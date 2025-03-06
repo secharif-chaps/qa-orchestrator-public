@@ -1,0 +1,103 @@
+@import 'tailwindcss';
+/* these are necessary styles for vue flow */
+@import '@vue-flow/core/dist/style.css';
+
+/* this contains the default theme, these are optional styles */
+@import '@vue-flow/core/dist/theme-default.css';
+
+@theme {
+  --spacing-6: 1.5rem;
+  --rounded-lg: 0.5rem;
+  --color-primary: var(--color-emerald-600);
+  --color-secondary: var(--color-slate-500);
+  --color-error: var(--color-red-500);
+  --color-success: var(--color-green-500);
+  --color-bg1: var(--color-white);
+  --color-bg2: var(--color-slate-50);
+  --color-bg3: var(--color-slate-100);
+
+  --color-border-1: var(--color-slate-400);
+  --color-border-2: var(--color-slate-200);
+}
+
+@layer components {
+  .card {
+    background-color: var(--color-white);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-6);
+  }
+
+  .icon-primary {
+    color: var(--color-primary);
+  }
+
+  .icon-light {
+    color: var(--color-white);
+  }
+
+  .icon-base {
+    color: var(--color-black);
+  }
+
+  .icon-secondary {
+    color: var(--color-secondary);
+  }
+
+  .icon-disabled {
+    color: var(--color-slate-400);
+  }
+
+  .text-base {
+    color: var(--color-black);
+  }
+
+  .text-secondary {
+    color: var(--color-secondary);
+  }
+
+  .text-light {
+    color: var(--color-white);
+  }
+
+  .text-primary-dark {
+    color: var(--color-emerald-700);
+  }
+
+  .text-primary-medium {
+    color: var(--color-emerald-500);
+  }
+
+  .text-disabled {
+    color: var(--color-slate-400);
+  }
+
+  .separator {
+    border-color: var(--color-emerald-100);
+  }
+
+  .border-primary-focus {
+    border-color: var(--color-primary);
+  }
+
+  .border-secondary-focus {
+    border-color: var(--color-emerald-300);
+  }
+
+  .btn {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: var(--spacing-6) var(--spacing-6);
+  }
+
+  .btn.disabled {
+    background-color: var(--color-emerald-200);
+  }
+
+  h1 {
+    font-size: var(--text-3xl);
+  }
+
+  h2 {
+    font-size: var(--text-2xl);
+  }
+}

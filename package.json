@@ -1,0 +1,36 @@
+{
+  "name": "mint",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@mistralai/mistralai": "^1.5.0",
+    "@nuxt/kit": "^3.15.4",
+    "@nuxtjs/leaflet": "1.2.6",
+    "@owlint/feathers-vue": "^0.2.7",
+    "@pinia/nuxt": "^0.10.1",
+    "@tailwindcss/vite": "^4.0.6",
+    "@vue-flow/core": "^1.42.1",
+    "d3": "^7.9.0",
+    "nuxt": "^3.6.0",
+    "pinia": "^3.0.1",
+    "pinia-plugin-persistedstate": "^4.2.0",
+    "pptxgenjs": "^3.12.0",
+    "reka-ui": "^1.0.0-alpha.9",
+    "tailwindcss": "^4.0.6",
+    "vue": "latest",
+    "vue-router": "latest",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "@types/leaflet": "^1.9.16",
+    "typescript": "^5.8.2"
+  }
+}
