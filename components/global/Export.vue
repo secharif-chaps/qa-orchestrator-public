@@ -8,6 +8,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { Company, SourcedValue } from '@/types'
 import { OButton } from '@owlint/feathers-vue'
 import pptxgen from 'pptxgenjs'
 
@@ -20,6 +21,112 @@ const COLORS = {
   cardBackground: 'FFFFFF', // white
   titleText: '000000', // black
   secondaryText: '475569', // slate-600
+  sourceText: '94A3B8', // slate-400
+}
+
+// Helper function to safely get value from SourcedValue type
+const getValue = <T>(
+  sourcedValue: SourcedValue<T> | undefined
+): T | undefined => {
+  return sourcedValue?.value
+}
+
+// Helper function to get sources from an array of SourcedValue items
+const getSourcesFromArray = <T>(
+  items: SourcedValue<T>[] | undefined
+): string[] => {
+  if (!items || items.length === 0) return []
+  return items
+    .map((item) => item.source)
+    .filter((source) => source && source.trim() !== '')
+}
+
+// Helper function to get sources from object properties
+const getSourcesFromObject = (
+  obj: Record<string, any> | undefined
+): string[] => {
+  if (!obj) return []
+
+  const sources: string[] = []
+
+  Object.values(obj).forEach((value) => {
+    if (value && typeof value === 'object') {
+      if (
+        'source' in value &&
+        typeof value.source === 'string' &&
+        value.source.trim() !== ''
+      ) {
+        sources.push(value.source)
+      } else if (Array.isArray(value)) {
+        sources.push(...getSourcesFromArray(value))
+      } else {
+        sources.push(...getSourcesFromObject(value))
+      }
+    }
+  })
+
+  return sources
+}
+
+// Function to add sources section to slide
+const addSourcesSection = (slide, sources: string[]) => {
+  if (!sources || sources.length === 0) return
+
+  // Remove duplicates
+  const uniqueSources = [...new Set(sources)]
+
+  // Create a background for the sources section
+  slide.addShape('RECTANGLE', {
+    x: 0.5,
+    y: 6.0,
+    w: 9.0,
+    h: 0.8,
+    fill: { color: 'F8FAFC' }, // Very light gray (slate-50)
+    lineSize: 0,
+  })
+
+  // Add sources title
+  slide.addText('Sources:', {
+    x: 0.75,
+    y: 6.05,
+    fontSize: 8,
+    bold: true,
+    color: COLORS.secondaryText,
+    fontFace: 'Arial',
+  })
+
+  // Split sources into two columns if there are more than 3
+  const maxItemsPerColumn = 3
+  const firstColumnSources = uniqueSources.slice(0, maxItemsPerColumn)
+  const secondColumnSources = uniqueSources.slice(maxItemsPerColumn)
+
+  // Add first column sources
+  firstColumnSources.forEach((source, index) => {
+    slide.addText(`• ${source}`, {
+      x: 0.75,
+      y: 6.2 + index * 0.15,
+      fontSize: 7,
+      color: COLORS.sourceText,
+      fontFace: 'Arial',
+      breakLine: true,
+      w: 4.0,
+    })
+  })
+
+  // Add second column sources if any
+  if (secondColumnSources.length > 0) {
+    secondColumnSources.forEach((source, index) => {
+      slide.addText(`• ${source}`, {
+        x: 5.0,
+        y: 6.2 + index * 0.15,
+        fontSize: 7,
+        color: COLORS.sourceText,
+        fontFace: 'Arial',
+        breakLine: true,
+        w: 4.0,
+      })
+    })
+  }
 }
 
 // Function to create rounded rectangle for card background
@@ -60,7 +167,13 @@ const addSlideTitle = (slide, title, options = {}) => {
 }
 
 // Function to create text block with label and value
-const addInfoBlock = (slide, label, value, x, y) => {
+const addInfoBlock = (
+  slide,
+  label,
+  sourcedValue: SourcedValue<string> | undefined,
+  x,
+  y
+) => {
   slide.addText(label, {
     x,
     y,
@@ -70,7 +183,7 @@ const addInfoBlock = (slide, label, value, x, y) => {
     fontFace: 'Arial',
   })
 
-  slide.addText(value || 'N/A', {
+  slide.addText(getValue(sourcedValue) || 'N/A', {
     x,
     y: y + 0.4,
     fontSize: 12,
@@ -82,7 +195,13 @@ const addInfoBlock = (slide, label, value, x, y) => {
 }
 
 // Function to create list items
-const addListItems = (slide, title, items, x, y) => {
+const addListItems = (
+  slide,
+  title,
+  items: SourcedValue<string>[] | undefined,
+  x,
+  y
+) => {
   slide.addText(title, {
     x,
     y,
@@ -104,7 +223,7 @@ const addListItems = (slide, title, items, x, y) => {
   }
 
   items.forEach((item, index) => {
-    slide.addText(`• ${item}`, {
+    slide.addText(`• ${getValue(item)}`, {
       x,
       y: y + 0.4 + index * 0.3,
       fontSize: 12,
@@ -117,7 +236,7 @@ const addListItems = (slide, title, items, x, y) => {
 }
 
 // Create slide for company profile
-const createProfileSlide = (pptx, company) => {
+const createProfileSlide = (pptx, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -125,7 +244,7 @@ const createProfileSlide = (pptx, company) => {
   addCardBackground(slide)
 
   // Company name with larger font
-  slide.addText(company.profile?.name || 'Company Name', {
+  slide.addText(getValue(company.profile?.name) || 'Company Name', {
     x: 1.0,
     y: 1.5,
     fontSize: 20,
@@ -136,7 +255,7 @@ const createProfileSlide = (pptx, company) => {
 
   // Add company catchphrase
   if (company.profile?.catchphrase) {
-    slide.addText(company.profile.catchphrase, {
+    slide.addText(getValue(company.profile.catchphrase), {
       x: 1.0,
       y: 2.0,
       fontSize: 14,
@@ -165,10 +284,14 @@ const createProfileSlide = (pptx, company) => {
   if (company.profile?.group_name) {
     addInfoBlock(slide, 'Group', company.profile.group_name, 5.0, 4.7)
   }
+
+  // Add sources section
+  const sources = getSourcesFromObject(company.profile)
+  addSourcesSection(slide, sources)
 }
 
 // Create slide for products and services
-const createProductsSlide = (pptx, company) => {
+const createProductsSlide = (pptx, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -197,10 +320,14 @@ const createProductsSlide = (pptx, company) => {
     1.0,
     4.0
   )
+
+  // Add sources section
+  const sources = getSourcesFromObject(company.products_and_services)
+  addSourcesSection(slide, sources)
 }
 
 // Create slide for target audience and customer base
-const createTargetAudienceSlide = (pptx, company) => {
+const createTargetAudienceSlide = (pptx, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -222,7 +349,7 @@ const createTargetAudienceSlide = (pptx, company) => {
     fontFace: 'Arial',
   })
 
-  slide.addText(targetAudience.marketing_positioning || 'N/A', {
+  slide.addText(getValue(targetAudience.marketing_positioning) || 'N/A', {
     x: 1.0,
     y: 2.9,
     fontSize: 12,
@@ -232,10 +359,16 @@ const createTargetAudienceSlide = (pptx, company) => {
     w: 8.0,
     h: 2.0,
   })
+
+  // Add sources section
+  const sources = getSourcesFromObject(
+    company.target_audience_and_customer_base
+  )
+  addSourcesSection(slide, sources)
 }
 
 // Create slide for digital strategy
-const createDigitalStrategySlide = (pptx, company) => {
+const createDigitalStrategySlide = (pptx, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -254,7 +387,7 @@ const createDigitalStrategySlide = (pptx, company) => {
     fontFace: 'Arial',
   })
 
-  slide.addText(digitalStrategy.digital_strategy || 'N/A', {
+  slide.addText(getValue(digitalStrategy.digital_strategy) || 'N/A', {
     x: 1.0,
     y: 1.9,
     fontSize: 12,
@@ -274,7 +407,7 @@ const createDigitalStrategySlide = (pptx, company) => {
     fontFace: 'Arial',
   })
 
-  slide.addText(digitalStrategy.loyalty_program || 'N/A', {
+  slide.addText(getValue(digitalStrategy.loyalty_program) || 'N/A', {
     x: 1.0,
     y: 3.4,
     fontSize: 12,
@@ -314,10 +447,21 @@ const createDigitalStrategySlide = (pptx, company) => {
       })
     })
   }
+
+  // Add sources section
+  const digitalSources = getSourcesFromObject(
+    company.digital_strategy_and_social_media
+  )
+  const socialSources = company.social_media
+    ? company.social_media.flatMap((social) =>
+        social.url?.source ? [social.url.source] : []
+      )
+    : []
+  addSourcesSection(slide, [...digitalSources, ...socialSources])
 }
 
 // Create slide for CSR initiatives
-const createCSRSlide = (pptx, company) => {
+const createCSRSlide = (pptx, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -337,10 +481,14 @@ const createCSRSlide = (pptx, company) => {
 
   // Add charity actions in second column
   addListItems(slide, 'Charity Actions', csr.charity_actions, 5.0, 1.5)
+
+  // Add sources section
+  const sources = getSourcesFromObject(company.csr)
+  addSourcesSection(slide, sources)
 }
 
 // Create slide for recent news
-const createNewsSlide = (pptx, company) => {
+const createNewsSlide = (pptx, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -349,10 +497,14 @@ const createNewsSlide = (pptx, company) => {
 
   // Add recent news items
   addListItems(slide, 'Latest Updates', company.recent_news, 1.0, 1.5)
+
+  // Add sources section
+  const sources = getSourcesFromArray(company.recent_news)
+  addSourcesSection(slide, sources)
 }
 
 // Create insights slide
-const createInsightsSlide = (pptx, company) => {
+const createInsightsSlide = (pptx, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -369,7 +521,7 @@ const createInsightsSlide = (pptx, company) => {
     fontFace: 'Arial',
   })
 
-  slide.addText(company.insights || 'No insights available', {
+  slide.addText(getValue(company.insights) || 'No insights available', {
     x: 1.0,
     y: 1.9,
     fontSize: 12,
@@ -379,10 +531,14 @@ const createInsightsSlide = (pptx, company) => {
     w: 8.0,
     h: 3.5,
   })
+
+  // Add sources section
+  const sources = company.insights?.source ? [company.insights.source] : []
+  addSourcesSection(slide, sources)
 }
 
 // Create title slide
-const createTitleSlide = (pptx, company) => {
+const createTitleSlide = (pptx, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -406,7 +562,7 @@ const createTitleSlide = (pptx, company) => {
   })
 
   // Add company name in large font as main title
-  slide.addText(company.profile?.name || 'Company Overview', {
+  slide.addText(getValue(company.profile?.name) || 'Company Overview', {
     x: 0.5,
     y: 1.8,
     w: 9.0,
@@ -419,7 +575,7 @@ const createTitleSlide = (pptx, company) => {
 
   // Add subtitle with catchphrase if available
   if (company.profile?.catchphrase) {
-    slide.addText(company.profile.catchphrase, {
+    slide.addText(getValue(company.profile.catchphrase), {
       x: 0.5,
       y: 2.8,
       w: 9.0,
@@ -454,39 +610,39 @@ const downloadPPT = async () => {
     pptx.layout = 'LAYOUT_WIDE'
 
     // Create all slides
-    createTitleSlide(pptx, company.value)
+    createTitleSlide(pptx, company.value as Company)
 
     // Prioritize insights slide as the first content slide if available
     if (company.value.insights) {
-      createInsightsSlide(pptx, company.value)
+      createInsightsSlide(pptx, company.value as Company)
     }
 
-    createProfileSlide(pptx, company.value)
+    createProfileSlide(pptx, company.value as Company)
 
     // Only create slides for sections that have data
     if (company.value.products_and_services) {
-      createProductsSlide(pptx, company.value)
+      createProductsSlide(pptx, company.value as Company)
     }
 
     if (company.value.target_audience_and_customer_base) {
-      createTargetAudienceSlide(pptx, company.value)
+      createTargetAudienceSlide(pptx, company.value as Company)
     }
 
     if (company.value.digital_strategy_and_social_media) {
-      createDigitalStrategySlide(pptx, company.value)
+      createDigitalStrategySlide(pptx, company.value as Company)
     }
 
     if (company.value.csr) {
-      createCSRSlide(pptx, company.value)
+      createCSRSlide(pptx, company.value as Company)
     }
 
     if (company.value.recent_news && company.value.recent_news.length > 0) {
-      createNewsSlide(pptx, company.value)
+      createNewsSlide(pptx, company.value as Company)
     }
 
     // Generate filename from company name or use default
     const fileName = company.value.profile?.name
-      ? `${company.value.profile.name.replace(
+      ? `${getValue(company.value.profile.name)?.replace(
           /[^a-z0-9]/gi,
           '_'
         )}_Overview.pptx`

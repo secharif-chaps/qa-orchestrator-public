@@ -17,8 +17,15 @@
             v-for="initiative in company?.csr?.responsibility_initiatives || []"
           >
             <span class="text-sm">
-              {{ initiative }}
+              {{ getSourcedValue(initiative) }}
             </span>
+            <Source :item="initiative" />
+          </li>
+          <li
+            v-if="company?.csr?.responsibility_initiatives?.length === 0"
+            class="text-sm text-secondary italic"
+          >
+            Not found
           </li>
         </ul>
       </div>
@@ -36,7 +43,11 @@
           class="text-sm text-secondary"
           v-if="company?.csr?.charity_actions"
         >
-          {{ (company?.csr?.charity_actions || []).join(', ') }}
+          {{
+            (
+              company?.csr?.charity_actions.map((action) => action.value) || []
+            ).join(', ') || 'Not found'
+          }}
         </span>
       </div>
       <div
@@ -50,5 +61,5 @@
 </template>
 
 <script lang="ts" setup>
-const { company, hasPropertyBeenUpdated } = useCompanyData()
+const { company, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
 </script>

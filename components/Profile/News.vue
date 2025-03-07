@@ -14,8 +14,15 @@
               v-for="news in company?.recent_news || []"
             >
               <span class="text-sm">
-                {{ news }}
+                {{ getSourcedValue(news) }}
               </span>
+              <Source :item="news" />
+            </li>
+            <li
+              v-if="company?.recent_news?.length === 0"
+              class="text-secondary"
+            >
+              No recent news found
             </li>
           </ul>
         </div>
@@ -31,5 +38,5 @@
 </template>
 
 <script lang="ts" setup>
-const { company, hasPropertyBeenUpdated } = useCompanyData()
+const { company, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
 </script>

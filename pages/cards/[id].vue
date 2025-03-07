@@ -30,26 +30,25 @@
         v-if="!hasAnyData"
         message="Loading company information..."
         title="Please wait"
-        icon="fa-spinner"
+        icon="fa-spinner fa-spin"
         color="blue"
       >
         <p>Fetching data from AI agent...</p>
       </OAlert>
-
       <!-- Insights section (only show if we have insights) -->
       <OAlert
         v-if="hasPropertyBeenUpdated('insights')"
         message="This company is a member of the Sephora group"
         title="Insights"
         icon="fa-wand-magic-sparkles"
-        :description="company?.insights"
+        :description="company?.insights?.value"
       >
       </OAlert>
       <OAlert
         v-else-if="!isCompanyNew"
         message="Loading insights..."
         title="Insights"
-        icon="fa-spinner"
+        icon="fa-spinner-third animate-spin"
         color="blue"
       >
       </OAlert>
@@ -91,25 +90,12 @@
           </div>
         </div>
       </div>
-
-      <!-- Graph section (conditionally displayed) -->
-      <div
-        v-if="hasPropertyBeenUpdated('partners_and_competitors_graph.nodes')"
-      >
-        <Graph />
-      </div>
-      <div
-        v-else
-        class="p-6 bg-white rounded shadow text-center text-gray-500"
-      >
-        <i class="fa fa-spinner fa-spin mr-2"></i> Loading graph data...
-      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Profile, ProfileBusinessLine, ProfileGroup } from '#components'
+import { Profile } from '#components'
 import { OAlert, OButton, OIcon } from '@owlint/feathers-vue'
 import { useCompanyStore } from '~/stores/company'
 import type { Company } from '~/types.global'

@@ -29,12 +29,14 @@ export default defineNuxtConfig({
     },
   },
 
-  
-
   routeRules: {
     '/cards/**': {
       ssr: false
     },
+  },
+
+  piniaPluginPersistedstate: {
+    debug: true
   },
 
   vite: {
@@ -43,5 +45,9 @@ export default defineNuxtConfig({
     ],
   },
 
-  modules: ['@nuxtjs/leaflet', '@pinia/nuxt'],
+  modules: [
+    '@nuxtjs/leaflet', 
+    '@pinia/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
+  ],
 })

@@ -18,7 +18,14 @@
           )
         "
       >
-        {{ company?.digital_strategy_and_social_media?.digital_strategy }}
+        {{
+          getSourcedValue(
+            company?.digital_strategy_and_social_media?.digital_strategy
+          ) || 'Not found'
+        }}
+        <Source
+          :item="company?.digital_strategy_and_social_media?.digital_strategy"
+        />
       </div>
       <div
         v-else
@@ -39,7 +46,14 @@
           )
         "
       >
-        {{ company?.digital_strategy_and_social_media?.loyalty_program }}
+        {{
+          getSourcedValue(
+            company?.digital_strategy_and_social_media?.loyalty_program
+          ) || 'Not found'
+        }}
+        <Source
+          :item="company?.digital_strategy_and_social_media?.loyalty_program"
+        />
       </div>
       <div
         v-else
@@ -60,8 +74,10 @@
       >
         {{
           (
-            company?.digital_strategy_and_social_media?.online_services || []
-          ).join(', ')
+            company?.digital_strategy_and_social_media?.online_services.map(
+              (service) => service.value
+            ) || []
+          ).join(', ') || 'Not found'
         }}
       </div>
       <div
@@ -75,5 +91,5 @@
 </template>
 
 <script lang="ts" setup>
-const { company, hasPropertyBeenUpdated } = useCompanyData()
+const { company, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
 </script>

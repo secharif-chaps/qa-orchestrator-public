@@ -7,17 +7,20 @@
         >
           <i class="fa fa-building text-5xl text-emerald-300"></i>
         </div>
+
         <div class="space-y-2">
           <p class="font-bold">
-            {{ company?.profile?.name || companyName }}
+            {{ getSourcedValue(company?.profile?.name) || companyName }}
           </p>
 
           <!-- Catchphrase - individual property loading -->
           <p
             v-if="hasPropertyBeenUpdated('profile.catchphrase')"
             class="max-w-lg text-secondary font-bold"
+            :title="getSourcedSource(company?.profile?.catchphrase)"
           >
-            {{ company?.profile?.catchphrase }}
+            {{ getSourcedValue(company?.profile?.catchphrase) }}
+            <Source :item="company?.profile?.catchphrase" />
           </p>
           <p
             v-else
@@ -31,17 +34,23 @@
             v-if="hasPropertyBeenUpdated('social_media')"
             class="space-x-2 text-primary"
           >
-            <NuxtLink
-              target="_blank"
-              v-for="(url, media) in company?.social_media"
-              :to="url"
+            <div
+              v-if="hasPropertyBeenUpdated('social_media')"
+              class="space-x-2 text-primary"
             >
-              <i
-                class="fa"
-                :class="getIcon(media)"
+              <NuxtLink
+                target="_blank"
+                v-for="platform in company?.social_media"
+                :key="platform.name"
+                :to="getSourcedValue(platform.url)"
+                :title="getSourcedSource(platform.url)"
               >
-              </i>
-            </NuxtLink>
+                <i
+                  class="fa"
+                  :class="getIcon(platform.name)"
+                ></i>
+              </NuxtLink>
+            </div>
           </div>
           <div
             v-else
@@ -73,7 +82,16 @@
 </template>
 
 <script setup lang="ts">
-const { company, companyName, hasPropertyBeenUpdated } = useCompanyData()
+import Source from '../global/Source.vue'
+
+const {
+  company,
+  companyName,
+  hasPropertyBeenUpdated,
+  getSourcedValue,
+  getSourcedSource,
+  getSourcedSourceName,
+} = useCompanyData()
 
 const getIcon = (media: string) => {
   switch (media) {

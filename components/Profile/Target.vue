@@ -18,7 +18,14 @@
         "
       >
         <span class="text-sm text-secondary">
-          {{ company?.target_audience_and_customer_base?.customer_type }}
+          {{
+            getSourcedValue(
+              company?.target_audience_and_customer_base?.customer_type
+            ) ?? 'Not found'
+          }}
+          <Source
+            :item="company?.target_audience_and_customer_base?.customer_type"
+          />
         </span>
       </div>
       <div
@@ -39,8 +46,15 @@
       >
         <span class="text-sm text-secondary">
           {{
-            company?.target_audience_and_customer_base?.marketing_positioning
+            getSourcedValue(
+              company?.target_audience_and_customer_base?.marketing_positioning
+            ) ?? 'Not found'
           }}
+          <Source
+            :item="
+              company?.target_audience_and_customer_base?.marketing_positioning
+            "
+          />
         </span>
       </div>
       <div
@@ -54,5 +68,5 @@
 </template>
 
 <script lang="ts" setup>
-const { company, hasPropertyBeenUpdated } = useCompanyData()
+const { company, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
 </script>

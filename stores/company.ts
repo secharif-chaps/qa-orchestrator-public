@@ -1,6 +1,6 @@
 // stores/company.ts
 import { defineStore } from 'pinia';
-import type { Company } from '~/types.global';
+import type { Company, SourcedValue } from '~/types.global';
 
 interface CompanyState {
   companies: Record<string, Partial<Company>>;
@@ -16,10 +16,19 @@ export const useCompanyStore = defineStore('company', {
   }),
 
   persist: {
-    // You can specify which paths to persist
-    paths: ['companies'],
-    // Custom storage key (optional)
-    key: 'companies',
+    // Be explicit about storage type
+    storage: import.meta.client ? localStorage : null,
+    
+    // Optionally, be explicit about what to persist
+    paths: ['companies', 'currentCompany', 'propertyUpdates'],
+    
+    // Add debugging
+    beforeRestore: (ctx) => {
+      console.log('About to restore state:', ctx);
+    },
+    afterRestore: (ctx) => {
+      console.log('State restored:', ctx);
+    }
   },
 
   getters: {
@@ -47,9 +56,15 @@ export const useCompanyStore = defineStore('company', {
   actions: {
     // Initialize a company with empty data
     initCompany(name: string) {
-      if (!this.companies[name]) {
+      if (name && !this.companies[name]) {
+        // Initialize with SourcedValue for name
         this.companies[name] = {
-          profile: { name }
+          profile: { 
+            name: { 
+              value: name, 
+              source: 'user input' 
+            } as SourcedValue<string>
+          }
         }
       }
       
@@ -153,13 +168,10 @@ export const useCompanyStore = defineStore('company', {
         this.initCompany(name)
       }
       
-      // Preserve the graph if it exists
-      const graph = this.companies[name].partners_and_competitors_graph
       
       // Replace all data
       this.companies[name] = {
         ...data,
-        partners_and_competitors_graph: graph || data.partners_and_competitors_graph
       }
       
       // Mark all properties as updated
@@ -180,48 +192,6 @@ export const useCompanyStore = defineStore('company', {
       }
       
       markUpdated(data)
-    },
-    
-    // Update a specific property in the graph
-    updateGraphProperty(companyName: string, propertyName: 'nodes' | 'edges', value: any) {
-      if (!this.companies[companyName]) {
-        this.initCompany(companyName)
-      }
-      
-      // Ensure the graph object exists
-      if (!this.companies[companyName].partners_and_competitors_graph) {
-        this.companies[companyName].partners_and_competitors_graph = {
-          nodes: [],
-          edges: []
-        }
-      }
-      
-      // Update the specific property
-      this.companies[companyName].partners_and_competitors_graph[propertyName] = value
-      
-      // Mark this property as updated
-      if (!this.propertyUpdates[companyName]) {
-        this.propertyUpdates[companyName] = {}
-      }
-      this.propertyUpdates[companyName][`partners_and_competitors_graph.${propertyName}`] = true
-    },
-    
-    // Set graph data
-    setGraphData(name: string, graphData: any) {
-      if (!this.companies[name]) {
-        this.initCompany(name)
-      }
-      
-      // Update only the graph part
-      this.companies[name].partners_and_competitors_graph = graphData
-      
-      // Mark graph properties as updated
-      if (!this.propertyUpdates[name]) {
-        this.propertyUpdates[name] = {}
-      }
-      this.propertyUpdates[name]['partners_and_competitors_graph'] = true
-      this.propertyUpdates[name]['partners_and_competitors_graph.nodes'] = true
-      this.propertyUpdates[name]['partners_and_competitors_graph.edges'] = true
     },
     
     setCurrentCompany(name: string) {

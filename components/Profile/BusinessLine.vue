@@ -7,7 +7,8 @@
         v-if="hasPropertyBeenUpdated('profile.business_line')"
         class="text-secondary"
       >
-        {{ company?.profile?.business_line }}
+        {{ getSourcedValue(company?.profile?.business_line) ?? 'Not found' }}
+        <Source :item="company?.profile?.business_line" />
       </div>
       <div
         v-else
@@ -20,5 +21,5 @@
 </template>
 
 <script lang="ts" setup>
-const { company, hasPropertyBeenUpdated } = useCompanyData()
+const { company, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
 </script>

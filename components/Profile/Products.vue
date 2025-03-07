@@ -12,7 +12,13 @@
       <div>Product Range</div>
       <div v-if="hasPropertyBeenUpdated('products_and_services.product_range')">
         <span class="text-sm text-secondary">
-          {{ (company?.products_and_services?.product_range || []).join(', ') }}
+          {{
+            (
+              company?.products_and_services?.product_range.map(
+                (p) => p.value
+              ) || []
+            ).join(', ') || 'Not found'
+          }}
         </span>
       </div>
       <div
@@ -29,13 +35,20 @@
       >
         <ul class="list-disc">
           <li
-            class="space-x-2 text-secondary"
+            class="text-secondary space-x-2"
             v-for="brand in company?.products_and_services?.partner_brands ||
             []"
           >
             <span class="text-sm">
-              {{ brand }}
+              {{ brand.value }}
             </span>
+            <Source :item="company?.profile?.group_name" />
+          </li>
+          <li
+            v-if="company?.products_and_services?.partner_brands?.length === 0"
+            class="text-sm text-secondary"
+          >
+            Not found
           </li>
         </ul>
       </div>
@@ -47,7 +60,7 @@
       </div>
 
       <!-- Private Labels - individual property loading -->
-      <div>{{ company?.profile?.name || companyName }} private label</div>
+      <div>{{ company?.profile?.name.value || companyName }} private label</div>
       <div
         v-if="hasPropertyBeenUpdated('products_and_services.private_labels')"
       >
@@ -58,8 +71,15 @@
             []"
           >
             <span class="text-sm">
-              {{ brand }}
+              {{ brand.value }}
             </span>
+            <Source :item="company?.profile?.group_name" />
+          </li>
+          <li
+            v-if="company?.products_and_services?.private_labels?.length === 0"
+            class="text-sm text-secondary"
+          >
+            Not found
           </li>
         </ul>
       </div>
