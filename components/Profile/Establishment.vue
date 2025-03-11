@@ -5,7 +5,9 @@
         class="bg-emerald-100 lg:w-2/3 text-primary mx-auto px-2 py-2 rounded"
       >
         <span v-if="hasPropertyBeenUpdated('profile.establishment_year')">
-          {{ getSourcedValue(company?.profile?.establishment_year)?? 'Not found' }}
+          {{
+            getSourcedValue(company?.profile?.establishment_year) ?? 'Not found'
+          }}
         </span>
         <span
           v-else

@@ -10,7 +10,7 @@ export const useAgent = () => {
 
   // Agent IDs
   const agentSourcedId = 'ag:cc2224b6:20250306:mint-sourced:f9c9d8b8';
-
+  const agentChatId = 'ag:cc2224b6:20250224:mint:c6b81070'
   // Create Mistral client
   const client = new Mistral({ apiKey: runtimeConfig.public.mistralApiKey });
 
@@ -431,6 +431,51 @@ export const useAgent = () => {
       : generateClassic(company, website, onCompanyName);
   };
 
+  const ask = async (question: string, companyName: string, context: any, onChunk: (text: string) => void) => {
+    const company = companyStore.companies[companyName]
+    
+    try {
+      const response = await client.agents.stream({
+        agentId: agentChatId,
+        messages: [
+          {
+            role: 'system',
+            content: `Voici les informations de l'entreprise : ${JSON.stringify(company)}`
+          },
+          {
+            role: 'system',
+            content: `Voici le context des précedants messages : ${JSON.stringify(context)}`
+          },
+          {
+            role: 'user',
+            content: question
+          }
+        ],
+        stream: true // Enable streaming
+      })
+      
+      let fullResponse = ''
+      
+      // Handle the stream
+
+      if(response){
+        for await (const chunk of response) {
+
+          if (chunk.data.choices && chunk.data.choices[0]?.delta?.content) {
+            const contentChunk = chunk.data.choices[0].delta.content as string
+            fullResponse += contentChunk
+            onChunk(contentChunk) // Send each chunk to the callback
+          }
+        }
+      }
+      
+      return fullResponse
+    } catch (error) {
+      console.error('Error with agent response:', error)
+      return null
+    }
+  }
+
   /**
    * Bascule entre les modes streaming et classique
    */
@@ -439,6 +484,7 @@ export const useAgent = () => {
   };
 
   return {
+    ask,
     generate,
     pending,
     companyName,
