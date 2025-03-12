@@ -1,7 +1,7 @@
 <template>
   <div class="w-[86px] bg-primary h-screen fixed text-white pt-24 pb-4 px-4">
     <div class="flex flex-col justify-between h-full">
-      <div class="space-y-4 divide-y divide-emerald-400">
+      <div class="space-y-4 divide-y divide-sidebar-border">
         <div
           v-for="button in buttons"
           :key="button.label"
@@ -22,7 +22,7 @@
 
               <span
                 v-if="button.chip"
-                class="bg-emerald-500 text-emerald-100 rounded px-2 py-1"
+                class="bg-sidebar-count text-white rounded px-2 py-1"
                 >{{ button.chip }}</span
               >
             </button>
@@ -31,7 +31,7 @@
       </div>
 
       <div
-        class="border-t border-emerald-400 pt-4 space-y-4 divide-y divide-emerald-400"
+        class="border-t border-sidebar-border pt-4 space-y-4 divide-y divide-sidebar-border"
       >
         <div
           v-for="button in actions"
@@ -57,7 +57,7 @@
 
               <span
                 v-if="button.chip"
-                class="bg-emerald-500 text-emerald-100 rounded px-2 py-1"
+                class="bg-sidebar-count text-white rounded px-2 py-1"
                 >{{ button.chip }}</span
               >
             </button>

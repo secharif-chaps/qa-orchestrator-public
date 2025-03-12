@@ -7,7 +7,7 @@
     >
       <div class="flex gap-4 items-center">
         <i
-          class="fa fa-chevrons-right cursor-pointer"
+          class="fa fa-chevrons-right cursor-pointer icon-secondary"
           @click="$emit('hide')"
         ></i>
         <span class="text-sm">Ask our AI</span>
@@ -31,15 +31,15 @@
         <div
           class="text-xs p-4 inline-block rounded-xl"
           :class="{
-            'bg-slate-100': message.from === 'ai',
-            'bg-emerald-100 text-emerald-900': message.from === 'user',
+            'bg-bg3': message.from === 'ai',
+            'bg-emerald-100 text-primary': message.from === 'user',
           }"
           v-html="formatMarkdown(message.text)"
         ></div>
       </div>
       <div v-if="isStreaming">
         <div
-          class="text-xs p-4 inline-block rounded-xl bg-slate-100 mr-auto"
+          class="text-xs p-4 inline-block rounded-xl bg-bg3 mr-auto"
           v-html="formatMarkdown(streamingText)"
         ></div>
       </div>
@@ -49,12 +49,13 @@
         @keyup.enter="askAgent"
         v-model="question"
         placeholder="Write a message..."
-        class="w-full h-32 bg-slate-100 border border-slate-200 rounded-lg p-2 text-sm focus-within:outline-primary"
+        class="w-full h-32 bg-bg3 border border-border-2 rounded-lg p-2 text-sm focus-within:outline-primary"
         @keydown.enter.ctrl.prevent="askAgent"
       ></textarea>
-      <OIcon
+      <OButton
         icon="fa-send"
         class="absolute right-2 bottom-4 cursor-pointer"
+        rounded
         @click="askAgent"
       />
     </div>
@@ -62,7 +63,7 @@
 </template>
 
 <script lang="ts" setup>
-import { OIcon } from '@owlint/feathers-vue'
+import { OButton } from '@owlint/feathers-vue'
 import { nextTick, ref, watch } from 'vue'
 
 const messages = ref([
@@ -120,7 +121,12 @@ const askAgent = async () => {
   const context = messages.value
 
   // Call the streaming version
-  const response = await ask(userQuestion, companyName.value, context, handleChunk)
+  const response = await ask(
+    userQuestion,
+    companyName.value,
+    context,
+    handleChunk
+  )
 
   // Stop streaming and add the final message
   if (response) {

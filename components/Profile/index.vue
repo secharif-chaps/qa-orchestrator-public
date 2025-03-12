@@ -3,9 +3,9 @@
     <div class="flex justify-between items-center">
       <div class="flex space-x-6 items-center">
         <div
-          class="bg-emerald-500 w-24 h-24 rounded-full min-w-24 flex items-center justify-center"
+          class="bg-primary w-24 h-24 rounded-full min-w-24 flex items-center justify-center"
         >
-          <i class="fa fa-building text-5xl text-emerald-300"></i>
+          <i class="fa fa-building text-5xl text-white"></i>
         </div>
 
         <div class="space-y-2">

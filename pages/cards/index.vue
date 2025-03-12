@@ -65,7 +65,7 @@
                 <tr
                   v-for="company in companies"
                   :key="company.name"
-                  class="hover:bg-emerald-50 group"
+                  class="hover:bg-bg2 group"
                 >
                   <td
                     class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 group-hover:text-primary cursor-pointer"

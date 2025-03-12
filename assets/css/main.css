@@ -5,24 +5,99 @@
 /* this contains the default theme, these are optional styles */
 @import '@vue-flow/core/dist/theme-default.css';
 
-@theme {
+@theme inline {
   --spacing-6: 1.5rem;
   --rounded-lg: 0.5rem;
-  --color-primary: var(--color-emerald-600);
-  --color-secondary: var(--color-slate-500);
-  --color-error: var(--color-red-500);
-  --color-success: var(--color-green-500);
-  --color-bg1: var(--color-white);
-  --color-bg2: var(--color-slate-50);
-  --color-bg3: var(--color-slate-100);
+  --color-primary: var(--theme-color-primary);
+  --color-secondary: var(--theme-color-secondary);
+  --color-error: var(--theme-color-error);
+  --color-success: var(--theme-color-success);
+  --color-bg1: var(--theme-color-bg1);
+  --color-bg2: var(--theme-color-bg2);
+  --color-bg3: var(--theme-color-bg3);
 
   --color-border-1: var(--color-slate-400);
   --color-border-2: var(--color-slate-200);
+
+  --color-sidebar-border: var(--theme-color-sidebar-border);
+  --color-sidebar-count: var(--theme-color-sidebar-count);
+}
+
+@layer base {
+  :root {
+    --theme-color-bg1: var(--color-white);
+    --theme-color-bg2: var(--color-slate-50);
+    --theme-color-bg3: var(--color-slate-100);
+
+    --theme-color-secondary: var(--color-slate-500);
+    --theme-color-error: var(--color-indigo-500);
+    --theme-color-success: var(--color-green-500);
+
+    --theme-color-primary: var(--color-indigo-600);
+    --theme-color-sidebar-border: var(--color-indigo-500);
+    --theme-color-sidebar-count: var(--color-indigo-500);
+  }
+
+  [data-theme='indigo'] {
+    --theme-color-bg1: var(--color-white);
+    --theme-color-bg2: var(--color-slate-50);
+    --theme-color-bg3: var(--color-slate-100);
+
+    --theme-color-secondary: var(--color-slate-500);
+    --theme-color-error: var(--color-indigo-500);
+    --theme-color-success: var(--color-green-500);
+
+    --theme-color-primary: var(--color-indigo-600);
+    --theme-color-sidebar-border: var(--color-indigo-500);
+    --theme-color-sidebar-count: var(--color-indigo-500);
+  }
+
+  [data-theme='emerald'] {
+    --theme-color-bg1: var(--color-white);
+    --theme-color-bg2: var(--color-slate-50);
+    --theme-color-bg3: var(--color-slate-100);
+
+    --theme-color-secondary: var(--color-slate-500);
+    --theme-color-error: var(--color-indigo-500);
+    --theme-color-success: var(--color-green-500);
+
+    --theme-color-primary: var(--color-emerald-600);
+    --theme-color-sidebar-border: var(--color-emerald-500);
+    --theme-color-sidebar-count: var(--color-emerald-500);
+  }
+
+  [data-theme='pink'] {
+    --theme-color-bg1: var(--color-white);
+    --theme-color-bg2: var(--color-slate-50);
+    --theme-color-bg3: var(--color-slate-100);
+
+    --theme-color-secondary: var(--color-slate-500);
+    --theme-color-error: var(--color-indigo-500);
+    --theme-color-success: var(--color-green-500);
+
+    --theme-color-primary: var(--color-pink-600);
+    --theme-color-sidebar-border: var(--color-pink-500);
+    --theme-color-sidebar-count: var(--color-pink-500);
+  }
+
+  [data-theme='dark'] {
+    --theme-color-bg1: var(--color-slate-700);
+    --theme-color-bg2: var(--color-slate-800);
+    --theme-color-bg3: var(--color-slate-900);
+
+    --theme-color-secondary: var(--color-slate-200);
+    --theme-color-error: var(--color-red-500);
+    --theme-color-success: var(--color-green-500);
+
+    --theme-color-primary: var(--color-pink-600);
+    --theme-color-sidebar-border: var(--color-pink-500);
+    --theme-color-sidebar-count: var(--color-pink-500);
+  }
 }
 
 @layer components {
   .card {
-    background-color: var(--color-white);
+    background-color: var(--color-bg1);
     border-radius: var(--rounded-lg);
     padding: var(--spacing-6);
   }
@@ -60,11 +135,11 @@
   }
 
   .text-primary-dark {
-    color: var(--color-emerald-700);
+    color: var(--color-indigo-700);
   }
 
   .text-primary-medium {
-    color: var(--color-emerald-500);
+    color: var(--color-indigo-500);
   }
 
   .text-disabled {
@@ -72,7 +147,7 @@
   }
 
   .separator {
-    border-color: var(--color-emerald-100);
+    border-color: var(--color-indigo-100);
   }
 
   .border-primary-focus {
@@ -80,7 +155,7 @@
   }
 
   .border-secondary-focus {
-    border-color: var(--color-emerald-300);
+    border-color: var(--color-indigo-300);
   }
 
   .btn {
@@ -90,7 +165,7 @@
   }
 
   .btn.disabled {
-    background-color: var(--color-emerald-200);
+    background-color: var(--color-indigo-200);
   }
 
   h1 {

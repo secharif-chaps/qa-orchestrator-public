@@ -24,7 +24,7 @@ export default defineNuxtConfig({
         },
       ],
       htmlAttrs: {
-        "data-theme": "emerald",
+        "data-theme": "indigo",
       },
     },
   },
