@@ -9,14 +9,19 @@
     >
       <div class="flex justify-between items-center">
         <OIcon
-          :icon="icon"
-          type="secondary"
+          :icon="loading ? 'fa-spinner fa-spin' : icon"
+          :type="loading ? 'primary' : 'secondary'"
         />
         <i class="fa fa-arrow-right text-primary ml-1"></i>
       </div>
       <h3 class="text-primary">{{ title }}</h3>
 
-      <p class="text-secondary text-sm flex-grow">{{ description }}</p>
+      <p class="text-secondary text-sm flex-grow">
+        <span v-if="loading" class="flex items-center gap-2">
+          <span>Loading...</span>
+        </span>
+        <span v-else>{{ description }}</span>
+      </p>
     </div>
   </NuxtLink>
 </template>
@@ -42,6 +47,10 @@ defineProps({
     required: true,
   },
   disabled: {
+    type: Boolean,
+    default: false,
+  },
+  loading: {
     type: Boolean,
     default: false,
   },

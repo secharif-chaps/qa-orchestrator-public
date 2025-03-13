@@ -89,9 +89,7 @@
               <i class="fa fa-map-marker"></i>
               <p>HQ</p>
               <span class="text-secondary">
-                {{
-                  getSourcedValue(company?.profile?.headquarters) || 'Unknown'
-                }}
+                {{ 'Unknown' }}
               </span>
             </div>
 
@@ -99,7 +97,7 @@
               <i class="fa fa-user-tie"></i>
               <p>CEO</p>
               <span class="text-secondary">
-                {{ getSourcedValue(company?.profile?.ceo) || 'Unknown' }}
+                {{ 'Unknown' }}
               </span>
             </div>
 
@@ -139,6 +137,7 @@
           description="View detailed company information, business lines, and key metrics."
           icon="fa-building"
           :to="`/cards/${companyName}/profile`"
+          :loading="isProfileLoading"
         />
 
         <InfoCard
@@ -146,6 +145,7 @@
           description="Explore company events, trade shows, and key activities."
           icon="fa-calendar-days"
           :to="`/cards/${companyName}/activities`"
+          :loading="isTimelineLoading"
         />
 
         <InfoCard
@@ -223,6 +223,7 @@ useHead({
 
 const { companyName, hasPropertyBeenUpdated, getSourcedValue } =
   useCompanyData()
+const { pending } = useAgent()
 
 const company = ref<Partial<Company> | null>(null)
 
@@ -233,6 +234,27 @@ const hasAnyData = ref(false)
 const isCompanyNew = ref(true)
 
 const showAiChat = ref(false)
+
+// Track loading states for different sections
+const isProfileLoading = computed(() => {
+  // Check if the agent is pending OR if we don't have profile data yet
+  return pending.value || (!hasAnyData.value && !hasPropertyBeenUpdated('profile'))
+})
+
+const isTimelineLoading = computed(() => {
+  // Check if we don't have timeline data yet
+  return pending.value || !hasPropertyBeenUpdated('timeline_events')
+})
+
+// For debugging
+console.log('Loading states:', {
+  pending: pending.value,
+  hasAnyData: hasAnyData.value,
+  profileUpdated: hasPropertyBeenUpdated('profile'),
+  timelineUpdated: hasPropertyBeenUpdated('timeline_events'),
+  isProfileLoading: isProfileLoading.value,
+  isTimelineLoading: isTimelineLoading.value
+})
 
 // Subscribe to company store for updates
 watch(

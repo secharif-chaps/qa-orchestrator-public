@@ -60,7 +60,7 @@ import { useCompanyStore } from '~/stores/company'
 const company = ref('')
 const website = ref('')
 
-const { generate, generateGraph, pending } = useAgent()
+const { generate, generateTimeline, pending } = useAgent()
 
 const companyStore = useCompanyStore()
 const router = useRouter()
@@ -80,12 +80,19 @@ const startSearch = async () => {
   generate(company.value, website.value, (companyName) => {
     // As soon as we get the company name, redirect to the company page
     if (companyName) {
-      router.push(`/cards/${companyName}`)
+      console.log('Company name received, starting timeline generation:', companyName);
+      
+      // Start the timeline generation in parallel
+      // We don't await this since we want to redirect immediately
+      // The pending state will be tracked by the useAgent composable
+      generateTimeline(companyName);
+      
+      // Redirect to the company page
+      router.push(`/cards/${companyName}`);
     }
   })
 
-  // Start the graph generation in parallel (no need for callback)
-  // generateGraph(company.value)
+  // No need for graph generation here
 
   // We don't need to wait for the results here since we'll redirect on the callback
 }

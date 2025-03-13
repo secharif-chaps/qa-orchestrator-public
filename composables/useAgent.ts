@@ -358,7 +358,7 @@ export const useAgent = () => {
           // Process more frequently - now with almost every chunk
           // The key is to process on every potential JSON element boundary
           // which could be a quote, bracket, brace or colon
-          if (content.match(/["{},:\[\]]/)) {
+          if (typeof content === 'string' && content.match(/["{},:\[\]]/)) {
             // Process even the smallest JSON fragment
             const { companyName: extractedName, isValid } = processJsonChunk(accumulated, currentCompanyName);
             
@@ -484,7 +484,9 @@ export const useAgent = () => {
   const generateTimeline = async (company: string) => {
     const prompt = `Research and provide a timeline of key milestone events for the company ${company}.`;
     
+    // Set timeline loading state
     pending.value = true;
+    console.log('Timeline generation started, pending:', pending.value);
     
     try {
       // Appel à l'agent de timeline
@@ -512,19 +514,23 @@ export const useAgent = () => {
           }
           
           pending.value = false;
+          console.log('Timeline generation completed, pending:', pending.value);
           return result;
         } catch (e) {
           console.error('Failed to parse JSON timeline response:', e);
           pending.value = false;
+          console.log('Timeline generation failed (parse error), pending:', pending.value);
           return {};
         }
       }
       
       pending.value = false;
+      console.log('Timeline generation completed (no choices), pending:', pending.value);
       return {};
     } catch (error) {
       console.error('Error during timeline data request:', error);
       pending.value = false;
+      console.log('Timeline generation failed (request error), pending:', pending.value);
       return {};
     }
   };
