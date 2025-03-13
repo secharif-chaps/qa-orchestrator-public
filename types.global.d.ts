@@ -43,4 +43,13 @@ export type Company = {
     name: string;
     url: SourcedValue<string>;
   }[];
+  timeline_events?: {
+    date: string;
+    title: string;
+    description: string;
+    category: string;
+    location: string;
+    impact: string;
+    source: string;
+  }[];
 };

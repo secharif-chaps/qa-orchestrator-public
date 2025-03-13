@@ -8,7 +8,7 @@
         class="text-secondary"
       >
         {{ getSourcedValue(company?.profile?.business_line) ?? 'Not found' }}
-        <Source :item="company?.profile?.business_line" />
+        <Source :sourced-value="company?.profile?.business_line" />
       </div>
       <div
         v-else

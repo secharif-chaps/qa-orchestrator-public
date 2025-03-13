@@ -1,17 +1,21 @@
 <template>
   <div
     class="relative inline-block group"
-    v-if="getSourcedSource(item) && getSourcedSource(item) !== 'N/A'"
+    v-if="
+      sourcedValue &&
+      getSourcedSource(sourcedValue) &&
+      getSourcedSource(sourcedValue) !== 'N/A'
+    "
   >
     <NuxtLink
-      :to="getSourcedSource(item)"
+      :to="getSourcedSource(sourcedValue)"
       target="_blank"
       class="inline-flex items-center"
     >
       <span
         class="text-xs bg-slate-100 hover:bg-slate-200 transition-colors rounded-full px-2 py-1"
       >
-        {{ getSourcedSourceName(item) }}
+        {{ getSourcedSourceName(sourcedValue) }}
       </span>
     </NuxtLink>
 
@@ -20,7 +24,7 @@
       class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10"
     >
       <div class="bg-gray-800 text-white text-xs rounded p-4 whitespace-nowrap">
-        {{ getSourcedSource(item) }}
+        {{ getSourcedSource(sourcedValue) }}
       </div>
       <!-- Petite flèche du tooltip -->
       <div
@@ -28,12 +32,28 @@
       ></div>
     </div>
   </div>
+  <div v-if="source">
+    <NuxtLink
+      :to="source"
+      target="_blank"
+      class="inline-flex items-center"
+    >
+      <span
+        class="text-xs bg-slate-100 hover:bg-slate-200 transition-colors rounded-full px-2 py-1"
+      >
+        {{ source }}
+      </span>
+    </NuxtLink>
+  </div>
 </template>
 
 <script lang="ts" setup>
-defineProps<{
-  item: any
-}>()
+interface Props {
+  sourcedValue?: any
+  source?: string
+}
+
+defineProps<Props>()
 
 const { getSourcedSource, getSourcedSourceName } = useCompanyData()
 </script>

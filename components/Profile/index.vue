@@ -20,7 +20,7 @@
             :title="getSourcedSource(company?.profile?.catchphrase)"
           >
             {{ getSourcedValue(company?.profile?.catchphrase) }}
-            <Source :item="company?.profile?.catchphrase" />
+            <Source :sourced-value="company?.profile?.catchphrase" />
           </p>
           <p
             v-else

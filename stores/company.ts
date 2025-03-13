@@ -8,6 +8,28 @@ interface CompanyState {
   propertyUpdates: Record<string, Record<string, boolean>>;
 }
 
+// Définir l'interface du store
+export interface CompanyStore {
+  // state
+  companies: Record<string, Partial<Company>>;
+  currentCompany: string | null;
+  propertyUpdates: Record<string, Record<string, boolean>>;
+  
+  // getters
+  getCurrentCompany: () => Partial<Company> | null;
+  getCompanyByName: (name: string) => Partial<Company> | null;
+  getCompanyList: () => Partial<Company>[];
+  hasPropertyBeenUpdated: (companyName: string, propertyPath: string) => boolean;
+  
+  // actions
+  initCompany: (name: string) => void;
+  updateCompanyProperty: (companyName: string, propertyPath: string, value: any) => void;
+  updateCompanyProperties: (companyName: string, properties: Partial<Company>) => void;
+  setCompanyData: (name: string, data: Partial<Company>) => void;
+  setCurrentCompany: (name: string) => void;
+  deleteCompany: (name: string) => void;
+}
+
 export const useCompanyStore = defineStore('company', {
   state: (): CompanyState => ({
     companies: {},
@@ -214,4 +236,4 @@ export const useCompanyStore = defineStore('company', {
       }
     }
   }
-})
+}) as unknown as () => CompanyStore

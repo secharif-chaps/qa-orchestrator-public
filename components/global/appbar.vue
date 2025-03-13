@@ -9,10 +9,10 @@
           </div>
         </NuxtLink>
         <div class="max-w-md grow">
-          <OInput
+          <!-- <OInput
             id="search"
             placeholder="Search"
-          />
+          /> -->
         </div>
         <div class="flex gap-2">
           <button
@@ -30,8 +30,6 @@
 </template>
 
 <script lang="ts" setup>
-import { OInput } from '@owlint/feathers-vue'
-
 const colors = ['pink', 'indigo', 'emerald']
 
 const currentTheme = ref('indigo')

@@ -42,7 +42,7 @@
             <span class="text-sm">
               {{ brand.value }}
             </span>
-            <Source :item="company?.profile?.group_name" />
+            <Source :sourced-value="company?.profile?.group_name" />
           </li>
           <li
             v-if="company?.products_and_services?.partner_brands?.length === 0"
@@ -73,7 +73,7 @@
             <span class="text-sm">
               {{ brand.value }}
             </span>
-            <Source :item="company?.profile?.group_name" />
+            <Source :sourced-value="company?.profile?.group_name" />
           </li>
           <li
             v-if="company?.products_and_services?.private_labels?.length === 0"

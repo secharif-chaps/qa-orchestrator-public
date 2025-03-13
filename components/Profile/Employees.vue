@@ -16,7 +16,7 @@
       <div>Number of employees</div>
       <Source
         v-if="hasPropertyBeenUpdated('profile.employee_count')"
-        :item="company?.profile?.employee_count"
+        :sourced-value="company?.profile?.employee_count"
       />
     </div>
   </Card>

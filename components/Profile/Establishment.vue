@@ -18,7 +18,7 @@
       <div>year of establishment</div>
       <Source
         v-if="hasPropertyBeenUpdated('profile.establishment_year')"
-        :item="company?.profile?.establishment_year"
+        :sourced-value="company?.profile?.establishment_year"
       />
     </div>
   </Card>

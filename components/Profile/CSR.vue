@@ -19,7 +19,7 @@
             <span class="text-sm">
               {{ getSourcedValue(initiative) }}
             </span>
-            <Source :item="initiative" />
+            <Source :sourced-value="initiative" />
           </li>
           <li
             v-if="company?.csr?.responsibility_initiatives?.length === 0"

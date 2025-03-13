@@ -4,7 +4,7 @@
       <OButton
         type="secondary"
         icon="fa-arrow-left"
-        @click="$router.push('/cards')"
+        @click="$router.push(`/cards/${companyName}`)"
       >
         Back
       </OButton>
@@ -76,7 +76,7 @@
           </div>
 
           <div
-            class="@max-6xl:col-span-6 @min-6xl:col-span-4 space-y-2 flex flex-col"
+            class="@max-6xl:col-span-6 @min-6xl:col-span-3 space-y-2 flex flex-col"
           >
             <!-- Products and services section -->
             <ProfileProducts />
@@ -88,7 +88,7 @@
             <ProfileCSR />
           </div>
           <div
-            class="@max-6xl:col-span-6 @min-6xl:col-span-2 col-span-6 lg:col-span-3 flex flex-col space-y-2"
+            class="@max-6xl:col-span-6 @min-6xl:col-span-3 col-span-6 lg:col-span-3 flex flex-col space-y-2"
           >
             <div class="grid grid-cols-3 gap-2">
               <!-- Key metrics - each can load independently -->
@@ -129,8 +129,8 @@ import type { Company } from '~/types.global'
 
 // Set page metadata
 useHead({
-  title: 'Mint',
-  meta: [{ name: 'description', content: 'Company Profile' }],
+  title: 'Mint - Company Profile',
+  meta: [{ name: 'description', content: 'Company Profile Details' }],
 })
 
 const { companyName, hasPropertyBeenUpdated } = useCompanyData()

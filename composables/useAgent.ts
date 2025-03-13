@@ -11,6 +11,8 @@ export const useAgent = () => {
   // Agent IDs
   const agentSourcedId = 'ag:cc2224b6:20250306:mint-sourced:f9c9d8b8';
   const agentChatId = 'ag:cc2224b6:20250224:mint:c6b81070'
+  const agentTimelineId = 'ag:cc2224b6:20250313:mint-timeline:971c6949';
+
   // Create Mistral client
   const client = new Mistral({ apiKey: runtimeConfig.public.mistralApiKey });
 
@@ -477,6 +479,57 @@ export const useAgent = () => {
   }
 
   /**
+   * Génère la timeline des événements marquants d'une entreprise
+   */
+  const generateTimeline = async (company: string) => {
+    const prompt = `Research and provide a timeline of key milestone events for the company ${company}.`;
+    
+    pending.value = true;
+    
+    try {
+      // Appel à l'agent de timeline
+      const response = await client.agents.complete({
+        agentId: agentTimelineId,
+        messages: [{ role: 'user', content: prompt }],
+        responseFormat: { type: 'json_object' }
+      });
+
+      // Extraction du contenu JSON
+      if (response.choices && response.choices.length > 0) {
+        const content = response.choices[0].message.content?.toString() || '';
+        
+        try {
+          const result = JSON.parse(content);
+          
+          // Mettre à jour le store avec les événements de timeline
+          if (result.timeline_events && Array.isArray(result.timeline_events)) {
+            companyStore.updateCompanyProperty(company, 'timeline_events', result.timeline_events);
+            
+            // Mettre à jour les métadonnées si disponibles
+            if (result.meta && result.meta.query_date) {
+              companyStore.updateCompanyProperty(company, 'meta.query_date', result.meta.query_date);
+            }
+          }
+          
+          pending.value = false;
+          return result;
+        } catch (e) {
+          console.error('Failed to parse JSON timeline response:', e);
+          pending.value = false;
+          return {};
+        }
+      }
+      
+      pending.value = false;
+      return {};
+    } catch (error) {
+      console.error('Error during timeline data request:', error);
+      pending.value = false;
+      return {};
+    }
+  };
+
+  /**
    * Bascule entre les modes streaming et classique
    */
   const toggleStreamingMode = (streaming: boolean) => {
@@ -489,6 +542,7 @@ export const useAgent = () => {
     pending,
     companyName,
     useStreaming,
-    toggleStreamingMode
+    toggleStreamingMode,
+    generateTimeline
   };
 };

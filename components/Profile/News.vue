@@ -16,7 +16,7 @@
               <span class="text-sm">
                 {{ getSourcedValue(news) }}
               </span>
-              <Source :item="news" />
+              <Source :sourced-value="news" />
             </li>
             <li
               v-if="company?.recent_news?.length === 0"

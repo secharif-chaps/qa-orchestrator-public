@@ -24,7 +24,9 @@
           ) || 'Not found'
         }}
         <Source
-          :item="company?.digital_strategy_and_social_media?.digital_strategy"
+          :sourced-value="
+            company?.digital_strategy_and_social_media?.digital_strategy
+          "
         />
       </div>
       <div
@@ -52,7 +54,9 @@
           ) || 'Not found'
         }}
         <Source
-          :item="company?.digital_strategy_and_social_media?.loyalty_program"
+          :sourced-value="
+            company?.digital_strategy_and_social_media?.loyalty_program
+          "
         />
       </div>
       <div

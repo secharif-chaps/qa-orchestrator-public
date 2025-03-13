@@ -18,7 +18,7 @@
       <div>Revenue</div>
       <Source
         v-if="hasPropertyBeenUpdated('profile.revenue')"
-        :item="company?.profile?.revenue"
+        :sourced-value="company?.profile?.revenue"
       />
     </div>
   </Card>

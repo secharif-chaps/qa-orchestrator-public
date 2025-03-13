@@ -24,7 +24,9 @@
             ) ?? 'Not found'
           }}
           <Source
-            :item="company?.target_audience_and_customer_base?.customer_type"
+            :sourced-value="
+              company?.target_audience_and_customer_base?.customer_type
+            "
           />
         </span>
       </div>
@@ -51,7 +53,7 @@
             ) ?? 'Not found'
           }}
           <Source
-            :item="
+            :sourced-value="
               company?.target_audience_and_customer_base?.marketing_positioning
             "
           />
