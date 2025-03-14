@@ -4,9 +4,7 @@
     icon="fa-building"
     :loading="isProfileLoading"
   >
-    <template #actions>
-      <Export />
-    </template>
+    <template #actions> </template>
 
     <template #loading>
       <OAlert

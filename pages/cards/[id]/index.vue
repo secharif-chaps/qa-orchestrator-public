@@ -69,7 +69,7 @@
               <i class="fa fa-map-marker"></i>
               <p>HQ</p>
               <span class="text-secondary">
-                {{ 'Unknown' }}
+                {{ getSourcedValue(company?.profile?.hq) || 'Unknown' }}
               </span>
             </div>
 
@@ -77,7 +77,7 @@
               <i class="fa fa-user-tie"></i>
               <p>CEO</p>
               <span class="text-secondary">
-                {{ 'Unknown' }}
+                {{ getSourcedValue(company?.profile?.ceo) || 'Unknown' }}
               </span>
             </div>
 
@@ -203,6 +203,8 @@ useHead({
 
 const { companyName, hasPropertyBeenUpdated, getSourcedValue } =
   useCompanyData()
+
+// Use the modular agent composables
 const { pending, timelinePending, productsPending } = useAgent()
 
 const company = ref<Partial<Company> | null>(null)

@@ -19,6 +19,8 @@ export type Company = {
     establishment_year: SourcedValue<string>;
     employee_count: SourcedValue<string>;
     revenue: SourcedValue<string>;
+    ceo: SourcedValue<string>;
+    hq: SourcedValue<string>;
   };
   products_and_services: {
     product_range: SourcedValue<string>[];

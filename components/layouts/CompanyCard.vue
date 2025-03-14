@@ -28,6 +28,7 @@
           >{{ showAiChat ? 'Hide AI Chat' : 'Ask our AI' }}</OButton
         >
         <slot name="actions"></slot>
+        <Export />
       </div>
     </div>
 

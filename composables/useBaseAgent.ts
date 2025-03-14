@@ -1,3 +1,4 @@
+import { Mistral } from '@mistralai/mistralai';
 
 // Retry helper function
 const withRetry = async <T>(
@@ -34,34 +35,37 @@ const withRetry = async <T>(
   throw lastError;
 };
 
-export const useAgent = () => {
-  // Import all specialized agents
-  const baseAgent = useBaseAgent();
-  const profileAgent = useCompanyProfileAgent();
-  const timelineAgent = useTimelineAgent();
-  const productsAgent = useProductsAgent();
-  const chatAgent = useChatAgent();
+export const useBaseAgent = () => {
+  const runtimeConfig = useRuntimeConfig();
+  const companyStore = useCompanyStore();
   
-  // Return a unified interface that matches the original useAgent API
-  return {
-    // Company profile functionality
-    generate: profileAgent.generate,
-    pending: profileAgent.pending,
-    companyName: profileAgent.companyName,
-    
-    // Timeline functionality
-    generateTimeline: timelineAgent.generateTimeline,
-    timelinePending: timelineAgent.timelinePending,
-    
-    // Products functionality
-    findProducts: productsAgent.findProducts,
-    productsPending: productsAgent.productsPending,
-    
-    // Chat functionality
-    ask: chatAgent.ask,
-    
-    // Streaming mode toggle
-    useStreaming: baseAgent.useStreaming,
-    toggleStreamingMode: baseAgent.toggleStreamingMode
+  // Create Mistral client
+  const client = new Mistral({ apiKey: runtimeConfig.public.mistralApiKey });
+  
+  // Common agent IDs
+  const agentIds = {
+    sourced: 'ag:cc2224b6:20250306:mint-sourced:f9c9d8b8',
+    chat: 'ag:cc2224b6:20250224:mint:c6b81070',
+    timeline: 'ag:cc2224b6:20250313:mint-timeline:971c6949',
+    products: 'ag:cc2224b6:20250314:mint-products:0cdfa3ef'
   };
-};
+  
+  // Streaming mode toggle
+  const useStreaming = ref(true);
+  
+  /**
+   * Toggle between streaming and classic modes
+   */
+  const toggleStreamingMode = (streaming: boolean) => {
+    useStreaming.value = streaming;
+  };
+  
+  return {
+    client,
+    agentIds,
+    withRetry,
+    companyStore,
+    useStreaming,
+    toggleStreamingMode
+  };
+}; 

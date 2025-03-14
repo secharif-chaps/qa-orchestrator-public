@@ -29,6 +29,44 @@
             Loading catchphrase...
           </p>
 
+          <!-- CEO - individual property loading -->
+          <div class="flex items-center gap-2">
+            <i class="fa fa-user-tie text-primary"></i>
+            <span class="font-semibold">CEO:</span>
+            <span
+              v-if="hasPropertyBeenUpdated('profile.ceo')"
+              class="text-secondary"
+            >
+              {{ getSourcedValue(company?.profile?.ceo) }}
+              <Source :sourced-value="company?.profile?.ceo" />
+            </span>
+            <span
+              v-else
+              class="text-secondary italic"
+            >
+              Loading CEO...
+            </span>
+          </div>
+
+          <!-- HQ - individual property loading -->
+          <div class="flex items-center gap-2">
+            <i class="fa fa-map-marker text-primary"></i>
+            <span class="font-semibold">HQ:</span>
+            <span
+              v-if="hasPropertyBeenUpdated('profile.hq')"
+              class="text-secondary"
+            >
+              {{ getSourcedValue(company?.profile?.hq) }}
+              <Source :sourced-value="company?.profile?.hq" />
+            </span>
+            <span
+              v-else
+              class="text-secondary italic"
+            >
+              Loading HQ...
+            </span>
+          </div>
+
           <!-- Social Media - individual property loading -->
           <div
             v-if="hasPropertyBeenUpdated('social_media')"

@@ -12,7 +12,6 @@
         type="secondary"
         icon="fa-sync"
       />
-      <Export />
     </template>
 
     <!-- Loading slot -->
