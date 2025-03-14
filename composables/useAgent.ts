@@ -5,6 +5,9 @@ export const useAgent = () => {
   const companyStore = useCompanyStore();
 
   const pending = ref(false);
+  const timelinePending = ref(false);
+  const productsPending = ref(false);
+
   const companyName = ref<string | null>(null);
   const useStreaming = ref(true); // Toggle pour le mode streaming
 
@@ -12,7 +15,7 @@ export const useAgent = () => {
   const agentSourcedId = 'ag:cc2224b6:20250306:mint-sourced:f9c9d8b8';
   const agentChatId = 'ag:cc2224b6:20250224:mint:c6b81070'
   const agentTimelineId = 'ag:cc2224b6:20250313:mint-timeline:971c6949';
-
+  const agentProductsId = 'ag:cc2224b6:20250314:mint-products:0cdfa3ef';
   // Create Mistral client
   const client = new Mistral({ apiKey: runtimeConfig.public.mistralApiKey });
 
@@ -485,8 +488,8 @@ export const useAgent = () => {
     const prompt = `Research and provide a timeline of key milestone events for the company ${company}.`;
     
     // Set timeline loading state
-    pending.value = true;
-    console.log('Timeline generation started, pending:', pending.value);
+    timelinePending.value = true;
+    console.log('Timeline generation started, timelinePending:', timelinePending.value);
     
     try {
       // Appel à l'agent de timeline
@@ -513,25 +516,69 @@ export const useAgent = () => {
             }
           }
           
-          pending.value = false;
-          console.log('Timeline generation completed, pending:', pending.value);
+          timelinePending.value = false;
+          console.log('Timeline generation completed, timelinePending:', timelinePending.value);
           return result;
         } catch (e) {
           console.error('Failed to parse JSON timeline response:', e);
-          pending.value = false;
-          console.log('Timeline generation failed (parse error), pending:', pending.value);
+          timelinePending.value = false;
+          console.log('Timeline generation failed (parse error), timelinePending:', timelinePending.value);
           return {};
         }
       }
       
-      pending.value = false;
-      console.log('Timeline generation completed (no choices), pending:', pending.value);
+      timelinePending.value = false;
+      console.log('Timeline generation completed (no choices), timelinePending:', timelinePending.value);
       return {};
     } catch (error) {
       console.error('Error during timeline data request:', error);
-      pending.value = false;
-      console.log('Timeline generation failed (request error), pending:', pending.value);
+      timelinePending.value = false;
+      console.log('Timeline generation failed (request error), timelinePending:', timelinePending.value);
       return {};
+    }
+  };
+
+  const findProducts = async (company: string, onChunk?: (text: string) => void) => {
+    productsPending.value = true;
+    try {
+      const prompt = `Find and list all products and services offered by ${company}.`;
+
+      const response = await client.agents.stream({
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        stream: true,
+        agentId: agentProductsId,
+        responseFormat: { type: 'json_object' }
+      });
+
+
+      let accumulated = '';
+      for await (const chunk of response) {
+        const content = chunk.data.choices[0]?.delta?.content || '';
+        accumulated += content;
+        
+        if (onChunk) {
+          onChunk(content as string);
+        }
+      }
+
+      // Process the final accumulated data
+      try {
+        const parsedData = JSON.parse(accumulated);
+        if (parsedData.products) {
+          companyStore.updateCompanyProperty(company, 'products', parsedData.products);
+        }
+      } catch (e) {
+        console.error('Error parsing products data:', e);
+      }
+    } catch (error) {
+      console.error('Error finding products:', error);
+    } finally {
+      productsPending.value = false;
     }
   };
 
@@ -545,10 +592,15 @@ export const useAgent = () => {
   return {
     ask,
     generate,
+
     pending,
+    timelinePending,
+    productsPending,
+
     companyName,
     useStreaming,
     toggleStreamingMode,
-    generateTimeline
+    generateTimeline,
+    findProducts
   };
 };

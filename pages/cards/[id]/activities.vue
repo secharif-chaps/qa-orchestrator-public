@@ -1,46 +1,35 @@
 <template>
-  <div class="space-y-6">
-    <div>
+  <LayoutsCompanyCard
+    title="Timeline & Key Milestones"
+    icon="fa-calendar-days"
+  >
+    <!-- Actions slot -->
+    <template #actions>
       <OButton
+        @click="refreshTimeline"
+        :loading="timelinePending"
+        label="Refresh Timeline"
         type="secondary"
-        icon="fa-arrow-left"
-        @click="$router.push(`/cards/${companyName}`)"
+        icon="fa-sync"
+      />
+      <Export />
+    </template>
+
+    <!-- Loading slot -->
+    <template #loading>
+      <OAlert
+        v-if="timelinePending"
+        message="Loading company timeline data..."
+        title="Please wait"
+        icon="fa-spinner fa-spin"
+        color="blue"
       >
-        Back
-      </OButton>
-    </div>
-    <div class="flex items-center justify-between">
-      <div class="flex space-x-4 items-center">
-        <OIcon
-          icon="fa-calendar-days"
-          type="secondary"
-        ></OIcon>
-        <h1 class="text-3xl">Timeline & Key Milestones</h1>
-      </div>
-      <div class="flex gap-2">
-        <OButton
-          @click="refreshTimeline"
-          :loading="pending"
-          label="Refresh Timeline"
-          type="secondary"
-          icon="fa-sync"
-        />
-        <Export />
-      </div>
-    </div>
+        <p>Fetching milestone events data from AI agent...</p>
+      </OAlert>
+    </template>
 
-    <!-- Loading indicator when nothing is available yet -->
-    <OAlert
-      v-if="pending"
-      message="Loading company timeline data..."
-      title="Please wait"
-      icon="fa-spinner fa-spin"
-      color="blue"
-    >
-      <p>Fetching milestone events data from AI agent...</p>
-    </OAlert>
-
-    <Card v-if="!hasTimelineData && !pending">
+    <!-- Main content -->
+    <Card v-if="!hasTimelineData && !timelinePending">
       <div class="text-center py-8">
         <div class="text-5xl text-slate-300 mb-4">
           <i class="fa fa-calendar-days"></i>
@@ -51,7 +40,7 @@
         </p>
         <OButton
           @click="refreshTimeline"
-          :loading="pending"
+          :loading="timelinePending"
           label="Generate Timeline"
         />
       </div>
@@ -97,11 +86,11 @@
         </div>
       </div>
     </div>
-  </div>
+  </LayoutsCompanyCard>
 </template>
 
 <script lang="ts" setup>
-import { OAlert, OButton, OIcon, OInput } from '@owlint/feathers-vue'
+import { OAlert, OButton, OInput } from '@owlint/feathers-vue'
 import { useCompanyStore } from '~/stores/company'
 
 // Set page metadata
@@ -118,7 +107,7 @@ useHead({
 const searchQuery = ref('')
 
 const { companyName } = useCompanyData()
-const { generateTimeline, pending } = useAgent()
+const { generateTimeline, timelinePending } = useAgent()
 const companyStore = useCompanyStore()
 
 const company = computed(() => {

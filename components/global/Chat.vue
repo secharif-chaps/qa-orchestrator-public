@@ -32,7 +32,7 @@
           class="text-xs p-4 inline-block rounded-xl"
           :class="{
             'bg-bg3': message.from === 'ai',
-            'bg-emerald-100 text-primary': message.from === 'user',
+            'bg-primary/10 text-primary': message.from === 'user',
           }"
           v-html="formatMarkdown(message.text)"
         ></div>

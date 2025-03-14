@@ -52,4 +52,7 @@ export type Company = {
     impact: string;
     source: string;
   }[];
+  products?: {
+    [key: string]: string[];
+  };
 };

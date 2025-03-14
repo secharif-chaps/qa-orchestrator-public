@@ -1,44 +1,24 @@
 <template>
-  <div class="space-y-6">
-    <div>
-      <OButton
-        type="secondary"
-        icon="fa-arrow-left"
-        @click="$router.push('/cards')"
-      >
-        Back
-      </OButton>
-    </div>
-    <div class="flex items-center justify-between">
-      <div class="flex space-x-4 items-center">
-        <OIcon
-          icon="fa-building"
-          type="secondary"
-        ></OIcon>
-        <h1 class="text-3xl">
-          {{ getSourcedValue(company?.profile?.name) || companyName }}
-        </h1>
-      </div>
-      <div class="flex gap-2">
-        <OButton
-          type="secondary"
-          @click="showAiChat = !showAiChat"
-          >{{ showAiChat ? 'Hide AI Chat' : 'Ask our AI' }}</OButton
-        >
-        <Export />
-      </div>
-    </div>
+  <LayoutsCompanyCard
+    title="Company Dashboard"
+    icon="fa-building"
+    :loading="!hasAnyData"
+  >
+    <template #actions>
+      <Export />
+    </template>
 
-    <!-- Loading indicator when nothing is available yet -->
-    <OAlert
-      v-if="!hasAnyData"
-      message="Loading company information..."
-      title="Please wait"
-      icon="fa-spinner fa-spin"
-      color="blue"
-    >
-      <p>Fetching data from AI agent...</p>
-    </OAlert>
+    <template #loading>
+      <OAlert
+        v-if="!hasAnyData"
+        message="Loading company information..."
+        title="Please wait"
+        icon="fa-spinner fa-spin"
+        color="blue"
+      >
+        <p>Fetching data from AI agent...</p>
+      </OAlert>
+    </template>
 
     <!-- Main content grid -->
     <div class="grid grid-cols-12 gap-6 bg-bg1 p-4 rounded-lg">
@@ -157,11 +137,11 @@
         />
 
         <InfoCard
-          disabled
           title="Products"
           description="Browse the company's products, services, and offerings."
           icon="fa-box"
           :to="`/cards/${companyName}/products`"
+          :loading="isProductsLoading"
         />
 
         <InfoCard
@@ -207,11 +187,11 @@
         <Chat @hide="showAiChat = false" />
       </div>
     </div>
-  </div>
+  </LayoutsCompanyCard>
 </template>
 
 <script lang="ts" setup>
-import { OAlert, OButton, OIcon } from '@owlint/feathers-vue'
+import { OAlert } from '@owlint/feathers-vue'
 import { useCompanyStore } from '~/stores/company'
 import type { Company } from '~/types.global'
 
@@ -223,7 +203,7 @@ useHead({
 
 const { companyName, hasPropertyBeenUpdated, getSourcedValue } =
   useCompanyData()
-const { pending } = useAgent()
+const { pending, timelinePending, productsPending } = useAgent()
 
 const company = ref<Partial<Company> | null>(null)
 
@@ -238,12 +218,19 @@ const showAiChat = ref(false)
 // Track loading states for different sections
 const isProfileLoading = computed(() => {
   // Check if the agent is pending OR if we don't have profile data yet
-  return pending.value || (!hasAnyData.value && !hasPropertyBeenUpdated('profile'))
+  return (
+    pending.value || (!hasAnyData.value && !hasPropertyBeenUpdated('profile'))
+  )
 })
 
 const isTimelineLoading = computed(() => {
   // Check if we don't have timeline data yet
-  return pending.value || !hasPropertyBeenUpdated('timeline_events')
+  return timelinePending.value || !hasPropertyBeenUpdated('timeline_events')
+})
+
+const isProductsLoading = computed(() => {
+  // Check if we don't have products data yet
+  return productsPending.value || !hasPropertyBeenUpdated('products')
 })
 
 // For debugging
@@ -253,7 +240,7 @@ console.log('Loading states:', {
   profileUpdated: hasPropertyBeenUpdated('profile'),
   timelineUpdated: hasPropertyBeenUpdated('timeline_events'),
   isProfileLoading: isProfileLoading.value,
-  isTimelineLoading: isTimelineLoading.value
+  isTimelineLoading: isTimelineLoading.value,
 })
 
 // Subscribe to company store for updates
