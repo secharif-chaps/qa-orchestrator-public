@@ -226,7 +226,9 @@ export const useCompanyStore = defineStore('company', {
     
     // Clean up method
     deleteCompany(name: string) {
+      console.log('Deleting company:', name)
       if (this.companies[name]) {
+        console.log('Deleting company:', this.companies[name])
         delete this.companies[name]
         delete this.propertyUpdates[name]
         

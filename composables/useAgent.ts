@@ -1,5 +1,40 @@
 import { Mistral } from '@mistralai/mistralai';
 
+// Retry helper function
+const withRetry = async <T>(
+  operation: () => Promise<T>,
+  options: {
+    maxRetries?: number;
+    baseDelay?: number;
+    onRetry?: (attempt: number, delay: number) => void;
+  } = {}
+): Promise<T> => {
+  const {
+    maxRetries = 3,
+    baseDelay = 1000,
+    onRetry = (attempt, delay) => console.log(`Retrying in ${delay}ms... (attempt ${attempt}/${maxRetries})`)
+  } = options;
+
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+  let lastError: any;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error: any) {
+      lastError = error;
+      if (error.message?.includes('rate limit exceeded') && attempt < maxRetries) {
+        const delay = baseDelay * Math.pow(2, attempt);
+        onRetry(attempt + 1, delay);
+        await sleep(delay);
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw lastError;
+};
+
 export const useAgent = () => {
   const runtimeConfig = useRuntimeConfig();
   const companyStore = useCompanyStore();
@@ -487,49 +522,43 @@ export const useAgent = () => {
   const generateTimeline = async (company: string) => {
     const prompt = `Research and provide a timeline of key milestone events for the company ${company}.`;
     
-    // Set timeline loading state
     timelinePending.value = true;
     console.log('Timeline generation started, timelinePending:', timelinePending.value);
     
     try {
-      // Appel à l'agent de timeline
-      const response = await client.agents.complete({
-        agentId: agentTimelineId,
-        messages: [{ role: 'user', content: prompt }],
-        responseFormat: { type: 'json_object' }
-      });
+      const result = await withRetry(
+        async () => {
+          const response = await client.agents.complete({
+            agentId: agentTimelineId,
+            messages: [{ role: 'user', content: prompt }],
+            responseFormat: { type: 'json_object' }
+          });
 
-      // Extraction du contenu JSON
-      if (response.choices && response.choices.length > 0) {
-        const content = response.choices[0].message.content?.toString() || '';
-        
-        try {
-          const result = JSON.parse(content);
+          if (!response.choices?.length) {
+            return {};
+          }
+
+          const content = response.choices[0].message.content?.toString() || '';
+          const parsedResult = JSON.parse(content);
           
-          // Mettre à jour le store avec les événements de timeline
-          if (result.timeline_events && Array.isArray(result.timeline_events)) {
-            companyStore.updateCompanyProperty(company, 'timeline_events', result.timeline_events);
+          if (parsedResult.timeline_events && Array.isArray(parsedResult.timeline_events)) {
+            companyStore.updateCompanyProperty(company, 'timeline_events', parsedResult.timeline_events);
             
-            // Mettre à jour les métadonnées si disponibles
-            if (result.meta && result.meta.query_date) {
-              companyStore.updateCompanyProperty(company, 'meta.query_date', result.meta.query_date);
+            if (parsedResult.meta?.query_date) {
+              companyStore.updateCompanyProperty(company, 'meta.query_date', parsedResult.meta.query_date);
             }
           }
           
-          timelinePending.value = false;
-          console.log('Timeline generation completed, timelinePending:', timelinePending.value);
-          return result;
-        } catch (e) {
-          console.error('Failed to parse JSON timeline response:', e);
-          timelinePending.value = false;
-          console.log('Timeline generation failed (parse error), timelinePending:', timelinePending.value);
-          return {};
+          return parsedResult;
+        },
+        {
+          onRetry: (attempt, delay) => console.log(`Timeline rate limit hit, retrying in ${delay}ms... (attempt ${attempt}/3)`)
         }
-      }
-      
+      );
+
       timelinePending.value = false;
-      console.log('Timeline generation completed (no choices), timelinePending:', timelinePending.value);
-      return {};
+      console.log('Timeline generation completed, timelinePending:', timelinePending.value);
+      return result;
     } catch (error) {
       console.error('Error during timeline data request:', error);
       timelinePending.value = false;
@@ -540,43 +569,40 @@ export const useAgent = () => {
 
   const findProducts = async (company: string, onChunk?: (text: string) => void) => {
     productsPending.value = true;
+    
     try {
-      const prompt = `Find and list all products and services offered by ${company}.`;
+      await withRetry(
+        async () => {
+          const prompt = `Find and list all products and services offered by ${company}.`;
+          const response = await client.agents.stream({
+            messages: [{ role: 'user', content: prompt }],
+            stream: true,
+            agentId: agentProductsId,
+            responseFormat: { type: 'json_object' }
+          });
 
-      const response = await client.agents.stream({
-        messages: [
-          {
-            role: 'user',
-            content: prompt
+          let accumulated = '';
+          for await (const chunk of response) {
+            const content = chunk.data.choices[0]?.delta?.content || '';
+            accumulated += content;
+            
+            if (onChunk) {
+              onChunk(content as string);
+            }
           }
-        ],
-        stream: true,
-        agentId: agentProductsId,
-        responseFormat: { type: 'json_object' }
-      });
 
-
-      let accumulated = '';
-      for await (const chunk of response) {
-        const content = chunk.data.choices[0]?.delta?.content || '';
-        accumulated += content;
-        
-        if (onChunk) {
-          onChunk(content as string);
+          const parsedData = JSON.parse(accumulated);
+          if (parsedData.products) {
+            companyStore.updateCompanyProperty(company, 'products', parsedData.products);
+          }
+        },
+        {
+          onRetry: (attempt, delay) => console.log(`Products rate limit hit, retrying in ${delay}ms... (attempt ${attempt}/3)`)
         }
-      }
-
-      // Process the final accumulated data
-      try {
-        const parsedData = JSON.parse(accumulated);
-        if (parsedData.products) {
-          companyStore.updateCompanyProperty(company, 'products', parsedData.products);
-        }
-      } catch (e) {
-        console.error('Error parsing products data:', e);
-      }
+      );
     } catch (error) {
       console.error('Error finding products:', error);
+      throw error;
     } finally {
       productsPending.value = false;
     }

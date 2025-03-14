@@ -88,26 +88,24 @@
                     class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
                   >
                     <div class="flex items-center justify-end space-x-3">
-                      <button
+                      <OButton
+                        icon="fa-eye"
+                        type="tertiary"
                         @click="
                           $router.push(
                             '/cards/' + getSourcedValue(company.profile.name)
                           )
                         "
-                        class="text-gray-500 hover:text-gray-700 focus:outline-none"
-                        title="View details"
                       >
-                        <i class="fa fa-eye"></i>
-                      </button>
-                      <button
-                        @click.stop="
-                          confirmDelete(getSourcedValue(company.profile.name))
+                      </OButton>
+                      <OButton
+                        @click="
+                          deleteCompany(getSourcedValue(company.profile.name))
                         "
-                        class="text-red-500 hover:text-red-700 focus:outline-none"
-                        title="Delete company"
-                      >
-                        <i class="fa fa-trash"></i>
-                      </button>
+                        icon="fa-trash"
+                        color="red"
+                        type="tertiary"
+                      />
                     </div>
                   </td>
                 </tr>
@@ -117,55 +115,12 @@
         </div>
       </div>
     </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div
-      v-if="showDeleteModal"
-      class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50"
-    >
-      <div
-        class="relative mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
-      >
-        <div class="mt-3 text-center">
-          <div
-            class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100"
-          >
-            <i class="fa fa-exclamation-triangle text-red-600 text-xl"></i>
-          </div>
-          <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">
-            Delete Company
-          </h3>
-          <div class="mt-2 px-7 py-3">
-            <p class="text-sm text-gray-500">
-              Are you sure you want to delete
-              <span class="font-semibold">{{ companyToDelete }}</span
-              >? This action cannot be undone.
-            </p>
-          </div>
-          <div
-            class="items-center px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
-          >
-            <button
-              @click="deleteCompany"
-              class="w-full sm:w-auto sm:ml-3 mb-2 sm:mb-0 inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-            >
-              Delete
-            </button>
-            <button
-              @click="cancelDelete"
-              class="w-full sm:w-auto inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { OButton } from '@owlint/feathers-vue'
+import { computed } from 'vue'
 import { useCompanyData } from '~/composables/useCompanyData'
 import { useCompanyStore } from '~/stores/company'
 
@@ -178,24 +133,7 @@ const companies = computed(() => {
 const { getSourcedValue } = useCompanyData()
 
 // Delete functionality
-const showDeleteModal = ref(false)
-const companyToDelete = ref('')
-
-const confirmDelete = (companyName) => {
-  companyToDelete.value = companyName
-  showDeleteModal.value = true
-}
-
-const cancelDelete = () => {
-  showDeleteModal.value = false
-  companyToDelete.value = ''
-}
-
-const deleteCompany = () => {
-  if (companyToDelete.value) {
-    companyStore.deleteCompany(companyToDelete.value)
-    showDeleteModal.value = false
-    companyToDelete.value = ''
-  }
+const deleteCompany = (companyName) => {
+  companyStore.deleteCompany(companyName)
 }
 </script>

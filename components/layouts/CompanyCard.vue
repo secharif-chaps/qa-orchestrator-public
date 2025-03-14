@@ -5,7 +5,7 @@
       <OButton
         type="secondary"
         icon="fa-arrow-left"
-        @click="$router.push(`/cards/${companyName}`)"
+        @click="$router.back()"
       >
         Back
       </OButton>

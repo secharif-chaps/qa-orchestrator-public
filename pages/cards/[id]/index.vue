@@ -233,16 +233,6 @@ const isProductsLoading = computed(() => {
   return productsPending.value || !hasPropertyBeenUpdated('products')
 })
 
-// For debugging
-console.log('Loading states:', {
-  pending: pending.value,
-  hasAnyData: hasAnyData.value,
-  profileUpdated: hasPropertyBeenUpdated('profile'),
-  timelineUpdated: hasPropertyBeenUpdated('timeline_events'),
-  isProfileLoading: isProfileLoading.value,
-  isTimelineLoading: isTimelineLoading.value,
-})
-
 // Subscribe to company store for updates
 watch(
   () => companyStore.getCompanyByName(companyName.value),

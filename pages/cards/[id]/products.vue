@@ -66,7 +66,7 @@
 </template>
 
 <script lang="ts" setup>
-import { OButton } from '@owlint/feathers-vue'
+import { OAlert, OButton } from '@owlint/feathers-vue'
 import { useCompanyStore } from '~/stores/company'
 
 // Set page metadata
