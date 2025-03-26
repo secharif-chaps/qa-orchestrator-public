@@ -4,9 +4,7 @@
     icon="fa-building"
     :loading="!hasAnyData"
   >
-    <template #actions>
-      <Export />
-    </template>
+    <template #actions> </template>
 
     <template #loading>
       <OAlert
@@ -169,11 +167,11 @@
         />
 
         <InfoCard
-          disabled
           title="Job Offers"
           description="Current job openings, career opportunities, and hiring information."
           icon="fa-briefcase"
           :to="`/cards/${companyName}/jobs`"
+          :loading="isJobOffersLoading"
         />
       </div>
     </div>
@@ -203,6 +201,7 @@ useHead({
 
 const { companyName, hasPropertyBeenUpdated, getSourcedValue } =
   useCompanyData()
+const { jobOffersPending } = useJobOffersAgent()
 
 // Use the modular agent composables
 const { pending, timelinePending, productsPending } = useAgent()
@@ -233,6 +232,11 @@ const isTimelineLoading = computed(() => {
 const isProductsLoading = computed(() => {
   // Check if we don't have products data yet
   return productsPending.value || !hasPropertyBeenUpdated('products')
+})
+
+const isJobOffersLoading = computed(() => {
+  // Check if we don't have job offers data yet
+  return jobOffersPending.value || !hasPropertyBeenUpdated('job_offers')
 })
 
 // Subscribe to company store for updates

@@ -57,4 +57,18 @@ export type Company = {
   products?: {
     [key: string]: string[];
   };
+  job_offers?: {
+    title: SourcedValue<string>;
+    location: SourcedValue<string>;
+    department: SourcedValue<string>;
+    description: SourcedValue<string>;
+    requirements: SourcedValue<string>;
+    posted_date: SourcedValue<string>;
+  }[];
+  job_offers_insights?: {
+    total_openings: SourcedValue<number>;
+    top_departments: SourcedValue<string[]>;
+    hiring_focus: SourcedValue<string>;
+    growth_indicators: SourcedValue<string>;
+  };
 };

@@ -1,30 +1,149 @@
 <template>
-  <div class="space-y-6">
-    <div>
+  <LayoutsCompanyCard
+    title="Job Offers"
+    icon="fa-briefcase"
+  >
+    <!-- Actions slot -->
+    <template #actions>
       <OButton
+        @click="refreshJobOffers"
+        :loading="jobOffersPending"
+        label="Refresh Jobs"
         type="secondary"
-        icon="fa-arrow-left"
-        @click="$router.push(`/cards/${companyName}`)"
+        icon="fa-sync"
+      />
+    </template>
+
+    <!-- Loading slot -->
+    <template #loading>
+      <OAlert
+        v-if="jobOffersPending"
+        message="Loading company job offers..."
+        title="Please wait"
+        icon="fa-spinner fa-spin"
+        color="blue"
       >
-        Back
-      </OButton>
-    </div>
-    <div class="flex items-center justify-between">
-      <div class="flex space-x-4 items-center">
-        <OIcon
-          icon="fa-briefcase"
-          type="secondary"
-        ></OIcon>
-        <h1 class="text-3xl">Job Offers</h1>
+        <p>Fetching job offers data from AI agent...</p>
+      </OAlert>
+    </template>
+
+    <!-- Empty state -->
+    <Card v-if="!hasJobOffersData && !jobOffersPending">
+      <div class="text-center py-8">
+        <div class="text-5xl text-slate-300 mb-4">
+          <i class="fa fa-briefcase"></i>
+        </div>
+        <h3 class="text-xl font-semibold mb-2">No Job Offers Available</h3>
+        <p class="text-slate-500 mb-6">
+          Fetch job offers for this company to see current opportunities
+        </p>
+        <OButton
+          @click="refreshJobOffers"
+          :loading="jobOffersPending"
+          label="Find Job Offers"
+        />
       </div>
+    </Card>
+
+    <!-- Main content -->
+    <div
+      v-if="hasJobOffersData"
+      class="space-y-6"
+    >
+      <!-- Insights Section -->
+      <Card v-if="jobOffersInsights" >
+        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+          <i class="fa fa-chart-line text-primary"></i>
+          <span>Hiring Insights</span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="p-4 bg-slate-50 rounded-lg">
+            <div class="text-sm text-slate-600">Total Openings</div>
+            <div class="text-2xl font-bold text-primary">
+              {{ getSourcedValue(jobOffersInsights?.total_openings) }}
+            </div>
+
+          </div>
+          <div class="p-4 bg-slate-50 rounded-lg">
+            <div class="text-sm text-slate-600">Top Departments</div>
+            <div class="text-sm">
+              <ul class="list-disc list-inside">
+                <li
+                  v-for="dept in getSourcedValue(
+                    jobOffersInsights?.top_departments
+                  )"
+                  :key="dept"
+                >
+                  {{ dept }}
+                </li>
+              </ul>
+            </div>
+
+          </div>
+          <div class="p-4 bg-slate-50 rounded-lg">
+            <div class="text-sm text-slate-600">Hiring Focus</div>
+            <div class="text-sm">
+              {{ getSourcedValue(jobOffersInsights?.hiring_focus) }}
+            </div>
+
+          </div>
+          <div class="p-4 bg-slate-50 rounded-lg">
+            <div class="text-sm text-slate-600">Growth Indicators</div>
+            <div class="text-sm">
+              {{ getSourcedValue(jobOffersInsights?.growth_indicators) }}
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <!-- Job Listings with Search -->
+      <Card>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex gap-2 items-center text-primary">
+            <i class="fa fa-list"></i>
+            <span>Current Openings</span>
+          </div>
+          <div>
+            <OInput
+              icon="fa-search"
+              id="search"
+              v-model="searchQuery"
+              placeholder="Search jobs..."
+            />
+          </div>
+        </div>
+
+        <!-- Job listings with transition group -->
+        <TransitionGroup 
+          name="job-list" 
+          tag="div" 
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
+          <JobCard
+            v-for="job in filteredJobs"
+            :key="getSourcedValue(job.title)"
+            :job="job"
+          />
+
+          <!-- No results message -->
+          <div v-if="filteredJobs.length === 0 && searchQuery" 
+               key="no-results"
+               class="text-center py-4"
+          >
+            <p class="text-slate-500">
+              No job offers found matching "{{ searchQuery }}"
+            </p>
+          </div>
+        </TransitionGroup>
+      </Card>
     </div>
-    
-    <span>todo</span>
-  </div>
+  </LayoutsCompanyCard>
 </template>
 
 <script lang="ts" setup>
-import { OButton, OIcon } from '@owlint/feathers-vue'
+import { OAlert, OButton, OInput } from '@owlint/feathers-vue'
+import { useCompanyStore } from '~/stores/company'
+import JobCard from '~/components/JobCard.vue'
 
 // Set page metadata
 useHead({
@@ -32,5 +151,76 @@ useHead({
   meta: [{ name: 'description', content: 'Company Job Opportunities' }],
 })
 
-const { companyName } = useCompanyData()
+const searchQuery = ref('')
+const { companyName, getSourcedValue } = useCompanyData()
+const { findJobOffers, jobOffersPending } = useJobOffersAgent()
+const companyStore = useCompanyStore()
+
+// Computed properties for data access
+const company = computed(() => {
+  return companyStore.getCompanyByName(companyName.value)
+})
+
+const hasJobOffersData = computed(() => {
+  return !!company.value?.job_offers && company.value.job_offers.length > 0
+})
+
+const jobOffers = computed(() => {
+  return company.value?.job_offers || []
+})
+
+const jobOffersInsights = computed(() => {
+  return company.value?.job_offers_insights
+})
+
+// Filter jobs based on search query
+const filteredJobs = computed(() => {
+  if (!searchQuery.value.trim()) {
+    return jobOffers.value
+  }
+
+  const query = searchQuery.value.toLowerCase().trim()
+
+  return jobOffers.value.filter((job) => {
+    return (
+      getSourcedValue(job.title)?.toLowerCase().includes(query) ||
+      getSourcedValue(job.department)?.toLowerCase().includes(query) ||
+      getSourcedValue(job.location)?.toLowerCase().includes(query) ||
+      getSourcedValue(job.description)?.toLowerCase().includes(query) ||
+      getSourcedValue(job.requirements)?.toLowerCase().includes(query)
+    )
+  })
+})
+
+// Generate or refresh job offers data
+const refreshJobOffers = async () => {
+  await findJobOffers(companyName.value)
+}
+
+// Check if job offers data exists on mount, if not, generate it
+onMounted(async () => {
+  if (!hasJobOffersData.value) {
+    await findJobOffers(companyName.value)
+  }
+})
 </script>
+
+<style>
+.job-list-move, /* apply transition to moving elements */
+.job-list-enter-active,
+.job-list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.job-list-enter-from,
+.job-list-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.job-list-leave-active {
+  position: absolute;
+}
+</style>
