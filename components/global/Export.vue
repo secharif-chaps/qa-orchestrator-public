@@ -1,10 +1,19 @@
 <template>
-  <OButton
-    type="tertiary"
-    @click="downloadPPT"
-    icon="fa-download"
-  >
-  </OButton>
+  <div>
+    <OButton
+      type="tertiary"
+      @click="showModal = true"
+      icon="fa-download"
+    >
+    </OButton>
+    
+    <ExportModal
+      :is-open="showModal"
+      :company="company"
+      @close="showModal = false"
+      @export="handleExport"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -13,6 +22,7 @@ import { OButton } from '@owlint/feathers-vue'
 import pptxgen from 'pptxgenjs'
 
 const { company } = useCompanyData()
+const showModal = ref(false)
 
 // Define color constants to match Tailwind colors
 const COLORS = {
@@ -601,7 +611,13 @@ const createTitleSlide = (pptx, company: Company) => {
   })
 }
 
-const downloadPPT = async () => {
+// Handle export with selected options
+const handleExport = (selectedOptions: string[]) => {
+  downloadPPT(selectedOptions)
+  showModal.value = false
+}
+
+const downloadPPT = async (selectedOptions: string[] = []) => {
   if (!company.value) return
 
   try {
@@ -609,34 +625,38 @@ const downloadPPT = async () => {
     const pptx = new pptxgen()
     pptx.layout = 'LAYOUT_WIDE'
 
-    // Create all slides
-    createTitleSlide(pptx, company.value as Company)
+    // Create slides based on selected options
+    if (selectedOptions.includes('titleSlide')) {
+      createTitleSlide(pptx, company.value as Company)
+    }
 
     // Prioritize insights slide as the first content slide if available
-    if (company.value.insights) {
+    if (selectedOptions.includes('insights') && company.value.insights) {
       createInsightsSlide(pptx, company.value as Company)
     }
 
-    createProfileSlide(pptx, company.value as Company)
+    if (selectedOptions.includes('profile')) {
+      createProfileSlide(pptx, company.value as Company)
+    }
 
-    // Only create slides for sections that have data
-    if (company.value.products_and_services) {
+    // Only create slides for sections that have data and are selected
+    if (selectedOptions.includes('productsServices') && company.value.products_and_services) {
       createProductsSlide(pptx, company.value as Company)
     }
 
-    if (company.value.target_audience_and_customer_base) {
+    if (selectedOptions.includes('targetAudience') && company.value.target_audience_and_customer_base) {
       createTargetAudienceSlide(pptx, company.value as Company)
     }
 
-    if (company.value.digital_strategy_and_social_media) {
+    if (selectedOptions.includes('digitalStrategy') && company.value.digital_strategy_and_social_media) {
       createDigitalStrategySlide(pptx, company.value as Company)
     }
 
-    if (company.value.csr) {
+    if (selectedOptions.includes('csr') && company.value.csr) {
       createCSRSlide(pptx, company.value as Company)
     }
 
-    if (company.value.recent_news && company.value.recent_news.length > 0) {
+    if (selectedOptions.includes('news') && company.value.recent_news && company.value.recent_news.length > 0) {
       createNewsSlide(pptx, company.value as Company)
     }
 
