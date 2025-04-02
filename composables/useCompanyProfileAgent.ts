@@ -1,5 +1,5 @@
 export const useCompanyProfileAgent = () => {
-  const { client, agentIds, withRetry, companyStore, useStreaming } = useBaseAgent();
+  const { client, agentIds, withRetry, companyStore } = useBaseAgent();
   
   const pending = ref(false);
   const companyName = ref<string | null>(null);
@@ -244,81 +244,9 @@ export const useCompanyProfileAgent = () => {
   };
 
   /**
-   * Non-streaming call to the agent
+   * Generate company profile data using streaming
    */
-  const generateClassic = async (company: string, website: string, onCompanyName?: (name: string) => void) => {
-    const prompt = `Extrayez les informations de base sur l'entreprise ${company} à partir de son site web ${website}.`;
-    
-    // Reset company name
-    companyName.value = null;
-    pending.value = true;
-    
-    try {
-      // Classic call without streaming
-      const response = await client.agents.complete({
-        agentId: agentIds.sourced,
-        messages: [{ role: 'user', content: prompt }],
-        responseFormat: { type: 'json_object' }
-      });
-
-      // Extract JSON content
-      if (response.choices && response.choices.length > 0) {
-        const content = response.choices[0].message.content?.toString() || '';
-        
-        try {
-          const result = JSON.parse(content);
-          
-          // Fix structure if needed
-          if (result.insights?.profile) {
-            // Extract nested properties to top level
-            const nestedKeys = ['profile', 'products_and_services', 'target_audience_and_customer_base', 
-                              'digital_strategy_and_social_media', 'csr', 'recent_news', 'social_media'];
-            
-            nestedKeys.forEach(key => {
-              if (result.insights[key]) {
-                result[key] = result.insights[key];
-                delete result.insights[key];
-              }
-            });
-          }
-          
-          // Get company name from either structure
-          const profile = result.profile || result.insights?.profile;
-          const extractedName = profile?.name?.value || company;
-          
-          if (extractedName) {
-            companyName.value = extractedName;
-            companyStore.initCompany(extractedName);
-            companyStore.setCompanyData(extractedName, result);
-            
-            // Call the callback if provided
-            if (onCompanyName) {
-              onCompanyName(extractedName);
-            }
-          }
-          
-          pending.value = false;
-          return result;
-        } catch (e) {
-          console.error('Failed to parse JSON response:', e);
-          pending.value = false;
-          return {};
-        }
-      }
-      
-      pending.value = false;
-      return {};
-    } catch (error) {
-      console.error('Error during company data request:', error);
-      pending.value = false;
-      return {};
-    }
-  };
-
-  /**
-   * Streaming call to the agent
-   */
-  const generateStreaming = async (company: string, website: string, onCompanyName?: (name: string) => void) => {
+  const generate = async (company: string, website: string) => {
     const prompt = `Extrayez les informations de base sur l'entreprise ${company} à partir de son site web ${website}.`;
     
     // Reset company name
@@ -353,11 +281,6 @@ export const useCompanyProfileAgent = () => {
             // Update current company name if we found one
             if (extractedName && !currentCompanyName) {
               currentCompanyName = extractedName;
-              
-              // Call the callback if provided
-              if (onCompanyName) {
-                onCompanyName(extractedName);
-              }
             }
             
             lastProcessedLength = accumulated.length;
@@ -390,12 +313,6 @@ export const useCompanyProfileAgent = () => {
         if (finalCompanyName) {
           // Set the complete data
           companyStore.setCompanyData(finalCompanyName, result);
-          
-          // Ensure callback is called if not already
-          if (!companyName.value && onCompanyName) {
-            companyName.value = finalCompanyName;
-            onCompanyName(finalCompanyName);
-          }
         }
         
         pending.value = false;
@@ -410,15 +327,6 @@ export const useCompanyProfileAgent = () => {
       pending.value = false;
       return {};
     }
-  };
-
-  /**
-   * Main function that selects the mode based on useStreaming parameter
-   */
-  const generate = async (company: string, website: string, onCompanyName?: (name: string) => void) => {
-    return useStreaming.value 
-      ? generateStreaming(company, website, onCompanyName)
-      : generateClassic(company, website, onCompanyName);
   };
 
   return {

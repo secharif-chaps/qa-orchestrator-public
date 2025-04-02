@@ -11,7 +11,12 @@ export default defineNuxtConfig({
     public:{
       mistralApiKey: '',
       tilesApiKey: '',
-      tilesApiUrl: '', 
+      tilesApiUrl: '',
+      mistralAgentSourced: '',
+      mistralAgentChat: '',
+      mistralAgentTimeline: '',
+      mistralAgentProducts: '',
+      mistralAgentJobs: ''
     }
   },
 
@@ -44,10 +49,24 @@ export default defineNuxtConfig({
       tailwindcss(),
     ],
   },
-
   modules: [
     '@nuxtjs/leaflet', 
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
   ],
+
+  // i18n: {
+  //   defaultLocale: 'en',
+  //   lazy: true,
+  //   locales: [
+  //     {
+  //       code: 'en',
+  //       file: 'en-US.ts'
+  //     },
+  //     {
+  //       code: 'fr',
+  //       file: 'fr-FR.ts'
+  //     }
+  //   ],
+  // }
 })

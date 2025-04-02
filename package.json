@@ -7,7 +7,11 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test:e2e": "nuxt dev & cypress run",
+    "test:e2e:dev": "nuxt dev & cypress open"
   },
   "dependencies": {
     "@mistralai/mistralai": "^1.5.0",
@@ -32,6 +36,8 @@
     "@nuxt/devtools": "^2.3.0",
     "@types/d3": "^7.4.3",
     "@types/leaflet": "^1.9.16",
+    "cypress": "^13.6.6",
+    "start-server-and-test": "^2.0.11",
     "typescript": "^5.8.2"
   }
 }

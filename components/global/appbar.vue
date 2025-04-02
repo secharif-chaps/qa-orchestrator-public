@@ -11,7 +11,7 @@
         <div class="max-w-md grow">
           <!-- <OInput
             id="search"
-            placeholder="Search"
+            :placeholder="t('appbar.search')"
           /> -->
         </div>
         <div class="flex gap-2">

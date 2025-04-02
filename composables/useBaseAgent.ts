@@ -44,11 +44,11 @@ export const useBaseAgent = () => {
   
   // Common agent IDs
   const agentIds = {
-    sourced: 'ag:cc2224b6:20250306:mint-sourced:f9c9d8b8',
-    chat: 'ag:cc2224b6:20250326:mint-chatbot:ea285e7a',
-    timeline: 'ag:cc2224b6:20250313:mint-timeline:971c6949',
-    products: 'ag:cc2224b6:20250314:mint-products:0cdfa3ef',
-    jobs: 'ag:cc2224b6:20250326:mint-jobs:2e796afd'
+    sourced: runtimeConfig.public.mistralAgentSourced,
+    chat: runtimeConfig.public.mistralAgentChat,
+    timeline: runtimeConfig.public.mistralAgentTimeline,
+    products: runtimeConfig.public.mistralAgentProducts,
+    jobs: runtimeConfig.public.mistralAgentJobs
   };
   
   // Streaming mode toggle

@@ -44,7 +44,7 @@
                 <div>
                   <span
                     :class="[
-                      isActive(button.to) ? 'bg-white icon-emerald-500' : '',
+                      isActive(button.to) ? 'bg-white text-primary' : '',
                     ]"
                     class="rounded p-1.5 text-lg group-hover:bg-white group-hover:text-primary"
                   >
@@ -69,6 +69,8 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
+
 const buttons = computed(() => [
   { icon: 'fa fa-search', label: 'Search', active: true, to: '/search' },
   {
@@ -79,7 +81,7 @@ const buttons = computed(() => [
   },
 ])
 
-const actions = ref([
+const actions = computed(() => [
   { icon: 'fa fa-cog', label: 'Settings', to: '/settings' },
   { icon: 'fa fa-question', label: 'Help', to: '/help' },
 ])

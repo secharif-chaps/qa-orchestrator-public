@@ -4,13 +4,13 @@
       class="border-b border-border-2 pb-2"
       v-if="title"
     >
-      <p class="font-bold">
+      <h2 class="font-bold">
         {{ props.title }}
-      </p>
+      </h2>
     </div>
     <div>
       <slot>
-        <CommingSoon />
+        <CommingSoon text="Coming Soon" />
       </slot>
     </div>
   </div>
