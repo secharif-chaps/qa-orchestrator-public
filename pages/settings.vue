@@ -1,25 +1,29 @@
 <template>
   <div class="container mx-auto p-4">
-    <Card title="Settings">
+    <Card :title="$t('settings.title')">
       <div class="space-y-6">
         <div>
-          <h2 class="text-xl font-semibold mb-2">Language Settings</h2>
-          <p class="text-gray-600 mb-4">Choose your preferred language for the application</p>
+          <h3 class="text-xl font-semibold mb-2" data-testid="language-title">{{ $t('settings.language.title') }}</h3>
+          <p class="text-gray-600 mb-4" data-testid="language-description">{{ $t('settings.language.description') }}</p>
+          <LocaleSwitcher />
         </div>
 
         <div>
-          <h2 class="text-xl font-semibold mb-2">Theme Settings</h2>
-          <p class="text-gray-600 mb-4">Customize the appearance of your application</p>
+          <h3 class="text-xl font-semibold mb-2" data-testid="theme-title">{{ $t('settings.theme.title') }}</h3>
+          <p class="text-gray-600 mb-4" data-testid="theme-description">{{ $t('settings.theme.description') }}</p>
         </div>
 
         <div>
-          <h2 class="text-xl font-semibold mb-2">Notification Settings</h2>
-          <p class="text-gray-600 mb-4">Manage your notification preferences</p>
+          <h3 class="text-xl font-semibold mb-2" data-testid="notifications-title">{{ $t('settings.notifications.title') }}</h3>
+          <p class="text-gray-600 mb-4" data-testid="notifications-description">{{ $t('settings.notifications.description') }}</p>
         </div>
       </div>
     </Card>
   </div>
 </template>
+
+<script setup lang="ts">
+</script>
 
 <style scoped>
 .settings-section {

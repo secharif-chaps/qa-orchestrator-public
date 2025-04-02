@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[86px] bg-primary h-screen fixed text-white pt-24 pb-4 px-4">
+  <div class="w-[86px] bg-primary h-screen fixed text-white pt-24 pb-4 px-2">
     <div class="flex flex-col justify-between h-full">
       <div class="space-y-4 divide-y divide-sidebar-border">
         <div
@@ -20,11 +20,13 @@
 
               <p class="font-bold text-xs">{{ button.label }}</p>
 
-              <span
-                v-if="button.chip"
-                class="bg-sidebar-count text-white rounded px-2 py-1"
-                >{{ button.chip }}</span
-              >
+              <ClientOnly>
+                <span
+                  v-if="button.chip"
+                  class="bg-sidebar-count text-white rounded px-2 py-1"
+                  >{{ button.chip }}</span
+                >
+              </ClientOnly>
             </button>
           </NuxtLink>
         </div>
@@ -71,19 +73,21 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
+
 const buttons = computed(() => [
-  { icon: 'fa fa-search', label: 'Search', active: true, to: '/search' },
+  { icon: 'fa fa-search', label: t('sidebar.search'), active: true, to: '/search' },
   {
     icon: 'fa fa-folder-open',
-    label: 'Cards',
+    label: t('sidebar.cards'),
     chip: nbCards.value || '0',
     to: '/cards',
   },
 ])
 
 const actions = computed(() => [
-  { icon: 'fa fa-cog', label: 'Settings', to: '/settings' },
-  { icon: 'fa fa-question', label: 'Help', to: '/help' },
+  { icon: 'fa fa-cog', label: t('sidebar.settings'), to: '/settings' },
+  { icon: 'fa fa-question', label: t('sidebar.help'), to: '/help' },
 ])
 
 const route = useRoute()

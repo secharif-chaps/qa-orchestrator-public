@@ -4,7 +4,7 @@
       <Card class="p-8">
         <div class="mb-8">
           <h2 class="text-2xl font-semibold text-center">
-            Connexion
+            {{ $t('login.title') }}
           </h2>
         </div>
 
@@ -12,7 +12,7 @@
           <div class="space-y-4">
             <div>
               <label for="email" class="block text-sm mb-1">
-                Adresse mail
+                {{ $t('login.email.label') }}
               </label>
               <OInput
                 id="email"
@@ -20,13 +20,13 @@
                 name="email"
                 type="email"
                 required
-                placeholder="exemple@gmail.com"
+                :placeholder="$t('login.email.placeholder')"
                 data-testid="email-input"
               />
             </div>
             <div>
               <label for="password" class="block text-sm mb-1">
-                Mot de passe
+                {{ $t('login.password.label') }}
               </label>
               <OInput
                 id="password"
@@ -34,12 +34,12 @@
                 name="password"
                 type="password"
                 required
-                placeholder="Entrer un mot de passe..."
+                :placeholder="$t('login.password.placeholder')"
                 data-testid="password-input"
               />
               <div class="flex justify-end mt-1">
                 <a href="#" class="text-sm text-[#6366F1] hover:text-[#4F46E5]">
-                  Mot de passe oublié ?
+                  {{ $t('login.password.forgot') }}
                 </a>
               </div>
             </div>
@@ -58,7 +58,7 @@
               @click="handleLogin"
               data-testid="submit-button"
             >
-              Connexion
+              {{ $t('login.submit') }}
             </OButton>
           </div>
         </form>
@@ -72,7 +72,9 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { OInput, OButton } from '@owlint/feathers-vue'
 import Card from '~/components/global/card.vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const router = useRouter()
 const email = ref('')
 const password = ref('')
@@ -91,10 +93,10 @@ const handleLogin = async () => {
     if (email.value !== '' && password.value !== '') {
       router.push('/cards')
     } else {
-      error.value = 'Email ou mot de passe invalide'
+      error.value = t('login.errors.invalidCredentials')
     }
   } catch (e) {
-    error.value = 'Une erreur est survenue lors de la connexion'
+    error.value = t('login.errors.connectionError')
   } finally {
     loading.value = false
   }

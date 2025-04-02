@@ -50,23 +50,8 @@ export default defineNuxtConfig({
     ],
   },
   modules: [
-    '@nuxtjs/leaflet', 
+    '@nuxtjs/leaflet',
     '@pinia/nuxt',
-    'pinia-plugin-persistedstate/nuxt',
+    'pinia-plugin-persistedstate/nuxt'
   ],
-
-  // i18n: {
-  //   defaultLocale: 'en',
-  //   lazy: true,
-  //   locales: [
-  //     {
-  //       code: 'en',
-  //       file: 'en-US.ts'
-  //     },
-  //     {
-  //       code: 'fr',
-  //       file: 'fr-FR.ts'
-  //     }
-  //   ],
-  // }
 })

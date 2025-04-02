@@ -2,7 +2,7 @@
   <div class="px-4 sm:px-6 lg:px-8">
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
-        <h1 class="text-3xl font-semibold text-primary">Cards</h1>
+        <h1 class="text-3xl font-semibold text-primary">{{ $t('cards.title') }}</h1>
       </div>
       <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex space-x-4">
         <!-- <PrimaryButton size="large">Add user</PrimaryButton>
@@ -30,26 +30,26 @@
                     scope="col"
                     class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                   >
-                    Name
+                    {{ $t('cards.table.name') }}
                   </th>
                   <th
                     scope="col"
                     class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Creator
+                    {{ $t('cards.table.creator') }}
                   </th>
                   <th
                     scope="col"
                     class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Last modification
+                    {{ $t('cards.table.lastModification') }}
                   </th>
 
                   <th
                     scope="col"
                     class="relative py-3.5 pl-3 pr-4 sm:pr-6"
                   >
-                    <span class="sr-only">actions</span>
+                    <span class="sr-only">{{ $t('cards.table.actions') }}</span>
                   </th>
                 </tr>
               </thead>
@@ -59,7 +59,7 @@
                     class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
                     colspan="5"
                   >
-                    No company found
+                    {{ $t('cards.noResults') }}
                   </td>
                 </tr>
                 <tr
@@ -91,6 +91,7 @@
                       <OButton
                         icon="fa-eye"
                         type="tertiary"
+                        :title="$t('cards.actions.view')"
                         @click="
                           $router.push(
                             '/cards/' + getSourcedValue(company.profile.name)
@@ -105,6 +106,7 @@
                         icon="fa-trash"
                         color="red"
                         type="tertiary"
+                        :title="$t('cards.actions.delete')"
                       />
                     </div>
                   </td>

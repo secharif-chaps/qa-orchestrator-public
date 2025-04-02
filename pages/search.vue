@@ -5,16 +5,16 @@
         icon="fa-search"
         type="secondary"
       ></OIcon>
-      <h1 class="text-2xl font-extrabold">New company</h1>
+      <h1 class="text-2xl font-extrabold">{{ $t('search.title') }}</h1>
     </div>
 
-    <Card title="Company identity">
+    <Card :title="$t('search.companyIdentity')">
       <div class="space-y-2">
         <OInput
           id="company"
           v-model="company"
-          placeholder="Sephora"
-          label="Company name"
+          :placeholder="$t('search.fields.companyName.placeholder')"
+          :label="$t('search.fields.companyName.label')"
           :error="companyError"
           data-cy="company-name-input"
         ></OInput>
@@ -22,27 +22,26 @@
         <OInput
           id="website"
           v-model="website"
-          placeholder="https://www.sephora.fr"
-          label="Website"
+          :placeholder="$t('search.fields.website.placeholder')"
+          :label="$t('search.fields.website.label')"
           :error="websiteError"
           data-cy="website-input"
         ></OInput>
       </div>
     </Card>
 
-    <Card title="Advanced search"> </Card>
+    <Card :title="$t('search.advancedSearch')"> </Card>
 
     <Card>
       <div class="flex items-center justify-between">
         <div>
           <span class="font-bold text-slate-500">
-            <span class="text-red-600"> * </span>mandatory fields to start
-            search
+            <span class="text-red-600"> * </span>{{ $t('search.mandatoryFields') }}
           </span>
         </div>
         <div class="flex space-x-2">
           <OButton
-            label="Delete Data"
+            :label="$t('search.actions.deleteData')"
             type="tertiary"
             :disabled="pending"
             data-cy="delete-data-button"
@@ -52,7 +51,7 @@
             :loading="pending"
             :disabled="pending || hasErrors"
             @click="startSearch()"
-            label="Launch Search"
+            :label="$t('search.actions.launchSearch')"
             data-cy="launch-search-button"
           />
         </div>
@@ -103,12 +102,12 @@ watch([company, website], ([newCompany, newWebsite]) => {
 
   // Validate company name
   if (newCompany && !validateCompany(newCompany)) {
-    companyError.value = 'Company name must be at least 2 characters long'
+    companyError.value = t('search.fields.companyName.error')
   }
 
   // Validate website URL
   if (newWebsite && !validateWebsite(newWebsite)) {
-    websiteError.value = 'Please enter a valid URL (e.g., https://www.example.com)'
+    websiteError.value = t('search.fields.website.error')
   }
 })
 
@@ -126,12 +125,12 @@ const pending = ref(false)
 const startSearch = async () => {
   // Validate inputs before proceeding
   if (!validateCompany(company.value)) {
-    companyError.value = 'Company name must be at least 2 characters long'
+    companyError.value = t('search.fields.companyName.error')
     return
   }
 
   if (!validateWebsite(website.value)) {
-    websiteError.value = 'Please enter a valid URL (e.g., https://www.example.com)'
+    websiteError.value = t('search.fields.website.error')
     return
   }
 

@@ -17,10 +17,14 @@ export default defineConfig({
       NUXT_PUBLIC_MISTRAL_AGENT_CHAT: 'ag:cc2224b6:20250326:mint-chatbot:ea285e7a',
       NUXT_PUBLIC_MISTRAL_AGENT_TIMELINE: 'ag:cc2224b6:20250313:mint-timeline:971c6949',
       NUXT_PUBLIC_MISTRAL_AGENT_PRODUCTS: 'ag:cc2224b6:20250314:mint-products:0cdfa3ef',
-      NUXT_PUBLIC_MISTRAL_AGENT_JOBS: 'ag:cc2224b6:20250326:mint-jobs:2e796afd'
+      NUXT_PUBLIC_MISTRAL_AGENT_JOBS: 'ag:cc2224b6:20250326:mint-jobs:2e796afd',
+      defaultLocale: 'en-US',
+      supportedLocales: ['en-US', 'fr-FR'],
     },
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
   },
+  viewportWidth: 1280,
+  viewportHeight: 720,
 });

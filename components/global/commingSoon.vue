@@ -2,7 +2,7 @@
   <div
     class="bg-slate-100 p-6 rounded-xl border-2 border-dashed border-slate-300 text-slate-500 italic"
   >
-    comming soon
+    {{ $t('common.comingSoon') }}
   </div>
 </template>
 

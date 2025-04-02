@@ -20,11 +20,31 @@ Cypress.Commands.add('login', (email: string, password: string) => {
   cy.get('[data-cy="login-button"]').click()
 })
 
-// Declare the type for the custom command
+// Custom command to check if text is translated
+Cypress.Commands.add('shouldBeTranslated', (selector: string, expectedText: string) => {
+  cy.get(selector).should('contain', expectedText)
+})
+
+// Custom command to switch language
+Cypress.Commands.add('switchLanguage', (locale: string) => {
+  cy.get('#locale-select').select(locale)
+  // Wait for translations to be applied
+  cy.wait(100)
+})
+
+// Custom command to check if element is translated
+Cypress.Commands.add('isTranslated', (selector: string, originalText: string) => {
+  cy.get(selector).should('not.contain', originalText)
+})
+
+// Declare the types for the custom commands
 declare global {
   namespace Cypress {
     interface Chainable {
       login(email: string, password: string): Chainable<void>
+      shouldBeTranslated(selector: string, expectedText: string): Chainable<void>
+      switchLanguage(locale: string): Chainable<void>
+      isTranslated(selector: string, originalText: string): Chainable<void>
     }
   }
 } 

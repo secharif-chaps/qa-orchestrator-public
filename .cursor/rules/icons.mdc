@@ -1,0 +1,263 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+// @ts-check
+
+/**
+ * Cursor FontAwesome Icon Rule
+ * 
+ * This rule ensures that all icons generated in Vue files by code agents 
+ * use FontAwesome icons with the appropriate <i> tag and classes.
+ * 
+ * Save this file as .cursor/rules/fontawesome-icons.js in your project
+ */
+
+const rule = {
+  name: "enforce-fontawesome-icons",
+  description: "Enforces the usage of FontAwesome icons with <i> tag in Vue files",
+  severity: "warning",
+
+  // Configuration options
+  config: {
+    // Default icon style to use if none is specified (fas, far, fab)
+    defaultIconStyle: "fas",
+    
+    // Whether to enforce a consistent style across all icons
+    enforceConsistentStyle: false,
+    
+    // Whether to suggest common icons when non-FontAwesome icons are detected
+    suggestAlternatives: true,
+    
+    // Map of common icon element patterns to FontAwesome alternatives
+    iconAlternatives: {
+      "material-icons": {
+        "add": "fa-plus",
+        "delete": "fa-trash",
+        "edit": "fa-pen",
+        "favorite": "fa-heart",
+        "search": "fa-search",
+        "settings": "fa-cog",
+        "menu": "fa-bars",
+        "close": "fa-times",
+        "check": "fa-check",
+        "info": "fa-info-circle",
+        "warning": "fa-exclamation-triangle",
+        "error": "fa-exclamation-circle",
+        "person": "fa-user",
+        "home": "fa-home",
+      },
+      "svg-icons": {
+        // Generic patterns for SVG icons
+        "user": "fa-user",
+        "arrow": "fa-arrow-right",
+        "cog": "fa-cog",
+        "gear": "fa-cog",
+        "trash": "fa-trash",
+        "pencil": "fa-pencil-alt",
+        "heart": "fa-heart",
+        "star": "fa-star",
+        "cart": "fa-shopping-cart",
+        "search": "fa-search"
+      }
+    }
+  },
+
+  // The apply function runs against each file matching the given pattern
+  applies: (file) => {
+    return file.endsWith('.vue');
+  },
+
+  // The check function implements the rule logic
+  check: (text, file) => {
+    const violations = [];
+    
+    // Check for non-FontAwesome icon patterns
+    
+    // 1. Check for <icon> custom components
+    const iconComponentRegex = /<icon[^>]*>/g;
+    let match;
+    
+    while ((match = iconComponentRegex.exec(text)) !== null) {
+      const iconTag = text.substring(match.index, text.indexOf('>', match.index) + 1);
+      
+      // Extract icon name if possible
+      const nameMatch = iconTag.match(/name=["'](mdc:[^"']+)["']/);
+      const iconName = nameMatch ? nameMatch[1] : "default-icon";
+      
+      // See if we can suggest a FontAwesome alternative
+      const suggestion = findFontAwesomeAlternative(iconName, rule.config.iconAlternatives);
+      
+      violations.push({
+        message: `Use FontAwesome <i> tag instead of custom <icon> component${suggestion ? `. Consider using ${suggestion}` : ''}`,
+        line: text.substring(0, match.index).split('\n').length,
+        position: match.index,
+        fix: {
+          replaceWith: `<i class="${rule.config.defaultIconStyle} ${suggestion || 'fa-icon'}"`,
+          iconName: iconName
+        }
+      });
+    }
+    
+    // 2. Check for Material Icons
+    const materialIconRegex = /<(span|i)[^>]*class=["'][^"']*material-icons[^"']*["'][^>]*>[^<]+<\/(span|i)>/g;
+    
+    while ((match = materialIconRegex.exec(text)) !== null) {
+      const iconElement = text.substring(match.index, match.index + match[0].length);
+      const iconText = iconElement.match(/>([^<]+)</);
+      const iconName = iconText ? iconText[1].trim() : "default-icon";
+      
+      // Find FontAwesome alternative
+      const suggestion = findFontAwesomeAlternative(iconName, rule.config.iconAlternatives.["material-icons"]);
+      
+      violations.push({
+        message: `Use FontAwesome <i> tag instead of Material Icons${suggestion ? `. Consider using ${suggestion}` : ''}`,
+        line: text.substring(0, match.index).split('\n').length,
+        position: match.index,
+        fix: {
+          replaceWith: `<i class="${rule.config.defaultIconStyle} ${suggestion || 'fa-icon'}"`,
+          fullReplace: true,
+          originalContent: match[0]
+        }
+      });
+    }
+    
+    // 3. Check for SVG icons
+    const svgIconRegex = /<svg[^>]*>[\s\S]*?<\/svg>/g;
+    
+    while ((match = svgIconRegex.exec(text)) !== null) {
+      const svgContent = text.substring(match.index, match.index + match[0].length);
+      
+      // Try to determine the icon type from attributes or content
+      let iconType = "icon";
+      for (const [key, value] of Object.entries(rule.config.iconAlternatives["svg-icons"])) {
+        if (svgContent.toLowerCase().includes(key)) {
+          iconType = key;
+          break;
+        }
+      }
+      
+      // Find FontAwesome alternative
+      const suggestion = findFontAwesomeAlternative(iconType, rule.config.iconAlternatives["svg-icons"]);
+      
+      violations.push({
+        message: `Use FontAwesome <i> tag instead of SVG icons${suggestion ? `. Consider using ${suggestion}` : ''}`,
+        line: text.substring(0, match.index).split('\n').length,
+        position: match.index,
+        fix: {
+          replaceWith: `<i class="${rule.config.defaultIconStyle} ${suggestion || 'fa-icon'}"`,
+          fullReplace: true,
+          originalContent: match[0]
+        }
+      });
+    }
+    
+    // 4. Check for other component libraries' icon patterns (like Vuetify, Element UI, etc.)
+    const otherIconComponentsRegex = /<(v-icon|el-icon|a-icon|n-icon|b-icon)[^>]*>[^<]*<\/(v-icon|el-icon|a-icon|n-icon|b-icon)>/g;
+    
+    while ((match = otherIconComponentsRegex.exec(text)) !== null) {
+      const iconElement = text.substring(match.index, match.index + match[0].length);
+      const iconText = iconElement.match(/>([^<]+)</);
+      const iconName = iconText ? iconText[1].trim() : "default-icon";
+      
+      violations.push({
+        message: `Use FontAwesome <i> tag instead of ${match[1]} component`,
+        line: text.substring(0, match.index).split('\n').length,
+        position: match.index,
+        fix: {
+          replaceWith: `<i class="${rule.config.defaultIconStyle} fa-${iconName.replace(/^mdi-|^md-|^fa-/, '')}"`,
+          fullReplace: true,
+          originalContent: match[0]
+        }
+      });
+    }
+    
+    // Add a general reminder if any violations are found
+    if (violations.length > 0 && !text.includes('font-awesome')) {
+      violations.push({
+        message: "FontAwesome is required for icons. Make sure to include the FontAwesome library in your project.",
+        line: 1,
+        position: 0,
+        fix: {
+          addComment: "<!-- Ensure FontAwesome is included in the project for icons -->"
+        }
+      });
+    }
+    
+    return violations;
+  },
+  
+  // The fix function applies the suggested fixes
+  fix: (text, violations, file) => {
+    let newText = text;
+    
+    // Apply replacements in reverse order to not invalidate positions
+    const sortedViolations = [...violations].sort((a, b) => b.position - a.position);
+    
+    for (const violation of sortedViolations) {
+      if (violation.fix) {
+        if (violation.fix.fullReplace && violation.fix.originalContent) {
+          // Full replacement of the element
+          newText = newText.substring(0, violation.position) + 
+                   `${violation.fix.replaceWith}></i>` + 
+                   newText.substring(violation.position + violation.fix.originalContent.length);
+        } else if (violation.fix.replaceWith) {
+          // Replace just the opening tag
+          const lines = newText.split('\n');
+          const line = lines[violation.line - 1];
+          const lineStart = newText.split('\n').slice(0, violation.line - 1).join('\n').length + (violation.line > 1 ? 1 : 0);
+          const position = violation.position - lineStart;
+          
+          const tagEnd = line.indexOf('>', position) + 1;
+          const before = line.substring(0, position);
+          const after = line.substring(tagEnd);
+          
+          lines[violation.line - 1] = before + `${violation.fix.replaceWith}></i>` + after;
+          newText = lines.join('\n');
+        }
+        
+        if (violation.fix.addComment && !newText.includes(violation.fix.addComment)) {
+          // Add comment at the top of the component
+          const scriptIndex = newText.indexOf('<script');
+          if (scriptIndex !== -1) {
+            newText = newText.substring(0, scriptIndex) + 
+                     violation.fix.addComment + '\n' + 
+                     newText.substring(scriptIndex);
+          } else {
+            // Add at the top if no script tag
+            newText = violation.fix.addComment + '\n' + newText;
+          }
+        }
+      }
+    }
+    
+    return newText;
+  }
+};
+
+/**
+ * Helper function to find FontAwesome alternatives for common icon names
+ */
+function findFontAwesomeAlternative(iconName, alternativesMap) {
+  if (!rule.config.suggestAlternatives) return null;
+  
+  iconName = iconName.toLowerCase();
+  
+  // Direct match
+  if (alternativesMap && alternativesMap[iconName]) {
+    return alternativesMap[iconName];
+  }
+  
+  // Partial match
+  for (const [key, value] of Object.entries(alternativesMap || {})) {
+    if (iconName.includes(key) || key.includes(iconName)) {
+      return value;
+    }
+  }
+  
+  // Generic fallback based on icon name
+  return `fa-${iconName.replace(/[^a-z0-9-]/g, '-')}`;
+}
+
+module.exports = rule;
