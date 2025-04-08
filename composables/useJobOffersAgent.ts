@@ -59,7 +59,6 @@ export const useJobOffersAgent = () => {
    */
   const findJobOffers = async (company: string) => {
     jobOffersPending.value = true;
-    let accumulatedJson = '';
     // Clear the processed jobs set when starting a new search
     processedJobTitles.clear();
     
@@ -71,79 +70,30 @@ export const useJobOffersAgent = () => {
         async () => {
           const prompt = `Research and analyze current job offers for ${company}. Include both the specific job listings and provide strategic insights about what these openings reveal about the company's focus and growth areas.`;
           
-          const response = await client.agents.stream({
+          const response = await client.agents.complete({
             messages: [{ role: 'user', content: prompt }],
-            stream: true,
             agentId: agentIds.jobs,
             responseFormat: { type: 'json_object' }
           });
 
-          let accumulated = '';
-          for await (const chunk of response) {
-            const content = chunk.data.choices[0]?.delta?.content || '';
-            accumulated += content;
-            accumulatedJson += content;
-            
-            try {
-              // Try to parse the accumulated JSON to find complete job offers
-              const partialData = extractPartialData(accumulated);
-              if (partialData) {
-                // Handle new job offers
-                if (partialData.job_offers?.length > 0) {
-                  const currentOffers = companyStore.getCompanyByName(company)?.job_offers || [];
-                  const newOffers = partialData.job_offers.filter(job => {
-                    const title = job.title?.value;
-                    if (!title || processedJobTitles.has(title)) return false;
-                    processedJobTitles.add(title);
-                    return true;
-                  });
+          const data = JSON.parse(response.choices[0].message.content);
+          
+          if (data.job_offers) {
+            const currentOffers = companyStore.getCompanyByName(company)?.job_offers || [];
+            const newOffers = data.job_offers.filter(job => {
+              const title = job.title?.value;
+              if (!title || processedJobTitles.has(title)) return false;
+              processedJobTitles.add(title);
+              return true;
+            });
 
-                  if (newOffers.length > 0) {
-                    // Add each new offer individually with a small delay
-                    for (const offer of newOffers) {
-                      companyStore.updateCompanyProperty(company, 'job_offers', [...currentOffers, offer]);
-                      // Small delay to ensure visual separation
-                      await new Promise(resolve => setTimeout(resolve, 300));
-                    }
-                  }
-                }
-                
-                // Update insights if available
-                if (partialData.insights) {
-                  companyStore.updateCompanyProperty(company, 'job_offers_insights', partialData.insights);
-                }
-              }
-            } catch (e) {
-              // Continue accumulating if we can't parse yet
-              continue;
+            if (newOffers.length > 0) {
+              companyStore.updateCompanyProperty(company, 'job_offers', [...currentOffers, ...newOffers]);
             }
           }
 
-          // Final parse to ensure we didn't miss anything
-          try {
-            const finalData = JSON.parse(accumulatedJson);
-            if (finalData.job_offers) {
-              const currentOffers = companyStore.getCompanyByName(company)?.job_offers || [];
-              const finalOffers = finalData.job_offers.filter(job => {
-                const title = job.title?.value;
-                if (!title || processedJobTitles.has(title)) return false;
-                processedJobTitles.add(title);
-                return true;
-              });
-
-              if (finalOffers.length > 0) {
-                // Add remaining offers individually
-                for (const offer of finalOffers) {
-                  companyStore.updateCompanyProperty(company, 'job_offers', [...currentOffers, offer]);
-                  await new Promise(resolve => setTimeout(resolve, 300));
-                }
-              }
-            }
-            if (finalData.insights) {
-              companyStore.updateCompanyProperty(company, 'job_offers_insights', finalData.insights);
-            }
-          } catch (e) {
-            console.error('Error parsing final job offers data:', e);
+          if (data.insights) {
+            companyStore.updateCompanyProperty(company, 'job_offers_insights', data.insights);
           }
         },
         {

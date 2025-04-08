@@ -65,9 +65,6 @@
 
 <script lang="ts" setup>
 import { OButton, OIcon } from '@owlint/feathers-vue'
-import { useCompanyData } from '~/composables/useCompanyData'
-
-const { companyName } = useCompanyData()
 
 // Props
 defineProps<{

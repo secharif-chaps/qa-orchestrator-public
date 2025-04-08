@@ -52,6 +52,29 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/leaflet',
     '@pinia/nuxt',
-    'pinia-plugin-persistedstate/nuxt'
+    'pinia-plugin-persistedstate/nuxt',
+    '@sidebase/nuxt-auth'
   ],
+
+  auth: {
+    baseURL: process.env.AUTH_ORIGIN,
+    provider: {
+      type: 'local',
+      endpoints: {
+        signIn: { path: '/api/auth/login', method: 'post' },
+        signOut: { path: '/api/auth/logout', method: 'post' },
+        signUp: { path: '/api/auth/register', method: 'post' },
+        getSession: { path: '/api/auth/session', method: 'get' }
+      },
+      pages: {
+        login: '/auth/login',
+        signup: '/auth/signup',
+        forgotPassword: '/auth/forgot-password',
+        resetPassword: '/auth/reset-password'
+      },
+      token: {
+        signInResponseTokenPointer: '/accessToken'
+      }
+    }
+  }
 })

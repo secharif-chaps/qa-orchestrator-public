@@ -1,7 +1,7 @@
 export const useCompanyProfileAgent = () => {
   const { client, agentIds, withRetry, companyStore } = useBaseAgent();
   
-  const pending = ref(false);
+  const profilePending = ref(false);
   const companyName = ref<string | null>(null);
 
   /**
@@ -251,7 +251,7 @@ export const useCompanyProfileAgent = () => {
     
     // Reset company name
     companyName.value = null;
-    pending.value = true;
+    profilePending.value = true;
     
     try {
       // Use the sourced agent for streaming
@@ -312,26 +312,26 @@ export const useCompanyProfileAgent = () => {
         
         if (finalCompanyName) {
           // Set the complete data
-          companyStore.setCompanyData(finalCompanyName, result);
+          companyStore.setCompanyData(finalCompanyName.toLowerCase(), result);
         }
         
-        pending.value = false;
+        profilePending.value = false;
         return result;
       } catch (e) {
         console.error('Failed to parse final JSON response:', e);
-        pending.value = false;
+        profilePending.value = false;
         return {};
       }
     } catch (error) {
       console.error('Error during company data streaming:', error);
-      pending.value = false;
+      profilePending.value = false;
       return {};
     }
   };
 
   return {
     generate,
-    pending,
+    profilePending,
     companyName
   };
 }; 

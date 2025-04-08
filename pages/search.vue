@@ -62,14 +62,17 @@
 
 <script lang="ts" setup>
 import { OButton, OIcon, OInput } from '@owlint/feathers-vue'
+import { useI18n } from 'vue-i18n'
 import { useCompanyStore } from '~/stores/company'
+
+const { t } = useI18n()
 
 const company = ref('')
 const website = ref('')
 const companyError = ref('')
 const websiteError = ref('')
 
-const { generate, generateTimeline, findProducts } = useAgent()
+const { findProfile, findTimeline, findProducts, findJobOffers } = useAgent()
 
 const companyStore = useCompanyStore()
 const router = useRouter()
@@ -137,10 +140,21 @@ const startSearch = async () => {
   pending.value = true
 
   try {
-    const trimmedCompany = company.value.trim()
-    generate(trimmedCompany, website.value)
-    generateTimeline(trimmedCompany)
+    const trimmedCompany = company.value.trim().toLowerCase()
+    // Start with profile
+    findProfile(trimmedCompany, website.value)
+    
+    // Wait 3s before timeline
+    await new Promise(resolve => setTimeout(resolve, 3000))
+    findTimeline(trimmedCompany)
+    
+    // Wait 3s before products
+    await new Promise(resolve => setTimeout(resolve, 3000))
     findProducts(trimmedCompany)
+    
+    // Wait 3s before job offers
+    await new Promise(resolve => setTimeout(resolve, 3000))
+    findJobOffers(trimmedCompany)
 
     // Redirect to the company page
     router.push(`/cards/${trimmedCompany}`)

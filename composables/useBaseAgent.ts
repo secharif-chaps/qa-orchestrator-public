@@ -6,13 +6,25 @@ const withRetry = async <T>(
   options: {
     maxRetries?: number;
     baseDelay?: number;
-    onRetry?: (attempt: number, delay: number) => void;
+    maxDelay?: number;
+    jitter?: boolean;
+    onRetry?: (attempt: number, delay: number, error: any) => void;
+    shouldRetry?: (error: any) => boolean;
   } = {}
 ): Promise<T> => {
   const {
     maxRetries = 3,
     baseDelay = 1000,
-    onRetry = (attempt, delay) => console.log(`Retrying in ${delay}ms... (attempt ${attempt}/${maxRetries})`)
+    maxDelay = 30000, // 30 seconds max delay
+    jitter = true,
+    onRetry = (attempt, delay, error) => console.log(`Retrying in ${delay}ms... (attempt ${attempt}/${maxRetries})`),
+    shouldRetry = (error) => {
+      // Retry on 429 (Too Many Requests) or network errors
+      return error?.status === 429 || 
+             error?.message?.includes('rate limit exceeded') ||
+             error?.message?.includes('network error') ||
+             error?.message?.includes('timeout');
+    }
   } = options;
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -23,9 +35,22 @@ const withRetry = async <T>(
       return await operation();
     } catch (error: any) {
       lastError = error;
-      if (error.message?.includes('rate limit exceeded') && attempt < maxRetries) {
-        const delay = baseDelay * Math.pow(2, attempt);
-        onRetry(attempt + 1, delay);
+      
+      // Check if we should retry based on the error
+      if (shouldRetry(error) && attempt < maxRetries) {
+        // Calculate delay with exponential backoff and optional jitter
+        let delay = baseDelay * Math.pow(2, attempt);
+        
+        // Add jitter (random variation) to prevent thundering herd
+        if (jitter) {
+          const jitterAmount = Math.random() * 0.1 * delay; // 10% jitter
+          delay += jitterAmount;
+        }
+        
+        // Cap the delay at maxDelay
+        delay = Math.min(delay, maxDelay);
+        
+        onRetry(attempt + 1, delay, error);
         await sleep(delay);
         continue;
       }

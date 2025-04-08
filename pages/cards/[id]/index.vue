@@ -18,6 +18,7 @@
       </OAlert>
     </template>
 
+
     <!-- Main content grid -->
     <div class="grid grid-cols-12 gap-6 bg-bg1 p-4 rounded-lg">
       <!-- First column: Company general info -->
@@ -115,7 +116,7 @@
           description="View detailed company information, business lines, and key metrics."
           icon="fa-building"
           :to="`/cards/${companyName}/profile`"
-          :loading="isProfileLoading"
+          :loading="profilePending"
         />
 
         <InfoCard
@@ -123,7 +124,7 @@
           description="Explore company events, trade shows, and key activities."
           icon="fa-calendar-days"
           :to="`/cards/${companyName}/activities`"
-          :loading="isTimelineLoading"
+          :loading="timelinePending"
         />
 
         <InfoCard
@@ -139,7 +140,7 @@
           description="Browse the company's products, services, and offerings."
           icon="fa-box"
           :to="`/cards/${companyName}/products`"
-          :loading="isProductsLoading"
+          :loading="productsPending"
         />
 
         <InfoCard
@@ -171,7 +172,7 @@
           description="Current job openings, career opportunities, and hiring information."
           icon="fa-briefcase"
           :to="`/cards/${companyName}/jobs`"
-          :loading="isJobOffersLoading"
+          :loading="jobOffersPending"
         />
       </div>
     </div>
@@ -201,10 +202,9 @@ useHead({
 
 const { companyName, hasPropertyBeenUpdated, getSourcedValue } =
   useCompanyData()
-const { jobOffersPending } = useJobOffersAgent()
 
 // Use the modular agent composables
-const { pending, timelinePending, productsPending } = useAgent()
+const { timelinePending, profilePending, productsPending, jobOffersPending } = useAgent()
 
 const company = ref<Partial<Company> | null>(null)
 
@@ -215,29 +215,6 @@ const hasAnyData = ref(false)
 const isCompanyNew = ref(true)
 
 const showAiChat = ref(false)
-
-// Track loading states for different sections
-const isProfileLoading = computed(() => {
-  // Check if the agent is pending OR if we don't have profile data yet
-  return (
-    pending.value || (!hasAnyData.value && !hasPropertyBeenUpdated('profile'))
-  )
-})
-
-const isTimelineLoading = computed(() => {
-  // Check if we don't have timeline data yet
-  return timelinePending.value || !hasPropertyBeenUpdated('timeline_events')
-})
-
-const isProductsLoading = computed(() => {
-  // Check if we don't have products data yet
-  return productsPending.value || !hasPropertyBeenUpdated('products')
-})
-
-const isJobOffersLoading = computed(() => {
-  // Check if we don't have job offers data yet
-  return jobOffersPending.value || !hasPropertyBeenUpdated('job_offers')
-})
 
 // Subscribe to company store for updates
 watch(

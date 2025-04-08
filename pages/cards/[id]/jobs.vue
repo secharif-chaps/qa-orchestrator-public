@@ -20,10 +20,10 @@
         v-if="jobOffersPending"
         message="Loading company job offers..."
         title="Please wait"
+        description="Job offers data will be displayed here once available."
         icon="fa-spinner fa-spin"
         color="blue"
       >
-        <p>Fetching job offers data from AI agent...</p>
       </OAlert>
     </template>
 

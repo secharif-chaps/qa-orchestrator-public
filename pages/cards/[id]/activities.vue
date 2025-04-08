@@ -14,6 +14,8 @@
       />
     </template>
 
+    {{ timelinePending }}
+
     <!-- Loading slot -->
     <template #loading>
       <OAlert
@@ -106,7 +108,7 @@ useHead({
 const searchQuery = ref('')
 
 const { companyName } = useCompanyData()
-const { generateTimeline, timelinePending } = useAgent()
+const { findTimeline, timelinePending } = useAgent()
 const companyStore = useCompanyStore()
 
 const company = computed(() => {
@@ -133,13 +135,13 @@ const getTimelineEvents = computed(() => {
 
 // Generate or refresh timeline data
 const refreshTimeline = async () => {
-  await generateTimeline(companyName.value)
+  await findTimeline(companyName.value)
 }
 
 // Check if timeline data exists on mount, if not, generate it
 onMounted(async () => {
   if (!hasTimelineData.value) {
-    await generateTimeline(companyName.value)
+    await findTimeline(companyName.value)
   }
 })
 

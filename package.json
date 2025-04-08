@@ -19,6 +19,7 @@
     "@nuxtjs/leaflet": "1.2.6",
     "@owlint/feathers-vue": "^0.2.7",
     "@pinia/nuxt": "^0.10.1",
+    "@sidebase/nuxt-auth": "^0.10.1",
     "@tailwindcss/vite": "^4.0.6",
     "@vue-flow/core": "^1.42.1",
     "d3": "^7.9.0",

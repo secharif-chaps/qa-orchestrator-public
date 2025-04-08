@@ -9,7 +9,7 @@
         </div>
 
         <div class="space-y-2">
-          <p class="font-bold">
+          <p class="font-bold capitalize">
             {{ getSourcedValue(company?.profile?.name) || companyName }}
           </p>
 
@@ -37,7 +37,7 @@
               v-if="hasPropertyBeenUpdated('profile.ceo')"
               class="text-secondary"
             >
-              {{ getSourcedValue(company?.profile?.ceo) }}
+              {{ getSourcedValue(company?.profile?.ceo) || 'Not found ' }}
               <Source :sourced-value="company?.profile?.ceo" />
             </span>
             <span
@@ -56,7 +56,7 @@
               v-if="hasPropertyBeenUpdated('profile.hq')"
               class="text-secondary"
             >
-              {{ getSourcedValue(company?.profile?.hq) }}
+              {{ getSourcedValue(company?.profile?.hq) || 'Not found' }}
               <Source :sourced-value="company?.profile?.hq" />
             </span>
             <span

@@ -4,7 +4,17 @@
     icon="fa-building"
     :loading="isProfileLoading"
   >
-    <template #actions> </template>
+    <template #actions>
+      <OButton
+        v-if="hasAnyData"
+        @click="retriggerProfileSearch"
+        :loading="profilePending"
+        icon="fa-refresh"
+        type="secondary"
+      >
+        Refresh Profile
+      </OButton>
+    </template>
 
     <template #loading>
       <OAlert
@@ -82,7 +92,7 @@
 
 <script lang="ts" setup>
 import { Profile } from '#components'
-import { OAlert } from '@owlint/feathers-vue'
+import { OAlert, OButton } from '@owlint/feathers-vue'
 import { useCompanyStore } from '~/stores/company'
 import type { Company } from '~/types.global'
 
@@ -93,7 +103,7 @@ useHead({
 })
 
 const { companyName, hasPropertyBeenUpdated } = useCompanyData()
-const { pending } = useAgent()
+const { profilePending, findProfile } = useAgent()
 
 const company = ref<Partial<Company> | null>(null)
 
@@ -106,9 +116,22 @@ const isCompanyNew = ref(true)
 // Track loading states for different sections
 const isProfileLoading = computed(() => {
   return (
-    pending.value || (!hasAnyData.value && !hasPropertyBeenUpdated('profile'))
+    profilePending.value || (!hasAnyData.value && !hasPropertyBeenUpdated('profile'))
   )
 })
+
+const retriggerProfileSearch = async () => {
+  if (companyName.value) {
+    // Reset the company data to trigger a fresh search
+    companyStore.deleteCompany(companyName.value)
+    companyStore.initCompany(companyName.value)
+    hasAnyData.value = false
+    isCompanyNew.value = true
+    
+    // Trigger the profile search
+    await findProfile(companyName.value, company.value?.profile?.website?.value)
+  }
+}
 
 // Subscribe to company store for updates
 watch(

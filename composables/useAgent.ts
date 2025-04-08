@@ -1,61 +1,30 @@
-
-// Retry helper function
-const withRetry = async <T>(
-  operation: () => Promise<T>,
-  options: {
-    maxRetries?: number;
-    baseDelay?: number;
-    onRetry?: (attempt: number, delay: number) => void;
-  } = {}
-): Promise<T> => {
-  const {
-    maxRetries = 3,
-    baseDelay = 1000,
-    onRetry = (attempt, delay) => console.log(`Retrying in ${delay}ms... (attempt ${attempt}/${maxRetries})`)
-  } = options;
-
-  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-  let lastError: any;
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      return await operation();
-    } catch (error: any) {
-      lastError = error;
-      if (error.message?.includes('rate limit exceeded') && attempt < maxRetries) {
-        const delay = baseDelay * Math.pow(2, attempt);
-        onRetry(attempt + 1, delay);
-        await sleep(delay);
-        continue;
-      }
-      throw error;
-    }
-  }
-  throw lastError;
-};
-
 export const useAgent = () => {
   // Import all specialized agents
   const baseAgent = useBaseAgent();
   const profileAgent = useCompanyProfileAgent();
   const timelineAgent = useTimelineAgent();
   const productsAgent = useProductsAgent();
+  const jobOffersAgent = useJobOffersAgent();
   const chatAgent = useChatAgent();
   
   // Return a unified interface that matches the original useAgent API
   return {
     // Company profile functionality
-    generate: profileAgent.generate,
-    pending: profileAgent.pending,
+    findProfile: profileAgent.generate,
+    profilePending: profileAgent.profilePending,
     companyName: profileAgent.companyName,
     
     // Timeline functionality
-    generateTimeline: timelineAgent.generateTimeline,
+    findTimeline: timelineAgent.generateTimeline,
     timelinePending: timelineAgent.timelinePending,
     
     // Products functionality
     findProducts: productsAgent.findProducts,
     productsPending: productsAgent.productsPending,
+
+    // Job offers functionality
+    findJobOffers: jobOffersAgent.findJobOffers,
+    jobOffersPending: jobOffersAgent.jobOffersPending,
     
     // Chat functionality
     ask: chatAgent.ask,

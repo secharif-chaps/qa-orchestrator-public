@@ -9,7 +9,7 @@
       <OButton
         type="secondary"
         icon="fa-refresh"
-        :loading="isProductsLoading"
+        :loading="productsPending"
         @click="refreshProducts"
       >
         Refresh Products
@@ -19,19 +19,19 @@
     <!-- Loading slot -->
     <template #loading>
       <OAlert
-        v-if="isProductsLoading"
+        v-if="productsPending"
         message="Loading products information..."
         title="Please wait"
+        description="Products information will be displayed here once available."
         icon="fa-spinner fa-spin"
         color="blue"
       >
-        <p>Fetching products data from AI agent...</p>
       </OAlert>
     </template>
 
     <!-- Main content -->
     <div
-      v-if="!isProductsLoading && hasProducts"
+      v-if="!productsPending && hasProducts"
       class="card grid @min-6xl:grid-cols-3 @max-6xl:grid-cols-2 gap-4"
     >
       <div
@@ -54,13 +54,13 @@
 
     <!-- No products state -->
     <OAlert
-      v-else
+      v-else-if="!productsPending"
       message="No products information available yet."
       title="No Data"
+      description="Products information will be displayed here once available."
       icon="fa-box"
       color="gray"
     >
-      <p>Products information will be displayed here once available.</p>
     </OAlert>
   </LayoutsCompanyCard>
 </template>
@@ -79,11 +79,6 @@ const { companyName, hasPropertyBeenUpdated } = useCompanyData()
 const { productsPending, findProducts } = useAgent()
 
 const companyStore = useCompanyStore()
-
-// Computed properties
-const isProductsLoading = computed(() => {
-  return productsPending.value || !hasPropertyBeenUpdated('products')
-})
 
 const hasProducts = computed(() => {
   const products = companyStore.companies[companyName.value]?.products
