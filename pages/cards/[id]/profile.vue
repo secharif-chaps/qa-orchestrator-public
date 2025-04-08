@@ -95,6 +95,7 @@ import { Profile } from '#components'
 import { OAlert, OButton } from '@owlint/feathers-vue'
 import { useCompanyStore } from '~/stores/company'
 import type { Company } from '~/types.global'
+import { useAgentStore } from '~/stores/agent'
 
 // Set page metadata
 useHead({
@@ -102,12 +103,13 @@ useHead({
   meta: [{ name: 'description', content: 'Company Profile Details' }],
 })
 
-const { companyName, hasPropertyBeenUpdated } = useCompanyData()
-const { profilePending, findProfile } = useAgent()
+const { companyName, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
+const { findProfile } = useAgent()
+const agentStore = useAgentStore()
+const profilePending = computed(() => agentStore.getPendingState('profile'))
+const companyStore = useCompanyStore()
 
 const company = ref<Partial<Company> | null>(null)
-
-const companyStore = useCompanyStore()
 
 // Set up company data
 const hasAnyData = ref(false)

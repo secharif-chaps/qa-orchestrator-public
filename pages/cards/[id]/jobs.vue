@@ -37,11 +37,6 @@
         <p class="text-slate-500 mb-6">
           Fetch job offers for this company to see current opportunities
         </p>
-        <OButton
-          @click="refreshJobOffers"
-          :loading="jobOffersPending"
-          label="Find Job Offers"
-        />
       </div>
     </Card>
 
@@ -144,6 +139,7 @@
 import { OAlert, OButton, OInput } from '@owlint/feathers-vue'
 import { useCompanyStore } from '~/stores/company'
 import JobCard from '~/components/JobCard.vue'
+import { useAgentStore } from '~/stores/agent'
 
 // Set page metadata
 useHead({
@@ -153,7 +149,9 @@ useHead({
 
 const searchQuery = ref('')
 const { companyName, getSourcedValue } = useCompanyData()
-const { findJobOffers, jobOffersPending } = useJobOffersAgent()
+const { findJobOffers } = useAgent()
+const agentStore = useAgentStore()
+const jobOffersPending = computed(() => agentStore.getPendingState('jobOffers'))
 const companyStore = useCompanyStore()
 
 // Computed properties for data access
@@ -197,12 +195,6 @@ const refreshJobOffers = async () => {
   await findJobOffers(companyName.value)
 }
 
-// Check if job offers data exists on mount, if not, generate it
-onMounted(async () => {
-  if (!hasJobOffersData.value) {
-    await findJobOffers(companyName.value)
-  }
-})
 </script>
 
 <style>

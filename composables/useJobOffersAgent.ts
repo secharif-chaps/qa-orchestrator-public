@@ -1,7 +1,7 @@
 export const useJobOffersAgent = () => {
   const { client, agentIds, withRetry, companyStore } = useBaseAgent();
+  const agentStore = useAgentStore();
   
-  const jobOffersPending = ref(false);
   // Keep track of processed job offers to avoid duplicates
   const processedJobTitles = new Set<string>();
 
@@ -58,7 +58,7 @@ export const useJobOffersAgent = () => {
    * Finds and analyzes job offers for a company
    */
   const findJobOffers = async (company: string) => {
-    jobOffersPending.value = true;
+    agentStore.setPendingState('jobOffers', true);
     // Clear the processed jobs set when starting a new search
     processedJobTitles.clear();
     
@@ -104,7 +104,7 @@ export const useJobOffersAgent = () => {
       console.error('Error finding job offers:', error);
       throw error;
     } finally {
-      jobOffersPending.value = false;
+      agentStore.setPendingState('jobOffers', false);
       // Clear the processed jobs set when done
       processedJobTitles.clear();
     }
@@ -112,6 +112,6 @@ export const useJobOffersAgent = () => {
 
   return {
     findJobOffers,
-    jobOffersPending
+    jobOffersPending: computed(() => agentStore.getPendingState('jobOffers'))
   };
 }; 

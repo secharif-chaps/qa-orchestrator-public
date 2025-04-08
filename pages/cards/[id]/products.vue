@@ -68,6 +68,7 @@
 <script lang="ts" setup>
 import { OAlert, OButton } from '@owlint/feathers-vue'
 import { useCompanyStore } from '~/stores/company'
+import { useAgentStore } from '~/stores/agent'
 
 // Set page metadata
 useHead({
@@ -75,9 +76,10 @@ useHead({
   meta: [{ name: 'description', content: 'Company Products and Services' }],
 })
 
-const { companyName, hasPropertyBeenUpdated } = useCompanyData()
-const { productsPending, findProducts } = useAgent()
-
+const { companyName, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
+const { findProducts } = useAgent()
+const agentStore = useAgentStore()
+const productsPending = computed(() => agentStore.getPendingState('products'))
 const companyStore = useCompanyStore()
 
 const hasProducts = computed(() => {

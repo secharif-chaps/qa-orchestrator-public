@@ -11,20 +11,16 @@ export const useAgent = () => {
   return {
     // Company profile functionality
     findProfile: profileAgent.generate,
-    profilePending: profileAgent.profilePending,
     companyName: profileAgent.companyName,
     
     // Timeline functionality
     findTimeline: timelineAgent.generateTimeline,
-    timelinePending: timelineAgent.timelinePending,
     
     // Products functionality
     findProducts: productsAgent.findProducts,
-    productsPending: productsAgent.productsPending,
 
     // Job offers functionality
     findJobOffers: jobOffersAgent.findJobOffers,
-    jobOffersPending: jobOffersAgent.jobOffersPending,
     
     // Chat functionality
     ask: chatAgent.ask,

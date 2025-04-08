@@ -14,8 +14,6 @@
       />
     </template>
 
-    {{ timelinePending }}
-
     <!-- Loading slot -->
     <template #loading>
       <OAlert
@@ -39,11 +37,6 @@
         <p class="text-slate-500 mb-6">
           Fetch milestone events for this company to see its history
         </p>
-        <OButton
-          @click="refreshTimeline"
-          :loading="timelinePending"
-          label="Generate Timeline"
-        />
       </div>
     </Card>
 
@@ -93,6 +86,7 @@
 <script lang="ts" setup>
 import { OAlert, OButton, OInput } from '@owlint/feathers-vue'
 import { useCompanyStore } from '~/stores/company'
+import { useAgentStore } from '~/stores/agent'
 
 // Set page metadata
 useHead({
@@ -108,7 +102,9 @@ useHead({
 const searchQuery = ref('')
 
 const { companyName } = useCompanyData()
-const { findTimeline, timelinePending } = useAgent()
+const { findTimeline } = useAgent()
+const agentStore = useAgentStore()
+const timelinePending = computed(() => agentStore.getPendingState('timeline'))
 const companyStore = useCompanyStore()
 
 const company = computed(() => {
@@ -137,13 +133,6 @@ const getTimelineEvents = computed(() => {
 const refreshTimeline = async () => {
   await findTimeline(companyName.value)
 }
-
-// Check if timeline data exists on mount, if not, generate it
-onMounted(async () => {
-  if (!hasTimelineData.value) {
-    await findTimeline(companyName.value)
-  }
-})
 
 const filteredEvents = computed(() => {
   if (!searchQuery.value.trim()) {

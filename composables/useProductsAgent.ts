@@ -1,13 +1,12 @@
 export const useProductsAgent = () => {
   const { client, agentIds, withRetry, companyStore } = useBaseAgent();
-  
-  const productsPending = ref(false);
+  const agentStore = useAgentStore();
 
   /**
    * Finds and lists all products and services offered by a company
    */
   const findProducts = async (company: string, onChunk?: (text: string) => void) => {
-    productsPending.value = true;
+    agentStore.setPendingState('products', true);
     
     try {
       await withRetry(
@@ -43,12 +42,12 @@ export const useProductsAgent = () => {
       console.error('Error finding products:', error);
       throw error;
     } finally {
-      productsPending.value = false;
+      agentStore.setPendingState('products', false);
     }
   };
 
   return {
     findProducts,
-    productsPending
+    productsPending: computed(() => agentStore.getPendingState('products'))
   };
 }; 

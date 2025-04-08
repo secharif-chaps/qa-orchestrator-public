@@ -203,8 +203,13 @@ useHead({
 const { companyName, hasPropertyBeenUpdated, getSourcedValue } =
   useCompanyData()
 
-// Use the modular agent composables
-const { timelinePending, profilePending, productsPending, jobOffersPending } = useAgent()
+// Use the agent store directly
+const agentStore = useAgentStore()
+
+const timelinePending = computed(() => agentStore.getPendingState('timeline'))
+const profilePending = computed(() => agentStore.getPendingState('profile'))
+const productsPending = computed(() => agentStore.getPendingState('products'))
+const jobOffersPending = computed(() => agentStore.getPendingState('jobOffers'))
 
 const company = ref<Partial<Company> | null>(null)
 

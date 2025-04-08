@@ -1,7 +1,6 @@
 export const useTimelineAgent = () => {
   const { client, agentIds, withRetry, companyStore } = useBaseAgent();
-  
-  const timelinePending = ref(false);
+  const agentStore = useAgentStore();
 
   /**
    * Generates a timeline of key milestone events for a company
@@ -9,8 +8,8 @@ export const useTimelineAgent = () => {
   const generateTimeline = async (company: string) => {
     const prompt = `Research and provide a timeline of key milestone events for the company ${company}.`;
     
-    timelinePending.value = true;
-    console.log('Timeline generation started, timelinePending:', timelinePending.value);
+    agentStore.setPendingState('timeline', true);
+    console.log('Timeline generation started, timelinePending:', agentStore.getPendingState('timeline'));
     
     try {
       const result = await withRetry(
@@ -43,19 +42,19 @@ export const useTimelineAgent = () => {
         }
       );
 
-      timelinePending.value = false;
-      console.log('Timeline generation completed, timelinePending:', timelinePending.value);
+      agentStore.setPendingState('timeline', false);
+      console.log('Timeline generation completed, timelinePending:', agentStore.getPendingState('timeline'));
       return result;
     } catch (error) {
       console.error('Error during timeline data request:', error);
-      timelinePending.value = false;
-      console.log('Timeline generation failed (request error), timelinePending:', timelinePending.value);
+      agentStore.setPendingState('timeline', false);
+      console.log('Timeline generation failed (request error), timelinePending:', agentStore.getPendingState('timeline'));
       return {};
     }
   };
 
   return {
     generateTimeline,
-    timelinePending
+    timelinePending: computed(() => agentStore.getPendingState('timeline'))
   };
 }; 
