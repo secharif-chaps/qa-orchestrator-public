@@ -1,11 +1,12 @@
 <template>
   <div class="fixed top-0 w-full z-10 pl-4">
-    <div class="bg-bg1 rounded-bl-2xl h-[68px] px-6 shadow-md">
+    <div class="bg-bg1 rounded-bl-2xl h-[68px] pr-6 shadow-md">
       <div class="flex items-center justify-between h-full">
         <NuxtLink to="/">
           <div class="flex items-center space-x-2 text-xl text-primary">
-            <i class="fa fa-leaf"></i>
-            <h1 class="font-extrabold">MINT</h1>
+            <!-- <i class="fa fa-leaf"></i>
+            <h1 class="font-extrabold">MINT</h1> -->
+            <img :src="logo" class="h-24" />
           </div>
         </NuxtLink>
         <div class="max-w-md grow">
@@ -30,7 +31,9 @@
 </template>
 
 <script lang="ts" setup>
-const colors = ['pink', 'indigo', 'emerald']
+import logo from '~/assets/mint.png'
+
+const colors = ['pink', 'indigo', 'emerald',]
 
 const currentTheme = ref('indigo')
 
@@ -50,6 +53,10 @@ const getStyle = (color: string) => {
         : 'text-emerald-500 hover:bg-emerald-300 hover:text-white'
     case 'dark':
       return currentTheme.value === 'dark'
+        ? 'bg-gray-500 text-white'
+        : 'text-gray-500 hover:bg-gray-300 hover:text-white'
+    case 'chaps':
+      return currentTheme.value === 'chaps'
         ? 'bg-gray-500 text-white'
         : 'text-gray-500 hover:bg-gray-300 hover:text-white'
     default:

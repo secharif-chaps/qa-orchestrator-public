@@ -21,6 +21,8 @@
 
   --color-sidebar-border: var(--theme-color-sidebar-border);
   --color-sidebar-count: var(--theme-color-sidebar-count);
+
+  --color-chaps : #197D89;
 }
 
 @layer base {
@@ -51,6 +53,21 @@
     --theme-color-sidebar-border: var(--color-indigo-500);
     --theme-color-sidebar-count: var(--color-indigo-500);
   }
+
+  [data-theme='chaps'] {
+    --theme-color-bg1: var(--color-white);
+    --theme-color-bg2: var(--color-slate-50);
+    --theme-color-bg3: var(--color-slate-100);
+
+    --theme-color-secondary: var(--color-slate-500);
+    --theme-color-error: var(--color-indigo-500);
+    --theme-color-success: var(--color-green-500);
+
+    --theme-color-primary: var(--color-chaps);
+    --theme-color-sidebar-border: #197D89;
+    --theme-color-sidebar-count: #197D89;
+  }
+
 
   [data-theme='emerald'] {
     --theme-color-bg1: var(--color-white);
