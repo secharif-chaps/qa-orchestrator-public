@@ -42,7 +42,7 @@ export const useCompanyStore = defineStore('company', {
     storage: import.meta.client ? localStorage : null,
     
     // Optionally, be explicit about what to persist
-    paths: ['companies', 'currentCompany', 'propertyUpdates'],
+    paths: ['companies'],
     
     // Add debugging
     beforeRestore: (ctx) => {
@@ -128,6 +128,7 @@ export const useCompanyStore = defineStore('company', {
     
     // Update multiple properties at once
     updateCompanyProperties(companyName: string, properties: Partial<Company>) {
+      companyName = companyName.toLocaleLowerCase()
       if (!this.companies[companyName]) {
         this.initCompany(companyName)
       }
@@ -220,6 +221,7 @@ export const useCompanyStore = defineStore('company', {
     },
     
     setCurrentCompany(name: string) {
+      name = name.toLocaleLowerCase()
       if (this.companies[name]) {
         this.currentCompany = name
       } else {
@@ -229,6 +231,7 @@ export const useCompanyStore = defineStore('company', {
     
     // Clean up method
     deleteCompany(name: string) {
+
       if (this.companies[name]) {
         delete this.companies[name]
         delete this.propertyUpdates[name]
@@ -237,6 +240,20 @@ export const useCompanyStore = defineStore('company', {
           this.currentCompany = null
         }
       }
+
+      const lowerCaseName = name.toLocaleLowerCase()
+
+      if (this.companies[lowerCaseName]) {
+        delete this.companies[lowerCaseName]
+        delete this.propertyUpdates[lowerCaseName]
+        
+        if (this.currentCompany === lowerCaseName) {
+          this.currentCompany = null
+        }
+      }
+
+
+
     }
   }
 }) as unknown as () => CompanyStore

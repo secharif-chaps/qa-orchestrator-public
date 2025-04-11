@@ -15,37 +15,26 @@
 
           <!-- Catchphrase - individual property loading -->
           <p
-            v-if="hasPropertyBeenUpdated('profile.catchphrase')"
+            
             class="max-w-lg text-secondary font-bold"
             :title="getSourcedSource(company?.profile?.catchphrase)"
           >
             {{ getSourcedValue(company?.profile?.catchphrase) }}
             <Source :sourced-value="company?.profile?.catchphrase" />
           </p>
-          <p
-            v-else
-            class="text-secondary italic"
-          >
-            Loading catchphrase...
-          </p>
+         
 
           <!-- CEO - individual property loading -->
           <div class="flex items-center gap-2">
             <i class="fa fa-user-tie text-primary"></i>
             <span class="font-semibold">CEO:</span>
             <span
-              v-if="hasPropertyBeenUpdated('profile.ceo')"
               class="text-secondary"
             >
               {{ getSourcedValue(company?.profile?.ceo) || 'Not found ' }}
               <Source :sourced-value="company?.profile?.ceo" />
             </span>
-            <span
-              v-else
-              class="text-secondary italic"
-            >
-              Loading CEO...
-            </span>
+            
           </div>
 
           <!-- HQ - individual property loading -->
@@ -53,27 +42,22 @@
             <i class="fa fa-map-marker text-primary"></i>
             <span class="font-semibold">HQ:</span>
             <span
-              v-if="hasPropertyBeenUpdated('profile.hq')"
+              
               class="text-secondary"
             >
               {{ getSourcedValue(company?.profile?.hq) || 'Not found' }}
               <Source :sourced-value="company?.profile?.hq" />
             </span>
-            <span
-              v-else
-              class="text-secondary italic"
-            >
-              Loading HQ...
-            </span>
+          
           </div>
 
           <!-- Social Media - individual property loading -->
           <div
-            v-if="hasPropertyBeenUpdated('social_media')"
+           
             class="space-x-2 text-primary"
           >
             <div
-              v-if="hasPropertyBeenUpdated('social_media')"
+              
               class="space-x-2 text-primary"
             >
               <NuxtLink
@@ -90,12 +74,7 @@
               </NuxtLink>
             </div>
           </div>
-          <div
-            v-else
-            class="text-secondary italic"
-          >
-            Loading social media...
-          </div>
+      
         </div>
       </div>
       <div class="lg:flex gap-2 hidden">

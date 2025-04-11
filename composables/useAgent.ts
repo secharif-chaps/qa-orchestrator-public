@@ -6,7 +6,7 @@ export const useAgent = () => {
   const productsAgent = useProductsAgent();
   const jobOffersAgent = useJobOffersAgent();
   const chatAgent = useChatAgent();
-  
+  const teamAgent = useTeamAgent();
   // Return a unified interface that matches the original useAgent API
   return {
     // Company profile functionality
@@ -21,6 +21,9 @@ export const useAgent = () => {
 
     // Job offers functionality
     findJobOffers: jobOffersAgent.findJobOffers,
+
+    // Team functionality
+    findTeam: teamAgent.findTeamHierarchy,
     
     // Chat functionality
     ask: chatAgent.ask,

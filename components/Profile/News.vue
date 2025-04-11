@@ -7,7 +7,7 @@
       </h3>
       <div class="mt-4">
         <!-- Recent News - individual property loading -->
-        <div v-if="hasPropertyBeenUpdated('recent_news')">
+        <div>
           <ul class="list-disc pl-4">
             <li
               class="space-x-2 text-secondary"
@@ -26,12 +26,7 @@
             </li>
           </ul>
         </div>
-        <div
-          v-else
-          class="text-secondary italic"
-        >
-          Loading recent news...
-        </div>
+      
       </div>
     </div>
   </Card>

@@ -10,7 +10,7 @@
 
       <!-- CSR Initiatives - individual property loading -->
       <div>Responsibility</div>
-      <div v-if="hasPropertyBeenUpdated('csr.responsibility_initiatives')">
+      <div >
         <ul class="list-disc">
           <li
             class="space-x-2 text-secondary"
@@ -29,16 +29,10 @@
           </li>
         </ul>
       </div>
-      <div
-        v-else
-        class="text-secondary italic"
-      >
-        Loading initiatives...
-      </div>
-
+   
       <!-- Charity Actions - individual property loading -->
       <div>Charity Initiative</div>
-      <div v-if="hasPropertyBeenUpdated('csr.charity_actions')">
+      <div>
         <span
           class="text-sm text-secondary"
           v-if="company?.csr?.charity_actions"
@@ -50,12 +44,7 @@
           }}
         </span>
       </div>
-      <div
-        v-else
-        class="text-secondary italic"
-      >
-        Loading charity initiatives...
-      </div>
+    
     </div>
   </Card>
 </template>

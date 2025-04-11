@@ -4,7 +4,14 @@ export type SourcedValue<T> = {
   source: string;
 };
 
-export type Company = {
+export interface TeamMember {
+  position: string;
+  firstName: string;
+  lastName: string;
+  subordinates?: TeamMember[];
+}
+
+export interface Company {
   meta?: {
     company_name: string;
     query_date: string;
@@ -71,4 +78,6 @@ export type Company = {
     hiring_focus: SourcedValue<string>;
     growth_indicators: SourcedValue<string>;
   };
-};
+  team?: TeamMember[];
+}
+

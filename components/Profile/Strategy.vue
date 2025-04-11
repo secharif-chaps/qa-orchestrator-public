@@ -12,11 +12,7 @@
       <div>Digital Strategy</div>
       <div
         class="text-secondary"
-        v-if="
-          hasPropertyBeenUpdated(
-            'digital_strategy_and_social_media.digital_strategy'
-          )
-        "
+       
       >
         {{
           getSourcedValue(
@@ -29,12 +25,7 @@
           "
         />
       </div>
-      <div
-        v-else
-        class="text-secondary italic"
-      >
-        Loading digital strategy...
-      </div>
+     
 
       <div class="col-span-2 border-b-2 border-slate-200"></div>
 
@@ -42,11 +33,7 @@
       <div>Loyalty program</div>
       <div
         class="text-secondary"
-        v-if="
-          hasPropertyBeenUpdated(
-            'digital_strategy_and_social_media.loyalty_program'
-          )
-        "
+  
       >
         {{
           getSourcedValue(
@@ -59,22 +46,12 @@
           "
         />
       </div>
-      <div
-        v-else
-        class="text-secondary italic"
-      >
-        Loading loyalty program...
-      </div>
+    
 
       <!-- Online Services - individual property loading -->
       <div>Online Services</div>
       <div
         class="text-secondary"
-        v-if="
-          hasPropertyBeenUpdated(
-            'digital_strategy_and_social_media.online_services'
-          )
-        "
       >
         {{
           (
@@ -83,12 +60,6 @@
             ) || []
           ).join(', ') || 'Not found'
         }}
-      </div>
-      <div
-        v-else
-        class="text-secondary italic"
-      >
-        Loading online services...
       </div>
     </div>
   </Card>

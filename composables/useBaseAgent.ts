@@ -73,7 +73,8 @@ export const useBaseAgent = () => {
     chat: runtimeConfig.public.mistralAgentChat,
     timeline: runtimeConfig.public.mistralAgentTimeline,
     products: runtimeConfig.public.mistralAgentProducts,
-    jobs: runtimeConfig.public.mistralAgentJobs
+    jobs: runtimeConfig.public.mistralAgentJobs,
+    team: runtimeConfig.public.mistralAgentTeam
   };
   
   // Streaming mode toggle

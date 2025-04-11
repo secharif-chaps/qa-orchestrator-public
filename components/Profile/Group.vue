@@ -4,18 +4,13 @@
       <div>Group</div>
       <!-- Group name - individual property loading -->
       <div
-        v-if="hasPropertyBeenUpdated('profile.group_name')"
+
         class="text-secondary"
       >
         {{ getSourcedValue(company?.profile?.group_name) ?? 'Not found' }}
         <Source :sourced-value="company?.profile?.group_name" />
       </div>
-      <div
-        v-else
-        class="text-secondary italic"
-      >
-        Loading...
-      </div>
+     
     </div>
   </Card>
 </template>

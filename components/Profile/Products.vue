@@ -10,7 +10,7 @@
 
       <!-- Product Range - individual property loading -->
       <div>Product Range</div>
-      <div v-if="hasPropertyBeenUpdated('products_and_services.product_range')">
+      <div>
         <span class="text-sm text-secondary">
           {{
             (
@@ -21,17 +21,10 @@
           }}
         </span>
       </div>
-      <div
-        v-else
-        class="text-secondary italic"
-      >
-        Loading product range...
-      </div>
 
       <!-- Partner Brands - individual property loading -->
       <div>Partner Brand</div>
       <div
-        v-if="hasPropertyBeenUpdated('products_and_services.partner_brands')"
       >
         <ul class="list-disc">
           <li
@@ -52,17 +45,12 @@
           </li>
         </ul>
       </div>
-      <div
-        v-else
-        class="text-secondary italic"
-      >
-        Loading partner brands...
-      </div>
+
 
       <!-- Private Labels - individual property loading -->
       <div>{{ company?.profile?.name.value || companyName }} private label</div>
       <div
-        v-if="hasPropertyBeenUpdated('products_and_services.private_labels')"
+       
       >
         <ul class="list-disc">
           <li
@@ -83,12 +71,7 @@
           </li>
         </ul>
       </div>
-      <div
-        v-else
-        class="text-secondary italic"
-      >
-        Loading private labels...
-      </div>
+   
     </div>
   </Card>
 </template>

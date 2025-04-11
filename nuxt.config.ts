@@ -16,7 +16,8 @@ export default defineNuxtConfig({
       mistralAgentChat: '',
       mistralAgentTimeline: '',
       mistralAgentProducts: '',
-      mistralAgentJobs: ''
+      mistralAgentJobs: '',
+      mistralAgentTeam: ''
     }
   },
 

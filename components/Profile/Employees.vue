@@ -4,14 +4,9 @@
       <div
         class="bg-orange-100 lg:w-2/3 text-orange-500 mx-auto px-2 py-2 rounded"
       >
-        <span v-if="hasPropertyBeenUpdated('profile.employee_count')">
+        <span >
           {{ getSourcedValue(company?.profile?.employee_count) ?? 'Not found' }}
         </span>
-        <span
-          v-else
-          class="text-gray-500"
-          >...</span
-        >
       </div>
       <div>Number of employees</div>
       <Source

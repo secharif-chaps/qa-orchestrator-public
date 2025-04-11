@@ -39,17 +39,12 @@
 
           <div>
             <p
-              v-if="hasPropertyBeenUpdated('profile.catchphrase')"
+              
               class="text-gray-600"
             >
               {{ getSourcedValue(company?.profile?.catchphrase) }}
             </p>
-            <p
-              v-else
-              class="text-gray-400 italic"
-            >
-              Loading company information...
-            </p>
+            
           </div>
 
           <div class="flex flex-col gap-2">
@@ -89,7 +84,7 @@
             </div>
 
             <div
-              v-if="hasPropertyBeenUpdated('social_media')"
+
               class="flex space-x-3 self-center mt-2"
             >
               <a
@@ -160,11 +155,11 @@
         />
 
         <InfoCard
-          disabled
           title="Team & Management"
           description="Leadership team, organizational structure, and key personnel."
           icon="fa-users"
           :to="`/cards/${companyName}/team`"
+          :loading="teamPending"
         />
 
         <InfoCard
@@ -193,6 +188,7 @@
 import { OAlert } from '@owlint/feathers-vue'
 import { useCompanyStore } from '~/stores/company'
 import type { Company } from '~/types.global'
+import { useAgentStore } from '~/stores/agent'
 
 // Set page metadata
 useHead({
@@ -210,6 +206,7 @@ const timelinePending = computed(() => agentStore.getPendingState('timeline'))
 const profilePending = computed(() => agentStore.getPendingState('profile'))
 const productsPending = computed(() => agentStore.getPendingState('products'))
 const jobOffersPending = computed(() => agentStore.getPendingState('jobOffers'))
+const teamPending = computed(() => agentStore.getPendingState('team'))
 
 const company = ref<Partial<Company> | null>(null)
 

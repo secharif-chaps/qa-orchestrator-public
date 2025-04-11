@@ -4,20 +4,16 @@
       <div
         class="bg-purple-100 lg:w-2/3 text-purple-500 mx-auto px-2 py-2 rounded"
       >
-        <span v-if="hasPropertyBeenUpdated('profile.revenue')">
+        <span >
           {{ getSourcedValue(company?.profile?.revenue) ?? 'Not found' }}
         </span>
 
-        <span
-          v-else
-          class="text-gray-500"
-          >...</span
-        >
+      
       </div>
 
       <div>Revenue</div>
       <Source
-        v-if="hasPropertyBeenUpdated('profile.revenue')"
+        
         :sourced-value="company?.profile?.revenue"
       />
     </div>

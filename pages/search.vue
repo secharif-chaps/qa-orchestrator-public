@@ -72,7 +72,7 @@ const website = ref('')
 const companyError = ref('')
 const websiteError = ref('')
 
-const { findProfile, findTimeline, findProducts, findJobOffers } = useAgent()
+const { findProfile, findTimeline, findProducts, findJobOffers, findTeam } = useAgent()
 
 const companyStore = useCompanyStore()
 const router = useRouter()
@@ -155,6 +155,10 @@ const startSearch = async () => {
     // Wait 3s before job offers
     await new Promise(resolve => setTimeout(resolve, 3000))
     findJobOffers(trimmedCompany)
+
+    // Wait 3s before team
+    await new Promise(resolve => setTimeout(resolve, 3000))
+    findTeam(trimmedCompany)
 
     // Redirect to the company page
     router.push(`/cards/${trimmedCompany}`)

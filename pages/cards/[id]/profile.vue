@@ -2,11 +2,11 @@
   <LayoutsCompanyCard
     title="Company Profile"
     icon="fa-building"
-    :loading="isProfileLoading"
+    :loading="profilePending"
   >
     <template #actions>
       <OButton
-        v-if="hasAnyData"
+
         @click="retriggerProfileSearch"
         :loading="profilePending"
         icon="fa-refresh"
@@ -20,11 +20,11 @@
       <OAlert
         v-if="!hasAnyData"
         message="Loading company information..."
-        title="Please wait"
-        icon="fa-spinner fa-spin"
+        title="Oops"
+        icon="fa-bug"
         color="blue"
+        description="Something went wrong while fetching the company profile. Please try again."
       >
-        <p>Fetching data from AI agent...</p>
       </OAlert>
       <!-- Insights section (only show if we have insights) -->
       <OAlert
@@ -115,48 +115,10 @@ const company = ref<Partial<Company> | null>(null)
 const hasAnyData = ref(false)
 const isCompanyNew = ref(true)
 
-// Track loading states for different sections
-const isProfileLoading = computed(() => {
-  return (
-    profilePending.value || (!hasAnyData.value && !hasPropertyBeenUpdated('profile'))
-  )
-})
-
 const retriggerProfileSearch = async () => {
   if (companyName.value) {
-    // Reset the company data to trigger a fresh search
-    companyStore.deleteCompany(companyName.value)
-    companyStore.initCompany(companyName.value)
-    hasAnyData.value = false
-    isCompanyNew.value = true
-    
     // Trigger the profile search
     await findProfile(companyName.value, company.value?.profile?.website?.value)
   }
 }
-
-// Subscribe to company store for updates
-watch(
-  () => companyStore.getCompanyByName(companyName.value),
-  (newCompany) => {
-    if (newCompany) {
-      company.value = newCompany
-      hasAnyData.value = true
-      isCompanyNew.value = false
-    }
-  },
-  { immediate: true, deep: true }
-)
-
-// Initialize the company in the store if it doesn't exist yet
-onMounted(() => {
-  if (!companyStore.getCompanyByName(companyName.value)) {
-    companyStore.initCompany(companyName.value)
-    isCompanyNew.value = true
-  } else {
-    company.value = companyStore.getCompanyByName(companyName.value)
-    hasAnyData.value = true
-    isCompanyNew.value = false
-  }
-})
 </script>

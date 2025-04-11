@@ -4,7 +4,9 @@ import type { SourcedValue } from '~/types.global'
 export function useCompanyData() {
   const route = useRoute()
   const companyStore = useCompanyStore()
-  const companyName = computed(() => route.params.id as string)
+  const companyName = computed(() => {
+    return (route.params.id as string)?.toLocaleLowerCase() || ''
+  })
   
   const company = computed(() => companyStore.getCompanyByName(companyName.value))
   const hasAnyData = computed(() => !!company.value)
