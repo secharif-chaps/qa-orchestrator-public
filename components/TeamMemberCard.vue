@@ -2,8 +2,8 @@
   <div class="border rounded-lg p-4">
     <div class="flex items-center justify-between">
       <div>
-        <h3 class="font-semibold text-lg">{{ member.position }}</h3>
-        <p class="text-slate-600">{{ member.firstName }} {{ member.lastName }}</p>
+        <h3 class="text-slate-600">{{ member.firstName }} {{ member.lastName }}</h3>
+        <p class="font-semibold text-lg">{{ member.position }}</p>
       </div>
     </div>
 

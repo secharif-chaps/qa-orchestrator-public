@@ -1,38 +1,61 @@
 <template>
-  <div class="bg-white p-4 rounded-lg shadow border border-slate-200">
+  <div class="bg-white p-4 rounded-lg shadow-lg w-[300px] hover:ring-4"
+:class="{ ' ring-purple-600': data.level <= 1,
+' ring-orange-400': data.level > 1 , 'ring-4': selected }"
+>
+<div class="flex items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center">
+<i class="fa fa-user text-bg1"></i>
+</div>
     <div class="flex flex-col">
-      <div class="font-semibold text-primary">{{ data.position }}</div>
-      <div class="text-sm text-slate-600">{{ data.firstName }} {{ data.lastName }}</div>
+
+      <div class="font-semibold">{{ data.firstName }} {{ data.lastName }}</div>
+      <div class="text-sm text-secondary">{{ data.position }}</div>
+
     </div>
+</div>
+
     <Handle
       type="target"
       :position="Position.Top"
-      class="!bg-slate-400"
+      class=" !border-4"
+      :class="{ 'opacity-0': data.level === 0,
+      '!bg-purple-600': data.level === 1,
+      '!bg-orange-400': data.level > 1 }"
     />
     <Handle
       type="source"
       :position="Position.Bottom"
-      class="!bg-slate-400"
+      class="!bg-slate-400 opacity-0"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Handle, Position, type NodeProps } from '@vue-flow/core'
+import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
+
+// todo check if the team member is the head of the company
 
 interface TeamMemberData {
   position: string
   firstName: string
   lastName: string
+  level: number
+  selected: boolean
 }
 
 const props = defineProps<NodeProps<TeamMemberData>>()
+
+const { edges } = useVueFlow()
+
 </script>
 
 <style scoped>
 .vue-flow__handle {
-  width: 8px;
-  height: 8px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
+  border-width: 4px;
+
 }
 </style> 
