@@ -1,11 +1,11 @@
 // stores/company.ts
 import { defineStore } from 'pinia';
 import type { Company, SourcedValue } from '~/types.global';
+import { ref, computed } from 'vue';
 
 interface CompanyState {
   companies: Record<string, Partial<Company>>;
   currentCompany: string | null;
-  propertyUpdates: Record<string, Record<string, boolean>>;
 }
 
 // Définir l'interface du store
@@ -13,13 +13,11 @@ export interface CompanyStore {
   // state
   companies: Record<string, Partial<Company>>;
   currentCompany: string | null;
-  propertyUpdates: Record<string, Record<string, boolean>>;
   
   // getters
   getCurrentCompany: () => Partial<Company> | null;
   getCompanyByName: (name: string) => Partial<Company> | null;
   getCompanyList: () => Partial<Company>[];
-  hasPropertyBeenUpdated: (companyName: string, propertyPath: string) => boolean;
   
   // actions
   initCompany: (name: string) => void;
@@ -30,230 +28,115 @@ export interface CompanyStore {
   deleteCompany: (name: string) => void;
 }
 
-export const useCompanyStore = defineStore('company', {
-  state: (): CompanyState => ({
-    companies: {},
-    currentCompany: null,
-    propertyUpdates: {}
-  }),
+export const useCompanyStore = defineStore('company', () => {
+  // State
+  const companies = ref<Record<string, Partial<Company>>>({});
+  const currentCompany = ref<string | null>(null);
 
-  persist: {
-    // Be explicit about storage type
-    storage: import.meta.client ? localStorage : null,
-    
-    // Optionally, be explicit about what to persist
-    paths: ['companies'],
-    
-    // Add debugging
-    beforeRestore: (ctx) => {
-      console.log('About to restore state:', ctx);
-    },
-    afterRestore: (ctx) => {
-      console.log('State restored:', ctx);
+  const router = useRouter()
+
+  // Getters
+  const getCurrentCompany = computed(() => {
+    if (!currentCompany.value) return null;
+    return companies.value[currentCompany.value] || null;
+  });
+
+  const getCompanyByName = (name: string) => {
+    return companies.value[name] || null;
+  };
+
+  const getCompanyList = computed(() => {
+    return Object.values(companies.value);
+  });
+
+  // Actions
+  const initCompany = (name: string, website: string) => {
+    if (!companies.value[name]) {
+      companies.value[name] = {
+        name,
+        website,
+      };
+    } else {
+      console.log('Company already exists');
     }
-  },
+  };
 
-  getters: {
-    getCurrentCompany: (state) => {
-      if (!state.currentCompany) return null
-      return state.companies[state.currentCompany] || null
-    },
-    
-    getCompanyByName: (state) => (name: string) => {
-      return state.companies[name] || null
-    },
-    
-    getCompanyList: (state) => {
-      return Object.values(state.companies)
-    },
-    
-    // Check if a specific property has been updated
-    hasPropertyBeenUpdated: (state) => (companyName: string, propertyPath: string) => {
-      const companyUpdates = state.propertyUpdates[companyName]
-      if (!companyUpdates) return false
-      return companyUpdates[propertyPath] || false
+  const startSearch = async (company: string, website: string) => {
+    try {
+      if (!companies.value[company]) {
+        initCompany(company, website);
+      }
+      companies.value[company].pending = true;
+      router.push(`/cards/${company}`)
+
+      const response = await fetch('https://nico-mrc.app.n8n.cloud/webhook-test/57be7c18-e8b2-47aa-b9aa-f7c2696f4523', {
+        method: 'POST',
+        body: JSON.stringify({
+          company: company,
+          website: website
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      let data = await response.json();
+      data = data[0].data[0].output;
+      
+      companies.value[company]  = {...companies.value[company], ...data};
+      
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      companies.value[company].pending = false;
     }
-  },
+  };
 
-  actions: {
-    // Initialize a company with empty data
-    initCompany(name: string) {
-      if (name && !this.companies[name]) {
-        // Initialize with SourcedValue for name
-        this.companies[name] = {
-          profile: { 
-            name: { 
-              value: name, 
-              source: 'user input' 
-            } as SourcedValue<string>
-          }
-        }
-      }
-      
-      // Initialize property updates tracking
-      if (!this.propertyUpdates[name]) {
-        this.propertyUpdates[name] = {}
-      }
-      
-      this.currentCompany = name
-    },
-    
-    // Update a specific property path in the company object
-    updateCompanyProperty(companyName: string, propertyPath: string, value: any) {
-      if (!this.companies[companyName]) {
-        this.initCompany(companyName)
-      }
-      
-      // Set value by path
-      const parts = propertyPath.split('.')
-      let current = this.companies[companyName]
-      
-      for (let i = 0; i < parts.length - 1; i++) {
-        const part = parts[i]
-        if (!current[part]) {
-          current[part] = {}
-        }
-        current = current[part]
-      }
-      
-      const lastPart = parts[parts.length - 1]
-      current[lastPart] = value
-      
-      // Mark this property as updated
-      if (!this.propertyUpdates[companyName]) {
-        this.propertyUpdates[companyName] = {}
-      }
-      this.propertyUpdates[companyName][propertyPath] = true
-    },
-    
-    // Update multiple properties at once
-    updateCompanyProperties(companyName: string, properties: Partial<Company>) {
-      companyName = companyName.toLocaleLowerCase()
-      if (!this.companies[companyName]) {
-        this.initCompany(companyName)
-      }
-      
-      // Function to recursively merge objects
-      const deepMerge = (target, source) => {
-        const output = { ...target }
-        
-        if (isObject(target) && isObject(source)) {
-          Object.keys(source).forEach(key => {
-            if (isObject(source[key])) {
-              if (!(key in target)) {
-                Object.assign(output, { [key]: source[key] })
-              } else {
-                output[key] = deepMerge(target[key], source[key])
-              }
-            } else if (Array.isArray(source[key])) {
-              // For arrays, we replace rather than merge
-              output[key] = [...source[key]]
-            } else {
-              Object.assign(output, { [key]: source[key] })
-            }
-          })
-        }
-        
-        return output
-      }
-      
-      // Helper to check if value is an object
-      const isObject = (item) => {
-        return (item && typeof item === 'object' && !Array.isArray(item))
-      }
-      
-      // Merge the properties with existing company data
-      this.companies[companyName] = deepMerge(this.companies[companyName], properties)
-      
-      // Mark all the top-level properties as updated
-      if (!this.propertyUpdates[companyName]) {
-        this.propertyUpdates[companyName] = {}
-      }
-      
-      // Recursively mark all property paths as updated
-      const markUpdated = (obj, prefix = '') => {
-        for (const key in obj) {
-          const path = prefix ? `${prefix}.${key}` : key
-          this.propertyUpdates[companyName][path] = true
-          
-          if (isObject(obj[key])) {
-            markUpdated(obj[key], path)
-          }
-        }
-      }
-      
-      markUpdated(properties)
-    },
-    
-    // Set complete company data
-    setCompanyData(name: string, data: Partial<Company>) {
-
-      name = name.toLocaleLowerCase()
-
-      if (!this.companies[name]) {
-        this.initCompany(name)
-      }
-      
-      
-      // Replace all data
-      this.companies[name] = {
-        ...data,
-      }
-      
-      // Mark all properties as updated
-      if (!this.propertyUpdates[name]) {
-        this.propertyUpdates[name] = {}
-      }
-      
-      // Recursively mark all property paths as updated
-      const markUpdated = (obj, prefix = '') => {
-        for (const key in obj) {
-          const path = prefix ? `${prefix}.${key}` : key
-          this.propertyUpdates[name][path] = true
-          
-          if (obj[key] && typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
-            markUpdated(obj[key], path)
-          }
-        }
-      }
-      
-      markUpdated(data)
-    },
-    
-    setCurrentCompany(name: string) {
-      name = name.toLocaleLowerCase()
-      if (this.companies[name]) {
-        this.currentCompany = name
-      } else {
-        this.initCompany(name)
-      }
-    },
-    
-    // Clean up method
-    deleteCompany(name: string) {
-
-      if (this.companies[name]) {
-        delete this.companies[name]
-        delete this.propertyUpdates[name]
-        
-        if (this.currentCompany === name) {
-          this.currentCompany = null
-        }
-      }
-
-      const lowerCaseName = name.toLocaleLowerCase()
-
-      if (this.companies[lowerCaseName]) {
-        delete this.companies[lowerCaseName]
-        delete this.propertyUpdates[lowerCaseName]
-        
-        if (this.currentCompany === lowerCaseName) {
-          this.currentCompany = null
-        }
-      }
-
-
-
+  const setCurrentCompany = (name: string) => {
+    name = name.toLocaleLowerCase();
+    if (companies.value[name]) {
+      currentCompany.value = name;
+    } else {
+      initCompany(name, '');
     }
-  }
-}) as unknown as () => CompanyStore
+  };
+
+  const deleteCompany = (name: string) => {
+    if (companies.value[name]) {
+      delete companies.value[name];
+      delete propertyUpdates.value[name];
+      
+      if (currentCompany.value === name) {
+        currentCompany.value = null;
+      }
+    }
+
+    const lowerCaseName = name.toLocaleLowerCase();
+
+    if (companies.value[lowerCaseName]) {
+      delete companies.value[lowerCaseName];
+      delete propertyUpdates.value[lowerCaseName];
+      
+      if (currentCompany.value === lowerCaseName) {
+        currentCompany.value = null;
+      }
+    }
+  };
+
+  return {
+    // State
+    companies,
+    currentCompany,
+
+    // Getters
+    getCurrentCompany,
+    getCompanyByName,
+    getCompanyList,
+
+    // Actions
+    initCompany,
+    startSearch,
+    setCurrentCompany,
+    deleteCompany
+  };
+}) as unknown as () => CompanyStore;

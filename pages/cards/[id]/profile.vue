@@ -2,41 +2,18 @@
   <LayoutsCompanyCard
     title="Company Profile"
     icon="fa-building"
-    :loading="profilePending"
+    v-if="company"
+    :loading="company.pending"
   >
     <template #actions>
-      <OButton
 
-        @click="retriggerProfileSearch"
-        :loading="profilePending"
-        icon="fa-refresh"
-        type="secondary"
-      >
-        Refresh Profile
-      </OButton>
     </template>
 
     <template #loading>
-      <OAlert
-        v-if="!hasAnyData"
-        message="Loading company information..."
-        title="Oops"
-        icon="fa-bug"
-        color="blue"
-        description="Something went wrong while fetching the company profile. Please try again."
-      >
-      </OAlert>
       <!-- Insights section (only show if we have insights) -->
+      
       <OAlert
-        v-if="hasPropertyBeenUpdated('insights')"
-        message="This company is a member of the Sephora group"
-        title="Insights"
-        icon="fa-wand-magic-sparkles"
-        :description="company?.insights?.value"
-      >
-      </OAlert>
-      <OAlert
-        v-else-if="!isCompanyNew"
+        v-if="company.pending"
         message="Loading insights..."
         title="Insights"
         icon="fa-spinner-third animate-spin"
@@ -92,10 +69,8 @@
 
 <script lang="ts" setup>
 import { Profile } from '#components'
-import { OAlert, OButton } from '@owlint/feathers-vue'
+import { OAlert } from '@owlint/feathers-vue'
 import { useCompanyStore } from '~/stores/company'
-import type { Company } from '~/types.global'
-import { useAgentStore } from '~/stores/agent'
 
 // Set page metadata
 useHead({
@@ -103,22 +78,15 @@ useHead({
   meta: [{ name: 'description', content: 'Company Profile Details' }],
 })
 
-const { companyName, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
-const { findProfile } = useAgent()
-const agentStore = useAgentStore()
-const profilePending = computed(() => agentStore.getPendingState('profile'))
-const companyStore = useCompanyStore()
+const { company } = useCompanyData()
 
-const company = ref<Partial<Company> | null>(null)
+const router = useRouter()
 
-// Set up company data
-const hasAnyData = ref(false)
-const isCompanyNew = ref(true)
-
-const retriggerProfileSearch = async () => {
-  if (companyName.value) {
-    // Trigger the profile search
-    await findProfile(companyName.value, company.value?.profile?.website?.value)
+onMounted(() => {
+  if (!company.value) {
+    router.push('/cards')
   }
-}
+})
+
+
 </script>

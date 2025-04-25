@@ -4,17 +4,14 @@ import type { SourcedValue } from '~/types.global'
 export function useCompanyData() {
   const route = useRoute()
   const companyStore = useCompanyStore()
+
   const companyName = computed(() => {
     return (route.params.id as string)?.toLocaleLowerCase() || ''
   })
   
   const company = computed(() => companyStore.getCompanyByName(companyName.value))
+
   const hasAnyData = computed(() => !!company.value)
-  const isCompanyNew = ref(true)
-  
-  const hasPropertyBeenUpdated = (propertyPath: string) => {
-    return companyStore.hasPropertyBeenUpdated(companyName.value, propertyPath)
-  }
   
   // Helper function to extract values from SourcedValue fields
   const getSourcedValue = <T>(sourcedValue: SourcedValue<T> | undefined): T | undefined => {
@@ -49,21 +46,12 @@ export function useCompanyData() {
     if (!sourcedArray) return []
     return sourcedArray.map(item => item.source)
   }
-  
-  onMounted(() => {
-    if (!company.value) {
-      companyStore.initCompany(companyName.value)
-    } else {
-      isCompanyNew.value = false
-    }
-  })
+
   
   return {
     company,
     companyName,
     hasAnyData,
-    isCompanyNew,
-    hasPropertyBeenUpdated,
     getSourcedValue,
     getSourcedSourceName,
     getSourcedSource,

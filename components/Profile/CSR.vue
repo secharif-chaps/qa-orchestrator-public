@@ -50,5 +50,5 @@
 </template>
 
 <script lang="ts" setup>
-const { company, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
+const { company, getSourcedValue } = useCompanyData()
 </script>

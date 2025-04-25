@@ -14,7 +14,7 @@
         <span class="text-sm text-secondary">
           {{
             (
-              company?.products_and_services?.product_range.map(
+              company?.products?.range.map(
                 (p) => p.value
               ) || []
             ).join(', ') || 'Not found'
@@ -29,7 +29,7 @@
         <ul class="list-disc">
           <li
             class="text-secondary space-x-2"
-            v-for="brand in company?.products_and_services?.partner_brands ||
+            v-for="brand in company?.products?.partnerBrands ||
             []"
           >
             <span class="text-sm">
@@ -38,7 +38,7 @@
             <Source :sourced-value="company?.profile?.group_name" />
           </li>
           <li
-            v-if="company?.products_and_services?.partner_brands?.length === 0"
+            v-if="company?.products?.partnerBrands?.length === 0"
             class="text-sm text-secondary"
           >
             Not found
@@ -48,14 +48,14 @@
 
 
       <!-- Private Labels - individual property loading -->
-      <div>{{ company?.profile?.name.value || companyName }} private label</div>
+      <div>{{ company?.name }} private label</div>
       <div
        
       >
         <ul class="list-disc">
           <li
             class="space-x-2 text-secondary"
-            v-for="brand in company?.products_and_services?.private_labels ||
+            v-for="brand in company?.products?.privateLabels ||
             []"
           >
             <span class="text-sm">
@@ -64,7 +64,7 @@
             <Source :sourced-value="company?.profile?.group_name" />
           </li>
           <li
-            v-if="company?.products_and_services?.private_labels?.length === 0"
+            v-if="company?.products?.privateLabels?.length === 0"
             class="text-sm text-secondary"
           >
             Not found
@@ -77,5 +77,5 @@
 </template>
 
 <script lang="ts" setup>
-const { company, companyName, hasPropertyBeenUpdated } = useCompanyData()
+const { company } = useCompanyData()
 </script>

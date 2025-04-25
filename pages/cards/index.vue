@@ -71,11 +71,11 @@
                     class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 group-hover:text-primary cursor-pointer"
                     @click="
                       $router.push(
-                        '/cards/' + getSourcedValue(company.profile.name)
+                        '/cards/' + company.name
                       )
                     "
                   >
-                    {{ getSourcedValue(company.profile.name) }}
+                    {{ company.name }}
                   </td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                     You
@@ -94,14 +94,14 @@
                         :title="$t('cards.actions.view')"
                         @click="
                           $router.push(
-                            '/cards/' + getSourcedValue(company.profile.name)
+                            '/cards/' + company.name
                           )
                         "
                       >
                       </OButton>
                       <OButton
                         @click="
-                          deleteCompany(getSourcedValue(company.profile.name))
+                          deleteCompany(company.name)
                         "
                         icon="fa-trash"
                         color="red"
@@ -129,10 +129,8 @@ import { useCompanyStore } from '~/stores/company'
 const companyStore = useCompanyStore()
 
 const companies = computed(() => {
-  return companyStore.getCompanyList.filter((c) => c.profile?.name)
+  return companyStore.getCompanyList.filter((c) => c.name)
 })
-
-const { getSourcedValue } = useCompanyData()
 
 // Delete functionality
 const deleteCompany = (companyName) => {

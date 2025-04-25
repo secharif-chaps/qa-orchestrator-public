@@ -8,13 +8,12 @@
 
     <template #loading>
       <OAlert
-        v-if="!hasAnyData"
-        message="Loading company information..."
+        v-if="company?.pending"
+        description="Loading company information..."
         title="Please wait"
         icon="fa-spinner fa-spin"
         color="blue"
       >
-        <p>Fetching data from AI agent...</p>
       </OAlert>
     </template>
 
@@ -32,7 +31,7 @@
             </div>
             <div>
               <h2 class="text-2xl font-bold">
-                {{ getSourcedValue(company?.profile?.name) || companyName }}
+                {{ company?.name }}
               </h2>
             </div>
           </div>
@@ -50,18 +49,18 @@
           <div class="flex flex-col gap-2">
             <div class="flex items-center bg-bg1 px-4 py-2 rounded-lg gap-2">
               <i class="fa fa-link"></i>
-              <p>Website</p>
+              <p></p>
               <a
-                :href="getSourcedValue(company?.profile?.website)"
+                :href="company?.website"
                 target="_blank"
                 class="text-secondary hover:underline hover:text-primary"
               >
-                {{ getSourcedValue(company?.profile?.website) }}
+                {{ company?.website }}
               </a>
             </div>
             <div class="flex items-center bg-bg1 px-4 py-2 rounded-lg gap-2">
               <i class="fa fa-map-marker"></i>
-              <p>HQ</p>
+              <p></p>
               <span class="text-secondary">
                 {{ getSourcedValue(company?.profile?.hq) || 'Unknown' }}
               </span>
@@ -196,8 +195,7 @@ useHead({
   meta: [{ name: 'description', content: 'Company Information Dashboard' }],
 })
 
-const { companyName, hasPropertyBeenUpdated, getSourcedValue } =
-  useCompanyData()
+const { companyName, getSourcedValue } = useCompanyData()
 
 // Use the agent store directly
 const agentStore = useAgentStore()

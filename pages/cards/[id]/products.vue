@@ -6,20 +6,13 @@
   >
     <!-- Actions slot -->
     <template #actions>
-      <OButton
-        type="secondary"
-        icon="fa-refresh"
-        :loading="productsPending"
-        @click="refreshProducts"
-      >
-        Refresh Products
-      </OButton>
+
     </template>
 
     <!-- Loading slot -->
     <template #loading>
       <OAlert
-        v-if="productsPending"
+        v-if="company.pending"
         message="Loading products information..."
         title="Please wait"
         description="Products information will be displayed here once available."
@@ -27,11 +20,20 @@
         color="blue"
       >
       </OAlert>
+
+    <OAlert
+        v-if="company?.products?.insights"
+        title="Products Insights"
+        :description="company?.products?.insights"
+        icon="fa-magic"
+        color="blue"
+      >
+      </OAlert>
     </template>
 
     <!-- Main content -->
     <div
-      v-if="!productsPending && hasProducts"
+      v-if="!company.pending && products"
       class="card grid @min-6xl:grid-cols-3 @max-6xl:grid-cols-2 gap-4"
     >
       <div
@@ -54,7 +56,7 @@
 
     <!-- No products state -->
     <OAlert
-      v-else-if="!productsPending"
+      v-else-if="!company.pending && !products"
       message="No products information available yet."
       title="No Data"
       description="Products information will be displayed here once available."
@@ -76,27 +78,13 @@ useHead({
   meta: [{ name: 'description', content: 'Company Products and Services' }],
 })
 
-const { companyName, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
-const { findProducts } = useAgent()
-const agentStore = useAgentStore()
-const productsPending = computed(() => agentStore.getPendingState('products'))
+const { company, getSourcedValue } = useCompanyData()
+
 const companyStore = useCompanyStore()
 
-const hasProducts = computed(() => {
-  const products = companyStore.companies[companyName.value]?.products
-  return products
-})
-
 const products = computed(() => {
-  return companyStore.companies[companyName.value]?.products || []
+  return company.value?.products?.categories || []
 })
-
-// Function to refresh products data
-const refreshProducts = async () => {
-  if (companyName.value) {
-    await findProducts(companyName.value)
-  }
-}
 </script>
 
 <style>

@@ -11,11 +11,7 @@
       <!-- Customer Type - individual property loading -->
       <div>Customer base</div>
       <div
-        v-if="
-          hasPropertyBeenUpdated(
-            'target_audience_and_customer_base.customer_type'
-          )
-        "
+        v-if="company?.target_audience_and_customer_base?.customer_type"
       >
         <span class="text-sm text-secondary">
           {{
@@ -40,11 +36,7 @@
       <!-- Marketing Positioning - individual property loading -->
       <div>Positioning</div>
       <div
-        v-if="
-          hasPropertyBeenUpdated(
-            'target_audience_and_customer_base.marketing_positioning'
-          )
-        "
+        v-if="company?.target_audience_and_customer_base?.marketing_positioning"
       >
         <span class="text-sm text-secondary">
           {{
@@ -70,5 +62,5 @@
 </template>
 
 <script lang="ts" setup>
-const { company, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
+const { company, getSourcedValue } = useCompanyData()
 </script>
