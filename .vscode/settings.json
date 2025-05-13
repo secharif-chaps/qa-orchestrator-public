@@ -1,22 +1,30 @@
 {
-  "editor.formatOnSave": false,
+  "editor.formatOnSave": true,
   "editor.formatOnType": false,
   "editor.formatOnPaste": false,
   "editor.codeActionsOnSave": {
-    "source.fixAll": "never",
-    "source.fixAll.eslint": "never",
-    "source.organizeImports": "never"
+    "source.fixAll": "explicit",
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
   },
   "editor.autoIndent": "none",
   "eslint.run": "onSave",
-  "eslint.format.enable": false,
-  "eslint.lintTask.enable": false,
-  "eslint.autoFixOnSave": false,
-  "prettier.disableLanguages": ["vue", "typescript", "javascript"],
+  "eslint.format.enable": true,
+  "eslint.lintTask.enable": true,
   "prettier.requireConfig": true,
   "editor.quickSuggestions": {
     "strings": false
   },
-  "typescript.validate.enable": false,
-  "javascript.validate.enable": false
+  "typescript.validate.enable": true,
+  "javascript.validate.enable": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

@@ -1,14 +1,14 @@
 <template>
   <Card class="grow">
-    <div class="grid grid-cols-2">
+    <div class="flex flex-col gap-4 ">
       <div>Group</div>
       <!-- Group name - individual property loading -->
       <div
 
         class="text-secondary"
       >
-        {{ getSourcedValue(company?.profile?.group_name) ?? 'Not found' }}
-        <Source :sourced-value="company?.profile?.group_name" />
+        {{ getSourcedValue(company?.profile?.groupName) ?? 'Not found' }}
+        <Source :sourced-value="company?.profile?.groupName" />
       </div>
      
     </div>
@@ -16,6 +16,5 @@
 </template>
 
 <script lang="ts" setup>
-const { company, companyName, hasPropertyBeenUpdated, getSourcedValue } =
-  useCompanyData()
+const { company, getSourcedValue } = useCompanyData()
 </script>

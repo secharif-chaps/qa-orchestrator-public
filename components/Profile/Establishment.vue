@@ -6,20 +6,20 @@
       >
         <span >
           {{
-            getSourcedValue(company?.profile?.establishment_year) ?? 'Not found'
+            getSourcedValue(company?.profile?.establishmentYear) ?? 'Not found'
           }}
         </span>
         
       </div>
       <div>year of establishment</div>
       <Source
-        v-if="hasPropertyBeenUpdated('profile.establishment_year')"
-        :sourced-value="company?.profile?.establishment_year"
+        v-if="company?.profile?.establishmentYear"
+        :sourced-value="company?.profile?.establishmentYear"
       />
     </div>
   </Card>
 </template>
 
 <script lang="ts" setup>
-const { company, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
+const { company, getSourcedValue } = useCompanyData()
 </script>

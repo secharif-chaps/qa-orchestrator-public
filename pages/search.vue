@@ -72,10 +72,7 @@ const website = ref('')
 const companyError = ref('')
 const websiteError = ref('')
 
-const { findProfile, findTimeline, findProducts, findJobOffers, findTeam } = useAgent()
-
 const companyStore = useCompanyStore()
-const router = useRouter()
 
 // Computed property to check if there are any validation errors
 const hasErrors = computed(() => {
@@ -141,27 +138,8 @@ const startSearch = async () => {
 
   try {
     const trimmedCompany = company.value.trim().toLowerCase()
-    // Start with profile
-    findProfile(trimmedCompany, website.value)
-    
-    // Wait 3s before timeline
-    await new Promise(resolve => setTimeout(resolve, 3000))
-    findTimeline(trimmedCompany)
-    
-    // Wait 3s before products
-    await new Promise(resolve => setTimeout(resolve, 3000))
-    findProducts(trimmedCompany)
-    
-    // Wait 3s before job offers
-    await new Promise(resolve => setTimeout(resolve, 3000))
-    findJobOffers(trimmedCompany)
+    companyStore.startSearch(trimmedCompany, website.value)
 
-    // Wait 3s before team
-    await new Promise(resolve => setTimeout(resolve, 3000))
-    findTeam(trimmedCompany)
-
-    // Redirect to the company page
-    router.push(`/cards/${trimmedCompany}`)
   } catch (error) {
     // Handle any unexpected errors during the search process
     console.error('Error during search:', error)

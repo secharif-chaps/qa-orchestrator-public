@@ -1,83 +1,100 @@
 // Types pour la structure avec sources
 export type SourcedValue<T> = {
-  value: T;
-  source: string;
-};
+  value: T
+  source: string
+}
 
 export interface TeamMember {
-  position: string;
-  firstName: string;
-  lastName: string;
-  subordinates?: TeamMember[];
+  position: string
+  firstName: string
+  lastName: string
+  subordinates?: TeamMember[]
 }
 
 export interface Company {
-  meta?: {
-    company_name: string;
-    query_date: string;
-  };
-  insights: SourcedValue<string>;
-  profile: {
-    name: SourcedValue<string>;
-    website: SourcedValue<string>;
-    group_name?: SourcedValue<string>;
-    business_line: SourcedValue<string>;
-    catchphrase: SourcedValue<string>;
-    establishment_year: SourcedValue<string>;
-    employee_count: SourcedValue<string>;
-    revenue: SourcedValue<string>;
-    ceo: SourcedValue<string>;
-    hq: SourcedValue<string>;
-  };
-  products_and_services: {
-    product_range: SourcedValue<string>[];
-    partner_brands: SourcedValue<string>[];
-    private_labels: SourcedValue<string>[];
-  };
-  target_audience_and_customer_base: {
-    customer_type: SourcedValue<string>;
-    marketing_positioning: SourcedValue<string>;
-  };
-  digital_strategy_and_social_media: {
-    digital_strategy: SourcedValue<string>;
-    loyalty_program: SourcedValue<string>;
-    online_services: SourcedValue<string>[];
-  };
-  csr: {
-    responsibility_initiatives: SourcedValue<string>[];
-    charity_actions: SourcedValue<string>[];
-  };
-  recent_news: SourcedValue<string>[];
-  social_media: {
-    name: string;
-    url: SourcedValue<string>;
-  }[];
-  timeline_events?: {
-    date: string;
-    title: string;
-    description: string;
-    category: string;
-    location: string;
-    impact: string;
-    source: string;
-  }[];
-  products?: {
-    [key: string]: string[];
-  };
-  job_offers?: {
-    title: SourcedValue<string>;
-    location: SourcedValue<string>;
-    department: SourcedValue<string>;
-    description: SourcedValue<string>;
-    requirements: SourcedValue<string>;
-    posted_date: SourcedValue<string>;
-  }[];
-  job_offers_insights?: {
-    total_openings: SourcedValue<number>;
-    top_departments: SourcedValue<string[]>;
-    hiring_focus: SourcedValue<string>;
-    growth_indicators: SourcedValue<string>;
-  };
-  team?: TeamMember[];
-}
+  pending?: boolean
+  error?: string
+  name: string
+  website: string
 
+  pendingStates: {
+    [key: string]: {
+      pending: boolean
+      error?: string
+    }
+  }
+
+  profile: {
+    groupName?: SourcedValue<string>
+    businessLine: SourcedValue<string>
+    catchphrase: SourcedValue<string>
+    establishmentYear: SourcedValue<string>
+    employeeCount: SourcedValue<string>
+    revenue: SourcedValue<string>
+    ceo: SourcedValue<string>
+    hq: SourcedValue<string>
+  }
+
+  digital: {
+    strategy: SourcedValue<string>
+    loyaltyProgram: SourcedValue<string>
+    onlineServices: SourcedValue<string>[]
+    socialMedia: {
+      name: string
+      url: SourcedValue<string>
+    }[]
+  }
+
+  timeline: {
+    insights?: string
+
+    events?: {
+      date: string
+      title: string
+      description: string
+      category: string
+      location: string
+      impact: string
+      source: string
+    }[]
+  }
+
+  products?: {
+    insights?: string
+    customerType: string
+    marketingPositioning: string
+    range: SourcedValue<string>[]
+    partnerBrands: SourcedValue<string>[]
+    privateLabels: SourcedValue<string>[]
+    categories: {
+      [key: string]: string[]
+    }
+  }
+
+  jobs: {
+    offers?: {
+      title: string
+      location: string
+      department: string
+      description: string
+      requirements: string
+      posted_date: string
+    }[]
+    insights?: {
+      total_openings: SourcedValue<number>
+      top_departments: SourcedValue<string[]>
+      hiring_focus: SourcedValue<string>
+      growth_indicators: SourcedValue<string>
+    }
+  }
+
+  csr: {
+    responsibility_initiatives: SourcedValue<string>[]
+    charity_actions: SourcedValue<string>[]
+  }
+  press: {
+    articles: SourcedValue<string>[]
+  }
+
+  team?: TeamMember[]
+}

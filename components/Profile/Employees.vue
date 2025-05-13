@@ -5,18 +5,18 @@
         class="bg-orange-100 lg:w-2/3 text-orange-500 mx-auto px-2 py-2 rounded"
       >
         <span >
-          {{ getSourcedValue(company?.profile?.employee_count) ?? 'Not found' }}
+          {{ getSourcedValue(company?.profile?.employeeCount) ?? 'Not found' }}
         </span>
       </div>
       <div>Number of employees</div>
       <Source
-        v-if="hasPropertyBeenUpdated('profile.employee_count')"
-        :sourced-value="company?.profile?.employee_count"
+        v-if="company?.profile?.employeeCount"
+        :sourced-value="company?.profile?.employeeCount"
       />
     </div>
   </Card>
 </template>
 
 <script lang="ts" setup>
-const { company, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
+const { company, getSourcedValue } = useCompanyData()
 </script>

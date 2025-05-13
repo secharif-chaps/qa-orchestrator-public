@@ -1,6 +1,6 @@
 <template>
   <Card class="h-full">
-    <div class="grid grid-cols-2 gap-4">
+    <div class="gap-4">
       <div class="col-span-2">
         <h3 class="space-x-2 font-bold text-primary">
           <i class="fa fa-hand-holding-heart"></i>
@@ -10,7 +10,7 @@
 
       <!-- CSR Initiatives - individual property loading -->
       <div>Responsibility</div>
-      <div >
+      <div class="p-4">
         <ul class="list-disc">
           <li
             class="space-x-2 text-secondary"
@@ -29,26 +29,21 @@
           </li>
         </ul>
       </div>
-   
+
       <!-- Charity Actions - individual property loading -->
       <div>Charity Initiative</div>
-      <div>
-        <span
-          class="text-sm text-secondary"
-          v-if="company?.csr?.charity_actions"
-        >
+      <div class="p-4">
+        <span class="text-sm text-secondary" v-if="company?.csr?.charity_actions">
           {{
-            (
-              company?.csr?.charity_actions.map((action) => action.value) || []
-            ).join(', ') || 'Not found'
+            (company?.csr?.charity_actions.map(action => action.value) || []).join(', ') ||
+            'Not found'
           }}
         </span>
       </div>
-    
     </div>
   </Card>
 </template>
 
 <script lang="ts" setup>
-const { company, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
+const { company, getSourcedValue } = useCompanyData()
 </script>

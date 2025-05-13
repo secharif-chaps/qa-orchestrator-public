@@ -10,7 +10,7 @@
 
         <div class="space-y-2">
           <p class="font-bold capitalize">
-            {{ getSourcedValue(company?.profile?.name) || companyName }}
+            {{ company?.name }}
           </p>
 
           <!-- Catchphrase - individual property loading -->
@@ -53,11 +53,9 @@
 
           <!-- Social Media - individual property loading -->
           <div
-           
             class="space-x-2 text-primary"
           >
             <div
-              
               class="space-x-2 text-primary"
             >
               <NuxtLink
@@ -103,11 +101,8 @@ import Source from '../global/Source.vue'
 
 const {
   company,
-  companyName,
-  hasPropertyBeenUpdated,
   getSourcedValue,
   getSourcedSource,
-  getSourcedSourceName,
 } = useCompanyData()
 
 const getIcon = (media: string) => {

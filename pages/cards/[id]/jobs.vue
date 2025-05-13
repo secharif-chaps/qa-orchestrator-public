@@ -1,12 +1,9 @@
 <template>
-  <LayoutsCompanyCard
-    title="Job Offers"
-    icon="fa-briefcase"
-  >
+  <LayoutsCompanyCard title="Job Offers" icon="fa-briefcase">
     <!-- Actions slot -->
     <template #actions>
       <OButton
-        @click="refreshJobOffers"
+        @click="refreshJobs"
         :loading="jobOffersPending"
         label="Refresh Jobs"
         type="secondary"
@@ -41,12 +38,9 @@
     </Card>
 
     <!-- Main content -->
-    <div
-      v-if="hasJobOffersData"
-      class="space-y-6"
-    >
+    <div v-if="hasJobOffersData" class="space-y-6">
       <!-- Insights Section -->
-      <Card v-if="jobOffersInsights" >
+      <Card v-if="jobOffersInsights">
         <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
           <i class="fa fa-chart-line text-primary"></i>
           <span>Hiring Insights</span>
@@ -55,37 +49,32 @@
           <div class="p-4 bg-slate-50 rounded-lg">
             <div class="text-sm text-slate-600">Total Openings</div>
             <div class="text-2xl font-bold text-primary">
-              {{ getSourcedValue(jobOffersInsights?.total_openings) }}
+              {{ getSourcedValue(company?.jobs?.insights?.total_openings) }}
             </div>
-
           </div>
           <div class="p-4 bg-slate-50 rounded-lg">
             <div class="text-sm text-slate-600">Top Departments</div>
             <div class="text-sm">
               <ul class="list-disc list-inside">
-                <li
-                  v-for="dept in getSourcedValue(
-                    jobOffersInsights?.top_departments
-                  )"
-                  :key="dept"
-                >
-                  {{ dept }}
-                </li>
+                {{
+                  getSourcedValue(company?.jobs?.insights?.top_departments)
+                }}
+                <div>
+                  {{ getSourcedSource(company?.jobs?.insights?.top_departments) }}
+                </div>
               </ul>
             </div>
-
           </div>
           <div class="p-4 bg-slate-50 rounded-lg">
             <div class="text-sm text-slate-600">Hiring Focus</div>
             <div class="text-sm">
-              {{ getSourcedValue(jobOffersInsights?.hiring_focus) }}
+              {{ getSourcedValue(company?.jobs?.insights?.hiring_focus) }}
             </div>
-
           </div>
           <div class="p-4 bg-slate-50 rounded-lg">
             <div class="text-sm text-slate-600">Growth Indicators</div>
             <div class="text-sm">
-              {{ getSourcedValue(jobOffersInsights?.growth_indicators) }}
+              {{ getSourcedValue(company?.jobs?.insights?.growth_indicators) }}
             </div>
           </div>
         </div>
@@ -109,25 +98,20 @@
         </div>
 
         <!-- Job listings with transition group -->
-        <TransitionGroup 
-          name="job-list" 
-          tag="div" 
+        <TransitionGroup
+          name="job-list"
+          tag="div"
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
         >
-          <JobCard
-            v-for="job in filteredJobs"
-            :key="getSourcedValue(job.title)"
-            :job="job"
-          />
+          <JobCard v-for="job in filteredJobs" :key="job.title" :job="job" />
 
           <!-- No results message -->
-          <div v-if="filteredJobs.length === 0 && searchQuery" 
-               key="no-results"
-               class="text-center py-4"
+          <div
+            v-if="filteredJobs.length === 0 && searchQuery"
+            key="no-results"
+            class="text-center py-4"
           >
-            <p class="text-slate-500">
-              No job offers found matching "{{ searchQuery }}"
-            </p>
+            <p class="text-slate-500">No job offers found matching "{{ searchQuery }}"</p>
           </div>
         </TransitionGroup>
       </Card>
@@ -137,38 +121,34 @@
 
 <script lang="ts" setup>
 import { OAlert, OButton, OInput } from '@owlint/feathers-vue'
-import { useCompanyStore } from '~/stores/company'
 import JobCard from '~/components/JobCard.vue'
-import { useAgentStore } from '~/stores/agent'
+import { useCompanyStore } from '~/stores/company'
 
 // Set page metadata
 useHead({
   title: 'Mint - Job Offers',
-  meta: [{ name: 'description', content: 'Company Job Opportunities' }],
+  meta: [{ name: 'description', content: 'Company Job Opportunities' }]
 })
 
 const searchQuery = ref('')
-const { companyName, getSourcedValue } = useCompanyData()
-const { findJobOffers } = useAgent()
-const agentStore = useAgentStore()
-const jobOffersPending = computed(() => agentStore.getPendingState('jobOffers'))
+const { company, companyName, getSourcedValue, getSourcedSource } = useCompanyData()
+
 const companyStore = useCompanyStore()
 
-// Computed properties for data access
-const company = computed(() => {
-  return companyStore.getCompanyByName(companyName.value)
-})
+const jobOffersPending = computed(
+  () => companyStore.companies[companyName.value].pendingStates?.jobs.pending
+)
 
 const hasJobOffersData = computed(() => {
-  return !!company.value?.job_offers && company.value.job_offers.length > 0
+  return !!company.value?.jobs?.offers && company.value.jobs.offers.length > 0
 })
 
 const jobOffers = computed(() => {
-  return company.value?.job_offers || []
+  return company.value?.jobs?.offers || []
 })
 
 const jobOffersInsights = computed(() => {
-  return company.value?.job_offers_insights
+  return company.value?.jobs?.insights
 })
 
 // Filter jobs based on search query
@@ -179,22 +159,24 @@ const filteredJobs = computed(() => {
 
   const query = searchQuery.value.toLowerCase().trim()
 
-  return jobOffers.value.filter((job) => {
+  return jobOffers.value.filter(job => {
     return (
-      getSourcedValue(job.title)?.toLowerCase().includes(query) ||
-      getSourcedValue(job.department)?.toLowerCase().includes(query) ||
-      getSourcedValue(job.location)?.toLowerCase().includes(query) ||
-      getSourcedValue(job.description)?.toLowerCase().includes(query) ||
-      getSourcedValue(job.requirements)?.toLowerCase().includes(query)
+      job.title?.toLowerCase().includes(query) ||
+      job.department?.toLowerCase().includes(query) ||
+      job.location?.toLowerCase().includes(query) ||
+      job.description?.toLowerCase().includes(query) ||
+      job.requirements?.toLowerCase().includes(query)
     )
   })
 })
 
 // Generate or refresh job offers data
-const refreshJobOffers = async () => {
-  await findJobOffers(companyName.value)
+const refreshJobs = async () => {
+  if (!company.value) {
+    return
+  }
+  await companyStore.startQuery(companyName.value, '', 'jobs')
 }
-
 </script>
 
 <style>

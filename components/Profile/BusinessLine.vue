@@ -1,13 +1,13 @@
 <template>
   <Card class="grow">
-    <div class="grid grid-cols-2">
+    <div class="flex flex-col gap-4 ">
       <div>Line of business</div>
       <!-- Business line - individual property loading -->
       <div
         class="text-secondary"
       >
-        {{ getSourcedValue(company?.profile?.business_line) ?? 'Not found' }}
-        <Source :sourced-value="company?.profile?.business_line" />
+        {{ getSourcedValue(company?.profile?.businessLine) ?? 'Not found' }}
+        <Source :sourced-value="company?.profile?.businessLine" />
       </div>
    
     </div>
@@ -15,5 +15,5 @@
 </template>
 
 <script lang="ts" setup>
-const { company, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
+const { company, getSourcedValue } = useCompanyData()
 </script>

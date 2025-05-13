@@ -2,45 +2,31 @@
   <LayoutsCompanyCard
     title="Company Profile"
     icon="fa-building"
+    v-if="company"
     :loading="profilePending"
   >
     <template #actions>
-      <OButton
-
-        @click="retriggerProfileSearch"
-        :loading="profilePending"
-        icon="fa-refresh"
-        type="secondary"
-      >
-        Refresh Profile
-      </OButton>
+      <OButton @click="refreshCompany" type="secondary" icon="fa-refresh">Refresh</OButton>
     </template>
 
     <template #loading>
-      <OAlert
-        v-if="!hasAnyData"
-        message="Loading company information..."
-        title="Oops"
-        icon="fa-bug"
-        color="blue"
-        description="Something went wrong while fetching the company profile. Please try again."
-      >
-      </OAlert>
       <!-- Insights section (only show if we have insights) -->
+
       <OAlert
-        v-if="hasPropertyBeenUpdated('insights')"
-        message="This company is a member of the Sephora group"
-        title="Insights"
-        icon="fa-wand-magic-sparkles"
-        :description="company?.insights?.value"
-      >
-      </OAlert>
-      <OAlert
-        v-else-if="!isCompanyNew"
+        v-if="profilePending"
         message="Loading insights..."
         title="Insights"
         icon="fa-spinner-third animate-spin"
         color="blue"
+      >
+      </OAlert>
+
+      <OAlert
+        v-if="company?.pendingStates?.profile?.error || company?.pendingStates?.digital?.error"
+        title="Oops, something went wrong"
+        description="Please try again later or contact support"
+        icon="fa-exclamation-triangle"
+        color="red"
       >
       </OAlert>
     </template>
@@ -57,9 +43,7 @@
         </div>
       </div>
 
-      <div
-        class="@max-6xl:col-span-6 @min-6xl:col-span-3 space-y-2 flex flex-col"
-      >
+      <div class="@max-6xl:col-span-6 @min-6xl:col-span-3 space-y-2 flex flex-col">
         <!-- Products and services section -->
         <ProfileProducts />
 
@@ -94,31 +78,40 @@
 import { Profile } from '#components'
 import { OAlert, OButton } from '@owlint/feathers-vue'
 import { useCompanyStore } from '~/stores/company'
-import type { Company } from '~/types.global'
-import { useAgentStore } from '~/stores/agent'
 
 // Set page metadata
 useHead({
   title: 'Mint - Company Profile',
-  meta: [{ name: 'description', content: 'Company Profile Details' }],
+  meta: [{ name: 'description', content: 'Company Profile Details' }]
 })
 
-const { companyName, hasPropertyBeenUpdated, getSourcedValue } = useCompanyData()
-const { findProfile } = useAgent()
-const agentStore = useAgentStore()
-const profilePending = computed(() => agentStore.getPendingState('profile'))
+const { company } = useCompanyData()
+
+const profilePending = computed(() => {
+  return (
+    company.value?.pendingStates?.profile?.pending ||
+    company.value?.pendingStates?.digital?.pending ||
+    company.value?.pendingStates?.press?.pending ||
+    company.value?.pendingStates?.csr?.pending
+  )
+})
+
 const companyStore = useCompanyStore()
 
-const company = ref<Partial<Company> | null>(null)
-
-// Set up company data
-const hasAnyData = ref(false)
-const isCompanyNew = ref(true)
-
-const retriggerProfileSearch = async () => {
-  if (companyName.value) {
-    // Trigger the profile search
-    await findProfile(companyName.value, company.value?.profile?.website?.value)
+const refreshCompany = () => {
+  if (company.value?.name && company.value?.website) {
+    companyStore.startQuery(company.value.name, company.value.website, 'profile')
+    companyStore.startQuery(company.value.name, company.value.website, 'digital')
+    companyStore.startQuery(company.value.name, company.value.website, 'press')
+    companyStore.startQuery(company.value.name, company.value.website, 'csr')
   }
 }
+
+const router = useRouter()
+
+onMounted(() => {
+  if (!company.value) {
+    router.push('/cards')
+  }
+})
 </script>

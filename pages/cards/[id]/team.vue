@@ -1,29 +1,31 @@
 <template>
-  <LayoutsCompanyCard
-    title="Team & Management"
-    icon="fa-users"
-  >
+  <LayoutsCompanyCard title="Team & Management" icon="fa-users">
     <!-- Actions slot -->
     <template #actions>
-      <OButton
-        @click="refreshTeamHierarchy"
-        :disabled="teamPending"
-        label="Refresh Team"
-        type="secondary"
-        icon="fa-sync"
-      />
+      <OButton @click="refreshCompany" type="secondary" icon="fa-refresh"> Refresh </OButton>
     </template>
 
     <!-- Loading slot -->
     <template #loading>
-      <OAlert
-        v-if="teamPending"
-        message="Loading company team hierarchy..."
-        title="Please wait"
-        description="Team hierarchy data will be displayed here once available."
-        icon="fa-spinner fa-spin"
-        color="blue"
-      />
+      <div class="flex flex-col gap-2">
+        <OAlert
+          v-if="teamPending"
+          message="Loading company team hierarchy..."
+          title="Please wait"
+          description="Team hierarchy data will be displayed here once available."
+          icon="fa-spinner fa-spin"
+          color="blue"
+        />
+
+        <OAlert
+          v-if="company?.pendingStates?.team?.error"
+          title="Oops, something went wrong"
+          description="Please try again later or contact support"
+          icon="fa-exclamation-triangle"
+          color="red"
+        >
+        </OAlert>
+      </div>
     </template>
 
     <!-- Empty state -->
@@ -40,84 +42,101 @@
     </Card>
 
     <!-- Main content -->
-    <div
-      v-if="hasTeamData"
-      class="space-y-6"
-    >
-
+    <div v-if="hasTeamData" class="space-y-6">
       <Card>
         <div class="flex items-center gap-2 text-primary mb-4">
           <i class="fa fa-sitemap"></i>
           <span>Management Hierarchy</span>
         </div>
-          <ClientOnly>
+        <ClientOnly>
+          <div class="h-[500px] w-full relative">
+            <div class="absolute top-4 right-4 z-50">
+              <OButton @click="doScreenshot" type="secondary" icon="fa-camera" />
+            </div>
 
-        <div class="h-[500px] w-full relative">
-        <div class="absolute top-4 right-4 z-50">
-        <OButton
-                @click="doScreenshot"
-                type="secondary"
-                icon="fa-camera"
-              />
-        </div>
+            <VueFlow
+              :nodes="layoutedNodes"
+              :edges="edges"
+              :default-viewport="{ x: 0, y: 0, zoom: 1 }"
+              :draggable="false"
+              @init="
+                () => {
+                  isInitialized = true
+                  applyLayoutAndFitView()
+                }
+              "
+              class="bg-bg3 rounded-lg"
+            >
+              <template #node-team-member="props">
+                <TeamMemberNode
+                  v-bind="{
+                    ...props,
+                    data: { ...props.data, selected: selectedNode === props.data }
+                  }"
+                  @click="openTeamMemberCard(props.data)"
+                />
+              </template>
+              <Background color="#CBD5E1" size="4" gap="60" />
 
-          <VueFlow
-            :nodes="layoutedNodes"
-            :edges="edges"
-            :default-viewport="{ x: 0, y: 0, zoom: 1 }"
-            :draggable="false"
-            @init="() => {
-              isInitialized = true
-              applyLayoutAndFitView()
-            }"
-            class="bg-bg3 rounded-lg"
-          >
-            <template #node-team-member="props">
-              <TeamMemberNode  v-bind="{...props , data : { ...props.data , selected : selectedNode === props.data } }" @click="openTeamMemberCard(props.data)" />
-            </template>
-            <Background color="#CBD5E1" size="4" gap="60" />
-
-            <Panel position="top-left" v-if="selectedNode" class="bg-bg1 rounded-lg max-w-[300px]  ring-2"
-        :class="{'ring-orange-400' : selectedNode.level > 1, 'ring-purple-600' : selectedNode.level <= 1}">
-              <div v-if="selectedNode" class="p-0.5">
-                <div class="flex items-center gap-3 p-2 rounded-lg" :class="[selectedNode.level > 1 ? 'bg-orange-50' : 'bg-purple-100']">
-                  <div class="min-w-12 grow-0 h-12 rounded-full flex items-center justify-center"
-:class="[selectedNode.level > 1 ? 'bg-orange-200 text-orange-600' : 'bg-purple-200 text-purple-600']">
-                    <i class="fa fa-user text-xl"></i>
-                  </div>
-                  <div >
-                    <h3 class="font-semibold">{{ selectedNode.firstName }} {{ selectedNode.lastName }}</h3>
-                    <p class="text-sm">{{ selectedNode.position }}</p>
-                  </div>
-<div class="ml-auto">
-<OButton
-        @click="selectedNode = null"
-        type="secondary"
-        icon="fa-times"
-        class="rounded-full"
-        :color="selectedNode.level > 1 ? 'orange' : 'purple'"
-      />
-</div>
-                </div>
-                
-                <div class="space-y-3 p-2">
-                  <a 
-                    :href="getMockedLinkedInUrl(selectedNode)" 
-                    target="_blank" 
-                    class="flex items-center gap-2 text-sm text-primary hover:underline"
+              <Panel
+                position="top-left"
+                v-if="selectedNode"
+                class="bg-bg1 rounded-lg max-w-[300px] ring-2"
+                :class="{
+                  'ring-orange-400': selectedNode.level > 1,
+                  'ring-purple-600': selectedNode.level <= 1
+                }"
+              >
+                <div v-if="selectedNode" class="p-0.5">
+                  <div
+                    class="flex items-center gap-3 p-2 rounded-lg"
+                    :class="[selectedNode.level > 1 ? 'bg-orange-50' : 'bg-purple-100']"
                   >
-                    <i class="fab fa-linkedin"></i>
-                    <span>View LinkedIn Profile</span>
-                  </a>
-                  
-                  <div class="flex items-start gap-2 text-sm text-slate-600">
-                    <i class="fa fa-map-marker-alt mt-1"></i>
-                    <span>{{ getMockedAddress(selectedNode) }}</span>
+                    <div
+                      class="min-w-12 grow-0 h-12 rounded-full flex items-center justify-center"
+                      :class="[
+                        selectedNode.level > 1
+                          ? 'bg-orange-200 text-orange-600'
+                          : 'bg-purple-200 text-purple-600'
+                      ]"
+                    >
+                      <i class="fa fa-user text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-semibold">
+                        {{ selectedNode.firstName }} {{ selectedNode.lastName }}
+                      </h3>
+                      <p class="text-sm">{{ selectedNode.position }}</p>
+                    </div>
+                    <div class="ml-auto">
+                      <OButton
+                        @click="selectedNode = null"
+                        type="secondary"
+                        icon="fa-times"
+                        class="rounded-full"
+                        :color="selectedNode.level > 1 ? 'orange' : 'purple'"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="space-y-3 p-2">
+                    <a
+                      :href="getMockedLinkedInUrl(selectedNode)"
+                      target="_blank"
+                      class="flex items-center gap-2 text-sm text-primary hover:underline"
+                    >
+                      <i class="fab fa-linkedin"></i>
+                      <span>View LinkedIn Profile</span>
+                    </a>
+
+                    <div class="flex items-start gap-2 text-sm text-slate-600">
+                      <i class="fa fa-map-marker-alt mt-1"></i>
+                      <span>{{ getMockedAddress(selectedNode) }}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Panel>
-          </VueFlow>
+              </Panel>
+            </VueFlow>
           </div>
         </ClientOnly>
       </Card>
@@ -127,35 +146,37 @@
 
 <script lang="ts" setup>
 import { OAlert, OButton } from '@owlint/feathers-vue'
-import { useCompanyStore } from '~/stores/company'
-import TeamMemberCard from '~/components/TeamMemberCard.vue'
-import { useAgentStore } from '~/stores/agent'
-import { VueFlow, useVueFlow, Panel } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
+import { Panel, VueFlow, useVueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
-import TeamMemberNode from '~/components/nodes/TeamMemberNode.vue'
-import dagre from 'dagre'
 import { nextTick, ref, watch } from 'vue'
+import TeamMemberNode from '~/components/nodes/TeamMemberNode.vue'
+import { useCompanyStore } from '~/stores/company'
 
 // Set page metadata
 useHead({
   title: 'Mint - Team & Management',
-  meta: [{ name: 'description', content: 'Company Team and Management Information' }],
+  meta: [{ name: 'description', content: 'Company Team and Management Information' }]
 })
 
-const { companyName } = useCompanyData()
-const { findTeamHierarchy } = useTeamAgent()
-const agentStore = useAgentStore()
-const teamPending = computed(() => agentStore.getPendingState('team'))
+const { company } = useCompanyData()
+
+const teamPending = computed(() => {
+  return company.value?.pendingStates?.team?.pending
+})
+
 const companyStore = useCompanyStore()
+
+const refreshCompany = () => {
+  if (company.value?.name && company.value?.website) {
+    companyStore.startQuery(company.value.name, company.value.website, 'team')
+  }
+}
+
 const { fitView, vueFlowRef } = useVueFlow()
 
 // Computed properties for data access
-const company = computed(() => {
-  return companyStore.getCompanyByName(companyName.value)
-})
-
 const hasTeamData = computed(() => {
   return !!company.value?.team && company.value.team.length > 0
 })
@@ -163,10 +184,10 @@ const hasTeamData = computed(() => {
 // Generate nodes and edges from team hierarchy
 const nodes = computed(() => {
   if (!company.value?.team) return []
-  
+
   const generateNodes = (members: any[], level = 0, parentId = null) => {
     let nodes = []
-    
+
     for (const member of members) {
       const nodeId = `${member.position}-${member.firstName}-${member.lastName}`
       const node = {
@@ -180,30 +201,30 @@ const nodes = computed(() => {
           level: level
         }
       }
-      
+
       nodes.push(node)
-      
+
       if (member.subordinates && member.subordinates.length > 0) {
         const childNodes = generateNodes(member.subordinates, level + 1, nodeId)
         nodes = nodes.concat(childNodes)
       }
     }
-    
+
     return nodes
   }
-  
+
   return generateNodes(company.value.team)
 })
 
 const edges = computed(() => {
   if (!company.value?.team) return []
-  
+
   const generateEdges = (members: any[], level = 0) => {
     let edges = []
-    
+
     for (const member of members) {
       const sourceId = `${member.position}-${member.firstName}-${member.lastName}`
-      
+
       if (member.subordinates && member.subordinates.length > 0) {
         for (const subordinate of member.subordinates) {
           const targetId = `${subordinate.position}-${subordinate.firstName}-${subordinate.lastName}`
@@ -216,21 +237,21 @@ const edges = computed(() => {
               level: level + 1
             },
             style: {
-              stroke: level === 0 ? '#9333EA': 'oklch(0.75 0.183 55.934)',
+              stroke: level === 0 ? '#9333EA' : 'oklch(0.75 0.183 55.934)',
               strokeWidth: 4,
-              strokeOpacity: 1,
+              strokeOpacity: 1
             }
           })
         }
-        
+
         const childEdges = generateEdges(member.subordinates, level + 1)
         edges = edges.concat(childEdges)
       }
     }
-    
+
     return edges
   }
-  
+
   return generateEdges(company.value.team)
 })
 
@@ -286,7 +307,7 @@ const applyLayout = () => {
       if (node.subordinateIds.length > 0) {
         // Get positions of all subordinates
         const subordinatePositions = node.subordinateIds.map(id => nodeMap.get(id).position)
-        
+
         // Calculate the center position based on subordinates
         const minX = Math.min(...subordinatePositions.map(pos => pos.x))
         const maxX = Math.max(...subordinatePositions.map(pos => pos.x))
@@ -333,11 +354,6 @@ const applyLayoutAndFitView = () => {
 
 watch([nodes, edges], applyLayoutAndFitView, { immediate: true })
 
-// Generate or refresh team hierarchy data
-const refreshTeamHierarchy = async () => {
-  await findTeamHierarchy(companyName.value)
-}
-
 const selectedNode = ref(null)
 const openTeamMemberCard = (data: any) => {
   selectedNode.value = data
@@ -347,11 +363,11 @@ const { capture } = useScreenshot()
 
 function doScreenshot() {
   if (!vueFlowRef.value) {
-    console.warn('VueFlow element not found');
-    return;
+    console.warn('VueFlow element not found')
+    return
   }
 
-  capture(vueFlowRef.value, { shouldDownload: true });
+  capture(vueFlowRef.value, { shouldDownload: true })
 }
 
 // Helper functions for mocked data
@@ -370,7 +386,7 @@ const getMockedAddress = (node: any) => {
     '15 Rue de la République, 13001 Marseille',
     '3 Rue du Commerce, 44000 Nantes'
   ]
-  
+
   // Use a deterministic way to select an address based on the node's name
   const index = (node.firstName.length + node.lastName.length) % addresses.length
   return addresses[index]
