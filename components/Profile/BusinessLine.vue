@@ -1,6 +1,6 @@
 <template>
   <Card class="grow">
-    <div class="grid grid-cols-2">
+    <div class="flex flex-col gap-4 ">
       <div>Line of business</div>
       <!-- Business line - individual property loading -->
       <div

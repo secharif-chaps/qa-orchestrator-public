@@ -9,29 +9,22 @@
         <!-- Recent News - individual property loading -->
         <div>
           <ul class="list-disc pl-4">
-            <li
-              class="space-x-2 text-secondary"
-              v-for="news in company?.recent_news || []"
-            >
+            <li class="space-x-2 text-secondary" v-for="news in company?.press?.articles || []">
               <span class="text-sm">
                 {{ getSourcedValue(news) }}
               </span>
               <Source :sourced-value="news" />
             </li>
-            <li
-              v-if="company?.recent_news?.length === 0"
-              class="text-secondary"
-            >
+            <li v-if="company?.press?.articles?.length === 0" class="text-secondary">
               No recent news found
             </li>
           </ul>
         </div>
-      
       </div>
     </div>
   </Card>
 </template>
 
 <script lang="ts" setup>
-const { company,  getSourcedValue } = useCompanyData()
+const { company, getSourcedValue } = useCompanyData()
 </script>

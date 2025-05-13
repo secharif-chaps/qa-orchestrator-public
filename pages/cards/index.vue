@@ -123,7 +123,6 @@
 <script setup>
 import { OButton } from '@owlint/feathers-vue'
 import { computed } from 'vue'
-import { useCompanyData } from '~/composables/useCompanyData'
 import { useCompanyStore } from '~/stores/company'
 
 const companyStore = useCompanyStore()

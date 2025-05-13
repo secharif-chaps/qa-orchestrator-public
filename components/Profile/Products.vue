@@ -1,6 +1,6 @@
 <template>
   <Card>
-    <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-4 ">
       <div class="col-span-2">
         <h3 class="space-x-2 font-bold text-primary">
           <i class="fa fa-box-open"></i>
@@ -24,7 +24,7 @@
 
       <!-- Partner Brands - individual property loading -->
       <div>Partner Brand</div>
-      <div
+      <div class="pl-4"
       >
         <ul class="list-disc">
           <li
@@ -49,7 +49,7 @@
 
       <!-- Private Labels - individual property loading -->
       <div>{{ company?.name }} private label</div>
-      <div
+      <div class="pl-4"
        
       >
         <ul class="list-disc">

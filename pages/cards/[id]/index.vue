@@ -1,22 +1,36 @@
 <template>
-  <LayoutsCompanyCard
-    title="Company Dashboard"
-    icon="fa-building"
-    :loading="!hasAnyData"
-  >
+  <LayoutsCompanyCard title="Company Dashboard" icon="fa-building" v-if="company">
     <template #actions> </template>
 
     <template #loading>
-      <OAlert
-        v-if="company?.pending"
-        description="Loading company information..."
-        title="Please wait"
-        icon="fa-spinner fa-spin"
-        color="blue"
-      >
-      </OAlert>
+      <div class="flex flex-col gap-2">
+        <OAlert
+          v-if="hasQueriesPending"
+          title="Loading company information..."
+          icon="fa-info-circle"
+          color="blue"
+        >
+          <template #description>
+            <div class="flex flex-col gap-2">
+              <div class="text-sm text-gray-600">
+                <div class="grid grid-cols-2 gap-2">
+                  <div
+                    v-for="(state, key) in company?.pendingStates"
+                    :key="key"
+                    class="flex items-center gap-2"
+                  >
+                    <i v-if="state.pending" class="fa fa-spinner fa-spin text-blue-500"></i>
+                    <i v-else-if="state.error" class="fa fa-exclamation-circle text-red-500"></i>
+                    <i v-else class="fa fa-check-circle text-green-500"></i>
+                    <span class="capitalize">{{ key }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </OAlert>
+      </div>
     </template>
-
 
     <!-- Main content grid -->
     <div class="grid grid-cols-12 gap-6 bg-bg1 p-4 rounded-lg">
@@ -24,9 +38,7 @@
       <div class="col-span-12 lg:col-span-4 space-y-4 w-full card bg-bg3">
         <div class="flex flex-col gap-4">
           <div class="flex flex-col items-center text-center gap-2">
-            <div
-              class="bg-primary w-20 h-20 rounded-full flex items-center justify-center"
-            >
+            <div class="bg-primary w-20 h-20 rounded-full flex items-center justify-center">
               <i class="fa fa-building text-4xl text-white"></i>
             </div>
             <div>
@@ -37,13 +49,9 @@
           </div>
 
           <div>
-            <p
-              
-              class="text-gray-600"
-            >
+            <p class="text-gray-600">
               {{ getSourcedValue(company?.profile?.catchphrase) }}
             </p>
-            
           </div>
 
           <div class="flex flex-col gap-2">
@@ -70,7 +78,7 @@
               <i class="fa fa-user-tie"></i>
               <p>CEO</p>
               <span class="text-secondary">
-                {{ getSourcedValue(company?.profile?.ceo) || 'Unknown' }}
+                {{ ceo || 'Unknown' }}
               </span>
             </div>
 
@@ -82,21 +90,15 @@
               </span>
             </div>
 
-            <div
-
-              class="flex space-x-3 self-center mt-2"
-            >
+            <div class="flex space-x-3 self-center mt-2">
               <a
-                v-for="platform in company?.social_media"
+                v-for="platform in company?.digital?.socialMedia"
                 :key="platform.name"
                 :href="getSourcedValue(platform.url)"
                 target="_blank"
                 class="text-primary hover:text-primary-dark"
               >
-                <i
-                  class="fa"
-                  :class="getSocialIcon(platform.name)"
-                ></i>
+                <i class="fa" :class="getSocialIcon(platform.name)"></i>
               </a>
             </div>
           </div>
@@ -109,16 +111,18 @@
           title="Company Profile"
           description="View detailed company information, business lines, and key metrics."
           icon="fa-building"
-          :to="`/cards/${companyName}/profile`"
-          :loading="profilePending"
+          :to="`/cards/${company.name}/profile`"
+          :loading="
+            company.pendingStates?.profile?.pending || company.pendingStates?.digital?.pending
+          "
         />
 
         <InfoCard
           title="Activities & Events"
           description="Explore company events, trade shows, and key activities."
           icon="fa-calendar-days"
-          :to="`/cards/${companyName}/activities`"
-          :loading="timelinePending"
+          :to="`/cards/${company.name}/activities`"
+          :loading="company.pendingStates?.timeline?.pending"
         />
 
         <InfoCard
@@ -126,15 +130,16 @@
           title="Corporate Communications"
           description="Press releases, public statements, and official communications."
           icon="fa-bullhorn"
-          :to="`/cards/${companyName}/communications`"
+          :to="`/cards/${company.name}/communications`"
+          :loading="company.pendingStates?.communications?.pending"
         />
 
         <InfoCard
           title="Products"
           description="Browse the company's products, services, and offerings."
           icon="fa-box"
-          :to="`/cards/${companyName}/products`"
-          :loading="productsPending"
+          :to="`/cards/${company.name}/products`"
+          :loading="company.pendingStates?.products?.pending"
         />
 
         <InfoCard
@@ -142,7 +147,8 @@
           title="Financials"
           description="Financial data, revenue information, and market performance."
           icon="fa-chart-line"
-          :to="`/cards/${companyName}/financials`"
+          :to="`/cards/${company.name}/financials`"
+          :loading="company.pendingStates?.financials?.pending"
         />
 
         <InfoCard
@@ -150,32 +156,30 @@
           title="Mentions"
           description="News articles, media coverage, and third-party mentions."
           icon="fa-quote-left"
-          :to="`/cards/${companyName}/mentions`"
+          :to="`/cards/${company.name}/mentions`"
+          :loading="company.pendingStates?.mentions?.pending"
         />
 
         <InfoCard
           title="Team & Management"
           description="Leadership team, organizational structure, and key personnel."
           icon="fa-users"
-          :to="`/cards/${companyName}/team`"
-          :loading="teamPending"
+          :to="`/cards/${company.name}/team`"
+          :loading="company.pendingStates?.team?.pending"
         />
 
         <InfoCard
           title="Job Offers"
           description="Current job openings, career opportunities, and hiring information."
           icon="fa-briefcase"
-          :to="`/cards/${companyName}/jobs`"
-          :loading="jobOffersPending"
+          :to="`/cards/${company.name}/jobs`"
+          :loading="company.pendingStates?.jobs?.pending"
         />
       </div>
     </div>
 
     <!-- AI Chat sidebar -->
-    <div
-      v-if="showAiChat"
-      class="fixed right-4 top-24 w-96 z-10"
-    >
+    <div v-if="showAiChat" class="fixed right-4 top-24 w-96 z-10">
       <div class="bg-white rounded-lg shadow-lg">
         <Chat @hide="showAiChat = false" />
       </div>
@@ -185,59 +189,36 @@
 
 <script lang="ts" setup>
 import { OAlert } from '@owlint/feathers-vue'
-import { useCompanyStore } from '~/stores/company'
-import type { Company } from '~/types.global'
-import { useAgentStore } from '~/stores/agent'
 
 // Set page metadata
 useHead({
   title: 'Mint - Company Dashboard',
-  meta: [{ name: 'description', content: 'Company Information Dashboard' }],
+  meta: [{ name: 'description', content: 'Company Information Dashboard' }]
 })
 
-const { companyName, getSourcedValue } = useCompanyData()
-
-// Use the agent store directly
-const agentStore = useAgentStore()
-
-const timelinePending = computed(() => agentStore.getPendingState('timeline'))
-const profilePending = computed(() => agentStore.getPendingState('profile'))
-const productsPending = computed(() => agentStore.getPendingState('products'))
-const jobOffersPending = computed(() => agentStore.getPendingState('jobOffers'))
-const teamPending = computed(() => agentStore.getPendingState('team'))
-
-const company = ref<Partial<Company> | null>(null)
-
-const companyStore = useCompanyStore()
-
-// Set up company data
-const hasAnyData = ref(false)
-const isCompanyNew = ref(true)
+const { company, getSourcedValue } = useCompanyData()
 
 const showAiChat = ref(false)
 
-// Subscribe to company store for updates
-watch(
-  () => companyStore.getCompanyByName(companyName.value),
-  (newCompany) => {
-    if (newCompany) {
-      company.value = newCompany
-      hasAnyData.value = true
-      isCompanyNew.value = false
-    }
-  },
-  { immediate: true, deep: true }
-)
+const ceo = computed(() => {
+  if (!company.value?.team) return 'Unknown'
+  return company.value?.team[0]?.firstName + ' ' + company.value?.team[0]?.lastName
+})
 
-// Initialize the company in the store if it doesn't exist yet
+const hasQueriesPending = computed(() => {
+  return (
+    company.value?.pendingStates?.profile?.pending ||
+    company.value?.pendingStates?.digital?.pending ||
+    company.value?.pendingStates?.timeline?.pending ||
+    company.value?.pendingStates?.products?.pending ||
+    company.value?.pendingStates?.team?.pending ||
+    company.value?.pendingStates?.jobs?.pending
+  )
+})
+
 onMounted(() => {
-  if (!companyStore.getCompanyByName(companyName.value)) {
-    companyStore.initCompany(companyName.value)
-    isCompanyNew.value = true
-  } else {
-    company.value = companyStore.getCompanyByName(companyName.value)
-    hasAnyData.value = true
-    isCompanyNew.value = false
+  if (!company.value) {
+    navigateTo('/cards')
   }
 })
 
@@ -249,7 +230,7 @@ const getSocialIcon = (platform: string) => {
     instagram: 'fa-instagram',
     linkedin: 'fa-linkedin',
     youtube: 'fa-youtube',
-    tiktok: 'fa-tiktok',
+    tiktok: 'fab fa-tiktok',
     pinterest: 'fa-pinterest',
     snapchat: 'fa-snapchat',
     telegram: 'fa-telegram',
@@ -259,7 +240,7 @@ const getSocialIcon = (platform: string) => {
     twitch: 'fa-twitch',
     github: 'fa-github',
     gitlab: 'fa-gitlab',
-    bitbucket: 'fa-bitbucket',
+    bitbucket: 'fa-bitbucket'
   }
 
   return iconMap[platform.toLowerCase()] || 'fa-globe'

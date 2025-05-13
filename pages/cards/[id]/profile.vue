@@ -3,21 +3,30 @@
     title="Company Profile"
     icon="fa-building"
     v-if="company"
-    :loading="company.pending"
+    :loading="profilePending"
   >
     <template #actions>
-
+      <OButton @click="refreshCompany" type="secondary" icon="fa-refresh">Refresh</OButton>
     </template>
 
     <template #loading>
       <!-- Insights section (only show if we have insights) -->
-      
+
       <OAlert
-        v-if="company.pending"
+        v-if="profilePending"
         message="Loading insights..."
         title="Insights"
         icon="fa-spinner-third animate-spin"
         color="blue"
+      >
+      </OAlert>
+
+      <OAlert
+        v-if="company?.pendingStates?.profile?.error || company?.pendingStates?.digital?.error"
+        title="Oops, something went wrong"
+        description="Please try again later or contact support"
+        icon="fa-exclamation-triangle"
+        color="red"
       >
       </OAlert>
     </template>
@@ -34,9 +43,7 @@
         </div>
       </div>
 
-      <div
-        class="@max-6xl:col-span-6 @min-6xl:col-span-3 space-y-2 flex flex-col"
-      >
+      <div class="@max-6xl:col-span-6 @min-6xl:col-span-3 space-y-2 flex flex-col">
         <!-- Products and services section -->
         <ProfileProducts />
 
@@ -69,16 +76,36 @@
 
 <script lang="ts" setup>
 import { Profile } from '#components'
-import { OAlert } from '@owlint/feathers-vue'
+import { OAlert, OButton } from '@owlint/feathers-vue'
 import { useCompanyStore } from '~/stores/company'
 
 // Set page metadata
 useHead({
   title: 'Mint - Company Profile',
-  meta: [{ name: 'description', content: 'Company Profile Details' }],
+  meta: [{ name: 'description', content: 'Company Profile Details' }]
 })
 
 const { company } = useCompanyData()
+
+const profilePending = computed(() => {
+  return (
+    company.value?.pendingStates?.profile?.pending ||
+    company.value?.pendingStates?.digital?.pending ||
+    company.value?.pendingStates?.press?.pending ||
+    company.value?.pendingStates?.csr?.pending
+  )
+})
+
+const companyStore = useCompanyStore()
+
+const refreshCompany = () => {
+  if (company.value?.name && company.value?.website) {
+    companyStore.startQuery(company.value.name, company.value.website, 'profile')
+    companyStore.startQuery(company.value.name, company.value.website, 'digital')
+    companyStore.startQuery(company.value.name, company.value.website, 'press')
+    companyStore.startQuery(company.value.name, company.value.website, 'csr')
+  }
+}
 
 const router = useRouter()
 
@@ -87,6 +114,4 @@ onMounted(() => {
     router.push('/cards')
   }
 })
-
-
 </script>

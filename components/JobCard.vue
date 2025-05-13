@@ -3,21 +3,21 @@
     <div class="flex justify-between items-start">
       <div>
         <h3 class="text-lg font-semibold text-primary">
-          {{ getSourcedValue(job.title) }}
+          {{ job.title }}
           <Source :sourced-value="job.title" />
         </h3>
         <div class="mt-2 space-y-2">
           <div class="flex items-center text-sm text-slate-600">
             <i class="fa fa-map-marker w-4"></i>
-            {{ getSourcedValue(job.location) }}
+            {{ job.location }}
           </div>
           <div class="flex items-center text-sm text-slate-600">
             <i class="fa fa-building w-4"></i>
-            {{ getSourcedValue(job.department) }}
+            {{ job.department }}
           </div>
           <div class="flex items-center text-sm text-slate-600">
             <i class="fa fa-calendar w-4"></i>
-            Posted: {{ getSourcedValue(job.posted_date) }}
+            Posted: {{ job.posted_date }}
           </div>
         </div>
       </div>
@@ -26,24 +26,20 @@
     <div class="mt-4">
       <h4 class="font-medium mb-2">Description</h4>
       <p class="text-sm text-slate-600">
-        {{ getSourcedValue(job.description) }}
+        {{ job.description }}
       </p>
     </div>
 
     <div class="mt-4">
       <h4 class="font-medium mb-2">Requirements</h4>
       <p class="text-sm text-slate-600">
-        {{ getSourcedValue(job.requirements) }}
+        {{ job.requirements }}
       </p>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useCompanyData } from '~/composables/useCompanyData'
-
-const { getSourcedValue } = useCompanyData()
-
 defineProps<{
   job: {
     title: any
@@ -54,4 +50,4 @@ defineProps<{
     requirements: any
   }
 }>()
-</script> 
+</script>

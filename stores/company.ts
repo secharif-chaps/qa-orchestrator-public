@@ -1,142 +1,171 @@
 // stores/company.ts
-import { defineStore } from 'pinia';
-import type { Company, SourcedValue } from '~/types.global';
-import { ref, computed } from 'vue';
-
-interface CompanyState {
-  companies: Record<string, Partial<Company>>;
-  currentCompany: string | null;
-}
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+import type { Company } from '~/types.global'
 
 // Définir l'interface du store
 export interface CompanyStore {
   // state
-  companies: Record<string, Partial<Company>>;
-  currentCompany: string | null;
-  
+  companies: Record<string, Partial<Company>>
+
   // getters
-  getCurrentCompany: () => Partial<Company> | null;
-  getCompanyByName: (name: string) => Partial<Company> | null;
-  getCompanyList: () => Partial<Company>[];
-  
+  getCompanyByName: (name: string) => Partial<Company> | null
+  getCompanyList: () => Partial<Company>[]
+
   // actions
-  initCompany: (name: string) => void;
-  updateCompanyProperty: (companyName: string, propertyPath: string, value: any) => void;
-  updateCompanyProperties: (companyName: string, properties: Partial<Company>) => void;
-  setCompanyData: (name: string, data: Partial<Company>) => void;
-  setCurrentCompany: (name: string) => void;
-  deleteCompany: (name: string) => void;
+  initCompany: (name: string) => void
+  deleteCompany: (name: string) => void
+  startQuery: (company: string, website: string, query: string) => Promise<void>
 }
 
-export const useCompanyStore = defineStore('company', () => {
-  // State
-  const companies = ref<Record<string, Partial<Company>>>({});
-  const currentCompany = ref<string | null>(null);
-
-  const router = useRouter()
-
-  // Getters
-  const getCurrentCompany = computed(() => {
-    if (!currentCompany.value) return null;
-    return companies.value[currentCompany.value] || null;
-  });
-
-  const getCompanyByName = (name: string) => {
-    return companies.value[name] || null;
-  };
-
-  const getCompanyList = computed(() => {
-    return Object.values(companies.value);
-  });
-
-  // Actions
-  const initCompany = (name: string, website: string) => {
-    if (!companies.value[name]) {
-      companies.value[name] = {
-        name,
-        website,
-      };
-    } else {
-      console.log('Company already exists');
-    }
-  };
-
-  const startSearch = async (company: string, website: string) => {
-    try {
-      if (!companies.value[company]) {
-        initCompany(company, website);
-      }
-      companies.value[company].pending = true;
-      router.push(`/cards/${company}`)
-
-      const response = await fetch('https://nico-mrc.app.n8n.cloud/webhook-test/57be7c18-e8b2-47aa-b9aa-f7c2696f4523', {
-        method: 'POST',
-        body: JSON.stringify({
-          company: company,
-          website: website
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-
-      let data = await response.json();
-      data = data[0].data[0].output;
-      
-      companies.value[company]  = {...companies.value[company], ...data};
-      
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      companies.value[company].pending = false;
-    }
-  };
-
-  const setCurrentCompany = (name: string) => {
-    name = name.toLocaleLowerCase();
-    if (companies.value[name]) {
-      currentCompany.value = name;
-    } else {
-      initCompany(name, '');
-    }
-  };
-
-  const deleteCompany = (name: string) => {
-    if (companies.value[name]) {
-      delete companies.value[name];
-      delete propertyUpdates.value[name];
-      
-      if (currentCompany.value === name) {
-        currentCompany.value = null;
-      }
-    }
-
-    const lowerCaseName = name.toLocaleLowerCase();
-
-    if (companies.value[lowerCaseName]) {
-      delete companies.value[lowerCaseName];
-      delete propertyUpdates.value[lowerCaseName];
-      
-      if (currentCompany.value === lowerCaseName) {
-        currentCompany.value = null;
-      }
-    }
-  };
-
-  return {
+export const useCompanyStore = defineStore(
+  'company',
+  () => {
     // State
-    companies,
-    currentCompany,
+    const companies = ref<Record<string, Partial<Company>>>({})
+    const currentCompany = ref<string | null>(null)
+
+    const router = useRouter()
 
     // Getters
-    getCurrentCompany,
-    getCompanyByName,
-    getCompanyList,
+    const getCompanyByName = (name: string) => {
+      return companies.value[name] || null
+    }
+
+    const getCompanyList = computed(() => {
+      return Object.values(companies.value)
+    })
 
     // Actions
-    initCompany,
-    startSearch,
-    setCurrentCompany,
-    deleteCompany
-  };
-}) as unknown as () => CompanyStore;
+    const initCompany = (name: string, website: string) => {
+      if (!companies.value[name]) {
+        companies.value[name] = {
+          pendingStates: {},
+          name,
+          website
+        }
+      } else {
+        console.log('Company already exists')
+      }
+    }
+
+    const startQuery = async (company: string, website: string, query: string) => {
+      if (!companies.value[company].pendingStates) {
+        companies.value[company].pendingStates = {}
+      }
+
+      companies.value[company].pendingStates[query] = {
+        pending: true,
+        error: undefined
+      }
+
+      const response = await fetch(
+        // 'http://ec2-34-244-245-92.eu-west-1.compute.amazonaws.com:5678/webhook-test/57be7c18-e8b2-47aa-b9aa-f7c2696f4523',
+        'http://ec2-34-244-245-92.eu-west-1.compute.amazonaws.com:5678/webhook/57be7c18-e8b2-47aa-b9aa-f7c2696f4523',
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            company: company,
+            website: website,
+            query: query
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+        .then(res => res.json())
+        .then(data => {
+          console.log(data[0].output)
+          companies.value[company] = {
+            ...companies.value[company],
+            ...data[0].output
+          }
+        })
+        .catch(err => {
+          companies.value[company].pendingStates![query].error = err
+        })
+        .finally(() => {
+          companies.value[company].pendingStates![query].pending = false
+        })
+
+      return response
+    }
+
+    const startSearch = async (company: string, website: string) => {
+      try {
+        if (!companies.value[company]) {
+          initCompany(company, website)
+        }
+        router.push(`/cards/${company}`)
+
+        const queries = [
+          'team',
+          'products',
+          'profile',
+          'digital',
+          'timeline',
+          'press',
+          'csr',
+          'jobs'
+        ]
+
+        for (const query of queries) {
+          const response = startQuery(company, website, query)
+
+          companies.value[company] = {
+            ...companies.value[company],
+            ...response
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+        companies.value[company] = {
+          ...companies.value[company],
+          error: error instanceof Error ? error.message : 'An unknown error occurred',
+          pending: false
+        }
+      }
+    }
+
+    const deleteCompany = (name: string) => {
+      if (companies.value[name]) {
+        delete companies.value[name]
+
+        if (currentCompany.value === name) {
+          currentCompany.value = null
+        }
+      }
+
+      const lowerCaseName = name.toLocaleLowerCase()
+
+      if (companies.value[lowerCaseName]) {
+        delete companies.value[lowerCaseName]
+
+        if (currentCompany.value === lowerCaseName) {
+          currentCompany.value = null
+        }
+      }
+    }
+
+    return {
+      // State
+      companies,
+
+      // Getters
+      getCompanyByName,
+      getCompanyList,
+
+      // Actions
+      initCompany,
+      startSearch,
+      deleteCompany,
+      startQuery
+    }
+  },
+  {
+    persist: {
+      storage: localStorage
+    }
+  }
+) as unknown as () => CompanyStore

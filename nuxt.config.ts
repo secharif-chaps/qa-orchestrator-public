@@ -1,14 +1,14 @@
-import tailwindcss from "@tailwindcss/vite";
+import tailwindcss from '@tailwindcss/vite'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
 
-  css: [  '@owlint/feathers-vue/style.css', '~/assets/css/main.css'],
+  css: ['@owlint/feathers-vue/style.css', '~/assets/css/main.css'],
 
   runtimeConfig: {
-    public:{
+    public: {
       mistralApiKey: '',
       tilesApiKey: '',
       tilesApiUrl: '',
@@ -25,30 +25,24 @@ export default defineNuxtConfig({
     head: {
       script: [
         {
-          src: "https://kit.fontawesome.com/84dcc6b9fc.js",
-          crossorigin: "anonymous",
-        },
+          src: 'https://kit.fontawesome.com/84dcc6b9fc.js',
+          crossorigin: 'anonymous'
+        }
       ],
       htmlAttrs: {
-        "data-theme": "indigo",
-      },
-    },
+        'data-theme': 'indigo'
+      }
+    }
   },
 
-  routeRules: {
-    '/cards/**': {
-      ssr: false
-    },
-  },
+  ssr: false,
 
   piniaPluginPersistedstate: {
     debug: true
   },
 
   vite: {
-    plugins: [
-      tailwindcss(),
-    ],
+    plugins: [tailwindcss()]
   },
   modules: [
     '@nuxtjs/leaflet',

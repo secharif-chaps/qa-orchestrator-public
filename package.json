@@ -40,9 +40,15 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "^2.3.0",
+    "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@types/d3": "^7.4.3",
     "@types/leaflet": "^1.9.16",
+    "@typescript-eslint/eslint-plugin": "^8.31.0",
+    "@typescript-eslint/parser": "^8.31.0",
     "cypress": "^13.6.6",
+    "eslint": "^9.25.1",
+    "eslint-plugin-vue": "^10.0.0",
+    "prettier": "^3.5.3",
     "start-server-and-test": "^2.0.11",
     "typescript": "^5.8.2"
   },

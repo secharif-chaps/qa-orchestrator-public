@@ -3,10 +3,9 @@
     <div class="bg-bg1 rounded-bl-2xl h-[68px] pr-6 shadow-md">
       <div class="flex items-center justify-between h-full">
         <NuxtLink to="/">
-          <div class="flex items-center space-x-2 text-xl text-primary">
-            <!-- <i class="fa fa-leaf"></i>
-            <h1 class="font-extrabold">MINT</h1> -->
-            <img :src="logo" class="h-24" />
+          <div class="flex items-center space-x-2 text-xl text-primary pl-6">
+            <i class="fa fa-leaf"></i>
+            <h1 class="font-extrabold">MINT</h1>
           </div>
         </NuxtLink>
         <div class="max-w-md grow">
@@ -15,15 +14,20 @@
             :placeholder="t('appbar.search')"
           /> -->
         </div>
-        <div class="flex gap-2">
-          <button
-            v-for="color in colors"
-            @click="changeTheme(color)"
-            class="w-6 h-6 rounded-full cursor-pointer"
-            :class="getStyle(color)"
-          >
-            <i class="fa fa-circle"></i>
-          </button>
+        <div class="flex items-center gap-6">
+          <div>
+            <Icon class="h-6 w-auto" />
+          </div>
+          <div class="flex gap-2">
+            <button
+              v-for="color in colors"
+              @click="changeTheme(color)"
+              class="size-6 rounded-full cursor-pointer flex items-center justify-center"
+              :class="getStyle(color)"
+            >
+              <i class="fa fa-circle"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -31,9 +35,7 @@
 </template>
 
 <script lang="ts" setup>
-import logo from '~/assets/mint.png'
-
-const colors = ['pink', 'indigo', 'emerald',]
+const colors = ['pink', 'indigo', 'emerald']
 
 const currentTheme = ref('indigo')
 

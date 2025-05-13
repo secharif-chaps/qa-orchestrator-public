@@ -1,6 +1,6 @@
 <template>
   <Card>
-    <div class="grid grid-cols-2 gap-4">
+    <div class="flex flex-col gap-4 ">
       <div class="col-span-2">
         <h3 class="space-x-2 font-bold text-primary">
           <i class="fa fa-chart-sine"></i>
@@ -11,38 +11,36 @@
       <!-- Digital Strategy - individual property loading -->
       <div>Digital Strategy</div>
       <div
-        class="text-secondary"
+        class="text-secondary text-sm"
        
       >
         {{
           getSourcedValue(
-            company?.digital_strategy_and_social_media?.digital_strategy
+            company?.digital?.strategy
           ) || 'Not found'
         }}
         <Source
           :sourced-value="
-            company?.digital_strategy_and_social_media?.digital_strategy
+            company?.digital?.strategy
           "
         />
       </div>
      
 
-      <div class="col-span-2 border-b-2 border-slate-200"></div>
-
       <!-- Loyalty Program - individual property loading -->
       <div>Loyalty program</div>
       <div
-        class="text-secondary"
+        class="text-secondary text-sm"
   
       >
         {{
           getSourcedValue(
-            company?.digital_strategy_and_social_media?.loyalty_program
+            company?.digital?.loyaltyProgram
           ) || 'Not found'
         }}
         <Source
           :sourced-value="
-            company?.digital_strategy_and_social_media?.loyalty_program
+            company?.digital?.loyaltyProgram
           "
         />
       </div>
@@ -51,11 +49,11 @@
       <!-- Online Services - individual property loading -->
       <div>Online Services</div>
       <div
-        class="text-secondary"
+        class="text-secondary text-sm"
       >
         {{
           (
-            company?.digital_strategy_and_social_media?.online_services.map(
+            company?.digital?.onlineServices.map(
               (service) => service.value
             ) || []
           ).join(', ') || 'Not found'

@@ -1,30 +1,41 @@
 <template>
-  <LayoutsCompanyCard
-    title="Timeline & Key Milestones"
-    icon="fa-calendar-days"
-  >
+  <LayoutsCompanyCard title="Timeline & Key Milestones" icon="fa-calendar-days">
     <!-- Actions slot -->
     <template #actions>
-      <OButton
-        @click="refreshTimeline"
-        :loading="timelinePending"
-        label="Refresh Timeline"
-        type="secondary"
-        icon="fa-sync"
-      />
+      <OButton @click="refreshTimeline" type="secondary" icon="fa-refresh">Refresh</OButton>
     </template>
 
     <!-- Loading slot -->
     <template #loading>
-      <OAlert
-        v-if="timelinePending"
-        message="Loading company timeline data..."
-        title="Please wait"
-        icon="fa-spinner fa-spin"
-        color="blue"
-      >
-        <p>Fetching milestone events data from AI agent...</p>
-      </OAlert>
+      <div class="flex flex-col gap-2">
+        <OAlert
+          v-if="timelinePending"
+          message="Loading company timeline data..."
+          title="Please wait"
+          icon="fa-spinner fa-spin"
+          color="blue"
+        >
+          <p>Fetching milestone events data from AI agent...</p>
+        </OAlert>
+
+        <OAlert
+          v-if="company?.timeline?.insights"
+          title="Timeline Insights"
+          :description="company?.timeline?.insights"
+          icon="fa-magic"
+          color="blue"
+        >
+        </OAlert>
+
+        <OAlert
+          v-if="company?.pendingStates?.timeline?.error"
+          title="Oops, something went wrong"
+          description="Please try again later or contact support"
+          icon="fa-exclamation-triangle"
+          color="red"
+        >
+        </OAlert>
+      </div>
     </template>
 
     <!-- Main content -->
@@ -41,10 +52,7 @@
     </Card>
 
     <!-- Timeline visualization -->
-    <div
-      v-if="hasTimelineData"
-      class="relative"
-    >
+    <div v-if="hasTimelineData" class="relative">
       <!-- Timeline events -->
       <div class="card flex flex-col gap-4">
         <div>
@@ -54,29 +62,15 @@
               <span>Timeline</span>
             </div>
             <div>
-              <OInput
-                icon="fa-search"
-                id="search"
-                v-model="searchQuery"
-                placeholder="Search..."
-              />
+              <OInput icon="fa-search" id="search" v-model="searchQuery" placeholder="Search..." />
             </div>
           </div>
         </div>
         <div class="grid grid-cols-1">
-          <TimelineEvent
-            v-for="(event, index) in filteredEvents"
-            :key="index"
-            :event="event"
-          />
+          <TimelineEvent v-for="(event, index) in filteredEvents" :key="index" :event="event" />
         </div>
-        <div
-          v-if="filteredEvents.length === 0 && searchQuery"
-          class="text-center py-4"
-        >
-          <p class="text-slate-500">
-            No events found matching "{{ searchQuery }}"
-          </p>
+        <div v-if="filteredEvents.length === 0 && searchQuery" class="text-center py-4">
+          <p class="text-slate-500">No events found matching "{{ searchQuery }}"</p>
         </div>
       </div>
     </div>
@@ -85,8 +79,6 @@
 
 <script lang="ts" setup>
 import { OAlert, OButton, OInput } from '@owlint/feathers-vue'
-import { useCompanyStore } from '~/stores/company'
-import { useAgentStore } from '~/stores/agent'
 
 // Set page metadata
 useHead({
@@ -94,45 +86,42 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: 'Company History Timeline & Key Milestones',
-    },
-  ],
+      content: 'Company History Timeline & Key Milestones'
+    }
+  ]
 })
 
 const searchQuery = ref('')
 
-const { companyName } = useCompanyData()
-const { findTimeline } = useAgent()
-const agentStore = useAgentStore()
-const timelinePending = computed(() => agentStore.getPendingState('timeline'))
-const companyStore = useCompanyStore()
+const { company } = useCompanyData()
 
-const company = computed(() => {
-  return companyStore.getCompanyByName(companyName.value)
+const timelinePending = computed(() => {
+  return company.value?.pendingStates?.timeline?.pending
 })
 
+const companyStore = useCompanyStore()
+
+const refreshTimeline = () => {
+  if (company.value?.name && company.value?.website) {
+    companyStore.startQuery(company.value.name, company.value.website, 'timeline')
+  }
+}
+
 const hasTimelineData = computed(() => {
-  return (
-    !!company.value?.timeline_events && company.value.timeline_events.length > 0
-  )
+  return !!company.value?.timeline?.events && company.value.timeline.events.length > 0
 })
 
 const getTimelineEvents = computed(() => {
-  if (!company.value?.timeline_events) return []
+  if (!company.value?.timeline?.events) return []
 
   // Sort events by date (oldest to newest)
-  return [...company.value.timeline_events].sort((a, b) => {
+  return [...company.value.timeline.events].sort((a, b) => {
     // Extract just the year if it's the only format available
     const yearA = a.date.substring(0, 4)
     const yearB = b.date.substring(0, 4)
     return parseInt(yearA) - parseInt(yearB)
   })
 })
-
-// Generate or refresh timeline data
-const refreshTimeline = async () => {
-  await findTimeline(companyName.value)
-}
 
 const filteredEvents = computed(() => {
   if (!searchQuery.value.trim()) {
@@ -141,7 +130,7 @@ const filteredEvents = computed(() => {
 
   const query = searchQuery.value.toLowerCase().trim()
 
-  return getTimelineEvents.value.filter((event) => {
+  return getTimelineEvents.value.filter(event => {
     // Search in title, description, location, and category
     return (
       (event.title && event.title.toLowerCase().includes(query)) ||
