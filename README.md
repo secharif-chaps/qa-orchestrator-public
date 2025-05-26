@@ -1,75 +1,61 @@
-# Nuxt Minimal Starter
+# Mint Application Docker Setup
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+This repository contains a dockerized setup for the Mint application, consisting of a Nuxt frontend, FastAPI backend, and PostgreSQL database.
 
-## Setup
+## Prerequisites
 
-Make sure to install dependencies:
+- Docker
+- Docker Compose
 
-```bash
-# npm
-npm install
+## Getting Started
 
-# pnpm
-pnpm install
+To run the application in Docker containers:
 
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+1. Clone this repository
+2. Navigate to the root directory
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+cd mint
 ```
 
-## Production
-
-Build the application for production:
+3. Build and start the containers
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+docker-compose up -d
 ```
 
-Locally preview production build:
+4. Access the application
 
-```bash
-# npm
-npm run preview
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
 
-# pnpm
-pnpm preview
+## Services
 
-# yarn
-yarn preview
+- **Frontend**: Nuxt.js application running on port 3000
+- **Backend**: FastAPI application running on port 8000
+- **Database**: PostgreSQL running on port 5432
 
-# bun
-bun run preview
-```
+## Docker Compose Commands
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- Start the containers: `docker-compose up -d`
+- Stop the containers: `docker-compose down`
+- View logs: `docker-compose logs -f`
+- Rebuild containers: `docker-compose up -d --build`
+
+## Environment Variables
+
+### Backend
+
+- `DATABASE_URL`: PostgreSQL connection string
+- `API_HOST`: Host to bind the API to
+- `API_PORT`: Port to run the API on
+- `N8N_BASE_URL`: URL for the N8N integration
+- `N8N_WEBHOOK_ID`: Webhook ID for N8N integration
+
+### Frontend
+
+- `NUXT_PUBLIC_BACKEND_API`: URL of the backend API
+
+## Data Persistence
+
+PostgreSQL data is persisted in a Docker volume named `postgres_data`. 
