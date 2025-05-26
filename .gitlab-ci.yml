@@ -14,7 +14,7 @@ cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - mint-front/node_modules/
-    - mint-back/.venv/
+    - mint-back/.cache/pypoetry/
 
 # Frontend build job
 build-frontend:
@@ -37,13 +37,13 @@ build-backend:
   stage: build
   script:
     - cd mint-back
-    - python -m venv .venv
-    - source .venv/bin/activate
-    - pip install -r requirements.txt
-    - pip install pytest pytest-cov
+    - curl -sSL https://install.python-poetry.org | python3 -
+    - poetry config virtualenvs.create false
+    - poetry install --no-interaction --no-ansi
+    - poetry add --group dev pytest pytest-cov
   artifacts:
     paths:
-      - mint-back/.venv/
+      - mint-back/.cache/pypoetry/
     expire_in: 1 week
   only:
     - main
@@ -68,8 +68,10 @@ test-backend:
   stage: test
   script:
     - cd mint-back
-    - source .venv/bin/activate
-    - pytest --cov=app tests/
+    - curl -sSL https://install.python-poetry.org | python3 -
+    - poetry config virtualenvs.create false
+    - poetry install --no-interaction --no-ansi
+    - poetry run pytest --cov=app tests/
   dependencies:
     - build-backend
   only:
