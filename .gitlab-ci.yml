@@ -37,8 +37,8 @@ build-backend:
   stage: build
   script:
     - cd mint-back
-    - curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python3 -
-    - export PATH="/opt/poetry/bin:$PATH"
+    - curl -sSL https://install.python-poetry.org | python3 -
+    - export PATH="$HOME/.local/bin:$PATH"
     - poetry config virtualenvs.create false
     - poetry install --no-interaction --no-ansi
     - poetry add --group dev pytest pytest-cov
@@ -69,8 +69,8 @@ build-backend:
 #   stage: test
 #   script:
 #     - cd mint-back
-#     - curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python3 -
-#     - export PATH="/opt/poetry/bin:$PATH"
+#     - curl -sSL https://install.python-poetry.org | python3 -
+#     - export PATH="$HOME/.local/bin:$PATH"
 #     - poetry config virtualenvs.create false
 #     - poetry install --no-interaction --no-ansi
 #     - poetry run pytest --cov=app tests/
