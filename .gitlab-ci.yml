@@ -1,0 +1,89 @@
+image: python:3.11
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
+stages:
+  - build
+  - test
+  - deploy
+
+# Cache dependencies between jobs
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - mint-front/node_modules/
+    - mint-back/.venv/
+
+# Frontend build job
+build-frontend:
+  stage: build
+  image: node:18
+  script:
+    - cd mint-front
+    - yarn install --frozen-lockfile
+    - yarn build
+  artifacts:
+    paths:
+      - mint-front/.output/
+    expire_in: 1 week
+  only:
+    - main
+    - merge_requests
+
+# Backend build job
+build-backend:
+  stage: build
+  script:
+    - cd mint-back
+    - python -m venv .venv
+    - source .venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install pytest pytest-cov
+  artifacts:
+    paths:
+      - mint-back/.venv/
+    expire_in: 1 week
+  only:
+    - main
+    - merge_requests
+
+# Frontend tests
+test-frontend:
+  stage: test
+  image: node:18
+  script:
+    - cd mint-front
+    - yarn install --frozen-lockfile
+    - yarn test
+  dependencies:
+    - build-frontend
+  only:
+    - main
+    - merge_requests
+
+# Backend tests
+test-backend:
+  stage: test
+  script:
+    - cd mint-back
+    - source .venv/bin/activate
+    - pytest --cov=app tests/
+  dependencies:
+    - build-backend
+  only:
+    - main
+    - merge_requests
+
+# Deploy job (example - adjust according to your deployment needs)
+deploy:
+  stage: deploy
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  script:
+    - docker build -t mint-front -f mint-front/Dockerfile mint-front/
+    - docker build -t mint-back -f mint-back/Dockerfile mint-back/
+  only:
+    - main 
