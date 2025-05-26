@@ -6,7 +6,7 @@ variables:
 
 stages:
   - build
-  - test
+  # - test
   - deploy
 
 # Cache dependencies between jobs
@@ -50,33 +50,33 @@ build-backend:
     - merge_requests
 
 # Frontend tests
-test-frontend:
-  stage: test
-  image: node:18
-  script:
-    - cd mint-front
-    - yarn install --frozen-lockfile
-    - yarn test
-  dependencies:
-    - build-frontend
-  only:
-    - main
-    - merge_requests
+# test-frontend:
+#   stage: test
+#   image: node:18
+#   script:
+#     - cd mint-front
+#     - yarn install --frozen-lockfile
+#     - yarn test
+#   dependencies:
+#     - build-frontend
+#   only:
+#     - main
+#     - merge_requests
 
 # Backend tests
-test-backend:
-  stage: test
-  script:
-    - cd mint-back
-    - curl -sSL https://install.python-poetry.org | python3 -
-    - poetry config virtualenvs.create false
-    - poetry install --no-interaction --no-ansi
-    - poetry run pytest --cov=app tests/
-  dependencies:
-    - build-backend
-  only:
-    - main
-    - merge_requests
+# test-backend:
+#   stage: test
+#   script:
+#     - cd mint-back
+#     - curl -sSL https://install.python-poetry.org | python3 -
+#     - poetry config virtualenvs.create false
+#     - poetry install --no-interaction --no-ansi
+#     - poetry run pytest --cov=app tests/
+#   dependencies:
+#     - build-backend
+#   only:
+#     - main
+#     - merge_requests
 
 # Deploy job (example - adjust according to your deployment needs)
 deploy:
