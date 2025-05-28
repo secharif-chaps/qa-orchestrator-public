@@ -7,7 +7,7 @@ variables:
 stages:
   - build
   - test
-  - deploy
+  - docker-build
 
 # Cache dependencies between jobs
 cache:
@@ -69,7 +69,7 @@ test-backend:
 
 # Deploy job (example - adjust according to your deployment needs)
 deploy:
-  stage: deploy
+  stage: docker-build
   script:
     - docker build -t mint-front -f mint-front/Dockerfile mint-front/
     - docker build -t mint-back -f mint-back/Dockerfile mint-back/
