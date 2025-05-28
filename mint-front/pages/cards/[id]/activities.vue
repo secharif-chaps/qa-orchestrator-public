@@ -28,7 +28,7 @@
         </OAlert>
 
         <OAlert
-          v-if="company?.pending_states?.timeline?.error"
+          v-if="company?.tasks?.some(task => task.type === 'timeline' && task.status === 'error')"
           title="Oops, something went wrong"
           description="Please try again later or contact support"
           icon="fa-exclamation-triangle"
@@ -100,7 +100,12 @@ onMounted(async () => {
 const searchQuery = ref('')
 
 const timelinePending = computed(() => {
-  return company.value?.pending_states?.timeline?.pending
+  if (!companyId.value) {
+    return false
+  }
+  return company.value?.tasks?.some(
+    task => task.type === 'timeline' && (task.status === 'pending' || task.status === 'running')
+  )
 })
 
 const companyStore = useCompanyStore()

@@ -170,7 +170,9 @@ const teamPending = computed(() => {
   if (!companyId.value) {
     return false
   }
-  return companyStore.companies[companyId.value]?.pending_states?.team?.pending
+  return companyStore.companies[companyId.value]?.tasks?.some(
+    task => task.type === 'team' && (task.status === 'pending' || task.status === 'running')
+  )
 })
 
 const companyStore = useCompanyStore()

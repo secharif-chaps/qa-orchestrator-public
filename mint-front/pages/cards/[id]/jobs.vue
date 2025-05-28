@@ -138,14 +138,14 @@ onMounted(async () => {
   await fetchCompany()
 })
 
-const jobOffersPending = computed(
-  () => {
-    if (!companyId.value) {
-      return false
-    }
-    return companyStore.companies[companyId.value]?.pending_states?.jobs?.pending
+const jobOffersPending = computed(() => {
+  if (!companyId.value) {
+    return false
   }
-)
+  return companyStore.companies[companyId.value]?.tasks?.some(
+    task => task.type === 'jobs' && (task.status === 'pending' || task.status === 'running')
+  )
+})
 
 const hasJobOffersData = computed(() => {
   return !!company.value?.jobs?.offers && company.value.jobs.offers.length > 0

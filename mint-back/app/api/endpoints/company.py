@@ -160,16 +160,7 @@ async def start_query(
     # Start the query
     result = await service.start_query(company_id, query_type)
 
-    # log the result
-    print(result)
-    
-    if not result.get("success", False):
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=result.get("error", "Unknown error")
-        )
-    
     return {
-        "message": f"Query '{query_type}' started for company ID: {company_id}",
+        "message": f"Query '{query_type}' finished for company ID: {company_id}",
         "result": result
     } 

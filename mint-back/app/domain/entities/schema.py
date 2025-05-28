@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
+from app.domain.entities.task import TaskStatus, TaskType
 
 # Base Pydantic models
 class SourcedValue(BaseModel):
@@ -11,6 +12,7 @@ class PendingState(BaseModel):
     pending: bool
     error: Optional[str] = None
 
+# Base Company model
 class CompanyBase(BaseModel):
     name: str
     website: str
@@ -30,6 +32,23 @@ class CompanyUpdate(BaseModel):
     csr: Optional[Dict[str, Any]] = None
     press: Optional[Dict[str, Any]] = None
     team: Optional[List[Dict[str, Any]]] = None
+
+# Task models
+class TaskBase(BaseModel):
+    type: TaskType
+    status: TaskStatus
+    error: Optional[str] = None
+
+class TaskCreate(TaskBase):
+    company_id: int
+
+class TaskResponse(TaskBase):
+    id: int
+    company_id: int
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
 
 # N8N related models
 class N8nWorkflowRequest(BaseModel):
@@ -51,10 +70,9 @@ class CompanyResponse(CompanyBase):
     csr: Dict[str, Any] = Field(default_factory=dict)
     press: Dict[str, Any] = Field(default_factory=dict)
     team: List[Dict[str, Any]] = Field(default_factory=list)
-    pending_states: Dict[str, PendingState] = Field(default_factory=dict)
     error: Optional[str] = None
     created_at: datetime
     updated_at: datetime
+    tasks: List[TaskResponse] = Field(default_factory=list)
     
-    class Config:
-        orm_mode = True 
+    model_config = ConfigDict(from_attributes=True) 

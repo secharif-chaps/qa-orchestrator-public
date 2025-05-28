@@ -5,15 +5,6 @@
     <template #loading>
       <div class="flex flex-col gap-2">
 
-
-        <OAlert v-if="error" title="Error loading company" icon="fa-exclamation-circle" color="red">
-          <template #description>
-            <div class="text-sm text-gray-600">
-              {{ error }}
-            </div>
-          </template>
-        </OAlert>
-
         <OAlert
           v-if="hasQueriesPending"
           title="Loading company information..."
@@ -25,14 +16,14 @@
               <div class="text-sm text-gray-600">
                 <div class="grid grid-cols-2 gap-2">
                   <div
-                    v-for="(state, key) in company?.pending_states"
-                    :key="key"
+                    v-for="task in company?.tasks"
+                    :key="task.type"
                     class="flex items-center gap-2"
                   >
-                    <i v-if="state.pending" class="fa fa-spinner fa-spin text-blue-500"></i>
-                    <i v-else-if="state.error" class="fa fa-exclamation-circle text-red-500"></i>
+                    <i v-if="task.status === 'pending' || task.status === 'running'" class="fa fa-spinner fa-spin text-blue-500"></i>
+                    <i v-else-if="task.status === 'error'" class="fa fa-exclamation-circle text-red-500"></i>
                     <i v-else class="fa fa-check-circle text-green-500"></i>
-                    <span class="capitalize">{{ key }}</span>
+                    <span class="capitalize">{{ task.type }}</span>
                   </div>
                 </div>
               </div>
@@ -165,8 +156,6 @@ const showAiChat = ref(false)
 const {
   company,
   companyId,
-  loading,
-  error,
   fetchCompany,
   getSourcedValue,
 } = useCompanyData()
@@ -256,12 +245,12 @@ const formatWebsiteUrl = (website: string) => {
 
 // Check if a section is pending
 const isPending = (sectionKey: string) => {
-  return company.value?.pending_states?.[sectionKey]?.pending === true
+  return company.value?.tasks?.some(task => task.type === sectionKey && (task.status === 'pending' || task.status === 'running'))
 }
 
 const hasQueriesPending = computed(() => {
-  if (!company.value?.pending_states) return false
-  return Object.values(company.value.pending_states).some(state => (state as { pending: boolean }).pending)
+  if (!company.value?.tasks) return false
+  return company.value.tasks.some(task => task.status === 'pending' || task.status === 'running')
 })
 
 // Helper function to get social media icon

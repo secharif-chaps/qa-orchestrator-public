@@ -23,11 +23,11 @@ class Company(Base):
     press = Column(JSON, default=dict)
     team = Column(JSON, default=list)
     
-    # Tracking pending states
-    pending_states = Column(JSON, default=dict)
-    
     # Error field
     error = Column(String, nullable=True)
+    
+    # Relationship with tasks
+    tasks = relationship("Task", back_populates="company", cascade="all, delete-orphan")
     
     def __init__(self, name: str, website: str):
         self.name = name
@@ -40,43 +40,36 @@ class Company(Base):
         self.csr = {}
         self.press = {}
         self.team = []
-        self.pending_states = {}
         
     def update_from_n8n(self, query_type: str, data: Dict[str, Any]) -> None:
         """Update company data from n8n workflow results"""
+        print(f"\n=== Updating company data for {query_type} ===")
+        data = data.get("output", data)
+        
         if query_type == "profile":
             self.profile = data.get("profile", self.profile)
+            print(f"Updated profile data: {list(self.profile.keys()) if isinstance(self.profile, dict) else 'Not a dict'}")
         elif query_type == "digital":
             self.digital = data.get("digital", self.digital)
+            print(f"Updated digital data: {list(self.digital.keys()) if isinstance(self.digital, dict) else 'Not a dict'}")
         elif query_type == "timeline":
-            self.timeline = data.get("timeline", self.timeline)
+            self.timeline = data.get("timeline", data)
+            print(f"Updated timeline data: {list(self.timeline.keys()) if isinstance(self.timeline, dict) else 'Not a dict'}")
         elif query_type == "products":
             self.products = data.get("products", self.products)
+            print(f"Updated products data: {list(self.products.keys()) if isinstance(self.products, dict) else 'Not a dict'}")
         elif query_type == "jobs":
             self.jobs = data.get("jobs", self.jobs)
+            print(f"Updated jobs data: {list(self.jobs.keys()) if isinstance(self.jobs, dict) else 'Not a dict'}")
         elif query_type == "csr":   
             self.csr = data.get("csr", self.csr)
+            print(f"Updated csr data: {list(self.csr.keys()) if isinstance(self.csr, dict) else 'Not a dict'}")
         elif query_type == "press":
             self.press = data.get("press", self.press)
+            print(f"Updated press data: {list(self.press.keys()) if isinstance(self.press, dict) else 'Not a dict'}")
         elif query_type == "team":
             self.team = data.get("team", self.team)
+            print(f"Updated team data: {len(self.team) if isinstance(self.team, list) else 'Not a list'}")
         
         self.updated_at = datetime.utcnow()
-        
-    def set_pending_state(self, query_type: str, is_pending: bool, error: Optional[str] = None) -> None:
-        """Update pending state for a specific query type"""
-        if not self.pending_states:
-            self.pending_states = {}
-            
-        # Create a new pending states dict with all existing states
-        new_pending_states = dict(self.pending_states)
-        
-        # Update or add the new pending state
-        new_pending_states[query_type] = {
-            "pending": is_pending,
-            "error": error
-        }
-        
-        # Update the pending states
-        self.pending_states = new_pending_states
-        self.updated_at = datetime.utcnow() 
+        print("Update completed") 

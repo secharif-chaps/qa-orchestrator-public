@@ -22,7 +22,8 @@
       </OAlert>
 
       <OAlert
-        v-if="company?.pending_states?.profile?.error || company?.pending_states?.digital?.error"
+        v-if="company?.tasks?.some(task => task.type === 'profile' && task.status === 'error') || 
+              company?.tasks?.some(task => task.type === 'digital' && task.status === 'error')"
         title="Oops, something went wrong"
         description="Please try again later or contact support"
         icon="fa-exclamation-triangle"
@@ -88,11 +89,12 @@ useHead({
 const { company, companyId, fetchCompany } = useCompanyData()
 
 const profilePending = computed(() => {
-  return (
-    company.value?.pending_states?.profile?.pending ||
-    company.value?.pending_states?.digital?.pending ||
-    company.value?.pending_states?.press?.pending ||
-    company.value?.pending_states?.csr?.pending
+  if (!companyId.value) {
+    return false
+  }
+  return company.value?.tasks?.some(
+    task => (task.type === 'profile' || task.type === 'digital' || task.type === 'press' || task.type === 'csr') &&
+           (task.status === 'pending' || task.status === 'running')
   )
 })
 

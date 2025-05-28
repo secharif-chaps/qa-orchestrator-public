@@ -9,12 +9,19 @@
     <template #loading>
       <div class="flex flex-col gap-2">
         <OAlert
-          v-if="company.pending_states?.products?.pending"
-          message="Loading products information..."
-          title="Please wait"
-          description="Products information will be displayed here once available."
-          icon="fa-spinner fa-spin"
+          v-if="company.tasks?.some(task => task.type === 'products' && (task.status === 'pending' || task.status === 'running'))"
+          title="Loading products..."
+          icon="fa-spinner-third animate-spin"
           color="blue"
+        >
+        </OAlert>
+
+        <OAlert
+          v-if="company.tasks?.some(task => task.type === 'products' && task.status === 'error')"
+          title="Oops, something went wrong"
+          description="Please try again later or contact support"
+          icon="fa-exclamation-triangle"
+          color="red"
         >
         </OAlert>
 
@@ -26,21 +33,12 @@
           color="blue"
         >
         </OAlert>
-
-        <OAlert
-          v-if="company.pending_states?.products?.error"
-          title="Oops, something went wrong"
-          description="Please try again later or contact support"
-          icon="fa-exclamation-triangle"
-          color="red"
-        >
-        </OAlert>
       </div>
     </template>
 
     <!-- Main content -->
     <div
-      v-if="!company.pending_states?.products?.pending && products"
+      v-if="!company.tasks?.some(task => task.type === 'products' && (task.status === 'pending' || task.status === 'running')) && products"
       class="card grid @min-6xl:grid-cols-3 @max-6xl:grid-cols-2 gap-4"
     >
       <div
@@ -57,10 +55,9 @@
       </div>
     </div>
 
-
     <!-- No products state -->
     <OAlert
-      v-else-if="!company.pending_states?.products?.pending && (!products || products.length === 0)"
+      v-else-if="!company.tasks?.some(task => task.type === 'products' && (task.status === 'pending' || task.status === 'running')) && (!products || products.length === 0)"
       message="No products information available yet."
       title="No Data"
       description="Products information will be displayed here once available."
@@ -68,7 +65,6 @@
       color="gray"
     >
     </OAlert>
-
 
   </LayoutsCompanyCard>
 </template>

@@ -21,7 +21,7 @@ class N8nClient:
         Returns:
             Response data from the n8n workflow
         """
-        url = f"{self.base_url}/webhook/{self.webhook_id}"
+        url = f"{self.base_url}/webhook-test/{self.webhook_id}"
         
         # Log the request details
         print(f"Triggering n8n workflow for {query}")
@@ -46,8 +46,44 @@ class N8nClient:
                 print(f"N8n raw response headers: {response.headers}")
                 print(f"N8n raw response body: {response.text}")
                 
-                response.raise_for_status()
-                return response.json()
+                if response.status_code != 200:
+                    error_msg = f"N8n workflow returned non-200 status code: {response.status_code}"
+                    print(error_msg)
+                    raise Exception(error_msg)
+                
+                try:
+                    # Parse the response text directly
+                    import json
+                    json_response = json.loads(response.text)
+                    
+                    if json_response is None:
+                        error_msg = "N8n workflow returned null response"
+                        print(error_msg)
+                        raise Exception(error_msg)
+                    
+                    # If the response is a list, take the first item
+                    if isinstance(json_response, list):
+                        if not json_response:
+                            error_msg = "N8n workflow returned empty list"
+                            print(error_msg)
+                            raise Exception(error_msg)
+                        json_response = json_response[0]
+                    
+                    # Ensure we have a dictionary
+                    if not isinstance(json_response, dict):
+                        error_msg = f"N8n workflow returned unexpected type: {type(json_response)}"
+                        print(error_msg)
+                        raise Exception(error_msg)
+                    
+                    return json_response
+                except json.JSONDecodeError as e:
+                    error_msg = f"Failed to parse n8n response as JSON: {str(e)}"
+                    print(error_msg)
+                    raise Exception(error_msg)
+                except Exception as e:
+                    error_msg = f"Error processing n8n response: {str(e)}"
+                    print(error_msg)
+                    raise Exception(error_msg)
                 
         except httpx.TimeoutException as e:
             error_msg = f"Request to n8n timed out after 5 minutes. This might indicate that the workflow is taking longer than expected to complete."
@@ -79,5 +115,5 @@ class N8nClient:
         
         async with httpx.AsyncClient() as client:
             response = await client.get(url)
-            response.raise_for_status()
-            return response.json() 
+            await response.raise_for_status()
+            return await response.json() 

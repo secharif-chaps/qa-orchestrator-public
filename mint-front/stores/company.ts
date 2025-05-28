@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { useCompanyRepository } from '~/composables/useCompanyRepository'
-import type { CompanyCreate, CompanyResponse, CompanyUpdate } from '~/types/company'
+import type { CompanyCreate, CompanyResponse, CompanyUpdate, TaskStatus } from '~/types/company'
 
 export const useCompanyStore = defineStore('company', {
   state: () => ({
@@ -27,16 +27,18 @@ export const useCompanyStore = defineStore('company', {
       }
     },
 
-    async fetchCompanyById(id: number) {
+    async getCompanyById(id: number) {
       const repository = useCompanyRepository()
       this.loading = true
       this.error = null
 
       try {
         this.currentCompany = await repository.getCompanyById(id)
+        return this.currentCompany
       } catch (err) {
         this.error = (err as Error).message
         console.error(`Failed to fetch company with ID ${id}:`, err)
+        throw err
       } finally {
         this.loading = false
       }
@@ -112,16 +114,14 @@ export const useCompanyStore = defineStore('company', {
 
       try {
         await repository.deleteCompany(id)
-
+        
         // Remove the company from the companies array
         this.companies = this.companies.filter(c => c.id !== id)
-
+        
         // Clear current company if it's the one being deleted
         if (this.currentCompany && this.currentCompany.id === id) {
           this.currentCompany = null
         }
-
-        return true
       } catch (err) {
         this.error = (err as Error).message
         console.error(`Failed to delete company with ID ${id}:`, err)
@@ -152,17 +152,6 @@ export const useCompanyStore = defineStore('company', {
       this.loading = true
       this.error = null
 
-      // Optimistically update the pending state
-      if (this.currentCompany) {
-        if (!this.currentCompany.pending_states) {
-          this.currentCompany.pending_states = {}
-        }
-        this.currentCompany.pending_states[queryType] = {
-          pending: true,
-          error: null
-        }
-      }
-
       try {
         console.log('Starting query for company ID:', companyId, 'with type:', queryType)
         const result = await repository.startQuery(companyId, queryType)
@@ -174,13 +163,6 @@ export const useCompanyStore = defineStore('company', {
         
         return result
       } catch (err) {
-        // Update error state if the query fails
-        if (this.currentCompany?.pending_states) {
-          this.currentCompany.pending_states[queryType] = {
-            pending: false,
-            error: (err as Error).message
-          }
-        }
         this.error = (err as Error).message
         console.error('Failed to start query:', err)
         throw err
@@ -190,25 +172,29 @@ export const useCompanyStore = defineStore('company', {
     },
 
     startPolling(companyId: number) {
-      // Clear any existing interval
+      // Clear any existing polling interval
       if (this.pollingInterval) {
         clearInterval(this.pollingInterval)
       }
 
-      // Start new polling interval
+      // Start polling every 5 seconds
       this.pollingInterval = setInterval(async () => {
         try {
-          await this.fetchCompanyById(companyId)
+          const company = await this.getCompanyById(companyId)
           
-          // Check if all pending states are resolved
-          if (this.currentCompany && !this.hasPendingStates(this.currentCompany)) {
+          // Check if all tasks are completed
+          const allTasksCompleted = company.tasks.every(
+            task => task.status === 'succeeded' || task.status === 'error'
+          )
+          
+          if (allTasksCompleted) {
             this.stopPolling()
           }
         } catch (err) {
-          console.error('Error during polling:', err)
+          console.error('Error polling company status:', err)
           this.stopPolling()
         }
-      }, 30000) // 30 seconds
+      }, 5000)
     },
 
     stopPolling() {
@@ -216,11 +202,6 @@ export const useCompanyStore = defineStore('company', {
         clearInterval(this.pollingInterval)
         this.pollingInterval = null
       }
-    },
-
-    hasPendingStates(company: CompanyResponse): boolean {
-      if (!company.pending_states) return false
-      return Object.values(company.pending_states).some(state => state.pending)
     },
 
     clearCurrentCompany() {

@@ -17,12 +17,15 @@ export interface Company {
   name: string
   website: string
 
-  pending_states: {
-    [key: string]: {
-      pending: boolean
-      error?: string
-    }
-  }
+  tasks: {
+    id: number
+    company_id: number
+    type: 'profile' | 'digital' | 'timeline' | 'products' | 'jobs' | 'csr' | 'press' | 'team'
+    status: 'pending' | 'running' | 'succeeded' | 'error'
+    error?: string | null
+    created_at: string
+    updated_at: string
+  }[]
 
   profile: {
     groupName?: SourcedValue<string>

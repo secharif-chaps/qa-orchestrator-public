@@ -12,21 +12,7 @@ export const useCompanyAdapter = () => {
     const appCompany: Partial<Company> = {
       name: apiCompany.name,
       website: apiCompany.website,
-      pending_states: {}
-    }
-
-    // Convert pending_states to pending_states
-    if (apiCompany.pending_states) {
-      appCompany.pending_states = Object.entries(apiCompany.pending_states).reduce(
-        (acc, [key, value]) => {
-          acc[key] = {
-            pending: value.pending,
-            error: value.error || undefined
-          }
-          return acc
-        },
-        {} as Record<string, { pending: boolean; error?: string }>
-      )
+      tasks: apiCompany.tasks
     }
 
     // Copy over profile data
@@ -83,6 +69,8 @@ export const useCompanyAdapter = () => {
       appCompany.team = [...apiCompany.team] as any
     }
 
+    
+
     return appCompany
   }
 
@@ -93,6 +81,7 @@ export const useCompanyAdapter = () => {
     return {
       name: appCompany.name,
       website: appCompany.website,
+      tasks: appCompany.tasks,
       profile: appCompany.profile,
       digital: appCompany.digital,
       timeline: appCompany.timeline,

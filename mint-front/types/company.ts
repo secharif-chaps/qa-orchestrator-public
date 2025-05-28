@@ -1,6 +1,14 @@
-export interface PendingState {
-  pending: boolean
+export type TaskType = 'profile' | 'digital' | 'timeline' | 'products' | 'jobs' | 'csr' | 'press' | 'team'
+export type TaskStatus = 'pending' | 'running' | 'succeeded' | 'error'
+
+export interface Task {
+  id: number
+  company_id: number
+  type: TaskType
+  status: TaskStatus
   error?: string | null
+  created_at: string
+  updated_at: string
 }
 
 export interface CompanyCreate {
@@ -33,8 +41,8 @@ export interface CompanyResponse {
   csr?: Record<string, any>
   press?: Record<string, any>
   team?: Record<string, any>[]
-  pending_states?: Record<string, PendingState>
   error?: string | null
   created_at: string
   updated_at: string
+  tasks: Task[]
 }
