@@ -51,7 +51,7 @@ build-backend:
     - merge_requests
 
 
-Backend tests
+# Backend tests
 test-backend:
   stage: test
   script:
