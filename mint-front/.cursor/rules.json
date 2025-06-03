@@ -1,0 +1,11 @@
+{
+  "rules": [
+    {
+      "name": "no-direct-imports",
+      "description": "Prevent direct imports of composables and components in Nuxt 3 project",
+      "pattern": "import\\s+.*\\s+from\\s+['\"](@/|~/)(composables|components)/",
+      "message": "Direct imports of composables and components are not allowed. Nuxt 3 provides auto-imports for these. Remove the import statement and use the auto-imported functions/components directly.",
+      "severity": "error"
+    }
+  ]
+} 

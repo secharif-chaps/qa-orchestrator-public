@@ -45,7 +45,7 @@
                 <tr v-for="company in companies" :key="company.id" class="hover:bg-bg2 group">
                   <td
                     class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 group-hover:text-primary cursor-pointer"
-                    @click="$router.push(`/cards/${company.id}`)"
+                    @click="$router.push(`/companies/${company.id}`)"
                   >
                     {{ company.name }}
                   </td>
@@ -63,7 +63,7 @@
                         icon="fa-eye"
                         type="tertiary"
                         :title="$t('cards.actions.view')"
-                        @click="$router.push(`/cards/${company.id}`)"
+                        @click="$router.push(`/companies/${company.id}`)"
                       >
                       </OButton>
                       <OButton

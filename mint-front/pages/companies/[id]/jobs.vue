@@ -1,28 +1,14 @@
 <template>
   <LayoutsCompanyCard title="Job Offers" icon="fa-briefcase">
-    <!-- Actions slot -->
-    <template #actions>
-      <OButton
-        @click="refreshJobs"
-        :loading="jobOffersPending"
-        label="Refresh Jobs"
-        type="secondary"
-        icon="fa-sync"
-      />
-    </template>
-
-    <!-- Loading slot -->
-    <template #loading>
-      <OAlert
-        v-if="jobOffersPending"
-        message="Loading company job offers..."
-        title="Please wait"
-        description="Job offers data will be displayed here once available."
-        icon="fa-spinner fa-spin"
-        color="blue"
-      >
-      </OAlert>
-    </template>
+    <div class="flex flex-col gap-4">
+      <!-- Task state -->
+      <TaskState
+        v-if="companyId"
+      :company-id="companyId"
+      :required-task-types="['jobs']"
+      loading-title="Loading job offers..."
+      loading-description="Fetching current job opportunities..."
+    />
 
     <!-- Empty state -->
     <Card v-if="!hasJobOffersData && !jobOffersPending">
@@ -116,13 +102,14 @@
         </TransitionGroup>
       </Card>
     </div>
+  </div>
   </LayoutsCompanyCard>
 </template>
 
 <script lang="ts" setup>
-import { OAlert, OButton, OInput } from '@owlint/feathers-vue'
+import { OInput } from '@owlint/feathers-vue'
 import JobCard from '~/components/JobCard.vue'
-import { useCompanyStore } from '~/stores/company'
+import TaskState from '~/components/TaskState.vue'
 
 // Set page metadata
 useHead({
@@ -132,7 +119,6 @@ useHead({
 
 const searchQuery = ref('')
 const { company, companyId, getSourcedValue, getSourcedSource, fetchCompany } = useCompanyData()
-const companyStore = useCompanyStore()
 
 onMounted(async () => {
   await fetchCompany()
@@ -142,8 +128,8 @@ const jobOffersPending = computed(() => {
   if (!companyId.value) {
     return false
   }
-  return companyStore.companies[companyId.value]?.tasks?.some(
-    task => task.type === 'jobs' && (task.status === 'pending' || task.status === 'running')
+  return company.value?.tasks?.some(
+    (task: { type: string; status: string }) => task.type === 'jobs' && (task.status === 'pending' || task.status === 'running')
   )
 })
 
@@ -177,14 +163,6 @@ const filteredJobs = computed(() => {
     )
   })
 })
-
-// Generate or refresh job offers data
-const refreshJobs = async () => {
-  if (!companyId.value) {
-    return
-  }
-  await companyStore.startQuery(companyId.value, 'jobs')
-}
 </script>
 
 <style>

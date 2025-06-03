@@ -5,32 +5,15 @@
     v-if="company"
     :loading="profilePending"
   >
-    <template #actions>
-      <OButton @click="refreshCompany" type="secondary" icon="fa-refresh">Refresh</OButton>
-    </template>
-
-    <template #loading>
-      <!-- Insights section (only show if we have insights) -->
-
-      <OAlert
-        v-if="profilePending"
-        message="Loading insights..."
-        title="Insights"
-        icon="fa-spinner-third animate-spin"
-        color="blue"
-      >
-      </OAlert>
-
-      <OAlert
-        v-if="company?.tasks?.some(task => task.type === 'profile' && task.status === 'error') || 
-              company?.tasks?.some(task => task.type === 'digital' && task.status === 'error')"
-        title="Oops, something went wrong"
-        description="Please try again later or contact support"
-        icon="fa-exclamation-triangle"
-        color="red"
-      >
-      </OAlert>
-    </template>
+  <div class="flex flex-col gap-4">
+    <!-- Task state -->
+    <TaskState
+      v-if="companyId"
+      :company-id="companyId"
+      :required-task-types="['profile', 'digital', 'products', 'csr', 'press']"
+      loading-title="Loading company profile..."
+      loading-description="Fetching comprehensive company information..."
+    />
 
     <div class="@container grid grid-cols-6 gap-2">
       <div class="@max-6xl:col-span-6 @min-6xl:col-span-4">
@@ -72,13 +55,13 @@
         </div>
       </div>
     </div>
+  </div>
   </LayoutsCompanyCard>
 </template>
 
 <script lang="ts" setup>
 import { Profile } from '#components'
-import { OAlert, OButton } from '@owlint/feathers-vue'
-import { useCompanyStore } from '~/stores/company'
+import TaskState from '~/components/TaskState.vue'
 
 // Set page metadata
 useHead({
@@ -93,28 +76,17 @@ const profilePending = computed(() => {
     return false
   }
   return company.value?.tasks?.some(
-    task => (task.type === 'profile' || task.type === 'digital' || task.type === 'press' || task.type === 'csr') &&
+    (task: { type: string; status: string }) => (task.type === 'profile' || task.type === 'digital' || task.type === 'press' || task.type === 'csr') &&
            (task.status === 'pending' || task.status === 'running')
   )
 })
-
-const companyStore = useCompanyStore()
-
-const refreshCompany = () => {
-  if (companyId.value) {
-    companyStore.startQuery(companyId.value, 'profile')
-    companyStore.startQuery(companyId.value, 'digital')
-    companyStore.startQuery(companyId.value, 'press')
-    companyStore.startQuery(companyId.value, 'csr')
-  }
-}
 
 const router = useRouter()
 
 onMounted(async () => {
   await fetchCompany()
   if (!companyId.value) {
-    router.push('/cards')
+    router.push('/companies')
   }
 })
 </script>

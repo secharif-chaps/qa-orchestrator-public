@@ -134,13 +134,11 @@ const startSearch = async () => {
 
   try {
     const trimmedCompany = company.value.trim().toLowerCase()
-    console.log('trying to create company', trimmedCompany)
     const newCompany = await companyStore.createCompany({
       name: trimmedCompany,
       website: website.value
     })
-    companyStore.searchCompany({ name: trimmedCompany, website: website.value })
-    router.push(`/cards/${newCompany.id}`)
+    router.push(`/companies/${newCompany.id}`)
   } catch (error) {
     // Handle any unexpected errors during the search process
     console.error('Error during search:', error)

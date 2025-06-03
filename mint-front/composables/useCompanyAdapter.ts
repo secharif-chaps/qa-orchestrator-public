@@ -10,6 +10,7 @@ export const useCompanyAdapter = () => {
    */
   const apiToAppModel = (apiCompany: CompanyResponse): Partial<Company> => {
     const appCompany: Partial<Company> = {
+      id: apiCompany.id,
       name: apiCompany.name,
       website: apiCompany.website,
       tasks: apiCompany.tasks
@@ -68,8 +69,6 @@ export const useCompanyAdapter = () => {
     if (apiCompany.team) {
       appCompany.team = [...apiCompany.team] as any
     }
-
-    
 
     return appCompany
   }

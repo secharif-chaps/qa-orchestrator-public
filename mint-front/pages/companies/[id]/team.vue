@@ -1,32 +1,14 @@
 <template>
   <LayoutsCompanyCard title="Team & Management" icon="fa-users">
-    <!-- Actions slot -->
-    <template #actions>
-      <OButton @click="refreshCompany" type="secondary" icon="fa-refresh"> Refresh </OButton>
-    </template>
-
-    <!-- Loading slot -->
-    <template #loading>
-      <div class="flex flex-col gap-2">
-        <OAlert
-          v-if="teamPending"
-          message="Loading company team hierarchy..."
-          title="Please wait"
-          description="Team hierarchy data will be displayed here once available."
-          icon="fa-spinner fa-spin"
-          color="blue"
-        />
-
-        <OAlert
-          v-if="company?.pending_states?.team?.error"
-          title="Oops, something went wrong"
-          description="Please try again later or contact support"
-          icon="fa-exclamation-triangle"
-          color="red"
-        >
-        </OAlert>
-      </div>
-    </template>
+    <div class="flex flex-col gap-4">
+    <!-- Task state -->
+    <TaskState
+      v-if="companyId"
+      :company-id="companyId"
+      :required-task-types="['team']"
+      loading-title="Loading team data..."
+      loading-description="Fetching team hierarchy and management structure..."
+    />
 
     <!-- Empty state -->
     <Card v-if="!hasTeamData && !teamPending">
@@ -141,18 +123,19 @@
         </ClientOnly>
       </Card>
     </div>
+  </div>
   </LayoutsCompanyCard>
 </template>
 
 <script lang="ts" setup>
-import { OAlert, OButton } from '@owlint/feathers-vue'
+import { OButton } from '@owlint/feathers-vue'
 import { Background } from '@vue-flow/background'
 import { Panel, VueFlow, useVueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 import { nextTick, ref, watch } from 'vue'
 import TeamMemberNode from '~/components/nodes/TeamMemberNode.vue'
-import { useCompanyStore } from '~/stores/company'
+import TaskState from '~/components/TaskState.vue'
 
 // Set page metadata
 useHead({
@@ -170,18 +153,10 @@ const teamPending = computed(() => {
   if (!companyId.value) {
     return false
   }
-  return companyStore.companies[companyId.value]?.tasks?.some(
-    task => task.type === 'team' && (task.status === 'pending' || task.status === 'running')
+  return company.value?.tasks?.some(
+    (task: { type: string; status: string }) => task.type === 'team' && (task.status === 'pending' || task.status === 'running')
   )
 })
-
-const companyStore = useCompanyStore()
-
-const refreshCompany = () => {
-  if (companyId.value) {
-    companyStore.startQuery(companyId.value, 'team')
-  }
-}
 
 const { fitView, vueFlowRef } = useVueFlow()
 

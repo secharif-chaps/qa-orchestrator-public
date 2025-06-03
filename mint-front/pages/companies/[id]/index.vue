@@ -3,35 +3,14 @@
     <template #actions> </template>
 
     <template #loading>
-      <div class="flex flex-col gap-2">
-
-        <OAlert
-          v-if="hasQueriesPending"
-          title="Loading company information..."
-          icon="fa-info-circle"
-          color="blue"
-        >
-          <template #description>
-            <div class="flex flex-col gap-2">
-              <div class="text-sm text-gray-600">
-                <div class="grid grid-cols-2 gap-2">
-                  <div
-                    v-for="task in company?.tasks"
-                    :key="task.type"
-                    class="flex items-center gap-2"
-                  >
-                    <i v-if="task.status === 'pending' || task.status === 'running'" class="fa fa-spinner fa-spin text-blue-500"></i>
-                    <i v-else-if="task.status === 'error'" class="fa fa-exclamation-circle text-red-500"></i>
-                    <i v-else class="fa fa-check-circle text-green-500"></i>
-                    <span class="capitalize">{{ task.type }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </template>
-        </OAlert>
+      <div class="flex flex-col gap-2" v-if="company && company.id">
+        <Tasks
+          v-if="company"
+          :company-id="company.id"
+        />
       </div>
     </template>
+
 
     <!-- Main content grid -->
     <div class="grid grid-cols-12 gap-6 bg-bg1 p-4 rounded-lg">
@@ -123,7 +102,7 @@
           :title="card.title"
           :description="card.description"
           :icon="card.icon"
-          :to="`/cards/${companyId}/${card.route}`"
+          :to="`/companies/${companyId}/${card.route}`"
           :disabled="card.disabled"
           :loading="isPending(card.loadingKey)"
         />
@@ -231,27 +210,25 @@ const infoCards = [
 // Lifecycle hooks
 onMounted(async () => {
   if (!companyId.value) {
-    router.push('/cards')
+    router.push('/companies')
   }
   await fetchCompany()  
 })
 
-
 // Format website URL
-const formatWebsiteUrl = (website: string) => {
+const formatWebsiteUrl = (website?: string) => {
   if (!website) return '#'
   return website.startsWith('http') ? website : `https://${website}`
 }
 
 // Check if a section is pending
+const taskStore = useTaskStore()
 const isPending = (sectionKey: string) => {
-  return company.value?.tasks?.some(task => task.type === sectionKey && (task.status === 'pending' || task.status === 'running'))
+  const id = companyId.value
+  if (!id) return false
+  return taskStore.getTaskStatus(id, sectionKey) === 'pending' || 
+         taskStore.getTaskStatus(id, sectionKey) === 'running'
 }
-
-const hasQueriesPending = computed(() => {
-  if (!company.value?.tasks) return false
-  return company.value.tasks.some(task => task.status === 'pending' || task.status === 'running')
-})
 
 // Helper function to get social media icon
 const getSocialIcon = (platform: string) => {

@@ -50,15 +50,6 @@ class TaskResponse(TaskBase):
 
     model_config = ConfigDict(from_attributes=True)
 
-# N8N related models
-class N8nWorkflowRequest(BaseModel):
-    company: str
-    website: str
-    query: str
-
-class N8nWorkflowResponse(BaseModel):
-    output: Dict[str, Any]
-
 # Full Company response model
 class CompanyResponse(CompanyBase):
     id: int

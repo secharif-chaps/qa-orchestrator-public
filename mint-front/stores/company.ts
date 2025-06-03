@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { useCompanyRepository } from '~/composables/useCompanyRepository'
-import type { CompanyCreate, CompanyResponse, CompanyUpdate, TaskStatus } from '~/types/company'
+import type { CompanyCreate, CompanyResponse, CompanyUpdate, TaskCreate, TaskResponse } from '~/types/company'
 
 export const useCompanyStore = defineStore('company', {
   state: () => ({
@@ -131,40 +131,82 @@ export const useCompanyStore = defineStore('company', {
       }
     },
 
-    async searchCompany(company: CompanyCreate) {
+    async createTask(task: TaskCreate) {
       const repository = useCompanyRepository()
       this.loading = true
       this.error = null
 
       try {
-        return await repository.searchCompany(company)
+        const newTask = await repository.createTask(task)
+        
+        // Update current company's tasks if it's the one we're working with
+        if (this.currentCompany && this.currentCompany.id === task.company_id) {
+          const taskIndex = this.currentCompany.tasks.findIndex(t => t.id === newTask.id)
+          if (taskIndex !== -1) {
+            this.currentCompany.tasks[taskIndex] = newTask
+          } else {
+            this.currentCompany.tasks.push(newTask)
+          }
+        }
+        
+        // Start polling if not already polling
+        if (!this.pollingInterval) {
+          this.startPolling(task.company_id)
+        }
+        
+        return newTask
       } catch (err) {
         this.error = (err as Error).message
-        console.error('Failed to search company:', err)
+        console.error('Failed to create task:', err)
         throw err
       } finally {
         this.loading = false
       }
     },
 
-    async startQuery(companyId: number, queryType: string) {
+    async restartTask(taskId: number) {
       const repository = useCompanyRepository()
       this.loading = true
       this.error = null
 
       try {
-        console.log('Starting query for company ID:', companyId, 'with type:', queryType)
-        const result = await repository.startQuery(companyId, queryType)
+        const restartedTask = await repository.restartTask(taskId)
         
-        // Start polling if not already polling
-        if (!this.pollingInterval) {
-          this.startPolling(companyId)
+        // Update current company's tasks if it contains the restarted task
+        if (this.currentCompany) {
+          const taskIndex = this.currentCompany.tasks.findIndex(t => t.id === taskId)
+          if (taskIndex !== -1) {
+            this.currentCompany.tasks[taskIndex] = restartedTask
+          }
         }
         
-        return result
+        return restartedTask
       } catch (err) {
         this.error = (err as Error).message
-        console.error('Failed to start query:', err)
+        console.error(`Failed to restart task with ID ${taskId}:`, err)
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async fetchCompanyTasks(companyId: number) {
+      const repository = useCompanyRepository()
+      this.loading = true
+      this.error = null
+
+      try {
+        const tasks = await repository.getCompanyTasks(companyId)
+        
+        // Update current company's tasks if it's the one we're working with
+        if (this.currentCompany && this.currentCompany.id === companyId) {
+          this.currentCompany.tasks = tasks
+        }
+        
+        return tasks
+      } catch (err) {
+        this.error = (err as Error).message
+        console.error(`Failed to fetch tasks for company ID ${companyId}:`, err)
         throw err
       } finally {
         this.loading = false

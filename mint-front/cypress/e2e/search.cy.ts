@@ -93,7 +93,7 @@ describe('Company Search', () => {
       waitForMistralCalls()
       
       // Then verify navigation
-      cy.url().should('include', `/cards/${validCompany}`)
+      cy.url().should('include', `/companies/${validCompany}`)
     })
 
     it('should handle whitespace in company name', () => {
@@ -110,7 +110,7 @@ describe('Company Search', () => {
       waitForMistralCalls()
       
       // Then verify navigation
-      cy.url().should('include', '/cards/Sephora')
+      cy.url().should('include', '/companies/Sephora')
     })
   })
 

@@ -58,7 +58,7 @@ describe('i18n Localization', () => {
 
   it('should update dynamic content translations', () => {
     // First navigate to cards page to get initial English text
-    cy.visit('/cards')
+    cy.visit('/companies')
     cy.get('h1').should('contain', 'Cards')
     
     // Go to settings to change language
@@ -66,7 +66,7 @@ describe('i18n Localization', () => {
     cy.get('#locale-select').select('fr-FR')
     
     // Navigate back to cards page to verify translation
-    cy.visit('/cards')
+    cy.visit('/companies')
     cy.get('h1').should('contain', 'Cartes')
   })
 

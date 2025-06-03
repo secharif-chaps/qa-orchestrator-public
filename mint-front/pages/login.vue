@@ -91,7 +91,7 @@ const handleLogin = async () => {
     await new Promise(resolve => setTimeout(resolve, 1000))
     
     if (email.value !== '' && password.value !== '') {
-      router.push('/cards')
+      router.push('/companies')
     } else {
       error.value = t('login.errors.invalidCredentials')
     }

@@ -32,7 +32,7 @@ export function useCompanyData() {
     `company-${companyId.value}`,
     async () => {
       if (companyId.value) {
-        return await repository.getCompanyById(companyId.value)
+        return await repository.getCompany(companyId.value)
       } else if (companyName.value) {
         return await repository.getCompanyByName(companyName.value)
       }

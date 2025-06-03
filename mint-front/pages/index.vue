@@ -7,7 +7,7 @@
       ></OButton>
 
       <OButton
-        @click="$router.push('/cards')"
+        @click="$router.push('/companies')"
         label="Cards"
       ></OButton>
     </div>

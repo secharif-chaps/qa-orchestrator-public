@@ -39,148 +39,114 @@ class CompanyService:
     def delete_company(self, company_id: int) -> bool:
         """Delete a company"""
         return self.repository.delete(company_id)
-    
-    async def initiate_company_search(self, name: str, website: str) -> Company:
+
+    async def create_and_start_task(self, company_id: int, task_type: str) -> Task:
         """
-        Start a comprehensive search for company data
-        - Creates or retrieves the company
-        - Creates tasks for each data type with pending status
-        - Initiates all workflows for data collection
-        """
-        # Create or get the company
-        company = self.create_company(name, website)
-        
-        # Create tasks for each query type
-        task_types = [
-            TaskType.profile,
-            TaskType.digital,
-            TaskType.timeline,
-            TaskType.products,
-            TaskType.press,
-            TaskType.csr,
-            TaskType.jobs,
-            TaskType.team
-        ]
-        
-        # First create all tasks with pending status
-        for task_type in task_types:
-            task = Task(company_id=company.id, type=task_type)  # status will be PENDING by default
-            company.tasks.append(task)
-        
-        # Save the company with its pending tasks
-        company = self.repository.update(company)
-        
-        # Now start all the queries independently
-        for task_type in task_types:
-            try:
-                await self.start_query(company.id, task_type.value)
-            except Exception as e:
-                print(f"Error starting query for {task_type.value}: {str(e)}")
-                # Don't re-raise the exception, continue with other tasks
-                continue
-            
-        return company
-    
-    async def start_query(self, company_id: int, query_type: str) -> Dict[str, Any]:
-        """
-        Start a specific n8n workflow for a company
+        Create a new task for a company and start it immediately
         
         Args:
             company_id: ID of the company
-            query_type: Type of data to query (profile, team, etc.)
+            task_type: Type of task to create
             
         Returns:
-            Updated company data
+            The created and started task
         """
-        print(f"\n=== Starting query for company {company_id}, type: {query_type} ===")
-        
         # Get the company
         company = self.repository.get_by_id(company_id)
         if not company:
-            print(f"ERROR: Company with ID {company_id} not found")
             raise ValueError(f"Company with ID {company_id} not found")
         
-        print(f"Found company: {company.name}")
+        # Convert task_type to TaskType enum
+        task_type = TaskType(task_type)
         
-        # Convert query_type to lowercase to match database enum
-        query_type = query_type.lower()
-        print(f"Query type (normalized): {query_type}")
+        # Find existing task of this type
+        existing_task = next((t for t in company.tasks if t.type == task_type), None)
         
-        # Find the corresponding task or create it if it doesn't exist
-        task = next((t for t in company.tasks if t.type.value == query_type), None)
-        if not task:
-            print(f"No task found for {query_type}, creating new task")
-            # Create a new task for this query type
-            task = Task(company_id=company.id, type=TaskType(query_type))
+        if existing_task:
+            # If task exists and is not running, restart it
+            if existing_task.status != TaskStatus.RUNNING:
+                existing_task.status = TaskStatus.PENDING
+                self.repository.update(company)
+                await self._execute_task(existing_task, company)
+                return existing_task
+            else:
+                # Task is already running
+                return existing_task
+        else:
+            # Create new task
+            task = Task(company_id=company_id, type=task_type)
             company.tasks.append(task)
             self.repository.update(company)
-            print(f"Created new task: {task.type.value}")
-        else:
-            print(f"Found existing task: {task.type.value} (status: {task.status})")
-        
-        # Update task status to running
-        task.status = TaskStatus.RUNNING
-        self.repository.update(company)
-        print(f"Updated task status to: {task.status}")
-        
-        try:
-            # Trigger the n8n workflow
-            print(f"\nTriggering n8n workflow for {query_type}")
-            result = await self.n8n_client.trigger_workflow(company.name, company.website, query_type)
-            print(f"Received n8n response: {type(result)}")
             
-            # Extract the data from the n8n response
-            if isinstance(result, list) and len(result) > 0:
-                print("Processing list response from n8n")
-                # Get the output data from the first item
-                output_data = result[0].get('output', {})
-                print(f"Output data keys: {list(output_data.keys()) if isinstance(output_data, dict) else 'Not a dict'}")
+            # Start the task
+            await self._execute_task(task, company)
+            return task
+
+    async def restart_task(self, task_id: int) -> Optional[Task]:
+        """
+        Restart a specific task
+        
+        Args:
+            task_id: ID of the task to restart
+            
+        Returns:
+            The restarted task if found, None otherwise
+        """
+        # Find the task
+        for company in self.repository.get_all():
+            task = next((t for t in company.tasks if t.id == task_id), None)
+            if task:
+                # Reset task status
+                task.status = TaskStatus.PENDING
+                task.error = None
+                self.repository.update(company)
                 
-                # For timeline data, we need to extract it from the output structure
-                if query_type == "timeline" and isinstance(output_data, dict):
-                    timeline_data = output_data.get('timeline', {})
-                    print(f"Extracted timeline data: {list(timeline_data.keys()) if isinstance(timeline_data, dict) else 'Not a dict'}")
-                    if isinstance(timeline_data, dict):
-                        print(f"Timeline data structure:")
-                        print(f"- Has insights: {'insights' in timeline_data}")
-                        print(f"- Has events: {'events' in timeline_data}")
-                        print(f"- Number of events: {len(timeline_data.get('events', []))}")
-                        data = timeline_data
-                    else:
-                        print("ERROR: Timeline data is not a dictionary")
-                        raise ValueError("Invalid timeline data structure")
+                # Start the task
+                await self._execute_task(task, company)
+                return task
+        
+        return None
+
+    async def _execute_task(self, task: Task, company: Company) -> None:
+        """
+        Execute a task by triggering the appropriate n8n workflow
+        
+        Args:
+            task: The task to execute
+            company: The company the task belongs to
+        """
+        try:
+            # Update task status to running
+            task.status = TaskStatus.RUNNING
+            self.repository.update(company)
+            
+            # Trigger the n8n workflow
+            result = await self.n8n_client.trigger_workflow(
+                company.name,
+                company.website,
+                task.type.value
+            )
+            
+            # Process the result
+            if isinstance(result, list) and len(result) > 0:
+                output_data = result[0].get('output', {})
+                if task.type == TaskType.timeline and isinstance(output_data, dict):
+                    data = output_data.get('timeline', {})
                 else:
                     data = output_data
             else:
-                print("Processing direct response from n8n")
                 data = result
             
-            print(f"\nData structure before update:")
-            print(f"- Keys in data: {list(data.keys()) if isinstance(data, dict) else 'Not a dict'}")
-            if isinstance(data, dict) and 'timeline' in data:
-                print(f"- Timeline keys: {list(data['timeline'].keys())}")
-            
-            # Update the company data
-            print("\nUpdating company data...")
-            company.update_from_n8n(query_type, data)
-            print("Company data updated")
+            # Update company data
+            company.update_from_n8n(task.type.value, data)
             
             # Update task status to succeeded
             task.status = TaskStatus.SUCCEEDED
             self.repository.update(company)
-            print(f"Task status updated to: {task.status}")
             
-            return data
         except Exception as e:
-            print(f"\nERROR in start_query:")
-            print(f"Exception type: {type(e)}")
-            print(f"Exception message: {str(e)}")
-            import traceback
-            print(f"Traceback:\n{traceback.format_exc()}")
-            
             # Update task status to error
             task.status = TaskStatus.ERROR
             task.error = str(e)
             self.repository.update(company)
-            print(f"Task status updated to: {task.status} with error: {task.error}")
             raise 

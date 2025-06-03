@@ -1,13 +1,12 @@
-from typing import List, Dict, Any
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from typing import List
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.domain.services.company_service import CompanyService
 from app.core.dependencies import get_company_service
 from app.domain.entities.schema import (
     CompanyCreate, 
     CompanyUpdate, 
-    CompanyResponse,
-    N8nWorkflowRequest
+    CompanyResponse
 )
 
 router = APIRouter(
@@ -115,52 +114,4 @@ async def delete_company(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Company with ID {company_id} not found"
         )
-    return {"success": True}
-
-@router.post("/search")
-async def search_company(
-    company_data: CompanyCreate,
-    service: CompanyService = Depends(get_company_service)
-):
-    """
-    Start a search for company data
-    This will trigger all n8n workflows to collect data about the company
-    """
-    company = await service.initiate_company_search(
-        name=company_data.name,
-        website=company_data.website
-    )
-    
-    return {
-        "message": f"Search initiated for company: {company.name}",
-        "company_id": company.id
-    }
-
-@router.post("/{company_id}/query/{query_type}")
-async def start_query(
-    company_id: int,
-    query_type: str,
-    service: CompanyService = Depends(get_company_service)
-):
-    """
-    Start a specific query for company data
-    
-    Args:
-        company_id: ID of the company
-        query_type: Type of data to query (profile, team, etc.)
-    """
-    # Check if query type is valid
-    valid_query_types = ["profile", "digital", "timeline", "products", "press", "csr", "jobs", "team"]
-    if query_type not in valid_query_types:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid query type: {query_type}. Valid types are: {', '.join(valid_query_types)}"
-        )
-    
-    # Start the query
-    result = await service.start_query(company_id, query_type)
-
-    return {
-        "message": f"Query '{query_type}' finished for company ID: {company_id}",
-        "result": result
-    } 
+    return {"success": True} 

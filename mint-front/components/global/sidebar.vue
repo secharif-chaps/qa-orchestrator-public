@@ -75,7 +75,7 @@ const buttons = computed(() => [
     icon: 'fa fa-folder-open',
     label: t('sidebar.cards'),
     chip: nbCards.value || '0',
-    to: '/cards'
+    to: '/companies'
   }
 ])
 
