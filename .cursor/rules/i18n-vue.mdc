@@ -1,0 +1,73 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# i18n Vue Rule
+
+## Description
+This rule ensures that all text content in Vue files is properly internationalized using i18n translations.
+
+## Rule Details
+- All text content in Vue templates must use the `$t()` function
+- All text content in script sections must use the `t()` function from `useI18n()`
+- All translations must be defined in both `en-US.ts` and `fr-FR.ts` locale files
+- No hardcoded strings should be present in Vue files
+
+## Examples
+❌ Incorrect:
+```vue
+<template>
+  <h1>Welcome to our app</h1>
+  <p>This is a description</p>
+</template>
+```
+
+✅ Correct:
+```vue
+<template>
+  <h1>{{ $t('welcome.title') }}</h1>
+  <p>{{ $t('welcome.description') }}</p>
+</template>
+
+<script setup>
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+</script>
+```
+
+## Translation Files
+All translations must be added to both locale files:
+
+```typescript
+// en-US.ts
+export default {
+  welcome: {
+    title: 'Welcome to our app',
+    description: 'This is a description'
+  }
+}
+
+// fr-FR.ts
+export default {
+  welcome: {
+    title: 'Bienvenue sur notre application',
+    description: 'Ceci est une description'
+  }
+}
+```
+
+## Exceptions
+- Component names
+- Technical identifiers
+- CSS class names
+- HTML attributes that don't need translation (e.g., `data-testid`)
+- URLs and paths
+- Numbers and dates (unless they need specific formatting)
+
+## Implementation Steps
+1. Identify all text content in Vue files
+2. Create translation keys in both locale files
+3. Replace hardcoded text with `$t()` or `t()` function calls
+4. Ensure all translations are properly defined in both languages
+5. Test the application in both languages to verify translations

@@ -3,7 +3,7 @@
     <div class="col-span-2">
       <h3 class="space-x-2 font-bold text-primary">
         <i class="fa fa-bullhorn"></i>
-        <span> Recent News </span>
+        <span>{{ title }}</span>
       </h3>
       <div class="mt-4">
         <!-- Recent News - individual property loading -->
@@ -16,7 +16,7 @@
               <Source :sourced-value="news" />
             </li>
             <li v-if="company?.press?.articles?.length === 0" class="text-secondary">
-              No recent news found
+              {{ $t('common.noData') }}
             </li>
           </ul>
         </div>
@@ -26,5 +26,12 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const { company, getSourcedValue } = useCompanyData()
+
+defineProps<{
+  title: string
+}>()
 </script>

@@ -173,12 +173,18 @@ const restartFailedTasks = async () => {
   }
 }
 
+const { fetchCompany } = useCompanyData()
+
+
 const startNotStartedTasks = async () => {
   for (const taskType of notStartedTaskTypes.value) {
     await taskRepository.createTask({
-      companyId: props.companyId,
-      type: taskType
+      company_id: props.companyId,
+      type: taskType,
+      status: 'pending'
     })
   }
+  // Fetch company data to update the store
+  await fetchCompany()
 }
 </script> 

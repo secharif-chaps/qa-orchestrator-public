@@ -1,5 +1,5 @@
 // composables/useCompanyData.ts
-import type { SourcedValue } from '~/types.global'
+import type { SourcedValue } from '~/types/company'
 import { useCompanyAdapter } from './useCompanyAdapter'
 import type { CompanyResponse } from '~/types/company'
 
@@ -40,13 +40,30 @@ export function useCompanyData() {
     },
     {
       watch: [companyId, companyName],
-      immediate: true
+      immediate: true,
+      dedupe: 'defer', // Prevent duplicate requests
+      getCachedData: (key, nuxtApp) => {
+        // Try to get data from the payload first
+        if (nuxtApp.payload.data[key]) {
+          return nuxtApp.payload.data[key]
+        }
+        // Then try to get from static data
+        if (nuxtApp.static.data[key]) {
+          return nuxtApp.static.data[key]
+        }
+        return undefined
+      }
     }
   )
 
-  // Function to fetch company data
+  // Function to fetch company data - only refresh if needed
   const fetchCompany = async () => {
-    await refreshCompanyData()
+    // Only refresh if we don't have data or if the company ID/name has changed
+    if (!companyData.value || 
+        (companyId.value && companyData.value.id !== companyId.value) ||
+        (companyName.value && companyData.value.name.toLowerCase() !== companyName.value)) {
+      await refreshCompanyData()
+    }
   }
 
   // Try to get company data from API store first, then fall back to old store

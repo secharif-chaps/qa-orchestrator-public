@@ -4,12 +4,12 @@
       <div class="col-span-2">
         <h3 class="space-x-2 font-bold text-primary">
           <i class="fa fa-box-open"></i>
-          <span> Product and services </span>
+          <span>{{ title }}</span>
         </h3>
       </div>
 
       <!-- Product Range - individual property loading -->
-      <div>Product Range</div>
+      <div>{{ $t('profile.sections.products.range') }}</div>
       <div>
         <span class="text-sm text-secondary">
           {{
@@ -17,15 +17,14 @@
               company?.products?.range?.map(
                 (p: any) => p.value
               ) || []
-            ).join(', ') || 'Not found'
+            ).join(', ') || $t('common.notFound')
           }}
         </span>
       </div>
 
       <!-- Partner Brands - individual property loading -->
-      <div>Partner Brand</div>
-      <div class="pl-4"
-      >
+      <div>{{ $t('profile.sections.products.partnerBrands') }}</div>
+      <div class="pl-4">
         <ul class="list-disc">
           <li
             class="text-secondary space-x-2"
@@ -41,17 +40,14 @@
             v-if="company?.products?.partnerBrands?.length === 0"
             class="text-sm text-secondary"
           >
-            Not found
+            {{ $t('common.notFound') }}
           </li>
         </ul>
       </div>
 
-
       <!-- Private Labels - individual property loading -->
-      <div>{{ company?.name }} private label</div>
-      <div class="pl-4"
-       
-      >
+      <div>{{ $t('profile.sections.products.privateLabels', { company: company?.name }) }}</div>
+      <div class="pl-4">
         <ul class="list-disc">
           <li
             class="space-x-2 text-secondary"
@@ -67,15 +63,21 @@
             v-if="company?.products?.privateLabels?.length === 0"
             class="text-sm text-secondary"
           >
-            Not found
+            {{ $t('common.notFound') }}
           </li>
         </ul>
       </div>
-   
     </div>
   </Card>
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const { company } = useCompanyData()
+
+defineProps<{
+  title: string
+}>()
 </script>

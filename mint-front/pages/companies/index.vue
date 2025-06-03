@@ -2,7 +2,7 @@
   <div class="px-4 sm:px-6 lg:px-8">
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
-        <h1 class="text-3xl font-semibold text-primary">{{ $t('cards.title') }}</h1>
+        <h1 class="text-3xl font-semibold text-primary">{{ $t('company.list.title') }}</h1>
       </div>
     </div>
     <div class="mt-8 flow-root">
@@ -10,7 +10,7 @@
         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <div class="overflow-hidden shadow ring-1 ring-black/5 sm:rounded-lg">
             <div v-if="loading" class="p-4 text-center">
-              <i class="fas fa-spinner fa-spin mr-2"></i> Loading...
+              <i class="fas fa-spinner fa-spin mr-2"></i> {{ $t('company.list.table.loading') }}
             </div>
             <div v-else-if="error" class="p-4 text-center text-red-500">
               <i class="fas fa-exclamation-circle mr-2"></i> {{ error }}
@@ -25,7 +25,7 @@
                     {{ $t('cards.table.name') }}
                   </th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Website
+                    {{ $t('company.list.table.website') }}
                   </th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                     {{ $t('cards.table.lastModification') }}
@@ -90,37 +90,37 @@
     >
       <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold">Create New Company</h2>
+          <h2 class="text-xl font-semibold">{{ $t('company.list.create.title') }}</h2>
           <button @click="showCreateModal = false" class="text-gray-500 hover:text-gray-700">
             <i class="fas fa-times"></i>
           </button>
         </div>
         <form @submit.prevent="createCompany">
           <div class="mb-4">
-            <label for="name" class="block text-sm font-medium text-gray-700">Company Name</label>
+            <label for="name" class="block text-sm font-medium text-gray-700">{{ $t('company.list.create.name.label') }}</label>
             <input
               id="name"
               v-model="newCompany.name"
               type="text"
               required
               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary text-sm"
-              placeholder="Enter company name"
+              :placeholder="$t('company.list.create.name.placeholder')"
             />
           </div>
           <div class="mb-6">
-            <label for="website" class="block text-sm font-medium text-gray-700">Website</label>
+            <label for="website" class="block text-sm font-medium text-gray-700">{{ $t('company.list.create.website.label') }}</label>
             <input
               id="website"
               v-model="newCompany.website"
               type="url"
               required
               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary text-sm"
-              placeholder="Enter website URL"
+              :placeholder="$t('company.list.create.website.placeholder')"
             />
           </div>
           <div class="flex justify-end gap-2">
-            <OButton type="tertiary" @click="showCreateModal = false"> Cancel </OButton>
-            <OButton type="primary" :loading="createLoading" submit> Create </OButton>
+            <OButton type="tertiary" @click="showCreateModal = false">{{ $t('company.list.create.actions.cancel') }}</OButton>
+            <OButton type="primary" :loading="createLoading" submit>{{ $t('company.list.create.actions.create') }}</OButton>
           </div>
         </form>
       </div>
@@ -133,19 +133,18 @@
     >
       <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold text-red-600">Delete Company</h2>
+          <h2 class="text-xl font-semibold text-red-600">{{ $t('company.list.delete.title') }}</h2>
           <button @click="showDeleteModal = false" class="text-gray-500 hover:text-gray-700">
             <i class="fas fa-times"></i>
           </button>
         </div>
         <p class="mb-4">
-          Are you sure you want to delete <strong>{{ companyToDelete.name }}</strong
-          >?
+          {{ $t('company.list.delete.confirm') }} <strong>{{ companyToDelete.name }}</strong>?
         </p>
-        <p class="mb-6 text-red-600 font-medium">This action cannot be undone.</p>
+        <p class="mb-6 text-red-600 font-medium">{{ $t('company.list.delete.warning') }}</p>
         <div class="flex justify-end gap-2">
-          <OButton type="tertiary" @click="showDeleteModal = false"> Cancel </OButton>
-          <OButton type="danger" :loading="deleteLoading" @click="deleteCompany"> Delete </OButton>
+          <OButton type="tertiary" @click="showDeleteModal = false">{{ $t('company.list.delete.actions.cancel') }}</OButton>
+          <OButton type="danger" :loading="deleteLoading" @click="deleteCompany">{{ $t('company.list.delete.actions.delete') }}</OButton>
         </div>
       </div>
     </div>
@@ -155,7 +154,9 @@
 <script setup>
 import { OButton } from '@owlint/feathers-vue'
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const companyStore = useCompanyStore()
 const router = useRouter()
 

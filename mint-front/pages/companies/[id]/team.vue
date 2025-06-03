@@ -1,13 +1,13 @@
 <template>
-  <LayoutsCompanyCard title="Team & Management" icon="fa-users">
+  <LayoutsCompanyCard :title="$t('team.title')" icon="fa-users">
     <div class="flex flex-col gap-4">
     <!-- Task state -->
     <TaskState
       v-if="companyId"
       :company-id="companyId"
       :required-task-types="['team']"
-      loading-title="Loading team data..."
-      loading-description="Fetching team hierarchy and management structure..."
+      :loading-title="$t('team.loading.title')"
+      :loading-description="$t('team.loading.description')"
     />
 
     <!-- Empty state -->
@@ -16,9 +16,9 @@
         <div class="text-5xl text-slate-300 mb-4">
           <i class="fa fa-users"></i>
         </div>
-        <h3 class="text-xl font-semibold mb-2">No Team Data Available</h3>
+        <h3 class="text-xl font-semibold mb-2">{{ $t('team.noData.title') }}</h3>
         <p class="text-slate-500 mb-6">
-          Fetch team hierarchy for this company to see management structure
+          {{ $t('team.noData.description') }}
         </p>
       </div>
     </Card>
@@ -28,7 +28,7 @@
       <Card>
         <div class="flex items-center gap-2 text-primary mb-4">
           <i class="fa fa-sitemap"></i>
-          <span>Management Hierarchy</span>
+          <span>{{ $t('team.hierarchy.title') }}</span>
         </div>
         <ClientOnly>
           <div class="h-[500px] w-full relative">
@@ -58,7 +58,7 @@
                   @click="openTeamMemberCard(props.data)"
                 />
               </template>
-              <Background color="#CBD5E1" size="4" gap="60" />
+              <Background :color="'#CBD5E1'" :size="4" :gap="60" />
 
               <Panel
                 position="top-left"
@@ -108,7 +108,7 @@
                       class="flex items-center gap-2 text-sm text-primary hover:underline"
                     >
                       <i class="fab fa-linkedin"></i>
-                      <span>View LinkedIn Profile</span>
+                      <span>{{ $t('team.hierarchy.viewLinkedIn') }}</span>
                     </a>
 
                     <div class="flex items-start gap-2 text-sm text-slate-600">
@@ -136,17 +136,22 @@ import '@vue-flow/core/dist/theme-default.css'
 import { nextTick, ref, watch } from 'vue'
 import TeamMemberNode from '~/components/nodes/TeamMemberNode.vue'
 import TaskState from '~/components/TaskState.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Set page metadata
 useHead({
-  title: 'Mint - Team & Management',
-  meta: [{ name: 'description', content: 'Company Team and Management Information' }]
+  title: `Mint - ${t('team.title')}`,
+  meta: [{ name: 'description', content: t('team.title') }]
 })
 
 const { company, companyId, fetchCompany } = useCompanyData()
 
 onMounted(async () => {
-  await fetchCompany()
+  if (!company.value) {
+    await fetchCompany()
+  }
 })
 
 const teamPending = computed(() => {
@@ -169,8 +174,8 @@ const hasTeamData = computed(() => {
 const nodes = computed(() => {
   if (!company.value?.team) return []
 
-  const generateNodes = (members: any[], level = 0, parentId = null) => {
-    let nodes = []
+  const generateNodes = (members: any[], level = 0, parentId = null): any[] => {
+    let nodes: any[] = []
 
     for (const member of members) {
       const nodeId = `${member.position}-${member.firstName}-${member.lastName}`
@@ -203,8 +208,8 @@ const nodes = computed(() => {
 const edges = computed(() => {
   if (!company.value?.team) return []
 
-  const generateEdges = (members: any[], level = 0) => {
-    let edges = []
+  const generateEdges = (members: any[], level = 0): any[] => {
+    let edges: any[] = []
 
     for (const member of members) {
       const sourceId = `${member.position}-${member.firstName}-${member.lastName}`
@@ -216,7 +221,6 @@ const edges = computed(() => {
             id: `${sourceId}-${targetId}`,
             source: sourceId,
             target: targetId,
-            // type: 'smoothstep',
             data: {
               level: level + 1
             },
@@ -247,7 +251,7 @@ const applyLayout = () => {
   const VERTICAL_SPACING = 100
 
   // First, let's create a map of nodes and their subordinates
-  const nodeMap = new Map()
+  const nodeMap = new Map<string, any>()
   nodes.value.forEach(node => {
     nodeMap.set(node.id, {
       ...node,
@@ -338,7 +342,7 @@ const applyLayoutAndFitView = () => {
 
 watch([nodes, edges], applyLayoutAndFitView, { immediate: true })
 
-const selectedNode = ref(null)
+const selectedNode = ref<any>(null)
 const openTeamMemberCard = (data: any) => {
   selectedNode.value = data
 }

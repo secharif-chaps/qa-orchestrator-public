@@ -1,5 +1,5 @@
 <template>
-  <LayoutsCompanyCard title="Corporate Communications" icon="fa-bullhorn">
+  <LayoutsCompanyCard :title="$t('communications.title')" icon="fa-bullhorn">
     <div class="flex flex-col gap-4">
 
     <!-- Task state -->
@@ -7,11 +7,11 @@
       v-if="companyId"
       :company-id="companyId"
       :required-task-types="[]"
-      loading-title="Not implemented yet"
-      loading-description="This feature is not implemented yet."
+      :loading-title="$t('communications.loading.title')"
+      :loading-description="$t('communications.loading.description')"
     />
     <div>
-      <h1>comming soon</h1>
+      <h1>{{ $t('communications.comingSoon') }}</h1>
     </div>
   </div>
 </LayoutsCompanyCard>
@@ -20,16 +20,22 @@
 <script lang="ts" setup>
 import { OButton, OIcon } from '@owlint/feathers-vue'
 import TaskState from '~/components/TaskState.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Set page metadata
 useHead({
-  title: 'Mint - Corporate Communications',
-  meta: [{ name: 'description', content: 'Company Corporate Communications' }],
+  title: `Mint - ${t('communications.title')}`,
+  meta: [{ name: 'description', content: t('communications.title') }],
 })
 
 const { companyName, companyId, fetchCompany } = useCompanyData()
 
 onMounted(async () => {
-  await fetchCompany()
+  if (!company.value) {
+    await fetchCompany()
+  }
 })
+
 </script>

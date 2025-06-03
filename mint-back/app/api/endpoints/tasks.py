@@ -1,10 +1,16 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+import logging
+from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 
 from app.domain.services.company_service import CompanyService
 from app.core.dependencies import get_company_service
 from app.domain.entities.schema import TaskCreate, TaskResponse
 from app.domain.entities.task import TaskType
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/tasks",
@@ -13,30 +19,56 @@ router = APIRouter(
 
 @router.post("/", response_model=TaskResponse)
 async def create_task(
+    request: Request,
     task_data: TaskCreate,
     service: CompanyService = Depends(get_company_service)
 ):
     """Create a new task for a company"""
-    # Check if company exists
-    company = service.get_company(task_data.company_id)
-    if not company:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Company with ID {task_data.company_id} not found"
-        )
-    
-    # Check if task type is valid
     try:
-        TaskType(task_data.type)
-    except ValueError:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid task type: {task_data.type}. Valid types are: {', '.join(t.value for t in TaskType)}"
+        # Check if company exists
+        company = service.get_company(task_data.company_id)
+        if not company:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Company with ID {task_data.company_id} not found"
+            )
+        
+        # Check if task type is valid
+        try:
+            TaskType(task_data.type)
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid task type: {task_data.type}. Valid types are: {', '.join(t.value for t in TaskType)}"
+            )
+        
+        # Create and start the task
+        task = await service.create_and_start_task(task_data.company_id, task_data.type)
+        return task
+    except ValidationError as e:
+        # Get request body for logging
+        body = await request.json()
+        
+        # Log detailed validation errors
+        logger.error("Validation error in task creation:")
+        logger.error(f"Request body: {body}")
+        logger.error(f"Validation errors: {e.errors()}")
+        
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            content={
+                "detail": "Validation error",
+                "errors": e.errors(),
+                "body": body
+            }
         )
-    
-    # Create and start the task
-    task = await service.create_and_start_task(task_data.company_id, task_data.type)
-    return task
+    except Exception as e:
+        # Log unexpected errors
+        logger.error(f"Unexpected error in task creation: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An unexpected error occurred: {str(e)}"
+        )
 
 @router.get("/company/{company_id}", response_model=List[TaskResponse])
 async def get_company_tasks(

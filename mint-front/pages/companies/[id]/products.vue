@@ -1,5 +1,5 @@
 <template>
-  <LayoutsCompanyCard v-if="company" name="main" title="Products & Services" icon="fa-box">
+  <LayoutsCompanyCard v-if="company" name="main" :title="$t('products.title')" icon="fa-box">
     <div class="flex flex-col gap-4">
 
     <!-- Task state -->
@@ -7,8 +7,8 @@
       v-if="companyId"
       :company-id="companyId"
       :required-task-types="['products']"
-      loading-title="Loading products..."
-      loading-description="Fetching products and services data..."
+      :loading-title="$t('products.loading.title')"
+      :loading-description="$t('products.loading.description')"
     />
 
        <!-- No products state -->
@@ -17,13 +17,10 @@
           <div class="text-5xl text-slate-300 mb-4">
             <i class="fa fa-box"></i>
           </div>
-          <h3 class="text-xl font-semibold mb-2">No Products Available</h3>
+          <h3 class="text-xl font-semibold mb-2">{{ $t('products.noData.title') }}</h3>
           <p class="text-slate-500 mb-6">
-            <span v-if="company.tasks?.some((task: TaskResponse) => task.type === 'products' && (task.status === 'pending' || task.status === 'running'))">
-              Products information will be displayed here once available.
-            </span>
-            <span v-else>
-              Products information will be displayed here once available.
+            <span >
+              {{ $t('products.noData.description') }}
             </span>
           </p>
         </div>
@@ -64,7 +61,9 @@ useHead({
 const { company, companyId, fetchCompany } = useCompanyData()
 
 onMounted(async () => {
-  await fetchCompany()
+  if (!company.value) {
+    await fetchCompany()
+  }
 })
 
 const products = computed(() => {

@@ -4,12 +4,12 @@
       <div class="col-span-2">
         <h3 class="space-x-2 font-bold text-primary">
           <i class="fa fa-hand-holding-heart"></i>
-          <span> CSR </span>
+          <span>{{ title }}</span>
         </h3>
       </div>
 
       <!-- CSR Initiatives - individual property loading -->
-      <div>Responsibility</div>
+      <div>{{ $t('profile.sections.csr.responsibility') }}</div>
       <div class="p-4">
         <ul class="list-disc">
           <li
@@ -25,18 +25,18 @@
             v-if="company?.csr?.responsibility_initiatives?.length === 0"
             class="text-sm text-secondary italic"
           >
-            Not found
+            {{ $t('common.notFound') }}
           </li>
         </ul>
       </div>
 
       <!-- Charity Actions - individual property loading -->
-      <div>Charity Initiative</div>
+      <div>{{ $t('profile.sections.csr.charity') }}</div>
       <div class="p-4">
         <span class="text-sm text-secondary" v-if="company?.csr?.charity_actions">
           {{
-            (company?.csr?.charity_actions.map(action => action.value) || []).join(', ') ||
-            'Not found'
+            (company?.csr?.charity_actions.map((action: { value: string }) => action.value) || []).join(', ') ||
+            $t('common.notFound')
           }}
         </span>
       </div>
@@ -45,5 +45,12 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const { company, getSourcedValue } = useCompanyData()
+
+defineProps<{
+  title: string
+}>()
 </script>

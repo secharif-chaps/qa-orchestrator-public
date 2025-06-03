@@ -6,12 +6,12 @@
       >
         <span >
           {{
-            getSourcedValue(company?.profile?.establishmentYear) ?? 'Not found'
+            getSourcedValue(company?.profile?.establishmentYear) ?? $t('common.notFound')
           }}
         </span>
         
       </div>
-      <div>year of establishment</div>
+      <div>{{ $t('profile.sections.metrics.establishment') }}</div>
       <Source
         v-if="company?.profile?.establishmentYear"
         :sourced-value="company?.profile?.establishmentYear"
@@ -21,5 +21,12 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const { company, getSourcedValue } = useCompanyData()
+
+defineProps<{
+  title: string
+}>()
 </script>

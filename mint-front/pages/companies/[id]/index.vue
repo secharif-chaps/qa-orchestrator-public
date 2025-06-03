@@ -1,5 +1,5 @@
 <template>
-  <LayoutsCompanyCard title="Company Dashboard" icon="fa-building" v-if="company">
+  <LayoutsCompanyCard :title="$t('company.dashboard.title')" icon="fa-building" v-if="company">
     <template #actions> </template>
 
     <template #loading>
@@ -10,7 +10,6 @@
         />
       </div>
     </template>
-
 
     <!-- Main content grid -->
     <div class="grid grid-cols-12 gap-6 bg-bg1 p-4 rounded-lg">
@@ -37,7 +36,7 @@
           <div class="flex flex-col gap-2">
             <div class="flex items-center bg-bg1 px-4 py-2 rounded-lg gap-2">
               <i class="fa fa-link"></i>
-              <p></p>
+              <p>{{ $t('company.dashboard.generalInfo.website') }}</p>
               <a
                 :href="formatWebsiteUrl(company?.website)"
                 target="_blank"
@@ -51,7 +50,7 @@
               v-if="company?.profile?.hq"
             >
               <i class="fa fa-map-marker"></i>
-              <p></p>
+              <p>{{ $t('company.dashboard.generalInfo.headquarters') }}</p>
               <span class="text-secondary">
                 {{ getSourcedValue(company.profile.hq) || 'Unknown' }}
               </span>
@@ -62,7 +61,7 @@
               v-if="company?.profile?.ceo"
             >
               <i class="fa fa-user-tie"></i>
-              <p>CEO</p>
+              <p>{{ $t('company.dashboard.generalInfo.ceo') }}</p>
               <span class="text-secondary">
                 {{ getSourcedValue(company.profile.ceo) || 'Unknown' }}
               </span>
@@ -73,7 +72,7 @@
               v-if="company?.profile?.revenue"
             >
               <i class="fa fa-money-bill"></i>
-              <p>Revenue</p>
+              <p>{{ $t('company.dashboard.generalInfo.revenue') }}</p>
               <span class="text-secondary">
                 {{ getSourcedValue(company.profile.revenue) || 'Unknown' }}
               </span>
@@ -98,9 +97,9 @@
       <div class="col-span-12 lg:col-span-8 gap-4 grid grid-cols-2">
         <InfoCard
           v-for="card in infoCards"
-          :key="card.title"
-          :title="card.title"
-          :description="card.description"
+          :key="card.titleKey"
+          :title="$t(card.titleKey)"
+          :description="$t(card.descriptionKey)"
           :icon="card.icon"
           :to="`/companies/${companyId}/${card.route}`"
           :disabled="card.disabled"
@@ -121,11 +120,14 @@
 <script lang="ts" setup>
 import { OAlert } from '@owlint/feathers-vue'
 import type { CompanyResponse } from '~/types/company'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Set page metadata
 useHead({
-  title: 'Mint - Company Dashboard',
-  meta: [{ name: 'description', content: 'Company Information Dashboard' }]
+  title: `Mint - ${t('company.dashboard.title')}`,
+  meta: [{ name: 'description', content: t('company.dashboard.description') }]
 })
 
 const router = useRouter()
@@ -142,64 +144,64 @@ const {
 // Info cards configuration
 const infoCards = [
   {
-    title: 'Company Profile',
-    description: 'View detailed company information, business lines, and key metrics.',
+    titleKey: 'company.dashboard.infoCards.profile.title',
+    descriptionKey: 'company.dashboard.infoCards.profile.description',
     icon: 'fa-building',
     route: 'profile',
     loadingKey: 'profile',
     disabled: false
   },
   {
-    title: 'Activities & Events',
-    description: 'Explore company events, trade shows, and key activities.',
+    titleKey: 'company.dashboard.infoCards.activities.title',
+    descriptionKey: 'company.dashboard.infoCards.activities.description',
     icon: 'fa-calendar-days',
     route: 'activities',
     loadingKey: 'timeline',
     disabled: false
   },
   {
-    title: 'Products',
-    description: 'Browse the company\'s products, services, and offerings.',
+    titleKey: 'company.dashboard.infoCards.products.title',
+    descriptionKey: 'company.dashboard.infoCards.products.description',
     icon: 'fa-box',
     route: 'products',
     loadingKey: 'products',
     disabled: false
   },
   {
-    title: 'Team & Management',
-    description: 'Leadership team, organizational structure, and key personnel.',
+    titleKey: 'company.dashboard.infoCards.team.title',
+    descriptionKey: 'company.dashboard.infoCards.team.description',
     icon: 'fa-users',
     route: 'team',
     loadingKey: 'team',
     disabled: false
   },
   {
-    title: 'Job Offers',
-    description: 'Current job openings, career opportunities, and hiring information.',
+    titleKey: 'company.dashboard.infoCards.jobs.title',
+    descriptionKey: 'company.dashboard.infoCards.jobs.description',
     icon: 'fa-briefcase',
     route: 'jobs',
     loadingKey: 'jobs',
     disabled: false
   },
   {
-    title: 'Corporate Communications',
-    description: 'Press releases, public statements, and official communications.',
+    titleKey: 'company.dashboard.infoCards.communications.title',
+    descriptionKey: 'company.dashboard.infoCards.communications.description',
     icon: 'fa-bullhorn',
     route: 'communications',
     loadingKey: 'communications',
     disabled: true
   },
   {
-    title: 'Financials',
-    description: 'Financial data, revenue information, and market performance.',
+    titleKey: 'company.dashboard.infoCards.financials.title',
+    descriptionKey: 'company.dashboard.infoCards.financials.description',
     icon: 'fa-chart-line',
     route: 'financials',
     loadingKey: 'financials',
     disabled: true
   },
   {
-    title: 'Mentions',
-    description: 'News articles, media coverage, and third-party mentions.',
+    titleKey: 'company.dashboard.infoCards.mentions.title',
+    descriptionKey: 'company.dashboard.infoCards.mentions.description',
     icon: 'fa-quote-left',
     route: 'mentions',
     loadingKey: 'press',
@@ -212,8 +214,11 @@ onMounted(async () => {
   if (!companyId.value) {
     router.push('/companies')
   }
-  await fetchCompany()  
+  if (!company.value) {
+    await fetchCompany()
+  }
 })
+
 
 // Format website URL
 const formatWebsiteUrl = (website?: string) => {

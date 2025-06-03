@@ -1,13 +1,13 @@
 <template>
-  <LayoutsCompanyCard title="Timeline & Key Milestones" icon="fa-calendar-days">
+  <LayoutsCompanyCard :title="$t('timeline.title')" icon="fa-calendar-days">
     <div class="flex flex-col gap-4">
       <!-- Task state -->
       <TaskState
         v-if="companyId"
         :company-id="companyId"
         :required-task-types="['timeline']"
-        loading-title="Loading company timeline data..."
-        loading-description="Fetching milestone events data from AI agent..."
+        :loading-title="$t('timeline.loading.title')"
+        :loading-description="$t('timeline.loading.description')"
       />
 
       <!-- Main content -->
@@ -16,9 +16,9 @@
           <div class="text-5xl text-slate-300 mb-4">
             <i class="fa fa-calendar-days"></i>
           </div>
-          <h3 class="text-xl font-semibold mb-2">No Timeline Data Available</h3>
+          <h3 class="text-xl font-semibold mb-2">{{ $t('timeline.noData.title') }}</h3>
           <p class="text-slate-500 mb-6">
-            Fetch milestone events for this company to see its history
+            {{ $t('timeline.noData.description') }}
           </p>
         </div>
       </Card>
@@ -31,10 +31,10 @@
             <div class="flex items-center justify-between">
               <div class="flex gap-2 items-center text-primary">
                 <i class="fa fa-list"></i>
-                <span>Timeline</span>
+                <span>{{ $t('timeline.title') }}</span>
               </div>
               <div>
-                <OInput icon="fa-search" id="search" v-model="searchQuery" placeholder="Search..." />
+                <OInput icon="fa-search" id="search" v-model="searchQuery" :placeholder="$t('timeline.search.placeholder')" />
               </div>
             </div>
           </div>
@@ -42,26 +42,28 @@
             <TimelineEvent v-for="(event, index) in filteredEvents" :key="index" :event="event" />
           </div>
           <div v-if="filteredEvents.length === 0 && searchQuery" class="text-center py-4">
-            <p class="text-slate-500">No events found matching "{{ searchQuery }}"</p>
+            <p class="text-slate-500">{{ $t('timeline.search.noResults', { query: searchQuery }) }}</p>
           </div>
         </div>
       </div>
     </div>
-
   </LayoutsCompanyCard>
 </template>
 
 <script lang="ts" setup>
 import { OAlert, OButton, OInput } from '@owlint/feathers-vue'
 import TaskState from '~/components/TaskState.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Set page metadata
 useHead({
-  title: 'Mint - Timeline & Key Milestones',
+  title: t('timeline.title'),
   meta: [
     {
       name: 'description',
-      content: 'Company History Timeline & Key Milestones'
+      content: t('timeline.title')
     }
   ]
 })
@@ -69,7 +71,9 @@ useHead({
 const { company, companyId, fetchCompany } = useCompanyData()
 
 onMounted(async () => {
-  await fetchCompany()
+  if (!company.value) {
+    await fetchCompany()
+  }
 })
 
 const searchQuery = ref('')

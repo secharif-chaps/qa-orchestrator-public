@@ -4,20 +4,20 @@
       <div class="col-span-2">
         <h3 class="space-x-2 font-bold text-primary">
           <i class="fa fa-bullseye-arrow"></i>
-          <span> Target audience and customer base </span>
+          <span>{{ title }}</span>
         </h3>
       </div>
 
       <!-- Customer Type - individual property loading -->
-      <div>Customer base</div>
+      <div>{{ $t('profile.sections.target.customerBase') }}</div>
       <div
         v-if="company?.products?.customerType"
       >
         <span class="text-sm text-secondary">
           {{
-
+            
               company?.products?.customerType
-            ?? 'Not found'
+             ?? $t('common.notFound')
           }}
           
         </span>
@@ -26,11 +26,11 @@
         v-else
         class="text-secondary italic"
       >
-        Loading customer base...
+        {{ $t('common.loading') }}
       </div>
 
       <!-- Marketing Positioning - individual property loading -->
-      <div>Positioning</div>
+      <div>{{ $t('profile.sections.target.positioning') }}</div>
       <div
         v-if="company?.products?.marketingPositioning"
       >
@@ -38,7 +38,7 @@
           {{
             
               company?.products?.marketingPositioning
-             ?? 'Not found'
+             ?? $t('common.notFound')
           }}
          
         </span>
@@ -47,12 +47,19 @@
         v-else
         class="text-secondary italic"
       >
-        Loading positioning...
+        {{ $t('common.loading') }}
       </div>
     </div>
   </Card>
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const { company, getSourcedValue } = useCompanyData()
+
+defineProps<{
+  title: string
+}>()
 </script>
