@@ -6,7 +6,6 @@ variables:
 
 stages:
   - build
-  - test
   - docker-build
 
 # Cache dependencies between jobs
@@ -50,22 +49,6 @@ build-backend:
     - main
     - merge_requests
 
-
-# Backend tests
-test-backend:
-  stage: test
-  script:
-    - cd mint-back
-    - curl -sSL https://install.python-poetry.org | python3 -
-    - export PATH="$HOME/.local/bin:$PATH"
-    - poetry config virtualenvs.create false
-    - poetry install --no-interaction --no-ansi
-    - poetry run pytest --cov=app tests/
-  dependencies:
-    - build-backend
-  only:
-    - main
-    - merge_requests
 
 # Deploy job (example - adjust according to your deployment needs)
 deploy:

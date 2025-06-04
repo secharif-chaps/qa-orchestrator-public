@@ -1,23 +1,12 @@
 from typing import Dict, List, Optional, Any
 from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
-from app.domain.entities.task import TaskStatus, TaskType
+from app.models.task import TaskStatus, TaskType
 
-# Base Pydantic models
-class SourcedValue(BaseModel):
-    value: Any
-    source: str
-
-class PendingState(BaseModel):
-    pending: bool
-    error: Optional[str] = None
-
-# Base Company model
 class CompanyBase(BaseModel):
     name: str
     website: str
 
-# Company creation and update models
 class CompanyCreate(CompanyBase):
     pass
 
@@ -33,24 +22,17 @@ class CompanyUpdate(BaseModel):
     press: Optional[Dict[str, Any]] = None
     team: Optional[List[Dict[str, Any]]] = None
 
-# Task models
-class TaskBase(BaseModel):
+class TaskResponse(BaseModel):
+    id: int
+    company_id: int
     type: TaskType
     status: TaskStatus
     error: Optional[str] = None
-
-class TaskCreate(TaskBase):
-    company_id: int
-
-class TaskResponse(TaskBase):
-    id: int
-    company_id: int
     created_at: datetime
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
 
-# Full Company response model
 class CompanyResponse(CompanyBase):
     id: int
     profile: Dict[str, Any] = Field(default_factory=dict)

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.router import api_router
+from app.api.routes import company, tasks
 from app.core.config import settings
 
 app = FastAPI(
@@ -24,8 +24,9 @@ app.add_middleware(
     max_age=3600,
 )
 
-# Include API router
-app.include_router(api_router)
+# Include API routers
+app.include_router(company.router)
+app.include_router(tasks.router)
 
 if __name__ == "__main__":
     import uvicorn
