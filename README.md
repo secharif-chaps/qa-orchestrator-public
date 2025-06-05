@@ -28,12 +28,14 @@ docker-compose up -d
 
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
+- Keycloak Admin Console: http://localhost:8080
 
 ## Services
 
 - **Frontend**: Nuxt.js application running on port 3000
 - **Backend**: FastAPI application running on port 8000
 - **Database**: PostgreSQL running on port 5432
+- **Keycloak**: Identity and Access Management server running on port 8080
 
 ## Docker Compose Commands
 
@@ -55,6 +57,14 @@ docker-compose up -d
 ### Frontend
 
 - `NUXT_PUBLIC_BACKEND_API`: URL of the backend API
+
+### Keycloak
+
+- `KEYCLOAK_DB_USERNAME`: Username for Keycloak database (default: `keycloak`)
+- `KEYCLOAK_DB_PASSWORD`: Password for Keycloak database (default: `!ChangeMe!`)
+- `KEYCLOAK_DB_NAME`: Name of the Keycloak database (default: `keycloak`)
+- `KEYCLOAK_ADMIN_USERNAME`: Username for Keycloak admin console (default: `admin`)
+- `KEYCLOAK_ADMIN_PASSWORD`: Password for Keycloak admin console (default: `admin`)
 
 ## Data Persistence
 
