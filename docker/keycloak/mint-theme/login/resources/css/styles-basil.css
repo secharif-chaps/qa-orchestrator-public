@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+html body {
+    font-optical-sizing: auto;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    font-variation-settings:
+        'wdth' 100,
+        'YTLC' 500;
+}
+
+html .pf-v5-c-form-control > :is(input, select, textarea) {
+    padding: 4px 12px;
+    border-radius: 4px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    position: relative;
+}
+
+html :is(input[type='text'], input[type='email'], input[type='password']) {
+    padding-left: 32px;
+    position: relative;
+}
+
+html .pf-v5-c-form-control:has(input#password)::before {
+    content: '\f023';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 16px;
+    position: absolute;
+    top: 4px;
+    left: 12px;
+    color: #64748b;
+    pointer-events: none;
+    z-index: 1;
+    border: none;
+    width: min-content;
+}
+
+html .pf-v5-c-form-control:has(input#username)::before {
+    content: '\f0e0';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 16px;
+    position: absolute;
+    top: 4px;
+    left: 12px;
+    color: #64748b;
+    pointer-events: none;
+    z-index: 1;
+    border: none;
+    width: min-content;
+}
+
+html .pf-v5-c-input-group button.pf-v5-c-button.pf-m-control {
+    position: absolute;
+    margin-left: -32px;
+    margin-top: 3px;
+    padding: 2px 4px !important;
+    color: #64748b !important;
+    background: #fff !important;
+    border: none;
+}
+
+html .pf-v5-c-input-group button.pf-v5-c-button.pf-m-control::after,
+html .pf-v5-c-form-control::after {
+    border: none;
+}
+
+@media (min-width: 1200px) {
+    .pf-v5-c-login__header {
+        margin-block-start: 0 !important;
+    }
+}
+
+html .pf-v5-c-login__container {
+    grid-template-columns: 430px;
+    max-width: 430px;
+}
+
+html.login-pf body {
+    background: #fff;
+}
+
+.pf-v5-c-brand {
+    max-width: 430px;
+}
+
+.pf-v5-c-login__main {
+    max-width: 430px;
+    background: transparent;
+    box-shadow: none;
+}
+
+html .pf-v5-c-login__main-header {
+    border-top: none;
+    grid-template-columns: 100% !important;
+    padding: 24px;
+}
+
+html .pf-v5-c-login__main-header-utilities {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+}
+
+html .pf-v5-c-login__main-header h1 {
+    display: block;
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    font-optical-sizing: auto;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 500 !important;
+    font-size: 24px !important;
+    line-height: 32px !important;
+    font-variation-settings:
+        'wdth' 100,
+        'YTLC' 500;
+}
+
+html .pf-v5-c-login__main-body {
+    background: #f3f4f5;
+    padding: 24px;
+    position: relative;
+    border-radius: 8px;
+}
+
+.pf-v5-c-login__main-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 25%;
+    height: 2px;
+    width: 50%;
+    background: linear-gradient(to right, transparent, #5249e6, transparent);
+}
+
+.pf-v5-c-login__main-body::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    height: 2px;
+    width: 50%;
+    background: linear-gradient(to right, transparent, #5249e6, transparent);
+}
+
+html .pf-v5-c-form__group-label.pf-v5-u-pb-xs {
+    padding-block-end: 4px !important;
+}
+
+html .pf-v5-c-form__group-label label span {
+    font-family: 'Nunito Sans', sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+html .pf-v5-c-form__helper-text {
+    margin-top: 8px;
+}
+
+html .pf-v5-c-form__helper-text .pf-v5-c-helper-text.pf-v5-u-display-flex {
+    flex-direction: row-reverse;
+}
+
+html .pf-v5-c-form__helper-text a {
+    color: #798ba4;
+    text-decoration: none;
+}
+
+html button.pf-v5-c-button.pf-m-primary {
+    background-color: #3c32e2;
+    color: #fdfdfe;
+}
+
+.basil-footer {
+    margin-top: 125px;
+}
+
+.basil-footer ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+}
+
+.basil-footer ul li {
+    margin: 0 10px;
+}
+
+.basil-footer ul li a {
+    color: #798ba4;
+    text-decoration: none;
+}
