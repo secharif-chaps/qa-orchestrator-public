@@ -1,9 +1,9 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.domain.services.company_service import CompanyService
+from app.services.company import CompanyService
 from app.core.dependencies import get_company_service
-from app.domain.entities.schema import (
+from app.schemas.company import (
     CompanyCreate, 
     CompanyUpdate, 
     CompanyResponse

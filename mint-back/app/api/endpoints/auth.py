@@ -3,6 +3,10 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.schemas.user import LoginRequest, RefreshTokenRequest, Token, User, TokenData
 from app.services.auth import keycloak_service
 from typing import Dict, Any
+import logging
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 security = HTTPBearer()
@@ -13,18 +17,39 @@ async def login(login_request: LoginRequest) -> Token:
     """
     Authenticate user with Keycloak and return tokens
     """
-    token_data = await keycloak_service.authenticate_user(
-        login_request.username, 
-        login_request.password
-    )
+    logger.info(f"Login attempt for username: {login_request.username}")
+    
+    try:
+        token_data = await keycloak_service.authenticate_user(
+            login_request.username, 
+            login_request.password
+        )
+        
+        logger.info(f"Keycloak authentication response received for user: {login_request.username}")
+        logger.debug(f"Token data type: {type(token_data)}")
+        
+        if token_data:
+            logger.info(f"Authentication successful for user: {login_request.username}")
+            logger.debug(f"Token data keys: {list(token_data.keys()) if isinstance(token_data, dict) else 'Not a dict'}")
+        else:
+            logger.warning(f"Authentication failed for user: {login_request.username} - token_data is None/False")
+        
+    except Exception as e:
+        logger.error(f"Exception during authentication for user {login_request.username}: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Authentication service error"
+        )
     
     if not token_data:
+        logger.warning(f"Invalid credentials for user: {login_request.username}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
+    logger.info(f"Returning token for user: {login_request.username}")
     return Token(
         access_token=token_data["access_token"],
         refresh_token=token_data.get("refresh_token"),

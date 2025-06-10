@@ -1,10 +1,9 @@
 from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
 
-from app.domain.entities.company import Company
-from app.domain.repositories.company_repository import CompanyRepository
+from app.models.company import Company
 
-class SQLAlchemyCompanyRepository(CompanyRepository):
+class SQLAlchemyCompanyRepository:
     """SQLAlchemy implementation of the Company repository"""
     
     def __init__(self, db_session: Session):

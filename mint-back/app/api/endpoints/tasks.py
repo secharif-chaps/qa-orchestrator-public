@@ -4,10 +4,10 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
-from app.domain.services.company_service import CompanyService
+from app.services.company import CompanyService
 from app.core.dependencies import get_company_service
-from app.domain.entities.schema import TaskCreate, TaskResponse
-from app.domain.entities.task import TaskType
+from app.schemas.task import TaskCreate, TaskResponse
+from app.models.task import TaskType
 
 # Configure logging
 logger = logging.getLogger(__name__)

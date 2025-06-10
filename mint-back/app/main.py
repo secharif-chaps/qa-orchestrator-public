@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import company, tasks
+from app.api.router import api_router
 from app.core.config import settings
 
 app = FastAPI(
@@ -25,6 +26,7 @@ app.add_middleware(
 )
 
 # Include API routers
+app.include_router(api_router, prefix="/api")
 app.include_router(company.router)
 app.include_router(tasks.router)
 

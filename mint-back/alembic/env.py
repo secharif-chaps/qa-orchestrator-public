@@ -13,8 +13,8 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Import the SQLAlchemy models
-from app.domain.entities.company import Company
-from app.infrastructure.database.database import Base
+from app.models.company import Company
+from app.database import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
