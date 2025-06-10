@@ -20,6 +20,16 @@ class Settings(BaseSettings):
     
     # CORS settings
     CORS_ORIGIN: str = "http://localhost:3000"
+    
+    # Keycloak settings
+    KEYCLOAK_SERVER_URL: str = "http://localhost:8080"
+    KEYCLOAK_REALM: str = "mint-dev"
+    KEYCLOAK_CLIENT_ID: str = "mint-client"
+    KEYCLOAK_CLIENT_SECRET: Optional[str] = None
+    
+    # JWT settings
+    JWT_ALGORITHM: str = "RS256"
+    JWT_AUDIENCE: str = "account"
 
     model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8")
 

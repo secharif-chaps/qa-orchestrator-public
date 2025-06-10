@@ -1,0 +1,130 @@
+from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from app.schemas.user import LoginRequest, RefreshTokenRequest, Token, User, TokenData
+from app.services.auth import keycloak_service
+from typing import Dict, Any
+
+router = APIRouter(prefix="/auth", tags=["authentication"])
+security = HTTPBearer()
+
+
+@router.post("/login", response_model=Token)
+async def login(login_request: LoginRequest) -> Token:
+    """
+    Authenticate user with Keycloak and return tokens
+    """
+    token_data = await keycloak_service.authenticate_user(
+        login_request.username, 
+        login_request.password
+    )
+    
+    if not token_data:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    return Token(
+        access_token=token_data["access_token"],
+        refresh_token=token_data.get("refresh_token"),
+        token_type="bearer",
+        expires_in=token_data.get("expires_in", 300)
+    )
+
+
+@router.post("/refresh", response_model=Token)
+async def refresh_token(refresh_request: RefreshTokenRequest) -> Token:
+    """
+    Refresh access token using refresh token
+    """
+    token_data = await keycloak_service.refresh_token(refresh_request.refresh_token)
+    
+    if not token_data:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    return Token(
+        access_token=token_data["access_token"],
+        refresh_token=token_data.get("refresh_token"),
+        token_type="bearer",
+        expires_in=token_data.get("expires_in", 300)
+    )
+
+
+@router.post("/logout")
+async def logout(refresh_request: RefreshTokenRequest) -> Dict[str, str]:
+    """
+    Logout user by invalidating refresh token
+    """
+    success = await keycloak_service.logout(refresh_request.refresh_token)
+    
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Failed to logout"
+        )
+    
+    return {"message": "Successfully logged out"}
+
+
+@router.get("/me", response_model=Dict[str, Any])
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
+    """
+    Get current user information from access token
+    """
+    token = credentials.credentials
+    user_info = await keycloak_service.get_user_info(token)
+    
+    if not user_info:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    return user_info
+
+
+@router.post("/verify")
+async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
+    """
+    Verify if the provided token is valid
+    """
+    token = credentials.credentials
+    token_data = await keycloak_service.verify_token(token)
+    
+    if not token_data:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    return {
+        "valid": True,
+        "username": token_data.username,
+        "sub": token_data.sub,
+        "roles": token_data.roles
+    }
+
+
+@router.post("/introspect")
+async def introspect_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
+    """
+    Introspect token (server-side validation with detailed info)
+    """
+    token = credentials.credentials
+    token_info = await keycloak_service.introspect_token(token)
+    
+    if not token_info:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or inactive token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    return token_info
