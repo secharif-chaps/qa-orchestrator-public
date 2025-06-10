@@ -8,8 +8,13 @@ export default defineNuxtConfig({
   css: ['@owlint/feathers-vue/style.css', '~/assets/css/main.css'],
 
   runtimeConfig: {
+    authSecret: process.env.NUXT_AUTH_SECRET || 'your-secret-key-here',
+    keycloakClientId: process.env.KEYCLOAK_CLIENT_ID || 'mint-front',
+    keycloakClientSecret: process.env.KEYCLOAK_CLIENT_SECRET || '',
+    keycloakIssuer: process.env.KEYCLOAK_ISSUER || 'http://localhost:8080/realms/mint-dev',
     public: {
-      backendApi: '',
+      backendApi: process.env.NUXT_PUBLIC_BACKEND_API || 'http://localhost:8000',
+      authBaseUrl: process.env.NUXT_PUBLIC_AUTH_BASE_URL || 'http://localhost:3000',
       mistralApiKey: '',
       tilesApiKey: '',
       tilesApiUrl: '',
@@ -48,7 +53,6 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/leaflet',
     '@pinia/nuxt',
-    'pinia-plugin-persistedstate/nuxt',
-    '@sidebase/nuxt-auth'
+    'pinia-plugin-persistedstate/nuxt'
   ],
 })

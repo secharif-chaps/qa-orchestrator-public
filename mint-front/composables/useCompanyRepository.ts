@@ -1,7 +1,7 @@
 import { useApiService } from './useApiService'
-import type { CompanyCreate, CompanyResponse, CompanyUpdate } from '~/types/company'
+import type { CompanyCreate, CompanyResponse, CompanyUpdate, TaskCreate, TaskResponse } from '~/types/company'
 
-const companiesUrl = '/companies'
+const companiesUrl = '/api/companies'
 
 export const useCompanyRepository = () => {
   const api = useApiService()
@@ -18,6 +18,13 @@ export const useCompanyRepository = () => {
      * Get a company by ID
      */
     getCompany: (id: number) => {
+      return api.get<CompanyResponse>(`${companiesUrl}/${id}`)
+    },
+
+    /**
+     * Get a company by ID (alias for consistency with store)
+     */
+    getCompanyById: (id: number) => {
       return api.get<CompanyResponse>(`${companiesUrl}/${id}`)
     },
 
@@ -47,6 +54,27 @@ export const useCompanyRepository = () => {
      */
     deleteCompany: (id: number) => {
       return api.delete(`${companiesUrl}/${id}`)
+    },
+
+    /**
+     * Create a task
+     */
+    createTask: (task: TaskCreate) => {
+      return api.post<TaskResponse>('/api/tasks', task)
+    },
+
+    /**
+     * Restart a task
+     */
+    restartTask: (taskId: number) => {
+      return api.post<TaskResponse>(`/api/tasks/${taskId}/restart`)
+    },
+
+    /**
+     * Get company tasks
+     */
+    getCompanyTasks: (companyId: number) => {
+      return api.get<TaskResponse[]>(`/api/tasks/company/${companyId}`)
     }
   }
 }

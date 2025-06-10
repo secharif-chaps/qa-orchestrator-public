@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     # Database settings
     DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/mint_db"
     
+    
     # N8N settings
     N8N_BASE_URL: str = "http://ec2-34-244-245-92.eu-west-1.compute.amazonaws.com:5678"
     # N8N_WEBHOOK_ID: str = "57be7c18-e8b2-47aa-b9aa-f7c2696f4523"
@@ -22,9 +23,9 @@ class Settings(BaseSettings):
     CORS_ORIGIN: str = "http://localhost:3000"
     
     # Keycloak settings
-    KEYCLOAK_SERVER_URL: str = "http://localhost:8080"
+    KEYCLOAK_SERVER_URL: str = "http://keycloak:8080"
     KEYCLOAK_REALM: str = "mint-dev"
-    KEYCLOAK_CLIENT_ID: str = "mint-client"
+    KEYCLOAK_CLIENT_ID: str = "mint-back"
     KEYCLOAK_CLIENT_SECRET: Optional[str] = None
     
     # JWT settings

@@ -1,10 +1,18 @@
 export const useApiService = () => {
   const config = useRuntimeConfig()
   const baseURL = config.public.backendApi
+  const { getAccessToken } = useAuth()
 
   const fetchAPI = async (url: string, options: RequestInit = {}) => {
     const defaultHeaders: HeadersInit = {
       'Content-Type': 'application/json'
+    }
+
+    // Add authorization header if user is authenticated
+    const accessToken = await getAccessToken()
+
+    if (accessToken) {
+      defaultHeaders['Authorization'] = `Bearer ${accessToken}`
     }
 
     const response = await fetch(`${baseURL}${url}`, {
@@ -17,6 +25,12 @@ export const useApiService = () => {
 
     // Handle HTTP errors
     if (!response.ok) {
+      // Handle unauthorized - redirect to login
+      if (response.status === 401) {
+        await navigateTo('/login')
+        return
+      }
+      
       const errorData = await response.json().catch(() => null)
       const error = new Error(
         errorData?.detail || `API error: ${response.status} ${response.statusText}`

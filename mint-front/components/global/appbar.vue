@@ -28,6 +28,20 @@
               <i class="fa fa-circle"></i>
             </button>
           </div>
+          <NuxtLink 
+            to="/profile"
+            class="flex items-center justify-center p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+            title="Profile"
+          >
+            <i class="fa fa-user text-lg"></i>
+          </NuxtLink>
+          <button
+            @click="handleLogout"
+            class="flex items-center justify-center p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            title="Logout"
+          >
+            <i class="fa fa-sign-out-alt text-lg"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -35,6 +49,8 @@
 </template>
 
 <script lang="ts" setup>
+const { signOut } = useAuth()
+
 const colors = ['pink', 'indigo', 'emerald']
 
 const currentTheme = ref('indigo')
@@ -70,5 +86,14 @@ const getStyle = (color: string) => {
 const changeTheme = (theme: string) => {
   currentTheme.value = theme
   document.documentElement.setAttribute('data-theme', theme)
+}
+
+// handle logout
+const handleLogout = async () => {
+  try {
+    await signOut()
+  } catch (error) {
+    console.error('Logout error:', error)
+  }
 }
 </script>

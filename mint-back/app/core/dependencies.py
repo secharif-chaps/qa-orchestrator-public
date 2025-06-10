@@ -27,17 +27,32 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     """
     Dependency to get current authenticated user from JWT token
     """
-    token = credentials.credentials
-    token_data = await keycloak_service.verify_token(token)
+    import logging
+    logger = logging.getLogger(__name__)
     
-    if not token_data:
+    token = credentials.credentials
+    
+    try:
+        token_data = await keycloak_service.verify_token(token)
+        
+        if not token_data:
+            logger.warning("Invalid token provided")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        logger.info(f"User authenticated: {token_data.username}")
+        return token_data
+        
+    except Exception as e:
+        logger.error(f"Token validation error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    return token_data
 
 def require_roles(required_roles: List[str]):
     """

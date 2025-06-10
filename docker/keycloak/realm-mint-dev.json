@@ -22,6 +22,20 @@
           "value": "password"
         }
       ]
+    },
+    {
+      "username": "nmr",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Nicolas",
+      "lastName": "Mercier",
+      "email": "nmr@example.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password"
+        }
+      ]
     }
   ],
   "clients": [
@@ -32,7 +46,11 @@
       "baseUrl": "http://localhost:8000",
       "redirectUris": ["*"],
       "webOrigins": ["*"],
-      "publicClient": true
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false
     },
     {
       "clientId": "mint-front",

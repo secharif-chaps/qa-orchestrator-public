@@ -1,9 +1,17 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <slot />
+  <div class="bg-bg3 min-h-screen h-full min-w-screen w-full">
+    <Appbar />
+    <div class="flex h-full">
+      <Sidebar />
+
+      <div class="py-24 pl-24 pr-4 w-full min-h-screen">
+        <slot />
+      </div>
+
+    </div>
   </div>
 </template>
 
-<script setup lang="ts">
-// Layout par défaut pour les pages publiques
+<script lang="ts" setup>
+
 </script>

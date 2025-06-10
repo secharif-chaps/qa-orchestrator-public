@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white rounded-lg overflow-hidden">
     <button
-      class="w-full px-4 py-3 bg-white flex items-center justify-between text-left border-b border-gray-200"
+      class="w-full px-4 py-3 bg-white flex items-center justify-between text-left border-b border-gray-200 cursor-pointer"
       @click="isOpen = !isOpen"
       :class="{
         'border-b-0': !isOpen
@@ -10,7 +10,7 @@
       <span class="font-medium">Tasks</span>
       <i
         class="fa"
-        :class="isOpen ? 'fa-chevron-up' : 'fa-chevron-down'"
+        :class="!isOpen ? 'fa-chevron-up' : 'fa-chevron-down'"
       ></i>
     </button>
     

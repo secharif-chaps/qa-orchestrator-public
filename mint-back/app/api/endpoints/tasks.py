@@ -5,8 +5,9 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
 from app.services.company import CompanyService
-from app.core.dependencies import get_company_service
+from app.core.dependencies import get_company_service, get_current_user
 from app.schemas.task import TaskCreate, TaskResponse
+from app.schemas.user import TokenData
 from app.models.task import TaskType
 
 # Configure logging
@@ -21,7 +22,8 @@ router = APIRouter(
 async def create_task(
     request: Request,
     task_data: TaskCreate,
-    service: CompanyService = Depends(get_company_service)
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user)
 ):
     """Create a new task for a company"""
     try:
@@ -73,7 +75,8 @@ async def create_task(
 @router.get("/company/{company_id}", response_model=List[TaskResponse])
 async def get_company_tasks(
     company_id: int,
-    service: CompanyService = Depends(get_company_service)
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user)
 ):
     """Get all tasks for a company"""
     company = service.get_company(company_id)
@@ -87,7 +90,8 @@ async def get_company_tasks(
 @router.post("/{task_id}/restart", response_model=TaskResponse)
 async def restart_task(
     task_id: int,
-    service: CompanyService = Depends(get_company_service)
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user)
 ):
     """Restart a specific task"""
     task = await service.restart_task(task_id)

@@ -1,7 +1,7 @@
 import { useApiService } from './useApiService'
 import type { TaskCreate, TaskResponse } from '~/types/company'
 
-const tasksUrl = '/tasks'
+const tasksUrl = '/api/tasks'
 
 export const useTaskRepository = () => {
   const api = useApiService()

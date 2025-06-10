@@ -3,7 +3,7 @@
     <div class="flex items-center gap-3">
       <div class="relative">
         <div
-          class="size-4 rounded-full"
+          class="size-3 rounded-full"
           :class="{
             'border-2 border-gray-300 border-dashed': !status,
             'bg-orange-500': status === 'running',
@@ -14,7 +14,7 @@
         ></div>
         <div
           v-if="status === 'running'"
-          class="absolute inset-0 size-4 rounded-full bg-orange-500 animate-pulse opacity-50"
+          class="absolute inset-0 size-3 rounded-full bg-orange-500 animate-ping"
         ></div>
       </div>
       <span class="capitalize font-medium">{{ type }}</span>

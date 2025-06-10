@@ -1555,20 +1555,6 @@
   resolved "https://registry.yarnpkg.com/@sec-ant/readable-stream/-/readable-stream-0.4.1.tgz#60de891bb126abfdc5410fdc6166aca065f10a0c"
   integrity sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg==
 
-"@sidebase/nuxt-auth@^0.10.1":
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/@sidebase/nuxt-auth/-/nuxt-auth-0.10.1.tgz#922c19b6de4f020d7d406592eb6b8e0cd721d316"
-  integrity sha512-fCSDfGl6npVIWrb//NbeKA16ATk1CpjzfRrNAdJ2PRr0BF5aJz6KCvDI8dSzs5VLMJBIRLR39G2rWYq5q+v5iA==
-  dependencies:
-    "@nuxt/kit" "^3.14.1592"
-    defu "^6.1.4"
-    h3 "^1.13.0"
-    knitwork "^1.1.0"
-    nitropack "^2.10.4"
-    requrl "^3.0.2"
-    scule "^1.3.0"
-    ufo "^1.5.4"
-
 "@sideway/address@^4.1.5":
   version "4.1.5"
   resolved "https://registry.yarnpkg.com/@sideway/address/-/address-4.1.5.tgz#4bc149a0076623ced99ca8208ba780d65a99b9d5"
@@ -5750,6 +5736,11 @@ jszip@^3.7.1:
     readable-stream "~2.3.6"
     setimmediate "^1.0.5"
 
+jwt-decode@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-4.0.0.tgz#2270352425fd413785b2faf11f6e755c5151bd4b"
+  integrity sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==
+
 keyv@^4.5.4:
   version "4.5.4"
   resolved "https://registry.yarnpkg.com/keyv/-/keyv-4.5.4.tgz#a879a99e29452f942439f2a405e3af8b31d4de93"
@@ -6583,6 +6574,13 @@ ohash@^2.0.4, ohash@^2.0.5, ohash@^2.0.9:
   resolved "https://registry.yarnpkg.com/ohash/-/ohash-2.0.10.tgz#fba0c751a4dd34e5caca22b0bf618fe9105fb06c"
   integrity sha512-jf9szh2McTXpXGqejbfHxy4wcs6CXc6MShfzLIdHuCrl2W3qG49qutlOMq1Bdmvpv3s/XJffTu4ElRBPtIOncQ==
 
+oidc-client-ts@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/oidc-client-ts/-/oidc-client-ts-3.2.1.tgz#d71d899dc0cddd11a8b84e41265fd79d7e0f152a"
+  integrity sha512-hS5AJ5s/x4bXhHvNJT1v+GGvzHUwdRWqNQQbSrp10L1IRmzfRGKQ3VWN3dstJb+oF3WtAyKezwD2+dTEIyBiAA==
+  dependencies:
+    jwt-decode "^4.0.0"
+
 on-finished@2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/on-finished/-/on-finished-2.4.1.tgz#58c8c44116e54845ad57f14ab10b03533184ac3f"
@@ -7397,11 +7395,6 @@ require-from-string@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/require-from-string/-/require-from-string-2.0.2.tgz#89a7fdd938261267318eafe14f9c32e598c36909"
   integrity sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==
-
-requrl@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/requrl/-/requrl-3.0.2.tgz#d376104193b02a2d874dde68454c2db2dfeb0fac"
-  integrity sha512-f3gjR6d8MhOpn46PP+DSJywbmxi95fxQm3coXBFwognjFLla9X6tr8BdNyaIKNOEkaRbRcm0/zYAqN19N1oyhg==
 
 resolve-from@^4.0.0:
   version "4.0.0"
