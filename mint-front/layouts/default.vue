@@ -6,4 +6,4 @@
 
 <script setup lang="ts">
 // Layout par défaut pour les pages publiques
-</script> 
+</script>
