@@ -70,6 +70,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const buttons = computed(() => [
+  { icon: 'fa fa-home', label: t('sidebar.home'), active: true, to: '/' },
   { icon: 'fa fa-search', label: t('sidebar.search'), active: true, to: '/search' },
   {
     icon: 'fa fa-folder-open',

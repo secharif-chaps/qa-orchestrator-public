@@ -16,6 +16,7 @@ export default {
     }
   },
   sidebar: {
+    home: 'Home',
     search: 'Search',
     cards: 'Cards',
     settings: 'Settings',

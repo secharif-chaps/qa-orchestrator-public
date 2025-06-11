@@ -2,13 +2,12 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.services.company import CompanyService
-from app.core.dependencies import get_company_service, get_current_user
+from app.core.dependencies import get_company_service
 from app.schemas.company import (
     CompanyCreate, 
     CompanyUpdate, 
     CompanyResponse
 )
-from app.schemas.user import TokenData
 
 router = APIRouter(
     prefix="/companies",
@@ -17,8 +16,7 @@ router = APIRouter(
 
 @router.get("/", response_model=List[CompanyResponse])
 async def get_companies(
-    service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    service: CompanyService = Depends(get_company_service)
 ):
     """Get all companies"""
     return service.get_all_companies()
@@ -26,8 +24,7 @@ async def get_companies(
 @router.get("/{company_id}", response_model=CompanyResponse)
 async def get_company(
     company_id: int,
-    service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    service: CompanyService = Depends(get_company_service)
 ):
     """Get a company by ID"""
     company = service.get_company(company_id)
@@ -41,8 +38,7 @@ async def get_company(
 @router.get("/by-name/{name}", response_model=CompanyResponse)
 async def get_company_by_name(
     name: str,
-    service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    service: CompanyService = Depends(get_company_service)
 ):
     """Get a company by name"""
     company = service.get_company_by_name(name)
@@ -56,8 +52,7 @@ async def get_company_by_name(
 @router.post("/", response_model=CompanyResponse)
 async def create_company(
     company_data: CompanyCreate,
-    service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    service: CompanyService = Depends(get_company_service)
 ):
     """Create a new company"""
     return service.create_company(
@@ -69,8 +64,7 @@ async def create_company(
 async def update_company(
     company_id: int,
     company_data: CompanyUpdate,
-    service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    service: CompanyService = Depends(get_company_service)
 ):
     """Update a company"""
     # Get existing company
@@ -111,8 +105,7 @@ async def update_company(
 @router.delete("/{company_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_company(
     company_id: int,
-    service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    service: CompanyService = Depends(get_company_service)
 ):
     """Delete a company"""
     success = service.delete_company(company_id)

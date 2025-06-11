@@ -1,13 +1,13 @@
 <template>
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <div class="flex items-center">
+  <div class="bg-white rounded-lg shadow-md p-6 flex items-center">
+    <div class="flex items-center w-full">
       <div class="flex-shrink-0">
-        <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+        <div class="w-12 h-12 rounded-lg flex items-center justify-center"
              :class="iconBackgroundClass">
-          <i :class="iconClass"></i>
+          <i :class="iconClass" class="text-xl"></i>
         </div>
       </div>
-      <div class="ml-4">
+      <div class="ml-4 flex-1">
         <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wide">{{ title }}</h4>
         <p class="text-2xl font-bold text-gray-900">{{ formattedValue }}</p>
         <p v-if="subtitle" class="text-xs text-gray-400 mt-1">{{ subtitle }}</p>

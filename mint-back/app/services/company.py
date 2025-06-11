@@ -11,13 +11,70 @@ class CompanyService:
         self.n8n_client = n8n_client
     
     def get_company(self, company_id: int) -> Optional[Company]:
-        return self.db.query(Company).filter(Company.id == company_id).first()
+        company = self.db.query(Company).filter(Company.id == company_id).first()
+        if company:
+            # Ensure all JSON fields have default values to prevent validation errors
+            if company.profile is None:
+                company.profile = {}
+            if company.digital is None:
+                company.digital = {}
+            if company.timeline is None:
+                company.timeline = {}
+            if company.products is None:
+                company.products = {}
+            if company.jobs is None:
+                company.jobs = {}
+            if company.csr is None:
+                company.csr = {}
+            if company.press is None:
+                company.press = {}
+            if company.team is None:
+                company.team = []
+        return company
     
     def get_company_by_name(self, name: str) -> Optional[Company]:
-        return self.db.query(Company).filter(Company.name == name).first()
+        company = self.db.query(Company).filter(Company.name == name).first()
+        if company:
+            # Ensure all JSON fields have default values to prevent validation errors
+            if company.profile is None:
+                company.profile = {}
+            if company.digital is None:
+                company.digital = {}
+            if company.timeline is None:
+                company.timeline = {}
+            if company.products is None:
+                company.products = {}
+            if company.jobs is None:
+                company.jobs = {}
+            if company.csr is None:
+                company.csr = {}
+            if company.press is None:
+                company.press = {}
+            if company.team is None:
+                company.team = []
+        return company
     
     def get_all_companies(self) -> List[Company]:
-        return self.db.query(Company).all()
+        companies = self.db.query(Company).all()
+        # Ensure all JSON fields have default values to prevent validation errors
+        for company in companies:
+            if company.profile is None:
+                company.profile = {}
+            if company.digital is None:
+                company.digital = {}
+            if company.timeline is None:
+                company.timeline = {}
+            if company.products is None:
+                company.products = {}
+            if company.jobs is None:
+                company.jobs = {}
+            if company.csr is None:
+                company.csr = {}
+            if company.press is None:
+                company.press = {}
+            if company.team is None:
+                company.team = []
+        return companies
     
     def create_company(self, name: str, website: str) -> Company:
         company = Company(name=name, website=website)
@@ -85,8 +142,15 @@ class CompanyService:
             
             if isinstance(result, list) and len(result) > 0:
                 output_data = result[0].get('output', {})
-                if task.type == TaskType.timeline and isinstance(output_data, dict):
-                    data = output_data.get('timeline', {})
+                # Remove newlines from the output data
+                if isinstance(output_data, dict):
+                    output_data = {k: v.replace('\n', '') if isinstance(v, str) else v 
+                                 for k, v in output_data.items()}
+                elif isinstance(output_data, str):
+                    output_data = output_data.replace('\n', '')
+                # Extract the correct field from the output data
+                if isinstance(output_data, dict):
+                    data = output_data.get(task.type.value, output_data)
                 else:
                     data = output_data
             else:
@@ -103,21 +167,20 @@ class CompanyService:
             raise
 
     def _update_company_data(self, company: Company, query_type: str, data: Dict[str, Any]) -> None:
-        data = data.get("output", data)
-        
+        # Store the data directly since it's already been extracted properly
         if query_type == "profile":
-            company.profile = data.get("profile", company.profile)
+            company.profile = data if isinstance(data, dict) else {}
         elif query_type == "digital":
-            company.digital = data.get("digital", company.digital)
+            company.digital = data if isinstance(data, dict) else {}
         elif query_type == "timeline":
-            company.timeline = data.get("timeline", data)
+            company.timeline = data if isinstance(data, dict) else {}
         elif query_type == "products":
-            company.products = data.get("products", company.products)
+            company.products = data if isinstance(data, dict) else {}
         elif query_type == "jobs":
-            company.jobs = data.get("jobs", company.jobs)
+            company.jobs = data if isinstance(data, dict) else {}
         elif query_type == "csr":   
-            company.csr = data.get("csr", company.csr)
+            company.csr = data if isinstance(data, dict) else {}
         elif query_type == "press":
-            company.press = data.get("press", company.press)
+            company.press = data if isinstance(data, dict) else {}
         elif query_type == "team":
-            company.team = data.get("team", company.team) 
+            company.team = data if isinstance(data, list) else [] 

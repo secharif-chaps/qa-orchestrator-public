@@ -16,6 +16,7 @@ export default {
     }
   },
   sidebar: {
+    home: 'Accueil',
     search: 'Recherche',
     cards: 'Cartes',
     settings: 'Paramètres',

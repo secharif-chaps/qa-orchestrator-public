@@ -21,7 +21,7 @@ class N8nClient:
         Returns:
             Response data from the n8n workflow
         """
-        url = f"{self.base_url}/webhook/{self.webhook_id}"
+        url = f"{self.base_url}/webhook-test/{self.webhook_id}"
         
         # Log the request details
         print(f"Triggering n8n workflow for {query}")
