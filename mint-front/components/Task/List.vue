@@ -1,5 +1,12 @@
 <template>
-  <div class="bg-white rounded-lg overflow-hidden">
+  <!-- Show TaskFlow for all users except 'nmr' -->
+  <TaskFlow 
+
+    :company-id="companyId" 
+  />
+  
+  <!-- Show TaskList only for user 'nmr' -->
+  <div v-if="isNmrUser" class="bg-white rounded-lg overflow-hidden">
     <button
       class="w-full px-4 py-3 bg-white flex items-center justify-between text-left border-b border-gray-200 cursor-pointer"
       @click="isOpen = !isOpen"
@@ -7,7 +14,7 @@
         'border-b-0': !isOpen
       }"
     >
-      <span class="font-medium">Tasks</span>
+      <span class="font-medium">Tasks (Admin)</span>
       <i
         class="fa"
         :class="!isOpen ? 'fa-chevron-up' : 'fa-chevron-down'"
@@ -41,6 +48,12 @@ const props = defineProps<Props>()
 const isOpen = ref(false)
 
 const taskStore = useTaskStore()
+const { user } = useAuth()
+
+// Check if current user is 'nmr'
+const isNmrUser = computed(() => {
+  return user.value?.profile?.preferred_username === 'nmr'
+})
 
 // Define all possible task types
 const taskTypes: TaskType[] = ['profile', 'digital', 'timeline', 'products', 'jobs', 'csr', 'press', 'team']
