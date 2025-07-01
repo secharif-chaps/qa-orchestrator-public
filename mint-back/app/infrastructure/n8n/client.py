@@ -24,8 +24,6 @@ class N8nClient:
         url = f"{self.base_url}/webhook/{self.webhook_id}"
         
         # Log the request details
-        print(f"Triggering n8n workflow for {query}")
-        print(f"URL: {url}")
         print(f"Request data: {{'company': {company}, 'website': {website}, 'query': {query}}}")
         
         try:
@@ -42,8 +40,8 @@ class N8nClient:
                 )
                 
                 # Log the raw response for debugging
-                print(f"N8n raw response status: {response.status_code}")
-                print(f"N8n raw response headers: {response.headers}")
+                # print(f"N8n raw response status: {response.status_code}")
+                # print(f"N8n raw response headers: {response.headers}")
                 print(f"N8n raw response body: {response.text}")
                 
                 if response.status_code != 200:
@@ -79,6 +77,8 @@ class N8nClient:
                         # Try to wrap non-dict responses in a dict
                         json_response = {"data": json_response}
                     
+
+                    print(f"N8n workflow returned parsed response: {json_response}")
                     return json_response
                 except json.JSONDecodeError as e:
                     # Handle non-JSON responses gracefully
