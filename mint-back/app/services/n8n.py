@@ -11,7 +11,7 @@ class N8nClient:
         """Trigger an n8n workflow with the given parameters"""
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                f"{self.base_url}/webhook-test/{query_type}",
+                f"{self.base_url}/webhook/{query_type}",
                 json={
                     "company_name": company_name,
                     "website": website

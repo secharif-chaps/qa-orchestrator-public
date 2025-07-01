@@ -23,7 +23,7 @@
     "dagre": "^0.8.5",
     "html-to-image": "^1.11.13",
     "nuxt": "^3.6.0",
-    "oidc-client-ts": "^3.2.1",
+    "oidc-client": "^1.11.5",
     "pinia": "^3.0.1",
     "pinia-plugin-persistedstate": "^4.2.0",
     "pptxgenjs": "^3.12.0",

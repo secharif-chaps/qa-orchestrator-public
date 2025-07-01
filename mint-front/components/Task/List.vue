@@ -21,6 +21,7 @@
           :key="taskType"
           :type="taskType"
           :status="getTaskStatus(taskType)"
+          :error="getTaskError(taskType)"
           @start="createTask(taskType)"
           @restart="restartTask(taskType)"
         />
@@ -63,21 +64,37 @@ const getTaskStatus = (type: TaskType): TaskStatus | null => {
   return task?.status || null
 }
 
-// Create a new task
-const createTask = async (type: TaskType) => {
-  const task: TaskCreate = {
-    type,
-    status: 'pending',
-    company_id: props.companyId
-  }
-  await taskStore.createTask(task)
+// Get error message for a specific task type
+const getTaskError = (type: TaskType): string | null => {
+  const task = tasks.value.find((t: TaskResponse) => t.type === type)
+  return task?.error || null
 }
 
-// Restart a task
+// Create a new task with optimistic UI
+const createTask = async (type: TaskType) => {
+  try {
+    const task: TaskCreate = {
+      type,
+      status: 'pending',
+      company_id: props.companyId
+    }
+    await taskStore.createTask(task)
+  } catch (error) {
+    // Error handling is done in the store with optimistic updates
+    console.error('Error creating task:', error)
+  }
+}
+
+// Restart a task with optimistic UI
 const restartTask = async (type: TaskType) => {
-  const task = tasks.value.find((t: TaskResponse) => t.type === type)
-  if (task) {
-    await taskStore.restartTask(task.id)
+  try {
+    const task = tasks.value.find((t: TaskResponse) => t.type === type)
+    if (task) {
+      await taskStore.restartTask(task.id)
+    }
+  } catch (error) {
+    // Error handling is done in the store with optimistic updates
+    console.error('Error restarting task:', error)
   }
 }
 

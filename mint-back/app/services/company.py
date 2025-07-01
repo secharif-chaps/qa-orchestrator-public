@@ -1,9 +1,12 @@
 from typing import List, Dict, Any, Optional
+import logging
 from sqlalchemy.orm import Session
 from app.models.company import Company
 from app.models.task import Task, TaskType, TaskStatus
 from app.schemas.company import CompanyCreate, CompanyUpdate
 from app.services.n8n import N8nClient
+
+logger = logging.getLogger(__name__)
 
 class CompanyService:
     def __init__(self, db: Session, n8n_client: N8nClient):
@@ -140,21 +143,13 @@ class CompanyService:
                 task.type.value
             )
             
-            if isinstance(result, list) and len(result) > 0:
-                output_data = result[0].get('output', {})
-                # Remove newlines from the output data
-                if isinstance(output_data, dict):
-                    output_data = {k: v.replace('\n', '') if isinstance(v, str) else v 
-                                 for k, v in output_data.items()}
-                elif isinstance(output_data, str):
-                    output_data = output_data.replace('\n', '')
-                # Extract the correct field from the output data
-                if isinstance(output_data, dict):
-                    data = output_data.get(task.type.value, output_data)
-                else:
-                    data = output_data
-            else:
-                data = result
+            # Debug logging to understand the n8n response structure
+            logger.info(f"Raw n8n response for {task.type.value}: {result}")
+            
+            # Parse the n8n response to extract the actual data
+            data = self._parse_n8n_response(result, task.type.value)
+            
+            logger.info(f"Parsed data for {task.type.value}: {data}")
             
             self._update_company_data(company, task.type.value, data)
             task.status = TaskStatus.SUCCEEDED
@@ -164,7 +159,83 @@ class CompanyService:
             task.status = TaskStatus.ERROR
             task.error = str(e)
             self.db.commit()
-            raise
+            # Log the error for debugging but don't re-raise to avoid crashing the backend
+            logger.error(f"Task execution failed for company {company.name} (task {task.type.value}): {str(e)}", exc_info=True)
+
+    def _parse_n8n_response(self, result: Any, task_type: str) -> Dict[str, Any]:
+        """
+        Parse n8n response and extract the actual data, removing nested wrapper structures.
+        
+        Expected n8n response structure:
+        [{"output": {"timeline": {"insights": "...", "events": [...]}}}]
+        
+        Should return:
+        {"insights": "...", "events": [...]}
+        """
+        try:
+            # Handle empty/null results
+            if result is None:
+                logger.info(f"N8n returned null result for {task_type}, using empty dict")
+                return {}
+            
+            # Handle empty dict
+            if isinstance(result, dict) and not result:
+                logger.info(f"N8n returned empty dict for {task_type}")
+                return {}
+            
+            # Handle list response (most common case)
+            if isinstance(result, list):
+                if len(result) == 0:
+                    logger.info(f"N8n returned empty list for {task_type}, using empty dict")
+                    return {}
+                result_item = result[0]
+            else:
+                result_item = result
+            
+            # Handle empty result item
+            if not result_item:
+                logger.info(f"N8n returned empty result item for {task_type}, using empty dict")
+                return {}
+            
+            # Extract from 'output' wrapper if it exists
+            if isinstance(result_item, dict) and 'output' in result_item:
+                output_data = result_item['output']
+                
+                # Extract the specific task type data if it exists
+                if isinstance(output_data, dict) and task_type in output_data:
+                    data = output_data[task_type]
+                else:
+                    data = output_data
+            else:
+                data = result_item
+            
+            # Handle empty data
+            if not data:
+                logger.info(f"Extracted empty data for {task_type}, using empty dict")
+                return {}
+            
+            # Clean up string data by removing newlines
+            if isinstance(data, dict):
+                cleaned_data = {}
+                for k, v in data.items():
+                    if isinstance(v, str):
+                        cleaned_data[k] = v.replace('\n', '')
+                    else:
+                        cleaned_data[k] = v
+                data = cleaned_data
+            elif isinstance(data, str):
+                data = data.replace('\n', '')
+            
+            # Ensure we return a dict for consistency
+            if not isinstance(data, dict):
+                logger.warning(f"Expected dict for {task_type} but got {type(data)}: {data}")
+                return {}
+                
+            return data
+            
+        except Exception as e:
+            logger.error(f"Error parsing n8n response for {task_type}: {str(e)}", exc_info=True)
+            return {}
 
     def _update_company_data(self, company: Company, query_type: str, data: Dict[str, Any]) -> None:
         # Store the data directly since it's already been extracted properly

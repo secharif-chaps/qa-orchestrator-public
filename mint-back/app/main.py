@@ -16,12 +16,11 @@ print(f"CORS Origin setting: {settings.CORS_ORIGIN}")
 # Add CORS middleware with specific origin
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.CORS_ORIGIN],  # Use the specific origin from settings
+    allow_origins=[settings.CORS_ORIGIN, "http://localhost:3000"],  # Allow both origins
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods
-    allow_headers=["*"],  # Allow all headers
-    expose_headers=["*"],  # Expose all headers
-    max_age=3600,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # Include API routers

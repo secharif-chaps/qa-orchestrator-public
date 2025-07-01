@@ -48,21 +48,43 @@ export const useTaskStore = defineStore('task', () => {
 
   async function createTask(task: TaskCreate) {
     const repository = useTaskRepository()
-    loading.value = true
     error.value = null
 
+    // Optimistic update: immediately set task as running
+    const optimisticTask: TaskResponse = {
+      id: Date.now(), // Temporary ID
+      company_id: task.company_id,
+      type: task.type,
+      status: 'running',
+      error: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+
+    // Update UI immediately
+    const tasks = companyTasks.value.get(task.company_id) || []
+    const existingIndex = tasks.findIndex(t => t.type === task.type)
+    
+    if (existingIndex !== -1) {
+      // Update existing task
+      tasks[existingIndex] = optimisticTask
+    } else {
+      // Add new task
+      tasks.push(optimisticTask)
+    }
+    companyTasks.value.set(task.company_id, tasks)
+
+    loading.value = true
     try {
       const newTask = await repository.createTask(task)
       
-      // Update tasks in the map
-      const tasks = companyTasks.value.get(task.company_id) || []
-      const taskIndex = tasks.findIndex(t => t.id === newTask.id)
-      if (taskIndex !== -1) {
-        tasks[taskIndex] = newTask
-      } else {
-        tasks.push(newTask)
+      // Replace optimistic task with real task data
+      const currentTasks = companyTasks.value.get(task.company_id) || []
+      const optimisticIndex = currentTasks.findIndex(t => t.type === task.type)
+      if (optimisticIndex !== -1) {
+        currentTasks[optimisticIndex] = newTask
+        companyTasks.value.set(task.company_id, currentTasks)
       }
-      companyTasks.value.set(task.company_id, tasks)
       
       // Start polling if not already polling
       if (!pollingIntervals.value.has(task.company_id)) {
@@ -71,6 +93,18 @@ export const useTaskStore = defineStore('task', () => {
       
       return newTask
     } catch (err) {
+      // Revert optimistic update on error
+      const currentTasks = companyTasks.value.get(task.company_id) || []
+      const failedIndex = currentTasks.findIndex(t => t.type === task.type)
+      if (failedIndex !== -1) {
+        currentTasks[failedIndex] = {
+          ...optimisticTask,
+          status: 'error',
+          error: `Failed to start task: ${(err as Error).message}`
+        }
+        companyTasks.value.set(task.company_id, currentTasks)
+      }
+      
       error.value = (err as Error).message
       console.error('Failed to create task:', err)
       throw err
@@ -81,24 +115,63 @@ export const useTaskStore = defineStore('task', () => {
 
   async function restartTask(taskId: number) {
     const repository = useTaskRepository()
-    loading.value = true
     error.value = null
 
+    // Find the task and apply optimistic update
+    let originalTask: TaskResponse | null = null
+    let companyId: number | null = null
+    
+    for (const [cId, tasks] of companyTasks.value.entries()) {
+      const taskIndex = tasks.findIndex(t => t.id === taskId)
+      if (taskIndex !== -1) {
+        originalTask = { ...tasks[taskIndex] }
+        companyId = cId
+        
+        // Optimistic update: immediately set as running
+        tasks[taskIndex] = {
+          ...tasks[taskIndex],
+          status: 'running',
+          error: null,
+          updated_at: new Date().toISOString()
+        }
+        companyTasks.value.set(cId, tasks)
+        break
+      }
+    }
+
+    if (!originalTask || !companyId) {
+      throw new Error(`Task with ID ${taskId} not found`)
+    }
+
+    loading.value = true
     try {
       const restartedTask = await repository.restartTask(taskId)
       
-      // Update task in the map
-      for (const [companyId, tasks] of companyTasks.value.entries()) {
-        const taskIndex = tasks.findIndex(t => t.id === taskId)
-        if (taskIndex !== -1) {
-          tasks[taskIndex] = restartedTask
-          companyTasks.value.set(companyId, tasks)
-          break
-        }
+      // Update task with real data from server
+      const tasks = companyTasks.value.get(companyId) || []
+      const taskIndex = tasks.findIndex(t => t.id === taskId)
+      if (taskIndex !== -1) {
+        tasks[taskIndex] = restartedTask
+        companyTasks.value.set(companyId, tasks)
       }
       
       return restartedTask
     } catch (err) {
+      // Revert optimistic update on error
+      if (companyId) {
+        const tasks = companyTasks.value.get(companyId) || []
+        const taskIndex = tasks.findIndex(t => t.id === taskId)
+        if (taskIndex !== -1) {
+          tasks[taskIndex] = {
+            ...originalTask,
+            status: 'error',
+            error: `Failed to restart task: ${(err as Error).message}`,
+            updated_at: new Date().toISOString()
+          }
+          companyTasks.value.set(companyId, tasks)
+        }
+      }
+      
       error.value = (err as Error).message
       console.error(`Failed to restart task with ID ${taskId}:`, err)
       throw err
@@ -148,6 +221,22 @@ export const useTaskStore = defineStore('task', () => {
     stopPolling(companyId)
   }
 
+  // Utility function to update task status optimistically
+  function updateTaskStatusOptimistically(companyId: number, taskType: string, status: TaskStatus, error?: string) {
+    const tasks = companyTasks.value.get(companyId) || []
+    const taskIndex = tasks.findIndex(t => t.type === taskType)
+    
+    if (taskIndex !== -1) {
+      tasks[taskIndex] = {
+        ...tasks[taskIndex],
+        status,
+        error: error || null,
+        updated_at: new Date().toISOString()
+      }
+      companyTasks.value.set(companyId, tasks)
+    }
+  }
+
   return {
     // State
     companyTasks,
@@ -166,6 +255,7 @@ export const useTaskStore = defineStore('task', () => {
     restartTask,
     startPolling,
     stopPolling,
-    clearCompanyTasks
+    clearCompanyTasks,
+    updateTaskStatusOptimistically
   }
 }) 

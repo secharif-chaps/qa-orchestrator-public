@@ -57,4 +57,7 @@ deploy:
     - docker build -t mint-front -f mint-front/Dockerfile mint-front/
     - docker build -t mint-back -f mint-back/Dockerfile mint-back/
   only:
-    - main 
+    - main
+
+    # configurer le registry gitlab pour pouvoir push des images dans le registry gitlab depuis la ci
+    # puis recup la clé pour acceder au registry gitlab depuis le serveur

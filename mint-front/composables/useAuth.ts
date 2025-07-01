@@ -1,18 +1,17 @@
-import { UserManager, User } from 'oidc-client-ts'
+import { UserManager, User } from 'oidc-client'
 
 export const useAuth = () => {
   const user = ref<User | null>(null)
   const isAuthenticated = computed(() => !!user.value && !user.value.expired)
 
   const keycloakConfig = {
-    authority: 'http://localhost:8080/realms/mint-dev',
+    authority: 'http://10.0.1.2:8080/realms/mint-dev',
     client_id: 'mint-front',
     redirect_uri: `${window.location.origin}/auth/callback`,
     post_logout_redirect_uri: `${window.location.origin}/login`,
     response_type: 'code',
     scope: 'openid profile email',
-    automaticSilentRenew: true,
-    silent_redirect_uri: `${window.location.origin}/auth/silent-callback`,
+    automaticSilentRenew: false,
     filterProtocolClaims: true,
     loadUserInfo: true
   }

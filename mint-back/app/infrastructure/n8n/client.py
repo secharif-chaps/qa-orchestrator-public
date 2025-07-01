@@ -21,7 +21,7 @@ class N8nClient:
         Returns:
             Response data from the n8n workflow
         """
-        url = f"{self.base_url}/webhook-test/{self.webhook_id}"
+        url = f"{self.base_url}/webhook/{self.webhook_id}"
         
         # Log the request details
         print(f"Triggering n8n workflow for {query}")
@@ -52,38 +52,45 @@ class N8nClient:
                     raise Exception(error_msg)
                 
                 try:
+                    # Handle empty or whitespace-only responses
+                    response_text = response.text.strip()
+                    if not response_text:
+                        print("N8n workflow returned empty response, using empty dict")
+                        return {}
+                    
                     # Parse the response text directly
                     import json
-                    json_response = json.loads(response.text)
+                    json_response = json.loads(response_text)
                     
                     if json_response is None:
-                        error_msg = "N8n workflow returned null response"
-                        print(error_msg)
-                        raise Exception(error_msg)
+                        print("N8n workflow returned null response, using empty dict")
+                        return {}
                     
                     # If the response is a list, take the first item
                     if isinstance(json_response, list):
                         if not json_response:
-                            error_msg = "N8n workflow returned empty list"
-                            print(error_msg)
-                            raise Exception(error_msg)
+                            print("N8n workflow returned empty list, using empty dict")
+                            return {}
                         json_response = json_response[0]
                     
                     # Ensure we have a dictionary
                     if not isinstance(json_response, dict):
-                        error_msg = f"N8n workflow returned unexpected type: {type(json_response)}"
-                        print(error_msg)
-                        raise Exception(error_msg)
+                        print(f"N8n workflow returned unexpected type: {type(json_response)}, converting to dict")
+                        # Try to wrap non-dict responses in a dict
+                        json_response = {"data": json_response}
                     
                     return json_response
                 except json.JSONDecodeError as e:
-                    error_msg = f"Failed to parse n8n response as JSON: {str(e)}"
-                    print(error_msg)
-                    raise Exception(error_msg)
+                    # Handle non-JSON responses gracefully
+                    print(f"Failed to parse n8n response as JSON: {str(e)}")
+                    print(f"Response text: '{response.text}'")
+                    print("Returning empty dict as fallback")
+                    return {}
                 except Exception as e:
                     error_msg = f"Error processing n8n response: {str(e)}"
                     print(error_msg)
-                    raise Exception(error_msg)
+                    print("Returning empty dict as fallback")
+                    return {}
                 
         except httpx.TimeoutException as e:
             error_msg = f"Request to n8n timed out after 5 minutes. This might indicate that the workflow is taking longer than expected to complete."

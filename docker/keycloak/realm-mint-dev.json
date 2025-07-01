@@ -56,13 +56,12 @@
       "clientId": "mint-front",
       "name": "Mint FrontEnd Application",
       "enabled": true,
-      "baseUrl": "http://localhost:3000",
-      "redirectUris": ["http://localhost:3000/*"],
-      "webOrigins": ["http://localhost:3000"],
+      "baseUrl": "http://10.0.1.2:3000",
+      "redirectUris": ["http://10.0.1.2:3000/*", "http://localhost:3000/*"],
+      "webOrigins": ["http://10.0.1.2:3000", "http://localhost:3000"],
       "publicClient": true,
       "attributes": {
-        "post.logout.redirect.uris": "http://localhost:3000",
-        "pkce.code.challenge.method": "S256"
+        "post.logout.redirect.uris": "http://10.0.1.2:3000,http://localhost:3000"
       },
       "defaultClientScopes": [
         "web-origins",
