@@ -128,6 +128,7 @@ const isOpen = ref(true)
 const taskStore = useTaskStore()
 const isWorkflowPaused = ref(false)
 const { fitView } = useVueFlow()
+const { fetchCompany } = useCompanyData()
 
 // Define workflow configuration with dependencies - horizontal stepper layout
 const workflowConfig = [
@@ -153,11 +154,24 @@ const workflowConfig = [
 // Fetch tasks when component is mounted
 onMounted(async () => {
   await taskStore.fetchCompanyTasks(props.companyId)
+  
+  // Initialize previous task statuses to avoid unnecessary refreshes on mount
+  const initialTasks = taskStore.getCompanyTasks(props.companyId)
+  initialTasks.forEach((task: TaskResponse) => {
+    previousTaskStatuses.value.set(task.type, task.status)
+  })
 })
 
 // Watch for company ID changes
 watch(() => props.companyId, async (newId) => {
   await taskStore.fetchCompanyTasks(newId)
+  
+  // Reset previous task statuses for new company
+  previousTaskStatuses.value.clear()
+  const newTasks = taskStore.getCompanyTasks(newId)
+  newTasks.forEach((task: TaskResponse) => {
+    previousTaskStatuses.value.set(task.type, task.status)
+  })
 })
 
 // Get tasks from store
@@ -165,8 +179,22 @@ const tasks = computed(() => taskStore.getCompanyTasks(props.companyId))
 
 // Watch for task updates and auto-progress (only if workflow was manually started)
 const workflowStarted = ref(false)
+const previousTaskStatuses = ref<Map<string, TaskStatus | null>>(new Map())
 
-watch(tasks, () => {
+watch(tasks, (newTasks, oldTasks) => {
+  // Check for newly succeeded tasks and refresh company data
+  newTasks.forEach((task: TaskResponse) => {
+    const previousStatus = previousTaskStatuses.value.get(task.type)
+    if (task.status === 'succeeded' && previousStatus !== 'succeeded') {
+      console.log(`Task ${task.type} completed successfully, refreshing company data...`)
+      // Refresh company data when a task succeeds
+      fetchCompany()
+    }
+    // Update the previous status
+    previousTaskStatuses.value.set(task.type, task.status)
+  })
+
+  // Auto-progress workflow if enabled
   if (!isWorkflowPaused.value && workflowStarted.value) {
     autoProgressWorkflow()
   }

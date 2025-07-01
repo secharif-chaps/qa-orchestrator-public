@@ -41,18 +41,22 @@
             <div class="p-4 bg-slate-50 rounded-lg">
               <div class="text-sm text-slate-600">{{ $t('jobs.insights.topDepartments') }}</div>
               <div class="text-sm">
-                <ul class="list-disc list-inside">
-                  {{ getSourcedValue(company?.jobs?.insights?.top_departments) }}
-                  <div>
-                    {{ getSourcedSource(company?.jobs?.insights?.top_departments) }}
-                  </div>
+                <ul class="list-disc list-inside space-y-1">
+                  <li v-for="department in getSourcedValue(company?.jobs?.insights?.top_departments)" :key="department">
+                    {{ department }}
+                  </li>
                 </ul>
+                <div class="mt-2">
+                  <span 
+                  class="text-xs italic ">
+                Source :   {{getSourcedSource(company?.jobs?.insights?.top_departments)}}
+                  </span>
+                </div>
               </div>
             </div>
             <div class="p-4 bg-slate-50 rounded-lg">
               <div class="text-sm text-slate-600">{{ $t('jobs.insights.hiringFocus') }}</div>
               <div class="text-sm">
-                {{ getSourcedValue(company?.jobs?.insights?.hiring_focus) }}
               </div>
             </div>
             <div class="p-4 bg-slate-50 rounded-lg">
@@ -108,6 +112,7 @@
 import { OInput } from '@owlint/feathers-vue'
 import JobCard from '~/components/JobCard.vue'
 import TaskState from '~/components/TaskState.vue'
+import Source from '~/components/global/Source.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
