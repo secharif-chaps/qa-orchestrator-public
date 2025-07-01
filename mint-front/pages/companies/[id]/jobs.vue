@@ -57,6 +57,7 @@
             <div class="p-4 bg-slate-50 rounded-lg">
               <div class="text-sm text-slate-600">{{ $t('jobs.insights.hiringFocus') }}</div>
               <div class="text-sm">
+                {{ getSourcedValue(company?.jobs?.insights?.hiring_focus) }}
               </div>
             </div>
             <div class="p-4 bg-slate-50 rounded-lg">
