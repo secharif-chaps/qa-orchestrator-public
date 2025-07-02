@@ -9,19 +9,8 @@
     >
       <div class="flex items-center gap-3">
         <span class="font-medium">Workflow de recherche</span>
-        <div class="flex items-center gap-2 text-sm">
-          <div class="flex items-center gap-1">
-            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-            <span class="text-green-600">{{ completedCount }}</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <div class="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
-            <span class="text-orange-600">{{ runningCount }}</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <div class="w-2 h-2 bg-red-400 rounded-full"></div>
-            <span class="text-red-600">{{ errorCount }}</span>
-          </div>
+        <div class="flex items-center">
+          <span class="text-xs text-gray-600 font-medium">{{ completedCount }}/{{ totalTasks }}</span>
         </div>
       </div>
       <i
@@ -38,7 +27,7 @@
           :edges="flowEdges"
           :default-viewport="{ zoom: 1, x: -50, y: -20 }"
           @init="onFlowInit"
-          :fit-view-on-init="false"
+          :fit-view-on-init="true"
           :nodes-draggable="false"
           :zoom-on-scroll="false"
           :zoom-on-pinch="false"
@@ -58,34 +47,49 @@
           <!-- Vue Flow Panel for controls -->
           <Panel position="top-right" class="p-2">
             <div class="bg-white rounded-lg shadow-lg p-3 flex flex-col gap-2 min-w-[200px]">
-              <div class="text-sm font-medium text-gray-700 mb-1">Contrôles du workflow</div>
+              <!-- <div class="text-sm font-medium text-gray-700 mb-1">Contrôles du workflow</div> -->
               
-              <!-- Status indicators -->
-              <div class="flex items-center gap-4 text-xs mb-2">
-                <div class="flex items-center gap-1">
-                  <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <span class="text-green-600">{{ completedCount }}</span>
+              <!-- Unified Status Progress Bar -->
+              <div class="w-full">
+                
+                <!-- Segmented progress bar -->
+                <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden flex">
+                  <!-- Completed segment -->
+                  <div 
+                    v-if="completedPercentage > 0"
+                    class="bg-green-400 h-full transition-all duration-500 ease-out"
+                    :style="{ width: `${completedPercentage}%` }"
+                    :title="`${completedCount} tâches terminées (${Math.round(completedPercentage)}%)`"
+                  ></div>
+                  
+                  <!-- Running segment -->
+                  <div 
+                    v-if="runningPercentage > 0"
+                    class="bg-orange-400 h-full transition-all duration-500 ease-out"
+                    :style="{ width: `${runningPercentage}%` }"
+                    :title="`${runningCount} tâches en cours (${Math.round(runningPercentage)}%)`"
+                  ></div>
+                  
+                  <!-- Error segment -->
+                  <div 
+                    v-if="errorPercentage > 0"
+                    class="bg-red-400 h-full transition-all duration-500 ease-out"
+                    :style="{ width: `${errorPercentage}%` }"
+                    :title="`${errorCount} tâches en erreur (${Math.round(errorPercentage)}%)`"
+                  ></div>
+                  
+                  <!-- Pending segment -->
+                  <div 
+                    v-if="pendingPercentage > 0"
+                    class="bg-gray-200 h-full transition-all duration-500 ease-out"
+                    :style="{ width: `${pendingPercentage}%` }"
+                    :title="`${pendingCount} tâches en attente (${Math.round(pendingPercentage)}%)`"
+                  ></div>
                 </div>
-                <div class="flex items-center gap-1">
-                  <div class="w-2 h-2 bg-orange-400 rounded-full animate-pulse"></div>
-                  <span class="text-orange-600">{{ runningCount }}</span>
-                </div>
-                <div class="flex items-center gap-1">
-                  <div class="w-2 h-2 bg-red-400 rounded-full"></div>
-                  <span class="text-red-600">{{ errorCount }}</span>
-                </div>
-              </div>
-              
-              <!-- Progress bar -->
-              <div class="w-full bg-gray-200 rounded-full h-1.5 mb-2">
-                <div 
-                  class="bg-gradient-to-r from-blue-500 to-green-500 h-1.5 rounded-full transition-all duration-500 ease-out"
-                  :style="{ width: `${progressPercentage}%` }"
-                ></div>
               </div>
               
               <!-- Control buttons -->
-              <div class="flex flex-col gap-1">
+              <!-- <div class="flex flex-col gap-1">
                 <OButton
                   type="secondary"
                   v-if="!workflowStarted || (!isWorkflowRunning && !isWorkflowComplete)"
@@ -105,7 +109,7 @@
                   <i class="fa fa-refresh mr-1"></i>
                   Auto-correction
                 </OButton>
-              </div>
+              </div> -->
             </div>
           </Panel>
         </VueFlow>
@@ -143,10 +147,10 @@ const { fetchCompany } = useCompanyData()
 // Define workflow configuration with dependencies - horizontal stepper layout
 const workflowConfig = [
   // Phase 1: Parallel tasks (x=100, stacked vertically)
-  { type: 'profile', name: 'Profil', description: 'Informations générales', dependencies: [], position: { x: 100, y: 50 } },
-  { type: 'digital', name: 'Digital', description: 'Présence en ligne', dependencies: [], position: { x: 100, y: 130 } },
-  { type: 'csr', name: 'RSE', description: 'Responsabilité sociale', dependencies: [], position: { x: 100, y: 210 } },
-  { type: 'press', name: 'Presse', description: 'Articles de presse', dependencies: [], position: { x: 100, y: 290 } },
+  { type: 'profile', name: 'Profil', description: 'Informations générales', dependencies: [], position: { x: 100, y: 50 }, first: true },
+  { type: 'digital', name: 'Digital', description: 'Présence en ligne', dependencies: [], position: { x: 100, y: 130 }, first: true },
+  { type: 'csr', name: 'RSE', description: 'Responsabilité sociale', dependencies: [], position: { x: 100, y: 210 }, first: true },
+  { type: 'press', name: 'Presse', description: 'Articles de presse', dependencies: [], position: { x: 100, y: 290 }, first: true },
   
   // Phase 2: Timeline (x=300)
   { type: 'timeline', name: 'Timeline', description: 'Historique événements', dependencies: ['profile', 'digital', 'csr', 'press'], position: { x: 350, y: 170 } },
@@ -158,7 +162,7 @@ const workflowConfig = [
   { type: 'team', name: 'Équipe', description: 'Organigramme', dependencies: ['products'], position: { x: 850, y: 170 } },
   
   // Phase 5: Jobs (x=900)
-  { type: 'jobs', name: 'Emplois', description: 'Offres d\'emploi', dependencies: ['team'], position: { x: 1100, y: 170 } }
+  { type: 'jobs', name: 'Emplois', description: 'Offres d\'emploi', dependencies: ['team'], position: { x: 1100, y: 170 }, last: true }
 ]
 
 // Fetch tasks when component is mounted
@@ -251,7 +255,9 @@ const flowNodes = computed<Node<TaskNodeData>[]>(() => {
       description: config.description,
       status: getTaskStatus(config.type),
       error: getTaskError(config.type),
-      canTrigger: canTriggerTask(config.type)
+      canTrigger: canTriggerTask(config.type),
+      first: config.first,
+      last: config.last
     }
   }))
 })
@@ -299,10 +305,35 @@ const errorCount = computed(() =>
   tasks.value.filter(t => t.status === 'error').length
 )
 
+const pendingCount = computed(() => {
+  const existingTasks = new Set(tasks.value.map(t => t.type))
+  const totalConfigTasks = workflowConfig.length
+  const pendingFromExisting = tasks.value.filter(t => t.status === 'pending').length
+  const notStartedTasks = totalConfigTasks - existingTasks.size
+  return pendingFromExisting + notStartedTasks
+})
+
 const totalTasks = computed(() => workflowConfig.length)
 
 const progressPercentage = computed(() => 
   totalTasks.value > 0 ? (completedCount.value / totalTasks.value) * 100 : 0
+)
+
+// Percentage calculations for segmented progress bar
+const completedPercentage = computed(() => 
+  totalTasks.value > 0 ? (completedCount.value / totalTasks.value) * 100 : 0
+)
+
+const runningPercentage = computed(() => 
+  totalTasks.value > 0 ? (runningCount.value / totalTasks.value) * 100 : 0
+)
+
+const errorPercentage = computed(() => 
+  totalTasks.value > 0 ? (errorCount.value / totalTasks.value) * 100 : 0
+)
+
+const pendingPercentage = computed(() => 
+  totalTasks.value > 0 ? (pendingCount.value / totalTasks.value) * 100 : 0
 )
 
 const isWorkflowRunning = computed(() => 
@@ -337,45 +368,15 @@ const performAutoRecovery = () => {
     workflowStarted.value = true
   }
   
-  // Check for stuck tasks and restart them (use 45 minutes to account for timezone differences)
+  // Check for stuck tasks (log only, no automatic restart)
   const stuckTasks = taskStore.getStuckTasks(props.companyId, 45) // 45 minutes timeout
   stuckTasks.forEach((task: TaskResponse) => {
-    const taskAge = Math.round((Date.now() - new Date(task.updated_at).getTime()) / 60000)
-    console.log(`⚠️ Restarting stuck task: ${task.type} (running for ${taskAge} minutes)`)
-    restartTask(task.type)
+    // Adjust for 2-hour timezone difference: subtract 120 minutes from server time
+    const adjustedServerTime = new Date(new Date(task.updated_at).getTime() + (120 * 60 * 1000))
+    const taskAge = Math.round((Date.now() - adjustedServerTime.getTime()) / 60000)
+    console.warn(`⚠️ Detected stuck task: ${task.type} (running for ${taskAge} minutes, timezone-adjusted) - manual intervention may be needed`)
+    // Note: Automatic restart disabled to prevent timezone issues
   })
-  
-  // Find tasks that should be running but aren't
-  for (const config of workflowConfig) {
-    const taskStatus = getTaskStatus(config.type)
-    const canTrigger = canTriggerTask(config.type)
-    
-    // Check if task should be started:
-    // - Dependencies are completed
-    // - Task doesn't exist yet (status is null)
-    // - OR task is in error state and can be retriggered
-    if (canTrigger && (!taskStatus || taskStatus === 'error')) {
-      // Check if dependencies are actually satisfied
-      const allDependenciesSucceeded = config.dependencies.every(depType => 
-        getTaskStatus(depType as TaskType) === 'succeeded'
-      )
-      
-      if (allDependenciesSucceeded || config.dependencies.length === 0) {
-        console.log(`🚀 Auto-recovering task: ${config.type} (current status: ${taskStatus || 'none'})`)
-        
-        if (taskStatus === 'error') {
-          // Restart failed task
-          const task = currentTasks.find(t => t.type === config.type)
-          if (task) {
-            restartTask(config.type)
-          }
-        } else {
-          // Start missing task
-          triggerTask(config.type)
-        }
-      }
-    }
-  }
   
   // Auto-progress workflow if it was started
   if (workflowStarted.value && !isWorkflowPaused.value) {

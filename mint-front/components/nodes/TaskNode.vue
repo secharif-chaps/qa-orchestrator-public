@@ -43,6 +43,7 @@
 
     <!-- Connection handles -->
     <Handle
+      v-if="!data.first"
       type="target"
       :position="Position.Left"
       :class="{
@@ -56,6 +57,7 @@
       class=" !size-3 !border-2 !bg-white"
     />
     <Handle
+      v-if="!data.last"
       type="source"
       :position="Position.Right"
       class="!size-3 !border-2 !bg-white !right-0"

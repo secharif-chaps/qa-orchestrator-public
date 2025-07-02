@@ -196,12 +196,14 @@ export const useTaskStore = defineStore('task', () => {
         tasks.forEach((task: TaskResponse) => {
           if (task.status === 'running') {
             const taskUpdatedAt = new Date(task.updated_at)
-            const taskAge = now.getTime() - taskUpdatedAt.getTime()
+            // Adjust for 2-hour timezone difference: subtract 120 minutes from server time
+            const adjustedServerTime = new Date(taskUpdatedAt.getTime() - (120 * 60 * 1000))
+            const taskAge = now.getTime() - adjustedServerTime.getTime()
             const twentyMinutes = 20 * 60 * 1000
             
             // Only warn if age is positive (not in the future) and > 20 minutes
             if (taskAge > 0 && taskAge > twentyMinutes) {
-              console.warn(`⚠️ Task ${task.type} has been running for ${Math.round(taskAge / 60000)} minutes - might be stuck`)
+              console.warn(`⚠️ Task ${task.type} has been running for ${Math.round(taskAge / 60000)} minutes (adjusted for timezone) - might be stuck`)
               // Mark as potentially stuck but don't auto-restart immediately
               // The auto-recovery system in Flow.vue will handle this
             }
@@ -267,14 +269,15 @@ export const useTaskStore = defineStore('task', () => {
       if (task.status !== 'running') return false
       
       const taskUpdatedAt = new Date(task.updated_at)
-      const taskAge = now.getTime() - taskUpdatedAt.getTime()
+      // Adjust for 2-hour timezone difference: subtract 120 minutes from server time
+      const adjustedServerTime = new Date(taskUpdatedAt.getTime() + (120 * 60 * 1000))
+      const taskAge = now.getTime() - adjustedServerTime.getTime()
       
       // Additional safety: only consider stuck if age is positive and > timeout
-      // This helps with timezone issues where server time might be ahead
       const isActuallyStuck = taskAge > 0 && taskAge > timeoutMs
       
       if (isActuallyStuck) {
-        console.log(`Task ${task.type}: updated_at=${task.updated_at}, age=${Math.round(taskAge / 60000)}min, threshold=${safeTimeoutMinutes}min`)
+        console.log(`Task ${task.type}: server_time=${task.updated_at}, adjusted_time=${adjustedServerTime.toISOString()}, age=${Math.round(taskAge / 60000)}min, threshold=${safeTimeoutMinutes}min`)
       }
       
       return isActuallyStuck
