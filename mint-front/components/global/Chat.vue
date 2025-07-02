@@ -85,8 +85,8 @@ const question = ref('')
 const isLoading = ref(false)
 const messagesContainer = ref(null)
 
-// Use local API proxy to avoid CORS issues
-const webhookUrl = '/api/chat'
+// Direct call to n8n webhook
+const webhookUrl = `http://ec2-34-244-245-92.eu-west-1.compute.amazonaws.com:5678/webhook/${runtimeConfig.public.n8nWebhookIdChat}/chat`
 
 // Auto-scroll to bottom when messages change
 watch(
