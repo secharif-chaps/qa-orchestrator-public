@@ -36,49 +36,54 @@
           </div>
 
           <div class="flex flex-col gap-2">
-            <div class="flex items-center bg-bg1 px-4 py-2 rounded-lg gap-2">
-              <i class="fa fa-link"></i>
-              <!-- <p>{{ $t('company.dashboard.generalInfo.website') }}</p> -->
+            <OPopper :text="$t('company.dashboard.generalInfo.website')" side="left"> 
+            <div class="flex items-center bg-bg1 px-4 py-2 rounded-lg gap-4 text-left">
+              <i class="fa fa-link fa-fw"></i>
               <a
                 :href="formatWebsiteUrl(company?.website)"
                 target="_blank"
-                class="text-blue-500 hover:underline hover:text-primary underline"
+                class="text-blue-500 hover:underline hover:text-primary underline text-sm"
               >
                 {{ company?.website }}
               </a>
             </div>
+          </OPopper>
+
+            <OPopper :text="$t('company.dashboard.generalInfo.headquarters')" side="left">
             <div
-              class="flex items-center bg-bg1 px-4 py-2 rounded-lg gap-2"
+              class="flex items-center bg-bg1 px-4 py-2 rounded-lg gap-4 text-left"
               v-if="company?.profile?.hq"
             >
-              <i class="fa fa-map-marker"></i>
-              <p>{{ $t('company.dashboard.generalInfo.headquarters') }}</p>
-              <span class="text-secondary">
+              <i class="fa fa-map-marker fa-fw"></i>
+              <span class="text-secondary text-sm text-left">
                 {{ getSourcedValue(company.profile.hq) || 'Unknown' }}
               </span>
             </div>
+          </OPopper>
 
+          <OPopper :text="$t('company.dashboard.generalInfo.ceo')" side="left">
             <div
-              class="flex items-center bg-bg1 px-4 py-2 rounded-lg gap-2"
+              class="flex items-center bg-bg1 px-4 py-2 rounded-lg gap-4 text-left"
               v-if="company?.profile?.ceo"
             >
-              <i class="fa fa-user-tie"></i>
-              <p>{{ $t('company.dashboard.generalInfo.ceo') }}</p>
-              <span class="text-secondary">
+              <i class="fa fa-user-tie fa-fw"></i>
+              <span class="text-secondary text-sm text-left">
                 {{ getSourcedValue(company.profile.ceo) || 'Unknown' }}
               </span>
             </div>
+          </OPopper>
 
+          <OPopper :text="$t('company.dashboard.generalInfo.revenue')" side="left">
             <div
-              class="flex items-center bg-bg1 px-4 py-2 rounded-lg gap-2"
+              class="flex items-center bg-bg1 px-4 py-2 rounded-lg gap-4 text-left"
               v-if="company?.profile?.revenue"
             >
-              <i class="fa fa-money-bill"></i>
-              <p>{{ $t('company.dashboard.generalInfo.revenue') }}</p>
-              <span class="text-secondary">
+              <i class="fa fa-money-bill fa-fw"></i>
+              <span class="text-secondary text-sm text-left">
                 {{ getSourcedValue(company.profile.revenue) || 'Unknown' }}
               </span>
             </div>
+          </OPopper>
 
             <div class="flex space-x-3 self-center mt-2" v-if="company?.digital?.socialMedia">
               <a
@@ -120,7 +125,7 @@
 </template>
 
 <script lang="ts" setup>
-import { OAlert } from '@owlint/feathers-vue'
+import { OAlert, OPopper } from '@owlint/feathers-vue'
 import type { CompanyResponse } from '~/types/company'
 import { useI18n } from 'vue-i18n'
 

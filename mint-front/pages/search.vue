@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-4 container mx-auto" data-cy="company-search-page">
+  <div class="space-y-4 max-w-7xl mx-auto" data-cy="company-search-page">
     <div class="card flex items-center space-x-4">
       <OIcon icon="fa-search" type="secondary"></OIcon>
       <h1 class="text-2xl font-extrabold">{{ $t('search.title') }}</h1>

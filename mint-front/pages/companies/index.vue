@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto">
+  <div class="max-w-7xl mx-auto">
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
         <h1 class="text-3xl font-semibold text-primary">{{ $t('company.list.title') }}</h1>

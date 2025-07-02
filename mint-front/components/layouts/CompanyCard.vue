@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto grid grid-cols-12 gap-4">
+  <div class="max-w-7xl mx-auto grid grid-cols-12 gap-4">
     <!-- Back button -->
     <div class="col-span-12">
       <OButton

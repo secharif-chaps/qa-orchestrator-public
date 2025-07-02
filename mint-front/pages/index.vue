@@ -1,6 +1,6 @@
 <template>
   <div class=" py-8">
-    <div class="container mx-auto">
+    <div class="max-w-7xl mx-auto">
       <!-- Welcome Header -->
       <div class="mb-8">
         <div class="flex items-center justify-between">
