@@ -2,6 +2,8 @@
   <LayoutsCompanyCard :title="$t('company.dashboard.title')" icon="fa-building" v-if="company">
     <template #actions> </template>
 
+      
+
     <template #loading>
       <div class="flex flex-col gap-2" v-if="company && company.id">
         <Tasks
@@ -21,7 +23,7 @@
               <i class="fa fa-building text-4xl text-white"></i>
             </div>
             <div>
-              <h2 class="text-2xl font-bold">
+              <h2 class="text-2xl font-bold capitalize">
                 {{ company?.name }}
               </h2>
             </div>
@@ -36,11 +38,11 @@
           <div class="flex flex-col gap-2">
             <div class="flex items-center bg-bg1 px-4 py-2 rounded-lg gap-2">
               <i class="fa fa-link"></i>
-              <p>{{ $t('company.dashboard.generalInfo.website') }}</p>
+              <!-- <p>{{ $t('company.dashboard.generalInfo.website') }}</p> -->
               <a
                 :href="formatWebsiteUrl(company?.website)"
                 target="_blank"
-                class="text-secondary hover:underline hover:text-primary"
+                class="text-blue-500 hover:underline hover:text-primary underline"
               >
                 {{ company?.website }}
               </a>

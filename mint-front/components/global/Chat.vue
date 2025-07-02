@@ -37,26 +37,27 @@
           v-html="formatMarkdown(message.text)"
         ></div>
       </div>
-      <div v-if="isStreaming">
-        <div
-          class="text-xs p-4 inline-block rounded-xl bg-bg3 mr-auto"
-          v-html="formatMarkdown(streamingText)"
-        ></div>
+      <div v-if="isLoading">
+        <div class="text-xs p-4 inline-block rounded-xl bg-bg3 mr-auto">
+          <i class="fa fa-spinner fa-spin"></i> Thinking...
+        </div>
       </div>
     </div>
     <div class="relative pt-2">
       <textarea
-        @keyup.enter="askAgent"
+        @keyup.enter="sendMessage"
         v-model="question"
         placeholder="Write a message..."
         class="w-full h-32 bg-bg3 border border-border-2 rounded-lg p-2 text-sm focus-within:outline-primary"
-        @keydown.enter.ctrl.prevent="askAgent"
+        @keydown.enter.ctrl.prevent="sendMessage"
+        :disabled="isLoading"
       ></textarea>
       <OButton
         icon="fa-send"
         class="absolute right-2 bottom-4 cursor-pointer"
         rounded
-        @click="askAgent"
+        @click="sendMessage"
+        :disabled="isLoading || !question.trim()"
       />
     </div>
   </div>
@@ -64,30 +65,32 @@
 
 <script lang="ts" setup>
 import { OButton } from '@owlint/feathers-vue'
-import { nextTick, ref, watch } from 'vue'
+import { ref, nextTick, watch } from 'vue'
 
+const emit = defineEmits(['hide'])
+
+const { companyName } = useCompanyData()
+const companyStore = useCompanyStore()
+const runtimeConfig = useRuntimeConfig()
+
+// Chat state
 const messages = ref([
   {
-    text: 'Hello, how can I help you?',
+    text: 'Hello! I am Basil, your assistant. I can help you with questions about this company. What would you like to know?',
     from: 'ai',
   },
 ])
 
-const loading = ref(false)
-const isStreaming = ref(false)
-const streamingText = ref('')
+const question = ref('')
+const isLoading = ref(false)
 const messagesContainer = ref(null)
 
-const { ask } = useAgent()
-const { companyName } = useCompanyData()
+// Use local API proxy to avoid CORS issues
+const webhookUrl = '/api/chat'
 
-const question = ref('')
-
-const emit = defineEmits(['hide'])
-
-// Automatically scroll to bottom when messages change
+// Auto-scroll to bottom when messages change
 watch(
-  [messages, streamingText],
+  messages,
   async () => {
     await nextTick()
     if (messagesContainer.value) {
@@ -97,10 +100,13 @@ watch(
   { deep: true }
 )
 
-const askAgent = async () => {
-  if (!question.value) return
+const { company } = useCompanyData()
 
-  const userQuestion = question.value
+
+const sendMessage = async () => {
+  if (!question.value.trim() || isLoading.value) return
+
+  const userQuestion = question.value.trim()
   question.value = ''
 
   // Add user message
@@ -109,39 +115,37 @@ const askAgent = async () => {
     from: 'user',
   })
 
-  // Start streaming
-  isStreaming.value = true
-  streamingText.value = ''
+  isLoading.value = true
 
-  // Process the chunks as they come in
-  const handleChunk = (chunk) => {
-    streamingText.value += chunk
-  }
+  try {
+    
+    // Send to n8n webhook
+    const response = await $fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        message: userQuestion,
+        companyContext: company.value,
+        chatHistory: messages.value.slice(0, -1) // Exclude the current user message
+      }
+    })
 
-  const context = messages.value
-
-  // Call the streaming version
-  const response = await ask(
-    userQuestion,
-    companyName.value,
-    context,
-    handleChunk
-  )
-
-  // Stop streaming and add the final message
-  if (response) {
-    isStreaming.value = false
+    // Add AI response
     messages.value.push({
-      text: response,
+      text: response.response || response.output || 'I received your message but couldn\'t generate a response.',
       from: 'ai',
     })
-  } else {
-    // In case of error
-    isStreaming.value = false
+
+  } catch (error) {
+    console.error('Error sending message to n8n:', error)
     messages.value.push({
-      text: "Sorry, I couldn't process your request.",
+      text: 'Sorry, I encountered an error processing your request. Please try again.',
       from: 'ai',
     })
+  } finally {
+    isLoading.value = false
   }
 }
 

@@ -8,10 +8,12 @@ export const useAuth = () => {
     authority: 'http://10.0.1.2:8080/realms/mint-dev',
     client_id: 'mint-front',
     redirect_uri: `${window.location.origin}/auth/callback`,
+    silent_redirect_uri: `${window.location.origin}/auth/silent-callback`,
     post_logout_redirect_uri: `${window.location.origin}/login`,
     response_type: 'code',
     scope: 'openid profile email',
-    automaticSilentRenew: false,
+    automaticSilentRenew: true,
+    silentRequestTimeout: 10000,
     filterProtocolClaims: true,
     loadUserInfo: true
   }
@@ -58,10 +60,44 @@ export const useAuth = () => {
     }
   }
 
+  const handleSilentCallback = async () => {
+    try {
+      const callbackUser = await userManager.signinSilentCallback()
+      user.value = callbackUser
+      return callbackUser
+    } catch (error) {
+      console.error('Silent callback error:', error)
+      throw error
+    }
+  }
+
   const getAccessToken = async () => {
     const user = await getUser()
     return user?.access_token || null
   }
+
+  // Set up event handlers for token events
+  userManager.events.addUserLoaded((user) => {
+    console.log('User loaded:', user.profile.preferred_username)
+  })
+
+  userManager.events.addUserUnloaded(() => {
+    console.log('User unloaded')
+    user.value = null
+  })
+
+  userManager.events.addAccessTokenExpiring(() => {
+    console.log('Access token expiring')
+  })
+
+  userManager.events.addAccessTokenExpired(() => {
+    console.log('Access token expired')
+    user.value = null
+  })
+
+  userManager.events.addSilentRenewError((error) => {
+    console.error('Silent renew error:', error)
+  })
 
   // Initialize user on composable creation
   onMounted(() => {
@@ -74,6 +110,7 @@ export const useAuth = () => {
     signIn,
     signOut,
     handleCallback,
+    handleSilentCallback,
     getUser,
     getAccessToken
   }

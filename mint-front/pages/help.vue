@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto p-4">
+  <div class="container mx-auto">
     <Card :title="$t('help.title')">
       <div class="space-y-6">
         <p class="text-gray-600">{{ $t('help.description') }}</p>

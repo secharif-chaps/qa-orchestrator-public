@@ -1,5 +1,5 @@
 <template>
-  <div class=" py-8">
+  <div class=" container mx-auto">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Header -->
       <div class="mb-8">

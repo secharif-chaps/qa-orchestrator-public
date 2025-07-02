@@ -1,40 +1,9 @@
 <template>
   <!-- Show TaskFlow for all users except 'nmr' -->
   <TaskFlow 
-
     :company-id="companyId" 
   />
   
-  <!-- Show TaskList only for user 'nmr' -->
-  <div v-if="isNmrUser" class="bg-white rounded-lg overflow-hidden">
-    <button
-      class="w-full px-4 py-3 bg-white flex items-center justify-between text-left border-b border-gray-200 cursor-pointer"
-      @click="isOpen = !isOpen"
-      :class="{
-        'border-b-0': !isOpen
-      }"
-    >
-      <span class="font-medium">Tasks (Admin)</span>
-      <i
-        class="fa"
-        :class="!isOpen ? 'fa-chevron-up' : 'fa-chevron-down'"
-      ></i>
-    </button>
-    
-    <div v-show="isOpen" class="p-4">
-      <div class="grid grid-cols-2 gap-4">
-        <TaskItem
-          v-for="taskType in taskTypes"
-          :key="taskType"
-          :type="taskType"
-          :status="getTaskStatus(taskType)"
-          :error="getTaskError(taskType)"
-          @start="createTask(taskType)"
-          @restart="restartTask(taskType)"
-        />
-      </div>
-    </div>
-  </div>
 </template>
 
 <script setup lang="ts">

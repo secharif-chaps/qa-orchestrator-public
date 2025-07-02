@@ -12,18 +12,13 @@ export default defineNuxtConfig({
     keycloakClientId: process.env.KEYCLOAK_CLIENT_ID || 'mint-front',
     keycloakClientSecret: process.env.KEYCLOAK_CLIENT_SECRET || '',
     keycloakIssuer: process.env.KEYCLOAK_ISSUER || 'http://localhost:8080/realms/mint-dev',
+    
     public: {
       backendApi: process.env.NUXT_PUBLIC_BACKEND_API || 'http://localhost:8000',
       authBaseUrl: process.env.NUXT_PUBLIC_AUTH_BASE_URL || 'http://localhost:3000',
-      mistralApiKey: '',
       tilesApiKey: '',
       tilesApiUrl: '',
-      mistralAgentSourced: '',
-      mistralAgentChat: '',
-      mistralAgentTimeline: '',
-      mistralAgentProducts: '',
-      mistralAgentJobs: '',
-      mistralAgentTeam: ''
+      n8nWebhookIdChat: '96b9765e-6c96-4493-bf56-a65905f7a6bc'
     }
   },
 
