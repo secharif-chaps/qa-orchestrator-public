@@ -2,12 +2,13 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.services.company import CompanyService
-from app.core.dependencies import get_company_service
+from app.core.dependencies import get_company_service, get_current_user
 from app.schemas.company import (
     CompanyCreate, 
     CompanyUpdate, 
     CompanyResponse
 )
+from app.schemas.user import TokenData
 
 router = APIRouter(
     prefix="/companies",
@@ -16,10 +17,11 @@ router = APIRouter(
 
 @router.get("/", response_model=List[CompanyResponse])
 async def get_companies(
-    service: CompanyService = Depends(get_company_service)
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user)
 ):
-    """Get all companies"""
-    return service.get_all_companies()
+    """Get all companies for the current user"""
+    return service.get_all_companies(username=current_user.username)
 
 @router.get("/{company_id}", response_model=CompanyResponse)
 async def get_company(
@@ -52,12 +54,14 @@ async def get_company_by_name(
 @router.post("/", response_model=CompanyResponse)
 async def create_company(
     company_data: CompanyCreate,
-    service: CompanyService = Depends(get_company_service)
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user)
 ):
     """Create a new company"""
     return service.create_company(
         name=company_data.name,
-        website=company_data.website
+        website=company_data.website,
+        owner_username=company_data.owner_username
     )
 
 @router.put("/{company_id}", response_model=CompanyResponse)

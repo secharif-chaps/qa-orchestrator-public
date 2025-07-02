@@ -8,7 +8,7 @@ class CompanyBase(BaseModel):
     website: str
 
 class CompanyCreate(CompanyBase):
-    pass
+    owner_username: str
 
 class CompanyUpdate(BaseModel):
     name: Optional[str] = None
@@ -35,6 +35,7 @@ class TaskResponse(BaseModel):
 
 class CompanyResponse(CompanyBase):
     id: int
+    owner_username: str
     profile: Dict[str, Any] = Field(default_factory=dict)
     digital: Dict[str, Any] = Field(default_factory=dict)
     timeline: Dict[str, Any] = Field(default_factory=dict)

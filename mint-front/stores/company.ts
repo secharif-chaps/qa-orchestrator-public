@@ -61,11 +61,16 @@ export const useCompanyStore = defineStore('company', {
 
     async createCompany(company: CompanyCreate) {
       const repository = useCompanyRepository()
+      const { getCurrentUsername } = useAuth()
       this.loading = true
       this.error = null
 
       try {
-        const newCompany = await repository.createCompany(company)
+        // Set the owner_username to current user
+        const username = await getCurrentUsername()
+        const companyWithOwner = { ...company, owner_username: username }
+        
+        const newCompany = await repository.createCompany(companyWithOwner)
         this.companies.push(newCompany)
         this.currentCompany = newCompany
         return newCompany

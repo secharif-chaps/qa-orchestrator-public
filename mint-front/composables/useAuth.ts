@@ -76,6 +76,11 @@ export const useAuth = () => {
     return user?.access_token || null
   }
 
+  const getCurrentUsername = async () => {
+    const user = await getUser()
+    return user?.profile?.preferred_username || user?.profile?.sub || 'suh'
+  }
+
   // Set up event handlers for token events
   userManager.events.addUserLoaded((user) => {
     console.log('User loaded:', user.profile.preferred_username)
@@ -109,6 +114,7 @@ export const useAuth = () => {
     handleCallback,
     handleSilentCallback,
     getUser,
-    getAccessToken
+    getAccessToken,
+    getCurrentUsername
   }
 }

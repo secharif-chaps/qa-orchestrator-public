@@ -9,6 +9,7 @@ class Company(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True, nullable=False)
     website = Column(String, index=True, nullable=False)
+    owner_username = Column(String, index=True, nullable=False, default="suh")  # User who searched this company
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     

@@ -3,6 +3,7 @@ import type { TaskResponse } from './task'
 export interface CompanyCreate {
   name: string
   website: string
+  owner_username: string
 }
 
 export interface CompanyUpdate {
@@ -22,6 +23,7 @@ export interface CompanyResponse {
   id: number
   name: string
   website: string
+  owner_username: string
   profile?: Record<string, any>
   digital?: Record<string, any>
   timeline?: Record<string, any>

@@ -57,8 +57,11 @@ class CompanyService:
                 company.team = []
         return company
     
-    def get_all_companies(self) -> List[Company]:
-        companies = self.db.query(Company).all()
+    def get_all_companies(self, username: Optional[str] = None) -> List[Company]:
+        query = self.db.query(Company)
+        if username:
+            query = query.filter(Company.owner_username == username)
+        companies = query.all()
         # Ensure all JSON fields have default values to prevent validation errors
         for company in companies:
             if company.profile is None:
@@ -79,8 +82,8 @@ class CompanyService:
                 company.team = []
         return companies
     
-    def create_company(self, name: str, website: str) -> Company:
-        company = Company(name=name, website=website)
+    def create_company(self, name: str, website: str, owner_username: str) -> Company:
+        company = Company(name=name, website=website, owner_username=owner_username)
         self.db.add(company)
         self.db.commit()
         self.db.refresh(company)
