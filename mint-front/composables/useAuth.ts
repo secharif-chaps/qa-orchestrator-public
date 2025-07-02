@@ -99,10 +99,7 @@ export const useAuth = () => {
     console.error('Silent renew error:', error)
   })
 
-  // Initialize user on composable creation
-  onMounted(() => {
-    getUser()
-  })
+  getUser()
 
   return {
     user: readonly(user),

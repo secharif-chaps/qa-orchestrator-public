@@ -191,6 +191,23 @@ export const useTaskStore = defineStore('task', () => {
       try {
         const tasks = await fetchCompanyTasks(companyId)
         
+        // Check for stuck tasks (running for more than 20 minutes, accounting for timezone differences)
+        const now = new Date()
+        tasks.forEach((task: TaskResponse) => {
+          if (task.status === 'running') {
+            const taskUpdatedAt = new Date(task.updated_at)
+            const taskAge = now.getTime() - taskUpdatedAt.getTime()
+            const twentyMinutes = 20 * 60 * 1000
+            
+            // Only warn if age is positive (not in the future) and > 20 minutes
+            if (taskAge > 0 && taskAge > twentyMinutes) {
+              console.warn(`⚠️ Task ${task.type} has been running for ${Math.round(taskAge / 60000)} minutes - might be stuck`)
+              // Mark as potentially stuck but don't auto-restart immediately
+              // The auto-recovery system in Flow.vue will handle this
+            }
+          }
+        })
+        
         // Check if all tasks are completed
         const allTasksCompleted = tasks.every(
           (task: TaskResponse) => task.status === 'succeeded' || task.status === 'error'
@@ -237,6 +254,42 @@ export const useTaskStore = defineStore('task', () => {
     }
   }
 
+  // Detect potentially stuck tasks (accounting for timezone differences)
+  function getStuckTasks(companyId: number, timeoutMinutes: number = 30): TaskResponse[] {
+    const tasks = companyTasks.value.get(companyId) || []
+    const now = new Date()
+    
+    // Use a longer timeout to account for timezone differences (minimum 30 minutes)
+    const safeTimeoutMinutes = Math.max(timeoutMinutes, 30)
+    const timeoutMs = safeTimeoutMinutes * 60 * 1000
+    
+    return tasks.filter((task: TaskResponse) => {
+      if (task.status !== 'running') return false
+      
+      const taskUpdatedAt = new Date(task.updated_at)
+      const taskAge = now.getTime() - taskUpdatedAt.getTime()
+      
+      // Additional safety: only consider stuck if age is positive and > timeout
+      // This helps with timezone issues where server time might be ahead
+      const isActuallyStuck = taskAge > 0 && taskAge > timeoutMs
+      
+      if (isActuallyStuck) {
+        console.log(`Task ${task.type}: updated_at=${task.updated_at}, age=${Math.round(taskAge / 60000)}min, threshold=${safeTimeoutMinutes}min`)
+      }
+      
+      return isActuallyStuck
+    })
+  }
+
+  // Check if workflow has any issues that need attention
+  function hasWorkflowIssues(companyId: number): boolean {
+    const tasks = companyTasks.value.get(companyId) || []
+    const stuckTasks = getStuckTasks(companyId)
+    const errorTasks = tasks.filter(t => t.status === 'error')
+    
+    return stuckTasks.length > 0 || errorTasks.length > 0
+  }
+
   return {
     // State
     companyTasks,
@@ -248,6 +301,8 @@ export const useTaskStore = defineStore('task', () => {
     getCompanyTasks,
     hasPendingTasks,
     getTaskStatus,
+    getStuckTasks,
+    hasWorkflowIssues,
     
     // Actions
     fetchCompanyTasks,

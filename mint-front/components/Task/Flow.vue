@@ -95,6 +95,16 @@
                   <i class="fa fa-play mr-1"></i>
                   {{ workflowStarted ? 'Reprendre' : 'Démarrer le workflow' }}
                 </OButton>
+                
+                <OButton
+                  type="tertiary"
+                  v-if="workflowStarted && (hasErrors || !isWorkflowRunning)"
+                  @click="performAutoRecovery"
+                  class="text-xs"
+                >
+                  <i class="fa fa-refresh mr-1"></i>
+                  Auto-correction
+                </OButton>
               </div>
             </div>
           </Panel>
@@ -160,6 +170,9 @@ onMounted(async () => {
   initialTasks.forEach((task: TaskResponse) => {
     previousTaskStatuses.value.set(task.type, task.status)
   })
+  
+  // Perform auto-recovery check on mount
+  performAutoRecovery()
 })
 
 // Watch for company ID changes
@@ -172,6 +185,9 @@ watch(() => props.companyId, async (newId) => {
   newTasks.forEach((task: TaskResponse) => {
     previousTaskStatuses.value.set(task.type, task.status)
   })
+  
+  // Perform auto-recovery for new company
+  performAutoRecovery()
 })
 
 // Get tasks from store
@@ -194,10 +210,8 @@ watch(tasks, (newTasks, oldTasks) => {
     previousTaskStatuses.value.set(task.type, task.status)
   })
 
-  // Auto-progress workflow if enabled
-  if (!isWorkflowPaused.value && workflowStarted.value) {
-    autoProgressWorkflow()
-  }
+  // Perform auto-recovery check on task changes
+  performAutoRecovery()
 }, { deep: true })
 
 // Helper function to get task status
@@ -305,6 +319,69 @@ const isWorkflowComplete = computed(() =>
 const hasErrors = computed(() => 
   tasks.value.some(t => t.status === 'error')
 )
+
+// Auto-recovery system to unstuck workflows
+const performAutoRecovery = () => {
+  console.log('🔄 Performing auto-recovery check...')
+  
+  const currentTasks = tasks.value
+  const hasAnyTask = currentTasks.length > 0
+  
+  // Debug timezone information
+  const now = new Date()
+  console.log(`⏰ Current client time: ${now.toISOString()} (${now.toString()})`)
+  
+  // If we have any task, assume workflow was started at some point
+  if (hasAnyTask && !workflowStarted.value) {
+    console.log('📝 Detected existing tasks - marking workflow as started')
+    workflowStarted.value = true
+  }
+  
+  // Check for stuck tasks and restart them (use 45 minutes to account for timezone differences)
+  const stuckTasks = taskStore.getStuckTasks(props.companyId, 45) // 45 minutes timeout
+  stuckTasks.forEach((task: TaskResponse) => {
+    const taskAge = Math.round((Date.now() - new Date(task.updated_at).getTime()) / 60000)
+    console.log(`⚠️ Restarting stuck task: ${task.type} (running for ${taskAge} minutes)`)
+    restartTask(task.type)
+  })
+  
+  // Find tasks that should be running but aren't
+  for (const config of workflowConfig) {
+    const taskStatus = getTaskStatus(config.type)
+    const canTrigger = canTriggerTask(config.type)
+    
+    // Check if task should be started:
+    // - Dependencies are completed
+    // - Task doesn't exist yet (status is null)
+    // - OR task is in error state and can be retriggered
+    if (canTrigger && (!taskStatus || taskStatus === 'error')) {
+      // Check if dependencies are actually satisfied
+      const allDependenciesSucceeded = config.dependencies.every(depType => 
+        getTaskStatus(depType as TaskType) === 'succeeded'
+      )
+      
+      if (allDependenciesSucceeded || config.dependencies.length === 0) {
+        console.log(`🚀 Auto-recovering task: ${config.type} (current status: ${taskStatus || 'none'})`)
+        
+        if (taskStatus === 'error') {
+          // Restart failed task
+          const task = currentTasks.find(t => t.type === config.type)
+          if (task) {
+            restartTask(config.type)
+          }
+        } else {
+          // Start missing task
+          triggerTask(config.type)
+        }
+      }
+    }
+  }
+  
+  // Auto-progress workflow if it was started
+  if (workflowStarted.value && !isWorkflowPaused.value) {
+    autoProgressWorkflow()
+  }
+}
 
 // Auto-progress workflow
 const autoProgressWorkflow = () => {

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative p-4 rounded-xl shadow-lg border-2 transition-all duration-300 cursor-pointer transform hover:scale-105 w-40"
+    class="relative p-4 rounded-xl shadow-lg border-2 transition-all duration-300 cursor-pointer transform hover:scale-105 w-40 "
     :class="getNodeClass()"
     @click="handleClick"
   >
@@ -8,17 +8,22 @@
     <!-- Task icon and info -->
     <div class="flex items-center space-x-3">
       <div 
-        class="w-10 h-10 rounded-lg flex items-center justify-center relative"
+        class="w-10 h-10 rounded-lg flex items-center justify-center relative "
         :class="getIconContainerClass()"
       >
-        <i 
+        
+
+        <i v-if="data.status === 'running'" class="fa fa-spinner-third animate-spin"></i>
+        <i v-else
           :class="getTaskIcon(data.type)"
           class="text-lg"
         ></i>
+
+
         <!-- Animated ring for running tasks -->
         <div 
           v-if="data.status === 'running'"
-          class="absolute inset-0 rounded-lg border-2 border-current animate-ping opacity-75"
+          class="absolute inset-0 rounded-lg border-2 border-current  opacity-75"
         ></div>
       </div>
       
@@ -110,7 +115,7 @@ const getNodeClass = (): string => {
     case 'error':
       return `${baseClasses} border-red-400 shadow-red-100`
     case 'running':
-      return `${baseClasses} border-orange-400 shadow-orange-100 animate-pulse`
+      return `${baseClasses} border-orange-400 shadow-orange-100 `
     case 'pending':
       return `${baseClasses} border-blue-400 shadow-blue-100`
     default:
