@@ -31,7 +31,7 @@
 
           <div v-if="company?.profile?.catchphrase">
             <p class="text-gray-600">
-              {{ getSourcedValue(company.profile.catchphrase) || company.profile.catchphrase }}
+              {{ getSourcedValue(company.profile.catchphrase) || "No catchphrase found" }}
             </p>
           </div>
 
