@@ -167,30 +167,40 @@ const workflowConfig = [
 
 // Fetch tasks when component is mounted
 onMounted(async () => {
+  console.log(`🔍 TaskFlow mounted for company ID: ${props.companyId}`)
+  
   await taskStore.fetchCompanyTasks(props.companyId)
   
   // Initialize previous task statuses to avoid unnecessary refreshes on mount
   const initialTasks = taskStore.getCompanyTasks(props.companyId)
+  console.log(`📊 Found ${initialTasks.length} existing tasks:`, initialTasks.map(t => `${t.type}:${t.status}`))
+  
   initialTasks.forEach((task: TaskResponse) => {
     previousTaskStatuses.value.set(task.type, task.status)
   })
   
   // Perform auto-recovery check on mount
+  console.log(`🚀 Starting auto-recovery check on mount...`)
   performAutoRecovery()
 })
 
 // Watch for company ID changes
 watch(() => props.companyId, async (newId) => {
+  console.log(`🔄 Company ID changed to: ${newId}`)
+  
   await taskStore.fetchCompanyTasks(newId)
   
   // Reset previous task statuses for new company
   previousTaskStatuses.value.clear()
   const newTasks = taskStore.getCompanyTasks(newId)
+  console.log(`📊 Tasks for new company ${newId}:`, newTasks.map(t => `${t.type}:${t.status}`))
+  
   newTasks.forEach((task: TaskResponse) => {
     previousTaskStatuses.value.set(task.type, task.status)
   })
   
   // Perform auto-recovery for new company
+  console.log(`🚀 Starting auto-recovery for new company ${newId}...`)
   performAutoRecovery()
 })
 
@@ -202,6 +212,13 @@ const workflowStarted = ref(false)
 const previousTaskStatuses = ref<Map<string, TaskStatus | null>>(new Map())
 
 watch(tasks, (newTasks, oldTasks) => {
+  console.log(`👀 Tasks changed for company ${props.companyId}:`, {
+    newCount: newTasks.length,
+    oldCount: oldTasks?.length || 0,
+    newTasks: newTasks.map(t => `${t.type}:${t.status}`),
+    oldTasks: oldTasks?.map(t => `${t.type}:${t.status}`) || []
+  })
+  
   // Check for newly succeeded tasks and refresh company data
   newTasks.forEach((task: TaskResponse) => {
     const previousStatus = previousTaskStatuses.value.get(task.type)
@@ -215,6 +232,7 @@ watch(tasks, (newTasks, oldTasks) => {
   })
 
   // Perform auto-recovery check on task changes
+  console.log(`🔄 Tasks watcher triggering auto-recovery...`)
   performAutoRecovery()
 }, { deep: true })
 
@@ -233,14 +251,38 @@ const getTaskError = (taskType: TaskType): string | null => {
 // Check if task can be triggered
 const canTriggerTask = (taskType: TaskType): boolean => {
   const status = getTaskStatus(taskType)
-  if (status === 'running' || status === 'succeeded') return false
+  console.log(`🔍 Checking if task ${taskType} can be triggered: status=${status}`)
+  
+  if (status === 'running' || status === 'succeeded') {
+    console.log(`❌ Task ${taskType} cannot be triggered: already ${status}`)
+    return false
+  }
   
   const config = workflowConfig.find(c => c.type === taskType)
-  if (!config) return false
+  if (!config) {
+    console.log(`❌ Task ${taskType} cannot be triggered: config not found`)
+    return false
+  }
   
-  return config.dependencies.every(depType => 
+  // First 4 tasks (no dependencies) can always be triggered if not running/succeeded
+  if (config.dependencies.length === 0) {
+    console.log(`✅ Task ${taskType} can be triggered: no dependencies`)
+    return true
+  }
+  
+  // For other tasks, check if all dependencies are succeeded
+  const dependencyStatuses = config.dependencies.map(depType => ({
+    type: depType,
+    status: getTaskStatus(depType as TaskType)
+  }))
+  
+  const allDepsSucceeded = config.dependencies.every(depType => 
     getTaskStatus(depType as TaskType) === 'succeeded'
   )
+  
+  console.log(`🔗 Task ${taskType} dependencies:`, dependencyStatuses, `allSucceeded=${allDepsSucceeded}`)
+  
+  return allDepsSucceeded
 }
 
 // Create flow nodes
@@ -353,14 +395,45 @@ const hasErrors = computed(() =>
 
 // Auto-recovery system to unstuck workflows
 const performAutoRecovery = () => {
-  console.log('🔄 Performing auto-recovery check...')
+  console.log(`🔄 Performing auto-recovery check for company ${props.companyId}...`)
   
   const currentTasks = tasks.value
   const hasAnyTask = currentTasks.length > 0
   
+  console.log(`📊 Current tasks state:`, {
+    totalTasks: currentTasks.length,
+    tasks: currentTasks.map(t => ({ type: t.type, status: t.status, id: t.id })),
+    workflowStarted: workflowStarted.value,
+    isWorkflowPaused: isWorkflowPaused.value
+  })
+  
   // Debug timezone information
   const now = new Date()
   console.log(`⏰ Current client time: ${now.toISOString()} (${now.toString()})`)
+  
+  // Auto-start first 4 tasks if they don't exist or are pending
+  const firstFourTasks = ['profile', 'digital', 'csr', 'press'] as TaskType[]
+  console.log(`🎯 Checking first 4 tasks for auto-start...`)
+  
+  firstFourTasks.forEach(taskType => {
+    const existingTask = currentTasks.find(t => t.type === taskType)
+    const shouldStart = !existingTask || existingTask.status === 'pending' || existingTask.status === null
+    
+    console.log(`📋 Task ${taskType}:`, {
+      exists: !!existingTask,
+      status: existingTask?.status || 'not found',
+      shouldStart,
+      canTrigger: canTriggerTask(taskType)
+    })
+    
+    if (shouldStart && canTriggerTask(taskType)) {
+      console.log(`🚀 Auto-starting task: ${taskType}`)
+      triggerTask(taskType)
+      workflowStarted.value = true
+    } else if (shouldStart && !canTriggerTask(taskType)) {
+      console.warn(`⚠️ Task ${taskType} should start but cannot be triggered`)
+    }
+  })
   
   // If we have any task, assume workflow was started at some point
   if (hasAnyTask && !workflowStarted.value) {
@@ -370,6 +443,10 @@ const performAutoRecovery = () => {
   
   // Check for stuck tasks (log only, no automatic restart)
   const stuckTasks = taskStore.getStuckTasks(props.companyId, 45) // 45 minutes timeout
+  if (stuckTasks.length > 0) {
+    console.log(`🔍 Found ${stuckTasks.length} stuck tasks`)
+  }
+  
   stuckTasks.forEach((task: TaskResponse) => {
     // Adjust for 2-hour timezone difference: subtract 120 minutes from server time
     const adjustedServerTime = new Date(new Date(task.updated_at).getTime() + (120 * 60 * 1000))
@@ -380,7 +457,13 @@ const performAutoRecovery = () => {
   
   // Auto-progress workflow if it was started
   if (workflowStarted.value && !isWorkflowPaused.value) {
+    console.log(`⏭️ Workflow started and not paused, checking auto-progress...`)
     autoProgressWorkflow()
+  } else {
+    console.log(`⏸️ Auto-progress skipped:`, {
+      workflowStarted: workflowStarted.value,
+      isWorkflowPaused: isWorkflowPaused.value
+    })
   }
 }
 
@@ -390,7 +473,9 @@ const autoProgressWorkflow = () => {
   
   // Find next available tasks to trigger
   for (const config of workflowConfig) {
-    if (canTriggerTask(config.type) && !getTaskStatus(config.type)) {
+    const currentStatus = getTaskStatus(config.type)
+    if (canTriggerTask(config.type) && (!currentStatus || currentStatus === 'pending')) {
+      console.log(`🔄 Auto-progressing workflow: starting ${config.type}`)
       triggerTask(config.type)
       break // Only trigger one at a time for sequential flow
     }
@@ -400,14 +485,20 @@ const autoProgressWorkflow = () => {
 // Task actions
 const triggerTask = async (taskType: TaskType) => {
   try {
+    console.log(`🎬 Triggering task ${taskType} for company ${props.companyId}`)
+    
     const task: TaskCreate = {
       type: taskType,
       status: 'pending',
       company_id: props.companyId
     }
-    await taskStore.createTask(task)
+    
+    console.log(`📤 Sending task creation request:`, task)
+    const result = await taskStore.createTask(task)
+    console.log(`✅ Task ${taskType} created successfully:`, result)
+    
   } catch (error) {
-    console.error('Error triggering task:', error)
+    console.error(`❌ Error triggering task ${taskType}:`, error)
   }
 }
 

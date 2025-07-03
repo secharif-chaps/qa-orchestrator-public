@@ -52,7 +52,6 @@ services:
     command: start-dev --import-realm
     volumes:
       - ./docker/keycloak/realm-mint-dev.json:/opt/keycloak/data/import/realm-mint-dev.json
-      - ./docker/keycloak/mint-theme:/opt/keycloak/themes/mint
     ports:
       - "8080:8080"
     depends_on:
