@@ -139,14 +139,14 @@ interface Props {
   companyId: number
 }
 
-
-
 const props = defineProps<Props>()
 const isOpen = ref(true)
 const taskStore = useTaskStore()
 const isWorkflowPaused = ref(false)
 const { fitView } = useVueFlow()
 const { fetchCompany, company } = useCompanyData()
+
+
 
 // Define workflow configuration with dependencies - horizontal stepper layout
 const workflowConfig = [
@@ -324,6 +324,12 @@ const flowEdges = computed<Edge[]>(() => {
 const completedCount = computed(() => 
   tasks.value.filter(t => t.status === 'succeeded').length
 )
+
+watch(completedCount, (newCount) => {
+  if (newCount >= 8) {
+    isOpen.value = false
+  }
+})
 
 const runningCount = computed(() => 
   tasks.value.filter(t => t.status === 'running').length
