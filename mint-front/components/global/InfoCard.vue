@@ -9,8 +9,8 @@
     >
       <div class="flex justify-between items-center">
         <OIcon
-          :icon="loading ? 'fa-spinner fa-spin' : icon"
-          :type="loading ? 'primary' : 'secondary'"
+          :icon="loading ? 'fa-spinner-third fa-spin' : icon"
+          type="secondary"
         />
         <i class="fa fa-arrow-right text-primary ml-1"></i>
       </div>

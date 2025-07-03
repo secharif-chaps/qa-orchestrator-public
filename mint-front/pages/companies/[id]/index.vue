@@ -235,11 +235,11 @@ const formatWebsiteUrl = (website?: string) => {
 
 // Check if a section is pending
 const taskStore = useTaskStore()
+
 const isPending = (sectionKey: string) => {
   const id = companyId.value
   if (!id) return false
-  return taskStore.getTaskStatus(id, sectionKey) === 'pending' || 
-         taskStore.getTaskStatus(id, sectionKey) === 'running'
+  return taskStore.getTaskStatus(id, sectionKey) === 'running'
 }
 
 // Helper function to get social media icon

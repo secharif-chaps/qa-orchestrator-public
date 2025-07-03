@@ -1,14 +1,6 @@
 <template>
   <LayoutsCompanyCard :title="$t('team.title')" icon="fa-users">
     <div class="flex flex-col gap-4">
-    <!-- Task state -->
-    <TaskState
-      v-if="companyId"
-      :company-id="companyId"
-      :required-task-types="['team']"
-      :loading-title="$t('team.loading.title')"
-      :loading-description="$t('team.loading.description')"
-    />
 
     <!-- Empty state -->
     <Card v-if="!hasTeamData && !teamPending">
@@ -245,10 +237,12 @@ const edges = computed(() => {
 
 // Apply dagre layout
 const applyLayout = () => {
+  
   const NODE_WIDTH = 300
   const NODE_HEIGHT = 100
   const HORIZONTAL_PADDING = 30
   const VERTICAL_SPACING = 100
+
 
   // First, let's create a map of nodes and their subordinates
   const nodeMap = new Map<string, any>()
@@ -330,7 +324,9 @@ const layoutedNodes = ref([])
 const isInitialized = ref(false)
 
 const applyLayoutAndFitView = () => {
-  if (nodes.value.length > 0 && edges.value.length > 0) {
+
+  if (nodes.value.length > 0 ) {
+    
     layoutedNodes.value = applyLayout()
     if (isInitialized.value) {
       nextTick(() => {

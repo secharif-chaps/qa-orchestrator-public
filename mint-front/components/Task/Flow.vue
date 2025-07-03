@@ -47,7 +47,7 @@
           />
           
           <!-- Vue Flow Panel for controls -->
-          <Panel position="top-right" class="p-2">
+          <Panel position="top-right" class="p-2" v-if="completedCount < 8">
             <div class="bg-white rounded-lg shadow-lg p-3 flex flex-col gap-2 min-w-[200px]">
               <!-- <div class="text-sm font-medium text-gray-700 mb-1">Contrôles du workflow</div> -->
               

@@ -50,6 +50,9 @@ export const useAuth = () => {
   }
 
   const getUser = async () => {
+    // Skip SSR
+    if (process.server) return null
+    
     try {
       const currentUser = await userManager.getUser()
       user.value = currentUser
@@ -63,7 +66,10 @@ export const useAuth = () => {
   const handleSilentCallback = async () => {
     try {
       const callbackUser = await userManager.signinSilentCallback()
-      user.value = callbackUser
+      if (callbackUser) {
+
+        user.value = callbackUser
+      }
       return callbackUser
     } catch (error) {
       console.error('Silent callback error:', error)
@@ -72,11 +78,17 @@ export const useAuth = () => {
   }
 
   const getAccessToken = async () => {
+    // Skip SSR
+    if (process.server) return null
+    
     const user = await getUser()
     return user?.access_token || null
   }
 
   const getCurrentUsername = async () => {
+    // Skip SSR
+    if (process.server) return 'unknown'
+    
     const user = await getUser()
     return user?.profile?.preferred_username || user?.profile?.sub || 'unknown'
   }

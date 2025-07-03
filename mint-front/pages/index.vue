@@ -128,7 +128,8 @@
 </template>
 
 <script setup>
-const { user } = useAuth()
+// Only access auth on client side
+const { user } = process.client ? useAuth() : { user: ref(null) }
 const companyRepository = useCompanyRepository()
 
 // Reactive data
