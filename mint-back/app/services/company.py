@@ -5,6 +5,8 @@ from app.models.company import Company
 from app.models.task import Task, TaskType, TaskStatus
 from app.schemas.company import CompanyCreate, CompanyUpdate
 from app.services.n8n import N8nClient
+from app.core.database_security import SecureQueryBuilder
+from app.core.validators import ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -12,9 +14,11 @@ class CompanyService:
     def __init__(self, db: Session, n8n_client: N8nClient):
         self.db = db
         self.n8n_client = n8n_client
+        self.secure_query = SecureQueryBuilder(db)
     
     def get_company(self, company_id: int) -> Optional[Company]:
-        company = self.db.query(Company).filter(Company.id == company_id).first()
+        """Securely get company by ID"""
+        company = self.secure_query.safe_filter_by_id(Company, company_id).first()
         if company:
             # Ensure all JSON fields have default values to prevent validation errors
             if company.profile is None:
@@ -36,7 +40,8 @@ class CompanyService:
         return company
     
     def get_company_by_name(self, name: str) -> Optional[Company]:
-        company = self.db.query(Company).filter(Company.name == name).first()
+        """Securely get company by name"""
+        company = self.secure_query.safe_filter_by_string(Company, Company.name, name, exact_match=True).first()
         if company:
             # Ensure all JSON fields have default values to prevent validation errors
             if company.profile is None:
@@ -58,10 +63,11 @@ class CompanyService:
         return company
     
     def get_all_companies(self, username: Optional[str] = None) -> List[Company]:
-        query = self.db.query(Company)
+        """Securely get all companies, optionally filtered by owner"""
         if username:
-            query = query.filter(Company.owner_username == username)
-        companies = query.all()
+            companies = self.secure_query.safe_filter_by_owner(Company, Company.owner_username, username).all()
+        else:
+            companies = self.db.query(Company).all()
         # Ensure all JSON fields have default values to prevent validation errors
         for company in companies:
             if company.profile is None:
@@ -83,10 +89,17 @@ class CompanyService:
         return companies
     
     def create_company(self, name: str, website: str, owner_username: str) -> Company:
-        company = Company(name=name, website=website, owner_username=owner_username)
-        self.db.add(company)
-        self.db.commit()
-        self.db.refresh(company)
+        """Securely create a new company"""
+        # Additional validation
+        if not owner_username or len(owner_username) > 100:
+            raise ValidationError("Invalid owner username")
+        
+        company = self.secure_query.safe_create_entity(
+            Company,
+            name=name,
+            website=website,
+            owner_username=owner_username
+        )
         
         # Create the 8 default tasks with pending status
         default_tasks = [
@@ -116,17 +129,19 @@ class CompanyService:
         return company
     
     def update_company(self, company: Company) -> Company:
-        self.db.commit()
-        self.db.refresh(company)
+        """Securely update company"""
+        with self.secure_query.secure_query_context():
+            self.db.commit()
+            self.db.refresh(company)
         return company
     
     def delete_company(self, company_id: int) -> bool:
+        """Securely delete company"""
         company = self.get_company(company_id)
         if not company:
             return False
-        self.db.delete(company)
-        self.db.commit()
-        return True
+        
+        return self.secure_query.safe_delete_entity(company)
 
     async def create_and_start_task(self, company_id: int, task_type: str) -> Task:
         company = self.get_company(company_id)

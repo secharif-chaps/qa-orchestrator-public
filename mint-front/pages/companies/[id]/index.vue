@@ -1,8 +1,5 @@
 <template>
   <LayoutsCompanyCard :title="$t('company.dashboard.title')" icon="fa-building" v-if="company">
-    <template #actions> </template>
-
-      
 
     <template #loading>
       <div class="flex flex-col gap-2" v-if="company && company.id">

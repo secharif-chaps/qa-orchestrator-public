@@ -1,4 +1,5 @@
 import tailwindcss from '@tailwindcss/vite'
+/// <reference types="vitest/config" />
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({

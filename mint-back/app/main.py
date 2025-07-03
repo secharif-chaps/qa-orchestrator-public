@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
 from app.core.config import settings
+from app.core.middleware import SecurityMiddleware, JSONValidationMiddleware
+from app.core.database_security import setup_database_security
+from app.database import engine
 
 app = FastAPI(
     title="Mint Backend API",
@@ -10,17 +13,30 @@ app = FastAPI(
     version="0.1.0",
 )
 
+# Initialize database security monitoring
+setup_database_security(engine)
+
 # Debug logging for CORS settings
 print(f"CORS Origin setting: {settings.CORS_ORIGIN}")
 
-# Add CORS middleware with specific origin
+# Add security middleware (MUST be added before CORS)
+app.add_middleware(
+    SecurityMiddleware,
+    max_request_size=2097152,  # 2MB
+    rate_limit_requests=100,   # 100 requests per minute
+    rate_limit_window=60
+)
+
+app.add_middleware(JSONValidationMiddleware)
+
+# Add CORS middleware with more restrictive settings
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.CORS_ORIGIN, "http://localhost:3000"],  # Allow both origins
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allow_headers=["*"],
-    expose_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Removed PATCH
+    allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],  # More restrictive
+    expose_headers=["Content-Type", "Authorization"],  # More restrictive
 )
 
 # Include API routers

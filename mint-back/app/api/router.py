@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.endpoints import company, tasks, auth, admin
+from app.api.endpoints import company, tasks, auth, admin, security
 
 api_router = APIRouter()
 
@@ -7,4 +7,5 @@ api_router = APIRouter()
 api_router.include_router(auth.router)
 api_router.include_router(company.router)
 api_router.include_router(tasks.router)
-api_router.include_router(admin.router) 
+api_router.include_router(admin.router)
+api_router.include_router(security.router) 
