@@ -23,7 +23,7 @@ const props = defineProps({
     required: true
   },
   value: {
-    type: [Number, String],
+    type: [Number, String, undefined],
     required: true
   },
   subtitle: {

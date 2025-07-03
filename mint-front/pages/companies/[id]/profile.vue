@@ -3,17 +3,9 @@
     :title="$t('profile.title')"
     icon="fa-building"
     v-if="company"
-    :loading="profilePending"
   >
     <div class="flex flex-col gap-4">
-      <!-- Task state -->
-      <TaskState
-        v-if="companyId"
-        :company-id="companyId"
-        :required-task-types="['profile', 'digital', 'products', 'csr', 'press']"
-        :loading-title="$t('profile.loading.title')"
-        :loading-description="$t('profile.loading.description')"
-      />
+
 
       <div class="@container grid grid-cols-6 gap-2">
         <div class="@max-6xl:col-span-6 @min-6xl:col-span-4">
@@ -61,7 +53,6 @@
 
 <script lang="ts" setup>
 import { Profile } from '#components'
-import TaskState from '~/components/TaskState.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -73,16 +64,6 @@ useHead({
 })
 
 const { company, companyId, fetchCompany } = useCompanyData()
-
-const profilePending = computed(() => {
-  if (!companyId.value) {
-    return false
-  }
-  return company.value?.tasks?.some(
-    (task: { type: string; status: string }) => (task.type === 'profile' || task.type === 'digital' || task.type === 'press' || task.type === 'csr') &&
-           (task.status === 'pending' || task.status === 'running')
-  )
-})
 
 const router = useRouter()
 

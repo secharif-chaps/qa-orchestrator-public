@@ -78,25 +78,25 @@ export const useAuth = () => {
 
   const getCurrentUsername = async () => {
     const user = await getUser()
-    return user?.profile?.preferred_username || user?.profile?.sub || 'suh'
+    return user?.profile?.preferred_username || user?.profile?.sub || 'unknown'
   }
 
   // Set up event handlers for token events
   userManager.events.addUserLoaded((user) => {
-    console.log('User loaded:', user.profile.preferred_username)
+
   })
 
   userManager.events.addUserUnloaded(() => {
-    console.log('User unloaded')
+
     user.value = null
   })
 
   userManager.events.addAccessTokenExpiring(() => {
-    console.log('Access token expiring')
+
   })
 
   userManager.events.addAccessTokenExpired(() => {
-    console.log('Access token expired')
+
     user.value = null
   })
 

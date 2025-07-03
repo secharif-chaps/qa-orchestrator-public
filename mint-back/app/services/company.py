@@ -87,6 +87,32 @@ class CompanyService:
         self.db.add(company)
         self.db.commit()
         self.db.refresh(company)
+        
+        # Create the 8 default tasks with pending status
+        default_tasks = [
+            ('profile', 'Profil'),
+            ('digital', 'Digital'),
+            ('csr', 'RSE'),
+            ('press', 'Presse'),
+            ('timeline', 'Timeline'),
+            ('products', 'Produits'),
+            ('team', 'Équipe'),
+            ('jobs', 'Emplois')
+        ]
+        
+        for task_type, task_name in default_tasks:
+            task = Task(
+                company_id=company.id,
+                type=TaskType(task_type),
+                status=TaskStatus.PENDING
+            )
+            company.tasks.append(task)
+        
+        self.db.commit()
+        self.db.refresh(company)
+        
+        logger.info(f"Created company '{name}' with {len(default_tasks)} pending tasks for user '{owner_username}'")
+        
         return company
     
     def update_company(self, company: Company) -> Company:
