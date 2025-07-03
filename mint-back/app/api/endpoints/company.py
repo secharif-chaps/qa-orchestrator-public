@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.services.company import CompanyService
 from app.core.dependencies import get_company_service, get_current_user
+from app.core.security import verify_company_ownership, sanitize_input
 from app.schemas.company import (
     CompanyCreate, 
     CompanyUpdate, 
@@ -26,30 +27,24 @@ async def get_companies(
 @router.get("/{company_id}", response_model=CompanyResponse)
 async def get_company(
     company_id: int,
-    service: CompanyService = Depends(get_company_service)
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user)
 ):
-    """Get a company by ID"""
+    """Get a company by ID (only if user owns it)"""
     company = service.get_company(company_id)
-    if not company:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Company with ID {company_id} not found"
-        )
-    return company
+    return verify_company_ownership(company, current_user)
 
 @router.get("/by-name/{name}", response_model=CompanyResponse)
 async def get_company_by_name(
     name: str,
-    service: CompanyService = Depends(get_company_service)
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user)
 ):
-    """Get a company by name"""
-    company = service.get_company_by_name(name)
-    if not company:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Company with name '{name}' not found"
-        )
-    return company
+    """Get a company by name (only if user owns it)"""
+    # Sanitize the name input
+    sanitized_name = sanitize_input(name, max_length=100)
+    company = service.get_company_by_name(sanitized_name)
+    return verify_company_ownership(company, current_user)
 
 @router.post("/", response_model=CompanyResponse)
 async def create_company(
@@ -58,26 +53,34 @@ async def create_company(
     current_user: TokenData = Depends(get_current_user)
 ):
     """Create a new company"""
+    # Sanitize inputs
+    sanitized_name = sanitize_input(company_data.name, max_length=100)
+    sanitized_website = sanitize_input(company_data.website, max_length=255)
+    
+    # Use the authenticated user's username as the owner
     return service.create_company(
-        name=company_data.name,
-        website=company_data.website,
-        owner_username=company_data.owner_username
+        name=sanitized_name,
+        website=sanitized_website,
+        owner_username=current_user.username
     )
 
 @router.put("/{company_id}", response_model=CompanyResponse)
 async def update_company(
     company_id: int,
     company_data: CompanyUpdate,
-    service: CompanyService = Depends(get_company_service)
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user)
 ):
-    """Update a company"""
-    # Get existing company
+    """Update a company (only if user owns it)"""
+    # Get existing company and verify ownership
     company = service.get_company(company_id)
-    if not company:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Company with ID {company_id} not found"
-        )
+    verify_company_ownership(company, current_user)
+    
+    # Sanitize inputs if provided
+    if company_data.name:
+        company_data.name = sanitize_input(company_data.name, max_length=100)
+    if company_data.website:
+        company_data.website = sanitize_input(company_data.website, max_length=255)
     
     # Update fields
     if company_data.name:
@@ -109,9 +112,14 @@ async def update_company(
 @router.delete("/{company_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_company(
     company_id: int,
-    service: CompanyService = Depends(get_company_service)
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user)
 ):
-    """Delete a company"""
+    """Delete a company (only if user owns it)"""
+    # Get existing company and verify ownership
+    company = service.get_company(company_id)
+    verify_company_ownership(company, current_user)
+    
     success = service.delete_company(company_id)
     if not success:
         raise HTTPException(

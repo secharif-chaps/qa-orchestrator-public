@@ -5,8 +5,10 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
 from app.services.company import CompanyService
-from app.core.dependencies import get_company_service
+from app.core.dependencies import get_company_service, get_current_user
+from app.core.security import verify_company_ownership
 from app.schemas.task import TaskCreate, TaskResponse
+from app.schemas.user import TokenData
 from app.models.task import TaskType
 
 # Configure logging
@@ -21,17 +23,14 @@ router = APIRouter(
 async def create_task(
     request: Request,
     task_data: TaskCreate,
-    service: CompanyService = Depends(get_company_service)
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user)
 ):
-    """Create a new task for a company"""
+    """Create a new task for a company (only if user owns the company)"""
     try:
-        # Check if company exists
+        # Check if company exists and user owns it
         company = service.get_company(task_data.company_id)
-        if not company:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Company with ID {task_data.company_id} not found"
-            )
+        verify_company_ownership(company, current_user)
         
         # Check if task type is valid
         try:
@@ -73,27 +72,40 @@ async def create_task(
 @router.get("/company/{company_id}", response_model=List[TaskResponse])
 async def get_company_tasks(
     company_id: int,
-    service: CompanyService = Depends(get_company_service)
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user)
 ):
-    """Get all tasks for a company"""
+    """Get all tasks for a company (only if user owns the company)"""
     company = service.get_company(company_id)
-    if not company:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Company with ID {company_id} not found"
-        )
+    verify_company_ownership(company, current_user)
     return company.tasks
 
 @router.post("/{task_id}/restart", response_model=TaskResponse)
 async def restart_task(
     task_id: int,
-    service: CompanyService = Depends(get_company_service)
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user)
 ):
-    """Restart a specific task"""
-    task = await service.restart_task(task_id)
+    """Restart a specific task (only if user owns the company)"""
+    # First, we need to find the task and verify ownership
+    # This is a bit complex as we need to check all user's companies
+    user_companies = service.get_all_companies(username=current_user.username)
+    
+    task = None
+    for company in user_companies:
+        for company_task in company.tasks:
+            if company_task.id == task_id:
+                task = company_task
+                break
+        if task:
+            break
+    
     if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Task with ID {task_id} not found"
+            detail=f"Task with ID {task_id} not found or you don't have permission to access it"
         )
-    return task 
+    
+    # Restart the task
+    restarted_task = await service.restart_task(task_id)
+    return restarted_task 

@@ -22,8 +22,8 @@ class KeycloakService:
             try:
                 self.keycloak_admin = KeycloakAdmin(
                     server_url=settings.KEYCLOAK_SERVER_URL,
-                    username="admin",  # This should be configurable
-                    password="admin",  # This should be configurable
+                    username=settings.KEYCLOAK_ADMIN_USERNAME,
+                    password=settings.KEYCLOAK_ADMIN_PASSWORD,
                     realm_name=settings.KEYCLOAK_REALM,
                     verify=True
                 )
@@ -34,13 +34,11 @@ class KeycloakService:
     async def authenticate_user(self, username: str, password: str) -> Optional[Dict[str, Any]]:
         """Authenticate user with Keycloak"""
         try:
-            print(f"Attempting to authenticate user: {username}")
-            print(f"Keycloak config - Server: {settings.KEYCLOAK_SERVER_URL}, Realm: {settings.KEYCLOAK_REALM}, Client: {settings.KEYCLOAK_CLIENT_ID}")
             token = self.keycloak_openid.token(username, password)
-            print(f"Authentication successful for user: {username}")
             return token
         except Exception as e:
-            print(f"Authentication failed for user {username}: {str(e)}")
+            # Log error without exposing sensitive information
+            print(f"Authentication failed for user {username}: Authentication error")
             return None
 
     async def refresh_token(self, refresh_token: str) -> Optional[Dict[str, Any]]:
@@ -62,41 +60,85 @@ class KeycloakService:
     async def get_user_info(self, access_token: str) -> Optional[Dict[str, Any]]:
         """Get user info from access token"""
         try:
+            print(f"Calling userinfo endpoint with token: {access_token[:20]}...")
+            print(f"Keycloak server URL: {settings.KEYCLOAK_SERVER_URL}")
             userinfo = self.keycloak_openid.userinfo(access_token)
+            print(f"Userinfo response: {userinfo}")
             return userinfo
         except Exception as e:
+            print(f"Userinfo error: {type(e).__name__}: {str(e)}")
             return None
 
     async def verify_token(self, token: str) -> Optional[TokenData]:
-        """Verify and decode JWT token"""
+        """Verify and decode JWT token with proper signature verification"""
         try:
-            print(f"VERIFY TOKEN - Keycloak server URL: {settings.KEYCLOAK_SERVER_URL}")
+            print(f"Verifying token: {token[:20]}...")
             
-            # For testing: decode without verification to check token structure
-            import base64
-            import json
-            
-            # Decode token payload (without verification for now)
-            parts = token.split('.')
-            if len(parts) != 3:
-                print("Invalid token format")
-                return None
+            # Try JWT decoding first (works with any valid token from the realm)
+            try:
+                # Get the public key from Keycloak for JWT verification
+                public_key = self.keycloak_openid.public_key()
+                key = f"-----BEGIN PUBLIC KEY-----\n{public_key}\n-----END PUBLIC KEY-----"
                 
-            # Decode the payload (add padding if needed)
-            payload_b64 = parts[1]
-            payload_b64 += '=' * (4 - len(payload_b64) % 4)
-            payload_json = base64.b64decode(payload_b64)
-            payload = json.loads(payload_json)
+                # Decode and verify the JWT token
+                options = {
+                    "verify_signature": True,
+                    "verify_aud": False,  # Don't verify audience for now
+                    "verify_exp": True,   # Verify expiration
+                }
+                
+                payload = jwt.decode(
+                    token, 
+                    key, 
+                    algorithms=[settings.JWT_ALGORITHM],
+                    options=options
+                )
+                
+                print(f"JWT payload: {payload}")
+                
+                # Extract user information
+                username = payload.get("preferred_username")
+                sub = payload.get("sub")
+                
+                # Extract roles
+                realm_access = payload.get("realm_access", {})
+                roles = realm_access.get("roles", ["user"])
+                
+                # Ensure admin role is properly assigned
+                if username == "admin":
+                    if "admin" not in roles:
+                        roles.append("admin")
+                
+                print(f"Token verified successfully via JWT decoding for user: {username}")
+                return TokenData(username=username, sub=sub, roles=roles)
+                
+            except jwt.ExpiredSignatureError:
+                print("Token has expired")
+                return None
+            except jwt.JWTError as jwt_error:
+                print(f"JWT validation failed: {jwt_error}")
+            except Exception as jwt_decode_error:
+                print(f"JWT decoding failed: {jwt_decode_error}")
             
-            print(f"Token payload: {payload}")
+            # Fallback to userinfo endpoint if JWT decoding fails
+            try:
+                userinfo = await self.get_user_info(token)
+                if userinfo:
+                    username = userinfo.get("preferred_username")
+                    sub = userinfo.get("sub")
+                    
+                    # Check if user is admin (you can customize this logic)
+                    roles = ["user"]
+                    if username == "admin":
+                        roles.append("admin")
+                    
+                    print(f"Token verified successfully via userinfo for user: {username}")
+                    return TokenData(username=username, sub=sub, roles=roles)
+            except Exception as userinfo_error:
+                print(f"Userinfo validation failed: {userinfo_error}")
             
-            username = payload.get("preferred_username")
-            sub = payload.get("sub")
-            realm_access = payload.get("realm_access", {})
-            roles = realm_access.get("roles", [])
-            
-            # TODO: Re-enable proper JWT verification once Keycloak connectivity is fixed
-            return TokenData(username=username, sub=sub, roles=roles)
+            print("Token verification failed - all validation methods failed")
+            return None
             
         except Exception as e:
             print(f"Token verification error: {str(e)}")
@@ -105,11 +147,14 @@ class KeycloakService:
     async def introspect_token(self, token: str) -> Optional[Dict[str, Any]]:
         """Introspect token (server-side validation)"""
         try:
+            print(f"Calling introspect endpoint with token: {token[:20]}...")
             token_info = self.keycloak_openid.introspect(token)
+            print(f"Introspect response: {token_info}")
             if token_info.get("active"):
                 return token_info
             return None
         except Exception as e:
+            print(f"Introspect error: {type(e).__name__}: {str(e)}")
             return None
 
 

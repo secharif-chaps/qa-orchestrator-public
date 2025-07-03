@@ -23,10 +23,12 @@ class Settings(BaseSettings):
     CORS_ORIGIN: str = "http://localhost:3000"
     
     # Keycloak settings
-    KEYCLOAK_SERVER_URL: str = "http://keycloak:8080"
+    KEYCLOAK_SERVER_URL: str = "http://10.0.1.2:8080"
     KEYCLOAK_REALM: str = "mint-dev"
     KEYCLOAK_CLIENT_ID: str = "mint-back"
     KEYCLOAK_CLIENT_SECRET: Optional[str] = None
+    KEYCLOAK_ADMIN_USERNAME: str = "admin"
+    KEYCLOAK_ADMIN_PASSWORD: str = "admin"
     
     # JWT settings
     JWT_ALGORITHM: str = "RS256"
