@@ -1,59 +1,58 @@
 <template>
   <div class="space-y-4 max-w-7xl mx-auto" data-cy="company-search-page">
-    <div class="card flex items-center space-x-4">
-      <OIcon icon="fa-search" type="secondary"></OIcon>
-      <h1 class="text-2xl font-extrabold">{{ $t('search.title') }}</h1>
-    </div>
 
-    <Card :title="$t('search.companyIdentity')">
-      <div class="space-y-2">
-        <OInput
-          id="company"
-          v-model="company"
-          :placeholder="$t('search.fields.companyName.placeholder')"
-          :label="$t('search.fields.companyName.label')"
-          :error="companyError"
-          data-cy="company-name-input"
-        ></OInput>
 
-        <OInput
-          id="website"
-          v-model="website"
-          :placeholder="$t('search.fields.website.placeholder')"
-          :label="$t('search.fields.website.label')"
-          :error="websiteError"
-          data-cy="website-input"
-        ></OInput>
-      </div>
-    </Card>
-
-    <Card :title="$t('search.advancedSearch')"> </Card>
-
-    <Card>
-      <div class="flex items-center justify-between">
-        <div>
-          <span class="font-bold text-slate-500">
-            <span class="text-red-600"> * </span>{{ $t('search.mandatoryFields') }}
-          </span>
+    <Card :title="$t('search.title')">
+      <div class="flex flex-col gap-4">
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <OInput
+            id="company"
+            v-model="company"
+            :placeholder="$t('search.fields.companyName.placeholder')"
+            :error="companyError"
+            data-cy="company-name-input"
+            required
+            :label="$t('search.fields.companyName.label')"
+          >
+          </OInput>
         </div>
+
+        <div class="space-y-2">
+          <OInput
+            id="website"
+            v-model="website"
+            :placeholder="$t('search.fields.website.placeholder')"
+            :error="websiteError"
+            data-cy="website-input"
+            required
+            :label="$t('search.fields.website.label')"
+          >
+          </OInput>
+
+        </div>
+      </div>
+      <div class="w-full flex items-center justify-end">
         <div class="flex space-x-2">
           <OButton
             :label="$t('search.actions.deleteData')"
             type="tertiary"
-            :disabled="pending"
+            :disabled="pending || (!company.trim() && !website.trim())"
             data-cy="delete-data-button"
             @click="resetData()"
           />
           <OButton
             :loading="pending"
-            :disabled="pending || hasErrors"
+            :disabled="pending || !isFormValid"
             @click="startSearch()"
             :label="$t('search.actions.launchSearch')"
             data-cy="launch-search-button"
           />
         </div>
       </div>
+    </div>
     </Card>
+
   </div>
 </template>
 
@@ -70,16 +69,32 @@ const websiteError = ref('')
 
 const companyStore = useCompanyStore()
 
-// Computed property to check if there are any validation errors
+// Computed property to check if there are any validation errors or missing required fields
 const hasErrors = computed(() => {
   return !!companyError.value || !!websiteError.value
 })
 
+// Computed property to check if both required fields are filled
+const isFormValid = computed(() => {
+  return company.value.trim().length > 0 && website.value.trim().length > 0 && !hasErrors.value
+})
+
+// Computed property to check if there's any data to delete
+const hasData = computed(() => {
+  return company.value.trim().length > 0 || website.value.trim().length > 0
+})
+
 // Validate website URL format
 const validateWebsite = (url: string) => {
+  if (!url.trim()) return false
+  
   try {
-    new URL(url)
-    return true
+    // Add https:// if no protocol is provided
+    const urlToTest = url.includes('://') ? url : `https://${url}`
+    const parsedUrl = new URL(urlToTest)
+    
+    // Check if it's a valid HTTP/HTTPS URL
+    return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:'
   } catch {
     return false
   }
@@ -134,9 +149,12 @@ const startSearch = async () => {
 
   try {
     const trimmedCompany = company.value.trim().toLowerCase()
+    // Ensure website has protocol
+    const websiteUrl = website.value.includes('://') ? website.value : `https://${website.value}`
+    
     const newCompany = await companyStore.createCompany({
       name: trimmedCompany,
-      website: website.value
+      website: websiteUrl
     })
     router.push(`/companies/${newCompany.id}`)
   } catch (error) {

@@ -129,7 +129,7 @@
 
 <script setup>
 // Only access auth on client side
-const { user } = process.client ? useAuth() : { user: ref(null) }
+const { user } = useAuth()
 const companyRepository = useCompanyRepository()
 
 // Reactive data
@@ -167,7 +167,8 @@ const companiesStats = computed(() => {
   const oneDayAgo = new Date(today.getTime() - 24 * 60 * 60 * 1000)
   const recentUpdates = recentCompanies.value.filter(company => 
     new Date(company.updated_at) > oneDayAgo
-  ).length
+  ).length || 0
+
   
   return { total, activeTasks, recentUpdates }
 })
