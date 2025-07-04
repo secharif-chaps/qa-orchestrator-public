@@ -1,7 +1,5 @@
 <template>
   <div class="space-y-4 max-w-7xl mx-auto" data-cy="company-search-page">
-
-
     <Card :title="$t('search.title')">
       <div class="flex flex-col gap-4">
       <div class="space-y-6">

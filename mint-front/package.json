@@ -13,7 +13,10 @@
     "test:e2e": "vitest --config vitest.config.e2e.ts",
     "test:unit": "vitest --config vitest.config.unit.ts",
     "test:coverage": "vitest --coverage",
-    "test:watch": "vitest --watch --config vitest.config.unit.ts"
+    "test:watch": "vitest --watch --config vitest.config.unit.ts",
+    "test:all": "yarn test:unit && yarn test:e2e",
+    "dev:test": "concurrently \"yarn dev\" \"yarn test:watch\"",
+    "validate": "yarn test:all"
   },
   "dependencies": {
     "@mistralai/mistralai": "^1.5.0",
