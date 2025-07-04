@@ -5,6 +5,8 @@
 /* this contains the default theme, these are optional styles */
 @import '@vue-flow/core/dist/theme-default.css';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --spacing-6: 1.5rem;
   --rounded-lg: 0.5rem;

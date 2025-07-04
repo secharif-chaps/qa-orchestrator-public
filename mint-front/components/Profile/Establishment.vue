@@ -2,7 +2,7 @@
   <Card>
     <div class="text-center space-y-2">
       <div
-        class="bg-emerald-100 lg:w-2/3 text-emerald-600 mx-auto px-2 py-2 rounded"
+        class="bg-emerald-100 dark:bg-emerald-400/10 lg:w-2/3 text-emerald-600 dark:text-emerald-400 mx-auto px-2 py-2 rounded"
       >
         <span >
           {{

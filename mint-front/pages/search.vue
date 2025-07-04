@@ -1,9 +1,16 @@
 <template>
-  <div class="space-y-4 max-w-7xl mx-auto" data-cy="company-search-page">
-    <Card :title="$t('search.title')">
-      <div class="flex flex-col gap-4">
-      <div class="space-y-6">
-        <div class="space-y-2">
+  <div class="max-w-4xl mx-auto space-y-6" data-cy="company-search-page">
+    <!-- Page Header -->
+    <div class="text-center space-y-2">
+      <h1 class="text-3xl font-semibold text-slate-900 dark:text-slate-100">{{ $t('search.title') }}</h1>
+      <p class="text-slate-600 dark:text-slate-400">{{ $t('search.companyIdentity') }}</p>
+    </div>
+
+    <!-- Search Form Card -->
+    <Card :title="$t('search.companyIdentity')">
+      <form @submit.prevent="startSearch" class="space-y-6">
+        <!-- Form Fields -->
+        <div class="space-y-4">
           <OInput
             id="company"
             v-model="company"
@@ -12,11 +19,9 @@
             data-cy="company-name-input"
             required
             :label="$t('search.fields.companyName.label')"
-          >
-          </OInput>
-        </div>
+            icon="fas fa-building"
+          />
 
-        <div class="space-y-2">
           <OInput
             id="website"
             v-model="website"
@@ -25,32 +30,46 @@
             data-cy="website-input"
             required
             :label="$t('search.fields.website.label')"
-          >
-          </OInput>
-
+            icon="fas fa-globe"
+          />
         </div>
-      </div>
-      <div class="w-full flex items-center justify-end">
-        <div class="flex space-x-2">
+
+        <!-- Help Text -->
+        <div class="bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-4">
+          <div class="flex items-start space-x-3">
+            <i class="fas fa-info-circle text-primary mt-0.5"></i>
+            <div>
+              <p class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ $t('search.mandatoryFields') }}</p>
+              <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                Provide both company name and website to start the search process.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-between pt-4">
           <OButton
             :label="$t('search.actions.deleteData')"
-            type="tertiary"
+            type="secondary"
+            color="slate"
+            icon="fas fa-trash"
             :disabled="pending || (!company.trim() && !website.trim())"
             data-cy="delete-data-button"
             @click="resetData()"
           />
           <OButton
+            :label="$t('search.actions.launchSearch')"
+            type="primary"
+            icon="fas fa-search"
             :loading="pending"
             :disabled="pending || !isFormValid"
-            @click="startSearch()"
-            :label="$t('search.actions.launchSearch')"
             data-cy="launch-search-button"
+            submit
           />
         </div>
-      </div>
-    </div>
+      </form>
     </Card>
-
   </div>
 </template>
 

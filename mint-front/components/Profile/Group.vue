@@ -5,7 +5,7 @@
       <!-- Group name - individual property loading -->
       <div
 
-        class="text-secondary"
+        class="text-secondary dark:text-slate-400"
       >
         {{ getSourcedValue(company?.profile?.groupName) ?? 'Not found' }}
         <Source :sourced-value="company?.profile?.groupName" />

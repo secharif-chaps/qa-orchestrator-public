@@ -1,14 +1,13 @@
 <template>
-  <div class="max-w-7xl mx-auto grid grid-cols-12 gap-4">
+  <div class="max-w-7xl mx-auto grid grid-cols-12 gap-4 px-4 sm:px-6 lg:px-8">
     <!-- Back button -->
     <div class="col-span-12">
       <OButton
         type="secondary"
         icon="fa-arrow-left"
+        :label="'Back'"
         @click="$router.back()"
-      >
-        Back
-      </OButton>
+      />
     </div>
 
     <!-- Title and buttons -->
@@ -18,15 +17,15 @@
           :icon="icon"
           type="secondary"
         ></OIcon>
-        <h1 class="text-3xl">{{ title }}</h1>
+        <h1 class="text-3xl font-semibold text-slate-900 dark:text-slate-100">{{ title }}</h1>
       </div>
       <div class="flex gap-2">
         <OButton
           type="secondary"
+          :label="showAiChat ? 'Hide AI Chat' : 'Ask our AI'"
           @click="showAiChat = !showAiChat"
           icon="fa-comment"
-          >{{ showAiChat ? 'Hide AI Chat' : 'Ask our AI' }}</OButton
-        >
+        />
         <slot name="actions"></slot>
         <Export />
       </div>

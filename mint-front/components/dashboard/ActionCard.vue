@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer group h-full"
+  <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-6 hover:shadow-lg hover:border-primary/50 transition-all cursor-pointer group h-full"
        @click="handleClick">
     <div class="flex items-center h-full">
       <div class="flex-shrink-0">
@@ -9,8 +9,8 @@
         </div>
       </div>
       <div class="ml-4 flex-1">
-        <h3 class="text-lg font-medium text-gray-900">{{ title }}</h3>
-        <p class="text-sm text-gray-500">{{ description }}</p>
+        <h3 class="text-lg font-medium text-slate-900 dark:text-slate-100 group-hover:text-primary transition-colors">{{ title }}</h3>
+        <p class="text-sm text-slate-500 dark:text-slate-400">{{ description }}</p>
       </div>
     </div>
   </div>
@@ -52,11 +52,31 @@ const props = defineProps({
 const emit = defineEmits(['click'])
 
 // Computed properties for styling
-const iconClass = computed(() => `fas fa-${props.icon} text-${props.color}-600`)
+const iconClass = computed(() => {
+  const colorMap = {
+    blue: 'text-blue-600 dark:text-blue-400',
+    green: 'text-green-600 dark:text-green-400',
+    purple: 'text-purple-600 dark:text-purple-400',
+    orange: 'text-orange-600 dark:text-orange-400',
+    red: 'text-red-600 dark:text-red-400',
+    yellow: 'text-yellow-600 dark:text-yellow-400',
+    indigo: 'text-indigo-600 dark:text-indigo-400'
+  }
+  const colorClass = colorMap[props.color] || colorMap.blue
+  return `fas fa-${props.icon} ${colorClass}`
+})
 
 const iconBackgroundClass = computed(() => {
-  const baseClasses = `bg-${props.color}-100 group-hover:bg-${props.color}-200`
-  return baseClasses
+  const colorMap = {
+    blue: 'bg-blue-100 dark:bg-blue-900/30 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50',
+    green: 'bg-green-100 dark:bg-green-900/30 group-hover:bg-green-200 dark:group-hover:bg-green-900/50',
+    purple: 'bg-purple-100 dark:bg-purple-900/30 group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50',
+    orange: 'bg-orange-100 dark:bg-orange-900/30 group-hover:bg-orange-200 dark:group-hover:bg-orange-900/50',
+    red: 'bg-red-100 dark:bg-red-900/30 group-hover:bg-red-200 dark:group-hover:bg-red-900/50',
+    yellow: 'bg-yellow-100 dark:bg-yellow-900/30 group-hover:bg-yellow-200 dark:group-hover:bg-yellow-900/50',
+    indigo: 'bg-indigo-100 dark:bg-indigo-900/30 group-hover:bg-indigo-200 dark:group-hover:bg-indigo-900/50'
+  }
+  return colorMap[props.color] || colorMap.blue
 })
 
 // Handle click events

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col h-[calc(80vh-5rem)] overflow-y-auto rounded-xl bg-white p-4"
+    class="flex flex-col h-[calc(80vh-5rem)] overflow-y-auto rounded-xl bg-white dark:bg-slate-800 p-4"
   >
     <div
       class="flex gap-4 items-center justify-between border-b pb-4 border-primary text-secondary"
@@ -31,8 +31,8 @@
         <div
           class="text-xs p-4 inline-block rounded-xl"
           :class="{
-            'bg-bg3': message.from === 'ai',
-            'bg-primary/10 text-primary': message.from === 'user',
+            'bg-bg3 dark:bg-slate-900': message.from === 'ai',
+            'bg-primary/10 text-primary dark:bg-primary/10 dark:text-primary': message.from === 'user',
           }"
           v-html="formatMarkdown(message.text)"
         ></div>
@@ -48,7 +48,7 @@
         @keyup.enter="sendMessage"
         v-model="question"
         placeholder="Write a message..."
-        class="w-full h-32 bg-bg3 border border-border-2 rounded-lg p-2 text-sm focus-within:outline-primary"
+        class="w-full h-32 bg-bg3 dark:bg-slate-900 border border-border-2 dark:border-slate-700 rounded-lg p-2 text-sm focus-within:outline-primary"
         @keydown.enter.ctrl.prevent="sendMessage"
         :disabled="isLoading"
       ></textarea>

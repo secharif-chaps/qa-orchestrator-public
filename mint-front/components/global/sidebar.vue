@@ -13,8 +13,8 @@
                 class="relative mx-auto flex h-10 w-10 items-center justify-center rounded-md"
                 :class="[
                   isActive(button.to)
-                    ? 'bg-white text-indigo-600'
-                    : 'group-hover:bg-indigo-700 group-hover:text-white'
+                    ? 'bg-white text-primary'
+                    : 'group-hover:bg-primary group-hover:text-white'
                 ]"
               >
                 <i
@@ -43,8 +43,8 @@
                 class="relative mx-auto flex h-10 w-10 items-center justify-center rounded-md"
                 :class="[
                   isActive(button.to)
-                    ? 'bg-white text-indigo-600'
-                    : 'group-hover:bg-indigo-700 group-hover:text-white'
+                    ? 'bg-white text-primary'
+                    : 'group-hover:bg-primary group-hover:text-white'
                 ]"
               >
                 <i
@@ -81,7 +81,7 @@ const buttons = computed(() => [
 ])
 
 const actions = computed(() => [
-  { icon: 'fa fa-cog', label: t('sidebar.settings'), to: '/settings' },
+  { icon: 'fa fa-cog', label: t('sidebar.settings'), to: '/account' },
   { icon: 'fa fa-question', label: t('sidebar.help'), to: '/help' }
 ])
 

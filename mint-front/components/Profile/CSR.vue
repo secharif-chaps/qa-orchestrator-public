@@ -13,7 +13,7 @@
       <div class="p-4">
         <ul class="list-disc">
           <li
-            class="space-x-2 text-secondary"
+            class="space-x-2 text-secondary dark:text-slate-400"
             v-for="initiative in company?.csr?.responsibility_initiatives || []"
           >
             <span class="text-sm">
@@ -23,7 +23,7 @@
           </li>
           <li
             v-if="company?.csr?.responsibility_initiatives?.length === 0"
-            class="text-sm text-secondary italic"
+            class="text-sm text-secondary dark:text-slate-400 italic"
           >
             {{ $t('common.notFound') }}
           </li>
@@ -33,7 +33,7 @@
       <!-- Charity Actions - individual property loading -->
       <div>{{ $t('profile.sections.csr.charity') }}</div>
       <div class="p-4">
-        <span class="text-sm text-secondary" v-if="company?.csr?.charity_actions">
+        <span class="text-sm text-secondary dark:text-slate-400" v-if="company?.csr?.charity_actions">
           {{
             (company?.csr?.charity_actions.map((action: { value: string }) => action.value) || []).join(', ') ||
             $t('common.notFound')

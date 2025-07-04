@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-white rounded-lg overflow-hidden">
+  <div class="bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
 
 
     <button
-      class="w-full px-4 py-3 bg-white flex items-center justify-between text-left border-b border-gray-200 cursor-pointer"
+      class="w-full px-4 py-3 bg-white dark:bg-slate-800 flex items-center justify-between text-left border-b border-gray-200 dark:border-slate-700 cursor-pointer"
       @click="isOpen = !isOpen"
       :class="{
         'border-b-0': !isOpen
@@ -22,7 +22,7 @@
     </button>
     
     <div v-show="isOpen" class="p-6">
-      <div class="h-96 w-full bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg relative overflow-hidden">
+      <div class="h-96 w-full bg-slate-100 dark:bg-slate-800 rounded-lg relative overflow-hidden">
         <VueFlow
           class="h-full"
           :nodes="flowNodes"
@@ -140,7 +140,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const isOpen = ref(true)
+const isOpen = ref(false)
 const taskStore = useTaskStore()
 const isWorkflowPaused = ref(false)
 const { fitView } = useVueFlow()
@@ -326,8 +326,8 @@ const completedCount = computed(() =>
 )
 
 watch(completedCount, (newCount) => {
-  if (newCount >= 8) {
-    isOpen.value = false
+  if (newCount < 8) {
+    isOpen.value = true
   }
 })
 

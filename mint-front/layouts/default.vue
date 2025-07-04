@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-bg3 min-h-screen h-full min-w-screen w-full">
+  <div class="bg-bg3 dark:bg-slate-900 min-h-screen h-full min-w-screen w-full">
     <Appbar />
     <div class="flex h-full">
       <Sidebar />

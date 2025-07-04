@@ -5,11 +5,11 @@
     <!-- Empty state -->
     <Card v-if="!hasTeamData && !teamPending">
       <div class="text-center py-8">
-        <div class="text-5xl text-slate-300 mb-4">
+        <div class="text-5xl text-slate-300 dark:text-slate-600 mb-4">
           <i class="fa fa-users"></i>
         </div>
-        <h3 class="text-xl font-semibold mb-2">{{ $t('team.noData.title') }}</h3>
-        <p class="text-slate-500 mb-6">
+        <h3 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">{{ $t('team.noData.title') }}</h3>
+        <p class="text-slate-500 dark:text-slate-400 mb-6">
           {{ $t('team.noData.description') }}
         </p>
       </div>
@@ -20,7 +20,7 @@
       <Card>
         <div class="flex items-center gap-2 text-primary mb-4">
           <i class="fa fa-sitemap"></i>
-          <span>{{ $t('team.hierarchy.title') }}</span>
+          <span class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ $t('team.hierarchy.title') }}</span>
         </div>
         <ClientOnly>
           <div class="h-[500px] w-full relative">
@@ -39,7 +39,7 @@
                   applyLayoutAndFitView()
                 }
               "
-              class="bg-bg3 rounded-lg"
+              class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg"
             >
               <template #node-team-member="props">
                 <TeamMemberNode
@@ -50,7 +50,7 @@
                   @click="openTeamMemberCard(props.data)"
                 />
               </template>
-              <Background :color="'#CBD5E1'" :size="4" :gap="60" />
+              <Background :color="isDark ? 'var(--color-slate-900)' : '#CBD5E1'" :size="4" :gap="60" />
 
               <Panel
                 position="top-left"
@@ -131,6 +131,8 @@ import TaskState from '~/components/TaskState.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+
+const { isDark } = useTheme()
 
 // Set page metadata
 useHead({

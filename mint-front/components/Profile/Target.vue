@@ -13,7 +13,7 @@
       <div
         v-if="company?.products?.customerType"
       >
-        <span class="text-sm text-secondary">
+        <span class="text-sm text-secondary dark:text-slate-400">
           {{
             
               company?.products?.customerType
@@ -24,7 +24,7 @@
       </div>
       <div
         v-else
-        class="text-secondary italic"
+        class="text-secondary dark:text-slate-400 italic"
       >
         {{ $t('common.loading') }}
       </div>
@@ -34,7 +34,7 @@
       <div
         v-if="company?.products?.marketingPositioning"
       >
-        <span class="text-sm text-secondary">
+        <span class="text-sm text-secondary dark:text-slate-400">
           {{
             
               company?.products?.marketingPositioning
@@ -45,7 +45,7 @@
       </div>
       <div
         v-else
-        class="text-secondary italic"
+        class="text-secondary dark:text-slate-400 italic"
       >
         {{ $t('common.loading') }}
       </div>

@@ -15,6 +15,242 @@ export default {
       description: 'Manage your notification preferences'
     }
   },
+  account: {
+    title: 'Account Settings',
+    description: 'Manage your account information and preferences',
+    tabs: {
+      profile: 'Profile',
+      appearance: 'Appearance',
+      preferences: 'Preferences',
+      security: 'Security'
+    },
+    profile: {
+      error: {
+        title: 'Error loading profile'
+      },
+      basic: {
+        title: 'Basic Information',
+        description: 'Your personal account details'
+      },
+      auth: {
+        title: 'Authentication Details',
+        description: 'Session and authentication information'
+      },
+      roles: {
+        title: 'Roles & Permissions',
+        description: 'Your assigned roles and access levels',
+        none: 'No roles assigned'
+      },
+      debug: {
+        title: 'Debug Information',
+        description: 'Technical details for debugging purposes'
+      },
+      fields: {
+        username: 'Username',
+        email: 'Email',
+        firstName: 'First Name',
+        lastName: 'Last Name',
+        userId: 'User ID',
+        expiresAt: 'Token Expires At',
+        issuedAt: 'Issued At',
+        sessionState: 'Session State'
+      },
+      status: {
+        active: 'Active',
+        expired: 'Expired'
+      },
+      actions: {
+        refresh: 'Refresh Profile',
+        signOut: 'Sign Out'
+      }
+    },
+    appearance: {
+      theme: {
+        title: 'Theme',
+        description: 'Choose your preferred theme',
+        options: {
+          light: {
+            title: 'Light',
+            description: 'Clean and bright interface'
+          },
+          dark: {
+            title: 'Dark',
+            description: 'Easy on the eyes in low light'
+          },
+          system: {
+            title: 'System',
+            description: 'Matches your device preference'
+          }
+        }
+      },
+      language: {
+        title: 'Language',
+        description: 'Select your preferred language'
+      },
+      layout: {
+        title: 'Layout Preferences',
+        description: 'Customize the interface layout',
+        compact: {
+          title: 'Compact Mode',
+          description: 'Reduce spacing for more content'
+        },
+        reducedMotion: {
+          title: 'Reduced Motion',
+          description: 'Minimize animations and transitions'
+        }
+      },
+      preview: {
+        title: 'Theme Preview',
+        description: 'See how your theme looks',
+        sample: 'This is a sample of your current theme',
+        tag1: 'Sample',
+        tag2: 'Preview'
+      }
+    },
+    preferences: {
+      notifications: {
+        title: 'Notifications',
+        description: 'Control when and how you receive notifications',
+        email: {
+          title: 'Email Notifications',
+          options: {
+            welcome: {
+              title: 'Welcome emails',
+              description: 'Receive welcome messages and getting started guides'
+            },
+            updates: {
+              title: 'Product updates',
+              description: 'News about new features and improvements'
+            },
+            security: {
+              title: 'Security alerts',
+              description: 'Important security and account notifications'
+            },
+            marketing: {
+              title: 'Marketing emails',
+              description: 'Promotional content and special offers'
+            }
+          }
+        },
+        push: {
+          title: 'Push Notifications',
+          options: {
+            mentions: {
+              title: 'Mentions',
+              description: 'When someone mentions you'
+            },
+            messages: {
+              title: 'Direct messages',
+              description: 'New direct messages and replies'
+            },
+            updates: {
+              title: 'System updates',
+              description: 'Important system notifications'
+            }
+          }
+        }
+      },
+      privacy: {
+        title: 'Data & Privacy',
+        description: 'Manage your data and privacy settings',
+        analytics: {
+          title: 'Analytics',
+          description: 'Help improve the service by sharing usage data'
+        },
+        export: {
+          title: 'Export Data',
+          description: 'Download a copy of your data'
+        },
+        delete: {
+          title: 'Delete Account',
+          description: 'Permanently delete your account and all data',
+          dialog: {
+            title: 'Delete Account',
+            description: 'This action cannot be undone. All your data will be permanently deleted.'
+          }
+        }
+      },
+      actions: {
+        cancel: 'Cancel',
+        save: 'Save Changes',
+        export: 'Export Data',
+        deleteAccount: 'Delete Account'
+      },
+      behavior: {
+        title: 'Behavior',
+        description: 'Customize how the application behaves',
+        autoSave: {
+          title: 'Auto-save',
+          description: 'Automatically save changes as you work'
+        },
+        confirmations: {
+          title: 'Show confirmations',
+          description: 'Ask for confirmation before important actions'
+        }
+      }
+    },
+    security: {
+      sessions: {
+        title: 'Session Management',
+        description: 'Manage your active sessions and devices',
+        current: {
+          title: 'Current Session',
+          badge: 'Current',
+          lastActive: 'Last active'
+        },
+        lastActive: 'Last active',
+        signOutAll: {
+          title: 'Sign out all devices',
+          description: 'Sign out of all other sessions and devices'
+        }
+      },
+      twoFactor: {
+        title: 'Two-Factor Authentication',
+        description: 'Add an extra layer of security to your account',
+        authenticator: {
+          title: 'Authenticator App',
+          description: 'Use an authenticator app for secure login'
+        },
+        securityKeys: {
+          title: 'Security Keys',
+          description: 'Use hardware security keys for login',
+          count: 'keys'
+        }
+      },
+      activity: {
+        title: 'Activity Log',
+        description: 'Recent security and account activity'
+      },
+      recovery: {
+        title: 'Account Recovery',
+        description: 'Set up recovery options for your account',
+        backupCodes: {
+          title: 'Backup Codes',
+          description: 'Generate backup codes for account recovery'
+        },
+        email: {
+          title: 'Recovery Email',
+          notSet: 'No recovery email set'
+        }
+      },
+      status: {
+        enabled: 'Enabled',
+        disabled: 'Disabled',
+        generated: 'Generated',
+        notGenerated: 'Not Generated'
+      },
+      actions: {
+        setup: 'Setup',
+        disable: 'Disable',
+        manage: 'Manage',
+        generate: 'Generate',
+        regenerate: 'Regenerate',
+        add: 'Add',
+        update: 'Update',
+        revoke: 'Revoke'
+      }
+    }
+  },
   sidebar: {
     home: 'Home',
     search: 'Search',
@@ -275,6 +511,7 @@ export default {
     },
     list: {
       title: 'Companies',
+      description: 'Manage your company database',
       create: {
         title: 'Create New Company',
         name: {

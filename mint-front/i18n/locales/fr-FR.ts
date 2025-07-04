@@ -15,6 +15,242 @@ export default {
       description: 'Gérez vos préférences de notification'
     }
   },
+  account: {
+    title: 'Paramètres du compte',
+    description: 'Gérez les informations de votre compte et vos préférences',
+    tabs: {
+      profile: 'Profil',
+      appearance: 'Apparence',
+      preferences: 'Préférences',
+      security: 'Sécurité'
+    },
+    profile: {
+      error: {
+        title: 'Erreur lors du chargement du profil'
+      },
+      basic: {
+        title: 'Informations de base',
+        description: 'Détails personnels de votre compte'
+      },
+      auth: {
+        title: 'Détails d\'authentification',
+        description: 'Informations de session et d\'authentification'
+      },
+      roles: {
+        title: 'Rôles et permissions',
+        description: 'Vos rôles assignés et niveaux d\'accès',
+        none: 'Aucun rôle assigné'
+      },
+      debug: {
+        title: 'Informations de débogage',
+        description: 'Détails techniques pour le débogage'
+      },
+      fields: {
+        username: 'Nom d\'utilisateur',
+        email: 'E-mail',
+        firstName: 'Prénom',
+        lastName: 'Nom de famille',
+        userId: 'ID utilisateur',
+        expiresAt: 'Le token expire le',
+        issuedAt: 'Émis le',
+        sessionState: 'État de la session'
+      },
+      status: {
+        active: 'Actif',
+        expired: 'Expiré'
+      },
+      actions: {
+        refresh: 'Actualiser le profil',
+        signOut: 'Se déconnecter'
+      }
+    },
+    appearance: {
+      theme: {
+        title: 'Thème',
+        description: 'Choisissez votre thème préféré',
+        options: {
+          light: {
+            title: 'Clair',
+            description: 'Interface propre et lumineuse'
+          },
+          dark: {
+            title: 'Sombre',
+            description: 'Repose les yeux en faible luminosité'
+          },
+          system: {
+            title: 'Système',
+            description: 'Correspond à la préférence de votre appareil'
+          }
+        }
+      },
+      language: {
+        title: 'Langue',
+        description: 'Sélectionnez votre langue préférée'
+      },
+      layout: {
+        title: 'Préférences de mise en page',
+        description: 'Personnalisez la mise en page de l\'interface',
+        compact: {
+          title: 'Mode compact',
+          description: 'Réduire l\'espacement pour plus de contenu'
+        },
+        reducedMotion: {
+          title: 'Mouvements réduits',
+          description: 'Minimiser les animations et transitions'
+        }
+      },
+      preview: {
+        title: 'Aperçu du thème',
+        description: 'Voyez à quoi ressemble votre thème',
+        sample: 'Ceci est un échantillon de votre thème actuel',
+        tag1: 'Exemple',
+        tag2: 'Aperçu'
+      }
+    },
+    preferences: {
+      notifications: {
+        title: 'Notifications',
+        description: 'Contrôlez quand et comment vous recevez les notifications',
+        email: {
+          title: 'Notifications par e-mail',
+          options: {
+            welcome: {
+              title: 'E-mails de bienvenue',
+              description: 'Recevoir des messages de bienvenue et guides de démarrage'
+            },
+            updates: {
+              title: 'Mises à jour produit',
+              description: 'Actualités sur les nouvelles fonctionnalités et améliorations'
+            },
+            security: {
+              title: 'Alertes de sécurité',
+              description: 'Notifications importantes de sécurité et de compte'
+            },
+            marketing: {
+              title: 'E-mails marketing',
+              description: 'Contenu promotionnel et offres spéciales'
+            }
+          }
+        },
+        push: {
+          title: 'Notifications push',
+          options: {
+            mentions: {
+              title: 'Mentions',
+              description: 'Quand quelqu\'un vous mentionne'
+            },
+            messages: {
+              title: 'Messages directs',
+              description: 'Nouveaux messages directs et réponses'
+            },
+            updates: {
+              title: 'Mises à jour système',
+              description: 'Notifications système importantes'
+            }
+          }
+        }
+      },
+      privacy: {
+        title: 'Données et confidentialité',
+        description: 'Gérez vos paramètres de données et de confidentialité',
+        analytics: {
+          title: 'Analytiques',
+          description: 'Aidez à améliorer le service en partageant les données d\'utilisation'
+        },
+        export: {
+          title: 'Exporter les données',
+          description: 'Télécharger une copie de vos données'
+        },
+        delete: {
+          title: 'Supprimer le compte',
+          description: 'Supprimer définitivement votre compte et toutes les données',
+          dialog: {
+            title: 'Supprimer le compte',
+            description: 'Cette action ne peut pas être annulée. Toutes vos données seront définitivement supprimées.'
+          }
+        }
+      },
+      actions: {
+        cancel: 'Annuler',
+        save: 'Enregistrer les modifications',
+        export: 'Exporter les données',
+        deleteAccount: 'Supprimer le compte'
+      },
+      behavior: {
+        title: 'Comportement',
+        description: 'Personnalisez le comportement de l\'application',
+        autoSave: {
+          title: 'Sauvegarde automatique',
+          description: 'Sauvegarder automatiquement les modifications pendant le travail'
+        },
+        confirmations: {
+          title: 'Afficher les confirmations',
+          description: 'Demander confirmation avant les actions importantes'
+        }
+      }
+    },
+    security: {
+      sessions: {
+        title: 'Gestion des sessions',
+        description: 'Gérez vos sessions actives et appareils',
+        current: {
+          title: 'Session actuelle',
+          badge: 'Actuelle',
+          lastActive: 'Dernière activité'
+        },
+        lastActive: 'Dernière activité',
+        signOutAll: {
+          title: 'Déconnecter tous les appareils',
+          description: 'Se déconnecter de toutes les autres sessions et appareils'
+        }
+      },
+      twoFactor: {
+        title: 'Authentification à deux facteurs',
+        description: 'Ajoutez une couche de sécurité supplémentaire à votre compte',
+        authenticator: {
+          title: 'Application d\'authentification',
+          description: 'Utilisez une application d\'authentification pour une connexion sécurisée'
+        },
+        securityKeys: {
+          title: 'Clés de sécurité',
+          description: 'Utilisez des clés de sécurité matérielles pour la connexion',
+          count: 'clés'
+        }
+      },
+      activity: {
+        title: 'Journal d\'activité',
+        description: 'Activité récente de sécurité et de compte'
+      },
+      recovery: {
+        title: 'Récupération de compte',
+        description: 'Configurez les options de récupération pour votre compte',
+        backupCodes: {
+          title: 'Codes de sauvegarde',
+          description: 'Générer des codes de sauvegarde pour la récupération de compte'
+        },
+        email: {
+          title: 'E-mail de récupération',
+          notSet: 'Aucun e-mail de récupération défini'
+        }
+      },
+      status: {
+        enabled: 'Activé',
+        disabled: 'Désactivé',
+        generated: 'Généré',
+        notGenerated: 'Non généré'
+      },
+      actions: {
+        setup: 'Configurer',
+        disable: 'Désactiver',
+        manage: 'Gérer',
+        generate: 'Générer',
+        regenerate: 'Régénérer',
+        add: 'Ajouter',
+        update: 'Mettre à jour',
+        revoke: 'Révoquer'
+      }
+    }
+  },
   sidebar: {
     home: 'Accueil',
     search: 'Recherche',
@@ -280,8 +516,9 @@ export default {
     },
     list: {
       title: 'Entreprises',
+      description: 'Gérez votre base de données d\'entreprises',
       create: {
-        title: 'Créer une Nouvelle Entreprise',
+        title: 'Nouveau Screen',
         name: {
           label: 'Nom de l\'Entreprise',
           placeholder: 'Entrez le nom de l\'entreprise'

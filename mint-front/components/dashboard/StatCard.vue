@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-md p-6 flex items-center">
+  <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-6 flex items-center">
     <div class="flex items-center w-full">
       <div class="flex-shrink-0">
         <div class="w-12 h-12 rounded-lg flex items-center justify-center"
@@ -8,9 +8,9 @@
         </div>
       </div>
       <div class="ml-4 flex-1">
-        <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wide">{{ title }}</h4>
-        <p class="text-2xl font-bold text-gray-900">{{ formattedValue }}</p>
-        <p v-if="subtitle" class="text-xs text-gray-400 mt-1">{{ subtitle }}</p>
+        <h4 class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{{ title }}</h4>
+        <p class="text-2xl font-bold text-slate-900 dark:text-slate-100">{{ formattedValue }}</p>
+        <p v-if="subtitle" class="text-xs text-slate-400 dark:text-slate-500 mt-1">{{ subtitle }}</p>
       </div>
     </div>
   </div>
@@ -46,9 +46,32 @@ const props = defineProps({
 })
 
 // Computed properties for styling
-const iconClass = computed(() => `fas fa-${props.icon} text-${props.color}-600`)
+const iconClass = computed(() => {
+  const colorMap = {
+    blue: 'text-blue-600 dark:text-blue-400',
+    green: 'text-green-600 dark:text-green-400',
+    purple: 'text-purple-600 dark:text-purple-400',
+    orange: 'text-orange-600 dark:text-orange-400',
+    red: 'text-red-600 dark:text-red-400',
+    yellow: 'text-yellow-600 dark:text-yellow-400',
+    indigo: 'text-indigo-600 dark:text-indigo-400'
+  }
+  const colorClass = colorMap[props.color] || colorMap.indigo
+  return `fas fa-${props.icon} ${colorClass}`
+})
 
-const iconBackgroundClass = computed(() => `bg-${props.color}-100`)
+const iconBackgroundClass = computed(() => {
+  const colorMap = {
+    blue: 'bg-blue-100 dark:bg-blue-900/30',
+    green: 'bg-green-100 dark:bg-green-900/30',
+    purple: 'bg-purple-100 dark:bg-purple-900/30',
+    orange: 'bg-orange-100 dark:bg-orange-900/30',
+    red: 'bg-red-100 dark:bg-red-900/30',
+    yellow: 'bg-yellow-100 dark:bg-yellow-900/30',
+    indigo: 'bg-indigo-100 dark:bg-indigo-900/30'
+  }
+  return colorMap[props.color] || colorMap.indigo
+})
 
 const formattedValue = computed(() => {
   if (props.loading) return '...'

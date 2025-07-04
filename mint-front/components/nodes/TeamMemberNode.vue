@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white p-4 rounded-lg shadow-lg w-[300px] hover:ring-4"
+    class="bg-white dark:bg-slate-900 p-4 rounded-lg shadow-lg w-[300px] hover:ring-4"
     :class="{
       ' ring-purple-600': data.level <= 1,
       ' ring-orange-400': data.level > 1,
@@ -8,7 +8,7 @@
     }"
   >
     <div class="flex items-center gap-2">
-      <div class="size-10 rounded-full bg-slate-200 flex items-center justify-center shrink-0">
+      <div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
         <i class="fa fa-user text-bg1"></i>
       </div>
       <div class="flex flex-col">
@@ -20,7 +20,7 @@
     <Handle
       type="target"
       :position="Position.Top"
-      class="!border-4"
+      class="!border-4 !bg-white dark:!bg-slate-900 !border-slate-200 dark:!border-slate-700"
       :class="{
         'opacity-0': data.level === 0,
         '!bg-purple-600': data.level === 1,

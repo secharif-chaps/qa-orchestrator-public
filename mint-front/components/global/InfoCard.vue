@@ -5,7 +5,7 @@
     :class="{ 'pointer-events-none opacity-50': disabled }"
   >
     <div
-      class="bg-bg3 rounded-lg p-6 h-full hover:shadow-lg transition-shadow duration-300 flex flex-col gap-2"
+      class="bg-bg3 dark:bg-slate-900 rounded-lg p-6 h-full hover:shadow-lg transition-shadow duration-300 flex flex-col gap-2"
     >
       <div class="flex justify-between items-center">
         <OIcon

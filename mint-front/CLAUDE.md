@@ -299,28 +299,65 @@ import { OButton, OInput, OTable } from '@owlint/feathers-vue'
 
 #### Reka UI Components (Headless + Style with Tailwind)
 ```typescript
-// ✅ SECONDARY COMPONENTS - Use when @owlint unavailable
-Accordion        // Collapsible content
-AlertDialog      // Confirmation dialogs
-Avatar           // User avatars
-Calendar         // Date picker (ADVANCED)
-Card             // Content containers
-Combobox         // Searchable dropdowns
-DatePicker       // Date selection (ADVANCED)
-Dialog           // Modal overlays
-DropdownMenu     // Context menus
-NavigationMenu   // Navigation systems
-Popover          // Overlay positioning
-Progress         // Progress bars
+// ✅ FORM COMPONENTS - Use when @owlint unavailable
+Checkbox         // Checkbox inputs
+Combobox         // Searchable dropdowns  
+Editable         // Inline editing
+Listbox          // List selection
+NumberField      // Number inputs
+Label            // Form labels
+PinInput         // PIN/code inputs
+RadioGroup       // Radio button groups
 Select           // Dropdown selects
 Slider           // Range inputs
+Switch           // Toggle switches
+TagsInput        // Tag input fields
+Toggle           // Toggle buttons
+ToggleGroup      // Toggle button groups
+
+// ✅ DATE COMPONENTS (Advanced)
+Calendar         // Calendar picker
+DateField        // Date input field (Alpha)
+DatePicker       // Date selection (Alpha)
+DateRangeField   // Date range input (Alpha)
+DateRangePicker  // Date range selection (Alpha)
+RangeCalendar    // Range calendar (Alpha)
+TimeField        // Time inputs (Alpha)
+
+// ✅ GENERAL COMPONENTS
+Accordion        // Collapsible content
+AlertDialog      // Confirmation dialogs
+AspectRatio      // Aspect ratio containers
+Avatar           // User avatars
+Collapsible      // Collapsible content
+ContextMenu      // Right-click menus
+Dialog           // Modal overlays
+DropdownMenu     // Context menus
+HoverCard        // Hover overlays
+Menubar          // Menu bars
+NavigationMenu   // Navigation systems
+Pagination       // Pagination controls
+Popover          // Overlay positioning
+Progress         // Progress bars
+ScrollArea       // Custom scrollable areas
+Separator        // Visual separators
+Splitter         // Resizable panels
+Stepper          // Step-by-step navigation (Alpha)
 Tabs             // Tab navigation
 Toast            // Toast notifications
-Toggle           // Toggle switches
+Toolbar          // Toolbars
 Tooltip          // Tooltips
+Tree             // Tree structures (Alpha)
+
+// ❌ NOT AVAILABLE in Reka UI:
+Card             // Use custom component instead
+Button           // Use @owlint OButton instead
+Input            // Use @owlint OInput instead
+Badge            // Use @owlint OBadge instead
+Table            // Use @owlint OTable instead
 
 // ✅ MANDATORY: Always use NAMESPACED syntax for Reka components
-import { Card, Calendar, DatePicker, Combobox, Dialog } from 'reka-ui/namespaced'
+import { Dialog, Calendar, DatePicker, Combobox, Avatar } from 'reka-ui/namespaced'
 ```
 
 ### 🎯 Decision Examples
@@ -337,7 +374,22 @@ import { Card, Calendar, DatePicker, Combobox, Dialog } from 'reka-ui/namespaced
 />
 ```
 
-#### Example 2: User needs a date picker
+#### Example 2: User needs a Card component
+```
+🔍 @owlint/feathers-vue: ❌ No Card component
+🔍 Reka UI: ❌ No Card component
+
+Claude should ask:
+"I found that neither @owlint nor Reka UI have a Card component:
+
+1. 🏗️ **Keep existing custom Card** (components/global/card.vue)
+2. 🆕 **Create enhanced Card** using available components as base
+3. 💡 **Request Card component** from @owlint team
+
+Your current Card component is functional. Would you like to enhance it or keep it as-is?"
+```
+
+#### Example 3: User needs a date picker
 ```
 🔍 @owlint/feathers-vue: ❌ No date picker
 🔍 Reka UI: ✅ Calendar + DatePicker with advanced features
@@ -353,7 +405,7 @@ The Reka DatePicker has these extra features: [list].
 Which approach would you prefer?"
 ```
 
-#### Example 3: User needs a table
+#### Example 4: User needs a table
 ```typescript
 // ✅ @owlint has OTable - use it first
 <OTable 
@@ -382,20 +434,24 @@ Which approach would you prefer?"
 ```vue
 <script setup lang="ts">
 // ✅ MANDATORY: Use namespaced imports for Reka components
-import { Card, Calendar, DatePicker } from 'reka-ui/namespaced'
+import { Dialog, Calendar, DatePicker } from 'reka-ui/namespaced'
 </script>
 
 <template>
   <!-- ✅ GOOD: Apply Tailwind classes with namespaced components -->
-  <Card.Root class="shadow-sm border border-gray-200">
-    <Card.Header>
-      <Card.Title>Settings</Card.Title>
-    </Card.Header>
-    <Card.Content>
-      <Calendar.Root class="border rounded-lg shadow-lg bg-white" />
-      <DatePicker.Root class="w-full px-3 py-2 border border-gray-300 rounded-md" />
-    </Card.Content>
-  </Card.Root>
+  <Dialog.Root>
+    <Dialog.Trigger class="px-4 py-2 bg-blue-500 text-white rounded">
+      Open Dialog
+    </Dialog.Trigger>
+    <Dialog.Portal>
+      <Dialog.Overlay class="fixed inset-0 bg-black/50" />
+      <Dialog.Content class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-lg">
+        <Dialog.Title class="text-lg font-semibold mb-4">Settings</Dialog.Title>
+        <Calendar.Root class="border rounded-lg shadow-lg bg-white" />
+        <DatePicker.Root class="w-full px-3 py-2 border border-gray-300 rounded-md" />
+      </Dialog.Content>
+    </Dialog.Portal>
+  </Dialog.Root>
 
   <!-- ❌ NEVER: Custom CSS -->
   <style>

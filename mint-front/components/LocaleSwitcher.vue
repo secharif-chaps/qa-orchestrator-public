@@ -1,42 +1,45 @@
 <template>
   <div class="locale-switcher">
-
-    <label for="locale-select" class="block text-sm font-medium text-gray-700 mb-2">Language</label>
-    <div class="mt-2 grid grid-cols-1">
-      <select id="locale-select" name="locale-select" v-model="currentLocale" @change="changeLocale" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-bg3 py-1.5 pl-3 pr-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-        <option value="en-US">English</option>
-        <option value="fr-FR">Français</option>
-      </select>
-      <i class="fas fa-chevron-down pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4" aria-hidden="true"></i>
-    </div>
-
+    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{{ $t('settings.language.title') }}</label>
+    
+    <Select.Root v-model="currentLocale" @update:model-value="changeLocale">
+      <Select.Trigger class="w-full appearance-none rounded-md bg-white dark:bg-slate-800 py-1.5 pl-3 pr-8 text-base text-slate-900 dark:text-slate-100 outline outline-1 -outline-offset-1 outline-slate-300 dark:outline-slate-600 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6">
+        <Select.Value />
+        <Select.Icon class="ml-2">
+          <i class="fas fa-chevron-down text-slate-500 dark:text-slate-400" aria-hidden="true"></i>
+        </Select.Icon>
+      </Select.Trigger>
+      
+      <Select.Portal>
+        <Select.Content class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-md shadow-lg">
+          <Select.Viewport class="p-1">
+            <Select.Item value="en-US" class="px-3 py-2 text-sm text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer rounded">
+              <Select.ItemText>English</Select.ItemText>
+            </Select.Item>
+            <Select.Item value="fr-FR" class="px-3 py-2 text-sm text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer rounded">
+              <Select.ItemText>Français</Select.ItemText>
+            </Select.Item>
+          </Select.Viewport>
+        </Select.Content>
+      </Select.Portal>
+    </Select.Root>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import {
-  SelectContent,
-  SelectIcon,
-  SelectItem,
-  SelectItemIndicator,
-  SelectItemText,
-  SelectPortal,
-  SelectRoot,
-  SelectTrigger,
-  SelectValue,
-  SelectViewport,
-} from 'reka-ui'
+import { Select } from 'reka-ui/namespaced'
 
 const { locale } = useI18n()
 const currentLocale = ref(locale.value)
 
 const STORAGE_KEY = 'user-locale'
 
-const changeLocale = () => {
-  locale.value = currentLocale.value
-  localStorage.setItem(STORAGE_KEY, currentLocale.value)
+const changeLocale = (value: string) => {
+  currentLocale.value = value
+  locale.value = value
+  localStorage.setItem(STORAGE_KEY, value)
 }
 
 // Keep the select in sync with the current locale

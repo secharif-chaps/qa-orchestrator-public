@@ -1,62 +1,87 @@
 <template>
-  <div class="relative flex items-start gap-6 pb-4">
+  <div class="relative flex items-start gap-6 pb-6">
     <!-- Date indicator -->
-    <div class="w-36 text-right pt-2">
-      {{ formattedDate }}
+    <div class="w-36 text-right pt-3">
+      <div class="text-sm font-medium text-slate-600 dark:text-slate-400">
+        {{ formattedDate }}
+      </div>
     </div>
 
     <!-- Timeline line -->
-
-    <div class="absolute top-3 left-[163px] w-0.5 h-full bg-border-2"></div>
+    <div class="absolute top-6 left-[163px] w-0.5 h-full bg-slate-200 dark:bg-slate-600"></div>
 
     <!-- Timeline dot -->
     <div class="relative">
-      <div
-        class="absolute top-3 -left-2.5 w-3 h-3 rounded-full bg-primary ring-4 ring-primary/30"
-      ></div>
+      <div class="absolute top-6 -left-2.5 w-4 h-4 rounded-full bg-primary ring-4 ring-primary/20 border-2 border-white dark:border-slate-800"></div>
     </div>
 
     <!-- Event content -->
-    <div class="flex-1 border border-border-2 rounded-lg p-4">
-      <h3 class="text-lg font-bold text-primary">{{ event.title }}</h3>
-      <div class="flex gap-2 mt-2 mb-4 flex-wrap">
-        <span class="bg-bg3 text-xs rounded-full px-3 py-1 text-secondary">
-          <i class="fa fa-clipboard mr-1"></i>
-          {{ event.category }}
-        </span>
-        <span
-          v-if="event.location"
-          class="bg-bg3 text-secondary text-xs rounded-full px-3 py-1"
-        >
-          <i class="fa fa-map-marker-alt mr-1"></i> {{ event.location }}
-        </span>
-      </div>
-      <p class="text-secondary mb-4">{{ event.description }}</p>
-
-      <div
-        v-if="event.impact"
-        class="mt-3"
-      >
-        <div class="text-xs uppercase font-bold text-slate-500 mb-1">
-          Impact
-        </div>
-        <p class="text-sm text-secondary italic">{{ event.impact }}</p>
-      </div>
-
-      <div
-        v-if="event.source"
-        class="mt-4 text-right"
-      >
-        <Source
-          v-if="event.source"
-          :source="event.source"
+    <div class="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+      <!-- Event Header -->
+      <div class="flex items-start justify-between mb-3">
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100 leading-tight">
+          {{ event.title }}
+        </h3>
+        <OIndicator 
+          v-if="getCategoryColor(event.category)"
+          :color="getCategoryColor(event.category)"
+          size="sm"
         />
+      </div>
+
+      <!-- Tags/Badges -->
+      <div class="flex gap-2 mb-4 flex-wrap">
+        <OBadge 
+          :text="event.category"
+          color="primary"
+          size="sm"
+          class="flex items-center gap-1"
+        >
+          <i class="fa fa-clipboard text-xs"></i>
+          {{ event.category }}
+        </OBadge>
+        
+        <OBadge
+          v-if="event.location"
+          :text="event.location"
+          color="slate"
+          size="sm"
+          class="flex items-center gap-1"
+        >
+          <i class="fa fa-map-marker-alt text-xs"></i>
+          {{ event.location }}
+        </OBadge>
+      </div>
+
+      <!-- Description -->
+      <p class="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed">
+        {{ event.description }}
+      </p>
+
+      <!-- Impact Section -->
+      <div v-if="event.impact" class="bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-4 mb-4">
+        <div class="flex items-center gap-2 mb-2">
+          <i class="fa fa-bolt text-yellow-500 text-sm"></i>
+          <span class="text-xs uppercase font-semibold text-slate-600 dark:text-slate-400 tracking-wide">
+            Impact Analysis
+          </span>
+        </div>
+        <p class="text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">
+          {{ event.impact }}
+        </p>
+      </div>
+
+      <!-- Source -->
+      <div v-if="event.source" class="flex justify-end">
+        <Source :source="event.source" />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { OBadge, OIndicator } from '@owlint/feathers-vue'
+
 interface TimelineEvent {
   date: string
   title: string
@@ -70,6 +95,25 @@ interface TimelineEvent {
 const props = defineProps<{
   event: TimelineEvent
 }>()
+
+// Get color for category indicator
+const getCategoryColor = (category: string) => {
+  const categoryColorMap: Record<string, string> = {
+    'funding': 'green',
+    'acquisition': 'blue',
+    'product': 'purple',
+    'expansion': 'orange',
+    'partnership': 'indigo',
+    'leadership': 'pink',
+    'milestone': 'yellow',
+    'award': 'emerald',
+    'regulatory': 'red',
+    'technology': 'cyan'
+  }
+  
+  const normalizedCategory = category.toLowerCase()
+  return categoryColorMap[normalizedCategory] || 'slate'
+}
 
 // Format date for display (handle partial dates like YYYY or YYYY-MM)
 const formattedDate = computed(() => {
@@ -100,11 +144,25 @@ const formattedDate = computed(() => {
 </script>
 
 <style scoped>
-/* Custom timeline styles */
-.bg-primary-50 {
-  background-color: #ebf5ff;
+/* Enhanced timeline styles with animations */
+.timeline-event {
+  animation: slideInFromLeft 0.5s ease-out;
 }
-.text-primary-700 {
-  color: var(--color-primary);
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Hover effects */
+.timeline-event:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
 }
 </style>

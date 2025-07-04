@@ -54,13 +54,13 @@
         '!border-slate-200': data.status === null,
 
       }"
-      class=" !size-3 !border-2 !bg-white"
+      class=" !size-3 !border-2 !bg-white dark:!bg-slate-800"
     />
     <Handle
       v-if="!data.last"
       type="source"
       :position="Position.Right"
-      class="!size-3 !border-2 !bg-white !right-0"
+      class="!size-3 !border-2 !bg-white dark:!bg-slate-800 !right-0"
       :class="{
         '!border-red-400': data.status === 'error',
         '!border-green-400': data.status === 'succeeded',
@@ -109,22 +109,22 @@ const getTaskIcon = (taskType: TaskType): string => {
 
 // Get node styling based on status
 const getNodeClass = (): string => {
-  const baseClasses = 'bg-white border-gray-200'
+  const baseClasses = 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700'
   
   switch (props.data.status) {
     case 'succeeded':
-      return `${baseClasses} border-green-400 shadow-green-100`
+      return `${baseClasses} border-green-400 shadow-green-100 dark:shadow-slate-900`
     case 'error':
-      return `${baseClasses} border-red-400 shadow-red-100`
+      return `${baseClasses} border-red-400 shadow-red-100 dark:shadow-slate-900`
     case 'running':
-      return `${baseClasses} border-orange-400 shadow-orange-100 `
+      return `${baseClasses} border-orange-400 shadow-orange-100 dark:shadow-slate-900`
     case 'pending':
-      return `${baseClasses} border-blue-400 shadow-blue-100`
+      return `${baseClasses} border-blue-400 shadow-blue-100 dark:shadow-slate-900`
     default:
       if (props.data.canTrigger) {
-        return `${baseClasses} border-blue-300 shadow-blue-50 hover:shadow-blue-200`
+        return `${baseClasses} border-blue-300 shadow-blue-50 hover:shadow-blue-200 dark:shadow-slate-900`
       }
-      return `${baseClasses} opacity-60`
+      return `${baseClasses} opacity-60 dark:opacity-40`
   }
 }
 
@@ -132,7 +132,7 @@ const getNodeClass = (): string => {
 const getIconContainerClass = (): string => {
   switch (props.data.status) {
     case 'succeeded':
-      return 'bg-green-100 text-green-600'
+      return 'bg-green-100 text-green-600 dark:bg-green-400/10 dark:text-green-400'
     case 'error':
       return 'bg-red-100 text-red-600'
     case 'running':

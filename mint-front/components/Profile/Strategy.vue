@@ -10,21 +10,21 @@
 
       <!-- Digital Strategy - individual property loading -->
       <div>{{ $t('profile.sections.digital.strategy') }}</div>
-      <div class="text-secondary text-sm">
+      <div class="text-secondary dark:text-slate-400 text-sm">
         {{ getSourcedValue(company?.digital?.strategy) || $t('common.notFound') }}
         <Source :sourced-value="company?.digital?.strategy" />
       </div>
 
       <!-- Loyalty Program - individual property loading -->
       <div>{{ $t('profile.sections.digital.loyaltyProgram') }}</div>
-      <div class="text-secondary text-sm">
+      <div class="text-secondary dark:text-slate-400 text-sm">
         {{ getSourcedValue(company?.digital?.loyaltyProgram) || $t('common.notFound') }}
         <Source :sourced-value="company?.digital?.loyaltyProgram" />
       </div>
 
       <!-- Online Services - individual property loading -->
       <div>{{ $t('profile.sections.digital.onlineServices') }}</div>
-      <div class="text-secondary text-sm">
+      <div class="text-secondary dark:text-slate-400 text-sm">
         {{
           (
             company?.digital?.onlineServices?.map(

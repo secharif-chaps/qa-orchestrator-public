@@ -13,7 +13,7 @@
       class="inline-flex items-center"
     >
       <span
-        class="text-xs bg-slate-100 hover:bg-slate-200 transition-colors rounded-full px-2 py-1"
+        class="text-xs bg-slate-100  dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors rounded-full px-2 py-1"
       >
         {{ getSourcedSourceName(sourcedValue) }}
       </span>
@@ -39,7 +39,7 @@
       class="inline-flex items-center"
     >
       <span
-        class="text-xs bg-slate-100 hover:bg-slate-200 transition-colors rounded-full px-2 py-1"
+        class="text-xs bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors rounded-full px-2 py-1"
       >
         {{ source }}
       </span>

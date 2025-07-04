@@ -2,7 +2,7 @@
   <Card>
     <div class="text-center space-y-2">
       <div
-        class="bg-purple-100 lg:w-2/3 text-purple-500 mx-auto px-2 py-2 rounded"
+        class="bg-purple-100 dark:bg-purple-400/10 lg:w-2/3 text-purple-500 dark:text-purple-400 mx-auto px-2 py-2 rounded"
       >
         <span >
           {{ getSourcedValue(company?.profile?.revenue) ?? $t('common.notFound') }}

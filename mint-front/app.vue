@@ -1,5 +1,8 @@
 <template>
-  <NuxtLayout > <NuxtPage /> </NuxtLayout>
+  <div :class="`${theme}`">
+    <NuxtLayout > <NuxtPage /> </NuxtLayout>
+    {{ theme }}
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -15,4 +18,12 @@ onMounted(() => {
     locale.value = savedLocale
   }
 })
+
+useHead({
+  bodyAttrs: {
+    class: 'bg-bg3 dark:bg-slate-900 text-slate-900 dark:text-slate-100'
+  }
+})
+
+const { theme } = useTheme()
 </script>

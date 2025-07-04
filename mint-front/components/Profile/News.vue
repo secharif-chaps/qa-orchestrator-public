@@ -9,7 +9,7 @@
         <!-- Recent News - individual property loading -->
         <div>
           <ul class="list-disc pl-4">
-            <li class="space-x-2 text-secondary" v-for="news in company?.press?.articles || []">
+            <li class="space-x-2 text-secondary dark:text-slate-400" v-for="news in company?.press?.articles || []">
               <span class="text-sm">
                 {{ getSourcedValue(news) }}
               </span>

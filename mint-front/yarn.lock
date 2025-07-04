@@ -8321,10 +8321,10 @@ regexpp@^3.0.0:
   resolved "https://registry.yarnpkg.com/regexpp/-/regexpp-3.2.0.tgz#0425a2768d8f23bad70ca4b90461fa2f1213e1b2"
   integrity sha512-pq2bWo9mVD43nbts2wGv17XLiNLya+GklZ8kaDLV2Z08gDCsGpnKn9BFMepvWuHCbyVvY7J5o5+BVvoQbmlJLg==
 
-reka-ui@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/reka-ui/-/reka-ui-2.0.2.tgz#1a1991d24f9a346b70b268f8e4ae87ac3a511ff3"
-  integrity sha512-pC2UF6Z+kJF96aJvIErhkSO4DJYIeq9pgvh3pntNqcZb3zFGMzw8h2uny+GnLX2CKiQV54kZNYXxecYIiPMGyg==
+reka-ui@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/reka-ui/-/reka-ui-2.3.2.tgz#aedae51d85dcc61e418f12ffc0b013fccd5bb00c"
+  integrity sha512-lCysSCILH2uqShEnt93/qzlXnB7ySvK7scR0Q5C+a2iXwFVzHhvZQsMaSnbQYueoCihx6yyUZTYECepnmKrbRA==
   dependencies:
     "@floating-ui/dom" "^1.6.13"
     "@floating-ui/vue" "^1.1.6"
@@ -8335,7 +8335,7 @@ reka-ui@^2.0.2:
     "@vueuse/shared" "^12.5.0"
     aria-hidden "^1.2.4"
     defu "^6.1.4"
-    ohash "^1.1.4"
+    ohash "^2.0.11"
 
 require-directory@^2.1.1:
   version "2.1.1"

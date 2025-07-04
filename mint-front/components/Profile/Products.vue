@@ -11,7 +11,7 @@
       <!-- Product Range - individual property loading -->
       <div>{{ $t('profile.sections.products.range') }}</div>
       <div>
-        <span class="text-sm text-secondary">
+        <span class="text-sm text-secondary dark:text-slate-400">
           {{
             (
               company?.products?.range?.map(
@@ -27,7 +27,7 @@
       <div class="pl-4">
         <ul class="list-disc">
           <li
-            class="text-secondary space-x-2"
+            class="text-secondary dark:text-slate-400 space-x-2"
             v-for="brand in company?.products?.partnerBrands ||
             []"
           >
@@ -38,7 +38,7 @@
           </li>
           <li
             v-if="company?.products?.partnerBrands?.length === 0"
-            class="text-sm text-secondary"
+            class="text-sm text-secondary dark:text-slate-400"
           >
             {{ $t('common.notFound') }}
           </li>
@@ -50,7 +50,7 @@
       <div class="pl-4">
         <ul class="list-disc">
           <li
-            class="space-x-2 text-secondary"
+            class="space-x-2 text-secondary dark:text-slate-400"
             v-for="brand in company?.products?.privateLabels ||
             []"
           >
@@ -61,7 +61,7 @@
           </li>
           <li
             v-if="company?.products?.privateLabels?.length === 0"
-            class="text-sm text-secondary"
+            class="text-sm text-secondary dark:text-slate-400"
           >
             {{ $t('common.notFound') }}
           </li>

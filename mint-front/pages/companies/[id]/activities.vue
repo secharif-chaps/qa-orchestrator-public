@@ -13,11 +13,11 @@
       <!-- Main content -->
       <Card v-if="!hasTimelineData && !timelinePending">
         <div class="text-center py-8">
-          <div class="text-5xl text-slate-300 mb-4">
+          <div class="text-5xl text-slate-300 dark:text-slate-600 mb-4">
             <i class="fa fa-calendar-days"></i>
           </div>
-          <h3 class="text-xl font-semibold mb-2">{{ $t('timeline.noData.title') }}</h3>
-          <p class="text-slate-500 mb-6">
+          <h3 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">{{ $t('timeline.noData.title') }}</h3>
+          <p class="text-slate-500 dark:text-slate-400 mb-6">
             {{ $t('timeline.noData.description') }}
           </p>
         </div>
@@ -26,25 +26,24 @@
       <!-- Timeline visualization -->
       <div v-if="hasTimelineData" class="relative">
         <!-- Timeline events -->
-        <div class="card flex flex-col gap-4">
-          <div>
-            <div class="flex items-center justify-between">
-              <div class="flex gap-2 items-center text-primary">
-                <i class="fa fa-list"></i>
-                <span>{{ $t('timeline.title') }}</span>
-              </div>
-              <div>
-                <OInput icon="fa-search" id="search" v-model="searchQuery" :placeholder="$t('timeline.search.placeholder')" />
-              </div>
+        <Card>
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex gap-2 items-center text-primary">
+              <i class="fa fa-list"></i>
+              <span class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ $t('timeline.title') }}</span>
+            </div>
+            <div class="w-64">
+              <OInput icon="fa-search" id="search" v-model="searchQuery" :placeholder="$t('timeline.search.placeholder')" />
             </div>
           </div>
-          <div class="grid grid-cols-1">
+          <div>
             <TimelineEvent v-for="(event, index) in filteredEvents" :key="index" :event="event" />
           </div>
-          <div v-if="filteredEvents.length === 0 && searchQuery" class="text-center py-4">
-            <p class="text-slate-500">{{ $t('timeline.search.noResults', { query: searchQuery }) }}</p>
+          <div v-if="filteredEvents.length === 0 && searchQuery" class="text-center py-8">
+            <i class="fa fa-search text-3xl text-slate-300 dark:text-slate-600 mb-3"></i>
+            <p class="text-slate-500 dark:text-slate-400">{{ $t('timeline.search.noResults', { query: searchQuery }) }}</p>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   </LayoutsCompanyCard>

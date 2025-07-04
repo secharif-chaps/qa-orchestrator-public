@@ -9,9 +9,16 @@
         :loading-title="$t('financials.loading.title')"
         :loading-description="$t('financials.loading.description')"
       />
-      <div>
-        <h1>{{ $t('financials.comingSoon') }}</h1>
-      </div>
+      <!-- Coming Soon State -->
+      <Card>
+        <div class="text-center py-12">
+          <div class="text-5xl text-slate-300 dark:text-slate-600 mb-4">
+            <i class="fa fa-chart-line"></i>
+          </div>
+          <h1 class="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-2">{{ $t('financials.comingSoon') }}</h1>
+          <p class="text-slate-500 dark:text-slate-400">Financial data and analytics will be available soon.</p>
+        </div>
+      </Card>
     </div>
   </LayoutsCompanyCard>
 </template>
