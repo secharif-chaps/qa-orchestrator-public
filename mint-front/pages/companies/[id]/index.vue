@@ -13,7 +13,7 @@
     <!-- Main content grid -->
     <div class="grid grid-cols-12 gap-6 bg-white dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
       <!-- First column: Company general info -->
-      <div class="col-span-12 lg:col-span-4 space-y-4 w-full bg-slate-50 dark:bg-slate-900 p-6 rounded-lg border border-slate-200 dark:border-slate-900">
+      <div class="col-span-12 lg:col-span-4 space-y-4 w-full bg-bg1 dark:bg-slate-900 p-6 rounded-lg border border-slate-200 dark:border-slate-900">
         <div class="flex flex-col gap-4">
           <div class="flex flex-col items-center text-center gap-2">
             <div class="bg-primary w-20 h-20 rounded-full flex items-center justify-center shadow-lg">

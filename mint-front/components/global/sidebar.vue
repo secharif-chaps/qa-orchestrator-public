@@ -23,7 +23,7 @@
                   aria-hidden="true"
                 />
               </div>
-              <div class="text-secondary text-center text-[0.65rem] leading-3 font-normal tracking-wide">
+              <div class="dark:text-secondary text-center text-[0.65rem] leading-3 font-normal tracking-wide">
                 {{ button.label }}
               </div>
             </div>
