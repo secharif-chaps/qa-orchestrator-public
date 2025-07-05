@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-6 hover:shadow-lg hover:border-primary/50 transition-all cursor-pointer group h-full"
+  <div class="bg-bg1 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-6 hover:shadow-lg hover:border-primary/50 transition-all cursor-pointer group h-full"
        @click="handleClick">
     <div class="flex items-center h-full">
       <div class="flex-shrink-0">
@@ -9,8 +9,8 @@
         </div>
       </div>
       <div class="ml-4 flex-1">
-        <h3 class="text-lg font-medium text-slate-900 dark:text-slate-100 group-hover:text-primary transition-colors">{{ title }}</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400">{{ description }}</p>
+        <h3 class="text-lg font-medium group-hover:text-primary transition-colors">{{ title }}</h3>
+        <p class="text-sm text-secondary">{{ description }}</p>
       </div>
     </div>
   </div>

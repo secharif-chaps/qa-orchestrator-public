@@ -27,8 +27,8 @@
         <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
           <div class="flex items-center justify-between">
             <div>
-              <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ $t('account.profile.basic.title') }}</h2>
-              <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">{{ $t('account.profile.basic.description') }}</p>
+              <h2 class="text-lg font-semibold">{{ $t('account.profile.basic.title') }}</h2>
+              <p class="text-sm text-secondary mt-1">{{ $t('account.profile.basic.description') }}</p>
             </div>
             <OBadge 
               :color="user.expired ? 'red' : 'green'"
@@ -42,22 +42,22 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('account.profile.fields.username') }}</label>
-                <p class="mt-1 text-sm text-slate-900 dark:text-slate-400">{{ user.profile?.preferred_username || 'N/A' }}</p>
+                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.username') }}</label>
+                <p class="mt-1 text-sm">{{ user.profile?.preferred_username || 'N/A' }}</p>
               </div>
               <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('account.profile.fields.email') }}</label>
-                <p class="mt-1 text-sm text-slate-900 dark:text-slate-400">{{ user.profile?.email || 'N/A' }}</p>
+                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.email') }}</label>
+                <p class="mt-1 text-sm">{{ user.profile?.email || 'N/A' }}</p>
               </div>
             </div>
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('account.profile.fields.firstName') }}</label>
-                <p class="mt-1 text-sm text-slate-900 dark:text-slate-400">{{ user.profile?.given_name || 'N/A' }}</p>
+                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.firstName') }}</label>
+                <p class="mt-1 text-sm">{{ user.profile?.given_name || 'N/A' }}</p>
               </div>
               <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('account.profile.fields.lastName') }}</label>
-                <p class="mt-1 text-sm text-slate-900 dark:text-slate-400">{{ user.profile?.family_name || 'N/A' }}</p>
+                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.lastName') }}</label>
+                <p class="mt-1 text-sm">{{ user.profile?.family_name || 'N/A' }}</p>
               </div>
             </div>
           </div>
@@ -67,28 +67,28 @@
       <!-- Authentication Details -->
       <div class="bg-white dark:bg-slate-800 shadow rounded-lg">
         <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ $t('account.profile.auth.title') }}</h2>
-          <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">{{ $t('account.profile.auth.description') }}</p>
+          <h2 class="text-lg font-semibold">{{ $t('account.profile.auth.title') }}</h2>
+          <p class="text-sm text-secondary mt-1">{{ $t('account.profile.auth.description') }}</p>
         </div>
         <div class="px-6 py-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('account.profile.fields.userId') }}</label>
-                <p class="mt-1 text-sm text-slate-900 dark:text-slate-400 font-mono break-all">{{ user.profile?.sub || 'N/A' }}</p>
+                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.userId') }}</label>
+                <p class="mt-1 text-sm font-mono break-all">{{ user.profile?.sub || 'N/A' }}</p>
               </div>
               <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('account.profile.fields.expiresAt') }}</label>
-                <p class="mt-1 text-sm text-slate-900 dark:text-slate-400">{{ formatDate(user.expires_at) }}</p>
+                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.expiresAt') }}</label>
+                <p class="mt-1 text-sm">{{ formatDate(user.expires_at) }}</p>
               </div>
             </div>
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('account.profile.fields.issuedAt') }}</label>
-                <p class="mt-1 text-sm text-slate-900 dark:text-slate-400">{{ formatDate(user.profile?.iat) }}</p>
+                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.issuedAt') }}</label>
+                <p class="mt-1 text-sm">{{ formatDate(user.profile?.iat) }}</p>
               </div>
               <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">{{ $t('account.profile.fields.sessionState') }}</label>
+                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.sessionState') }}</label>
                 <OBadge 
                   :color="user.expired ? 'red' : 'green'"
                   :text="user.expired ? $t('account.profile.status.expired') : $t('account.profile.status.active')"
@@ -102,8 +102,8 @@
       <!-- Roles and Permissions -->
       <div class="bg-white dark:bg-slate-800 shadow rounded-lg">
         <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ $t('account.profile.roles.title') }}</h2>
-          <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">{{ $t('account.profile.roles.description') }}</p>
+          <h2 class="text-lg font-semibold">{{ $t('account.profile.roles.title') }}</h2>
+          <p class="text-sm text-secondary mt-1">{{ $t('account.profile.roles.description') }}</p>
         </div>
         <div class="px-6 py-6">
           <div v-if="userRoles && userRoles.length > 0">
@@ -117,7 +117,7 @@
             </div>
           </div>
           <div v-else>
-            <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('account.profile.roles.none') }}</p>
+            <p class="text-sm text-secondary">{{ $t('account.profile.roles.none') }}</p>
           </div>
         </div>
       </div>
@@ -127,13 +127,13 @@
         <div class="bg-white dark:bg-slate-800 shadow rounded-lg ">
           <Collapsible.Trigger class="w-full px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
             <div>
-              <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ $t('account.profile.debug.title') }}</h2>
-              <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">{{ $t('account.profile.debug.description') }}</p>
+              <h2 class="text-lg font-semibold">{{ $t('account.profile.debug.title') }}</h2>
+              <p class="text-sm text-secondary mt-1">{{ $t('account.profile.debug.description') }}</p>
             </div>
             <i class="fas fa-chevron-down transition-transform" :class="showDebugInfo ? 'rotate-180' : ''"></i>
           </Collapsible.Trigger>
           <Collapsible.Content class="px-6 py-6">
-            <pre class="text-xs bg-slate-50 dark:bg-slate-900 dark:text-slate-100 p-4 rounded overflow-auto">{{ JSON.stringify(user, null, 2) }}</pre>
+            <pre class="text-xs bg-slate-50 dark:bg-slate-900 p-4 rounded overflow-auto">{{ JSON.stringify(user, null, 2) }}</pre>
           </Collapsible.Content>
         </div>
       </Collapsible.Root>

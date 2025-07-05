@@ -2,8 +2,8 @@
   <div class="max-w-4xl mx-auto space-y-6" data-cy="company-search-page">
     <!-- Page Header -->
     <div class="text-center space-y-2">
-      <h1 class="text-3xl font-semibold text-slate-900 dark:text-slate-100">{{ $t('search.title') }}</h1>
-      <p class="text-slate-600 dark:text-slate-400">{{ $t('search.companyIdentity') }}</p>
+      <h1 class="text-3xl font-semibold ">{{ $t('search.title') }}</h1>
+      <p class="text-secondary">{{ $t('search.companyIdentity') }}</p>
     </div>
 
     <!-- Search Form Card -->
@@ -35,12 +35,12 @@
         </div>
 
         <!-- Help Text -->
-        <div class="bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-4">
+        <div class="bg-bg1 border border-slate-200 dark:border-slate-600 rounded-lg p-4">
           <div class="flex items-start space-x-3">
             <i class="fas fa-info-circle text-primary mt-0.5"></i>
             <div>
-              <p class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ $t('search.mandatoryFields') }}</p>
-              <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+              <p class="text-sm font-medium text-secondary">{{ $t('search.mandatoryFields') }}</p>
+              <p class="text-xs text-secondary mt-1">
                 Provide both company name and website to start the search process.
               </p>
             </div>

@@ -8,9 +8,9 @@
         </div>
       </div>
       <div class="ml-4 flex-1">
-        <h4 class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{{ title }}</h4>
-        <p class="text-2xl font-bold text-slate-900 dark:text-slate-100">{{ formattedValue }}</p>
-        <p v-if="subtitle" class="text-xs text-slate-400 dark:text-slate-500 mt-1">{{ subtitle }}</p>
+        <h4 class="text-sm font-medium uppercase tracking-wide">{{ title }}</h4>
+        <p class="text-2xl font-bold">{{ formattedValue }}</p>
+        <p v-if="subtitle" class="text-xs mt-1 text-secondary">{{ subtitle }}</p>
       </div>
     </div>
   </div>

@@ -1,61 +1,68 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 flex items-center justify-center z-50">
-    <div class="fixed inset-0 bg-black opacity-50" @click="close"></div>
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 z-10">
-      <div class="p-6">
-        <div class="flex justify-between items-center border-b pb-3 border-border-2">
-          <h3 class="text-lg font-semibold text-primary">Export Options</h3>
-          <button @click="close" class="text-slate-500 hover:text-slate-700">
-            <i class="fa fa-times"></i>
-          </button>
+  <OModal 
+    v-model="isOpen"
+    :display-modal="isOpen"
+    title="Export Options"
+    size="xl"
+    icon="fas fa-download"
+    color="primary"
+  >
+    <template #description>
+      <p class="text-secondary">
+        Select which sections to include in your PowerPoint export:
+      </p>
+
+    <!-- Select All / None toggle -->
+    <div class="flex justify-between mb-4">
+      <span v-if="showSavedMessage" class="text-xs text-primary animate-fade-out">
+        <i class="fa fa-check-circle mr-1"></i>Preferences saved
+      </span>
+      <button 
+        @click="toggleAll" 
+        class="text-xs text-primary hover:text-primary/80 transition-colors"
+      >
+        {{ allSelected ? 'Deselect All' : 'Select All' }}
+      </button>
+    </div>
+    
+    <div class="space-y-4">
+      <div v-for="(option, index) in exportOptions" :key="index" class="flex items-center justify-between">
+        <div class="flex-1 mr-4">
+          <label class="font-medium text-sm">{{ option.label }}</label>
+          <p v-if="option.description" class="text-secondary text-xs mt-1">{{ option.description }}</p>
         </div>
-        
-        <div class="py-4 space-y-3">
-          <p class="text-sm text-slate-600">Select which sections to include in your PowerPoint export:</p>
-          
-          <!-- Select All / None toggle -->
-          <div class="flex justify-between mb-2">
-            <span v-if="showSavedMessage" class="text-xs text-primary animate-fade-out">
-              <i class="fa fa-check-circle mr-1"></i>Preferences saved
-            </span>
-            <button 
-              @click="toggleAll" 
-              class="text-xs text-primary hover:text-primary-dark"
-            >
-              {{ allSelected ? 'Deselect All' : 'Select All' }}
-            </button>
-          </div>
-          
-          <div class="space-y-2 mt-3">
-            <div v-for="(option, index) in exportOptions" :key="index" class="flex items-start">
-              <div class="flex items-center h-5">
-                <input
-                  :id="'option-' + index"
-                  v-model="option.selected"
-                  type="checkbox"
-                  class="h-4 w-4 text-primary border-gray-300 rounded"
-                  @change="preferencesChanged = true"
-                />
-              </div>
-              <div class="ml-3 text-sm">
-                <label :for="'option-' + index" class="font-medium text-gray-700">{{ option.label }}</label>
-                <p v-if="option.description" class="text-gray-500">{{ option.description }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="mt-5 border-t pt-4 border-border-2 flex justify-between">
-          <OButton type="secondary" @click="close">Cancel</OButton>
-          <OButton type="primary" @click="exportPPT">Export</OButton>
-        </div>
+        <Switch.Root 
+          v-model:checked="option.selected"
+          class="w-11 h-6 bg-bg1 rounded-full relative focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75 data-[state=checked]:bg-primary transition-colors duration-200"
+          @update:checked="preferencesChanged = true"
+        >
+          <Switch.Thumb class="block w-4 h-4 bg-bg2 rounded-full shadow-lg transform transition-transform duration-200 translate-x-1 data-[state=checked]:translate-x-6" />
+        </Switch.Root>
       </div>
     </div>
-  </div>
+    </template>
+
+    <template #footer>
+      <div class="flex justify-end gap-3">
+        <OButton 
+          type="secondary" 
+          label="Cancel"
+          @click="close"
+        />
+        <OButton 
+          type="primary"
+          label="Export" 
+          icon="fas fa-download"
+          @click="exportPPT"
+        />
+      </div>
+    </template>
+  </OModal>
 </template>
 
 <script lang="ts" setup>
-import { OButton } from '@owlint/feathers-vue'
+import { OButton, OModal } from '@owlint/feathers-vue'
+import { Switch } from 'reka-ui/namespaced'
 import type { Company, SourcedValue } from '@/types'
 import { onMounted } from 'vue'
 
@@ -63,6 +70,21 @@ const props = defineProps<{
   isOpen: boolean
   company: Company | null
 }>()
+
+// Create a local reactive reference for the modal state
+const isOpen = ref(props.isOpen)
+
+// Watch for changes in the prop and update local state
+watch(() => props.isOpen, (newValue) => {
+  isOpen.value = newValue
+})
+
+// Watch for changes in local state and emit close event
+watch(isOpen, (newValue) => {
+  if (!newValue && props.isOpen) {
+    emit('close')
+  }
+})
 
 const emit = defineEmits(['close', 'export'])
 

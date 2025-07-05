@@ -1,14 +1,15 @@
 <template>
   <Card class="grow">
-    <div class="flex flex-col gap-4 ">
-      <div>Line of business</div>
+    <div class="flex flex-col gap-2">
+      <h4>Line of business</h4>
       <!-- Business line - individual property loading -->
-      <div
-        class="text-secondary"
-      >
-        {{ getSourcedValue(company?.profile?.businessLine) ?? 'Not found' }}
-        <Source :sourced-value="company?.profile?.businessLine" />
+      <div class="text-sm flex flex-col gap-2">
+        <p class="text-secondary">
+          {{ getSourcedValue(company?.profile?.businessLine) ?? 'Not found' }}
+        </p>
+
       </div>
+          <Source :sourced-value="company?.profile?.businessLine" />
    
     </div>
   </Card>

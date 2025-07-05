@@ -3,8 +3,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100">{{ $t('account.title') }}</h1>
-        <p class="text-slate-600 dark:text-slate-400 mt-2">{{ $t('account.description') }}</p>
+        <h1 class="text-3xl font-bold">{{ $t('account.title') }}</h1>
+        <p class="text-secondary mt-2">{{ $t('account.description') }}</p>
       </div>
 
       <div class="lg:grid lg:grid-cols-4 lg:gap-8">
@@ -17,8 +17,8 @@
               :to="`/account/${tab.id}`"
               class="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
               :class="currentTab === tab.id 
-                ? 'bg-indigo-100 dark:bg-slate-800 text-indigo-700 dark:text-slate-100 border-indigo-500 dark:border-slate-700' 
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800'"
+                ? 'bg-bg1 text-secondary border-primary' 
+                : 'text-secondary hover:text-primary hover:bg-bg2'"
             >
               <i :class="tab.icon" class="mr-3 text-sm"></i>
               {{ $t(`account.tabs.${tab.id}`) }}
@@ -29,7 +29,7 @@
         <!-- Mobile Tab Navigation -->
         <div class="lg:hidden mb-6">
           <Tabs.Root :model-value="currentTab" @update:model-value="handleTabChange">
-            <Tabs.List class="flex space-x-1 rounded-lg bg-slate-100 p-1">
+            <Tabs.List class="flex space-x-1 rounded-lg bg-bg1 p-1">
               <Tabs.Trigger
                 v-for="tab in tabs"
                 :key="tab.id"

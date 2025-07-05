@@ -9,29 +9,35 @@
       </div>
 
       <!-- Digital Strategy - individual property loading -->
-      <div>{{ $t('profile.sections.digital.strategy') }}</div>
-      <div class="text-secondary dark:text-slate-400 text-sm">
-        {{ getSourcedValue(company?.digital?.strategy) || $t('common.notFound') }}
+      <h4>{{ $t('profile.sections.digital.strategy') }}</h4>
+      <div class="text-sm flex flex-col gap-2">
+        <p class="text-secondary">
+          {{ getSourcedValue(company?.digital?.strategy) || $t('common.notFound') }}
+        </p>
         <Source :sourced-value="company?.digital?.strategy" />
       </div>
 
       <!-- Loyalty Program - individual property loading -->
-      <div>{{ $t('profile.sections.digital.loyaltyProgram') }}</div>
-      <div class="text-secondary dark:text-slate-400 text-sm">
-        {{ getSourcedValue(company?.digital?.loyaltyProgram) || $t('common.notFound') }}
+      <h4>{{ $t('profile.sections.digital.loyaltyProgram') }}</h4>
+      <div class="text-sm flex flex-col gap-2">
+        <p class="text-secondary">
+          {{ getSourcedValue(company?.digital?.loyaltyProgram) || $t('common.notFound') }}
+        </p>
         <Source :sourced-value="company?.digital?.loyaltyProgram" />
       </div>
 
       <!-- Online Services - individual property loading -->
-      <div>{{ $t('profile.sections.digital.onlineServices') }}</div>
-      <div class="text-secondary dark:text-slate-400 text-sm">
+      <h4>{{ $t('profile.sections.digital.onlineServices') }}</h4>
+      <div class="text-sm flex flex-col gap-2">
+        <p class="text-secondary">
         {{
           (
             company?.digital?.onlineServices?.map(
               (service: { value: string }) => service.value
             ) || []
-          ).join(', ') || $t('common.notFound')
-        }}
+            ).join(', ') || $t('common.notFound')
+          }}
+        </p>
       </div>
     </div>
   </Card>

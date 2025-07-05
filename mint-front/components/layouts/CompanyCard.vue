@@ -16,8 +16,9 @@
         <OIcon
           :icon="icon"
           type="secondary"
+          size="lg"
         ></OIcon>
-        <h1 class="text-3xl font-semibold text-slate-900 dark:text-slate-100">{{ title }}</h1>
+        <h1 class="text-3xl font-semibold">{{ title }}</h1>
       </div>
       <div class="flex gap-2">
         <OButton

@@ -101,10 +101,10 @@
     >
 
     <template #description>
-        <p class="text-slate-600 dark:text-slate-400">
-          {{ $t('company.list.delete.confirm') }} <strong class="font-medium text-slate-900 dark:text-slate-100 capitalize">{{ companyToDelete.name }}</strong>?
+        <p class="text-secondary">
+          {{ $t('company.list.delete.confirm') }} <strong class="font-medium text-primary capitalize">{{ companyToDelete.name }}</strong>?
         </p>
-        <p class="text-slate-600 dark:text-slate-400">
+        <p class="text-secondary">
           {{ $t('company.list.delete.warning') }} 
         </p>
         </template>

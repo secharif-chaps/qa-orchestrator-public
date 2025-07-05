@@ -9,9 +9,9 @@
       </div>
 
       <!-- Product Range - individual property loading -->
-      <div>{{ $t('profile.sections.products.range') }}</div>
-      <div>
-        <span class="text-sm text-secondary dark:text-slate-400">
+      <h4>{{ $t('profile.sections.products.range') }}</h4>
+      <div class="text-sm flex flex-col gap-2">
+        <p class="text-secondary">
           {{
             (
               company?.products?.range?.map(
@@ -19,15 +19,15 @@
               ) || []
             ).join(', ') || $t('common.notFound')
           }}
-        </span>
+        </p>
       </div>
 
       <!-- Partner Brands - individual property loading -->
-      <div>{{ $t('profile.sections.products.partnerBrands') }}</div>
-      <div class="pl-4">
-        <ul class="list-disc">
+      <h4>{{ $t('profile.sections.products.partnerBrands') }}</h4>
+      <div class="pl-4 text-sm flex flex-col gap-2">
+        <ul class="list-disc text-secondary">
           <li
-            class="text-secondary dark:text-slate-400 space-x-2"
+            class=" space-x-2"
             v-for="brand in company?.products?.partnerBrands ||
             []"
           >
@@ -38,7 +38,7 @@
           </li>
           <li
             v-if="company?.products?.partnerBrands?.length === 0"
-            class="text-sm text-secondary dark:text-slate-400"
+            class="text-sm "
           >
             {{ $t('common.notFound') }}
           </li>
@@ -46,11 +46,11 @@
       </div>
 
       <!-- Private Labels - individual property loading -->
-      <div>{{ $t('profile.sections.products.privateLabels', { company: company?.name }) }}</div>
-      <div class="pl-4">
-        <ul class="list-disc">
+      <h4>{{ $t('profile.sections.products.privateLabels', { company: company?.name }) }}</h4>
+      <div class="pl-4 text-sm flex flex-col gap-2">
+        <ul class="list-disc text-secondary">
           <li
-            class="space-x-2 text-secondary dark:text-slate-400"
+            class="space-x-2 "
             v-for="brand in company?.products?.privateLabels ||
             []"
           >
@@ -61,7 +61,7 @@
           </li>
           <li
             v-if="company?.products?.privateLabels?.length === 0"
-            class="text-sm text-secondary dark:text-slate-400"
+            class="text-sm "
           >
             {{ $t('common.notFound') }}
           </li>

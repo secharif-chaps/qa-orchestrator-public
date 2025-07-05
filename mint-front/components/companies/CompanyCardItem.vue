@@ -6,10 +6,10 @@
           <i class="fas fa-building text-primary text-xl"></i>
         </div>
         <div class="flex-1 min-w-0">
-          <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100 group-hover:text-primary transition-colors truncate">
+          <h3 class="text-lg font-semibold group-hover:text-primary transition-colors truncate">
             {{ company.name }}
           </h3>
-          <p v-if="company.website" class="text-sm text-slate-500 dark:text-slate-400 truncate">
+          <p v-if="company.website" class="text-sm text-secondary truncate">
             {{ formatWebsiteDisplay(company.website) }}
           </p>
         </div>
@@ -39,7 +39,7 @@
     <div class="space-y-3">
       <!-- Website Link -->
       <div v-if="company.website" class="flex items-center gap-2">
-        <i class="fas fa-globe text-slate-400 text-sm w-4"></i>
+        <i class="fas fa-globe text-secondary text-sm w-4"></i>
         <a 
           :href="formatWebsiteUrl(company.website)"
           target="_blank"
@@ -54,17 +54,17 @@
 
       <!-- Last Updated -->
       <div class="flex items-center gap-2">
-        <i class="fas fa-clock text-slate-400 text-sm w-4"></i>
-        <span class="text-sm text-slate-600 dark:text-slate-400">
+        <i class="fas fa-clock text-secondary text-sm w-4"></i>
+        <span class="text-sm text-secondary">
           Updated {{ formatRelativeTime(company.updated_at) }}
         </span>
       </div>
 
       <!-- Tasks Info -->
       <div v-if="company.tasks && company.tasks.length > 0" class="flex items-center gap-2">
-        <i class="fas fa-tasks text-slate-400 text-sm w-4"></i>
+        <i class="fas fa-tasks text-secondary text-sm w-4"></i>
         <div class="flex items-center gap-2">
-          <span class="text-sm text-slate-600 dark:text-slate-400">
+          <span class="text-sm text-secondary">
             {{ company.tasks.length }} tasks
           </span>
           <OBadge 
@@ -78,7 +78,7 @@
 
     <!-- Footer with creation date -->
     <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700">
-      <div class="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400">
+      <div class="flex justify-between items-center text-xs text-secondary">
         <span>Created {{ formatDate(company.created_at) }}</span>
         <span class="flex items-center gap-1">
           <div class="w-2 h-2 rounded-full bg-green-400"></div>

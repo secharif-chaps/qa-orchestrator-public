@@ -5,8 +5,8 @@
         <i :class="categoryIcon" class="text-primary text-xl"></i>
       </div>
       <div>
-        <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100 capitalize">{{ formattedCategoryName }}</h3>
-        <p class="text-sm text-slate-500 dark:text-slate-400">{{ productList.length }} products</p>
+        <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
+        <p class="text-sm text-secondary">{{ productList.length }} products</p>
       </div>
     </div>
 
@@ -14,10 +14,10 @@
       <div
         v-for="(product, index) in displayedProducts"
         :key="index"
-        class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors"
+        class="flex items-center gap-3 p-3 bg-bg3 rounded-lg hover:bg-bg2 transition-colors"
       >
         <OIndicator color="primary" size="sm" />
-        <span class="text-sm text-slate-700 dark:text-slate-300 flex-1 capitalize">{{ product }}</span>
+        <span class="text-sm flex-1 capitalize">{{ product }}</span>
         <OBadge
           v-if="isNewProduct(product)"
           text="New"

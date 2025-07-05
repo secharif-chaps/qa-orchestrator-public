@@ -1,18 +1,18 @@
 <template>
-  <div class="py-8 min-h-screen bg-slate-50 dark:bg-slate-900">
+  <div class="py-8 min-h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Welcome Header -->
       <div class="mb-8">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100">
+            <h1 class="text-3xl font-bold ">
               Welcome back, {{ userDisplayName }}! 👋
             </h1>
-            <p class="text-slate-600 dark:text-slate-400 mt-2">{{ greetingMessage }}</p>
+            <p class="text-secondary mt-2">{{ greetingMessage }}</p>
           </div>
-          <div class="text-right text-sm text-slate-500 dark:text-slate-400">
+          <div class="text-right text-sm text-secondary">
             <p class="font-medium">{{ currentDate }}</p>
-            <p class="text-slate-400 dark:text-slate-500">{{ currentTime }}</p>
+            <p>{{ currentTime }}</p>
           </div>
         </div>
       </div>
@@ -31,10 +31,10 @@
       </div>
 
       <!-- Recent Companies Section -->
-      <div class="bg-white dark:bg-slate-800 rounded-lg shadow-md border border-slate-200 dark:border-slate-700 mb-8">
+      <div class="bg-bg1 rounded-lg shadow-md border border-slate-200 dark:border-slate-700 mb-8">
         <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
           <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100">Recent Companies</h2>
+            <h2 class="text-xl font-semibold">Recent Companies</h2>
             <NuxtLink 
               to="/companies"
               class="text-primary hover:text-primary/80 text-sm font-medium flex items-center transition-colors"
@@ -56,7 +56,7 @@
         <div v-else-if="companiesError" class="px-6 py-8">
           <div class="text-center">
             <i class="fas fa-exclamation-triangle text-red-400 text-2xl mb-2"></i>
-            <p class="text-slate-500 dark:text-slate-400">Unable to load recent companies</p>
+            <p class="text-secondary">Unable to load recent companies</p>
             <button @click="refreshCompanies" 
                     class="mt-2 text-primary hover:text-primary/80 text-sm font-medium transition-colors">
               Try again
@@ -72,23 +72,23 @@
                  class="border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 rounded-lg p-4 hover:border-primary hover:shadow-md transition-all cursor-pointer group"
                  @click="navigateTo(`/companies/${company.id}`)">
               <div class="flex items-start justify-between mb-2">
-                <h3 class="font-medium text-slate-900 dark:text-slate-100 truncate group-hover:text-primary transition-colors">
+                <h3 class="font-medium truncate group-hover:text-primary transition-colors">
                   {{ company.name }}
                 </h3>
-                <span class="text-xs text-slate-500 dark:text-slate-400 ml-2 flex-shrink-0">
+                <span class="text-xs text-secondary ml-2 flex-shrink-0">
                   {{ formatRelativeTime(company.created_at) }}
                 </span>
               </div>
-              <p class="text-sm text-slate-500 dark:text-slate-400 truncate mb-2">{{ company.website }}</p>
+              <p class="text-sm text-secondary truncate mb-2">{{ company.website }}</p>
               <div class="flex items-center justify-between">
-                <div class="flex items-center text-xs text-slate-400 dark:text-slate-500">
+                <div class="flex items-center text-xs text-secondary">
                   <i class="fas fa-tasks mr-1"></i>
                   {{ company.tasks?.length || 0 }} tasks
                 </div>
                 <div class="flex items-center">
                   <span class="w-2 h-2 rounded-full mr-1"
                         :class="getCompanyStatusColor(company)"></span>
-                  <span class="text-xs text-slate-400 dark:text-slate-500">{{ getCompanyStatus(company) }}</span>
+                  <span class="text-xs text-secondary">{{ getCompanyStatus(company) }}</span>
                 </div>
               </div>
             </div>
@@ -97,9 +97,9 @@
 
         <!-- Empty State -->
         <div v-else class="px-6 py-8 text-center">
-          <i class="fas fa-building text-slate-300 dark:text-slate-600 text-3xl mb-4"></i>
-          <h3 class="text-lg font-medium text-slate-900 dark:text-slate-100 mb-2">No companies yet</h3>
-          <p class="text-slate-500 dark:text-slate-400 mb-4">Start by adding your first company to the database</p>
+          <i class="fas fa-building text-secondary text-3xl mb-4"></i>
+          <h3 class="text-lg font-medium mb-2">No companies yet</h3>
+          <p class="text-secondary mb-4">Start by adding your first company to the database</p>
           <OButton
             :label="'Add Company'"
             icon="fas fa-plus"

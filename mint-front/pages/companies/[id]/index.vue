@@ -20,14 +20,14 @@
               <i class="fa fa-building text-4xl text-white"></i>
             </div>
             <div>
-              <h2 class="text-2xl font-bold capitalize text-slate-900 dark:text-slate-100">
+              <h2 class="text-2xl font-bold capitalize">
                 {{ company?.name }}
               </h2>
             </div>
           </div>
 
           <div v-if="company?.profile?.catchphrase">
-            <p class="text-slate-600 dark:text-slate-400 text-center italic">
+            <p class="text-secondary text-center italic">
               {{ getSourcedValue(company.profile.catchphrase) || "No catchphrase found" }}
             </p>
           </div>
@@ -51,8 +51,8 @@
               class="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left"
               v-if="company?.profile?.hq"
             >
-              <i class="fa fa-map-marker fa-fw text-slate-500 dark:text-slate-400"></i>
-              <span class="text-slate-700 dark:text-slate-300 text-sm">
+              <i class="fa fa-map-marker fa-fw text-secondary"></i>
+              <span class="text-secondary text-sm">
                 {{ getSourcedValue(company.profile.hq) || 'Unknown' }}
               </span>
             </div>
@@ -63,8 +63,8 @@
               class="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left"
               v-if="company?.profile?.ceo"
             >
-              <i class="fa fa-user-tie fa-fw text-slate-500 dark:text-slate-400"></i>
-              <span class="text-slate-700 dark:text-slate-300 text-sm">
+              <i class="fa fa-user-tie fa-fw text-secondary"></i>
+              <span class="text-secondary text-sm">
                 {{ getSourcedValue(company.profile.ceo) || 'Unknown' }}
               </span>
             </div>
@@ -75,8 +75,8 @@
               class="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left"
               v-if="company?.profile?.revenue"
             >
-              <i class="fa fa-money-bill fa-fw text-slate-500 dark:text-slate-400"></i>
-              <span class="text-slate-700 dark:text-slate-300 text-sm">
+              <i class="fa fa-money-bill fa-fw text-secondary"></i>
+              <span class="text-secondary text-sm">
                 {{ getSourcedValue(company.profile.revenue) || 'Unknown' }}
               </span>
             </div>

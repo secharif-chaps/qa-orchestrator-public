@@ -16,7 +16,7 @@
           <!-- Catchphrase - individual property loading -->
           <p
             
-            class="max-w-lg text-secondary dark:text-slate-400 font-bold"
+            class="max-w-lg text-secondary font-bold"
             :title="getSourcedSource(company?.profile?.catchphrase)"
           >
             {{ getSourcedValue(company?.profile?.catchphrase) }}
@@ -29,7 +29,7 @@
             <i class="fa fa-user-tie text-primary"></i>
             <span class="font-semibold">CEO:</span>
             <span
-              class="text-secondary dark:text-slate-400"
+              class="text-secondary"
             >
               {{ getSourcedValue(company?.profile?.ceo) || 'Not found ' }}
               <Source :sourced-value="company?.profile?.ceo" />
@@ -43,8 +43,8 @@
             <span class="font-semibold">HQ:</span>
             <span
               
-              class="text-secondary dark:text-slate-400"
-            >
+              class="text-secondary"
+            > 
               {{ getSourcedValue(company?.profile?.hq) || 'Not found' }}
               <Source :sourced-value="company?.profile?.hq" />
             </span>

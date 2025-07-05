@@ -13,11 +13,11 @@
       <!-- Empty state -->
       <Card v-if="!hasJobOffersData && !jobOffersPending">
         <div class="text-center py-8">
-          <div class="text-5xl text-slate-300 dark:text-slate-600 mb-4">
+          <div class="text-5xl text-secondary mb-4">
             <i class="fa fa-briefcase"></i>
           </div>
-          <h3 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">{{ $t('jobs.noData.title') }}</h3>
-          <p class="text-slate-500 dark:text-slate-400 mb-6">
+          <h3 class="text-xl font-semibold text-primary mb-2">{{ $t('jobs.noData.title') }}</h3>
+          <p class="text-secondary mb-6">
             {{ $t('jobs.noData.description') }}
           </p>
         </div>
@@ -27,43 +27,43 @@
       <div v-if="hasJobOffersData" class="space-y-6">
         <!-- Insights Section -->
         <Card v-if="jobOffersInsights">
-          <h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+          <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
             <i class="fa fa-chart-line text-primary"></i>
             <span>{{ $t('jobs.insights.title') }}</span>
           </h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
-              <div class="text-sm text-slate-600 dark:text-slate-400">{{ $t('jobs.insights.totalOpenings') }}</div>
-              <div class="text-2xl font-bold text-primary">
+            <div class="p-4 bg-bg3 border border-slate-200 dark:border-slate-700 rounded-lg">
+              <h4 class="text-sm font-semibold">{{ $t('jobs.insights.totalOpenings') }}</h4>
+              <p class="text-2xl font-bold text-primary">
                 {{ getSourcedValue(company?.jobs?.insights?.total_openings) }}
-              </div>
+              </p>
             </div>
-            <div class="p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
-              <div class="text-sm text-slate-600 dark:text-slate-400">{{ $t('jobs.insights.topDepartments') }}</div>
-              <div class="text-sm text-slate-700 dark:text-slate-300">
+            <div class="p-4 bg-bg3 border border-slate-200 dark:border-slate-700 rounded-lg">
+              <h4 class="text-sm font-semibold">{{ $t('jobs.insights.topDepartments') }}</h4>
+              <div class="text-sm text-secondary">
                 <ul class="list-disc list-inside space-y-1">
                   <li v-for="department in getSourcedValue(company?.jobs?.insights?.top_departments)" :key="department">
                     {{ department }}
                   </li>
                 </ul>
                 <div class="mt-2">
-                  <span class="text-xs italic text-slate-500 dark:text-slate-400">
+                  <span class="text-xs italic text-secondary">
                     Source: {{getSourcedSource(company?.jobs?.insights?.top_departments)}}
                   </span>
                 </div>
               </div>
             </div>
-            <div class="p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
-              <div class="text-sm text-slate-600 dark:text-slate-400">{{ $t('jobs.insights.hiringFocus') }}</div>
-              <div class="text-sm text-slate-700 dark:text-slate-300">
+            <div class="p-4 bg-bg3 border border-slate-200 dark:border-slate-700 rounded-lg">
+              <h4 class="text-sm font-semibold">{{ $t('jobs.insights.hiringFocus') }}</h4>
+              <p class="text-sm text-secondary">
                 {{ getSourcedValue(company?.jobs?.insights?.hiring_focus) }}
-              </div>
+              </p>
             </div>
-            <div class="p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
-              <div class="text-sm text-slate-600 dark:text-slate-400">{{ $t('jobs.insights.growthIndicators') }}</div>
-              <div class="text-sm text-slate-700 dark:text-slate-300">
+            <div class="p-4 bg-bg3 border border-slate-200 dark:border-slate-700 rounded-lg">
+              <h4 class="text-sm font-semibold">{{ $t('jobs.insights.growthIndicators') }}</h4>
+              <p class="text-sm text-secondary">
                 {{ getSourcedValue(company?.jobs?.insights?.growth_indicators) }}
-              </div>
+              </p>
             </div>
           </div>
         </Card>
@@ -71,9 +71,9 @@
         <!-- Job Listings with Search -->
         <Card>
           <div class="flex items-center justify-between mb-6">
-            <div class="flex gap-2 items-center text-primary">
-              <i class="fa fa-list"></i>
-              <span class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ $t('jobs.listings.title') }}</span>
+            <div class="flex gap-2 items-center">
+              <i class="fa fa-list text-primary"></i>
+              <span class="text-lg font-semibold">{{ $t('jobs.listings.title') }}</span>
             </div>
             <div class="w-64">
               <OInput
@@ -99,8 +99,8 @@
               key="no-results"
               class="col-span-full text-center py-8"
             >
-              <i class="fa fa-search text-3xl text-slate-300 dark:text-slate-600 mb-3"></i>
-              <p class="text-slate-500 dark:text-slate-400">{{ $t('jobs.listings.noResults', { query: searchQuery }) }}</p>
+              <i class="fa fa-search text-3xl text-secondary mb-3"></i>
+              <p class="text-secondary">{{ $t('jobs.listings.noResults', { query: searchQuery }) }}</p>
             </div>
           </TransitionGroup>
         </Card>

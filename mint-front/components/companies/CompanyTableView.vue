@@ -4,7 +4,7 @@
     <div v-if="loading" class="p-8 text-center">
       <div class="flex items-center justify-center space-x-2">
         <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
-        <span class="text-slate-600 dark:text-slate-400">{{ $t('company.list.table.loading') }}</span>
+        <span class="text-secondary">{{ $t('company.list.table.loading') }}</span>
       </div>
     </div>
 
@@ -29,7 +29,7 @@
           <td class="p-3">
             <button 
               @click="$emit('viewCompany', item.id)"
-              class="text-left font-medium text-slate-900 dark:text-slate-100 hover:text-primary transition-colors"
+              class="text-left font-medium text-secondary hover:text-primary transition-colors"
             >
               {{ item.name }}
             </button>
@@ -44,20 +44,20 @@
               :href="formatWebsiteUrl(item.website)" 
               target="_blank" 
               rel="noopener noreferrer"
-              class="text-primary dark:text-slate-300 hover:text-primary/80"
+              class="text-primary hover:text-primary/80"
               @click.stop
             >
               {{ formatWebsiteDisplay(item.website) }}
               <i class="fas fa-external-link-alt ml-1 text-xs"></i>
             </a>
-            <span v-else class="text-slate-400 dark:text-slate-500">-</span>
+            <span v-else class="text-secondary">-</span>
           </td>
         </template>
 
         <!-- Custom updated_at column -->
         <template #cell(updated_at)="{ item }">
           <td class="p-3">
-            <span class="text-slate-600 dark:text-slate-400">{{ formatDate(item.updated_at) }}</span>
+            <span class="text-secondary">{{ formatDate(item.updated_at) }}</span>
           </td>
         </template>
 

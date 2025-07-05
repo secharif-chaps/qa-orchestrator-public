@@ -4,8 +4,8 @@
       <div class="flex items-center gap-3">
         <OIcon icon="fa-box" type="secondary" />
         <div>
-          <h2 class="text-xl font-semibold text-slate-900 dark:text-slate-100">Product Portfolio</h2>
-          <p class="text-sm text-slate-600 dark:text-slate-400">{{ totalProductCount }} products across {{ categoryCount }} categories</p>
+          <h2 class="text-xl font-semibold">Product Portfolio</h2>
+          <p class="text-sm text-secondary">{{ totalProductCount }} products across {{ categoryCount }} categories</p>
         </div>
       </div>
       <div class="flex gap-2">

@@ -2,13 +2,13 @@
   <div class="relative flex items-start gap-6 pb-6">
     <!-- Date indicator -->
     <div class="w-36 text-right pt-3">
-      <div class="text-sm font-medium text-slate-600 dark:text-slate-400">
+      <div class="text-sm font-medium text-secondary pt-2.5">
         {{ formattedDate }}
       </div>
     </div>
 
     <!-- Timeline line -->
-    <div class="absolute top-6 left-[163px] w-0.5 h-full bg-slate-200 dark:bg-slate-600"></div>
+    <div class="absolute top-6 left-[163px] w-0.5 h-full bg-bg2"></div>
 
     <!-- Timeline dot -->
     <div class="relative">
@@ -16,10 +16,10 @@
     </div>
 
     <!-- Event content -->
-    <div class="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+    <div class="flex-1 bg-bg1 border border-slate-200 dark:border-slate-700 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
       <!-- Event Header -->
       <div class="flex items-start justify-between mb-3">
-        <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100 leading-tight">
+        <h3 class="text-lg font-semibold leading-tight">
           {{ event.title }}
         </h3>
         <OIndicator 
@@ -54,7 +54,7 @@
       </div>
 
       <!-- Description -->
-      <p class="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed">
+      <p class="text-secondary mb-4 leading-relaxed">
         {{ event.description }}
       </p>
 
@@ -62,11 +62,11 @@
       <div v-if="event.impact" class="bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-4 mb-4">
         <div class="flex items-center gap-2 mb-2">
           <i class="fa fa-bolt text-yellow-500 text-sm"></i>
-          <span class="text-xs uppercase font-semibold text-slate-600 dark:text-slate-400 tracking-wide">
+          <span class="text-xs uppercase font-semibold text-secondary tracking-wide">
             Impact Analysis
           </span>
         </div>
-        <p class="text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed">
+        <p class="text-sm text-secondary italic leading-relaxed">
           {{ event.impact }}
         </p>
       </div>

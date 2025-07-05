@@ -3,19 +3,19 @@
     <!-- Theme Settings -->
     <div class="bg-white dark:bg-slate-800 shadow rounded-lg">
       <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-        <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ $t('account.appearance.theme.title') }}</h2>
-        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">{{ $t('account.appearance.theme.description') }}</p>
+        <h2 class="text-lg font-semibold text-secondary">{{ $t('account.appearance.theme.title') }}</h2>
+        <p class="text-sm text-secondary mt-1">{{ $t('account.appearance.theme.description') }}</p>
       </div>
       <div class="px-6 py-6">
         <div class="space-y-4">
           <div v-for="themeOption in themeOptions" :key="themeOption.value" class="flex items-center justify-between p-4 border border-slate-200 dark:border-slate-700 rounded-lg hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
             <div class="flex items-center space-x-4">
               <div class="flex-shrink-0">
-                <i :class="themeOption.icon" class="text-lg text-slate-600 dark:text-slate-400"></i>
+                <i :class="themeOption.icon" class="text-lg text-secondary"></i>
               </div>
               <div>
-                <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ $t(`account.appearance.theme.options.${themeOption.value}.title`) }}</h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t(`account.appearance.theme.options.${themeOption.value}.description`) }}</p>
+                <h3 class="text-sm font-medium text-secondary">{{ $t(`account.appearance.theme.options.${themeOption.value}.title`) }}</h3>
+                <p class="text-sm text-secondary">{{ $t(`account.appearance.theme.options.${themeOption.value}.description`) }}</p>
               </div>
             </div>
             <div>
@@ -37,8 +37,8 @@
     <!-- Language Settings -->
     <div class="bg-white dark:bg-slate-800 shadow rounded-lg">
       <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-        <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ $t('account.appearance.language.title') }}</h2>
-        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">{{ $t('account.appearance.language.description') }}</p>
+        <h2 class="text-lg font-semibold text-secondary">{{ $t('account.appearance.language.title') }}</h2>
+        <p class="text-sm text-secondary mt-1">{{ $t('account.appearance.language.description') }}</p>
       </div>
       <div class="px-6 py-6">
         <LocaleSwitcher />
@@ -48,16 +48,16 @@
     <!-- Layout Preferences -->
     <div class="bg-white dark:bg-slate-800 shadow rounded-lg">
       <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-        <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ $t('account.appearance.layout.title') }}</h2>
-        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">{{ $t('account.appearance.layout.description') }}</p>
+        <h2 class="text-lg font-semibold">{{ $t('account.appearance.layout.title') }}</h2>
+        <p class="text-sm text-secondary mt-1">{{ $t('account.appearance.layout.description') }}</p>
       </div>
       <div class="px-6 py-6">
         <div class="space-y-4">
           <!-- Compact Mode -->
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ $t('account.appearance.layout.compact.title') }}</h3>
-              <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('account.appearance.layout.compact.description') }}</p>
+              <h3 class="text-sm font-medium">{{ $t('account.appearance.layout.compact.title') }}</h3>
+              <p class="text-sm text-secondary">{{ $t('account.appearance.layout.compact.description') }}</p>
             </div>
             <Switch.Root 
               v-model:checked="compactMode"
@@ -72,8 +72,8 @@
           <!-- Reduced Motion -->
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ $t('account.appearance.layout.reducedMotion.title') }}</h3>
-              <p class="text-sm text-slate-500 dark:text-slate-400">{{ $t('account.appearance.layout.reducedMotion.description') }}</p>
+              <h3 class="text-sm font-medium">{{ $t('account.appearance.layout.reducedMotion.title') }}</h3>
+              <p class="text-sm text-secondary">{{ $t('account.appearance.layout.reducedMotion.description') }}</p>
             </div>
             <Switch.Root 
               v-model:checked="reducedMotion"
@@ -91,18 +91,18 @@
     <!-- Theme Preview -->
     <div class="bg-white dark:bg-slate-800 shadow rounded-lg">
       <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-        <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ $t('account.appearance.preview.title') }}</h2>
-        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">{{ $t('account.appearance.preview.description') }}</p>
+        <h2 class="text-lg font-semibold">{{ $t('account.appearance.preview.title') }}</h2>
+        <p class="text-sm text-secondary mt-1">{{ $t('account.appearance.preview.description') }}</p>
       </div>
       <div class="px-6 py-6">
         <!-- Preview Container -->
         <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-6 bg-slate-50 dark:bg-slate-900">
           <!-- Preview Header -->
           <div class="mb-6">
-            <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">
+            <h3 class="text-lg font-semibold mb-2">
               {{ $t('account.appearance.preview.sample') }}
             </h3>
-            <p class="text-sm text-slate-600 dark:text-slate-400">
+            <p class="text-sm text-secondary">
               Experience how your interface looks with the current theme settings.
             </p>
           </div>
@@ -111,8 +111,8 @@
           <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 mb-6">
             <div class="flex items-start justify-between mb-4">
               <div>
-                <h4 class="text-base font-medium text-slate-900 dark:text-slate-100">Sample Card Title</h4>
-                <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">This card demonstrates the current theme styling</p>
+                <h4 class="font-medium">Sample Card Title</h4>
+                <p class="text-sm text-secondary mt-1">This card demonstrates the current theme styling</p>
               </div>
               <div class="flex gap-2">
                 <OBadge color="green" :text="$t('account.appearance.preview.tag1')" />
@@ -124,24 +124,24 @@
             <div class="space-y-4">
               <!-- Input Field -->
               <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                <label class="block text-sm font-medium mb-2">
                   Sample Input Field
                 </label>
                 <input 
                   v-model="previewInputValue"
                   type="text" 
                   placeholder="Type something here..."
-                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-bg1 text-secondary placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
 
               <!-- Toggle Switch -->
               <div class="flex items-center justify-between">
                 <div>
-                  <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  <label class="text-sm font-medium">
                     Sample Toggle
                   </label>
-                  <p class="text-sm text-slate-500 dark:text-slate-400">
+                  <p class="text-sm text-secondary">
                     This toggle demonstrates switch styling
                   </p>
                 </div>
@@ -181,15 +181,15 @@
               <div class="flex flex-wrap gap-2">
                 <div class="flex items-center gap-2">
                   <div class="h-2 w-2 bg-green-500 rounded-full"></div>
-                  <span class="text-sm text-slate-600 dark:text-slate-400">Active</span>
+                  <span class="text-sm text-secondary">Active</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <div class="h-2 w-2 bg-yellow-500 rounded-full"></div>
-                  <span class="text-sm text-slate-600 dark:text-slate-400">Pending</span>
+                  <span class="text-sm text-secondary">Pending</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <div class="h-2 w-2 bg-red-500 rounded-full"></div>
-                  <span class="text-sm text-slate-600 dark:text-slate-400">Error</span>
+                  <span class="text-sm text-secondary">Error</span>
                 </div>
               </div>
             </div>
@@ -198,7 +198,7 @@
           <!-- Sample List -->
           <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
             <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
-              <h4 class="text-sm font-medium text-slate-900 dark:text-slate-100">Sample List Items</h4>
+              <h4 class="text-sm font-medium">Sample List Items</h4>
             </div>
             <div class="divide-y divide-slate-200 dark:divide-slate-700">
               <div v-for="(item, index) in previewItems" :key="index" 
@@ -209,11 +209,11 @@
                       <i :class="item.icon" class="text-primary text-sm"></i>
                     </div>
                     <div>
-                      <p class="text-sm font-medium text-slate-900 dark:text-slate-100">{{ item.title }}</p>
-                      <p class="text-xs text-slate-500 dark:text-slate-400">{{ item.description }}</p>
+                      <p class="text-sm font-medium">{{ item.title }}</p>
+                      <p class="text-xs text-secondary">{{ item.description }}</p>
                     </div>
                   </div>
-                  <div class="text-xs text-slate-400 dark:text-slate-500">{{ item.time }}</div>
+                  <div class="text-xs text-secondary">{{ item.time }}</div>
                 </div>
               </div>
             </div>

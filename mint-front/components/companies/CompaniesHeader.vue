@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
-      <h1 class="text-3xl font-semibold text-slate-900 dark:text-slate-100">{{ $t('company.list.title') }}</h1>
-      <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
+      <h1 class="text-3xl font-semibold">{{ $t('company.list.title') }}</h1>
+      <p class="text-sm text-secondary mt-1">
         {{ $t('company.list.description') }} • {{ companiesCount }} companies
       </p>
     </div>

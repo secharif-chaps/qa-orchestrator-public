@@ -1,6 +1,6 @@
 <template>
   <Card class="h-full">
-    <div class="gap-4">
+    <div class="flex flex-col gap-2">
       <div class="col-span-2">
         <h3 class="space-x-2 font-bold text-primary">
           <i class="fa fa-hand-holding-heart"></i>
@@ -9,11 +9,11 @@
       </div>
 
       <!-- CSR Initiatives - individual property loading -->
-      <div>{{ $t('profile.sections.csr.responsibility') }}</div>
+      <h4>{{ $t('profile.sections.csr.responsibility') }}</h4>
       <div class="p-4">
         <ul class="list-disc">
           <li
-            class="space-x-2 text-secondary dark:text-slate-400"
+            class="space-x-2 text-secondary"
             v-for="initiative in company?.csr?.responsibility_initiatives || []"
           >
             <span class="text-sm">
@@ -23,7 +23,7 @@
           </li>
           <li
             v-if="company?.csr?.responsibility_initiatives?.length === 0"
-            class="text-sm text-secondary dark:text-slate-400 italic"
+            class="text-sm text-secondary italic"
           >
             {{ $t('common.notFound') }}
           </li>
@@ -31,9 +31,9 @@
       </div>
 
       <!-- Charity Actions - individual property loading -->
-      <div>{{ $t('profile.sections.csr.charity') }}</div>
+      <h4>{{ $t('profile.sections.csr.charity') }}</h4>
       <div class="p-4">
-        <span class="text-sm text-secondary dark:text-slate-400" v-if="company?.csr?.charity_actions">
+        <span class="text-sm text-secondary" v-if="company?.csr?.charity_actions">
           {{
             (company?.csr?.charity_actions.map((action: { value: string }) => action.value) || []).join(', ') ||
             $t('common.notFound')

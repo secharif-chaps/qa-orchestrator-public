@@ -420,7 +420,47 @@ Which approach would you prefer?"
 // - Advanced filtering
 ```
 
-### 🎨 Styling Rules
+### 🎨 Theme System & Styling Rules
+
+#### 🚨 MANDATORY: Theme System Usage
+This project uses a centralized theme system with CSS variables defined in `main.css`. **NEVER use `dark:` prefixes** for text and background colors as they are handled automatically by the theme system.
+
+#### ✅ Text Color Rules
+```vue
+<!-- ✅ GOOD: No Tailwind classes - inherits from global styles -->
+<h1>{{ title }}</h1>
+<p>{{ description }}</p>
+
+<!-- ✅ GOOD: Use semantic theme colors -->
+<p class="text-secondary">{{ subtitle }}</p>
+<span class="text-primary">{{ highlight }}</span>
+
+<!-- ❌ FORBIDDEN: Never use dark: prefixes -->
+<p class="text-slate-600 dark:text-slate-400">Bad</p>
+<span class="text-gray-500 dark:text-gray-300">Bad</span>
+```
+
+#### ✅ Background Color Rules
+```vue
+<!-- ✅ GOOD: Use semantic theme backgrounds -->
+<div class="bg-primary">Primary background</div>
+<div class="bg-secondary">Secondary background</div>
+<div class="bg1">Background level 1</div>
+<div class="bg2">Background level 2</div>
+<div class="bg3">Background level 3</div>
+
+<!-- ❌ FORBIDDEN: Never use dark: prefixes -->
+<div class="bg-white dark:bg-slate-800">Bad</div>
+<div class="bg-gray-50 dark:bg-gray-900">Bad</div>
+```
+
+#### 🎯 Theme Colors Available
+- **text-primary**: Primary text color (auto-adjusts for dark/light)
+- **text-secondary**: Secondary text color (auto-adjusts intensity)
+- **bg-primary**: Primary background color
+- **bg-secondary**: Secondary background color  
+- **bg1, bg2, bg3**: Background hierarchy levels
+- **Normal text**: No classes needed - inherits from global styles
 
 #### @owlint Components (Pre-styled)
 ```vue

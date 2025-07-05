@@ -1,9 +1,9 @@
 <template>
   <Card>
     <div class="text-center py-8">
-      <i :class="iconClass" class="text-3xl text-slate-300 dark:text-slate-600 mb-3"></i>
-      <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2">{{ title }}</h3>
-      <p class="text-slate-500 dark:text-slate-400 mb-4">{{ description }}</p>
+      <i :class="iconClass" class="text-3xl text-secondary mb-3"></i>
+      <h3 class="text-lg font-semibold text-secondary mb-2">{{ title }}</h3>
+      <p class="text-secondary mb-4">{{ description }}</p>
       <slot name="actions">
         <OButton
           v-if="type === 'no-data'"

@@ -8,9 +8,9 @@
       <div class="mt-4">
         <!-- Recent News - individual property loading -->
         <div>
-          <ul class="list-disc pl-4">
-            <li class="space-x-2 text-secondary dark:text-slate-400" v-for="news in company?.press?.articles || []">
-              <span class="text-sm">
+          <ul class="list-disc pl-4 text-sm flex flex-col gap-2">
+            <li class="space-x-2" v-for="news in company?.press?.articles || []">
+              <span class="text-sm text-secondary">
                 {{ getSourcedValue(news) }}
               </span>
               <Source :sourced-value="news" />

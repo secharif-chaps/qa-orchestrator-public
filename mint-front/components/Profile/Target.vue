@@ -9,43 +9,40 @@
       </div>
 
       <!-- Customer Type - individual property loading -->
-      <div>{{ $t('profile.sections.target.customerBase') }}</div>
+      <h4>{{ $t('profile.sections.target.customerBase') }}</h4>
       <div
         v-if="company?.products?.customerType"
       >
-        <span class="text-sm text-secondary dark:text-slate-400">
+        <p class="text-sm text-secondary">
           {{
-            
-              company?.products?.customerType
-             ?? $t('common.notFound')
+              company?.products?.customerType ?? $t('common.notFound')
           }}
-          
-        </span>
+        </p>
       </div>
       <div
         v-else
-        class="text-secondary dark:text-slate-400 italic"
+        class="text-secondary italic"
       >
         {{ $t('common.loading') }}
       </div>
 
       <!-- Marketing Positioning - individual property loading -->
-      <div>{{ $t('profile.sections.target.positioning') }}</div>
+      <h4>{{ $t('profile.sections.target.positioning') }}</h4>
       <div
         v-if="company?.products?.marketingPositioning"
       >
-        <span class="text-sm text-secondary dark:text-slate-400">
+        <p class="text-sm text-secondary">
           {{
             
               company?.products?.marketingPositioning
              ?? $t('common.notFound')
           }}
          
-        </span>
+        </p>
       </div>
       <div
         v-else
-        class="text-secondary dark:text-slate-400 italic"
+        class="text-secondary italic"
       >
         {{ $t('common.loading') }}
       </div>

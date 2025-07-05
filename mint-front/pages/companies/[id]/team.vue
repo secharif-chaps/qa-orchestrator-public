@@ -5,11 +5,11 @@
     <!-- Empty state -->
     <Card v-if="!hasTeamData && !teamPending">
       <div class="text-center py-8">
-        <div class="text-5xl text-slate-300 dark:text-slate-600 mb-4">
+        <div class="text-5xl text-secondary mb-4">
           <i class="fa fa-users"></i>
         </div>
-        <h3 class="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">{{ $t('team.noData.title') }}</h3>
-        <p class="text-slate-500 dark:text-slate-400 mb-6">
+        <h3 class="text-xl font-semibold text-primary mb-2">{{ $t('team.noData.title') }}</h3>
+        <p class="text-secondary mb-6">
           {{ $t('team.noData.description') }}
         </p>
       </div>
@@ -20,7 +20,7 @@
       <Card>
         <div class="flex items-center gap-2 text-primary mb-4">
           <i class="fa fa-sitemap"></i>
-          <span class="text-lg font-semibold text-slate-900 dark:text-slate-100">{{ $t('team.hierarchy.title') }}</span>
+          <span class="text-lg font-semibold text-primary">{{ $t('team.hierarchy.title') }}</span>
         </div>
         <ClientOnly>
           <div class="h-[500px] w-full relative">
@@ -55,23 +55,23 @@
               <Panel
                 position="top-left"
                 v-if="selectedNode"
-                class="bg-bg1 rounded-lg max-w-[300px] ring-2"
+                class="bg-bg1 rounded-lg max-w-[300px] ring-4 ring-offset-2 ring-offset-bg1"
                 :class="{
-                  'ring-orange-400': selectedNode.level > 1,
-                  'ring-purple-600': selectedNode.level <= 1
+                  'ring-orange-400 dark:ring-orange-500/20': selectedNode.level > 1,
+                  'ring-purple-600 dark:ring-purple-500/20': selectedNode.level <= 1
                 }"
               >
                 <div v-if="selectedNode" class="p-0.5">
                   <div
                     class="flex items-center gap-3 p-2 rounded-lg"
-                    :class="[selectedNode.level > 1 ? 'bg-orange-50' : 'bg-purple-100']"
+                    :class="[selectedNode.level > 1 ? 'bg-orange-50 dark:bg-orange-900' : 'bg-purple-100 dark:bg-purple-500/20']"
                   >
                     <div
                       class="min-w-12 grow-0 h-12 rounded-full flex items-center justify-center"
                       :class="[
                         selectedNode.level > 1
-                          ? 'bg-orange-200 text-orange-600'
-                          : 'bg-purple-200 text-purple-600'
+                          ? 'bg-orange-200 dark:bg-bg3 text-orange-600'
+                          : 'bg-purple-200 dark:bg-bg3 text-purple-600'
                       ]"
                     >
                       <i class="fa fa-user text-xl"></i>
@@ -103,7 +103,7 @@
                       <span>{{ $t('team.hierarchy.viewLinkedIn') }}</span>
                     </a>
 
-                    <div class="flex items-start gap-2 text-sm text-slate-600">
+                    <div class="flex items-start gap-2 text-sm ">
                       <i class="fa fa-map-marker-alt mt-1"></i>
                       <span>{{ getMockedAddress(selectedNode) }}</span>
                     </div>
@@ -364,17 +364,6 @@ const getMockedLinkedInUrl = (node: any) => {
 }
 
 const getMockedAddress = (node: any) => {
-  // Return a random address based on the node's data to keep it consistent
-  const addresses = [
-    '6 Rue Moyenne, 18000 Bourges',
-    '12 Avenue des Champs-Élysées, 75008 Paris',
-    '8 Place Bellecour, 69002 Lyon',
-    '15 Rue de la République, 13001 Marseille',
-    '3 Rue du Commerce, 44000 Nantes'
-  ]
-
-  // Use a deterministic way to select an address based on the node's name
-  const index = (node.firstName.length + node.lastName.length) % addresses.length
-  return addresses[index]
+  return '6 Rue Moyenne, 18000 Bourges'
 }
 </script>
