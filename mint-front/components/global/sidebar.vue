@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[86px] bg-primary h-screen fixed text-white pt-24 pb-4 px-2">
+  <div class="w-[86px] bg-primary dark:bg-slate-900 dark:border-2 dark:border-slate-950 h-screen fixed text-white pt-24 pb-4 px-2">
     <div class="flex flex-col justify-between h-full">
       <div class="space-y-4">
         <div
@@ -13,8 +13,8 @@
                 class="relative mx-auto flex h-10 w-10 items-center justify-center rounded-md"
                 :class="[
                   isActive(button.to)
-                    ? 'bg-white text-primary'
-                    : 'group-hover:bg-primary group-hover:text-white'
+                    ? 'bg-white dark:bg-primary/20 text-primary'
+                    : 'group-hover:bg-primary group-hover:text-white dark:group-hover:bg-primary/20 dark:group-hover:text-primary'
                 ]"
               >
                 <i
@@ -23,7 +23,7 @@
                   aria-hidden="true"
                 />
               </div>
-              <div class="text-center text-[0.65rem] leading-3 font-normal tracking-wide">
+              <div class="text-secondary text-center text-[0.65rem] leading-3 font-normal tracking-wide">
                 {{ button.label }}
               </div>
             </div>
