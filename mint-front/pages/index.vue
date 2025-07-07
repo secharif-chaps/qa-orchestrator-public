@@ -31,8 +31,8 @@
       </div>
 
       <!-- Recent Companies Section -->
-      <div class="bg-bg1 rounded-lg shadow-md border border-slate-200 dark:border-slate-700 mb-8">
-        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+      <div class="bg-bg1 border border-border-2 rounded-lg mb-8">
+        <div class="px-6 py-4 border-b border-border-2">
           <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold">Recent Companies</h2>
             <NuxtLink 
@@ -69,7 +69,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div v-for="company in recentCompanies" 
                  :key="company.id"
-                 class="border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 rounded-lg p-4 hover:border-primary hover:shadow-md transition-all cursor-pointer group"
+                 class="border border-border-2 rounded-lg p-4 ring-offset-2 ring-offset-bg2 hover:ring-4 hover:ring-primary/70 transition-all cursor-pointer group"
                  @click="navigateTo(`/companies/${company.id}`)">
               <div class="flex items-start justify-between mb-2">
                 <h3 class="font-medium truncate group-hover:text-primary transition-colors">

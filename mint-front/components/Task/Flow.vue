@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
+  <div class="bg-bg1 border border-border-2 rounded-lg overflow-hidden">
 
 
     <button
-      class="w-full px-4 py-3 bg-white dark:bg-slate-800 flex items-center justify-between text-left border-b border-gray-200 dark:border-slate-700 cursor-pointer"
+      class="w-full px-4 py-3 flex items-center justify-between text-left border-b border-gray-200 dark:border-slate-700 cursor-pointer"
       @click="isOpen = !isOpen"
       :class="{
         'border-b-0': !isOpen
@@ -22,7 +22,7 @@
     </button>
     
     <div v-show="isOpen" class="p-6">
-      <div class="h-96 w-full bg-slate-100 dark:bg-slate-800 rounded-lg relative overflow-hidden">
+      <div class="h-96 w-full bg-bg1 border border-border-2 rounded-lg relative overflow-hidden">
         <VueFlow
           class="h-full"
           :nodes="flowNodes"

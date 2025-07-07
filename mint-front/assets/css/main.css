@@ -18,13 +18,23 @@
   --color-bg2: var(--theme-color-bg2);
   --color-bg3: var(--theme-color-bg3);
 
-  --color-border-1: var(--color-slate-400);
-  --color-border-2: var(--color-slate-200);
+  --color-border-1: var(--theme-color-border-1);
+  --color-border-2: var(--theme-color-border-2);
 
   --color-sidebar-border: var(--theme-color-sidebar-border);
   --color-sidebar-count: var(--theme-color-sidebar-count);
 
-  --color-chaps : #197D89;
+  --color-boston-50 : #DEEBED;
+  --color-boston-100 : #B7D8DC;
+  --color-boston-200 : #80BFC6;
+  --color-boston-300 : #42ABB8;
+  --color-boston-400 : #138C9A;
+  --color-boston-500 : #197D89;
+  --color-boston-600 : #1F717A;
+  --color-boston-700 : #23646C;
+  --color-boston-800 : #245358;
+  --color-boston-900 : #003039;
+  --color-boston-950 : #020C0E;
 }
 
 @layer base {
@@ -36,6 +46,10 @@
     --theme-color-secondary: var(--color-slate-500);
     --theme-color-error: var(--color-indigo-500);
     --theme-color-success: var(--color-green-500);
+
+    --theme-color-border-1: var(--color-slate-400);
+    --theme-color-border-2: var(--color-slate-200);
+  
 
     /* --theme-color-primary: var(--color-indigo-600); */
     --theme-color-sidebar-border: var(--color-indigo-500);
@@ -53,6 +67,9 @@
     /* --theme-color-primary: var(--color-indigo-400); */
     --theme-color-secondary: var(--color-slate-400);
 
+    --theme-color-border-1: var(--color-slate-600);
+    --theme-color-border-2: var(--color-slate-700);
+
     --theme-color-sidebar-border: var(--color-indigo-500);
     --theme-color-sidebar-count: var(--color-indigo-500);
   }
@@ -65,10 +82,13 @@
     --theme-color-primary: var(--color-indigo-400);
   }
 
-  [data-theme='chaps'] {
-    --theme-color-primary: var(--color-chaps);
+  [data-theme='boston'] {
+    --theme-color-primary: var(--color-boston-500);
   }
 
+  [data-theme='boston'].dark {
+    --theme-color-primary: var(--color-boston-400);
+  }
 
   [data-theme='emerald'] {
     --theme-color-primary: var(--color-emerald-600);
@@ -84,6 +104,22 @@
 
   [data-theme='pink'].dark {
     --theme-color-primary: var(--color-pink-400);
+  }
+
+  [data-theme='rose'] {
+    --theme-color-primary: var(--color-rose-600);
+  }
+
+  [data-theme='rose'].dark {
+    --theme-color-primary: var(--color-rose-400);
+  }
+
+  [data-theme='orange'] {
+    --theme-color-primary: var(--color-orange-600);
+  }
+
+  [data-theme='orange'].dark {
+    --theme-color-primary: var(--color-orange-400);
   }
 
 

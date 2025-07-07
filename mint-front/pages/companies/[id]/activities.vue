@@ -1,15 +1,6 @@
 <template>
   <LayoutsCompanyCard :title="$t('timeline.title')" icon="fa-calendar-days">
     <div class="flex flex-col gap-4">
-      <!-- Task state -->
-      <TaskState
-        v-if="companyId"
-        :company-id="companyId"
-        :required-task-types="['timeline']"
-        :loading-title="$t('timeline.loading.title')"
-        :loading-description="$t('timeline.loading.description')"
-      />
-
       <!-- Main content -->
       <Card v-if="!hasTimelineData && !timelinePending">
         <div class="text-center py-8">

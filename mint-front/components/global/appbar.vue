@@ -18,16 +18,6 @@
           <div>
             <img :src="theme === 'light' ? logoLight : logoDark" class="h-10 w-auto" />
           </div>
-          <div class="flex gap-2">
-            <button
-              v-for="color in colors"
-              @click="changeTheme(color)"
-              class="size-6 rounded-full cursor-pointer flex items-center justify-center"
-              :class="getStyle(color)"
-            >
-              <i class="fa fa-circle"></i>
-            </button>
-          </div>
           <NuxtLink 
             to="/profile"
             class="flex items-center justify-center p-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900 rounded-lg transition-colors"
@@ -55,35 +45,6 @@ import logoLight from '@/assets/logo_chaps.png'
 const { signOut } = useAuth()
 
 const { theme } = useTheme()
-
-const colors = ['pink', 'indigo', 'emerald']
-
-const currentTheme = ref('indigo')
-
-const getStyle = (color: string) => {
-  switch (color) {
-    case 'pink':
-      return currentTheme.value === 'pink'
-        ? 'bg-pink-500 text-white'
-        : 'text-pink-500 hover:bg-pink-300 hover:text-white'
-    case 'indigo':
-      return currentTheme.value === 'indigo'
-        ? 'bg-indigo-500 text-white'
-        : 'text-indigo-500 hover:bg-indigo-300 hover:text-white'
-    case 'emerald':
-      return currentTheme.value === 'emerald'
-        ? 'bg-emerald-500 text-white'
-        : 'text-emerald-500 hover:bg-emerald-300 hover:text-white'
-    default:
-      return 'text-gray-500'
-  }
-}
-
-// switch data theme
-const changeTheme = (theme: string) => {
-  currentTheme.value = theme
-  document.documentElement.setAttribute('data-theme', theme)
-}
 
 // handle logout
 const handleLogout = async () => {

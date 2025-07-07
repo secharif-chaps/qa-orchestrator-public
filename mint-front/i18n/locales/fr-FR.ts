@@ -83,6 +83,10 @@ export default {
           }
         }
       },
+      accent: {
+        title: 'Couleur d\'accent',
+        description: 'Choisissez votre couleur d\'accent préférée pour l\'interface'
+      },
       language: {
         title: 'Langue',
         description: 'Sélectionnez votre langue préférée'

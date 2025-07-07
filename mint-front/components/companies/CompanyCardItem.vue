@@ -1,5 +1,5 @@
 <template>
-  <Card class="hover:shadow-lg transition-all duration-200 cursor-pointer group" @click="$emit('viewCompany', company.id)">
+  <Card class="hover:ring-4 hover:ring-primary/70 ring-offset-2 ring-offset-bg2 transition-all duration-200 cursor-pointer group" @click="$emit('viewCompany', company.id)">
     <div class="flex items-start justify-between mb-4">
       <div class="flex items-center gap-3">
         <div class="w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">

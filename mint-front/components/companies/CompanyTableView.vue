@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white dark:bg-slate-800 shadow rounded-lg overflow-hidden">
+  <div class="bg-bg1 border border-border-2 rounded-lg overflow-hidden">
     <!-- Loading State -->
     <div v-if="loading" class="p-8 text-center">
       <div class="flex items-center justify-center space-x-2">

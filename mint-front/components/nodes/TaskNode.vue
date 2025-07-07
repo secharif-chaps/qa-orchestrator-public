@@ -109,7 +109,7 @@ const getTaskIcon = (taskType: TaskType): string => {
 
 // Get node styling based on status
 const getNodeClass = (): string => {
-  const baseClasses = 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700'
+  const baseClasses = 'bg-bg1 border-gray-200 dark:border-slate-700'
   
   switch (props.data.status) {
     case 'succeeded':

@@ -450,7 +450,7 @@ This project uses a centralized theme system with CSS variables defined in `main
 <div class="bg3">Background level 3</div>
 
 <!-- ❌ FORBIDDEN: Never use dark: prefixes -->
-<div class="bg-white dark:bg-slate-800">Bad</div>
+<div class="bg-bg1">Bad</div>
 <div class="bg-gray-50 dark:bg-gray-900">Bad</div>
 ```
 

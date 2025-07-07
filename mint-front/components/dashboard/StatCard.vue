@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-6 flex items-center">
+  <div class="bg-bg1 border border-border-2 rounded-lg p-6 flex items-center">
     <div class="flex items-center w-full">
       <div class="flex-shrink-0">
         <div class="w-12 h-12 rounded-lg flex items-center justify-center"

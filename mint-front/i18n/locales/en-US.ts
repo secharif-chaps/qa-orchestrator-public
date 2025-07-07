@@ -83,6 +83,10 @@ export default {
           }
         }
       },
+      accent: {
+        title: 'Accent Color',
+        description: 'Choose your preferred accent color for the interface'
+      },
       language: {
         title: 'Language',
         description: 'Select your preferred language'

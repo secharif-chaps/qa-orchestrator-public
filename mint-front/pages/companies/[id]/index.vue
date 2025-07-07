@@ -11,9 +11,9 @@
     </template>
 
     <!-- Main content grid -->
-    <div class="grid grid-cols-12 gap-6 bg-white dark:bg-slate-800 p-6 rounded-lg border border-slate-200 dark:border-slate-700">
+    <div class="grid grid-cols-12 gap-6 bg-bg1 p-6 rounded-lg border border-border-2">
       <!-- First column: Company general info -->
-      <div class="col-span-12 lg:col-span-4 space-y-4 w-full bg-bg1 dark:bg-slate-900 p-6 rounded-lg border border-slate-200 dark:border-slate-900">
+      <div class="col-span-12 lg:col-span-4 space-y-4 w-full bg-bg1 p-6 rounded-lg border border-border-2">
         <div class="flex flex-col gap-4">
           <div class="flex flex-col items-center text-center gap-2">
             <div class="bg-primary w-20 h-20 rounded-full flex items-center justify-center shadow-lg">
@@ -34,7 +34,7 @@
 
           <div class="flex flex-col gap-3">
             <OPopper :text="$t('company.dashboard.generalInfo.website')" side="left"> 
-            <div class="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left hover:border-primary/50 transition-colors">
+            <div class="flex items-center bg-bg1 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left hover:border-primary/50 transition-colors">
               <i class="fa fa-link fa-fw text-primary"></i>
               <a
                 :href="formatWebsiteUrl(company?.website)"
@@ -48,7 +48,7 @@
 
             <OPopper :text="$t('company.dashboard.generalInfo.headquarters')" side="left">
             <div
-              class="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left"
+              class="flex items-center bg-bg1 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left"
               v-if="company?.profile?.hq"
             >
               <i class="fa fa-map-marker fa-fw text-secondary"></i>
@@ -60,7 +60,7 @@
 
           <OPopper :text="$t('company.dashboard.generalInfo.ceo')" side="left">
             <div
-              class="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left"
+              class="flex items-center bg-bg1 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left"
               v-if="company?.profile?.ceo"
             >
               <i class="fa fa-user-tie fa-fw text-secondary"></i>
@@ -72,7 +72,7 @@
 
           <OPopper :text="$t('company.dashboard.generalInfo.revenue')" side="left">
             <div
-              class="flex items-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left"
+              class="flex items-center bg-bg1 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left"
               v-if="company?.profile?.revenue"
             >
               <i class="fa fa-money-bill fa-fw text-secondary"></i>
@@ -114,7 +114,7 @@
 
     <!-- AI Chat sidebar -->
     <div v-if="showAiChat" class="fixed right-4 top-24 w-96 z-10">
-      <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg">
+      <div class="bg-bg1 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg">
         <Chat @hide="showAiChat = false" />
       </div>
     </div>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col h-[calc(80vh-5rem)] overflow-y-auto rounded-xl bg-white dark:bg-slate-800 p-4"
+    class="flex flex-col h-[calc(80vh-5rem)] overflow-y-auto rounded-xl bg-bg1 p-4"
   >
     <div
       class="flex gap-4 items-center justify-between border-b pb-4 border-primary text-secondary"

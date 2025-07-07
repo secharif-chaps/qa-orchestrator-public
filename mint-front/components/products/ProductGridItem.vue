@@ -1,5 +1,5 @@
 <template>
-  <Card class="hover:shadow-lg transition-shadow duration-200">
+  <Card>
     <div class="flex items-center gap-3 mb-4">
       <div class="w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
         <i :class="categoryIcon" class="text-primary text-xl"></i>
@@ -14,7 +14,7 @@
       <div
         v-for="(product, index) in displayedProducts"
         :key="index"
-        class="flex items-center gap-3 p-3 bg-bg3 rounded-lg hover:bg-bg2 transition-colors"
+        class="flex items-center gap-3 p-3 bg-bg3 rounded-lg transition-colors"
       >
         <OIndicator color="primary" size="sm" />
         <span class="text-sm flex-1 capitalize">{{ product }}</span>

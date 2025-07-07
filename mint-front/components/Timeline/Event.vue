@@ -16,7 +16,7 @@
     </div>
 
     <!-- Event content -->
-    <div class="flex-1 bg-bg1 border border-slate-200 dark:border-slate-700 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+    <div class="flex-1 bg-bg1 border border-border-2 rounded-lg p-5">
       <!-- Event Header -->
       <div class="flex items-start justify-between mb-3">
         <h3 class="text-lg font-semibold leading-tight">

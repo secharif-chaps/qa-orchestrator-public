@@ -23,153 +23,32 @@
     <!-- Profile Content -->
     <template v-else-if="user">
       <!-- Basic Information -->
-      <div class="bg-white dark:bg-slate-800 shadow rounded-lg">
-        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-          <div class="flex items-center justify-between">
-            <div>
-              <h2 class="text-lg font-semibold">{{ $t('account.profile.basic.title') }}</h2>
-              <p class="text-sm text-secondary mt-1">{{ $t('account.profile.basic.description') }}</p>
-            </div>
-            <OBadge 
-              :color="user.expired ? 'red' : 'green'"
-              :text="user.expired ? $t('account.profile.status.expired') : $t('account.profile.status.active')"
-            >
-              {{ user.expired ? $t('account.profile.status.expired') : $t('account.profile.status.active') }}
-            </OBadge>
-          </div>
-        </div>
-        <div class="px-6 py-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.username') }}</label>
-                <p class="mt-1 text-sm">{{ user.profile?.preferred_username || 'N/A' }}</p>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.email') }}</label>
-                <p class="mt-1 text-sm">{{ user.profile?.email || 'N/A' }}</p>
-              </div>
-            </div>
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.firstName') }}</label>
-                <p class="mt-1 text-sm">{{ user.profile?.given_name || 'N/A' }}</p>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.lastName') }}</label>
-                <p class="mt-1 text-sm">{{ user.profile?.family_name || 'N/A' }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <BasicInformationSection :user="user" />
 
       <!-- Authentication Details -->
-      <div class="bg-white dark:bg-slate-800 shadow rounded-lg">
-        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-          <h2 class="text-lg font-semibold">{{ $t('account.profile.auth.title') }}</h2>
-          <p class="text-sm text-secondary mt-1">{{ $t('account.profile.auth.description') }}</p>
-        </div>
-        <div class="px-6 py-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.userId') }}</label>
-                <p class="mt-1 text-sm font-mono break-all">{{ user.profile?.sub || 'N/A' }}</p>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.expiresAt') }}</label>
-                <p class="mt-1 text-sm">{{ formatDate(user.expires_at) }}</p>
-              </div>
-            </div>
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.issuedAt') }}</label>
-                <p class="mt-1 text-sm">{{ formatDate(user.profile?.iat) }}</p>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.sessionState') }}</label>
-                <OBadge 
-                  :color="user.expired ? 'red' : 'green'"
-                  :text="user.expired ? $t('account.profile.status.expired') : $t('account.profile.status.active')"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <AuthenticationDetailsSection :user="user" />
 
       <!-- Roles and Permissions -->
-      <div class="bg-white dark:bg-slate-800 shadow rounded-lg">
-        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-          <h2 class="text-lg font-semibold">{{ $t('account.profile.roles.title') }}</h2>
-          <p class="text-sm text-secondary mt-1">{{ $t('account.profile.roles.description') }}</p>
-        </div>
-        <div class="px-6 py-6">
-          <div v-if="userRoles && userRoles.length > 0">
-            <div class="flex flex-wrap gap-2">
-              <OBadge 
-                v-for="role in userRoles"
-                :key="role"
-                color="blue"
-                :text="role"
-              />
-            </div>
-          </div>
-          <div v-else>
-            <p class="text-sm text-secondary">{{ $t('account.profile.roles.none') }}</p>
-          </div>
-        </div>
-      </div>
+      <RolesPermissionsSection :user-roles="userRoles" />
 
-      <!-- Debug Information (Collapsible) -->
-      <Collapsible.Root v-model:open="showDebugInfo">
-        <div class="bg-white dark:bg-slate-800 shadow rounded-lg ">
-          <Collapsible.Trigger class="w-full px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-            <div>
-              <h2 class="text-lg font-semibold">{{ $t('account.profile.debug.title') }}</h2>
-              <p class="text-sm text-secondary mt-1">{{ $t('account.profile.debug.description') }}</p>
-            </div>
-            <i class="fas fa-chevron-down transition-transform" :class="showDebugInfo ? 'rotate-180' : ''"></i>
-          </Collapsible.Trigger>
-          <Collapsible.Content class="px-6 py-6">
-            <pre class="text-xs bg-slate-50 dark:bg-slate-900 p-4 rounded overflow-auto">{{ JSON.stringify(user, null, 2) }}</pre>
-          </Collapsible.Content>
-        </div>
-      </Collapsible.Root>
-
-      <!-- Actions -->
-      <div class="bg-white dark:bg-slate-800 shadow rounded-lg">
-        <div class="px-6 py-6">
-          <div class="flex flex-wrap gap-4">
-            <OButton 
-              :label="$t('account.profile.actions.refresh')"
-              icon="fas fa-refresh"
-              type="primary"
-              color="primary"
-              :loading="refreshing"
-              @click="refreshUser"
-            />
-            <OButton 
-              :label="$t('account.profile.actions.signOut')"
-              icon="fas fa-sign-out-alt"
-              type="secondary"
-              color="red"
-              @click="handleSignOut"
-            />
-          </div>
-        </div>
-      </div>
+      <!-- Profile Actions -->
+      <ProfileActionsSection 
+        :user="user"
+        :refreshing="refreshing"
+        @refresh-user="refreshUser"
+        @sign-out="handleSignOut"
+      />
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { OBadge, OButton } from '@owlint/feathers-vue'
-import { Collapsible } from 'reka-ui/namespaced'
+import BasicInformationSection from '~/components/account/profile/BasicInformationSection.vue'
+import AuthenticationDetailsSection from '~/components/account/profile/AuthenticationDetailsSection.vue'
+import RolesPermissionsSection from '~/components/account/profile/RolesPermissionsSection.vue'
+import ProfileActionsSection from '~/components/account/profile/ProfileActionsSection.vue'
 
 const { user, getUser, signOut } = useAuth()
-const showDebugInfo = ref(false)
 const refreshing = ref(false)
 
 // Reactive states
@@ -210,16 +89,6 @@ const handleSignOut = async () => {
   }
 }
 
-const formatDate = (timestamp) => {
-  if (!timestamp) return 'N/A'
-  
-  // Handle both Unix timestamp (seconds) and JavaScript timestamp (milliseconds)
-  const date = new Date(timestamp * 1000 > Date.now() ? timestamp * 1000 : timestamp)
-  
-  if (isNaN(date.getTime())) return 'Invalid Date'
-  
-  return date.toLocaleString()
-}
 
 // Initialize user data on mount
 onMounted(async () => {

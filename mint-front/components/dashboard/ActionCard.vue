@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-bg1 border border-slate-200 dark:border-slate-700 rounded-lg shadow-md p-6 hover:shadow-lg hover:border-primary/50 transition-all cursor-pointer group h-full"
+  <div class="bg-bg1 border border-border-2 rounded-lg p-6 ring-offset-2 ring-offset-bg2 hover:ring-4 hover:ring-primary/70 transition-all cursor-pointer group h-full"
        @click="handleClick">
     <div class="flex items-center h-full">
       <div class="flex-shrink-0">

@@ -15,7 +15,7 @@
       <div
         v-for="(product, index) in productList"
         :key="index"
-        class="flex items-center gap-2 p-2 bg-bg3 rounded text-sm hover:bg-bg2 transition-colors"
+        class="flex items-center gap-2 p-2 bg-bg3 rounded text-sm"
       >
         <OIndicator color="secondary" size="xs" />
         <span class="text-secondary flex-1 capitalize">{{ product }}</span>
