@@ -90,16 +90,22 @@ class CompanyService:
     
     def create_company(self, name: str, website: str, owner_username: str) -> Company:
         """Securely create a new company"""
+        print(f"🏭 CompanyService.create_company - START - Name: {name[:50]}, Owner: {owner_username}")
+        
         # Additional validation
+        print(f"🔍 Validating owner username: {owner_username}")
         if not owner_username or len(owner_username) > 100:
+            print(f"❌ Invalid owner username: {owner_username}")
             raise ValidationError("Invalid owner username")
         
+        print(f"🔄 Creating company entity via secure_query...")
         company = self.secure_query.safe_create_entity(
             Company,
             name=name,
             website=website,
             owner_username=owner_username
         )
+        print(f"✅ Company entity created - ID: {company.id}")
         
         # Create the 8 default tasks with pending status
         default_tasks = [

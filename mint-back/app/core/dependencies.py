@@ -31,11 +31,15 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     logger = logging.getLogger(__name__)
     
     token = credentials.credentials
+    print(f"🔐 get_current_user - START - Token: {token[:20]}...")
     
     try:
+        print(f"🔄 Calling keycloak_service.verify_token...")
         token_data = await keycloak_service.verify_token(token)
+        print(f"✅ Token verification completed - Valid: {token_data is not None}")
         
         if not token_data:
+            print(f"❌ Invalid token provided - token_data is None")
             logger.warning("Invalid token provided")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -47,6 +51,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         return token_data
         
     except Exception as e:
+        print(f"💥 Exception in get_current_user: {str(e)}")
         logger.error(f"Token validation error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

@@ -35,6 +35,15 @@
   --color-boston-800 : #245358;
   --color-boston-900 : #003039;
   --color-boston-950 : #020C0E;
+
+  --color-sage-50 : #607C7F;
+  --color-sage-100 : #607C7F;
+  --color-sage-200 : #607C7F;
+  --color-sage-300 : #607C7F;
+  --color-sage-400 : #607C7F;
+  --color-sage-500 : #607C7F;
+  --color-sage-600 : #607C7F;
+  --color-sage-700 : #607C7F;
 }
 
 @layer base {
@@ -120,6 +129,14 @@
 
   [data-theme='orange'].dark {
     --theme-color-primary: var(--color-orange-400);
+  }
+
+  [data-theme='sage'] {
+    --theme-color-primary: var(--color-sage-500);
+  }
+
+  [data-theme='sage'].dark {
+    --theme-color-primary: var(--color-sage-400);
   }
 
 

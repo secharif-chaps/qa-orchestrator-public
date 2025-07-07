@@ -101,6 +101,12 @@ const emit = defineEmits<{
 }>()
 
 const accentColors = [
+{ 
+    name: 'sage', 
+    label: 'Sage', 
+    bgClass: 'bg-sage-500 ring-sage-500/20', 
+    focusRingClass: 'focus:ring-sage-500' 
+  },
   { 
     name: 'emerald', 
     label: 'Emerald', 

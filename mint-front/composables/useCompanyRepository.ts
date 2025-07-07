@@ -39,7 +39,7 @@ export const useCompanyRepository = () => {
      * Create a new company
      */
     createCompany: (company: CompanyCreate) => {
-      return api.post<CompanyResponse>(companiesUrl, company)
+      return api.post<CompanyResponse>(`${companiesUrl}`, company)
     },
 
     /**

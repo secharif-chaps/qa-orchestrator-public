@@ -19,17 +19,7 @@ setup_database_security(engine)
 # Debug logging for CORS settings
 print(f"CORS Origin setting: {settings.CORS_ORIGIN}")
 
-# Add security middleware (MUST be added before CORS)
-app.add_middleware(
-    SecurityMiddleware,
-    max_request_size=2097152,  # 2MB
-    rate_limit_requests=100,   # 100 requests per minute
-    rate_limit_window=60
-)
-
-app.add_middleware(JSONValidationMiddleware)
-
-# Add CORS middleware with more restrictive settings
+# Add CORS middleware FIRST (to handle preflight requests properly)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.CORS_ORIGIN, "http://localhost:3000"],  # Allow both origins
@@ -38,6 +28,16 @@ app.add_middleware(
     allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],  # More restrictive
     expose_headers=["Content-Type", "Authorization"],  # More restrictive
 )
+
+# Add security middleware AFTER CORS (so CORS headers are set before security checks)
+app.add_middleware(
+    SecurityMiddleware,
+    max_request_size=2097152,  # 2MB
+    rate_limit_requests=100,   # 100 requests per minute
+    rate_limit_window=60
+)
+
+app.add_middleware(JSONValidationMiddleware)
 
 # Include API routers
 app.include_router(api_router, prefix="/api")

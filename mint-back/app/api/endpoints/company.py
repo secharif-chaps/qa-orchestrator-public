@@ -1,5 +1,8 @@
+import logging
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
+
+logger = logging.getLogger(__name__)
 
 from app.services.company import CompanyService
 from app.core.dependencies import get_company_service, get_current_user
@@ -53,16 +56,44 @@ async def create_company(
     current_user: TokenData = Depends(get_current_user)
 ):
     """Create a new company"""
-    # Sanitize inputs
-    sanitized_name = sanitize_input(company_data.name, max_length=100)
-    sanitized_website = sanitize_input(company_data.website, max_length=255)
+    print(f"🏢 POST /api/companies/ - START - User: {current_user.username}, Data: {company_data.name[:50]}...")
     
-    # Use the authenticated user's username as the owner
-    return service.create_company(
-        name=sanitized_name,
-        website=sanitized_website,
-        owner_username=current_user.username
-    )
+    try:
+        # Sanitize inputs
+        print(f"🧹 Sanitizing inputs - Name: {company_data.name[:50]}, Website: {company_data.website[:50]}")
+        sanitized_name = sanitize_input(company_data.name, max_length=100)
+        sanitized_website = sanitize_input(company_data.website, max_length=255)
+        print(f"✅ Sanitized - Name: {sanitized_name[:50]}, Website: {sanitized_website[:50]}")
+        
+        # Use the authenticated user's username as the owner
+        print(f"🔄 Calling service.create_company for authenticated user: {current_user.username}")
+        result = service.create_company(
+            name=sanitized_name,
+            website=sanitized_website,
+            owner_username=current_user.username
+        )
+        print(f"✅ Company created successfully - ID: {result.id}, Name: {result.name}")
+        return result
+        
+    except ValidationError as e:
+        print(f"❌ Validation error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Validation error: {str(e)}"
+        )
+    except ValueError as e:
+        print(f"❌ Value error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid input: {str(e)}"
+        )
+    except Exception as e:
+        print(f"❌ Unexpected error creating company: {str(e)}")
+        logger.error(f"Unexpected error in create_company: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An internal server error occurred while creating the company"
+        )
 
 @router.put("/{company_id}", response_model=CompanyResponse)
 async def update_company(

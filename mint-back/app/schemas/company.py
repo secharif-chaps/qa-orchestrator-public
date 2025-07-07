@@ -21,7 +21,7 @@ class CompanyBase(BaseModel):
         return InputValidator.validate_website_url(v)
 
 class CompanyCreate(CompanyBase):
-    owner_username: str
+    pass  # Only inherits name and website from CompanyBase
 
 class CompanyUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=2, max_length=100, description="Company name")

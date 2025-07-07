@@ -16,36 +16,51 @@ export const useApiService = () => {
       defaultHeaders['Authorization'] = `Bearer ${accessToken}`
     }
 
-    const response = await fetch(`${baseURL}${url}`, {
-      ...options,
-      headers: {
-        ...defaultHeaders,
-        ...options.headers
+    // Add timeout to prevent indefinite waiting
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+    
+    try {
+      const response = await fetch(`${baseURL}${url}`, {
+        ...options,
+        headers: {
+          ...defaultHeaders,
+          ...options.headers
+        },
+        signal: controller.signal
+      })
+      
+      clearTimeout(timeoutId)
+      
+      // Handle HTTP errors
+      if (!response.ok) {
+        // Handle unauthorized - redirect to login
+        if (response.status === 401) {
+          await navigateTo('/login')
+          return
+        }
+        
+        const errorData = await response.json().catch(() => null)
+        const error = new Error(
+          errorData?.detail || `API error: ${response.status} ${response.statusText}`
+        )
+        throw error
       }
-    })
 
-    // Handle HTTP errors
-    if (!response.ok) {
-      // Handle unauthorized - redirect to login
-      if (response.status === 401) {
-        await navigateTo('/login')
-        return
+      // Return null for 204 No Content
+      if (response.status === 204) {
+        return null
       }
       
-      const errorData = await response.json().catch(() => null)
-      const error = new Error(
-        errorData?.detail || `API error: ${response.status} ${response.statusText}`
-      )
+      return response.json()
+      
+    } catch (error) {
+      clearTimeout(timeoutId)
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout - please try again')
+      }
       throw error
     }
-
-    // Return null for 204 No Content
-    if (response.status === 204) {
-      return null
-    }
-
-    // Parse JSON response
-    return await response.json()
   }
 
   return {

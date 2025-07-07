@@ -6,6 +6,10 @@
       <p class="text-secondary">{{ $t('search.companyIdentity') }}</p>
     </div>
 
+
+    {{ websiteError }}
+    {{ companyError }}
+
     <!-- Search Form Card -->
     <Card :title="$t('search.companyIdentity')">
       <form @submit.prevent="startSearch" class="space-y-6">
@@ -65,7 +69,7 @@
             :loading="pending"
             :disabled="pending || !isFormValid"
             data-cy="launch-search-button"
-            submit
+            @click="submit"
           />
         </div>
       </form>
@@ -150,8 +154,10 @@ const resetData = () => {
 const pending = ref(false)
 const router = useRouter()
 // Handle the search and redirection as soon as we get the company name
-const startSearch = async () => {
+const submit = async () => {
   // Validate inputs before proceeding
+  console.log('startSearch', company.value, website.value)
+
   if (!validateCompany(company.value)) {
     companyError.value = t('search.fields.companyName.error')
     return
@@ -164,6 +170,7 @@ const startSearch = async () => {
 
   pending.value = true
 
+
   try {
     const trimmedCompany = company.value.trim().toLowerCase()
     // Ensure website has protocol
@@ -173,11 +180,30 @@ const startSearch = async () => {
       name: trimmedCompany,
       website: websiteUrl
     })
+    
     router.push(`/companies/${newCompany.id}`)
   } catch (error) {
     // Handle any unexpected errors during the search process
     console.error('Error during search:', error)
-    // You might want to show a toast or error message to the user here
+    
+    // Display user-friendly error message
+    if (error.message) {
+      // Extract meaningful error message
+      if (error.message.includes('Validation error')) {
+        companyError.value = 'Invalid company name format'
+        websiteError.value = 'Invalid website URL format'
+      } else if (error.message.includes('Invalid input')) {
+        companyError.value = 'Please check your company name'
+        websiteError.value = 'Please check your website URL'
+      } else if (error.message.includes('unauthorized') || error.message.includes('401')) {
+        // Authentication error - will be handled by navigateTo('/login') in API service
+      } else {
+        // Generic error
+        companyError.value = 'An error occurred while creating the company'
+      }
+    } else {
+      companyError.value = 'Network error - please try again'
+    }
   } finally {
     pending.value = false
   }

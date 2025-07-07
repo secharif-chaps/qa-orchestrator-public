@@ -25,8 +25,9 @@
             <label class="block text-sm font-medium text-secondary">{{ $t('account.profile.fields.sessionState') }}</label>
             <OBadge 
               :color="user?.expired ? 'red' : 'green'"
-              :text="user?.expired ? $t('account.profile.status.expired') : $t('account.profile.status.active')"
-            />
+            >
+            {{ user?.expired ? $t('account.profile.status.expired') : $t('account.profile.status.active') }}
+            </OBadge>
           </div>
         </div>
       </div>
