@@ -12,11 +12,19 @@ const { locale } = useI18n()
 const STORAGE_KEY = 'user-locale'
 
 onMounted(() => {
-  // Load saved locale on app initialization
-  const savedLocale = localStorage.getItem(STORAGE_KEY)
+  if (typeof localStorage !== 'undefined') {
+    const savedLocale = localStorage.getItem(STORAGE_KEY)
   if (savedLocale) {
     locale.value = savedLocale
   }
+    // Load saved accent color
+    const savedAccent = localStorage.getItem('accent-color')
+    if (savedAccent) {
+      document.documentElement.setAttribute('data-theme', savedAccent)
+    }
+  }
+
+  
 })
 
 useHead({
