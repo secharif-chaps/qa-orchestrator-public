@@ -85,10 +85,10 @@ const addSourcesSection = (slide, sources: string[]) => {
   // Remove duplicates
   const uniqueSources = [...new Set(sources)]
 
-  // Create a background for the sources section
+  // Create a background for the sources section - moved to bottom
   slide.addShape('RECTANGLE', {
     x: 0.5,
-    y: 6.0,
+    y: 6.8,
     w: 9.0,
     h: 0.8,
     fill: { color: 'F8FAFC' }, // Very light gray (slate-50)
@@ -98,7 +98,7 @@ const addSourcesSection = (slide, sources: string[]) => {
   // Add sources title
   slide.addText('Sources:', {
     x: 0.75,
-    y: 6.05,
+    y: 6.85,
     fontSize: 8,
     bold: true,
     color: COLORS.secondaryText,
@@ -114,7 +114,7 @@ const addSourcesSection = (slide, sources: string[]) => {
   firstColumnSources.forEach((source, index) => {
     slide.addText(`• ${source}`, {
       x: 0.75,
-      y: 6.2 + index * 0.15,
+      y: 7.0 + index * 0.15,
       fontSize: 7,
       color: COLORS.sourceText,
       fontFace: 'Arial',
@@ -128,7 +128,7 @@ const addSourcesSection = (slide, sources: string[]) => {
     secondColumnSources.forEach((source, index) => {
       slide.addText(`• ${source}`, {
         x: 5.0,
-        y: 6.2 + index * 0.15,
+        y: 7.0 + index * 0.15,
         fontSize: 7,
         color: COLORS.sourceText,
         fontFace: 'Arial',
@@ -245,6 +245,52 @@ const addListItems = (
   })
 }
 
+// Better bullet point function using single text block
+const addListItemsImproved = (
+  slide,
+  title,
+  items: SourcedValue<string>[] | undefined,
+  x,
+  y,
+  maxWidth = 4.0
+) => {
+  slide.addText(title, {
+    x,
+    y,
+    fontSize: 14,
+    bold: true,
+    color: COLORS.titleText,
+    fontFace: 'Arial',
+  })
+
+  if (!items || items.length === 0) {
+    slide.addText('No items available', {
+      x,
+      y: y + 0.4,
+      fontSize: 12,
+      color: COLORS.secondaryText,
+      fontFace: 'Arial',
+    })
+    return
+  }
+
+  // Create single text block with all bullet points
+  const bulletText = items
+    .map(item => `• ${getValue(item)}`)
+    .join('\n')
+
+  slide.addText(bulletText, {
+    x,
+    y: y + 0.4,
+    fontSize: 12,
+    color: COLORS.secondaryText,
+    fontFace: 'Arial',
+    breakLine: true,
+    w: maxWidth,
+    valign: 'top',
+  })
+}
+
 // Create slide for company profile
 const createProfileSlide = (pptx, company: Company) => {
   const slide = pptx.addSlide()
@@ -254,7 +300,7 @@ const createProfileSlide = (pptx, company: Company) => {
   addCardBackground(slide)
 
   // Company name with larger font
-  slide.addText(getValue(company.profile?.name) || 'Company Name', {
+  slide.addText(company.name || 'Company Name', {
     x: 1.0,
     y: 1.5,
     fontSize: 20,
@@ -278,21 +324,23 @@ const createProfileSlide = (pptx, company: Company) => {
   }
 
   // Company details in 2 columns
-  addInfoBlock(slide, 'Business Line', company.profile?.business_line, 1.0, 2.7)
-  addInfoBlock(slide, 'Website', company.profile?.website, 5.0, 2.7)
+  addInfoBlock(slide, 'Business Line', company.profile?.businessLine, 1.0, 2.7)
+  addInfoBlock(slide, 'Website', company.website, 5.0, 2.7)
   addInfoBlock(
     slide,
     'Established',
-    company.profile?.establishment_year,
+    company.profile?.establishmentYear,
     1.0,
     3.7
   )
-  addInfoBlock(slide, 'Employees', company.profile?.employee_count, 5.0, 3.7)
+  addInfoBlock(slide, 'Employees', company.profile?.employeeCount, 5.0, 3.7)
   addInfoBlock(slide, 'Revenue', company.profile?.revenue, 1.0, 4.7)
+  addInfoBlock(slide, 'CEO', company.profile?.ceo, 5.0, 4.7)
+  addInfoBlock(slide, 'Headquarters', company.profile?.hq, 1.0, 5.7)
 
   // Add group name if available
-  if (company.profile?.group_name) {
-    addInfoBlock(slide, 'Group', company.profile.group_name, 5.0, 4.7)
+  if (company.profile?.groupName) {
+    addInfoBlock(slide, 'Group', company.profile.groupName, 5.0, 5.7)
   }
 
   // Add sources section
@@ -308,31 +356,53 @@ const createProductsSlide = (pptx, company: Company) => {
   addSlideTitle(slide, 'Products and Services')
   addCardBackground(slide)
 
-  const productsServices = company.products_and_services || {}
+  const products = company.products || {}
+
+  // Add insights if available
+  if (products.insights) {
+    slide.addText('Insights:', {
+      x: 1.0,
+      y: 1.5,
+      fontSize: 14,
+      bold: true,
+      color: COLORS.titleText,
+      fontFace: 'Arial',
+    })
+    
+    slide.addText(products.insights, {
+      x: 1.0,
+      y: 1.9,
+      w: 8.0,
+      fontSize: 12,
+      color: COLORS.secondaryText,
+      fontFace: 'Arial',
+      breakLine: true,
+    })
+  }
 
   // Add product range in first column
-  addListItems(slide, 'Product Range', productsServices.product_range, 1.0, 1.5)
+  addListItemsImproved(slide, 'Product Range', products.range, 1.0, 2.8)
 
   // Add partner brands in second column
-  addListItems(
+  addListItemsImproved(
     slide,
     'Partner Brands',
-    productsServices.partner_brands,
+    products.partnerBrands,
     5.0,
-    1.5
+    2.8
   )
 
   // Add private labels at bottom
-  addListItems(
+  addListItemsImproved(
     slide,
     'Private Labels',
-    productsServices.private_labels,
+    products.privateLabels,
     1.0,
-    4.0
+    4.5
   )
 
   // Add sources section
-  const sources = getSourcesFromObject(company.products_and_services)
+  const sources = getSourcesFromObject(company.products)
   addSourcesSection(slide, sources)
 }
 
@@ -344,10 +414,27 @@ const createTargetAudienceSlide = (pptx, company: Company) => {
   addSlideTitle(slide, 'Target Audience & Customer Base')
   addCardBackground(slide)
 
-  const targetAudience = company.target_audience_and_customer_base || {}
+  const products = company.products || {}
 
   // Add customer type
-  addInfoBlock(slide, 'Customer Type', targetAudience.customer_type, 1.0, 1.5)
+  slide.addText('Customer Type', {
+    x: 1.0,
+    y: 1.5,
+    fontSize: 14,
+    bold: true,
+    color: COLORS.titleText,
+    fontFace: 'Arial',
+  })
+
+  slide.addText(products.customerType || 'N/A', {
+    x: 1.0,
+    y: 1.9,
+    w: 8.0,
+    fontSize: 12,
+    color: COLORS.secondaryText,
+    fontFace: 'Arial',
+    breakLine: true,
+  })
 
   // Add marketing positioning with more space
   slide.addText('Marketing Positioning', {
@@ -359,7 +446,7 @@ const createTargetAudienceSlide = (pptx, company: Company) => {
     fontFace: 'Arial',
   })
 
-  slide.addText(getValue(targetAudience.marketing_positioning) || 'N/A', {
+  slide.addText(products.marketingPositioning || 'N/A', {
     x: 1.0,
     y: 2.9,
     fontSize: 12,
@@ -367,13 +454,11 @@ const createTargetAudienceSlide = (pptx, company: Company) => {
     fontFace: 'Arial',
     breakLine: true,
     w: 8.0,
-    h: 2.0,
+    h: 3.0,
   })
 
-  // Add sources section
-  const sources = getSourcesFromObject(
-    company.target_audience_and_customer_base
-  )
+  // Add sources section  
+  const sources = getSourcesFromObject(company.products)
   addSourcesSection(slide, sources)
 }
 
@@ -385,7 +470,7 @@ const createDigitalStrategySlide = (pptx, company: Company) => {
   addSlideTitle(slide, 'Digital Strategy & Social Media')
   addCardBackground(slide)
 
-  const digitalStrategy = company.digital_strategy_and_social_media || {}
+  const digital = company.digital || {}
 
   // Add digital strategy
   slide.addText('Digital Strategy', {
@@ -397,73 +482,79 @@ const createDigitalStrategySlide = (pptx, company: Company) => {
     fontFace: 'Arial',
   })
 
-  slide.addText(getValue(digitalStrategy.digital_strategy) || 'N/A', {
+  slide.addText(getValue(digital.strategy) || 'N/A', {
     x: 1.0,
     y: 1.9,
     fontSize: 12,
     color: COLORS.secondaryText,
     fontFace: 'Arial',
     breakLine: true,
-    w: 8.0,
+    w: 4.0,
+    h: 0.8,
   })
 
   // Add loyalty program
   slide.addText('Loyalty Program', {
     x: 1.0,
-    y: 3.0,
+    y: 2.9,
     fontSize: 14,
     bold: true,
     color: COLORS.titleText,
     fontFace: 'Arial',
   })
 
-  slide.addText(getValue(digitalStrategy.loyalty_program) || 'N/A', {
+  slide.addText(getValue(digital.loyaltyProgram) || 'N/A', {
     x: 1.0,
-    y: 3.4,
+    y: 3.3,
     fontSize: 12,
     color: COLORS.secondaryText,
     fontFace: 'Arial',
     breakLine: true,
-    w: 8.0,
+    w: 4.0,
+    h: 0.8,
   })
 
-  // Add online services
-  addListItems(
+  // Add online services in first column
+  addListItemsImproved(
     slide,
     'Online Services',
-    digitalStrategy.online_services,
+    digital.onlineServices,
     1.0,
-    4.2
+    4.3,
+    4.0
   )
 
-  // Add social media
-  if (company.social_media && company.social_media.length > 0) {
+  // Add social media in second column
+  if (digital.socialMedia && digital.socialMedia.length > 0) {
     slide.addText('Social Media Presence', {
       x: 5.0,
-      y: 4.2,
+      y: 1.5,
       fontSize: 14,
       bold: true,
       color: COLORS.titleText,
       fontFace: 'Arial',
     })
 
-    company.social_media.forEach((social, index) => {
-      slide.addText(`• ${social.name}`, {
-        x: 5.0,
-        y: 4.6 + index * 0.3,
-        fontSize: 12,
-        color: COLORS.secondaryText,
-        fontFace: 'Arial',
-      })
+    const socialMediaText = digital.socialMedia
+      .map(social => `• ${social.name}`)
+      .join('\n')
+
+    slide.addText(socialMediaText, {
+      x: 5.0,
+      y: 1.9,
+      fontSize: 12,
+      color: COLORS.secondaryText,
+      fontFace: 'Arial',
+      breakLine: true,
+      w: 4.0,
+      valign: 'top',
     })
   }
 
   // Add sources section
-  const digitalSources = getSourcesFromObject(
-    company.digital_strategy_and_social_media
-  )
-  const socialSources = company.social_media
-    ? company.social_media.flatMap((social) =>
+  const digitalSources = getSourcesFromObject(company.digital)
+  const socialSources = digital.socialMedia
+    ? digital.socialMedia.flatMap((social) =>
         social.url?.source ? [social.url.source] : []
       )
     : []
@@ -481,16 +572,17 @@ const createCSRSlide = (pptx, company: Company) => {
   const csr = company.csr || {}
 
   // Add responsibility initiatives in first column
-  addListItems(
+  addListItemsImproved(
     slide,
     'Responsibility Initiatives',
     csr.responsibility_initiatives,
     1.0,
-    1.5
+    1.5,
+    4.0
   )
 
   // Add charity actions in second column
-  addListItems(slide, 'Charity Actions', csr.charity_actions, 5.0, 1.5)
+  addListItemsImproved(slide, 'Charity Actions', csr.charity_actions, 5.0, 1.5, 4.0)
 
   // Add sources section
   const sources = getSourcesFromObject(company.csr)
@@ -502,50 +594,17 @@ const createNewsSlide = (pptx, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
-  addSlideTitle(slide, 'Recent News')
+  addSlideTitle(slide, 'Press & Media')
   addCardBackground(slide)
 
-  // Add recent news items
-  addListItems(slide, 'Latest Updates', company.recent_news, 1.0, 1.5)
+  // Add press articles
+  addListItemsImproved(slide, 'Press Articles', company.press?.articles, 1.0, 1.5, 8.0)
 
   // Add sources section
-  const sources = getSourcesFromArray(company.recent_news)
+  const sources = getSourcesFromArray(company.press?.articles)
   addSourcesSection(slide, sources)
 }
 
-// Create insights slide
-const createInsightsSlide = (pptx, company: Company) => {
-  const slide = pptx.addSlide()
-  slide.background = { color: COLORS.background }
-
-  addSlideTitle(slide, 'Company Insights')
-  addCardBackground(slide)
-
-  // Add insights text
-  slide.addText('Key Insights', {
-    x: 1.0,
-    y: 1.5,
-    fontSize: 14,
-    bold: true,
-    color: COLORS.titleText,
-    fontFace: 'Arial',
-  })
-
-  slide.addText(getValue(company.insights) || 'No insights available', {
-    x: 1.0,
-    y: 1.9,
-    fontSize: 12,
-    color: COLORS.secondaryText,
-    fontFace: 'Arial',
-    breakLine: true,
-    w: 8.0,
-    h: 3.5,
-  })
-
-  // Add sources section
-  const sources = company.insights?.source ? [company.insights.source] : []
-  addSourcesSection(slide, sources)
-}
 
 // Create title slide
 const createTitleSlide = (pptx, company: Company) => {
@@ -572,7 +631,7 @@ const createTitleSlide = (pptx, company: Company) => {
   })
 
   // Add company name in large font as main title
-  slide.addText(getValue(company.profile?.name) || 'Company Overview', {
+  slide.addText(company.name || 'Company Overview', {
     x: 0.5,
     y: 1.8,
     w: 9.0,
@@ -611,65 +670,336 @@ const createTitleSlide = (pptx, company: Company) => {
   })
 }
 
+// Create timeline slide
+const createTimelineSlide = (pptx, company: Company) => {
+  const slide = pptx.addSlide()
+  slide.background = { color: COLORS.background }
+
+  addSlideTitle(slide, 'Timeline')
+  addCardBackground(slide)
+
+  // Add timeline JSON dump for now as requested
+  if (company.timeline) {
+    slide.addText('Timeline Data:', {
+      x: 1.0,
+      y: 1.5,
+      fontSize: 14,
+      bold: true,
+      color: COLORS.titleText,
+      fontFace: 'Arial',
+    })
+    
+    slide.addText(JSON.stringify(company.timeline, null, 2), {
+      x: 1.0,
+      y: 2.0,
+      w: 8.0,
+      h: 3.5,
+      fontSize: 8,
+      color: COLORS.secondaryText,
+      fontFace: 'Courier New',
+      valign: 'top',
+      breakLine: true,
+    })
+  }
+
+  // Add sources section
+  const sources = company.timeline?.events 
+    ? company.timeline.events.map(event => event.source).filter(source => source && source.trim() !== '')
+    : []
+  addSourcesSection(slide, sources)
+}
+
+// Create team slide
+const createTeamSlide = (pptx, company: Company) => {
+  const slide = pptx.addSlide()
+  slide.background = { color: COLORS.background }
+
+  addSlideTitle(slide, 'Team & Management')
+  addCardBackground(slide)
+
+  // Add team JSON dump for now as requested
+  if (company.team) {
+    slide.addText('Team Data:', {
+      x: 1.0,
+      y: 1.5,
+      fontSize: 14,
+      bold: true,
+      color: COLORS.titleText,
+      fontFace: 'Arial',
+    })
+    
+    slide.addText(JSON.stringify(company.team, null, 2), {
+      x: 1.0,
+      y: 2.0,
+      w: 8.0,
+      h: 3.5,
+      fontSize: 8,
+      color: COLORS.secondaryText,
+      fontFace: 'Courier New',
+      valign: 'top',
+      breakLine: true,
+    })
+  }
+
+  // Add sources section - team data doesn't have sources in the interface
+  const sources: string[] = []
+  addSourcesSection(slide, sources)
+}
+
+// Create jobs slide
+const createJobsSlide = (pptx, company: Company) => {
+  const slide = pptx.addSlide()
+  slide.background = { color: COLORS.background }
+
+  addSlideTitle(slide, 'Job Opportunities')
+  addCardBackground(slide)
+
+  // Add jobs insights if available - COLUMN 1
+  if (company.jobs?.insights) {
+    slide.addText('Job Market Insights:', {
+      x: 1.0,
+      y: 1.5,
+      fontSize: 14,
+      bold: true,
+      color: COLORS.titleText,
+      fontFace: 'Arial',
+    })
+    
+    // Combine insights into single text block
+    const insights = company.jobs.insights
+    const insightLines = []
+    
+    if (insights.total_openings) {
+      insightLines.push(`Total Openings: ${getValue(insights.total_openings)}`)
+    }
+    
+    if (insights.hiring_focus) {
+      insightLines.push(`Hiring Focus: ${getValue(insights.hiring_focus)}`)
+    }
+    
+    if (insights.top_departments) {
+      const depts = getValue(insights.top_departments)
+      if (Array.isArray(depts)) {
+        insightLines.push(`Top Departments: ${depts.join(', ')}`)
+      }
+    }
+    
+    if (insights.growth_indicators) {
+      insightLines.push(`Growth Indicators: ${getValue(insights.growth_indicators)}`)
+    }
+    
+    if (insightLines.length > 0) {
+      slide.addText(insightLines.join('\n'), {
+        x: 1.0,
+        y: 1.9,
+        fontSize: 12,
+        color: COLORS.secondaryText,
+        fontFace: 'Arial',
+        breakLine: true,
+        w: 4.0,
+        valign: 'top',
+      })
+    }
+  }
+
+  // Add job offers - COLUMN 2
+  if (company.jobs?.offers && company.jobs.offers.length > 0) {
+    slide.addText('Current Job Openings:', {
+      x: 5.0,
+      y: 1.5,
+      fontSize: 14,
+      bold: true,
+      color: COLORS.titleText,
+      fontFace: 'Arial',
+    })
+    
+    const jobLines = company.jobs.offers
+      .slice(0, 10) // Limit to first 10 jobs to avoid overcrowding
+      .map(job => `${job.title} - ${job.location}`)
+    
+    slide.addText(jobLines.join('\n'), {
+      x: 5.0,
+      y: 1.9,
+      fontSize: 11,
+      color: COLORS.secondaryText,
+      fontFace: 'Arial',
+      breakLine: true,
+      w: 4.0,
+      valign: 'top',
+    })
+  }
+
+  // Add sources section
+  const sources = company.jobs?.insights 
+    ? Object.values(company.jobs.insights)
+        .filter(insight => insight && typeof insight === 'object' && 'source' in insight)
+        .map(insight => (insight as any).source)
+        .filter(source => source && source.trim() !== '')
+    : []
+  addSourcesSection(slide, sources)
+}
+
+// Create press slide
+const createPressSlide = (pptx, company: Company) => {
+  const slide = pptx.addSlide()
+  slide.background = { color: COLORS.background }
+
+  addSlideTitle(slide, 'Press & Media')
+  addCardBackground(slide)
+
+  // Add press JSON dump for now as requested
+  if (company.press) {
+    slide.addText('Press Data:', {
+      x: 1.0,
+      y: 1.5,
+      fontSize: 14,
+      bold: true,
+      color: COLORS.titleText,
+      fontFace: 'Arial',
+    })
+    
+    slide.addText(JSON.stringify(company.press, null, 2), {
+      x: 1.0,
+      y: 2.0,
+      w: 8.0,
+      h: 3.5,
+      fontSize: 8,
+      color: COLORS.secondaryText,
+      fontFace: 'Courier New',
+      valign: 'top',
+      breakLine: true,
+    })
+  }
+
+  // Add sources section
+  const sources = getSourcesFromArray(company.press?.articles)
+  addSourcesSection(slide, sources)
+}
+
 // Handle export with selected options
 const handleExport = (selectedOptions: string[]) => {
+  console.log('🚀 Export started with selected options:', selectedOptions)
   downloadPPT(selectedOptions)
   showModal.value = false
 }
 
 const downloadPPT = async (selectedOptions: string[] = []) => {
-  if (!company.value) return
+  if (!company.value) {
+    console.log('❌ No company data available')
+    return
+  }
+
+  console.log('📊 Company data available:', !!company.value)
+  console.log('📋 Company data keys:', Object.keys(company.value))
 
   try {
     // Create new PowerPoint presentation
     const pptx = new pptxgen()
     pptx.layout = 'LAYOUT_WIDE'
+    console.log('📄 PowerPoint presentation created')
+
+    let slideCount = 0
 
     // Create slides based on selected options
     if (selectedOptions.includes('titleSlide')) {
+      console.log('✅ Creating title slide')
       createTitleSlide(pptx, company.value as Company)
+      slideCount++
     }
 
-    // Prioritize insights slide as the first content slide if available
-    if (selectedOptions.includes('insights') && company.value.insights) {
-      createInsightsSlide(pptx, company.value as Company)
-    }
 
     if (selectedOptions.includes('profile')) {
+      console.log('✅ Creating profile slide')
       createProfileSlide(pptx, company.value as Company)
+      slideCount++
     }
 
     // Only create slides for sections that have data and are selected
-    if (selectedOptions.includes('productsServices') && company.value.products_and_services) {
+    if (selectedOptions.includes('productsServices') && company.value.products) {
+      console.log('✅ Creating products slide')
       createProductsSlide(pptx, company.value as Company)
+      slideCount++
+    } else if (selectedOptions.includes('productsServices')) {
+      console.log('❌ Products selected but no data available')
     }
 
-    if (selectedOptions.includes('targetAudience') && company.value.target_audience_and_customer_base) {
+    if (selectedOptions.includes('targetAudience') && company.value.products && (company.value.products.customerType || company.value.products.marketingPositioning)) {
+      console.log('✅ Creating target audience slide')
       createTargetAudienceSlide(pptx, company.value as Company)
+      slideCount++
+    } else if (selectedOptions.includes('targetAudience')) {
+      console.log('❌ Target audience selected but no data available')
     }
 
-    if (selectedOptions.includes('digitalStrategy') && company.value.digital_strategy_and_social_media) {
+    if (selectedOptions.includes('digitalStrategy') && company.value.digital) {
+      console.log('✅ Creating digital strategy slide')
       createDigitalStrategySlide(pptx, company.value as Company)
+      slideCount++
+    } else if (selectedOptions.includes('digitalStrategy')) {
+      console.log('❌ Digital strategy selected but no data available')
     }
 
     if (selectedOptions.includes('csr') && company.value.csr) {
+      console.log('✅ Creating CSR slide')
       createCSRSlide(pptx, company.value as Company)
+      slideCount++
+    } else if (selectedOptions.includes('csr')) {
+      console.log('❌ CSR selected but no data available')
     }
 
-    if (selectedOptions.includes('news') && company.value.recent_news && company.value.recent_news.length > 0) {
+    if (selectedOptions.includes('news') && company.value.press && company.value.press.articles && company.value.press.articles.length > 0) {
+      console.log('✅ Creating news slide')
       createNewsSlide(pptx, company.value as Company)
+      slideCount++
+    } else if (selectedOptions.includes('news')) {
+      console.log('❌ News selected but no data available')
     }
+
+    if (selectedOptions.includes('timeline') && company.value.timeline) {
+      console.log('✅ Creating timeline slide')
+      createTimelineSlide(pptx, company.value as Company)
+      slideCount++
+    } else if (selectedOptions.includes('timeline')) {
+      console.log('❌ Timeline selected but no data available')
+    }
+
+    if (selectedOptions.includes('team') && company.value.team) {
+      console.log('✅ Creating team slide')
+      createTeamSlide(pptx, company.value as Company)
+      slideCount++
+    } else if (selectedOptions.includes('team')) {
+      console.log('❌ Team selected but no data available')
+    }
+
+    if (selectedOptions.includes('jobs') && company.value.jobs) {
+      console.log('✅ Creating jobs slide')
+      createJobsSlide(pptx, company.value as Company)
+      slideCount++
+    } else if (selectedOptions.includes('jobs')) {
+      console.log('❌ Jobs selected but no data available')
+    }
+
+    if (selectedOptions.includes('press') && company.value.press) {
+      console.log('✅ Creating press slide')
+      createPressSlide(pptx, company.value as Company)
+      slideCount++
+    } else if (selectedOptions.includes('press')) {
+      console.log('❌ Press selected but no data available')
+    }
+
+    console.log(`📊 Total slides created: ${slideCount}`)
 
     // Generate filename from company name or use default
-    const fileName = company.value.profile?.name
-      ? `${getValue(company.value.profile.name)?.replace(
-          /[^a-z0-9]/gi,
-          '_'
-        )}_Overview.pptx`
+    const fileName = company.value.name
+      ? `${company.value.name.replace(/[^a-z0-9]/gi, '_')}_Overview.pptx`
       : 'Company_Overview.pptx'
 
+    console.log(`💾 Writing PowerPoint file: ${fileName}`)
+    
     // Write file
     pptx.writeFile({ fileName })
+    
+    console.log(`✅ PowerPoint export completed successfully!`)
   } catch (error) {
     console.error('Error generating PowerPoint:', error)
     // Here you could add user notification about the error

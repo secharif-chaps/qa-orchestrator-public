@@ -3,7 +3,7 @@
     class="flex flex-col h-[calc(80vh-5rem)] overflow-y-auto rounded-xl bg-bg1 p-4"
   >
     <div
-      class="flex gap-4 items-center justify-between border-b pb-4 border-primary text-secondary"
+      class="relative flex gap-4 items-center justify-between border-b pb-4 border-primary text-secondary"
     >
       <div class="flex gap-4 items-center">
         <i
@@ -12,7 +12,7 @@
         ></i>
         <span class="text-sm">Ask our AI</span>
       </div>
-      <div>
+      <div class="absolute h-6 w-full bg-gradient-to-b from-bg1 to-transparent -bottom-6">
         <!-- <i class="fa fa-up-right-and-down-left-from-center"></i> -->
       </div>
     </div>

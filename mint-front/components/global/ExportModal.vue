@@ -31,12 +31,13 @@
           <label class="font-medium text-sm">{{ option.label }}</label>
           <p v-if="option.description" class="text-secondary text-xs mt-1">{{ option.description }}</p>
         </div>
+        
         <Switch.Root 
-          v-model:checked="option.selected"
-          class="w-11 h-6 bg-bg1 rounded-full relative focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75 data-[state=checked]:bg-primary transition-colors duration-200"
+          v-model="option.selected"
+          class="w-11 h-6 bg-red-400/30 rounded-full relative focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75 data-[state=checked]:bg-primary transition-colors duration-200"
           @update:checked="preferencesChanged = true"
         >
-          <Switch.Thumb class="block w-4 h-4 bg-bg2 rounded-full shadow-lg transform transition-transform duration-200 translate-x-1 data-[state=checked]:translate-x-6" />
+          <Switch.Thumb class="block w-4 h-4 bg-bg1 rounded-full shadow-lg transform transition-transform duration-200 translate-x-1 data-[state=checked]:translate-x-6" />
         </Switch.Root>
       </div>
     </div>
@@ -97,12 +98,6 @@ const defaultOptions = [
     selected: true 
   },
   { 
-    id: 'insights', 
-    label: 'Company Insights', 
-    description: 'Key insights and analysis about the company',
-    selected: true 
-  },
-  { 
     id: 'profile', 
     label: 'Company Profile', 
     description: 'Basic information, business lines, and key metrics',
@@ -134,8 +129,32 @@ const defaultOptions = [
   },
   { 
     id: 'news', 
-    label: 'Recent News', 
-    description: 'Latest company updates and announcements',
+    label: 'Press & Media', 
+    description: 'Press articles and media coverage',
+    selected: true 
+  },
+  { 
+    id: 'timeline', 
+    label: 'Timeline', 
+    description: 'Company timeline events and milestones',
+    selected: true 
+  },
+  { 
+    id: 'team', 
+    label: 'Team & Management', 
+    description: 'Leadership team and organizational structure',
+    selected: true 
+  },
+  { 
+    id: 'jobs', 
+    label: 'Job Opportunities', 
+    description: 'Current job openings and hiring information',
+    selected: true 
+  },
+  { 
+    id: 'press', 
+    label: 'Press Coverage', 
+    description: 'Media articles and press releases',
     selected: true 
   }
 ]
@@ -206,13 +225,19 @@ const close = () => {
 }
 
 const exportPPT = () => {
+  console.log('🔧 Export modal: All export options:', exportOptions.value)
+  
   const selectedOptions = exportOptions.value
     .filter(option => option.selected)
     .map(option => option.id)
   
+  console.log('✅ Export modal: Selected options:', selectedOptions)
+  console.log('📊 Export modal: Number of selected options:', selectedOptions.length)
+  
   // Save preferences before export
   savePreferences()
   
+  console.log('📤 Export modal: Emitting export event with options:', selectedOptions)
   emit('export', selectedOptions)
 }
 </script>
