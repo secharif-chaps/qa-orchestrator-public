@@ -1,6 +1,6 @@
 <template>
   <div class="fixed top-0 w-full z-10 pl-4">
-    <div class="bg-bg1 dark:bg-slate-800 rounded-bl-2xl h-[68px] pr-6 shadow-md">
+    <div class="bg-bg1 dark:bg-bg3 dark:border-b-2 dark:border-bg1  rounded-bl-2xl h-[68px] pr-6 shadow-md">
       <div class="flex items-center justify-between h-full">
         <NuxtLink to="/">
           <div class="flex items-center space-x-2 text-xl text-primary dark:text-white pl-6">

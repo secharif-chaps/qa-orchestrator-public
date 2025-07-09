@@ -1,6 +1,9 @@
 import httpx
-from typing import Dict, Any, Optional
+import logging
+from typing import Dict, Any, Optional, List
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 class N8nClient:
     """Client for interacting with n8n workflows"""
@@ -123,4 +126,107 @@ class N8nClient:
         async with httpx.AsyncClient() as client:
             response = await client.get(url)
             await response.raise_for_status()
-            return await response.json() 
+            return await response.json()
+    
+    async def send_chat_message(self, message: str, company_context: Dict[str, Any], chat_history: List[Dict[str, str]]) -> Dict[str, Any]:
+        """
+        Send a chat message to the n8n chat workflow
+        
+        Args:
+            message: User's chat message
+            company_context: Company context data
+            chat_history: Previous chat messages
+            
+        Returns:
+            Response from the chat workflow
+        """
+        url = f"{self.base_url}/webhook/{settings.N8N_CHAT_WEBHOOK_ID}/chat"
+        
+        logger.info(f"Sending chat message to n8n workflow: {url}")
+        
+        try:
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(
+                    url,
+                    json={
+                        "message": message,
+                        "companyContext": company_context,
+                        "chatHistory": chat_history
+                    }
+                )
+                
+                logger.info(f"Chat response status: {response.status_code}")
+                
+                if response.status_code != 200:
+                    error_msg = f"N8n chat workflow returned non-200 status code: {response.status_code}"
+                    logger.error(error_msg)
+                    raise Exception(error_msg)
+                
+                try:
+                    response_text = response.text.strip()
+                    if not response_text:
+                        logger.warning("N8n chat workflow returned empty response")
+                        return {"response": "I'm sorry, I couldn't generate a response. Please try again.", "status": "error"}
+                    
+                    import json
+                    import ast
+                    json_response = json.loads(response_text)
+                    
+                    if json_response is None:
+                        logger.warning("N8n chat workflow returned null response")
+                        return {"response": "I'm sorry, I couldn't generate a response. Please try again.", "status": "error"}
+                    
+                    # Check if the response contains stringified JSON with 'output' field
+                    if isinstance(json_response.get("response"), str):
+                        try:
+                            # Try to parse the stringified response
+                            stringified_response = json_response["response"]
+                            logger.info(f"Attempting to parse stringified response: {stringified_response[:100]}...")
+                            
+                            # Handle Python dict string format like "{'output': '...'}" or "{'output': \"...\"}"
+                            if stringified_response.startswith("{") and stringified_response.endswith("}"):
+                                # Try ast.literal_eval first for Python dict format
+                                try:
+                                    parsed_response = ast.literal_eval(stringified_response)
+                                    if isinstance(parsed_response, dict) and "output" in parsed_response:
+                                        json_response["response"] = parsed_response["output"]
+                                        logger.info("Successfully parsed stringified response with ast.literal_eval")
+                                    else:
+                                        logger.warning("Parsed response doesn't contain 'output' field")
+                                except (ValueError, SyntaxError):
+                                    # If ast.literal_eval fails, try json.loads
+                                    try:
+                                        parsed_response = json.loads(stringified_response)
+                                        if isinstance(parsed_response, dict) and "output" in parsed_response:
+                                            json_response["response"] = parsed_response["output"]
+                                            logger.info("Successfully parsed stringified response with json.loads")
+                                        else:
+                                            logger.warning("JSON parsed response doesn't contain 'output' field")
+                                    except json.JSONDecodeError:
+                                        logger.warning("Failed to parse with both ast.literal_eval and json.loads")
+                        
+                        except Exception as parse_error:
+                            logger.warning(f"Could not parse stringified response: {parse_error}. Using original response.")
+                    
+                    logger.info("Chat response received successfully")
+                    return json_response
+                    
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse n8n chat response as JSON: {str(e)}")
+                    return {"response": "I'm sorry, there was an error processing your message. Please try again.", "status": "error"}
+                except Exception as e:
+                    logger.error(f"Error processing n8n chat response: {str(e)}")
+                    return {"response": "I'm sorry, there was an error processing your message. Please try again.", "status": "error"}
+                
+        except httpx.TimeoutException as e:
+            error_msg = f"Chat request to n8n timed out after 60 seconds"
+            logger.error(error_msg)
+            raise Exception(error_msg) from e
+        except httpx.HTTPError as e:
+            error_msg = f"HTTP error occurred in chat request: {str(e)}"
+            logger.error(error_msg)
+            raise Exception(error_msg) from e
+        except Exception as e:
+            error_msg = f"Error in chat workflow: {str(e)}"
+            logger.error(error_msg)
+            raise Exception(error_msg) from e 

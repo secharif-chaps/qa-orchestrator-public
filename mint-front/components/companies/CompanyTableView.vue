@@ -90,6 +90,7 @@
 
 <script setup lang="ts">
 import { OButton, OTable, OAlert } from '@owlint/feathers-vue'
+import { useI18n } from 'vue-i18n'
 
 interface Company {
   id: string
@@ -113,12 +114,14 @@ defineEmits<{
   deleteCompany: [id: string, name: string]
 }>()
 
+const {t} = useI18n()
+
 // Table configuration
 const tableFields = [
-  { key: 'name', label: 'cards.table.name' },
-  { key: 'website', label: 'company.list.table.website' },
-  { key: 'updated_at', label: 'cards.table.lastModification' },
-  { key: 'actions', label: 'cards.table.actions', sortable: false }
+  { key: 'name', label: t('cards.table.name') },
+  { key: 'website', label: t('company.list.table.website') },
+  { key: 'updated_at', label: t('cards.table.lastModification') },
+  { key: 'actions', label: t('cards.table.actions'), sortable: false }
 ]
 
 // Methods

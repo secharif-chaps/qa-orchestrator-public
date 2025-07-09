@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     N8N_BASE_URL: str = "http://ec2-34-244-245-92.eu-west-1.compute.amazonaws.com:5678"
     # N8N_WEBHOOK_ID: str = "57be7c18-e8b2-47aa-b9aa-f7c2696f4523"
     N8N_WEBHOOK_ID: str = "57be7c18-e8b2-47aa-b9aa-f7c2696f4523"
+    N8N_CHAT_WEBHOOK_ID: str = "96b9765e-6c96-4493-bf56-a65905f7a6bc"
     N8N_API_KEY: str = "n8n-api-key"
     
     # CORS settings

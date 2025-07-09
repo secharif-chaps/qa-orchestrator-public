@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[86px] bg-primary dark:bg-slate-900 dark:border-2 dark:border-slate-950 h-screen fixed text-white pt-24 pb-4 px-2">
+  <div class="w-[86px] bg-primary dark:bg-sidebar h-screen fixed text-white pt-24 pb-4 px-2">
     <div class="flex flex-col justify-between h-full">
       <div class="space-y-4">
         <div
@@ -8,13 +8,13 @@
           class="w-full py-2 text-center space-y-2 pb-6"
         >
           <NuxtLink :to="button.to" class="block">
-            <div class="group cursor-pointer space-y-1 text-white">
+            <div class="group cursor-pointer space-y-1 text-white dark:text-bg2">
               <div
                 class="relative mx-auto flex h-10 w-10 items-center justify-center rounded-md"
                 :class="[
                   isActive(button.to)
-                    ? 'bg-white dark:bg-primary/20 text-primary'
-                    : 'group-hover:bg-primary group-hover:text-white dark:group-hover:bg-primary/20 dark:group-hover:text-primary'
+                    ? 'bg-white dark:bg-bg2/20 text-primary dark:text-bg2'
+                    : 'group-hover:bg-primary group-hover:text-white dark:group-hover:bg-primary/20 dark:group-hover:text-primary-content'
                 ]"
               >
                 <i
@@ -23,7 +23,7 @@
                   aria-hidden="true"
                 />
               </div>
-              <div class="dark:text-secondary text-center text-[0.65rem] leading-3 font-normal tracking-wide">
+              <div class="dark:text-bg2 text-center text-[0.65rem] leading-3 font-normal tracking-wide">
                 {{ button.label }}
               </div>
             </div>
@@ -38,13 +38,13 @@
           class="w-full py-2 text-center space-y-2 pb-6"
         >
           <NuxtLink :to="button.to" class="block">
-            <div class="group cursor-pointer space-y-1 text-white">
+            <div class="group cursor-pointer space-y-1 text-white dark:text-bg2">
               <div
                 class="relative mx-auto flex h-10 w-10 items-center justify-center rounded-md"
                 :class="[
                   isActive(button.to)
-                    ? 'bg-white text-primary'
-                    : 'group-hover:bg-primary group-hover:text-white'
+                    ? 'bg-white text-primary dark:text-bg2'
+                    : 'group-hover:bg-primary group-hover:text-white dark:group-hover:bg-bg2/20 dark:group-hover:text-bg2'
                 ]"
               >
                 <i

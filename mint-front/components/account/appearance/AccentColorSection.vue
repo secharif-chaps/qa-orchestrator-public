@@ -100,13 +100,11 @@ const emit = defineEmits<{
   accentChange: [accent: string]
 }>()
 
-const accentColors = [
-{ 
-    name: 'sage', 
-    label: 'Sage', 
-    bgClass: 'bg-sage-500 ring-sage-500/20', 
-    focusRingClass: 'focus:ring-sage-500' 
-  },
+const { user } = useAuth()
+
+const accentColors = computed(() => {
+  const colors = [
+  
   { 
     name: 'emerald', 
     label: 'Emerald', 
@@ -124,12 +122,6 @@ const accentColors = [
     label: 'Indigo', 
     bgClass: 'bg-indigo-500 ring-indigo-500/20', 
     focusRingClass: 'focus:ring-indigo-500' 
-  },
-  { 
-    name: 'purple', 
-    label: 'Purple', 
-    bgClass: 'bg-purple-500 ring-purple-500/20', 
-    focusRingClass: 'focus:ring-purple-500' 
   },
   { 
     name: 'pink', 
@@ -150,18 +142,29 @@ const accentColors = [
     focusRingClass: 'focus:ring-orange-500' 
   },
 ]
+  if (user.value?.profile.preferred_username === 'nmr') {
+    colors.push({ 
+    name: 'sage', 
+    label: 'Sage', 
+    bgClass: 'bg-sage-500 ring-sage-500/20', 
+    focusRingClass: 'focus:ring-sage-500' 
+  })
+  }
+
+  return colors
+})
 
 const handleAccentChange = (accentValue: string) => {
   emit('accentChange', accentValue)
 }
 
 const getCurrentAccentBgClass = () => {
-  const currentColor = accentColors.find(color => color.name === props.currentAccent)
+  const currentColor = accentColors.value.find(color => color.name === props.currentAccent)
   return currentColor?.bgClass || 'bg-indigo-500'
 }
 
 const getCurrentAccentLabel = () => {
-  const currentColor = accentColors.find(color => color.name === props.currentAccent)
+  const currentColor = accentColors.value.find(color => color.name === props.currentAccent)
   return currentColor?.label || 'Indigo'
 }
 </script>

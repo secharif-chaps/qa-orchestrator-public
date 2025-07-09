@@ -71,7 +71,8 @@ const emit = defineEmits(['hide'])
 
 const { companyName } = useCompanyData()
 const companyStore = useCompanyStore()
-const runtimeConfig = useRuntimeConfig()
+const route = useRoute()
+const apiService = useApiService()
 
 // Chat state
 const messages = ref([
@@ -85,8 +86,8 @@ const question = ref('')
 const isLoading = ref(false)
 const messagesContainer = ref(null)
 
-// Direct call to n8n webhook
-const webhookUrl = `http://ec2-34-244-245-92.eu-west-1.compute.amazonaws.com:5678/webhook/${runtimeConfig.public.n8nWebhookIdChat}/chat`
+// Get company ID from route
+const companyId = route.params.id
 
 // Auto-scroll to bottom when messages change
 watch(
@@ -102,6 +103,10 @@ watch(
 
 const { company } = useCompanyData()
 
+interface ChatResponse {
+  response: string
+  status: string
+}
 
 const sendMessage = async () => {
   if (!question.value.trim() || isLoading.value) return
@@ -118,28 +123,46 @@ const sendMessage = async () => {
   isLoading.value = true
 
   try {
-    
-    // Send to n8n webhook
-    const response = await $fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: {
-        message: userQuestion,
-        companyContext: company.value,
-        chatHistory: messages.value.slice(0, -1) // Exclude the current user message
-      }
+    // Convert chat history to the format expected by the backend
+    const chatHistory = messages.value.slice(0, -1).map(msg => ({
+      role: msg.from === 'user' ? 'user' : 'assistant',
+      content: msg.text
+    }))
+
+
+
+    // Send to mint-backend API with authentication
+    let response: ChatResponse = await apiService.post(`/api/companies/${companyId}/chatbot`, {
+      message: userQuestion,
+      company_context: company.value,
+      chat_history: chatHistory
     })
+
+    // Parse the response to extract actual content from stringified format
+    let responseText = response.response || 'I received your message but couldn\'t generate a response.'
+    
+    // Check if response contains stringified JSON with 'output' field
+    if (typeof responseText === 'string' && responseText.startsWith('{') && responseText.endsWith('}')) {
+      try {
+        // Try to parse the stringified response  
+        const parsed = eval(`(${responseText})`)
+        if (parsed && typeof parsed === 'object' && 'output' in parsed) {
+          responseText = parsed.output
+        }
+      } catch (parseError) {
+        console.warn('Could not parse stringified response:', parseError)
+        // Keep original response if parsing fails
+      }
+    }
 
     // Add AI response
     messages.value.push({
-      text: response.response || response.output || 'I received your message but couldn\'t generate a response.',
+      text: responseText,
       from: 'ai',
     })
 
   } catch (error) {
-    console.error('Error sending message to n8n:', error)
+    console.error('Error sending message to backend:', error)
     messages.value.push({
       text: 'Sorry, I encountered an error processing your request. Please try again.',
       from: 'ai',

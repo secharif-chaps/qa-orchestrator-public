@@ -1,18 +1,21 @@
 import logging
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import ValidationError
 
 logger = logging.getLogger(__name__)
 
 from app.services.company import CompanyService
-from app.core.dependencies import get_company_service, get_current_user
+from app.core.dependencies import get_company_service, get_current_user, get_n8n_client
 from app.core.security import verify_company_ownership, sanitize_input
 from app.schemas.company import (
     CompanyCreate, 
     CompanyUpdate, 
     CompanyResponse
 )
+from app.schemas.chat import ChatRequest, ChatResponse
 from app.schemas.user import TokenData
+from app.infrastructure.n8n.client import N8nClient
 
 router = APIRouter(
     prefix="/companies",
@@ -157,4 +160,50 @@ async def delete_company(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Company with ID {company_id} not found"
         )
-    return {"success": True} 
+    return {"success": True}
+
+@router.post("/{company_id}/chatbot", response_model=ChatResponse)
+async def chat_with_company(
+    company_id: int,
+    chat_request: ChatRequest,
+    service: CompanyService = Depends(get_company_service),
+    n8n_client: N8nClient = Depends(get_n8n_client),
+    current_user: TokenData = Depends(get_current_user)
+):
+    """Chat with AI about a company (only if user owns the company)"""
+    logger.info(f"Chat request for company {company_id} by user {current_user.username}")
+    
+    try:
+        # Get company and verify ownership
+        company = service.get_company(company_id)
+        verify_company_ownership(company, current_user)
+        
+        # Send chat message to n8n workflow
+        response = await n8n_client.send_chat_message(
+            message=chat_request.message,
+            company_context=chat_request.company_context,
+            chat_history=[msg.dict() for msg in chat_request.chat_history]
+        )
+        
+        logger.info(f"Chat response received for company {company_id}")
+        
+        # Return the response in the expected format
+        if isinstance(response, dict) and "response" in response:
+            return ChatResponse(
+                response=response["response"],
+                status=response.get("status", "success")
+            )
+        else:
+            # Handle unexpected response format
+            return ChatResponse(
+                response=str(response),
+                status="success"
+            )
+            
+    except Exception as e:
+        logger.error(f"Error in chat endpoint: {str(e)}")
+        # Return error response instead of raising exception
+        return ChatResponse(
+            response="I'm sorry, I'm having trouble responding right now. Please try again in a moment.",
+            status="error"
+        ) 

@@ -12,7 +12,7 @@
       <div class="flex items-center gap-3">
         <span class="font-medium">Workflow de recherche</span>
         <div class="flex items-center">
-          <span class="text-xs text-gray-600 font-medium">{{ completedCount }}/{{ totalTasks }}</span>
+          <span class="text-xs text-secondary font-medium">{{ completedCount }}/{{ totalTasks }}</span>
         </div>
       </div>
       <i
@@ -27,9 +27,9 @@
           class="h-full"
           :nodes="flowNodes"
           :edges="flowEdges"
-          :default-viewport="{ zoom: 1, x: -50, y: -20 }"
+          :default-viewport="{ zoom: 0.9, x: -25, y: -0 }"
           @init="onFlowInit"
-          :fit-view-on-init="true"
+          :fit-view-on-init="false"
           :nodes-draggable="false"
           :zoom-on-scroll="false"
           :zoom-on-pinch="false"
@@ -183,6 +183,13 @@ onMounted(async () => {
   
   // Perform auto-recovery check on mount
   performAutoRecovery()
+
+  setTimeout(() => {
+    fitView({
+
+      duration: 300,
+    })
+  }, 150)
 })
 
 // Watch for company ID changes

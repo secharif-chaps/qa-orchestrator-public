@@ -34,7 +34,7 @@
 
           <div class="flex flex-col gap-3">
             <OPopper :text="$t('company.dashboard.generalInfo.website')" side="left"> 
-            <div class="flex items-center bg-bg1 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left hover:border-primary/50 transition-colors">
+            <div class="flex items-center bg-bg1 border border-border-2 px-4 py-3 rounded-lg gap-4 text-left hover:border-primary/50 transition-colors">
               <i class="fa fa-link fa-fw text-primary"></i>
               <a
                 :href="formatWebsiteUrl(company?.website)"
@@ -48,7 +48,7 @@
 
             <OPopper :text="$t('company.dashboard.generalInfo.headquarters')" side="left">
             <div
-              class="flex items-center bg-bg1 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left"
+              class="flex items-center bg-bg1 border border-border-2 px-4 py-3 rounded-lg gap-4 text-left"
               v-if="company?.profile?.hq"
             >
               <i class="fa fa-map-marker fa-fw text-secondary"></i>
@@ -60,7 +60,7 @@
 
           <OPopper :text="$t('company.dashboard.generalInfo.ceo')" side="left">
             <div
-              class="flex items-center bg-bg1 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left"
+              class="flex items-center bg-bg1 border border-border-2 px-4 py-3 rounded-lg gap-4 text-left"
               v-if="company?.profile?.ceo"
             >
               <i class="fa fa-user-tie fa-fw text-secondary"></i>
@@ -72,7 +72,7 @@
 
           <OPopper :text="$t('company.dashboard.generalInfo.revenue')" side="left">
             <div
-              class="flex items-center bg-bg1 border border-slate-200 dark:border-slate-600 px-4 py-3 rounded-lg gap-4 text-left"
+              class="flex items-center bg-bg1 border border-border-2 px-4 py-3 rounded-lg gap-4 text-left"
               v-if="company?.profile?.revenue"
             >
               <i class="fa fa-money-bill fa-fw text-secondary"></i>

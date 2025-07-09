@@ -110,14 +110,14 @@
       </div>
 
       <!-- Quick Tips -->
-      <div class="bg-gradient-to-r from-primary to-purple-600 dark:from-primary dark:to-purple-700 rounded-lg shadow-md border border-slate-200 dark:border-slate-700 p-6 text-white">
+      <div class="bg-gradient-to-r from-primary to-purple-600 dark:from-primary dark:to-almond-200 dark:text-sage-900 rounded-lg shadow-md border border-slate-200 dark:border-none p-6 text-white">
         <div class="flex items-center">
           <div class="flex-shrink-0">
             <i class="fas fa-lightbulb text-2xl text-white/80"></i>
           </div>
           <div class="ml-4">
-            <h3 class="text-lg font-medium text-white">Pro Tip</h3>
-            <p class="text-white/90 mt-1">
+            <h3 class="text-lg font-medium text-white dark:text-bg2">Pro Tip</h3>
+            <p class="text-white/90 dark:text-bg2 mt-1">
               Use the search feature to quickly find and analyze companies. 
               You can also view detailed profiles and track company activities through the task system.
             </p>

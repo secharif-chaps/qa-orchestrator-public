@@ -6,7 +6,7 @@
     </div>
     <div class="px-6 py-6">
       <!-- Preview Container -->
-      <div class="border border-border-2 rounded-lg p-6 bg-slate-50 dark:bg-slate-900">
+      <div class="border border-border-2 rounded-lg p-6 bg-bg1 dark:bg-bg3">
         <!-- Preview Header -->
         <div class="mb-6">
           <h3 class="text-lg font-semibold mb-2">

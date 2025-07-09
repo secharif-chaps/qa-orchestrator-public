@@ -59,7 +59,7 @@
       </p>
 
       <!-- Impact Section -->
-      <div v-if="event.impact" class="bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg p-4 mb-4">
+      <div v-if="event.impact" class="bg-bg3 border border-border-2 rounded-lg p-4 mb-4">
         <div class="flex items-center gap-2 mb-2">
           <i class="fa fa-bolt text-yellow-500 text-sm"></i>
           <span class="text-xs uppercase font-semibold text-secondary tracking-wide">

@@ -9,7 +9,7 @@
         <div 
           v-for="themeOption in themeOptions" 
           :key="themeOption.value" 
-          class="flex items-center justify-between p-4 border border-slate-200 dark:border-slate-700 rounded-lg hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
+          class="flex items-center justify-between p-4 border border-border-2 rounded-lg hover:border-primary/70 transition-colors"
         >
           <div class="flex items-center space-x-4">
             <div class="flex-shrink-0">

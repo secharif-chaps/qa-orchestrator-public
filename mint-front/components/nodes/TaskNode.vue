@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative p-4 rounded-xl shadow-lg border-2 transition-all duration-300 cursor-pointer transform hover:scale-105 w-40 "
+    class="relative p-4 rounded-xl shadow-lg shadow-bg2 border-2 border-border-2 transition-all duration-300 cursor-pointer transform hover:scale-105 w-40 "
     :class="getNodeClass()"
     @click="handleClick"
   >
