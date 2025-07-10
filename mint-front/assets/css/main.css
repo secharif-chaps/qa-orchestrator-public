@@ -26,6 +26,8 @@
   --color-sidebar-border: var(--theme-color-sidebar-border);
   --color-sidebar-count: var(--theme-color-sidebar-count);
 
+
+
   --color-boston-50 : #DEEBED;
   --color-boston-100 : #B7D8DC;
   --color-boston-200 : #80BFC6;
@@ -67,6 +69,7 @@
 
     --theme-color-border-1: var(--color-slate-400);
     --theme-color-border-2: var(--color-slate-200);
+
   
 
     /* --theme-color-primary: var(--color-indigo-600); */
@@ -94,13 +97,11 @@
 
   [data-theme='indigo'] {
     --theme-color-primary: var(--color-indigo-600);
-
     --theme-color-sidebar: var(--color-indigo-500);
   }
 
   [data-theme='indigo'].dark {
     --theme-color-primary: var(--color-indigo-400);
-
     --theme-color-sidebar: var(--color-indigo-300);
     --theme-color-sidebar-content: var(--color-indigo-900);
   }
