@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field, ConfigDict, field_validator
 from datetime import datetime
 from app.models.task import TaskStatus, TaskType
 from app.core.validators import InputValidator
+from app.schemas.pagination import PaginatedResponse
 
 class CompanyBase(BaseModel):
     name: str = Field(..., min_length=2, max_length=100, description="Company name")

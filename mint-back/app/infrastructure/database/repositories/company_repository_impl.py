@@ -1,7 +1,9 @@
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Tuple
 from sqlalchemy.orm import Session
+from sqlalchemy import asc, desc
 
 from app.models.company import Company
+from app.schemas.pagination import PaginationParams
 
 class SQLAlchemyCompanyRepository:
     """SQLAlchemy implementation of the Company repository"""
@@ -49,4 +51,35 @@ class SQLAlchemyCompanyRepository:
         self.db_session.add(company)
         self.db_session.commit()
         self.db_session.refresh(company)
-        return company 
+        return company
+    
+    def get_paginated(self, pagination_params: PaginationParams, owner_username: Optional[str] = None) -> Tuple[List[Company], int]:
+        """Get paginated list of companies with sorting and filtering"""
+        query = self.db_session.query(Company)
+        
+        # Filter by owner if provided
+        if owner_username:
+            query = query.filter(Company.owner_username == owner_username)
+        
+        # Apply sorting
+        if pagination_params.sort:
+            sort_field = getattr(Company, pagination_params.sort, None)
+            if sort_field is not None:
+                if pagination_params.order.value == "asc":
+                    query = query.order_by(asc(sort_field))
+                else:
+                    query = query.order_by(desc(sort_field))
+            else:
+                # Default sort by created_at DESC if invalid sort field
+                query = query.order_by(desc(Company.created_at))
+        else:
+            # Default sort by created_at DESC
+            query = query.order_by(desc(Company.created_at))
+        
+        # Get total count before applying pagination
+        total_count = query.count()
+        
+        # Apply pagination
+        companies = query.offset(pagination_params.get_offset()).limit(pagination_params.get_limit()).all()
+        
+        return companies, total_count 

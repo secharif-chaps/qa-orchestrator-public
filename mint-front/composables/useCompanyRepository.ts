@@ -1,5 +1,13 @@
 import { useApiService } from './useApiService'
-import type { CompanyCreate, CompanyResponse, CompanyUpdate, TaskCreate, TaskResponse } from '~/types/company'
+import type { 
+  CompanyCreate, 
+  CompanyResponse, 
+  CompanyUpdate, 
+  TaskCreate, 
+  TaskResponse,
+  PaginationParams,
+  PaginatedResponse
+} from '~/types/company'
 
 const companiesUrl = '/api/companies'
 
@@ -8,10 +16,25 @@ export const useCompanyRepository = () => {
 
   return {
     /**
-     * Get all companies
+     * Get companies (legacy - returns all companies)
      */
     getCompanies: () => {
       return api.get<CompanyResponse[]>(companiesUrl)
+    },
+
+    /**
+     * Get paginated companies
+     */
+    getPaginatedCompanies: (params?: PaginationParams) => {
+      const queryParams = new URLSearchParams()
+      
+      if (params?.page) queryParams.set('page', params.page.toString())
+      if (params?.per_page) queryParams.set('per_page', params.per_page.toString())
+      if (params?.sort) queryParams.set('sort', params.sort)
+      if (params?.order) queryParams.set('order', params.order)
+      
+      const url = queryParams.toString() ? `${companiesUrl}?${queryParams}` : companiesUrl
+      return api.get<PaginatedResponse<CompanyResponse>>(url)
     },
 
     /**

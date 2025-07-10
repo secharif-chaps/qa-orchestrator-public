@@ -1,6 +1,6 @@
 import logging
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from pydantic import ValidationError
 
 logger = logging.getLogger(__name__)
@@ -13,6 +13,7 @@ from app.schemas.company import (
     CompanyUpdate, 
     CompanyResponse
 )
+from app.schemas.pagination import PaginationParams, PaginatedResponse, SortOrder
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.schemas.user import TokenData
 from app.infrastructure.n8n.client import N8nClient
@@ -22,13 +23,23 @@ router = APIRouter(
     tags=["companies"]
 )
 
-@router.get("/", response_model=List[CompanyResponse])
+@router.get("/", response_model=PaginatedResponse[CompanyResponse])
 async def get_companies(
+    page: int = Query(1, ge=1, description="Page number (starting from 1)"),
+    per_page: int = Query(10, ge=1, le=100, description="Items per page (max 100)"),
+    sort: str = Query(None, description="Field to sort by (name, created_at)"),
+    order: SortOrder = Query(SortOrder.DESC, description="Sort order"),
     service: CompanyService = Depends(get_company_service),
     current_user: TokenData = Depends(get_current_user)
 ):
-    """Get all companies for the current user"""
-    return service.get_all_companies(username=current_user.username)
+    """Get paginated companies for the current user"""
+    pagination_params = PaginationParams(
+        page=page,
+        per_page=per_page,
+        sort=sort,
+        order=order
+    )
+    return service.get_paginated_companies(pagination_params, username=current_user.username)
 
 @router.get("/{company_id}", response_model=CompanyResponse)
 async def get_company(

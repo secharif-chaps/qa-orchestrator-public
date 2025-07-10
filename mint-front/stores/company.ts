@@ -1,6 +1,13 @@
 import { defineStore } from 'pinia'
 import { useCompanyRepository } from '~/composables/useCompanyRepository'
-import type { CompanyCreate, CompanyResponse, CompanyUpdate, TaskCreate, TaskResponse } from '~/types/company'
+import type { 
+  CompanyCreate, 
+  CompanyResponse, 
+  CompanyUpdate, 
+  PaginationParams,
+  PaginatedResponse,
+  PaginationMeta 
+} from '~/types/company'
 
 export const useCompanyStore = defineStore('company', {
   state: () => ({
@@ -8,7 +15,8 @@ export const useCompanyStore = defineStore('company', {
     currentCompany: null as CompanyResponse | null,
     loading: false,
     error: null as string | null,
-    pollingInterval: null as NodeJS.Timeout | null
+    pollingInterval: null as NodeJS.Timeout | null,
+    paginationMeta: null as PaginationMeta | null
   }),
 
   actions: {
@@ -22,6 +30,27 @@ export const useCompanyStore = defineStore('company', {
       } catch (err) {
         this.error = (err as Error).message
         console.error('Failed to fetch companies:', err)
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async fetchPaginatedCompanies(params?: PaginationParams) {
+      const repository = useCompanyRepository()
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await repository.getPaginatedCompanies(params)
+
+        console.log('🚀 response', response)  
+        this.companies = response.data
+        this.paginationMeta = response.meta
+        return response
+      } catch (err) {
+        this.error = (err as Error).message
+        console.error('Failed to fetch paginated companies:', err)
+        throw err
       } finally {
         this.loading = false
       }

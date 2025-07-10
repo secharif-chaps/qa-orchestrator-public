@@ -3,10 +3,12 @@ import logging
 from sqlalchemy.orm import Session
 from app.models.company import Company
 from app.models.task import Task, TaskType, TaskStatus
-from app.schemas.company import CompanyCreate, CompanyUpdate
+from app.schemas.company import CompanyCreate, CompanyUpdate, CompanyResponse
+from app.schemas.pagination import PaginationParams, PaginatedResponse, create_pagination_meta
 from app.services.n8n import N8nClient
 from app.core.database_security import SecureQueryBuilder
 from app.core.validators import ValidationError
+from app.infrastructure.database.repositories.company_repository_impl import SQLAlchemyCompanyRepository
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +17,7 @@ class CompanyService:
         self.db = db
         self.n8n_client = n8n_client
         self.secure_query = SecureQueryBuilder(db)
+        self.repository = SQLAlchemyCompanyRepository(db)
     
     def get_company(self, company_id: int) -> Optional[Company]:
         """Securely get company by ID"""
@@ -87,6 +90,44 @@ class CompanyService:
             if company.team is None:
                 company.team = []
         return companies
+    
+    def get_paginated_companies(self, pagination_params: PaginationParams, username: Optional[str] = None) -> PaginatedResponse[CompanyResponse]:
+        """Get paginated companies with sorting"""
+        companies, total_count = self.repository.get_paginated(pagination_params, username)
+        
+        # Convert SQLAlchemy models to Pydantic response models
+        company_responses = []
+        for company in companies:
+            # Ensure all JSON fields have default values to prevent validation errors
+            if company.profile is None:
+                company.profile = {}
+            if company.digital is None:
+                company.digital = {}
+            if company.timeline is None:
+                company.timeline = {}
+            if company.products is None:
+                company.products = {}
+            if company.jobs is None:
+                company.jobs = {}
+            if company.csr is None:
+                company.csr = {}
+            if company.press is None:
+                company.press = {}
+            if company.team is None:
+                company.team = []
+            
+            # Convert to CompanyResponse using from_attributes
+            company_response = CompanyResponse.model_validate(company)
+            company_responses.append(company_response)
+        
+        # Create pagination metadata
+        meta = create_pagination_meta(
+            total=total_count,
+            page=pagination_params.page,
+            per_page=pagination_params.per_page
+        )
+        
+        return PaginatedResponse(data=company_responses, meta=meta)
     
     def create_company(self, name: str, website: str, owner_username: str) -> Company:
         """Securely create a new company"""

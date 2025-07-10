@@ -130,6 +130,8 @@
 
 <script setup>
 import { OButton } from '@owlint/feathers-vue'
+import { SortOrder } from '~/types/company'
+
 // Only access auth on client side
 const { user } = useAuth()
 const companyRepository = useCompanyRepository()
@@ -140,6 +142,7 @@ const pendingCompanies = ref(true)
 const companiesError = ref(null)
 const currentTime = ref('')
 const currentDate = ref('')
+const totalCompaniesCount = ref(0)
 
 // Computed properties
 const userDisplayName = computed(() => {
@@ -158,20 +161,21 @@ const greetingMessage = computed(() => {
 })
 
 const companiesStats = computed(() => {
-  if (!recentCompanies.value.length) return {}
+  // Use actual total count, not just recent companies length
+  const total = totalCompaniesCount.value
   
-  const total = recentCompanies.value.length
+  // Calculate active tasks from recent companies (this is an approximation for display)
   const activeTasks = recentCompanies.value.reduce((acc, company) => {
     return acc + (company.tasks?.filter(task => task.status !== 'succeeded').length || 0)
   }, 0)
   
+  // Calculate recent updates from recent companies (this is an approximation)
   const today = new Date()
   const oneDayAgo = new Date(today.getTime() - 24 * 60 * 60 * 1000)
   const recentUpdates = recentCompanies.value.filter(company => 
     new Date(company.updated_at) > oneDayAgo
   ).length || 0
 
-  
   return { total, activeTasks, recentUpdates }
 })
 
@@ -181,12 +185,19 @@ const loadRecentCompanies = async () => {
     pendingCompanies.value = true
     companiesError.value = null
     
-    const companies = await companyRepository.getCompanies()
+    // Fetch paginated data to get total count and recent companies
+    const paginatedResponse = await companyRepository.getPaginatedCompanies({
+      page: 1,
+      per_page: 4,
+      sort: 'created_at',
+      order: SortOrder.DESC
+    })
     
-    // Sort by creation date and take the 4 most recent
-    recentCompanies.value = companies
-      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-      .slice(0, 4)
+    // Set the recent companies from the paginated response
+    recentCompanies.value = paginatedResponse.data
+    
+    // Set the total count from pagination metadata
+    totalCompaniesCount.value = paginatedResponse.meta.total
       
   } catch (error) {
     console.error('Error loading companies:', error)

@@ -659,6 +659,31 @@ Which approach would you prefer?"
 - Use environment variables for configuration
 - Follow secure coding practices
 
+### Icons System
+- **ALWAYS use Font Awesome icons** - never import icon libraries like Lucide, Heroicons, etc.
+- We have Font Awesome Pro license with full access to all icons
+- Use Font Awesome kit system with `<i>` tags
+- Icon examples:
+  ```vue
+  <!-- ✅ GOOD: Font Awesome icons -->
+  <i class="fas fa-chevron-left"></i>      <!-- Chevron left -->
+  <i class="fas fa-chevron-right"></i>     <!-- Chevron right -->
+  <i class="fas fa-chevron-double-left"></i>  <!-- First page -->
+  <i class="fas fa-chevron-double-right"></i> <!-- Last page -->
+  <i class="fas fa-ellipsis-h"></i>        <!-- More horizontal -->
+  <i class="fas fa-search"></i>            <!-- Search -->
+  <i class="fas fa-plus"></i>              <!-- Add/Plus -->
+  <i class="fas fa-trash"></i>             <!-- Delete -->
+  <i class="fas fa-edit"></i>              <!-- Edit -->
+  <i class="fas fa-cog"></i>               <!-- Settings -->
+  <i class="fas fa-user"></i>              <!-- User -->
+  <i class="fas fa-building"></i>          <!-- Building -->
+  
+  <!-- ❌ FORBIDDEN: Never import icon libraries -->
+  import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
+  import { ChevronLeftIcon } from '@heroicons/vue/24/outline'
+  ```
+
 ## 🧪 Test Commands You Should Use
 
 ```bash
