@@ -19,7 +19,7 @@
             <img :src="theme === 'light' ? logoLight : logoDark" class="h-10 w-auto" />
           </div>
           <NuxtLink 
-            to="/profile"
+            to="/account"
             class="flex items-center justify-center p-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900 rounded-lg transition-colors"
             title="Profile"
           >

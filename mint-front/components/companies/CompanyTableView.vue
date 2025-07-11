@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-bg1 border border-border-2 rounded-lg overflow-hidden">
+  <div class="bg-bg1 border border-border-2 rounded-xl overflow-hidden">
     <!-- Loading State -->
     <div v-if="loading" class="p-8 text-center">
       <div class="flex items-center justify-center space-x-2">
@@ -78,7 +78,7 @@
                 color="red"
                 size="sm"
                 :title="$t('cards.actions.delete')"
-                @click="$emit('deleteCompany', item.id, item.name)"
+                @click="$emit('deleteCompany', item)"
               />
             </div>
           </td>
@@ -91,14 +91,7 @@
 <script setup lang="ts">
 import { OButton, OTable, OAlert } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
-
-interface Company {
-  id: string
-  name: string
-  website?: string
-  created_at: string
-  updated_at: string
-}
+import type { Company } from '~/types/company'
 
 interface Props {
   companies: Company[]
@@ -111,7 +104,7 @@ defineProps<Props>()
 
 defineEmits<{
   viewCompany: [id: string]
-  deleteCompany: [id: string, name: string]
+  deleteCompany: [company: Company]
 }>()
 
 const {t} = useI18n()

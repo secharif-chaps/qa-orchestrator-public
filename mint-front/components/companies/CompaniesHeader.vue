@@ -13,7 +13,6 @@
         :model-value="searchQuery"
         placeholder="Search companies..."
         icon="fas fa-search"
-        size="sm"
         class="w-full sm:w-64"
         @update:model-value="$emit('updateSearch', $event)"
       />

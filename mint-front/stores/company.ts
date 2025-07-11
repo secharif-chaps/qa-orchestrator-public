@@ -1,23 +1,72 @@
 import { defineStore } from 'pinia'
 import { useCompanyRepository } from '~/composables/useCompanyRepository'
 import type { 
-  CompanyCreate, 
-  CompanyResponse, 
+  CompanyCreate,
   CompanyUpdate, 
   PaginationParams,
-  PaginatedResponse,
-  PaginationMeta 
+  PaginationMeta, 
+  Company,
+  SortOrder
 } from '~/types/company'
+import type { TaskCreate } from '~/types/task'
 
 export const useCompanyStore = defineStore('company', {
   state: () => ({
-    companies: [] as CompanyResponse[],
-    currentCompany: null as CompanyResponse | null,
+    companies: [] as Company[],
+    currentCompany: null as Company | null,
     loading: false,
     error: null as string | null,
     pollingInterval: null as NodeJS.Timeout | null,
-    paginationMeta: null as PaginationMeta | null
+    paginationMeta: null as PaginationMeta | null,
+    
+    // Pagination state
+    currentPage: 1,
+    perPage: 10,
+    sortField: 'created_at',
+    sortOrder: 'desc' as SortOrder,
+    searchQuery: '',
+    viewMode: 'table' as 'table' | 'grid'
   }),
+
+  getters: {
+    // Pagination getters
+    paginationQuery: (state): PaginationParams => ({
+      page: state.currentPage,
+      per_page: state.perPage,
+      sort: state.sortField,
+      order: state.sortOrder as SortOrder
+    }),
+    
+    sortCacheKey: (state) => {
+      const { user } = useAuth()
+      return `companies-sort-${user.value?.profile?.preferred_username || 'anonymous'}-${state.sortField}-${state.sortOrder}`
+    },
+    
+    pageCacheKey: (state) => {
+      const { user } = useAuth()
+      return `companies-sort-${user.value?.profile?.preferred_username || 'anonymous'}-${state.sortField}-${state.sortOrder}-page-${state.currentPage}-${state.perPage}`
+    },
+    
+    urlQuery: (state) => {
+      const query: Record<string, string> = {}
+      if (state.currentPage !== 1) query.page = state.currentPage.toString()
+      if (state.perPage !== 10) query.per_page = state.perPage.toString()
+      if (state.sortField !== 'created_at') query.sort = state.sortField
+      if (state.sortOrder !== 'desc') query.order = state.sortOrder
+      return query
+    },
+    
+    filteredCompanies: (state) => {
+      if (!state.searchQuery.trim()) {
+        return state.companies
+      }
+      const query = state.searchQuery.toLowerCase().trim()
+      return state.companies.filter(company => 
+        company.name.toLowerCase().includes(query) ||
+        (company.website && company.website.toLowerCase().includes(query))
+      )
+    }
+  },
 
   actions: {
     async fetchCompanies() {
@@ -278,6 +327,63 @@ export const useCompanyStore = defineStore('company', {
     clearCurrentCompany() {
       this.currentCompany = null
       this.stopPolling() // Stop polling when clearing current company
+    },
+
+    // Pagination actions
+    setPage(page: number) {
+      this.currentPage = page
+    },
+
+    setPerPage(perPage: number) {
+      this.perPage = perPage
+      this.currentPage = 1 // Reset to first page when changing page size
+    },
+
+    setSort(field: string, order: SortOrder) {
+      this.sortField = field
+      this.sortOrder = order
+      this.currentPage = 1 // Reset to first page when changing sort
+    },
+
+    setSearchQuery(query: string) {
+      this.searchQuery = query
+    },
+
+    setViewMode(mode: 'table' | 'grid') {
+      this.viewMode = mode
+    },
+
+    initializePaginationFromURL(query: Record<string, any>) {
+      this.currentPage = parseInt(query.page as string) || 1
+      this.perPage = parseInt(query.per_page as string) || 10
+      this.sortField = query.sort as string || 'created_at'
+      this.sortOrder = (query.order as SortOrder) || 'desc'
+    },
+
+    initializePaginationFromStorage() {
+      const stored = localStorage.getItem('companies-query')
+      if (stored) {
+        const query = JSON.parse(stored)
+        this.currentPage = query.page || 1
+        this.perPage = query.per_page || 10
+        this.sortField = query.sort || 'created_at'
+        this.sortOrder = query.order || 'desc'
+      }
+    },
+
+    savePaginationToStorage() {
+      localStorage.setItem('companies-query', JSON.stringify(this.paginationQuery))
+    },
+
+    clearCache() {
+      const nuxtApp = useNuxtApp()
+      const userPrefix = `companies-sort-${useAuth().user.value?.profile?.preferred_username || 'anonymous'}`
+      const keys = Object.keys(nuxtApp.payload.data).filter(key => 
+        key.startsWith(userPrefix)
+      )
+      keys.forEach(key => {
+        delete nuxtApp.payload.data[key]
+      })
     }
   },
 

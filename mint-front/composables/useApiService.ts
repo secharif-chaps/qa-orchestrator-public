@@ -10,7 +10,6 @@ export const useApiService = () => {
 
     // Add authorization header if user is authenticated
     const accessToken = await getAccessToken()
-    console.log('Access token for API call:', accessToken ? `${accessToken.substring(0, 20)}...` : 'null')
 
     if (accessToken) {
       defaultHeaders['Authorization'] = `Bearer ${accessToken}`

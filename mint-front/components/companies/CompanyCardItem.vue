@@ -20,7 +20,6 @@
         <OButton
           icon="fas fa-eye"
           type="tertiary"
-          size="xs"
           :title="$t('cards.actions.view')"
           @click.stop="$emit('viewCompany', company.id)"
         />
@@ -28,7 +27,6 @@
           icon="fas fa-trash"
           type="tertiary"
           color="red"
-          size="xs"
           :title="$t('cards.actions.delete')"
           @click.stop="$emit('deleteCompany', company.id, company.name)"
         />
@@ -91,15 +89,7 @@
 
 <script setup lang="ts">
 import { OButton, OBadge } from '@owlint/feathers-vue'
-
-interface Company {
-  id: string
-  name: string
-  website?: string
-  created_at: string
-  updated_at: string
-  tasks?: Array<{ status: string }>
-}
+import type { Company } from '~/types/company';
 
 interface Props {
   company: Company
@@ -109,7 +99,7 @@ defineProps<Props>()
 
 defineEmits<{
   viewCompany: [id: string]
-  deleteCompany: [id: string, name: string]
+  deleteCompany: [company: Company]
 }>()
 
 // Methods

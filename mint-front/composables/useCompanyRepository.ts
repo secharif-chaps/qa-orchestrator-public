@@ -1,13 +1,14 @@
 import { useApiService } from './useApiService'
 import type { 
   CompanyCreate, 
-  CompanyResponse, 
-  CompanyUpdate, 
-  TaskCreate, 
-  TaskResponse,
+  CompanyUpdate,
   PaginationParams,
-  PaginatedResponse
+  PaginatedResponse,
+  Company
 } from '~/types/company'
+
+import type { TaskCreate, TaskResponse } from '~/types/task'
+
 
 const companiesUrl = '/api/companies'
 
@@ -19,7 +20,7 @@ export const useCompanyRepository = () => {
      * Get companies (legacy - returns all companies)
      */
     getCompanies: () => {
-      return api.get<CompanyResponse[]>(companiesUrl)
+      return api.get<Company[]>(companiesUrl)
     },
 
     /**
@@ -34,42 +35,42 @@ export const useCompanyRepository = () => {
       if (params?.order) queryParams.set('order', params.order)
       
       const url = queryParams.toString() ? `${companiesUrl}?${queryParams}` : companiesUrl
-      return api.get<PaginatedResponse<CompanyResponse>>(url)
+      return api.get<PaginatedResponse<Company>>(url)
     },
 
     /**
      * Get a company by ID
      */
     getCompany: (id: number) => {
-      return api.get<CompanyResponse>(`${companiesUrl}/${id}`)
+      return api.get<Company>(`${companiesUrl}/${id}`)
     },
 
     /**
      * Get a company by ID (alias for consistency with store)
      */
     getCompanyById: (id: number) => {
-      return api.get<CompanyResponse>(`${companiesUrl}/${id}`)
+      return api.get<Company>(`${companiesUrl}/${id}`)
     },
 
     /**
      * Get a company by name
      */
     getCompanyByName: (name: string) => {
-      return api.get<CompanyResponse>(`${companiesUrl}/by-name/${name}`)
+      return api.get<Company>(`${companiesUrl}/by-name/${name}`)
     },
 
     /**
      * Create a new company
      */
     createCompany: (company: CompanyCreate) => {
-      return api.post<CompanyResponse>(`${companiesUrl}`, company)
+      return api.post<Company>(`${companiesUrl}`, company)
     },
 
     /**
      * Update a company
      */
     updateCompany: (id: number, company: CompanyUpdate) => {
-      return api.put<CompanyResponse>(`${companiesUrl}/${id}`, company)
+      return api.put<Company>(`${companiesUrl}/${id}`, company)
     },
 
     /**
@@ -90,7 +91,7 @@ export const useCompanyRepository = () => {
      * Restart a task
      */
     restartTask: (taskId: number) => {
-      return api.post<TaskResponse>(`/api/tasks/${taskId}/restart`)
+      return api.post<TaskResponse>(`/api/tasks/${taskId}/restart`, {})
     },
 
     /**
