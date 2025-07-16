@@ -22,11 +22,7 @@
         <h3 class="text-lg font-semibold leading-tight">
           {{ event.title }}
         </h3>
-        <OIndicator 
-          v-if="getCategoryColor(event.category)"
-          :color="getCategoryColor(event.category)"
-          size="sm"
-        />
+
       </div>
 
       <!-- Tags/Badges -->

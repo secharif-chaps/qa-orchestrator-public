@@ -18,13 +18,7 @@
           <div>
             <img :src="theme === 'light' ? logoLight : logoDark" class="h-10 w-auto" />
           </div>
-          <NuxtLink 
-            to="/account"
-            class="flex items-center justify-center p-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900 rounded-lg transition-colors"
-            title="Profile"
-          >
-            <i class="fa fa-user text-lg"></i>
-          </NuxtLink>
+          
           <button
             @click="handleLogout"
             class="flex items-center justify-center p-2 text-gray-600 dark:text-gray-300 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-400/50 rounded-lg transition-colors"

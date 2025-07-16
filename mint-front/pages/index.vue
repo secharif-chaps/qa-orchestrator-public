@@ -26,7 +26,7 @@
       <div class="mb-8">
         <DashboardStatisticsOverview 
           :stats="companiesStats" 
-          :loading="pendingCompanies" 
+          :loading="status === 'pending'" 
         />
       </div>
 
@@ -46,14 +46,14 @@
         </div>
         
         <!-- Loading State -->
-        <div v-if="pendingCompanies" class="px-6 py-8">
+        <div v-if="status === 'pending'" class="px-6 py-8">
           <div class="flex justify-center">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         </div>
 
         <!-- Error State -->
-        <div v-else-if="companiesError" class="px-6 py-8">
+        <div v-else-if="status === 'error'" class="px-6 py-8">
           <div class="text-center">
             <i class="fas fa-exclamation-triangle text-red-400 text-2xl mb-2"></i>
             <p class="text-secondary">Unable to load recent companies</p>
@@ -128,21 +128,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { OButton } from '@owlint/feathers-vue'
+import TaskState from '~/components/TaskState.vue'
+import type { PaginationMeta, Company } from '~/types/company'
 import { SortOrder } from '~/types/company'
 
 // Only access auth on client side
 const { user } = useAuth()
-const companyRepository = useCompanyRepository()
 
 // Reactive data
-const recentCompanies = ref([])
-const pendingCompanies = ref(true)
-const companiesError = ref(null)
 const currentTime = ref('')
 const currentDate = ref('')
-const totalCompaniesCount = ref(0)
 
 // Computed properties
 const userDisplayName = computed(() => {
@@ -160,9 +157,42 @@ const greetingMessage = computed(() => {
   return 'Good evening! Time to wrap up your company research.'
 })
 
+// Computed pagination params
+const query = ref({
+  page: 1,
+  per_page: 4,
+  sort: 'created_at',
+  order: SortOrder.DESC
+})
+
+const { getAccessToken } = useAuth()
+const accessToken = await getAccessToken()
+
+// Cached pagination data using useAsyncData
+const { data: paginatedResponse, status, error, refresh: refreshCache, execute } = await useFetch(
+  `/api/companies`,
+  {
+    key: 'recent-companies',
+    watch: [() => query.value],
+    default: () => ({ data: [], meta: null }),
+    query,
+    baseURL: useRuntimeConfig().public.backendApi,
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    },
+    transform: (data: any) => ({
+      data: data.data as Company[],
+      meta: data.meta as PaginationMeta
+    })
+  },
+)
+
+const recentCompanies = computed(() => paginatedResponse.value.data)
+const companiesMeta = computed(() => paginatedResponse.value.meta)
+
 const companiesStats = computed(() => {
   // Use actual total count, not just recent companies length
-  const total = totalCompaniesCount.value
+  const total = companiesMeta.value?.total
   
   // Calculate active tasks from recent companies (this is an approximation for display)
   const activeTasks = recentCompanies.value.reduce((acc, company) => {
@@ -179,42 +209,16 @@ const companiesStats = computed(() => {
   return { total, activeTasks, recentUpdates }
 })
 
-// Methods
-const loadRecentCompanies = async () => {
-  try {
-    pendingCompanies.value = true
-    companiesError.value = null
-    
-    // Fetch paginated data to get total count and recent companies
-    const paginatedResponse = await companyRepository.getPaginatedCompanies({
-      page: 1,
-      per_page: 4,
-      sort: 'created_at',
-      order: SortOrder.DESC
-    })
-    
-    // Set the recent companies from the paginated response
-    recentCompanies.value = paginatedResponse.data
-    
-    // Set the total count from pagination metadata
-    totalCompaniesCount.value = paginatedResponse.meta.total
-      
-  } catch (error) {
-    console.error('Error loading companies:', error)
-    companiesError.value = error.message || 'Failed to load companies'
-  } finally {
-    pendingCompanies.value = false
-  }
-}
+
 
 const refreshCompanies = () => {
-  loadRecentCompanies()
+  execute()
 }
 
-const formatRelativeTime = (dateString) => {
+const formatRelativeTime = (dateString: string) => {
   const date = new Date(dateString)
   const now = new Date()
-  const diffInSeconds = Math.floor((now - date) / 1000)
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
   
   if (diffInSeconds < 60) return 'Just now'
   if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
@@ -222,21 +226,21 @@ const formatRelativeTime = (dateString) => {
   return `${Math.floor(diffInSeconds / 86400)}d ago`
 }
 
-const getCompanyStatus = (company) => {
+const getCompanyStatus = (company: Company) => {
   if (!company.tasks || company.tasks.length === 0) return 'New'
   
   const hasRunningTasks = company.tasks.some(task => 
-    task.status === 'running' || task.status === 'pending'
+    task.status === TaskState.RUNNING || task.status === TaskState.PENDING
   )
   if (hasRunningTasks) return 'Processing'
   
-  const hasFailedTasks = company.tasks.some(task => task.status === 'failed')
+  const hasFailedTasks = company.tasks.some(task => task.status === TaskState.FAILED)
   if (hasFailedTasks) return 'Issues'
   
   return 'Complete'
 }
 
-const getCompanyStatusColor = (company) => {
+const getCompanyStatusColor = (company: Company) => {
   const status = getCompanyStatus(company)
   switch (status) {
     case 'New': return 'bg-gray-400'
@@ -264,7 +268,6 @@ const updateTime = () => {
 
 // Lifecycle
 onMounted(() => {
-  loadRecentCompanies()
   updateTime()
   
   // Update time every minute

@@ -66,10 +66,11 @@
             {{ company.tasks.length }} tasks
           </span>
           <OBadge 
-            :text="getTaskStatusText(company.tasks)"
             :color="getTaskStatusColor(company.tasks)"
             size="xs"
-          />
+          >
+            {{ getTaskStatusText(company.tasks) }}
+          </OBadge>
         </div>
       </div>
     </div>
@@ -78,10 +79,6 @@
     <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700">
       <div class="flex justify-between items-center text-xs text-secondary">
         <span>Created {{ formatDate(company.created_at) }}</span>
-        <span class="flex items-center gap-1">
-          <div class="w-2 h-2 rounded-full bg-green-400"></div>
-          Active
-        </span>
       </div>
     </div>
   </Card>

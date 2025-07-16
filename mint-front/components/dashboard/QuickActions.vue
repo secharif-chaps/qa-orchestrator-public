@@ -21,7 +21,7 @@
       description="Manage your account"
       icon="user"
       color="purple"
-      to="/profile"
+      to="/account/profile"
     />
     
     <DashboardActionCard
@@ -29,7 +29,7 @@
       description="Configure preferences"
       icon="cog"
       color="orange"
-      to="/settings"
+      to="/account/appearance"
     />
   </div>
 </template>

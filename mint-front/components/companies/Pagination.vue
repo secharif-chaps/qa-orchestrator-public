@@ -1,9 +1,9 @@
 <template>
-  <div v-if="companyStore.paginationMeta && companyStore.paginationMeta.last_page > 1" class="flex justify-center mt-8">
+  <div v-if="meta && meta.last_page > 1" class="flex justify-center mt-8">
     <Pagination.Root 
       v-model:page="companyStore.currentPage"
-      :total="companyStore.paginationMeta.total"
-      :items-per-page="companyStore.paginationMeta.per_page"
+      :total="meta.total"
+      :items-per-page="meta.per_page"
       :sibling-count="1"
       :show-edges="true"
       class="mx-auto"
@@ -44,11 +44,11 @@
 
 <script setup lang="ts">
 import { Pagination } from 'reka-ui/namespaced'
+import type { PaginationMeta } from '~/types/company';
 
 const companyStore = useCompanyStore()
 
-// Watch for page changes and update URL
-watch(() => companyStore.currentPage, () => {
-  companyStore.savePaginationToStorage()
-})
+defineProps<{
+  meta: PaginationMeta | null
+}>()
 </script>
