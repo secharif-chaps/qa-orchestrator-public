@@ -53,13 +53,13 @@ class SQLAlchemyCompanyRepository:
         self.db_session.refresh(company)
         return company
     
-    def get_paginated(self, pagination_params: PaginationParams, owner_username: Optional[str] = None) -> Tuple[List[Company], int]:
+    def get_paginated(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None) -> Tuple[List[Company], int]:
         """Get paginated list of companies with sorting and filtering"""
         query = self.db_session.query(Company)
         
-        # Filter by owner if provided
-        if owner_username:
-            query = query.filter(Company.owner_username == owner_username)
+        # Filter by workspace if provided
+        if workspace_id:
+            query = query.filter(Company.workspace_id == workspace_id)
         
         # Apply sorting
         if pagination_params.sort:

@@ -1,0 +1,139 @@
+@import url('https://cdn.tailwindcss.com');
+
+/* Override Keycloak default styles */
+body {
+    @apply bg-gray-50 font-sans;
+}
+
+.login-pf {
+    @apply bg-gray-50;
+}
+
+.login-pf body {
+    @apply bg-gray-50;
+}
+
+/* Main login container */
+.login-pf .container {
+    @apply flex items-center justify-center min-h-screen p-4;
+}
+
+/* Login box styling */
+.login-pf-page .login-pf-brand {
+    @apply text-center mb-8;
+}
+
+.login-pf-page .login-pf-brand img {
+    @apply mx-auto h-12 w-auto;
+}
+
+/* Card container */
+.card-pf {
+    @apply bg-white rounded-lg shadow-lg border-0 max-w-md w-full;
+}
+
+.card-pf .card-pf-body {
+    @apply p-8;
+}
+
+/* Header styling */
+.login-pf-page .form-signin h1,
+.login-pf-page .form-signin .kc-page-title {
+    @apply text-2xl font-bold text-gray-900 text-center mb-6;
+}
+
+/* Form styling */
+.login-pf-page .form-group {
+    @apply mb-4;
+}
+
+.login-pf-page .form-control {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm;
+}
+
+.login-pf-page .form-control:focus {
+    @apply ring-2 ring-blue-500 border-blue-500;
+}
+
+/* Button styling */
+.login-pf-page .btn-primary {
+    @apply w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.login-pf-page .btn-primary:hover {
+    @apply bg-blue-700;
+}
+
+.login-pf-page .btn-primary:focus {
+    @apply ring-2 ring-blue-500 ring-offset-2;
+}
+
+/* Checkbox styling */
+.login-pf-page .checkbox {
+    @apply flex items-center mb-4;
+}
+
+.login-pf-page .checkbox input[type="checkbox"] {
+    @apply h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500;
+}
+
+.login-pf-page .checkbox label {
+    @apply ml-2 text-sm text-gray-900;
+}
+
+/* Error messages */
+.alert-error {
+    @apply bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md mb-4;
+}
+
+.alert-warning {
+    @apply bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-md mb-4;
+}
+
+.alert-success {
+    @apply bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-md mb-4;
+}
+
+.alert-info {
+    @apply bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-md mb-4;
+}
+
+/* Links */
+.login-pf-page a {
+    @apply text-blue-600 hover:text-blue-500 text-sm;
+}
+
+/* Labels */
+.login-pf-page label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+}
+
+/* Footer links */
+.login-pf-page .login-pf-signup {
+    @apply text-center mt-6;
+}
+
+.login-pf-page .login-pf-signup a {
+    @apply text-blue-600 hover:text-blue-500;
+}
+
+/* Hide default Keycloak branding */
+.login-pf-page .login-pf-brand {
+    @apply mb-8;
+}
+
+/* Custom logo area */
+.kc-logo-text {
+    @apply text-3xl font-bold text-blue-600 text-center mb-8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .card-pf .card-pf-body {
+        @apply p-6;
+    }
+    
+    .login-pf .container {
+        @apply p-2;
+    }
+}

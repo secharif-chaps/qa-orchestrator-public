@@ -21,7 +21,8 @@
           "type": "password",
           "value": "password"
         }
-      ]
+      ],
+      "realmRoles": ["admin"]
     },
     {
       "username": "nmr",
@@ -29,7 +30,22 @@
       "emailVerified": true,
       "firstName": "Nicolas",
       "lastName": "Mercier",
-      "email": "nmr@example.com",
+      "email": "nmercier@chapsivion.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password"
+        }
+      ],
+      "realmRoles": ["workspace.manage", "screen.view", "company.view", "export.generate"]
+    },
+    {
+      "username": "suh",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Sophie",
+      "lastName": "Ulrich",
+      "email": "sulrich@chapsvision.com",
       "credentials": [
         {
           "type": "password",
@@ -61,7 +77,7 @@
       "webOrigins": ["http://10.0.1.2:3000", "http://localhost:3000"],
       "publicClient": true,
       "attributes": {
-        "post.logout.redirect.uris": "http://10.0.1.2:3000,http://localhost:3000"
+        "post.logout.redirect.uris": "http://10.0.1.2:3000/*##http://localhost:3000/*"
       },
       "defaultClientScopes": [
         "web-origins",
@@ -75,5 +91,96 @@
   ],
   "internationalizationEnabled": true,
   "supportedLocales": ["en", "fr"],
-  "defaultLocale": "en"
+  "defaultLocale": "en",
+  "roles": {
+    "realm": [
+      {
+        "name": "workspace.manage",
+        "description": "Manage workspace members and settings",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "screen.create",
+        "description": "Create new screens",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "screen.update",
+        "description": "Update existing screens",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "screen.delete",
+        "description": "Delete screens",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "screen.view",
+        "description": "View screens",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "company.create",
+        "description": "Create new companies",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "company.update",
+        "description": "Update existing companies",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "company.delete",
+        "description": "Delete companies",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "company.view",
+        "description": "View companies",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "export.generate",
+        "description": "Generate exports",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "admin.workspaces",
+        "description": "Full administrative access to workspaces (list, edit, create, delete)",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "admin",
+        "description": "Full administrative access",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "workspace.manage",
+            "screen.create",
+            "screen.update",
+            "screen.delete",
+            "screen.view",
+            "company.create",
+            "company.update",
+            "company.delete",
+            "company.view",
+            "export.generate",
+            "admin.workspaces"
+          ]
+        },
+        "clientRole": false
+      }
+    ]
+  }
 }

@@ -7,7 +7,8 @@ logger = logging.getLogger(__name__)
 
 from app.services.company import CompanyService
 from app.core.dependencies import get_company_service, get_current_user, get_n8n_client
-from app.core.security import verify_company_ownership, sanitize_input
+from app.core.workspace import get_user_workspace, WorkspaceContext
+from app.core.security import verify_company_ownership, verify_company_workspace_access, verify_company_modify_permission, sanitize_input
 from app.schemas.company import (
     CompanyCreate, 
     CompanyUpdate, 
@@ -30,47 +31,47 @@ async def get_companies(
     sort: str = Query(None, description="Field to sort by (name, created_at)"),
     order: SortOrder = Query(SortOrder.DESC, description="Sort order"),
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
-    """Get paginated companies for the current user"""
+    """Get paginated companies for the current workspace"""
     pagination_params = PaginationParams(
         page=page,
         per_page=per_page,
         sort=sort,
         order=order
     )
-    return service.get_paginated_companies(pagination_params, username=current_user.username)
+    return service.get_paginated_companies(pagination_params, workspace_id=workspace_context.workspace_id)
 
 @router.get("/{company_id}", response_model=CompanyResponse)
 async def get_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
-    """Get a company by ID (only if user owns it)"""
+    """Get a company by ID (only if it belongs to user's workspace)"""
     company = service.get_company(company_id)
-    return verify_company_ownership(company, current_user)
+    return verify_company_workspace_access(company, workspace_context)
 
 @router.get("/by-name/{name}", response_model=CompanyResponse)
 async def get_company_by_name(
     name: str,
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
-    """Get a company by name (only if user owns it)"""
+    """Get a company by name (only if it belongs to user's workspace)"""
     # Sanitize the name input
     sanitized_name = sanitize_input(name, max_length=100)
     company = service.get_company_by_name(sanitized_name)
-    return verify_company_ownership(company, current_user)
+    return verify_company_workspace_access(company, workspace_context)
 
 @router.post("/", response_model=CompanyResponse)
 async def create_company(
     company_data: CompanyCreate,
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
     """Create a new company"""
-    print(f"🏢 POST /api/companies/ - START - User: {current_user.username}, Data: {company_data.name[:50]}...")
+    print(f"🏢 POST /api/companies/ - START - User: {workspace_context.username}, Data: {company_data.name[:50]}...")
     
     try:
         # Sanitize inputs
@@ -79,12 +80,13 @@ async def create_company(
         sanitized_website = sanitize_input(company_data.website, max_length=255)
         print(f"✅ Sanitized - Name: {sanitized_name[:50]}, Website: {sanitized_website[:50]}")
         
-        # Use the authenticated user's username as the owner
-        print(f"🔄 Calling service.create_company for authenticated user: {current_user.username}")
+        # Use the authenticated user's username as the owner and link to their workspace
+        print(f"🔄 Calling service.create_company for authenticated user: {workspace_context.username} in workspace: {workspace_context.workspace_id}")
         result = service.create_company(
             name=sanitized_name,
             website=sanitized_website,
-            owner_username=current_user.username
+            owner_username=workspace_context.username,
+            workspace_id=workspace_context.workspace_id
         )
         print(f"✅ Company created successfully - ID: {result.id}, Name: {result.name}")
         return result
@@ -114,12 +116,15 @@ async def update_company(
     company_id: int,
     company_data: CompanyUpdate,
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
-    """Update a company (only if user owns it)"""
-    # Get existing company and verify ownership
+    """Update a company (requires company.update permission)"""
+    # Verify user has permission to update companies
+    verify_company_modify_permission(workspace_context, "company.update")
+    
+    # Get existing company and verify it belongs to workspace
     company = service.get_company(company_id)
-    verify_company_ownership(company, current_user)
+    verify_company_workspace_access(company, workspace_context)
     
     # Sanitize inputs if provided
     if company_data.name:
@@ -158,12 +163,15 @@ async def update_company(
 async def delete_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
-    """Delete a company (only if user owns it)"""
-    # Get existing company and verify ownership
+    """Delete a company (requires company.delete permission)"""
+    # Verify user has permission to delete companies
+    verify_company_modify_permission(workspace_context, "company.delete")
+    
+    # Get existing company and verify it belongs to workspace
     company = service.get_company(company_id)
-    verify_company_ownership(company, current_user)
+    verify_company_workspace_access(company, workspace_context)
     
     success = service.delete_company(company_id)
     if not success:
@@ -179,15 +187,15 @@ async def chat_with_company(
     chat_request: ChatRequest,
     service: CompanyService = Depends(get_company_service),
     n8n_client: N8nClient = Depends(get_n8n_client),
-    current_user: TokenData = Depends(get_current_user)
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
-    """Chat with AI about a company (only if user owns the company)"""
-    logger.info(f"Chat request for company {company_id} by user {current_user.username}")
+    """Chat with AI about a company (accessible to all workspace members)"""
+    logger.info(f"Chat request for company {company_id} by user {workspace_context.username}")
     
     try:
-        # Get company and verify ownership
+        # Get company and verify it belongs to workspace
         company = service.get_company(company_id)
-        verify_company_ownership(company, current_user)
+        verify_company_workspace_access(company, workspace_context)
         
         # Send chat message to n8n workflow
         response = await n8n_client.send_chat_message(

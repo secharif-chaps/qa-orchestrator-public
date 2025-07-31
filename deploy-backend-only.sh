@@ -37,7 +37,7 @@ docker-compose -f docker-compose.prod.yml stop backend
 docker-compose -f docker-compose.prod.yml rm -f backend
 docker rmi mint-backend 2>/dev/null || true
 
-# Build and start backend service only
+# Build and start backend service only (migrations will run automatically via entrypoint.sh)
 docker-compose -f docker-compose.prod.yml up -d --build backend
 
 # Wait for backend to be ready

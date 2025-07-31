@@ -1,0 +1,118 @@
+import logging
+from fastapi import APIRouter, HTTPException, status
+from pydantic import BaseModel, Field
+from typing import Dict, Any, Optional
+from datetime import datetime
+
+from app.services.company import CompanyService
+from app.core.dependencies import get_company_service
+from app.models.task import TaskStatus
+from fastapi import Depends
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter(
+    prefix="/webhooks",
+    tags=["webhooks"]
+)
+
+class TaskCallbackPayload(BaseModel):
+    task_id: int
+    company_id: int
+    task_type: str
+    status: str = Field(..., description="succeeded or failed")
+    data: Optional[Dict[str, Any]] = Field(None, description="Task results data")
+    error: Optional[str] = Field(None, description="Error message if failed")
+
+@router.post("/tasks/{task_id}/callback")
+async def task_callback(
+    task_id: int,
+    payload: TaskCallbackPayload,
+    service: CompanyService = Depends(get_company_service)
+):
+    """
+    Webhook endpoint for N8N to call when a task completes
+    """
+    logger.info(f"🔄 Task callback received - Task ID: {task_id}, Status: {payload.status}")
+    
+    try:
+        # Validate that task_id in URL matches payload
+        if task_id != payload.task_id:
+            logger.error(f"Task ID mismatch - URL: {task_id}, Payload: {payload.task_id}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Task ID in URL doesn't match payload"
+            )
+        
+        # Get the company and find the task
+        company = service.get_company(payload.company_id)
+        if not company:
+            logger.error(f"Company not found - ID: {payload.company_id}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Company with ID {payload.company_id} not found"
+            )
+        
+        # Find the specific task
+        task = next((t for t in company.tasks if t.id == task_id), None)
+        if not task:
+            logger.error(f"Task not found - ID: {task_id} in company {payload.company_id}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Task with ID {task_id} not found"
+            )
+        
+        # Check if task is already completed
+        if task.status in [TaskStatus.SUCCEEDED, TaskStatus.ERROR]:
+            logger.warning(f"Task {task_id} already completed with status: {task.status}")
+            return {"message": "Task already completed", "current_status": task.status.value}
+        
+        # Update task based on callback status
+        if payload.status == "succeeded":
+            task.status = TaskStatus.SUCCEEDED
+            task.error = None
+            
+            # Update company data if provided
+            if payload.data:
+                logger.info(f"Updating company data for task type: {payload.task_type}")
+                service._update_company_data(company, payload.task_type, payload.data)
+            
+            logger.info(f"✅ Task {task_id} completed successfully")
+            
+        elif payload.status == "failed":
+            task.status = TaskStatus.ERROR
+            task.error = payload.error or "Task failed without specific error message"
+            
+            logger.error(f"❌ Task {task_id} failed: {task.error}")
+            
+        else:
+            logger.error(f"Invalid status received: {payload.status}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid status: {payload.status}. Must be 'succeeded' or 'failed'"
+            )
+        
+        # Update the task's updated_at timestamp
+        task.updated_at = datetime.utcnow()
+        
+        # Save changes to database
+        service.db.commit()
+        service.db.refresh(task)
+        
+        logger.info(f"🎉 Task {task_id} callback processed successfully")
+        
+        return {
+            "message": "Task callback processed successfully",
+            "task_id": task_id,
+            "new_status": task.status.value
+        }
+        
+    except HTTPException:
+        # Re-raise HTTP exceptions (they're already properly formatted)
+        raise
+    except Exception as e:
+        logger.error(f"💥 Unexpected error processing task callback {task_id}: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error processing task callback"
+        )

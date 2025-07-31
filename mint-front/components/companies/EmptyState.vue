@@ -10,7 +10,8 @@
           :label="$t('company.list.create.title')"
           icon="fas fa-plus"
           type="primary"
-          @click="$emit('createCompany')"
+          class="mx-auto"
+          @click="$router.push('/search')"
         />
       </slot>
     </div>

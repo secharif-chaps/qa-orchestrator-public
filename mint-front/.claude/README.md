@@ -116,7 +116,7 @@ const checked = defineModel<boolean>('checked', {
 ### Nuxt 3 Specific Rules
 - **Use `~/` or `@/` aliases** for imports
 - **Leverage auto-imports** - don't manually import Vue functions, components and composables
-- **Use `useFetch()`, `$fetch()`, `useLazyFetch()`** for data fetching
+- **ALWAYS use `useFetch()` or `useLazyFetch()`** for data fetching - NEVER use `$fetch()`
 - **Use `useState()` for cross-component reactive state**
 - **Use `useRoute()` and `useRouter()`** for navigation
 - **Use `useHead()` and `useSeoMeta()`** for SEO
@@ -284,7 +284,7 @@ OCheckbox        // Checkbox inputs
 OFilterItem      // Filter tags/chips
 OIcon            // Icon system
 OIndicator       // Status indicators
-OInput           // Text inputs and form fields
+OInput           // Text inputs and form fields (requires 'id' prop)
 OModal           // Modal dialogs
 ONotification    // Toast notifications
 ONotificationList // Notification container
@@ -628,36 +628,20 @@ When @owlint component lacks features, suggest:
 Which approach would you prefer?"
 ```
 
-
-### Git and Commits
-- **NEVER commit** unless user explicitly asks
-- If user asks for commit, always:
-  1. Run `yarn test:all` first
-  2. Use proper commit message format
-  3. Include the standard footer:
-    ```
-    🤖 Generated with [Claude Code](https://claude.ai/code)
-    
-    Co-Authored-By: Claude <noreply@anthropic.com>
-    ```
-
-### Testing Patterns
-- Unit tests: Use Nuxt environment with `mockNuxtImport`
-- E2E tests: Use jsdom environment with MSW mocking
-- UI tests: Use jsdom environment with global mocks
-- Follow existing mock patterns in test files
-
-### File Structure Rules
-- Tests go in appropriate directories:
-  - `tests/unit/` - Unit tests (*.test.ts)
-  - `tests/e2e/` - Integration tests (*.test.ts) 
-  - `tests/unit/` - UI-specific tests (*.ui.test.ts)
-- Follow Nuxt conventions for pages, components, composables
-
-### Security
-- Never expose secrets or API keys
-- Use environment variables for configuration
-- Follow secure coding practices
+### Database Connection Info
+- **Docker container name**: `mint-db-1`
+- **Database name**: `mint_db` (not mint_dev)
+- **Connection commands**:
+  ```bash
+  # Start database
+  docker-compose -f docker-compose.dev.yml up -d db
+  
+  # Connect to database
+  docker exec mint-db-1 psql -U postgres -d mint_db
+  
+  # Run SQL query
+  docker exec mint-db-1 psql -U postgres -d mint_db -c "SELECT * FROM companies LIMIT 5;"
+  ```
 
 ### Icons System
 - **ALWAYS use Font Awesome icons** - never import icon libraries like Lucide, Heroicons, etc.
@@ -714,5 +698,6 @@ yarn validate       # Alias for test:all
 
 ---
 
-*This file provides instructions for AI assistants working on mint-front*
-*Last updated: 2025-07-04*
+*This file provides general instructions for AI assistants working on mint-front*
+*For specific topics, see other files in the .claude folder*
+*Last updated: 2025-07-31*

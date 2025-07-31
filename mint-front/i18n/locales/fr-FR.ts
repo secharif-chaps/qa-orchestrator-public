@@ -259,8 +259,41 @@ export default {
     home: 'Accueil',
     search: 'Recherche',
     cards: 'Cartes',
+    workspaces: 'Espaces de travail',
     settings: 'Paramètres',
-    help: 'Aide'
+    help: 'Aide',
+    workspace: 'Équipe'
+  },
+  workspaces: {
+    title: 'Gestion des espaces de travail',
+    description: 'Gérez tous les espaces de travail de votre organisation',
+    fields: {
+      name: 'Nom',
+      slug: 'Identifiant',
+      description: 'Description',
+      created: 'Créé le',
+      members: 'membres'
+    },
+    placeholders: {
+      name: 'Nom de l\'espace de travail',
+      slug: 'identifiant-unique',
+      description: 'Description de l\'espace de travail'
+    },
+    actions: {
+      create: 'Nouvel espace'
+    },
+    modal: {
+      create: 'Créer un espace de travail',
+      edit: 'Modifier l\'espace de travail'
+    },
+    error: {
+      loading: 'Erreur lors du chargement des espaces de travail',
+      save: 'Erreur lors de la sauvegarde',
+      delete: 'Erreur lors de la suppression'
+    },
+    confirm: {
+      delete: 'Êtes-vous sûr de vouloir supprimer l\'espace "{name}" ?'
+    }
   },
   help: {
     title: 'Aide',
@@ -550,5 +583,40 @@ export default {
         loading: 'Chargement...'
       }
     }
+  },
+  workspace: {
+    title: 'Gestion de l\'équipe',
+    description: 'Gérez les membres et les paramètres de votre équipe',
+    error: {
+      loading: 'Erreur lors du chargement des données de l\'équipe'
+    },
+    info: {
+      title: 'Informations de l\'équipe',
+      name: 'Nom',
+      description: 'Description',
+      slug: 'Identifiant'
+    },
+    members: {
+      title: 'Membres de l\'équipe',
+      add: 'Ajouter un membre',
+      empty: 'Aucun membre dans cette équipe',
+      revoke: 'Révoquer',
+      activate: 'Activer',
+      status: {
+        active: 'Actif',
+        revoked: 'Révoqué'
+      },
+      addDialog: {
+        title: 'Ajouter un nouveau membre',
+        email: 'Adresse e-mail',
+        emailPlaceholder: 'email@exemple.com',
+        username: 'Nom d\'utilisateur',
+        usernamePlaceholder: 'Optionnel - sera généré automatiquement',
+        submit: 'Ajouter le membre'
+      }
+    }
+  },
+  common: {
+    cancel: 'Annuler'
   }
 } 

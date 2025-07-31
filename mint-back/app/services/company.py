@@ -65,10 +65,10 @@ class CompanyService:
                 company.team = []
         return company
     
-    def get_all_companies(self, username: Optional[str] = None) -> List[Company]:
-        """Securely get all companies, optionally filtered by owner"""
-        if username:
-            companies = self.secure_query.safe_filter_by_owner(Company, Company.owner_username, username).all()
+    def get_all_companies(self, workspace_id: Optional[int] = None) -> List[Company]:
+        """Securely get all companies, optionally filtered by workspace"""
+        if workspace_id:
+            companies = self.db.query(Company).filter(Company.workspace_id == workspace_id).all()
         else:
             companies = self.db.query(Company).all()
         # Ensure all JSON fields have default values to prevent validation errors
@@ -91,9 +91,9 @@ class CompanyService:
                 company.team = []
         return companies
     
-    def get_paginated_companies(self, pagination_params: PaginationParams, username: Optional[str] = None) -> PaginatedResponse[CompanyResponse]:
+    def get_paginated_companies(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None) -> PaginatedResponse[CompanyResponse]:
         """Get paginated companies with sorting"""
-        companies, total_count = self.repository.get_paginated(pagination_params, username)
+        companies, total_count = self.repository.get_paginated(pagination_params, workspace_id)
         
         # Convert SQLAlchemy models to Pydantic response models
         company_responses = []
@@ -129,9 +129,9 @@ class CompanyService:
         
         return PaginatedResponse(data=company_responses, meta=meta)
     
-    def create_company(self, name: str, website: str, owner_username: str) -> Company:
+    def create_company(self, name: str, website: str, owner_username: str, workspace_id: int) -> Company:
         """Securely create a new company"""
-        print(f"🏭 CompanyService.create_company - START - Name: {name[:50]}, Owner: {owner_username}")
+        print(f"🏭 CompanyService.create_company - START - Name: {name[:50]}, Owner: {owner_username}, Workspace: {workspace_id}")
         
         # Additional validation
         print(f"🔍 Validating owner username: {owner_username}")
@@ -144,7 +144,8 @@ class CompanyService:
             Company,
             name=name,
             website=website,
-            owner_username=owner_username
+            owner_username=owner_username,
+            workspace_id=workspace_id
         )
         print(f"✅ Company entity created - ID: {company.id}")
         
@@ -228,10 +229,16 @@ class CompanyService:
             task.status = TaskStatus.RUNNING
             self.db.commit()
             
+            # For now, keep synchronous processing (wait for N8N to complete)
+            # Future: Use callback system when network connectivity allows
+            # from app.core.config import settings
+            # callback_url = f"{settings.BACKEND_BASE_URL}/api/webhooks/tasks/{task.id}/callback"
+            
             result = await self.n8n_client.trigger_workflow(
                 company.name,
                 company.website,
                 task.type.value
+                # callback_url=callback_url  # Disabled for now
             )
             
             # Debug logging to understand the n8n response structure

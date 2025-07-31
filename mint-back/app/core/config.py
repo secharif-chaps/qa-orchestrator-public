@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     # API settings
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8000
+    BACKEND_BASE_URL: str = "http://localhost:8000"  # Used for webhook callbacks
     
     # Database settings
     DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/mint_db"

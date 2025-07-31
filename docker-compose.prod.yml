@@ -45,7 +45,7 @@ services:
 
   # Keycloak for Authentication
   keycloak:
-    image: quay.io/keycloak/keycloak:20.0
+    image: keycloak/keycloak:26.3
     restart: unless-stopped
     env_file:
       - .env.production

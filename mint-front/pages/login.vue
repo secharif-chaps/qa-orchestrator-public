@@ -42,6 +42,7 @@ definePageMeta({
 
 const { signIn } = useAuth()
 
+
 const error = ref('')
 const isLoading = ref(false)
 

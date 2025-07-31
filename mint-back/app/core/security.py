@@ -6,6 +6,7 @@ from typing import Optional
 from fastapi import HTTPException, status
 from app.schemas.user import TokenData
 from app.models.company import Company
+from app.core.workspace import WorkspaceContext
 
 
 class AuthorizationError(HTTPException):
@@ -43,6 +44,52 @@ def verify_company_ownership(company: Optional[Company], current_user: TokenData
     return company
 
 
+def verify_company_workspace_access(company: Optional[Company], workspace_context: WorkspaceContext) -> Company:
+    """
+    Verify that the company belongs to the user's workspace
+    
+    Args:
+        company: Company object to check
+        workspace_context: Current user's workspace context
+        
+    Returns:
+        Company object if it belongs to the workspace
+        
+    Raises:
+        HTTPException: If company doesn't exist or doesn't belong to workspace
+    """
+    if not company:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Company not found"
+        )
+    
+    if company.workspace_id != workspace_context.workspace_id:
+        raise AuthorizationError("Company not found in your workspace")
+    
+    return company
+
+
+def verify_company_modify_permission(workspace_context: WorkspaceContext, permission: str) -> WorkspaceContext:
+    """
+    Verify that the user has permission to modify companies in their workspace
+    
+    Args:
+        workspace_context: Current user's workspace context
+        permission: Required permission (e.g., 'company.update', 'company.delete')
+        
+    Returns:
+        WorkspaceContext if user has permission
+        
+    Raises:
+        AuthorizationError: If user doesn't have permission
+    """
+    if not workspace_context.user.roles or permission not in workspace_context.user.roles:
+        raise AuthorizationError(f"Permission denied: {permission} required")
+    
+    return workspace_context
+
+
 def verify_admin_access(current_user: TokenData) -> TokenData:
     """
     Verify that the current user has admin privileges
@@ -58,6 +105,25 @@ def verify_admin_access(current_user: TokenData) -> TokenData:
     """
     if not current_user.roles or "admin" not in current_user.roles:
         raise AuthorizationError("Admin access required")
+    
+    return current_user
+
+
+def verify_workspace_admin_access(current_user: TokenData) -> TokenData:
+    """
+    Verify that the current user has workspace admin privileges
+    
+    Args:
+        current_user: Current authenticated user
+        
+    Returns:
+        TokenData if user has admin.workspaces role
+        
+    Raises:
+        AuthorizationError: If user doesn't have admin.workspaces role
+    """
+    if not current_user.roles or "admin.workspaces" not in current_user.roles:
+        raise AuthorizationError("Workspace admin access required (admin.workspaces role)")
     
     return current_user
 

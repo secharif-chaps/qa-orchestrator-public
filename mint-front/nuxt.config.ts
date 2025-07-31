@@ -15,11 +15,13 @@ export default defineNuxtConfig({
     keycloakIssuer: process.env.KEYCLOAK_ISSUER || 'http://localhost:8080/realms/mint-dev',
     
     public: {
+      keycloakUrl: process.env.NUXT_PUBLIC_KEYCLOAK_URL || 'http://localhost:8080',
       backendApi: process.env.NUXT_PUBLIC_BACKEND_API || 'http://localhost:8000',
       authBaseUrl: process.env.NUXT_PUBLIC_AUTH_BASE_URL || 'http://localhost:3000',
-      tilesApiKey: '',
-      tilesApiUrl: '',
-      n8nWebhookIdChat: '96b9765e-6c96-4493-bf56-a65905f7a6bc'
+      tilesApiKey: process.env.NUXT_PUBLIC_TILES_API_KEY || '',
+      tilesApiUrl: process.env.NUXT_PUBLIC_TILES_API_URL || '',
+      n8nWebhookIdChat: process.env.NUXT_PUBLIC_N8N_WEBHOOK_ID_CHAT || '96b9765e-6c96-4493-bf56-a65905f7a6bc',
+      isDev: process.env.NUXT_PUBLIC_IS_DEV === 'true' || false
     }
   },
 

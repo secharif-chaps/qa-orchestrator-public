@@ -5,7 +5,7 @@
         <div
           v-for="button in buttons"
           :key="button.label"
-          class="w-full py-2 text-center space-y-2 pb-6"
+          class="w-full py-2 text-center space-y-2"
         >
           <NuxtLink :to="button.to" class="block">
             <div class="group cursor-pointer space-y-1 text-white dark:text-bg2">
@@ -35,7 +35,7 @@
         <div
           v-for="button in actions"
           :key="button.label"
-          class="w-full py-2 text-center space-y-2 pb-6"
+          class="w-full py-2 text-center space-y-2"
         >
           <NuxtLink :to="button.to" class="block">
             <div class="group cursor-pointer space-y-1 text-white dark:text-bg2">
@@ -69,16 +69,27 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-const buttons = computed(() => [
-  { icon: 'fa fa-home', label: t('sidebar.home'), active: true, to: '/' },
-  { icon: 'fa fa-search', label: t('sidebar.search'), active: true, to: '/search' },
-  {
-    icon: 'fa fa-folder-open',
-    label: t('sidebar.cards'),
-    chip: nbCards.value || '0',
-    to: '/companies'
+const { userRoles, userPermissions } = useAuthStore()
+
+const buttons = computed(() => {
+  const baseButtons = [
+    { icon: 'fa fa-home', label: t('sidebar.home'), active: true, to: '/' },
+    { icon: 'fa fa-search', label: t('sidebar.search'), active: true, to: '/search' },
+    {
+      icon: 'fa fa-folder-open',
+      label: t('sidebar.cards'),
+      chip: nbCards.value || '0',
+      to: '/companies'
+    }
+  ]
+  
+  // Add workspace button if user has admin.workspaces role
+  if (userRoles.includes('admin.workspaces')) {
+    baseButtons.push({ icon: 'fa fa-sitemap', label: t('sidebar.workspaces'), active: true, to: '/workspaces' })
   }
-])
+  
+  return baseButtons
+})
 
 const actions = computed(() => [
   { icon: 'fa fa-cog', label: t('sidebar.settings'), to: '/account' },

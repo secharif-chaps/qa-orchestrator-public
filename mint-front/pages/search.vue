@@ -1,14 +1,10 @@
 <template>
   <div class="max-w-4xl mx-auto space-y-6" data-cy="company-search-page">
     <!-- Page Header -->
-    <div class="text-center space-y-2">
+    <div class="space-y-2">
       <h1 class="text-3xl font-semibold ">{{ $t('search.title') }}</h1>
       <p class="text-secondary">{{ $t('search.companyIdentity') }}</p>
     </div>
-
-
-    {{ websiteError }}
-    {{ companyError }}
 
     <!-- Search Form Card -->
     <Card :title="$t('search.companyIdentity')">

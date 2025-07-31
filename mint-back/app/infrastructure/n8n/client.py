@@ -12,7 +12,7 @@ class N8nClient:
         self.base_url = base_url or settings.N8N_BASE_URL
         self.webhook_id = webhook_id or settings.N8N_WEBHOOK_ID
         
-    async def trigger_workflow(self, company: str, website: str, query: str) -> Dict[str, Any]:
+    async def trigger_workflow(self, company: str, website: str, query: str, callback_url: str = None) -> Dict[str, Any]:
         """
         Trigger an n8n workflow for a specific company data query
         
@@ -20,32 +20,41 @@ class N8nClient:
             company: Company name
             website: Company website
             query: Type of query (profile, team, products, etc.)
+            callback_url: Optional callback URL for asynchronous results
             
         Returns:
-            Response data from the n8n workflow
+            Response data from the n8n workflow (or acknowledgment if callback_url provided)
         """
         url = f"{self.base_url}/webhook/{self.webhook_id}"
         
-        # Log the request details
-        print(f"Request data: {{'company': {company}, 'website': {website}, 'query': {query}}}")
+        # Prepare request payload
+        payload = {
+            "company": company,
+            "website": website,
+            "query": query
+        }
+        
+        # Add callback URL if provided (for asynchronous processing)
+        if callback_url:
+            payload["callback_url"] = callback_url
+            print(f"Request data with callback: {payload}")
+        else:
+            print(f"Request data (synchronous): {payload}")
         
         try:
             async with httpx.AsyncClient() as client:
-                # Increased timeout to 5 minutes
+                # Keep long timeout for all requests (synchronous processing for now)
+                # When callback system is enabled, can use: timeout = 30.0 if callback_url else 300.0
                 response = await client.post(
                     url,
-                    json={
-                        "company": company,
-                        "website": website,
-                        "query": query
-                    },
+                    json=payload,
                     timeout=300.0  # 5 minutes timeout
                 )
                 
                 # Log the raw response for debugging
                 # print(f"N8n raw response status: {response.status_code}")
                 # print(f"N8n raw response headers: {response.headers}")
-                print(f"N8n raw response body: {response.text}")
+                # print(f"N8n raw response body: {response.text}")
                 
                 if response.status_code != 200:
                     error_msg = f"N8n workflow returned non-200 status code: {response.status_code}"
@@ -81,7 +90,7 @@ class N8nClient:
                         json_response = {"data": json_response}
                     
 
-                    print(f"N8n workflow returned parsed response: {json_response}")
+                    print(f"Received response for {company} {website} {query} from n8n")
                     return json_response
                 except json.JSONDecodeError as e:
                     # Handle non-JSON responses gracefully

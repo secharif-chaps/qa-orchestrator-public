@@ -75,10 +75,11 @@
       </div>
     </div>
 
-    <!-- Footer with creation date -->
+    <!-- Footer with creation date and owner -->
     <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700">
       <div class="flex justify-between items-center text-xs text-secondary">
         <span>Created {{ formatDate(company.created_at) }}</span>
+        <span v-if="company.owner_username">by {{ company.owner_username }}</span>
       </div>
     </div>
   </Card>

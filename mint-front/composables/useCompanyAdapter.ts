@@ -70,6 +70,10 @@ export const useCompanyAdapter = () => {
       appCompany.team = [...apiCompany.team] as any
     }
 
+    appCompany.created_at = apiCompany.created_at
+    appCompany.updated_at = apiCompany.updated_at
+    appCompany.owner_username = apiCompany.owner_username
+
     return appCompany
   }
 

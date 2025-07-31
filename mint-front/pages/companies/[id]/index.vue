@@ -11,9 +11,9 @@
     </template>
 
     <!-- Main content grid -->
-    <div class="grid grid-cols-12 gap-6 bg-bg1 p-6 rounded-lg border border-border-2">
+    <div class="grid grid-cols-3 gap-6 bg-bg1 p-6 rounded-lg border border-border-2">
       <!-- First column: Company general info -->
-      <div class="col-span-12 lg:col-span-4 space-y-4 w-full bg-bg1 p-6 rounded-lg border border-border-2">
+      <div class="col-span-3 row-span-4 lg:col-span-1 space-y-4 w-full bg-bg1 p-6 rounded-lg border border-border-2">
         <div class="flex flex-col gap-4">
           <div class="flex flex-col items-center text-center gap-2">
             <div class="bg-primary w-20 h-20 rounded-full flex items-center justify-center shadow-lg">
@@ -96,11 +96,10 @@
           </div>
         </div>
       </div>
+      
 
-      <!-- Second column: First set of info cards -->
-      <div class="col-span-12 lg:col-span-8 gap-4 grid grid-cols-2">
         <InfoCard
-          v-for="card in infoCards"
+          v-for="(card, index) in infoCards"
           :key="card.titleKey"
           :title="$t(card.titleKey)"
           :description="$t(card.descriptionKey)"
@@ -109,7 +108,11 @@
           :disabled="card.disabled"
           :loading="isPending(card.loadingKey)"
         />
-      </div>
+
+        <div class="col-span-3 row-span-1 text-xs text-secondary italic">
+          Created by {{ company.owner_username }} on {{ company.created_at }}
+        </div>
+
     </div>
 
     <!-- AI Chat sidebar -->
@@ -122,8 +125,7 @@
 </template>
 
 <script lang="ts" setup>
-import { OAlert, OPopper } from '@owlint/feathers-vue'
-import type { CompanyResponse } from '~/types/company'
+import { OPopper } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()

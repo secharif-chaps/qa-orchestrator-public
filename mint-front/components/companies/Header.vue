@@ -32,7 +32,7 @@
         icon="fas fa-plus"
         type="primary"
         size="sm"
-        @click="$emit('createCompany')"
+        @click="$router.push('/search')"
       />
     </div>
   </div>

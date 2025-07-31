@@ -48,14 +48,14 @@
           
           <!-- Vue Flow Panel for controls -->
           <Panel position="top-right" class="p-2" v-if="completedCount < 8">
-            <div class="bg-white rounded-lg shadow-lg p-3 flex flex-col gap-2 min-w-[200px]">
+            <div class="bg-white dark:bg-slate-900 rounded-lg shadow-lg p-3 flex flex-col gap-2 min-w-[200px]">
               <!-- <div class="text-sm font-medium text-gray-700 mb-1">Contrôles du workflow</div> -->
               
               <!-- Unified Status Progress Bar -->
               <div class="w-full">
                 
                 <!-- Segmented progress bar -->
-                <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden flex">
+                <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2 overflow-hidden flex">
                   <!-- Completed segment -->
                   <div 
                     v-if="completedPercentage > 0"
@@ -83,7 +83,7 @@
                   <!-- Pending segment -->
                   <div 
                     v-if="pendingPercentage > 0"
-                    class="bg-gray-200 h-full transition-all duration-500 ease-out"
+                    class="bg-gray-200 dark:bg-gray-800 h-full transition-all duration-500 ease-out"
                     :style="{ width: `${pendingPercentage}%` }"
                     :title="`${pendingCount} tâches en attente (${Math.round(pendingPercentage)}%)`"
                   ></div>

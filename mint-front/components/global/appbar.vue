@@ -15,6 +15,13 @@
           /> -->
         </div>
         <div class="flex items-center gap-6">
+          <!-- Dev mode workspace display -->
+          <div v-if="isDev" class="px-3 py-1 bg-primary text-white rounded-full text-sm font-medium">
+            <span v-if="workspaceLoading">Loading workspace...</span>
+            <span v-else-if="currentWorkspace">{{ currentWorkspace.name }}</span>
+            <span v-else>No workspace</span>
+          </div>
+          
           <div>
             <img :src="theme === 'light' ? logoLight : logoDark" class="h-10 w-auto" />
           </div>
@@ -39,6 +46,33 @@ import logoLight from '@/assets/logo_chaps.png'
 const { signOut } = useAuth()
 
 const { theme } = useTheme()
+
+// Check if we're in dev mode
+const isDev = computed(() => {
+  return useRuntimeConfig().public.isDev
+})
+
+// Workspace data
+const { fetchCurrentWorkspace } = useWorkspace()
+const currentWorkspace = ref(null)
+const workspaceLoading = ref(false)
+
+// Fetch workspace on mount
+onMounted(async () => {
+  if (isDev.value) {
+    try {
+      const { currentWorkspace: workspace, loading, error } = await fetchCurrentWorkspace()
+      currentWorkspace.value = workspace.value
+      workspaceLoading.value = loading.value
+      
+      if (error.value) {
+        console.error('Failed to load workspace in appbar:', error.value)
+      }
+    } catch (error) {
+      console.error('Failed to load workspace in appbar:', error)
+    }
+  }
+})
 
 // handle logout
 const handleLogout = async () => {

@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, String, Integer, DateTime, JSON
+from sqlalchemy import Column, String, Integer, DateTime, JSON, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -9,7 +9,8 @@ class Company(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True, nullable=False)
     website = Column(String, index=True, nullable=False)
-    owner_username = Column(String, index=True, nullable=False, default="suh")  # User who searched this company
+    owner_username = Column(String, index=True, nullable=False)  # User who searched this company
+    workspace_id = Column(Integer, ForeignKey("workspaces.id"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -26,5 +27,6 @@ class Company(Base):
     # Error field
     error = Column(String, nullable=True)
     
-    # Relationship with tasks
+    # Relationships
+    workspace = relationship("Workspace", back_populates="companies")
     tasks = relationship("Task", back_populates="company", cascade="all, delete-orphan") 

@@ -2,7 +2,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // Skip middleware on server-side rendering
   if (process.server) return
 
-  const { getUser, isAuthenticated } = useAuth()
+  const authStore = useAuthStore()
+  const { fetchCurrentWorkspace } = useWorkspace()
   
   // Define public routes that don't require authentication
   const publicRoutes = [
@@ -11,8 +12,14 @@ export default defineNuxtRouteMiddleware(async (to) => {
     '/auth/silent-callback'
   ]
   
-  // Check if current route is public
+  // Define workspace-related routes that don't require workspace access
+  const workspaceRoutes = [
+    '/workspace/join'
+  ]
+  
+  // Check if current route is public or workspace-related
   const isPublicRoute = publicRoutes.some(route => to.path.startsWith(route))
+  const isWorkspaceRoute = workspaceRoutes.some(route => to.path.startsWith(route))
   
   // If it's a public route, allow access
   if (isPublicRoute) {
@@ -21,11 +28,28 @@ export default defineNuxtRouteMiddleware(async (to) => {
   
   try {
     // Check if user is authenticated
-    await getUser()
+    await authStore.getUser()
     
-    if (!isAuthenticated.value) {
+    if (!authStore.isAuthenticated) {
       // Redirect to login if not authenticated
       return navigateTo('/login')
+    }
+    
+    // Skip workspace check for workspace-related routes
+    if (isWorkspaceRoute) {
+      return
+    }
+    
+    // Check if user has workspace access
+    try {
+      const result = await fetchCurrentWorkspace()
+      if (result.error.value) {
+        // User doesn't have workspace access, redirect to join page
+        return navigateTo('/workspace/join')
+      }
+    } catch (workspaceError) {
+      // On workspace error, redirect to join page
+      return navigateTo('/workspace/join')
     }
   } catch (error) {
     console.error('Auth middleware error:', error)

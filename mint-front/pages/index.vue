@@ -104,6 +104,7 @@
             :label="'Add Company'"
             icon="fas fa-plus"
             type="primary"
+            class="mx-auto"
             @click="navigateTo('/search')"
           />
         </div>

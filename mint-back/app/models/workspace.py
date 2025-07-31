@@ -1,0 +1,45 @@
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Enum as SQLEnum
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+from enum import Enum
+from app.database import Base
+
+
+class WorkspaceMemberStatus(str, Enum):
+    ACTIVE = "active"
+    REVOKED = "revoked"
+
+
+class Workspace(Base):
+    __tablename__ = "workspaces"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, index=True)
+    description = Column(Text, nullable=True)
+    slug = Column(String, unique=True, nullable=False, index=True)
+    
+    # Timestamps
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    # Relationships
+    companies = relationship("Company", back_populates="workspace")
+    members = relationship("WorkspaceMember", back_populates="workspace")
+
+
+class WorkspaceMember(Base):
+    __tablename__ = "workspace_members"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    workspace_id = Column(Integer, ForeignKey("workspaces.id"), nullable=False)
+    user_id = Column(String, nullable=False)  # Keycloak user ID
+    username = Column(String, nullable=False, index=True)
+    email = Column(String, nullable=False, index=True)
+    status = Column(SQLEnum(WorkspaceMemberStatus, name='workspacememberstatus', values_callable=lambda x: [e.value for e in x]), default=WorkspaceMemberStatus.ACTIVE)
+    
+    # Timestamps
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    # Relationships
+    workspace = relationship("Workspace", back_populates="members")

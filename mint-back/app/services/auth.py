@@ -72,8 +72,6 @@ class KeycloakService:
     async def verify_token(self, token: str) -> Optional[TokenData]:
         """Verify and decode JWT token with proper signature verification"""
         try:
-            print(f"Verifying token: {token[:20]}...")
-            
             # Try JWT decoding first (works with any valid token from the realm)
             try:
                 # Get the public key from Keycloak for JWT verification
@@ -93,8 +91,6 @@ class KeycloakService:
                     algorithms=[settings.JWT_ALGORITHM],
                     options=options
                 )
-                
-                print(f"JWT payload: {payload}")
                 
                 # Extract user information
                 username = payload.get("preferred_username")

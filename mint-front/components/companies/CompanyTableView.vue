@@ -54,6 +54,20 @@
           </td>
         </template>
 
+        <!-- Custom owner_username column -->
+        <template #cell(owner_username)="{ item }">
+          <td class="p-3">
+            <span class="text-secondary">{{ item.owner_username || 'N/A' }}</span>
+          </td>
+        </template>
+
+        <!-- Custom created_at column -->
+        <template #cell(created_at)="{ item }">
+          <td class="p-3">
+            <span class="text-secondary">{{ formatDate(item.created_at) }}</span>
+          </td>
+        </template>
+
         <!-- Custom updated_at column -->
         <template #cell(updated_at)="{ item }">
           <td class="p-3">
@@ -113,6 +127,8 @@ const {t} = useI18n()
 const tableFields = [
   { key: 'name', label: t('cards.table.name') },
   { key: 'website', label: t('company.list.table.website') },
+  { key: 'owner_username', label: t('company.list.table.owner') },
+  { key: 'created_at', label: t('cards.table.created') },
   { key: 'updated_at', label: t('cards.table.lastModification') },
   { key: 'actions', label: t('cards.table.actions'), sortable: false }
 ]
