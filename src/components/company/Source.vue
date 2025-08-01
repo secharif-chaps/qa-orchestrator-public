@@ -5,8 +5,8 @@
       sourcedValue && getSourcedSource(sourcedValue) && getSourcedSource(sourcedValue) !== 'N/A'
     "
   >
-    <RouterLink
-      :to="getSourcedSource(sourcedValue) || ''"
+    <a
+      :href="getSourcedSource(sourcedValue) || ''"
       target="_blank"
       class="inline-flex items-center"
     >
@@ -15,7 +15,7 @@
       >
         {{ getSourcedSourceName(sourcedValue) }}
       </span>
-    </RouterLink>
+    </a>
 
     <div
       class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10"
@@ -29,13 +29,13 @@
     </div>
   </div>
   <div v-if="source">
-    <RouterLink :to="source" target="_blank" class="inline-flex items-center">
+    <a :href="source" target="_blank" class="inline-flex items-center">
       <span
         class="text-xs bg-bg2 hover:bg-bg3 dark:hover:bg-bg2 transition-colors rounded-full px-2 py-1"
       >
         {{ source }}
       </span>
-    </RouterLink>
+    </a>
   </div>
 </template>
 

@@ -23,15 +23,16 @@
         >
           <i class="fa-solid" :class="viewMode === 'grid' ? 'fa-list' : 'fa-th-large'"></i>
         </OButton>
-        <OInput
-          id="search"
-          :model-value="searchQuery"
-          placeholder="Search products..."
-          class="w-64"
-          @update:model-value="$emit('updateSearch', $event as string)"
-        >
-          <i class="fa-solid fa-search"></i>
-        </OInput>
+
+        <div class="w-64 relative">
+          <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-secondary"></i>
+          <input
+            :model-value="searchQuery"
+            placeholder="Search products..."
+            class="w-full sm:w-64 bg-bg3 border border-border-2 rounded-md p-2 pl-8 focus:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 ring-primary ring-offset-bg3"
+            @update:model-value="$emit('updateSearch', $event as string)"
+          />
+        </div>
       </div>
     </div>
 

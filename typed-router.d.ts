@@ -21,11 +21,12 @@ declare module 'vue-router/auto-routes' {
     '/(home)': RouteRecordInfo<'/(home)', '/', Record<never, never>, Record<never, never>>,
     '/auth/callback': RouteRecordInfo<'/auth/callback', '/auth/callback', Record<never, never>, Record<never, never>>,
     '/auth/silent-callback': RouteRecordInfo<'/auth/silent-callback', '/auth/silent-callback', Record<never, never>, Record<never, never>>,
-    '/companies': RouteRecordInfo<'/companies', '/companies', Record<never, never>, Record<never, never>, '/companies/(list)' | '/companies/[companyId]' | '/companies/[companyId].jobs' | '/companies/[companyId].products'>,
+    '/companies': RouteRecordInfo<'/companies', '/companies', Record<never, never>, Record<never, never>, '/companies/(list)' | '/companies/[companyId]' | '/companies/[companyId].jobs' | '/companies/[companyId].products' | '/companies/[companyId].timeline'>,
     '/companies/(list)': RouteRecordInfo<'/companies/(list)', '/companies', Record<never, never>, Record<never, never>>,
     '/companies/[companyId]': RouteRecordInfo<'/companies/[companyId]', '/companies/:companyId', { companyId: ParamValue<true> }, { companyId: ParamValue<false> }>,
     '/companies/[companyId].jobs': RouteRecordInfo<'/companies/[companyId].jobs', '/companies/:companyId/jobs', { companyId: ParamValue<true> }, { companyId: ParamValue<false> }>,
     '/companies/[companyId].products': RouteRecordInfo<'/companies/[companyId].products', '/companies/:companyId/products', { companyId: ParamValue<true> }, { companyId: ParamValue<false> }>,
+    '/companies/[companyId].timeline': RouteRecordInfo<'/companies/[companyId].timeline', '/companies/:companyId/timeline', { companyId: ParamValue<true> }, { companyId: ParamValue<false> }>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
   }
 }

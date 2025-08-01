@@ -164,7 +164,7 @@ const infoCards = [
     titleKey: 'company.dashboard.infoCards.activities.title',
     descriptionKey: 'company.dashboard.infoCards.activities.description',
     icon: 'fa-calendar-days',
-    route: 'activities',
+    route: 'timeline',
     loadingKey: 'timeline',
     disabled: false,
   },
