@@ -1,4 +1,4 @@
-# CHAPSDATA
+# MINT
 
 A modern and fast Vue 3 v4 webapp with TypeScript, data fetching, state management, and comprehensive tooling.
 
