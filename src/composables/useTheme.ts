@@ -21,17 +21,14 @@ const getSystemTheme = (): 'light' | 'dark' => {
 const applyTheme = (targetTheme: 'light' | 'dark') => {
   if (typeof document === 'undefined') return
 
-  console.log('Applying theme to document:', targetTheme)
   const root = document.documentElement
 
   if (targetTheme === 'dark') {
     root.classList.add('dark')
     globalIsDark.value = true
-    console.log('Added dark class to document')
   } else {
     root.classList.remove('dark')
     globalIsDark.value = false
-    console.log('Removed dark class from document')
   }
 
   // Apply CSS custom properties for smooth transitions
@@ -46,9 +43,6 @@ const updateTheme = () => {
 
 // Set theme and persist to localStorage
 const setTheme = (newTheme: Theme) => {
-  console.log('setTheme called with:', newTheme)
-  console.log('Current theme before:', globalTheme.value)
-
   globalTheme.value = newTheme
 
   if (typeof localStorage !== 'undefined') {

@@ -6,6 +6,7 @@
     </OButton>
 
     <ExportModal
+      v-if="company"
       :is-open="showModal"
       :company="company"
       @close="showModal = false"
