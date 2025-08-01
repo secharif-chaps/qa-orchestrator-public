@@ -1,0 +1,549 @@
+export default {
+  welcome: 'Welcome',
+  settings: {
+    title: 'Settings',
+    language: {
+      title: 'Language Settings',
+      description: 'Choose your preferred language for the application'
+    },
+    theme: {
+      title: 'Theme Settings',
+      description: 'Customize the appearance of your application'
+    },
+    notifications: {
+      title: 'Notification Settings',
+      description: 'Manage your notification preferences'
+    }
+  },
+  account: {
+    title: 'Account Settings',
+    description: 'Manage your account information and preferences',
+    tabs: {
+      profile: 'Profile',
+      appearance: 'Appearance',
+      preferences: 'Preferences',
+      security: 'Security'
+    },
+    profile: {
+      error: {
+        title: 'Error loading profile'
+      },
+      basic: {
+        title: 'Basic Information',
+        description: 'Your personal account details'
+      },
+      auth: {
+        title: 'Authentication Details',
+        description: 'Session and authentication information'
+      },
+      roles: {
+        title: 'Roles & Permissions',
+        description: 'Your assigned roles and access levels',
+        none: 'No roles assigned'
+      },
+      debug: {
+        title: 'Debug Information',
+        description: 'Technical details for debugging purposes'
+      },
+      fields: {
+        username: 'Username',
+        email: 'Email',
+        firstName: 'First Name',
+        lastName: 'Last Name',
+        userId: 'User ID',
+        expiresAt: 'Token Expires At',
+        issuedAt: 'Issued At',
+        sessionState: 'Session State'
+      },
+      status: {
+        active: 'Active',
+        expired: 'Expired'
+      },
+      actions: {
+        refresh: 'Refresh Profile',
+        signOut: 'Sign Out'
+      }
+    },
+    appearance: {
+      theme: {
+        title: 'Theme',
+        description: 'Choose your preferred theme',
+        options: {
+          light: {
+            title: 'Light',
+            description: 'Clean and bright interface'
+          },
+          dark: {
+            title: 'Dark',
+            description: 'Easy on the eyes in low light'
+          },
+          system: {
+            title: 'System',
+            description: 'Matches your device preference'
+          }
+        }
+      },
+      accent: {
+        title: 'Accent Color',
+        description: 'Choose your preferred accent color for the interface'
+      },
+      language: {
+        title: 'Language',
+        description: 'Select your preferred language'
+      },
+      layout: {
+        title: 'Layout Preferences',
+        description: 'Customize the interface layout',
+        compact: {
+          title: 'Compact Mode',
+          description: 'Reduce spacing for more content'
+        },
+        reducedMotion: {
+          title: 'Reduced Motion',
+          description: 'Minimize animations and transitions'
+        }
+      },
+      preview: {
+        title: 'Theme Preview',
+        description: 'See how your theme looks',
+        sample: 'This is a sample of your current theme',
+        tag1: 'Sample',
+        tag2: 'Preview'
+      }
+    },
+    preferences: {
+      notifications: {
+        title: 'Notifications',
+        description: 'Control when and how you receive notifications',
+        email: {
+          title: 'Email Notifications',
+          options: {
+            welcome: {
+              title: 'Welcome emails',
+              description: 'Receive welcome messages and getting started guides'
+            },
+            updates: {
+              title: 'Product updates',
+              description: 'News about new features and improvements'
+            },
+            security: {
+              title: 'Security alerts',
+              description: 'Important security and account notifications'
+            },
+            marketing: {
+              title: 'Marketing emails',
+              description: 'Promotional content and special offers'
+            }
+          }
+        },
+        push: {
+          title: 'Push Notifications',
+          options: {
+            mentions: {
+              title: 'Mentions',
+              description: 'When someone mentions you'
+            },
+            messages: {
+              title: 'Direct messages',
+              description: 'New direct messages and replies'
+            },
+            updates: {
+              title: 'System updates',
+              description: 'Important system notifications'
+            }
+          }
+        }
+      },
+      privacy: {
+        title: 'Data & Privacy',
+        description: 'Manage your data and privacy settings',
+        analytics: {
+          title: 'Analytics',
+          description: 'Help improve the service by sharing usage data'
+        },
+        export: {
+          title: 'Export Data',
+          description: 'Download a copy of your data'
+        },
+        delete: {
+          title: 'Delete Account',
+          description: 'Permanently delete your account and all data',
+          dialog: {
+            title: 'Delete Account',
+            description: 'This action cannot be undone. All your data will be permanently deleted.'
+          }
+        }
+      },
+      actions: {
+        cancel: 'Cancel',
+        save: 'Save Changes',
+        export: 'Export Data',
+        deleteAccount: 'Delete Account'
+      },
+      behavior: {
+        title: 'Behavior',
+        description: 'Customize how the application behaves',
+        autoSave: {
+          title: 'Auto-save',
+          description: 'Automatically save changes as you work'
+        },
+        confirmations: {
+          title: 'Show confirmations',
+          description: 'Ask for confirmation before important actions'
+        }
+      }
+    },
+    security: {
+      sessions: {
+        title: 'Session Management',
+        description: 'Manage your active sessions and devices',
+        current: {
+          title: 'Current Session',
+          badge: 'Current',
+          lastActive: 'Last active'
+        },
+        lastActive: 'Last active',
+        signOutAll: {
+          title: 'Sign out all devices',
+          description: 'Sign out of all other sessions and devices'
+        }
+      },
+      twoFactor: {
+        title: 'Two-Factor Authentication',
+        description: 'Add an extra layer of security to your account',
+        authenticator: {
+          title: 'Authenticator App',
+          description: 'Use an authenticator app for secure login'
+        },
+        securityKeys: {
+          title: 'Security Keys',
+          description: 'Use hardware security keys for login',
+          count: 'keys'
+        }
+      },
+      activity: {
+        title: 'Activity Log',
+        description: 'Recent security and account activity'
+      },
+      recovery: {
+        title: 'Account Recovery',
+        description: 'Set up recovery options for your account',
+        backupCodes: {
+          title: 'Backup Codes',
+          description: 'Generate backup codes for account recovery'
+        },
+        email: {
+          title: 'Recovery Email',
+          notSet: 'No recovery email set'
+        }
+      },
+      status: {
+        enabled: 'Enabled',
+        disabled: 'Disabled',
+        generated: 'Generated',
+        notGenerated: 'Not Generated'
+      },
+      actions: {
+        setup: 'Setup',
+        disable: 'Disable',
+        manage: 'Manage',
+        generate: 'Generate',
+        regenerate: 'Regenerate',
+        add: 'Add',
+        update: 'Update',
+        revoke: 'Revoke'
+      }
+    }
+  },
+  sidebar: {
+    home: 'Home',
+    search: 'Search',
+    cards: 'Cards',
+    settings: 'Settings',
+    help: 'Help'
+  },
+  help: {
+    title: 'Help',
+    description: 'Need assistance? Find answers to common questions and learn how to use the application.'
+  },
+  cards: {
+    title: 'Cards',
+    noResults: 'No company found',
+    table: {
+      name: 'Name',
+      creator: 'Creator',
+      lastModification: 'Last modification',
+      actions: 'actions'
+    },
+    actions: {
+      view: 'View',
+      delete: 'Delete'
+    }
+  },
+  search: {
+    title: 'New company',
+    companyIdentity: 'Company identity',
+    advancedSearch: 'Advanced search',
+    fields: {
+      companyName: {
+        label: 'Company name',
+        placeholder: 'Sephora',
+        error: 'Company name must be at least 2 characters long'
+      },
+      website: {
+        label: 'Website',
+        placeholder: 'https://www.sephora.fr',
+        error: 'Please enter a valid URL (e.g., https://www.example.com)'
+      }
+    },
+    mandatoryFields: 'mandatory fields to start search',
+    actions: {
+      deleteData: 'Delete Data',
+      launchSearch: 'Launch Search'
+    }
+  },
+  login: {
+    title: 'Login',
+    email: {
+      label: 'Email address',
+      placeholder: 'example@gmail.com'
+    },
+    password: {
+      label: 'Password',
+      placeholder: 'Enter a password...',
+      forgot: 'Forgot password?'
+    },
+    submit: 'Login',
+    errors: {
+      invalidCredentials: 'Invalid email or password',
+      connectionError: 'An error occurred during login'
+    }
+  },
+  dashboard: {
+    title: 'Dashboard',
+    actions: {
+      search: 'Search',
+      cards: 'Cards'
+    }
+  },
+  common: {
+    comingSoon: 'Coming soon',
+    notFound: 'Not found',
+    loading: 'Loading...',
+    noData: 'No data available'
+  },
+  appbar: {
+    search: 'Search...',
+    theme: {
+      pink: 'Pink theme',
+      indigo: 'Indigo theme',
+      emerald: 'Emerald theme',
+      dark: 'Dark theme'
+    }
+  },
+  timeline: {
+    title: 'Timeline & Key Milestones',
+    loading: {
+      title: 'Loading company timeline data...',
+      description: 'Fetching milestone events data from AI agent...'
+    },
+    noData: {
+      title: 'No Timeline Data Available',
+      description: 'Fetch milestone events for this company to see its history'
+    },
+    search: {
+      placeholder: 'Search...',
+      noResults: 'No events found matching "{query}"'
+    }
+  },
+  communications: {
+    title: 'Corporate Communications',
+    loading: {
+      title: 'Not implemented yet',
+      description: 'This feature is not implemented yet.'
+    },
+    comingSoon: 'Coming soon'
+  },
+  financials: {
+    title: 'Financials',
+    loading: {
+      title: 'Not implemented yet',
+      description: 'This feature is not implemented yet.'
+    },
+    comingSoon: 'Coming soon'
+  },
+  jobs: {
+    title: 'Job Offers',
+    loading: {
+      title: 'Loading job offers...',
+      description: 'Fetching current job opportunities...'
+    },
+    noData: {
+      title: 'No Job Offers Available',
+      description: 'Fetch job offers for this company to see current opportunities'
+    },
+    insights: {
+      title: 'Hiring Insights',
+      totalOpenings: 'Total Openings',
+      topDepartments: 'Top Departments',
+      hiringFocus: 'Hiring Focus',
+      growthIndicators: 'Growth Indicators'
+    },
+    listings: {
+      title: 'Current Openings',
+      search: {
+        placeholder: 'Search jobs...'
+      },
+      noResults: 'No job offers found matching "{query}"'
+    }
+  },
+  mentions: {
+    title: 'Mentions',
+    loading: {
+      title: 'Not implemented yet',
+      description: 'This feature is not implemented yet.'
+    },
+    comingSoon: 'Coming soon'
+  },
+  products: {
+    title: 'Products & Services',
+    loading: {
+      title: 'Loading products...',
+      description: 'Fetching products and services data...'
+    },
+    noData: {
+      title: 'No Products Available',
+      description: 'Products information will be displayed here once available.'
+    }
+  },
+  profile: {
+    title: 'Company Profile',
+    loading: {
+      title: 'Loading company profile...',
+      description: 'Fetching comprehensive company information...'
+    },
+    sections: {
+      products: {
+        title: 'Products and services',
+        range: 'Product Range',
+        partnerBrands: 'Partner Brands',
+        privateLabels: '{company} Private Labels'
+      },
+      target: {
+        title: 'Target audience',
+        customerBase: 'Customer Base',
+        positioning: 'Marketing Positioning'
+      },
+      csr: {
+        title: 'Corporate Social Responsibility',
+        responsibility: 'Responsibility Initiatives',
+        charity: 'Charity Actions'
+      },
+      digital: {
+        title: 'Digital strategy',
+        strategy: 'Digital Strategy',
+        loyaltyProgram: 'Loyalty Program',
+        onlineServices: 'Online Services'
+      },
+      news: 'Recent news',
+      metrics: {
+        establishment: 'Year of establishment',
+        employees: 'Number of employees',
+        revenue: 'Revenue'
+      }
+    }
+  },
+  team: {
+    title: 'Team & Management',
+    loading: {
+      title: 'Loading team data...',
+      description: 'Fetching team hierarchy and management structure...'
+    },
+    noData: {
+      title: 'No Team Data Available',
+      description: 'Fetch team hierarchy for this company to see management structure'
+    },
+    hierarchy: {
+      title: 'Management Hierarchy',
+      viewLinkedIn: 'View LinkedIn Profile'
+    }
+  },
+  company: {
+    dashboard: {
+      title: 'Company Dashboard',
+      description: 'Company Information Dashboard',
+      generalInfo: {
+        website: 'Website',
+        headquarters: 'Headquarters',
+        ceo: 'CEO',
+        revenue: 'Revenue'
+      },
+      infoCards: {
+        profile: {
+          title: 'Company Profile',
+          description: 'View detailed company information, business lines, and key metrics.'
+        },
+        activities: {
+          title: 'Activities & Events',
+          description: 'Explore company events, trade shows, and key activities.'
+        },
+        products: {
+          title: 'Products',
+          description: 'Browse the company\'s products, services, and offerings.'
+        },
+        team: {
+          title: 'Team & Management',
+          description: 'Leadership team, organizational structure, and key personnel.'
+        },
+        jobs: {
+          title: 'Job Offers',
+          description: 'Current job openings, career opportunities, and hiring information.'
+        },
+        communications: {
+          title: 'Corporate Communications',
+          description: 'Press releases, public statements, and official communications.'
+        },
+        financials: {
+          title: 'Financials',
+          description: 'Financial data, revenue information, and market performance.'
+        },
+        mentions: {
+          title: 'Mentions',
+          description: 'News articles, media coverage, and third-party mentions.'
+        }
+      }
+    },
+    list: {
+      title: 'Companies',
+      description: 'Manage your company database',
+      create: {
+        title: 'Create New Company',
+        name: {
+          label: 'Company Name',
+          placeholder: 'Enter company name'
+        },
+        website: {
+          label: 'Website',
+          placeholder: 'Enter website URL'
+        },
+        actions: {
+          cancel: 'Cancel',
+          create: 'Create'
+        }
+      },
+      delete: {
+        title: 'Delete Company',
+        confirm: 'Are you sure you want to delete',
+        warning: 'This action cannot be undone.',
+        actions: {
+          cancel: 'Cancel',
+          delete: 'Delete'
+        }
+      },
+      table: {
+        website: 'Website',
+        loading: 'Loading...'
+      }
+    }
+  }
+}

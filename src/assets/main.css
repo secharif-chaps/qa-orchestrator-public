@@ -1,0 +1,273 @@
+@import '@owlint/feathers-vue/style.css';
+@import 'tailwindcss';
+/* these are necessary styles for vue flow */
+@import '@vue-flow/core/dist/style.css';
+
+/* this contains the default theme, these are optional styles */
+@import '@vue-flow/core/dist/theme-default.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --spacing-6: 1.5rem;
+  --rounded-lg: 0.5rem;
+  --color-primary: var(--theme-color-primary);
+  --color-secondary: var(--theme-color-secondary);
+  --color-error: var(--theme-color-error);
+  --color-success: var(--theme-color-success);
+  --color-bg1: var(--theme-color-bg1);
+  --color-bg2: var(--theme-color-bg2);
+  --color-bg3: var(--theme-color-bg3);
+
+  --color-sidebar: var(--theme-color-sidebar);
+
+  --color-border-1: var(--theme-color-border-1);
+  --color-border-2: var(--theme-color-border-2);
+
+  --color-sidebar-border: var(--theme-color-sidebar-border);
+  --color-sidebar-count: var(--theme-color-sidebar-count);
+
+  --color-boston-50: #deebed;
+  --color-boston-100: #b7d8dc;
+  --color-boston-200: #80bfc6;
+  --color-boston-300: #42abb8;
+  --color-boston-400: #138c9a;
+  --color-boston-500: #197d89;
+  --color-boston-600: #1f717a;
+  --color-boston-700: #23646c;
+  --color-boston-800: #245358;
+  --color-boston-900: #003039;
+  --color-boston-950: #020c0e;
+
+  --color-sage-50: #f6f8f7;
+  --color-sage-100: #eaf0ee;
+  --color-sage-200: #d4e0dd;
+  --color-sage-300: #aec0b8;
+  --color-sage-400: #819b95;
+  --color-sage-500: #667b7e;
+  --color-sage-600: #607274;
+  --color-sage-700: #526162;
+  --color-sage-800: #475456;
+  --color-sage-900: #455248;
+  --color-sage-950: #30383a;
+
+  --color-gray-950: #22272b;
+
+  --color-almond-200: #dfeee4;
+}
+
+@layer base {
+  :root {
+    --theme-color-bg1: var(--color-white);
+    --theme-color-bg2: var(--color-slate-50);
+    --theme-color-bg3: var(--color-slate-100);
+
+    --theme-color-secondary: var(--color-slate-500);
+    --theme-color-error: var(--color-indigo-500);
+    --theme-color-success: var(--color-green-500);
+
+    --theme-color-border-1: var(--color-slate-400);
+    --theme-color-border-2: var(--color-slate-200);
+
+    /* --theme-color-primary: var(--color-indigo-600); */
+    --theme-color-sidebar-border: var(--color-indigo-500);
+    --theme-color-sidebar-count: var(--color-indigo-500);
+  }
+
+  :root.dark {
+    --theme-color-bg1: var(--color-slate-800);
+    --theme-color-bg2: var(--color-slate-700);
+    --theme-color-bg3: var(--color-slate-900);
+
+    --theme-color-error: var(--color-red-500);
+    --theme-color-success: var(--color-green-500);
+
+    /* --theme-color-primary: var(--color-indigo-400); */
+    --theme-color-secondary: var(--color-slate-400);
+
+    --theme-color-border-1: var(--color-slate-600);
+    --theme-color-border-2: var(--color-slate-700);
+
+    --theme-color-sidebar-border: var(--color-indigo-500);
+    --theme-color-sidebar-count: var(--color-indigo-500);
+  }
+
+  [data-theme='indigo'] {
+    --theme-color-primary: var(--color-indigo-600);
+    --theme-color-sidebar: var(--color-indigo-500);
+  }
+
+  [data-theme='indigo'].dark {
+    --theme-color-primary: var(--color-indigo-400);
+    --theme-color-sidebar: var(--color-indigo-300);
+    --theme-color-sidebar-content: var(--color-indigo-900);
+  }
+
+  [data-theme='boston'] {
+    --theme-color-primary: var(--color-boston-400);
+
+    --theme-color-sidebar: var(--color-boston-400);
+  }
+
+  [data-theme='boston'].dark {
+    --theme-color-primary: var(--color-boston-300);
+
+    --theme-color-sidebar: var(--color-boston-300);
+    --theme-color-sidebar-content: var(--color-boston-900);
+  }
+
+  [data-theme='emerald'] {
+    --theme-color-primary: var(--color-emerald-600);
+
+    --theme-color-sidebar: var(--color-emerald-500);
+    --theme-color-sidebar-content: var(--color-emerald-900);
+  }
+
+  [data-theme='emerald'].dark {
+    --theme-color-primary: var(--color-emerald-400);
+
+    --theme-color-sidebar: var(--color-emerald-300);
+  }
+
+  [data-theme='pink'] {
+    --theme-color-primary: var(--color-pink-600);
+
+    --theme-color-sidebar: var(--color-pink-500);
+  }
+
+  [data-theme='pink'].dark {
+    --theme-color-primary: var(--color-pink-400);
+
+    --theme-color-sidebar: var(--color-pink-400);
+  }
+
+  [data-theme='rose'] {
+    --theme-color-primary: var(--color-rose-600);
+
+    --theme-color-sidebar: var(--color-rose-500);
+  }
+
+  [data-theme='rose'].dark {
+    --theme-color-primary: var(--color-rose-400);
+
+    --theme-color-sidebar: var(--color-rose-400);
+  }
+
+  [data-theme='orange'] {
+    --theme-color-primary: var(--color-orange-600);
+
+    --theme-color-sidebar: var(--color-orange-500);
+  }
+
+  [data-theme='orange'].dark {
+    --theme-color-primary: var(--color-orange-400);
+    --theme-color-sidebar: var(--color-orange-400);
+  }
+
+  [data-theme='sage'] {
+    --theme-color-bg1: var(--color-sage-50);
+    --theme-color-bg2: var(--color-sage-100);
+    --theme-color-bg3: var(--color-sage-200);
+
+    --theme-color-primary: var(--color-sage-500);
+
+    --theme-color-sidebar: var(--color-sage-500);
+  }
+
+  [data-theme='sage'].dark {
+    --theme-color-bg1: var(--color-sage-950);
+    --theme-color-bg2: var(--color-sage-900);
+    --theme-color-bg3: var(--color-gray-950);
+
+    --theme-color-border-1: var(--color-sage-900);
+    --theme-color-border-2: var(--color-sage-900);
+
+    --theme-color-secondary: var(--color-sage-300);
+
+    --theme-color-primary: var(--color-sage-400);
+
+    --theme-color-sidebar: var(--color-sage-400);
+  }
+}
+
+@layer components {
+  .card {
+    background-color: var(--color-bg1);
+    border-radius: var(--rounded-lg);
+    padding: var(--spacing-6);
+  }
+
+  .icon-primary {
+    color: var(--color-primary);
+  }
+
+  .icon-light {
+    color: var(--color-white);
+  }
+
+  .icon-base {
+    color: var(--color-black);
+  }
+
+  .icon-secondary {
+    color: var(--color-secondary);
+  }
+
+  .icon-disabled {
+    color: var(--color-slate-400);
+  }
+
+  .text-base {
+    color: var(--color-black);
+  }
+
+  .text-secondary {
+    color: var(--color-secondary);
+  }
+
+  .text-light {
+    color: var(--color-white);
+  }
+
+  .text-primary-dark {
+    color: var(--color-indigo-700);
+  }
+
+  .text-primary-medium {
+    color: var(--color-indigo-500);
+  }
+
+  .text-disabled {
+    color: var(--color-slate-400);
+  }
+
+  .separator {
+    border-color: var(--color-indigo-100);
+  }
+
+  .border-primary-focus {
+    border-color: var(--color-primary);
+  }
+
+  .border-secondary-focus {
+    border-color: var(--color-indigo-300);
+  }
+
+  .btn {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: var(--spacing-6) var(--spacing-6);
+  }
+
+  .btn.disabled {
+    background-color: var(--color-indigo-200);
+  }
+
+  h1 {
+    font-size: var(--text-3xl);
+  }
+
+  h2 {
+    font-size: var(--text-2xl);
+  }
+}
