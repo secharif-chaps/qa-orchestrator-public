@@ -43,15 +43,15 @@
           <!-- Social Media - individual property loading -->
           <div class="space-x-2 text-primary">
             <div class="space-x-2 text-primary">
-              <RouterLink
+              <a
                 target="_blank"
                 v-for="platform in company?.digital?.socialMedia"
                 :key="platform.name"
-                :to="getSourcedValue(platform.url) as string"
+                :href="getSourcedValue(platform.url) as string"
                 :title="getSourcedSource(platform.url)"
               >
                 <i class="fa" :class="getIcon(platform.name)"></i>
-              </RouterLink>
+              </a>
             </div>
           </div>
         </div>
@@ -77,7 +77,7 @@ const { data: company } = useQuery(companyByIdQuery, () => ({
 }))
 
 const getIcon = (media: string) => {
-  switch (media) {
+  switch (media.toLowerCase()) {
     case 'facebook':
       return `fa-facebook`
     case 'twitter':
