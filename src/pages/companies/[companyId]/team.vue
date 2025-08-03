@@ -1,130 +1,128 @@
 <template>
-  <CompanyCard :title="$t('team.title')" icon="fa-users">
-    <div class="flex flex-col gap-4">
-      <!-- Empty state -->
-      <div class="bg-bg1 p-4 rounded-lg" v-if="!hasTeamData && !teamPending">
-        <div class="text-center py-8">
-          <div class="text-5xl text-secondary mb-4">
-            <i class="fa fa-users"></i>
-          </div>
-          <h3 class="text-xl font-semibold text-primary mb-2">{{ $t('team.noData.title') }}</h3>
-          <p class="text-secondary mb-6">
-            {{ $t('team.noData.description') }}
-          </p>
+  <div class="flex flex-col gap-4">
+    <!-- Empty state -->
+    <div class="bg-bg1 p-4 rounded-lg" v-if="!hasTeamData && !teamPending">
+      <div class="text-center py-8">
+        <div class="text-5xl text-secondary mb-4">
+          <i class="fa fa-users"></i>
         </div>
+        <h3 class="text-xl font-semibold text-primary mb-2">{{ $t('team.noData.title') }}</h3>
+        <p class="text-secondary mb-6">
+          {{ $t('team.noData.description') }}
+        </p>
       </div>
+    </div>
 
-      <!-- Main content -->
-      <div v-if="hasTeamData" class="space-y-6">
-        <div class="bg-bg1 p-4 rounded-lg">
-          <div class="flex items-center gap-2 text-primary mb-4">
-            <i class="fa fa-sitemap"></i>
-            <span class="text-lg font-semibold text-primary">{{ $t('team.hierarchy.title') }}</span>
+    <!-- Main content -->
+    <div v-if="hasTeamData" class="space-y-6">
+      <div class="bg-bg1 p-4 rounded-lg">
+        <div class="flex items-center gap-2 text-primary mb-4">
+          <i class="fa fa-sitemap"></i>
+          <span class="text-lg font-semibold text-primary">{{ $t('team.hierarchy.title') }}</span>
+        </div>
+
+        <div class="h-[500px] w-full relative">
+          <div class="absolute top-4 right-4 z-50">
+            <OButton @click="doScreenshot" type="tertiary">
+              <i class="fa fa-camera"></i>
+            </OButton>
           </div>
 
-          <div class="h-[500px] w-full relative">
-            <div class="absolute top-4 right-4 z-50">
-              <OButton @click="doScreenshot" type="tertiary">
-                <i class="fa fa-camera"></i>
-              </OButton>
-            </div>
-
-            <VueFlow
-              :nodes="layoutedNodes"
-              :edges="edges"
-              :default-viewport="{ x: 0, y: 0, zoom: 1 }"
-              :draggable="false"
-              @init="
-                () => {
-                  isInitialized = true
-                  applyLayoutAndFitView()
-                }
-              "
-              class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg"
-            >
-              <template #node-team-member="props">
-                <TeamMemberNode
-                  v-bind="{
-                    ...props,
-                    data: { ...props.data, selected: selectedNode === props.data },
-                  }"
-                  @click="openTeamMemberCard(props.data)"
-                />
-              </template>
-              <Background
-                :color="isDark ? 'var(--color-slate-900)' : '#CBD5E1'"
-                :size="4"
-                :gap="60"
-              />
-
-              <Panel
-                position="top-left"
-                v-if="selectedNode"
-                class="bg-bg1 rounded-lg max-w-[300px] ring-4 ring-offset-2 ring-offset-bg1"
-                :class="{
-                  'ring-orange-400 dark:ring-orange-500/20': selectedNode.level > 1,
-                  'ring-purple-600 dark:ring-purple-500/20': selectedNode.level <= 1,
+          <VueFlow
+            :nodes="layoutedNodes"
+            :edges="edges"
+            :default-viewport="{ x: 0, y: 0, zoom: 1 }"
+            :draggable="false"
+            @init="
+              () => {
+                isInitialized = true
+                applyLayoutAndFitView()
+              }
+            "
+            class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg"
+          >
+            <template #node-team-member="props">
+              <TeamMemberNode
+                v-bind="{
+                  ...props,
+                  data: { ...props.data, selected: selectedNode === props.data },
                 }"
-              >
-                <div v-if="selectedNode" class="p-0.5">
+                @click="openTeamMemberCard(props.data)"
+              />
+            </template>
+            <Background
+              :color="isDark ? 'var(--color-slate-900)' : '#CBD5E1'"
+              :size="4"
+              :gap="60"
+            />
+
+            <Panel
+              position="top-left"
+              v-if="selectedNode"
+              class="bg-bg1 rounded-lg max-w-[300px] ring-4 ring-offset-2 ring-offset-bg1"
+              :class="{
+                'ring-orange-400 dark:ring-orange-500/20': selectedNode.level > 1,
+                'ring-purple-600 dark:ring-purple-500/20': selectedNode.level <= 1,
+              }"
+            >
+              <div v-if="selectedNode" class="p-0.5">
+                <div
+                  class="flex items-center gap-3 p-2 rounded-lg"
+                  :class="[
+                    selectedNode.level > 1
+                      ? 'bg-orange-50 dark:bg-orange-900'
+                      : 'bg-purple-100 dark:bg-purple-500/20',
+                  ]"
+                >
                   <div
-                    class="flex items-center gap-3 p-2 rounded-lg"
+                    class="min-w-12 grow-0 h-12 rounded-full flex items-center justify-center"
                     :class="[
                       selectedNode.level > 1
-                        ? 'bg-orange-50 dark:bg-orange-900'
-                        : 'bg-purple-100 dark:bg-purple-500/20',
+                        ? 'bg-orange-200 dark:bg-bg3 text-orange-600'
+                        : 'bg-purple-200 dark:bg-bg3 text-purple-600',
                     ]"
                   >
-                    <div
-                      class="min-w-12 grow-0 h-12 rounded-full flex items-center justify-center"
-                      :class="[
-                        selectedNode.level > 1
-                          ? 'bg-orange-200 dark:bg-bg3 text-orange-600'
-                          : 'bg-purple-200 dark:bg-bg3 text-purple-600',
-                      ]"
-                    >
-                      <i class="fa fa-user text-xl"></i>
-                    </div>
-                    <div>
-                      <h3 class="font-semibold">
-                        {{ selectedNode.firstName }} {{ selectedNode.lastName }}
-                      </h3>
-                      <p class="text-sm">{{ selectedNode.position }}</p>
-                    </div>
-                    <div class="ml-auto">
-                      <OButton
-                        @click="selectedNode = null"
-                        type="secondary"
-                        icon="fa-times"
-                        class="rounded-full"
-                        :color="selectedNode.level > 1 ? 'orange' : 'purple'"
-                      />
-                    </div>
+                    <i class="fa fa-user text-xl"></i>
                   </div>
-
-                  <div class="space-y-3 p-2">
-                    <a
-                      :href="getMockedLinkedInUrl(selectedNode)"
-                      target="_blank"
-                      class="flex items-center gap-2 text-sm text-primary hover:underline"
-                    >
-                      <i class="fab fa-linkedin"></i>
-                      <span>{{ $t('team.hierarchy.viewLinkedIn') }}</span>
-                    </a>
-
-                    <div class="flex items-start gap-2 text-sm">
-                      <i class="fa fa-map-marker-alt mt-1"></i>
-                      <span>{{ getMockedAddress(selectedNode) }}</span>
-                    </div>
+                  <div>
+                    <h3 class="font-semibold">
+                      {{ selectedNode.firstName }} {{ selectedNode.lastName }}
+                    </h3>
+                    <p class="text-sm">{{ selectedNode.position }}</p>
+                  </div>
+                  <div class="ml-auto">
+                    <OButton
+                      @click="selectedNode = null"
+                      type="secondary"
+                      icon="fa-times"
+                      class="rounded-full"
+                      :color="selectedNode.level > 1 ? 'orange' : 'purple'"
+                    />
                   </div>
                 </div>
-              </Panel>
-            </VueFlow>
-          </div>
+
+                <div class="space-y-3 p-2">
+                  <a
+                    :href="getMockedLinkedInUrl(selectedNode)"
+                    target="_blank"
+                    class="flex items-center gap-2 text-sm text-primary hover:underline"
+                  >
+                    <i class="fab fa-linkedin"></i>
+                    <span>{{ $t('team.hierarchy.viewLinkedIn') }}</span>
+                  </a>
+
+                  <div class="flex items-start gap-2 text-sm">
+                    <i class="fa fa-map-marker-alt mt-1"></i>
+                    <span>{{ getMockedAddress(selectedNode) }}</span>
+                  </div>
+                </div>
+              </div>
+            </Panel>
+          </VueFlow>
         </div>
       </div>
     </div>
-  </CompanyCard>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -135,7 +133,6 @@ import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
 import { computed, nextTick, ref, watch } from 'vue'
 
-import CompanyCard from '@/components/company/CompanyCard.vue'
 import { useTheme } from '@/composables/useTheme'
 import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'

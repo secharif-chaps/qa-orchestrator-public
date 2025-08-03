@@ -1,68 +1,63 @@
 <template>
-  <CompanyCard v-if="company" name="main" :title="$t('products.title')" icon="fa-box">
-    <div class="flex flex-col gap-4">
-      <!-- Task state -->
-      <TaskState
-        v-if="companyId"
-        :company-id="Number(companyId)"
-        :required-task-types="['products']"
-        :loading-title="$t('products.loading.title')"
-        :loading-description="$t('products.loading.description')"
+  <div class="flex flex-col gap-4">
+    <!-- Task state -->
+    <TaskState
+      v-if="companyId"
+      :company-id="Number(companyId)"
+      :required-task-types="['products']"
+      :loading-title="$t('products.loading.title')"
+      :loading-description="$t('products.loading.description')"
+    />
+
+    <!-- No products state -->
+    <ProductsEmptyState v-if="!products || Object.keys(products).length === 0" type="no-data" />
+
+    <!-- Main content -->
+    <div v-else class="space-y-6">
+      <!-- Products Overview Header -->
+      <ProductsHeader
+        :total-product-count="totalProductCount"
+        :category-count="Object.keys(products).length"
+        :categories="Object.keys(products)"
+        :view-mode="viewMode"
+        :search-query="searchQuery"
+        :selected-category="selectedCategory"
+        @toggle-view-mode="toggleViewMode"
+        @update-search="searchQuery = $event"
+        @select-category="selectedCategory = $event"
       />
 
-      <!-- No products state -->
-      <ProductsEmptyState v-if="!products || Object.keys(products).length === 0" type="no-data" />
-
-      <!-- Main content -->
-      <div v-else class="space-y-6">
-        <!-- Products Overview Header -->
-        <ProductsHeader
-          :total-product-count="totalProductCount"
-          :category-count="Object.keys(products).length"
-          :categories="Object.keys(products)"
-          :view-mode="viewMode"
-          :search-query="searchQuery"
-          :selected-category="selectedCategory"
-          @toggle-view-mode="toggleViewMode"
-          @update-search="searchQuery = $event"
-          @select-category="selectedCategory = $event"
+      <!-- Products Grid View -->
+      <div v-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <ProductGridItem
+          v-for="(productList, category) in filteredProducts"
+          :key="category"
+          :category="category"
+          :product-list="productList"
+          @toggle-show-all="toggleShowAllProducts"
         />
+      </div>
 
-        <!-- Products Grid View -->
-        <div
-          v-if="viewMode === 'grid'"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          <ProductGridItem
+      <!-- Products List View -->
+      <div v-else-if="viewMode === 'list'" class="bg-bg1 rounded-lg p-4">
+        <div class="space-y-4">
+          <ProductListItem
             v-for="(productList, category) in filteredProducts"
             :key="category"
             :category="category"
             :product-list="productList"
-            @toggle-show-all="toggleShowAllProducts"
           />
         </div>
-
-        <!-- Products List View -->
-        <div v-else-if="viewMode === 'list'" class="bg-bg1 rounded-lg p-4">
-          <div class="space-y-4">
-            <ProductListItem
-              v-for="(productList, category) in filteredProducts"
-              :key="category"
-              :category="category"
-              :product-list="productList"
-            />
-          </div>
-        </div>
-
-        <!-- No Results State -->
-        <ProductsEmptyState
-          v-if="Object.keys(filteredProducts).length === 0 && searchQuery"
-          type="no-results"
-          :search-query="searchQuery"
-        />
       </div>
+
+      <!-- No Results State -->
+      <ProductsEmptyState
+        v-if="Object.keys(filteredProducts).length === 0 && searchQuery"
+        type="no-results"
+        :search-query="searchQuery"
+      />
     </div>
-  </CompanyCard>
+  </div>
 </template>
 
 <script lang="ts" setup>
