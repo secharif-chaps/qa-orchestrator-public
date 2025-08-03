@@ -1,7 +1,6 @@
 export default {
   welcome: 'Bienvenue',
   settings: {
-    title: 'Paramètres',
     language: {
       title: 'Paramètres de langue',
       description: "Choisissez votre langue préférée pour l'application",
@@ -14,8 +13,6 @@ export default {
       title: 'Paramètres de notification',
       description: 'Gérez vos préférences de notification',
     },
-  },
-  account: {
     title: 'Paramètres du compte',
     description: 'Gérez les informations de votre compte et vos préférences',
     tabs: {

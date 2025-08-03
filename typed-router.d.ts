@@ -29,6 +29,11 @@ declare module 'vue-router/auto-routes' {
     '/companies/[companyId].profile': RouteRecordInfo<'/companies/[companyId].profile', '/companies/:companyId/profile', { companyId: ParamValue<true> }, { companyId: ParamValue<false> }>,
     '/companies/[companyId].team': RouteRecordInfo<'/companies/[companyId].team', '/companies/:companyId/team', { companyId: ParamValue<true> }, { companyId: ParamValue<false> }>,
     '/companies/[companyId].timeline': RouteRecordInfo<'/companies/[companyId].timeline', '/companies/:companyId/timeline', { companyId: ParamValue<true> }, { companyId: ParamValue<false> }>,
+    '/help': RouteRecordInfo<'/help', '/help', Record<never, never>, Record<never, never>>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
+    '/settings': RouteRecordInfo<'/settings', '/settings', Record<never, never>, Record<never, never>, '/settings/appearance' | '/settings/profile' | '/settings/security'>,
+    '/settings/appearance': RouteRecordInfo<'/settings/appearance', '/settings/appearance', Record<never, never>, Record<never, never>>,
+    '/settings/profile': RouteRecordInfo<'/settings/profile', '/settings/profile', Record<never, never>, Record<never, never>>,
+    '/settings/security': RouteRecordInfo<'/settings/security', '/settings/security', Record<never, never>, Record<never, never>>,
   }
 }

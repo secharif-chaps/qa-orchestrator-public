@@ -101,7 +101,7 @@ const buttons = computed(() => {
 })
 
 const actions = computed(() => [
-  { icon: 'fa fa-cog', label: t('sidebar.settings'), to: '/account' },
+  { icon: 'fa fa-cog', label: t('sidebar.settings'), to: '/settings' },
   { icon: 'fa fa-question', label: t('sidebar.help'), to: '/help' },
 ])
 
