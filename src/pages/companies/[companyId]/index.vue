@@ -104,7 +104,7 @@
       :loading="isPending(card.loadingKey)"
     />
 
-    <div class="col-span-3 row-span-1 text-xs text-secondary italic">
+    <div v-if="company" class="col-span-3 row-span-1 text-xs text-secondary italic">
       Created by {{ company.owner_username }} on {{ company.created_at }}
     </div>
   </div>

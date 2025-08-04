@@ -20,6 +20,8 @@ declare module 'vue-router/auto-routes' {
   export interface RouteNamedMap {
     '/(home)': RouteRecordInfo<'/(home)', '/', Record<never, never>, Record<never, never>>,
     '/(admin)/workspaces': RouteRecordInfo<'/(admin)/workspaces', '/workspaces', Record<never, never>, Record<never, never>>,
+    '/(admin)/workspaces.[workspaceId]': RouteRecordInfo<'/(admin)/workspaces.[workspaceId]', '/workspaces/:workspaceId', { workspaceId: ParamValue<true> }, { workspaceId: ParamValue<false> }>,
+    '/(admin)/workspaces.create': RouteRecordInfo<'/(admin)/workspaces.create', '/workspaces/create', Record<never, never>, Record<never, never>>,
     '/403': RouteRecordInfo<'/403', '/403', Record<never, never>, Record<never, never>>,
     '/auth/callback': RouteRecordInfo<'/auth/callback', '/auth/callback', Record<never, never>, Record<never, never>>,
     '/auth/silent-callback': RouteRecordInfo<'/auth/silent-callback', '/auth/silent-callback', Record<never, never>, Record<never, never>>,
@@ -34,6 +36,7 @@ declare module 'vue-router/auto-routes' {
     '/companies/[companyId]/timeline': RouteRecordInfo<'/companies/[companyId]/timeline', '/companies/:companyId/timeline', { companyId: ParamValue<true> }, { companyId: ParamValue<false> }>,
     '/help': RouteRecordInfo<'/help', '/help', Record<never, never>, Record<never, never>>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
+    '/search': RouteRecordInfo<'/search', '/search', Record<never, never>, Record<never, never>>,
     '/settings': RouteRecordInfo<'/settings', '/settings', Record<never, never>, Record<never, never>, '/settings/appearance' | '/settings/profile' | '/settings/security'>,
     '/settings/appearance': RouteRecordInfo<'/settings/appearance', '/settings/appearance', Record<never, never>, Record<never, never>>,
     '/settings/profile': RouteRecordInfo<'/settings/profile', '/settings/profile', Record<never, never>, Record<never, never>>,
