@@ -2,6 +2,7 @@ import { User, UserManager, WebStorageStateStore } from 'oidc-client'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { jwtDecode } from 'jwt-decode'
 
 export const useAuthStore = defineStore(
   'auth',
@@ -18,30 +19,23 @@ export const useAuthStore = defineStore(
     const username = computed(
       () => user.value?.profile?.preferred_username || user.value?.profile?.sub || 'unknown',
     )
-    const userRoles = ref<string[]>([])
-    const userPermissions = ref<string[]>([])
 
-    // Extract user claims from OIDC token
-    const extractUserClaims = (authUser: User) => {
-      const profile = authUser.profile
+    // Computed properties for roles and permissions - reactive and always up-to-date
+    const userRoles = computed<string[]>(() => {
+      if (!user.value?.profile) return []
 
-      // Extract roles from Keycloak token structure
-      const realmRoles = (profile as any)?.realm_access?.roles || []
-      const resourceRoles =
-        (profile as any)?.resource_access?.[import.meta.env.VITE_KEYCLOAK_CLIENT_ID]?.roles || []
+      const token = jwtDecode(user.value?.access_token || '') as {
+        realm_access: { roles: string[] }
+      }
 
-      // Combine all roles
-      userRoles.value = [...realmRoles, ...resourceRoles]
+      return token.realm_access?.roles || []
+    })
 
-      // For now, treat roles as permissions (can be customized later)
-      userPermissions.value = [...userRoles.value]
-
-      console.log('Extracted user claims:', {
-        roles: userRoles.value,
-        permissions: userPermissions.value,
-        profile: profile,
-      })
-    }
+    const userPermissions = computed<string[]>(() => {
+      // For now, treat roles as permissions
+      // You can customize this to map roles to specific permissions
+      return userRoles.value
+    })
 
     // Initialize UserManager
     const initializeUserManager = () => {
@@ -68,7 +62,7 @@ export const useAuthStore = defineStore(
       // Set up event handlers
       manager.events.addUserLoaded((loadedUser: User) => {
         user.value = loadedUser
-        extractUserClaims(loadedUser)
+        // No need to extract claims anymore - computed properties handle it
       })
 
       manager.events.addUserUnloaded(() => {
@@ -108,10 +102,7 @@ export const useAuthStore = defineStore(
       try {
         const currentUser = await manager.getUser()
         user.value = currentUser
-        if (currentUser) {
-          extractUserClaims(currentUser)
-        }
-        console.log('Auth initialized:', { user: user.value, roles: userRoles.value })
+        console.log('Auth initialized:', { user: user.value })
         initialized.value = true
       } catch (error) {
         console.error('Initialize auth error:', error)
@@ -150,9 +141,6 @@ export const useAuthStore = defineStore(
       try {
         const callbackUser = await manager.signinRedirectCallback()
         user.value = callbackUser
-        if (callbackUser) {
-          extractUserClaims(callbackUser)
-        }
         return callbackUser
       } catch (error) {
         console.error('Callback error:', error)

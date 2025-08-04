@@ -90,7 +90,7 @@ const buttons = computed(() => {
   // Add workspace button if user has admin.workspaces role
   if (userRoles.includes('admin.workspaces')) {
     baseButtons.push({
-      icon: 'fa fa-sitemap',
+      icon: 'fa fa-users',
       label: t('sidebar.workspaces'),
       active: true,
       to: '/workspaces',

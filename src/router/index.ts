@@ -8,7 +8,7 @@ const router = createRouter({
 })
 
 // Define public routes that don't require authentication
-const publicRoutes = ['/login', '/auth/callback', '/auth/silent-callback']
+const publicRoutes = ['/login', '/auth/callback', '/auth/silent-callback', '/403']
 
 // Check if a route is public
 const isPublicRoute = (path: string): boolean => {
@@ -52,7 +52,28 @@ router.beforeEach(async (to, from, next) => {
     })
   }
 
-  // User is authenticated, allow access
+  // Check for required permissions if specified in route meta
+  const requiredPermissions = to.meta.permissions as string[] | undefined
+  if (requiredPermissions && requiredPermissions.length > 0) {
+    const hasPermission = requiredPermissions.some(permission => 
+      authStore.hasPermission(permission)
+    )
+    
+    if (!hasPermission) {
+      console.warn(`Access denied: User lacks required permissions for ${to.path}`, {
+        required: requiredPermissions,
+        userPermissions: authStore.userPermissions
+      })
+      
+      // Redirect to 403 forbidden page
+      return next({
+        path: '/403',
+        replace: true
+      })
+    }
+  }
+
+  // User is authenticated and has required permissions, allow access
   next()
 })
 

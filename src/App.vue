@@ -56,7 +56,7 @@ watch(
   (newIsAuthenticated) => {
     if (!newIsAuthenticated) {
       // redirect to login page
-      router.push('/login')
+      routpush('/login')
     }
   },
 )

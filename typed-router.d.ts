@@ -19,6 +19,8 @@ declare module 'vue-router/auto-routes' {
    */
   export interface RouteNamedMap {
     '/(home)': RouteRecordInfo<'/(home)', '/', Record<never, never>, Record<never, never>>,
+    '/(admin)/workspaces': RouteRecordInfo<'/(admin)/workspaces', '/workspaces', Record<never, never>, Record<never, never>>,
+    '/403': RouteRecordInfo<'/403', '/403', Record<never, never>, Record<never, never>>,
     '/auth/callback': RouteRecordInfo<'/auth/callback', '/auth/callback', Record<never, never>, Record<never, never>>,
     '/auth/silent-callback': RouteRecordInfo<'/auth/silent-callback', '/auth/silent-callback', Record<never, never>, Record<never, never>>,
     '/companies': RouteRecordInfo<'/companies', '/companies', Record<never, never>, Record<never, never>, '/companies/(list)' | '/companies/[companyId]' | '/companies/[companyId]/' | '/companies/[companyId]/jobs' | '/companies/[companyId]/products' | '/companies/[companyId]/profile' | '/companies/[companyId]/team' | '/companies/[companyId]/timeline'>,
