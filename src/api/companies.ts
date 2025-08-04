@@ -1,4 +1,4 @@
-import { type Company } from '@/types/company'
+import { type Company, type CompanyCreate } from '@/types/company'
 import { apiClient } from './client'
 import type { PaginatedResponse } from '@/types/pagination'
 
@@ -20,5 +20,10 @@ export const getCompanies = async (filters: { page: number; size: number; name: 
   const response = await apiClient.get<PaginatedResponse<Company>>(
     `/companies?${params.toString()}`,
   )
+  return response
+}
+
+export const createCompany = async (company: { name: string; website: string }) => {
+  const response = await apiClient.post<Company>('/companies', company)
   return response
 }
