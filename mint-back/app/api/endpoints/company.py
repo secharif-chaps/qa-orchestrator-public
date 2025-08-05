@@ -28,19 +28,31 @@ router = APIRouter(
 async def get_companies(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
     per_page: int = Query(10, ge=1, le=100, description="Items per page (max 100)"),
+    size: int = Query(None, ge=1, le=100, description="Items per page (alias for per_page)"),
     sort: str = Query(None, description="Field to sort by (name, created_at)"),
     order: SortOrder = Query(SortOrder.DESC, description="Sort order"),
+    name: str = Query(None, description="Filter companies by name (partial match)"),
     service: CompanyService = Depends(get_company_service),
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
     """Get paginated companies for the current workspace"""
+    effective_per_page = size if size is not None else per_page
+    
+    # Single line request log
+    filter_info = f"name='{name}'" if name else "no filters"
+    print(f"🏢 GET /companies - User: {workspace_context.username} - Page: {page}, Size: {effective_per_page}, {filter_info}")
+    
     pagination_params = PaginationParams(
         page=page,
-        per_page=per_page,
+        per_page=effective_per_page,
         sort=sort,
         order=order
     )
-    return service.get_paginated_companies(pagination_params, workspace_id=workspace_context.workspace_id)
+    return service.get_paginated_companies(
+        pagination_params, 
+        workspace_id=workspace_context.workspace_id,
+        name_filter=name
+    )
 
 @router.get("/{company_id}", response_model=CompanyResponse)
 async def get_company(

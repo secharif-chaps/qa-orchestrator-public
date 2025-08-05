@@ -87,6 +87,36 @@
         "basic",
         "email"
       ]
+    },
+    {
+      "clientId": "admin-cli",
+      "name": "Admin CLI",
+      "description": "Admin CLI for backend service account access",
+      "enabled": true,
+      "publicClient": false,
+      "bearerOnly": false,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "secret": "admin-cli-secret",
+      "protocolMappers": [
+        {
+          "name": "Client ID",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usersessionmodel-note-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.session.note": "clientId",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "clientId",
+            "jsonType.label": "String"
+          }
+        }
+      ]
     }
   ],
   "internationalizationEnabled": true,
@@ -180,6 +210,22 @@
           ]
         },
         "clientRole": false
+      }
+    ]
+  },
+  "clientScopeMappings": {
+    "admin-cli": [
+      {
+        "client": "realm-management",
+        "roles": [
+          "realm-admin",
+          "manage-users",
+          "view-users",
+          "query-users",
+          "create-client",
+          "manage-clients",
+          "view-clients"
+        ]
       }
     ]
   }

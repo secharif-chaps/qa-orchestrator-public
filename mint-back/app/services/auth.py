@@ -105,16 +105,14 @@ class KeycloakService:
                     if "admin" not in roles:
                         roles.append("admin")
                 
-                print(f"Token verified successfully via JWT decoding for user: {username}")
                 return TokenData(username=username, sub=sub, roles=roles)
                 
             except jwt.ExpiredSignatureError:
-                print("Token has expired")
                 return None
-            except jwt.JWTError as jwt_error:
-                print(f"JWT validation failed: {jwt_error}")
-            except Exception as jwt_decode_error:
-                print(f"JWT decoding failed: {jwt_decode_error}")
+            except jwt.JWTError:
+                pass
+            except Exception:
+                pass
             
             # Fallback to userinfo endpoint if JWT decoding fails
             try:
@@ -128,12 +126,10 @@ class KeycloakService:
                     if username == "admin":
                         roles.append("admin")
                     
-                    print(f"Token verified successfully via userinfo for user: {username}")
                     return TokenData(username=username, sub=sub, roles=roles)
-            except Exception as userinfo_error:
-                print(f"Userinfo validation failed: {userinfo_error}")
+            except Exception:
+                pass
             
-            print("Token verification failed - all validation methods failed")
             return None
             
         except Exception as e:

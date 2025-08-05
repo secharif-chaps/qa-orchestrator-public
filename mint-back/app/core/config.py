@@ -31,6 +31,8 @@ class Settings(BaseSettings):
     KEYCLOAK_CLIENT_SECRET: Optional[str] = None
     KEYCLOAK_ADMIN_USERNAME: str = "admin"
     KEYCLOAK_ADMIN_PASSWORD: str = "admin"
+    KEYCLOAK_ADMIN_CLIENT_ID: str = "admin-cli"
+    KEYCLOAK_ADMIN_CLIENT_SECRET: str = "admin-cli-secret"
     
     # JWT settings
     JWT_ALGORITHM: str = "RS256"

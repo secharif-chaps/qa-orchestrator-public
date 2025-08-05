@@ -53,13 +53,17 @@ class SQLAlchemyCompanyRepository:
         self.db_session.refresh(company)
         return company
     
-    def get_paginated(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None) -> Tuple[List[Company], int]:
+    def get_paginated(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None, name_filter: Optional[str] = None) -> Tuple[List[Company], int]:
         """Get paginated list of companies with sorting and filtering"""
         query = self.db_session.query(Company)
         
         # Filter by workspace if provided
         if workspace_id:
             query = query.filter(Company.workspace_id == workspace_id)
+        
+        # Filter by name if provided (case-insensitive partial match)
+        if name_filter:
+            query = query.filter(Company.name.ilike(f"%{name_filter}%"))
         
         # Apply sorting
         if pagination_params.sort:
@@ -81,5 +85,9 @@ class SQLAlchemyCompanyRepository:
         
         # Apply pagination
         companies = query.offset(pagination_params.get_offset()).limit(pagination_params.get_limit()).all()
+        
+        # Single result log
+        filter_info = f" (filtered by '{name_filter}')" if name_filter else ""
+        print(f"📊 Found {total_count} companies{filter_info}, returning {len(companies)} for page {pagination_params.page}")
         
         return companies, total_count 

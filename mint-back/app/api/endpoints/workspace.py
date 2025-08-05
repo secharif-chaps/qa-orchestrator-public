@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
@@ -18,9 +18,20 @@ from app.schemas.workspace import (
     WorkspaceCreate,
     WorkspaceUpdate
 )
+from app.schemas.workspace_user import (
+    WorkspaceUserCreate,
+    WorkspaceUserUpdate,
+    WorkspaceUserResponse,
+    WorkspaceUserListResponse,
+    WorkspaceUserCreateResponse,
+    UserQueryParams,
+    UserStatusRequest,
+    PasswordResetResponse
+)
 from app.schemas.user import TokenData
 from app.core.dependencies import get_current_user
 from app.core.security import verify_workspace_admin_access
+from app.services.workspace_user import WorkspaceUserService
 
 router = APIRouter(prefix="/workspace", tags=["workspace"])
 
@@ -35,12 +46,12 @@ async def get_current_workspace(
 
 @router.get("/current/members", response_model=List[WorkspaceMemberResponse])
 async def get_workspace_members(
-    current_user: TokenData = Depends(get_current_user),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
     """Get all members of the current workspace"""
     members = db.query(WorkspaceMember).filter(
-        WorkspaceMember.workspace_id == 1
+        WorkspaceMember.workspace_id == workspace_context.workspace_id
     ).all()
     
     return members
@@ -49,14 +60,14 @@ async def get_workspace_members(
 @router.post("/current/members", response_model=WorkspaceMemberResponse)
 async def add_workspace_member(
     member_data: WorkspaceMemberCreate,
-    current_user: TokenData = Depends(get_current_user),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
     """Add a new member to the current workspace"""
     
     # Check if user already exists in this workspace
     existing_member = db.query(WorkspaceMember).filter(
-        WorkspaceMember.workspace_id == 1,
+        WorkspaceMember.workspace_id == workspace_context.workspace_id,
         WorkspaceMember.email == member_data.email
     ).first()
     
@@ -73,7 +84,7 @@ async def add_workspace_member(
     
     # Create workspace member
     member = WorkspaceMember(
-        workspace_id=1,
+        workspace_id=workspace_context.workspace_id,
         user_id=user_id,
         username=username,
         email=member_data.email,
@@ -91,14 +102,14 @@ async def add_workspace_member(
 async def update_workspace_member(
     member_user_id: str,
     member_update: WorkspaceMemberUpdate,
-    current_user: TokenData = Depends(get_current_user),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
     """Update a workspace member"""
     
     # Get the member to update
     member = db.query(WorkspaceMember).filter(
-        WorkspaceMember.workspace_id == 1,
+        WorkspaceMember.workspace_id == workspace_context.workspace_id,
         WorkspaceMember.user_id == member_user_id
     ).first()
     
@@ -121,14 +132,14 @@ async def update_workspace_member(
 @router.delete("/current/members/{member_user_id}")
 async def remove_workspace_member(
     member_user_id: str,
-    current_user: TokenData = Depends(get_current_user),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
     """Remove a member from the current workspace"""
     
     # Get the member to remove
     member = db.query(WorkspaceMember).filter(
-        WorkspaceMember.workspace_id == 1,
+        WorkspaceMember.workspace_id == workspace_context.workspace_id,
         WorkspaceMember.user_id == member_user_id
     ).first()
     
@@ -193,18 +204,16 @@ async def join_workspace(
 
 @router.get("/current/with-members", response_model=WorkspaceWithMembersResponse)
 async def get_workspace_with_members(
-    current_user: TokenData = Depends(get_current_user),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
     """Get workspace with all members"""
     
     # Get workspace with members
-    workspace = db.query(Workspace).filter(
-        Workspace.id == 1
-    ).first()
+    workspace = workspace_context.workspace
     
     members = db.query(WorkspaceMember).filter(
-        WorkspaceMember.workspace_id == 1
+        WorkspaceMember.workspace_id == workspace_context.workspace_id
     ).all()
     
     return {
@@ -376,3 +385,150 @@ async def get_workspace_members_admin(
     ).all()
     
     return members
+
+
+# Keycloak User Management Endpoints (requires admin.workspaces role)
+
+@router.post("/admin/{workspace_id}/users", response_model=WorkspaceUserCreateResponse)
+async def create_workspace_user(
+    workspace_id: int,
+    user_data: WorkspaceUserCreate,
+    current_user: TokenData = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Create a new Keycloak user and add to workspace (admin only)"""
+    # Verify admin access
+    verify_workspace_admin_access(current_user)
+    
+    user_service = WorkspaceUserService(db)
+    return await user_service.create_user(workspace_id, user_data)
+
+
+@router.get("/admin/{workspace_id}/users", response_model=WorkspaceUserListResponse)
+async def get_workspace_users(
+    workspace_id: int,
+    page: int = 0,
+    limit: int = 20,
+    search: Optional[str] = None,
+    status: Optional[str] = None,
+    current_user: TokenData = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get paginated list of workspace users (admin only)"""
+    # Verify admin access
+    verify_workspace_admin_access(current_user)
+    
+    # Create query parameters
+    query = UserQueryParams(
+        page=page,
+        limit=limit,
+        search=search,
+        status=status
+    )
+    
+    user_service = WorkspaceUserService(db)
+    return await user_service.get_users(workspace_id, query)
+
+
+@router.get("/admin/{workspace_id}/users/{user_id}", response_model=WorkspaceUserResponse)
+async def get_workspace_user(
+    workspace_id: int,
+    user_id: str,
+    current_user: TokenData = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get specific workspace user details (admin only)"""
+    # Verify admin access
+    verify_workspace_admin_access(current_user)
+    
+    user_service = WorkspaceUserService(db)
+    user = await user_service.get_user(workspace_id, user_id)
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    return user
+
+
+@router.put("/admin/{workspace_id}/users/{user_id}", response_model=WorkspaceUserResponse)
+async def update_workspace_user(
+    workspace_id: int,
+    user_id: str,
+    user_data: WorkspaceUserUpdate,
+    current_user: TokenData = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Update workspace user details (admin only)"""
+    # Verify admin access
+    verify_workspace_admin_access(current_user)
+    
+    user_service = WorkspaceUserService(db)
+    return await user_service.update_user(workspace_id, user_id, user_data)
+
+
+@router.patch("/admin/{workspace_id}/users/{user_id}/status", response_model=WorkspaceUserResponse)
+async def toggle_user_status(
+    workspace_id: int,
+    user_id: str,
+    status_data: UserStatusRequest,
+    current_user: TokenData = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Enable or disable user account (admin only)"""
+    # Verify admin access
+    verify_workspace_admin_access(current_user)
+    
+    user_service = WorkspaceUserService(db)
+    return await user_service.toggle_user_status(workspace_id, user_id, status_data.enabled)
+
+
+@router.delete("/admin/{workspace_id}/users/{user_id}")
+async def remove_workspace_user(
+    workspace_id: int,
+    user_id: str,
+    current_user: TokenData = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Remove user from workspace (admin only)"""
+    # Verify admin access
+    verify_workspace_admin_access(current_user)
+    
+    user_service = WorkspaceUserService(db)
+    success = await user_service.delete_user(workspace_id, user_id)
+    
+    if success:
+        return {"message": "User removed from workspace successfully"}
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to remove user from workspace"
+        )
+
+
+@router.post("/admin/{workspace_id}/users/{user_id}/reset-password", response_model=PasswordResetResponse)
+async def send_password_reset(
+    workspace_id: int,
+    user_id: str,
+    current_user: TokenData = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Send password reset email to user (admin only)"""
+    # Verify admin access
+    verify_workspace_admin_access(current_user)
+    
+    user_service = WorkspaceUserService(db)
+    success = await user_service.send_password_reset(workspace_id, user_id)
+    
+    if success:
+        return PasswordResetResponse(
+            message="Password reset email sent successfully",
+            userId=user_id
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to send password reset email"
+        )

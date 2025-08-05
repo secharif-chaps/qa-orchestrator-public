@@ -40,63 +40,43 @@ class SecurityMiddleware(BaseHTTPMiddleware):
     
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """Main middleware processing"""
-        print(f"🛡️ SecurityMiddleware - START - {request.method} {request.url.path}")
-        print(f"🔍 Headers: Content-Type={request.headers.get('content-type')}, Origin={request.headers.get('origin')}")
-        
-        # TEMPORARY: Skip ALL security checks for /api/companies/ route for debugging
-        if request.url.path == "/api/companies/":
-            print(f"🚫 BYPASSING SecurityMiddleware for /api/companies/ - DEBUG MODE")
+        # Skip logging for OPTIONS preflight requests
+        if request.method == "OPTIONS":
             return await call_next(request)
         
-        # Skip security checks for OPTIONS preflight requests
-        if request.method == "OPTIONS":
-            print(f"🔄 OPTIONS request detected - skipping security checks")
+        # Skip all security checks for /api/companies/ route (debug mode)
+        if request.url.path == "/api/companies/":
             return await call_next(request)
         
         try:
-            # 1. Rate limiting check
-            print(f"⏱️ Checking rate limit for {request.client.host if request.client else 'unknown'}")
             await self._check_rate_limit(request)
-            
-            # 2. Request size validation
-            print(f"📏 Validating request size")
             await self._validate_request_size(request)
-            
-            # 3. Content type validation
-            print(f"📝 Validating content type")
             await self._validate_content_type(request)
-            
-            # 4. Security headers check
-            print(f"🔒 Validating security headers")
             await self._validate_security_headers(request)
             
-            # 5. Process request
-            print(f"➡️ Calling next middleware/endpoint")
             response = await call_next(request)
-            print(f"⬅️ Response received from endpoint - Status: {response.status_code}")
             
-            # Log error responses for debugging
+            # Only log errors
             if response.status_code >= 400:
-                print(f"🚨 Error response - Status: {response.status_code}, Method: {request.method}, Path: {request.url.path}")
+                print(f"🚨 {request.method} {request.url.path} - {response.status_code}")
             
-            # 6. Add security headers to response
             response = self._add_security_headers(response)
-            
             return response
             
         except ValidationError as e:
+            print(f"🛡️ Security blocked: {request.method} {request.url.path} - {e.detail}")
             return JSONResponse(
                 status_code=e.status_code,
                 content={"detail": e.detail, "type": "validation_error"}
             )
         except HTTPException as e:
+            print(f"🛡️ Security blocked: {request.method} {request.url.path} - {e.detail}")
             return JSONResponse(
                 status_code=e.status_code,
                 content={"detail": e.detail}
             )
         except Exception as e:
-            # Log unexpected errors but don't expose details
-            print(f"Security middleware error: {str(e)}")
+            print(f"🛡️ Security error: {str(e)}")
             return JSONResponse(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content={"detail": "Internal server error"}
@@ -202,57 +182,41 @@ class JSONValidationMiddleware(BaseHTTPMiddleware):
     
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """Validate JSON payload structure and content"""
-        print(f"📋 JSONValidationMiddleware - START - {request.method} {request.url.path}")
-        
-        # Re-enabled JSON validation for debugging - testing if this causes cancellation
-        # if request.url.path == "/api/companies/":
-        #     print(f"🚫 BYPASSING JSONValidationMiddleware for /api/companies/ - DEBUG MODE")
-        #     return await call_next(request)
+        # Skip OPTIONS preflight requests
+        if request.method == "OPTIONS":
+            return await call_next(request)
         
         # Only process JSON requests
         if (request.method not in ["GET", "HEAD", "OPTIONS"] and 
             request.headers.get("content-type", "").startswith("application/json")):
             
-            print(f"🔍 Processing JSON request - Content-Type: {request.headers.get('content-type')}")
             try:
-                # Read and validate JSON
-                print(f"📖 Reading request body...")
                 body = await request.body()
-                print(f"✅ Body read successfully - Size: {len(body) if body else 0} bytes")
                 
                 if body:
                     try:
-                        print(f"🔄 Parsing JSON...")
                         data = json.loads(body)
-                        print(f"✅ JSON parsed successfully: {data}")
+                        await self._validate_json_structure(data)
                         
-                        # Validate JSON structure
-                        print(f"🔍 Validating JSON structure...")
-                        # TEMPORARY: Skip actual validation to test if this causes the issue
-                        # await self._validate_json_structure(data)
-                        print(f"✅ JSON structure validation passed (skipped for debugging)")
-                        
-                        # CRITICAL: Restore the request body for FastAPI to read
-                        print(f"🔄 Restoring request body for FastAPI...")
-                        
+                        # Restore the request body for FastAPI
                         async def receive():
                             return {"type": "http.request", "body": body}
-                        
-                        # Replace the original receive callable
                         request._receive = receive
                         
                     except json.JSONDecodeError:
+                        print(f"📋 Invalid JSON in {request.method} {request.url.path}")
                         return JSONResponse(
                             status_code=status.HTTP_400_BAD_REQUEST,
                             content={"detail": "Invalid JSON format"}
                         )
                     except ValidationError as e:
+                        print(f"📋 JSON validation failed: {e.detail}")
                         return JSONResponse(
                             status_code=e.status_code,
                             content={"detail": e.detail}
                         )
             except Exception as e:
-                # Handle any other errors during JSON processing
+                print(f"📋 JSON processing error: {str(e)}")
                 return JSONResponse(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     content={"detail": "Request processing error"}

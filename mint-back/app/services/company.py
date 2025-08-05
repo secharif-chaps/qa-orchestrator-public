@@ -91,9 +91,9 @@ class CompanyService:
                 company.team = []
         return companies
     
-    def get_paginated_companies(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None) -> PaginatedResponse[CompanyResponse]:
-        """Get paginated companies with sorting"""
-        companies, total_count = self.repository.get_paginated(pagination_params, workspace_id)
+    def get_paginated_companies(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None, name_filter: Optional[str] = None) -> PaginatedResponse[CompanyResponse]:
+        """Get paginated companies with sorting and filtering"""
+        companies, total_count = self.repository.get_paginated(pagination_params, workspace_id, name_filter)
         
         # Convert SQLAlchemy models to Pydantic response models
         company_responses = []
