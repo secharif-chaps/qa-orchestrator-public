@@ -32,7 +32,7 @@ Key Components:
 ## Standards
 
 - Stack: Vue.js, TypeScript, TailwindCSS v4, Reka UI, Pinia, Pinia Colada
-- Patterns: ALWAYS use Composition API + `<script setup>`, NEVER use Options API
+- Patterns: ALWAYS use Composition API + `<script setup lang="ts">`, NEVER use Options API
 - ALWAYS Keep types alongside your code, use TypeScript for type safety, prefer `interface` over `type` for defining types
 - Keep unit and integration tests alongside the file they test: `src/ui/Button.vue` + `src/ui/Button.spec.ts`
 - ALWAYS use TailwindCSS classes rather than manual CSS
