@@ -82,6 +82,19 @@
               }}</label>
               <p class="text-base">{{ formatDate(workspace.updated_at) }}</p>
             </div>
+            <div>
+              <label class="block text-sm font-medium text-secondary mb-1">{{
+                $t('workspace.members', 'Members')
+              }}</label>
+              <div class="flex items-center gap-2">
+                <span
+                  class="inline-flex items-center justify-center w-8 h-8 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                >
+                  {{ workspace.member_count }}
+                </span>
+                <span class="text-base">{{ workspace.member_count === 1 ? 'member' : 'members' }}</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -314,7 +327,7 @@ meta:
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
-import { allWorkspacesQuery } from '@/queries/workspace'
+import { workspaceDetailsQuery } from '@/queries/workspace'
 import { workspaceUsersQuery } from '@/queries/user'
 import {
   useCreateWorkspaceUser,
@@ -330,11 +343,9 @@ const route = useRoute()
 const workspaceId = computed(() => parseInt(route.params.workspaceId as string))
 
 // Query for workspace details
-const { data: workspaces, isLoading, error } = useQuery(allWorkspacesQuery, () => ({}))
-
-const workspace = computed(() =>
-  workspaces.value?.find((workspace) => workspace.id === workspaceId.value),
-)
+const { data: workspace, isLoading, error } = useQuery(workspaceDetailsQuery, () => ({ id: workspaceId.value }), {
+  enabled: computed(() => !isNaN(workspaceId.value)),
+})
 
 // Query for workspace users
 const {

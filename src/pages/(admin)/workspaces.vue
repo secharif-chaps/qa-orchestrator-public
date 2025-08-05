@@ -2,23 +2,79 @@
   <div class="min-h-screen bg-bg3">
     <div class="container mx-auto px-4 py-8">
       <!-- Header -->
-      <div class="mb-8 flex items-center justify-between">
-        <div>
-          <h1 class="text-3xl font-bold">
-            {{ $t('workspace.admin.title', 'Workspace Management') }}
-          </h1>
-          <p class="text-secondary mt-2">
-            {{ $t('workspace.admin.description', 'Manage all workspaces in the system') }}
-          </p>
+      <div class="mb-8">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h1 class="text-3xl font-bold">
+              {{ $t('workspace.admin.title', 'Workspace Management') }}
+            </h1>
+            <p class="text-secondary mt-2">
+              {{ $t('workspace.admin.description', 'Manage all workspaces in the system') }}
+            </p>
+          </div>
+
+          <button
+            @click="$router.push('/workspaces/create')"
+            class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 transition-colors flex items-center gap-2"
+          >
+            <i class="fa fa-plus"></i>
+            {{ $t('workspace.create.button', 'Create Workspace') }}
+          </button>
         </div>
 
-        <button
-          @click="$router.push('/workspaces/create')"
-          class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 transition-colors flex items-center gap-2"
-        >
-          <i class="fa fa-plus"></i>
-          {{ $t('workspace.create.button', 'Create Workspace') }}
-        </button>
+        <!-- Search and Filters -->
+        <div class="flex items-center gap-4 bg-bg1 p-4 rounded-lg shadow-sm">
+          <!-- Search Input -->
+          <div class="flex-1 max-w-md">
+            <div class="relative">
+              <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"></i>
+              <input
+                v-model="queryParams.search"
+                @input="searchWorkspaces(queryParams.search)"
+                type="text"
+                :placeholder="$t('workspace.search.placeholder', 'Search workspaces...')"
+                class="w-full pl-10 pr-4 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+            </div>
+          </div>
+
+          <!-- Sort Options -->
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-secondary">{{ $t('workspace.sort.label', 'Sort by:') }}</label>
+            <select
+              v-model="queryParams.sort"
+              @change="changeSorting(queryParams.sort, queryParams.order)"
+              class="px-3 py-2 border border-border-2 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            >
+              <option value="created_at">{{ $t('workspace.sort.created', 'Created Date') }}</option>
+              <option value="name">{{ $t('workspace.sort.name', 'Name') }}</option>
+              <option value="member_count">{{ $t('workspace.sort.members', 'Member Count') }}</option>
+            </select>
+            
+            <button
+              @click="changeSorting(queryParams.sort, queryParams.order === 'asc' ? 'desc' : 'asc')"
+              class="p-2 border border-border-2 rounded-lg hover:bg-bg2 transition-colors"
+              :title="queryParams.order === 'asc' ? $t('workspace.sort.desc', 'Sort Descending') : $t('workspace.sort.asc', 'Sort Ascending')"
+            >
+              <i :class="queryParams.order === 'asc' ? 'fa fa-sort-up' : 'fa fa-sort-down'"></i>
+            </button>
+          </div>
+
+          <!-- Page Size Selector -->
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-secondary">{{ $t('workspace.pageSize.label', 'Show:') }}</label>
+            <select
+              v-model="queryParams.limit"
+              @change="changePageSize(parseInt($event.target.value))"
+              class="px-3 py-2 border border-border-2 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            >
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+          </div>
+        </div>
       </div>
 
       <!-- Error Alert -->
@@ -134,20 +190,105 @@
         </div>
 
         <!-- Empty State -->
-        <div v-if="workspaces.length === 0" class="p-12 text-center">
+        <div v-if="workspaces.length === 0 && !isLoading" class="p-12 text-center">
           <i class="fa fa-building text-4xl text-secondary/50 mb-4"></i>
           <h3 class="text-lg font-medium text-base mb-2">
-            {{ $t('workspace.empty.title', 'No workspaces found') }}
+            {{ queryParams.search ? $t('workspace.empty.noResults', 'No workspaces found') : $t('workspace.empty.title', 'No workspaces found') }}
           </h3>
           <p class="text-secondary mb-6">
-            {{ $t('workspace.empty.description', 'Create your first workspace to get started') }}
+            {{ queryParams.search ? $t('workspace.empty.tryDifferentSearch', 'Try a different search term') : $t('workspace.empty.description', 'Create your first workspace to get started') }}
           </p>
           <button
+            v-if="!queryParams.search"
             @click="$router.push('/workspaces/create')"
             class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/80 transition-colors"
           >
             {{ $t('workspace.create.button', 'Create Workspace') }}
           </button>
+          <button
+            v-else
+            @click="queryParams.search = ''; searchWorkspaces('')"
+            class="bg-secondary text-white px-6 py-2 rounded-lg hover:bg-secondary/80 transition-colors"
+          >
+            {{ $t('workspace.clearSearch', 'Clear Search') }}
+          </button>
+        </div>
+
+        <!-- Pagination -->
+        <div v-if="pagination && pagination.totalPages > 1" class="px-6 py-4 border-t border-border-2 bg-bg2">
+          <div class="flex items-center justify-between">
+            <!-- Results Info -->
+            <div class="text-sm text-secondary">
+              {{ $t('workspace.pagination.showing', 'Showing') }}
+              <span class="font-medium">{{ ((pagination.page - 1) * pagination.limit) + 1 }}</span>
+              {{ $t('workspace.pagination.to', 'to') }}
+              <span class="font-medium">{{ Math.min(pagination.page * pagination.limit, pagination.total) }}</span>
+              {{ $t('workspace.pagination.of', 'of') }}
+              <span class="font-medium">{{ pagination.total }}</span>
+              {{ $t('workspace.pagination.results', 'results') }}
+            </div>
+
+            <!-- Pagination Controls -->
+            <div class="flex items-center gap-2">
+              <!-- Previous Button -->
+              <button
+                @click="goToPage(pagination.page - 1)"
+                :disabled="!pagination.hasPrev"
+                class="px-3 py-2 text-sm border border-border-2 rounded-lg hover:bg-bg3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <i class="fa fa-chevron-left mr-1"></i>
+                {{ $t('workspace.pagination.previous', 'Previous') }}
+              </button>
+
+              <!-- Page Numbers -->
+              <div class="flex items-center gap-1">
+                <!-- First page -->
+                <button
+                  v-if="pagination.page > 3"
+                  @click="goToPage(1)"
+                  class="px-3 py-2 text-sm border border-border-2 rounded-lg hover:bg-bg3 transition-colors"
+                >
+                  1
+                </button>
+                <span v-if="pagination.page > 4" class="px-2 text-secondary">...</span>
+
+                <!-- Current page and neighbors -->
+                <template v-for="page in getVisiblePages(pagination)" :key="page">
+                  <button
+                    @click="goToPage(page)"
+                    :class="[
+                      'px-3 py-2 text-sm border rounded-lg transition-colors',
+                      page === pagination.page
+                        ? 'bg-primary text-white border-primary'
+                        : 'border-border-2 hover:bg-bg3'
+                    ]"
+                  >
+                    {{ page }}
+                  </button>
+                </template>
+
+                <!-- Last page -->
+                <span v-if="pagination.page < pagination.totalPages - 3" class="px-2 text-secondary">...</span>
+                <button
+                  v-if="pagination.page < pagination.totalPages - 2"
+                  @click="goToPage(pagination.totalPages)"
+                  class="px-3 py-2 text-sm border border-border-2 rounded-lg hover:bg-bg3 transition-colors"
+                >
+                  {{ pagination.totalPages }}
+                </button>
+              </div>
+
+              <!-- Next Button -->
+              <button
+                @click="goToPage(pagination.page + 1)"
+                :disabled="!pagination.hasNext"
+                class="px-3 py-2 text-sm border border-border-2 rounded-lg hover:bg-bg3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {{ $t('workspace.pagination.next', 'Next') }}
+                <i class="fa fa-chevron-right ml-1"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -169,18 +310,27 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { useRouter } from 'vue-router'
 import { allWorkspacesQuery } from '@/queries/workspace'
 import { useDeleteWorkspace } from '@/mutations/workspace'
-import type { WorkspaceResponse, WorkspaceListItem } from '@/types/workspace'
+import type { WorkspaceResponse, WorkspaceListItem, WorkspaceQueryParams } from '@/types/workspace'
 import WorkspaceDeleteModal from '@/components/workspace/WorkspaceDeleteModal.vue'
 
 const router = useRouter()
 
+// Query parameters state
+const queryParams = reactive<WorkspaceQueryParams>({
+  page: 1,
+  limit: 20,
+  sort: 'created_at',
+  order: 'desc',
+  search: ''
+})
+
 // Queries
-const { data: workspaces, isLoading, error } = useQuery(allWorkspacesQuery, () => ({}))
+const { data: workspacesResponse, isLoading, error } = useQuery(allWorkspacesQuery, () => queryParams)
 
 // Mutations
 const { deleteWorkspace, isLoading: isDeleting } = useDeleteWorkspace()
@@ -188,15 +338,19 @@ const { deleteWorkspace, isLoading: isDeleting } = useDeleteWorkspace()
 // Delete modal state
 const workspaceToDelete = ref<WorkspaceResponse | null>(null)
 
-// Transform workspaces to include member count (hardcoded for now)
+// Transform workspaces to include backward compatible memberCount property
 const workspacesWithMemberCount = computed<WorkspaceListItem[]>(() => {
-  if (!workspaces.value) return []
+  if (!workspacesResponse.value?.data) return []
 
-  return workspaces.value.map((workspace) => ({
+  return workspacesResponse.value.data.map((workspace) => ({
     ...workspace,
-    memberCount: workspace.id === 1 ? 15 : Math.floor(Math.random() * 10) + 1, // Hardcoded for now
+    memberCount: workspace.member_count, // Map to backward compatible property
   }))
 })
+
+// Pagination info
+const pagination = computed(() => workspacesResponse.value?.pagination)
+const workspaces = computed(() => workspacesResponse.value?.data || [])
 
 // Format date helper
 const formatDate = (dateString: string) => {
@@ -205,6 +359,44 @@ const formatDate = (dateString: string) => {
     month: 'short',
     day: 'numeric',
   })
+}
+
+// Pagination actions
+const goToPage = (page: number) => {
+  queryParams.page = page
+}
+
+const changePageSize = (limit: number) => {
+  queryParams.limit = limit
+  queryParams.page = 1 // Reset to first page when changing page size
+}
+
+const changeSorting = (sort: WorkspaceQueryParams['sort'], order: WorkspaceQueryParams['order'] = 'desc') => {
+  queryParams.sort = sort
+  queryParams.order = order
+  queryParams.page = 1 // Reset to first page when changing sort
+}
+
+const searchWorkspaces = (search: string) => {
+  queryParams.search = search
+  queryParams.page = 1 // Reset to first page when searching
+}
+
+// Helper function to get visible page numbers for pagination
+const getVisiblePages = (paginationInfo: NonNullable<typeof pagination.value>) => {
+  const current = paginationInfo.page
+  const total = paginationInfo.totalPages
+  const pages: number[] = []
+  
+  // Show current page and 2 neighbors on each side
+  const start = Math.max(1, current - 2)
+  const end = Math.min(total, current + 2)
+  
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+  
+  return pages
 }
 
 // Actions

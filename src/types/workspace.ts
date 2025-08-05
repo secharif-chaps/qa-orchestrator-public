@@ -7,6 +7,10 @@ export interface WorkspaceResponse {
   updated_at: string
 }
 
+export interface WorkspaceWithMemberCount extends WorkspaceResponse {
+  member_count: number
+}
+
 export interface WorkspaceCreate {
   name: string
   description?: string
@@ -35,9 +39,31 @@ export interface WorkspaceWithMembersResponse {
   members: WorkspaceMemberResponse[]
 }
 
-// For UI display purposes
-export interface WorkspaceListItem extends WorkspaceResponse {
-  memberCount: number // Hardcoded for now
+// Pagination response wrapper
+export interface PaginatedWorkspacesResponse {
+  data: WorkspaceWithMemberCount[]
+  pagination: {
+    page: number
+    limit: number
+    total: number
+    totalPages: number
+    hasNext: boolean
+    hasPrev: boolean
+  }
+}
+
+// Query parameters for workspace list
+export interface WorkspaceQueryParams {
+  page?: number
+  limit?: number
+  sort?: 'name' | 'created_at' | 'member_count'
+  order?: 'asc' | 'desc'
+  search?: string
+}
+
+// For UI display purposes (backward compatibility)
+export interface WorkspaceListItem extends WorkspaceWithMemberCount {
+  memberCount: number
 }
 
 // Legacy interface for backward compatibility
