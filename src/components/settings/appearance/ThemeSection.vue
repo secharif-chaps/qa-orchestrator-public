@@ -27,7 +27,7 @@
           <div>
             <Switch.Root
               :model-value="currentTheme === themeOption.value"
-              @update:model-value="(checked) => checked && handleThemeChange(themeOption.value)"
+              @update:model-value="() => handleThemeChange(themeOption.value)"
               class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               :class="
                 currentTheme === themeOption.value ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-600'
