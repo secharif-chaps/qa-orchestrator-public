@@ -10,48 +10,19 @@
   "loginTheme": "mint",
   "users": [
     {
-      "username": "admin",
+      "username": "keycloak-admin",
       "enabled": true,
       "emailVerified": true,
-      "firstName": "Chuck",
-      "lastName": "NORRIS",
-      "email": "admin@example.com",
+      "firstName": "Keycloak",
+      "lastName": "Admin",
+      "email": "keycloak-admin@mint.dev",
       "credentials": [
         {
           "type": "password",
-          "value": "password"
+          "value": "admin123"
         }
       ],
       "realmRoles": ["admin"]
-    },
-    {
-      "username": "nmr",
-      "enabled": true,
-      "emailVerified": true,
-      "firstName": "Nicolas",
-      "lastName": "Mercier",
-      "email": "nmercier@chapsivion.com",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "password"
-        }
-      ],
-      "realmRoles": ["workspace.manage", "screen.view", "company.view", "export.generate"]
-    },
-    {
-      "username": "suh",
-      "enabled": true,
-      "emailVerified": true,
-      "firstName": "Sophie",
-      "lastName": "Ulrich",
-      "email": "sulrich@chapsvision.com",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "password"
-        }
-      ]
     }
   ],
   "clients": [
@@ -125,87 +96,52 @@
   "roles": {
     "realm": [
       {
-        "name": "workspace.manage",
-        "description": "Manage workspace members and settings",
+        "name": "workspace.read",
+        "description": "Read access to user's own workspace",
         "composite": false,
         "clientRole": false
       },
       {
-        "name": "screen.create",
-        "description": "Create new screens",
-        "composite": false,
-        "clientRole": false
-      },
-      {
-        "name": "screen.update",
-        "description": "Update existing screens",
-        "composite": false,
-        "clientRole": false
-      },
-      {
-        "name": "screen.delete",
-        "description": "Delete screens",
-        "composite": false,
-        "clientRole": false
-      },
-      {
-        "name": "screen.view",
-        "description": "View screens",
-        "composite": false,
-        "clientRole": false
-      },
-      {
-        "name": "company.create",
-        "description": "Create new companies",
-        "composite": false,
-        "clientRole": false
-      },
-      {
-        "name": "company.update",
-        "description": "Update existing companies",
-        "composite": false,
-        "clientRole": false
-      },
-      {
-        "name": "company.delete",
-        "description": "Delete companies",
+        "name": "workspace.write", 
+        "description": "Write access to user's own workspace",
         "composite": false,
         "clientRole": false
       },
       {
         "name": "company.view",
-        "description": "View companies",
+        "description": "View companies in user's workspace",
         "composite": false,
         "clientRole": false
       },
       {
-        "name": "export.generate",
-        "description": "Generate exports",
+        "name": "company.create",
+        "description": "Create companies in user's workspace", 
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "company.delete",
+        "description": "Delete companies in user's workspace",
         "composite": false,
         "clientRole": false
       },
       {
         "name": "admin.workspaces",
-        "description": "Full administrative access to workspaces (list, edit, create, delete)",
+        "description": "Global administrative access to all workspaces",
         "composite": false,
         "clientRole": false
       },
       {
         "name": "admin",
-        "description": "Full administrative access",
+        "description": "Full administrative access (composite role)",
         "composite": true,
         "composites": {
           "realm": [
-            "workspace.manage",
-            "screen.create",
-            "screen.update",
-            "screen.delete",
-            "screen.view",
-            "company.create",
-            "company.update",
-            "company.delete",
+            "workspace.read",
+            "workspace.write", 
             "company.view",
-            "export.generate",
+            "company.create",
+            "company.delete",
             "admin.workspaces"
           ]
         },

@@ -1,6 +1,6 @@
 <#macro registrationLayout bodyClass="" displayInfo=false displayMessage=true displayRequiredFields=false>
 <!DOCTYPE html>
-<html class="h-full bg-white"<#if realm.internationalizationEnabled?? && locale??> lang="${locale.currentLanguageTag}"</#if>>
+<html class="h-full bg-bg3"<#if realm.internationalizationEnabled?? && locale??> lang="${locale.currentLanguageTag}"</#if>>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -50,18 +50,18 @@
 
 </head>
 
-<body class="h-full bg-white">
+<body class="h-full bg-slate-100 dark:bg-slate-900">
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
         <div class="mx-auto h-10 w-auto text-center">
-            <div class="text-3xl font-bold text-indigo-600">
+            <div class="text-3xl font-bold text-indigo-600 dark:text-indigo-300">
                 Mint
             </div>
         </div>
-        <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
+        <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900 dark:text-slate-100">
             <#nested "title">
         </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
+        <p class="mt-2 text-center text-sm text-gray-600 dark:text-slate-400">
             ${msg("loginSubtitle")}
         </p>
     </div>

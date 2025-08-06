@@ -4,8 +4,9 @@
     <#if section = "title">
         Sign in to your account
     <#elseif section = "form">
+    <div class="bg-white dark:bg-slate-800 rounded-lg p-6">
         <#-- Language selector -->
-        <#if realm.internationalizationEnabled?? && locale?? && locale.supported?? && locale.supported?size gt 1>
+        <!-- <#if realm.internationalizationEnabled?? && locale?? && locale.supported?? && locale.supported?size gt 1>
             <div class="mb-6 flex justify-end">
                 <div class="relative">
                     <button type="button" id="kc-current-locale-link" class="text-sm text-gray-500 hover:text-gray-700">
@@ -18,7 +19,7 @@
                     </div>
                 </div>
             </div>
-        </#if>
+        </#if> -->
 
         <#-- Username display for re-authentication -->
         <#if auth?has_content && auth.showUsername() && !auth.showResetCredentials()>
@@ -35,7 +36,7 @@
 
         <form id="kc-form-login" onsubmit="login.disabled = true; return true;" action="${url.loginAction}" method="post" class="space-y-6">
             <div>
-                <label for="username" class="block text-sm/6 font-medium text-gray-900">
+                <label for="username" class="block text-sm/6 font-medium text-gray-900 dark:text-slate-100">
                     <#if !realm.loginWithEmailAllowed>
                         ${msg("username")}
                     <#elseif !realm.registrationEmailAsUsername>
@@ -50,20 +51,20 @@
                                type="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>text</#if>" 
                                autofocus autocomplete="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>username</#if>"
                                aria-invalid="<#if messagesPerField.existsError('username','password')>true</#if>"
-                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
                     <#else>
                         <input tabindex="1" id="username" name="username" value="${(login.username!'')}" 
                                type="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>text</#if>" 
                                autofocus autocomplete="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>username</#if>"
                                aria-invalid="<#if messagesPerField.existsError('username','password')>true</#if>"
-                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
                     </#if>
                 </div>
             </div>
 
             <div>
                 <div class="flex items-center justify-between">
-                    <label for="password" class="block text-sm/6 font-medium text-gray-900">
+                    <label for="password" class="block text-sm/6 font-medium text-gray-900 dark:text-slate-100">
                         ${msg("password")}
                     </label>
                     <#if realm.resetPasswordAllowed>
@@ -78,7 +79,7 @@
                     <input tabindex="2" id="password" name="password" type="password" 
                            autocomplete="current-password" required
                            aria-invalid="<#if messagesPerField.existsError('username','password')>true</#if>"
-                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
                 </div>
             </div>
 
@@ -87,7 +88,7 @@
                 <div class="flex items-center">
                     <input tabindex="3" id="rememberMe" name="rememberMe" type="checkbox" <#if login.rememberMe??>checked</#if>
                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" />
-                    <label for="rememberMe" class="ml-3 block text-sm/6 text-gray-900">
+                    <label for="rememberMe" class="ml-3 block text-sm/6 text-gray-900 dark:text-slate-100">
                         ${msg("rememberMe")}
                     </label>
                 </div>
@@ -124,5 +125,6 @@
                 </div>
             </form>
         </#if>
+        </div>
     </#if>
 </@layout.registrationLayout>
