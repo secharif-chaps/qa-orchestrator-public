@@ -68,3 +68,55 @@ The backend API is available at `http://localhost:8000/api/v1/`
 - Check logs: `docker compose -f docker-compose.dev.yml logs backend`
 - Restart backend: `docker compose -f docker-compose.dev.yml restart backend`
 - Enter backend shell: `docker compose -f docker-compose.dev.yml exec backend bash`
+
+## Permission System Guidelines
+
+### Available Permissions
+
+#### Workspace Permissions (workspace-specific)
+- **workspace.read**: View workspace content (basic access)
+- **workspace.write**: Modify workspace content and manage team members
+
+#### Company Permissions (workspace-specific)  
+- **company.view**: View companies in workspace
+- **company.create**: Search and create companies (search form functionality)
+- **company.update**: Update existing companies (future feature)
+- **company.delete**: Delete companies from workspace
+
+#### Global Admin Permissions
+- **admin.workspaces**: Global workspace administration
+
+### Permission Implementation Rules
+
+#### When Adding New Features
+1. **ALWAYS ask user about permissions** before implementing
+2. **Check if existing permission covers the feature**:
+   - company.create = search + create companies  
+   - workspace.write = workspace modifications + user management
+3. **Only create NEW permissions if existing ones don't fit**
+4. **User MUST decide** on permission choice before implementation
+
+#### Frontend Implementation
+- Use `usePermissions()` composable for permission checks
+- Show/hide UI elements based on permissions (v-if="canCreateCompany")
+- Display helpful messages for users without permissions
+
+#### Backend Implementation  
+- Always verify permissions in API endpoints using `verify_*_permission()` functions
+- Return 403 Forbidden with clear error messages
+- Check permissions BEFORE executing business logic
+
+#### Permission Naming Convention
+- Format: `resource.action` (e.g., company.create, workspace.write)
+- Workspace permissions: workspace-specific only
+- Admin permissions: global only
+- Company permissions: workspace-specific only
+
+### Example Permission Checks
+```python
+# Backend - Always check before action
+verify_company_permission(workspace_context, "company.create")
+
+# Frontend - Show/hide UI elements  
+<PrimaryButton v-if="canCreateCompany">Create Company</PrimaryButton>
+```
