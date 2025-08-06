@@ -31,18 +31,6 @@ services:
     ports:
       - "8000:8000"
 
-  # Nuxt Frontend
-  frontend:
-    build:
-      context: ./mint-front
-    restart: always
-    env_file:
-      - .env.production
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-
   # Keycloak for Authentication
   keycloak:
     image: keycloak/keycloak:26.3

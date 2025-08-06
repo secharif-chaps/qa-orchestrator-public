@@ -12,24 +12,7 @@ stages:
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
-    - mint-front/node_modules/
     - mint-back/.cache/pypoetry/
-
-# Frontend build job
-build-frontend:
-  stage: build
-  image: node:18
-  script:
-    - cd mint-front
-    - yarn install --frozen-lockfile
-    - yarn build
-  artifacts:
-    paths:
-      - mint-front/.output/
-    expire_in: 1 week
-  only:
-    - main
-    - merge_requests
 
 # Backend build job
 build-backend:
@@ -54,7 +37,6 @@ build-backend:
 deploy:
   stage: docker-build
   script:
-    - docker build -t mint-front -f mint-front/Dockerfile mint-front/
     - docker build -t mint-back -f mint-back/Dockerfile mint-back/
   only:
     - main
