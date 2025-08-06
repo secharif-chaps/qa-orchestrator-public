@@ -29,6 +29,10 @@ class WorkspaceResponse(WorkspaceBase):
         from_attributes = True
 
 
+class WorkspaceWithMemberCount(WorkspaceResponse):
+    member_count: int = Field(..., description="Number of active members in the workspace")
+
+
 class WorkspaceMemberBase(BaseModel):
     user_id: str
     username: str

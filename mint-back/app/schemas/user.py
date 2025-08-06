@@ -49,6 +49,8 @@ class TokenData(BaseModel):
     username: Optional[str] = None
     sub: Optional[str] = None
     roles: Optional[List[str]] = None
+    workspace_id: Optional[int] = None
+    workspace_slug: Optional[str] = None
 
 
 class LoginRequest(BaseModel):

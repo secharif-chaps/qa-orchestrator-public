@@ -1,6 +1,7 @@
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import func, case
 from app.database import get_db
 from app.core.workspace import (
     get_user_workspace, 
@@ -16,8 +17,10 @@ from app.schemas.workspace import (
     WorkspaceMemberCreate,
     WorkspaceMemberUpdate,
     WorkspaceCreate,
-    WorkspaceUpdate
+    WorkspaceUpdate,
+    WorkspaceWithMemberCount
 )
+from app.schemas.pagination import PaginatedResponse, PaginationParams, SortOrder, create_pagination_meta
 from app.schemas.workspace_user import (
     WorkspaceUserCreate,
     WorkspaceUserUpdate,
@@ -224,17 +227,144 @@ async def get_workspace_with_members(
 
 # Admin endpoints for workspace management (requires admin.workspaces role)
 
-@router.get("/admin/all", response_model=List[WorkspaceResponse])
+@router.get("/admin/all", response_model=PaginatedResponse[WorkspaceWithMemberCount])
 async def get_all_workspaces(
+    page: int = Query(1, ge=1, description="Page number (starting from 1)"),
+    limit: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
+    sort: str = Query('created_at', description="Field to sort by (name, created_at, member_count)"),
+    order: SortOrder = Query(SortOrder.DESC, description="Sort order"),
+    search: Optional[str] = Query(None, description="Search workspaces by name or slug"),
     current_user: TokenData = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Get all workspaces (admin only)"""
+    """Get all workspaces with member counts (admin only)"""
     # Verify admin access
     verify_workspace_admin_access(current_user)
     
-    workspaces = db.query(Workspace).all()
-    return workspaces
+    # Build the base query with member count
+    query = db.query(
+        Workspace.id,
+        Workspace.name,
+        Workspace.description,
+        Workspace.slug,
+        Workspace.created_at,
+        Workspace.updated_at,
+        func.coalesce(func.count(WorkspaceMember.user_id), 0).label('member_count')
+    ).outerjoin(
+        WorkspaceMember,
+        (Workspace.id == WorkspaceMember.workspace_id) & 
+        (WorkspaceMember.status == WorkspaceMemberStatus.ACTIVE)
+    ).group_by(
+        Workspace.id,
+        Workspace.name,
+        Workspace.description,
+        Workspace.slug,
+        Workspace.created_at,
+        Workspace.updated_at
+    )
+    
+    # Apply search filter if provided
+    if search:
+        search_pattern = f"%{search}%"
+        query = query.filter(
+            (Workspace.name.ilike(search_pattern)) | 
+            (Workspace.slug.ilike(search_pattern))
+        )
+    
+    # Get total count before pagination
+    total = query.count()
+    
+    # Apply sorting
+    if sort == 'name':
+        query = query.order_by(Workspace.name.asc() if order == SortOrder.ASC else Workspace.name.desc())
+    elif sort == 'member_count':
+        query = query.order_by(
+            func.count(WorkspaceMember.user_id).asc() if order == SortOrder.ASC 
+            else func.count(WorkspaceMember.user_id).desc()
+        )
+    else:  # Default to created_at
+        query = query.order_by(
+            Workspace.created_at.asc() if order == SortOrder.ASC 
+            else Workspace.created_at.desc()
+        )
+    
+    # Apply pagination
+    offset = (page - 1) * limit
+    results = query.offset(offset).limit(limit).all()
+    
+    # Convert results to WorkspaceWithMemberCount objects
+    workspaces = []
+    for row in results:
+        workspace_dict = {
+            'id': row.id,
+            'name': row.name,
+            'description': row.description,
+            'slug': row.slug,
+            'created_at': row.created_at,
+            'updated_at': row.updated_at,
+            'member_count': row.member_count
+        }
+        workspaces.append(WorkspaceWithMemberCount(**workspace_dict))
+    
+    # Create pagination metadata
+    meta = create_pagination_meta(total=total, page=page, per_page=limit)
+    
+    return PaginatedResponse(data=workspaces, meta=meta)
+
+
+@router.get("/admin/{workspace_id}/details", response_model=WorkspaceWithMemberCount)
+async def get_workspace_details(
+    workspace_id: int,
+    current_user: TokenData = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get single workspace with member count (admin only)"""
+    # Verify admin access
+    verify_workspace_admin_access(current_user)
+    
+    # Query workspace with member count using efficient JOIN
+    result = db.query(
+        Workspace.id,
+        Workspace.name,
+        Workspace.description,
+        Workspace.slug,
+        Workspace.created_at,
+        Workspace.updated_at,
+        func.count(WorkspaceMember.user_id.distinct()).label('member_count')
+    ).outerjoin(
+        WorkspaceMember,
+        (Workspace.id == WorkspaceMember.workspace_id) & 
+        (WorkspaceMember.status == WorkspaceMemberStatus.ACTIVE)
+    ).filter(
+        Workspace.id == workspace_id
+    ).group_by(
+        Workspace.id,
+        Workspace.name,
+        Workspace.description,
+        Workspace.slug,
+        Workspace.created_at,
+        Workspace.updated_at
+    ).first()
+    
+    # Check if workspace exists
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Workspace not found"
+        )
+    
+    # Convert result to WorkspaceWithMemberCount
+    workspace_dict = {
+        'id': result.id,
+        'name': result.name,
+        'description': result.description,
+        'slug': result.slug,
+        'created_at': result.created_at,
+        'updated_at': result.updated_at,
+        'member_count': result.member_count
+    }
+    
+    return WorkspaceWithMemberCount(**workspace_dict)
 
 
 @router.post("/admin", response_model=WorkspaceResponse)

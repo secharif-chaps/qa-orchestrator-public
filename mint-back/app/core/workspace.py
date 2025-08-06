@@ -33,41 +33,53 @@ class WorkspaceContext:
 
 
 def get_user_workspace(
-    user: TokenData = Depends(get_current_user),
+    current_user: TokenData = Depends(get_current_user),
     db: Session = Depends(get_db)
 ) -> WorkspaceContext:
     """
-    Get the current user's workspace context.
-    For now, we assume users belong to the chapsvision workspace (id=1).
-    In the future, this will be more sophisticated with workspace switching.
+    Get user's assigned workspace with JWT-first approach.
+    Priority: 1) JWT workspace claims, 2) Database lookup
     """
     
-    # For now, always use chapsvision workspace (id=1)
-    workspace = db.query(Workspace).filter(Workspace.id == 1).first()
-    if not workspace:
+    workspace_id = None
+    
+    # Priority 1: Use workspace from JWT token
+    if current_user.workspace_id:
+        workspace_id = current_user.workspace_id
+    else:
+        # Priority 2: Database lookup fallback
+        member = db.query(WorkspaceMember).filter(
+            WorkspaceMember.user_id == current_user.sub
+        ).first()
+        
+        if member:
+            workspace_id = member.workspace_id
+    
+    if not workspace_id:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Default workspace not found"
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"User {current_user.username} is not assigned to any workspace. Contact administrator."
         )
     
-    # Check if user is a member of this workspace
+    # Get workspace details
+    workspace = db.query(Workspace).filter(Workspace.id == workspace_id).first()
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Workspace {workspace_id} not found"
+        )
+    
+    # Get member details
     member = db.query(WorkspaceMember).filter(
-        WorkspaceMember.workspace_id == workspace.id,
-        WorkspaceMember.user_id == user.sub
+        WorkspaceMember.user_id == current_user.sub,
+        WorkspaceMember.workspace_id == workspace_id
     ).first()
     
     if not member:
-        # Fallback: Create a new workspace member automatically for ChapsVision workspace
-        member = WorkspaceMember(
-            workspace_id=workspace.id,
-            user_id=user.sub,
-            username=user.username or user.sub,
-            email=f"{user.username}@example.com" if user.username else f"{user.sub}@example.com",
-            status=WorkspaceMemberStatus.ACTIVE
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"User {current_user.username} is not a member of workspace {workspace.name}"
         )
-        db.add(member)
-        db.commit()
-        db.refresh(member)
     
     if member.status != WorkspaceMemberStatus.ACTIVE:
         raise HTTPException(
@@ -75,7 +87,7 @@ def get_user_workspace(
             detail="User access to workspace has been revoked"
         )
     
-    return WorkspaceContext(workspace, user, member)
+    return WorkspaceContext(workspace, current_user, member)
 
 
 def get_workspace_member_by_id(

@@ -100,12 +100,22 @@ class KeycloakService:
                 realm_access = payload.get("realm_access", {})
                 roles = realm_access.get("roles", ["user"])
                 
+                # Extract workspace information from JWT
+                workspace_id = payload.get("workspace_id")  # Custom claim
+                workspace_slug = payload.get("workspace_slug")  # Custom claim
+                
                 # Ensure admin role is properly assigned
                 if username == "admin":
                     if "admin" not in roles:
                         roles.append("admin")
                 
-                return TokenData(username=username, sub=sub, roles=roles)
+                return TokenData(
+                    username=username, 
+                    sub=sub, 
+                    roles=roles,
+                    workspace_id=workspace_id,
+                    workspace_slug=workspace_slug
+                )
                 
             except jwt.ExpiredSignatureError:
                 return None
@@ -126,7 +136,15 @@ class KeycloakService:
                     if username == "admin":
                         roles.append("admin")
                     
-                    return TokenData(username=username, sub=sub, roles=roles)
+                    # Note: Userinfo endpoint doesn't contain workspace claims
+                    # So we only get them from JWT decoding
+                    return TokenData(
+                        username=username, 
+                        sub=sub, 
+                        roles=roles,
+                        workspace_id=None,
+                        workspace_slug=None
+                    )
             except Exception:
                 pass
             
