@@ -45,11 +45,24 @@ def upgrade():
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now()),
         sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
         sa.ForeignKeyConstraint(['workspace_id'], ['workspaces.id'], ),
-        sa.PrimaryKeyConstraint('id')
+        sa.PrimaryKeyConstraint('id'),
+        sa.UniqueConstraint('workspace_id', 'user_id', name='unique_workspace_user')
     )
     op.create_index('ix_workspace_members_id', 'workspace_members', ['id'])
     op.create_index('ix_workspace_members_username', 'workspace_members', ['username'])
     op.create_index('ix_workspace_members_email', 'workspace_members', ['email'])
+    
+    # Additional workspace member indexes (from 2a48646e2a67)
+    op.create_index(
+        'idx_workspace_members_workspace_id_status',
+        'workspace_members',
+        ['workspace_id', 'status']
+    )
+    op.create_index(
+        'idx_workspace_members_user_id',
+        'workspace_members',
+        ['user_id']
+    )
     
     # Create companies table
     op.create_table('companies',
@@ -112,6 +125,28 @@ def upgrade():
     op.create_index('ix_users_username', 'users', ['username'], unique=True)
     op.create_index('ix_users_email', 'users', ['email'], unique=True)
     
+    # Create user_workspace_permissions table (from 2dd0b771bfc5)
+    op.create_table(
+        'user_workspace_permissions',
+        sa.Column('id', sa.Integer, primary_key=True, index=True),
+        sa.Column('user_id', sa.String, nullable=False, index=True),  # Keycloak user ID
+        sa.Column('workspace_id', sa.Integer, sa.ForeignKey('workspaces.id'), nullable=True, index=True),  # NULL = global permission
+        sa.Column('permission', sa.String, nullable=False, index=True),  # e.g., 'workspace.users.read'
+        sa.Column('granted_by', sa.String, nullable=True),  # Who granted this permission
+        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now()),
+        sa.Column('updated_at', sa.DateTime(timezone=True), onupdate=sa.func.now()),
+        
+        # Unique constraint: user can't have same permission twice for same workspace
+        sa.UniqueConstraint('user_id', 'workspace_id', 'permission', name='unique_user_workspace_permission')
+    )
+    
+    # Index for efficient permission lookups
+    op.create_index(
+        'idx_user_workspace_permissions_lookup',
+        'user_workspace_permissions',
+        ['user_id', 'workspace_id', 'permission']
+    )
+    
     # Insert default ChapsVision workspace
     op.execute("""
         INSERT INTO workspaces (id, name, description, slug, created_at)
@@ -123,6 +158,10 @@ def upgrade():
 
 
 def downgrade():
+    # Drop user_workspace_permissions table
+    op.drop_index('idx_user_workspace_permissions_lookup', 'user_workspace_permissions')
+    op.drop_table('user_workspace_permissions')
+    
     # Drop users table
     op.drop_index('ix_users_email', table_name='users')
     op.drop_index('ix_users_username', table_name='users')
@@ -147,6 +186,8 @@ def downgrade():
     op.drop_table('companies')
     
     # Drop workspace_members table
+    op.drop_index('idx_workspace_members_user_id', table_name='workspace_members')
+    op.drop_index('idx_workspace_members_workspace_id_status', table_name='workspace_members')
     op.drop_index('ix_workspace_members_email', table_name='workspace_members')
     op.drop_index('ix_workspace_members_username', table_name='workspace_members')
     op.drop_index('ix_workspace_members_id', table_name='workspace_members')
