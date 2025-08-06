@@ -3,8 +3,9 @@ FROM node:22-alpine as build-stage
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files and npm config
 COPY package*.json ./
+COPY .npmrc ./
 
 # Install dependencies
 RUN npm install
