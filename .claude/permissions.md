@@ -212,9 +212,12 @@ Use a hierarchical naming system:
 ```
 admin.workspaces     # Admin access to workspace management
 admin.users          # Admin access to user management
+workspace.read       # Permission to view workspace content
+workspace.write      # Permission to manage workspace users and settings
 company.create       # Permission to create companies
 company.edit         # Permission to edit companies
 company.delete       # Permission to delete companies
+company.view         # Permission to view company details
 profile.view         # Permission to view profiles
 profile.edit         # Permission to edit profiles
 ```
@@ -473,3 +476,53 @@ If you need to evolve from role-based to permission-based access:
 4. Test thoroughly with different user roles
 
 This system provides flexible, secure access control while maintaining good developer experience with Vue 3 and TypeScript.
+
+### Example 5: Team Management Page
+
+```vue
+<template>
+  <div class="team-management">
+    <h1>Team Management</h1>
+    <p>Manage users in your workspace</p>
+    
+    <!-- Team management requires workspace.write permission -->
+    <TeamUserModal 
+      v-if="showModal"
+      :user="editingUser"
+      @update-user="updateUser"
+      @create-user="createUser"
+    />
+  </div>
+</template>
+
+<route lang="yaml">
+meta:
+  permissions:
+    - workspace.write
+</route>
+
+<script setup lang="ts">
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+
+// This page is only accessible to users with workspace.write permission
+// The router guard will automatically redirect unauthorized users to /403
+</script>
+```
+
+## Current Permission Implementation
+
+### Workspace Permissions
+- **workspace.read**: Basic access to view workspace content
+- **workspace.write**: Full management access including:
+  - Create, edit, and disable workspace users
+  - Update user permissions
+  - Manage user names and details
+  - View team member list
+
+### Backend Integration
+The permission system is fully integrated with the backend API:
+- Team management endpoints require `workspace.write` permission
+- Permissions are synced between the database and Keycloak
+- User permissions can be dynamically updated through the team management interface
