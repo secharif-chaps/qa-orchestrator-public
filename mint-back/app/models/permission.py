@@ -18,6 +18,7 @@ class PermissionType(str, Enum):
     # Company permissions (workspace-specific)
     COMPANY_VIEW = "company.view"
     COMPANY_CREATE = "company.create"
+    COMPANY_UPDATE = "company.update"
     COMPANY_DELETE = "company.delete"
     
     # Admin permissions (global only)
