@@ -25,6 +25,7 @@ class Workspace(Base):
     # Relationships
     companies = relationship("Company", back_populates="workspace")
     members = relationship("WorkspaceMember", back_populates="workspace")
+    user_permissions = relationship("UserWorkspacePermission", back_populates="workspace")
 
 
 class WorkspaceMember(Base):
@@ -35,6 +36,8 @@ class WorkspaceMember(Base):
     user_id = Column(String, nullable=False)  # Keycloak user ID
     username = Column(String, nullable=False, index=True)
     email = Column(String, nullable=False, index=True)
+    first_name = Column(String(100), nullable=True)
+    last_name = Column(String(100), nullable=True)
     status = Column(SQLEnum(WorkspaceMemberStatus, name='workspacememberstatus', values_callable=lambda x: [e.value for e in x]), default=WorkspaceMemberStatus.ACTIVE)
     
     # Timestamps
