@@ -61,9 +61,15 @@ export const createCompany = async (company: CompanyCreate) => {
   return response
 }
 
-// PUT update resource
+// PUT update resource (full replacement)
 export const updateCompany = async (id: string, company: CompanyUpdate) => {
   const response = await apiClient.put<Company>(`/companies/${id}`, company)
+  return response
+}
+
+// PATCH update resource (partial update)
+export const patchCompany = async (id: string, company: Partial<CompanyUpdate>) => {
+  const response = await apiClient.patch<Company>(`/companies/${id}`, company)
   return response
 }
 
@@ -78,6 +84,8 @@ export const deleteCompany = async (id: string) => {
 - Use URLSearchParams for query parameters
 - Keep functions pure and focused
 - Handle different HTTP methods appropriately
+- Use PUT for full resource replacement
+- Use PATCH for partial resource updates
 
 ## Creating Queries
 

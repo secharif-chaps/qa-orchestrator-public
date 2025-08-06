@@ -15,6 +15,7 @@ This guide explains how the permission-based access control system works in the 
 ## Overview
 
 The permission system is built on top of:
+
 - **Keycloak**: Identity provider that manages roles and authentication
 - **Vue Router**: Route-level protection with navigation guards
 - **Pinia Store**: Reactive permission state management
@@ -38,11 +39,11 @@ Currently, permissions are derived directly from Keycloak roles:
 // In auth store
 const userRoles = computed<string[]>(() => {
   if (!user.value?.profile) return []
-  
+
   const token = jwtDecode(user.value?.access_token || '') as {
     realm_access: { roles: string[] }
   }
-  
+
   return token.realm_access?.roles || []
 })
 
@@ -98,14 +99,14 @@ The global navigation guard in `src/router/index.ts` handles permission checking
 // Check for required permissions if specified in route meta
 const requiredPermissions = to.meta.permissions as string[] | undefined
 if (requiredPermissions && requiredPermissions.length > 0) {
-  const hasPermission = requiredPermissions.some(permission => 
-    authStore.hasPermission(permission)
+  const hasPermission = requiredPermissions.some((permission) =>
+    authStore.hasPermission(permission),
   )
-  
+
   if (!hasPermission) {
     return next({
       path: '/403',
-      replace: true
+      replace: true,
     })
   }
 }
@@ -139,14 +140,10 @@ const userPermissions = authStore.userPermissions
 <template>
   <div>
     <!-- Conditional rendering based on permissions -->
-    <button v-if="canManageUsers">
-      Manage Users
-    </button>
-    
+    <button v-if="canManageUsers">Manage Users</button>
+
     <!-- Show user's permissions for debugging -->
-    <div v-if="userPermissions.length > 0">
-      Permissions: {{ userPermissions.join(', ') }}
-    </div>
+    <div v-if="userPermissions.length > 0">Permissions: {{ userPermissions.join(', ') }}</div>
   </div>
 </template>
 ```
@@ -165,15 +162,15 @@ const authStore = useAuthStore()
 // Reactive computed based on permissions
 const availableActions = computed(() => {
   const actions = []
-  
+
   if (authStore.hasPermission('admin.workspaces')) {
     actions.push('Manage Workspaces')
   }
-  
+
   if (authStore.hasPermission('admin.users')) {
     actions.push('Manage Users')
   }
-  
+
   return actions
 })
 </script>
@@ -184,12 +181,14 @@ const availableActions = computed(() => {
 The auth store provides several utility methods:
 
 ### Single Permission Check
+
 ```typescript
 hasPermission(permission: string): boolean
 // Example: authStore.hasPermission('admin.workspaces')
 ```
 
 ### Role-Based Checks
+
 ```typescript
 hasRole(role: string): boolean
 hasAnyRole(roles: string[]): boolean  // OR logic
@@ -197,6 +196,7 @@ hasAllRoles(roles: string[]): boolean // AND logic
 ```
 
 ### Available Properties
+
 ```typescript
 userRoles: string[]        // Keycloak roles
 userPermissions: string[]  // Computed permissions
@@ -218,8 +218,6 @@ company.create       # Permission to create companies
 company.edit         # Permission to edit companies
 company.delete       # Permission to delete companies
 company.view         # Permission to view company details
-profile.view         # Permission to view profiles
-profile.edit         # Permission to edit profiles
 ```
 
 ### 2. **Route Protection**
@@ -255,7 +253,7 @@ Hide UI elements users can't access:
       Delete Company
     </button>
   </div>
-  
+
   <!-- ❌ Bad: Show buttons user can't use -->
   <div>
     <button @click="editCompany">Edit Company</button>
@@ -298,7 +296,7 @@ Add debug information in development:
   <div class="admin-dashboard">
     <h1>Admin Dashboard</h1>
     <p>This page requires admin.dashboard permission</p>
-    
+
     <!-- Show current permissions for debugging -->
     <div class="text-sm text-secondary">
       Your permissions: {{ authStore.userPermissions.join(', ') }}
@@ -347,36 +345,18 @@ meta:
 <template>
   <div class="company-actions">
     <h2>Company: {{ company.name }}</h2>
-    
+
     <div class="actions">
       <!-- Show edit button only if user can edit -->
-      <button 
-        v-if="canEdit" 
-        @click="editCompany"
-        class="btn-primary"
-      >
-        Edit Company
-      </button>
-      
+      <button v-if="canEdit" @click="editCompany" class="btn-primary">Edit Company</button>
+
       <!-- Show delete button only if user can delete -->
-      <button 
-        v-if="canDelete" 
-        @click="deleteCompany"
-        class="btn-danger"
-      >
-        Delete Company
-      </button>
-      
+      <button v-if="canDelete" @click="deleteCompany" class="btn-danger">Delete Company</button>
+
       <!-- Show admin panel link only for admins -->
-      <router-link 
-        v-if="isAdmin" 
-        to="/admin"
-        class="btn-secondary"
-      >
-        Admin Panel
-      </router-link>
+      <router-link v-if="isAdmin" to="/admin" class="btn-secondary"> Admin Panel </router-link>
     </div>
-    
+
     <!-- No permissions message -->
     <div v-if="!canEdit && !canDelete" class="text-secondary">
       You have read-only access to this company.
@@ -416,18 +396,18 @@ const deleteCompany = () => {
     <ul>
       <li><router-link to="/">Dashboard</router-link></li>
       <li><router-link to="/companies">Companies</router-link></li>
-      
+
       <!-- Admin-only navigation items -->
       <template v-if="hasAdminAccess">
         <li><router-link to="/admin/workspaces">Workspaces</router-link></li>
         <li><router-link to="/admin/users">User Management</router-link></li>
       </template>
-      
+
       <!-- Content management for editors and admins -->
       <li v-if="canManageContent">
         <router-link to="/content">Content Management</router-link>
       </li>
-      
+
       <!-- Settings for all authenticated users -->
       <li><router-link to="/settings">Settings</router-link></li>
     </ul>
@@ -440,13 +420,9 @@ import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 
-const hasAdminAccess = computed(() => 
-  authStore.hasAnyRole(['admin.workspaces', 'admin.users'])
-)
+const hasAdminAccess = computed(() => authStore.hasAnyRole(['admin.workspaces', 'admin.users']))
 
-const canManageContent = computed(() => 
-  authStore.hasAnyRole(['content.edit', 'admin.content'])
-)
+const canManageContent = computed(() => authStore.hasAnyRole(['content.edit', 'admin.content']))
 </script>
 ```
 
@@ -484,9 +460,9 @@ This system provides flexible, secure access control while maintaining good deve
   <div class="team-management">
     <h1>Team Management</h1>
     <p>Manage users in your workspace</p>
-    
+
     <!-- Team management requires workspace.write permission -->
-    <TeamUserModal 
+    <TeamUserModal
       v-if="showModal"
       :user="editingUser"
       @update-user="updateUser"
@@ -514,6 +490,7 @@ const authStore = useAuthStore()
 ## Current Permission Implementation
 
 ### Workspace Permissions
+
 - **workspace.read**: Basic access to view workspace content
 - **workspace.write**: Full management access including:
   - Create, edit, and disable workspace users
@@ -522,7 +499,9 @@ const authStore = useAuthStore()
   - View team member list
 
 ### Backend Integration
+
 The permission system is fully integrated with the backend API:
+
 - Team management endpoints require `workspace.write` permission
 - Permissions are synced between the database and Keycloak
 - User permissions can be dynamically updated through the team management interface
