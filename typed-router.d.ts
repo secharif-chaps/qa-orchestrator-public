@@ -41,5 +41,6 @@ declare module 'vue-router/auto-routes' {
     '/settings/appearance': RouteRecordInfo<'/settings/appearance', '/settings/appearance', Record<never, never>, Record<never, never>>,
     '/settings/profile': RouteRecordInfo<'/settings/profile', '/settings/profile', Record<never, never>, Record<never, never>>,
     '/settings/security': RouteRecordInfo<'/settings/security', '/settings/security', Record<never, never>, Record<never, never>>,
+    '/team': RouteRecordInfo<'/team', '/team', Record<never, never>, Record<never, never>>,
   }
 }

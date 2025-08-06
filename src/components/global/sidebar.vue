@@ -74,7 +74,7 @@ import { useRoute } from 'vue-router'
 
 const { t } = useI18n()
 
-const { userRoles } = useAuthStore()
+const authStore = useAuthStore()
 
 const buttons = computed(() => {
   const baseButtons = [
@@ -87,10 +87,20 @@ const buttons = computed(() => {
     },
   ]
 
-  // Add workspace button if user has admin.workspaces role
-  if (userRoles.includes('admin.workspaces')) {
+  // Add team management button if user has workspace.read permission
+  if (authStore.hasPermission('workspace.read')) {
     baseButtons.push({
       icon: 'fa fa-users',
+      label: t('sidebar.team'),
+      active: true,
+      to: '/team',
+    })
+  }
+
+  // Add workspace button if user has admin.workspaces role
+  if (authStore.hasPermission('admin.workspaces')) {
+    baseButtons.push({
+      icon: 'fa fa-building',
       label: t('sidebar.workspaces'),
       active: true,
       to: '/workspaces',
