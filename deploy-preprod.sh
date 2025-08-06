@@ -6,7 +6,8 @@
 set -e  # Exit on error
 
 # Configuration
-DEPLOY_DIR="/home/deploy/mint-preprod"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DEPLOY_DIR="$SCRIPT_DIR"
 SERVER_IP="10.0.1.1"
 
 # Colors for output

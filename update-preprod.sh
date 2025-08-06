@@ -6,7 +6,8 @@
 set -e
 
 # Configuration
-DEPLOY_DIR="/home/deploy/mint-preprod"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DEPLOY_DIR="$SCRIPT_DIR"
 
 # Colors
 GREEN='\033[0;32m'
