@@ -260,7 +260,9 @@ export default {
     search: 'Search',
     cards: 'Cards',
     settings: 'Settings',
-    help: 'Help'
+    help: 'Help',
+    team: 'Team',
+    workspaces: 'Workspaces'
   },
   help: {
     title: 'Help',
@@ -330,7 +332,8 @@ export default {
     comingSoon: 'Coming soon',
     notFound: 'Not found',
     loading: 'Loading...',
-    noData: 'No data available'
+    noData: 'No data available',
+    save: 'Save'
   },
   appbar: {
     search: 'Search...',
@@ -466,6 +469,57 @@ export default {
     hierarchy: {
       title: 'Management Hierarchy',
       viewLinkedIn: 'View LinkedIn Profile'
+    },
+    email: 'Email',
+    emailPlaceholder: 'Enter email address',
+    emailCannotChange: 'Email cannot be changed after creation',
+    usernamePlaceholder: 'Enter username (optional)',
+    usernameCannotChange: 'Username cannot be changed after creation',
+    permissions: 'Permissions',
+    'permissions.description': 'Select the permissions for this team member',
+    edit: 'Edit',
+    disable: 'Disable',
+    loading: 'Loading team members...',
+    description: 'Manage team members and their permissions',
+    table: {
+      user: 'User',
+      permissions: 'Permissions',
+      created: 'Created',
+      status: 'Status',
+      actions: 'Actions'
+    },
+    create: {
+      button: 'Add Member'
+    },
+    edit: {
+      title: 'Edit Team Member',
+      description: 'Update team member information and permissions'
+    },
+    firstName: 'First Name',
+    firstNamePlaceholder: 'Enter first name',
+    lastName: 'Last Name',
+    lastNamePlaceholder: 'Enter last name',
+    username: 'Username',
+    search: {
+      placeholder: 'Search team members...'
+    },
+    pageSize: {
+      label: 'Items per page'
+    },
+    sort: {
+      label: 'Sort by',
+      created: 'Created Date',
+      name: 'Name',
+      email: 'Email',
+      username: 'Username',
+      asc: 'Ascending',
+      desc: 'Descending'
+    },
+    status: {
+      active: 'Active',
+      label: 'Status',
+      all: 'All',
+      disabled: 'Disabled'
     }
   },
   company: {
