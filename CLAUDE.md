@@ -4,10 +4,13 @@
 
 This project maintains detailed documentation in the `.claude/` folder that MUST be followed:
 
-- **Git Commits**: Always follow `.claude/git-commit-guide.md` for ALL commits
-- **Theme Guidelines**: Follow `.claude/theme.md` for styling
-- **API Patterns**: Use `.claude/api-patterns.md` for API integration
 - **Project Overview**: See `.claude/index.md` for setup and architecture
+- **Git Commits**: Always follow `.claude/git-commit-guide.md` for ALL commits
+- **Theme Guidelines**: Follow `.claude/theme.md` for styling and color system
+- **API Patterns**: Use `.claude/api-patterns.md` for API integration patterns
+- **Permission System**: Follow `.claude/permissions.md` for implementing access control
+- **Routing**: See `.claude/routing.md` for Vue Router patterns and file-based routing
+- **Test Users**: Use `.claude/test-users.md` for testing different permission levels
 
 ## Key Requirements
 
@@ -15,6 +18,8 @@ This project maintains detailed documentation in the `.claude/` folder that MUST
 2. **NEVER** commit without following the git commit format with gitmojis
 3. When in doubt, read the relevant `.claude/` documentation first
 4. Run tests before committing when available (yarn test:all)
+5. **ALWAYS** implement proper permission checks using resource-based composables
+6. Use test users from `.claude/test-users.md` to verify permission functionality
 
 ## Git Commit Format (Quick Reference)
 
@@ -34,6 +39,25 @@ Examples:
 - Vue Router for navigation
 - Tailwind CSS for styling
 - Workspace-based multi-tenancy
+- Keycloak for authentication & authorization
+- Resource-based permission system
+
+## Permission System
+
+This project implements a granular permission system:
+
+- **Resource-based composables**: Use `useCompanyPermissions()` for company-related features
+- **Route guards**: All pages have permission requirements defined in `<route>` blocks
+- **UI conditional rendering**: Hide/show elements based on user permissions
+- **Backend integration**: Permissions are synced between Keycloak and database
+
+### Available Permissions
+- `company.create`, `company.update`, `company.delete`, `company.view`
+- `workspace.read`, `workspace.write`
+- `admin.workspaces`
+
+### Testing Permissions
+Use test users defined in `.claude/test-users.md` to test different permission scenarios.
 
 ## Important Reminders
 

@@ -43,6 +43,12 @@
   </div>
 </template>
 
+<route lang="yaml">
+meta:
+  permissions:
+    - company.view
+</route>
+
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'

@@ -11,6 +11,7 @@
       </div>
 
       <button
+        v-if="canManageUsers"
         @click="$emit('create-user')"
         class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 transition-colors flex items-center gap-2"
       >
@@ -96,6 +97,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import type { WorkspaceUserQueryParams } from '@/types/team'
 
 defineProps<{
@@ -114,4 +117,9 @@ defineEmits<{
   'update:status': [value: WorkspaceUserQueryParams['status']]
   'update:page-size': [value: number]
 }>()
+
+const authStore = useAuthStore()
+
+// Only users with workspace.write can manage users (add, edit, disable)
+const canManageUsers = computed(() => authStore.hasPermission('workspace.write'))
 </script>

@@ -35,7 +35,11 @@
       </div>
 
       <!-- Create Button -->
-      <OButton type="primary" @click="$router.push('/search')">
+      <OButton 
+        v-if="canCreateCompany" 
+        type="primary" 
+        @click="$router.push('/search')"
+      >
         <i class="fas fa-plus"></i>
         {{ $t('company.list.create.title') }}
       </OButton>
@@ -45,6 +49,7 @@
 
 <script setup lang="ts">
 import { useCompaniesStore } from '@/stores/companies'
+import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { OButton } from '@owlint/feathers-vue'
 
 interface Props {
@@ -52,6 +57,7 @@ interface Props {
 }
 
 const companiesStore = useCompaniesStore()
+const { canCreateCompany } = useCompanyPermissions()
 
 defineProps<Props>()
 

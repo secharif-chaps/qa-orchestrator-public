@@ -71,6 +71,12 @@
   </div>
 </template>
 
+<route lang="yaml">
+meta:
+  permissions:
+    - company.create
+</route>
+
 <script lang="ts" setup>
 import { OButton, OIcon, OInput } from '@owlint/feathers-vue'
 import { computed, ref, watch } from 'vue'

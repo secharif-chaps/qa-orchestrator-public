@@ -8,7 +8,7 @@
       {{ description }}
     </p>
     <button
-      v-if="showCreateButton"
+      v-if="showCreateButton && canManageUsers"
       @click="$emit('create-user')"
       class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/80 transition-colors"
     >
@@ -26,6 +26,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
 const props = defineProps<{
   type: 'no-users' | 'no-results' | 'loading'
@@ -36,6 +37,11 @@ defineEmits<{
   'create-user': []
   'clear-search': []
 }>()
+
+const authStore = useAuthStore()
+
+// Only users with workspace.write can manage users (add, edit, disable)
+const canManageUsers = computed(() => authStore.hasPermission('workspace.write'))
 
 const title = computed(() => {
   switch (props.type) {

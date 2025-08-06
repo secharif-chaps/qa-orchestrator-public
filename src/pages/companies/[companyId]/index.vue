@@ -117,6 +117,12 @@
   </div>
 </template>
 
+<route lang="yaml">
+meta:
+  permissions:
+    - company.view
+</route>
+
 <script lang="ts" setup>
 import Chat from '@/components/company/Chat.vue'
 import InfoCard from '@/components/company/InfoCard.vue'

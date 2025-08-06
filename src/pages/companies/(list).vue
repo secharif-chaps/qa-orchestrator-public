@@ -68,6 +68,12 @@
   </div>
 </template>
 
+<route lang="yaml">
+meta:
+  permissions:
+    - company.view
+</route>
+
 <script setup lang="ts">
 import CompanyDeleteModal from '@/components/companies/CompanyDeleteModal.vue'
 import type { Company } from '@/types/company'

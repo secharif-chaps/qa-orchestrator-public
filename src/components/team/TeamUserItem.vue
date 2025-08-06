@@ -67,7 +67,7 @@
       </div>
 
       <div class="col-span-1">
-        <div class="flex items-center gap-2">
+        <div v-if="canManageUsers" class="flex items-center gap-2">
           <button
             @click="$emit('edit-user', user)"
             class="text-primary hover:text-primary/80 transition-colors p-2"
@@ -94,6 +94,9 @@
             <i class="fa fa-ban"></i>
           </button>
         </div>
+        <div v-else class="flex items-center justify-center">
+          <span class="text-xs text-secondary">{{ $t('team.readOnly', 'Read-only') }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -101,6 +104,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import type { WorkspaceUser } from '@/types/team'
 
 const props = defineProps<{
@@ -112,6 +116,11 @@ defineEmits<{
   'disable-user': [userId: number]
   'enable-user': [userId: number]
 }>()
+
+const authStore = useAuthStore()
+
+// Only users with workspace.write can manage users (add, edit, disable)
+const canManageUsers = computed(() => authStore.hasPermission('workspace.write'))
 
 const userDisplayName = computed(() => {
   return `${props.user.first_name} ${props.user.last_name}`.trim() || props.user.username

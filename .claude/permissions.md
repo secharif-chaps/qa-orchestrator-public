@@ -178,6 +178,8 @@ const availableActions = computed(() => {
 
 ## Permission Utilities
 
+### Auth Store Methods
+
 The auth store provides several utility methods:
 
 ### Single Permission Check
@@ -203,6 +205,35 @@ userPermissions: string[]  // Computed permissions
 isAuthenticated: boolean   // Authentication status
 ```
 
+### Resource-Based Composables
+
+For better organization, use resource-specific permission composables:
+
+#### Company Permissions Composable
+
+```typescript
+import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+
+const {
+  canCreateCompany,
+  canEditCompany,
+  canDeleteCompany,
+  canViewCompany,
+  canManageCompanies,
+  hasAnyCompanyAccess
+} = useCompanyPermissions()
+```
+
+**Individual permissions:**
+- `canCreateCompany` - Permission to create companies
+- `canEditCompany` - Permission to edit companies  
+- `canDeleteCompany` - Permission to delete companies
+- `canViewCompany` - Permission to view company details
+
+**Compound permissions:**
+- `canManageCompanies` - True if user can edit OR delete companies
+- `hasAnyCompanyAccess` - True if user has any company permission
+
 ## Best Practices
 
 ### 1. **Permission Naming Convention**
@@ -215,7 +246,7 @@ admin.users          # Admin access to user management
 workspace.read       # Permission to view workspace content
 workspace.write      # Permission to manage workspace users and settings
 company.create       # Permission to create companies
-company.edit         # Permission to edit companies
+company.update         # Permission to edit companies
 company.delete       # Permission to delete companies
 company.view         # Permission to view company details
 ```
@@ -246,7 +277,7 @@ Hide UI elements users can't access:
 <template>
   <!-- ✅ Good: Hide actions user can't perform -->
   <div>
-    <button v-if="authStore.hasPermission('company.edit')" @click="editCompany">
+    <button v-if="authStore.hasPermission('company.update')" @click="editCompany">
       Edit Company
     </button>
     <button v-if="authStore.hasPermission('company.delete')" @click="deleteCompany">
@@ -371,7 +402,7 @@ import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
 
 // Computed permission checks
-const canEdit = computed(() => authStore.hasPermission('company.edit'))
+const canEdit = computed(() => authStore.hasPermission('company.update'))
 const canDelete = computed(() => authStore.hasPermission('company.delete'))
 const isAdmin = computed(() => authStore.hasAnyRole(['admin.companies', 'admin.all']))
 
@@ -453,7 +484,64 @@ If you need to evolve from role-based to permission-based access:
 
 This system provides flexible, secure access control while maintaining good developer experience with Vue 3 and TypeScript.
 
-### Example 5: Team Management Page
+### Example 5: Company Permissions with Composable
+
+```vue
+<template>
+  <div class="company-header">
+    <h1>Companies</h1>
+    
+    <!-- Search button - only visible if user can create companies -->
+    <router-link v-if="canCreateCompany" to="/search" class="btn-primary">
+      <i class="fas fa-plus"></i>
+      Create Company
+    </router-link>
+    
+    <!-- Company actions for individual companies -->
+    <div v-for="company in companies" :key="company.id" class="company-item">
+      <h3>{{ company.name }}</h3>
+      
+      <div class="company-actions">
+        <button v-if="canEditCompany" @click="editCompany(company.id)">
+          Edit
+        </button>
+        <button v-if="canDeleteCompany" @click="deleteCompany(company.id)">
+          Delete
+        </button>
+      </div>
+      
+      <!-- Show message if user has no management permissions -->
+      <p v-if="!canManageCompanies" class="text-secondary">
+        Read-only access
+      </p>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+
+// Get all company permissions with one import
+const {
+  canCreateCompany,
+  canEditCompany,
+  canDeleteCompany,
+  canManageCompanies
+} = useCompanyPermissions()
+
+const companies = ref([]) // Your company data
+
+const editCompany = (id: string) => {
+  // Edit logic
+}
+
+const deleteCompany = (id: string) => {
+  // Delete logic
+}
+</script>
+```
+
+### Example 6: Team Management Page
 
 ```vue
 <template>
