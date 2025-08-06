@@ -1,0 +1,70 @@
+# Claude Code Configuration
+
+## Docker Compose Commands
+
+This project uses different Docker Compose files for different environments:
+
+### Development Environment
+- **File**: `docker-compose.dev.yml`  
+- **Commands**: Use `-f docker-compose.dev.yml` flag
+- **Examples**:
+  ```bash
+  docker compose -f docker-compose.dev.yml ps
+  docker compose -f docker-compose.dev.yml up -d
+  docker compose -f docker-compose.dev.yml restart keycloak
+  docker compose -f docker-compose.dev.yml logs keycloak
+  ```
+
+### Production Environment  
+- **File**: `docker-compose.prod.yml`
+- **Commands**: Use `-f docker-compose.prod.yml` flag
+- **Examples**:
+  ```bash
+  docker compose -f docker-compose.prod.yml ps
+  docker compose -f docker-compose.prod.yml up -d
+  docker compose -f docker-compose.prod.yml restart
+  ```
+
+### Services Available
+- **backend**: FastAPI backend service (port 8000)
+- **frontend**: Nuxt.js frontend service (port 3000)
+- **keycloak**: Authentication service (port 8080)
+- **db**: PostgreSQL database service (port 5432)
+
+**Note**: Always specify the compose file with `-f` flag to avoid "no configuration file provided" errors.
+
+## Database Migrations
+
+### Creating Migrations
+Always create migrations from within the Docker container:
+```bash
+docker compose -f docker-compose.dev.yml exec backend alembic revision -m "description"
+```
+
+### Applying Migrations
+```bash
+docker compose -f docker-compose.dev.yml exec backend alembic upgrade head
+```
+
+### Checking Migration Status
+```bash
+docker compose -f docker-compose.dev.yml exec backend alembic current
+```
+
+**Important**: Never run alembic commands locally - the database host is configured as 'db' which only resolves inside Docker network.
+
+## Backend Development
+
+### Running Python Scripts
+To run Python scripts that need database access:
+```bash
+docker compose -f docker-compose.dev.yml exec backend python script_name.py
+```
+
+### Testing Endpoints
+The backend API is available at `http://localhost:8000/api/v1/`
+
+### Common Commands
+- Check logs: `docker compose -f docker-compose.dev.yml logs backend`
+- Restart backend: `docker compose -f docker-compose.dev.yml restart backend`
+- Enter backend shell: `docker compose -f docker-compose.dev.yml exec backend bash`

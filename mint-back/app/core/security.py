@@ -3,10 +3,13 @@ Security utilities for authorization and access control
 """
 
 from typing import Optional
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
+from sqlalchemy.orm import Session
 from app.schemas.user import TokenData
 from app.models.company import Company
 from app.core.workspace import WorkspaceContext
+from app.database import get_db
+from app.services.permission import PermissionService
 
 
 class AuthorizationError(HTTPException):
@@ -126,6 +129,63 @@ def verify_workspace_admin_access(current_user: TokenData) -> TokenData:
         raise AuthorizationError("Workspace admin access required (admin.workspaces role)")
     
     return current_user
+
+
+def verify_workspace_permission(current_user: TokenData, workspace_id: int, permission: str, db: Session = None) -> TokenData:
+    """
+    Verify that the current user has a specific permission for a workspace
+    Uses both JWT token and database permissions
+    
+    Args:
+        current_user: Current authenticated user
+        workspace_id: ID of the workspace to check permission for
+        permission: Required permission (e.g., 'workspace.manage', 'workspace.users.read')
+        db: Database session (optional, for database permission check)
+        
+    Returns:
+        TokenData if user has permission
+        
+    Raises:
+        AuthorizationError: If user doesn't have the required permission
+    """
+    # First check JWT token permissions (backward compatibility)
+    jwt_has_permission = False
+    if current_user.roles:
+        # Check for exact permission match
+        if permission in current_user.roles:
+            jwt_has_permission = True
+        # Check for admin permissions (global)
+        elif permission.startswith('workspace.') and 'admin.workspaces' in current_user.roles:
+            jwt_has_permission = True
+        # Legacy role mapping
+        elif permission == "workspace.write" and "workspace.write" in current_user.roles:
+            jwt_has_permission = True
+    
+    # If we have a database session, also check database permissions
+    db_has_permission = False
+    if db is not None and current_user.sub:
+        permission_service = PermissionService(db)
+        
+        # Check for exact permission
+        if permission_service.has_permission(current_user.sub, permission, workspace_id):
+            db_has_permission = True
+        
+        # Check for admin permissions (global)
+        elif permission.startswith('workspace.') and permission_service.has_permission(current_user.sub, "admin.workspaces"):
+            db_has_permission = True
+    
+    # User has permission if either JWT or database grants it
+    if jwt_has_permission or db_has_permission:
+        return current_user
+    
+    raise AuthorizationError(f"Permission denied: {permission} required for workspace {workspace_id}")
+
+
+def verify_workspace_permission_with_db(current_user: TokenData, workspace_id: int, permission: str, db: Session) -> TokenData:
+    """
+    Wrapper for verify_workspace_permission that ensures database session is provided
+    """
+    return verify_workspace_permission(current_user, workspace_id, permission, db)
 
 
 def verify_user_or_admin_access(resource_owner: str, current_user: TokenData) -> TokenData:

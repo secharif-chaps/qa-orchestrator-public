@@ -321,6 +321,140 @@ class KeycloakAdminService:
         except Exception as e:
             logger.error(f"Error counting users: {e}")
             return 0
+    
+    async def get_realm_roles(self) -> List[Dict[str, Any]]:
+        """Get all realm roles"""
+        try:
+            response = await self._make_admin_request("GET", "/roles")
+            
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logger.error(f"Failed to get realm roles: {response.status_code} - {response.text}")
+                return []
+                
+        except Exception as e:
+            logger.error(f"Error getting realm roles: {e}")
+            return []
+    
+    async def get_user_realm_roles(self, user_id: str) -> List[Dict[str, Any]]:
+        """Get realm roles assigned to a user"""
+        try:
+            response = await self._make_admin_request("GET", f"/users/{user_id}/role-mappings/realm")
+            
+            if response.status_code == 200:
+                return response.json()
+            elif response.status_code == 404:
+                return []
+            else:
+                logger.error(f"Failed to get user roles: {response.status_code} - {response.text}")
+                return []
+                
+        except Exception as e:
+            logger.error(f"Error getting user roles: {e}")
+            return []
+    
+    async def assign_realm_roles_to_user(self, user_id: str, roles: List[Dict[str, Any]]) -> bool:
+        """Assign realm roles to a user"""
+        try:
+            response = await self._make_admin_request("POST", f"/users/{user_id}/role-mappings/realm", roles)
+            
+            if response.status_code == 204:
+                return True
+            elif response.status_code == 404:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User not found"
+                )
+            else:
+                logger.error(f"Failed to assign roles: {response.status_code} - {response.text}")
+                return False
+                
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Error assigning roles: {e}")
+            return False
+    
+    async def remove_realm_roles_from_user(self, user_id: str, roles: List[Dict[str, Any]]) -> bool:
+        """Remove realm roles from a user"""
+        try:
+            response = await self._make_admin_request("DELETE", f"/users/{user_id}/role-mappings/realm", roles)
+            
+            if response.status_code == 204:
+                return True
+            elif response.status_code == 404:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User not found"
+                )
+            else:
+                logger.error(f"Failed to remove roles: {response.status_code} - {response.text}")
+                return False
+                
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Error removing roles: {e}")
+            return False
+    
+    async def sync_user_realm_roles(self, user_id: str, target_roles: List[str]) -> bool:
+        """
+        Sync user realm roles to match target roles list
+        This will add missing roles and remove extra roles
+        
+        Args:
+            user_id: Keycloak user ID
+            target_roles: List of role names that the user should have
+        
+        Returns:
+            True if sync was successful, False otherwise
+        """
+        try:
+            # Get all available realm roles
+            all_realm_roles = await self.get_realm_roles()
+            role_name_to_obj = {role['name']: role for role in all_realm_roles}
+            
+            # Get current user roles
+            current_user_roles = await self.get_user_realm_roles(user_id)
+            current_role_names = {role['name'] for role in current_user_roles}
+            
+            target_role_names = set(target_roles)
+            
+            # Determine roles to add and remove
+            roles_to_add = target_role_names - current_role_names
+            roles_to_remove = current_role_names - target_role_names
+            
+            success = True
+            
+            # Add missing roles
+            if roles_to_add:
+                roles_to_add_objs = []
+                for role_name in roles_to_add:
+                    if role_name in role_name_to_obj:
+                        roles_to_add_objs.append(role_name_to_obj[role_name])
+                    else:
+                        logger.warning(f"Role '{role_name}' not found in realm")
+                
+                if roles_to_add_objs:
+                    if not await self.assign_realm_roles_to_user(user_id, roles_to_add_objs):
+                        success = False
+            
+            # Remove extra roles
+            if roles_to_remove:
+                roles_to_remove_objs = [role for role in current_user_roles if role['name'] in roles_to_remove]
+                if roles_to_remove_objs:
+                    if not await self.remove_realm_roles_from_user(user_id, roles_to_remove_objs):
+                        success = False
+            
+            if success:
+                logger.info(f"Successfully synced roles for user {user_id}: +{len(roles_to_add)}, -{len(roles_to_remove)}")
+            
+            return success
+            
+        except Exception as e:
+            logger.error(f"Error syncing user roles: {e}")
+            return False
 
 
 # Global instance
