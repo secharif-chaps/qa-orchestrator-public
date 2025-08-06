@@ -1,0 +1,99 @@
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: mint_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/db/initdb.d:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mint-network
+
+  # FastAPI Backend
+  backend:
+    build: 
+      context: ./mint-back
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-postgres}@db:5432/mint_db
+      KEYCLOAK_SERVER_URL: http://keycloak:8080
+      KEYCLOAK_REALM: mint-dev
+      KEYCLOAK_CLIENT_ID: mint-back
+      KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET:-}
+      KEYCLOAK_ADMIN_USERNAME: admin
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      CORS_ORIGIN: http://${SERVER_IP:-10.0.1.1}
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+    networks:
+      - mint-network
+
+  # Keycloak for Authentication
+  keycloak:
+    image: keycloak/keycloak:26.3
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_DB: postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+      KC_PROXY: edge
+    command: start --import-realm
+    volumes:
+      - ./docker/keycloak/realm-mint-dev.json:/opt/keycloak/data/import/realm-mint-dev.json
+    depends_on:
+      - db
+    networks:
+      - mint-network
+
+  # Vue Frontend
+  frontend:
+    build:
+      context: ../mint-front
+    restart: always
+    environment:
+      VITE_API_URL: http://${SERVER_IP:-10.0.1.1}/api
+      VITE_KEYCLOAK_URL: http://${SERVER_IP:-10.0.1.1}/auth
+      VITE_KEYCLOAK_REALM: mint-dev
+      VITE_KEYCLOAK_CLIENT_ID: mint-front
+    networks:
+      - mint-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx-preprod.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - keycloak
+      - frontend
+    networks:
+      - mint-network
+
+volumes:
+  postgres_data:
+
+networks:
+  mint-network:
+    driver: bridge
