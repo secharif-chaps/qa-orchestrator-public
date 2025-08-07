@@ -1,7 +1,7 @@
 """Add first_name and last_name to workspace_members
 
 Revision ID: 4af8b7ae794b
-Revises: 15232be66651
+Revises: 001
 Create Date: 2025-08-06 08:38:02.596251
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '4af8b7ae794b'
-down_revision = '15232be66651'
+down_revision = '001'
 branch_labels = None
 depends_on = None
 
