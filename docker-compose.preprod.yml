@@ -55,10 +55,8 @@ services:
       KC_HOSTNAME_STRICT_HTTPS: false
       KC_HTTP_ENABLED: true
       KC_PROXY: edge
-      KC_HTTP_RELATIVE_PATH: /auth
-      KC_HOSTNAME_PATH: /auth
-      KC_HOSTNAME_URL: http://${SERVER_IP:-10.0.1.2}/auth
-    command: start --import-realm --http-relative-path=/auth
+      KC_HOSTNAME_URL: http://${SERVER_IP:-10.0.1.2}
+    command: start --import-realm
     volumes:
       - ./docker/keycloak/realm-mint-dev.json:/opt/keycloak/data/import/realm-mint-dev.json
     depends_on:

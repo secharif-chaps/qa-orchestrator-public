@@ -120,6 +120,12 @@
         "clientRole": false
       },
       {
+        "name": "company.update",
+        "description": "Update companies in user's workspace",
+        "composite": false,
+        "clientRole": false
+      },
+      {
         "name": "company.delete",
         "description": "Delete companies in user's workspace",
         "composite": false,
