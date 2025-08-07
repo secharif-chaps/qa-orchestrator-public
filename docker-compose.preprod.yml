@@ -73,7 +73,7 @@ services:
     restart: always
     environment:
       VITE_API_URL: http://${SERVER_IP:-10.0.1.2}/api
-      VITE_KEYCLOAK_URL: http://${SERVER_IP:-10.0.1.2}/auth
+      VITE_KEYCLOAK_URL: http://${SERVER_IP:-10.0.1.2}:8080
       VITE_KEYCLOAK_REALM: mint-dev
       VITE_KEYCLOAK_CLIENT_ID: mint-front
     networks:

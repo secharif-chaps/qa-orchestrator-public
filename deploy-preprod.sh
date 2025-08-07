@@ -70,7 +70,7 @@ export $(cat .env | grep -v '^#' | xargs)
 # Create frontend .env.production file with correct URLs
 echo -e "${YELLOW}Configuring frontend environment...${NC}"
 cat > ../mint-front/.env.production << EOF
-VITE_KEYCLOAK_URL=http://$SERVER_IP/auth
+VITE_KEYCLOAK_URL=http://$SERVER_IP:8080
 VITE_KEYCLOAK_REALM=mint-dev
 VITE_KEYCLOAK_CLIENT_ID=mint-front
 
