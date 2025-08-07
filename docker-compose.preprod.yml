@@ -56,6 +56,10 @@ services:
       KC_HTTP_ENABLED: true
       KC_PROXY_HEADERS: xforwarded
       KC_HOSTNAME_URL: http://${SERVER_IP:-10.0.1.2}
+      # Explicitly unset deprecated options
+      KC_PROXY: ""
+      KC_HTTP_RELATIVE_PATH: ""
+      KC_HOSTNAME_PATH: ""
     command: start --import-realm
     volumes:
       - ./docker/keycloak/realm-mint-dev.json:/opt/keycloak/data/import/realm-mint-dev.json
