@@ -8,7 +8,7 @@ set -e  # Exit on error
 # Configuration
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DEPLOY_DIR="$SCRIPT_DIR"
-SERVER_IP="10.0.1.1"
+SERVER_IP="10.0.1.2"  # Updated to new server IP
 
 # Colors for output
 RED='\033[0;31m'
@@ -66,6 +66,18 @@ fi
 
 # Load environment variables
 export $(cat .env | grep -v '^#' | xargs)
+
+# Create frontend .env.production file with correct URLs
+echo -e "${YELLOW}Configuring frontend environment...${NC}"
+cat > ../mint-front/.env.production << EOF
+VITE_KEYCLOAK_URL=http://$SERVER_IP/auth
+VITE_KEYCLOAK_REALM=mint-dev
+VITE_KEYCLOAK_CLIENT_ID=mint-front
+
+VITE_BASE_URL=http://$SERVER_IP
+VITE_BACKEND_API=http://$SERVER_IP/api
+EOF
+echo -e "${GREEN}Frontend .env.production created with server IP: $SERVER_IP${NC}"
 
 # Build and deploy with docker-compose
 echo -e "${YELLOW}Building and deploying services...${NC}"

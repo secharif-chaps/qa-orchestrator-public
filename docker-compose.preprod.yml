@@ -34,7 +34,7 @@ services:
       KEYCLOAK_CLIENT_SECRET: ${KEYCLOAK_CLIENT_SECRET:-}
       KEYCLOAK_ADMIN_USERNAME: admin
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
-      CORS_ORIGIN: http://${SERVER_IP:-10.0.1.1}
+      CORS_ORIGIN: http://${SERVER_IP:-10.0.1.2}
       API_HOST: 0.0.0.0
       API_PORT: 8000
     networks:
@@ -55,7 +55,10 @@ services:
       KC_HOSTNAME_STRICT_HTTPS: false
       KC_HTTP_ENABLED: true
       KC_PROXY: edge
-    command: start --import-realm
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_HOSTNAME_PATH: /auth
+      KC_HOSTNAME_URL: http://${SERVER_IP:-10.0.1.2}/auth
+    command: start --import-realm --http-relative-path=/auth
     volumes:
       - ./docker/keycloak/realm-mint-dev.json:/opt/keycloak/data/import/realm-mint-dev.json
     depends_on:
@@ -69,8 +72,8 @@ services:
       context: ../mint-front
     restart: always
     environment:
-      VITE_API_URL: http://${SERVER_IP:-10.0.1.1}/api
-      VITE_KEYCLOAK_URL: http://${SERVER_IP:-10.0.1.1}/auth
+      VITE_API_URL: http://${SERVER_IP:-10.0.1.2}/api
+      VITE_KEYCLOAK_URL: http://${SERVER_IP:-10.0.1.2}/auth
       VITE_KEYCLOAK_REALM: mint-dev
       VITE_KEYCLOAK_CLIENT_ID: mint-front
     networks:
