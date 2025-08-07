@@ -13,6 +13,9 @@ RUN npm install
 # Copy project files
 COPY . .
 
+# If .env.production exists, use it for the build
+RUN if [ -f .env.production ]; then cp .env.production .env; fi
+
 # Build the app
 RUN npm run build-only
 
