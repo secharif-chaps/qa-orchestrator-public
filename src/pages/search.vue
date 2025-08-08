@@ -2,16 +2,47 @@
   <div class="max-w-4xl mx-auto space-y-6" data-cy="company-search-page">
     <!-- Page Header -->
     <div class="space-y-2">
-      <h1 class="text-3xl font-semibold">{{ $t('search.title') }}</h1>
-      <p class="text-secondary">{{ $t('search.companyIdentity') }}</p>
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-semibold">{{ $t('search.title') }}</h1>
+          <p class="text-secondary">{{ $t('search.companyIdentity') }}</p>
+        </div>
+
+        <!-- Token Counter -->
+        <div v-if="currentWorkspace" class="flex items-center gap-4">
+          <div class="text-right">
+            <TokenCounter
+              module="screen"
+              :token-count="screenTokenCount"
+              :is-enabled="screenModuleEnabled"
+              :is-loading="tokenDataLoading || !currentWorkspace?.id"
+              :is-refreshing="isRefreshingTokens"
+              show-label
+              show-status
+              @refresh="refreshScreenTokens"
+            />
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Token Alerts -->
+    <InsufficientTokensAlert
+      v-if="showInsufficientTokenAlert"
+      module="screen"
+      :current-tokens="screenTokenCount"
+      :required-tokens="1"
+      @contact-admin="contactAdmin"
+      @refresh="refreshScreenTokens"
+      @dismiss="dismissTokenAlert"
+    />
 
     <!-- Search Form Card -->
     <div class="bg-bg1 rounded-lg p-6" :title="$t('search.companyIdentity')">
       <form @submit.prevent="startSearch" class="space-y-6">
         <!-- Form Fields -->
         <div class="space-y-4">
-          <OInput
+          <Input
             id="company"
             v-model="company"
             :placeholder="$t('search.fields.companyName.placeholder')"
@@ -20,9 +51,10 @@
             required
             :label="$t('search.fields.companyName.label')"
             icon="fas fa-building"
+            clearable
           />
 
-          <OInput
+          <Input
             id="website"
             v-model="website"
             :placeholder="$t('search.fields.website.placeholder')"
@@ -31,6 +63,7 @@
             required
             :label="$t('search.fields.website.label')"
             icon="fas fa-globe"
+            clearable
           />
         </div>
 
@@ -62,7 +95,7 @@
             type="primary"
             icon="fas fa-search"
             :loading="mutationLoading"
-            :disabled="mutationLoading || !isFormValid"
+            :disabled="mutationLoading || !isFormValid || !canPerformSearch"
             @click="submit"
           />
         </div>
@@ -78,13 +111,22 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import { OButton, OIcon, OInput } from '@owlint/feathers-vue'
+import { OButton, OIcon } from '@owlint/feathers-vue'
+import Input from '@/components/ui/Input.vue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { useQuery } from '@pinia/colada'
 import { useCreateCompany } from '@/mutations/companies'
+import { currentWorkspaceQuery } from '@/queries/workspace'
+import { moduleTokensQuery } from '@/queries/tokens'
+import { InsufficientTokensError } from '@/api/client'
+import type { ModuleName } from '@/types/tokens'
+import TokenCounter from '@/components/tokens/TokenCounter.vue'
+import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
 
 const { t } = useI18n()
+const router = useRouter()
 
 const company = ref('')
 const website = ref('')
@@ -92,6 +134,49 @@ const companyError = ref('')
 const websiteError = ref('')
 
 const { isLoading: mutationLoading, mutateAsync } = useCreateCompany()
+
+// Token validation with real backend integration
+const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
+
+// Query for screen module tokens
+const {
+  data: screenTokenData,
+  isLoading: tokenDataLoading,
+  refetch: refetchTokens,
+} = useQuery(
+  moduleTokensQuery,
+  () => ({
+    workspaceId: currentWorkspace.value?.id || 0,
+    module: 'screen' as ModuleName,
+  }),
+  {
+    enabled: computed(() => !!currentWorkspace.value?.id),
+  },
+)
+
+// Computed properties based on real token data
+const screenTokenCount = computed(() => screenTokenData.value?.token_count ?? 0)
+const screenModuleEnabled = computed(() => screenTokenData.value?.enabled ?? false)
+
+const canPerformSearch = computed(() => {
+  // Don't allow search if workspace or token data is not loaded yet
+  if (!currentWorkspace.value?.id || tokenDataLoading.value) {
+    return false
+  }
+  return screenModuleEnabled.value && screenTokenCount.value > 0
+})
+
+const showInsufficientTokenAlert = computed(() => {
+  // Don't show alert if data is still loading
+  if (!currentWorkspace.value?.id || tokenDataLoading.value) {
+    return false
+  }
+  return screenModuleEnabled.value && screenTokenCount.value === 0 && !showTokenAlert.value
+})
+
+// Token alert state
+const showTokenAlert = ref(false)
+const isRefreshingTokens = ref(false)
 
 // Computed property to check if there are any validation errors or missing required fields
 const hasErrors = computed(() => {
@@ -149,10 +234,48 @@ const resetData = () => {
   websiteError.value = ''
 }
 
-const router = useRouter()
+// Token methods
+const refreshScreenTokens = async () => {
+  isRefreshingTokens.value = true
+  try {
+    await refetchTokens()
+  } finally {
+    isRefreshingTokens.value = false
+  }
+}
+
+const contactAdmin = () => {
+  // This would typically open a modal or redirect to admin contact
+  console.log('Contact admin for token refill')
+}
+
+const dismissTokenAlert = () => {
+  showTokenAlert.value = true
+}
 
 // Handle the search and redirection as soon as we get the company name
 const submit = async () => {
+  // Check if workspace data is loaded
+  if (!currentWorkspace.value?.id) {
+    companyError.value = 'Loading workspace data, please wait...'
+    return
+  }
+
+  // Check if token data is still loading
+  if (tokenDataLoading.value) {
+    companyError.value = 'Loading token information, please wait...'
+    return
+  }
+
+  // Check token availability
+  if (!canPerformSearch.value) {
+    if (!screenModuleEnabled.value) {
+      companyError.value = 'Screen module is disabled. Please contact your administrator.'
+    } else {
+      companyError.value = `Insufficient tokens to perform company search. You have ${screenTokenCount.value} tokens but need at least 1.`
+    }
+    return
+  }
   // Validate inputs before proceeding
   console.log('startSearch', company.value, website.value)
 
@@ -180,6 +303,14 @@ const submit = async () => {
   } catch (error: any) {
     // Handle any unexpected errors during the search process
     console.error('Error during search:', error)
+
+    // Handle insufficient tokens error
+    if (error instanceof InsufficientTokensError) {
+      companyError.value = `Insufficient tokens: ${error.message}`
+      // Refresh token data to get current counts
+      await refreshScreenTokens()
+      return
+    }
 
     // Display user-friendly error message
     if (error?.message) {

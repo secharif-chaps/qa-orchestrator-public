@@ -10,10 +10,13 @@ const router = createRouter({
 // Define public routes that don't require authentication
 const publicRoutes = ['/login', '/auth/callback', '/auth/silent-callback', '/403']
 
+// Token validation is handled at component level rather than route level
+
 // Check if a route is public
 const isPublicRoute = (path: string): boolean => {
   return publicRoutes.some((route) => path.startsWith(route))
 }
+
 
 // Global navigation guard
 router.beforeEach(async (to, from, next) => {
@@ -73,7 +76,11 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  // User is authenticated and has required permissions, allow access
+  // Note: Token validation is primarily handled at component level
+  // Router-level token validation is disabled to avoid issues with composables in guards
+  // The search page and other components will handle token validation directly
+
+  // User is authenticated and has required permissions and tokens, allow access
   next()
 })
 

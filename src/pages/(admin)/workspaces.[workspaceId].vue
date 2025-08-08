@@ -239,6 +239,9 @@
           </div>
         </div>
 
+        <!-- Token Management Section -->
+        <WorkspaceTokensManager :workspace-id="workspaceId" />
+
         <div class="bg-bg1 rounded-lg shadow-sm p-6">
           <h2 class="text-xl font-semibold mb-4">
             {{ $t('workspace.detail.settings', 'Settings') }}
@@ -337,6 +340,7 @@ import {
 } from '@/mutations/user'
 import type { WorkspaceUserCreate, WorkspaceUserListItem } from '@/types/user'
 import CreateUserModal from '@/components/user/CreateUserModal.vue'
+import WorkspaceTokensManager from '@/components/tokens/WorkspaceTokensManager.vue'
 
 const route = useRoute()
 

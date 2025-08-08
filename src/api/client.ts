@@ -46,6 +46,11 @@ class ApiClient {
     }
 
     if (!response.ok) {
+      if (response.status === 402) {
+        // Handle insufficient tokens error with detailed response
+        const errorData = await response.json().catch(() => ({}))
+        throw new InsufficientTokensError(errorData)
+      }
       throw new ApiError(`HTTP ${response.status}: ${response.statusText}`, response.status)
     }
 
@@ -94,5 +99,20 @@ class ApiError extends Error {
   }
 }
 
+class InsufficientTokensError extends Error {
+  public readonly currentTokens: number
+  public readonly requiredTokens: number
+  public readonly module: string
+
+  constructor(data: any) {
+    const message = data.message || 'Insufficient tokens for this operation'
+    super(message)
+    this.name = 'InsufficientTokensError'
+    this.currentTokens = data.current_tokens || 0
+    this.requiredTokens = data.required_tokens || 1
+    this.module = data.module || 'unknown'
+  }
+}
+
 export const apiClient = new ApiClient(API_BASE_URL)
-export { ApiError }
+export { ApiError, InsufficientTokensError }

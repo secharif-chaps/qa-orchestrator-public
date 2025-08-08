@@ -1,0 +1,109 @@
+import { ref } from 'vue'
+import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
+import { updateWorkspaceModules, addModuleTokens, toggleModule } from '@/api/tokens'
+import type { ModuleName, TokenUpdateRequest, AddTokensRequest } from '@/types/tokens'
+import { TOKEN_QUERY_KEYS } from '@/queries/tokens'
+import { toast } from '@/utils/toast'
+
+// Update workspace modules configuration
+export const useUpdateWorkspaceModules = defineMutation(() => {
+  const workspaceId = ref<number | null>(null)
+  const queryCache = useQueryCache()
+
+  const { mutate, ...mutation } = useMutation({
+    mutation: ({ workspaceId, updates }: { workspaceId: number; updates: Record<ModuleName, TokenUpdateRequest> }) =>
+      updateWorkspaceModules(workspaceId, updates),
+    onSuccess: (response, { workspaceId }) => {
+      toast.success('Module configuration updated successfully!')
+      
+      // Invalidate all token queries for this workspace
+      queryCache.invalidateQueries({ key: TOKEN_QUERY_KEYS.workspaceModules(workspaceId) })
+      queryCache.invalidateQueries({ key: TOKEN_QUERY_KEYS.root })
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.message || 'Failed to update module configuration'
+      toast.error(errorMessage)
+    },
+  })
+
+  return {
+    ...mutation,
+    workspaceId,
+    updateModules: mutate,
+  }
+})
+
+// Add tokens to a specific module
+export const useAddModuleTokens = defineMutation(() => {
+  const workspaceId = ref<number | null>(null)
+  const module = ref<ModuleName | null>(null)
+  const tokensToAdd = ref<number>(0)
+  const queryCache = useQueryCache()
+
+  const { mutate, ...mutation } = useMutation({
+    mutation: ({ workspaceId, module, data }: { workspaceId: number; module: ModuleName; data: AddTokensRequest }) =>
+      addModuleTokens(workspaceId, module, data),
+    onSuccess: (response, { workspaceId, module }) => {
+      toast.success(`Added ${response.token_count} tokens to ${module} module`)
+      
+      // Invalidate token queries
+      queryCache.invalidateQueries({ key: TOKEN_QUERY_KEYS.moduleTokens(workspaceId, module) })
+      queryCache.invalidateQueries({ key: TOKEN_QUERY_KEYS.workspaceModules(workspaceId) })
+      
+      // Reset form
+      tokensToAdd.value = 0
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.message || 'Failed to add tokens'
+      toast.error(errorMessage)
+    },
+  })
+
+  const addTokens = () => {
+    if (!workspaceId.value || !module.value || tokensToAdd.value <= 0) {
+      throw new Error('Workspace ID, module, and token amount are required')
+    }
+    
+    return mutate({
+      workspaceId: workspaceId.value,
+      module: module.value,
+      data: { tokens: tokensToAdd.value },
+    })
+  }
+
+  return {
+    ...mutation,
+    workspaceId,
+    module,
+    tokensToAdd,
+    addTokens,
+    mutate,
+  }
+})
+
+// Toggle module enabled status
+export const useToggleModule = defineMutation(() => {
+  const queryCache = useQueryCache()
+
+  const { mutate, ...mutation } = useMutation({
+    mutation: ({ workspaceId, module, enabled }: { workspaceId: number; module: ModuleName; enabled: boolean }) =>
+      toggleModule(workspaceId, module, enabled),
+    onSuccess: (response, { workspaceId, module, enabled }) => {
+      const action = enabled ? 'enabled' : 'disabled'
+      toast.success(`${module} module ${action} successfully`)
+      
+      // Invalidate token queries
+      queryCache.invalidateQueries({ key: TOKEN_QUERY_KEYS.moduleTokens(workspaceId, module) })
+      queryCache.invalidateQueries({ key: TOKEN_QUERY_KEYS.workspaceModules(workspaceId) })
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.message || 'Failed to toggle module'
+      toast.error(errorMessage)
+    },
+  })
+
+  return {
+    ...mutation,
+    toggleModule: mutate,
+  }
+})
