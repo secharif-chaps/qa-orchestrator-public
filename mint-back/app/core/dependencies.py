@@ -6,6 +6,7 @@ from typing import List, Optional
 from app.database import get_db
 from app.infrastructure.database.repositories.company_repository_impl import SQLAlchemyCompanyRepository
 from app.services.company import CompanyService
+from app.services.token_manager import TokenManager
 from app.infrastructure.n8n.client import N8nClient
 from app.services.auth import keycloak_service
 from app.schemas.user import TokenData
@@ -19,6 +20,9 @@ def get_company_service(
     n8n_client: N8nClient = Depends(get_n8n_client)
 ) -> CompanyService:
     return CompanyService(db=db, n8n_client=n8n_client)
+
+def get_token_manager(db: Session = Depends(get_db)) -> TokenManager:
+    return TokenManager(db=db)
 
 # Authentication dependencies
 security = HTTPBearer()

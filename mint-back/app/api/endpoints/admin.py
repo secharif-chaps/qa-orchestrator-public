@@ -6,10 +6,16 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.services.company import CompanyService
-from app.core.dependencies import get_company_service, get_current_user
-from app.core.security import verify_admin_access
+from app.services.token_manager import TokenManager
+from app.core.dependencies import get_company_service, get_current_user, get_token_manager
+from app.core.security import verify_admin_access, verify_workspace_admin_access
 from app.schemas.company import CompanyResponse
 from app.schemas.user import TokenData
+from app.schemas.module import (
+    WorkspaceModulesResponse, WorkspaceModuleResponse, ModuleUpdateRequest, 
+    AddTokensRequest, ModuleTokensResponse
+)
+from app.models.workspace import ModuleName
 
 router = APIRouter(
     prefix="/admin",
@@ -70,3 +76,139 @@ async def get_user_companies_admin(
     """Get companies for a specific user (admin only)"""
     verify_admin_access(current_user)
     return service.get_all_companies(username=username)
+
+
+# Module Management Endpoints
+
+@router.get("/workspaces/{workspace_id}/modules", response_model=WorkspaceModulesResponse)
+async def get_workspace_modules_admin(
+    workspace_id: int,
+    token_manager: TokenManager = Depends(get_token_manager),
+    current_user: TokenData = Depends(get_current_user)
+):
+    """Get workspace module configurations (admin only)"""
+    verify_workspace_admin_access(current_user)
+    
+    if not token_manager.validate_workspace_access(workspace_id):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Workspace {workspace_id} not found"
+        )
+    
+    modules = token_manager.get_all_workspace_modules(workspace_id)
+    module_responses = [
+        WorkspaceModuleResponse(
+            name=module.module_name,
+            enabled=module.enabled,
+            token_count=module.token_count,
+            created_at=module.created_at,
+            updated_at=module.updated_at
+        )
+        for module in modules
+    ]
+    
+    return WorkspaceModulesResponse(modules=module_responses)
+
+
+@router.put("/workspaces/{workspace_id}/modules", response_model=WorkspaceModulesResponse)
+async def update_workspace_modules_admin(
+    workspace_id: int,
+    updates: dict[ModuleName, ModuleUpdateRequest],
+    token_manager: TokenManager = Depends(get_token_manager),
+    current_user: TokenData = Depends(get_current_user)
+):
+    """Update module enablement and token counts (admin only)"""
+    verify_workspace_admin_access(current_user)
+    
+    if not token_manager.validate_workspace_access(workspace_id):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Workspace {workspace_id} not found"
+        )
+    
+    # Update each module
+    for module_name, update_request in updates.items():
+        token_manager.update_module_config(
+            workspace_id=workspace_id,
+            module_name=module_name,
+            enabled=update_request.enabled,
+            token_count=update_request.token_count
+        )
+    
+    # Return updated modules
+    modules = token_manager.get_all_workspace_modules(workspace_id)
+    module_responses = [
+        WorkspaceModuleResponse(
+            name=module.module_name,
+            enabled=module.enabled,
+            token_count=module.token_count,
+            created_at=module.created_at,
+            updated_at=module.updated_at
+        )
+        for module in modules
+    ]
+    
+    return WorkspaceModulesResponse(modules=module_responses)
+
+
+@router.post("/workspaces/{workspace_id}/modules/{module}/tokens", response_model=ModuleTokensResponse)
+async def add_module_tokens_admin(
+    workspace_id: int,
+    module: ModuleName,
+    request: AddTokensRequest,
+    token_manager: TokenManager = Depends(get_token_manager),
+    current_user: TokenData = Depends(get_current_user)
+):
+    """Add tokens to specific module (admin only)"""
+    verify_workspace_admin_access(current_user)
+    
+    if not token_manager.validate_workspace_access(workspace_id):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Workspace {workspace_id} not found"
+        )
+    
+    updated_module = token_manager.add_tokens(
+        workspace_id=workspace_id,
+        module_name=module,
+        tokens=request.tokens
+    )
+    
+    return ModuleTokensResponse(
+        module=updated_module.module_name,
+        token_count=updated_module.token_count,
+        enabled=updated_module.enabled
+    )
+
+
+@router.put("/workspaces/{workspace_id}/modules/{module}/toggle", response_model=ModuleTokensResponse)
+async def toggle_module_admin(
+    workspace_id: int,
+    module: ModuleName,
+    token_manager: TokenManager = Depends(get_token_manager),
+    current_user: TokenData = Depends(get_current_user)
+):
+    """Enable/disable module (admin only)"""
+    verify_workspace_admin_access(current_user)
+    
+    if not token_manager.validate_workspace_access(workspace_id):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Workspace {workspace_id} not found"
+        )
+    
+    current_module = token_manager.get_module_tokens(workspace_id, module)
+    if not current_module:
+        current_module = token_manager.get_or_create_module(workspace_id, module)
+    
+    updated_module = token_manager.update_module_config(
+        workspace_id=workspace_id,
+        module_name=module,
+        enabled=not current_module.enabled
+    )
+    
+    return ModuleTokensResponse(
+        module=updated_module.module_name,
+        token_count=updated_module.token_count,
+        enabled=updated_module.enabled
+    )

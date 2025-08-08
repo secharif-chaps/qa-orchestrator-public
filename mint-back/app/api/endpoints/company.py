@@ -6,8 +6,10 @@ from pydantic import ValidationError
 logger = logging.getLogger(__name__)
 
 from app.services.company import CompanyService
-from app.core.dependencies import get_company_service, get_current_user, get_n8n_client
+from app.services.token_manager import TokenManager
+from app.core.dependencies import get_company_service, get_current_user, get_n8n_client, get_token_manager
 from app.core.workspace import get_user_workspace, WorkspaceContext
+from app.models.workspace import ModuleName
 from app.core.security import verify_company_ownership, verify_company_workspace_access, verify_company_modify_permission, sanitize_input
 from app.schemas.company import (
     CompanyCreate, 
@@ -80,19 +82,29 @@ async def get_company_by_name(
 async def create_company(
     company_data: CompanyCreate,
     service: CompanyService = Depends(get_company_service),
+    token_manager: TokenManager = Depends(get_token_manager),
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
     """Create a new company"""
     print(f"🏢 POST /api/companies/ - START - User: {workspace_context.username}, Data: {company_data.name[:50]}...")
     
     try:
-        # Sanitize inputs
+        # Step 1: Consume token immediately (for 'screen' module - company creation/search/screening)
+        print(f"🪙 Checking and consuming token for screen module in workspace: {workspace_context.workspace_id}")
+        token_manager.consume_tokens(
+            workspace_id=workspace_context.workspace_id,
+            module_name=ModuleName.SCREEN,
+            tokens=1
+        )
+        print(f"✅ Token consumed successfully")
+        
+        # Step 2: Sanitize inputs
         print(f"🧹 Sanitizing inputs - Name: {company_data.name[:50]}, Website: {company_data.website[:50]}")
         sanitized_name = sanitize_input(company_data.name, max_length=100)
         sanitized_website = sanitize_input(company_data.website, max_length=255)
         print(f"✅ Sanitized - Name: {sanitized_name[:50]}, Website: {sanitized_website[:50]}")
         
-        # Use the authenticated user's username as the owner and link to their workspace
+        # Step 3: Create company using the authenticated user's username as the owner
         print(f"🔄 Calling service.create_company for authenticated user: {workspace_context.username} in workspace: {workspace_context.workspace_id}")
         result = service.create_company(
             name=sanitized_name,
@@ -105,12 +117,26 @@ async def create_company(
         
     except ValidationError as e:
         print(f"❌ Validation error: {str(e)}")
+        # Rollback token on validation failure
+        try:
+            token_manager.rollback_tokens(workspace_context.workspace_id, ModuleName.SCREEN, 1)
+            print(f"🔄 Token rolled back due to validation error")
+        except Exception as rollback_error:
+            logger.error(f"Failed to rollback token: {rollback_error}")
+        
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Validation error: {str(e)}"
         )
     except ValueError as e:
         print(f"❌ Value error: {str(e)}")
+        # Rollback token on value error
+        try:
+            token_manager.rollback_tokens(workspace_context.workspace_id, ModuleName.SCREEN, 1)
+            print(f"🔄 Token rolled back due to value error")
+        except Exception as rollback_error:
+            logger.error(f"Failed to rollback token: {rollback_error}")
+        
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Invalid input: {str(e)}"
@@ -118,6 +144,15 @@ async def create_company(
     except Exception as e:
         print(f"❌ Unexpected error creating company: {str(e)}")
         logger.error(f"Unexpected error in create_company: {str(e)}", exc_info=True)
+        
+        # Rollback token on any other failure (but skip token-related errors)
+        if not ("insufficient_tokens" in str(e) or "not enabled" in str(e)):
+            try:
+                token_manager.rollback_tokens(workspace_context.workspace_id, ModuleName.SCREEN, 1)
+                print(f"🔄 Token rolled back due to unexpected error")
+            except Exception as rollback_error:
+                logger.error(f"Failed to rollback token: {rollback_error}")
+        
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An internal server error occurred while creating the company"

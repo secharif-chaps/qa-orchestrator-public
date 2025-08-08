@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Enum as SQLEnum
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Enum as SQLEnum, UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from enum import Enum
@@ -8,6 +8,13 @@ from app.database import Base
 class WorkspaceMemberStatus(str, Enum):
     ACTIVE = "active"
     REVOKED = "revoked"
+
+
+class ModuleName(str, Enum):
+    SCREEN = "screen"
+    TARGET = "target"
+    EXPLORE = "explore"
+    STREAM = "stream"
 
 
 class Workspace(Base):
@@ -26,6 +33,7 @@ class Workspace(Base):
     companies = relationship("Company", back_populates="workspace")
     members = relationship("WorkspaceMember", back_populates="workspace")
     user_permissions = relationship("UserWorkspacePermission", back_populates="workspace")
+    modules = relationship("WorkspaceModule", back_populates="workspace")
 
 
 class WorkspaceMember(Base):
@@ -46,3 +54,25 @@ class WorkspaceMember(Base):
     
     # Relationships
     workspace = relationship("Workspace", back_populates="members")
+
+
+class WorkspaceModule(Base):
+    __tablename__ = "workspace_modules"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    workspace_id = Column(Integer, ForeignKey("workspaces.id"), nullable=False)
+    module_name = Column(SQLEnum(ModuleName, name='modulename', values_callable=lambda x: [e.value for e in x]), nullable=False)
+    enabled = Column(Boolean, default=False, nullable=False)
+    token_count = Column(Integer, default=0, nullable=False)
+    
+    # Timestamps
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    # Constraints
+    __table_args__ = (
+        UniqueConstraint('workspace_id', 'module_name', name='uq_workspace_modules_workspace_module'),
+    )
+    
+    # Relationships
+    workspace = relationship("Workspace", back_populates="modules")

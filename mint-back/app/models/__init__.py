@@ -1,7 +1,7 @@
 from .company import Company
 from .task import Task, TaskStatus, TaskType
 from .user import User
-from .workspace import Workspace, WorkspaceMember, WorkspaceMemberStatus
+from .workspace import Workspace, WorkspaceMember, WorkspaceMemberStatus, WorkspaceModule, ModuleName
 from .permission import UserWorkspacePermission, PermissionType
 
 __all__ = [
@@ -13,6 +13,8 @@ __all__ = [
     "Workspace",
     "WorkspaceMember",
     "WorkspaceMemberStatus",
+    "WorkspaceModule",
+    "ModuleName",
     "UserWorkspacePermission",
     "PermissionType"
 ]
