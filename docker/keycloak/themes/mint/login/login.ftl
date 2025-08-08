@@ -1,6 +1,6 @@
 <#import "template.ftl" as layout>
 
-<@layout.registrationLayout displayMessage=!messagesPerField.existsError('username','password') displayInfo=realm.password && realm.registrationAllowed && !registrationDisabled??; section>
+<@layout.registrationLayout displayMessage=true displayInfo=realm.password && realm.registrationAllowed && !registrationDisabled??; section>
     <#if section = "title">
         Sign in to your account
     <#elseif section = "form">
@@ -51,13 +51,16 @@
                                type="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>text</#if>" 
                                autofocus autocomplete="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>username</#if>"
                                aria-invalid="<#if messagesPerField.existsError('username','password')>true</#if>"
-                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
+                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 <#if messagesPerField.existsError('username','password')>outline-red-500<#else>outline-gray-300</#if> placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 <#if messagesPerField.existsError('username','password')>focus:outline-red-600<#else>focus:outline-indigo-600</#if> sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
                     <#else>
                         <input tabindex="1" id="username" name="username" value="${(login.username!'')}" 
                                type="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>text</#if>" 
                                autofocus autocomplete="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>username</#if>"
                                aria-invalid="<#if messagesPerField.existsError('username','password')>true</#if>"
-                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
+                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 <#if messagesPerField.existsError('username','password')>outline-red-500<#else>outline-gray-300</#if> placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 <#if messagesPerField.existsError('username','password')>focus:outline-red-600<#else>focus:outline-indigo-600</#if> sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
+                    </#if>
+                    <#if messagesPerField.existsError('username')>
+                        <p class="mt-2 text-sm text-red-600">${kcSanitize(messagesPerField.getFirstError('username'))?no_esc}</p>
                     </#if>
                 </div>
             </div>
@@ -79,7 +82,10 @@
                     <input tabindex="2" id="password" name="password" type="password" 
                            autocomplete="current-password" required
                            aria-invalid="<#if messagesPerField.existsError('username','password')>true</#if>"
-                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
+                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 <#if messagesPerField.existsError('username','password')>outline-red-500<#else>outline-gray-300</#if> placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 <#if messagesPerField.existsError('username','password')>focus:outline-red-600<#else>focus:outline-indigo-600</#if> sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
+                    <#if messagesPerField.existsError('password')>
+                        <p class="mt-2 text-sm text-red-600">${kcSanitize(messagesPerField.getFirstError('password'))?no_esc}</p>
+                    </#if>
                 </div>
             </div>
 
