@@ -60,7 +60,8 @@ services:
       KC_HOSTNAME_URL: http://${SERVER_IP:-10.0.1.2}/auth
     command: start --import-realm
     volumes:
-      - ./docker/keycloak/realm-mint-dev.json:/opt/keycloak/data/import/realm-mint-dev.json
+      - ./docker/keycloak/realm-mint-preprod.json:/opt/keycloak/data/import/realm-mint-preprod.json
+      - ./docker/keycloak/themes/mint:/opt/keycloak/themes/mint
     depends_on:
       - db
     networks:
