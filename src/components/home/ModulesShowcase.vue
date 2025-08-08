@@ -77,10 +77,7 @@
 
         <!-- Action Buttons -->
         <div class="mt-4">
-          <div
-            v-if="module.unlocked"
-            class="grid grid-cols-2 gap-2"
-          >
+          <div v-if="module.unlocked" class="grid grid-cols-2 gap-2">
             <RouterLink
               to="/search"
               class="bg-gradient-to-r from-primary to-purple-500 text-white py-2 px-3 rounded-lg font-medium text-center text-sm transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 transform hover:-translate-y-0.5 flex items-center justify-center"
@@ -116,7 +113,7 @@
     </div>
 
     <!-- Upgrade Section -->
-    <div class="text-center p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+    <!-- <div class="text-center p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
       <h3 class="font-semibold text-text-1 mb-2">Ready to unlock more potential?</h3>
       <p class="text-text-2 text-sm mb-4">
         Get access to all modules and supercharge your business intelligence workflow
@@ -125,7 +122,7 @@
         <i class="fa-solid fa-rocket mr-2"></i>
         Upgrade Plan
       </button>
-    </div>
+    </div> -->
   </div>
 </template>
 

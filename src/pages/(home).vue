@@ -30,7 +30,7 @@
       </div> -->
 
       <!-- Recent Companies Section -->
-      <!-- <div class="bg-bg1 border border-border-2 rounded-lg mb-8">
+      <div class="bg-bg1 border border-border-2 rounded-lg mb-8">
         <div class="px-6 py-4 border-b border-border-2">
           <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold">Recent Companies</h2>
@@ -42,17 +42,17 @@
               <i class="fas fa-arrow-right ml-1"></i>
             </RouterLink>
           </div>
-        </div> -->
+        </div>
 
-      <!-- Loading State -->
-      <!-- <div v-if="status === 'pending'" class="px-6 py-8">
+        <!-- Loading State -->
+        <div v-if="status === 'pending'" class="px-6 py-8">
           <div class="flex justify-center">
             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
-        </div> -->
+        </div>
 
-      <!-- Error State -->
-      <!-- <div v-else-if="status === 'error'" class="px-6 py-8">
+        <!-- Error State -->
+        <div v-else-if="status === 'error'" class="px-6 py-8">
           <div class="text-center">
             <i class="fas fa-exclamation-triangle text-red-400 text-2xl mb-2"></i>
             <p class="text-secondary">Unable to load recent companies</p>
@@ -63,10 +63,10 @@
               Try again
             </button>
           </div>
-        </div> -->
+        </div>
 
-      <!-- Companies Grid -->
-      <!-- <div v-else-if="recentCompanies && recentCompanies.length > 0" class="p-6">
+        <!-- Companies Grid -->
+        <div v-else-if="recentCompanies && recentCompanies.length > 0" class="p-6">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div
               v-for="company in recentCompanies"
@@ -98,10 +98,10 @@
               </div>
             </div>
           </div>
-        </div> -->
+        </div>
 
-      <!-- Empty State -->
-      <!-- <div v-else class="px-6 py-8 text-center">
+        <!-- Empty State -->
+        <div v-else class="px-6 py-8 text-center">
           <i class="fas fa-building text-secondary text-3xl mb-4"></i>
           <h3 class="text-lg font-medium mb-2">No companies yet</h3>
           <p class="text-secondary mb-4">Start by adding your first company to the database</p>
@@ -110,7 +110,7 @@
             Add Company
           </OButton>
         </div>
-      </div> -->
+      </div>
 
       <!-- Quick Tips -->
       <!-- <div
