@@ -147,6 +147,24 @@ def upgrade():
         ['user_id', 'workspace_id', 'permission']
     )
     
+    # Create modulename enum type
+    op.execute("CREATE TYPE modulename AS ENUM ('screen', 'target', 'explore', 'stream')")
+    
+    # Create workspace_modules table
+    op.create_table('workspace_modules',
+        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('workspace_id', sa.Integer(), nullable=False),
+        sa.Column('module_name', postgresql.ENUM('screen', 'target', 'explore', 'stream', name='modulename', create_type=False), nullable=False),
+        sa.Column('enabled', sa.Boolean(), nullable=False, default=False),
+        sa.Column('token_count', sa.Integer(), nullable=False, default=0),
+        sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.func.now()),
+        sa.Column('updated_at', sa.DateTime(timezone=True), onupdate=sa.func.now()),
+        sa.ForeignKeyConstraint(['workspace_id'], ['workspaces.id'], ),
+        sa.PrimaryKeyConstraint('id'),
+        sa.UniqueConstraint('workspace_id', 'module_name', name='uq_workspace_modules_workspace_module')
+    )
+    op.create_index('ix_workspace_modules_id', 'workspace_modules', ['id'])
+    
     # Insert default ChapsVision workspace
     op.execute("""
         INSERT INTO workspaces (id, name, description, slug, created_at)
@@ -158,6 +176,13 @@ def upgrade():
 
 
 def downgrade():
+    # Drop workspace_modules table
+    op.drop_index('ix_workspace_modules_id', table_name='workspace_modules')
+    op.drop_table('workspace_modules')
+    
+    # Drop modulename enum type
+    op.execute('DROP TYPE IF EXISTS modulename')
+    
     # Drop user_workspace_permissions table
     op.drop_index('idx_user_workspace_permissions_lookup', 'user_workspace_permissions')
     op.drop_table('user_workspace_permissions')
