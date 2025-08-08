@@ -66,3 +66,8 @@ export const getCurrentWorkspaceWithMembers = async (): Promise<WorkspaceWithMem
   const response = await apiClient.get<WorkspaceWithMembersResponse>('/workspace/current/with-members')
   return response
 }
+
+export const pickWorkspace = async (id: number): Promise<WorkspaceResponse> => {
+  const response = await apiClient.put<WorkspaceResponse>(`/workspace/admin/${id}/pick`)
+  return response
+}

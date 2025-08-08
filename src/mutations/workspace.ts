@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { createWorkspace, updateWorkspace, deleteWorkspace } from '@/api/workspace'
+import { createWorkspace, updateWorkspace, deleteWorkspace, pickWorkspace } from '@/api/workspace'
 import type { WorkspaceCreate, WorkspaceUpdate } from '@/types/workspace'
 import { WORKSPACE_QUERY_KEYS } from '@/queries/workspace'
 import { toast } from '@/utils/toast'
@@ -134,5 +134,35 @@ export const useDeleteWorkspace = defineMutation(() => {
   return {
     ...mutation,
     deleteWorkspace: mutate,
+  }
+})
+
+// Pick workspace mutation
+export const usePickWorkspace = defineMutation(() => {
+  const queryCache = useQueryCache()
+
+  const { mutate, ...mutation } = useMutation({
+    mutation: (id: number) => pickWorkspace(id),
+    onSuccess: (pickedWorkspace, id) => {
+      // Show success notification
+      toast.success(`Switched to workspace "${pickedWorkspace.name}"!`)
+
+      // Invalidate current workspace queries to refresh data
+      queryCache.invalidateQueries({ key: WORKSPACE_QUERY_KEYS.current })
+      queryCache.invalidateQueries({ key: WORKSPACE_QUERY_KEYS.currentWithMembers })
+
+      // Also invalidate admin workspace list to refresh current workspace indicator
+      queryCache.invalidateQueries({ key: WORKSPACE_QUERY_KEYS.adminAll })
+    },
+    onError: (error: any) => {
+      // Show error notification
+      const errorMessage = error?.message || 'Failed to switch workspace'
+      toast.error(errorMessage)
+    },
+  })
+
+  return {
+    ...mutation,
+    pickWorkspace: mutate,
   }
 })
