@@ -662,3 +662,83 @@ async def send_password_reset(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to send password reset email"
         )
+
+
+@router.put("/admin/{workspace_id}/pick", response_model=WorkspaceResponse)
+async def pick_workspace(
+    workspace_id: int,
+    current_user: TokenData = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Pick a workspace as current workspace (admin only)"""
+    print(f"DEBUG: pick_workspace called for workspace_id={workspace_id}")
+    print(f"DEBUG: current_user.sub={current_user.sub}")
+    print(f"DEBUG: current_user.username={getattr(current_user, 'username', 'NOT SET')}")
+    print(f"DEBUG: current_user.email={getattr(current_user, 'email', 'NOT SET')}")
+    
+    # Verify admin access
+    verify_workspace_admin_access(current_user)
+    print(f"DEBUG: Admin access verified")
+    
+    # Verify workspace exists
+    workspace = db.query(Workspace).filter(Workspace.id == workspace_id).first()
+    if not workspace:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Workspace not found"
+        )
+    print(f"DEBUG: Workspace found: {workspace.name}")
+    
+    # Check if user is already a member of this workspace
+    existing_member = db.query(WorkspaceMember).filter(
+        WorkspaceMember.workspace_id == workspace_id,
+        WorkspaceMember.user_id == current_user.sub
+    ).first()
+    print(f"DEBUG: Existing member: {existing_member}")
+    
+    if existing_member:
+        # If user is already a member but revoked, reactivate them
+        if existing_member.status == WorkspaceMemberStatus.REVOKED:
+            print(f"DEBUG: Reactivating revoked member")
+            existing_member.status = WorkspaceMemberStatus.ACTIVE
+        
+        # Update the updated_at timestamp to mark this as the current workspace
+        print(f"DEBUG: Updating timestamp to mark as current workspace")
+        from sqlalchemy.sql import func
+        existing_member.updated_at = func.now()
+        db.commit()
+        db.refresh(existing_member)
+    else:
+        print(f"DEBUG: Creating new workspace member")
+        # Add user as a member of this workspace
+        try:
+            # Safely get email with fallback
+            user_email = getattr(current_user, 'email', None)
+            if not user_email:
+                user_email = f"{getattr(current_user, 'username', current_user.sub)}@example.com"
+            
+            member = WorkspaceMember(
+                workspace_id=workspace_id,
+                user_id=current_user.sub,
+                username=getattr(current_user, 'username', None) or current_user.sub,
+                email=user_email,
+                status=WorkspaceMemberStatus.ACTIVE
+            )
+            print(f"DEBUG: New member data - username: {member.username}, email: {member.email}")
+            
+            db.add(member)
+            db.commit()
+            db.refresh(member)
+            print(f"DEBUG: Member created successfully")
+        except Exception as e:
+            print(f"ERROR: Failed to create workspace member: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            raise
+    
+    # Note: The actual workspace switching is handled by the frontend
+    # by triggering a token refresh with updated workspace_id claim
+    # This endpoint just ensures the user is a member of the target workspace
+    
+    print(f"DEBUG: Returning workspace: {workspace.name}")
+    return workspace

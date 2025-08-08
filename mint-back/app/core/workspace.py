@@ -38,22 +38,44 @@ def get_user_workspace(
 ) -> WorkspaceContext:
     """
     Get user's assigned workspace with JWT-first approach.
-    Priority: 1) JWT workspace claims, 2) Database lookup
+    Priority: 1) Database lookup for admin.workspaces users, 2) JWT workspace claims, 3) Database lookup fallback
     """
     
     workspace_id = None
     
-    # Priority 1: Use workspace from JWT token
-    if current_user.workspace_id:
-        workspace_id = current_user.workspace_id
-    else:
-        # Priority 2: Database lookup fallback
+    # Check if user has admin.workspaces role
+    has_admin_workspaces = current_user.roles and "admin.workspaces" in current_user.roles
+    print(f"DEBUG get_user_workspace: user={current_user.sub}, has_admin_workspaces={has_admin_workspaces}")
+    
+    if has_admin_workspaces:
+        # Priority 1: For admin.workspaces users, always use database lookup to support workspace switching
         member = db.query(WorkspaceMember).filter(
-            WorkspaceMember.user_id == current_user.sub
-        ).first()
+            WorkspaceMember.user_id == current_user.sub,
+            WorkspaceMember.status == WorkspaceMemberStatus.ACTIVE
+        ).order_by(WorkspaceMember.updated_at.desc().nullslast()).first()
         
         if member:
             workspace_id = member.workspace_id
+            print(f"DEBUG get_user_workspace: Found admin member, workspace_id={workspace_id}, updated_at={member.updated_at}")
+        # If no database membership found, fall back to JWT token
+        elif current_user.workspace_id:
+            workspace_id = current_user.workspace_id
+            print(f"DEBUG get_user_workspace: Using JWT fallback, workspace_id={workspace_id}")
+    else:
+        # Priority 2: Use workspace from JWT token for regular users
+        if current_user.workspace_id:
+            workspace_id = current_user.workspace_id
+            print(f"DEBUG get_user_workspace: Regular user JWT workspace_id={workspace_id}")
+        else:
+            # Priority 3: Database lookup fallback - use most recently updated membership
+            member = db.query(WorkspaceMember).filter(
+                WorkspaceMember.user_id == current_user.sub,
+                WorkspaceMember.status == WorkspaceMemberStatus.ACTIVE
+            ).order_by(WorkspaceMember.updated_at.desc().nullslast()).first()
+            
+            if member:
+                workspace_id = member.workspace_id
+                print(f"DEBUG get_user_workspace: Regular user DB fallback, workspace_id={workspace_id}")
     
     if not workspace_id:
         raise HTTPException(
