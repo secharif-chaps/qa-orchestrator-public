@@ -6,20 +6,14 @@
     </div>
     <div class="px-6 py-6">
       <div class="flex flex-col gap-2">
-        <div class="flex flex-wrap gap-2" v-if="userRoles && userRoles.length > 0">
-          <OBadge v-for="role in userRoles" :key="role" color="blue" :text="role">
-            {{ role }}
-          </OBadge>
-        </div>
         <div class="flex flex-wrap gap-2">
-          <OBadge
+          <span
             v-for="permission in userPermissions"
             :key="permission"
-            color="rose"
-            :text="permission"
+            class="bg-bg2/50 text-sm px-2 py-1 rounded-md"
           >
             {{ permission }}
-          </OBadge>
+          </span>
         </div>
       </div>
     </div>

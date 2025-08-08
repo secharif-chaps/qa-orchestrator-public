@@ -20,9 +20,9 @@
       </div>
 
       <!-- Statistics Overview -->
-      <div class="mb-8">
+      <!-- <div class="mb-8">
         <StatisticsOverview :stats="companiesStats" :loading="status === 'pending'" />
-      </div>
+      </div> -->
 
       <!-- Recent Companies Section -->
       <div class="bg-bg1 border border-border-2 rounded-lg mb-8">
@@ -108,7 +108,7 @@
       </div>
 
       <!-- Quick Tips -->
-      <div
+      <!-- <div
         class="bg-gradient-to-r from-primary to-purple-600 dark:from-primary dark:to-almond-200 dark:text-sage-900 rounded-lg shadow-md border border-slate-200 dark:border-none p-6 text-white"
       >
         <div class="flex items-center">
@@ -123,7 +123,7 @@
             </p>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -153,9 +153,9 @@ const userDisplayName = computed(() => {
 
 const greetingMessage = computed(() => {
   const hour = new Date().getHours()
-  if (hour < 12) return 'Good morning! Ready to explore companies today?'
-  if (hour < 17) return "Good afternoon! Let's discover some amazing companies."
-  return 'Good evening! Time to wrap up your company research.'
+  if (hour < 12) return 'Good morning! Ready to harvest some mint!'
+  if (hour < 17) return "Good afternoon! Let's harvest some mint!"
+  return "Good evening! Let's harvest some mint!"
 })
 
 // Cached pagination data using useAsyncData

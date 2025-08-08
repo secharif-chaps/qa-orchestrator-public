@@ -1,21 +1,18 @@
 export default {
   welcome: 'Bienvenue',
   settings: {
-    title: 'Paramètres',
     language: {
       title: 'Paramètres de langue',
-      description: "Choisissez votre langue préférée pour l'application"
+      description: "Choisissez votre langue préférée pour l'application",
     },
     theme: {
       title: 'Paramètres du thème',
-      description: "Personnalisez l'apparence de votre application"
+      description: "Personnalisez l'apparence de votre application",
     },
     notifications: {
       title: 'Paramètres de notification',
-      description: 'Gérez vos préférences de notification'
-    }
-  },
-  account: {
+      description: 'Gérez vos préférences de notification',
+    },
     title: 'Paramètres du compte',
     description: 'Gérez les informations de votre compte et vos préférences',
     tabs: {
@@ -264,7 +261,7 @@ export default {
     settings: 'Paramètres',
     help: 'Aide',
     workspace: 'Équipe',
-    team: 'Équipe'
+    team: 'Équipe',
   },
   workspaces: {
     title: 'Gestion des espaces de travail',
@@ -516,55 +513,55 @@ export default {
       viewLinkedIn: 'Voir le Profil LinkedIn',
     },
     email: 'E-mail',
-    emailPlaceholder: 'Saisir l\'adresse e-mail',
-    emailCannotChange: 'L\'e-mail ne peut pas être modifié après la création',
-    usernamePlaceholder: 'Saisir le nom d\'utilisateur (optionnel)',
-    usernameCannotChange: 'Le nom d\'utilisateur ne peut pas être modifié après la création',
+    emailPlaceholder: "Saisir l'adresse e-mail",
+    emailCannotChange: "L'e-mail ne peut pas être modifié après la création",
+    usernamePlaceholder: "Saisir le nom d'utilisateur (optionnel)",
+    usernameCannotChange: "Le nom d'utilisateur ne peut pas être modifié après la création",
     permissions: 'Permissions',
-    'permissions.description': 'Sélectionnez les permissions pour ce membre d\'équipe',
+    'permissions.description': "Sélectionnez les permissions pour ce membre d'équipe",
     edit: 'Modifier',
     disable: 'Désactiver',
-    loading: 'Chargement des membres de l\'équipe...',
-    description: 'Gérez les membres de l\'équipe et leurs permissions',
+    loading: "Chargement des membres de l'équipe...",
+    description: "Gérez les membres de l'équipe et leurs permissions",
     table: {
       user: 'Utilisateur',
       permissions: 'Permissions',
       created: 'Créé',
       status: 'Statut',
-      actions: 'Actions'
+      actions: 'Actions',
     },
     create: {
-      button: 'Ajouter un membre'
+      button: 'Ajouter un membre',
     },
     edit: {
-      title: 'Modifier le membre de l\'équipe',
-      description: 'Mettre à jour les informations et permissions du membre'
+      title: "Modifier le membre de l'équipe",
+      description: 'Mettre à jour les informations et permissions du membre',
     },
     firstName: 'Prénom',
     firstNamePlaceholder: 'Saisir le prénom',
     lastName: 'Nom',
     lastNamePlaceholder: 'Saisir le nom',
-    username: 'Nom d\'utilisateur',
+    username: "Nom d'utilisateur",
     search: {
-      placeholder: 'Rechercher des membres...'
+      placeholder: 'Rechercher des membres...',
     },
     pageSize: {
-      label: 'Éléments par page'
+      label: 'Éléments par page',
     },
     sort: {
       label: 'Trier par',
       created: 'Date de création',
       name: 'Nom',
       email: 'E-mail',
-      username: 'Nom d\'utilisateur',
+      username: "Nom d'utilisateur",
       asc: 'Croissant',
-      desc: 'Décroissant'
+      desc: 'Décroissant',
     },
     status: {
       active: 'Actif',
       label: 'Statut',
       all: 'Tous',
-      disabled: 'Désactivé'
+      disabled: 'Désactivé',
     },
   },
   company: {
