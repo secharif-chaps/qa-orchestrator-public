@@ -75,7 +75,7 @@ VITE_KEYCLOAK_REALM=mint-dev
 VITE_KEYCLOAK_CLIENT_ID=mint-front
 
 VITE_BASE_URL=http://$SERVER_IP
-VITE_BACKEND_API=http://$SERVER_IP/api
+VITE_BACKEND_API=http://$SERVER_IP
 EOF
 echo -e "${GREEN}Frontend .env.production created with server IP: $SERVER_IP${NC}"
 
