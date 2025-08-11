@@ -24,6 +24,15 @@
             <img :src="theme === 'light' ? logoLight : logoDark" class="!h-10 !w-auto" />
           </div>
 
+          <!-- Dev mode only theme toggle -->
+          <Button 
+            v-if="isDev"
+            variant="tertiary" 
+            :icon="isDark ? 'fa fa-sun' : 'fa fa-moon'" 
+            icon-only 
+            @click="toggleTheme"
+          />
+
           <Button variant="tertiary" color="danger" icon="fa fa-arrow-right-from-bracket" icon-only @click="handleLogout" />
         </div>
       </div>
@@ -43,7 +52,15 @@ import Badge from '@/components/ui/Badge.vue'
 
 const { signOut } = useAuthStore()
 
-const { theme } = useTheme()
+const { theme, isDark, setTheme } = useTheme()
+
+// Dev mode detection
+const isDev = import.meta.env.DEV
+
+// Theme toggle function
+const toggleTheme = () => {
+  setTheme(isDark.value ? 'light' : 'dark')
+}
 
 // Fetch current workspace
 const { data: workspace, isLoading } = useQuery(currentWorkspaceQuery, () => ({}))
