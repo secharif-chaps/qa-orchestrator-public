@@ -25,7 +25,7 @@
         <div class="absolute top-3 right-3">
           <Badge
             v-if="module.unlocked"
-            variant="success"
+            variant="primary"
             icon="fa-solid fa-check"
             label="Active"
             size="xs"
