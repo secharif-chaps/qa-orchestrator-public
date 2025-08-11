@@ -32,19 +32,18 @@
     <div class="bg-bg1 border border-border-2 rounded-lg">
       <div class="px-6 py-6">
         <div class="flex flex-wrap gap-4">
-          <OButton
+          <Button
             :label="$t('settings.profile.actions.refresh')"
-            icon="fas fa-refresh"
-            type="primary"
-            color="primary"
+            icon="fa fa-refresh"
+            variant="primary"
             :loading="refreshing"
             @click="handleRefreshUser"
           />
-          <OButton
+          <Button
             :label="$t('settings.profile.actions.signOut')"
-            icon="fas fa-sign-out-alt"
-            type="secondary"
-            color="red"
+            icon="fa fa-sign-out-alt"
+            variant="secondary"
+            color="danger"
             @click="handleSignOut"
           />
         </div>
@@ -54,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { OButton } from '@owlint/feathers-vue'
+import Button from '@/components/ui/Button.vue'
 import { Collapsible } from 'reka-ui/namespaced'
 import { ref } from 'vue'
 

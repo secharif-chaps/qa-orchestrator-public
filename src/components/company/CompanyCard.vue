@@ -2,10 +2,7 @@
   <div class="max-w-7xl mx-auto grid grid-cols-12 gap-4 px-4 sm:px-6 lg:px-8">
     <!-- Back button -->
     <div class="col-span-12">
-      <OButton type="tertiary" @click="$router.back()">
-        <i class="fa fa-arrow-left"></i>
-        <span class="text-secondary">Back</span>
-      </OButton>
+      <Button variant="tertiary" icon="fa fa-arrow-left" label="Back" @click="$router.back()" />
     </div>
 
     <!-- Title and buttons -->
@@ -14,14 +11,12 @@
         <h1 class="text-3xl font-semibold">{{ title }}</h1>
       </div>
       <div class="flex gap-2">
-        <OButton
-          type="tertiary"
+        <Button
+          variant="tertiary"
+          icon="fa fa-comment"
           :label="showAiChat ? 'Hide AI Chat' : 'Ask our AI'"
           @click="showAiChat = !showAiChat"
-        >
-          <i class="fa fa-comment"></i>
-          <span class="text-secondary">Ask our AI</span>
-        </OButton>
+        />
         <slot name="actions"></slot>
         <Export />
       </div>
@@ -59,7 +54,7 @@
 </template>
 
 <script lang="ts" setup>
-import { OButton } from '@owlint/feathers-vue'
+import Button from '@/components/ui/Button.vue'
 import { ref } from 'vue'
 import Export from './Export.vue'
 import Chat from './Chat.vue'

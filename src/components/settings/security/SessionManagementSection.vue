@@ -26,7 +26,7 @@
                 </p>
               </div>
             </div>
-            <OBadge color="green" :text="$t('settings.security.sessions.current.badge')" />
+            <Badge variant="success" :label="$t('settings.security.sessions.current.badge')" />
           </div>
         </div>
 
@@ -50,10 +50,10 @@
                 </p>
               </div>
             </div>
-            <OButton
+            <Button
               :label="$t('settings.security.actions.revoke')"
-              type="secondary"
-              color="red"
+              variant="secondary"
+              color="danger"
               size="sm"
               @click="() => handleRevokeSession(session.id)"
             />
@@ -71,11 +71,11 @@
                 {{ $t('settings.security.sessions.signOutAll.description') }}
               </p>
             </div>
-            <OButton
+            <Button
               :label="$t('settings.security.sessions.signOutAll.title')"
-              icon="fas fa-sign-out-alt"
-              type="secondary"
-              color="red"
+              icon="fa fa-sign-out-alt"
+              variant="secondary"
+              color="danger"
               @click="handleSignOutAllDevices"
             />
           </div>
@@ -86,7 +86,8 @@
 </template>
 
 <script setup lang="ts">
-import { OBadge, OButton } from '@owlint/feathers-vue'
+import Badge from '@/components/ui/Badge.vue'
+import Button from '@/components/ui/Button.vue'
 
 interface Session {
   id: string

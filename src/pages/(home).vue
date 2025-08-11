@@ -105,10 +105,7 @@
           <i class="fas fa-building text-secondary text-3xl mb-4"></i>
           <h3 class="text-lg font-medium mb-2">No companies yet</h3>
           <p class="text-secondary mb-4">Start by adding your first company to the database</p>
-          <OButton type="primary" class="mx-auto" @click="$router.push('/search')">
-            <i class="fas fa-plus"></i>
-            Add Company
-          </OButton>
+          <Button variant="primary" icon="fa fa-plus" label="Add Company" @click="$router.push('/search')" />
         </div>
       </div>
 
@@ -136,7 +133,7 @@
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth'
 import { companiesQuery } from '@/queries/companies'
-import { OButton } from '@owlint/feathers-vue'
+import Button from '@/components/ui/Button.vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { Company } from '@/types/company'
 import QuickActions from '@/components/dashboard/QuickActions.vue'

@@ -159,22 +159,11 @@
               <!-- User Status & Actions -->
               <div class="flex items-center gap-2">
                 <!-- Status Badge -->
-                <span
-                  :class="{
-                    'bg-green-100 text-green-800': user.enabled && user.emailVerified,
-                    'bg-yellow-100 text-yellow-800': user.enabled && !user.emailVerified,
-                    'bg-red-100 text-red-800': !user.enabled,
-                  }"
-                  class="px-2 py-1 text-xs font-medium rounded-full"
-                >
-                  {{
-                    !user.enabled
-                      ? $t('user.status.disabled', 'Disabled')
-                      : !user.emailVerified
-                        ? $t('user.status.pending', 'Pending')
-                        : $t('user.status.active', 'Active')
-                  }}
-                </span>
+                <Badge
+                  :variant="getUserStatusVariant(user)"
+                  :label="getUserStatusText(user)"
+                  size="xs"
+                />
 
                 <!-- Actions Dropdown -->
                 <div class="relative">
@@ -330,6 +319,7 @@ meta:
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
+import { useI18n } from 'vue-i18n'
 import { workspaceDetailsQuery } from '@/queries/workspace'
 import { workspaceUsersQuery } from '@/queries/user'
 import {
@@ -341,8 +331,10 @@ import {
 import type { WorkspaceUserCreate, WorkspaceUserListItem } from '@/types/user'
 import CreateUserModal from '@/components/user/CreateUserModal.vue'
 import WorkspaceTokensManager from '@/components/tokens/WorkspaceTokensManager.vue'
+import Badge from '@/components/ui/Badge.vue'
 
 const route = useRoute()
+const { t } = useI18n()
 
 const workspaceId = computed(() => parseInt(route.params.workspaceId as string))
 
@@ -395,6 +387,19 @@ const formatDate = (dateString: string) => {
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+// User status helpers
+const getUserStatusVariant = (user: WorkspaceUserListItem) => {
+  if (!user.enabled) return 'error'
+  if (!user.emailVerified) return 'warning'
+  return 'success'
+}
+
+const getUserStatusText = (user: WorkspaceUserListItem) => {
+  if (!user.enabled) return t('user.status.disabled', 'Disabled')
+  if (!user.emailVerified) return t('user.status.pending', 'Pending')
+  return t('user.status.active', 'Active')
 }
 
 // User management actions

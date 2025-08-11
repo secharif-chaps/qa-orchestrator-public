@@ -8,13 +8,13 @@
     </div>
 
     <div class="flex flex-col sm:flex-row gap-3">
-      <OButton
-        type="tertiary"
+      <Button
+        variant="tertiary"
+        :icon="viewMode !== 'table' ? 'fa fa-list' : 'fa fa-table'"
         :title="viewMode === 'table' ? 'Card View' : 'Table View'"
+        icon-only
         @click="$emit('toggleView')"
-      >
-        <i class="fas text-sm" :class="viewMode !== 'table' ? 'fa-list' : 'fa-table'"></i>
-      </OButton>
+      />
 
       <!-- Search Input -->
 
@@ -35,14 +35,13 @@
       </div>
 
       <!-- Create Button -->
-      <OButton 
+      <Button 
         v-if="canCreateCompany" 
-        type="primary" 
+        variant="primary"
+        icon="fa fa-plus"
+        :label="$t('company.list.create.title')"
         @click="$router.push('/search')"
-      >
-        <i class="fas fa-plus"></i>
-        {{ $t('company.list.create.title') }}
-      </OButton>
+      />
     </div>
   </div>
 </template>
@@ -50,7 +49,7 @@
 <script setup lang="ts">
 import { useCompaniesStore } from '@/stores/companies'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
-import { OButton } from '@owlint/feathers-vue'
+import Button from '@/components/ui/Button.vue'
 
 interface Props {
   viewMode: 'table' | 'grid'

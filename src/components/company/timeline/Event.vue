@@ -28,21 +28,20 @@
 
       <!-- Tags/Badges -->
       <div class="flex gap-2 mb-4 flex-wrap">
-        <OBadge :text="event.category" color="primary" size="sm" class="flex items-center gap-1">
+        <Badge variant="primary" size="sm" class="flex items-center gap-1">
           <i class="fa fa-clipboard text-xs"></i>
           {{ event.category }}
-        </OBadge>
+        </Badge>
 
-        <OBadge
+        <Badge
           v-if="event.location"
-          :text="event.location"
-          color="slate"
+          variant="slate"
           size="sm"
           class="flex items-center gap-1"
         >
           <i class="fa fa-map-marker-alt text-xs"></i>
           {{ event.location }}
-        </OBadge>
+        </Badge>
       </div>
 
       <!-- Description -->
@@ -72,7 +71,7 @@
 </template>
 
 <script lang="ts" setup>
-import { OBadge } from '@owlint/feathers-vue'
+import Badge from '@/components/ui/Badge.vue'
 import { computed } from 'vue'
 import Source from '../Source.vue'
 

@@ -12,21 +12,19 @@
         </RouterLink>
         <div class="max-w-md grow"></div>
         <div class="flex items-center gap-6">
-          <div
+          <Badge
             v-if="workspace && !isLoading"
-            class="flex items-center gap-1 bg-primary/20 rounded-full px-2 py-0.5 text-sm text-primary"
-          >
-            <i class="fas fa-building"></i>
-            {{ workspace.name }}
-          </div>
+            variant="primary"
+            icon="fas fa-building"
+            :label="workspace.name"
+            rounded
+          />
 
           <div>
             <img :src="theme === 'light' ? logoLight : logoDark" class="!h-10 !w-auto" />
           </div>
 
-          <OButton type="tertiary" color="red" @click="handleLogout">
-            <i class="fas fa-arrow-right-from-bracket"></i>
-          </OButton>
+          <Button variant="tertiary" color="danger" icon="fa fa-arrow-right-from-bracket" icon-only @click="handleLogout" />
         </div>
       </div>
     </div>
@@ -38,9 +36,10 @@ import logoLight from '@/assets/logo_chaps.png'
 import logoDark from '@/assets/logo_chaps_white.png'
 import { useTheme } from '@/composables/useTheme'
 import { useAuthStore } from '@/stores/auth'
-import { OButton } from '@owlint/feathers-vue'
+import Button from '@/components/ui/Button.vue'
 import { useQuery } from '@pinia/colada'
 import { currentWorkspaceQuery } from '@/queries/workspace'
+import Badge from '@/components/ui/Badge.vue'
 
 const { signOut } = useAuthStore()
 

@@ -23,9 +23,12 @@
 
         <div class="h-[500px] w-full relative">
           <div class="absolute top-4 right-4 z-50">
-            <OButton @click="doScreenshot" type="tertiary">
-              <i class="fa fa-camera"></i>
-            </OButton>
+            <Button
+              @click="doScreenshot"
+              variant="tertiary"
+              icon="fa fa-camera"
+              icon-only
+            />
           </div>
 
           <VueFlow
@@ -91,12 +94,12 @@
                     <p class="text-sm">{{ selectedNode.position }}</p>
                   </div>
                   <div class="ml-auto">
-                    <OButton
+                    <Button
                       @click="selectedNode = null"
-                      type="secondary"
-                      icon="fa-times"
+                      variant="tertiary"
+                      icon="fa fa-times"
+                      icon-only
                       class="rounded-full"
-                      :color="selectedNode.level > 1 ? 'orange' : 'purple'"
                     />
                   </div>
                 </div>
@@ -126,7 +129,7 @@
 </template>
 
 <script lang="ts" setup>
-import { OButton } from '@owlint/feathers-vue'
+import Button from '@/components/ui/Button.vue'
 import { Background } from '@vue-flow/background'
 import { Panel, VueFlow, useVueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'

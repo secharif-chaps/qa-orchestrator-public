@@ -24,21 +24,21 @@
 
       <!-- Quick Actions -->
       <div class="flex gap-1 opacity-100 group-hover:opacity-100 transition-opacity">
-        <OButton
-          type="tertiary"
+        <Button
+          variant="tertiary"
+          icon="fa fa-eye"
+          icon-only
           :title="$t('cards.actions.view')"
           @click.stop="$emit('viewCompany', company.id)"
-        >
-          <i class="fas fa-eye"></i>
-        </OButton>
-        <OButton
-          type="tertiary"
-          color="red"
+        />
+        <Button
+          variant="tertiary"
+          color="danger"
+          icon="fa fa-trash"
+          icon-only
           :title="$t('cards.actions.delete')"
           @click.stop="$emit('deleteCompany', company)"
-        >
-          <i class="fas fa-trash"></i>
-        </OButton>
+        />
       </div>
     </div>
 
@@ -72,9 +72,9 @@
         <i class="fas fa-tasks text-secondary text-sm w-4"></i>
         <div class="flex items-center gap-2">
           <span class="text-sm text-secondary"> {{ company.tasks.length }} tasks </span>
-          <OBadge :color="getTaskStatusColor(company.tasks)" size="xs">
+          <Badge :variant="getTaskStatusVariant(company.tasks)" size="xs">
             {{ getTaskStatusText(company.tasks) }}
-          </OBadge>
+          </Badge>
         </div>
       </div>
     </div>
@@ -91,12 +91,12 @@
   <!-- List/Table View -->
   <div
     v-else
-    class="bg-bg1 rounded-lg hover:bg-bg2 p-4 transition-colors cursor-pointer group"
+    class="px-6 py-4 transition-colors cursor-pointer hover:bg-bg2"
     @click="$emit('viewCompany', company.id)"
   >
     <div class="grid grid-cols-12 gap-4 items-center">
-      <!-- Column 1: Icon, Company Name and Website (5 cols) -->
-      <div class="col-span-5 flex items-center gap-3 min-w-0">
+      <!-- Column 1: Company Name and Website (4 cols) -->
+      <div class="col-span-4 flex items-center gap-3 min-w-0">
         <div
           class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center flex-shrink-0"
         >
@@ -104,59 +104,67 @@
         </div>
 
         <div class="flex-1 min-w-0">
-          <h3 class="font-semibold group-hover:text-primary transition-colors truncate">
+          <h3 class="font-medium hover:text-primary transition-colors truncate">
             {{ company.name }}
           </h3>
           <p v-if="company.website" class="text-sm text-secondary truncate">
-            <i class="fas fa-globe mr-1 text-xs"></i>
             {{ formatWebsiteDisplay(company.website) }}
           </p>
         </div>
       </div>
 
       <!-- Column 2: Created Date (2 cols) -->
-      <div class="col-span-2 text-sm text-secondary">
-        <span class="flex items-center gap-1">
-          <i class="fas fa-calendar text-xs"></i>
+      <div class="col-span-2">
+        <div class="text-sm text-secondary">
           {{ formatDate(company.created_at) }}
-        </span>
+        </div>
       </div>
 
-      <!-- Column 3: Owner (3 cols) -->
-      <div class="col-span-3 text-sm text-secondary">
-        <span v-if="company.owner_username" class="flex items-center gap-1">
-          <i class="fas fa-user text-xs"></i>
-          {{ company.owner_username }}
-        </span>
-        <span v-else class="text-secondary/50">—</span>
+      <!-- Column 3: Owner (2 cols) -->
+      <div class="col-span-2">
+        <div class="text-sm text-secondary">
+          {{ company.owner_username || '—' }}
+        </div>
       </div>
 
-      <!-- Column 4: Actions (2 cols) -->
-      <div class="col-span-2 flex items-center justify-end gap-2">
-        <OButton
-          type="tertiary"
-          size="sm"
-          :title="$t('cards.actions.view')"
-          @click.stop="$emit('viewCompany', company.id)"
-        >
-          <i class="fas fa-eye"></i>
-        </OButton>
-        <OButton
-          type="tertiary"
-          size="sm"
-          color="red"
-          :title="$t('cards.actions.delete')"
-          @click.stop="$emit('deleteCompany', company)"
-        >
-          <i class="fas fa-trash"></i>
-        </OButton>
+      <!-- Column 4: Status (2 cols) -->
+      <div class="col-span-2">
+        <div class="flex items-center gap-2">
+          <Badge :variant="getTaskStatusVariant(company.tasks || [])" size="sm">
+            {{ getTaskStatusText(company.tasks || []) }}
+          </Badge>
+        </div>
+      </div>
+
+      <!-- Column 5: Actions (2 cols) -->
+      <div class="col-span-2">
+        <div class="flex items-center gap-1 justify-end">
+          <Button
+            variant="tertiary"
+            size="sm"
+            icon="fa fa-eye"
+            icon-only
+            :title="$t('cards.actions.view')"
+            @click.stop="$emit('viewCompany', company.id)"
+          />
+          <Button
+            variant="tertiary"
+            color="danger"
+            size="sm"
+            icon="fa fa-trash"
+            icon-only
+            :title="$t('cards.actions.delete')"
+            @click.stop="$emit('deleteCompany', company)"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { OButton, OBadge } from '@owlint/feathers-vue'
+import Badge from '@/components/ui/Badge.vue'
+import Button from '@/components/ui/Button.vue'
 import type { Company } from '@/types/company'
 
 interface Props {
@@ -203,21 +211,29 @@ const formatRelativeTime = (dateString: string) => {
 }
 
 const getTaskStatusText = (tasks: Array<{ status: string }>) => {
+  if (!tasks || tasks.length === 0) return 'New'
+  
   const running = tasks.filter((t) => t.status === 'running' || t.status === 'pending').length
-  const failed = tasks.filter((t) => t.status === 'failed').length
+  const failed = tasks.filter((t) => t.status === 'error' || t.status === 'failed').length
+  const succeeded = tasks.filter((t) => t.status === 'succeeded').length
 
-  if (running > 0) return `${running} running`
-  if (failed > 0) return `${failed} failed`
-  return 'completed'
+  if (running > 0) return 'Processing'
+  if (failed > 0) return 'Issues'
+  if (succeeded === tasks.length) return 'Complete'
+  return 'Partial'
 }
 
-const getTaskStatusColor = (tasks: Array<{ status: string }>) => {
+const getTaskStatusVariant = (tasks: Array<{ status: string }>) => {
+  if (!tasks || tasks.length === 0) return 'slate'
+  
   const running = tasks.filter((t) => t.status === 'running' || t.status === 'pending').length
-  const failed = tasks.filter((t) => t.status === 'failed').length
+  const failed = tasks.filter((t) => t.status === 'error' || t.status === 'failed').length
+  const succeeded = tasks.filter((t) => t.status === 'succeeded').length
 
-  if (running > 0) return 'yellow'
-  if (failed > 0) return 'red'
-  return 'green'
+  if (running > 0) return 'warning'
+  if (failed > 0) return 'error'
+  if (succeeded === tasks.length) return 'success'
+  return 'info'
 }
 </script>
 

@@ -10,11 +10,13 @@
       target="_blank"
       class="inline-flex items-center"
     >
-      <span
-        class="text-xs bg-bg2 hover:bg-bg3 dark:hover:bg-bg2 transition-colors rounded-full px-2 py-1"
-      >
-        {{ getSourcedSourceName(sourcedValue) }}
-      </span>
+      <Badge
+        variant="slate"
+        size="xs"
+        :label="getSourcedSourceName(sourcedValue)"
+        rounded
+        :gradient="false"
+      />
     </a>
 
     <div
@@ -30,16 +32,13 @@
   </div>
   <div v-if="source">
     <a :href="source" target="_blank" class="inline-flex items-center">
-      <span
-        class="text-xs bg-bg2 hover:bg-bg3 dark:hover:bg-bg2 transition-colors rounded-full px-2 py-1"
-      >
-        {{ source }}
-      </span>
+      <Badge variant="slate" size="xs" :label="source" rounded :gradient="false" />
     </a>
   </div>
 </template>
 
 <script lang="ts" setup>
+import Badge from '@/components/ui/Badge.vue'
 import { getSourcedSource, getSourcedSourceName } from '@/components/helpers/sourcedValues'
 import type { SourcedValue } from '@/types/company'
 

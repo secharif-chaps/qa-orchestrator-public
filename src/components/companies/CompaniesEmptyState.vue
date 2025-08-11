@@ -5,23 +5,20 @@
       <h3 class="text-lg font-semibold text-secondary mb-2">{{ title }}</h3>
       <p class="text-secondary mb-4">{{ description }}</p>
       <slot name="actions">
-        <OButton
+        <Button
           v-if="type === 'no-data'"
+          variant="primary"
+          icon="fa fa-plus"
           :label="$t('company.list.create.title')"
-          type="primary"
-          class="mx-auto"
           @click="$router.push('/search')"
-        >
-          <i class="fas fa-plus"></i>
-          {{ $t('company.list.create.title') }}
-        </OButton>
+        />
       </slot>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { OButton } from '@owlint/feathers-vue'
+import Button from '@/components/ui/Button.vue'
 import { computed } from 'vue'
 
 interface Props {

@@ -45,9 +45,12 @@
         @keydown.enter.ctrl.prevent="sendMessage"
         :disabled="isLoading"
       ></textarea>
-      <OButton
-        icon="fa-send"
-        class="absolute right-2 bottom-4 cursor-pointer"
+      <Button
+        variant="primary"
+        icon="fa fa-send"
+        icon-only
+        size="sm"
+        class="absolute right-2 bottom-4"
         rounded
         @click="sendMessage"
         :disabled="isLoading || !question.trim()"
@@ -59,7 +62,7 @@
 <script lang="ts" setup>
 import { apiClient } from '@/api/client'
 import { companyByIdQuery } from '@/queries/companies'
-import { OButton } from '@owlint/feathers-vue'
+import Button from '@/components/ui/Button.vue'
 import { useQuery } from '@pinia/colada'
 import { ref, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'

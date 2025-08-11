@@ -31,13 +31,14 @@
             <label class="block text-sm font-medium text-secondary">{{
               $t('settings.profile.fields.sessionState')
             }}</label>
-            <OBadge :color="user?.expired ? 'red' : 'green'">
-              {{
+            <Badge 
+              :variant="user?.expired ? 'error' : 'success'"
+              :label="
                 user?.expired
                   ? $t('settings.profile.status.expired')
                   : $t('settings.profile.status.active')
-              }}
-            </OBadge>
+              "
+            />
           </div>
         </div>
       </div>
@@ -46,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { OBadge } from '@owlint/feathers-vue'
+import Badge from '@/components/ui/Badge.vue'
 
 interface User {
   expired?: boolean

@@ -15,12 +15,12 @@
         <span v-if="showSavedMessage" class="text-xs text-primary animate-fade-out">
           <i class="fa fa-check-circle mr-1"></i>Preferences saved
         </span>
-        <button
+        <Button
+          variant="tertiary"
+          :label="allSelected ? 'Deselect All' : 'Select All'"
+          size="sm"
           @click="toggleAll"
-          class="text-xs text-primary hover:text-primary/80 transition-colors"
-        >
-          {{ allSelected ? 'Deselect All' : 'Select All' }}
-        </button>
+        />
       </div>
 
       <div class="space-y-4">
@@ -51,8 +51,8 @@
 
     <template #footer>
       <div class="flex justify-end gap-3">
-        <OButton type="secondary" label="Cancel" @click="close" />
-        <OButton type="primary" label="Export" icon="fas fa-download" @click="exportPPT" />
+        <Button variant="secondary" label="Cancel" @click="close" />
+        <Button variant="primary" label="Export" icon="fa fa-download" @click="exportPPT" />
       </div>
     </template>
   </OModal>
@@ -60,7 +60,8 @@
 
 <script lang="ts" setup>
 import type { Company } from '@/types/company'
-import { OButton, OModal } from '@owlint/feathers-vue'
+import { OModal } from '@owlint/feathers-vue'
+import Button from '@/components/ui/Button.vue'
 import { Switch } from 'reka-ui/namespaced'
 import { computed, onMounted, ref, watch } from 'vue'
 

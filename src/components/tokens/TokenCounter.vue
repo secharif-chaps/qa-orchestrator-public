@@ -28,15 +28,17 @@
             <span class="text-xs font-medium text-secondary uppercase tracking-wide">
               {{ module || 'Screen' }} Module
             </span>
-            <button
+            <Button
               v-if="showRefresh"
-              @click="$emit('refresh')"
+              variant="tertiary"
+              icon="fa fa-refresh"
+              icon-only
+              size="sm"
+              :loading="isRefreshing"
               :disabled="isRefreshing"
-              class="text-secondary hover:text-primary transition-colors p-0.5 disabled:opacity-50"
               :title="$t('tokens.refresh', 'Refresh token count')"
-            >
-              <i :class="{ 'animate-spin': isRefreshing }" class="fa fa-refresh text-xs"></i>
-            </button>
+              @click="$emit('refresh')"
+            />
           </div>
 
           <!-- Token Count Display -->
@@ -71,6 +73,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { ModuleName } from '@/types/tokens'
+import Button from '@/components/ui/Button.vue'
 
 interface Props {
   module?: ModuleName

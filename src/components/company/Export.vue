@@ -1,9 +1,6 @@
 <template>
   <div>
-    <OButton type="tertiary" @click="showModal = true">
-      <i class="fa fa-download"></i>
-      <span class="text-secondary">Export</span>
-    </OButton>
+    <Button variant="tertiary" icon="fa fa-download" label="Export" @click="showModal = true" />
 
     <ExportModal
       v-if="company"
@@ -18,7 +15,7 @@
 <script lang="ts" setup>
 import { companyByIdQuery } from '@/queries/companies'
 import type { SourcedValue } from '@/types/company'
-import { OButton } from '@owlint/feathers-vue'
+import Button from '@/components/ui/Button.vue'
 import pptxgen from 'pptxgenjs'
 import { ref } from 'vue'
 import ExportModal from './ExportModal.vue'

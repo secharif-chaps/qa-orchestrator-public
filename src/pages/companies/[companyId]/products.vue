@@ -1,14 +1,5 @@
 <template>
   <div class="flex flex-col gap-4">
-    <!-- Task state -->
-    <TaskState
-      v-if="companyId"
-      :company-id="Number(companyId)"
-      :required-task-types="['products']"
-      :loading-title="$t('products.loading.title')"
-      :loading-description="$t('products.loading.description')"
-    />
-
     <!-- No products state -->
     <ProductsEmptyState v-if="!products || Object.keys(products).length === 0" type="no-data" />
 
@@ -61,7 +52,6 @@
 </template>
 
 <script lang="ts" setup>
-import TaskState from '@/components/TaskState.vue'
 import ProductsHeader from '@/components/company/products/ProductsHeader.vue'
 import ProductGridItem from '@/components/company/products/ProductGridItem.vue'
 import ProductListItem from '@/components/company/products/ProductListItem.vue'

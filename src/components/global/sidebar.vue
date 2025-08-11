@@ -119,10 +119,23 @@ const buttons = computed(() => {
   return baseButtons
 })
 
-const actions = computed(() => [
-  { icon: 'fa fa-cog', label: t('sidebar.settings'), to: '/settings' },
-  { icon: 'fa fa-question', label: t('sidebar.help'), to: '/help' },
-])
+const actions = computed(() => {
+  const baseActions = [
+    { icon: 'fa fa-cog', label: t('sidebar.settings'), to: '/settings' },
+    { icon: 'fa fa-question', label: t('sidebar.help'), to: '/help' },
+  ]
+
+  // Add UI demo link in development mode
+  if (import.meta.env.DEV) {
+    baseActions.unshift({
+      icon: 'fa fa-palette',
+      label: 'UI Demo',
+      to: '/ui-demo',
+    })
+  }
+
+  return baseActions
+})
 
 const route = useRoute()
 

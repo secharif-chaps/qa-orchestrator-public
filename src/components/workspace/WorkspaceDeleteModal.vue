@@ -93,24 +93,20 @@
 
       <!-- Footer -->
       <div class="p-6 border-t border-border-2 flex items-center justify-end gap-3">
-        <button
+        <Button
+          variant="tertiary"
+          :label="$t('common.cancel', 'Cancel')"
           @click="$emit('cancel')"
-          class="px-4 py-2 text-secondary hover:text-base transition-colors"
-        >
-          {{ $t('common.cancel', 'Cancel') }}
-        </button>
-        <button
-          @click="$emit('confirm', workspace.id)"
+        />
+        <Button
+          variant="primary"
+          color="danger"
+          icon="fa fa-trash"
+          :label="$t('workspace.delete.confirm.button', 'Delete Workspace')"
+          :loading="isLoading"
           :disabled="!isConfirmed || isLoading"
-          class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-        >
-          <div
-            v-if="isLoading"
-            class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
-          ></div>
-          <i v-else class="fa fa-trash"></i>
-          {{ $t('workspace.delete.confirm.button', 'Delete Workspace') }}
-        </button>
+          @click="$emit('confirm', workspace.id)"
+        />
       </div>
     </div>
   </div>
@@ -119,6 +115,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import type { WorkspaceResponse } from '@/types/workspace'
+import Button from '@/components/ui/Button.vue'
 
 interface Props {
   workspace: WorkspaceResponse

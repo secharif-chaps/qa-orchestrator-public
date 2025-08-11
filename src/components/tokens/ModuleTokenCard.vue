@@ -1,8 +1,10 @@
 <template>
-  <div class="bg-bg2 rounded-lg p-4 border border-border-2">
+  <div class="bg-bg1 rounded-lg p-4 border border-border-2">
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center">
+        <div
+          class="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center"
+        >
           <i :class="moduleIcon" class="text-lg"></i>
         </div>
         <div>
@@ -10,7 +12,7 @@
           <p class="text-sm text-secondary">{{ moduleDescription }}</p>
         </div>
       </div>
-      
+
       <!-- Enable/Disable Toggle -->
       <label class="relative inline-flex items-center cursor-pointer">
         <input
@@ -20,7 +22,9 @@
           :disabled="isToggling"
           class="sr-only peer"
         />
-        <div class="relative w-11 h-6 bg-bg3 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border-2 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+        <div
+          class="relative w-11 h-6 bg-bg3 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border-2 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"
+        ></div>
         <span class="ml-3 text-sm font-medium">
           {{ isEnabled ? $t('tokens.enabled', 'Enabled') : $t('tokens.disabled', 'Disabled') }}
         </span>
@@ -30,7 +34,9 @@
     <!-- Token Count Display -->
     <div class="mb-4">
       <div class="flex items-center gap-2 mb-2">
-        <span class="text-sm text-secondary">{{ $t('tokens.currentCount', 'Current Tokens') }}</span>
+        <span class="text-sm text-secondary">{{
+          $t('tokens.currentCount', 'Current Tokens')
+        }}</span>
         <button
           @click="refreshTokens"
           :disabled="isRefreshing"
@@ -40,18 +46,12 @@
           <i :class="{ 'animate-spin': isRefreshing }" class="fa fa-refresh text-xs"></i>
         </button>
       </div>
-      
+
       <div class="flex items-center gap-4">
         <div class="text-2xl font-bold" :class="tokenCountColor">
           {{ tokenCount }}
         </div>
-        <div 
-          v-if="isEnabled"
-          :class="tokenStatusBadge"
-          class="px-2 py-1 text-xs font-medium rounded-full"
-        >
-          {{ tokenStatusText }}
-        </div>
+        <Badge v-if="isEnabled" :variant="tokenStatusVariant" :label="tokenStatusText" size="xs" />
       </div>
     </div>
 
@@ -73,7 +73,7 @@
             <i class="fa fa-plus text-xs"></i>
             {{ amount }}
           </button>
-          
+
           <!-- Loading indicator for quick buttons -->
           <div
             v-if="addTokensMutation.isLoading.value"
@@ -114,7 +114,7 @@
             {{ $t('tokens.add', 'Add') }}
           </button>
         </div>
-        
+
         <!-- Helper text -->
         <div class="text-xs text-secondary mt-1">
           {{ $t('tokens.addHelper', 'Press Enter or click Add to add custom amount') }}
@@ -128,6 +128,7 @@
 import { computed, ref } from 'vue'
 import { useToggleModule, useAddModuleTokens } from '@/mutations/tokens'
 import type { ModuleName } from '@/types/tokens'
+import Badge from '@/components/ui/Badge.vue'
 
 interface Props {
   module: ModuleName
@@ -159,17 +160,17 @@ const quickAddAmounts = computed(() => {
   // Smart amounts based on current token count
   const current = props.tokenCount
   const baseAmounts = [5, 10, 25, 50, 100]
-  
+
   // If current count is very low, suggest smaller amounts first
   if (current < 10) {
     return [5, 10, 25, 50]
   }
-  
+
   // If current count is medium, suggest balanced amounts
   if (current < 50) {
     return [10, 25, 50, 100]
   }
-  
+
   // For higher counts, suggest larger amounts
   return [25, 50, 100, 250]
 })
@@ -199,7 +200,9 @@ const isRefreshing = ref(false)
 
 // Computed properties
 const moduleIcon = computed(() => moduleConfigs[props.module]?.icon || 'fa fa-cog')
-const moduleDescription = computed(() => moduleConfigs[props.module]?.description || 'Module functionality')
+const moduleDescription = computed(
+  () => moduleConfigs[props.module]?.description || 'Module functionality',
+)
 
 const tokenCountColor = computed(() => {
   if (!props.isEnabled) return 'text-secondary'
@@ -208,10 +211,10 @@ const tokenCountColor = computed(() => {
   return 'text-green-600'
 })
 
-const tokenStatusBadge = computed(() => {
-  if (props.tokenCount === 0) return 'bg-red-100 text-red-800'
-  if (props.tokenCount < 10) return 'bg-yellow-100 text-yellow-800'
-  return 'bg-green-100 text-green-800'
+const tokenStatusVariant = computed(() => {
+  if (props.tokenCount === 0) return 'error'
+  if (props.tokenCount < 10) return 'warning'
+  return 'success'
 })
 
 const tokenStatusText = computed(() => {
@@ -221,10 +224,12 @@ const tokenStatusText = computed(() => {
 })
 
 const canAddTokens = computed(() => {
-  return props.isEnabled && 
-         !addTokensMutation.isLoading.value && 
-         tokensToAdd.value > 0 && 
-         props.showAdminControls
+  return (
+    props.isEnabled &&
+    !addTokensMutation.isLoading.value &&
+    tokensToAdd.value > 0 &&
+    props.showAdminControls
+  )
 })
 
 // Methods
@@ -249,9 +254,9 @@ const addQuickTokens = async (amount: number) => {
     addTokensMutation.workspaceId.value = props.workspaceId
     addTokensMutation.module.value = props.module
     addTokensMutation.tokensToAdd.value = amount
-    
+
     await addTokensMutation.addTokens()
-    
+
     emit('refresh')
   } catch (error) {
     console.error('Failed to add tokens:', error)
@@ -266,12 +271,12 @@ const handleAddTokens = async () => {
     addTokensMutation.workspaceId.value = props.workspaceId
     addTokensMutation.module.value = props.module
     addTokensMutation.tokensToAdd.value = tokensToAdd.value
-    
+
     await addTokensMutation.addTokens()
-    
+
     // Reset local input
     tokensToAdd.value = 0
-    
+
     emit('refresh')
   } catch (error) {
     console.error('Failed to add tokens:', error)
@@ -283,7 +288,7 @@ const refreshTokens = async () => {
   try {
     emit('refresh')
     // Add a small delay for visual feedback
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise((resolve) => setTimeout(resolve, 300))
   } finally {
     isRefreshing.value = false
   }

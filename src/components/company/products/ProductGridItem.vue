@@ -19,28 +19,28 @@
         class="flex items-center gap-3 p-3 bg-bg3 rounded-lg transition-colors"
       >
         <span class="text-sm flex-1 capitalize">{{ product }}</span>
-        <OBadge v-if="isNewProduct(product)" color="green" size="xs">
+        <Badge v-if="isNewProduct(product)" variant="success" size="xs">
           <i class="fa-solid fa-star"></i>
           New
-        </OBadge>
+        </Badge>
       </div>
     </div>
 
     <div v-if="productList.length > maxDisplayItems" class="mt-4 text-center">
-      <OButton
-        type="tertiary"
+      <Button
+        variant="tertiary"
         size="sm"
+        :icon="showAll ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"
         :label="showAll ? 'Show Less' : `Show ${productList.length - maxDisplayItems} More`"
         @click="toggleShowAll"
-      >
-        <i class="fa-solid" :class="showAll ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-      </OButton>
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { OBadge, OIndicator, OButton } from '@owlint/feathers-vue'
+import Badge from '@/components/ui/Badge.vue'
+import Button from '@/components/ui/Button.vue'
 import { ref, computed } from 'vue'
 
 interface Props {

@@ -22,7 +22,6 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
-import { OBadge } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 
 const isDev = computed(() => import.meta.env.DEV)

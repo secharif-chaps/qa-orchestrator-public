@@ -124,7 +124,9 @@ import { useRoute } from 'vue-router'
 import { companyTasksQuery } from '@/queries/tasks'
 import TaskNode from './TaskNode.vue'
 import { useQuery } from '@pinia/colada'
-import { useCreateTask, useRestartTask } from '@/mutations/tasks'
+import { useRestartTask } from '@/mutations/tasks'
+import { useDebounceFn } from '@vueuse/core'
+import { onUnmounted } from 'vue'
 
 interface TaskNodeData {
   type: TaskType
@@ -140,11 +142,13 @@ const companyId = computed(() => route.params.companyId as string)
 
 const isOpen = ref(false)
 
-const { data: tasks } = useQuery(companyTasksQuery, () => ({
+const { data: tasks, refetch: refetchTasks } = useQuery(companyTasksQuery, () => ({
   companyId: companyId.value,
 }))
 
 const isWorkflowPaused = ref(false)
+const autoRecoveryLock = ref(false)
+const pollingInterval = ref<NodeJS.Timeout | null>(null)
 const { fitView } = useVueFlow()
 
 // Define workflow configuration with dependencies - horizontal stepper layout
@@ -221,18 +225,11 @@ const workflowConfig = [
   },
 ]
 
-// create task mutation
-const { mutate: create } = useCreateTask()
-const { mutate: restart } = useRestartTask()
+const restartTaskMutation = useRestartTask()
+const { mutate: restart } = restartTaskMutation
 
-// Fetch tasks when component is mounted
+// Initialize component when mounted
 onMounted(async () => {
-  create({
-    company_id: Number(companyId.value),
-    type: 'profile',
-    status: 'pending',
-  })
-
   // Initialize previous task statuses to avoid unnecessary refreshes on mount
   const initialTasks = tasks.value || []
 
@@ -240,7 +237,7 @@ onMounted(async () => {
     previousTaskStatuses.value.set(task.type, task.status)
   })
 
-  // Perform auto-recovery check on mount
+  // Perform auto-recovery check on mount (tasks already exist from backend)
   performAutoRecovery()
 
   setTimeout(() => {
@@ -254,27 +251,11 @@ onMounted(async () => {
 const workflowStarted = ref(false)
 const previousTaskStatuses = ref<Map<string, TaskStatus | null>>(new Map())
 
-watch(
-  tasks,
-  (newTasks) => {
-    // Check for newly succeeded tasks and refresh company data
-    newTasks?.forEach((task: TaskResponse) => {
-      const previousStatus = previousTaskStatuses.value.get(task.type)
-      if (task.status === 'succeeded' && previousStatus !== 'succeeded') {
-        // Refresh company data when a task succeeds
-      }
-      // Update the previous status
-      previousTaskStatuses.value.set(task.type, task.status)
-    })
-
-    // Perform auto-recovery check on task changes
-    performAutoRecovery()
-  },
-  { deep: true },
-)
+// This watcher will be defined after debouncedAutoRecovery is created
 
 // Helper function to get task status
 const getTaskStatus = (taskType: TaskType): TaskStatus | null => {
+  // Fall back to server state
   const task = tasks.value?.find((t: TaskResponse) => t.type === taskType)
   return task?.status || null
 }
@@ -285,11 +266,13 @@ const getTaskError = (taskType: TaskType): string | null => {
   return task?.error || null
 }
 
-// Check if task can be triggered
+// Check if task can be triggered (uses server state for logic decisions)
 const canTriggerTask = (taskType: TaskType): boolean => {
-  const status = getTaskStatus(taskType)
+  // Find the actual task (not just its status)
+  const task = tasks.value?.find((t: TaskResponse) => t.type === taskType)
 
-  if (status === 'running' || status === 'succeeded') {
+  // Task must exist and be in pending or error state to be triggered
+  if (!task || (task.status !== 'pending' && task.status !== 'error')) {
     return false
   }
 
@@ -298,14 +281,16 @@ const canTriggerTask = (taskType: TaskType): boolean => {
     return false
   }
 
-  // First 4 tasks (no dependencies) can always be triggered if not running/succeeded
+  // First 4 tasks (no dependencies) can always be triggered if pending/error
   if (config.dependencies.length === 0) {
     return true
   }
 
-  const allDepsSucceeded = config.dependencies.every(
-    (depType) => getTaskStatus(depType as TaskType) === 'succeeded',
-  )
+  // For dependent tasks, all dependencies must be succeeded (use actual task status for dependencies)
+  const allDepsSucceeded = config.dependencies.every((depType) => {
+    const depTask = tasks.value?.find((t) => t.type === depType)
+    return depTask?.status === 'succeeded'
+  })
 
   return allDepsSucceeded
 }
@@ -365,11 +350,15 @@ const completedCount = computed(
   () => tasks.value?.filter((t) => t.status === 'succeeded').length || 0,
 )
 
-watch(completedCount, (newCount) => {
-  if (newCount < 8) {
-    isOpen.value = true
-  }
-})
+watch(
+  completedCount,
+  (newCount) => {
+    if (newCount < 8) {
+      isOpen.value = true
+    }
+  },
+  { immediate: true },
+)
 
 const runningCount = computed(
   () => tasks.value?.filter((t: TaskResponse) => t.status === 'running').length || 0,
@@ -389,6 +378,32 @@ const pendingCount = computed(() => {
 
 const totalTasks = computed(() => workflowConfig.length)
 
+// Polling logic for running tasks
+const hasRunningTasks = computed(() => tasks.value?.some((t) => t.status === 'running') || false)
+
+const startPolling = () => {
+  if (pollingInterval.value) return // Already polling
+
+  console.log('🔄 Starting task polling...')
+  pollingInterval.value = setInterval(() => {
+    if (hasRunningTasks.value) {
+      console.log('🔍 Polling for task updates...')
+      refetchTasks()
+    } else {
+      console.log('✅ No running tasks, stopping poll')
+      stopPolling()
+    }
+  }, 10000) // Poll every 10 seconds
+}
+
+const stopPolling = () => {
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value)
+    pollingInterval.value = null
+    console.log('⏹️ Stopped task polling')
+  }
+}
+
 // Percentage calculations for segmented progress bar
 const completedPercentage = computed(() =>
   totalTasks.value > 0 ? (completedCount.value / totalTasks.value) * 100 : 0,
@@ -407,95 +422,146 @@ const pendingPercentage = computed(() =>
 )
 
 // Auto-recovery system to unstuck workflows
-const performAutoRecovery = () => {
-  console.log(`🔄 Performing auto-recovery check for company ${companyId.value}...`)
-
-  const currentTasks = tasks.value
-
-  if (!currentTasks) return
-  const hasAnyTask = currentTasks.length > 0
-
-  console.log(`📊 Current tasks state:`, {
-    totalTasks: currentTasks.length,
-    tasks: currentTasks.map((t: TaskResponse) => ({ type: t.type, status: t.status, id: t.id })),
-    workflowStarted: workflowStarted.value,
-    isWorkflowPaused: isWorkflowPaused.value,
-  })
-
-  // Auto-start first 4 tasks if they are pending (since backend now creates all tasks automatically)
-  const firstFourTasks = ['profile', 'digital', 'csr', 'press'] as TaskType[]
-  console.log(`🎯 Checking first 4 tasks for auto-start...`)
-
-  firstFourTasks.forEach((taskType) => {
-    const existingTask = currentTasks.find((t: TaskResponse) => t.type === taskType)
-
-    console.log(`📋 Task ${taskType}:`, {
-      exists: !!existingTask,
-      status: existingTask?.status || 'not found',
-      canTrigger: existingTask ? canTriggerTask(taskType) : false,
-    })
-
-    if (existingTask && existingTask.status === 'pending' && canTriggerTask(taskType)) {
-      console.log(`🚀 Auto-starting pending task: ${taskType}`)
-      triggerTask(taskType)
-      workflowStarted.value = true
-    }
-  })
-
-  // If we have any task, assume workflow was started at some point
-  if (hasAnyTask && !workflowStarted.value) {
-    console.log('📝 Detected existing tasks - marking workflow as started')
-    workflowStarted.value = true
+const performAutoRecovery = async () => {
+  if (autoRecoveryLock.value) {
+    console.log('🔒 Auto-recovery already running, skipping...')
+    return
   }
 
-  // Auto-progress workflow if it was started
-  if (workflowStarted.value && !isWorkflowPaused.value) {
-    console.log(`⏭️ Workflow started and not paused, checking auto-progress...`)
-    autoProgressWorkflow()
-  } else {
-    console.log(`⏸️ Auto-progress skipped:`, {
-      workflowStarted: workflowStarted.value,
-      isWorkflowPaused: isWorkflowPaused.value,
-    })
+  autoRecoveryLock.value = true
+  try {
+    const currentTasks = tasks.value
+    if (!currentTasks || currentTasks.length === 0) return
+
+    // 🎯 EARLY EXIT 1: All tasks succeeded - nothing to do!
+    const allSucceeded = currentTasks.every((t: TaskResponse) => t.status === 'succeeded')
+    if (allSucceeded) {
+      console.log('✅ All tasks succeeded - skipping auto-recovery')
+      return
+    }
+
+    // 🎯 EARLY EXIT 2: Has running tasks - just wait for them to complete
+    const hasRunning = currentTasks.some((t: TaskResponse) => t.status === 'running')
+    if (hasRunning) {
+      console.log('⏳ Tasks are running - waiting for completion')
+      return
+    }
+
+    // 🎯 EARLY EXIT 3: Has errors but no pending - nothing to auto-start
+    const hasPending = currentTasks.some((t: TaskResponse) => t.status === 'pending')
+    if (!hasPending) {
+      console.log('⚠️ No pending tasks to start')
+      return
+    }
+
+    console.log(`🔄 Performing auto-recovery for pending tasks...`)
+
+    // Check first 4 parallel tasks
+    const firstFourTasks = ['profile', 'digital', 'csr', 'press'] as TaskType[]
+    for (const taskType of firstFourTasks) {
+      const task = currentTasks.find((t: TaskResponse) => t.type === taskType)
+      if (task?.status === 'pending') {
+        console.log(`🚀 Auto-starting: ${taskType}`)
+        triggerTask(taskType)
+        workflowStarted.value = true
+        return // Start one at a time to avoid overwhelming the backend
+      }
+    }
+
+    // Check dependent tasks in order
+    const dependentTasks = ['timeline', 'products', 'team', 'jobs'] as TaskType[]
+    for (const taskType of dependentTasks) {
+      const task = currentTasks.find((t: TaskResponse) => t.type === taskType)
+      if (task?.status === 'pending' && canTriggerTask(taskType)) {
+        console.log(`🚀 Auto-starting dependent task: ${taskType}`)
+        triggerTask(taskType)
+        workflowStarted.value = true
+        return // Start one at a time
+      }
+    }
+  } finally {
+    autoRecoveryLock.value = false
   }
 }
 
-// Auto-progress workflow
+// Debounced auto-recovery to prevent race conditions
+const debouncedAutoRecovery = useDebounceFn(performAutoRecovery, 500)
+
+// Watch for task updates and auto-progress
+watch(
+  tasks,
+  (newTasks) => {
+    // Check for newly succeeded tasks and refresh company data
+    newTasks?.forEach((task: TaskResponse) => {
+      const previousStatus = previousTaskStatuses.value.get(task.type)
+      if (task.status === 'succeeded' && previousStatus !== 'succeeded') {
+        // Refresh company data when a task succeeds
+      }
+
+      // Update the previous status
+      previousTaskStatuses.value.set(task.type, task.status)
+    })
+
+    // Perform debounced auto-recovery check on task changes
+    debouncedAutoRecovery()
+  },
+  { deep: true },
+)
+
+// Auto-progress workflow - DEPRECATED: Now handled in performAutoRecovery
 const autoProgressWorkflow = () => {
-  if (isWorkflowPaused.value) return
-
-  // Find next available tasks to trigger
-  for (const config of workflowConfig) {
-    const currentStatus = getTaskStatus(config.type as TaskType)
-    if (canTriggerTask(config.type as TaskType) && currentStatus === 'pending') {
-      triggerTask(config.type as TaskType)
-      break // Only trigger one at a time for sequential flow
-    }
-  }
+  // This function is no longer needed as performAutoRecovery handles all progression
+  console.warn('autoProgressWorkflow called but is deprecated')
 }
+
+// Watch for running tasks to start/stop polling
+watch(
+  hasRunningTasks,
+  (isRunning) => {
+    if (isRunning) {
+      startPolling()
+    } else {
+      stopPolling()
+    }
+  },
+  { immediate: true },
+)
+
+// Cleanup on unmount
+onUnmounted(() => {
+  stopPolling()
+})
 
 // Task actions
 const triggerTask = async (taskType: TaskType) => {
   try {
-    console.log(`🎬 Triggering task ${taskType} for company ${companyId.value}`)
-
-    // Find the existing pending task
+    // Find the existing task (pending or error)
     const existingTask = tasks.value?.find(
-      (t: TaskResponse) => t.type === taskType && t.status === 'pending',
+      (t: TaskResponse) => t.type === taskType && (t.status === 'pending' || t.status === 'error'),
     )
 
     if (existingTask) {
-      console.log(`📤 Starting existing pending task:`, existingTask)
-      // Use the existing create_and_start_task method from the backend
-      const result = await create({
-        type: taskType,
-        status: 'pending',
-        company_id: Number(companyId.value),
-      })
-
-      console.log(`✅ Task ${taskType} started successfully:`, result)
+      try {
+        // Use restart endpoint for both pending and error tasks (never create new ones)
+        console.log(`🔄 About to call restart mutation with ID:`, existingTask.id)
+        await restart(existingTask.id)
+        console.log(`✅ Task ${taskType} started successfully:`, existingTask)
+      } catch (apiError) {
+        throw apiError
+      }
     } else {
-      console.warn(`⚠️ No pending task found for ${taskType}`)
+      console.warn(`⚠️ No pending or error task found for ${taskType}`)
+      // Log current task state for debugging
+      const currentTask = tasks.value?.find((t) => t.type === taskType)
+      if (currentTask) {
+        console.warn(`📋 Current task state:`, {
+          type: currentTask.type,
+          status: currentTask.status,
+          id: currentTask.id,
+        })
+      } else {
+        console.warn(`📋 No task found at all for type: ${taskType}`)
+      }
     }
   } catch (error) {
     console.error(`❌ Error triggering task ${taskType}:`, error)

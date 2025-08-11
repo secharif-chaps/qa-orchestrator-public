@@ -15,14 +15,13 @@
         </div>
       </div>
       <div class="flex gap-2">
-        <OButton
-          type="tertiary"
+        <Button
+          variant="tertiary"
           size="sm"
+          :icon="viewMode === 'grid' ? 'fa fa-list' : 'fa fa-th-large'"
           :label="viewMode === 'grid' ? 'List View' : 'Grid View'"
           @click="$emit('toggleViewMode')"
-        >
-          <i class="fa-solid" :class="viewMode === 'grid' ? 'fa-list' : 'fa-th-large'"></i>
-        </OButton>
+        />
 
         <div class="w-64 relative">
           <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-secondary"></i>
@@ -38,17 +37,17 @@
 
     <!-- Category Filter Pills -->
     <div class="flex flex-wrap gap-2 mb-4">
-      <OButton
-        type="tertiary"
+      <Button
+        variant="tertiary"
         size="sm"
         label="All Categories"
         :class="selectedCategory === null ? 'bg-primary text-white' : ''"
         @click="$emit('selectCategory', null)"
       />
-      <OButton
+      <Button
         v-for="category in categories"
         :key="category"
-        type="tertiary"
+        variant="tertiary"
         size="sm"
         :label="formatCategoryName(category)"
         :class="selectedCategory === category ? 'bg-primary text-white' : ''"
@@ -59,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { OButton, OInput } from '@owlint/feathers-vue'
+import Button from '@/components/ui/Button.vue'
 
 interface Props {
   totalProductCount: number

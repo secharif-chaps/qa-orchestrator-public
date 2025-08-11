@@ -22,14 +22,14 @@
 
     <template #footer>
       <div class="flex justify-end gap-3">
-        <OButton
-          type="secondary"
+        <Button
+          variant="secondary"
           :label="$t('company.list.delete.actions.cancel')"
           @click="showDeleteModal = false"
         />
-        <OButton
-          type="primary"
-          color="red"
+        <Button
+          variant="primary"
+          color="danger"
           :label="$t('company.list.delete.actions.delete')"
           :loading="deleteLoading"
           @click="deleteCompany"
@@ -40,7 +40,8 @@
 </template>
 
 <script setup lang="ts">
-import { OButton, OModal } from '@owlint/feathers-vue'
+import { OModal } from '@owlint/feathers-vue'
+import Button from '@/components/ui/Button.vue'
 import { ref } from 'vue'
 import type { Company } from '@/types/company'
 

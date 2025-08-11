@@ -64,7 +64,7 @@
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <OBadge :text="'Active'" class="animate-pulse" />
+              <Badge label="Active" variant="primary" class="animate-pulse" />
             </div>
           </div>
         </div>
@@ -91,7 +91,7 @@
 
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth'
-import { OBadge } from '@owlint/feathers-vue'
+import Badge from '@/components/ui/Badge.vue'
 import { computed } from 'vue'
 
 interface Props {

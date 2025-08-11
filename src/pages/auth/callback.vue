@@ -8,9 +8,12 @@
       <p v-if="isLoading" class="mt-4 text-gray-600">Processing login...</p>
       <div v-if="error" class="text-red-600">
         <p>Login failed: {{ error }}</p>
-        <button @click="$router.push('/login')" class="mt-4 text-indigo-600 hover:text-indigo-800">
-          Try again
-        </button>
+        <Button
+          @click="$router.push('/login')"
+          label="Try again"
+          variant="tertiary"
+          class="mt-4"
+        />
       </div>
     </div>
   </div>
@@ -20,6 +23,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import Button from '@/components/ui/Button.vue'
 
 const { handleCallback } = useAuthStore()
 const router = useRouter()

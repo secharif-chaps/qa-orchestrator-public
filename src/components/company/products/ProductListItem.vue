@@ -10,7 +10,7 @@
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
         <p class="text-sm text-secondary">{{ productList.length }} products in this category</p>
       </div>
-      <OBadge :text="productList.length.toString()" color="slate" size="sm" />
+      <Badge :label="productList.length.toString()" variant="slate" size="sm" />
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -20,17 +20,17 @@
         class="flex items-center gap-2 p-2 bg-bg3 rounded text-sm"
       >
         <span class="text-secondary flex-1 capitalize">{{ product }}</span>
-        <OBadge v-if="isNewProduct(product)" color="green" size="xs">
+        <Badge v-if="isNewProduct(product)" variant="success" size="xs">
           <i class="fa-solid fa-star"></i>
           New
-        </OBadge>
+        </Badge>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { OBadge, OIndicator } from '@owlint/feathers-vue'
+import Badge from '@/components/ui/Badge.vue'
 import { computed } from 'vue'
 
 interface Props {

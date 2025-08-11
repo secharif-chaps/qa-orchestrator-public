@@ -1,14 +1,5 @@
 <template>
   <div class="flex flex-col gap-4">
-    <!-- Task state -->
-    <TaskState
-      v-if="companyId"
-      :company-id="companyId"
-      :required-task-types="['jobs']"
-      :loading-title="$t('jobs.loading.title')"
-      :loading-description="$t('jobs.loading.description')"
-    />
-
     <!-- Empty state -->
     <div class="bg-bg1 rounded-lg p-4" v-if="!hasJobOffersData && !jobOffersPending">
       <div class="text-center py-8">
@@ -113,7 +104,6 @@
 </template>
 
 <script lang="ts" setup>
-import TaskState from '@/components/TaskState.vue'
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'

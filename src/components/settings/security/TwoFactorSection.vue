@@ -24,28 +24,22 @@
             </div>
           </div>
           <div class="flex items-center space-x-2">
-            <OBadge
-              :color="twoFactorEnabled ? 'green' : 'slate'"
-              :text="
+            <Badge
+              :variant="twoFactorEnabled ? 'success' : 'slate'"
+              :label="
                 twoFactorEnabled
                   ? $t('settings.security.status.enabled')
                   : $t('settings.security.status.disabled')
               "
-            >
-              {{
-                twoFactorEnabled
-                  ? $t('settings.security.status.enabled')
-                  : $t('settings.security.status.disabled')
-              }}
-            </OBadge>
-            <OButton
+            />
+            <Button
               :label="
                 twoFactorEnabled
                   ? $t('settings.security.actions.disable')
                   : $t('settings.security.actions.setup')
               "
-              type="secondary"
-              :color="twoFactorEnabled ? 'red' : 'primary'"
+              variant="secondary"
+              :color="twoFactorEnabled ? 'danger' : 'neutral'"
               size="sm"
               @click="handleToggleTwoFactor"
             />
@@ -68,24 +62,17 @@
             </div>
           </div>
           <div class="flex items-center space-x-2">
-            <OBadge
-              :color="securityKeysCount > 0 ? 'green' : 'slate'"
-              :text="
+            <Badge
+              :variant="securityKeysCount > 0 ? 'success' : 'slate'"
+              :label="
                 securityKeysCount > 0
                   ? `${securityKeysCount} ${$t('settings.security.twoFactor.securityKeys.count')}`
                   : $t('settings.security.status.disabled')
               "
-            >
-              {{
-                securityKeysCount > 0
-                  ? `${securityKeysCount} ${$t('settings.security.twoFactor.securityKeys.count')}`
-                  : $t('settings.security.status.disabled')
-              }}
-            </OBadge>
-            <OButton
+            />
+            <Button
               :label="$t('settings.security.actions.manage')"
-              type="secondary"
-              color="primary"
+              variant="secondary"
               size="sm"
               @click="handleManageSecurityKeys"
             />
@@ -97,7 +84,8 @@
 </template>
 
 <script setup lang="ts">
-import { OBadge, OButton } from '@owlint/feathers-vue'
+import Badge from '@/components/ui/Badge.vue'
+import Button from '@/components/ui/Button.vue'
 
 interface Props {
   twoFactorEnabled: boolean

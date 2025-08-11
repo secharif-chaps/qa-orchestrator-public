@@ -67,33 +67,12 @@
           />
         </div>
 
-        <!-- Help Text -->
-        <div class="bg-bg1 border border-slate-200 dark:border-slate-600 rounded-lg p-4">
-          <div class="flex items-start space-x-3">
-            <i class="fas fa-info-circle text-primary mt-0.5"></i>
-            <div>
-              <p class="text-sm font-medium text-secondary">{{ $t('search.mandatoryFields') }}</p>
-              <p class="text-xs text-secondary mt-1">
-                Provide both company name and website to start the search process.
-              </p>
-            </div>
-          </div>
-        </div>
-
         <!-- Action Buttons -->
-        <div class="flex items-center justify-between pt-4">
-          <OButton
-            :label="$t('search.actions.deleteData')"
-            type="secondary"
-            color="slate"
-            icon="fas fa-trash"
-            :disabled="mutationLoading || (!company.trim() && !website.trim())"
-            @click="resetData()"
-          />
-          <OButton
+        <div class="flex items-center justify-end pt-4">
+          <Button
+            variant="primary"
+            icon="fa fa-search"
             :label="$t('search.actions.launchSearch')"
-            type="primary"
-            icon="fas fa-search"
             :loading="mutationLoading"
             :disabled="mutationLoading || !isFormValid || !canPerformSearch"
             @click="submit"
@@ -111,7 +90,8 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import { OButton, OIcon } from '@owlint/feathers-vue'
+import { OIcon } from '@owlint/feathers-vue'
+import Button from '@/components/ui/Button.vue'
 import Input from '@/components/ui/Input.vue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

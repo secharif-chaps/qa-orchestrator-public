@@ -27,8 +27,8 @@
               </p>
             </div>
             <div class="flex gap-2">
-              <OBadge color="green" :text="$t('settings.appearance.preview.tag1')" />
-              <OBadge color="blue" :text="$t('settings.appearance.preview.tag2')" />
+              <Badge variant="success" :label="$t('settings.appearance.preview.tag1')" />
+              <Badge variant="info" :label="$t('settings.appearance.preview.tag2')" />
             </div>
           </div>
 
@@ -65,9 +65,9 @@
 
             <!-- Buttons -->
             <div class="flex flex-wrap gap-3">
-              <OButton label="Primary Button" type="primary" />
-              <OButton label="Secondary Button" type="secondary" />
-              <OButton label="Danger Button" type="tertiary" />
+              <Button label="Primary Button" variant="primary" />
+              <Button label="Secondary Button" variant="secondary" />
+              <Button label="Danger Button" variant="tertiary" color="danger" />
             </div>
 
             <!-- Status Indicators -->
@@ -121,7 +121,8 @@
 
 <script setup lang="ts">
 import { Switch } from 'reka-ui/namespaced'
-import { OBadge, OButton } from '@owlint/feathers-vue'
+import Badge from '@/components/ui/Badge.vue'
+import Button from '@/components/ui/Button.vue'
 import { ref } from 'vue'
 
 // Preview component data

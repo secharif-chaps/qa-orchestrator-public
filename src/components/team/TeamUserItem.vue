@@ -22,21 +22,23 @@
 
       <div class="col-span-3">
         <div class="flex flex-wrap gap-1">
-          <span
+          <Badge
             v-for="permission in displayPermissions"
             :key="permission"
-            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
-            :class="user.is_disabled ? 'bg-gray-100 text-gray-500' : 'bg-primary/10 text-primary'"
-          >
-            {{ formatPermission(permission) }}
-          </span>
-          <span
+            :variant="user.is_disabled ? 'slate' : 'primary'"
+            :label="formatPermission(permission)"
+            size="xs"
+            rounded
+            :gradient="false"
+          />
+          <Badge
             v-if="user.permissions && user.permissions.length > 3"
-            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
-            :class="user.is_disabled ? 'bg-gray-100 text-gray-500' : 'bg-gray-100 text-gray-600'"
-          >
-            +{{ user.permissions.length - 3 }}
-          </span>
+            variant="slate"
+            :label="`+${user.permissions.length - 3}`"
+            size="xs"
+            rounded
+            :gradient="false"
+          />
         </div>
       </div>
 
@@ -48,51 +50,52 @@
 
       <div class="col-span-2">
         <div class="flex items-center gap-2">
-          <span
-            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
-            :class="
-              user.is_disabled
-                ? 'bg-red-400/20 text-red-800 dark:text-red-400'
-                : 'bg-green-400/20 text-green-800 dark:text-green-400'
-            "
-          >
-            <i :class="user.is_disabled ? 'fa fa-ban' : 'fa fa-check-circle'" class="mr-1"></i>
-            {{
+          <Badge
+            :variant="user.is_disabled ? 'error' : 'success'"
+            :icon="user.is_disabled ? 'fa fa-ban' : 'fa fa-check-circle'"
+            :label="
               user.is_disabled
                 ? $t('team.status.disabled', 'Disabled')
                 : $t('team.status.active', 'Active')
-            }}
-          </span>
+            "
+            size="xs"
+            rounded
+          />
         </div>
       </div>
 
       <div class="col-span-1">
         <div v-if="canManageUsers" class="flex items-center gap-2">
-          <button
-            @click="$emit('edit-user', user)"
-            class="text-primary hover:text-primary/80 transition-colors p-2"
+          <Button
+            variant="tertiary"
+            icon="fa fa-edit"
+            icon-only
+            size="sm"
             :title="$t('team.edit', 'Edit user')"
-          >
-            <i class="fa fa-edit"></i>
-          </button>
+            @click="$emit('edit-user', user)"
+          />
 
-          <button
+          <Button
             v-if="user.is_disabled"
-            @click="$emit('enable-user', user.id)"
-            class="text-green-600 hover:text-green-700 transition-colors p-2"
+            variant="tertiary"
+            color="warning"
+            icon="fa fa-check"
+            icon-only
+            size="sm"
             :title="$t('team.enable', 'Enable user')"
-          >
-            <i class="fa fa-check"></i>
-          </button>
+            @click="$emit('enable-user', user.id)"
+          />
 
-          <button
+          <Button
             v-else
-            @click="$emit('disable-user', user.id)"
-            class="text-red-600 hover:text-red-700 transition-colors p-2"
+            variant="tertiary"
+            color="danger"
+            icon="fa fa-ban"
+            icon-only
+            size="sm"
             :title="$t('team.disable', 'Disable user')"
-          >
-            <i class="fa fa-ban"></i>
-          </button>
+            @click="$emit('disable-user', user.id)"
+          />
         </div>
         <div v-else class="flex items-center justify-center">
           <span class="text-xs text-secondary">{{ $t('team.readOnly', 'Read-only') }}</span>
@@ -106,6 +109,8 @@
 import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import type { WorkspaceUser } from '@/types/team'
+import Badge from '../ui/Badge.vue'
+import Button from '@/components/ui/Button.vue'
 
 const props = defineProps<{
   user: WorkspaceUser

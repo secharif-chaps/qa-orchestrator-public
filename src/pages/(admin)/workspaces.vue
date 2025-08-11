@@ -13,13 +13,12 @@
             </p>
           </div>
 
-          <button
+          <Button
+            variant="primary"
+            icon="fa fa-plus"
+            :label="$t('workspace.create.button', 'Create Workspace')"
             @click="$router.push('/workspaces/create')"
-            class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 transition-colors flex items-center gap-2"
-          >
-            <i class="fa fa-plus"></i>
-            {{ $t('workspace.create.button', 'Create Workspace') }}
-          </button>
+          />
         </div>
 
         <!-- Search and Filters -->
@@ -57,17 +56,17 @@
               </option>
             </select>
 
-            <button
-              @click="changeSorting(queryParams.sort, queryParams.order === 'asc' ? 'desc' : 'asc')"
-              class="p-2 border border-border-2 rounded-lg hover:bg-bg2 transition-colors"
+            <Button
+              variant="tertiary"
+              :icon="queryParams.order === 'asc' ? 'fa fa-sort-up' : 'fa fa-sort-down'"
+              icon-only
               :title="
                 queryParams.order === 'asc'
                   ? $t('workspace.sort.desc', 'Sort Descending')
                   : $t('workspace.sort.asc', 'Sort Ascending')
               "
-            >
-              <i :class="queryParams.order === 'asc' ? 'fa fa-sort-up' : 'fa fa-sort-down'"></i>
-            </button>
+              @click="changeSorting(queryParams.sort, queryParams.order === 'asc' ? 'desc' : 'asc')"
+            />
           </div>
 
           <!-- Page Size Selector -->
@@ -118,7 +117,7 @@
             <div class="col-span-2">{{ $t('workspace.slug', 'Slug') }}</div>
             <div class="col-span-3">{{ $t('workspace.table.description', 'Description') }}</div>
             <div class="col-span-2">{{ $t('workspace.created', 'Created') }}</div>
-            <div class="col-span-2">{{ $t('workspace.actions', 'Actions') }}</div>
+            <div class="col-span-2 text-right">{{ $t('workspace.actions', 'Actions') }}</div>
           </div>
         </div>
 
@@ -139,13 +138,15 @@
                     {{ workspace.memberCount }}
                   </span>
                 </div>
-                <div class="font-medium">{{ workspace.name }}</div>
-                <div
-                  v-if="currentWorkspace && workspace.id === currentWorkspace.id"
-                  class="text-xs text-green-600 mt-1"
-                >
-                  <i class="fa fa-check-circle mr-1"></i>
-                  {{ $t('workspace.current', 'Current workspace') }}
+                <div>
+                  <div class="font-medium">{{ workspace.name }}</div>
+                  <div
+                    v-if="currentWorkspace && workspace.id === currentWorkspace.id"
+                    class="text-xs text-green-600 mt-1"
+                  >
+                    <i class="fa fa-check-circle mr-1"></i>
+                    {{ $t('workspace.current', 'Current workspace') }}
+                  </div>
                 </div>
               </div>
 
@@ -172,41 +173,45 @@
 
               <!-- Actions -->
               <div class="col-span-2">
-                <div class="flex items-center gap-1">
+                <div class="flex items-center gap-1 justify-end">
                   <!-- Pick Workspace Button -->
-                  <button
+                  <Button
                     @click="showPickModal(workspace)"
                     :disabled="currentWorkspace && workspace.id === currentWorkspace.id"
-                    class="text-green-600 hover:text-green-700 transition-colors p-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    variant="tertiary"
+                    icon="fa fa-exchange-alt"
+                    icon-only
+                    size="sm"
                     :title="
                       currentWorkspace && workspace.id === currentWorkspace.id
                         ? $t('workspace.alreadyCurrent', 'This is your current workspace')
                         : $t('workspace.pick', 'Switch to this workspace')
                     "
-                  >
-                    <i class="fa fa-exchange-alt"></i>
-                  </button>
+                  />
 
-                  <button
+                  <Button
                     @click="viewWorkspace(workspace.id)"
-                    class="text-primary hover:text-primary/80 transition-colors p-2"
+                    variant="tertiary"
+                    icon="fa fa-eye"
+                    icon-only
+                    size="sm"
                     :title="$t('workspace.view', 'View workspace')"
-                  >
-                    <i class="fa fa-eye"></i>
-                  </button>
+                  />
 
-                  <button
+                  <Button
                     @click="showDeleteModal(workspace)"
                     :disabled="workspace.id === 1"
-                    class="text-red-600 hover:text-red-700 transition-colors p-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    variant="tertiary"
+                    color="danger"
+                    icon="fa fa-trash"
+                    icon-only
+                    size="sm"
                     :title="
                       workspace.id === 1
                         ? $t('workspace.cannotDeleteDefault', 'Cannot delete default workspace')
                         : $t('workspace.delete', 'Delete workspace')
                     "
-                  >
-                    <i class="fa fa-trash"></i>
-                  </button>
+                  />
                 </div>
               </div>
             </div>
@@ -230,20 +235,18 @@
                 : $t('workspace.empty.description', 'Create your first workspace to get started')
             }}
           </p>
-          <button
+          <Button
             v-if="!queryParams.search"
             @click="$router.push('/workspaces/create')"
-            class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/80 transition-colors"
-          >
-            {{ $t('workspace.create.button', 'Create Workspace') }}
-          </button>
-          <button
+            :label="$t('workspace.create.button', 'Create Workspace')"
+            variant="primary"
+          />
+          <Button
             v-else
             @click="((queryParams.search = ''), searchWorkspaces(''))"
-            class="bg-secondary text-white px-6 py-2 rounded-lg hover:bg-secondary/80 transition-colors"
-          >
-            {{ $t('workspace.clearSearch', 'Clear Search') }}
-          </button>
+            :label="$t('workspace.clearSearch', 'Clear Search')"
+            variant="secondary"
+          />
         </div>
 
         <!-- Pagination -->
@@ -366,6 +369,7 @@ import { useDeleteWorkspace, usePickWorkspace } from '@/mutations/workspace'
 import type { WorkspaceResponse, WorkspaceListItem, WorkspaceQueryParams } from '@/types/workspace'
 import WorkspaceDeleteModal from '@/components/workspace/WorkspaceDeleteModal.vue'
 import WorkspacePickModal from '@/components/workspace/WorkspacePickModal.vue'
+import Button from '@/components/ui/Button.vue'
 
 const router = useRouter()
 

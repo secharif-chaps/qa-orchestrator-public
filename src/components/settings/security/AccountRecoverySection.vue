@@ -24,22 +24,21 @@
             </div>
           </div>
           <div class="flex items-center space-x-2">
-            <OBadge
-              :color="backupCodesGenerated ? 'green' : 'yellow'"
-              :text="
+            <Badge
+              :variant="backupCodesGenerated ? 'success' : 'warning'"
+              :label="
                 backupCodesGenerated
                   ? $t('settings.security.status.generated')
                   : $t('settings.security.status.notGenerated')
               "
             />
-            <OButton
+            <Button
               :label="
                 backupCodesGenerated
                   ? $t('settings.security.actions.regenerate')
                   : $t('settings.security.actions.generate')
               "
-              type="secondary"
-              color="primary"
+              variant="secondary"
               size="sm"
               @click="handleGenerateBackupCodes"
             />
@@ -63,14 +62,13 @@
               </p>
             </div>
           </div>
-          <OButton
+          <Button
             :label="
               recoveryEmail
                 ? $t('settings.security.actions.update')
                 : $t('settings.security.actions.add')
             "
-            type="secondary"
-            color="primary"
+            variant="secondary"
             size="sm"
             @click="handleUpdateRecoveryEmail"
           />
@@ -81,7 +79,8 @@
 </template>
 
 <script setup lang="ts">
-import { OBadge, OButton } from '@owlint/feathers-vue'
+import Badge from '@/components/ui/Badge.vue'
+import Button from '@/components/ui/Button.vue'
 
 interface Props {
   backupCodesGenerated: boolean

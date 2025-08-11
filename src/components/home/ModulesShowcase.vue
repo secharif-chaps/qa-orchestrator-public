@@ -17,30 +17,27 @@
           'relative rounded-xl border transition-all duration-300 hover:scale-[1.02] cursor-pointer',
           'p-6 min-h-[200px] flex flex-col justify-between',
           module.unlocked
-            ? 'bg-gradient-to-br from-primary/10 to-purple-500/10 border-primary/20 hover:shadow-lg hover:shadow-primary/20'
+            ? 'bg-gradient-to-br from-primary/10 to-primary/20 border-primary/20 hover:shadow-lg hover:shadow-primary/20'
             : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:shadow-md',
         ]"
       >
         <!-- Status Badge -->
         <div class="absolute top-3 right-3">
-          <div
+          <Badge
             v-if="module.unlocked"
-            class="flex items-center gap-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs px-2 py-1 rounded-full"
-          >
-            <i class="fa-solid fa-check text-[10px]"></i>
-            <span>Active</span>
-          </div>
-          <div
+            variant="success"
+            icon="fa-solid fa-check"
+            label="Active"
+            size="xs"
+            rounded
+          />
+          <Badge
             v-else
-            :class="[
-              'text-xs px-2 py-1 rounded-full',
-              module.status === 'contact-sales'
-                ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300'
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400',
-            ]"
-          >
-            {{ module.status === 'contact-sales' ? 'Pro Feature' : 'Coming Soon' }}
-          </div>
+            :variant="module.status === 'contact-sales' ? 'warning' : 'slate'"
+            :label="module.status === 'contact-sales' ? 'Pro Feature' : 'Coming Soon'"
+            size="xs"
+            rounded
+          />
         </div>
 
         <!-- Module Icon -->
@@ -49,7 +46,7 @@
             :class="[
               'w-12 h-12 rounded-lg flex items-center justify-center mb-4',
               module.unlocked
-                ? 'bg-gradient-to-br from-primary to-purple-500 text-white'
+                ? 'bg-gradient-to-br from-primary to-primary/80 text-white'
                 : 'bg-gray-200 dark:bg-gray-700 text-gray-400',
             ]"
           >
@@ -80,14 +77,14 @@
           <div v-if="module.unlocked" class="grid grid-cols-2 gap-2">
             <RouterLink
               to="/search"
-              class="bg-gradient-to-r from-primary to-purple-500 text-white py-2 px-3 rounded-lg font-medium text-center text-sm transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 transform hover:-translate-y-0.5 flex items-center justify-center"
+              class="bg-gradient-to-r from-primary to-primary/80 text-white py-2 px-3 rounded-lg font-medium text-center text-sm transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 transform hover:-translate-y-0.5 flex items-center justify-center"
             >
               <i class="fa-solid fa-magnifying-glass mr-1"></i>
               Search
             </RouterLink>
             <RouterLink
               to="/companies"
-              class="bg-gradient-to-r from-primary to-purple-500 text-white py-2 px-3 rounded-lg font-medium text-center text-sm transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 transform hover:-translate-y-0.5 flex items-center justify-center"
+              class="bg-gradient-to-r from-primary to-primary/80 text-white py-2 px-3 rounded-lg font-medium text-center text-sm transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 transform hover:-translate-y-0.5 flex items-center justify-center"
             >
               <i class="fa-solid fa-building mr-1"></i>
               Companies
@@ -127,6 +124,8 @@
 </template>
 
 <script setup lang="ts">
+import Badge from '@/components/ui/Badge.vue'
+
 interface Module {
   name: string
   description: string

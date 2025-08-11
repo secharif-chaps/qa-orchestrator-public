@@ -10,14 +10,13 @@
         </p>
       </div>
 
-      <button
+      <Button
         v-if="canManageUsers"
+        variant="primary"
+        icon="fa fa-plus"
+        :label="$t('team.create.button', 'Add User')"
         @click="$emit('create-user')"
-        class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/80 transition-colors flex items-center gap-2"
-      >
-        <i class="fa fa-plus"></i>
-        {{ $t('team.create.button', 'Add User') }}
-      </button>
+      />
     </div>
 
     <div class="flex items-center gap-4 bg-bg1 p-4 rounded-lg shadow-sm">
@@ -100,6 +99,7 @@
 import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import type { WorkspaceUserQueryParams } from '@/types/team'
+import Button from '@/components/ui/Button.vue'
 
 defineProps<{
   search: string

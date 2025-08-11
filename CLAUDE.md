@@ -59,6 +59,22 @@ This project implements a granular permission system:
 ### Testing Permissions
 Use test users defined in `.claude/test-users.md` to test different permission scenarios.
 
+## UI Components
+
+- **ALWAYS use custom UI components** from `@/components/ui/` instead of third-party libraries when available:
+  - **Alert**: Use `Alert` component instead of `OAlert` (Feathers) or `RAlert` (Reka)
+    - For warnings, errors, info messages, and important notifications
+  - **Input**: Use `Input` component instead of `OInput` (Feathers)
+    - For all form inputs, search fields, and text entry
+  - **Badge**: Use `Badge` component instead of any third-party badge/chip/tag components
+    - For status indicators, counts, labels, tags, and small metadata
+- These custom components provide:
+  - Theme-aware styling that works in both light and dark modes
+  - Consistent design language across the application
+  - Subtle gradients and modern aesthetics
+  - Better TypeScript support
+- See `src/components/CLAUDE.md` for detailed component usage and examples
+
 ## Important Reminders
 
 - Only commit when explicitly asked by the user

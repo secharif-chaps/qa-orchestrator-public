@@ -36,18 +36,16 @@
       </div>
 
       <div class="space-x-4">
-        <button
+        <Button
+          :label="$t('errors.forbidden.goHome', 'Go to Home')"
+          variant="primary"
           @click="$router.push('/')"
-          class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/80 transition-colors"
-        >
-          {{ $t('errors.forbidden.goHome', 'Go to Home') }}
-        </button>
-        <button
+        />
+        <Button
+          :label="$t('errors.forbidden.goBack', 'Go Back')"
+          variant="secondary"
           @click="$router.back()"
-          class="bg-bg2 text-base px-6 py-2 rounded-lg hover:bg-bg1 transition-colors"
-        >
-          {{ $t('errors.forbidden.goBack', 'Go Back') }}
-        </button>
+        />
       </div>
 
       <div class="mt-8 text-sm text-secondary">
@@ -68,6 +66,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import Button from '@/components/ui/Button.vue'
 
 const route = useRoute()
 const { t } = useI18n()

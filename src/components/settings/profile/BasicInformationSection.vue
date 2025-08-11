@@ -6,20 +6,14 @@
           <h2 class="text-lg font-semibold">{{ $t('settings.profile.basic.title') }}</h2>
           <p class="text-sm text-secondary mt-1">{{ $t('settings.profile.basic.description') }}</p>
         </div>
-        <OBadge
-          :color="user?.expired ? 'red' : 'green'"
-          :text="
+        <Badge
+          :variant="user?.expired ? 'error' : 'success'"
+          :label="
             user?.expired
               ? $t('settings.profile.status.expired')
               : $t('settings.profile.status.active')
           "
-        >
-          {{
-            user?.expired
-              ? $t('settings.profile.status.expired')
-              : $t('settings.profile.status.active')
-          }}
-        </OBadge>
+        />
       </div>
     </div>
     <div class="px-6 py-6">
@@ -58,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { OBadge } from '@owlint/feathers-vue'
+import Badge from '@/components/ui/Badge.vue'
 
 interface User {
   expired?: boolean

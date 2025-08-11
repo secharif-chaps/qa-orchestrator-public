@@ -1,7 +1,11 @@
-import { ref } from 'vue'
-import { defineMutation, useMutation } from '@pinia/colada'
+import { computed, ref } from 'vue'
+import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { createTask, restartTask } from '@/api/tasks'
-import type { TaskCreate, TaskType } from '@/types/task'
+import type { TaskCreate, TaskResponse, TaskType } from '@/types/task'
+import { useRoute } from 'vue-router'
+import { TASK_QUERY_KEYS } from '@/queries/tasks'
+
+const queryCache = useQueryCache()
 
 export const useCreateTask = defineMutation(() => {
   const companyId = ref<number | null>(null)
@@ -31,11 +35,45 @@ export const useCreateTask = defineMutation(() => {
   }
 })
 
-export const useRestartTask = defineMutation(() => {
+export const useRestartTask = () => {
   const taskId = ref<number | null>(null)
+  const route = useRoute()
+  const companyId = computed(() => route.params.companyId as string)
 
   const { mutate, ...mutation } = useMutation({
     mutation: (id: number) => restartTask(id),
+    onMutate: (id: number) => {
+      console.log('getting cache', TASK_QUERY_KEYS.byCompanyId(companyId.value))
+
+      const previousTasks = queryCache.getQueryData(
+        TASK_QUERY_KEYS.byCompanyId(companyId.value),
+      ) as TaskResponse[]
+
+      const taskToUpdate = previousTasks?.find((task: TaskResponse) => task.id === id)
+      
+      if (!taskToUpdate) {
+        throw new Error('Task not found')
+      }
+
+      const newTasks = [...previousTasks]
+      newTasks.find((task: TaskResponse) => task.id === id)!.status = 'running'
+
+      // Set the optimistic update to the cache
+      queryCache.setQueryData(TASK_QUERY_KEYS.byCompanyId(companyId.value), newTasks)
+
+      return { previousTasks, newTasks }
+    },
+    onError: (error, variables, { previousTasks }) => {
+      queryCache.setQueryData(TASK_QUERY_KEYS.byCompanyId(companyId.value), previousTasks)
+
+      console.error(`An error occurred when updating a task "${variables}"`, error)
+    },
+    onSettled: (data, error, variables, { newTasks }) => {
+      console.log('tasks mutation settled invalidating cache to get fresh data')
+      if (newTasks) {
+        queryCache.invalidateQueries({ key: TASK_QUERY_KEYS.byCompanyId(companyId.value) })
+      }
+    },
   })
 
   return {
@@ -51,4 +89,4 @@ export const useRestartTask = defineMutation(() => {
     taskId,
     mutate,
   }
-})
+}

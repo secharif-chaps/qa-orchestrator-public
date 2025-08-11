@@ -9,7 +9,7 @@
           {{ $t('tokens.moduleDescription', 'Configure module access and token allocations') }}
         </p>
       </div>
-      
+
       <div class="flex items-center gap-2">
         <button
           @click="refreshAllTokens"
@@ -19,7 +19,7 @@
         >
           <i :class="{ 'animate-spin': isRefreshing }" class="fa fa-refresh"></i>
         </button>
-        
+
         <button
           v-if="hasChanges"
           @click="saveAllChanges"
@@ -59,32 +59,40 @@
       <h3 class="text-lg font-medium mb-4">
         {{ $t('tokens.statistics', 'Token Statistics') }}
       </h3>
-      
+
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="bg-bg2 rounded-lg p-4">
-          <div class="text-sm text-secondary mb-1">{{ $t('tokens.totalTokens', 'Total Tokens') }}</div>
+          <div class="text-sm text-secondary mb-1">
+            {{ $t('tokens.totalTokens', 'Total Tokens') }}
+          </div>
           <div class="text-2xl font-bold">{{ totalTokens }}</div>
         </div>
-        
+
         <div class="bg-bg2 rounded-lg p-4">
-          <div class="text-sm text-secondary mb-1">{{ $t('tokens.enabledModules', 'Enabled Modules') }}</div>
+          <div class="text-sm text-secondary mb-1">
+            {{ $t('tokens.enabledModules', 'Enabled Modules') }}
+          </div>
           <div class="text-2xl font-bold text-green-600">{{ enabledModulesCount }}</div>
         </div>
-        
+
         <div class="bg-bg2 rounded-lg p-4">
-          <div class="text-sm text-secondary mb-1">{{ $t('tokens.disabledModules', 'Disabled Modules') }}</div>
+          <div class="text-sm text-secondary mb-1">
+            {{ $t('tokens.disabledModules', 'Disabled Modules') }}
+          </div>
           <div class="text-2xl font-bold text-red-600">{{ disabledModulesCount }}</div>
         </div>
-        
+
         <div class="bg-bg2 rounded-lg p-4">
-          <div class="text-sm text-secondary mb-1">{{ $t('tokens.lowTokenModules', 'Low Token Modules') }}</div>
+          <div class="text-sm text-secondary mb-1">
+            {{ $t('tokens.lowTokenModules', 'Low Token Modules') }}
+          </div>
           <div class="text-2xl font-bold text-yellow-600">{{ lowTokenModulesCount }}</div>
         </div>
       </div>
     </div>
 
     <!-- Module Cards -->
-    <div v-if="modules" class="space-y-4">
+    <div v-if="modules" class="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-4">
       <ModuleTokenCard
         v-for="module in modules.modules"
         :key="module.name"
@@ -104,7 +112,12 @@
         {{ $t('tokens.empty.title', 'No modules configured') }}
       </h3>
       <p class="text-secondary mb-6">
-        {{ $t('tokens.empty.description', 'Module configuration will be displayed here once available') }}
+        {{
+          $t(
+            'tokens.empty.description',
+            'Module configuration will be displayed here once available',
+          )
+        }}
       </p>
       <button
         @click="refreshTokens"
@@ -134,13 +147,14 @@ const isRefreshing = ref(false)
 const hasChanges = ref(false)
 
 // Query for workspace modules
-const { data: modules, isLoading, error, refetch } = useQuery(
-  workspaceModulesQuery,
-  () => ({ workspaceId: props.workspaceId }),
-  {
-    enabled: computed(() => !!props.workspaceId),
-  }
-)
+const {
+  data: modules,
+  isLoading,
+  error,
+  refetch,
+} = useQuery(workspaceModulesQuery, () => ({ workspaceId: props.workspaceId }), {
+  enabled: computed(() => !!props.workspaceId),
+})
 
 // Mutation for bulk updates
 const { updateModules, isLoading: isSaving } = useUpdateWorkspaceModules()
@@ -153,19 +167,17 @@ const totalTokens = computed(() => {
 
 const enabledModulesCount = computed(() => {
   if (!modules.value?.modules) return 0
-  return modules.value.modules.filter(module => module.enabled).length
+  return modules.value.modules.filter((module) => module.enabled).length
 })
 
 const disabledModulesCount = computed(() => {
   if (!modules.value?.modules) return 0
-  return modules.value.modules.filter(module => !module.enabled).length
+  return modules.value.modules.filter((module) => !module.enabled).length
 })
 
 const lowTokenModulesCount = computed(() => {
   if (!modules.value?.modules) return 0
-  return modules.value.modules.filter(module => 
-    module.enabled && module.token_count < 10
-  ).length
+  return modules.value.modules.filter((module) => module.enabled && module.token_count < 10).length
 })
 
 // Methods
@@ -178,7 +190,7 @@ const refreshAllTokens = async () => {
   try {
     await refreshTokens()
     // Add a small delay for visual feedback
-    await new Promise(resolve => setTimeout(resolve, 500))
+    await new Promise((resolve) => setTimeout(resolve, 500))
   } finally {
     isRefreshing.value = false
   }
