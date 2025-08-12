@@ -75,8 +75,8 @@
   }
 
   :root.dark {
-    --theme-color-bg1: var(--color-slate-800);
-    --theme-color-bg2: var(--color-slate-700);
+    --theme-color-bg1: color-mix(in srgb, var(--color-slate-800) 50%, transparent);
+    --theme-color-bg2: var(--color-slate-800);
     --theme-color-bg3: var(--color-slate-900);
 
     --theme-color-error: var(--color-red-500);
@@ -86,7 +86,7 @@
     --theme-color-secondary: var(--color-slate-400);
 
     --theme-color-border-1: var(--color-slate-600);
-    --theme-color-border-2: var(--color-slate-700);
+    --theme-color-border-2: color-mix(in srgb, var(--color-slate-700) 50%, transparent);
 
     --theme-color-sidebar-border: var(--color-indigo-500);
     --theme-color-sidebar-count: var(--color-indigo-500);

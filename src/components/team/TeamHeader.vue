@@ -19,10 +19,12 @@
       />
     </div>
 
-    <div class="flex items-center gap-4 bg-bg1 p-4 rounded-lg shadow-sm">
+    <div class="flex items-center gap-4 bg-bg1 p-4 rounded-lg shadow-sm border border-border-2">
       <div class="flex-1 max-w-md">
         <div class="relative">
-          <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"></i>
+          <i
+            class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
+          ></i>
           <input
             :model-value="search"
             @input="$emit('update:search', $event.target.value)"
@@ -45,20 +47,24 @@
           <option value="email">{{ $t('team.sort.email', 'Email') }}</option>
           <option value="username">{{ $t('team.sort.username', 'Username') }}</option>
         </select>
-        
+
         <button
           @click="$emit('toggle-order')"
           class="flex items-center gap-2 px-3 py-2 border border-border-2 rounded-lg hover:bg-bg2 transition-colors text-sm font-medium"
-          :title="order === 'asc' ? $t('team.sort.desc', 'Sort Descending') : $t('team.sort.asc', 'Sort Ascending')"
+          :title="
+            order === 'asc'
+              ? $t('team.sort.desc', 'Sort Descending')
+              : $t('team.sort.asc', 'Sort Ascending')
+          "
         >
           <span class="text-secondary">{{ order === 'asc' ? 'A-Z' : 'Z-A' }}</span>
           <div class="flex flex-col items-center gap-0.5">
-            <i 
-              class="fa fa-chevron-up text-xs transition-colors" 
+            <i
+              class="fa fa-chevron-up text-xs transition-colors"
               :class="order === 'asc' ? 'text-primary' : 'text-gray-300'"
             ></i>
-            <i 
-              class="fa fa-chevron-down text-xs transition-colors" 
+            <i
+              class="fa fa-chevron-down text-xs transition-colors"
               :class="order === 'desc' ? 'text-primary' : 'text-gray-300'"
             ></i>
           </div>

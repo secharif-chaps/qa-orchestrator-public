@@ -1,9 +1,9 @@
 <template>
-  <div v-if="meta && meta.pages > 1" class="flex justify-center mt-8">
+  <div v-if="meta && meta.last_page > 1" class="flex justify-center">
     <Pagination.Root
-      v-model:page="meta.page"
+      v-model:page="currentPage"
       :total="meta.total"
-      :items-per-page="meta.size"
+      :items-per-page="meta.per_page"
       :sibling-count="1"
       :show-edges="true"
       class="mx-auto"
@@ -32,8 +32,8 @@
             v-else
             class="h-10 w-10 p-0 hover:bg-bg2 rounded-md flex items-center justify-center cursor-pointer transition-colors hover:ring-2 hover:ring-primary hover:ring-offset-2 hover:ring-offset-bg1"
             :class="{
-              'bg-primary/10 border-primary text-primary': item.value === meta.page,
-              'bg-bg1 text-secondary hover:text-primary': item.value !== meta.page,
+              'bg-primary/10 border-primary text-primary': item.value === meta.current_page,
+              'bg-bg1 text-secondary hover:text-primary': item.value !== meta.current_page,
             }"
             :value="item.value"
           >
@@ -63,4 +63,6 @@ import type { PaginationMeta } from '@/types/pagination'
 defineProps<{
   meta: PaginationMeta | null
 }>()
+
+const currentPage = defineModel<number>('currentPage', { required: true })
 </script>

@@ -9,7 +9,12 @@
               {{ $t('company.management.title', 'Company Management') }}
             </h1>
             <p class="text-secondary mt-2">
-              {{ $t('company.management.description', 'View and manage all companies in your workspace') }}
+              {{
+                $t(
+                  'company.management.description',
+                  'View and manage all companies in your workspace',
+                )
+              }}
             </p>
           </div>
 
@@ -22,7 +27,7 @@
         </div>
 
         <!-- Search and Filters -->
-        <div class="flex items-center gap-4 bg-bg1 p-4 rounded-lg shadow-sm">
+        <div class="flex items-center gap-4 bg-bg1 p-4 rounded-lg shadow-sm border border-border-2">
           <!-- Search Input -->
           <div class="flex-1 max-w-md">
             <div class="relative">
@@ -65,6 +70,7 @@
               v-model="companiesStore.size"
               class="px-3 py-2 border border-border-2 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
+              <option value="5">5</option>
               <option value="10">10</option>
               <option value="20">20</option>
               <option value="50">50</option>
@@ -111,7 +117,7 @@
         </div>
 
         <!-- Table View -->
-        <div v-else class="bg-bg1 rounded-lg shadow-sm overflow-hidden">
+        <div v-else class="bg-bg1 rounded-lg shadow-sm overflow-hidden border border-border-2">
           <!-- Table Header -->
           <div class="px-6 py-4 border-b border-border-2 bg-bg2">
             <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
@@ -138,18 +144,26 @@
 
         <!-- Pagination -->
         <div v-if="paginationMeta" class="flex justify-center mt-8">
-          <CompaniesPagination :meta="paginationMeta" />
+          <CompaniesPagination v-model:current-page="companiesStore.page" :meta="paginationMeta" />
         </div>
       </div>
 
       <!-- Empty State -->
       <div v-else-if="status === 'success'" class="bg-bg1 rounded-lg shadow-sm p-12 text-center">
         <i class="fa fa-building text-4xl text-secondary/50 mb-4"></i>
-        <h3 class="text-lg font-medium text-base mb-2">
-          {{ companiesStore.filterName ? $t('company.empty.noResults', 'No companies found') : $t('company.empty.title', 'No companies yet') }}
+        <h3 class="text-lg font-medium mb-2">
+          {{
+            companiesStore.filterName
+              ? $t('company.empty.noResults', 'No companies found')
+              : $t('company.empty.title', 'No companies yet')
+          }}
         </h3>
         <p class="text-secondary mb-6">
-          {{ companiesStore.filterName ? $t('company.empty.tryDifferentSearch', 'Try a different search term') : $t('company.empty.description', 'Start by adding your first company') }}
+          {{
+            companiesStore.filterName
+              ? $t('company.empty.tryDifferentSearch', 'Try a different search term')
+              : $t('company.empty.description', 'Start by adding your first company')
+          }}
         </p>
         <Button
           v-if="!companiesStore.filterName"
