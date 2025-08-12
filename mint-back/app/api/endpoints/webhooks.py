@@ -137,7 +137,7 @@ async def dify_task_callback(
         
         # Extract task metadata (might be in different places depending on Dify configuration)
         company_id = None
-        task_type = "products"  # Default to products since that's what we're testing
+        task_type = "products"  # Default to products, but will be overridden if found in payload
         
         # Try to extract company_id from various possible locations
         if "callback_payload" in body:
@@ -201,16 +201,19 @@ async def dify_task_callback(
         
         # Extract the actual result data (could be in various places)
         if success:
+            # Determine the key to use based on task type
+            data_key = task_type if task_type in ["products", "timeline"] else "products"
+            
             # Try different possible locations for the result
             if "result" in body:
                 # Direct result
                 if isinstance(body["result"], str):
                     try:
-                        task_data = {"products": json.loads(body["result"])}
+                        task_data = {data_key: json.loads(body["result"])}
                     except json.JSONDecodeError:
-                        task_data = {"products": body["result"]}
+                        task_data = {data_key: body["result"]}
                 else:
-                    task_data = {"products": body["result"]}
+                    task_data = {data_key: body["result"]}
             elif "data" in body:
                 # Result in data field
                 if "outputs" in body["data"]:
@@ -218,22 +221,22 @@ async def dify_task_callback(
                     if "result" in outputs:
                         if isinstance(outputs["result"], str):
                             try:
-                                task_data = {"products": json.loads(outputs["result"])}
+                                task_data = {data_key: json.loads(outputs["result"])}
                             except json.JSONDecodeError:
-                                task_data = {"products": outputs["result"]}
+                                task_data = {data_key: outputs["result"]}
                         else:
-                            task_data = {"products": outputs["result"]}
+                            task_data = {data_key: outputs["result"]}
                     else:
-                        task_data = {"products": outputs}
+                        task_data = {data_key: outputs}
                 else:
-                    task_data = {"products": body["data"]}
+                    task_data = {data_key: body["data"]}
             elif "outputs" in body:
                 # Direct outputs
-                task_data = {"products": body["outputs"]}
+                task_data = {data_key: body["outputs"]}
             else:
                 # Use entire body as result if nothing else matches
                 logger.warning(f"Could not find standard result location, using entire body")
-                task_data = {"products": body}
+                task_data = {data_key: body}
         
         # Update task and company based on result
         if success:
