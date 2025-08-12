@@ -23,6 +23,7 @@ export interface CompanyUpdate {
 export type SourcedValue<T> = {
   value: T
   source: string
+  favicon?: string
 }
 
 export interface TeamMember {
