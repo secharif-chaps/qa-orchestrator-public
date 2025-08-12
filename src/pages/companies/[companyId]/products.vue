@@ -5,14 +5,26 @@
 
     <!-- Main content -->
     <div v-else class="space-y-6">
-      <!-- Insights Section -->
-      <div v-if="productsInsights" class="bg-bg1 rounded-lg p-6 border border-border-2">
-        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-          <i class="fa fa-chart-line text-primary"></i>
+      <!-- AI Insights Section -->
+      <div v-if="productsInsights" class="relative bg-gradient-to-br from-primary/5 via-primary/3 to-primary/5 rounded-lg p-6 border border-primary/20 shadow-sm">
+        <!-- AI Badge -->
+        <div class="absolute top-4 right-4">
+          <Badge
+            variant="primary"
+            icon="fa fa-sparkles"
+            label="AI"
+            size="xs"
+            rounded
+          />
+        </div>
+        
+        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 text-primary">
+          <i class="fa fa-brain"></i>
           <span>{{ $t('products.insights.title', 'Product Insights') }}</span>
         </h2>
-        <div class="bg-bg2 rounded-lg p-4">
-          <div class="prose prose-sm max-w-none dark:prose-invert text-secondary">
+        
+        <div class="bg-white/50 dark:bg-slate-800/30 rounded-lg p-4 backdrop-blur-sm border border-primary/10">
+          <div class="prose prose-sm max-w-none dark:prose-invert text-slate-700 dark:text-slate-300 leading-relaxed">
             {{ productsInsights }}
           </div>
         </div>
@@ -69,6 +81,7 @@ import ProductsHeader from '@/components/company/products/ProductsHeader.vue'
 import ProductGridItem from '@/components/company/products/ProductGridItem.vue'
 import ProductListItem from '@/components/company/products/ProductListItem.vue'
 import ProductsEmptyState from '@/components/company/products/ProductsEmptyState.vue'
+import Badge from '@/components/ui/Badge.vue'
 import { useRoute } from 'vue-router'
 import { computed, ref } from 'vue'
 import { useQuery } from '@pinia/colada'
