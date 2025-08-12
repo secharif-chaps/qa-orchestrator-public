@@ -52,8 +52,8 @@ class DifyClient:
         
         payload = {
             "inputs": {
-                "company_name": company_name,
-                "company_website": website,
+                "company": company_name,  # Changed from company_name to company
+                "website": website,      # Changed from company_website to website
                 "success_callback": success_callback,
                 "error_callback": error_callback,
                 "callback_payload": callback_payload_template  # Include task metadata for callback
