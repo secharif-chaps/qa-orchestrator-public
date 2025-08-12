@@ -38,19 +38,19 @@
     <!-- Category Filter Pills -->
     <div class="flex flex-wrap gap-2 mb-4">
       <Button
-        variant="tertiary"
+        :variant="selectedCategory === null ? 'primary' : 'tertiary'"
         size="sm"
         label="All Categories"
-        :class="selectedCategory === null ? 'bg-primary text-white' : ''"
+        :icon="selectedCategory === null ? 'fa fa-check' : ''"
         @click="$emit('selectCategory', null)"
       />
       <Button
         v-for="category in categories"
         :key="category"
-        variant="tertiary"
+        :variant="selectedCategory === category ? 'primary' : 'tertiary'"
         size="sm"
         :label="formatCategoryName(category)"
-        :class="selectedCategory === category ? 'bg-primary text-white' : ''"
+        :icon="selectedCategory === category ? 'fa fa-check' : ''"
         @click="$emit('selectCategory', category)"
       />
     </div>
