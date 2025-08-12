@@ -30,7 +30,7 @@
           class="mt-1 text-xs text-red-600 truncate relative group"
         >
           {{ data.error }}
-          
+
           <!-- Restart tooltip -->
           <div
             class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto whitespace-nowrap z-10"
