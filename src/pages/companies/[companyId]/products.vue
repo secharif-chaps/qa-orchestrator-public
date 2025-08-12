@@ -5,6 +5,19 @@
 
     <!-- Main content -->
     <div v-else class="space-y-6">
+      <!-- Insights Section -->
+      <div v-if="productsInsights" class="bg-bg1 rounded-lg p-6 border border-border-2">
+        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+          <i class="fa fa-chart-line text-primary"></i>
+          <span>{{ $t('products.insights.title', 'Product Insights') }}</span>
+        </h2>
+        <div class="bg-bg2 rounded-lg p-4">
+          <div class="prose prose-sm max-w-none dark:prose-invert text-secondary">
+            {{ productsInsights }}
+          </div>
+        </div>
+      </div>
+
       <!-- Products Overview Header -->
       <ProductsHeader
         :total-product-count="totalProductCount"
@@ -87,6 +100,10 @@ const totalProductCount = computed(() => {
     (total: number, productList: string[]) => total + productList.length,
     0,
   )
+})
+
+const productsInsights = computed(() => {
+  return company.value?.products?.insights
 })
 
 const filteredProducts = computed(() => {
