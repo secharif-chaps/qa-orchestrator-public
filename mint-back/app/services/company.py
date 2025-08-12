@@ -237,7 +237,7 @@ class CompanyService:
                 logger.info(f"Using Dify workflow (async) for products task - Company: {company.name}")
                 
                 # Prepare callback URLs - use Dify-specific endpoint
-                success_callback = f"{settings.BACKEND_BASE_URL}/api/v1/webhooks/dify/tasks/{task.id}/callback"
+                success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
                 error_callback = success_callback  # Same endpoint, different status in payload
                 
                 # Trigger Dify workflow with callbacks (ASYNC mode - fire and forget)
