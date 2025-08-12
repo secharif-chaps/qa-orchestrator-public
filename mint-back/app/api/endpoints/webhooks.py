@@ -8,6 +8,7 @@ import json
 from app.services.company import CompanyService
 from app.core.dependencies import get_company_service
 from app.models.task import TaskStatus
+from app.core.config import settings
 from fastapi import Depends
 
 logger = logging.getLogger(__name__)
@@ -274,3 +275,16 @@ async def dify_task_callback(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error processing Dify callback"
         )
+
+@router.get("/debug/dify-config")
+async def debug_dify_config():
+    """
+    Debug endpoint to check Dify configuration values
+    """
+    return {
+        "dify_url": settings.DIFY_URL,
+        "dify_api_key": settings.DIFY_API_KEY[:10] + "..." if settings.DIFY_API_KEY else "None",
+        "product_workflow_id": settings.DIFY_PRODUCT_WORKFLOW_ID,
+        "timeline_workflow_id": settings.DIFY_TIMELINE_WORKFLOW_ID,
+        "message": "Configuration loaded successfully"
+    }

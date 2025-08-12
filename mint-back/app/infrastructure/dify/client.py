@@ -63,6 +63,9 @@ class DifyClient:
         }
         
         logger.info(f"Triggering Dify product workflow for {company_name} ({website}) - Task ID: {task_id}")
+        logger.info(f"Product Workflow ID: {self.product_workflow_id}")
+        logger.info(f"Dify Base URL: {self.base_url}")
+        logger.info(f"Full URL: {self.base_url}/workflows/{self.product_workflow_id}/run")
         logger.info(f"Mode: {'Async (fire-and-forget)' if async_mode else 'Sync (wait for response)'}")
         logger.info(f"Success callback: {success_callback}")
         logger.info(f"Error callback: {error_callback}")
@@ -193,6 +196,9 @@ class DifyClient:
         }
         
         logger.info(f"Triggering Dify timeline workflow for {company_name} ({website}) - Task ID: {task_id}")
+        logger.info(f"Timeline Workflow ID: {self.timeline_workflow_id}")
+        logger.info(f"Dify Base URL: {self.base_url}")
+        logger.info(f"Full URL: {self.base_url}/workflows/{self.timeline_workflow_id}/run")
         logger.info(f"Mode: {'Async (fire-and-forget)' if async_mode else 'Sync (wait for response)'}")
         logger.info(f"Success callback: {success_callback}")
         logger.info(f"Error callback: {error_callback}")
