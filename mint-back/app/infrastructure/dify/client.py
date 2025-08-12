@@ -54,8 +54,7 @@ class DifyClient:
             "inputs": {
                 "company": company_name,  # Changed from company_name to company
                 "website": website,      # Changed from company_website to website
-                "success_callback": success_callback,
-                "error_callback": error_callback,
+                "callback_webhook": success_callback,  # Dify expects callback_webhook field
                 "callback_payload": callback_payload_template  # Include task metadata for callback
             },
             "response_mode": "blocking",  # Dify still processes synchronously but we don't wait
