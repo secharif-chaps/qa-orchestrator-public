@@ -1,9 +1,26 @@
 <template>
   <div
-    class="relative p-4 rounded-xl shadow-lg shadow-bg2 border-2 border-border-2 transition-all duration-300 cursor-pointer transform hover:scale-105 w-40"
+    class="group relative p-4 rounded-xl shadow-lg shadow-bg2 border-2 border-border-2 transition-all duration-300 cursor-pointer transform w-40"
     :class="getNodeClass()"
     @click="handleClick"
   >
+    <div
+      v-if="data.status === 'error'"
+      class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs rounded shadow-lg opacity-100 whitespace-nowrap z-50"
+    >
+      <Button
+        @click.stop="$emit('restart', data.type)"
+        icon="fa fa-rotate-right"
+        class="flex items-center gap-1 px-2 py-1 text-white hover:text-gray-200 hover:bg-gray-800 rounded transition-colors duration-150"
+      >
+        <span>Restart</span>
+      </Button>
+      <!-- Tooltip arrow -->
+      <div
+        class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-primary"
+      ></div>
+    </div>
+
     <!-- Task icon and info -->
     <div class="flex items-center space-x-3">
       <div
@@ -22,32 +39,6 @@
 
       <div class="flex-1 min-w-0">
         <h3 class="font-semibold text-sm truncate">{{ data.name }}</h3>
-        <!-- <p class="text-xs text-gray-500 truncate">{{ data.description }}</p> -->
-
-        <!-- Error message with restart tooltip -->
-        <div
-          v-if="data.status === 'error' && data.error"
-          class="mt-1 text-xs text-red-600 truncate relative group"
-        >
-          {{ data.error }}
-
-          <!-- Restart tooltip -->
-          <div
-            class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto whitespace-nowrap z-10"
-          >
-            <button
-              @click.stop="$emit('restart', data.type)"
-              class="flex items-center gap-1 px-2 py-1 text-white hover:text-gray-200 hover:bg-gray-800 rounded transition-colors duration-150"
-            >
-              <i class="fa fa-rotate-right text-xs"></i>
-              <span>Restart</span>
-            </button>
-            <!-- Tooltip arrow -->
-            <div
-              class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"
-            ></div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -84,6 +75,7 @@
 <script setup lang="ts">
 import { Handle, Position, type NodeProps } from '@vue-flow/core'
 import type { TaskType, TaskStatus } from '@/types/task'
+import Button from '@/components/ui/Button.vue'
 
 interface TaskNodeData {
   type: TaskType
