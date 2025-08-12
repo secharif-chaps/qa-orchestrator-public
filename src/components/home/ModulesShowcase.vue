@@ -1,12 +1,9 @@
 <template>
   <div class="space-y-6">
     <!-- Header Section -->
-    <div class="text-center">
+    <!-- <div class="text-center">
       <h2 class="text-2xl font-bold text-text-1 mb-2">Your Modules</h2>
-      <p class="text-text-2 text-sm">
-        Unlock powerful features to supercharge your business intelligence
-      </p>
-    </div>
+    </div> -->
 
     <!-- Modules Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -18,7 +15,7 @@
           'p-6 min-h-[200px] flex flex-col justify-between',
           module.unlocked
             ? 'bg-gradient-to-br from-primary/10 to-primary/20 border-primary/20 hover:shadow-lg hover:shadow-primary/20'
-            : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:shadow-md',
+            : 'opacity-50 bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:shadow-md',
         ]"
       >
         <!-- Status Badge -->
