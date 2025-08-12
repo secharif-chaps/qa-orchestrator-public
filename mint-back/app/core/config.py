@@ -21,6 +21,11 @@ class Settings(BaseSettings):
     N8N_CHAT_WEBHOOK_ID: str = "96b9765e-6c96-4493-bf56-a65905f7a6bc"
     N8N_API_KEY: str = "n8n-api-key"
     
+    # Dify settings
+    DIFY_API_KEY: str = "app-WpGZCTFDaBzCUS9M4LeoQHGa"
+    DIFY_URL: str = "http://10.0.1.1/v1"
+    DIFY_PRODUCT_WORKFLOW_URL: str = "http://10.0.1.1/workflow/GAEkbOxlQJYu15R0"
+    
     # CORS settings
     CORS_ORIGIN: str = "http://localhost:3000"
     

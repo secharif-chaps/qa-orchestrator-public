@@ -88,8 +88,8 @@ async def restart_task(
 ):
     """Restart a specific task (only if user owns the company)"""
     # First, we need to find the task and verify ownership
-    # This is a bit complex as we need to check all user's companies
-    user_companies = service.get_all_companies(username=current_user.username)
+    # Get companies for the user's workspace
+    user_companies = service.get_all_companies(workspace_id=current_user.workspace_id)
     
     task = None
     for company in user_companies:

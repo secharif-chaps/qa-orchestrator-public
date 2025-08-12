@@ -1,8 +1,9 @@
 import logging
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Request
 from pydantic import BaseModel, Field
 from typing import Dict, Any, Optional
 from datetime import datetime
+import json
 
 from app.services.company import CompanyService
 from app.core.dependencies import get_company_service
@@ -115,4 +116,158 @@ async def task_callback(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error processing task callback"
+        )
+
+@router.post("/dify/tasks/{task_id}/callback")
+async def dify_task_callback(
+    task_id: int,
+    request: Request,
+    service: CompanyService = Depends(get_company_service)
+):
+    """
+    Flexible webhook endpoint for Dify callbacks
+    Handles various response formats from Dify workflows
+    """
+    logger.info(f"🔄 Dify callback received for Task ID: {task_id}")
+    
+    try:
+        # Get raw body for logging
+        body = await request.json()
+        logger.info(f"Dify callback raw payload: {json.dumps(body, indent=2)[:500]}")  # Log first 500 chars
+        
+        # Extract task metadata (might be in different places depending on Dify configuration)
+        company_id = None
+        task_type = "products"  # Default to products since that's what we're testing
+        
+        # Try to extract company_id from various possible locations
+        if "callback_payload" in body:
+            company_id = body["callback_payload"].get("company_id")
+            task_type = body["callback_payload"].get("task_type", "products")
+        elif "inputs" in body and "callback_payload" in body["inputs"]:
+            company_id = body["inputs"]["callback_payload"].get("company_id")
+            task_type = body["inputs"]["callback_payload"].get("task_type", "products")
+        elif "company_id" in body:
+            company_id = body["company_id"]
+        
+        # If no company_id, try to find it from the task
+        if not company_id:
+            # Get all companies and find the task
+            companies = service.get_all_companies()
+            for company in companies:
+                task = next((t for t in company.tasks if t.id == task_id), None)
+                if task:
+                    company_id = company.id
+                    break
+        
+        if not company_id:
+            logger.error(f"Could not determine company_id for task {task_id}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Could not determine company_id from callback"
+            )
+        
+        # Get the company and task
+        company = service.get_company(company_id)
+        if not company:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Company with ID {company_id} not found"
+            )
+        
+        task = next((t for t in company.tasks if t.id == task_id), None)
+        if not task:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Task with ID {task_id} not found"
+            )
+        
+        # Check if task is already completed
+        if task.status in [TaskStatus.SUCCEEDED, TaskStatus.ERROR]:
+            logger.warning(f"Task {task_id} already completed with status: {task.status}")
+            return {"message": "Task already completed", "current_status": task.status.value}
+        
+        # Determine success/failure and extract data
+        success = True
+        error_msg = None
+        task_data = None
+        
+        # Check for error indicators
+        if "error" in body and body["error"]:
+            success = False
+            error_msg = str(body["error"])
+        elif "status" in body and body["status"] in ["failed", "error"]:
+            success = False
+            error_msg = body.get("message", "Task failed without specific error")
+        
+        # Extract the actual result data (could be in various places)
+        if success:
+            # Try different possible locations for the result
+            if "result" in body:
+                # Direct result
+                if isinstance(body["result"], str):
+                    try:
+                        task_data = {"products": json.loads(body["result"])}
+                    except json.JSONDecodeError:
+                        task_data = {"products": body["result"]}
+                else:
+                    task_data = {"products": body["result"]}
+            elif "data" in body:
+                # Result in data field
+                if "outputs" in body["data"]:
+                    outputs = body["data"]["outputs"]
+                    if "result" in outputs:
+                        if isinstance(outputs["result"], str):
+                            try:
+                                task_data = {"products": json.loads(outputs["result"])}
+                            except json.JSONDecodeError:
+                                task_data = {"products": outputs["result"]}
+                        else:
+                            task_data = {"products": outputs["result"]}
+                    else:
+                        task_data = {"products": outputs}
+                else:
+                    task_data = {"products": body["data"]}
+            elif "outputs" in body:
+                # Direct outputs
+                task_data = {"products": body["outputs"]}
+            else:
+                # Use entire body as result if nothing else matches
+                logger.warning(f"Could not find standard result location, using entire body")
+                task_data = {"products": body}
+        
+        # Update task and company based on result
+        if success:
+            task.status = TaskStatus.SUCCEEDED
+            task.error = None
+            
+            if task_data:
+                logger.info(f"Updating company data for task type: {task_type}")
+                service._update_company_data(company, task_type, task_data)
+            
+            logger.info(f"✅ Task {task_id} completed successfully via Dify callback")
+        else:
+            task.status = TaskStatus.ERROR
+            task.error = error_msg or "Task failed without specific error message"
+            logger.error(f"❌ Task {task_id} failed via Dify callback: {task.error}")
+        
+        # Update timestamp and save
+        task.updated_at = datetime.utcnow()
+        service.db.commit()
+        service.db.refresh(task)
+        
+        logger.info(f"🎉 Dify callback for task {task_id} processed successfully")
+        
+        return {
+            "message": "Dify callback processed successfully",
+            "task_id": task_id,
+            "new_status": task.status.value
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"💥 Unexpected error processing Dify callback for task {task_id}: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error processing Dify callback"
         )

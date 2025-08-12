@@ -6,9 +6,11 @@ from app.models.task import Task, TaskType, TaskStatus
 from app.schemas.company import CompanyCreate, CompanyUpdate, CompanyResponse
 from app.schemas.pagination import PaginationParams, PaginatedResponse, create_pagination_meta
 from app.services.n8n import N8nClient
+from app.infrastructure.dify.client import DifyClient
 from app.core.database_security import SecureQueryBuilder
 from app.core.validators import ValidationError
 from app.infrastructure.database.repositories.company_repository_impl import SQLAlchemyCompanyRepository
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +18,7 @@ class CompanyService:
     def __init__(self, db: Session, n8n_client: N8nClient):
         self.db = db
         self.n8n_client = n8n_client
+        self.dify_client = DifyClient()
         self.secure_query = SecureQueryBuilder(db)
         self.repository = SQLAlchemyCompanyRepository(db)
     
@@ -229,24 +232,48 @@ class CompanyService:
             task.status = TaskStatus.RUNNING
             self.db.commit()
             
-            # For now, keep synchronous processing (wait for N8N to complete)
-            # Future: Use callback system when network connectivity allows
-            # from app.core.config import settings
-            # callback_url = f"{settings.BACKEND_BASE_URL}/api/webhooks/tasks/{task.id}/callback"
-            
-            result = await self.n8n_client.trigger_workflow(
-                company.name,
-                company.website,
-                task.type.value
-                # callback_url=callback_url  # Disabled for now
-            )
-            
-            # Debug logging to understand the n8n response structure
-            print(f"parsed response to be updated: {result}")
-            
-            self._update_company_data(company, task.type.value, result)
-            task.status = TaskStatus.SUCCEEDED
-            self.db.commit()
+            # Use Dify for products task, N8N for all others
+            if task.type == TaskType.products:
+                logger.info(f"Using Dify workflow (async) for products task - Company: {company.name}")
+                
+                # Prepare callback URLs - use Dify-specific endpoint
+                success_callback = f"{settings.BACKEND_BASE_URL}/api/v1/webhooks/dify/tasks/{task.id}/callback"
+                error_callback = success_callback  # Same endpoint, different status in payload
+                
+                # Trigger Dify workflow with callbacks (ASYNC mode - fire and forget)
+                result = await self.dify_client.trigger_product_workflow(
+                    company_name=company.name,
+                    website=company.website,
+                    success_callback=success_callback,
+                    error_callback=error_callback,
+                    task_id=task.id,
+                    company_id=company.id,
+                    async_mode=True  # This is the key change - async mode!
+                )
+                
+                # In async mode, we just log the trigger confirmation
+                logger.info(f"✅ Dify workflow triggered (async): {result}")
+                
+                # Task remains in RUNNING state - will be updated via callback
+                # No need to update company data here - callback will handle it
+                self.db.commit()
+                
+            else:
+                # Use N8N for all other tasks (still synchronous for now)
+                logger.info(f"Using N8N workflow for {task.type.value} task - Company: {company.name}")
+                
+                result = await self.n8n_client.trigger_workflow(
+                    company.name,
+                    company.website,
+                    task.type.value
+                )
+                
+                # Debug logging to understand the n8n response structure
+                print(f"parsed response to be updated: {result}")
+                
+                self._update_company_data(company, task.type.value, result)
+                task.status = TaskStatus.SUCCEEDED
+                self.db.commit()
             
         except Exception as e:
             task.status = TaskStatus.ERROR
