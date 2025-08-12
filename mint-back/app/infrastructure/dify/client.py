@@ -11,7 +11,7 @@ class DifyClient:
     def __init__(self):
         self.api_key = settings.DIFY_API_KEY
         self.base_url = settings.DIFY_URL
-        self.product_workflow_url = settings.DIFY_PRODUCT_WORKFLOW_URL
+        self.product_workflow_id = settings.DIFY_PRODUCT_WORKFLOW_ID
         
     async def trigger_product_workflow(
         self, 
@@ -72,8 +72,9 @@ class DifyClient:
                 # Fire-and-forget mode: Send request but don't wait for workflow completion
                 async with httpx.AsyncClient() as client:
                     # Use a short timeout just for the initial request acknowledgment
+                    # Use the proper Dify API endpoint format: /workflows/{workflow_id}/run
                     response = await client.post(
-                        f"{self.product_workflow_url}/run",
+                        f"{self.base_url}/workflows/{self.product_workflow_id}/run",
                         json=payload,
                         headers=headers,
                         timeout=10.0  # Just wait for acknowledgment, not completion
@@ -91,7 +92,7 @@ class DifyClient:
                 # Synchronous mode: Wait for the full response (fallback option)
                 async with httpx.AsyncClient() as client:
                     response = await client.post(
-                        f"{self.product_workflow_url}/run",
+                        f"{self.base_url}/workflows/{self.product_workflow_id}/run",
                         json=payload,
                         headers=headers,
                         timeout=300.0  # 5 minutes timeout for blocking mode

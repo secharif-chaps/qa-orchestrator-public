@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     # Dify settings
     DIFY_API_KEY: str = "app-WpGZCTFDaBzCUS9M4LeoQHGa"
     DIFY_URL: str = "http://10.0.1.1/v1"
-    DIFY_PRODUCT_WORKFLOW_URL: str = "http://10.0.1.1/workflow/GAEkbOxlQJYu15R0"
+    DIFY_PRODUCT_WORKFLOW_ID: str = "c62b24e8-4fb8-49e7-96f8-edc10d7cebe0"
     
     # CORS settings
     CORS_ORIGIN: str = "http://localhost:3000"
