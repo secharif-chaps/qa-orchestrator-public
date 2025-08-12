@@ -22,7 +22,7 @@
         </div>
 
         <!-- Search and Filters -->
-        <div class="flex items-center gap-4 bg-bg1 p-4 rounded-lg shadow-sm">
+        <div class="flex items-center gap-4 bg-bg1 p-4 rounded-lg shadow-sm border border-border-2">
           <!-- Search Input -->
           <div class="flex-1 max-w-md">
             <div class="relative">
@@ -101,7 +101,10 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="bg-bg1 rounded-lg shadow-sm p-8 text-center">
+      <div
+        v-if="isLoading"
+        class="bg-bg1 rounded-lg shadow-sm p-8 text-center border border-border-2"
+      >
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
@@ -109,7 +112,10 @@
       </div>
 
       <!-- Workspaces List -->
-      <div v-else-if="workspaces" class="bg-bg1 rounded-lg shadow-sm overflow-hidden">
+      <div
+        v-else-if="workspaces"
+        class="bg-bg1 rounded-lg shadow-sm overflow-hidden border border-border-2"
+      >
         <!-- Table Header -->
         <div class="px-6 py-4 border-b border-border-2 bg-bg2">
           <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">

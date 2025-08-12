@@ -26,14 +26,20 @@
         </div>
       </div>
 
-      <div v-if="isLoading" class="bg-bg1 rounded-lg shadow-sm p-8 text-center">
+      <div
+        v-if="isLoading"
+        class="bg-bg1 rounded-lg shadow-sm p-8 text-center border border-border-2"
+      >
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
         <p class="text-secondary">{{ $t('team.loading', 'Loading users...') }}</p>
       </div>
 
-      <div v-else-if="users" class="bg-bg1 rounded-lg shadow-sm overflow-hidden">
+      <div
+        v-else-if="users"
+        class="bg-bg1 rounded-lg shadow-sm overflow-hidden border border-border-2"
+      >
         <div class="px-6 py-4 border-b border-border-2 bg-bg2">
           <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
             <div class="col-span-4">{{ $t('team.table.user', 'User') }}</div>

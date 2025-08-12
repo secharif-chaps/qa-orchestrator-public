@@ -38,7 +38,7 @@
     />
 
     <!-- Search Form Card -->
-    <div class="bg-bg1 rounded-lg p-6" :title="$t('search.companyIdentity')">
+    <div class="bg-bg1 border border-border-2 rounded-lg p-6" :title="$t('search.companyIdentity')">
       <form @submit.prevent="startSearch" class="space-y-6">
         <!-- Form Fields -->
         <div class="space-y-4">
