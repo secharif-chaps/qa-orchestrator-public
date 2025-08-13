@@ -227,3 +227,21 @@ class DifyClient:
             "timeline", company_name, website, success_callback, 
             error_callback, task_id, company_id, async_mode
         )
+
+    async def trigger_profile_workflow(
+        self, 
+        company_name: str, 
+        website: str, 
+        success_callback: str,
+        error_callback: str,
+        task_id: int,
+        company_id: int,
+        async_mode: bool = True
+    ) -> Dict[str, Any]:
+        """
+        Trigger the Dify profile workflow with callback URLs (backward compatibility)
+        """
+        return await self.trigger_workflow(
+            "profile", company_name, website, success_callback, 
+            error_callback, task_id, company_id, async_mode
+        )

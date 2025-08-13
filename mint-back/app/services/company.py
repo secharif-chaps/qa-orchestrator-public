@@ -232,7 +232,7 @@ class CompanyService:
             task.status = TaskStatus.RUNNING
             self.db.commit()
             
-            # Use Dify for products and timeline tasks, N8N for all others
+            # Use Dify for products, timeline, and profile tasks, N8N for all others
             if task.type == TaskType.products:
                 logger.info(f"Using Dify workflow (async) for products task - Company: {company.name}")
                 
@@ -278,6 +278,31 @@ class CompanyService:
                 
                 # In async mode, we just log the trigger confirmation
                 logger.info(f"✅ Dify timeline workflow triggered (async): {result}")
+                
+                # Task remains in RUNNING state - will be updated via callback
+                # No need to update company data here - callback will handle it
+                self.db.commit()
+                
+            elif task.type == TaskType.profile:
+                logger.info(f"Using Dify workflow (async) for profile task - Company: {company.name}")
+                
+                # Prepare callback URLs - use Dify-specific endpoint
+                success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
+                error_callback = success_callback  # Same endpoint, different status in payload
+                
+                # Trigger Dify profile workflow with callbacks (ASYNC mode - fire and forget)
+                result = await self.dify_client.trigger_profile_workflow(
+                    company_name=company.name,
+                    website=company.website,
+                    success_callback=success_callback,
+                    error_callback=error_callback,
+                    task_id=task.id,
+                    company_id=company.id,
+                    async_mode=True  # This is the key change - async mode!
+                )
+                
+                # In async mode, we just log the trigger confirmation
+                logger.info(f"✅ Dify profile workflow triggered (async): {result}")
                 
                 # Task remains in RUNNING state - will be updated via callback
                 # No need to update company data here - callback will handle it
