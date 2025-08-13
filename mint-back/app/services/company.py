@@ -18,7 +18,7 @@ class CompanyService:
     def __init__(self, db: Session, n8n_client: N8nClient):
         self.db = db
         self.n8n_client = n8n_client
-        self.dify_client = DifyClient()
+        self.dify_client = DifyClient(db)  # Pass database session for workflow config access
         self.secure_query = SecureQueryBuilder(db)
         self.repository = SQLAlchemyCompanyRepository(db)
     

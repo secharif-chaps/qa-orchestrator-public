@@ -131,6 +131,25 @@ def verify_workspace_admin_access(current_user: TokenData) -> TokenData:
     return current_user
 
 
+def verify_workflow_admin_access(current_user: TokenData) -> TokenData:
+    """
+    Verify that the current user has workflow admin privileges
+    
+    Args:
+        current_user: Current authenticated user
+        
+    Returns:
+        TokenData if user has admin.workflow role
+        
+    Raises:
+        AuthorizationError: If user doesn't have admin.workflow role
+    """
+    if not current_user.roles or "admin.workflow" not in current_user.roles:
+        raise AuthorizationError("Workflow admin access required (admin.workflow role)")
+    
+    return current_user
+
+
 def verify_workspace_permission(current_user: TokenData, workspace_id: int, permission: str, db: Session = None) -> TokenData:
     """
     Verify that the current user has a specific permission for a workspace

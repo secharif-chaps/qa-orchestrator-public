@@ -138,6 +138,12 @@
         "clientRole": false
       },
       {
+        "name": "admin.workflow",
+        "description": "Administrative access to workflow configurations",
+        "composite": false,
+        "clientRole": false
+      },
+      {
         "name": "admin",
         "description": "Full administrative access (composite role)",
         "composite": true,
@@ -148,7 +154,8 @@
             "company.view",
             "company.create",
             "company.delete",
-            "admin.workspaces"
+            "admin.workspaces",
+            "admin.workflow"
           ]
         },
         "clientRole": false

@@ -4,11 +4,13 @@ Admin endpoints requiring admin role
 
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 
 from app.services.company import CompanyService
 from app.services.token_manager import TokenManager
+from app.services.workflow_config import WorkflowConfigService, WorkflowConfigResponse, WorkflowConfigUpdate
 from app.core.dependencies import get_company_service, get_current_user, get_token_manager
-from app.core.security import verify_admin_access, verify_workspace_admin_access
+from app.core.security import verify_admin_access, verify_workspace_admin_access, verify_workflow_admin_access
 from app.schemas.company import CompanyResponse
 from app.schemas.user import TokenData
 from app.schemas.module import (
@@ -16,6 +18,7 @@ from app.schemas.module import (
     AddTokensRequest, ModuleTokensResponse
 )
 from app.models.workspace import ModuleName
+from app.database import get_db
 
 router = APIRouter(
     prefix="/admin",
@@ -211,4 +214,47 @@ async def toggle_module_admin(
         module=updated_module.module_name,
         token_count=updated_module.token_count,
         enabled=updated_module.enabled
+    )
+
+
+# Workflow Configuration Endpoints
+
+@router.get("/workflows", response_model=List[WorkflowConfigResponse])
+async def get_all_workflow_configs(
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user)
+):
+    """Get all workflow configurations with obfuscated API keys (admin only)"""
+    verify_workflow_admin_access(current_user)
+    
+    service = WorkflowConfigService(db)
+    return service.get_all_configs()
+
+
+@router.put("/workflows/{task_type}", response_model=WorkflowConfigResponse)
+async def update_workflow_config(
+    task_type: str,
+    update_data: WorkflowConfigUpdate,
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user)
+):
+    """Update workflow configuration (admin only)"""
+    verify_workflow_admin_access(current_user)
+    
+    service = WorkflowConfigService(db)
+    updated_config = service.update_config(task_type, update_data)
+    
+    if not updated_config:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Workflow configuration for task type '{task_type}' not found"
+        )
+    
+    # Return response with obfuscated API key
+    return WorkflowConfigResponse(
+        task_type=updated_config.task_type,
+        title=updated_config.title,
+        workflow_id=updated_config.workflow_id,
+        api_key_obfuscated=service.obfuscate_api_key(updated_config.api_key),
+        has_api_key=bool(updated_config.api_key)
     )
