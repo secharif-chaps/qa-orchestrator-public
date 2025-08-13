@@ -9,7 +9,8 @@ class DifyClient:
     """Client for interacting with Dify workflows"""
     
     def __init__(self):
-        self.api_key = settings.DIFY_API_KEY
+        self.api_key = settings.DIFY_API_KEY  # Products workflow API key
+        self.timeline_api_key = settings.DIFY_TIMELINE_API_KEY  # Timeline workflow API key
         self.base_url = settings.DIFY_URL
         self.product_workflow_id = settings.DIFY_PRODUCT_WORKFLOW_ID
         self.timeline_workflow_id = settings.DIFY_TIMELINE_WORKFLOW_ID
@@ -173,7 +174,7 @@ class DifyClient:
             Response data from Dify (acknowledgment if async, results if sync)
         """
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {self.timeline_api_key}",
             "Content-Type": "application/json"
         }
         

@@ -22,10 +22,11 @@ class Settings(BaseSettings):
     N8N_API_KEY: str = "n8n-api-key"
     
     # Dify settings
-    DIFY_API_KEY: str = "app-WpGZCTFDaBzCUS9M4LeoQHGa"
+    DIFY_API_KEY: str = "app-WpGZCTFDaBzCUS9M4LeoQHGa"  # Products workflow API key
+    DIFY_TIMELINE_API_KEY: str = "app-qX4RISdrrif2aSPAaLVz7tto"  # Timeline workflow API key
     DIFY_URL: str = "http://10.0.1.1/v1"
     DIFY_PRODUCT_WORKFLOW_ID: str = "9d9c4884-342d-42d4-afcc-2ef15479db2f"
-    DIFY_TIMELINE_WORKFLOW_ID: str = "f867cef4-8f39-4bd6-a2b2-b959ee0e3e3b"
+    DIFY_TIMELINE_WORKFLOW_ID: str = "6b95cda2-b32f-4578-9b63-520ebb527c97"
     
     # CORS settings
     CORS_ORIGIN: str = "http://localhost:3000"
