@@ -27,7 +27,7 @@
           :default-viewport="{ zoom: 0.9, x: -25, y: -0 }"
           @init="onFlowInit"
           :fit-view-on-init="false"
-          :nodes-draggable="false"
+          :nodes-draggable="true"
           :zoom-on-scroll="false"
           :zoom-on-pinch="false"
           :pan-on-scroll="false"

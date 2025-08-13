@@ -5,7 +5,7 @@
     @click="handleClick"
   >
     <div
-      v-if="data.status === 'error'"
+      v-if="data.status === 'error' || (data.status === 'running' && isDev)"
       class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs rounded shadow-lg opacity-100 whitespace-nowrap z-50"
     >
       <Button
@@ -39,6 +39,8 @@
 
       <div class="flex-1 min-w-0">
         <h3 class="font-semibold text-sm truncate">{{ data.name }}</h3>
+        <div v-if="isDev" class="text-xs text-gray-500">{{ data.status }}</div>
+        <div v-if="isDev" class="text-xs text-gray-500">{{ data.error }}</div>
       </div>
     </div>
 
@@ -87,6 +89,8 @@ interface TaskNodeData {
   first: boolean
   last: boolean
 }
+
+const isDev = import.meta.env.DEV
 
 const props = defineProps<NodeProps<TaskNodeData>>()
 
