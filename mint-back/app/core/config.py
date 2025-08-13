@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     DIFY_URL: str = "http://10.0.1.1/v1"
     DIFY_PRODUCT_WORKFLOW_ID: str = "9d9c4884-342d-42d4-afcc-2ef15479db2f"
     DIFY_TIMELINE_WORKFLOW_ID: str = "6b95cda2-b32f-4578-9b63-520ebb527c97"
+    CODE_MAX_STRING_ARRAY_LENGTH: int = 200
+    CODE_MAX_OBJECT_ARRAY_LENGTH: int = 200
     
     # CORS settings
     CORS_ORIGIN: str = "http://localhost:3000"
