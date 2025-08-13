@@ -20,13 +20,25 @@ setup_database_security(engine)
 print(f"CORS Origin setting: {settings.CORS_ORIGIN}")
 
 # Add CORS middleware FIRST (to handle preflight requests properly)
+# Allow common development origins for local testing
+development_origins = [
+    settings.CORS_ORIGIN,
+    "http://localhost:3000",
+    "http://localhost:5173",  # Vite dev server default
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173",
+    "http://10.0.1.2",       # Direct access to preprod server
+    "http://10.0.1.2:3000",
+    "http://10.0.1.2:5173",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.CORS_ORIGIN, "http://localhost:3000"],  # Allow both origins
+    allow_origins=development_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],  # More restrictive
-    expose_headers=["Content-Type", "Authorization"],  # More restrictive
+    allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
+    expose_headers=["Content-Type", "Authorization"],
 )
 
 # Add security middleware AFTER CORS (so CORS headers are set before security checks)
