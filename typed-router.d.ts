@@ -19,10 +19,12 @@ declare module 'vue-router/auto-routes' {
    */
   export interface RouteNamedMap {
     '/(home)': RouteRecordInfo<'/(home)', '/', Record<never, never>, Record<never, never>>,
-    '/(admin)/workspaces': RouteRecordInfo<'/(admin)/workspaces', '/workspaces', Record<never, never>, Record<never, never>>,
-    '/(admin)/workspaces.[workspaceId]': RouteRecordInfo<'/(admin)/workspaces.[workspaceId]', '/workspaces/:workspaceId', { workspaceId: ParamValue<true> }, { workspaceId: ParamValue<false> }>,
-    '/(admin)/workspaces.create': RouteRecordInfo<'/(admin)/workspaces.create', '/workspaces/create', Record<never, never>, Record<never, never>>,
     '/403': RouteRecordInfo<'/403', '/403', Record<never, never>, Record<never, never>>,
+    '/admin/(admin)': RouteRecordInfo<'/admin/(admin)', '/admin', Record<never, never>, Record<never, never>>,
+    '/admin/workspaces': RouteRecordInfo<'/admin/workspaces', '/admin/workspaces', Record<never, never>, Record<never, never>>,
+    '/admin/workspaces.[workspaceId]': RouteRecordInfo<'/admin/workspaces.[workspaceId]', '/admin/workspaces/:workspaceId', { workspaceId: ParamValue<true> }, { workspaceId: ParamValue<false> }>,
+    '/admin/workspaces.create': RouteRecordInfo<'/admin/workspaces.create', '/admin/workspaces/create', Record<never, never>, Record<never, never>>,
+    '/admin.workflows': RouteRecordInfo<'/admin.workflows', '/admin/workflows', Record<never, never>, Record<never, never>>,
     '/auth/callback': RouteRecordInfo<'/auth/callback', '/auth/callback', Record<never, never>, Record<never, never>>,
     '/auth/silent-callback': RouteRecordInfo<'/auth/silent-callback', '/auth/silent-callback', Record<never, never>, Record<never, never>>,
     '/companies': RouteRecordInfo<'/companies', '/companies', Record<never, never>, Record<never, never>, '/companies/(list)' | '/companies/[companyId]' | '/companies/[companyId]/' | '/companies/[companyId]/jobs' | '/companies/[companyId]/products' | '/companies/[companyId]/profile' | '/companies/[companyId]/team' | '/companies/[companyId]/timeline'>,
