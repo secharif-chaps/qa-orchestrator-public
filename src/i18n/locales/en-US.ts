@@ -555,31 +555,16 @@ export default {
     },
     workflows: {
       title: 'Workflow Management',
-      description: 'Configure and manage automated workflows and processes',
-      backToDashboard: 'Back to Dashboard',
-      requestFeature: 'Request Feature',
-      comingSoon: {
-        title: 'Workflow Features Coming Soon',
-        description: 'We\'re working on powerful workflow management features that will allow you to automate processes and streamline operations.',
-        features: {
-          title: 'Planned Features',
-          automation: {
-            title: 'Process Automation',
-            description: 'Create automated workflows for routine tasks',
-          },
-          triggers: {
-            title: 'Custom Triggers',
-            description: 'Set up triggers based on events and conditions',
-          },
-          monitoring: {
-            title: 'Workflow Monitoring',
-            description: 'Monitor workflow execution and performance',
-          },
-          templates: {
-            title: 'Workflow Templates',
-            description: 'Pre-built templates for common workflow patterns',
-          },
-        },
+      description: 'Configure Dify workflow integrations for automated analysis tasks',
+      loading: 'Loading workflows...',
+      updateSuccess: 'Workflow updated successfully!',
+      workflowId: 'Workflow ID',
+      workflowIdPlaceholder: 'Enter Dify workflow ID',
+      apiKey: 'API Key',
+      apiKeyPlaceholder: 'Enter Dify API key',
+      notConfigured: 'Not configured',
+      error: {
+        title: 'Failed to Load Workflows',
       },
     },
   },

@@ -99,7 +99,7 @@
                 <h3 class="text-lg font-semibold">
                   {{ $t('admin.features.workflows.title', 'Workflow Management') }}
                 </h3>
-                <Badge variant="success" size="sm" label="Coming Soon" />
+                <Badge variant="success" size="sm" label="Active" />
               </div>
             </div>
             <p class="text-secondary text-sm mb-4">

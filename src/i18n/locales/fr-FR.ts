@@ -599,31 +599,16 @@ export default {
     },
     workflows: {
       title: 'Gestion des Workflows',
-      description: 'Configurez et gérez les workflows automatisés et processus',
-      backToDashboard: 'Retour au Tableau de Bord',
-      requestFeature: 'Demander une Fonctionnalité',
-      comingSoon: {
-        title: 'Fonctionnalités Workflow Bientôt Disponibles',
-        description: 'Nous travaillons sur des fonctionnalités puissantes de gestion des workflows qui vous permettront d\'automatiser les processus et rationaliser les opérations.',
-        features: {
-          title: 'Fonctionnalités Prévues',
-          automation: {
-            title: 'Automatisation des Processus',
-            description: 'Créez des workflows automatisés pour les tâches routinières',
-          },
-          triggers: {
-            title: 'Déclencheurs Personnalisés',
-            description: 'Configurez des déclencheurs basés sur des événements et conditions',
-          },
-          monitoring: {
-            title: 'Surveillance des Workflows',
-            description: 'Surveillez l\'exécution et les performances des workflows',
-          },
-          templates: {
-            title: 'Modèles de Workflow',
-            description: 'Modèles pré-construits pour les patterns de workflow courants',
-          },
-        },
+      description: 'Configurez les intégrations Dify pour les tâches d\'analyse automatisées',
+      loading: 'Chargement des workflows...',
+      updateSuccess: 'Workflow mis à jour avec succès !',
+      workflowId: 'ID du Workflow',
+      workflowIdPlaceholder: 'Saisissez l\'ID du workflow Dify',
+      apiKey: 'Clé API',
+      apiKeyPlaceholder: 'Saisissez la clé API Dify',
+      notConfigured: 'Non configuré',
+      error: {
+        title: 'Échec du chargement des workflows',
       },
     },
   },
