@@ -92,7 +92,7 @@ const buttons = computed(() => {
       icon: 'fa fa-search',
       label: t('sidebar.search'),
       active: true,
-      to: '/search'
+      to: '/search',
     })
   }
 
@@ -106,13 +106,13 @@ const buttons = computed(() => {
     })
   }
 
-  // Add workspace button if user has admin.workspaces role
-  if (authStore.hasPermission('admin.workspaces')) {
+  // Add admin dashboard if user has any admin permissions
+  if (authStore.hasAnyRole(['admin', 'admin.workspaces', 'admin.workflow'])) {
     baseButtons.push({
-      icon: 'fa fa-building',
-      label: t('sidebar.workspaces'),
+      icon: 'fa fa-fire',
+      label: t('sidebar.admin'),
       active: true,
-      to: '/workspaces',
+      to: '/admin',
     })
   }
 
@@ -124,15 +124,6 @@ const actions = computed(() => {
     { icon: 'fa fa-cog', label: t('sidebar.settings'), to: '/settings' },
     { icon: 'fa fa-question', label: t('sidebar.help'), to: '/help' },
   ]
-
-  // Add UI demo link in development mode
-  if (import.meta.env.DEV) {
-    baseActions.unshift({
-      icon: 'fa fa-palette',
-      label: 'UI Demo',
-      to: '/ui-demo',
-    })
-  }
 
   return baseActions
 })

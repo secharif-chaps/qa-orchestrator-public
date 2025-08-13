@@ -262,6 +262,7 @@ export default {
     help: 'Aide',
     workspace: 'Équipe',
     team: 'Équipe',
+    admin: 'Admin',
   },
   workspaces: {
     title: 'Gestion des espaces de travail',
@@ -562,6 +563,68 @@ export default {
       label: 'Statut',
       all: 'Tous',
       disabled: 'Désactivé',
+    },
+  },
+  admin: {
+    dashboard: {
+      title: 'Tableau de Bord Admin',
+      description: 'Gérez les fonctionnalités système et les paramètres',
+      back: 'Retour à Admin',
+      quickStats: {
+        title: 'Aperçu Système',
+      },
+      stats: {
+        workspaces: 'Total Espaces de travail',
+        users: 'Utilisateurs Actifs',
+        companies: 'Entreprises',
+        health: 'Santé Système',
+      },
+    },
+    features: {
+      workspaces: {
+        title: 'Gestion des Espaces de travail',
+        description: 'Gérez tous les espaces de travail, utilisateurs et paramètres',
+      },
+      uiDemo: {
+        title: 'Démo Composants UI',
+        description: 'Prévisualisez et testez tous les composants UI et le système de design',
+      },
+      workflows: {
+        title: 'Gestion des Workflows',
+        description: 'Configurez et gérez les workflows automatisés et processus',
+      },
+      manage: 'Gérer',
+      explore: 'Explorer',
+      configure: 'Configurer',
+    },
+    workflows: {
+      title: 'Gestion des Workflows',
+      description: 'Configurez et gérez les workflows automatisés et processus',
+      backToDashboard: 'Retour au Tableau de Bord',
+      requestFeature: 'Demander une Fonctionnalité',
+      comingSoon: {
+        title: 'Fonctionnalités Workflow Bientôt Disponibles',
+        description: 'Nous travaillons sur des fonctionnalités puissantes de gestion des workflows qui vous permettront d\'automatiser les processus et rationaliser les opérations.',
+        features: {
+          title: 'Fonctionnalités Prévues',
+          automation: {
+            title: 'Automatisation des Processus',
+            description: 'Créez des workflows automatisés pour les tâches routinières',
+          },
+          triggers: {
+            title: 'Déclencheurs Personnalisés',
+            description: 'Configurez des déclencheurs basés sur des événements et conditions',
+          },
+          monitoring: {
+            title: 'Surveillance des Workflows',
+            description: 'Surveillez l\'exécution et les performances des workflows',
+          },
+          templates: {
+            title: 'Modèles de Workflow',
+            description: 'Modèles pré-construits pour les patterns de workflow courants',
+          },
+        },
+      },
     },
   },
   company: {

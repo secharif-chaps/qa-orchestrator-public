@@ -260,6 +260,7 @@ export default {
     help: 'Help',
     team: 'Team',
     workspaces: 'Workspaces',
+    admin: 'Admin',
   },
   help: {
     title: 'Help',
@@ -518,6 +519,68 @@ export default {
       label: 'Status',
       all: 'All',
       disabled: 'Disabled',
+    },
+  },
+  admin: {
+    dashboard: {
+      title: 'Admin Dashboard',
+      description: 'Manage system features and settings',
+      back: 'Back to Admin',
+      quickStats: {
+        title: 'System Overview',
+      },
+      stats: {
+        workspaces: 'Total Workspaces',
+        users: 'Active Users',
+        companies: 'Companies',
+        health: 'System Health',
+      },
+    },
+    features: {
+      workspaces: {
+        title: 'Workspace Management',
+        description: 'Manage all workspaces, users, and workspace settings',
+      },
+      uiDemo: {
+        title: 'UI Components Demo',
+        description: 'Preview and test all UI components and design system',
+      },
+      workflows: {
+        title: 'Workflow Management',
+        description: 'Configure and manage automated workflows and processes',
+      },
+      manage: 'Manage',
+      explore: 'Explore',
+      configure: 'Configure',
+    },
+    workflows: {
+      title: 'Workflow Management',
+      description: 'Configure and manage automated workflows and processes',
+      backToDashboard: 'Back to Dashboard',
+      requestFeature: 'Request Feature',
+      comingSoon: {
+        title: 'Workflow Features Coming Soon',
+        description: 'We\'re working on powerful workflow management features that will allow you to automate processes and streamline operations.',
+        features: {
+          title: 'Planned Features',
+          automation: {
+            title: 'Process Automation',
+            description: 'Create automated workflows for routine tasks',
+          },
+          triggers: {
+            title: 'Custom Triggers',
+            description: 'Set up triggers based on events and conditions',
+          },
+          monitoring: {
+            title: 'Workflow Monitoring',
+            description: 'Monitor workflow execution and performance',
+          },
+          templates: {
+            title: 'Workflow Templates',
+            description: 'Pre-built templates for common workflow patterns',
+          },
+        },
+      },
     },
   },
   company: {
