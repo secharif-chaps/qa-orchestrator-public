@@ -100,7 +100,7 @@ const buttonClasses = computed(() => {
           'hover:from-red-600 hover:to-red-700',
           'focus:ring-red-500/30',
           'disabled:from-red-400/20 disabled:to-bg1',
-          'disabled:text-white/20',
+          'disabled:text-secondary/50',
           'shadow-sm hover:shadow-md',
         )
       } else if (color === 'warning') {
@@ -110,7 +110,7 @@ const buttonClasses = computed(() => {
           'hover:from-orange-600 hover:to-orange-700',
           'focus:ring-orange-500/30',
           'disabled:from-orange-400/20 disabled:to-bg2/50',
-          'disabled:text-white/20',
+          'disabled:text-secondary/50',
           'shadow-sm hover:shadow-md',
         )
       } else {
@@ -121,7 +121,7 @@ const buttonClasses = computed(() => {
           'hover:from-primary/90 hover:to-primary/80',
           'focus:ring-primary/30',
           'disabled:from-bg2 disabled:to-bg2/50',
-          'disabled:text-white/20',
+          'disabled:text-secondary/50',
           'shadow-sm hover:shadow-md',
         )
       }
@@ -146,7 +146,7 @@ const buttonClasses = computed(() => {
           'hover:bg-orange-600/10 hover:border-orange-600/30',
           'focus:ring-orange-500/30',
           'disabled:from-bg1/50 disabled:to-bg1/40',
-          'disabled:text-secondary/50 ',
+          'disabled:text-secondary/50',
           'disabled:border-border-2/50',
         )
       } else {
@@ -214,6 +214,11 @@ const iconSizeClasses = computed(() => {
 })
 
 const iconColorClasses = computed(() => {
+  // Disabled state - use theme-aware secondary color
+  if (disabled || loading) {
+    return 'text-secondary/50'
+  }
+
   if (variant === 'primary') {
     return 'text-white'
   }
