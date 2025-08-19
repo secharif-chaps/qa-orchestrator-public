@@ -30,6 +30,7 @@ export interface TeamMember {
   position: string
   firstName: string
   lastName: string
+  linkedinUrl?: string
   subordinates?: TeamMember[]
 }
 

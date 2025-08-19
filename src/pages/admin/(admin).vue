@@ -116,6 +116,41 @@
             </div>
           </div>
         </div>
+
+        <!-- Cost Analysis -->
+        <div
+          v-if="hasWorkflowAccess"
+          class="bg-bg1 rounded-lg shadow-sm border border-border-2 hover:shadow-md transition-all duration-200 cursor-pointer group"
+          @click="navigateToCosts"
+        >
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <div
+                class="w-12 h-12 bg-error/10 text-error rounded-lg flex items-center justify-center group-hover:bg-error/20 transition-colors"
+              >
+                <i class="fa fa-dollar-sign text-xl"></i>
+              </div>
+              <div class="ml-4">
+                <h3 class="text-lg font-semibold">
+                  {{ $t('admin.features.costs.title', 'Cost Analysis') }}
+                </h3>
+                <Badge variant="error" size="sm" label="Token Tracking" />
+              </div>
+            </div>
+            <p class="text-secondary text-sm mb-4">
+              {{
+                $t(
+                  'admin.features.costs.description',
+                  'Monitor token usage and costs for MINT screening workflows',
+                )
+              }}
+            </p>
+            <div class="flex items-center text-error text-sm font-medium">
+              <span>{{ $t('admin.features.analyze', 'Analyze') }}</span>
+              <i class="fa fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Access Restricted Message -->
@@ -163,5 +198,9 @@ const navigateToUiDemo = () => {
 
 const navigateToWorkflows = () => {
   router.push('/admin/workflows')
+}
+
+const navigateToCosts = () => {
+  router.push('/admin/costs')
 }
 </script>

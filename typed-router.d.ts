@@ -21,6 +21,7 @@ declare module 'vue-router/auto-routes' {
     '/(home)': RouteRecordInfo<'/(home)', '/', Record<never, never>, Record<never, never>>,
     '/403': RouteRecordInfo<'/403', '/403', Record<never, never>, Record<never, never>>,
     '/admin/(admin)': RouteRecordInfo<'/admin/(admin)', '/admin', Record<never, never>, Record<never, never>>,
+    '/admin/costs': RouteRecordInfo<'/admin/costs', '/admin/costs', Record<never, never>, Record<never, never>>,
     '/admin/workspaces': RouteRecordInfo<'/admin/workspaces', '/admin/workspaces', Record<never, never>, Record<never, never>>,
     '/admin/workspaces.[workspaceId]': RouteRecordInfo<'/admin/workspaces.[workspaceId]', '/admin/workspaces/:workspaceId', { workspaceId: ParamValue<true> }, { workspaceId: ParamValue<false> }>,
     '/admin/workspaces.create': RouteRecordInfo<'/admin/workspaces.create', '/admin/workspaces/create', Record<never, never>, Record<never, never>>,

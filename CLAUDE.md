@@ -80,4 +80,3 @@ Use test users defined in `.claude/test-users.md` to test different permission s
 - Only commit when explicitly asked by the user
 - Include Claude footer in commit messages
 - Follow existing code patterns and conventions
-- Check for lint/type errors before committing

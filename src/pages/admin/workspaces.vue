@@ -470,7 +470,7 @@ const getVisiblePages = (paginationInfo: NonNullable<typeof pagination.value>) =
 
 // Actions
 const viewWorkspace = (id: number) => {
-  router.push(`/workspaces/${id}`)
+  router.push(`/admin/workspaces/${id}`)
 }
 
 const showDeleteModal = (workspace: WorkspaceResponse) => {

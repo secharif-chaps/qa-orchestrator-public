@@ -19,209 +19,222 @@
     </button>
 
     <div v-show="isOpen" class="p-6">
-      <div class="h-96 w-full bg-bg1 border border-border-2 rounded-lg relative overflow-hidden">
-        <VueFlow
-          class="h-full"
-          :nodes="flowNodes"
-          :edges="flowEdges"
-          :default-viewport="{ zoom: 0.9, x: -25, y: -0 }"
-          @init="onFlowInit"
-          :fit-view-on-init="false"
-          :nodes-draggable="true"
-          :zoom-on-scroll="false"
-          :zoom-on-pinch="false"
-          :pan-on-scroll="false"
+      <!-- Progress Overview -->
+      <div class="mb-6">
+        <!-- Segmented progress bar -->
+        <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-3 overflow-hidden flex">
+          <!-- Completed segment -->
+          <div
+            v-if="completedPercentage > 0"
+            class="bg-green-400 h-full transition-all duration-500 ease-out"
+            :style="{ width: `${completedPercentage}%` }"
+            :title="`${completedCount} tâches terminées (${Math.round(completedPercentage)}%)`"
+          ></div>
+
+          <!-- Running segment -->
+          <div
+            v-if="runningPercentage > 0"
+            class="bg-orange-400 h-full transition-all duration-500 ease-out"
+            :style="{ width: `${runningPercentage}%` }"
+            :title="`${runningCount} tâches en cours (${Math.round(runningPercentage)}%)`"
+          ></div>
+
+          <!-- Error segment -->
+          <div
+            v-if="errorPercentage > 0"
+            class="bg-red-400 h-full transition-all duration-500 ease-out"
+            :style="{ width: `${errorPercentage}%` }"
+            :title="`${errorCount} tâches en erreur (${Math.round(errorPercentage)}%)`"
+          ></div>
+
+          <!-- Pending segment -->
+          <div
+            v-if="pendingPercentage > 0"
+            class="bg-gray-200 dark:bg-gray-800 h-full transition-all duration-500 ease-out"
+            :style="{ width: `${pendingPercentage}%` }"
+            :title="`${pendingCount} tâches en attente (${Math.round(pendingPercentage)}%)`"
+          ></div>
+        </div>
+
+        <!-- Status summary -->
+        <div class="flex items-center justify-between mt-2 text-xs text-secondary">
+          <div class="flex items-center gap-4">
+            <span class="flex items-center gap-1">
+              <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+              {{ completedCount }} terminées
+            </span>
+            <span v-if="runningCount > 0" class="flex items-center gap-1">
+              <div class="w-2 h-2 bg-orange-400 rounded-full"></div>
+              {{ runningCount }} en cours
+            </span>
+            <span v-if="errorCount > 0" class="flex items-center gap-1">
+              <div class="w-2 h-2 bg-red-400 rounded-full"></div>
+              {{ errorCount }} en erreur
+            </span>
+            <span v-if="pendingCount > 0" class="flex items-center gap-1">
+              <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
+              {{ pendingCount }} en attente
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task List -->
+      <div class="space-y-2">
+        <div
+          v-for="task in taskList"
+          :key="task.type"
+          class="flex items-center justify-between p-3 rounded-lg border transition-all duration-300"
+          :class="getTaskClass(task)"
         >
-          <template #node-task="props">
-            <TaskNode v-bind="props" @trigger="triggerTask" @restart="restartTask" />
-          </template>
-
-          <Background pattern="dots" :gap="16" :size="1" class="opacity-30" />
-
-          <!-- Vue Flow Panel for controls -->
-          <Panel position="top-right" class="p-2" v-if="completedCount < 8">
+          <!-- Task Info -->
+          <div class="flex items-center gap-3">
             <div
-              class="bg-white dark:bg-slate-900 rounded-lg shadow-lg p-3 flex flex-col gap-2 min-w-[200px]"
+              class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+              :class="getIconContainerClass(task.status)"
             >
-              <!-- <div class="text-sm font-medium text-gray-700 mb-1">Contrôles du workflow</div> -->
-
-              <!-- Unified Status Progress Bar -->
-              <div class="w-full">
-                <!-- Segmented progress bar -->
-                <div
-                  class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2 overflow-hidden flex"
-                >
-                  <!-- Completed segment -->
-                  <div
-                    v-if="completedPercentage > 0"
-                    class="bg-green-400 h-full transition-all duration-500 ease-out"
-                    :style="{ width: `${completedPercentage}%` }"
-                    :title="`${completedCount} tâches terminées (${Math.round(completedPercentage)}%)`"
-                  ></div>
-
-                  <!-- Running segment -->
-                  <div
-                    v-if="runningPercentage > 0"
-                    class="bg-orange-400 h-full transition-all duration-500 ease-out"
-                    :style="{ width: `${runningPercentage}%` }"
-                    :title="`${runningCount} tâches en cours (${Math.round(runningPercentage)}%)`"
-                  ></div>
-
-                  <!-- Error segment -->
-                  <div
-                    v-if="errorPercentage > 0"
-                    class="bg-red-400 h-full transition-all duration-500 ease-out"
-                    :style="{ width: `${errorPercentage}%` }"
-                    :title="`${errorCount} tâches en erreur (${Math.round(errorPercentage)}%)`"
-                  ></div>
-
-                  <!-- Pending segment -->
-                  <div
-                    v-if="pendingPercentage > 0"
-                    class="bg-gray-200 dark:bg-gray-800 h-full transition-all duration-500 ease-out"
-                    :style="{ width: `${pendingPercentage}%` }"
-                    :title="`${pendingCount} tâches en attente (${Math.round(pendingPercentage)}%)`"
-                  ></div>
-                </div>
-              </div>
-
-              <!-- Control buttons -->
-              <!-- <div class="flex flex-col gap-1">
-                <OButton
-                  type="secondary"
-                  v-if="!workflowStarted || (!isWorkflowRunning && !isWorkflowComplete)"
-                  @click="startWorkflow"
-                  class=""
-                >
-                  <i class="fa fa-play mr-1"></i>
-                  {{ workflowStarted ? 'Reprendre' : 'Démarrer le workflow' }}
-                </OButton>
-                
-                <OButton
-                  type="tertiary"
-                  v-if="workflowStarted && (hasErrors || !isWorkflowRunning)"
-                  @click="performAutoRecovery"
-                  class="text-xs"
-                >
-                  <i class="fa fa-refresh mr-1"></i>
-                  Auto-correction
-                </OButton>
-              </div> -->
+              <i 
+                v-if="task.status === 'running'" 
+                class="fa fa-spinner-third animate-spin"
+              ></i>
+              <i 
+                v-else 
+                :class="getTaskIcon(task.type)" 
+              ></i>
             </div>
-          </Panel>
-        </VueFlow>
+            
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <h3 class="font-semibold text-sm">{{ task.name }}</h3>
+                <Badge
+                  :variant="getStatusVariant(task.status)"
+                  :label="getStatusLabel(task.status)"
+                  size="xs"
+                />
+              </div>
+              <p class="text-xs text-secondary truncate">{{ task.description }}</p>
+              
+              <!-- Error message -->
+              <div v-if="task.error && task.status === 'error'" class="mt-1">
+                <span class="text-xs text-red-500">{{ task.error }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Task Actions -->
+          <div class="flex items-center gap-2">
+            <!-- Restart button -->
+            <Button
+              v-if="(canRestartTask(task) && canEditCompany) || isDev"
+              variant="tertiary"
+              size="sm"
+              icon="fa fa-rotate-right"
+              icon-only
+              @click="restartTask(task.type)"
+              :loading="isRestarting === task.type"
+              class="ml-auto"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Global Actions -->
+      <div v-if="hasErrorsOrPending && canEditCompany" class="mt-6 pt-6 border-t border-border-2">
+        <div class="flex items-center justify-between">
+          <div class="text-sm text-secondary">
+            Des tâches peuvent être redémarrées ou ne sont pas encore lancées
+          </div>
+          <Button
+            variant="secondary"
+            size="sm"
+            icon="fa fa-play"
+            @click="startAllPendingTasks"
+            :loading="isStartingAll"
+          >
+            Démarrer toutes les tâches
+          </Button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { VueFlow, useVueFlow, Panel, type Node, type Edge, MarkerType } from '@vue-flow/core'
-import { Background } from '@vue-flow/background'
 import type { TaskType, TaskStatus, TaskResponse } from '@/types/task'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { companyTasksQuery } from '@/queries/tasks'
-import TaskNode from './TaskNode.vue'
 import { useQuery } from '@pinia/colada'
 import { useRestartTask } from '@/mutations/tasks'
 import { useDebounceFn } from '@vueuse/core'
 import { onUnmounted } from 'vue'
+import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import Button from '@/components/ui/Button.vue'
+import Badge from '@/components/ui/Badge.vue'
+import Alert from '@/components/ui/Alert.vue'
 
-interface TaskNodeData {
+interface TaskConfig {
   type: TaskType
   name: string
   description: string
-  status: TaskStatus | null
-  error: string | null
-  canTrigger: boolean
 }
 
 const route = useRoute()
 const companyId = computed(() => route.params.companyId as string)
 
+const isDev = import.meta.env.DEV
 const isOpen = ref(false)
+const isRestarting = ref<TaskType | null>(null)
+const isStartingAll = ref(false)
 
 const { data: tasks, refetch: refetchTasks } = useQuery(companyTasksQuery, () => ({
   companyId: companyId.value,
 }))
 
-const isWorkflowPaused = ref(false)
-const autoRecoveryLock = ref(false)
 const pollingInterval = ref<NodeJS.Timeout | null>(null)
-const { fitView } = useVueFlow()
+const { canEditCompany } = useCompanyPermissions()
 
-// Define workflow configuration with dependencies - horizontal stepper layout
-const workflowConfig = [
-  // Phase 1: Parallel tasks (x=100, stacked vertically)
+// Task configuration - all 8 tasks that can run in parallel
+const taskConfigs: TaskConfig[] = [
   {
     type: 'profile',
     name: 'Profil',
-    description: 'Informations générales',
-    dependencies: [],
-    position: { x: 100, y: 50 },
-    first: true,
+    description: 'Informations générales de l\'entreprise',
   },
   {
     type: 'digital',
     name: 'Digital',
-    description: 'Présence en ligne',
-    dependencies: [],
-    position: { x: 100, y: 130 },
-    first: true,
+    description: 'Présence numérique et réseaux sociaux',
   },
   {
     type: 'csr',
     name: 'RSE',
-    description: 'Responsabilité sociale',
-    dependencies: [],
-    position: { x: 100, y: 210 },
-    first: true,
+    description: 'Responsabilité sociale et environnementale',
   },
   {
     type: 'press',
     name: 'Presse',
-    description: 'Articles de presse',
-    dependencies: [],
-    position: { x: 100, y: 290 },
-    first: true,
+    description: 'Articles et communiqués de presse',
   },
-
-  // Phase 2: Timeline (x=300)
   {
     type: 'timeline',
     name: 'Timeline',
-    description: 'Historique événements',
-    dependencies: ['profile', 'digital', 'csr', 'press'],
-    position: { x: 350, y: 170 },
+    description: 'Historique et événements importants',
   },
-
-  // Phase 3: Products (x=500)
   {
     type: 'products',
     name: 'Produits',
-    description: 'Catalogue produits',
-    dependencies: ['timeline'],
-    position: { x: 600, y: 170 },
+    description: 'Catalogue et gamme de produits',
   },
-
-  // Phase 4: Team (x=700)
   {
     type: 'team',
     name: 'Équipe',
-    description: 'Organigramme',
-    dependencies: ['products'],
-    position: { x: 850, y: 170 },
+    description: 'Organigramme et membres clés',
   },
-
-  // Phase 5: Jobs (x=900)
   {
     type: 'jobs',
     name: 'Emplois',
-    description: "Offres d'emploi",
-    dependencies: ['team'],
-    position: { x: 1100, y: 170 },
-    last: true,
+    description: 'Offres d\'emploi et recrutement',
   },
 ]
 
@@ -230,32 +243,12 @@ const { mutate: restart } = restartTaskMutation
 
 // Initialize component when mounted
 onMounted(async () => {
-  // Initialize previous task statuses to avoid unnecessary refreshes on mount
-  const initialTasks = tasks.value || []
-
-  initialTasks.forEach((task: TaskResponse) => {
-    previousTaskStatuses.value.set(task.type, task.status)
-  })
-
-  // Perform auto-recovery check on mount (tasks already exist from backend)
+  // Start all pending tasks automatically if workflow was previously started
   performAutoRecovery()
-
-  setTimeout(() => {
-    fitView({
-      duration: 300,
-    })
-  }, 150)
 })
-
-// Watch for task updates and auto-progress (only if workflow was manually started)
-const workflowStarted = ref(false)
-const previousTaskStatuses = ref<Map<string, TaskStatus | null>>(new Map())
-
-// This watcher will be defined after debouncedAutoRecovery is created
 
 // Helper function to get task status
 const getTaskStatus = (taskType: TaskType): TaskStatus | null => {
-  // Fall back to server state
   const task = tasks.value?.find((t: TaskResponse) => t.type === taskType)
   return task?.status || null
 }
@@ -266,98 +259,100 @@ const getTaskError = (taskType: TaskType): string | null => {
   return task?.error || null
 }
 
-// Check if task can be triggered (uses server state for logic decisions)
-const canTriggerTask = (taskType: TaskType): boolean => {
-  // Find the actual task (not just its status)
-  const task = tasks.value?.find((t: TaskResponse) => t.type === taskType)
-
-  // Task must exist and be in pending or error state to be triggered
-  if (!task || (task.status !== 'pending' && task.status !== 'error')) {
-    return false
-  }
-
-  const config = workflowConfig.find((c) => c.type === taskType)
-  if (!config) {
-    return false
-  }
-
-  // First 4 tasks (no dependencies) can always be triggered if pending/error
-  if (config.dependencies.length === 0) {
-    return true
-  }
-
-  // For dependent tasks, all dependencies must be succeeded (use actual task status for dependencies)
-  const allDepsSucceeded = config.dependencies.every((depType) => {
-    const depTask = tasks.value?.find((t) => t.type === depType)
-    return depTask?.status === 'succeeded'
-  })
-
-  return allDepsSucceeded
-}
-
-// Create flow nodes
-const flowNodes = computed<Node<TaskNodeData>[]>(() => {
-  return workflowConfig.map((config) => ({
-    id: config.type,
-    type: 'task',
-    position: config.position,
-    data: {
-      type: config.type as TaskType,
-      name: config.name,
-      description: config.description,
-      status: getTaskStatus(config.type as TaskType),
-      error: getTaskError(config.type as TaskType),
-      canTrigger: canTriggerTask(config.type as TaskType),
-      first: config.first,
-      last: config.last,
-    },
+// Create combined task list with config and status
+const taskList = computed(() => {
+  return taskConfigs.map(config => ({
+    ...config,
+    status: getTaskStatus(config.type),
+    error: getTaskError(config.type),
   }))
 })
 
-// Create flow edges with animations
-const flowEdges = computed<Edge[]>(() => {
-  const edges: Edge[] = []
+// Task status utilities
+const getTaskIcon = (taskType: TaskType): string => {
+  const iconMap: Record<TaskType, string> = {
+    profile: 'fas fa-user',
+    digital: 'fas fa-globe',
+    timeline: 'fas fa-history',
+    products: 'fas fa-box',
+    jobs: 'fas fa-briefcase',
+    csr: 'fas fa-leaf',
+    press: 'fas fa-newspaper',
+    team: 'fas fa-users',
+  }
+  return iconMap[taskType] || 'fas fa-question'
+}
 
-  workflowConfig.forEach((config) => {
-    config.dependencies.forEach((depType) => {
-      const sourceStatus = getTaskStatus(depType as TaskType)
-      const targetStatus = getTaskStatus(config.type as TaskType)
+const getTaskClass = (task: { status: TaskStatus | null }): string => {
+  const baseClasses = 'bg-bg1'
 
-      edges.push({
-        id: `${depType}-${config.type}`,
-        source: depType,
-        target: config.type,
-        type: 'smoothstep',
-        animated: sourceStatus === 'succeeded' && targetStatus === 'running',
-        style: {
-          stroke:
-            sourceStatus === 'succeeded' ? 'var(--color-green-500)' : 'var(--color-slate-300)',
-          strokeWidth: sourceStatus === 'succeeded' ? 3 : 2,
-        },
-        markerEnd: {
-          type: 'arrowclosed' as MarkerType,
-          color: sourceStatus === 'succeeded' ? 'var(--color-green-500)' : 'var(--color-slate-300)',
-        },
-      })
-    })
-  })
+  switch (task.status) {
+    case 'succeeded':
+      return `${baseClasses} border-green-400`
+    case 'error':
+      return `${baseClasses} border-red-400`
+    case 'running':
+      return `${baseClasses} border-orange-400`
+    case 'pending':
+      return `${baseClasses} border-blue-400`
+    default:
+      return `${baseClasses} border-gray-300 dark:border-slate-700 opacity-60`
+  }
+}
 
-  return edges
-})
+const getIconContainerClass = (status: TaskStatus | null): string => {
+  switch (status) {
+    case 'succeeded':
+      return 'bg-green-100 text-green-600 dark:bg-green-400/10 dark:text-green-400'
+    case 'error':
+      return 'bg-red-100 text-red-600 dark:bg-red-400/10 dark:text-red-400'
+    case 'running':
+      return 'bg-orange-100 text-orange-600 dark:bg-orange-400/10 dark:text-orange-400'
+    case 'pending':
+      return 'bg-blue-100 text-blue-600 dark:bg-blue-400/10 dark:text-blue-400'
+    default:
+      return 'bg-gray-100 text-gray-400 dark:bg-gray-400/10 dark:text-gray-400'
+  }
+}
+
+const getStatusVariant = (status: TaskStatus | null) => {
+  switch (status) {
+    case 'succeeded':
+      return 'success'
+    case 'error':
+      return 'error'
+    case 'running':
+      return 'warning'
+    case 'pending':
+      return 'info'
+    default:
+      return 'slate'
+  }
+}
+
+const getStatusLabel = (status: TaskStatus | null): string => {
+  switch (status) {
+    case 'succeeded':
+      return 'Terminée'
+    case 'error':
+      return 'Erreur'
+    case 'running':
+      return 'En cours'
+    case 'pending':
+      return 'En attente'
+    default:
+      return 'Non démarrée'
+  }
+}
+
+// Task actions
+const canRestartTask = (task: { status: TaskStatus | null }): boolean => {
+  return task.status === 'error' || task.status === 'pending'
+}
 
 // Computed stats
 const completedCount = computed(
   () => tasks.value?.filter((t) => t.status === 'succeeded').length || 0,
-)
-
-watch(
-  completedCount,
-  (newCount) => {
-    if (newCount < 8) {
-      isOpen.value = true
-    }
-  },
-  { immediate: true },
 )
 
 const runningCount = computed(
@@ -370,13 +365,26 @@ const errorCount = computed(
 
 const pendingCount = computed(() => {
   const existingTasks = new Set(tasks.value?.map((t: TaskResponse) => t.type) || [])
-  const totalConfigTasks = workflowConfig.length
+  const totalConfigTasks = taskConfigs.length
   const pendingFromExisting = tasks.value?.filter((t) => t.status === 'pending').length || 0
   const notStartedTasks = totalConfigTasks - existingTasks.size
   return pendingFromExisting + notStartedTasks
 })
 
-const totalTasks = computed(() => workflowConfig.length)
+const totalTasks = computed(() => taskConfigs.length)
+
+const hasErrorsOrPending = computed(() => errorCount.value > 0 || pendingCount.value > 0)
+
+// Auto-open when tasks are not complete
+watch(
+  completedCount,
+  (newCount) => {
+    if (newCount < 8) {
+      isOpen.value = true
+    }
+  },
+  { immediate: true },
+)
 
 // Polling logic for running tasks
 const hasRunningTasks = computed(() => tasks.value?.some((t) => t.status === 'running') || false)
@@ -421,66 +429,43 @@ const pendingPercentage = computed(() =>
   totalTasks.value > 0 ? (pendingCount.value / totalTasks.value) * 100 : 0,
 )
 
-// Auto-recovery system to unstuck workflows
+// Parallel task execution - start all pending tasks at once
 const performAutoRecovery = async () => {
-  if (autoRecoveryLock.value) {
-    console.log('🔒 Auto-recovery already running, skipping...')
+  const currentTasks = tasks.value
+  if (!currentTasks || currentTasks.length === 0) return
+
+  // Early exit if all tasks succeeded
+  const allSucceeded = currentTasks.every((t: TaskResponse) => t.status === 'succeeded')
+  if (allSucceeded) {
+    console.log('✅ All tasks succeeded - skipping auto-recovery')
     return
   }
 
-  autoRecoveryLock.value = true
+  // Early exit if has running tasks
+  const hasRunning = currentTasks.some((t: TaskResponse) => t.status === 'running')
+  if (hasRunning) {
+    console.log('⏳ Tasks are running - waiting for completion')
+    return
+  }
+
+  // Early exit if no pending tasks
+  const hasPending = currentTasks.some((t: TaskResponse) => t.status === 'pending')
+  if (!hasPending) {
+    console.log('⚠️ No pending tasks to start')
+    return
+  }
+
+  console.log(`🔄 Starting all pending tasks in parallel...`)
+
+  // Start ALL pending tasks at once (parallel execution)
+  const pendingTasks = currentTasks.filter((t: TaskResponse) => t.status === 'pending')
+  const startPromises = pendingTasks.map((task) => triggerTask(task.type))
+  
   try {
-    const currentTasks = tasks.value
-    if (!currentTasks || currentTasks.length === 0) return
-
-    // 🎯 EARLY EXIT 1: All tasks succeeded - nothing to do!
-    const allSucceeded = currentTasks.every((t: TaskResponse) => t.status === 'succeeded')
-    if (allSucceeded) {
-      console.log('✅ All tasks succeeded - skipping auto-recovery')
-      return
-    }
-
-    // 🎯 EARLY EXIT 2: Has running tasks - just wait for them to complete
-    const hasRunning = currentTasks.some((t: TaskResponse) => t.status === 'running')
-    if (hasRunning) {
-      console.log('⏳ Tasks are running - waiting for completion')
-      return
-    }
-
-    // 🎯 EARLY EXIT 3: Has errors but no pending - nothing to auto-start
-    const hasPending = currentTasks.some((t: TaskResponse) => t.status === 'pending')
-    if (!hasPending) {
-      console.log('⚠️ No pending tasks to start')
-      return
-    }
-
-    console.log(`🔄 Performing auto-recovery for pending tasks...`)
-
-    // Check first 4 parallel tasks
-    const firstFourTasks = ['profile', 'digital', 'csr', 'press'] as TaskType[]
-    for (const taskType of firstFourTasks) {
-      const task = currentTasks.find((t: TaskResponse) => t.type === taskType)
-      if (task?.status === 'pending') {
-        console.log(`🚀 Auto-starting: ${taskType}`)
-        triggerTask(taskType)
-        workflowStarted.value = true
-        return // Start one at a time to avoid overwhelming the backend
-      }
-    }
-
-    // Check dependent tasks in order
-    const dependentTasks = ['timeline', 'products', 'team', 'jobs'] as TaskType[]
-    for (const taskType of dependentTasks) {
-      const task = currentTasks.find((t: TaskResponse) => t.type === taskType)
-      if (task?.status === 'pending' && canTriggerTask(taskType)) {
-        console.log(`🚀 Auto-starting dependent task: ${taskType}`)
-        triggerTask(taskType)
-        workflowStarted.value = true
-        return // Start one at a time
-      }
-    }
-  } finally {
-    autoRecoveryLock.value = false
+    await Promise.all(startPromises)
+    console.log(`✅ Started ${pendingTasks.length} tasks in parallel`)
+  } catch (error) {
+    console.error('❌ Error starting tasks in parallel:', error)
   }
 }
 
@@ -491,28 +476,11 @@ const debouncedAutoRecovery = useDebounceFn(performAutoRecovery, 500)
 watch(
   tasks,
   (newTasks) => {
-    // Check for newly succeeded tasks and refresh company data
-    newTasks?.forEach((task: TaskResponse) => {
-      const previousStatus = previousTaskStatuses.value.get(task.type)
-      if (task.status === 'succeeded' && previousStatus !== 'succeeded') {
-        // Refresh company data when a task succeeds
-      }
-
-      // Update the previous status
-      previousTaskStatuses.value.set(task.type, task.status)
-    })
-
     // Perform debounced auto-recovery check on task changes
     debouncedAutoRecovery()
   },
   { deep: true },
 )
-
-// Auto-progress workflow - DEPRECATED: Now handled in performAutoRecovery
-const autoProgressWorkflow = () => {
-  // This function is no longer needed as performAutoRecovery handles all progression
-  console.warn('autoProgressWorkflow called but is deprecated')
-}
 
 // Watch for running tasks to start/stop polling
 watch(
@@ -541,27 +509,11 @@ const triggerTask = async (taskType: TaskType) => {
     )
 
     if (existingTask) {
-      try {
-        // Use restart endpoint for both pending and error tasks (never create new ones)
-        console.log(`🔄 About to call restart mutation with ID:`, existingTask.id)
-        await restart(existingTask.id)
-        console.log(`✅ Task ${taskType} started successfully:`, existingTask)
-      } catch (apiError) {
-        throw apiError
-      }
+      console.log(`🔄 Starting task ${taskType} with ID:`, existingTask.id)
+      await restart(existingTask.id)
+      console.log(`✅ Task ${taskType} started successfully`)
     } else {
       console.warn(`⚠️ No pending or error task found for ${taskType}`)
-      // Log current task state for debugging
-      const currentTask = tasks.value?.find((t) => t.type === taskType)
-      if (currentTask) {
-        console.warn(`📋 Current task state:`, {
-          type: currentTask.type,
-          status: currentTask.status,
-          id: currentTask.id,
-        })
-      } else {
-        console.warn(`📋 No task found at all for type: ${taskType}`)
-      }
     }
   } catch (error) {
     console.error(`❌ Error triggering task ${taskType}:`, error)
@@ -569,40 +521,57 @@ const triggerTask = async (taskType: TaskType) => {
 }
 
 const restartTask = async (taskType: TaskType) => {
+  if (!canEditCompany.value) {
+    console.warn('❌ No permission to restart tasks')
+    return
+  }
+
+  isRestarting.value = taskType
   try {
     const task = tasks.value?.find((t: TaskResponse) => t.type === taskType)
     if (task) {
+      console.log(`🔄 Restarting task ${taskType}`)
       await restart(task.id)
+      console.log(`✅ Task ${taskType} restarted successfully`)
     }
   } catch (error) {
-    console.error('Error restarting task:', error)
+    console.error('❌ Error restarting task:', error)
+  } finally {
+    isRestarting.value = null
   }
 }
 
-// Flow initialization
-const onFlowInit = () => {
-  // Keep the defined viewport without auto-fitting
+const startAllPendingTasks = async () => {
+  if (!canEditCompany.value) {
+    console.warn('❌ No permission to start tasks')
+    return
+  }
+
+  isStartingAll.value = true
+  try {
+    await performAutoRecovery()
+  } catch (error) {
+    console.error('❌ Error starting all tasks:', error)
+  } finally {
+    isStartingAll.value = false
+  }
 }
 </script>
 
 <style scoped>
-/* Custom flow styling */
-:deep(.vue-flow__node) {
-  cursor: pointer;
-}
-
-:deep(.vue-flow__edge-path) {
-  transition: all 0.3s ease;
-}
-
-:deep(.vue-flow__edge.animated .vue-flow__edge-path) {
-  stroke-dasharray: 5;
-  animation: dash 1s linear infinite;
-}
-
-@keyframes dash {
-  to {
-    stroke-dashoffset: -10;
+/* Custom animations */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
   }
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.5s ease-out infinite;
 }
 </style>
