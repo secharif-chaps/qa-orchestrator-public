@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.models.company import Company
 from app.models.task import Task, TaskType, TaskStatus
 from app.schemas.company import CompanyCreate, CompanyUpdate, CompanyResponse
+from app.schemas.task import TaskTokenUpdate
 from app.schemas.pagination import PaginationParams, PaginatedResponse, create_pagination_meta
 from app.services.n8n import N8nClient
 from app.infrastructure.dify.client import DifyClient
@@ -239,6 +240,7 @@ class CompanyService:
                 # Prepare callback URLs - use Dify-specific endpoint
                 success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
                 error_callback = success_callback  # Same endpoint, different status in payload
+                token_callback = f"{settings.BACKEND_BASE_URL}/api/v1/tasks/{task.id}/tokens"
                 
                 # Trigger Dify workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_product_workflow(
@@ -248,7 +250,8 @@ class CompanyService:
                     error_callback=error_callback,
                     task_id=task.id,
                     company_id=company.id,
-                    async_mode=True  # This is the key change - async mode!
+                    async_mode=True,  # This is the key change - async mode!
+                    token_callback_url=token_callback
                 )
                 
                 # In async mode, we just log the trigger confirmation
@@ -264,6 +267,7 @@ class CompanyService:
                 # Prepare callback URLs - use Dify-specific endpoint
                 success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
                 error_callback = success_callback  # Same endpoint, different status in payload
+                token_callback = f"{settings.BACKEND_BASE_URL}/api/v1/tasks/{task.id}/tokens"
                 
                 # Trigger Dify timeline workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_timeline_workflow(
@@ -273,7 +277,8 @@ class CompanyService:
                     error_callback=error_callback,
                     task_id=task.id,
                     company_id=company.id,
-                    async_mode=True  # This is the key change - async mode!
+                    async_mode=True,  # This is the key change - async mode!
+                    token_callback_url=token_callback
                 )
                 
                 # In async mode, we just log the trigger confirmation
@@ -289,6 +294,7 @@ class CompanyService:
                 # Prepare callback URLs - use Dify-specific endpoint
                 success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
                 error_callback = success_callback  # Same endpoint, different status in payload
+                token_callback = f"{settings.BACKEND_BASE_URL}/api/v1/tasks/{task.id}/tokens"
                 
                 # Trigger Dify profile workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_profile_workflow(
@@ -298,11 +304,40 @@ class CompanyService:
                     error_callback=error_callback,
                     task_id=task.id,
                     company_id=company.id,
-                    async_mode=True  # This is the key change - async mode!
+                    async_mode=True,  # This is the key change - async mode!
+                    token_callback_url=token_callback
                 )
                 
                 # In async mode, we just log the trigger confirmation
                 logger.info(f"✅ Dify profile workflow triggered (async): {result}")
+                
+                # Task remains in RUNNING state - will be updated via callback
+                # No need to update company data here - callback will handle it
+                self.db.commit()
+                
+            elif task.type == TaskType.team:
+                logger.info(f"Using Dify workflow (async) for team task - Company: {company.name}")
+                
+                # Prepare callback URLs - use Dify-specific endpoint
+                success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
+                error_callback = success_callback  # Same endpoint, different status in payload
+                token_callback = f"{settings.BACKEND_BASE_URL}/api/v1/tasks/{task.id}/tokens"
+                
+                # Trigger Dify team workflow with callbacks (ASYNC mode - fire and forget)
+                result = await self.dify_client.trigger_workflow(
+                    task_type="team",
+                    company_name=company.name,
+                    website=company.website,
+                    success_callback=success_callback,
+                    error_callback=error_callback,
+                    task_id=task.id,
+                    company_id=company.id,
+                    async_mode=True,
+                    token_callback_url=token_callback
+                )
+                
+                # In async mode, we just log the trigger confirmation
+                logger.info(f"✅ Dify team workflow triggered (async): {result}")
                 
                 # Task remains in RUNNING state - will be updated via callback
                 # No need to update company data here - callback will handle it
@@ -368,3 +403,33 @@ class CompanyService:
             company.press = data.get("press", {}) if isinstance(data, dict) else {}
         elif query_type == "team":
             company.team = data.get("team", []) if isinstance(data, dict) else []
+    
+    def update_task_tokens(self, task_id: int, token_data: TaskTokenUpdate) -> Task:
+        """Update token usage information for a task"""
+        task = self.db.query(Task).filter(Task.id == task_id).first()
+        if not task:
+            raise ValueError(f"Task with ID {task_id} not found")
+        
+        # Update token fields
+        if token_data.input_tokens is not None:
+            task.input_tokens = token_data.input_tokens
+        if token_data.output_tokens is not None:
+            task.output_tokens = token_data.output_tokens
+        if token_data.total_cost is not None:
+            task.total_cost = token_data.total_cost
+        
+        # Calculate cost if not provided but tokens are available
+        if (task.total_cost is None and 
+            task.input_tokens is not None and 
+            task.output_tokens is not None):
+            # Claude Sonnet 4 pricing per your specification
+            input_cost_per_1m = 3.15  # USD per 1M input tokens
+            output_cost_per_1m = 15.75  # USD per 1M output tokens
+            
+            input_cost = (task.input_tokens / 1_000_000) * input_cost_per_1m
+            output_cost = (task.output_tokens / 1_000_000) * output_cost_per_1m
+            task.total_cost = input_cost + output_cost
+        
+        self.db.commit()
+        self.db.refresh(task)
+        return task

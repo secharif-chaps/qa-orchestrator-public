@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Enum as SQLEnum
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Enum as SQLEnum, Float
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -30,6 +30,11 @@ class Task(Base):
     error = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Token usage tracking (optional)
+    input_tokens = Column(Integer, nullable=True)
+    output_tokens = Column(Integer, nullable=True)
+    total_cost = Column(Float, nullable=True)  # Cost in USD
     
     # Relationship with Company
     company = relationship("Company", back_populates="tasks") 

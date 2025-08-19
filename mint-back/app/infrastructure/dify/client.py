@@ -62,7 +62,8 @@ class DifyClient:
         error_callback: str,
         task_id: int,
         company_id: int,
-        async_mode: bool = True
+        async_mode: bool = True,
+        token_callback_url: str = None
     ) -> Dict[str, Any]:
         """
         Generic method to trigger any workflow type
@@ -99,13 +100,20 @@ class DifyClient:
             "task_type": task_type
         }
         
+        inputs = {
+            "company": company_name,
+            "website": website,
+            "callback_webhook": success_callback,
+            "task_id": str(task_id),
+            "callback_payload": callback_payload_template
+        }
+        
+        # Add token callback URL if provided
+        if token_callback_url:
+            inputs["token_callback_url"] = token_callback_url
+            
         payload = {
-            "inputs": {
-                "company": company_name,
-                "website": website,
-                "callback_webhook": success_callback,
-                "callback_payload": callback_payload_template
-            },
+            "inputs": inputs,
             "response_mode": "blocking",
             "user": f"company_{company_id}"
         }
@@ -200,14 +208,15 @@ class DifyClient:
         error_callback: str,
         task_id: int,
         company_id: int,
-        async_mode: bool = True
+        async_mode: bool = True,
+        token_callback_url: str = None
     ) -> Dict[str, Any]:
         """
         Trigger the Dify product workflow with callback URLs (backward compatibility)
         """
         return await self.trigger_workflow(
             "products", company_name, website, success_callback, 
-            error_callback, task_id, company_id, async_mode
+            error_callback, task_id, company_id, async_mode, token_callback_url
         )
 
     async def trigger_timeline_workflow(
@@ -218,14 +227,15 @@ class DifyClient:
         error_callback: str,
         task_id: int,
         company_id: int,
-        async_mode: bool = True
+        async_mode: bool = True,
+        token_callback_url: str = None
     ) -> Dict[str, Any]:
         """
         Trigger the Dify timeline workflow with callback URLs (backward compatibility)
         """
         return await self.trigger_workflow(
             "timeline", company_name, website, success_callback, 
-            error_callback, task_id, company_id, async_mode
+            error_callback, task_id, company_id, async_mode, token_callback_url
         )
 
     async def trigger_profile_workflow(
@@ -236,12 +246,13 @@ class DifyClient:
         error_callback: str,
         task_id: int,
         company_id: int,
-        async_mode: bool = True
+        async_mode: bool = True,
+        token_callback_url: str = None
     ) -> Dict[str, Any]:
         """
         Trigger the Dify profile workflow with callback URLs (backward compatibility)
         """
         return await self.trigger_workflow(
             "profile", company_name, website, success_callback, 
-            error_callback, task_id, company_id, async_mode
+            error_callback, task_id, company_id, async_mode, token_callback_url
         )

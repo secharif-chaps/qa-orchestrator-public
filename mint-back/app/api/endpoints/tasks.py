@@ -7,7 +7,7 @@ from pydantic import ValidationError
 from app.services.company import CompanyService
 from app.core.dependencies import get_company_service, get_current_user
 from app.core.security import verify_company_ownership
-from app.schemas.task import TaskCreate, TaskResponse
+from app.schemas.task import TaskCreate, TaskResponse, TaskTokenUpdate
 from app.schemas.user import TokenData
 from app.models.task import TaskType
 
@@ -108,4 +108,34 @@ async def restart_task(
     
     # Restart the task
     restarted_task = await service.restart_task(task_id)
-    return restarted_task 
+    return restarted_task
+
+@router.patch("/{task_id}/tokens", response_model=TaskResponse)
+async def update_task_tokens(
+    task_id: int,
+    token_data: TaskTokenUpdate,
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user)
+):
+    """Update token usage information for a task (used by Dify workflows)"""
+    # First, find the task and verify ownership
+    user_companies = service.get_all_companies(workspace_id=current_user.workspace_id)
+    
+    task = None
+    for company in user_companies:
+        for company_task in company.tasks:
+            if company_task.id == task_id:
+                task = company_task
+                break
+        if task:
+            break
+    
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Task with ID {task_id} not found or you don't have permission to access it"
+        )
+    
+    # Update token information
+    updated_task = service.update_task_tokens(task_id, token_data)
+    return updated_task 
