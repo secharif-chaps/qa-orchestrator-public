@@ -44,6 +44,9 @@ class CompanyService:
                 company.press = {}
             if company.team is None:
                 company.team = []
+            elif isinstance(company.team, dict) and 'team' in company.team:
+                # Handle nested team structure from data processing
+                company.team = company.team.get('team', [])
         return company
     
     def get_company_by_name(self, name: str) -> Optional[Company]:
@@ -67,6 +70,9 @@ class CompanyService:
                 company.press = {}
             if company.team is None:
                 company.team = []
+            elif isinstance(company.team, dict) and 'team' in company.team:
+                # Handle nested team structure from data processing
+                company.team = company.team.get('team', [])
         return company
     
     def get_all_companies(self, workspace_id: Optional[int] = None) -> List[Company]:
@@ -93,6 +99,9 @@ class CompanyService:
                 company.press = {}
             if company.team is None:
                 company.team = []
+            elif isinstance(company.team, dict) and 'team' in company.team:
+                # Handle nested team structure from data processing
+                company.team = company.team.get('team', [])
         return companies
     
     def get_paginated_companies(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None, name_filter: Optional[str] = None) -> PaginatedResponse[CompanyResponse]:
@@ -119,6 +128,9 @@ class CompanyService:
                 company.press = {}
             if company.team is None:
                 company.team = []
+            elif isinstance(company.team, dict) and 'team' in company.team:
+                # Handle nested team structure from data processing
+                company.team = company.team.get('team', [])
             
             # Convert to CompanyResponse using from_attributes
             company_response = CompanyResponse.model_validate(company)
