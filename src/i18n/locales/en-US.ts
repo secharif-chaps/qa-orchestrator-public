@@ -476,9 +476,7 @@ export default {
     usernameCannotChange: 'Username cannot be changed after creation',
     permissions: 'Permissions',
     'permissions.description': 'Select the permissions for this team member',
-    edit: 'Edit',
     disable: 'Disable',
-    loading: 'Loading team members...',
     description: 'Manage team members and their permissions',
     table: {
       user: 'User',

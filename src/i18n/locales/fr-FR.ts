@@ -520,9 +520,7 @@ export default {
     usernameCannotChange: "Le nom d'utilisateur ne peut pas être modifié après la création",
     permissions: 'Permissions',
     'permissions.description': "Sélectionnez les permissions pour ce membre d'équipe",
-    edit: 'Modifier',
     disable: 'Désactiver',
-    loading: "Chargement des membres de l'équipe...",
     description: "Gérez les membres de l'équipe et leurs permissions",
     table: {
       user: 'Utilisateur',

@@ -114,6 +114,22 @@
               </div>
               <p class="text-xs text-secondary truncate">{{ task.description }}</p>
               
+              <!-- Token information for admins -->
+              <div v-if="hasAdminAccess && getTokenInfo(task.type)?.hasTokenData" class="mt-1 flex items-center gap-3 text-xs text-secondary">
+                <span v-if="getTokenInfo(task.type)?.inputTokens">
+                  <i class="fa fa-arrow-down text-blue-500"></i>
+                  {{ formatTokens(getTokenInfo(task.type)?.inputTokens) }}
+                </span>
+                <span v-if="getTokenInfo(task.type)?.outputTokens">
+                  <i class="fa fa-arrow-up text-green-500"></i>
+                  {{ formatTokens(getTokenInfo(task.type)?.outputTokens) }}
+                </span>
+                <span v-if="getTokenInfo(task.type)?.totalCost" class="font-medium">
+                  <i class="fa fa-coins text-yellow-500"></i>
+                  {{ formatCost(getTokenInfo(task.type)?.totalCost) }}
+                </span>
+              </div>
+              
               <!-- Error message -->
               <div v-if="task.error && task.status === 'error'" class="mt-1">
                 <span class="text-xs text-red-500">{{ task.error }}</span>
@@ -169,6 +185,7 @@ import { useRestartTask } from '@/mutations/tasks'
 import { useDebounceFn } from '@vueuse/core'
 import { onUnmounted } from 'vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import { useAuthStore } from '@/stores/auth'
 import Button from '@/components/ui/Button.vue'
 import Badge from '@/components/ui/Badge.vue'
 import Alert from '@/components/ui/Alert.vue'
@@ -193,6 +210,35 @@ const { data: tasks, refetch: refetchTasks } = useQuery(companyTasksQuery, () =>
 
 const pollingInterval = ref<NodeJS.Timeout | null>(null)
 const { canEditCompany } = useCompanyPermissions()
+const authStore = useAuthStore()
+
+// Check if user has admin permissions to view token data
+const hasAdminAccess = computed(() => 
+  authStore.hasAnyRole(['admin.workspaces', 'admin.users', 'admin.all'])
+)
+
+// Helper functions for token formatting
+const formatTokens = (tokens: number | null): string => {
+  if (tokens === null || tokens === undefined) return '—'
+  return tokens.toLocaleString()
+}
+
+const formatCost = (cost: number | null): string => {
+  if (cost === null || cost === undefined) return '—'
+  return `$${cost.toFixed(4)}`
+}
+
+const getTokenInfo = (taskType: TaskType) => {
+  const task = tasks.value?.find((t: TaskResponse) => t.type === taskType)
+  if (!task) return null
+  
+  return {
+    inputTokens: task.input_tokens,
+    outputTokens: task.output_tokens,
+    totalCost: task.total_cost,
+    hasTokenData: task.input_tokens !== null || task.output_tokens !== null || task.total_cost !== null
+  }
+}
 
 // Task configuration - all 8 tasks that can run in parallel
 const taskConfigs: TaskConfig[] = [

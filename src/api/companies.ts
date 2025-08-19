@@ -27,3 +27,10 @@ export const createCompany = async (company: { name: string; website: string }) 
   const response = await apiClient.post<Company>('/companies', company)
   return response
 }
+
+// Export as a single API object for backward compatibility
+export const companiesApi = {
+  getCompanyById,
+  getCompanies,
+  createCompany,
+}
