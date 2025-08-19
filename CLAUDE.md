@@ -1,5 +1,29 @@
 # Claude Code Configuration
 
+## Remote Server Access
+
+### SSH Connection to Production Server
+- **Server**: 10.0.1.2 (nmercier@10.0.1.2)
+- **Project Location**: ~/mint (NOT ~/mint-server)
+- **Database Container**: mint-server-db-1
+
+### Accessing Database on Remote Server
+```bash
+# Connect to database from remote server
+ssh nmercier@10.0.1.2 "docker exec mint-server-db-1 psql -U postgres -d mint_db -c \"YOUR_SQL_QUERY\""
+
+# List tables
+ssh nmercier@10.0.1.2 "docker exec mint-server-db-1 psql -U postgres -d mint_db -c \"\\dt\""
+
+# Describe table structure
+ssh nmercier@10.0.1.2 "docker exec mint-server-db-1 psql -U postgres -d mint_db -c \"\\d TABLE_NAME\""
+```
+
+**Important Notes:**
+- The Docker container name is `mint-server-db-1`, not accessed via docker-compose
+- Use double quotes for the SQL query to handle escaping properly
+- No need to cd into directories when using docker exec directly
+
 ## Docker Compose Commands
 
 This project uses different Docker Compose files for different environments:

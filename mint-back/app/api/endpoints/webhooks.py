@@ -202,8 +202,8 @@ async def dify_task_callback(
         
         # Extract the actual result data (could be in various places)
         if success:
-            # Determine the key to use based on task type
-            data_key = task_type if task_type in ["products", "timeline", "profile"] else "products"
+            # Determine the key to use based on actual task type from database
+            data_key = task.type.value if task.type.value in ["products", "timeline", "profile", "digital", "jobs", "csr", "press", "team"] else "products"
             
             # Try different possible locations for the result
             if "result" in body:
@@ -245,8 +245,8 @@ async def dify_task_callback(
             task.error = None
             
             if task_data:
-                logger.info(f"Updating company data for task type: {task_type}")
-                service._update_company_data(company, task_type, task_data)
+                logger.info(f"Updating company data for task type: {task.type.value}")
+                service._update_company_data(company, task.type.value, task_data)
             
             logger.info(f"✅ Task {task_id} completed successfully via Dify callback")
         else:
