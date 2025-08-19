@@ -234,6 +234,9 @@ async def dify_task_callback(
             elif "outputs" in body:
                 # Direct outputs
                 task_data = {data_key: body["outputs"]}
+            elif data_key in body:
+                # Data is sent directly with the field name as key (e.g., {"timeline": {...}})
+                task_data = {data_key: body[data_key]}
             else:
                 # Use entire body as result if nothing else matches
                 logger.warning(f"Could not find standard result location, using entire body")
