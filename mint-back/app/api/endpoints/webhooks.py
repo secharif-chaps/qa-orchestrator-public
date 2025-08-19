@@ -9,6 +9,7 @@ from app.services.company import CompanyService
 from app.core.dependencies import get_company_service
 from app.models.task import TaskStatus
 from app.core.config import settings
+from app.schemas.task import TaskTokenUpdate
 from fastapi import Depends
 
 logger = logging.getLogger(__name__)
@@ -277,6 +278,60 @@ async def dify_task_callback(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error processing Dify callback"
+        )
+
+@router.patch("/dify/tasks/{task_id}/tokens")
+async def dify_task_tokens(
+    task_id: int,
+    token_data: TaskTokenUpdate,
+    service: CompanyService = Depends(get_company_service)
+):
+    """
+    Update token usage information for a task (called by Dify workflows)
+    No authentication required as this is a webhook endpoint
+    """
+    logger.info(f"📊 Token update received for Task ID: {task_id}")
+    logger.info(f"Tokens - Input: {token_data.input_tokens}, Output: {token_data.output_tokens}, Cost: {token_data.total_cost}")
+    
+    try:
+        # Find the task across all companies
+        companies = service.get_all_companies()
+        task = None
+        company_id = None
+        
+        for company in companies:
+            task = next((t for t in company.tasks if t.id == task_id), None)
+            if task:
+                company_id = company.id
+                break
+        
+        if not task:
+            logger.error(f"Task {task_id} not found in any company")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Task with ID {task_id} not found"
+            )
+        
+        # Update token information using the service
+        updated_task = service.update_task_tokens(task_id, token_data)
+        
+        logger.info(f"✅ Token information updated for task {task_id}")
+        
+        return {
+            "message": "Token information updated successfully",
+            "task_id": task_id,
+            "input_tokens": updated_task.input_tokens,
+            "output_tokens": updated_task.output_tokens,
+            "total_cost": updated_task.total_cost
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"💥 Error updating tokens for task {task_id}: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error updating token information"
         )
 
 @router.get("/debug/dify-config")

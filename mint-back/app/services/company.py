@@ -252,7 +252,7 @@ class CompanyService:
                 # Prepare callback URLs - use Dify-specific endpoint
                 success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
                 error_callback = success_callback  # Same endpoint, different status in payload
-                token_callback = f"{settings.BACKEND_BASE_URL}/api/v1/tasks/{task.id}/tokens"
+                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
                 
                 # Trigger Dify workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_product_workflow(
@@ -279,7 +279,7 @@ class CompanyService:
                 # Prepare callback URLs - use Dify-specific endpoint
                 success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
                 error_callback = success_callback  # Same endpoint, different status in payload
-                token_callback = f"{settings.BACKEND_BASE_URL}/api/v1/tasks/{task.id}/tokens"
+                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
                 
                 # Trigger Dify timeline workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_timeline_workflow(
@@ -306,7 +306,7 @@ class CompanyService:
                 # Prepare callback URLs - use Dify-specific endpoint
                 success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
                 error_callback = success_callback  # Same endpoint, different status in payload
-                token_callback = f"{settings.BACKEND_BASE_URL}/api/v1/tasks/{task.id}/tokens"
+                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
                 
                 # Trigger Dify profile workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_profile_workflow(
@@ -333,7 +333,7 @@ class CompanyService:
                 # Prepare callback URLs - use Dify-specific endpoint
                 success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
                 error_callback = success_callback  # Same endpoint, different status in payload
-                token_callback = f"{settings.BACKEND_BASE_URL}/api/v1/tasks/{task.id}/tokens"
+                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
                 
                 # Trigger Dify team workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_workflow(
