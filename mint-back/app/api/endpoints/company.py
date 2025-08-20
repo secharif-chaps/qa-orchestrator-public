@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 from app.services.company import CompanyService
 from app.services.token_manager import TokenManager
-from app.core.dependencies import get_company_service, get_current_user, get_n8n_client, get_token_manager
+from app.core.dependencies import get_company_service, get_current_user, get_token_manager
 from app.core.workspace import get_user_workspace, WorkspaceContext
 from app.models.workspace import ModuleName
 from app.core.security import verify_company_ownership, verify_company_workspace_access, verify_company_modify_permission, sanitize_input
@@ -19,7 +19,8 @@ from app.schemas.company import (
 from app.schemas.pagination import PaginationParams, PaginatedResponse, SortOrder
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.schemas.user import TokenData
-from app.infrastructure.n8n.client import N8nClient
+# Chat functionality temporarily disabled due to n8n removal
+# from app.infrastructure.n8n.client import N8nClient
 
 router = APIRouter(
     prefix="/companies",
@@ -252,42 +253,24 @@ async def chat_with_company(
     company_id: int,
     chat_request: ChatRequest,
     service: CompanyService = Depends(get_company_service),
-    n8n_client: N8nClient = Depends(get_n8n_client),
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
-    """Chat with AI about a company (accessible to all workspace members)"""
-    logger.info(f"Chat request for company {company_id} by user {workspace_context.username}")
+    """Chat with AI about a company (temporarily disabled due to n8n removal)"""
+    logger.info(f"Chat request for company {company_id} by user {workspace_context.username} - DISABLED")
     
     try:
         # Get company and verify it belongs to workspace
         company = service.get_company(company_id)
         verify_company_workspace_access(company, workspace_context)
         
-        # Send chat message to n8n workflow
-        response = await n8n_client.send_chat_message(
-            message=chat_request.message,
-            company_context=chat_request.company_context,
-            chat_history=[msg.dict() for msg in chat_request.chat_history]
+        # Return disabled message until chat is migrated to alternative service
+        return ChatResponse(
+            response="Chat functionality is temporarily disabled while we upgrade our systems. Please check back later.",
+            status="disabled"
         )
-        
-        logger.info(f"Chat response received for company {company_id}")
-        
-        # Return the response in the expected format
-        if isinstance(response, dict) and "response" in response:
-            return ChatResponse(
-                response=response["response"],
-                status=response.get("status", "success")
-            )
-        else:
-            # Handle unexpected response format
-            return ChatResponse(
-                response=str(response),
-                status="success"
-            )
             
     except Exception as e:
         logger.error(f"Error in chat endpoint: {str(e)}")
-        # Return error response instead of raising exception
         return ChatResponse(
             response="I'm sorry, I'm having trouble responding right now. Please try again in a moment.",
             status="error"
