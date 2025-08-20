@@ -47,10 +47,10 @@
 
             <!-- Close button -->
             <button
-              v-if="dismissible"
-              @click="$emit('dismiss')"
-              class="text-secondary hover:text-base transition-colors p-1 ml-4"
-              :title="dismissLabel || 'Dismiss'"
+              v-if="dismissible || closable"
+              @click="handleClose"
+              class="text-secondary hover:text-base transition-colors p-1 ml-4 flex-shrink-0"
+              :title="dismissLabel || 'Close'"
             >
               <i class="fa fa-times"></i>
             </button>
@@ -87,6 +87,7 @@ interface Props {
   decorationIcon?: string
   show?: boolean
   dismissible?: boolean
+  closable?: boolean
   dismissLabel?: string
 }
 
@@ -94,13 +95,20 @@ const props = withDefaults(defineProps<Props>(), {
   variant: 'info',
   show: true,
   dismissible: true,
+  closable: false,
 })
 
 const slots = useSlots()
 
-defineEmits<{
+const emit = defineEmits<{
   dismiss: []
+  close: []
 }>()
+
+const handleClose = () => {
+  emit('dismiss')
+  emit('close')
+}
 
 // Check if there are action slots
 const hasActions = computed(() => {
