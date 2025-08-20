@@ -1,4 +1,12 @@
-export type TaskType = 'profile' | 'digital' | 'timeline' | 'products' | 'jobs' | 'csr' | 'press' | 'team'
+export type TaskType =
+  | 'profile'
+  | 'digital'
+  | 'timeline'
+  | 'products'
+  | 'jobs'
+  | 'csr'
+  | 'press'
+  | 'team'
 export type TaskStatus = 'pending' | 'running' | 'succeeded' | 'error'
 
 export interface TaskBase {
@@ -19,4 +27,4 @@ export interface TaskResponse extends TaskBase {
   input_tokens?: number | null
   output_tokens?: number | null
   total_cost?: number | null
-} 
+}

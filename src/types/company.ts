@@ -62,6 +62,7 @@ export interface Company {
   }
 
   digital: {
+    insights?: string
     strategy: SourcedValue<string>
     loyaltyProgram: SourcedValue<string>
     onlineServices: SourcedValue<string>[]

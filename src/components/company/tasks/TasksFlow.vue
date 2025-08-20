@@ -93,16 +93,10 @@
               class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
               :class="getIconContainerClass(task.status)"
             >
-              <i 
-                v-if="task.status === 'running'" 
-                class="fa fa-spinner-third animate-spin"
-              ></i>
-              <i 
-                v-else 
-                :class="getTaskIcon(task.type)" 
-              ></i>
+              <i v-if="task.status === 'running'" class="fa fa-spinner-third animate-spin"></i>
+              <i v-else :class="getTaskIcon(task.type)"></i>
             </div>
-            
+
             <div class="min-w-0">
               <div class="flex items-center gap-2">
                 <h3 class="font-semibold text-sm">{{ task.name }}</h3>
@@ -113,9 +107,12 @@
                 />
               </div>
               <p class="text-xs text-secondary truncate">{{ task.description }}</p>
-              
+
               <!-- Token information for admins -->
-              <div v-if="hasAdminAccess && getTokenInfo(task.type)?.hasTokenData" class="mt-1 flex items-center gap-3 text-xs text-secondary">
+              <div
+                v-if="hasAdminAccess && getTokenInfo(task.type)?.hasTokenData"
+                class="mt-1 flex items-center gap-3 text-xs text-secondary"
+              >
                 <span v-if="getTokenInfo(task.type)?.inputTokens">
                   <i class="fa fa-arrow-down text-blue-500"></i>
                   {{ formatTokens(getTokenInfo(task.type)?.inputTokens) }}
@@ -129,7 +126,7 @@
                   {{ formatCost(getTokenInfo(task.type)?.totalCost) }}
                 </span>
               </div>
-              
+
               <!-- Error message -->
               <div v-if="task.error && task.status === 'error'" class="mt-1">
                 <span class="text-xs text-red-500">{{ task.error }}</span>
@@ -213,8 +210,8 @@ const { canEditCompany } = useCompanyPermissions()
 const authStore = useAuthStore()
 
 // Check if user has admin permissions to view token data
-const hasAdminAccess = computed(() => 
-  authStore.hasAnyRole(['admin.workspaces', 'admin.users', 'admin.all'])
+const hasAdminAccess = computed(() =>
+  authStore.hasAnyRole(['admin.workspaces', 'admin.users', 'admin.all']),
 )
 
 // Helper functions for token formatting
@@ -231,12 +228,13 @@ const formatCost = (cost: number | null): string => {
 const getTokenInfo = (taskType: TaskType) => {
   const task = tasks.value?.find((t: TaskResponse) => t.type === taskType)
   if (!task) return null
-  
+
   return {
     inputTokens: task.input_tokens,
     outputTokens: task.output_tokens,
     totalCost: task.total_cost,
-    hasTokenData: task.input_tokens !== null || task.output_tokens !== null || task.total_cost !== null
+    hasTokenData:
+      task.input_tokens !== null || task.output_tokens !== null || task.total_cost !== null,
   }
 }
 
@@ -245,7 +243,7 @@ const taskConfigs: TaskConfig[] = [
   {
     type: 'profile',
     name: 'Profil',
-    description: 'Informations générales de l\'entreprise',
+    description: "Informations générales de l'entreprise",
   },
   {
     type: 'digital',
@@ -280,7 +278,7 @@ const taskConfigs: TaskConfig[] = [
   {
     type: 'jobs',
     name: 'Emplois',
-    description: 'Offres d\'emploi et recrutement',
+    description: "Offres d'emploi et recrutement",
   },
 ]
 
@@ -307,7 +305,7 @@ const getTaskError = (taskType: TaskType): string | null => {
 
 // Create combined task list with config and status
 const taskList = computed(() => {
-  return taskConfigs.map(config => ({
+  return taskConfigs.map((config) => ({
     ...config,
     status: getTaskStatus(config.type),
     error: getTaskError(config.type),
@@ -506,7 +504,7 @@ const performAutoRecovery = async () => {
   // Start ALL pending tasks at once (parallel execution)
   const pendingTasks = currentTasks.filter((t: TaskResponse) => t.status === 'pending')
   const startPromises = pendingTasks.map((task) => triggerTask(task.type))
-  
+
   try {
     await Promise.all(startPromises)
     console.log(`✅ Started ${pendingTasks.length} tasks in parallel`)
