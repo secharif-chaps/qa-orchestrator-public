@@ -383,6 +383,34 @@ class CompanyService:
                 # No need to update company data here - callback will handle it
                 self.db.commit()
                 
+            elif task.type == TaskType.csr:
+                logger.info(f"Using Dify workflow (async) for csr task - Company: {company.name}")
+                
+                # Prepare callback URLs - use Dify-specific endpoint
+                success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
+                error_callback = success_callback  # Same endpoint, different status in payload
+                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
+                
+                # Trigger Dify csr workflow with callbacks (ASYNC mode - fire and forget)
+                result = await self.dify_client.trigger_workflow(
+                    task_type="csr",
+                    company_name=company.name,
+                    website=company.website,
+                    success_callback=success_callback,
+                    error_callback=error_callback,
+                    task_id=task.id,
+                    company_id=company.id,
+                    async_mode=True,
+                    token_callback_url=token_callback
+                )
+                
+                # In async mode, we just log the trigger confirmation
+                logger.info(f"✅ Dify csr workflow triggered (async): {result}")
+                
+                # Task remains in RUNNING state - will be updated via callback
+                # No need to update company data here - callback will handle it
+                self.db.commit()
+                
             else:
                 # Use N8N for all other tasks (still synchronous for now)
                 logger.info(f"Using N8N workflow for {task.type.value} task - Company: {company.name}")
