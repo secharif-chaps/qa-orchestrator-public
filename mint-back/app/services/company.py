@@ -6,7 +6,8 @@ from app.models.task import Task, TaskType, TaskStatus
 from app.schemas.company import CompanyCreate, CompanyUpdate, CompanyResponse
 from app.schemas.task import TaskTokenUpdate
 from app.schemas.pagination import PaginationParams, PaginatedResponse, create_pagination_meta
-from app.services.n8n import N8nClient
+# N8N client no longer needed - all tasks migrated to Dify
+# from app.services.n8n import N8nClient
 from app.infrastructure.dify.client import DifyClient
 from app.core.database_security import SecureQueryBuilder
 from app.core.validators import ValidationError
@@ -15,10 +16,80 @@ from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
+def _parse_json_fields(company: Company) -> Company:
+    """Helper function to parse JSON string fields into proper JSON objects"""
+    if not company:
+        return company
+    
+    # Parse profile field
+    if company.profile is None:
+        company.profile = {}
+    
+    # Parse digital field if it's a JSON string
+    if company.digital is None:
+        company.digital = {}
+    elif isinstance(company.digital, str):
+        try:
+            import json
+            company.digital = json.loads(company.digital)
+        except (json.JSONDecodeError, TypeError) as e:
+            logger.warning(f"Failed to parse digital field for company {company.id}: {e}")
+            company.digital = {}
+    
+    # Parse csr field if it's a JSON string (handle markdown code blocks)
+    if company.csr is None:
+        company.csr = {}
+    elif isinstance(company.csr, str):
+        try:
+            import json
+            # Remove markdown code block wrapper if present
+            csr_text = company.csr.strip()
+            if csr_text.startswith('```json') and csr_text.endswith('```'):
+                csr_text = csr_text[7:-3].strip()  # Remove ```json and ```
+            company.csr = json.loads(csr_text)
+        except (json.JSONDecodeError, TypeError) as e:
+            logger.warning(f"Failed to parse csr field for company {company.id}: {e}")
+            company.csr = {}
+    
+    # Parse other fields
+    for field_name in ['timeline', 'products', 'jobs', 'press']:
+        field_value = getattr(company, field_name)
+        if field_value is None:
+            setattr(company, field_name, {})
+        elif isinstance(field_value, str):
+            try:
+                import json
+                setattr(company, field_name, json.loads(field_value))
+            except (json.JSONDecodeError, TypeError) as e:
+                logger.warning(f"Failed to parse {field_name} field for company {company.id}: {e}")
+                setattr(company, field_name, {})
+    
+    # Handle team field specially
+    if company.team is None:
+        company.team = []
+    elif isinstance(company.team, dict) and 'team' in company.team:
+        # Handle nested team structure from data processing
+        company.team = company.team.get('team', [])
+    elif isinstance(company.team, str):
+        try:
+            import json
+            team_data = json.loads(company.team)
+            if isinstance(team_data, dict) and 'team' in team_data:
+                company.team = team_data.get('team', [])
+            elif isinstance(team_data, list):
+                company.team = team_data
+            else:
+                company.team = []
+        except (json.JSONDecodeError, TypeError) as e:
+            logger.warning(f"Failed to parse team field for company {company.id}: {e}")
+            company.team = []
+    
+    return company
+
 class CompanyService:
-    def __init__(self, db: Session, n8n_client: N8nClient):
+    def __init__(self, db: Session):
         self.db = db
-        self.n8n_client = n8n_client
+        # All tasks now use Dify workflows - n8n_client removed
         self.dify_client = DifyClient(db)  # Pass database session for workflow config access
         self.secure_query = SecureQueryBuilder(db)
         self.repository = SQLAlchemyCompanyRepository(db)
@@ -26,54 +97,12 @@ class CompanyService:
     def get_company(self, company_id: int) -> Optional[Company]:
         """Securely get company by ID"""
         company = self.secure_query.safe_filter_by_id(Company, company_id).first()
-        if company:
-            # Ensure all JSON fields have default values to prevent validation errors
-            if company.profile is None:
-                company.profile = {}
-            if company.digital is None:
-                company.digital = {}
-            if company.timeline is None:
-                company.timeline = {}
-            if company.products is None:
-                company.products = {}
-            if company.jobs is None:
-                company.jobs = {}
-            if company.csr is None:
-                company.csr = {}
-            if company.press is None:
-                company.press = {}
-            if company.team is None:
-                company.team = []
-            elif isinstance(company.team, dict) and 'team' in company.team:
-                # Handle nested team structure from data processing
-                company.team = company.team.get('team', [])
-        return company
+        return _parse_json_fields(company)
     
     def get_company_by_name(self, name: str) -> Optional[Company]:
         """Securely get company by name"""
         company = self.secure_query.safe_filter_by_string(Company, Company.name, name, exact_match=True).first()
-        if company:
-            # Ensure all JSON fields have default values to prevent validation errors
-            if company.profile is None:
-                company.profile = {}
-            if company.digital is None:
-                company.digital = {}
-            if company.timeline is None:
-                company.timeline = {}
-            if company.products is None:
-                company.products = {}
-            if company.jobs is None:
-                company.jobs = {}
-            if company.csr is None:
-                company.csr = {}
-            if company.press is None:
-                company.press = {}
-            if company.team is None:
-                company.team = []
-            elif isinstance(company.team, dict) and 'team' in company.team:
-                # Handle nested team structure from data processing
-                company.team = company.team.get('team', [])
-        return company
+        return _parse_json_fields(company)
     
     def get_all_companies(self, workspace_id: Optional[int] = None) -> List[Company]:
         """Securely get all companies, optionally filtered by workspace"""
@@ -81,28 +110,8 @@ class CompanyService:
             companies = self.db.query(Company).filter(Company.workspace_id == workspace_id).all()
         else:
             companies = self.db.query(Company).all()
-        # Ensure all JSON fields have default values to prevent validation errors
-        for company in companies:
-            if company.profile is None:
-                company.profile = {}
-            if company.digital is None:
-                company.digital = {}
-            if company.timeline is None:
-                company.timeline = {}
-            if company.products is None:
-                company.products = {}
-            if company.jobs is None:
-                company.jobs = {}
-            if company.csr is None:
-                company.csr = {}
-            if company.press is None:
-                company.press = {}
-            if company.team is None:
-                company.team = []
-            elif isinstance(company.team, dict) and 'team' in company.team:
-                # Handle nested team structure from data processing
-                company.team = company.team.get('team', [])
-        return companies
+        # Parse JSON fields for all companies
+        return [_parse_json_fields(company) for company in companies]
     
     def get_paginated_companies(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None, name_filter: Optional[str] = None) -> PaginatedResponse[CompanyResponse]:
         """Get paginated companies with sorting and filtering"""
@@ -111,26 +120,8 @@ class CompanyService:
         # Convert SQLAlchemy models to Pydantic response models
         company_responses = []
         for company in companies:
-            # Ensure all JSON fields have default values to prevent validation errors
-            if company.profile is None:
-                company.profile = {}
-            if company.digital is None:
-                company.digital = {}
-            if company.timeline is None:
-                company.timeline = {}
-            if company.products is None:
-                company.products = {}
-            if company.jobs is None:
-                company.jobs = {}
-            if company.csr is None:
-                company.csr = {}
-            if company.press is None:
-                company.press = {}
-            if company.team is None:
-                company.team = []
-            elif isinstance(company.team, dict) and 'team' in company.team:
-                # Handle nested team structure from data processing
-                company.team = company.team.get('team', [])
+            # Parse JSON fields
+            company = _parse_json_fields(company)
             
             # Convert to CompanyResponse using from_attributes
             company_response = CompanyResponse.model_validate(company)
@@ -439,21 +430,39 @@ class CompanyService:
                 # No need to update company data here - callback will handle it
                 self.db.commit()
                 
-            else:
-                # Use N8N for all other tasks (still synchronous for now)
-                logger.info(f"Using N8N workflow for {task.type.value} task - Company: {company.name}")
+            elif task.type == TaskType.jobs:
+                logger.info(f"Using Dify workflow (async) for jobs task - Company: {company.name}")
                 
-                result = await self.n8n_client.trigger_workflow(
-                    company.name,
-                    company.website,
-                    task.type.value
+                # Prepare callback URLs - use Dify-specific endpoint
+                success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
+                error_callback = success_callback  # Same endpoint, different status in payload
+                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
+                
+                # Trigger Dify jobs workflow with callbacks (ASYNC mode - fire and forget)
+                result = await self.dify_client.trigger_workflow(
+                    task_type="jobs",
+                    company_name=company.name,
+                    website=company.website,
+                    success_callback=success_callback,
+                    error_callback=error_callback,
+                    task_id=task.id,
+                    company_id=company.id,
+                    async_mode=True,
+                    token_callback_url=token_callback
                 )
                 
-                # Debug logging to understand the n8n response structure
-                print(f"parsed response to be updated: {result}")
+                # In async mode, we just log the trigger confirmation
+                logger.info(f"✅ Dify jobs workflow triggered (async): {result}")
                 
-                self._update_company_data(company, task.type.value, result)
-                task.status = TaskStatus.SUCCEEDED
+                # Task remains in RUNNING state - will be updated via callback
+                # No need to update company data here - callback will handle it
+                self.db.commit()
+                
+            else:
+                # This should not happen as all tasks are now migrated to Dify
+                logger.error(f"Unknown task type: {task.type.value}")
+                task.status = TaskStatus.ERROR
+                task.error = f"Unknown task type: {task.type.value}"
                 self.db.commit()
             
         except Exception as e:

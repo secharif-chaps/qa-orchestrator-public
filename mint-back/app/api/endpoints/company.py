@@ -63,8 +63,27 @@ async def get_company(
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
     """Get a company by ID (only if it belongs to user's workspace)"""
-    company = service.get_company(company_id)
-    return verify_company_workspace_access(company, workspace_context)
+    try:
+        print(f"🏢 GET /api/companies/{company_id} - User: {workspace_context.username}, Workspace: {workspace_context.workspace_id}")
+        company = service.get_company(company_id)
+        if not company:
+            print(f"❌ Company {company_id} not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Company not found"
+            )
+        print(f"✅ Company {company_id} found, verifying workspace access")
+        return verify_company_workspace_access(company, workspace_context)
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
+    except Exception as e:
+        print(f"❌ Unexpected error in get_company: {str(e)}")
+        logger.error(f"Unexpected error in get_company endpoint: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An internal server error occurred while retrieving the company"
+        )
 
 @router.get("/by-name/{name}", response_model=CompanyResponse)
 async def get_company_by_name(
