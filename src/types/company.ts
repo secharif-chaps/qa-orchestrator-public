@@ -63,13 +63,23 @@ export interface Company {
 
   digital: {
     insights?: string
-    strategy: SourcedValue<string>
-    loyaltyProgram: SourcedValue<string>
-    onlineServices: SourcedValue<string>[]
-    socialMedia: {
+    digitalStrategy?: SourcedValue<{
+      overallStrategy: string
+      digitalTransformation: string
+      eCommerceCapabilities: string
+      mobileStrategy: string
+      digitalMarketingApproach: string
+    }>
+    onlineServices?: SourcedValue<{
       name: string
-      url: SourcedValue<string>
-    }[]
+      description: string
+    }[]>
+    socialMediaAccounts?: SourcedValue<{
+      platform: string
+      handle: string
+      description: string
+    }[]>
+    loyaltyProgram?: SourcedValue<string>
   }
 
   timeline: {
@@ -116,11 +126,50 @@ export interface Company {
   }
 
   csr: {
+    insights?: string
+    responsibility: string
     responsibility_initiatives: SourcedValue<string>[]
     charity_actions: SourcedValue<string>[]
+    sustainability_programs: SourcedValue<string>[]
+    community_involvement: SourcedValue<string>[]
+    diversity_inclusion: SourcedValue<string>[]
+    ethical_practices: SourcedValue<string>[]
+    awards_certifications: SourcedValue<string>[]
   }
   press: {
-    articles: SourcedValue<string>[]
+    insights?: string
+    articles?: {
+      value: string
+      sources: string[]
+    }[]
+    press_releases?: {
+      value: string
+      sources: string[]
+    }[]
+    media_mentions?: {
+      value: string
+      sources: string[]
+    }[]
+    awards_recognition?: {
+      value: string
+      sources: string[]
+    }[]
+    product_launches?: {
+      value: string
+      sources: string[]
+    }[]
+    executive_interviews?: {
+      value: string
+      sources: string[]
+    }[]
+    financial_news?: {
+      value: string
+      sources: string[]
+    }[]
+    partnership_announcements?: {
+      value: string
+      sources: string[]
+    }[]
   }
 
   team?: TeamMember[]

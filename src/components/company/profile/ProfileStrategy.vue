@@ -8,36 +8,92 @@
         </h3>
       </div>
 
-      <!-- Digital Strategy - individual property loading -->
-      <h4>{{ $t('profile.sections.digital.strategy') }}</h4>
-      <div class="text-sm flex flex-col gap-2">
-        <p class="text-secondary">
-          {{ getSourcedValue(company?.digital?.strategy) || $t('common.notFound') }}
-        </p>
-        <Source :sourced-value="company?.digital?.strategy" />
+      <!-- Digital Insights -->
+      <div v-if="company?.digital?.insights">
+        <Alert
+          variant="info"
+          icon="fa fa-robot"
+          decoration-icon="fa fa-sparkles"
+          :title="$t('profile.sections.digital.insights.title')"
+          :message="company.digital.insights"
+          :dismissible="false"
+        >
+          <template #status>
+            <div class="flex items-center space-x-1 text-xs text-info">
+              <i class="fa fa-brain"></i>
+              <span>AI Generated</span>
+            </div>
+          </template>
+        </Alert>
       </div>
 
-      <!-- Loyalty Program - individual property loading -->
-      <h4>{{ $t('profile.sections.digital.loyaltyProgram') }}</h4>
-      <div class="text-sm flex flex-col gap-2">
-        <p class="text-secondary">
-          {{ getSourcedValue(company?.digital?.loyaltyProgram) || $t('common.notFound') }}
-        </p>
-        <Source :sourced-value="company?.digital?.loyaltyProgram" />
+      <!-- Digital Strategy - detailed breakdown -->
+      <div v-if="company?.digital?.digitalStrategy">
+        <h4>{{ $t('profile.sections.digital.strategy') }}</h4>
+        <div class="text-sm flex flex-col gap-3">
+          <div v-if="getSourcedValue(company.digital.digitalStrategy)?.overallStrategy">
+            <h5 class="font-medium text-secondary mb-1">Overall Strategy</h5>
+            <p class="text-secondary">{{ getSourcedValue(company.digital.digitalStrategy).overallStrategy }}</p>
+          </div>
+          
+          <div v-if="getSourcedValue(company.digital.digitalStrategy)?.digitalTransformation">
+            <h5 class="font-medium text-secondary mb-1">Digital Transformation</h5>
+            <p class="text-secondary">{{ getSourcedValue(company.digital.digitalStrategy).digitalTransformation }}</p>
+          </div>
+          
+          <div v-if="getSourcedValue(company.digital.digitalStrategy)?.eCommerceCapabilities">
+            <h5 class="font-medium text-secondary mb-1">E-Commerce Capabilities</h5>
+            <p class="text-secondary">{{ getSourcedValue(company.digital.digitalStrategy).eCommerceCapabilities }}</p>
+          </div>
+          
+          <div v-if="getSourcedValue(company.digital.digitalStrategy)?.mobileStrategy">
+            <h5 class="font-medium text-secondary mb-1">Mobile Strategy</h5>
+            <p class="text-secondary">{{ getSourcedValue(company.digital.digitalStrategy).mobileStrategy }}</p>
+          </div>
+          
+          <div v-if="getSourcedValue(company.digital.digitalStrategy)?.digitalMarketingApproach">
+            <h5 class="font-medium text-secondary mb-1">Digital Marketing Approach</h5>
+            <p class="text-secondary">{{ getSourcedValue(company.digital.digitalStrategy).digitalMarketingApproach }}</p>
+          </div>
+          
+          <Source :sourced-value="company.digital.digitalStrategy" />
+        </div>
       </div>
 
-      <!-- Online Services - individual property loading -->
-      <h4>{{ $t('profile.sections.digital.onlineServices') }}</h4>
-      <div class="text-sm flex flex-col gap-2">
-        <p class="text-secondary">
-          {{
-            (
-              company?.digital?.onlineServices?.map(
-                (service: { value: string }) => service.value,
-              ) || []
-            ).join(', ') || $t('common.notFound')
-          }}
-        </p>
+      <!-- Online Services -->
+      <div v-if="company?.digital?.onlineServices">
+        <h4>{{ $t('profile.sections.digital.onlineServices') }}</h4>
+        <div class="text-sm flex flex-col gap-2">
+          <div v-for="service in getSourcedValue(company.digital.onlineServices)" :key="service.name" class="bg-bg2 rounded p-3">
+            <h5 class="font-medium text-secondary mb-1">{{ service.name }}</h5>
+            <p class="text-secondary">{{ service.description }}</p>
+          </div>
+          <Source :sourced-value="company.digital.onlineServices" />
+        </div>
+      </div>
+
+      <!-- Social Media Accounts -->
+      <div v-if="company?.digital?.socialMediaAccounts">
+        <h4>Social Media Presence</h4>
+        <div class="text-sm flex flex-col gap-2">
+          <div v-for="account in getSourcedValue(company.digital.socialMediaAccounts)" :key="account.platform" class="flex items-center gap-3 bg-bg2 rounded p-3">
+            <div class="font-medium text-secondary">{{ account.platform }}</div>
+            <div class="text-primary">{{ account.handle }}</div>
+            <div class="text-secondary text-xs">{{ account.description }}</div>
+          </div>
+          <Source :sourced-value="company.digital.socialMediaAccounts" />
+        </div>
+      </div>
+
+      <!-- Loyalty Program - keeping for backward compatibility -->
+      <div v-if="company?.digital?.loyaltyProgram">
+        <h4>{{ $t('profile.sections.digital.loyaltyProgram') }}</h4>
+        <div class="text-sm flex flex-col gap-2">
+          <p class="text-secondary">
+            {{ getSourcedValue(company.digital.loyaltyProgram) || $t('common.notFound') }}
+          </p>
+          <Source :sourced-value="company.digital.loyaltyProgram" />
+        </div>
       </div>
     </div>
   </div>
@@ -50,6 +106,7 @@ import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Source from '../Source.vue'
+import Alert from '@/components/ui/Alert.vue'
 
 const route = useRoute()
 
