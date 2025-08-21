@@ -70,15 +70,17 @@ export interface Company {
       mobileStrategy: string
       digitalMarketingApproach: string
     }>
-    onlineServices?: SourcedValue<{
-      name: string
-      description: string
-    }[]>
-    socialMediaAccounts?: SourcedValue<{
+    onlineServices?: SourcedValue<
+      {
+        name: string
+        description: string
+      }[]
+    >
+    socialMediaAccounts?: {
       platform: string
-      handle: string
-      description: string
-    }[]>
+      url: string
+    }[]
+
     loyaltyProgram?: SourcedValue<string>
   }
 
@@ -136,6 +138,7 @@ export interface Company {
     ethical_practices: SourcedValue<string>[]
     awards_certifications: SourcedValue<string>[]
   }
+
   press: {
     insights?: string
     articles?: {

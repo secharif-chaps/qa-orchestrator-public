@@ -37,20 +37,24 @@
 
     <!-- Category Filter Pills -->
     <div class="flex flex-wrap gap-2 mb-4">
-      <Button
-        :variant="selectedCategory === null ? 'primary' : 'tertiary'"
-        size="sm"
+      <Badge
         label="All Categories"
-        :icon="selectedCategory === null ? 'fa fa-check' : ''"
+        :variant="selectedCategory === null ? 'primary' : 'slate'"
+        size="md"
+        :icon="selectedCategory === null ? 'fa fa-check' : 'fa fa-layer-group'"
+        rounded
+        class="cursor-pointer hover:opacity-80 transition-opacity"
         @click="$emit('selectCategory', null)"
       />
-      <Button
+      <Badge
         v-for="category in categories"
         :key="category"
-        :variant="selectedCategory === category ? 'primary' : 'tertiary'"
-        size="sm"
         :label="formatCategoryName(category)"
-        :icon="selectedCategory === category ? 'fa fa-check' : ''"
+        :variant="selectedCategory === category ? 'success' : 'slate'"
+        size="md"
+        :icon="selectedCategory === category ? 'fa fa-check' : getCategoryIcon(category)"
+        rounded
+        class="cursor-pointer hover:opacity-80 transition-opacity"
         @click="$emit('selectCategory', category)"
       />
     </div>
@@ -59,6 +63,7 @@
 
 <script setup lang="ts">
 import Button from '@/components/ui/Button.vue'
+import Badge from '@/components/ui/Badge.vue'
 
 interface Props {
   totalProductCount: number
@@ -80,6 +85,33 @@ defineEmits<{
 // Methods
 const formatCategoryName = (category: string) => {
   return category.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())
+}
+
+const getCategoryIcon = (category: string) => {
+  const iconMap: Record<string, string> = {
+    software: 'fa fa-laptop-code',
+    hardware: 'fa fa-microchip',
+    services: 'fa fa-handshake',
+    consulting: 'fa fa-lightbulb',
+    saas: 'fa fa-cloud',
+    mobile: 'fa fa-mobile-alt',
+    web: 'fa fa-globe',
+    enterprise: 'fa fa-building',
+    consumer: 'fa fa-users',
+    healthcare: 'fa fa-heartbeat',
+    finance: 'fa fa-chart-line',
+    education: 'fa fa-graduation-cap',
+    retail: 'fa fa-shopping-cart',
+    gaming: 'fa fa-gamepad',
+    analytics: 'fa fa-chart-bar',
+    security: 'fa fa-shield-alt',
+    ai: 'fa fa-robot',
+    blockchain: 'fa fa-link',
+    iot: 'fa fa-wifi',
+  }
+
+  const normalizedCategory = category.toLowerCase().replace(/\s+/g, '')
+  return iconMap[normalizedCategory] || 'fa fa-box'
 }
 </script>
 

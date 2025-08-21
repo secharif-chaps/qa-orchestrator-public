@@ -7,22 +7,20 @@
     >
       <div class="flex flex-col gap-4">
         <div class="flex flex-col items-center text-center gap-2">
-          <div
-            class="w-20 h-20 border-2 border-border-2 rounded-full flex items-center justify-center overflow-hidden bg-white"
-          >
+          <div class="relative w-20 h-20 rounded-xl overflow-hidden bg-white ring-2 ring-border-2">
             <img
               v-if="getCompanyDomain(company?.website)"
               :src="getLogoUrl(company?.website)"
               :alt="`${company?.name} logo`"
-              class="w-full h-full object-contain"
+              class="w-full h-full object-contain p-2"
               @error="showFallbackIcon = true"
               v-show="!showFallbackIcon"
             />
             <div
               v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
-              class="bg-bg1 w-full h-full flex items-center justify-center"
+              class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/20"
             >
-              <i class="fa fa-building text-4xl text-primary"></i>
+              <i class="fa fa-building text-3xl text-primary"></i>
             </div>
           </div>
           <div>

@@ -1,6 +1,6 @@
 <template>
   <div class="bg-bg1 rounded-lg p-4">
-    <div class="text-center space-y-2">
+    <div class="text-center space-y-2 relative">
       <div
         class="bg-orange-100 dark:bg-orange-400/10 lg:w-2/3 text-orange-500 dark:text-orange-400 mx-auto px-2 py-2 rounded"
       >
@@ -9,10 +9,12 @@
         </span>
       </div>
       <div>{{ $t('profile.sections.metrics.employees') }}</div>
-      <Source
-        v-if="company?.profile?.employeeCount"
-        :sourced-value="company?.profile?.employeeCount"
-      />
+      <div class="absolute top-0 right-0">
+        <Source
+          v-if="company?.profile?.employeeCount"
+          :sourced-value="company?.profile?.employeeCount"
+        />
+      </div>
     </div>
   </div>
 </template>

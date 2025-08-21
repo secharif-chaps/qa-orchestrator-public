@@ -425,6 +425,8 @@ watch(
   (newCount) => {
     if (newCount < 8) {
       isOpen.value = true
+    } else {
+      isOpen.value = false
     }
   },
   { immediate: true },

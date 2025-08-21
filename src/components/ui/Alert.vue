@@ -1,5 +1,5 @@
 <template>
-  <div v-if="show" :class="alertClasses" class="relative overflow-hidden rounded-xl border-3 mb-6">
+  <div v-if="show" :class="alertClasses" class="relative overflow-hidden rounded-xl border-3">
     <!-- Background decoration -->
     <div
       v-if="decorationIcon"

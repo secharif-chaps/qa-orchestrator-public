@@ -470,6 +470,9 @@ export default {
     sections: {
       products: {
         title: 'Produits et services',
+        insights: {
+          title: 'Aperçu des Produits',
+        },
         range: 'Gamme de produits',
         partnerBrands: 'Marques partenaires',
         privateLabels: 'Marques propres {company}',
@@ -481,16 +484,35 @@ export default {
       },
       csr: {
         title: "Responsabilité Sociale d'Entreprise",
-        responsibility: 'Initiatives de responsabilité',
+        insights: {
+          title: 'Aperçu RSE',
+        },
+        responsibility: 'Déclaration de responsabilité',
+        responsibility_initiatives: 'Initiatives de responsabilité',
         charity: 'Actions caritatives',
+        sustainability: 'Programmes de développement durable',
+        community: 'Implication communautaire',
+        diversity: 'Diversité et inclusion',
+        ethics: 'Pratiques éthiques',
+        awards: 'Prix et certifications',
       },
       digital: {
         title: 'Stratégie digitale',
+        insights: {
+          title: 'Aperçu de la Stratégie Digitale',
+        },
         strategy: 'Stratégie digitale',
         loyaltyProgram: 'Programme de fidélité',
         onlineServices: 'Services en ligne',
       },
-      news: 'Actualités récentes',
+      news: {
+        title: 'Actualités récentes',
+      },
+      press: {
+        insights: {
+          title: 'Aperçu de la Couverture Presse',
+        },
+      },
       metrics: {
         establishment: 'Année de création',
         employees: "Nombre d'employés",
@@ -656,6 +678,10 @@ export default {
         mentions: {
           title: 'Mentions',
           description: 'Articles de presse, couverture médiatique et mentions tierces.',
+        },
+        press: {
+          title: 'Presse et Couverture Médiatique',
+          description: 'Communiqués de presse, articles de presse, interviews et mentions médiatiques.',
         },
       },
     },

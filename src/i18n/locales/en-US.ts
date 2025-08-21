@@ -427,6 +427,9 @@ export default {
     sections: {
       products: {
         title: 'Products and services',
+        insights: {
+          title: 'Product Insights',
+        },
         range: 'Product Range',
         partnerBrands: 'Partner Brands',
         privateLabels: '{company} Private Labels',
@@ -438,16 +441,35 @@ export default {
       },
       csr: {
         title: 'Corporate Social Responsibility',
-        responsibility: 'Responsibility Initiatives',
+        insights: {
+          title: 'CSR Insights',
+        },
+        responsibility: 'Responsibility Statement',
+        responsibility_initiatives: 'Responsibility Initiatives',
         charity: 'Charity Actions',
+        sustainability: 'Sustainability Programs',
+        community: 'Community Involvement',
+        diversity: 'Diversity & Inclusion',
+        ethics: 'Ethical Practices',
+        awards: 'Awards & Certifications',
       },
       digital: {
         title: 'Digital strategy',
+        insights: {
+          title: 'Digital Strategy Insights',
+        },
         strategy: 'Digital Strategy',
         loyaltyProgram: 'Loyalty Program',
         onlineServices: 'Online Services',
       },
-      news: 'Recent news',
+      news: {
+        title: 'Recent news',
+      },
+      press: {
+        insights: {
+          title: 'Press Coverage Insights',
+        },
+      },
       metrics: {
         establishment: 'Year of establishment',
         employees: 'Number of employees',
@@ -608,6 +630,10 @@ export default {
         mentions: {
           title: 'Mentions',
           description: 'News articles, media coverage, and third-party mentions.',
+        },
+        press: {
+          title: 'Press & Media Coverage',
+          description: 'Press releases, news articles, interviews, and media mentions.',
         },
       },
     },

@@ -1,6 +1,6 @@
 <template>
   <div class="bg-bg1 rounded-lg p-4">
-    <div class="text-center space-y-2">
+    <div class="text-center space-y-2 relative">
       <div
         class="bg-purple-100 dark:bg-purple-400/10 lg:w-2/3 text-purple-500 dark:text-purple-400 mx-auto px-2 py-2 rounded"
       >
@@ -10,7 +10,9 @@
       </div>
 
       <div>{{ $t('profile.sections.metrics.revenue') }}</div>
-      <Source :sourced-value="company?.profile?.revenue" />
+      <div class="absolute top-0 right-0">
+        <Source :sourced-value="company?.profile?.revenue" />
+      </div>
     </div>
   </div>
 </template>

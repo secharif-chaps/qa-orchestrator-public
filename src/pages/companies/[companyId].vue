@@ -36,6 +36,8 @@ const title = computed(() => {
       return t('timeline.title')
     case '/companies/[companyId]/team':
       return t('team.title')
+    case '/companies/[companyId]/press':
+      return 'Press & Media Coverage'
     default:
       return ''
   }

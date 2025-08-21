@@ -15,7 +15,8 @@
           'p-6 min-h-[200px] flex flex-col justify-between',
           module.unlocked
             ? 'bg-gradient-to-br from-primary/10 to-primary/20 border-primary/20 hover:shadow-lg hover:shadow-primary/20'
-            : 'opacity-50 bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:shadow-md',
+            : 'opacity-100 bg-white dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:shadow-md',
+          module.soon ? 'opacity-50!' : '',
         ]"
       >
         <!-- Status Badge -->
@@ -128,6 +129,7 @@ interface Module {
   description: string
   icon: string
   unlocked: boolean
+  soon: boolean
   status: 'contact-sales' | 'coming-soon'
 }
 
@@ -137,6 +139,7 @@ const modules: Module[] = [
     description: 'Deep company intelligence and comprehensive business screening',
     icon: 'fa-solid fa-magnifying-glass',
     unlocked: true,
+    soon: false,
     status: 'contact-sales', // This won't be used since it's unlocked
   },
   {
@@ -144,6 +147,7 @@ const modules: Module[] = [
     description: 'AI-powered market watch with smart alerts and monitoring',
     icon: 'fa-solid fa-bullseye',
     unlocked: false,
+    soon: false,
     status: 'contact-sales',
   },
   {
@@ -151,6 +155,7 @@ const modules: Module[] = [
     description: 'Interactive knowledge graph for data visualization and discovery',
     icon: 'fa-solid fa-project-diagram',
     unlocked: false,
+    soon: true,
     status: 'coming-soon',
   },
   {
@@ -158,6 +163,7 @@ const modules: Module[] = [
     description: 'Automated insights delivery through newsletters and reports',
     icon: 'fa-solid fa-rss',
     unlocked: false,
+    soon: true,
     status: 'coming-soon',
   },
 ]

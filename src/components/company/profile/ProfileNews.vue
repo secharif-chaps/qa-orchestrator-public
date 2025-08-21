@@ -1,187 +1,54 @@
 <template>
   <div class="bg-bg1 rounded-lg p-4">
     <div class="flex flex-col gap-4">
-      <div class="col-span-2">
+      <div class="flex items-center justify-between">
         <h3 class="space-x-2 font-bold text-primary">
           <i class="fa fa-bullhorn"></i>
           <span>{{ $t('profile.sections.news.title') }}</span>
         </h3>
+        <RouterLink :to="`/companies/${companyId}/press`">
+          <Button 
+            variant="tertiary" 
+            label="View All"
+            icon="fa fa-arrow-right"
+            icon-position="right"
+            size="sm"
+          />
+        </RouterLink>
       </div>
 
-      <!-- Press Insights -->
-      <div v-if="company?.press?.insights">
-        <Alert
-          variant="info"
-          icon="fa fa-robot"
-          decoration-icon="fa fa-sparkles"
-          :title="$t('profile.sections.press.insights.title')"
-          :message="company.press.insights"
-          :dismissible="false"
-        >
-          <template #status>
-            <div class="flex items-center space-x-1 text-xs text-info">
-              <i class="fa fa-brain"></i>
-              <span>AI Generated</span>
-            </div>
-          </template>
-        </Alert>
-      </div>
-
-      <!-- Financial News -->
-      <div v-if="company?.press?.financial_news?.length" class="space-y-2">
-        <h4 class="font-medium text-primary flex items-center gap-2">
-          <i class="fa fa-chart-line"></i>
-          Financial News
-        </h4>
-        <div class="text-sm space-y-2">
-          <div
-            v-for="(item, index) in company.press.financial_news"
-            :key="index"
-            class="bg-bg2 rounded p-3"
-          >
-            <p class="text-secondary">{{ item.value }}</p>
-            <div v-if="item.sources?.length" class="flex flex-wrap gap-1 mt-2">
-              <Source v-for="source in item.sources" :key="source" :source="source" />
-            </div>
-          </div>
+      <!-- Press Summary Stats -->
+      <div v-if="hasAnyPressData" class="grid grid-cols-2 gap-2">
+        <div v-if="totalPressItems > 0" class="bg-bg2 rounded p-3">
+          <div class="text-2xl font-bold text-primary">{{ totalPressItems }}</div>
+          <div class="text-xs text-secondary">Total Press Items</div>
+        </div>
+        <div v-if="company?.press?.financial_news?.length" class="bg-bg2 rounded p-3">
+          <div class="text-2xl font-bold text-primary">{{ company.press.financial_news.length }}</div>
+          <div class="text-xs text-secondary">Financial News</div>
+        </div>
+        <div v-if="company?.press?.media_mentions?.length" class="bg-bg2 rounded p-3">
+          <div class="text-2xl font-bold text-primary">{{ company.press.media_mentions.length }}</div>
+          <div class="text-xs text-secondary">Media Mentions</div>
+        </div>
+        <div v-if="company?.press?.product_launches?.length" class="bg-bg2 rounded p-3">
+          <div class="text-2xl font-bold text-primary">{{ company.press.product_launches.length }}</div>
+          <div class="text-xs text-secondary">Product Launches</div>
         </div>
       </div>
 
-      <!-- Product Launches -->
-      <div v-if="company?.press?.product_launches?.length" class="space-y-2">
-        <h4 class="font-medium text-primary flex items-center gap-2">
-          <i class="fa fa-rocket"></i>
-          Product Launches
-        </h4>
-        <div class="text-sm space-y-2">
+      <!-- Latest Press Items Preview -->
+      <div v-if="latestPressItems.length > 0" class="space-y-2">
+        <h4 class="text-sm font-medium text-secondary">Latest Updates</h4>
+        <div class="space-y-2">
           <div
-            v-for="(item, index) in company.press.product_launches"
-            :key="index"
-            class="bg-bg2 rounded p-3"
+            v-for="item in latestPressItems"
+            :key="item.value"
+            class="bg-bg2 rounded p-3 text-sm"
           >
-            <p class="text-secondary">{{ item.value }}</p>
-            <div v-if="item.sources?.length" class="flex flex-wrap gap-1 mt-2">
-              <Source v-for="source in item.sources" :key="source" :source="source" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Executive Interviews -->
-      <div v-if="company?.press?.executive_interviews?.length" class="space-y-2">
-        <h4 class="font-medium text-primary flex items-center gap-2">
-          <i class="fa fa-microphone"></i>
-          Executive Interviews
-        </h4>
-        <div class="text-sm space-y-2">
-          <div
-            v-for="(item, index) in company.press.executive_interviews"
-            :key="index"
-            class="bg-bg2 rounded p-3"
-          >
-            <p class="text-secondary">{{ item.value }}</p>
-            <div v-if="item.sources?.length" class="flex flex-wrap gap-1 mt-2">
-              <Source v-for="source in item.sources" :key="source" :source="source" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Media Mentions -->
-      <div v-if="company?.press?.media_mentions?.length" class="space-y-2">
-        <h4 class="font-medium text-primary flex items-center gap-2">
-          <i class="fa fa-newspaper"></i>
-          Media Mentions
-        </h4>
-        <div class="text-sm space-y-2">
-          <div
-            v-for="(item, index) in company.press.media_mentions"
-            :key="index"
-            class="bg-bg2 rounded p-3"
-          >
-            <p class="text-secondary">{{ item.value }}</p>
-            <div v-if="item.sources?.length" class="flex flex-wrap gap-1 mt-2">
-              <Source v-for="source in item.sources" :key="source" :source="source" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Press Releases -->
-      <div v-if="company?.press?.press_releases?.length" class="space-y-2">
-        <h4 class="font-medium text-primary flex items-center gap-2">
-          <i class="fa fa-file-alt"></i>
-          Press Releases
-        </h4>
-        <div class="text-sm space-y-2">
-          <div
-            v-for="(item, index) in company.press.press_releases"
-            :key="index"
-            class="bg-bg2 rounded p-3"
-          >
-            <p class="text-secondary">{{ item.value }}</p>
-            <div v-if="item.sources?.length" class="flex flex-wrap gap-1 mt-2">
-              <Source v-for="source in item.sources" :key="source" :source="source" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Partnership Announcements -->
-      <div v-if="company?.press?.partnership_announcements?.length" class="space-y-2">
-        <h4 class="font-medium text-primary flex items-center gap-2">
-          <i class="fa fa-handshake"></i>
-          Partnership Announcements
-        </h4>
-        <div class="text-sm space-y-2">
-          <div
-            v-for="(item, index) in company.press.partnership_announcements"
-            :key="index"
-            class="bg-bg2 rounded p-3"
-          >
-            <p class="text-secondary">{{ item.value }}</p>
-            <div v-if="item.sources?.length" class="flex flex-wrap gap-1 mt-2">
-              <Source v-for="source in item.sources" :key="source" :source="source" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Awards & Recognition -->
-      <div v-if="company?.press?.awards_recognition?.length" class="space-y-2">
-        <h4 class="font-medium text-primary flex items-center gap-2">
-          <i class="fa fa-trophy"></i>
-          Awards & Recognition
-        </h4>
-        <div class="text-sm space-y-2">
-          <div
-            v-for="(item, index) in company.press.awards_recognition"
-            :key="index"
-            class="bg-bg2 rounded p-3"
-          >
-            <p class="text-secondary">{{ item.value }}</p>
-            <div v-if="item.sources?.length" class="flex flex-wrap gap-1 mt-2">
-              <Source v-for="source in item.sources" :key="source" :source="source" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Articles (keeping for backward compatibility) -->
-      <div v-if="company?.press?.articles?.length" class="space-y-2">
-        <h4 class="font-medium text-primary flex items-center gap-2">
-          <i class="fa fa-newspaper"></i>
-          Articles
-        </h4>
-        <div class="text-sm space-y-2">
-          <div
-            v-for="(item, index) in company.press.articles"
-            :key="index"
-            class="bg-bg2 rounded p-3"
-          >
-            <p class="text-secondary">{{ item.value }}</p>
-            <div v-if="item.sources?.length" class="flex flex-wrap gap-1 mt-2">
-              <Source v-for="source in item.sources" :key="source" :source="source" />
+            <div class="flex items-start justify-between gap-2">
+              <p class="text-secondary line-clamp-2">{{ item.value }}</p>
+              <i :class="[item.icon]" class="text-secondary/50 text-xs mt-1"></i>
             </div>
           </div>
         </div>
@@ -198,11 +65,9 @@
 <script lang="ts" setup>
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
-import { useRoute } from 'vue-router'
+import { useRoute, RouterLink } from 'vue-router'
 import { computed } from 'vue'
-import { getSourcedValue } from '@/components/helpers/sourcedValues'
-import Source from '../Source.vue'
-import Alert from '@/components/ui/Alert.vue'
+import Button from '@/components/ui/Button.vue'
 
 const route = useRoute()
 
@@ -227,5 +92,42 @@ const hasAnyPressData = computed(() => {
     (press.financial_news && press.financial_news.length > 0) ||
     (press.partnership_announcements && press.partnership_announcements.length > 0)
   )
+})
+
+const totalPressItems = computed(() => {
+  const press = company.value?.press
+  if (!press) return 0
+  
+  return (
+    (press.articles?.length || 0) +
+    (press.press_releases?.length || 0) +
+    (press.media_mentions?.length || 0) +
+    (press.awards_recognition?.length || 0) +
+    (press.product_launches?.length || 0) +
+    (press.executive_interviews?.length || 0) +
+    (press.financial_news?.length || 0) +
+    (press.partnership_announcements?.length || 0)
+  )
+})
+
+const latestPressItems = computed(() => {
+  const press = company.value?.press
+  if (!press) return []
+  
+  const allItems = []
+  
+  // Add items with their category icons
+  if (press.financial_news?.length) {
+    allItems.push(...press.financial_news.slice(0, 1).map(item => ({ ...item, icon: 'fa fa-chart-line' })))
+  }
+  if (press.product_launches?.length) {
+    allItems.push(...press.product_launches.slice(0, 1).map(item => ({ ...item, icon: 'fa fa-rocket' })))
+  }
+  if (press.media_mentions?.length) {
+    allItems.push(...press.media_mentions.slice(0, 1).map(item => ({ ...item, icon: 'fa fa-newspaper' })))
+  }
+  
+  // Return max 3 items
+  return allItems.slice(0, 3)
 })
 </script>
