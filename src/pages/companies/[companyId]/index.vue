@@ -7,8 +7,23 @@
     >
       <div class="flex flex-col gap-4">
         <div class="flex flex-col items-center text-center gap-2">
-          <div class="bg-primary w-20 h-20 rounded-full flex items-center justify-center shadow-lg">
-            <i class="fa fa-building text-4xl text-white"></i>
+          <div
+            class="w-20 h-20 border-2 border-border-2 rounded-full flex items-center justify-center overflow-hidden bg-white"
+          >
+            <img
+              v-if="getCompanyDomain(company?.website)"
+              :src="getLogoUrl(company?.website)"
+              :alt="`${company?.name} logo`"
+              class="w-full h-full object-contain"
+              @error="showFallbackIcon = true"
+              v-show="!showFallbackIcon"
+            />
+            <div
+              v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
+              class="bg-bg1 w-full h-full flex items-center justify-center"
+            >
+              <i class="fa fa-building text-4xl text-primary"></i>
+            </div>
           </div>
           <div>
             <h2 class="text-2xl font-bold capitalize">
@@ -77,16 +92,16 @@
 
           <div
             class="grid grid-cols-6 gap-3 justify-center mt-4"
-            v-if="company?.digital?.socialMedia"
+            v-if="company?.digital?.socialMediaAccounts"
           >
             <a
-              v-for="platform in company?.digital?.socialMedia"
-              :key="platform.name"
-              :href="getSourcedValue(platform.url)"
+              v-for="account in company?.digital?.socialMediaAccounts.value"
+              :key="account.platform"
+              :href="getSourcedValue(account.url)"
               target="_blank"
               class="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all"
             >
-              <i class="fa text-lg" :class="getSocialIcon(platform.name)"></i>
+              <i class="fa text-lg" :class="getSocialIcon(account.platform)"></i>
             </a>
           </div>
         </div>
@@ -130,11 +145,12 @@ import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import { companyByIdQuery } from '@/queries/companies'
 import { OPopper } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 const showAiChat = ref(false)
+const showFallbackIcon = ref(false)
 const route = useRoute()
 
 const companyId = computed(() => route.params.companyId as string)
@@ -143,6 +159,11 @@ const companyId = computed(() => route.params.companyId as string)
 const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
 }))
+
+// Reset fallback icon when company changes
+watch(company, () => {
+  showFallbackIcon.value = false
+})
 
 // Info cards configuration
 const infoCards = [
@@ -187,6 +208,14 @@ const infoCards = [
     disabled: false,
   },
   {
+    titleKey: 'company.dashboard.infoCards.press.title',
+    descriptionKey: 'company.dashboard.infoCards.press.description',
+    icon: 'fa-newspaper',
+    route: 'press',
+    loadingKey: 'press',
+    disabled: false,
+  },
+  {
     titleKey: 'company.dashboard.infoCards.communications.title',
     descriptionKey: 'company.dashboard.infoCards.communications.description',
     icon: 'fa-bullhorn',
@@ -200,14 +229,6 @@ const infoCards = [
     icon: 'fa-chart-line',
     route: 'financials',
     loadingKey: 'financials',
-    disabled: true,
-  },
-  {
-    titleKey: 'company.dashboard.infoCards.mentions.title',
-    descriptionKey: 'company.dashboard.infoCards.mentions.description',
-    icon: 'fa-quote-left',
-    route: 'mentions',
-    loadingKey: 'press',
     disabled: true,
   },
 ]
@@ -233,6 +254,27 @@ const isPending = (sectionKey: string) => {
   if (!id) return false
   // return taskStore.getTaskStatus(id, sectionKey) === 'running'
   return false
+}
+
+// Helper function to extract domain from website URL
+const getCompanyDomain = (website?: string) => {
+  if (!website) return null
+  try {
+    // Remove protocol and www
+    let domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '')
+    // Remove trailing slash and any path
+    domain = domain.split('/')[0]
+    return domain
+  } catch {
+    return null
+  }
+}
+
+// Helper function to get logo URL from logo.dev
+const getLogoUrl = (website?: string) => {
+  const domain = getCompanyDomain(website)
+  if (!domain) return ''
+  return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
 }
 
 // Helper function to get social media icon
