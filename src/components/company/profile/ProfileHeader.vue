@@ -1,56 +1,149 @@
 <template>
-  <div class="bg-bg1 rounded-lg p-4 h-full">
-    <div class="flex justify-between items-center">
-      <div class="flex space-x-6 items-center">
-        <div class="bg-primary w-24 h-24 rounded-full min-w-24 flex items-center justify-center">
-          <i class="fa fa-building text-5xl text-white"></i>
-        </div>
+  <div class="bg-bg1 rounded-lg overflow-hidden h-full">
+    <!-- Header with background pattern -->
+    <div class="relative">
+      <!-- Background pattern overlay using CSS gradient instead of SVG -->
+      <div class="absolute inset-0 opacity-10">
+        <div
+          class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5"
+        ></div>
+      </div>
 
-        <div class="space-y-2">
-          <p class="font-bold capitalize">
-            {{ company?.name }}
-          </p>
-
-          <!-- Catchphrase - individual property loading -->
-          <p
-            class="max-w-lg text-secondary font-bold"
-            :title="getSourcedSource(company?.profile?.catchphrase)"
-          >
-            {{ getSourcedValue(company?.profile?.catchphrase) }}
-            <Source :sourced-value="company?.profile?.catchphrase" />
-          </p>
-
-          <!-- CEO - individual property loading -->
-          <div class="flex items-center gap-2">
-            <i class="fa fa-user-tie text-primary"></i>
-            <span class="font-semibold">CEO:</span>
-            <span class="text-secondary">
-              {{ getSourcedValue(company?.profile?.ceo) || 'Not found ' }}
-              <Source :sourced-value="company?.profile?.ceo" />
-            </span>
-          </div>
-
-          <!-- HQ - individual property loading -->
-          <div class="flex items-center gap-2">
-            <i class="fa fa-map-marker text-primary"></i>
-            <span class="font-semibold">HQ:</span>
-            <span class="text-secondary">
-              {{ getSourcedValue(company?.profile?.hq) || 'Not found' }}
-              <Source :sourced-value="company?.profile?.hq" />
-            </span>
-          </div>
-
-          <!-- Social Media - individual property loading -->
-          <div class="space-x-2 text-primary">
-            <div class="space-x-2 text-primary">
-              <a
-                target="_blank"
-                v-for="platform in company?.digital?.socialMedia"
-                :key="platform.name"
-                :href="getSourcedValue(platform.url) as string"
-                :title="getSourcedSource(platform.url)"
+      <div class="relative p-6">
+        <div class="flex items-start gap-6">
+          <!-- Logo Section -->
+          <div class="relative group">
+            <div
+              class="absolute -inset-1 bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-300"
+            ></div>
+            <div
+              class="relative w-20 h-20 rounded-xl overflow-hidden bg-white ring-2 ring-border-2"
+            >
+              <img
+                v-if="getCompanyDomain(company?.website)"
+                :src="getLogoUrl(company?.website)"
+                :alt="`${company?.name} logo`"
+                class="w-full h-full object-contain p-2"
+                @error="showFallbackIcon = true"
+                v-show="!showFallbackIcon"
+              />
+              <div
+                v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
+                class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/20"
               >
-                <i class="fa" :class="getIcon(platform.name)"></i>
+                <i class="fa fa-building text-3xl text-primary"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Company Info Section -->
+          <div class="flex-1">
+            <!-- Company Name & Catchphrase -->
+            <div class="mb-4">
+              <h1 class="text-2xl font-bold text-primary mb-1">
+                {{ company?.name }}
+              </h1>
+              <p v-if="company?.profile?.catchphrase" class="text-secondary italic text-sm">
+                "{{ getSourcedValue(company?.profile?.catchphrase) }}"
+                <Source :sourced-value="company?.profile?.catchphrase" />
+              </p>
+            </div>
+
+            <!-- Quick Info Grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+              <!-- CEO -->
+              <div class="flex items-start gap-2">
+                <div
+                  class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="fa fa-user-tie text-primary text-xs"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs text-secondary/70">CEO</p>
+                  <p class="text-sm font-medium text-primary truncate">
+                    {{ getSourcedValue(company?.profile?.ceo) || 'Unknown' }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Headquarters -->
+              <div class="flex items-start gap-2">
+                <div
+                  class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="fa fa-map-marker text-primary text-xs"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs text-secondary/70">Headquarters</p>
+                  <p class="text-sm font-medium text-primary truncate">
+                    {{ getSourcedValue(company?.profile?.hq) || 'Unknown' }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Founded -->
+              <div v-if="company?.profile?.founded" class="flex items-start gap-2">
+                <div
+                  class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="fa fa-calendar text-primary text-xs"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs text-secondary/70">Founded</p>
+                  <p class="text-sm font-medium text-primary">
+                    {{ getSourcedValue(company?.profile?.founded) }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Industry -->
+              <div v-if="company?.profile?.industry" class="flex items-start gap-2">
+                <div
+                  class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="fa fa-industry text-primary text-xs"></i>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs text-secondary/70">Industry</p>
+                  <p class="text-sm font-medium text-primary truncate">
+                    {{ getSourcedValue(company?.profile?.industry) }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Social Media Links -->
+            <div
+              v-if="company?.digital?.socialMediaAccounts?.value?.length"
+              class="flex items-center gap-3"
+            >
+              <div class="flex gap-2">
+                <a
+                  v-for="account in company?.digital?.socialMediaAccounts.value"
+                  :key="account.platform"
+                  :href="getSourcedValue(account.url) as string"
+                  target="_blank"
+                  class="w-8 h-8 rounded-lg bg-bg1 hover:bg-primary hover:text-white text-primary flex items-center justify-center transition-all duration-200 border border-border-2 hover:shadow-md hover:scale-110"
+                  :title="account.platform"
+                >
+                  <i class="text-sm fab" :class="getIcon(account.platform)"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats Section (Right side) -->
+          <div class="hidden lg:flex flex-col gap-3">
+            <!-- Website -->
+            <div v-if="company?.website" class="text-right">
+              <p class="text-xs text-secondary/70 mb-1">Website</p>
+              <a
+                :href="formatWebsiteUrl(company?.website)"
+                target="_blank"
+                class="text-sm font-medium text-primary hover:text-primary/80 inline-flex items-center gap-1"
+              >
+                <span>Visit</span>
+                <i class="fa fa-external-link text-xs"></i>
               </a>
             </div>
           </div>
@@ -64,7 +157,7 @@
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { getSourcedSource, getSourcedValue } from '@/components/helpers/sourcedValues'
 import Source from '../Source.vue'
 
@@ -75,6 +168,35 @@ const companyId = computed(() => route.params.companyId as string)
 const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
 }))
+
+const showFallbackIcon = ref(false)
+
+// Format website URL
+const formatWebsiteUrl = (website?: string) => {
+  if (!website) return '#'
+  return website.startsWith('http') ? website : `https://${website}`
+}
+
+// Helper function to extract domain from website URL
+const getCompanyDomain = (website?: string) => {
+  if (!website) return null
+  try {
+    // Remove protocol and www
+    let domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '')
+    // Remove trailing slash and any path
+    domain = domain.split('/')[0]
+    return domain
+  } catch {
+    return null
+  }
+}
+
+// Helper function to get logo URL from logo.dev
+const getLogoUrl = (website?: string) => {
+  const domain = getCompanyDomain(website)
+  if (!domain) return ''
+  return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
+}
 
 const getIcon = (media: string) => {
   switch (media.toLowerCase()) {
