@@ -150,6 +150,25 @@ def verify_workflow_admin_access(current_user: TokenData) -> TokenData:
     return current_user
 
 
+def verify_cost_admin_access(current_user: TokenData) -> TokenData:
+    """
+    Verify that the current user has cost analysis admin privileges
+    
+    Args:
+        current_user: Current authenticated user
+        
+    Returns:
+        TokenData if user has admin.cost role
+        
+    Raises:
+        AuthorizationError: If user doesn't have admin.cost role
+    """
+    if not current_user.roles or "admin.cost" not in current_user.roles:
+        raise AuthorizationError("Cost admin access required (admin.cost role)")
+    
+    return current_user
+
+
 def verify_workspace_permission(current_user: TokenData, workspace_id: int, permission: str, db: Session = None) -> TokenData:
     """
     Verify that the current user has a specific permission for a workspace

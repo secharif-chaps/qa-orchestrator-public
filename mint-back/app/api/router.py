@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.endpoints import company, tasks, auth, admin, security, workspace, webhooks, team_management, modules
+from app.api.endpoints import company, tasks, auth, admin, security, workspace, webhooks, team_management, modules, cost_analysis
 
 api_router = APIRouter()
 
@@ -12,4 +12,5 @@ api_router.include_router(security.router)
 api_router.include_router(workspace.router)
 api_router.include_router(team_management.router)
 api_router.include_router(modules.router)
-api_router.include_router(webhooks.router) 
+api_router.include_router(webhooks.router)
+api_router.include_router(cost_analysis.router) 

@@ -144,6 +144,12 @@
         "clientRole": false
       },
       {
+        "name": "admin.cost",
+        "description": "Administrative access to cost analysis and reporting",
+        "composite": false,
+        "clientRole": false
+      },
+      {
         "name": "admin",
         "description": "Full administrative access (composite role)",
         "composite": true,
@@ -155,7 +161,8 @@
             "company.create",
             "company.delete",
             "admin.workspaces",
-            "admin.workflow"
+            "admin.workflow",
+            "admin.cost"
           ]
         },
         "clientRole": false
