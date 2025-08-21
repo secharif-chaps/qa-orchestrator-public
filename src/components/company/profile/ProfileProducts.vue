@@ -1,30 +1,20 @@
 <template>
   <div class="bg-bg1 rounded-lg p-4">
     <div class="flex flex-col gap-4">
-      <div class="col-span-2">
+      <div class="flex items-center justify-between">
         <h3 class="space-x-2 font-bold text-primary">
           <i class="fa fa-box-open"></i>
           <span>{{ $t('profile.sections.products.title') }}</span>
         </h3>
-      </div>
-
-      <!-- Product Insights -->
-      <div v-if="company?.products?.insights">
-        <Alert
-          variant="info"
-          icon="fa fa-robot"
-          decoration-icon="fa fa-sparkles"
-          :title="$t('profile.sections.products.insights.title')"
-          :message="company.products.insights"
-          :dismissible="false"
-        >
-          <template #status>
-            <div class="flex items-center space-x-1 text-xs text-info">
-              <i class="fa fa-brain"></i>
-              <span>AI Generated</span>
-            </div>
-          </template>
-        </Alert>
+        <RouterLink :to="`/companies/${companyId}/products`">
+          <Button 
+            variant="tertiary" 
+            label="View All"
+            icon="fa fa-arrow-right"
+            icon-position="right"
+            size="sm"
+          />
+        </RouterLink>
       </div>
 
       <!-- Customer Type -->
@@ -53,12 +43,14 @@
         </h4>
         <div class="text-sm flex flex-col gap-2">
           <div class="flex flex-wrap gap-2">
-            <div v-for="product in company.products.range" :key="getSourcedValue(product)" class="bg-bg2 rounded-full px-3 py-1 text-secondary text-sm">
+            <div
+              v-for="product in company.products.range"
+              :key="getSourcedValue(product)"
+              class="bg-bg2 rounded-full px-3 py-1 text-secondary text-sm"
+            >
               {{ getSourcedValue(product) }}
+              <Source :sourced-value="product" />
             </div>
-          </div>
-          <div class="flex flex-wrap gap-1 mt-1">
-            <Source v-for="product in company.products.range" :key="getSourcedValue(product)" :sourced-value="product" />
           </div>
         </div>
       </div>
@@ -71,7 +63,11 @@
         </h4>
         <div class="text-sm flex flex-col gap-2">
           <div class="grid grid-cols-2 gap-2">
-            <div v-for="brand in company.products.partnerBrands" :key="getSourcedValue(brand)" class="bg-bg2 rounded p-3 flex items-center justify-between">
+            <div
+              v-for="brand in company.products.partnerBrands"
+              :key="getSourcedValue(brand)"
+              class="bg-bg2 rounded p-3 flex items-center justify-between"
+            >
               <span class="text-secondary">{{ getSourcedValue(brand) }}</span>
               <Source :sourced-value="brand" />
             </div>
@@ -87,7 +83,11 @@
         </h4>
         <div class="text-sm flex flex-col gap-2">
           <div class="grid grid-cols-2 gap-2">
-            <div v-for="label in company.products.privateLabels" :key="getSourcedValue(label)" class="bg-bg2 rounded p-3 flex items-center justify-between">
+            <div
+              v-for="label in company.products.privateLabels"
+              :key="getSourcedValue(label)"
+              class="bg-bg2 rounded p-3 flex items-center justify-between"
+            >
               <span class="text-secondary">{{ getSourcedValue(label) }}</span>
               <Source :sourced-value="label" />
             </div>
@@ -96,22 +96,30 @@
       </div>
 
       <!-- Product Categories -->
-      <div v-if="company?.products?.categories && Object.keys(company.products.categories).length">
+      <!-- <div v-if="company?.products?.categories && Object.keys(company.products.categories).length">
         <h4 class="font-medium text-primary mb-2 flex items-center gap-2">
           <i class="fa fa-sitemap"></i>
           Product Categories
         </h4>
         <div class="text-sm space-y-3">
-          <div v-for="(items, category) in company.products.categories" :key="category" class="bg-bg2 rounded p-3">
+          <div
+            v-for="(items, category) in company.products.categories"
+            :key="category"
+            class="bg-bg2 rounded p-3"
+          >
             <h5 class="font-medium text-secondary mb-2">{{ category }}</h5>
             <div class="flex flex-wrap gap-1">
-              <span v-for="item in items" :key="item" class="bg-primary/10 text-primary rounded-full px-2 py-1 text-xs">
+              <span
+                v-for="item in items"
+                :key="item"
+                class="bg-primary/10 text-primary rounded-full px-2 py-1 text-xs"
+              >
                 {{ item }}
               </span>
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <!-- No data message -->
       <div v-if="!hasAnyProductData" class="text-secondary text-center py-4">
@@ -124,11 +132,12 @@
 <script lang="ts" setup>
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
-import { useRoute } from 'vue-router'
+import { useRoute, RouterLink } from 'vue-router'
 import { computed } from 'vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Source from '../Source.vue'
 import Alert from '@/components/ui/Alert.vue'
+import Button from '@/components/ui/Button.vue'
 
 const route = useRoute()
 
@@ -141,7 +150,7 @@ const { data: company } = useQuery(companyByIdQuery, () => ({
 const hasAnyProductData = computed(() => {
   const products = company.value?.products
   if (!products) return false
-  
+
   return !!(
     products.insights ||
     products.customerType ||
