@@ -1,0 +1,209 @@
+<template>
+  <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
+    <div>
+      <h1 class="text-3xl font-bold">Cost Analysis Dashboard</h1>
+      <p class="text-secondary mt-2">
+        Comprehensive overview of application costs and usage metrics
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-3 items-end">
+      <!-- Button Group for Time Range Selection -->
+      <div class="inline-flex rounded-lg border border-border-2 bg-bg1 p-1">
+        <button
+          v-for="(preset, index) in presetsWithCustom"
+          :key="preset.key"
+          @click="selectPreset(preset)"
+          :class="[
+            'px-4 py-2 text-sm font-medium transition-all duration-200',
+            selectedPreset === preset.key
+              ? 'bg-primary text-white shadow-sm'
+              : 'text-secondary hover:text-primary hover:bg-bg2',
+            index === 0 ? 'rounded-l-md' : '',
+            index === presetsWithCustom.length - 1 ? 'rounded-r-md' : '',
+            index > 0 ? '-ml-px' : '',
+          ]"
+        >
+          <i v-if="preset.icon" :class="[preset.icon, 'mr-2']"></i>
+          {{ preset.label }}
+        </button>
+      </div>
+
+      <!-- Custom Date Range (shown when custom is selected) -->
+      <transition
+        enter-active-class="transition-all duration-200 ease-out"
+        enter-from-class="opacity-0 -translate-y-2"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition-all duration-150 ease-in"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 -translate-y-2"
+      >
+        <div v-if="selectedPreset === 'custom'" class="flex gap-2 items-center">
+          <input
+            v-model="startDate"
+            type="date"
+            class="px-3 py-2 text-sm border border-border-2 rounded-lg bg-bg1 text-primary focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+            @change="handleCustomDateChange"
+          />
+          <span class="text-secondary text-sm">to</span>
+          <input
+            v-model="endDate"
+            type="date"
+            class="px-3 py-2 text-sm border border-border-2 rounded-lg bg-bg1 text-primary focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+            @change="handleCustomDateChange"
+          />
+        </div>
+      </transition>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue'
+
+interface DatePreset {
+  key: string
+  label: string
+  startDate: string
+  endDate: string
+  icon?: string
+}
+
+interface Props {
+  modelValue: {
+    start_date?: string
+    end_date?: string
+  }
+}
+
+interface Emits {
+  (e: 'update:modelValue', value: { start_date?: string; end_date?: string }): void
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
+
+const selectedPreset = ref('current-month')
+
+const getCurrentMonthDates = () => {
+  const now = new Date()
+  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+
+  return {
+    start: firstDay.toISOString().split('T')[0],
+    end: lastDay.toISOString().split('T')[0],
+  }
+}
+
+const getLast30DaysDates = () => {
+  const now = new Date()
+  const thirtyDaysAgo = new Date(now)
+  thirtyDaysAgo.setDate(now.getDate() - 30)
+
+  return {
+    start: thirtyDaysAgo.toISOString().split('T')[0],
+    end: now.toISOString().split('T')[0],
+  }
+}
+
+const getCurrentMonthPreset = () => {
+  const dates = getCurrentMonthDates()
+  return {
+    key: 'current-month',
+    label: 'Current Month',
+    startDate: dates.start,
+    endDate: dates.end,
+  }
+}
+
+const getLast30DaysPreset = () => {
+  const dates = getLast30DaysDates()
+  return {
+    key: 'last-30-days',
+    label: 'Last 30 Days',
+    startDate: dates.start,
+    endDate: dates.end,
+  }
+}
+
+const presets: DatePreset[] = [
+  {
+    ...getCurrentMonthPreset(),
+    icon: 'fa fa-calendar',
+  },
+  {
+    ...getLast30DaysPreset(),
+    icon: 'fa fa-clock',
+  },
+  {
+    key: 'all-time',
+    label: 'All Time',
+    startDate: '',
+    endDate: '',
+    icon: 'fa fa-infinity',
+  },
+]
+
+const presetsWithCustom = computed(() => [
+  ...presets,
+  {
+    key: 'custom',
+    label: 'Custom',
+    startDate: '',
+    endDate: '',
+    icon: 'fa fa-calendar-days',
+  },
+])
+
+const startDate = ref(props.modelValue.start_date || getCurrentMonthDates().start)
+const endDate = ref(props.modelValue.end_date || getCurrentMonthDates().end)
+
+const selectPreset = (preset: DatePreset) => {
+  selectedPreset.value = preset.key
+
+  if (preset.key === 'custom') {
+    // Keep the current dates when switching to custom
+    return
+  } else if (preset.key === 'all-time') {
+    startDate.value = ''
+    endDate.value = ''
+  } else {
+    startDate.value = preset.startDate
+    endDate.value = preset.endDate
+  }
+}
+
+const handleCustomDateChange = () => {
+  // Automatically select custom when dates are manually changed
+  selectedPreset.value = 'custom'
+}
+
+// Watch for changes and emit
+watch(
+  [startDate, endDate],
+  () => {
+    // Update selected preset based on current dates
+    const currentDates = { start: startDate.value, end: endDate.value }
+    const matchingPreset = presets.find(
+      (preset) => preset.startDate === currentDates.start && preset.endDate === currentDates.end,
+    )
+
+    if (matchingPreset) {
+      selectedPreset.value = matchingPreset.key
+    } else {
+      selectedPreset.value = 'custom'
+    }
+
+    emit('update:modelValue', {
+      start_date: startDate.value || undefined,
+      end_date: endDate.value || undefined,
+    })
+  },
+  { immediate: true },
+)
+
+// Initialize with current month by default
+const currentMonthPreset = presets.find((p) => p.key === 'current-month')!
+selectPreset(currentMonthPreset)
+</script>
