@@ -1,24 +1,9 @@
 <template>
   <div class="min-h-screen">
     <!-- Page Header -->
-    <div class="">
-      <div class="container mx-auto px-4 py-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-3xl font-bold text-primary flex items-center gap-3">
-              <i class="fa fa-bullhorn"></i>
-              Press & Media Coverage
-            </h1>
-            <p class="text-secondary mt-2">
-              Latest news, announcements, and media coverage for {{ company?.name }}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Main Content -->
-    <div class="container mx-auto px-4">
+    <div class="container mx-auto">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div v-if="company?.press?.insights" class="lg:col-span-3">
           <Alert

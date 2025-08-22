@@ -10,6 +10,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
 interface Props {
   type: 'no-data' | 'no-results'
   searchQuery?: string
@@ -27,7 +29,7 @@ const title = computed(() => {
 
 const description = computed(() => {
   if (props.type === 'no-results') {
-    return props.searchQuery 
+    return props.searchQuery
       ? `No products match "${props.searchQuery}". Try adjusting your search terms or filters.`
       : 'Try adjusting your search terms or filters'
   }
