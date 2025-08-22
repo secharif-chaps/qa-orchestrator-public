@@ -1,20 +1,17 @@
 <template>
   <div
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    class="fixed inset-0 bg-bg1/20 backdrop-blur-sm flex items-center justify-center z-50"
     @click.self="$emit('cancel')"
   >
-    <div class="bg-bg1 rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
+    <div
+      class="bg-gradient-to-br from-bg1 to-bg2 rounded-xl shadow-2xl border border-border-2 p-6 max-w-xl w-full mx-4"
+    >
       <!-- Header -->
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-lg font-semibold text-base">
           {{ $t('workspace.pick.title', 'Switch Workspace') }}
         </h3>
-        <button
-          @click="$emit('cancel')"
-          class="text-secondary hover:text-base transition-colors p-1"
-        >
-          <i class="fa fa-times"></i>
-        </button>
+        <Button variant="tertiary" icon="fa fa-times" icon-only @click="$emit('cancel')" />
       </div>
 
       <!-- Content -->
@@ -25,13 +22,13 @@
           }}
         </p>
 
-        <div class="bg-bg2 p-4 rounded-lg border">
+        <div class="bg-gradient-to-r from-bg2 to-bg1 p-4 rounded-lg border border-border-2">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
               <i class="fa fa-building text-primary"></i>
             </div>
             <div>
-              <h4 class="font-medium">{{ workspace.name }}</h4>
+              <h4 class="font-medium text-base">{{ workspace.name }}</h4>
               <p class="text-sm text-secondary">{{ workspace.slug }}</p>
               <p v-if="workspace.description" class="text-sm text-secondary mt-1">
                 {{ workspace.description }}
@@ -40,49 +37,42 @@
           </div>
         </div>
 
-        <div class="mt-4 p-3 bg-yellow-400/10 border border-yellow-400 rounded-lg">
-          <div class="flex items-start gap-2">
-            <i class="fa fa-info-circle text-yellow-400 text-sm mt-0.5"></i>
-            <div class="text-sm text-yellow-400">
-              <p class="font-medium">{{ $t('workspace.pick.notice.title', 'Admin Feature') }}</p>
-              <p class="mt-1">
-                {{
-                  $t(
-                    'workspace.pick.notice.description',
-                    'This action will switch your current workspace and refresh the page to update all workspace-specific data.',
-                  )
-                }}
-              </p>
-            </div>
-          </div>
-        </div>
+        <Alert
+          variant="warning"
+          :title="$t('workspace.pick.notice.title', 'Admin Feature')"
+          :message="
+            $t(
+              'workspace.pick.notice.description',
+              'This action will switch your current workspace and refresh the page to update all workspace-specific data.',
+            )
+          "
+          icon="fa fa-info-circle"
+          decoration-icon="fa fa-exclamation-triangle"
+          :dismissible="false"
+          class="mt-4"
+        />
       </div>
 
       <!-- Actions -->
       <div class="flex items-center gap-3 justify-end">
-        <button
+        <Button
+          variant="tertiary"
+          :label="$t('common.cancel', 'Cancel')"
           @click="$emit('cancel')"
-          class="px-4 py-2 text-secondary hover:text-base transition-colors"
-        >
-          {{ $t('common.cancel', 'Cancel') }}
-        </button>
+        />
 
-        <button
-          @click="$emit('confirm', workspace.id)"
-          :disabled="isLoading"
-          class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-        >
-          <div
-            v-if="isLoading"
-            class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"
-          ></div>
-          <i v-else class="fa fa-exchange-alt"></i>
-          {{
+        <Button
+          variant="primary"
+          icon="fa fa-exchange-alt"
+          :label="
             isLoading
               ? $t('workspace.pick.switching', 'Switching...')
               : $t('workspace.pick.switch', 'Switch Workspace')
-          }}
-        </button>
+          "
+          :loading="isLoading"
+          :disabled="isLoading"
+          @click="$emit('confirm', workspace.id)"
+        />
       </div>
     </div>
   </div>
@@ -90,6 +80,8 @@
 
 <script setup lang="ts">
 import type { WorkspaceResponse } from '@/types/workspace'
+import Alert from '@/components/ui/Alert.vue'
+import Button from '@/components/ui/Button.vue'
 
 interface Props {
   workspace: WorkspaceResponse

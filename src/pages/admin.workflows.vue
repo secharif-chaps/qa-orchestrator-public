@@ -9,7 +9,12 @@
               {{ $t('admin.workflows.title', 'Workflow Management') }}
             </h1>
             <p class="text-secondary mt-2">
-              {{ $t('admin.workflows.description', 'Configure Dify workflow integrations for automated analysis tasks') }}
+              {{
+                $t(
+                  'admin.workflows.description',
+                  'Configure Dify workflow integrations for automated analysis tasks',
+                )
+              }}
             </p>
           </div>
 
@@ -113,14 +118,17 @@ const updatingWorkflow = ref<string | null>(null)
 const showSuccessToast = ref(false)
 
 // Status counts
-const activeCount = computed(() =>
-  workflows.value.filter((w) => w.workflow_id && w.has_api_key).length,
+const activeCount = computed(
+  () => workflows.value.filter((w) => w.workflow_id && w.has_api_key).length,
 )
-const partialCount = computed(() =>
-  workflows.value.filter((w) => (w.workflow_id || w.has_api_key) && !(w.workflow_id && w.has_api_key)).length,
+const partialCount = computed(
+  () =>
+    workflows.value.filter(
+      (w) => (w.workflow_id || w.has_api_key) && !(w.workflow_id && w.has_api_key),
+    ).length,
 )
-const inactiveCount = computed(() =>
-  workflows.value.filter((w) => !w.workflow_id && !w.has_api_key).length,
+const inactiveCount = computed(
+  () => workflows.value.filter((w) => !w.workflow_id && !w.has_api_key).length,
 )
 
 // Load workflows on mount
@@ -149,22 +157,21 @@ const handleWorkflowUpdate = async (
 ) => {
   try {
     updatingWorkflow.value = taskType
-    
+
     // Update via API
     const updatedWorkflow = await workflowsApi.updateWorkflow(taskType, data)
-    
+
     // Update local state
     const index = workflows.value.findIndex((w) => w.task_type === taskType)
     if (index !== -1) {
       workflows.value[index] = updatedWorkflow
     }
-    
+
     // Show success toast
     showSuccessToast.value = true
     setTimeout(() => {
       showSuccessToast.value = false
     }, 3000)
-    
   } catch (err) {
     console.error('Failed to update workflow:', err)
     // You could show an error toast here

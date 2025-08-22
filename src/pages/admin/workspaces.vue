@@ -17,7 +17,7 @@
             variant="primary"
             icon="fa fa-plus"
             :label="$t('workspace.create.button', 'Create Workspace')"
-            @click="$router.push('/workspaces/create')"
+            @click="$router.push('/admin/workspaces/create')"
           />
         </div>
 
