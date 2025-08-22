@@ -21,7 +21,7 @@
           <Button
             variant="primary"
             icon="fa fa-plus"
-            :label="$t('company.create.button', 'Add Company')"
+            :label="$t('company.create.button', 'New search')"
             @click="$router.push('/search')"
           />
         </div>
@@ -168,7 +168,7 @@
         <Button
           v-if="!companiesStore.filterName"
           @click="$router.push('/search')"
-          :label="$t('company.create.button', 'Add Company')"
+          :label="$t('company.create.button', 'Make a new search')"
           variant="primary"
         />
         <Button

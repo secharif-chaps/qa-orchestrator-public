@@ -27,8 +27,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-type BadgeVariant = 'primary' | 'success' | 'warning' | 'error' | 'info' | 'slate'
-type BadgeSize = 'xs' | 'sm' | 'md' | 'lg'
+export type BadgeVariant = 'primary' | 'success' | 'warning' | 'error' | 'info' | 'slate' | 'purple' | 'teal'
+export type BadgeSize = 'xs' | 'sm' | 'md' | 'lg'
 
 interface Props {
   variant?: BadgeVariant
@@ -134,6 +134,16 @@ const variantClasses = computed(() => {
       // Slate is always subtle, no gradient
       return `${isRounded} bg-slate-200 dark:bg-slate-700/30 text-slate-700 dark:text-slate-400`
 
+    case 'purple':
+      return props.gradient
+        ? `${isRounded} ${gradient} from-purple-200 dark:from-purple-400/10 to-purple-300 dark:to-purple-400/30 text-purple-700 dark:text-purple-400`
+        : `${isRounded} bg-purple-200 dark:bg-purple-400/20 text-purple-700 dark:text-purple-400`
+
+    case 'teal':
+      return props.gradient
+        ? `${isRounded} ${gradient} from-teal-200 dark:from-teal-400/10 to-teal-300 dark:to-teal-400/30 text-teal-700 dark:text-teal-400`
+        : `${isRounded} bg-teal-200 dark:bg-teal-400/20 text-teal-700 dark:text-teal-400`
+
     default: // primary
       return props.gradient
         ? `${isRounded} ${gradient} from-primary/20 dark:from-primary/10 to-primary/30 dark:to-primary/20 text-primary`
@@ -154,6 +164,10 @@ const dotClasses = computed(() => {
       return 'bg-blue-500'
     case 'slate':
       return 'bg-secondary'
+    case 'purple':
+      return 'bg-purple-500'
+    case 'teal':
+      return 'bg-teal-500'
     default: // primary
       return 'bg-primary'
   }

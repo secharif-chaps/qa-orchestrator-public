@@ -50,7 +50,7 @@
             </div>
 
             <!-- Quick Info Grid -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div class="grid grid-cols-2 gap-4 mb-4">
               <!-- CEO -->
               <div class="flex items-start gap-2">
                 <div
