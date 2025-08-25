@@ -77,6 +77,22 @@ docker compose -f docker-compose.dev.yml exec backend alembic current
 
 **Important**: Never run alembic commands locally - the database host is configured as 'db' which only resolves inside Docker network.
 
+## Deployment Rules
+
+### CRITICAL: Never Copy Files Directly to Production Server
+- **NEVER** use scp, ssh, or any method to directly copy files to the production server
+- **NEVER** create or modify files directly on the production server
+- **ALWAYS** commit and push changes, then ask user to deploy via proper deployment process
+- This ensures version control integrity and proper deployment procedures
+
+### Proper Deployment Process
+1. Make changes locally in development environment
+2. Test changes locally
+3. Commit changes with descriptive commit message
+4. Push to repository
+5. Ask user to deploy using their deployment process
+6. Verify deployment worked correctly
+
 ## Backend Development
 
 ### Running Python Scripts
