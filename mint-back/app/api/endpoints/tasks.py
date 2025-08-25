@@ -6,7 +6,8 @@ from pydantic import ValidationError
 
 from app.services.company import CompanyService
 from app.core.dependencies import get_company_service, get_current_user
-from app.core.security import verify_company_ownership
+from app.core.workspace import get_user_workspace, WorkspaceContext
+from app.core.security import verify_company_workspace_access
 from app.schemas.task import TaskCreate, TaskResponse, TaskTokenUpdate
 from app.schemas.user import TokenData
 from app.models.task import TaskType
@@ -73,11 +74,12 @@ async def create_task(
 async def get_company_tasks(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    current_user: TokenData = Depends(get_current_user),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
-    """Get all tasks for a company (only if user owns the company)"""
+    """Get all tasks for a company (if user has access to the company's workspace)"""
     company = service.get_company(company_id)
-    verify_company_ownership(company, current_user)
+    verify_company_workspace_access(company, workspace_context)
     return company.tasks
 
 @router.post("/{task_id}/restart", response_model=TaskResponse)
