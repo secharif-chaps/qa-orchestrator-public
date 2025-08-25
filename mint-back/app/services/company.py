@@ -64,25 +64,63 @@ def _parse_json_fields(company: Company) -> Company:
                 logger.warning(f"Failed to parse {field_name} field for company {company.id}: {e}")
                 setattr(company, field_name, {})
     
-    # Handle team field specially
+    # Handle team field specially - needs to be a list for CompanyResponse
     if company.team is None:
         company.team = []
-    elif isinstance(company.team, dict) and 'team' in company.team:
-        # Handle nested team structure from data processing
-        company.team = company.team.get('team', [])
+    elif isinstance(company.team, dict):
+        # Handle different dictionary structures
+        if 'team' in company.team:
+            # Handle nested team structure from data processing
+            company.team = company.team.get('team', [])
+        elif 'teamAnalysis' in company.team:
+            # Handle new teamAnalysis structure - extract the team members
+            team_analysis = company.team.get('teamAnalysis', {})
+            if isinstance(team_analysis, dict):
+                # Try to extract team members from different possible locations
+                team_members = []
+                
+                # Check for team members in various possible keys
+                if 'team' in team_analysis:
+                    team_members = team_analysis.get('team', [])
+                elif 'members' in team_analysis:
+                    team_members = team_analysis.get('members', [])
+                elif 'subordinates' in team_analysis:
+                    team_members = team_analysis.get('subordinates', [])
+                
+                # If still no team members found, convert the whole structure to a list
+                if not team_members and team_analysis:
+                    # Store the team analysis as a single-item list to preserve the data
+                    team_members = [team_analysis]
+                
+                company.team = team_members if isinstance(team_members, list) else []
+            else:
+                company.team = []
+        else:
+            # Unknown dictionary structure - try to convert to list or set empty
+            logger.warning(f"Unknown team dictionary structure for company {company.id}: {list(company.team.keys())[:5]}")
+            # Store as single-item list to preserve data
+            company.team = [company.team] if company.team else []
     elif isinstance(company.team, str):
         try:
             import json
             team_data = json.loads(company.team)
-            if isinstance(team_data, dict) and 'team' in team_data:
-                company.team = team_data.get('team', [])
+            if isinstance(team_data, dict):
+                # Recursively handle the parsed dictionary
+                company.team = team_data
+                # Call this section again to handle the dictionary
+                return _parse_json_fields(company)
             elif isinstance(team_data, list):
                 company.team = team_data
             else:
+                logger.warning(f"Unexpected team data type for company {company.id}: {type(team_data)}")
                 company.team = []
         except (json.JSONDecodeError, TypeError) as e:
             logger.warning(f"Failed to parse team field for company {company.id}: {e}")
             company.team = []
+    elif not isinstance(company.team, list):
+        # If it's not a list, dict, string or None, log and set to empty list
+        logger.warning(f"Unexpected team field type for company {company.id}: {type(company.team)}")
+        company.team = []
     
     return company
 
@@ -120,12 +158,37 @@ class CompanyService:
         # Convert SQLAlchemy models to Pydantic response models
         company_responses = []
         for company in companies:
-            # Parse JSON fields
-            company = _parse_json_fields(company)
-            
-            # Convert to CompanyResponse using from_attributes
-            company_response = CompanyResponse.model_validate(company)
-            company_responses.append(company_response)
+            try:
+                # Parse JSON fields
+                company = _parse_json_fields(company)
+                
+                # Convert to CompanyResponse using from_attributes
+                company_response = CompanyResponse.model_validate(company)
+                company_responses.append(company_response)
+            except Exception as e:
+                # Log the error but don't fail the entire request
+                logger.error(f"Failed to validate company {company.id}: {e}")
+                
+                # Try to create a minimal valid response
+                try:
+                    # Ensure team is a list
+                    if not isinstance(company.team, list):
+                        company.team = []
+                    
+                    # Ensure all dict fields are dicts
+                    for field in ['profile', 'digital', 'timeline', 'products', 'jobs', 'csr', 'press']:
+                        if not isinstance(getattr(company, field, None), dict):
+                            setattr(company, field, {})
+                    
+                    # Try validation again
+                    company_response = CompanyResponse.model_validate(company)
+                    company_responses.append(company_response)
+                    logger.info(f"Successfully created fallback response for company {company.id}")
+                except Exception as fallback_error:
+                    # If still failing, skip this company but log it
+                    logger.error(f"Failed to create fallback response for company {company.id}: {fallback_error}")
+                    # Optionally, you could add a placeholder or continue without this company
+                    continue
         
         # Create pagination metadata
         meta = create_pagination_meta(

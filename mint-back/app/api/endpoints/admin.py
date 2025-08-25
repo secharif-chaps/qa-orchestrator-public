@@ -256,5 +256,6 @@ async def update_workflow_config(
         title=updated_config.title,
         workflow_id=updated_config.workflow_id,
         api_key_obfuscated=service.obfuscate_api_key(updated_config.api_key),
-        has_api_key=bool(updated_config.api_key)
+        has_api_key=bool(updated_config.api_key),
+        llm=updated_config.llm
     )

@@ -20,38 +20,38 @@ class DifyClient:
         self.fallback_product_workflow_id = settings.DIFY_PRODUCT_WORKFLOW_ID
         self.fallback_timeline_workflow_id = settings.DIFY_TIMELINE_WORKFLOW_ID
     
-    def _get_workflow_config(self, task_type: str) -> tuple[Optional[str], Optional[str]]:
-        """Get workflow ID and API key for task type from database or fallback to config"""
+    def _get_workflow_config(self, task_type: str) -> tuple[Optional[str], Optional[str], Optional[str]]:
+        """Get workflow ID, API key and LLM for task type from database or fallback to config"""
         if self.db is None:
-            # Fallback to config-based settings
+            # Fallback to config-based settings (default LLM is mistral)
             if task_type == "products":
-                return self.fallback_product_workflow_id, self.fallback_api_key
+                return self.fallback_product_workflow_id, self.fallback_api_key, "mistral"
             elif task_type == "timeline":
-                return self.fallback_timeline_workflow_id, self.fallback_timeline_api_key
+                return self.fallback_timeline_workflow_id, self.fallback_timeline_api_key, "mistral"
             else:
-                return None, None
+                return None, None, None
         
         try:
             service = WorkflowConfigService(self.db)
             config = service.get_config_by_task_type(task_type)
             if config and config.workflow_id and config.api_key:
-                return config.workflow_id, config.api_key
+                return config.workflow_id, config.api_key, config.llm
             else:
                 # Fallback to config if database config is incomplete
                 if task_type == "products":
-                    return self.fallback_product_workflow_id, self.fallback_api_key
+                    return self.fallback_product_workflow_id, self.fallback_api_key, "mistral"
                 elif task_type == "timeline":
-                    return self.fallback_timeline_workflow_id, self.fallback_timeline_api_key
+                    return self.fallback_timeline_workflow_id, self.fallback_timeline_api_key, "mistral"
                 else:
-                    return None, None
+                    return None, None, None
         except Exception as e:
             logger.warning(f"Failed to get workflow config from database, using fallback: {e}")
             if task_type == "products":
-                return self.fallback_product_workflow_id, self.fallback_api_key
+                return self.fallback_product_workflow_id, self.fallback_api_key, "mistral"
             elif task_type == "timeline":
-                return self.fallback_timeline_workflow_id, self.fallback_timeline_api_key
+                return self.fallback_timeline_workflow_id, self.fallback_timeline_api_key, "mistral"
             else:
-                return None, None
+                return None, None, None
     
     async def trigger_workflow(
         self,
@@ -81,7 +81,7 @@ class DifyClient:
         Returns:
             Response data from Dify (acknowledgment if async, results if sync)
         """
-        workflow_id, api_key = self._get_workflow_config(task_type)
+        workflow_id, api_key, llm = self._get_workflow_config(task_type)
         
         if not workflow_id or not api_key:
             error_msg = f"No workflow configuration found for task type: {task_type}"
@@ -105,7 +105,8 @@ class DifyClient:
             "website": website,
             "callback_webhook": success_callback,
             "task_id": str(task_id),
-            "callback_payload": callback_payload_template
+            "callback_payload": callback_payload_template,
+            "llm": llm  # Add LLM parameter to the inputs
         }
         
         # Add token callback URL if provided
@@ -120,6 +121,7 @@ class DifyClient:
         
         logger.info(f"Triggering Dify {task_type} workflow for {company_name} ({website}) - Task ID: {task_id}")
         logger.info(f"Workflow ID: {workflow_id}")
+        logger.info(f"LLM: {llm}")
         logger.info(f"Dify Base URL: {self.base_url}")
         logger.info(f"Full URL: {self.base_url}/workflows/{workflow_id}/run")
         logger.info(f"Mode: {'Async (fire-and-forget)' if async_mode else 'Sync (wait for response)'}")
