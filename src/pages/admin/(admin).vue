@@ -169,7 +169,9 @@
 <route lang="yaml">
 meta:
   permissions:
-    - admin
+    - admin.workspaces
+    - admin.workflows
+    - admin.costs
 </route>
 
 <script setup lang="ts">
