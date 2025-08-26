@@ -280,9 +280,10 @@ class DifyClient:
         logger.info(f"Sending chat message to Dify workflow: {chat_workflow_id}")
         
         # Prepare the payload for Dify API
+        import json
         payload = {
             "inputs": {
-                "company": company_context
+                "company": json.dumps(company_context, ensure_ascii=False)
             },
             "query": message,
             "response_mode": "blocking",
@@ -292,8 +293,8 @@ class DifyClient:
         
         # Add chat history if provided
         if chat_history:
-            # Convert chat history to a format that can be included in inputs
-            payload["inputs"]["chat_history"] = chat_history
+            # Convert chat history to a stringified JSON format as well
+            payload["inputs"]["chat_history"] = json.dumps(chat_history, ensure_ascii=False)
         
         headers = {
             "Authorization": f"Bearer {chat_api_key}",
