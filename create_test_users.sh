@@ -6,13 +6,15 @@ set -e  # Exit on any error
 
 echo "👥 Creating Multiple Test Users..."
 
-# Detect which docker-compose file to use
+# Detect which docker-compose file to use and set admin credentials
 if [ -f "docker-compose.preprod.yml" ]; then
     COMPOSE_FILE="docker-compose.preprod.yml"
-    echo "🔧 Using preprod configuration"
+    ADMIN_PASSWORD="admin_preprod_password"
+    echo "🔧 Using preprod configuration with preprod admin password"
 elif [ -f "docker-compose.dev.yml" ]; then
     COMPOSE_FILE="docker-compose.dev.yml"
-    echo "🔧 Using development configuration"
+    ADMIN_PASSWORD="admin"
+    echo "🔧 Using development configuration with default admin password"
 else
     echo "❌ No docker-compose file found"
     exit 1
@@ -29,12 +31,14 @@ import asyncio
 import httpx
 import json
 import psycopg2
+import os
 from datetime import datetime
 import sys
 
 # Configuration
 KEYCLOAK_URL = "http://keycloak:8080"
 KEYCLOAK_REALM = "mint-dev"
+ADMIN_PASSWORD = os.getenv('KEYCLOAK_ADMIN_PASSWORD', 'admin')
 DB_CONFIG = {
     'host': 'db',
     'port': 5432,
@@ -144,7 +148,7 @@ async def get_admin_token():
                 "grant_type": "password",
                 "client_id": "admin-cli",
                 "username": "admin",
-                "password": "admin"
+                "password": ADMIN_PASSWORD
             }
         )
         
@@ -415,7 +419,7 @@ EOF
 # Copy script to container and run it
 echo "🐍 Running test users creation script..."
 docker compose -f "$COMPOSE_FILE" cp create_test_users.py backend:/app/create_test_users.py
-docker compose -f "$COMPOSE_FILE" exec backend python create_test_users.py
+docker compose -f "$COMPOSE_FILE" exec -e KEYCLOAK_ADMIN_PASSWORD="$ADMIN_PASSWORD" backend python create_test_users.py
 
 # Clean up
 rm create_test_users.py
