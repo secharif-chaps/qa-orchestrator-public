@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="flex flex-col gap-6">
     <!-- Empty state -->
     <div class="bg-bg1 p-4 rounded-lg" v-if="!hasTeamData && !teamPending">
       <div class="text-center py-8">
@@ -15,22 +15,46 @@
 
     <!-- Main content -->
     <div v-if="hasTeamData" class="space-y-6">
-      <div class="bg-bg1 p-4 rounded-lg">
-        <div class="flex items-center gap-2 text-primary mb-4">
-          <i class="fa fa-sitemap"></i>
-          <span class="text-lg font-semibold text-primary">{{ $t('team.hierarchy.title') }}</span>
-        </div>
+      <!-- Team Header with Stats -->
+      <TeamPageHeader 
+        :team="company?.team"
+        :team-insights="company?.team_insights"
+        @export="handleExport"
+      />
 
-        <div class="h-[500px] w-full relative">
-          <div class="absolute top-4 right-4 z-50">
+      <!-- Team Members List -->
+      <div class="bg-bg1 p-6 rounded-lg">
+        <h3 class="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
+          <i class="fa fa-address-card"></i>
+          <span>{{ $t('team.members.title', 'Team Members') }}</span>
+        </h3>
+        <TeamMembersList 
+          :team="company?.team"
+          @view-in-hierarchy="scrollToMemberInHierarchy"
+        />
+      </div>
+
+      <!-- Hierarchy Graph -->
+      <div class="bg-bg1 p-6 rounded-lg">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-primary flex items-center gap-2">
+            <i class="fa fa-sitemap"></i>
+            <span>{{ $t('team.hierarchy.title', 'Organization Chart') }}</span>
+          </h3>
+          <div class="flex items-center gap-2">
+            <Badge variant="info" label="Interactive" size="xs" rounded />
             <Button
               @click="doScreenshot"
               variant="tertiary"
               icon="fa fa-camera"
+              :title="$t('team.hierarchy.screenshot', 'Take Screenshot')"
               icon-only
+              size="sm"
             />
           </div>
+        </div>
 
+        <div class="h-[500px] w-full relative">
           <VueFlow
             :nodes="layoutedNodes"
             :edges="edges"
@@ -130,6 +154,7 @@
 
 <script lang="ts" setup>
 import Button from '@/components/ui/Button.vue'
+import Badge from '@/components/ui/Badge.vue'
 import { Background } from '@vue-flow/background'
 import { Panel, VueFlow, useVueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
@@ -141,7 +166,10 @@ import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import TeamMemberNode from '@/components/company/team/TeamMemberNode.vue'
+import TeamPageHeader from '@/components/company/team/TeamPageHeader.vue'
+import TeamMembersList from '@/components/company/team/TeamMembersList.vue'
 import { useScreenshot } from '@/composables/useScreenshot'
+import type { TeamMember } from '@/types/company'
 
 const { isDark } = useTheme()
 
@@ -368,5 +396,47 @@ const getMockedLinkedInUrl = (node: any) => {
 
 const getMockedAddress = (node: any) => {
   return '6 Rue Moyenne, 18000 Bourges'
+}
+
+// New methods for the enhanced team page
+const handleExport = () => {
+  // Export team data as JSON
+  const exportData = {
+    company: company.value?.name,
+    team: company.value?.team,
+    exportDate: new Date().toISOString()
+  }
+  
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${company.value?.name || 'company'}-team-${new Date().toISOString().split('T')[0]}.json`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+const scrollToMemberInHierarchy = (member: TeamMember) => {
+  // Find the node in the hierarchy
+  const nodeId = `${member.position}-${member.firstName}-${member.lastName}`
+  const node = nodes.value.find(n => n.id === nodeId)
+  
+  if (node) {
+    // Set as selected
+    selectedNode.value = node.data
+    
+    // Scroll to the hierarchy section
+    nextTick(() => {
+      const hierarchySection = document.querySelector('.vue-flow')
+      if (hierarchySection) {
+        hierarchySection.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+      
+      // Fit view to show the selected node
+      setTimeout(() => {
+        fitView({ nodes: [nodeId], duration: 800, padding: 0.5 })
+      }, 500)
+    })
+  }
 }
 </script>
