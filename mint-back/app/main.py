@@ -30,14 +30,18 @@ development_origins = [
     "http://10.0.1.2",       # Direct access to preprod server
     "http://10.0.1.2:3000",
     "http://10.0.1.2:5173",
+    "http://10.0.1.2:8000",  # Backend on preprod server
 ]
+
+print(f"CORS allowed origins: {development_origins}")
+print(f"CORS allowed methods: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=development_origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization", "Accept", "Origin", "X-Requested-With"],
+    allow_methods=["*"],  # Allow all methods including PATCH
+    allow_headers=["*"],  # Allow all headers
     expose_headers=["Content-Type", "Authorization"],
 )
 
