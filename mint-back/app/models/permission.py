@@ -23,7 +23,7 @@ class PermissionType(str, Enum):
     
     # Admin permissions (global only)
     ADMIN_WORKSPACES = "admin.workspaces"
-    ADMIN_COST = "admin.cost"
+    ADMIN_COST = "admin.costs"
 
 
 class UserWorkspacePermission(Base):

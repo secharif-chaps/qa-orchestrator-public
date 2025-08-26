@@ -28,11 +28,11 @@ async def get_global_cost_analysis(
 ):
     """
     Get global cost analysis across all workspaces.
-    Requires admin.cost permission.
+    Requires admin.costs permission.
     
     By default, returns data for the current month.
     """
-    # Verify admin.cost permission
+    # Verify admin.costs permission
     verify_cost_admin_access(current_user)
     
     # Set default date range if not provided (current month)
@@ -103,11 +103,11 @@ async def get_cost_by_workspace(
 ):
     """
     Get cost analysis broken down by workspace.
-    Requires admin.cost permission.
+    Requires admin.costs permission.
     
     By default, returns data for the current month.
     """
-    # Verify admin.cost permission
+    # Verify admin.costs permission
     verify_cost_admin_access(current_user)
     
     # Set default date range if not provided (current month)
@@ -197,11 +197,11 @@ async def get_cost_by_task_type(
 ):
     """
     Get cost analysis broken down by task type.
-    Requires admin.cost permission.
+    Requires admin.costs permission.
     
     By default, returns data for the current month.
     """
-    # Verify admin.cost permission
+    # Verify admin.costs permission
     verify_cost_admin_access(current_user)
     
     # Set default date range if not provided (current month)
@@ -291,11 +291,11 @@ async def get_cost_trends(
 ):
     """
     Get cost trends over time.
-    Requires admin.cost permission.
+    Requires admin.costs permission.
     
     By default, returns daily data for the current month.
     """
-    # Verify admin.cost permission
+    # Verify admin.costs permission
     verify_cost_admin_access(current_user)
     
     # Set default date range if not provided
@@ -390,11 +390,11 @@ async def refresh_materialized_views(
 ):
     """
     Refresh the materialized views for cost analysis.
-    Requires admin.cost permission.
+    Requires admin.costs permission.
     
     This should be called periodically to update the cached cost data.
     """
-    # Verify admin.cost permission
+    # Verify admin.costs permission
     verify_cost_admin_access(current_user)
     
     try:

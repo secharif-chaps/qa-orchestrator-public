@@ -138,13 +138,13 @@
         "clientRole": false
       },
       {
-        "name": "admin.workflow",
+        "name": "admin.workflows",
         "description": "Administrative access to workflow configurations",
         "composite": false,
         "clientRole": false
       },
       {
-        "name": "admin.cost",
+        "name": "admin.costs",
         "description": "Administrative access to cost analysis and reporting",
         "composite": false,
         "clientRole": false
@@ -161,8 +161,8 @@
             "company.create",
             "company.delete",
             "admin.workspaces",
-            "admin.workflow",
-            "admin.cost"
+            "admin.workflows",
+            "admin.costs"
           ]
         },
         "clientRole": false

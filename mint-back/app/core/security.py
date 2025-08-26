@@ -139,13 +139,13 @@ def verify_workflow_admin_access(current_user: TokenData) -> TokenData:
         current_user: Current authenticated user
         
     Returns:
-        TokenData if user has admin.workflow role
+        TokenData if user has admin.workflows role
         
     Raises:
-        AuthorizationError: If user doesn't have admin.workflow role
+        AuthorizationError: If user doesn't have admin.workflows role
     """
-    if not current_user.roles or "admin.workflow" not in current_user.roles:
-        raise AuthorizationError("Workflow admin access required (admin.workflow role)")
+    if not current_user.roles or "admin.workflows" not in current_user.roles:
+        raise AuthorizationError("Workflow admin access required (admin.workflows role)")
     
     return current_user
 
@@ -158,13 +158,13 @@ def verify_cost_admin_access(current_user: TokenData) -> TokenData:
         current_user: Current authenticated user
         
     Returns:
-        TokenData if user has admin.cost role
+        TokenData if user has admin.costs role
         
     Raises:
-        AuthorizationError: If user doesn't have admin.cost role
+        AuthorizationError: If user doesn't have admin.costs role
     """
-    if not current_user.roles or "admin.cost" not in current_user.roles:
-        raise AuthorizationError("Cost admin access required (admin.cost role)")
+    if not current_user.roles or "admin.costs" not in current_user.roles:
+        raise AuthorizationError("Cost admin access required (admin.costs role)")
     
     return current_user
 
