@@ -70,10 +70,9 @@
               v-model="companiesStore.size"
               class="px-3 py-2 border border-border-2 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
+              <option v-for="option in pageSizeOptions" :key="option" :value="option">
+                {{ option }}
+              </option>
             </select>
           </div>
         </div>
@@ -209,6 +208,17 @@ import { useCompaniesStore } from '@/stores/companies'
 // Constants
 const VIEW_MODE_STORAGE_KEY = 'companies-view-mode'
 
+// Dynamic page size options based on view mode
+const pageSizeOptions = computed(() => {
+  if (viewMode.value === 'grid') {
+    // Multiples of 3 for grid view (3 columns)
+    return [6, 12, 21, 30]
+  } else {
+    // Traditional options for table view
+    return [5, 10, 20, 50]
+  }
+})
+
 // View state
 const viewMode = ref<'table' | 'grid'>('table')
 
@@ -248,5 +258,20 @@ const setViewMode = (mode: 'table' | 'grid') => {
   viewMode.value = mode
   // Save to localStorage
   localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode)
+  
+  // Adjust page size when switching modes to match the new options
+  if (mode === 'grid' && !pageSizeOptions.value.includes(companiesStore.size)) {
+    // Switch to closest grid-friendly option
+    if (companiesStore.size <= 6) companiesStore.size = 6
+    else if (companiesStore.size <= 12) companiesStore.size = 12
+    else if (companiesStore.size <= 21) companiesStore.size = 21
+    else companiesStore.size = 30
+  } else if (mode === 'table' && !pageSizeOptions.value.includes(companiesStore.size)) {
+    // Switch to closest table-friendly option
+    if (companiesStore.size <= 5) companiesStore.size = 5
+    else if (companiesStore.size <= 10) companiesStore.size = 10
+    else if (companiesStore.size <= 20) companiesStore.size = 20
+    else companiesStore.size = 50
+  }
 }
 </script>

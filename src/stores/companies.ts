@@ -4,7 +4,7 @@ import { refDebounced } from '@vueuse/core'
 
 export const useCompaniesStore = defineStore('companies', () => {
   const page = ref(1)
-  const size = ref(10)
+  const size = ref(12) // Default to grid-friendly value (multiple of 3)
   const filterName = ref('')
 
   const debouncedName = refDebounced(filterName, 500)
