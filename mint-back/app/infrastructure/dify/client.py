@@ -258,3 +258,99 @@ class DifyClient:
             "profile", company_name, website, success_callback, 
             error_callback, task_id, company_id, async_mode, token_callback_url
         )
+
+    async def send_chat_message(self, message: str, company_context: Dict[str, Any], chat_history: list = None) -> Dict[str, Any]:
+        """
+        Send a chat message to the Dify chat workflow
+        
+        Args:
+            message: User's chat message
+            company_context: Company context data to provide context to the chat
+            chat_history: Previous chat messages (optional)
+            
+        Returns:
+            Response from the Dify chat workflow
+        """
+        # Hardcoded chat workflow credentials as provided
+        chat_workflow_id = "31435ab2-01e2-40e3-ae77-6b469d3a006c"
+        chat_api_key = "app-jGJl5PAPQnAE0IzFAfkV3XjO"
+        
+        url = f"{self.base_url}/chat-messages"
+        
+        logger.info(f"Sending chat message to Dify workflow: {chat_workflow_id}")
+        
+        # Prepare the payload for Dify API
+        payload = {
+            "inputs": {
+                "company": company_context
+            },
+            "query": message,
+            "response_mode": "blocking",
+            "conversation_id": "",
+            "user": "user"
+        }
+        
+        # Add chat history if provided
+        if chat_history:
+            # Convert chat history to a format that can be included in inputs
+            payload["inputs"]["chat_history"] = chat_history
+        
+        headers = {
+            "Authorization": f"Bearer {chat_api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        try:
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(
+                    url,
+                    json=payload,
+                    headers=headers
+                )
+                
+                logger.info(f"Dify chat response status: {response.status_code}")
+                
+                if response.status_code != 200:
+                    error_msg = f"Dify chat API returned non-200 status code: {response.status_code}"
+                    logger.error(f"{error_msg}. Response: {response.text}")
+                    raise Exception(error_msg)
+                
+                try:
+                    response_text = response.text.strip()
+                    if not response_text:
+                        logger.warning("Dify chat API returned empty response")
+                        return {"response": "I'm sorry, I couldn't generate a response. Please try again.", "status": "error"}
+                    
+                    json_response = response.json()
+                    
+                    if json_response is None:
+                        logger.warning("Dify chat API returned null response")
+                        return {"response": "I'm sorry, I couldn't generate a response. Please try again.", "status": "error"}
+                    
+                    # Extract the answer from Dify response format
+                    if "answer" in json_response:
+                        return {
+                            "response": json_response["answer"],
+                            "status": "success",
+                            "conversation_id": json_response.get("conversation_id", "")
+                        }
+                    else:
+                        logger.warning(f"Unexpected Dify chat response format: {json_response}")
+                        return {"response": "I'm sorry, I couldn't generate a response. Please try again.", "status": "error"}
+                    
+                except Exception as e:
+                    logger.error(f"Error processing Dify chat response: {str(e)}")
+                    return {"response": "I'm sorry, there was an error processing your message. Please try again.", "status": "error"}
+                
+        except httpx.TimeoutException as e:
+            error_msg = f"Chat request to Dify timed out after 60 seconds"
+            logger.error(error_msg)
+            raise Exception(error_msg) from e
+        except httpx.HTTPError as e:
+            error_msg = f"HTTP error occurred in Dify chat request: {str(e)}"
+            logger.error(error_msg)
+            raise Exception(error_msg) from e
+        except Exception as e:
+            error_msg = f"Error in Dify chat workflow: {str(e)}"
+            logger.error(error_msg)
+            raise Exception(error_msg) from e

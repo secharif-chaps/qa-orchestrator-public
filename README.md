@@ -51,8 +51,8 @@ docker-compose up -d
 - `DATABASE_URL`: PostgreSQL connection string
 - `API_HOST`: Host to bind the API to
 - `API_PORT`: Port to run the API on
-- `N8N_BASE_URL`: URL for the N8N integration
-- `N8N_WEBHOOK_ID`: Webhook ID for N8N integration
+- `DIFY_URL`: URL for the Dify integration
+- `DIFY_API_KEY`: API key for Dify workflows
 
 ### Frontend
 
@@ -192,8 +192,8 @@ ssh nmercier@10.0.1.2 "cd /home/nmercier/mint && docker-compose -f docker-compos
 ### Alembic migrations corrupted
 Migration files contain null bytes. Use manual table creation instead.
 
-### N8N webhook external service
-External N8N service may be unavailable. This only affects task creation, not core functionality.
+### Workflow external service
+External workflow service (Dify) may be unavailable. This only affects task creation, not core functionality.
 
 ### Crypto.subtle HTTPS error
 Resolved by using `oidc-client` v1.11.5 instead of `oidc-client-ts` for HTTP support.

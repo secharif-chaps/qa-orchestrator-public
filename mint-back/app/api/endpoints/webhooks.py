@@ -34,7 +34,7 @@ async def task_callback(
     service: CompanyService = Depends(get_company_service)
 ):
     """
-    Webhook endpoint for N8N to call when a task completes
+    Webhook endpoint for workflow services to call when a task completes
     """
     logger.info(f"🔄 Task callback received - Task ID: {task_id}, Status: {payload.status}")
     

@@ -19,8 +19,7 @@ from app.schemas.company import (
 from app.schemas.pagination import PaginationParams, PaginatedResponse, SortOrder
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.schemas.user import TokenData
-# Chat functionality temporarily disabled due to n8n removal
-# from app.infrastructure.n8n.client import N8nClient
+from app.infrastructure.dify.client import DifyClient
 
 router = APIRouter(
     prefix="/companies",
@@ -255,18 +254,47 @@ async def chat_with_company(
     service: CompanyService = Depends(get_company_service),
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
-    """Chat with AI about a company (temporarily disabled due to n8n removal)"""
-    logger.info(f"Chat request for company {company_id} by user {workspace_context.username} - DISABLED")
+    """Chat with AI about a company using Dify workflow"""
+    logger.info(f"Chat request for company {company_id} by user {workspace_context.username}")
     
     try:
         # Get company and verify it belongs to workspace
         company = service.get_company(company_id)
         verify_company_workspace_access(company, workspace_context)
         
-        # Return disabled message until chat is migrated to alternative service
+        # Initialize Dify client
+        dify_client = DifyClient()
+        
+        # Prepare company context for the chat
+        company_context = {
+            "id": company.id,
+            "name": company.name,
+            "website": company.website,
+            "profile": company.profile,
+            "digital": company.digital,
+            "timeline": company.timeline,
+            "products": company.products,
+            "jobs": company.jobs,
+            "csr": company.csr,
+            "press": company.press,
+            "team": company.team
+        }
+        
+        # Convert chat history to simple format if provided
+        chat_history = []
+        if chat_request.chat_history:
+            chat_history = [{"role": msg.role, "content": msg.content} for msg in chat_request.chat_history]
+        
+        # Send message to Dify
+        response_data = await dify_client.send_chat_message(
+            message=chat_request.message,
+            company_context=company_context,
+            chat_history=chat_history
+        )
+        
         return ChatResponse(
-            response="Chat functionality is temporarily disabled while we upgrade our systems. Please check back later.",
-            status="disabled"
+            response=response_data.get("response", "No response received"),
+            status=response_data.get("status", "success")
         )
             
     except Exception as e:

@@ -42,16 +42,6 @@ class SQLAlchemyCompanyRepository:
         self.db_session.commit()
         return True
     
-    def update_company_data(self, company_id: int, query_type: str, data: Dict[str, Any]) -> Company:
-        company = self.get_by_id(company_id)
-        if not company:
-            raise ValueError(f"Company with ID {company_id} not found")
-        
-        company.update_from_n8n(query_type, data)
-        self.db_session.add(company)
-        self.db_session.commit()
-        self.db_session.refresh(company)
-        return company
     
     def get_paginated(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None, name_filter: Optional[str] = None) -> Tuple[List[Company], int]:
         """Get paginated list of companies with sorting and filtering"""

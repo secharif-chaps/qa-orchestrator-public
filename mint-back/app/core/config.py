@@ -14,13 +14,6 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/mint_db"
     
     
-    # N8N settings
-    N8N_BASE_URL: str = "http://ec2-34-244-245-92.eu-west-1.compute.amazonaws.com:5678"
-    # N8N_WEBHOOK_ID: str = "57be7c18-e8b2-47aa-b9aa-f7c2696f4523"
-    N8N_WEBHOOK_ID: str = "57be7c18-e8b2-47aa-b9aa-f7c2696f4523"
-    N8N_CHAT_WEBHOOK_ID: str = "96b9765e-6c96-4493-bf56-a65905f7a6bc"
-    N8N_API_KEY: str = "n8n-api-key"
-    
     # Dify settings
     DIFY_API_KEY: str = "app-WpGZCTFDaBzCUS9M4LeoQHGa"  # Products workflow API key
     DIFY_TIMELINE_API_KEY: str = "app-qX4RISdrrif2aSPAaLVz7tto"  # Timeline workflow API key

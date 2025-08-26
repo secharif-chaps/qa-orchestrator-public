@@ -6,8 +6,6 @@ from app.models.task import Task, TaskType, TaskStatus
 from app.schemas.company import CompanyCreate, CompanyUpdate, CompanyResponse
 from app.schemas.task import TaskTokenUpdate
 from app.schemas.pagination import PaginationParams, PaginatedResponse, create_pagination_meta
-# N8N client no longer needed - all tasks migrated to Dify
-# from app.services.n8n import N8nClient
 from app.infrastructure.dify.client import DifyClient
 from app.core.database_security import SecureQueryBuilder
 from app.core.validators import ValidationError
@@ -127,7 +125,6 @@ def _parse_json_fields(company: Company) -> Company:
 class CompanyService:
     def __init__(self, db: Session):
         self.db = db
-        # All tasks now use Dify workflows - n8n_client removed
         self.dify_client = DifyClient(db)  # Pass database session for workflow config access
         self.secure_query = SecureQueryBuilder(db)
         self.repository = SQLAlchemyCompanyRepository(db)
@@ -299,7 +296,7 @@ class CompanyService:
             task.status = TaskStatus.RUNNING
             self.db.commit()
             
-            # Use Dify for products, timeline, and profile tasks, N8N for all others
+            # Use Dify for all workflow tasks
             if task.type == TaskType.products:
                 logger.info(f"Using Dify workflow (async) for products task - Company: {company.name}")
                 
@@ -535,23 +532,6 @@ class CompanyService:
             # Log the error for debugging but don't re-raise to avoid crashing the backend
             logger.error(f"Task execution failed for company {company.name} (task {task.type.value}): {str(e)}", exc_info=True)
 
-    def _parse_n8n_response(self, result: Any, task_type: str) -> Dict[str, Any]:
-        """
-        Parse n8n response and extract the actual data, removing nested wrapper structures.
-        
-        Expected n8n response structure:
-        [{"output": {"timeline": {"insights": "...", "events": [...]}}}]
-        
-        Should return:
-        {"insights": "...", "events": [...]}
-        """
-        try:
-            logger.info(f"Raw n8n response for {task_type}: {result}")
-            return result
-            
-        except Exception as e:
-            logger.error(f"Error parsing n8n response for {task_type}: {str(e)}", exc_info=True)
-            return {}
 
     def _update_company_data(self, company: Company, query_type: str, data: Dict[str, Any]) -> None:
         # Store the data directly since it's already been extracted properly

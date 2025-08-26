@@ -9,7 +9,7 @@ from app.database import engine
 
 app = FastAPI(
     title="Mint Backend API",
-    description="API for company data and n8n workflow integration",
+    description="API for company data and workflow integration",
     version="0.1.0",
 )
 

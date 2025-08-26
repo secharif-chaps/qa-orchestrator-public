@@ -7,13 +7,10 @@ from app.database import get_db
 from app.infrastructure.database.repositories.company_repository_impl import SQLAlchemyCompanyRepository
 from app.services.company import CompanyService
 from app.services.token_manager import TokenManager
-# N8N client no longer needed - all tasks migrated to Dify
-# from app.infrastructure.n8n.client import N8nClient
 from app.services.auth import keycloak_service
 from app.schemas.user import TokenData
 
 # Service dependencies
-# N8N client removed - all tasks migrated to Dify workflows
 def get_company_service(
     db: Session = Depends(get_db)
 ) -> CompanyService:

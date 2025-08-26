@@ -1,11 +1,11 @@
 # Mint Backend
 
-A FastAPI backend for company data management and n8n workflow integration. This application follows Domain-Driven Design principles to provide a clean, maintainable architecture.
+A FastAPI backend for company data management and workflow integration. This application follows Domain-Driven Design principles to provide a clean, maintainable architecture.
 
 ## Features
 
 - Company data management (CRUD operations)
-- Integration with n8n workflows for data collection
+- Integration with Dify workflows for data collection
 - Asynchronous processing of company data
 - PostgreSQL database for data storage
 - Alembic for database migrations
@@ -16,7 +16,7 @@ The application follows a Domain-Driven Design approach with the following compo
 
 - **Domain Layer**: Core business logic and entities
 - **Application Layer**: Orchestration of business operations
-- **Infrastructure Layer**: Technical implementations (database, n8n)
+- **Infrastructure Layer**: Technical implementations (database, Dify)
 - **API Layer**: External interface
 
 ## Installation
@@ -25,7 +25,7 @@ The application follows a Domain-Driven Design approach with the following compo
 
 - Python 3.9+
 - PostgreSQL database
-- n8n instance running
+- Dify instance running
 
 ### Setup
 
@@ -49,8 +49,8 @@ pip install -r requirements.txt
 4. Configure environment variables in `.env` file:
 ```
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/mint_db
-N8N_BASE_URL=http://your-n8n-instance:5678
-N8N_WEBHOOK_ID=your-webhook-id
+DIFY_URL=http://your-dify-instance/v1
+DIFY_API_KEY=your-api-key
 ```
 
 5. Run database migrations:
@@ -78,11 +78,11 @@ uvicorn app.main:app --reload
 
 ### Webhooks
 
-- `POST /webhooks/n8n/callback` - Endpoint for n8n to send workflow results
+- `POST /webhooks/tasks/{task_id}/callback` - Endpoint for workflows to send task results
 
-## n8n Integration
+## Dify Integration
 
-This application integrates with n8n workflows to collect data about companies. Each workflow is responsible for finding specific data (profile, team, products, etc.). The application provides two ways to interact with n8n:
+This application integrates with Dify workflows to collect data about companies. Each workflow is responsible for finding specific data (profile, team, products, etc.). The application provides two ways to interact with workflows:
 
 1. **Search Endpoint**: Triggers all workflows for a company
 2. **Query Endpoint**: Triggers a specific workflow for a company
