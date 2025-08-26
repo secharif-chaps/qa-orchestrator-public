@@ -1,10 +1,28 @@
 <template>
   <div class="flex flex-col gap-4">
     <!-- Loading State -->
-    <TimelineEmptyState v-if="timelinePending" type="loading" />
+    <PageState 
+      v-if="taskState.isLoading.value" 
+      state="loading" 
+      page-type="timeline"
+      :task-progress="taskState.taskProgress.value"
+    />
+    
+    <!-- Error State -->
+    <PageState
+      v-else-if="taskState.hasErrors.value"
+      state="error"
+      page-type="timeline"
+      :error-message="taskState.errorMessages.value[0]"
+      @retry="handleRetry"
+    />
     
     <!-- No Data State -->
-    <TimelineEmptyState v-else-if="!hasTimelineData" type="no-data" />
+    <PageState 
+      v-else-if="!hasTimelineData" 
+      state="no-data" 
+      page-type="timeline"
+    />
 
     <!-- Timeline visualization -->
     <div v-if="hasTimelineData" class="relative">
@@ -27,10 +45,11 @@
         <div>
           <Event v-for="(event, index) in filteredEvents" :key="index" :event="event" />
         </div>
-        <TimelineEmptyState
+        <PageState
           v-if="filteredEvents.length === 0 && searchQuery"
-          type="no-results"
+          state="no-results"
           :search-query="searchQuery"
+          @clear-search="searchQuery = ''"
         />
       </div>
     </div>
@@ -42,8 +61,9 @@ import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { useRoute } from 'vue-router'
 import { computed, ref } from 'vue'
+import { useTaskState, hasDataForSection } from '@/composables/useTaskState'
 import Event from '@/components/company/timeline/Event.vue'
-import TimelineEmptyState from '@/components/company/timeline/TimelineEmptyState.vue'
+import PageState from '@/components/company/PageState.vue'
 
 const route = useRoute()
 
@@ -54,20 +74,19 @@ const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
 }))
 
+// Task state management
+const taskState = useTaskState(company, 'timeline')
+
 const searchQuery = ref('')
 
-const timelinePending = computed(() => {
-  if (!companyId.value) {
-    return false
-  }
-  return company.value?.tasks?.some(
-    (task: { type: string; status: string }) =>
-      task.type === 'timeline' && (task.status === 'pending' || task.status === 'running'),
-  )
-})
+// Handle retry action
+const handleRetry = () => {
+  // TODO: Implement retry logic - trigger timeline task restart
+  console.log('Retrying timeline data fetch...')
+}
 
 const hasTimelineData = computed(() => {
-  return !!company.value?.timeline?.events && company.value.timeline.events.length > 0
+  return hasDataForSection(company.value, 'timeline', 'events')
 })
 
 const getTimelineEvents = computed(() => {

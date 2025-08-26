@@ -1,7 +1,28 @@
 <template>
   <div class="flex flex-col gap-4">
-    <!-- No products state -->
-    <ProductsEmptyState v-if="!products || Object.keys(products).length === 0" type="no-data" />
+    <!-- Loading State -->
+    <PageState 
+      v-if="taskState.isLoading.value" 
+      state="loading" 
+      page-type="products"
+      :task-progress="taskState.taskProgress.value"
+    />
+    
+    <!-- Error State -->
+    <PageState
+      v-else-if="taskState.hasErrors.value"
+      state="error"
+      page-type="products"
+      :error-message="taskState.errorMessages.value[0]"
+      @retry="handleRetry"
+    />
+    
+    <!-- No Data State -->
+    <PageState 
+      v-else-if="!products || Object.keys(products).length === 0" 
+      state="no-data" 
+      page-type="products"
+    />
 
     <!-- Main content -->
     <div v-else class="space-y-6">
@@ -62,10 +83,11 @@
       </div>
 
       <!-- No Results State -->
-      <ProductsEmptyState
+      <PageState
         v-if="Object.keys(filteredProducts).length === 0 && searchQuery"
-        type="no-results"
+        state="no-results"
         :search-query="searchQuery"
+        @clear-search="searchQuery = ''"
       />
     </div>
   </div>
@@ -75,14 +97,15 @@
 import ProductsHeader from '@/components/company/products/ProductsHeader.vue'
 import ProductGridItem from '@/components/company/products/ProductGridItem.vue'
 import ProductListItem from '@/components/company/products/ProductListItem.vue'
-import ProductsEmptyState from '@/components/company/products/ProductsEmptyState.vue'
 import Badge from '@/components/ui/Badge.vue'
 import Alert from '@/components/ui/Alert.vue'
 import { useRoute } from 'vue-router'
 import { computed, ref } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
+import { useTaskState } from '@/composables/useTaskState'
 import CompanyCard from '@/components/company/CompanyCard.vue'
+import PageState from '@/components/company/PageState.vue'
 
 const route = useRoute()
 
@@ -92,6 +115,15 @@ const companyId = computed(() => route.params.companyId as string)
 const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
 }))
+
+// Task state management
+const taskState = useTaskState(company, 'products')
+
+// Handle retry action
+const handleRetry = () => {
+  // TODO: Implement retry logic - trigger products task restart
+  console.log('Retrying products data fetch...')
+}
 
 // Reactive state
 const viewMode = ref<'grid' | 'list'>('grid')

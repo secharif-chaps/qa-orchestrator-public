@@ -1,9 +1,31 @@
 <template>
   <div class="min-h-screen">
-    <!-- Page Header -->
+    <!-- Loading State -->
+    <PageState 
+      v-if="taskState.isLoading.value" 
+      state="loading" 
+      page-type="press"
+      :task-progress="taskState.taskProgress.value"
+    />
+    
+    <!-- Error State -->
+    <PageState
+      v-else-if="taskState.hasErrors.value"
+      state="error"
+      page-type="press"
+      :error-message="taskState.errorMessages.value[0]"
+      @retry="handleRetry"
+    />
+    
+    <!-- No Data State -->
+    <PageState 
+      v-else-if="!hasAnyPressData" 
+      state="no-data" 
+      page-type="press"
+    />
 
     <!-- Main Content -->
-    <div class="container mx-auto">
+    <div v-else class="container mx-auto">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div v-if="company?.press?.insights" class="lg:col-span-3">
           <Alert
@@ -135,11 +157,6 @@
             </div>
           </div>
 
-          <!-- No data message -->
-          <div v-if="!hasAnyPressData" class="bg-bg1 rounded-lg p-12 text-center">
-            <i class="fa fa-newspaper text-4xl text-secondary/30 mb-4"></i>
-            <p class="text-secondary">{{ $t('common.noData') }}</p>
-          </div>
         </div>
 
         <!-- Sidebar -->
@@ -236,8 +253,10 @@ import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
+import { useTaskState } from '@/composables/useTaskState'
 import Source from '@/components/company/Source.vue'
 import Alert from '@/components/ui/Alert.vue'
+import PageState from '@/components/company/PageState.vue'
 
 const route = useRoute()
 
@@ -246,6 +265,15 @@ const companyId = computed(() => route.params.companyId as string)
 const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
 }))
+
+// Task state management
+const taskState = useTaskState(company, 'press')
+
+// Handle retry action
+const handleRetry = () => {
+  // TODO: Implement retry logic - trigger press task restart
+  console.log('Retrying press data fetch...')
+}
 
 const hasAnyPressData = computed(() => {
   const press = company.value?.press

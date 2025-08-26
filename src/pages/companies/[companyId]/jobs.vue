@@ -1,10 +1,28 @@
 <template>
   <div class="flex flex-col gap-4">
     <!-- Loading State -->
-    <JobsEmptyState v-if="jobOffersPending" type="loading" />
+    <PageState 
+      v-if="taskState.isLoading.value" 
+      state="loading" 
+      page-type="jobs"
+      :task-progress="taskState.taskProgress.value"
+    />
+    
+    <!-- Error State -->
+    <PageState
+      v-else-if="taskState.hasErrors.value"
+      state="error"
+      page-type="jobs"
+      :error-message="taskState.errorMessages.value[0]"
+      @retry="handleRetry"
+    />
     
     <!-- No Data State -->
-    <JobsEmptyState v-else-if="!hasJobOffersData" type="no-data" />
+    <PageState 
+      v-else-if="!hasJobOffersData" 
+      state="no-data" 
+      page-type="jobs"
+    />
 
     <!-- Main content -->
     <div v-if="hasJobOffersData" class="space-y-6">
@@ -85,9 +103,10 @@
             key="no-results"
             class="col-span-full"
           >
-            <JobsEmptyState
-              type="no-results"
+            <PageState
+              state="no-results"
               :search-query="searchQuery"
+              @clear-search="searchQuery = ''"
             />
           </div>
         </TransitionGroup>
@@ -102,8 +121,9 @@ import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { getSourcedSource, getSourcedValue } from '@/components/helpers/sourcedValues'
+import { useTaskState, hasDataForSection } from '@/composables/useTaskState'
 import JobCard from '@/components/company/jobs/JobCard.vue'
-import JobsEmptyState from '@/components/company/jobs/JobsEmptyState.vue'
+import PageState from '@/components/company/PageState.vue'
 import { OInput } from '@owlint/feathers-vue'
 
 const route = useRoute()
@@ -115,20 +135,19 @@ const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
 }))
 
+// Task state management
+const taskState = useTaskState(company, 'jobs')
+
 const searchQuery = ref('')
 
-const jobOffersPending = computed(() => {
-  if (!companyId.value) {
-    return false
-  }
-  return company.value?.tasks?.some(
-    (task: { type: string; status: string }) =>
-      task.type === 'jobs' && (task.status === 'pending' || task.status === 'running'),
-  )
-})
+// Handle retry action
+const handleRetry = () => {
+  // TODO: Implement retry logic - trigger jobs task restart
+  console.log('Retrying jobs data fetch...')
+}
 
 const hasJobOffersData = computed(() => {
-  return !!company.value?.jobs?.offers && company.value.jobs.offers.length > 0
+  return hasDataForSection(company.value, 'jobs', 'offers')
 })
 
 const jobOffers = computed(() => {

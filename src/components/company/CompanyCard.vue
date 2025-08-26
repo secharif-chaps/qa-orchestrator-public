@@ -11,12 +11,6 @@
         <h1 class="text-3xl font-semibold">{{ title }}</h1>
       </div>
       <div class="flex gap-2">
-        <Button
-          variant="tertiary"
-          icon="fa fa-comment"
-          :label="showAiChat ? 'Hide AI Chat' : 'Ask our AI'"
-          @click="showAiChat = !showAiChat"
-        />
         <slot name="actions"></slot>
         <Export />
       </div>
@@ -28,27 +22,8 @@
     </div>
 
     <!-- Main content container -->
-    <div
-      class="@container"
-      :class="{
-        'col-span-12': !showAiChat,
-        'col-span-7 lg:col-span-9': showAiChat,
-      }"
-    >
+    <div class="col-span-12">
       <slot></slot>
-    </div>
-
-    <!-- AI Chat sidebar -->
-    <div
-      :class="{
-        'col-span-0': !showAiChat,
-        'col-span-5 lg:col-span-3': showAiChat,
-      }"
-      v-show="showAiChat"
-    >
-      <div class="sticky top-20">
-        <Chat @hide="showAiChat = false" />
-      </div>
     </div>
   </div>
 </template>

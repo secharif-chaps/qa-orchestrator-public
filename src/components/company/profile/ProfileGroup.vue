@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-bg1 rounded-lg p-4">
+  <div class="bg-bg1 rounded-lg p-4 relative h-full">
     <div class="flex flex-col gap-2">
       <h4>Group</h4>
       <!-- Group name - individual property loading -->
@@ -8,7 +8,9 @@
           {{ getSourcedValue(company?.profile?.groupName) ?? 'Not found' }}
         </p>
       </div>
-      <Source :sourced-value="company?.profile?.groupName" />
+      <div class="absolute top-2 right-2">
+        <Source :sourced-value="company?.profile?.groupName" />
+      </div>
     </div>
   </div>
 </template>

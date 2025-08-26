@@ -142,14 +142,11 @@ const sendMessage = async () => {
     }))
 
     // Send to mint-backend API with authentication
-    const response: ChatResponse = await apiClient.post(
-      `/api/companies/${companyId.value}/chatbot`,
-      {
-        message: userQuestion,
-        company_context: company.value,
-        chat_history: chatHistory,
-      },
-    )
+    const response: ChatResponse = await apiClient.post(`/companies/${companyId.value}/chatbot`, {
+      message: userQuestion,
+      company_context: company.value,
+      chat_history: chatHistory,
+    })
 
     // Parse the response to extract actual content from stringified format
     let responseText =

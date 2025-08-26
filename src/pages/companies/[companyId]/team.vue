@@ -1,17 +1,28 @@
 <template>
   <div class="flex flex-col gap-6">
-    <!-- Empty state -->
-    <div class="bg-bg1 p-4 rounded-lg" v-if="!hasTeamData && !teamPending">
-      <div class="text-center py-8">
-        <div class="text-5xl text-secondary mb-4">
-          <i class="fa fa-users"></i>
-        </div>
-        <h3 class="text-xl font-semibold text-primary mb-2">{{ $t('team.noData.title') }}</h3>
-        <p class="text-secondary mb-6">
-          {{ $t('team.noData.description') }}
-        </p>
-      </div>
-    </div>
+    <!-- Loading State -->
+    <PageState 
+      v-if="taskState.isLoading.value" 
+      state="loading" 
+      page-type="team"
+      :task-progress="taskState.taskProgress.value"
+    />
+    
+    <!-- Error State -->
+    <PageState
+      v-else-if="taskState.hasErrors.value"
+      state="error"
+      page-type="team"
+      :error-message="taskState.errorMessages.value[0]"
+      @retry="handleRetry"
+    />
+    
+    <!-- No Data State -->
+    <PageState 
+      v-else-if="!hasTeamData" 
+      state="no-data" 
+      page-type="team"
+    />
 
     <!-- Main content -->
     <div v-if="hasTeamData" class="space-y-6">
@@ -165,9 +176,11 @@ import { useTheme } from '@/composables/useTheme'
 import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
+import { useTaskState, hasDataForSection } from '@/composables/useTaskState'
 import TeamMemberNode from '@/components/company/team/TeamMemberNode.vue'
 import TeamPageHeader from '@/components/company/team/TeamPageHeader.vue'
 import TeamMembersList from '@/components/company/team/TeamMembersList.vue'
+import PageState from '@/components/company/PageState.vue'
 import { useScreenshot } from '@/composables/useScreenshot'
 import type { TeamMember } from '@/types/company'
 
@@ -182,21 +195,20 @@ const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
 }))
 
-const teamPending = computed(() => {
-  if (!companyId.value) {
-    return false
-  }
-  return company.value?.tasks?.some(
-    (task: { type: string; status: string }) =>
-      task.type === 'team' && (task.status === 'pending' || task.status === 'running'),
-  )
-})
+// Task state management
+const taskState = useTaskState(company, 'team')
+
+// Handle retry action
+const handleRetry = () => {
+  // TODO: Implement retry logic - trigger team task restart
+  console.log('Retrying team data fetch...')
+}
 
 const { fitView, vueFlowRef } = useVueFlow()
 
 // Computed properties for data access
 const hasTeamData = computed(() => {
-  return !!company.value?.team && company.value.team.length > 0
+  return hasDataForSection(company.value, 'team')
 })
 
 // Generate nodes and edges from team hierarchy
