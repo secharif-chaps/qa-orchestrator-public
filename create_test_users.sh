@@ -1,24 +1,56 @@
 #!/bin/bash
 # Create Multiple Test Users Script
 # Creates multiple users with different permission combinations for testing
+#
+# Usage:
+#   ./create_test_users.sh                    # Interactive mode
+#   ./create_test_users.sh --non-interactive  # Use default credentials
 
 set -e  # Exit on any error
 
 echo "👥 Creating Multiple Test Users..."
 
-# Detect which docker-compose file to use and set admin credentials
+# Check for non-interactive mode
+NON_INTERACTIVE=false
+if [ "$1" = "--non-interactive" ]; then
+    NON_INTERACTIVE=true
+    echo "🤖 Running in non-interactive mode"
+fi
+
+# Detect which docker-compose file to use
 if [ -f "docker-compose.preprod.yml" ]; then
     COMPOSE_FILE="docker-compose.preprod.yml"
-    ADMIN_PASSWORD="admin_preprod_password"
-    echo "🔧 Using preprod configuration with preprod admin password"
+    DEFAULT_ADMIN_PASSWORD="admin_preprod_password"
+    echo "🔧 Using preprod configuration"
 elif [ -f "docker-compose.dev.yml" ]; then
     COMPOSE_FILE="docker-compose.dev.yml"
-    ADMIN_PASSWORD="admin"
-    echo "🔧 Using development configuration with default admin password"
+    DEFAULT_ADMIN_PASSWORD="admin"
+    echo "🔧 Using development configuration"
 else
     echo "❌ No docker-compose file found"
     exit 1
 fi
+
+# Set admin credentials (interactive or default)
+if [ "$NON_INTERACTIVE" = true ]; then
+    ADMIN_USERNAME="admin"
+    ADMIN_PASSWORD="$DEFAULT_ADMIN_PASSWORD"
+    echo "✅ Using default admin credentials: $ADMIN_USERNAME / [hidden]"
+else
+    # Prompt for admin credentials
+    echo ""
+    echo "🔐 Keycloak Admin Credentials"
+    echo "─────────────────────────────"
+    read -p "Admin username [admin]: " ADMIN_USERNAME
+    ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+
+    read -p "Admin password [$DEFAULT_ADMIN_PASSWORD]: " -s ADMIN_PASSWORD
+    echo  # New line after password input
+    ADMIN_PASSWORD=${ADMIN_PASSWORD:-$DEFAULT_ADMIN_PASSWORD}
+
+    echo "✅ Using admin credentials: $ADMIN_USERNAME / [hidden]"
+fi
+echo ""
 
 # Create Python script for multiple user creation
 cat > create_test_users.py << 'EOF'
@@ -38,6 +70,7 @@ import sys
 # Configuration
 KEYCLOAK_URL = "http://keycloak:8080"
 KEYCLOAK_REALM = "mint-dev"
+ADMIN_USERNAME = os.getenv('KEYCLOAK_ADMIN_USERNAME', 'admin')
 ADMIN_PASSWORD = os.getenv('KEYCLOAK_ADMIN_PASSWORD', 'admin')
 DB_CONFIG = {
     'host': 'db',
@@ -147,7 +180,7 @@ async def get_admin_token():
             data={
                 "grant_type": "password",
                 "client_id": "admin-cli",
-                "username": "admin",
+                "username": ADMIN_USERNAME,
                 "password": ADMIN_PASSWORD
             }
         )
@@ -419,7 +452,7 @@ EOF
 # Copy script to container and run it
 echo "🐍 Running test users creation script..."
 docker compose -f "$COMPOSE_FILE" cp create_test_users.py backend:/app/create_test_users.py
-docker compose -f "$COMPOSE_FILE" exec -e KEYCLOAK_ADMIN_PASSWORD="$ADMIN_PASSWORD" backend python create_test_users.py
+docker compose -f "$COMPOSE_FILE" exec -e KEYCLOAK_ADMIN_USERNAME="$ADMIN_USERNAME" -e KEYCLOAK_ADMIN_PASSWORD="$ADMIN_PASSWORD" backend python create_test_users.py
 
 # Clean up
 rm create_test_users.py
