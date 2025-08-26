@@ -1,17 +1,10 @@
 <template>
   <div class="flex flex-col gap-4">
-    <!-- Empty state -->
-    <div class="bg-bg1 rounded-lg p-4" v-if="!hasJobOffersData && !jobOffersPending">
-      <div class="text-center py-8">
-        <div class="text-5xl text-secondary mb-4">
-          <i class="fa fa-briefcase"></i>
-        </div>
-        <h3 class="text-xl font-semibold text-primary mb-2">{{ $t('jobs.noData.title') }}</h3>
-        <p class="text-secondary mb-6">
-          {{ $t('jobs.noData.description') }}
-        </p>
-      </div>
-    </div>
+    <!-- Loading State -->
+    <JobsEmptyState v-if="jobOffersPending" type="loading" />
+    
+    <!-- No Data State -->
+    <JobsEmptyState v-else-if="!hasJobOffersData" type="no-data" />
 
     <!-- Main content -->
     <div v-if="hasJobOffersData" class="space-y-6">
@@ -90,12 +83,12 @@
           <div
             v-if="filteredJobs.length === 0 && searchQuery"
             key="no-results"
-            class="col-span-full text-center py-8"
+            class="col-span-full"
           >
-            <i class="fa fa-search text-3xl text-secondary mb-3"></i>
-            <p class="text-secondary">
-              {{ $t('jobs.listings.noResults', { query: searchQuery }) }}
-            </p>
+            <JobsEmptyState
+              type="no-results"
+              :search-query="searchQuery"
+            />
           </div>
         </TransitionGroup>
       </div>
@@ -110,6 +103,7 @@ import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { getSourcedSource, getSourcedValue } from '@/components/helpers/sourcedValues'
 import JobCard from '@/components/company/jobs/JobCard.vue'
+import JobsEmptyState from '@/components/company/jobs/JobsEmptyState.vue'
 import { OInput } from '@owlint/feathers-vue'
 
 const route = useRoute()
