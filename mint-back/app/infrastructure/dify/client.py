@@ -272,7 +272,7 @@ class DifyClient:
             Response from the Dify chat workflow
         """
         # Hardcoded chat workflow credentials as provided
-        chat_workflow_id = "31435ab2-01e2-40e3-ae77-6b469d3a006c"
+        chat_workflow_id = "a2a382d0-caed-43e5-8272-b3b4cba96451"
         chat_api_key = "app-jGJl5PAPQnAE0IzFAfkV3XjO"
         
         url = f"{self.base_url}/chat-messages"
