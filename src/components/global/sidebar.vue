@@ -107,7 +107,7 @@ const buttons = computed(() => {
   }
 
   // Add admin dashboard if user has any admin permissions
-  if (authStore.hasAnyRole(['admin', 'admin.workspaces', 'admin.workflow'])) {
+  if (authStore.hasAnyRole(['admin.workspaces', 'admin.workflows', 'admin.costs'])) {
     baseButtons.push({
       icon: 'fa fa-fire',
       label: t('sidebar.admin'),

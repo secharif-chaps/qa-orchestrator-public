@@ -96,7 +96,7 @@
 <route lang="yaml">
 meta:
   permissions:
-    - admin.workflow
+    - admin.workflows
 </route>
 
 <script setup lang="ts">

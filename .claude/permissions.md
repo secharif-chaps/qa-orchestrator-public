@@ -220,17 +220,19 @@ const {
   canDeleteCompany,
   canViewCompany,
   canManageCompanies,
-  hasAnyCompanyAccess
+  hasAnyCompanyAccess,
 } = useCompanyPermissions()
 ```
 
 **Individual permissions:**
+
 - `canCreateCompany` - Permission to create companies
-- `canEditCompany` - Permission to edit companies  
+- `canEditCompany` - Permission to edit companies
 - `canDeleteCompany` - Permission to delete companies
 - `canViewCompany` - Permission to view company details
 
 **Compound permissions:**
+
 - `canManageCompanies` - True if user can edit OR delete companies
 - `hasAnyCompanyAccess` - True if user has any company permission
 
@@ -246,7 +248,6 @@ admin.users          # Admin access to user management
 workspace.read       # Permission to view workspace content
 workspace.write      # Permission to manage workspace users and settings
 company.create       # Permission to create companies
-company.update         # Permission to edit companies
 company.delete       # Permission to delete companies
 company.view         # Permission to view company details
 ```
@@ -277,7 +278,7 @@ Hide UI elements users can't access:
 <template>
   <!-- ✅ Good: Hide actions user can't perform -->
   <div>
-    <button v-if="authStore.hasPermission('company.update')" @click="editCompany">
+    <button v-if="authStore.hasPermission('company.create')" @click="editCompany">
       Edit Company
     </button>
     <button v-if="authStore.hasPermission('company.delete')" @click="deleteCompany">
@@ -378,9 +379,6 @@ meta:
     <h2>Company: {{ company.name }}</h2>
 
     <div class="actions">
-      <!-- Show edit button only if user can edit -->
-      <button v-if="canEdit" @click="editCompany" class="btn-primary">Edit Company</button>
-
       <!-- Show delete button only if user can delete -->
       <button v-if="canDelete" @click="deleteCompany" class="btn-danger">Delete Company</button>
 
@@ -389,9 +387,7 @@ meta:
     </div>
 
     <!-- No permissions message -->
-    <div v-if="!canEdit && !canDelete" class="text-secondary">
-      You have read-only access to this company.
-    </div>
+    <div v-if="!canDelete" class="text-secondary">You have read-only access to this company.</div>
   </div>
 </template>
 
@@ -402,7 +398,6 @@ import { useAuthStore } from '@/stores/auth'
 const authStore = useAuthStore()
 
 // Computed permission checks
-const canEdit = computed(() => authStore.hasPermission('company.update'))
 const canDelete = computed(() => authStore.hasPermission('company.delete'))
 const isAdmin = computed(() => authStore.hasAnyRole(['admin.companies', 'admin.all']))
 
@@ -490,30 +485,24 @@ This system provides flexible, secure access control while maintaining good deve
 <template>
   <div class="company-header">
     <h1>Companies</h1>
-    
+
     <!-- Search button - only visible if user can create companies -->
     <router-link v-if="canCreateCompany" to="/search" class="btn-primary">
       <i class="fas fa-plus"></i>
       Create Company
     </router-link>
-    
+
     <!-- Company actions for individual companies -->
     <div v-for="company in companies" :key="company.id" class="company-item">
       <h3>{{ company.name }}</h3>
-      
+
       <div class="company-actions">
-        <button v-if="canEditCompany" @click="editCompany(company.id)">
-          Edit
-        </button>
-        <button v-if="canDeleteCompany" @click="deleteCompany(company.id)">
-          Delete
-        </button>
+        <button v-if="canEditCompany" @click="editCompany(company.id)">Edit</button>
+        <button v-if="canDeleteCompany" @click="deleteCompany(company.id)">Delete</button>
       </div>
-      
+
       <!-- Show message if user has no management permissions -->
-      <p v-if="!canManageCompanies" class="text-secondary">
-        Read-only access
-      </p>
+      <p v-if="!canManageCompanies" class="text-secondary">Read-only access</p>
     </div>
   </div>
 </template>
@@ -522,12 +511,8 @@ This system provides flexible, secure access control while maintaining good deve
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 
 // Get all company permissions with one import
-const {
-  canCreateCompany,
-  canEditCompany,
-  canDeleteCompany,
-  canManageCompanies
-} = useCompanyPermissions()
+const { canCreateCompany, canEditCompany, canDeleteCompany, canManageCompanies } =
+  useCompanyPermissions()
 
 const companies = ref([]) // Your company data
 

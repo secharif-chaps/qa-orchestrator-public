@@ -119,7 +119,7 @@
 
         <!-- Cost Analysis -->
         <div
-          v-if="hasWorkflowAccess"
+          v-if="hasCostsAccess"
           class="bg-bg1 rounded-lg shadow-sm border border-border-2 hover:shadow-md transition-all duration-200 cursor-pointer group"
           @click="navigateToCosts"
         >
@@ -184,8 +184,11 @@ const authStore = useAuthStore()
 
 // Permission checks
 const hasWorkspaceAccess = computed(() => authStore.hasPermission('admin.workspaces'))
-const hasWorkflowAccess = computed(() => authStore.hasPermission('admin.workflow'))
-const hasAnyAdminAccess = computed(() => hasWorkspaceAccess.value || hasWorkflowAccess.value)
+const hasWorkflowAccess = computed(() => authStore.hasPermission('admin.workflows'))
+const hasCostsAccess = computed(() => authStore.hasPermission('admin.costs'))
+const hasAnyAdminAccess = computed(
+  () => hasWorkspaceAccess.value || hasWorkflowAccess.value || hasCostsAccess.value,
+)
 
 // Navigation methods
 const navigateToWorkspaces = () => {

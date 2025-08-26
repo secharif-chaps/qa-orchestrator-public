@@ -26,6 +26,7 @@ This project maintains detailed documentation in the `.claude/` folder that MUST
 Format: `<gitmoji> <type>(<scope>): <description>`
 
 Examples:
+
 - `✨ feat(companies): add new company listing feature`
 - `🐛 fix(auth): resolve login redirect issue`
 - `💄 style(ui): improve button hover states`
@@ -52,11 +53,13 @@ This project implements a granular permission system:
 - **Backend integration**: Permissions are synced between Keycloak and database
 
 ### Available Permissions
-- `company.create`, `company.update`, `company.delete`, `company.view`
+
+- `company.create`, `company.delete`, `company.view`
 - `workspace.read`, `workspace.write`
 - `admin.workspaces`
 
 ### Testing Permissions
+
 Use test users defined in `.claude/test-users.md` to test different permission scenarios.
 
 ## UI Components
