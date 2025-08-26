@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-bg3">
-    <div class="container mx-auto px-4 py-8 space-y-6">
+    <div class="space-y-6">
       <Button
         variant="tertiary"
         icon="fa fa-arrow-left"

@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen">
-    <div class="max-w-7xl mx-auto px-4">
+    <div class="">
       <!-- Header -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold mb-2">UI Components Showcase</h1>
@@ -295,7 +295,12 @@
                   <Button variant="secondary" icon="fa fa-download" label="Download" />
                   <Button variant="tertiary" icon="fa fa-edit" label="Edit" />
                   <Button variant="primary" color="danger" icon="fa fa-trash" label="Delete" />
-                  <Button variant="secondary" color="warning" icon="fa fa-exclamation-triangle" label="Warning" />
+                  <Button
+                    variant="secondary"
+                    color="warning"
+                    icon="fa fa-exclamation-triangle"
+                    label="Warning"
+                  />
                 </div>
                 <div class="flex flex-wrap gap-3">
                   <span class="text-sm text-secondary w-24">Right Icons:</span>
@@ -436,19 +441,35 @@
 
                 <!-- Destructive Actions -->
                 <div class="bg-bg1 p-4 rounded-lg border border-border-2">
-                  <h3 class="text-sm font-medium mb-3">Destructive Actions (Different Hierarchies)</h3>
+                  <h3 class="text-sm font-medium mb-3">
+                    Destructive Actions (Different Hierarchies)
+                  </h3>
                   <div class="space-y-2">
                     <div class="text-xs text-secondary mb-2">When delete is the main action:</div>
                     <div class="flex gap-2">
                       <Button variant="tertiary" label="Cancel" />
-                      <Button variant="primary" color="danger" icon="fa fa-trash" label="Delete Item" />
+                      <Button
+                        variant="primary"
+                        color="danger"
+                        icon="fa fa-trash"
+                        label="Delete Item"
+                      />
                     </div>
-                    <div class="text-xs text-secondary mb-2 mt-4">When delete is a secondary action:</div>
+                    <div class="text-xs text-secondary mb-2 mt-4">
+                      When delete is a secondary action:
+                    </div>
                     <div class="flex gap-2">
                       <Button variant="primary" icon="fa fa-save" label="Save Changes" />
-                      <Button variant="secondary" color="danger" icon="fa fa-trash" label="Delete" />
+                      <Button
+                        variant="secondary"
+                        color="danger"
+                        icon="fa fa-trash"
+                        label="Delete"
+                      />
                     </div>
-                    <div class="text-xs text-secondary mb-2 mt-4">When delete is a tertiary action:</div>
+                    <div class="text-xs text-secondary mb-2 mt-4">
+                      When delete is a tertiary action:
+                    </div>
                     <div class="flex gap-2">
                       <Button variant="primary" icon="fa fa-edit" label="Edit" />
                       <Button variant="secondary" icon="fa fa-copy" label="Duplicate" />

@@ -7,13 +7,6 @@
       class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center group animate-float"
     >
       <i class="fa fa-comments text-xl group-hover:rotate-12 transition-transform duration-300"></i>
-      <!-- Pulse animation for attention -->
-      <span class="absolute -top-0 -right-0 h-3 w-3">
-        <span
-          class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"
-        ></span>
-        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-      </span>
     </button>
   </Transition>
 

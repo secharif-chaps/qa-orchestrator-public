@@ -1,11 +1,11 @@
 <template>
   <div class="min-h-screen bg-bg3">
-    <div class="container mx-auto px-4 py-8">
+    <div>
       <!-- Header -->
       <div class="mb-8">
         <div class="flex items-center gap-4 mb-4">
           <button
-            @click="$router.push('/workspaces')"
+            @click="$router.push('/admin/workspaces')"
             class="text-secondary hover:text-base transition-colors p-2"
           >
             <i class="fa fa-arrow-left"></i>
@@ -92,7 +92,9 @@
                 >
                   {{ workspace.member_count }}
                 </span>
-                <span class="text-base">{{ workspace.member_count === 1 ? 'member' : 'members' }}</span>
+                <span class="text-base">{{
+                  workspace.member_count === 1 ? 'member' : 'members'
+                }}</span>
               </div>
             </div>
           </div>
@@ -339,7 +341,11 @@ const { t } = useI18n()
 const workspaceId = computed(() => parseInt(route.params.workspaceId as string))
 
 // Query for workspace details
-const { data: workspace, isLoading, error } = useQuery(workspaceDetailsQuery, () => ({ id: workspaceId.value }), {
+const {
+  data: workspace,
+  isLoading,
+  error,
+} = useQuery(workspaceDetailsQuery, () => ({ id: workspaceId.value }), {
   enabled: computed(() => !isNaN(workspaceId.value)),
 })
 

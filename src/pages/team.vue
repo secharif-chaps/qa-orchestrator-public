@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-bg3">
-    <div class="container mx-auto px-4 py-8">
+    <div>
       <TeamHeader
         :search="queryParams.search"
         :sort="queryParams.sort"

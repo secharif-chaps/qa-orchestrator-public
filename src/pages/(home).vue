@@ -1,6 +1,6 @@
 <template>
   <div class="py-8 min-h-screen">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div>
       <div class="mb-8">
         <div class="flex items-center justify-between">
           <div>
@@ -105,7 +105,12 @@
           <i class="fas fa-building text-secondary text-3xl mb-4"></i>
           <h3 class="text-lg font-medium mb-2">No companies yet</h3>
           <p class="text-secondary mb-4">Start by adding your first company to the database</p>
-          <Button variant="primary" icon="fa fa-plus" label="Add Company" @click="$router.push('/search')" />
+          <Button
+            variant="primary"
+            icon="fa fa-plus"
+            label="Add Company"
+            @click="$router.push('/search')"
+          />
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="">
     <div class="mb-8">
       <h1 class="text-3xl font-bold">{{ $t('settings.title') }}</h1>
       <p class="text-secondary mt-2">{{ $t('settings.description') }}</p>

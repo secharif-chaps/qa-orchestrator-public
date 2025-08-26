@@ -168,9 +168,11 @@ const departmentsCount = computed(() => {
     if (!members) return
     members.forEach((member) => {
       // Extract department from position (e.g., "VP of Sales" -> "Sales")
-      const dept = member.position.replace(/^(VP of |Head of |Director of |Manager of )/i, '')
-      if (dept && !dept.includes('CEO') && !dept.includes('Chief')) {
-        departments.add(dept)
+      if (member.position) {
+        const dept = member.position.replace(/^(VP of |Head of |Director of |Manager of )/i, '')
+        if (dept && !dept.includes('CEO') && !dept.includes('Chief')) {
+          departments.add(dept)
+        }
       }
       if (member.subordinates) {
         collectDepartments(member.subordinates)

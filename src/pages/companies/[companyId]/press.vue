@@ -1,13 +1,13 @@
 <template>
   <div class="min-h-screen">
     <!-- Loading State -->
-    <PageState 
-      v-if="taskState.isLoading.value" 
-      state="loading" 
+    <PageState
+      v-if="taskState.isLoading.value"
+      state="loading"
       page-type="press"
       :task-progress="taskState.taskProgress.value"
     />
-    
+
     <!-- Error State -->
     <PageState
       v-else-if="taskState.hasErrors.value"
@@ -16,16 +16,12 @@
       :error-message="taskState.errorMessages.value[0]"
       @retry="handleRetry"
     />
-    
+
     <!-- No Data State -->
-    <PageState 
-      v-else-if="!hasAnyPressData" 
-      state="no-data" 
-      page-type="press"
-    />
+    <PageState v-else-if="!hasAnyPressData" state="no-data" page-type="press" />
 
     <!-- Main Content -->
-    <div v-else class="container mx-auto">
+    <div v-else class="mx-auto">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div v-if="company?.press?.insights" class="lg:col-span-3">
           <Alert
@@ -156,7 +152,6 @@
               </div>
             </div>
           </div>
-
         </div>
 
         <!-- Sidebar -->
