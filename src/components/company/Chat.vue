@@ -1,6 +1,10 @@
 <template>
-  <div class="flex flex-col h-[calc(80vh-5rem)] overflow-y-auto rounded-xl bg-bg1 p-4">
+  <div
+    class="flex flex-col overflow-y-auto"
+    :class="isFloating ? 'h-full bg-transparent' : 'h-[calc(80vh-5rem)] rounded-xl bg-bg1 p-4'"
+  >
     <div
+      v-if="!isFloating"
       class="relative flex gap-4 items-center justify-between border-b pb-4 border-primary text-secondary"
     >
       <div class="flex gap-4 items-center">
@@ -11,7 +15,11 @@
         <!-- <i class="fa fa-up-right-and-down-left-from-center"></i> -->
       </div>
     </div>
-    <div class="grow py-2 flex flex-col gap-2 overflow-y-auto" ref="messagesContainer">
+    <div
+      class="grow flex flex-col gap-2 overflow-y-auto"
+      :class="isFloating ? 'p-4' : 'py-2'"
+      ref="messagesContainer"
+    >
       <div
         v-for="(message, index) in messages"
         :key="index"
@@ -36,12 +44,13 @@
         </div>
       </div>
     </div>
-    <div class="relative pt-2">
+    <div class="relative" :class="isFloating ? 'p-4 border-t border-border-2' : 'pt-2'">
       <textarea
         @keyup.enter="sendMessage"
         v-model="question"
         placeholder="Write a message..."
-        class="w-full h-32 bg-bg3 dark:bg-slate-900 border border-border-2 dark:border-slate-700 rounded-lg p-2 text-sm focus-within:outline-primary"
+        class="w-full bg-bg3 dark:bg-slate-900 border border-border-2 dark:border-slate-700 rounded-lg p-2 text-sm focus-within:outline-primary"
+        :class="isFloating ? 'h-20' : 'h-32'"
         @keydown.enter.ctrl.prevent="sendMessage"
         :disabled="isLoading"
       ></textarea>
@@ -64,8 +73,13 @@ import { apiClient } from '@/api/client'
 import { companyByIdQuery } from '@/queries/companies'
 import Button from '@/components/ui/Button.vue'
 import { useQuery } from '@pinia/colada'
-import { ref, nextTick, watch } from 'vue'
+import { ref, nextTick, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
+
+const props = defineProps<{
+  isFloating?: boolean
+  companyId?: string
+}>()
 
 defineEmits(['hide'])
 
@@ -83,8 +97,7 @@ const question = ref('')
 const isLoading = ref(false)
 const messagesContainer = ref(null)
 
-// Get company ID from route
-const companyId = route.params.id
+const companyId = computed(() => props.companyId || (route.params.companyId as string))
 
 // Auto-scroll to bottom when messages change
 watch(
@@ -99,7 +112,7 @@ watch(
 )
 
 const { data: company } = useQuery(companyByIdQuery, () => ({
-  id: route.params.companyId as string,
+  id: companyId.value,
 }))
 
 interface ChatResponse {
@@ -129,11 +142,14 @@ const sendMessage = async () => {
     }))
 
     // Send to mint-backend API with authentication
-    const response: ChatResponse = await apiClient.post(`/api/companies/${companyId}/chatbot`, {
-      message: userQuestion,
-      company_context: company.value,
-      chat_history: chatHistory,
-    })
+    const response: ChatResponse = await apiClient.post(
+      `/api/companies/${companyId.value}/chatbot`,
+      {
+        message: userQuestion,
+        company_context: company.value,
+        chat_history: chatHistory,
+      },
+    )
 
     // Parse the response to extract actual content from stringified format
     let responseText =

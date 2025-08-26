@@ -122,12 +122,6 @@
     </div>
   </div>
 
-  <!-- AI Chat sidebar -->
-  <div v-if="showAiChat" class="fixed right-4 top-24 w-96 z-10">
-    <div class="bg-bg1 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg">
-      <Chat @hide="showAiChat = false" />
-    </div>
-  </div>
 </template>
 
 <route lang="yaml">
@@ -137,7 +131,6 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import Chat from '@/components/company/Chat.vue'
 import InfoCard from '@/components/company/InfoCard.vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import { companyByIdQuery } from '@/queries/companies'
@@ -147,7 +140,6 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
-const showAiChat = ref(false)
 const showFallbackIcon = ref(false)
 const route = useRoute()
 

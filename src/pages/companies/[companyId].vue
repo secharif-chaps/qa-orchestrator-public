@@ -4,12 +4,15 @@
       <TasksFlow v-if="displayTasks" />
       <RouterView />
     </div>
+    <!-- Floating AI Chat -->
+    <FloatingChat />
   </CompanyCard>
 </template>
 
 <script lang="ts" setup>
 import CompanyCard from '@/components/company/CompanyCard.vue'
 import TasksFlow from '@/components/company/tasks/TasksFlow.vue'
+import FloatingChat from '@/components/company/FloatingChat.vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
