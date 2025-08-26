@@ -95,6 +95,24 @@
             </div>
           </div>
 
+          <!-- LLM Selection -->
+          <div>
+            <label class="block text-sm font-medium text-base mb-2">
+              {{ $t('admin.workflows.llm', 'Language Model') }}
+            </label>
+            <select
+              v-if="isEditing"
+              v-model="editData.llm"
+              class="w-full px-3 py-2 rounded-md bg-bg2 border border-border text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+            >
+              <option value="claude">Claude</option>
+              <option value="mistral">Mistral</option>
+            </select>
+            <div v-else class="text-sm text-secondary bg-bg2 px-3 py-2 rounded-md">
+              {{ workflow.llm ? capitalizeFirst(workflow.llm) : 'Claude' }}
+            </div>
+          </div>
+
           <!-- Action Buttons (Edit Mode Only) -->
           <div v-if="isEditing" class="flex items-center gap-3 pt-2">
             <Button
@@ -194,6 +212,16 @@
             }}
           </div>
         </div>
+
+        <!-- LLM Selection -->
+        <div>
+          <label class="block text-sm font-medium text-base mb-2">
+            {{ $t('admin.workflows.llm', 'Language Model') }}
+          </label>
+          <div class="text-sm text-secondary bg-bg2 px-3 py-2 rounded-md">
+            {{ workflow.llm ? capitalizeFirst(workflow.llm) : 'Claude' }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -214,7 +242,7 @@ interface Props {
 const { workflow, loading = false } = defineProps<Props>()
 
 const emit = defineEmits<{
-  update: [taskType: string, data: { workflow_id?: string | null; api_key?: string | null }]
+  update: [taskType: string, data: { workflow_id?: string | null; api_key?: string | null; llm?: 'claude' | 'mistral' | null }]
 }>()
 
 // Edit state
@@ -229,6 +257,7 @@ const originalRect = ref<DOMRect | null>(null)
 const editData = ref({
   workflow_id: '',
   api_key: '',
+  llm: 'claude' as 'claude' | 'mistral',
 })
 
 // Initialize edit data when workflow changes
@@ -238,6 +267,7 @@ watch(
     editData.value = {
       workflow_id: newWorkflow.workflow_id || '',
       api_key: '',
+      llm: newWorkflow.llm || 'claude',
     }
   },
   { immediate: true },
@@ -296,8 +326,10 @@ const hasChanges = computed(() => {
   const originalWorkflowId = workflow.workflow_id || ''
   const newWorkflowId = editData.value.workflow_id || ''
   const hasNewApiKey = !!editData.value.api_key
+  const originalLlm = workflow.llm || 'claude'
+  const newLlm = editData.value.llm
 
-  return originalWorkflowId !== newWorkflowId || hasNewApiKey
+  return originalWorkflowId !== newWorkflowId || hasNewApiKey || originalLlm !== newLlm
 })
 
 // Enter zoom mode with smooth animation
@@ -428,6 +460,7 @@ const cancelEdit = () => {
   editData.value = {
     workflow_id: workflow.workflow_id || '',
     api_key: '',
+    llm: workflow.llm || 'claude',
   }
 }
 
@@ -435,7 +468,7 @@ const cancelEdit = () => {
 const saveChanges = () => {
   if (!hasChanges.value) return
 
-  const updateData: { workflow_id?: string | null; api_key?: string | null } = {}
+  const updateData: { workflow_id?: string | null; api_key?: string | null; llm?: 'claude' | 'mistral' | null } = {}
 
   // Include workflow_id if changed
   const originalWorkflowId = workflow.workflow_id || ''
@@ -449,9 +482,20 @@ const saveChanges = () => {
     updateData.api_key = editData.value.api_key
   }
 
+  // Include llm if changed
+  const originalLlm = workflow.llm || 'claude'
+  if (originalLlm !== editData.value.llm) {
+    updateData.llm = editData.value.llm
+  }
+
   emit('update', workflow.task_type, updateData)
   isEditing.value = false
   exitZoomMode()
+}
+
+// Helper function to capitalize first letter
+const capitalizeFirst = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 // ESC key support
