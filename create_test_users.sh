@@ -3,8 +3,8 @@
 # Creates multiple users with different permission combinations for testing
 #
 # Usage:
-#   ./create_test_users.sh                    # Interactive mode
-#   ./create_test_users.sh --non-interactive  # Use default credentials
+#   ./create_test_users.sh                    # Interactive mode (prompts for credentials)
+#   ./create_test_users.sh --non-interactive  # Use environment-specific defaults
 
 set -e  # Exit on any error
 
@@ -21,10 +21,12 @@ fi
 if [ -f "docker-compose.preprod.yml" ]; then
     COMPOSE_FILE="docker-compose.preprod.yml"
     DEFAULT_ADMIN_PASSWORD="admin_preprod_password"
+    DEFAULT_DB_PASSWORD="postgres_preprod_password"
     echo "🔧 Using preprod configuration"
 elif [ -f "docker-compose.dev.yml" ]; then
     COMPOSE_FILE="docker-compose.dev.yml"
     DEFAULT_ADMIN_PASSWORD="admin"
+    DEFAULT_DB_PASSWORD="postgres"
     echo "🔧 Using development configuration"
 else
     echo "❌ No docker-compose file found"
@@ -35,7 +37,10 @@ fi
 if [ "$NON_INTERACTIVE" = true ]; then
     ADMIN_USERNAME="admin"
     ADMIN_PASSWORD="$DEFAULT_ADMIN_PASSWORD"
+    DB_USERNAME="postgres"
+    DB_PASSWORD="$DEFAULT_DB_PASSWORD"
     echo "✅ Using default admin credentials: $ADMIN_USERNAME / [hidden]"
+    echo "✅ Using default database credentials: $DB_USERNAME / [hidden]"
 else
     # Prompt for admin credentials
     echo ""
@@ -49,6 +54,19 @@ else
     ADMIN_PASSWORD=${ADMIN_PASSWORD:-$DEFAULT_ADMIN_PASSWORD}
 
     echo "✅ Using admin credentials: $ADMIN_USERNAME / [hidden]"
+
+    # Prompt for database credentials
+    echo ""
+    echo "🗄️  Database Credentials"
+    echo "─────────────────────────"
+    read -p "Database username [postgres]: " DB_USERNAME
+    DB_USERNAME=${DB_USERNAME:-postgres}
+
+    read -p "Database password [$DEFAULT_DB_PASSWORD]: " -s DB_PASSWORD
+    echo  # New line after password input
+    DB_PASSWORD=${DB_PASSWORD:-$DEFAULT_DB_PASSWORD}
+
+    echo "✅ Using database credentials: $DB_USERNAME / [hidden]"
 fi
 echo ""
 
@@ -76,8 +94,8 @@ DB_CONFIG = {
     'host': 'db',
     'port': 5432,
     'database': 'mint_db',
-    'user': 'postgres',
-    'password': 'postgres'
+    'user': os.getenv('DB_USERNAME', 'postgres'),
+    'password': os.getenv('DB_PASSWORD', 'postgres')
 }
 
 # Test users configuration with different permission combinations
@@ -452,7 +470,7 @@ EOF
 # Copy script to container and run it
 echo "🐍 Running test users creation script..."
 docker compose -f "$COMPOSE_FILE" cp create_test_users.py backend:/app/create_test_users.py
-docker compose -f "$COMPOSE_FILE" exec -e KEYCLOAK_ADMIN_USERNAME="$ADMIN_USERNAME" -e KEYCLOAK_ADMIN_PASSWORD="$ADMIN_PASSWORD" backend python create_test_users.py
+docker compose -f "$COMPOSE_FILE" exec -e KEYCLOAK_ADMIN_USERNAME="$ADMIN_USERNAME" -e KEYCLOAK_ADMIN_PASSWORD="$ADMIN_PASSWORD" -e DB_USERNAME="$DB_USERNAME" -e DB_PASSWORD="$DB_PASSWORD" backend python create_test_users.py
 
 # Clean up
 rm create_test_users.py
