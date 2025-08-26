@@ -10,29 +10,25 @@ export const useCompanyPermissions = () => {
 
   // Core company permissions
   const canCreateCompany = computed(() => authStore.hasPermission('company.create'))
-  const canEditCompany = computed(() => authStore.hasPermission('company.update'))
   const canDeleteCompany = computed(() => authStore.hasPermission('company.delete'))
   const canViewCompany = computed(() => authStore.hasPermission('company.view'))
 
   // Compound permissions for convenience
-  const canManageCompanies = computed(() => 
-    canEditCompany.value || canDeleteCompany.value
-  )
+  const canManageCompanies = computed(() => canDeleteCompany.value)
 
-  const hasAnyCompanyAccess = computed(() => 
-    canCreateCompany.value || 
-    canEditCompany.value || 
-    canDeleteCompany.value || 
-    canViewCompany.value
+  const hasAnyCompanyAccess = computed(
+    () =>
+      canCreateCompany.value ||
+      canDeleteCompany.value ||
+      canViewCompany.value,
   )
 
   return {
     // Individual permissions
     canCreateCompany,
-    canEditCompany,
     canDeleteCompany,
     canViewCompany,
-    
+
     // Compound permissions
     canManageCompanies,
     hasAnyCompanyAccess,
