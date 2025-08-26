@@ -67,7 +67,7 @@
       <div>
         <h4 class="font-semibold text-primary mb-2">{{ $t('profile.sections.csr.charity') }}</h4>
         <div class="">
-          <ul class="list-disc space-y-1">
+          <ul class="space-y-1">
             <li
               class="flex items-start space-x-2 text-secondary"
               v-for="action in company?.csr?.charity_actions || []"
@@ -92,7 +92,7 @@
           {{ $t('profile.sections.csr.sustainability') }}
         </h4>
         <div class="">
-          <ul class="list-disc space-y-1">
+          <ul class="space-y-1">
             <li
               class="flex items-start space-x-2 text-secondary"
               v-for="program in company?.csr?.sustainability_programs || []"
@@ -118,7 +118,7 @@
       <div>
         <h4 class="font-semibold text-primary mb-2">{{ $t('profile.sections.csr.community') }}</h4>
         <div class="">
-          <ul class="list-disc space-y-1">
+          <ul class="space-y-1">
             <li
               class="flex items-start space-x-2 text-secondary"
               v-for="involvement in company?.csr?.community_involvement || []"
@@ -144,7 +144,7 @@
       <div>
         <h4 class="font-semibold text-primary mb-2">{{ $t('profile.sections.csr.diversity') }}</h4>
         <div class="">
-          <ul class="list-disc space-y-1">
+          <ul class="space-y-1">
             <li
               class="flex items-start space-x-2 text-secondary"
               v-for="initiative in company?.csr?.diversity_inclusion || []"
@@ -170,7 +170,7 @@
       <div>
         <h4 class="font-semibold text-primary mb-2">{{ $t('profile.sections.csr.ethics') }}</h4>
         <div class="">
-          <ul class="list-disc space-y-1">
+          <ul class="space-y-1">
             <li
               class="flex items-start space-x-2 text-secondary"
               v-for="practice in company?.csr?.ethical_practices || []"
@@ -196,7 +196,7 @@
       <div>
         <h4 class="font-semibold text-primary mb-2">{{ $t('profile.sections.csr.awards') }}</h4>
         <div class="">
-          <ul class="list-disc space-y-1">
+          <ul class="space-y-1">
             <li
               class="flex items-start space-x-2 text-secondary"
               v-for="award in company?.csr?.awards_certifications || []"
