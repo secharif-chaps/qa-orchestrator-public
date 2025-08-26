@@ -1,17 +1,10 @@
 <template>
   <div class="flex flex-col gap-4">
-    <!-- Main content -->
-    <div class="bg-bg1 p-4 rounded-lg" v-if="!hasTimelineData && !timelinePending">
-      <div class="text-center py-8">
-        <div class="text-5xl text-secondary mb-4">
-          <i class="fa fa-calendar-days"></i>
-        </div>
-        <h3 class="text-xl font-semibold text-primary mb-2">{{ $t('timeline.noData.title') }}</h3>
-        <p class="text-secondary mb-6">
-          {{ $t('timeline.noData.description') }}
-        </p>
-      </div>
-    </div>
+    <!-- Loading State -->
+    <TimelineEmptyState v-if="timelinePending" type="loading" />
+    
+    <!-- No Data State -->
+    <TimelineEmptyState v-else-if="!hasTimelineData" type="no-data" />
 
     <!-- Timeline visualization -->
     <div v-if="hasTimelineData" class="relative">
@@ -34,28 +27,23 @@
         <div>
           <Event v-for="(event, index) in filteredEvents" :key="index" :event="event" />
         </div>
-        <div
+        <TimelineEmptyState
           v-if="filteredEvents.length === 0 && searchQuery"
-          class="text-center py-8 border-2 border-dashed border-border-2 rounded-lg"
-        >
-          <i class="fa fa-search text-3xl text-secondary mb-3"></i>
-          <p class="text-secondary">
-            {{ $t('timeline.search.noResults', { query: searchQuery }) }}
-          </p>
-        </div>
+          type="no-results"
+          :search-query="searchQuery"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import CompanyCard from '@/components/company/CompanyCard.vue'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { useRoute } from 'vue-router'
 import { computed, ref } from 'vue'
 import Event from '@/components/company/timeline/Event.vue'
-import { OInput } from '@owlint/feathers-vue'
+import TimelineEmptyState from '@/components/company/timeline/TimelineEmptyState.vue'
 
 const route = useRoute()
 
