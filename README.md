@@ -1,228 +1,272 @@
-# Mint Application Docker Setup
+# Mint Server - Company Data Intelligence Platform
 
-This repository contains a dockerized setup for the Mint application, consisting of a Nuxt frontend, FastAPI backend, and PostgreSQL database.
+A FastAPI backend service that finds and aggregates comprehensive data about companies online using web scraping, AI workflows, and automated data collection systems.
 
-## Prerequisites
+## 🎯 What It Does
 
-- Docker
-- Docker Compose
+Mint Server is a company research platform that automatically discovers and collects:
 
-## Getting Started
+- **Company profiles**: Basic info, descriptions, and business details
+- **Digital presence**: Websites, social media, online footprint
+- **Team information**: Key employees, leadership, organizational structure
+- **Product portfolios**: Services, solutions, and offerings
+- **Corporate timeline**: Company history, milestones, news
+- **CSR initiatives**: Sustainability efforts, social responsibility
+- **Press coverage**: News articles, media mentions
+- **Job listings**: Current openings, hiring trends
 
-To run the application in Docker containers:
+All data is collected through automated workflows, AI analysis, and intelligent web scraping.
 
-1. Clone this repository
-2. Navigate to the root directory
+## 🏗️ Architecture
 
+- **FastAPI Backend**: RESTful API with async processing
+- **PostgreSQL Database**: Company data storage and relationships
+- **Keycloak Authentication**: User management and permissions
+- **Dify AI Workflows**: Intelligent data processing and chat
+- **Docker**: Containerized deployment
+
+## 🚀 Quick Start
+
+### Development Environment
+
+1. **Clone and setup**:
+   ```bash
+   git clone <repository>
+   cd mint-server
+   ```
+
+2. **Start services**:
+   ```bash
+   docker compose -f docker-compose.dev.yml up -d
+   ```
+
+3. **Create initial user**:
+   ```bash
+   ./create_initial_user.sh
+   ```
+
+4. **Access the application**:
+   - API Documentation: http://localhost:8000/docs
+   - Keycloak Admin: http://localhost:8080 (admin/admin)
+   - Database: localhost:5432 (postgres/postgres)
+
+### Test Users
+
+Create test users with different permission levels:
 ```bash
-cd mint
+./create_test_users.sh
 ```
 
-3. Build and start the containers
+Available test accounts:
+- `admin` / `admin123` - Full system access
+- `company_manager` / `manager123` - Full company management
+- `company_creator` / `creator123` - Create and view companies
+- `company_viewer` / `viewer123` - Read-only access
 
+## 🔧 API Features
+
+### Company Management
+- **GET** `/api/companies` - List companies with pagination
+- **POST** `/api/companies` - Create/search new companies
+- **GET** `/api/companies/{id}` - Get company details
+- **PUT** `/api/companies/{id}` - Update company data
+- **DELETE** `/api/companies/{id}` - Remove companies
+
+### AI Chat
+- **POST** `/api/companies/{id}/chatbot` - Chat about company data
+
+### Task Management
+- **GET** `/api/tasks` - View data collection tasks
+- **POST** `/api/tasks/{id}/execute` - Trigger data collection
+
+### User & Workspace Management
+- **GET** `/api/workspaces/{id}/users` - Manage team members
+- **PATCH** `/api/workspaces/{id}/users/{user_id}` - Update permissions
+
+## 🌍 Environments
+
+### Development
 ```bash
-docker-compose up -d
+docker compose -f docker-compose.dev.yml up -d
 ```
+- Local development with hot reload
+- Debug logging enabled
+- Exposed database port
 
-4. Access the application
-
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- Keycloak Admin Console: http://localhost:8080
-
-## Services
-
-- **Frontend**: Nuxt.js application running on port 3000
-- **Backend**: FastAPI application running on port 8000
-- **Database**: PostgreSQL running on port 5432
-- **Keycloak**: Identity and Access Management server running on port 8080
-
-## Docker Compose Commands
-
-- Start the containers: `docker-compose up -d`
-- Stop the containers: `docker-compose down`
-- View logs: `docker-compose logs -f`
-- Rebuild containers: `docker-compose up -d --build`
-
-## Environment Variables
-
-### Backend
-
-- `DATABASE_URL`: PostgreSQL connection string
-- `API_HOST`: Host to bind the API to
-- `API_PORT`: Port to run the API on
-- `DIFY_URL`: URL for the Dify integration
-- `DIFY_API_KEY`: API key for Dify workflows
-
-### Frontend
-
-- `NUXT_PUBLIC_BACKEND_API`: URL of the backend API
-
-### Keycloak
-
-- `KEYCLOAK_DB_USERNAME`: Username for Keycloak database (default: `keycloak`)
-- `KEYCLOAK_DB_PASSWORD`: Password for Keycloak database (default: `!ChangeMe!`)
-- `KEYCLOAK_DB_NAME`: Name of the Keycloak database (default: `keycloak`)
-- `KEYCLOAK_ADMIN_USERNAME`: Username for Keycloak admin console (default: `admin`)
-- `KEYCLOAK_ADMIN_PASSWORD`: Password for Keycloak admin console (default: `admin`)
-
-## Data Persistence
-
-PostgreSQL data is persisted in a Docker volume named `postgres_data`. 
-
----
-
-# 🚀 Production Deployment
-
-## Initial Deployment
-
-### Prerequisites
-- SSH access to server: `nmercier@10.0.1.2`
-- Docker and Docker Compose installed on server
-
-### Deploy all services
+### Preprod (VPN Required)
 ```bash
-./deploy-single-server.sh
+./deploy-preprod.sh
 ```
+- **Server**: 10.0.1.2 (behind VPN)
+- **Dify Workflows**: 10.0.1.1
+- Production-like environment for testing
 
-This deploys all services to `10.0.1.2`:
-- **Frontend**: http://10.0.1.2:3000
-- **Backend API**: http://10.0.1.2:8000  
-- **Keycloak**: http://10.0.1.2:8080
-- **Database**: PostgreSQL on port 5432
+## 📝 Scripts Reference
 
-### Create database tables (if needed)
-```bash
-ssh nmercier@10.0.1.2 "cd /home/nmercier/mint && docker-compose -f docker-compose.prod.yml exec backend python -c \"
-import sys
-sys.path.append('/app')
-from app.database import Base, engine
-from app.models.company import Company
-from app.models.user import User  
-from app.models.task import Task
-print('Creating all tables...')
-Base.metadata.create_all(bind=engine)
-print('Tables created successfully!')
-\""
-```
+### Deployment
+- `./deploy-preprod.sh` - Deploy to preprod server (10.0.1.2)
 
-## 🔄 Updates
+### User Management
+- `./create_initial_user.sh` - Create admin user (nmr)
+- `./create_test_users.sh` - Create multiple test users with different permissions
 
-### Quick update scripts
-```bash
-# Update only frontend (~30-60s)
-./update.sh frontend
+### Monitoring
+- `./logs.sh` - View production logs
+- `./logs.sh backend` - Backend logs only
+- `./logs.sh status` - Service status
+- `./logs.sh backend -f` - Real-time backend logs
 
-# Update only backend (~30-60s)  
-./update.sh backend
+## 🔐 Authentication & Permissions
 
-# Full redeploy (~2-3min)
-./update.sh all
-```
+### Permission System
+- **workspace.read/write** - Workspace access and team management
+- **company.view** - View company data
+- **company.create** - Search and create companies
+- **company.update** - Edit existing companies
+- **company.delete** - Remove companies
+- **admin.workspaces** - Global workspace administration
 
-### Manual updates
-```bash
-# Frontend only
-tar -czf /tmp/mint-frontend.tar.gz mint-front/
-scp /tmp/mint-frontend.tar.gz nmercier@10.0.1.2:/home/nmercier/mint/
-ssh nmercier@10.0.1.2 "cd /home/nmercier/mint && tar -xzf mint-frontend.tar.gz && docker-compose -f docker-compose.prod.yml build frontend && docker-compose -f docker-compose.prod.yml up -d frontend"
+### Keycloak Configuration
+- **Development Realm**: mint-dev
+- **Default Admin**: admin/admin
+- **JWT Authentication**: RS256 with realm roles
 
-# Backend only
-tar -czf /tmp/mint-backend.tar.gz mint-back/
-scp /tmp/mint-backend.tar.gz nmercier@10.0.1.2:/home/nmercier/mint/
-ssh nmercier@10.0.1.2 "cd /home/nmercier/mint && tar -xzf mint-backend.tar.gz && docker-compose -f docker-compose.prod.yml build backend && docker-compose -f docker-compose.prod.yml up -d backend"
-```
+## 🤖 AI Integration
+
+### Dify Workflows
+- **Data Collection**: Automated scraping and analysis
+- **Company Chat**: AI-powered conversations about company data
+- **Workflow Server**: 10.0.1.1 (production)
+
+### Supported Tasks
+- Profile generation
+- Team analysis
+- Product discovery
+- Timeline construction
+- Press monitoring
+- CSR assessment
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+**Database**:
+- `DATABASE_URL`: PostgreSQL connection
+- `DB_PASSWORD`: Database password (preprod)
+
+**Dify Integration**:
+- `DIFY_URL`: Workflow server URL
+- `DIFY_API_KEY`: Workflow API access
+- `DIFY_TIMELINE_API_KEY`: Timeline workflow key
+
+**Keycloak**:
+- `KEYCLOAK_SERVER_URL`: Auth server URL
+- `KEYCLOAK_REALM`: Authentication realm
+- `KEYCLOAK_CLIENT_ID`: Client identifier
+- `KEYCLOAK_ADMIN_PASSWORD`: Admin password
+
+**CORS**:
+- `CORS_ORIGIN`: Allowed frontend origins
+
+## 📊 Database Schema
+
+### Core Tables
+- `companies` - Company profiles and data
+- `workspaces` - Multi-tenancy organization
+- `workspace_members` - User-workspace relationships
+- `user_workspace_permissions` - Granular permissions
+- `tasks` - Data collection job tracking
+- `workflow_configs` - AI workflow settings
 
 ## 🔍 Monitoring
 
-### View logs
+### Health Checks
 ```bash
-# All logs
-./logs.sh
+# Service status
+docker compose -f docker-compose.dev.yml ps
+
+# Backend health
+curl http://localhost:8000/docs
+
+# Database connection
+docker compose -f docker-compose.dev.yml exec backend python -c "from app.database import engine; print(engine.execute('SELECT 1').scalar())"
+```
+
+### Logs
+```bash
+# All services
+docker compose -f docker-compose.dev.yml logs
 
 # Specific service
-./logs.sh backend
-./logs.sh frontend
-./logs.sh keycloak
+docker compose -f docker-compose.dev.yml logs backend
 
-# Real-time logs
-./logs.sh backend -f
-
-# Service status
-./logs.sh status
+# Real-time
+docker compose -f docker-compose.dev.yml logs -f backend
 ```
 
-### Manual monitoring
+## 🔧 Development
+
+### Database Migrations
 ```bash
-# Service status
-ssh nmercier@10.0.1.2 "cd /home/nmercier/mint && docker-compose -f docker-compose.prod.yml ps"
+# Create migration
+docker compose -f docker-compose.dev.yml exec backend alembic revision -m "description"
 
-# All logs
-ssh nmercier@10.0.1.2 "cd /home/nmercier/mint && docker-compose -f docker-compose.prod.yml logs"
-
-# Specific service logs
-ssh nmercier@10.0.1.2 "cd /home/nmercier/mint && docker-compose -f docker-compose.prod.yml logs backend"
-
-# Real-time logs
-ssh nmercier@10.0.1.2 "cd /home/nmercier/mint && docker-compose -f docker-compose.prod.yml logs -f backend"
+# Apply migrations
+docker compose -f docker-compose.dev.yml exec backend alembic upgrade head
 ```
 
-### Connect to containers
+### Adding New Features
+1. Create API endpoints in `mint-back/app/api/endpoints/`
+2. Define data models in `mint-back/app/models/`
+3. Add business logic in `mint-back/app/services/`
+4. Update permissions in Keycloak realm configuration
+
+## 🚨 Known Issues
+
+### Alembic Migrations
+Some migration files contain null bytes. Use manual table creation if needed:
 ```bash
-# Backend shell
-ssh nmercier@10.0.1.2 "cd /home/nmercier/mint && docker-compose -f docker-compose.prod.yml exec backend bash"
-
-# Database console
-ssh nmercier@10.0.1.2 "cd /home/nmercier/mint && docker-compose -f docker-compose.prod.yml exec db psql -U postgres mint_db"
+docker compose -f docker-compose.dev.yml exec backend python -c "
+from app.database import Base, engine
+Base.metadata.create_all(bind=engine)
+"
 ```
 
-## 🔐 Authentication
-
-### Keycloak Admin Access
-- **URL**: http://10.0.1.2:8080
-- **Username**: `admin`
-- **Password**: `admin`
-
-### Test Users (realm: mint-dev)
-- `admin` / `password`
-- `nmr` / `password`
-
-## 🐛 Known Issues
-
-### Alembic migrations corrupted
-Migration files contain null bytes. Use manual table creation instead.
-
-### Workflow external service
-External workflow service (Dify) may be unavailable. This only affects task creation, not core functionality.
-
-### Crypto.subtle HTTPS error
-Resolved by using `oidc-client` v1.11.5 instead of `oidc-client-ts` for HTTP support.
+### Dify Connectivity
+External Dify workflows may be unavailable. This only affects new data collection tasks - existing company data remains accessible.
 
 ## 📁 Project Structure
 
 ```
-mint/
-├── mint-front/              # Nuxt.js frontend
-├── mint-back/               # FastAPI backend  
-├── docker/                  # Docker configs
-│   ├── db/                  # PostgreSQL init scripts
-│   └── keycloak/            # Keycloak configuration
-├── deploy-single-server.sh  # Full deployment script
-├── update.sh                # Quick update script
-├── logs.sh                  # Log viewing script
-├── docker-compose.yml       # Local development
-└── docker-compose.prod.yml  # Production config (generated)
+mint-server/
+├── mint-back/              # FastAPI application
+│   ├── app/
+│   │   ├── api/            # REST API endpoints
+│   │   ├── core/           # Configuration and security
+│   │   ├── models/         # Database models
+│   │   ├── services/       # Business logic
+│   │   ├── schemas/        # Pydantic models
+│   │   └── infrastructure/ # External integrations
+│   ├── alembic/            # Database migrations
+│   └── scripts/            # Utility scripts
+├── docker/                 # Docker configurations
+│   ├── db/                 # PostgreSQL setup
+│   └── keycloak/           # Auth server config
+├── create_initial_user.sh  # Admin user setup
+├── create_test_users.sh    # Test users creation
+├── deploy-preprod.sh       # Preprod deployment
+├── logs.sh                 # Log viewing utility
+└── docker-compose.*.yml    # Environment configs
 ```
 
-## 🔧 Production Configuration
+## 🤝 Contributing
 
-### Environment Variables
-- `CORS_ORIGIN=http://10.0.1.2:3000` (backend)
-- `NUXT_PUBLIC_BACKEND_API=http://10.0.1.2:8000` (frontend)
-- `KEYCLOAK_ADMIN=admin` / `KEYCLOAK_ADMIN_PASSWORD=admin`
+1. Follow existing code patterns and structure
+2. Add appropriate permissions for new endpoints
+3. Update documentation for new features
+4. Test with multiple user permission levels
+5. Ensure Docker compatibility
 
-### Exposed Ports
-- `3000`: Frontend Nuxt.js
-- `8000`: Backend FastAPI
-- `8080`: Keycloak
-- `5432`: PostgreSQL
+---
+
+*This platform helps businesses discover comprehensive intelligence about companies through automated data collection and AI-powered analysis.*
