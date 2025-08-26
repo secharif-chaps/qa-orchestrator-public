@@ -6,6 +6,18 @@ set -e  # Exit on any error
 
 echo "👥 Creating Multiple Test Users..."
 
+# Detect which docker-compose file to use
+if [ -f "docker-compose.preprod.yml" ]; then
+    COMPOSE_FILE="docker-compose.preprod.yml"
+    echo "🔧 Using preprod configuration"
+elif [ -f "docker-compose.dev.yml" ]; then
+    COMPOSE_FILE="docker-compose.dev.yml"
+    echo "🔧 Using development configuration"
+else
+    echo "❌ No docker-compose file found"
+    exit 1
+fi
+
 # Create Python script for multiple user creation
 cat > create_test_users.py << 'EOF'
 #!/usr/bin/env python3
@@ -44,9 +56,10 @@ TEST_USERS = [
             'workspace.write', 
             'company.view',
             'company.create',
-            'company.update',
             'company.delete',
-            'admin.workspaces'
+            'admin.workspaces',
+            'admin.workflows',
+            'admin.costs'
         ],
         'description': 'Full admin access - can manage workspaces and all company operations'
     },
@@ -59,10 +72,9 @@ TEST_USERS = [
         'realm_roles': [
             'company.view',
             'company.create',
-            'company.update',
             'company.delete'
         ],
-        'description': 'Full company management - can create, edit and delete companies'
+        'description': 'Full company management - can create and delete companies'
     },
     {
         'username': 'company_editor',
@@ -71,10 +83,9 @@ TEST_USERS = [
         'firstName': 'Company',
         'lastName': 'Editor',
         'realm_roles': [
-            'company.view',
-            'company.update'
+            'company.view'
         ],
-        'description': 'Can view and edit existing companies, cannot create or delete'
+        'description': 'Can view companies only - read access'
     },
     {
         'username': 'company_creator',
@@ -86,7 +97,7 @@ TEST_USERS = [
             'company.view',
             'company.create'
         ],
-        'description': 'Can view and create companies, cannot edit or delete existing ones'
+        'description': 'Can view and create companies, cannot delete existing ones'
     },
     {
         'username': 'company_viewer',
@@ -403,11 +414,11 @@ EOF
 
 # Copy script to container and run it
 echo "🐍 Running test users creation script..."
-docker compose -f docker-compose.dev.yml cp create_test_users.py backend:/app/create_test_users.py
-docker compose -f docker-compose.dev.yml exec backend python create_test_users.py
+docker compose -f "$COMPOSE_FILE" cp create_test_users.py backend:/app/create_test_users.py
+docker compose -f "$COMPOSE_FILE" exec backend python create_test_users.py
 
 # Clean up
 rm create_test_users.py
-docker compose -f docker-compose.dev.yml exec backend rm /app/create_test_users.py
+docker compose -f "$COMPOSE_FILE" exec backend rm /app/create_test_users.py
 
 echo "✅ Test users creation complete!"
