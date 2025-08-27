@@ -146,9 +146,13 @@ const route = useRoute()
 const companyId = computed(() => route.params.companyId as string)
 
 // Use the company data composable
-const { data: company } = useQuery(companyByIdQuery, () => ({
-  id: companyId.value,
-}))
+const { data: company } = useQuery(
+  companyByIdQuery, 
+  () => ({ id: companyId.value }),
+  {
+    enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
+  }
+)
 
 // Reset fallback icon when company changes
 watch(company, () => {

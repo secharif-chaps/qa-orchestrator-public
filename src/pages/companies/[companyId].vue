@@ -1,5 +1,16 @@
 <template>
   <CompanyCard :title="title" icon="fa-building">
+    <template #actions>
+      <Button
+        v-if="canDeleteCompany && company"
+        variant="tertiary"
+        color="danger"
+        icon="fa fa-trash"
+        :label="$t('company.delete.button', 'Delete')"
+        @click="confirmDelete"
+      />
+    </template>
+    
     <div class="flex flex-col gap-4">
       <TasksFlow v-if="displayTasks" />
       <RouterView />
@@ -7,23 +18,71 @@
     <!-- Floating AI Chat -->
     <FloatingChat />
   </CompanyCard>
+
+  <!-- Delete Confirmation Modal -->
+  <CompanyDeleteModal
+    v-model="showDeleteModal"
+    :company-to-delete="company"
+    @delete-company="handleDeleteCompany"
+  />
 </template>
 
 <script lang="ts" setup>
 import CompanyCard from '@/components/company/CompanyCard.vue'
 import TasksFlow from '@/components/company/tasks/TasksFlow.vue'
 import FloatingChat from '@/components/company/FloatingChat.vue'
-import { computed } from 'vue'
+import CompanyDeleteModal from '@/components/companies/CompanyDeleteModal.vue'
+import Button from '@/components/ui/Button.vue'
+import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import { companyByIdQuery } from '@/queries/companies'
+import { useQuery } from '@pinia/colada'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
+const { t } = useI18n()
+
+const companyId = computed(() => route.params.companyId as string)
+
+// Get company data
+const { data: company, error, status } = useQuery(
+  companyByIdQuery, 
+  () => ({ id: companyId.value }),
+  {
+    enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
+  }
+)
+
+// Permissions
+const { canDeleteCompany } = useCompanyPermissions()
+
+// Modal state
+const showDeleteModal = ref(false)
+
+// Handle 404 errors - redirect to companies list if company doesn't exist
+watch([error, status], ([newError, newStatus]) => {
+  // Check for 404 error in multiple possible formats
+  if ((newError && (newError.status === 404 || newError.response?.status === 404)) ||
+      (newStatus === 'error' && newError && newError.message?.includes('404'))) {
+    // Company not found, redirect to companies list
+    router.push('/companies')
+  }
+})
 
 const displayTasks = computed(() => {
   return route.name === '/companies/[companyId]/'
 })
 
-const { t } = useI18n()
+const confirmDelete = () => {
+  showDeleteModal.value = true
+}
+
+const handleDeleteCompany = () => {
+  // Redirect to companies list after deletion
+  router.push('/companies')
+}
 
 const title = computed(() => {
   switch (route.name) {

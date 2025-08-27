@@ -28,9 +28,15 @@ export const createCompany = async (company: { name: string; website: string }) 
   return response
 }
 
+export const deleteCompany = async (companyId: string) => {
+  const response = await apiClient.delete(`/companies/${companyId}`)
+  return response
+}
+
 // Export as a single API object for backward compatibility
 export const companiesApi = {
   getCompanyById,
   getCompanies,
   createCompany,
+  deleteCompany,
 }

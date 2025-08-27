@@ -32,6 +32,7 @@
           @click.stop="$emit('viewCompany', company.id)"
         />
         <Button
+          v-if="canDeleteCompany"
           variant="tertiary"
           color="danger"
           icon="fa fa-trash"
@@ -148,6 +149,7 @@
             @click.stop="$emit('viewCompany', company.id)"
           />
           <Button
+            v-if="canDeleteCompany"
             variant="tertiary"
             color="danger"
             size="sm"
@@ -166,6 +168,7 @@
 import Badge from '@/components/ui/Badge.vue'
 import Button from '@/components/ui/Button.vue'
 import type { Company } from '@/types/company'
+import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 
 interface Props {
   company: Company
@@ -178,6 +181,9 @@ defineEmits<{
   viewCompany: [id: string]
   deleteCompany: [company: Company]
 }>()
+
+// Permissions
+const { canDeleteCompany } = useCompanyPermissions()
 
 // Methods
 const formatWebsiteUrl = (website: string) => {

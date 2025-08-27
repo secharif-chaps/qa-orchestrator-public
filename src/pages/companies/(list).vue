@@ -224,7 +224,7 @@ const viewMode = ref<'table' | 'grid'>('table')
 
 const companiesStore = useCompaniesStore()
 
-const { data, status, isLoading } = useQuery(companiesQuery, () => ({
+const { data, status, isLoading, refetch } = useQuery(companiesQuery, () => ({
   filters: {
     page: companiesStore.page,
     size: companiesStore.size,
@@ -246,12 +246,14 @@ onMounted(() => {
   }
 })
 
-const handleDeleteCompany = () => {
-  // TODO: Implement delete company
+const handleDeleteCompany = async () => {
+  // Refresh the companies list after successful deletion
+  await refetch()
 }
 
 const confirmDelete = (company: Company) => {
-  // TODO: Implement delete company
+  companyToDelete.value = company
+  showDeleteModal.value = true
 }
 
 const setViewMode = (mode: 'table' | 'grid') => {

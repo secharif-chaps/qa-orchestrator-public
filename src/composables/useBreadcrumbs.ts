@@ -27,7 +27,7 @@ export function useBreadcrumbs() {
     companyByIdQuery,
     () => ({ id: companyId.value! }),
     {
-      enabled: () => !!companyId.value,
+      enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
     }
   )
 
