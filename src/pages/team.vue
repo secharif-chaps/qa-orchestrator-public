@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-bg3">
-    <div>
+    <div class="flex flex-col gap-4">
       <TeamHeader
         :search="queryParams.search"
         :sort="queryParams.sort"
@@ -15,10 +15,7 @@
         @update:page-size="updatePageSize"
       />
 
-      <div
-        v-if="error"
-        class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"
-      >
+      <div v-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
         <div class="flex items-center gap-2">
           <i class="fa fa-exclamation-triangle"></i>
           <span class="font-medium">Error:</span>
@@ -26,20 +23,14 @@
         </div>
       </div>
 
-      <div
-        v-if="isLoading"
-        class="bg-bg1 rounded-lg shadow-sm p-8 text-center border border-border-2"
-      >
+      <div v-if="isLoading" class="bg-bg1 rounded-lg p-8 text-center border border-border-2">
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
         <p class="text-secondary">{{ $t('team.loading', 'Loading users...') }}</p>
       </div>
 
-      <div
-        v-else-if="users"
-        class="bg-bg1 rounded-lg shadow-sm overflow-hidden border border-border-2"
-      >
+      <div v-else-if="users" class="bg-bg1 rounded-lg overflow-hidden border border-border-2">
         <div class="px-6 py-4 border-b border-border-2 bg-bg2">
           <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
             <div class="col-span-4">{{ $t('team.table.user', 'User') }}</div>
@@ -68,82 +59,14 @@
           @create-user="showCreateModal = true"
           @clear-search="clearSearch"
         />
-
-        <div
-          v-if="pagination && pagination.totalPages > 1"
-          class="px-6 py-4 border-t border-border-2 bg-bg2"
-        >
-          <div class="flex items-center justify-between">
-            <div class="text-sm text-secondary">
-              {{ $t('team.pagination.showing', 'Showing') }}
-              <span class="font-medium">{{ (pagination.page - 1) * pagination.limit + 1 }}</span>
-              {{ $t('team.pagination.to', 'to') }}
-              <span class="font-medium">{{
-                Math.min(pagination.page * pagination.limit, pagination.total)
-              }}</span>
-              {{ $t('team.pagination.of', 'of') }}
-              <span class="font-medium">{{ pagination.total }}</span>
-              {{ $t('team.pagination.results', 'results') }}
-            </div>
-
-            <div class="flex items-center gap-2">
-              <button
-                @click="goToPage(pagination.page - 1)"
-                :disabled="!pagination.hasPrev"
-                class="px-3 py-2 text-sm border border-border-2 rounded-lg hover:bg-bg3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <i class="fa fa-chevron-left mr-1"></i>
-                {{ $t('team.pagination.previous', 'Previous') }}
-              </button>
-
-              <div class="flex items-center gap-1">
-                <button
-                  v-if="pagination.page > 3"
-                  @click="goToPage(1)"
-                  class="px-3 py-2 text-sm border border-border-2 rounded-lg hover:bg-bg3 transition-colors"
-                >
-                  1
-                </button>
-                <span v-if="pagination.page > 4" class="px-2 text-secondary">...</span>
-
-                <template v-for="page in getVisiblePages(pagination)" :key="page">
-                  <button
-                    @click="goToPage(page)"
-                    :class="[
-                      'px-3 py-2 text-sm border rounded-lg transition-colors',
-                      page === pagination.page
-                        ? 'bg-primary text-white border-primary'
-                        : 'border-border-2 hover:bg-bg3',
-                    ]"
-                  >
-                    {{ page }}
-                  </button>
-                </template>
-
-                <span v-if="pagination.page < pagination.totalPages - 3" class="px-2 text-secondary"
-                  >...</span
-                >
-                <button
-                  v-if="pagination.page < pagination.totalPages - 2"
-                  @click="goToPage(pagination.totalPages)"
-                  class="px-3 py-2 text-sm border border-border-2 rounded-lg hover:bg-bg3 transition-colors"
-                >
-                  {{ pagination.totalPages }}
-                </button>
-              </div>
-
-              <button
-                @click="goToPage(pagination.page + 1)"
-                :disabled="!pagination.hasNext"
-                class="px-3 py-2 text-sm border border-border-2 rounded-lg hover:bg-bg3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {{ $t('team.pagination.next', 'Next') }}
-                <i class="fa fa-chevron-right ml-1"></i>
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
+      <Pagination
+        v-model:current-page="currentPage"
+        :meta="paginationMeta"
+        :page-size-options="pageSizeOptions"
+        item-name="users"
+        @update-per-page="updatePageSize"
+      />
     </div>
 
     <TeamUserModal
@@ -183,6 +106,8 @@ import TeamHeader from '@/components/team/TeamHeader.vue'
 import TeamUserItem from '@/components/team/TeamUserItem.vue'
 import TeamUserModal from '@/components/team/TeamUserModal.vue'
 import TeamEmptyState from '@/components/team/TeamEmptyState.vue'
+import Pagination from '@/components/ui/Pagination.vue'
+import type { PaginationMeta } from '@/types/pagination'
 
 const queryParams = reactive<WorkspaceUserQueryParams>({
   page: 1,
@@ -203,7 +128,32 @@ const showCreateModal = ref(false)
 const editingUser = ref<WorkspaceUser | null>(null)
 
 const users = computed(() => usersResponse.value?.data || [])
-const pagination = computed(() => usersResponse.value?.pagination)
+const pagination = computed(() => usersResponse.value?.meta)
+
+// Convert team pagination format to PaginationMeta format
+const paginationMeta = computed<PaginationMeta | null>(() => {
+  if (!pagination.value) return null
+
+  return {
+    total: pagination.value.total,
+    per_page: pagination.value.limit,
+    current_page: pagination.value.page,
+    last_page: pagination.value.totalPages,
+    from: (pagination.value.page - 1) * pagination.value.limit + 1,
+    to: Math.min(pagination.value.page * pagination.value.limit, pagination.value.total),
+  }
+})
+
+// Current page for v-model binding
+const currentPage = computed({
+  get: () => queryParams.page,
+  set: (value: number) => {
+    queryParams.page = value
+  },
+})
+
+// Page size options
+const pageSizeOptions = [10, 20, 50, 100]
 
 const usersWithDisplayName = computed<WorkspaceUserListItem[]>(() => {
   return users.value.map((user) => ({
@@ -237,29 +187,10 @@ const updatePageSize = (limit: number) => {
   queryParams.page = 1
 }
 
-const goToPage = (page: number) => {
-  queryParams.page = page
-}
-
 const clearSearch = () => {
   queryParams.search = ''
   queryParams.status = 'all'
   queryParams.page = 1
-}
-
-const getVisiblePages = (paginationInfo: NonNullable<typeof pagination.value>) => {
-  const current = paginationInfo.page
-  const total = paginationInfo.totalPages
-  const pages: number[] = []
-
-  const start = Math.max(1, current - 2)
-  const end = Math.min(total, current + 2)
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
-
-  return pages
 }
 
 const editUser = (user: WorkspaceUser) => {

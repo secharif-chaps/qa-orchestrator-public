@@ -9,25 +9,11 @@
 
     <div class="flex flex-col gap-3 items-end">
       <!-- Button Group for Time Range Selection -->
-      <div class="inline-flex rounded-lg border border-border-2 bg-bg1 p-1">
-        <button
-          v-for="(preset, index) in presetsWithCustom"
-          :key="preset.key"
-          @click="selectPreset(preset)"
-          :class="[
-            'px-4 py-2 text-sm font-medium transition-all duration-200',
-            selectedPreset === preset.key
-              ? 'bg-primary text-white shadow-sm'
-              : 'text-secondary hover:text-primary hover:bg-bg2',
-            index === 0 ? 'rounded-l-md' : '',
-            index === presetsWithCustom.length - 1 ? 'rounded-r-md' : '',
-            index > 0 ? '-ml-px' : '',
-          ]"
-        >
-          <i v-if="preset.icon" :class="[preset.icon, 'mr-2']"></i>
-          {{ preset.label }}
-        </button>
-      </div>
+      <ButtonGroup
+        v-model="selectedPreset"
+        :options="buttonGroupOptions"
+        @update:model-value="handlePresetChange"
+      />
 
       <!-- Custom Date Range (shown when custom is selected) -->
       <transition
@@ -60,6 +46,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import ButtonGroup from '@/components/ui/ButtonGroup.vue'
 
 interface DatePreset {
   key: string
@@ -156,8 +143,24 @@ const presetsWithCustom = computed(() => [
   },
 ])
 
+// Convert presets to ButtonGroup options format
+const buttonGroupOptions = computed(() =>
+  presetsWithCustom.value.map(preset => ({
+    value: preset.key,
+    label: preset.label,
+    icon: preset.icon,
+  }))
+)
+
 const startDate = ref(props.modelValue.start_date || getCurrentMonthDates().start)
 const endDate = ref(props.modelValue.end_date || getCurrentMonthDates().end)
+
+const handlePresetChange = (presetKey: string | number) => {
+  const preset = presetsWithCustom.value.find(p => p.key === presetKey)
+  if (preset) {
+    selectPreset(preset)
+  }
+}
 
 const selectPreset = (preset: DatePreset) => {
   selectedPreset.value = preset.key

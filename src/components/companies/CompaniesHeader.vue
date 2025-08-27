@@ -1,67 +1,83 @@
 <template>
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div class="flex flex-col gap-4">
+    <!-- Header -->
     <div>
-      <h1 class="text-3xl font-semibold">{{ $t('company.list.title') }}</h1>
-      <p class="text-sm text-secondary mt-1">
-        {{ $t('company.list.description') }}
-      </p>
-    </div>
-
-    <div class="flex flex-col sm:flex-row gap-3">
-      <Button
-        variant="tertiary"
-        :icon="viewMode !== 'table' ? 'fa fa-list' : 'fa fa-table'"
-        :title="viewMode === 'table' ? 'Card View' : 'Table View'"
-        icon-only
-        @click="$emit('toggleView')"
-      />
-
-      <!-- Search Input -->
-
-      <div class="relative">
-        <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-secondary"></i>
-        <input
-          v-model="companiesStore.filterName"
-          placeholder="Search companies..."
-          class="w-full sm:w-64 bg-bg1 border border-border-2 rounded-md p-2 pl-8 focus:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 ring-primary ring-offset-bg3"
-        />
-
-        <div
-          v-if="companiesStore.debouncedName !== companiesStore.filterName"
-          class="absolute right-2 top-1/2 -translate-y-1/2 text-secondary"
-        >
-          <i class="fas fa-spinner-third fa-spin"></i>
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-3xl font-bold">
+            {{ $t('company.management.title', 'Company Management') }}
+          </h1>
+          <p class="text-secondary mt-2">
+            {{
+              $t(
+                'company.management.description',
+                'View and manage all companies in your workspace',
+              )
+            }}
+          </p>
         </div>
+
+        <Button
+          variant="tertiary"
+          icon="fa fa-plus"
+          :label="$t('company.create.button', 'New search')"
+          @click="$router.push('/search')"
+        />
       </div>
 
-      <!-- Create Button -->
-      <Button 
-        v-if="canCreateCompany" 
-        variant="primary"
-        icon="fa fa-plus"
-        :label="$t('company.list.create.title')"
-        @click="$router.push('/search')"
-      />
+      <!-- Search and Filters -->
+      <div class="flex items-center justify-between gap-4 rounded-lg">
+        <!-- Search Input -->
+        <div class="flex-1 max-w-md">
+          <div class="relative">
+            <i
+              class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
+            ></i>
+            <input
+              v-model="companiesStore.filterName"
+              type="text"
+              :placeholder="$t('company.search.placeholder', 'Search companies...')"
+              class="w-full pl-10 pr-4 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary bg-bg1"
+            />
+          </div>
+        </div>
+
+        <!-- View Mode Toggle -->
+        <ButtonGroup
+          v-model="viewMode"
+          :options="viewModeOptions"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useCompaniesStore } from '@/stores/companies'
-import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import Button from '@/components/ui/Button.vue'
-
-interface Props {
-  viewMode: 'table' | 'grid'
-}
+import ButtonGroup from '@/components/ui/ButtonGroup.vue'
+import { useI18n } from 'vue-i18n'
 
 const companiesStore = useCompaniesStore()
-const { canCreateCompany } = useCompanyPermissions()
+const { t } = useI18n()
 
-defineProps<Props>()
+// v-model for viewMode
+const viewMode = defineModel<'table' | 'grid'>('viewMode', { required: true })
 
-defineEmits<{
-  toggleView: []
-  createCompany: []
-}>()
+// View mode options for ButtonGroup
+const viewModeOptions = computed(() => [
+  {
+    value: 'table',
+    label: 'Table',
+    icon: 'fa fa-list',
+    title: t('company.view.table', 'Table View')
+  },
+  {
+    value: 'grid',
+    label: 'Grid',
+    icon: 'fa fa-th-large',
+    title: t('company.view.grid', 'Grid View')
+  }
+])
 </script>

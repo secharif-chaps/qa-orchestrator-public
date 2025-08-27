@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-8">
+  <div>
     <div class="flex items-center justify-between mb-6">
       <div>
         <h1 class="text-3xl font-bold">
@@ -12,14 +12,14 @@
 
       <Button
         v-if="canManageUsers"
-        variant="primary"
+        variant="tertiary"
         icon="fa fa-plus"
         :label="$t('team.create.button', 'Add User')"
         @click="$emit('create-user')"
       />
     </div>
 
-    <div class="flex items-center gap-4 bg-bg1 p-4 rounded-lg shadow-sm border border-border-2">
+    <div class="flex items-center gap-4 bg-bg1 p-4 rounded-lg border border-border-2">
       <div class="flex-1 max-w-md">
         <div class="relative">
           <i

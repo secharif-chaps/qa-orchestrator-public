@@ -67,7 +67,7 @@
 <route lang="yaml">
 meta:
   permissions:
-    - admin.cost
+    - admin.costs
 </route>
 
 <script setup lang="ts">

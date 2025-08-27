@@ -1,82 +1,8 @@
 <template>
   <div class="min-h-screen bg-bg3">
-    <div class="">
+    <div class="flex flex-col gap-4">
       <!-- Header -->
-      <div class="mb-8">
-        <div class="flex items-center justify-between mb-6">
-          <div>
-            <h1 class="text-3xl font-bold">
-              {{ $t('company.management.title', 'Company Management') }}
-            </h1>
-            <p class="text-secondary mt-2">
-              {{
-                $t(
-                  'company.management.description',
-                  'View and manage all companies in your workspace',
-                )
-              }}
-            </p>
-          </div>
-
-          <Button
-            variant="primary"
-            icon="fa fa-plus"
-            :label="$t('company.create.button', 'New search')"
-            @click="$router.push('/search')"
-          />
-        </div>
-
-        <!-- Search and Filters -->
-        <div class="flex items-center gap-4 bg-bg1 p-4 rounded-lg shadow-sm border border-border-2">
-          <!-- Search Input -->
-          <div class="flex-1 max-w-md">
-            <div class="relative">
-              <i
-                class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
-              ></i>
-              <input
-                v-model="companiesStore.filterName"
-                type="text"
-                :placeholder="$t('company.search.placeholder', 'Search companies...')"
-                class="w-full pl-10 pr-4 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              />
-            </div>
-          </div>
-
-          <!-- View Mode Toggle -->
-          <div class="flex items-center gap-2">
-            <Button
-              :variant="viewMode === 'table' ? 'secondary' : 'tertiary'"
-              icon="fa fa-list"
-              icon-only
-              :title="$t('company.view.table', 'Table View')"
-              @click="setViewMode('table')"
-            />
-            <Button
-              :variant="viewMode === 'grid' ? 'secondary' : 'tertiary'"
-              icon="fa fa-th-large"
-              icon-only
-              :title="$t('company.view.grid', 'Grid View')"
-              @click="setViewMode('grid')"
-            />
-          </div>
-
-          <!-- Page Size Selector -->
-          <div class="flex items-center gap-2">
-            <label class="text-sm text-secondary">{{
-              $t('company.pageSize.label', 'Show:')
-            }}</label>
-            <select
-              v-model="companiesStore.size"
-              class="px-3 py-2 border border-border-2 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary"
-            >
-              <option v-for="option in pageSizeOptions" :key="option" :value="option">
-                {{ option }}
-              </option>
-            </select>
-          </div>
-        </div>
-      </div>
+      <CompaniesHeader v-model:view-mode="viewMode" />
 
       <!-- Error Alert -->
       <div
@@ -116,7 +42,7 @@
         </div>
 
         <!-- Table View -->
-        <div v-else class="bg-bg1 rounded-lg shadow-sm overflow-hidden border border-border-2">
+        <div v-else class="bg-bg1 rounded-lg overflow-hidden border border-border-2">
           <!-- Table Header -->
           <div class="px-6 py-4 border-b border-border-2 bg-bg2">
             <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
@@ -142,8 +68,14 @@
         </div>
 
         <!-- Pagination -->
-        <div v-if="paginationMeta" class="flex justify-center mt-8">
-          <CompaniesPagination v-model:current-page="companiesStore.page" :meta="paginationMeta" />
+        <div v-if="paginationMeta" class="mt-4">
+          <Pagination
+            v-model:current-page="companiesStore.page"
+            :meta="paginationMeta"
+            :page-size-options="pageSizeOptions"
+            item-name="companies"
+            @update-per-page="updatePerPage"
+          />
         </div>
       </div>
 
@@ -196,10 +128,11 @@ meta:
 
 <script setup lang="ts">
 import CompanyDeleteModal from '@/components/companies/CompanyDeleteModal.vue'
+import CompaniesHeader from '@/components/companies/CompaniesHeader.vue'
 import type { Company } from '@/types/company'
 import { ref, onMounted, computed } from 'vue'
 import { companiesQuery } from '@/queries/companies'
-import CompaniesPagination from '@/components/companies/CompaniesPagination.vue'
+import Pagination from '@/components/ui/Pagination.vue'
 import CompanyItem from '@/components/companies/CompanyItem.vue'
 import Button from '@/components/ui/Button.vue'
 import { useQuery } from '@pinia/colada'
@@ -256,11 +189,17 @@ const confirmDelete = (company: Company) => {
   showDeleteModal.value = true
 }
 
+const updatePerPage = (newSize: number) => {
+  companiesStore.size = newSize
+  // Reset to first page when changing page size
+  companiesStore.page = 1
+}
+
 const setViewMode = (mode: 'table' | 'grid') => {
   viewMode.value = mode
   // Save to localStorage
   localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode)
-  
+
   // Adjust page size when switching modes to match the new options
   if (mode === 'grid' && !pageSizeOptions.value.includes(companiesStore.size)) {
     // Switch to closest grid-friendly option
