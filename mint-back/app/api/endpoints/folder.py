@@ -16,7 +16,6 @@ from app.schemas.folder import (
     FolderItemResponse
 )
 from app.services.folder import FolderService
-from app.services.permission import PermissionService
 from app.core.workspace import get_user_workspace, WorkspaceContext
 from app.core.security import verify_workspace_permission_with_db
 
@@ -54,12 +53,7 @@ def list_folders(
 ):
     """List all folders in the workspace"""
     # Check workspace read permission
-    PermissionService.verify_workspace_permission(
-        db=db,
-        workspace_id=workspace_context.workspace.id,
-        user_id=workspace_context.user.id,
-        permission="workspace.read"
-    )
+    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.read", db)
     
     include_deleted = False
     if archived == "include":
@@ -85,12 +79,7 @@ def get_folder(
 ):
     """Get a folder with its items"""
     # Check workspace read permission
-    PermissionService.verify_workspace_permission(
-        db=db,
-        workspace_id=workspace_context.workspace.id,
-        user_id=workspace_context.user.id,
-        permission="workspace.read"
-    )
+    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.read", db)
     
     folder_data = FolderService.get_folder_with_items(
         db=db,
@@ -116,12 +105,7 @@ def update_folder(
 ):
     """Update a folder"""
     # Check workspace write permission
-    PermissionService.verify_workspace_permission(
-        db=db,
-        workspace_id=workspace_context.workspace.id,
-        user_id=workspace_context.user.id,
-        permission="workspace.write"
-    )
+    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
     
     folder = FolderService.get_folder(
         db=db,
@@ -153,12 +137,7 @@ def patch_folder(
 ):
     """Partially update a folder (for favorite toggle, etc.)"""
     # Check workspace write permission
-    PermissionService.verify_workspace_permission(
-        db=db,
-        workspace_id=workspace_context.workspace.id,
-        user_id=workspace_context.user.id,
-        permission="workspace.write"
-    )
+    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
     
     folder = FolderService.get_folder(
         db=db,
@@ -189,12 +168,7 @@ def delete_folder(
 ):
     """Soft delete a folder"""
     # Check workspace write permission
-    PermissionService.verify_workspace_permission(
-        db=db,
-        workspace_id=workspace_context.workspace.id,
-        user_id=workspace_context.user.id,
-        permission="workspace.write"
-    )
+    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
     
     folder = FolderService.get_folder(
         db=db,
@@ -221,12 +195,7 @@ def restore_folder(
 ):
     """Restore a soft-deleted folder"""
     # Check workspace write permission
-    PermissionService.verify_workspace_permission(
-        db=db,
-        workspace_id=workspace_context.workspace.id,
-        user_id=workspace_context.user.id,
-        permission="workspace.write"
-    )
+    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
     
     folder = FolderService.get_folder(
         db=db,
@@ -261,12 +230,7 @@ def add_item_to_folder(
 ):
     """Add an item to a folder"""
     # Check workspace write permission
-    PermissionService.verify_workspace_permission(
-        db=db,
-        workspace_id=workspace_context.workspace.id,
-        user_id=workspace_context.user.id,
-        permission="workspace.write"
-    )
+    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
     
     folder = FolderService.get_folder(
         db=db,
@@ -302,12 +266,7 @@ def remove_item_from_folder(
 ):
     """Remove an item from a folder"""
     # Check workspace write permission
-    PermissionService.verify_workspace_permission(
-        db=db,
-        workspace_id=workspace_context.workspace.id,
-        user_id=workspace_context.user.id,
-        permission="workspace.write"
-    )
+    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
     
     folder = FolderService.get_folder(
         db=db,
