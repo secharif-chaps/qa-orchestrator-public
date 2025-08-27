@@ -22,68 +22,113 @@
         </div>
 
         <!-- Search and Filters -->
-        <div class="flex items-center gap-4 bg-bg1 p-4 rounded-lg shadow-sm border border-border-2">
+        <div class="flex items-center justify-between gap-4">
           <!-- Search Input -->
           <div class="flex-1 max-w-md">
             <div class="relative">
               <i
                 class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
               ></i>
-              <input
-                v-model="queryParams.search"
-                @input="searchWorkspaces(queryParams.search)"
+              <Input
+                :model-value="queryParams.search"
+                @input="searchWorkspaces($event.target.value)"
                 type="text"
                 :placeholder="$t('workspace.search.placeholder', 'Search workspaces...')"
-                class="w-full pl-10 pr-4 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
               />
             </div>
           </div>
 
-          <!-- Sort Options -->
           <div class="flex items-center gap-2">
-            <label class="text-sm text-secondary">{{
-              $t('workspace.sort.label', 'Sort by:')
-            }}</label>
-            <select
-              v-model="queryParams.sort"
-              @change="changeSorting(queryParams.sort, queryParams.order)"
-              class="px-3 py-2 border border-border-2 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary"
-            >
-              <option value="created_at">{{ $t('workspace.sort.created', 'Created Date') }}</option>
-              <option value="name">{{ $t('workspace.sort.name', 'Name') }}</option>
-              <option value="member_count">
-                {{ $t('workspace.sort.members', 'Member Count') }}
-              </option>
-            </select>
+            <!-- Sort Dropdown -->
+            <div class="relative">
+              <button
+                @click.stop="showSortDropdown = !showSortDropdown"
+                class="flex items-center gap-2 px-3 py-2 border border-border-2 rounded-lg hover:bg-bg2 transition-colors text-sm font-medium bg-bg1"
+              >
+                <span class="text-secondary">{{ getSortDisplayText() }}</span>
+                <i
+                  class="fa fa-chevron-down text-xs transition-transform"
+                  :class="{ 'rotate-180': showSortDropdown }"
+                ></i>
+              </button>
 
-            <Button
-              variant="tertiary"
-              :icon="queryParams.order === 'asc' ? 'fa fa-sort-up' : 'fa fa-sort-down'"
-              icon-only
-              :title="
-                queryParams.order === 'asc'
-                  ? $t('workspace.sort.desc', 'Sort Descending')
-                  : $t('workspace.sort.asc', 'Sort Ascending')
-              "
-              @click="changeSorting(queryParams.sort, queryParams.order === 'asc' ? 'desc' : 'asc')"
-            />
-          </div>
+              <div
+                v-if="showSortDropdown"
+                class="absolute right-0 mt-2 w-64 bg-bg1 border border-border-2 rounded-lg shadow-lg z-50"
+                @click.stop
+              >
+                <div class="p-4 border-b border-border-2">
+                  <h3 class="text-sm font-medium text-primary mb-3">
+                    {{ $t('workspace.sort.label', 'Sort by:') }}
+                  </h3>
+                  <div class="space-y-2">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        :checked="queryParams.sort === 'created_at'"
+                        @change="updateSort('created_at')"
+                        class="w-4 h-4 text-primary border-border-2 focus:ring-primary/20"
+                      />
+                      <span class="text-sm">{{
+                        $t('workspace.sort.created', 'Created Date')
+                      }}</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        :checked="queryParams.sort === 'name'"
+                        @change="updateSort('name')"
+                        class="w-4 h-4 text-primary border-border-2 focus:ring-primary/20"
+                      />
+                      <span class="text-sm">{{ $t('workspace.sort.name', 'Name') }}</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        :checked="queryParams.sort === 'member_count'"
+                        @change="updateSort('member_count')"
+                        class="w-4 h-4 text-primary border-border-2 focus:ring-primary/20"
+                      />
+                      <span class="text-sm">{{
+                        $t('workspace.sort.members', 'Member Count')
+                      }}</span>
+                    </label>
+                  </div>
+                </div>
 
-          <!-- Page Size Selector -->
-          <div class="flex items-center gap-2">
-            <label class="text-sm text-secondary">{{
-              $t('workspace.pageSize.label', 'Show:')
-            }}</label>
-            <select
-              v-model="queryParams.limit"
-              @change="changePageSize(parseInt($event.target.value))"
-              class="px-3 py-2 border border-border-2 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary"
-            >
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
+                <div class="p-4">
+                  <h3 class="text-sm font-medium text-primary mb-3">
+                    {{ $t('workspace.sort.order', 'Sort Order:') }}
+                  </h3>
+                  <div class="space-y-2">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        :checked="queryParams.order === 'asc'"
+                        @change="updateOrder('asc')"
+                        class="w-4 h-4 text-primary border-border-2 focus:ring-primary/20"
+                      />
+                      <span class="text-sm flex items-center gap-2">
+                        <i class="fa fa-sort-amount-up"></i>
+                        {{ $t('workspace.sort.ascending', 'Ascending (A-Z)') }}
+                      </span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        :checked="queryParams.order === 'desc'"
+                        @change="updateOrder('desc')"
+                        class="w-4 h-4 text-primary border-border-2 focus:ring-primary/20"
+                      />
+                      <span class="text-sm flex items-center gap-2">
+                        <i class="fa fa-sort-amount-down"></i>
+                        {{ $t('workspace.sort.descending', 'Descending (Z-A)') }}
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -255,90 +300,15 @@
           />
         </div>
 
-        <!-- Pagination -->
-        <div
-          v-if="pagination && pagination.totalPages > 1"
-          class="px-6 py-4 border-t border-border-2 bg-bg2"
-        >
-          <div class="flex items-center justify-between">
-            <!-- Results Info -->
-            <div class="text-sm text-secondary">
-              {{ $t('workspace.pagination.showing', 'Showing') }}
-              <span class="font-medium">{{ (pagination.page - 1) * pagination.limit + 1 }}</span>
-              {{ $t('workspace.pagination.to', 'to') }}
-              <span class="font-medium">{{
-                Math.min(pagination.page * pagination.limit, pagination.total)
-              }}</span>
-              {{ $t('workspace.pagination.of', 'of') }}
-              <span class="font-medium">{{ pagination.total }}</span>
-              {{ $t('workspace.pagination.results', 'results') }}
-            </div>
-
-            <!-- Pagination Controls -->
-            <div class="flex items-center gap-2">
-              <!-- Previous Button -->
-              <button
-                @click="goToPage(pagination.page - 1)"
-                :disabled="!pagination.hasPrev"
-                class="px-3 py-2 text-sm border border-border-2 rounded-lg hover:bg-bg3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <i class="fa fa-chevron-left mr-1"></i>
-                {{ $t('workspace.pagination.previous', 'Previous') }}
-              </button>
-
-              <!-- Page Numbers -->
-              <div class="flex items-center gap-1">
-                <!-- First page -->
-                <button
-                  v-if="pagination.page > 3"
-                  @click="goToPage(1)"
-                  class="px-3 py-2 text-sm border border-border-2 rounded-lg hover:bg-bg3 transition-colors"
-                >
-                  1
-                </button>
-                <span v-if="pagination.page > 4" class="px-2 text-secondary">...</span>
-
-                <!-- Current page and neighbors -->
-                <template v-for="page in getVisiblePages(pagination)" :key="page">
-                  <button
-                    @click="goToPage(page)"
-                    :class="[
-                      'px-3 py-2 text-sm border rounded-lg transition-colors',
-                      page === pagination.page
-                        ? 'bg-primary text-white border-primary'
-                        : 'border-border-2 hover:bg-bg3',
-                    ]"
-                  >
-                    {{ page }}
-                  </button>
-                </template>
-
-                <!-- Last page -->
-                <span v-if="pagination.page < pagination.totalPages - 3" class="px-2 text-secondary"
-                  >...</span
-                >
-                <button
-                  v-if="pagination.page < pagination.totalPages - 2"
-                  @click="goToPage(pagination.totalPages)"
-                  class="px-3 py-2 text-sm border border-border-2 rounded-lg hover:bg-bg3 transition-colors"
-                >
-                  {{ pagination.totalPages }}
-                </button>
-              </div>
-
-              <!-- Next Button -->
-              <button
-                @click="goToPage(pagination.page + 1)"
-                :disabled="!pagination.hasNext"
-                class="px-3 py-2 text-sm border border-border-2 rounded-lg hover:bg-bg3 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {{ $t('workspace.pagination.next', 'Next') }}
-                <i class="fa fa-chevron-right ml-1"></i>
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
+
+      <Pagination
+        v-model:current-page="currentPage"
+        :meta="paginationMeta"
+        :page-size-options="pageSizeOptions"
+        item-name="workspaces"
+        @update-per-page="updatePageSize"
+      />
     </div>
 
     <!-- Delete Confirmation Modal -->
@@ -367,7 +337,7 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, onMounted, onUnmounted } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { useRouter } from 'vue-router'
 import { allWorkspacesQuery, currentWorkspaceQuery } from '@/queries/workspace'
@@ -376,6 +346,9 @@ import type { WorkspaceResponse, WorkspaceListItem, WorkspaceQueryParams } from 
 import WorkspaceDeleteModal from '@/components/workspace/WorkspaceDeleteModal.vue'
 import WorkspacePickModal from '@/components/workspace/WorkspacePickModal.vue'
 import Button from '@/components/ui/Button.vue'
+import Input from '@/components/ui/Input.vue'
+import Pagination from '@/components/ui/Pagination.vue'
+import type { PaginationMeta } from '@/types/pagination'
 
 const router = useRouter()
 
@@ -418,6 +391,31 @@ const workspacesWithMemberCount = computed<WorkspaceListItem[]>(() => {
 const pagination = computed(() => workspacesResponse.value?.pagination)
 const workspaces = computed(() => workspacesResponse.value?.data || [])
 
+// Convert workspace pagination format to PaginationMeta format
+const paginationMeta = computed<PaginationMeta | null>(() => {
+  if (!pagination.value) return null
+
+  return {
+    total: pagination.value.total,
+    per_page: pagination.value.limit,
+    current_page: pagination.value.page,
+    last_page: pagination.value.totalPages,
+    from: (pagination.value.page - 1) * pagination.value.limit + 1,
+    to: Math.min(pagination.value.page * pagination.value.limit, pagination.value.total),
+  }
+})
+
+// Current page for v-model binding
+const currentPage = computed({
+  get: () => queryParams.page,
+  set: (value: number) => {
+    queryParams.page = value
+  },
+})
+
+// Page size options
+const pageSizeOptions = [10, 20, 50, 100]
+
 // Format date helper
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -427,12 +425,49 @@ const formatDate = (dateString: string) => {
   })
 }
 
-// Pagination actions
-const goToPage = (page: number) => {
-  queryParams.page = page
+// Dropdown state
+const showSortDropdown = ref(false)
+
+// Helper methods for dropdown
+const getSortDisplayText = () => {
+  const sortLabels = {
+    created_at: 'Created Date',
+    name: 'Name',
+    member_count: 'Member Count',
+  }
+  const orderText = queryParams.order === 'asc' ? 'A-Z' : 'Z-A'
+  return `${sortLabels[queryParams.sort]} (${orderText})`
 }
 
-const changePageSize = (limit: number) => {
+const updateSort = (newSort: WorkspaceQueryParams['sort']) => {
+  changeSorting(newSort, queryParams.order)
+  showSortDropdown.value = false
+}
+
+const updateOrder = (newOrder: WorkspaceQueryParams['order']) => {
+  if (newOrder !== queryParams.order) {
+    changeSorting(queryParams.sort, newOrder)
+  }
+  showSortDropdown.value = false
+}
+
+// Close dropdown when clicking outside
+const handleClickOutside = (event: MouseEvent) => {
+  if (showSortDropdown.value) {
+    showSortDropdown.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+
+// Page size update for Pagination component
+const updatePageSize = (limit: number) => {
   queryParams.limit = limit
   queryParams.page = 1 // Reset to first page when changing page size
 }
@@ -451,22 +486,6 @@ const searchWorkspaces = (search: string) => {
   queryParams.page = 1 // Reset to first page when searching
 }
 
-// Helper function to get visible page numbers for pagination
-const getVisiblePages = (paginationInfo: NonNullable<typeof pagination.value>) => {
-  const current = paginationInfo.page
-  const total = paginationInfo.totalPages
-  const pages: number[] = []
-
-  // Show current page and 2 neighbors on each side
-  const start = Math.max(1, current - 2)
-  const end = Math.min(total, current + 2)
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
-
-  return pages
-}
 
 // Actions
 const viewWorkspace = (id: number) => {

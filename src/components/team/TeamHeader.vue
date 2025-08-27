@@ -15,99 +15,131 @@
         variant="tertiary"
         icon="fa fa-plus"
         :label="$t('team.create.button', 'Add User')"
-        @click="$emit('create-user')"
+        @click="emit('create-user')"
       />
     </div>
 
-    <div class="flex items-center gap-4 bg-bg1 p-4 rounded-lg border border-border-2">
+    <div class="flex items-center justify-between gap-4">
       <div class="flex-1 max-w-md">
         <div class="relative">
           <i
             class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
           ></i>
-          <input
-            :model-value="search"
-            @input="$emit('update:search', $event.target.value)"
+          <Input
+            :model-value="props.search"
+            @input="emit('update:search', $event.target.value)"
             type="text"
             :placeholder="$t('team.search.placeholder', 'Search users...')"
-            class="w-full pl-10 pr-4 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary"
           />
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <label class="text-sm text-secondary">{{ $t('team.sort.label', 'Sort by:') }}</label>
-        <select
-          :model-value="sort"
-          @change="$emit('update:sort', $event.target.value)"
-          class="px-3 py-2 border border-border-2 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary"
-        >
-          <option value="created_at">{{ $t('team.sort.created', 'Created Date') }}</option>
-          <option value="name">{{ $t('team.sort.name', 'Name') }}</option>
-          <option value="email">{{ $t('team.sort.email', 'Email') }}</option>
-          <option value="username">{{ $t('team.sort.username', 'Username') }}</option>
-        </select>
-
+      <div class="relative">
         <button
-          @click="$emit('toggle-order')"
-          class="flex items-center gap-2 px-3 py-2 border border-border-2 rounded-lg hover:bg-bg2 transition-colors text-sm font-medium"
-          :title="
-            order === 'asc'
-              ? $t('team.sort.desc', 'Sort Descending')
-              : $t('team.sort.asc', 'Sort Ascending')
-          "
+          @click.stop="showSortDropdown = !showSortDropdown"
+          class="flex items-center gap-2 px-3 py-2 border border-border-2 rounded-lg hover:bg-bg2 transition-colors text-sm font-medium bg-bg1"
         >
-          <span class="text-secondary">{{ order === 'asc' ? 'A-Z' : 'Z-A' }}</span>
-          <div class="flex flex-col items-center gap-0.5">
-            <i
-              class="fa fa-chevron-up text-xs transition-colors"
-              :class="order === 'asc' ? 'text-primary' : 'text-gray-300'"
-            ></i>
-            <i
-              class="fa fa-chevron-down text-xs transition-colors"
-              :class="order === 'desc' ? 'text-primary' : 'text-gray-300'"
-            ></i>
-          </div>
+          <span class="text-secondary">{{ getSortDisplayText() }}</span>
+          <i
+            class="fa fa-chevron-down text-xs transition-transform"
+            :class="{ 'rotate-180': showSortDropdown }"
+          ></i>
         </button>
-      </div>
 
-      <div class="flex items-center gap-2">
-        <label class="text-sm text-secondary">{{ $t('team.status.label', 'Status:') }}</label>
-        <select
-          :model-value="status"
-          @change="$emit('update:status', $event.target.value)"
-          class="px-3 py-2 border border-border-2 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary"
+        <div
+          v-if="showSortDropdown"
+          class="absolute right-0 mt-2 w-56 bg-bg1 border border-border-2 rounded-lg shadow-lg z-50"
+          @click.stop
         >
-          <option value="all">{{ $t('team.status.all', 'All') }}</option>
-          <option value="active">{{ $t('team.status.active', 'Active') }}</option>
-          <option value="disabled">{{ $t('team.status.disabled', 'Disabled') }}</option>
-        </select>
-      </div>
+          <div class="p-4 border-b border-border-2">
+            <h3 class="text-sm font-medium text-primary mb-3">
+              {{ $t('team.sort.label', 'Sort by:') }}
+            </h3>
+            <div class="space-y-2">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  :checked="props.sort === 'created_at'"
+                  @change="updateSort('created_at')"
+                  class="w-4 h-4 text-primary border-border-2 focus:ring-primary/20"
+                />
+                <span class="text-sm">{{ $t('team.sort.created', 'Created Date') }}</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  :checked="props.sort === 'name'"
+                  @change="updateSort('name')"
+                  class="w-4 h-4 text-primary border-border-2 focus:ring-primary/20"
+                />
+                <span class="text-sm">{{ $t('team.sort.name', 'Name') }}</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  :checked="props.sort === 'email'"
+                  @change="updateSort('email')"
+                  class="w-4 h-4 text-primary border-border-2 focus:ring-primary/20"
+                />
+                <span class="text-sm">{{ $t('team.sort.email', 'Email') }}</span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  :checked="props.sort === 'username'"
+                  @change="updateSort('username')"
+                  class="w-4 h-4 text-primary border-border-2 focus:ring-primary/20"
+                />
+                <span class="text-sm">{{ $t('team.sort.username', 'Username') }}</span>
+              </label>
+            </div>
+          </div>
 
-      <div class="flex items-center gap-2">
-        <label class="text-sm text-secondary">{{ $t('team.pageSize.label', 'Show:') }}</label>
-        <select
-          :model-value="pageSize"
-          @change="$emit('update:page-size', parseInt($event.target.value))"
-          class="px-3 py-2 border border-border-2 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary"
-        >
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
+          <div class="p-4">
+            <h3 class="text-sm font-medium text-primary mb-3">
+              {{ $t('team.sort.order', 'Sort Order:') }}
+            </h3>
+            <div class="space-y-2">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  :checked="props.order === 'asc'"
+                  @change="updateOrder('asc')"
+                  class="w-4 h-4 text-primary border-border-2 focus:ring-primary/20"
+                />
+                <span class="text-sm flex items-center gap-2">
+                  <i class="fa fa-sort-amount-up"></i>
+                  {{ $t('team.sort.ascending', 'Ascending (A-Z)') }}
+                </span>
+              </label>
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="radio"
+                  :checked="props.order === 'desc'"
+                  @change="updateOrder('desc')"
+                  class="w-4 h-4 text-primary border-border-2 focus:ring-primary/20"
+                />
+                <span class="text-sm flex items-center gap-2">
+                  <i class="fa fa-sort-amount-down"></i>
+                  {{ $t('team.sort.descending', 'Descending (Z-A)') }}
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import type { WorkspaceUserQueryParams } from '@/types/team'
 import Button from '@/components/ui/Button.vue'
+import Input from '../ui/Input.vue'
 
-defineProps<{
+const props = defineProps<{
   search: string
   sort: WorkspaceUserQueryParams['sort']
   order: WorkspaceUserQueryParams['order']
@@ -115,7 +147,7 @@ defineProps<{
   pageSize: number
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   'create-user': []
   'update:search': [value: string]
   'update:sort': [value: WorkspaceUserQueryParams['sort']]
@@ -128,4 +160,46 @@ const authStore = useAuthStore()
 
 // Only users with workspace.write can manage users (add, edit, disable)
 const canManageUsers = computed(() => authStore.hasPermission('workspace.write'))
+
+// Dropdown state
+const showSortDropdown = ref(false)
+
+// Helper methods
+const getSortDisplayText = () => {
+  const sortLabels = {
+    created_at: 'Created Date',
+    name: 'Name',
+    email: 'Email',
+    username: 'Username',
+  }
+  const orderText = props.order === 'asc' ? 'A-Z' : 'Z-A'
+  return `${sortLabels[props.sort]} (${orderText})`
+}
+
+const updateSort = (newSort: WorkspaceUserQueryParams['sort']) => {
+  emit('update:sort', newSort)
+  showSortDropdown.value = false
+}
+
+const updateOrder = (newOrder: WorkspaceUserQueryParams['order']) => {
+  if (newOrder !== props.order) {
+    emit('toggle-order')
+  }
+  showSortDropdown.value = false
+}
+
+// Close dropdown when clicking outside
+const handleClickOutside = (event: MouseEvent) => {
+  if (showSortDropdown.value) {
+    showSortDropdown.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>
