@@ -16,6 +16,7 @@ from app.schemas.folder import (
     FolderItemResponse
 )
 from app.services.folder import FolderService
+from app.services.permission import PermissionService
 from app.core.workspace import get_user_workspace, WorkspaceContext
 from app.core.security import verify_workspace_permission_with_db
 
@@ -35,7 +36,7 @@ def create_folder(
     verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
     
     # Get user from database
-    user = db.query(User).filter(User.keycloak_id == workspace_context.user_id).first()
+    user = db.query(User).filter(User.keycloak_id == workspace_context.user.id).first()
     if not user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
