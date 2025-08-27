@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.endpoints import company, tasks, auth, admin, security, workspace, webhooks, team_management, modules, cost_analysis, folder_simple as folder
+from app.api.endpoints import company, tasks, auth, admin, security, workspace, webhooks, team_management, modules, cost_analysis, folder
 
 api_router = APIRouter()
 
