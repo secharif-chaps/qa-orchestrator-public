@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, String, Integer, DateTime, JSON, ForeignKey
+from sqlalchemy import Column, String, Integer, DateTime, JSON, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -13,6 +13,7 @@ class Company(Base):
     workspace_id = Column(Integer, ForeignKey("workspaces.id"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_deleted = Column(Boolean, default=False, nullable=False)
     
     # JSON fields for complex data structures
     profile = Column(JSON, default=dict)

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.endpoints import company, tasks, auth, admin, security, workspace, webhooks, team_management, modules, cost_analysis
+from app.api.endpoints import company, tasks, auth, admin, security, workspace, webhooks, team_management, modules, cost_analysis, folder_simple as folder
 
 api_router = APIRouter()
 
@@ -13,4 +13,5 @@ api_router.include_router(workspace.router)
 api_router.include_router(team_management.router)
 api_router.include_router(modules.router)
 api_router.include_router(webhooks.router)
-api_router.include_router(cost_analysis.router) 
+api_router.include_router(cost_analysis.router)
+api_router.include_router(folder.router, prefix="/folders", tags=["folders"]) 

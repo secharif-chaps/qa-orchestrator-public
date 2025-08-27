@@ -34,6 +34,7 @@ async def get_companies(
     sort: str = Query(None, description="Field to sort by (name, created_at)"),
     order: SortOrder = Query(SortOrder.DESC, description="Sort order"),
     name: str = Query(None, description="Filter companies by name (partial match)"),
+    archived: bool = Query(False, description="Include archived (soft-deleted) companies"),
     service: CompanyService = Depends(get_company_service),
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
@@ -53,7 +54,8 @@ async def get_companies(
     return service.get_paginated_companies(
         pagination_params, 
         workspace_id=workspace_context.workspace_id,
-        name_filter=name
+        name_filter=name,
+        include_archived=archived
     )
 
 @router.get("/{company_id}", response_model=CompanyResponse)
@@ -302,4 +304,72 @@ async def chat_with_company(
         return ChatResponse(
             response="I'm sorry, I'm having trouble responding right now. Please try again in a moment.",
             status="error"
-        ) 
+        )
+
+
+@router.delete("/{company_id}", response_model=CompanyResponse)
+async def soft_delete_company(
+    company_id: int,
+    service: CompanyService = Depends(get_company_service),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+):
+    """Soft delete a company"""
+    print(f"🏢 DELETE /api/companies/{company_id} - User: {workspace_context.username}")
+    
+    # Get company and verify access
+    company = service.get_company(company_id)
+    if not company:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Company not found"
+        )
+    
+    # Verify workspace access and modification permission
+    verify_company_workspace_access(company, workspace_context)
+    verify_company_modify_permission(workspace_context)
+    
+    # Soft delete the company
+    deleted_company = service.soft_delete_company(company_id)
+    if not deleted_company:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete company"
+        )
+    
+    return deleted_company
+
+
+@router.post("/{company_id}/restore", response_model=CompanyResponse)
+async def restore_company(
+    company_id: int,
+    service: CompanyService = Depends(get_company_service),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+):
+    """Restore a soft-deleted company"""
+    print(f"🏢 POST /api/companies/{company_id}/restore - User: {workspace_context.username}")
+    
+    # Verify modification permission
+    verify_company_modify_permission(workspace_context)
+    
+    # Restore the company
+    restored_company = service.restore_company(company_id)
+    if not restored_company:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Company not found or not deleted"
+        )
+    
+    # Verify workspace access after restore
+    return verify_company_workspace_access(restored_company, workspace_context)
+
+
+@router.get("/archived/list", response_model=List[CompanyResponse])
+async def get_archived_companies(
+    service: CompanyService = Depends(get_company_service),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+):
+    """Get all archived (soft-deleted) companies in the workspace"""
+    print(f"🏢 GET /api/companies/archived/list - User: {workspace_context.username}")
+    
+    archived_companies = service.get_archived_companies(workspace_id=workspace_context.workspace_id)
+    return archived_companies 

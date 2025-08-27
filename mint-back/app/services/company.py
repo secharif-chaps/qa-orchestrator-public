@@ -129,28 +129,36 @@ class CompanyService:
         self.secure_query = SecureQueryBuilder(db)
         self.repository = SQLAlchemyCompanyRepository(db)
     
-    def get_company(self, company_id: int) -> Optional[Company]:
+    def get_company(self, company_id: int, include_deleted: bool = False) -> Optional[Company]:
         """Securely get company by ID"""
-        company = self.secure_query.safe_filter_by_id(Company, company_id).first()
+        query = self.secure_query.safe_filter_by_id(Company, company_id)
+        if not include_deleted:
+            query = query.filter(Company.is_deleted == False)
+        company = query.first()
         return _parse_json_fields(company)
     
-    def get_company_by_name(self, name: str) -> Optional[Company]:
+    def get_company_by_name(self, name: str, include_deleted: bool = False) -> Optional[Company]:
         """Securely get company by name"""
-        company = self.secure_query.safe_filter_by_string(Company, Company.name, name, exact_match=True).first()
+        query = self.secure_query.safe_filter_by_string(Company, Company.name, name, exact_match=True)
+        if not include_deleted:
+            query = query.filter(Company.is_deleted == False)
+        company = query.first()
         return _parse_json_fields(company)
     
-    def get_all_companies(self, workspace_id: Optional[int] = None) -> List[Company]:
+    def get_all_companies(self, workspace_id: Optional[int] = None, include_deleted: bool = False) -> List[Company]:
         """Securely get all companies, optionally filtered by workspace"""
+        query = self.db.query(Company)
+        if not include_deleted:
+            query = query.filter(Company.is_deleted == False)
         if workspace_id:
-            companies = self.db.query(Company).filter(Company.workspace_id == workspace_id).all()
-        else:
-            companies = self.db.query(Company).all()
+            query = query.filter(Company.workspace_id == workspace_id)
+        companies = query.all()
         # Parse JSON fields for all companies
         return [_parse_json_fields(company) for company in companies]
     
-    def get_paginated_companies(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None, name_filter: Optional[str] = None) -> PaginatedResponse[CompanyResponse]:
+    def get_paginated_companies(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None, name_filter: Optional[str] = None, include_archived: bool = False) -> PaginatedResponse[CompanyResponse]:
         """Get paginated companies with sorting and filtering"""
-        companies, total_count = self.repository.get_paginated(pagination_params, workspace_id, name_filter)
+        companies, total_count = self.repository.get_paginated(pagination_params, workspace_id, name_filter, include_archived)
         
         # Convert SQLAlchemy models to Pydantic response models
         company_responses = []
@@ -581,3 +589,32 @@ class CompanyService:
         self.db.commit()
         self.db.refresh(task)
         return task
+    
+    def soft_delete_company(self, company_id: int) -> Optional[Company]:
+        """Soft delete a company"""
+        company = self.get_company(company_id)
+        if company:
+            company.is_deleted = True
+            self.db.commit()
+            self.db.refresh(company)
+        return company
+    
+    def restore_company(self, company_id: int) -> Optional[Company]:
+        """Restore a soft-deleted company"""
+        company = self.db.query(Company).filter(
+            Company.id == company_id,
+            Company.is_deleted == True
+        ).first()
+        if company:
+            company.is_deleted = False
+            self.db.commit()
+            self.db.refresh(company)
+        return _parse_json_fields(company)
+    
+    def get_archived_companies(self, workspace_id: Optional[int] = None) -> List[Company]:
+        """Get all soft-deleted (archived) companies"""
+        query = self.db.query(Company).filter(Company.is_deleted == True)
+        if workspace_id:
+            query = query.filter(Company.workspace_id == workspace_id)
+        companies = query.all()
+        return [_parse_json_fields(company) for company in companies]

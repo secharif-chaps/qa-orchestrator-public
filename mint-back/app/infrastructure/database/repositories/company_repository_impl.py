@@ -43,9 +43,13 @@ class SQLAlchemyCompanyRepository:
         return True
     
     
-    def get_paginated(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None, name_filter: Optional[str] = None) -> Tuple[List[Company], int]:
+    def get_paginated(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None, name_filter: Optional[str] = None, include_archived: bool = False) -> Tuple[List[Company], int]:
         """Get paginated list of companies with sorting and filtering"""
         query = self.db_session.query(Company)
+        
+        # Filter out soft-deleted unless explicitly included
+        if not include_archived:
+            query = query.filter(Company.is_deleted == False)
         
         # Filter by workspace if provided
         if workspace_id:

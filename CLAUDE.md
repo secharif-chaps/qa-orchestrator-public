@@ -102,7 +102,7 @@ docker compose -f docker-compose.dev.yml exec backend python script_name.py
 ```
 
 ### Testing Endpoints
-The backend API is available at `http://localhost:8000/api/v1/`
+The backend API is available at `http://localhost:8000/api/`
 
 ### Common Commands
 - Check logs: `docker compose -f docker-compose.dev.yml logs backend`

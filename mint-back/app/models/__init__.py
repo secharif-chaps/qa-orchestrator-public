@@ -3,6 +3,7 @@ from .task import Task, TaskStatus, TaskType
 from .user import User
 from .workspace import Workspace, WorkspaceMember, WorkspaceMemberStatus, WorkspaceModule, ModuleName
 from .permission import UserWorkspacePermission, PermissionType
+from .folder import Folder, FolderItem
 
 __all__ = [
     "Company",
@@ -16,5 +17,7 @@ __all__ = [
     "WorkspaceModule",
     "ModuleName",
     "UserWorkspacePermission",
-    "PermissionType"
+    "PermissionType",
+    "Folder",
+    "FolderItem"
 ]

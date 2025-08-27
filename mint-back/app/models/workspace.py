@@ -34,6 +34,7 @@ class Workspace(Base):
     members = relationship("WorkspaceMember", back_populates="workspace")
     user_permissions = relationship("UserWorkspacePermission", back_populates="workspace")
     modules = relationship("WorkspaceModule", back_populates="workspace")
+    folders = relationship("Folder", back_populates="workspace")
 
 
 class WorkspaceMember(Base):
