@@ -14,13 +14,13 @@ class FolderService:
     def create_folder(
         db: Session,
         workspace_id: int,
-        owner_id: UUID,
+        owner_username: str,
         folder_data: FolderCreate
     ) -> Folder:
         """Create a new folder"""
         folder = Folder(
             workspace_id=workspace_id,
-            owner_id=owner_id,
+            owner_username=owner_username,
             name=folder_data.name,
             color=folder_data.color,
             icon=folder_data.icon,
@@ -99,7 +99,7 @@ class FolderService:
             'is_deleted': folder.is_deleted,
             'created_at': folder.created_at.isoformat() if folder.created_at else None,
             'updated_at': folder.updated_at.isoformat() if folder.updated_at else None,
-            'owner_id': str(folder.owner_id),
+            'owner_username': folder.owner_username,
             'workspace_id': folder.workspace_id,
             'items': items
         }
@@ -171,7 +171,7 @@ class FolderService:
         folder_id: UUID,
         item_id: str,
         item_type: str,
-        added_by: UUID,
+        added_by_username: str,
         position: Optional[int] = None
     ) -> FolderItem:
         """Add an item to a folder"""
@@ -194,7 +194,7 @@ class FolderService:
             folder_id=folder_id,
             item_id=item_id,
             item_type=item_type,
-            added_by=added_by,
+            added_by_username=added_by_username,
             position=position
         )
         db.add(folder_item)

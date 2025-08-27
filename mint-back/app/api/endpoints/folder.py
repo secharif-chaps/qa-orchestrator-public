@@ -35,18 +35,10 @@ def create_folder(
     # Check workspace write permission
     verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
     
-    # Get user from database
-    user = db.query(User).filter(User.keycloak_id == workspace_context.user.id).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User not found in database"
-        )
-    
     folder = FolderService.create_folder(
         db=db,
         workspace_id=workspace_context.workspace_id,
-        owner_id=user.id,
+        owner_username=workspace_context.username,
         folder_data=folder
     )
     
@@ -288,20 +280,12 @@ def add_item_to_folder(
             detail="Folder not found"
         )
     
-    # Get user from database
-    user = db.query(User).filter(User.keycloak_id == workspace_context.user.id).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User not found in database"
-        )
-    
     folder_item = FolderService.add_item_to_folder(
         db=db,
         folder_id=folder_id,
         item_id=item.item_id,
         item_type=item.item_type,
-        added_by=user.id,
+        added_by_username=workspace_context.username,
         position=item.position
     )
     
