@@ -48,6 +48,7 @@ def create_folder(
 def list_folders(
     archived: Optional[str] = Query(None, pattern="^(include|only)$"),
     favorites: bool = Query(False),
+    current_user: TokenData = Depends(get_current_user),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
@@ -74,6 +75,7 @@ def list_folders(
 @router.get("/{folder_id}", response_model=FolderWithItemsResponse)
 def get_folder(
     folder_id: UUID,
+    current_user: TokenData = Depends(get_current_user),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
@@ -100,6 +102,7 @@ def get_folder(
 def update_folder(
     folder_id: UUID,
     folder_update: FolderUpdate,
+    current_user: TokenData = Depends(get_current_user),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
@@ -132,6 +135,7 @@ def update_folder(
 def patch_folder(
     folder_id: UUID,
     folder_update: FolderUpdate,
+    current_user: TokenData = Depends(get_current_user),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
@@ -163,6 +167,7 @@ def patch_folder(
 @router.delete("/{folder_id}", response_model=FolderResponse)
 def delete_folder(
     folder_id: UUID,
+    current_user: TokenData = Depends(get_current_user),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
@@ -190,6 +195,7 @@ def delete_folder(
 @router.post("/{folder_id}/restore", response_model=FolderResponse)
 def restore_folder(
     folder_id: UUID,
+    current_user: TokenData = Depends(get_current_user),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
@@ -225,6 +231,7 @@ def restore_folder(
 def add_item_to_folder(
     folder_id: UUID,
     item: FolderItemAdd,
+    current_user: TokenData = Depends(get_current_user),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
@@ -261,6 +268,7 @@ def remove_item_from_folder(
     folder_id: UUID,
     item_id: UUID,
     item_type: str = Query(..., pattern="^(company|contact|document)$"),
+    current_user: TokenData = Depends(get_current_user),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
