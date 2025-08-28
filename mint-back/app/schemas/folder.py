@@ -48,14 +48,13 @@ class FolderItemSimple(BaseModel):
     name: str
     website: Optional[str]
     created_at: Optional[str]
-    owner_username: str
+    owner: str
 
 
 class FolderResponse(FolderBase):
     id: UUID
     workspace_id: int
-    owner_id: Optional[UUID]  # Now optional since we use owner_username
-    owner_username: str  # New required field
+    owner: str
     is_favorite: bool
     is_deleted: bool
     created_at: datetime
@@ -87,6 +86,6 @@ class FolderWithItemsResponse(BaseModel):
     is_deleted: bool
     created_at: Optional[str]
     updated_at: Optional[str]
-    owner_username: str  # Changed from owner_id to owner_username
+    owner: str
     workspace_id: int
     items: List[FolderItemSummary]

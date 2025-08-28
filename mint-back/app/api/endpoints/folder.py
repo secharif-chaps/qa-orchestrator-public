@@ -46,18 +46,18 @@ def create_folder(
         folder_obj = FolderService.create_folder(
             db=db,
             workspace_id=workspace_context.workspace_id,
-            owner_username=workspace_context.username,
+            owner=workspace_context.username,
             folder_data=folder
         )
         logger.info(f"✅ Folder created successfully - ID: {folder_obj.id}, Name: {folder_obj.name}")
         
         # Debug the folder object before returning
         logger.debug(f"📁 Folder object type: {type(folder_obj)}")
-        logger.debug(f"📁 Folder attributes: id={folder_obj.id}, name={folder_obj.name}, owner_username={getattr(folder_obj, 'owner_username', 'MISSING')}")
+        logger.debug(f"📁 Folder attributes: id={folder_obj.id}, name={folder_obj.name}, owner={getattr(folder_obj, 'owner', 'MISSING')}")
         
-        # Check if owner_id is None (could cause serialization issues)
-        if hasattr(folder_obj, 'owner_id'):
-            logger.debug(f"📁 owner_id value: {folder_obj.owner_id}")
+        # Check if owner is None (could cause serialization issues)
+        if hasattr(folder_obj, 'owner'):
+            logger.debug(f"📁 owner value: {folder_obj.owner}")
         
         logger.info(f"📁 About to return folder object")
         return folder_obj
@@ -101,8 +101,7 @@ def list_folders(
         folder_dict = {
             "id": folder.id,
             "workspace_id": folder.workspace_id,
-            "owner_id": folder.owner_id,
-            "owner_username": folder.owner_username or "Unknown",
+            "owner": folder.owner or "Unknown",
             "name": folder.name,
             "color": folder.color,
             "icon": folder.icon,
@@ -195,7 +194,25 @@ def update_folder(
         folder_update=folder_update
     )
     
-    return updated_folder
+    # Build the response with items for consistency
+    folder_items = FolderService._get_folder_items_summary(db, updated_folder.id)
+    
+    folder_dict = {
+        "id": updated_folder.id,
+        "workspace_id": updated_folder.workspace_id,
+        "owner": updated_folder.owner or "Unknown",
+        "name": updated_folder.name,
+        "color": updated_folder.color,
+        "icon": updated_folder.icon,
+        "tags": updated_folder.tags,
+        "is_favorite": updated_folder.is_favorite,
+        "is_deleted": updated_folder.is_deleted,
+        "created_at": updated_folder.created_at,
+        "updated_at": updated_folder.updated_at,
+        "items": folder_items
+    }
+    
+    return folder_dict
 
 
 @router.patch("/{folder_id}", response_model=FolderResponse)
@@ -228,7 +245,25 @@ def patch_folder(
         folder_update=folder_update
     )
     
-    return updated_folder
+    # Build the response with items for consistency
+    folder_items = FolderService._get_folder_items_summary(db, updated_folder.id)
+    
+    folder_dict = {
+        "id": updated_folder.id,
+        "workspace_id": updated_folder.workspace_id,
+        "owner": updated_folder.owner or "Unknown",
+        "name": updated_folder.name,
+        "color": updated_folder.color,
+        "icon": updated_folder.icon,
+        "tags": updated_folder.tags,
+        "is_favorite": updated_folder.is_favorite,
+        "is_deleted": updated_folder.is_deleted,
+        "created_at": updated_folder.created_at,
+        "updated_at": updated_folder.updated_at,
+        "items": folder_items
+    }
+    
+    return folder_dict
 
 
 @router.delete("/{folder_id}", response_model=FolderResponse)

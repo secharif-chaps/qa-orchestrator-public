@@ -76,7 +76,8 @@ class SecurityMiddleware(BaseHTTPMiddleware):
                 content={"detail": e.detail}
             )
         except Exception as e:
-            print(f"🛡️ Security error: {str(e)}")
+            print(f"🛡️ Security error: {type(e).__name__}: {str(e)}")
+            logger.error(f"Security middleware error: {type(e).__name__}: {str(e)}", exc_info=True)
             return JSONResponse(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content={"detail": "Internal server error"}

@@ -21,4 +21,4 @@ class User(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     # Relationships
-    folders = relationship("Folder", back_populates="owner", foreign_keys="Folder.owner_id")
+    # folders = relationship("Folder", back_populates="owner", foreign_keys="Folder.owner_id")  # Removed - no longer using foreign key relationship
