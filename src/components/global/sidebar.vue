@@ -79,20 +79,20 @@ const authStore = useAuthStore()
 const buttons = computed(() => {
   const baseButtons = [
     { icon: 'fa fa-home', label: t('sidebar.home'), active: true, to: '/' },
-    {
-      icon: 'fa fa-folder',
-      label: t('sidebar.cards'),
-      to: '/companies',
-    },
+    // {
+    //   icon: 'fa fa-building',
+    //   label: t('sidebar.cards'),
+    //   to: '/companies',
+    // },
   ]
 
-  // Add search button only if user can create companies
-  if (authStore.hasPermission('company.create')) {
-    baseButtons.splice(1, 0, {
-      icon: 'fa fa-search',
-      label: t('sidebar.search'),
+  // Add folders button if user has workspace read permission
+  if (authStore.hasPermission('workspace.read')) {
+    baseButtons.push({
+      icon: 'fa fa-folder',
+      label: t('sidebar.folders'),
       active: true,
-      to: '/search',
+      to: '/folders',
     })
   }
 

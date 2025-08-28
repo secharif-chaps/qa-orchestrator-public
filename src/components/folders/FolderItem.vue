@@ -59,7 +59,7 @@
               class="flex flex-col justify-center items-center gap-2 min-w-0"
             >
               <div
-                class="w-6 h-6 rounded bg-white ring-1 ring-border-2 overflow-hidden flex items-center justify-center flex-shrink-0"
+                class="w-10 h-10 rounded bg-white ring-1 ring-border-2 overflow-hidden flex items-center justify-center flex-shrink-0"
               >
                 <img
                   v-if="item.type === 'company' && getCompanyDomain(item.website)"

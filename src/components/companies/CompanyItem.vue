@@ -34,26 +34,6 @@
           </p>
         </div>
       </div>
-
-      <!-- Quick Actions -->
-      <div class="flex gap-1 opacity-100 group-hover:opacity-100 transition-opacity">
-        <Button
-          variant="tertiary"
-          icon="fa fa-eye"
-          icon-only
-          :title="$t('cards.actions.view')"
-          @click.stop="$emit('viewCompany', company.id)"
-        />
-        <Button
-          v-if="canDeleteCompany"
-          variant="tertiary"
-          color="danger"
-          icon="fa fa-trash"
-          icon-only
-          :title="$t('cards.actions.delete')"
-          @click.stop="$emit('deleteCompany', company)"
-        />
-      </div>
     </div>
 
     <!-- Company Details -->
@@ -73,14 +53,6 @@
         </a>
       </div>
 
-      <!-- Last Updated -->
-      <div class="flex items-center gap-2">
-        <i class="fas fa-clock text-secondary text-sm w-4"></i>
-        <span class="text-sm text-secondary">
-          Updated {{ formatRelativeTime(company.updated_at) }}
-        </span>
-      </div>
-
       <!-- Tasks Info -->
       <div v-if="company.tasks && company.tasks.length > 0" class="flex items-center gap-2">
         <i class="fas fa-tasks text-secondary text-sm w-4"></i>
@@ -97,7 +69,7 @@
     <div class="mt-4 pt-3 border-t border-border-2">
       <div class="flex justify-between items-center text-xs text-secondary">
         <span>Created {{ formatDate(company.created_at) }}</span>
-        <span v-if="company.owner_username">by {{ company.owner_username }}</span>
+        <span v-if="company.owner">by {{ company.owner }}</span>
       </div>
     </div>
   </div>
@@ -269,7 +241,7 @@ const formatRelativeTime = (dateString: string) => {
 
 const getTaskStatusText = (tasks: Array<{ status: string }>) => {
   if (!tasks || tasks.length === 0) return 'New'
-  
+
   const running = tasks.filter((t) => t.status === 'running' || t.status === 'pending').length
   const failed = tasks.filter((t) => t.status === 'error' || t.status === 'failed').length
   const succeeded = tasks.filter((t) => t.status === 'succeeded').length
@@ -282,7 +254,7 @@ const getTaskStatusText = (tasks: Array<{ status: string }>) => {
 
 const getTaskStatusVariant = (tasks: Array<{ status: string }>) => {
   if (!tasks || tasks.length === 0) return 'slate'
-  
+
   const running = tasks.filter((t) => t.status === 'running' || t.status === 'pending').length
   const failed = tasks.filter((t) => t.status === 'error' || t.status === 'failed').length
   const succeeded = tasks.filter((t) => t.status === 'succeeded').length

@@ -254,6 +254,7 @@ export default {
     },
   },
   sidebar: {
+    folders: 'Dossiers',
     home: 'Accueil',
     search: 'Recherche',
     cards: 'Cartes',
@@ -619,11 +620,11 @@ export default {
     },
     workflows: {
       title: 'Gestion des Workflows',
-      description: 'Configurez les intégrations Dify pour les tâches d\'analyse automatisées',
+      description: "Configurez les intégrations Dify pour les tâches d'analyse automatisées",
       loading: 'Chargement des workflows...',
       updateSuccess: 'Workflow mis à jour avec succès !',
       workflowId: 'ID du Workflow',
-      workflowIdPlaceholder: 'Saisissez l\'ID du workflow Dify',
+      workflowIdPlaceholder: "Saisissez l'ID du workflow Dify",
       apiKey: 'Clé API',
       apiKeyPlaceholder: 'Saisissez la clé API Dify',
       notConfigured: 'Non configuré',
@@ -681,7 +682,8 @@ export default {
         },
         press: {
           title: 'Presse et Couverture Médiatique',
-          description: 'Communiqués de presse, articles de presse, interviews et mentions médiatiques.',
+          description:
+            'Communiqués de presse, articles de presse, interviews et mentions médiatiques.',
         },
       },
     },

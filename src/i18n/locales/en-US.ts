@@ -253,6 +253,7 @@ export default {
     },
   },
   sidebar: {
+    folders: 'Folders',
     home: 'Home',
     search: 'Search',
     cards: 'Cards',

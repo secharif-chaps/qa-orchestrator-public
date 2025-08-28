@@ -16,7 +16,7 @@
         <!-- Workspace Management -->
         <div
           v-if="hasWorkspaceAccess"
-          class="bg-bg1 rounded-lg shadow-sm border border-border-2 hover:shadow-md transition-all duration-200 cursor-pointer group"
+          class="bg-bg1 rounded-lg border border-border-2 hover:ring-4 ring-offset-2 ring-primary/50 transition-all duration-200 cursor-pointer group"
           @click="navigateToWorkspaces"
         >
           <div class="p-6">
@@ -50,13 +50,13 @@
 
         <!-- UI Demo -->
         <div
-          class="bg-bg1 rounded-lg shadow-sm border border-border-2 hover:shadow-md transition-all duration-200 cursor-pointer group"
+          class="bg-bg1 rounded-lg border border-border-2 hover:ring-4 ring-offset-2 ring-teal-500/50 transition-all duration-200 cursor-pointer group"
           @click="navigateToUiDemo"
         >
           <div class="p-6">
             <div class="flex items-center mb-4">
               <div
-                class="w-12 h-12 bg-info/10 text-info rounded-lg flex items-center justify-center group-hover:bg-info/20 transition-colors"
+                class="w-12 h-12 bg-teal-500/10 text-teal-500 rounded-lg flex items-center justify-center group-hover:bg-teal-500/20 transition-colors"
               >
                 <i class="fa fa-palette text-xl"></i>
               </div>
@@ -64,7 +64,7 @@
                 <h3 class="text-lg font-semibold">
                   {{ $t('admin.features.uiDemo.title', 'UI Components Demo') }}
                 </h3>
-                <Badge variant="info" size="sm" label="Developer Tool" />
+                <Badge variant="teal" size="sm" label="Developer Tool" />
               </div>
             </div>
             <p class="text-secondary text-sm mb-4">
@@ -75,7 +75,7 @@
                 )
               }}
             </p>
-            <div class="flex items-center text-info text-sm font-medium">
+            <div class="flex items-center text-teal-500 text-sm font-medium">
               <span>{{ $t('admin.features.explore', 'Explore') }}</span>
               <i class="fa fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
             </div>
@@ -85,7 +85,7 @@
         <!-- Workflow Management -->
         <div
           v-if="hasWorkflowAccess"
-          class="bg-bg1 rounded-lg shadow-sm border border-border-2 hover:shadow-md transition-all duration-200 cursor-pointer group"
+          class="bg-bg1 rounded-lg border border-border-2 hover:ring-4 ring-offset-2 ring-success/50 transition-all duration-200 cursor-pointer group"
           @click="navigateToWorkflows"
         >
           <div class="p-6">
@@ -120,13 +120,13 @@
         <!-- Cost Analysis -->
         <div
           v-if="hasCostsAccess"
-          class="bg-bg1 rounded-lg shadow-sm border border-border-2 hover:shadow-md transition-all duration-200 cursor-pointer group"
+          class="bg-bg1 rounded-lg border border-border-2 hover:ring-4 ring-offset-2 ring-orange-500/50 transition-all duration-200 cursor-pointer group"
           @click="navigateToCosts"
         >
           <div class="p-6">
             <div class="flex items-center mb-4">
               <div
-                class="w-12 h-12 bg-error/10 text-error rounded-lg flex items-center justify-center group-hover:bg-error/20 transition-colors"
+                class="w-12 h-12 bg-orange-500/10 text-orange-500 rounded-lg flex items-center justify-center group-hover:bg-orange-500/20 transition-colors"
               >
                 <i class="fa fa-dollar-sign text-xl"></i>
               </div>
@@ -134,7 +134,7 @@
                 <h3 class="text-lg font-semibold">
                   {{ $t('admin.features.costs.title', 'Cost Analysis') }}
                 </h3>
-                <Badge variant="error" size="sm" label="Token Tracking" />
+                <Badge variant="warning" size="sm" label="Token Tracking" />
               </div>
             </div>
             <p class="text-secondary text-sm mb-4">
@@ -145,7 +145,7 @@
                 )
               }}
             </p>
-            <div class="flex items-center text-error text-sm font-medium">
+            <div class="flex items-center text-orange-500 text-sm font-medium">
               <span>{{ $t('admin.features.analyze', 'Analyze') }}</span>
               <i class="fa fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
             </div>

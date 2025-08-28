@@ -91,7 +91,7 @@ const showFallbackIcon = ref(false)
 
 const handleClick = () => {
   if (props.item.type === 'company') {
-    emit('viewItem', props.item.item_id)
+    emit('viewItem', props.item.id)
   }
 }
 

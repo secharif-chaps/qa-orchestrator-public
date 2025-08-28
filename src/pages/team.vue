@@ -128,21 +128,7 @@ const showCreateModal = ref(false)
 const editingUser = ref<WorkspaceUser | null>(null)
 
 const users = computed(() => usersResponse.value?.data || [])
-const pagination = computed(() => usersResponse.value?.meta)
-
-// Convert team pagination format to PaginationMeta format
-const paginationMeta = computed<PaginationMeta | null>(() => {
-  if (!pagination.value) return null
-
-  return {
-    total: pagination.value.total,
-    per_page: pagination.value.limit,
-    current_page: pagination.value.page,
-    last_page: pagination.value.totalPages,
-    from: (pagination.value.page - 1) * pagination.value.limit + 1,
-    to: Math.min(pagination.value.page * pagination.value.limit, pagination.value.total),
-  }
-})
+const paginationMeta = computed(() => usersResponse.value?.meta)
 
 // Current page for v-model binding
 const currentPage = computed({

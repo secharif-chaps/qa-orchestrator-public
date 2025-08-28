@@ -287,7 +287,7 @@ const submit = async () => {
     await addToFolder({
       folderId,
       item: {
-        item_id: newCompany.id.toString(),
+        id: newCompany.id.toString(),
         item_type: 'company',
       },
     })

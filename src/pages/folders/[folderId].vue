@@ -242,7 +242,7 @@ const formatDate = (dateString: string) => {
 
 const navigateToItem = (item: FolderItem) => {
   if (item.type === 'company') {
-    router.push(`/companies/${item.item_id}`)
+    router.push(`/companies/${item.id}`)
   }
 }
 
