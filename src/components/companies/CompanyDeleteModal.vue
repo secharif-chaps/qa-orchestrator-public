@@ -137,7 +137,7 @@ const deleteCompany = async () => {
   deleteLoading.value = true
 
   try {
-    await apiDeleteCompany(props.companyToDelete.id)
+    await apiDeleteCompany(props.companyToDelete.id.toString())
     
     // Show success toast
     toast.success(`Company "${props.companyToDelete.name}" has been deleted successfully`)

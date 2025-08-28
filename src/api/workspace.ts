@@ -7,7 +7,8 @@ import type {
   WorkspaceMemberResponse,
   Workspace,
   PaginatedWorkspacesResponse,
-  WorkspaceQueryParams
+  WorkspaceQueryParams,
+  WorkspaceWithMemberCount
 } from '@/types/workspace'
 
 // Admin workspace management endpoints
@@ -68,6 +69,6 @@ export const getCurrentWorkspaceWithMembers = async (): Promise<WorkspaceWithMem
 }
 
 export const pickWorkspace = async (id: number): Promise<WorkspaceResponse> => {
-  const response = await apiClient.put<WorkspaceResponse>(`/workspace/admin/${id}/pick`)
+  const response = await apiClient.put<WorkspaceResponse>(`/workspace/admin/${id}/pick`, {})
   return response
 }

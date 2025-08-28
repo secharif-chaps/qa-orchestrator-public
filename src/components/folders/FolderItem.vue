@@ -124,7 +124,7 @@
     <div>
       <div class="flex justify-between items-center text-xs text-secondary">
         <span>Created {{ formatDate(folder.created_at) }}</span>
-        <span>by {{ folder.owner_username }}</span>
+        <span>by {{ folder.owner }}</span>
       </div>
     </div>
   </div>

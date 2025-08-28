@@ -1,10 +1,7 @@
 <template>
-  <div class="grid grid-cols-12 gap-4">
+  <div class="grid grid-cols-12 gap-4 -mt-15">
     <!-- Title and buttons -->
-    <div class="col-span-12 flex items-center justify-between">
-      <div class="flex items-center space-x-4">
-        <h1 class="text-3xl font-semibold">{{ title }}</h1>
-      </div>
+    <div class="col-span-12 flex items-center justify-end">
       <div class="flex gap-2">
         <slot name="actions"></slot>
         <Export />
@@ -24,7 +21,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
 import Export from './Export.vue'
 
 // Props

@@ -99,17 +99,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  Pagination as PaginationRoot,
-  PaginationEllipsis,
-  PaginationFirst,
-  PaginationLast,
-  PaginationList,
-  PaginationListItem,
-  PaginationNext,
-  PaginationPrev,
-  Pagination,
-} from 'reka-ui/namespaced'
+import { Pagination } from 'reka-ui/namespaced'
 import type { PaginationMeta } from '@/types/pagination'
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -125,7 +115,7 @@ const props = withDefaults(defineProps<Props>(), {
   itemName: 'results',
 })
 
-const emit = defineEmits<{
+defineEmits<{
   updatePerPage: [value: number]
 }>()
 

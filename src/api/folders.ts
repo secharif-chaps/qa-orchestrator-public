@@ -64,7 +64,7 @@ export const deleteFolder = async (folderId: string) => {
 }
 
 export const restoreFolder = async (folderId: string) => {
-  const response = await apiClient.post<Folder>(`/folders/${folderId}/restore`)
+  const response = await apiClient.post<Folder>(`/folders/${folderId}/restore`, {})
   return response
 }
 

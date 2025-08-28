@@ -42,7 +42,7 @@ export const getWorkspaceUser = async (workspaceId: number, userId: string): Pro
 }
 
 export const resendPasswordReset = async (workspaceId: number, userId: string): Promise<void> => {
-  await apiClient.post(`/workspace/admin/${workspaceId}/users/${userId}/reset-password`)
+  await apiClient.post(`/workspace/admin/${workspaceId}/users/${userId}/reset-password`, {})
 }
 
 export const toggleUserStatus = async (workspaceId: number, userId: string, enabled: boolean): Promise<WorkspaceUserResponse> => {

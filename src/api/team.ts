@@ -18,16 +18,16 @@ const getCurrentWorkspaceId = async (): Promise<number> => {
   return currentWorkspaceId
 }
 
-export const getWorkspaceUsers = async (params: WorkspaceUserQueryParams = {}): Promise<WorkspaceUserResponse> => {
+export const getWorkspaceUsers = async (params?: WorkspaceUserQueryParams): Promise<WorkspaceUserResponse> => {
   const workspaceId = await getCurrentWorkspaceId()
   const searchParams = new URLSearchParams()
   
-  if (params.page) searchParams.set('page', params.page.toString())
-  if (params.limit) searchParams.set('limit', params.limit.toString())
-  if (params.sort) searchParams.set('sort', params.sort)
-  if (params.order) searchParams.set('order', params.order)
-  if (params.search) searchParams.set('search', params.search)
-  if (params.status) searchParams.set('status', params.status)
+  if (params?.page) searchParams.set('page', params.page.toString())
+  if (params?.limit) searchParams.set('limit', params.limit.toString())
+  if (params?.sort) searchParams.set('sort', params.sort)
+  if (params?.order) searchParams.set('order', params.order)
+  if (params?.search) searchParams.set('search', params.search)
+  if (params?.status) searchParams.set('status', params.status)
   
   const queryString = searchParams.toString()
   const url = `/workspaces/${workspaceId}/users${queryString ? `?${queryString}` : ''}`
