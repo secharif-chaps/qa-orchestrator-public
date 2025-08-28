@@ -24,8 +24,8 @@
         <FoldersHeader
           v-model:search-term="searchTerm"
           v-model:view-mode="viewMode"
-          :folder="folder || null"
-          @edit-folder="$router.push(`/folders/${folder.id}/edit`)"
+          :folder="folder"
+          @edit-folder="$router.push(`/folders/${folder?.id}/edit`)"
           @delete-folder="confirmDelete"
         />
 
@@ -37,10 +37,10 @@
             class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             <!-- Items List -->
-            <CompanyItem
+            <FolderItemDisplay
               v-for="item in filteredItems"
               :key="item.id"
-              :company="item"
+              :item="item"
               mode="grid"
               @view-item="$router.push(`/companies/${$event}`)"
               @remove-item="confirmRemoveItem"
@@ -107,7 +107,7 @@
                     <span class="text-sm text-secondary">{{ formatDate(item.created_at) }}</span>
                   </div>
                   <div class="col-span-2">
-                    <span class="text-sm text-secondary">{{ item.owner || 'N/A' }}</span>
+                    <span class="text-sm text-secondary">{{ item.owner_username || 'N/A' }}</span>
                   </div>
                   <div class="col-span-2 text-right">
                     <Button
@@ -154,7 +154,7 @@
     <!-- Delete Folder Modal -->
     <FolderDeleteModal
       v-model="showDeleteModal"
-      :folder-to-delete="folder"
+      :folder-to-delete="folder || null"
       @delete-folder="$router.push('/folders')"
     />
   </div>
@@ -242,7 +242,7 @@ const formatDate = (dateString: string) => {
 
 const navigateToItem = (item: FolderItem) => {
   if (item.type === 'company') {
-    router.push(`/companies/${item.id}`)
+    router.push(`/companies/${item.item_id}`)
   }
 }
 

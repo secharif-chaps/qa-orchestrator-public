@@ -203,7 +203,7 @@ const formatDate = (dateString: string) => {
 
 // Compute folder color classes based on the color prop
 const folderColorClasses = computed(() => {
-  const color = props.folder.value?.color || 'blue'
+  const color = props.folder?.color || 'blue'
   const colorMap: Record<string, string> = {
     blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',
     green: 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400',
@@ -219,6 +219,6 @@ const folderColorClasses = computed(() => {
 
 // Compute folder icon
 const folderIcon = computed(() => {
-  return props.folder.value?.icon || 'fas fa-folder'
+  return props.folder?.icon || 'fas fa-folder'
 })
 </script>

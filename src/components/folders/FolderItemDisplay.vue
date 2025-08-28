@@ -56,7 +56,7 @@
     </div>
 
     <div class="flex items-center justify-between text-sm text-secondary">
-      <span>{{ $t('folder.item.created', 'Created') }} {{ formatDate(item.created_at_item) }}</span>
+      <span>{{ $t('folder.item.created', 'Created') }} {{ formatDate(item.created_at) }}</span>
       <span v-if="item.owner_username">{{ item.owner_username }}</span>
     </div>
   </div>
