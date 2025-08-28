@@ -20,207 +20,133 @@
 
       <!-- Folder Content -->
       <div v-else-if="status === 'success' && folder" class="flex flex-col gap-4">
-        <!-- Folder Header -->
-        <div class="">
-          <div class="flex items-end justify-between">
-            <div class="flex items-center gap-4">
-              <div
-                class="w-16 h-16 rounded-lg flex items-center justify-center border border-border-2"
-                :class="folderColorClasses"
-              >
-                <i :class="folderIcon" class="text-3xl"></i>
-              </div>
-              <div>
-                <div class="flex items-center gap-3 mb-2">
-                  <h1 class="text-3xl font-bold">{{ folder.name }}</h1>
-                  <i
-                    v-if="folder.is_favorite"
-                    class="fas fa-star text-warning"
-                    :title="$t('folder.favorite', 'Favorite folder')"
-                  ></i>
-                </div>
-                <div class="flex items-center gap-2 text-secondary">
-                  <span>{{ folder.items?.length || 0 }} items</span>
-                  <span>created on {{ formatDate(folder.created_at) }}</span>
-                  <span>by {{ folder.owner_username }}</span>
-                </div>
-                <div
-                  v-if="folder.tags && folder.tags.length > 0"
-                  class="flex items-center gap-2 mt-3"
-                >
-                  <Badge
-                    v-for="tag in folder.tags"
-                    :key="tag"
-                    :label="tag"
-                    variant="slate"
-                    size="sm"
-                  />
-                </div>
+        <!-- Folder Header with Search and View Mode -->
+        <FoldersHeader
+          v-model:search-term="searchTerm"
+          v-model:view-mode="viewMode"
+          :folder="folder || null"
+          @edit-folder="$router.push(`/folders/${folder.id}/edit`)"
+          @delete-folder="confirmDelete"
+        />
+
+        <!-- Folder Items -->
+        <div v-if="filteredItems && filteredItems.length > 0">
+          <!-- Grid View -->
+          <div
+            v-if="viewMode === 'grid'"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            <!-- Items List -->
+            <CompanyItem
+              v-for="item in filteredItems"
+              :key="item.id"
+              :company="item"
+              mode="grid"
+              @view-item="$router.push(`/companies/${$event}`)"
+              @remove-item="confirmRemoveItem"
+            />
+          </div>
+
+          <!-- Table View -->
+          <div v-else class="bg-bg1 rounded-lg overflow-hidden border border-border-2">
+            <!-- Add Items Row -->
+
+            <!-- Table Header -->
+            <div class="px-6 py-4 border-b border-border-2 bg-bg2">
+              <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
+                <div class="col-span-4">{{ $t('folder.item.name', 'Item') }}</div>
+                <div class="col-span-2">{{ $t('folder.item.type', 'Type') }}</div>
+                <div class="col-span-2">{{ $t('folder.item.created', 'Created') }}</div>
+                <div class="col-span-2">{{ $t('folder.item.owner', 'Owner') }}</div>
+                <div class="col-span-2 text-right">{{ $t('folder.item.actions', 'Actions') }}</div>
               </div>
             </div>
 
-            <div class="flex items-center gap-2">
-              <Button
-                variant="tertiary"
-                icon="fa fa-edit"
-                :label="$t('folder.actions.edit', 'Edit')"
-                @click="$router.push(`/folders/${folder.id}/edit`)"
-              />
-              <Button
-                variant="tertiary"
-                color="danger"
-                icon="fa fa-trash"
-                :label="$t('folder.actions.delete', 'Delete')"
-                @click="confirmDelete"
-              />
+            <!-- Table Body -->
+            <div class="divide-y divide-border-2">
+              <div
+                v-for="item in filteredItems"
+                :key="item.id"
+                class="px-6 py-4 hover:bg-bg2 transition-colors cursor-pointer"
+                @click="navigateToItem(item)"
+              >
+                <div class="grid grid-cols-12 gap-4 items-center">
+                  <div class="col-span-4">
+                    <div class="flex items-center gap-3">
+                      <div
+                        class="w-10 h-10 rounded-lg bg-white ring-1 ring-border-2 overflow-hidden flex items-center justify-center flex-shrink-0"
+                      >
+                        <img
+                          v-if="item.type === 'company' && getCompanyDomain(item.website)"
+                          :src="getLogoUrl(item.website)"
+                          :alt="`${item.name} logo`"
+                          class="w-full h-full object-contain p-1"
+                          @error="item.showFallbackIcon = true"
+                          v-show="!item.showFallbackIcon"
+                        />
+                        <div
+                          v-show="
+                            item.showFallbackIcon ||
+                            !getCompanyDomain(item.website) ||
+                            item.type !== 'company'
+                          "
+                          class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
+                        >
+                          <i class="fas fa-building text-primary"></i>
+                        </div>
+                      </div>
+                      <div class="flex-1">
+                        <h3 class="font-medium">{{ item.name }}</h3>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-span-2">
+                    <Badge variant="primary" :label="item.type" size="sm" />
+                  </div>
+                  <div class="col-span-2">
+                    <span class="text-sm text-secondary">{{ formatDate(item.created_at) }}</span>
+                  </div>
+                  <div class="col-span-2">
+                    <span class="text-sm text-secondary">{{ item.owner || 'N/A' }}</span>
+                  </div>
+                  <div class="col-span-2 text-right">
+                    <Button
+                      variant="tertiary"
+                      size="sm"
+                      icon="fa fa-external-link-alt"
+                      :label="$t('folder.item.view', 'View')"
+                      @click.stop="navigateToItem(item)"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Folder Items -->
-        <div class="grid grid-cols-4 gap-4">
-          <!-- Add Items Dropdown -->
-          <div
-            class="rounded-lg border-2 border-dashed border-border-2 flex items-center justify-center h-full"
-          >
-            <div class="relative">
-              <Button
-                variant="secondary"
-                icon="fa fa-plus"
-                :label="$t('folder.items.add', 'Add Items')"
-                @click="showAddItemsDropdown = !showAddItemsDropdown"
-              />
-
-              <!-- Backdrop to close dropdown -->
-              <div
-                v-if="showAddItemsDropdown"
-                class="fixed inset-0 z-40"
-                @click="showAddItemsDropdown = false"
-              ></div>
-
-              <!-- Dropdown Menu -->
-              <div
-                v-if="showAddItemsDropdown"
-                class="absolute right-0 top-full mt-2 w-80 bg-bg1 border border-border-2 rounded-lg shadow-lg z-50"
-              >
-                <div class="p-2">
-                  <!-- Company Screen - Enabled -->
-                  <button
-                    class="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-bg2 rounded-md transition-colors"
-                    @click="$router.push(`/folders/${$route.params.folderId}/create/company`)"
-                  >
-                    <div
-                      class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center"
-                    >
-                      <i class="fas fa-building text-blue-600 dark:text-blue-400 text-sm"></i>
-                    </div>
-                    <div class="flex-1">
-                      <div class="font-medium text-sm">
-                        {{ $t('folder.addItems.companyScreen', 'Company Screen') }}
-                      </div>
-                      <div class="text-xs text-secondary">
-                        {{ $t('folder.addItems.companyDescription', 'Add company profiles') }}
-                      </div>
-                    </div>
-                  </button>
-
-                  <!-- Watchfile - Disabled -->
-                  <button
-                    class="w-full flex items-center gap-3 px-3 py-2 text-left opacity-50 cursor-not-allowed rounded-md"
-                    disabled
-                  >
-                    <div
-                      class="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/20 flex items-center justify-center"
-                    >
-                      <i class="fas fa-eye text-green-600 dark:text-green-400 text-sm"></i>
-                    </div>
-                    <div class="flex-1">
-                      <div class="font-medium text-sm">
-                        {{ $t('folder.addItems.watchfile', 'Watchfile') }}
-                      </div>
-                      <div class="text-xs text-secondary">
-                        {{ $t('folder.addItems.watchfileDescription', 'Monitor company changes') }}
-                      </div>
-                    </div>
-                    <Badge variant="slate" size="xs" label="Soon" />
-                  </button>
-
-                  <!-- GraphRag - Disabled -->
-                  <button
-                    class="w-full flex items-center gap-3 px-3 py-2 text-left opacity-50 cursor-not-allowed rounded-md"
-                    disabled
-                  >
-                    <div
-                      class="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center"
-                    >
-                      <i
-                        class="fas fa-project-diagram text-purple-600 dark:text-purple-400 text-sm"
-                      ></i>
-                    </div>
-                    <div class="flex-1">
-                      <div class="font-medium text-sm">
-                        {{ $t('folder.addItems.graphrag', 'GraphRAG') }}
-                      </div>
-                      <div class="text-xs text-secondary">
-                        {{ $t('folder.addItems.graphragDescription', 'Knowledge graphs') }}
-                      </div>
-                    </div>
-                    <Badge variant="slate" size="xs" label="Soon" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Items List -->
-
-          <CompanyItem
-            mode="grid"
-            :company="item"
-            v-for="item in folder.items.filter((item) => item.type === 'company')"
-            :key="item.id"
-            class="p-4 hover:bg-bg2 transition-colors cursor-pointer"
-            @view-company="$router.push(`/companies/${$event}`)"
-          >
-            <div class="flex items-center gap-3">
-              <div
-                class="w-10 h-10 rounded-lg bg-white ring-1 ring-border-2 overflow-hidden flex items-center justify-center flex-shrink-0"
-              >
-                <img
-                  v-if="item.item_type === 'company' && getCompanyDomain(item.website)"
-                  :src="getLogoUrl(item.website)"
-                  :alt="`${item.name} logo`"
-                  class="w-full h-full object-contain p-1"
-                  @error="item.showFallbackIcon = true"
-                  v-show="!item.showFallbackIcon"
-                />
-                <div
-                  v-show="item.showFallbackIcon || !getCompanyDomain(item.website) || item.item_type !== 'company'"
-                  class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
-                >
-                  <i class="fas fa-building text-primary"></i>
-                </div>
-              </div>
-              <div class="flex-1">
-                <h3 class="font-medium">{{ item.name }}</h3>
-                <p class="text-sm text-secondary">
-                  Created {{ formatDate(item.created_at_item) }}
-                  <span v-if="item.owner_username"> • by {{ item.owner_username }}</span>
-                </p>
-              </div>
-            </div>
-          </CompanyItem>
-
-          <!-- Empty State -->
-          <div v-if="folder.items && folder.items.length === 0" class="p-12 text-center">
-            <i class="fas fa-folder-open text-4xl text-secondary/50 mb-4"></i>
-            <h3 class="text-lg font-medium mb-2">
-              {{ $t('folder.empty.title', 'No items in this folder') }}
-            </h3>
-            <p class="text-secondary mb-6">
-              {{ $t('folder.empty.description', 'Start by adding items to this folder') }}
-            </p>
-          </div>
+        <!-- Empty State -->
+        <div v-else class="bg-bg1 rounded-lg shadow-sm p-12 text-center">
+          <i class="fas fa-folder-open text-4xl text-secondary/50 mb-4"></i>
+          <h3 class="text-lg font-medium mb-2">
+            {{
+              searchTerm
+                ? $t('folder.empty.noResults', 'No items found')
+                : $t('folder.empty.title', 'No items in this folder')
+            }}
+          </h3>
+          <p class="text-secondary mb-6">
+            {{
+              searchTerm
+                ? $t('folder.empty.tryDifferentSearch', 'Try a different search term')
+                : $t('folder.empty.description', 'Start by adding items to this folder')
+            }}
+          </p>
+          <Button
+            v-if="searchTerm"
+            @click="searchTerm = ''"
+            :label="$t('folder.clearSearch', 'Clear Search')"
+            variant="secondary"
+          />
         </div>
       </div>
     </div>
@@ -245,47 +171,46 @@ import Alert from '@/components/ui/Alert.vue'
 import Badge from '@/components/ui/Badge.vue'
 import Button from '@/components/ui/Button.vue'
 import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
+import FoldersHeader from '@/components/folders/FoldersHeader.vue'
 import type { FolderItem } from '@/types/folder'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { folderByIdQuery } from '@/queries/folders'
 import { useQuery } from '@pinia/colada'
 import { useRoute, useRouter } from 'vue-router'
 import CompanyCard from '@/components/company/CompanyCard.vue'
+
+import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
+import { Combobox } from 'reka-ui/namespaced'
 import CompanyItem from '@/components/companies/CompanyItem.vue'
+
+// Constants
+const VIEW_MODE_STORAGE_KEY = 'folder-view-mode'
 
 const route = useRoute('/folders/[folderId]')
 const router = useRouter()
 
-const showAddItemsDropdown = ref(false)
 const showDeleteModal = ref(false)
+const searchTerm = ref('')
+const viewMode = ref<'table' | 'grid'>('grid')
 
 const {
   data: folder,
   status,
   isLoading,
 } = useQuery(folderByIdQuery, () => ({
-  id: route.params.folderId,
+  id: route.params.folderId as string,
 }))
 
-// Compute folder color classes based on the color prop
-const folderColorClasses = computed(() => {
-  const color = folder.value?.color || 'blue'
-  const colorMap: Record<string, string> = {
-    blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',
-    green: 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400',
-    yellow: 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400',
-    red: 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400',
-    purple: 'bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
-    gray: 'bg-gray-100 dark:bg-gray-900/20 text-gray-600 dark:text-gray-400',
-    orange: 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400',
-    pink: 'bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400',
-  }
-  return colorMap[color] || colorMap.blue
-})
+// Computed property for filtered items
+const filteredItems = computed(() => {
+  if (!folder.value?.items) return []
 
-// Compute folder icon
-const folderIcon = computed(() => {
-  return folder.value?.icon || 'fas fa-folder'
+  if (!searchTerm.value.trim()) {
+    return folder.value.items
+  }
+
+  const query = searchTerm.value.toLowerCase()
+  return folder.value.items.filter((item) => item.name.toLowerCase().includes(query))
 })
 
 // Helper function to extract domain from website URL
@@ -316,8 +241,8 @@ const formatDate = (dateString: string) => {
 }
 
 const navigateToItem = (item: FolderItem) => {
-  if (item.item_type === 'company') {
-    router.push(`/companies/${item.item_id}`)
+  if (item.type === 'company') {
+    router.push(`/companies/${item.id}`)
   }
 }
 
@@ -329,4 +254,17 @@ const confirmRemoveItem = (item: FolderItem) => {
   // TODO: Implement remove item confirmation
   console.log('Remove item:', item)
 }
+
+// Load saved view mode from localStorage
+onMounted(() => {
+  const savedViewMode = localStorage.getItem(VIEW_MODE_STORAGE_KEY)
+  if (savedViewMode === 'grid' || savedViewMode === 'table') {
+    viewMode.value = savedViewMode
+  }
+})
+
+// Watch for view mode changes and save to localStorage
+watch(viewMode, (newMode) => {
+  localStorage.setItem(VIEW_MODE_STORAGE_KEY, newMode)
+})
 </script>

@@ -18,7 +18,7 @@ export interface FolderUpdate {
 export interface FolderItem {
   id: string
   item_id: string
-  item_type: 'company'
+  type: 'company'
   position?: number
   created_at: string
   // Company metadata for preview
@@ -50,6 +50,6 @@ export interface Folder {
 
 export interface FolderItemAdd {
   item_id: string
-  item_type: 'company'
+  type: 'company'
   position?: number
 }
