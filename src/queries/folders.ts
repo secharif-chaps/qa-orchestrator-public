@@ -1,0 +1,27 @@
+import { defineQueryOptions } from '@pinia/colada'
+import { getFolders, getFolderById } from '@/api/folders'
+
+export const FOLDER_QUERY_KEYS = {
+  root: ['folders'] as const,
+  byId: (id: string) => [...FOLDER_QUERY_KEYS.root, id] as const,
+  withFilters: (filters: { page: number; size: number; name: string }) =>
+    [...FOLDER_QUERY_KEYS.root, { filters }] as const,
+}
+
+export const folderByIdQuery = defineQueryOptions(({ id }: { id: string }) => ({
+  key: FOLDER_QUERY_KEYS.byId(id),
+  query: () => {
+    // Ensure we don't make API calls with invalid IDs
+    if (!id || id === 'null' || id === 'undefined' || id.trim() === '') {
+      throw new Error('Invalid folder ID')
+    }
+    return getFolderById(id)
+  },
+}))
+
+export const foldersQuery = defineQueryOptions(
+  ({ filters }: { filters: { page: number; size: number; name: string; archived?: boolean } }) => ({
+    key: FOLDER_QUERY_KEYS.withFilters(filters),
+    query: () => getFolders(filters),
+  }),
+)
