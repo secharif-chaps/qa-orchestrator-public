@@ -1,7 +1,7 @@
 """add owner column to folders and migrate from owner_username
 
 Revision ID: 7a00644af8d6
-Revises: e0ca846da5c0
+Revises: 5d2eccea2fb2
 Create Date: 2025-08-28 16:57:54.445255
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '7a00644af8d6'
-down_revision = 'e0ca846da5c0'
+down_revision = '5d2eccea2fb2'
 branch_labels = None
 depends_on = None
 
