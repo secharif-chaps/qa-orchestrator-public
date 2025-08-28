@@ -46,7 +46,8 @@ class FolderItemResponse(FolderItemBase):
 class FolderResponse(FolderBase):
     id: UUID
     workspace_id: int
-    owner_id: UUID
+    owner_id: Optional[UUID]  # Now optional since we use owner_username
+    owner_username: str  # New required field
     is_favorite: bool
     is_deleted: bool
     created_at: datetime

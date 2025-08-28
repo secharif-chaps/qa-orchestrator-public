@@ -31,17 +31,41 @@ def create_folder(
     db: Session = Depends(get_db)
 ):
     """Create a new folder in the workspace"""
-    # Check workspace write permission
-    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
+    import logging
+    logger = logging.getLogger(__name__)
     
-    folder = FolderService.create_folder(
-        db=db,
-        workspace_id=workspace_context.workspace_id,
-        owner_username=workspace_context.username,
-        folder_data=folder
-    )
-    
-    return folder
+    try:
+        logger.info(f"📁 POST /folders - START - User: {workspace_context.username}, Folder: {folder.name}")
+        
+        # Check workspace write permission
+        logger.debug(f"📁 Checking workspace write permission for user {current_user.username} in workspace {workspace_context.workspace_id}")
+        verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
+        logger.debug(f"✅ Permission check passed")
+        
+        logger.debug(f"📁 Creating folder with owner_username={workspace_context.username}, workspace_id={workspace_context.workspace_id}")
+        folder_obj = FolderService.create_folder(
+            db=db,
+            workspace_id=workspace_context.workspace_id,
+            owner_username=workspace_context.username,
+            folder_data=folder
+        )
+        logger.info(f"✅ Folder created successfully - ID: {folder_obj.id}, Name: {folder_obj.name}")
+        
+        # Debug the folder object before returning
+        logger.debug(f"📁 Folder object type: {type(folder_obj)}")
+        logger.debug(f"📁 Folder attributes: id={folder_obj.id}, name={folder_obj.name}, owner_username={getattr(folder_obj, 'owner_username', 'MISSING')}")
+        
+        # Check if owner_id is None (could cause serialization issues)
+        if hasattr(folder_obj, 'owner_id'):
+            logger.debug(f"📁 owner_id value: {folder_obj.owner_id}")
+        
+        logger.info(f"📁 About to return folder object")
+        return folder_obj
+        
+    except Exception as e:
+        logger.error(f"❌ Error in create_folder: {type(e).__name__}: {str(e)}")
+        logger.error(f"❌ Full exception details:", exc_info=True)
+        raise
 
 
 @router.get("/", response_model=List[FolderResponse])
