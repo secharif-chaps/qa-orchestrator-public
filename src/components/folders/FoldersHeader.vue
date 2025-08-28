@@ -132,10 +132,12 @@
                   </div>
                   <div class="flex-1">
                     <div class="font-medium text-sm">
-                      {{ $t('folder.addItems.graphrag', 'GraphRAG') }}
+                      {{ $t('folder.addItems.graphrag', 'Knowledge graph') }}
                     </div>
                     <div class="text-xs text-secondary">
-                      {{ $t('folder.addItems.graphragDescription', 'Knowledge graphs') }}
+                      {{
+                        $t('folder.addItems.graphragDescription', 'explore ecosystem with GraphRAG')
+                      }}
                     </div>
                   </div>
                   <Badge variant="slate" size="xs" label="Soon" />

@@ -98,17 +98,17 @@ import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { useCreateCompany } from '@/mutations/companies'
+import { useAddItemToFolder } from '@/mutations/folders'
 import { currentWorkspaceQuery } from '@/queries/workspace'
 import { moduleTokensQuery } from '@/queries/tokens'
 import { InsufficientTokensError } from '@/api/client'
 import type { ModuleName } from '@/types/tokens'
 import TokenCounter from '@/components/tokens/TokenCounter.vue'
 import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
-import { useMutation } from '@pinia/colada'
 
 const { t } = useI18n()
 const router = useRouter()
-const route = useRoute('/folders/[folderId]/create/company')
+const route = useRoute('/folders/[folderId].create.company')
 
 const company = ref('')
 const website = ref('')
@@ -116,6 +116,7 @@ const companyError = ref('')
 const websiteError = ref('')
 
 const { isLoading: mutationLoading, mutateAsync } = useCreateCompany()
+const { mutateAsync: addToFolder } = useAddItemToFolder()
 
 // Token validation with real backend integration
 const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
@@ -235,15 +236,6 @@ const dismissTokenAlert = () => {
   showTokenAlert.value = true
 }
 
-// Add company to folder mutation
-const { mutateAsync: addToFolder } = useMutation({
-  mutationFn: ({ folderId, itemId }: { folderId: string; itemId: string }) =>
-    client.post(`/api/folders/${folderId}/items`, {
-      id: itemId,
-      item_type: 'company',
-    }),
-})
-
 // Handle the search and redirection as soon as we get the company name
 const submit = async () => {
   // Check if workspace data is loaded
@@ -285,20 +277,23 @@ const submit = async () => {
     // Ensure website has protocol
     const websiteUrl = website.value.includes('://') ? website.value : `https://${website.value}`
 
-    // Create the company
     const newCompany = await mutateAsync({
       name: trimmedCompany,
       website: websiteUrl,
     })
 
-    // Add company to folder
+    // Add the company to the folder
+    const folderId = route.params.folderId
     await addToFolder({
-      folderId: route.params.folderId,
-      itemId: newCompany.id.toString(),
+      folderId,
+      item: {
+        item_id: newCompany.id.toString(),
+        item_type: 'company',
+      },
     })
 
-    // Redirect to the company page
-    router.push(`/companies/${newCompany.id}`)
+    // Redirect to the folder page to see the newly added company
+    router.push(`/folders/${folderId}`)
   } catch (error: any) {
     // Handle any unexpected errors during the search process
     console.error('Error during search:', error)
