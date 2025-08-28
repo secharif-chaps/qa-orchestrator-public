@@ -2,8 +2,13 @@
   <!-- Card View -->
   <div
     v-if="mode === 'grid'"
-    class="bg-bg1 rounded-lg p-4 border border-border-2 hover:ring-4 hover:ring-primary/70 ring-offset-2 ring-offset-bg3 transition-all duration-200 cursor-pointer group"
+    :class="[
+      'bg-bg1 rounded-lg p-4 border border-border-2 ring-offset-2 ring-offset-bg3 transition-all duration-200 cursor-pointer group',
+      { 'hover:ring-4 hover:ring-primary/70': !isChildHovered }
+    ]"
     @click="handleClick"
+    @mouseenter="isParentHovered = true"
+    @mouseleave="isParentHovered = false"
   >
     <div class="flex items-start justify-between mb-4">
       <div class="flex items-center gap-3">
@@ -36,7 +41,11 @@
       </div>
 
       <!-- Quick Actions -->
-      <div class="flex gap-1 opacity-100 group-hover:opacity-100 transition-opacity">
+      <div 
+        class="flex gap-1 opacity-100 group-hover:opacity-100 transition-opacity"
+        @mouseenter="isChildHovered = true"
+        @mouseleave="isChildHovered = false"
+      >
         <Button
           variant="tertiary"
           icon="fa fa-eye"
@@ -88,6 +97,8 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const showFallbackIcon = ref(false)
+const isParentHovered = ref(false)
+const isChildHovered = ref(false)
 
 const handleClick = () => {
   if (props.item.type === 'company') {

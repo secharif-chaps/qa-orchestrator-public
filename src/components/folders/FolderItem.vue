@@ -1,8 +1,13 @@
 <template>
   <!-- Card View -->
   <div
-    class="bg-bg1 rounded-lg p-4 border border-border-2 hover:ring-4 hover:ring-primary/70 ring-offset-2 ring-offset-bg3 transition-all duration-200 cursor-pointer group flex flex-col justify-between gap-2"
+    :class="[
+      'bg-bg1 rounded-lg p-4 border border-border-2 ring-offset-2 ring-offset-bg3 transition-all duration-200 cursor-pointer group flex flex-col justify-between gap-2',
+      { 'hover:ring-4 hover:ring-primary/70': !isChildHovered },
+    ]"
     @click="$emit('viewFolder', folder.id)"
+    @mouseenter="isParentHovered = true"
+    @mouseleave="isParentHovered = false"
   >
     <div class="flex flex-col gap-2">
       <div class="flex items-start justify-between">
@@ -47,12 +52,21 @@
 
       <!-- Folder Item Previews -->
       <div v-if="folder.items && folder.items.length > 0" class="mb-4">
-        <div class="grid grid-cols-2 gap-2">
+        <div
+          class="grid grid-cols-2 gap-2"
+          @mouseenter="isChildHovered = true"
+          @mouseleave="isChildHovered = false"
+        >
           <!-- Show first 4 items or first 3 + overflow indicator -->
           <div
+            @click.prevent="
+              index < 3 || folder.items.length <= 4
+                ? $router.push(`/companies/${item.id}`)
+                : $router.push(`/folders/${folder.id}`)
+            "
             v-for="(item, index) in previewItems"
             :key="item.id"
-            class="bg-bg2 h-24 rounded-md p-2 border border-border-2 min-h-[60px] flex flex-col items-center justify-center"
+            class="bg-bg2 h-24 rounded-md p-2 border border-border-2 min-h-[60px] flex flex-col items-center justify-center hover:ring-2 ring-primary/50 ring-offset-bg2"
           >
             <div
               v-if="index < 3 || folder.items.length <= 4"
@@ -120,7 +134,7 @@
 import Badge from '@/components/ui/Badge.vue'
 import Button from '@/components/ui/Button.vue'
 import type { Folder } from '@/types/folder'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 interface Props {
   folder: Folder
@@ -132,6 +146,9 @@ defineEmits<{
   viewFolder: [id: string]
   deleteFolder: [folder: Folder]
 }>()
+
+const isParentHovered = ref(false)
+const isChildHovered = ref(false)
 
 // Compute folder color classes based on the color prop
 const folderColorClasses = computed(() => {
