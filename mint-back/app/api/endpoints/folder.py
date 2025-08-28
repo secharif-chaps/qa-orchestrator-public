@@ -281,31 +281,43 @@ def add_item_to_folder(
     db: Session = Depends(get_db)
 ):
     """Add an item to a folder"""
-    # Check workspace write permission
-    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
+    import logging
+    logger = logging.getLogger(__name__)
     
-    folder = FolderService.get_folder(
-        db=db,
-        folder_id=folder_id,
-        workspace_id=workspace_context.workspace_id
-    )
-    
-    if not folder:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
+    try:
+        logger.debug(f"Adding item to folder - folder_id: {folder_id}, item_id: {item.item_id}, item_type: {item.item_type}")
+        logger.debug(f"User context - user_id: {current_user.sub}, username: {workspace_context.username}")
+        
+        # Check workspace write permission
+        verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
+        
+        folder = FolderService.get_folder(
+            db=db,
+            folder_id=folder_id,
+            workspace_id=workspace_context.workspace_id
         )
-    
-    folder_item = FolderService.add_item_to_folder(
-        db=db,
-        folder_id=folder_id,
-        item_id=item.item_id,
-        item_type=item.item_type,
-        added_by_username=workspace_context.username,
-        position=item.position
-    )
-    
-    return folder_item
+        
+        if not folder:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Folder not found"
+            )
+        
+        folder_item = FolderService.add_item_to_folder(
+            db=db,
+            folder_id=folder_id,
+            item_id=item.item_id,
+            item_type=item.item_type,
+            added_by=current_user.sub,  # Pass the user ID
+            added_by_username=workspace_context.username,
+            position=item.position
+        )
+        
+        logger.debug(f"Successfully added item to folder - folder_item_id: {folder_item.id}")
+        return folder_item
+    except Exception as e:
+        logger.error(f"Error adding item to folder: {str(e)}", exc_info=True)
+        raise
 
 
 @router.delete("/{folder_id}/items/{item_id}")

@@ -160,3 +160,18 @@ verify_company_permission(workspace_context, "company.create")
 # Frontend - Show/hide UI elements  
 <PrimaryButton v-if="canCreateCompany">Create Company</PrimaryButton>
 ```
+
+## Testing and Deployment Workflow
+
+### Testing Changes
+- **NEVER** use curl or local testing commands directly
+- **ALWAYS** ask user to deploy changes to test on the server
+- **ALWAYS** request a fresh bearer token from the user when needed for testing
+
+### Deployment Process for Testing
+1. Make code changes locally
+2. Add debug logging if investigating errors
+3. Commit and push changes
+4. Ask user to deploy to server
+5. Request fresh bearer token if needed for testing
+6. User will provide server logs for debugging

@@ -207,36 +207,51 @@ class FolderService:
         folder_id: UUID,
         item_id: str,
         item_type: str,
+        added_by: UUID,  # User ID
         added_by_username: str,
         position: Optional[int] = None
     ) -> FolderItem:
         """Add an item to a folder"""
-        # Check if item already exists in folder
-        existing = db.query(FolderItem).filter(
-            FolderItem.folder_id == folder_id,
-            FolderItem.item_id == item_id,
-            FolderItem.item_type == item_type
-        ).first()
+        import logging
+        logger = logging.getLogger(__name__)
         
-        if existing:
-            # Update position if provided
-            if position is not None:
-                existing.position = position
-                db.commit()
-                db.refresh(existing)
-            return existing
-        
-        folder_item = FolderItem(
-            folder_id=folder_id,
-            item_id=item_id,
-            item_type=item_type,
-            added_by_username=added_by_username,
-            position=position
-        )
-        db.add(folder_item)
-        db.commit()
-        db.refresh(folder_item)
-        return folder_item
+        try:
+            # Check if item already exists in folder
+            existing = db.query(FolderItem).filter(
+                FolderItem.folder_id == folder_id,
+                FolderItem.item_id == item_id,
+                FolderItem.item_type == item_type
+            ).first()
+            
+            if existing:
+                logger.debug(f"Item already exists in folder, updating position if provided")
+                # Update position if provided
+                if position is not None:
+                    existing.position = position
+                    db.commit()
+                    db.refresh(existing)
+                return existing
+            
+            logger.debug(f"Creating new folder item - folder_id: {folder_id}, item_id: {item_id}, item_type: {item_type}, added_by: {added_by}")
+            
+            folder_item = FolderItem(
+                folder_id=folder_id,
+                item_id=item_id,
+                item_type=item_type,
+                added_by=added_by,  # Include the user ID
+                added_by_username=added_by_username,
+                position=position
+            )
+            db.add(folder_item)
+            db.commit()
+            db.refresh(folder_item)
+            
+            logger.debug(f"Successfully created folder item with id: {folder_item.id}")
+            return folder_item
+        except Exception as e:
+            logger.error(f"Error in add_item_to_folder: {str(e)}", exc_info=True)
+            db.rollback()
+            raise
     
     @staticmethod
     def remove_item_from_folder(
