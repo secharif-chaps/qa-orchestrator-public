@@ -43,6 +43,13 @@ class FolderItemResponse(FolderItemBase):
         from_attributes = True
 
 
+class FolderItemSimple(BaseModel):
+    type: str
+    name: str
+    created_at: Optional[str]
+    owner_username: str
+
+
 class FolderResponse(FolderBase):
     id: UUID
     workspace_id: int
@@ -52,6 +59,7 @@ class FolderResponse(FolderBase):
     is_deleted: bool
     created_at: datetime
     updated_at: datetime
+    items: Optional[List[FolderItemSimple]] = Field(default_factory=list)  # Add items summary
 
     class Config:
         from_attributes = True

@@ -50,6 +50,36 @@ class FolderService:
         return query.first()
     
     @staticmethod
+    def _get_folder_items_summary(db: Session, folder_id: UUID) -> List[Dict[str, Any]]:
+        """Get simplified items for a folder"""
+        items = []
+        folder_items = db.query(FolderItem).filter(
+            FolderItem.folder_id == folder_id
+        ).order_by(FolderItem.position.nullsfirst(), FolderItem.added_at).all()
+        
+        for item in folder_items:
+            if item.item_type == 'company':
+                try:
+                    company_id = int(item.item_id)
+                    company = db.query(Company).filter(
+                        Company.id == company_id,
+                        Company.is_deleted == False
+                    ).first()
+                    
+                    if company:
+                        items.append({
+                            'type': 'company',
+                            'name': company.name,
+                            'created_at': company.created_at.isoformat() if company.created_at else None,
+                            'owner_username': company.owner_username
+                        })
+                except (ValueError, TypeError):
+                    continue
+            # Add support for other item types (contact, document) here in the future
+        
+        return items
+    
+    @staticmethod
     def get_folder_with_items(
         db: Session,
         folder_id: UUID,
@@ -111,7 +141,7 @@ class FolderService:
         include_deleted: bool = False,
         favorites_only: bool = False
     ) -> List[Folder]:
-        """List all folders in a workspace"""
+        """List all folders in a workspace with their items"""
         query = db.query(Folder).filter(Folder.workspace_id == workspace_id)
         
         if not include_deleted:
@@ -122,7 +152,13 @@ class FolderService:
         if favorites_only:
             query = query.filter(Folder.is_favorite == True)
         
-        return query.order_by(Folder.created_at.desc()).all()
+        folders = query.order_by(Folder.created_at.desc()).all()
+        
+        # For each folder, fetch its items
+        for folder in folders:
+            folder.items = FolderService._get_folder_items_summary(db, folder.id)
+        
+        return folders
     
     @staticmethod
     def update_folder(
