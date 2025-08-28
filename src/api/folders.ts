@@ -27,6 +27,27 @@ export const getFolders = async (filters: { page: number; size: number; name: st
   return response
 }
 
+export const getFoldersWithItems = async (filters: { page: number; size: number; name: string; archived?: boolean }) => {
+  const params = new URLSearchParams({
+    page: filters.page.toString(),
+    size: filters.size.toString(),
+    include_items: 'true', // Request items to be included
+  })
+
+  if (filters.name) {
+    params.append('name', filters.name)
+  }
+  
+  if (filters.archived) {
+    params.append('archived', 'true')
+  }
+
+  const response = await apiClient.get<PaginatedResponse<Folder>>(
+    `/folders?${params.toString()}`,
+  )
+  return response
+}
+
 export const createFolder = async (folder: FolderCreate) => {
   const response = await apiClient.post<Folder>('/folders', folder)
   return response

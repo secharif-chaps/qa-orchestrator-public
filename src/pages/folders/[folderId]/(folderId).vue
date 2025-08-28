@@ -177,11 +177,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { folderByIdQuery } from '@/queries/folders'
 import { useQuery } from '@pinia/colada'
 import { useRoute, useRouter } from 'vue-router'
-import CompanyCard from '@/components/company/CompanyCard.vue'
-
 import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
-import { Combobox } from 'reka-ui/namespaced'
-import CompanyItem from '@/components/companies/CompanyItem.vue'
 
 // Constants
 const VIEW_MODE_STORAGE_KEY = 'folder-view-mode'

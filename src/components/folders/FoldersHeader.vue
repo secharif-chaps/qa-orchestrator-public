@@ -215,6 +215,14 @@ const folderColorClasses = computed(() => {
     gray: 'bg-gray-100 dark:bg-gray-900/20 text-gray-600 dark:text-gray-400',
     orange: 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400',
     pink: 'bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400',
+    cyan: 'bg-cyan-100 dark:bg-cyan-900/20 text-cyan-600 dark:text-cyan-400',
+    fuchsia: 'bg-fuchsia-100 dark:bg-fuchsia-900/20 text-fuchsia-600 dark:text-fuchsia-400',
+    rose: 'bg-rose-100 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400',
+    emerald: 'bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400',
+    teal: 'bg-teal-100 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400',
+    sky: 'bg-sky-100 dark:bg-sky-900/20 text-sky-600 dark:text-sky-400',
+    indigo: 'bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400',
+    violet: 'bg-violet-100 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400',
   }
   return colorMap[color] || colorMap.blue
 })

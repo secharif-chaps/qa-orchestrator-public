@@ -2,6 +2,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
+import { folderByIdQuery } from '@/queries/folders'
 
 export interface BreadcrumbItem {
   name: string
@@ -31,6 +32,22 @@ export function useBreadcrumbs() {
     }
   )
 
+  // Get folder data if we're on a folder page
+  const folderId = computed(() => {
+    if (typeof route.params.folderId === 'string') {
+      return route.params.folderId
+    }
+    return null
+  })
+  
+  const { data: folder } = useQuery(
+    folderByIdQuery,
+    () => ({ id: folderId.value! }),
+    {
+      enabled: () => !!folderId.value && folderId.value !== 'null' && folderId.value !== 'undefined',
+    }
+  )
+
   const breadcrumbs = computed((): BreadcrumbItem[] => {
     const items: BreadcrumbItem[] = []
     const pathSegments = route.path.split('/').filter(Boolean)
@@ -57,6 +74,14 @@ export function useBreadcrumbs() {
           items.push({
             name: 'Companies',
             to: isLast ? undefined : '/companies',
+            current: isLast
+          })
+          break
+          
+        case 'folders':
+          items.push({
+            name: 'Folders',
+            to: isLast ? undefined : '/folders',
             current: isLast
           })
           break
@@ -138,6 +163,39 @@ export function useBreadcrumbs() {
           })
           break
           
+        case 'edit':
+          // For folder edit pages
+          if (pathSegments.includes('folders')) {
+            items.push({
+              name: 'Edit',
+              to: isLast ? undefined : currentPath,
+              current: isLast
+            })
+          }
+          break
+          
+        case 'create':
+          // For folder create pages
+          if (pathSegments.includes('folders')) {
+            items.push({
+              name: 'Create',
+              to: isLast ? undefined : currentPath,
+              current: isLast
+            })
+          }
+          break
+          
+        case 'company':
+          // For specific create pages like /folders/[id]/create/company
+          if (pathSegments.includes('folders') && pathSegments.includes('create')) {
+            items.push({
+              name: 'Company',
+              to: isLast ? undefined : currentPath,
+              current: isLast
+            })
+          }
+          break
+          
         // Admin pages
         case 'workspaces':
           items.push({
@@ -173,12 +231,20 @@ export function useBreadcrumbs() {
           break
           
         default:
-          // Handle dynamic segments like company IDs
+          // Handle dynamic segments like company IDs and folder IDs
           if (pathSegments[i - 1] === 'companies' && segment !== 'companies') {
             // This is a company ID - show company name
             const companyName = company.value?.name || 'Company'
             items.push({
               name: companyName,
+              to: isLast ? undefined : currentPath,
+              current: isLast
+            })
+          } else if (pathSegments[i - 1] === 'folders' && segment !== 'folders') {
+            // This is a folder ID - show folder name
+            const folderName = folder.value?.name || 'Folder'
+            items.push({
+              name: folderName,
               to: isLast ? undefined : currentPath,
               current: isLast
             })

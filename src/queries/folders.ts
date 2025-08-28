@@ -1,11 +1,13 @@
 import { defineQueryOptions } from '@pinia/colada'
-import { getFolders, getFolderById } from '@/api/folders'
+import { getFolders, getFolderById, getFoldersWithItems } from '@/api/folders'
 
 export const FOLDER_QUERY_KEYS = {
   root: ['folders'] as const,
   byId: (id: string) => [...FOLDER_QUERY_KEYS.root, id] as const,
   withFilters: (filters: { page: number; size: number; name: string }) =>
     [...FOLDER_QUERY_KEYS.root, { filters }] as const,
+  withItems: (filters: { page: number; size: number; name: string }) =>
+    [...FOLDER_QUERY_KEYS.root, 'with-items', { filters }] as const,
 }
 
 export const folderByIdQuery = defineQueryOptions(({ id }: { id: string }) => ({
@@ -23,5 +25,12 @@ export const foldersQuery = defineQueryOptions(
   ({ filters }: { filters: { page: number; size: number; name: string; archived?: boolean } }) => ({
     key: FOLDER_QUERY_KEYS.withFilters(filters),
     query: () => getFolders(filters),
+  }),
+)
+
+export const foldersWithItemsQuery = defineQueryOptions(
+  ({ filters }: { filters: { page: number; size: number; name: string; archived?: boolean } }) => ({
+    key: FOLDER_QUERY_KEYS.withItems(filters),
+    query: () => getFoldersWithItems(filters),
   }),
 )
