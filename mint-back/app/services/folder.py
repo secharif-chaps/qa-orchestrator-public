@@ -51,7 +51,7 @@ class FolderService:
     
     @staticmethod
     def _get_folder_items_summary(db: Session, folder_id: UUID) -> List[Dict[str, Any]]:
-        """Get simplified items for a folder - returns dicts for internal use"""
+        """Get complete items for a folder - returns dicts for internal use"""
         items = []
         folder_items = db.query(FolderItem).filter(
             FolderItem.folder_id == folder_id
@@ -68,7 +68,10 @@ class FolderService:
                     
                     if company:
                         items.append({
-                            'type': 'company',
+                            'id': str(item.item_id),
+                            'type': item.item_type,
+                            'position': item.position,
+                            'added_at': item.added_at.isoformat() if item.added_at else None,
                             'name': company.name,
                             'website': company.website,
                             'created_at': company.created_at.isoformat() if company.created_at else None,
