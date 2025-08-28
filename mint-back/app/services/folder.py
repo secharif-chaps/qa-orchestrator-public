@@ -70,6 +70,7 @@ class FolderService:
                         items.append({
                             'type': 'company',
                             'name': company.name,
+                            'website': company.website,
                             'created_at': company.created_at.isoformat() if company.created_at else None,
                             'owner_username': company.owner_username or 'Unknown'
                         })

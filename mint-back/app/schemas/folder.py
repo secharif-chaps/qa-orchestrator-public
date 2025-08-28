@@ -46,6 +46,7 @@ class FolderItemResponse(FolderItemBase):
 class FolderItemSimple(BaseModel):
     type: str
     name: str
+    website: Optional[str]
     created_at: Optional[str]
     owner_username: str
 
