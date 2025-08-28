@@ -51,7 +51,7 @@ class FolderService:
     
     @staticmethod
     def _get_folder_items_summary(db: Session, folder_id: UUID) -> List[Dict[str, Any]]:
-        """Get simplified items for a folder"""
+        """Get simplified items for a folder - returns dicts for internal use"""
         items = []
         folder_items = db.query(FolderItem).filter(
             FolderItem.folder_id == folder_id
@@ -71,7 +71,7 @@ class FolderService:
                             'type': 'company',
                             'name': company.name,
                             'created_at': company.created_at.isoformat() if company.created_at else None,
-                            'owner_username': company.owner_username
+                            'owner_username': company.owner_username or 'Unknown'
                         })
                 except (ValueError, TypeError):
                     continue
@@ -154,10 +154,8 @@ class FolderService:
         
         folders = query.order_by(Folder.created_at.desc()).all()
         
-        # For each folder, fetch its items
-        for folder in folders:
-            folder.items = FolderService._get_folder_items_summary(db, folder.id)
-        
+        # Don't assign items to the SQLAlchemy models directly
+        # The endpoint will handle the response serialization
         return folders
     
     @staticmethod
@@ -207,8 +205,7 @@ class FolderService:
         folder_id: UUID,
         item_id: str,
         item_type: str,
-        added_by: UUID,  # User ID
-        added_by_username: str,
+        owner: str,  # Username
         position: Optional[int] = None
     ) -> FolderItem:
         """Add an item to a folder"""
@@ -232,14 +229,13 @@ class FolderService:
                     db.refresh(existing)
                 return existing
             
-            logger.debug(f"Creating new folder item - folder_id: {folder_id}, item_id: {item_id}, item_type: {item_type}, added_by: {added_by}")
+            logger.debug(f"Creating new folder item - folder_id: {folder_id}, item_id: {item_id}, item_type: {item_type}, owner: {owner}")
             
             folder_item = FolderItem(
                 folder_id=folder_id,
                 item_id=item_id,
                 item_type=item_type,
-                added_by=added_by,  # Include the user ID
-                added_by_username=added_by_username,
+                owner=owner,
                 position=position
             )
             db.add(folder_item)

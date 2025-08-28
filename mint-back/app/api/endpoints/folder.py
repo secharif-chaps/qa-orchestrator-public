@@ -93,7 +93,29 @@ def list_folders(
         favorites_only=favorites
     )
     
-    return folders
+    # Build the response with items for each folder
+    response_folders = []
+    for folder in folders:
+        folder_items = FolderService._get_folder_items_summary(db, folder.id)
+        
+        folder_dict = {
+            "id": folder.id,
+            "workspace_id": folder.workspace_id,
+            "owner_id": folder.owner_id,
+            "owner_username": folder.owner_username or "Unknown",
+            "name": folder.name,
+            "color": folder.color,
+            "icon": folder.icon,
+            "tags": folder.tags,
+            "is_favorite": folder.is_favorite,
+            "is_deleted": folder.is_deleted,
+            "created_at": folder.created_at,
+            "updated_at": folder.updated_at,
+            "items": folder_items
+        }
+        response_folders.append(folder_dict)
+    
+    return response_folders
 
 
 @router.get("/{folder_id}", response_model=FolderWithItemsResponse)
@@ -308,8 +330,7 @@ def add_item_to_folder(
             folder_id=folder_id,
             item_id=item.item_id,
             item_type=item.item_type,
-            added_by=current_user.sub,  # Pass the user ID
-            added_by_username=workspace_context.username,
+            owner=workspace_context.username,
             position=item.position
         )
         

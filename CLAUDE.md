@@ -163,15 +163,64 @@ verify_company_permission(workspace_context, "company.create")
 
 ## Testing and Deployment Workflow
 
-### Testing Changes
-- **NEVER** use curl or local testing commands directly
-- **ALWAYS** ask user to deploy changes to test on the server
-- **ALWAYS** request a fresh bearer token from the user when needed for testing
+### Local Testing
+- **Backend API**: Available at `http://localhost:8000/api/`
+- **Frontend**: Available at `http://localhost:3000` (when running)
+- **Keycloak**: Available at `http://localhost:8080`
+- Use `docker compose -f docker-compose.dev.yml` for all local Docker operations
 
-### Deployment Process for Testing
+### Authentication for Testing
+
+#### Setting Up Test Users (One-time setup)
+```bash
+# Run this once to create test users in Keycloak and database
+./create_test_users.sh --non-interactive
+```
+
+This creates multiple test users with different permission levels:
+- `admin` / `admin123` - Full admin access
+- `company_manager` / `manager123` - Full company management
+- `company_creator` / `creator123` - Can create companies
+- `company_viewer` / `viewer123` - Read-only access
+- `workspace_manager` / `workspace123` - Workspace management
+- `no_access` / `noaccess123` - No permissions (for testing 403 errors)
+
+#### Getting Authentication Token
+```bash
+# Get token for default test user
+python3 get_token.py
+
+# Get token for specific user
+python3 get_token.py company_manager manager123
+```
+
+The script will output:
+1. The access token
+2. Example curl command with the token
+
+#### Using Token in API Calls
+```bash
+# Example: Get folders
+curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:8000/api/folders/
+
+# Example: Create company
+curl -X POST http://localhost:8000/api/companies/ \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Test Company"}'
+```
+
+### Testing Process
 1. Make code changes locally
-2. Add debug logging if investigating errors
-3. Commit and push changes
-4. Ask user to deploy to server
-5. Request fresh bearer token if needed for testing
-6. User will provide server logs for debugging
+2. Test locally using Docker development environment
+3. Check logs: `docker compose -f docker-compose.dev.yml logs backend`
+4. Once working, commit and push changes
+5. Ask user to deploy to production server
+
+### Deployment Process
+1. Make changes locally in development environment
+2. Test changes locally with Docker
+3. Commit changes with descriptive commit message
+4. Push to repository
+5. Ask user to deploy using their deployment process
+6. Verify deployment worked correctly

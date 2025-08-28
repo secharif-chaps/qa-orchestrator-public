@@ -37,7 +37,7 @@ class FolderItemResponse(FolderItemBase):
     id: UUID
     folder_id: UUID
     added_at: datetime
-    added_by: UUID
+    owner: Optional[str]
 
     class Config:
         from_attributes = True

@@ -11,7 +11,7 @@ class Folder(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
     workspace_id = Column(Integer, ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
     owner_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
-    owner_username = Column(String, nullable=False)
+    owner_username = Column(String, nullable=True)
     name = Column(String, nullable=False)
     color = Column(String, nullable=True)
     icon = Column(String, nullable=True)
@@ -36,9 +36,7 @@ class FolderItem(Base):
     item_type = Column(String, nullable=False)  # 'company', 'contact', etc.
     position = Column(Integer, nullable=True)
     added_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    added_by = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
-    added_by_username = Column(String, nullable=True)
+    owner = Column(String, nullable=True)
 
     # Relationships
     folder = relationship("Folder", back_populates="items")
-    added_by_user = relationship("User", foreign_keys=[added_by])
