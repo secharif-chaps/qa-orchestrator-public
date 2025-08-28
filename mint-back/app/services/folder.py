@@ -116,6 +116,7 @@ class FolderService:
                         'position': item.position,
                         'added_at': item.added_at.isoformat() if item.added_at else None,
                         'name': company.name,
+                        'website': company.website,
                         'created_at': company.created_at.isoformat() if company.created_at else None,
                         'owner': company.owner_username
                     })
