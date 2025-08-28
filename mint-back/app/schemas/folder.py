@@ -77,6 +77,6 @@ class FolderWithItemsResponse(BaseModel):
     is_deleted: bool
     created_at: Optional[str]
     updated_at: Optional[str]
-    owner_id: str
+    owner_username: str  # Changed from owner_id to owner_username
     workspace_id: int
     items: List[FolderItemSummary]

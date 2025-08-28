@@ -88,7 +88,7 @@ def list_folders(
     
     folders = FolderService.list_folders(
         db=db,
-        workspace_id=workspace_context.workspace.id,
+        workspace_id=workspace_context.workspace_id,
         include_deleted=include_deleted,
         favorites_only=favorites
     )
@@ -104,22 +104,43 @@ def get_folder(
     db: Session = Depends(get_db)
 ):
     """Get a folder with its items"""
-    # Check workspace read permission
-    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.read", db)
+    import logging
+    logger = logging.getLogger(__name__)
     
-    folder_data = FolderService.get_folder_with_items(
-        db=db,
-        folder_id=folder_id,
-        workspace_id=workspace_context.workspace.id
-    )
-    
-    if not folder_data:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Folder not found"
+    try:
+        logger.info(f"📁 GET /folders/{folder_id} - START - User: {workspace_context.username}")
+        
+        # Check workspace read permission
+        logger.debug(f"📁 Checking workspace read permission")
+        verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.read", db)
+        logger.debug(f"✅ Permission check passed")
+        
+        # Fix: Use workspace_context.workspace_id instead of workspace_context.workspace_id
+        logger.debug(f"📁 Getting folder with items - folder_id={folder_id}, workspace_id={workspace_context.workspace_id}")
+        folder_data = FolderService.get_folder_with_items(
+            db=db,
+            folder_id=folder_id,
+            workspace_id=workspace_context.workspace_id  # Fixed: was workspace_context.workspace_id
         )
-    
-    return folder_data
+        
+        if not folder_data:
+            logger.warning(f"❌ Folder {folder_id} not found in workspace {workspace_context.workspace_id}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Folder not found"
+            )
+        
+        logger.debug(f"📁 Folder data retrieved: {type(folder_data)}")
+        logger.debug(f"📁 Folder data keys: {folder_data.keys() if isinstance(folder_data, dict) else 'Not a dict'}")
+        logger.info(f"✅ Returning folder data for {folder_id}")
+        return folder_data
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Error in get_folder: {type(e).__name__}: {str(e)}")
+        logger.error(f"❌ Full exception details:", exc_info=True)
+        raise
 
 
 @router.put("/{folder_id}", response_model=FolderResponse)
@@ -137,7 +158,7 @@ def update_folder(
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
-        workspace_id=workspace_context.workspace.id
+        workspace_id=workspace_context.workspace_id
     )
     
     if not folder:
@@ -170,7 +191,7 @@ def patch_folder(
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
-        workspace_id=workspace_context.workspace.id
+        workspace_id=workspace_context.workspace_id
     )
     
     if not folder:
@@ -202,7 +223,7 @@ def delete_folder(
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
-        workspace_id=workspace_context.workspace.id
+        workspace_id=workspace_context.workspace_id
     )
     
     if not folder:
@@ -230,7 +251,7 @@ def restore_folder(
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
-        workspace_id=workspace_context.workspace.id,
+        workspace_id=workspace_context.workspace_id,
         include_deleted=True
     )
     
@@ -266,7 +287,7 @@ def add_item_to_folder(
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
-        workspace_id=workspace_context.workspace.id
+        workspace_id=workspace_context.workspace_id
     )
     
     if not folder:
@@ -303,7 +324,7 @@ def remove_item_from_folder(
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
-        workspace_id=workspace_context.workspace.id
+        workspace_id=workspace_context.workspace_id
     )
     
     if not folder:
