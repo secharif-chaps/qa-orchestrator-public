@@ -8,9 +8,22 @@
     <div class="flex items-start justify-between mb-4">
       <div class="flex items-center gap-3">
         <div
-          class="w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
+          class="w-12 h-12 rounded-lg bg-white ring-1 ring-border-2 overflow-hidden flex items-center justify-center"
         >
-          <i class="fas fa-building text-primary text-xl"></i>
+          <img
+            v-if="getCompanyDomain(company.website)"
+            :src="getLogoUrl(company.website)"
+            :alt="`${company.name} logo`"
+            class="w-full h-full object-contain p-1"
+            @error="showFallbackIcon = true"
+            v-show="!showFallbackIcon"
+          />
+          <div
+            v-show="showFallbackIcon || !getCompanyDomain(company.website)"
+            class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
+          >
+            <i class="fas fa-building text-primary text-xl"></i>
+          </div>
         </div>
         <div class="flex-1 min-w-0">
           <h3 class="text-lg font-semibold group-hover:text-primary transition-colors truncate">
@@ -99,9 +112,22 @@
       <!-- Column 1: Company Name and Website (4 cols) -->
       <div class="col-span-4 flex items-center gap-3 min-w-0">
         <div
-          class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center flex-shrink-0"
+          class="w-10 h-10 rounded-lg bg-white ring-1 ring-border-2 overflow-hidden flex items-center justify-center flex-shrink-0"
         >
-          <i class="fas fa-building text-primary"></i>
+          <img
+            v-if="getCompanyDomain(company.website)"
+            :src="getLogoUrl(company.website)"
+            :alt="`${company.name} logo`"
+            class="w-full h-full object-contain p-1"
+            @error="showFallbackIcon = true"
+            v-show="!showFallbackIcon"
+          />
+          <div
+            v-show="showFallbackIcon || !getCompanyDomain(company.website)"
+            class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
+          >
+            <i class="fas fa-building text-primary"></i>
+          </div>
         </div>
 
         <div class="flex-1 min-w-0">
@@ -169,6 +195,7 @@ import Badge from '@/components/ui/Badge.vue'
 import Button from '@/components/ui/Button.vue'
 import type { Company } from '@/types/company'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import { ref } from 'vue'
 
 interface Props {
   company: Company
@@ -184,6 +211,30 @@ defineEmits<{
 
 // Permissions
 const { canDeleteCompany } = useCompanyPermissions()
+
+// Logo state
+const showFallbackIcon = ref(false)
+
+// Helper function to extract domain from website URL
+const getCompanyDomain = (website?: string) => {
+  if (!website) return null
+  try {
+    // Remove protocol and www
+    let domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '')
+    // Remove trailing slash and any path
+    domain = domain.split('/')[0]
+    return domain
+  } catch {
+    return null
+  }
+}
+
+// Helper function to get logo URL from logo.dev
+const getLogoUrl = (website?: string) => {
+  const domain = getCompanyDomain(website)
+  if (!domain) return ''
+  return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
+}
 
 // Methods
 const formatWebsiteUrl = (website: string) => {
