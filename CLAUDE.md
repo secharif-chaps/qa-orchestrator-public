@@ -220,10 +220,55 @@ curl -X POST http://localhost:8000/api/companies/ \
 ### Deployment Process
 1. Make changes locally in development environment
 2. Test changes locally with Docker
-3. Commit changes with descriptive commit message
+3. Commit changes with descriptive commit message using gitmoji
 4. Push to repository
 5. Ask user to deploy using their deployment process
 6. Verify deployment worked correctly
+
+## Git Commit Guidelines
+
+### Gitmoji Usage
+**ALWAYS** use gitmoji in commit messages to provide visual context:
+
+Common gitmojis for this project:
+- ✨ `:sparkles:` - New features
+- 🐛 `:bug:` - Bug fixes
+- 🔧 `:wrench:` - Configuration changes
+- 📝 `:memo:` - Documentation updates
+- 🗃️ `:card_file_box:` - Database changes/migrations
+- 🔒 `:lock:` - Security improvements
+- ♻️ `:recycle:` - Refactoring code
+- 🚀 `:rocket:` - Deployment/performance improvements
+- 🔥 `:fire:` - Removing code/files
+- 💄 `:lipstick:` - UI/styling updates
+- 🧪 `:test_tube:` - Adding tests
+- 📦 `:package:` - Dependencies/packages
+
+### Commit Message Format
+```
+<gitmoji> <type>: <description>
+
+[optional body]
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+### Examples
+```bash
+# Feature
+✨ feat: add user authentication system
+
+# Bug fix  
+🐛 fix: resolve validation error for company names with ampersand
+
+# Database change
+🗃️ feat: populate workflow_configs with 8 task types in initial migration
+
+# Security fix
+🔒 fix: sanitize user input to prevent XSS attacks
+```
 
 ## Database Schema Guidelines
 
