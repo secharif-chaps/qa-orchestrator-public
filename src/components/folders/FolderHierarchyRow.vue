@@ -66,7 +66,7 @@
         v-for="item in folder.items"
         :key="item.id"
         class="px-6 py-3 hover:bg-bg2/50 transition-colors cursor-pointer border-l-4 border-primary/20 ml-12"
-        @click="$emit('view-item', item.id)"
+        @click="$emit('view-item', { itemId: item.id, folderId: folder.id })"
       >
         <div class="grid grid-cols-12 gap-4 items-center">
           <!-- Item name with indentation -->
@@ -115,7 +115,7 @@
               size="sm"
               icon="fa fa-external-link-alt"
               icon-only
-              @click.stop="$emit('view-item', item.id)"
+              @click.stop="$emit('view-item', { itemId: item.id, folderId: folder.id })"
             />
           </div>
         </div>

@@ -72,22 +72,14 @@
 
         <!-- Action Buttons -->
         <div class="mt-4">
-          <div v-if="module.unlocked" class="grid grid-cols-2 gap-2">
-            <RouterLink
-              to="/search"
-              class="bg-gradient-to-r from-primary to-primary/80 text-white py-2 px-3 rounded-lg font-medium text-center text-sm transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 transform hover:-translate-y-0.5 flex items-center justify-center"
-            >
-              <i class="fa-solid fa-magnifying-glass mr-1"></i>
-              Search
-            </RouterLink>
-            <RouterLink
-              to="/companies"
-              class="bg-gradient-to-r from-primary to-primary/80 text-white py-2 px-3 rounded-lg font-medium text-center text-sm transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 transform hover:-translate-y-0.5 flex items-center justify-center"
-            >
-              <i class="fa-solid fa-building mr-1"></i>
-              Companies
-            </RouterLink>
-          </div>
+          <RouterLink
+            v-if="module.unlocked"
+            to="/folders"
+            class="block w-full bg-gradient-to-r from-primary to-primary/80 text-white py-2 px-4 rounded-lg font-medium text-center text-sm transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 transform hover:-translate-y-0.5"
+          >
+            <i class="fa-solid fa-folder mr-2"></i>
+            View Folders
+          </RouterLink>
           <button
             v-else-if="module.status === 'contact-sales'"
             class="w-full border border-orange-300 dark:border-orange-700 text-orange-600 dark:text-orange-400 py-2 px-4 rounded-lg font-medium transition-all duration-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"

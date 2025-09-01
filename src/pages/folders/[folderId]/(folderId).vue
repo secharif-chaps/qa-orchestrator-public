@@ -42,7 +42,7 @@
               :key="item.id"
               :item="item"
               mode="grid"
-              @view-item="$router.push(`/companies/${$event}`)"
+              @view-item="$router.push(`/folders/${route.params.folderId}/companies/${$event}`)"
               @remove-item="confirmRemoveItem"
             />
           </div>
@@ -238,7 +238,7 @@ const formatDate = (dateString: string) => {
 
 const navigateToItem = (item: FolderItem) => {
   if (item.type === 'company') {
-    router.push(`/companies/${item.id}`)
+    router.push(`/folders/${route.params.folderId}/companies/${item.id}`)
   }
 }
 

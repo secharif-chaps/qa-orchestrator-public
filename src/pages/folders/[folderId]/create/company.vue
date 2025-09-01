@@ -290,7 +290,7 @@ const submit = async () => {
       },
     })
     // Redirect to the newly created company page
-    router.push(`/companies/${newCompany.id}`)
+    router.push(`/folders/${folderId}/companies/${newCompany.id}`)
   } catch (error: any) {
     // Handle any unexpected errors during the search process
     console.error('Error during search:', error)

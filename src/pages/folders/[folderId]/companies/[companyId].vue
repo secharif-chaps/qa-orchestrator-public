@@ -10,7 +10,7 @@
         @click="confirmDelete"
       />
     </template>
-
+    
     <div class="flex flex-col gap-4">
       <TasksFlow v-if="displayTasks" />
       <RouterView />
@@ -21,7 +21,6 @@
 
   <!-- Delete Confirmation Modal -->
   <CompanyDeleteModal
-    v-if="company"
     v-model="showDeleteModal"
     :company-to-delete="company"
     @delete-company="handleDeleteCompany"
@@ -46,15 +45,16 @@ const router = useRouter()
 const { t } = useI18n()
 
 const companyId = computed(() => route.params.companyId as string)
+const folderId = computed(() => route.params.folderId as string)
 
 // Get company data
-const {
-  data: company,
-  error,
-  status,
-} = useQuery(companyByIdQuery, () => ({ id: companyId.value }), {
-  enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
-})
+const { data: company, error, status } = useQuery(
+  companyByIdQuery, 
+  () => ({ id: companyId.value }),
+  {
+    enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
+  }
+)
 
 // Permissions
 const { canDeleteCompany } = useCompanyPermissions()
@@ -65,17 +65,15 @@ const showDeleteModal = ref(false)
 // Handle 404 errors - redirect to companies list if company doesn't exist
 watch([error, status], ([newError, newStatus]) => {
   // Check for 404 error in multiple possible formats
-  if (
-    (newError && (newError.status === 404 || newError.response?.status === 404)) ||
-    (newStatus === 'error' && newError && newError.message?.includes('404'))
-  ) {
+  if ((newError && (newError.status === 404 || newError.response?.status === 404)) ||
+      (newStatus === 'error' && newError && newError.message?.includes('404'))) {
     // Company not found, redirect to companies list
-    router.push('/companies')
+    router.push(`/folders/${folderId.value}`)
   }
 })
 
 const displayTasks = computed(() => {
-  return route.name === '/companies/[companyId]/'
+  return route.name === '/folders/[folderId]/companies/[companyId]/'
 })
 
 const confirmDelete = () => {
@@ -89,17 +87,17 @@ const handleDeleteCompany = () => {
 
 const title = computed(() => {
   switch (route.name) {
-    case '/companies/[companyId]/':
+    case '/folders/[folderId]/companies/[companyId]/':
       return t('dashboard.title')
-    case '/companies/[companyId]/profile':
+    case '/folders/[folderId]/companies/[companyId]/profile':
       return t('profile.title')
-    case '/companies/[companyId]/products':
+    case '/folders/[folderId]/companies/[companyId]/products':
       return t('products.title')
-    case '/companies/[companyId]/jobs':
+    case '/folders/[folderId]/companies/[companyId]/jobs':
       return t('jobs.title')
-    case '/companies/[companyId]/timeline':
+    case '/folders/[folderId]/companies/[companyId]/timeline':
       return t('timeline.title')
-    case '/companies/[companyId]/team':
+    case '/folders/[folderId]/companies/[companyId]/team':
       return t('team.title')
     case '/companies/[companyId]/press':
       return 'Press & Media Coverage'

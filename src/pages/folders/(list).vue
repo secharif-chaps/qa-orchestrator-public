@@ -116,7 +116,7 @@
               :folder="folder"
               @view-folder="$router.push(`/folders/${$event}`)"
               @delete-folder="confirmDelete"
-              @view-item="$router.push(`/companies/${$event}`)"
+              @view-item="(event) => $router.push(`/folders/${event.folderId}/companies/${event.itemId}`)"
             />
           </div>
         </div>

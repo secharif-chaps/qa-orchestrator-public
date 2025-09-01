@@ -61,7 +61,7 @@
           <div
             @click.prevent="
               index < 3 || folder.items.length <= 4
-                ? $router.push(`/companies/${item.id}`)
+                ? $router.push(`/folders/${folder.id}/companies/${item.id}`)
                 : $router.push(`/folders/${folder.id}`)
             "
             v-for="(item, index) in previewItems"

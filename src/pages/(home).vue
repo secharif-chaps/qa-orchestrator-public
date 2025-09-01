@@ -35,7 +35,7 @@
           <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold">Recent Companies</h2>
             <RouterLink
-              to="/companies"
+              to="/folders"
               class="text-primary hover:text-primary/80 text-sm font-medium flex items-center transition-colors"
             >
               View all
