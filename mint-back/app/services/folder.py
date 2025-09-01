@@ -143,16 +143,16 @@ class FolderService:
     def list_folders(
         db: Session,
         workspace_id: int,
-        include_deleted: bool = False,
+        archived: bool = False,
         favorites_only: bool = False
     ) -> List[Folder]:
         """List all folders in a workspace with their items"""
         query = db.query(Folder).filter(Folder.workspace_id == workspace_id)
         
-        if not include_deleted:
-            query = query.filter(Folder.is_deleted == False)
-        elif include_deleted == "only":
+        if archived:
             query = query.filter(Folder.is_deleted == True)
+        else:
+            query = query.filter(Folder.is_deleted == False)
         
         if favorites_only:
             query = query.filter(Folder.is_favorite == True)

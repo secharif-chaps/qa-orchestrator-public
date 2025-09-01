@@ -70,7 +70,7 @@ def create_folder(
 
 @router.get("/", response_model=List[FolderResponse])
 def list_folders(
-    archived: Optional[str] = Query(None, pattern="^(include|only)$"),
+    archived: bool = Query(False),
     favorites: bool = Query(False),
     current_user: TokenData = Depends(get_current_user),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
@@ -80,16 +80,10 @@ def list_folders(
     # Check workspace read permission
     verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.read", db)
     
-    include_deleted = False
-    if archived == "include":
-        include_deleted = True
-    elif archived == "only":
-        include_deleted = "only"
-    
     folders = FolderService.list_folders(
         db=db,
         workspace_id=workspace_context.workspace_id,
-        include_deleted=include_deleted,
+        archived=archived,
         favorites_only=favorites
     )
     
