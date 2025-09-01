@@ -249,6 +249,20 @@ def upgrade():
         VALUES (1, 'ChapsVision', 'Main ChapsVision workspace', 'chapsvision', NOW())
         ON CONFLICT DO NOTHING
     """)
+    
+    # Insert default workflow configs for all 8 task types
+    op.execute("""
+        INSERT INTO workflow_configs (task_type, title, llm, created_at, updated_at) VALUES
+        ('profile', 'Company Profile Analysis', 'mistral', NOW(), NOW()),
+        ('digital', 'Digital Presence Analysis', 'mistral', NOW(), NOW()),
+        ('timeline', 'Company Timeline Analysis', 'mistral', NOW(), NOW()),
+        ('products', 'Products & Services Analysis', 'mistral', NOW(), NOW()),
+        ('jobs', 'Jobs & Careers Analysis', 'mistral', NOW(), NOW()),
+        ('csr', 'CSR & Sustainability Analysis', 'mistral', NOW(), NOW()),
+        ('press', 'Press & Media Analysis', 'mistral', NOW(), NOW()),
+        ('team', 'Team & Leadership Analysis', 'mistral', NOW(), NOW())
+        ON CONFLICT (task_type) DO NOTHING
+    """)
 
 def downgrade():
     # Drop materialized views
