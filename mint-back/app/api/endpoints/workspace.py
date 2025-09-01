@@ -8,7 +8,7 @@ from app.core.workspace import (
     WorkspaceContext
 )
 from app.models.workspace import Workspace, WorkspaceMember, WorkspaceMemberStatus
-from app.models.user import User
+# NOTE: No User model - user references handled via username strings only
 from app.models.company import Company
 from app.schemas.workspace import (
     WorkspaceResponse,

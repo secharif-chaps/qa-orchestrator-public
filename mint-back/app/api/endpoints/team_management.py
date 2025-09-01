@@ -13,7 +13,7 @@ from sqlalchemy import func, or_, and_
 from app.database import get_db
 from app.core.dependencies import get_current_user
 from app.models.workspace import Workspace, WorkspaceMember, WorkspaceMemberStatus
-from app.models.user import User
+# NOTE: No User model - user references handled via username strings only
 from app.schemas.user import TokenData
 from app.schemas.team_management import (
     WorkspaceUser,

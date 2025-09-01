@@ -224,3 +224,31 @@ curl -X POST http://localhost:8000/api/companies/ \
 4. Push to repository
 5. Ask user to deploy using their deployment process
 6. Verify deployment worked correctly
+
+## Database Schema Guidelines
+
+### User Reference Architecture
+**CRITICAL**: This application does NOT use a separate users table with UUID foreign keys.
+
+- **User References**: All user references are done via **username strings** only
+- **No Users Table**: There is NO `users` table in the database
+- **Authentication**: User authentication is handled entirely by Keycloak
+- **User Data**: User information is stored in Keycloak, not in the application database
+
+### Table Schema Rules
+- **folders.owner**: `VARCHAR` field containing username string (NOT UUID FK)
+- **folder_items.owner**: `VARCHAR` field containing username string (NOT UUID FK) 
+- **companies.owner_username**: `VARCHAR` field containing username string
+- **workspace_members.username**: `VARCHAR` field containing username string
+
+### Model Relationships
+- **NO foreign key relationships to users table** (because it doesn't exist)
+- **NO SQLAlchemy relationships to User model** (because it doesn't exist)
+- All user references are simple string fields containing usernames
+- User data is fetched from Keycloak when needed, not from database joins
+
+### Migration Rules
+- Never create `users` table
+- Never create UUID foreign keys to users
+- Always use VARCHAR/String fields for user references
+- User references should be nullable in most cases (owner can be empty)

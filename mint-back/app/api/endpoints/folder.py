@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import User
+# NOTE: No User model - user references handled via username strings only
 from app.core.dependencies import get_current_user
 from app.schemas.user import TokenData
 from app.schemas.folder import (

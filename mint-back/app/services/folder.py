@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_
 from datetime import datetime
 
-from app.models import Folder, FolderItem, Company, User
+from app.models import Folder, FolderItem, Company
 from app.schemas.folder import FolderCreate, FolderUpdate
 
 
