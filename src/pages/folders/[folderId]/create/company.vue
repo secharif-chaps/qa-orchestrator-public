@@ -108,7 +108,7 @@ import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert
 
 const { t } = useI18n()
 const router = useRouter()
-const route = useRoute('/folders/[folderId].create.company')
+const route = useRoute()
 
 const company = ref('')
 const website = ref('')
@@ -259,8 +259,6 @@ const submit = async () => {
     }
     return
   }
-  // Validate inputs before proceeding
-  console.log('startSearch', company.value, website.value)
 
   if (!validateCompany(company.value)) {
     companyError.value = t('search.fields.companyName.error')
@@ -291,9 +289,8 @@ const submit = async () => {
         item_type: 'company',
       },
     })
-
-    // Redirect to the folder page to see the newly added company
-    router.push(`/folders/${folderId}`)
+    // Redirect to the newly created company page
+    router.push(`/companies/${newCompany.id}`)
   } catch (error: any) {
     // Handle any unexpected errors during the search process
     console.error('Error during search:', error)
