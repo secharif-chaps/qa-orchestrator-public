@@ -54,12 +54,13 @@
           @click.stop="handleClick"
         />
         <Button
+          v-if="item.type === 'company' && canDeleteCompany"
           variant="tertiary"
           color="danger"
           icon="fa fa-trash"
           icon-only
-          :title="$t('folder.item.actions.remove', 'Remove from folder')"
-          @click.stop="$emit('removeItem', item)"
+          :title="$t('company.delete.title', 'Delete Company')"
+          @click.stop="$emit('deleteCompany', item)"
         />
       </div>
     </div>
@@ -82,6 +83,7 @@ import { ref } from 'vue'
 import Button from '@/components/ui/Button.vue'
 import type { FolderItem } from '@/types/folder'
 import { useI18n } from 'vue-i18n'
+import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 
 interface Props {
   item: FolderItem
@@ -93,9 +95,11 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   viewItem: [id: string]
   removeItem: [item: FolderItem]
+  deleteCompany: [item: FolderItem]
 }>()
 
 const { t } = useI18n()
+const { canDeleteCompany } = useCompanyPermissions()
 const showFallbackIcon = ref(false)
 const isParentHovered = ref(false)
 const isChildHovered = ref(false)

@@ -44,6 +44,7 @@
               mode="grid"
               @view-item="$router.push(`/folders/${route.params.folderId}/companies/${$event}`)"
               @remove-item="confirmRemoveItem"
+              @delete-company="confirmDeleteCompany"
             />
           </div>
 
@@ -110,13 +111,25 @@
                     <span class="text-sm text-secondary">{{ item.owner_username || 'N/A' }}</span>
                   </div>
                   <div class="col-span-2 text-right">
-                    <Button
-                      variant="tertiary"
-                      size="sm"
-                      icon="fa fa-external-link-alt"
-                      :label="$t('folder.item.view', 'View')"
-                      @click.stop="navigateToItem(item)"
-                    />
+                    <div class="flex items-center justify-end gap-2">
+                      <Button
+                        variant="tertiary"
+                        size="sm"
+                        icon="fa fa-external-link-alt"
+                        :label="$t('folder.item.view', 'View')"
+                        @click.stop="navigateToItem(item)"
+                      />
+                      <Button
+                        v-if="item.type === 'company' && canDeleteCompany"
+                        variant="tertiary"
+                        color="danger"
+                        size="sm"
+                        icon="fa fa-trash"
+                        icon-only
+                        :title="$t('company.delete.title', 'Delete Company')"
+                        @click.stop="confirmDeleteCompany(item)"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -157,6 +170,13 @@
       :folder-to-delete="folder || null"
       @delete-folder="$router.push('/folders')"
     />
+
+    <!-- Delete Company Modal -->
+    <CompanyDeleteModal
+      v-model="showDeleteCompanyModal"
+      :company-to-delete="companyToDelete"
+      @delete-company="handleDeleteCompany"
+    />
   </div>
 </template>
 
@@ -171,21 +191,27 @@ import Alert from '@/components/ui/Alert.vue'
 import Badge from '@/components/ui/Badge.vue'
 import Button from '@/components/ui/Button.vue'
 import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
+import CompanyDeleteModal from '@/components/companies/CompanyDeleteModal.vue'
 import FoldersHeader from '@/components/folders/FoldersHeader.vue'
 import type { FolderItem } from '@/types/folder'
+import type { Company } from '@/types/company'
 import { ref, computed, onMounted, watch } from 'vue'
 import { folderByIdQuery } from '@/queries/folders'
 import { useQuery } from '@pinia/colada'
 import { useRoute, useRouter } from 'vue-router'
 import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
+import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 
 // Constants
 const VIEW_MODE_STORAGE_KEY = 'folder-view-mode'
 
 const route = useRoute('/folders/[folderId]')
 const router = useRouter()
+const { canDeleteCompany } = useCompanyPermissions()
 
 const showDeleteModal = ref(false)
+const showDeleteCompanyModal = ref(false)
+const companyToDelete = ref<Company | null>(null)
 const searchTerm = ref('')
 const viewMode = ref<'table' | 'grid'>('grid')
 
@@ -193,6 +219,7 @@ const {
   data: folder,
   status,
   isLoading,
+  refetch,
 } = useQuery(folderByIdQuery, () => ({
   id: route.params.folderId as string,
 }))
@@ -249,6 +276,26 @@ const confirmDelete = () => {
 const confirmRemoveItem = (item: FolderItem) => {
   // TODO: Implement remove item confirmation
   console.log('Remove item:', item)
+}
+
+const confirmDeleteCompany = (item: FolderItem) => {
+  // Convert FolderItem to Company format for the delete modal
+  if (item.type === 'company') {
+    companyToDelete.value = {
+      id: parseInt(item.id),
+      name: item.name,
+      website: item.website,
+      created_at: item.created_at,
+      owner_username: item.owner_username,
+    } as Company
+    showDeleteCompanyModal.value = true
+  }
+}
+
+const handleDeleteCompany = async () => {
+  // Refresh the folder items after successful deletion
+  await refetch()
+  companyToDelete.value = null
 }
 
 // Load saved view mode from localStorage
