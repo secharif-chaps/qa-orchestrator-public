@@ -29,11 +29,11 @@
         <StatisticsOverview :stats="companiesStats" :loading="status === 'pending'" />
       </div> -->
 
-      <!-- Recent Companies Section -->
+      <!-- Favorite Folders Section -->
       <div class="bg-bg1 border border-border-2 rounded-lg mb-8">
         <div class="px-6 py-4 border-b border-border-2">
           <div class="flex items-center justify-between">
-            <h2 class="text-xl font-semibold">Recent Companies</h2>
+            <h2 class="text-xl font-semibold">Favorite Folders</h2>
             <RouterLink
               to="/folders"
               class="text-primary hover:text-primary/80 text-sm font-medium flex items-center transition-colors"
@@ -55,9 +55,9 @@
         <div v-else-if="status === 'error'" class="px-6 py-8">
           <div class="text-center">
             <i class="fas fa-exclamation-triangle text-red-400 text-2xl mb-2"></i>
-            <p class="text-secondary">Unable to load recent companies</p>
+            <p class="text-secondary">Unable to load favorite folders</p>
             <button
-              @click="refreshCompanies()"
+              @click="refreshFavorites()"
               class="mt-2 text-primary hover:text-primary/80 text-sm font-medium transition-colors"
             >
               Try again
@@ -65,51 +65,31 @@
           </div>
         </div>
 
-        <!-- Companies Grid -->
-        <div v-else-if="recentCompanies && recentCompanies.length > 0" class="p-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div
-              v-for="company in recentCompanies"
-              :key="company.id"
-              class="border border-border-2 rounded-lg p-4 ring-offset-2 ring-offset-bg2 hover:ring-4 hover:ring-primary/70 transition-all cursor-pointer group"
-              @click="$router.push(`/companies/${company.id}`)"
-            >
-              <div class="flex items-start justify-between mb-2">
-                <h3 class="font-medium truncate group-hover:text-primary transition-colors">
-                  {{ company.name }}
-                </h3>
-                <span class="text-xs text-secondary ml-2 flex-shrink-0">
-                  {{ formatRelativeTime(company.created_at) }}
-                </span>
-              </div>
-              <p class="text-sm text-secondary truncate mb-2">{{ company.website }}</p>
-              <div class="flex items-center justify-between">
-                <div class="flex items-center text-xs text-secondary">
-                  <i class="fas fa-tasks mr-1"></i>
-                  {{ company.tasks?.length || 0 }} tasks
-                </div>
-                <div class="flex items-center">
-                  <span
-                    class="w-2 h-2 rounded-full mr-1"
-                    :class="getCompanyStatusColor(company)"
-                  ></span>
-                  <span class="text-xs text-secondary">{{ getCompanyStatus(company) }}</span>
-                </div>
-              </div>
-            </div>
+        <!-- Favorite Folders Grid -->
+        <div v-else-if="favoriteFolders && favoriteFolders.length > 0" class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <FolderItem
+              v-for="folder in favoriteFolders"
+              :key="folder.id"
+              :folder="folder"
+              @view-folder="viewFolder"
+              @favorite-toggled="handleFavoriteToggled"
+            />
           </div>
         </div>
 
         <!-- Empty State -->
         <div v-else class="px-6 py-8 text-center">
-          <i class="fas fa-building text-secondary text-3xl mb-4"></i>
-          <h3 class="text-lg font-medium mb-2">No companies yet</h3>
-          <p class="text-secondary mb-4">Start by adding your first company to the database</p>
+          <i class="fas fa-star text-secondary text-3xl mb-4"></i>
+          <h3 class="text-lg font-medium mb-2">No favorite folders yet</h3>
+          <p class="text-secondary mb-4">
+            Mark folders as favorites to see them here for quick access
+          </p>
           <Button
             variant="primary"
-            icon="fa fa-plus"
-            label="Add Company"
-            @click="$router.push('/search')"
+            icon="fa fa-folder-plus"
+            label="Create Folder"
+            @click="$router.push('/folders/create')"
           />
         </div>
       </div>
@@ -137,17 +117,18 @@
 
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth'
-import { companiesQuery } from '@/queries/companies'
+import { favoriteFoldersQuery } from '@/queries/folders'
 import Button from '@/components/ui/Button.vue'
+import FolderItem from '@/components/folders/FolderItem.vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import type { Company } from '@/types/company'
-import QuickActions from '@/components/dashboard/QuickActions.vue'
-import StatisticsOverview from '@/components/dashboard/StatisticsOverview.vue'
+import type { Folder } from '@/types/folder'
 import ModulesShowcase from '@/components/home/ModulesShowcase.vue'
 import { useQuery } from '@pinia/colada'
+import { useRouter } from 'vue-router'
 
 // Only access auth on client side
 const { user } = useAuth()
+const $router = useRouter()
 
 // Reactive data
 const currentTime = ref('')
@@ -166,73 +147,23 @@ const greetingMessage = computed(() => {
   return "Good evening! Let's harvest some mint!"
 })
 
-// Cached pagination data using useAsyncData
+// Cached favorite folders data
 const {
-  data,
+  data: favoriteFolders,
   status,
-  refresh: refreshCompanies,
-} = useQuery(companiesQuery, () => ({
-  filters: {
-    page: 1,
-    size: 10,
-    name: '',
-  },
-}))
+  refresh: refreshFavorites,
+} = useQuery(favoriteFoldersQuery, () => ({}))
 
-const recentCompanies = computed(() => data.value?.data)
-const companiesMeta = computed(() => data.value?.meta)
-
-const companiesStats = computed(() => {
-  // Use actual total count , not just recent companies length
-  const total = companiesMeta.value?.total || 'N/A'
-
-  // Calculate active tasks from recent companies (this is an approximation for display)
-  const activeTasks = 0
-
-  // Calculate recent updates from recent companies (this is an approximation)
-  const recentUpdates = 0
-
-  return { total, activeTasks, recentUpdates }
-})
-
-const formatRelativeTime = (dateString: string) => {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-
-  if (diffInSeconds < 60) return 'Just now'
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`
-  return `${Math.floor(diffInSeconds / 86400)}d ago`
+// Navigate to folder
+const viewFolder = (folderId: string) => {
+  $router.push(`/folders/${folderId}`)
 }
 
-const getCompanyStatus = (company: Company) => {
-  if (!company.tasks || company.tasks.length === 0) return 'New'
-
-  const hasRunningTasks = company.tasks.some(
-    (task) => task.status === 'running' || task.status === 'pending',
-  )
-  if (hasRunningTasks) return 'Processing'
-
-  const hasFailedTasks = company.tasks.some((task) => task.status === 'error')
-  if (hasFailedTasks) return 'Issues'
-
-  return 'Complete'
-}
-
-const getCompanyStatusColor = (company: Company) => {
-  const status = getCompanyStatus(company)
-  switch (status) {
-    case 'New':
-      return 'bg-gray-400'
-    case 'Processing':
-      return 'bg-yellow-400'
-    case 'Issues':
-      return 'bg-red-400'
-    case 'Complete':
-      return 'bg-green-400'
-    default:
-      return 'bg-gray-400'
+// Handle favorite toggle
+const handleFavoriteToggled = async (folder: Folder) => {
+  // Refresh the favorites list since a folder was removed from favorites
+  if (!folder.is_favorite) {
+    await refreshFavorites()
   }
 }
 

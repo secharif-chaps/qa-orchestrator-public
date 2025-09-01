@@ -7,7 +7,7 @@ export const getFolderById = async (folderId: string) => {
   return response
 }
 
-export const getFolders = async (filters: { page: number; size: number; name: string; archived?: boolean }) => {
+export const getFolders = async (filters: { page: number; size: number; name: string; archived?: boolean; favorites?: boolean }) => {
   const params = new URLSearchParams({
     page: filters.page.toString(),
     size: filters.size.toString(),
@@ -20,6 +20,10 @@ export const getFolders = async (filters: { page: number; size: number; name: st
   if (filters.archived) {
     params.append('archived', 'true')
   }
+  
+  if (filters.favorites) {
+    params.append('favorites', 'true')
+  }
 
   const response = await apiClient.get<PaginatedResponse<Folder>>(
     `/folders?${params.toString()}`,
@@ -27,7 +31,7 @@ export const getFolders = async (filters: { page: number; size: number; name: st
   return response
 }
 
-export const getFoldersWithItems = async (filters: { page: number; size: number; name: string; archived?: boolean }) => {
+export const getFoldersWithItems = async (filters: { page: number; size: number; name: string; archived?: boolean; favorites?: boolean }) => {
   const params = new URLSearchParams({
     page: filters.page.toString(),
     size: filters.size.toString(),
@@ -40,6 +44,10 @@ export const getFoldersWithItems = async (filters: { page: number; size: number;
   
   if (filters.archived) {
     params.append('archived', 'true')
+  }
+  
+  if (filters.favorites) {
+    params.append('favorites', 'true')
   }
 
   const response = await apiClient.get<PaginatedResponse<Folder>>(
@@ -55,6 +63,13 @@ export const createFolder = async (folder: FolderCreate) => {
 
 export const updateFolder = async (folderId: string, folder: FolderUpdate) => {
   const response = await apiClient.put<Folder>(`/folders/${folderId}`, folder)
+  return response
+}
+
+export const toggleFolderFavorite = async (folderId: string, isFavorite: boolean) => {
+  const response = await apiClient.patch<Folder>(`/folders/${folderId}`, {
+    is_favorite: isFavorite
+  })
   return response
 }
 
@@ -85,6 +100,7 @@ export const foldersApi = {
   getFolders,
   createFolder,
   updateFolder,
+  toggleFolderFavorite,
   deleteFolder,
   restoreFolder,
   addItemToFolder,

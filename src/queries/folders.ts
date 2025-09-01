@@ -8,6 +8,7 @@ export const FOLDER_QUERY_KEYS = {
     [...FOLDER_QUERY_KEYS.root, { filters }] as const,
   withItems: (filters: { page: number; size: number; name: string }) =>
     [...FOLDER_QUERY_KEYS.root, 'with-items', { filters }] as const,
+  favorites: () => [...FOLDER_QUERY_KEYS.root, 'favorites'] as const,
 }
 
 export const folderByIdQuery = defineQueryOptions(({ id }: { id: string }) => ({
@@ -34,3 +35,18 @@ export const foldersWithItemsQuery = defineQueryOptions(
     query: () => getFoldersWithItems(filters),
   }),
 )
+
+export const favoriteFoldersQuery = defineQueryOptions(() => ({
+  key: FOLDER_QUERY_KEYS.favorites(),
+  query: async () => {
+    // Get favorite folders with items directly from the API
+    const response = await getFoldersWithItems({
+      page: 1,
+      size: 4, // Only need first 4 favorites for home page
+      name: '',
+      favorites: true, // Use the favorites parameter to get only favorite folders
+    })
+    
+    return response
+  },
+}))

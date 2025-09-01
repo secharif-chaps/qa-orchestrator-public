@@ -79,6 +79,7 @@
             :folder="folder"
             @view-folder="$router.push(`/folders/${$event}`)"
             @delete-folder="confirmDelete"
+            @favorite-toggled="handleFavoriteToggled"
           />
         </div>
 
@@ -312,6 +313,15 @@ const handleDeleteFolder = async () => {
 const confirmDelete = (folder: Folder) => {
   folderToDelete.value = folder
   showDeleteModal.value = true
+}
+
+const handleFavoriteToggled = async (folder: Folder) => {
+  // Refresh the folders list after favorite toggle to update the filtered views
+  if (viewMode.value === 'grid') {
+    await refetch()
+  } else {
+    await refetchWithItems()
+  }
 }
 
 const updatePerPage = (newSize: number) => {

@@ -2,13 +2,31 @@
   <!-- Card View -->
   <div
     :class="[
-      'bg-bg1 rounded-lg p-4 border border-border-2 ring-offset-2 ring-offset-bg3 transition-all duration-200 cursor-pointer group flex flex-col justify-between gap-2',
+      'bg-bg1 rounded-lg p-4 border border-border-2 ring-offset-2 ring-offset-bg3 transition-all duration-200 cursor-pointer group flex flex-col justify-between gap-2 relative',
       { 'hover:ring-4 hover:ring-primary/70': !isChildHovered },
     ]"
-    @click="$emit('viewFolder', folder.id)"
+    @click="handleCardClick"
     @mouseenter="isParentHovered = true"
     @mouseleave="isParentHovered = false"
   >
+    <!-- Favorite Toggle Button -->
+    <button
+      @click.stop="toggleFavorite"
+      class="absolute top-3 right-3 z-10 p-2 rounded-lg hover:bg-bg2 transition-colors"
+      :title="folder.is_favorite ? 'Remove from favorites' : 'Add to favorites'"
+      :disabled="isTogglingFavorite"
+    >
+      <i
+        v-if="!isTogglingFavorite"
+        :class="[
+          folder.is_favorite
+            ? 'fa-jelly-fill fa-regular fa-star text-amber-500'
+            : 'fa-jelly fa-regular fa-star text-secondary hover:text-amber-500',
+        ]"
+      ></i>
+      <i v-else class="fas fa-spinner fa-spin text-secondary"></i>
+    </button>
+
     <div class="flex flex-col gap-2">
       <div class="flex items-start justify-between">
         <div class="flex items-center gap-3">
@@ -23,11 +41,6 @@
               <h3 class="text-lg font-semibold group-hover:text-primary transition-colors truncate">
                 {{ folder.name }}
               </h3>
-              <i
-                v-if="folder.is_favorite"
-                class="fas fa-star text-warning text-sm"
-                :title="$t('folder.favorite', 'Favorite folder')"
-              ></i>
             </div>
             <div class="flex items-center gap-2">
               <span class="text-sm text-secondary">
@@ -134,7 +147,9 @@
 import Badge from '@/components/ui/Badge.vue'
 import Button from '@/components/ui/Button.vue'
 import type { Folder } from '@/types/folder'
+import { toggleFolderFavorite } from '@/api/folders'
 import { computed, ref } from 'vue'
+import { toast } from '@/utils/toast'
 
 interface Props {
   folder: Folder
@@ -142,13 +157,15 @@ interface Props {
 
 const props = defineProps<Props>()
 
-defineEmits<{
+const emit = defineEmits<{
   viewFolder: [id: string]
   deleteFolder: [folder: Folder]
+  favoriteToggled: [folder: Folder]
 }>()
 
 const isParentHovered = ref(false)
 const isChildHovered = ref(false)
+const isTogglingFavorite = ref(false)
 
 // Compute folder color classes based on the color prop
 const folderColorClasses = computed(() => {
@@ -222,5 +239,33 @@ const getLogoUrl = (website?: string) => {
 const formatDate = (dateString: string) => {
   if (!dateString) return 'N/A'
   return new Date(dateString).toLocaleDateString()
+}
+
+const handleCardClick = (event: MouseEvent) => {
+  // Only emit viewFolder if not clicking on the favorite button
+  emit('viewFolder', props.folder.id)
+}
+
+const toggleFavorite = async () => {
+  if (isTogglingFavorite.value) return
+
+  isTogglingFavorite.value = true
+  try {
+    const newFavoriteStatus = !props.folder.is_favorite
+    const updatedFolder = await toggleFolderFavorite(props.folder.id, newFavoriteStatus)
+
+    // Update the local folder object
+    props.folder.is_favorite = newFavoriteStatus
+
+    // Emit event for parent to handle
+    emit('favoriteToggled', updatedFolder)
+
+    toast.success(newFavoriteStatus ? 'Folder added to favorites' : 'Folder removed from favorites')
+  } catch (error) {
+    console.error('Failed to toggle favorite:', error)
+    toast.error('Failed to update favorite status')
+  } finally {
+    isTogglingFavorite.value = false
+  }
 }
 </script>
