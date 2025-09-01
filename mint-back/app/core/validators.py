@@ -87,10 +87,11 @@ class InputValidator:
         # Additional character restrictions
         # Allow alphanumeric, spaces, and common business characters
         allowed_chars = re.compile(r'^[a-zA-Z0-9\s\-_.&()]+$')
-        if not allowed_chars.match(sanitized.replace('&lt;', '<').replace('&gt;', '>').replace('&amp;', '&')):
-            # If HTML escaped, check the original pattern
-            if not allow_html and not allowed_chars.match(value.strip()):
-                raise ValidationError("Input contains invalid characters")
+        
+        # Check against the original value before HTML escaping
+        original_value = value.strip()
+        if not allowed_chars.match(original_value):
+            raise ValidationError("Input contains invalid characters")
         
         return sanitized
     
