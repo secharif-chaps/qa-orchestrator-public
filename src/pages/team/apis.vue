@@ -1,6 +1,21 @@
 <template>
   <!-- External APIs Tab -->
   <div class="space-y-6">
+    <!-- Header Section -->
+    <div>
+      <h2 class="text-2xl font-bold text-primary mb-2">
+        {{ $t('team.apis.title', 'External APIs') }}
+      </h2>
+      <p class="text-secondary max-w-2xl">
+        {{
+          $t(
+            'team.apis.description',
+            'Connect external APIs to use as data sources in your workflows. Add your API credentials to integrate third-party services and expand your automation capabilities.',
+          )
+        }}
+      </p>
+    </div>
+
     <!-- APIs List -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <!-- Existing APIs -->

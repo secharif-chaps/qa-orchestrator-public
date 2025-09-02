@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed top-0 w-full z-10 pl-4">
+  <div class="fixed top-0 w-full z-20 pl-4">
     <div
       class="bg-bg1 dark:bg-bg3 dark:border-b-2 dark:border-bg1 rounded-bl-2xl h-[68px] pr-6 shadow-md"
     >
@@ -25,15 +25,21 @@
           </div>
 
           <!-- Dev mode only theme toggle -->
-          <Button 
+          <Button
             v-if="isDev"
-            variant="tertiary" 
-            :icon="isDark ? 'fa fa-sun' : 'fa fa-moon'" 
-            icon-only 
+            variant="tertiary"
+            :icon="isDark ? 'fa fa-sun' : 'fa fa-moon'"
+            icon-only
             @click="toggleTheme"
           />
 
-          <Button variant="tertiary" color="danger" icon="fa fa-arrow-right-from-bracket" icon-only @click="handleLogout" />
+          <Button
+            variant="tertiary"
+            color="danger"
+            icon="fa fa-arrow-right-from-bracket"
+            icon-only
+            @click="handleLogout"
+          />
         </div>
       </div>
     </div>
