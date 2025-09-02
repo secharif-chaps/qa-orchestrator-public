@@ -62,8 +62,6 @@ export function useBreadcrumbs() {
       const isLast = i === pathSegments.length - 1
       const currentPath = buildPath(pathSegments, i)
 
-      console.log('segment', segment)
-
       switch (segment) {
         case 'companies':
           // Only add 'Companies' breadcrumb if it's not under folders

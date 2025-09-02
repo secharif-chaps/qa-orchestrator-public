@@ -70,11 +70,11 @@ const currentTab = computed(() => {
 })
 
 const handleTabChange = (value: string) => {
-  router.push(`/settings/${value}`)
+  router.replace(`/settings/${value}`)
 }
 
 // Redirect to profile if no tab specified
 if (route.path === '/settings' || route.path === '/settings/') {
-  router.push('/settings/profile')
+  router.replace('/settings/profile')
 }
 </script>

@@ -206,7 +206,7 @@ const { data: tasks, refetch: refetchTasks } = useQuery(companyTasksQuery, () =>
 }))
 
 const pollingInterval = ref<NodeJS.Timeout | null>(null)
-const { canEditCompany } = useCompanyPermissions()
+const { canCreateCompany } = useCompanyPermissions()
 const authStore = useAuthStore()
 
 // Check if user has admin permissions to view token data
@@ -567,7 +567,7 @@ const triggerTask = async (taskType: TaskType) => {
 }
 
 const restartTask = async (taskType: TaskType) => {
-  if (!canEditCompany.value) {
+  if (!canCreateCompany.value) {
     console.warn('❌ No permission to restart tasks')
     return
   }
@@ -588,7 +588,7 @@ const restartTask = async (taskType: TaskType) => {
 }
 
 const startAllPendingTasks = async () => {
-  if (!canEditCompany.value) {
+  if (!canCreateCompany.value) {
     console.warn('❌ No permission to start tasks')
     return
   }

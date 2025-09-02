@@ -200,7 +200,7 @@ const handleSubmit = async () => {
   try {
     await createWorkspace()
     // Redirect to workspaces list on success
-    router.push('/workspaces')
+    router.push('/admin/workspaces')
   } catch (err) {
     console.error('Failed to create workspace:', err)
     // Error is handled by the mutation
