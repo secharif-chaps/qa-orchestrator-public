@@ -227,27 +227,37 @@ async def update_company(
     # Save the updated company
     return service.update_company(company)
 
-@router.delete("/{company_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_company(
+@router.delete("/{company_id}", response_model=CompanyResponse)
+async def soft_delete_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
-    """Delete a company (requires company.delete permission)"""
+    """Soft delete a company (archive)"""
+    
     # Verify user has permission to delete companies
     verify_company_modify_permission(workspace_context, "company.delete")
     
-    # Get existing company and verify it belongs to workspace
+    # Get company and verify access
     company = service.get_company(company_id)
-    verify_company_workspace_access(company, workspace_context)
-    
-    success = service.delete_company(company_id)
-    if not success:
+    if not company:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Company with ID {company_id} not found"
+            detail="Company not found"
         )
-    return {"success": True}
+    
+    # Verify workspace access
+    verify_company_workspace_access(company, workspace_context)
+    
+    # Soft delete the company
+    deleted_company = service.soft_delete_company(company_id)
+    if not deleted_company:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to archive company"
+        )
+    
+    return deleted_company
 
 @router.post("/{company_id}/chatbot", response_model=ChatResponse)
 async def chat_with_company(
@@ -307,38 +317,6 @@ async def chat_with_company(
         )
 
 
-@router.delete("/{company_id}", response_model=CompanyResponse)
-async def soft_delete_company(
-    company_id: int,
-    service: CompanyService = Depends(get_company_service),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
-):
-    """Soft delete a company"""
-    print(f"🏢 DELETE /api/companies/{company_id} - User: {workspace_context.username}")
-    
-    # Get company and verify access
-    company = service.get_company(company_id)
-    if not company:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Company not found"
-        )
-    
-    # Verify workspace access and modification permission
-    verify_company_workspace_access(company, workspace_context)
-    verify_company_modify_permission(workspace_context)
-    
-    # Soft delete the company
-    deleted_company = service.soft_delete_company(company_id)
-    if not deleted_company:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to delete company"
-        )
-    
-    return deleted_company
-
-
 @router.post("/{company_id}/restore", response_model=CompanyResponse)
 async def restore_company(
     company_id: int,
@@ -349,7 +327,7 @@ async def restore_company(
     print(f"🏢 POST /api/companies/{company_id}/restore - User: {workspace_context.username}")
     
     # Verify modification permission
-    verify_company_modify_permission(workspace_context)
+    verify_company_modify_permission(workspace_context, 'company.update')
     
     # Restore the company
     restored_company = service.restore_company(company_id)

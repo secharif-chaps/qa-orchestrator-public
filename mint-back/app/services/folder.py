@@ -50,7 +50,11 @@ class FolderService:
         return query.first()
     
     @staticmethod
-    def _get_folder_items_summary(db: Session, folder_id: UUID) -> List[Dict[str, Any]]:
+    def _get_folder_items_summary(
+        db: Session, 
+        folder_id: UUID,
+        item_archived_filter: bool = False
+    ) -> List[Dict[str, Any]]:
         """Get complete items for a folder - returns dicts for internal use"""
         items = []
         folder_items = db.query(FolderItem).filter(
@@ -61,10 +65,12 @@ class FolderService:
             if item.item_type == 'company':
                 try:
                     company_id = int(item.item_id)
-                    company = db.query(Company).filter(
-                        Company.id == company_id,
-                        Company.is_deleted == False
-                    ).first()
+                    company_query = db.query(Company).filter(Company.id == company_id)
+                    
+                    # Apply the archived filter
+                    company_query = company_query.filter(Company.is_deleted == item_archived_filter)
+                    
+                    company = company_query.first()
                     
                     if company:
                         items.append({
@@ -75,7 +81,8 @@ class FolderService:
                             'name': company.name,
                             'website': company.website,
                             'created_at': company.created_at.isoformat() if company.created_at else None,
-                            'owner': company.owner_username or 'Unknown'
+                            'owner': company.owner_username or 'Unknown',
+                            'is_deleted': company.is_deleted
                         })
                 except (ValueError, TypeError):
                     continue
@@ -87,42 +94,20 @@ class FolderService:
     def get_folder_with_items(
         db: Session,
         folder_id: UUID,
-        workspace_id: int
+        workspace_id: int,
+        item_archived_filter: bool = False
     ) -> Optional[Dict[str, Any]]:
         """Get folder with summary of its items"""
         folder = FolderService.get_folder(db, folder_id, workspace_id)
         if not folder:
             return None
         
-        # Get folder items with company details
-        items = []
-        folder_items = db.query(FolderItem).filter(
-            FolderItem.folder_id == folder_id
-        ).order_by(FolderItem.position.nullsfirst(), FolderItem.added_at).all()
-        
-        for item in folder_items:
-            if item.item_type == 'company':
-                try:
-                    company_id = int(item.item_id)
-                    company = db.query(Company).filter(
-                        Company.id == company_id,
-                        Company.is_deleted == False
-                    ).first()
-                except (ValueError, TypeError):
-                    # Skip invalid item_id
-                    continue
-                
-                if company:
-                    items.append({
-                        'id': str(item.item_id),
-                        'type': item.item_type,
-                        'position': item.position,
-                        'added_at': item.added_at.isoformat() if item.added_at else None,
-                        'name': company.name,
-                        'website': company.website,
-                        'created_at': company.created_at.isoformat() if company.created_at else None,
-                        'owner': company.owner_username
-                    })
+        # Get folder items with company details, applying filters
+        items = FolderService._get_folder_items_summary(
+            db, 
+            folder_id, 
+            item_archived_filter=item_archived_filter
+        )
         
         return {
             'id': str(folder.id),

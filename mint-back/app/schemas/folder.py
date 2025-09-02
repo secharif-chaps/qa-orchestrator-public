@@ -77,6 +77,7 @@ class FolderItemSummary(BaseModel):
     website: Optional[str]
     created_at: Optional[str]
     owner: str
+    is_deleted: bool = False
 
 
 class FolderWithItemsResponse(BaseModel):

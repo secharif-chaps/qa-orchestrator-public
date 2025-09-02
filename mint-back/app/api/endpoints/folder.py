@@ -114,11 +114,12 @@ def list_folders(
 @router.get("/{folder_id}", response_model=FolderWithItemsResponse)
 def get_folder(
     folder_id: UUID,
+    archived: bool = Query(False),
     current_user: TokenData = Depends(get_current_user),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
-    """Get a folder with its items"""
+    """Get a folder with its items, with optional filtering by archived status"""
     import logging
     logger = logging.getLogger(__name__)
     
@@ -130,12 +131,12 @@ def get_folder(
         verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.read", db)
         logger.debug(f"✅ Permission check passed")
         
-        # Fix: Use workspace_context.workspace_id instead of workspace_context.workspace_id
         logger.debug(f"📁 Getting folder with items - folder_id={folder_id}, workspace_id={workspace_context.workspace_id}")
         folder_data = FolderService.get_folder_with_items(
             db=db,
             folder_id=folder_id,
-            workspace_id=workspace_context.workspace_id  # Fixed: was workspace_context.workspace_id
+            workspace_id=workspace_context.workspace_id,
+            item_archived_filter=archived
         )
         
         if not folder_data:

@@ -91,6 +91,7 @@ class CompanyResponse(CompanyBase):
     press: Dict[str, Any] = Field(default_factory=dict)
     team: List[Dict[str, Any]] = Field(default_factory=list)
     error: Optional[str] = None
+    is_deleted: bool = Field(default=False)
     created_at: datetime
     updated_at: datetime
     tasks: List[TaskResponse] = Field(default_factory=list)
