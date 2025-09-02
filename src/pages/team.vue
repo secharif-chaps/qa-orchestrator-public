@@ -11,7 +11,9 @@
             <h1 class="text-2xl font-bold text-primary">
               {{ currentWorkspace?.name || 'Workspace' }}
             </h1>
-            <p class="text-sm text-secondary">{{ $t('team.workspace_description', 'Manage your workspace team and settings') }}</p>
+            <p class="text-sm text-secondary">
+              {{ $t('team.workspace_description', 'Manage your workspace team and settings') }}
+            </p>
           </div>
         </div>
       </div>
@@ -55,18 +57,30 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { currentWorkspaceQuery } from '@/queries/workspace'
+import { useRoute, useRouter } from 'vue-router'
 
 // Get current workspace
 const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
 
 // Tab management
-const activeTab = ref('users')
+const route = useRoute()
+const activeTab = computed(() => {
+  return route.path.split('/').pop() || 'users'
+})
+
 const tabs = [
-  { id: 'users', label: 'Team Users', icon: 'fa fa-users', to: '/team' },
+  { id: 'users', label: 'Team Users', icon: 'fa fa-users', to: '/team/users' },
   { id: 'settings', label: 'Settings', icon: 'fa fa-cog', to: '/team/settings' },
   { id: 'apis', label: 'External APIs', icon: 'fa fa-plug', to: '/team/apis' },
 ]
+
+const router = useRouter()
+onMounted(() => {
+  if (route.path === '/team') {
+    router.replace('/team/users')
+  }
+})
 </script>

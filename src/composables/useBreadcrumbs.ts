@@ -85,6 +85,14 @@ export function useBreadcrumbs() {
           })
           break
 
+        case 'team':
+          items.push({
+            name: 'Team',
+            to: undefined,
+            current: isLast,
+          })
+          break
+
         case 'admin':
           items.push({
             name: 'Admin',

@@ -199,6 +199,7 @@ export const useAuthStore = defineStore(
           user.value = refreshedUser
           return refreshedUser
         }
+        console.log('Refresh token:', currentUser)
         return currentUser
       } catch (error) {
         console.error('Refresh token error:', error)

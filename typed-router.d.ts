@@ -58,7 +58,10 @@ declare module 'vue-router/auto-routes' {
     '/settings/appearance': RouteRecordInfo<'/settings/appearance', '/settings/appearance', Record<never, never>, Record<never, never>>,
     '/settings/profile': RouteRecordInfo<'/settings/profile', '/settings/profile', Record<never, never>, Record<never, never>>,
     '/settings/security': RouteRecordInfo<'/settings/security', '/settings/security', Record<never, never>, Record<never, never>>,
-    '/team': RouteRecordInfo<'/team', '/team', Record<never, never>, Record<never, never>>,
+    '/team': RouteRecordInfo<'/team', '/team', Record<never, never>, Record<never, never>, '/team/apis' | '/team/settings' | '/team/users'>,
+    '/team/apis': RouteRecordInfo<'/team/apis', '/team/apis', Record<never, never>, Record<never, never>>,
+    '/team/settings': RouteRecordInfo<'/team/settings', '/team/settings', Record<never, never>, Record<never, never>>,
+    '/team/users': RouteRecordInfo<'/team/users', '/team/users', Record<never, never>, Record<never, never>>,
     '/ui-demo': RouteRecordInfo<'/ui-demo', '/ui-demo', Record<never, never>, Record<never, never>>,
   }
 }
