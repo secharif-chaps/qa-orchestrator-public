@@ -45,10 +45,77 @@ All data is collected through automated workflows, AI analysis, and intelligent 
    ./create_initial_user.sh
    ```
 
-4. **Access the application**:
+4. **Set up local Dify callbacks** (for AI workflow testing):
+   ```bash
+   # Install ngrok
+   brew install ngrok
+   
+   # Sign up and get authtoken from https://dashboard.ngrok.com/signup
+   ngrok config add-authtoken YOUR_TOKEN
+   
+   # Start ngrok tunnel
+   ngrok http 8000
+   
+   # Update .env.dev with your ngrok URL (note: use .env.dev, not .env)
+   echo "BACKEND_BASE_URL=https://your-ngrok-url.ngrok-free.app" >> .env.dev
+   echo "ENVIRONMENT=development" >> .env.dev
+   
+   # Restart backend to load new configuration
+   docker compose -f docker-compose.dev.yml restart backend
+   ```
+
+5. **Access the application**:
    - API Documentation: http://localhost:8000/docs
    - Keycloak Admin: http://localhost:8080 (admin/admin)
    - Database: localhost:5432 (postgres/postgres)
+
+### Local Dify Callback Setup
+
+For testing AI workflows locally, you need to expose your local backend to the internet so Dify can send callbacks:
+
+#### Prerequisites
+1. **Install ngrok**: `brew install ngrok`
+2. **Sign up**: https://dashboard.ngrok.com/signup
+3. **Get authtoken**: https://dashboard.ngrok.com/get-started/your-authtoken
+
+#### Setup Process
+```bash
+# Configure ngrok with your authtoken
+ngrok config add-authtoken YOUR_AUTHTOKEN
+
+# Start ngrok tunnel (keep this running)
+ngrok http 8000
+
+# Copy the HTTPS URL (e.g., https://abc123.ngrok-free.app)
+# Update your environment configuration in .env.dev (not .env)
+echo "BACKEND_BASE_URL=https://your-ngrok-url.ngrok-free.app" >> .env.dev
+echo "ENVIRONMENT=development" >> .env.dev
+
+# Restart backend to load new configuration
+docker compose -f docker-compose.dev.yml restart backend
+```
+
+#### Testing Callbacks
+```bash
+# Get authentication token
+python3 get_token.py
+
+# Create a test task (will use ngrok callback URL)
+curl -X POST http://localhost:8000/api/tasks/ \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"company_id": 1, "type": "profile"}'
+
+# Check logs for callback activity
+docker compose -f docker-compose.dev.yml logs backend | grep callback
+```
+
+#### Important Notes
+- Keep ngrok running while testing workflows
+- Use `.env.dev` file (Docker Compose uses this, not `.env`)
+- Callback URLs will be: `https://your-ngrok-url.ngrok-free.app/api/webhooks/dify/tasks/{task_id}/callback`
+- Without ngrok, tasks will stay in "running" state as callbacks can't reach localhost
+- The default `BACKEND_BASE_URL` in `config.py` is set for local development and gets overridden by environment variables
 
 ### Test Users
 

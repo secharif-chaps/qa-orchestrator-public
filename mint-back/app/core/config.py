@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     # API settings
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8000
-    BACKEND_BASE_URL: str = "http://10.0.1.2"  # Used for webhook callbacks - through nginx reverse proxy
+    BACKEND_BASE_URL: str = "http://localhost:8000"  # Default for local dev, override with env var
     
     # Database settings
     DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/mint_db"
@@ -41,4 +41,12 @@ class Settings(BaseSettings):
     model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
-settings = Settings() 
+settings = Settings()
+
+# 🔍 DEBUG: Log configuration on startup
+import logging
+logger = logging.getLogger(__name__)
+logger.info(f"🔧 CONFIG DEBUG - BACKEND_BASE_URL loaded as: {settings.BACKEND_BASE_URL}")
+logger.info(f"🔧 CONFIG DEBUG - ENVIRONMENT: {getattr(settings, 'ENVIRONMENT', 'not set')}")
+logger.info(f"🔧 CONFIG DEBUG - .env file path: {os.path.abspath('.env') if os.path.exists('.env') else 'not found'}")
+print(f"🔧 STARTUP CONFIG - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")  # Print to console for visibility 

@@ -313,6 +313,11 @@ class CompanyService:
                 error_callback = success_callback  # Same endpoint, different status in payload
                 token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
                 
+                # 🔍 DEBUG: Log callback URLs being sent to Dify
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
+                
                 # Trigger Dify workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_product_workflow(
                     company_name=company.name,
@@ -339,6 +344,11 @@ class CompanyService:
                 success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
                 error_callback = success_callback  # Same endpoint, different status in payload
                 token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
+                
+                # 🔍 DEBUG: Log callback URLs being sent to Dify
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
                 
                 # Trigger Dify timeline workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_timeline_workflow(
@@ -367,6 +377,11 @@ class CompanyService:
                 error_callback = success_callback  # Same endpoint, different status in payload
                 token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
                 
+                # 🔍 DEBUG: Log callback URLs being sent to Dify
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
+                
                 # Trigger Dify profile workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_profile_workflow(
                     company_name=company.name,
@@ -393,6 +408,11 @@ class CompanyService:
                 success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
                 error_callback = success_callback  # Same endpoint, different status in payload
                 token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
+                
+                # 🔍 DEBUG: Log callback URLs being sent to Dify
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
                 
                 # Trigger Dify team workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_workflow(
@@ -422,6 +442,11 @@ class CompanyService:
                 error_callback = success_callback  # Same endpoint, different status in payload
                 token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
                 
+                # 🔍 DEBUG: Log callback URLs being sent to Dify
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
+                
                 # Trigger Dify digital workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_workflow(
                     task_type="digital",
@@ -449,6 +474,11 @@ class CompanyService:
                 success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
                 error_callback = success_callback  # Same endpoint, different status in payload
                 token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
+                
+                # 🔍 DEBUG: Log callback URLs being sent to Dify
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
                 
                 # Trigger Dify csr workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_workflow(
@@ -478,6 +508,11 @@ class CompanyService:
                 error_callback = success_callback  # Same endpoint, different status in payload
                 token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
                 
+                # 🔍 DEBUG: Log callback URLs being sent to Dify
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
+                
                 # Trigger Dify press workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_workflow(
                     task_type="press",
@@ -505,6 +540,11 @@ class CompanyService:
                 success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
                 error_callback = success_callback  # Same endpoint, different status in payload
                 token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
+                
+                # 🔍 DEBUG: Log callback URLs being sent to Dify
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
+                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
                 
                 # Trigger Dify jobs workflow with callbacks (ASYNC mode - fire and forget)
                 result = await self.dify_client.trigger_workflow(
