@@ -671,4 +671,34 @@ export default {
       },
     },
   },
+  folder: {
+    title: 'Folders',
+    description: 'Organize your companies into folders',
+    search: 'Search folders...',
+    list: {
+      error: {
+        title: 'Error',
+        description: 'Failed to load folders',
+      },
+    },
+    loading: 'Loading folders...',
+    create: {
+      title: 'Create New Folder',
+      description: 'Organize your companies into folders',
+      button: 'Create Folder',
+    },
+    table: {
+      name: 'Name',
+      items: 'Items',
+      created: 'Created',
+      actions: 'Actions',
+    },
+    empty: {
+      noResults: 'No folders found',
+      title: 'No folders yet',
+      tryDifferentSearch: 'Try a different search term',
+      description: 'Create your first folder to organize your companies',
+    },
+    clearSearch: 'Clear Search',
+  },
 }

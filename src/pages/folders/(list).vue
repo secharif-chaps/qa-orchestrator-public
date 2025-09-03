@@ -262,11 +262,11 @@ const { data, status, isLoading, refetch } = useQuery(foldersQuery, () => ({
 })
 
 // Query for table view (folders with items)
-const { 
-  data: dataWithItems, 
-  status: statusWithItems, 
-  isLoading: isLoadingWithItems, 
-  refetch: refetchWithItems 
+const {
+  data: dataWithItems,
+  status: statusWithItems,
+  isLoading: isLoadingWithItems,
+  refetch: refetchWithItems
 } = useQuery(foldersWithItemsQuery, () => ({
   filters: {
     page: foldersStore.page,

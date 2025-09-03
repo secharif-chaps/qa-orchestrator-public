@@ -2,8 +2,22 @@ import { type Folder, type FolderCreate, type FolderUpdate, type FolderItemAdd }
 import { apiClient } from './client'
 import type { PaginatedResponse } from '@/types/pagination'
 
-export const getFolderById = async (folderId: string) => {
-  const response = await apiClient.get<Folder>(`/folders/${folderId}`)
+export const getFolderById = async (folderId: string, filters?: {archived?: boolean;}) => {
+
+  const params = new URLSearchParams()
+
+  if (filters?.archived) {
+    params.set('archived', 'true')
+  }
+
+  const queryString = params.toString()
+  console.log('queryStringqueryStringqueryString', filters)
+
+  const url = queryString
+    ? `/folders/${folderId}?${queryString}`
+    : `/folders/${folderId}`
+
+  const response = await apiClient.get<Folder>(url)
   return response
 }
 
@@ -16,11 +30,11 @@ export const getFolders = async (filters: { page: number; size: number; name: st
   if (filters.name) {
     params.append('name', filters.name)
   }
-  
+
   if (filters.archived) {
     params.append('archived', 'true')
   }
-  
+
   if (filters.favorites) {
     params.append('favorites', 'true')
   }
@@ -41,11 +55,11 @@ export const getFoldersWithItems = async (filters: { page: number; size: number;
   if (filters.name) {
     params.append('name', filters.name)
   }
-  
+
   if (filters.archived) {
     params.append('archived', 'true')
   }
-  
+
   if (filters.favorites) {
     params.append('favorites', 'true')
   }
