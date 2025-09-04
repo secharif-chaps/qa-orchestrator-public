@@ -25,6 +25,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     restart: always
     environment:
       DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-postgres}@db:5432/mint_db
@@ -37,6 +39,9 @@ services:
       CORS_ORIGIN: http://${SERVER_IP:-10.0.1.2}
       API_HOST: 0.0.0.0
       API_PORT: 8000
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672//
+      MAX_CONCURRENT_WORKFLOWS: ${MAX_CONCURRENT_WORKFLOWS:-10}
+      BACKEND_BASE_URL: http://${SERVER_IP:-10.0.1.2}
     networks:
       - mint-network
 
@@ -80,6 +85,68 @@ services:
     networks:
       - mint-network
 
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    restart: always
+    ports:
+      - "5672:5672"     # AMQP port
+      - "15672:15672"   # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - mint-network
+
+  # Celery Worker for Task Processing
+  celery_worker:
+    build: 
+      context: ./mint-back
+      dockerfile: Dockerfile.celery
+    command: celery -A app.core.celery_app worker --loglevel=info --concurrency=4 --pool=solo
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-postgres}@db:5432/mint_db
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672//
+      MAX_CONCURRENT_WORKFLOWS: ${MAX_CONCURRENT_WORKFLOWS:-10}
+      BACKEND_BASE_URL: http://${SERVER_IP:-10.0.1.2}
+      KEYCLOAK_SERVER_URL: http://keycloak:8080
+      KEYCLOAK_REALM: mint-dev
+      KEYCLOAK_CLIENT_ID: mint-back
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    volumes:
+      - ./mint-back/app:/app/app
+    networks:
+      - mint-network
+
+  # Flower Dashboard for Monitoring
+  celery_flower:
+    build: 
+      context: ./mint-back
+      dockerfile: Dockerfile.celery
+    command: celery -A app.core.celery_app flower --port=5555 --broker=amqp://guest:guest@rabbitmq:5672//
+    restart: always
+    ports:
+      - "5555:5555"
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672//
+      FLOWER_BASIC_AUTH: ${FLOWER_AUTH:-admin:admin}
+    depends_on:
+      - rabbitmq
+    networks:
+      - mint-network
+
   # Nginx Reverse Proxy
   nginx:
     image: nginx:alpine
@@ -97,6 +164,7 @@ services:
 
 volumes:
   postgres_data:
+  rabbitmq_data:
 
 networks:
   mint-network:
