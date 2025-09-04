@@ -342,8 +342,6 @@ async def debug_dify_config():
     return {
         "dify_url": settings.DIFY_URL,
         "dify_api_key": settings.DIFY_API_KEY[:10] + "..." if settings.DIFY_API_KEY else "None",
-        "dify_timeline_api_key": settings.DIFY_TIMELINE_API_KEY[:10] + "..." if settings.DIFY_TIMELINE_API_KEY else "None",
-        "product_workflow_id": settings.DIFY_PRODUCT_WORKFLOW_ID,
-        "timeline_workflow_id": settings.DIFY_TIMELINE_WORKFLOW_ID,
-        "message": "Configuration loaded successfully"
+        "message": "Configuration loaded successfully",
+        "note": "Workflow IDs are now managed in the database via workflow_configs table"
     }
