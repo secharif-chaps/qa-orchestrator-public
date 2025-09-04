@@ -15,11 +15,8 @@ class Settings(BaseSettings):
     
     
     # Dify settings
-    DIFY_API_KEY: str = "app-WpGZCTFDaBzCUS9M4LeoQHGa"  # Products workflow API key
-    DIFY_TIMELINE_API_KEY: str = "app-qX4RISdrrif2aSPAaLVz7tto"  # Timeline workflow API key
+    DIFY_API_KEY: str = "app-WpGZCTFDaBzCUS9M4LeoQHGa"  # Fallback API key for chat workflows
     DIFY_URL: str = "http://10.0.1.1/v1"
-    DIFY_PRODUCT_WORKFLOW_ID: str = "9d9c4884-342d-42d4-afcc-2ef15479db2f"
-    DIFY_TIMELINE_WORKFLOW_ID: str = "0781c8e1-cbcf-42fc-a225-7026e761cb36"
     
     # CORS settings
     CORS_ORIGIN: str = "http://localhost:3000"

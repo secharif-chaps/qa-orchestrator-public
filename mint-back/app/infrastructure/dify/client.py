@@ -14,22 +14,14 @@ class DifyClient:
         self.db = db
         self.base_url = settings.DIFY_URL
         
-        # Fallback to config settings if database is not available
+        # Fallback API key if database is not available
         self.fallback_api_key = settings.DIFY_API_KEY
-        self.fallback_timeline_api_key = settings.DIFY_TIMELINE_API_KEY
-        self.fallback_product_workflow_id = settings.DIFY_PRODUCT_WORKFLOW_ID
-        self.fallback_timeline_workflow_id = settings.DIFY_TIMELINE_WORKFLOW_ID
     
     def _get_workflow_config(self, task_type: str) -> tuple[Optional[str], Optional[str], Optional[str]]:
-        """Get workflow ID, API key and LLM for task type from database or fallback to config"""
+        """Get workflow ID, API key and LLM for task type from database"""
         if self.db is None:
-            # Fallback to config-based settings (default LLM is mistral)
-            if task_type == "products":
-                return self.fallback_product_workflow_id, self.fallback_api_key, "mistral"
-            elif task_type == "timeline":
-                return self.fallback_timeline_workflow_id, self.fallback_timeline_api_key, "mistral"
-            else:
-                return None, None, None
+            # No database available - workflows must be configured in database
+            return None, None, None
         
         try:
             service = WorkflowConfigService(self.db)
@@ -37,21 +29,11 @@ class DifyClient:
             if config and config.workflow_id and config.api_key:
                 return config.workflow_id, config.api_key, config.llm
             else:
-                # Fallback to config if database config is incomplete
-                if task_type == "products":
-                    return self.fallback_product_workflow_id, self.fallback_api_key, "mistral"
-                elif task_type == "timeline":
-                    return self.fallback_timeline_workflow_id, self.fallback_timeline_api_key, "mistral"
-                else:
-                    return None, None, None
-        except Exception as e:
-            logger.warning(f"Failed to get workflow config from database, using fallback: {e}")
-            if task_type == "products":
-                return self.fallback_product_workflow_id, self.fallback_api_key, "mistral"
-            elif task_type == "timeline":
-                return self.fallback_timeline_workflow_id, self.fallback_timeline_api_key, "mistral"
-            else:
+                # No config found in database
                 return None, None, None
+        except Exception as e:
+            logger.warning(f"Failed to get workflow config from database: {e}")
+            return None, None, None
     
     async def trigger_workflow(
         self,
@@ -202,63 +184,6 @@ class DifyClient:
             error_msg = f"Error triggering Dify {task_type} workflow: {str(e)}"
             logger.error(error_msg)
             raise Exception(error_msg) from e
-    async def trigger_product_workflow(
-        self, 
-        company_name: str, 
-        website: str, 
-        success_callback: str,
-        error_callback: str,
-        task_id: int,
-        company_id: int,
-        async_mode: bool = True,
-        token_callback_url: str = None
-    ) -> Dict[str, Any]:
-        """
-        Trigger the Dify product workflow with callback URLs (backward compatibility)
-        """
-        return await self.trigger_workflow(
-            "products", company_name, website, success_callback, 
-            error_callback, task_id, company_id, async_mode, token_callback_url
-        )
-
-    async def trigger_timeline_workflow(
-        self, 
-        company_name: str, 
-        website: str, 
-        success_callback: str,
-        error_callback: str,
-        task_id: int,
-        company_id: int,
-        async_mode: bool = True,
-        token_callback_url: str = None
-    ) -> Dict[str, Any]:
-        """
-        Trigger the Dify timeline workflow with callback URLs (backward compatibility)
-        """
-        return await self.trigger_workflow(
-            "timeline", company_name, website, success_callback, 
-            error_callback, task_id, company_id, async_mode, token_callback_url
-        )
-
-    async def trigger_profile_workflow(
-        self, 
-        company_name: str, 
-        website: str, 
-        success_callback: str,
-        error_callback: str,
-        task_id: int,
-        company_id: int,
-        async_mode: bool = True,
-        token_callback_url: str = None
-    ) -> Dict[str, Any]:
-        """
-        Trigger the Dify profile workflow with callback URLs (backward compatibility)
-        """
-        return await self.trigger_workflow(
-            "profile", company_name, website, success_callback, 
-            error_callback, task_id, company_id, async_mode, token_callback_url
-        )
-
     async def send_chat_message(self, message: str, company_context: Dict[str, Any], chat_history: list = None) -> Dict[str, Any]:
         """
         Send a chat message to the Dify chat workflow

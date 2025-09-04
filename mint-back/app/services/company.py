@@ -299,279 +299,48 @@ class CompanyService:
                 return task
         return None
 
+    def _prepare_task_callbacks(self, task: Task) -> tuple[str, str, str]:
+        """Helper method to prepare callback URLs for task execution"""
+        success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
+        error_callback = success_callback  # Same endpoint, different status in payload
+        token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
+        
+        # Debug logging for callback URLs
+        logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
+        logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
+        logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
+        
+        return success_callback, error_callback, token_callback
+
     async def _execute_task(self, task: Task, company: Company) -> None:
         try:
             task.status = TaskStatus.RUNNING
             self.db.commit()
             
-            # Use Dify for all workflow tasks
-            if task.type == TaskType.products:
-                logger.info(f"Using Dify workflow (async) for products task - Company: {company.name}")
-                
-                # Prepare callback URLs - use Dify-specific endpoint
-                success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
-                error_callback = success_callback  # Same endpoint, different status in payload
-                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
-                
-                # 🔍 DEBUG: Log callback URLs being sent to Dify
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
-                
-                # Trigger Dify workflow with callbacks (ASYNC mode - fire and forget)
-                result = await self.dify_client.trigger_product_workflow(
-                    company_name=company.name,
-                    website=company.website,
-                    success_callback=success_callback,
-                    error_callback=error_callback,
-                    task_id=task.id,
-                    company_id=company.id,
-                    async_mode=True,  # This is the key change - async mode!
-                    token_callback_url=token_callback
-                )
-                
-                # In async mode, we just log the trigger confirmation
-                logger.info(f"✅ Dify workflow triggered (async): {result}")
-                
-                # Task remains in RUNNING state - will be updated via callback
-                # No need to update company data here - callback will handle it
-                self.db.commit()
-                
-            elif task.type == TaskType.timeline:
-                logger.info(f"Using Dify workflow (async) for timeline task - Company: {company.name}")
-                
-                # Prepare callback URLs - use Dify-specific endpoint
-                success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
-                error_callback = success_callback  # Same endpoint, different status in payload
-                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
-                
-                # 🔍 DEBUG: Log callback URLs being sent to Dify
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
-                
-                # Trigger Dify timeline workflow with callbacks (ASYNC mode - fire and forget)
-                result = await self.dify_client.trigger_timeline_workflow(
-                    company_name=company.name,
-                    website=company.website,
-                    success_callback=success_callback,
-                    error_callback=error_callback,
-                    task_id=task.id,
-                    company_id=company.id,
-                    async_mode=True,  # This is the key change - async mode!
-                    token_callback_url=token_callback
-                )
-                
-                # In async mode, we just log the trigger confirmation
-                logger.info(f"✅ Dify timeline workflow triggered (async): {result}")
-                
-                # Task remains in RUNNING state - will be updated via callback
-                # No need to update company data here - callback will handle it
-                self.db.commit()
-                
-            elif task.type == TaskType.profile:
-                logger.info(f"Using Dify workflow (async) for profile task - Company: {company.name}")
-                
-                # Prepare callback URLs - use Dify-specific endpoint
-                success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
-                error_callback = success_callback  # Same endpoint, different status in payload
-                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
-                
-                # 🔍 DEBUG: Log callback URLs being sent to Dify
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
-                
-                # Trigger Dify profile workflow with callbacks (ASYNC mode - fire and forget)
-                result = await self.dify_client.trigger_profile_workflow(
-                    company_name=company.name,
-                    website=company.website,
-                    success_callback=success_callback,
-                    error_callback=error_callback,
-                    task_id=task.id,
-                    company_id=company.id,
-                    async_mode=True,  # This is the key change - async mode!
-                    token_callback_url=token_callback
-                )
-                
-                # In async mode, we just log the trigger confirmation
-                logger.info(f"✅ Dify profile workflow triggered (async): {result}")
-                
-                # Task remains in RUNNING state - will be updated via callback
-                # No need to update company data here - callback will handle it
-                self.db.commit()
-                
-            elif task.type == TaskType.team:
-                logger.info(f"Using Dify workflow (async) for team task - Company: {company.name}")
-                
-                # Prepare callback URLs - use Dify-specific endpoint
-                success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
-                error_callback = success_callback  # Same endpoint, different status in payload
-                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
-                
-                # 🔍 DEBUG: Log callback URLs being sent to Dify
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
-                
-                # Trigger Dify team workflow with callbacks (ASYNC mode - fire and forget)
-                result = await self.dify_client.trigger_workflow(
-                    task_type="team",
-                    company_name=company.name,
-                    website=company.website,
-                    success_callback=success_callback,
-                    error_callback=error_callback,
-                    task_id=task.id,
-                    company_id=company.id,
-                    async_mode=True,
-                    token_callback_url=token_callback
-                )
-                
-                # In async mode, we just log the trigger confirmation
-                logger.info(f"✅ Dify team workflow triggered (async): {result}")
-                
-                # Task remains in RUNNING state - will be updated via callback
-                # No need to update company data here - callback will handle it
-                self.db.commit()
-                
-            elif task.type == TaskType.digital:
-                logger.info(f"Using Dify workflow (async) for digital task - Company: {company.name}")
-                
-                # Prepare callback URLs - use Dify-specific endpoint
-                success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
-                error_callback = success_callback  # Same endpoint, different status in payload
-                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
-                
-                # 🔍 DEBUG: Log callback URLs being sent to Dify
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
-                
-                # Trigger Dify digital workflow with callbacks (ASYNC mode - fire and forget)
-                result = await self.dify_client.trigger_workflow(
-                    task_type="digital",
-                    company_name=company.name,
-                    website=company.website,
-                    success_callback=success_callback,
-                    error_callback=error_callback,
-                    task_id=task.id,
-                    company_id=company.id,
-                    async_mode=True,
-                    token_callback_url=token_callback
-                )
-                
-                # In async mode, we just log the trigger confirmation
-                logger.info(f"✅ Dify digital workflow triggered (async): {result}")
-                
-                # Task remains in RUNNING state - will be updated via callback
-                # No need to update company data here - callback will handle it
-                self.db.commit()
-                
-            elif task.type == TaskType.csr:
-                logger.info(f"Using Dify workflow (async) for csr task - Company: {company.name}")
-                
-                # Prepare callback URLs - use Dify-specific endpoint
-                success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
-                error_callback = success_callback  # Same endpoint, different status in payload
-                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
-                
-                # 🔍 DEBUG: Log callback URLs being sent to Dify
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
-                
-                # Trigger Dify csr workflow with callbacks (ASYNC mode - fire and forget)
-                result = await self.dify_client.trigger_workflow(
-                    task_type="csr",
-                    company_name=company.name,
-                    website=company.website,
-                    success_callback=success_callback,
-                    error_callback=error_callback,
-                    task_id=task.id,
-                    company_id=company.id,
-                    async_mode=True,
-                    token_callback_url=token_callback
-                )
-                
-                # In async mode, we just log the trigger confirmation
-                logger.info(f"✅ Dify csr workflow triggered (async): {result}")
-                
-                # Task remains in RUNNING state - will be updated via callback
-                # No need to update company data here - callback will handle it
-                self.db.commit()
-                
-            elif task.type == TaskType.press:
-                logger.info(f"Using Dify workflow (async) for press task - Company: {company.name}")
-                
-                # Prepare callback URLs - use Dify-specific endpoint
-                success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
-                error_callback = success_callback  # Same endpoint, different status in payload
-                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
-                
-                # 🔍 DEBUG: Log callback URLs being sent to Dify
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
-                
-                # Trigger Dify press workflow with callbacks (ASYNC mode - fire and forget)
-                result = await self.dify_client.trigger_workflow(
-                    task_type="press",
-                    company_name=company.name,
-                    website=company.website,
-                    success_callback=success_callback,
-                    error_callback=error_callback,
-                    task_id=task.id,
-                    company_id=company.id,
-                    async_mode=True,
-                    token_callback_url=token_callback
-                )
-                
-                # In async mode, we just log the trigger confirmation
-                logger.info(f"✅ Dify press workflow triggered (async): {result}")
-                
-                # Task remains in RUNNING state - will be updated via callback
-                # No need to update company data here - callback will handle it
-                self.db.commit()
-                
-            elif task.type == TaskType.jobs:
-                logger.info(f"Using Dify workflow (async) for jobs task - Company: {company.name}")
-                
-                # Prepare callback URLs - use Dify-specific endpoint
-                success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
-                error_callback = success_callback  # Same endpoint, different status in payload
-                token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
-                
-                # 🔍 DEBUG: Log callback URLs being sent to Dify
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
-                logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
-                
-                # Trigger Dify jobs workflow with callbacks (ASYNC mode - fire and forget)
-                result = await self.dify_client.trigger_workflow(
-                    task_type="jobs",
-                    company_name=company.name,
-                    website=company.website,
-                    success_callback=success_callback,
-                    error_callback=error_callback,
-                    task_id=task.id,
-                    company_id=company.id,
-                    async_mode=True,
-                    token_callback_url=token_callback
-                )
-                
-                # In async mode, we just log the trigger confirmation
-                logger.info(f"✅ Dify jobs workflow triggered (async): {result}")
-                
-                # Task remains in RUNNING state - will be updated via callback
-                # No need to update company data here - callback will handle it
-                self.db.commit()
-                
-            else:
-                # This should not happen as all tasks are now migrated to Dify
-                logger.error(f"Unknown task type: {task.type.value}")
-                task.status = TaskStatus.ERROR
-                task.error = f"Unknown task type: {task.type.value}"
-                self.db.commit()
+            logger.info(f"Using Dify workflow (async) for {task.type.value} task - Company: {company.name}")
+            
+            # Prepare callback URLs using helper method
+            success_callback, error_callback, token_callback = self._prepare_task_callbacks(task)
+            
+            # Trigger Dify workflow with callbacks (ASYNC mode - fire and forget)
+            result = await self.dify_client.trigger_workflow(
+                task_type=task.type.value,
+                company_name=company.name,
+                website=company.website,
+                success_callback=success_callback,
+                error_callback=error_callback,
+                task_id=task.id,
+                company_id=company.id,
+                async_mode=True,
+                token_callback_url=token_callback
+            )
+            
+            # In async mode, we just log the trigger confirmation
+            logger.info(f"✅ Dify {task.type.value} workflow triggered (async): {result}")
+            
+            # Task remains in RUNNING state - will be updated via callback
+            # No need to update company data here - callback will handle it
+            self.db.commit()
             
         except Exception as e:
             task.status = TaskStatus.ERROR
