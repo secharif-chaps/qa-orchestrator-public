@@ -34,6 +34,11 @@ class Settings(BaseSettings):
     # JWT settings
     JWT_ALGORITHM: str = "RS256"
     JWT_AUDIENCE: str = "account"
+    
+    # RabbitMQ and Celery settings
+    RABBITMQ_URL: str = "amqp://guest:guest@rabbitmq:5672//"
+    MAX_CONCURRENT_WORKFLOWS: int = 10
+    FLOWER_BASIC_AUTH: str = "admin:admin"
 
     model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8")
 

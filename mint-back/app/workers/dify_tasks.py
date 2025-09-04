@@ -1,0 +1,178 @@
+"""Dify workflow task worker with dynamic concurrency control."""
+from app.core.celery_app import celery_app, MAX_CONCURRENT_WORKFLOWS
+from celery import Task
+from sqlalchemy.orm import Session
+from app.database import SessionLocal
+from app.models.task import Task as TaskModel, TaskStatus
+from app.models.company import Company
+from app.core.config import settings
+from app.core.concurrency import DifyConcurrencyManager
+import logging
+import asyncio
+import time
+from typing import Optional
+
+logger = logging.getLogger(__name__)
+
+
+class DifyWorkflowTask(Task):
+    """Base task class for Dify workflow execution."""
+    autoretry_for = ()  # No automatic retry for now
+    max_retries = 0  # Disabled for now, will implement smart retry logic later
+    default_retry_delay = 60
+
+    def on_failure(self, exc, task_id, args, kwargs, einfo):
+        """Handle task failure - update DB status."""
+        task_db_id = kwargs.get('task_id')
+        if not task_db_id:
+            logger.error(f"No task_id provided in kwargs for failed Celery task {task_id}")
+            return
+            
+        try:
+            with SessionLocal() as db:
+                task = db.query(TaskModel).filter(TaskModel.id == task_db_id).first()
+                if task:
+                    task.status = TaskStatus.ERROR
+                    task.error = str(exc)
+                    db.commit()
+                    logger.error(f"Task {task_db_id} marked as ERROR in database: {exc}")
+                else:
+                    logger.error(f"Task {task_db_id} not found in database during failure handling")
+        except Exception as e:
+            logger.error(f"Failed to update task {task_db_id} status on failure: {e}")
+
+
+def run_async_task(coro):
+    """Helper to run async code in sync context."""
+    loop = None
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            # If loop is already running, create a new one
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            return loop.run_until_complete(coro)
+        else:
+            return loop.run_until_complete(coro)
+    except RuntimeError:
+        # No event loop, create one
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        return loop.run_until_complete(coro)
+    finally:
+        if loop and not loop.is_running():
+            loop.close()
+
+
+@celery_app.task(
+    bind=True,
+    base=DifyWorkflowTask,
+    name='execute_dify_workflow',
+    queue='dify_workflows'
+)
+def execute_dify_workflow(self, task_id: int, company_id: int, task_type: str, workflow_id: str, api_key: str, llm: str = "mistral"):
+    """Execute Dify workflow with dynamic concurrency control."""
+    logger.info(f"Starting workflow execution: Task {task_id}, Type: {task_type}, Company: {company_id}")
+    
+    # Import here to avoid circular import
+    from app.infrastructure.dify.client import DifyClient
+    
+    with SessionLocal() as db:
+        # Initialize concurrency manager
+        concurrency_manager = DifyConcurrencyManager(db)
+        
+        # Query company and task directly
+        company = db.query(Company).filter(Company.id == company_id).first()
+        task = db.query(TaskModel).filter(TaskModel.id == task_id).first()
+        
+        if not task:
+            logger.error(f"Task {task_id} not found in database")
+            return {"status": "error", "message": f"Task {task_id} not found"}
+            
+        if not company:
+            logger.error(f"Company {company_id} not found in database")
+            task.status = TaskStatus.ERROR
+            task.error = f"Company {company_id} not found"
+            db.commit()
+            return {"status": "error", "message": f"Company {company_id} not found"}
+        
+        # Wait for available workflow slot (dynamic concurrency control)
+        logger.info(f"Task {task_id}: Checking workflow concurrency...")
+        if not concurrency_manager.wait_for_available_slot(task_id, max_wait_time=300):
+            # Timeout waiting for slot
+            task.status = TaskStatus.ERROR
+            task.error = "Timeout waiting for available workflow slot"
+            db.commit()
+            return {"status": "error", "message": "Timeout waiting for workflow slot"}
+        
+        # Now we have a slot - update task to RUNNING
+        logger.info(f"Task {task_id}: Workflow slot available, starting execution...")
+        task.status = TaskStatus.RUNNING
+        db.commit()
+        
+        running_count = concurrency_manager.get_running_count()
+        logger.info(f"Task {task_id}: Started workflow ({running_count}/{concurrency_manager.max_concurrent} running)")
+        
+        try:
+            # Prepare callback URLs (replicate logic from CompanyService)
+            success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
+            error_callback = success_callback  # Same endpoint, different status in payload
+            token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
+            
+            # Debug logging for callback URLs
+            logger.info(f"🔗 CALLBACK URL DEBUG - Task {task_type} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
+            logger.info(f"🔗 CALLBACK URL DEBUG - Task {task_type} - Success callback: {success_callback}")
+            logger.info(f"🔗 CALLBACK URL DEBUG - Task {task_type} - Token callback: {token_callback}")
+            
+            logger.info(f"Triggering Dify workflow for task {task_id} ({task_type}) - Company: {company.name}")
+            logger.info(f"Using workflow_id: {workflow_id[:8]}...")  # Log first 8 chars for debugging
+            
+            # Create Dify client and trigger workflow
+            dify_client = DifyClient()
+            
+            # Execute the async Dify workflow trigger with provided workflow_id and api_key
+            result = run_async_task(
+                dify_client.trigger_workflow(
+                    task_type=task_type,
+                    company_name=company.name,
+                    website=company.website,
+                    success_callback=success_callback,
+                    error_callback=error_callback,
+                    task_id=task.id,
+                    company_id=company.id,
+                    async_mode=True,
+                    token_callback_url=token_callback,
+                    workflow_id=workflow_id,
+                    api_key=api_key,
+                    llm=llm
+                )
+            )
+            
+            logger.info(f"✅ Workflow triggered for task {task_id}: {result}")
+            
+            # Task remains in RUNNING state - will be updated via webhook callback
+            return {"status": "success", "message": f"Workflow triggered for task {task_id}", "result": result}
+            
+        except Exception as e:
+            logger.error(f"Failed to trigger workflow for task {task_id}: {e}")
+            # Revert task status to allow retry or manual intervention
+            task.status = TaskStatus.ERROR
+            task.error = str(e)
+            db.commit()
+            
+            # Log current concurrency state for debugging
+            running_count = concurrency_manager.get_running_count()
+            logger.error(f"Task {task_id} failed, running workflows: {running_count}/{concurrency_manager.max_concurrent}")
+            
+            # Re-raise to trigger on_failure handler
+            raise
+
+
+@celery_app.task(name='check_queue_health')
+def check_queue_health() -> dict:
+    """Health check task to monitor queue status."""
+    return {
+        "status": "healthy",
+        "max_concurrent_workflows": MAX_CONCURRENT_WORKFLOWS,
+        "worker": "active"
+    }

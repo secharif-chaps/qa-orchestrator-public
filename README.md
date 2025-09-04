@@ -23,6 +23,9 @@ All data is collected through automated workflows, AI analysis, and intelligent 
 - **PostgreSQL Database**: Company data storage and relationships
 - **Keycloak Authentication**: User management and permissions
 - **Dify AI Workflows**: Intelligent data processing and chat
+- **RabbitMQ Message Broker**: Task queue for async workflow execution
+- **Celery Workers**: Distributed task processing with concurrency control
+- **Flower Dashboard**: Real-time monitoring of task queues and workers
 - **Docker**: Containerized deployment
 
 ## 🚀 Quick Start
@@ -68,6 +71,8 @@ All data is collected through automated workflows, AI analysis, and intelligent 
    - API Documentation: http://localhost:8000/docs
    - Keycloak Admin: http://localhost:8080 (admin/admin)
    - Database: localhost:5432 (postgres/postgres)
+   - RabbitMQ Management: http://localhost:15672 (guest/guest)
+   - Flower Dashboard: http://localhost:5555 (admin/admin)
 
 ### Local Dify Callback Setup
 
@@ -145,6 +150,8 @@ Available test accounts:
 ### Task Management
 - **GET** `/api/tasks` - View data collection tasks
 - **POST** `/api/tasks/{id}/execute` - Trigger data collection
+- **GET** `/api/concurrency/status` - View task queue and worker status
+- **POST** `/api/concurrency/cleanup` - Clean up stuck tasks
 
 ### User & Workspace Management
 - **GET** `/api/workspaces/{id}/users` - Manage team members
@@ -226,6 +233,10 @@ docker compose -f docker-compose.dev.yml up -d
 - `DIFY_API_KEY`: Workflow API access
 - `DIFY_TIMELINE_API_KEY`: Timeline workflow key
 
+**Task Queue**:
+- `RABBITMQ_URL`: Message broker connection (default: amqp://guest:guest@rabbitmq:5672//)
+- `MAX_CONCURRENT_WORKFLOWS`: Maximum parallel workflow executions (default: 10)
+
 **Keycloak**:
 - `KEYCLOAK_SERVER_URL`: Auth server URL
 - `KEYCLOAK_REALM`: Authentication realm
@@ -244,6 +255,100 @@ docker compose -f docker-compose.dev.yml up -d
 - `user_workspace_permissions` - Granular permissions
 - `tasks` - Data collection job tracking
 - `workflow_configs` - AI workflow settings
+
+## 📈 Task Queue System
+
+### Overview
+The application uses Celery with RabbitMQ for distributed task processing, enabling asynchronous execution of Dify AI workflows with intelligent concurrency control.
+
+### Components
+
+#### RabbitMQ Message Broker
+- **Purpose**: Reliable message queue for task distribution
+- **Features**:
+  - Persistent messages with 1-hour TTL
+  - Priority queue support
+  - Automatic task re-queueing on worker failure
+- **Management UI**: http://localhost:15672 (guest/guest)
+
+#### Celery Workers
+- **Purpose**: Execute Dify workflow tasks asynchronously
+- **Configuration**:
+  - Concurrency: 4 workers with solo pool (for async compatibility)
+  - Task timeout: 10 min soft limit, 15 min hard limit
+  - Result backend: RabbitMQ RPC
+- **Queue**: `dify_workflows` - Dedicated queue for AI workflow tasks
+
+#### Flower Dashboard
+- **Purpose**: Real-time monitoring and management of Celery workers
+- **Features**:
+  - Worker status and performance metrics
+  - Task execution history and statistics
+  - Queue monitoring and management
+- **Access**: http://localhost:5555 (admin/admin)
+
+### Dynamic Concurrency Control
+The system implements database-based concurrency management to prevent API rate limiting:
+
+- **Max Concurrent Workflows**: Configurable via `MAX_CONCURRENT_WORKFLOWS` (default: 10)
+- **Queue Management**: Tasks wait for available slots before execution
+- **Status Tracking**: Real-time monitoring via `/api/concurrency/status`
+- **Stuck Task Detection**: Automatic identification of tasks running > 30 minutes
+- **Graceful Degradation**: Tasks timeout after 5 minutes waiting for slots
+
+### Task Workflow
+
+1. **Task Creation**: API endpoint creates task in database (status: PENDING)
+2. **Queue Submission**: Task sent to RabbitMQ `dify_workflows` queue
+3. **Worker Processing**:
+   - Worker picks up task from queue
+   - Checks concurrency limits (waits if at max)
+   - Updates status to RUNNING
+   - Executes Dify workflow with callbacks
+4. **Webhook Callbacks**: Dify sends results back via webhooks
+5. **Status Updates**: Task marked COMPLETED or ERROR based on results
+
+### Monitoring Commands
+
+```bash
+# Check worker status
+docker compose -f docker-compose.dev.yml logs celery_worker
+
+# Monitor real-time task execution
+docker compose -f docker-compose.dev.yml logs -f celery_worker
+
+# View queue status via API
+curl http://localhost:8000/api/concurrency/status
+
+# Access Flower dashboard
+open http://localhost:5555
+
+# Access RabbitMQ management
+open http://localhost:15672
+
+# Check queue health
+docker compose -f docker-compose.dev.yml exec celery_worker celery -A app.core.celery_app inspect active
+```
+
+### Troubleshooting
+
+#### Tasks Stuck in RUNNING
+```bash
+# Check for stuck tasks
+curl -X POST http://localhost:8000/api/concurrency/cleanup
+
+# Restart workers
+docker compose -f docker-compose.dev.yml restart celery_worker
+```
+
+#### Worker Connection Issues
+```bash
+# Check RabbitMQ health
+docker compose -f docker-compose.dev.yml ps rabbitmq
+
+# Verify worker can connect
+docker compose -f docker-compose.dev.yml exec celery_worker celery -A app.core.celery_app status
+```
 
 ## 🔍 Monitoring
 
