@@ -3,6 +3,7 @@ import logging
 from sqlalchemy.orm import Session
 from app.models.company import Company
 from app.models.task import Task, TaskType, TaskStatus
+from app.models.workflow_config import WorkflowConfig
 from app.schemas.company import CompanyCreate, CompanyUpdate, CompanyResponse
 from app.schemas.task import TaskTokenUpdate
 from app.schemas.pagination import PaginationParams, PaginatedResponse, create_pagination_meta
@@ -11,6 +12,7 @@ from app.core.database_security import SecureQueryBuilder
 from app.core.validators import ValidationError
 from app.infrastructure.database.repositories.company_repository_impl import SQLAlchemyCompanyRepository
 from app.core.config import settings
+from app.workers.dify_tasks import execute_dify_workflow
 
 logger = logging.getLogger(__name__)
 
@@ -247,7 +249,38 @@ class CompanyService:
         self.db.commit()
         self.db.refresh(company)
         
-        logger.info(f"Created company '{name}' with {len(default_tasks)} pending tasks for user '{owner_username}'")
+        # Queue tasks for execution instead of executing directly
+        for task in company.tasks:
+            # Get workflow configuration from database before queuing
+            workflow_config = self.db.query(WorkflowConfig).filter(
+                WorkflowConfig.task_type == task.type.value
+            ).first()
+            
+            if not workflow_config:
+                logger.error(f"No workflow configuration found for task type: {task.type.value}")
+                task.status = TaskStatus.ERROR
+                task.error = f"No workflow configuration found for task type: {task.type.value}"
+                self.db.commit()
+                continue
+            
+            if not workflow_config.workflow_id or not workflow_config.api_key:
+                logger.error(f"Incomplete workflow configuration for task type: {task.type.value}")
+                task.status = TaskStatus.ERROR
+                task.error = f"Incomplete workflow configuration for task type: {task.type.value}"
+                self.db.commit()
+                continue
+            
+            logger.info(f"Queueing task {task.id} ({task.type.value}) for company {company.id}")
+            execute_dify_workflow.delay(
+                task_id=task.id,
+                company_id=company.id,
+                task_type=task.type.value,
+                workflow_id=workflow_config.workflow_id,
+                api_key=workflow_config.api_key,
+                llm=workflow_config.llm
+            )
+        
+        logger.info(f"Created company '{name}' and queued {len(default_tasks)} tasks for user '{owner_username}'")
         
         return company
     

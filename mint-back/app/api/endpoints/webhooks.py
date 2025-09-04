@@ -10,6 +10,7 @@ from app.core.dependencies import get_company_service
 from app.models.task import TaskStatus
 from app.core.config import settings
 from app.schemas.task import TaskTokenUpdate
+from app.core.concurrency import DifyConcurrencyManager
 from fastapi import Depends
 
 logger = logging.getLogger(__name__)
@@ -101,6 +102,12 @@ async def task_callback(
         # Save changes to database
         service.db.commit()
         service.db.refresh(task)
+        
+        # Log concurrency status when workflow completes
+        if payload.status in ["succeeded", "failed"]:
+            concurrency_manager = DifyConcurrencyManager(service.db)
+            running_count = concurrency_manager.get_running_count()
+            logger.info(f"🎉 Task {task_id} callback processed successfully - Running workflows: {running_count}/{concurrency_manager.max_concurrent}")
         
         logger.info(f"🎉 Task {task_id} callback processed successfully")
         
@@ -262,6 +269,11 @@ async def dify_task_callback(
         task.updated_at = datetime.utcnow()
         service.db.commit()
         service.db.refresh(task)
+        
+        # Log concurrency status when workflow completes
+        concurrency_manager = DifyConcurrencyManager(service.db)
+        running_count = concurrency_manager.get_running_count()
+        logger.info(f"🎉 Dify callback for task {task_id} processed successfully - Running workflows: {running_count}/{concurrency_manager.max_concurrent}")
         
         logger.info(f"🎉 Dify callback for task {task_id} processed successfully")
         

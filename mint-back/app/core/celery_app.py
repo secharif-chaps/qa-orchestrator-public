@@ -1,0 +1,55 @@
+"""Celery configuration for Mint application."""
+from celery import Celery
+from kombu import Queue
+import os
+
+# Get broker URL from environment or use default
+RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq:5672//")
+MAX_CONCURRENT_WORKFLOWS = int(os.getenv("MAX_CONCURRENT_WORKFLOWS", "10"))
+
+# Create Celery app
+celery_app = Celery(
+    "mint_tasks",
+    broker=RABBITMQ_URL,
+    backend='rpc://',  # RabbitMQ as result backend
+    include=['app.workers.dify_tasks']
+)
+
+# Configure Celery
+celery_app.conf.update(
+    task_serializer='json',
+    accept_content=['json'],
+    result_serializer='json',
+    timezone='UTC',
+    enable_utc=True,
+    task_acks_late=True,  # Task persistence
+    worker_prefetch_multiplier=1,  # Better rate control
+    task_track_started=True,
+    task_reject_on_worker_lost=True,  # Re-queue on worker failure
+    
+    # RabbitMQ specific settings for durability
+    task_queue_durable=True,
+    task_queue_arguments={
+        'x-message-ttl': 3600000,  # 1 hour TTL
+        'x-max-priority': 10,  # For future priority support
+    },
+    
+    # Define queues
+    task_default_queue='dify_workflows',
+    task_queues=(
+        Queue('dify_workflows', 
+              routing_key='workflow.#',
+              queue_arguments={'x-max-priority': 10}),
+    ),
+    
+    # Task time limits
+    task_soft_time_limit=600,  # 10 minutes soft limit
+    task_time_limit=900,  # 15 minutes hard limit
+    
+    # Result backend settings
+    result_expires=3600,  # Results expire after 1 hour
+    result_persistent=True,  # Persist results to survive restart
+)
+
+# Export the app
+__all__ = ['celery_app']

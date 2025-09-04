@@ -58,7 +58,61 @@ services:
       db:
         condition: service_healthy
 
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    restart: always
+    ports:
+      - "5672:5672"     # AMQP port
+      - "15672:15672"   # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Celery Worker for Task Processing
+  celery_worker:
+    build: 
+      context: ./mint-back
+      dockerfile: Dockerfile.celery
+    command: celery -A app.core.celery_app worker --loglevel=info --concurrency=4 --pool=solo
+    restart: always
+    env_file:
+      - .env.dev
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672//
+      MAX_CONCURRENT_WORKFLOWS: 10
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    volumes:
+      - ./mint-back/app:/app/app
+
+  # Flower Dashboard for Monitoring
+  celery_flower:
+    build: 
+      context: ./mint-back
+      dockerfile: Dockerfile.celery
+    command: celery -A app.core.celery_app flower --port=5555 --broker=amqp://guest:guest@rabbitmq:5672//
+    restart: always
+    ports:
+      - "5555:5555"
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672//
+      FLOWER_BASIC_AUTH: admin:admin  # Change in production
+    depends_on:
+      - rabbitmq
+
 volumes:
-  postgres_data: 
+  postgres_data:
+  rabbitmq_data: 
 
   

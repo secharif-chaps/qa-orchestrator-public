@@ -45,7 +45,10 @@ class DifyClient:
         task_id: int,
         company_id: int,
         async_mode: bool = True,
-        token_callback_url: str = None
+        token_callback_url: str = None,
+        workflow_id: Optional[str] = None,
+        api_key: Optional[str] = None,
+        llm: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Generic method to trigger any workflow type
@@ -63,12 +66,21 @@ class DifyClient:
         Returns:
             Response data from Dify (acknowledgment if async, results if sync)
         """
-        workflow_id, api_key, llm = self._get_workflow_config(task_type)
+        # Use provided parameters if available, otherwise get from database
+        if workflow_id is None or api_key is None or llm is None:
+            db_workflow_id, db_api_key, db_llm = self._get_workflow_config(task_type)
+            workflow_id = workflow_id or db_workflow_id
+            api_key = api_key or db_api_key
+            llm = llm or db_llm
         
         if not workflow_id or not api_key:
             error_msg = f"No workflow configuration found for task type: {task_type}"
             logger.error(error_msg)
             raise Exception(error_msg)
+        
+        # Default LLM if not provided
+        if not llm:
+            llm = "mistral"
         
         headers = {
             "Authorization": f"Bearer {api_key}",
