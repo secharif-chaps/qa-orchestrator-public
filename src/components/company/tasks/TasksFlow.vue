@@ -288,7 +288,7 @@ const { mutate: restart } = restartTaskMutation
 // Initialize component when mounted
 onMounted(async () => {
   // Start all pending tasks automatically if workflow was previously started
-  performAutoRecovery()
+  // performAutoRecovery()
 })
 
 // Helper function to get task status
@@ -475,59 +475,6 @@ const pendingPercentage = computed(() =>
   totalTasks.value > 0 ? (pendingCount.value / totalTasks.value) * 100 : 0,
 )
 
-// Parallel task execution - start all pending tasks at once
-const performAutoRecovery = async () => {
-  const currentTasks = tasks.value
-  if (!currentTasks || currentTasks.length === 0) return
-
-  // Early exit if all tasks succeeded
-  const allSucceeded = currentTasks.every((t: TaskResponse) => t.status === 'succeeded')
-  if (allSucceeded) {
-    console.log('✅ All tasks succeeded - skipping auto-recovery')
-    return
-  }
-
-  // Early exit if has running tasks
-  const hasRunning = currentTasks.some((t: TaskResponse) => t.status === 'running')
-  if (hasRunning) {
-    console.log('⏳ Tasks are running - waiting for completion')
-    return
-  }
-
-  // Early exit if no pending tasks
-  const hasPending = currentTasks.some((t: TaskResponse) => t.status === 'pending')
-  if (!hasPending) {
-    console.log('⚠️ No pending tasks to start')
-    return
-  }
-
-  console.log(`🔄 Starting all pending tasks in parallel...`)
-
-  // Start ALL pending tasks at once (parallel execution)
-  const pendingTasks = currentTasks.filter((t: TaskResponse) => t.status === 'pending')
-  const startPromises = pendingTasks.map((task) => triggerTask(task.type))
-
-  try {
-    await Promise.all(startPromises)
-    console.log(`✅ Started ${pendingTasks.length} tasks in parallel`)
-  } catch (error) {
-    console.error('❌ Error starting tasks in parallel:', error)
-  }
-}
-
-// Debounced auto-recovery to prevent race conditions
-const debouncedAutoRecovery = useDebounceFn(performAutoRecovery, 500)
-
-// Watch for task updates and auto-progress
-watch(
-  tasks,
-  (newTasks) => {
-    // Perform debounced auto-recovery check on task changes
-    debouncedAutoRecovery()
-  },
-  { deep: true },
-)
-
 // Watch for running tasks to start/stop polling
 watch(
   hasRunningTasks,
@@ -545,26 +492,6 @@ watch(
 onUnmounted(() => {
   stopPolling()
 })
-
-// Task actions
-const triggerTask = async (taskType: TaskType) => {
-  try {
-    // Find the existing task (pending or error)
-    const existingTask = tasks.value?.find(
-      (t: TaskResponse) => t.type === taskType && (t.status === 'pending' || t.status === 'error'),
-    )
-
-    if (existingTask) {
-      console.log(`🔄 Starting task ${taskType} with ID:`, existingTask.id)
-      await restart(existingTask.id)
-      console.log(`✅ Task ${taskType} started successfully`)
-    } else {
-      console.warn(`⚠️ No pending or error task found for ${taskType}`)
-    }
-  } catch (error) {
-    console.error(`❌ Error triggering task ${taskType}:`, error)
-  }
-}
 
 const restartTask = async (taskType: TaskType) => {
   if (!canCreateCompany.value) {
