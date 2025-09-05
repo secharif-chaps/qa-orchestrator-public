@@ -96,4 +96,49 @@ class CompanyResponse(CompanyBase):
     updated_at: datetime
     tasks: List[TaskResponse] = Field(default_factory=list)
     
-    model_config = ConfigDict(from_attributes=True) 
+    model_config = ConfigDict(from_attributes=True)
+
+class CompanyCSVRow(BaseModel):
+    """Single row from CSV import"""
+    row_number: int
+    name: str
+    website: str
+
+class CompanyCSVValidationError(BaseModel):
+    """Validation error for a specific row"""
+    row_number: int
+    field: str
+    error: str
+
+class CompanyCSVValidationRequest(BaseModel):
+    """Request to validate CSV data"""
+    companies: List[CompanyCSVRow]
+
+class CompanyCSVValidationResponse(BaseModel):
+    """Response from validation endpoint"""
+    valid_count: int
+    error_count: int
+    errors: List[CompanyCSVValidationError]
+    has_sufficient_tokens: bool
+    tokens_required: int
+    tokens_available: int
+
+class CompanyCSVImportRequest(BaseModel):
+    """Request to import validated CSV data"""
+    companies: List[CompanyCSVRow]
+    skip_invalid: bool = True  # Whether to skip invalid rows or fail entire import
+
+class CompanyCSVImportResult(BaseModel):
+    """Result for a single company import"""
+    row_number: int
+    success: bool
+    company_id: Optional[int] = None
+    name: Optional[str] = None
+    error: Optional[str] = None
+
+class CompanyCSVImportResponse(BaseModel):
+    """Response from import endpoint"""
+    total_rows: int
+    successful: int
+    failed: int
+    results: List[CompanyCSVImportResult] 

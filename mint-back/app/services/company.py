@@ -4,15 +4,21 @@ from sqlalchemy.orm import Session
 from app.models.company import Company
 from app.models.task import Task, TaskType, TaskStatus
 from app.models.workflow_config import WorkflowConfig
-from app.schemas.company import CompanyCreate, CompanyUpdate, CompanyResponse
+from app.schemas.company import (
+    CompanyCreate, CompanyUpdate, CompanyResponse,
+    CompanyCSVRow, CompanyCSVValidationError, CompanyCSVValidationResponse,
+    CompanyCSVImportResponse, CompanyCSVImportResult
+)
 from app.schemas.task import TaskTokenUpdate
 from app.schemas.pagination import PaginationParams, PaginatedResponse, create_pagination_meta
 from app.infrastructure.dify.client import DifyClient
 from app.core.database_security import SecureQueryBuilder
-from app.core.validators import ValidationError
+from app.core.validators import ValidationError, InputValidator
 from app.infrastructure.database.repositories.company_repository_impl import SQLAlchemyCompanyRepository
 from app.core.config import settings
 from app.workers.dify_tasks import execute_dify_workflow
+from app.services.token_manager import TokenManager
+from app.models.workspace import ModuleName
 
 logger = logging.getLogger(__name__)
 
@@ -460,3 +466,193 @@ class CompanyService:
             query = query.filter(Company.workspace_id == workspace_id)
         companies = query.all()
         return [_parse_json_fields(company) for company in companies]
+    
+    def validate_csv_companies(self, companies: List[CompanyCSVRow], workspace_id: int,
+                               token_manager: TokenManager) -> CompanyCSVValidationResponse:
+        """Validate a list of companies from CSV without creating them"""
+        errors = []
+        
+        # First, identify duplicate names and mark all instances as duplicates
+        name_count = {}
+        for company_row in companies:
+            if company_row.name.strip():  # Only count non-empty names
+                if company_row.name in name_count:
+                    name_count[company_row.name].append(company_row.row_number)
+                else:
+                    name_count[company_row.name] = [company_row.row_number]
+        
+        duplicates = {name: rows for name, rows in name_count.items() if len(rows) > 1}
+        
+        for company_row in companies:
+            # Check for duplicate names within the CSV
+            if company_row.name in duplicates:
+                other_rows = [r for r in duplicates[company_row.name] if r != company_row.row_number]
+                errors.append(CompanyCSVValidationError(
+                    row_number=company_row.row_number,
+                    field="name",
+                    error=f"Duplicate company name in CSV (also on row {other_rows[0]})"
+                ))
+                continue  # Skip other validations for duplicate rows
+            
+            # Check if company already exists in database (skip if name is empty - will be caught by validation)
+            if company_row.name.strip():
+                existing = self.get_company_by_name(company_row.name)
+                if existing and existing.workspace_id == workspace_id:
+                    errors.append(CompanyCSVValidationError(
+                        row_number=company_row.row_number,
+                        field="name",
+                        error=f"Company '{company_row.name}' already exists in this workspace"
+                    ))
+            
+            # Validate name
+            try:
+                InputValidator.validate_company_name(company_row.name)
+            except ValidationError as e:
+                errors.append(CompanyCSVValidationError(
+                    row_number=company_row.row_number,
+                    field="name",
+                    error=str(e)
+                ))
+            
+            # Validate website
+            try:
+                InputValidator.validate_website_url(company_row.website)
+            except ValidationError as e:
+                errors.append(CompanyCSVValidationError(
+                    row_number=company_row.row_number,
+                    field="website",
+                    error=str(e)
+                ))
+        
+        # Calculate valid companies count (count unique error row numbers since a row can have multiple errors)
+        error_rows = set(error.row_number for error in errors if error.row_number > 0)
+        valid_count = len(companies) - len(error_rows)
+        tokens_required = valid_count
+        
+        # Check available tokens
+        module = token_manager.get_module_tokens(workspace_id, ModuleName.SCREEN)
+        available_tokens = module.token_count if module else 0
+        has_sufficient_tokens = available_tokens >= tokens_required
+        
+        # Add token insufficiency as a validation error if needed
+        if not has_sufficient_tokens and valid_count > 0:
+            errors.append(CompanyCSVValidationError(
+                row_number=0,  # Global error, not specific to a row
+                field="tokens",
+                error=f"Insufficient tokens. Required: {tokens_required}, Available: {available_tokens}"
+            ))
+        
+        return CompanyCSVValidationResponse(
+            valid_count=valid_count,
+            error_count=len(errors),
+            errors=errors,
+            has_sufficient_tokens=has_sufficient_tokens,
+            tokens_required=tokens_required,
+            tokens_available=available_tokens
+        )
+    
+    def import_csv_companies(self, companies: List[CompanyCSVRow], owner_username: str,
+                            workspace_id: int, skip_invalid: bool = True) -> CompanyCSVImportResponse:
+        """Import companies from CSV, creating them with tasks"""
+        results = []
+        successful = 0
+        
+        # First validate all companies (without token manager for internal validation)
+        validation_errors = []
+        invalid_rows = set()
+        
+        # First, identify duplicate names and mark all instances as invalid
+        name_count = {}
+        for company_row in companies:
+            if company_row.name.strip():  # Only count non-empty names
+                if company_row.name in name_count:
+                    name_count[company_row.name].append(company_row.row_number)
+                else:
+                    name_count[company_row.name] = [company_row.row_number]
+        
+        duplicates = {name: rows for name, rows in name_count.items() if len(rows) > 1}
+        
+        for company_row in companies:
+            # Check for duplicate names within the CSV
+            if company_row.name in duplicates:
+                validation_errors.append(company_row.row_number)
+                invalid_rows.add(company_row.row_number)
+                continue
+            
+            # Check if company already exists in database (skip if name is empty - will be caught by validation)
+            if company_row.name.strip():
+                existing = self.get_company_by_name(company_row.name)
+                if existing and existing.workspace_id == workspace_id:
+                    validation_errors.append(company_row.row_number)
+                    invalid_rows.add(company_row.row_number)
+                    continue
+            
+            # Validate name and website
+            try:
+                InputValidator.validate_company_name(company_row.name)
+                InputValidator.validate_website_url(company_row.website)
+            except ValidationError:
+                validation_errors.append(company_row.row_number)
+                invalid_rows.add(company_row.row_number)
+        
+        # If skip_invalid is False and there are errors, fail the entire import
+        if not skip_invalid and len(validation_errors) > 0:
+            return CompanyCSVImportResponse(
+                total_rows=len(companies),
+                successful=0,
+                failed=len(companies),
+                results=[
+                    CompanyCSVImportResult(
+                        row_number=company.row_number,
+                        success=False,
+                        name=company.name,
+                        error="Import cancelled due to validation errors"
+                    ) for company in companies
+                ]
+            )
+        
+        # Process each valid company
+        for company_row in companies:
+            if company_row.row_number in invalid_rows:
+                # Add failure result for invalid rows
+                results.append(CompanyCSVImportResult(
+                    row_number=company_row.row_number,
+                    success=False,
+                    name=company_row.name,
+                    error="Validation error"
+                ))
+                continue
+            
+            try:
+                # Create the company (reusing existing create_company logic)
+                company = self.create_company(
+                    name=company_row.name,
+                    website=company_row.website,
+                    owner_username=owner_username,
+                    workspace_id=workspace_id
+                )
+                
+                results.append(CompanyCSVImportResult(
+                    row_number=company_row.row_number,
+                    success=True,
+                    company_id=company.id,
+                    name=company.name,
+                    error=None
+                ))
+                successful += 1
+                
+            except Exception as e:
+                logger.error(f"Failed to create company from CSV row {company_row.row_number}: {str(e)}")
+                results.append(CompanyCSVImportResult(
+                    row_number=company_row.row_number,
+                    success=False,
+                    name=company_row.name,
+                    error=str(e)
+                ))
+        
+        return CompanyCSVImportResponse(
+            total_rows=len(companies),
+            successful=successful,
+            failed=len(companies) - successful,
+            results=results
+        )

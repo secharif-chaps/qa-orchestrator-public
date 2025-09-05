@@ -45,7 +45,6 @@ def get_user_workspace(
     
     # Check if user has admin.workspaces role
     has_admin_workspaces = current_user.roles and "admin.workspaces" in current_user.roles
-    print(f"DEBUG get_user_workspace: user={current_user.sub}, has_admin_workspaces={has_admin_workspaces}")
     
     if has_admin_workspaces:
         # Priority 1: For admin.workspaces users, always use database lookup to support workspace switching
@@ -56,7 +55,6 @@ def get_user_workspace(
         
         if member:
             workspace_id = member.workspace_id
-            print(f"DEBUG get_user_workspace: Found admin member, workspace_id={workspace_id}, updated_at={member.updated_at}")
         # If no database membership found, fall back to JWT token
         elif current_user.workspace_id:
             workspace_id = current_user.workspace_id

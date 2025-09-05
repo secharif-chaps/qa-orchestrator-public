@@ -14,7 +14,11 @@ from app.core.security import verify_company_ownership, verify_company_workspace
 from app.schemas.company import (
     CompanyCreate, 
     CompanyUpdate, 
-    CompanyResponse
+    CompanyResponse,
+    CompanyCSVValidationRequest,
+    CompanyCSVValidationResponse,
+    CompanyCSVImportRequest,
+    CompanyCSVImportResponse
 )
 from app.schemas.pagination import PaginationParams, PaginatedResponse, SortOrder
 from app.schemas.chat import ChatRequest, ChatResponse
@@ -350,4 +354,111 @@ async def get_archived_companies(
     print(f"🏢 GET /api/companies/archived/list - User: {workspace_context.username}")
     
     archived_companies = service.get_archived_companies(workspace_id=workspace_context.workspace_id)
-    return archived_companies 
+    return archived_companies
+
+
+@router.post("/csv/validate", response_model=CompanyCSVValidationResponse)
+async def validate_csv_companies(
+    validation_request: CompanyCSVValidationRequest,
+    service: CompanyService = Depends(get_company_service),
+    token_manager: TokenManager = Depends(get_token_manager),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+):
+    """
+    Validate CSV company data without creating companies.
+    Also checks if user has sufficient tokens for valid companies.
+    """
+    logger.info(f"📋 CSV validation request - User: {workspace_context.username}, Rows: {len(validation_request.companies)}")
+    
+    # Verify user has permission to create companies
+    verify_company_modify_permission(workspace_context, "company.create")
+    
+    # Validate companies and check token availability
+    return service.validate_csv_companies(
+        companies=validation_request.companies,
+        workspace_id=workspace_context.workspace_id,
+        token_manager=token_manager
+    )
+
+
+@router.post("/csv/import", response_model=CompanyCSVImportResponse)
+async def import_csv_companies(
+    import_request: CompanyCSVImportRequest,
+    service: CompanyService = Depends(get_company_service),
+    token_manager: TokenManager = Depends(get_token_manager),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+):
+    """Import companies from CSV data"""
+    logger.info(f"📋 CSV import request - User: {workspace_context.username}, Rows: {len(import_request.companies)}")
+    
+    # Verify user has permission to create companies
+    verify_company_modify_permission(workspace_context, "company.create")
+    
+    # First validate to get token requirements
+    validation = service.validate_csv_companies(
+        companies=import_request.companies,
+        workspace_id=workspace_context.workspace_id,
+        token_manager=token_manager
+    )
+    
+    # Check if we have sufficient tokens
+    if not validation.has_sufficient_tokens:
+        raise HTTPException(
+            status_code=status.HTTP_402_PAYMENT_REQUIRED,
+            detail=f"Insufficient tokens. Need {validation.tokens_required} tokens for {validation.valid_count} valid companies, but only {validation.tokens_available} available"
+        )
+    
+    tokens_needed = validation.valid_count
+    
+    if tokens_needed > 0:
+        try:
+            # Consume tokens for all valid companies at once
+            logger.info(f"🪙 Consuming {tokens_needed} tokens for CSV import")
+            token_manager.consume_tokens(
+                workspace_id=workspace_context.workspace_id,
+                module_name=ModuleName.SCREEN,
+                tokens=tokens_needed
+            )
+        except Exception as e:
+            logger.error(f"Token consumption failed: {str(e)}")
+            raise HTTPException(
+                status_code=status.HTTP_402_PAYMENT_REQUIRED,
+                detail=f"Failed to consume tokens: {str(e)}"
+            )
+    
+    try:
+        # Import the companies
+        result = service.import_csv_companies(
+            companies=import_request.companies,
+            owner_username=workspace_context.username,
+            workspace_id=workspace_context.workspace_id,
+            skip_invalid=import_request.skip_invalid
+        )
+        
+        # If some companies failed after token consumption, rollback the difference
+        if result.failed > 0 and tokens_needed > result.successful:
+            tokens_to_rollback = tokens_needed - result.successful
+            try:
+                token_manager.rollback_tokens(
+                    workspace_context.workspace_id,
+                    ModuleName.SCREEN,
+                    tokens_to_rollback
+                )
+                logger.info(f"🔄 Rolled back {tokens_to_rollback} unused tokens")
+            except Exception as rollback_error:
+                logger.error(f"Failed to rollback tokens: {rollback_error}")
+        
+        return result
+        
+    except Exception as e:
+        # On complete failure, rollback all tokens
+        if tokens_needed > 0:
+            try:
+                token_manager.rollback_tokens(
+                    workspace_context.workspace_id,
+                    ModuleName.SCREEN,
+                    tokens_needed
+                )
+            except Exception as rollback_error:
+                logger.error(f"Failed to rollback tokens: {rollback_error}")
+        raise 
