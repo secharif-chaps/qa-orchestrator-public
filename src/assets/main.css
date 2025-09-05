@@ -27,6 +27,8 @@
   --color-sidebar-border: var(--theme-color-sidebar-border);
   --color-sidebar-count: var(--theme-color-sidebar-count);
 
+  --color-info: var(--theme-color-info);
+
   --color-boston-50: #deebed;
   --color-boston-100: #b7d8dc;
   --color-boston-200: #80bfc6;
@@ -72,6 +74,8 @@
     /* --theme-color-primary: var(--color-indigo-600); */
     --theme-color-sidebar-border: var(--color-indigo-500);
     --theme-color-sidebar-count: var(--color-indigo-500);
+
+    --theme-color-info: var(--color-sky-500);
   }
 
   :root.dark {
@@ -90,6 +94,8 @@
 
     --theme-color-sidebar-border: var(--color-indigo-500);
     --theme-color-sidebar-count: var(--color-indigo-500);
+
+    --theme-color-info: var(--color-sky-400);
   }
 
   [data-theme='indigo'] {

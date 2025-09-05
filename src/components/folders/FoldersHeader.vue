@@ -74,12 +74,12 @@
             <!-- Dropdown Menu -->
             <div
               v-if="showAddItemsDropdown"
-              class="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 w-80 bg-bg1 border border-border-2 rounded-lg shadow-lg z-50"
+              class="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 w-80 bg-bg2 border border-border-2 rounded-lg shadow-lg z-50"
             >
               <div class="p-2">
                 <!-- Company Screen - Enabled -->
                 <button
-                  class="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-bg2 rounded-md transition-colors"
+                  class="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-bg3 rounded-md transition-colors"
                   @click="$router.push(`/folders/${$route.params.folderId}/create/company`)"
                 >
                   <div
