@@ -68,7 +68,14 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex items-center justify-end pt-4">
+        <div class="flex items-center justify-between pt-4">
+          <Button
+            variant="tertiary"
+            icon="fa fa-upload"
+            :label="$t('csv.upload.button', 'Upload CSV')"
+            @click="goToCSVUpload"
+          />
+          
           <Button
             variant="primary"
             icon="fa fa-search"
@@ -234,6 +241,12 @@ const contactAdmin = () => {
 
 const dismissTokenAlert = () => {
   showTokenAlert.value = true
+}
+
+// Navigation to CSV upload
+const goToCSVUpload = () => {
+  const folderId = route.params.folderId
+  router.push(`/folders/${folderId}/create/company-csv`)
 }
 
 // Handle the search and redirection as soon as we get the company name
