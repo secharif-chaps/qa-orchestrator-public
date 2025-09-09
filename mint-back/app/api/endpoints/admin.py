@@ -19,6 +19,9 @@ from app.schemas.module import (
 )
 from app.models.workspace import ModuleName
 from app.database import get_db
+from app.models.task import Task, TaskStatus
+from app.core.celery_app import celery_app
+from datetime import datetime
 
 router = APIRouter(
     prefix="/admin",
@@ -259,3 +262,67 @@ async def update_workflow_config(
         has_api_key=bool(updated_config.api_key),
         llm=updated_config.llm
     )
+
+
+# Task Management Endpoints
+
+@router.post("/tasks/fail-stuck")
+async def fail_stuck_tasks(
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user)
+):
+    """
+    Fail all pending and running tasks and clear the task queue.
+    This is used to unlock the system when tasks get stuck.
+    Requires admin.workspaces permission.
+    """
+    verify_workspace_admin_access(current_user)
+    
+    # Get all pending and running tasks
+    stuck_tasks = db.query(Task).filter(
+        Task.status.in_([TaskStatus.PENDING, TaskStatus.RUNNING])
+    ).all()
+    
+    failed_count = 0
+    for task in stuck_tasks:
+        task.status = TaskStatus.ERROR
+        task.error = "Task failed by admin to unlock stuck queue"
+        task.updated_at = datetime.utcnow()
+        failed_count += 1
+    
+    # Commit the database changes
+    db.commit()
+    
+    # Clear the Celery queue
+    # Purge all messages from the dify_workflows queue
+    try:
+        # Get the queue with the same parameters as defined in celery_app
+        from kombu import Connection, Queue as KombuQueue
+        from app.core.celery_app import RABBITMQ_URL
+        
+        with Connection(RABBITMQ_URL) as conn:
+            channel = conn.channel()
+            # Declare the queue with the same arguments as in celery_app
+            queue = KombuQueue(
+                'dify_workflows', 
+                channel=channel, 
+                durable=True,
+                queue_arguments={'x-max-priority': 10}  # Match the celery config
+            )
+            queue.declare()
+            # Purge the queue
+            purged_count = queue.purge()
+            
+        queue_cleared = True
+        queue_message = f"Purged {purged_count} messages from queue"
+    except Exception as e:
+        queue_cleared = False
+        queue_message = f"Failed to clear queue: {str(e)}"
+    
+    return {
+        "success": True,
+        "tasks_failed": failed_count,
+        "queue_cleared": queue_cleared,
+        "queue_status": queue_message,
+        "message": f"Failed {failed_count} stuck tasks and {'successfully cleared' if queue_cleared else 'attempted to clear'} the queue"
+    }

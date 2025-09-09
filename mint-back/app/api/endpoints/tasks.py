@@ -83,36 +83,35 @@ async def get_company_tasks(
     verify_company_workspace_access(company, workspace_context)
     return company.tasks
 
-# COMMENTED OUT - Tasks are now automatically processed via queue system
-# @router.post("/{task_id}/restart", response_model=TaskResponse)
-# async def restart_task(
-#     task_id: int,
-#     service: CompanyService = Depends(get_company_service),
-#     current_user: TokenData = Depends(get_current_user)
-# ):
-#     """Restart a specific task (only if user owns the company)"""
-#     # First, we need to find the task and verify ownership
-#     # Get companies for the user's workspace
-#     user_companies = service.get_all_companies(workspace_id=current_user.workspace_id)
-#     
-#     task = None
-#     for company in user_companies:
-#         for company_task in company.tasks:
-#             if company_task.id == task_id:
-#                 task = company_task
-#                 break
-#         if task:
-#             break
-#     
-#     if not task:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail=f"Task with ID {task_id} not found or you don't have permission to access it"
-#         )
-#     
-#     # Restart the task
-#     restarted_task = await service.restart_task(task_id)
-#     return restarted_task
+@router.post("/{task_id}/restart", response_model=TaskResponse)
+async def restart_task(
+    task_id: int,
+    service: CompanyService = Depends(get_company_service),
+    current_user: TokenData = Depends(get_current_user),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+):
+    """Restart a specific task (if user has access to the company's workspace)"""
+    # Get companies for the user's workspace
+    user_companies = service.get_all_companies(workspace_id=workspace_context.workspace.id)
+    
+    task = None
+    for company in user_companies:
+        for company_task in company.tasks:
+            if company_task.id == task_id:
+                task = company_task
+                break
+        if task:
+            break
+    
+    if not task:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Task with ID {task_id} not found or you don't have permission to access it"
+        )
+    
+    # Restart the task
+    restarted_task = await service.restart_task(task_id)
+    return restarted_task
 
 @router.patch("/{task_id}/tokens", response_model=TaskResponse)
 async def update_task_tokens(
