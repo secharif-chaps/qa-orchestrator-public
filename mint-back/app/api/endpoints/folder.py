@@ -286,7 +286,25 @@ def delete_folder(
     
     deleted_folder = FolderService.soft_delete_folder(db=db, folder=folder)
     
-    return deleted_folder
+    # Build the response with items for consistency
+    folder_items = FolderService._get_folder_items_summary(db, deleted_folder.id)
+    
+    folder_dict = {
+        "id": deleted_folder.id,
+        "workspace_id": deleted_folder.workspace_id,
+        "owner": deleted_folder.owner or "Unknown",
+        "name": deleted_folder.name,
+        "color": deleted_folder.color,
+        "icon": deleted_folder.icon,
+        "tags": deleted_folder.tags,
+        "is_favorite": deleted_folder.is_favorite,
+        "is_deleted": deleted_folder.is_deleted,
+        "created_at": deleted_folder.created_at,
+        "updated_at": deleted_folder.updated_at,
+        "items": folder_items
+    }
+    
+    return folder_dict
 
 
 @router.post("/{folder_id}/restore", response_model=FolderResponse)
@@ -321,7 +339,25 @@ def restore_folder(
     
     restored_folder = FolderService.restore_folder(db=db, folder=folder)
     
-    return restored_folder
+    # Build the response with items for consistency
+    folder_items = FolderService._get_folder_items_summary(db, restored_folder.id)
+    
+    folder_dict = {
+        "id": restored_folder.id,
+        "workspace_id": restored_folder.workspace_id,
+        "owner": restored_folder.owner or "Unknown",
+        "name": restored_folder.name,
+        "color": restored_folder.color,
+        "icon": restored_folder.icon,
+        "tags": restored_folder.tags,
+        "is_favorite": restored_folder.is_favorite,
+        "is_deleted": restored_folder.is_deleted,
+        "created_at": restored_folder.created_at,
+        "updated_at": restored_folder.updated_at,
+        "items": folder_items
+    }
+    
+    return folder_dict
 
 
 @router.post("/{folder_id}/items", response_model=FolderItemResponse)
