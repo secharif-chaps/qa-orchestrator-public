@@ -79,6 +79,7 @@
             :folder="folder"
             @view-folder="$router.push(`/folders/${$event}`)"
             @delete-folder="confirmDelete"
+            @restore-folder="confirmRestore"
             @favorite-toggled="handleFavoriteToggled"
           />
         </div>
@@ -117,6 +118,7 @@
               :folder="folder"
               @view-folder="$router.push(`/folders/${$event}`)"
               @delete-folder="confirmDelete"
+              @restore-folder="confirmRestore"
               @view-item="(event) => $router.push(`/folders/${event.folderId}/companies/${event.itemId}`)"
             />
           </div>
@@ -176,6 +178,13 @@
       :folder-to-delete="folderToDelete"
       @delete-folder="handleDeleteFolder"
     />
+
+    <!-- Restore Confirmation Modal -->
+    <FolderRestoreModal
+      v-model="showRestoreModal"
+      :folder-to-restore="folderToRestore"
+      @restore-folder="handleRestoreFolder"
+    />
   </div>
 </template>
 
@@ -191,6 +200,7 @@ import Button from '@/components/ui/Button.vue'
 import ButtonGroup from '@/components/ui/ButtonGroup.vue'
 import FolderItem from '@/components/folders/FolderItem.vue'
 import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
+import FolderRestoreModal from '@/components/folders/FolderRestoreModal.vue'
 import FolderHierarchyRow from '@/components/folders/FolderHierarchyRow.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import type { Folder } from '@/types/folder'
@@ -301,6 +311,9 @@ const paginationMeta = computed(() => currentData.value?.meta)
 const showDeleteModal = ref(false)
 const folderToDelete = ref<Folder | null>(null)
 
+const showRestoreModal = ref(false)
+const folderToRestore = ref<Folder | null>(null)
+
 const handleDeleteFolder = async () => {
   // Refresh the folders list after successful deletion
   if (viewMode.value === 'grid') {
@@ -313,6 +326,20 @@ const handleDeleteFolder = async () => {
 const confirmDelete = (folder: Folder) => {
   folderToDelete.value = folder
   showDeleteModal.value = true
+}
+
+const handleRestoreFolder = async () => {
+  // Refresh the folders list after successful deletion
+  if (viewMode.value === 'grid') {
+    await refetch()
+  } else {
+    await refetchWithItems()
+  }
+}
+
+const confirmRestore = (folder: Folder) => {
+  folderToRestore.value = folder
+  showRestoreModal.value = true
 }
 
 const handleFavoriteToggled = async (folder: Folder) => {

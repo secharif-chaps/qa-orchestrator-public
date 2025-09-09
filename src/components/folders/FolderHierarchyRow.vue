@@ -36,11 +36,11 @@
         <div class="col-span-2">
           <span class="text-sm text-secondary">{{ formatDate(folder.created_at) }}</span>
         </div>
-
         <!-- Actions -->
         <div class="col-span-2 text-right">
           <div class="flex items-center justify-end gap-2">
             <Button
+              v-if="!folder.is_deleted"
               variant="tertiary"
               size="sm"
               icon="fa fa-external-link-alt"
@@ -51,10 +51,18 @@
               variant="tertiary"
               size="sm"
               color="danger"
-              icon="fa fa-trash"
+              :icon="folder.is_deleted ? 'fa fa-undo' : 'fa fa-archive'"
               icon-only
-              @click.stop="$emit('delete-folder', folder)"
+              @click.stop="folder.is_deleted ? $emit('restore-folder', folder): $emit('delete-folder', folder)"
             />
+            <!-- Deleted Tag -->
+            <span
+              v-if="folder.is_deleted"
+              class="inline-block text-xs bg-gray-200 text-gray-600  px-2 py-0.5 rounded ml-2"
+            >
+              {{ $t('folder.item.deleted', 'Deleted') }}
+            </span>
+
           </div>
         </div>
       </div>
@@ -150,6 +158,7 @@ const props = defineProps<Props>()
 defineEmits<{
   'view-folder': [id: string]
   'delete-folder': [folder: Folder]
+  'restore-folder': [folder: Folder]
   'view-item': [itemId: string]
 }>()
 
