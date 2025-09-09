@@ -10,7 +10,7 @@
         @click="confirmDelete"
       />
     </template>
-    
+
     <div class="flex flex-col gap-4">
       <TasksFlow v-if="displayTasks" />
       <RouterView />
@@ -19,11 +19,11 @@
     <FloatingChat />
   </CompanyCard>
 
-  <!-- Delete Confirmation Modal -->
-  <CompanyDeleteModal
+  <!-- Archive company Modal -->
+  <CompanyArchiveModal
     v-model="showDeleteModal"
-    :company-to-delete="company"
-    @delete-company="handleDeleteCompany"
+    :company-to-archive="company"
+    @archive-company="handleArchiveCompany"
   />
 </template>
 
@@ -31,7 +31,7 @@
 import CompanyCard from '@/components/company/CompanyCard.vue'
 import TasksFlow from '@/components/company/tasks/TasksFlow.vue'
 import FloatingChat from '@/components/company/FloatingChat.vue'
-import CompanyDeleteModal from '@/components/companies/CompanyDeleteModal.vue'
+import CompanyArchiveModal from '@/components/companies/CompanyArchiveModal.vue'
 import Button from '@/components/ui/Button.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { companyByIdQuery } from '@/queries/companies'
@@ -44,12 +44,12 @@ const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 
-const companyId = computed(() => route.params.companyId as string)
-const folderId = computed(() => route.params.folderId as string)
+const companyId = computed(() => (route.params as { companyId: string }).companyId)
+const folderId = computed(() => (route.params as { folderId: string }).folderId)
 
 // Get company data
 const { data: company, error, status } = useQuery(
-  companyByIdQuery, 
+  companyByIdQuery,
   () => ({ id: companyId.value }),
   {
     enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
@@ -80,9 +80,9 @@ const confirmDelete = () => {
   showDeleteModal.value = true
 }
 
-const handleDeleteCompany = () => {
+const handleArchiveCompany = async () => {
   // Redirect to companies list after deletion
-  router.push('/companies')
+  router.push(`/folders/${folderId.value}/companies/`)
 }
 
 const title = computed(() => {

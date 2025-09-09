@@ -24,6 +24,7 @@
         <FoldersHeader
           v-model:search-term="searchTerm"
           v-model:view-mode="viewMode"
+          v-model:company-filter="companyFilter"
           :folder="folder"
           @edit-folder="$router.push(`/folders/${folder?.id}/edit`)"
           @delete-folder="confirmDelete"
@@ -38,13 +39,15 @@
           >
             <!-- Items List -->
             <FolderItemDisplay
+              v-model:company-filter="companyFilter"
               v-for="item in filteredItems"
               :key="item.id"
               :item="item"
+              :is-archived="companyFilter === 'archived'"
               mode="grid"
               @view-item="$router.push(`/folders/${route.params.folderId}/companies/${$event}`)"
               @remove-item="confirmRemoveItem"
-              @delete-company="confirmDeleteCompany"
+              @delete-company="confirmArchiveCompany"
             />
           </div>
 
@@ -68,8 +71,9 @@
               <div
                 v-for="item in filteredItems"
                 :key="item.id"
-                class="px-6 py-4 hover:bg-bg2 transition-colors cursor-pointer"
-                @click="navigateToItem(item)"
+                class="px-6 py-4 hover:bg-bg2 transition-colors"
+                :class="{ 'cursor-auto': companyFilter === 'archived', 'cursor-pointer': companyFilter !== 'archived' }"
+                @click="companyFilter !== 'archived' && navigateToItem(item)"
               >
                 <div class="grid grid-cols-12 gap-4 items-center">
                   <div class="col-span-4">
@@ -82,6 +86,7 @@
                           :src="getLogoUrl(item.website)"
                           :alt="`${item.name} logo`"
                           class="w-full h-full object-contain p-1"
+                          :class="{ 'grayscale': companyFilter === 'archived' }"
                           @error="item.showFallbackIcon = true"
                           v-show="!item.showFallbackIcon"
                         />
@@ -118,17 +123,25 @@
                         icon="fa fa-external-link-alt"
                         :label="$t('folder.item.view', 'View')"
                         @click.stop="navigateToItem(item)"
+                        :hidden="companyFilter === 'archived'"
                       />
                       <Button
                         v-if="item.type === 'company' && canDeleteCompany"
                         variant="tertiary"
                         color="danger"
                         size="sm"
-                        icon="fa fa-trash"
+                        :icon="companyFilter === 'archived' ? 'fa fa-undo' : 'fa fa-archive'"
                         icon-only
-                        :title="$t('company.delete.title', 'Delete Company')"
-                        @click.stop="confirmDeleteCompany(item)"
+                        :title="companyFilter === 'archived' ?$t('company.restore.title', 'Restore Company') : $t('company.delete.title', 'Delete Company')"
+                        @click.stop="confirmArchiveCompany(item)"
                       />
+                      <!-- Deleted Tag -->
+                      <span
+                        v-if="companyFilter==='archived'"
+                        class="inline-block text-xs bg-gray-200 text-gray-600  px-2 py-0.5 rounded ml-2"
+                      >
+                        {{ $t('folder.item.deleted', 'Deleted') }}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -171,12 +184,20 @@
       @delete-folder="$router.push('/folders')"
     />
 
-    <!-- Delete Company Modal -->
-    <CompanyDeleteModal
-      v-model="showDeleteCompanyModal"
-      :company-to-delete="companyToDelete"
-      @delete-company="handleDeleteCompany"
+    <!-- Archive company Modal -->
+    <CompanyArchiveModal
+      v-model="showArchiveCompanyModal"
+      :company-to-archive="companyToArchive"
+      @archive-company="handleArchiveCompany"
     />
+
+    <!-- Restore company Modal -->
+    <CompanyRestoreModal
+      v-model="showRestoreCompanyModal"
+      :company-to-restore="companyToArchive"
+      @restore-company="handleRestoreCompany"
+    />
+
   </div>
 </template>
 
@@ -191,7 +212,8 @@ import Alert from '@/components/ui/Alert.vue'
 import Badge from '@/components/ui/Badge.vue'
 import Button from '@/components/ui/Button.vue'
 import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
-import CompanyDeleteModal from '@/components/companies/CompanyDeleteModal.vue'
+import CompanyArchiveModal from '@/components/companies/CompanyArchiveModal.vue'
+import CompanyRestoreModal from '@/components/companies/CompanyRestoreModal.vue'
 import FoldersHeader from '@/components/folders/FoldersHeader.vue'
 import type { FolderItem } from '@/types/folder'
 import type { Company } from '@/types/company'
@@ -210,10 +232,12 @@ const router = useRouter()
 const { canDeleteCompany } = useCompanyPermissions()
 
 const showDeleteModal = ref(false)
-const showDeleteCompanyModal = ref(false)
-const companyToDelete = ref<Company | null>(null)
+const showArchiveCompanyModal = ref(false)
+const showRestoreCompanyModal = ref(false)
+const companyToArchive = ref<Company | null>(null)
 const searchTerm = ref('')
 const viewMode = ref<'table' | 'grid'>('grid')
+const companyFilter = ref<'all' | 'archived'>('all')
 
 const {
   data: folder,
@@ -222,6 +246,9 @@ const {
   refetch,
 } = useQuery(folderByIdQuery, () => ({
   id: route.params.folderId as string,
+  filters: {
+    archived: companyFilter.value === 'archived',
+  },
 }))
 
 // Computed property for filtered items
@@ -278,24 +305,35 @@ const confirmRemoveItem = (item: FolderItem) => {
   console.log('Remove item:', item)
 }
 
-const confirmDeleteCompany = (item: FolderItem) => {
+const confirmArchiveCompany = (item: FolderItem) => {
   // Convert FolderItem to Company format for the delete modal
   if (item.type === 'company') {
-    companyToDelete.value = {
+    companyToArchive.value = {
       id: parseInt(item.id),
       name: item.name,
       website: item.website,
       created_at: item.created_at,
       owner_username: item.owner_username,
     } as Company
-    showDeleteCompanyModal.value = true
+    if (companyFilter.value === 'archived'){
+      showRestoreCompanyModal.value = true
+    }
+    else {
+      showArchiveCompanyModal.value = true
+    }
   }
 }
 
-const handleDeleteCompany = async () => {
+const handleArchiveCompany = async () => {
   // Refresh the folder items after successful deletion
   await refetch()
-  companyToDelete.value = null
+  companyToArchive.value = null
+}
+
+const handleRestoreCompany = async () => {
+  // Refresh the folder items after successful restoration
+  await refetch()
+  companyToArchive.value = null
 }
 
 // Load saved view mode from localStorage

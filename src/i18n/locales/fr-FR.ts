@@ -752,4 +752,34 @@ export default {
       },
     },
   },
+  folder: {
+    title: 'Dossiers',
+    description: 'Organisez vos entreprises en dossiers',
+    search: 'Rechercher des dossiers...',
+    list: {
+      error: {
+        title: 'Erreur',
+        description: 'Échec du chargement des dossiers',
+      },
+    },
+    loading: 'Chargement des dossiers...',
+    create: {
+      title: 'Créer un nouveau dossier',
+      description: 'Organisez vos entreprises en dossiers',
+      button: 'Créer un dossier',
+    },
+    table: {
+      name: 'Nom',
+      items: 'Éléments',
+      created: 'Créé le',
+      actions: 'Actions',
+    },
+    empty: {
+      noResults: 'Aucun dossier trouvé',
+      title: 'Aucun dossier pour le moment',
+      tryDifferentSearch: 'Essayez un autre terme de recherche',
+      description: 'Créez votre premier dossier pour organiser vos entreprises',
+    },
+    clearSearch: 'Effacer la recherche',
+  },
 }

@@ -109,13 +109,13 @@ export function useBreadcrumbs() {
           })
           break
 
-        case 'team':
-          items.push({
-            name: 'Team',
-            to: isLast ? undefined : currentPath,
-            current: isLast,
-          })
-          break
+        // case 'team':
+        //   items.push({
+        //     name: 'Team',
+        //     to: isLast ? undefined : currentPath,
+        //     current: isLast,
+        //   })
+        //   break
 
         case 'search':
           items.push({

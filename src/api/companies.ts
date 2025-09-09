@@ -48,7 +48,12 @@ export const getCompanyById = async (companyId: string) => {
   return response
 }
 
-export const getCompanies = async (filters: { page: number; size: number; name: string }) => {
+export const getCompanies = async (filters: {
+  page: number
+  size: number
+  name: string
+  archived?: boolean
+}) => {
   const params = new URLSearchParams({
     page: filters.page.toString(),
     size: filters.size.toString(),
@@ -56,6 +61,10 @@ export const getCompanies = async (filters: { page: number; size: number; name: 
 
   if (filters.name) {
     params.append('name', filters.name)
+  }
+
+  if (filters.archived) {
+    params.append('archived', 'true')
   }
 
   const response = await apiClient.get<PaginatedResponse<Company>>(
@@ -71,6 +80,11 @@ export const createCompany = async (company: { name: string; website: string }) 
 
 export const deleteCompany = async (companyId: string) => {
   const response = await apiClient.delete(`/companies/${companyId}`)
+  return response
+}
+
+export const restoreCompany = async (companyId: string) => {
+  const response = await apiClient.post(`/companies/${companyId}/restore`, {})
   return response
 }
 
@@ -90,6 +104,7 @@ export const companiesApi = {
   getCompanies,
   createCompany,
   deleteCompany,
+  restoreCompany,
   validateCSV,
   importCSV,
 }

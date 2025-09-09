@@ -2,15 +2,17 @@
   <!-- Card View -->
   <div
     :class="[
-      'bg-bg1 rounded-lg p-4 border border-border-2 ring-offset-2 ring-offset-bg3 transition-all duration-200 cursor-pointer group flex flex-col justify-between gap-2 relative',
+      'bg-bg1 rounded-lg p-4 border border-border-2 ring-offset-2 ring-offset-bg3 transition-all duration-200 group flex flex-col justify-between gap-2 relative',
       { 'hover:ring-4 hover:ring-primary/70': !isChildHovered },
+      { 'cursor-auto': folder.is_deleted, 'cursor-pointer': !folder.is_deleted }
     ]"
-    @click="handleCardClick"
+    @click="!folder.is_deleted && handleCardClick()"
     @mouseenter="isParentHovered = true"
     @mouseleave="isParentHovered = false"
   >
     <!-- Favorite Toggle Button -->
     <button
+      v-if="!folder.is_deleted"
       @click.stop="toggleFavorite"
       class="absolute top-3 right-3 z-10 p-2 rounded-lg hover:bg-bg2 transition-colors"
       :title="folder.is_favorite ? 'Remove from favorites' : 'Add to favorites'"
@@ -26,6 +28,28 @@
       ></i>
       <i v-else class="fas fa-spinner fa-spin text-secondary"></i>
     </button>
+
+    <!-- Restore + Deleted Tag Container -->
+    <div
+      v-if="folder.is_deleted"
+      class="absolute top-3 right-3 z-10 flex items-center gap-2"
+    >
+      <!-- Restore Button -->
+      <button
+        @click.stop="emitRestore"
+        class="p-2 rounded-lg hover:bg-bg2 transition-colors"
+        title="Restore folder"
+      >
+        <i class="fa-solid fa-undo text-secondary hover:text-primary"></i>
+      </button>
+
+      <!-- Deleted Tag -->
+      <span
+        class="h-fit inline-flex items-center text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded"
+      >
+        {{ $t('folder.item.deleted', 'Deleted') }}
+      </span>
+    </div>
 
     <div class="flex flex-col gap-2">
       <div class="flex items-start justify-between">
@@ -160,6 +184,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   viewFolder: [id: string]
   deleteFolder: [folder: Folder]
+  restoreFolder: [folder: Folder]
   favoriteToggled: [folder: Folder]
 }>()
 
@@ -241,9 +266,13 @@ const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString()
 }
 
-const handleCardClick = (event: MouseEvent) => {
+const handleCardClick = () => {
   // Only emit viewFolder if not clicking on the favorite button
   emit('viewFolder', props.folder.id)
+}
+
+const emitRestore = () => {
+  emit('restoreFolder', props.folder)
 }
 
 const toggleFavorite = async () => {

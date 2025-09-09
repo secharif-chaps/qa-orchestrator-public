@@ -21,7 +21,7 @@
         <p class="text-secondary mb-3">
           {{ $t('folder.delete.message', 'Are you sure you want to delete this folder?') }}
         </p>
-        
+
         <div class="bg-bg2 border border-border-2 rounded-lg p-4">
           <div class="flex items-center gap-3">
             <div
@@ -74,6 +74,7 @@ import Button from '@/components/ui/Button.vue'
 import type { Folder } from '@/types/folder'
 import { computed, ref } from 'vue'
 import { deleteFolder } from '@/api/folders'
+import { toast } from '@/utils/toast'
 
 interface Props {
   folderToDelete: Folder | null
@@ -116,8 +117,17 @@ const handleDelete = async () => {
   isDeleting.value = true
   try {
     await deleteFolder(props.folderToDelete.id)
-    modelValue.value = false
+
+    // Show success toast
+    toast.success(`folder "${props.folderToDelete.name}" has been deleted successfully`)
+
+    // Emit event first, then clean up
     emit('deleteFolder')
+
+    // Small delay to ensure parent component processes the event
+    setTimeout(() => {
+       modelValue.value = false
+    }, 50)
   } catch (error) {
     console.error('Error deleting folder:', error)
     // TODO: Show error toast/notification

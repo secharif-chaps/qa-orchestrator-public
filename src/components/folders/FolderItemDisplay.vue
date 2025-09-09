@@ -3,10 +3,11 @@
   <div
     v-if="mode === 'grid'"
     :class="[
-      'bg-bg1 rounded-lg p-4 border border-border-2 ring-offset-2 ring-offset-bg3 transition-all duration-200 cursor-pointer group',
-      { 'hover:ring-4 hover:ring-primary/70': !isChildHovered }
+      'bg-bg1 rounded-lg p-4 border border-border-2 ring-offset-2 ring-offset-bg3 transition-all duration-200 group',
+      { 'hover:ring-4 hover:ring-primary/70': !isChildHovered },
+      { 'cursor-auto': isArchived, 'cursor-pointer': !isArchived }
     ]"
-    @click="handleClick"
+    @click="!isArchived && handleClick()"
     @mouseenter="isParentHovered = true"
     @mouseleave="isParentHovered = false"
   >
@@ -20,6 +21,7 @@
             :src="getLogoUrl(item.website)"
             :alt="`${item.name} logo`"
             class="w-full h-full object-contain p-1"
+            :class="{ 'grayscale': isArchived }"
             @error="showFallbackIcon = true"
             v-show="!showFallbackIcon"
           />
@@ -41,7 +43,7 @@
       </div>
 
       <!-- Quick Actions -->
-      <div 
+      <div
         class="flex gap-1 opacity-100 group-hover:opacity-100 transition-opacity"
         @mouseenter="isChildHovered = true"
         @mouseleave="isChildHovered = false"
@@ -52,16 +54,24 @@
           icon-only
           :title="$t('folder.item.actions.view', 'View Item')"
           @click.stop="handleClick"
+          :hidden="isArchived"
         />
         <Button
           v-if="item.type === 'company' && canDeleteCompany"
           variant="tertiary"
           color="danger"
-          icon="fa fa-trash"
+          :icon="isArchived ? 'fa fa-undo' : 'fa fa-archive'"
           icon-only
-          :title="$t('company.delete.title', 'Delete Company')"
+          :title="isArchived ?$t('company.restore.title', 'Restore Company') : $t('company.delete.title', 'Delete Company')"
           @click.stop="$emit('deleteCompany', item)"
         />
+        <!-- Deleted Tag -->
+        <span
+          v-if="isArchived"
+          class="self-center h-fit inline-flex items-center text-xs bg-gray-200 text-gray-600  px-2 py-0.5 rounded"
+        >
+          {{ $t('folder.item.deleted', 'Deleted') }}
+        </span>
       </div>
     </div>
 
@@ -88,9 +98,11 @@ import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 interface Props {
   item: FolderItem
   mode: 'grid' | 'table'
+  isArchived: boolean
 }
 
 const props = defineProps<Props>()
+
 
 const emit = defineEmits<{
   viewItem: [id: string]

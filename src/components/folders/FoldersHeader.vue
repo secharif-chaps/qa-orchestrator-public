@@ -146,8 +146,13 @@
             </div>
           </div>
 
-          <!-- View Mode Toggle -->
-          <ButtonGroup v-model="viewMode" :options="viewModeOptions" />
+          <div class="flex items-center gap-4">
+            <!-- Filter Buttons -->
+            <ButtonGroup v-model="companyFilter" :options="filterOptions" />
+
+            <!-- View Mode Toggle -->
+            <ButtonGroup v-model="viewMode" :options="viewModeOptions" />
+          </div>
         </div>
       </div>
     </div>
@@ -180,6 +185,25 @@ const searchTerm = defineModel<string>('searchTerm', { default: '' })
 
 // v-model for viewMode
 const viewMode = defineModel<'table' | 'grid'>('viewMode', { required: true })
+
+// v-model for companyFilter
+const companyFilter = defineModel<'all' | 'archived'>('companyFilter', { required: true })
+
+// Filter options for ButtonGroup
+const filterOptions = computed(() => [
+  {
+    value: 'all',
+    icon: 'fas fa-building',
+    title: 'All companies',
+    label: 'All',
+  },
+  {
+    value: 'archived',
+    icon: 'fas fa-archive',
+    title: 'Archived companies',
+    label: 'Archived',
+  },
+])
 
 // View mode options for ButtonGroup
 const viewModeOptions = computed(() => [
