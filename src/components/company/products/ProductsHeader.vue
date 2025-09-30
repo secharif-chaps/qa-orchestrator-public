@@ -16,7 +16,7 @@
       </div>
       <div class="flex gap-2">
         <Button
-          variant="tertiary"
+          variant="ghost-primary"
           size="sm"
           :icon="viewMode === 'grid' ? 'fa fa-list' : 'fa fa-th-large'"
           :label="viewMode === 'grid' ? 'List View' : 'Grid View'"

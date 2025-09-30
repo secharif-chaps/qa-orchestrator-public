@@ -11,7 +11,7 @@
         <Button
           @click="$router.push('/login')"
           label="Try again"
-          variant="tertiary"
+          variant="ghost-primary"
           class="mt-4"
         />
       </div>

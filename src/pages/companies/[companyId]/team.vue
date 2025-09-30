@@ -56,7 +56,7 @@
             <Badge variant="info" label="Interactive" size="xs" rounded />
             <Button
               @click="doScreenshot"
-              variant="tertiary"
+              variant="ghost-primary"
               icon="fa fa-camera"
               :title="$t('team.hierarchy.screenshot', 'Take Screenshot')"
               icon-only
@@ -131,7 +131,7 @@
                   <div class="ml-auto">
                     <Button
                       @click="selectedNode = null"
-                      variant="tertiary"
+                      variant="ghost-primary"
                       icon="fa fa-times"
                       icon-only
                       class="rounded-full"

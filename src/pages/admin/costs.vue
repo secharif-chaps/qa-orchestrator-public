@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-bg3">
     <div class="space-y-6">
       <Button
-        variant="tertiary"
+        variant="ghost-primary"
         icon="fa fa-arrow-left"
         label="Back to Admin"
         @click="$router.push('/admin')"

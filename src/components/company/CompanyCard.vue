@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-12 gap-4 -mt-15">
+  <div class="grid grid-cols-12 gap-4 -mt-15 relative z-10">
     <!-- Title and buttons -->
     <div class="col-span-12 flex items-center justify-end">
       <div class="flex gap-2">

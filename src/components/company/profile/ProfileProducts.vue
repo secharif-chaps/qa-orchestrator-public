@@ -8,7 +8,7 @@
         </h3>
         <RouterLink :to="`/companies/${companyId}/products`">
           <Button 
-            variant="tertiary" 
+            variant="ghost-primary" 
             label="View All"
             icon="fa fa-arrow-right"
             icon-position="right"

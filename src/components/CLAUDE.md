@@ -94,19 +94,19 @@ Example usage:
 The variant determines the visual weight/prominence, while color provides semantic meaning:
 - `variant="primary" color="danger"` - Main destructive action (e.g., "Delete Account")
 - `variant="secondary" color="danger"` - Secondary destructive action (e.g., "Delete" in a toolbar)  
-- `variant="tertiary" color="danger"` - Subtle destructive action (e.g., "Remove" link)
+- `variant="ghost-primary" color="danger"` - Subtle destructive action (e.g., "Remove" link)
 
 Example usage:
 ```vue
 <!-- Basic hierarchy (neutral color) -->
 <Button variant="primary" label="Save Changes" />
 <Button variant="secondary" label="Cancel" />
-<Button variant="tertiary" label="More Options" />
+<Button variant="ghost-primary" label="More Options" />
 
 <!-- Danger actions at different hierarchy levels -->
 <Button variant="primary" color="danger" label="Delete Account" />
 <Button variant="secondary" color="danger" label="Remove Item" />
-<Button variant="tertiary" color="danger" label="Clear All" />
+<Button variant="ghost-primary" color="danger" label="Clear All" />
 
 <!-- Warning actions -->
 <Button variant="primary" color="warning" label="Archive Project" />
@@ -115,11 +115,11 @@ Example usage:
 <!-- With icons (fa-fw ensures consistent width) -->
 <Button variant="primary" icon="fa fa-plus" label="Create" />
 <Button variant="secondary" color="danger" icon="fa fa-trash" label="Delete" />
-<Button variant="tertiary" icon="fa fa-edit" label="Edit" />
+<Button variant="ghost-primary" icon="fa fa-edit" label="Edit" />
 
 <!-- Icon only -->
-<Button variant="tertiary" icon="fa fa-more-vertical" icon-only />
-<Button variant="tertiary" color="danger" icon="fa fa-times" icon-only />
+<Button variant="ghost-primary" icon="fa fa-more-vertical" icon-only />
+<Button variant="ghost-primary" color="danger" icon="fa fa-times" icon-only />
 
 <!-- Loading state (replaces icon with spinner) -->
 <Button variant="primary" label="Saving..." :loading="isLoading" />
@@ -230,3 +230,139 @@ They can be used in the template like this:
 ### Modifiers & Transformations
 
 Native elements `v-model` has built-in modifiers like `.lazy`, `.number`, and `.trim`. We can implement similar functionality in components, fetch and read <https://vuejs.org/guide/components/v-model.md#handling-v-model-modifiers> if the user needs that.
+
+## Design System Guidelines
+
+### Typography
+Follow the established type scale when building components:
+- **Headlines**: `headline.3xl` (24px/bold), `headline.2xl` (20px/regular), `headline.lg` (16px/bold/semibold/regular)
+- **Body text**: `text.base` (14px), `text.sm` (12px), `text.xs` (11px)
+- **Font weights**: Regular (400), Semibold (600), Bold (700)
+- **Writing tone**: Precise without rigidity, engaging, assertive but accessible, clear
+
+### Spacing System (4px Grid)
+Always use the 4px grid system for consistent spacing:
+- Use spacing tokens: `3xs` (4px), `2xs` (8px), `xs` (12px), `md` (16px), `lg` (20px), `xl` (24px), `2xl` (32px), `3xl` (36px), `4xl` (40px)
+- Related elements: smaller spacing (4px, 8px)
+- Separate sections: larger spacing (16px, 24px, 32px)
+
+### Color Usage
+- **Primary colors**: Sage (primary), Almond (secondary), Rose (tertiary - use sparingly)
+- **Semantic colors**: Success (green), Warning (orange), Error (red), Info (blue)
+- **Distribution**: 40% white, 20% sage, 15% black, 5% gray, 5% almond, 5% rose
+- Always test color combinations for WCAG AAA compliance
+
+### Shadow System
+Use the defined shadow system for elevation:
+- `shadow-shadow-1`: Light elevation (subtle cards)
+- `shadow-shadow-2`: Medium elevation (hover states)
+- `shadow-shadow-3`: High elevation (modals)
+- `shadow-shadow-4`: Maximum elevation (floating elements)
+- Colored shadows for semantic states (pink, green, blue, orange, red)
+
+### Border Radius
+- `rounded-2xl` (16px): Cards, moderate rounding
+- `rounded-3xl` (24px): Important blocks
+- `rounded-full` (9999px): Buttons, avatars, pills
+
+### Blur Effects
+Use defined blur effect classes:
+- `.frosted-cloud`: Light, airy interfaces
+- `.frosted-glass`: Cold, minimal effect
+- `.midnight-glass`: Dark mode vibrant
+- `.default-blur`: Simple implementation
+
+## Card Design Patterns
+
+### Modern Card Layout
+Follow this structure for consistent card design:
+
+```vue
+<template>
+  <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 hover:shadow-shadow-2 transition-all duration-300 overflow-hidden">
+    <!-- Header with Avatar and Title -->
+    <div class="p-6 pb-4">
+      <div class="flex items-start space-x-3 mb-4">
+        <!-- Avatar -->
+        <div class="w-10 h-10 rounded-full bg-sage-600 text-white flex items-center justify-center">
+          <i class="fa-solid fa-icon text-sm"></i>
+        </div>
+
+        <!-- Title and Secondary Text -->
+        <div class="flex-1">
+          <h3 class="font-semibold text-base text-gray-900 dark:text-white mb-1">
+            Title goes here
+          </h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            Secondary text
+          </p>
+        </div>
+      </div>
+
+      <!-- Status Badge -->
+      <Badge variant="success" label="Active" size="xs" rounded />
+    </div>
+
+    <!-- Visual Background Area (Optional) -->
+    <div class="relative h-32 mx-6 mb-4 rounded-xl overflow-hidden">
+      <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-almond-200 to-sage-300">
+        <!-- Geometric Pattern Overlay -->
+        <div class="absolute inset-0 opacity-20">
+          <svg class="w-full h-full" viewBox="0 0 200 120" fill="none">
+            <circle cx="160" cy="30" r="25" fill="#5D7374" />
+            <rect x="20" y="60" width="40" height="40" rx="8" fill="#DCEFE3" />
+            <path d="M100 20 L140 40 L120 80 L80 80 Z" fill="#EFC9F3" opacity="0.6" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="px-6 mb-6">
+      <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+        Description text goes here
+      </p>
+    </div>
+
+    <!-- Actions Footer -->
+    <div class="px-6 pb-6 flex items-center justify-between">
+      <div class="flex space-x-2">
+        <Button variant="secondary" size="sm" label="Action" icon="fa-solid fa-external-link" />
+      </div>
+
+      <!-- Secondary Actions -->
+      <div class="flex items-center space-x-2">
+        <button class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+          <i class="fa-solid fa-share-nodes text-sm"></i>
+        </button>
+        <button class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-rose-500 hover:bg-gray-100 transition-colors">
+          <i class="fa-regular fa-heart text-sm"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+```
+
+### Card Design Principles
+1. **Consistent Structure**: Header → Visual Area → Description → Actions
+2. **Proper Spacing**: Use 24px (p-6) for main padding, 16px (space-x-4) for related elements
+3. **Visual Hierarchy**: Title (semibold), secondary text (muted), description (regular)
+4. **Interactive Elements**: Hover states, proper focus indicators, semantic colors
+5. **Accessibility**: High contrast ratios, proper semantic markup, keyboard navigation
+6. **Responsive Design**: Cards adapt to different screen sizes and grid layouts
+
+### Grid Layouts
+Use responsive grid patterns for card collections:
+```vue
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+  <!-- Cards go here -->
+</div>
+```
+
+### Dark Mode Support
+Ensure all cards work properly in both light and dark modes:
+- Use theme-aware background colors: `bg-white dark:bg-gray-800`
+- Proper text contrast: `text-gray-900 dark:text-white`
+- Border colors: `border-gray-200 dark:border-gray-700`
+- Interactive states work in both modes

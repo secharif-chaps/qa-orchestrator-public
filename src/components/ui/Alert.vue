@@ -1,12 +1,5 @@
 <template>
-  <div v-if="show" :class="alertClasses" class="relative overflow-hidden rounded-xl border-3">
-    <!-- Background decoration -->
-    <div
-      v-if="decorationIcon"
-      class="absolute top-0 right-0 w-32 h-32 opacity-[0.1] dark:opacity-[0.08]"
-    >
-      <i :class="[decorationIcon, iconColorClasses]" class="text-6xl"></i>
-    </div>
+  <div v-if="show" :class="alertClasses" class="relative overflow-hidden rounded-block">
 
     <!-- Content -->
     <div class="relative p-6">
@@ -14,7 +7,6 @@
         <!-- Icon -->
         <div v-if="icon" class="flex-shrink-0">
           <div
-            :class="iconBackgroundClasses"
             class="w-12 h-12 rounded-full flex items-center justify-center"
           >
             <i :class="[icon, iconColorClasses]" class="text-lg"></i>
@@ -77,7 +69,7 @@
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
 
-type AlertVariant = 'info' | 'success' | 'warning' | 'error'
+type AlertVariant = 'info' | 'success' | 'warning' | 'error' | 'accent' | 'gradient'
 
 interface Props {
   variant?: AlertVariant
@@ -117,43 +109,40 @@ const hasActions = computed(() => {
 
 // Dynamic classes based on variant
 const alertClasses = computed(() => {
-  const baseClasses = 'border-border-2 bg-gradient-to-r from-bg1 to-bg2'
+  const baseClasses = 'shadow-sm'
 
   switch (props.variant) {
     case 'success':
-      return `${baseClasses} border-green-500/40`
+      return `${baseClasses} bg-success-100 dark:bg-success-400/50`
     case 'warning':
-      return `${baseClasses} border-yellow-500/40`
+      return `${baseClasses} bg-warning-100 dark:bg-warning-400/50`
     case 'error':
-      return `${baseClasses} border-red-500/40`
+      return `${baseClasses} bg-error-100 dark:bg-error-400/50`
+    case 'accent':
+      return `${baseClasses} bg-tertiary-100 dark:bg-tertiary-400/50`
+    case 'gradient':
+      return `${baseClasses} bg-gradient-to-r from-tertiary-100 to-sage-100 dark:from-tertiary-400/20 dark:to-tertiary-400/70`
     default:
-      return `${baseClasses} border-blue-500/40`
+      return `${baseClasses} bg-info-100 dark:bg-info-400/50`
   }
 })
 
 const iconColorClasses = computed(() => {
   switch (props.variant) {
     case 'success':
-      return 'text-green-500'
+      return 'text-success-500 dark:text-success-200'
     case 'warning':
-      return 'text-yellow-500'
+      return 'text-warning-500 dark:text-warning-200'
     case 'error':
-      return 'text-red-500'
+      return 'text-error-500 dark:text-error-200'
+    case 'accent':
+      return 'text-tertiary-500 dark:text-tertiary-200'
+    case 'gradient':
+      return 'text-tertiary-500 dark:text-primary-200'
     default:
-      return 'text-blue-500'
+      return 'text-info-500 dark:text-info-200'
   }
 })
 
-const iconBackgroundClasses = computed(() => {
-  switch (props.variant) {
-    case 'success':
-      return 'bg-green-500/10'
-    case 'warning':
-      return 'bg-yellow-500/10'
-    case 'error':
-      return 'bg-red-500/10'
-    default:
-      return 'bg-blue-500/10'
-  }
-})
+
 </script>

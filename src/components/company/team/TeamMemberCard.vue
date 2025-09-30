@@ -32,7 +32,7 @@
         <Button
           v-if="member.linkedinUrl"
           @click="openLinkedIn"
-          variant="tertiary"
+          variant="ghost-primary"
           icon="fab fa-linkedin"
           :title="$t('team.viewLinkedIn', 'View LinkedIn Profile')"
           icon-only
@@ -43,7 +43,7 @@
         <!-- View in Hierarchy -->
         <Button
           @click="$emit('viewInHierarchy', member)"
-          variant="tertiary"
+          variant="ghost-primary"
           icon="fa fa-sitemap"
           :title="$t('team.viewInHierarchy', 'View in Hierarchy')"
           icon-only

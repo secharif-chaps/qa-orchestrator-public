@@ -12,7 +12,7 @@
 
       <Button
         v-if="canManageUsers"
-        variant="tertiary"
+        variant="ghost-primary"
         icon="fa fa-plus"
         :label="$t('team.create.button', 'Add User')"
         @click="emit('create-user')"

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-bg3">
+  <div class="min-h-screen">
     <div class="flex flex-col gap-4">
       <!-- Workspace Header -->
       <div class="bg-bg1 p-6 rounded-lg border border-border-2">

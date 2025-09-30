@@ -1,162 +1,182 @@
 <template>
   <div class="space-y-6">
-    <!-- Header Section -->
-    <!-- <div class="text-center">
-      <h2 class="text-2xl font-bold text-text-1 mb-2">Your Modules</h2>
-    </div> -->
-
     <!-- Modules Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <div
         v-for="module in modules"
         :key="module.name"
         :class="[
-          'relative rounded-xl border transition-all duration-300 hover:scale-[1.02] cursor-pointer',
-          'p-6 min-h-[200px] flex flex-col justify-between',
-          module.unlocked
-            ? 'bg-gradient-to-br from-primary/10 to-primary/20 border-primary/20 hover:shadow-lg hover:shadow-primary/20'
-            : 'opacity-100 bg-white dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:shadow-md',
-          module.soon ? 'opacity-50!' : '',
+          'relative bg-bg1 rounded-card shadow-lg',
+          'transition-all duration-300 hover:scale-[1.02] cursor-pointer overflow-hidden',
+          'hover:shadow-shadow-2 dark:hover:shadow-gray-800/25',
+          module.soon ? 'opacity-75 shadow-none' : '',
         ]"
       >
-        <!-- Status Badge -->
-        <div class="absolute top-3 right-3">
+        <!-- Card Header with Avatar and Title -->
+        <div class="p-6 pb-4">
+          <div class="flex items-start space-x-3 mb-4">
+            <!-- Avatar -->
+            <div
+              :class="[
+                'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0',
+                module.unlocked
+                  ? 'bg-sage-600 text-white'
+                  : 'bg-gray-200 dark:bg-gray-700 text-gray-400',
+              ]"
+            >
+              <i :class="[module.icon, 'text-sm']"></i>
+            </div>
+
+            <!-- Title and Secondary Text -->
+            <div class="flex-1 min-w-0">
+              <h3 class="font-semibold text-base text-gray-900 dark:text-white mb-1">
+                {{ module.name }}
+              </h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{ module.category }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Tag Label -->
           <Badge
-            v-if="module.unlocked"
-            variant="primary"
-            icon="fa-solid fa-check"
-            label="Active"
-            size="xs"
-            rounded
-          />
-          <Badge
-            v-else
-            :variant="module.status === 'contact-sales' ? 'warning' : 'slate'"
-            :label="module.status === 'contact-sales' ? 'Pro Feature' : 'Coming Soon'"
+            :variant="
+              module.unlocked ? 'success' : module.status === 'contact-sales' ? 'warning' : 'slate'
+            "
+            :label="
+              module.unlocked
+                ? 'Active'
+                : module.status === 'contact-sales'
+                  ? 'Pro Feature'
+                  : 'Coming Soon'
+            "
             size="xs"
             rounded
           />
         </div>
 
-        <!-- Module Icon -->
-        <div class="flex-1">
-          <div
-            :class="[
-              'w-12 h-12 rounded-lg flex items-center justify-center mb-4',
-              module.unlocked
-                ? 'bg-gradient-to-br from-primary to-primary/80 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-400',
-            ]"
-          >
-            <i :class="[module.icon, 'text-lg']"></i>
-          </div>
-
-          <!-- Module Info -->
-          <h3
-            :class="[
-              'font-semibold text-lg mb-2',
-              module.unlocked ? 'text-text-1' : 'text-gray-500 dark:text-gray-400',
-            ]"
-          >
-            {{ module.name }}
-          </h3>
-          <p
-            :class="[
-              'text-sm leading-relaxed',
-              module.unlocked ? 'text-text-2' : 'text-gray-400 dark:text-gray-500',
-            ]"
-          >
+        <!-- Description -->
+        <div class="px-6 mb-6">
+          <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
             {{ module.description }}
           </p>
         </div>
 
         <!-- Action Buttons -->
-        <div class="mt-4">
-          <RouterLink
-            v-if="module.unlocked"
-            to="/folders"
-            class="block w-full bg-gradient-to-r from-primary to-primary/80 text-white py-2 px-4 rounded-lg font-medium text-center text-sm transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 transform hover:-translate-y-0.5"
-          >
-            <i class="fa-solid fa-folder mr-2"></i>
-            View Folders
-          </RouterLink>
-          <button
-            v-else-if="module.status === 'contact-sales'"
-            class="w-full border border-orange-300 dark:border-orange-700 text-orange-600 dark:text-orange-400 py-2 px-4 rounded-lg font-medium transition-all duration-200 hover:bg-orange-50 dark:hover:bg-orange-900/20"
-          >
-            <i class="fa-solid fa-envelope mr-2"></i>
-            Contact Sales
-          </button>
-          <button
-            v-else
-            disabled
-            class="w-full border border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 py-2 px-4 rounded-lg font-medium cursor-not-allowed"
-          >
-            <i class="fa-solid fa-clock mr-2"></i>
-            Coming Soon
-          </button>
+        <div class="px-6 pb-6 flex items-center justify-between">
+          <div class="flex space-x-2">
+            <Button
+              v-if="module.unlocked"
+              variant="secondary"
+              size="sm"
+              label="Open"
+              icon="fa-solid fa-external-link"
+              @click="handleModuleAction(module)"
+            />
+            <Button
+              v-else-if="module.status === 'contact-sales'"
+              variant="secondary"
+              color="warning"
+              size="sm"
+              label="Contact Sales"
+              icon="fa-solid fa-envelope"
+              @click="handleContactSales(module)"
+            />
+            <Button
+              v-else
+              variant="secondary"
+              size="sm"
+              label="Coming Soon"
+              icon="fa-solid fa-clock"
+              disabled
+            />
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- Upgrade Section -->
-    <!-- <div class="text-center p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-      <h3 class="font-semibold text-text-1 mb-2">Ready to unlock more potential?</h3>
-      <p class="text-text-2 text-sm mb-4">
-        Get access to all modules and supercharge your business intelligence workflow
-      </p>
-      <button class="bg-gradient-to-r from-primary to-purple-500 text-white py-2 px-6 rounded-lg font-medium transition-all duration-200 hover:shadow-lg hover:shadow-primary/25 transform hover:-translate-y-0.5">
-        <i class="fa-solid fa-rocket mr-2"></i>
-        Upgrade Plan
-      </button>
-    </div> -->
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import Badge from '@/components/ui/Badge.vue'
+import Button from '@/components/ui/Button.vue'
 
 interface Module {
   name: string
   description: string
+  category: string
   icon: string
   unlocked: boolean
   soon: boolean
   status: 'contact-sales' | 'coming-soon'
+  favorite: boolean
 }
 
-const modules: Module[] = [
+const router = useRouter()
+
+const modules = ref<Module[]>([
   {
     name: 'Screen',
-    description: 'Deep company intelligence and comprehensive business screening',
+    description:
+      'Deep company intelligence and comprehensive business screening with advanced analytics',
+    category: 'Business Intelligence',
     icon: 'fa-solid fa-magnifying-glass',
     unlocked: true,
     soon: false,
-    status: 'contact-sales', // This won't be used since it's unlocked
+    status: 'contact-sales',
+    favorite: false,
   },
   {
     name: 'Target',
-    description: 'AI-powered market watch with smart alerts and monitoring',
+    description: 'AI-powered market watch with smart alerts and comprehensive monitoring tools',
+    category: 'Market Analysis',
     icon: 'fa-solid fa-bullseye',
     unlocked: false,
     soon: false,
     status: 'contact-sales',
+    favorite: true,
   },
   {
     name: 'Explore',
-    description: 'Interactive knowledge graph for data visualization and discovery',
+    description: 'Interactive knowledge graph for advanced data visualization and discovery',
+    category: 'Data Visualization',
     icon: 'fa-solid fa-project-diagram',
     unlocked: false,
     soon: true,
     status: 'coming-soon',
+    favorite: false,
   },
   {
-    name: 'Stream',
-    description: 'Automated insights delivery through newsletters and reports',
+    name: 'Discover',
+    description: 'Automated insights delivery through newsletters and comprehensive reports',
+    category: 'Automation',
     icon: 'fa-solid fa-rss',
-    unlocked: false,
-    soon: true,
+    unlocked: true,
+    soon: false,
     status: 'coming-soon',
+    favorite: false,
   },
-]
+])
+
+const handleModuleAction = (module: Module) => {
+  if (module.name === 'Screen' && module.unlocked) {
+    router.push('/folders')
+  }
+}
+
+const handleContactSales = (module: Module) => {
+  // Implement contact sales functionality
+  console.log('Contact sales for:', module.name)
+}
+
+const handleShare = (module: Module) => {
+  // Implement share functionality
+  console.log('Share module:', module.name)
+}
+
+const handleFavorite = (module: Module) => {
+  module.favorite = !module.favorite
+}
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="inline-flex rounded-lg border border-border-2 bg-bg1 p-1">
+  <div class="inline-flex rounded-full border border-border-2 bg-bg1 p-1">
     <button
       v-for="(option, index) in options"
       :key="option.value"
@@ -9,8 +9,8 @@
         modelValue === option.value
           ? 'bg-primary text-white shadow-sm'
           : 'text-secondary hover:text-primary hover:bg-bg2',
-        index === 0 ? 'rounded-l-md' : '',
-        index === options.length - 1 ? 'rounded-r-md' : '',
+        index === 0 ? 'rounded-l-full' : '',
+        index === options.length - 1 ? 'rounded-r-full' : '',
         index > 0 ? '-ml-px' : '',
       ]"
       :title="option.title"

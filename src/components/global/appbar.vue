@@ -1,44 +1,79 @@
 <template>
-  <div class="fixed top-0 w-full z-20 pl-4">
-    <div
-      class="bg-bg1 dark:bg-bg3 dark:border-b-2 dark:border-bg1 rounded-bl-2xl h-[68px] pr-6 shadow-md"
-    >
+  <div class="w-full z-20">
+    <div class="bg-sage-950 fixed top-0 w-full z-20 h-[68px] pr-6">
       <div class="flex items-center justify-between h-full">
         <RouterLink to="/">
-          <div class="flex items-center space-x-2 text-xl text-primary dark:text-white pl-6">
-            <i class="fas fa-leaf"></i>
-            <h1 class="font-extrabold">Mint</h1>
+          <div
+            class="flex items-center space-x-2 text-xl text-sage-200 dark:text-white pl-6 relative"
+          >
+            <img :src="logo_small" class="!h-10 !w-auto" />
+            <h1 class="font-extrabold">ChapsMind</h1>
           </div>
         </RouterLink>
         <div class="max-w-md grow"></div>
-        <div class="flex items-center gap-6">
-          <Badge
-            v-if="workspace && !isLoading"
-            variant="primary"
-            icon="fas fa-building"
-            :label="workspace.name"
-            rounded
-          />
+        <div class="flex items-center gap-4">
+          <!-- Module badges -->
+          <ModuleBadges v-if="workspace && !isLoading" :workspace-id="workspace.id" />
 
-          <div>
-            <img :src="theme === 'light' ? logoLight : logoDark" class="!h-10 !w-auto" />
-          </div>
+          <!-- <div>
+            <img :src="logo" class="!h-10 !w-auto" />
+          </div> -->
 
           <!-- Dev mode only theme toggle -->
           <Button
-            v-if="isDev"
-            variant="tertiary"
+            variant="ghost-primary"
+            dark
             :icon="isDark ? 'fa fa-sun' : 'fa fa-moon'"
             icon-only
             @click="toggleTheme"
           />
 
           <Button
-            variant="tertiary"
-            color="danger"
+            variant="ghost-primary"
+            dark
+            :icon="'fa fa-home'"
+            icon-only
+            @click="$router.push('/')"
+          />
+
+          <Button
+            variant="ghost-primary"
+            dark
             icon="fa fa-arrow-right-from-bracket"
             icon-only
             @click="handleLogout"
+          />
+
+          <div class="w-px h-4 bg-sage-600 dark:bg-sage-400"></div>
+
+          <Button
+            :variant="isTokensActive ? 'accent' : 'ghost-primary'"
+            dark
+            :icon="'fa fa-circle-dollar'"
+            icon-only
+            @click="toggleTokens"
+          />
+          <Button
+            :variant="isChaapseActive ? 'accent' : 'ghost-primary'"
+            dark
+            :icon="'fa fa-robot'"
+            icon-only
+            @click="toggleChapse"
+          />
+
+          <Button
+            :variant="isNotificationsActive ? 'accent' : 'ghost-primary'"
+            dark
+            :icon="'fa fa-bell'"
+            icon-only
+            @click="toggleNotifications"
+          />
+          <Button
+            :variant="isFoldersActive ? 'accent' : 'ghost-primary'"
+            dark
+            :icon="'fa fa-grip-lines'"
+            icon-only
+            @click="toggleFolders"
           />
         </div>
       </div>
@@ -47,16 +82,20 @@
 </template>
 
 <script lang="ts" setup>
-import logoLight from '@/assets/logo_chaps.png'
-import logoDark from '@/assets/logo_chaps_white.png'
+import logo_small from '@/assets/CHAPSVISION_LOGO_ChapsVision_logo_icone_amande.svg'
+import logo from '@/assets/logo_chaps.svg'
 import { useTheme } from '@/composables/useTheme'
 import { useAuthStore } from '@/stores/auth'
+import { useSidebarStore } from '@/stores/sidebar'
 import Button from '@/components/ui/Button.vue'
 import { useQuery } from '@pinia/colada'
 import { currentWorkspaceQuery } from '@/queries/workspace'
 import Badge from '@/components/ui/Badge.vue'
+import ModuleBadges from '@/components/global/ModuleBadges.vue'
+import { computed } from 'vue'
 
 const { signOut } = useAuthStore()
+const sidebarStore = useSidebarStore()
 
 const { theme, isDark, setTheme } = useTheme()
 
@@ -70,6 +109,17 @@ const toggleTheme = () => {
 
 // Fetch current workspace
 const { data: workspace, isLoading } = useQuery(currentWorkspaceQuery, () => ({}))
+
+// Sidebar toggle handlers
+const isTokensActive = computed(() => sidebarStore.state === 'tokens')
+const isChaapseActive = computed(() => sidebarStore.state === 'chapse')
+const isNotificationsActive = computed(() => sidebarStore.state === 'notifications')
+const isFoldersActive = computed(() => sidebarStore.state === 'folders')
+
+const toggleTokens = () => sidebarStore.toggleState('tokens')
+const toggleChapse = () => sidebarStore.toggleState('chapse')
+const toggleNotifications = () => sidebarStore.toggleState('notifications')
+const toggleFolders = () => sidebarStore.toggleState('folders')
 
 // handle logout
 const handleLogout = async () => {

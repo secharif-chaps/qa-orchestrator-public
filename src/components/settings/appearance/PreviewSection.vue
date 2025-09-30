@@ -67,7 +67,7 @@
             <div class="flex flex-wrap gap-3">
               <Button label="Primary Button" variant="primary" />
               <Button label="Secondary Button" variant="secondary" />
-              <Button label="Danger Button" variant="tertiary" color="danger" />
+              <Button label="Danger Button" variant="ghost-primary" color="danger" />
             </div>
 
             <!-- Status Indicators -->

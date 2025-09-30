@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-bg3">
+  <div class="min-h-screen">
     <div class="flex flex-col gap-4">
       <!-- Loading State -->
       <div v-if="isLoading" class="bg-bg1 rounded-lg shadow-sm p-8 text-center">
@@ -118,7 +118,7 @@
                   <div class="col-span-2 text-right">
                     <div class="flex items-center justify-end gap-2">
                       <Button
-                        variant="tertiary"
+                        variant="ghost-primary"
                         size="sm"
                         icon="fa fa-external-link-alt"
                         :label="$t('folder.item.view', 'View')"
@@ -127,7 +127,7 @@
                       />
                       <Button
                         v-if="item.type === 'company' && canDeleteCompany"
-                        variant="tertiary"
+                        variant="ghost-primary"
                         color="danger"
                         size="sm"
                         :icon="companyFilter === 'archived' ? 'fa fa-undo' : 'fa fa-archive'"

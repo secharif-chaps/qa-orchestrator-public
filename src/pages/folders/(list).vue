@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-bg3">
+  <div class="min-h-screen">
     <div class="flex flex-col gap-4">
       <!-- Header -->
       <div>
@@ -54,7 +54,7 @@
         <div v-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Create New Folder Card -->
           <div
-            class="rounded-lg p-6 border-2 border-dashed border-border-2 hover:border-primary/50 hover:bg-bg2/50 transition-all duration-200 cursor-pointer group flex flex-col items-center justify-center min-h-[280px]"
+            class="rounded-card p-6 border-2 border-dashed border-border-2 hover:border-primary/50 hover:bg-bg2/50 transition-all duration-200 cursor-pointer group flex flex-col items-center justify-center min-h-[280px]"
             @click="$router.push('/folders/create')"
           >
             <div

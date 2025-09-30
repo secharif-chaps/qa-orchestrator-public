@@ -23,13 +23,13 @@
 
         <div class="flex items-center gap-2">
           <Button
-            variant="tertiary"
+            variant="ghost-primary"
             icon="fa fa-edit"
             :label="$t('folder.actions.edit', 'Edit')"
             @click="$emit('edit-folder')"
           />
           <Button
-            variant="tertiary"
+            variant="ghost-primary"
             color="danger"
             icon="fa fa-trash"
             :label="$t('folder.actions.delete', 'Delete')"
@@ -41,8 +41,7 @@
       <!-- Search and Filters -->
       <div class="flex items-center justify-between gap-4 rounded-lg">
         <!-- Search Input -->
-        <div class="flex-1 max-w-md">
-          <div class="relative">
+        <div class="flex-1 max-w-md relative">
             <i
               class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
             ></i>
@@ -52,7 +51,6 @@
               :placeholder="$t('folder.search.placeholder', 'Search items...')"
               class="w-full pl-10 pr-4 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary bg-bg1"
             />
-          </div>
         </div>
 
         <div class="flex gap-2">

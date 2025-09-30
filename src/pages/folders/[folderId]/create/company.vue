@@ -70,7 +70,7 @@
         <!-- Action Buttons -->
         <div class="flex items-center justify-between pt-4">
           <Button
-            variant="tertiary"
+            variant="ghost-primary"
             icon="fa fa-upload"
             :label="$t('csv.upload.button', 'Upload CSV')"
             @click="goToCSVUpload"

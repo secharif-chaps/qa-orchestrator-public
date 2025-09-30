@@ -83,7 +83,7 @@
       <!-- Footer -->
       <div class="p-6 border-t border-border-2 flex items-center justify-end gap-3">
         <Button
-          variant="tertiary"
+          variant="ghost-primary"
           :label="$t('common.cancel', 'Cancel')"
           @click="showDeleteModal = false"
         />

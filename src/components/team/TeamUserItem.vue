@@ -67,7 +67,7 @@
       <div class="col-span-1">
         <div v-if="canManageUsers" class="flex items-center gap-2">
           <Button
-            variant="tertiary"
+            variant="ghost-primary"
             icon="fa fa-edit"
             icon-only
             size="sm"
@@ -77,7 +77,7 @@
 
           <Button
             v-if="user.is_disabled"
-            variant="tertiary"
+            variant="ghost-primary"
             color="warning"
             icon="fa fa-check"
             icon-only
@@ -88,7 +88,7 @@
 
           <Button
             v-else
-            variant="tertiary"
+            variant="ghost-primary"
             color="danger"
             icon="fa fa-ban"
             icon-only

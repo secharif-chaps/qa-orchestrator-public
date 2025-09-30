@@ -138,8 +138,8 @@
           <div class="flex items-center gap-2">
             <!-- Restart button -->
             <Button
-              v-if="(canRestartTask(task) && canEditCompany) || isDev"
-              variant="tertiary"
+              v-if="canRestartTask(task)"
+              variant="ghost-primary"
               size="sm"
               icon="fa fa-rotate-right"
               icon-only
@@ -152,7 +152,7 @@
       </div>
 
       <!-- Global Actions -->
-      <div v-if="hasErrorsOrPending && canEditCompany" class="mt-6 pt-6 border-t border-border-2">
+      <div v-if="hasErrorsOrPending" class="mt-6 pt-6 border-t border-border-2">
         <div class="flex items-center justify-between">
           <div class="text-sm text-secondary">
             Des tâches peuvent être redémarrées ou ne sont pas encore lancées
@@ -179,13 +179,11 @@ import { useRoute } from 'vue-router'
 import { companyTasksQuery } from '@/queries/tasks'
 import { useQuery } from '@pinia/colada'
 import { useRestartTask } from '@/mutations/tasks'
-import { useDebounceFn } from '@vueuse/core'
 import { onUnmounted } from 'vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { useAuthStore } from '@/stores/auth'
 import Button from '@/components/ui/Button.vue'
 import Badge from '@/components/ui/Badge.vue'
-import Alert from '@/components/ui/Alert.vue'
 
 interface TaskConfig {
   type: TaskType

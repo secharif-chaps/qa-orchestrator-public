@@ -2,8 +2,8 @@
   <button
     :type="type"
     :disabled="disabled || loading"
-    :class="buttonClasses"
-    class="hover:cursor-pointer inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg2 disabled:cursor-not-allowed"
+    :class="[buttonClasses, dark ? 'dark' : '']"
+    class="min-w-10 hover:cursor-pointer rounded-full inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg2 disabled:cursor-not-allowed"
     @click="$emit('click', $event)"
   >
     <!-- Loading Spinner -->
@@ -35,14 +35,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-type ButtonVariant = 'primary' | 'secondary' | 'tertiary'
-type ButtonColor = 'neutral' | 'danger' | 'warning'
+type ButtonVariant = 'primary' | 'secondary' | 'ghost-primary' | 'ghost-black' | 'accent'
 type ButtonSize = 'sm' | 'md' | 'lg'
 type IconPosition = 'left' | 'right'
 
 interface Props {
   variant?: ButtonVariant
-  color?: ButtonColor
   size?: ButtonSize
   type?: 'button' | 'submit' | 'reset'
   disabled?: boolean
@@ -51,12 +49,11 @@ interface Props {
   iconPosition?: IconPosition
   iconOnly?: boolean
   label?: string
-  rounded?: boolean
+  dark?: boolean
 }
 
 const {
   variant = 'primary',
-  color = 'neutral',
   size = 'md',
   type = 'button',
   disabled = false,
@@ -65,7 +62,6 @@ const {
   iconPosition = 'left',
   iconOnly = false,
   label,
-  rounded = false,
 } = defineProps<Props>()
 
 defineEmits<{
@@ -76,7 +72,6 @@ const buttonClasses = computed(() => {
   const classes = []
 
   // Base styles
-  classes.push(rounded ? 'rounded-full' : 'rounded-lg')
 
   // Size classes
   switch (size) {
@@ -90,112 +85,63 @@ const buttonClasses = computed(() => {
       classes.push(iconOnly ? 'w-10 h-10' : 'px-4 py-2', 'text-base')
   }
 
-  // Variant and color combination styles
+  // Variant styles
   switch (variant) {
     case 'primary':
-      if (color === 'danger') {
-        classes.push(
-          'bg-gradient-to-br from-red-500 to-red-600',
-          'text-white',
-          'hover:from-red-600 hover:to-red-700',
-          'focus:ring-red-500/30',
-          'disabled:from-red-400/20 disabled:to-bg1',
-          'disabled:text-secondary/50',
-          'shadow-sm hover:shadow-md',
-        )
-      } else if (color === 'warning') {
-        classes.push(
-          'bg-gradient-to-br from-orange-500 to-orange-600',
-          'text-white',
-          'hover:from-orange-600 hover:to-orange-700',
-          'focus:ring-orange-500/30',
-          'disabled:from-orange-400/20 disabled:to-bg2/50',
-          'disabled:text-secondary/50',
-          'shadow-sm hover:shadow-md',
-        )
-      } else {
-        // neutral
-        classes.push(
-          'bg-gradient-to-br from-primary to-primary/90',
-          'text-white',
-          'hover:from-primary/90 hover:to-primary/80',
-          'focus:ring-primary/30',
-          'disabled:from-bg2 disabled:to-bg2/50',
-          'disabled:text-secondary/50',
-          'shadow-sm hover:shadow-md',
-        )
-      }
+      classes.push(
+        'bg-sage-600 dark:bg-sage-300 dark:text-sage-900',
+        'text-white',
+        'hover:bg-sage-700',
+        'active:bg-sage-800',
+        'focus:ring-sage-600/30',
+        'disabled:bg-sage-300',
+        'disabled:text-sage-100',
+        'shadow-sm hover:shadow-md',
+      )
       break
     case 'secondary':
-      if (color === 'danger') {
-        classes.push(
-          'bg-bg1',
-          'text-red-600',
-          'border border-border-2',
-          'hover:bg-red-600/10 hover:border-red-600/30',
-          'focus:ring-red-500/30',
-          'disabled:from-bg1/50 disabled:to-bg1/40',
-          'disabled:text-secondary/50',
-          'disabled:border-border-2/50',
-        )
-      } else if (color === 'warning') {
-        classes.push(
-          'bg-bg1',
-          'text-orange-600',
-          'border border-border-2',
-          'hover:bg-orange-600/10 hover:border-orange-600/30',
-          'focus:ring-orange-500/30',
-          'disabled:from-bg1/50 disabled:to-bg1/40',
-          'disabled:text-secondary/50',
-          'disabled:border-border-2/50',
-        )
-      } else {
-        // neutral
-        classes.push(
-          'bg-bg1',
-          'text-primary',
-          'border border-border-2',
-          'hover:bg-primary/10 hover:border-primary/30',
-          'focus:ring-primary/30',
-          'disabled:from-bg1/50 disabled:to-bg1/40',
-          'disabled:text-secondary/50',
-          'disabled:border-border-2/50',
-        )
-      }
+      classes.push(
+        'bg-transparent',
+        'text-sage-600 dark:text-sage-300',
+        'border border-sage-600 dark:border-sage-300',
+        'hover:bg-sage-50 dark:hover:bg-sage-200/10',
+        'active:bg-sage-100 dark:active:bg-sage-900',
+        'focus:ring-sage-600/30',
+        'disabled:border-sage-300 dark:disabled:border-sage-700',
+        'disabled:text-sage-300 dark:disabled:text-sage-700',
+      )
       break
-    case 'tertiary':
-      if (color === 'danger') {
-        classes.push(
-          'bg-transparent',
-          'text-red-600',
-          'hover:text-red-600/80',
-          'hover:bg-red-600/10 hover:border-red-600/30',
-          'focus:ring-red-500/30',
-          'disabled:text-secondary/50',
-          'disabled:hover:bg-transparent',
-        )
-      } else if (color === 'warning') {
-        classes.push(
-          'bg-transparent',
-          'text-orange-600',
-          'hover:text-orange-600/80',
-          'hover:bg-orange-600/10 hover:border-orange-600/30',
-          'focus:ring-orange-500/30',
-          'disabled:text-secondary/50',
-          'disabled:hover:bg-transparent',
-        )
-      } else {
-        // neutral
-        classes.push(
-          'bg-transparent',
-          'text-primary',
-          'hover:text-primary/80',
-          'hover:bg-primary/10 hover:border-primary/30',
-          'focus:ring-primary/30',
-          'disabled:text-secondary/50',
-          'disabled:hover:bg-transparent',
-        )
-      }
+    case 'ghost-primary':
+      classes.push(
+        'bg-transparent',
+        'text-sage-600 dark:text-sage-300',
+        'hover:bg-sage-100 dark:hover:bg-sage-200/10',
+        'active:bg-sage-100 dark:active:bg-sage-900',
+        'focus:ring-sage-600/30',
+        'disabled:text-sage-300 dark:disabled:text-sage-700',
+      )
+      break
+    case 'ghost-black':
+      classes.push(
+        'bg-transparent',
+        'text-gray-900 dark:text-gray-100',
+        'hover:bg-gray-100 dark:hover:bg-gray-800',
+        'active:bg-gray-200 dark:active:bg-gray-700',
+        'focus:ring-gray-500/30',
+        'disabled:text-gray-400 dark:disabled:text-gray-600',
+      )
+      break
+    case 'accent':
+      classes.push(
+        'bg-tertiary',
+        'text-black',
+        'hover:bg-tertiary-300 dark:hover:bg-tertiary-400',
+        'active:bg-tertiary-700',
+        'focus:ring-tertiary-30',
+        'disabled:bg-tertiary-20',
+        'disabled:text-tertiary-100',
+        'shadow-sm hover:shadow-md',
+      )
       break
   }
 
@@ -214,23 +160,26 @@ const iconSizeClasses = computed(() => {
 })
 
 const iconColorClasses = computed(() => {
-  // Disabled state - use theme-aware secondary color
+  // Disabled state
   if (disabled || loading) {
-    return 'text-secondary/50'
+    if (variant === 'primary') return 'text-sage-100 dark:text-sage-900'
+    if (variant === 'accent') return 'text-rose-100 dark:text-sage-900'
+    if (variant === 'secondary' || variant === 'ghost-primary') return 'text-sage-300 dark:text-sage-700'
+    return 'text-sage-400 dark:text-gray-600'
   }
 
-  if (variant === 'primary') {
-    return 'text-white'
+  switch (variant) {
+    case 'primary':
+      return 'text-white dark:text-sage-900'
+    case 'accent':
+      return 'text-black'
+    case 'secondary':
+    case 'ghost-primary':
+      return 'text-sage-600 dark:text-sage-300'
+    case 'ghost-black':
+      return 'text-gray-900 dark:text-gray-100'
+    default:
+      return 'text-current'
   }
-
-  if (color === 'danger') {
-    return 'text-red-600'
-  }
-
-  if (color === 'warning') {
-    return 'text-orange-600'
-  }
-
-  return 'text-primary' // neutral secondary/tertiary
 })
 </script>

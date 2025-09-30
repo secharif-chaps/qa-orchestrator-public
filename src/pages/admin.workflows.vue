@@ -20,7 +20,7 @@
 
           <!-- Back to Admin Dashboard -->
           <Button
-            variant="tertiary"
+            variant="ghost-primary"
             icon="fa fa-arrow-left"
             :label="$t('admin.dashboard.back', 'Back to Admin')"
             @click="$router.push('/admin')"

@@ -18,7 +18,7 @@
         </div>
 
         <Button
-          variant="tertiary"
+          variant="ghost-primary"
           icon="fa fa-plus"
           :label="$t('company.create.button', 'New search')"
           @click="$router.push('/search')"

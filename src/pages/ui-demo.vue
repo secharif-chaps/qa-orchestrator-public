@@ -39,9 +39,10 @@
                 <Badge variant="primary" label="Primary" />
                 <Badge variant="success" label="Success" />
                 <Badge variant="warning" label="Warning" />
+                <Badge variant="accent" label="Accent" />
                 <Badge variant="error" label="Error" />
                 <Badge variant="info" label="Info" />
-                <Badge variant="slate" label="Slate" />
+                <Badge variant="accent" label="Accent" />
               </div>
             </section>
 
@@ -54,7 +55,7 @@
                 <Badge variant="warning" icon="fa fa-exclamation-triangle" label="Pending" />
                 <Badge variant="error" icon="fa fa-times-circle" label="Rejected" />
                 <Badge variant="info" icon="fa fa-info-circle" label="Information" />
-                <Badge variant="slate" icon="fa fa-clock" label="Scheduled" />
+                <Badge variant="accent" icon="fa fa-clock" label="Scheduled" />
               </div>
             </section>
 
@@ -65,7 +66,7 @@
                 <Badge variant="success" dot label="Online" />
                 <Badge variant="warning" dot label="Away" />
                 <Badge variant="error" dot label="Offline" />
-                <Badge variant="slate" dot label="Unknown" />
+                <Badge variant="accent" dot label="Accent" />
               </div>
             </section>
 
@@ -140,6 +141,12 @@
             <section class="space-y-4">
               <h2 class="text-xl font-semibold">Basic Alerts</h2>
               <Alert
+                variant="gradient"
+                title="AI"
+                message="This is an AI message to keep you updated."
+                icon="fa fa-brain"
+              />
+              <Alert
                 variant="info"
                 title="Information"
                 message="This is an informational message to keep you updated."
@@ -162,6 +169,12 @@
                 title="Error Occurred"
                 message="An error has occurred. Please try again."
                 icon="fa fa-times-circle"
+              />
+              <Alert
+                variant="accent"
+                title="Accent"
+                message="This is an accent message to keep you updated."
+                icon="fa fa-info-circle"
               />
             </section>
 
@@ -206,16 +219,15 @@
                 decoration-icon="fa fa-rocket"
               >
                 <template #actions>
-                  <button
-                    class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm"
-                  >
+                  <Button>
                     Update Now
-                  </button>
-                  <button
-                    class="px-4 py-2 text-secondary hover:text-base transition-colors text-sm"
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    label="Remind Me Later"
                   >
                     Remind Me Later
-                  </button>
+                  </Button>
                 </template>
               </Alert>
               <Alert
@@ -225,11 +237,11 @@
                 icon="fa fa-user-circle"
               >
                 <template #actions>
-                  <button
-                    class="px-4 py-2 bg-warning text-white rounded-lg hover:bg-warning/90 transition-colors text-sm"
+                  <Button
+                  variant="secondary"
                   >
                     Complete Profile
-                  </button>
+                  </Button>
                 </template>
               </Alert>
             </section>
@@ -255,33 +267,18 @@
 
           <!-- Button Tab -->
           <div v-if="activeTab === 'button'" class="space-y-8">
-            <!-- Button Hierarchy (Neutral Color) -->
+            <!-- All Button Variants -->
             <section class="space-y-4">
-              <h2 class="text-xl font-semibold">Button Hierarchy - Neutral</h2>
+              <h2 class="text-xl font-semibold">Button Variants (Design System)</h2>
+              <p class="text-sm text-secondary">
+                All buttons have 2000px border-radius (fully rounded) as per design system
+              </p>
               <div class="flex flex-wrap gap-3">
-                <Button variant="primary" label="Primary Action" />
-                <Button variant="secondary" label="Secondary Action" />
-                <Button variant="tertiary" label="Tertiary Action" />
-              </div>
-            </section>
-
-            <!-- Danger Color Variants -->
-            <section class="space-y-4">
-              <h2 class="text-xl font-semibold">Danger Color Variants</h2>
-              <div class="flex flex-wrap gap-3">
-                <Button variant="primary" color="danger" label="Delete (Primary)" />
-                <Button variant="secondary" color="danger" label="Remove (Secondary)" />
-                <Button variant="tertiary" color="danger" label="Clear (Tertiary)" />
-              </div>
-            </section>
-
-            <!-- Warning Color Variants -->
-            <section class="space-y-4">
-              <h2 class="text-xl font-semibold">Warning Color Variants</h2>
-              <div class="flex flex-wrap gap-3">
-                <Button variant="primary" color="warning" label="Archive (Primary)" />
-                <Button variant="secondary" color="warning" label="Suspend (Secondary)" />
-                <Button variant="tertiary" color="warning" label="Hide (Tertiary)" />
+                <Button variant="primary" label="Primary" icon="fa fa-arrow-right" icon-position="right" />
+                <Button variant="secondary" label="Secondary" icon="fa fa-arrow-right" icon-position="right" />
+                <Button variant="accent" label="Accent" icon="fa fa-arrow-right" icon-position="right" />
+                <Button variant="ghost-primary" label="Ghost Primary" icon="fa fa-arrow-right" icon-position="right" />
+                <Button variant="ghost-black" label="Ghost Black" icon="fa fa-arrow-right" icon-position="right" />
               </div>
             </section>
 
@@ -293,14 +290,9 @@
                   <span class="text-sm text-secondary w-24">Left Icons:</span>
                   <Button variant="primary" icon="fa fa-plus" label="Create" />
                   <Button variant="secondary" icon="fa fa-download" label="Download" />
-                  <Button variant="tertiary" icon="fa fa-edit" label="Edit" />
-                  <Button variant="primary" color="danger" icon="fa fa-trash" label="Delete" />
-                  <Button
-                    variant="secondary"
-                    color="warning"
-                    icon="fa fa-exclamation-triangle"
-                    label="Warning"
-                  />
+                  <Button variant="accent" icon="fa fa-sparkles" label="Special" />
+                  <Button variant="ghost-primary" icon="fa fa-edit" label="Edit" />
+                  <Button variant="ghost-black" icon="fa fa-trash" label="Delete" />
                 </div>
                 <div class="flex flex-wrap gap-3">
                   <span class="text-sm text-secondary w-24">Right Icons:</span>
@@ -317,19 +309,19 @@
                     label="Open"
                   />
                   <Button
-                    variant="tertiary"
-                    icon="fa fa-chevron-down"
+                    variant="accent"
+                    icon="fa fa-arrow-right"
                     icon-position="right"
-                    label="More"
+                    label="Next"
                   />
                 </div>
                 <div class="flex flex-wrap gap-3">
                   <span class="text-sm text-secondary w-24">Icon Only:</span>
                   <Button variant="primary" icon="fa fa-heart" icon-only />
                   <Button variant="secondary" icon="fa fa-bookmark" icon-only />
-                  <Button variant="tertiary" icon="fa fa-share" icon-only />
-                  <Button variant="tertiary" color="danger" icon="fa fa-times" icon-only />
-                  <Button variant="tertiary" color="warning" icon="fa fa-exclamation" icon-only />
+                  <Button variant="accent" icon="fa fa-star" icon-only />
+                  <Button variant="ghost-primary" icon="fa fa-share" icon-only />
+                  <Button variant="ghost-black" icon="fa fa-times" icon-only />
                 </div>
               </div>
             </section>
@@ -342,19 +334,22 @@
                   <span class="text-sm text-secondary w-20">Small:</span>
                   <Button variant="primary" label="Small" size="sm" />
                   <Button variant="secondary" icon="fa fa-cog" label="Settings" size="sm" />
-                  <Button variant="tertiary" icon="fa fa-info" icon-only size="sm" />
+                  <Button variant="accent" label="Accent" size="sm" />
+                  <Button variant="ghost-primary" icon="fa fa-info" icon-only size="sm" />
                 </div>
                 <div class="flex items-center gap-3">
                   <span class="text-sm text-secondary w-20">Medium:</span>
                   <Button variant="primary" label="Medium" size="md" />
                   <Button variant="secondary" icon="fa fa-save" label="Save" size="md" />
-                  <Button variant="tertiary" icon="fa fa-more" icon-only size="md" />
+                  <Button variant="accent" label="Accent" size="md" />
+                  <Button variant="ghost-black" icon="fa fa-more" icon-only size="md" />
                 </div>
                 <div class="flex items-center gap-3">
                   <span class="text-sm text-secondary w-20">Large:</span>
                   <Button variant="primary" label="Large" size="lg" />
                   <Button variant="secondary" icon="fa fa-upload" label="Upload" size="lg" />
-                  <Button variant="tertiary" icon="fa fa-search" icon-only size="lg" />
+                  <Button variant="accent" label="Accent" size="lg" />
+                  <Button variant="ghost-primary" icon="fa fa-search" icon-only size="lg" />
                 </div>
               </div>
             </section>
@@ -378,38 +373,26 @@
                     @click="simulateLoading('secondary')"
                   />
                   <Button
-                    variant="tertiary"
+                    variant="accent"
                     label="Loading"
-                    :loading="loadingButtons.tertiary"
-                    @click="simulateLoading('tertiary')"
+                    :loading="loadingButtons.accent"
+                    @click="simulateLoading('accent')"
                   />
                   <Button
-                    variant="primary"
-                    color="danger"
-                    label="Deleting"
-                    :loading="loadingButtons.danger"
-                    @click="simulateLoading('danger')"
+                    variant="ghost-primary"
+                    label="Loading"
+                    :loading="loadingButtons.ghostPrimary"
+                    @click="simulateLoading('ghostPrimary')"
                   />
                 </div>
                 <div class="flex flex-wrap gap-3">
                   <span class="text-sm text-secondary w-20">Disabled:</span>
                   <Button variant="primary" label="Disabled" disabled />
                   <Button variant="secondary" label="Disabled" disabled />
-                  <Button variant="tertiary" label="Disabled" disabled />
-                  <Button variant="primary" color="danger" label="Disabled" disabled />
-                  <Button variant="secondary" color="warning" label="Disabled" disabled />
+                  <Button variant="accent" label="Disabled" disabled />
+                  <Button variant="ghost-primary" label="Disabled" disabled />
+                  <Button variant="ghost-black" label="Disabled" disabled />
                 </div>
-              </div>
-            </section>
-
-            <!-- Rounded Buttons -->
-            <section class="space-y-4">
-              <h2 class="text-xl font-semibold">Rounded (Pill) Style</h2>
-              <div class="flex flex-wrap gap-3">
-                <Button variant="primary" label="Rounded" rounded />
-                <Button variant="secondary" icon="fa fa-heart" label="Like" rounded />
-                <Button variant="tertiary" icon="fa fa-share" icon-only rounded />
-                <Button variant="primary" icon="fa fa-play" icon-only rounded size="lg" />
               </div>
             </section>
 
@@ -423,9 +406,9 @@
                   <div class="flex flex-wrap gap-2">
                     <Button variant="primary" icon="fa fa-plus" label="Create" />
                     <Button variant="secondary" icon="fa fa-download" label="Export" />
-                    <Button variant="tertiary" icon="fa fa-filter" label="Filter" />
-                    <Button variant="secondary" color="danger" icon="fa fa-trash" label="Delete" />
-                    <Button variant="tertiary" icon="fa fa-more-vertical" icon-only />
+                    <Button variant="ghost-primary" icon="fa fa-filter" label="Filter" />
+                    <Button variant="ghost-black" icon="fa fa-trash" label="Delete" />
+                    <Button variant="ghost-primary" icon="fa fa-more-vertical" icon-only />
                   </div>
                 </div>
 
@@ -433,48 +416,19 @@
                 <div class="bg-bg1 p-4 rounded-lg border border-border-2">
                   <h3 class="text-sm font-medium mb-3">Form Actions</h3>
                   <div class="flex justify-end gap-2">
-                    <Button variant="tertiary" label="Cancel" />
+                    <Button variant="ghost-black" label="Cancel" />
                     <Button variant="secondary" label="Save Draft" />
                     <Button variant="primary" label="Publish" />
                   </div>
                 </div>
 
-                <!-- Destructive Actions -->
+                <!-- Call to Action -->
                 <div class="bg-bg1 p-4 rounded-lg border border-border-2">
-                  <h3 class="text-sm font-medium mb-3">
-                    Destructive Actions (Different Hierarchies)
-                  </h3>
-                  <div class="space-y-2">
-                    <div class="text-xs text-secondary mb-2">When delete is the main action:</div>
-                    <div class="flex gap-2">
-                      <Button variant="tertiary" label="Cancel" />
-                      <Button
-                        variant="primary"
-                        color="danger"
-                        icon="fa fa-trash"
-                        label="Delete Item"
-                      />
-                    </div>
-                    <div class="text-xs text-secondary mb-2 mt-4">
-                      When delete is a secondary action:
-                    </div>
-                    <div class="flex gap-2">
-                      <Button variant="primary" icon="fa fa-save" label="Save Changes" />
-                      <Button
-                        variant="secondary"
-                        color="danger"
-                        icon="fa fa-trash"
-                        label="Delete"
-                      />
-                    </div>
-                    <div class="text-xs text-secondary mb-2 mt-4">
-                      When delete is a tertiary action:
-                    </div>
-                    <div class="flex gap-2">
-                      <Button variant="primary" icon="fa fa-edit" label="Edit" />
-                      <Button variant="secondary" icon="fa fa-copy" label="Duplicate" />
-                      <Button variant="tertiary" color="danger" icon="fa fa-trash" label="Delete" />
-                    </div>
+                  <h3 class="text-sm font-medium mb-3">Special Actions with Accent</h3>
+                  <div class="flex gap-2">
+                    <Button variant="accent" icon="fa fa-sparkles" label="Try Premium" />
+                    <Button variant="accent" icon="fa fa-star" label="Upgrade Now" />
+                    <Button variant="accent" icon="fa fa-gift" label="Get Started" />
                   </div>
                 </div>
 
@@ -484,9 +438,9 @@
                   <div class="flex justify-between">
                     <Button variant="secondary" icon="fa fa-chevron-left" label="Previous" />
                     <div class="flex gap-2">
-                      <Button variant="tertiary" label="1" size="sm" />
+                      <Button variant="ghost-primary" label="1" size="sm" />
                       <Button variant="primary" label="2" size="sm" />
-                      <Button variant="tertiary" label="3" size="sm" />
+                      <Button variant="ghost-primary" label="3" size="sm" />
                     </div>
                     <Button
                       variant="secondary"
@@ -497,14 +451,14 @@
                   </div>
                 </div>
 
-                <!-- Social Actions -->
+                <!-- Icon Actions -->
                 <div class="bg-bg1 p-4 rounded-lg border border-border-2">
-                  <h3 class="text-sm font-medium mb-3">Social Actions</h3>
+                  <h3 class="text-sm font-medium mb-3">Icon Actions</h3>
                   <div class="flex gap-2">
-                    <Button variant="tertiary" icon="fa fa-heart" icon-only rounded />
-                    <Button variant="tertiary" icon="fa fa-bookmark" icon-only rounded />
-                    <Button variant="tertiary" icon="fa fa-share" icon-only rounded />
-                    <Button variant="secondary" icon="fa fa-comment" label="Comment" rounded />
+                    <Button variant="ghost-primary" icon="fa fa-heart" icon-only />
+                    <Button variant="ghost-primary" icon="fa fa-bookmark" icon-only />
+                    <Button variant="ghost-primary" icon="fa fa-share" icon-only />
+                    <Button variant="secondary" icon="fa fa-comment" label="Comment" />
                   </div>
                 </div>
               </div>
@@ -842,9 +796,8 @@ const inputValues = reactive({
 const loadingButtons = reactive({
   primary: false,
   secondary: false,
-  tertiary: false,
-  danger: false,
-  warning: false,
+  accent: false,
+  ghostPrimary: false,
 })
 
 const simulateLoading = (variant: keyof typeof loadingButtons) => {

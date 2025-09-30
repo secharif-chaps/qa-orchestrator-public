@@ -24,10 +24,12 @@ import DefaultLayout from './layouts/DefaultLayout.vue'
 import UnauthenticatedLayout from './layouts/UnauthenticatedLayout.vue'
 import AuthLoader from './components/ui/AuthLoader.vue'
 import { useAuthStore } from './stores/auth'
+import { useSidebarStore } from './stores/sidebar'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
+const sidebarStore = useSidebarStore()
 
 const STORAGE_KEY = 'user-locale'
 const { locale } = useI18n()
@@ -35,6 +37,9 @@ const { locale } = useI18n()
 // Initialize auth store on app startup
 onMounted(async () => {
   await authStore.initialize()
+
+  // Load sidebar state from localStorage
+  sidebarStore.loadState()
 
   if (typeof localStorage !== 'undefined') {
     const savedLocale = localStorage.getItem(STORAGE_KEY)

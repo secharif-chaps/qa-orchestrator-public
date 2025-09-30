@@ -30,7 +30,7 @@
             </span>
             <Button
               v-if="showRefresh"
-              variant="tertiary"
+              variant="ghost-primary"
               icon="fa fa-refresh"
               icon-only
               size="sm"

@@ -2,19 +2,17 @@
   <!-- Card View -->
   <div
     :class="[
-      'bg-bg1 rounded-lg p-4 border border-border-2 ring-offset-2 ring-offset-bg3 transition-all duration-200 group flex flex-col justify-between gap-2 relative',
-      { 'hover:ring-4 hover:ring-primary/70': !isChildHovered },
-      { 'cursor-auto': folder.is_deleted, 'cursor-pointer': !folder.is_deleted }
+      'bg-bg1 rounded-card p-4 shadow-lg transition-all duration-200 cursor-pointer group flex flex-col justify-between gap-2 relative',
+      { 'hover:shadow': !isChildHovered },
     ]"
-    @click="!folder.is_deleted && handleCardClick()"
+    @click="handleCardClick"
     @mouseenter="isParentHovered = true"
     @mouseleave="isParentHovered = false"
   >
     <!-- Favorite Toggle Button -->
     <button
-      v-if="!folder.is_deleted"
       @click.stop="toggleFavorite"
-      class="absolute top-3 right-3 z-10 p-2 rounded-lg hover:bg-bg2 transition-colors"
+      class="absolute top-3 right-3 size-10 z-10 p-2 rounded-block hover:bg-bg2 transition-colors"
       :title="folder.is_favorite ? 'Remove from favorites' : 'Add to favorites'"
       :disabled="isTogglingFavorite"
     >
@@ -22,41 +20,18 @@
         v-if="!isTogglingFavorite"
         :class="[
           folder.is_favorite
-            ? 'fa-jelly-fill fa-regular fa-star text-amber-500'
-            : 'fa-jelly fa-regular fa-star text-secondary hover:text-amber-500',
+            ? 'fa-jelly-fill fa-regular fa-star text-tertiary'
+            : 'fa-jelly fa-regular fa-star text-secondary hover:text-tertiary',
         ]"
       ></i>
       <i v-else class="fas fa-spinner fa-spin text-secondary"></i>
     </button>
 
-    <!-- Restore + Deleted Tag Container -->
-    <div
-      v-if="folder.is_deleted"
-      class="absolute top-3 right-3 z-10 flex items-center gap-2"
-    >
-      <!-- Restore Button -->
-      <button
-        @click.stop="emitRestore"
-        class="p-2 rounded-lg hover:bg-bg2 transition-colors"
-        title="Restore folder"
-      >
-        <i class="fa-solid fa-undo text-secondary hover:text-primary"></i>
-      </button>
-
-      <!-- Deleted Tag -->
-      <span
-        class="h-fit inline-flex items-center text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded"
-      >
-        {{ $t('folder.item.deleted', 'Deleted') }}
-      </span>
-    </div>
-
     <div class="flex flex-col gap-2">
       <div class="flex items-start justify-between">
         <div class="flex items-center gap-3">
           <div
-            class="w-12 h-12 rounded-lg flex items-center justify-center"
-            :class="folderColorClasses"
+            class="w-12 h-12 rounded-lg flex items-center justify-center bg-almond-50 text-almond-600"
           >
             <i :class="folderIcon" class="text-xl"></i>
           </div>
@@ -88,9 +63,9 @@
       </div>
 
       <!-- Folder Item Previews -->
-      <div v-if="folder.items && folder.items.length > 0" class="mb-4">
+      <div v-if="folder.items && folder.items.length > 0" class="mb-4 relative rounded-xl overflow-hidden">
         <div
-          class="grid grid-cols-2 gap-2"
+          class="grid grid-cols-1 gap-2 bg-bg2 p-4 rounded-xl max-h-64 overflow-y-auto "
           @mouseenter="isChildHovered = true"
           @mouseleave="isChildHovered = false"
         >
@@ -103,14 +78,13 @@
             "
             v-for="(item, index) in previewItems"
             :key="item.id"
-            class="bg-bg2 h-24 rounded-md p-2 border border-border-2 min-h-[60px] flex flex-col items-center justify-center hover:ring-2 ring-primary/50 ring-offset-bg2"
+            class="bg-bg1 rounded-md p-2 border border-border-2 min-h-[60px] flex  items-center hover:ring-2 ring-primary/50 ring-offset-bg2"
           >
             <div
-              v-if="index < 3 || folder.items.length <= 4"
-              class="flex flex-col justify-center items-center gap-2 min-w-0"
+              class="flex items-center gap-2 min-w-0"
             >
               <div
-                class="w-10 h-10 rounded bg-white ring-1 ring-border-2 overflow-hidden flex items-center justify-center flex-shrink-0"
+                class="w-10 h-10 rounded bg-white ring-1 ring-border-2 overflow-hidden flex items-center flex-shrink-0"
               >
                 <img
                   v-if="item.type === 'company' && getCompanyDomain(item.website)"
@@ -135,15 +109,10 @@
                 <div class="text-sm font-medium truncate">{{ item.name }}</div>
               </div>
             </div>
-            <div v-else class="flex items-center justify-center h-full">
-              <div class="text-center">
-                <div class="text-lg font-semibold text-secondary">
-                  +{{ folder.items.length - 3 }}
-                </div>
-                <div class="text-xs text-secondary">{{ $t('folder.moreItems', 'more') }}</div>
-              </div>
-            </div>
           </div>
+          <div class="absolute top-0 left-0 h-6 w-full bg-gradient-to-b from-bg2 to-transparent z-10"></div>
+          <div class="absolute bottom-0 left-0 h-4 w-full bg-gradient-to-b from-transparent to-bg2 z-10"></div>
+
         </div>
       </div>
 
@@ -184,7 +153,6 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   viewFolder: [id: string]
   deleteFolder: [folder: Folder]
-  restoreFolder: [folder: Folder]
   favoriteToggled: [folder: Folder]
 }>()
 
@@ -230,13 +198,8 @@ const itemCount = computed(() => {
 const previewItems = computed(() => {
   if (!props.folder.items || props.folder.items.length === 0) return []
 
-  // Always show first 3, then if there are exactly 4 items, show all 4
-  // Otherwise show first 3 and use the 4th slot for overflow indicator
-  if (props.folder.items.length <= 4) {
-    return props.folder.items.slice(0, 4)
-  } else {
-    return props.folder.items.slice(0, 4) // We'll handle the overflow in template
-  }
+   return props.folder.items
+  
 })
 
 // Helper function to extract domain from website URL
@@ -266,13 +229,9 @@ const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString()
 }
 
-const handleCardClick = () => {
+const handleCardClick = (event: MouseEvent) => {
   // Only emit viewFolder if not clicking on the favorite button
   emit('viewFolder', props.folder.id)
-}
-
-const emitRestore = () => {
-  emit('restoreFolder', props.folder)
 }
 
 const toggleFavorite = async () => {

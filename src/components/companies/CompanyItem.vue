@@ -139,7 +139,7 @@
       <div class="col-span-2">
         <div class="flex items-center gap-1 justify-end">
           <Button
-            variant="tertiary"
+            variant="ghost-primary"
             size="sm"
             icon="fa fa-eye"
             icon-only
@@ -148,7 +148,7 @@
           />
           <Button
             v-if="canDeleteCompany"
-            variant="tertiary"
+            variant="ghost-primary"
             color="danger"
             size="sm"
             icon="fa fa-trash"
@@ -253,7 +253,7 @@ const getTaskStatusText = (tasks: Array<{ status: string }>) => {
 }
 
 const getTaskStatusVariant = (tasks: Array<{ status: string }>) => {
-  if (!tasks || tasks.length === 0) return 'slate'
+  if (!tasks || tasks.length === 0) return 'primary'
 
   const running = tasks.filter((t) => t.status === 'running' || t.status === 'pending').length
   const failed = tasks.filter((t) => t.status === 'error' || t.status === 'failed').length

@@ -3,7 +3,7 @@
     <template #actions>
       <Button
         v-if="canDeleteCompany && company"
-        variant="tertiary"
+        variant="ghost-primary"
         color="danger"
         icon="fa fa-trash"
         :label="$t('company.delete.button', 'Delete')"

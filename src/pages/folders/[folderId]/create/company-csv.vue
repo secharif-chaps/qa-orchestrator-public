@@ -59,7 +59,7 @@
               <div>
                 <p class="text-secondary">{{ $t('csv.upload.dragDrop', 'Drag and drop your CSV file here, or') }}</p>
                 <Button
-                  variant="tertiary"
+                  variant="ghost-primary"
                   label="Choose File"
                   @click="$refs.fileInput?.click()"
                 />
@@ -71,7 +71,7 @@
               <p class="font-medium">{{ selectedFile.name }}</p>
               <p class="text-sm text-secondary">{{ formatFileSize(selectedFile.size) }}</p>
               <Button
-                variant="tertiary"
+                variant="ghost-primary"
                 color="danger"
                 icon="fa fa-times"
                 label="Remove"

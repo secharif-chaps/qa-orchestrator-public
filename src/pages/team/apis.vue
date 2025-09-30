@@ -38,7 +38,7 @@
           </div>
           <Button
             @click="deleteApi(api.id)"
-            variant="tertiary"
+            variant="ghost-primary"
             icon="fa fa-trash"
             icon-only
             size="sm"
@@ -59,7 +59,7 @@
             </span>
             <Button
               @click="toggleApiKey(api.id)"
-              variant="tertiary"
+              variant="ghost-primary"
               :icon="showApiKey[api.id] ? 'fa fa-eye-slash' : 'fa fa-eye'"
               icon-only
               size="sm"
@@ -115,7 +115,7 @@
             </h4>
             <Button
               @click="cancelAddApi"
-              variant="tertiary"
+              variant="ghost-primary"
               icon="fa fa-times"
               icon-only
               size="sm"

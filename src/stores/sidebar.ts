@@ -1,0 +1,81 @@
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+
+export type SidebarState = 'folders' | 'tokens' | 'chapse' | 'notifications' | 'minimized'
+
+const STORAGE_KEY = 'sidebar-state'
+
+export const useSidebarStore = defineStore('sidebar', () => {
+  const state = ref<SidebarState>('folders')
+  const previousState = ref<SidebarState>('folders')
+
+  // Button order from left to right in the appbar
+  const stateOrder: SidebarState[] = ['tokens', 'chapse', 'notifications', 'folders']
+
+  // Get the index of a state in the order
+  function getStateIndex(s: SidebarState): number {
+    return stateOrder.indexOf(s)
+  }
+
+  // Determine if transitioning to the right (higher index)
+  function isTransitioningRight(fromState: SidebarState, toState: SidebarState): boolean {
+    const fromIndex = getStateIndex(fromState)
+    const toIndex = getStateIndex(toState)
+    return toIndex > fromIndex
+  }
+
+  // Load state from localStorage
+  function loadState() {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored && isValidSidebarState(stored)) {
+      state.value = stored as SidebarState
+      previousState.value = stored as SidebarState
+    }
+  }
+
+  // Save state to localStorage
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, state.value)
+  }
+
+  // Validate state
+  function isValidSidebarState(value: string): boolean {
+    return ['folders', 'tokens', 'chapse', 'notifications', 'minimized'].includes(value)
+  }
+
+  // Set sidebar state
+  function setState(newState: SidebarState) {
+    previousState.value = state.value
+    state.value = newState
+    saveState()
+  }
+
+  // Toggle sidebar state (for button clicks)
+  function toggleState(targetState: SidebarState) {
+    if (state.value === 'minimized') {
+      // If minimized, open to target state
+      setState(targetState)
+    } else if (state.value === targetState) {
+      // If already showing this state, minimize
+      setState('minimized')
+    } else {
+      // If showing different state, switch to target
+      setState(targetState)
+    }
+  }
+
+  // Check if sidebar is open
+  function isOpen() {
+    return state.value !== 'minimized'
+  }
+
+  return {
+    state,
+    previousState,
+    loadState,
+    setState,
+    toggleState,
+    isOpen,
+    isTransitioningRight,
+  }
+})

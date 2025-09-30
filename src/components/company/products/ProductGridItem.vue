@@ -28,7 +28,7 @@
 
     <div v-if="productList.length > maxDisplayItems" class="mt-4 text-center">
       <Button
-        variant="tertiary"
+        variant="ghost-primary"
         size="sm"
         :icon="showAll ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"
         :label="showAll ? 'Show Less' : `Show ${productList.length - maxDisplayItems} More`"
