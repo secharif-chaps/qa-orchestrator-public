@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-export type BadgeVariant = 'primary' | 'success' | 'warning' | 'error' | 'info' | 'accent'
+export type BadgeVariant = 'primary' | 'success' | 'warning' | 'error' | 'info' | 'accent' | 'slate'
 export type BadgeSize = 'xs' | 'sm' | 'md' | 'lg'
 
 interface Props {
@@ -104,7 +104,7 @@ const closeIconClasses = computed(() => {
 // Variant classes with gradient sa
 const variantClasses = computed(() => {
   const isRounded = 'rounded-full'
-  
+
 
   switch (props.variant) {
     case 'success':
@@ -121,6 +121,9 @@ const variantClasses = computed(() => {
 
     case 'accent':
       return `${isRounded} bg-tertiary-200 dark:bg-tertiary-700/30 text-tertiary-700 dark:text-tertiary-400`
+
+    case 'slate':
+      return `${isRounded} bg-bg2 text-secondary`
 
     default: // primary
       return `${isRounded} bg-primary/20 dark:bg-primary/15 text-primary`
@@ -140,6 +143,8 @@ const dotClasses = computed(() => {
       return 'bg-blue-500'
     case 'accent':
       return 'bg-tertiary-500'
+    case 'slate':
+      return 'bg-secondary'
     default: // primary
       return 'bg-primary'
   }
