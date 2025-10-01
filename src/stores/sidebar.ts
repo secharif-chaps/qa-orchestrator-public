@@ -69,6 +69,34 @@ export const useSidebarStore = defineStore('sidebar', () => {
     return state.value !== 'minimized'
   }
 
+  // Navigate to next tab in the order
+  function navigateNext() {
+    const currentIndex = getStateIndex(state.value)
+    const nextIndex = currentIndex + 1
+
+    // Don't navigate if at the end or minimized
+    if (nextIndex >= stateOrder.length || state.value === 'minimized') {
+      return false
+    }
+
+    setState(stateOrder[nextIndex])
+    return true
+  }
+
+  // Navigate to previous tab in the order
+  function navigatePrevious() {
+    const currentIndex = getStateIndex(state.value)
+    const previousIndex = currentIndex - 1
+
+    // Don't navigate if at the beginning or minimized
+    if (previousIndex < 0 || state.value === 'minimized') {
+      return false
+    }
+
+    setState(stateOrder[previousIndex])
+    return true
+  }
+
   return {
     state,
     previousState,
@@ -77,5 +105,7 @@ export const useSidebarStore = defineStore('sidebar', () => {
     toggleState,
     isOpen,
     isTransitioningRight,
+    navigateNext,
+    navigatePrevious,
   }
 })

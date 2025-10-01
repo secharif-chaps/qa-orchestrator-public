@@ -1,6 +1,8 @@
 <template>
   <div
+    ref="sidebarEl"
     class="w-[320px] flex flex-col justify-between fixed right-0 bg-sage-950 dark:bg-sidebar h-screen text-white pt-16 z-0 overflow-hidden"
+    @wheel.prevent="handleWheel"
   >
     <Transition
       mode="out-in"
@@ -43,13 +45,66 @@
 
 <script lang="ts" setup>
 import { useSidebarStore } from '@/stores/sidebar'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import TokenSidebar from '@/components/sidebar/TokenSidebar.vue'
 import ChapseSidebar from '@/components/sidebar/ChapseSidebar.vue'
 import NotificationsSidebar from '@/components/sidebar/NotificationsSidebar.vue'
 import FoldersSidebar from '@/components/sidebar/FoldersSidebar.vue'
 
 const sidebarStore = useSidebarStore()
+const sidebarEl = ref<HTMLElement>()
+
+// Horizontal scroll configuration
+const SCROLL_THRESHOLD = 50 // Pixels of accumulated horizontal scroll needed to switch tabs
+let scrollDelta = 0
+let isNavigating = ref(false) // Prevent multiple navigations in one gesture
+
+// Handle horizontal scroll/swipe gestures
+function handleWheel(event: WheelEvent) {
+  // Detect horizontal scroll (deltaX for trackpad swipe, deltaY with shift for mouse wheel)
+  const horizontalDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY)
+    ? event.deltaX
+    : event.shiftKey ? event.deltaY : 0
+
+  if (horizontalDelta === 0) return
+
+  // If already navigating, ignore additional scroll events
+  if (isNavigating.value) return
+
+  // Accumulate scroll delta
+  scrollDelta += horizontalDelta
+
+  // Check if threshold is reached for next tab (scroll right)
+  if (scrollDelta >= SCROLL_THRESHOLD) {
+    const success = sidebarStore.navigateNext()
+    if (success) {
+      isNavigating.value = true
+      scrollDelta = 0
+      // Reset navigation lock after a short delay to allow new gestures
+      setTimeout(() => {
+        isNavigating.value = false
+      }, 300)
+    } else {
+      // At boundary, limit accumulation
+      scrollDelta = SCROLL_THRESHOLD
+    }
+  }
+  // Check if threshold is reached for previous tab (scroll left)
+  else if (scrollDelta <= -SCROLL_THRESHOLD) {
+    const success = sidebarStore.navigatePrevious()
+    if (success) {
+      isNavigating.value = true
+      scrollDelta = 0
+      // Reset navigation lock after a short delay to allow new gestures
+      setTimeout(() => {
+        isNavigating.value = false
+      }, 300)
+    } else {
+      // At boundary, limit accumulation
+      scrollDelta = -SCROLL_THRESHOLD
+    }
+  }
+}
 
 const currentComponent = computed(() => {
   switch (sidebarStore.state) {
