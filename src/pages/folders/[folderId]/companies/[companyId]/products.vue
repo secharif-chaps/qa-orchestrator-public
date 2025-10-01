@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col gap-4">
     <!-- Loading State -->
-    <PageState 
-      v-if="taskState.isLoading.value" 
-      state="loading" 
+    <PageState
+      v-if="taskState.isLoading.value"
+      state="loading"
       page-type="products"
       :task-progress="taskState.taskProgress.value"
     />
-    
+
     <!-- Error State -->
     <PageState
       v-else-if="taskState.hasErrors.value"
@@ -16,11 +16,11 @@
       :error-message="taskState.errorMessages.value[0]"
       @retry="handleRetry"
     />
-    
+
     <!-- No Data State -->
-    <PageState 
-      v-else-if="!products || Object.keys(products).length === 0" 
-      state="no-data" 
+    <PageState
+      v-else-if="!products || Object.keys(products).length === 0"
+      state="no-data"
       page-type="products"
     />
 
@@ -36,13 +36,7 @@
         decoration-icon="fa fa-sparkles"
       >
         <template #status>
-          <Badge
-            variant="primary"
-            icon="fa fa-sparkles"
-            label="AI"
-            size="xs"
-            rounded
-          />
+          <Badge variant="primary" icon="fa fa-sparkles" label="AI" size="xs" rounded />
         </template>
       </Alert>
 
@@ -104,7 +98,6 @@ import { computed, ref } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { useTaskState } from '@/composables/useTaskState'
-import CompanyCard from '@/components/company/CompanyCard.vue'
 import PageState from '@/components/company/PageState.vue'
 
 const route = useRoute()
