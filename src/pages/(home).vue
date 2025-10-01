@@ -15,11 +15,9 @@
           <h2 class="text-xl font-semibold">Est-ce que je peux vous aider ?</h2>
           <div class="flex gap-2">
             <Button variant="secondary" size="sm" icon="fa fa-file-pdf">Génère moi un PDF</Button>
-            <Button variant="secondary" size="sm" icon="fa fa-search">Je souhaite faire une nouvelle recherche</Button>
-            <button class="text-sm text-sage-600 hover:text-sage-800 flex items-center gap-1">
-              Voir plus de Chaps-e
-              <i class="fa fa-chevron-right text-xs"></i>
-            </button>
+            <Button variant="secondary" size="sm" icon="fa fa-search"
+              >Je souhaite faire une nouvelle recherche</Button
+            >
           </div>
         </div>
       </div>
@@ -27,86 +25,97 @@
       <!-- Main Content Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Left Column -->
-        <div class="space-y-6">
-          <!-- Recent Projects -->
-          <div class="bg-white dark:bg-gray-800 rounded-card p-6 border border-gray-200 dark:border-gray-700">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="font-semibold text-gray-900 dark:text-white">Projets récents</h3>
-              <button class="text-xs text-sage-600 hover:text-sage-800">Voir tout</button>
-            </div>
-            <div class="space-y-3">
+
+        <!-- Recent Projects -->
+        <div
+          class="bg-white dark:bg-gray-800 rounded-card p-6 border border-gray-200 dark:border-gray-700"
+        >
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-gray-900 dark:text-white">Projets récents</h3>
+            <button class="text-xs text-sage-600 hover:text-sage-800">Voir tout</button>
+          </div>
+          <div class="space-y-3">
+            <div
+              v-for="project in mockProjects"
+              :key="project.id"
+              class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
+              @click="$router.push(`folders/${project.folder}/companies/${project.id}`)"
+            >
               <div
-                v-for="project in mockProjects"
-                :key="project.id"
-                class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
-                @click="$router.push(`/companies/${project.id}`)"
+                class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                :class="project.icon.bg"
               >
-                <div
-                  class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                  :class="project.icon.bg"
-                >
-                  <i :class="[project.icon.icon, project.icon.color, 'text-sm']"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                  <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ project.name }}</h4>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">{{ project.folder }} • il y a {{ project.time }}</p>
-                </div>
-                <Badge
-                  v-if="project.badge"
-                  :variant="project.badge.variant"
-                  :label="project.badge.label"
-                  size="xs"
-                />
+                <i :class="[project.icon.icon, project.icon.color, 'text-sm']"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                  {{ project.name }}
+                </h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  {{ project.folder }} • il y a {{ project.time }}
+                </p>
+              </div>
+              <Badge
+                v-if="project.badge"
+                :variant="project.badge.variant"
+                :label="project.badge.label"
+                size="xs"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Collaborative Activity -->
+        <div
+          class="bg-white dark:bg-gray-800 rounded-card p-6 border border-gray-200 dark:border-gray-700"
+        >
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Activité collaborative</h3>
+
+          <!-- Team Online -->
+          <div class="mb-4">
+            <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
+              Équipe en ligne
+            </h4>
+            <div class="flex items-center gap-2">
+              <div
+                v-for="member in mockOnlineTeam"
+                :key="member.id"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white"
+                :class="member.color"
+                :title="member.name"
+              >
+                {{ member.initials }}
               </div>
             </div>
           </div>
 
-          <!-- Collaborative Activity -->
-          <div class="bg-white dark:bg-gray-800 rounded-card p-6 border border-gray-200 dark:border-gray-700">
-            <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Activité collaborative</h3>
-
-            <!-- Team Online -->
-            <div class="mb-4">
-              <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Équipe en ligne</h4>
-              <div class="flex items-center gap-2">
+          <!-- Recent Activities -->
+          <div>
+            <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
+              Activités récentes
+            </h4>
+            <div class="space-y-3">
+              <div
+                v-for="activity in mockActivities"
+                :key="activity.id"
+                class="flex items-start gap-3"
+              >
                 <div
-                  v-for="member in mockOnlineTeam"
-                  :key="member.id"
-                  class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white"
-                  :class="member.color"
-                  :title="member.name"
+                  class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white flex-shrink-0"
+                  :class="activity.user.color"
                 >
-                  {{ member.initials }}
+                  {{ activity.user.initials }}
                 </div>
-              </div>
-            </div>
-
-            <!-- Recent Activities -->
-            <div>
-              <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Activités récentes</h4>
-              <div class="space-y-3">
-                <div
-                  v-for="activity in mockActivities"
-                  :key="activity.id"
-                  class="flex items-start gap-3"
-                >
-                  <div
-                    class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white flex-shrink-0"
-                    :class="activity.user.color"
-                  >
-                    {{ activity.user.initials }}
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-900 dark:text-white">
-                      <span class="font-medium">{{ activity.user.name }}</span>
-                      {{ activity.action }}
-                      <i :class="activity.icon" class="text-xs"></i>
-                    </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ activity.target }}</p>
-                    <div class="flex items-center gap-1 text-xs text-gray-400 mt-1">
-                      <i class="fa fa-clock"></i>
-                      <span>il y a {{ activity.time }}</span>
-                    </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm text-gray-900 dark:text-white">
+                    <span class="font-medium">{{ activity.user.name }}</span>
+                    {{ activity.action }}
+                    <i :class="activity.icon" class="text-xs"></i>
+                  </p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">{{ activity.target }}</p>
+                  <div class="flex items-center gap-1 text-xs text-gray-400 mt-1">
+                    <i class="fa fa-clock"></i>
+                    <span>il y a {{ activity.time }}</span>
                   </div>
                 </div>
               </div>
@@ -115,72 +124,6 @@
         </div>
 
         <!-- Right Column: Sources & Relevance -->
-        <div class="bg-white dark:bg-gray-800 rounded-card p-6 border border-gray-200 dark:border-gray-700">
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="font-semibold text-gray-900 dark:text-white">Sources et pertinence</h3>
-          </div>
-
-          <!-- Global Relevance -->
-          <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 mb-6 border border-green-200 dark:border-green-800">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-2">
-                <i class="fa fa-shield-check text-green-600 dark:text-green-400"></i>
-                <h4 class="font-semibold text-gray-900 dark:text-white">Pertinence globale</h4>
-              </div>
-              <div class="text-right">
-                <div class="text-2xl font-bold text-green-600 dark:text-green-400">93%</div>
-                <div class="text-xs text-green-700 dark:text-green-500">+2% cette semaine</div>
-              </div>
-            </div>
-            <p class="text-xs text-gray-600 dark:text-gray-400">Toutes sources confondues</p>
-          </div>
-
-          <!-- Favorite Strategic Sources -->
-          <div class="mb-6">
-            <div class="flex items-center justify-between mb-3">
-              <h4 class="text-sm font-semibold text-gray-900 dark:text-white">Sources stratégiques favorites (4)</h4>
-            </div>
-            <div class="space-y-2">
-              <div
-                v-for="source in mockSources.strategic"
-                :key="source.id"
-                class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-              >
-                <div class="flex-1 min-w-0">
-                  <h5 class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ source.name }}</h5>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">{{ source.description }}</p>
-                </div>
-                <div class="flex items-center gap-2 flex-shrink-0 ml-3">
-                  <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ source.score }}%</span>
-                  <i class="fa fa-check-circle text-green-500 text-sm"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Most Used Sources -->
-          <div>
-            <div class="flex items-center justify-between mb-3">
-              <h4 class="text-sm font-semibold text-gray-900 dark:text-white">Sources les plus utilisées</h4>
-              <button class="text-xs text-sage-600 hover:text-sage-800">Voir tout le classement</button>
-            </div>
-            <div class="space-y-2">
-              <div
-                v-for="(source, index) in mockSources.mostUsed"
-                :key="source.id"
-                class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-              >
-                <div class="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-semibold text-gray-600 dark:text-gray-300 flex-shrink-0">
-                  {{ index + 1 }}
-                </div>
-                <div class="flex-1 min-w-0">
-                  <p class="text-sm text-gray-900 dark:text-white truncate">{{ source.name }}</p>
-                </div>
-                <span class="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">{{ source.count }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Modules Showcase -->
