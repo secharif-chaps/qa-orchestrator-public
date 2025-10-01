@@ -283,8 +283,19 @@ The design follows a **4px grid system** for consistent spacing:
   - Better TypeScript support
 - See `src/components/CLAUDE.md` for detailed component usage and examples
 
+## Smart Commit Agent
+
+Use `/commit` to automatically analyze changes, group them intelligently, and create well-structured commits:
+- Analyzes all git changes and groups them logically by scope
+- Creates multiple focused commits (not one giant commit)
+- Follows gitmoji + conventional commits format automatically
+- Includes detailed descriptions and Claude footer
+- Pushes everything to origin/main
+
+See `.claude/commit-agent.md` for full documentation.
+
 ## Important Reminders
 
-- Only commit when explicitly asked by the user
+- Use `/commit` for automatic intelligent commits, or commit manually when explicitly asked
 - Include Claude footer in commit messages
 - Follow existing code patterns and conventions
