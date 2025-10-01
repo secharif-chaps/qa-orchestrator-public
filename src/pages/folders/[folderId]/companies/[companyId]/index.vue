@@ -1,127 +1,143 @@
 <template>
-  <!-- Main content grid -->
-  <div class="grid grid-cols-3 gap-6 bg-bg1 p-6 rounded-lg border border-border-2">
-    <!-- First column: Company general info -->
-    <div
-      class="col-span-3 row-span-4 lg:col-span-1 space-y-4 w-full bg-bg1 p-6 rounded-lg border border-border-2"
-    >
-      <div class="flex flex-col gap-4">
-        <div class="flex flex-col items-center text-center gap-2">
-          <div class="relative w-20 h-20 rounded-xl overflow-hidden bg-white ring-2 ring-border-2">
-            <img
-              v-if="getCompanyDomain(company?.website)"
-              :src="getLogoUrl(company?.website)"
-              :alt="`${company?.name} logo`"
-              class="w-full h-full object-contain p-2"
-              @error="showFallbackIcon = true"
-              v-show="!showFallbackIcon"
-            />
-            <div
-              v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
-              class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/20"
-            >
-              <i class="fa fa-building text-3xl text-primary"></i>
+  <div class="space-y-6">
+    <!-- Company Info Card - Full Width -->
+    <div class="flex gap-4">
+      <div class="bg-bg1 flex-1 shadow-shadow-2 rounded-card border border-border-2 p-6">
+        <div class="flex items-start gap-6">
+          <!-- Logo -->
+
+          <!-- Company Info -->
+          <div class="flex-1 min-w-0 flex flex-col gap-2">
+            <div>
+              <h3 v-if="company?.profile?.catchphrase" class="font-bold">
+                {{ getSourcedValue(company.profile.businessLine) }}
+              </h3>
             </div>
-          </div>
-          <div>
-            <h2 class="text-2xl font-bold capitalize">
-              {{ company?.name }}
-            </h2>
-          </div>
-        </div>
+            <div>
+              <p>{{ company?.products?.insights }}</p>
+            </div>
 
-        <div v-if="company?.profile?.catchphrase">
-          <p class="text-secondary text-center italic">
-            {{ getSourcedValue(company.profile.catchphrase) || 'No catchphrase found' }}
-          </p>
-        </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <!-- Employee Count -->
+              <div class="flex items-center gap-3 rounded-card px-4 py-3">
+                <i class="fa-solid fa-users fa-fw"></i>
+                <div class="flex flex-col gap-1">
+                  <span class="text-sm truncate"> Nombre d'employés </span>
+                  <span class="text-xs text-secondary">
+                    {{ company?.profile?.employeeCount?.value || 'Non renseigné' }}
+                  </span>
+                </div>
+              </div>
 
-        <div class="flex flex-col gap-3">
-          <OPopper :text="$t('company.dashboard.generalInfo.website')" side="left">
-            <div
-              class="flex items-center bg-bg1 border border-border-2 px-4 py-3 rounded-lg gap-4 text-left hover:border-primary/50 transition-colors"
-            >
-              <i class="fa fa-link fa-fw text-primary"></i>
-              <a
-                :href="formatWebsiteUrl(company?.website)"
-                target="_blank"
-                class="text-primary hover:text-primary/80 text-sm font-medium transition-colors"
+              <!-- HQ -->
+              <div
+                v-if="company?.profile?.hq"
+                class="flex items-center gap-3 rounded-card px-4 py-3"
               >
-                {{ company?.website }}
-              </a>
-            </div>
-          </OPopper>
+                <i class="fa-solid fa-map-marker fa-fw text-secondary"></i>
+                <div class="flex flex-col gap-1">
+                  <span class="text-sm truncate"> Siege Social </span>
+                  <span class="text-xs text-secondary">
+                    {{ company?.profile?.hq?.value || 'Non renseigné' }}
+                  </span>
+                </div>
+              </div>
 
-          <OPopper :text="$t('company.dashboard.generalInfo.headquarters')" side="left">
-            <div
-              class="flex items-center bg-bg1 border border-border-2 px-4 py-3 rounded-lg gap-4 text-left"
-              v-if="company?.profile?.hq"
-            >
-              <i class="fa fa-map-marker fa-fw text-secondary"></i>
-              <span class="text-secondary text-sm">
-                {{ getSourcedValue(company.profile.hq) || 'Unknown' }}
-              </span>
-            </div>
-          </OPopper>
+              <!-- CEO -->
+              <div
+                v-if="company?.profile?.ceo"
+                class="flex items-center gap-3 rounded-card px-4 py-3"
+              >
+                <i class="fa-solid fa-user-tie fa-fw text-secondary"></i>
+                <div class="flex flex-col gap-1">
+                  <span class="text-sm truncate"> CEO </span>
+                  <span class="text-xs text-secondary">
+                    {{ company?.profile?.ceo?.value || 'Non renseigné' }}
+                  </span>
+                </div>
+              </div>
 
-          <OPopper :text="$t('company.dashboard.generalInfo.ceo')" side="left">
-            <div
-              class="flex items-center bg-bg1 border border-border-2 px-4 py-3 rounded-lg gap-4 text-left"
-              v-if="company?.profile?.ceo"
-            >
-              <i class="fa fa-user-tie fa-fw text-secondary"></i>
-              <span class="text-secondary text-sm">
-                {{ getSourcedValue(company.profile.ceo) || 'Unknown' }}
-              </span>
+              <!-- Revenue -->
+              <div
+                v-if="company?.profile?.revenue"
+                class="flex items-center gap-3 rounded-card px-4 py-3"
+              >
+                <i class="fa-solid fa-money-bill fa-fw text-secondary"></i>
+                <div class="flex flex-col gap-1">
+                  <span class="text-sm truncate"> Chiffre d'affaires </span>
+                  <span class="text-xs text-secondary">
+                    {{ company?.profile?.revenue?.value || 'Non renseigné' }}
+                  </span>
+                </div>
+              </div>
             </div>
-          </OPopper>
 
-          <OPopper :text="$t('company.dashboard.generalInfo.revenue')" side="left">
-            <div
-              class="flex items-center bg-bg1 border border-border-2 px-4 py-3 rounded-lg gap-4 text-left"
-              v-if="company?.profile?.revenue"
-            >
-              <i class="fa fa-money-bill fa-fw text-secondary"></i>
-              <span class="text-secondary text-sm">
-                {{ getSourcedValue(company.profile.revenue) || 'Unknown' }}
-              </span>
-            </div>
-          </OPopper>
+            <!-- Social Media -->
+          </div>
+        </div>
+      </div>
 
-          <div
-            class="grid grid-cols-6 gap-3 justify-center mt-4"
-            v-if="company?.digital?.socialMediaAccounts"
-          >
-            <a
+      <div
+        class="bg-bg1 shadow-shadow-2 rounded-card border border-border-2 p-6 flex flex-col gap-4 max-w-xs"
+      >
+        <p>Présence en ligne</p>
+        <div class="flex bg-bg2 items-center gap-3 rounded-card px-4 py-3">
+          <i class="fa-solid fa-link fa-fw text-primary"></i>
+          <div class="flex flex-col gap-1 w-44">
+            <span class="text-sm truncate"> Site web </span>
+            <span class="text-xs text-secondary truncate">
+              {{ company?.website || 'Non renseigné' }}
+            </span>
+          </div>
+        </div>
+        <p>Présence sur les réseaux sociaux</p>
+        <div>
+          <div v-if="company?.digital?.socialMediaAccounts" class="flex flex-wrap gap-2">
+            <Badge
+              variant="slate"
               v-for="account in company?.digital?.socialMediaAccounts.value"
               :key="account.platform"
               :href="getSourcedValue(account.url)"
               target="_blank"
-              class="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all"
             >
-              <i class="fa text-lg" :class="getSocialIcon(account.platform)"></i>
-            </a>
+              <i class="fa" :class="getSocialIcon(account.platform)"></i>
+              <span class="underline">
+                {{ account.platform }}
+              </span>
+            </Badge>
           </div>
         </div>
       </div>
     </div>
 
-    <InfoCard
-      v-for="card in infoCards"
-      :key="card.titleKey"
-      :title="$t(card.titleKey)"
-      :description="$t(card.descriptionKey)"
-      :icon="card.icon"
-      :to="`/folders/${folderId}/companies/${companyId}/${card.route}`"
-      :disabled="card.disabled"
-      :loading="isPending(card.loadingKey)"
-    />
+    <div>
+      <h4 class="font-semibold">Analyses</h4>
+    </div>
 
-    <div v-if="company" class="col-span-3 row-span-1 text-xs text-secondary italic">
-      Created by {{ company.owner_username }} on {{ company.created_at }}
+    <!-- Analysis Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <AnalysisCard
+        v-for="card in analysisCards"
+        :key="card.section"
+        :title="card.title"
+        :description="card.description"
+        :icon="card.icon"
+        :insights="card.insights"
+        :task-status="card.taskStatus"
+        :error-message="card.errorMessage"
+        :disabled="card.disabled"
+        @click="openSection(card.section)"
+      />
+    </div>
+
+    <!-- Footer -->
+    <div v-if="company" class="text-xs text-secondary italic text-center">
+      Created by {{ company.owner_username }} on {{ formatDate(company.created_at) }}
     </div>
   </div>
 
+  <!-- Section Modal -->
+  <SectionModal v-model="showSectionModal" v-model:section="activeSection" />
 </template>
 
 <route lang="yaml">
@@ -131,109 +147,138 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import InfoCard from '@/components/company/InfoCard.vue'
+import AnalysisCard from '@/components/company/AnalysisCard.vue'
+import SectionModal from '@/components/company/SectionModal.vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import { companyByIdQuery } from '@/queries/companies'
-import { OPopper } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import type { TaskType, TaskStatus } from '@/types/task'
+import Badge from '@/components/ui/Badge.vue'
 
 const router = useRouter()
-const showFallbackIcon = ref(false)
 const route = useRoute()
+
+const showSectionModal = ref(false)
+const activeSection = ref<TaskType | null>(null)
 
 const companyId = computed(() => route.params.companyId as string)
 const folderId = computed(() => route.params.folderId as string)
 
 // Use the company data composable
-const { data: company } = useQuery(
-  companyByIdQuery, 
-  () => ({ id: companyId.value }),
-  {
-    enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
-  }
-)
-
-// Reset fallback icon when company changes
-watch(company, () => {
-  showFallbackIcon.value = false
+const { data: company } = useQuery(companyByIdQuery, () => ({ id: companyId.value }), {
+  enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
 })
 
-// Info cards configuration
-const infoCards = [
-  {
-    titleKey: 'company.dashboard.infoCards.profile.title',
-    descriptionKey: 'company.dashboard.infoCards.profile.description',
-    icon: 'fa-building',
-    route: 'profile',
-    loadingKey: 'profile',
-    disabled: false,
-  },
-  {
-    titleKey: 'company.dashboard.infoCards.activities.title',
-    descriptionKey: 'company.dashboard.infoCards.activities.description',
-    icon: 'fa-calendar-days',
-    route: 'timeline',
-    loadingKey: 'timeline',
-    disabled: false,
-  },
-  {
-    titleKey: 'company.dashboard.infoCards.products.title',
-    descriptionKey: 'company.dashboard.infoCards.products.description',
-    icon: 'fa-box',
-    route: 'products',
-    loadingKey: 'products',
-    disabled: false,
-  },
-  {
-    titleKey: 'company.dashboard.infoCards.team.title',
-    descriptionKey: 'company.dashboard.infoCards.team.description',
-    icon: 'fa-users',
-    route: 'team',
-    loadingKey: 'team',
-    disabled: false,
-  },
-  {
-    titleKey: 'company.dashboard.infoCards.jobs.title',
-    descriptionKey: 'company.dashboard.infoCards.jobs.description',
-    icon: 'fa-briefcase',
-    route: 'jobs',
-    loadingKey: 'jobs',
-    disabled: false,
-  },
-  {
-    titleKey: 'company.dashboard.infoCards.press.title',
-    descriptionKey: 'company.dashboard.infoCards.press.description',
-    icon: 'fa-newspaper',
-    route: 'press',
-    loadingKey: 'press',
-    disabled: false,
-  },
-  {
-    titleKey: 'company.dashboard.infoCards.communications.title',
-    descriptionKey: 'company.dashboard.infoCards.communications.description',
-    icon: 'fa-bullhorn',
-    route: 'communications',
-    loadingKey: 'communications',
-    disabled: true,
-  },
-  {
-    titleKey: 'company.dashboard.infoCards.financials.title',
-    descriptionKey: 'company.dashboard.infoCards.financials.description',
-    icon: 'fa-chart-line',
-    route: 'financials',
-    loadingKey: 'financials',
-    disabled: true,
-  },
-]
+// Helper function to get task status by type
+const getTaskStatus = (taskType: TaskType): TaskStatus | null => {
+  if (!company.value?.tasks) return null
+  const task = company.value.tasks.find((t) => t.type === taskType)
+  return task?.status || null
+}
 
-// Lifecycle hooks
-onMounted(async () => {
-  if (!companyId.value) {
-    router.push('/companies')
-  }
-})
+// Helper function to get task error message
+const getTaskError = (taskType: TaskType): string | null => {
+  if (!company.value?.tasks) return null
+  const task = company.value.tasks.find((t) => t.type === taskType)
+  return task?.error || null
+}
+
+// Analysis cards configuration
+const analysisCards = computed(() => [
+  {
+    section: 'profile' as TaskType,
+    title: "Profil de l'entreprise",
+    description: 'Informations générales et présence digitale',
+    icon: 'fas fa-building',
+    insights: company.value?.profile?.businessLine?.value || company.value?.digital?.insights,
+    taskStatus: getTaskStatus('profile') || getTaskStatus('digital'),
+    errorMessage: getTaskError('profile') || getTaskError('digital'),
+    disabled: false,
+  },
+  {
+    section: 'timeline' as TaskType,
+    title: 'Activités & Événements',
+    description: 'Historique et moments clés',
+    icon: 'fas fa-calendar-days',
+    insights: company.value?.timeline?.insights,
+    taskStatus: getTaskStatus('timeline'),
+    errorMessage: getTaskError('timeline'),
+    disabled: false,
+  },
+  {
+    section: 'products' as TaskType,
+    title: 'Produits & Services',
+    description: 'Catalogue et gamme de produits',
+    icon: 'fas fa-box',
+    insights: company.value?.products?.insights,
+    taskStatus: getTaskStatus('products'),
+    errorMessage: getTaskError('products'),
+    disabled: false,
+  },
+  {
+    section: 'team' as TaskType,
+    title: 'Équipe & Management',
+    description: 'Organigramme et membres clés',
+    icon: 'fas fa-users',
+    insights: null, // Team doesn't have insights field
+    taskStatus: getTaskStatus('team'),
+    errorMessage: getTaskError('team'),
+    disabled: false,
+  },
+  {
+    section: 'jobs' as TaskType,
+    title: "Offres d'emploi",
+    description: 'Recrutement et opportunités',
+    icon: 'fas fa-briefcase',
+    insights: company.value?.jobs?.insights?.hiring_focus?.value,
+    taskStatus: getTaskStatus('jobs'),
+    errorMessage: getTaskError('jobs'),
+    disabled: false,
+  },
+  {
+    section: 'press' as TaskType,
+    title: 'Presse & Médias',
+    description: 'Articles et communiqués',
+    icon: 'fas fa-newspaper',
+    insights: company.value?.press?.insights,
+    taskStatus: getTaskStatus('press'),
+    errorMessage: getTaskError('press'),
+    disabled: false,
+  },
+  {
+    section: 'csr' as TaskType,
+    title: 'Responsabilité sociale',
+    description: 'RSE et développement durable',
+    icon: 'fas fa-leaf',
+    insights: company.value?.csr?.insights,
+    taskStatus: getTaskStatus('csr'),
+    errorMessage: getTaskError('csr'),
+    disabled: false,
+  },
+  {
+    section: 'digital' as TaskType,
+    title: 'Communications',
+    description: 'Stratégie de communication',
+    icon: 'fas fa-bullhorn',
+    insights: null,
+    taskStatus: null,
+    errorMessage: null,
+    disabled: true,
+  },
+])
+
+// Open section in modal
+const openSection = (section: TaskType) => {
+  activeSection.value = section
+  showSectionModal.value = true
+
+  // Update URL with query param
+  router.push({
+    query: { ...route.query, section },
+  })
+}
 
 // Format website URL
 const formatWebsiteUrl = (website?: string) => {
@@ -241,35 +286,10 @@ const formatWebsiteUrl = (website?: string) => {
   return website.startsWith('http') ? website : `https://${website}`
 }
 
-// Check if a section is pending
-// const taskStore = useTaskStore()
-
-const isPending = (sectionKey: string) => {
-  const id = companyId.value
-  if (!id) return false
-  // return taskStore.getTaskStatus(id, sectionKey) === 'running'
-  return false
-}
-
-// Helper function to extract domain from website URL
-const getCompanyDomain = (website?: string) => {
-  if (!website) return null
-  try {
-    // Remove protocol and www
-    let domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '')
-    // Remove trailing slash and any path
-    domain = domain.split('/')[0]
-    return domain
-  } catch {
-    return null
-  }
-}
-
-// Helper function to get logo URL from logo.dev
-const getLogoUrl = (website?: string) => {
-  const domain = getCompanyDomain(website)
-  if (!domain) return ''
-  return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
+// Format date
+const formatDate = (dateString: string) => {
+  if (!dateString) return 'N/A'
+  return new Date(dateString).toLocaleDateString()
 }
 
 // Helper function to get social media icon
