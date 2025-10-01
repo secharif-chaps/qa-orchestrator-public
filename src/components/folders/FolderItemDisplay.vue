@@ -1,12 +1,10 @@
 <template>
   <!-- Card View -->
-  <div
+  <Card
     v-if="mode === 'grid'"
-    :class="[
-      'bg-bg1 rounded-xl p-4 shadow-lg transition-all duration-200 cursor-pointer group',
-      { 'hover:shadow': !isChildHovered }
-    ]"
     @click="handleClick"
+    hoverable
+    clickable
     @mouseenter="isParentHovered = true"
     @mouseleave="isParentHovered = false"
   >
@@ -41,7 +39,7 @@
       </div>
 
       <!-- Quick Actions -->
-      <div 
+      <div
         class="flex gap-1 opacity-100 group-hover:opacity-100 transition-opacity"
         @mouseenter="isChildHovered = true"
         @mouseleave="isChildHovered = false"
@@ -56,7 +54,6 @@
         <Button
           v-if="item.type === 'company' && canDeleteCompany"
           variant="ghost-primary"
-
           icon="fa fa-trash"
           icon-only
           :title="$t('company.delete.title', 'Delete Company')"
@@ -69,7 +66,7 @@
       <span>{{ $t('folder.item.created', 'Created') }} {{ formatDate(item.created_at) }}</span>
       <span v-if="item.owner_username">{{ item.owner_username }}</span>
     </div>
-  </div>
+  </Card>
 
   <!-- Table Row (for table mode) -->
   <div v-else class="contents">
@@ -84,6 +81,7 @@ import Button from '@/components/ui/Button.vue'
 import type { FolderItem } from '@/types/folder'
 import { useI18n } from 'vue-i18n'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import Card from '../ui/Card.vue'
 
 interface Props {
   item: FolderItem

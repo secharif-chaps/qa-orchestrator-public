@@ -1,10 +1,6 @@
 <template>
   <!-- Card View -->
-  <div
-    :class="[
-      'bg-bg1 rounded-card p-4 shadow-lg transition-all duration-200 cursor-pointer group flex flex-col justify-between gap-2 relative',
-      { 'hover:shadow': !isChildHovered },
-    ]"
+  <Card
     @click="handleCardClick"
     @mouseenter="isParentHovered = true"
     @mouseleave="isParentHovered = false"
@@ -63,9 +59,12 @@
       </div>
 
       <!-- Folder Item Previews -->
-      <div v-if="folder.items && folder.items.length > 0" class="mb-4 relative rounded-xl overflow-hidden">
+      <div
+        v-if="folder.items && folder.items.length > 0"
+        class="mb-4 relative rounded-xl overflow-hidden"
+      >
         <div
-          class="grid grid-cols-1 gap-2 bg-bg2 p-4 rounded-xl max-h-64 overflow-y-auto "
+          class="grid grid-cols-1 gap-2 bg-bg2 p-4 rounded-xl max-h-64 overflow-y-auto"
           @mouseenter="isChildHovered = true"
           @mouseleave="isChildHovered = false"
         >
@@ -78,11 +77,9 @@
             "
             v-for="(item, index) in previewItems"
             :key="item.id"
-            class="bg-bg1 rounded-md p-2 border border-border-2 min-h-[60px] flex  items-center hover:ring-2 ring-primary/50 ring-offset-bg2"
+            class="bg-bg1 rounded-md p-2 border border-border-2 min-h-[60px] flex items-center hover:ring-2 ring-primary/50 ring-offset-bg2"
           >
-            <div
-              class="flex items-center gap-2 min-w-0"
-            >
+            <div class="flex items-center gap-2 min-w-0">
               <div
                 class="w-10 h-10 rounded bg-white ring-1 ring-border-2 overflow-hidden flex items-center flex-shrink-0"
               >
@@ -110,9 +107,12 @@
               </div>
             </div>
           </div>
-          <div class="absolute top-0 left-0 h-6 w-full bg-gradient-to-b from-bg2 to-transparent z-10"></div>
-          <div class="absolute bottom-0 left-0 h-4 w-full bg-gradient-to-b from-transparent to-bg2 z-10"></div>
-
+          <div
+            class="absolute top-0 left-0 h-6 w-full bg-gradient-to-b from-bg2 to-transparent z-10"
+          ></div>
+          <div
+            class="absolute bottom-0 left-0 h-4 w-full bg-gradient-to-b from-transparent to-bg2 z-10"
+          ></div>
         </div>
       </div>
 
@@ -130,10 +130,10 @@
     <div>
       <div class="flex justify-between items-center text-xs text-secondary">
         <span>Created {{ formatDate(folder.created_at) }}</span>
-        <span>by {{ folder.owner }}</span>
+        <span>by @{{ folder.owner }}</span>
       </div>
     </div>
-  </div>
+  </Card>
 </template>
 
 <script setup lang="ts">
@@ -143,6 +143,7 @@ import type { Folder } from '@/types/folder'
 import { toggleFolderFavorite } from '@/api/folders'
 import { computed, ref } from 'vue'
 import { toast } from '@/utils/toast'
+import Card from '../ui/Card.vue'
 
 interface Props {
   folder: Folder
@@ -198,8 +199,7 @@ const itemCount = computed(() => {
 const previewItems = computed(() => {
   if (!props.folder.items || props.folder.items.length === 0) return []
 
-   return props.folder.items
-  
+  return props.folder.items
 })
 
 // Helper function to extract domain from website URL

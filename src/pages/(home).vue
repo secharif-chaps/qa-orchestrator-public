@@ -27,9 +27,7 @@
         <!-- Left Column -->
 
         <!-- Recent Projects -->
-        <div
-          class="bg-white dark:bg-gray-800 rounded-card p-6 border border-gray-200 dark:border-gray-700"
-        >
+        <Card>
           <div class="flex items-center justify-between mb-4">
             <h3 class="font-semibold text-gray-900 dark:text-white">Projets récents</h3>
             <button class="text-xs text-sage-600 hover:text-sage-800">Voir tout</button>
@@ -63,12 +61,10 @@
               />
             </div>
           </div>
-        </div>
+        </Card>
 
         <!-- Collaborative Activity -->
-        <div
-          class="bg-white dark:bg-gray-800 rounded-card p-6 border border-gray-200 dark:border-gray-700"
-        >
+        <Card>
           <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Activité collaborative</h3>
 
           <!-- Team Online -->
@@ -121,7 +117,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </Card>
 
         <!-- Right Column: Sources & Relevance -->
       </div>
@@ -177,6 +173,7 @@ import { useQuery } from '@pinia/colada'
 import { useRouter } from 'vue-router'
 
 import head from '@/assets/chapse/head.svg'
+import Card from '@/components/ui/Card.vue'
 
 // Only access auth on client side
 const { user } = useAuth()

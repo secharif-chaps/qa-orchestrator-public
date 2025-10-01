@@ -2,7 +2,7 @@
   <div class="space-y-6">
     <!-- Company Info Card - Full Width -->
     <div class="flex gap-4">
-      <div class="bg-bg1 flex-1 shadow-shadow-2 rounded-card border border-border-2 p-6">
+      <Card>
         <div class="flex items-start gap-6">
           <!-- Logo -->
 
@@ -75,11 +75,9 @@
             <!-- Social Media -->
           </div>
         </div>
-      </div>
+      </Card>
 
-      <div
-        class="bg-bg1 shadow-shadow-2 rounded-card border border-border-2 p-6 flex flex-col gap-4 max-w-xs"
-      >
+      <Card>
         <p>Présence en ligne</p>
         <div class="flex bg-bg2 items-center gap-3 rounded-card px-4 py-3">
           <i class="fa-solid fa-link fa-fw text-primary"></i>
@@ -107,7 +105,7 @@
             </Badge>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
 
     <div>
@@ -156,6 +154,7 @@ import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { TaskType, TaskStatus } from '@/types/task'
 import Badge from '@/components/ui/Badge.vue'
+import Card from '@/components/ui/Card.vue'
 
 const router = useRouter()
 const route = useRoute()

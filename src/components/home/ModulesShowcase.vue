@@ -2,15 +2,12 @@
   <div class="space-y-6">
     <!-- Modules Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <div
+      <Card
         v-for="module in modules"
         :key="module.name"
-        :class="[
-          'relative bg-bg1 rounded-card shadow-lg',
-          'transition-all duration-300 hover:scale-[1.02] cursor-pointer overflow-hidden',
-          'hover:shadow-shadow-2 dark:hover:shadow-gray-800/25',
-          module.soon ? 'opacity-75 shadow-none' : '',
-        ]"
+        hoverable
+        clickable
+        :disabled="module.soon"
       >
         <!-- Card Header with Avatar and Title -->
         <div class="p-6 pb-4">
@@ -92,7 +89,7 @@
             />
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   </div>
 </template>
@@ -102,6 +99,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Badge from '@/components/ui/Badge.vue'
 import Button from '@/components/ui/Button.vue'
+import Card from '../ui/Card.vue'
 
 interface Module {
   name: string
