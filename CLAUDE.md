@@ -1,301 +1,719 @@
 # Claude AI Assistant Instructions
 
-## Important: Project Documentation
+## 📁 Project Structure
 
-This project maintains detailed documentation in the `.claude/` folder that MUST be followed:
+```
+mint-front/
+├── .claude/
+│   ├── agents/                    # Specialized AI agents
+│   │   └── frontend-design-system-dev.md
+│   └── commands/                  # Custom slash commands
+│       └── commit.md
+├── src/
+│   ├── api/                       # API functions (fetch wrappers)
+│   ├── components/
+│   │   ├── ui/                   # Base UI components (Alert, Input, Button, Badge, Card)
+│   │   ├── layout/               # Layout components
+│   │   └── features/             # Feature-specific components
+│   ├── composables/              # Composition functions
+│   ├── stores/                   # Pinia stores (global state)
+│   ├── queries/                  # Pinia Colada queries (data fetching)
+│   ├── pages/                    # Page components (file-based routing)
+│   ├── plugins/                  # Vue plugins
+│   ├── utils/                    # Utility functions
+│   ├── assets/                   # Static assets (CSS, images)
+│   ├── main.ts                   # App entry point
+│   └── App.vue                   # Root component
+├── public/                        # Public static files
+└── CLAUDE.md                      # This file
+```
 
-- **Project Overview**: See `.claude/index.md` for setup and architecture
-- **Git Commits**: Always follow `.claude/git-commit-guide.md` for ALL commits
-- **Theme Guidelines**: Follow `.claude/theme.md` for styling and color system
-- **API Patterns**: Use `.claude/api-patterns.md` for API integration patterns
-- **Permission System**: Follow `.claude/permissions.md` for implementing access control
-- **Routing**: See `.claude/routing.md` for Vue Router patterns and file-based routing
-- **Test Users**: Use `.claude/test-users.md` for testing different permission levels
+---
 
-## Key Requirements
+# MINT Frontend Application
 
-1. **ALWAYS** check and follow the guidelines in `.claude/` folder before performing any task
-2. **NEVER** commit without following the git commit format with gitmojis
-3. When in doubt, read the relevant `.claude/` documentation first
-4. Run tests before committing when available (yarn test:all)
-5. **ALWAYS** implement proper permission checks using resource-based composables
-6. Use test users from `.claude/test-users.md` to verify permission functionality
+A modern Vue 3 application with TypeScript, Tailwind CSS v4, and comprehensive tooling for monitoring companies online.
 
-## Git Commit Format (Quick Reference)
+## Project Overview
 
-Format: `<gitmoji> <type>(<scope>): <description>`
+### User Application Workflow
 
-Examples:
+🗂️ **Workspaces**
+- Users create company cards to monitor companies' information online
+- A user always belongs to a workspace
+- Company cards are shared within a workspace
 
-- `✨ feat(companies): add new company listing feature`
-- `🐛 fix(auth): resolve login redirect issue`
-- `💄 style(ui): improve button hover states`
-- `♻️ refactor(api): restructure API client`
-- `🔧 chore(deps): update dependencies`
+🔄 **Company Lifecycle & Tasks**
+- Creating a company card triggers tasks that find specific information online via n8n workflows
+- Frontend monitors task status and calls the backend to start tasks
 
-## Project Stack
+**Key Components**: User, Company, Workspace, Tasks
 
-- Vue 3 + TypeScript
-- Pinia for state management
-- Vue Router for navigation
-- Tailwind CSS for styling
-- Workspace-based multi-tenancy
-- Keycloak for authentication & authorization
-- Resource-based permission system
+**User Experience**:
+1. Dashboard: See stats and recent companies
+2. Companies List View: Browse all companies
+3. Company View: Detailed information about a company
 
-## Permission System
+---
 
-This project implements a granular permission system:
+## 🛠️ Tech Stack
 
-- **Resource-based composables**: Use `useCompanyPermissions()` for company-related features
-- **Route guards**: All pages have permission requirements defined in `<route>` blocks
-- **UI conditional rendering**: Hide/show elements based on user permissions
-- **Backend integration**: Permissions are synced between Keycloak and database
+- **Framework**: Vue 3 with Composition API + `<script setup lang="ts">`
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **UI Components**: Custom design system + Reka UI
+- **State Management**: Pinia (global state)
+- **Data Fetching**: Pinia Colada (queries & mutations)
+- **Routing**: Vue Router + unplugin-vue-router (file-based)
+- **Authentication**: Keycloak with role-based permissions
+- **Architecture**: Workspace-based multi-tenancy
+
+---
+
+## 📋 Development Standards
+
+### Core Principles
+
+1. **ALWAYS** use Composition API with `<script setup lang="ts">`, **NEVER** Options API
+2. **ALWAYS** use TypeScript, prefer `interface` over `type`
+3. **ALWAYS** use Tailwind CSS classes, avoid manual CSS
+4. **DO NOT** hard-code colors, use semantic color classes
+5. **ALWAYS** use named functions for methods, arrow functions only for callbacks
+6. **ALWAYS** prefer named exports over default exports
+7. Add meaningful comments explaining **why**, not **what**
+
+### File Organization
+
+- Keep types alongside code
+- Keep tests alongside files: `Button.vue` + `Button.spec.ts`
+- Use consistent PascalCase for component files
+- Use kebab-case for other files
+
+### Dev Environment
+
+- Dev server runs on `http://localhost:3000` with HMR
+- **NEVER** launch the dev server yourself (it's already running)
+
+---
+
+## 🎯 Specialized Agents
+
+This project uses specialized agents for specific domains. Use them proactively:
+
+### Frontend Design System Agent (`frontend-design-system-dev`)
+
+**Use for**: All frontend UI/UX development, component creation, styling, and design system compliance
+
+**Responsibilities**:
+- Creating/modifying UI components and pages
+- Implementing features requiring design system compliance
+- Refactoring frontend code to match standards
+- Building forms, layouts, interactive elements
+- Ensuring WCAG AAA accessibility compliance
+- Reviewing code for design system adherence
+
+**Knowledge**: Complete design system (colors, typography, spacing, shadows), custom UI components (Alert, Input, Button, Badge, Card), Vue 3 best practices, routing patterns, permissions, data fetching, accessibility, responsive design
+
+**When to use**:
+- Building new pages or components
+- Implementing forms or interactive features
+- Fixing styling or UI issues
+- Ensuring accessibility compliance
+- Reviewing frontend code
+
+**Location**: `.claude/agents/frontend-design-system-dev.md`
+
+### Smart Commit Agent (`/commit`)
+
+**Use for**: Automated git commit creation and management
+
+**Responsibilities**:
+- Analyzes all git changes intelligently
+- Groups changes logically by scope and type
+- Creates multiple focused commits (not one giant commit)
+- Follows gitmoji + conventional commits format
+- Includes detailed descriptions and Claude footer
+- Pushes everything to `origin/main`
+
+**When to use**: When you have multiple changes to commit and want intelligent grouping
+
+**Location**: `.claude/commands/commit.md`
+
+---
+
+## 🔐 Permission System
+
+### Overview
+
+The application implements a granular, resource-based permission system integrated with Keycloak.
+
+### Permission Model
+
+Permissions are derived from Keycloak roles and stored in the database:
+- Permissions are checked at **route level** (navigation guards)
+- Permissions are checked at **component level** (conditional rendering)
+- Backend API endpoints validate permissions
 
 ### Available Permissions
 
-- `company.create`, `company.delete`, `company.view`
-- `workspace.read`, `workspace.write`
-- `admin.workspaces`
+**Company Permissions**:
+- `company.view` - View company details
+- `company.create` - Create new companies
+- `company.delete` - Delete companies
 
-### Testing Permissions
+**Workspace Permissions**:
+- `workspace.read` - Access team page (read-only)
+- `workspace.write` - Manage workspace users and settings
 
-Use test users defined in `.claude/test-users.md` to test different permission scenarios.
+**Admin Permissions**:
+- `admin.workspaces` - Admin access to workspace management
 
-## Design System
+### Implementing Permissions
 
-### Typography
+#### Route-Level Protection
 
-- **Font Family**: Hanken Grotesk
-- **Font Weights**: Regular (400), Semibold (600), Bold (700)
-- **Optical Sizing**: Auto
+```vue
+<template>
+  <div>Your protected page</div>
+</template>
 
-#### Type Scale
+<route lang="yaml">
+meta:
+  permissions:
+    - admin.workspaces
+    - workspace.write
+  requiresAuth: true
+  title: "Page Title"
+</route>
+```
 
-**Headlines:**
-- `headline.3xl`: 24px / Bold / Line-height: 31px
-- `headline.2xl`: 20px / Regular / Line-height: 26px
-- `headline.lg`: 16px / Bold, Semibold, Regular / Line-height: 22px
+**Permission Logic**: OR - user needs **any one** of the specified permissions
 
-**Body Text:**
-- `text.base`: 14px / Bold, Semibold, Regular / Line-height: 18px
-- `text.sm`: 12px / Bold, Semibold, Regular / Line-height: 16px
-- `text.xs`: 11px / Bold, Semibold, Regular / Line-height: 14px
+#### Component-Level Checks
 
-#### Writing Tone
+```vue
+<script setup lang="ts">
+import { useAuthStore } from '@/stores/auth'
+import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 
-- **Précis, sans rigidité**: Direct and clear messages without complexity
-- **Engageant**: Positive vocabulary, avoiding technical jargon
-- **Assertif mais accessible**: Active voice with clear definitions
-- **Clair**: Important information highlighted with subtle conviviality
+const authStore = useAuthStore()
+const { canCreateCompany, canEditCompany, canDeleteCompany } = useCompanyPermissions()
+</script>
 
-### Color Palette
+<template>
+  <div>
+    <Button v-if="canCreateCompany" variant="primary" label="Create Company" />
+    <Button v-if="canDeleteCompany" variant="secondary" color="danger" label="Delete" />
+  </div>
+</template>
+```
 
-The design system is built around a harmonious and modern palette with five main color families, each with 10 intensity levels (50-950).
+#### Resource-Based Composables
 
-#### Primary Colors
+**Company Permissions** (`useCompanyPermissions`):
+- `canCreateCompany` - Permission to create companies
+- `canEditCompany` - Permission to edit companies
+- `canDeleteCompany` - Permission to delete companies
+- `canViewCompany` - Permission to view company details
+- `canManageCompanies` - Edit OR delete permission
+- `hasAnyCompanyAccess` - Any company permission
 
-- **Sage** (Primary - #5D7374)
-  - Usage: Primary CTAs, navigation elements, selections, tags, and illustrations
-  - Conveys calm and reliability
+**Auth Store Methods**:
+- `hasPermission(permission: string)` - Check single permission
+- `hasRole(role: string)` - Check single role
+- `hasAnyRole(roles: string[])` - Check if user has any of the roles (OR logic)
+- `hasAllRoles(roles: string[])` - Check if user has all roles (AND logic)
 
-- **Almond** (Secondary - #DCEFE3)
-  - Usage: Background accents, secondary CTAs, subtle highlights
-  - Adds freshness and lightness
+### Test Users
 
-- **Rose** (Tertiary - #EFC9F3)
-  - Usage: Emotional touches, separators, secondary tags
-  - Brings warmth and engagement
+See **Test Users** section below for credentials to test different permission scenarios.
 
-#### Semantic Colors
+---
 
-- **Success (Green - #29AD72)**: Successful actions, validation, confirmation
-- **Warning (Orange - #5FA884)**: Warnings, calls to attention
-- **Error (Red - #DB1C50)**: Errors, blockages, critical actions
-- **Information (Blue - #3CB6DA)**: Neutral information, guidance
+## 🗺️ Routing System
 
-#### Neutral Colors
+### File-Based Routing
 
-- **Black (#1B211E)**: Text, titles, tertiary CTAs
-- **White (#F2F2F3)**: Primary backgrounds
-- **Gray Scale**: Secondary CTAs, avatars, discrete elements
+Routes are automatically generated from `src/pages/` directory structure using `unplugin-vue-router`.
 
-#### Color Distribution Guidelines
+#### Basic Patterns
 
-To maintain visual hierarchy and balance:
-- **40% White**: Dominant surface color for clarity and breathing space
-- **20% Sage**: Primary identity color for main CTAs and navigation
-- **15% Black**: Text readability and visual contrast
-- **5% Gray**: Discrete structural elements
-- **5% Almond**: Background accents and complementary touches
-- **5% Rose**: Emotional accents used sparingly
+```
+src/pages/
+├── index.vue                    → "/"
+├── about.vue                    → "/about"
+├── users/
+│   ├── index.vue               → "/users"
+│   ├── [id].vue                → "/users/:id"
+│   ├── [id]/
+│   │   └── edit.vue            → "/users/:id/edit"
+│   └── create.vue              → "/users/create"
+└── [...path].vue               → "/*" (catch-all)
+```
 
-### Gradients
+#### Route Groups
 
-- **Brand Gradient**: Almond 200 → Sage 600 (for brand elements)
-- **AI Gradient**: Almond 400 → Rose 500 (temporary, will be updated)
+Organize files without affecting URLs using parentheses:
 
-### Accessibility
+```
+src/pages/
+├── (admin)/
+│   ├── dashboard.vue          → "/dashboard"
+│   └── users.vue              → "/users"
+├── (public)/
+│   ├── login.vue              → "/login"
+│   └── register.vue           → "/register"
+```
 
-All color combinations must meet WCAG AAA standards:
-- Minimum contrast ratio of 7:1 for normal text
-- Minimum contrast ratio of 4.5:1 for large text
-- Test all combinations before implementation
+#### Breaking Out of Layouts
 
-#### Approved Color Combinations (WCAG AAA Compliant)
+Use dot notation to bypass parent layouts:
 
-**Text on Backgrounds:**
-- ✅ Black text on White background (16.47:1)
-- ✅ Black text on Almond-100 background (13.72:1)
-- ✅ Black text on Rose-200 background (11.23:1)
-- ✅ White text on Sage-600 background (5.04:1)
-- ✅ Sage-700 text on Almond-100 background (5.43:1)
-- ✅ Sage-700 text on White background (16.47:1)
-- ✅ Sage-800 text on Sage-200 background (5.79:1)
-- ✅ Rose-800 text on Rose-100 background (4.94:1)
-- ✅ Gray-500 text on White background (4.88:1)
-
-**Semantic Colors:**
-- ✅ Green-500 text on White background (5.74:1)
-- ✅ Orange-400 text on Black background (7.98:1)
-- ✅ Red-600 text on White background (7.98:1)
-- ✅ Blue-400 text on Black background (6.98:1)
-
-**Dark Mode Combinations:**
-- ✅ White text on Sage-950 background (8.15:1)
-- ✅ Sage-300 text on Sage-950 background (6.26:1)
-- ✅ Rose-200 text on Sage-950 background (8.15:1)
-- ✅ Almond-400 text on Black background (8.59:1)
-
-#### Forbidden Color Combinations (Insufficient Contrast)
-
-**Never use these combinations for text:**
-- ❌ Rose-200 on White background (1.47:1)
-- ❌ Rose-200 on Rose-100 background (1.29:1)
-- ❌ Almond-100 on White background (1.20:1)
-- ❌ Gray-300 on White background (2.10:1)
-- ❌ Gray-400 on Gray-100 background (2.74:1)
-- ❌ Sage-400 on Sage-100 background (2.61:1)
-- ❌ Gray-500 on Sage-950 background (2.45:1)
-- ❌ Sage-600 on Sage-950 background (1.20:1)
-
-#### Best Practices for Color Usage
-
-1. **Primary Text**: Always use Black on light backgrounds or White on dark backgrounds
-2. **Interactive Elements**: Ensure CTAs and buttons have sufficient contrast in all states (default, hover, active, disabled)
-3. **Status Colors**: When using semantic colors, always pair with appropriate backgrounds:
-   - Success (Green): Use on white or very dark backgrounds
-   - Error (Red): Use on white or light backgrounds
-   - Warning (Orange): Use on dark backgrounds
-   - Information (Blue): Use on dark backgrounds
-4. **Testing**: Always verify contrast ratios using tools before implementation
-5. **Fallbacks**: Provide additional visual indicators beyond color alone (icons, borders, patterns)
-
-### Spacing System
-
-The design follows a **4px grid system** for consistent spacing:
-
-#### Spacing Scale
-- `none`: 0px
-- `3xs`: 4px (0.25rem)
-- `2xs`: 8px (0.5rem)
-- `xs`: 12px (0.75rem)
-- `md`: 16px (1rem)
-- `lg`: 20px (1.25rem)
-- `xl`: 24px (1.5rem)
-- `2xl`: 32px (2rem)
-- `3xl`: 36px (2.25rem)
-- `4xl`: 40px (2.5rem)
+```
+src/pages/
+├── users.vue                  → Layout for /users/*
+├── users/
+│   ├── index.vue             → Uses users.vue layout
+│   └── [id].vue              → Uses users.vue layout
+└── users.create.vue          → "/users/create" (NO layout)
+```
 
 #### Best Practices
-- Use 4px or 8px as base for all spacing
-- Related elements: smaller spacing (4px)
-- Separate sections: larger spacing (16px, 24px, 32px)
-- Combine with modular grid for structure
 
-### Shadow System
+- **AVOID** files named `index.vue`, use groups: `(home).vue` instead
+- **ALWAYS** use explicit param names: `[userId].vue` not `[id].vue`
+- Use `[[paramName]]` for optional parameters
+- Use `+` modifier for repeatable params: `[[slug]]+.vue`
+- Refer to `typed-router.d.ts` for route names and parameters
+- Prefer named route locations: `router.push({ name: '/users/[userId]', params: { userId } })`
 
-#### Standard Shadows
-- `shadow-1`: Light elevation - subtle cards
-- `shadow-2`: Medium elevation - hover states
-- `shadow-3`: High elevation - modals
-- `shadow-4`: Maximum elevation - floating elements
-- `shadow-inner`: Inset shadow for inputs
-- `shadow-volume`: Complex multi-layer shadow
+---
 
-#### Colored Shadows (Semantic)
-- Pink shadow for Rose elements
-- Green shadow for Success states
-- Blue shadow for Information
-- Orange shadow for Warnings
-- Red shadow for Errors
+## 🔌 API & Data Fetching
 
-### Border Radius
+### Architecture
 
-- `rounded-full` (2000px): CTAs, icon buttons, avatars
-- `rounded-2xl` (16px): Cards, triggers, moderate rounding
-- `rounded-3xl` (24px): Important blocks, containers
+```
+API Layer (src/api/) → Queries (src/queries/) → Components
+                     ↓
+                 Mutations (src/mutations/)
+```
 
-### Blur Effects
+### API Functions (`src/api/`)
 
-- **Frosted Cloud**: Light, airy interfaces (30% opacity)
-- **Frosted Glass**: Cold, minimal effect (25% opacity)
-- **Midnight Glass**: Dark mode vibrant (30% opacity)
-- **Default blur**: Simple implementation (30% opacity)
+Pure functions that make HTTP calls using `apiClient`:
 
-### Grid System
+```typescript
+import { apiClient } from './client'
+import type { Company } from '@/types/company'
 
-#### Breakpoints
-- `xs`: 480px (Mobile) - 2 columns
-- `sm`: 744px (Large mobile/tablet) - 4 columns
-- `md`: 1024px (Laptop) - 6 columns
-- `lg`: 1440px (Desktop) - 8 columns
-- `xl`: 1920px (Large desktop) - 12 columns
+// GET single resource
+export const getCompanyById = async (id: string) => {
+  return apiClient.get<Company>(`/companies/${id}`)
+}
 
-#### Grid Configuration
-- **Margins**: 16px (mobile), 24-32px (desktop)
-- **Gutters**: 16px (mobile), 24-32px (desktop)
-- **Default design target**: Desktop (1440px)
+// GET list with filters
+export const getCompanies = async (filters: { page: number; size: number }) => {
+  const params = new URLSearchParams({
+    page: filters.page.toString(),
+    size: filters.size.toString(),
+  })
+  return apiClient.get<PaginatedResponse<Company>>(`/companies?${params}`)
+}
 
-### Implementation Guidelines
+// POST create
+export const createCompany = async (data: CompanyCreate) => {
+  return apiClient.post<Company>('/companies', data)
+}
 
-1. **Use CSS Variables**: All design tokens should be CSS custom properties
-2. **Semantic Naming**: Use semantic names for colors, spacing, and shadows
-3. **Dark Mode**: Ensure all elements have appropriate dark mode variants
-4. **Consistency**: Always use tokens from the design system
-5. **4px Grid**: All spacing must be multiples of 4px
-6. **Accessibility First**: Test all combinations for WCAG compliance
-7. **Responsive Design**: Mobile-first approach with defined breakpoints
+// PUT update (full replacement)
+export const updateCompany = async (id: string, data: CompanyUpdate) => {
+  return apiClient.put<Company>(`/companies/${id}`, data)
+}
 
-## UI Components
+// PATCH update (partial)
+export const patchCompany = async (id: string, data: Partial<CompanyUpdate>) => {
+  return apiClient.patch<Company>(`/companies/${id}`, data)
+}
 
-- **ALWAYS use custom UI components** from `@/components/ui/` instead of third-party libraries when available:
-  - **Alert**: Use `Alert` component instead of `OAlert` (Feathers) or `RAlert` (Reka)
-    - For warnings, errors, info messages, and important notifications
-  - **Input**: Use `Input` component instead of `OInput` (Feathers)
-    - For all form inputs, search fields, and text entry
-  - **Badge**: Use `Badge` component instead of any third-party badge/chip/tag components
-    - For status indicators, counts, labels, tags, and small metadata
-- These custom components provide:
-  - Theme-aware styling that works in both light and dark modes
-  - Consistent design language across the application
-  - Subtle gradients and modern aesthetics
-  - Better TypeScript support
-- See `src/components/CLAUDE.md` for detailed component usage and examples
+// DELETE
+export const deleteCompany = async (id: string) => {
+  await apiClient.delete(`/companies/${id}`)
+}
+```
 
-## Smart Commit Agent
+**Key Points**:
+- Always return typed responses
+- Use URLSearchParams for query parameters
+- Keep functions pure and focused
+- Use PUT for full replacement, PATCH for partial updates
+- Let Pinia Colada handle errors (don't wrap in try/catch)
 
-Use `/commit` to automatically analyze changes, group them intelligently, and create well-structured commits:
-- Analyzes all git changes and groups them logically by scope
-- Creates multiple focused commits (not one giant commit)
-- Follows gitmoji + conventional commits format automatically
-- Includes detailed descriptions and Claude footer
-- Pushes everything to origin/main
+### Queries (`src/queries/`)
 
-See `.claude/commit-agent.md` for full documentation.
+Queries fetch data using `defineQueryOptions` from Pinia Colada:
 
-## Important Reminders
+```typescript
+import { defineQueryOptions } from '@pinia/colada'
+import { getCompanies, getCompanyById } from '@/api/companies'
 
-- Use `/commit` for automatic intelligent commits, or commit manually when explicitly asked
-- Include Claude footer in commit messages
-- Follow existing code patterns and conventions
+// Define query keys for cache management
+export const COMPANY_QUERY_KEYS = {
+  root: ['companies'] as const,
+  byId: (id: string) => [...COMPANY_QUERY_KEYS.root, id] as const,
+  withFilters: (filters: { page: number; size: number }) =>
+    [...COMPANY_QUERY_KEYS.root, { filters }] as const,
+}
+
+// Query for single company
+export const companyByIdQuery = defineQueryOptions(({ id }: { id: string }) => ({
+  key: COMPANY_QUERY_KEYS.byId(id),
+  query: () => getCompanyById(id),
+}))
+
+// Query for company list with filters
+export const companiesQuery = defineQueryOptions(
+  ({ filters }: { filters: { page: number; size: number } }) => ({
+    key: COMPANY_QUERY_KEYS.withFilters(filters),
+    query: () => getCompanies(filters),
+  })
+)
+```
+
+**Query Key Patterns**:
+- Use consistent naming: `RESOURCE_QUERY_KEYS`
+- Structure keys hierarchically
+- Include parameters in keys for proper caching
+
+### Mutations (`src/mutations/`)
+
+Mutations create, update, or delete data using `defineMutation`:
+
+```typescript
+import { ref } from 'vue'
+import { defineMutation, useMutation } from '@pinia/colada'
+import { createTask } from '@/api/tasks'
+import type { TaskCreate } from '@/types/task'
+
+// Mutation with reactive refs
+export const useCreateTask = defineMutation(() => {
+  const companyId = ref<number | null>(null)
+  const taskType = ref<string>('')
+
+  const { mutate, ...mutation } = useMutation({
+    mutation: (task: TaskCreate) => createTask(task),
+  })
+
+  return {
+    ...mutation,
+    createTask: () => {
+      if (!companyId.value || !taskType.value) {
+        throw new Error('Company ID and task type are required')
+      }
+      return mutate({
+        company_id: companyId.value,
+        type: taskType.value,
+        status: 'pending',
+      })
+    },
+    companyId,
+    taskType,
+    mutate,
+  }
+})
+
+// Simple mutation without refs
+export const useDeleteCompany = defineMutation(() => {
+  const { mutate, ...mutation } = useMutation({
+    mutation: (id: string) => deleteCompany(id),
+  })
+
+  return {
+    ...mutation,
+    deleteCompany: mutate,
+  }
+})
+```
+
+### Using in Components
+
+```vue
+<script setup lang="ts">
+import { useQuery } from '@pinia/colada'
+import { companyByIdQuery } from '@/queries/companies'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
+// Query with route params
+const { data: company, isLoading, error } = useQuery(
+  companyByIdQuery,
+  () => ({ id: route.params.id as string })
+)
+
+// Query with reactive parameters
+const page = ref(1)
+const size = ref(10)
+const { data: companies } = useQuery(
+  companiesQuery,
+  () => ({ filters: { page: page.value, size: size.value } })
+)
+</script>
+
+<template>
+  <div v-if="isLoading">Loading...</div>
+  <div v-else-if="error">Error: {{ error.message }}</div>
+  <div v-else>
+    <h1>{{ company?.name }}</h1>
+    <!-- Use data -->
+  </div>
+</template>
+```
+
+### Best Practices
+
+1. **Type Everything**: Always define types for API responses
+2. **Consistent Query Keys**: Use hierarchical key structures
+3. **Error Handling**: Let Pinia Colada handle errors
+4. **Optimistic Updates**: Use mutation options for better UX
+5. **Query Invalidation**: Invalidate queries after mutations
+6. **Loading States**: Always handle loading, error, and empty states
+7. **No Direct API Calls**: Never call API functions directly in components
+
+---
+
+## ✅ Git Commit Format
+
+**Format**: `<gitmoji> <type>(<scope>): <description>`
+
+### Common Gitmojis
+
+- ✨ `:sparkles:` - New feature
+- 🐛 `:bug:` - Bug fix
+- 💄 `:lipstick:` - UI/styling
+- ♻️ `:recycle:` - Refactoring
+- 🔧 `:wrench:` - Configuration
+- 🔥 `:fire:` - Remove code/files
+- ⚡ `:zap:` - Performance
+- 🗃️ `:card_file_box:` - Database
+- 📝 `:memo:` - Documentation
+
+### Commit Types
+
+- `feat` - New feature
+- `fix` - Bug fix
+- `style` - UI/styling changes
+- `refactor` - Code refactoring
+- `perf` - Performance improvements
+- `chore` - Configuration, dependencies
+- `docs` - Documentation
+
+### Common Scopes
+
+- `sidebar`, `layout`, `components`, `pages`, `ui`, `stores`
+- `auth`, `workspace`, `company`, `tasks`
+- `api`, `db`, `config`, `tests`
+
+### Examples
+
+```bash
+✨ feat(companies): add new company listing feature
+🐛 fix(auth): resolve login redirect issue
+💄 style(ui): improve button hover states
+♻️ refactor(api): restructure API client
+🔧 chore(deps): update dependencies
+```
+
+### Claude Footer
+
+Always include in commit messages:
+
+```
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+---
+
+## 👥 Test Users
+
+All test users are linked to **Workspace ID 1** (ChapsVision workspace).
+
+### 1. Admin User (Full Access)
+
+```
+Username: admin
+Password: admin123
+Email: admin@test.com
+```
+
+**Permissions**: All permissions
+
+**Expected Behavior**:
+- ✅ Sees all sidebar links (home, search, companies, team, workspaces)
+- ✅ Can create, edit, and delete companies
+- ✅ Can manage team members
+- ✅ Has access to all routes
+
+### 2. Company Manager
+
+```
+Username: company_manager
+Password: manager123
+Email: manager@test.com
+```
+
+**Permissions**: `company.view`, `company.create`, `company.delete`
+
+**Expected Behavior**:
+- ✅ Can manage companies (create, edit, delete)
+- ❌ Cannot see team link
+- ❌ Cannot access workspace admin
+
+### 3. Company Viewer
+
+```
+Username: company_viewer
+Password: viewer123
+Email: viewer@test.com
+```
+
+**Permissions**: `company.view`
+
+**Expected Behavior**:
+- ✅ Can view companies (read-only)
+- ❌ Cannot create/edit/delete companies
+- ❌ Cannot access team page
+- ✅ Sees "Read-only access" messages
+
+### 4. Team Viewer
+
+```
+Username: team_viewer
+Password: teamviewer123
+Email: teamviewer@test.com
+```
+
+**Permissions**: `workspace.read`, `company.view`
+
+**Expected Behavior**:
+- ✅ Can access team page (read-only)
+- ✅ Can view companies
+- ❌ Cannot add/edit/disable users
+- ❌ Cannot create/edit/delete companies
+
+### 5. Team Manager
+
+```
+Username: team_manager
+Password: teammanager123
+Email: teammanager@test.com
+```
+
+**Permissions**: `workspace.read`, `workspace.write`, `company.view`
+
+**Expected Behavior**:
+- ✅ Can manage team members (add, edit, disable)
+- ✅ Can view companies
+- ❌ Cannot create/edit/delete companies
+
+### 6. No Access User
+
+```
+Username: no_access
+Password: noaccess123
+Email: noaccess@test.com
+```
+
+**Permissions**: None
+
+**Expected Behavior**:
+- ✅ Can only see home link
+- ❌ Gets 403 on most routes
+- ❌ Sees permission denied messages
+
+### Creating Test Users
+
+Run from the mint-new repository root:
+
+```bash
+./create_test_users.sh
+```
+
+---
+
+## 🔍 Development Workflow
+
+### Standard Workflow
+
+1. Plan your tasks, review with user
+2. Write code following [project structure](#project-structure) and [standards](#development-standards)
+3. Test implementations:
+   - Write tests for logic and components
+   - Use Playwright MCP server to test like a real user
+4. Stage changes with `git add` once feature works
+5. Review changes and analyze need for refactoring
+6. Use `/commit` or commit manually with proper format
+
+### Testing with Playwright MCP
+
+1. Navigate to the relevant page
+2. Wait for content to load completely
+3. Test primary user interactions
+4. Test secondary functionality (error states, edge cases)
+5. Check JS console for errors/warnings
+6. Document and fix any bugs immediately
+
+---
+
+## 📚 Project Commands
+
+### Frequently Used
+
+```bash
+# Build for production
+pnpm run build
+
+# Run all tests
+pnpm run test
+
+# Run specific test files
+pnpm exec vitest run <test-files>
+
+# Check test coverage
+pnpm exec vitest run --coverage
+```
+
+---
+
+## 🔗 Research & Documentation
+
+- **NEVER** hallucinate or guess URLs
+- **ALWAYS** try accessing `llms.txt` first (e.g., `https://pinia-colada.esm.dev/llms.txt`)
+- **ALWAYS** follow existing links in documentation indices
+- Verify examples and patterns from documentation before using
+
+---
+
+## 🎯 Key Reminders
+
+1. Use appropriate specialized agents for frontend work or commits
+2. Follow git commit format with gitmojis
+3. Always implement permission checks
+4. Use custom UI components from `@/components/ui/`
+5. Follow design system guidelines (use the frontend agent)
+6. Keep code TypeScript-strict
+7. Test with appropriate test users
+8. Use Pinia Colada for data fetching
+9. Never bypass authentication or permissions
+10. Follow existing code patterns and conventions
+
+---
+
+## 📖 Additional Documentation
+
+- **Frontend Design System**: `.claude/agents/frontend-design-system-dev.md`
+- **Commit Agent**: `.claude/commands/commit.md`
+- **Component Guidelines**: `src/components/CLAUDE.md`
+- **Page Routing**: `src/pages/CLAUDE.md`
