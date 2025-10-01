@@ -52,6 +52,7 @@ Use opacity modifiers with colors for better dark mode compatibility:
 ❌ **Avoid**: `bg-blue-100` (looks bad in dark mode)
 
 Common opacity values:
+
 - `/10` - Very subtle backgrounds
 - `/20` - Subtle backgrounds
 - `/50` - Medium opacity
@@ -83,44 +84,10 @@ Common opacity values:
 The semantic colors automatically adjust for dark mode. The CSS variables are defined separately for light and dark themes in `main.css`.
 
 Current behavior:
+
 - Background colors invert (light → dark)
 - Text colors adjust for contrast
 - Primary colors may shift hue for better visibility
-
-## Available Themes
-
-The application supports multiple color themes:
-- `indigo` (default)
-- `boston`
-- `emerald`
-- `pink`
-- `rose`
-- `orange`
-- `sage`
-
-Each theme defines its own primary color and sidebar colors while maintaining the same semantic structure.
-
-## Adding New Themes
-
-To add a new theme:
-
-1. Define the theme in `main.css`:
-
-```css
-[data-theme='your-theme'] {
-  --theme-color-primary: var(--color-your-color-600);
-  --theme-color-sidebar: var(--color-your-color-500);
-}
-
-[data-theme='your-theme'].dark {
-  --theme-color-primary: var(--color-your-color-400);
-  --theme-color-sidebar: var(--color-your-color-300);
-  --theme-color-sidebar-content: var(--color-your-color-900);
-}
-```
-
-2. Add any custom color definitions if needed in the `@theme inline` section
-3. Update the theme switcher component to include the new theme
 
 ## Best Practices
 
@@ -133,29 +100,23 @@ To add a new theme:
 ## Common Patterns
 
 ### Interactive Elements
+
 ```vue
 <!-- Button -->
-<button class="bg-primary text-white hover:bg-primary/80 transition-colors">
-
-<!-- Link -->
-<a class="text-primary hover:text-primary/80 transition-colors">
-
-<!-- Card with hover -->
-<div class="bg-bg1 hover:bg-bg2 border border-border-2 transition-colors">
+<button class="bg-primary text-white hover:bg-primary/80 transition-colors"></button>
 ```
 
 ### Status Indicators
+
 ```vue
 <!-- Success -->
-<div class="text-success bg-success/10 border border-success/20">
-
-<!-- Error -->
-<div class="text-error bg-error/10 border border-error/20">
+<div class="text-success bg-success/10 border border-success/20"></div>
 ```
 
 ### Disabled States
+
 ```vue
-<button class="bg-primary/50 text-white/50 cursor-not-allowed">
+<button class="bg-primary/50 text-white/50 cursor-not-allowed"></button>
 ```
 
 ## DO NOT
