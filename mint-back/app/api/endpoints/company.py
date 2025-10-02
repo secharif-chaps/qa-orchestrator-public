@@ -30,6 +30,19 @@ router = APIRouter(
     tags=["companies"]
 )
 
+@router.get("/recent", response_model=List[CompanyResponse])
+async def get_recent_companies(
+    limit: int = Query(5, ge=1, le=20, description="Number of recent companies to return"),
+    service: CompanyService = Depends(get_company_service),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+):
+    """Get recent companies with their folder information"""
+    print(f"🏢 GET /companies/recent - User: {workspace_context.username}, Limit: {limit}")
+    return service.get_recent_companies(
+        workspace_id=workspace_context.workspace_id,
+        limit=limit
+    )
+
 @router.get("/", response_model=PaginatedResponse[CompanyResponse])
 async def get_companies(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
@@ -44,11 +57,11 @@ async def get_companies(
 ):
     """Get paginated companies for the current workspace"""
     effective_per_page = size if size is not None else per_page
-    
+
     # Single line request log
     filter_info = f"name='{name}'" if name else "no filters"
     print(f"🏢 GET /companies - User: {workspace_context.username} - Page: {page}, Size: {effective_per_page}, {filter_info}")
-    
+
     pagination_params = PaginationParams(
         page=page,
         per_page=effective_per_page,
@@ -56,7 +69,7 @@ async def get_companies(
         order=order
     )
     return service.get_paginated_companies(
-        pagination_params, 
+        pagination_params,
         workspace_id=workspace_context.workspace_id,
         name_filter=name,
         include_archived=archived

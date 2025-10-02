@@ -95,7 +95,9 @@ class CompanyResponse(CompanyBase):
     created_at: datetime
     updated_at: datetime
     tasks: List[TaskResponse] = Field(default_factory=list)
-    
+    folder_id: Optional[str] = Field(None, description="Primary folder ID (if company is in folders)")
+    folder_name: Optional[str] = Field(None, description="Primary folder name (if company is in folders)")
+
     model_config = ConfigDict(from_attributes=True)
 
 class CompanyCSVRow(BaseModel):

@@ -466,6 +466,49 @@ class CompanyService:
             query = query.filter(Company.workspace_id == workspace_id)
         companies = query.all()
         return [_parse_json_fields(company) for company in companies]
+
+    def get_recent_companies(self, workspace_id: int, limit: int = 5) -> List[CompanyResponse]:
+        """Get recent companies with their folder information"""
+        from app.models.folder import FolderItem, Folder
+        from sqlalchemy import func
+
+        # Get recent companies ordered by created_at
+        companies = (
+            self.db.query(Company)
+            .filter(Company.workspace_id == workspace_id)
+            .filter(Company.is_deleted == False)
+            .order_by(Company.created_at.desc())
+            .limit(limit)
+            .all()
+        )
+
+        # Build response with folder information
+        company_responses = []
+        for company in companies:
+            # Parse JSON fields
+            company = _parse_json_fields(company)
+
+            # Find the first folder this company belongs to
+            folder_item = (
+                self.db.query(FolderItem, Folder)
+                .join(Folder, FolderItem.folder_id == Folder.id)
+                .filter(FolderItem.item_id == str(company.id))
+                .filter(FolderItem.item_type == 'company')
+                .filter(Folder.is_deleted == False)
+                .order_by(FolderItem.added_at.desc())  # Most recent folder first
+                .first()
+            )
+
+            # Create CompanyResponse with folder info
+            company_response = CompanyResponse.model_validate(company)
+            if folder_item:
+                folder_item_obj, folder_obj = folder_item
+                company_response.folder_id = str(folder_obj.id)
+                company_response.folder_name = folder_obj.name
+
+            company_responses.append(company_response)
+
+        return company_responses
     
     def validate_csv_companies(self, companies: List[CompanyCSVRow], workspace_id: int,
                                token_manager: TokenManager) -> CompanyCSVValidationResponse:
