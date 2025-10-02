@@ -2,6 +2,7 @@
   <!-- Card View -->
   <Card
     @click="handleCardClick"
+    clickable
     @mouseenter="isParentHovered = true"
     @mouseleave="isParentHovered = false"
   >

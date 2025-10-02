@@ -486,7 +486,7 @@ export default {
       csr: {
         title: "Responsabilité Sociale d'Entreprise",
         insights: {
-          title: 'Aperçu RSE',
+          title: 'AI-Generated Insights',
         },
         responsibility: 'Déclaration de responsabilité',
         responsibility_initiatives: 'Initiatives de responsabilité',

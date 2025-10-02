@@ -28,7 +28,7 @@
             <i class="fas fa-building text-primary text-xl"></i>
           </div>
         </div>
-        <div class="flex-1 min-w-0">
+        <div class="flex-1 min-w-0 w-52">
           <h3 class="text-lg font-semibold transition-colors truncate">
             {{ item.name }}
           </h3>
@@ -64,7 +64,7 @@
 
     <div class="flex items-center justify-between text-sm text-secondary">
       <span>{{ $t('folder.item.created', 'Created') }} {{ formatDate(item.created_at) }}</span>
-      <span v-if="item.owner_username">{{ item.owner_username }}</span>
+      <span v-if="item.owner">by @{{ item.owner }}</span>
     </div>
   </Card>
 

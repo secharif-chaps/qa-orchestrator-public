@@ -23,7 +23,7 @@ export interface FolderItem {
   created_at: string
   // Company metadata for preview
   name: string
-  owner_username?: string
+  owner?: string
   created_at_item: string
   website?: string
   showFallbackIcon?: boolean // For logo fallback state
@@ -39,7 +39,7 @@ export interface Folder {
   is_deleted: boolean
   created_at: string
   updated_at: string
-  owner_username: string
+  owner: string
   workspace_id: number
 
   // Items contained in this folder (populated when getting folder details)

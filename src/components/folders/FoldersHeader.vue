@@ -16,7 +16,7 @@
             </h1>
             <p class="text-secondary mt-2" v-if="folder">
               {{ folder.items?.length || 0 }} items • created on
-              {{ formatDate(folder.created_at) }} by {{ folder.owner_username }}
+              {{ formatDate(folder.created_at) }} by @{{ folder.owner }}
             </p>
           </div>
         </div>
@@ -42,15 +42,15 @@
       <div class="flex items-center justify-between gap-4 rounded-lg">
         <!-- Search Input -->
         <div class="flex-1 max-w-md relative">
-            <i
-              class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
-            ></i>
-            <input
-              v-model="searchTerm"
-              type="text"
-              :placeholder="$t('folder.search.placeholder', 'Search items...')"
-              class="w-full pl-10 pr-4 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary bg-bg1"
-            />
+          <i
+            class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
+          ></i>
+          <Input
+            v-model="searchTerm"
+            type="text"
+            icon="fa-solid fa-search"
+            :placeholder="$t('folder.search.placeholder', 'Search items...')"
+          />
         </div>
 
         <div class="flex gap-2">
@@ -72,7 +72,7 @@
             <!-- Dropdown Menu -->
             <div
               v-if="showAddItemsDropdown"
-              class="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 w-80 bg-bg2 border border-border-2 rounded-lg shadow-lg z-50"
+              class="absolute left-0 transform top-full mt-2 w-80 bg-bg1 border border-border-2 rounded-lg shadow-lg z-50"
             >
               <div class="p-2">
                 <!-- Company Screen - Enabled -->
@@ -163,6 +163,7 @@ import Button from '@/components/ui/Button.vue'
 import ButtonGroup from '@/components/ui/ButtonGroup.vue'
 import { useI18n } from 'vue-i18n'
 import type { Folder } from '@/types/folder'
+import Input from '../ui/Input.vue'
 
 interface Props {
   folder?: Folder | null

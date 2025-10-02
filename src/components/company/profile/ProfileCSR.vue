@@ -9,23 +9,9 @@
       </div>
 
       <!-- AI-Generated CSR Insights -->
-      <div v-if="company?.csr?.insights">
-        <Alert
-          variant="info"
-          icon="fa fa-robot"
-          decoration-icon="fa fa-sparkles"
-          :title="$t('profile.sections.csr.insights.title')"
-          :message="company.csr.insights"
-          :dismissible="false"
-        >
-          <template #status>
-            <div class="flex items-center space-x-1 text-xs text-info">
-              <i class="fa fa-brain"></i>
-              <span>AI Generated</span>
-            </div>
-          </template>
-        </Alert>
-      </div>
+      <ChapseAlert v-if="company?.csr?.insights" variant="mage">
+        {{ company.csr.insights }}
+      </ChapseAlert>
 
       <!-- CSR Responsibility Statement -->
       <div v-if="company?.csr?.responsibility">
@@ -228,7 +214,7 @@ import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Source from '../Source.vue'
-import Alert from '@/components/ui/Alert.vue'
+import ChapseAlert from '@/components/ui/ChapseAlert.vue'
 
 const route = useRoute()
 

@@ -1,7 +1,7 @@
 <template>
   <div
     :class="cardClasses"
-    class="bg-bg1 rounded-card p-4 shadow-shadow-2 flex flex-col gap-2 border border-sage-100"
+    class="bg-bg1 rounded-card p-4 shadow-shadow-2 flex flex-col gap-2 border border-sage-100 dark:border-sage-800"
   >
     <!-- Default slot for card content -->
     <slot />
