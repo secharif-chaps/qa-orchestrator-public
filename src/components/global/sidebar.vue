@@ -1,8 +1,9 @@
 <template>
   <div
     ref="sidebarEl"
-    class="w-[320px] flex flex-col justify-between fixed right-0 bg-sage-950 dark:bg-sidebar h-screen text-white pt-16 z-0 overflow-hidden"
-    @wheel.prevent="handleWheel"
+    class="w-[320px] flex flex-col justify-between fixed right-0 bg-sage-950 dark:bg-sidebar h-screen text-white pt-16 overflow-hidden"
+    :class="sidebarStore.isFullscreen ? 'z-[100]' : 'z-0'"
+    @wheel="handleWheel"
   >
     <Transition
       mode="out-in"
@@ -66,10 +67,31 @@ function handleWheel(event: WheelEvent) {
     ? event.deltaX
     : event.shiftKey ? event.deltaY : 0
 
+  // If no horizontal scroll detected, allow normal vertical/horizontal scrolling
   if (horizontalDelta === 0) return
 
+  // Check if the target element or its parents are scrollable horizontally
+  let target = event.target as HTMLElement
+  while (target && target !== sidebarEl.value) {
+    const hasHorizontalScroll = target.scrollWidth > target.clientWidth
+    const computedStyle = window.getComputedStyle(target)
+    const overflowX = computedStyle.overflowX
+
+    // If element is scrollable horizontally, allow native scroll
+    if (hasHorizontalScroll && (overflowX === 'auto' || overflowX === 'scroll')) {
+      return
+    }
+    target = target.parentElement as HTMLElement
+  }
+
   // If already navigating, ignore additional scroll events
-  if (isNavigating.value) return
+  if (isNavigating.value) {
+    event.preventDefault()
+    return
+  }
+
+  // Only prevent default when we're using it for tab navigation
+  event.preventDefault()
 
   // Accumulate scroll delta
   scrollDelta += horizontalDelta

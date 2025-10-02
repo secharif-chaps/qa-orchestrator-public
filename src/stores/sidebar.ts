@@ -8,6 +8,7 @@ const STORAGE_KEY = 'sidebar-state'
 export const useSidebarStore = defineStore('sidebar', () => {
   const state = ref<SidebarState>('folders')
   const previousState = ref<SidebarState>('folders')
+  const isFullscreen = ref(false)
 
   // Button order from left to right in the appbar
   const stateOrder: SidebarState[] = ['tokens', 'chapse', 'notifications', 'folders']
@@ -97,9 +98,14 @@ export const useSidebarStore = defineStore('sidebar', () => {
     return true
   }
 
+  function setFullscreen(value: boolean) {
+    isFullscreen.value = value
+  }
+
   return {
     state,
     previousState,
+    isFullscreen,
     loadState,
     setState,
     toggleState,
@@ -107,5 +113,6 @@ export const useSidebarStore = defineStore('sidebar', () => {
     isTransitioningRight,
     navigateNext,
     navigatePrevious,
+    setFullscreen,
   }
 })
