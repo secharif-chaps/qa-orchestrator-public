@@ -1,8 +1,9 @@
 import { defineQueryOptions } from '@pinia/colada'
-import { getCompanies, getCompanyById } from '@/api/companies'
+import { getCompanies, getCompanyById, getRecentCompanies } from '@/api/companies'
 
 export const COMPANY_QUERY_KEYS = {
   root: ['companies'] as const,
+  recent: (limit: number) => [...COMPANY_QUERY_KEYS.root, 'recent', limit] as const,
   byId: (id: string) => [...COMPANY_QUERY_KEYS.root, id] as const,
   withFilters: (filters: { page: number; size: number; name: string }) =>
     [...COMPANY_QUERY_KEYS.root, { filters }] as const,
@@ -17,6 +18,11 @@ export const companyByIdQuery = defineQueryOptions(({ id }: { id: string }) => (
     }
     return getCompanyById(id)
   },
+}))
+
+export const recentCompaniesQuery = defineQueryOptions(({ limit }: { limit: number }) => ({
+  key: COMPANY_QUERY_KEYS.recent(limit),
+  query: () => getRecentCompanies(limit),
 }))
 
 export const companiesQuery = defineQueryOptions(

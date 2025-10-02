@@ -50,6 +50,10 @@ export interface Company {
   owner_username: string
   workspace_id: number
 
+  // Optional folder information (populated for recent companies)
+  folder_id?: string
+  folder_name?: string
+
   profile: {
     groupName?: SourcedValue<string>
     businessLine: SourcedValue<string>

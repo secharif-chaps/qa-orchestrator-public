@@ -10,7 +10,13 @@
       </div>
 
       <div class="bg-sage-100 p-6 rounded-card border-2 border-sage-200 flex items-center gap-8">
-        <img :src="head" class="size-20" />
+        <img
+          src="@/assets/chapse/head.svg"
+          alt="Chapse head character"
+          class="h-20 w-auto object-contain"
+          loading="lazy"
+          style="image-rendering: -webkit-optimize-contrast; image-rendering: smooth"
+        />
         <div class="flex flex-col gap-2">
           <h2 class="text-xl font-semibold">Est-ce que je peux vous aider ?</h2>
           <div class="flex gap-2">
@@ -37,7 +43,7 @@
               v-for="project in mockProjects"
               :key="project.id"
               class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
-              @click="$router.push(`folders/${project.folder}/companies/${project.id}`)"
+              @click="project.folderId && $router.push(`folders/${project.folderId}/companies/${project.id}`)"
             >
               <div
                 class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -163,7 +169,7 @@
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth'
 import { favoriteFoldersQuery } from '@/queries/folders'
-import { companiesQuery } from '@/queries/companies'
+import { recentCompaniesQuery } from '@/queries/companies'
 import Button from '@/components/ui/Button.vue'
 import Badge from '@/components/ui/Badge.vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
@@ -203,13 +209,9 @@ const {
   refresh: refreshFavorites,
 } = useQuery(favoriteFoldersQuery, () => ({}))
 
-// Fetch recent companies (3 most recent)
-const { data: recentCompaniesData } = useQuery(companiesQuery, () => ({
-  filters: {
-    page: 1,
-    size: 3,
-    name: '',
-  },
+// Fetch recent companies (5 most recent with folder info)
+const { data: recentCompaniesData } = useQuery(recentCompaniesQuery, () => ({
+  limit: 5,
 }))
 
 // Navigate to folder
@@ -255,9 +257,9 @@ onUnmounted(() => {
 
 // Transform recent companies data for display
 const mockProjects = computed(() => {
-  if (!recentCompaniesData.value?.data) return []
+  if (!recentCompaniesData.value) return []
 
-  return recentCompaniesData.value.data.map((company) => {
+  return recentCompaniesData.value.map((company) => {
     // Calculate time ago
     const createdDate = new Date(company.created_at)
     const now = new Date()
@@ -277,7 +279,8 @@ const mockProjects = computed(() => {
     return {
       id: company.id,
       name: company.name,
-      folder: 'Entreprises', // Could be enhanced to show actual folder if available
+      folder: company.folder_name || 'Sans dossier',
+      folderId: company.folder_id,
       time: timeAgo,
       icon: { icon: 'fa fa-building', color: 'text-purple-400', bg: 'bg-purple-500/20' },
       badge: { variant: 'info', label: 'Collaboratif' },

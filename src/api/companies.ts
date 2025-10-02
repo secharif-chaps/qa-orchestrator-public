@@ -48,6 +48,14 @@ export const getCompanyById = async (companyId: string) => {
   return response
 }
 
+export const getRecentCompanies = async (limit: number = 5) => {
+  const params = new URLSearchParams({
+    limit: limit.toString(),
+  })
+  const response = await apiClient.get<Company[]>(`/companies/recent?${params.toString()}`)
+  return response
+}
+
 export const getCompanies = async (filters: {
   page: number
   size: number
