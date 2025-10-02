@@ -45,9 +45,9 @@ const modules = computed(() => {
 
   return modulesData.value.modules.map((module) => {
     // Explore module is hardcoded as coming soon
-    const comingSoon = module.name === 'explore'
+    // const comingSoon = module.name === 'explore'
 
-    return getModuleDisplayConfig(module.name, module.enabled, comingSoon)
+    return getModuleDisplayConfig(module.name, module.enabled, false)
   })
 })
 

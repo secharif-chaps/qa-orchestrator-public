@@ -1,22 +1,7 @@
 <template>
   <div class="min-h-screen">
     <div class="flex flex-col gap-4">
-      <!-- Workspace Header -->
-      <div class="bg-bg1 p-6 rounded-lg border border-border-2">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-            <i class="fa fa-building text-primary text-xl"></i>
-          </div>
-          <div>
-            <h1 class="text-2xl font-bold text-primary">
-              {{ currentWorkspace?.name || 'Workspace' }}
-            </h1>
-            <p class="text-sm text-secondary">
-              {{ $t('team.workspace_description', 'Manage your workspace team and settings') }}
-            </p>
-          </div>
-        </div>
-      </div>
+   
 
       <!-- Tab Navigation -->
       <div class="bg-bg1 border border-border-2 rounded-lg overflow-hidden">

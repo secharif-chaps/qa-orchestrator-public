@@ -9,7 +9,7 @@
         </div>
       </div>
 
-      <div class="bg-sage-100 p-6 rounded-card border-2 border-sage-200 flex items-center gap-8">
+      <div class="bg-bg3 p-6 rounded-card border-2 border-border-2 flex items-center gap-8">
         <img
           src="@/assets/chapse/head.svg"
           alt="Chapse head character"
