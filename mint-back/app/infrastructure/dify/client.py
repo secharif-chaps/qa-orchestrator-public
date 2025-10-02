@@ -292,3 +292,117 @@ class DifyClient:
             error_msg = f"Error in Dify chat workflow: {str(e)}"
             logger.error(error_msg)
             raise Exception(error_msg) from e
+
+    async def send_global_chat_message(
+        self,
+        message: str,
+        contexts: Dict[str, Any],
+        system_context: Dict[str, Any],
+        chat_history: list = None
+    ) -> Dict[str, Any]:
+        """
+        Send a chat message to the global Chaps-e chat workflow
+
+        Args:
+            message: User's chat message
+            contexts: Multiple context types (company, folder, workspace)
+            system_context: System-level context (language, username, workspace_name)
+            chat_history: Previous chat messages (optional)
+
+        Returns:
+            Response from the Dify chat workflow
+        """
+        # Use same chat workflow for now (Phase 1)
+        # In future, this could use a different workflow optimized for global chat
+        chat_workflow_id = "efc315b1-219f-4d06-a8ef-5e4fc6edb341"
+        chat_api_key = "app-jGJl5PAPQnAE0IzFAfkV3XjO"
+
+        url = f"{self.base_url}/chat-messages"
+
+        logger.info(f"Sending global chat message to Dify workflow: {chat_workflow_id}")
+        logger.debug(f"Contexts: {list(contexts.keys())}")
+        logger.debug(f"Language: {system_context.get('language', 'fr')}")
+
+        # Prepare the payload for Dify API
+        import json
+
+        # Combine all contexts into a single input
+        combined_context = {
+            "system": system_context,
+            **contexts  # Spread company, folder, workspace contexts
+        }
+
+        payload = {
+            "inputs": {
+                "context": json.dumps(combined_context, ensure_ascii=False),
+                "language": system_context.get("language", "fr")
+            },
+            "query": message,
+            "response_mode": "blocking",
+            "conversation_id": "",
+            "user": system_context.get("username", "user")
+        }
+
+        # Add chat history if provided
+        if chat_history:
+            payload["inputs"]["chat_history"] = json.dumps(chat_history, ensure_ascii=False)
+
+        headers = {
+            "Authorization": f"Bearer {chat_api_key}",
+            "Content-Type": "application/json"
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(
+                    url,
+                    json=payload,
+                    headers=headers
+                )
+
+                logger.info(f"Dify global chat response status: {response.status_code}")
+
+                if response.status_code != 200:
+                    error_msg = f"Dify chat API returned non-200 status code: {response.status_code}"
+                    logger.error(f"{error_msg}. Response: {response.text}")
+                    raise Exception(error_msg)
+
+                try:
+                    response_text = response.text.strip()
+                    if not response_text:
+                        logger.warning("Dify chat API returned empty response")
+                        return {"output": "Je suis désolé, je n'ai pas pu générer de réponse. Veuillez réessayer.", "status": "error"}
+
+                    json_response = response.json()
+
+                    if json_response is None:
+                        logger.warning("Dify chat API returned null response")
+                        return {"output": "Je suis désolé, je n'ai pas pu générer de réponse. Veuillez réessayer.", "status": "error"}
+
+                    # Extract the answer from Dify response format
+                    if "answer" in json_response:
+                        return {
+                            "output": json_response["answer"],
+                            "status": "success",
+                            "conversation_id": json_response.get("conversation_id", "")
+                        }
+                    else:
+                        logger.warning(f"Unexpected Dify chat response format: {json_response}")
+                        return {"output": "Je suis désolé, je n'ai pas pu générer de réponse. Veuillez réessayer.", "status": "error"}
+
+                except Exception as e:
+                    logger.error(f"Error processing Dify chat response: {str(e)}")
+                    return {"output": "Je suis désolé, une erreur s'est produite lors du traitement de votre message. Veuillez réessayer.", "status": "error"}
+
+        except httpx.TimeoutException as e:
+            error_msg = f"Global chat request to Dify timed out after 60 seconds"
+            logger.error(error_msg)
+            raise Exception(error_msg) from e
+        except httpx.HTTPError as e:
+            error_msg = f"HTTP error occurred in Dify global chat request: {str(e)}"
+            logger.error(error_msg)
+            raise Exception(error_msg) from e
+        except Exception as e:
+            error_msg = f"Error in Dify global chat workflow: {str(e)}"
+            logger.error(error_msg)
+            raise Exception(error_msg) from e
