@@ -36,6 +36,26 @@
             @click="$router.push('/')"
           />
 
+          <!-- Admin button - only visible to users with admin.workspaces permission -->
+          <Button
+            v-if="hasAdminPermission"
+            variant="ghost-primary"
+            dark
+            icon="fa fa-shield"
+            icon-only
+            @click="$router.push('/admin')"
+          />
+
+          <!-- Team button - visible to users with workspace.read permission -->
+          <Button
+            v-if="hasTeamPermission"
+            variant="ghost-primary"
+            dark
+            icon="fa fa-users"
+            icon-only
+            @click="$router.push('/team')"
+          />
+
           <Button
             variant="ghost-primary"
             dark
@@ -94,10 +114,15 @@ import Badge from '@/components/ui/Badge.vue'
 import ModuleBadges from '@/components/global/ModuleBadges.vue'
 import { computed } from 'vue'
 
-const { signOut } = useAuthStore()
+const authStore = useAuthStore()
+const { signOut } = authStore
 const sidebarStore = useSidebarStore()
 
 const { theme, isDark, setTheme } = useTheme()
+
+// Permission checks for navigation buttons
+const hasAdminPermission = computed(() => authStore.hasPermission('admin.workspaces'))
+const hasTeamPermission = computed(() => authStore.hasPermission('workspace.read'))
 
 // Dev mode detection
 const isDev = import.meta.env.DEV
