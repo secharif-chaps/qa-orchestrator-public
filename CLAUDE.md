@@ -39,17 +39,20 @@ A modern Vue 3 application with TypeScript, Tailwind CSS v4, and comprehensive t
 ### User Application Workflow
 
 🗂️ **Workspaces**
+
 - Users create company cards to monitor companies' information online
 - A user always belongs to a workspace
 - Company cards are shared within a workspace
 
 🔄 **Company Lifecycle & Tasks**
+
 - Creating a company card triggers tasks that find specific information online via n8n workflows
 - Frontend monitors task status and calls the backend to start tasks
 
 **Key Components**: User, Company, Workspace, Tasks
 
 **User Experience**:
+
 1. Dashboard: See stats and recent companies
 2. Companies List View: Browse all companies
 3. Company View: Detailed information about a company
@@ -105,6 +108,7 @@ This project uses specialized agents for specific domains. Use them proactively:
 **Use for**: All frontend UI/UX development, component creation, styling, and design system compliance
 
 **Responsibilities**:
+
 - Creating/modifying UI components and pages
 - Implementing features requiring design system compliance
 - Refactoring frontend code to match standards
@@ -115,6 +119,7 @@ This project uses specialized agents for specific domains. Use them proactively:
 **Knowledge**: Complete design system (colors, typography, spacing, shadows), custom UI components (Alert, Input, Button, Badge, Card), Vue 3 best practices, routing patterns, permissions, data fetching, accessibility, responsive design
 
 **When to use**:
+
 - Building new pages or components
 - Implementing forms or interactive features
 - Fixing styling or UI issues
@@ -128,6 +133,7 @@ This project uses specialized agents for specific domains. Use them proactively:
 **Use for**: Automated git commit creation and management
 
 **Responsibilities**:
+
 - Analyzes all git changes intelligently
 - Groups changes logically by scope and type
 - Creates multiple focused commits (not one giant commit)
@@ -150,6 +156,7 @@ The application implements a granular, resource-based permission system integrat
 ### Permission Model
 
 Permissions are derived from Keycloak roles and stored in the database:
+
 - Permissions are checked at **route level** (navigation guards)
 - Permissions are checked at **component level** (conditional rendering)
 - Backend API endpoints validate permissions
@@ -157,15 +164,18 @@ Permissions are derived from Keycloak roles and stored in the database:
 ### Available Permissions
 
 **Company Permissions**:
+
 - `company.view` - View company details
 - `company.create` - Create new companies
 - `company.delete` - Delete companies
 
 **Workspace Permissions**:
+
 - `workspace.read` - Access team page (read-only)
 - `workspace.write` - Manage workspace users and settings
 
 **Admin Permissions**:
+
 - `admin.workspaces` - Admin access to workspace management
 
 ### Implementing Permissions
@@ -183,7 +193,7 @@ meta:
     - admin.workspaces
     - workspace.write
   requiresAuth: true
-  title: "Page Title"
+  title: 'Page Title'
 </route>
 ```
 
@@ -211,6 +221,7 @@ const { canCreateCompany, canEditCompany, canDeleteCompany } = useCompanyPermiss
 #### Resource-Based Composables
 
 **Company Permissions** (`useCompanyPermissions`):
+
 - `canCreateCompany` - Permission to create companies
 - `canEditCompany` - Permission to edit companies
 - `canDeleteCompany` - Permission to delete companies
@@ -219,6 +230,7 @@ const { canCreateCompany, canEditCompany, canDeleteCompany } = useCompanyPermiss
 - `hasAnyCompanyAccess` - Any company permission
 
 **Auth Store Methods**:
+
 - `hasPermission(permission: string)` - Check single permission
 - `hasRole(role: string)` - Check single role
 - `hasAnyRole(roles: string[])` - Check if user has any of the roles (OR logic)
@@ -343,6 +355,7 @@ export const deleteCompany = async (id: string) => {
 ```
 
 **Key Points**:
+
 - Always return typed responses
 - Use URLSearchParams for query parameters
 - Keep functions pure and focused
@@ -376,11 +389,12 @@ export const companiesQuery = defineQueryOptions(
   ({ filters }: { filters: { page: number; size: number } }) => ({
     key: COMPANY_QUERY_KEYS.withFilters(filters),
     query: () => getCompanies(filters),
-  })
+  }),
 )
 ```
 
 **Query Key Patterns**:
+
 - Use consistent naming: `RESOURCE_QUERY_KEYS`
 - Structure keys hierarchically
 - Include parameters in keys for proper caching
@@ -446,18 +460,18 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 
 // Query with route params
-const { data: company, isLoading, error } = useQuery(
-  companyByIdQuery,
-  () => ({ id: route.params.id as string })
-)
+const {
+  data: company,
+  isLoading,
+  error,
+} = useQuery(companyByIdQuery, () => ({ id: route.params.id as string }))
 
 // Query with reactive parameters
 const page = ref(1)
 const size = ref(10)
-const { data: companies } = useQuery(
-  companiesQuery,
-  () => ({ filters: { page: page.value, size: size.value } })
-)
+const { data: companies } = useQuery(companiesQuery, () => ({
+  filters: { page: page.value, size: size.value },
+}))
 </script>
 
 <template>
@@ -482,60 +496,6 @@ const { data: companies } = useQuery(
 
 ---
 
-## ✅ Git Commit Format
-
-**Format**: `<gitmoji> <type>(<scope>): <description>`
-
-### Common Gitmojis
-
-- ✨ `:sparkles:` - New feature
-- 🐛 `:bug:` - Bug fix
-- 💄 `:lipstick:` - UI/styling
-- ♻️ `:recycle:` - Refactoring
-- 🔧 `:wrench:` - Configuration
-- 🔥 `:fire:` - Remove code/files
-- ⚡ `:zap:` - Performance
-- 🗃️ `:card_file_box:` - Database
-- 📝 `:memo:` - Documentation
-
-### Commit Types
-
-- `feat` - New feature
-- `fix` - Bug fix
-- `style` - UI/styling changes
-- `refactor` - Code refactoring
-- `perf` - Performance improvements
-- `chore` - Configuration, dependencies
-- `docs` - Documentation
-
-### Common Scopes
-
-- `sidebar`, `layout`, `components`, `pages`, `ui`, `stores`
-- `auth`, `workspace`, `company`, `tasks`
-- `api`, `db`, `config`, `tests`
-
-### Examples
-
-```bash
-✨ feat(companies): add new company listing feature
-🐛 fix(auth): resolve login redirect issue
-💄 style(ui): improve button hover states
-♻️ refactor(api): restructure API client
-🔧 chore(deps): update dependencies
-```
-
-### Claude Footer
-
-Always include in commit messages:
-
-```
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
----
-
 ## 👥 Test Users
 
 All test users are linked to **Workspace ID 1** (ChapsVision workspace).
@@ -551,6 +511,7 @@ Email: admin@test.com
 **Permissions**: All permissions
 
 **Expected Behavior**:
+
 - ✅ Sees all sidebar links (home, search, companies, team, workspaces)
 - ✅ Can create, edit, and delete companies
 - ✅ Can manage team members
@@ -567,6 +528,7 @@ Email: manager@test.com
 **Permissions**: `company.view`, `company.create`, `company.delete`
 
 **Expected Behavior**:
+
 - ✅ Can manage companies (create, edit, delete)
 - ❌ Cannot see team link
 - ❌ Cannot access workspace admin
@@ -582,6 +544,7 @@ Email: viewer@test.com
 **Permissions**: `company.view`
 
 **Expected Behavior**:
+
 - ✅ Can view companies (read-only)
 - ❌ Cannot create/edit/delete companies
 - ❌ Cannot access team page
@@ -598,6 +561,7 @@ Email: teamviewer@test.com
 **Permissions**: `workspace.read`, `company.view`
 
 **Expected Behavior**:
+
 - ✅ Can access team page (read-only)
 - ✅ Can view companies
 - ❌ Cannot add/edit/disable users
@@ -614,6 +578,7 @@ Email: teammanager@test.com
 **Permissions**: `workspace.read`, `workspace.write`, `company.view`
 
 **Expected Behavior**:
+
 - ✅ Can manage team members (add, edit, disable)
 - ✅ Can view companies
 - ❌ Cannot create/edit/delete companies
@@ -629,6 +594,7 @@ Email: noaccess@test.com
 **Permissions**: None
 
 **Expected Behavior**:
+
 - ✅ Can only see home link
 - ❌ Gets 403 on most routes
 - ❌ Sees permission denied messages
