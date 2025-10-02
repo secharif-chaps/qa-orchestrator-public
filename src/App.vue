@@ -14,7 +14,7 @@
       </UnauthenticatedLayout>
     </template>
   </div>
-  <PiniaColadaDevtools />
+  <PiniaColadaDevtools position="bottom-left" />
 </template>
 
 <script setup lang="ts">
@@ -66,3 +66,12 @@ watch(
   },
 )
 </script>
+
+<style>
+/* Force Pinia Colada devtools to bottom-left */
+:deep(.pinia-colada-devtools-button) {
+  right: auto !important;
+  left: 16px !important;
+  bottom: 16px !important;
+}
+</style>
