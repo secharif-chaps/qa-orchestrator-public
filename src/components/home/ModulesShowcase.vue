@@ -10,8 +10,8 @@
         :disabled="module.soon"
       >
         <!-- Card Header with Avatar and Title -->
-        <div class="p-6 pb-4">
-          <div class="flex items-start space-x-3 mb-4">
+        <div class="flex flex-col gap-4">
+          <div class="flex items-start space-x-3">
             <!-- Avatar -->
             <div
               :class="[
@@ -36,31 +36,37 @@
           </div>
 
           <!-- Tag Label -->
-          <Badge
-            :variant="
-              module.unlocked ? 'success' : module.status === 'contact-sales' ? 'warning' : 'slate'
-            "
-            :label="
-              module.unlocked
-                ? 'Active'
-                : module.status === 'contact-sales'
-                  ? 'Pro Feature'
-                  : 'Coming Soon'
-            "
-            size="xs"
-            rounded
-          />
+          <div>
+            <Badge
+              :variant="
+                module.unlocked
+                  ? 'success'
+                  : module.status === 'contact-sales'
+                    ? 'warning'
+                    : 'slate'
+              "
+              :label="
+                module.unlocked
+                  ? 'Active'
+                  : module.status === 'contact-sales'
+                    ? 'Pro Feature'
+                    : 'Coming Soon'
+              "
+              size="xs"
+              rounded
+            />
+          </div>
         </div>
 
         <!-- Description -->
-        <div class="px-6 mb-6">
+        <div class="">
           <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
             {{ module.description }}
           </p>
         </div>
 
         <!-- Action Buttons -->
-        <div class="px-6 pb-6 flex items-center justify-between">
+        <div class="pb-6 flex items-center justify-between">
           <div class="flex space-x-2">
             <Button
               v-if="module.unlocked"

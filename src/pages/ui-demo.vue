@@ -219,15 +219,8 @@
                 decoration-icon="fa fa-rocket"
               >
                 <template #actions>
-                  <Button>
-                    Update Now
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    label="Remind Me Later"
-                  >
-                    Remind Me Later
-                  </Button>
+                  <Button> Update Now </Button>
+                  <Button variant="secondary" label="Remind Me Later"> Remind Me Later </Button>
                 </template>
               </Alert>
               <Alert
@@ -237,11 +230,7 @@
                 icon="fa fa-user-circle"
               >
                 <template #actions>
-                  <Button
-                  variant="secondary"
-                  >
-                    Complete Profile
-                  </Button>
+                  <Button variant="secondary"> Complete Profile </Button>
                 </template>
               </Alert>
             </section>
@@ -274,11 +263,36 @@
                 All buttons have 2000px border-radius (fully rounded) as per design system
               </p>
               <div class="flex flex-wrap gap-3">
-                <Button variant="primary" label="Primary" icon="fa fa-arrow-right" icon-position="right" />
-                <Button variant="secondary" label="Secondary" icon="fa fa-arrow-right" icon-position="right" />
-                <Button variant="accent" label="Accent" icon="fa fa-arrow-right" icon-position="right" />
-                <Button variant="ghost-primary" label="Ghost Primary" icon="fa fa-arrow-right" icon-position="right" />
-                <Button variant="ghost-black" label="Ghost Black" icon="fa fa-arrow-right" icon-position="right" />
+                <Button
+                  variant="primary"
+                  label="Primary"
+                  icon="fa fa-arrow-right"
+                  icon-position="right"
+                />
+                <Button
+                  variant="secondary"
+                  label="Secondary"
+                  icon="fa fa-arrow-right"
+                  icon-position="right"
+                />
+                <Button
+                  variant="accent"
+                  label="Accent"
+                  icon="fa fa-arrow-right"
+                  icon-position="right"
+                />
+                <Button
+                  variant="ghost-primary"
+                  label="Ghost Primary"
+                  icon="fa fa-arrow-right"
+                  icon-position="right"
+                />
+                <Button
+                  variant="ghost-black"
+                  label="Ghost Black"
+                  icon="fa fa-arrow-right"
+                  icon-position="right"
+                />
               </div>
             </section>
 
@@ -664,18 +678,8 @@
                     />
                   </div>
                   <div class="mt-4 flex gap-2">
-                    <button
-                      @click="submitForm"
-                      class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-                    >
-                      Submit
-                    </button>
-                    <button
-                      @click="resetForm"
-                      class="px-4 py-2 text-secondary hover:text-base transition-colors"
-                    >
-                      Reset
-                    </button>
+                    <Button @click="submitForm"> Submit </Button>
+                    <Button @click="resetForm"> Reset </Button>
                   </div>
                 </div>
               </div>

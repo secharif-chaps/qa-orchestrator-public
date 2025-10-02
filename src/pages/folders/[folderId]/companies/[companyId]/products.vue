@@ -27,18 +27,13 @@
     <!-- Main content -->
     <div v-else class="space-y-6">
       <!-- AI Insights Section -->
-      <Alert
+      <ChapseAlert
         v-if="productsInsights"
-        variant="info"
+        variant="mage"
         :title="$t('products.insights.title', 'Product Insights')"
-        :message="productsInsights"
-        icon="fa fa-brain"
-        decoration-icon="fa fa-sparkles"
       >
-        <template #status>
-          <Badge variant="primary" icon="fa fa-sparkles" label="AI" size="xs" rounded />
-        </template>
-      </Alert>
+        {{ productsInsights }}
+      </ChapseAlert>
 
       <!-- Products Overview Header -->
       <ProductsHeader
@@ -91,8 +86,7 @@
 import ProductsHeader from '@/components/company/products/ProductsHeader.vue'
 import ProductGridItem from '@/components/company/products/ProductGridItem.vue'
 import ProductListItem from '@/components/company/products/ProductListItem.vue'
-import Badge from '@/components/ui/Badge.vue'
-import Alert from '@/components/ui/Alert.vue'
+import ChapseAlert from '@/components/ui/ChapseAlert.vue'
 import { useRoute } from 'vue-router'
 import { computed, ref } from 'vue'
 import { useQuery } from '@pinia/colada'
