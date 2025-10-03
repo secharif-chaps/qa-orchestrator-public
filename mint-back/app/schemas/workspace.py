@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Literal, Union
 from pydantic import BaseModel, Field
 from app.models.workspace import WorkspaceMemberStatus
 
@@ -67,3 +67,15 @@ class WorkspaceWithMembersResponse(WorkspaceResponse):
 class WorkspaceListResponse(BaseModel):
     workspaces: List[WorkspaceResponse]
     total: int
+
+
+class ActivityResponse(BaseModel):
+    """Response model for workspace activity items (companies and folders)"""
+    type: Literal["company", "folder"]
+    id: Union[int, str]  # int for companies, str for folders (UUID)
+    name: str
+    owner_username: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

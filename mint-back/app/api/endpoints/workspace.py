@@ -1,4 +1,5 @@
 from typing import List, Optional
+from datetime import timezone
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, case
@@ -10,6 +11,7 @@ from app.core.workspace import (
 from app.models.workspace import Workspace, WorkspaceMember, WorkspaceMemberStatus
 # NOTE: No User model - user references handled via username strings only
 from app.models.company import Company
+from app.models.folder import Folder
 from app.schemas.workspace import (
     WorkspaceResponse,
     WorkspaceWithMembersResponse,
@@ -18,7 +20,8 @@ from app.schemas.workspace import (
     WorkspaceMemberUpdate,
     WorkspaceCreate,
     WorkspaceUpdate,
-    WorkspaceWithMemberCount
+    WorkspaceWithMemberCount,
+    ActivityResponse
 )
 from app.schemas.pagination import PaginatedResponse, PaginationParams, SortOrder, create_pagination_meta
 from app.schemas.workspace_user import (
@@ -45,6 +48,79 @@ async def get_current_workspace(
 ):
     """Get current workspace information"""
     return workspace_context.workspace
+
+
+@router.get("/{workspace_id}/activities", response_model=List[ActivityResponse])
+async def get_workspace_activities(
+    workspace_id: int,
+    db: Session = Depends(get_db),
+    current_user: TokenData = Depends(get_current_user)
+) -> List[ActivityResponse]:
+    """
+    Get recent creation activities in the workspace (companies and folders created by other users).
+
+    Returns:
+        List of activities sorted by creation date (newest first), maximum 10 items
+    """
+    # Get current username
+    current_username = current_user.username
+
+    # Query last 10 companies created in workspace (exclude current user)
+    companies = (
+        db.query(Company)
+        .filter(
+            Company.workspace_id == workspace_id,
+            Company.owner_username != current_username,
+            Company.is_deleted == False
+        )
+        .order_by(Company.created_at.desc())
+        .limit(10)
+        .all()
+    )
+
+    # Query last 10 folders created in workspace (exclude current user)
+    folders = (
+        db.query(Folder)
+        .filter(
+            Folder.workspace_id == workspace_id,
+            Folder.owner != current_username,
+            Folder.is_deleted == False
+        )
+        .order_by(Folder.created_at.desc())
+        .limit(10)
+        .all()
+    )
+
+    # Merge and create activity objects
+    activities = []
+
+    for company in companies:
+        # Make naive datetime timezone-aware (UTC) for consistent sorting
+        created_at = company.created_at
+        if created_at.tzinfo is None:
+            created_at = created_at.replace(tzinfo=timezone.utc)
+
+        activities.append({
+            "type": "company",
+            "id": company.id,
+            "name": company.name,
+            "owner_username": company.owner_username,
+            "created_at": created_at
+        })
+
+    for folder in folders:
+        # Folders already have timezone-aware datetimes
+        activities.append({
+            "type": "folder",
+            "id": str(folder.id),  # UUID to string
+            "name": folder.name,
+            "owner_username": folder.owner,
+            "created_at": folder.created_at
+        })
+
+    # Sort by created_at descending and return top 10
+    activities.sort(key=lambda x: x["created_at"], reverse=True)
+    return activities[:10]
 
 
 @router.get("/current/members", response_model=List[WorkspaceMemberResponse])
