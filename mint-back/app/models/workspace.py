@@ -14,7 +14,6 @@ class ModuleName(str, Enum):
     SCREEN = "screen"
     TARGET = "target"
     EXPLORE = "explore"
-    STREAM = "stream"
 
 
 class Workspace(Base):

@@ -21,7 +21,7 @@ def upgrade():
     op.execute("CREATE TYPE workspacememberstatus AS ENUM ('active', 'revoked')")
     op.execute("CREATE TYPE task_type_enum AS ENUM ('profile', 'digital', 'timeline', 'products', 'jobs', 'csr', 'press', 'team')")
     op.execute("CREATE TYPE task_status_enum AS ENUM ('pending', 'running', 'succeeded', 'error')")
-    op.execute("CREATE TYPE modulename AS ENUM ('screen', 'target', 'explore', 'stream')")
+    op.execute("CREATE TYPE modulename AS ENUM ('screen', 'target', 'explore')")
     
     # Create workspaces table
     op.create_table('workspaces',
@@ -136,7 +136,7 @@ def upgrade():
     op.create_table('workspace_modules',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('workspace_id', sa.Integer(), nullable=False),
-        sa.Column('module_name', postgresql.ENUM('screen', 'target', 'explore', 'stream', name='modulename', create_type=False), nullable=False),
+        sa.Column('module_name', postgresql.ENUM('screen', 'target', 'explore', name='modulename', create_type=False), nullable=False),
         sa.Column('enabled', sa.Boolean(), nullable=False),
         sa.Column('token_count', sa.Integer(), nullable=False),
         sa.Column('created_at', sa.DateTime(timezone=True), nullable=True, server_default=sa.func.now()),
