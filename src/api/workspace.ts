@@ -1,14 +1,15 @@
 import { apiClient } from './client'
-import type { 
-  WorkspaceResponse, 
-  WorkspaceCreate, 
+import type {
+  WorkspaceResponse,
+  WorkspaceCreate,
   WorkspaceUpdate,
   WorkspaceWithMembersResponse,
   WorkspaceMemberResponse,
   Workspace,
   PaginatedWorkspacesResponse,
   WorkspaceQueryParams,
-  WorkspaceWithMemberCount
+  WorkspaceWithMemberCount,
+  Activity
 } from '@/types/workspace'
 
 // Admin workspace management endpoints
@@ -70,5 +71,11 @@ export const getCurrentWorkspaceWithMembers = async (): Promise<WorkspaceWithMem
 
 export const pickWorkspace = async (id: number): Promise<WorkspaceResponse> => {
   const response = await apiClient.put<WorkspaceResponse>(`/workspace/admin/${id}/pick`, {})
+  return response
+}
+
+// Workspace activities
+export const getWorkspaceActivities = async (workspaceId: number): Promise<Activity[]> => {
+  const response = await apiClient.get<Activity[]>(`/workspace/${workspaceId}/activities`)
   return response
 }

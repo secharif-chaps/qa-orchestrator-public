@@ -5,7 +5,7 @@
 
     <!-- Show layouts based on auth state once initialized -->
     <template v-else>
-      <DefaultLayout v-if="authStore.isAuthenticated">
+      <DefaultLayout v-if="isAuthenticated">
         <RouterView />
       </DefaultLayout>
 
@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { PiniaColadaDevtools } from '@pinia/colada-devtools'
-import { onMounted, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import DefaultLayout from './layouts/DefaultLayout.vue'
 import UnauthenticatedLayout from './layouts/UnauthenticatedLayout.vue'
 import AuthLoader from './components/ui/AuthLoader.vue'
@@ -55,6 +55,8 @@ onMounted(async () => {
 })
 
 const router = useRouter()
+
+const isAuthenticated = computed(() => authStore.isAuthenticated)
 
 watch(
   () => authStore.isAuthenticated,

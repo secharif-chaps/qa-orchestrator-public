@@ -28,7 +28,7 @@
             <i class="fas fa-building text-primary text-xl"></i>
           </div>
         </div>
-        <div class="flex-1 min-w-0 w-52">
+        <div class="flex-1 min-w-0 max-w-32">
           <h3 class="text-lg font-semibold transition-colors truncate">
             {{ item.name }}
           </h3>

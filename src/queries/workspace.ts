@@ -1,11 +1,12 @@
 import { defineQueryOptions } from '@pinia/colada'
-import { 
-  getAllWorkspaces, 
+import {
+  getAllWorkspaces,
   getWorkspaceById,
-  getWorkspaceDetails, 
+  getWorkspaceDetails,
   getCurrentWorkspace,
   getCurrentWorkspaceWithMembers,
-  getWorkspaceMembers
+  getWorkspaceMembers,
+  getWorkspaceActivities
 } from '@/api/workspace'
 import type { WorkspaceQueryParams } from '@/types/workspace'
 
@@ -19,6 +20,7 @@ export const WORKSPACE_QUERY_KEYS = {
   adminMembers: (id: number) => ['workspaces', 'admin', id, 'members'] as const,
   current: ['workspaces', 'current'] as const,
   currentWithMembers: ['workspaces', 'current', 'with-members'] as const,
+  activities: (workspaceId: number) => ['workspaces', workspaceId, 'activities'] as const,
 }
 
 // Admin queries
@@ -51,4 +53,10 @@ export const currentWorkspaceQuery = defineQueryOptions(() => ({
 export const currentWorkspaceWithMembersQuery = defineQueryOptions(() => ({
   key: WORKSPACE_QUERY_KEYS.currentWithMembers,
   query: () => getCurrentWorkspaceWithMembers(),
+}))
+
+// Workspace activities query
+export const workspaceActivitiesQuery = defineQueryOptions(({ workspaceId }: { workspaceId: number }) => ({
+  key: WORKSPACE_QUERY_KEYS.activities(workspaceId),
+  query: () => getWorkspaceActivities(workspaceId),
 }))

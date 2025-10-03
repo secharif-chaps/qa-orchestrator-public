@@ -69,99 +69,49 @@
           </div>
         </Card>
 
-        <!-- Collaborative Activity -->
         <Card>
-          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Activité collaborative</h3>
-
-          <!-- Team Online -->
-          <div class="mb-4">
-            <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
-              Équipe en ligne
-            </h4>
-            <div class="flex items-center gap-2">
-              <div
-                v-for="member in mockOnlineTeam"
-                :key="member.id"
-                class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white"
-                :class="member.color"
-                :title="member.name"
-              >
-                {{ member.initials }}
-              </div>
-            </div>
-          </div>
-
+          <h3 class="font-semibold text-gray-900 dark:text-white">Activité récentes</h3>
           <!-- Recent Activities -->
-          <div>
-            <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
-              Activités récentes
-            </h4>
-            <div class="space-y-3">
-              <div
-                v-for="activity in mockActivities"
-                :key="activity.id"
-                class="flex items-start gap-3"
-              >
-                <div
-                  class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white flex-shrink-0"
-                  :class="activity.user.color"
-                >
-                  {{ activity.user.initials }}
+          <div class="space-y-3 max-h-[400px] overflow-y-auto  border border-border-2 rounded-card p-4">
+            <div
+              v-for="activity in mockActivities"
+              :key="activity.id"
+              class="flex items-start gap-3"
+            >
+              <!-- Icon with badge -->
+              <div class="relative flex-shrink-0">
+                <div class="w-10 h-10 rounded-full bg-sage-100 dark:bg-sage-900/30 flex items-center justify-center">
+                  <i :class="activity.icon" class="text-sage-600 dark:text-sage-400 text-base"></i>
                 </div>
-                <div class="flex-1 min-w-0">
-                  <p class="text-sm text-gray-900 dark:text-white">
-                    <span class="font-medium">{{ activity.user.name }}</span>
-                    {{ activity.action }}
-                    <i :class="activity.icon" class="text-xs"></i>
-                  </p>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">{{ activity.target }}</p>
-                  <div class="flex items-center gap-1 text-xs text-gray-400 mt-1">
+                <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-sage-500 flex items-center justify-center">
+                  <i class="fa fa-plus text-white text-xs"></i>
+                </div>
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <!-- Company/Folder Name -->
+                <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                  {{ activity.target }}
+                </p>
+                <!-- Meta info: user and timestamp -->
+                <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                  
+                  <span class="flex items-center gap-1">
                     <i class="fa fa-clock"></i>
-                    <span>il y a {{ activity.time }}</span>
-                  </div>
+                    <span>{{ activity.time }}</span>
+                  </span>
+                  <span>par @{{ activity.user.name }}</span>
                 </div>
               </div>
             </div>
           </div>
         </Card>
-
-        <!-- Right Column: Sources & Relevance -->
       </div>
 
       <!-- Modules Showcase -->
       <div class="">
         <ModulesShowcase />
       </div>
-
-      <!-- Quick Actions -->
-      <!-- <div class="mb-8">
-        <QuickActions />
-      </div> -->
-
-      <!-- Statistics Overview -->
-      <!-- <div class="mb-8">
-        <StatisticsOverview :stats="companiesStats" :loading="status === 'pending'" />
-      </div> -->
-
-      <!-- Favorite Folders Section -->
-
-      <!-- Quick Tips -->
-      <!-- <div
-        class="bg-gradient-to-r from-primary to-purple-600 dark:from-primary dark:to-almond-200 dark:text-sage-900 rounded-lg shadow-md border border-slate-200 dark:border-none p-6 text-white"
-      >
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <i class="fas fa-lightbulb text-2xl text-white/80"></i>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-lg font-medium text-white dark:text-bg2">Pro Tip</h3>
-            <p class="text-white/90 dark:text-bg2 mt-1">
-              Use the search feature to quickly find and analyze companies. You can also view
-              detailed profiles and track company activities through the task system.
-            </p>
-          </div>
-        </div>
-      </div> -->
     </div>
   </div>
 </template>
@@ -170,6 +120,7 @@
 import { useAuth } from '@/composables/useAuth'
 import { favoriteFoldersQuery } from '@/queries/folders'
 import { recentCompaniesQuery } from '@/queries/companies'
+import { workspaceActivitiesQuery, currentWorkspaceQuery } from '@/queries/workspace'
 import Button from '@/components/ui/Button.vue'
 import Badge from '@/components/ui/Badge.vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
@@ -177,8 +128,9 @@ import type { Folder } from '@/types/folder'
 import ModulesShowcase from '@/components/home/ModulesShowcase.vue'
 import { useQuery } from '@pinia/colada'
 import { useRouter } from 'vue-router'
+import { formatRelativeTime } from '@/utils/time'
 
-import head from '@/assets/chapse/head.svg'
+
 import Card from '@/components/ui/Card.vue'
 
 // Only access auth on client side
@@ -209,10 +161,22 @@ const {
   refresh: refreshFavorites,
 } = useQuery(favoriteFoldersQuery, () => ({}))
 
+// Fetch current workspace to get workspace ID
+const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
+
 // Fetch recent companies (5 most recent with folder info)
 const { data: recentCompaniesData } = useQuery(recentCompaniesQuery, () => ({
   limit: 5,
 }))
+
+// Fetch workspace activities (only if workspace ID is available)
+const { data: workspaceActivitiesData, isLoading: isActivitiesLoading } = useQuery(
+  workspaceActivitiesQuery,
+  () => ({ workspaceId: currentWorkspace.value?.id ?? 0 }),
+  {
+    enabled: () => !!currentWorkspace.value?.id,
+  }
+)
 
 // Navigate to folder
 const viewFolder = (folderId: string) => {
@@ -294,40 +258,48 @@ const mockOnlineTeam = ref([
   { id: 3, name: 'Vincent Noir', initials: 'VN', color: 'bg-green-500' },
 ])
 
-const mockActivities = ref([
-  {
-    id: 1,
-    user: { name: 'Sarah Martina', initials: 'ST', color: 'bg-blue-500' },
-    action: 'commenté',
-    icon: 'fa fa-comment',
-    target: 'Analyse Concurrentielle Q4',
-    time: '15 min',
-  },
-  {
-    id: 2,
-    user: { name: 'Thomas Dubois', initials: 'TD', color: 'bg-orange-500' },
-    action: 'modifié',
-    icon: 'fa fa-edit',
-    target: 'Veille Technologique IA',
-    time: '1h',
-  },
-  {
-    id: 3,
-    user: { name: 'Marie Chena', initials: 'MC', color: 'bg-pink-500' },
-    action: 'créé',
-    icon: 'fa fa-plus',
-    target: 'Nouveau Watchlist Blockchain',
-    time: '2h',
-  },
-  {
-    id: 4,
-    user: { name: 'Sarah Martina', initials: 'ST', color: 'bg-blue-500' },
-    action: 'commenté',
-    icon: 'fa fa-comment',
-    target: 'Analyse Concurrentielle Q4',
-    time: '2h',
-  },
-])
+// Transform workspace activities for display
+const recentActivities = computed(() => {
+  if (!workspaceActivitiesData.value) return []
+
+  return workspaceActivitiesData.value.map((activity, index) => {
+    // Generate user initials from username
+    const username = activity.owner_username
+    const initials = username
+      .split('_')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2)
+
+    // Assign color based on hash of username for consistency
+    const colors = ['bg-blue-500', 'bg-purple-500', 'bg-green-500', 'bg-orange-500', 'bg-pink-500', 'bg-indigo-500']
+    const colorIndex = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length
+
+    // Format action based on activity type
+    const action = activity.type === 'company' ? 'created a new Company Card about' : 'created the Folder'
+
+    return {
+      id: index + 1,
+      user: {
+        name: activity.owner_username,
+        initials,
+        color: colors[colorIndex]
+      },
+      action,
+      icon: activity.type === 'company' ? 'fa fa-building' : 'fa fa-folder',
+      target: activity.name,
+      time: formatRelativeTime(activity.created_at),
+      activityType: activity.type,
+      activityId: activity.id
+    }
+  })
+})
+
+// Fallback to empty array when loading
+const mockActivities = computed(() => {
+  return isActivitiesLoading.value ? [] : recentActivities.value
+})
 
 const mockSources = ref({
   strategic: [

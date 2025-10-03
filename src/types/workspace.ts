@@ -68,3 +68,12 @@ export interface WorkspaceListItem extends WorkspaceWithMemberCount {
 
 // Legacy interface for backward compatibility
 export interface Workspace extends WorkspaceResponse {}
+
+// Activity feed types
+export interface Activity {
+  type: 'company' | 'folder'
+  id: number | string // int for companies, string for folders (UUID)
+  name: string
+  owner_username: string
+  created_at: string
+}

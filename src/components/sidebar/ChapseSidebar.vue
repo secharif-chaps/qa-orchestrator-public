@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-between h-screen" :class="{ 'fixed top-0 left-0 right-0 bottom-0 inset-0 z-[100] h-full justify-between bg-sage-950': isFullscreen }">
+  <div class="flex flex-col justify-between h-screen">
     <!-- Header -->
     <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
       <h2 class="text-headline-2xl">Chaps-e</h2>
@@ -12,14 +12,6 @@
           @click="handleClearHistory"
           size="sm"
         />
-        <Button
-          variant="ghost-primary"
-          dark
-          :icon="isFullscreen ? 'fa-solid fa-compress' : 'fa-solid fa-expand'"
-          @click="toggleFullscreen"
-        >
-          {{ isFullscreen ? 'Réduire' : 'Agrandir' }}
-        </Button>
       </div>
     </div>
 
@@ -49,8 +41,7 @@
     <!-- Messages Container -->
     <div
       ref="messagesContainer"
-      class="overflow-y-auto px-4 py-4 grow"
-      :class="isFullscreen ? 'h-[calc(100vh-300px)]' : 'max-h-[calc(100vh-450px)]'"
+      class="overflow-y-auto px-4 py-4 grow max-h-[calc(100vh-450px)]"
     >
       <ChatMessage
         v-for="message in messages"
@@ -71,18 +62,19 @@
 
       <!-- Suggestion Buttons (shown when no messages) -->
       <div
-        v-if="!hasMessages && !isLoading"
+        v-if="!hasMessages && !isLoading && suggestions.length > 0"
         class="w-full grow gap-2 flex flex-col items-center justify-center py-8"
       >
-        <img :src="chapseAvatar" class="w-32 h-32 mb-4" />
-        <Button variant="secondary" dark @click="sendSuggestion('Fais moi une synthèse')">
-          Fais moi une synthèse
-        </Button>
-        <Button variant="secondary" dark @click="sendSuggestion('Liste moi les technologies citées')">
-          Liste moi les technologies citées
-        </Button>
-        <Button variant="secondary" dark @click="sendSuggestion('Génère moi un PDF')">
-          Génère moi un PDF
+        <img :src="withBody" class="w-32 h-32 mb-4" />
+        <Button
+          v-for="suggestion in suggestions"
+          :key="suggestion.label"
+          variant="secondary"
+          dark
+          size="sm"
+          @click="sendSuggestion(suggestion.message)"
+        >
+          {{ suggestion.label }}
         </Button>
       </div>
     </div>
@@ -136,15 +128,19 @@
 
 <script setup lang="ts">
 import { ref, nextTick, watch, onMounted, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useChapseChat } from '@/composables/useChapseChat'
 import { useChapseContext } from '@/composables/useChapseContext'
-import { useSidebarStore } from '@/stores/sidebar'
 import ChatMessage from '@/components/chapse/ChatMessage.vue'
 import ContextBadge from '@/components/chapse/ContextBadge.vue'
 import Button from '../ui/Button.vue'
 import Alert from '../ui/Alert.vue'
 import chapseAvatar from '@/assets/chapse/head.svg'
+import withBody from '@/assets/chapse/default.svg'
 import type { ChapseContext } from '@/composables/useChapseChat'
+
+// Router
+const route = useRoute()
 
 // Chat composable
 const {
@@ -170,14 +166,50 @@ const {
   shouldWarnContextSwitch
 } = useChapseContext()
 
-// Sidebar store
-const sidebarStore = useSidebarStore()
-
 // Local state
 const userMessage = ref('')
-const isFullscreen = computed(() => sidebarStore.isFullscreen)
 const messagesContainer = ref<HTMLElement | null>(null)
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
+
+// Context-aware suggestions based on current route
+interface Suggestion {
+  label: string
+  message: string
+}
+
+const suggestions = computed<Suggestion[]>(() => {
+  const routeName = route.name as string
+
+  // Home page suggestions
+  if (routeName === '/(home)') {
+    return [
+      { label: 'Montre-moi mes entreprises récentes', message: 'Montre-moi mes entreprises récentes' },
+      { label: "Résume l'activité de mon workspace", message: "Résume l'activité de mon workspace" }
+    ]
+  }
+
+  // Company page suggestions (must check before folder page)
+  // Routes: /folders/[folderId]/companies/[companyId], /folders/[folderId]/companies/[companyId]/,
+  // /folders/[folderId]/companies/[companyId]/profile, etc.
+  if (routeName?.includes('/companies/[companyId]')) {
+    return [
+      { label: 'Fais-moi une synthèse de cette entreprise', message: 'Fais-moi une synthèse de cette entreprise' },
+      { label: 'Liste les technologies citées', message: 'Liste les technologies citées' }
+    ]
+  }
+
+  // Folder page suggestions
+  // Routes: /folders/[folderId], /folders/[folderId]/(folderId)
+  if (routeName?.startsWith('/folders/[folderId]') && !routeName?.includes('/companies/')) {
+    return [
+      { label: 'Résume les entreprises de ce dossier', message: 'Résume les entreprises de ce dossier' },
+      { label: 'Compare les entreprises de ce dossier', message: 'Compare les entreprises de ce dossier' }
+    ]
+  }
+
+  // No suggestions for other pages
+  return []
+})
 
 // Load chat history on mount
 onMounted(() => {
@@ -236,14 +268,6 @@ const handleAddContext = (context: ChapseContext) => {
 
 // Handle clear history
 const handleClearHistory = () => {
-  const confirmed = confirm('Êtes-vous sûr de vouloir effacer l\'historique des conversations ?')
-  if (confirmed) {
-    clearHistory()
-  }
-}
-
-// Toggle fullscreen mode
-const toggleFullscreen = () => {
-  sidebarStore.setFullscreen(!sidebarStore.isFullscreen)
+  clearHistory()
 }
 </script>
