@@ -4,7 +4,7 @@
       <div class="">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-3xl font-bold">Welcome back, {{ userDisplayName }}! 👋</h1>
+            <h1 class="text-3xl font-bold">{{ $t('home.welcome.title', { name: userDisplayName }) }} 👋</h1>
           </div>
         </div>
       </div>
@@ -18,12 +18,10 @@
           style="image-rendering: -webkit-optimize-contrast; image-rendering: smooth"
         />
         <div class="flex flex-col gap-2">
-          <h2 class="text-xl font-semibold">Est-ce que je peux vous aider ?</h2>
+          <h2 class="text-xl font-semibold">{{ $t('home.assistant.greeting') }}</h2>
           <div class="flex gap-2">
-            <Button variant="secondary" size="sm" icon="fa fa-file-pdf">Génère moi un PDF</Button>
-            <Button variant="secondary" size="sm" icon="fa fa-search"
-              >Je souhaite faire une nouvelle recherche</Button
-            >
+            <Button variant="secondary" size="sm" icon="fa fa-file-pdf">{{ $t('home.assistant.actions.generatePdf') }}</Button>
+            <Button variant="secondary" size="sm" icon="fa fa-search">{{ $t('home.assistant.actions.newSearch') }}</Button>
           </div>
         </div>
       </div>
@@ -35,8 +33,8 @@
         <!-- Recent Projects -->
         <Card>
           <div class="flex items-center justify-between mb-4">
-            <h3 class="font-semibold text-gray-900 dark:text-white">Projets récents</h3>
-            <button class="text-xs text-sage-600 hover:text-sage-800">Voir tout</button>
+            <h3 class="font-semibold text-gray-900 dark:text-white">{{ $t('home.recentProjects.title') }}</h3>
+            <button class="text-xs text-sage-600 hover:text-sage-800">{{ $t('home.recentProjects.viewAll') }}</button>
           </div>
           <div class="space-y-3">
             <div
@@ -56,7 +54,7 @@
                   {{ project.name }}
                 </h4>
                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                  {{ project.folder }} • il y a {{ project.time }}
+                  {{ project.folder }} • {{ $t('home.recentProjects.timeAgo', { time: project.time }) }}
                 </p>
               </div>
               <Badge
@@ -70,7 +68,7 @@
         </Card>
 
         <Card>
-          <h3 class="font-semibold text-gray-900 dark:text-white">Activité récentes</h3>
+          <h3 class="font-semibold text-gray-900 dark:text-white">{{ $t('home.recentActivities.title') }}</h3>
           <!-- Recent Activities -->
           <div class="space-y-3 max-h-[400px] overflow-y-auto  border border-border-2 rounded-card p-4">
             <div
@@ -100,7 +98,7 @@
                     <i class="fa fa-clock"></i>
                     <span>{{ activity.time }}</span>
                   </span>
-                  <span>par @{{ activity.user.name }}</span>
+                  <span>{{ $t('home.recentActivities.by', { username: activity.user.name }) }}</span>
                 </div>
               </div>
             </div>
@@ -129,13 +127,14 @@ import ModulesShowcase from '@/components/home/ModulesShowcase.vue'
 import { useQuery } from '@pinia/colada'
 import { useRouter } from 'vue-router'
 import { formatRelativeTime } from '@/utils/time'
-
+import { useI18n } from 'vue-i18n'
 
 import Card from '@/components/ui/Card.vue'
 
 // Only access auth on client side
 const { user } = useAuth()
 const $router = useRouter()
+const { t } = useI18n()
 
 // Reactive data
 const currentTime = ref('')
@@ -145,13 +144,6 @@ const currentDate = ref('')
 const userDisplayName = computed(() => {
   if (!user) return 'User'
   return user.profile.given_name || user.profile.preferred_username || user.profile.name || 'User'
-})
-
-const greetingMessage = computed(() => {
-  const hour = new Date().getHours()
-  if (hour < 12) return 'Good morning! Ready to harvest some mint!'
-  if (hour < 17) return "Good afternoon! Let's harvest some mint!"
-  return "Good evening! Let's harvest some mint!"
 })
 
 // Cached favorite folders data
@@ -233,21 +225,21 @@ const mockProjects = computed(() => {
 
     let timeAgo = ''
     if (diffDays > 0) {
-      timeAgo = `${diffDays} jour${diffDays > 1 ? 's' : ''}`
+      timeAgo = diffDays === 1 ? t('common.time.day') : `${diffDays} ${t('common.time.days')}`
     } else if (diffHours > 0) {
-      timeAgo = `${diffHours}h`
+      timeAgo = t('common.time.hours', { count: diffHours })
     } else {
-      timeAgo = 'quelques minutes'
+      timeAgo = t('common.time.fewMinutes')
     }
 
     return {
       id: company.id,
       name: company.name,
-      folder: company.folder_name || 'Sans dossier',
+      folder: company.folder_name || t('home.recentProjects.noFolder'),
       folderId: company.folder_id,
       time: timeAgo,
       icon: { icon: 'fa fa-building', color: 'text-purple-400', bg: 'bg-purple-500/20' },
-      badge: { variant: 'info', label: 'Collaboratif' },
+      badge: { variant: 'info', label: t('home.recentProjects.badge.collaborative') },
     }
   })
 })
@@ -277,7 +269,9 @@ const recentActivities = computed(() => {
     const colorIndex = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length
 
     // Format action based on activity type
-    const action = activity.type === 'company' ? 'created a new Company Card about' : 'created the Folder'
+    const action = activity.type === 'company'
+      ? t('home.recentActivities.actions.createdCompany')
+      : t('home.recentActivities.actions.createdFolder')
 
     return {
       id: index + 1,

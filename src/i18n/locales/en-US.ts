@@ -701,4 +701,41 @@ export default {
     },
     clearSearch: 'Clear Search',
   },
+  home: {
+    welcome: {
+      title: 'Welcome back, {name}!',
+    },
+    assistant: {
+      greeting: 'Can I help you?',
+      actions: {
+        generatePdf: 'Generate a PDF for me',
+        newSearch: 'I want to make a new search',
+      },
+    },
+    recentProjects: {
+      title: 'Recent Projects',
+      viewAll: 'View all',
+      timeAgo: '{time} ago',
+      noFolder: 'No folder',
+      badge: {
+        collaborative: 'Collaborative',
+      },
+    },
+    recentActivities: {
+      title: 'Recent Activities',
+      by: 'by @{username}',
+      actions: {
+        createdCompany: 'created a new Company Card about',
+        createdFolder: 'created the Folder',
+      },
+    },
+  },
+  common: {
+    time: {
+      day: 'day',
+      days: 'days',
+      hours: '{count}h',
+      fewMinutes: 'a few minutes',
+    },
+  },
 }

@@ -782,4 +782,41 @@ export default {
     },
     clearSearch: 'Effacer la recherche',
   },
+  home: {
+    welcome: {
+      title: 'Bienvenue, {name} !',
+    },
+    assistant: {
+      greeting: 'Est-ce que je peux vous aider ?',
+      actions: {
+        generatePdf: 'Génère moi un PDF',
+        newSearch: 'Je souhaite faire une nouvelle recherche',
+      },
+    },
+    recentProjects: {
+      title: 'Projets récents',
+      viewAll: 'Voir tout',
+      timeAgo: 'il y a {time}',
+      noFolder: 'Sans dossier',
+      badge: {
+        collaborative: 'Collaboratif',
+      },
+    },
+    recentActivities: {
+      title: 'Activités récentes',
+      by: 'par @{username}',
+      actions: {
+        createdCompany: 'a créé une nouvelle Carte Entreprise pour',
+        createdFolder: 'a créé le Dossier',
+      },
+    },
+  },
+  common: {
+    time: {
+      day: 'jour',
+      days: 'jours',
+      hours: '{count}h',
+      fewMinutes: 'quelques minutes',
+    },
+  },
 }
