@@ -104,6 +104,22 @@ defineProps<Props>()
 function isLLMSource(source: string | undefined): boolean {
   if (!source) return false
   const normalizedSource = source.toLowerCase().trim()
-  return normalizedSource === 'mistral' || normalizedSource === 'claude'
+
+  // Direct name matches
+  if (normalizedSource === 'mistral' || normalizedSource === 'claude') {
+    return true
+  }
+
+  // URL-based detection
+  // Remove protocol and www, then check domain
+  const cleanedSource = normalizedSource
+    .replace(/^https?:\/\//, '')
+    .replace(/^www\./, '')
+    .split('/')[0] // Get just the domain
+
+  // Check for Anthropic (Claude) or Mistral domains
+  return cleanedSource.includes('anthropic.com') ||
+         cleanedSource.includes('mistral.ai') ||
+         cleanedSource.includes('claude.ai')
 }
 </script>
