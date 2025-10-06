@@ -407,8 +407,19 @@ const getStatusLabel = (status: TaskStatus | null): string => {
   }
 }
 
+// Check if current user is a debug user
+const isDebugUser = computed(() => {
+  const username = authStore.user?.profile?.preferred_username?.toLowerCase()
+  return username === 'nmr' || username === 'suh'
+})
+
 // Task actions
 const canRestartTask = (task: { status: TaskStatus | null }): boolean => {
+  // Debug users can restart any task, including successful ones
+  if (isDebugUser.value) {
+    return task.status !== null
+  }
+  // Regular users can only restart error or pending tasks
   return task.status === 'error' || task.status === 'pending'
 }
 
@@ -504,7 +515,11 @@ const restartTask = async (taskType: TaskType) => {
   try {
     const task = tasks.value?.find((t: TaskResponse) => t.type === taskType)
     if (task) {
+      console.log('🔄 Restarting task:', task.id, task.type)
       await restart(task.id)
+      console.log('✅ Task restarted successfully')
+    } else {
+      console.warn('⚠️ Task not found for type:', taskType)
     }
   } catch (error) {
     console.error('❌ Error restarting task:', error)

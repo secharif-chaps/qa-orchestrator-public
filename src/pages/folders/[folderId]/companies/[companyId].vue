@@ -118,8 +118,8 @@ const confirmDelete = () => {
 }
 
 const handleArchiveCompany = async () => {
-  // Redirect to companies list after deletion
-  router.push(`/folders/${folderId.value}/companies/`)
+  // Redirect to home page after deletion
+  router.push('/')
 }
 
 const showFallbackIcon = ref(false)
