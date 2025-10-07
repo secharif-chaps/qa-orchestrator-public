@@ -38,8 +38,6 @@ build-and-push-frontend:
     - docker logout $CI_REGISTRY
   only:
     - main
-  tags:
-    - docker
 
 # Optional: Build on merge requests for testing (without pushing)
 test-build-frontend:
@@ -53,5 +51,3 @@ test-build-frontend:
     - echo "✅ Frontend build test passed!"
   only:
     - merge_requests
-  tags:
-    - docker
