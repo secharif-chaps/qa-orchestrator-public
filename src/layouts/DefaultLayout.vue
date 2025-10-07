@@ -16,10 +16,10 @@
           :class="{ 'w-[calc(100%-320px)]': isOpen, 'w-full': !isOpen }"
         ></div>
 
-        <div class="z-10 relative py-4 pr-4 w-full ">
+        <div class="z-10 relative py-4 pr-4 w-full">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
             <!-- Breadcrumbs -->
-            <div class="mb-6">
+            <div class="mb-6" v-if="route.name !== '/[...path]'">
               <Breadcrumbs />
             </div>
 
@@ -40,8 +40,11 @@ import Sidebar from '@/components/global/sidebar.vue'
 import Breadcrumbs from '@/components/ui/Breadcrumbs.vue'
 import { useSidebarStore } from '@/stores/sidebar'
 import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
 const sidebarStore = useSidebarStore()
 
 const isOpen = computed(() => sidebarStore.isOpen())
+
+const route = useRoute()
 </script>
