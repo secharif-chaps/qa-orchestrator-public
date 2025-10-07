@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-bg1 rounded-lg p-4">
+  <div class="bg-base-100 rounded-lg p-4">
     <div class="flex items-center gap-3 mb-4">
       <div
         class="w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
@@ -8,7 +8,7 @@
       </div>
       <div>
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
-        <p class="text-sm text-secondary">{{ productList.length }} products</p>
+        <p class="text-sm text-primary-light-content">{{ productList.length }} products</p>
       </div>
     </div>
 
@@ -16,7 +16,7 @@
       <div
         v-for="(product, index) in displayedProducts"
         :key="index"
-        class="flex items-center gap-3 p-3 bg-bg3 rounded-lg transition-colors"
+        class="flex items-center gap-3 p-3 bg-base-300 rounded-lg transition-colors"
       >
         <span class="text-sm flex-1 capitalize">{{ product }}</span>
         <Badge v-if="isNewProduct(product)" variant="success" size="xs">

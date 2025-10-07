@@ -2,13 +2,13 @@
   <div class="relative flex items-start gap-6 pb-6">
     <!-- Date indicator -->
     <div class="w-36 text-right pt-3">
-      <div class="text-sm font-medium text-secondary pt-2.5">
+      <div class="text-sm font-medium text-primary-light-content pt-2.5">
         {{ formattedDate }}
       </div>
     </div>
 
     <!-- Timeline line -->
-    <div class="absolute top-6 left-[163px] w-0.5 h-full bg-bg2"></div>
+    <div class="absolute top-6 left-[163px] w-0.5 h-full bg-base-200"></div>
 
     <!-- Timeline dot -->
     <div class="relative">
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Event content -->
-    <div class="flex-1 bg-bg1 border border-border-2 rounded-lg p-5">
+    <div class="flex-1 bg-base-100 border border-primary-stroke rounded-lg p-5">
       <!-- Event Header -->
       <div class="flex items-start justify-between mb-3">
         <h3 class="text-lg font-semibold leading-tight">
@@ -45,19 +45,19 @@
       </div>
 
       <!-- Description -->
-      <p class="text-secondary mb-4 leading-relaxed">
+      <p class="text-primary-light-content mb-4 leading-relaxed">
         {{ event.description }}
       </p>
 
       <!-- Impact Section -->
-      <div v-if="event.impact" class="bg-bg3 border border-border-2 rounded-lg p-4 mb-4">
+      <div v-if="event.impact" class="bg-base-300 border border-primary-stroke rounded-lg p-4 mb-4">
         <div class="flex items-center gap-2 mb-2">
           <i class="fa fa-bolt text-yellow-500 text-sm"></i>
-          <span class="text-xs uppercase font-semibold text-secondary tracking-wide">
+          <span class="text-xs uppercase font-semibold text-primary-light-content tracking-wide">
             Impact Analysis
           </span>
         </div>
-        <p class="text-sm text-secondary italic leading-relaxed">
+        <p class="text-sm text-primary-light-content italic leading-relaxed">
           {{ event.impact }}
         </p>
       </div>

@@ -1,9 +1,9 @@
 <template>
   <!-- Delete Confirmation Modal with backdrop blur -->
   <div v-if="showDeleteModal && companyToDelete" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-    <div class="bg-bg1 rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div class="bg-base-100 rounded-lg shadow-xl max-w-md w-full mx-4">
       <!-- Header -->
-      <div class="p-6 border-b border-border-2">
+      <div class="p-6 border-b border-primary-stroke">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
             <i class="fa fa-exclamation-triangle text-red-600"></i>
@@ -12,7 +12,7 @@
             <h3 class="text-lg font-semibold text-base">
               {{ $t('company.delete.title', 'Delete Company') }}
             </h3>
-            <p class="text-sm text-secondary">
+            <p class="text-sm text-primary-light-content">
               {{ $t('company.delete.subtitle', 'This action cannot be undone') }}
             </p>
           </div>
@@ -37,25 +37,25 @@
         </div>
 
         <!-- Company Details -->
-        <div class="mb-6 bg-bg2 rounded-lg p-4">
+        <div class="mb-6 bg-base-200 rounded-lg p-4">
           <h4 class="font-medium text-base mb-3">
             {{ $t('company.delete.details', 'Company Details') }}
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('company.name', 'Name') }}:</span>
+              <span class="text-primary-light-content">{{ $t('company.name', 'Name') }}:</span>
               <span class="font-medium">{{ companyToDelete.name }}</span>
             </div>
             <div v-if="companyToDelete.website" class="flex justify-between">
-              <span class="text-secondary">{{ $t('company.website', 'Website') }}:</span>
+              <span class="text-primary-light-content">{{ $t('company.website', 'Website') }}:</span>
               <span class="text-xs">{{ companyToDelete.website }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('company.created', 'Created') }}:</span>
+              <span class="text-primary-light-content">{{ $t('company.created', 'Created') }}:</span>
               <span>{{ formatDate(companyToDelete.created_at) }}</span>
             </div>
             <div v-if="companyToDelete.tasks && companyToDelete.tasks.length > 0" class="flex justify-between">
-              <span class="text-secondary">{{ $t('company.tasks', 'Tasks') }}:</span>
+              <span class="text-primary-light-content">{{ $t('company.tasks', 'Tasks') }}:</span>
               <span class="inline-flex items-center gap-1">
                 <i class="fa fa-tasks text-primary text-xs"></i>
                 {{ companyToDelete.tasks.length }} {{ $t('company.tasks.count', 'tasks') }}
@@ -66,22 +66,22 @@
 
         <!-- Confirmation Input -->
         <div class="mb-6">
-          <p class="text-sm text-secondary mb-3">
+          <p class="text-sm text-primary-light-content mb-3">
             {{ $t('company.delete.confirm.message', 'Type the company name to confirm deletion:') }}
           </p>
           <div class="space-y-2">
-            <code class="text-sm bg-bg3 px-2 py-1 rounded block">{{ companyToDelete.name }}</code>
+            <code class="text-sm bg-base-300 px-2 py-1 rounded block">{{ companyToDelete.name }}</code>
             <Input
               v-model="confirmationText"
               :placeholder="$t('company.delete.confirm.placeholder', 'Enter company name...')"
-              class="bg-bg3"
+              class="bg-base-300"
             />
           </div>
         </div>
       </div>
 
       <!-- Footer -->
-      <div class="p-6 border-t border-border-2 flex items-center justify-end gap-3">
+      <div class="p-6 border-t border-primary-stroke flex items-center justify-end gap-3">
         <Button
           variant="ghost-primary"
           :label="$t('common.cancel', 'Cancel')"

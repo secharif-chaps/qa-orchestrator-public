@@ -15,7 +15,7 @@
         <!-- Level Filter -->
         <select
           v-model="selectedLevel"
-          class="px-4 py-2 rounded-lg bg-bg2 border border-border text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
+          class="px-4 py-2 rounded-lg bg-base-200 border border-border text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
         >
           <option value="">{{ $t('team.allLevels', 'All Levels') }}</option>
           <option value="0">CEO</option>
@@ -25,7 +25,7 @@
         </select>
 
         <!-- View Mode Toggle -->
-        <div class="flex bg-bg2 rounded-lg p-1">
+        <div class="flex bg-base-200 rounded-lg p-1">
           <Button
             @click="viewMode = 'grid'"
             :variant="viewMode === 'grid' ? 'primary' : 'tertiary'"
@@ -72,11 +72,11 @@
     </div>
 
     <!-- No Results -->
-    <div v-else class="bg-bg1 rounded-lg p-8 text-center">
-      <div class="text-4xl text-secondary mb-3">
+    <div v-else class="bg-base-100 rounded-lg p-8 text-center">
+      <div class="text-4xl text-primary-light-content mb-3">
         <i class="fa fa-search"></i>
       </div>
-      <p class="text-secondary">
+      <p class="text-primary-light-content">
         {{ $t('team.noResults', 'No team members found matching your criteria') }}
       </p>
     </div>

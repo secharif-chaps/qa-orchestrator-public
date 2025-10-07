@@ -18,7 +18,7 @@
     <div
       v-if="isAnimating || isZoomed"
       ref="floatingCardRef"
-      class="bg-bg1 rounded-lg shadow-2xl border border-border-2 fixed z-50"
+      class="bg-base-100 rounded-lg shadow-2xl border border-primary-stroke fixed z-50"
     >
       <div class="p-6">
         <!-- Header -->
@@ -69,7 +69,7 @@
               size="sm"
               clearable
             />
-            <div v-else class="text-sm text-secondary bg-bg2 px-3 py-2 rounded-md">
+            <div v-else class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md">
               {{ workflow.workflow_id || $t('admin.workflows.notConfigured', 'Not configured') }}
             </div>
           </div>
@@ -88,7 +88,7 @@
               size="sm"
               clearable
             />
-            <div v-else class="text-sm text-secondary bg-bg2 px-3 py-2 rounded-md font-mono">
+            <div v-else class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md font-mono">
               {{
                 workflow.api_key_obfuscated || $t('admin.workflows.notConfigured', 'Not configured')
               }}
@@ -103,12 +103,12 @@
             <select
               v-if="isEditing"
               v-model="editData.llm"
-              class="w-full px-3 py-2 rounded-md bg-bg2 border border-border text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              class="w-full px-3 py-2 rounded-md bg-base-200 border border-border text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
             >
               <option value="claude">Claude</option>
               <option value="mistral">Mistral</option>
             </select>
-            <div v-else class="text-sm text-secondary bg-bg2 px-3 py-2 rounded-md">
+            <div v-else class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md">
               {{ workflow.llm ? capitalizeFirst(workflow.llm) : 'Claude' }}
             </div>
           </div>
@@ -141,9 +141,9 @@
   <!-- Placeholder Card (maintains grid layout) -->
   <div
     v-if="isAnimating || isZoomed"
-    class="bg-bg2/50 rounded-lg border-2 border-dashed border-border-2 min-h-[200px] flex items-center justify-center transition-all duration-300"
+    class="bg-base-200/50 rounded-lg border-2 border-dashed border-primary-stroke min-h-[200px] flex items-center justify-center transition-all duration-300"
   >
-    <div class="text-center text-secondary/60">
+    <div class="text-center text-primary-light-content/60">
       <i class="fa fa-edit text-2xl mb-2"></i>
       <p class="text-sm">Editing...</p>
     </div>
@@ -153,7 +153,7 @@
   <div
     v-else
     ref="cardRef"
-    class="bg-bg1 rounded-lg shadow-sm border border-border-2 hover:shadow-md transition-shadow duration-200"
+    class="bg-base-100 rounded-lg shadow-sm border border-primary-stroke hover:shadow-md transition-shadow duration-200"
   >
     <div class="p-6">
       <!-- Header -->
@@ -196,7 +196,7 @@
           <label class="block text-sm font-medium text-base mb-2">
             {{ $t('admin.workflows.workflowId', 'Workflow ID') }}
           </label>
-          <div class="text-sm text-secondary bg-bg2 px-3 py-2 rounded-md">
+          <div class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md">
             {{ workflow.workflow_id || $t('admin.workflows.notConfigured', 'Not configured') }}
           </div>
         </div>
@@ -206,7 +206,7 @@
           <label class="block text-sm font-medium text-base mb-2">
             {{ $t('admin.workflows.apiKey', 'API Key') }}
           </label>
-          <div class="text-sm text-secondary bg-bg2 px-3 py-2 rounded-md font-mono">
+          <div class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md font-mono">
             {{
               workflow.api_key_obfuscated || $t('admin.workflows.notConfigured', 'Not configured')
             }}
@@ -218,7 +218,7 @@
           <label class="block text-sm font-medium text-base mb-2">
             {{ $t('admin.workflows.llm', 'Language Model') }}
           </label>
-          <div class="text-sm text-secondary bg-bg2 px-3 py-2 rounded-md">
+          <div class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md">
             {{ workflow.llm ? capitalizeFirst(workflow.llm) : 'Claude' }}
           </div>
         </div>
@@ -317,7 +317,7 @@ const statusConfig = computed(() => {
     label: 'Not Configured',
     badgeIcon: 'fa fa-times',
     iconBg: 'bg-slate/10 group-hover:bg-slate/20',
-    iconColor: 'text-secondary',
+    iconColor: 'text-primary-light-content',
   }
 })
 

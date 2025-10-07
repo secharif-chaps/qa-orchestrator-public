@@ -1,12 +1,12 @@
 <template>
-  <div class="bg-bg1 rounded-lg p-6">
+  <div class="bg-base-100 rounded-lg p-6">
     <div class="flex items-center justify-between mb-6">
       <div>
         <h2 class="text-2xl font-bold text-primary flex items-center gap-3">
           <i class="fa fa-users"></i>
           <span>{{ $t('team.title', 'Team & Organization') }}</span>
         </h2>
-        <p class="text-secondary mt-1">
+        <p class="text-primary-light-content mt-1">
           {{ $t('team.subtitle', 'Explore the organizational structure and team members') }}
         </p>
       </div>
@@ -23,10 +23,10 @@
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- Total Members -->
-      <div class="bg-bg2 rounded-lg p-4">
+      <div class="bg-base-200 rounded-lg p-4">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-secondary text-sm">{{ $t('team.totalMembers', 'Total Members') }}</p>
+            <p class="text-primary-light-content text-sm">{{ $t('team.totalMembers', 'Total Members') }}</p>
             <p class="text-2xl font-bold text-primary mt-1">{{ totalMembers }}</p>
           </div>
           <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -36,10 +36,10 @@
       </div>
 
       <!-- Executives -->
-      <div class="bg-bg2 rounded-lg p-4">
+      <div class="bg-base-200 rounded-lg p-4">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-secondary text-sm">{{ $t('team.executives', 'Executives') }}</p>
+            <p class="text-primary-light-content text-sm">{{ $t('team.executives', 'Executives') }}</p>
             <p class="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">
               {{ executivesCount }}
             </p>
@@ -53,10 +53,10 @@
       </div>
 
       <!-- Managers -->
-      <div class="bg-bg2 rounded-lg p-4">
+      <div class="bg-base-200 rounded-lg p-4">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-secondary text-sm">{{ $t('team.managers', 'Managers') }}</p>
+            <p class="text-primary-light-content text-sm">{{ $t('team.managers', 'Managers') }}</p>
             <p class="text-2xl font-bold text-orange-600 dark:text-orange-400 mt-1">
               {{ managersCount }}
             </p>
@@ -70,10 +70,10 @@
       </div>
 
       <!-- Departments -->
-      <div class="bg-bg2 rounded-lg p-4">
+      <div class="bg-base-200 rounded-lg p-4">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-secondary text-sm">{{ $t('team.departments', 'Departments') }}</p>
+            <p class="text-primary-light-content text-sm">{{ $t('team.departments', 'Departments') }}</p>
             <p class="text-2xl font-bold text-primary mt-1">{{ departmentsCount }}</p>
           </div>
           <div

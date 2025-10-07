@@ -1,15 +1,14 @@
 <template>
-  <div class="bg-bg1 rounded-lg p-4">
-    <div class="text-center space-y-2 relative">
-      <div
-        class="bg-purple-100 dark:bg-purple-400/10 lg:w-2/3 text-purple-500 dark:text-purple-400 mx-auto px-2 py-2 rounded"
-      >
-        <span>
+  <div class="bg-base-200 rounded-card border border-primary-stroke p-4">
+    <div class="items-center flex gap-6 relative">
+      <i class="fa fa-money-bill text-primary text-2xl"></i>
+      <div>
+        <h2>
           {{ getSourcedValue(company?.profile?.revenue) ?? $t('common.notFound') }}
-        </span>
+        </h2>
+        <div>{{ $t('profile.sections.metrics.revenue') }}</div>
       </div>
 
-      <div>{{ $t('profile.sections.metrics.revenue') }}</div>
       <div class="absolute top-0 right-0">
         <Source :sourced-value="company?.profile?.revenue" />
       </div>

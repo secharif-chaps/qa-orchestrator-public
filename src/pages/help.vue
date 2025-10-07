@@ -2,7 +2,7 @@
   <div class="">
     <div class="mb-8">
       <h1 class="text-3xl font-bold">{{ $t('help.title') }}</h1>
-      <p class="text-secondary mt-2">{{ $t('help.description') }}</p>
+      <p class="text-primary-light-content mt-2">{{ $t('help.description') }}</p>
     </div>
 
     <!-- No help content available -->
@@ -19,7 +19,7 @@
       <div class="hidden lg:block lg:col-span-1">
         <nav class="space-y-1 sticky top-8">
           <div v-for="category in helpCategories" :key="category" class="mb-4">
-            <div class="text-xs font-semibold text-secondary uppercase tracking-wider mb-2">
+            <div class="text-xs font-semibold text-primary-light-content uppercase tracking-wider mb-2">
               {{ getCategoryTitle(category) }}
             </div>
             <div class="space-y-1">
@@ -30,8 +30,8 @@
                 class="w-full group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors text-left"
                 :class="
                   selectedSection?.permission === section.permission
-                    ? 'bg-bg1 text-secondary border-primary'
-                    : 'text-secondary hover:text-primary hover:bg-bg2'
+                    ? 'bg-base-100 text-primary-light-content border-primary'
+                    : 'text-primary-light-content hover:text-primary hover:bg-base-200'
                 "
               >
                 <span class="truncate">{{ section.title }}</span>
@@ -46,7 +46,7 @@
         <select
           v-model="selectedSectionPermission"
           @change="onMobileSelectChange"
-          class="w-full px-3 py-2 border border-border-2 rounded-md bg-bg1 text-secondary focus:outline-none focus:ring-2 focus:ring-primary"
+          class="w-full px-3 py-2 border border-primary-stroke rounded-md bg-base-100 text-primary-light-content focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <option value="">Select a help topic</option>
           <optgroup
@@ -75,15 +75,15 @@
           </div>
         </div>
 
-        <div v-else class="bg-bg1 rounded-lg p-6">
+        <div v-else class="bg-base-100 rounded-lg p-6">
           <div class="mb-6">
             <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               {{ selectedSection.title }}
             </h2>
-            <p class="text-secondary">{{ selectedSection.description }}</p>
+            <p class="text-primary-light-content">{{ selectedSection.description }}</p>
           </div>
 
-          <div class="border-t border-border-2 pt-6">
+          <div class="border-t border-primary-stroke pt-6">
             <div
               v-if="selectedSectionContent"
               class="prose prose-gray dark:prose-invert max-w-none space-y-4"
@@ -94,7 +94,7 @@
                 <div
                   class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
                 ></div>
-                <p class="text-secondary">Loading help content...</p>
+                <p class="text-primary-light-content">Loading help content...</p>
               </div>
             </div>
           </div>

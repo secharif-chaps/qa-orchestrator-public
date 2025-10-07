@@ -5,7 +5,7 @@
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-semibold">{{ $t('search.title') }}</h1>
-          <p class="text-secondary">{{ $t('search.companyIdentity') }}</p>
+          <p class="text-primary-light-content">{{ $t('search.companyIdentity') }}</p>
         </div>
 
         <!-- Token Counter -->
@@ -38,7 +38,7 @@
     />
 
     <!-- Search Form Card -->
-    <div class="bg-bg1 border border-border-2 rounded-lg p-6" :title="$t('search.companyIdentity')">
+    <div class="bg-base-100 border border-primary-stroke rounded-lg p-6" :title="$t('search.companyIdentity')">
       <form @submit.prevent="startSearch" class="space-y-6">
         <!-- Form Fields -->
         <div class="space-y-4">

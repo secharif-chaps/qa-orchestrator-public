@@ -6,7 +6,7 @@
         <h1 class="text-3xl font-bold">
           {{ $t('admin.dashboard.title', 'Admin Dashboard') }}
         </h1>
-        <p class="text-secondary mt-2">
+        <p class="text-primary-light-content mt-2">
           {{ $t('admin.dashboard.description', 'Manage system features and settings') }}
         </p>
       </div>
@@ -17,7 +17,7 @@
           v-for="feature in visibleFeatures"
           :key="feature.id"
           :class="[
-            'bg-bg1 rounded-lg border border-border-2 hover:ring-4 ring-offset-2 transition-all duration-200 cursor-pointer group',
+            'bg-base-100 rounded-lg border border-primary-stroke hover:ring-4 ring-offset-2 transition-all duration-200 cursor-pointer group',
             feature.ringColor,
           ]"
           @click="feature.navigate()"
@@ -41,7 +41,7 @@
                 <Badge :variant="feature.badgeVariant" size="sm" :label="feature.badgeLabel" />
               </div>
             </div>
-            <p class="text-secondary text-sm mb-4">
+            <p class="text-primary-light-content text-sm mb-4">
               {{ $t(feature.descriptionKey, feature.descriptionDefault) }}
             </p>
             <div :class="['flex items-center text-sm font-medium', feature.actionTextColor]">

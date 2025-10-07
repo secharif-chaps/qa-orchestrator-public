@@ -2,7 +2,7 @@
   <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
     <div>
       <h1 class="text-3xl font-bold">Cost Analysis Dashboard</h1>
-      <p class="text-secondary mt-2">
+      <p class="text-primary-light-content mt-2">
         Comprehensive overview of application costs and usage metrics
       </p>
     </div>
@@ -28,14 +28,14 @@
           <input
             v-model="startDate"
             type="date"
-            class="px-3 py-2 text-sm border border-border-2 rounded-lg bg-bg1 text-primary focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+            class="px-3 py-2 text-sm border border-primary-stroke rounded-lg bg-base-100 text-primary focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
             @change="handleCustomDateChange"
           />
-          <span class="text-secondary text-sm">to</span>
+          <span class="text-primary-light-content text-sm">to</span>
           <input
             v-model="endDate"
             type="date"
-            class="px-3 py-2 text-sm border border-border-2 rounded-lg bg-bg1 text-primary focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+            class="px-3 py-2 text-sm border border-primary-stroke rounded-lg bg-base-100 text-primary focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
             @change="handleCustomDateChange"
           />
         </div>

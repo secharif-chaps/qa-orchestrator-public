@@ -5,7 +5,7 @@
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-4">
           <div
-            class="w-16 h-16 rounded-lg flex items-center justify-center border border-border-2"
+            class="w-16 h-16 rounded-lg flex items-center justify-center border border-primary-stroke"
             :class="folderColorClasses"
           >
             <i :class="folderIcon" class="text-3xl"></i>
@@ -14,7 +14,7 @@
             <h1 class="text-3xl font-bold">
               {{ folder?.name || $t('folder.loading', 'Loading folder...') }}
             </h1>
-            <p class="text-secondary mt-2" v-if="folder">
+            <p class="text-primary-light-content mt-2" v-if="folder">
               {{ folder.items?.length || 0 }} items • created on
               {{ formatDate(folder.created_at) }} by @{{ folder.owner }}
             </p>
@@ -43,7 +43,7 @@
         <!-- Search Input -->
         <div class="flex-1 max-w-md relative">
           <i
-            class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
+            class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-primary-light-content"
           ></i>
           <Input
             v-model="searchTerm"
@@ -72,12 +72,12 @@
             <!-- Dropdown Menu -->
             <div
               v-if="showAddItemsDropdown"
-              class="absolute left-0 transform top-full mt-2 w-80 bg-bg1 border border-border-2 rounded-lg shadow-lg z-50"
+              class="absolute left-0 transform top-full mt-2 w-80 bg-base-100 border border-primary-stroke rounded-lg shadow-lg z-50"
             >
               <div class="p-2">
                 <!-- Company Screen - Enabled -->
                 <button
-                  class="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-bg3 rounded-md transition-colors"
+                  class="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-base-300 rounded-md transition-colors"
                   @click="$router.push(`/folders/${$route.params.folderId}/create/company`)"
                 >
                   <div
@@ -89,7 +89,7 @@
                     <div class="font-medium text-sm">
                       {{ $t('folder.addItems.companyScreen', 'Company Screen') }}
                     </div>
-                    <div class="text-xs text-secondary">
+                    <div class="text-xs text-primary-light-content">
                       {{ $t('folder.addItems.companyDescription', 'Add company profiles') }}
                     </div>
                   </div>
@@ -109,7 +109,7 @@
                     <div class="font-medium text-sm">
                       {{ $t('folder.addItems.watchfile', 'Watchfile') }}
                     </div>
-                    <div class="text-xs text-secondary">
+                    <div class="text-xs text-primary-light-content">
                       {{ $t('folder.addItems.watchfileDescription', 'Monitor company changes') }}
                     </div>
                   </div>
@@ -132,7 +132,7 @@
                     <div class="font-medium text-sm">
                       {{ $t('folder.addItems.graphrag', 'Knowledge graph') }}
                     </div>
-                    <div class="text-xs text-secondary">
+                    <div class="text-xs text-primary-light-content">
                       {{
                         $t('folder.addItems.graphragDescription', 'explore ecosystem with GraphRAG')
                       }}

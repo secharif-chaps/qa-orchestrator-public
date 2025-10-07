@@ -6,7 +6,7 @@
     <div class="relative">
       <button
         type="button"
-        class="w-full flex items-center gap-3 px-4 py-3 bg-bg2 border border-border-2 rounded-lg hover:border-primary/50 transition-colors"
+        class="w-full flex items-center gap-3 px-4 py-3 bg-base-200 border border-primary-stroke rounded-lg hover:border-primary/50 transition-colors"
         @click="showDropdown = !showDropdown"
       >
         <div
@@ -16,7 +16,7 @@
           <i :class="selectedIcon" class="text-lg"></i>
         </div>
         <span class="flex-1 text-left">{{ getIconDisplayName(selectedIcon) }}</span>
-        <i class="fas fa-chevron-down text-secondary"></i>
+        <i class="fas fa-chevron-down text-primary-light-content"></i>
       </button>
 
       <!-- Backdrop -->
@@ -25,21 +25,21 @@
       <!-- Icon Grid Dropdown -->
       <div
         v-if="showDropdown"
-        class="absolute top-full mt-2 bg-bg1 border border-border-2 rounded-lg shadow-lg z-50 p-4"
+        class="absolute top-full mt-2 bg-base-100 border border-primary-stroke rounded-lg shadow-lg z-50 p-4"
       >
         <div class="grid grid-cols-5 gap-2">
           <button
             v-for="icon in availableIcons"
             :key="icon.class"
             type="button"
-            class="w-12 h-12 rounded-lg flex items-center justify-center transition-all hover:bg-bg2 border-2"
+            class="w-12 h-12 rounded-lg flex items-center justify-center transition-all hover:bg-base-200 border-2"
             :class="
               selectedIcon === icon.class ? 'border-primary bg-primary/10' : 'border-transparent'
             "
             @click="selectIcon(icon.class)"
             :title="icon.name"
           >
-            <i :class="icon.class" class="text-lg text-secondary"></i>
+            <i :class="icon.class" class="text-lg text-primary-light-content"></i>
           </button>
         </div>
       </div>

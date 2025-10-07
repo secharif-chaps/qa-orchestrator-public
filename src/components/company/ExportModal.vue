@@ -8,7 +8,7 @@
     color="primary"
   >
     <template #description>
-      <p class="text-secondary">Select which sections to include in your PowerPoint export:</p>
+      <p class="text-primary-light-content">Select which sections to include in your PowerPoint export:</p>
 
       <!-- Select All / None toggle -->
       <div class="flex justify-between mb-4">
@@ -31,7 +31,7 @@
         >
           <div class="flex-1 mr-4">
             <label class="font-medium text-sm">{{ option.label }}</label>
-            <p v-if="option.description" class="text-secondary text-xs mt-1">
+            <p v-if="option.description" class="text-primary-light-content text-xs mt-1">
               {{ option.description }}
             </p>
           </div>
@@ -42,7 +42,7 @@
             @update:checked="preferencesChanged = true"
           >
             <Switch.Thumb
-              class="block w-4 h-4 bg-bg1 rounded-full shadow-lg transform transition-transform duration-200 translate-x-1 data-[state=checked]:translate-x-6"
+              class="block w-4 h-4 bg-base-100 rounded-full shadow-lg transform transition-transform duration-200 translate-x-1 data-[state=checked]:translate-x-6"
             />
           </Switch.Root>
         </div>

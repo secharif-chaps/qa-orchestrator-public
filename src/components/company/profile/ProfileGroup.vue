@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-bg1 rounded-lg p-4 relative h-full">
+  <div class="bg-base-100 rounded-lg p-4 relative h-full">
     <div class="flex flex-col gap-2">
       <h4>Group</h4>
       <!-- Group name - individual property loading -->
       <div>
-        <p class="text-secondary">
+        <p class="text-primary-light-content">
           {{ getSourcedValue(company?.profile?.groupName) ?? 'Not found' }}
         </p>
       </div>

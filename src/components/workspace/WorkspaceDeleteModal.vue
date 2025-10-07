@@ -1,8 +1,8 @@
 <template>
   <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-bg1 rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div class="bg-base-100 rounded-lg shadow-xl max-w-md w-full mx-4">
       <!-- Header -->
-      <div class="p-6 border-b border-border-2">
+      <div class="p-6 border-b border-primary-stroke">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
             <i class="fa fa-exclamation-triangle text-red-600"></i>
@@ -11,7 +11,7 @@
             <h3 class="text-lg font-semibold text-base">
               {{ $t('workspace.delete.title', 'Delete Workspace') }}
             </h3>
-            <p class="text-sm text-secondary">
+            <p class="text-sm text-primary-light-content">
               {{ $t('workspace.delete.subtitle', 'This action cannot be undone') }}
             </p>
           </div>
@@ -41,29 +41,29 @@
         </div>
 
         <!-- Workspace Details -->
-        <div class="mb-6 bg-bg2 rounded-lg p-4">
+        <div class="mb-6 bg-base-200 rounded-lg p-4">
           <h4 class="font-medium text-base mb-3">
             {{ $t('workspace.delete.details', 'Workspace Details') }}
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('workspace.name', 'Name') }}:</span>
+              <span class="text-primary-light-content">{{ $t('workspace.name', 'Name') }}:</span>
               <span class="font-medium">{{ workspace.name }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('workspace.slug', 'Slug') }}:</span>
-              <code class="text-xs bg-bg3 px-2 py-1 rounded">{{ workspace.slug }}</code>
+              <span class="text-primary-light-content">{{ $t('workspace.slug', 'Slug') }}:</span>
+              <code class="text-xs bg-base-300 px-2 py-1 rounded">{{ workspace.slug }}</code>
             </div>
             <div v-if="workspace.description" class="flex justify-between">
-              <span class="text-secondary">{{ $t('workspace.description', 'Description') }}:</span>
+              <span class="text-primary-light-content">{{ $t('workspace.description', 'Description') }}:</span>
               <span class="max-w-48 truncate">{{ workspace.description }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('workspace.created', 'Created') }}:</span>
+              <span class="text-primary-light-content">{{ $t('workspace.created', 'Created') }}:</span>
               <span>{{ formatDate(workspace.created_at) }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('workspace.members', 'Members') }}:</span>
+              <span class="text-primary-light-content">{{ $t('workspace.members', 'Members') }}:</span>
               <span class="inline-flex items-center gap-1">
                 <i class="fa fa-users text-primary text-xs"></i>
                 {{ memberCount }} {{ $t('workspace.users', 'users') }}
@@ -74,25 +74,25 @@
 
         <!-- Confirmation Input -->
         <div class="mb-6">
-          <p class="text-sm text-secondary mb-3">
+          <p class="text-sm text-primary-light-content mb-3">
             {{
               $t('workspace.delete.confirm.message', 'Type the workspace name to confirm deletion:')
             }}
           </p>
           <div class="space-y-2">
-            <code class="text-sm bg-bg3 px-2 py-1 rounded block">{{ workspace.slug }}</code>
+            <code class="text-sm bg-base-300 px-2 py-1 rounded block">{{ workspace.slug }}</code>
             <input
               v-model="confirmationText"
               type="text"
               :placeholder="$t('workspace.delete.confirm.placeholder', 'Enter workspace name...')"
-              class="w-full px-3 py-2 border border-border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-bg3"
+              class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-base-300"
             />
           </div>
         </div>
       </div>
 
       <!-- Footer -->
-      <div class="p-6 border-t border-border-2 flex items-center justify-end gap-3">
+      <div class="p-6 border-t border-primary-stroke flex items-center justify-end gap-3">
         <Button
           variant="ghost-primary"
           :label="$t('common.cancel', 'Cancel')"

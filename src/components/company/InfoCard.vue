@@ -5,7 +5,7 @@
     :class="{ 'pointer-events-none opacity-50': disabled }"
   >
     <div
-      class="bg-bg1 border border-border-2 rounded-lg p-6 h-full hover:ring-4 hover:ring-primary/70 ring-offset-2 ring-offset-bg2  transition-shadow duration-300 flex flex-col gap-2"
+      class="bg-base-100 border border-primary-stroke rounded-lg p-6 h-full hover:ring-4 hover:ring-primary/70 ring-offset-2 ring-offset-bg2  transition-shadow duration-300 flex flex-col gap-2"
     >
       <div class="flex justify-between items-center">
         <div class="bg-primary/20 size-10 rounded-lg flex items-center justify-center text-primary"> 
@@ -15,11 +15,11 @@
       </div>
       <h3 class="text-primary">{{ title }}</h3>
 
-      <p class="text-secondary text-sm flex-grow">
+      <p class="text-primary-light-content text-sm flex-grow">
         <span v-if="loading" class="flex items-center gap-2">
           <span>Loading...</span>
         </span>
-        <p v-if="disabled" class="text-secondary">Coming soon</p>
+        <p v-if="disabled" class="text-primary-light-content">Coming soon</p>
 
         <span v-else>{{ description }}</span>
       </p>

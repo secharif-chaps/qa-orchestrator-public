@@ -9,7 +9,7 @@
     <!-- Favorite Toggle Button -->
     <button
       @click.stop="toggleFavorite"
-      class="absolute top-3 right-3 size-10 z-10 p-2 rounded-block hover:bg-bg2 transition-colors"
+      class="absolute top-3 right-3 size-10 z-10 p-2 rounded-block hover:bg-base-200 transition-colors"
       :title="folder.is_favorite ? 'Remove from favorites' : 'Add to favorites'"
       :disabled="isTogglingFavorite"
     >
@@ -17,11 +17,11 @@
         v-if="!isTogglingFavorite"
         :class="[
           folder.is_favorite
-            ? 'fa-jelly-fill fa-regular fa-star text-tertiary'
-            : 'fa-jelly fa-regular fa-star text-secondary hover:text-tertiary',
+            ? 'fa-jelly-fill fa-regular fa-star text-accent'
+            : 'fa-jelly fa-regular fa-star text-primary-light-content hover:text-accent',
         ]"
       ></i>
-      <i v-else class="fas fa-spinner fa-spin text-secondary"></i>
+      <i v-else class="fas fa-spinner fa-spin text-primary-light-content"></i>
     </button>
 
     <div class="flex flex-col gap-2">
@@ -39,7 +39,7 @@
               </h3>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-sm text-secondary">
+              <span class="text-sm text-primary-light-content">
                 {{ $t('folder.itemCount', '{count} items', { count: itemCount }) }}
               </span>
               <div v-if="folder.tags && folder.tags.length > 0" class="flex items-center gap-1">
@@ -50,7 +50,7 @@
                   variant="slate"
                   size="xs"
                 />
-                <span v-if="folder.tags.length > 2" class="text-xs text-secondary">
+                <span v-if="folder.tags.length > 2" class="text-xs text-primary-light-content">
                   +{{ folder.tags.length - 2 }}
                 </span>
               </div>
@@ -65,7 +65,7 @@
         class="mb-4 relative rounded-xl overflow-hidden"
       >
         <div
-          class="grid grid-cols-1 gap-2 bg-bg2 p-4 rounded-xl max-h-64 overflow-y-auto"
+          class="grid grid-cols-1 gap-2 bg-base-200 p-4 rounded-xl max-h-64 overflow-y-auto"
           @mouseenter="isChildHovered = true"
           @mouseleave="isChildHovered = false"
         >
@@ -78,11 +78,11 @@
             "
             v-for="(item, index) in previewItems"
             :key="item.id"
-            class="bg-bg1 rounded-md p-2 border border-border-2 min-h-[60px] flex items-center hover:ring-2 ring-primary/50 ring-offset-bg2"
+            class="bg-base-100 rounded-md p-2 border border-primary-stroke min-h-[60px] flex items-center hover:ring-2 ring-primary/50 ring-offset-bg2"
           >
             <div class="flex items-center gap-2 min-w-0">
               <div
-                class="w-10 h-10 rounded bg-white ring-1 ring-border-2 overflow-hidden flex items-center flex-shrink-0"
+                class="w-10 h-10 rounded bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center flex-shrink-0"
               >
                 <img
                   v-if="item.type === 'company' && getCompanyDomain(item.website)"
@@ -122,14 +122,14 @@
         <div
           v-for="i in 4"
           :key="i"
-          class="rounded-md border-2 border-dashed border-border-2 bg-bg2 h-24"
+          class="rounded-md border-2 border-dashed border-primary-stroke bg-base-200 h-24"
         ></div>
       </div>
     </div>
 
     <!-- Footer with creation date and owner -->
     <div>
-      <div class="flex justify-between items-center text-xs text-secondary">
+      <div class="flex justify-between items-center text-xs text-primary-light-content">
         <span>Created {{ formatDate(folder.created_at) }}</span>
         <span>by @{{ folder.owner }}</span>
       </div>

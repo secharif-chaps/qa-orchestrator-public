@@ -2,13 +2,13 @@
   <!-- Card View -->
   <div
     v-if="mode === 'grid'"
-    class="bg-bg1 rounded-lg p-4 border border-border-2 hover:ring-4 hover:ring-primary/70 ring-offset-2 ring-offset-bg3 transition-all duration-200 cursor-pointer group"
+    class="bg-base-100 rounded-lg p-4 border border-primary-stroke hover:ring-4 hover:ring-primary/70 ring-offset-2 ring-offset-bg3 transition-all duration-200 cursor-pointer group"
     @click="$emit('viewCompany', company.id)"
   >
     <div class="flex items-start justify-between mb-4">
       <div class="flex items-center gap-3">
         <div
-          class="w-12 h-12 rounded-lg bg-white ring-1 ring-border-2 overflow-hidden flex items-center justify-center"
+          class="w-12 h-12 rounded-lg bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center justify-center"
         >
           <img
             v-if="getCompanyDomain(company.website)"
@@ -29,7 +29,7 @@
           <h3 class="text-lg font-semibold group-hover:text-primary transition-colors truncate">
             {{ company.name }}
           </h3>
-          <p v-if="company.website" class="text-sm text-secondary truncate">
+          <p v-if="company.website" class="text-sm text-primary-light-content truncate">
             {{ formatWebsiteDisplay(company.website) }}
           </p>
         </div>
@@ -40,7 +40,7 @@
     <div class="space-y-3">
       <!-- Website Link -->
       <div v-if="company.website" class="flex items-center gap-2">
-        <i class="fas fa-globe text-secondary text-sm w-4"></i>
+        <i class="fas fa-globe text-primary-light-content text-sm w-4"></i>
         <a
           :href="formatWebsiteUrl(company.website)"
           target="_blank"
@@ -55,9 +55,9 @@
 
       <!-- Tasks Info -->
       <div v-if="company.tasks && company.tasks.length > 0" class="flex items-center gap-2">
-        <i class="fas fa-tasks text-secondary text-sm w-4"></i>
+        <i class="fas fa-tasks text-primary-light-content text-sm w-4"></i>
         <div class="flex items-center gap-2">
-          <span class="text-sm text-secondary"> {{ company.tasks.length }} tasks </span>
+          <span class="text-sm text-primary-light-content"> {{ company.tasks.length }} tasks </span>
           <Badge :variant="getTaskStatusVariant(company.tasks)" size="xs">
             {{ getTaskStatusText(company.tasks) }}
           </Badge>
@@ -66,8 +66,8 @@
     </div>
 
     <!-- Footer with creation date and owner -->
-    <div class="mt-4 pt-3 border-t border-border-2">
-      <div class="flex justify-between items-center text-xs text-secondary">
+    <div class="mt-4 pt-3 border-t border-primary-stroke">
+      <div class="flex justify-between items-center text-xs text-primary-light-content">
         <span>Created {{ formatDate(company.created_at) }}</span>
         <span v-if="company.owner">by {{ company.owner }}</span>
       </div>
@@ -77,14 +77,14 @@
   <!-- List/Table View -->
   <div
     v-else
-    class="px-6 py-4 transition-colors cursor-pointer hover:bg-bg2"
+    class="px-6 py-4 transition-colors cursor-pointer hover:bg-base-200"
     @click="$emit('viewCompany', company.id)"
   >
     <div class="grid grid-cols-12 gap-4 items-center">
       <!-- Column 1: Company Name and Website (4 cols) -->
       <div class="col-span-4 flex items-center gap-3 min-w-0">
         <div
-          class="w-10 h-10 rounded-lg bg-white ring-1 ring-border-2 overflow-hidden flex items-center justify-center flex-shrink-0"
+          class="w-10 h-10 rounded-lg bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center justify-center flex-shrink-0"
         >
           <img
             v-if="getCompanyDomain(company.website)"
@@ -106,7 +106,7 @@
           <h3 class="font-medium hover:text-primary transition-colors truncate">
             {{ company.name }}
           </h3>
-          <p v-if="company.website" class="text-sm text-secondary truncate">
+          <p v-if="company.website" class="text-sm text-primary-light-content truncate">
             {{ formatWebsiteDisplay(company.website) }}
           </p>
         </div>
@@ -114,14 +114,14 @@
 
       <!-- Column 2: Created Date (2 cols) -->
       <div class="col-span-2">
-        <div class="text-sm text-secondary">
+        <div class="text-sm text-primary-light-content">
           {{ formatDate(company.created_at) }}
         </div>
       </div>
 
       <!-- Column 3: Owner (2 cols) -->
       <div class="col-span-2">
-        <div class="text-sm text-secondary">
+        <div class="text-sm text-primary-light-content">
           {{ company.owner_username || '—' }}
         </div>
       </div>

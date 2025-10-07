@@ -23,7 +23,7 @@
                 <i class="fa-solid fa-users fa-fw"></i>
                 <div class="flex flex-col gap-1">
                   <span class="text-sm truncate"> Nombre d'employés </span>
-                  <span class="text-xs text-secondary">
+                  <span class="text-xs text-primary-light-content">
                     {{ company?.profile?.employeeCount?.value || 'Non renseigné' }}
                   </span>
                 </div>
@@ -34,10 +34,10 @@
                 v-if="company?.profile?.hq"
                 class="flex items-center gap-3 rounded-card px-4 py-3"
               >
-                <i class="fa-solid fa-map-marker fa-fw text-secondary"></i>
+                <i class="fa-solid fa-map-marker fa-fw text-primary-light-content"></i>
                 <div class="flex flex-col gap-1">
                   <span class="text-sm truncate"> Siege Social </span>
-                  <span class="text-xs text-secondary">
+                  <span class="text-xs text-primary-light-content">
                     {{ company?.profile?.hq?.value || 'Non renseigné' }}
                   </span>
                 </div>
@@ -48,10 +48,10 @@
                 v-if="company?.profile?.ceo"
                 class="flex items-center gap-3 rounded-card px-4 py-3"
               >
-                <i class="fa-solid fa-user-tie fa-fw text-secondary"></i>
+                <i class="fa-solid fa-user-tie fa-fw text-primary-light-content"></i>
                 <div class="flex flex-col gap-1">
                   <span class="text-sm truncate"> CEO </span>
-                  <span class="text-xs text-secondary">
+                  <span class="text-xs text-primary-light-content">
                     {{ company?.profile?.ceo?.value || 'Non renseigné' }}
                   </span>
                 </div>
@@ -62,10 +62,10 @@
                 v-if="company?.profile?.revenue"
                 class="flex items-center gap-3 rounded-card px-4 py-3"
               >
-                <i class="fa-solid fa-money-bill fa-fw text-secondary"></i>
+                <i class="fa-solid fa-money-bill fa-fw text-primary-light-content"></i>
                 <div class="flex flex-col gap-1">
                   <span class="text-sm truncate"> Chiffre d'affaires </span>
-                  <span class="text-xs text-secondary">
+                  <span class="text-xs text-primary-light-content">
                     {{ company?.profile?.revenue?.value || 'Non renseigné' }}
                   </span>
                 </div>
@@ -79,11 +79,11 @@
 
       <Card>
         <p>Présence en ligne</p>
-        <div class="flex bg-bg2 items-center gap-3 rounded-card px-4 py-3">
+        <div class="flex bg-base-200 items-center gap-3 rounded-card px-4 py-3">
           <i class="fa-solid fa-link fa-fw text-primary"></i>
           <div class="flex flex-col gap-1 w-44">
             <span class="text-sm truncate"> Site web </span>
-            <span class="text-xs text-secondary truncate">
+            <span class="text-xs text-primary-light-content truncate">
               {{ company?.website || 'Non renseigné' }}
             </span>
           </div>
@@ -113,7 +113,7 @@
     </div>
 
     <!-- Analysis Cards Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-fr">
       <AnalysisCard
         v-for="card in analysisCards"
         :key="card.section"
@@ -123,13 +123,15 @@
         :insights="card.insights"
         :task-status="card.taskStatus"
         :error-message="card.errorMessage"
+        :task-id="card.taskId"
         :disabled="card.disabled"
         @click="openSection(card.section)"
+        @restart="handleRestartTask"
       />
     </div>
 
     <!-- Footer -->
-    <div v-if="company" class="text-xs text-secondary italic text-center">
+    <div v-if="company" class="text-xs text-primary-light-content italic text-center">
       Created by {{ company.owner_username }} on {{ formatDate(company.created_at) }}
     </div>
   </div>
@@ -155,6 +157,7 @@ import { useRoute, useRouter } from 'vue-router'
 import type { TaskType, TaskStatus } from '@/types/task'
 import Badge from '@/components/ui/Badge.vue'
 import Card from '@/components/ui/Card.vue'
+import { useRestartTask } from '@/mutations/tasks'
 
 const router = useRouter()
 const route = useRoute()
@@ -170,6 +173,9 @@ const { data: company } = useQuery(companyByIdQuery, () => ({ id: companyId.valu
   enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
 })
 
+// Restart task mutation
+const { mutate: restartTaskMutation } = useRestartTask()
+
 // Helper function to get task status by type
 const getTaskStatus = (taskType: TaskType): TaskStatus | null => {
   if (!company.value?.tasks) return null
@@ -184,6 +190,13 @@ const getTaskError = (taskType: TaskType): string | null => {
   return task?.error || null
 }
 
+// Helper function to get task ID by type
+const getTaskId = (taskType: TaskType): number | null => {
+  if (!company.value?.tasks) return null
+  const task = company.value.tasks.find((t) => t.type === taskType)
+  return task?.id || null
+}
+
 // Analysis cards configuration
 const analysisCards = computed(() => [
   {
@@ -194,6 +207,7 @@ const analysisCards = computed(() => [
     insights: company.value?.profile?.businessLine?.value || company.value?.digital?.insights,
     taskStatus: getTaskStatus('profile') || getTaskStatus('digital'),
     errorMessage: getTaskError('profile') || getTaskError('digital'),
+    taskId: getTaskId('profile') || getTaskId('digital'),
     disabled: false,
   },
   {
@@ -204,6 +218,7 @@ const analysisCards = computed(() => [
     insights: company.value?.timeline?.insights,
     taskStatus: getTaskStatus('timeline'),
     errorMessage: getTaskError('timeline'),
+    taskId: getTaskId('timeline'),
     disabled: false,
   },
   {
@@ -214,6 +229,7 @@ const analysisCards = computed(() => [
     insights: company.value?.products?.insights,
     taskStatus: getTaskStatus('products'),
     errorMessage: getTaskError('products'),
+    taskId: getTaskId('products'),
     disabled: false,
   },
   {
@@ -224,6 +240,7 @@ const analysisCards = computed(() => [
     insights: null, // Team doesn't have insights field
     taskStatus: getTaskStatus('team'),
     errorMessage: getTaskError('team'),
+    taskId: getTaskId('team'),
     disabled: false,
   },
   {
@@ -234,6 +251,7 @@ const analysisCards = computed(() => [
     insights: company.value?.jobs?.insights?.hiring_focus?.value,
     taskStatus: getTaskStatus('jobs'),
     errorMessage: getTaskError('jobs'),
+    taskId: getTaskId('jobs'),
     disabled: false,
   },
   {
@@ -244,6 +262,7 @@ const analysisCards = computed(() => [
     insights: company.value?.press?.insights,
     taskStatus: getTaskStatus('press'),
     errorMessage: getTaskError('press'),
+    taskId: getTaskId('press'),
     disabled: false,
   },
   {
@@ -254,6 +273,7 @@ const analysisCards = computed(() => [
     insights: company.value?.csr?.insights,
     taskStatus: getTaskStatus('csr'),
     errorMessage: getTaskError('csr'),
+    taskId: getTaskId('csr'),
     disabled: false,
   },
   {
@@ -264,6 +284,7 @@ const analysisCards = computed(() => [
     insights: null,
     taskStatus: null,
     errorMessage: null,
+    taskId: null,
     disabled: true,
   },
 ])
@@ -277,6 +298,16 @@ const openSection = (section: TaskType) => {
   router.push({
     query: { ...route.query, section },
   })
+}
+
+// Handle restart task with optimistic UI
+const handleRestartTask = async (taskId: number) => {
+  try {
+    await restartTaskMutation(taskId)
+    console.log('✅ Task restarted successfully')
+  } catch (error) {
+    console.error('❌ Error restarting task:', error)
+  }
 }
 
 // Format website URL

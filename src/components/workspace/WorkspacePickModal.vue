@@ -1,10 +1,10 @@
 <template>
   <div
-    class="fixed inset-0 bg-bg1/20 backdrop-blur-sm flex items-center justify-center z-50"
+    class="fixed inset-0 bg-base-100/20 backdrop-blur-sm flex items-center justify-center z-50"
     @click.self="$emit('cancel')"
   >
     <div
-      class="bg-gradient-to-br from-bg1 to-bg2 rounded-xl shadow-2xl border border-border-2 p-6 max-w-xl w-full mx-4"
+      class="bg-gradient-to-br from-bg1 to-bg2 rounded-xl shadow-2xl border border-primary-stroke p-6 max-w-xl w-full mx-4"
     >
       <!-- Header -->
       <div class="flex items-center justify-between mb-6">
@@ -16,21 +16,21 @@
 
       <!-- Content -->
       <div class="mb-6">
-        <p class="text-secondary mb-4">
+        <p class="text-primary-light-content mb-4">
           {{
             $t('workspace.pick.confirmation', 'Are you sure you want to switch to this workspace?')
           }}
         </p>
 
-        <div class="bg-gradient-to-r from-bg2 to-bg1 p-4 rounded-lg border border-border-2">
+        <div class="bg-gradient-to-r from-bg2 to-bg1 p-4 rounded-lg border border-primary-stroke">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
               <i class="fa fa-building text-primary"></i>
             </div>
             <div>
               <h4 class="font-medium text-base">{{ workspace.name }}</h4>
-              <p class="text-sm text-secondary">{{ workspace.slug }}</p>
-              <p v-if="workspace.description" class="text-sm text-secondary mt-1">
+              <p class="text-sm text-primary-light-content">{{ workspace.slug }}</p>
+              <p v-if="workspace.description" class="text-sm text-primary-light-content mt-1">
                 {{ workspace.description }}
               </p>
             </div>

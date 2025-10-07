@@ -1,12 +1,12 @@
 <template>
   <div>
     <!-- Folder Row -->
-    <div class="px-6 py-4 hover:bg-bg2 transition-colors cursor-pointer" @click="toggleExpanded">
+    <div class="px-6 py-4 hover:bg-base-200 transition-colors cursor-pointer" @click="toggleExpanded">
       <div class="grid grid-cols-12 gap-4 items-center">
         <!-- Name with expand/collapse icon -->
         <div class="col-span-6 flex items-center gap-3">
           <button
-            class="w-6 h-6 flex items-center justify-center text-secondary hover:text-primary transition-colors"
+            class="w-6 h-6 flex items-center justify-center text-primary-light-content hover:text-primary transition-colors"
             @click.stop="toggleExpanded"
           >
             <i
@@ -16,7 +16,7 @@
           </button>
 
           <div
-            class="w-10 h-10 rounded-lg flex items-center justify-center border border-border-2"
+            class="w-10 h-10 rounded-lg flex items-center justify-center border border-primary-stroke"
             :class="folderColorClasses"
           >
             <i :class="folderIcon" class="text-lg"></i>
@@ -34,7 +34,7 @@
 
         <!-- Created date -->
         <div class="col-span-2">
-          <span class="text-sm text-secondary">{{ formatDate(folder.created_at) }}</span>
+          <span class="text-sm text-primary-light-content">{{ formatDate(folder.created_at) }}</span>
         </div>
 
         <!-- Actions -->
@@ -61,18 +61,18 @@
     </div>
 
     <!-- Expanded Items -->
-    <div v-if="isExpanded && folder.items && folder.items.length > 0" class="bg-bg2/30">
+    <div v-if="isExpanded && folder.items && folder.items.length > 0" class="bg-base-200/30">
       <div
         v-for="item in folder.items"
         :key="item.id"
-        class="px-6 py-3 hover:bg-bg2/50 transition-colors cursor-pointer border-l-4 border-primary/20 ml-12"
+        class="px-6 py-3 hover:bg-base-200/50 transition-colors cursor-pointer border-l-4 border-primary/20 ml-12"
         @click="$emit('view-item', { itemId: item.id, folderId: folder.id })"
       >
         <div class="grid grid-cols-12 gap-4 items-center">
           <!-- Item name with indentation -->
           <div class="col-span-6 flex items-center gap-3 pl-8">
             <div
-              class="w-8 h-8 rounded-lg bg-white ring-1 ring-border-2 overflow-hidden flex items-center justify-center flex-shrink-0"
+              class="w-8 h-8 rounded-lg bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center justify-center flex-shrink-0"
             >
               <img
                 v-if="item.type === 'company' && getCompanyDomain(item.website)"
@@ -105,7 +105,7 @@
 
           <!-- Item created date -->
           <div class="col-span-2">
-            <span class="text-xs text-secondary">{{ formatDate(item.created_at) }}</span>
+            <span class="text-xs text-primary-light-content">{{ formatDate(item.created_at) }}</span>
           </div>
 
           <!-- Item actions -->
@@ -125,10 +125,10 @@
     <!-- Empty state for expanded folder -->
     <div
       v-else-if="isExpanded"
-      class="px-6 py-8 text-center bg-bg2/30 border-l-4 border-primary/20 ml-12"
+      class="px-6 py-8 text-center bg-base-200/30 border-l-4 border-primary/20 ml-12"
     >
-      <i class="fas fa-folder-open text-2xl text-secondary/50 mb-2"></i>
-      <p class="text-sm text-secondary">
+      <i class="fas fa-folder-open text-2xl text-primary-light-content/50 mb-2"></i>
+      <p class="text-sm text-primary-light-content">
         {{ $t('folder.items.empty', 'No items in this folder') }}
       </p>
     </div>

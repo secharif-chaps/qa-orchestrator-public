@@ -1,12 +1,12 @@
 <template>
   <div class="grid grid-cols-2 gap-6">
-    <div class="bg-bg1 rounded-lg border border-border-2 p-6 col-span-2">
+    <div class="bg-base-100 rounded-lg border border-primary-stroke p-6 col-span-2">
       <h3 class="text-lg font-semibold mb-4">Key Insights</h3>
 
       <div v-if="loading" class="space-y-3">
         <div v-for="i in 4" :key="i" class="animate-pulse">
-          <div class="h-4 bg-bg2 rounded w-3/4 mb-2"></div>
-          <div class="h-3 bg-bg2 rounded w-1/2"></div>
+          <div class="h-4 bg-base-200 rounded w-3/4 mb-2"></div>
+          <div class="h-3 bg-base-200 rounded w-1/2"></div>
         </div>
       </div>
 
@@ -17,12 +17,12 @@
 
       <div v-else class="space-y-4">
         <!-- Most Expensive Workspace -->
-        <div v-if="mostExpensiveWorkspace" class="p-4 bg-bg2 rounded-lg">
+        <div v-if="mostExpensiveWorkspace" class="p-4 bg-base-200 rounded-lg">
           <div class="flex items-center gap-2 mb-2">
             <i class="fa fa-crown text-warning"></i>
             <h4 class="font-medium">Most Expensive Workspace</h4>
           </div>
-          <div class="text-sm text-secondary">
+          <div class="text-sm text-primary-light-content">
             <strong>{{ mostExpensiveWorkspace.workspace_name }}</strong> has spent
             <span class="font-semibold text-primary">{{
               formatCurrency(mostExpensiveWorkspace.total_cost)
@@ -33,12 +33,12 @@
         </div>
 
         <!-- Most Cost-Effective Task Type -->
-        <div v-if="mostEfficientTaskType" class="p-4 bg-bg2 rounded-lg">
+        <div v-if="mostEfficientTaskType" class="p-4 bg-base-200 rounded-lg">
           <div class="flex items-center gap-2 mb-2">
             <i class="fa fa-leaf text-success"></i>
             <h4 class="font-medium">Most Cost-Effective Task Type</h4>
           </div>
-          <div class="text-sm text-secondary">
+          <div class="text-sm text-primary-light-content">
             <Badge
               :variant="getTaskTypeVariant(mostEfficientTaskType.task_type)"
               :label="mostEfficientTaskType.task_type"
@@ -53,12 +53,12 @@
         </div>
 
         <!-- Least Cost-Effective Task Type -->
-        <div v-if="leastEfficientTaskType" class="p-4 bg-bg2 rounded-lg">
+        <div v-if="leastEfficientTaskType" class="p-4 bg-base-200 rounded-lg">
           <div class="flex items-center gap-2 mb-2">
             <i class="fa fa-exclamation-triangle text-warning"></i>
             <h4 class="font-medium">Least Cost-Effective Task Type</h4>
           </div>
-          <div class="text-sm text-secondary">
+          <div class="text-sm text-primary-light-content">
             <Badge
               :variant="getTaskTypeVariant(leastEfficientTaskType.task_type)"
               :label="leastEfficientTaskType.task_type"
@@ -73,12 +73,12 @@
         </div>
 
         <!-- Highest Cost Day -->
-        <div v-if="highestCostPeriod" class="p-4 bg-bg2 rounded-lg">
+        <div v-if="highestCostPeriod" class="p-4 bg-base-200 rounded-lg">
           <div class="flex items-center gap-2 mb-2">
             <i class="fa fa-chart-line text-info"></i>
             <h4 class="font-medium">Peak Cost Period</h4>
           </div>
-          <div class="text-sm text-secondary">
+          <div class="text-sm text-primary-light-content">
             <strong>{{ formatDate(highestCostPeriod.period) }}</strong> had the highest costs with
             <span class="font-semibold text-info">{{
               formatCurrency(highestCostPeriod.total_cost)
@@ -92,28 +92,28 @@
     </div>
 
     <!-- Quick Stats -->
-    <div class="bg-bg1 rounded-lg border border-border-2 p-6">
+    <div class="bg-base-100 rounded-lg border border-primary-stroke p-6">
       <h3 class="text-lg font-semibold mb-4">Quick Statistics</h3>
 
       <div v-if="globalData?.global_summary" class="grid grid-cols-2 gap-4 text-sm">
         <div class="flex justify-between">
-          <span class="text-secondary">Avg Cost per Task:</span>
+          <span class="text-primary-light-content">Avg Cost per Task:</span>
           <span class="font-semibold">{{
             formatCurrency(globalData.global_summary.avg_cost_per_task)
           }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-secondary">Avg Cost per Company:</span>
+          <span class="text-primary-light-content">Avg Cost per Company:</span>
           <span class="font-semibold">{{
             formatCurrency(globalData.global_summary.avg_cost_per_company)
           }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-secondary">Total Workspaces:</span>
+          <span class="text-primary-light-content">Total Workspaces:</span>
           <span class="font-semibold">{{ globalData.global_summary.total_workspaces }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-secondary">Total Tokens:</span>
+          <span class="text-primary-light-content">Total Tokens:</span>
           <span class="font-semibold">{{
             formatNumber(
               globalData.global_summary.total_input_tokens +
@@ -123,14 +123,14 @@
         </div>
       </div>
     </div>
-    <div class="bg-bg1 rounded-lg border border-border-2 p-6">
+    <div class="bg-base-100 rounded-lg border border-primary-stroke p-6">
       <h3 class="text-lg font-semibold mb-4">Claude Sonnet 4 Pricing</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="flex items-center justify-between p-3 bg-bg2 rounded-lg">
+        <div class="flex items-center justify-between p-3 bg-base-200 rounded-lg">
           <span class="text-sm font-medium">Input Cost (per 1M tokens)</span>
           <span class="font-bold text-success">$3.15</span>
         </div>
-        <div class="flex items-center justify-between p-3 bg-bg2 rounded-lg">
+        <div class="flex items-center justify-between p-3 bg-base-200 rounded-lg">
           <span class="text-sm font-medium">Output Cost (per 1M tokens)</span>
           <span class="font-bold text-info">$15.75</span>
         </div>

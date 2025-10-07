@@ -2,7 +2,7 @@
   <div class="relative">
     <!-- Main Counter Card -->
     <div
-      class="bg-gradient-to-br from-bg1 to-bg2 border border-border-2 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200"
+      class="bg-gradient-to-br from-bg1 to-bg2 border border-primary-stroke rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200"
     >
       <div class="flex items-center gap-3">
         <!-- Animated Token Icon -->
@@ -25,7 +25,7 @@
         <div class="flex-1 min-w-0">
           <!-- Module Label -->
           <div class="flex items-center gap-2 mb-1">
-            <span class="text-xs font-medium text-secondary uppercase tracking-wide">
+            <span class="text-xs font-medium text-primary-light-content uppercase tracking-wide">
               {{ module || 'Screen' }} Module
             </span>
             <Button
@@ -46,7 +46,7 @@
             <span :class="tokenCountClasses" class="text-2xl font-bold tabular-nums">
               {{ displayCount }}
             </span>
-            <span v-if="showLabel && !isLoading" class="text-sm text-secondary">
+            <span v-if="showLabel && !isLoading" class="text-sm text-primary-light-content">
               {{ tokenLabel }}
             </span>
           </div>
@@ -60,7 +60,7 @@
           </div> -->
 
           <!-- Loading State -->
-          <div v-if="isLoading" class="mt-2 flex items-center gap-2 text-xs text-secondary">
+          <div v-if="isLoading" class="mt-2 flex items-center gap-2 text-xs text-primary-light-content">
             <div class="w-2 h-2 bg-primary/60 rounded-full animate-pulse"></div>
             Loading token data...
           </div>
@@ -114,21 +114,21 @@ const tokenLabel = computed(() => {
 })
 
 const tokenIconClasses = computed(() => {
-  if (!props.isEnabled) return 'bg-secondary/10 text-secondary'
+  if (!props.isEnabled) return 'bg-secondary/10 text-primary-light-content'
   if (props.tokenCount === 0) return 'bg-warning/10 text-warning'
   if (props.tokenCount < 10) return 'bg-warning/15 text-warning'
   return 'bg-success/10 text-success'
 })
 
 const tokenCountClasses = computed(() => {
-  if (!props.isEnabled) return 'text-secondary'
+  if (!props.isEnabled) return 'text-primary-light-content'
   if (props.tokenCount === 0) return 'text-warning'
   if (props.tokenCount < 10) return 'text-warning'
   return 'text-success'
 })
 
 const statusBadgeClasses = computed(() => {
-  if (!props.isEnabled) return 'bg-secondary/10 text-secondary'
+  if (!props.isEnabled) return 'bg-secondary/10 text-primary-light-content'
   if (props.tokenCount === 0) return 'bg-warning/10 text-warning'
   if (props.tokenCount < 10) return 'bg-warning/10 text-warning'
   return 'bg-success/10 text-success'

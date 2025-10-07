@@ -7,10 +7,10 @@
         @click.self="emit('update:modelValue', false)"
       >
         <div
-          class="bg-bg1 rounded-card border border-border-2 shadow-shadow-3 w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
+          class="bg-base-100 rounded-card border border-primary-stroke shadow-shadow-3 w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
         >
           <!-- Header -->
-          <div class="flex items-center justify-between p-6 border-b border-border-2">
+          <div class="flex items-center justify-between p-6 border-b border-primary-stroke">
             <div class="flex items-center gap-3">
               <div
                 class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center"
@@ -19,7 +19,7 @@
               </div>
               <div>
                 <h2 class="text-lg font-semibold">Workflow de recherche</h2>
-                <p class="text-sm text-secondary">
+                <p class="text-sm text-primary-light-content">
                   {{ completedCount }}/{{ totalTasks }} tâches terminées
                 </p>
               </div>
@@ -37,7 +37,7 @@
             <!-- Progress Overview -->
             <div class="mb-6">
               <!-- Segmented progress bar -->
-              <div class="w-full bg-bg2 rounded-full h-3 overflow-hidden flex">
+              <div class="w-full bg-base-200 rounded-full h-3 overflow-hidden flex">
                 <!-- Completed segment -->
                 <div
                   v-if="completedPercentage > 0"
@@ -65,14 +65,14 @@
                 <!-- Pending segment -->
                 <div
                   v-if="pendingPercentage > 0"
-                  class="bg-bg2 h-full transition-all duration-500 ease-out"
+                  class="bg-base-200 h-full transition-all duration-500 ease-out"
                   :style="{ width: `${pendingPercentage}%` }"
                   :title="`${pendingCount} tâches en attente (${Math.round(pendingPercentage)}%)`"
                 ></div>
               </div>
 
               <!-- Status summary -->
-              <div class="flex items-center justify-between mt-3 text-xs text-secondary">
+              <div class="flex items-center justify-between mt-3 text-xs text-primary-light-content">
                 <div class="flex items-center gap-4">
                   <span class="flex items-center gap-1.5">
                     <div class="w-2 h-2 bg-success-500 rounded-full"></div>
@@ -124,12 +124,12 @@
                         size="xs"
                       />
                     </div>
-                    <p class="text-xs text-secondary truncate">{{ task.description }}</p>
+                    <p class="text-xs text-primary-light-content truncate">{{ task.description }}</p>
 
                     <!-- Token information for admins -->
                     <div
                       v-if="hasAdminAccess && getTokenInfo(task.type)?.hasTokenData"
-                      class="mt-2 flex items-center gap-3 text-xs text-secondary"
+                      class="mt-2 flex items-center gap-3 text-xs text-primary-light-content"
                     >
                       <span v-if="getTokenInfo(task.type)?.inputTokens">
                         <i class="fas fa-arrow-down text-info-500"></i>
@@ -169,9 +169,9 @@
             </div>
 
             <!-- Global Actions -->
-            <div v-if="hasErrorsOrPending" class="mt-6 pt-6 border-t border-border-2">
+            <div v-if="hasErrorsOrPending" class="mt-6 pt-6 border-t border-primary-stroke">
               <div class="flex items-center justify-between">
-                <div class="text-sm text-secondary">
+                <div class="text-sm text-primary-light-content">
                   Des tâches peuvent être redémarrées ou ne sont pas encore lancées
                 </div>
                 <Button
@@ -346,7 +346,7 @@ const getTaskIcon = (taskType: TaskType): string => {
 }
 
 const getTaskClass = (task: { status: TaskStatus | null }): string => {
-  const baseClasses = 'bg-bg1'
+  const baseClasses = 'bg-base-100'
 
   switch (task.status) {
     case 'succeeded':
@@ -358,7 +358,7 @@ const getTaskClass = (task: { status: TaskStatus | null }): string => {
     case 'pending':
       return `${baseClasses} border-info-500`
     default:
-      return `${baseClasses} border-border-2 opacity-60`
+      return `${baseClasses} border-primary-stroke opacity-60`
   }
 }
 
@@ -373,7 +373,7 @@ const getIconContainerClass = (status: TaskStatus | null): string => {
     case 'pending':
       return 'bg-info-500/10 text-info-500'
     default:
-      return 'bg-bg2 text-secondary'
+      return 'bg-base-200 text-primary-light-content'
   }
 }
 
@@ -557,13 +557,13 @@ const startAllPendingTasks = async () => {
   opacity: 0;
 }
 
-.modal-enter-active .bg-bg1,
-.modal-leave-active .bg-bg1 {
+.modal-enter-active .bg-base-100,
+.modal-leave-active .bg-base-100 {
   transition: transform 0.3s ease;
 }
 
-.modal-enter-from .bg-bg1,
-.modal-leave-to .bg-bg1 {
+.modal-enter-from .bg-base-100,
+.modal-leave-to .bg-base-100 {
   transform: scale(0.95);
 }
 </style>

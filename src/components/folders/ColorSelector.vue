@@ -6,12 +6,12 @@
     <div class="relative">
       <button
         type="button"
-        class="w-full flex items-center gap-3 px-4 py-3 bg-bg2 border border-border-2 rounded-lg hover:border-primary/50 transition-colors"
+        class="w-full flex items-center gap-3 px-4 py-3 bg-base-200 border border-primary-stroke rounded-lg hover:border-primary/50 transition-colors"
         @click="showDropdown = !showDropdown"
       >
         <div class="w-6 h-6 rounded-lg" :class="getColorPreviewClasses()"></div>
         <span class="flex-1 text-left capitalize">{{ selectedColor }}</span>
-        <i class="fas fa-chevron-down text-secondary"></i>
+        <i class="fas fa-chevron-down text-primary-light-content"></i>
       </button>
 
       <!-- Backdrop -->
@@ -20,7 +20,7 @@
       <!-- Color Grid Dropdown -->
       <div
         v-if="showDropdown"
-        class="absolute top-full mt-2 bg-bg1 border border-border-2 rounded-lg shadow-lg z-50 p-4"
+        class="absolute top-full mt-2 bg-base-100 border border-primary-stroke rounded-lg shadow-lg z-50 p-4"
       >
         <div class="grid grid-cols-6 gap-2">
           <button

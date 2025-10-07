@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-bg1 border border-border-2 rounded-lg">
-    <div class="px-6 py-4 border-b border-border-2">
+  <div class="bg-base-100 border border-primary-stroke rounded-lg">
+    <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.security.sessions.title') }}</h2>
-      <p class="text-sm text-secondary mt-1">{{ $t('settings.security.sessions.description') }}</p>
+      <p class="text-sm text-primary-light-content mt-1">{{ $t('settings.security.sessions.description') }}</p>
     </div>
     <div class="px-6 py-6">
       <div class="space-y-4">
@@ -39,12 +39,12 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3">
               <div class="flex-shrink-0">
-                <i :class="session.deviceIcon" class="text-secondary"></i>
+                <i :class="session.deviceIcon" class="text-primary-light-content"></i>
               </div>
               <div>
                 <h3 class="text-sm font-medium">{{ session.device }}</h3>
-                <p class="text-xs text-secondary">{{ session.location }}</p>
-                <p class="text-xs text-secondary">
+                <p class="text-xs text-primary-light-content">{{ session.location }}</p>
+                <p class="text-xs text-primary-light-content">
                   {{ $t('settings.security.sessions.lastActive') }}:
                   {{ formatDate(session.lastActive) }}
                 </p>
@@ -67,7 +67,7 @@
               <h3 class="text-sm font-medium">
                 {{ $t('settings.security.sessions.signOutAll.title') }}
               </h3>
-              <p class="text-sm text-secondary">
+              <p class="text-sm text-primary-light-content">
                 {{ $t('settings.security.sessions.signOutAll.description') }}
               </p>
             </div>

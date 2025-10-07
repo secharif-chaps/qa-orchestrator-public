@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-bg1 p-8 rounded-lg">
+  <div class="bg-base-100 p-8 rounded-lg">
     <div class="text-center">
       <div class="mb-6">
         <div 
@@ -11,11 +11,11 @@
       </div>
       
       <h3 class="text-xl font-semibold text-primary mb-3">{{ title }}</h3>
-      <p class="text-secondary mb-6 max-w-md mx-auto">{{ description }}</p>
+      <p class="text-primary-light-content mb-6 max-w-md mx-auto">{{ description }}</p>
       
       <!-- Loading State -->
       <div v-if="type === 'loading'" class="flex justify-center">
-        <div class="flex items-center gap-3 text-secondary">
+        <div class="flex items-center gap-3 text-primary-light-content">
           <i class="fa fa-spinner animate-spin"></i>
           <span>{{ $t('timeline.loading', 'Analyzing company timeline...') }}</span>
         </div>
@@ -25,7 +25,7 @@
       <div v-else>
         <slot name="actions">
           <!-- Default action could be to suggest running timeline analysis -->
-          <div v-if="type === 'no-data'" class="text-sm text-secondary">
+          <div v-if="type === 'no-data'" class="text-sm text-primary-light-content">
             {{ $t('timeline.emptyState.hint', 'Timeline data will appear here once available') }}
           </div>
         </slot>

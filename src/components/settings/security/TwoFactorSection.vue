@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-bg1 border border-border-2 rounded-lg">
-    <div class="px-6 py-4 border-b border-border-2">
+  <div class="bg-base-100 border border-primary-stroke rounded-lg">
+    <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.security.twoFactor.title') }}</h2>
-      <p class="text-sm text-secondary mt-1">{{ $t('settings.security.twoFactor.description') }}</p>
+      <p class="text-sm text-primary-light-content mt-1">{{ $t('settings.security.twoFactor.description') }}</p>
     </div>
     <div class="px-6 py-6">
       <div class="space-y-4">
@@ -12,13 +12,13 @@
         >
           <div class="flex items-center space-x-3">
             <div class="flex-shrink-0">
-              <i class="fas fa-mobile-alt text-secondary"></i>
+              <i class="fas fa-mobile-alt text-primary-light-content"></i>
             </div>
             <div>
               <h3 class="text-sm font-medium">
                 {{ $t('settings.security.twoFactor.authenticator.title') }}
               </h3>
-              <p class="text-sm text-secondary">
+              <p class="text-sm text-primary-light-content">
                 {{ $t('settings.security.twoFactor.authenticator.description') }}
               </p>
             </div>
@@ -47,16 +47,16 @@
         </div>
 
         <!-- Security Keys -->
-        <div class="flex items-center justify-between p-4 border border-border-2 rounded-lg">
+        <div class="flex items-center justify-between p-4 border border-primary-stroke rounded-lg">
           <div class="flex items-center space-x-3">
             <div class="flex-shrink-0">
-              <i class="fas fa-key text-secondary"></i>
+              <i class="fas fa-key text-primary-light-content"></i>
             </div>
             <div>
               <h3 class="text-sm font-medium">
                 {{ $t('settings.security.twoFactor.securityKeys.title') }}
               </h3>
-              <p class="text-sm text-secondary">
+              <p class="text-sm text-primary-light-content">
                 {{ $t('settings.security.twoFactor.securityKeys.description') }}
               </p>
             </div>

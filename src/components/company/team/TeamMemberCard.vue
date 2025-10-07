@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-bg1 rounded-lg p-4 hover:shadow-lg transition-all duration-200 border border-border-2 hover:border-primary/30"
+    class="bg-base-100 rounded-lg p-4 hover:shadow-lg transition-all duration-200 border border-primary-stroke hover:border-primary/30"
   >
     <div class="flex items-start justify-between gap-4">
       <!-- Avatar & Basic Info -->
@@ -20,7 +20,7 @@
           <h3 class="font-semibold text-primary text-lg">
             {{ member.firstName }} {{ member.lastName }}
           </h3>
-          <p class="text-secondary text-sm mt-0.5">
+          <p class="text-primary-light-content text-sm mt-0.5">
             {{ member.position }}
           </p>
         </div>
@@ -53,8 +53,8 @@
     </div>
 
     <!-- Subordinates Count -->
-    <div v-if="subordinatesCount > 0" class="mt-3 pt-3 border-t border-border-2">
-      <div class="flex items-center gap-2 text-sm text-secondary">
+    <div v-if="subordinatesCount > 0" class="mt-3 pt-3 border-t border-primary-stroke">
+      <div class="flex items-center gap-2 text-sm text-primary-light-content">
         <i class="fa fa-users"></i>
         <span>{{
           $t(

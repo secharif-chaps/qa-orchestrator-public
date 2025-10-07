@@ -11,7 +11,7 @@
           </div>
           <div>
             <h1 class="text-2xl font-bold">{{ $t('folder.create.title', 'Create New Folder') }}</h1>
-            <p class="text-secondary">
+            <p class="text-primary-light-content">
               {{ $t('folder.create.subtitle', 'Organize your companies with a custom folder') }}
             </p>
           </div>
@@ -19,7 +19,7 @@
       </div>
 
       <!-- Form -->
-      <div class="bg-bg1 rounded-lg p-6 border border-border-2">
+      <div class="bg-base-100 rounded-lg p-6 border border-primary-stroke">
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Folder Name -->
           <div>
@@ -45,7 +45,7 @@
           <div>
             <label class="block text-sm font-medium mb-2">
               {{ $t('folder.form.tags', 'Tags') }}
-              <span class="text-secondary text-xs ml-1"
+              <span class="text-primary-light-content text-xs ml-1"
                 >({{ $t('folder.form.tagsOptional', 'optional') }})</span
               >
             </label>
@@ -72,7 +72,7 @@
               id="is_favorite"
               v-model="form.is_favorite"
               type="checkbox"
-              class="w-5 h-5 rounded border-border-2 text-primary focus:ring-primary/20"
+              class="w-5 h-5 rounded border-primary-stroke text-primary focus:ring-primary/20"
             />
             <label for="is_favorite" class="text-sm font-medium cursor-pointer">
               {{ $t('folder.form.favorite', 'Mark as favorite') }}
@@ -80,7 +80,7 @@
           </div>
 
           <!-- Actions -->
-          <div class="flex justify-end gap-3 pt-6 border-t border-border-2">
+          <div class="flex justify-end gap-3 pt-6 border-t border-primary-stroke">
             <Button
               type="button"
               variant="secondary"

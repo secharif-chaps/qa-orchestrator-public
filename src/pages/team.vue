@@ -4,8 +4,8 @@
    
 
       <!-- Tab Navigation -->
-      <div class="bg-bg1 border border-border-2 rounded-lg overflow-hidden">
-        <div class="border-b border-border-2">
+      <div class="bg-base-100 border border-primary-stroke rounded-lg overflow-hidden">
+        <div class="border-b border-primary-stroke">
           <div class="flex">
             <RouterLink
               v-for="tab in tabs"
@@ -16,7 +16,7 @@
                 'px-6 py-3 text-sm font-medium transition-all relative border-b-2',
                 activeTab === tab.id
                   ? 'text-primary bg-primary/5 border-primary'
-                  : 'text-secondary hover:bg-bg2/50 border-transparent',
+                  : 'text-primary-light-content hover:bg-base-200/50 border-transparent',
               ]"
             >
               <i :class="tab.icon" class="mr-2"></i>

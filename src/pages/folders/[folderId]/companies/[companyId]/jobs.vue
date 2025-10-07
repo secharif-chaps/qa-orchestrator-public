@@ -27,21 +27,21 @@
     <!-- Main content -->
     <div v-if="hasJobOffersData" class="space-y-6">
       <!-- Insights Section -->
-      <div class="bg-bg1 rounded-lg p-4" v-if="jobOffersInsights">
+      <div class="bg-base-100 rounded-lg p-4" v-if="jobOffersInsights">
         <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
           <i class="fa fa-chart-line text-primary"></i>
           <span>{{ $t('jobs.insights.title') }}</span>
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="p-4 bg-bg3 border border-slate-200 dark:border-slate-700 rounded-lg">
+          <div class="p-4 bg-base-300 border border-slate-200 dark:border-slate-700 rounded-lg">
             <h4 class="text-sm font-semibold">{{ $t('jobs.insights.totalOpenings') }}</h4>
             <p class="text-2xl font-bold text-primary">
               {{ getSourcedValue(company?.jobs?.insights?.total_openings) }}
             </p>
           </div>
-          <div class="p-4 bg-bg3 border border-slate-200 dark:border-slate-700 rounded-lg">
+          <div class="p-4 bg-base-300 border border-slate-200 dark:border-slate-700 rounded-lg">
             <h4 class="text-sm font-semibold">{{ $t('jobs.insights.topDepartments') }}</h4>
-            <div class="text-sm text-secondary">
+            <div class="text-sm text-primary-light-content">
               <ul class="list-disc list-inside space-y-1">
                 <li
                   v-for="department in getSourcedValue(company?.jobs?.insights?.top_departments)"
@@ -51,21 +51,21 @@
                 </li>
               </ul>
               <div class="mt-2">
-                <span class="text-xs italic text-secondary">
+                <span class="text-xs italic text-primary-light-content">
                   Source: {{ getSourcedSource(company?.jobs?.insights?.top_departments) }}
                 </span>
               </div>
             </div>
           </div>
-          <div class="p-4 bg-bg3 border border-slate-200 dark:border-slate-700 rounded-lg">
+          <div class="p-4 bg-base-300 border border-slate-200 dark:border-slate-700 rounded-lg">
             <h4 class="text-sm font-semibold">{{ $t('jobs.insights.hiringFocus') }}</h4>
-            <p class="text-sm text-secondary">
+            <p class="text-sm text-primary-light-content">
               {{ getSourcedValue(company?.jobs?.insights?.hiring_focus) }}
             </p>
           </div>
-          <div class="p-4 bg-bg3 border border-slate-200 dark:border-slate-700 rounded-lg">
+          <div class="p-4 bg-base-300 border border-slate-200 dark:border-slate-700 rounded-lg">
             <h4 class="text-sm font-semibold">{{ $t('jobs.insights.growthIndicators') }}</h4>
-            <p class="text-sm text-secondary">
+            <p class="text-sm text-primary-light-content">
               {{ getSourcedValue(company?.jobs?.insights?.growth_indicators) }}
             </p>
           </div>
@@ -73,7 +73,7 @@
       </div>
 
       <!-- Job Listings with Search -->
-      <div class="bg-bg1 rounded-lg p-4">
+      <div class="bg-base-100 rounded-lg p-4">
         <div class="flex items-center justify-between mb-6">
           <div class="flex gap-2 items-center">
             <i class="fa fa-list text-primary"></i>
@@ -125,25 +125,51 @@ import { useTaskState, hasDataForSection } from '@/composables/useTaskState'
 import JobCard from '@/components/company/jobs/JobCard.vue'
 import PageState from '@/components/company/PageState.vue'
 import { OInput } from '@owlint/feathers-vue'
+import { useRestartTask } from '@/mutations/tasks'
 
 const route = useRoute()
 
 const companyId = computed(() => route.params.companyId as string)
 
 // Use the company data composable
-const { data: company } = useQuery(companyByIdQuery, () => ({
-  id: companyId.value,
-}))
+const { data: company } = useQuery(
+  companyByIdQuery,
+  () => ({
+    id: companyId.value,
+  }),
+  {
+    // Poll every 5 seconds when any task is running
+    refetchInterval: () => {
+      const hasRunningTasks = company.value?.tasks?.some(
+        (t) => t.status === 'running' || t.status === 'pending'
+      )
+      return hasRunningTasks ? 5000 : false
+    },
+  }
+)
 
 // Task state management
 const taskState = useTaskState(company, 'jobs')
 
 const searchQuery = ref('')
 
+// Restart task mutation
+const { mutate: restartTaskMutation } = useRestartTask()
+
 // Handle retry action
-const handleRetry = () => {
-  // TODO: Implement retry logic - trigger jobs task restart
-  console.log('Retrying jobs data fetch...')
+const handleRetry = async () => {
+  const task = company.value?.tasks?.find((t) => t.type === 'jobs')
+  if (task) {
+    console.log('🔄 Retrying jobs task:', task.id)
+    try {
+      await restartTaskMutation(task.id)
+      console.log('✅ Jobs task restarted successfully')
+    } catch (error) {
+      console.error('❌ Error restarting jobs task:', error)
+    }
+  } else {
+    console.warn('⚠️ Jobs task not found')
+  }
 }
 
 const hasJobOffersData = computed(() => {

@@ -1,7 +1,7 @@
 <template>
-  <div class="fixed inset-0 bg-bg1/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div class="bg-bg1 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-      <div class="px-6 py-4 border-b border-border-2">
+  <div class="fixed inset-0 bg-base-100/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div class="bg-base-100 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div class="px-6 py-4 border-b border-primary-stroke">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold">
             {{
@@ -12,12 +12,12 @@
           </h2>
           <button
             @click="$emit('cancel')"
-            class="text-secondary hover:text-base transition-colors p-1"
+            class="text-primary-light-content hover:text-base transition-colors p-1"
           >
             <i class="fa fa-times"></i>
           </button>
         </div>
-        <p class="text-secondary text-sm mt-1">
+        <p class="text-primary-light-content text-sm mt-1">
           {{
             isEditing
               ? $t('team.edit.description', 'Update user information and permissions')
@@ -29,7 +29,7 @@
       <form @submit.prevent="handleSubmit" class="px-6 py-4 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-secondary mb-1">
+            <label class="block text-sm font-medium text-primary-light-content mb-1">
               {{ $t('team.firstName', 'First Name') }}
               <span class="text-red-500">*</span>
             </label>
@@ -38,7 +38,7 @@
               type="text"
               required
               :disabled="isLoading"
-              class="w-full px-3 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               :placeholder="$t('team.firstNamePlaceholder', 'Enter first name')"
             />
             <p v-if="errors.firstName" class="text-red-600 text-xs mt-1">
@@ -47,7 +47,7 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-secondary mb-1">
+            <label class="block text-sm font-medium text-primary-light-content mb-1">
               {{ $t('team.lastName', 'Last Name') }}
               <span class="text-red-500">*</span>
             </label>
@@ -56,7 +56,7 @@
               type="text"
               required
               :disabled="isLoading"
-              class="w-full px-3 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               :placeholder="$t('team.lastNamePlaceholder', 'Enter last name')"
             />
             <p v-if="errors.lastName" class="text-red-600 text-xs mt-1">
@@ -66,7 +66,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-secondary mb-1">
+          <label class="block text-sm font-medium text-primary-light-content mb-1">
             {{ $t('team.username', 'Username') }}
             <span class="text-red-500">*</span>
           </label>
@@ -75,19 +75,19 @@
             type="text"
             required
             :disabled="isLoading || isEditing"
-            class="w-full px-3 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
             :placeholder="$t('team.usernamePlaceholder', 'Enter username')"
           />
           <p v-if="errors.username" class="text-red-600 text-xs mt-1">
             {{ errors.username }}
           </p>
-          <p v-if="isEditing" class="text-xs text-secondary mt-1">
+          <p v-if="isEditing" class="text-xs text-primary-light-content mt-1">
             {{ $t('team.usernameCannotChange', 'Username cannot be changed') }}
           </p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-secondary mb-1">
+          <label class="block text-sm font-medium text-primary-light-content mb-1">
             {{ $t('team.email', 'Email') }}
             <span class="text-red-500">*</span>
           </label>
@@ -96,19 +96,19 @@
             type="email"
             required
             :disabled="isLoading || isEditing"
-            class="w-full px-3 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
             :placeholder="$t('team.emailPlaceholder', 'Enter email address')"
           />
           <p v-if="errors.email" class="text-red-600 text-xs mt-1">
             {{ errors.email }}
           </p>
-          <p v-if="isEditing" class="text-xs text-secondary mt-1">
+          <p v-if="isEditing" class="text-xs text-primary-light-content mt-1">
             {{ $t('team.emailCannotChange', 'Email cannot be changed') }}
           </p>
         </div>
 
         <div v-if="!isEditing">
-          <label class="block text-sm font-medium text-secondary mb-1">
+          <label class="block text-sm font-medium text-primary-light-content mb-1">
             {{ $t('team.temporaryPassword', 'Temporary Password') }}
             <span class="text-red-500">*</span>
           </label>
@@ -118,20 +118,20 @@
               :type="showPassword ? 'text' : 'password'"
               required
               :disabled="isLoading"
-              class="w-full px-3 py-2 pr-10 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full px-3 py-2 pr-10 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               :placeholder="$t('team.passwordPlaceholder', 'Enter temporary password')"
             />
             <button
               type="button"
               @click="showPassword = !showPassword"
-              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary hover:text-base"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary-light-content hover:text-base"
               :disabled="isLoading"
             >
               <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
             </button>
           </div>
           <div class="flex justify-between items-center mt-1">
-            <p class="text-xs text-secondary">
+            <p class="text-xs text-primary-light-content">
               {{
                 $t(
                   'team.passwordHelp',
@@ -163,12 +163,12 @@
         </div>
       </form>
 
-      <div class="px-6 py-4 border-t border-border-2 flex justify-end gap-3">
+      <div class="px-6 py-4 border-t border-primary-stroke flex justify-end gap-3">
         <button
           type="button"
           @click="$emit('cancel')"
           :disabled="isLoading"
-          class="px-4 py-2 text-secondary hover:text-base transition-colors disabled:opacity-50"
+          class="px-4 py-2 text-primary-light-content hover:text-base transition-colors disabled:opacity-50"
         >
           {{ $t('common.cancel', 'Cancel') }}
         </button>

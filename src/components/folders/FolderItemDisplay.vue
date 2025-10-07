@@ -11,7 +11,7 @@
     <div class="flex items-start justify-between mb-4">
       <div class="flex items-center gap-3">
         <div
-          class="w-12 h-12 rounded-lg bg-white ring-1 ring-border-2 overflow-hidden flex items-center justify-center"
+          class="w-12 h-12 rounded-lg bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center justify-center"
         >
           <img
             v-if="item.type === 'company' && getCompanyDomain(item.website)"
@@ -32,7 +32,7 @@
           <h3 class="text-lg font-semibold transition-colors truncate">
             {{ item.name }}
           </h3>
-          <p class="text-sm text-secondary truncate">
+          <p class="text-sm text-primary-light-content truncate">
             {{ formatType(item.type) }}
           </p>
         </div>
@@ -62,7 +62,7 @@
       </div>
     </div>
 
-    <div class="flex items-center justify-between text-sm text-secondary">
+    <div class="flex items-center justify-between text-sm text-primary-light-content">
       <span>{{ $t('folder.item.created', 'Created') }} {{ formatDate(item.created_at) }}</span>
       <span v-if="item.owner">by @{{ item.owner }}</span>
     </div>

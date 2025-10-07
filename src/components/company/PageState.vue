@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-bg1 rounded-lg p-12 text-center">
+  <div class="bg-base-100 rounded-lg p-12 text-center">
     <!-- Loading State -->
     <div v-if="state === 'loading'" class="animate-pulse">
       <div class="flex justify-center mb-4">
@@ -8,43 +8,53 @@
       <h3 class="text-xl font-semibold text-primary mb-2">
         {{ loadingTitle }}
       </h3>
-      <p class="text-secondary max-w-md mx-auto">
+      <p class="text-primary-light-content max-w-md mx-auto">
         {{ loadingDescription }}
       </p>
       <!-- Progress indicator for multiple tasks -->
       <div v-if="taskProgress && taskProgress.total > 1" class="mt-6">
-        <div class="bg-bg2 rounded-full h-2 max-w-xs mx-auto">
+        <div class="bg-base-200 rounded-full h-2 max-w-xs mx-auto">
           <div 
             class="bg-primary rounded-full h-2 transition-all duration-300"
             :style="{ width: `${(taskProgress.completed / taskProgress.total) * 100}%` }"
           ></div>
         </div>
-        <p class="text-xs text-secondary mt-2">
+        <p class="text-xs text-primary-light-content mt-2">
           {{ taskProgress.completed }} of {{ taskProgress.total }} sections loaded
         </p>
       </div>
     </div>
 
     <!-- Error State -->
-    <div v-else-if="state === 'error'" class="text-red-500">
-      <div class="flex justify-center mb-4">
-        <i :class="errorIcon" class="text-4xl"></i>
+    <div v-else-if="state === 'error'" class="flex flex-col items-center">
+      <!-- Chapse Error Image -->
+      <div class="mb-6">
+        <img
+          :src="chapseErrorImage"
+          alt="Error"
+          class="w-24 h-auto"
+        />
       </div>
-      <h3 class="text-xl font-semibold mb-2">
+
+      <!-- Error Title -->
+      <h3 class="text-xl font-semibold text-primary mb-2">
         {{ errorTitle }}
       </h3>
-      <p class="text-secondary max-w-md mx-auto mb-6">
+
+      <!-- Error Description -->
+      <p class="text-primary-light-content max-w-md mx-auto mb-4 text-center">
         {{ errorDescription }}
       </p>
+
       <!-- Error details -->
-      <div v-if="errorMessage" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 max-w-md mx-auto mb-6">
-        <p class="text-sm text-red-700 dark:text-red-300">{{ errorMessage }}</p>
+      <div v-if="errorMessage" class="bg-error-500/10 border border-error-500/20 rounded-lg p-4 max-w-md mx-auto mb-6">
+        <p class="text-sm text-error-500">{{ errorMessage }}</p>
       </div>
+
       <!-- Retry action -->
       <Button
         v-if="showRetryButton"
         variant="primary"
-        color="danger"
         icon="fa fa-refresh"
         :label="retryButtonLabel"
         @click="$emit('retry')"
@@ -54,12 +64,12 @@
     <!-- No Data State -->
     <div v-else-if="state === 'no-data'">
       <div class="flex justify-center mb-4">
-        <i :class="noDataIcon" class="text-4xl text-secondary/30"></i>
+        <i :class="noDataIcon" class="text-4xl text-primary-light-content/30"></i>
       </div>
       <h3 class="text-xl font-semibold text-primary mb-2">
         {{ noDataTitle }}
       </h3>
-      <p class="text-secondary max-w-md mx-auto mb-6">
+      <p class="text-primary-light-content max-w-md mx-auto mb-6">
         {{ noDataDescription }}
       </p>
       <!-- Custom action button -->
@@ -75,12 +85,12 @@
     <!-- No Results State (for search/filter) -->
     <div v-else-if="state === 'no-results'">
       <div class="flex justify-center mb-4">
-        <i class="fa fa-search text-4xl text-secondary/30"></i>
+        <i class="fa fa-search text-4xl text-primary-light-content/30"></i>
       </div>
       <h3 class="text-xl font-semibold text-primary mb-2">
         No results found
       </h3>
-      <p class="text-secondary max-w-md mx-auto mb-6">
+      <p class="text-primary-light-content max-w-md mx-auto mb-6">
         <span v-if="searchQuery">
           We couldn't find anything matching "<strong>{{ searchQuery }}</strong>".
         </span>
@@ -102,6 +112,7 @@
 import { computed } from 'vue'
 import Button from '@/components/ui/Button.vue'
 import type { TaskType } from '@/types/task'
+import chapseErrorImage from '@/assets/chapse/error_light.svg'
 
 interface Props {
   state: 'loading' | 'error' | 'no-data' | 'no-results'

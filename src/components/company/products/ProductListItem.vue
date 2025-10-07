@@ -8,7 +8,7 @@
       </div>
       <div class="flex-1">
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
-        <p class="text-sm text-secondary">{{ productList.length }} products in this category</p>
+        <p class="text-sm text-primary-light-content">{{ productList.length }} products in this category</p>
       </div>
       <Badge :label="productList.length.toString()" variant="slate" size="sm" />
     </div>
@@ -17,9 +17,9 @@
       <div
         v-for="(product, index) in productList"
         :key="index"
-        class="flex items-center gap-2 p-2 bg-bg3 rounded text-sm"
+        class="flex items-center gap-2 p-2 bg-base-300 rounded text-sm"
       >
-        <span class="text-secondary flex-1 capitalize">{{ product }}</span>
+        <span class="text-primary-light-content flex-1 capitalize">{{ product }}</span>
         <Badge v-if="isNewProduct(product)" variant="success" size="xs">
           <i class="fa-solid fa-star"></i>
           New

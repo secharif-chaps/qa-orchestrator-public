@@ -7,7 +7,7 @@
           <h1 class="text-3xl font-bold">
             {{ $t('company.management.title', 'Company Management') }}
           </h1>
-          <p class="text-secondary mt-2">
+          <p class="text-primary-light-content mt-2">
             {{
               $t(
                 'company.management.description',
@@ -31,13 +31,13 @@
         <div class="flex-1 max-w-md">
           <div class="relative">
             <i
-              class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
+              class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-primary-light-content"
             ></i>
             <input
               v-model="companiesStore.filterName"
               type="text"
               :placeholder="$t('company.search.placeholder', 'Search companies...')"
-              class="w-full pl-10 pr-4 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary bg-bg1"
+              class="w-full pl-10 pr-4 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary bg-base-100"
             />
           </div>
         </div>

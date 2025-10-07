@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-bg3">
+  <div class="min-h-screen flex items-center justify-center bg-base-300">
     <div class="text-center">
       <div class="mb-8">
         <h1 class="text-6xl font-bold text-primary">403</h1>
@@ -9,12 +9,12 @@
           <h2 class="text-2xl font-semibold mt-4">
             {{ tokenErrorTitle }}
           </h2>
-          <p class="text-secondary mt-2">
+          <p class="text-primary-light-content mt-2">
             {{ tokenErrorMessage }}
           </p>
           
           <!-- Token status display -->
-          <div v-if="errorModule" class="mt-4 inline-flex items-center gap-2 bg-bg2 px-4 py-2 rounded-lg">
+          <div v-if="errorModule" class="mt-4 inline-flex items-center gap-2 bg-base-200 px-4 py-2 rounded-lg">
             <i class="fa fa-coins text-primary"></i>
             <span class="text-sm">
               <span class="font-medium capitalize">{{ errorModule }}</span> Module
@@ -29,7 +29,7 @@
           <h2 class="text-2xl font-semibold mt-4">
             {{ $t('errors.forbidden.title', 'Access Forbidden') }}
           </h2>
-          <p class="text-secondary mt-2">
+          <p class="text-primary-light-content mt-2">
             {{ $t('errors.forbidden.message', "You don't have permission to access this page.") }}
           </p>
         </div>
@@ -48,7 +48,7 @@
         />
       </div>
 
-      <div class="mt-8 text-sm text-secondary">
+      <div class="mt-8 text-sm text-primary-light-content">
         <p>
           {{
             $t(

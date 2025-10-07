@@ -4,7 +4,7 @@
     class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
     @click.self="$emit('update:modelValue', false)"
   >
-    <div class="bg-bg1 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+    <div class="bg-base-100 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
       <!-- Header -->
       <div class="flex items-center gap-3 mb-4">
         <div class="w-12 h-12 rounded-lg bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
@@ -12,17 +12,17 @@
         </div>
         <div>
           <h3 class="text-lg font-semibold">{{ $t('folder.delete.title', 'Delete Folder') }}</h3>
-          <p class="text-sm text-secondary">{{ $t('folder.delete.subtitle', 'This action cannot be undone') }}</p>
+          <p class="text-sm text-primary-light-content">{{ $t('folder.delete.subtitle', 'This action cannot be undone') }}</p>
         </div>
       </div>
 
       <!-- Warning Message -->
       <div class="mb-6">
-        <p class="text-secondary mb-3">
+        <p class="text-primary-light-content mb-3">
           {{ $t('folder.delete.message', 'Are you sure you want to delete this folder?') }}
         </p>
 
-        <div class="bg-bg2 border border-border-2 rounded-lg p-4">
+        <div class="bg-base-200 border border-primary-stroke rounded-lg p-4">
           <div class="flex items-center gap-3">
             <div
               class="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -32,7 +32,7 @@
             </div>
             <div>
               <div class="font-medium">{{ folderToDelete?.name }}</div>
-              <div class="text-sm text-secondary">
+              <div class="text-sm text-primary-light-content">
                 {{ $t('folder.itemCount', '{count} items', { count: folderToDelete?.items?.length || folderToDelete?.items_count || 0 }) }}
               </div>
             </div>

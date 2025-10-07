@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-bg1 border border-border-2 rounded-lg">
-    <div class="px-6 py-4 border-b border-border-2">
+  <div class="bg-base-100 border border-primary-stroke rounded-lg">
+    <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.accent.title') }}</h2>
-      <p class="text-sm text-secondary mt-1">{{ $t('settings.appearance.accent.description') }}</p>
+      <p class="text-sm text-primary-light-content mt-1">{{ $t('settings.appearance.accent.description') }}</p>
     </div>
     <div class="px-6 py-6">
       <div class="space-y-6">
@@ -11,7 +11,7 @@
           <div
             v-for="colorOption in accentColors"
             :key="colorOption.name"
-            class="group relative border border-border-2 rounded-lg flex flex-col items-center justify-center p-4"
+            class="group relative border border-primary-stroke rounded-lg flex flex-col items-center justify-center p-4"
           >
             <!-- Color Circle Button -->
             <button
@@ -43,7 +43,7 @@
             <!-- Color Name Label -->
             <div class="mt-2 text-center">
               <span
-                class="text-xs font-medium text-secondary group-hover:text-primary transition-colors"
+                class="text-xs font-medium text-primary-light-content group-hover:text-primary transition-colors"
               >
                 {{ colorOption.label }}
               </span>
@@ -53,14 +53,14 @@
 
         <!-- Current Selection Preview -->
         <div
-          class="border border-border-2 rounded-lg p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900"
+          class="border border-primary-stroke rounded-lg p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900"
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <div class="w-8 h-8 rounded-full shadow-md" :class="getCurrentAccentBgClass()"></div>
               <div>
                 <h4 class="text-sm font-medium">Current Accent Color</h4>
-                <p class="text-xs text-secondary">{{ getCurrentAccentLabel() }}</p>
+                <p class="text-xs text-primary-light-content">{{ getCurrentAccentLabel() }}</p>
               </div>
             </div>
             <div class="flex items-center gap-2">
@@ -77,7 +77,7 @@
             </div>
             <div>
               <h4 class="text-sm font-medium text-primary">Personalize Your Experience</h4>
-              <p class="text-xs text-secondary mt-1">
+              <p class="text-xs text-primary-light-content mt-1">
                 Your accent color affects buttons, links, highlights, and interactive elements
                 throughout the application.
               </p>

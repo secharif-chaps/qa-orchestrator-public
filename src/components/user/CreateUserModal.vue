@@ -1,20 +1,20 @@
 <template>
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-bg1 rounded-lg shadow-xl w-full max-w-md">
+    <div class="bg-base-100 rounded-lg shadow-xl w-full max-w-md">
       <!-- Header -->
-      <div class="px-6 py-4 border-b border-border-2">
+      <div class="px-6 py-4 border-b border-primary-stroke">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold">
             {{ $t('user.create.title', 'Create New User') }}
           </h2>
           <button
             @click="$emit('cancel')"
-            class="text-secondary hover:text-base transition-colors p-1"
+            class="text-primary-light-content hover:text-base transition-colors p-1"
           >
             <i class="fa fa-times"></i>
           </button>
         </div>
-        <p class="text-secondary text-sm mt-1">
+        <p class="text-primary-light-content text-sm mt-1">
           {{
             $t('user.create.description', 'User will be prompted to reset password on first login')
           }}
@@ -25,7 +25,7 @@
       <form @submit.prevent="handleSubmit" class="px-6 py-4 space-y-4">
         <!-- Username -->
         <div>
-          <label class="block text-sm font-medium text-secondary mb-1">
+          <label class="block text-sm font-medium text-primary-light-content mb-1">
             {{ $t('user.username', 'Username') }} *
           </label>
           <input
@@ -33,7 +33,7 @@
             type="text"
             required
             :disabled="isLoading"
-            class="w-full px-3 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
             :placeholder="$t('user.usernamePlaceholder', 'Enter username')"
           />
           <p v-if="errors.username" class="text-red-600 text-xs mt-1">
@@ -43,7 +43,7 @@
 
         <!-- Email -->
         <div>
-          <label class="block text-sm font-medium text-secondary mb-1">
+          <label class="block text-sm font-medium text-primary-light-content mb-1">
             {{ $t('user.email', 'Email') }} *
           </label>
           <input
@@ -51,7 +51,7 @@
             type="email"
             required
             :disabled="isLoading"
-            class="w-full px-3 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
             :placeholder="$t('user.emailPlaceholder', 'Enter email address')"
           />
           <p v-if="errors.email" class="text-red-600 text-xs mt-1">
@@ -61,35 +61,35 @@
 
         <!-- First Name -->
         <!-- <div>
-          <label class="block text-sm font-medium text-secondary mb-1">
+          <label class="block text-sm font-medium text-primary-light-content mb-1">
             {{ $t('user.firstName', 'First Name') }}
           </label>
           <input
             v-model="form.firstName"
             type="text"
             :disabled="isLoading"
-            class="w-full px-3 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
             :placeholder="$t('user.firstNamePlaceholder', 'Enter first name')"
           />
         </div> -->
 
         <!-- Last Name -->
         <!-- <div>
-          <label class="block text-sm font-medium text-secondary mb-1">
+          <label class="block text-sm font-medium text-primary-light-content mb-1">
             {{ $t('user.lastName', 'Last Name') }}
           </label>
           <input
             v-model="form.lastName"
             type="text"
             :disabled="isLoading"
-            class="w-full px-3 py-2 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
             :placeholder="$t('user.lastNamePlaceholder', 'Enter last name')"
           />
         </div> -->
 
         <!-- Temporary Password -->
         <div>
-          <label class="block text-sm font-medium text-secondary mb-1">
+          <label class="block text-sm font-medium text-primary-light-content mb-1">
             {{ $t('user.temporaryPassword', 'Temporary Password') }} *
           </label>
           <div class="relative">
@@ -98,19 +98,19 @@
               :type="showPassword ? 'text' : 'password'"
               required
               :disabled="isLoading"
-              class="w-full px-3 py-2 pr-10 border border-border-2 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full px-3 py-2 pr-10 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               :placeholder="$t('user.passwordPlaceholder', 'Enter temporary password')"
             />
             <button
               type="button"
               @click="showPassword = !showPassword"
-              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary hover:text-base"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary-light-content hover:text-base"
               :disabled="isLoading"
             >
               <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
             </button>
           </div>
-          <p class="text-xs text-secondary mt-1">
+          <p class="text-xs text-primary-light-content mt-1">
             {{
               $t(
                 'user.passwordHelp',
@@ -138,12 +138,12 @@
       </form>
 
       <!-- Actions -->
-      <div class="px-6 py-4 border-t border-border-2 flex justify-end gap-3">
+      <div class="px-6 py-4 border-t border-primary-stroke flex justify-end gap-3">
         <button
           type="button"
           @click="$emit('cancel')"
           :disabled="isLoading"
-          class="px-4 py-2 text-secondary hover:text-base transition-colors disabled:opacity-50"
+          class="px-4 py-2 text-primary-light-content hover:text-base transition-colors disabled:opacity-50"
         >
           {{ $t('common.cancel', 'Cancel') }}
         </button>

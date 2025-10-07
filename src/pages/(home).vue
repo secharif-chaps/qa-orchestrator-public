@@ -9,7 +9,7 @@
         </div>
       </div>
 
-      <div class="bg-bg3 p-6 rounded-card border-2 border-border-2 flex items-center gap-8">
+      <div class="bg-base-300 p-6 rounded-card border-2 border-primary-stroke flex items-center gap-8">
         <img
           src="@/assets/chapse/head.svg"
           alt="Chapse head character"
@@ -36,7 +36,32 @@
             <h3 class="font-semibold text-gray-900 dark:text-white">{{ $t('home.recentProjects.title') }}</h3>
             <button class="text-xs text-sage-600 hover:text-sage-800">{{ $t('home.recentProjects.viewAll') }}</button>
           </div>
-          <div class="space-y-3">
+
+          <!-- Loading State -->
+          <div v-if="isRecentCompaniesLoading" class="flex items-center justify-center py-8">
+            <i class="fa fa-spinner fa-spin text-2xl text-sage-500"></i>
+          </div>
+
+          <!-- Error State -->
+          <div v-else-if="recentCompaniesError" class="py-6">
+            <Alert
+              variant="error"
+              title="Unable to load recent projects"
+              message="There was a problem loading your recent projects. Please try again later."
+              icon="fa fa-exclamation-triangle"
+            />
+          </div>
+
+          <!-- Empty State -->
+          <div v-else-if="mockProjects.length === 0" class="py-8 text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+              <i class="fa fa-folder-open text-2xl text-gray-400"></i>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400">No recent projects yet</p>
+          </div>
+
+          <!-- Projects List -->
+          <div v-else class="space-y-3">
             <div
               v-for="project in mockProjects"
               :key="project.id"
@@ -68,9 +93,33 @@
         </Card>
 
         <Card>
-          <h3 class="font-semibold text-gray-900 dark:text-white">{{ $t('home.recentActivities.title') }}</h3>
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">{{ $t('home.recentActivities.title') }}</h3>
+
+          <!-- Loading State -->
+          <div v-if="isActivitiesLoading" class="flex items-center justify-center py-8">
+            <i class="fa fa-spinner fa-spin text-2xl text-sage-500"></i>
+          </div>
+
+          <!-- Error State -->
+          <div v-else-if="activitiesError" class="py-6">
+            <Alert
+              variant="error"
+              title="Unable to load recent activities"
+              message="There was a problem loading workspace activities. Please try again later."
+              icon="fa fa-exclamation-triangle"
+            />
+          </div>
+
+          <!-- Empty State -->
+          <div v-else-if="mockActivities.length === 0" class="py-8 text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+              <i class="fa fa-clock-rotate-left text-2xl text-gray-400"></i>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400">No recent activities</p>
+          </div>
+
           <!-- Recent Activities -->
-          <div class="space-y-3 max-h-[400px] overflow-y-auto  border border-border-2 rounded-card p-4">
+          <div v-else class="space-y-3 max-h-[400px] overflow-y-auto border border-primary-stroke rounded-card p-4">
             <div
               v-for="activity in mockActivities"
               :key="activity.id"
@@ -93,7 +142,7 @@
                 </p>
                 <!-- Meta info: user and timestamp -->
                 <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                  
+
                   <span class="flex items-center gap-1">
                     <i class="fa fa-clock"></i>
                     <span>{{ activity.time }}</span>
@@ -121,6 +170,7 @@ import { recentCompaniesQuery } from '@/queries/companies'
 import { workspaceActivitiesQuery, currentWorkspaceQuery } from '@/queries/workspace'
 import Button from '@/components/ui/Button.vue'
 import Badge from '@/components/ui/Badge.vue'
+import Alert from '@/components/ui/Alert.vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { Folder } from '@/types/folder'
 import ModulesShowcase from '@/components/home/ModulesShowcase.vue'
@@ -157,12 +207,20 @@ const {
 const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
 
 // Fetch recent companies (5 most recent with folder info)
-const { data: recentCompaniesData } = useQuery(recentCompaniesQuery, () => ({
+const {
+  data: recentCompaniesData,
+  isLoading: isRecentCompaniesLoading,
+  error: recentCompaniesError
+} = useQuery(recentCompaniesQuery, () => ({
   limit: 5,
 }))
 
 // Fetch workspace activities (only if workspace ID is available)
-const { data: workspaceActivitiesData, isLoading: isActivitiesLoading } = useQuery(
+const {
+  data: workspaceActivitiesData,
+  isLoading: isActivitiesLoading,
+  error: activitiesError
+} = useQuery(
   workspaceActivitiesQuery,
   () => ({ workspaceId: currentWorkspace.value?.id ?? 0 }),
   {

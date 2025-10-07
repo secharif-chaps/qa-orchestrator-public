@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-bg3">
+  <div class="min-h-screen">
     <div>
       <!-- Header -->
       <div class="mb-8">
@@ -8,7 +8,7 @@
             <h1 class="text-3xl font-bold">
               {{ $t('admin.workflows.title', 'Workflow Management') }}
             </h1>
-            <p class="text-secondary mt-2">
+            <p class="text-primary-light-content mt-2">
               {{
                 $t(
                   'admin.workflows.description',
@@ -29,19 +29,19 @@
 
         <!-- Status Overview -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div class="bg-bg1 rounded-lg border border-border-2 p-4">
+          <div class="bg-base-100 rounded-lg border border-primary-stroke p-4">
             <div class="flex items-center">
               <Badge variant="success" icon="fa fa-check" size="sm" />
               <span class="ml-3 text-sm font-medium">{{ activeCount }} Active</span>
             </div>
           </div>
-          <div class="bg-bg1 rounded-lg border border-border-2 p-4">
+          <div class="bg-base-100 rounded-lg border border-primary-stroke p-4">
             <div class="flex items-center">
               <Badge variant="warning" icon="fa fa-exclamation" size="sm" />
               <span class="ml-3 text-sm font-medium">{{ partialCount }} Partial</span>
             </div>
           </div>
-          <div class="bg-bg1 rounded-lg border border-border-2 p-4">
+          <div class="bg-base-100 rounded-lg border border-primary-stroke p-4">
             <div class="flex items-center">
               <Badge variant="slate" icon="fa fa-times" size="sm" />
               <span class="ml-3 text-sm font-medium">{{ inactiveCount }} Not Configured</span>
@@ -54,7 +54,7 @@
       <div v-if="loading && !workflows.length" class="flex justify-center py-16">
         <div class="text-center">
           <i class="fa fa-spinner animate-spin text-4xl text-primary mb-4"></i>
-          <p class="text-secondary">{{ $t('admin.workflows.loading', 'Loading workflows...') }}</p>
+          <p class="text-primary-light-content">{{ $t('admin.workflows.loading', 'Loading workflows...') }}</p>
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Modules Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
       <Card
         v-for="module in modules"
         :key="module.name"
@@ -10,7 +10,8 @@
         :disabled="module.soon"
       >
         <!-- Card Header with Avatar and Title -->
-        <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-4 justify-between h-full">
+          <div class="flex  flex-col gap-4">
           <div class="flex items-start space-x-3">
             <!-- Avatar -->
             <div
@@ -26,17 +27,14 @@
 
             <!-- Title and Secondary Text -->
             <div class="flex-1 min-w-0">
-              <h3 class="font-semibold text-base text-gray-900 dark:text-white mb-1">
+              <h3 class="font-semibold text-base text-gray-900 dark:text-white">
                 {{ module.name }}
               </h3>
               <p class="text-sm text-gray-600 dark:text-gray-400">
                 {{ module.category }}
               </p>
             </div>
-          </div>
-
-          <!-- Tag Label -->
-          <div>
+            <div>
             <Badge
               :variant="
                 module.unlocked
@@ -56,28 +54,21 @@
               rounded
             />
           </div>
-        </div>
-
-        <!-- Description -->
-        <div class="">
+        
+          </div>
           <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
             {{ module.description }}
           </p>
+        </div>
+    
         </div>
 
         <!-- Action Buttons -->
         <div class="pb-6 flex items-center justify-between">
           <div class="flex space-x-2">
+       
             <Button
-              v-if="module.unlocked"
-              variant="secondary"
-              size="sm"
-              label="Open"
-              icon="fa-solid fa-external-link"
-              @click="handleModuleAction(module)"
-            />
-            <Button
-              v-else-if="module.status === 'contact-sales'"
+              v-if="module.status === 'contact-sales'"
               variant="secondary"
               color="warning"
               size="sm"
@@ -86,12 +77,20 @@
               @click="handleContactSales(module)"
             />
             <Button
-              v-else
+              v-else-if="module.status === 'coming-soon'"
               variant="secondary"
               size="sm"
               label="Coming Soon"
               icon="fa-solid fa-clock"
               disabled
+            />
+            <Button
+              v-else-if="module.status === 'external'"
+              variant="secondary"
+              size="sm"
+              label="Open"
+              icon="fa-solid fa-external-link"
+              @click="handleModuleAction(module)"
             />
           </div>
         </div>
@@ -114,7 +113,7 @@ interface Module {
   icon: string
   unlocked: boolean
   soon: boolean
-  status: 'contact-sales' | 'coming-soon'
+  status: 'contact-sales' | 'coming-soon' | 'available' | 'external'
   favorite: boolean
 }
 
@@ -129,7 +128,7 @@ const modules = ref<Module[]>([
     icon: 'fa-solid fa-magnifying-glass',
     unlocked: true,
     soon: false,
-    status: 'contact-sales',
+    status: 'available',
     favorite: false,
   },
   {
@@ -145,7 +144,7 @@ const modules = ref<Module[]>([
   {
     name: 'Explore',
     description: 'Interactive knowledge graph for advanced data visualization and discovery',
-    category: 'Data Visualization',
+    category: 'Cartography',
     icon: 'fa-solid fa-project-diagram',
     unlocked: false,
     soon: true,
@@ -154,12 +153,12 @@ const modules = ref<Module[]>([
   },
   {
     name: 'Discover',
-    description: 'Automated insights delivery through newsletters and comprehensive reports',
-    category: 'Automation',
+    description: 'Share strategic insights',
+    category: 'Search Data',
     icon: 'fa-solid fa-rss',
     unlocked: true,
     soon: false,
-    status: 'coming-soon',
+    status: 'external',
     favorite: false,
   },
 ])

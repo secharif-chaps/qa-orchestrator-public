@@ -2,16 +2,16 @@
   <div class="space-y-6">
     <!-- Debug Information (Collapsible) -->
     <Collapsible.Root v-model:open="showDebugInfo">
-      <div class="bg-bg1 border border-border-2 rounded-lg overflow-hidden">
+      <div class="bg-base-100 border border-primary-stroke rounded-lg overflow-hidden">
         <Collapsible.Trigger
-          class="w-full px-6 py-4 border-border-2 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+          class="w-full px-6 py-4 border-primary-stroke flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           :class="{
             'border-b': showDebugInfo,
           }"
         >
           <div>
             <h2 class="text-lg font-semibold">{{ $t('settings.profile.debug.title') }}</h2>
-            <p class="text-sm text-secondary mt-1">
+            <p class="text-sm text-primary-light-content mt-1">
               {{ $t('settings.profile.debug.description') }}
             </p>
           </div>
@@ -29,7 +29,7 @@
     </Collapsible.Root>
 
     <!-- Actions -->
-    <div class="bg-bg1 border border-border-2 rounded-lg">
+    <div class="bg-base-100 border border-primary-stroke rounded-lg">
       <div class="px-6 py-6">
         <div class="flex flex-wrap gap-4">
           <Button

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-bg3 min-h-64 rounded-card border border-border-2 p-6 hover:shadow-shadow-2 transition-all duration-300 cursor-pointer group relative overflow-hidden flex flex-col gap-4"
+    class="bg-base-300 min-h-52 rounded-card border border-primary-stroke p-6 hover:shadow-shadow-2 transition-all duration-300 cursor-pointer group relative overflow-hidden flex flex-col gap-4 h-full"
     :class="{
       'opacity-60 cursor-not-allowed': disabled,
       'hover:border-primary/50': !disabled && !isLoading,
@@ -29,14 +29,14 @@
     </div>
 
     <!-- AI Insights Preview -->
-    <div v-if="hasInsights" class="">
-      <p class="text-sm text-secondary line-clamp-3">
-        {{ insightsPreview }}
+    <div v-if="hasInsights" class="flex-1 flex flex-col">
+      <p class="text-sm text-primary-light-content">
+        {{ insights }}
       </p>
       <button
-        class="mt-2 text-xs text-primary hover:text-primary/80 transition-colors font-medium flex items-center gap-1"
+        class="mt-2 text-xs text-primary hover:text-primary/80 transition-colors font-medium flex items-center gap-1 self-start"
       >
-        <span>Lire la suite</span>
+        <span>Voir plus</span>
         <i class="fas fa-arrow-right text-[10px]"></i>
       </button>
     </div>
@@ -44,9 +44,9 @@
     <!-- Loading State Overlay -->
     <div
       v-if="isLoading"
-      class="absolute inset-0 bg-bg1/80 backdrop-blur-sm flex items-center justify-center rounded-card"
+      class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card"
     >
-      <div class="flex items-center gap-3 text-base text-secondary">
+      <div class="flex items-center gap-3 text-base text-primary-light-content">
         <i class="fas fa-spinner fa-spin text-xl"></i>
         <span>Analyse en cours...</span>
       </div>
@@ -55,26 +55,28 @@
     <!-- Error State Overlay -->
     <div
       v-if="hasError"
-      class="absolute inset-0 bg-bg1/80 backdrop-blur-sm flex items-center justify-center rounded-card p-6"
+      class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card p-6"
     >
-      <Alert
-        variant="error"
-        title="Erreur"
-        :message="errorMessage || 'Une erreur est survenue lors de l\'analyse'"
-        icon="fa fa-exclamation-triangle"
-        :dismissible="false"
-      />
+      <div class="flex flex-col items-center gap-4 w-full">
+        <Alert
+          variant="error"
+          title="Erreur"
+          :message="errorMessage || 'Une erreur est survenue lors de l\'analyse'"
+          icon="fa fa-exclamation-triangle"
+          :dismissible="false"
+        />
+      </div>
     </div>
 
     <!-- No Data State -->
-    <div v-else-if="!hasInsights && !isLoading" class="mt-4 pt-4 border-t border-border-2">
-      <p class="text-sm text-secondary italic">Aucune donnée disponible pour cette section</p>
+    <div v-else-if="!hasInsights && !isLoading" class="mt-4 pt-4 border-t border-primary-stroke">
+      <p class="text-sm text-primary-light-content italic">Aucune donnée disponible pour cette section</p>
     </div>
 
     <!-- Disabled Overlay -->
     <div
       v-if="disabled"
-      class="absolute inset-0 bg-bg1/80 backdrop-blur-sm flex items-center justify-center rounded-card"
+      class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card"
     >
       <Badge variant="accent" label="Bientôt disponible" size="sm" />
     </div>
@@ -82,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import Badge from '@/components/ui/Badge.vue'
 import Alert from '@/components/ui/Alert.vue'
 import type { TaskStatus } from '@/types/task'
@@ -95,6 +97,7 @@ interface Props {
   taskStatus?: TaskStatus | null
   errorMessage?: string | null
   disabled?: boolean
+  taskId?: number | null
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -102,24 +105,18 @@ const props = withDefaults(defineProps<Props>(), {
   insights: null,
   taskStatus: null,
   errorMessage: null,
+  taskId: null,
 })
 
 const emit = defineEmits<{
   click: []
+  restart: [taskId: number]
 }>()
 
 // Computed properties
 const isLoading = computed(() => props.taskStatus === 'running' || props.taskStatus === 'pending')
 const hasError = computed(() => props.taskStatus === 'error')
 const hasInsights = computed(() => !!props.insights && props.insights.trim().length > 0)
-
-const insightsPreview = computed(() => {
-  if (!props.insights) return ''
-  // Truncate to ~150 characters for preview
-  const maxLength = 150
-  if (props.insights.length <= maxLength) return props.insights
-  return props.insights.substring(0, maxLength).trim() + '...'
-})
 
 const statusVariant = computed(() => {
   switch (props.taskStatus) {
@@ -151,22 +148,9 @@ const statusLabel = computed(() => {
   }
 })
 
-const iconContainerClass = computed(() => {
-  if (props.disabled) {
-    return 'bg-bg2 group-hover:bg-bg2'
-  }
-  if (isLoading.value) {
-    return 'bg-warning-500/10 group-hover:bg-warning-500/20'
-  }
-  if (hasError.value) {
-    return 'bg-error-500/10 group-hover:bg-error-500/20'
-  }
-  return 'bg-primary/10 group-hover:bg-primary/20'
-})
-
 const iconColorClass = computed(() => {
   if (props.disabled) {
-    return 'text-secondary'
+    return 'text-primary-light-content'
   }
   if (isLoading.value) {
     return 'text-warning-500'

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-bg3">
+  <div>
     <div class="space-y-6">
       <Button
         variant="ghost-primary"

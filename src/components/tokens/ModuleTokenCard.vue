@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-bg1 rounded-lg p-4 border border-border-2">
+  <div class="bg-base-100 rounded-lg p-4 border border-primary-stroke">
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center gap-3">
         <div
@@ -9,7 +9,7 @@
         </div>
         <div>
           <h3 class="font-medium capitalize">{{ module }} Module</h3>
-          <p class="text-sm text-secondary">{{ moduleDescription }}</p>
+          <p class="text-sm text-primary-light-content">{{ moduleDescription }}</p>
         </div>
       </div>
 
@@ -23,7 +23,7 @@
           class="sr-only peer"
         />
         <div
-          class="relative w-11 h-6 bg-bg3 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border-2 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"
+          class="relative w-11 h-6 bg-base-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-primary-stroke after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"
         ></div>
         <span class="ml-3 text-sm font-medium">
           {{ isEnabled ? $t('tokens.enabled', 'Enabled') : $t('tokens.disabled', 'Disabled') }}
@@ -34,13 +34,13 @@
     <!-- Token Count Display -->
     <div class="mb-4">
       <div class="flex items-center gap-2 mb-2">
-        <span class="text-sm text-secondary">{{
+        <span class="text-sm text-primary-light-content">{{
           $t('tokens.currentCount', 'Current Tokens')
         }}</span>
         <button
           @click="refreshTokens"
           :disabled="isRefreshing"
-          class="text-secondary hover:text-base transition-colors p-1"
+          class="text-primary-light-content hover:text-base transition-colors p-1"
           :title="$t('tokens.refresh', 'Refresh token count')"
         >
           <i :class="{ 'animate-spin': isRefreshing }" class="fa fa-refresh text-xs"></i>
@@ -56,10 +56,10 @@
     </div>
 
     <!-- Admin Controls -->
-    <div v-if="showAdminControls" class="space-y-3 pt-3 border-t border-border-2">
+    <div v-if="showAdminControls" class="space-y-3 pt-3 border-t border-primary-stroke">
       <!-- Quick Add Buttons -->
       <div>
-        <label class="block text-xs font-medium text-secondary mb-2">
+        <label class="block text-xs font-medium text-primary-light-content mb-2">
           {{ $t('tokens.quickAdd', 'Quick Add') }}
         </label>
         <div class="flex items-center gap-2 flex-wrap">
@@ -68,7 +68,7 @@
             :key="amount"
             @click="addQuickTokens(amount)"
             :disabled="!isEnabled || addTokensMutation.isLoading.value"
-            class="bg-bg3 hover:bg-primary hover:text-white border border-border-2 hover:border-primary text-sm px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+            class="bg-base-300 hover:bg-primary hover:text-white border border-primary-stroke hover:border-primary text-sm px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
           >
             <i class="fa fa-plus text-xs"></i>
             {{ amount }}
@@ -77,7 +77,7 @@
           <!-- Loading indicator for quick buttons -->
           <div
             v-if="addTokensMutation.isLoading.value"
-            class="flex items-center gap-2 text-xs text-secondary"
+            class="flex items-center gap-2 text-xs text-primary-light-content"
           >
             <div class="animate-spin rounded-full h-3 w-3 border-b-2 border-primary"></div>
             {{ $t('tokens.adding', 'Adding...') }}
@@ -87,7 +87,7 @@
 
       <!-- Custom Amount -->
       <div>
-        <label class="block text-xs font-medium text-secondary mb-2">
+        <label class="block text-xs font-medium text-primary-light-content mb-2">
           {{ $t('tokens.customAmount', 'Custom Amount') }}
         </label>
         <div class="flex items-center gap-2">
@@ -97,7 +97,7 @@
             min="1"
             max="10000"
             :disabled="!isEnabled || addTokensMutation.isLoading.value"
-            class="flex-1 px-3 py-2 border border-border-2 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50"
+            class="flex-1 px-3 py-2 border border-primary-stroke rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50"
             :placeholder="$t('tokens.addPlaceholder', 'Enter custom amount...')"
             @keyup.enter="handleAddTokens"
           />
@@ -116,7 +116,7 @@
         </div>
 
         <!-- Helper text -->
-        <div class="text-xs text-secondary mt-1">
+        <div class="text-xs text-primary-light-content mt-1">
           {{ $t('tokens.addHelper', 'Press Enter or click Add to add custom amount') }}
         </div>
       </div>
@@ -205,7 +205,7 @@ const moduleDescription = computed(
 )
 
 const tokenCountColor = computed(() => {
-  if (!props.isEnabled) return 'text-secondary'
+  if (!props.isEnabled) return 'text-primary-light-content'
   if (props.tokenCount === 0) return 'text-red-600'
   if (props.tokenCount < 10) return 'text-yellow-600'
   return 'text-green-600'

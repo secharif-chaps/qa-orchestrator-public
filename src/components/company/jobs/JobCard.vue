@@ -1,6 +1,6 @@
 <template>
   <div
-    class="p-4 bg-bg3 border border-slate-200 dark:border-slate-700 rounded-lg transition-all duration-300"
+    class="p-4 bg-base-300 border border-slate-200 dark:border-slate-700 rounded-lg transition-all duration-300"
   >
     <div class="flex justify-between items-start">
       <div>
@@ -9,15 +9,15 @@
           <Source :sourced-value="job.title" />
         </h3>
         <div class="mt-2 space-y-2">
-          <div v-if="job.location" class="flex items-center text-sm text-secondary">
+          <div v-if="job.location" class="flex items-center text-sm text-primary-light-content">
             <i class="fa fa-map-marker w-4"></i>
             {{ job.location }}
           </div>
-          <div v-if="job.department" class="flex items-center text-sm text-secondary">
+          <div v-if="job.department" class="flex items-center text-sm text-primary-light-content">
             <i class="fa fa-building w-4"></i>
             {{ job.department }}
           </div>
-          <div v-if="job.posted_date" class="flex items-center text-sm text-secondary">
+          <div v-if="job.posted_date" class="flex items-center text-sm text-primary-light-content">
             <i class="fa fa-calendar w-4"></i>
             Posted: {{ job.posted_date }}
           </div>
@@ -27,14 +27,14 @@
 
     <div class="mt-4">
       <h4 class="font-medium mb-2">Description</h4>
-      <p class="text-sm text-secondary">
+      <p class="text-sm text-primary-light-content">
         {{ job.description }}
       </p>
     </div>
 
     <div class="mt-4">
       <h4 class="font-medium mb-2">Requirements</h4>
-      <p class="text-sm text-secondary">
+      <p class="text-sm text-primary-light-content">
         {{ job.requirements }}
       </p>
     </div>

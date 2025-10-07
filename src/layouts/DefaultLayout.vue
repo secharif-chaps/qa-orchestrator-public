@@ -7,7 +7,7 @@
         :class="{ 'mr-0': !isOpen, 'mr-[320px]': isOpen }"
       >
         <div
-          class="bg-bg2 fixed h-[calc(100vh-68px)] rounded-t-2xl left-0 top-[68px] transition-all z-10"
+          class="bg-base-200 fixed h-[calc(100vh-68px)] rounded-t-2xl left-0 top-[68px] transition-all z-10"
           :class="{ 'w-[calc(100%-320px)]': isOpen, 'w-full': !isOpen }"
         ></div>
 
@@ -16,7 +16,7 @@
           :class="{ 'w-[calc(100%-320px)]': isOpen, 'w-full': !isOpen }"
         ></div>
 
-        <div class="z-10 relative py-4 pr-4 w-full min-h-screen">
+        <div class="z-10 relative py-4 pr-4 w-full ">
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
             <!-- Breadcrumbs -->
             <div class="mb-6">

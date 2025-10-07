@@ -7,10 +7,10 @@
         @click.self="close"
       >
         <div
-          class="bg-bg1 rounded-card border border-border-2 shadow-shadow-3 w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col"
+          class="bg-base-100 rounded-card border border-primary-stroke shadow-shadow-3 w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col"
         >
           <!-- Header -->
-          <div class="flex items-center justify-between p-6 border-b border-border-2 bg-bg2">
+          <div class="flex items-center justify-between p-6 border-b border-primary-stroke bg-base-200">
             <div class="flex items-center gap-3">
               <div
                 class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center"
@@ -19,7 +19,7 @@
               </div>
               <div>
                 <h2 class="text-xl font-semibold">{{ sectionConfig?.name }}</h2>
-                <p class="text-sm text-secondary">{{ sectionConfig?.description }}</p>
+                <p class="text-sm text-primary-light-content">{{ sectionConfig?.description }}</p>
               </div>
             </div>
             <Button
@@ -34,7 +34,7 @@
           <!-- Content -->
           <div class="flex-1 overflow-y-auto p-6">
             <component :is="sectionComponent" v-if="sectionComponent" />
-            <div v-else class="text-center text-secondary py-12">
+            <div v-else class="text-center text-primary-light-content py-12">
               <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
               <p>Section non disponible</p>
             </div>
@@ -58,6 +58,7 @@ const ProductsPage = defineAsyncComponent(() => import('@/pages/folders/[folderI
 const TeamPage = defineAsyncComponent(() => import('@/pages/folders/[folderId]/companies/[companyId]/team.vue'))
 const JobsPage = defineAsyncComponent(() => import('@/pages/folders/[folderId]/companies/[companyId]/jobs.vue'))
 const PressPage = defineAsyncComponent(() => import('@/pages/folders/[folderId]/companies/[companyId]/press.vue'))
+const CsrPage = defineAsyncComponent(() => import('@/pages/folders/[folderId]/companies/[companyId]/csr.vue'))
 
 interface SectionConfig {
   name: string
@@ -129,7 +130,7 @@ const sections: Record<TaskType, SectionConfig> = {
     name: 'Responsabilité sociale',
     description: 'RSE et développement durable',
     icon: 'fas fa-leaf',
-    component: ProfilePage, // Included in profile
+    component: CsrPage,
   },
 }
 
@@ -186,13 +187,13 @@ watch(() => props.modelValue, (isOpen) => {
   opacity: 0;
 }
 
-.modal-enter-active .bg-bg1,
-.modal-leave-active .bg-bg1 {
+.modal-enter-active .bg-base-100,
+.modal-leave-active .bg-base-100 {
   transition: transform 0.3s ease;
 }
 
-.modal-enter-from .bg-bg1,
-.modal-leave-to .bg-bg1 {
+.modal-enter-from .bg-base-100,
+.modal-leave-to .bg-base-100 {
   transform: scale(0.95);
 }
 </style>

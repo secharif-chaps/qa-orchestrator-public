@@ -2,11 +2,11 @@
   <div class="min-h-screen">
     <div class="flex flex-col gap-4">
       <!-- Loading State -->
-      <div v-if="isLoading" class="bg-bg1 rounded-lg shadow-sm p-8 text-center">
+      <div v-if="isLoading" class="bg-base-100 rounded-lg shadow-sm p-8 text-center">
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
-        <p class="text-secondary">{{ $t('folder.loading', 'Loading folder...') }}</p>
+        <p class="text-primary-light-content">{{ $t('folder.loading', 'Loading folder...') }}</p>
       </div>
 
       <!-- Error State -->
@@ -52,12 +52,12 @@
           </div>
 
           <!-- Table View -->
-          <div v-else class="bg-bg1 rounded-lg overflow-hidden border border-border-2">
+          <div v-else class="bg-base-100 rounded-lg overflow-hidden border border-primary-stroke">
             <!-- Add Items Row -->
 
             <!-- Table Header -->
-            <div class="px-6 py-4 border-b border-border-2 bg-bg2">
-              <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
+            <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
+              <div class="grid grid-cols-12 gap-4 text-sm font-medium text-primary-light-content">
                 <div class="col-span-4">{{ $t('folder.item.name', 'Item') }}</div>
                 <div class="col-span-2">{{ $t('folder.item.type', 'Type') }}</div>
                 <div class="col-span-2">{{ $t('folder.item.created', 'Created') }}</div>
@@ -71,7 +71,7 @@
               <div
                 v-for="item in filteredItems"
                 :key="item.id"
-                class="px-6 py-4 hover:bg-bg2 transition-colors"
+                class="px-6 py-4 hover:bg-base-200 transition-colors"
                 :class="{ 'cursor-auto': companyFilter === 'archived', 'cursor-pointer': companyFilter !== 'archived' }"
                 @click="companyFilter !== 'archived' && navigateToItem(item)"
               >
@@ -79,7 +79,7 @@
                   <div class="col-span-4">
                     <div class="flex items-center gap-3">
                       <div
-                        class="w-10 h-10 rounded-lg bg-white ring-1 ring-border-2 overflow-hidden flex items-center justify-center flex-shrink-0"
+                        class="w-10 h-10 rounded-lg bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center justify-center flex-shrink-0"
                       >
                         <img
                           v-if="item.type === 'company' && getCompanyDomain(item.website)"
@@ -110,10 +110,10 @@
                     <Badge variant="primary" :label="item.type" size="sm" />
                   </div>
                   <div class="col-span-2">
-                    <span class="text-sm text-secondary">{{ formatDate(item.created_at) }}</span>
+                    <span class="text-sm text-primary-light-content">{{ formatDate(item.created_at) }}</span>
                   </div>
                   <div class="col-span-2">
-                    <span class="text-sm text-secondary">{{ item.owner_username || 'N/A' }}</span>
+                    <span class="text-sm text-primary-light-content">{{ item.owner_username || 'N/A' }}</span>
                   </div>
                   <div class="col-span-2 text-right">
                     <div class="flex items-center justify-end gap-2">
@@ -151,8 +151,8 @@
         </div>
 
         <!-- Empty State -->
-        <div v-else class="bg-bg1 rounded-lg shadow-sm p-12 text-center">
-          <i class="fas fa-folder-open text-4xl text-secondary/50 mb-4"></i>
+        <div v-else class="bg-base-100 rounded-lg shadow-sm p-12 text-center">
+          <i class="fas fa-folder-open text-4xl text-primary-light-content/50 mb-4"></i>
           <h3 class="text-lg font-medium mb-2">
             {{
               searchTerm
@@ -160,7 +160,7 @@
                 : $t('folder.empty.title', 'No items in this folder')
             }}
           </h3>
-          <p class="text-secondary mb-6">
+          <p class="text-primary-light-content mb-6">
             {{
               searchTerm
                 ? $t('folder.empty.tryDifferentSearch', 'Try a different search term')

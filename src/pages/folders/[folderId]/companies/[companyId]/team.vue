@@ -34,7 +34,7 @@
       />
 
       <!-- Team Members List -->
-      <div class="bg-bg1 p-6 rounded-lg">
+      <div class="bg-base-100 p-6 rounded-lg">
         <h3 class="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
           <i class="fa fa-address-card"></i>
           <span>{{ $t('team.members.title', 'Team Members') }}</span>
@@ -46,7 +46,7 @@
       </div>
 
       <!-- Hierarchy Graph -->
-      <div class="bg-bg1 p-6 rounded-lg">
+      <div class="bg-base-100 p-6 rounded-lg">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-semibold text-primary flex items-center gap-2">
             <i class="fa fa-sitemap"></i>
@@ -97,7 +97,7 @@
             <Panel
               position="top-left"
               v-if="selectedNode"
-              class="bg-bg1 rounded-lg max-w-[300px] ring-4 ring-offset-2 ring-offset-bg1"
+              class="bg-base-100 rounded-lg max-w-[300px] ring-4 ring-offset-2 ring-offset-bg1"
               :class="{
                 'ring-orange-400 dark:ring-orange-500/20': selectedNode.level > 1,
                 'ring-purple-600 dark:ring-purple-500/20': selectedNode.level <= 1,
@@ -116,8 +116,8 @@
                     class="min-w-12 grow-0 h-12 rounded-full flex items-center justify-center"
                     :class="[
                       selectedNode.level > 1
-                        ? 'bg-orange-200 dark:bg-bg3 text-orange-600'
-                        : 'bg-purple-200 dark:bg-bg3 text-purple-600',
+                        ? 'bg-orange-200 dark:bg-base-300 text-orange-600'
+                        : 'bg-purple-200 dark:bg-base-300 text-purple-600',
                     ]"
                   >
                     <i class="fa fa-user text-xl"></i>
@@ -183,6 +183,7 @@ import TeamMembersList from '@/components/company/team/TeamMembersList.vue'
 import PageState from '@/components/company/PageState.vue'
 import { useScreenshot } from '@/composables/useScreenshot'
 import type { TeamMember } from '@/types/company'
+import { useRestartTask } from '@/mutations/tasks'
 
 const { isDark } = useTheme()
 
@@ -191,17 +192,42 @@ const route = useRoute()
 const companyId = computed(() => route.params.companyId as string)
 
 // Use the company data composable
-const { data: company } = useQuery(companyByIdQuery, () => ({
-  id: companyId.value,
-}))
+const { data: company } = useQuery(
+  companyByIdQuery,
+  () => ({
+    id: companyId.value,
+  }),
+  {
+    // Poll every 5 seconds when any task is running
+    refetchInterval: () => {
+      const hasRunningTasks = company.value?.tasks?.some(
+        (t) => t.status === 'running' || t.status === 'pending'
+      )
+      return hasRunningTasks ? 5000 : false
+    },
+  }
+)
 
 // Task state management
 const taskState = useTaskState(company, 'team')
 
+// Restart task mutation
+const { mutate: restartTaskMutation } = useRestartTask()
+
 // Handle retry action
-const handleRetry = () => {
-  // TODO: Implement retry logic - trigger team task restart
-  console.log('Retrying team data fetch...')
+const handleRetry = async () => {
+  const task = company.value?.tasks?.find((t) => t.type === 'team')
+  if (task) {
+    console.log('🔄 Retrying team task:', task.id)
+    try {
+      await restartTaskMutation(task.id)
+      console.log('✅ Team task restarted successfully')
+    } catch (error) {
+      console.error('❌ Error restarting team task:', error)
+    }
+  } else {
+    console.warn('⚠️ Team task not found')
+  }
 }
 
 const { fitView, vueFlowRef } = useVueFlow()

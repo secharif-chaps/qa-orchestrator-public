@@ -5,7 +5,7 @@
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-semibold">{{ $t('csv.upload.title', 'Import Companies from CSV') }}</h1>
-          <p class="text-secondary">{{ $t('csv.upload.description', 'Upload a CSV file to create multiple companies at once') }}</p>
+          <p class="text-primary-light-content">{{ $t('csv.upload.description', 'Upload a CSV file to create multiple companies at once') }}</p>
         </div>
 
         <!-- Token Counter -->
@@ -38,14 +38,14 @@
     />
 
     <!-- CSV Upload Form -->
-    <div class="bg-bg1 border border-border-2 rounded-lg p-6 space-y-6">
+    <div class="bg-base-100 border border-primary-stroke rounded-lg p-6 space-y-6">
       <!-- File Upload -->
       <div class="space-y-4">
         <h2 class="text-lg font-medium">{{ $t('csv.upload.step1', 'Step 1: Upload CSV File') }}</h2>
         
         <div class="space-y-4">
           <!-- File Input -->
-          <div class="border-2 border-dashed border-border-2 rounded-lg p-6 text-center">
+          <div class="border-2 border-dashed border-primary-stroke rounded-lg p-6 text-center">
             <input
               ref="fileInput"
               type="file"
@@ -55,9 +55,9 @@
             />
             
             <div v-if="!selectedFile" class="space-y-2">
-              <i class="fa fa-upload text-3xl text-secondary"></i>
+              <i class="fa fa-upload text-3xl text-primary-light-content"></i>
               <div>
-                <p class="text-secondary">{{ $t('csv.upload.dragDrop', 'Drag and drop your CSV file here, or') }}</p>
+                <p class="text-primary-light-content">{{ $t('csv.upload.dragDrop', 'Drag and drop your CSV file here, or') }}</p>
                 <Button
                   variant="ghost-primary"
                   label="Choose File"
@@ -69,7 +69,7 @@
             <div v-else class="space-y-2">
               <i class="fa fa-file-csv text-3xl text-success"></i>
               <p class="font-medium">{{ selectedFile.name }}</p>
-              <p class="text-sm text-secondary">{{ formatFileSize(selectedFile.size) }}</p>
+              <p class="text-sm text-primary-light-content">{{ formatFileSize(selectedFile.size) }}</p>
               <Button
                 variant="ghost-primary"
                 color="danger"
@@ -113,7 +113,7 @@
         <!-- Parsed Companies Preview -->
         <div v-if="parseResult.companies.length > 0" class="space-y-4">
           <div class="flex items-center justify-between">
-            <p class="text-sm text-secondary">
+            <p class="text-sm text-primary-light-content">
               {{ $t('csv.upload.companiesFound', 'Found {count} companies in CSV', { count: parseResult.companies.length }) }}
             </p>
             <Button
@@ -127,16 +127,16 @@
           </div>
           
           <!-- Preview Table -->
-          <div class="overflow-x-auto border border-border-2 rounded-lg">
+          <div class="overflow-x-auto border border-primary-stroke rounded-lg">
             <table class="min-w-full divide-y divide-border-2">
-              <thead class="bg-bg2">
+              <thead class="bg-base-200">
                 <tr>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Row</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Company Name</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider">Website</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider">Row</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider">Company Name</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider">Website</th>
                 </tr>
               </thead>
-              <tbody class="bg-bg1 divide-y divide-border-2">
+              <tbody class="bg-base-100 divide-y divide-border-2">
                 <tr v-for="company in parseResult.companies.slice(0, 5)" :key="company.row_number">
                   <td class="px-4 py-3 text-sm">{{ company.row_number }}</td>
                   <td class="px-4 py-3 text-sm">{{ company.name || '-' }}</td>
@@ -144,7 +144,7 @@
                 </tr>
               </tbody>
             </table>
-            <div v-if="parseResult.companies.length > 5" class="px-4 py-3 text-sm text-secondary bg-bg2">
+            <div v-if="parseResult.companies.length > 5" class="px-4 py-3 text-sm text-primary-light-content bg-base-200">
               {{ $t('csv.upload.moreRows', 'and {count} more rows...', { count: parseResult.companies.length - 5 }) }}
             </div>
           </div>

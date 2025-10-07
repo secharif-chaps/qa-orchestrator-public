@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-bg3">
+  <div class="min-h-screen bg-base-300">
     <div class="flex flex-col gap-4">
       <!-- Header -->
       <CompaniesHeader v-model:view-mode="viewMode" />
@@ -17,11 +17,11 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="bg-bg1 rounded-lg shadow-sm p-8 text-center">
+      <div v-if="isLoading" class="bg-base-100 rounded-lg shadow-sm p-8 text-center">
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
-        <p class="text-secondary">{{ $t('company.loading', 'Loading companies...') }}</p>
+        <p class="text-primary-light-content">{{ $t('company.loading', 'Loading companies...') }}</p>
       </div>
 
       <!-- Companies List -->
@@ -42,10 +42,10 @@
         </div>
 
         <!-- Table View -->
-        <div v-else class="bg-bg1 rounded-lg overflow-hidden border border-border-2">
+        <div v-else class="bg-base-100 rounded-lg overflow-hidden border border-primary-stroke">
           <!-- Table Header -->
-          <div class="px-6 py-4 border-b border-border-2 bg-bg2">
-            <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
+          <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
+            <div class="grid grid-cols-12 gap-4 text-sm font-medium text-primary-light-content">
               <div class="col-span-4">{{ $t('company.name', 'Company') }}</div>
               <div class="col-span-2">{{ $t('company.created', 'Created') }}</div>
               <div class="col-span-2">{{ $t('company.owner', 'Owner') }}</div>
@@ -80,8 +80,8 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else-if="status === 'success'" class="bg-bg1 rounded-lg shadow-sm p-12 text-center">
-        <i class="fa fa-building text-4xl text-secondary/50 mb-4"></i>
+      <div v-else-if="status === 'success'" class="bg-base-100 rounded-lg shadow-sm p-12 text-center">
+        <i class="fa fa-building text-4xl text-primary-light-content/50 mb-4"></i>
         <h3 class="text-lg font-medium mb-2">
           {{
             companiesStore.filterName
@@ -89,7 +89,7 @@
               : $t('company.empty.title', 'No companies yet')
           }}
         </h3>
-        <p class="text-secondary mb-6">
+        <p class="text-primary-light-content mb-6">
           {{
             companiesStore.filterName
               ? $t('company.empty.tryDifferentSearch', 'Try a different search term')

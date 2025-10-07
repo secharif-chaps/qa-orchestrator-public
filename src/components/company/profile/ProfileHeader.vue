@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-bg1 rounded-lg overflow-hidden h-full">
+  <div>
     <!-- Header with background pattern -->
-    <div class="relative">
+    <Card class="relative">
       <!-- Background pattern overlay using CSS gradient instead of SVG -->
       <div class="absolute inset-0 opacity-10">
         <div
@@ -17,7 +17,7 @@
               class="absolute -inset-1 bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-300"
             ></div>
             <div
-              class="relative w-20 h-20 rounded-xl overflow-hidden bg-white ring-2 ring-border-2"
+              class="relative w-20 h-20 rounded-xl overflow-hidden bg-white ring-2 ring-primary-stroke"
             >
               <img
                 v-if="getCompanyDomain(company?.website)"
@@ -43,7 +43,7 @@
               <h1 class="text-2xl font-bold text-primary mb-1">
                 {{ company?.name }}
               </h1>
-              <p v-if="company?.profile?.catchphrase" class="text-secondary italic text-sm">
+              <p v-if="company?.profile?.catchphrase" class="text-primary-light-content italic text-sm">
                 "{{ getSourcedValue(company?.profile?.catchphrase) }}"
                 <Source :sourced-value="company?.profile?.catchphrase" />
               </p>
@@ -59,7 +59,7 @@
                   <i class="fa fa-user-tie text-primary text-xs"></i>
                 </div>
                 <div class="min-w-0">
-                  <p class="text-xs text-secondary/70">CEO</p>
+                  <p class="text-xs text-primary-light-content/70">CEO</p>
                   <p class="text-sm font-medium text-primary truncate">
                     {{ getSourcedValue(company?.profile?.ceo) || 'Unknown' }}
                   </p>
@@ -74,7 +74,7 @@
                   <i class="fa fa-map-marker text-primary text-xs"></i>
                 </div>
                 <div class="min-w-0">
-                  <p class="text-xs text-secondary/70">Headquarters</p>
+                  <p class="text-xs text-primary-light-content/70">Headquarters</p>
                   <p class="text-sm font-medium text-primary truncate">
                     {{ getSourcedValue(company?.profile?.hq) || 'Unknown' }}
                   </p>
@@ -89,7 +89,7 @@
                   <i class="fa fa-calendar text-primary text-xs"></i>
                 </div>
                 <div class="min-w-0">
-                  <p class="text-xs text-secondary/70">Founded</p>
+                  <p class="text-xs text-primary-light-content/70">Founded</p>
                   <p class="text-sm font-medium text-primary">
                     {{ getSourcedValue(company?.profile?.founded) }}
                   </p>
@@ -104,7 +104,7 @@
                   <i class="fa fa-industry text-primary text-xs"></i>
                 </div>
                 <div class="min-w-0">
-                  <p class="text-xs text-secondary/70">Industry</p>
+                  <p class="text-xs text-primary-light-content/70">Industry</p>
                   <p class="text-sm font-medium text-primary truncate">
                     {{ getSourcedValue(company?.profile?.industry) }}
                   </p>
@@ -123,7 +123,7 @@
                   :key="account.platform"
                   :href="getSourcedValue(account.url) as string"
                   target="_blank"
-                  class="w-8 h-8 rounded-lg bg-bg1 hover:bg-primary hover:text-white text-primary flex items-center justify-center transition-all duration-200 border border-border-2 hover:shadow-md hover:scale-110"
+                  class="w-8 h-8 rounded-lg bg-base-100 hover:bg-primary hover:text-white text-primary flex items-center justify-center transition-all duration-200 border border-primary-stroke hover:shadow-md hover:scale-110"
                   :title="account.platform"
                 >
                   <i class="text-sm fab" :class="getIcon(account.platform)"></i>
@@ -136,7 +136,7 @@
           <div class="hidden lg:flex flex-col gap-3">
             <!-- Website -->
             <div v-if="company?.website" class="text-right">
-              <p class="text-xs text-secondary/70 mb-1">Website</p>
+              <p class="text-xs text-primary-light-content/70 mb-1">Website</p>
               <a
                 :href="formatWebsiteUrl(company?.website)"
                 target="_blank"
@@ -149,7 +149,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   </div>
 </template>
 
@@ -160,6 +160,7 @@ import { useRoute } from 'vue-router'
 import { computed, ref } from 'vue'
 import { getSourcedSource, getSourcedValue } from '@/components/helpers/sourcedValues'
 import Source from '../Source.vue'
+import Card from '@/components/ui/Card.vue'
 
 const route = useRoute()
 

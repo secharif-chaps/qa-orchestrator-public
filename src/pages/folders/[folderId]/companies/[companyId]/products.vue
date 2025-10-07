@@ -60,7 +60,7 @@
       </div>
 
       <!-- Products List View -->
-      <div v-else-if="viewMode === 'list'" class="bg-bg1 rounded-lg p-4">
+      <div v-else-if="viewMode === 'list'" class="bg-base-100 rounded-lg p-4">
         <div class="space-y-4">
           <ProductListItem
             v-for="(productList, category) in filteredProducts"
@@ -93,23 +93,49 @@ import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { useTaskState } from '@/composables/useTaskState'
 import PageState from '@/components/company/PageState.vue'
+import { useRestartTask } from '@/mutations/tasks'
 
 const route = useRoute()
 
 const companyId = computed(() => route.params.companyId as string)
 
 // Use the company data composable
-const { data: company } = useQuery(companyByIdQuery, () => ({
-  id: companyId.value,
-}))
+const { data: company } = useQuery(
+  companyByIdQuery,
+  () => ({
+    id: companyId.value,
+  }),
+  {
+    // Poll every 5 seconds when any task is running
+    refetchInterval: () => {
+      const hasRunningTasks = company.value?.tasks?.some(
+        (t) => t.status === 'running' || t.status === 'pending'
+      )
+      return hasRunningTasks ? 5000 : false
+    },
+  }
+)
 
 // Task state management
 const taskState = useTaskState(company, 'products')
 
+// Restart task mutation
+const { mutate: restartTaskMutation } = useRestartTask()
+
 // Handle retry action
-const handleRetry = () => {
-  // TODO: Implement retry logic - trigger products task restart
-  console.log('Retrying products data fetch...')
+const handleRetry = async () => {
+  const task = company.value?.tasks?.find((t) => t.type === 'products')
+  if (task) {
+    console.log('🔄 Retrying products task:', task.id)
+    try {
+      await restartTaskMutation(task.id)
+      console.log('✅ Products task restarted successfully')
+    } catch (error) {
+      console.error('❌ Error restarting products task:', error)
+    }
+  } else {
+    console.warn('⚠️ Products task not found')
+  }
 }
 
 // Reactive state

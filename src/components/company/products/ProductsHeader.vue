@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-bg1 rounded-lg p-4">
+  <div class="bg-base-100 rounded-lg p-4">
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
         <div
@@ -9,7 +9,7 @@
         </div>
         <div>
           <h2 class="text-xl font-semibold">Product Portfolio</h2>
-          <p class="text-sm text-secondary">
+          <p class="text-sm text-primary-light-content">
             {{ totalProductCount }} products across {{ categoryCount }} categories
           </p>
         </div>
@@ -24,12 +24,12 @@
         />
 
         <div class="w-64 relative">
-          <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-secondary"></i>
+          <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-primary-light-content"></i>
           <input
-            :model-value="searchQuery"
+            :value="searchQuery"
             placeholder="Search products..."
-            class="w-full sm:w-64 bg-bg3 border border-border-2 rounded-md p-2 pl-8 focus:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 ring-primary ring-offset-bg3"
-            @update:model-value="$emit('updateSearch', $event as string)"
+            class="w-full sm:w-64 bg-base-300 border border-primary-stroke rounded-md p-2 pl-8 focus:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 ring-primary ring-offset-bg3"
+            @input="$emit('updateSearch', ($event.target as HTMLInputElement).value)"
           />
         </div>
       </div>

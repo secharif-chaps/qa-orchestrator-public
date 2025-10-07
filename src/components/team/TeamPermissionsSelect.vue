@@ -2,7 +2,7 @@
   <div class="space-y-4">
     <div class="pb-2">
       <h4 class="text-base font-medium mb-1">{{ $t('team.permissions.title', 'User Permissions') }}</h4>
-      <p class="text-sm text-secondary">
+      <p class="text-sm text-primary-light-content">
         {{ $t('team.permissions.description', 'Select which actions this user can perform in the workspace') }}
       </p>
     </div>
@@ -25,7 +25,7 @@
         </div>
         <div class="text-sm">
           <strong class="text-base">{{ $t('team.permissions.limitedAccess', 'Limited Access') }}</strong>
-          <p class="text-secondary mt-1">
+          <p class="text-primary-light-content mt-1">
             {{
               $t(
                 'team.permissions.limitedDescription',
@@ -47,7 +47,7 @@
         </div>
         <div class="text-sm">
           <strong class="text-base">{{ $t('team.permissions.warning', 'Important') }}</strong>
-          <p class="text-secondary mt-1">
+          <p class="text-primary-light-content mt-1">
             {{
               $t(
                 'team.permissions.workspaceManageWarning',

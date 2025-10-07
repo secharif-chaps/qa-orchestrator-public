@@ -4,6 +4,7 @@ import { createTask, restartTask } from '@/api/tasks'
 import type { TaskCreate, TaskResponse, TaskType } from '@/types/task'
 import { useRoute } from 'vue-router'
 import { TASK_QUERY_KEYS } from '@/queries/tasks'
+import { COMPANY_QUERY_KEYS } from '@/queries/companies'
 
 const queryCache = useQueryCache()
 
@@ -41,38 +42,52 @@ export const useRestartTask = () => {
   const companyId = computed(() => route.params.companyId as string)
 
   const { mutate, ...mutation } = useMutation({
-    mutation: (id: number) => restartTask(id),
+    mutation: (id: number) => {
+      console.log('🔄 Calling restartTask API with ID:', id)
+      return restartTask(id)
+    },
     onMutate: (id: number) => {
-      console.log('getting cache', TASK_QUERY_KEYS.byCompanyId(companyId.value))
+      console.log('⏳ onMutate: Getting cache for company', companyId.value)
 
       const previousTasks = queryCache.getQueryData(
         TASK_QUERY_KEYS.byCompanyId(companyId.value),
       ) as TaskResponse[]
 
-      const taskToUpdate = previousTasks?.find((task: TaskResponse) => task.id === id)
-      
-      if (!taskToUpdate) {
-        throw new Error('Task not found')
+      if (!previousTasks) {
+        console.warn('⚠️ No previous tasks found in cache')
+        return { previousTasks: [] }
       }
 
-      const newTasks = [...previousTasks]
-      newTasks.find((task: TaskResponse) => task.id === id)!.status = 'running'
+      const taskToUpdate = previousTasks.find((task: TaskResponse) => task.id === id)
+
+      if (!taskToUpdate) {
+        console.warn('⚠️ Task not found in cache:', id)
+        return { previousTasks }
+      }
+
+      const newTasks = previousTasks.map((task: TaskResponse) =>
+        task.id === id ? { ...task, status: 'running' as const } : task
+      )
 
       // Set the optimistic update to the cache
       queryCache.setQueryData(TASK_QUERY_KEYS.byCompanyId(companyId.value), newTasks)
+      console.log('✅ Optimistic update applied')
 
       return { previousTasks, newTasks }
     },
-    onError: (error, variables, { previousTasks }) => {
-      queryCache.setQueryData(TASK_QUERY_KEYS.byCompanyId(companyId.value), previousTasks)
-
-      console.error(`An error occurred when updating a task "${variables}"`, error)
-    },
-    onSettled: (data, error, variables, { newTasks }) => {
-      console.log('tasks mutation settled invalidating cache to get fresh data')
-      if (newTasks) {
-        queryCache.invalidateQueries({ key: TASK_QUERY_KEYS.byCompanyId(companyId.value) })
+    onError: (error, variables, context) => {
+      console.error('❌ onError: Restoring previous tasks', error)
+      if (context?.previousTasks) {
+        queryCache.setQueryData(TASK_QUERY_KEYS.byCompanyId(companyId.value), context.previousTasks)
       }
+    },
+    onSettled: (data, error, variables, context) => {
+      console.log('✅ onSettled: Invalidating cache to get fresh data')
+      // Invalidate tasks cache
+      queryCache.invalidateQueries({ key: TASK_QUERY_KEYS.byCompanyId(companyId.value) })
+      // Invalidate company cache to refetch updated data
+      queryCache.invalidateQueries({ key: COMPANY_QUERY_KEYS.byId(companyId.value) })
+      console.log('✅ Company data will be refetched automatically')
     },
   })
 

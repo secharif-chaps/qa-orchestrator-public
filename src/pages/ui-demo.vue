@@ -4,12 +4,12 @@
       <!-- Header -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold mb-2">UI Components Showcase</h1>
-        <p class="text-secondary">Custom theme-aware components for the application</p>
+        <p class="text-primary-light-content">Custom theme-aware components for the application</p>
       </div>
 
       <!-- Tab Navigation -->
-      <div class="bg-bg1 border border-border-2 rounded-lg overflow-hidden">
-        <div class="border-b border-border-2">
+      <div class="bg-base-100 border border-primary-stroke rounded-lg overflow-hidden">
+        <div class="border-b border-primary-stroke">
           <div class="flex">
             <button
               v-for="tab in tabs"
@@ -19,7 +19,7 @@
                 'px-6 py-3 text-sm font-medium transition-all relative border-b-2',
                 activeTab === tab.id
                   ? 'text-primary bg-primary/5  border-primary'
-                  : 'text-secondary  hover:bg-bg2/50 border-transparent',
+                  : 'text-primary-light-content  hover:bg-base-200/50 border-transparent',
               ]"
             >
               <i :class="tab.icon" class="mr-2"></i>
@@ -75,22 +75,22 @@
               <h2 class="text-xl font-semibold">Size Variations</h2>
               <div class="space-y-3">
                 <div class="flex items-center gap-3">
-                  <span class="text-sm text-secondary w-20">Extra Small:</span>
+                  <span class="text-sm text-primary-light-content w-20">Extra Small:</span>
                   <Badge variant="primary" label="XS Badge" size="xs" />
                   <Badge variant="success" icon="fa fa-check" label="Done" size="xs" />
                 </div>
                 <div class="flex items-center gap-3">
-                  <span class="text-sm text-secondary w-20">Small:</span>
+                  <span class="text-sm text-primary-light-content w-20">Small:</span>
                   <Badge variant="primary" label="SM Badge" size="sm" />
                   <Badge variant="warning" icon="fa fa-star" label="Featured" size="sm" />
                 </div>
                 <div class="flex items-center gap-3">
-                  <span class="text-sm text-secondary w-20">Medium:</span>
+                  <span class="text-sm text-primary-light-content w-20">Medium:</span>
                   <Badge variant="primary" label="MD Badge" size="md" />
                   <Badge variant="info" icon="fa fa-info" label="Information" size="md" />
                 </div>
                 <div class="flex items-center gap-3">
-                  <span class="text-sm text-secondary w-20">Large:</span>
+                  <span class="text-sm text-primary-light-content w-20">Large:</span>
                   <Badge variant="primary" label="LG Badge" size="lg" />
                   <Badge variant="error" icon="fa fa-exclamation" label="Alert" size="lg" />
                 </div>
@@ -241,10 +241,10 @@
               <Alert variant="success" icon="fa fa-gift">
                 <div>
                   <h3 class="font-semibold mb-2">Welcome Gift!</h3>
-                  <p class="text-sm text-secondary mb-3">
+                  <p class="text-sm mb-3">
                     As a new user, you've received 100 free tokens to get started.
                   </p>
-                  <ul class="text-sm text-secondary space-y-1">
+                  <ul class="text-sm space-y-1">
                     <li>• Valid for 30 days</li>
                     <li>• Use for any module</li>
                     <li>• No credit card required</li>
@@ -259,7 +259,7 @@
             <!-- All Button Variants -->
             <section class="space-y-4">
               <h2 class="text-xl font-semibold">Button Variants (Design System)</h2>
-              <p class="text-sm text-secondary">
+              <p class="text-sm text-primary-light-content">
                 All buttons have 2000px border-radius (fully rounded) as per design system
               </p>
               <div class="flex flex-wrap gap-3">
@@ -301,7 +301,7 @@
               <h2 class="text-xl font-semibold">With Icons</h2>
               <div class="space-y-3">
                 <div class="flex flex-wrap gap-3">
-                  <span class="text-sm text-secondary w-24">Left Icons:</span>
+                  <span class="text-sm text-primary-light-content w-24">Left Icons:</span>
                   <Button variant="primary" icon="fa fa-plus" label="Create" />
                   <Button variant="secondary" icon="fa fa-download" label="Download" />
                   <Button variant="accent" icon="fa fa-sparkles" label="Special" />
@@ -309,7 +309,7 @@
                   <Button variant="ghost-black" icon="fa fa-trash" label="Delete" />
                 </div>
                 <div class="flex flex-wrap gap-3">
-                  <span class="text-sm text-secondary w-24">Right Icons:</span>
+                  <span class="text-sm text-primary-light-content w-24">Right Icons:</span>
                   <Button
                     variant="primary"
                     icon="fa fa-arrow-right"
@@ -330,7 +330,7 @@
                   />
                 </div>
                 <div class="flex flex-wrap gap-3">
-                  <span class="text-sm text-secondary w-24">Icon Only:</span>
+                  <span class="text-sm text-primary-light-content w-24">Icon Only:</span>
                   <Button variant="primary" icon="fa fa-heart" icon-only />
                   <Button variant="secondary" icon="fa fa-bookmark" icon-only />
                   <Button variant="accent" icon="fa fa-star" icon-only />
@@ -345,21 +345,21 @@
               <h2 class="text-xl font-semibold">Size Variations</h2>
               <div class="space-y-3">
                 <div class="flex items-center gap-3">
-                  <span class="text-sm text-secondary w-20">Small:</span>
+                  <span class="text-sm text-primary-light-content w-20">Small:</span>
                   <Button variant="primary" label="Small" size="sm" />
                   <Button variant="secondary" icon="fa fa-cog" label="Settings" size="sm" />
                   <Button variant="accent" label="Accent" size="sm" />
                   <Button variant="ghost-primary" icon="fa fa-info" icon-only size="sm" />
                 </div>
                 <div class="flex items-center gap-3">
-                  <span class="text-sm text-secondary w-20">Medium:</span>
+                  <span class="text-sm text-primary-light-content w-20">Medium:</span>
                   <Button variant="primary" label="Medium" size="md" />
                   <Button variant="secondary" icon="fa fa-save" label="Save" size="md" />
                   <Button variant="accent" label="Accent" size="md" />
                   <Button variant="ghost-black" icon="fa fa-more" icon-only size="md" />
                 </div>
                 <div class="flex items-center gap-3">
-                  <span class="text-sm text-secondary w-20">Large:</span>
+                  <span class="text-sm text-primary-light-content w-20">Large:</span>
                   <Button variant="primary" label="Large" size="lg" />
                   <Button variant="secondary" icon="fa fa-upload" label="Upload" size="lg" />
                   <Button variant="accent" label="Accent" size="lg" />
@@ -373,7 +373,7 @@
               <h2 class="text-xl font-semibold">States</h2>
               <div class="space-y-3">
                 <div class="flex flex-wrap gap-3">
-                  <span class="text-sm text-secondary w-20">Loading:</span>
+                  <span class="text-sm text-primary-light-content w-20">Loading:</span>
                   <Button
                     variant="primary"
                     label="Loading"
@@ -400,7 +400,7 @@
                   />
                 </div>
                 <div class="flex flex-wrap gap-3">
-                  <span class="text-sm text-secondary w-20">Disabled:</span>
+                  <span class="text-sm text-primary-light-content w-20">Disabled:</span>
                   <Button variant="primary" label="Disabled" disabled />
                   <Button variant="secondary" label="Disabled" disabled />
                   <Button variant="accent" label="Disabled" disabled />
@@ -415,7 +415,7 @@
               <h2 class="text-xl font-semibold">Real-world Use Cases</h2>
               <div class="space-y-4">
                 <!-- Action Bar -->
-                <div class="bg-bg1 p-4 rounded-lg border border-border-2">
+                <div class="bg-base-100 p-4 rounded-lg border border-primary-stroke">
                   <h3 class="text-sm font-medium mb-3">Action Bar</h3>
                   <div class="flex flex-wrap gap-2">
                     <Button variant="primary" icon="fa fa-plus" label="Create" />
@@ -427,7 +427,7 @@
                 </div>
 
                 <!-- Form Actions -->
-                <div class="bg-bg1 p-4 rounded-lg border border-border-2">
+                <div class="bg-base-100 p-4 rounded-lg border border-primary-stroke">
                   <h3 class="text-sm font-medium mb-3">Form Actions</h3>
                   <div class="flex justify-end gap-2">
                     <Button variant="ghost-black" label="Cancel" />
@@ -437,7 +437,7 @@
                 </div>
 
                 <!-- Call to Action -->
-                <div class="bg-bg1 p-4 rounded-lg border border-border-2">
+                <div class="bg-base-100 p-4 rounded-lg border border-primary-stroke">
                   <h3 class="text-sm font-medium mb-3">Special Actions with Accent</h3>
                   <div class="flex gap-2">
                     <Button variant="accent" icon="fa fa-sparkles" label="Try Premium" />
@@ -447,7 +447,7 @@
                 </div>
 
                 <!-- Navigation -->
-                <div class="bg-bg1 p-4 rounded-lg border border-border-2">
+                <div class="bg-base-100 p-4 rounded-lg border border-primary-stroke">
                   <h3 class="text-sm font-medium mb-3">Navigation</h3>
                   <div class="flex justify-between">
                     <Button variant="secondary" icon="fa fa-chevron-left" label="Previous" />
@@ -466,7 +466,7 @@
                 </div>
 
                 <!-- Icon Actions -->
-                <div class="bg-bg1 p-4 rounded-lg border border-border-2">
+                <div class="bg-base-100 p-4 rounded-lg border border-primary-stroke">
                   <h3 class="text-sm font-medium mb-3">Icon Actions</h3>
                   <div class="flex gap-2">
                     <Button variant="ghost-primary" icon="fa fa-heart" icon-only />
@@ -649,7 +649,7 @@
               <!-- Form with Validation -->
               <div class="space-y-4">
                 <h3 class="text-lg font-medium">User Registration Form</h3>
-                <div class="bg-bg2 p-6 rounded-lg border border-border-2">
+                <div class="bg-base-200 p-6 rounded-lg border border-primary-stroke">
                   <div class="space-y-4">
                     <Input
                       v-model="formData.name"
@@ -688,29 +688,29 @@
               <div class="space-y-4">
                 <h3 class="text-lg font-medium">Status Dashboard</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div class="bg-bg2 p-4 rounded-lg border border-border-2">
+                  <div class="bg-base-200 p-4 rounded-lg border border-primary-stroke">
                     <div class="flex items-center justify-between mb-3">
                       <span class="text-sm font-medium">API Status</span>
                       <Badge variant="success" dot label="Operational" size="sm" />
                     </div>
                     <div class="text-2xl font-bold">99.9%</div>
-                    <div class="text-xs text-secondary">Uptime</div>
+                    <div class="text-xs text-primary-light-content">Uptime</div>
                   </div>
-                  <div class="bg-bg2 p-4 rounded-lg border border-border-2">
+                  <div class="bg-base-200 p-4 rounded-lg border border-primary-stroke">
                     <div class="flex items-center justify-between mb-3">
                       <span class="text-sm font-medium">Token Usage</span>
                       <Badge variant="warning" icon="fa fa-coins" label="25 left" size="sm" />
                     </div>
                     <div class="text-2xl font-bold">475/500</div>
-                    <div class="text-xs text-secondary">Tokens used</div>
+                    <div class="text-xs text-primary-light-content">Tokens used</div>
                   </div>
-                  <div class="bg-bg2 p-4 rounded-lg border border-border-2">
+                  <div class="bg-base-200 p-4 rounded-lg border border-primary-stroke">
                     <div class="flex items-center justify-between mb-3">
                       <span class="text-sm font-medium">Tasks</span>
                       <Badge variant="info" label="3 pending" size="sm" />
                     </div>
                     <div class="text-2xl font-bold">12</div>
-                    <div class="text-xs text-secondary">Active tasks</div>
+                    <div class="text-xs text-primary-light-content">Active tasks</div>
                   </div>
                 </div>
               </div>
@@ -727,7 +727,7 @@
                 />
                 <Alert variant="warning" title="Maintenance Scheduled" icon="fa fa-wrench">
                   <div>
-                    <p class="text-sm text-secondary mb-2">
+                    <p class="text-sm text-primary-light-content mb-2">
                       System maintenance is scheduled for tonight at 2:00 AM EST.
                     </p>
                     <div class="flex gap-2">

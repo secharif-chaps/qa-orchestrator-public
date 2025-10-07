@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-bg1 rounded-lg p-4">
+  <div class="bg-base-100 rounded-lg p-4">
     <div class="flex flex-col gap-4">
       <div class="flex items-center justify-between">
         <h3 class="space-x-2 font-bold text-primary">
@@ -23,7 +23,7 @@
           <i class="fa fa-users"></i>
           Customer Type
         </h4>
-        <p class="text-sm text-secondary">{{ company.products.customerType }}</p>
+        <p class="text-sm text-primary-light-content">{{ company.products.customerType }}</p>
       </div>
 
       <!-- Marketing Positioning -->
@@ -32,7 +32,7 @@
           <i class="fa fa-bullseye"></i>
           Marketing Positioning
         </h4>
-        <p class="text-sm text-secondary">{{ company.products.marketingPositioning }}</p>
+        <p class="text-sm text-primary-light-content">{{ company.products.marketingPositioning }}</p>
       </div>
 
       <!-- Product Range -->
@@ -46,7 +46,7 @@
             <div
               v-for="product in company.products.range"
               :key="getSourcedValue(product)"
-              class="bg-bg2 rounded-full px-3 py-1 text-secondary text-sm"
+              class="bg-base-200 rounded-full px-3 py-1 text-primary-light-content text-sm"
             >
               {{ getSourcedValue(product) }}
               <Source :sourced-value="product" />
@@ -66,9 +66,9 @@
             <div
               v-for="brand in company.products.partnerBrands"
               :key="getSourcedValue(brand)"
-              class="bg-bg2 rounded p-3 flex items-center justify-between"
+              class="bg-base-200 rounded p-3 flex items-center justify-between"
             >
-              <span class="text-secondary">{{ getSourcedValue(brand) }}</span>
+              <span class="text-primary-light-content">{{ getSourcedValue(brand) }}</span>
               <Source :sourced-value="brand" />
             </div>
           </div>
@@ -86,9 +86,9 @@
             <div
               v-for="label in company.products.privateLabels"
               :key="getSourcedValue(label)"
-              class="bg-bg2 rounded p-3 flex items-center justify-between"
+              class="bg-base-200 rounded p-3 flex items-center justify-between"
             >
-              <span class="text-secondary">{{ getSourcedValue(label) }}</span>
+              <span class="text-primary-light-content">{{ getSourcedValue(label) }}</span>
               <Source :sourced-value="label" />
             </div>
           </div>
@@ -105,9 +105,9 @@
           <div
             v-for="(items, category) in company.products.categories"
             :key="category"
-            class="bg-bg2 rounded p-3"
+            class="bg-base-200 rounded p-3"
           >
-            <h5 class="font-medium text-secondary mb-2">{{ category }}</h5>
+            <h5 class="font-medium text-primary-light-content mb-2">{{ category }}</h5>
             <div class="flex flex-wrap gap-1">
               <span
                 v-for="item in items"
@@ -122,7 +122,7 @@
       </div> -->
 
       <!-- No data message -->
-      <div v-if="!hasAnyProductData" class="text-secondary text-center py-4">
+      <div v-if="!hasAnyProductData" class="text-primary-light-content text-center py-4">
         {{ $t('common.noData') }}
       </div>
     </div>

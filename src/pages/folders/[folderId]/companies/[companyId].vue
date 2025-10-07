@@ -3,7 +3,7 @@
     <div class="flex gap-4 items-center justify-between">
       <div class="flex items-center gap-4">
         <div
-          class="relative size-12 rounded-card overflow-hidden bg-white ring-2 ring-border-2 flex-shrink-0"
+          class="relative size-12 rounded-card overflow-hidden bg-white ring-2 ring-primary-stroke flex-shrink-0"
         >
           <img
             v-if="getCompanyDomain(company?.website)"

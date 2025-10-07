@@ -1,28 +1,28 @@
 <template>
-  <div class="bg-bg1 border border-border-2 rounded-lg">
-    <div class="px-6 py-4 border-b border-border-2">
+  <div class="bg-base-100 border border-primary-stroke rounded-lg">
+    <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.preview.title') }}</h2>
-      <p class="text-sm text-secondary mt-1">{{ $t('settings.appearance.preview.description') }}</p>
+      <p class="text-sm text-primary-light-content mt-1">{{ $t('settings.appearance.preview.description') }}</p>
     </div>
     <div class="px-6 py-6">
       <!-- Preview Container -->
-      <div class="border border-border-2 rounded-lg p-6 bg-bg1 dark:bg-bg3">
+      <div class="border border-primary-stroke rounded-lg p-6 bg-base-100 dark:bg-base-300">
         <!-- Preview Header -->
         <div class="mb-6">
           <h3 class="text-lg font-semibold mb-2">
             {{ $t('settings.appearance.preview.sample') }}
           </h3>
-          <p class="text-sm text-secondary">
+          <p class="text-sm text-primary-light-content">
             Experience how your interface looks with the current theme settings.
           </p>
         </div>
 
         <!-- Sample Card -->
-        <div class="bg-bg1 border border-border-2 rounded-lg p-4 mb-6">
+        <div class="bg-base-100 border border-primary-stroke rounded-lg p-4 mb-6">
           <div class="flex items-start justify-between mb-4">
             <div>
               <h4 class="font-medium">Sample Card Title</h4>
-              <p class="text-sm text-secondary mt-1">
+              <p class="text-sm text-primary-light-content mt-1">
                 This card demonstrates the current theme styling
               </p>
             </div>
@@ -41,7 +41,7 @@
                 v-model="previewInputValue"
                 type="text"
                 placeholder="Type something here..."
-                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-bg1 text-secondary placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-base-100 text-primary-light-content placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
 
@@ -49,7 +49,7 @@
             <div class="flex items-center justify-between">
               <div>
                 <label class="text-sm font-medium"> Sample Toggle </label>
-                <p class="text-sm text-secondary">This toggle demonstrates switch styling</p>
+                <p class="text-sm text-primary-light-content">This toggle demonstrates switch styling</p>
               </div>
               <Switch.Root
                 v-model:checked="previewToggleValue"
@@ -74,23 +74,23 @@
             <div class="flex flex-wrap gap-2">
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 bg-green-500 rounded-full"></div>
-                <span class="text-sm text-secondary">Active</span>
+                <span class="text-sm text-primary-light-content">Active</span>
               </div>
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 bg-yellow-500 rounded-full"></div>
-                <span class="text-sm text-secondary">Pending</span>
+                <span class="text-sm text-primary-light-content">Pending</span>
               </div>
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 bg-red-500 rounded-full"></div>
-                <span class="text-sm text-secondary">Error</span>
+                <span class="text-sm text-primary-light-content">Error</span>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Sample List -->
-        <div class="bg-bg1 border border-border-2 rounded-lg overflow-hidden">
-          <div class="px-4 py-3 border-b border-border-2">
+        <div class="bg-base-100 border border-primary-stroke rounded-lg overflow-hidden">
+          <div class="px-4 py-3 border-b border-primary-stroke">
             <h4 class="text-sm font-medium">Sample List Items</h4>
           </div>
           <div class="divide-y divide-slate-200 dark:divide-slate-700">
@@ -106,10 +106,10 @@
                   </div>
                   <div>
                     <p class="text-sm font-medium">{{ item.title }}</p>
-                    <p class="text-xs text-secondary">{{ item.description }}</p>
+                    <p class="text-xs text-primary-light-content">{{ item.description }}</p>
                   </div>
                 </div>
-                <div class="text-xs text-secondary">{{ item.time }}</div>
+                <div class="text-xs text-primary-light-content">{{ item.time }}</div>
               </div>
             </div>
           </div>

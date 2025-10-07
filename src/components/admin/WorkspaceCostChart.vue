@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-bg1 rounded-lg border border-border-2 p-6">
+  <div class="bg-base-100 rounded-lg border border-primary-stroke p-6">
     <h3 class="text-lg font-semibold mb-4">Workspace Cost Distribution</h3>
     
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
         <i class="fa fa-spinner animate-spin text-2xl text-primary mb-2"></i>
-        <p class="text-sm text-secondary">Loading chart data...</p>
+        <p class="text-sm text-primary-light-content">Loading chart data...</p>
       </div>
     </div>
     
@@ -18,8 +18,8 @@
     
     <div v-else-if="!data?.workspaces.length" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-chart-pie text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">No workspace data available</p>
+        <i class="fa fa-chart-pie text-2xl text-primary-light-content mb-2"></i>
+        <p class="text-sm text-primary-light-content">No workspace data available</p>
       </div>
     </div>
     
@@ -42,7 +42,7 @@
             class="w-3 h-3 rounded-full flex-shrink-0"
             :style="{ backgroundColor: colors[index % colors.length] }"
           ></div>
-          <span class="text-sm text-secondary truncate">{{ workspace.workspace_name }}</span>
+          <span class="text-sm text-primary-light-content truncate">{{ workspace.workspace_name }}</span>
           <span class="text-sm font-medium ml-auto">${{ workspace.total_cost.toFixed(2) }}</span>
         </div>
       </div>

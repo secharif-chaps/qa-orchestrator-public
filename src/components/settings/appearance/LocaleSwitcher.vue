@@ -1,22 +1,22 @@
 <template>
   <div class="locale-switcher">
-    <label class="block text-sm font-medium text-secondary mb-2">{{ $t('settings.language.title') }}</label>
+    <label class="block text-sm font-medium text-primary-light-content mb-2">{{ $t('settings.language.title') }}</label>
     
     <Select.Root v-model="currentLocale" @update:model-value="changeLocale">
-      <Select.Trigger class="w-full appearance-none rounded-md bg-bg1 py-1.5 pl-3 pr-8 text-base text-secondary outline outline-1 -outline-offset-1 outline-slate-300 dark:outline-slate-600 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6">
+      <Select.Trigger class="w-full appearance-none rounded-md bg-base-100 py-1.5 pl-3 pr-8 text-base text-primary-light-content outline outline-1 -outline-offset-1 outline-slate-300 dark:outline-slate-600 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6">
         <Select.Value />
         <Select.Icon class="ml-2">
-          <i class="fas fa-chevron-down text-secondary" aria-hidden="true"></i>
+          <i class="fas fa-chevron-down text-primary-light-content" aria-hidden="true"></i>
         </Select.Icon>
       </Select.Trigger>
       
       <Select.Portal>
-        <Select.Content class="bg-bg1 border border-slate-300 dark:border-slate-600 rounded-md shadow-lg">
+        <Select.Content class="bg-base-100 border border-slate-300 dark:border-slate-600 rounded-md shadow-lg">
           <Select.Viewport class="p-1">
-            <Select.Item value="en-US" class="px-3 py-2 text-sm text-secondary hover:bg-bg2 cursor-pointer rounded">
+            <Select.Item value="en-US" class="px-3 py-2 text-sm text-primary-light-content hover:bg-base-200 cursor-pointer rounded">
               <Select.ItemText>English</Select.ItemText>
             </Select.Item>
-            <Select.Item value="fr-FR" class="px-3 py-2 text-sm text-secondary hover:bg-bg2 cursor-pointer rounded">
+            <Select.Item value="fr-FR" class="px-3 py-2 text-sm text-primary-light-content hover:bg-base-200 cursor-pointer rounded">
               <Select.ItemText>Français</Select.ItemText>
             </Select.Item>
           </Select.Viewport>

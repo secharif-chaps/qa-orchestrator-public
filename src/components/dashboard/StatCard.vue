@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-bg1 border border-border-2 rounded-lg p-6 flex items-center">
+  <div class="bg-base-100 border border-primary-stroke rounded-lg p-6 flex items-center">
     <div class="flex items-center w-full">
       <div class="flex-shrink-0">
         <div
@@ -12,7 +12,7 @@
       <div class="ml-4 flex-1">
         <h4 class="text-sm font-medium uppercase tracking-wide">{{ title }}</h4>
         <p class="text-2xl font-bold">{{ formattedValue }}</p>
-        <p v-if="subtitle" class="text-xs mt-1 text-secondary">{{ subtitle }}</p>
+        <p v-if="subtitle" class="text-xs mt-1 text-primary-light-content">{{ subtitle }}</p>
       </div>
     </div>
   </div>

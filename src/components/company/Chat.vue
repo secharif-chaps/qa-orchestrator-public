@@ -1,11 +1,11 @@
 <template>
   <div
     class="flex flex-col overflow-y-auto"
-    :class="isFloating ? 'h-full bg-transparent' : 'h-[calc(80vh-5rem)] rounded-xl bg-bg1 p-4'"
+    :class="isFloating ? 'h-full bg-transparent' : 'h-[calc(80vh-5rem)] rounded-xl bg-base-100 p-4'"
   >
     <div
       v-if="!isFloating"
-      class="relative flex gap-4 items-center justify-between border-b pb-4 border-primary text-secondary"
+      class="relative flex gap-4 items-center justify-between border-b pb-4 border-primary text-primary-light-content"
     >
       <div class="flex gap-4 items-center">
         <i class="fa fa-chevrons-right cursor-pointer icon-secondary" @click="$emit('hide')"></i>
@@ -31,7 +31,7 @@
         <div
           class="text-xs p-4 inline-block rounded-xl"
           :class="{
-            'bg-bg3 dark:bg-slate-900': message.from === 'ai',
+            'bg-base-300 dark:bg-slate-900': message.from === 'ai',
             'bg-primary/10 text-primary dark:bg-primary/10 dark:text-primary':
               message.from === 'user',
           }"
@@ -39,17 +39,17 @@
         ></div>
       </div>
       <div v-if="isLoading">
-        <div class="text-xs p-4 inline-block rounded-xl bg-bg3 mr-auto">
+        <div class="text-xs p-4 inline-block rounded-xl bg-base-300 mr-auto">
           <i class="fa fa-spinner fa-spin"></i> Thinking...
         </div>
       </div>
     </div>
-    <div class="relative" :class="isFloating ? 'p-4 border-t border-border-2' : 'pt-2'">
+    <div class="relative" :class="isFloating ? 'p-4 border-t border-primary-stroke' : 'pt-2'">
       <textarea
         @keyup.enter="sendMessage"
         v-model="question"
         placeholder="Write a message..."
-        class="w-full bg-bg3 dark:bg-slate-900 border border-border-2 dark:border-slate-700 rounded-lg p-2 text-sm focus-within:outline-primary"
+        class="w-full bg-base-300 dark:bg-slate-900 border border-primary-stroke dark:border-slate-700 rounded-lg p-2 text-sm focus-within:outline-primary"
         :class="isFloating ? 'h-20' : 'h-32'"
         @keydown.enter.ctrl.prevent="sendMessage"
         :disabled="isLoading"

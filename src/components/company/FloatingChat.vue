@@ -14,7 +14,7 @@
   <Transition name="chat-window">
     <div
       v-if="isOpen"
-      class="fixed bottom-6 right-6 z-50 w-96 h-[600px] max-h-[80vh] bg-bg1 dark:bg-slate-900 rounded-2xl shadow-2xl border border-border-2 dark:border-slate-700 flex flex-col overflow-hidden animate-slideUp"
+      class="fixed bottom-6 right-6 z-50 w-96 h-[600px] max-h-[80vh] bg-base-100 dark:bg-slate-900 rounded-2xl shadow-2xl border border-primary-stroke dark:border-slate-700 flex flex-col overflow-hidden animate-slideUp"
     >
       <!-- Chat header with glass effect -->
       <div
