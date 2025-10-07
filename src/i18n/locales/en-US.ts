@@ -463,6 +463,9 @@ export default {
     noData: 'No data available',
     save: 'Save',
     error: 'Error',
+    close: 'Close',
+    dismiss: 'Dismiss',
+    breadcrumb: 'Breadcrumb',
     preview: {
       items: {
         newMessage: 'New Message Received',

@@ -501,6 +501,9 @@ export default {
     cancel: 'Annuler',
     save: 'Enregistrer',
     error: 'Erreur',
+    close: 'Fermer',
+    dismiss: 'Ignorer',
+    breadcrumb: 'Fil d\'Ariane',
     preview: {
       items: {
         newMessage: 'Nouveau Message Reçu',
