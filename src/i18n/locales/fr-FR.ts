@@ -769,6 +769,64 @@ export default {
       all: 'Tous',
       disabled: 'Désactivé',
     },
+    empty: {
+      noUsers: {
+        title: 'Aucun utilisateur dans l\'espace de travail',
+        description: 'Ajoutez votre premier membre d\'équipe pour commencer la collaboration',
+      },
+      noResults: {
+        title: 'Aucun utilisateur trouvé',
+        description: 'Essayez un autre terme de recherche ou filtre',
+        descriptionNoFilter: 'Aucun utilisateur ne correspond aux filtres actuels',
+      },
+      loading: {
+        title: 'Chargement des utilisateurs...',
+        description: 'Veuillez patienter pendant que nous chargeons vos membres d\'équipe',
+      },
+      default: 'Aucun utilisateur',
+    },
+    validation: {
+      firstName: {
+        required: 'Le prénom est requis',
+      },
+      lastName: {
+        required: 'Le nom est requis',
+      },
+      username: {
+        required: 'Le nom d\'utilisateur est requis',
+        minLength: 'Le nom d\'utilisateur doit contenir au moins 3 caractères',
+      },
+      email: {
+        required: 'L\'email est requis',
+        invalid: 'Veuillez entrer une adresse email valide',
+      },
+      password: {
+        required: 'Le mot de passe est requis',
+        minLength: 'Le mot de passe doit contenir au moins 8 caractères',
+      },
+    },
+    permissionsList: {
+      workspaceRead: {
+        name: 'Accès de Base',
+        description: 'Voir le contenu de l\'espace de travail et les entreprises',
+      },
+      companyView: {
+        name: 'Voir les Entreprises',
+        description: 'Accéder aux informations détaillées des entreprises',
+      },
+      companyCreate: {
+        name: 'Créer des Entreprises',
+        description: 'Ajouter de nouvelles entreprises à l\'espace de travail',
+      },
+      companyDelete: {
+        name: 'Supprimer des Entreprises',
+        description: 'Retirer des entreprises de l\'espace de travail',
+      },
+      workspaceWrite: {
+        name: 'Gestion d\'Équipe',
+        description: 'Gérer les utilisateurs et paramètres de l\'espace de travail',
+      },
+    },
   },
   admin: {
     dashboard: {
@@ -1010,6 +1068,78 @@ export default {
       createError: 'Une erreur s\'est produite lors de la création de l\'entreprise',
       networkError: 'Erreur réseau - veuillez réessayer',
     },
+    empty: {
+      noResults: {
+        title: 'Aucune entreprise trouvée',
+        description: 'Aucune entreprise ne correspond à "{query}". Essayez d\'ajuster vos termes de recherche.',
+        descriptionNoQuery: 'Essayez d\'ajuster vos termes de recherche',
+      },
+      noCompanies: {
+        title: 'Aucune entreprise pour le moment',
+        description:
+          'Commencez par créer votre première entreprise pour suivre et gérer vos relations d\'affaires.',
+      },
+    },
+    archive: {
+      success: 'L\'entreprise "{name}" a été archivée avec succès',
+      error: 'Échec de l\'archivage de l\'entreprise "{name}". Veuillez réessayer.',
+    },
+    delete: {
+      success: 'L\'entreprise "{name}" a été supprimée avec succès',
+      error: 'Échec de la suppression de l\'entreprise "{name}". Veuillez réessayer.',
+    },
+    restore: {
+      success: 'L\'entreprise "{name}" a été restaurée avec succès',
+      error: 'Échec de la restauration de l\'entreprise "{name}". Veuillez réessayer.',
+    },
+    item: {
+      tasks: {
+        count: '{count} tâches',
+        status: {
+          new: 'Nouveau',
+          processing: 'En cours',
+          issues: 'Problèmes',
+          complete: 'Terminé',
+          partial: 'Partiel',
+        },
+      },
+      time: {
+        justNow: 'à l\'instant',
+        minutesAgo: 'il y a {minutes}m',
+        hoursAgo: 'il y a {hours}h',
+        daysAgo: 'il y a {days}j',
+      },
+    },
+  },
+  tokens: {
+    module: 'Module {module}',
+    token: 'jeton',
+    tokens: 'jetons',
+    loading: 'Chargement des données de jetons...',
+    status: {
+      disabled: 'Désactivé',
+      noTokens: 'Aucun jeton',
+      low: 'Faible',
+      active: 'Actif',
+    },
+    modules: {
+      screen: {
+        name: 'Screen',
+        description: 'Recherche et screening d\'entreprises',
+      },
+      target: {
+        name: 'Target',
+        description: 'Fonctionnalités de ciblage avancées',
+      },
+      explore: {
+        name: 'Explore',
+        description: 'Outils d\'exploration de marché',
+      },
+      stream: {
+        name: 'Stream',
+        description: 'Capacités de streaming de données',
+      },
+    },
   },
   workspace: {
     title: "Gestion de l'équipe",
@@ -1140,6 +1270,20 @@ export default {
       title: "Retirer l'Utilisateur",
       description: "Êtes-vous sûr de vouloir retirer cet utilisateur de l'espace de travail ?",
       button: "Retirer l'Utilisateur",
+    },
+    validation: {
+      username: {
+        required: 'Le nom d\'utilisateur est requis',
+        minLength: 'Le nom d\'utilisateur doit contenir au moins 3 caractères',
+      },
+      email: {
+        required: 'L\'email est requis',
+        invalid: 'Veuillez entrer une adresse email valide',
+      },
+      temporaryPassword: {
+        required: 'Le mot de passe temporaire est requis',
+        minLength: 'Le mot de passe doit contenir au moins 8 caractères',
+      },
     },
   },
   folder: {

@@ -723,6 +723,64 @@ export default {
       all: 'All',
       disabled: 'Disabled',
     },
+    empty: {
+      noUsers: {
+        title: 'No users in workspace',
+        description: 'Add your first team member to get started with collaboration',
+      },
+      noResults: {
+        title: 'No users found',
+        description: 'Try a different search term or filter',
+        descriptionNoFilter: 'No users match the current filters',
+      },
+      loading: {
+        title: 'Loading users...',
+        description: 'Please wait while we load your team members',
+      },
+      default: 'No users',
+    },
+    validation: {
+      firstName: {
+        required: 'First name is required',
+      },
+      lastName: {
+        required: 'Last name is required',
+      },
+      username: {
+        required: 'Username is required',
+        minLength: 'Username must be at least 3 characters',
+      },
+      email: {
+        required: 'Email is required',
+        invalid: 'Please enter a valid email address',
+      },
+      password: {
+        required: 'Password is required',
+        minLength: 'Password must be at least 8 characters',
+      },
+    },
+    permissionsList: {
+      workspaceRead: {
+        name: 'Basic Access',
+        description: 'View workspace content and companies',
+      },
+      companyView: {
+        name: 'View Companies',
+        description: 'Access detailed company information',
+      },
+      companyCreate: {
+        name: 'Create Companies',
+        description: 'Add new companies to the workspace',
+      },
+      companyDelete: {
+        name: 'Delete Companies',
+        description: 'Remove companies from the workspace',
+      },
+      workspaceWrite: {
+        name: 'Team Management',
+        description: 'Manage workspace users and settings',
+      },
+    },
   },
   admin: {
     dashboard: {
@@ -958,6 +1016,78 @@ export default {
       websiteRequired: 'Website URL is required',
       createError: 'An error occurred while creating the company',
       networkError: 'Network error - please try again',
+    },
+    empty: {
+      noResults: {
+        title: 'No companies found',
+        description: 'No companies match "{query}". Try adjusting your search terms.',
+        descriptionNoQuery: 'Try adjusting your search terms',
+      },
+      noCompanies: {
+        title: 'No companies yet',
+        description:
+          'Get started by creating your first company to track and manage your business relationships.',
+      },
+    },
+    archive: {
+      success: 'Company "{name}" has been archived successfully',
+      error: 'Failed to archive company "{name}". Please try again.',
+    },
+    delete: {
+      success: 'Company "{name}" has been deleted successfully',
+      error: 'Failed to delete company "{name}". Please try again.',
+    },
+    restore: {
+      success: 'Company "{name}" has been restored successfully',
+      error: 'Failed to restore company "{name}". Please try again.',
+    },
+    item: {
+      tasks: {
+        count: '{count} tasks',
+        status: {
+          new: 'New',
+          processing: 'Processing',
+          issues: 'Issues',
+          complete: 'Complete',
+          partial: 'Partial',
+        },
+      },
+      time: {
+        justNow: 'just now',
+        minutesAgo: '{minutes}m ago',
+        hoursAgo: '{hours}h ago',
+        daysAgo: '{days}d ago',
+      },
+    },
+  },
+  tokens: {
+    module: '{module} Module',
+    token: 'token',
+    tokens: 'tokens',
+    loading: 'Loading token data...',
+    status: {
+      disabled: 'Disabled',
+      noTokens: 'No tokens',
+      low: 'Low',
+      active: 'Active',
+    },
+    modules: {
+      screen: {
+        name: 'Screen',
+        description: 'Company search and screening',
+      },
+      target: {
+        name: 'Target',
+        description: 'Advanced targeting features',
+      },
+      explore: {
+        name: 'Explore',
+        description: 'Market exploration tools',
+      },
+      stream: {
+        name: 'Stream',
+        description: 'Data streaming capabilities',
+      },
     },
   },
   folder: {
@@ -1203,6 +1333,20 @@ export default {
       title: 'Remove User',
       description: 'Are you sure you want to remove this user from the workspace?',
       button: 'Remove User',
+    },
+    validation: {
+      username: {
+        required: 'Username is required',
+        minLength: 'Username must be at least 3 characters',
+      },
+      email: {
+        required: 'Email is required',
+        invalid: 'Please enter a valid email address',
+      },
+      temporaryPassword: {
+        required: 'Temporary password is required',
+        minLength: 'Password must be at least 8 characters',
+      },
     },
   },
   csv: {
