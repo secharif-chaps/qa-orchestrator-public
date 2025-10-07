@@ -133,13 +133,13 @@ const buttonClasses = computed(() => {
       break
     case 'accent':
       classes.push(
-        'bg-tertiary',
+        'bg-accent',
         'text-black',
-        'hover:bg-tertiary-300 dark:hover:bg-tertiary-400',
-        'active:bg-tertiary-700',
+        'hover:bg-accent-300 dark:hover:bg-accent-400',
+        'active:bg-accent-700',
         'focus:ring-tertiary-30',
-        'disabled:bg-tertiary-20',
-        'disabled:text-tertiary-100',
+        'disabled:bg-accent-20',
+        'disabled:text-accent-100',
         'shadow-sm hover:shadow-md',
       )
       break

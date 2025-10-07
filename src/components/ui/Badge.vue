@@ -108,25 +108,25 @@ const variantClasses = computed(() => {
 
   switch (props.variant) {
     case 'success':
-      return `${isRounded} bg-green-200 dark:bg-green-400/10 text-green-700 dark:text-green-400`
+      return `${isRounded} bg-success-light text-success-light-content border border-success-stroke`
 
     case 'warning':
-      return `${isRounded} bg-yellow-200 dark:bg-yellow-400/10 text-yellow-700 dark:text-yellow-400`
+      return `${isRounded} bg-warning-light text-warning-light-content border border-warning-stroke`
 
     case 'error':
-      return `${isRounded} bg-red-200 dark:bg-red-400/10 text-red-700 dark:text-red-400`
+      return `${isRounded} bg-error-light text-error-light-content border border-error-stroke`
 
     case 'info':
-      return `${isRounded} bg-blue-200 dark:bg-blue-400/10 text-blue-700 dark:text-blue-400`
+      return `${isRounded} bg-info-light text-info-light-content border border-info-stroke`
 
     case 'accent':
-      return `${isRounded} bg-tertiary-200 dark:bg-tertiary-700/30 text-tertiary-700 dark:text-tertiary-400`
+      return `${isRounded} bg-accent-light text-accent-light-content border border-accent-stroke`
 
     case 'slate':
-      return `${isRounded} bg-bg2 text-secondary`
+      return `${isRounded} bg-base-200 text-primary-light-content`
 
     default: // primary
-      return `${isRounded} bg-primary/20 dark:bg-primary/15 text-primary`
+      return `${isRounded} bg-primary-light text-primary-light-content border border-primary-stroke`
   }
 })
 
@@ -142,7 +142,7 @@ const dotClasses = computed(() => {
     case 'info':
       return 'bg-blue-500'
     case 'accent':
-      return 'bg-tertiary-500'
+      return 'bg-accent-500'
     case 'slate':
       return 'bg-secondary'
     default: // primary

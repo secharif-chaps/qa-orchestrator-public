@@ -3,11 +3,11 @@
     <!-- Left: Per page selector with results info -->
     <div class="flex flex-col gap-2">
       <div class="flex items-center gap-2">
-        <label class="text-sm text-secondary whitespace-nowrap sr-only">Show:</label>
+        <label class="text-sm text-primary-light-content whitespace-nowrap sr-only">Show:</label>
         <select
           :value="meta.per_page"
           @change="$emit('updatePerPage', parseInt(($event.target as HTMLSelectElement).value))"
-          class="px-3 py-1.5 bg-bg2 border border-border-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary min-w-16"
+          class="px-3 py-1.5 bg-base-200 border border-primary-stroke rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary min-w-16"
         >
           <option v-for="option in pageSizeOptions" :key="option" :value="option">
             {{ option }}
@@ -15,7 +15,7 @@
         </select>
       </div>
 
-      <div class="text-sm text-secondary whitespace-nowrap">
+      <div class="text-sm text-primary-light-content whitespace-nowrap">
         {{ resultText }}
       </div>
     </div>
@@ -31,12 +31,12 @@
       >
         <Pagination.List v-slot="{ items }" class="flex items-center gap-2">
           <Pagination.First
-            class="h-10 w-10 p-0 bg-bg2 hover:bg-bg3 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-secondary hover:text-primary transition-colors"
+            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-primary-light-content hover:text-primary transition-colors"
           >
             <i class="fas fa-chevron-double-left text-sm"></i>
           </Pagination.First>
           <Pagination.Prev
-            class="h-10 w-10 p-0 bg-bg2 hover:bg-bg3 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-secondary hover:text-primary transition-colors"
+            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-primary-light-content hover:text-primary transition-colors"
           >
             <i class="fas fa-chevron-left text-sm"></i>
           </Pagination.Prev>
@@ -44,17 +44,17 @@
           <template v-for="(item, index) in items" :key="index">
             <Pagination.Ellipsis
               v-if="item.type === 'ellipsis'"
-              class="flex h-10 w-10 items-center justify-center text-secondary hover:ring-2 hover:ring-primary hover:ring-offset-2 hover:ring-offset-bg1"
+              class="flex h-10 w-10 items-center justify-center text-primary-light-content hover:ring-2 hover:ring-primary hover:ring-offset-2 hover:ring-offset-bg1"
             >
               <i class="fas fa-ellipsis-h text-sm"></i>
             </Pagination.Ellipsis>
 
             <Pagination.ListItem
               v-else
-              class="h-10 w-10 p-0 hover:bg-bg3 rounded-md flex items-center justify-center cursor-pointer transition-colors hover:ring-2 hover:ring-primary hover:ring-offset-2 hover:ring-offset-bg1"
+              class="h-10 w-10 p-0 hover:bg-base-300 rounded-md flex items-center justify-center cursor-pointer transition-colors hover:ring-2 hover:ring-primary hover:ring-offset-2 hover:ring-offset-bg1"
               :class="{
                 'bg-primary/10 border-primary text-primary': item.value === meta.current_page,
-                'bg-bg2 text-secondary hover:text-primary': item.value !== meta.current_page,
+                'bg-base-200 text-primary-light-content hover:text-primary': item.value !== meta.current_page,
               }"
               :value="item.value"
             >
@@ -63,12 +63,12 @@
           </template>
 
           <Pagination.Next
-            class="h-10 w-10 p-0 bg-bg2 hover:bg-bg3 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-secondary hover:text-primary transition-colors"
+            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-primary-light-content hover:text-primary transition-colors"
           >
             <i class="fas fa-chevron-right text-sm"></i>
           </Pagination.Next>
           <Pagination.Last
-            class="h-10 w-10 p-0 bg-bg2 hover:bg-bg3 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-secondary hover:text-primary transition-colors"
+            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-primary-light-content hover:text-primary transition-colors"
           >
             <i class="fas fa-chevron-double-right text-sm"></i>
           </Pagination.Last>
@@ -78,7 +78,7 @@
 
     <!-- Right: Direct page input -->
     <div class="flex items-center gap-2 justify-end">
-      <label class="text-sm text-secondary whitespace-nowrap">{{
+      <label class="text-sm text-primary-light-content whitespace-nowrap">{{
         $t('pagination.page', 'Page:')
       }}</label>
       <input
@@ -88,10 +88,10 @@
         type="number"
         :min="1"
         :max="meta.last_page"
-        class="w-16 px-2 py-1.5 bg-bg2 border border-border-2 rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+        class="w-16 px-2 py-1.5 bg-base-200 border border-primary-stroke rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
         :placeholder="String(meta.current_page)"
       />
-      <span class="text-sm text-secondary whitespace-nowrap"
+      <span class="text-sm text-primary-light-content whitespace-nowrap"
         >{{ $t('pagination.of', 'of') }} {{ meta.last_page }}</span
       >
     </div>

@@ -25,7 +25,7 @@
               <!-- Message -->
               <p
                 v-if="message"
-                class="text-secondary text-sm leading-relaxed"
+                class="text-primary-light-content dark:text-white text-sm leading-relaxed"
                 :class="{ 'mb-4': hasActions }"
               >
                 {{ message }}
@@ -41,7 +41,7 @@
             <button
               v-if="dismissible || closable"
               @click="handleClose"
-              class="text-secondary hover:text-base transition-colors p-1 ml-4 flex-shrink-0"
+              class="text-primary-light-content hover:text-base transition-colors p-1 ml-4 flex-shrink-0"
               :title="dismissLabel || 'Close'"
             >
               <i class="fa fa-times"></i>
@@ -119,7 +119,7 @@ const alertClasses = computed(() => {
     case 'error':
       return `${baseClasses} bg-error-100 dark:bg-error-400/50`
     case 'accent':
-      return `${baseClasses} bg-tertiary-100 dark:bg-tertiary-400/50`
+      return `${baseClasses} bg-accent-100 dark:bg-accent-400/50`
     case 'gradient':
       return `${baseClasses} bg-gradient-to-r from-tertiary-100 to-sage-100 dark:from-tertiary-400/20 dark:to-tertiary-400/70`
     default:
@@ -136,9 +136,9 @@ const iconColorClasses = computed(() => {
     case 'error':
       return 'text-error-500 dark:text-error-200'
     case 'accent':
-      return 'text-tertiary-500 dark:text-tertiary-200'
+      return 'text-accent-500 dark:text-accent-200'
     case 'gradient':
-      return 'text-tertiary-500 dark:text-primary-200'
+      return 'text-accent-500 dark:text-primary-200'
     default:
       return 'text-info-500 dark:text-info-200'
   }

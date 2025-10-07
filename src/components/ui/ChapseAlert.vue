@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative overflow-hidden rounded-block bg-bg2 border border-border-2 p-6"
+    class="relative overflow-hidden rounded-block bg-base-200 border border-primary-stroke p-6"
     role="alert"
     :aria-labelledby="title ? 'chapse-alert-title' : undefined"
   >
