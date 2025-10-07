@@ -1133,6 +1133,9 @@ export default {
         row: 'Ligne',
         company: 'Entreprise',
         error: 'Erreur',
+        errorsFound: 'Erreurs de Validation Trouvées',
+        errorsFoundMessage:
+          'Vous pouvez soit corriger les erreurs dans votre fichier CSV et le télécharger à nouveau, soit continuer l\'importation qui ignorera les lignes invalides.',
       },
       tokens: {
         title: 'Utilisation des Jetons',
@@ -1149,6 +1152,10 @@ export default {
         import: 'Importer les Entreprises',
         importing: 'Importation...',
         close: 'Fermer',
+        importCompanies: 'Importer {count} Entreprises',
+        fixAndReupload: 'Corriger le CSV et Télécharger à Nouveau',
+        goToFolder: 'Aller au Dossier',
+        uploadAnother: 'Télécharger un Autre CSV',
       },
       results: {
         title: 'Résultats de l\'Import',

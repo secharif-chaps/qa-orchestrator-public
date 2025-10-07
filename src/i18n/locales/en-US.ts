@@ -1053,6 +1053,9 @@ export default {
         row: 'Row',
         company: 'Company',
         error: 'Error',
+        errorsFound: 'Validation Errors Found',
+        errorsFoundMessage:
+          'You can either fix the errors in your CSV file and re-upload, or proceed with import which will skip invalid rows.',
       },
       tokens: {
         title: 'Token Usage',
@@ -1069,6 +1072,10 @@ export default {
         import: 'Import Companies',
         importing: 'Importing...',
         close: 'Close',
+        importCompanies: 'Import {count} Companies',
+        fixAndReupload: 'Fix CSV and Re-upload',
+        goToFolder: 'Go to Folder',
+        uploadAnother: 'Upload Another CSV',
       },
       results: {
         title: 'Import Results',

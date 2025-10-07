@@ -68,7 +68,7 @@
                 </p>
                 <Button
                   variant="ghost-primary"
-                  label="Choose File"
+                  :label="$t('csv.upload.chooseFile', 'Choose File')"
                   @click="$refs.fileInput?.click()"
                 />
               </div>
@@ -84,7 +84,7 @@
                 variant="ghost-primary"
                 color="danger"
                 icon="fa fa-times"
-                label="Remove"
+                :label="$t('csv.upload.remove', 'Remove')"
                 @click="removeFile"
               />
             </div>
@@ -144,7 +144,7 @@
             </p>
             <Button
               variant="secondary"
-              label="Validate Data"
+              :label="$t('csv.upload.validateData', 'Validate Data')"
               icon="fa fa-check"
               :loading="isValidating"
               :disabled="isValidating || parseResult.companies.length === 0"
@@ -222,8 +222,13 @@
         <Alert
           v-if="!validationResult.has_sufficient_tokens"
           variant="error"
-          title="Insufficient Tokens"
-          :message="`You need ${validationResult.tokens_required} tokens but only have ${validationResult.tokens_available} available.`"
+          :title="$t('csv.upload.tokens.insufficient', 'Insufficient tokens')"
+          :message="
+            $t('csv.upload.tokens.insufficientMessage', 'You need {required} tokens but only have {available} available', {
+              required: validationResult.tokens_required,
+              available: validationResult.tokens_available,
+            })
+          "
           icon="fa fa-coins"
         />
 
@@ -243,8 +248,13 @@
 
           <Alert
             variant="warning"
-            title="Validation Errors Found"
-            message="You can either fix the errors in your CSV file and re-upload, or proceed with import which will skip invalid rows."
+            :title="$t('csv.upload.validation.errorsFound', 'Validation Errors Found')"
+            :message="
+              $t(
+                'csv.upload.validation.errorsFoundMessage',
+                'You can either fix the errors in your CSV file and re-upload, or proceed with import which will skip invalid rows.',
+              )
+            "
           />
         </div>
 
@@ -253,7 +263,11 @@
           <Button
             variant="primary"
             icon="fa fa-upload"
-            :label="`Import ${validationResult.valid_count} Companies`"
+            :label="
+              $t('csv.upload.actions.importCompanies', 'Import {count} Companies', {
+                count: validationResult.valid_count,
+              })
+            "
             :loading="isImporting"
             :disabled="isImporting || !validationResult.has_sufficient_tokens"
             @click="importCompanies"
@@ -262,7 +276,7 @@
           <Button
             variant="secondary"
             icon="fa fa-edit"
-            label="Fix CSV and Re-upload"
+            :label="$t('csv.upload.actions.fixAndReupload', 'Fix CSV and Re-upload')"
             @click="resetUpload"
           />
         </div>
@@ -302,12 +316,17 @@
 
         <!-- Success Actions -->
         <div class="flex items-center gap-4 pt-4">
-          <Button variant="primary" icon="fa fa-folder" label="Go to Folder" @click="goToFolder" />
+          <Button
+            variant="primary"
+            icon="fa fa-folder"
+            :label="$t('csv.upload.actions.goToFolder', 'Go to Folder')"
+            @click="goToFolder"
+          />
 
           <Button
             variant="secondary"
             icon="fa fa-upload"
-            label="Upload Another CSV"
+            :label="$t('csv.upload.actions.uploadAnother', 'Upload Another CSV')"
             @click="resetUpload"
           />
         </div>
