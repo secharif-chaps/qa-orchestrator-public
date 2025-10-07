@@ -80,10 +80,139 @@ A modern Vue 3 application with TypeScript, Tailwind CSS v4, and comprehensive t
 1. **ALWAYS** use Composition API with `<script setup lang="ts">`, **NEVER** Options API
 2. **ALWAYS** use TypeScript, prefer `interface` over `type`
 3. **ALWAYS** use Tailwind CSS classes, avoid manual CSS
-4. **DO NOT** hard-code colors, use semantic color classes
+4. **DO NOT** hard-code colors, use semantic color tokens (see Color System below)
 5. **ALWAYS** use named functions for methods, arrow functions only for callbacks
 6. **ALWAYS** prefer named exports over default exports
 7. Add meaningful comments explaining **why**, not **what**
+
+### 🎨 Semantic Color System
+
+The MINT design system uses DaisyUI-inspired semantic color tokens for consistent, accessible theming.
+
+#### Philosophy
+
+**Never use palette colors directly** (~~`bg-green-500`~~, ~~`text-red-600`~~). Always use semantic tokens that automatically adapt to light/dark themes and ensure WCAG accessibility.
+
+#### Semantic Color Tokens
+
+| Token | Purpose | Example Use Case |
+|-------|---------|-----------------|
+| `primary` | Main brand actions | Primary buttons, active states |
+| `secondary` | Secondary brand elements | Secondary buttons, badges |
+| `accent` | Emphasis and highlights | Special badges, callouts |
+| `success` | Positive feedback | Success messages, confirmations |
+| `warning` | Caution states | Warnings, pending states |
+| `error` | Negative feedback | Error messages, validation |
+| `info` | Informational | Info banners, help text |
+
+#### Token Variants
+
+Each semantic color has **4 variants**:
+
+1. **Solid** (`{color}`): For solid backgrounds
+2. **Solid Content** (`{color}-content`): Text/icons on solid backgrounds
+3. **Light** (`{color}-light`): For light/subtle backgrounds
+4. **Light Content** (`{color}-light-content`): Text/icons on light backgrounds
+5. **Stroke** (`{color}-stroke`): For borders
+
+#### Usage Patterns
+
+**Solid Button**
+```vue
+<button class="bg-primary text-primary-content">
+  Primary Action
+</button>
+```
+
+**Light Alert**
+```vue
+<div class="bg-success-light text-success-light-content border border-success-stroke rounded-lg p-4">
+  <Icon class="text-success-light-content" />
+  Operation successful!
+</div>
+```
+
+**Badge (Light)**
+```vue
+<span class="bg-info-light text-info-light-content border border-info-stroke px-2 py-1 rounded">
+  New
+</span>
+```
+
+**Card with Border**
+```vue
+<div class="bg-base-200 border border-primary-stroke rounded-card p-6">
+  Card content
+</div>
+```
+
+#### Background Layering
+
+Use `base` colors for application hierarchy:
+
+```vue
+<body class="bg-base-100">              <!-- Page background -->
+  <div class="bg-base-200">             <!-- Card/modal background -->
+    <div class="bg-base-300">           <!-- Nested card -->
+    </div>
+  </div>
+</body>
+```
+
+#### Complete Examples
+
+**Success Toast**
+```vue
+<div class="bg-success-light text-success-light-content border border-success-stroke
+            rounded-lg p-4 shadow-green flex items-center gap-3">
+  <IconCircleCheck class="text-success-light-content" />
+  <span>Changes saved successfully</span>
+</div>
+```
+
+**Error Alert**
+```vue
+<div class="bg-error-light text-error-light-content border border-error-stroke
+            rounded-lg p-4 shadow-red">
+  <IconAlertCircle class="text-error-light-content" />
+  <p class="font-semibold">Error</p>
+  <p>Something went wrong</p>
+</div>
+```
+
+**Warning Banner**
+```vue
+<div class="bg-warning-light text-warning-light-content border-l-4 border-warning-stroke p-4">
+  <IconAlertTriangle class="text-warning-light-content" />
+  <p>This action cannot be undone</p>
+</div>
+```
+
+**Button Group**
+```vue
+<div class="flex gap-2">
+  <button class="bg-primary text-primary-content px-4 py-2 rounded-lg">
+    Save
+  </button>
+  <button class="bg-error text-error-content px-4 py-2 rounded-lg">
+    Delete
+  </button>
+</div>
+```
+
+#### Accessibility Rules
+
+✅ **DO**:
+- Always pair backgrounds with their matching `-content` color
+- Use `-light` variants for non-critical/informational UI
+- Use solid variants for primary actions and critical states
+- Use `-stroke` for borders to maintain visual hierarchy
+
+❌ **DON'T**:
+- Mix mismatched pairs: ~~`bg-success text-error-content`~~
+- Use palette colors: ~~`bg-green-100`~~, ~~`text-red-700`~~
+- Use raw colors: ~~`bg-[#29ad72]`~~
+- Ignore content pairing: ~~`bg-primary text-black`~~ (use `text-primary-content`)
 
 ### File Organization
 
