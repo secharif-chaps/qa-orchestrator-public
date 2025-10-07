@@ -397,6 +397,7 @@ export default {
     comingSoon: 'Bientôt disponible',
     notFound: 'Non trouvé',
     loading: 'Chargement...',
+    na: 'N/D',
     noData: 'Aucune donnée disponible',
     cancel: 'Annuler',
     save: 'Enregistrer',

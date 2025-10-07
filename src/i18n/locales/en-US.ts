@@ -361,6 +361,7 @@ export default {
     comingSoon: 'Coming soon',
     notFound: 'Not found',
     loading: 'Loading...',
+    na: 'N/A',
     noData: 'No data available',
     save: 'Save',
     error: 'Error',

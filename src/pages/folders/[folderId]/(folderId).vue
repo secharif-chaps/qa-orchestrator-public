@@ -121,7 +121,7 @@
                   </div>
                   <div class="col-span-2">
                     <span class="text-sm text-primary-light-content">{{
-                      item.owner_username || 'N/A'
+                      item.owner_username || $t('common.na', 'N/A')
                     }}</span>
                   </div>
                   <div class="col-span-2 text-right">
@@ -235,12 +235,14 @@ import { useQuery } from '@pinia/colada'
 import { useRoute, useRouter } from 'vue-router'
 import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import { useI18n } from 'vue-i18n'
 
 // Constants
 const VIEW_MODE_STORAGE_KEY = 'folder-view-mode'
 
 const route = useRoute('/folders/[folderId]')
 const router = useRouter()
+const { t: $t } = useI18n()
 const { canDeleteCompany } = useCompanyPermissions()
 
 const showDeleteModal = ref(false)
@@ -298,7 +300,7 @@ const getLogoUrl = (website?: string) => {
 
 // Methods
 const formatDate = (dateString: string) => {
-  if (!dateString) return 'N/A'
+  if (!dateString) return $t('common.na', 'N/A')
   return new Date(dateString).toLocaleDateString()
 }
 
