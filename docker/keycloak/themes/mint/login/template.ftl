@@ -1,6 +1,6 @@
 <#macro registrationLayout bodyClass="" displayInfo=false displayMessage=true displayRequiredFields=false>
 <!DOCTYPE html>
-<html class="h-full bg-bg3"<#if realm.internationalizationEnabled?? && locale??> lang="${locale.currentLanguageTag}"</#if>>
+<html class="h-full bg-base-300"<#if realm.internationalizationEnabled?? && locale??> lang="${locale.currentLanguageTag}"</#if>>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
