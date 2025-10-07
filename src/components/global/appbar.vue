@@ -21,11 +21,22 @@
 
           <!-- Dev mode only theme toggle -->
           <Button
+            v-if="isDev"
             variant="ghost-primary"
             dark
             :icon="isDark ? 'fa fa-sun' : 'fa fa-moon'"
             icon-only
             @click="toggleTheme"
+          />
+
+          <!-- Dev mode only language toggle -->
+          <Button
+            v-if="isDev"
+            variant="ghost-primary"
+            dark
+            :icon="'fa fa-language'"
+            icon-only
+            @click="toggleLocale"
           />
 
           <Button
@@ -113,12 +124,14 @@ import { currentWorkspaceQuery } from '@/queries/workspace'
 import Badge from '@/components/ui/Badge.vue'
 import ModuleBadges from '@/components/global/ModuleBadges.vue'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const authStore = useAuthStore()
 const { signOut } = authStore
 const sidebarStore = useSidebarStore()
 
 const { theme, isDark, setTheme } = useTheme()
+const { locale } = useI18n()
 
 // Permission checks for navigation buttons
 const hasAdminPermission = computed(() => authStore.hasPermission('admin.workspaces'))
@@ -130,6 +143,11 @@ const isDev = import.meta.env.DEV
 // Theme toggle function
 const toggleTheme = () => {
   setTheme(isDark.value ? 'light' : 'dark')
+}
+
+// Language toggle function
+const toggleLocale = () => {
+  locale.value = locale.value === 'en-US' ? 'fr-FR' : 'en-US'
 }
 
 // Fetch current workspace
