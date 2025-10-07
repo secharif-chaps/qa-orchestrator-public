@@ -555,6 +555,11 @@ export default {
   },
   team: {
     title: 'Équipe & Management',
+    tabs: {
+      users: 'Membres de l\'Équipe',
+      settings: 'Paramètres',
+      apis: 'APIs Externes',
+    },
     loading: {
       title: "Chargement des données d'équipe...",
       description: 'Récupération de la hiérarchie et de la structure de management...',
@@ -670,6 +675,11 @@ export default {
       apiKey: 'Clé API',
       apiKeyPlaceholder: 'Saisissez la clé API Dify',
       notConfigured: 'Non configuré',
+      status: {
+        active: 'Actif',
+        partial: 'Partiel',
+        notConfigured: 'Non Configuré',
+      },
       error: {
         title: 'Échec du chargement des workflows',
       },
@@ -1176,6 +1186,63 @@ export default {
         uploadError: 'Erreur lors du téléchargement du fichier',
         validationError: 'Erreur lors de la validation des entreprises',
         importError: 'Erreur lors de l\'importation des entreprises',
+      },
+    },
+  },
+  help: {
+    noContent: {
+      title: 'Aucun Contenu d\'Aide Disponible',
+      message: 'Vous n\'avez accès à aucune section d\'aide en fonction de vos permissions actuelles.',
+    },
+    selectTopic: {
+      placeholder: 'Sélectionner un sujet d\'aide',
+      title: 'Sélectionner un Sujet d\'Aide',
+      message: 'Choisissez un sujet dans la barre latérale pour voir la documentation détaillée.',
+    },
+    loading: {
+      content: 'Chargement du contenu d\'aide...',
+    },
+    categories: {
+      admin: 'Administration',
+      company: 'Analyse d\'Entreprises',
+      workspace: 'Gestion de l\'Espace de Travail',
+    },
+  },
+  login: {
+    heading: 'Connectez-vous à votre compte',
+    signingIn: 'Connexion en cours...',
+    signInButton: 'Se connecter avec Keycloak',
+    errors: {
+      genericError: 'Une erreur s\'est produite lors de la connexion',
+    },
+  },
+  errors: {
+    notFound: {
+      title: 'Page Non Trouvée',
+      message: 'La page que vous recherchez n\'existe pas ou a été déplacée.',
+      goHome: 'Aller à l\'Accueil',
+      goBack: 'Retour',
+      help: 'Besoin d\'Aide ?',
+    },
+    forbidden: {
+      title: 'Accès Refusé',
+      message: 'Vous n\'avez pas la permission d\'accéder à cette ressource.',
+      goHome: 'Aller à l\'Accueil',
+      goBack: 'Retour',
+      contactAdmin: 'Contacter l\'Administrateur',
+      token: {
+        moduleDisabled: '{module} Désactivé',
+        insufficientTokens: 'Jetons Insuffisants',
+        accessRestricted: 'Accès Restreint',
+        moduleDisabledMessage:
+          'Le module {module} a été désactivé pour votre espace de travail. Contactez votre administrateur pour activer cette fonctionnalité.',
+        insufficientTokensMessage:
+          'Vous n\'avez pas assez de jetons pour accéder au module {module}. Contactez votre administrateur pour ajouter plus de jetons.',
+        unavailable: 'Cette fonctionnalité est actuellement indisponible.',
+        status: {
+          disabled: 'Désactivé',
+          noTokens: 'Aucun Jeton',
+        },
       },
     },
   },

@@ -21,9 +21,9 @@
             <i class="fa fa-coins text-primary-light-content"></i>
             <span class="text-sm">
               <span class="font-medium capitalize">{{ errorModule }}</span> Module
-              <span v-if="reason === 'module_disabled'" class="text-red-600 ml-2">• Disabled</span>
+              <span v-if="reason === 'module_disabled'" class="text-red-600 ml-2">• {{ $t('errors.forbidden.token.status.disabled', 'Disabled') }}</span>
               <span v-else-if="reason === 'insufficient_tokens'" class="text-red-600 ml-2"
-                >• No Tokens</span
+                >• {{ $t('errors.forbidden.token.status.noTokens', 'No Tokens') }}</span
               >
             </span>
           </div>
@@ -86,21 +86,31 @@ const isTokenError = computed(
 
 const tokenErrorTitle = computed(() => {
   if (reason.value === 'module_disabled') {
-    return `${errorModule.value || 'Module'} Disabled`
+    return t('errors.forbidden.token.moduleDisabled', '{module} Disabled', {
+      module: errorModule.value || 'Module',
+    })
   }
   if (reason.value === 'insufficient_tokens') {
-    return 'Insufficient Tokens'
+    return t('errors.forbidden.token.insufficientTokens', 'Insufficient Tokens')
   }
-  return 'Access Restricted'
+  return t('errors.forbidden.token.accessRestricted', 'Access Restricted')
 })
 
 const tokenErrorMessage = computed(() => {
   if (reason.value === 'module_disabled') {
-    return `The ${errorModule.value || 'requested'} module has been disabled for your workspace. Contact your administrator to enable this feature.`
+    return t(
+      'errors.forbidden.token.moduleDisabledMessage',
+      'The {module} module has been disabled for your workspace. Contact your administrator to enable this feature.',
+      { module: errorModule.value || 'requested' },
+    )
   }
   if (reason.value === 'insufficient_tokens') {
-    return `You don't have enough tokens to access the ${errorModule.value || 'requested'} module. Contact your administrator to add more tokens.`
+    return t(
+      'errors.forbidden.token.insufficientTokensMessage',
+      "You don't have enough tokens to access the {module} module. Contact your administrator to add more tokens.",
+      { module: errorModule.value || 'requested' },
+    )
   }
-  return 'This feature is currently unavailable.'
+  return t('errors.forbidden.token.unavailable', 'This feature is currently unavailable.')
 })
 </script>

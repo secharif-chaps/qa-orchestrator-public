@@ -44,6 +44,9 @@ import { ref, computed, onMounted } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { currentWorkspaceQuery } from '@/queries/workspace'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Get current workspace
 const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
@@ -54,11 +57,11 @@ const activeTab = computed(() => {
   return route.path.split('/').pop() || 'users'
 })
 
-const tabs = [
-  { id: 'users', label: 'Team Users', icon: 'fa fa-users', to: '/team/users' },
-  { id: 'settings', label: 'Settings', icon: 'fa fa-cog', to: '/team/settings' },
-  { id: 'apis', label: 'External APIs', icon: 'fa fa-plug', to: '/team/apis' },
-]
+const tabs = computed(() => [
+  { id: 'users', label: t('team.tabs.users', 'Team Users'), icon: 'fa fa-users', to: '/team/users' },
+  { id: 'settings', label: t('team.tabs.settings', 'Settings'), icon: 'fa fa-cog', to: '/team/settings' },
+  { id: 'apis', label: t('team.tabs.apis', 'External APIs'), icon: 'fa fa-plug', to: '/team/apis' },
+])
 
 const router = useRouter()
 onMounted(() => {

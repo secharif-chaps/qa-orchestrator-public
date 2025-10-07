@@ -9,8 +9,8 @@
     <div v-if="!hasAnyHelpAccess" class="text-center py-16">
       <div class="text-gray-500 dark:text-gray-400">
         <div class="text-6xl mb-4">📚</div>
-        <h3 class="text-xl font-medium mb-2">No Help Content Available</h3>
-        <p>You don't have access to any help sections based on your current permissions.</p>
+        <h3 class="text-xl font-medium mb-2">{{ $t('help.noContent.title', 'No Help Content Available') }}</h3>
+        <p>{{ $t('help.noContent.message', "You don't have access to any help sections based on your current permissions.") }}</p>
       </div>
     </div>
 
@@ -50,7 +50,7 @@
           @change="onMobileSelectChange"
           class="w-full px-3 py-2 border border-primary-stroke rounded-md bg-base-100 text-primary-light-content focus:outline-none focus:ring-2 focus:ring-primary"
         >
-          <option value="">Select a help topic</option>
+          <option value="">{{ $t('help.selectTopic.placeholder', 'Select a help topic') }}</option>
           <optgroup
             v-for="category in helpCategories"
             :key="category"
@@ -72,8 +72,8 @@
         <div v-if="!selectedSection" class="text-center py-16">
           <div class="text-gray-500 dark:text-gray-400">
             <div class="text-4xl mb-4">👈</div>
-            <h3 class="text-lg font-medium mb-2">Select a Help Topic</h3>
-            <p>Choose a topic from the sidebar to view detailed documentation.</p>
+            <h3 class="text-lg font-medium mb-2">{{ $t('help.selectTopic.title', 'Select a Help Topic') }}</h3>
+            <p>{{ $t('help.selectTopic.message', 'Choose a topic from the sidebar to view detailed documentation.') }}</p>
           </div>
         </div>
 
@@ -96,7 +96,7 @@
                 <div
                   class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
                 ></div>
-                <p class="text-primary-light-content">Loading help content...</p>
+                <p class="text-primary-light-content">{{ $t('help.loading.content', 'Loading help content...') }}</p>
               </div>
             </div>
           </div>
@@ -110,6 +110,9 @@
 import { ref, watch, computed } from 'vue'
 import { marked } from 'marked'
 import { usePermissionBasedHelp } from '@/composables/usePermissionBasedHelp'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const {
   hasAnyHelpAccess,
@@ -126,9 +129,9 @@ const selectedSectionPermission = ref<string>('')
 // Category titles mapping
 const getCategoryTitle = (category: string) => {
   const titles: Record<string, string> = {
-    admin: 'Administration',
-    company: 'Company Screening',
-    workspace: 'Workspace Management',
+    admin: t('help.categories.admin', 'Administration'),
+    company: t('help.categories.company', 'Company Screening'),
+    workspace: t('help.categories.workspace', 'Workspace Management'),
   }
   return titles[category] || category
 }

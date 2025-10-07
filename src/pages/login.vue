@@ -5,7 +5,7 @@
         <div class="flex justify-center">
           <i class="fa-solid fa-leaf text-primary-light-content text-7xl"></i>
         </div>
-        <h2 class="mt-6 text-center text-3xl font-extrabold">Sign in to your account</h2>
+        <h2 class="mt-6 text-center text-3xl font-extrabold">{{ $t('login.heading', 'Sign in to your account') }}</h2>
       </div>
       <div class="mt-8">
         <div v-if="error" class="text-red-600 text-sm text-center mb-4">
@@ -16,7 +16,7 @@
           <Button
             @click="handleLogin"
             :disabled="isLoading"
-            :label="isLoading ? 'Signing in...' : 'Sign in with Keycloak'"
+            :label="isLoading ? $t('login.signingIn', 'Signing in...') : $t('login.signInButton', 'Sign in with Keycloak')"
             :loading="isLoading"
             variant="primary"
             class="w-full"
@@ -31,7 +31,9 @@
 import { useAuth } from '@/composables/useAuth'
 import { ref } from 'vue'
 import Button from '@/components/ui/Button.vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const { signIn } = useAuth()
 
 const error = ref('')
@@ -46,7 +48,7 @@ const handleLogin = async () => {
     await signIn()
   } catch (err) {
     console.error('Login error:', err)
-    error.value = 'An error occurred during login'
+    error.value = t('login.errors.genericError', 'An error occurred during login')
     isLoading.value = false
   }
 }

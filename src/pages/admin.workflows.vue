@@ -32,19 +32,19 @@
           <div class="bg-base-100 rounded-lg border border-primary-stroke p-4">
             <div class="flex items-center">
               <Badge variant="success" icon="fa fa-check" size="sm" />
-              <span class="ml-3 text-sm font-medium">{{ activeCount }} Active</span>
+              <span class="ml-3 text-sm font-medium">{{ activeCount }} {{ $t('admin.workflows.status.active', 'Active') }}</span>
             </div>
           </div>
           <div class="bg-base-100 rounded-lg border border-primary-stroke p-4">
             <div class="flex items-center">
               <Badge variant="warning" icon="fa fa-exclamation" size="sm" />
-              <span class="ml-3 text-sm font-medium">{{ partialCount }} Partial</span>
+              <span class="ml-3 text-sm font-medium">{{ partialCount }} {{ $t('admin.workflows.status.partial', 'Partial') }}</span>
             </div>
           </div>
           <div class="bg-base-100 rounded-lg border border-primary-stroke p-4">
             <div class="flex items-center">
               <Badge variant="slate" icon="fa fa-times" size="sm" />
-              <span class="ml-3 text-sm font-medium">{{ inactiveCount }} Not Configured</span>
+              <span class="ml-3 text-sm font-medium">{{ inactiveCount }} {{ $t('admin.workflows.status.notConfigured', 'Not Configured') }}</span>
             </div>
           </div>
         </div>

@@ -511,6 +511,11 @@ export default {
   },
   team: {
     title: 'Team & Management',
+    tabs: {
+      users: 'Team Users',
+      settings: 'Settings',
+      apis: 'External APIs',
+    },
     loading: {
       title: 'Loading team data...',
       description: 'Fetching team hierarchy and management structure...',
@@ -625,6 +630,11 @@ export default {
       apiKey: 'API Key',
       apiKeyPlaceholder: 'Enter Dify API key',
       notConfigured: 'Not configured',
+      status: {
+        active: 'Active',
+        partial: 'Partial',
+        notConfigured: 'Not Configured',
+      },
       error: {
         title: 'Failed to Load Workflows',
       },
@@ -1096,6 +1106,63 @@ export default {
         uploadError: 'Error uploading file',
         validationError: 'Error validating companies',
         importError: 'Error importing companies',
+      },
+    },
+  },
+  help: {
+    noContent: {
+      title: 'No Help Content Available',
+      message: "You don't have access to any help sections based on your current permissions.",
+    },
+    selectTopic: {
+      placeholder: 'Select a help topic',
+      title: 'Select a Help Topic',
+      message: 'Choose a topic from the sidebar to view detailed documentation.',
+    },
+    loading: {
+      content: 'Loading help content...',
+    },
+    categories: {
+      admin: 'Administration',
+      company: 'Company Screening',
+      workspace: 'Workspace Management',
+    },
+  },
+  login: {
+    heading: 'Sign in to your account',
+    signingIn: 'Signing in...',
+    signInButton: 'Sign in with Keycloak',
+    errors: {
+      genericError: 'An error occurred during login',
+    },
+  },
+  errors: {
+    notFound: {
+      title: 'Page Not Found',
+      message: "The page you're looking for doesn't exist or has been moved.",
+      goHome: 'Go to Home',
+      goBack: 'Go Back',
+      help: 'Need Help?',
+    },
+    forbidden: {
+      title: 'Access Denied',
+      message: "You don't have permission to access this resource.",
+      goHome: 'Go to Home',
+      goBack: 'Go Back',
+      contactAdmin: 'Contact Administrator',
+      token: {
+        moduleDisabled: '{module} Disabled',
+        insufficientTokens: 'Insufficient Tokens',
+        accessRestricted: 'Access Restricted',
+        moduleDisabledMessage:
+          'The {module} module has been disabled for your workspace. Contact your administrator to enable this feature.',
+        insufficientTokensMessage:
+          "You don't have enough tokens to access the {module} module. Contact your administrator to add more tokens.",
+        unavailable: 'This feature is currently unavailable.',
+        status: {
+          disabled: 'Disabled',
+          noTokens: 'No Tokens',
+        },
       },
     },
   },
