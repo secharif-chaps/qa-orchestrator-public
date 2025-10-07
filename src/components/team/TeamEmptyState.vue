@@ -26,7 +26,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   type: 'no-users' | 'no-results' | 'loading'
@@ -46,26 +49,29 @@ const canManageUsers = computed(() => authStore.hasPermission('workspace.write')
 const title = computed(() => {
   switch (props.type) {
     case 'no-users':
-      return 'No users in workspace'
+      return t('team.empty.noUsers.title', 'No users in workspace')
     case 'no-results':
-      return 'No users found'
+      return t('team.empty.noResults.title', 'No users found')
     case 'loading':
-      return 'Loading users...'
+      return t('team.empty.loading.title', 'Loading users...')
     default:
-      return 'No users'
+      return t('team.empty.default', 'No users')
   }
 })
 
 const description = computed(() => {
   switch (props.type) {
     case 'no-users':
-      return 'Add your first team member to get started with collaboration'
+      return t(
+        'team.empty.noUsers.description',
+        'Add your first team member to get started with collaboration',
+      )
     case 'no-results':
       return props.hasSearch
-        ? 'Try a different search term or filter'
-        : 'No users match the current filters'
+        ? t('team.empty.noResults.description', 'Try a different search term or filter')
+        : t('team.empty.noResults.descriptionNoFilter', 'No users match the current filters')
     case 'loading':
-      return 'Please wait while we load your team members'
+      return t('team.empty.loading.description', 'Please wait while we load your team members')
     default:
       return ''
   }

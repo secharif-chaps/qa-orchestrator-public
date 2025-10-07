@@ -193,6 +193,7 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import type {
   WorkspaceUser,
@@ -200,6 +201,8 @@ import type {
   UpdateWorkspaceUserRequest,
 } from '@/types/team'
 import TeamPermissionsSelect from './TeamPermissionsSelect.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   user?: WorkspaceUser
@@ -298,30 +301,39 @@ const validateForm = () => {
   errors.value = {}
 
   if (!form.firstName.trim()) {
-    errors.value.firstName = 'First name is required'
+    errors.value.firstName = t('team.validation.firstName.required', 'First name is required')
   }
 
   if (!form.lastName.trim()) {
-    errors.value.lastName = 'Last name is required'
+    errors.value.lastName = t('team.validation.lastName.required', 'Last name is required')
   }
 
   if (!isEditing.value) {
     if (!form.username.trim()) {
-      errors.value.username = 'Username is required'
+      errors.value.username = t('team.validation.username.required', 'Username is required')
     } else if (form.username.length < 3) {
-      errors.value.username = 'Username must be at least 3 characters'
+      errors.value.username = t(
+        'team.validation.username.minLength',
+        'Username must be at least 3 characters',
+      )
     }
 
     if (!form.email.trim()) {
-      errors.value.email = 'Email is required'
+      errors.value.email = t('team.validation.email.required', 'Email is required')
     } else if (!isValidEmail(form.email)) {
-      errors.value.email = 'Please enter a valid email address'
+      errors.value.email = t(
+        'team.validation.email.invalid',
+        'Please enter a valid email address',
+      )
     }
 
     if (!form.password.trim()) {
-      errors.value.password = 'Password is required'
+      errors.value.password = t('team.validation.password.required', 'Password is required')
     } else if (form.password.length < 8) {
-      errors.value.password = 'Password must be at least 8 characters'
+      errors.value.password = t(
+        'team.validation.password.minLength',
+        'Password must be at least 8 characters',
+      )
     }
   }
 
