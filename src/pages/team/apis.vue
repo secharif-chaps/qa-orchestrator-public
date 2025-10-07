@@ -47,14 +47,14 @@
         </div>
         <div class="space-y-2">
           <div class="flex items-center gap-2 text-sm">
-            <span class="text-primary-light-content">URL:</span>
+            <span class="text-primary-light-content">{{ $t('team.apis.urlLabel', 'URL:') }}</span>
             <span
               class="text-primary-light-content font-mono text-xs bg-base-200 px-2 py-1 rounded"
               >{{ api.url }}</span
             >
           </div>
           <div class="flex items-center gap-2 text-sm">
-            <span class="text-primary-light-content">API Key:</span>
+            <span class="text-primary-light-content">{{ $t('team.apis.apiKeyLabel', 'API Key:') }}</span>
             <span
               class="text-primary-light-content font-mono text-xs bg-base-200 px-2 py-1 rounded"
             >
@@ -129,14 +129,22 @@
             <label class="block text-sm font-medium text-primary-light-content mb-1">
               {{ $t('team.apis.name', 'API Name') }}
             </label>
-            <Input v-model="newApi.name" placeholder="e.g., Weather API" class="w-full" />
+            <Input
+              v-model="newApi.name"
+              :placeholder="$t('team.apis.namePlaceholder', 'e.g., Weather API')"
+              class="w-full"
+            />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-primary-light-content mb-1">
               {{ $t('team.apis.url', 'API URL') }}
             </label>
-            <Input v-model="newApi.url" placeholder="https://api.example.com/v1" class="w-full" />
+            <Input
+              v-model="newApi.url"
+              :placeholder="$t('team.apis.urlPlaceholder', 'https://api.example.com/v1')"
+              class="w-full"
+            />
           </div>
 
           <div>
@@ -146,7 +154,7 @@
             <Input
               v-model="newApi.apiKey"
               type="password"
-              placeholder="Your API key"
+              :placeholder="$t('team.apis.apiKeyPlaceholder', 'Your API key')"
               class="w-full"
             />
           </div>
