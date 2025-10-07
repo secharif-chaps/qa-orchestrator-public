@@ -224,6 +224,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { foldersQuery, foldersWithItemsQuery } from '@/queries/folders'
 import { useQuery } from '@pinia/colada'
 import { useFoldersStore } from '@/stores/folders'
+import { useI18n } from 'vue-i18n'
 
 // Constants
 const VIEW_MODE_STORAGE_KEY = 'folders-view-mode'
@@ -231,6 +232,7 @@ const VIEW_MODE_STORAGE_KEY = 'folders-view-mode'
 // Grid-friendly page size options (multiples of 3)
 const pageSizeOptions = [6, 12, 21, 30]
 
+const { t: $t } = useI18n()
 const foldersStore = useFoldersStore()
 
 // Filter and view state
@@ -242,20 +244,20 @@ const filterOptions = computed(() => [
   {
     value: 'all',
     icon: 'fas fa-folder',
-    title: 'All folders',
-    label: 'All',
+    title: $t('folder.filter.all', 'All folders'),
+    label: $t('folder.filter.allLabel', 'All'),
   },
   {
     value: 'favorites',
     icon: 'fas fa-star',
-    title: 'Favorite folders',
-    label: 'Favorites',
+    title: $t('folder.filter.favorites', 'Favorite folders'),
+    label: $t('folder.filter.favoritesLabel', 'Favorites'),
   },
   {
     value: 'archived',
     icon: 'fas fa-archive',
-    title: 'Archived folders',
-    label: 'Archived',
+    title: $t('folder.filter.archived', 'Archived folders'),
+    label: $t('folder.filter.archivedLabel', 'Archived'),
   },
 ])
 
@@ -263,15 +265,15 @@ const filterOptions = computed(() => [
 const viewModeOptions = computed(() => [
   {
     value: 'table',
-    label: 'Table',
+    label: $t('folder.viewMode.table', 'Table'),
     icon: 'fa fa-list',
-    title: 'Table View',
+    title: $t('folder.viewMode.tableView', 'Table View'),
   },
   {
     value: 'grid',
-    label: 'Grid',
+    label: $t('folder.viewMode.grid', 'Grid'),
     icon: 'fa fa-th-large',
-    title: 'Grid View',
+    title: $t('folder.viewMode.gridView', 'Grid View'),
   },
 ])
 

@@ -117,8 +117,10 @@ import type { FolderCreate } from '@/types/folder'
 import { ref, computed, watch } from 'vue'
 import { createFolder } from '@/api/folders'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
+const { t: $t } = useI18n()
 
 // Form state
 const form = ref<FolderCreate & { is_favorite?: boolean }>({
@@ -182,17 +184,23 @@ const validateForm = () => {
   errors.value = {}
 
   if (!form.value.name?.trim()) {
-    errors.value.name = 'Folder name is required'
+    errors.value.name = $t('folder.validation.nameRequired', 'Folder name is required')
     return false
   }
 
   if (form.value.name.trim().length < 3) {
-    errors.value.name = 'Folder name must be at least 3 characters'
+    errors.value.name = $t(
+      'folder.validation.nameMinLength',
+      'Folder name must be at least 3 characters',
+    )
     return false
   }
 
   if (form.value.name.trim().length > 50) {
-    errors.value.name = 'Folder name must be less than 50 characters'
+    errors.value.name = $t(
+      'folder.validation.nameMaxLength',
+      'Folder name must be less than 50 characters',
+    )
     return false
   }
 
