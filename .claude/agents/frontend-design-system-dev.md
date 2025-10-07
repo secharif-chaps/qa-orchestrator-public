@@ -39,7 +39,7 @@ examples :
 - text-info-800 instead of text-blue-800
 - bg-success-100 instead of bg-green-100
 - rounded-card instead of rounded-2xl
-- border-border-2 instead of border-sage-200
+- border-primary-stroke instead of border-sage-200
 - shadow-shadow-2 instead of shadow-lg
 
 #### Approved WCAG AAA Color Combinations

@@ -210,13 +210,13 @@ Use semantic color classes for consistent theming:
 ```vue
 <template>
   <!-- Backgrounds -->
-  <div class="bg-bg1">Primary content background</div>
-  <div class="bg-bg2">Secondary background</div>
-  <div class="bg-bg3">Main app background</div>
+  <div class="bg-base-100">Primary content background</div>
+  <div class="bg-base-200">Secondary background</div>
+  <div class="bg-base-300">Main app background</div>
 
   <!-- Text -->
   <p class="text-base">Normal text</p>
-  <p class="text-secondary">Secondary text</p>
+  <p class="text-primary-light-content">Secondary text</p>
   <p class="text-primary">Accent text</p>
 
   <!-- Interactive elements -->
