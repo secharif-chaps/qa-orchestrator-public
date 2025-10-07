@@ -12,7 +12,7 @@
     />
 
     <!-- Timeline visualization -->
-    <div v-if="hasTimelineData" class="relative">
+    <div v-if="company?.timeline.events" class="relative">
       <!-- Timeline events -->
       <div class="bg-base-100 p-4 rounded-lg">
         <div class="flex items-center justify-between mb-6">
@@ -46,7 +46,6 @@ import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { useRoute } from 'vue-router'
 import { computed, ref } from 'vue'
-import { hasDataForSection } from '@/composables/useTaskState'
 import Event from '@/components/company/timeline/Event.vue'
 import { companyTasksQuery } from '@/queries/tasks'
 import Input from '@/components/ui/Input.vue'
@@ -76,10 +75,6 @@ const { data: company } = useQuery(companyByIdQuery, () => ({
 }))
 
 const searchQuery = ref('')
-
-const hasTimelineData = computed(() => {
-  return hasDataForSection(company.value, 'timeline', 'events')
-})
 
 const getTimelineEvents = computed(() => {
   if (!company.value?.timeline?.events) return []

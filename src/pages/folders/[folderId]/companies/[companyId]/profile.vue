@@ -55,7 +55,6 @@ import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
-import { useTaskState } from '@/composables/useTaskState'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import ProfileHeader from '@/components/company/profile/ProfileHeader.vue'
@@ -92,9 +91,6 @@ const { data: company } = useQuery(
     },
   },
 )
-
-// Task state management for profile-related tasks
-const taskState = useTaskState(company, ['profile', 'digital'])
 
 // Check if we have any profile data to show
 const hasAnyProfileData = computed(() => {

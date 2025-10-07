@@ -13,10 +13,10 @@
     />
 
     <!-- No Data State -->
-    <div v-else-if="!hasJobOffersData">no data state</div>
+    <div v-else-if="!company?.jobs.offers">no data state</div>
 
     <!-- Main content -->
-    <div v-if="hasJobOffersData" class="space-y-6">
+    <div v-if="company?.jobs.offers" class="space-y-6">
       <!-- Insights Section -->
       <div class="rounded-lg p-4" v-if="jobOffersInsights">
         <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -117,11 +117,9 @@ import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import { getSourcedSource, getSourcedValue } from '@/components/helpers/sourcedValues'
-import { useTaskState, hasDataForSection } from '@/composables/useTaskState'
 import JobCard from '@/components/company/jobs/JobCard.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
-import { OInput } from '@owlint/feathers-vue'
 import Input from '@/components/ui/Input.vue'
 
 const route = useRoute()
@@ -135,27 +133,18 @@ const { data: tasks } = useQuery(companyTasksQuery, () => ({
 const task = computed(() => tasks.value?.find((t) => t.type === 'jobs'))
 
 // Use the company data composable
-const { data: company } = useQuery(
-  companyByIdQuery,
-  () => ({
-    id: companyId.value,
-  }),
-  {
-    // Poll every 5 seconds when any task is running
-    refetchInterval: () => {
-      const hasRunningTasks = company.value?.tasks?.some(
-        (t) => t.status === 'running' || t.status === 'pending',
-      )
-      return hasRunningTasks ? 5000 : false
-    },
+const { data: company } = useQuery(companyByIdQuery, () => ({
+  id: companyId.value,
+  // Poll every 5 seconds when any task is running
+  refetchInterval: () => {
+    const hasRunningTasks = company.value?.tasks?.some(
+      (t) => t.status === 'running' || t.status === 'pending',
+    )
+    return hasRunningTasks ? 5000 : false
   },
-)
+}))
 
 const searchQuery = ref('')
-
-const hasJobOffersData = computed(() => {
-  return hasDataForSection(company.value, 'jobs', 'offers')
-})
 
 const jobOffers = computed(() => {
   return company.value?.jobs?.offers || []

@@ -12,10 +12,10 @@
     />
 
     <!-- No Data State -->
-    <div v-else-if="!hasTeamData">no data state</div>
+    <div v-else-if="!company?.team">no data state</div>
 
     <!-- Main content -->
-    <div v-if="hasTeamData" class="space-y-6">
+    <div v-if="company?.team" class="space-y-6">
       <!-- Team Header with Stats -->
       <TeamPageHeader
         :team="company?.team"
@@ -164,7 +164,6 @@ import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
-import { useTaskState, hasDataForSection } from '@/composables/useTaskState'
 import TeamMemberNode from '@/components/company/team/TeamMemberNode.vue'
 import TeamPageHeader from '@/components/company/team/TeamPageHeader.vue'
 import TeamMembersList from '@/components/company/team/TeamMembersList.vue'
@@ -186,28 +185,18 @@ const { data: tasks } = useQuery(companyTasksQuery, () => ({
 const task = computed(() => tasks.value?.find((t) => t.type === 'team'))
 
 // Use the company data composable
-const { data: company } = useQuery(
-  companyByIdQuery,
-  () => ({
-    id: companyId.value,
-  }),
-  {
-    // Poll every 5 seconds when any task is running
-    refetchInterval: () => {
-      const hasRunningTasks = company.value?.tasks?.some(
-        (t) => t.status === 'running' || t.status === 'pending',
-      )
-      return hasRunningTasks ? 5000 : false
-    },
+const { data: company } = useQuery(companyByIdQuery, () => ({
+  id: companyId.value,
+  // Poll every 5 seconds when any task is running
+  refetchInterval: () => {
+    const hasRunningTasks = company.value?.tasks?.some(
+      (t) => t.status === 'running' || t.status === 'pending',
+    )
+    return hasRunningTasks ? 5000 : false
   },
-)
+}))
 
 const { fitView, vueFlowRef } = useVueFlow()
-
-// Computed properties for data access
-const hasTeamData = computed(() => {
-  return hasDataForSection(company.value, 'team')
-})
 
 // Generate nodes and edges from team hierarchy
 const nodes = computed(() => {

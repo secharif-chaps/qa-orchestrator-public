@@ -13,7 +13,7 @@
     />
 
     <!-- No Data State -->
-    <div v-else-if="!hasCsrData">no data state</div>
+    <div v-else-if="!company?.csr">no data state</div>
 
     <!-- Main Content -->
     <div v-else class="flex flex-col gap-6">
@@ -239,7 +239,6 @@ import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
-import { useTaskState, hasDataForSection } from '@/composables/useTaskState'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Source from '@/components/company/Source.vue'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
@@ -256,23 +255,14 @@ const { data: tasks } = useQuery(companyTasksQuery, () => ({
 
 const task = computed(() => tasks.value?.find((t) => t.type === 'csr'))
 
-const { data: company } = useQuery(
-  companyByIdQuery,
-  () => ({
-    id: companyId.value,
-  }),
-  {
-    // Poll every 5 seconds when any task is running
-    refetchInterval: () => {
-      const hasRunningTasks = company.value?.tasks?.some(
-        (t) => t.status === 'running' || t.status === 'pending',
-      )
-      return hasRunningTasks ? 5000 : false
-    },
+const { data: company } = useQuery(companyByIdQuery, () => ({
+  id: companyId.value,
+  // Poll every 5 seconds when any task is running
+  refetchInterval: () => {
+    const hasRunningTasks = company.value?.tasks?.some(
+      (t) => t.status === 'running' || t.status === 'pending',
+    )
+    return hasRunningTasks ? 5000 : false
   },
-)
-
-const hasCsrData = computed(() => {
-  return hasDataForSection(company.value, 'csr')
-})
+}))
 </script>

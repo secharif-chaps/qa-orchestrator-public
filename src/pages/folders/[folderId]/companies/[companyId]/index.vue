@@ -2,10 +2,8 @@
   <div class="space-y-6">
     <!-- Company Info Card - Full Width -->
     <div class="flex gap-4">
-      <Card>
+      <Card class="flex-1">
         <div class="flex items-start gap-6">
-          <!-- Logo -->
-
           <!-- Company Info -->
           <div class="flex-1 min-w-0 flex flex-col gap-2">
             <div>
@@ -158,6 +156,7 @@ import type { TaskType, TaskStatus } from '@/types/task'
 import Badge from '@/components/ui/Badge.vue'
 import Card from '@/components/ui/Card.vue'
 import { useRestartTask } from '@/mutations/tasks'
+import { companyTasksQuery } from '@/queries/tasks'
 
 const router = useRouter()
 const route = useRoute()
@@ -176,24 +175,28 @@ const { data: company } = useQuery(companyByIdQuery, () => ({ id: companyId.valu
 // Restart task mutation
 const { mutate: restartTaskMutation } = useRestartTask()
 
+const { data: tasks } = useQuery(companyTasksQuery, () => ({
+  companyId: companyId.value,
+}))
+
 // Helper function to get task status by type
 const getTaskStatus = (taskType: TaskType): TaskStatus | null => {
-  if (!company.value?.tasks) return null
-  const task = company.value.tasks.find((t) => t.type === taskType)
+  if (!tasks.value) return null
+  const task = tasks.value?.find((t) => t.type === taskType)
   return task?.status || null
 }
 
 // Helper function to get task error message
 const getTaskError = (taskType: TaskType): string | null => {
-  if (!company.value?.tasks) return null
-  const task = company.value.tasks.find((t) => t.type === taskType)
+  if (!tasks.value) return null
+  const task = tasks.value?.find((t) => t.type === taskType)
   return task?.error || null
 }
 
 // Helper function to get task ID by type
 const getTaskId = (taskType: TaskType): number | null => {
-  if (!company.value?.tasks) return null
-  const task = company.value.tasks.find((t) => t.type === taskType)
+  if (!tasks.value) return null
+  const task = tasks.value?.find((t) => t.type === taskType)
   return task?.id || null
 }
 
@@ -215,7 +218,7 @@ const analysisCards = computed(() => [
     title: 'Activités & Événements',
     description: 'Historique et moments clés',
     icon: 'fas fa-calendar-days',
-    insights: company.value?.timeline?.insights,
+    insights: "Découvrez l'historique et les événements clés de l'entreprise",
     taskStatus: getTaskStatus('timeline'),
     errorMessage: getTaskError('timeline'),
     taskId: getTaskId('timeline'),
@@ -226,7 +229,8 @@ const analysisCards = computed(() => [
     title: 'Produits & Services',
     description: 'Catalogue et gamme de produits',
     icon: 'fas fa-box',
-    insights: company.value?.products?.insights,
+    insights:
+      company.value?.products?.insights || "Découvrez les produits et services de l'entreprise",
     taskStatus: getTaskStatus('products'),
     errorMessage: getTaskError('products'),
     taskId: getTaskId('products'),
@@ -237,7 +241,7 @@ const analysisCards = computed(() => [
     title: 'Équipe & Management',
     description: 'Organigramme et membres clés',
     icon: 'fas fa-users',
-    insights: null, // Team doesn't have insights field
+    insights: "Découvrez l'organigramme et les membres clés de l'entreprise",
     taskStatus: getTaskStatus('team'),
     errorMessage: getTaskError('team'),
     taskId: getTaskId('team'),
