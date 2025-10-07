@@ -1,45 +1,74 @@
-image: python:3.11
-
-variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: ""
+# Backend GitLab CI/CD Pipeline
+# Builds and publishes Docker image to GitLab Container Registry on main branch
 
 stages:
   - build
-  - docker-build
+  - publish
 
-# Cache dependencies between jobs
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - mint-back/.cache/pypoetry/
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  IMAGE_NAME: $CI_REGISTRY/mint/mint-back
+  DOCKER_BUILDKIT: 1
 
-# Backend build job
-build-backend:
+# Build and push Docker image on main branch
+build-and-push-backend:
   stage: build
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
   script:
+    - echo "Building backend Docker image..."
     - cd mint-back
-    - curl -sSL https://install.python-poetry.org | python3 -
-    - export PATH="$HOME/.local/bin:$PATH"
-    - poetry config virtualenvs.create false
-    - poetry install --no-interaction --no-ansi
-    - poetry add --group dev pytest pytest-cov
-  artifacts:
-    paths:
-      - mint-back/.cache/pypoetry/
-    expire_in: 1 week
+    - |
+      docker build \
+        --cache-from $IMAGE_NAME:latest \
+        --tag $IMAGE_NAME:$CI_COMMIT_SHORT_SHA \
+        --tag $IMAGE_NAME:latest \
+        .
+    - echo "Pushing images to registry..."
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+    - docker push $IMAGE_NAME:latest
+    - echo "✅ Backend image published successfully!"
+    - echo "📦 Image: $IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
+    - echo "📦 Image: $IMAGE_NAME:latest"
+  after_script:
+    - docker logout $CI_REGISTRY
   only:
     - main
-    - merge_requests
+  tags:
+    - docker
 
-
-# Deploy job (example - adjust according to your deployment needs)
-deploy:
-  stage: docker-build
+# Optional: Build on merge requests for testing (without pushing)
+test-build-backend:
+  stage: build
+  image: docker:24-dind
+  services:
+    - docker:24-dind
   script:
-    - docker build -t mint-back -f mint-back/Dockerfile mint-back/
+    - echo "Testing backend Docker build..."
+    - cd mint-back
+    - docker build --tag mint-back:test .
+    - echo "✅ Backend build test passed!"
   only:
-    - main
+    - merge_requests
+  tags:
+    - docker
 
-    # configurer le registry gitlab pour pouvoir push des images dans le registry gitlab depuis la ci
-    # puis recup la clé pour acceder au registry gitlab depuis le serveur
+# Optional: Run tests before building (uncomment when tests are ready)
+# test-backend:
+#   stage: build
+#   image: python:3.11
+#   before_script:
+#     - cd mint-back
+#     - curl -sSL https://install.python-poetry.org | python3 -
+#     - export PATH="$HOME/.local/bin:$PATH"
+#     - poetry config virtualenvs.create false
+#     - poetry install --no-interaction --no-ansi
+#   script:
+#     - poetry run pytest tests/
+#   only:
+#     - main
+#     - merge_requests
