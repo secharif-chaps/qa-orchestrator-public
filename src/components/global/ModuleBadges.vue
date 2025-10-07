@@ -14,14 +14,14 @@
         v-if="module.status === 'soon'"
         class="ml-1 px-2 py-0.5 bg-almond-300 dark:bg-almond-600 text-sage-900 dark:text-sage-100 text-xs rounded-full"
       >
-        Bientôt disponible
+        {{ $t('common.comingSoon', 'Coming soon') }}
       </span>
 
       <!-- Unavailable info icon -->
       <i
         v-if="module.status === 'unavailable'"
         class="fa fa-info-circle text-xs ml-1 opacity-60"
-        title="Module non disponible"
+        :title="$t('common.moduleUnavailable', 'Module unavailable')"
       />
     </div>
   </div>

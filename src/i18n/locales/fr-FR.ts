@@ -296,6 +296,11 @@ export default {
     workspace: 'Équipe',
     team: 'Équipe',
     admin: 'Admin',
+    footer: {
+      profile: 'Profil',
+      settings: 'Paramètres',
+      accessibility: 'Accessibilité',
+    },
   },
   workspaces: {
     title: 'Gestion des espaces de travail',
@@ -429,6 +434,7 @@ export default {
       hoursAgo: 'il y a {count} heures',
     },
     comingSoon: 'Bientôt disponible',
+    moduleUnavailable: 'Module non disponible',
     notFound: 'Non trouvé',
     loading: 'Chargement...',
     na: 'N/D',

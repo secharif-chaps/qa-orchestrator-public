@@ -293,6 +293,11 @@ export default {
     team: 'Team',
     workspaces: 'Workspaces',
     admin: 'Admin',
+    footer: {
+      profile: 'Profile',
+      settings: 'Settings',
+      accessibility: 'Accessibility',
+    },
   },
   help: {
     title: 'Help',
@@ -392,6 +397,7 @@ export default {
       hoursAgo: '{count} hours ago',
     },
     comingSoon: 'Coming soon',
+    moduleUnavailable: 'Module unavailable',
     notFound: 'Not found',
     loading: 'Loading...',
     na: 'N/A',

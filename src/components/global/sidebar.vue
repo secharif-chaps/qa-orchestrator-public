@@ -24,21 +24,21 @@
         @click="$router.push('/settings/profile')"
       >
         <i class="fa fa-user text-lg"></i>
-        <span class="text-xs">Profil</span>
+        <span class="text-xs">{{ $t('sidebar.footer.profile', 'Profile') }}</span>
       </button>
       <button
         class="flex flex-col items-center gap-1 text-sage-300 hover:text-white transition-colors"
         @click="$router.push('/settings')"
       >
         <i class="fa fa-cog text-lg"></i>
-        <span class="text-xs">Paramètres</span>
+        <span class="text-xs">{{ $t('sidebar.footer.settings', 'Settings') }}</span>
       </button>
       <button
         class="flex flex-col items-center gap-1 text-sage-300 hover:text-white transition-colors"
         @click="toggleAccessibilityMode()"
       >
         <i class="fa fa-universal-access text-lg"></i>
-        <span class="text-xs">Accessibilité</span>
+        <span class="text-xs">{{ $t('sidebar.footer.accessibility', 'Accessibility') }}</span>
       </button>
     </div>
   </div>
