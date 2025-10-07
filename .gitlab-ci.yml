@@ -1,0 +1,56 @@
+# Frontend GitLab CI/CD Pipeline
+# Builds and publishes Docker image to GitLab Container Registry on main branch
+
+stages:
+  - build
+  - publish
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  IMAGE_NAME: $CI_REGISTRY/mint/mint-front
+  DOCKER_BUILDKIT: 1
+
+# Build and push Docker image on main branch
+build-and-push-frontend:
+  stage: build
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+  script:
+    - echo "Building frontend Docker image..."
+    - |
+      docker build \
+        --cache-from $IMAGE_NAME:latest \
+        --tag $IMAGE_NAME:$CI_COMMIT_SHORT_SHA \
+        --tag $IMAGE_NAME:latest \
+        .
+    - echo "Pushing images to registry..."
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+    - docker push $IMAGE_NAME:latest
+    - echo "✅ Frontend image published successfully!"
+    - echo "📦 Image: $IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
+    - echo "📦 Image: $IMAGE_NAME:latest"
+  after_script:
+    - docker logout $CI_REGISTRY
+  only:
+    - main
+  tags:
+    - docker
+
+# Optional: Build on merge requests for testing (without pushing)
+test-build-frontend:
+  stage: build
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  script:
+    - echo "Testing frontend Docker build..."
+    - docker build --tag mint-front:test .
+    - echo "✅ Frontend build test passed!"
+  only:
+    - merge_requests
+  tags:
+    - docker
