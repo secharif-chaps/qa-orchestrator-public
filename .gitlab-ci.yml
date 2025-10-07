@@ -8,7 +8,7 @@ stages:
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
-  IMAGE_NAME: $CI_REGISTRY_NAME/mint-back
+  IMAGE_NAME: ${CI_REGISTRY_IMAGE}/mint-back
   DOCKER_BUILDKIT: 1
 
 # Build and push Docker image on main branch
@@ -27,11 +27,8 @@ build-and-push-backend:
   script:
     - |
       echo "Building backend Docker image..."
-      docker build \
-        --cache-from $IMAGE_NAME:latest \
-        --tag $IMAGE_NAME:$CI_COMMIT_SHORT_SHA \
-        --tag $IMAGE_NAME:latest \
-        .
+      echo " DEBUG : docker build --no-cache --pull -t ${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} -t ${IMAGE_NAME}:latest ."
+      docker build --no-cache --pull -t "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}" -t "${IMAGE_NAME}:latest" .
       echo "Pushing images to registry..."
       docker push $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
       docker push $IMAGE_NAME:latest
