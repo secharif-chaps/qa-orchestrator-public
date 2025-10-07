@@ -838,6 +838,9 @@ export default {
     restore: {
       title: 'Restaurer l\'Entreprise',
     },
+    debug: {
+      workflowTitle: 'Debug : Workflow de recherche',
+    },
     validation: {
       loadingWorkspace: 'Chargement de l\'espace de travail...',
       loadingTokens: 'Chargement des jetons...',

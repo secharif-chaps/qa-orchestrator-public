@@ -29,7 +29,7 @@
           size="sm"
           icon="fa fa-bug"
           icon-only
-          title="Debug: Workflow de recherche"
+          :title="t('company.debug.workflowTitle', 'Debug: Search Workflow')"
           @click="showTasksModal = true"
         />
         <Button

@@ -20,9 +20,9 @@
               <div class="flex items-center gap-3 rounded-card px-4 py-3">
                 <i class="fa-solid fa-users fa-fw"></i>
                 <div class="flex flex-col gap-1">
-                  <span class="text-sm truncate"> Nombre d'employés </span>
+                  <span class="text-sm truncate"> {{ t('company.fields.employeeCount', 'Employee Count') }} </span>
                   <span class="text-xs text-primary-light-content">
-                    {{ company?.profile?.employeeCount?.value || 'Non renseigné' }}
+                    {{ company?.profile?.employeeCount?.value || t('company.fields.notSpecified', 'Not specified') }}
                   </span>
                 </div>
               </div>
@@ -34,9 +34,9 @@
               >
                 <i class="fa-solid fa-map-marker fa-fw text-primary-light-content"></i>
                 <div class="flex flex-col gap-1">
-                  <span class="text-sm truncate"> Siege Social </span>
+                  <span class="text-sm truncate"> {{ t('company.fields.headquarters', 'Headquarters') }} </span>
                   <span class="text-xs text-primary-light-content">
-                    {{ company?.profile?.hq?.value || 'Non renseigné' }}
+                    {{ company?.profile?.hq?.value || t('company.fields.notSpecified', 'Not specified') }}
                   </span>
                 </div>
               </div>
@@ -48,9 +48,9 @@
               >
                 <i class="fa-solid fa-user-tie fa-fw text-primary-light-content"></i>
                 <div class="flex flex-col gap-1">
-                  <span class="text-sm truncate"> CEO </span>
+                  <span class="text-sm truncate"> {{ t('company.fields.ceo', 'CEO') }} </span>
                   <span class="text-xs text-primary-light-content">
-                    {{ company?.profile?.ceo?.value || 'Non renseigné' }}
+                    {{ company?.profile?.ceo?.value || t('company.fields.notSpecified', 'Not specified') }}
                   </span>
                 </div>
               </div>
@@ -62,9 +62,9 @@
               >
                 <i class="fa-solid fa-money-bill fa-fw text-primary-light-content"></i>
                 <div class="flex flex-col gap-1">
-                  <span class="text-sm truncate"> Chiffre d'affaires </span>
+                  <span class="text-sm truncate"> {{ t('company.fields.revenue', 'Revenue') }} </span>
                   <span class="text-xs text-primary-light-content">
-                    {{ company?.profile?.revenue?.value || 'Non renseigné' }}
+                    {{ company?.profile?.revenue?.value || t('company.fields.notSpecified', 'Not specified') }}
                   </span>
                 </div>
               </div>
@@ -157,9 +157,11 @@ import Badge from '@/components/ui/Badge.vue'
 import Card from '@/components/ui/Card.vue'
 import { useRestartTask } from '@/mutations/tasks'
 import { companyTasksQuery } from '@/queries/tasks'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
 
 const showSectionModal = ref(false)
 const activeSection = ref<TaskType | null>(null)
@@ -204,8 +206,11 @@ const getTaskId = (taskType: TaskType): number | null => {
 const analysisCards = computed(() => [
   {
     section: 'profile' as TaskType,
-    title: "Profil de l'entreprise",
-    description: 'Informations générales et présence digitale',
+    title: t('company.analysisCards.profile.title', 'Company Profile'),
+    description: t(
+      'company.analysisCards.profile.description',
+      'View detailed company information, business lines, and key metrics',
+    ),
     icon: 'fas fa-building',
     insights: company.value?.profile?.businessLine?.value || company.value?.digital?.insights,
     taskStatus: getTaskStatus('profile') || getTaskStatus('digital'),
@@ -215,10 +220,16 @@ const analysisCards = computed(() => [
   },
   {
     section: 'timeline' as TaskType,
-    title: 'Activités & Événements',
-    description: 'Historique et moments clés',
+    title: t('company.analysisCards.timeline.title', 'Timeline & History'),
+    description: t(
+      'company.analysisCards.timeline.description',
+      'Company history, milestones, and key events over time',
+    ),
     icon: 'fas fa-calendar-days',
-    insights: "Découvrez l'historique et les événements clés de l'entreprise",
+    insights: t(
+      'company.analysisCards.timeline.insights',
+      'Discover the company history and key events',
+    ),
     taskStatus: getTaskStatus('timeline'),
     errorMessage: getTaskError('timeline'),
     taskId: getTaskId('timeline'),
@@ -226,11 +237,12 @@ const analysisCards = computed(() => [
   },
   {
     section: 'products' as TaskType,
-    title: 'Produits & Services',
-    description: 'Catalogue et gamme de produits',
+    title: t('company.analysisCards.products.title', 'Products & Services'),
+    description: t('company.analysisCards.products.description', 'Browse products, services, and offerings'),
     icon: 'fas fa-box',
     insights:
-      company.value?.products?.insights || "Découvrez les produits et services de l'entreprise",
+      company.value?.products?.insights ||
+      t('company.analysisCards.products.insights', 'Discover the company products and services'),
     taskStatus: getTaskStatus('products'),
     errorMessage: getTaskError('products'),
     taskId: getTaskId('products'),
@@ -238,10 +250,16 @@ const analysisCards = computed(() => [
   },
   {
     section: 'team' as TaskType,
-    title: 'Équipe & Management',
-    description: 'Organigramme et membres clés',
+    title: t('company.analysisCards.team.title', 'Team & Management'),
+    description: t(
+      'company.analysisCards.team.description',
+      'Leadership team, organizational structure, and key personnel',
+    ),
     icon: 'fas fa-users',
-    insights: "Découvrez l'organigramme et les membres clés de l'entreprise",
+    insights: t(
+      'company.analysisCards.team.insights',
+      'Discover the organizational structure and key members',
+    ),
     taskStatus: getTaskStatus('team'),
     errorMessage: getTaskError('team'),
     taskId: getTaskId('team'),
@@ -249,8 +267,8 @@ const analysisCards = computed(() => [
   },
   {
     section: 'jobs' as TaskType,
-    title: "Offres d'emploi",
-    description: 'Recrutement et opportunités',
+    title: t('company.analysisCards.jobs.title', 'Job Offers'),
+    description: t('company.analysisCards.jobs.description', 'Current job openings and career opportunities'),
     icon: 'fas fa-briefcase',
     insights: company.value?.jobs?.insights?.hiring_focus?.value,
     taskStatus: getTaskStatus('jobs'),
@@ -260,8 +278,8 @@ const analysisCards = computed(() => [
   },
   {
     section: 'press' as TaskType,
-    title: 'Presse & Médias',
-    description: 'Articles et communiqués',
+    title: t('company.analysisCards.press.title', 'Press & Media'),
+    description: t('company.analysisCards.press.description', 'Press releases, news articles, and media coverage'),
     icon: 'fas fa-newspaper',
     insights: company.value?.press?.insights,
     taskStatus: getTaskStatus('press'),
@@ -271,8 +289,11 @@ const analysisCards = computed(() => [
   },
   {
     section: 'csr' as TaskType,
-    title: 'Responsabilité sociale',
-    description: 'RSE et développement durable',
+    title: t('company.analysisCards.csr.title', 'Corporate Social Responsibility'),
+    description: t(
+      'company.analysisCards.csr.description',
+      'CSR initiatives, sustainability programs, and social impact',
+    ),
     icon: 'fas fa-leaf',
     insights: company.value?.csr?.insights,
     taskStatus: getTaskStatus('csr'),
@@ -282,8 +303,11 @@ const analysisCards = computed(() => [
   },
   {
     section: 'digital' as TaskType,
-    title: 'Communications',
-    description: 'Stratégie de communication',
+    title: t('company.analysisCards.communications.title', 'Corporate Communications'),
+    description: t(
+      'company.analysisCards.communications.description',
+      'Press releases, public statements, and official communications',
+    ),
     icon: 'fas fa-bullhorn',
     insights: null,
     taskStatus: null,

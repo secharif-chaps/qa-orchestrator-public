@@ -788,6 +788,9 @@ export default {
     restore: {
       title: 'Restore Company',
     },
+    debug: {
+      workflowTitle: 'Debug: Search Workflow',
+    },
     validation: {
       loadingWorkspace: 'Loading workspace...',
       loadingTokens: 'Loading tokens...',
