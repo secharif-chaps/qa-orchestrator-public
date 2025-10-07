@@ -16,11 +16,7 @@ build-and-push-backend:
   stage: build
   image: docker:24-dind
   services:
-    - name: docker:24-dind
-      command: ["--tls=false"]
-  variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
+    - docker:24-dind
   before_script:
     # If RELEASE_VERSION is not defined, image is tagged with `latest`
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
