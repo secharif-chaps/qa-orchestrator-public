@@ -347,6 +347,7 @@ export default {
     loading: 'Loading...',
     noData: 'No data available',
     save: 'Save',
+    error: 'Error',
   },
   appbar: {
     search: 'Search...',
@@ -613,6 +614,13 @@ export default {
     },
   },
   company: {
+    loading: 'Loading companies...',
+    name: 'Company',
+    created: 'Created',
+    owner: 'Owner',
+    status: 'Status',
+    actions: 'Actions',
+    clearSearch: 'Clear Search',
     dashboard: {
       title: 'Company Dashboard',
       description: 'Company Information Dashboard',
@@ -664,6 +672,9 @@ export default {
     list: {
       title: 'Companies',
       description: 'Manage your company database',
+      error: {
+        description: 'Failed to load companies',
+      },
       create: {
         title: 'Create New Company',
         name: {
@@ -692,6 +703,15 @@ export default {
         website: 'Website',
         loading: 'Loading...',
       },
+    },
+    create: {
+      button: 'Make a new search',
+    },
+    empty: {
+      noResults: 'No companies found',
+      title: 'No companies yet',
+      tryDifferentSearch: 'Try a different search term',
+      description: 'Start by adding your first company',
     },
   },
   folder: {

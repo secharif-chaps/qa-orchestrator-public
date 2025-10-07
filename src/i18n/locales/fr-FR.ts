@@ -383,6 +383,7 @@ export default {
     noData: 'Aucune donnée disponible',
     cancel: 'Annuler',
     save: 'Enregistrer',
+    error: 'Erreur',
   },
   appbar: {
     search: 'Rechercher...',
@@ -657,6 +658,13 @@ export default {
     },
   },
   company: {
+    loading: 'Chargement des entreprises...',
+    name: 'Entreprise',
+    created: 'Créé',
+    owner: 'Propriétaire',
+    status: 'Statut',
+    actions: 'Actions',
+    clearSearch: 'Effacer la recherche',
     dashboard: {
       title: "Tableau de Bord de l'Entreprise",
       description: "Tableau de Bord des Informations de l'Entreprise",
@@ -713,6 +721,9 @@ export default {
     list: {
       title: 'Entreprises',
       description: "Gérez votre base de données d'entreprises",
+      error: {
+        description: 'Échec du chargement des entreprises',
+      },
       create: {
         title: 'Nouveau Screen',
         name: {
@@ -741,6 +752,15 @@ export default {
         website: 'Site Web',
         loading: 'Chargement...',
       },
+    },
+    create: {
+      button: 'Faire une nouvelle recherche',
+    },
+    empty: {
+      noResults: 'Aucune entreprise trouvée',
+      title: 'Aucune entreprise pour le moment',
+      tryDifferentSearch: 'Essayez un autre terme de recherche',
+      description: 'Commencez par ajouter votre première entreprise',
     },
   },
   workspace: {

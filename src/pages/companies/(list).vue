@@ -11,7 +11,7 @@
       >
         <div class="flex items-center gap-2">
           <i class="fa fa-exclamation-triangle"></i>
-          <span class="font-medium">Error:</span>
+          <span class="font-medium">{{ $t('common.error', 'Error') }}:</span>
           <span>{{ $t('company.list.error.description', 'Failed to load companies') }}</span>
         </div>
       </div>
