@@ -170,6 +170,9 @@ import Button from '@/components/ui/Button.vue'
 import type { Company } from '@/types/company'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   company: Company
@@ -222,36 +225,45 @@ const formatWebsiteDisplay = (website: string) => {
 }
 
 const formatDate = (dateString: string) => {
-  if (!dateString) return 'N/A'
+  if (!dateString) return t('common.na', 'N/A')
   return new Date(dateString).toLocaleDateString()
 }
 
 const formatRelativeTime = (dateString: string) => {
-  if (!dateString) return 'unknown'
+  if (!dateString) return t('common.na', 'N/A')
 
   const date = new Date(dateString)
   const now = new Date()
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
 
-  if (diffInSeconds < 60) return 'just now'
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`
-  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d ago`
+  if (diffInSeconds < 60) return t('company.item.time.justNow', 'just now')
+  if (diffInSeconds < 3600)
+    return t('company.item.time.minutesAgo', '{minutes}m ago', {
+      minutes: Math.floor(diffInSeconds / 60),
+    })
+  if (diffInSeconds < 86400)
+    return t('company.item.time.hoursAgo', '{hours}h ago', {
+      hours: Math.floor(diffInSeconds / 3600),
+    })
+  if (diffInSeconds < 2592000)
+    return t('company.item.time.daysAgo', '{days}d ago', {
+      days: Math.floor(diffInSeconds / 86400),
+    })
 
   return formatDate(dateString)
 }
 
 const getTaskStatusText = (tasks: Array<{ status: string }>) => {
-  if (!tasks || tasks.length === 0) return 'New'
+  if (!tasks || tasks.length === 0) return t('company.item.tasks.status.new', 'New')
 
   const running = tasks.filter((t) => t.status === 'running' || t.status === 'pending').length
   const failed = tasks.filter((t) => t.status === 'error' || t.status === 'failed').length
   const succeeded = tasks.filter((t) => t.status === 'succeeded').length
 
-  if (running > 0) return 'Processing'
-  if (failed > 0) return 'Issues'
-  if (succeeded === tasks.length) return 'Complete'
-  return 'Partial'
+  if (running > 0) return t('company.item.tasks.status.processing', 'Processing')
+  if (failed > 0) return t('company.item.tasks.status.issues', 'Issues')
+  if (succeeded === tasks.length) return t('company.item.tasks.status.complete', 'Complete')
+  return t('company.item.tasks.status.partial', 'Partial')
 }
 
 const getTaskStatusVariant = (tasks: Array<{ status: string }>) => {
