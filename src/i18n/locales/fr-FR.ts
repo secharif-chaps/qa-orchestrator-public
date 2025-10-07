@@ -356,6 +356,13 @@ export default {
       connectionError: 'Une erreur est survenue lors de la connexion',
     },
   },
+  auth: {
+    callback: {
+      processing: 'Traitement de la connexion...',
+      loginFailed: 'Échec de la connexion',
+      tryAgain: 'Réessayer',
+    },
+  },
   dashboard: {
     title: 'Tableau de bord',
     actions: {
@@ -786,7 +793,7 @@ export default {
       },
       slug: {
         label: "Identifiant de l'Espace de Travail",
-        help: "Identifiant compatible URL (minuscules, sans espaces)",
+        help: 'Identifiant compatible URL (minuscules, sans espaces)',
       },
       description: {
         label: 'Description',
@@ -800,7 +807,7 @@ export default {
       basicInfo: 'Informations de Base',
       members: 'Membres',
       settings: 'Paramètres',
-      settingsPlaceholder: 'Les paramètres de l\'espace de travail seront implémentés ici',
+      settingsPlaceholder: "Les paramètres de l'espace de travail seront implémentés ici",
     },
     search: {
       placeholder: 'Rechercher des espaces de travail...',
@@ -823,10 +830,10 @@ export default {
       tryDifferentSearch: 'Essayez un autre terme de recherche',
       description: 'Créez votre premier espace de travail pour commencer',
     },
-    justCreated: 'Vient d\'être créé',
+    justCreated: "Vient d'être créé",
     loading: 'Chargement des espaces de travail...',
-    name: 'Nom de l\'Espace de Travail',
-    slug: 'Identifiant de l\'Espace de Travail',
+    name: 'Nom',
+    slug: 'Identifiant',
     description: 'Description',
     created: 'Créé',
     updated: 'Mis à jour',
@@ -837,8 +844,8 @@ export default {
     alreadyCurrent: 'Déjà dans cet espace de travail',
     pick: 'Basculer vers cet espace de travail',
     view: 'Voir les Détails',
-    delete: 'Supprimer l\'Espace de Travail',
-    cannotDeleteDefault: 'Impossible de supprimer l\'espace de travail par défaut',
+    delete: "Supprimer l'Espace de Travail",
+    cannotDeleteDefault: "Impossible de supprimer l'espace de travail par défaut",
     clearSearch: 'Effacer la Recherche',
   },
   user: {
@@ -853,18 +860,18 @@ export default {
     },
     actions: {
       resetPassword: 'Réinitialiser le Mot de Passe',
-      disable: 'Désactiver l\'Utilisateur',
-      enable: 'Activer l\'Utilisateur',
-      delete: 'Retirer l\'Utilisateur',
+      disable: "Désactiver l'Utilisateur",
+      enable: "Activer l'Utilisateur",
+      delete: "Retirer l'Utilisateur",
     },
     empty: {
       title: 'Aucun utilisateur trouvé',
       description: 'Créez votre premier utilisateur pour commencer',
     },
     delete: {
-      title: 'Retirer l\'Utilisateur',
-      description: 'Êtes-vous sûr de vouloir retirer cet utilisateur de l\'espace de travail ?',
-      button: 'Retirer l\'Utilisateur',
+      title: "Retirer l'Utilisateur",
+      description: "Êtes-vous sûr de vouloir retirer cet utilisateur de l'espace de travail ?",
+      button: "Retirer l'Utilisateur",
     },
   },
   folder: {

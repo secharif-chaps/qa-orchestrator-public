@@ -5,12 +5,14 @@
         v-if="isLoading"
         class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"
       ></div>
-      <p v-if="isLoading" class="mt-4 text-gray-600">Processing login...</p>
+      <p v-if="isLoading" class="mt-4 text-gray-600">
+        {{ $t('auth.callback.processing', 'Processing login...') }}
+      </p>
       <div v-if="error" class="text-red-600">
-        <p>Login failed: {{ error }}</p>
+        <p>{{ $t('auth.callback.loginFailed', 'Login failed') }}: {{ error }}</p>
         <Button
           @click="$router.push('/login')"
-          label="Try again"
+          :label="$t('auth.callback.tryAgain', 'Try again')"
           variant="ghost-primary"
           class="mt-4"
         />

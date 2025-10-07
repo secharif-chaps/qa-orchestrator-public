@@ -321,6 +321,13 @@ export default {
       connectionError: 'An error occurred during login',
     },
   },
+  auth: {
+    callback: {
+      processing: 'Processing login...',
+      loginFailed: 'Login failed',
+      tryAgain: 'Try again',
+    },
+  },
   dashboard: {
     title: 'Dashboard',
     actions: {
