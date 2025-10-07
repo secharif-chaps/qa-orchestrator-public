@@ -26,7 +26,7 @@
           <!-- Module Label -->
           <div class="flex items-center gap-2 mb-1">
             <span class="text-xs font-medium text-primary-light-content uppercase tracking-wide">
-              {{ module || 'Screen' }} Module
+              {{ $t('tokens.module', '{module} Module', { module: module || $t('tokens.modules.screen.name', 'Screen') }) }}
             </span>
             <Button
               v-if="showRefresh"
@@ -65,7 +65,7 @@
             class="mt-2 flex items-center gap-2 text-xs text-primary-light-content"
           >
             <div class="w-2 h-2 bg-primary/60 rounded-full animate-pulse"></div>
-            Loading token data...
+            {{ $t('tokens.loading', 'Loading token data...') }}
           </div>
         </div>
       </div>
@@ -75,8 +75,11 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { ModuleName } from '@/types/tokens'
 import Button from '@/components/ui/Button.vue'
+
+const { t } = useI18n()
 
 interface Props {
   module?: ModuleName
@@ -112,8 +115,8 @@ const displayCount = computed(() => {
 })
 
 const tokenLabel = computed(() => {
-  if (props.tokenCount === 1) return 'token'
-  return 'tokens'
+  if (props.tokenCount === 1) return t('tokens.token', 'token')
+  return t('tokens.tokens', 'tokens')
 })
 
 const tokenIconClasses = computed(() => {
@@ -145,9 +148,9 @@ const statusDotClasses = computed(() => {
 })
 
 const statusText = computed(() => {
-  if (!props.isEnabled) return 'Disabled'
-  if (props.tokenCount === 0) return 'No tokens'
-  if (props.tokenCount < 10) return 'Low'
-  return 'Active'
+  if (!props.isEnabled) return t('tokens.status.disabled', 'Disabled')
+  if (props.tokenCount === 0) return t('tokens.status.noTokens', 'No tokens')
+  if (props.tokenCount < 10) return t('tokens.status.low', 'Low')
+  return t('tokens.status.active', 'Active')
 })
 </script>

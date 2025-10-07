@@ -126,9 +126,12 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useToggleModule, useAddModuleTokens } from '@/mutations/tokens'
 import type { ModuleName } from '@/types/tokens'
 import Badge from '@/components/ui/Badge.vue'
+
+const { t } = useI18n()
 
 interface Props {
   module: ModuleName
@@ -179,19 +182,15 @@ const quickAddAmounts = computed(() => {
 const moduleConfigs = {
   screen: {
     icon: 'fa fa-search',
-    description: 'Company search and screening',
   },
   target: {
     icon: 'fa fa-bullseye',
-    description: 'Advanced targeting features',
   },
   explore: {
     icon: 'fa fa-compass',
-    description: 'Market exploration tools',
   },
   stream: {
     icon: 'fa fa-stream',
-    description: 'Data streaming capabilities',
   },
 }
 
@@ -200,8 +199,8 @@ const isRefreshing = ref(false)
 
 // Computed properties
 const moduleIcon = computed(() => moduleConfigs[props.module]?.icon || 'fa fa-cog')
-const moduleDescription = computed(
-  () => moduleConfigs[props.module]?.description || 'Module functionality',
+const moduleDescription = computed(() =>
+  t(`tokens.modules.${props.module}.description`, 'Module functionality'),
 )
 
 const tokenCountColor = computed(() => {
@@ -218,9 +217,9 @@ const tokenStatusVariant = computed(() => {
 })
 
 const tokenStatusText = computed(() => {
-  if (props.tokenCount === 0) return 'No tokens'
-  if (props.tokenCount < 10) return 'Low tokens'
-  return 'Active'
+  if (props.tokenCount === 0) return t('tokens.status.noTokens', 'No tokens')
+  if (props.tokenCount < 10) return t('tokens.status.low', 'Low')
+  return t('tokens.status.active', 'Active')
 })
 
 const canAddTokens = computed(() => {
