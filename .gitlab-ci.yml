@@ -8,7 +8,7 @@ stages:
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: '/certs'
-  IMAGE_NAME: $CI_REGISTRY/mint/mint-front
+  IMAGE_NAME: $CI_REGISTRY_NAME/mint-front
   DOCKER_BUILDKIT: 1
 
 # Build and push Docker image on main branch
