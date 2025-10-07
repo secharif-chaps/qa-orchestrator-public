@@ -18,10 +18,10 @@ build-and-push-backend:
   services:
     - docker:24-dind
   before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+    # If RELEASE_VERSION is not defined, image is tagged with `latest`
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - echo "Building backend Docker image..."
-    - cd mint-back
     - |
       docker build \
         --cache-from $IMAGE_NAME:latest \
@@ -49,7 +49,6 @@ test-build-backend:
     - docker:24-dind
   script:
     - echo "Testing backend Docker build..."
-    - cd mint-back
     - docker build --tag mint-back:test .
     - echo "✅ Backend build test passed!"
   only:
