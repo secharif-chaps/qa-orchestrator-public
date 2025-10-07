@@ -38,8 +38,6 @@ build-and-push-backend:
     - docker logout $CI_REGISTRY
   only:
     - main
-  tags:
-    - docker
 
 # Optional: Build on merge requests for testing (without pushing)
 test-build-backend:
@@ -53,8 +51,6 @@ test-build-backend:
     - echo "✅ Backend build test passed!"
   only:
     - merge_requests
-  tags:
-    - docker
 
 # Optional: Run tests before building (uncomment when tests are ready)
 # test-backend:
