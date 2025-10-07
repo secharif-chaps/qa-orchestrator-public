@@ -125,11 +125,14 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Company } from '@/types/company'
 import Button from '@/components/ui/Button.vue'
 import Input from '@/components/ui/Input.vue'
 import { deleteCompany as apiDeleteCompany } from '@/api/companies'
 import { toast } from '@/utils/toast'
+
+const { t } = useI18n()
 
 interface Props {
   companyToDelete: Company | null
@@ -162,7 +165,11 @@ const deleteCompany = async () => {
     await apiDeleteCompany(props.companyToDelete.id.toString())
 
     // Show success toast
-    toast.success(`Company "${props.companyToDelete.name}" has been deleted successfully`)
+    toast.success(
+      t('company.delete.success', 'Company "{name}" has been deleted successfully', {
+        name: props.companyToDelete.name,
+      }),
+    )
 
     // Emit event first, then clean up
     emit('delete-company')
@@ -175,7 +182,11 @@ const deleteCompany = async () => {
   } catch (err) {
     console.error('Failed to delete company:', err)
     // Show error toast
-    toast.error(`Failed to delete company "${props.companyToDelete.name}". Please try again.`)
+    toast.error(
+      t('company.delete.error', 'Failed to delete company "{name}". Please try again.', {
+        name: props.companyToDelete.name,
+      }),
+    )
   } finally {
     deleteLoading.value = false
   }

@@ -80,10 +80,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Company } from '@/types/company'
 import Button from '@/components/ui/Button.vue'
 import { restoreCompany as apiRestoreCompany } from '@/api/companies'
 import { toast } from '@/utils/toast'
+
+const { t } = useI18n()
 
 interface Props {
   companyToRestore: Company | null
@@ -111,7 +114,11 @@ const restoreCompany = async () => {
     await apiRestoreCompany(props.companyToRestore.id.toString())
 
     // Show success toast
-    toast.success(`Company "${props.companyToRestore.name}" has been restored successfully`)
+    toast.success(
+      t('company.restore.success', 'Company "{name}" has been restored successfully', {
+        name: props.companyToRestore.name,
+      }),
+    )
 
     // Emit event first, then close modal
     emit('restore-company')
@@ -121,7 +128,11 @@ const restoreCompany = async () => {
     }, 50)
   } catch (err) {
     console.error('Failed to restore company:', err)
-    toast.error(`Failed to restore company "${props.companyToRestore.name}". Please try again.`)
+    toast.error(
+      t('company.restore.error', 'Failed to restore company "{name}". Please try again.', {
+        name: props.companyToRestore.name,
+      }),
+    )
   } finally {
     restoreLoading.value = false
   }

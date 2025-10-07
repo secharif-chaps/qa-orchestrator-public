@@ -76,10 +76,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Company } from '@/types/company'
 import Button from '@/components/ui/Button.vue'
 import { deleteCompany as apiArchiveCompany } from '@/api/companies'
 import { toast } from '@/utils/toast'
+
+const { t } = useI18n()
 
 interface Props {
   companyToArchive: Company | null
@@ -107,7 +110,11 @@ const archiveCompany = async () => {
     await apiArchiveCompany(props.companyToArchive.id.toString())
 
     // Show success toast
-    toast.success(`Company "${props.companyToArchive.name}" has been archived successfully`)
+    toast.success(
+      t('company.archive.success', 'Company "{name}" has been archived successfully', {
+        name: props.companyToArchive.name,
+      }),
+    )
 
     // Emit event first, then clean up
     emit('archive-company')
@@ -119,7 +126,11 @@ const archiveCompany = async () => {
   } catch (err) {
     console.error('Failed to archive company:', err)
     // Show error toast
-    toast.error(`Failed to archive company "${props.companyToArchive.name}". Please try again.`)
+    toast.error(
+      t('company.archive.error', 'Failed to archive company "{name}". Please try again.', {
+        name: props.companyToArchive.name,
+      }),
+    )
   } finally {
     archiveLoading.value = false
   }

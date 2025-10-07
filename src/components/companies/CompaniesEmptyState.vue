@@ -20,6 +20,9 @@
 <script setup lang="ts">
 import Button from '@/components/ui/Button.vue'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   type: 'no-data' | 'no-results'
@@ -37,15 +40,24 @@ const iconClass = computed(() => {
 })
 
 const title = computed(() => {
-  return props.type === 'no-results' ? 'No companies found' : 'No companies yet'
+  return props.type === 'no-results'
+    ? t('company.empty.noResults.title', 'No companies found')
+    : t('company.empty.noCompanies.title', 'No companies yet')
 })
 
 const description = computed(() => {
   if (props.type === 'no-results') {
     return props.searchQuery
-      ? `No companies match "${props.searchQuery}". Try adjusting your search terms.`
-      : 'Try adjusting your search terms'
+      ? t(
+          'company.empty.noResults.description',
+          'No companies match "{query}". Try adjusting your search terms.',
+          { query: props.searchQuery },
+        )
+      : t('company.empty.noResults.descriptionNoQuery', 'Try adjusting your search terms')
   }
-  return 'Get started by creating your first company to track and manage your business relationships.'
+  return t(
+    'company.empty.noCompanies.description',
+    'Get started by creating your first company to track and manage your business relationships.',
+  )
 })
 </script>
