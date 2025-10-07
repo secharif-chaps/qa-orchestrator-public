@@ -19,6 +19,7 @@ declare module 'vue-router/auto-routes' {
    */
   export interface RouteNamedMap {
     '/(home)': RouteRecordInfo<'/(home)', '/', Record<never, never>, Record<never, never>>,
+    '/[...path]': RouteRecordInfo<'/[...path]', '/:path(.*)', { path: ParamValue<true> }, { path: ParamValue<false> }>,
     '/403': RouteRecordInfo<'/403', '/403', Record<never, never>, Record<never, never>>,
     '/admin/(admin)': RouteRecordInfo<'/admin/(admin)', '/admin', Record<never, never>, Record<never, never>>,
     '/admin/costs': RouteRecordInfo<'/admin/costs', '/admin/costs', Record<never, never>, Record<never, never>>,
@@ -28,8 +29,7 @@ declare module 'vue-router/auto-routes' {
     '/admin.workflows': RouteRecordInfo<'/admin.workflows', '/admin/workflows', Record<never, never>, Record<never, never>>,
     '/auth/callback': RouteRecordInfo<'/auth/callback', '/auth/callback', Record<never, never>, Record<never, never>>,
     '/auth/silent-callback': RouteRecordInfo<'/auth/silent-callback', '/auth/silent-callback', Record<never, never>, Record<never, never>>,
-    '/companies': RouteRecordInfo<'/companies', '/companies', Record<never, never>, Record<never, never>, '/companies/(list)'>,
-    '/companies/(list)': RouteRecordInfo<'/companies/(list)', '/companies', Record<never, never>, Record<never, never>>,
+    '/companies': RouteRecordInfo<'/companies', '/companies', Record<never, never>, Record<never, never>>,
     '/folders/(list)': RouteRecordInfo<'/folders/(list)', '/folders', Record<never, never>, Record<never, never>>,
     '/folders/[folderId]': RouteRecordInfo<'/folders/[folderId]', '/folders/:folderId', { folderId: ParamValue<true> }, { folderId: ParamValue<false> }, '/folders/[folderId]/(folderId)' | '/folders/[folderId]/companies/[companyId]' | '/folders/[folderId]/companies/[companyId]/' | '/folders/[folderId]/companies/[companyId]/csr' | '/folders/[folderId]/companies/[companyId]/jobs' | '/folders/[folderId]/companies/[companyId]/press' | '/folders/[folderId]/companies/[companyId]/products' | '/folders/[folderId]/companies/[companyId]/profile' | '/folders/[folderId]/companies/[companyId]/team' | '/folders/[folderId]/companies/[companyId]/timeline' | '/folders/[folderId]/create/company' | '/folders/[folderId]/create/company-csv' | '/folders/[folderId]/edit'>,
     '/folders/[folderId]/(folderId)': RouteRecordInfo<'/folders/[folderId]/(folderId)', '/folders/:folderId', { folderId: ParamValue<true> }, { folderId: ParamValue<false> }>,

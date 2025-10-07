@@ -727,8 +727,62 @@ export default {
     loading: 'Loading folders...',
     create: {
       title: 'Create New Folder',
+      subtitle: 'Organize your companies with a custom folder',
       description: 'Organize your companies into folders',
       button: 'Create Folder',
+    },
+    edit: {
+      title: 'Edit Folder',
+      subtitle: 'Update your folder settings and appearance',
+      error: {
+        title: 'Error',
+        description: 'Failed to load folder',
+      },
+    },
+    detail: {
+      error: {
+        title: 'Error',
+        description: 'Failed to load folder',
+      },
+    },
+    item: {
+      name: 'Item',
+      type: 'Type',
+      created: 'Created',
+      owner: 'Owner',
+      actions: 'Actions',
+      view: 'View',
+      deleted: 'Deleted',
+    },
+    form: {
+      name: 'Folder Name',
+      namePlaceholder: 'Enter folder name...',
+      tags: 'Tags',
+      tagsOptional: 'optional',
+      tagsPlaceholder: 'Enter tags separated by commas...',
+      favorite: 'Mark as favorite',
+      cancel: 'Cancel',
+      create: 'Create Folder',
+      save: 'Save Changes',
+    },
+    filter: {
+      all: 'All',
+      favorites: 'Favorites',
+      archived: 'Archived',
+      allFolders: 'All folders',
+      favoriteFolders: 'Favorite folders',
+      archivedFolders: 'Archived folders',
+    },
+    viewMode: {
+      table: 'Table',
+      grid: 'Grid',
+      tableView: 'Table View',
+      gridView: 'Grid View',
+    },
+    validation: {
+      nameRequired: 'Folder name is required',
+      nameMinLength: 'Folder name must be at least 3 characters',
+      nameMaxLength: 'Folder name must be less than 50 characters',
     },
     table: {
       name: 'Name',

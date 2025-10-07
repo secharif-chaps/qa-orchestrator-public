@@ -907,8 +907,62 @@ export default {
     loading: 'Chargement des dossiers...',
     create: {
       title: 'Créer un nouveau dossier',
+      subtitle: 'Organisez vos entreprises avec un dossier personnalisé',
       description: 'Organisez vos entreprises en dossiers',
       button: 'Créer un dossier',
+    },
+    edit: {
+      title: 'Modifier le dossier',
+      subtitle: 'Mettez à jour les paramètres et l\'apparence de votre dossier',
+      error: {
+        title: 'Erreur',
+        description: 'Échec du chargement du dossier',
+      },
+    },
+    detail: {
+      error: {
+        title: 'Erreur',
+        description: 'Échec du chargement du dossier',
+      },
+    },
+    item: {
+      name: 'Élément',
+      type: 'Type',
+      created: 'Créé',
+      owner: 'Propriétaire',
+      actions: 'Actions',
+      view: 'Voir',
+      deleted: 'Supprimé',
+    },
+    form: {
+      name: 'Nom du dossier',
+      namePlaceholder: 'Saisir le nom du dossier...',
+      tags: 'Étiquettes',
+      tagsOptional: 'optionnel',
+      tagsPlaceholder: 'Saisir les étiquettes séparées par des virgules...',
+      favorite: 'Marquer comme favori',
+      cancel: 'Annuler',
+      create: 'Créer le dossier',
+      save: 'Enregistrer les modifications',
+    },
+    filter: {
+      all: 'Tous',
+      favorites: 'Favoris',
+      archived: 'Archivés',
+      allFolders: 'Tous les dossiers',
+      favoriteFolders: 'Dossiers favoris',
+      archivedFolders: 'Dossiers archivés',
+    },
+    viewMode: {
+      table: 'Tableau',
+      grid: 'Grille',
+      tableView: 'Vue tableau',
+      gridView: 'Vue grille',
+    },
+    validation: {
+      nameRequired: 'Le nom du dossier est requis',
+      nameMinLength: 'Le nom du dossier doit contenir au moins 3 caractères',
+      nameMaxLength: 'Le nom du dossier doit contenir moins de 50 caractères',
     },
     table: {
       name: 'Nom',
