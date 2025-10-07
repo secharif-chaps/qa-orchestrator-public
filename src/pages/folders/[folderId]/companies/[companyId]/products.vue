@@ -1,28 +1,19 @@
 <template>
   <div class="flex flex-col gap-4">
     <!-- Loading State -->
-    <PageState
-      v-if="taskState.isLoading.value"
-      state="loading"
-      page-type="products"
-      :task-progress="taskState.taskProgress.value"
+    <SectionLoadingState
+      v-if="company && (task?.status === 'pending' || task?.status === 'running')"
     />
 
     <!-- Error State -->
-    <PageState
-      v-else-if="taskState.hasErrors.value"
-      state="error"
-      page-type="products"
-      :error-message="taskState.errorMessages.value[0]"
-      @retry="handleRetry"
+    <SectionErrorState
+      v-else-if="company && task?.status === 'error'"
+      :error-message="task.error"
+      :task="task"
     />
 
     <!-- No Data State -->
-    <PageState
-      v-else-if="!products || Object.keys(products).length === 0"
-      state="no-data"
-      page-type="products"
-    />
+    <div v-else-if="!products || Object.keys(products).length === 0">no data state</div>
 
     <!-- Main content -->
     <div v-else class="space-y-6">
@@ -72,12 +63,7 @@
       </div>
 
       <!-- No Results State -->
-      <PageState
-        v-if="Object.keys(filteredProducts).length === 0 && searchQuery"
-        state="no-results"
-        :search-query="searchQuery"
-        @clear-search="searchQuery = ''"
-      />
+      <div v-if="Object.keys(filteredProducts).length === 0 && searchQuery">no results state</div>
     </div>
   </div>
 </template>
@@ -91,13 +77,19 @@ import { useRoute } from 'vue-router'
 import { computed, ref } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
-import { useTaskState } from '@/composables/useTaskState'
-import PageState from '@/components/company/PageState.vue'
-import { useRestartTask } from '@/mutations/tasks'
+import { companyTasksQuery } from '@/queries/tasks'
+import SectionErrorState from '@/components/company/SectionErrorState.vue'
+import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 
 const route = useRoute()
 
 const companyId = computed(() => route.params.companyId as string)
+
+const { data: tasks } = useQuery(companyTasksQuery, () => ({
+  companyId: companyId.value,
+}))
+
+const task = computed(() => tasks.value?.find((t) => t.type === 'products'))
 
 // Use the company data composable
 const { data: company } = useQuery(
@@ -109,34 +101,12 @@ const { data: company } = useQuery(
     // Poll every 5 seconds when any task is running
     refetchInterval: () => {
       const hasRunningTasks = company.value?.tasks?.some(
-        (t) => t.status === 'running' || t.status === 'pending'
+        (t) => t.status === 'running' || t.status === 'pending',
       )
       return hasRunningTasks ? 5000 : false
     },
-  }
+  },
 )
-
-// Task state management
-const taskState = useTaskState(company, 'products')
-
-// Restart task mutation
-const { mutate: restartTaskMutation } = useRestartTask()
-
-// Handle retry action
-const handleRetry = async () => {
-  const task = company.value?.tasks?.find((t) => t.type === 'products')
-  if (task) {
-    console.log('🔄 Retrying products task:', task.id)
-    try {
-      await restartTaskMutation(task.id)
-      console.log('✅ Products task restarted successfully')
-    } catch (error) {
-      console.error('❌ Error restarting products task:', error)
-    }
-  } else {
-    console.warn('⚠️ Products task not found')
-  }
-}
 
 // Reactive state
 const viewMode = ref<'grid' | 'list'>('grid')

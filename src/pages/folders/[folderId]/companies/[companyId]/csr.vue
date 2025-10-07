@@ -1,24 +1,19 @@
 <template>
   <div class="flex flex-col gap-4">
     <!-- Loading State -->
-    <PageState
-      v-if="taskState.isLoading.value"
-      state="loading"
-      page-type="csr"
-      :task-progress="taskState.taskProgress.value"
+    <SectionLoadingState
+      v-if="company && (task?.status === 'pending' || task?.status === 'running')"
     />
 
     <!-- Error State -->
-    <PageState
-      v-else-if="taskState.hasErrors.value"
-      state="error"
-      page-type="csr"
-      :error-message="taskState.errorMessages.value[0]"
-      @retry="handleRetry"
+    <SectionErrorState
+      v-else-if="company && task?.status === 'error'"
+      :error-message="task.error"
+      :task="task"
     />
 
     <!-- No Data State -->
-    <PageState v-else-if="!hasCsrData" state="no-data" page-type="csr" />
+    <div v-else-if="!hasCsrData">no data state</div>
 
     <!-- Main Content -->
     <div v-else class="flex flex-col gap-6">
@@ -241,18 +236,25 @@ meta:
 <script lang="ts" setup>
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
+import { companyTasksQuery } from '@/queries/tasks'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 import { useTaskState, hasDataForSection } from '@/composables/useTaskState'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Source from '@/components/company/Source.vue'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
-import PageState from '@/components/company/PageState.vue'
-import { useRestartTask } from '@/mutations/tasks'
+import SectionErrorState from '@/components/company/SectionErrorState.vue'
+import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 
 const route = useRoute()
 
 const companyId = computed(() => route.params.companyId as string)
+
+const { data: tasks } = useQuery(companyTasksQuery, () => ({
+  companyId: companyId.value,
+}))
+
+const task = computed(() => tasks.value?.find((t) => t.type === 'csr'))
 
 const { data: company } = useQuery(
   companyByIdQuery,
@@ -269,28 +271,6 @@ const { data: company } = useQuery(
     },
   },
 )
-
-// Task state management
-const taskState = useTaskState(company, 'csr')
-
-// Restart task mutation
-const { mutate: restartTaskMutation } = useRestartTask()
-
-// Handle retry action
-const handleRetry = async () => {
-  const task = company.value?.tasks?.find((t) => t.type === 'csr')
-  if (task) {
-    console.log('🔄 Retrying CSR task:', task.id)
-    try {
-      await restartTaskMutation(task.id)
-      console.log('✅ CSR task restarted successfully')
-    } catch (error) {
-      console.error('❌ Error restarting CSR task:', error)
-    }
-  } else {
-    console.warn('⚠️ CSR task not found')
-  }
-}
 
 const hasCsrData = computed(() => {
   return hasDataForSection(company.value, 'csr')

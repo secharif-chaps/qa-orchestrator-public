@@ -1,24 +1,18 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Loading State -->
-    <PageState
-      v-if="taskState.isLoading.value"
-      state="loading"
-      page-type="team"
-      :task-progress="taskState.taskProgress.value"
+    <SectionLoadingState
+      v-if="company && (task?.status === 'pending' || task?.status === 'running')"
     />
-
     <!-- Error State -->
-    <PageState
-      v-else-if="taskState.hasErrors.value"
-      state="error"
-      page-type="team"
-      :error-message="taskState.errorMessages.value[0]"
-      @retry="handleRetry"
+    <SectionErrorState
+      v-else-if="company && task?.status === 'error'"
+      :error-message="task.error"
+      :task="task"
     />
 
     <!-- No Data State -->
-    <PageState v-else-if="!hasTeamData" state="no-data" page-type="team" />
+    <div v-else-if="!hasTeamData">no data state</div>
 
     <!-- Main content -->
     <div v-if="hasTeamData" class="space-y-6">
@@ -169,20 +163,27 @@ import { useTheme } from '@/composables/useTheme'
 import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
+import { companyTasksQuery } from '@/queries/tasks'
 import { useTaskState, hasDataForSection } from '@/composables/useTaskState'
 import TeamMemberNode from '@/components/company/team/TeamMemberNode.vue'
 import TeamPageHeader from '@/components/company/team/TeamPageHeader.vue'
 import TeamMembersList from '@/components/company/team/TeamMembersList.vue'
-import PageState from '@/components/company/PageState.vue'
+import SectionErrorState from '@/components/company/SectionErrorState.vue'
+import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import { useScreenshot } from '@/composables/useScreenshot'
 import type { TeamMember } from '@/types/company'
-import { useRestartTask } from '@/mutations/tasks'
 
 const { isDark } = useTheme()
 
 const route = useRoute()
 
 const companyId = computed(() => route.params.companyId as string)
+
+const { data: tasks } = useQuery(companyTasksQuery, () => ({
+  companyId: companyId.value,
+}))
+
+const task = computed(() => tasks.value?.find((t) => t.type === 'team'))
 
 // Use the company data composable
 const { data: company } = useQuery(
@@ -200,28 +201,6 @@ const { data: company } = useQuery(
     },
   },
 )
-
-// Task state management
-const taskState = useTaskState(company, 'team')
-
-// Restart task mutation
-const { mutate: restartTaskMutation } = useRestartTask()
-
-// Handle retry action
-const handleRetry = async () => {
-  const task = company.value?.tasks?.find((t) => t.type === 'team')
-  if (task) {
-    console.log('🔄 Retrying team task:', task.id)
-    try {
-      await restartTaskMutation(task.id)
-      console.log('✅ Team task restarted successfully')
-    } catch (error) {
-      console.error('❌ Error restarting team task:', error)
-    }
-  } else {
-    console.warn('⚠️ Team task not found')
-  }
-}
 
 const { fitView, vueFlowRef } = useVueFlow()
 

@@ -305,8 +305,7 @@ const taskConfigs: TaskConfig[] = [
   },
 ]
 
-const restartTaskMutation = useRestartTask()
-const { mutate: restart } = restartTaskMutation
+const { mutate: restart } = useRestartTask()
 
 // Helper function to get task status
 const getTaskStatus = (taskType: TaskType): TaskStatus | null => {

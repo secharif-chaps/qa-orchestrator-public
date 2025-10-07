@@ -1,24 +1,15 @@
 <template>
   <div class="flex flex-col gap-4">
     <!-- Loading State -->
-    <PageState
-      v-if="taskState.isLoading.value"
-      state="loading"
-      page-type="timeline"
-      :task-progress="taskState.taskProgress.value"
+    <SectionLoadingState
+      v-if="company && (task?.status === 'pending' || task?.status === 'running')"
     />
-
     <!-- Error State -->
-    <PageState
-      v-else-if="taskState.hasErrors.value"
-      state="error"
-      page-type="timeline"
-      :error-message="taskState.errorMessages.value[0]"
-      @retry="handleRetry"
+    <SectionErrorState
+      v-if="company && task?.status === 'error'"
+      :error-message="task.error"
+      :task="task"
     />
-
-    <!-- No Data State -->
-    <PageState v-else-if="!hasTimelineData" state="no-data" page-type="timeline" />
 
     <!-- Timeline visualization -->
     <div v-if="hasTimelineData" class="relative">
@@ -33,22 +24,18 @@
             <i
               class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-primary-light-content"
             ></i>
-            <input
+            <Input
               v-model="searchQuery"
               :placeholder="$t('timeline.search.placeholder')"
-              class="w-full sm:w-64 bg-base-300 border border-primary-stroke rounded-md p-2 pl-8 focus:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 ring-primary ring-offset-bg3"
+              icon="fa fa-search"
             />
           </div>
         </div>
         <div>
           <Event v-for="(event, index) in filteredEvents" :key="index" :event="event" />
         </div>
-        <PageState
-          v-if="filteredEvents.length === 0 && searchQuery"
-          state="no-results"
-          :search-query="searchQuery"
-          @clear-search="searchQuery = ''"
-        />
+
+        <div v-if="filteredEvents.length === 0 && searchQuery">todo empty state</div>
       </div>
     </div>
   </div>
@@ -58,56 +45,37 @@
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { useRoute } from 'vue-router'
-import { computed, ref, watch } from 'vue'
-import { useTaskState, hasDataForSection } from '@/composables/useTaskState'
+import { computed, ref } from 'vue'
+import { hasDataForSection } from '@/composables/useTaskState'
 import Event from '@/components/company/timeline/Event.vue'
-import PageState from '@/components/company/PageState.vue'
-import { useRestartTask } from '@/mutations/tasks'
+import { companyTasksQuery } from '@/queries/tasks'
+import Input from '@/components/ui/Input.vue'
+import SectionErrorState from '@/components/company/SectionErrorState.vue'
+import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 
 const route = useRoute()
 
 const companyId = computed(() => route.params.companyId as string)
 
-// Use the company data composable with automatic refetching when task is running
-const { data: company, refetch } = useQuery(
-  companyByIdQuery,
-  () => ({
-    id: companyId.value,
-  }),
-  {
-    // Poll every 5 seconds when any task is running
-    refetchInterval: () => {
-      const hasRunningTasks = company.value?.tasks?.some(
-        (t) => t.status === 'running' || t.status === 'pending',
-      )
-      return hasRunningTasks ? 5000 : false
-    },
-  },
-)
+const { data: tasks, refetch: refetchTasks } = useQuery(companyTasksQuery, () => ({
+  companyId: companyId.value,
+}))
 
-// Task state management
-const taskState = useTaskState(company, 'timeline')
+const task = computed(() => tasks.value?.find((t) => t.type === 'timeline'))
+
+// Use the company data composable with automatic refetching when task is running
+const { data: company } = useQuery(companyByIdQuery, () => ({
+  id: companyId.value,
+  // Poll every 5 seconds when any task is running
+  refetchInterval: () => {
+    const hasRunningTasks = company.value?.tasks?.some(
+      (t) => t.status === 'running' || t.status === 'pending',
+    )
+    return hasRunningTasks ? 5000 : false
+  },
+}))
 
 const searchQuery = ref('')
-
-// Restart task mutation
-const { mutate: restartTaskMutation } = useRestartTask()
-
-// Handle retry action
-const handleRetry = async () => {
-  const task = company.value?.tasks?.find((t) => t.type === 'timeline')
-  if (task) {
-    console.log('🔄 Retrying timeline task:', task.id)
-    try {
-      await restartTaskMutation(task.id)
-      console.log('✅ Timeline task restarted successfully')
-    } catch (error) {
-      console.error('❌ Error restarting timeline task:', error)
-    }
-  } else {
-    console.warn('⚠️ Timeline task not found')
-  }
-}
 
 const hasTimelineData = computed(() => {
   return hasDataForSection(company.value, 'timeline', 'events')

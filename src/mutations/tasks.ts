@@ -41,6 +41,8 @@ export const useRestartTask = () => {
   const route = useRoute()
   const companyId = computed(() => route.params.companyId as string)
 
+  console.log('🔄 restarting Task ID:', taskId.value)
+
   const { mutate, ...mutation } = useMutation({
     mutation: (id: number) => {
       console.log('🔄 Calling restartTask API with ID:', id)
@@ -66,7 +68,7 @@ export const useRestartTask = () => {
       }
 
       const newTasks = previousTasks.map((task: TaskResponse) =>
-        task.id === id ? { ...task, status: 'running' as const } : task
+        task.id === id ? { ...task, status: 'running' as const } : task,
       )
 
       // Set the optimistic update to the cache
