@@ -462,6 +462,26 @@ export default {
       search: 'Rechercher',
       cards: 'Cartes',
     },
+    stats: {
+      totalCompanies: 'Total des Entreprises',
+      activeTasks: 'Tâches Actives',
+      recentUpdates: 'Mises à jour Récentes',
+      last24Hours: 'Dernières 24 heures',
+    },
+    quickActions: {
+      searchCompanies: {
+        title: 'Rechercher des Entreprises',
+        description: 'Trouver et explorer des entreprises',
+      },
+      allCompanies: {
+        title: 'Toutes les Entreprises',
+        description: 'Voir la base de données des entreprises',
+      },
+      settings: {
+        title: 'Paramètres',
+        description: 'Configurer les préférences',
+      },
+    },
   },
   common: {
     time: {
@@ -1232,6 +1252,37 @@ export default {
       actions: {
         createdCompany: 'a créé une nouvelle Carte Entreprise pour',
         createdFolder: 'a créé le Dossier',
+      },
+    },
+    modules: {
+      status: {
+        active: 'Actif',
+        proFeature: 'Fonctionnalité Pro',
+        comingSoon: 'Bientôt Disponible',
+      },
+      actions: {
+        contactSales: 'Contacter les Ventes',
+        open: 'Ouvrir',
+      },
+      screen: {
+        name: 'Screen',
+        description: 'Intelligence approfondie des entreprises et screening complet avec analyses avancées',
+        category: 'Business Intelligence',
+      },
+      target: {
+        name: 'Target',
+        description: 'Veille de marché alimentée par IA avec alertes intelligentes et outils de surveillance complets',
+        category: 'Analyse de Marché',
+      },
+      explore: {
+        name: 'Explore',
+        description: 'Graphe de connaissances interactif pour visualisation et découverte avancées de données',
+        category: 'Cartographie',
+      },
+      discover: {
+        name: 'Discover',
+        description: 'Partager des insights stratégiques',
+        category: 'Recherche de Données',
       },
     },
   },

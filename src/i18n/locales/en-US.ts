@@ -425,6 +425,26 @@ export default {
       search: 'Search',
       cards: 'Cards',
     },
+    stats: {
+      totalCompanies: 'Total Companies',
+      activeTasks: 'Active Tasks',
+      recentUpdates: 'Recent Updates',
+      last24Hours: 'Last 24 hours',
+    },
+    quickActions: {
+      searchCompanies: {
+        title: 'Search Companies',
+        description: 'Find and explore companies',
+      },
+      allCompanies: {
+        title: 'All Companies',
+        description: 'View companies database',
+      },
+      settings: {
+        title: 'Settings',
+        description: 'Configure preferences',
+      },
+    },
   },
   common: {
     time: {
@@ -1050,6 +1070,37 @@ export default {
       actions: {
         createdCompany: 'created a new Company Card about',
         createdFolder: 'created the Folder',
+      },
+    },
+    modules: {
+      status: {
+        active: 'Active',
+        proFeature: 'Pro Feature',
+        comingSoon: 'Coming Soon',
+      },
+      actions: {
+        contactSales: 'Contact Sales',
+        open: 'Open',
+      },
+      screen: {
+        name: 'Screen',
+        description: 'Deep company intelligence and comprehensive business screening with advanced analytics',
+        category: 'Business Intelligence',
+      },
+      target: {
+        name: 'Target',
+        description: 'AI-powered market watch with smart alerts and comprehensive monitoring tools',
+        category: 'Market Analysis',
+      },
+      explore: {
+        name: 'Explore',
+        description: 'Interactive knowledge graph for advanced data visualization and discovery',
+        category: 'Cartography',
+      },
+      discover: {
+        name: 'Discover',
+        description: 'Share strategic insights',
+        category: 'Search Data',
       },
     },
   },

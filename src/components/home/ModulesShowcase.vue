@@ -45,10 +45,10 @@
               "
               :label="
                 module.unlocked
-                  ? 'Active'
+                  ? $t('home.modules.status.active', 'Active')
                   : module.status === 'contact-sales'
-                    ? 'Pro Feature'
-                    : 'Coming Soon'
+                    ? $t('home.modules.status.proFeature', 'Pro Feature')
+                    : $t('home.modules.status.comingSoon', 'Coming Soon')
               "
               size="xs"
               rounded
@@ -72,7 +72,7 @@
               variant="secondary"
               color="warning"
               size="sm"
-              label="Contact Sales"
+              :label="$t('home.modules.actions.contactSales', 'Contact Sales')"
               icon="fa-solid fa-envelope"
               @click="handleContactSales(module)"
             />
@@ -80,7 +80,7 @@
               v-else-if="module.status === 'coming-soon'"
               variant="secondary"
               size="sm"
-              label="Coming Soon"
+              :label="$t('home.modules.status.comingSoon', 'Coming Soon')"
               icon="fa-solid fa-clock"
               disabled
             />
@@ -88,7 +88,7 @@
               v-else-if="module.status === 'external'"
               variant="secondary"
               size="sm"
-              label="Open"
+              :label="$t('home.modules.actions.open', 'Open')"
               icon="fa-solid fa-external-link"
               @click="handleModuleAction(module)"
             />
@@ -100,8 +100,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Badge from '@/components/ui/Badge.vue'
 import Button from '@/components/ui/Button.vue'
 import Card from '../ui/Card.vue'
@@ -118,13 +119,16 @@ interface Module {
 }
 
 const router = useRouter()
+const { t } = useI18n()
 
-const modules = ref<Module[]>([
+const modules = computed<Module[]>(() => [
   {
-    name: 'Screen',
-    description:
+    name: t('home.modules.screen.name', 'Screen'),
+    description: t(
+      'home.modules.screen.description',
       'Deep company intelligence and comprehensive business screening with advanced analytics',
-    category: 'Business Intelligence',
+    ),
+    category: t('home.modules.screen.category', 'Business Intelligence'),
     icon: 'fa-solid fa-magnifying-glass',
     unlocked: true,
     soon: false,
@@ -132,9 +136,12 @@ const modules = ref<Module[]>([
     favorite: false,
   },
   {
-    name: 'Target',
-    description: 'AI-powered market watch with smart alerts and comprehensive monitoring tools',
-    category: 'Market Analysis',
+    name: t('home.modules.target.name', 'Target'),
+    description: t(
+      'home.modules.target.description',
+      'AI-powered market watch with smart alerts and comprehensive monitoring tools',
+    ),
+    category: t('home.modules.target.category', 'Market Analysis'),
     icon: 'fa-solid fa-bullseye',
     unlocked: false,
     soon: false,
@@ -142,9 +149,12 @@ const modules = ref<Module[]>([
     favorite: true,
   },
   {
-    name: 'Explore',
-    description: 'Interactive knowledge graph for advanced data visualization and discovery',
-    category: 'Cartography',
+    name: t('home.modules.explore.name', 'Explore'),
+    description: t(
+      'home.modules.explore.description',
+      'Interactive knowledge graph for advanced data visualization and discovery',
+    ),
+    category: t('home.modules.explore.category', 'Cartography'),
     icon: 'fa-solid fa-project-diagram',
     unlocked: false,
     soon: true,
@@ -152,9 +162,9 @@ const modules = ref<Module[]>([
     favorite: false,
   },
   {
-    name: 'Discover',
-    description: 'Share strategic insights',
-    category: 'Search Data',
+    name: t('home.modules.discover.name', 'Discover'),
+    description: t('home.modules.discover.description', 'Share strategic insights'),
+    category: t('home.modules.discover.category', 'Search Data'),
     icon: 'fa-solid fa-rss',
     unlocked: true,
     soon: false,
