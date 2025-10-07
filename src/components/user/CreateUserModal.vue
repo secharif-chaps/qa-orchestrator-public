@@ -166,7 +166,10 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { WorkspaceUserCreate } from '@/types/user'
+
+const { t } = useI18n()
 
 interface Props {
   isLoading?: boolean
@@ -236,21 +239,33 @@ const validateForm = () => {
   errors.value = {}
 
   if (!form.username.trim()) {
-    errors.value.username = 'Username is required'
+    errors.value.username = t('user.validation.username.required', 'Username is required')
   } else if (form.username.length < 3) {
-    errors.value.username = 'Username must be at least 3 characters'
+    errors.value.username = t(
+      'user.validation.username.minLength',
+      'Username must be at least 3 characters',
+    )
   }
 
   if (!form.email.trim()) {
-    errors.value.email = 'Email is required'
+    errors.value.email = t('user.validation.email.required', 'Email is required')
   } else if (!isValidEmail(form.email)) {
-    errors.value.email = 'Please enter a valid email address'
+    errors.value.email = t(
+      'user.validation.email.invalid',
+      'Please enter a valid email address',
+    )
   }
 
   if (!form.temporaryPassword.trim()) {
-    errors.value.temporaryPassword = 'Temporary password is required'
+    errors.value.temporaryPassword = t(
+      'user.validation.temporaryPassword.required',
+      'Temporary password is required',
+    )
   } else if (form.temporaryPassword.length < 8) {
-    errors.value.temporaryPassword = 'Password must be at least 8 characters'
+    errors.value.temporaryPassword = t(
+      'user.validation.temporaryPassword.minLength',
+      'Password must be at least 8 characters',
+    )
   }
 
   return Object.keys(errors.value).length === 0

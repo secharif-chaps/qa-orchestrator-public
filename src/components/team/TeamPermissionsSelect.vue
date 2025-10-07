@@ -72,7 +72,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import PermissionItem from './PermissionItem.vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   permissions: string[]
@@ -88,34 +91,49 @@ const availablePermissions = computed(() => [
   // Basic permissions
   {
     key: 'workspace.read',
-    name: 'Basic Access',
-    description: 'View workspace content and companies',
+    name: t('team.permissionsList.workspaceRead.name', 'Basic Access'),
+    description: t(
+      'team.permissionsList.workspaceRead.description',
+      'View workspace content and companies',
+    ),
     icon: 'fa fa-eye',
   },
   // Company permissions
   {
     key: 'company.view',
-    name: 'View Companies',
-    description: 'Access detailed company information',
+    name: t('team.permissionsList.companyView.name', 'View Companies'),
+    description: t(
+      'team.permissionsList.companyView.description',
+      'Access detailed company information',
+    ),
     icon: 'fa fa-building',
   },
   {
     key: 'company.create',
-    name: 'Create Companies',
-    description: 'Add new companies to the workspace',
+    name: t('team.permissionsList.companyCreate.name', 'Create Companies'),
+    description: t(
+      'team.permissionsList.companyCreate.description',
+      'Add new companies to the workspace',
+    ),
     icon: 'fa fa-plus-circle',
   },
   {
     key: 'company.delete',
-    name: 'Delete Companies',
-    description: 'Remove companies from the workspace',
+    name: t('team.permissionsList.companyDelete.name', 'Delete Companies'),
+    description: t(
+      'team.permissionsList.companyDelete.description',
+      'Remove companies from the workspace',
+    ),
     icon: 'fa fa-trash',
   },
   // Admin permission
   {
     key: 'workspace.write',
-    name: 'Team Management',
-    description: 'Manage workspace users and settings',
+    name: t('team.permissionsList.workspaceWrite.name', 'Team Management'),
+    description: t(
+      'team.permissionsList.workspaceWrite.description',
+      'Manage workspace users and settings',
+    ),
     icon: 'fa fa-users-cog',
   },
 ])
