@@ -17,6 +17,11 @@ const isPublicRoute = (path: string): boolean => {
   return publicRoutes.some((route) => path.startsWith(route))
 }
 
+// Check if route is 404 catch-all
+const is404Route = (routeName: string | null | undefined): boolean => {
+  return routeName === '/[...path]'
+}
+
 
 // Global navigation guard
 router.beforeEach(async (to, from, next) => {
@@ -33,9 +38,10 @@ router.beforeEach(async (to, from, next) => {
 
   const isAuthenticated = authStore.isAuthenticated
   const isPublic = isPublicRoute(to.path)
+  const is404 = is404Route(to.name as string)
 
-  // If route is public, allow access
-  if (isPublic) {
+  // If route is public or 404, allow access
+  if (isPublic || is404) {
     // Redirect authenticated users away from login page
     if (to.path === '/login' && isAuthenticated) {
       return next('/')

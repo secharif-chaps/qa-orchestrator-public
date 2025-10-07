@@ -363,6 +363,23 @@ export default {
       tryAgain: 'Réessayer',
     },
   },
+  errors: {
+    notFound: {
+      title: 'Page introuvable',
+      message: "La page que vous recherchez n'existe pas ou a été déplacée.",
+      goHome: "Aller à l'accueil",
+      goBack: 'Retour',
+      help: 'Si vous pensez que cette page devrait exister, veuillez contacter le support.',
+    },
+    forbidden: {
+      title: 'Accès interdit',
+      message: "Vous n'avez pas la permission d'accéder à cette page.",
+      goHome: "Aller à l'accueil",
+      goBack: 'Retour',
+      contact:
+        "Si vous pensez qu'il s'agit d'une erreur, veuillez contacter votre administrateur.",
+    },
+  },
   dashboard: {
     title: 'Tableau de bord',
     actions: {

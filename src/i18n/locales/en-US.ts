@@ -328,6 +328,22 @@ export default {
       tryAgain: 'Try again',
     },
   },
+  errors: {
+    notFound: {
+      title: 'Page Not Found',
+      message: "The page you're looking for doesn't exist or has been moved.",
+      goHome: 'Go to Home',
+      goBack: 'Go Back',
+      help: 'If you believe this page should exist, please contact support.',
+    },
+    forbidden: {
+      title: 'Access Forbidden',
+      message: "You don't have permission to access this page.",
+      goHome: 'Go to Home',
+      goBack: 'Go Back',
+      contact: 'If you believe this is an error, please contact your administrator.',
+    },
+  },
   dashboard: {
     title: 'Dashboard',
     actions: {
