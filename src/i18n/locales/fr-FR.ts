@@ -364,6 +364,12 @@ export default {
     },
   },
   common: {
+    time: {
+      day: 'jour',
+      days: 'jours',
+      hours: '{count}h',
+      fewMinutes: 'quelques minutes',
+    },
     comingSoon: 'Bientôt disponible',
     notFound: 'Non trouvé',
     loading: 'Chargement...',
@@ -809,14 +815,6 @@ export default {
         createdCompany: 'a créé une nouvelle Carte Entreprise pour',
         createdFolder: 'a créé le Dossier',
       },
-    },
-  },
-  common: {
-    time: {
-      day: 'jour',
-      days: 'jours',
-      hours: '{count}h',
-      fewMinutes: 'quelques minutes',
     },
   },
 }

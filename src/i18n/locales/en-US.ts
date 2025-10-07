@@ -329,6 +329,12 @@ export default {
     },
   },
   common: {
+    time: {
+      day: 'day',
+      days: 'days',
+      hours: '{count}h',
+      fewMinutes: 'a few minutes',
+    },
     comingSoon: 'Coming soon',
     notFound: 'Not found',
     loading: 'Loading...',
@@ -728,14 +734,6 @@ export default {
         createdCompany: 'created a new Company Card about',
         createdFolder: 'created the Folder',
       },
-    },
-  },
-  common: {
-    time: {
-      day: 'day',
-      days: 'days',
-      hours: '{count}h',
-      fewMinutes: 'a few minutes',
     },
   },
 }
