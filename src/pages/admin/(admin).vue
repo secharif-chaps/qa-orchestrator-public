@@ -56,8 +56,13 @@
       <div v-if="!hasAnyAdminAccess" class="mt-8">
         <Alert
           variant="warning"
-          title="Limited Access"
-          message="You have access to basic admin features. Contact your administrator for additional permissions."
+          :title="$t('admin.dashboard.limitedAccess.title', 'Limited Access')"
+          :message="
+            $t(
+              'admin.dashboard.limitedAccess.message',
+              'You have access to basic admin features. Contact your administrator for additional permissions.',
+            )
+          "
           icon="fa fa-lock"
         />
       </div>

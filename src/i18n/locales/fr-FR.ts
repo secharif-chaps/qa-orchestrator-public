@@ -597,6 +597,11 @@ export default {
       title: 'Tableau de Bord Admin',
       description: 'Gérez les fonctionnalités système et les paramètres',
       back: 'Retour à Admin',
+      limitedAccess: {
+        title: 'Accès Limité',
+        message:
+          'Vous avez accès aux fonctionnalités admin de base. Contactez votre administrateur pour des permissions supplémentaires.',
+      },
       quickStats: {
         title: 'Aperçu Système',
       },
@@ -620,9 +625,14 @@ export default {
         title: 'Gestion des Workflows',
         description: 'Configurez et gérez les workflows automatisés et processus',
       },
+      costs: {
+        title: 'Analyse des Coûts',
+        description: "Surveillez l'utilisation des tokens et les coûts des workflows MINT",
+      },
       manage: 'Gérer',
       explore: 'Explorer',
       configure: 'Configurer',
+      analyze: 'Analyser',
     },
     workflows: {
       title: 'Gestion des Workflows',
@@ -756,6 +766,105 @@ export default {
         usernamePlaceholder: 'Optionnel - sera généré automatiquement',
         submit: 'Ajouter le membre',
       },
+    },
+    admin: {
+      title: 'Gestion des Espaces de Travail',
+      description: 'Gérez tous les espaces de travail du système',
+    },
+    create: {
+      title: 'Créer un Espace de Travail',
+      description: 'Créez un nouvel espace de travail pour votre organisation',
+      button: 'Créer un Espace de Travail',
+      submit: 'Créer un Espace de Travail',
+      preview: 'Aperçu',
+    },
+    form: {
+      name: {
+        label: "Nom de l'Espace de Travail",
+        placeholder: "Saisir le nom de l'espace de travail...",
+        help: "Ce sera le nom d'affichage pour votre espace de travail",
+      },
+      slug: {
+        label: "Identifiant de l'Espace de Travail",
+        help: "Identifiant compatible URL (minuscules, sans espaces)",
+      },
+      description: {
+        label: 'Description',
+        placeholder: 'Décrivez le but de cet espace de travail...',
+        help: 'Brève description pour aider les utilisateurs à comprendre cet espace de travail',
+      },
+    },
+    detail: {
+      title: "Détails de l'Espace de Travail",
+      description: "Informations et paramètres de l'espace de travail",
+      basicInfo: 'Informations de Base',
+      members: 'Membres',
+      settings: 'Paramètres',
+      settingsPlaceholder: 'Les paramètres de l\'espace de travail seront implémentés ici',
+    },
+    search: {
+      placeholder: 'Rechercher des espaces de travail...',
+    },
+    sort: {
+      label: 'Trier par',
+      created: 'Date de Création',
+      name: 'Nom',
+      members: 'Membres',
+      order: 'Ordre',
+      ascending: 'Croissant',
+      descending: 'Décroissant',
+    },
+    table: {
+      description: 'Description',
+    },
+    empty: {
+      noResults: 'Aucun espace de travail trouvé',
+      title: 'Aucun espace de travail pour le moment',
+      tryDifferentSearch: 'Essayez un autre terme de recherche',
+      description: 'Créez votre premier espace de travail pour commencer',
+    },
+    justCreated: 'Vient d\'être créé',
+    loading: 'Chargement des espaces de travail...',
+    name: 'Nom de l\'Espace de Travail',
+    slug: 'Identifiant de l\'Espace de Travail',
+    description: 'Description',
+    created: 'Créé',
+    updated: 'Mis à jour',
+    members: 'Membres',
+    actions: 'Actions',
+    current: 'Actuel',
+    noDescription: 'Aucune description',
+    alreadyCurrent: 'Déjà dans cet espace de travail',
+    pick: 'Basculer vers cet espace de travail',
+    view: 'Voir les Détails',
+    delete: 'Supprimer l\'Espace de Travail',
+    cannotDeleteDefault: 'Impossible de supprimer l\'espace de travail par défaut',
+    clearSearch: 'Effacer la Recherche',
+  },
+  user: {
+    create: {
+      button: 'Ajouter un Utilisateur',
+    },
+    loading: 'Chargement des utilisateurs...',
+    status: {
+      active: 'Actif',
+      pending: 'En attente',
+      disabled: 'Désactivé',
+    },
+    actions: {
+      resetPassword: 'Réinitialiser le Mot de Passe',
+      disable: 'Désactiver l\'Utilisateur',
+      enable: 'Activer l\'Utilisateur',
+      delete: 'Retirer l\'Utilisateur',
+    },
+    empty: {
+      title: 'Aucun utilisateur trouvé',
+      description: 'Créez votre premier utilisateur pour commencer',
+    },
+    delete: {
+      title: 'Retirer l\'Utilisateur',
+      description: 'Êtes-vous sûr de vouloir retirer cet utilisateur de l\'espace de travail ?',
+      button: 'Retirer l\'Utilisateur',
     },
   },
   folder: {

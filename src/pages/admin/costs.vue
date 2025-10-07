@@ -4,7 +4,7 @@
       <Button
         variant="ghost-primary"
         icon="fa fa-arrow-left"
-        label="Back to Admin"
+        :label="$t('admin.dashboard.back', 'Back to Admin')"
         @click="$router.push('/admin')"
       />
       <!-- Header with Time Range Selector -->

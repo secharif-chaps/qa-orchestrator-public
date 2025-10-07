@@ -553,6 +553,11 @@ export default {
       title: 'Admin Dashboard',
       description: 'Manage system features and settings',
       back: 'Back to Admin',
+      limitedAccess: {
+        title: 'Limited Access',
+        message:
+          'You have access to basic admin features. Contact your administrator for additional permissions.',
+      },
       quickStats: {
         title: 'System Overview',
       },
@@ -576,9 +581,14 @@ export default {
         title: 'Workflow Management',
         description: 'Configure and manage automated workflows and processes',
       },
+      costs: {
+        title: 'Cost Analysis',
+        description: 'Monitor token usage and costs for MINT screening workflows',
+      },
       manage: 'Manage',
       explore: 'Explore',
       configure: 'Configure',
+      analyze: 'Analyze',
     },
     workflows: {
       title: 'Workflow Management',
@@ -734,6 +744,107 @@ export default {
         createdCompany: 'created a new Company Card about',
         createdFolder: 'created the Folder',
       },
+    },
+  },
+  workspace: {
+    admin: {
+      title: 'Workspace Management',
+      description: 'Manage all workspaces in the system',
+    },
+    create: {
+      title: 'Create Workspace',
+      description: 'Create a new workspace for your organization',
+      button: 'Create Workspace',
+      submit: 'Create Workspace',
+      preview: 'Preview',
+    },
+    form: {
+      name: {
+        label: 'Workspace Name',
+        placeholder: 'Enter workspace name...',
+        help: 'This will be the display name for your workspace',
+      },
+      slug: {
+        label: 'Workspace Slug',
+        help: 'URL-friendly identifier (lowercase, no spaces)',
+      },
+      description: {
+        label: 'Description',
+        placeholder: 'Describe the purpose of this workspace...',
+        help: 'Brief description to help users understand this workspace',
+      },
+    },
+    detail: {
+      title: 'Workspace Details',
+      description: 'Workspace information and settings',
+      basicInfo: 'Basic Information',
+      members: 'Members',
+      settings: 'Settings',
+      settingsPlaceholder: 'Workspace settings will be implemented here',
+    },
+    search: {
+      placeholder: 'Search workspaces...',
+    },
+    sort: {
+      label: 'Sort by',
+      created: 'Created Date',
+      name: 'Name',
+      members: 'Members',
+      order: 'Order',
+      ascending: 'Ascending',
+      descending: 'Descending',
+    },
+    table: {
+      description: 'Description',
+    },
+    empty: {
+      noResults: 'No workspaces found',
+      title: 'No workspaces yet',
+      tryDifferentSearch: 'Try a different search term',
+      description: 'Create your first workspace to get started',
+    },
+    justCreated: 'Just created',
+    loading: 'Loading workspaces...',
+    name: 'Workspace Name',
+    slug: 'Workspace Slug',
+    description: 'Description',
+    created: 'Created',
+    updated: 'Updated',
+    members: 'Members',
+    actions: 'Actions',
+    current: 'Current',
+    noDescription: 'No description',
+    alreadyCurrent: 'Already in this workspace',
+    pick: 'Switch to this workspace',
+    view: 'View Details',
+    delete: 'Delete Workspace',
+    cannotDeleteDefault: 'Cannot delete the default workspace',
+    clearSearch: 'Clear Search',
+  },
+  user: {
+    create: {
+      button: 'Add User',
+    },
+    loading: 'Loading users...',
+    status: {
+      active: 'Active',
+      pending: 'Pending',
+      disabled: 'Disabled',
+    },
+    actions: {
+      resetPassword: 'Reset Password',
+      disable: 'Disable User',
+      enable: 'Enable User',
+      delete: 'Remove User',
+    },
+    empty: {
+      title: 'No users found',
+      description: 'Create your first user to get started',
+    },
+    delete: {
+      title: 'Remove User',
+      description: 'Are you sure you want to remove this user from the workspace?',
+      button: 'Remove User',
     },
   },
 }
