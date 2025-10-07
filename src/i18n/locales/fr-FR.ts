@@ -847,6 +847,8 @@ export default {
       invalidWebsiteFormat: 'Veuillez entrer une URL de site web valide',
       nameRequired: 'Le nom de l\'entreprise est requis',
       websiteRequired: 'L\'URL du site web est requise',
+      createError: 'Une erreur s\'est produite lors de la création de l\'entreprise',
+      networkError: 'Erreur réseau - veuillez réessayer',
     },
   },
   workspace: {

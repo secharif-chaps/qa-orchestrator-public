@@ -797,6 +797,8 @@ export default {
       invalidWebsiteFormat: 'Please enter a valid website URL',
       nameRequired: 'Company name is required',
       websiteRequired: 'Website URL is required',
+      createError: 'An error occurred while creating the company',
+      networkError: 'Network error - please try again',
     },
   },
   folder: {

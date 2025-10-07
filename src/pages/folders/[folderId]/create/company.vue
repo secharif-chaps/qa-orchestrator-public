@@ -256,22 +256,25 @@ const goToCSVUpload = () => {
 const submit = async () => {
   // Check if workspace data is loaded
   if (!currentWorkspace.value?.id) {
-    companyError.value = 'Loading workspace data, please wait...'
+    companyError.value = t('company.validation.loadingWorkspace', 'Loading workspace...')
     return
   }
 
   // Check if token data is still loading
   if (tokenDataLoading.value) {
-    companyError.value = 'Loading token information, please wait...'
+    companyError.value = t('company.validation.loadingTokens', 'Loading tokens...')
     return
   }
 
   // Check token availability
   if (!canPerformSearch.value) {
     if (!screenModuleEnabled.value) {
-      companyError.value = 'Screen module is disabled. Please contact your administrator.'
+      companyError.value = t('company.validation.moduleDisabled', 'The Stream module is disabled')
     } else {
-      companyError.value = `Insufficient tokens to perform company search. You have ${screenTokenCount.value} tokens but need at least 1.`
+      companyError.value = t(
+        'company.validation.insufficientTokens',
+        'Insufficient tokens. You need at least 1 token to create a company.',
+      )
     }
     return
   }
@@ -313,7 +316,10 @@ const submit = async () => {
 
     // Handle insufficient tokens error
     if (error instanceof InsufficientTokensError) {
-      companyError.value = `Insufficient tokens: ${error.message}`
+      companyError.value = t(
+        'company.validation.insufficientTokens',
+        'Insufficient tokens. You need at least 1 token to create a company.',
+      )
       // Refresh token data to get current counts
       await refreshScreenTokens()
       return
@@ -323,19 +329,28 @@ const submit = async () => {
     if (error?.message) {
       // Extract meaningful error message
       if (error.message.includes('Validation error')) {
-        companyError.value = 'Invalid company name format'
-        websiteError.value = 'Invalid website URL format'
+        companyError.value = t(
+          'company.validation.invalidNameFormat',
+          'Company name must contain at least 2 alphabetic characters',
+        )
+        websiteError.value = t(
+          'company.validation.invalidWebsiteFormat',
+          'Please enter a valid website URL',
+        )
       } else if (error.message.includes('Invalid input')) {
-        companyError.value = 'Please check your company name'
-        websiteError.value = 'Please check your website URL'
+        companyError.value = t('company.validation.nameRequired', 'Company name is required')
+        websiteError.value = t('company.validation.websiteRequired', 'Website URL is required')
       } else if (error.message.includes('unauthorized') || error.message.includes('401')) {
         // Authentication error - will be handled by navigateTo('/login') in API service
       } else {
         // Generic error
-        companyError.value = 'An error occurred while creating the company'
+        companyError.value = t(
+          'company.validation.createError',
+          'An error occurred while creating the company',
+        )
       }
     } else {
-      companyError.value = 'Network error - please try again'
+      companyError.value = t('company.validation.networkError', 'Network error - please try again')
     }
   }
 }
