@@ -83,6 +83,11 @@ export default {
       accent: {
         title: "Couleur d'accent",
         description: "Choisissez votre couleur d'accent préférée pour l'interface",
+        currentColor: "Couleur d'Accent Actuelle",
+        active: 'Actif',
+        personalizeTitle: 'Personnalisez Votre Expérience',
+        personalizeDescription:
+          "Votre couleur d'accent affecte les boutons, liens, surlignages et éléments interactifs dans toute l'application.",
       },
       language: {
         title: 'Langue',
@@ -106,6 +111,33 @@ export default {
         sample: 'Ceci est un échantillon de votre thème actuel',
         tag1: 'Exemple',
         tag2: 'Aperçu',
+        interfaceDescription:
+          'Expérimentez l\'apparence de votre interface avec les paramètres de thème actuels.',
+        card: {
+          title: 'Titre de la Carte Exemple',
+          description: 'Cette carte démontre le style du thème actuel',
+        },
+        input: {
+          label: 'Champ de Saisie Exemple',
+          placeholder: 'Tapez quelque chose ici...',
+        },
+        toggle: {
+          label: 'Commutateur Exemple',
+          description: 'Ce commutateur démontre le style de basculement',
+        },
+        buttons: {
+          primary: 'Bouton Principal',
+          secondary: 'Bouton Secondaire',
+          danger: 'Bouton Danger',
+        },
+        status: {
+          active: 'Actif',
+          pending: 'En Attente',
+          error: 'Erreur',
+        },
+        list: {
+          title: 'Éléments de Liste Exemple',
+        },
       },
     },
     preferences: {

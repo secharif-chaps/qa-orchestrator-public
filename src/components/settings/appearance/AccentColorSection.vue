@@ -61,14 +61,14 @@
             <div class="flex items-center gap-4">
               <div class="w-8 h-8 rounded-full shadow-md" :class="getCurrentAccentBgClass()"></div>
               <div>
-                <h4 class="text-sm font-medium">Current Accent Color</h4>
+                <h4 class="text-sm font-medium">{{ $t('settings.appearance.accent.currentColor', 'Current Accent Color') }}</h4>
                 <p class="text-xs text-primary-light-content">
                   {{ getCurrentAccentLabel() }}
                 </p>
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <Badge label="Active" variant="primary" class="animate-pulse" />
+              <Badge :label="$t('settings.appearance.accent.active', 'Active')" variant="primary" class="animate-pulse" />
             </div>
           </div>
         </div>
@@ -81,11 +81,10 @@
             </div>
             <div>
               <h4 class="text-sm font-medium text-primary-light-content">
-                Personalize Your Experience
+                {{ $t('settings.appearance.accent.personalizeTitle', 'Personalize Your Experience') }}
               </h4>
               <p class="text-xs text-primary-light-content mt-1">
-                Your accent color affects buttons, links, highlights, and interactive elements
-                throughout the application.
+                {{ $t('settings.appearance.accent.personalizeDescription', 'Your accent color affects buttons, links, highlights, and interactive elements throughout the application.') }}
               </p>
             </div>
           </div>

@@ -83,6 +83,11 @@ export default {
       accent: {
         title: 'Accent Color',
         description: 'Choose your preferred accent color for the interface',
+        currentColor: 'Current Accent Color',
+        active: 'Active',
+        personalizeTitle: 'Personalize Your Experience',
+        personalizeDescription:
+          'Your accent color affects buttons, links, highlights, and interactive elements throughout the application.',
       },
       language: {
         title: 'Language',
@@ -106,6 +111,32 @@ export default {
         sample: 'This is a sample of your current theme',
         tag1: 'Sample',
         tag2: 'Preview',
+        interfaceDescription: 'Experience how your interface looks with the current theme settings.',
+        card: {
+          title: 'Sample Card Title',
+          description: 'This card demonstrates the current theme styling',
+        },
+        input: {
+          label: 'Sample Input Field',
+          placeholder: 'Type something here...',
+        },
+        toggle: {
+          label: 'Sample Toggle',
+          description: 'This toggle demonstrates switch styling',
+        },
+        buttons: {
+          primary: 'Primary Button',
+          secondary: 'Secondary Button',
+          danger: 'Danger Button',
+        },
+        status: {
+          active: 'Active',
+          pending: 'Pending',
+          error: 'Error',
+        },
+        list: {
+          title: 'Sample List Items',
+        },
       },
     },
     preferences: {
