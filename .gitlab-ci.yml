@@ -7,7 +7,7 @@ stages:
 
 variables:
   DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: "/certs"
+  DOCKER_TLS_CERTDIR: '/certs'
   IMAGE_NAME: $CI_REGISTRY/mint/mint-front
   DOCKER_BUILDKIT: 1
 
@@ -18,7 +18,9 @@ build-and-push-frontend:
   services:
     - docker:24-dind
   before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+    before_script:
+      # If RELEASE_VERSION is not defined, image is tagged with `latest`
+      - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - echo "Building frontend Docker image..."
     - |
