@@ -425,6 +425,8 @@ export default {
       days: 'jours',
       hours: '{count}h',
       fewMinutes: 'quelques minutes',
+      minutesAgo: 'il y a {count} min',
+      hoursAgo: 'il y a {count} heures',
     },
     comingSoon: 'Bientôt disponible',
     notFound: 'Non trouvé',
@@ -434,6 +436,16 @@ export default {
     cancel: 'Annuler',
     save: 'Enregistrer',
     error: 'Erreur',
+    preview: {
+      items: {
+        newMessage: 'Nouveau Message Reçu',
+        newMessageDesc: 'Vous avez un nouveau message de John Doe',
+        systemUpdate: 'Mise à Jour Système',
+        systemUpdateDesc: 'Application mise à jour vers la version 2.1.0',
+        profileComplete: 'Profil Complété',
+        profileCompleteDesc: 'La configuration de votre profil est terminée',
+      },
+    },
   },
   appbar: {
     search: 'Rechercher...',

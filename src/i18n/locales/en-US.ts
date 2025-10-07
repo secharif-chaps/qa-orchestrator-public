@@ -388,6 +388,8 @@ export default {
       days: 'days',
       hours: '{count}h',
       fewMinutes: 'a few minutes',
+      minutesAgo: '{count} min ago',
+      hoursAgo: '{count} hours ago',
     },
     comingSoon: 'Coming soon',
     notFound: 'Not found',
@@ -396,6 +398,16 @@ export default {
     noData: 'No data available',
     save: 'Save',
     error: 'Error',
+    preview: {
+      items: {
+        newMessage: 'New Message Received',
+        newMessageDesc: 'You have a new message from John Doe',
+        systemUpdate: 'System Update',
+        systemUpdateDesc: 'Application updated to version 2.1.0',
+        profileComplete: 'Profile Completed',
+        profileCompleteDesc: 'Your profile setup is now complete',
+      },
+    },
   },
   appbar: {
     search: 'Search...',

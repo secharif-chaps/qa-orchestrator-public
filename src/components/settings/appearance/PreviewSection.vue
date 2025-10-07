@@ -15,7 +15,7 @@
             {{ $t('settings.appearance.preview.sample') }}
           </h3>
           <p class="text-sm text-primary-light-content">
-            Experience how your interface looks with the current theme settings.
+            {{ $t('settings.appearance.preview.interfaceDescription', 'Experience how your interface looks with the current theme settings.') }}
           </p>
         </div>
 
@@ -23,9 +23,9 @@
         <div class="bg-base-100 border border-primary-stroke rounded-lg p-4 mb-6">
           <div class="flex items-start justify-between mb-4">
             <div>
-              <h4 class="font-medium">Sample Card Title</h4>
+              <h4 class="font-medium">{{ $t('settings.appearance.preview.card.title', 'Sample Card Title') }}</h4>
               <p class="text-sm text-primary-light-content mt-1">
-                This card demonstrates the current theme styling
+                {{ $t('settings.appearance.preview.card.description', 'This card demonstrates the current theme styling') }}
               </p>
             </div>
             <div class="flex gap-2">
@@ -38,11 +38,11 @@
           <div class="space-y-4">
             <!-- Input Field -->
             <div>
-              <label class="block text-sm font-medium mb-2"> Sample Input Field </label>
+              <label class="block text-sm font-medium mb-2">{{ $t('settings.appearance.preview.input.label', 'Sample Input Field') }}</label>
               <input
                 v-model="previewInputValue"
                 type="text"
-                placeholder="Type something here..."
+                :placeholder="$t('settings.appearance.preview.input.placeholder', 'Type something here...')"
                 class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-base-100 text-primary-light-content placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
@@ -50,9 +50,9 @@
             <!-- Toggle Switch -->
             <div class="flex items-center justify-between">
               <div>
-                <label class="text-sm font-medium"> Sample Toggle </label>
+                <label class="text-sm font-medium">{{ $t('settings.appearance.preview.toggle.label', 'Sample Toggle') }}</label>
                 <p class="text-sm text-primary-light-content">
-                  This toggle demonstrates switch styling
+                  {{ $t('settings.appearance.preview.toggle.description', 'This toggle demonstrates switch styling') }}
                 </p>
               </div>
               <Switch.Root
@@ -69,24 +69,24 @@
 
             <!-- Buttons -->
             <div class="flex flex-wrap gap-3">
-              <Button label="Primary Button" variant="primary" />
-              <Button label="Secondary Button" variant="secondary" />
-              <Button label="Danger Button" variant="ghost-primary" color="danger" />
+              <Button :label="$t('settings.appearance.preview.buttons.primary', 'Primary Button')" variant="primary" />
+              <Button :label="$t('settings.appearance.preview.buttons.secondary', 'Secondary Button')" variant="secondary" />
+              <Button :label="$t('settings.appearance.preview.buttons.danger', 'Danger Button')" variant="ghost-primary" color="danger" />
             </div>
 
             <!-- Status Indicators -->
             <div class="flex flex-wrap gap-2">
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 bg-green-500 rounded-full"></div>
-                <span class="text-sm text-primary-light-content">Active</span>
+                <span class="text-sm text-primary-light-content">{{ $t('settings.appearance.preview.status.active', 'Active') }}</span>
               </div>
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 bg-yellow-500 rounded-full"></div>
-                <span class="text-sm text-primary-light-content">Pending</span>
+                <span class="text-sm text-primary-light-content">{{ $t('settings.appearance.preview.status.pending', 'Pending') }}</span>
               </div>
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 bg-red-500 rounded-full"></div>
-                <span class="text-sm text-primary-light-content">Error</span>
+                <span class="text-sm text-primary-light-content">{{ $t('settings.appearance.preview.status.error', 'Error') }}</span>
               </div>
             </div>
           </div>
@@ -95,7 +95,7 @@
         <!-- Sample List -->
         <div class="bg-base-100 border border-primary-stroke rounded-lg overflow-hidden">
           <div class="px-4 py-3 border-b border-primary-stroke">
-            <h4 class="text-sm font-medium">Sample List Items</h4>
+            <h4 class="text-sm font-medium">{{ $t('settings.appearance.preview.list.title', 'Sample List Items') }}</h4>
           </div>
           <div class="divide-y divide-slate-200 dark:divide-slate-700">
             <div
@@ -128,28 +128,31 @@ import { Switch } from 'reka-ui/namespaced'
 import Badge from '@/components/ui/Badge.vue'
 import Button from '@/components/ui/Button.vue'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Preview component data
 const previewInputValue = ref('Sample text input')
 const previewToggleValue = ref(true)
 const previewItems = ref([
   {
-    title: 'New Message Received',
-    description: 'You have a new message from John Doe',
+    title: t('common.preview.items.newMessage', 'New Message Received'),
+    description: t('common.preview.items.newMessageDesc', 'You have a new message from John Doe'),
     icon: 'fas fa-envelope',
-    time: '2 min ago',
+    time: t('common.time.minutesAgo', '{count} min ago', { count: 2 }),
   },
   {
-    title: 'System Update',
-    description: 'Application updated to version 2.1.0',
+    title: t('common.preview.items.systemUpdate', 'System Update'),
+    description: t('common.preview.items.systemUpdateDesc', 'Application updated to version 2.1.0'),
     icon: 'fas fa-download',
-    time: '1 hour ago',
+    time: t('common.time.hoursAgo', '{count} hour ago', { count: 1 }),
   },
   {
-    title: 'Profile Completed',
-    description: 'Your profile setup is now complete',
+    title: t('common.preview.items.profileComplete', 'Profile Completed'),
+    description: t('common.preview.items.profileCompleteDesc', 'Your profile setup is now complete'),
     icon: 'fas fa-check-circle',
-    time: '3 hours ago',
+    time: t('common.time.hoursAgo', '{count} hours ago', { count: 3 }),
   },
 ])
 </script>
