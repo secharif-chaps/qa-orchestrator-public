@@ -2,13 +2,13 @@
   <div class="h-[calc(100vh-140px)] flex flex-col">
     <!-- Header -->
     <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
-      <h2 class="text-headline-2xl">Notifications</h2>
+      <h2 class="text-headline-2xl">{{ $t('sidebar.notifications.title', 'Notifications') }}</h2>
       <button
         v-if="unreadCount > 0"
         class="text-xs text-sage-300 hover:text-white transition-colors"
         @click="markAllAsRead"
       >
-        Tout marquer comme lu
+        {{ $t('sidebar.notifications.markAllRead', 'Mark all as read') }}
       </button>
     </div>
 
@@ -64,9 +64,9 @@
         <div class="w-16 h-16 rounded-full bg-sage-800/50 flex items-center justify-center mb-4">
           <i class="fa fa-bell text-2xl text-sage-500"></i>
         </div>
-        <h3 class="text-sm font-medium text-white mb-2">Aucune notification</h3>
+        <h3 class="text-sm font-medium text-white mb-2">{{ $t('sidebar.notifications.noNotifications', 'No notifications') }}</h3>
         <p class="text-xs text-sage-400 text-center">
-          Vous êtes à jour ! Toutes vos notifications apparaîtront ici.
+          {{ $t('sidebar.notifications.upToDate', 'You are up to date! All notifications will appear here.') }}
         </p>
       </div>
     </div>
@@ -77,7 +77,7 @@
         class="w-full text-sm text-sage-300 hover:text-white transition-colors flex items-center justify-center gap-2"
         @click="$router.push('/notifications')"
       >
-        Voir toutes les notifications
+        {{ $t('sidebar.notifications.viewAll', 'View all notifications') }}
         <i class="fa fa-arrow-right text-xs"></i>
       </button>
     </div>

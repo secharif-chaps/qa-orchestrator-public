@@ -334,6 +334,8 @@ export default {
       title: 'Chaps-e',
       context: 'Context:',
       activeContext: 'Active context:',
+      thinking: 'Thinking...',
+      placeholder: 'Write a message...',
     },
   },
   help: {

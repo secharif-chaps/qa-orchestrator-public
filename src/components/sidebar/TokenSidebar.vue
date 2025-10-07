@@ -2,10 +2,10 @@
   <div class="h-[calc(100vh-140px)] flex flex-col">
     <!-- Header with Total Credits -->
     <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
-      <h2 class="text-headline-2xl">Crédits</h2>
+      <h2 class="text-headline-2xl">{{ $t('sidebar.tokens.title', 'Credits') }}</h2>
       <Badge
         variant="success"
-        :label="`${totalTokens} crédits`"
+        :label="$t('sidebar.tokens.credits', '{count} credits', { count: totalTokens })"
         icon="fa fa-coins"
         rounded
         size="md"
@@ -23,7 +23,7 @@
       <div v-else class="space-y-6">
         <!-- Today Section -->
         <div v-if="mockHistory.today.length > 0">
-          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider mb-3">Hier</h3>
+          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider mb-3">{{ $t('sidebar.tokens.yesterday', 'Yesterday') }}</h3>
           <div class="space-y-2">
             <div
               v-for="item in mockHistory.today"
@@ -99,7 +99,7 @@
             class="text-sm text-sage-300 hover:text-white transition-colors flex items-center gap-2"
             @click="$router.push('/tokens/history')"
           >
-            Voir tout l'historique
+            {{ $t('sidebar.tokens.viewHistory', 'View all history') }}
             <i class="fa fa-arrow-right text-xs"></i>
           </button>
         </div>
@@ -109,15 +109,15 @@
     <!-- Contact Card -->
     <div class="px-4 pb-4">
       <div class="bg-gradient-to-br from-rose-900/20 to-sage-900/20 rounded-lg p-4 border border-rose-500/20">
-        <h3 class="text-sm font-semibold text-white mb-2">Besoin de plus de Crédits ?</h3>
+        <h3 class="text-sm font-semibold text-white mb-2">{{ $t('sidebar.tokens.needMore', 'Need more Credits?') }}</h3>
         <p class="text-xs text-sage-300 mb-3">
-          Votre conseiller ChapsVision<br />
+          {{ $t('sidebar.tokens.advisor', 'Your ChapsVision advisor') }}<br />
           <span class="font-semibold text-white">Victoire ECHEKÉMAT</span>
         </p>
         <Button
           variant="secondary"
           size="sm"
-          label="Contacter"
+          :label="$t('sidebar.tokens.contact', 'Contact')"
           icon="fa fa-envelope"
           @click="handleContact"
         />

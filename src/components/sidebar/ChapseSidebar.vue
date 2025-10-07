@@ -2,7 +2,7 @@
   <div class="flex flex-col justify-between h-screen">
     <!-- Header -->
     <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
-      <h2 class="text-headline-2xl">Chaps-e</h2>
+      <h2 class="text-headline-2xl">{{ $t('sidebar.chapse.title', 'Chaps-e') }}</h2>
       <div class="flex items-center gap-2">
         <Button
           variant="ghost-primary"
@@ -20,7 +20,7 @@
       v-if="availableContexts.length > 0"
       class="px-4 py-2 border-b border-sage-800 flex items-center gap-2 flex-wrap"
     >
-      <span class="text-xs text-sage-200">Contexte :</span>
+      <span class="text-xs text-sage-200">{{ $t('sidebar.chapse.context', 'Context:') }}</span>
       <button
         v-for="context in availableContexts"
         :key="`${context.type}-${context.id}`"
@@ -56,7 +56,7 @@
         </div>
         <div class="bg-almond-300/30 text-white text-sm rounded-xl px-4 py-3">
           <i class="fa fa-spinner fa-spin mr-2"></i>
-          {{ $t('chapse.thinking') || 'Réflexion en cours...' }}
+          {{ $t('sidebar.chapse.thinking', 'Thinking...') }}
         </div>
       </div>
 
@@ -84,7 +84,7 @@
       v-if="hasActiveContexts"
       class="px-4 py-2 border-t border-sage-800 flex items-center gap-2 flex-wrap"
     >
-      <span class="text-xs text-sage-200">Contexte actif :</span>
+      <span class="text-xs text-sage-200">{{ $t('sidebar.chapse.activeContext', 'Active context:') }}</span>
       <ContextBadge
         v-for="context in activeContexts"
         :key="`active-${context.type}-${context.id}`"
@@ -100,7 +100,7 @@
         ref="textareaRef"
         v-model="userMessage"
         @keydown.enter.ctrl.prevent="handleSendMessage"
-        :placeholder="$t('chapse.placeholder') || 'Écrivez un message...'"
+        :placeholder="$t('sidebar.chapse.placeholder', 'Write a message...')"
         class="p-4 w-full h-32 bg-sage-900 rounded-block text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
         :disabled="isLoading"
       ></textarea>

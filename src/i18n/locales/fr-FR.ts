@@ -337,6 +337,8 @@ export default {
       title: 'Chaps-e',
       context: 'Contexte :',
       activeContext: 'Contexte actif :',
+      thinking: 'Réflexion en cours...',
+      placeholder: 'Écrivez un message...',
     },
   },
   workspaces: {
