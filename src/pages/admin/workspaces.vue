@@ -58,7 +58,7 @@
                 @click.stop
               >
                 <div class="p-4 border-b border-primary-stroke">
-                  <h3 class="text-sm font-medium text-primary mb-3">
+                  <h3 class="text-sm font-medium text-primary-light-content mb-3">
                     {{ $t('workspace.sort.label', 'Sort by:') }}
                   </h3>
                   <div class="space-y-2">
@@ -67,7 +67,7 @@
                         type="radio"
                         :checked="queryParams.sort === 'created_at'"
                         @change="updateSort('created_at')"
-                        class="w-4 h-4 text-primary border-primary-stroke focus:ring-primary/20"
+                        class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
                       />
                       <span class="text-sm">{{
                         $t('workspace.sort.created', 'Created Date')
@@ -78,7 +78,7 @@
                         type="radio"
                         :checked="queryParams.sort === 'name'"
                         @change="updateSort('name')"
-                        class="w-4 h-4 text-primary border-primary-stroke focus:ring-primary/20"
+                        class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
                       />
                       <span class="text-sm">{{ $t('workspace.sort.name', 'Name') }}</span>
                     </label>
@@ -87,7 +87,7 @@
                         type="radio"
                         :checked="queryParams.sort === 'member_count'"
                         @change="updateSort('member_count')"
-                        class="w-4 h-4 text-primary border-primary-stroke focus:ring-primary/20"
+                        class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
                       />
                       <span class="text-sm">{{
                         $t('workspace.sort.members', 'Member Count')
@@ -97,7 +97,7 @@
                 </div>
 
                 <div class="p-4">
-                  <h3 class="text-sm font-medium text-primary mb-3">
+                  <h3 class="text-sm font-medium text-primary-light-content mb-3">
                     {{ $t('workspace.sort.order', 'Sort Order:') }}
                   </h3>
                   <div class="space-y-2">
@@ -106,7 +106,7 @@
                         type="radio"
                         :checked="queryParams.order === 'asc'"
                         @change="updateOrder('asc')"
-                        class="w-4 h-4 text-primary border-primary-stroke focus:ring-primary/20"
+                        class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
                       />
                       <span class="text-sm flex items-center gap-2">
                         <i class="fa fa-sort-amount-up"></i>
@@ -118,7 +118,7 @@
                         type="radio"
                         :checked="queryParams.order === 'desc'"
                         @change="updateOrder('desc')"
-                        class="w-4 h-4 text-primary border-primary-stroke focus:ring-primary/20"
+                        class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
                       />
                       <span class="text-sm flex items-center gap-2">
                         <i class="fa fa-sort-amount-down"></i>
@@ -153,7 +153,9 @@
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
-        <p class="text-primary-light-content">{{ $t('workspace.loading', 'Loading workspaces...') }}</p>
+        <p class="text-primary-light-content">
+          {{ $t('workspace.loading', 'Loading workspaces...') }}
+        </p>
       </div>
 
       <!-- Workspaces List -->
@@ -184,7 +186,7 @@
               <div class="col-span-3 flex items-center gap-2">
                 <div class="text-center">
                   <span
-                    class="inline-flex items-center justify-center w-8 h-8 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                    class="inline-flex items-center justify-center w-8 h-8 bg-primary/10 text-primary-light-content rounded-full text-sm font-medium"
                   >
                     {{ workspace.memberCount }}
                   </span>
@@ -299,7 +301,6 @@
             variant="secondary"
           />
         </div>
-
       </div>
 
       <Pagination
@@ -485,7 +486,6 @@ const searchWorkspaces = (search: string) => {
   queryParams.search = search
   queryParams.page = 1 // Reset to first page when searching
 }
-
 
 // Actions
 const viewWorkspace = (id: number) => {

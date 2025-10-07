@@ -88,7 +88,10 @@
               size="sm"
               clearable
             />
-            <div v-else class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md font-mono">
+            <div
+              v-else
+              class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md font-mono"
+            >
               {{
                 workflow.api_key_obfuscated || $t('admin.workflows.notConfigured', 'Not configured')
               }}
@@ -103,7 +106,7 @@
             <select
               v-if="isEditing"
               v-model="editData.llm"
-              class="w-full px-3 py-2 rounded-md bg-base-200 border border-border text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              class="w-full px-3 py-2 rounded-md bg-base-200 border border-border text-primary-light-content text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
             >
               <option value="claude">Claude</option>
               <option value="mistral">Mistral</option>
@@ -206,7 +209,9 @@
           <label class="block text-sm font-medium text-base mb-2">
             {{ $t('admin.workflows.apiKey', 'API Key') }}
           </label>
-          <div class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md font-mono">
+          <div
+            class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md font-mono"
+          >
             {{
               workflow.api_key_obfuscated || $t('admin.workflows.notConfigured', 'Not configured')
             }}
@@ -242,7 +247,14 @@ interface Props {
 const { workflow, loading = false } = defineProps<Props>()
 
 const emit = defineEmits<{
-  update: [taskType: string, data: { workflow_id?: string | null; api_key?: string | null; llm?: 'claude' | 'mistral' | null }]
+  update: [
+    taskType: string,
+    data: {
+      workflow_id?: string | null
+      api_key?: string | null
+      llm?: 'claude' | 'mistral' | null
+    },
+  ]
 }>()
 
 // Edit state
@@ -468,7 +480,11 @@ const cancelEdit = () => {
 const saveChanges = () => {
   if (!hasChanges.value) return
 
-  const updateData: { workflow_id?: string | null; api_key?: string | null; llm?: 'claude' | 'mistral' | null } = {}
+  const updateData: {
+    workflow_id?: string | null
+    api_key?: string | null
+    llm?: 'claude' | 'mistral' | null
+  } = {}
 
   // Include workflow_id if changed
   const originalWorkflowId = workflow.workflow_id || ''

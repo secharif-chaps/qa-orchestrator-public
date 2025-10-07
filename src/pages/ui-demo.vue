@@ -18,7 +18,7 @@
               :class="[
                 'px-6 py-3 text-sm font-medium transition-all relative border-b-2',
                 activeTab === tab.id
-                  ? 'text-primary bg-primary/5  border-primary'
+                  ? 'text-primary-light-content bg-primary/5  border-primary'
                   : 'text-primary-light-content  hover:bg-base-200/50 border-transparent',
               ]"
             >
@@ -127,7 +127,7 @@
                 <button
                   v-if="!showDismissible1 || !showDismissible2 || !showDismissible3"
                   @click="resetDismissible"
-                  class="text-primary text-sm hover:underline"
+                  class="text-primary-light-content text-sm hover:underline"
                 >
                   Reset dismissed badges
                 </button>
@@ -202,7 +202,7 @@
               <button
                 v-if="!showAlert1 || !showAlert2"
                 @click="((showAlert1 = true), (showAlert2 = true))"
-                class="text-primary text-sm hover:underline"
+                class="text-primary-light-content text-sm hover:underline"
               >
                 Reset dismissed alerts
               </button>

@@ -80,7 +80,7 @@
       <Card>
         <p>Présence en ligne</p>
         <div class="flex bg-base-200 items-center gap-3 rounded-card px-4 py-3">
-          <i class="fa-solid fa-link fa-fw text-primary"></i>
+          <i class="fa-solid fa-link fa-fw text-primary-light-content"></i>
           <div class="flex flex-col gap-1 w-44">
             <span class="text-sm truncate"> Site web </span>
             <span class="text-xs text-primary-light-content truncate">

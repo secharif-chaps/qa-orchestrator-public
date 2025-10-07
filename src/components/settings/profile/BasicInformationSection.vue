@@ -4,7 +4,9 @@
       <div class="flex items-center justify-between">
         <div>
           <h2 class="text-lg font-semibold">{{ $t('settings.profile.basic.title') }}</h2>
-          <p class="text-sm text-primary-light-content mt-1">{{ $t('settings.profile.basic.description') }}</p>
+          <p class="text-sm text-primary-light-content mt-1">
+            {{ $t('settings.profile.basic.description') }}
+          </p>
         </div>
         <Badge
           :variant="user?.expired ? 'error' : 'success'"

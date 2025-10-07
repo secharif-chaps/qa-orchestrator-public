@@ -31,8 +31,10 @@
         :class="[
           inputClasses,
           {
-            'bg-sage-700 placeholder:text-primary-light-content dark:placeholder:text-white border-primary-700': dark,
-            'bg-base-100 border-primary-stroke placeholder:text-primary-light-content/60 dark:placeholder:text-sage-300': !dark,
+            'bg-sage-700 placeholder:text-primary-light-content dark:placeholder:text-white border-primary-700':
+              dark,
+            'bg-base-100 border-primary-stroke placeholder:text-primary-light-content/60 dark:placeholder:text-sage-300':
+              !dark,
           },
         ]"
         class="w-full border rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-200 dark:focus:ring-primary-700 dark:focus:border-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"

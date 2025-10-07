@@ -43,10 +43,7 @@
         </div>
 
         <!-- View Mode Toggle -->
-        <ButtonGroup
-          v-model="viewMode"
-          :options="viewModeOptions"
-        />
+        <ButtonGroup v-model="viewMode" :options="viewModeOptions" />
       </div>
     </div>
   </div>
@@ -71,13 +68,13 @@ const viewModeOptions = computed(() => [
     value: 'table',
     label: 'Table',
     icon: 'fa fa-list',
-    title: t('company.view.table', 'Table View')
+    title: t('company.view.table', 'Table View'),
   },
   {
     value: 'grid',
     label: 'Grid',
     icon: 'fa fa-th-large',
-    title: t('company.view.grid', 'Grid View')
-  }
+    title: t('company.view.grid', 'Grid View'),
+  },
 ])
 </script>

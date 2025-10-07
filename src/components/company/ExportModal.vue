@@ -8,11 +8,13 @@
     color="primary"
   >
     <template #description>
-      <p class="text-primary-light-content">Select which sections to include in your PowerPoint export:</p>
+      <p class="text-primary-light-content">
+        Select which sections to include in your PowerPoint export:
+      </p>
 
       <!-- Select All / None toggle -->
       <div class="flex justify-between mb-4">
-        <span v-if="showSavedMessage" class="text-xs text-primary animate-fade-out">
+        <span v-if="showSavedMessage" class="text-xs text-primary-light-content animate-fade-out">
           <i class="fa fa-check-circle mr-1"></i>Preferences saved
         </span>
         <Button

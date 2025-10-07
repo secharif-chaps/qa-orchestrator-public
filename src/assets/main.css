@@ -150,17 +150,17 @@
   --color-sidebar-count: var(--theme-color-sidebar-count);
 
   /* Sage Color Palette */
-  --color-sage-50: #f5f9f7;
-  --color-sage-100: #e8f0ee;
-  --color-sage-200: #d1e1dd;
-  --color-sage-300: #a9c1b8;
-  --color-sage-400: #607c7f;
-  --color-sage-500: #607c7f;
-  --color-sage-600: #5d7374;
-  --color-sage-700: #4f6162;
-  --color-sage-800: #445556;
-  --color-sage-900: #374648;
-  --color-sage-950: #2b393a;
+  --color-sage-50: var(--theme-color-sage-50);
+  --color-sage-100: var(--theme-color-sage-100);
+  --color-sage-200: var(--theme-color-sage-200);
+  --color-sage-300: var(--theme-color-sage-300);
+  --color-sage-400: var(--theme-color-sage-400);
+  --color-sage-500: var(--theme-color-sage-500);
+  --color-sage-600: var(--theme-color-sage-600);
+  --color-sage-700: var(--theme-color-sage-700);
+  --color-sage-800: var(--theme-color-sage-800);
+  --color-sage-900: var(--theme-color-sage-900);
+  --color-sage-950: var(--theme-color-sage-950);
 
   --color-primary-50: #f5f9f7;
   --color-primary-100: #e8f0ee;
@@ -287,7 +287,7 @@
   --color-red-950: #4c051d;
 
   --color-error-50: var(--color-red-50);
-  --color-error-100: var(--color-red-100);  
+  --color-error-100: var(--color-red-100);
   --color-error-200: var(--color-red-200);
   --color-error-300: var(--color-red-300);
   --color-error-400: var(--color-red-400);
@@ -347,15 +347,27 @@
     font-family: 'Hanken Grotesk', sans-serif;
     font-optical-sizing: auto;
 
+    --theme-color-sage-50: #f5f9f7;
+    --theme-color-sage-100: #e8f0ee;
+    --theme-color-sage-200: #d1e1dd;
+    --theme-color-sage-300: #a9c1b8;
+    --theme-color-sage-400: #607c7f;
+    --theme-color-sage-500: #607c7f;
+    --theme-color-sage-600: #5d7374;
+    --theme-color-sage-700: #4f6162;
+    --theme-color-sage-800: #445556;
+    --theme-color-sage-900: #374648;
+    --theme-color-sage-950: #2b393a;
+
     --theme-color-base-100: var(--color-white);
     --theme-color-base-200: var(--color-sage-50);
     --theme-color-base-300: var(--color-sage-100);
 
     --theme-color-primary: var(--color-primary-600);
     --theme-color-primary-content: var(--color-white);
-    --theme-color-primary-light: var(--color-primary-100);
+    --theme-color-primary-light: var(--color-primary-50);
     --theme-color-primary-light-content: var(--color-primary-700);
-    
+
     --theme-color-secondary: var(--color-secondary-100);
     --theme-color-secondary-content: var(--color-black);
 
@@ -402,7 +414,7 @@
     --theme-color-primary-content: var(--color-sage-50);
     --theme-color-primary-light: var(--color-primary-200);
     --theme-color-primary-light-content: var(--color-primary-700);
-    
+
     --theme-color-secondary: var(--color-secondary-200);
     --theme-color-secondary-content: var(--color-black);
 
@@ -440,7 +452,111 @@
     --theme-color-info-stroke: var(--color-info-300);
   }
 
-  
+  :root[data-theme='contrast'] {
+    --theme-color-sage-50: var(--color-white);
+    --theme-color-sage-100: var(--color-white);
+    --theme-color-sage-200: var(--color-white);
+    --theme-color-sage-300: var(--color-white);
+    --theme-color-sage-400: var(--color-white);
+    --theme-color-sage-500: var(--color-white);
+    --theme-color-sage-600: var(--color-black);
+    --theme-color-sage-700: var(--color-black);
+    --theme-color-sage-800: var(--color-black);
+    --theme-color-sage-900: var(--color-black);
+    --theme-color-sage-950: var(--color-black);
+
+    --theme-color-base-100: var(--color-white);
+    --theme-color-base-200: var(--color-white);
+    --theme-color-base-300: var(--color-white);
+
+    --theme-color-primary: var(--color-black);
+    --theme-color-primary-content: var(--color-white);
+    --theme-color-primary-light: var(--color-black);
+    --theme-color-primary-light-content: var(--color-black);
+
+    --theme-color-secondary: var(--color-black);
+    --theme-color-secondary-content: var(--color-black);
+
+    --theme-color-accent: var(--color-white);
+    --theme-color-accent-content: var(--color-black);
+
+    /* SUCCESS */
+    --theme-color-success: var(--color-black);
+    --theme-color-success-content: var(--color-black);
+    --theme-color-success-light: var(--color-black);
+    --theme-color-success-light-content: var(--color-white);
+
+    --theme-color-warning: var(--color-black);
+    --theme-color-warning-content: var(--color-black);
+    --theme-color-warning-light: var(--color-black);
+    --theme-color-warning-light-content: var(--color-white);
+
+    --theme-color-error: var(--color-black);
+    --theme-color-error-content: var(--color-white);
+    --theme-color-error-light: var(--color-black);
+    --theme-color-error-light-content: var(--color-white);
+
+    --theme-color-info: var(--color-black);
+    --theme-color-info-content: var(--color-white);
+    --theme-color-info-light: var(--color-black);
+    --theme-color-info-light-content: var(--color-white);
+
+    --theme-color-primary-stroke: var(--color-black);
+    --theme-color-primary-light-stroke: var(--color-black);
+    --theme-color-secondary-stroke: var(--color-black);
+    --theme-color-accent-stroke: var(--color-black);
+    --theme-color-success-stroke: var(--color-black);
+    --theme-color-warning-stroke: var(--color-black);
+    --theme-color-error-stroke: var(--color-black);
+    --theme-color-info-stroke: var(--color-black);
+  }
+
+  :root[data-theme='contrast'].dark {
+    --theme-color-base-100: var(--color-black);
+    --theme-color-base-200: var(--color-black);
+    --theme-color-base-300: var(--color-black);
+
+    --theme-color-primary: var(--color-black);
+    --theme-color-primary-content: var(--color-white);
+    --theme-color-primary-light: var(--color-black);
+    --theme-color-primary-light-content: var(--color-white);
+
+    --theme-color-secondary: var(--color-black);
+    --theme-color-secondary-content: var(--color-white);
+
+    --theme-color-accent: var(--color-white);
+    --theme-color-accent-content: var(--color-black);
+
+    /* SUCCESS */
+    --theme-color-success: var(--color-black);
+    --theme-color-success-content: var(--color-black);
+    --theme-color-success-light: var(--color-black);
+    --theme-color-success-light-content: var(--color-white);
+
+    --theme-color-warning: var(--color-black);
+    --theme-color-warning-content: var(--color-black);
+    --theme-color-warning-light: var(--color-black);
+    --theme-color-warning-light-content: var(--color-white);
+
+    --theme-color-error: var(--color-black);
+    --theme-color-error-content: var(--color-white);
+    --theme-color-error-light: var(--color-black);
+    --theme-color-error-light-content: var(--color-white);
+
+    --theme-color-info: var(--color-black);
+    --theme-color-info-content: var(--color-white);
+    --theme-color-info-light: var(--color-black);
+    --theme-color-info-light-content: var(--color-white);
+
+    --theme-color-primary-stroke: var(--color-white);
+    --theme-color-primary-light-stroke: var(--color-black);
+    --theme-color-secondary-stroke: var(--color-black);
+    --theme-color-accent-stroke: var(--color-black);
+    --theme-color-success-stroke: var(--color-black);
+    --theme-color-warning-stroke: var(--color-black);
+    --theme-color-error-stroke: var(--color-black);
+    --theme-color-info-stroke: var(--color-black);
+  }
 }
 
 @layer components {
@@ -528,11 +644,11 @@
     color: var(--color-white);
   }
 
-  .text-primary-dark {
+  .text-primary-content-dark {
     color: var(--color-sage-700);
   }
 
-  .text-primary-medium {
+  .text-primary-content-medium {
     color: var(--color-sage-500);
   }
 

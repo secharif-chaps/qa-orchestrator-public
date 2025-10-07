@@ -6,7 +6,9 @@
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
-        <p class="text-primary-light-content">{{ $t('folder.loading', 'Loading folder...') }}</p>
+        <p class="text-primary-light-content">
+          {{ $t('folder.loading', 'Loading folder...') }}
+        </p>
       </div>
 
       <!-- Error State -->
@@ -72,7 +74,10 @@
                 v-for="item in filteredItems"
                 :key="item.id"
                 class="px-6 py-4 hover:bg-base-200 transition-colors"
-                :class="{ 'cursor-auto': companyFilter === 'archived', 'cursor-pointer': companyFilter !== 'archived' }"
+                :class="{
+                  'cursor-auto': companyFilter === 'archived',
+                  'cursor-pointer': companyFilter !== 'archived',
+                }"
                 @click="companyFilter !== 'archived' && navigateToItem(item)"
               >
                 <div class="grid grid-cols-12 gap-4 items-center">
@@ -86,7 +91,7 @@
                           :src="getLogoUrl(item.website)"
                           :alt="`${item.name} logo`"
                           class="w-full h-full object-contain p-1"
-                          :class="{ 'grayscale': companyFilter === 'archived' }"
+                          :class="{ grayscale: companyFilter === 'archived' }"
                           @error="item.showFallbackIcon = true"
                           v-show="!item.showFallbackIcon"
                         />
@@ -98,7 +103,7 @@
                           "
                           class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
                         >
-                          <i class="fas fa-building text-primary"></i>
+                          <i class="fas fa-building text-primary-light-content"></i>
                         </div>
                       </div>
                       <div class="flex-1">
@@ -110,10 +115,14 @@
                     <Badge variant="primary" :label="item.type" size="sm" />
                   </div>
                   <div class="col-span-2">
-                    <span class="text-sm text-primary-light-content">{{ formatDate(item.created_at) }}</span>
+                    <span class="text-sm text-primary-light-content">{{
+                      formatDate(item.created_at)
+                    }}</span>
                   </div>
                   <div class="col-span-2">
-                    <span class="text-sm text-primary-light-content">{{ item.owner_username || 'N/A' }}</span>
+                    <span class="text-sm text-primary-light-content">{{
+                      item.owner_username || 'N/A'
+                    }}</span>
                   </div>
                   <div class="col-span-2 text-right">
                     <div class="flex items-center justify-end gap-2">
@@ -132,13 +141,17 @@
                         size="sm"
                         :icon="companyFilter === 'archived' ? 'fa fa-undo' : 'fa fa-archive'"
                         icon-only
-                        :title="companyFilter === 'archived' ?$t('company.restore.title', 'Restore Company') : $t('company.delete.title', 'Delete Company')"
+                        :title="
+                          companyFilter === 'archived'
+                            ? $t('company.restore.title', 'Restore Company')
+                            : $t('company.delete.title', 'Delete Company')
+                        "
                         @click.stop="confirmArchiveCompany(item)"
                       />
                       <!-- Deleted Tag -->
                       <span
-                        v-if="companyFilter==='archived'"
-                        class="inline-block text-xs bg-gray-200 text-gray-600  px-2 py-0.5 rounded ml-2"
+                        v-if="companyFilter === 'archived'"
+                        class="inline-block text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded ml-2"
                       >
                         {{ $t('folder.item.deleted', 'Deleted') }}
                       </span>
@@ -197,7 +210,6 @@
       :company-to-restore="companyToArchive"
       @restore-company="handleRestoreCompany"
     />
-
   </div>
 </template>
 
@@ -315,10 +327,9 @@ const confirmArchiveCompany = (item: FolderItem) => {
       created_at: item.created_at,
       owner_username: item.owner_username,
     } as Company
-    if (companyFilter.value === 'archived'){
+    if (companyFilter.value === 'archived') {
       showRestoreCompanyModal.value = true
-    }
-    else {
+    } else {
       showArchiveCompanyModal.value = true
     }
   }

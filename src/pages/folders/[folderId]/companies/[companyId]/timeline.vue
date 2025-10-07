@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col gap-4">
     <!-- Loading State -->
-    <PageState 
-      v-if="taskState.isLoading.value" 
-      state="loading" 
+    <PageState
+      v-if="taskState.isLoading.value"
+      state="loading"
       page-type="timeline"
       :task-progress="taskState.taskProgress.value"
     />
-    
+
     <!-- Error State -->
     <PageState
       v-else-if="taskState.hasErrors.value"
@@ -16,13 +16,9 @@
       :error-message="taskState.errorMessages.value[0]"
       @retry="handleRetry"
     />
-    
+
     <!-- No Data State -->
-    <PageState 
-      v-else-if="!hasTimelineData" 
-      state="no-data" 
-      page-type="timeline"
-    />
+    <PageState v-else-if="!hasTimelineData" state="no-data" page-type="timeline" />
 
     <!-- Timeline visualization -->
     <div v-if="hasTimelineData" class="relative">
@@ -34,7 +30,9 @@
             <span class="text-lg font-semibold">{{ $t('timeline.title') }}</span>
           </div>
           <div class="w-64 relative">
-            <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-primary-light-content"></i>
+            <i
+              class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-primary-light-content"
+            ></i>
             <input
               v-model="searchQuery"
               :placeholder="$t('timeline.search.placeholder')"
@@ -80,11 +78,11 @@ const { data: company, refetch } = useQuery(
     // Poll every 5 seconds when any task is running
     refetchInterval: () => {
       const hasRunningTasks = company.value?.tasks?.some(
-        (t) => t.status === 'running' || t.status === 'pending'
+        (t) => t.status === 'running' || t.status === 'pending',
       )
       return hasRunningTasks ? 5000 : false
     },
-  }
+  },
 )
 
 // Task state management

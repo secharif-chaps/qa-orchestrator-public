@@ -1,6 +1,9 @@
 <template>
   <!-- Delete Confirmation Modal with backdrop blur -->
-  <div v-if="showDeleteModal && companyToDelete" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+  <div
+    v-if="showDeleteModal && companyToDelete"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+  >
     <div class="bg-base-100 rounded-lg shadow-xl max-w-md w-full mx-4">
       <!-- Header -->
       <div class="p-6 border-b border-primary-stroke">
@@ -27,10 +30,20 @@
             <i class="fa fa-exclamation-triangle text-red-500 mt-0.5"></i>
             <div class="text-red-700 text-sm leading-relaxed">
               <p class="font-medium mb-2">
-                {{ $t('company.delete.warning.title', 'Warning: This will permanently delete the company') }}
+                {{
+                  $t(
+                    'company.delete.warning.title',
+                    'Warning: This will permanently delete the company',
+                  )
+                }}
               </p>
               <p>
-                {{ $t('company.delete.warning.message', 'All associated data including tasks, reports, and history will be permanently removed. This action cannot be undone.') }}
+                {{
+                  $t(
+                    'company.delete.warning.message',
+                    'All associated data including tasks, reports, and history will be permanently removed. This action cannot be undone.',
+                  )
+                }}
               </p>
             </div>
           </div>
@@ -47,17 +60,24 @@
               <span class="font-medium">{{ companyToDelete.name }}</span>
             </div>
             <div v-if="companyToDelete.website" class="flex justify-between">
-              <span class="text-primary-light-content">{{ $t('company.website', 'Website') }}:</span>
+              <span class="text-primary-light-content"
+                >{{ $t('company.website', 'Website') }}:</span
+              >
               <span class="text-xs">{{ companyToDelete.website }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-primary-light-content">{{ $t('company.created', 'Created') }}:</span>
+              <span class="text-primary-light-content"
+                >{{ $t('company.created', 'Created') }}:</span
+              >
               <span>{{ formatDate(companyToDelete.created_at) }}</span>
             </div>
-            <div v-if="companyToDelete.tasks && companyToDelete.tasks.length > 0" class="flex justify-between">
+            <div
+              v-if="companyToDelete.tasks && companyToDelete.tasks.length > 0"
+              class="flex justify-between"
+            >
               <span class="text-primary-light-content">{{ $t('company.tasks', 'Tasks') }}:</span>
               <span class="inline-flex items-center gap-1">
-                <i class="fa fa-tasks text-primary text-xs"></i>
+                <i class="fa fa-tasks text-primary-light-content text-xs"></i>
                 {{ companyToDelete.tasks.length }} {{ $t('company.tasks.count', 'tasks') }}
               </span>
             </div>
@@ -70,7 +90,9 @@
             {{ $t('company.delete.confirm.message', 'Type the company name to confirm deletion:') }}
           </p>
           <div class="space-y-2">
-            <code class="text-sm bg-base-300 px-2 py-1 rounded block">{{ companyToDelete.name }}</code>
+            <code class="text-sm bg-base-300 px-2 py-1 rounded block">{{
+              companyToDelete.name
+            }}</code>
             <Input
               v-model="confirmationText"
               :placeholder="$t('company.delete.confirm.placeholder', 'Enter company name...')"
@@ -138,13 +160,13 @@ const deleteCompany = async () => {
 
   try {
     await apiDeleteCompany(props.companyToDelete.id.toString())
-    
+
     // Show success toast
     toast.success(`Company "${props.companyToDelete.name}" has been deleted successfully`)
-    
+
     // Emit event first, then clean up
     emit('delete-company')
-    
+
     // Small delay to ensure parent component processes the event
     setTimeout(() => {
       showDeleteModal.value = false

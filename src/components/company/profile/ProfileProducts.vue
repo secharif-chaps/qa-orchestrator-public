@@ -2,13 +2,13 @@
   <div class="bg-base-100 rounded-lg p-4">
     <div class="flex flex-col gap-4">
       <div class="flex items-center justify-between">
-        <h3 class="space-x-2 font-bold text-primary">
+        <h3 class="space-x-2 font-bold text-primary-light-content">
           <i class="fa fa-box-open"></i>
           <span>{{ $t('profile.sections.products.title') }}</span>
         </h3>
         <RouterLink :to="`/companies/${companyId}/products`">
-          <Button 
-            variant="ghost-primary" 
+          <Button
+            variant="ghost-primary"
             label="View All"
             icon="fa fa-arrow-right"
             icon-position="right"
@@ -19,25 +19,29 @@
 
       <!-- Customer Type -->
       <div v-if="company?.products?.customerType">
-        <h4 class="font-medium text-primary mb-2 flex items-center gap-2">
+        <h4 class="font-medium text-primary-light-content mb-2 flex items-center gap-2">
           <i class="fa fa-users"></i>
           Customer Type
         </h4>
-        <p class="text-sm text-primary-light-content">{{ company.products.customerType }}</p>
+        <p class="text-sm text-primary-light-content">
+          {{ company.products.customerType }}
+        </p>
       </div>
 
       <!-- Marketing Positioning -->
       <div v-if="company?.products?.marketingPositioning">
-        <h4 class="font-medium text-primary mb-2 flex items-center gap-2">
+        <h4 class="font-medium text-primary-light-content mb-2 flex items-center gap-2">
           <i class="fa fa-bullseye"></i>
           Marketing Positioning
         </h4>
-        <p class="text-sm text-primary-light-content">{{ company.products.marketingPositioning }}</p>
+        <p class="text-sm text-primary-light-content">
+          {{ company.products.marketingPositioning }}
+        </p>
       </div>
 
       <!-- Product Range -->
       <div v-if="company?.products?.range?.length">
-        <h4 class="font-medium text-primary mb-2 flex items-center gap-2">
+        <h4 class="font-medium text-primary-light-content mb-2 flex items-center gap-2">
           <i class="fa fa-box"></i>
           {{ $t('profile.sections.products.range') }}
         </h4>
@@ -57,7 +61,7 @@
 
       <!-- Partner Brands -->
       <div v-if="company?.products?.partnerBrands?.length">
-        <h4 class="font-medium text-primary mb-2 flex items-center gap-2">
+        <h4 class="font-medium text-primary-light-content mb-2 flex items-center gap-2">
           <i class="fa fa-handshake"></i>
           {{ $t('profile.sections.products.partnerBrands') }}
         </h4>
@@ -77,7 +81,7 @@
 
       <!-- Private Labels -->
       <div v-if="company?.products?.privateLabels?.length">
-        <h4 class="font-medium text-primary mb-2 flex items-center gap-2">
+        <h4 class="font-medium text-primary-light-content mb-2 flex items-center gap-2">
           <i class="fa fa-tag"></i>
           {{ $t('profile.sections.products.privateLabels', { company: company?.name }) }}
         </h4>
@@ -97,7 +101,7 @@
 
       <!-- Product Categories -->
       <!-- <div v-if="company?.products?.categories && Object.keys(company.products.categories).length">
-        <h4 class="font-medium text-primary mb-2 flex items-center gap-2">
+        <h4 class="font-medium text-primary-light-content mb-2 flex items-center gap-2">
           <i class="fa fa-sitemap"></i>
           Product Categories
         </h4>
@@ -112,7 +116,7 @@
               <span
                 v-for="item in items"
                 :key="item"
-                class="bg-primary/10 text-primary rounded-full px-2 py-1 text-xs"
+                class="bg-primary/10 text-primary-light-content rounded-full px-2 py-1 text-xs"
               >
                 {{ item }}
               </span>

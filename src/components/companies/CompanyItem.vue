@@ -22,11 +22,13 @@
             v-show="showFallbackIcon || !getCompanyDomain(company.website)"
             class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
           >
-            <i class="fas fa-building text-primary text-xl"></i>
+            <i class="fas fa-building text-primary-light-content text-xl"></i>
           </div>
         </div>
         <div class="flex-1 min-w-0">
-          <h3 class="text-lg font-semibold group-hover:text-primary transition-colors truncate">
+          <h3
+            class="text-lg font-semibold group-hover:text-primary-light-content transition-colors truncate"
+          >
             {{ company.name }}
           </h3>
           <p v-if="company.website" class="text-sm text-primary-light-content truncate">
@@ -45,7 +47,7 @@
           :href="formatWebsiteUrl(company.website)"
           target="_blank"
           rel="noopener noreferrer"
-          class="text-sm text-primary hover:text-primary/80 transition-colors truncate"
+          class="text-sm text-primary-light-content hover:text-primary-content/80 transition-colors truncate"
           @click.stop
         >
           {{ company.website }}
@@ -98,12 +100,12 @@
             v-show="showFallbackIcon || !getCompanyDomain(company.website)"
             class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
           >
-            <i class="fas fa-building text-primary"></i>
+            <i class="fas fa-building text-primary-light-content"></i>
           </div>
         </div>
 
         <div class="flex-1 min-w-0">
-          <h3 class="font-medium hover:text-primary transition-colors truncate">
+          <h3 class="font-medium hover:text-primary-light-content transition-colors truncate">
             {{ company.name }}
           </h3>
           <p v-if="company.website" class="text-sm text-primary-light-content truncate">

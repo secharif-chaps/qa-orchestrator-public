@@ -17,7 +17,7 @@
         </div>
 
         <div class="flex-1">
-          <h3 class="font-semibold text-primary text-lg">
+          <h3 class="font-semibold text-primary-light-content text-lg">
             {{ member.firstName }} {{ member.lastName }}
           </h3>
           <p class="text-primary-light-content text-sm mt-0.5">

@@ -13,7 +13,9 @@
         </div>
       </div>
       <div class="ml-4 flex-1">
-        <h3 class="text-lg font-medium group-hover:text-primary transition-colors">{{ title }}</h3>
+        <h3 class="text-lg font-medium group-hover:text-primary-light-content transition-colors">
+          {{ title }}
+        </h3>
         <p class="text-sm text-primary-light-content">{{ description }}</p>
       </div>
     </div>

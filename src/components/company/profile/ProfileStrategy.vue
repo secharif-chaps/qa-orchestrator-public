@@ -2,7 +2,7 @@
   <div class="bg-base-100 rounded-lg p-4">
     <div class="flex flex-col gap-4">
       <div class="col-span-2">
-        <h3 class="space-x-2 font-bold text-primary">
+        <h3 class="space-x-2 font-bold text-primary-light-content">
           <i class="fa fa-chart-sine"></i>
           <span>{{ $t('profile.sections.digital.title') }}</span>
         </h3>
@@ -82,7 +82,7 @@
             class="flex items-center gap-3 bg-base-200 rounded p-3"
           >
             <div class="font-medium text-primary-light-content">{{ account.platform }}</div>
-            <div class="text-primary">{{ account.handle }}</div>
+            <div class="text-primary-light-content">{{ account.handle }}</div>
             <div class="text-primary-light-content text-xs">{{ account.description }}</div>
           </div>
           <Source :sourced-value="company.digital.socialMediaAccounts" />

@@ -61,7 +61,7 @@ const description = computed(() => {
     case 'no-users':
       return 'Add your first team member to get started with collaboration'
     case 'no-results':
-      return props.hasSearch 
+      return props.hasSearch
         ? 'Try a different search term or filter'
         : 'No users match the current filters'
     case 'loading':

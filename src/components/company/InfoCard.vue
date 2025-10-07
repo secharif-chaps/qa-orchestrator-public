@@ -8,12 +8,12 @@
       class="bg-base-100 border border-primary-stroke rounded-lg p-6 h-full hover:ring-4 hover:ring-primary/70 ring-offset-2 ring-offset-bg2  transition-shadow duration-300 flex flex-col gap-2"
     >
       <div class="flex justify-between items-center">
-        <div class="bg-primary/20 size-10 rounded-lg flex items-center justify-center text-primary"> 
+        <div class="bg-primary/20 size-10 rounded-lg flex items-center justify-center text-primary-light-content"> 
           <i class="text-2xl fas " :class="loading ? ' fa-spinner-third fa-spin' : icon" />
         </div>
-        <i class="fa fa-arrow-right text-primary ml-1"></i>
+        <i class="fa fa-arrow-right text-primary-light-content ml-1"></i>
       </div>
-      <h3 class="text-primary">{{ title }}</h3>
+      <h3 class="text-primary-light-content">{{ title }}</h3>
 
       <p class="text-primary-light-content text-sm flex-grow">
         <span v-if="loading" class="flex items-center gap-2">

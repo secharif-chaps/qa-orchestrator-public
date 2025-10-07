@@ -106,7 +106,9 @@
                   size="xs"
                 />
               </div>
-              <p class="text-xs text-primary-light-content truncate">{{ task.description }}</p>
+              <p class="text-xs text-primary-light-content truncate">
+                {{ task.description }}
+              </p>
 
               <!-- Token information for admins -->
               <div

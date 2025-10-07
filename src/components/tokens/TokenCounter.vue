@@ -60,7 +60,10 @@
           </div> -->
 
           <!-- Loading State -->
-          <div v-if="isLoading" class="mt-2 flex items-center gap-2 text-xs text-primary-light-content">
+          <div
+            v-if="isLoading"
+            class="mt-2 flex items-center gap-2 text-xs text-primary-light-content"
+          >
             <div class="w-2 h-2 bg-primary/60 rounded-full animate-pulse"></div>
             Loading token data...
           </div>

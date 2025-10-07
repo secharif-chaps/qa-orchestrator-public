@@ -3,7 +3,7 @@
     class="flex gap-3 mb-4"
     :class="{
       'justify-start': message.role === 'assistant',
-      'justify-end': message.role === 'user'
+      'justify-end': message.role === 'user',
     }"
   >
     <!-- Chaps-e Avatar (left side for assistant messages) -->
@@ -12,21 +12,15 @@
       class="flex-shrink-0 w-8 h-8 rounded-full bg-almond-300/50 flex items-center justify-center"
     >
       <img v-if="chapseAvatar" :src="chapseAvatar" class="w-6 h-6" alt="Chaps-e" />
-      <i v-else class="fa fa-robot text-primary text-sm"></i>
+      <i v-else class="fa fa-robot text-primary-light-content text-sm"></i>
     </div>
 
     <!-- Message Content -->
-    <div
-      class="max-w-[90%] rounded-xl px-4 py-3 text-sm"
-      :class="messageClasses"
-    >
+    <div class="max-w-[90%] rounded-xl px-4 py-3 text-sm" :class="messageClasses">
       <div v-html="formattedContent"></div>
 
       <!-- Timestamp -->
-      <div
-        v-if="showTimestamp"
-        class="text-[10px] mt-2 opacity-60"
-      >
+      <div v-if="showTimestamp" class="text-[10px] mt-2 opacity-60">
         {{ formattedTime }}
       </div>
     </div>

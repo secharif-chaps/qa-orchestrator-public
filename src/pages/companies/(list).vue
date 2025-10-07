@@ -21,7 +21,9 @@
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
-        <p class="text-primary-light-content">{{ $t('company.loading', 'Loading companies...') }}</p>
+        <p class="text-primary-light-content">
+          {{ $t('company.loading', 'Loading companies...') }}
+        </p>
       </div>
 
       <!-- Companies List -->
@@ -80,7 +82,10 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else-if="status === 'success'" class="bg-base-100 rounded-lg shadow-sm p-12 text-center">
+      <div
+        v-else-if="status === 'success'"
+        class="bg-base-100 rounded-lg shadow-sm p-12 text-center"
+      >
         <i class="fa fa-building text-4xl text-primary-light-content/50 mb-4"></i>
         <h3 class="text-lg font-medium mb-2">
           {{

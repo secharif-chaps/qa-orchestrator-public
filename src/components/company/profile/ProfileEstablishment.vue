@@ -1,7 +1,7 @@
 <template>
   <div class="bg-base-200 rounded-card border border-primary-stroke p-4">
     <div class="items-center flex gap-6 relative">
-      <i class="fa fa-calendar text-primary text-2xl"></i>
+      <i class="fa fa-calendar text-primary-light-content text-2xl"></i>
       <div>
         <h2>
           {{ getSourcedValue(company?.profile?.establishmentYear) ?? $t('common.notFound') }}

@@ -105,7 +105,6 @@ const closeIconClasses = computed(() => {
 const variantClasses = computed(() => {
   const isRounded = 'rounded-full'
 
-
   switch (props.variant) {
     case 'success':
       return `${isRounded} bg-success-light text-success-light-content border border-success-stroke`

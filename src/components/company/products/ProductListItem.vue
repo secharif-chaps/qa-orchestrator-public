@@ -4,11 +4,13 @@
       <div
         class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
       >
-        <i :class="categoryIcon" class="text-primary"></i>
+        <i :class="categoryIcon" class="text-primary-light-content"></i>
       </div>
       <div class="flex-1">
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
-        <p class="text-sm text-primary-light-content">{{ productList.length }} products in this category</p>
+        <p class="text-sm text-primary-light-content">
+          {{ productList.length }} products in this category
+        </p>
       </div>
       <Badge :label="productList.length.toString()" variant="slate" size="sm" />
     </div>

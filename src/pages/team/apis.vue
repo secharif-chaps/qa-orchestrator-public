@@ -3,7 +3,7 @@
   <div class="space-y-6">
     <!-- Header Section -->
     <div>
-      <h2 class="text-2xl font-bold text-primary mb-2">
+      <h2 class="text-2xl font-bold text-primary-light-content mb-2">
         {{ $t('team.apis.title', 'External APIs') }}
       </h2>
       <p class="text-primary-light-content max-w-2xl">
@@ -27,10 +27,10 @@
         <div class="flex items-start justify-between mb-3">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-              <i class="fa fa-plug text-primary"></i>
+              <i class="fa fa-plug text-primary-light-content"></i>
             </div>
             <div>
-              <h4 class="font-semibold text-primary">{{ api.name }}</h4>
+              <h4 class="font-semibold text-primary-light-content">{{ api.name }}</h4>
               <p class="text-xs text-primary-light-content">
                 {{ $t('team.apis.added', 'Added') }} {{ formatDate(api.createdAt) }}
               </p>
@@ -48,13 +48,16 @@
         <div class="space-y-2">
           <div class="flex items-center gap-2 text-sm">
             <span class="text-primary-light-content">URL:</span>
-            <span class="text-primary font-mono text-xs bg-base-200 px-2 py-1 rounded">{{
-              api.url
-            }}</span>
+            <span
+              class="text-primary-light-content font-mono text-xs bg-base-200 px-2 py-1 rounded"
+              >{{ api.url }}</span
+            >
           </div>
           <div class="flex items-center gap-2 text-sm">
             <span class="text-primary-light-content">API Key:</span>
-            <span class="text-primary font-mono text-xs bg-base-200 px-2 py-1 rounded">
+            <span
+              class="text-primary-light-content font-mono text-xs bg-base-200 px-2 py-1 rounded"
+            >
               {{ showApiKey[api.id] ? api.apiKey : '••••••••' }}
             </span>
             <Button
@@ -95,9 +98,9 @@
           <div
             class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors"
           >
-            <i class="fa fa-plus text-primary text-lg"></i>
+            <i class="fa fa-plus text-primary-light-content text-lg"></i>
           </div>
-          <h4 class="font-semibold text-primary mb-1">
+          <h4 class="font-semibold text-primary-light-content mb-1">
             {{ $t('team.apis.add_new', 'Add External API') }}
           </h4>
           <p class="text-sm text-primary-light-content text-center">
@@ -110,7 +113,7 @@
       <div v-else class="bg-base-100 p-6 rounded-lg border-2 border-primary/50">
         <div class="space-y-4">
           <div class="flex items-center justify-between mb-2">
-            <h4 class="font-semibold text-primary">
+            <h4 class="font-semibold text-primary-light-content">
               {{ $t('team.apis.new_api', 'New External API') }}
             </h4>
             <Button
@@ -172,7 +175,7 @@
       class="bg-base-100 p-12 rounded-lg text-center"
     >
       <i class="fa fa-plug text-4xl text-primary-light-content mb-4"></i>
-      <h3 class="text-lg font-semibold text-primary mb-2">
+      <h3 class="text-lg font-semibold text-primary-light-content mb-2">
         {{ $t('team.apis.no_apis', 'No External APIs') }}
       </h3>
       <p class="text-primary-light-content mb-6">

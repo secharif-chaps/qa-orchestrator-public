@@ -39,7 +39,9 @@
     <!-- Loading State -->
     <div v-if="isLoading" class="text-center p-8">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-      <p class="text-primary-light-content">{{ $t('tokens.loading', 'Loading token configuration...') }}</p>
+      <p class="text-primary-light-content">
+        {{ $t('tokens.loading', 'Loading token configuration...') }}
+      </p>
     </div>
 
     <!-- Error State -->

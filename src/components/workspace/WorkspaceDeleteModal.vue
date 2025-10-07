@@ -55,17 +55,23 @@
               <code class="text-xs bg-base-300 px-2 py-1 rounded">{{ workspace.slug }}</code>
             </div>
             <div v-if="workspace.description" class="flex justify-between">
-              <span class="text-primary-light-content">{{ $t('workspace.description', 'Description') }}:</span>
+              <span class="text-primary-light-content"
+                >{{ $t('workspace.description', 'Description') }}:</span
+              >
               <span class="max-w-48 truncate">{{ workspace.description }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-primary-light-content">{{ $t('workspace.created', 'Created') }}:</span>
+              <span class="text-primary-light-content"
+                >{{ $t('workspace.created', 'Created') }}:</span
+              >
               <span>{{ formatDate(workspace.created_at) }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-primary-light-content">{{ $t('workspace.members', 'Members') }}:</span>
+              <span class="text-primary-light-content"
+                >{{ $t('workspace.members', 'Members') }}:</span
+              >
               <span class="inline-flex items-center gap-1">
-                <i class="fa fa-users text-primary text-xs"></i>
+                <i class="fa fa-users text-primary-light-content text-xs"></i>
                 {{ memberCount }} {{ $t('workspace.users', 'users') }}
               </span>
             </div>

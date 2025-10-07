@@ -31,7 +31,7 @@
                 v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
                 class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/20"
               >
-                <i class="fa fa-building text-3xl text-primary"></i>
+                <i class="fa fa-building text-3xl text-primary-light-content"></i>
               </div>
             </div>
           </div>
@@ -40,10 +40,13 @@
           <div class="flex-1">
             <!-- Company Name & Catchphrase -->
             <div class="mb-4">
-              <h1 class="text-2xl font-bold text-primary mb-1">
+              <h1 class="text-2xl font-bold text-primary-light-content mb-1">
                 {{ company?.name }}
               </h1>
-              <p v-if="company?.profile?.catchphrase" class="text-primary-light-content italic text-sm">
+              <p
+                v-if="company?.profile?.catchphrase"
+                class="text-primary-light-content italic text-sm"
+              >
                 "{{ getSourcedValue(company?.profile?.catchphrase) }}"
                 <Source :sourced-value="company?.profile?.catchphrase" />
               </p>
@@ -56,11 +59,11 @@
                 <div
                   class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0"
                 >
-                  <i class="fa fa-user-tie text-primary text-xs"></i>
+                  <i class="fa fa-user-tie text-primary-light-content text-xs"></i>
                 </div>
                 <div class="min-w-0">
                   <p class="text-xs text-primary-light-content/70">CEO</p>
-                  <p class="text-sm font-medium text-primary truncate">
+                  <p class="text-sm font-medium text-primary-light-content truncate">
                     {{ getSourcedValue(company?.profile?.ceo) || 'Unknown' }}
                   </p>
                 </div>
@@ -71,11 +74,11 @@
                 <div
                   class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0"
                 >
-                  <i class="fa fa-map-marker text-primary text-xs"></i>
+                  <i class="fa fa-map-marker text-primary-light-content text-xs"></i>
                 </div>
                 <div class="min-w-0">
                   <p class="text-xs text-primary-light-content/70">Headquarters</p>
-                  <p class="text-sm font-medium text-primary truncate">
+                  <p class="text-sm font-medium text-primary-light-content truncate">
                     {{ getSourcedValue(company?.profile?.hq) || 'Unknown' }}
                   </p>
                 </div>
@@ -86,11 +89,11 @@
                 <div
                   class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0"
                 >
-                  <i class="fa fa-calendar text-primary text-xs"></i>
+                  <i class="fa fa-calendar text-primary-light-content text-xs"></i>
                 </div>
                 <div class="min-w-0">
                   <p class="text-xs text-primary-light-content/70">Founded</p>
-                  <p class="text-sm font-medium text-primary">
+                  <p class="text-sm font-medium text-primary-light-content">
                     {{ getSourcedValue(company?.profile?.founded) }}
                   </p>
                 </div>
@@ -101,11 +104,11 @@
                 <div
                   class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0"
                 >
-                  <i class="fa fa-industry text-primary text-xs"></i>
+                  <i class="fa fa-industry text-primary-light-content text-xs"></i>
                 </div>
                 <div class="min-w-0">
                   <p class="text-xs text-primary-light-content/70">Industry</p>
-                  <p class="text-sm font-medium text-primary truncate">
+                  <p class="text-sm font-medium text-primary-light-content truncate">
                     {{ getSourcedValue(company?.profile?.industry) }}
                   </p>
                 </div>
@@ -123,7 +126,7 @@
                   :key="account.platform"
                   :href="getSourcedValue(account.url) as string"
                   target="_blank"
-                  class="w-8 h-8 rounded-lg bg-base-100 hover:bg-primary hover:text-white text-primary flex items-center justify-center transition-all duration-200 border border-primary-stroke hover:shadow-md hover:scale-110"
+                  class="w-8 h-8 rounded-lg bg-base-100 hover:bg-primary hover:text-white text-primary-light-content flex items-center justify-center transition-all duration-200 border border-primary-stroke hover:shadow-md hover:scale-110"
                   :title="account.platform"
                 >
                   <i class="text-sm fab" :class="getIcon(account.platform)"></i>
@@ -140,7 +143,7 @@
               <a
                 :href="formatWebsiteUrl(company?.website)"
                 target="_blank"
-                class="text-sm font-medium text-primary hover:text-primary/80 inline-flex items-center gap-1"
+                class="text-sm font-medium text-primary-light-content hover:text-primary-content/80 inline-flex items-center gap-1"
               >
                 <span>Visit</span>
                 <i class="fa fa-external-link text-xs"></i>

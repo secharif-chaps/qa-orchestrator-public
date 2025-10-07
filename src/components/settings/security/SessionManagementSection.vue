@@ -2,7 +2,9 @@
   <div class="bg-base-100 border border-primary-stroke rounded-lg">
     <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.security.sessions.title') }}</h2>
-      <p class="text-sm text-primary-light-content mt-1">{{ $t('settings.security.sessions.description') }}</p>
+      <p class="text-sm text-primary-light-content mt-1">
+        {{ $t('settings.security.sessions.description') }}
+      </p>
     </div>
     <div class="px-6 py-6">
       <div class="space-y-4">
@@ -13,14 +15,14 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3">
               <div class="flex-shrink-0">
-                <i class="fas fa-desktop text-primary"></i>
+                <i class="fas fa-desktop text-primary-light-content"></i>
               </div>
               <div>
-                <h3 class="text-sm font-medium text-primary">
+                <h3 class="text-sm font-medium text-primary-light-content">
                   {{ $t('settings.security.sessions.current.title') }}
                 </h3>
-                <p class="text-xs text-primary">{{ userAgent }}</p>
-                <p class="text-xs text-primary">
+                <p class="text-xs text-primary-light-content">{{ userAgent }}</p>
+                <p class="text-xs text-primary-light-content">
                   {{ $t('settings.security.sessions.current.lastActive') }}:
                   {{ formatDate(new Date()) }}
                 </p>

@@ -2,10 +2,12 @@
   <Alert
     variant="warning"
     :title="$t('tokens.insufficientTitle', 'Out of Search Tokens')"
-    :message="$t(
-      'tokens.insufficientMessage',
-      'You need tokens to search for companies. Contact your administrator to get more tokens and continue searching.',
-    )"
+    :message="
+      $t(
+        'tokens.insufficientMessage',
+        'You need tokens to search for companies. Contact your administrator to get more tokens and continue searching.',
+      )
+    "
     icon="fa fa-exclamation-triangle"
     decoration-icon="fa fa-coins"
     :show="show"

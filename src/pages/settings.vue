@@ -17,7 +17,7 @@
             :class="
               currentTab === tab.id
                 ? 'bg-base-100 text-primary-light-content border-primary'
-                : 'text-primary-light-content hover:text-primary hover:bg-base-200'
+                : 'text-primary-light-content hover:text-primary-light-content hover:bg-base-200'
             "
           >
             <i :class="tab.icon" class="mr-3 text-sm"></i>

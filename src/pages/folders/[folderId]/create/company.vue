@@ -38,7 +38,10 @@
     />
 
     <!-- Search Form Card -->
-    <div class="bg-base-100 border border-primary-stroke rounded-lg p-6" :title="$t('search.companyIdentity')">
+    <div
+      class="bg-base-100 border border-primary-stroke rounded-lg p-6"
+      :title="$t('search.companyIdentity')"
+    >
       <form @submit.prevent="startSearch" class="space-y-6">
         <!-- Form Fields -->
         <div class="space-y-4">
@@ -75,7 +78,7 @@
             :label="$t('csv.upload.button', 'Upload CSV')"
             @click="goToCSVUpload"
           />
-          
+
           <Button
             variant="primary"
             icon="fa fa-search"

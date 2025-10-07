@@ -96,7 +96,7 @@ Only theses combinations are allowed :
 
 #### Opacity Modifiers
 
-- Use `bg-primary/10`, `bg-primary/20`, `text-primary/80` instead of color shades for dark mode
+- Use `bg-primary/10`, `bg-primary/20`, `text-primary-content/80` instead of color shades for dark mode
 - `/10`: Very subtle backgrounds
 - `/20`: Subtle backgrounds
 - `/50`: Medium opacity

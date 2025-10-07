@@ -1,6 +1,9 @@
 <template>
   <!-- Archive Confirmation Modal -->
-  <div v-if="showArchiveModal && companyToArchive" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+  <div
+    v-if="showArchiveModal && companyToArchive"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+  >
     <div class="bg-base-100 rounded-lg shadow-xl max-w-md w-full mx-4">
       <!-- Header -->
       <div class="p-6 border-b border-primary-stroke">
@@ -22,7 +25,12 @@
       <!-- Content -->
       <div class="p-6">
         <p class="text-sm text-primary-light-content mb-4">
-          {{ $t('company.archive.warning.message', 'Archiving a company will hide it from the main list. You can restore it later from the archived view.') }}
+          {{
+            $t(
+              'company.archive.warning.message',
+              'Archiving a company will hide it from the main list. You can restore it later from the archived view.',
+            )
+          }}
         </p>
 
         <!-- Company Details -->
@@ -36,7 +44,9 @@
               <span class="font-medium">{{ companyToArchive.name }}</span>
             </div>
             <div v-if="companyToArchive.website" class="flex justify-between">
-              <span class="text-primary-light-content">{{ $t('company.website', 'Website') }}:</span>
+              <span class="text-primary-light-content"
+                >{{ $t('company.website', 'Website') }}:</span
+              >
               <span class="text-xs">{{ companyToArchive.website }}</span>
             </div>
           </div>

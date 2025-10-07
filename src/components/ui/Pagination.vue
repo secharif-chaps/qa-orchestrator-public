@@ -31,12 +31,12 @@
       >
         <Pagination.List v-slot="{ items }" class="flex items-center gap-2">
           <Pagination.First
-            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-primary-light-content hover:text-primary transition-colors"
+            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-primary-light-content hover:text-primary-light-content transition-colors"
           >
             <i class="fas fa-chevron-double-left text-sm"></i>
           </Pagination.First>
           <Pagination.Prev
-            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-primary-light-content hover:text-primary transition-colors"
+            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-primary-light-content hover:text-primary-light-content transition-colors"
           >
             <i class="fas fa-chevron-left text-sm"></i>
           </Pagination.Prev>
@@ -53,8 +53,10 @@
               v-else
               class="h-10 w-10 p-0 hover:bg-base-300 rounded-md flex items-center justify-center cursor-pointer transition-colors hover:ring-2 hover:ring-primary hover:ring-offset-2 hover:ring-offset-bg1"
               :class="{
-                'bg-primary/10 border-primary text-primary': item.value === meta.current_page,
-                'bg-base-200 text-primary-light-content hover:text-primary': item.value !== meta.current_page,
+                'bg-primary/10 border-primary text-primary-content':
+                  item.value === meta.current_page,
+                'bg-base-200 text-primary-light-content hover:text-primary-content':
+                  item.value !== meta.current_page,
               }"
               :value="item.value"
             >
@@ -63,12 +65,12 @@
           </template>
 
           <Pagination.Next
-            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-primary-light-content hover:text-primary transition-colors"
+            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-primary-light-content hover:text-primary-light-content transition-colors"
           >
             <i class="fas fa-chevron-right text-sm"></i>
           </Pagination.Next>
           <Pagination.Last
-            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-primary-light-content hover:text-primary transition-colors"
+            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-primary-light-content hover:text-primary-light-content transition-colors"
           >
             <i class="fas fa-chevron-double-right text-sm"></i>
           </Pagination.Last>

@@ -143,7 +143,9 @@
               <h4 class="font-medium text-base">
                 {{ name || $t('workspace.form.name.placeholder', 'Enter workspace name...') }}
               </h4>
-              <p v-if="description" class="text-primary-light-content text-sm mt-1">{{ description }}</p>
+              <p v-if="description" class="text-primary-light-content text-sm mt-1">
+                {{ description }}
+              </p>
               <div class="flex items-center gap-4 mt-3 text-xs text-primary-light-content">
                 <span v-if="slug">
                   <i class="fa fa-link mr-1"></i>

@@ -25,7 +25,7 @@
         <div class="bg-gradient-to-r from-bg2 to-bg1 p-4 rounded-lg border border-primary-stroke">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-              <i class="fa fa-building text-primary"></i>
+              <i class="fa fa-building text-primary-light-content"></i>
             </div>
             <div>
               <h4 class="font-medium text-base">{{ workspace.name }}</h4>

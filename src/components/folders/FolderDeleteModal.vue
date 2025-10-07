@@ -7,12 +7,16 @@
     <div class="bg-base-100 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
       <!-- Header -->
       <div class="flex items-center gap-3 mb-4">
-        <div class="w-12 h-12 rounded-lg bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+        <div
+          class="w-12 h-12 rounded-lg bg-red-100 dark:bg-red-900/20 flex items-center justify-center"
+        >
           <i class="fas fa-trash text-red-600 dark:text-red-400 text-xl"></i>
         </div>
         <div>
           <h3 class="text-lg font-semibold">{{ $t('folder.delete.title', 'Delete Folder') }}</h3>
-          <p class="text-sm text-primary-light-content">{{ $t('folder.delete.subtitle', 'This action cannot be undone') }}</p>
+          <p class="text-sm text-primary-light-content">
+            {{ $t('folder.delete.subtitle', 'This action cannot be undone') }}
+          </p>
         </div>
       </div>
 
@@ -33,7 +37,11 @@
             <div>
               <div class="font-medium">{{ folderToDelete?.name }}</div>
               <div class="text-sm text-primary-light-content">
-                {{ $t('folder.itemCount', '{count} items', { count: folderToDelete?.items?.length || folderToDelete?.items_count || 0 }) }}
+                {{
+                  $t('folder.itemCount', '{count} items', {
+                    count: folderToDelete?.items?.length || folderToDelete?.items_count || 0,
+                  })
+                }}
               </div>
             </div>
           </div>
@@ -43,7 +51,12 @@
           v-if="folderToDelete?.items && folderToDelete.items.length > 0"
           variant="warning"
           :title="$t('folder.delete.warning.title', 'Items will not be deleted')"
-          :message="$t('folder.delete.warning.message', 'Companies in this folder will remain accessible but will no longer be organized in this folder.')"
+          :message="
+            $t(
+              'folder.delete.warning.message',
+              'Companies in this folder will remain accessible but will no longer be organized in this folder.',
+            )
+          "
           class="mt-4"
         />
       </div>
@@ -126,7 +139,7 @@ const handleDelete = async () => {
 
     // Small delay to ensure parent component processes the event
     setTimeout(() => {
-       modelValue.value = false
+      modelValue.value = false
     }, 50)
   } catch (error) {
     console.error('Error deleting folder:', error)

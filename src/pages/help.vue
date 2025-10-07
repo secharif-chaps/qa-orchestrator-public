@@ -19,7 +19,9 @@
       <div class="hidden lg:block lg:col-span-1">
         <nav class="space-y-1 sticky top-8">
           <div v-for="category in helpCategories" :key="category" class="mb-4">
-            <div class="text-xs font-semibold text-primary-light-content uppercase tracking-wider mb-2">
+            <div
+              class="text-xs font-semibold text-primary-light-content uppercase tracking-wider mb-2"
+            >
               {{ getCategoryTitle(category) }}
             </div>
             <div class="space-y-1">
@@ -31,7 +33,7 @@
                 :class="
                   selectedSection?.permission === section.permission
                     ? 'bg-base-100 text-primary-light-content border-primary'
-                    : 'text-primary-light-content hover:text-primary hover:bg-base-200'
+                    : 'text-primary-light-content hover:text-primary-light-content hover:bg-base-200'
                 "
               >
                 <span class="truncate">{{ section.title }}</span>

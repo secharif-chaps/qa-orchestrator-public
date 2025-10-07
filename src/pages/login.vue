@@ -3,7 +3,7 @@
     <div class="max-w-md w-full space-y-8">
       <div>
         <div class="flex justify-center">
-          <i class="fa-solid fa-leaf text-primary text-7xl"></i>
+          <i class="fa-solid fa-leaf text-primary-light-content text-7xl"></i>
         </div>
         <h2 class="mt-6 text-center text-3xl font-extrabold">Sign in to your account</h2>
       </div>

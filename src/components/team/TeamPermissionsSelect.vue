@@ -1,9 +1,16 @@
 <template>
   <div class="space-y-4">
     <div class="pb-2">
-      <h4 class="text-base font-medium mb-1">{{ $t('team.permissions.title', 'User Permissions') }}</h4>
+      <h4 class="text-base font-medium mb-1">
+        {{ $t('team.permissions.title', 'User Permissions') }}
+      </h4>
       <p class="text-sm text-primary-light-content">
-        {{ $t('team.permissions.description', 'Select which actions this user can perform in the workspace') }}
+        {{
+          $t(
+            'team.permissions.description',
+            'Select which actions this user can perform in the workspace',
+          )
+        }}
       </p>
     </div>
 
@@ -21,10 +28,12 @@
     <div v-if="!canManageWorkspace" class="bg-primary/10 border border-primary/20 rounded-lg p-4">
       <div class="flex items-start gap-3">
         <div class="flex-shrink-0">
-          <i class="fa fa-info-circle text-primary text-lg"></i>
+          <i class="fa fa-info-circle text-primary-light-content text-lg"></i>
         </div>
         <div class="text-sm">
-          <strong class="text-base">{{ $t('team.permissions.limitedAccess', 'Limited Access') }}</strong>
+          <strong class="text-base">{{
+            $t('team.permissions.limitedAccess', 'Limited Access')
+          }}</strong>
           <p class="text-primary-light-content mt-1">
             {{
               $t(

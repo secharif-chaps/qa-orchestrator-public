@@ -1,10 +1,10 @@
 <template>
   <div
-    class="p-4 bg-base-300 border border-slate-200 dark:border-slate-700 rounded-lg transition-all duration-300"
+    class="p-4 bg-primary-light border border-primary-stroke rounded-lg transition-all duration-300"
   >
     <div class="flex justify-between items-start">
       <div>
-        <h3 class="text-lg font-semibold text-primary">
+        <h3 class="text-lg font-semibold text-primary-light-content">
           {{ job.title }}
           <Source :sourced-value="job.title" />
         </h3>

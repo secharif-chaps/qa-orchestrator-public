@@ -52,7 +52,7 @@
           @click.stop
         >
           <div class="p-4 border-b border-primary-stroke">
-            <h3 class="text-sm font-medium text-primary mb-3">
+            <h3 class="text-sm font-medium text-primary-light-content mb-3">
               {{ $t('team.sort.label', 'Sort by:') }}
             </h3>
             <div class="space-y-2">
@@ -61,7 +61,7 @@
                   type="radio"
                   :checked="props.sort === 'created_at'"
                   @change="updateSort('created_at')"
-                  class="w-4 h-4 text-primary border-primary-stroke focus:ring-primary/20"
+                  class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
                 />
                 <span class="text-sm">{{ $t('team.sort.created', 'Created Date') }}</span>
               </label>
@@ -70,7 +70,7 @@
                   type="radio"
                   :checked="props.sort === 'name'"
                   @change="updateSort('name')"
-                  class="w-4 h-4 text-primary border-primary-stroke focus:ring-primary/20"
+                  class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
                 />
                 <span class="text-sm">{{ $t('team.sort.name', 'Name') }}</span>
               </label>
@@ -79,7 +79,7 @@
                   type="radio"
                   :checked="props.sort === 'email'"
                   @change="updateSort('email')"
-                  class="w-4 h-4 text-primary border-primary-stroke focus:ring-primary/20"
+                  class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
                 />
                 <span class="text-sm">{{ $t('team.sort.email', 'Email') }}</span>
               </label>
@@ -88,7 +88,7 @@
                   type="radio"
                   :checked="props.sort === 'username'"
                   @change="updateSort('username')"
-                  class="w-4 h-4 text-primary border-primary-stroke focus:ring-primary/20"
+                  class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
                 />
                 <span class="text-sm">{{ $t('team.sort.username', 'Username') }}</span>
               </label>
@@ -96,7 +96,7 @@
           </div>
 
           <div class="p-4">
-            <h3 class="text-sm font-medium text-primary mb-3">
+            <h3 class="text-sm font-medium text-primary-light-content mb-3">
               {{ $t('team.sort.order', 'Sort Order:') }}
             </h3>
             <div class="space-y-2">
@@ -105,7 +105,7 @@
                   type="radio"
                   :checked="props.order === 'asc'"
                   @change="updateOrder('asc')"
-                  class="w-4 h-4 text-primary border-primary-stroke focus:ring-primary/20"
+                  class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
                 />
                 <span class="text-sm flex items-center gap-2">
                   <i class="fa fa-sort-amount-up"></i>
@@ -117,7 +117,7 @@
                   type="radio"
                   :checked="props.order === 'desc'"
                   @change="updateOrder('desc')"
-                  class="w-4 h-4 text-primary border-primary-stroke focus:ring-primary/20"
+                  class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
                 />
                 <span class="text-sm flex items-center gap-2">
                   <i class="fa fa-sort-amount-down"></i>

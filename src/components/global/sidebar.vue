@@ -35,7 +35,7 @@
       </button>
       <button
         class="flex flex-col items-center gap-1 text-sage-300 hover:text-white transition-colors"
-        @click="$router.push('/accessibility')"
+        @click="toggleAccessibilityMode()"
       >
         <i class="fa fa-universal-access text-lg"></i>
         <span class="text-xs">Accessibilité</span>
@@ -51,6 +51,7 @@ import TokenSidebar from '@/components/sidebar/TokenSidebar.vue'
 import ChapseSidebar from '@/components/sidebar/ChapseSidebar.vue'
 import NotificationsSidebar from '@/components/sidebar/NotificationsSidebar.vue'
 import FoldersSidebar from '@/components/sidebar/FoldersSidebar.vue'
+import { useTheme } from '@/composables/useTheme'
 
 const sidebarStore = useSidebarStore()
 const sidebarEl = ref<HTMLElement>()
@@ -58,14 +59,17 @@ const sidebarEl = ref<HTMLElement>()
 // Horizontal scroll configuration
 const SCROLL_THRESHOLD = 50 // Pixels of accumulated horizontal scroll needed to switch tabs
 let scrollDelta = 0
-let isNavigating = ref(false) // Prevent multiple navigations in one gesture
+const isNavigating = ref(false) // Prevent multiple navigations in one gesture
 
 // Handle horizontal scroll/swipe gestures
 function handleWheel(event: WheelEvent) {
   // Detect horizontal scroll (deltaX for trackpad swipe, deltaY with shift for mouse wheel)
-  const horizontalDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY)
-    ? event.deltaX
-    : event.shiftKey ? event.deltaY : 0
+  const horizontalDelta =
+    Math.abs(event.deltaX) > Math.abs(event.deltaY)
+      ? event.deltaX
+      : event.shiftKey
+        ? event.deltaY
+        : 0
 
   // If no horizontal scroll detected, allow normal vertical/horizontal scrolling
   if (horizontalDelta === 0) return
@@ -172,4 +176,13 @@ const transitionClasses = computed(() => {
     }
   }
 })
+
+const toggleAccessibilityMode = () => {
+  const document = window.document
+  if (document.documentElement.getAttribute('data-theme') === 'contrast') {
+    document.documentElement.setAttribute('data-theme', 'light')
+  } else {
+    document.documentElement.setAttribute('data-theme', 'contrast')
+  }
+}
 </script>

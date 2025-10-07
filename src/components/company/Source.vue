@@ -30,11 +30,16 @@
     >
       <div
         class="bg-gray-800 text-white text-xs rounded px-2 py-1 max-w-xs"
-        :class="isLLMSource(getSourcedSource(sourcedValue)) ? 'break-words' : 'break-all overflow-hidden text-ellipsis'"
+        :class="
+          isLLMSource(getSourcedSource(sourcedValue))
+            ? 'break-words'
+            : 'break-all overflow-hidden text-ellipsis'
+        "
       >
         <template v-if="isLLMSource(getSourcedSource(sourcedValue))">
-          Cette information est issue de la base de connaissances du modèle de langage (LLM).
-          Un LLM s'appuie sur un vaste ensemble de textes analysés lors de son entraînement, et ne consulte pas de sources externes en temps réel.
+          Cette information est issue de la base de connaissances du modèle de langage (LLM). Un LLM
+          s'appuie sur un vaste ensemble de textes analysés lors de son entraînement, et ne consulte
+          pas de sources externes en temps réel.
         </template>
         <template v-else>
           {{ getSourcedSource(sourcedValue) }}
@@ -49,10 +54,7 @@
   <!-- Direct source prop -->
   <div class="relative inline-block group" v-else-if="source">
     <!-- LLM Source (non-clickable) -->
-    <div
-      v-if="isLLMSource(source)"
-      class="text-primary-light-content/50 cursor-help"
-    >
+    <div v-if="isLLMSource(source)" class="text-primary-light-content/50 cursor-help">
       <i class="fa fa-info-circle text-xs"></i>
     </div>
 
@@ -75,8 +77,9 @@
         :class="isLLMSource(source) ? 'break-words' : 'break-all overflow-hidden text-ellipsis'"
       >
         <template v-if="isLLMSource(source)">
-          Cette information est issue de la base de connaissances du modèle de langage (LLM).
-          Un LLM s'appuie sur un vaste ensemble de textes analysés lors de son entraînement, et ne consulte pas de sources externes en temps réel.
+          Cette information est issue de la base de connaissances du modèle de langage (LLM). Un LLM
+          s'appuie sur un vaste ensemble de textes analysés lors de son entraînement, et ne consulte
+          pas de sources externes en temps réel.
         </template>
         <template v-else>
           {{ source }}
@@ -118,8 +121,10 @@ function isLLMSource(source: string | undefined): boolean {
     .split('/')[0] // Get just the domain
 
   // Check for Anthropic (Claude) or Mistral domains
-  return cleanedSource.includes('anthropic.com') ||
-         cleanedSource.includes('mistral.ai') ||
-         cleanedSource.includes('claude.ai')
+  return (
+    cleanedSource.includes('anthropic.com') ||
+    cleanedSource.includes('mistral.ai') ||
+    cleanedSource.includes('claude.ai')
+  )
 }
 </script>

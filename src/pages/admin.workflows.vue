@@ -53,8 +53,10 @@
       <!-- Loading State -->
       <div v-if="loading && !workflows.length" class="flex justify-center py-16">
         <div class="text-center">
-          <i class="fa fa-spinner animate-spin text-4xl text-primary mb-4"></i>
-          <p class="text-primary-light-content">{{ $t('admin.workflows.loading', 'Loading workflows...') }}</p>
+          <i class="fa fa-spinner animate-spin text-4xl text-primary-light-content mb-4"></i>
+          <p class="text-primary-light-content">
+            {{ $t('admin.workflows.loading', 'Loading workflows...') }}
+          </p>
         </div>
       </div>
 

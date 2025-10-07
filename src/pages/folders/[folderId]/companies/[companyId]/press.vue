@@ -34,7 +34,9 @@
 
           <!-- Financial News -->
           <div v-if="company?.press?.financial_news?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-primary flex items-center gap-2 mb-4">
+            <h2
+              class="text-xl font-semibold text-primary-light-content flex items-center gap-2 mb-4"
+            >
               <i class="fa fa-chart-line"></i>
               Financial News
             </h2>
@@ -52,7 +54,9 @@
 
           <!-- Product Launches -->
           <div v-if="company?.press?.product_launches?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-primary flex items-center gap-2 mb-4">
+            <h2
+              class="text-xl font-semibold text-primary-light-content flex items-center gap-2 mb-4"
+            >
               <i class="fa fa-rocket"></i>
               Product Launches
             </h2>
@@ -70,8 +74,13 @@
           </div>
 
           <!-- Executive Interviews -->
-          <div v-if="company?.press?.executive_interviews?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-primary flex items-center gap-2 mb-4">
+          <div
+            v-if="company?.press?.executive_interviews?.length"
+            class="bg-base-100 rounded-lg p-6"
+          >
+            <h2
+              class="text-xl font-semibold text-primary-light-content flex items-center gap-2 mb-4"
+            >
               <i class="fa fa-microphone"></i>
               Executive Interviews
             </h2>
@@ -89,7 +98,9 @@
 
           <!-- Media Mentions -->
           <div v-if="company?.press?.media_mentions?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-primary flex items-center gap-2 mb-4">
+            <h2
+              class="text-xl font-semibold text-primary-light-content flex items-center gap-2 mb-4"
+            >
               <i class="fa fa-newspaper"></i>
               Media Mentions
             </h2>
@@ -107,7 +118,9 @@
 
           <!-- Press Releases -->
           <div v-if="company?.press?.press_releases?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-primary flex items-center gap-2 mb-4">
+            <h2
+              class="text-xl font-semibold text-primary-light-content flex items-center gap-2 mb-4"
+            >
               <i class="fa fa-file-alt"></i>
               Press Releases
             </h2>
@@ -125,7 +138,9 @@
 
           <!-- Articles (backward compatibility) -->
           <div v-if="company?.press?.articles?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-primary flex items-center gap-2 mb-4">
+            <h2
+              class="text-xl font-semibold text-primary-light-content flex items-center gap-2 mb-4"
+            >
               <i class="fa fa-newspaper"></i>
               Articles
             </h2>
@@ -149,7 +164,9 @@
             v-if="company?.press?.partnership_announcements?.length"
             class="bg-base-100 rounded-lg p-6"
           >
-            <h2 class="text-lg font-semibold text-primary flex items-center gap-2 mb-4">
+            <h2
+              class="text-lg font-semibold text-primary-light-content flex items-center gap-2 mb-4"
+            >
               <i class="fa fa-handshake"></i>
               Partnership Announcements
             </h2>
@@ -167,7 +184,9 @@
 
           <!-- Awards & Recognition -->
           <div v-if="company?.press?.awards_recognition?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-lg font-semibold text-primary flex items-center gap-2 mb-4">
+            <h2
+              class="text-lg font-semibold text-primary-light-content flex items-center gap-2 mb-4"
+            >
               <i class="fa fa-trophy"></i>
               Awards & Recognition
             </h2>
@@ -185,35 +204,37 @@
 
           <!-- Quick Stats -->
           <div class="bg-base-100 rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-primary mb-4">Press Coverage Stats</h3>
+            <h3 class="text-lg font-semibold text-primary-light-content mb-4">
+              Press Coverage Stats
+            </h3>
             <div class="space-y-3">
               <div class="flex justify-between items-center">
                 <span class="text-primary-light-content text-sm">Financial News</span>
-                <span class="text-primary font-medium">{{
+                <span class="text-primary-light-content font-medium">{{
                   company?.press?.financial_news?.length || 0
                 }}</span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-primary-light-content text-sm">Product Launches</span>
-                <span class="text-primary font-medium">{{
+                <span class="text-primary-light-content font-medium">{{
                   company?.press?.product_launches?.length || 0
                 }}</span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-primary-light-content text-sm">Media Mentions</span>
-                <span class="text-primary font-medium">{{
+                <span class="text-primary-light-content font-medium">{{
                   company?.press?.media_mentions?.length || 0
                 }}</span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-primary-light-content text-sm">Press Releases</span>
-                <span class="text-primary font-medium">{{
+                <span class="text-primary-light-content font-medium">{{
                   company?.press?.press_releases?.length || 0
                 }}</span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-primary-light-content text-sm">Executive Interviews</span>
-                <span class="text-primary font-medium">{{
+                <span class="text-primary-light-content font-medium">{{
                   company?.press?.executive_interviews?.length || 0
                 }}</span>
               </div>
@@ -255,11 +276,11 @@ const { data: company } = useQuery(
     // Poll every 5 seconds when any task is running
     refetchInterval: () => {
       const hasRunningTasks = company.value?.tasks?.some(
-        (t) => t.status === 'running' || t.status === 'pending'
+        (t) => t.status === 'running' || t.status === 'pending',
       )
       return hasRunningTasks ? 5000 : false
     },
-  }
+  },
 )
 
 // Task state management

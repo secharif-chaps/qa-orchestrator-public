@@ -4,7 +4,7 @@
 
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner animate-spin text-2xl text-primary mb-2"></i>
+        <i class="fa fa-spinner animate-spin text-2xl text-primary-light-content mb-2"></i>
         <p class="text-sm text-primary-light-content">Loading chart data...</p>
       </div>
     </div>

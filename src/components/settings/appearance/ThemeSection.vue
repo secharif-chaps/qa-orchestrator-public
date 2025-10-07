@@ -2,7 +2,9 @@
   <div class="bg-base-100 border border-primary-stroke rounded-lg">
     <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.theme.title') }}</h2>
-      <p class="text-sm text-primary-light-content mt-1">{{ $t('settings.appearance.theme.description') }}</p>
+      <p class="text-sm text-primary-light-content mt-1">
+        {{ $t('settings.appearance.theme.description') }}
+      </p>
     </div>
     <div class="px-6 py-6">
       <div class="space-y-4">

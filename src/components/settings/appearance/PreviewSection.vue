@@ -2,7 +2,9 @@
   <div class="bg-base-100 border border-primary-stroke rounded-lg">
     <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.preview.title') }}</h2>
-      <p class="text-sm text-primary-light-content mt-1">{{ $t('settings.appearance.preview.description') }}</p>
+      <p class="text-sm text-primary-light-content mt-1">
+        {{ $t('settings.appearance.preview.description') }}
+      </p>
     </div>
     <div class="px-6 py-6">
       <!-- Preview Container -->
@@ -49,7 +51,9 @@
             <div class="flex items-center justify-between">
               <div>
                 <label class="text-sm font-medium"> Sample Toggle </label>
-                <p class="text-sm text-primary-light-content">This toggle demonstrates switch styling</p>
+                <p class="text-sm text-primary-light-content">
+                  This toggle demonstrates switch styling
+                </p>
               </div>
               <Switch.Root
                 v-model:checked="previewToggleValue"
@@ -102,7 +106,7 @@
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                   <div class="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
-                    <i :class="item.icon" class="text-primary text-sm"></i>
+                    <i :class="item.icon" class="text-primary-light-content text-sm"></i>
                   </div>
                   <div>
                     <p class="text-sm font-medium">{{ item.title }}</p>

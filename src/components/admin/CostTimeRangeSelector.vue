@@ -28,14 +28,14 @@
           <input
             v-model="startDate"
             type="date"
-            class="px-3 py-2 text-sm border border-primary-stroke rounded-lg bg-base-100 text-primary focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+            class="px-3 py-2 text-sm border border-primary-stroke rounded-lg bg-base-100 text-primary-light-content focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
             @change="handleCustomDateChange"
           />
           <span class="text-primary-light-content text-sm">to</span>
           <input
             v-model="endDate"
             type="date"
-            class="px-3 py-2 text-sm border border-primary-stroke rounded-lg bg-base-100 text-primary focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+            class="px-3 py-2 text-sm border border-primary-stroke rounded-lg bg-base-100 text-primary-light-content focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
             @change="handleCustomDateChange"
           />
         </div>
@@ -145,18 +145,18 @@ const presetsWithCustom = computed(() => [
 
 // Convert presets to ButtonGroup options format
 const buttonGroupOptions = computed(() =>
-  presetsWithCustom.value.map(preset => ({
+  presetsWithCustom.value.map((preset) => ({
     value: preset.key,
     label: preset.label,
     icon: preset.icon,
-  }))
+  })),
 )
 
 const startDate = ref(props.modelValue.start_date || getCurrentMonthDates().start)
 const endDate = ref(props.modelValue.end_date || getCurrentMonthDates().end)
 
 const handlePresetChange = (presetKey: string | number) => {
-  const preset = presetsWithCustom.value.find(p => p.key === presetKey)
+  const preset = presetsWithCustom.value.find((p) => p.key === presetKey)
   if (preset) {
     selectPreset(preset)
   }

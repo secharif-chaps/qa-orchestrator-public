@@ -14,7 +14,7 @@
       </UnauthenticatedLayout>
     </template>
   </div>
-  <PiniaColadaDevtools position="bottom-left" />
+  <PiniaColadaDevtools class="fixed !bottom-0 !left-0" position="bottom-left" />
 </template>
 
 <script setup lang="ts">
@@ -72,6 +72,12 @@ watch(
 <style>
 /* Force Pinia Colada devtools to bottom-left */
 :deep(.pinia-colada-devtools-button) {
+  right: auto !important;
+  left: 16px !important;
+  bottom: 16px !important;
+}
+
+#open-devtools-button {
   right: auto !important;
   left: 16px !important;
   bottom: 16px !important;

@@ -29,7 +29,9 @@
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
-        <p class="text-primary-light-content">{{ $t('workspace.loading', 'Loading workspace...') }}</p>
+        <p class="text-primary-light-content">
+          {{ $t('workspace.loading', 'Loading workspace...') }}
+        </p>
       </div>
 
       <!-- Error State -->
@@ -88,7 +90,7 @@
               }}</label>
               <div class="flex items-center gap-2">
                 <span
-                  class="inline-flex items-center justify-center w-8 h-8 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                  class="inline-flex items-center justify-center w-8 h-8 bg-primary/10 text-primary-light-content rounded-full text-sm font-medium"
                 >
                   {{ workspace.member_count }}
                 </span>
@@ -120,7 +122,9 @@
             <div
               class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"
             ></div>
-            <p class="text-primary-light-content">{{ $t('user.loading', 'Loading users...') }}</p>
+            <p class="text-primary-light-content">
+              {{ $t('user.loading', 'Loading users...') }}
+            </p>
           </div>
 
           <!-- Users Error State -->
@@ -145,7 +149,7 @@
               <div class="flex items-center gap-3">
                 <!-- User Avatar -->
                 <div
-                  class="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center font-medium"
+                  class="w-10 h-10 bg-primary/10 text-primary-light-content rounded-full flex items-center justify-center font-medium"
                 >
                   {{ user.initials }}
                 </div>

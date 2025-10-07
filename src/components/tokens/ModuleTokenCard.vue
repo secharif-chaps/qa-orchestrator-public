@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center gap-3">
         <div
-          class="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center"
+          class="w-10 h-10 bg-primary/10 text-primary-light-content rounded-full flex items-center justify-center"
         >
           <i :class="moduleIcon" class="text-lg"></i>
         </div>

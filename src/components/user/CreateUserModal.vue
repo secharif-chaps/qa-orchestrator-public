@@ -129,7 +129,7 @@
             type="button"
             @click="generatePassword"
             :disabled="isLoading"
-            class="text-primary hover:text-primary/80 text-sm font-medium disabled:opacity-50"
+            class="text-primary-light-content hover:text-primary-content/80 text-sm font-medium disabled:opacity-50"
           >
             <i class="fa fa-refresh mr-1"></i>
             {{ $t('user.generatePassword', 'Generate Random Password') }}

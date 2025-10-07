@@ -2,8 +2,8 @@
   <div class="min-h-screen flex items-center justify-center bg-base-300">
     <div class="text-center">
       <div class="mb-8">
-        <h1 class="text-6xl font-bold text-primary">403</h1>
-        
+        <h1 class="text-6xl font-bold text-primary-light-content">403</h1>
+
         <!-- Token-specific error messages -->
         <div v-if="isTokenError">
           <h2 class="text-2xl font-semibold mt-4">
@@ -12,18 +12,23 @@
           <p class="text-primary-light-content mt-2">
             {{ tokenErrorMessage }}
           </p>
-          
+
           <!-- Token status display -->
-          <div v-if="errorModule" class="mt-4 inline-flex items-center gap-2 bg-base-200 px-4 py-2 rounded-lg">
-            <i class="fa fa-coins text-primary"></i>
+          <div
+            v-if="errorModule"
+            class="mt-4 inline-flex items-center gap-2 bg-base-200 px-4 py-2 rounded-lg"
+          >
+            <i class="fa fa-coins text-primary-light-content"></i>
             <span class="text-sm">
               <span class="font-medium capitalize">{{ errorModule }}</span> Module
               <span v-if="reason === 'module_disabled'" class="text-red-600 ml-2">• Disabled</span>
-              <span v-else-if="reason === 'insufficient_tokens'" class="text-red-600 ml-2">• No Tokens</span>
+              <span v-else-if="reason === 'insufficient_tokens'" class="text-red-600 ml-2"
+                >• No Tokens</span
+              >
             </span>
           </div>
         </div>
-        
+
         <!-- Regular permission error -->
         <div v-else>
           <h2 class="text-2xl font-semibold mt-4">
@@ -75,8 +80,8 @@ const { t } = useI18n()
 const reason = computed(() => route.query.reason as string)
 const errorModule = computed(() => route.query.module as string)
 
-const isTokenError = computed(() => 
-  reason.value === 'module_disabled' || reason.value === 'insufficient_tokens'
+const isTokenError = computed(
+  () => reason.value === 'module_disabled' || reason.value === 'insufficient_tokens',
 )
 
 const tokenErrorTitle = computed(() => {

@@ -95,15 +95,15 @@ The MINT design system uses DaisyUI-inspired semantic color tokens for consisten
 
 #### Semantic Color Tokens
 
-| Token | Purpose | Example Use Case |
-|-------|---------|-----------------|
-| `primary` | Main brand actions | Primary buttons, active states |
-| `secondary` | Secondary brand elements | Secondary buttons, badges |
-| `accent` | Emphasis and highlights | Special badges, callouts |
-| `success` | Positive feedback | Success messages, confirmations |
-| `warning` | Caution states | Warnings, pending states |
-| `error` | Negative feedback | Error messages, validation |
-| `info` | Informational | Info banners, help text |
+| Token       | Purpose                  | Example Use Case                |
+| ----------- | ------------------------ | ------------------------------- |
+| `primary`   | Main brand actions       | Primary buttons, active states  |
+| `secondary` | Secondary brand elements | Secondary buttons, badges       |
+| `accent`    | Emphasis and highlights  | Special badges, callouts        |
+| `success`   | Positive feedback        | Success messages, confirmations |
+| `warning`   | Caution states           | Warnings, pending states        |
+| `error`     | Negative feedback        | Error messages, validation      |
+| `info`      | Informational            | Info banners, help text         |
 
 #### Token Variants
 
@@ -118,21 +118,26 @@ Each semantic color has **4 variants**:
 #### Usage Patterns
 
 **Solid Button**
+
 ```vue
-<button class="bg-primary text-primary-content">
+<button class="bg-primary text-primary-content-content">
   Primary Action
 </button>
 ```
 
 **Light Alert**
+
 ```vue
-<div class="bg-success-light text-success-light-content border border-success-stroke rounded-lg p-4">
+<div
+  class="bg-success-light text-success-light-content border border-success-stroke rounded-lg p-4"
+>
   <Icon class="text-success-light-content" />
   Operation successful!
 </div>
 ```
 
 **Badge (Light)**
+
 ```vue
 <span class="bg-info-light text-info-light-content border border-info-stroke px-2 py-1 rounded">
   New
@@ -140,6 +145,7 @@ Each semantic color has **4 variants**:
 ```
 
 **Card with Border**
+
 ```vue
 <div class="bg-base-200 border border-primary-stroke rounded-card p-6">
   Card content
@@ -162,18 +168,24 @@ Use `base` colors for application hierarchy:
 #### Complete Examples
 
 **Success Toast**
+
 ```vue
-<div class="bg-success-light text-success-light-content border border-success-stroke
-            rounded-lg p-4 shadow-green flex items-center gap-3">
+<div
+  class="bg-success-light text-success-light-content border border-success-stroke
+            rounded-lg p-4 shadow-green flex items-center gap-3"
+>
   <IconCircleCheck class="text-success-light-content" />
   <span>Changes saved successfully</span>
 </div>
 ```
 
 **Error Alert**
+
 ```vue
-<div class="bg-error-light text-error-light-content border border-error-stroke
-            rounded-lg p-4 shadow-red">
+<div
+  class="bg-error-light text-error-light-content border border-error-stroke
+            rounded-lg p-4 shadow-red"
+>
   <IconAlertCircle class="text-error-light-content" />
   <p class="font-semibold">Error</p>
   <p>Something went wrong</p>
@@ -181,6 +193,7 @@ Use `base` colors for application hierarchy:
 ```
 
 **Warning Banner**
+
 ```vue
 <div class="bg-warning-light text-warning-light-content border-l-4 border-warning-stroke p-4">
   <IconAlertTriangle class="text-warning-light-content" />
@@ -189,9 +202,10 @@ Use `base` colors for application hierarchy:
 ```
 
 **Button Group**
+
 ```vue
 <div class="flex gap-2">
-  <button class="bg-primary text-primary-content px-4 py-2 rounded-lg">
+  <button class="bg-primary text-primary-content-content px-4 py-2 rounded-lg">
     Save
   </button>
   <button class="bg-error text-error-content px-4 py-2 rounded-lg">
@@ -203,16 +217,18 @@ Use `base` colors for application hierarchy:
 #### Accessibility Rules
 
 ✅ **DO**:
+
 - Always pair backgrounds with their matching `-content` color
 - Use `-light` variants for non-critical/informational UI
 - Use solid variants for primary actions and critical states
 - Use `-stroke` for borders to maintain visual hierarchy
 
 ❌ **DON'T**:
+
 - Mix mismatched pairs: ~~`bg-success text-error-content`~~
 - Use palette colors: ~~`bg-green-100`~~, ~~`text-red-700`~~
 - Use raw colors: ~~`bg-[#29ad72]`~~
-- Ignore content pairing: ~~`bg-primary text-black`~~ (use `text-primary-content`)
+- Ignore content pairing: ~~`bg-primary text-black`~~ (use `text-primary-content-content`)
 
 ### File Organization
 
@@ -812,5 +828,3 @@ pnpm exec vitest run --coverage
 - **Commit Agent**: `.claude/commands/commit.md`
 - **Component Guidelines**: `src/components/CLAUDE.md`
 - **Page Routing**: `src/pages/CLAUDE.md`
-
-

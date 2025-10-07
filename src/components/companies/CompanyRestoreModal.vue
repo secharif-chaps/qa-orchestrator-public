@@ -16,7 +16,12 @@
               {{ $t('company.restore.title', 'Restore Company') }}
             </h3>
             <p class="text-sm text-primary-light-content">
-              {{ $t('company.restore.subtitle', 'This will move the company back to the active list.') }}
+              {{
+                $t(
+                  'company.restore.subtitle',
+                  'This will move the company back to the active list.',
+                )
+              }}
             </p>
           </div>
         </div>
@@ -25,7 +30,12 @@
       <!-- Content -->
       <div class="p-6">
         <p class="text-sm text-primary-light-content mb-4">
-          {{ $t('company.restore.warning.message', 'Restoring a company will make it visible again in the main list.') }}
+          {{
+            $t(
+              'company.restore.warning.message',
+              'Restoring a company will make it visible again in the main list.',
+            )
+          }}
         </p>
 
         <!-- Company Details -->
@@ -39,7 +49,9 @@
               <span class="font-medium">{{ companyToRestore.name }}</span>
             </div>
             <div v-if="companyToRestore.website" class="flex justify-between">
-              <span class="text-primary-light-content">{{ $t('company.website', 'Website') }}:</span>
+              <span class="text-primary-light-content"
+                >{{ $t('company.website', 'Website') }}:</span
+              >
               <span class="text-xs">{{ companyToRestore.website }}</span>
             </div>
           </div>

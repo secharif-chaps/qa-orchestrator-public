@@ -2,7 +2,9 @@
   <div class="bg-base-100 border border-primary-stroke rounded-lg">
     <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.accent.title') }}</h2>
-      <p class="text-sm text-primary-light-content mt-1">{{ $t('settings.appearance.accent.description') }}</p>
+      <p class="text-sm text-primary-light-content mt-1">
+        {{ $t('settings.appearance.accent.description') }}
+      </p>
     </div>
     <div class="px-6 py-6">
       <div class="space-y-6">
@@ -43,7 +45,7 @@
             <!-- Color Name Label -->
             <div class="mt-2 text-center">
               <span
-                class="text-xs font-medium text-primary-light-content group-hover:text-primary transition-colors"
+                class="text-xs font-medium text-primary-light-content group-hover:text-primary-light-content transition-colors"
               >
                 {{ colorOption.label }}
               </span>
@@ -60,7 +62,9 @@
               <div class="w-8 h-8 rounded-full shadow-md" :class="getCurrentAccentBgClass()"></div>
               <div>
                 <h4 class="text-sm font-medium">Current Accent Color</h4>
-                <p class="text-xs text-primary-light-content">{{ getCurrentAccentLabel() }}</p>
+                <p class="text-xs text-primary-light-content">
+                  {{ getCurrentAccentLabel() }}
+                </p>
               </div>
             </div>
             <div class="flex items-center gap-2">
@@ -73,10 +77,12 @@
         <div class="bg-primary/5 border border-primary/20 rounded-lg p-4">
           <div class="flex items-start gap-3">
             <div class="flex-shrink-0">
-              <i class="fas fa-palette text-primary"></i>
+              <i class="fas fa-palette text-primary-light-content"></i>
             </div>
             <div>
-              <h4 class="text-sm font-medium text-primary">Personalize Your Experience</h4>
+              <h4 class="text-sm font-medium text-primary-light-content">
+                Personalize Your Experience
+              </h4>
               <p class="text-xs text-primary-light-content mt-1">
                 Your accent color affects buttons, links, highlights, and interactive elements
                 throughout the application.

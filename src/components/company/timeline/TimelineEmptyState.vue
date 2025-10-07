@@ -2,17 +2,17 @@
   <div class="bg-base-100 p-8 rounded-lg">
     <div class="text-center">
       <div class="mb-6">
-        <div 
+        <div
           class="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4"
           :class="containerClass"
         >
           <i :class="iconClass" class="text-2xl"></i>
         </div>
       </div>
-      
-      <h3 class="text-xl font-semibold text-primary mb-3">{{ title }}</h3>
+
+      <h3 class="text-xl font-semibold text-primary-light-content mb-3">{{ title }}</h3>
       <p class="text-primary-light-content mb-6 max-w-md mx-auto">{{ description }}</p>
-      
+
       <!-- Loading State -->
       <div v-if="type === 'loading'" class="flex justify-center">
         <div class="flex items-center gap-3 text-primary-light-content">
@@ -20,7 +20,7 @@
           <span>{{ $t('timeline.loading', 'Analyzing company timeline...') }}</span>
         </div>
       </div>
-      
+
       <!-- Actions Slot -->
       <div v-else>
         <slot name="actions">
@@ -49,7 +49,7 @@ const iconClass = computed(() => {
     case 'no-results':
       return 'fa fa-search text-orange-500'
     case 'loading':
-      return 'fa fa-clock text-primary'
+      return 'fa fa-clock text-primary-content'
     default:
       return 'fa fa-calendar-days text-slate-500'
   }
@@ -69,9 +69,7 @@ const containerClass = computed(() => {
 const title = computed(() => {
   switch (props.type) {
     case 'no-results':
-      return props.searchQuery 
-        ? `No events found for "${props.searchQuery}"`
-        : 'No events found'
+      return props.searchQuery ? `No events found for "${props.searchQuery}"` : 'No events found'
     case 'loading':
       return 'Building Timeline'
     default:
@@ -84,7 +82,7 @@ const description = computed(() => {
     case 'no-results':
       return 'Try adjusting your search terms or check for different event types and dates.'
     case 'loading':
-      return 'We\'re analyzing the company\'s history and building a comprehensive timeline of important events and milestones.'
+      return "We're analyzing the company's history and building a comprehensive timeline of important events and milestones."
     default:
       return 'Timeline events and company milestones will be displayed here once the analysis is complete.'
   }

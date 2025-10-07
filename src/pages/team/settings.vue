@@ -3,7 +3,7 @@
   <div class="bg-base-100 p-6 rounded-lg">
     <div class="flex flex-col items-center justify-center py-12 text-center">
       <i class="fa fa-cog text-4xl text-primary-light-content mb-4"></i>
-      <h3 class="text-lg font-semibold text-primary mb-2">
+      <h3 class="text-lg font-semibold text-primary-light-content mb-2">
         {{ $t('team.settings.title', 'Team Settings') }}
       </h3>
       <p class="text-primary-light-content">

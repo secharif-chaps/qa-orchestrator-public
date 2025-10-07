@@ -24,7 +24,7 @@
           </div>
           <div class="text-sm text-primary-light-content">
             <strong>{{ mostExpensiveWorkspace.workspace_name }}</strong> has spent
-            <span class="font-semibold text-primary">{{
+            <span class="font-semibold text-primary-light-content">{{
               formatCurrency(mostExpensiveWorkspace.total_cost)
             }}</span>
             across {{ mostExpensiveWorkspace.task_count }} tasks and

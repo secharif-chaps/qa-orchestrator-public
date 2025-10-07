@@ -16,7 +16,9 @@
               {{ $t('folder.restore.title', 'Restore Folder') }}
             </h3>
             <p class="text-sm text-primary-light-content">
-              {{ $t('folder.restore.subtitle', 'This will move the folder back to the active list.') }}
+              {{
+                $t('folder.restore.subtitle', 'This will move the folder back to the active list.')
+              }}
             </p>
           </div>
         </div>
@@ -25,7 +27,12 @@
       <!-- Content -->
       <div class="p-6">
         <p class="text-sm text-primary-light-content mb-4">
-          {{ $t('folder.restore.warning.message', 'Restoring a folder will make it visible again in the main list.') }}
+          {{
+            $t(
+              'folder.restore.warning.message',
+              'Restoring a folder will make it visible again in the main list.',
+            )
+          }}
         </p>
 
         <!-- Folder Details -->

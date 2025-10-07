@@ -7,7 +7,7 @@
           <div
             class="w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
           >
-            <i class="fas fa-plus text-primary text-xl"></i>
+            <i class="fas fa-plus text-primary-light-content text-xl"></i>
           </div>
           <div>
             <h1 class="text-2xl font-bold">{{ $t('folder.create.title', 'Create New Folder') }}</h1>
@@ -72,7 +72,7 @@
               id="is_favorite"
               v-model="form.is_favorite"
               type="checkbox"
-              class="w-5 h-5 rounded border-primary-stroke text-primary focus:ring-primary/20"
+              class="w-5 h-5 rounded border-primary-stroke text-primary-light-content focus:ring-primary/20"
             />
             <label for="is_favorite" class="text-sm font-medium cursor-pointer">
               {{ $t('folder.form.favorite', 'Mark as favorite') }}
@@ -134,7 +134,6 @@ const isSubmitting = ref(false)
 
 // Validation
 const errors = ref<Record<string, string>>({})
-
 
 // Watch tags input for comma-separated values
 watch(tagsInput, (newValue) => {

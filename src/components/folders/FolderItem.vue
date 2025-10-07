@@ -34,7 +34,9 @@
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 mb-1">
-              <h3 class="text-lg font-semibold group-hover:text-primary transition-colors truncate">
+              <h3
+                class="text-lg font-semibold group-hover:text-primary-light-content transition-colors truncate"
+              >
                 {{ folder.name }}
               </h3>
             </div>
@@ -100,7 +102,7 @@
                   "
                   class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
                 >
-                  <i class="fas fa-building text-primary text-xs"></i>
+                  <i class="fas fa-building text-primary-light-content text-xs"></i>
                 </div>
               </div>
               <div class="flex-1 min-w-0">

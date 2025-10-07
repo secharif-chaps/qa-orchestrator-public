@@ -2,7 +2,7 @@
   <div class="bg-base-100 rounded-lg p-4">
     <div class="flex flex-col gap-6">
       <div class="col-span-2">
-        <h3 class="space-x-2 font-bold text-primary">
+        <h3 class="space-x-2 font-bold text-primary-light-content">
           <i class="fa fa-hand-holding-heart"></i>
           <span>{{ $t('profile.sections.csr.title') }}</span>
         </h3>
@@ -15,7 +15,7 @@
 
       <!-- CSR Responsibility Statement -->
       <div v-if="company?.csr?.responsibility">
-        <h4 class="font-semibold text-primary mb-2">
+        <h4 class="font-semibold text-primary-light-content mb-2">
           {{ $t('profile.sections.csr.responsibility') }}
         </h4>
         <p class="text-sm text-primary-light-content">{{ company.csr.responsibility }}</p>
@@ -23,7 +23,7 @@
 
       <!-- Responsibility Initiatives -->
       <div>
-        <h4 class="font-semibold text-primary mb-2">
+        <h4 class="font-semibold text-primary-light-content mb-2">
           {{ $t('profile.sections.csr.responsibility_initiatives') }}
         </h4>
         <div class="">
@@ -51,7 +51,9 @@
 
       <!-- Charity Actions -->
       <div>
-        <h4 class="font-semibold text-primary mb-2">{{ $t('profile.sections.csr.charity') }}</h4>
+        <h4 class="font-semibold text-primary-light-content mb-2">
+          {{ $t('profile.sections.csr.charity') }}
+        </h4>
         <div class="">
           <ul class="space-y-1">
             <li
@@ -65,7 +67,10 @@
               </span>
               <Source :source="action.sources[0]" />
             </li>
-            <li v-if="!company?.csr?.charity_actions?.length" class="text-sm text-primary-light-content italic">
+            <li
+              v-if="!company?.csr?.charity_actions?.length"
+              class="text-sm text-primary-light-content italic"
+            >
               {{ $t('common.notFound') }}
             </li>
           </ul>
@@ -74,7 +79,7 @@
 
       <!-- Sustainability Programs -->
       <div>
-        <h4 class="font-semibold text-primary mb-2">
+        <h4 class="font-semibold text-primary-light-content mb-2">
           {{ $t('profile.sections.csr.sustainability') }}
         </h4>
         <div class="">
@@ -102,7 +107,9 @@
 
       <!-- Community Involvement -->
       <div>
-        <h4 class="font-semibold text-primary mb-2">{{ $t('profile.sections.csr.community') }}</h4>
+        <h4 class="font-semibold text-primary-light-content mb-2">
+          {{ $t('profile.sections.csr.community') }}
+        </h4>
         <div class="">
           <ul class="space-y-1">
             <li
@@ -128,7 +135,9 @@
 
       <!-- Diversity & Inclusion -->
       <div>
-        <h4 class="font-semibold text-primary mb-2">{{ $t('profile.sections.csr.diversity') }}</h4>
+        <h4 class="font-semibold text-primary-light-content mb-2">
+          {{ $t('profile.sections.csr.diversity') }}
+        </h4>
         <div class="">
           <ul class="space-y-1">
             <li
@@ -154,7 +163,9 @@
 
       <!-- Ethical Practices -->
       <div>
-        <h4 class="font-semibold text-primary mb-2">{{ $t('profile.sections.csr.ethics') }}</h4>
+        <h4 class="font-semibold text-primary-light-content mb-2">
+          {{ $t('profile.sections.csr.ethics') }}
+        </h4>
         <div class="">
           <ul class="space-y-1">
             <li
@@ -180,7 +191,9 @@
 
       <!-- Awards & Certifications -->
       <div>
-        <h4 class="font-semibold text-primary mb-2">{{ $t('profile.sections.csr.awards') }}</h4>
+        <h4 class="font-semibold text-primary-light-content mb-2">
+          {{ $t('profile.sections.csr.awards') }}
+        </h4>
         <div class="">
           <ul class="space-y-1">
             <li

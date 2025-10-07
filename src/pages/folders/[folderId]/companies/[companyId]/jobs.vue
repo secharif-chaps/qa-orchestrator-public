@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col gap-4">
     <!-- Loading State -->
-    <PageState 
-      v-if="taskState.isLoading.value" 
-      state="loading" 
+    <PageState
+      v-if="taskState.isLoading.value"
+      state="loading"
       page-type="jobs"
       :task-progress="taskState.taskProgress.value"
     />
-    
+
     <!-- Error State -->
     <PageState
       v-else-if="taskState.hasErrors.value"
@@ -16,30 +16,30 @@
       :error-message="taskState.errorMessages.value[0]"
       @retry="handleRetry"
     />
-    
+
     <!-- No Data State -->
-    <PageState 
-      v-else-if="!hasJobOffersData" 
-      state="no-data" 
-      page-type="jobs"
-    />
+    <PageState v-else-if="!hasJobOffersData" state="no-data" page-type="jobs" />
 
     <!-- Main content -->
     <div v-if="hasJobOffersData" class="space-y-6">
       <!-- Insights Section -->
-      <div class="bg-base-100 rounded-lg p-4" v-if="jobOffersInsights">
+      <div class="rounded-lg p-4" v-if="jobOffersInsights">
         <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
-          <i class="fa fa-chart-line text-primary"></i>
+          <i class="fa fa-chart-line text-primary-light-content"></i>
           <span>{{ $t('jobs.insights.title') }}</span>
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="p-4 bg-base-300 border border-slate-200 dark:border-slate-700 rounded-lg">
+          <div
+            class="p-4 bg-primary-light border border-slate-200 dark:border-slate-700 rounded-lg"
+          >
             <h4 class="text-sm font-semibold">{{ $t('jobs.insights.totalOpenings') }}</h4>
-            <p class="text-2xl font-bold text-primary">
+            <p class="text-2xl font-bold text-primary-light-content">
               {{ getSourcedValue(company?.jobs?.insights?.total_openings) }}
             </p>
           </div>
-          <div class="p-4 bg-base-300 border border-slate-200 dark:border-slate-700 rounded-lg">
+          <div
+            class="p-4 bg-primary-light border border-slate-200 dark:border-slate-700 rounded-lg"
+          >
             <h4 class="text-sm font-semibold">{{ $t('jobs.insights.topDepartments') }}</h4>
             <div class="text-sm text-primary-light-content">
               <ul class="list-disc list-inside space-y-1">
@@ -57,13 +57,17 @@
               </div>
             </div>
           </div>
-          <div class="p-4 bg-base-300 border border-slate-200 dark:border-slate-700 rounded-lg">
+          <div
+            class="p-4 bg-primary-light border border-slate-200 dark:border-slate-700 rounded-lg"
+          >
             <h4 class="text-sm font-semibold">{{ $t('jobs.insights.hiringFocus') }}</h4>
             <p class="text-sm text-primary-light-content">
               {{ getSourcedValue(company?.jobs?.insights?.hiring_focus) }}
             </p>
           </div>
-          <div class="p-4 bg-base-300 border border-slate-200 dark:border-slate-700 rounded-lg">
+          <div
+            class="p-4 bg-primary-light border border-slate-200 dark:border-slate-700 rounded-lg"
+          >
             <h4 class="text-sm font-semibold">{{ $t('jobs.insights.growthIndicators') }}</h4>
             <p class="text-sm text-primary-light-content">
               {{ getSourcedValue(company?.jobs?.insights?.growth_indicators) }}
@@ -73,15 +77,15 @@
       </div>
 
       <!-- Job Listings with Search -->
-      <div class="bg-base-100 rounded-lg p-4">
+      <div class="rounded-lg p-4">
         <div class="flex items-center justify-between mb-6">
           <div class="flex gap-2 items-center">
-            <i class="fa fa-list text-primary"></i>
+            <i class="fa fa-list text-primary-light-content"></i>
             <span class="text-lg font-semibold">{{ $t('jobs.listings.title') }}</span>
           </div>
           <div class="w-64">
-            <OInput
-              icon="fa-search"
+            <Input
+              icon="fa fa-search"
               id="search"
               v-model="searchQuery"
               :placeholder="$t('jobs.listings.search.placeholder')"
@@ -126,6 +130,7 @@ import JobCard from '@/components/company/jobs/JobCard.vue'
 import PageState from '@/components/company/PageState.vue'
 import { OInput } from '@owlint/feathers-vue'
 import { useRestartTask } from '@/mutations/tasks'
+import Input from '@/components/ui/Input.vue'
 
 const route = useRoute()
 
@@ -141,11 +146,11 @@ const { data: company } = useQuery(
     // Poll every 5 seconds when any task is running
     refetchInterval: () => {
       const hasRunningTasks = company.value?.tasks?.some(
-        (t) => t.status === 'running' || t.status === 'pending'
+        (t) => t.status === 'running' || t.status === 'pending',
       )
       return hasRunningTasks ? 5000 : false
     },
-  }
+  },
 )
 
 // Task state management

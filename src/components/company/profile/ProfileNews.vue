@@ -2,13 +2,13 @@
   <div class="bg-base-100 rounded-lg p-4">
     <div class="flex flex-col gap-4">
       <div class="flex items-center justify-between">
-        <h3 class="space-x-2 font-bold text-primary">
+        <h3 class="space-x-2 font-bold text-primary-light-content">
           <i class="fa fa-bullhorn"></i>
           <span>{{ $t('profile.sections.news.title') }}</span>
         </h3>
         <RouterLink :to="`/companies/${companyId}/press`">
-          <Button 
-            variant="ghost-primary" 
+          <Button
+            variant="ghost-primary"
             label="View All"
             icon="fa fa-arrow-right"
             icon-position="right"
@@ -20,19 +20,25 @@
       <!-- Press Summary Stats -->
       <div v-if="hasAnyPressData" class="grid grid-cols-2 gap-2">
         <div v-if="totalPressItems > 0" class="bg-base-200 rounded p-3">
-          <div class="text-2xl font-bold text-primary">{{ totalPressItems }}</div>
+          <div class="text-2xl font-bold text-primary-light-content">{{ totalPressItems }}</div>
           <div class="text-xs text-primary-light-content">Total Press Items</div>
         </div>
         <div v-if="company?.press?.financial_news?.length" class="bg-base-200 rounded p-3">
-          <div class="text-2xl font-bold text-primary">{{ company.press.financial_news.length }}</div>
+          <div class="text-2xl font-bold text-primary-light-content">
+            {{ company.press.financial_news.length }}
+          </div>
           <div class="text-xs text-primary-light-content">Financial News</div>
         </div>
         <div v-if="company?.press?.media_mentions?.length" class="bg-base-200 rounded p-3">
-          <div class="text-2xl font-bold text-primary">{{ company.press.media_mentions.length }}</div>
+          <div class="text-2xl font-bold text-primary-light-content">
+            {{ company.press.media_mentions.length }}
+          </div>
           <div class="text-xs text-primary-light-content">Media Mentions</div>
         </div>
         <div v-if="company?.press?.product_launches?.length" class="bg-base-200 rounded p-3">
-          <div class="text-2xl font-bold text-primary">{{ company.press.product_launches.length }}</div>
+          <div class="text-2xl font-bold text-primary-light-content">
+            {{ company.press.product_launches.length }}
+          </div>
           <div class="text-xs text-primary-light-content">Product Launches</div>
         </div>
       </div>
@@ -97,7 +103,7 @@ const hasAnyPressData = computed(() => {
 const totalPressItems = computed(() => {
   const press = company.value?.press
   if (!press) return 0
-  
+
   return (
     (press.articles?.length || 0) +
     (press.press_releases?.length || 0) +
@@ -113,20 +119,26 @@ const totalPressItems = computed(() => {
 const latestPressItems = computed(() => {
   const press = company.value?.press
   if (!press) return []
-  
+
   const allItems = []
-  
+
   // Add items with their category icons
   if (press.financial_news?.length) {
-    allItems.push(...press.financial_news.slice(0, 1).map(item => ({ ...item, icon: 'fa fa-chart-line' })))
+    allItems.push(
+      ...press.financial_news.slice(0, 1).map((item) => ({ ...item, icon: 'fa fa-chart-line' })),
+    )
   }
   if (press.product_launches?.length) {
-    allItems.push(...press.product_launches.slice(0, 1).map(item => ({ ...item, icon: 'fa fa-rocket' })))
+    allItems.push(
+      ...press.product_launches.slice(0, 1).map((item) => ({ ...item, icon: 'fa fa-rocket' })),
+    )
   }
   if (press.media_mentions?.length) {
-    allItems.push(...press.media_mentions.slice(0, 1).map(item => ({ ...item, icon: 'fa fa-newspaper' })))
+    allItems.push(
+      ...press.media_mentions.slice(0, 1).map((item) => ({ ...item, icon: 'fa fa-newspaper' })),
+    )
   }
-  
+
   // Return max 3 items
   return allItems.slice(0, 3)
 })

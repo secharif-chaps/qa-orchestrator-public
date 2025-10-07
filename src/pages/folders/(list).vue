@@ -45,13 +45,18 @@
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
-        <p class="text-primary-light-content">{{ $t('folder.loading', 'Loading folders...') }}</p>
+        <p class="text-primary-light-content">
+          {{ $t('folder.loading', 'Loading folders...') }}
+        </p>
       </div>
 
       <!-- Folders Content -->
       <div v-else-if="currentStatus === 'success'">
         <!-- Grid View -->
-        <div v-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          v-if="viewMode === 'grid'"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           <!-- Create New Folder Card -->
           <div
             class="rounded-card p-6 border-2 border-dashed border-primary-stroke hover:border-primary/50 hover:bg-base-200/50 transition-all duration-200 cursor-pointer group flex flex-col items-center justify-center min-h-[280px]"
@@ -60,10 +65,10 @@
             <div
               class="w-16 h-16 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors"
             >
-              <i class="fas fa-plus text-primary text-2xl"></i>
+              <i class="fas fa-plus text-primary-light-content text-2xl"></i>
             </div>
             <h3
-              class="text-lg font-semibold text-center mb-2 group-hover:text-primary transition-colors"
+              class="text-lg font-semibold text-center mb-2 group-hover:text-primary-light-content transition-colors"
             >
               {{ $t('folder.create.title', 'Create New Folder') }}
             </h3>
@@ -87,14 +92,23 @@
         <!-- Hierarchical Table View -->
         <div v-else class="bg-base-100 rounded-lg overflow-hidden border border-primary-stroke">
           <!-- Create New Folder Row -->
-          <div class="px-6 py-4 border-b border-primary-stroke bg-base-200/50 hover:bg-base-200 transition-colors cursor-pointer" @click="$router.push('/folders/create')">
+          <div
+            class="px-6 py-4 border-b border-primary-stroke bg-base-200/50 hover:bg-base-200 transition-colors cursor-pointer"
+            @click="$router.push('/folders/create')"
+          >
             <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
-                <i class="fas fa-plus text-primary text-sm"></i>
+              <div
+                class="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
+              >
+                <i class="fas fa-plus text-primary-light-content text-sm"></i>
               </div>
               <div class="flex-1">
-                <h3 class="font-medium text-primary">{{ $t('folder.create.title', 'Create New Folder') }}</h3>
-                <p class="text-xs text-primary-light-content mt-1">{{ $t('folder.create.description', 'Organize your companies into folders') }}</p>
+                <h3 class="font-medium text-primary-light-content">
+                  {{ $t('folder.create.title', 'Create New Folder') }}
+                </h3>
+                <p class="text-xs text-primary-light-content mt-1">
+                  {{ $t('folder.create.description', 'Organize your companies into folders') }}
+                </p>
               </div>
               <i class="fas fa-chevron-right text-primary-light-content"></i>
             </div>
@@ -119,7 +133,9 @@
               @view-folder="$router.push(`/folders/${$event}`)"
               @delete-folder="confirmDelete"
               @restore-folder="confirmRestore"
-              @view-item="(event) => $router.push(`/folders/${event.folderId}/companies/${event.itemId}`)"
+              @view-item="
+                (event) => $router.push(`/folders/${event.folderId}/companies/${event.itemId}`)
+              "
             />
           </div>
         </div>
@@ -260,38 +276,50 @@ const viewModeOptions = computed(() => [
 ])
 
 // Query for grid view (folders only)
-const { data, status, isLoading, refetch } = useQuery(foldersQuery, () => ({
-  filters: {
-    page: foldersStore.page,
-    size: foldersStore.size,
-    name: foldersStore.debouncedName,
-    archived: folderFilter.value === 'archived',
+const { data, status, isLoading, refetch } = useQuery(
+  foldersQuery,
+  () => ({
+    filters: {
+      page: foldersStore.page,
+      size: foldersStore.size,
+      name: foldersStore.debouncedName,
+      archived: folderFilter.value === 'archived',
+    },
+  }),
+  {
+    enabled: () => viewMode.value === 'grid',
   },
-}), {
-  enabled: () => viewMode.value === 'grid'
-})
+)
 
 // Query for table view (folders with items)
 const {
   data: dataWithItems,
   status: statusWithItems,
   isLoading: isLoadingWithItems,
-  refetch: refetchWithItems
-} = useQuery(foldersWithItemsQuery, () => ({
-  filters: {
-    page: foldersStore.page,
-    size: foldersStore.size,
-    name: foldersStore.debouncedName,
-    archived: folderFilter.value === 'archived',
+  refetch: refetchWithItems,
+} = useQuery(
+  foldersWithItemsQuery,
+  () => ({
+    filters: {
+      page: foldersStore.page,
+      size: foldersStore.size,
+      name: foldersStore.debouncedName,
+      archived: folderFilter.value === 'archived',
+    },
+  }),
+  {
+    enabled: () => viewMode.value === 'table',
   },
-}), {
-  enabled: () => viewMode.value === 'table'
-})
+)
 
 // Combined computed properties for different view modes
-const currentData = computed(() => viewMode.value === 'grid' ? data.value : dataWithItems.value)
-const currentStatus = computed(() => viewMode.value === 'grid' ? status.value : statusWithItems.value)
-const currentIsLoading = computed(() => viewMode.value === 'grid' ? isLoading.value : isLoadingWithItems.value)
+const currentData = computed(() => (viewMode.value === 'grid' ? data.value : dataWithItems.value))
+const currentStatus = computed(() =>
+  viewMode.value === 'grid' ? status.value : statusWithItems.value,
+)
+const currentIsLoading = computed(() =>
+  viewMode.value === 'grid' ? isLoading.value : isLoadingWithItems.value,
+)
 
 const folders = computed(() => {
   const allFolders = currentData.value || []

@@ -1,12 +1,15 @@
 <template>
   <div>
     <!-- Folder Row -->
-    <div class="px-6 py-4 hover:bg-base-200 transition-colors cursor-pointer" @click="toggleExpanded">
+    <div
+      class="px-6 py-4 hover:bg-base-200 transition-colors cursor-pointer"
+      @click="toggleExpanded"
+    >
       <div class="grid grid-cols-12 gap-4 items-center">
         <!-- Name with expand/collapse icon -->
         <div class="col-span-6 flex items-center gap-3">
           <button
-            class="w-6 h-6 flex items-center justify-center text-primary-light-content hover:text-primary transition-colors"
+            class="w-6 h-6 flex items-center justify-center text-primary-light-content hover:text-primary-light-content transition-colors"
             @click.stop="toggleExpanded"
           >
             <i
@@ -34,7 +37,9 @@
 
         <!-- Created date -->
         <div class="col-span-2">
-          <span class="text-sm text-primary-light-content">{{ formatDate(folder.created_at) }}</span>
+          <span class="text-sm text-primary-light-content">{{
+            formatDate(folder.created_at)
+          }}</span>
         </div>
 
         <!-- Actions -->
@@ -90,7 +95,7 @@
                 "
                 class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
               >
-                <i class="fas fa-building text-primary text-sm"></i>
+                <i class="fas fa-building text-primary-light-content text-sm"></i>
               </div>
             </div>
             <div class="flex-1">
@@ -105,7 +110,9 @@
 
           <!-- Item created date -->
           <div class="col-span-2">
-            <span class="text-xs text-primary-light-content">{{ formatDate(item.created_at) }}</span>
+            <span class="text-xs text-primary-light-content">{{
+              formatDate(item.created_at)
+            }}</span>
           </div>
 
           <!-- Item actions -->

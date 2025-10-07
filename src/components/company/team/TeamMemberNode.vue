@@ -4,11 +4,13 @@
     :class="{
       ' ring-purple-600': data.level <= 1,
       ' ring-orange-400': data.level > 1,
-      'ring-4': selected
+      'ring-4': selected,
     }"
   >
     <div class="flex items-center gap-2">
-      <div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0">
+      <div
+        class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0"
+      >
         <i class="fa fa-user text-bg1"></i>
       </div>
       <div class="flex flex-col">
@@ -24,7 +26,7 @@
       :class="{
         'opacity-0': data.level === 0,
         '!bg-purple-600': data.level === 1,
-        '!bg-orange-400': data.level > 1
+        '!bg-orange-400': data.level > 1,
       }"
     />
     <Handle type="source" :position="Position.Bottom" class="!bg-slate-400 opacity-0" />

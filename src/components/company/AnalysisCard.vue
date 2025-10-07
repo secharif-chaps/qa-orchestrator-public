@@ -22,7 +22,7 @@
       </div>
 
       <div class="flex-1 min-w-0">
-        <h3 class="text-lg font-semibold mb-1 group-hover:text-primary transition-colors">
+        <h3 class="text-lg font-semibold mb-1 transition-colors">
           {{ title }}
         </h3>
       </div>
@@ -34,7 +34,7 @@
         {{ insights }}
       </p>
       <button
-        class="mt-2 text-xs text-primary hover:text-primary/80 transition-colors font-medium flex items-center gap-1 self-start"
+        class="mt-2 text-xs text-primary-light-content hover:text-primary-light-content/80 transition-colors font-medium flex items-center gap-1 self-start"
       >
         <span>Voir plus</span>
         <i class="fas fa-arrow-right text-[10px]"></i>
@@ -70,7 +70,9 @@
 
     <!-- No Data State -->
     <div v-else-if="!hasInsights && !isLoading" class="mt-4 pt-4 border-t border-primary-stroke">
-      <p class="text-sm text-primary-light-content italic">Aucune donnée disponible pour cette section</p>
+      <p class="text-sm text-primary-light-content italic">
+        Aucune donnée disponible pour cette section
+      </p>
     </div>
 
     <!-- Disabled Overlay -->
@@ -158,7 +160,7 @@ const iconColorClass = computed(() => {
   if (hasError.value) {
     return 'text-error-500'
   }
-  return 'text-primary'
+  return 'text-primary-light-content'
 })
 
 const handleClick = () => {

@@ -24,7 +24,9 @@
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
-        <p class="text-primary-light-content">{{ $t('folder.loading', 'Loading folder...') }}</p>
+        <p class="text-primary-light-content">
+          {{ $t('folder.loading', 'Loading folder...') }}
+        </p>
       </div>
 
       <!-- Error State -->
@@ -37,7 +39,10 @@
       />
 
       <!-- Form -->
-      <div v-else-if="folder && status === 'success'" class="bg-base-100 rounded-lg p-6 border border-primary-stroke">
+      <div
+        v-else-if="folder && status === 'success'"
+        class="bg-base-100 rounded-lg p-6 border border-primary-stroke"
+      >
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Folder Name -->
           <div>
@@ -90,7 +95,7 @@
               id="is_favorite"
               v-model="form.is_favorite"
               type="checkbox"
-              class="w-5 h-5 rounded border-primary-stroke text-primary focus:ring-primary/20"
+              class="w-5 h-5 rounded border-primary-stroke text-primary-light-content focus:ring-primary/20"
             />
             <label for="is_favorite" class="text-sm font-medium cursor-pointer">
               {{ $t('folder.form.favorite', 'Mark as favorite') }}
@@ -169,19 +174,22 @@ const errors = ref<Record<string, string>>({})
 // Update mutation
 const { mutateAsync: updateFolderMutation } = useUpdateFolder()
 
-
 // Initialize form with folder data when loaded
-watch(folder, (newFolder) => {
-  if (newFolder) {
-    form.value = {
-      name: newFolder.name,
-      icon: newFolder.icon || 'fa-jelly-duo fa-folder',
-      color: newFolder.color || 'blue',
-      tags: newFolder.tags || [],
-      is_favorite: newFolder.is_favorite,
+watch(
+  folder,
+  (newFolder) => {
+    if (newFolder) {
+      form.value = {
+        name: newFolder.name,
+        icon: newFolder.icon || 'fa-jelly-duo fa-folder',
+        color: newFolder.color || 'blue',
+        tags: newFolder.tags || [],
+        is_favorite: newFolder.is_favorite,
+      }
     }
-  }
-}, { immediate: true })
+  },
+  { immediate: true },
+)
 
 // Watch tags input for comma-separated values
 watch(tagsInput, (newValue) => {

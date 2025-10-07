@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Loading State -->
-    <PageState 
-      v-if="taskState.isLoading.value" 
-      state="loading" 
+    <PageState
+      v-if="taskState.isLoading.value"
+      state="loading"
       page-type="team"
       :task-progress="taskState.taskProgress.value"
     />
-    
+
     <!-- Error State -->
     <PageState
       v-else-if="taskState.hasErrors.value"
@@ -16,18 +16,14 @@
       :error-message="taskState.errorMessages.value[0]"
       @retry="handleRetry"
     />
-    
+
     <!-- No Data State -->
-    <PageState 
-      v-else-if="!hasTeamData" 
-      state="no-data" 
-      page-type="team"
-    />
+    <PageState v-else-if="!hasTeamData" state="no-data" page-type="team" />
 
     <!-- Main content -->
     <div v-if="hasTeamData" class="space-y-6">
       <!-- Team Header with Stats -->
-      <TeamPageHeader 
+      <TeamPageHeader
         :team="company?.team"
         :team-insights="company?.team_insights"
         @export="handleExport"
@@ -35,20 +31,17 @@
 
       <!-- Team Members List -->
       <div class="bg-base-100 p-6 rounded-lg">
-        <h3 class="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
+        <h3 class="text-lg font-semibold text-primary-light-content mb-4 flex items-center gap-2">
           <i class="fa fa-address-card"></i>
           <span>{{ $t('team.members.title', 'Team Members') }}</span>
         </h3>
-        <TeamMembersList 
-          :team="company?.team"
-          @view-in-hierarchy="scrollToMemberInHierarchy"
-        />
+        <TeamMembersList :team="company?.team" @view-in-hierarchy="scrollToMemberInHierarchy" />
       </div>
 
       <!-- Hierarchy Graph -->
       <div class="bg-base-100 p-6 rounded-lg">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold text-primary flex items-center gap-2">
+          <h3 class="text-lg font-semibold text-primary-light-content flex items-center gap-2">
             <i class="fa fa-sitemap"></i>
             <span>{{ $t('team.hierarchy.title', 'Organization Chart') }}</span>
           </h3>
@@ -143,7 +136,7 @@
                   <a
                     :href="getMockedLinkedInUrl(selectedNode)"
                     target="_blank"
-                    class="flex items-center gap-2 text-sm text-primary hover:underline"
+                    class="flex items-center gap-2 text-sm text-primary-light-content hover:underline"
                   >
                     <i class="fab fa-linkedin"></i>
                     <span>{{ $t('team.hierarchy.viewLinkedIn') }}</span>
@@ -201,11 +194,11 @@ const { data: company } = useQuery(
     // Poll every 5 seconds when any task is running
     refetchInterval: () => {
       const hasRunningTasks = company.value?.tasks?.some(
-        (t) => t.status === 'running' || t.status === 'pending'
+        (t) => t.status === 'running' || t.status === 'pending',
       )
       return hasRunningTasks ? 5000 : false
     },
-  }
+  },
 )
 
 // Task state management
@@ -442,9 +435,9 @@ const handleExport = () => {
   const exportData = {
     company: company.value?.name,
     team: company.value?.team,
-    exportDate: new Date().toISOString()
+    exportDate: new Date().toISOString(),
   }
-  
+
   const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -457,19 +450,19 @@ const handleExport = () => {
 const scrollToMemberInHierarchy = (member: TeamMember) => {
   // Find the node in the hierarchy
   const nodeId = `${member.position}-${member.firstName}-${member.lastName}`
-  const node = nodes.value.find(n => n.id === nodeId)
-  
+  const node = nodes.value.find((n) => n.id === nodeId)
+
   if (node) {
     // Set as selected
     selectedNode.value = node.data
-    
+
     // Scroll to the hierarchy section
     nextTick(() => {
       const hierarchySection = document.querySelector('.vue-flow')
       if (hierarchySection) {
         hierarchySection.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }
-      
+
       // Fit view to show the selected node
       setTimeout(() => {
         fitView({ nodes: [nodeId], duration: 800, padding: 0.5 })

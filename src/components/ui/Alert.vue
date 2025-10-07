@@ -1,14 +1,11 @@
 <template>
   <div v-if="show" :class="alertClasses" class="relative overflow-hidden rounded-block">
-
     <!-- Content -->
     <div class="relative p-6">
       <div class="flex items-start gap-4">
         <!-- Icon -->
         <div v-if="icon" class="flex-shrink-0">
-          <div
-            class="w-12 h-12 rounded-full flex items-center justify-center"
-          >
+          <div class="w-12 h-12 rounded-full flex items-center justify-center">
             <i :class="[icon, iconColorClasses]" class="text-lg"></i>
           </div>
         </div>
@@ -138,11 +135,9 @@ const iconColorClasses = computed(() => {
     case 'accent':
       return 'text-accent-500 dark:text-accent-200'
     case 'gradient':
-      return 'text-accent-500 dark:text-primary-200'
+      return 'text-accent-500 dark:text-primary-content-200'
     default:
       return 'text-info-500 dark:text-info-200'
   }
 })
-
-
 </script>

@@ -4,8 +4,14 @@
     <div class="space-y-2">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-3xl font-semibold">{{ $t('csv.upload.title', 'Import Companies from CSV') }}</h1>
-          <p class="text-primary-light-content">{{ $t('csv.upload.description', 'Upload a CSV file to create multiple companies at once') }}</p>
+          <h1 class="text-3xl font-semibold">
+            {{ $t('csv.upload.title', 'Import Companies from CSV') }}
+          </h1>
+          <p class="text-primary-light-content">
+            {{
+              $t('csv.upload.description', 'Upload a CSV file to create multiple companies at once')
+            }}
+          </p>
         </div>
 
         <!-- Token Counter -->
@@ -42,7 +48,7 @@
       <!-- File Upload -->
       <div class="space-y-4">
         <h2 class="text-lg font-medium">{{ $t('csv.upload.step1', 'Step 1: Upload CSV File') }}</h2>
-        
+
         <div class="space-y-4">
           <!-- File Input -->
           <div class="border-2 border-dashed border-primary-stroke rounded-lg p-6 text-center">
@@ -53,11 +59,13 @@
               class="hidden"
               @change="handleFileSelect"
             />
-            
+
             <div v-if="!selectedFile" class="space-y-2">
               <i class="fa fa-upload text-3xl text-primary-light-content"></i>
               <div>
-                <p class="text-primary-light-content">{{ $t('csv.upload.dragDrop', 'Drag and drop your CSV file here, or') }}</p>
+                <p class="text-primary-light-content">
+                  {{ $t('csv.upload.dragDrop', 'Drag and drop your CSV file here, or') }}
+                </p>
                 <Button
                   variant="ghost-primary"
                   label="Choose File"
@@ -65,11 +73,13 @@
                 />
               </div>
             </div>
-            
+
             <div v-else class="space-y-2">
               <i class="fa fa-file-csv text-3xl text-success"></i>
               <p class="font-medium">{{ selectedFile.name }}</p>
-              <p class="text-sm text-primary-light-content">{{ formatFileSize(selectedFile.size) }}</p>
+              <p class="text-sm text-primary-light-content">
+                {{ formatFileSize(selectedFile.size) }}
+              </p>
               <Button
                 variant="ghost-primary"
                 color="danger"
@@ -88,8 +98,18 @@
             </h3>
             <ul class="text-sm text-info space-y-1 ml-6">
               <li>• {{ $t('csv.upload.format1', 'Include a header row with column names') }}</li>
-              <li>• {{ $t('csv.upload.format2', 'Company name column: Name, Company, Nom, Entreprise, etc.') }}</li>
-              <li>• {{ $t('csv.upload.format3', 'Website column: Website, URL, Site, Domain, etc.') }}</li>
+              <li>
+                •
+                {{
+                  $t(
+                    'csv.upload.format2',
+                    'Company name column: Name, Company, Nom, Entreprise, etc.',
+                  )
+                }}
+              </li>
+              <li>
+                • {{ $t('csv.upload.format3', 'Website column: Website, URL, Site, Domain, etc.') }}
+              </li>
               <li>• {{ $t('csv.upload.format4', 'Use commas to separate columns') }}</li>
             </ul>
           </div>
@@ -98,8 +118,10 @@
 
       <!-- Parse Results -->
       <div v-if="parseResult" class="space-y-4">
-        <h2 class="text-lg font-medium">{{ $t('csv.upload.step2', 'Step 2: Review Parsed Data') }}</h2>
-        
+        <h2 class="text-lg font-medium">
+          {{ $t('csv.upload.step2', 'Step 2: Review Parsed Data') }}
+        </h2>
+
         <!-- Parse Errors -->
         <div v-if="parseResult.errors.length > 0" class="space-y-2">
           <Alert
@@ -114,7 +136,11 @@
         <div v-if="parseResult.companies.length > 0" class="space-y-4">
           <div class="flex items-center justify-between">
             <p class="text-sm text-primary-light-content">
-              {{ $t('csv.upload.companiesFound', 'Found {count} companies in CSV', { count: parseResult.companies.length }) }}
+              {{
+                $t('csv.upload.companiesFound', 'Found {count} companies in CSV', {
+                  count: parseResult.companies.length,
+                })
+              }}
             </p>
             <Button
               variant="secondary"
@@ -125,15 +151,27 @@
               @click="validateCompanies"
             />
           </div>
-          
+
           <!-- Preview Table -->
           <div class="overflow-x-auto border border-primary-stroke rounded-lg">
             <table class="min-w-full divide-y divide-border-2">
               <thead class="bg-base-200">
                 <tr>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider">Row</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider">Company Name</th>
-                  <th class="px-4 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider">Website</th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider"
+                  >
+                    Row
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider"
+                  >
+                    Company Name
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider"
+                  >
+                    Website
+                  </th>
                 </tr>
               </thead>
               <tbody class="bg-base-100 divide-y divide-border-2">
@@ -144,8 +182,15 @@
                 </tr>
               </tbody>
             </table>
-            <div v-if="parseResult.companies.length > 5" class="px-4 py-3 text-sm text-primary-light-content bg-base-200">
-              {{ $t('csv.upload.moreRows', 'and {count} more rows...', { count: parseResult.companies.length - 5 }) }}
+            <div
+              v-if="parseResult.companies.length > 5"
+              class="px-4 py-3 text-sm text-primary-light-content bg-base-200"
+            >
+              {{
+                $t('csv.upload.moreRows', 'and {count} more rows...', {
+                  count: parseResult.companies.length - 5,
+                })
+              }}
             </div>
           </div>
         </div>
@@ -153,8 +198,10 @@
 
       <!-- Validation Results -->
       <div v-if="validationResult" class="space-y-4">
-        <h2 class="text-lg font-medium">{{ $t('csv.upload.step3', 'Step 3: Validation Results') }}</h2>
-        
+        <h2 class="text-lg font-medium">
+          {{ $t('csv.upload.step3', 'Step 3: Validation Results') }}
+        </h2>
+
         <!-- Token Info -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-success/10 border border-success/20 rounded-lg p-4">
@@ -211,7 +258,7 @@
             :disabled="isImporting || !validationResult.has_sufficient_tokens"
             @click="importCompanies"
           />
-          
+
           <Button
             variant="secondary"
             icon="fa fa-edit"
@@ -224,7 +271,7 @@
       <!-- Import Results -->
       <div v-if="importResult" class="space-y-4">
         <h2 class="text-lg font-medium">{{ $t('csv.upload.results', 'Import Results') }}</h2>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-success/10 border border-success/20 rounded-lg p-4">
             <div class="text-sm text-success">Successful</div>
@@ -244,7 +291,7 @@
         <div v-if="importResult.failed > 0" class="space-y-2 max-h-60 overflow-y-auto">
           <h3 class="font-medium text-error">Failed Imports</h3>
           <div
-            v-for="result in importResult.results.filter(r => !r.success)"
+            v-for="result in importResult.results.filter((r) => !r.success)"
             :key="result.row_number"
             class="bg-error/5 border border-error/20 rounded-lg p-3 text-sm"
           >
@@ -255,13 +302,8 @@
 
         <!-- Success Actions -->
         <div class="flex items-center gap-4 pt-4">
-          <Button
-            variant="primary"
-            icon="fa fa-folder"
-            label="Go to Folder"
-            @click="goToFolder"
-          />
-          
+          <Button variant="primary" icon="fa fa-folder" label="Go to Folder" @click="goToFolder" />
+
           <Button
             variant="secondary"
             icon="fa fa-upload"
@@ -290,7 +332,12 @@ import Alert from '@/components/ui/Alert.vue'
 import TokenCounter from '@/components/tokens/TokenCounter.vue'
 import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
 import { parseCSVAdvanced, type CSVParseResult } from '@/utils/csvParser'
-import { validateCSV, importCSV, type CSVValidationResponse, type CSVImportResponse } from '@/api/companies'
+import {
+  validateCSV,
+  importCSV,
+  type CSVValidationResponse,
+  type CSVImportResponse,
+} from '@/api/companies'
 import { useAddItemToFolder } from '@/mutations/folders'
 import { currentWorkspaceQuery } from '@/queries/workspace'
 import { moduleTokensQuery } from '@/queries/tokens'
@@ -339,10 +386,14 @@ const showInsufficientTokenAlert = computed(() => {
   if (!currentWorkspace.value?.id || tokenDataLoading.value) {
     return false
   }
-  
+
   if (!validationResult.value) return false
-  
-  return screenModuleEnabled.value && !validationResult.value.has_sufficient_tokens && !showTokenAlert.value
+
+  return (
+    screenModuleEnabled.value &&
+    !validationResult.value.has_sufficient_tokens &&
+    !showTokenAlert.value
+  )
 })
 
 // Token alert state
@@ -386,7 +437,7 @@ const parseCSVFile = async (file: File) => {
     console.error('Error parsing CSV:', error)
     parseResult.value = {
       companies: [],
-      errors: ['Failed to read CSV file. Please ensure it is a valid CSV format.']
+      errors: ['Failed to read CSV file. Please ensure it is a valid CSV format.'],
     }
   }
 }
@@ -394,11 +445,11 @@ const parseCSVFile = async (file: File) => {
 // Validation
 const validateCompanies = async () => {
   if (!parseResult.value?.companies.length) return
-  
+
   isValidating.value = true
   try {
     validationResult.value = await validateCSV({
-      companies: parseResult.value.companies
+      companies: parseResult.value.companies,
     })
   } catch (error: any) {
     console.error('Validation error:', error)
@@ -411,19 +462,19 @@ const validateCompanies = async () => {
 // Import
 const importCompanies = async () => {
   if (!parseResult.value?.companies.length || !validationResult.value) return
-  
+
   isImporting.value = true
   try {
     importResult.value = await importCSV({
       companies: parseResult.value.companies,
-      skip_invalid: true
+      skip_invalid: true,
     })
-    
+
     // Add successful companies to the folder
     if (importResult.value.successful > 0) {
       const { mutateAsync: addToFolder } = useAddItemToFolder()
       const folderId = route.params.folderId
-      
+
       // Add each successful company to the folder
       for (const result of importResult.value.results) {
         if (result.success && result.company_id) {

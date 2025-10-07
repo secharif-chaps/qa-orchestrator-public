@@ -33,12 +33,7 @@
           {{ event.category }}
         </Badge>
 
-        <Badge
-          v-if="event.location"
-          variant="slate"
-          size="sm"
-          class="flex items-center gap-1"
-        >
+        <Badge v-if="event.location" variant="slate" size="sm" class="flex items-center gap-1">
           <i class="fa fa-map-marker-alt text-xs"></i>
           {{ event.location }}
         </Badge>

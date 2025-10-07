@@ -12,10 +12,8 @@
           <!-- Header -->
           <div class="flex items-center justify-between p-6 border-b border-primary-stroke">
             <div class="flex items-center gap-3">
-              <div
-                class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center"
-              >
-                <i class="fas fa-bug text-primary"></i>
+              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <i class="fas fa-bug text-primary-light-content"></i>
               </div>
               <div>
                 <h2 class="text-lg font-semibold">Workflow de recherche</h2>
@@ -72,7 +70,9 @@
               </div>
 
               <!-- Status summary -->
-              <div class="flex items-center justify-between mt-3 text-xs text-primary-light-content">
+              <div
+                class="flex items-center justify-between mt-3 text-xs text-primary-light-content"
+              >
                 <div class="flex items-center gap-4">
                   <span class="flex items-center gap-1.5">
                     <div class="w-2 h-2 bg-success-500 rounded-full"></div>
@@ -108,10 +108,7 @@
                     class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
                     :class="getIconContainerClass(task.status)"
                   >
-                    <i
-                      v-if="task.status === 'running'"
-                      class="fas fa-spinner-third fa-spin"
-                    ></i>
+                    <i v-if="task.status === 'running'" class="fas fa-spinner-third fa-spin"></i>
                     <i v-else :class="getTaskIcon(task.type)"></i>
                   </div>
 
@@ -124,7 +121,9 @@
                         size="xs"
                       />
                     </div>
-                    <p class="text-xs text-primary-light-content truncate">{{ task.description }}</p>
+                    <p class="text-xs text-primary-light-content truncate">
+                      {{ task.description }}
+                    </p>
 
                     <!-- Token information for admins -->
                     <div

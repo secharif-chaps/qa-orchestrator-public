@@ -4,7 +4,7 @@
       <div
         class="w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
       >
-        <i :class="categoryIcon" class="text-primary text-xl"></i>
+        <i :class="categoryIcon" class="text-primary-light-content text-xl"></i>
       </div>
       <div>
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>

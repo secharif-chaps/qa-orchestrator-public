@@ -25,7 +25,7 @@
             v-show="showFallbackIcon || !getCompanyDomain(item.website) || item.type !== 'company'"
             class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
           >
-            <i class="fas fa-building text-primary text-xl"></i>
+            <i class="fas fa-building text-primary-light-content text-xl"></i>
           </div>
         </div>
         <div class="flex-1 min-w-0 max-w-32">

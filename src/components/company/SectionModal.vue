@@ -10,25 +10,21 @@
           class="bg-base-100 rounded-card border border-primary-stroke shadow-shadow-3 w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col"
         >
           <!-- Header -->
-          <div class="flex items-center justify-between p-6 border-b border-primary-stroke bg-base-200">
+          <div
+            class="flex items-center justify-between p-6 border-b border-primary-stroke bg-base-200"
+          >
             <div class="flex items-center gap-3">
-              <div
-                class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center"
-              >
-                <i :class="[sectionConfig?.icon, 'text-primary text-lg']"></i>
+              <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <i :class="[sectionConfig?.icon, 'text-primary-light-content text-lg']"></i>
               </div>
               <div>
                 <h2 class="text-xl font-semibold">{{ sectionConfig?.name }}</h2>
-                <p class="text-sm text-primary-light-content">{{ sectionConfig?.description }}</p>
+                <p class="text-sm text-primary-light-content">
+                  {{ sectionConfig?.description }}
+                </p>
               </div>
             </div>
-            <Button
-              variant="ghost-primary"
-              icon="fa fa-times"
-              icon-only
-              size="lg"
-              @click="close"
-            />
+            <Button variant="ghost-primary" icon="fa fa-times" icon-only size="lg" @click="close" />
           </div>
 
           <!-- Content -->
@@ -52,13 +48,27 @@ import Button from '@/components/ui/Button.vue'
 import type { TaskType } from '@/types/task'
 
 // Lazy load section components
-const ProfilePage = defineAsyncComponent(() => import('@/pages/folders/[folderId]/companies/[companyId]/profile.vue'))
-const TimelinePage = defineAsyncComponent(() => import('@/pages/folders/[folderId]/companies/[companyId]/timeline.vue'))
-const ProductsPage = defineAsyncComponent(() => import('@/pages/folders/[folderId]/companies/[companyId]/products.vue'))
-const TeamPage = defineAsyncComponent(() => import('@/pages/folders/[folderId]/companies/[companyId]/team.vue'))
-const JobsPage = defineAsyncComponent(() => import('@/pages/folders/[folderId]/companies/[companyId]/jobs.vue'))
-const PressPage = defineAsyncComponent(() => import('@/pages/folders/[folderId]/companies/[companyId]/press.vue'))
-const CsrPage = defineAsyncComponent(() => import('@/pages/folders/[folderId]/companies/[companyId]/csr.vue'))
+const ProfilePage = defineAsyncComponent(
+  () => import('@/pages/folders/[folderId]/companies/[companyId]/profile.vue'),
+)
+const TimelinePage = defineAsyncComponent(
+  () => import('@/pages/folders/[folderId]/companies/[companyId]/timeline.vue'),
+)
+const ProductsPage = defineAsyncComponent(
+  () => import('@/pages/folders/[folderId]/companies/[companyId]/products.vue'),
+)
+const TeamPage = defineAsyncComponent(
+  () => import('@/pages/folders/[folderId]/companies/[companyId]/team.vue'),
+)
+const JobsPage = defineAsyncComponent(
+  () => import('@/pages/folders/[folderId]/companies/[companyId]/jobs.vue'),
+)
+const PressPage = defineAsyncComponent(
+  () => import('@/pages/folders/[folderId]/companies/[companyId]/press.vue'),
+)
+const CsrPage = defineAsyncComponent(
+  () => import('@/pages/folders/[folderId]/companies/[companyId]/csr.vue'),
+)
 
 interface SectionConfig {
   name: string
@@ -85,7 +95,7 @@ const route = useRoute()
 // Section configurations
 const sections: Record<TaskType, SectionConfig> = {
   profile: {
-    name: 'Profil de l\'entreprise',
+    name: "Profil de l'entreprise",
     description: 'Informations générales et présence digitale',
     icon: 'fas fa-building',
     component: ProfilePage,
@@ -109,7 +119,7 @@ const sections: Record<TaskType, SectionConfig> = {
     component: TeamPage,
   },
   jobs: {
-    name: 'Offres d\'emploi',
+    name: "Offres d'emploi",
     description: 'Recrutement et opportunités',
     icon: 'fas fa-briefcase',
     component: JobsPage,
@@ -154,26 +164,33 @@ const close = () => {
 }
 
 // Watch for URL changes to sync modal state
-watch(() => route.query.section, (newSection) => {
-  if (newSection && typeof newSection === 'string') {
-    emit('update:section', newSection as TaskType)
-    emit('update:modelValue', true)
-  } else if (!newSection && props.modelValue) {
-    emit('update:modelValue', false)
-    emit('update:section', null)
-  }
-}, { immediate: true })
+watch(
+  () => route.query.section,
+  (newSection) => {
+    if (newSection && typeof newSection === 'string') {
+      emit('update:section', newSection as TaskType)
+      emit('update:modelValue', true)
+    } else if (!newSection && props.modelValue) {
+      emit('update:modelValue', false)
+      emit('update:section', null)
+    }
+  },
+  { immediate: true },
+)
 
 // Watch for modal close to update URL
-watch(() => props.modelValue, (isOpen) => {
-  if (!isOpen) {
-    const query = { ...route.query }
-    delete query.section
-    if (JSON.stringify(query) !== JSON.stringify(route.query)) {
-      router.replace({ query })
+watch(
+  () => props.modelValue,
+  (isOpen) => {
+    if (!isOpen) {
+      const query = { ...route.query }
+      delete query.section
+      if (JSON.stringify(query) !== JSON.stringify(route.query)) {
+        router.replace({ query })
+      }
     }
-  }
-})
+  },
+)
 </script>
 
 <style scoped>
