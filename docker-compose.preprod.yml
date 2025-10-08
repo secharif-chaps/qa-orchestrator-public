@@ -20,8 +20,8 @@ services:
 
   # FastAPI Backend
   backend:
-    build: 
-      context: ./mint-back
+    build:
+      context: .
     depends_on:
       db:
         condition: service_healthy
@@ -107,8 +107,8 @@ services:
 
   # Celery Worker for Task Processing
   celery_worker:
-    build: 
-      context: ./mint-back
+    build:
+      context: .
       dockerfile: Dockerfile.celery
     command: celery -A app.core.celery_app worker --loglevel=info --concurrency=4 --pool=solo
     restart: always
@@ -126,14 +126,14 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./mint-back/app:/app/app
+      - ./app:/app/app
     networks:
       - mint-network
 
   # Flower Dashboard for Monitoring
   celery_flower:
-    build: 
-      context: ./mint-back
+    build:
+      context: .
       dockerfile: Dockerfile.celery
     command: celery -A app.core.celery_app flower --port=5555 --broker=amqp://guest:guest@rabbitmq:5672//
     restart: always
