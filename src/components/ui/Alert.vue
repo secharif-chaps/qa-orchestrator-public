@@ -1,79 +1,63 @@
 <template>
-  <div v-if="show" :class="alertClasses" class="relative overflow-hidden rounded-block">
-    <!-- Content -->
-    <div class="relative p-6">
-      <div class="flex items-start gap-4">
-        <!-- Icon -->
-        <div v-if="icon" class="flex-shrink-0">
-          <div class="w-12 h-12 rounded-full flex items-center justify-center">
-            <i :class="[icon, iconColorClasses]" class="text-lg"></i>
-          </div>
+  <div v-if="show" :class="alertClasses" class="relative rounded-xl border p-4">
+    <div class="flex items-start gap-4">
+      <!-- Icon Badge -->
+      <Badge v-if="icon" :color="badgeColor" variant="primary" size="md" :icon="icon" />
+
+      <!-- Main Content -->
+      <div class="flex-1 min-w-0">
+        <!-- Title -->
+        <h3 v-if="title" class="font-semibold mb-1">
+          {{ title }}
+        </h3>
+
+        <!-- Message -->
+        <p v-if="message" class="text-sm leading-relaxed opacity-90">
+          {{ message }}
+        </p>
+
+        <!-- Custom content slot -->
+        <div v-if="$slots.default" class="text-sm opacity-90">
+          <slot />
         </div>
 
-        <!-- Main content -->
-        <div class="flex-1 min-w-0">
-          <div class="flex items-start justify-between">
-            <div>
-              <!-- Title -->
-              <h3 v-if="title" class="text-lg font-semibold mb-1">
-                {{ title }}
-              </h3>
-
-              <!-- Message -->
-              <p
-                v-if="message"
-                class="text-primary-light-content dark:text-white text-sm leading-relaxed"
-                :class="{ 'mb-4': hasActions }"
-              >
-                {{ message }}
-              </p>
-
-              <!-- Custom content slot -->
-              <div v-if="$slots.default" :class="{ 'mb-4': hasActions }">
-                <slot />
-              </div>
-            </div>
-
-            <!-- Close button -->
-            <button
-              v-if="dismissible || closable"
-              @click="handleClose"
-              class="text-primary-light-content hover:text-base transition-colors p-1 ml-4 flex-shrink-0"
-              :title="dismissLabel || 'Close'"
-            >
-              <i class="fa fa-times"></i>
-            </button>
-          </div>
-
-          <!-- Actions Row -->
-          <div v-if="hasActions" class="flex items-center justify-between">
-            <!-- Left content slot (e.g., status indicators) -->
-            <div v-if="$slots.status" class="flex-1">
-              <slot name="status" />
-            </div>
-
-            <!-- Actions slot -->
-            <div v-if="$slots.actions" class="flex items-center gap-3">
-              <slot name="actions" />
-            </div>
-          </div>
+        <!-- Actions slot -->
+        <div v-if="$slots.actions" class="mt-3 flex items-center gap-2">
+          <slot name="actions" />
         </div>
       </div>
+
+      <!-- Action Button (if provided) -->
+      <div v-if="$slots.action" class="flex-shrink-0">
+        <slot name="action" />
+      </div>
+
+      <!-- Close button -->
+      <Button
+        icon-only
+        variant="tertiary"
+        v-if="dismissible || closable"
+        @click="handleClose"
+        :title="dismissLabel || 'Close'"
+        icon="fa fa-times"
+      >
+      </Button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
+import Button from './Button.vue'
+import Badge from './Badge.vue'
 
-type AlertVariant = 'info' | 'success' | 'warning' | 'error' | 'accent' | 'gradient'
+type AlertVariant = 'info' | 'success' | 'warning' | 'error' | 'accent' | 'neutral'
 
 interface Props {
   variant?: AlertVariant
   title?: string
   message?: string
   icon?: string
-  decorationIcon?: string
   show?: boolean
   dismissible?: boolean
   closable?: boolean
@@ -83,7 +67,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   variant: 'info',
   show: true,
-  dismissible: true,
+  dismissible: false,
   closable: false,
 })
 
@@ -94,50 +78,36 @@ const emit = defineEmits<{
   close: []
 }>()
 
-const handleClose = () => {
+function handleClose() {
   emit('dismiss')
   emit('close')
 }
 
-// Check if there are action slots
-const hasActions = computed(() => {
-  return !!(slots.actions || slots.status)
-})
-
-// Dynamic classes based on variant
-const alertClasses = computed(() => {
-  const baseClasses = 'shadow-sm'
-
+// Map alert variant to badge color
+const badgeColor = computed(() => {
   switch (props.variant) {
-    case 'success':
-      return `${baseClasses} bg-success-100 dark:bg-success-400/50`
-    case 'warning':
-      return `${baseClasses} bg-warning-100 dark:bg-warning-400/50`
-    case 'error':
-      return `${baseClasses} bg-error-100 dark:bg-error-400/50`
-    case 'accent':
-      return `${baseClasses} bg-accent-100 dark:bg-accent-400/50`
-    case 'gradient':
-      return `${baseClasses} bg-gradient-to-r from-tertiary-100 to-sage-100 dark:from-tertiary-400/20 dark:to-tertiary-400/70`
+    case 'neutral':
+      return 'slate'
     default:
-      return `${baseClasses} bg-info-100 dark:bg-info-400/50`
+      return props.variant
   }
 })
 
-const iconColorClasses = computed(() => {
+// Border and background color classes based on variant
+const alertClasses = computed(() => {
   switch (props.variant) {
     case 'success':
-      return 'text-success-500 dark:text-success-200'
+      return 'border-success-stroke bg-success-50 text-success-light-950'
     case 'warning':
-      return 'text-warning-500 dark:text-warning-200'
+      return 'border-warning-stroke bg-warning-50 text-warning-950'
     case 'error':
-      return 'text-error-500 dark:text-error-200'
+      return 'border-error-stroke bg-error-50 text-error-950'
     case 'accent':
-      return 'text-accent-500 dark:text-accent-200'
-    case 'gradient':
-      return 'text-accent-500 dark:text-primary-content-200'
-    default:
-      return 'text-info-500 dark:text-info-200'
+      return 'border-accent-stroke bg-accent-50 text-accent-950'
+    case 'neutral':
+      return 'border-gray-300 bg-gray-50 text-gray-950'
+    default: // info
+      return 'border-info-stroke bg-info-50 text-info-950'
   }
 })
 </script>

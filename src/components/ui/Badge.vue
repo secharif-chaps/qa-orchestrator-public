@@ -1,156 +1,117 @@
 <template>
-  <span :class="badgeClasses" class="inline-flex items-center gap-1.5 font-medium transition-all">
+  <div :class="badgeClasses" class="flex items-center justify-center rounded-full flex-shrink-0">
     <!-- Icon -->
     <i v-if="icon" :class="[icon, iconClasses]"></i>
 
-    <!-- Dot indicator -->
-    <span v-else-if="dot" :class="dotClasses" class="w-1.5 h-1.5 rounded-full"></span>
+    <!-- Number -->
+    <span v-else-if="number !== undefined" :class="numberClasses">{{ displayNumber }}</span>
 
-    <!-- Label -->
-    <span v-if="label">{{ label }}</span>
-
-    <!-- Custom content slot -->
+    <!-- Logo/Custom content slot -->
     <slot v-else />
-
-    <!-- Close button for dismissible badges -->
-    <button
-      v-if="dismissible"
-      @click="$emit('dismiss')"
-      class="ml-1 -mr-0.5 hover:opacity-80 transition-opacity"
-      :aria-label="dismissLabel || 'Dismiss'"
-    >
-      <i class="fa fa-times" :class="closeIconClasses"></i>
-    </button>
-  </span>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 
-export type BadgeVariant = 'primary' | 'success' | 'warning' | 'error' | 'info' | 'accent' | 'slate'
-export type BadgeSize = 'xs' | 'sm' | 'md' | 'lg'
+export type BadgeVariant = 'primary' | 'secondary'
+export type BadgeColor = 'primary' | 'success' | 'warning' | 'error' | 'info' | 'accent' | 'slate'
+export type BadgeSize = 'sm' | 'md' | 'lg'
 
 interface Props {
   variant?: BadgeVariant
+  color?: BadgeColor
   size?: BadgeSize
-  label?: string
   icon?: string
-  dot?: boolean
-  rounded?: boolean
-  dismissible?: boolean
-  dismissLabel?: string
+  number?: number
+  maxNumber?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
   variant: 'primary',
-  size: 'sm',
-  rounded: false,
-  gradient: true,
-  dot: false,
-  dismissible: false,
+  color: 'primary',
+  size: 'md',
+  maxNumber: 99,
 })
 
-defineEmits<{
-  dismiss: []
-}>()
+// Display number with max limit (e.g., 99+)
+const displayNumber = computed(() => {
+  if (props.number === undefined) return ''
+  return props.number > props.maxNumber ? `${props.maxNumber}+` : props.number.toString()
+})
 
 // Size classes
 const sizeClasses = computed(() => {
   switch (props.size) {
-    case 'xs':
-      return 'px-2 py-0.5 text-xs'
     case 'sm':
-      return 'px-2.5 py-1 text-xs'
+      return 'w-6 h-6'
     case 'md':
-      return 'px-3 py-1.5 text-sm'
+      return 'w-10 h-10'
     case 'lg':
-      return 'px-4 py-2 text-base'
+      return 'w-12 h-12'
     default:
-      return 'px-2.5 py-1 text-xs'
+      return 'w-10 h-10'
   }
 })
 
 // Icon size classes
 const iconClasses = computed(() => {
   switch (props.size) {
-    case 'xs':
     case 'sm':
-      return 'text-[10px]'
-    case 'md':
       return 'text-xs'
+    case 'md':
+      return 'text-base'
     case 'lg':
-      return 'text-sm'
+      return 'text-lg'
     default:
-      return 'text-[10px]'
+      return 'text-base'
   }
 })
 
-// Close icon size
-const closeIconClasses = computed(() => {
+// Number text size classes
+const numberClasses = computed(() => {
   switch (props.size) {
-    case 'xs':
-      return 'text-[8px]'
     case 'sm':
-      return 'text-[9px]'
+      return 'text-xs font-semibold'
     case 'md':
-      return 'text-[10px]'
+      return 'text-sm font-semibold'
     case 'lg':
-      return 'text-xs'
+      return 'text-base font-semibold'
     default:
-      return 'text-[9px]'
+      return 'text-sm font-semibold'
   }
 })
 
-// Variant classes with gradient sa
-const variantClasses = computed(() => {
-  const isRounded = 'rounded-full'
+// Badge color and variant classes
+const colorVariantClasses = computed(() => {
+  const isPrimary = props.variant === 'primary'
 
-  switch (props.variant) {
+  switch (props.color) {
     case 'success':
-      return `${isRounded} bg-success-light text-success-light-content border border-success-stroke`
+      return isPrimary ? 'bg-success-500 text-white' : 'bg-success-light text-success-light-content'
 
     case 'warning':
-      return `${isRounded} bg-warning-light text-warning-light-content border border-warning-stroke`
+      return isPrimary ? 'bg-warning-500 text-white' : 'bg-warning-light text-warning-light-content'
 
     case 'error':
-      return `${isRounded} bg-error-light text-error-light-content border border-error-stroke`
+      return isPrimary ? 'bg-error-500 text-white' : 'bg-error-light text-error-light-content'
 
     case 'info':
-      return `${isRounded} bg-info-light text-info-light-content border border-info-stroke`
+      return isPrimary ? 'bg-info-500 text-white' : 'bg-info-light text-info-light-content'
 
     case 'accent':
-      return `${isRounded} bg-accent-light text-accent-light-content border border-accent-stroke`
+      return isPrimary ? 'bg-accent-800 text-white' : 'bg-accent-light text-accent-light-content'
 
     case 'slate':
-      return `${isRounded} bg-base-200 text-primary-light-content`
+      return isPrimary ? 'bg-gray-800 text-white' : 'bg-base-200 text-primary-light-content'
 
     default: // primary
-      return `${isRounded} bg-primary-light text-primary-light-content border border-primary-stroke`
-  }
-})
-
-// Dot color classes
-const dotClasses = computed(() => {
-  switch (props.variant) {
-    case 'success':
-      return 'bg-green-500'
-    case 'warning':
-      return 'bg-yellow-500'
-    case 'error':
-      return 'bg-red-500'
-    case 'info':
-      return 'bg-blue-500'
-    case 'accent':
-      return 'bg-accent-500'
-    case 'slate':
-      return 'bg-secondary'
-    default: // primary
-      return 'bg-primary'
+      return isPrimary ? 'bg-primary text-white' : 'bg-primary-light text-primary-light-content'
   }
 })
 
 // Combined badge classes
 const badgeClasses = computed(() => {
-  return [sizeClasses.value, variantClasses.value].join(' ')
+  return [sizeClasses.value, colorVariantClasses.value].join(' ')
 })
 </script>
