@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     MAX_CONCURRENT_WORKFLOWS: int = 10
     FLOWER_BASIC_AUTH: str = "admin:admin"
 
-    model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 
 settings = Settings()
