@@ -2,7 +2,7 @@
 
 # Wait for PostgreSQL to be ready
 echo "Waiting for PostgreSQL..."
-while ! nc -z db 5432; do
+while ! nc -z ${DATABASE_HOST} ${DATABASE_PORT}; do
   sleep 1
 done
 echo "PostgreSQL is up"
