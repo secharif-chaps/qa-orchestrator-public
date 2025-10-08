@@ -372,11 +372,6 @@ export default {
       delete: 'Êtes-vous sûr de vouloir supprimer l\'espace "{name}" ?',
     },
   },
-  help: {
-    title: 'Aide',
-    description:
-      "Besoin d'assistance ? Trouvez des réponses aux questions courantes et apprenez à utiliser l'application.",
-  },
   cards: {
     title: 'Cartes',
     noResults: 'Aucune entreprise trouvée',
@@ -415,45 +410,11 @@ export default {
       launchSearch: 'Lancer la recherche',
     },
   },
-  login: {
-    title: 'Connexion',
-    email: {
-      label: 'Adresse mail',
-      placeholder: 'exemple@gmail.com',
-    },
-    password: {
-      label: 'Mot de passe',
-      placeholder: 'Entrer un mot de passe...',
-      forgot: 'Mot de passe oublié ?',
-    },
-    submit: 'Connexion',
-    errors: {
-      invalidCredentials: 'Email ou mot de passe invalide',
-      connectionError: 'Une erreur est survenue lors de la connexion',
-    },
-  },
   auth: {
     callback: {
       processing: 'Traitement de la connexion...',
       loginFailed: 'Échec de la connexion',
       tryAgain: 'Réessayer',
-    },
-  },
-  errors: {
-    notFound: {
-      title: 'Page introuvable',
-      message: "La page que vous recherchez n'existe pas ou a été déplacée.",
-      goHome: "Aller à l'accueil",
-      goBack: 'Retour',
-      help: 'Si vous pensez que cette page devrait exister, veuillez contacter le support.',
-    },
-    forbidden: {
-      title: 'Accès interdit',
-      message: "Vous n'avez pas la permission d'accéder à cette page.",
-      goHome: "Aller à l'accueil",
-      goBack: 'Retour',
-      contact:
-        "Si vous pensez qu'il s'agit d'une erreur, veuillez contacter votre administrateur.",
     },
   },
   dashboard: {
@@ -992,12 +953,6 @@ export default {
     create: {
       button: 'Faire une nouvelle recherche',
     },
-    empty: {
-      noResults: 'Aucune entreprise trouvée',
-      title: 'Aucune entreprise pour le moment',
-      tryDifferentSearch: 'Essayez un autre terme de recherche',
-      description: 'Commencez par ajouter votre première entreprise',
-    },
     fields: {
       employeeCount: 'Nombre d\'employés',
       headquarters: 'Siège Social',
@@ -1052,9 +1007,6 @@ export default {
         description: 'Communiqués de presse, déclarations publiques et communications officielles',
         insights: 'Informations Communication',
       },
-    },
-    restore: {
-      title: 'Restaurer l\'Entreprise',
     },
     debug: {
       workflowTitle: 'Debug : Workflow de recherche',

@@ -338,11 +338,6 @@ export default {
       placeholder: 'Write a message...',
     },
   },
-  help: {
-    title: 'Help',
-    description:
-      'Need assistance? Find answers to common questions and learn how to use the application.',
-  },
   cards: {
     title: 'Cards',
     noResults: 'No company found',
@@ -379,44 +374,11 @@ export default {
       launchSearch: 'Launch Search',
     },
   },
-  login: {
-    title: 'Login',
-    email: {
-      label: 'Email address',
-      placeholder: 'example@gmail.com',
-    },
-    password: {
-      label: 'Password',
-      placeholder: 'Enter a password...',
-      forgot: 'Forgot password?',
-    },
-    submit: 'Login',
-    errors: {
-      invalidCredentials: 'Invalid email or password',
-      connectionError: 'An error occurred during login',
-    },
-  },
   auth: {
     callback: {
       processing: 'Processing login...',
       loginFailed: 'Login failed',
       tryAgain: 'Try again',
-    },
-  },
-  errors: {
-    notFound: {
-      title: 'Page Not Found',
-      message: "The page you're looking for doesn't exist or has been moved.",
-      goHome: 'Go to Home',
-      goBack: 'Go Back',
-      help: 'If you believe this page should exist, please contact support.',
-    },
-    forbidden: {
-      title: 'Access Forbidden',
-      message: "You don't have permission to access this page.",
-      goHome: 'Go to Home',
-      goBack: 'Go Back',
-      contact: 'If you believe this is an error, please contact your administrator.',
     },
   },
   dashboard: {
@@ -941,12 +903,6 @@ export default {
     create: {
       button: 'Make a new search',
     },
-    empty: {
-      noResults: 'No companies found',
-      title: 'No companies yet',
-      tryDifferentSearch: 'Try a different search term',
-      description: 'Start by adding your first company',
-    },
     fields: {
       employeeCount: 'Employee Count',
       headquarters: 'Headquarters',
@@ -1001,9 +957,6 @@ export default {
         description: 'Press releases, public statements, and official communications',
         insights: 'Communication Insights',
       },
-    },
-    restore: {
-      title: 'Restore Company',
     },
     debug: {
       workflowTitle: 'Debug: Search Workflow',
