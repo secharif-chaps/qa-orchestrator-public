@@ -30,6 +30,9 @@ services:
     restart: always
     env_file:
       - .env.dev
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
     ports:
       - "8000:8000"
     volumes:

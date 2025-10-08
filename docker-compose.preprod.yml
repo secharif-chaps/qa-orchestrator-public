@@ -29,6 +29,8 @@ services:
         condition: service_healthy
     restart: always
     environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
       DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-postgres}@db:5432/mint_db
       KEYCLOAK_SERVER_URL: http://keycloak:8080
       KEYCLOAK_REALM: mint-dev
