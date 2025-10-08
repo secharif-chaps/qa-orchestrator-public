@@ -8,7 +8,8 @@ stages:
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
-  IMAGE_NAME: ${CI_REGISTRY_IMAGE}/mint-back
+  IMAGE_NAME_BACKEND: ${CI_REGISTRY_IMAGE}/mint-back
+  IMAGE_NAME_CELERY: ${CI_REGISTRY_IMAGE}/mint-celery
   DOCKER_BUILDKIT: 1
 
 # Build and push Docker image on main branch
@@ -23,14 +24,38 @@ build-and-push-backend:
   script:
     - |
       echo "Building backend Docker image..."
-      echo " DEBUG : docker build --no-cache --pull -t ${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} -t ${IMAGE_NAME}:latest ."
-      docker build --no-cache --pull -t "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}" -t "${IMAGE_NAME}:latest" .
+      echo " DEBUG : docker build --no-cache --pull -t ${IMAGE_NAME_BACKEND}:${CI_COMMIT_SHORT_SHA} -t ${IMAGE_NAME_BACKEND}:latest ."
+      docker build --no-cache --pull -t "${IMAGE_NAME_BACKEND}:${CI_COMMIT_SHORT_SHA}" -t "${IMAGE_NAME_BACKEND}:latest" .
       echo "Pushing images to registry..."
-      docker push $IMAGE_NAME:$CI_COMMIT_SHORT_SHA
-      docker push $IMAGE_NAME:latest
+      docker push $IMAGE_NAME_BACKEND:$CI_COMMIT_SHORT_SHA
+      docker push $IMAGE_NAME_BACKEND:latest
       echo "✅ Backend image published successfully!"
-      echo "📦 Image: $IMAGE_NAME:$CI_COMMIT_SHORT_SHA"
-      echo "📦 Image: $IMAGE_NAME:latest"
+      echo "📦 Image: $IMAGE_NAME_BACKEND:$CI_COMMIT_SHORT_SHA"
+      echo "📦 Image: $IMAGE_NAME_BACKEND:latest"
+  after_script:
+    - docker logout $CI_REGISTRY
+  only:
+    - main
+
+# Build and push Celery Docker image on main branch
+build-and-push-celery:
+  stage: build
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - |
+      echo "Building Celery Docker image..."
+      echo " DEBUG : docker build --no-cache --pull -f Dockerfile.celery -t ${IMAGE_NAME_CELERY}:${CI_COMMIT_SHORT_SHA} -t ${IMAGE_NAME_CELERY}:latest ."
+      docker build --no-cache --pull -f Dockerfile.celery -t "${IMAGE_NAME_CELERY}:${CI_COMMIT_SHORT_SHA}" -t "${IMAGE_NAME_CELERY}:latest" .
+      echo "Pushing images to registry..."
+      docker push $IMAGE_NAME_CELERY:$CI_COMMIT_SHORT_SHA
+      docker push $IMAGE_NAME_CELERY:latest
+      echo "✅ Celery image published successfully!"
+      echo "📦 Image: $IMAGE_NAME_CELERY:$CI_COMMIT_SHORT_SHA"
+      echo "📦 Image: $IMAGE_NAME_CELERY:latest"
   after_script:
     - docker logout $CI_REGISTRY
   only:
@@ -50,6 +75,23 @@ test-build-backend:
     - echo "Testing backend Docker build..."
     - docker build --tag mint-back:test .
     - echo "✅ Backend build test passed!"
+  only:
+    - merge_requests
+
+# Optional: Test Celery build on merge requests (without pushing)
+test-build-celery:
+  stage: build
+  image: docker:24-dind
+  services:
+    - name: docker:24-dind
+      command: ["--tls=false"]
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - echo "Testing Celery Docker build..."
+    - docker build -f Dockerfile.celery --tag mint-celery:test .
+    - echo "✅ Celery build test passed!"
   only:
     - merge_requests
 
