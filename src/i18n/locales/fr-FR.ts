@@ -1097,36 +1097,6 @@ export default {
     },
   },
   workspace: {
-    title: "Gestion de l'équipe",
-    description: 'Gérez les membres et les paramètres de votre équipe',
-    error: {
-      loading: "Erreur lors du chargement des données de l'équipe",
-    },
-    info: {
-      title: "Informations de l'équipe",
-      name: 'Nom',
-      description: 'Description',
-      slug: 'Identifiant',
-    },
-    members: {
-      title: "Membres de l'équipe",
-      add: 'Ajouter un membre',
-      empty: 'Aucun membre dans cette équipe',
-      revoke: 'Révoquer',
-      activate: 'Activer',
-      status: {
-        active: 'Actif',
-        revoked: 'Révoqué',
-      },
-      addDialog: {
-        title: 'Ajouter un nouveau membre',
-        email: 'Adresse e-mail',
-        emailPlaceholder: 'email@exemple.com',
-        username: "Nom d'utilisateur",
-        usernamePlaceholder: 'Optionnel - sera généré automatiquement',
-        submit: 'Ajouter le membre',
-      },
-    },
     admin: {
       title: 'Gestion des Espaces de Travail',
       description: 'Gérez tous les espaces de travail du système',
