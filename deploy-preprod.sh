@@ -7,7 +7,7 @@ set -e  # Exit on error
 
 # Configuration
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-DEPLOY_DIR="$( cd "$SCRIPT_DIR/.." && pwd )"  # Parent directory (mint-server/)
+DEPLOY_DIR="$SCRIPT_DIR"  # mint-server root directory
 SERVER_IP="10.0.1.2"  # Updated to new server IP
 
 # Colors for output
@@ -40,7 +40,7 @@ if [ -d "../mint-front/.git" ]; then
     echo -e "${YELLOW}Updating mint-front repository...${NC}"
     cd ../mint-front
     git pull origin main
-    cd ../mint-server
+    cd "$DEPLOY_DIR"
 fi
 
 # Create .env file if it doesn't exist
