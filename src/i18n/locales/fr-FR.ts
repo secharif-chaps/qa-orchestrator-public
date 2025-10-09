@@ -1320,7 +1320,7 @@ export default {
     },
     recentActivities: {
       title: 'Activités récentes',
-      by: 'par @{username}',
+      by: 'par {username}',
       actions: {
         createdCompany: 'a créé une nouvelle Carte Entreprise pour',
         createdFolder: 'a créé le Dossier',

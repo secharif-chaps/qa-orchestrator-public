@@ -8,57 +8,56 @@
         hoverable
         clickable
         :disabled="module.soon"
+        class="flex flex-col"
       >
-        <!-- Card Header with Avatar and Title -->
-        <div class="flex flex-col gap-4 justify-between h-full">
-          <div class="flex flex-col gap-4">
-            <div class="flex items-start space-x-3">
-              <!-- Avatar Badge -->
-              <Badge
-                variant="primary"
-                :color="module.unlocked ? 'primary' : 'slate'"
-                :icon="module.icon"
-                size="md"
-              />
+        <!-- Card Content - grows to fill space -->
+        <div class="flex-1 flex flex-col gap-4">
+          <div class="flex items-start space-x-3">
+            <!-- Avatar Badge -->
+            <Badge
+              variant="primary"
+              :color="module.unlocked ? 'primary' : 'slate'"
+              :icon="module.icon"
+              size="md"
+            />
 
-              <!-- Title and Secondary Text -->
-              <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-base text-gray-900 dark:text-white">
-                  {{ module.name }}
-                </h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                  {{ module.category }}
-                </p>
-              </div>
-              <div>
-                <Tag
-                  :variant="
-                    module.unlocked
-                      ? 'success'
-                      : module.status === 'contact-sales'
-                        ? 'warning'
-                        : 'slate'
-                  "
-                  :label="
-                    module.unlocked
-                      ? $t('home.modules.status.active', 'Active')
-                      : module.status === 'contact-sales'
-                        ? $t('home.modules.status.proFeature', 'Pro Feature')
-                        : $t('home.modules.status.comingSoon', 'Coming Soon')
-                  "
-                  size="xs"
-                  rounded
-                />
-              </div>
+            <!-- Title and Secondary Text -->
+            <div class="flex-1 min-w-0">
+              <h3 class="font-semibold text-base text-gray-900 dark:text-white">
+                {{ module.name }}
+              </h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{ module.category }}
+              </p>
             </div>
-            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-              {{ module.description }}
-            </p>
+            <div>
+              <Tag
+                :variant="
+                  module.unlocked
+                    ? 'success'
+                    : module.status === 'contact-sales'
+                      ? 'warning'
+                      : 'slate'
+                "
+                :label="
+                  module.unlocked
+                    ? $t('home.modules.status.active', 'Active')
+                    : module.status === 'contact-sales'
+                      ? $t('home.modules.status.proFeature', 'Pro Feature')
+                      : $t('home.modules.status.comingSoon', 'Coming Soon')
+                "
+                size="xs"
+                rounded
+              />
+            </div>
           </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+            {{ module.description }}
+          </p>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="pb-6 flex items-center justify-between">
+        <!-- Action Buttons - stuck to bottom -->
+        <div class="mt-4 flex items-center justify-between">
           <div class="flex space-x-2">
             <Button
               v-if="module.status === 'contact-sales'"

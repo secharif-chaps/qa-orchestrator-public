@@ -1155,7 +1155,7 @@ export default {
     },
     recentActivities: {
       title: 'Recent Activities',
-      by: 'by @{username}',
+      by: 'by {username}',
       actions: {
         createdCompany: 'created a new Company Card about',
         createdFolder: 'created the Folder',

@@ -166,9 +166,9 @@
                     <i class="fa fa-clock"></i>
                     <span>{{ activity.time }}</span>
                   </span>
-                  <span>{{
-                    $t('home.recentActivities.by', { username: activity.user.name })
-                  }}</span>
+                  <span>
+                    {{ $t('home.recentActivities.by', { username: '@' + activity.user.name }) }}</span
+                  >
                 </div>
               </div>
             </div>
