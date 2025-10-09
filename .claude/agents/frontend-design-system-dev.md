@@ -154,7 +154,7 @@ Only theses combinations are allowed :
 <!-- Basic hierarchy -->
 <button variant="primary" label="Save Changes" />
 <button variant="secondary" label="Cancel" />
-<button variant="ghost-primary" label="More Options" />
+<button variant="tertiary" label="More Options" />
 
 <!-- With semantic colors -->
 <button variant="primary" color="danger" label="Delete Account" />
@@ -164,7 +164,7 @@ Only theses combinations are allowed :
 <button variant="primary" icon="fa fa-plus" label="Create" />
 
 <!-- Icon only -->
-<button variant="ghost-primary" icon="fa fa-more-vertical" icon-only />
+<button variant="tertiary" icon="fa fa-more-vertical" icon-only />
 
 <!-- Loading state -->
 <button variant="primary" label="Saving..." :loading="isLoading" />
@@ -178,13 +178,13 @@ Only theses combinations are allowed :
 
 ```html
 <!-- Status indicators -->
-<Badge variant="success" label="Active" />
-<Badge variant="warning" icon="fa fa-exclamation" label="Pending" />
-<Badge variant="success" dot label="Online" />
+<Tag variant="success" label="Active" />
+<Tag variant="warning" icon="fa fa-exclamation" label="Pending" />
+<Tag variant="success" dot label="Online" />
 
 <!-- Token counts -->
-<Badge variant="error" icon="fa fa-coins" label="0 tokens" />
-<Badge variant="success" icon="fa fa-coins" label="100 tokens" />
+<Tag variant="error" icon="fa fa-coins" label="0 tokens" />
+<Tag variant="success" icon="fa fa-coins" label="100 tokens" />
 ```
 
 #### Card Component (`@/components/ui/Card.vue`)
