@@ -91,7 +91,7 @@
           >
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
-                <Badge
+                <Tag
                   :variant="getTaskTypeVariant(taskType.task_type)"
                   :label="taskType.task_type"
                 />
@@ -141,7 +141,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div>
             <span class="font-medium text-primary-light-content">Most Expensive:</span>
-            <Badge
+            <Tag
               :variant="getTaskTypeVariant(data.summary.most_expensive_type)"
               :label="data.summary.most_expensive_type"
               class="ml-2"
@@ -149,7 +149,7 @@
           </div>
           <div>
             <span class="font-medium text-primary-light-content">Most Frequent:</span>
-            <Badge
+            <Tag
               :variant="getTaskTypeVariant(data.summary.most_frequent_type)"
               :label="data.summary.most_frequent_type"
               class="ml-2"

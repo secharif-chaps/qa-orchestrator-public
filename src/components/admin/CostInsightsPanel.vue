@@ -39,7 +39,7 @@
             <h4 class="font-medium">Most Cost-Effective Task Type</h4>
           </div>
           <div class="text-sm text-primary-light-content">
-            <Badge
+            <Tag
               :variant="getTaskTypeVariant(mostEfficientTaskType.task_type)"
               :label="mostEfficientTaskType.task_type"
               class="mr-2"
@@ -59,7 +59,7 @@
             <h4 class="font-medium">Least Cost-Effective Task Type</h4>
           </div>
           <div class="text-sm text-primary-light-content">
-            <Badge
+            <Tag
               :variant="getTaskTypeVariant(leastEfficientTaskType.task_type)"
               :label="leastEfficientTaskType.task_type"
               class="mr-2"
@@ -141,7 +141,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import Badge, { type BadgeVariant } from '@/components/ui/Badge.vue'
+import Badge, { type BadgeVariant } from '@/components/ui/Tag.vue'
 import type {
   GlobalCostResponse,
   WorkspaceCostResponse,

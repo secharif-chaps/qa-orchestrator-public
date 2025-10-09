@@ -35,7 +35,7 @@
             </div>
             <div class="ml-4">
               <h3 class="text-lg font-semibold">{{ workflow.title }}</h3>
-              <Badge
+              <Tag
                 :variant="statusConfig.variant"
                 :label="statusConfig.label"
                 :icon="statusConfig.badgeIcon"
@@ -173,7 +173,7 @@
           </div>
           <div class="ml-4">
             <h3 class="text-lg font-semibold">{{ workflow.title }}</h3>
-            <Badge
+            <Tag
               :variant="statusConfig.variant"
               :label="statusConfig.label"
               :icon="statusConfig.badgeIcon"
@@ -235,7 +235,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import type { WorkflowConfig } from '@/api/workflows'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 import Input from '@/components/ui/Input.vue'
 
