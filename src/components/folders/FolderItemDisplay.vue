@@ -45,7 +45,7 @@
         @mouseleave="isChildHovered = false"
       >
         <Button
-          variant="ghost-primary"
+          variant="tertiary"
           icon="fa fa-eye"
           icon-only
           :title="$t('folder.item.actions.view', 'View Item')"
@@ -53,7 +53,7 @@
         />
         <Button
           v-if="item.type === 'company' && canDeleteCompany"
-          variant="ghost-primary"
+          variant="tertiary"
           icon="fa fa-trash"
           icon-only
           :title="$t('company.delete.title', 'Delete Company')"

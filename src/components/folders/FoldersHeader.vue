@@ -23,13 +23,13 @@
 
         <div class="flex items-center gap-2">
           <Button
-            variant="ghost-primary"
+            variant="tertiary"
             icon="fa fa-edit"
             :label="$t('folder.actions.edit', 'Edit')"
             @click="$emit('edit-folder')"
           />
           <Button
-            variant="ghost-primary"
+            variant="tertiary"
             color="danger"
             icon="fa fa-trash"
             :label="$t('folder.actions.delete', 'Delete')"
@@ -113,7 +113,7 @@
                       {{ $t('folder.addItems.watchfileDescription', 'Monitor company changes') }}
                     </div>
                   </div>
-                  <Badge variant="slate" size="xs" label="Soon" />
+                  <Tag variant="slate" size="xs" label="Soon" />
                 </button>
 
                 <!-- GraphRag - Disabled -->
@@ -138,7 +138,7 @@
                       }}
                     </div>
                   </div>
-                  <Badge variant="slate" size="xs" label="Soon" />
+                  <Tag variant="slate" size="xs" label="Soon" />
                 </button>
               </div>
             </div>

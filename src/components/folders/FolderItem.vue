@@ -45,7 +45,7 @@
                 {{ $t('folder.itemCount', '{count} items', { count: itemCount }) }}
               </span>
               <div v-if="folder.tags && folder.tags.length > 0" class="flex items-center gap-1">
-                <Badge
+                <Tag
                   v-for="tag in folder.tags.slice(0, 2)"
                   :key="tag"
                   :label="tag"
@@ -140,7 +140,7 @@
 </template>
 
 <script setup lang="ts">
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 import type { Folder } from '@/types/folder'
 import { toggleFolderFavorite } from '@/api/folders'

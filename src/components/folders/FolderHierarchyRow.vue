@@ -32,7 +32,7 @@
 
         <!-- Items count -->
         <div class="col-span-2">
-          <Badge variant="slate" :label="`${folder.items?.length || 0} items`" size="sm" />
+          <Tag variant="slate" :label="`${folder.items?.length || 0} items`" size="sm" />
         </div>
 
         <!-- Created date -->
@@ -46,14 +46,14 @@
         <div class="col-span-2 text-right">
           <div class="flex items-center justify-end gap-2">
             <Button
-              variant="ghost-primary"
+              variant="tertiary"
               size="sm"
               icon="fa fa-external-link-alt"
               :label="$t('folder.actions.view', 'View')"
               @click.stop="$emit('view-folder', folder.id)"
             />
             <Button
-              variant="ghost-primary"
+              variant="tertiary"
               size="sm"
               color="danger"
               icon="fa fa-trash"
@@ -105,7 +105,7 @@
 
           <!-- Item type -->
           <div class="col-span-2">
-            <Badge variant="primary" :label="item.type" size="xs" />
+            <Tag variant="primary" :label="item.type" size="xs" />
           </div>
 
           <!-- Item created date -->
@@ -118,7 +118,7 @@
           <!-- Item actions -->
           <div class="col-span-2 text-right">
             <Button
-              variant="ghost-primary"
+              variant="tertiary"
               size="sm"
               icon="fa fa-external-link-alt"
               icon-only
@@ -144,7 +144,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 import type { Folder } from '@/types/folder'
 
