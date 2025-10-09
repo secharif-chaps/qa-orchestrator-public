@@ -7,17 +7,10 @@
     @click="$emit('click', $event)"
   >
     <!-- Loading Spinner -->
-    <i
-      v-if="loading"
-      class="fa-solid fa-spinner animate-spin fa-fw"
-      :class="[iconSizeClasses, iconColorClasses]"
-    ></i>
+    <i v-if="loading" class="fa-solid fa-spinner animate-spin fa-fw" :class="[iconSizeClasses]"></i>
 
     <!-- Left Icon -->
-    <i
-      v-else-if="icon && iconPosition === 'left'"
-      :class="[icon, 'fa-fw', iconSizeClasses, iconColorClasses]"
-    ></i>
+    <i v-else-if="icon && iconPosition === 'left'" :class="[icon, 'fa-fw', iconSizeClasses]"></i>
 
     <!-- Button Text -->
     <span v-if="!iconOnly">
@@ -27,7 +20,7 @@
     <!-- Right Icon -->
     <i
       v-if="!loading && icon && iconPosition === 'right'"
-      :class="[icon, 'fa-fw', iconSizeClasses, iconColorClasses]"
+      :class="[icon, 'fa-fw', iconSizeClasses]"
     ></i>
   </button>
 </template>
@@ -35,7 +28,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost-primary' | 'ghost-black' | 'accent'
+type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'accent'
 type ButtonSize = 'sm' | 'md' | 'lg'
 type IconPosition = 'left' | 'right'
 
@@ -71,8 +64,6 @@ defineEmits<{
 const buttonClasses = computed(() => {
   const classes = []
 
-  // Base styles
-
   // Size classes
   switch (size) {
     case 'sm':
@@ -89,58 +80,39 @@ const buttonClasses = computed(() => {
   switch (variant) {
     case 'primary':
       classes.push(
-        'bg-sage-600 dark:bg-sage-300 dark:text-sage-900',
-        'text-white',
-        'hover:bg-sage-700',
-        'active:bg-sage-800',
-        'focus:ring-sage-600/30',
-        'disabled:bg-sage-300',
-        'disabled:text-sage-100',
-        'shadow-sm hover:shadow-md',
+        'bg-sage-800 dark:bg-sage-300',
+        'text-white dark:text-sage-900',
+        'hover:bg-sage-900',
+        'active:bg-sage-950',
+        'focus:bg-sage-800 focus:ring-accent-700',
+        'disabled:bg-gray-100 disabled:text-gray-800',
       )
       break
     case 'secondary':
       classes.push(
-        'bg-transparent',
-        'text-sage-600 dark:text-sage-300',
-        'border border-sage-600 dark:border-sage-300',
-        'hover:bg-sage-50 dark:hover:bg-sage-200/10',
-        'active:bg-sage-100 dark:active:bg-sage-900',
-        'focus:ring-sage-600/30',
-        'disabled:border-sage-300 dark:disabled:border-sage-700',
-        'disabled:text-sage-300 dark:disabled:text-sage-700',
+        'bg-transparent border border-sage-800 dark:border-sage-300 text-sage-800 dark:text-sage-300',
+        'hover:bg-sage-100 hover:text-sage-900 dark:hover:bg-sage-200/10',
+        'active:bg-sage-200 active:text-sage-950 dark:active:bg-sage-900',
+        'focus:bg-transparent focus:ring-accent-700',
+        'disabled:border-transparent disabled:text-gray-800 disabled:bg-gray-100',
       )
       break
-    case 'ghost-primary':
+    case 'tertiary':
       classes.push(
-        'bg-transparent',
-        'text-sage-600 dark:text-sage-300',
+        'bg-transparent text-sage-800 dark:text-sage-300',
         'hover:bg-sage-100 dark:hover:bg-sage-200/10',
-        'active:bg-sage-100 dark:active:bg-sage-900',
-        'focus:ring-sage-600/30',
-        'disabled:text-sage-300 dark:disabled:text-sage-700',
-      )
-      break
-    case 'ghost-black':
-      classes.push(
-        'bg-transparent',
-        'text-gray-900 dark:text-gray-100',
-        'hover:bg-gray-100 dark:hover:bg-gray-800',
-        'active:bg-gray-200 dark:active:bg-gray-700',
-        'focus:ring-gray-500/30',
-        'disabled:text-gray-400 dark:disabled:text-gray-600',
+        'active:bg-sage-200 dark:active:bg-sage-950',
+        'focus:ring-accent-700 focus:bg-transparent',
+        'disabled:text-gray-800 disabled:bg-gray-100',
       )
       break
     case 'accent':
       classes.push(
-        'bg-accent',
-        'text-black',
-        'hover:bg-accent-300 dark:hover:bg-accent-400',
-        'active:bg-accent-700',
-        'focus:ring-tertiary-30',
-        'disabled:bg-accent-20',
-        'disabled:text-accent-100',
-        'shadow-sm hover:shadow-md',
+        'bg-accent-200 text-accent-900',
+        'hover:bg-accent-100 hover:text-accent-950 dark:hover:bg-accent-400',
+        'active:bg-accent-900 active:text-accent-50',
+        'focus:ring-accent-700 focus:bg-accent-200 focus:text-accent-900',
+        'disabled:bg-gray-100 disabled:text-gray-800',
       )
       break
   }
@@ -155,31 +127,7 @@ const iconSizeClasses = computed(() => {
     case 'lg':
       return 'text-lg'
     default:
-      return 'text-base'
-  }
-})
-
-const iconColorClasses = computed(() => {
-  // Disabled state
-  if (disabled || loading) {
-    if (variant === 'primary') return 'text-sage-100 dark:text-sage-900'
-    if (variant === 'accent') return 'text-rose-100 dark:text-sage-900'
-    if (variant === 'secondary' || variant === 'ghost-primary') return 'text-sage-300 dark:text-sage-700'
-    return 'text-sage-400 dark:text-gray-600'
-  }
-
-  switch (variant) {
-    case 'primary':
-      return 'text-white dark:text-sage-900'
-    case 'accent':
-      return 'text-black'
-    case 'secondary':
-    case 'ghost-primary':
-      return 'text-sage-600 dark:text-sage-300'
-    case 'ghost-black':
-      return 'text-gray-900 dark:text-gray-100'
-    default:
-      return 'text-current'
+      return 'text-md'
   }
 })
 </script>
