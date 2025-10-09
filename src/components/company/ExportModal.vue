@@ -18,7 +18,7 @@
           <i class="fa fa-check-circle mr-1"></i>Preferences saved
         </span>
         <Button
-          variant="ghost-primary"
+          variant="tertiary"
           :label="allSelected ? 'Deselect All' : 'Select All'"
           size="sm"
           @click="toggleAll"

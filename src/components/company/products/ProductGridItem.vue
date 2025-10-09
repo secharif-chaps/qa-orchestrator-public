@@ -19,16 +19,16 @@
         class="flex items-center gap-3 p-3 bg-base-300 rounded-lg transition-colors"
       >
         <span class="text-sm flex-1 capitalize">{{ product }}</span>
-        <Badge v-if="isNewProduct(product)" variant="success" size="xs">
+        <Tag v-if="isNewProduct(product)" variant="success" size="xs">
           <i class="fa-solid fa-star"></i>
           New
-        </Badge>
+        </Tag>
       </div>
     </div>
 
     <div v-if="productList.length > maxDisplayItems" class="mt-4 text-center">
       <Button
-        variant="ghost-primary"
+        variant="tertiary"
         size="sm"
         :icon="showAll ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"
         :label="showAll ? 'Show Less' : `Show ${productList.length - maxDisplayItems} More`"
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 import { ref, computed } from 'vue'
 

@@ -105,7 +105,7 @@
       <!-- Footer -->
       <div class="p-6 border-t border-primary-stroke flex items-center justify-end gap-3">
         <Button
-          variant="ghost-primary"
+          variant="tertiary"
           :label="$t('common.cancel', 'Cancel')"
           @click="showDeleteModal = false"
         />

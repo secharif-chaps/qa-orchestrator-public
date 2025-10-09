@@ -28,15 +28,15 @@
 
       <!-- Tags/Badges -->
       <div class="flex gap-2 mb-4 flex-wrap">
-        <Badge variant="primary" size="sm" class="flex items-center gap-1">
+        <Tag variant="primary" size="sm" class="flex items-center gap-1">
           <i class="fa fa-clipboard text-xs"></i>
           {{ event.category }}
-        </Badge>
+        </Tag>
 
-        <Badge v-if="event.location" variant="slate" size="sm" class="flex items-center gap-1">
+        <Tag v-if="event.location" variant="slate" size="sm" class="flex items-center gap-1">
           <i class="fa fa-map-marker-alt text-xs"></i>
           {{ event.location }}
-        </Badge>
+        </Tag>
       </div>
 
       <!-- Description -->
@@ -66,7 +66,7 @@
 </template>
 
 <script lang="ts" setup>
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import { computed } from 'vue'
 import Source from '../Source.vue'
 

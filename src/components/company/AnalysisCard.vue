@@ -9,7 +9,7 @@
   >
     <!-- Status Badge (top-right) -->
     <div class="absolute top-4 right-4">
-      <Badge v-if="taskStatus" :variant="statusVariant" :label="statusLabel" size="xs" dot />
+      <Tag v-if="taskStatus" :variant="statusVariant" :label="statusLabel" size="xs" dot />
     </div>
 
     <!-- Header -->
@@ -80,14 +80,14 @@
       v-if="disabled"
       class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card"
     >
-      <Badge variant="accent" label="Bientôt disponible" size="sm" />
+      <Tag variant="accent" label="Bientôt disponible" size="sm" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Alert from '@/components/ui/Alert.vue'
 import type { TaskStatus } from '@/types/task'
 

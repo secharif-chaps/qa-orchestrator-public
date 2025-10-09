@@ -104,7 +104,7 @@
       class="mt-6"
     >
       <template #status>
-        <Badge variant="primary" icon="fa fa-sparkles" label="AI" size="xs" rounded />
+        <Tag variant="primary" icon="fa fa-sparkles" label="AI" size="xs" rounded />
       </template>
     </Alert>
   </div>
@@ -115,7 +115,7 @@ import { computed } from 'vue'
 import type { TeamMember } from '@/types/company'
 import Button from '@/components/ui/Button.vue'
 import Alert from '@/components/ui/Alert.vue'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 
 const props = defineProps<{
   team: TeamMember[]

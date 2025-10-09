@@ -12,7 +12,7 @@
           {{ productList.length }} products in this category
         </p>
       </div>
-      <Badge :label="productList.length.toString()" variant="slate" size="sm" />
+      <Tag :label="productList.length.toString()" variant="slate" size="sm" />
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -22,17 +22,17 @@
         class="flex items-center gap-2 p-2 bg-base-300 rounded text-sm"
       >
         <span class="text-primary-light-content flex-1 capitalize">{{ product }}</span>
-        <Badge v-if="isNewProduct(product)" variant="success" size="xs">
+        <Tag v-if="isNewProduct(product)" variant="success" size="xs">
           <i class="fa-solid fa-star"></i>
           New
-        </Badge>
+        </Tag>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import { computed } from 'vue'
 
 interface Props {

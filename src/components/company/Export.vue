@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Button variant="ghost-primary" icon="fa fa-download" label="Export" @click="showModal = true" />
+    <Button variant="tertiary" icon="fa fa-download" label="Export" @click="showModal = true" />
 
     <ExportModal
       v-if="company"

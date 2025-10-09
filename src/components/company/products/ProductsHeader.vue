@@ -16,7 +16,7 @@
       </div>
       <div class="flex gap-2">
         <Button
-          variant="ghost-primary"
+          variant="tertiary"
           size="sm"
           :icon="viewMode === 'grid' ? 'fa fa-list' : 'fa fa-th-large'"
           :label="viewMode === 'grid' ? 'List View' : 'Grid View'"
@@ -39,7 +39,7 @@
 
     <!-- Category Filter Pills -->
     <div class="flex flex-wrap gap-2 mb-4">
-      <Badge
+      <Tag
         label="All Categories"
         :variant="selectedCategory === null ? 'primary' : 'slate'"
         size="md"
@@ -48,7 +48,7 @@
         class="cursor-pointer hover:opacity-80 transition-opacity"
         @click="$emit('selectCategory', null)"
       />
-      <Badge
+      <Tag
         v-for="category in categories"
         :key="category"
         :label="formatCategoryName(category)"
@@ -65,7 +65,7 @@
 
 <script setup lang="ts">
 import Button from '@/components/ui/Button.vue'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 
 interface Props {
   totalProductCount: number

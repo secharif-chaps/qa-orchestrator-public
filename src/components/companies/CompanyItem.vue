@@ -60,9 +60,9 @@
         <i class="fas fa-tasks text-primary-light-content text-sm w-4"></i>
         <div class="flex items-center gap-2">
           <span class="text-sm text-primary-light-content"> {{ company.tasks.length }} tasks </span>
-          <Badge :variant="getTaskStatusVariant(company.tasks)" size="xs">
+          <Tag :variant="getTaskStatusVariant(company.tasks)" size="xs">
             {{ getTaskStatusText(company.tasks) }}
-          </Badge>
+          </Tag>
         </div>
       </div>
     </div>
@@ -131,9 +131,9 @@
       <!-- Column 4: Status (2 cols) -->
       <div class="col-span-2">
         <div class="flex items-center gap-2">
-          <Badge :variant="getTaskStatusVariant(company.tasks || [])" size="sm">
+          <Tag :variant="getTaskStatusVariant(company.tasks || [])" size="sm">
             {{ getTaskStatusText(company.tasks || []) }}
-          </Badge>
+          </Tag>
         </div>
       </div>
 
@@ -141,7 +141,7 @@
       <div class="col-span-2">
         <div class="flex items-center gap-1 justify-end">
           <Button
-            variant="ghost-primary"
+            variant="tertiary"
             size="sm"
             icon="fa fa-eye"
             icon-only
@@ -150,7 +150,7 @@
           />
           <Button
             v-if="canDeleteCompany"
-            variant="ghost-primary"
+            variant="tertiary"
             color="danger"
             size="sm"
             icon="fa fa-trash"
@@ -165,7 +165,7 @@
 </template>
 
 <script setup lang="ts">
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 import type { Company } from '@/types/company'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'

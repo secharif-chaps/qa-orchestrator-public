@@ -100,7 +100,7 @@
             <div class="min-w-0">
               <div class="flex items-center gap-2">
                 <h3 class="font-semibold text-sm">{{ task.name }}</h3>
-                <Badge
+                <Tag
                   :variant="getStatusVariant(task.status)"
                   :label="getStatusLabel(task.status)"
                   size="xs"
@@ -141,7 +141,7 @@
             <!-- Restart button -->
             <Button
               v-if="canRestartTask(task)"
-              variant="ghost-primary"
+              variant="tertiary"
               size="sm"
               icon="fa fa-rotate-right"
               icon-only
@@ -185,7 +185,7 @@ import { onUnmounted } from 'vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { useAuthStore } from '@/stores/auth'
 import Button from '@/components/ui/Button.vue'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 
 interface TaskConfig {
   type: TaskType

@@ -24,7 +24,7 @@
                 </p>
               </div>
             </div>
-            <Button variant="ghost-primary" icon="fa fa-times" icon-only size="lg" @click="close" />
+            <Button variant="tertiary" icon="fa fa-times" icon-only size="lg" @click="close" />
           </div>
 
           <!-- Content -->
