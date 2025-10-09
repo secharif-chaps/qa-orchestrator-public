@@ -119,43 +119,43 @@ const variantClasses = computed(() => {
   switch (props.variant) {
     case 'secondary':
       return isOutline
-        ? `${isRounded} bg-transparent text-secondary-light-content border-2 border-secondary-stroke`
-        : `${isRounded} bg-secondary-200 text-secondary-950 border border-secondary-200`
+        ? `${isRounded} bg-transparent text-secondary-light-content border border-secondary-stroke dark:text-secondary-50`
+        : `${isRounded} bg-secondary-200 text-secondary-950 border border-secondary-200 dark:bg-secondary-400/30 dark:text-secondary-50 dark:border-secondary-400/30`
 
     case 'success':
       return isOutline
-        ? `${isRounded} bg-transparent text-success-light-content border-2 border-success-stroke`
-        : `${isRounded} bg-success-200 text-success-950 border border-success-200`
+        ? `${isRounded} bg-transparent text-success-light-content border border-success-stroke dark:text-success-50`
+        : `${isRounded} bg-success-200 text-success-950 border border-success-200 dark:bg-success-400/30 dark:text-success-50 dark:border-success-400/30`
 
     case 'warning':
       return isOutline
-        ? `${isRounded} bg-transparent text-warning-light-content border-2 border-warning-stroke`
-        : `${isRounded} bg-warning-200 text-warning-950 border border-warning-200`
+        ? `${isRounded} bg-transparent text-warning-light-content border border-warning-stroke dark:text-warning-50`
+        : `${isRounded} bg-warning-200 text-warning-950 border border-warning-200 dark:bg-warning-400/30 dark:text-warning-50 dark:border-warning-400/30`
 
     case 'error':
       return isOutline
-        ? `${isRounded} bg-transparent text-error-light-content border-2 border-error-stroke`
-        : `${isRounded} bg-error-200 text-error-950 border border-error-200`
+        ? `${isRounded} bg-transparent text-error-light-content border border-error-stroke dark:text-error-50`
+        : `${isRounded} bg-error-200 text-error-950 border border-error-200 dark:bg-error-400/30 dark:text-error-50 dark:border-error-400/30`
 
     case 'info':
       return isOutline
-        ? `${isRounded} bg-transparent text-info-light-content border-2 border-info-stroke`
-        : `${isRounded} bg-info-200 text-info-950 border border-info-200`
+        ? `${isRounded} bg-transparent text-info-light-content border border-info-stroke dark:text-info-50`
+        : `${isRounded} bg-info-200 text-info-950 border border-info-200 dark:bg-info-400/30 dark:text-info-50 dark:border-info-400/30`
 
     case 'accent':
       return isOutline
-        ? `${isRounded} bg-transparent text-accent-light-content border-2 border-accent-stroke`
-        : `${isRounded} bg-accent-200 text-accent-950 border border-accent-200`
+        ? `${isRounded} bg-transparent text-accent-light-content border border-accent-stroke dark:text-accent-50`
+        : `${isRounded} bg-accent-200 text-accent-950 border border-accent-200 dark:bg-accent-400/30 dark:text-accent-50 dark:border-accent-400/30`
 
     case 'slate':
       return isOutline
-        ? `${isRounded} bg-transparent text-primary-light-content border-2 border-base-200`
-        : `${isRounded} bg-base-200 text-primary-950`
+        ? `${isRounded} bg-transparent text-primary-light-content border border-base-200 dark:text-primary-50`
+        : `${isRounded} bg-base-200 text-primary-950 dark:bg-base-400/30 dark:text-primary-50 dark:border-base-400/30`
 
     default: // primary
       return isOutline
-        ? `${isRounded} bg-transparent text-primary-light-content border-2 border-primary-stroke`
-        : `${isRounded} bg-primary-200 text-primary-950 border border-primary-200`
+        ? `${isRounded} bg-transparent text-primary-light-content border border-primary-stroke dark:text-primary-50`
+        : `${isRounded} bg-primary-200 text-primary-950 border border-primary-200 dark:bg-primary-400/30 dark:text-primary-50 dark:border-primary-400/30`
   }
 })
 

@@ -7,7 +7,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-export type IndicatorColor = 'primary' | 'success' | 'warning' | 'error' | 'info' | 'accent' | 'slate'
+export type IndicatorColor =
+  | 'primary'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'info'
+  | 'accent'
+  | 'slate'
 export type IndicatorSize = 'sm' | 'md' | 'lg'
 
 interface Props {
@@ -51,38 +58,38 @@ const colorClasses = computed(() => {
   switch (props.color) {
     case 'success':
       return {
-        container: 'bg-success-200',
-        dot: 'bg-success-800',
+        container: 'bg-success-200 dark:bg-success-400/30',
+        dot: 'bg-success-800 dark:bg-success-400',
       }
     case 'warning':
       return {
-        container: 'bg-warning-200',
-        dot: 'bg-warning-800',
+        container: 'bg-warning-200 dark:bg-warning-400/30',
+        dot: 'bg-warning-800 dark:bg-warning-400',
       }
     case 'error':
       return {
-        container: 'bg-error-200',
-        dot: 'bg-error-800',
+        container: 'bg-error-200 dark:bg-error-400/30',
+        dot: 'bg-error-800 dark:bg-error-400',
       }
     case 'info':
       return {
-        container: 'bg-info-200',
-        dot: 'bg-info-800',
+        container: 'bg-info-200 dark:bg-info-400/30',
+        dot: 'bg-info-800 dark:bg-info-400',
       }
     case 'accent':
       return {
-        container: 'bg-accent-200',
-        dot: 'bg-accent-800',
+        container: 'bg-accent-200 dark:bg-accent-400/30',
+        dot: 'bg-accent-800 dark:bg-accent-400',
       }
     case 'slate':
       return {
-        container: 'bg-gray-200',
-        dot: 'bg-gray-800',
+        container: 'bg-gray-200 dark:bg-gray-400/30',
+        dot: 'bg-gray-800 dark:bg-gray-400',
       }
     default: // primary
       return {
-        container: 'bg-primary-200',
-        dot: 'bg-primary-800',
+        container: 'bg-primary-200 dark:bg-primary-400/30',
+        dot: 'bg-primary-800 dark:bg-primary-400',
       }
   }
 })

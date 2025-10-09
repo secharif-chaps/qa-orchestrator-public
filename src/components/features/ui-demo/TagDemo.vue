@@ -1,21 +1,56 @@
 <template>
   <div class="space-y-8">
-    <!-- Basic Badges -->
+    <!-- Basic Tags -->
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">Basic Badges</h2>
-      <div class="flex flex-wrap gap-3">
+      <h2 class="text-xl font-semibold">Basic Tags</h2>
+      <div class="p-4 border border-primary-stroke rounded-card flex flex-wrap gap-3">
         <Tag variant="primary" label="Primary" />
         <Tag variant="secondary" label="Secondary" />
         <Tag variant="success" label="Success" />
         <Tag variant="warning" label="Warning" />
+        <Tag variant="error" label="Error" />
+        <Tag variant="info" label="Info" />
         <Tag variant="accent" label="Accent" />
+      </div>
+      <div
+        class="dark p-4 border border-primary-stroke rounded-card dark:text-sage-100 dark:bg-sage-900 flex flex-wrap gap-3"
+      >
+        <Tag variant="primary" label="Primary" />
+        <Tag variant="secondary" label="Secondary" />
+        <Tag variant="success" label="Success" />
+        <Tag variant="warning" label="Warning" />
         <Tag variant="error" label="Error" />
         <Tag variant="info" label="Info" />
         <Tag variant="accent" label="Accent" />
       </div>
     </section>
 
-    <!-- Badges with Icons -->
+    <!-- Basic Tags -->
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold">Basic Tags</h2>
+      <div class="p-4 border border-primary-stroke rounded-card flex flex-wrap gap-3">
+        <Tag appearance="outline" variant="primary" label="Primary" />
+        <Tag appearance="outline" variant="secondary" label="Secondary" />
+        <Tag appearance="outline" variant="success" label="Success" />
+        <Tag appearance="outline" variant="warning" label="Warning" />
+        <Tag appearance="outline" variant="error" label="Error" />
+        <Tag appearance="outline" variant="info" label="Info" />
+        <Tag appearance="outline" variant="accent" label="Accent" />
+      </div>
+      <div
+        class="dark p-4 border border-primary-stroke rounded-card dark:text-sage-100 dark:bg-sage-900 flex flex-wrap gap-3"
+      >
+        <Tag appearance="outline" variant="primary" label="Primary" />
+        <Tag appearance="outline" variant="secondary" label="Secondary" />
+        <Tag appearance="outline" variant="success" label="Success" />
+        <Tag appearance="outline" variant="warning" label="Warning" />
+        <Tag appearance="outline" variant="error" label="Error" />
+        <Tag appearance="outline" variant="info" label="Info" />
+        <Tag appearance="outline" variant="accent" label="Accent" />
+      </div>
+    </section>
+
+    <!-- Tags with Icons -->
     <section class="space-y-4">
       <h2 class="text-xl font-semibold">With Icons</h2>
       <div class="flex flex-wrap gap-3">
@@ -28,7 +63,7 @@
       </div>
     </section>
 
-    <!-- Badges with Dots -->
+    <!-- Tags with Dots -->
     <section class="space-y-4">
       <h2 class="text-xl font-semibold">With Status Dots</h2>
       <div class="flex flex-wrap gap-3">
@@ -66,7 +101,7 @@
       </div>
     </section>
 
-    <!-- Dismissible Badges -->
+    <!-- Dismissible Tags -->
     <section class="space-y-4">
       <h2 class="text-xl font-semibold">Dismissible</h2>
       <div class="flex flex-wrap gap-3">
@@ -98,7 +133,7 @@
           @click="resetDismissible"
           class="text-primary-light-content text-sm hover:underline"
         >
-          Reset dismissed badges
+          Reset dismissed Tags
         </button>
       </div>
     </section>

@@ -154,7 +154,7 @@
 
           <!-- Preview Table -->
           <div class="overflow-x-auto border border-primary-stroke rounded-lg">
-            <table class="min-w-full divide-y divide-border-2">
+            <table class="min-w-full divide-y divide-primary-stroke">
               <thead class="bg-base-200">
                 <tr>
                   <th
@@ -174,7 +174,7 @@
                   </th>
                 </tr>
               </thead>
-              <tbody class="bg-base-100 divide-y divide-border-2">
+              <tbody class="bg-base-100 divide-y divide-primary-stroke">
                 <tr v-for="company in parseResult.companies.slice(0, 5)" :key="company.row_number">
                   <td class="px-4 py-3 text-sm">{{ company.row_number }}</td>
                   <td class="px-4 py-3 text-sm">{{ company.name || '-' }}</td>

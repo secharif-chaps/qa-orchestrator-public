@@ -15,7 +15,10 @@
       @update:page-size="updatePageSize"
     />
 
-    <div v-if="error" class="bg-error-light border border-error-stroke text-error-light-content px-4 py-3 rounded-lg">
+    <div
+      v-if="error"
+      class="bg-error-light border border-error-stroke text-error-light-content px-4 py-3 rounded-lg"
+    >
       <div class="flex items-center gap-2">
         <i class="fa fa-exclamation-triangle"></i>
         <span class="font-medium">{{ $t('common.error', 'Error') }}:</span>
@@ -45,7 +48,7 @@
         </div>
       </div>
 
-      <div class="divide-y divide-border-2">
+      <div class="divide-y divide-primary-stroke">
         <TeamUserItem
           v-for="user in usersWithDisplayName"
           :key="user.id"

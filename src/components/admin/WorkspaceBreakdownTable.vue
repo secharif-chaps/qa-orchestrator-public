@@ -83,7 +83,7 @@
             </th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-border-2">
+        <tbody class="divide-y divide-primary-stroke">
           <tr
             v-for="workspace in sortedWorkspaces"
             :key="workspace.workspace_id"

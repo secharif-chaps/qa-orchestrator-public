@@ -13,34 +13,70 @@
         <p class="text-sm text-primary-light-content mb-4">
           Solid backgrounds with white icons, ideal for alerts and notifications
         </p>
-        <div class="flex flex-wrap items-center gap-4">
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="primary" color="primary" icon="fa fa-home" />
-            <span class="text-xs text-primary-light-content">Primary</span>
+        <div class="grid grid-cols-2 gap-4">
+          <div
+            class="p-6 border border-primary-stroke rounded-2xl flex flex-wrap items-center gap-4"
+          >
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="primary" icon="fa fa-home" />
+              <span class="text-xs">Primary</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="success" icon="fa fa-check" />
+              <span class="text-xs">Success</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="warning" icon="fa fa-exclamation-triangle" />
+              <span class="text-xs">Warning</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="error" icon="fa fa-times" />
+              <span class="text-xs">Error</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="info" icon="fa fa-info" />
+              <span class="text-xs">Info</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="accent" icon="fa fa-star" />
+              <span class="text-xs">Accent</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="slate" icon="fa fa-cog" />
+              <span class="text-xs">Slate</span>
+            </div>
           </div>
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="primary" color="success" icon="fa fa-check" />
-            <span class="text-xs text-primary-light-content">Success</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="primary" color="warning" icon="fa fa-exclamation-triangle" />
-            <span class="text-xs text-primary-light-content">Warning</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="primary" color="error" icon="fa fa-times" />
-            <span class="text-xs text-primary-light-content">Error</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="primary" color="info" icon="fa fa-info" />
-            <span class="text-xs text-primary-light-content">Info</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="primary" color="accent" icon="fa fa-star" />
-            <span class="text-xs text-primary-light-content">Accent</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="primary" color="slate" icon="fa fa-cog" />
-            <span class="text-xs text-primary-light-content">Slate</span>
+          <div
+            class="dark dark:text-sage-100 bg-sage-900 p-6 border border-primary-stroke rounded-2xl flex flex-wrap items-center gap-4"
+          >
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="primary" icon="fa fa-home" />
+              <span class="text-xs">Primary</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="success" icon="fa fa-check" />
+              <span class="text-xs">Success</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="warning" icon="fa fa-exclamation-triangle" />
+              <span class="text-xs">Warning</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="error" icon="fa fa-times" />
+              <span class="text-xs">Error</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="info" icon="fa fa-info" />
+              <span class="text-xs">Info</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="accent" icon="fa fa-star" />
+              <span class="text-xs">Accent</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="primary" color="slate" icon="fa fa-cog" />
+              <span class="text-xs">Slate</span>
+            </div>
           </div>
         </div>
       </div>
@@ -48,37 +84,71 @@
       <!-- Icon Badges - Secondary Variant -->
       <div class="space-y-2">
         <h3 class="text-lg font-medium">Icon Badges - Secondary (Light)</h3>
-        <p class="text-sm text-primary-light-content mb-4">
-          Light backgrounds with colored icons, more subtle appearance
-        </p>
-        <div class="flex flex-wrap items-center gap-4">
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="secondary" color="primary" icon="fa fa-home" />
-            <span class="text-xs text-primary-light-content">Primary</span>
+        <p class="text-sm mb-4">Light backgrounds with colored icons, more subtle appearance</p>
+        <div class="grid grid-cols-2 gap-4">
+          <div
+            class="p-6 border border-primary-stroke rounded-2xl flex flex-wrap items-center gap-4"
+          >
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="primary" icon="fa fa-home" />
+              <span class="text-xs">Primary</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="success" icon="fa fa-check" />
+              <span class="text-xs">Success</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="warning" icon="fa fa-exclamation-triangle" />
+              <span class="text-xs">Warning</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="error" icon="fa fa-times" />
+              <span class="text-xs">Error</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="info" icon="fa fa-info" />
+              <span class="text-xs">Info</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="accent" icon="fa fa-star" />
+              <span class="text-xs">Accent</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="slate" icon="fa fa-cog" />
+              <span class="text-xs">Slate</span>
+            </div>
           </div>
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="secondary" color="success" icon="fa fa-check" />
-            <span class="text-xs text-primary-light-content">Success</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="secondary" color="warning" icon="fa fa-exclamation-triangle" />
-            <span class="text-xs text-primary-light-content">Warning</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="secondary" color="error" icon="fa fa-times" />
-            <span class="text-xs text-primary-light-content">Error</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="secondary" color="info" icon="fa fa-info" />
-            <span class="text-xs text-primary-light-content">Info</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="secondary" color="accent" icon="fa fa-star" />
-            <span class="text-xs text-primary-light-content">Accent</span>
-          </div>
-          <div class="flex flex-col items-center gap-2">
-            <Badge variant="secondary" color="slate" icon="fa fa-cog" />
-            <span class="text-xs text-primary-light-content">Slate</span>
+          <div
+            class="dark dark:text-sage-100 bg-sage-900 p-6 border border-primary-stroke rounded-2xl flex flex-wrap items-center gap-4"
+          >
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="primary" icon="fa fa-home" />
+              <span class="text-xs">Primary</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="success" icon="fa fa-check" />
+              <span class="text-xs">Success</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="warning" icon="fa fa-exclamation-triangle" />
+              <span class="text-xs">Warning</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="error" icon="fa fa-times" />
+              <span class="text-xs">Error</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="info" icon="fa fa-info" />
+              <span class="text-xs">Info</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="accent" icon="fa fa-star" />
+              <span class="text-xs">Accent</span>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <Badge variant="secondary" color="slate" icon="fa fa-cog" />
+              <span class="text-xs">Slate</span>
+            </div>
           </div>
         </div>
       </div>
@@ -112,7 +182,9 @@
       <!-- Sizes -->
       <div class="space-y-2">
         <h3 class="text-lg font-medium">Sizes</h3>
-        <p class="text-sm text-primary-light-content mb-4">Extra small, small, medium, and large sizes</p>
+        <p class="text-sm text-primary-light-content mb-4">
+          Extra small, small, medium, and large sizes
+        </p>
         <div class="flex flex-wrap items-center gap-6">
           <div class="flex flex-col items-center gap-2">
             <Badge variant="primary" color="primary" icon="fa fa-bell" size="xs" />
@@ -144,7 +216,7 @@
           <div class="flex gap-4">
             <div class="relative">
               <i class="fa fa-bell text-2xl text-primary-light-content"></i>
-              <div class="absolute -top-1 -right-1">
+              <div class="absolute -top-2 -right-2">
                 <Badge variant="primary" color="error" :number="3" size="xs" />
               </div>
             </div>
@@ -169,11 +241,13 @@
           <div class="space-y-3">
             <div class="flex items-center gap-3">
               <div class="relative">
-                <div class="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center">
+                <div
+                  class="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center"
+                >
                   <span class="text-sm font-semibold text-primary-light-content">JD</span>
                 </div>
                 <div class="absolute -bottom-1 -right-1">
-                  <Badge variant="primary" color="success" icon="fa fa-check" size="sm" />
+                  <Badge variant="primary" color="success" icon="fa fa-check" size="xs" />
                 </div>
               </div>
               <div>
@@ -183,11 +257,13 @@
             </div>
             <div class="flex items-center gap-3">
               <div class="relative">
-                <div class="w-10 h-10 rounded-full bg-accent-light flex items-center justify-center">
+                <div
+                  class="w-10 h-10 rounded-full bg-accent-light flex items-center justify-center"
+                >
                   <span class="text-sm font-semibold text-accent-light-content">AS</span>
                 </div>
                 <div class="absolute -bottom-1 -right-1">
-                  <Badge variant="primary" color="warning" icon="fa fa-moon" size="sm" />
+                  <Badge variant="primary" color="warning" icon="fa fa-moon" size="xs" />
                 </div>
               </div>
               <div>
@@ -201,7 +277,7 @@
                   <span class="text-sm font-semibold text-info-light-content">BJ</span>
                 </div>
                 <div class="absolute -bottom-1 -right-1">
-                  <Badge variant="primary" color="slate" icon="fa fa-minus" size="sm" />
+                  <Badge variant="primary" color="slate" icon="fa fa-minus" size="xs" />
                 </div>
               </div>
               <div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="h-[calc(100vh-140px)] flex flex-col">
+  <div class="dark h-[calc(100vh-140px)] flex flex-col">
     <!-- Header -->
     <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
       <h2 class="text-headline-2xl">{{ $t('sidebar.notifications.title', 'Notifications') }}</h2>
@@ -30,12 +30,12 @@
         >
           <div class="flex items-start gap-3">
             <!-- Icon -->
-            <div
-              class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-              :class="notification.icon.bg"
+            <Badge
+              variant="secondary"
+              :color="notification.icon.color"
+              :icon="notification.icon.icon"
             >
-              <i :class="[notification.icon.icon, notification.icon.color]"></i>
-            </div>
+            </Badge>
 
             <!-- Content -->
             <div class="flex-1 min-w-0">
@@ -64,9 +64,16 @@
         <div class="w-16 h-16 rounded-full bg-sage-800/50 flex items-center justify-center mb-4">
           <i class="fa fa-bell text-2xl text-sage-500"></i>
         </div>
-        <h3 class="text-sm font-medium text-white mb-2">{{ $t('sidebar.notifications.noNotifications', 'No notifications') }}</h3>
+        <h3 class="text-sm font-medium text-white mb-2">
+          {{ $t('sidebar.notifications.noNotifications', 'No notifications') }}
+        </h3>
         <p class="text-xs text-sage-400 text-center">
-          {{ $t('sidebar.notifications.upToDate', 'You are up to date! All notifications will appear here.') }}
+          {{
+            $t(
+              'sidebar.notifications.upToDate',
+              'You are up to date! All notifications will appear here.',
+            )
+          }}
         </p>
       </div>
     </div>
@@ -86,6 +93,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import Badge, { type BadgeColor } from '../ui/Badge.vue'
 
 interface Notification {
   id: number
@@ -96,8 +104,7 @@ interface Notification {
   read: boolean
   icon: {
     icon: string
-    color: string
-    bg: string
+    color: BadgeColor
   }
   action?: string
 }
@@ -116,8 +123,7 @@ const notifications = ref<Notification[]>([
     read: false,
     icon: {
       icon: 'fa fa-building',
-      color: 'text-purple-400',
-      bg: 'bg-purple-500/20',
+      color: 'accent',
     },
     action: '/companies/123',
   },
@@ -130,8 +136,7 @@ const notifications = ref<Notification[]>([
     read: false,
     icon: {
       icon: 'fa fa-folder',
-      color: 'text-blue-400',
-      bg: 'bg-blue-500/20',
+      color: 'success',
     },
     action: '/folders/456',
   },
@@ -144,8 +149,7 @@ const notifications = ref<Notification[]>([
     read: true,
     icon: {
       icon: 'fa fa-coins',
-      color: 'text-green-400',
-      bg: 'bg-green-500/20',
+      color: 'error',
     },
   },
   {
@@ -157,8 +161,7 @@ const notifications = ref<Notification[]>([
     read: true,
     icon: {
       icon: 'fa fa-rss',
-      color: 'text-orange-400',
-      bg: 'bg-orange-500/20',
+      color: 'info',
     },
     action: '/veille/789',
   },
@@ -171,8 +174,7 @@ const notifications = ref<Notification[]>([
     read: true,
     icon: {
       icon: 'fa fa-file-csv',
-      color: 'text-teal-400',
-      bg: 'bg-teal-500/20',
+      color: 'warning',
     },
   },
   {
@@ -184,8 +186,7 @@ const notifications = ref<Notification[]>([
     read: true,
     icon: {
       icon: 'fa fa-comment',
-      color: 'text-rose-400',
-      bg: 'bg-rose-500/20',
+      color: 'info',
     },
     action: '/companies/321',
   },

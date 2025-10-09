@@ -97,17 +97,17 @@ const badgeColor = computed(() => {
 const alertClasses = computed(() => {
   switch (props.variant) {
     case 'success':
-      return 'border-success-stroke bg-success-50 text-success-light-950'
+      return 'border-success-stroke bg-success-50 text-success-light-950 dark:border-success-400/30 dark:bg-success-400/30 dark:text-success-50'
     case 'warning':
-      return 'border-warning-stroke bg-warning-50 text-warning-950'
+      return 'border-warning-stroke bg-warning-50 text-warning-950 dark:border-warning-400/30 dark:bg-warning-400/30 dark:text-warning-50'
     case 'error':
-      return 'border-error-stroke bg-error-50 text-error-950'
+      return 'border-error-stroke bg-error-50 text-error-950 dark:border-error-400/30 dark:bg-error-400/30 dark:text-error-50'
     case 'accent':
-      return 'border-accent-stroke bg-accent-50 text-accent-950'
+      return 'border-accent-stroke bg-accent-50 text-accent-950 dark:border-accent-400/30 dark:bg-accent-400/30 dark:text-accent-50'
     case 'neutral':
-      return 'border-gray-300 bg-gray-50 text-gray-950'
+      return 'border-gray-300 bg-gray-50 text-gray-950 dark:border-gray-400/30 dark:bg-gray-400/30 dark:text-gray-50'
     default: // info
-      return 'border-info-stroke bg-info-50 text-info-950'
+      return 'border-info-stroke bg-info-50 text-info-950 dark:border-info-400/30 dark:bg-info-400/30 dark:text-info-50'
   }
 })
 </script>

@@ -125,7 +125,7 @@
           </div>
 
           <!-- Table Body - Folders with expandable items -->
-          <div class="divide-y divide-border-2">
+          <div class="divide-y divide-primary-stroke">
             <FolderHierarchyRow
               v-for="folder in foldersWithItems"
               :key="folder.id"

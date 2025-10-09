@@ -13,7 +13,9 @@
         <p class="text-sm text-primary-light-content mb-4">
           All semantic colors available with -200 background and -900 dot
         </p>
-        <div class="flex flex-wrap items-center gap-6">
+        <div
+          class="p-4 border border-primary-stroke rounded-card flex flex-wrap items-center gap-6"
+        >
           <div class="flex flex-col items-center gap-2">
             <Indicator color="primary" />
             <span class="text-xs text-primary-light-content">Primary</span>
@@ -43,6 +45,39 @@
             <span class="text-xs text-primary-light-content">Slate</span>
           </div>
         </div>
+
+        <div
+          class="dark dark:text-sage-100 dark:bg-sage-900 border border-primary-stroke rounded-card p-4 flex flex-wrap items-center gap-6"
+        >
+          <div class="flex flex-col items-center gap-2">
+            <Indicator color="primary" />
+            <span class="text-xs">Primary</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <Indicator color="success" />
+            <span class="text-xs">Success</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <Indicator color="warning" />
+            <span class="text-xs">Warning</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <Indicator color="error" />
+            <span class="text-xs">Error</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <Indicator color="info" />
+            <span class="text-xs">Info</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <Indicator color="accent" />
+            <span class="text-xs">Accent</span>
+          </div>
+          <div class="flex flex-col items-center gap-2">
+            <Indicator color="slate" />
+            <span class="text-xs">Slate</span>
+          </div>
+        </div>
       </div>
 
       <!-- Sizes -->
@@ -68,9 +103,7 @@
       <!-- Usage with Text -->
       <div class="space-y-2">
         <h3 class="text-lg font-medium">Usage with Text</h3>
-        <p class="text-sm text-primary-light-content mb-4">
-          Indicators paired with status text
-        </p>
+        <p class="text-sm text-primary-light-content mb-4">Indicators paired with status text</p>
         <div class="space-y-3">
           <div class="flex items-center gap-2">
             <Indicator color="success" size="sm" />
@@ -101,7 +134,9 @@
           <div class="space-y-3">
             <div class="flex items-center justify-between p-3 bg-base-100 rounded-lg">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-success-light flex items-center justify-center">
+                <div
+                  class="w-10 h-10 rounded-full bg-success-light flex items-center justify-center"
+                >
                   <span class="text-sm font-semibold text-success-light-content">AM</span>
                 </div>
                 <div>
@@ -117,7 +152,9 @@
 
             <div class="flex items-center justify-between p-3 bg-base-100 rounded-lg">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-warning-light flex items-center justify-center">
+                <div
+                  class="w-10 h-10 rounded-full bg-warning-light flex items-center justify-center"
+                >
                   <span class="text-sm font-semibold text-warning-light-content">BT</span>
                 </div>
                 <div>
@@ -221,7 +258,9 @@
               <Indicator color="info" size="sm" class="mt-1" />
               <div class="flex-1">
                 <div class="text-sm font-medium">Design dashboard layout</div>
-                <div class="text-xs text-primary-light-content mt-1">In progress - 60% complete</div>
+                <div class="text-xs text-primary-light-content mt-1">
+                  In progress - 60% complete
+                </div>
               </div>
             </div>
 

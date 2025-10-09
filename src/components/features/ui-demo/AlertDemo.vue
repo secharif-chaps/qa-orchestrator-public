@@ -41,6 +41,48 @@
       />
     </section>
 
+    <section
+      class="space-y-4 dark dark:text-sage-100 dark:bg-sage-900 border border-primary-stroke rounded-card p-4"
+    >
+      <h2 class="text-xl font-semibold">Basic Dark Alerts</h2>
+      <Alert
+        variant="neutral"
+        title="Alert title"
+        message="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        icon="fa fa-info-circle"
+      />
+      <Alert
+        variant="info"
+        title="Information"
+        message="This is an informational message to keep you updated."
+        icon="fa fa-info-circle"
+      />
+      <Alert
+        variant="success"
+        title="Success!"
+        message="Your operation completed successfully."
+        icon="fa fa-check-circle"
+      />
+      <Alert
+        variant="warning"
+        title="Warning"
+        message="Please review this warning before proceeding."
+        icon="fa fa-exclamation-triangle"
+      />
+      <Alert
+        variant="error"
+        title="Error Occurred"
+        message="An error has occurred. Please try again."
+        icon="fa fa-times-circle"
+      />
+      <Alert
+        variant="accent"
+        title="Special Notice"
+        message="This is a special announcement or promotional message."
+        icon="fa fa-star"
+      />
+    </section>
+
     <!-- Dismissible Alerts -->
     <section class="space-y-4">
       <h2 class="text-xl font-semibold">Dismissible Alerts</h2>

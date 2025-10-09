@@ -175,7 +175,7 @@
         </div>
 
         <!-- Table Body -->
-        <div class="divide-y divide-border-2">
+        <div class="divide-y divide-primary-stroke">
           <div
             v-for="workspace in workspacesWithMemberCount"
             :key="workspace.id"

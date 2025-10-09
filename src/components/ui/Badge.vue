@@ -94,25 +94,39 @@ const colorVariantClasses = computed(() => {
 
   switch (props.color) {
     case 'success':
-      return isPrimary ? 'bg-success-500 text-white' : 'bg-success-light text-success-light-content'
+      return isPrimary
+        ? 'bg-success-500 dark:bg-success-400 text-white dark:text-success-800'
+        : 'bg-success-light dark:bg-success-400/20 text-success-light-content dark:text-success-400'
 
     case 'warning':
-      return isPrimary ? 'bg-warning-500 text-white' : 'bg-warning-light text-warning-light-content'
+      return isPrimary
+        ? 'bg-warning-500 text-white dark:text-warning-900'
+        : 'bg-warning-light dark:bg-warning-400/20 text-warning-light-content dark:text-warning-400'
 
     case 'error':
-      return isPrimary ? 'bg-error-500 text-white' : 'bg-error-light text-error-light-content'
+      return isPrimary
+        ? 'bg-error-500 text-white dark:text-error-900'
+        : 'bg-error-light dark:bg-error-400/20 text-error-light-content dark:text-error-400'
 
     case 'info':
-      return isPrimary ? 'bg-info-500 text-white' : 'bg-info-light text-info-light-content'
+      return isPrimary
+        ? 'bg-info-500 text-white dark:text-info-800'
+        : 'bg-info-light dark:bg-info-400/20 text-info-light-content dark:text-info-400'
 
     case 'accent':
-      return isPrimary ? 'bg-accent-800 text-white' : 'bg-accent-light text-accent-light-content'
+      return isPrimary
+        ? 'bg-accent-800 dark:bg-accent-300 text-white dark:text-accent-800'
+        : 'bg-accent-light dark:bg-accent-400/20 text-accent-light-content dark:text-accent-400'
 
     case 'slate':
-      return isPrimary ? 'bg-gray-800 text-white' : 'bg-base-200 text-primary-light-content'
+      return isPrimary
+        ? 'bg-gray-800 dark:bg-gray-300 text-white dark:text-gray-800'
+        : 'bg-base-200 dark:bg-gray-400/30 text-primary-light-content dark:text-gray-200'
 
     default: // primary
-      return isPrimary ? 'bg-primary text-white' : 'bg-primary-light text-primary-light-content'
+      return isPrimary
+        ? 'bg-primary text-white dark:bg-sage-300 text-white dark:text-sage-900'
+        : 'bg-primary-light dark:bg-sage-400/30 text-primary-light-content dark:text-sage-200'
   }
 })
 

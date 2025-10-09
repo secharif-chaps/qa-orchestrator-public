@@ -409,7 +409,8 @@
     --theme-color-info-stroke: var(--color-info-300);
   }
 
-  :root.dark {
+  :root.dark,
+  :root[data-theme='dark'] {
     --theme-color-base-100: var(--color-sage-950);
     --theme-color-base-200: var(--color-sage-900);
     --theme-color-base-300: var(--color-sage-800);
