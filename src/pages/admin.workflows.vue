@@ -20,7 +20,7 @@
 
           <!-- Back to Admin Dashboard -->
           <Button
-            variant="ghost-primary"
+            variant="tertiary"
             icon="fa fa-arrow-left"
             :label="$t('admin.dashboard.back', 'Back to Admin')"
             @click="$router.push('/admin')"
@@ -31,20 +31,27 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div class="bg-base-100 rounded-lg border border-primary-stroke p-4">
             <div class="flex items-center">
-              <Badge variant="success" icon="fa fa-check" size="sm" />
-              <span class="ml-3 text-sm font-medium">{{ activeCount }} {{ $t('admin.workflows.status.active', 'Active') }}</span>
+              <Tag variant="success" icon="fa fa-check" size="sm" />
+              <span class="ml-3 text-sm font-medium"
+                >{{ activeCount }} {{ $t('admin.workflows.status.active', 'Active') }}</span
+              >
             </div>
           </div>
           <div class="bg-base-100 rounded-lg border border-primary-stroke p-4">
             <div class="flex items-center">
-              <Badge variant="warning" icon="fa fa-exclamation" size="sm" />
-              <span class="ml-3 text-sm font-medium">{{ partialCount }} {{ $t('admin.workflows.status.partial', 'Partial') }}</span>
+              <Tag variant="warning" icon="fa fa-exclamation" size="sm" />
+              <span class="ml-3 text-sm font-medium"
+                >{{ partialCount }} {{ $t('admin.workflows.status.partial', 'Partial') }}</span
+              >
             </div>
           </div>
           <div class="bg-base-100 rounded-lg border border-primary-stroke p-4">
             <div class="flex items-center">
-              <Badge variant="slate" icon="fa fa-times" size="sm" />
-              <span class="ml-3 text-sm font-medium">{{ inactiveCount }} {{ $t('admin.workflows.status.notConfigured', 'Not Configured') }}</span>
+              <Tag variant="slate" icon="fa fa-times" size="sm" />
+              <span class="ml-3 text-sm font-medium"
+                >{{ inactiveCount }}
+                {{ $t('admin.workflows.status.notConfigured', 'Not Configured') }}</span
+              >
             </div>
           </div>
         </div>
@@ -107,7 +114,7 @@ import { useRouter } from 'vue-router'
 import { workflowsApi, type WorkflowConfig } from '@/api/workflows'
 import Button from '@/components/ui/Button.vue'
 import Alert from '@/components/ui/Alert.vue'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import WorkflowCard from '@/components/admin/WorkflowCard.vue'
 
 const router = useRouter()

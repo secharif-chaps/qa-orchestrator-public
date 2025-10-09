@@ -20,9 +20,14 @@
               <div class="flex items-center gap-3 rounded-card px-4 py-3">
                 <i class="fa-solid fa-users fa-fw"></i>
                 <div class="flex flex-col gap-1">
-                  <span class="text-sm truncate"> {{ t('company.fields.employeeCount', 'Employee Count') }} </span>
+                  <span class="text-sm truncate">
+                    {{ t('company.fields.employeeCount', 'Employee Count') }}
+                  </span>
                   <span class="text-xs text-primary-light-content">
-                    {{ company?.profile?.employeeCount?.value || t('company.fields.notSpecified', 'Not specified') }}
+                    {{
+                      company?.profile?.employeeCount?.value ||
+                      t('company.fields.notSpecified', 'Not specified')
+                    }}
                   </span>
                 </div>
               </div>
@@ -34,9 +39,14 @@
               >
                 <i class="fa-solid fa-map-marker fa-fw text-primary-light-content"></i>
                 <div class="flex flex-col gap-1">
-                  <span class="text-sm truncate"> {{ t('company.fields.headquarters', 'Headquarters') }} </span>
+                  <span class="text-sm truncate">
+                    {{ t('company.fields.headquarters', 'Headquarters') }}
+                  </span>
                   <span class="text-xs text-primary-light-content">
-                    {{ company?.profile?.hq?.value || t('company.fields.notSpecified', 'Not specified') }}
+                    {{
+                      company?.profile?.hq?.value ||
+                      t('company.fields.notSpecified', 'Not specified')
+                    }}
                   </span>
                 </div>
               </div>
@@ -50,7 +60,10 @@
                 <div class="flex flex-col gap-1">
                   <span class="text-sm truncate"> {{ t('company.fields.ceo', 'CEO') }} </span>
                   <span class="text-xs text-primary-light-content">
-                    {{ company?.profile?.ceo?.value || t('company.fields.notSpecified', 'Not specified') }}
+                    {{
+                      company?.profile?.ceo?.value ||
+                      t('company.fields.notSpecified', 'Not specified')
+                    }}
                   </span>
                 </div>
               </div>
@@ -62,9 +75,14 @@
               >
                 <i class="fa-solid fa-money-bill fa-fw text-primary-light-content"></i>
                 <div class="flex flex-col gap-1">
-                  <span class="text-sm truncate"> {{ t('company.fields.revenue', 'Revenue') }} </span>
+                  <span class="text-sm truncate">
+                    {{ t('company.fields.revenue', 'Revenue') }}
+                  </span>
                   <span class="text-xs text-primary-light-content">
-                    {{ company?.profile?.revenue?.value || t('company.fields.notSpecified', 'Not specified') }}
+                    {{
+                      company?.profile?.revenue?.value ||
+                      t('company.fields.notSpecified', 'Not specified')
+                    }}
                   </span>
                 </div>
               </div>
@@ -89,7 +107,7 @@
         <p>Présence sur les réseaux sociaux</p>
         <div>
           <div v-if="company?.digital?.socialMediaAccounts" class="flex flex-wrap gap-2">
-            <Badge
+            <Tag
               variant="slate"
               v-for="account in company?.digital?.socialMediaAccounts.value"
               :key="account.platform"
@@ -100,7 +118,7 @@
               <span class="underline">
                 {{ account.platform }}
               </span>
-            </Badge>
+            </Tag>
           </div>
         </div>
       </Card>
@@ -153,7 +171,7 @@ import { useQuery } from '@pinia/colada'
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { TaskType, TaskStatus } from '@/types/task'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Card from '@/components/ui/Card.vue'
 import { useRestartTask } from '@/mutations/tasks'
 import { companyTasksQuery } from '@/queries/tasks'
@@ -238,7 +256,10 @@ const analysisCards = computed(() => [
   {
     section: 'products' as TaskType,
     title: t('company.analysisCards.products.title', 'Products & Services'),
-    description: t('company.analysisCards.products.description', 'Browse products, services, and offerings'),
+    description: t(
+      'company.analysisCards.products.description',
+      'Browse products, services, and offerings',
+    ),
     icon: 'fas fa-box',
     insights:
       company.value?.products?.insights ||
@@ -268,7 +289,10 @@ const analysisCards = computed(() => [
   {
     section: 'jobs' as TaskType,
     title: t('company.analysisCards.jobs.title', 'Job Offers'),
-    description: t('company.analysisCards.jobs.description', 'Current job openings and career opportunities'),
+    description: t(
+      'company.analysisCards.jobs.description',
+      'Current job openings and career opportunities',
+    ),
     icon: 'fas fa-briefcase',
     insights: company.value?.jobs?.insights?.hiring_focus?.value,
     taskStatus: getTaskStatus('jobs'),
@@ -279,7 +303,10 @@ const analysisCards = computed(() => [
   {
     section: 'press' as TaskType,
     title: t('company.analysisCards.press.title', 'Press & Media'),
-    description: t('company.analysisCards.press.description', 'Press releases, news articles, and media coverage'),
+    description: t(
+      'company.analysisCards.press.description',
+      'Press releases, news articles, and media coverage',
+    ),
     icon: 'fas fa-newspaper',
     insights: company.value?.press?.insights,
     taskStatus: getTaskStatus('press'),

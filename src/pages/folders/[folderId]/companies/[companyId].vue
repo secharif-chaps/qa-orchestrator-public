@@ -25,7 +25,7 @@
       <div>
         <Button
           v-if="isDebugUser"
-          variant="ghost-primary"
+          variant="tertiary"
           size="sm"
           icon="fa fa-bug"
           icon-only
@@ -34,7 +34,7 @@
         />
         <Button
           v-if="canDeleteCompany && company"
-          variant="ghost-primary"
+          variant="tertiary"
           color="danger"
           icon="fa fa-trash"
           :label="$t('company.delete.button', 'Delete')"

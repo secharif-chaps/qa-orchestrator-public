@@ -38,7 +38,7 @@
                 <h3 class="text-lg font-semibold">
                   {{ $t(feature.titleKey, feature.titleDefault) }}
                 </h3>
-                <Badge :variant="feature.badgeVariant" size="sm" :label="feature.badgeLabel" />
+                <Tag :variant="feature.badgeVariant" size="sm" :label="feature.badgeLabel" />
               </div>
             </div>
             <p class="text-primary-light-content text-sm mb-4">
@@ -82,7 +82,7 @@ meta:
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Alert from '@/components/ui/Alert.vue'
 
 const router = useRouter()

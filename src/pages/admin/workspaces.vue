@@ -231,7 +231,7 @@
                   <Button
                     @click="showPickModal(workspace)"
                     :disabled="currentWorkspace && workspace.id === currentWorkspace.id"
-                    variant="ghost-primary"
+                    variant="tertiary"
                     icon="fa fa-exchange-alt"
                     icon-only
                     size="sm"
@@ -244,7 +244,7 @@
 
                   <Button
                     @click="viewWorkspace(workspace.id)"
-                    variant="ghost-primary"
+                    variant="tertiary"
                     icon="fa fa-eye"
                     icon-only
                     size="sm"
@@ -254,7 +254,7 @@
                   <Button
                     @click="showDeleteModal(workspace)"
                     :disabled="workspace.id === 1"
-                    variant="ghost-primary"
+                    variant="tertiary"
                     color="danger"
                     icon="fa fa-trash"
                     icon-only

@@ -40,10 +40,10 @@
             <span>{{ $t('team.hierarchy.title', 'Organization Chart') }}</span>
           </h3>
           <div class="flex items-center gap-2">
-            <Badge variant="info" label="Interactive" size="xs" rounded />
+            <Tag variant="info" label="Interactive" size="xs" rounded />
             <Button
               @click="doScreenshot"
-              variant="ghost-primary"
+              variant="tertiary"
               icon="fa fa-camera"
               :title="$t('team.hierarchy.screenshot', 'Take Screenshot')"
               icon-only
@@ -118,7 +118,7 @@
                   <div class="ml-auto">
                     <Button
                       @click="selectedNode = null"
-                      variant="ghost-primary"
+                      variant="tertiary"
                       icon="fa fa-times"
                       icon-only
                       class="rounded-full"
@@ -152,7 +152,7 @@
 
 <script lang="ts" setup>
 import Button from '@/components/ui/Button.vue'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import { Background } from '@vue-flow/background'
 import { Panel, VueFlow, useVueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'

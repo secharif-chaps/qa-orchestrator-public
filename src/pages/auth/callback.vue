@@ -13,7 +13,7 @@
         <Button
           @click="$router.push('/login')"
           :label="$t('auth.callback.tryAgain', 'Try again')"
-          variant="ghost-primary"
+          variant="tertiary"
           class="mt-4"
         />
       </div>
@@ -36,12 +36,12 @@ const error = ref<string | null>(null)
 onMounted(async () => {
   try {
     await handleCallback()
-    
+
     // Get intended redirect from URL state or default to home
     const urlParams = new URLSearchParams(window.location.search)
     const state = urlParams.get('state')
     let redirectTo = '/'
-    
+
     // If state contains redirect info, parse it
     if (state) {
       try {
@@ -52,7 +52,7 @@ onMounted(async () => {
         redirectTo = '/'
       }
     }
-    
+
     // Redirect to intended route or home
     await router.push(redirectTo)
   } catch (err) {

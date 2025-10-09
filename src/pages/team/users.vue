@@ -15,10 +15,10 @@
       @update:page-size="updatePageSize"
     />
 
-    <div v-if="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+    <div v-if="error" class="bg-error-light border border-error-stroke text-error-light-content px-4 py-3 rounded-lg">
       <div class="flex items-center gap-2">
         <i class="fa fa-exclamation-triangle"></i>
-        <span class="font-medium">Error:</span>
+        <span class="font-medium">{{ $t('common.error', 'Error') }}:</span>
         <span>{{ error.message }}</span>
       </div>
     </div>
@@ -28,7 +28,7 @@
       class="bg-base-100 rounded-lg p-8 text-center border border-primary-stroke"
     >
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-      <p class="text-primary-light-content">{{ $t('team.loading', 'Loading users...') }}</p>
+      <p class="text-primary-light-content">{{ $t('team.users.loading', 'Loading users...') }}</p>
     </div>
 
     <div
@@ -69,7 +69,7 @@
       v-model:current-page="currentPage"
       :meta="paginationMeta"
       :page-size-options="pageSizeOptions"
-      item-name="users"
+      :item-name="$t('team.users.pagination.itemName', 'users')"
       @update-per-page="updatePageSize"
     />
 

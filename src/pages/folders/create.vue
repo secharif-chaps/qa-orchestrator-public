@@ -54,7 +54,7 @@
               :placeholder="$t('folder.form.tagsPlaceholder', 'Enter tags separated by commas...')"
             />
             <div v-if="form.tags && form.tags.length > 0" class="flex flex-wrap gap-2 mt-2">
-              <Badge
+              <Tag
                 v-for="tag in form.tags"
                 :key="tag"
                 :label="tag"
@@ -110,7 +110,7 @@ meta:
 <script setup lang="ts">
 import Input from '@/components/ui/Input.vue'
 import Button from '@/components/ui/Button.vue'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import IconSelector from '@/components/folders/IconSelector.vue'
 import ColorSelector from '@/components/folders/ColorSelector.vue'
 import type { FolderCreate } from '@/types/folder'

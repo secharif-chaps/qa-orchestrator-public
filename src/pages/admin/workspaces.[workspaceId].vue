@@ -165,7 +165,7 @@
               <!-- User Status & Actions -->
               <div class="flex items-center gap-2">
                 <!-- Status Badge -->
-                <Badge
+                <Tag
                   :variant="getUserStatusVariant(user)"
                   :label="getUserStatusText(user)"
                   size="xs"
@@ -337,7 +337,7 @@ import {
 import type { WorkspaceUserCreate, WorkspaceUserListItem } from '@/types/user'
 import CreateUserModal from '@/components/user/CreateUserModal.vue'
 import WorkspaceTokensManager from '@/components/tokens/WorkspaceTokensManager.vue'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 
 const route = useRoute()
 const { t } = useI18n()

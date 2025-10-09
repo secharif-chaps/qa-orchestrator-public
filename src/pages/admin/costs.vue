@@ -2,7 +2,7 @@
   <div>
     <div class="space-y-6">
       <Button
-        variant="ghost-primary"
+        variant="tertiary"
         icon="fa fa-arrow-left"
         :label="$t('admin.dashboard.back', 'Back to Admin')"
         @click="$router.push('/admin')"

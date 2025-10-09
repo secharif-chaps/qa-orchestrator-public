@@ -7,7 +7,7 @@
         :class="{ 'mr-0': !isOpen, 'mr-[320px]': isOpen }"
       >
         <div
-          class="bg-base-200 fixed h-[calc(100vh-68px)] rounded-t-2xl left-0 top-[68px] transition-all z-10"
+          class="bg-white dark:bg-sage-900 fixed h-[calc(100vh-68px)] rounded-t-2xl left-0 top-[68px] transition-all z-10"
           :class="{ 'w-[calc(100%-320px)]': isOpen, 'w-full': !isOpen }"
         ></div>
 

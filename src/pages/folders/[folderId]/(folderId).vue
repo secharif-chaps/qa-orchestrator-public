@@ -112,7 +112,7 @@
                     </div>
                   </div>
                   <div class="col-span-2">
-                    <Badge variant="primary" :label="item.type" size="sm" />
+                    <Tag variant="primary" :label="item.type" size="sm" />
                   </div>
                   <div class="col-span-2">
                     <span class="text-sm text-primary-light-content">{{
@@ -127,7 +127,7 @@
                   <div class="col-span-2 text-right">
                     <div class="flex items-center justify-end gap-2">
                       <Button
-                        variant="ghost-primary"
+                        variant="tertiary"
                         size="sm"
                         icon="fa fa-external-link-alt"
                         :label="$t('folder.item.view', 'View')"
@@ -136,7 +136,7 @@
                       />
                       <Button
                         v-if="item.type === 'company' && canDeleteCompany"
-                        variant="ghost-primary"
+                        variant="tertiary"
                         color="danger"
                         size="sm"
                         :icon="companyFilter === 'archived' ? 'fa fa-undo' : 'fa fa-archive'"
@@ -221,7 +221,7 @@ meta:
 
 <script setup lang="ts">
 import Alert from '@/components/ui/Alert.vue'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
 import CompanyArchiveModal from '@/components/companies/CompanyArchiveModal.vue'

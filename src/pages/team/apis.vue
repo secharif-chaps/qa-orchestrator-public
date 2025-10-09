@@ -38,7 +38,7 @@
           </div>
           <Button
             @click="deleteApi(api.id)"
-            variant="ghost-primary"
+            variant="tertiary"
             icon="fa fa-trash"
             icon-only
             size="sm"
@@ -54,7 +54,9 @@
             >
           </div>
           <div class="flex items-center gap-2 text-sm">
-            <span class="text-primary-light-content">{{ $t('team.apis.apiKeyLabel', 'API Key:') }}</span>
+            <span class="text-primary-light-content">{{
+              $t('team.apis.apiKeyLabel', 'API Key:')
+            }}</span>
             <span
               class="text-primary-light-content font-mono text-xs bg-base-200 px-2 py-1 rounded"
             >
@@ -62,14 +64,14 @@
             </span>
             <Button
               @click="toggleApiKey(api.id)"
-              variant="ghost-primary"
+              variant="tertiary"
               :icon="showApiKey[api.id] ? 'fa fa-eye-slash' : 'fa fa-eye'"
               icon-only
               size="sm"
             />
           </div>
           <div class="flex items-center gap-2 mt-3">
-            <Badge
+            <Tag
               :variant="api.status === 'active' ? 'success' : 'warning'"
               :label="
                 api.status === 'active'
@@ -79,7 +81,7 @@
               dot
               size="xs"
             />
-            <Badge
+            <Tag
               variant="slate"
               :label="`${api.requestCount} ${$t('team.apis.requests', 'requests')}`"
               size="xs"
@@ -118,7 +120,7 @@
             </h4>
             <Button
               @click="cancelAddApi"
-              variant="ghost-primary"
+              variant="tertiary"
               icon="fa fa-times"
               icon-only
               size="sm"
@@ -205,7 +207,7 @@ meta:
 <script setup lang="ts">
 import { ref } from 'vue'
 import Button from '@/components/ui/Button.vue'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Input from '@/components/ui/Input.vue'
 
 // External APIs management (mock data)

@@ -67,7 +67,7 @@
                   {{ $t('csv.upload.dragDrop', 'Drag and drop your CSV file here, or') }}
                 </p>
                 <Button
-                  variant="ghost-primary"
+                  variant="tertiary"
                   :label="$t('csv.upload.chooseFile', 'Choose File')"
                   @click="$refs.fileInput?.click()"
                 />
@@ -81,7 +81,7 @@
                 {{ formatFileSize(selectedFile.size) }}
               </p>
               <Button
-                variant="ghost-primary"
+                variant="tertiary"
                 color="danger"
                 icon="fa fa-times"
                 :label="$t('csv.upload.remove', 'Remove')"
@@ -224,10 +224,14 @@
           variant="error"
           :title="$t('csv.upload.tokens.insufficient', 'Insufficient tokens')"
           :message="
-            $t('csv.upload.tokens.insufficientMessage', 'You need {required} tokens but only have {available} available', {
-              required: validationResult.tokens_required,
-              available: validationResult.tokens_available,
-            })
+            $t(
+              'csv.upload.tokens.insufficientMessage',
+              'You need {required} tokens but only have {available} available',
+              {
+                required: validationResult.tokens_required,
+                available: validationResult.tokens_available,
+              },
+            )
           "
           icon="fa fa-coins"
         />
