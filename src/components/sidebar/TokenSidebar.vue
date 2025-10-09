@@ -3,7 +3,7 @@
     <!-- Header with Total Credits -->
     <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
       <h2 class="text-headline-2xl">{{ $t('sidebar.tokens.title', 'Credits') }}</h2>
-      <Badge
+      <Tag
         variant="success"
         :label="$t('sidebar.tokens.credits', '{count} credits', { count: totalTokens })"
         icon="fa fa-coins"
@@ -23,7 +23,9 @@
       <div v-else class="space-y-6">
         <!-- Today Section -->
         <div v-if="mockHistory.today.length > 0">
-          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider mb-3">{{ $t('sidebar.tokens.yesterday', 'Yesterday') }}</h3>
+          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider mb-3">
+            {{ $t('sidebar.tokens.yesterday', 'Yesterday') }}
+          </h3>
           <div class="space-y-2">
             <div
               v-for="item in mockHistory.today"
@@ -45,7 +47,11 @@
                     <h4 class="text-sm font-medium text-white truncate">{{ item.title }}</h4>
                     <span
                       class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0"
-                      :class="item.amount < 0 ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'"
+                      :class="
+                        item.amount < 0
+                          ? 'bg-red-500/20 text-red-300'
+                          : 'bg-green-500/20 text-green-300'
+                      "
                     >
                       {{ item.amount > 0 ? '+' : '' }}{{ item.amount }}
                     </span>
@@ -59,7 +65,9 @@
 
         <!-- Date Section (26 septembre) -->
         <div v-if="mockHistory.date.length > 0">
-          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider mb-3">26 septembre</h3>
+          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider mb-3">
+            26 septembre
+          </h3>
           <div class="space-y-2">
             <div
               v-for="item in mockHistory.date"
@@ -81,7 +89,11 @@
                     <h4 class="text-sm font-medium text-white truncate">{{ item.title }}</h4>
                     <span
                       class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0"
-                      :class="item.amount < 0 ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'"
+                      :class="
+                        item.amount < 0
+                          ? 'bg-red-500/20 text-red-300'
+                          : 'bg-green-500/20 text-green-300'
+                      "
                     >
                       {{ item.amount > 0 ? '+' : '' }}{{ item.amount }}
                     </span>
@@ -108,8 +120,12 @@
 
     <!-- Contact Card -->
     <div class="px-4 pb-4">
-      <div class="bg-gradient-to-br from-rose-900/20 to-sage-900/20 rounded-lg p-4 border border-rose-500/20">
-        <h3 class="text-sm font-semibold text-white mb-2">{{ $t('sidebar.tokens.needMore', 'Need more Credits?') }}</h3>
+      <div
+        class="bg-gradient-to-br from-rose-900/20 to-sage-900/20 rounded-lg p-4 border border-rose-500/20"
+      >
+        <h3 class="text-sm font-semibold text-white mb-2">
+          {{ $t('sidebar.tokens.needMore', 'Need more Credits?') }}
+        </h3>
         <p class="text-xs text-sage-300 mb-3">
           {{ $t('sidebar.tokens.advisor', 'Your ChapsVision advisor') }}<br />
           <span class="font-semibold text-white">Victoire ECHEKÉMAT</span>
@@ -131,7 +147,7 @@ import { computed, ref } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { workspaceModulesQuery } from '@/queries/tokens'
 import { useAuthStore } from '@/stores/auth'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 
 const authStore = useAuthStore()
@@ -143,7 +159,7 @@ const workspaceId = computed(() => authStore.currentWorkspace?.id || 1)
 const { data: modulesData, isLoading } = useQuery(
   workspaceModulesQuery,
   () => ({ workspaceId: workspaceId.value }),
-  { enabled: () => !!workspaceId.value }
+  { enabled: () => !!workspaceId.value },
 )
 
 // Calculate total tokens across all modules

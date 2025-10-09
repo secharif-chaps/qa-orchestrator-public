@@ -34,7 +34,7 @@
 
       <!-- Add Company Button -->
       <Button
-        variant="ghost-primary"
+        variant="tertiary"
         dark
         icon="fa fa-plus-circle"
         icon-only

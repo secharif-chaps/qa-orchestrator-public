@@ -15,7 +15,12 @@
             {{ $t('settings.appearance.preview.sample') }}
           </h3>
           <p class="text-sm text-primary-light-content">
-            {{ $t('settings.appearance.preview.interfaceDescription', 'Experience how your interface looks with the current theme settings.') }}
+            {{
+              $t(
+                'settings.appearance.preview.interfaceDescription',
+                'Experience how your interface looks with the current theme settings.',
+              )
+            }}
           </p>
         </div>
 
@@ -23,14 +28,21 @@
         <div class="bg-base-100 border border-primary-stroke rounded-lg p-4 mb-6">
           <div class="flex items-start justify-between mb-4">
             <div>
-              <h4 class="font-medium">{{ $t('settings.appearance.preview.card.title', 'Sample Card Title') }}</h4>
+              <h4 class="font-medium">
+                {{ $t('settings.appearance.preview.card.title', 'Sample Card Title') }}
+              </h4>
               <p class="text-sm text-primary-light-content mt-1">
-                {{ $t('settings.appearance.preview.card.description', 'This card demonstrates the current theme styling') }}
+                {{
+                  $t(
+                    'settings.appearance.preview.card.description',
+                    'This card demonstrates the current theme styling',
+                  )
+                }}
               </p>
             </div>
             <div class="flex gap-2">
-              <Badge variant="success" :label="$t('settings.appearance.preview.tag1')" />
-              <Badge variant="info" :label="$t('settings.appearance.preview.tag2')" />
+              <Tag variant="success" :label="$t('settings.appearance.preview.tag1')" />
+              <Tag variant="info" :label="$t('settings.appearance.preview.tag2')" />
             </div>
           </div>
 
@@ -38,11 +50,15 @@
           <div class="space-y-4">
             <!-- Input Field -->
             <div>
-              <label class="block text-sm font-medium mb-2">{{ $t('settings.appearance.preview.input.label', 'Sample Input Field') }}</label>
+              <label class="block text-sm font-medium mb-2">{{
+                $t('settings.appearance.preview.input.label', 'Sample Input Field')
+              }}</label>
               <input
                 v-model="previewInputValue"
                 type="text"
-                :placeholder="$t('settings.appearance.preview.input.placeholder', 'Type something here...')"
+                :placeholder="
+                  $t('settings.appearance.preview.input.placeholder', 'Type something here...')
+                "
                 class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-base-100 text-primary-light-content placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
@@ -50,9 +66,16 @@
             <!-- Toggle Switch -->
             <div class="flex items-center justify-between">
               <div>
-                <label class="text-sm font-medium">{{ $t('settings.appearance.preview.toggle.label', 'Sample Toggle') }}</label>
+                <label class="text-sm font-medium">{{
+                  $t('settings.appearance.preview.toggle.label', 'Sample Toggle')
+                }}</label>
                 <p class="text-sm text-primary-light-content">
-                  {{ $t('settings.appearance.preview.toggle.description', 'This toggle demonstrates switch styling') }}
+                  {{
+                    $t(
+                      'settings.appearance.preview.toggle.description',
+                      'This toggle demonstrates switch styling',
+                    )
+                  }}
                 </p>
               </div>
               <Switch.Root
@@ -69,24 +92,40 @@
 
             <!-- Buttons -->
             <div class="flex flex-wrap gap-3">
-              <Button :label="$t('settings.appearance.preview.buttons.primary', 'Primary Button')" variant="primary" />
-              <Button :label="$t('settings.appearance.preview.buttons.secondary', 'Secondary Button')" variant="secondary" />
-              <Button :label="$t('settings.appearance.preview.buttons.danger', 'Danger Button')" variant="ghost-primary" color="danger" />
+              <Button
+                :label="$t('settings.appearance.preview.buttons.primary', 'Primary Button')"
+                variant="primary"
+              />
+              <Button
+                :label="$t('settings.appearance.preview.buttons.secondary', 'Secondary Button')"
+                variant="secondary"
+              />
+              <Button
+                :label="$t('settings.appearance.preview.buttons.danger', 'Danger Button')"
+                variant="tertiary"
+                color="danger"
+              />
             </div>
 
             <!-- Status Indicators -->
             <div class="flex flex-wrap gap-2">
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 bg-green-500 rounded-full"></div>
-                <span class="text-sm text-primary-light-content">{{ $t('settings.appearance.preview.status.active', 'Active') }}</span>
+                <span class="text-sm text-primary-light-content">{{
+                  $t('settings.appearance.preview.status.active', 'Active')
+                }}</span>
               </div>
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 bg-yellow-500 rounded-full"></div>
-                <span class="text-sm text-primary-light-content">{{ $t('settings.appearance.preview.status.pending', 'Pending') }}</span>
+                <span class="text-sm text-primary-light-content">{{
+                  $t('settings.appearance.preview.status.pending', 'Pending')
+                }}</span>
               </div>
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 bg-red-500 rounded-full"></div>
-                <span class="text-sm text-primary-light-content">{{ $t('settings.appearance.preview.status.error', 'Error') }}</span>
+                <span class="text-sm text-primary-light-content">{{
+                  $t('settings.appearance.preview.status.error', 'Error')
+                }}</span>
               </div>
             </div>
           </div>
@@ -95,7 +134,9 @@
         <!-- Sample List -->
         <div class="bg-base-100 border border-primary-stroke rounded-lg overflow-hidden">
           <div class="px-4 py-3 border-b border-primary-stroke">
-            <h4 class="text-sm font-medium">{{ $t('settings.appearance.preview.list.title', 'Sample List Items') }}</h4>
+            <h4 class="text-sm font-medium">
+              {{ $t('settings.appearance.preview.list.title', 'Sample List Items') }}
+            </h4>
           </div>
           <div class="divide-y divide-slate-200 dark:divide-slate-700">
             <div
@@ -125,7 +166,7 @@
 
 <script setup lang="ts">
 import { Switch } from 'reka-ui/namespaced'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -150,7 +191,10 @@ const previewItems = ref([
   },
   {
     title: t('common.preview.items.profileComplete', 'Profile Completed'),
-    description: t('common.preview.items.profileCompleteDesc', 'Your profile setup is now complete'),
+    description: t(
+      'common.preview.items.profileCompleteDesc',
+      'Your profile setup is now complete',
+    ),
     icon: 'fas fa-check-circle',
     time: t('common.time.hoursAgo', '{count} hours ago', { count: 3 }),
   },

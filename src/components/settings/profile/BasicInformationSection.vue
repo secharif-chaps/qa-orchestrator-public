@@ -8,7 +8,7 @@
             {{ $t('settings.profile.basic.description') }}
           </p>
         </div>
-        <Badge
+        <Tag
           :variant="user?.expired ? 'error' : 'success'"
           :label="
             user?.expired
@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 
 interface User {
   expired?: boolean

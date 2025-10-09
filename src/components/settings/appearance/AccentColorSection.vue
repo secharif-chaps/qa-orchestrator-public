@@ -61,14 +61,20 @@
             <div class="flex items-center gap-4">
               <div class="w-8 h-8 rounded-full shadow-md" :class="getCurrentAccentBgClass()"></div>
               <div>
-                <h4 class="text-sm font-medium">{{ $t('settings.appearance.accent.currentColor', 'Current Accent Color') }}</h4>
+                <h4 class="text-sm font-medium">
+                  {{ $t('settings.appearance.accent.currentColor', 'Current Accent Color') }}
+                </h4>
                 <p class="text-xs text-primary-light-content">
                   {{ getCurrentAccentLabel() }}
                 </p>
               </div>
             </div>
             <div class="flex items-center gap-2">
-              <Badge :label="$t('settings.appearance.accent.active', 'Active')" variant="primary" class="animate-pulse" />
+              <Tag
+                :label="$t('settings.appearance.accent.active', 'Active')"
+                variant="primary"
+                class="animate-pulse"
+              />
             </div>
           </div>
         </div>
@@ -81,10 +87,17 @@
             </div>
             <div>
               <h4 class="text-sm font-medium text-primary-light-content">
-                {{ $t('settings.appearance.accent.personalizeTitle', 'Personalize Your Experience') }}
+                {{
+                  $t('settings.appearance.accent.personalizeTitle', 'Personalize Your Experience')
+                }}
               </h4>
               <p class="text-xs text-primary-light-content mt-1">
-                {{ $t('settings.appearance.accent.personalizeDescription', 'Your accent color affects buttons, links, highlights, and interactive elements throughout the application.') }}
+                {{
+                  $t(
+                    'settings.appearance.accent.personalizeDescription',
+                    'Your accent color affects buttons, links, highlights, and interactive elements throughout the application.',
+                  )
+                }}
               </p>
             </div>
           </div>
@@ -96,7 +109,7 @@
 
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import { computed } from 'vue'
 
 interface Props {

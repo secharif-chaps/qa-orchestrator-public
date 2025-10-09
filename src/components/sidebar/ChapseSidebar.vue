@@ -5,7 +5,7 @@
       <h2 class="text-headline-2xl">{{ $t('sidebar.chapse.title', 'Chaps-e') }}</h2>
       <div class="flex items-center gap-2">
         <Button
-          variant="ghost-primary"
+          variant="tertiary"
           dark
           icon="fa-solid fa-trash"
           icon-only
@@ -27,9 +27,11 @@
         @click="handleAddContext(context)"
         :disabled="isContextActive(context)"
         class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-all"
-        :class="isContextActive(context)
-          ? 'bg-sage-300 text-sage-950 cursor-not-allowed opacity-100'
-          : 'bg-sage-800 text-sage-200 hover:bg-sage-700 cursor-pointer'"
+        :class="
+          isContextActive(context)
+            ? 'bg-sage-300 text-sage-950 cursor-not-allowed opacity-100'
+            : 'bg-sage-800 text-sage-200 hover:bg-sage-700 cursor-pointer'
+        "
       >
         <i :class="getContextIcon(context)" class="text-xs"></i>
         <span>{{ context.name }}</span>
@@ -39,19 +41,14 @@
     </div>
 
     <!-- Messages Container -->
-    <div
-      ref="messagesContainer"
-      class="overflow-y-auto px-4 py-4 grow max-h-[calc(100vh-450px)]"
-    >
-      <ChatMessage
-        v-for="message in messages"
-        :key="message.id"
-        :message="message"
-      />
+    <div ref="messagesContainer" class="overflow-y-auto px-4 py-4 grow max-h-[calc(100vh-450px)]">
+      <ChatMessage v-for="message in messages" :key="message.id" :message="message" />
 
       <!-- Loading Indicator -->
       <div v-if="isLoading" class="flex gap-3 mb-4">
-        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+        <div
+          class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center"
+        >
           <img :src="chapseAvatar" class="w-6 h-6" alt="Chaps-e" />
         </div>
         <div class="bg-almond-300/30 text-white text-sm rounded-xl px-4 py-3">
@@ -84,7 +81,9 @@
       v-if="hasActiveContexts"
       class="px-4 py-2 border-t border-sage-800 flex items-center gap-2 flex-wrap"
     >
-      <span class="text-xs text-sage-200">{{ $t('sidebar.chapse.activeContext', 'Active context:') }}</span>
+      <span class="text-xs text-sage-200">{{
+        $t('sidebar.chapse.activeContext', 'Active context:')
+      }}</span>
       <ContextBadge
         v-for="context in activeContexts"
         :key="`active-${context.type}-${context.id}`"
@@ -116,12 +115,7 @@
 
     <!-- Error Alert -->
     <div v-if="error" class="px-4 pb-4">
-      <Alert
-        variant="error"
-        :message="error"
-        dismissible
-        @dismiss="error = null"
-      />
+      <Alert variant="error" :message="error" dismissible @dismiss="error = null" />
     </div>
   </div>
 </template>
@@ -151,7 +145,7 @@ const {
   sendMessage,
   loadHistory,
   clearHistory,
-  initializeChat
+  initializeChat,
 } = useChapseChat()
 
 // Context composable
@@ -163,7 +157,7 @@ const {
   removeContext,
   isContextActive,
   getContextIcon,
-  shouldWarnContextSwitch
+  shouldWarnContextSwitch,
 } = useChapseContext()
 
 // Local state
@@ -183,8 +177,14 @@ const suggestions = computed<Suggestion[]>(() => {
   // Home page suggestions
   if (routeName === '/(home)') {
     return [
-      { label: 'Montre-moi mes entreprises récentes', message: 'Montre-moi mes entreprises récentes' },
-      { label: "Résume l'activité de mon workspace", message: "Résume l'activité de mon workspace" }
+      {
+        label: 'Montre-moi mes entreprises récentes',
+        message: 'Montre-moi mes entreprises récentes',
+      },
+      {
+        label: "Résume l'activité de mon workspace",
+        message: "Résume l'activité de mon workspace",
+      },
     ]
   }
 
@@ -193,8 +193,11 @@ const suggestions = computed<Suggestion[]>(() => {
   // /folders/[folderId]/companies/[companyId]/profile, etc.
   if (routeName?.includes('/companies/[companyId]')) {
     return [
-      { label: 'Fais-moi une synthèse de cette entreprise', message: 'Fais-moi une synthèse de cette entreprise' },
-      { label: 'Liste les technologies citées', message: 'Liste les technologies citées' }
+      {
+        label: 'Fais-moi une synthèse de cette entreprise',
+        message: 'Fais-moi une synthèse de cette entreprise',
+      },
+      { label: 'Liste les technologies citées', message: 'Liste les technologies citées' },
     ]
   }
 
@@ -202,8 +205,14 @@ const suggestions = computed<Suggestion[]>(() => {
   // Routes: /folders/[folderId], /folders/[folderId]/(folderId)
   if (routeName?.startsWith('/folders/[folderId]') && !routeName?.includes('/companies/')) {
     return [
-      { label: 'Résume les entreprises de ce dossier', message: 'Résume les entreprises de ce dossier' },
-      { label: 'Compare les entreprises de ce dossier', message: 'Compare les entreprises de ce dossier' }
+      {
+        label: 'Résume les entreprises de ce dossier',
+        message: 'Résume les entreprises de ce dossier',
+      },
+      {
+        label: 'Compare les entreprises de ce dossier',
+        message: 'Compare les entreprises de ce dossier',
+      },
     ]
   }
 
@@ -225,7 +234,7 @@ watch(
       messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
     }
   },
-  { deep: true }
+  { deep: true },
 )
 
 // Handle send message
@@ -252,12 +261,12 @@ const handleAddContext = (context: ChapseContext) => {
   if (shouldWarnContextSwitch(context)) {
     // Warn user about context switch
     const confirmed = confirm(
-      `Voulez-vous remplacer le contexte actuel par ${context.name} ? Cela peut affecter la pertinence de la réponse.`
+      `Voulez-vous remplacer le contexte actuel par ${context.name} ? Cela peut affecter la pertinence de la réponse.`,
     )
     if (!confirmed) return
 
     // Remove existing company context
-    const existingCompany = activeContexts.value.find(ctx => ctx.type === 'company')
+    const existingCompany = activeContexts.value.find((ctx) => ctx.type === 'company')
     if (existingCompany) {
       removeContext(existingCompany.id.toString())
     }

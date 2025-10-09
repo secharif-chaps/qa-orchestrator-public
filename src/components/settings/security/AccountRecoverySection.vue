@@ -26,7 +26,7 @@
             </div>
           </div>
           <div class="flex items-center space-x-2">
-            <Badge
+            <Tag
               :variant="backupCodesGenerated ? 'success' : 'warning'"
               :label="
                 backupCodesGenerated
@@ -81,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 
 interface Props {

@@ -28,7 +28,7 @@
                 </p>
               </div>
             </div>
-            <Badge variant="success" :label="$t('settings.security.sessions.current.badge')" />
+            <Tag variant="success" :label="$t('settings.security.sessions.current.badge')" />
           </div>
         </div>
 
@@ -88,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 
 interface Session {

@@ -26,7 +26,7 @@
             </div>
           </div>
           <div class="flex items-center space-x-2">
-            <Badge
+            <Tag
               :variant="twoFactorEnabled ? 'success' : 'slate'"
               :label="
                 twoFactorEnabled
@@ -64,7 +64,7 @@
             </div>
           </div>
           <div class="flex items-center space-x-2">
-            <Badge
+            <Tag
               :variant="securityKeysCount > 0 ? 'success' : 'slate'"
               :label="
                 securityKeysCount > 0
@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 
 interface Props {

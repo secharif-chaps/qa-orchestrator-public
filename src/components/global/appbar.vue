@@ -22,7 +22,7 @@
           <!-- Dev mode only theme toggle -->
           <Button
             v-if="isDev"
-            variant="ghost-primary"
+            variant="tertiary"
             dark
             :icon="isDark ? 'fa fa-sun' : 'fa fa-moon'"
             icon-only
@@ -32,7 +32,7 @@
           <!-- Dev mode only language toggle -->
           <Button
             v-if="isDev"
-            variant="ghost-primary"
+            variant="tertiary"
             dark
             :icon="'fa fa-language'"
             icon-only
@@ -40,7 +40,7 @@
           />
 
           <Button
-            variant="ghost-primary"
+            variant="tertiary"
             dark
             :icon="'fa fa-home'"
             icon-only
@@ -50,7 +50,7 @@
           <!-- Admin button - only visible to users with admin.workspaces permission -->
           <Button
             v-if="hasAdminPermission"
-            variant="ghost-primary"
+            variant="tertiary"
             dark
             icon="fa fa-shield"
             icon-only
@@ -60,7 +60,7 @@
           <!-- Team button - visible to users with workspace.read permission -->
           <Button
             v-if="hasTeamPermission"
-            variant="ghost-primary"
+            variant="tertiary"
             dark
             icon="fa fa-users"
             icon-only
@@ -68,7 +68,7 @@
           />
 
           <Button
-            variant="ghost-primary"
+            variant="tertiary"
             dark
             icon="fa fa-arrow-right-from-bracket"
             icon-only
@@ -78,14 +78,14 @@
           <div class="w-px h-4 bg-sage-600 dark:bg-sage-400"></div>
 
           <Button
-            :variant="isTokensActive ? 'accent' : 'ghost-primary'"
+            :variant="isTokensActive ? 'accent' : 'tertiary'"
             dark
             :icon="'fa fa-circle-dollar'"
             icon-only
             @click="toggleTokens"
           />
           <Button
-            :variant="isChaapseActive ? 'accent' : 'ghost-primary'"
+            :variant="isChaapseActive ? 'accent' : 'tertiary'"
             dark
             :icon="'fa fa-robot'"
             icon-only
@@ -93,14 +93,14 @@
           />
 
           <Button
-            :variant="isNotificationsActive ? 'accent' : 'ghost-primary'"
+            :variant="isNotificationsActive ? 'accent' : 'tertiary'"
             dark
             :icon="'fa fa-bell'"
             icon-only
             @click="toggleNotifications"
           />
           <Button
-            :variant="isFoldersActive ? 'accent' : 'ghost-primary'"
+            :variant="isFoldersActive ? 'accent' : 'tertiary'"
             dark
             :icon="'fa fa-grip-lines'"
             icon-only
@@ -114,14 +114,12 @@
 
 <script lang="ts" setup>
 import logo_small from '@/assets/CHAPSVISION_LOGO_ChapsVision_logo_icone_amande.svg'
-import logo from '@/assets/logo_chaps.svg'
 import { useTheme } from '@/composables/useTheme'
 import { useAuthStore } from '@/stores/auth'
 import { useSidebarStore } from '@/stores/sidebar'
 import Button from '@/components/ui/Button.vue'
 import { useQuery } from '@pinia/colada'
 import { currentWorkspaceQuery } from '@/queries/workspace'
-import Badge from '@/components/ui/Badge.vue'
 import ModuleBadges from '@/components/global/ModuleBadges.vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
