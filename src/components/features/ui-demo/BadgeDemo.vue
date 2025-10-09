@@ -112,8 +112,12 @@
       <!-- Sizes -->
       <div class="space-y-2">
         <h3 class="text-lg font-medium">Sizes</h3>
-        <p class="text-sm text-primary-light-content mb-4">Small, medium, and large sizes</p>
+        <p class="text-sm text-primary-light-content mb-4">Extra small, small, medium, and large sizes</p>
         <div class="flex flex-wrap items-center gap-6">
+          <div class="flex flex-col items-center gap-2">
+            <Badge variant="primary" color="primary" icon="fa fa-bell" size="xs" />
+            <span class="text-xs text-primary-light-content">XS (20px)</span>
+          </div>
           <div class="flex flex-col items-center gap-2">
             <Badge variant="primary" color="primary" icon="fa fa-bell" size="sm" />
             <span class="text-xs text-primary-light-content">Small (24px)</span>
@@ -136,24 +140,24 @@
 
         <!-- Notification Icons -->
         <div class="bg-base-200 p-6 rounded-lg border border-primary-stroke space-y-4">
-          <h4 class="text-sm font-semibold">Notification Bar</h4>
+          <h4 class="text-sm font-semibold">Notification Bar (xs size for floating badges)</h4>
           <div class="flex gap-4">
             <div class="relative">
               <i class="fa fa-bell text-2xl text-primary-light-content"></i>
-              <div class="absolute -top-2 -right-2">
-                <Badge variant="primary" color="error" :number="3" size="sm" />
+              <div class="absolute -top-1 -right-1">
+                <Badge variant="primary" color="error" :number="3" size="xs" />
               </div>
             </div>
             <div class="relative">
               <i class="fa fa-envelope text-2xl text-primary-light-content"></i>
-              <div class="absolute -top-2 -right-2">
-                <Badge variant="primary" color="info" :number="12" size="sm" />
+              <div class="absolute -top-1 -right-1">
+                <Badge variant="primary" color="info" :number="12" size="xs" />
               </div>
             </div>
             <div class="relative">
               <i class="fa fa-comment text-2xl text-primary-light-content"></i>
-              <div class="absolute -top-2 -right-2">
-                <Badge variant="primary" color="success" :number="5" size="sm" />
+              <div class="absolute -top-1 -right-1">
+                <Badge variant="primary" color="success" :number="5" size="xs" />
               </div>
             </div>
           </div>

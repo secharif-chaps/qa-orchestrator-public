@@ -16,7 +16,7 @@ import { computed } from 'vue'
 
 export type BadgeVariant = 'primary' | 'secondary'
 export type BadgeColor = 'primary' | 'success' | 'warning' | 'error' | 'info' | 'accent' | 'slate'
-export type BadgeSize = 'sm' | 'md' | 'lg'
+export type BadgeSize = 'xs' | 'sm' | 'md' | 'lg'
 
 interface Props {
   variant?: BadgeVariant
@@ -43,6 +43,8 @@ const displayNumber = computed(() => {
 // Size classes
 const sizeClasses = computed(() => {
   switch (props.size) {
+    case 'xs':
+      return 'w-5 h-5'
     case 'sm':
       return 'w-6 h-6'
     case 'md':
@@ -57,6 +59,8 @@ const sizeClasses = computed(() => {
 // Icon size classes
 const iconClasses = computed(() => {
   switch (props.size) {
+    case 'xs':
+      return 'text-[10px]'
     case 'sm':
       return 'text-xs'
     case 'md':
@@ -71,6 +75,8 @@ const iconClasses = computed(() => {
 // Number text size classes
 const numberClasses = computed(() => {
   switch (props.size) {
+    case 'xs':
+      return 'text-[10px] font-semibold'
     case 'sm':
       return 'text-xs font-semibold'
     case 'md':

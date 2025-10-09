@@ -11,62 +11,55 @@
       >
         <!-- Card Header with Avatar and Title -->
         <div class="flex flex-col gap-4 justify-between h-full">
-          <div class="flex  flex-col gap-4">
-          <div class="flex items-start space-x-3">
-            <!-- Avatar -->
-            <div
-              :class="[
-                'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0',
-                module.unlocked
-                  ? 'bg-sage-600 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-400',
-              ]"
-            >
-              <i :class="[module.icon, 'text-sm']"></i>
-            </div>
+          <div class="flex flex-col gap-4">
+            <div class="flex items-start space-x-3">
+              <!-- Avatar Badge -->
+              <Badge
+                variant="primary"
+                :color="module.unlocked ? 'primary' : 'slate'"
+                :icon="module.icon"
+                size="md"
+              />
 
-            <!-- Title and Secondary Text -->
-            <div class="flex-1 min-w-0">
-              <h3 class="font-semibold text-base text-gray-900 dark:text-white">
-                {{ module.name }}
-              </h3>
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                {{ module.category }}
-              </p>
+              <!-- Title and Secondary Text -->
+              <div class="flex-1 min-w-0">
+                <h3 class="font-semibold text-base text-gray-900 dark:text-white">
+                  {{ module.name }}
+                </h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  {{ module.category }}
+                </p>
+              </div>
+              <div>
+                <Tag
+                  :variant="
+                    module.unlocked
+                      ? 'success'
+                      : module.status === 'contact-sales'
+                        ? 'warning'
+                        : 'slate'
+                  "
+                  :label="
+                    module.unlocked
+                      ? $t('home.modules.status.active', 'Active')
+                      : module.status === 'contact-sales'
+                        ? $t('home.modules.status.proFeature', 'Pro Feature')
+                        : $t('home.modules.status.comingSoon', 'Coming Soon')
+                  "
+                  size="xs"
+                  rounded
+                />
+              </div>
             </div>
-            <div>
-            <Badge
-              :variant="
-                module.unlocked
-                  ? 'success'
-                  : module.status === 'contact-sales'
-                    ? 'warning'
-                    : 'slate'
-              "
-              :label="
-                module.unlocked
-                  ? $t('home.modules.status.active', 'Active')
-                  : module.status === 'contact-sales'
-                    ? $t('home.modules.status.proFeature', 'Pro Feature')
-                    : $t('home.modules.status.comingSoon', 'Coming Soon')
-              "
-              size="xs"
-              rounded
-            />
+            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              {{ module.description }}
+            </p>
           </div>
-        
-          </div>
-          <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-            {{ module.description }}
-          </p>
-        </div>
-    
         </div>
 
         <!-- Action Buttons -->
         <div class="pb-6 flex items-center justify-between">
           <div class="flex space-x-2">
-       
             <Button
               v-if="module.status === 'contact-sales'"
               variant="secondary"
@@ -104,6 +97,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 import Card from '../ui/Card.vue'
 

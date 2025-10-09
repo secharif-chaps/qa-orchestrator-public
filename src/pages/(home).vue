@@ -4,12 +4,16 @@
       <div class="">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-3xl font-bold">{{ $t('home.welcome.title', { name: userDisplayName }) }} 👋</h1>
+            <h1 class="text-3xl font-bold">
+              {{ $t('home.welcome.title', { name: userDisplayName }) }} 👋
+            </h1>
           </div>
         </div>
       </div>
 
-      <div class="bg-base-300 p-6 rounded-card border-2 border-primary-stroke flex items-center gap-8">
+      <div
+        class="bg-base-300 p-6 rounded-card border-2 border-primary-stroke flex items-center gap-8"
+      >
         <img
           src="@/assets/chapse/head.svg"
           alt="Chapse head character"
@@ -20,8 +24,12 @@
         <div class="flex flex-col gap-2">
           <h2 class="text-xl font-semibold">{{ $t('home.assistant.greeting') }}</h2>
           <div class="flex gap-2">
-            <Button variant="secondary" size="sm" icon="fa fa-file-pdf">{{ $t('home.assistant.actions.generatePdf') }}</Button>
-            <Button variant="secondary" size="sm" icon="fa fa-search">{{ $t('home.assistant.actions.newSearch') }}</Button>
+            <Button variant="secondary" size="sm" icon="fa fa-file-pdf">{{
+              $t('home.assistant.actions.generatePdf')
+            }}</Button>
+            <Button variant="secondary" size="sm" icon="fa fa-search">{{
+              $t('home.assistant.actions.newSearch')
+            }}</Button>
           </div>
         </div>
       </div>
@@ -33,8 +41,12 @@
         <!-- Recent Projects -->
         <Card>
           <div class="flex items-center justify-between mb-4">
-            <h3 class="font-semibold text-gray-900 dark:text-white">{{ $t('home.recentProjects.title') }}</h3>
-            <button class="text-xs text-sage-600 hover:text-sage-800">{{ $t('home.recentProjects.viewAll') }}</button>
+            <h3 class="font-semibold text-gray-900 dark:text-white">
+              {{ $t('home.recentProjects.title') }}
+            </h3>
+            <button class="text-xs text-sage-600 hover:text-sage-800">
+              {{ $t('home.recentProjects.viewAll') }}
+            </button>
           </div>
 
           <!-- Loading State -->
@@ -54,7 +66,9 @@
 
           <!-- Empty State -->
           <div v-else-if="mockProjects.length === 0" class="py-8 text-center">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+            <div
+              class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
+            >
               <i class="fa fa-folder-open text-2xl text-gray-400"></i>
             </div>
             <p class="text-sm text-gray-500 dark:text-gray-400">No recent projects yet</p>
@@ -66,23 +80,22 @@
               v-for="project in mockProjects"
               :key="project.id"
               class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
-              @click="project.folderId && $router.push(`folders/${project.folderId}/companies/${project.id}`)"
+              @click="
+                project.folderId &&
+                $router.push(`folders/${project.folderId}/companies/${project.id}`)
+              "
             >
-              <div
-                class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                :class="project.icon.bg"
-              >
-                <i :class="[project.icon.icon, project.icon.color, 'text-sm']"></i>
-              </div>
+              <Badge variant="secondary" color="accent" icon="fa fa-building" size="md" />
               <div class="flex-1 min-w-0">
                 <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">
                   {{ project.name }}
                 </h4>
                 <p class="text-xs text-gray-500 dark:text-gray-400">
-                  {{ project.folder }} • {{ $t('home.recentProjects.timeAgo', { time: project.time }) }}
+                  {{ project.folder }} •
+                  {{ $t('home.recentProjects.timeAgo', { time: project.time }) }}
                 </p>
               </div>
-              <Badge
+              <Tag
                 v-if="project.badge"
                 :variant="project.badge.variant"
                 :label="project.badge.label"
@@ -93,7 +106,9 @@
         </Card>
 
         <Card>
-          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">{{ $t('home.recentActivities.title') }}</h3>
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">
+            {{ $t('home.recentActivities.title') }}
+          </h3>
 
           <!-- Loading State -->
           <div v-if="isActivitiesLoading" class="flex items-center justify-center py-8">
@@ -112,14 +127,19 @@
 
           <!-- Empty State -->
           <div v-else-if="mockActivities.length === 0" class="py-8 text-center">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+            <div
+              class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
+            >
               <i class="fa fa-clock-rotate-left text-2xl text-gray-400"></i>
             </div>
             <p class="text-sm text-gray-500 dark:text-gray-400">No recent activities</p>
           </div>
 
           <!-- Recent Activities -->
-          <div v-else class="space-y-3 max-h-[400px] overflow-y-auto border border-primary-stroke rounded-card p-4">
+          <div
+            v-else
+            class="space-y-3 max-h-[400px] overflow-y-auto border border-primary-stroke rounded-card p-4"
+          >
             <div
               v-for="activity in mockActivities"
               :key="activity.id"
@@ -127,11 +147,9 @@
             >
               <!-- Icon with badge -->
               <div class="relative flex-shrink-0">
-                <div class="w-10 h-10 rounded-full bg-sage-100 dark:bg-sage-900/30 flex items-center justify-center">
-                  <i :class="activity.icon" class="text-sage-600 dark:text-sage-400 text-base"></i>
-                </div>
-                <div class="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-sage-500 flex items-center justify-center">
-                  <i class="fa fa-plus text-white text-xs"></i>
+                <Badge variant="secondary" color="primary" :icon="activity.icon" size="md" />
+                <div class="absolute -bottom-0.5 -right-0.5">
+                  <Badge variant="primary" color="success" icon="fa fa-plus" size="xs" />
                 </div>
               </div>
 
@@ -141,13 +159,16 @@
                   {{ activity.target }}
                 </p>
                 <!-- Meta info: user and timestamp -->
-                <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-
+                <div
+                  class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-0.5"
+                >
                   <span class="flex items-center gap-1">
                     <i class="fa fa-clock"></i>
                     <span>{{ activity.time }}</span>
                   </span>
-                  <span>{{ $t('home.recentActivities.by', { username: activity.user.name }) }}</span>
+                  <span>{{
+                    $t('home.recentActivities.by', { username: activity.user.name })
+                  }}</span>
                 </div>
               </div>
             </div>
@@ -168,8 +189,9 @@ import { useAuth } from '@/composables/useAuth'
 import { favoriteFoldersQuery } from '@/queries/folders'
 import { recentCompaniesQuery } from '@/queries/companies'
 import { workspaceActivitiesQuery, currentWorkspaceQuery } from '@/queries/workspace'
-import Button from '@/components/ui/Button.vue'
 import Badge from '@/components/ui/Badge.vue'
+import Button from '@/components/ui/Button.vue'
+import Tag from '@/components/ui/Tag.vue'
 import Alert from '@/components/ui/Alert.vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { Folder } from '@/types/folder'
@@ -210,7 +232,7 @@ const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
 const {
   data: recentCompaniesData,
   isLoading: isRecentCompaniesLoading,
-  error: recentCompaniesError
+  error: recentCompaniesError,
 } = useQuery(recentCompaniesQuery, () => ({
   limit: 5,
 }))
@@ -219,14 +241,10 @@ const {
 const {
   data: workspaceActivitiesData,
   isLoading: isActivitiesLoading,
-  error: activitiesError
-} = useQuery(
-  workspaceActivitiesQuery,
-  () => ({ workspaceId: currentWorkspace.value?.id ?? 0 }),
-  {
-    enabled: () => !!currentWorkspace.value?.id,
-  }
-)
+  error: activitiesError,
+} = useQuery(workspaceActivitiesQuery, () => ({ workspaceId: currentWorkspace.value?.id ?? 0 }), {
+  enabled: () => !!currentWorkspace.value?.id,
+})
 
 // Navigate to folder
 const viewFolder = (folderId: string) => {
@@ -317,33 +335,42 @@ const recentActivities = computed(() => {
     const username = activity.owner_username
     const initials = username
       .split('_')
-      .map(part => part[0])
+      .map((part) => part[0])
       .join('')
       .toUpperCase()
       .substring(0, 2)
 
     // Assign color based on hash of username for consistency
-    const colors = ['bg-blue-500', 'bg-purple-500', 'bg-green-500', 'bg-orange-500', 'bg-pink-500', 'bg-indigo-500']
-    const colorIndex = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length
+    const colors = [
+      'bg-blue-500',
+      'bg-purple-500',
+      'bg-green-500',
+      'bg-orange-500',
+      'bg-pink-500',
+      'bg-indigo-500',
+    ]
+    const colorIndex =
+      username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length
 
     // Format action based on activity type
-    const action = activity.type === 'company'
-      ? t('home.recentActivities.actions.createdCompany')
-      : t('home.recentActivities.actions.createdFolder')
+    const action =
+      activity.type === 'company'
+        ? t('home.recentActivities.actions.createdCompany')
+        : t('home.recentActivities.actions.createdFolder')
 
     return {
       id: index + 1,
       user: {
         name: activity.owner_username,
         initials,
-        color: colors[colorIndex]
+        color: colors[colorIndex],
       },
       action,
       icon: activity.type === 'company' ? 'fa fa-building' : 'fa fa-folder',
       target: activity.name,
       time: formatRelativeTime(activity.created_at),
       activityType: activity.type,
-      activityId: activity.id
+      activityId: activity.id,
     }
   })
 })
