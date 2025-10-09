@@ -36,144 +36,19 @@
 
       <!-- Main Content Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Left Column -->
-
         <!-- Recent Projects -->
-        <Card>
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="font-semibold text-gray-900 dark:text-white">
-              {{ $t('home.recentProjects.title') }}
-            </h3>
-            <button class="text-xs text-sage-600 hover:text-sage-800">
-              {{ $t('home.recentProjects.viewAll') }}
-            </button>
-          </div>
+        <RecentProjectsList
+          :projects="recentProjects"
+          :is-loading="isRecentCompaniesLoading"
+          :error="recentCompaniesError"
+        />
 
-          <!-- Loading State -->
-          <div v-if="isRecentCompaniesLoading" class="flex items-center justify-center py-8">
-            <i class="fa fa-spinner fa-spin text-2xl text-sage-500"></i>
-          </div>
-
-          <!-- Error State -->
-          <div v-else-if="recentCompaniesError" class="py-6">
-            <Alert
-              variant="error"
-              title="Unable to load recent projects"
-              message="There was a problem loading your recent projects. Please try again later."
-              icon="fa fa-exclamation-triangle"
-            />
-          </div>
-
-          <!-- Empty State -->
-          <div v-else-if="mockProjects.length === 0" class="py-8 text-center">
-            <div
-              class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
-            >
-              <i class="fa fa-folder-open text-2xl text-gray-400"></i>
-            </div>
-            <p class="text-sm text-gray-500 dark:text-gray-400">No recent projects yet</p>
-          </div>
-
-          <!-- Projects List -->
-          <div v-else class="space-y-3">
-            <div
-              v-for="project in mockProjects"
-              :key="project.id"
-              class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
-              @click="
-                project.folderId &&
-                $router.push(`folders/${project.folderId}/companies/${project.id}`)
-              "
-            >
-              <Badge variant="secondary" color="accent" icon="fa fa-building" size="md" />
-              <div class="flex-1 min-w-0">
-                <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                  {{ project.name }}
-                </h4>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
-                  {{ project.folder }} •
-                  {{ $t('home.recentProjects.timeAgo', { time: project.time }) }}
-                </p>
-              </div>
-              <Tag
-                v-if="project.badge"
-                :variant="project.badge.variant"
-                :label="project.badge.label"
-                size="xs"
-              />
-            </div>
-          </div>
-        </Card>
-
-        <Card>
-          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">
-            {{ $t('home.recentActivities.title') }}
-          </h3>
-
-          <!-- Loading State -->
-          <div v-if="isActivitiesLoading" class="flex items-center justify-center py-8">
-            <i class="fa fa-spinner fa-spin text-2xl text-sage-500"></i>
-          </div>
-
-          <!-- Error State -->
-          <div v-else-if="activitiesError" class="py-6">
-            <Alert
-              variant="error"
-              title="Unable to load recent activities"
-              message="There was a problem loading workspace activities. Please try again later."
-              icon="fa fa-exclamation-triangle"
-            />
-          </div>
-
-          <!-- Empty State -->
-          <div v-else-if="mockActivities.length === 0" class="py-8 text-center">
-            <div
-              class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
-            >
-              <i class="fa fa-clock-rotate-left text-2xl text-gray-400"></i>
-            </div>
-            <p class="text-sm text-gray-500 dark:text-gray-400">No recent activities</p>
-          </div>
-
-          <!-- Recent Activities -->
-          <div
-            v-else
-            class="space-y-3 max-h-[400px] overflow-y-auto border border-primary-stroke rounded-card p-4"
-          >
-            <div
-              v-for="activity in mockActivities"
-              :key="activity.id"
-              class="flex items-start gap-3"
-            >
-              <!-- Icon with badge -->
-              <div class="relative flex-shrink-0">
-                <Badge variant="secondary" color="primary" :icon="activity.icon" size="md" />
-                <div class="absolute -bottom-0.5 -right-0.5">
-                  <Badge variant="primary" color="success" icon="fa fa-plus" size="xs" />
-                </div>
-              </div>
-
-              <div class="flex-1 min-w-0">
-                <!-- Company/Folder Name -->
-                <p class="text-sm font-semibold text-gray-900 dark:text-white">
-                  {{ activity.target }}
-                </p>
-                <!-- Meta info: user and timestamp -->
-                <div
-                  class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-0.5"
-                >
-                  <span class="flex items-center gap-1">
-                    <i class="fa fa-clock"></i>
-                    <span>{{ activity.time }}</span>
-                  </span>
-                  <span>
-                    {{ $t('home.recentActivities.by', { username: '@' + activity.user.name }) }}</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </Card>
+        <!-- Recent Activities -->
+        <RecentActivitiesList
+          :activities="recentActivities"
+          :is-loading="isActivitiesLoading"
+          :error="activitiesError"
+        />
       </div>
 
       <!-- Modules Showcase -->
@@ -186,26 +61,19 @@
 
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth'
-import { favoriteFoldersQuery } from '@/queries/folders'
 import { recentCompaniesQuery } from '@/queries/companies'
 import { workspaceActivitiesQuery, currentWorkspaceQuery } from '@/queries/workspace'
-import Badge from '@/components/ui/Badge.vue'
 import Button from '@/components/ui/Button.vue'
-import Tag from '@/components/ui/Tag.vue'
-import Alert from '@/components/ui/Alert.vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import type { Folder } from '@/types/folder'
 import ModulesShowcase from '@/components/home/ModulesShowcase.vue'
+import RecentProjectsList from '@/components/home/RecentProjectsList.vue'
+import RecentActivitiesList from '@/components/home/RecentActivitiesList.vue'
 import { useQuery } from '@pinia/colada'
-import { useRouter } from 'vue-router'
 import { formatRelativeTime } from '@/utils/time'
 import { useI18n } from 'vue-i18n'
 
-import Card from '@/components/ui/Card.vue'
-
 // Only access auth on client side
 const { user } = useAuth()
-const $router = useRouter()
 const { t } = useI18n()
 
 // Reactive data
@@ -218,12 +86,6 @@ const userDisplayName = computed(() => {
   return user.profile.given_name || user.profile.preferred_username || user.profile.name || 'User'
 })
 
-// Cached favorite folders data
-const {
-  data: favoriteFolders,
-  status,
-  refresh: refreshFavorites,
-} = useQuery(favoriteFoldersQuery, () => ({}))
 
 // Fetch current workspace to get workspace ID
 const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
@@ -246,18 +108,6 @@ const {
   enabled: () => !!currentWorkspace.value?.id,
 })
 
-// Navigate to folder
-const viewFolder = (folderId: string) => {
-  $router.push(`/folders/${folderId}`)
-}
-
-// Handle favorite toggle
-const handleFavoriteToggled = async (folder: Folder) => {
-  // Refresh the favorites list since a folder was removed from favorites
-  if (!folder.is_favorite) {
-    await refreshFavorites()
-  }
-}
 
 const updateTime = () => {
   const now = new Date()
@@ -288,7 +138,7 @@ onUnmounted(() => {
 })
 
 // Transform recent companies data for display
-const mockProjects = computed(() => {
+const recentProjects = computed(() => {
   if (!recentCompaniesData.value) return []
 
   return recentCompaniesData.value.map((company) => {
@@ -311,88 +161,35 @@ const mockProjects = computed(() => {
     return {
       id: company.id,
       name: company.name,
-      folder: company.folder_name || t('home.recentProjects.noFolder'),
+      folderName: company.folder_name || t('home.recentProjects.noFolder'),
       folderId: company.folder_id,
-      time: timeAgo,
-      icon: { icon: 'fa fa-building', color: 'text-purple-400', bg: 'bg-purple-500/20' },
-      badge: { variant: 'info', label: t('home.recentProjects.badge.collaborative') },
+      timeAgo: t('home.recentProjects.timeAgo', { time: timeAgo }),
+      badge: { variant: 'info' as const, label: t('home.recentProjects.badge.collaborative') },
     }
   })
 })
-
-const mockOnlineTeam = ref([
-  { id: 1, name: 'Sarah Martina', initials: 'ST', color: 'bg-blue-500' },
-  { id: 2, name: 'Emma Young', initials: 'EY', color: 'bg-purple-500' },
-  { id: 3, name: 'Vincent Noir', initials: 'VN', color: 'bg-green-500' },
-])
 
 // Transform workspace activities for display
 const recentActivities = computed(() => {
   if (!workspaceActivitiesData.value) return []
 
-  return workspaceActivitiesData.value.map((activity, index) => {
-    // Generate user initials from username
-    const username = activity.owner_username
-    const initials = username
-      .split('_')
-      .map((part) => part[0])
-      .join('')
-      .toUpperCase()
-      .substring(0, 2)
+  // Defensive check - ensure it's an array
+  const activities = Array.isArray(workspaceActivitiesData.value)
+    ? workspaceActivitiesData.value
+    : []
 
-    // Assign color based on hash of username for consistency
-    const colors = [
-      'bg-blue-500',
-      'bg-purple-500',
-      'bg-green-500',
-      'bg-orange-500',
-      'bg-pink-500',
-      'bg-indigo-500',
-    ]
-    const colorIndex =
-      username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length
+  if (activities.length === 0) return []
 
-    // Format action based on activity type
-    const action =
-      activity.type === 'company'
-        ? t('home.recentActivities.actions.createdCompany')
-        : t('home.recentActivities.actions.createdFolder')
+  return activities.map((activity, index) => {
+    const username = activity.owner_username || 'Unknown'
 
     return {
-      id: index + 1,
-      user: {
-        name: activity.owner_username,
-        initials,
-        color: colors[colorIndex],
-      },
-      action,
+      id: activity.id || index,
       icon: activity.type === 'company' ? 'fa fa-building' : 'fa fa-folder',
       target: activity.name,
+      username,
       time: formatRelativeTime(activity.created_at),
-      activityType: activity.type,
-      activityId: activity.id,
     }
   })
-})
-
-// Fallback to empty array when loading
-const mockActivities = computed(() => {
-  return isActivitiesLoading.value ? [] : recentActivities.value
-})
-
-const mockSources = ref({
-  strategic: [
-    { id: 1, name: 'Nom source', description: 'Description de la source', score: 95 },
-    { id: 2, name: 'Nom source', description: 'Description de la source', score: 95 },
-    { id: 3, name: 'Nom source', description: 'Description de la source', score: 95 },
-    { id: 4, name: 'Nom source', description: 'Description de la source', score: 95 },
-  ],
-  mostUsed: [
-    { id: 1, name: 'Nom de la source', count: 12456 },
-    { id: 2, name: 'Nom de la source', count: 12365 },
-    { id: 3, name: 'Nom de la source', count: 5785 },
-    { id: 4, name: 'Nom de la source', count: 3214 },
-    { id: 5, name: 'Nom de la source', count: 3198 },
-  ],
 })
 </script>
