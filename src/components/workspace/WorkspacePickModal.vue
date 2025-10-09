@@ -11,7 +11,7 @@
         <h3 class="text-lg font-semibold text-base">
           {{ $t('workspace.pick.title', 'Switch Workspace') }}
         </h3>
-        <Button variant="ghost-primary" icon="fa fa-times" icon-only @click="$emit('cancel')" />
+        <Button variant="tertiary" icon="fa fa-times" icon-only @click="$emit('cancel')" />
       </div>
 
       <!-- Content -->
@@ -56,7 +56,7 @@
       <!-- Actions -->
       <div class="flex items-center gap-3 justify-end">
         <Button
-          variant="ghost-primary"
+          variant="tertiary"
           :label="$t('common.cancel', 'Cancel')"
           @click="$emit('cancel')"
         />

@@ -25,7 +25,7 @@
 
       <div class="col-span-3">
         <div class="flex flex-wrap gap-1">
-          <Badge
+          <Tag
             v-for="permission in displayPermissions"
             :key="permission"
             :variant="user.is_disabled ? 'slate' : 'primary'"
@@ -34,7 +34,7 @@
             rounded
             :gradient="false"
           />
-          <Badge
+          <Tag
             v-if="user.permissions && user.permissions.length > 3"
             variant="slate"
             :label="`+${user.permissions.length - 3}`"
@@ -56,7 +56,7 @@
 
       <div class="col-span-2">
         <div class="flex items-center gap-2">
-          <Badge
+          <Tag
             :variant="user.is_disabled ? 'error' : 'success'"
             :icon="user.is_disabled ? 'fa fa-ban' : 'fa fa-check-circle'"
             :label="
@@ -73,7 +73,7 @@
       <div class="col-span-1">
         <div v-if="canManageUsers" class="flex items-center gap-2">
           <Button
-            variant="ghost-primary"
+            variant="tertiary"
             icon="fa fa-edit"
             icon-only
             size="sm"
@@ -83,7 +83,7 @@
 
           <Button
             v-if="user.is_disabled"
-            variant="ghost-primary"
+            variant="tertiary"
             color="warning"
             icon="fa fa-check"
             icon-only
@@ -94,7 +94,7 @@
 
           <Button
             v-else
-            variant="ghost-primary"
+            variant="tertiary"
             color="danger"
             icon="fa fa-ban"
             icon-only
@@ -117,7 +117,7 @@
 import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import type { WorkspaceUser } from '@/types/team'
-import Badge from '../ui/Badge.vue'
+
 import Button from '@/components/ui/Button.vue'
 
 const props = defineProps<{

@@ -26,11 +26,15 @@
           <!-- Module Label -->
           <div class="flex items-center gap-2 mb-1">
             <span class="text-xs font-medium text-primary-light-content uppercase tracking-wide">
-              {{ $t('tokens.module', '{module} Module', { module: module || $t('tokens.modules.screen.name', 'Screen') }) }}
+              {{
+                $t('tokens.module', '{module} Module', {
+                  module: module || $t('tokens.modules.screen.name', 'Screen'),
+                })
+              }}
             </span>
             <Button
               v-if="showRefresh"
-              variant="ghost-primary"
+              variant="tertiary"
               icon="fa fa-refresh"
               icon-only
               size="sm"

@@ -51,7 +51,7 @@
         <div class="text-2xl font-bold" :class="tokenCountColor">
           {{ tokenCount }}
         </div>
-        <Badge v-if="isEnabled" :variant="tokenStatusVariant" :label="tokenStatusText" size="xs" />
+        <Tag v-if="isEnabled" :variant="tokenStatusVariant" :label="tokenStatusText" size="xs" />
       </div>
     </div>
 
@@ -129,7 +129,7 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToggleModule, useAddModuleTokens } from '@/mutations/tokens'
 import type { ModuleName } from '@/types/tokens'
-import Badge from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 
 const { t } = useI18n()
 
