@@ -103,7 +103,7 @@ const alertClasses = computed(() => {
     case 'error':
       return 'border-error-stroke bg-error-50 text-error-950 dark:border-error-400/30 dark:bg-error-400/30 dark:text-error-50'
     case 'accent':
-      return 'border-accent-stroke bg-accent-50 text-accent-950 dark:border-accent-400/30 dark:bg-accent-400/30 dark:text-accent-50'
+      return 'border-accent-stroke bg-rose-50 text-rose-950 dark:border-accent-400/30 dark:bg-rose-400/30 dark:text-rose-50'
     case 'neutral':
       return 'border-gray-300 bg-gray-50 text-gray-950 dark:border-gray-400/30 dark:bg-gray-400/30 dark:text-gray-50'
     default: // info

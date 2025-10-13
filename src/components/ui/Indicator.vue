@@ -78,8 +78,8 @@ const colorClasses = computed(() => {
       }
     case 'accent':
       return {
-        container: 'bg-accent-200 dark:bg-accent-400/30',
-        dot: 'bg-accent-800 dark:bg-accent-400',
+        container: 'bg-rose-200 dark:bg-rose-400/30',
+        dot: 'bg-rose-800 dark:bg-rose-400',
       }
     case 'slate':
       return {
@@ -88,8 +88,8 @@ const colorClasses = computed(() => {
       }
     default: // primary
       return {
-        container: 'bg-primary-200 dark:bg-primary-400/30',
-        dot: 'bg-primary-800 dark:bg-primary-400',
+        container: 'bg-sage-200 dark:bg-sage-400/30',
+        dot: 'bg-sage-800 dark:bg-sage-400',
       }
   }
 })

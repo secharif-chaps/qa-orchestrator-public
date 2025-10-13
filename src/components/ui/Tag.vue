@@ -28,8 +28,8 @@
 import { computed } from 'vue'
 
 export type BadgeVariant =
-  | 'primary'
-  | 'secondary'
+  | 'sage'
+  | 'almond'
   | 'success'
   | 'warning'
   | 'error'
@@ -52,7 +52,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  variant: 'primary',
+  variant: 'sage',
   size: 'sm',
   appearance: 'light',
   rounded: false,
@@ -117,10 +117,10 @@ const variantClasses = computed(() => {
   const isOutline = props.appearance === 'outline'
 
   switch (props.variant) {
-    case 'secondary':
+    case 'almond':
       return isOutline
-        ? `${isRounded} bg-transparent text-secondary-light-content border border-secondary-stroke dark:text-secondary-50`
-        : `${isRounded} bg-secondary-200 text-secondary-950 border border-secondary-200 dark:bg-secondary-400/30 dark:text-secondary-50 dark:border-secondary-400/30`
+        ? `${isRounded} bg-transparent text-almond-700 border border-almond-200 dark:text-almond-50`
+        : `${isRounded} bg-almond-200 text-almond-950 border border-almond-200 dark:bg-almond-400/30 dark:text-almond-50 dark:border-almond-400/30`
 
     case 'success':
       return isOutline
@@ -144,18 +144,18 @@ const variantClasses = computed(() => {
 
     case 'accent':
       return isOutline
-        ? `${isRounded} bg-transparent text-accent-light-content border border-accent-stroke dark:text-accent-50`
-        : `${isRounded} bg-accent-200 text-accent-950 border border-accent-200 dark:bg-accent-400/30 dark:text-accent-50 dark:border-accent-400/30`
+        ? `${isRounded} bg-transparent text-rose-700 border border-accent-stroke dark:text-rose-50`
+        : `${isRounded} bg-rose-200 text-rose-950 border border-accent-200 dark:bg-rose-400/30 dark:text-rose-50 dark:border-accent-400/30`
 
     case 'slate':
       return isOutline
-        ? `${isRounded} bg-transparent text-primary-light-content border border-base-200 dark:text-primary-50`
-        : `${isRounded} bg-base-200 text-primary-950 dark:bg-base-400/30 dark:text-primary-50 dark:border-base-400/30`
+        ? `${isRounded} bg-transparent text-gray-500 border border-base-200 dark:text-sage-50`
+        : `${isRounded} bg-base-200 text-sage-950 dark:bg-base-400/30 dark:text-sage-50 dark:border-base-400/30`
 
     default: // primary
       return isOutline
-        ? `${isRounded} bg-transparent text-primary-light-content border border-primary-stroke dark:text-primary-50`
-        : `${isRounded} bg-primary-200 text-primary-950 border border-primary-200 dark:bg-primary-400/30 dark:text-primary-50 dark:border-primary-400/30`
+        ? `${isRounded} bg-transparent text-sage-700 border border-primary-stroke dark:text-sage-50`
+        : `${isRounded} bg-sage-200 text-sage-950 border border-sage-200 dark:bg-sage-400/30 dark:text-sage-50 dark:border-sage-400/30`
   }
 })
 
