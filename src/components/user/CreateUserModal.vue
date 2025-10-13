@@ -9,12 +9,12 @@
           </h2>
           <button
             @click="$emit('cancel')"
-            class="text-primary-light-content hover:text-base transition-colors p-1"
+            class="text-secondary hover:text-base transition-colors p-1"
           >
             <i class="fa fa-times"></i>
           </button>
         </div>
-        <p class="text-primary-light-content text-sm mt-1">
+        <p class="text-secondary text-sm mt-1">
           {{
             $t('user.create.description', 'User will be prompted to reset password on first login')
           }}
@@ -25,7 +25,7 @@
       <form @submit.prevent="handleSubmit" class="px-6 py-4 space-y-4">
         <!-- Username -->
         <div>
-          <label class="block text-sm font-medium text-primary-light-content mb-1">
+          <label class="block text-sm font-medium text-secondary mb-1">
             {{ $t('user.username', 'Username') }} *
           </label>
           <input
@@ -43,7 +43,7 @@
 
         <!-- Email -->
         <div>
-          <label class="block text-sm font-medium text-primary-light-content mb-1">
+          <label class="block text-sm font-medium text-secondary mb-1">
             {{ $t('user.email', 'Email') }} *
           </label>
           <input
@@ -61,7 +61,7 @@
 
         <!-- First Name -->
         <!-- <div>
-          <label class="block text-sm font-medium text-primary-light-content mb-1">
+          <label class="block text-sm font-medium text-secondary mb-1">
             {{ $t('user.firstName', 'First Name') }}
           </label>
           <input
@@ -75,7 +75,7 @@
 
         <!-- Last Name -->
         <!-- <div>
-          <label class="block text-sm font-medium text-primary-light-content mb-1">
+          <label class="block text-sm font-medium text-secondary mb-1">
             {{ $t('user.lastName', 'Last Name') }}
           </label>
           <input
@@ -89,7 +89,7 @@
 
         <!-- Temporary Password -->
         <div>
-          <label class="block text-sm font-medium text-primary-light-content mb-1">
+          <label class="block text-sm font-medium text-secondary mb-1">
             {{ $t('user.temporaryPassword', 'Temporary Password') }} *
           </label>
           <div class="relative">
@@ -104,13 +104,13 @@
             <button
               type="button"
               @click="showPassword = !showPassword"
-              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary-light-content hover:text-base"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary hover:text-base"
               :disabled="isLoading"
             >
               <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
             </button>
           </div>
-          <p class="text-xs text-primary-light-content mt-1">
+          <p class="text-xs text-secondary mt-1">
             {{
               $t(
                 'user.passwordHelp',
@@ -129,7 +129,7 @@
             type="button"
             @click="generatePassword"
             :disabled="isLoading"
-            class="text-primary-light-content hover:text-primary-content/80 text-sm font-medium disabled:opacity-50"
+            class="text-secondary hover:text-sage-content/80 text-sm font-medium disabled:opacity-50"
           >
             <i class="fa fa-refresh mr-1"></i>
             {{ $t('user.generatePassword', 'Generate Random Password') }}
@@ -143,7 +143,7 @@
           type="button"
           @click="$emit('cancel')"
           :disabled="isLoading"
-          class="px-4 py-2 text-primary-light-content hover:text-base transition-colors disabled:opacity-50"
+          class="px-4 py-2 text-secondary hover:text-base transition-colors disabled:opacity-50"
         >
           {{ $t('common.cancel', 'Cancel') }}
         </button>
@@ -250,10 +250,7 @@ const validateForm = () => {
   if (!form.email.trim()) {
     errors.value.email = t('user.validation.email.required', 'Email is required')
   } else if (!isValidEmail(form.email)) {
-    errors.value.email = t(
-      'user.validation.email.invalid',
-      'Please enter a valid email address',
-    )
+    errors.value.email = t('user.validation.email.invalid', 'Please enter a valid email address')
   }
 
   if (!form.temporaryPassword.trim()) {

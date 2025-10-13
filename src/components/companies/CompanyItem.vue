@@ -22,16 +22,14 @@
             v-show="showFallbackIcon || !getCompanyDomain(company.website)"
             class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
           >
-            <i class="fas fa-building text-primary-light-content text-xl"></i>
+            <i class="fas fa-building text-secondary text-xl"></i>
           </div>
         </div>
         <div class="flex-1 min-w-0">
-          <h3
-            class="text-lg font-semibold group-hover:text-primary-light-content transition-colors truncate"
-          >
+          <h3 class="text-lg font-semibold group-hover:text-secondary transition-colors truncate">
             {{ company.name }}
           </h3>
-          <p v-if="company.website" class="text-sm text-primary-light-content truncate">
+          <p v-if="company.website" class="text-sm text-secondary truncate">
             {{ formatWebsiteDisplay(company.website) }}
           </p>
         </div>
@@ -42,12 +40,12 @@
     <div class="space-y-3">
       <!-- Website Link -->
       <div v-if="company.website" class="flex items-center gap-2">
-        <i class="fas fa-globe text-primary-light-content text-sm w-4"></i>
+        <i class="fas fa-globe text-secondary text-sm w-4"></i>
         <a
           :href="formatWebsiteUrl(company.website)"
           target="_blank"
           rel="noopener noreferrer"
-          class="text-sm text-primary-light-content hover:text-primary-content/80 transition-colors truncate"
+          class="text-sm text-secondary hover:text-sage-content/80 transition-colors truncate"
           @click.stop
         >
           {{ company.website }}
@@ -57,9 +55,9 @@
 
       <!-- Tasks Info -->
       <div v-if="company.tasks && company.tasks.length > 0" class="flex items-center gap-2">
-        <i class="fas fa-tasks text-primary-light-content text-sm w-4"></i>
+        <i class="fas fa-tasks text-secondary text-sm w-4"></i>
         <div class="flex items-center gap-2">
-          <span class="text-sm text-primary-light-content"> {{ company.tasks.length }} tasks </span>
+          <span class="text-sm text-secondary"> {{ company.tasks.length }} tasks </span>
           <Tag :variant="getTaskStatusVariant(company.tasks)" size="xs">
             {{ getTaskStatusText(company.tasks) }}
           </Tag>
@@ -69,7 +67,7 @@
 
     <!-- Footer with creation date and owner -->
     <div class="mt-4 pt-3 border-t border-primary-stroke">
-      <div class="flex justify-between items-center text-xs text-primary-light-content">
+      <div class="flex justify-between items-center text-xs text-secondary">
         <span>Created {{ formatDate(company.created_at) }}</span>
         <span v-if="company.owner">by {{ company.owner }}</span>
       </div>
@@ -100,15 +98,15 @@
             v-show="showFallbackIcon || !getCompanyDomain(company.website)"
             class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
           >
-            <i class="fas fa-building text-primary-light-content"></i>
+            <i class="fas fa-building text-secondary"></i>
           </div>
         </div>
 
         <div class="flex-1 min-w-0">
-          <h3 class="font-medium hover:text-primary-light-content transition-colors truncate">
+          <h3 class="font-medium hover:text-secondary transition-colors truncate">
             {{ company.name }}
           </h3>
-          <p v-if="company.website" class="text-sm text-primary-light-content truncate">
+          <p v-if="company.website" class="text-sm text-secondary truncate">
             {{ formatWebsiteDisplay(company.website) }}
           </p>
         </div>
@@ -116,14 +114,14 @@
 
       <!-- Column 2: Created Date (2 cols) -->
       <div class="col-span-2">
-        <div class="text-sm text-primary-light-content">
+        <div class="text-sm text-secondary">
           {{ formatDate(company.created_at) }}
         </div>
       </div>
 
       <!-- Column 3: Owner (2 cols) -->
       <div class="col-span-2">
-        <div class="text-sm text-primary-light-content">
+        <div class="text-sm text-secondary">
           {{ company.owner_username || '—' }}
         </div>
       </div>

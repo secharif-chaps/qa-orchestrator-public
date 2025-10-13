@@ -16,7 +16,7 @@
           <i :class="selectedIcon" class="text-lg"></i>
         </div>
         <span class="flex-1 text-left">{{ getIconDisplayName(selectedIcon) }}</span>
-        <i class="fas fa-chevron-down text-primary-light-content"></i>
+        <i class="fas fa-chevron-down text-secondary"></i>
       </button>
 
       <!-- Backdrop -->
@@ -39,7 +39,7 @@
             @click="selectIcon(icon.class)"
             :title="icon.name"
           >
-            <i :class="icon.class" class="text-lg text-primary-light-content"></i>
+            <i :class="icon.class" class="text-lg text-secondary"></i>
           </button>
         </div>
       </div>

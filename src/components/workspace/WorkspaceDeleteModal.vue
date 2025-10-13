@@ -11,7 +11,7 @@
             <h3 class="text-lg font-semibold text-base">
               {{ $t('workspace.delete.title', 'Delete Workspace') }}
             </h3>
-            <p class="text-sm text-primary-light-content">
+            <p class="text-sm text-secondary">
               {{ $t('workspace.delete.subtitle', 'This action cannot be undone') }}
             </p>
           </div>
@@ -47,31 +47,25 @@
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-primary-light-content">{{ $t('workspace.name', 'Name') }}:</span>
+              <span class="text-secondary">{{ $t('workspace.name', 'Name') }}:</span>
               <span class="font-medium">{{ workspace.name }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-primary-light-content">{{ $t('workspace.slug', 'Slug') }}:</span>
+              <span class="text-secondary">{{ $t('workspace.slug', 'Slug') }}:</span>
               <code class="text-xs bg-base-300 px-2 py-1 rounded">{{ workspace.slug }}</code>
             </div>
             <div v-if="workspace.description" class="flex justify-between">
-              <span class="text-primary-light-content"
-                >{{ $t('workspace.description', 'Description') }}:</span
-              >
+              <span class="text-secondary">{{ $t('workspace.description', 'Description') }}:</span>
               <span class="max-w-48 truncate">{{ workspace.description }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-primary-light-content"
-                >{{ $t('workspace.created', 'Created') }}:</span
-              >
+              <span class="text-secondary">{{ $t('workspace.created', 'Created') }}:</span>
               <span>{{ formatDate(workspace.created_at) }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-primary-light-content"
-                >{{ $t('workspace.members', 'Members') }}:</span
-              >
+              <span class="text-secondary">{{ $t('workspace.members', 'Members') }}:</span>
               <span class="inline-flex items-center gap-1">
-                <i class="fa fa-users text-primary-light-content text-xs"></i>
+                <i class="fa fa-users text-secondary text-xs"></i>
                 {{ memberCount }} {{ $t('workspace.users', 'users') }}
               </span>
             </div>
@@ -80,7 +74,7 @@
 
         <!-- Confirmation Input -->
         <div class="mb-6">
-          <p class="text-sm text-primary-light-content mb-3">
+          <p class="text-sm text-secondary mb-3">
             {{
               $t('workspace.delete.confirm.message', 'Type the workspace name to confirm deletion:')
             }}

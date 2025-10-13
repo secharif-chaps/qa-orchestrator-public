@@ -1,8 +1,7 @@
 <template>
   <div
     ref="sidebarEl"
-    class="w-[320px] flex flex-col justify-between fixed right-0 bg-sage-950 dark:bg-sidebar h-screen text-white pt-16 overflow-hidden"
-    :class="sidebarStore.isFullscreen ? 'z-[100]' : 'z-0'"
+    class="flex w-full flex-col justify-between bg-sage-950 dark:bg-sidebar h-screen text-white overflow-hidden"
     @wheel="handleWheel"
   >
     <Transition

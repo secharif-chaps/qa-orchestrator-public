@@ -1,7 +1,7 @@
 <template>
   <div class="bg-base-200 rounded-card border border-primary-stroke p-4">
     <div class="items-center flex gap-6 relative">
-      <i class="fa fa-users text-primary-light-content text-2xl"></i>
+      <i class="fa fa-users text-secondary text-2xl"></i>
       <div>
         <h2>
           {{ getSourcedValue(company?.profile?.employeeCount) ?? $t('common.notFound') }}

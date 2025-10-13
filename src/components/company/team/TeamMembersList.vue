@@ -15,7 +15,7 @@
         <!-- Level Filter -->
         <select
           v-model="selectedLevel"
-          class="px-4 py-2 rounded-lg bg-base-200 border border-border text-primary-light-content focus:outline-none focus:ring-2 focus:ring-primary/50"
+          class="px-4 py-2 rounded-lg bg-base-200 border border-border text-secondary focus:outline-none focus:ring-2 focus:ring-primary/50"
         >
           <option value="">{{ $t('team.allLevels', 'All Levels') }}</option>
           <option value="0">CEO</option>
@@ -73,10 +73,10 @@
 
     <!-- No Results -->
     <div v-else class="bg-base-100 rounded-lg p-8 text-center">
-      <div class="text-4xl text-primary-light-content mb-3">
+      <div class="text-4xl text-secondary mb-3">
         <i class="fa fa-search"></i>
       </div>
-      <p class="text-primary-light-content">
+      <p class="text-secondary">
         {{ $t('team.noResults', 'No team members found matching your criteria') }}
       </p>
     </div>

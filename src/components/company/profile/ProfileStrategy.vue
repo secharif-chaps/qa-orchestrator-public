@@ -2,7 +2,7 @@
   <div class="bg-base-100 rounded-lg p-4">
     <div class="flex flex-col gap-4">
       <div class="col-span-2">
-        <h3 class="space-x-2 font-bold text-primary-light-content">
+        <h3 class="space-x-2 font-bold text-secondary">
           <i class="fa fa-chart-sine"></i>
           <span>{{ $t('profile.sections.digital.title') }}</span>
         </h3>
@@ -18,36 +18,36 @@
         <h4>{{ $t('profile.sections.digital.strategy') }}</h4>
         <div class="text-sm flex flex-col gap-3">
           <div v-if="getSourcedValue(company.digital.digitalStrategy)?.overallStrategy">
-            <h5 class="font-medium text-primary-light-content mb-1">Overall Strategy</h5>
-            <p class="text-primary-light-content">
+            <h5 class="font-medium text-secondary mb-1">Overall Strategy</h5>
+            <p class="text-secondary">
               {{ getSourcedValue(company.digital.digitalStrategy).overallStrategy }}
             </p>
           </div>
 
           <div v-if="getSourcedValue(company.digital.digitalStrategy)?.digitalTransformation">
-            <h5 class="font-medium text-primary-light-content mb-1">Digital Transformation</h5>
-            <p class="text-primary-light-content">
+            <h5 class="font-medium text-secondary mb-1">Digital Transformation</h5>
+            <p class="text-secondary">
               {{ getSourcedValue(company.digital.digitalStrategy).digitalTransformation }}
             </p>
           </div>
 
           <div v-if="getSourcedValue(company.digital.digitalStrategy)?.eCommerceCapabilities">
-            <h5 class="font-medium text-primary-light-content mb-1">E-Commerce Capabilities</h5>
-            <p class="text-primary-light-content">
+            <h5 class="font-medium text-secondary mb-1">E-Commerce Capabilities</h5>
+            <p class="text-secondary">
               {{ getSourcedValue(company.digital.digitalStrategy).eCommerceCapabilities }}
             </p>
           </div>
 
           <div v-if="getSourcedValue(company.digital.digitalStrategy)?.mobileStrategy">
-            <h5 class="font-medium text-primary-light-content mb-1">Mobile Strategy</h5>
-            <p class="text-primary-light-content">
+            <h5 class="font-medium text-secondary mb-1">Mobile Strategy</h5>
+            <p class="text-secondary">
               {{ getSourcedValue(company.digital.digitalStrategy).mobileStrategy }}
             </p>
           </div>
 
           <div v-if="getSourcedValue(company.digital.digitalStrategy)?.digitalMarketingApproach">
-            <h5 class="font-medium text-primary-light-content mb-1">Digital Marketing Approach</h5>
-            <p class="text-primary-light-content">
+            <h5 class="font-medium text-secondary mb-1">Digital Marketing Approach</h5>
+            <p class="text-secondary">
               {{ getSourcedValue(company.digital.digitalStrategy).digitalMarketingApproach }}
             </p>
           </div>
@@ -65,8 +65,8 @@
             :key="service.name"
             class="bg-base-200 rounded p-3"
           >
-            <h5 class="font-medium text-primary-light-content mb-1">{{ service.name }}</h5>
-            <p class="text-primary-light-content">{{ service.description }}</p>
+            <h5 class="font-medium text-secondary mb-1">{{ service.name }}</h5>
+            <p class="text-secondary">{{ service.description }}</p>
           </div>
           <Source :sourced-value="company.digital.onlineServices" />
         </div>
@@ -81,9 +81,9 @@
             :key="account.platform"
             class="flex items-center gap-3 bg-base-200 rounded p-3"
           >
-            <div class="font-medium text-primary-light-content">{{ account.platform }}</div>
-            <div class="text-primary-light-content">{{ account.handle }}</div>
-            <div class="text-primary-light-content text-xs">{{ account.description }}</div>
+            <div class="font-medium text-secondary">{{ account.platform }}</div>
+            <div class="text-secondary">{{ account.handle }}</div>
+            <div class="text-secondary text-xs">{{ account.description }}</div>
           </div>
           <Source :sourced-value="company.digital.socialMediaAccounts" />
         </div>
@@ -93,7 +93,7 @@
       <div v-if="company?.digital?.loyaltyProgram">
         <h4>{{ $t('profile.sections.digital.loyaltyProgram') }}</h4>
         <div class="text-sm flex flex-col gap-2">
-          <p class="text-primary-light-content">
+          <p class="text-secondary">
             {{ getSourcedValue(company.digital.loyaltyProgram) || $t('common.notFound') }}
           </p>
           <Source :sourced-value="company.digital.loyaltyProgram" />

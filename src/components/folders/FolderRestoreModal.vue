@@ -15,7 +15,7 @@
             <h3 class="text-lg font-semibold text-base">
               {{ $t('folder.restore.title', 'Restore Folder') }}
             </h3>
-            <p class="text-sm text-primary-light-content">
+            <p class="text-sm text-secondary">
               {{
                 $t('folder.restore.subtitle', 'This will move the folder back to the active list.')
               }}
@@ -26,7 +26,7 @@
 
       <!-- Content -->
       <div class="p-6">
-        <p class="text-sm text-primary-light-content mb-4">
+        <p class="text-sm text-secondary mb-4">
           {{
             $t(
               'folder.restore.warning.message',
@@ -42,7 +42,7 @@
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-primary-light-content">{{ $t('folder.name', 'Name') }}:</span>
+              <span class="text-secondary">{{ $t('folder.name', 'Name') }}:</span>
               <span class="font-medium">{{ folderToRestore.name }}</span>
             </div>
           </div>

@@ -13,11 +13,11 @@
           <div class="flex items-center justify-between p-6 border-b border-primary-stroke">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <i class="fas fa-bug text-primary-light-content"></i>
+                <i class="fas fa-bug text-secondary"></i>
               </div>
               <div>
                 <h2 class="text-lg font-semibold">Workflow de recherche</h2>
-                <p class="text-sm text-primary-light-content">
+                <p class="text-sm text-secondary">
                   {{ completedCount }}/{{ totalTasks }} tâches terminées
                 </p>
               </div>
@@ -70,9 +70,7 @@
               </div>
 
               <!-- Status summary -->
-              <div
-                class="flex items-center justify-between mt-3 text-xs text-primary-light-content"
-              >
+              <div class="flex items-center justify-between mt-3 text-xs text-secondary">
                 <div class="flex items-center gap-4">
                   <span class="flex items-center gap-1.5">
                     <div class="w-2 h-2 bg-success-500 rounded-full"></div>
@@ -121,14 +119,14 @@
                         size="xs"
                       />
                     </div>
-                    <p class="text-xs text-primary-light-content truncate">
+                    <p class="text-xs text-secondary truncate">
                       {{ task.description }}
                     </p>
 
                     <!-- Token information for admins -->
                     <div
                       v-if="hasAdminAccess && getTokenInfo(task.type)?.hasTokenData"
-                      class="mt-2 flex items-center gap-3 text-xs text-primary-light-content"
+                      class="mt-2 flex items-center gap-3 text-xs text-secondary"
                     >
                       <span v-if="getTokenInfo(task.type)?.inputTokens">
                         <i class="fas fa-arrow-down text-info-500"></i>
@@ -170,7 +168,7 @@
             <!-- Global Actions -->
             <div v-if="hasErrorsOrPending" class="mt-6 pt-6 border-t border-primary-stroke">
               <div class="flex items-center justify-between">
-                <div class="text-sm text-primary-light-content">
+                <div class="text-sm text-secondary">
                   Des tâches peuvent être redémarrées ou ne sont pas encore lancées
                 </div>
                 <Button
@@ -371,7 +369,7 @@ const getIconContainerClass = (status: TaskStatus | null): string => {
     case 'pending':
       return 'bg-info-500/10 text-info-500'
     default:
-      return 'bg-base-200 text-primary-light-content'
+      return 'bg-base-200 text-secondary'
   }
 }
 

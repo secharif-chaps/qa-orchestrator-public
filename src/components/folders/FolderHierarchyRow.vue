@@ -9,7 +9,7 @@
         <!-- Name with expand/collapse icon -->
         <div class="col-span-6 flex items-center gap-3">
           <button
-            class="w-6 h-6 flex items-center justify-center text-primary-light-content hover:text-primary-light-content transition-colors"
+            class="w-6 h-6 flex items-center justify-center text-secondary hover:text-secondary transition-colors"
             @click.stop="toggleExpanded"
           >
             <i
@@ -37,9 +37,7 @@
 
         <!-- Created date -->
         <div class="col-span-2">
-          <span class="text-sm text-primary-light-content">{{
-            formatDate(folder.created_at)
-          }}</span>
+          <span class="text-sm text-secondary">{{ formatDate(folder.created_at) }}</span>
         </div>
 
         <!-- Actions -->
@@ -95,7 +93,7 @@
                 "
                 class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
               >
-                <i class="fas fa-building text-primary-light-content text-sm"></i>
+                <i class="fas fa-building text-secondary text-sm"></i>
               </div>
             </div>
             <div class="flex-1">
@@ -110,9 +108,7 @@
 
           <!-- Item created date -->
           <div class="col-span-2">
-            <span class="text-xs text-primary-light-content">{{
-              formatDate(item.created_at)
-            }}</span>
+            <span class="text-xs text-secondary">{{ formatDate(item.created_at) }}</span>
           </div>
 
           <!-- Item actions -->
@@ -134,8 +130,8 @@
       v-else-if="isExpanded"
       class="px-6 py-8 text-center bg-base-200/30 border-l-4 border-primary/20 ml-12"
     >
-      <i class="fas fa-folder-open text-2xl text-primary-light-content/50 mb-2"></i>
-      <p class="text-sm text-primary-light-content">
+      <i class="fas fa-folder-open text-2xl text-secondary/50 mb-2"></i>
+      <p class="text-sm text-secondary">
         {{ $t('folder.items.empty', 'No items in this folder') }}
       </p>
     </div>

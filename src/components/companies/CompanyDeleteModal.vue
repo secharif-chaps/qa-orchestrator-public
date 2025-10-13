@@ -15,7 +15,7 @@
             <h3 class="text-lg font-semibold text-base">
               {{ $t('company.delete.title', 'Delete Company') }}
             </h3>
-            <p class="text-sm text-primary-light-content">
+            <p class="text-sm text-secondary">
               {{ $t('company.delete.subtitle', 'This action cannot be undone') }}
             </p>
           </div>
@@ -56,28 +56,24 @@
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-primary-light-content">{{ $t('company.name', 'Name') }}:</span>
+              <span class="text-secondary">{{ $t('company.name', 'Name') }}:</span>
               <span class="font-medium">{{ companyToDelete.name }}</span>
             </div>
             <div v-if="companyToDelete.website" class="flex justify-between">
-              <span class="text-primary-light-content"
-                >{{ $t('company.website', 'Website') }}:</span
-              >
+              <span class="text-secondary">{{ $t('company.website', 'Website') }}:</span>
               <span class="text-xs">{{ companyToDelete.website }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-primary-light-content"
-                >{{ $t('company.created', 'Created') }}:</span
-              >
+              <span class="text-secondary">{{ $t('company.created', 'Created') }}:</span>
               <span>{{ formatDate(companyToDelete.created_at) }}</span>
             </div>
             <div
               v-if="companyToDelete.tasks && companyToDelete.tasks.length > 0"
               class="flex justify-between"
             >
-              <span class="text-primary-light-content">{{ $t('company.tasks', 'Tasks') }}:</span>
+              <span class="text-secondary">{{ $t('company.tasks', 'Tasks') }}:</span>
               <span class="inline-flex items-center gap-1">
-                <i class="fa fa-tasks text-primary-light-content text-xs"></i>
+                <i class="fa fa-tasks text-secondary text-xs"></i>
                 {{ companyToDelete.tasks.length }} {{ $t('company.tasks.count', 'tasks') }}
               </span>
             </div>
@@ -86,7 +82,7 @@
 
         <!-- Confirmation Input -->
         <div class="mb-6">
-          <p class="text-sm text-primary-light-content mb-3">
+          <p class="text-sm text-secondary mb-3">
             {{ $t('company.delete.confirm.message', 'Type the company name to confirm deletion:') }}
           </p>
           <div class="space-y-2">

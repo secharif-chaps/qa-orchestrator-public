@@ -2,7 +2,7 @@
   <div class="bg-base-100 rounded-lg p-4">
     <div class="flex flex-col gap-4">
       <div class="flex items-center justify-between">
-        <h3 class="space-x-2 font-bold text-primary-light-content">
+        <h3 class="space-x-2 font-bold text-secondary">
           <i class="fa fa-bullhorn"></i>
           <span>{{ $t('profile.sections.news.title') }}</span>
         </h3>
@@ -20,32 +20,32 @@
       <!-- Press Summary Stats -->
       <div v-if="hasAnyPressData" class="grid grid-cols-2 gap-2">
         <div v-if="totalPressItems > 0" class="bg-base-200 rounded p-3">
-          <div class="text-2xl font-bold text-primary-light-content">{{ totalPressItems }}</div>
-          <div class="text-xs text-primary-light-content">Total Press Items</div>
+          <div class="text-2xl font-bold text-secondary">{{ totalPressItems }}</div>
+          <div class="text-xs text-secondary">Total Press Items</div>
         </div>
         <div v-if="company?.press?.financial_news?.length" class="bg-base-200 rounded p-3">
-          <div class="text-2xl font-bold text-primary-light-content">
+          <div class="text-2xl font-bold text-secondary">
             {{ company.press.financial_news.length }}
           </div>
-          <div class="text-xs text-primary-light-content">Financial News</div>
+          <div class="text-xs text-secondary">Financial News</div>
         </div>
         <div v-if="company?.press?.media_mentions?.length" class="bg-base-200 rounded p-3">
-          <div class="text-2xl font-bold text-primary-light-content">
+          <div class="text-2xl font-bold text-secondary">
             {{ company.press.media_mentions.length }}
           </div>
-          <div class="text-xs text-primary-light-content">Media Mentions</div>
+          <div class="text-xs text-secondary">Media Mentions</div>
         </div>
         <div v-if="company?.press?.product_launches?.length" class="bg-base-200 rounded p-3">
-          <div class="text-2xl font-bold text-primary-light-content">
+          <div class="text-2xl font-bold text-secondary">
             {{ company.press.product_launches.length }}
           </div>
-          <div class="text-xs text-primary-light-content">Product Launches</div>
+          <div class="text-xs text-secondary">Product Launches</div>
         </div>
       </div>
 
       <!-- Latest Press Items Preview -->
       <div v-if="latestPressItems.length > 0" class="space-y-2">
-        <h4 class="text-sm font-medium text-primary-light-content">Latest Updates</h4>
+        <h4 class="text-sm font-medium text-secondary">Latest Updates</h4>
         <div class="space-y-2">
           <div
             v-for="item in latestPressItems"
@@ -53,15 +53,15 @@
             class="bg-base-200 rounded p-3 text-sm"
           >
             <div class="flex items-start justify-between gap-2">
-              <p class="text-primary-light-content line-clamp-2">{{ item.value }}</p>
-              <i :class="[item.icon]" class="text-primary-light-content/50 text-xs mt-1"></i>
+              <p class="text-secondary line-clamp-2">{{ item.value }}</p>
+              <i :class="[item.icon]" class="text-secondary/50 text-xs mt-1"></i>
             </div>
           </div>
         </div>
       </div>
 
       <!-- No data message -->
-      <div v-if="!hasAnyPressData" class="text-primary-light-content text-center py-4">
+      <div v-if="!hasAnyPressData" class="text-secondary text-center py-4">
         {{ $t('common.noData') }}
       </div>
     </div>

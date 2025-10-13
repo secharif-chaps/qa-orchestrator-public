@@ -30,10 +30,7 @@
     </div>
 
     <!-- Recent Activities -->
-    <div
-      v-else
-      class="space-y-3 max-h-[400px] overflow-y-auto border border-primary-stroke rounded-card p-4"
-    >
+    <div v-else class="space-y-3">
       <RecentActivityItem
         v-for="activity in activities"
         :key="activity.id"

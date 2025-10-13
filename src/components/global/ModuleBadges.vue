@@ -66,6 +66,9 @@ const getBadgeClasses = (module: ReturnType<typeof getModuleDisplayConfig>) => {
     green: 'bg-green-500/10 dark:bg-green-500/15 text-green-100 border-green-500/30',
     orange: 'bg-orange-500/10 dark:bg-orange-500/15 text-orange-100 border-orange-500/30',
     blue: 'bg-blue-500/10 dark:bg-blue-500/15 text-blue-100 border-blue-500/30',
+    indigo: 'bg-indigo-500/20 dark:bg-indigo-500/15 text-indigo-300 border-indigo-500/30',
+    almond: 'bg-almond-500/10 dark:bg-almond-500/15 text-almond-100 border-almond-500/30',
+    yellow: 'bg-yellow-500/10 dark:bg-yellow-500/15 text-yellow-100 border-yellow-500/30',
   }
 
   return `${baseClasses} ${colorClasses[module.color]}`

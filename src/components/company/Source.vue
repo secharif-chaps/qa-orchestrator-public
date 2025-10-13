@@ -7,10 +7,7 @@
     "
   >
     <!-- LLM Source (non-clickable) -->
-    <div
-      v-if="isLLMSource(getSourcedSource(sourcedValue))"
-      class="text-primary-light-content/50 cursor-help"
-    >
+    <div v-if="isLLMSource(getSourcedSource(sourcedValue))" class="text-secondary/50 cursor-help">
       <i class="fa fa-info-circle text-sm"></i>
     </div>
 
@@ -19,7 +16,7 @@
       v-else
       :href="getSourcedSource(sourcedValue) || ''"
       target="_blank"
-      class="text-primary-light-content/50 hover:text-primary-light-content transition-colors duration-200"
+      class="text-secondary/50 hover:text-secondary transition-colors duration-200"
     >
       <i class="fa fa-info-circle text-sm"></i>
     </a>
@@ -54,7 +51,7 @@
   <!-- Direct source prop -->
   <div class="relative inline-block group" v-else-if="source">
     <!-- LLM Source (non-clickable) -->
-    <div v-if="isLLMSource(source)" class="text-primary-light-content/50 cursor-help">
+    <div v-if="isLLMSource(source)" class="text-secondary/50 cursor-help">
       <i class="fa fa-info-circle text-xs"></i>
     </div>
 
@@ -63,7 +60,7 @@
       v-else
       :href="source"
       target="_blank"
-      class="text-primary-light-content/50 hover:text-primary-light-content transition-colors duration-200"
+      class="text-secondary/50 hover:text-secondary transition-colors duration-200"
     >
       <i class="fa fa-info-circle text-xs"></i>
     </a>

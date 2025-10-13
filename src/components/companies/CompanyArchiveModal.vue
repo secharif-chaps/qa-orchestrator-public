@@ -15,7 +15,7 @@
             <h3 class="text-lg font-semibold text-base">
               {{ $t('company.archive.title', 'Archive Company') }}
             </h3>
-            <p class="text-sm text-primary-light-content">
+            <p class="text-sm text-secondary">
               {{ $t('company.archive.subtitle', 'This will move the company to the archive.') }}
             </p>
           </div>
@@ -24,7 +24,7 @@
 
       <!-- Content -->
       <div class="p-6">
-        <p class="text-sm text-primary-light-content mb-4">
+        <p class="text-sm text-secondary mb-4">
           {{
             $t(
               'company.archive.warning.message',
@@ -40,13 +40,11 @@
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-primary-light-content">{{ $t('company.name', 'Name') }}:</span>
+              <span class="text-secondary">{{ $t('company.name', 'Name') }}:</span>
               <span class="font-medium">{{ companyToArchive.name }}</span>
             </div>
             <div v-if="companyToArchive.website" class="flex justify-between">
-              <span class="text-primary-light-content"
-                >{{ $t('company.website', 'Website') }}:</span
-              >
+              <span class="text-secondary">{{ $t('company.website', 'Website') }}:</span>
               <span class="text-xs">{{ companyToArchive.website }}</span>
             </div>
           </div>

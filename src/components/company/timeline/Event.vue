@@ -2,7 +2,7 @@
   <div class="relative flex items-start gap-6 pb-6">
     <!-- Date indicator -->
     <div class="w-36 text-right pt-3">
-      <div class="text-sm font-medium text-primary-light-content pt-2.5">
+      <div class="text-sm font-medium text-secondary pt-2.5">
         {{ formattedDate }}
       </div>
     </div>
@@ -40,7 +40,7 @@
       </div>
 
       <!-- Description -->
-      <p class="text-primary-light-content mb-4 leading-relaxed">
+      <p class="text-secondary mb-4 leading-relaxed">
         {{ event.description }}
       </p>
 
@@ -48,11 +48,11 @@
       <div v-if="event.impact" class="bg-base-300 border border-primary-stroke rounded-lg p-4 mb-4">
         <div class="flex items-center gap-2 mb-2">
           <i class="fa fa-bolt text-yellow-500 text-sm"></i>
-          <span class="text-xs uppercase font-semibold text-primary-light-content tracking-wide">
+          <span class="text-xs uppercase font-semibold text-secondary tracking-wide">
             Impact Analysis
           </span>
         </div>
-        <p class="text-sm text-primary-light-content italic leading-relaxed">
+        <p class="text-sm text-secondary italic leading-relaxed">
           {{ event.impact }}
         </p>
       </div>

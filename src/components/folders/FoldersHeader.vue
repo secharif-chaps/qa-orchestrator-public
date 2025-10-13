@@ -14,7 +14,7 @@
             <h1 class="text-3xl font-bold">
               {{ folder?.name || $t('folder.loading', 'Loading folder...') }}
             </h1>
-            <p class="text-primary-light-content mt-2" v-if="folder">
+            <p class="text-secondary mt-2" v-if="folder">
               {{ folder.items?.length || 0 }} items • created on
               {{ formatDate(folder.created_at) }} by @{{ folder.owner }}
             </p>
@@ -43,7 +43,7 @@
         <!-- Search Input -->
         <div class="flex-1 max-w-md relative">
           <i
-            class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-primary-light-content"
+            class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
           ></i>
           <Input
             v-model="searchTerm"
@@ -89,7 +89,7 @@
                     <div class="font-medium text-sm">
                       {{ $t('folder.addItems.companyScreen', 'Company Screen') }}
                     </div>
-                    <div class="text-xs text-primary-light-content">
+                    <div class="text-xs text-secondary">
                       {{ $t('folder.addItems.companyDescription', 'Add company profiles') }}
                     </div>
                   </div>
@@ -109,7 +109,7 @@
                     <div class="font-medium text-sm">
                       {{ $t('folder.addItems.watchfile', 'Watchfile') }}
                     </div>
-                    <div class="text-xs text-primary-light-content">
+                    <div class="text-xs text-secondary">
                       {{ $t('folder.addItems.watchfileDescription', 'Monitor company changes') }}
                     </div>
                   </div>
@@ -132,7 +132,7 @@
                     <div class="font-medium text-sm">
                       {{ $t('folder.addItems.graphrag', 'Knowledge graph') }}
                     </div>
-                    <div class="text-xs text-primary-light-content">
+                    <div class="text-xs text-secondary">
                       {{
                         $t('folder.addItems.graphragDescription', 'explore ecosystem with GraphRAG')
                       }}

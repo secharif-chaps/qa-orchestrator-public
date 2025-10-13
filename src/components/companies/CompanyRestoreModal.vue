@@ -15,7 +15,7 @@
             <h3 class="text-lg font-semibold text-base">
               {{ $t('company.restore.title', 'Restore Company') }}
             </h3>
-            <p class="text-sm text-primary-light-content">
+            <p class="text-sm text-secondary">
               {{
                 $t(
                   'company.restore.subtitle',
@@ -29,7 +29,7 @@
 
       <!-- Content -->
       <div class="p-6">
-        <p class="text-sm text-primary-light-content mb-4">
+        <p class="text-sm text-secondary mb-4">
           {{
             $t(
               'company.restore.warning.message',
@@ -45,13 +45,11 @@
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-primary-light-content">{{ $t('company.name', 'Name') }}:</span>
+              <span class="text-secondary">{{ $t('company.name', 'Name') }}:</span>
               <span class="font-medium">{{ companyToRestore.name }}</span>
             </div>
             <div v-if="companyToRestore.website" class="flex justify-between">
-              <span class="text-primary-light-content"
-                >{{ $t('company.website', 'Website') }}:</span
-              >
+              <span class="text-secondary">{{ $t('company.website', 'Website') }}:</span>
               <span class="text-xs">{{ companyToRestore.website }}</span>
             </div>
           </div>

@@ -4,7 +4,7 @@
       <h4 class="text-base font-medium mb-1">
         {{ $t('team.permissions.title', 'User Permissions') }}
       </h4>
-      <p class="text-sm text-primary-light-content">
+      <p class="text-sm text-secondary">
         {{
           $t(
             'team.permissions.description',
@@ -28,13 +28,13 @@
     <div v-if="!canManageWorkspace" class="bg-primary/10 border border-primary/20 rounded-lg p-4">
       <div class="flex items-start gap-3">
         <div class="flex-shrink-0">
-          <i class="fa fa-info-circle text-primary-light-content text-lg"></i>
+          <i class="fa fa-info-circle text-secondary text-lg"></i>
         </div>
         <div class="text-sm">
           <strong class="text-base">{{
             $t('team.permissions.limitedAccess', 'Limited Access')
           }}</strong>
-          <p class="text-primary-light-content mt-1">
+          <p class="text-secondary mt-1">
             {{
               $t(
                 'team.permissions.limitedDescription',
@@ -56,7 +56,7 @@
         </div>
         <div class="text-sm">
           <strong class="text-base">{{ $t('team.permissions.warning', 'Important') }}</strong>
-          <p class="text-primary-light-content mt-1">
+          <p class="text-secondary mt-1">
             {{
               $t(
                 'team.permissions.workspaceManageWarning',

@@ -17,7 +17,7 @@ export const MODULE_CONFIG: Record<ModuleName, Omit<ModuleDisplayConfig, 'status
   screen: {
     label: 'Fiche entreprise',
     icon: 'fa fa-building',
-    color: 'purple',
+    color: 'indigo',
   },
   target: {
     label: 'Veille',
@@ -27,19 +27,19 @@ export const MODULE_CONFIG: Record<ModuleName, Omit<ModuleDisplayConfig, 'status
   explore: {
     label: 'Cartographie',
     icon: 'fa fa-map',
-    color: 'green',
+    color: 'almond',
   },
   stream: {
     label: 'Stream',
     icon: 'fa fa-stream',
-    color: 'blue',
+    color: 'yellow',
   },
 }
 
 export const getModuleDisplayConfig = (
   name: ModuleName,
   enabled: boolean,
-  comingSoon: boolean = false
+  comingSoon: boolean = false,
 ): ModuleDisplayConfig => {
   const config = MODULE_CONFIG[name]
 

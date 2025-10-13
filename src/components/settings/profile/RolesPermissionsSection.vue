@@ -2,7 +2,7 @@
   <div v-if="isDev" class="bg-base-100 border border-primary-stroke rounded-lg">
     <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.profile.roles.title') }}</h2>
-      <p class="text-sm text-primary-light-content mt-1">
+      <p class="text-sm text-secondary mt-1">
         {{ $t('settings.profile.roles.description') }}
       </p>
     </div>

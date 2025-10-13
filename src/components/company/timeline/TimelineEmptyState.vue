@@ -10,12 +10,12 @@
         </div>
       </div>
 
-      <h3 class="text-xl font-semibold text-primary-light-content mb-3">{{ title }}</h3>
-      <p class="text-primary-light-content mb-6 max-w-md mx-auto">{{ description }}</p>
+      <h3 class="text-xl font-semibold text-secondary mb-3">{{ title }}</h3>
+      <p class="text-secondary mb-6 max-w-md mx-auto">{{ description }}</p>
 
       <!-- Loading State -->
       <div v-if="type === 'loading'" class="flex justify-center">
-        <div class="flex items-center gap-3 text-primary-light-content">
+        <div class="flex items-center gap-3 text-secondary">
           <i class="fa fa-spinner animate-spin"></i>
           <span>{{ $t('timeline.loading', 'Analyzing company timeline...') }}</span>
         </div>
@@ -25,7 +25,7 @@
       <div v-else>
         <slot name="actions">
           <!-- Default action could be to suggest running timeline analysis -->
-          <div v-if="type === 'no-data'" class="text-sm text-primary-light-content">
+          <div v-if="type === 'no-data'" class="text-sm text-secondary">
             {{ $t('timeline.emptyState.hint', 'Timeline data will appear here once available') }}
           </div>
         </slot>
@@ -49,7 +49,7 @@ const iconClass = computed(() => {
     case 'no-results':
       return 'fa fa-search text-orange-500'
     case 'loading':
-      return 'fa fa-clock text-primary-content'
+      return 'fa fa-clock text-sage-content'
     default:
       return 'fa fa-calendar-days text-slate-500'
   }

@@ -4,7 +4,7 @@
       <h4>Line of business</h4>
       <!-- Business line - individual property loading -->
       <div class="text-sm flex flex-col gap-2">
-        <p class="text-primary-light-content">
+        <p class="text-secondary">
           {{ getSourcedValue(company?.profile?.businessLine) ?? 'Not found' }}
         </p>
       </div>

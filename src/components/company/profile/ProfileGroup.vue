@@ -4,7 +4,7 @@
       <h4>Group</h4>
       <!-- Group name - individual property loading -->
       <div>
-        <p class="text-primary-light-content">
+        <p class="text-secondary">
           {{ getSourcedValue(company?.profile?.groupName) ?? 'Not found' }}
         </p>
       </div>

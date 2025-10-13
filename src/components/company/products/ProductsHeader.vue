@@ -5,11 +5,11 @@
         <div
           class="w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-2xl"
         >
-          <i class="fa-solid fa-box text-primary-light-content"></i>
+          <i class="fa-solid fa-box text-secondary"></i>
         </div>
         <div>
           <h2 class="text-xl font-semibold">Product Portfolio</h2>
-          <p class="text-sm text-primary-light-content">
+          <p class="text-sm text-secondary">
             {{ totalProductCount }} products across {{ categoryCount }} categories
           </p>
         </div>
@@ -24,9 +24,7 @@
         />
 
         <div class="w-64 relative">
-          <i
-            class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-primary-light-content"
-          ></i>
+          <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-secondary"></i>
           <input
             :value="searchQuery"
             placeholder="Search products..."

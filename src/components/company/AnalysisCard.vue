@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-base-300 min-h-52 rounded-card border border-primary-stroke p-6 hover:shadow-shadow-2 transition-all duration-300 cursor-pointer group relative overflow-hidden flex flex-col gap-4 h-full"
+    class="bg-base-200 min-h-52 rounded-card border border-primary-stroke p-6 hover:shadow-shadow-2 transition-all duration-300 cursor-pointer group relative overflow-hidden flex flex-col gap-4 h-full"
     :class="{
       'opacity-60 cursor-not-allowed': disabled,
       'hover:border-primary/50': !disabled && !isLoading,
@@ -30,11 +30,11 @@
 
     <!-- AI Insights Preview -->
     <div v-if="hasInsights" class="flex-1 flex flex-col">
-      <p class="text-sm text-primary-light-content">
+      <p class="text-sm text-secondary">
         {{ insights }}
       </p>
       <button
-        class="mt-2 text-xs text-primary-light-content hover:text-primary-light-content/80 transition-colors font-medium flex items-center gap-1 self-start"
+        class="mt-2 text-xs text-secondary hover:text-secondary/80 transition-colors font-medium flex items-center gap-1 self-start"
       >
         <span>Voir plus</span>
         <i class="fas fa-arrow-right text-[10px]"></i>
@@ -46,7 +46,7 @@
       v-if="isLoading"
       class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card"
     >
-      <div class="flex items-center gap-3 text-base text-primary-light-content">
+      <div class="flex items-center gap-3 text-base text-secondary">
         <i class="fas fa-spinner fa-spin text-xl"></i>
         <span>Analyse en cours...</span>
       </div>
@@ -70,9 +70,7 @@
 
     <!-- No Data State -->
     <div v-else-if="!hasInsights && !isLoading" class="mt-4 pt-4 border-t border-primary-stroke">
-      <p class="text-sm text-primary-light-content italic">
-        Aucune donnée disponible pour cette section
-      </p>
+      <p class="text-sm text-secondary italic">Aucune donnée disponible pour cette section</p>
     </div>
 
     <!-- Disabled Overlay -->
@@ -152,7 +150,7 @@ const statusLabel = computed(() => {
 
 const iconColorClass = computed(() => {
   if (props.disabled) {
-    return 'text-primary-light-content'
+    return 'text-secondary'
   }
   if (isLoading.value) {
     return 'text-warning-500'
@@ -160,7 +158,7 @@ const iconColorClass = computed(() => {
   if (hasError.value) {
     return 'text-error-500'
   }
-  return 'text-primary-light-content'
+  return 'text-secondary'
 })
 
 const handleClick = () => {

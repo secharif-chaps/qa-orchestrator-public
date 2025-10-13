@@ -14,7 +14,7 @@
         </div>
         <div>
           <h3 class="text-lg font-semibold">{{ $t('folder.delete.title', 'Delete Folder') }}</h3>
-          <p class="text-sm text-primary-light-content">
+          <p class="text-sm text-secondary">
             {{ $t('folder.delete.subtitle', 'This action cannot be undone') }}
           </p>
         </div>
@@ -22,7 +22,7 @@
 
       <!-- Warning Message -->
       <div class="mb-6">
-        <p class="text-primary-light-content mb-3">
+        <p class="text-secondary mb-3">
           {{ $t('folder.delete.message', 'Are you sure you want to delete this folder?') }}
         </p>
 
@@ -36,7 +36,7 @@
             </div>
             <div>
               <div class="font-medium">{{ folderToDelete?.name }}</div>
-              <div class="text-sm text-primary-light-content">
+              <div class="text-sm text-secondary">
                 {{
                   $t('folder.itemCount', '{count} items', {
                     count: folderToDelete?.items?.length || folderToDelete?.items_count || 0,

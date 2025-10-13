@@ -4,13 +4,11 @@
       <div
         class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
       >
-        <i :class="categoryIcon" class="text-primary-light-content"></i>
+        <i :class="categoryIcon" class="text-secondary"></i>
       </div>
       <div class="flex-1">
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
-        <p class="text-sm text-primary-light-content">
-          {{ productList.length }} products in this category
-        </p>
+        <p class="text-sm text-secondary">{{ productList.length }} products in this category</p>
       </div>
       <Tag :label="productList.length.toString()" variant="slate" size="sm" />
     </div>
@@ -21,7 +19,7 @@
         :key="index"
         class="flex items-center gap-2 p-2 bg-base-300 rounded text-sm"
       >
-        <span class="text-primary-light-content flex-1 capitalize">{{ product }}</span>
+        <span class="text-secondary flex-1 capitalize">{{ product }}</span>
         <Tag v-if="isNewProduct(product)" variant="success" size="xs">
           <i class="fa-solid fa-star"></i>
           New

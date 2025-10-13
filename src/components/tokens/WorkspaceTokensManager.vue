@@ -5,7 +5,7 @@
         <h2 class="text-xl font-semibold">
           {{ $t('tokens.moduleManagement', 'Module & Token Management') }}
         </h2>
-        <p class="text-primary-light-content mt-1">
+        <p class="text-secondary mt-1">
           {{ $t('tokens.moduleDescription', 'Configure module access and token allocations') }}
         </p>
       </div>
@@ -14,7 +14,7 @@
         <button
           @click="refreshAllTokens"
           :disabled="isRefreshing"
-          class="text-primary-light-content hover:text-base transition-colors p-2"
+          class="text-secondary hover:text-base transition-colors p-2"
           :title="$t('tokens.refreshAll', 'Refresh all token counts')"
         >
           <i :class="{ 'animate-spin': isRefreshing }" class="fa fa-refresh"></i>
@@ -39,7 +39,7 @@
     <!-- Loading State -->
     <div v-if="isLoading" class="text-center p-8">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-      <p class="text-primary-light-content">
+      <p class="text-secondary">
         {{ $t('tokens.loading', 'Loading token configuration...') }}
       </p>
     </div>
@@ -64,28 +64,28 @@
 
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="bg-base-200 rounded-lg p-4">
-          <div class="text-sm text-primary-light-content mb-1">
+          <div class="text-sm text-secondary mb-1">
             {{ $t('tokens.totalTokens', 'Total Tokens') }}
           </div>
           <div class="text-2xl font-bold">{{ totalTokens }}</div>
         </div>
 
         <div class="bg-base-200 rounded-lg p-4">
-          <div class="text-sm text-primary-light-content mb-1">
+          <div class="text-sm text-secondary mb-1">
             {{ $t('tokens.enabledModules', 'Enabled Modules') }}
           </div>
           <div class="text-2xl font-bold text-green-600">{{ enabledModulesCount }}</div>
         </div>
 
         <div class="bg-base-200 rounded-lg p-4">
-          <div class="text-sm text-primary-light-content mb-1">
+          <div class="text-sm text-secondary mb-1">
             {{ $t('tokens.disabledModules', 'Disabled Modules') }}
           </div>
           <div class="text-2xl font-bold text-red-600">{{ disabledModulesCount }}</div>
         </div>
 
         <div class="bg-base-200 rounded-lg p-4">
-          <div class="text-sm text-primary-light-content mb-1">
+          <div class="text-sm text-secondary mb-1">
             {{ $t('tokens.lowTokenModules', 'Low Token Modules') }}
           </div>
           <div class="text-2xl font-bold text-yellow-600">{{ lowTokenModulesCount }}</div>
@@ -109,11 +109,11 @@
 
     <!-- Empty State -->
     <div v-else class="text-center p-8">
-      <i class="fa fa-cogs text-4xl text-primary-light-content/50 mb-4"></i>
+      <i class="fa fa-cogs text-4xl text-secondary/50 mb-4"></i>
       <h3 class="text-lg font-medium text-base mb-2">
         {{ $t('tokens.empty.title', 'No modules configured') }}
       </h3>
-      <p class="text-primary-light-content mb-6">
+      <p class="text-secondary mb-6">
         {{
           $t(
             'tokens.empty.description',

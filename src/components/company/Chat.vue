@@ -5,7 +5,7 @@
   >
     <div
       v-if="!isFloating"
-      class="relative flex gap-4 items-center justify-between border-b pb-4 border-primary text-primary-light-content"
+      class="relative flex gap-4 items-center justify-between border-b pb-4 border-primary text-secondary"
     >
       <div class="flex gap-4 items-center">
         <i class="fa fa-chevrons-right cursor-pointer icon-secondary" @click="$emit('hide')"></i>
@@ -32,7 +32,7 @@
           class="text-xs p-4 inline-block rounded-xl"
           :class="{
             'bg-base-300 dark:bg-slate-900': message.from === 'ai',
-            'bg-primary/10 text-primary-light-content dark:bg-primary/10 dark:text-primary-content':
+            'bg-primary/10 text-secondary dark:bg-primary/10 dark:text-sage-content':
               message.from === 'user',
           }"
           v-html="formatMarkdown(message.text)"

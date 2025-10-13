@@ -2,7 +2,7 @@
   <div class="bg-base-100 border border-primary-stroke rounded-lg">
     <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.security.recovery.title') }}</h2>
-      <p class="text-sm text-primary-light-content mt-1">
+      <p class="text-sm text-secondary mt-1">
         {{ $t('settings.security.recovery.description') }}
       </p>
     </div>
@@ -14,13 +14,13 @@
         >
           <div class="flex items-center space-x-3">
             <div class="flex-shrink-0">
-              <i class="fas fa-shield-alt text-primary-light-content"></i>
+              <i class="fas fa-shield-alt text-secondary"></i>
             </div>
             <div>
               <h3 class="text-sm font-medium">
                 {{ $t('settings.security.recovery.backupCodes.title') }}
               </h3>
-              <p class="text-sm text-primary-light-content">
+              <p class="text-sm text-secondary">
                 {{ $t('settings.security.recovery.backupCodes.description') }}
               </p>
             </div>
@@ -53,13 +53,13 @@
         >
           <div class="flex items-center space-x-3">
             <div class="flex-shrink-0">
-              <i class="fas fa-envelope text-primary-light-content"></i>
+              <i class="fas fa-envelope text-secondary"></i>
             </div>
             <div>
               <h3 class="text-sm font-medium">
                 {{ $t('settings.security.recovery.email.title') }}
               </h3>
-              <p class="text-sm text-primary-light-content">
+              <p class="text-sm text-secondary">
                 {{ recoveryEmail || $t('settings.security.recovery.email.notSet') }}
               </p>
             </div>

@@ -25,7 +25,7 @@
         <div class="flex-1 min-w-0">
           <!-- Module Label -->
           <div class="flex items-center gap-2 mb-1">
-            <span class="text-xs font-medium text-primary-light-content uppercase tracking-wide">
+            <span class="text-xs font-medium text-secondary uppercase tracking-wide">
               {{
                 $t('tokens.module', '{module} Module', {
                   module: module || $t('tokens.modules.screen.name', 'Screen'),
@@ -50,7 +50,7 @@
             <span :class="tokenCountClasses" class="text-2xl font-bold tabular-nums">
               {{ displayCount }}
             </span>
-            <span v-if="showLabel && !isLoading" class="text-sm text-primary-light-content">
+            <span v-if="showLabel && !isLoading" class="text-sm text-secondary">
               {{ tokenLabel }}
             </span>
           </div>
@@ -64,10 +64,7 @@
           </div> -->
 
           <!-- Loading State -->
-          <div
-            v-if="isLoading"
-            class="mt-2 flex items-center gap-2 text-xs text-primary-light-content"
-          >
+          <div v-if="isLoading" class="mt-2 flex items-center gap-2 text-xs text-secondary">
             <div class="w-2 h-2 bg-primary/60 rounded-full animate-pulse"></div>
             {{ $t('tokens.loading', 'Loading token data...') }}
           </div>
@@ -124,21 +121,21 @@ const tokenLabel = computed(() => {
 })
 
 const tokenIconClasses = computed(() => {
-  if (!props.isEnabled) return 'bg-secondary/10 text-primary-light-content'
+  if (!props.isEnabled) return 'bg-secondary/10 text-secondary'
   if (props.tokenCount === 0) return 'bg-warning/10 text-warning'
   if (props.tokenCount < 10) return 'bg-warning/15 text-warning'
   return 'bg-success/10 text-success'
 })
 
 const tokenCountClasses = computed(() => {
-  if (!props.isEnabled) return 'text-primary-light-content'
+  if (!props.isEnabled) return 'text-secondary'
   if (props.tokenCount === 0) return 'text-warning'
   if (props.tokenCount < 10) return 'text-warning'
   return 'text-success'
 })
 
 const statusBadgeClasses = computed(() => {
-  if (!props.isEnabled) return 'bg-secondary/10 text-primary-light-content'
+  if (!props.isEnabled) return 'bg-secondary/10 text-secondary'
   if (props.tokenCount === 0) return 'bg-warning/10 text-warning'
   if (props.tokenCount < 10) return 'bg-warning/10 text-warning'
   return 'bg-success/10 text-success'

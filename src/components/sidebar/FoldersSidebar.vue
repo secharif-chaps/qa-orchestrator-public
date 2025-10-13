@@ -1,5 +1,5 @@
 <template>
-  <div class="h-[calc(100vh-140px)] flex flex-col">
+  <div class="h-[calc(100vh-140px)] flex flex-col min-w-[320px]">
     <!-- Header -->
     <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
       <h2 class="text-headline-2xl">{{ $t('sidebar.foldersSidebar.title', 'Folders') }}</h2>
@@ -39,7 +39,11 @@
         v-else-if="filteredFolders.length === 0"
         class="px-4 py-8 text-center text-sage-400 text-sm"
       >
-        {{ searchTerm ? $t('sidebar.foldersSidebar.noFoldersFound', 'No folders found') : $t('sidebar.foldersSidebar.noFolders', 'No folders') }}
+        {{
+          searchTerm
+            ? $t('sidebar.foldersSidebar.noFoldersFound', 'No folders found')
+            : $t('sidebar.foldersSidebar.noFolders', 'No folders')
+        }}
       </div>
 
       <div v-else class="flex flex-col gap-3">
@@ -49,7 +53,9 @@
             class="flex items-center gap-2 px-2 py-1.5 text-sage-300 rounded-md cursor-pointer transition-colors group"
           >
             <i class="fa fa-heart text-sm"></i>
-            <span class="text-sm font-medium flex-1">{{ $t('sidebar.foldersSidebar.favorites', 'Favorites') }}</span>
+            <span class="text-sm font-medium flex-1">{{
+              $t('sidebar.foldersSidebar.favorites', 'Favorites')
+            }}</span>
           </div>
 
           <div class="space-y-4">
@@ -73,7 +79,9 @@
             class="flex items-center gap-2 px-2 py-1.5 text-sage-300 rounded-md cursor-pointer transition-colors group"
           >
             <i class="fa fa-folders text-sm"></i>
-            <span class="text-sm font-medium flex-1">{{ $t('sidebar.foldersSidebar.allFolders', 'Folders') }}</span>
+            <span class="text-sm font-medium flex-1">{{
+              $t('sidebar.foldersSidebar.allFolders', 'Folders')
+            }}</span>
           </div>
           <FolderRow
             v-for="folder in regularFolders"

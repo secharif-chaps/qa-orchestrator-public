@@ -22,7 +22,7 @@
       >
         <div class="flex items-center gap-2">
           <i class="fa fa-coins text-warning"></i>
-          <span class="text-sm font-medium text-primary-light-content">Current tokens:</span>
+          <span class="text-sm font-medium text-secondary">Current tokens:</span>
         </div>
         <div class="text-2xl font-bold text-warning">{{ currentTokens }}</div>
       </div>

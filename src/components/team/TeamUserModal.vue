@@ -14,12 +14,12 @@
           </h2>
           <button
             @click="$emit('cancel')"
-            class="text-primary-light-content hover:text-base transition-colors p-1"
+            class="text-secondary hover:text-base transition-colors p-1"
           >
             <i class="fa fa-times"></i>
           </button>
         </div>
-        <p class="text-primary-light-content text-sm mt-1">
+        <p class="text-secondary text-sm mt-1">
           {{
             isEditing
               ? $t('team.edit.description', 'Update user information and permissions')
@@ -31,7 +31,7 @@
       <form @submit.prevent="handleSubmit" class="px-6 py-4 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-primary-light-content mb-1">
+            <label class="block text-sm font-medium text-secondary mb-1">
               {{ $t('team.firstName', 'First Name') }}
               <span class="text-red-500">*</span>
             </label>
@@ -49,7 +49,7 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-primary-light-content mb-1">
+            <label class="block text-sm font-medium text-secondary mb-1">
               {{ $t('team.lastName', 'Last Name') }}
               <span class="text-red-500">*</span>
             </label>
@@ -68,7 +68,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-primary-light-content mb-1">
+          <label class="block text-sm font-medium text-secondary mb-1">
             {{ $t('team.username', 'Username') }}
             <span class="text-red-500">*</span>
           </label>
@@ -83,13 +83,13 @@
           <p v-if="errors.username" class="text-red-600 text-xs mt-1">
             {{ errors.username }}
           </p>
-          <p v-if="isEditing" class="text-xs text-primary-light-content mt-1">
+          <p v-if="isEditing" class="text-xs text-secondary mt-1">
             {{ $t('team.usernameCannotChange', 'Username cannot be changed') }}
           </p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-primary-light-content mb-1">
+          <label class="block text-sm font-medium text-secondary mb-1">
             {{ $t('team.email', 'Email') }}
             <span class="text-red-500">*</span>
           </label>
@@ -104,13 +104,13 @@
           <p v-if="errors.email" class="text-red-600 text-xs mt-1">
             {{ errors.email }}
           </p>
-          <p v-if="isEditing" class="text-xs text-primary-light-content mt-1">
+          <p v-if="isEditing" class="text-xs text-secondary mt-1">
             {{ $t('team.emailCannotChange', 'Email cannot be changed') }}
           </p>
         </div>
 
         <div v-if="!isEditing">
-          <label class="block text-sm font-medium text-primary-light-content mb-1">
+          <label class="block text-sm font-medium text-secondary mb-1">
             {{ $t('team.temporaryPassword', 'Temporary Password') }}
             <span class="text-red-500">*</span>
           </label>
@@ -126,14 +126,14 @@
             <button
               type="button"
               @click="showPassword = !showPassword"
-              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary-light-content hover:text-base"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary hover:text-base"
               :disabled="isLoading"
             >
               <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
             </button>
           </div>
           <div class="flex justify-between items-center mt-1">
-            <p class="text-xs text-primary-light-content">
+            <p class="text-xs text-secondary">
               {{
                 $t(
                   'team.passwordHelp',
@@ -145,7 +145,7 @@
               type="button"
               @click="generatePassword"
               :disabled="isLoading"
-              class="text-primary-light-content hover:text-primary-content/80 text-xs font-medium disabled:opacity-50"
+              class="text-secondary hover:text-sage-content/80 text-xs font-medium disabled:opacity-50"
             >
               <i class="fa fa-refresh mr-1"></i>
               {{ $t('team.generatePassword', 'Generate') }}
@@ -170,7 +170,7 @@
           type="button"
           @click="$emit('cancel')"
           :disabled="isLoading"
-          class="px-4 py-2 text-primary-light-content hover:text-base transition-colors disabled:opacity-50"
+          class="px-4 py-2 text-secondary hover:text-base transition-colors disabled:opacity-50"
         >
           {{ $t('common.cancel', 'Cancel') }}
         </button>
@@ -321,10 +321,7 @@ const validateForm = () => {
     if (!form.email.trim()) {
       errors.value.email = t('team.validation.email.required', 'Email is required')
     } else if (!isValidEmail(form.email)) {
-      errors.value.email = t(
-        'team.validation.email.invalid',
-        'Please enter a valid email address',
-      )
+      errors.value.email = t('team.validation.email.invalid', 'Please enter a valid email address')
     }
 
     if (!form.password.trim()) {

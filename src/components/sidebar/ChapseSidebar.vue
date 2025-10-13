@@ -7,6 +7,18 @@
         <Button
           variant="tertiary"
           dark
+          icon="fa-solid fa-expand"
+          icon-only
+          @click="
+            sidebarStore.isFullscreen
+              ? sidebarStore.setFullscreen(false)
+              : sidebarStore.setFullscreen(true)
+          "
+          size="sm"
+        />
+        <Button
+          variant="tertiary"
+          dark
           icon="fa-solid fa-trash"
           icon-only
           @click="handleClearHistory"
@@ -132,6 +144,7 @@ import Alert from '../ui/Alert.vue'
 import chapseAvatar from '@/assets/chapse/head.svg'
 import withBody from '@/assets/chapse/default.svg'
 import type { ChapseContext } from '@/composables/useChapseChat'
+import { useSidebarStore } from '@/stores/sidebar'
 
 // Router
 const route = useRoute()
@@ -147,6 +160,8 @@ const {
   clearHistory,
   initializeChat,
 } = useChapseChat()
+
+const sidebarStore = useSidebarStore()
 
 // Context composable
 const {

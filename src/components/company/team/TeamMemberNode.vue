@@ -15,7 +15,7 @@
       </div>
       <div class="flex flex-col">
         <div class="font-semibold">{{ data.firstName }} {{ data.lastName }}</div>
-        <div class="text-sm text-primary-light-content">{{ data.position }}</div>
+        <div class="text-sm text-secondary">{{ data.position }}</div>
       </div>
     </div>
 

@@ -13,10 +13,7 @@
             <div class="font-medium" :class="user.is_disabled ? 'text-gray-500' : 'text-base'">
               @{{ user.username }}
             </div>
-            <div
-              class="text-sm"
-              :class="user.is_disabled ? 'text-gray-400' : 'text-primary-light-content'"
-            >
+            <div class="text-sm" :class="user.is_disabled ? 'text-gray-400' : 'text-secondary'">
               {{ user.email }}
             </div>
           </div>
@@ -46,10 +43,7 @@
       </div>
 
       <div class="col-span-2">
-        <div
-          class="text-sm"
-          :class="user.is_disabled ? 'text-gray-400' : 'text-primary-light-content'"
-        >
+        <div class="text-sm" :class="user.is_disabled ? 'text-gray-400' : 'text-secondary'">
           {{ formatDate(user.created_at) }}
         </div>
       </div>
@@ -104,9 +98,7 @@
           />
         </div>
         <div v-else class="flex items-center justify-center">
-          <span class="text-xs text-primary-light-content">{{
-            $t('team.readOnly', 'Read-only')
-          }}</span>
+          <span class="text-xs text-secondary">{{ $t('team.readOnly', 'Read-only') }}</span>
         </div>
       </div>
     </div>

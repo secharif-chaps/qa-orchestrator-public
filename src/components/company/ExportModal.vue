@@ -5,16 +5,14 @@
     title="Export Options"
     size="xl"
     icon="fas fa-download"
-    color="primary"
+    color="sage"
   >
     <template #description>
-      <p class="text-primary-light-content">
-        Select which sections to include in your PowerPoint export:
-      </p>
+      <p class="text-secondary">Select which sections to include in your PowerPoint export:</p>
 
       <!-- Select All / None toggle -->
       <div class="flex justify-between mb-4">
-        <span v-if="showSavedMessage" class="text-xs text-primary-light-content animate-fade-out">
+        <span v-if="showSavedMessage" class="text-xs text-secondary animate-fade-out">
           <i class="fa fa-check-circle mr-1"></i>Preferences saved
         </span>
         <Button
@@ -33,7 +31,7 @@
         >
           <div class="flex-1 mr-4">
             <label class="font-medium text-sm">{{ option.label }}</label>
-            <p v-if="option.description" class="text-primary-light-content text-xs mt-1">
+            <p v-if="option.description" class="text-secondary text-xs mt-1">
               {{ option.description }}
             </p>
           </div>

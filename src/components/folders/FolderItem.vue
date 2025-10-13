@@ -18,10 +18,10 @@
         :class="[
           folder.is_favorite
             ? 'fa-jelly-fill fa-regular fa-star text-accent'
-            : 'fa-jelly fa-regular fa-star text-primary-light-content hover:text-accent',
+            : 'fa-jelly fa-regular fa-star text-secondary hover:text-accent',
         ]"
       ></i>
-      <i v-else class="fas fa-spinner fa-spin text-primary-light-content"></i>
+      <i v-else class="fas fa-spinner fa-spin text-secondary"></i>
     </button>
 
     <div class="flex flex-col gap-2">
@@ -35,13 +35,13 @@
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 mb-1">
               <h3
-                class="text-lg font-semibold group-hover:text-primary-light-content transition-colors truncate"
+                class="text-lg font-semibold group-hover:text-secondary transition-colors truncate"
               >
                 {{ folder.name }}
               </h3>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-sm text-primary-light-content">
+              <span class="text-sm text-secondary">
                 {{ $t('folder.itemCount', '{count} items', { count: itemCount }) }}
               </span>
               <div v-if="folder.tags && folder.tags.length > 0" class="flex items-center gap-1">
@@ -52,7 +52,7 @@
                   variant="slate"
                   size="xs"
                 />
-                <span v-if="folder.tags.length > 2" class="text-xs text-primary-light-content">
+                <span v-if="folder.tags.length > 2" class="text-xs text-secondary">
                   +{{ folder.tags.length - 2 }}
                 </span>
               </div>
@@ -102,7 +102,7 @@
                   "
                   class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
                 >
-                  <i class="fas fa-building text-primary-light-content text-xs"></i>
+                  <i class="fas fa-building text-secondary text-xs"></i>
                 </div>
               </div>
               <div class="flex-1 min-w-0">
@@ -131,7 +131,7 @@
 
     <!-- Footer with creation date and owner -->
     <div>
-      <div class="flex justify-between items-center text-xs text-primary-light-content">
+      <div class="flex justify-between items-center text-xs text-secondary">
         <span>Created {{ formatDate(folder.created_at) }}</span>
         <span>by @{{ folder.owner }}</span>
       </div>

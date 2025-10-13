@@ -2,7 +2,7 @@
   <div class="bg-base-100 border border-primary-stroke rounded-lg">
     <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.preview.title') }}</h2>
-      <p class="text-sm text-primary-light-content mt-1">
+      <p class="text-sm text-secondary mt-1">
         {{ $t('settings.appearance.preview.description') }}
       </p>
     </div>
@@ -14,7 +14,7 @@
           <h3 class="text-lg font-semibold mb-2">
             {{ $t('settings.appearance.preview.sample') }}
           </h3>
-          <p class="text-sm text-primary-light-content">
+          <p class="text-sm text-secondary">
             {{
               $t(
                 'settings.appearance.preview.interfaceDescription',
@@ -31,7 +31,7 @@
               <h4 class="font-medium">
                 {{ $t('settings.appearance.preview.card.title', 'Sample Card Title') }}
               </h4>
-              <p class="text-sm text-primary-light-content mt-1">
+              <p class="text-sm text-secondary mt-1">
                 {{
                   $t(
                     'settings.appearance.preview.card.description',
@@ -59,7 +59,7 @@
                 :placeholder="
                   $t('settings.appearance.preview.input.placeholder', 'Type something here...')
                 "
-                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-base-100 text-primary-light-content placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-base-100 text-secondary placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
 
@@ -69,7 +69,7 @@
                 <label class="text-sm font-medium">{{
                   $t('settings.appearance.preview.toggle.label', 'Sample Toggle')
                 }}</label>
-                <p class="text-sm text-primary-light-content">
+                <p class="text-sm text-secondary">
                   {{
                     $t(
                       'settings.appearance.preview.toggle.description',
@@ -111,19 +111,19 @@
             <div class="flex flex-wrap gap-2">
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 bg-green-500 rounded-full"></div>
-                <span class="text-sm text-primary-light-content">{{
+                <span class="text-sm text-secondary">{{
                   $t('settings.appearance.preview.status.active', 'Active')
                 }}</span>
               </div>
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 bg-yellow-500 rounded-full"></div>
-                <span class="text-sm text-primary-light-content">{{
+                <span class="text-sm text-secondary">{{
                   $t('settings.appearance.preview.status.pending', 'Pending')
                 }}</span>
               </div>
               <div class="flex items-center gap-2">
                 <div class="h-2 w-2 bg-red-500 rounded-full"></div>
-                <span class="text-sm text-primary-light-content">{{
+                <span class="text-sm text-secondary">{{
                   $t('settings.appearance.preview.status.error', 'Error')
                 }}</span>
               </div>
@@ -147,14 +147,14 @@
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                   <div class="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
-                    <i :class="item.icon" class="text-primary-light-content text-sm"></i>
+                    <i :class="item.icon" class="text-secondary text-sm"></i>
                   </div>
                   <div>
                     <p class="text-sm font-medium">{{ item.title }}</p>
-                    <p class="text-xs text-primary-light-content">{{ item.description }}</p>
+                    <p class="text-xs text-secondary">{{ item.description }}</p>
                   </div>
                 </div>
-                <div class="text-xs text-primary-light-content">{{ item.time }}</div>
+                <div class="text-xs text-secondary">{{ item.time }}</div>
               </div>
             </div>
           </div>

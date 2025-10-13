@@ -2,7 +2,7 @@
   <div class="bg-base-100 border border-primary-stroke rounded-lg">
     <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.accent.title') }}</h2>
-      <p class="text-sm text-primary-light-content mt-1">
+      <p class="text-sm text-secondary mt-1">
         {{ $t('settings.appearance.accent.description') }}
       </p>
     </div>
@@ -45,7 +45,7 @@
             <!-- Color Name Label -->
             <div class="mt-2 text-center">
               <span
-                class="text-xs font-medium text-primary-light-content group-hover:text-primary-light-content transition-colors"
+                class="text-xs font-medium text-secondary group-hover:text-secondary transition-colors"
               >
                 {{ colorOption.label }}
               </span>
@@ -64,7 +64,7 @@
                 <h4 class="text-sm font-medium">
                   {{ $t('settings.appearance.accent.currentColor', 'Current Accent Color') }}
                 </h4>
-                <p class="text-xs text-primary-light-content">
+                <p class="text-xs text-secondary">
                   {{ getCurrentAccentLabel() }}
                 </p>
               </div>
@@ -83,15 +83,15 @@
         <div class="bg-primary/5 border border-primary/20 rounded-lg p-4">
           <div class="flex items-start gap-3">
             <div class="flex-shrink-0">
-              <i class="fas fa-palette text-primary-light-content"></i>
+              <i class="fas fa-palette text-secondary"></i>
             </div>
             <div>
-              <h4 class="text-sm font-medium text-primary-light-content">
+              <h4 class="text-sm font-medium text-secondary">
                 {{
                   $t('settings.appearance.accent.personalizeTitle', 'Personalize Your Experience')
                 }}
               </h4>
-              <p class="text-xs text-primary-light-content mt-1">
+              <p class="text-xs text-secondary mt-1">
                 {{
                   $t(
                     'settings.appearance.accent.personalizeDescription',

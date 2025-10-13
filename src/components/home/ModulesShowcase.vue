@@ -15,8 +15,8 @@
           <div class="flex items-start space-x-3">
             <!-- Avatar Badge -->
             <Badge
-              variant="primary"
-              :color="module.unlocked ? 'primary' : 'slate'"
+              variant="secondary"
+              :color="module.unlocked ? module.color : 'slate'"
               :icon="module.icon"
               size="md"
             />
@@ -109,6 +109,18 @@ interface Module {
   soon: boolean
   status: 'contact-sales' | 'coming-soon' | 'available' | 'external'
   favorite: boolean
+  color:
+    | 'sage'
+    | 'almond'
+    | 'success'
+    | 'warning'
+    | 'error'
+    | 'info'
+    | 'accent'
+    | 'slate'
+    | 'yellow'
+    | 'indigo'
+    | 'orange'
 }
 
 const router = useRouter()
@@ -127,6 +139,7 @@ const modules = computed<Module[]>(() => [
     soon: false,
     status: 'available',
     favorite: false,
+    color: 'indigo',
   },
   {
     name: t('home.modules.target.name', 'Target'),
@@ -140,6 +153,7 @@ const modules = computed<Module[]>(() => [
     soon: false,
     status: 'contact-sales',
     favorite: true,
+    color: 'orange',
   },
   {
     name: t('home.modules.explore.name', 'Explore'),
@@ -153,6 +167,7 @@ const modules = computed<Module[]>(() => [
     soon: true,
     status: 'coming-soon',
     favorite: false,
+    color: 'almond',
   },
   {
     name: t('home.modules.discover.name', 'Discover'),
@@ -163,6 +178,7 @@ const modules = computed<Module[]>(() => [
     soon: false,
     status: 'external',
     favorite: false,
+    color: 'yellow',
   },
 ])
 

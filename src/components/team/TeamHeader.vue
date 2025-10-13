@@ -5,7 +5,7 @@
         <h1 class="text-3xl font-bold">
           {{ $t('team.title', 'Team Management') }}
         </h1>
-        <p class="text-primary-light-content mt-2">
+        <p class="text-secondary mt-2">
           {{ $t('team.description', 'Manage users in your workspace') }}
         </p>
       </div>
@@ -23,7 +23,7 @@
       <div class="flex-1 max-w-md">
         <div class="relative">
           <i
-            class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-primary-light-content"
+            class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
           ></i>
           <Input
             :model-value="props.search"
@@ -39,7 +39,7 @@
           @click.stop="showSortDropdown = !showSortDropdown"
           class="flex items-center gap-2 px-3 py-2 border border-primary-stroke rounded-lg hover:bg-base-200 transition-colors text-sm font-medium bg-base-100"
         >
-          <span class="text-primary-light-content">{{ getSortDisplayText() }}</span>
+          <span class="text-secondary">{{ getSortDisplayText() }}</span>
           <i
             class="fa fa-chevron-down text-xs transition-transform"
             :class="{ 'rotate-180': showSortDropdown }"
@@ -52,7 +52,7 @@
           @click.stop
         >
           <div class="p-4 border-b border-primary-stroke">
-            <h3 class="text-sm font-medium text-primary-light-content mb-3">
+            <h3 class="text-sm font-medium text-secondary mb-3">
               {{ $t('team.sort.label', 'Sort by:') }}
             </h3>
             <div class="space-y-2">
@@ -61,7 +61,7 @@
                   type="radio"
                   :checked="props.sort === 'created_at'"
                   @change="updateSort('created_at')"
-                  class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
+                  class="w-4 h-4 text-secondary border-primary-stroke focus:ring-primary/20"
                 />
                 <span class="text-sm">{{ $t('team.sort.created', 'Created Date') }}</span>
               </label>
@@ -70,7 +70,7 @@
                   type="radio"
                   :checked="props.sort === 'name'"
                   @change="updateSort('name')"
-                  class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
+                  class="w-4 h-4 text-secondary border-primary-stroke focus:ring-primary/20"
                 />
                 <span class="text-sm">{{ $t('team.sort.name', 'Name') }}</span>
               </label>
@@ -79,7 +79,7 @@
                   type="radio"
                   :checked="props.sort === 'email'"
                   @change="updateSort('email')"
-                  class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
+                  class="w-4 h-4 text-secondary border-primary-stroke focus:ring-primary/20"
                 />
                 <span class="text-sm">{{ $t('team.sort.email', 'Email') }}</span>
               </label>
@@ -88,7 +88,7 @@
                   type="radio"
                   :checked="props.sort === 'username'"
                   @change="updateSort('username')"
-                  class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
+                  class="w-4 h-4 text-secondary border-primary-stroke focus:ring-primary/20"
                 />
                 <span class="text-sm">{{ $t('team.sort.username', 'Username') }}</span>
               </label>
@@ -96,7 +96,7 @@
           </div>
 
           <div class="p-4">
-            <h3 class="text-sm font-medium text-primary-light-content mb-3">
+            <h3 class="text-sm font-medium text-secondary mb-3">
               {{ $t('team.sort.order', 'Sort Order:') }}
             </h3>
             <div class="space-y-2">
@@ -105,7 +105,7 @@
                   type="radio"
                   :checked="props.order === 'asc'"
                   @change="updateOrder('asc')"
-                  class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
+                  class="w-4 h-4 text-secondary border-primary-stroke focus:ring-primary/20"
                 />
                 <span class="text-sm flex items-center gap-2">
                   <i class="fa fa-sort-amount-up"></i>
@@ -117,7 +117,7 @@
                   type="radio"
                   :checked="props.order === 'desc'"
                   @change="updateOrder('desc')"
-                  class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
+                  class="w-4 h-4 text-secondary border-primary-stroke focus:ring-primary/20"
                 />
                 <span class="text-sm flex items-center gap-2">
                   <i class="fa fa-sort-amount-down"></i>

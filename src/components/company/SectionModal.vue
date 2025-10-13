@@ -15,11 +15,11 @@
           >
             <div class="flex items-center gap-3">
               <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <i :class="[sectionConfig?.icon, 'text-primary-light-content text-lg']"></i>
+                <i :class="[sectionConfig?.icon, 'text-secondary text-lg']"></i>
               </div>
               <div>
                 <h2 class="text-xl font-semibold">{{ sectionConfig?.name }}</h2>
-                <p class="text-sm text-primary-light-content">
+                <p class="text-sm text-secondary">
                   {{ sectionConfig?.description }}
                 </p>
               </div>
@@ -30,7 +30,7 @@
           <!-- Content -->
           <div class="flex-1 overflow-y-auto p-6">
             <component :is="sectionComponent" v-if="sectionComponent" />
-            <div v-else class="text-center text-primary-light-content py-12">
+            <div v-else class="text-center text-secondary py-12">
               <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
               <p>Section non disponible</p>
             </div>

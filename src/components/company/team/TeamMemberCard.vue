@@ -17,10 +17,10 @@
         </div>
 
         <div class="flex-1">
-          <h3 class="font-semibold text-primary-light-content text-lg">
+          <h3 class="font-semibold text-secondary text-lg">
             {{ member.firstName }} {{ member.lastName }}
           </h3>
-          <p class="text-primary-light-content text-sm mt-0.5">
+          <p class="text-secondary text-sm mt-0.5">
             {{ member.position }}
           </p>
         </div>
@@ -54,7 +54,7 @@
 
     <!-- Subordinates Count -->
     <div v-if="subordinatesCount > 0" class="mt-3 pt-3 border-t border-primary-stroke">
-      <div class="flex items-center gap-2 text-sm text-primary-light-content">
+      <div class="flex items-center gap-2 text-sm text-secondary">
         <i class="fa fa-users"></i>
         <span>{{
           $t(

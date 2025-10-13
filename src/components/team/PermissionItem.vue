@@ -17,14 +17,14 @@
               :class="[
                 permission.icon,
                 'text-lg transition-colors',
-                value ? 'text-primary-content' : 'text-primary-light-content',
+                value ? 'text-sage-content' : 'text-secondary',
               ]"
             ></i>
           </div>
         </div>
         <div class="flex-1">
           <div class="font-medium text-base">{{ permission.name }}</div>
-          <div class="text-sm text-primary-light-content">{{ permission.description }}</div>
+          <div class="text-sm text-secondary">{{ permission.description }}</div>
         </div>
       </div>
     </div>

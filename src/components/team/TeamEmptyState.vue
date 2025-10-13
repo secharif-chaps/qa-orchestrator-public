@@ -1,10 +1,10 @@
 <template>
   <div class="bg-base-100 rounded-lg shadow-sm p-12 text-center">
-    <i class="fa fa-users text-4xl text-primary-light-content/50 mb-4"></i>
+    <i class="fa fa-users text-4xl text-secondary/50 mb-4"></i>
     <h3 class="text-lg font-medium text-base mb-2">
       {{ title }}
     </h3>
-    <p class="text-primary-light-content mb-6">
+    <p class="text-secondary mb-6">
       {{ description }}
     </p>
     <button

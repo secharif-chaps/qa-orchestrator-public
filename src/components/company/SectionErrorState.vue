@@ -6,12 +6,12 @@
     </div>
 
     <!-- Error Title -->
-    <h3 class="text-xl font-semibold text-primary-light-content mb-2">
+    <h3 class="text-xl font-semibold text-secondary mb-2">
       {{ title }}
     </h3>
 
     <!-- Error Description -->
-    <p class="text-primary-light-content max-w-md mx-auto mb-4 text-center">
+    <p class="text-secondary max-w-md mx-auto mb-4 text-center">
       {{ description }}
     </p>
 

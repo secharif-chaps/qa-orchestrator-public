@@ -2,7 +2,7 @@
   <div class="flex items-start gap-3">
     <!-- Icon with badge -->
     <div class="relative flex-shrink-0">
-      <Badge variant="secondary" color="primary" :icon="icon" size="md" />
+      <Badge variant="secondary" color="sage" :icon="icon" size="md" />
       <div class="absolute -bottom-0.5 -right-0.5">
         <Badge variant="primary" color="success" icon="fa fa-plus" size="xs" />
       </div>

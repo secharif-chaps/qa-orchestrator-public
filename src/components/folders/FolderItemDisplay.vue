@@ -25,14 +25,14 @@
             v-show="showFallbackIcon || !getCompanyDomain(item.website) || item.type !== 'company'"
             class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
           >
-            <i class="fas fa-building text-primary-light-content text-xl"></i>
+            <i class="fas fa-building text-secondary text-xl"></i>
           </div>
         </div>
         <div class="flex-1 min-w-0 max-w-32">
           <h3 class="text-lg font-semibold transition-colors truncate">
             {{ item.name }}
           </h3>
-          <p class="text-sm text-primary-light-content truncate">
+          <p class="text-sm text-secondary truncate">
             {{ formatType(item.type) }}
           </p>
         </div>
@@ -62,7 +62,7 @@
       </div>
     </div>
 
-    <div class="flex items-center justify-between text-sm text-primary-light-content">
+    <div class="flex items-center justify-between text-sm text-secondary">
       <span>{{ $t('folder.item.created', 'Created') }} {{ formatDate(item.created_at) }}</span>
       <span v-if="item.owner">by @{{ item.owner }}</span>
     </div>

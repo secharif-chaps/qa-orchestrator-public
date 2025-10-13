@@ -3,13 +3,13 @@
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center gap-3">
         <div
-          class="w-10 h-10 bg-primary/10 text-primary-light-content rounded-full flex items-center justify-center"
+          class="w-10 h-10 bg-primary/10 text-secondary rounded-full flex items-center justify-center"
         >
           <i :class="moduleIcon" class="text-lg"></i>
         </div>
         <div>
           <h3 class="font-medium capitalize">{{ module }} Module</h3>
-          <p class="text-sm text-primary-light-content">{{ moduleDescription }}</p>
+          <p class="text-sm text-secondary">{{ moduleDescription }}</p>
         </div>
       </div>
 
@@ -34,13 +34,13 @@
     <!-- Token Count Display -->
     <div class="mb-4">
       <div class="flex items-center gap-2 mb-2">
-        <span class="text-sm text-primary-light-content">{{
+        <span class="text-sm text-secondary">{{
           $t('tokens.currentCount', 'Current Tokens')
         }}</span>
         <button
           @click="refreshTokens"
           :disabled="isRefreshing"
-          class="text-primary-light-content hover:text-base transition-colors p-1"
+          class="text-secondary hover:text-base transition-colors p-1"
           :title="$t('tokens.refresh', 'Refresh token count')"
         >
           <i :class="{ 'animate-spin': isRefreshing }" class="fa fa-refresh text-xs"></i>
@@ -59,7 +59,7 @@
     <div v-if="showAdminControls" class="space-y-3 pt-3 border-t border-primary-stroke">
       <!-- Quick Add Buttons -->
       <div>
-        <label class="block text-xs font-medium text-primary-light-content mb-2">
+        <label class="block text-xs font-medium text-secondary mb-2">
           {{ $t('tokens.quickAdd', 'Quick Add') }}
         </label>
         <div class="flex items-center gap-2 flex-wrap">
@@ -77,7 +77,7 @@
           <!-- Loading indicator for quick buttons -->
           <div
             v-if="addTokensMutation.isLoading.value"
-            class="flex items-center gap-2 text-xs text-primary-light-content"
+            class="flex items-center gap-2 text-xs text-secondary"
           >
             <div class="animate-spin rounded-full h-3 w-3 border-b-2 border-primary"></div>
             {{ $t('tokens.adding', 'Adding...') }}
@@ -87,7 +87,7 @@
 
       <!-- Custom Amount -->
       <div>
-        <label class="block text-xs font-medium text-primary-light-content mb-2">
+        <label class="block text-xs font-medium text-secondary mb-2">
           {{ $t('tokens.customAmount', 'Custom Amount') }}
         </label>
         <div class="flex items-center gap-2">
@@ -116,7 +116,7 @@
         </div>
 
         <!-- Helper text -->
-        <div class="text-xs text-primary-light-content mt-1">
+        <div class="text-xs text-secondary mt-1">
           {{ $t('tokens.addHelper', 'Press Enter or click Add to add custom amount') }}
         </div>
       </div>
@@ -204,7 +204,7 @@ const moduleDescription = computed(() =>
 )
 
 const tokenCountColor = computed(() => {
-  if (!props.isEnabled) return 'text-primary-light-content'
+  if (!props.isEnabled) return 'text-secondary'
   if (props.tokenCount === 0) return 'text-red-600'
   if (props.tokenCount < 10) return 'text-yellow-600'
   return 'text-green-600'

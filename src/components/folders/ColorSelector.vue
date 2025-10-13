@@ -11,7 +11,7 @@
       >
         <div class="w-6 h-6 rounded-lg" :class="getColorPreviewClasses()"></div>
         <span class="flex-1 text-left capitalize">{{ selectedColor }}</span>
-        <i class="fas fa-chevron-down text-primary-light-content"></i>
+        <i class="fas fa-chevron-down text-secondary"></i>
       </button>
 
       <!-- Backdrop -->

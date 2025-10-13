@@ -7,7 +7,7 @@
           <h1 class="text-3xl font-bold">
             {{ $t('company.management.title', 'Company Management') }}
           </h1>
-          <p class="text-primary-light-content mt-2">
+          <p class="text-secondary mt-2">
             {{
               $t(
                 'company.management.description',
@@ -31,7 +31,7 @@
         <div class="flex-1 max-w-md">
           <div class="relative">
             <i
-              class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-primary-light-content"
+              class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
             ></i>
             <input
               v-model="companiesStore.filterName"

@@ -11,7 +11,7 @@
         >
           <div>
             <h2 class="text-lg font-semibold">{{ $t('settings.profile.debug.title') }}</h2>
-            <p class="text-sm text-primary-light-content mt-1">
+            <p class="text-sm text-secondary mt-1">
               {{ $t('settings.profile.debug.description') }}
             </p>
           </div>

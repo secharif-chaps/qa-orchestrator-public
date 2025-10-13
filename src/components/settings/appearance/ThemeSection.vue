@@ -2,7 +2,7 @@
   <div class="bg-base-100 border border-primary-stroke rounded-lg">
     <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.theme.title') }}</h2>
-      <p class="text-sm text-primary-light-content mt-1">
+      <p class="text-sm text-secondary mt-1">
         {{ $t('settings.appearance.theme.description') }}
       </p>
     </div>
@@ -15,13 +15,13 @@
         >
           <div class="flex items-center space-x-4">
             <div class="flex-shrink-0">
-              <i :class="themeOption.icon" class="text-lg text-primary-light-content"></i>
+              <i :class="themeOption.icon" class="text-lg text-secondary"></i>
             </div>
             <div>
-              <h3 class="text-sm font-medium text-primary-light-content">
+              <h3 class="text-sm font-medium text-secondary">
                 {{ $t(`settings.appearance.theme.options.${themeOption.value}.title`) }}
               </h3>
-              <p class="text-sm text-primary-light-content">
+              <p class="text-sm text-secondary">
                 {{ $t(`settings.appearance.theme.options.${themeOption.value}.description`) }}
               </p>
             </div>
