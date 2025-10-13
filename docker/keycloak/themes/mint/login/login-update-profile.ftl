@@ -34,7 +34,7 @@
                     </label>
                     <div class="mt-2">
                         <input type="text" id="username" name="username" value="${(user.username!'')}"
-                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
+                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sage-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
                                aria-invalid="<#if messagesPerField.existsError('username')>true</#if>"/>
                         
                         <#if messagesPerField.existsError('username')>
@@ -70,7 +70,7 @@
                 </label>
                 <div class="mt-2">
                     <input type="text" id="firstName" name="firstName" value="${(user.firstName!'')}" required
-                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
+                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sage-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
                            aria-invalid="<#if messagesPerField.existsError('firstName')>true</#if>"/>
                     
                     <#-- Only show error after form submission attempt -->
@@ -89,7 +89,7 @@
                 </label>
                 <div class="mt-2">
                     <input type="text" id="lastName" name="lastName" value="${(user.lastName!'')}" required
-                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
+                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sage-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
                            aria-invalid="<#if messagesPerField.existsError('lastName')>true</#if>"/>
                     
                     <#-- Only show error after form submission attempt -->
@@ -113,7 +113,7 @@
                             <div class="mt-2">
                                 <#if attribute.annotations.inputType?? && attribute.annotations.inputType == "select">
                                     <select id="${attribute.name}" name="${attribute.name}" 
-                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
+                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-sage-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
                                             <#if attribute.required>required</#if>
                                             aria-invalid="<#if messagesPerField.existsError('${attribute.name}')>true</#if>">
                                         <option value="">${msg("selectAnOption")}</option>
@@ -125,13 +125,13 @@
                                     </select>
                                 <#elseif attribute.annotations.inputType?? && attribute.annotations.inputType == "textarea">
                                     <textarea id="${attribute.name}" name="${attribute.name}" rows="3"
-                                              class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
+                                              class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sage-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
                                               <#if attribute.required>required</#if>
                                               aria-invalid="<#if messagesPerField.existsError('${attribute.name}')>true</#if>">${(attribute.value!'')}</textarea>
                                 <#else>
                                     <input type="<#if attribute.annotations.inputType??>${attribute.annotations.inputType}<#else>text</#if>" 
                                            id="${attribute.name}" name="${attribute.name}" value="${(attribute.value!'')}"
-                                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
+                                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sage-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
                                            <#if attribute.required>required</#if>
                                            aria-invalid="<#if messagesPerField.existsError('${attribute.name}')>true</#if>"/>
                                 </#if>
@@ -151,7 +151,7 @@
             <div class="space-y-3">
                 <#if isAppInitiatedAction??>
                     <button type="submit" 
-                            class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                            class="flex w-full justify-center rounded-md bg-sage-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sage-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage-600">
                         ${msg("doSubmit")}
                     </button>
                     <button type="submit" name="cancel-aia" value="true"
@@ -160,7 +160,7 @@
                     </button>
                 <#else>
                     <button type="submit" 
-                            class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                            class="flex w-full justify-center rounded-md bg-sage-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sage-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage-600">
                         ${msg("doSubmit")}
                     </button>
                 </#if>
@@ -170,7 +170,7 @@
         <#-- Back to application link -->
         <#if !isAppInitiatedAction??>
             <div class="mt-6 text-center">
-                <a href="${url.loginUrl}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                <a href="${url.loginUrl}" class="text-sm font-semibold text-sage-600 hover:text-sage-700 dark:text-sage-400 dark:hover:text-sage-300">
                     ${msg("backToApplication")}
                 </a>
             </div>

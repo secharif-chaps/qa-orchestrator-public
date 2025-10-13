@@ -28,7 +28,7 @@
                     <#if !realm.loginWithEmailAllowed>${msg("username")}<#elseif !realm.registrationEmailAsUsername>${msg("usernameOrEmail")}<#else>${msg("email")}</#if>
                 </p>
                 <p class="text-lg font-medium text-gray-900">${auth.attemptedUsername}</p>
-                <a id="reset-login" href="${url.loginRestartFlowUrl}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-500">
+                <a id="reset-login" href="${url.loginRestartFlowUrl}" class="text-sm font-semibold text-sage-600 hover:text-sage-700">
                     ${msg("restartLoginTooltip")}
                 </a>
             </div>
@@ -47,17 +47,17 @@
                 </label>
                 <div class="mt-2">
                     <#if auth?has_content && auth.showUsername()>
-                        <input tabindex="1" id="username" name="username" value="${(auth.attemptedUsername!'')}" 
-                               type="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>text</#if>" 
+                        <input tabindex="1" id="username" name="username" value="${(auth.attemptedUsername!'')}"
+                               type="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>text</#if>"
                                autofocus autocomplete="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>username</#if>"
                                aria-invalid="<#if messagesPerField.existsError('username','password')>true</#if>"
-                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 <#if messagesPerField.existsError('username','password')>outline-red-500<#else>outline-gray-300</#if> placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 <#if messagesPerField.existsError('username','password')>focus:outline-red-600<#else>focus:outline-indigo-600</#if> sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
+                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 <#if messagesPerField.existsError('username','password')>outline-red-500<#else>outline-gray-300</#if> placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 <#if messagesPerField.existsError('username','password')>focus:outline-red-600<#else>focus:outline-sage-600</#if> sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
                     <#else>
-                        <input tabindex="1" id="username" name="username" value="${(login.username!'')}" 
-                               type="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>text</#if>" 
+                        <input tabindex="1" id="username" name="username" value="${(login.username!'')}"
+                               type="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>text</#if>"
                                autofocus autocomplete="<#if realm.loginWithEmailAllowed && realm.registrationEmailAsUsername>email<#else>username</#if>"
                                aria-invalid="<#if messagesPerField.existsError('username','password')>true</#if>"
-                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 <#if messagesPerField.existsError('username','password')>outline-red-500<#else>outline-gray-300</#if> placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 <#if messagesPerField.existsError('username','password')>focus:outline-red-600<#else>focus:outline-indigo-600</#if> sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
+                               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 <#if messagesPerField.existsError('username','password')>outline-red-500<#else>outline-gray-300</#if> placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 <#if messagesPerField.existsError('username','password')>focus:outline-red-600<#else>focus:outline-sage-600</#if> sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
                     </#if>
                     <#if messagesPerField.existsError('username')>
                         <p class="mt-2 text-sm text-red-600">${kcSanitize(messagesPerField.getFirstError('username'))?no_esc}</p>
@@ -72,17 +72,17 @@
                     </label>
                     <#if realm.resetPasswordAllowed>
                         <div class="text-sm">
-                            <a href="${url.loginResetCredentialsUrl}" class="font-semibold text-indigo-600 hover:text-indigo-500">
+                            <a href="${url.loginResetCredentialsUrl}" class="font-semibold text-sage-600 hover:text-sage-700">
                                 ${msg("doForgotPassword")}
                             </a>
                         </div>
                     </#if>
                 </div>
                 <div class="mt-2">
-                    <input tabindex="2" id="password" name="password" type="password" 
+                    <input tabindex="2" id="password" name="password" type="password"
                            autocomplete="current-password" required
                            aria-invalid="<#if messagesPerField.existsError('username','password')>true</#if>"
-                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 <#if messagesPerField.existsError('username','password')>outline-red-500<#else>outline-gray-300</#if> placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 <#if messagesPerField.existsError('username','password')>focus:outline-red-600<#else>focus:outline-indigo-600</#if> sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
+                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 <#if messagesPerField.existsError('username','password')>outline-red-500<#else>outline-gray-300</#if> placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 <#if messagesPerField.existsError('username','password')>focus:outline-red-600<#else>focus:outline-sage-600</#if> sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700" />
                     <#if messagesPerField.existsError('password')>
                         <p class="mt-2 text-sm text-red-600">${kcSanitize(messagesPerField.getFirstError('password'))?no_esc}</p>
                     </#if>
@@ -93,7 +93,7 @@
             <#if realm.rememberMe && !usernameEditDisabled??>
                 <div class="flex items-center">
                     <input tabindex="3" id="rememberMe" name="rememberMe" type="checkbox" <#if login.rememberMe??>checked</#if>
-                           class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" />
+                           class="h-4 w-4 rounded border-gray-300 text-sage-600 focus:ring-sage-600" />
                     <label for="rememberMe" class="ml-3 block text-sm/6 text-gray-900 dark:text-slate-100">
                         ${msg("rememberMe")}
                     </label>
@@ -102,8 +102,8 @@
 
             <div>
                 <input type="hidden" id="id-hidden-input" name="credentialId" <#if auth.selectedCredential?has_content>value="${auth.selectedCredential}"</#if>/>
-                <button tabindex="4" name="login" id="kc-login" type="submit" 
-                        class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                <button tabindex="4" name="login" id="kc-login" type="submit"
+                        class="flex w-full justify-center rounded-full bg-sage-800 px-4 py-2 text-base font-medium text-white hover:bg-sage-900 active:bg-sage-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500 transition-all duration-200">
                     ${msg("doLogIn")}
                 </button>
             </div>
@@ -111,9 +111,9 @@
 
         <#-- Registration link -->
         <#if realm.registrationAllowed && !registrationDisabled??>
-            <p class="mt-10 text-center text-sm/6 text-gray-500">
+            <p class="mt-10 text-center text-sm/6 text-gray-500 dark:text-gray-400">
                 ${msg("noAccount")}
-                <a href="${url.registrationUrl}" class="font-semibold text-indigo-600 hover:text-indigo-500">
+                <a href="${url.registrationUrl}" class="font-semibold text-sage-600 hover:text-sage-700">
                     ${msg("doRegister")}
                 </a>
             </p>
@@ -124,8 +124,8 @@
             <form id="kc-select-try-another-way-form" action="${url.loginAction}" method="post">
                 <div class="mt-6 text-center">
                     <input type="hidden" name="tryAnotherWay" value="on"/>
-                    <a href="#" id="try-another-way" onclick="document.forms['kc-select-try-another-way-form'].submit();return false;" 
-                       class="text-sm font-semibold text-indigo-600 hover:text-indigo-500">
+                    <a href="#" id="try-another-way" onclick="document.forms['kc-select-try-another-way-form'].submit();return false;"
+                       class="text-sm font-semibold text-sage-600 hover:text-sage-700">
                         ${msg("doTryAnotherWay")}
                     </a>
                 </div>

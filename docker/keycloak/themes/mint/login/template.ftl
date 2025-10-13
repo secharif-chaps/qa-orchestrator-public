@@ -54,7 +54,7 @@
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
         <div class="mx-auto h-10 w-auto text-center">
-            <div class="text-3xl font-bold text-indigo-600 dark:text-indigo-300">
+            <div class="text-3xl font-bold text-sage-600 dark:text-sage-300">
                 Mint
             </div>
         </div>

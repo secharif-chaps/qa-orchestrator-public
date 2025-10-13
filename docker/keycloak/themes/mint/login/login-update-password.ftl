@@ -43,7 +43,7 @@
                 </label>
                 <div class="mt-2">
                     <input type="password" id="password-new" name="password-new" 
-                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
+                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sage-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
                            autofocus autocomplete="new-password"
                            aria-invalid="<#if messagesPerField.existsError('password','password-confirm')>true</#if>"/>
                     
@@ -62,7 +62,7 @@
                 </label>
                 <div class="mt-2">
                     <input type="password" id="password-confirm" name="password-confirm" 
-                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
+                           class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-sage-600 sm:text-sm/6 dark:bg-slate-800 dark:text-slate-100 dark:outline-slate-700"
                            autocomplete="new-password"
                            aria-invalid="<#if messagesPerField.existsError('password-confirm')>true</#if>"/>
                     
@@ -117,7 +117,7 @@
             <div class="space-y-3">
                 <#if isAppInitiatedAction??>
                     <button type="submit" id="kc-login" name="login"
-                            class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                            class="flex w-full justify-center rounded-md bg-sage-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sage-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage-600">
                         ${msg("doSubmit")}
                     </button>
                     <button type="submit" name="cancel-aia" value="true"
@@ -126,7 +126,7 @@
                     </button>
                 <#else>
                     <button type="submit" id="kc-login" name="login"
-                            class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                            class="flex w-full justify-center rounded-md bg-sage-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-sage-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sage-600">
                         ${msg("doSubmit")}
                     </button>
                 </#if>
@@ -136,7 +136,7 @@
         <#-- Logout option -->
         <#if !isAppInitiatedAction??>
             <div class="mt-6 text-center">
-                <a href="${url.loginUrl}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
+                <a href="${url.loginUrl}" class="text-sm font-semibold text-sage-600 hover:text-sage-700 dark:text-sage-400 dark:hover:text-sage-300">
                     ${msg("backToLogin")}
                 </a>
             </div>
