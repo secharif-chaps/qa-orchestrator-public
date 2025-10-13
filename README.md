@@ -216,8 +216,8 @@ Use semantic color classes for consistent theming:
 
   <!-- Text -->
   <p class="text-base">Normal text</p>
-  <p class="text-primary-light-content">Secondary text</p>
-  <p class="text-primary-light-content">Accent text</p>
+  <p class="text-secondary">Secondary text</p>
+  <p class="text-secondary">Accent text</p>
 
   <!-- Interactive elements -->
   <button class="bg-primary text-white hover:bg-primary/80">Primary Button</button>

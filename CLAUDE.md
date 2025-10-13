@@ -120,7 +120,7 @@ Each semantic color has **4 variants**:
 **Solid Button**
 
 ```vue
-<button class="bg-primary text-primary-content-content">
+<button class="bg-primary text-sage-content-content">
   Primary Action
 </button>
 ```
@@ -205,7 +205,7 @@ Use `base` colors for application hierarchy:
 
 ```vue
 <div class="flex gap-2">
-  <button class="bg-primary text-primary-content-content px-4 py-2 rounded-lg">
+  <button class="bg-primary text-sage-content-content px-4 py-2 rounded-lg">
     Save
   </button>
   <button class="bg-error text-error-content px-4 py-2 rounded-lg">
@@ -228,7 +228,7 @@ Use `base` colors for application hierarchy:
 - Mix mismatched pairs: ~~`bg-success text-error-content`~~
 - Use palette colors: ~~`bg-green-100`~~, ~~`text-red-700`~~
 - Use raw colors: ~~`bg-[#29ad72]`~~
-- Ignore content pairing: ~~`bg-primary text-black`~~ (use `text-primary-content-content`)
+- Ignore content pairing: ~~`bg-primary text-black`~~ (use `text-sage-content-content`)
 
 ### File Organization
 

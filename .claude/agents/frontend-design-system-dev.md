@@ -50,8 +50,8 @@ Only theses combinations are allowed :
 
 - text-white on bg-sage-600
 - text-black on bg-almond-100
-- text-sage-700 on bg-almond-100
-- text-sage-700 on bg-sage-100
+- text-secondary on bg-almond-100
+- text-secondary on bg-sage-100
 - text-sage-800 on bg-sage-200
 - text-black on bg-rose-200
 - text-rose-800 on bg-rose-100
@@ -96,7 +96,7 @@ Only theses combinations are allowed :
 
 #### Opacity Modifiers
 
-- Use `bg-primary/10`, `bg-primary/20`, `text-primary-content/80` instead of color shades for dark mode
+- Use `bg-primary/10`, `bg-primary/20`, `text-sage-content/80` instead of color shades for dark mode
 - `/10`: Very subtle backgrounds
 - `/20`: Subtle backgrounds
 - `/50`: Medium opacity
