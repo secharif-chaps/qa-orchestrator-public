@@ -107,7 +107,7 @@
       <button
         v-if="!showAlert1 || !showAlert2"
         @click="resetAlerts"
-        class="text-primary-light-content text-sm hover:underline"
+        class="text-secondary text-sm hover:underline"
       >
         Reset dismissed alerts
       </button>

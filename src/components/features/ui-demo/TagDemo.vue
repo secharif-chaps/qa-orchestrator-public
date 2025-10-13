@@ -4,8 +4,8 @@
     <section class="space-y-4">
       <h2 class="text-xl font-semibold">Basic Tags</h2>
       <div class="p-4 border border-primary-stroke rounded-card flex flex-wrap gap-3">
-        <Tag variant="primary" label="Primary" />
-        <Tag variant="secondary" label="Secondary" />
+        <Tag variant="sage" label="Sage" />
+        <Tag variant="almond" label="Almond" />
         <Tag variant="success" label="Success" />
         <Tag variant="warning" label="Warning" />
         <Tag variant="error" label="Error" />
@@ -15,8 +15,8 @@
       <div
         class="dark p-4 border border-primary-stroke rounded-card dark:text-sage-100 dark:bg-sage-900 flex flex-wrap gap-3"
       >
-        <Tag variant="primary" label="Primary" />
-        <Tag variant="secondary" label="Secondary" />
+        <Tag variant="sage" label="Sage" />
+        <Tag variant="almond" label="Almond" />
         <Tag variant="success" label="Success" />
         <Tag variant="warning" label="Warning" />
         <Tag variant="error" label="Error" />
@@ -29,8 +29,8 @@
     <section class="space-y-4">
       <h2 class="text-xl font-semibold">Basic Tags</h2>
       <div class="p-4 border border-primary-stroke rounded-card flex flex-wrap gap-3">
-        <Tag appearance="outline" variant="primary" label="Primary" />
-        <Tag appearance="outline" variant="secondary" label="Secondary" />
+        <Tag appearance="outline" variant="sage" label="Sage" />
+        <Tag appearance="outline" variant="almond" label="Almond" />
         <Tag appearance="outline" variant="success" label="Success" />
         <Tag appearance="outline" variant="warning" label="Warning" />
         <Tag appearance="outline" variant="error" label="Error" />
@@ -40,8 +40,8 @@
       <div
         class="dark p-4 border border-primary-stroke rounded-card dark:text-sage-100 dark:bg-sage-900 flex flex-wrap gap-3"
       >
-        <Tag appearance="outline" variant="primary" label="Primary" />
-        <Tag appearance="outline" variant="secondary" label="Secondary" />
+        <Tag appearance="outline" variant="sage" label="Sage" />
+        <Tag appearance="outline" variant="almond" label="Almond" />
         <Tag appearance="outline" variant="success" label="Success" />
         <Tag appearance="outline" variant="warning" label="Warning" />
         <Tag appearance="outline" variant="error" label="Error" />
@@ -54,7 +54,7 @@
     <section class="space-y-4">
       <h2 class="text-xl font-semibold">With Icons</h2>
       <div class="flex flex-wrap gap-3">
-        <Tag variant="primary" icon="fa fa-star" label="Featured" />
+        <Tag variant="sage" icon="fa fa-star" label="Featured" />
         <Tag variant="success" icon="fa fa-check" label="Approved" />
         <Tag variant="warning" icon="fa fa-exclamation-triangle" label="Pending" />
         <Tag variant="error" icon="fa fa-times-circle" label="Rejected" />
@@ -79,23 +79,23 @@
       <h2 class="text-xl font-semibold">Size Variations</h2>
       <div class="space-y-3">
         <div class="flex items-center gap-3">
-          <span class="text-sm text-primary-light-content w-20">Extra Small:</span>
-          <Tag variant="primary" label="XS Badge" size="xs" />
+          <span class="text-sm text-secondary w-20">Extra Small:</span>
+          <Tag variant="sage" label="XS Badge" size="xs" />
           <Tag variant="success" icon="fa fa-check" label="Done" size="xs" />
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-sm text-primary-light-content w-20">Small:</span>
-          <Tag variant="primary" label="SM Badge" size="sm" />
+          <span class="text-sm text-secondary w-20">Small:</span>
+          <Tag variant="sage" label="SM Badge" size="sm" />
           <Tag variant="warning" icon="fa fa-star" label="Featured" size="sm" />
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-sm text-primary-light-content w-20">Medium:</span>
-          <Tag variant="primary" label="MD Badge" size="md" />
+          <span class="text-sm text-secondary w-20">Medium:</span>
+          <Tag variant="sage" label="MD Badge" size="md" />
           <Tag variant="info" icon="fa fa-info" label="Information" size="md" />
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-sm text-primary-light-content w-20">Large:</span>
-          <Tag variant="primary" label="LG Badge" size="lg" />
+          <span class="text-sm text-secondary w-20">Large:</span>
+          <Tag variant="sage" label="LG Badge" size="lg" />
           <Tag variant="error" icon="fa fa-exclamation" label="Alert" size="lg" />
         </div>
       </div>
@@ -107,7 +107,7 @@
       <div class="flex flex-wrap gap-3">
         <Tag
           v-if="showDismissible1"
-          variant="primary"
+          variant="sage"
           label="Dismissible"
           dismissible
           @dismiss="showDismissible1 = false"
@@ -131,7 +131,7 @@
         <button
           v-if="!showDismissible1 || !showDismissible2 || !showDismissible3"
           @click="resetDismissible"
-          class="text-primary-light-content text-sm hover:underline"
+          class="text-secondary text-sm hover:underline"
         >
           Reset dismissed Tags
         </button>

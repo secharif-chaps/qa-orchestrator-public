@@ -2,7 +2,7 @@
   <div class="space-y-8">
     <section class="space-y-4">
       <h2 class="text-xl font-semibold">Indicator Component</h2>
-      <p class="text-primary-light-content">
+      <p class="text-secondary">
         Simple status indicators with light halo effect. Perfect for online status, activity
         indicators, and subtle notifications.
       </p>
@@ -10,39 +10,39 @@
       <!-- All Colors -->
       <div class="space-y-2">
         <h3 class="text-lg font-medium">Colors</h3>
-        <p class="text-sm text-primary-light-content mb-4">
+        <p class="text-sm text-secondary mb-4">
           All semantic colors available with -200 background and -900 dot
         </p>
         <div
           class="p-4 border border-primary-stroke rounded-card flex flex-wrap items-center gap-6"
         >
           <div class="flex flex-col items-center gap-2">
-            <Indicator color="primary" />
-            <span class="text-xs text-primary-light-content">Primary</span>
+            <Indicator color="sage" />
+            <span class="text-xs text-secondary">Primary</span>
           </div>
           <div class="flex flex-col items-center gap-2">
             <Indicator color="success" />
-            <span class="text-xs text-primary-light-content">Success</span>
+            <span class="text-xs text-secondary">Success</span>
           </div>
           <div class="flex flex-col items-center gap-2">
             <Indicator color="warning" />
-            <span class="text-xs text-primary-light-content">Warning</span>
+            <span class="text-xs text-secondary">Warning</span>
           </div>
           <div class="flex flex-col items-center gap-2">
             <Indicator color="error" />
-            <span class="text-xs text-primary-light-content">Error</span>
+            <span class="text-xs text-secondary">Error</span>
           </div>
           <div class="flex flex-col items-center gap-2">
             <Indicator color="info" />
-            <span class="text-xs text-primary-light-content">Info</span>
+            <span class="text-xs text-secondary">Info</span>
           </div>
           <div class="flex flex-col items-center gap-2">
             <Indicator color="accent" />
-            <span class="text-xs text-primary-light-content">Accent</span>
+            <span class="text-xs text-secondary">Accent</span>
           </div>
           <div class="flex flex-col items-center gap-2">
             <Indicator color="slate" />
-            <span class="text-xs text-primary-light-content">Slate</span>
+            <span class="text-xs text-secondary">Slate</span>
           </div>
         </div>
 
@@ -50,7 +50,7 @@
           class="dark dark:text-sage-100 dark:bg-sage-900 border border-primary-stroke rounded-card p-4 flex flex-wrap items-center gap-6"
         >
           <div class="flex flex-col items-center gap-2">
-            <Indicator color="primary" />
+            <Indicator color="sage" />
             <span class="text-xs">Primary</span>
           </div>
           <div class="flex flex-col items-center gap-2">
@@ -83,19 +83,19 @@
       <!-- Sizes -->
       <div class="space-y-2">
         <h3 class="text-lg font-medium">Sizes</h3>
-        <p class="text-sm text-primary-light-content mb-4">Small, medium, and large sizes</p>
+        <p class="text-sm text-secondary mb-4">Small, medium, and large sizes</p>
         <div class="flex flex-wrap items-center gap-8">
           <div class="flex flex-col items-center gap-2">
             <Indicator color="success" size="sm" />
-            <span class="text-xs text-primary-light-content">Small</span>
+            <span class="text-xs text-secondary">Small</span>
           </div>
           <div class="flex flex-col items-center gap-2">
             <Indicator color="success" size="md" />
-            <span class="text-xs text-primary-light-content">Medium</span>
+            <span class="text-xs text-secondary">Medium</span>
           </div>
           <div class="flex flex-col items-center gap-2">
             <Indicator color="success" size="lg" />
-            <span class="text-xs text-primary-light-content">Large</span>
+            <span class="text-xs text-secondary">Large</span>
           </div>
         </div>
       </div>
@@ -103,7 +103,7 @@
       <!-- Usage with Text -->
       <div class="space-y-2">
         <h3 class="text-lg font-medium">Usage with Text</h3>
-        <p class="text-sm text-primary-light-content mb-4">Indicators paired with status text</p>
+        <p class="text-sm text-secondary mb-4">Indicators paired with status text</p>
         <div class="space-y-3">
           <div class="flex items-center gap-2">
             <Indicator color="success" size="sm" />
@@ -141,12 +141,12 @@
                 </div>
                 <div>
                   <div class="font-medium text-sm">Alice Morgan</div>
-                  <div class="text-xs text-primary-light-content">Product Designer</div>
+                  <div class="text-xs text-secondary">Product Designer</div>
                 </div>
               </div>
               <div class="flex items-center gap-2">
                 <Indicator color="success" size="sm" />
-                <span class="text-xs text-primary-light-content">Online</span>
+                <span class="text-xs text-secondary">Online</span>
               </div>
             </div>
 
@@ -159,28 +159,28 @@
                 </div>
                 <div>
                   <div class="font-medium text-sm">Ben Taylor</div>
-                  <div class="text-xs text-primary-light-content">Frontend Developer</div>
+                  <div class="text-xs text-secondary">Frontend Developer</div>
                 </div>
               </div>
               <div class="flex items-center gap-2">
                 <Indicator color="warning" size="sm" />
-                <span class="text-xs text-primary-light-content">Away</span>
+                <span class="text-xs text-secondary">Away</span>
               </div>
             </div>
 
             <div class="flex items-center justify-between p-3 bg-base-100 rounded-lg">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center">
-                  <span class="text-sm font-semibold text-primary-light-content">CW</span>
+                  <span class="text-sm font-semibold text-secondary">CW</span>
                 </div>
                 <div>
                   <div class="font-medium text-sm">Clara White</div>
-                  <div class="text-xs text-primary-light-content">Backend Developer</div>
+                  <div class="text-xs text-secondary">Backend Developer</div>
                 </div>
               </div>
               <div class="flex items-center gap-2">
                 <Indicator color="slate" size="sm" />
-                <span class="text-xs text-primary-light-content">Offline</span>
+                <span class="text-xs text-secondary">Offline</span>
               </div>
             </div>
           </div>
@@ -195,7 +195,7 @@
                 <span class="text-sm font-medium">API Server</span>
                 <Indicator color="success" size="md" />
               </div>
-              <div class="text-xs text-primary-light-content">
+              <div class="text-xs text-secondary">
                 Response time: 45ms
                 <br />
                 Uptime: 99.99%
@@ -207,7 +207,7 @@
                 <span class="text-sm font-medium">Database</span>
                 <Indicator color="warning" size="md" />
               </div>
-              <div class="text-xs text-primary-light-content">
+              <div class="text-xs text-secondary">
                 Response time: 120ms
                 <br />
                 Uptime: 98.5%
@@ -219,7 +219,7 @@
                 <span class="text-sm font-medium">Cache Server</span>
                 <Indicator color="success" size="md" />
               </div>
-              <div class="text-xs text-primary-light-content">
+              <div class="text-xs text-secondary">
                 Response time: 12ms
                 <br />
                 Uptime: 99.95%
@@ -231,7 +231,7 @@
                 <span class="text-sm font-medium">Storage</span>
                 <Indicator color="error" size="md" />
               </div>
-              <div class="text-xs text-primary-light-content">
+              <div class="text-xs text-secondary">
                 Status: Maintenance
                 <br />
                 ETA: 30 minutes
@@ -248,9 +248,7 @@
               <Indicator color="success" size="sm" class="mt-1" />
               <div class="flex-1">
                 <div class="text-sm font-medium">Implement user authentication</div>
-                <div class="text-xs text-primary-light-content mt-1">
-                  Completed on March 15, 2024
-                </div>
+                <div class="text-xs text-secondary mt-1">Completed on March 15, 2024</div>
               </div>
             </div>
 
@@ -258,9 +256,7 @@
               <Indicator color="info" size="sm" class="mt-1" />
               <div class="flex-1">
                 <div class="text-sm font-medium">Design dashboard layout</div>
-                <div class="text-xs text-primary-light-content mt-1">
-                  In progress - 60% complete
-                </div>
+                <div class="text-xs text-secondary mt-1">In progress - 60% complete</div>
               </div>
             </div>
 
@@ -268,9 +264,7 @@
               <Indicator color="warning" size="sm" class="mt-1" />
               <div class="flex-1">
                 <div class="text-sm font-medium">API integration testing</div>
-                <div class="text-xs text-primary-light-content mt-1">
-                  Pending - Waiting for backend
-                </div>
+                <div class="text-xs text-secondary mt-1">Pending - Waiting for backend</div>
               </div>
             </div>
 
@@ -278,7 +272,7 @@
               <Indicator color="slate" size="sm" class="mt-1" />
               <div class="flex-1">
                 <div class="text-sm font-medium">Performance optimization</div>
-                <div class="text-xs text-primary-light-content mt-1">Not started</div>
+                <div class="text-xs text-secondary mt-1">Not started</div>
               </div>
             </div>
           </div>
@@ -290,7 +284,7 @@
             <h4 class="text-sm font-semibold">Notifications</h4>
             <div class="flex items-center gap-2">
               <Indicator color="error" size="sm" />
-              <span class="text-xs text-primary-light-content">3 unread</span>
+              <span class="text-xs text-secondary">3 unread</span>
             </div>
           </div>
 
@@ -299,33 +293,27 @@
               <Indicator color="info" size="sm" class="mt-1" />
               <div class="flex-1">
                 <div class="text-sm font-medium">System Update Available</div>
-                <div class="text-xs text-primary-light-content mt-1">
-                  Version 2.4.0 is ready to install
-                </div>
+                <div class="text-xs text-secondary mt-1">Version 2.4.0 is ready to install</div>
               </div>
-              <span class="text-xs text-primary-light-content whitespace-nowrap">5m ago</span>
+              <span class="text-xs text-secondary whitespace-nowrap">5m ago</span>
             </div>
 
             <div class="flex items-start gap-3 p-3 bg-base-100 rounded-lg">
               <Indicator color="success" size="sm" class="mt-1" />
               <div class="flex-1">
                 <div class="text-sm font-medium">Backup Completed</div>
-                <div class="text-xs text-primary-light-content mt-1">
-                  Daily backup finished successfully
-                </div>
+                <div class="text-xs text-secondary mt-1">Daily backup finished successfully</div>
               </div>
-              <span class="text-xs text-primary-light-content whitespace-nowrap">1h ago</span>
+              <span class="text-xs text-secondary whitespace-nowrap">1h ago</span>
             </div>
 
             <div class="flex items-start gap-3 p-3 bg-base-100 rounded-lg">
               <Indicator color="warning" size="sm" class="mt-1" />
               <div class="flex-1">
                 <div class="text-sm font-medium">Storage Almost Full</div>
-                <div class="text-xs text-primary-light-content mt-1">
-                  85% of storage capacity used
-                </div>
+                <div class="text-xs text-secondary mt-1">85% of storage capacity used</div>
               </div>
-              <span class="text-xs text-primary-light-content whitespace-nowrap">2h ago</span>
+              <span class="text-xs text-secondary whitespace-nowrap">2h ago</span>
             </div>
           </div>
         </div>

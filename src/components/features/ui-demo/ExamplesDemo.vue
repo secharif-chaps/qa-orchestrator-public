@@ -73,7 +73,7 @@
               <Tag variant="success" dot label="Operational" size="sm" />
             </div>
             <div class="text-2xl font-bold">99.9%</div>
-            <div class="text-xs text-primary-light-content">Uptime</div>
+            <div class="text-xs text-secondary">Uptime</div>
           </div>
           <div class="bg-base-200 p-4 rounded-lg border border-primary-stroke">
             <div class="flex items-center justify-between mb-3">
@@ -81,7 +81,7 @@
               <Tag variant="warning" icon="fa fa-coins" label="25 left" size="sm" />
             </div>
             <div class="text-2xl font-bold">475/500</div>
-            <div class="text-xs text-primary-light-content">Tokens used</div>
+            <div class="text-xs text-secondary">Tokens used</div>
           </div>
           <div class="bg-base-200 p-4 rounded-lg border border-primary-stroke">
             <div class="flex items-center justify-between mb-3">
@@ -89,7 +89,7 @@
               <Tag variant="info" label="3 pending" size="sm" />
             </div>
             <div class="text-2xl font-bold">12</div>
-            <div class="text-xs text-primary-light-content">Active tasks</div>
+            <div class="text-xs text-secondary">Active tasks</div>
           </div>
         </div>
       </div>
@@ -106,7 +106,7 @@
         />
         <Alert variant="warning" title="Maintenance Scheduled" icon="fa fa-wrench">
           <div>
-            <p class="text-sm text-primary-light-content mb-2">
+            <p class="text-sm text-secondary mb-2">
               System maintenance is scheduled for tonight at 2:00 AM EST.
             </p>
             <div class="flex gap-2">
@@ -136,7 +136,7 @@
               </div>
               <div class="flex-1">
                 <div class="font-semibold">John Doe</div>
-                <div class="text-xs text-primary-light-content">Product Manager</div>
+                <div class="text-xs text-secondary">Product Manager</div>
               </div>
             </div>
             <div class="flex gap-2">
@@ -149,7 +149,9 @@
           <div class="bg-base-200 p-4 rounded-lg border border-primary-stroke">
             <div class="flex items-center gap-3 mb-3">
               <div class="relative">
-                <div class="w-12 h-12 rounded-full bg-warning-light flex items-center justify-center">
+                <div
+                  class="w-12 h-12 rounded-full bg-warning-light flex items-center justify-center"
+                >
                   <span class="text-lg font-semibold text-warning-light-content">AS</span>
                 </div>
                 <div class="absolute -bottom-1 -right-1">
@@ -158,7 +160,7 @@
               </div>
               <div class="flex-1">
                 <div class="font-semibold">Alice Smith</div>
-                <div class="text-xs text-primary-light-content">Designer</div>
+                <div class="text-xs text-secondary">Designer</div>
               </div>
             </div>
             <div class="flex gap-2">
@@ -180,7 +182,7 @@
               </div>
               <div class="flex-1">
                 <div class="font-semibold">Bob Johnson</div>
-                <div class="text-xs text-primary-light-content">Developer</div>
+                <div class="text-xs text-secondary">Developer</div>
               </div>
             </div>
             <div class="flex gap-2">
@@ -199,9 +201,7 @@
             <h4 class="font-semibold">Notifications</h4>
             <div class="flex items-center gap-3">
               <Badge variant="primary" color="error" :number="5" size="sm" />
-              <button class="text-sm text-primary-light-content hover:text-primary">
-                Mark all as read
-              </button>
+              <button class="text-sm text-secondary hover:text-primary">Mark all as read</button>
             </div>
           </div>
           <div class="divide-y divide-primary-stroke">
@@ -210,10 +210,10 @@
               <Badge variant="primary" color="info" icon="fa fa-comment" size="md" />
               <div class="flex-1">
                 <div class="font-medium text-sm">New comment on your task</div>
-                <div class="text-xs text-primary-light-content mt-1">
+                <div class="text-xs text-secondary mt-1">
                   Sarah commented: "Great work on the design!"
                 </div>
-                <div class="text-xs text-primary-light-content mt-2">2 minutes ago</div>
+                <div class="text-xs text-secondary mt-2">2 minutes ago</div>
               </div>
               <Badge variant="secondary" color="info" :number="1" size="sm" />
             </div>
@@ -223,22 +223,25 @@
               <Badge variant="primary" color="success" icon="fa fa-check-circle" size="md" />
               <div class="flex-1">
                 <div class="font-medium text-sm">Task completed</div>
-                <div class="text-xs text-primary-light-content mt-1">
+                <div class="text-xs text-secondary mt-1">
                   "Update documentation" was marked as complete
                 </div>
-                <div class="text-xs text-primary-light-content mt-2">1 hour ago</div>
+                <div class="text-xs text-secondary mt-2">1 hour ago</div>
               </div>
             </div>
 
             <!-- Notification 3 -->
             <div class="p-4 flex items-start gap-3 hover:bg-base-100 transition-colors">
-              <Badge variant="primary" color="warning" icon="fa fa-exclamation-triangle" size="md" />
+              <Badge
+                variant="primary"
+                color="warning"
+                icon="fa fa-exclamation-triangle"
+                size="md"
+              />
               <div class="flex-1">
                 <div class="font-medium text-sm">Deadline approaching</div>
-                <div class="text-xs text-primary-light-content mt-1">
-                  "Q4 Report" is due in 2 days
-                </div>
-                <div class="text-xs text-primary-light-content mt-2">3 hours ago</div>
+                <div class="text-xs text-secondary mt-1">"Q4 Report" is due in 2 days</div>
+                <div class="text-xs text-secondary mt-2">3 hours ago</div>
               </div>
               <Badge variant="secondary" color="warning" :number="2" size="sm" />
             </div>

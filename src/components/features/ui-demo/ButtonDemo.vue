@@ -3,7 +3,7 @@
     <!-- Button Variants -->
     <section class="space-y-4 border border-primary-stroke p-4 rounded-card">
       <h2 class="text-xl font-semibold">Button Variants (Design System)</h2>
-      <p class="text-sm text-primary-light-content">
+      <p class="text-sm text-secondary">
         All buttons have fully rounded style as per design system. Hover, focus, and click to see
         different states.
       </p>
@@ -30,14 +30,14 @@
       <h2 class="text-xl font-semibold">With Icons</h2>
       <div class="space-y-3">
         <div class="flex flex-wrap gap-3">
-          <span class="text-sm text-primary-light-content w-24">Left Icons:</span>
+          <span class="text-sm text-secondary w-24">Left Icons:</span>
           <Button variant="primary" icon="fa fa-plus" label="Create" />
           <Button variant="secondary" icon="fa fa-download" label="Download" />
           <Button variant="tertiary" icon="fa fa-edit" label="Edit" />
           <Button variant="accent" icon="fa fa-sparkles" label="Special" />
         </div>
         <div class="flex flex-wrap gap-3">
-          <span class="text-sm text-primary-light-content w-24">Right Icons:</span>
+          <span class="text-sm text-secondary w-24">Right Icons:</span>
           <Button
             variant="primary"
             icon="fa fa-arrow-right"
@@ -53,7 +53,7 @@
           <Button variant="accent" icon="fa fa-arrow-right" icon-position="right" label="Next" />
         </div>
         <div class="flex flex-wrap gap-3">
-          <span class="text-sm text-primary-light-content w-24">Icon Only:</span>
+          <span class="text-sm text-secondary w-24">Icon Only:</span>
           <Button variant="primary" icon="fa fa-heart" icon-only />
           <Button variant="secondary" icon="fa fa-bookmark" icon-only />
           <Button variant="tertiary" icon="fa fa-share" icon-only />
@@ -67,21 +67,21 @@
       <h2 class="text-xl font-semibold">Size Variations</h2>
       <div class="space-y-3">
         <div class="flex items-center gap-3">
-          <span class="text-sm text-primary-light-content w-20">Small:</span>
+          <span class="text-sm text-secondary w-20">Small:</span>
           <Button variant="primary" label="Small" size="sm" />
           <Button variant="secondary" icon="fa fa-cog" label="Settings" size="sm" />
           <Button variant="accent" label="Accent" size="sm" />
           <Button variant="tertiary" icon="fa fa-info" icon-only size="sm" />
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-sm text-primary-light-content w-20">Medium:</span>
+          <span class="text-sm text-secondary w-20">Medium:</span>
           <Button variant="primary" label="Medium" size="md" />
           <Button variant="secondary" icon="fa fa-save" label="Save" size="md" />
           <Button variant="accent" label="Accent" size="md" />
           <Button variant="tertiary" icon="fa fa-more" icon-only size="md" />
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-sm text-primary-light-content w-20">Large:</span>
+          <span class="text-sm text-secondary w-20">Large:</span>
           <Button variant="primary" label="Large" size="lg" />
           <Button variant="secondary" icon="fa fa-upload" label="Upload" size="lg" />
           <Button variant="accent" label="Accent" size="lg" />
@@ -95,7 +95,7 @@
       <h2 class="text-xl font-semibold">States</h2>
       <div class="space-y-3">
         <div class="flex flex-wrap gap-3">
-          <span class="text-sm text-primary-light-content w-20">Loading:</span>
+          <span class="text-sm text-secondary w-20">Loading:</span>
           <Button
             variant="primary"
             label="Loading"
@@ -122,7 +122,7 @@
           />
         </div>
         <div class="flex flex-wrap gap-3">
-          <span class="text-sm text-primary-light-content w-20">Disabled:</span>
+          <span class="text-sm text-secondary w-20">Disabled:</span>
           <Button variant="primary" label="Disabled" disabled />
           <Button variant="secondary" label="Disabled" disabled />
           <Button variant="tertiary" label="Disabled" disabled />
