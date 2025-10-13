@@ -18,8 +18,19 @@ build-and-push-frontend:
   services:
     - docker:24-dind
   before_script:
-    # If RELEASE_VERSION is not defined, image is tagged with `latest`
+    # Login to registry
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    # Generate .env.production from GitLab CI/CD variables
+    - |
+      echo "Creating .env.production file..."
+      cat > .env.production << EOF
+      VITE_BASE_URL=${VITE_BASE_URL}
+      VITE_KEYCLOAK_URL=${VITE_KEYCLOAK_URL}
+      VITE_KEYCLOAK_REALM=${VITE_KEYCLOAK_REALM}
+      VITE_BACKEND_API=${VITE_BACKEND_API}
+      VITE_KEYCLOAK_CLIENT_ID=${VITE_KEYCLOAK_CLIENT_ID}
+      EOF
+      echo "✅ .env.production file created"
   script:
     - |
       echo "Building frontend Docker image..."
@@ -42,6 +53,18 @@ test-build-frontend:
   image: docker:24-dind
   services:
     - docker:24-dind
+  before_script:
+    # Generate .env.production from GitLab CI/CD variables
+    - |
+      echo "Creating .env.production file..."
+      cat > .env.production << EOF
+      VITE_BASE_URL=${VITE_BASE_URL}
+      VITE_KEYCLOAK_URL=${VITE_KEYCLOAK_URL}
+      VITE_KEYCLOAK_REALM=${VITE_KEYCLOAK_REALM}
+      VITE_BACKEND_API=${VITE_BACKEND_API}
+      VITE_KEYCLOAK_CLIENT_ID=${VITE_KEYCLOAK_CLIENT_ID}
+      EOF
+      echo "✅ .env.production file created"
   script:
     - echo "Testing frontend Docker build..."
     - docker build --tag mint-front:test .
