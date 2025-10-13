@@ -8,7 +8,7 @@
         'px-3 py-1.5 text-sm font-medium transition-all duration-200',
         modelValue === option.value
           ? 'bg-primary text-white shadow-sm'
-          : 'text-primary-light-content hover:text-primary-light-content hover:bg-base-200',
+          : 'text-secondary hover:text-secondary hover:bg-base-200',
         index === 0 ? 'rounded-l-full' : '',
         index === options.length - 1 ? 'rounded-r-full' : '',
         index > 0 ? '-ml-px' : '',

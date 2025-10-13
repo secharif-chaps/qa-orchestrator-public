@@ -34,7 +34,10 @@
         </h3>
 
         <!-- Default slot for content -->
-        <div v-if="$slots.default" class="text-sm text-sage-700 dark:text-sage-300 leading-relaxed">
+        <div
+          v-if="$slots.default"
+          class="text-sm text-secondary dark:text-sage-300 leading-relaxed"
+        >
           <slot />
         </div>
       </div>

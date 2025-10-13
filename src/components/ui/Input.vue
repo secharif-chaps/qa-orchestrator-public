@@ -13,7 +13,7 @@
         v-if="icon"
         :class="{
           'text-sage-200': dark,
-          'text-primary-light-content/60': !dark,
+          'text-secondary/60': !dark,
         }"
         class="absolute left-4 top-1/2 transform -translate-y-1/2 pointer-events-none"
       >
@@ -31,13 +31,13 @@
         :class="[
           inputClasses,
           {
-            'bg-sage-700 placeholder:text-primary-light-content dark:placeholder:text-white border-primary-700':
+            'bg-sage-700 placeholder:text-secondary dark:placeholder:text-white border-primary-700':
               dark,
-            'bg-base-100 border-primary-stroke placeholder:text-primary-light-content/60 dark:placeholder:text-sage-300':
+            'bg-base-100 border-primary-stroke placeholder:text-secondary/60 dark:placeholder:text-sage-300':
               !dark,
           },
         ]"
-        class="w-full border rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-200 dark:focus:ring-primary-700 dark:focus:border-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="w-full border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-200 dark:focus:ring-primary-700 dark:focus:border-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
         @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
         @blur="$emit('blur', $event)"
         @focus="$emit('focus', $event)"
@@ -49,7 +49,7 @@
         v-if="clearable && modelValue && !disabled"
         type="button"
         @click="$emit('update:modelValue', '')"
-        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary-light-content hover:text-base transition-colors p-1"
+        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary hover:text-base transition-colors p-1"
       >
         <i class="fa fa-times text-xs"></i>
       </button>
@@ -62,7 +62,7 @@
     </div>
 
     <!-- Helper Text -->
-    <div v-if="helper && !error" class="text-xs text-primary-light-content">
+    <div v-if="helper && !error" class="text-xs text-secondary">
       {{ helper }}
     </div>
   </div>

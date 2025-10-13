@@ -3,7 +3,7 @@
     :type="type"
     :disabled="disabled || loading"
     :class="[buttonClasses, dark ? 'dark' : '']"
-    class="min-w-10 hover:cursor-pointer rounded-full inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-bg2 disabled:cursor-not-allowed"
+    class="min-w-10 hover:cursor-pointer rounded-full inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-bg2 disabled:cursor-not-allowed"
     @click="$emit('click', $event)"
   >
     <!-- Loading Spinner -->
@@ -83,8 +83,8 @@ const buttonClasses = computed(() => {
         'bg-sage-800 dark:bg-sage-300',
         'text-white dark:text-sage-900',
         'hover:bg-sage-900',
-        'active:bg-sage-950',
-        'focus:bg-sage-800 focus:ring-accent-700',
+        'active:bg-green-950',
+        'focus-visible:bg-sage-800 focus-visible:ring-accent-500',
         'disabled:bg-gray-100 disabled:text-gray-800',
       )
       break
@@ -93,7 +93,7 @@ const buttonClasses = computed(() => {
         'bg-transparent border border-sage-800 dark:border-sage-300 text-sage-800 dark:text-sage-300',
         'hover:bg-sage-100 hover:text-sage-900 dark:hover:bg-sage-200/10',
         'active:bg-sage-200 active:text-sage-950 dark:active:bg-sage-900',
-        'focus:bg-transparent focus:ring-accent-700',
+        'focus-visible:bg-transparent focus-visible:ring-accent-500',
         'disabled:border-transparent disabled:text-gray-800 disabled:bg-gray-100',
       )
       break
@@ -102,16 +102,16 @@ const buttonClasses = computed(() => {
         'bg-transparent text-sage-800 dark:text-sage-300',
         'hover:bg-sage-100 dark:hover:bg-sage-200/10',
         'active:bg-sage-200 dark:active:bg-sage-950',
-        'focus:ring-accent-700 focus:bg-transparent',
+        'focus-visible:ring-accent-500 focus-visible:bg-transparent',
         'disabled:text-gray-800 disabled:bg-gray-100',
       )
       break
     case 'accent':
       classes.push(
-        'bg-accent-200 text-accent-900',
-        'hover:bg-accent-100 hover:text-accent-950 dark:hover:bg-accent-400',
-        'active:bg-accent-900 active:text-accent-50',
-        'focus:ring-accent-700 focus:bg-accent-200 focus:text-accent-900',
+        'bg-rose-200 text-rose-900',
+        'hover:bg-rose-100 hover:text-rose-950 dark:hover:bg-rose-400',
+        'active:bg-rose-900 active:text-rose-50',
+        'focus-visible:ring-accent-500 focus-visible:bg-rose-200 focus-visible:text-rose-900',
         'disabled:bg-gray-100 disabled:text-gray-800',
       )
       break
