@@ -17,7 +17,7 @@
             v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
             class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/20"
           >
-            <i class="fa fa-building text-4xl text-primary-light-content"></i>
+            <i class="fa fa-building text-4xl text-secondary"></i>
           </div>
         </div>
         <h1 class="text-2xl font-bold">{{ company?.name }}</h1>

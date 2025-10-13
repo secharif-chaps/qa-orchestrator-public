@@ -25,7 +25,7 @@
 
       <!-- Team Members List -->
       <div class="bg-base-100 p-6 rounded-lg">
-        <h3 class="text-lg font-semibold text-primary-light-content mb-4 flex items-center gap-2">
+        <h3 class="text-lg font-semibold text-secondary mb-4 flex items-center gap-2">
           <i class="fa fa-address-card"></i>
           <span>{{ $t('team.members.title', 'Team Members') }}</span>
         </h3>
@@ -35,7 +35,7 @@
       <!-- Hierarchy Graph -->
       <div class="bg-base-100 p-6 rounded-lg">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold text-primary-light-content flex items-center gap-2">
+          <h3 class="text-lg font-semibold text-secondary flex items-center gap-2">
             <i class="fa fa-sitemap"></i>
             <span>{{ $t('team.hierarchy.title', 'Organization Chart') }}</span>
           </h3>
@@ -130,7 +130,7 @@
                   <a
                     :href="getMockedLinkedInUrl(selectedNode)"
                     target="_blank"
-                    class="flex items-center gap-2 text-sm text-primary-light-content hover:underline"
+                    class="flex items-center gap-2 text-sm text-secondary hover:underline"
                   >
                     <i class="fab fa-linkedin"></i>
                     <span>{{ $t('team.hierarchy.viewLinkedIn') }}</span>

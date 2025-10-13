@@ -6,7 +6,7 @@
         <h1 class="text-3xl font-bold">
           {{ $t('admin.dashboard.title', 'Admin Dashboard') }}
         </h1>
-        <p class="text-primary-light-content mt-2">
+        <p class="text-secondary mt-2">
           {{ $t('admin.dashboard.description', 'Manage system features and settings') }}
         </p>
       </div>
@@ -41,7 +41,7 @@
                 <Tag :variant="feature.badgeVariant" size="sm" :label="feature.badgeLabel" />
               </div>
             </div>
-            <p class="text-primary-light-content text-sm mb-4">
+            <p class="text-secondary text-sm mb-4">
               {{ $t(feature.descriptionKey, feature.descriptionDefault) }}
             </p>
             <div :class="['flex items-center text-sm font-medium', feature.actionTextColor]">
@@ -169,14 +169,14 @@ const features: AdminFeature[] = [
     descriptionDefault: 'Manage all workspaces, users, and workspace settings',
     icon: 'fa fa-building',
     iconBgColor: 'bg-primary/10',
-    iconTextColor: 'text-primary-content',
+    iconTextColor: 'text-sage-content',
     iconHoverBgColor: 'group-hover:bg-primary/20',
     ringColor: 'ring-primary/50',
     badgeVariant: 'primary',
     badgeLabel: 'Admin Required',
     actionKey: 'admin.features.manage',
     actionDefault: 'Manage',
-    actionTextColor: 'text-primary-content',
+    actionTextColor: 'text-sage-content',
     permission: 'admin.workspaces',
     navigate: () => router.push('/admin/workspaces'),
   },

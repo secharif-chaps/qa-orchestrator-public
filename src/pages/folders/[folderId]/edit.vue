@@ -12,7 +12,7 @@
           </div>
           <div>
             <h1 class="text-2xl font-bold">{{ $t('folder.edit.title', 'Edit Folder') }}</h1>
-            <p class="text-primary-light-content">
+            <p class="text-secondary">
               {{ $t('folder.edit.subtitle', 'Update your folder settings and appearance') }}
             </p>
           </div>
@@ -24,7 +24,7 @@
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
-        <p class="text-primary-light-content">
+        <p class="text-secondary">
           {{ $t('folder.loading', 'Loading folder...') }}
         </p>
       </div>
@@ -68,7 +68,7 @@
           <div>
             <label class="block text-sm font-medium mb-2">
               {{ $t('folder.form.tags', 'Tags') }}
-              <span class="text-primary-light-content text-xs ml-1"
+              <span class="text-secondary text-xs ml-1"
                 >({{ $t('folder.form.tagsOptional', 'optional') }})</span
               >
             </label>
@@ -95,7 +95,7 @@
               id="is_favorite"
               v-model="form.is_favorite"
               type="checkbox"
-              class="w-5 h-5 rounded border-primary-stroke text-primary-light-content focus:ring-primary/20"
+              class="w-5 h-5 rounded border-primary-stroke text-secondary focus:ring-primary/20"
             />
             <label for="is_favorite" class="text-sm font-medium cursor-pointer">
               {{ $t('folder.form.favorite', 'Mark as favorite') }}

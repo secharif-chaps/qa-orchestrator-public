@@ -8,7 +8,7 @@
             <h1 class="text-3xl font-bold">
               {{ $t('workspace.admin.title', 'Workspace Management') }}
             </h1>
-            <p class="text-primary-light-content mt-2">
+            <p class="text-secondary mt-2">
               {{ $t('workspace.admin.description', 'Manage all workspaces in the system') }}
             </p>
           </div>
@@ -27,7 +27,7 @@
           <div class="flex-1 max-w-md">
             <div class="relative">
               <i
-                class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-primary-light-content"
+                class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
               ></i>
               <Input
                 :model-value="queryParams.search"
@@ -45,7 +45,7 @@
                 @click.stop="showSortDropdown = !showSortDropdown"
                 class="flex items-center gap-2 px-3 py-2 border border-primary-stroke rounded-lg hover:bg-base-200 transition-colors text-sm font-medium bg-base-100"
               >
-                <span class="text-primary-light-content">{{ getSortDisplayText() }}</span>
+                <span class="text-secondary">{{ getSortDisplayText() }}</span>
                 <i
                   class="fa fa-chevron-down text-xs transition-transform"
                   :class="{ 'rotate-180': showSortDropdown }"
@@ -58,7 +58,7 @@
                 @click.stop
               >
                 <div class="p-4 border-b border-primary-stroke">
-                  <h3 class="text-sm font-medium text-primary-light-content mb-3">
+                  <h3 class="text-sm font-medium text-secondary mb-3">
                     {{ $t('workspace.sort.label', 'Sort by:') }}
                   </h3>
                   <div class="space-y-2">
@@ -67,7 +67,7 @@
                         type="radio"
                         :checked="queryParams.sort === 'created_at'"
                         @change="updateSort('created_at')"
-                        class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
+                        class="w-4 h-4 text-secondary border-primary-stroke focus:ring-primary/20"
                       />
                       <span class="text-sm">{{
                         $t('workspace.sort.created', 'Created Date')
@@ -78,7 +78,7 @@
                         type="radio"
                         :checked="queryParams.sort === 'name'"
                         @change="updateSort('name')"
-                        class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
+                        class="w-4 h-4 text-secondary border-primary-stroke focus:ring-primary/20"
                       />
                       <span class="text-sm">{{ $t('workspace.sort.name', 'Name') }}</span>
                     </label>
@@ -87,7 +87,7 @@
                         type="radio"
                         :checked="queryParams.sort === 'member_count'"
                         @change="updateSort('member_count')"
-                        class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
+                        class="w-4 h-4 text-secondary border-primary-stroke focus:ring-primary/20"
                       />
                       <span class="text-sm">{{
                         $t('workspace.sort.members', 'Member Count')
@@ -97,7 +97,7 @@
                 </div>
 
                 <div class="p-4">
-                  <h3 class="text-sm font-medium text-primary-light-content mb-3">
+                  <h3 class="text-sm font-medium text-secondary mb-3">
                     {{ $t('workspace.sort.order', 'Sort Order:') }}
                   </h3>
                   <div class="space-y-2">
@@ -106,7 +106,7 @@
                         type="radio"
                         :checked="queryParams.order === 'asc'"
                         @change="updateOrder('asc')"
-                        class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
+                        class="w-4 h-4 text-secondary border-primary-stroke focus:ring-primary/20"
                       />
                       <span class="text-sm flex items-center gap-2">
                         <i class="fa fa-sort-amount-up"></i>
@@ -118,7 +118,7 @@
                         type="radio"
                         :checked="queryParams.order === 'desc'"
                         @change="updateOrder('desc')"
-                        class="w-4 h-4 text-primary-light-content border-primary-stroke focus:ring-primary/20"
+                        class="w-4 h-4 text-secondary border-primary-stroke focus:ring-primary/20"
                       />
                       <span class="text-sm flex items-center gap-2">
                         <i class="fa fa-sort-amount-down"></i>
@@ -153,7 +153,7 @@
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
-        <p class="text-primary-light-content">
+        <p class="text-secondary">
           {{ $t('workspace.loading', 'Loading workspaces...') }}
         </p>
       </div>
@@ -165,7 +165,7 @@
       >
         <!-- Table Header -->
         <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
-          <div class="grid grid-cols-12 gap-4 text-sm font-medium text-primary-light-content">
+          <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
             <div class="col-span-3">{{ $t('workspace.name', 'Name') }}</div>
             <div class="col-span-2">{{ $t('workspace.slug', 'Slug') }}</div>
             <div class="col-span-3">{{ $t('workspace.table.description', 'Description') }}</div>
@@ -186,7 +186,7 @@
               <div class="col-span-3 flex items-center gap-2">
                 <div class="text-center">
                   <span
-                    class="inline-flex items-center justify-center w-8 h-8 bg-primary/10 text-primary-light-content rounded-full text-sm font-medium"
+                    class="inline-flex items-center justify-center w-8 h-8 bg-primary/10 text-secondary rounded-full text-sm font-medium"
                   >
                     {{ workspace.memberCount }}
                   </span>
@@ -205,21 +205,21 @@
 
               <!-- Slug -->
               <div class="col-span-2">
-                <code class="text-sm bg-base-300 px-2 py-1 rounded text-primary-light-content">{{
+                <code class="text-sm bg-base-300 px-2 py-1 rounded text-secondary">{{
                   workspace.slug
                 }}</code>
               </div>
 
               <!-- Description -->
               <div class="col-span-3">
-                <p class="text-primary-light-content text-sm">
+                <p class="text-secondary text-sm">
                   {{ workspace.description || $t('workspace.noDescription', 'No description') }}
                 </p>
               </div>
 
               <!-- Created Date -->
               <div class="col-span-2">
-                <div class="text-sm text-primary-light-content">
+                <div class="text-sm text-secondary">
                   {{ formatDate(workspace.created_at) }}
                 </div>
               </div>
@@ -273,7 +273,7 @@
 
         <!-- Empty State -->
         <div v-if="workspaces.length === 0 && !isLoading" class="p-12 text-center">
-          <i class="fa fa-building text-4xl text-primary-light-content/50 mb-4"></i>
+          <i class="fa fa-building text-4xl text-secondary/50 mb-4"></i>
           <h3 class="text-lg font-medium text-base mb-2">
             {{
               queryParams.search
@@ -281,7 +281,7 @@
                 : $t('workspace.empty.title', 'No workspaces found')
             }}
           </h3>
-          <p class="text-primary-light-content mb-6">
+          <p class="text-secondary mb-6">
             {{
               queryParams.search
                 ? $t('workspace.empty.tryDifferentSearch', 'Try a different search term')

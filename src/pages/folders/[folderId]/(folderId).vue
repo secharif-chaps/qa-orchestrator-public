@@ -6,7 +6,7 @@
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
-        <p class="text-primary-light-content">
+        <p class="text-secondary">
           {{ $t('folder.loading', 'Loading folder...') }}
         </p>
       </div>
@@ -59,7 +59,7 @@
 
             <!-- Table Header -->
             <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
-              <div class="grid grid-cols-12 gap-4 text-sm font-medium text-primary-light-content">
+              <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
                 <div class="col-span-4">{{ $t('folder.item.name', 'Item') }}</div>
                 <div class="col-span-2">{{ $t('folder.item.type', 'Type') }}</div>
                 <div class="col-span-2">{{ $t('folder.item.created', 'Created') }}</div>
@@ -103,7 +103,7 @@
                           "
                           class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
                         >
-                          <i class="fas fa-building text-primary-light-content"></i>
+                          <i class="fas fa-building text-secondary"></i>
                         </div>
                       </div>
                       <div class="flex-1">
@@ -115,12 +115,10 @@
                     <Tag variant="primary" :label="item.type" size="sm" />
                   </div>
                   <div class="col-span-2">
-                    <span class="text-sm text-primary-light-content">{{
-                      formatDate(item.created_at)
-                    }}</span>
+                    <span class="text-sm text-secondary">{{ formatDate(item.created_at) }}</span>
                   </div>
                   <div class="col-span-2">
-                    <span class="text-sm text-primary-light-content">{{
+                    <span class="text-sm text-secondary">{{
                       item.owner_username || $t('common.na', 'N/A')
                     }}</span>
                   </div>
@@ -165,7 +163,7 @@
 
         <!-- Empty State -->
         <div v-else class="bg-base-100 rounded-lg shadow-sm p-12 text-center">
-          <i class="fas fa-folder-open text-4xl text-primary-light-content/50 mb-4"></i>
+          <i class="fas fa-folder-open text-4xl text-secondary/50 mb-4"></i>
           <h3 class="text-lg font-medium mb-2">
             {{
               searchTerm
@@ -173,7 +171,7 @@
                 : $t('folder.empty.title', 'No items in this folder')
             }}
           </h3>
-          <p class="text-primary-light-content mb-6">
+          <p class="text-secondary mb-6">
             {{
               searchTerm
                 ? $t('folder.empty.tryDifferentSearch', 'Try a different search term')

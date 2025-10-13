@@ -6,7 +6,7 @@
         <div class="flex items-center gap-4 mb-4">
           <button
             @click="$router.push('/admin/workspaces')"
-            class="text-primary-light-content hover:text-base transition-colors p-2"
+            class="text-secondary hover:text-base transition-colors p-2"
           >
             <i class="fa fa-arrow-left"></i>
           </button>
@@ -14,7 +14,7 @@
             <h1 class="text-3xl font-bold text-base">
               {{ workspace?.name || $t('workspace.detail.title', 'Workspace Details') }}
             </h1>
-            <p class="text-primary-light-content mt-2">
+            <p class="text-secondary mt-2">
               {{
                 workspace?.description ||
                 $t('workspace.detail.description', 'Workspace information and settings')
@@ -29,7 +29,7 @@
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
-        <p class="text-primary-light-content">
+        <p class="text-secondary">
           {{ $t('workspace.loading', 'Loading workspace...') }}
         </p>
       </div>
@@ -55,42 +55,42 @@
           </h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label class="block text-sm font-medium text-primary-light-content mb-1">{{
+              <label class="block text-sm font-medium text-secondary mb-1">{{
                 $t('workspace.name', 'Name')
               }}</label>
               <p class="text-base font-medium">{{ workspace.name }}</p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-primary-light-content mb-1">{{
+              <label class="block text-sm font-medium text-secondary mb-1">{{
                 $t('workspace.slug', 'Slug')
               }}</label>
               <code class="text-sm bg-base-300 px-2 py-1 rounded">{{ workspace.slug }}</code>
             </div>
             <div class="md:col-span-2" v-if="workspace.description">
-              <label class="block text-sm font-medium text-primary-light-content mb-1">{{
+              <label class="block text-sm font-medium text-secondary mb-1">{{
                 $t('workspace.description', 'Description')
               }}</label>
               <p class="text-base">{{ workspace.description }}</p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-primary-light-content mb-1">{{
+              <label class="block text-sm font-medium text-secondary mb-1">{{
                 $t('workspace.created', 'Created')
               }}</label>
               <p class="text-base">{{ formatDate(workspace.created_at) }}</p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-primary-light-content mb-1">{{
+              <label class="block text-sm font-medium text-secondary mb-1">{{
                 $t('workspace.updated', 'Last Updated')
               }}</label>
               <p class="text-base">{{ formatDate(workspace.updated_at) }}</p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-primary-light-content mb-1">{{
+              <label class="block text-sm font-medium text-secondary mb-1">{{
                 $t('workspace.members', 'Members')
               }}</label>
               <div class="flex items-center gap-2">
                 <span
-                  class="inline-flex items-center justify-center w-8 h-8 bg-primary/10 text-primary-light-content rounded-full text-sm font-medium"
+                  class="inline-flex items-center justify-center w-8 h-8 bg-primary/10 text-secondary rounded-full text-sm font-medium"
                 >
                   {{ workspace.member_count }}
                 </span>
@@ -122,7 +122,7 @@
             <div
               class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"
             ></div>
-            <p class="text-primary-light-content">
+            <p class="text-secondary">
               {{ $t('user.loading', 'Loading users...') }}
             </p>
           </div>
@@ -149,7 +149,7 @@
               <div class="flex items-center gap-3">
                 <!-- User Avatar -->
                 <div
-                  class="w-10 h-10 bg-primary/10 text-primary-light-content rounded-full flex items-center justify-center font-medium"
+                  class="w-10 h-10 bg-primary/10 text-secondary rounded-full flex items-center justify-center font-medium"
                 >
                   {{ user.initials }}
                 </div>
@@ -157,8 +157,8 @@
                 <!-- User Info -->
                 <div>
                   <div class="font-medium">{{ user.displayName }}</div>
-                  <div class="text-sm text-primary-light-content">{{ user.email }}</div>
-                  <div class="text-xs text-primary-light-content">@{{ user.username }}</div>
+                  <div class="text-sm text-secondary">{{ user.email }}</div>
+                  <div class="text-xs text-secondary">@{{ user.username }}</div>
                 </div>
               </div>
 
@@ -175,7 +175,7 @@
                 <div class="relative">
                   <button
                     @click="toggleUserActions(user.id)"
-                    class="text-primary-light-content hover:text-base transition-colors p-2"
+                    class="text-secondary hover:text-base transition-colors p-2"
                   >
                     <i class="fa fa-ellipsis-v"></i>
                   </button>
@@ -218,11 +218,11 @@
 
           <!-- Empty Users State -->
           <div v-else class="text-center p-8">
-            <i class="fa fa-users text-4xl text-primary-light-content/50 mb-4"></i>
+            <i class="fa fa-users text-4xl text-secondary/50 mb-4"></i>
             <h3 class="text-lg font-medium text-base mb-2">
               {{ $t('user.empty.title', 'No users found') }}
             </h3>
-            <p class="text-primary-light-content mb-6">
+            <p class="text-secondary mb-6">
               {{ $t('user.empty.description', 'Create your first user to get started') }}
             </p>
             <button
@@ -241,7 +241,7 @@
           <h2 class="text-xl font-semibold mb-4">
             {{ $t('workspace.detail.settings', 'Settings') }}
           </h2>
-          <div class="text-center p-8 text-primary-light-content">
+          <div class="text-center p-8 text-secondary">
             <i class="fa fa-cog text-4xl mb-4 opacity-50"></i>
             <p>
               {{
@@ -276,7 +276,7 @@
           </h2>
         </div>
         <div class="px-6 py-4">
-          <p class="text-primary-light-content mb-4">
+          <p class="text-secondary mb-4">
             {{
               $t(
                 'user.delete.description',
@@ -286,14 +286,14 @@
           </p>
           <div class="bg-base-200 p-3 rounded-lg">
             <div class="font-medium">{{ userToDelete.displayName }}</div>
-            <div class="text-sm text-primary-light-content">{{ userToDelete.email }}</div>
+            <div class="text-sm text-secondary">{{ userToDelete.email }}</div>
           </div>
         </div>
         <div class="px-6 py-4 border-t border-primary-stroke flex justify-end gap-3">
           <button
             @click="userToDelete = null"
             :disabled="isDeletingUser"
-            class="px-4 py-2 text-primary-light-content hover:text-base transition-colors disabled:opacity-50"
+            class="px-4 py-2 text-secondary hover:text-base transition-colors disabled:opacity-50"
           >
             {{ $t('common.cancel', 'Cancel') }}
           </button>

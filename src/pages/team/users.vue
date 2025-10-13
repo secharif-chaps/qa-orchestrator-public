@@ -31,7 +31,7 @@
       class="bg-base-100 rounded-lg p-8 text-center border border-primary-stroke"
     >
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-      <p class="text-primary-light-content">{{ $t('team.users.loading', 'Loading users...') }}</p>
+      <p class="text-secondary">{{ $t('team.users.loading', 'Loading users...') }}</p>
     </div>
 
     <div
@@ -39,7 +39,7 @@
       class="bg-base-100 rounded-lg overflow-hidden border border-primary-stroke"
     >
       <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
-        <div class="grid grid-cols-12 gap-4 text-sm font-medium text-primary-light-content">
+        <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
           <div class="col-span-4">{{ $t('team.table.user', 'User') }}</div>
           <div class="col-span-3">{{ $t('team.table.permissions', 'Permissions') }}</div>
           <div class="col-span-2">{{ $t('team.table.created', 'Created') }}</div>

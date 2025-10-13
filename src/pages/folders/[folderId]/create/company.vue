@@ -5,7 +5,7 @@
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-semibold">{{ $t('search.title') }}</h1>
-          <p class="text-primary-light-content">{{ $t('search.companyIdentity') }}</p>
+          <p class="text-secondary">{{ $t('search.companyIdentity') }}</p>
         </div>
 
         <!-- Token Counter -->

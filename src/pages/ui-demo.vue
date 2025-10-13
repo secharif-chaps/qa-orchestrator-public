@@ -4,7 +4,7 @@
       <!-- Header -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold mb-2">UI Components Showcase</h1>
-        <p class="text-primary-light-content">Custom theme-aware components for the application</p>
+        <p class="text-secondary">Custom theme-aware components for the application</p>
       </div>
 
       <!-- Tab Navigation -->
@@ -18,8 +18,8 @@
               :class="[
                 'px-6 py-3 text-sm font-medium transition-all relative border-b-2',
                 activeTab === tab.id
-                  ? 'text-primary-light-content bg-primary/5  border-primary'
-                  : 'text-primary-light-content  hover:bg-base-200/50 border-transparent',
+                  ? 'text-secondary bg-primary/5  border-primary'
+                  : 'text-secondary  hover:bg-base-200/50 border-transparent',
               ]"
             >
               <i :class="tab.icon" class="mr-2"></i>

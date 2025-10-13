@@ -2,15 +2,24 @@
   <div class="">
     <div class="mb-8">
       <h1 class="text-3xl font-bold">{{ $t('help.title') }}</h1>
-      <p class="text-primary-light-content mt-2">{{ $t('help.description') }}</p>
+      <p class="text-secondary mt-2">{{ $t('help.description') }}</p>
     </div>
 
     <!-- No help content available -->
     <div v-if="!hasAnyHelpAccess" class="text-center py-16">
       <div class="text-gray-500 dark:text-gray-400">
         <div class="text-6xl mb-4">📚</div>
-        <h3 class="text-xl font-medium mb-2">{{ $t('help.noContent.title', 'No Help Content Available') }}</h3>
-        <p>{{ $t('help.noContent.message', "You don't have access to any help sections based on your current permissions.") }}</p>
+        <h3 class="text-xl font-medium mb-2">
+          {{ $t('help.noContent.title', 'No Help Content Available') }}
+        </h3>
+        <p>
+          {{
+            $t(
+              'help.noContent.message',
+              "You don't have access to any help sections based on your current permissions.",
+            )
+          }}
+        </p>
       </div>
     </div>
 
@@ -19,9 +28,7 @@
       <div class="hidden lg:block lg:col-span-1">
         <nav class="space-y-1 sticky top-8">
           <div v-for="category in helpCategories" :key="category" class="mb-4">
-            <div
-              class="text-xs font-semibold text-primary-light-content uppercase tracking-wider mb-2"
-            >
+            <div class="text-xs font-semibold text-secondary uppercase tracking-wider mb-2">
               {{ getCategoryTitle(category) }}
             </div>
             <div class="space-y-1">
@@ -32,8 +39,8 @@
                 class="w-full group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors text-left"
                 :class="
                   selectedSection?.permission === section.permission
-                    ? 'bg-base-100 text-primary-light-content border-primary'
-                    : 'text-primary-light-content hover:text-primary-light-content hover:bg-base-200'
+                    ? 'bg-base-100 text-secondary border-primary'
+                    : 'text-secondary hover:text-secondary hover:bg-base-200'
                 "
               >
                 <span class="truncate">{{ section.title }}</span>
@@ -48,7 +55,7 @@
         <select
           v-model="selectedSectionPermission"
           @change="onMobileSelectChange"
-          class="w-full px-3 py-2 border border-primary-stroke rounded-md bg-base-100 text-primary-light-content focus:outline-none focus:ring-2 focus:ring-primary"
+          class="w-full px-3 py-2 border border-primary-stroke rounded-md bg-base-100 text-secondary focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <option value="">{{ $t('help.selectTopic.placeholder', 'Select a help topic') }}</option>
           <optgroup
@@ -72,8 +79,17 @@
         <div v-if="!selectedSection" class="text-center py-16">
           <div class="text-gray-500 dark:text-gray-400">
             <div class="text-4xl mb-4">👈</div>
-            <h3 class="text-lg font-medium mb-2">{{ $t('help.selectTopic.title', 'Select a Help Topic') }}</h3>
-            <p>{{ $t('help.selectTopic.message', 'Choose a topic from the sidebar to view detailed documentation.') }}</p>
+            <h3 class="text-lg font-medium mb-2">
+              {{ $t('help.selectTopic.title', 'Select a Help Topic') }}
+            </h3>
+            <p>
+              {{
+                $t(
+                  'help.selectTopic.message',
+                  'Choose a topic from the sidebar to view detailed documentation.',
+                )
+              }}
+            </p>
           </div>
         </div>
 
@@ -82,7 +98,7 @@
             <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               {{ selectedSection.title }}
             </h2>
-            <p class="text-primary-light-content">{{ selectedSection.description }}</p>
+            <p class="text-secondary">{{ selectedSection.description }}</p>
           </div>
 
           <div class="border-t border-primary-stroke pt-6">
@@ -96,7 +112,9 @@
                 <div
                   class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
                 ></div>
-                <p class="text-primary-light-content">{{ $t('help.loading.content', 'Loading help content...') }}</p>
+                <p class="text-secondary">
+                  {{ $t('help.loading.content', 'Loading help content...') }}
+                </p>
               </div>
             </div>
           </div>

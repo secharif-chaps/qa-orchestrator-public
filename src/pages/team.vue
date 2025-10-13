@@ -13,8 +13,8 @@
               :class="[
                 'px-6 py-3 text-sm font-medium transition-all relative border-b-2',
                 activeTab === tab.id
-                  ? 'text-primary-light-content bg-primary/5 border-primary'
-                  : 'text-primary-light-content hover:bg-base-200/50 border-transparent',
+                  ? 'text-secondary bg-primary/5 border-primary'
+                  : 'text-secondary hover:bg-base-200/50 border-transparent',
               ]"
             >
               <i :class="tab.icon" class="mr-2"></i>
@@ -58,8 +58,18 @@ const activeTab = computed(() => {
 })
 
 const tabs = computed(() => [
-  { id: 'users', label: t('team.tabs.users', 'Team Users'), icon: 'fa fa-users', to: '/team/users' },
-  { id: 'settings', label: t('team.tabs.settings', 'Settings'), icon: 'fa fa-cog', to: '/team/settings' },
+  {
+    id: 'users',
+    label: t('team.tabs.users', 'Team Users'),
+    icon: 'fa fa-users',
+    to: '/team/users',
+  },
+  {
+    id: 'settings',
+    label: t('team.tabs.settings', 'Settings'),
+    icon: 'fa fa-cog',
+    to: '/team/settings',
+  },
   { id: 'apis', label: t('team.tabs.apis', 'External APIs'), icon: 'fa fa-plug', to: '/team/apis' },
 ])
 

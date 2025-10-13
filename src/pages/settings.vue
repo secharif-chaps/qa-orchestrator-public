@@ -2,7 +2,7 @@
   <div class="">
     <div class="mb-8">
       <h1 class="text-3xl font-bold">{{ $t('settings.title') }}</h1>
-      <p class="text-primary-light-content mt-2">{{ $t('settings.description') }}</p>
+      <p class="text-secondary mt-2">{{ $t('settings.description') }}</p>
     </div>
 
     <div class="lg:grid lg:grid-cols-4 lg:gap-8">
@@ -16,8 +16,8 @@
             class="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
             :class="
               currentTab === tab.id
-                ? 'bg-base-100 text-primary-light-content border-primary'
-                : 'text-primary-light-content hover:text-primary-light-content hover:bg-base-200'
+                ? 'bg-base-100 text-secondary border-primary'
+                : 'text-secondary hover:text-secondary hover:bg-base-200'
             "
           >
             <i :class="tab.icon" class="mr-3 text-sm"></i>

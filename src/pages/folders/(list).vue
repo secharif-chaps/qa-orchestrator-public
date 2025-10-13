@@ -6,7 +6,7 @@
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 class="text-2xl font-bold">{{ $t('folder.title', 'Folders') }}</h1>
-            <p class="text-primary-light-content mt-1">
+            <p class="text-secondary mt-1">
               {{ $t('folder.description', 'Organize your companies into folders') }}
             </p>
           </div>
@@ -45,7 +45,7 @@
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
-        <p class="text-primary-light-content">
+        <p class="text-secondary">
           {{ $t('folder.loading', 'Loading folders...') }}
         </p>
       </div>
@@ -65,14 +65,14 @@
             <div
               class="w-16 h-16 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors"
             >
-              <i class="fas fa-plus text-primary-light-content text-2xl"></i>
+              <i class="fas fa-plus text-secondary text-2xl"></i>
             </div>
             <h3
-              class="text-lg font-semibold text-center mb-2 group-hover:text-primary-light-content transition-colors"
+              class="text-lg font-semibold text-center mb-2 group-hover:text-secondary transition-colors"
             >
               {{ $t('folder.create.title', 'Create New Folder') }}
             </h3>
-            <p class="text-sm text-primary-light-content text-center">
+            <p class="text-sm text-secondary text-center">
               {{ $t('folder.create.description', 'Organize your companies into folders') }}
             </p>
           </div>
@@ -100,23 +100,23 @@
               <div
                 class="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
               >
-                <i class="fas fa-plus text-primary-light-content text-sm"></i>
+                <i class="fas fa-plus text-secondary text-sm"></i>
               </div>
               <div class="flex-1">
-                <h3 class="font-medium text-primary-light-content">
+                <h3 class="font-medium text-secondary">
                   {{ $t('folder.create.title', 'Create New Folder') }}
                 </h3>
-                <p class="text-xs text-primary-light-content mt-1">
+                <p class="text-xs text-secondary mt-1">
                   {{ $t('folder.create.description', 'Organize your companies into folders') }}
                 </p>
               </div>
-              <i class="fas fa-chevron-right text-primary-light-content"></i>
+              <i class="fas fa-chevron-right text-secondary"></i>
             </div>
           </div>
 
           <!-- Table Header -->
           <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
-            <div class="grid grid-cols-12 gap-4 text-sm font-medium text-primary-light-content">
+            <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
               <div class="col-span-6">{{ $t('folder.table.name', 'Name') }}</div>
               <div class="col-span-2">{{ $t('folder.table.items', 'Items') }}</div>
               <div class="col-span-2">{{ $t('folder.table.created', 'Created') }}</div>
@@ -154,7 +154,7 @@
 
       <!-- Empty State -->
       <div v-else class="bg-base-100 rounded-lg shadow-sm p-12 text-center">
-        <i class="fa fa-folder-open text-4xl text-primary-light-content/50 mb-4"></i>
+        <i class="fa fa-folder-open text-4xl text-secondary/50 mb-4"></i>
         <h3 class="text-lg font-medium mb-2">
           {{
             foldersStore.filterName
@@ -162,7 +162,7 @@
               : $t('folder.empty.title', 'No folders yet')
           }}
         </h3>
-        <p class="text-primary-light-content mb-6">
+        <p class="text-secondary mb-6">
           {{
             foldersStore.filterName
               ? $t('folder.empty.tryDifferentSearch', 'Try a different search term')

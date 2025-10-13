@@ -21,9 +21,7 @@
             <span class="text-lg font-semibold">{{ $t('timeline.title') }}</span>
           </div>
           <div class="w-64 relative">
-            <i
-              class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-primary-light-content"
-            ></i>
+            <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-secondary"></i>
             <Input
               v-model="searchQuery"
               :placeholder="$t('timeline.search.placeholder')"

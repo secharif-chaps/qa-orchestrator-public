@@ -7,7 +7,7 @@
           <h1 class="text-3xl font-semibold">
             {{ $t('csv.upload.title', 'Import Companies from CSV') }}
           </h1>
-          <p class="text-primary-light-content">
+          <p class="text-secondary">
             {{
               $t('csv.upload.description', 'Upload a CSV file to create multiple companies at once')
             }}
@@ -61,9 +61,9 @@
             />
 
             <div v-if="!selectedFile" class="space-y-2">
-              <i class="fa fa-upload text-3xl text-primary-light-content"></i>
+              <i class="fa fa-upload text-3xl text-secondary"></i>
               <div>
-                <p class="text-primary-light-content">
+                <p class="text-secondary">
                   {{ $t('csv.upload.dragDrop', 'Drag and drop your CSV file here, or') }}
                 </p>
                 <Button
@@ -77,7 +77,7 @@
             <div v-else class="space-y-2">
               <i class="fa fa-file-csv text-3xl text-success"></i>
               <p class="font-medium">{{ selectedFile.name }}</p>
-              <p class="text-sm text-primary-light-content">
+              <p class="text-sm text-secondary">
                 {{ formatFileSize(selectedFile.size) }}
               </p>
               <Button
@@ -135,7 +135,7 @@
         <!-- Parsed Companies Preview -->
         <div v-if="parseResult.companies.length > 0" class="space-y-4">
           <div class="flex items-center justify-between">
-            <p class="text-sm text-primary-light-content">
+            <p class="text-sm text-secondary">
               {{
                 $t('csv.upload.companiesFound', 'Found {count} companies in CSV', {
                   count: parseResult.companies.length,
@@ -158,17 +158,17 @@
               <thead class="bg-base-200">
                 <tr>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider"
                   >
                     Row
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider"
                   >
                     Company Name
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider"
                   >
                     Website
                   </th>
@@ -184,7 +184,7 @@
             </table>
             <div
               v-if="parseResult.companies.length > 5"
-              class="px-4 py-3 text-sm text-primary-light-content bg-base-200"
+              class="px-4 py-3 text-sm text-secondary bg-base-200"
             >
               {{
                 $t('csv.upload.moreRows', 'and {count} more rows...', {

@@ -2,11 +2,11 @@
   <div class="min-h-screen flex items-center justify-center">
     <div class="text-center max-w-md px-4">
       <div class="mb-8">
-        <h1 class="text-6xl font-bold text-primary-light-content">404</h1>
+        <h1 class="text-6xl font-bold text-secondary">404</h1>
         <h2 class="text-2xl font-semibold mt-4">
           {{ $t('errors.notFound.title', 'Page Not Found') }}
         </h2>
-        <p class="text-primary-light-content mt-2">
+        <p class="text-secondary mt-2">
           {{
             $t(
               'errors.notFound.message',
@@ -29,7 +29,7 @@
         />
       </div>
 
-      <div class="mt-8 text-sm text-primary-light-content">
+      <div class="mt-8 text-sm text-secondary">
         <p>
           {{
             $t(

@@ -4,7 +4,7 @@
     <div class="mb-8">
       <button
         @click="$router.push('/workspaces')"
-        class="text-primary-light-content hover:text-base transition-colors p-2 flex items-center gap-2"
+        class="text-secondary hover:text-base transition-colors p-2 flex items-center gap-2"
       >
         <i class="fa fa-arrow-left"></i>
         <span>Back</span>
@@ -18,7 +18,7 @@
           <h1 class="text-3xl font-bold text-base">
             {{ $t('workspace.create.title', 'Create Workspace') }}
           </h1>
-          <p class="text-primary-light-content mt-2">
+          <p class="text-secondary mt-2">
             {{ $t('workspace.create.description', 'Create a new workspace for your organization') }}
           </p>
         </div>
@@ -53,7 +53,7 @@
               class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-base-300"
               required
             />
-            <p class="text-xs text-primary-light-content mt-1">
+            <p class="text-xs text-secondary mt-1">
               {{
                 $t('workspace.form.name.help', 'This will be the display name for your workspace')
               }}
@@ -72,7 +72,7 @@
                 {{ slug }}
               </div>
             </div>
-            <p class="text-xs text-primary-light-content mt-1">
+            <p class="text-xs text-secondary mt-1">
               {{ $t('workspace.form.slug.help', 'URL-friendly identifier (lowercase, no spaces)') }}
             </p>
           </div>
@@ -81,7 +81,7 @@
           <div>
             <label for="workspace-description" class="block text-sm font-medium text-base mb-2">
               {{ $t('workspace.form.description.label', 'Description') }}
-              <span class="text-primary-light-content text-sm font-normal"
+              <span class="text-secondary text-sm font-normal"
                 >({{ $t('common.optional', 'optional') }})</span
               >
             </label>
@@ -97,7 +97,7 @@
               "
               class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-base-300 resize-none"
             ></textarea>
-            <p class="text-xs text-primary-light-content mt-1">
+            <p class="text-xs text-secondary mt-1">
               {{
                 $t(
                   'workspace.form.description.help',
@@ -112,7 +112,7 @@
             <button
               type="button"
               @click="$router.push('/workspaces')"
-              class="px-6 py-2 text-primary-light-content hover:text-base transition-colors"
+              class="px-6 py-2 text-secondary hover:text-base transition-colors"
             >
               {{ $t('common.cancel', 'Cancel') }}
             </button>
@@ -143,10 +143,10 @@
               <h4 class="font-medium text-base">
                 {{ name || $t('workspace.form.name.placeholder', 'Enter workspace name...') }}
               </h4>
-              <p v-if="description" class="text-primary-light-content text-sm mt-1">
+              <p v-if="description" class="text-secondary text-sm mt-1">
                 {{ description }}
               </p>
-              <div class="flex items-center gap-4 mt-3 text-xs text-primary-light-content">
+              <div class="flex items-center gap-4 mt-3 text-xs text-secondary">
                 <span v-if="slug">
                   <i class="fa fa-link mr-1"></i>
                   {{ slug }}

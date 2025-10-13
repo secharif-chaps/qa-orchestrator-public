@@ -23,7 +23,7 @@
                   <span class="text-sm truncate">
                     {{ t('company.fields.employeeCount', 'Employee Count') }}
                   </span>
-                  <span class="text-xs text-primary-light-content">
+                  <span class="text-xs text-secondary">
                     {{
                       company?.profile?.employeeCount?.value ||
                       t('company.fields.notSpecified', 'Not specified')
@@ -37,12 +37,12 @@
                 v-if="company?.profile?.hq"
                 class="flex items-center gap-3 rounded-card px-4 py-3"
               >
-                <i class="fa-solid fa-map-marker fa-fw text-primary-light-content"></i>
+                <i class="fa-solid fa-map-marker fa-fw text-secondary"></i>
                 <div class="flex flex-col gap-1">
                   <span class="text-sm truncate">
                     {{ t('company.fields.headquarters', 'Headquarters') }}
                   </span>
-                  <span class="text-xs text-primary-light-content">
+                  <span class="text-xs text-secondary">
                     {{
                       company?.profile?.hq?.value ||
                       t('company.fields.notSpecified', 'Not specified')
@@ -56,10 +56,10 @@
                 v-if="company?.profile?.ceo"
                 class="flex items-center gap-3 rounded-card px-4 py-3"
               >
-                <i class="fa-solid fa-user-tie fa-fw text-primary-light-content"></i>
+                <i class="fa-solid fa-user-tie fa-fw text-secondary"></i>
                 <div class="flex flex-col gap-1">
                   <span class="text-sm truncate"> {{ t('company.fields.ceo', 'CEO') }} </span>
-                  <span class="text-xs text-primary-light-content">
+                  <span class="text-xs text-secondary">
                     {{
                       company?.profile?.ceo?.value ||
                       t('company.fields.notSpecified', 'Not specified')
@@ -73,12 +73,12 @@
                 v-if="company?.profile?.revenue"
                 class="flex items-center gap-3 rounded-card px-4 py-3"
               >
-                <i class="fa-solid fa-money-bill fa-fw text-primary-light-content"></i>
+                <i class="fa-solid fa-money-bill fa-fw text-secondary"></i>
                 <div class="flex flex-col gap-1">
                   <span class="text-sm truncate">
                     {{ t('company.fields.revenue', 'Revenue') }}
                   </span>
-                  <span class="text-xs text-primary-light-content">
+                  <span class="text-xs text-secondary">
                     {{
                       company?.profile?.revenue?.value ||
                       t('company.fields.notSpecified', 'Not specified')
@@ -96,10 +96,10 @@
       <Card>
         <p>Présence en ligne</p>
         <div class="flex bg-base-200 items-center gap-3 rounded-card px-4 py-3">
-          <i class="fa-solid fa-link fa-fw text-primary-light-content"></i>
+          <i class="fa-solid fa-link fa-fw text-secondary"></i>
           <div class="flex flex-col gap-1 w-44">
             <span class="text-sm truncate"> Site web </span>
-            <span class="text-xs text-primary-light-content truncate">
+            <span class="text-xs text-secondary truncate">
               {{ company?.website || 'Non renseigné' }}
             </span>
           </div>
@@ -147,7 +147,7 @@
     </div>
 
     <!-- Footer -->
-    <div v-if="company" class="text-xs text-primary-light-content italic text-center">
+    <div v-if="company" class="text-xs text-secondary italic text-center">
       Created by {{ company.owner_username }} on {{ formatDate(company.created_at) }}
     </div>
   </div>

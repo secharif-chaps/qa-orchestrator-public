@@ -3,10 +3,10 @@
   <div class="space-y-6">
     <!-- Header Section -->
     <div>
-      <h2 class="text-2xl font-bold text-primary-light-content mb-2">
+      <h2 class="text-2xl font-bold text-secondary mb-2">
         {{ $t('team.apis.title', 'External APIs') }}
       </h2>
-      <p class="text-primary-light-content max-w-2xl">
+      <p class="text-secondary max-w-2xl">
         {{
           $t(
             'team.apis.description',
@@ -27,11 +27,11 @@
         <div class="flex items-start justify-between mb-3">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-              <i class="fa fa-plug text-primary-light-content"></i>
+              <i class="fa fa-plug text-secondary"></i>
             </div>
             <div>
-              <h4 class="font-semibold text-primary-light-content">{{ api.name }}</h4>
-              <p class="text-xs text-primary-light-content">
+              <h4 class="font-semibold text-secondary">{{ api.name }}</h4>
+              <p class="text-xs text-secondary">
                 {{ $t('team.apis.added', 'Added') }} {{ formatDate(api.createdAt) }}
               </p>
             </div>
@@ -47,19 +47,14 @@
         </div>
         <div class="space-y-2">
           <div class="flex items-center gap-2 text-sm">
-            <span class="text-primary-light-content">{{ $t('team.apis.urlLabel', 'URL:') }}</span>
-            <span
-              class="text-primary-light-content font-mono text-xs bg-base-200 px-2 py-1 rounded"
-              >{{ api.url }}</span
-            >
+            <span class="text-secondary">{{ $t('team.apis.urlLabel', 'URL:') }}</span>
+            <span class="text-secondary font-mono text-xs bg-base-200 px-2 py-1 rounded">{{
+              api.url
+            }}</span>
           </div>
           <div class="flex items-center gap-2 text-sm">
-            <span class="text-primary-light-content">{{
-              $t('team.apis.apiKeyLabel', 'API Key:')
-            }}</span>
-            <span
-              class="text-primary-light-content font-mono text-xs bg-base-200 px-2 py-1 rounded"
-            >
+            <span class="text-secondary">{{ $t('team.apis.apiKeyLabel', 'API Key:') }}</span>
+            <span class="text-secondary font-mono text-xs bg-base-200 px-2 py-1 rounded">
               {{ showApiKey[api.id] ? api.apiKey : '••••••••' }}
             </span>
             <Button
@@ -100,12 +95,12 @@
           <div
             class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors"
           >
-            <i class="fa fa-plus text-primary-light-content text-lg"></i>
+            <i class="fa fa-plus text-secondary text-lg"></i>
           </div>
-          <h4 class="font-semibold text-primary-light-content mb-1">
+          <h4 class="font-semibold text-secondary mb-1">
             {{ $t('team.apis.add_new', 'Add External API') }}
           </h4>
-          <p class="text-sm text-primary-light-content text-center">
+          <p class="text-sm text-secondary text-center">
             {{ $t('team.apis.add_description', 'Connect a new data source') }}
           </p>
         </div>
@@ -115,7 +110,7 @@
       <div v-else class="bg-base-100 p-6 rounded-lg border-2 border-primary/50">
         <div class="space-y-4">
           <div class="flex items-center justify-between mb-2">
-            <h4 class="font-semibold text-primary-light-content">
+            <h4 class="font-semibold text-secondary">
               {{ $t('team.apis.new_api', 'New External API') }}
             </h4>
             <Button
@@ -128,7 +123,7 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-primary-light-content mb-1">
+            <label class="block text-sm font-medium text-secondary mb-1">
               {{ $t('team.apis.name', 'API Name') }}
             </label>
             <Input
@@ -139,7 +134,7 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-primary-light-content mb-1">
+            <label class="block text-sm font-medium text-secondary mb-1">
               {{ $t('team.apis.url', 'API URL') }}
             </label>
             <Input
@@ -150,7 +145,7 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-primary-light-content mb-1">
+            <label class="block text-sm font-medium text-secondary mb-1">
               {{ $t('team.apis.api_key', 'API Key') }}
             </label>
             <Input
@@ -184,11 +179,11 @@
       v-if="externalApis.length === 0 && !showAddApiForm"
       class="bg-base-100 p-12 rounded-lg text-center"
     >
-      <i class="fa fa-plug text-4xl text-primary-light-content mb-4"></i>
-      <h3 class="text-lg font-semibold text-primary-light-content mb-2">
+      <i class="fa fa-plug text-4xl text-secondary mb-4"></i>
+      <h3 class="text-lg font-semibold text-secondary mb-2">
         {{ $t('team.apis.no_apis', 'No External APIs') }}
       </h3>
-      <p class="text-primary-light-content mb-6">
+      <p class="text-secondary mb-6">
         {{ $t('team.apis.no_apis_description', 'Add external APIs to connect new data sources') }}
       </p>
       <Button @click="showAddApiForm = true" variant="primary" icon="fa fa-plus">

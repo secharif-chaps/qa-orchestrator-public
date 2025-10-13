@@ -7,11 +7,11 @@
           <div
             class="w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
           >
-            <i class="fas fa-plus text-primary-light-content text-xl"></i>
+            <i class="fas fa-plus text-secondary text-xl"></i>
           </div>
           <div>
             <h1 class="text-2xl font-bold">{{ $t('folder.create.title', 'Create New Folder') }}</h1>
-            <p class="text-primary-light-content">
+            <p class="text-secondary">
               {{ $t('folder.create.subtitle', 'Organize your companies with a custom folder') }}
             </p>
           </div>
@@ -45,7 +45,7 @@
           <div>
             <label class="block text-sm font-medium mb-2">
               {{ $t('folder.form.tags', 'Tags') }}
-              <span class="text-primary-light-content text-xs ml-1"
+              <span class="text-secondary text-xs ml-1"
                 >({{ $t('folder.form.tagsOptional', 'optional') }})</span
               >
             </label>
@@ -72,7 +72,7 @@
               id="is_favorite"
               v-model="form.is_favorite"
               type="checkbox"
-              class="w-5 h-5 rounded border-primary-stroke text-primary-light-content focus:ring-primary/20"
+              class="w-5 h-5 rounded border-primary-stroke text-secondary focus:ring-primary/20"
             />
             <label for="is_favorite" class="text-sm font-medium cursor-pointer">
               {{ $t('folder.form.favorite', 'Mark as favorite') }}

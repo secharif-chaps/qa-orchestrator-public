@@ -86,7 +86,6 @@ const userDisplayName = computed(() => {
   return user.profile.given_name || user.profile.preferred_username || user.profile.name || 'User'
 })
 
-
 // Fetch current workspace to get workspace ID
 const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
 
@@ -104,10 +103,13 @@ const {
   data: workspaceActivitiesData,
   isLoading: isActivitiesLoading,
   error: activitiesError,
-} = useQuery(workspaceActivitiesQuery, () => ({ workspaceId: currentWorkspace.value?.id ?? 0 }), {
-  enabled: () => !!currentWorkspace.value?.id,
-})
-
+} = useQuery(
+  workspaceActivitiesQuery,
+  () => ({ workspaceId: currentWorkspace.value?.id ?? 0, limit: 5 }),
+  {
+    enabled: () => !!currentWorkspace.value?.id,
+  },
+)
 
 const updateTime = () => {
   const now = new Date()
@@ -175,7 +177,7 @@ const recentActivities = computed(() => {
 
   // Defensive check - ensure it's an array
   const activities = Array.isArray(workspaceActivitiesData.value)
-    ? workspaceActivitiesData.value
+    ? workspaceActivitiesData.value.slice(0, 7)
     : []
 
   if (activities.length === 0) return []

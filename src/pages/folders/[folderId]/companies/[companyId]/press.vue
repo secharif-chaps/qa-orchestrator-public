@@ -29,9 +29,7 @@
 
           <!-- Financial News -->
           <div v-if="company?.press?.financial_news?.length" class="bg-base-100 rounded-lg p-6">
-            <h2
-              class="text-xl font-semibold text-primary-light-content flex items-center gap-2 mb-4"
-            >
+            <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-chart-line"></i>
               Financial News
             </h2>
@@ -41,7 +39,7 @@
                 :key="index"
                 class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
               >
-                <span class="text-primary-light-content mr-2">{{ item.value }}</span>
+                <span class="text-secondary mr-2">{{ item.value }}</span>
                 <Source v-for="source in item.sources" :key="source" :source="source" />
               </div>
             </div>
@@ -49,9 +47,7 @@
 
           <!-- Product Launches -->
           <div v-if="company?.press?.product_launches?.length" class="bg-base-100 rounded-lg p-6">
-            <h2
-              class="text-xl font-semibold text-primary-light-content flex items-center gap-2 mb-4"
-            >
+            <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-rocket"></i>
               Product Launches
             </h2>
@@ -61,7 +57,7 @@
                 :key="index"
                 class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
               >
-                <span class="text-primary-light-content mr-2">{{ item.value }}</span>
+                <span class="text-secondary mr-2">{{ item.value }}</span>
 
                 <Source v-for="source in item.sources" :key="source" :source="source" />
               </div>
@@ -73,9 +69,7 @@
             v-if="company?.press?.executive_interviews?.length"
             class="bg-base-100 rounded-lg p-6"
           >
-            <h2
-              class="text-xl font-semibold text-primary-light-content flex items-center gap-2 mb-4"
-            >
+            <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-microphone"></i>
               Executive Interviews
             </h2>
@@ -85,7 +79,7 @@
                 :key="index"
                 class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
               >
-                <span class="text-primary-light-content mr-2">{{ item.value }}</span>
+                <span class="text-secondary mr-2">{{ item.value }}</span>
                 <Source v-for="source in item.sources" :key="source" :source="source" />
               </div>
             </div>
@@ -93,9 +87,7 @@
 
           <!-- Media Mentions -->
           <div v-if="company?.press?.media_mentions?.length" class="bg-base-100 rounded-lg p-6">
-            <h2
-              class="text-xl font-semibold text-primary-light-content flex items-center gap-2 mb-4"
-            >
+            <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-newspaper"></i>
               Media Mentions
             </h2>
@@ -105,7 +97,7 @@
                 :key="index"
                 class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
               >
-                <span class="text-primary-light-content mr-2">{{ item.value }}</span>
+                <span class="text-secondary mr-2">{{ item.value }}</span>
                 <Source v-for="source in item.sources" :key="source" :source="source" />
               </div>
             </div>
@@ -113,9 +105,7 @@
 
           <!-- Press Releases -->
           <div v-if="company?.press?.press_releases?.length" class="bg-base-100 rounded-lg p-6">
-            <h2
-              class="text-xl font-semibold text-primary-light-content flex items-center gap-2 mb-4"
-            >
+            <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-file-alt"></i>
               Press Releases
             </h2>
@@ -125,7 +115,7 @@
                 :key="index"
                 class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
               >
-                <span class="text-primary-light-content mr-2">{{ item.value }}</span>
+                <span class="text-secondary mr-2">{{ item.value }}</span>
                 <Source v-for="source in item.sources" :key="source" :source="source" />
               </div>
             </div>
@@ -133,9 +123,7 @@
 
           <!-- Articles (backward compatibility) -->
           <div v-if="company?.press?.articles?.length" class="bg-base-100 rounded-lg p-6">
-            <h2
-              class="text-xl font-semibold text-primary-light-content flex items-center gap-2 mb-4"
-            >
+            <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-newspaper"></i>
               Articles
             </h2>
@@ -145,7 +133,7 @@
                 :key="index"
                 class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
               >
-                <span class="text-primary-light-content mr-2">{{ item.value }}</span>
+                <span class="text-secondary mr-2">{{ item.value }}</span>
                 <Source v-for="source in item.sources" :key="source" :source="source" />
               </div>
             </div>
@@ -159,9 +147,7 @@
             v-if="company?.press?.partnership_announcements?.length"
             class="bg-base-100 rounded-lg p-6"
           >
-            <h2
-              class="text-lg font-semibold text-primary-light-content flex items-center gap-2 mb-4"
-            >
+            <h2 class="text-lg font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-handshake"></i>
               Partnership Announcements
             </h2>
@@ -171,7 +157,7 @@
                 :key="index"
                 class="bg-base-200 rounded-lg p-3"
               >
-                <span class="text-primary-light-content mr-2">{{ item.value }}</span>
+                <span class="text-secondary mr-2">{{ item.value }}</span>
                 <Source v-for="source in item.sources" :key="source" :source="source" />
               </div>
             </div>
@@ -179,9 +165,7 @@
 
           <!-- Awards & Recognition -->
           <div v-if="company?.press?.awards_recognition?.length" class="bg-base-100 rounded-lg p-6">
-            <h2
-              class="text-lg font-semibold text-primary-light-content flex items-center gap-2 mb-4"
-            >
+            <h2 class="text-lg font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-trophy"></i>
               Awards & Recognition
             </h2>
@@ -191,7 +175,7 @@
                 :key="index"
                 class="bg-base-200 rounded-lg p-3"
               >
-                <span class="text-primary-light-content mr-2">{{ item.value }}</span>
+                <span class="text-secondary mr-2">{{ item.value }}</span>
                 <Source v-for="source in item.sources" :key="source" :source="source" />
               </div>
             </div>
@@ -199,37 +183,35 @@
 
           <!-- Quick Stats -->
           <div class="bg-base-100 rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-primary-light-content mb-4">
-              Press Coverage Stats
-            </h3>
+            <h3 class="text-lg font-semibold text-secondary mb-4">Press Coverage Stats</h3>
             <div class="space-y-3">
               <div class="flex justify-between items-center">
-                <span class="text-primary-light-content text-sm">Financial News</span>
-                <span class="text-primary-light-content font-medium">{{
+                <span class="text-secondary text-sm">Financial News</span>
+                <span class="text-secondary font-medium">{{
                   company?.press?.financial_news?.length || 0
                 }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-primary-light-content text-sm">Product Launches</span>
-                <span class="text-primary-light-content font-medium">{{
+                <span class="text-secondary text-sm">Product Launches</span>
+                <span class="text-secondary font-medium">{{
                   company?.press?.product_launches?.length || 0
                 }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-primary-light-content text-sm">Media Mentions</span>
-                <span class="text-primary-light-content font-medium">{{
+                <span class="text-secondary text-sm">Media Mentions</span>
+                <span class="text-secondary font-medium">{{
                   company?.press?.media_mentions?.length || 0
                 }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-primary-light-content text-sm">Press Releases</span>
-                <span class="text-primary-light-content font-medium">{{
+                <span class="text-secondary text-sm">Press Releases</span>
+                <span class="text-secondary font-medium">{{
                   company?.press?.press_releases?.length || 0
                 }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-primary-light-content text-sm">Executive Interviews</span>
-                <span class="text-primary-light-content font-medium">{{
+                <span class="text-secondary text-sm">Executive Interviews</span>
+                <span class="text-secondary font-medium">{{
                   company?.press?.executive_interviews?.length || 0
                 }}</span>
               </div>
