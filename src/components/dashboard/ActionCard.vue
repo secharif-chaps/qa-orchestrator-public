@@ -13,10 +13,10 @@
         </div>
       </div>
       <div class="ml-4 flex-1">
-        <h3 class="text-lg font-medium group-hover:text-primary-light-content transition-colors">
+        <h3 class="text-lg font-medium group-hover:text-secondary transition-colors">
           {{ title }}
         </h3>
-        <p class="text-sm text-primary-light-content">{{ description }}</p>
+        <p class="text-sm text-secondary">{{ description }}</p>
       </div>
     </div>
   </div>

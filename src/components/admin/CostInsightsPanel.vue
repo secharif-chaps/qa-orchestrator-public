@@ -22,9 +22,9 @@
             <i class="fa fa-crown text-warning"></i>
             <h4 class="font-medium">Most Expensive Workspace</h4>
           </div>
-          <div class="text-sm text-primary-light-content">
+          <div class="text-sm text-secondary">
             <strong>{{ mostExpensiveWorkspace.workspace_name }}</strong> has spent
-            <span class="font-semibold text-primary-light-content">{{
+            <span class="font-semibold text-secondary">{{
               formatCurrency(mostExpensiveWorkspace.total_cost)
             }}</span>
             across {{ mostExpensiveWorkspace.task_count }} tasks and
@@ -38,7 +38,7 @@
             <i class="fa fa-leaf text-success"></i>
             <h4 class="font-medium">Most Cost-Effective Task Type</h4>
           </div>
-          <div class="text-sm text-primary-light-content">
+          <div class="text-sm text-secondary">
             <Tag
               :variant="getTaskTypeVariant(mostEfficientTaskType.task_type)"
               :label="mostEfficientTaskType.task_type"
@@ -58,7 +58,7 @@
             <i class="fa fa-exclamation-triangle text-warning"></i>
             <h4 class="font-medium">Least Cost-Effective Task Type</h4>
           </div>
-          <div class="text-sm text-primary-light-content">
+          <div class="text-sm text-secondary">
             <Tag
               :variant="getTaskTypeVariant(leastEfficientTaskType.task_type)"
               :label="leastEfficientTaskType.task_type"
@@ -78,7 +78,7 @@
             <i class="fa fa-chart-line text-info"></i>
             <h4 class="font-medium">Peak Cost Period</h4>
           </div>
-          <div class="text-sm text-primary-light-content">
+          <div class="text-sm text-secondary">
             <strong>{{ formatDate(highestCostPeriod.period) }}</strong> had the highest costs with
             <span class="font-semibold text-info">{{
               formatCurrency(highestCostPeriod.total_cost)
@@ -97,23 +97,23 @@
 
       <div v-if="globalData?.global_summary" class="grid grid-cols-2 gap-4 text-sm">
         <div class="flex justify-between">
-          <span class="text-primary-light-content">Avg Cost per Task:</span>
+          <span class="text-secondary">Avg Cost per Task:</span>
           <span class="font-semibold">{{
             formatCurrency(globalData.global_summary.avg_cost_per_task)
           }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-primary-light-content">Avg Cost per Company:</span>
+          <span class="text-secondary">Avg Cost per Company:</span>
           <span class="font-semibold">{{
             formatCurrency(globalData.global_summary.avg_cost_per_company)
           }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-primary-light-content">Total Workspaces:</span>
+          <span class="text-secondary">Total Workspaces:</span>
           <span class="font-semibold">{{ globalData.global_summary.total_workspaces }}</span>
         </div>
         <div class="flex justify-between">
-          <span class="text-primary-light-content">Total Tokens:</span>
+          <span class="text-secondary">Total Tokens:</span>
           <span class="font-semibold">{{
             formatNumber(
               globalData.global_summary.total_input_tokens +

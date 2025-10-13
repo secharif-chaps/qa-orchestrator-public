@@ -12,7 +12,7 @@
       class="flex-shrink-0 w-8 h-8 rounded-full bg-almond-300/50 flex items-center justify-center"
     >
       <img v-if="chapseAvatar" :src="chapseAvatar" class="w-6 h-6" alt="Chaps-e" />
-      <i v-else class="fa fa-robot text-primary-light-content text-sm"></i>
+      <i v-else class="fa fa-robot text-secondary text-sm"></i>
     </div>
 
     <!-- Message Content -->

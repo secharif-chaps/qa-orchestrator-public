@@ -12,7 +12,7 @@
       <div class="ml-4 flex-1">
         <h4 class="text-sm font-medium uppercase tracking-wide">{{ title }}</h4>
         <p class="text-2xl font-bold">{{ formattedValue }}</p>
-        <p v-if="subtitle" class="text-xs mt-1 text-primary-light-content">
+        <p v-if="subtitle" class="text-xs mt-1 text-secondary">
           {{ subtitle }}
         </p>
       </div>

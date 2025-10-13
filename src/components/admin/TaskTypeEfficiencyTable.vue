@@ -6,8 +6,8 @@
 
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner animate-spin text-2xl text-primary-light-content mb-2"></i>
-        <p class="text-sm text-primary-light-content">Loading task type data...</p>
+        <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
+        <p class="text-sm text-secondary">Loading task type data...</p>
       </div>
     </div>
 
@@ -19,8 +19,8 @@
     </div>
 
     <div v-else-if="!data?.task_types.length" class="text-center py-12">
-      <i class="fa fa-tasks text-4xl text-primary-light-content mb-4"></i>
-      <p class="text-lg font-medium text-primary-light-content">No task type data available</p>
+      <i class="fa fa-tasks text-4xl text-secondary mb-4"></i>
+      <p class="text-lg font-medium text-secondary">No task type data available</p>
     </div>
 
     <div v-else class="overflow-x-auto">
@@ -28,7 +28,7 @@
         <thead class="bg-base-200">
           <tr>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
               @click="sort('task_type')"
             >
               <div class="flex items-center gap-1">
@@ -37,7 +37,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
               @click="sort('total_cost')"
             >
               <div class="flex items-center gap-1">
@@ -46,7 +46,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
               @click="sort('task_count')"
             >
               <div class="flex items-center gap-1">
@@ -55,7 +55,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
               @click="sort('avg_cost_per_task')"
             >
               <div class="flex items-center gap-1">
@@ -64,7 +64,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
               @click="sort('avg_input_tokens')"
             >
               <div class="flex items-center gap-1">
@@ -73,7 +73,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
               @click="sort('avg_output_tokens')"
             >
               <div class="flex items-center gap-1">
@@ -98,16 +98,16 @@
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-semibold text-primary-light-content">
+              <div class="text-sm font-semibold text-secondary">
                 {{ formatCurrency(taskType.total_cost) }}
               </div>
-              <div class="text-xs text-primary-light-content">
+              <div class="text-xs text-secondary">
                 {{ getPercentage(taskType.total_cost) }}% of total
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-sm font-medium">{{ formatNumber(taskType.task_count) }}</div>
-              <div class="text-xs text-primary-light-content">
+              <div class="text-xs text-secondary">
                 {{ getTaskCountPercentage(taskType.task_count) }}% of all tasks
               </div>
             </td>
@@ -118,17 +118,17 @@
               >
                 {{ formatCurrency(taskType.avg_cost_per_task) }}
               </div>
-              <div class="text-xs text-primary-light-content">
+              <div class="text-xs text-secondary">
                 {{ getEfficiencyLabel(taskType.avg_cost_per_task) }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-primary-light-content">
+              <div class="text-sm text-secondary">
                 {{ formatNumber(taskType.avg_input_tokens) }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-primary-light-content">
+              <div class="text-sm text-secondary">
                 {{ formatNumber(taskType.avg_output_tokens) }}
               </div>
             </td>
@@ -140,7 +140,7 @@
       <div v-if="data?.summary" class="px-6 py-4 border-t border-primary-stroke bg-base-200">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div>
-            <span class="font-medium text-primary-light-content">Most Expensive:</span>
+            <span class="font-medium text-secondary">Most Expensive:</span>
             <Tag
               :variant="getTaskTypeVariant(data.summary.most_expensive_type)"
               :label="data.summary.most_expensive_type"
@@ -148,7 +148,7 @@
             />
           </div>
           <div>
-            <span class="font-medium text-primary-light-content">Most Frequent:</span>
+            <span class="font-medium text-secondary">Most Frequent:</span>
             <Tag
               :variant="getTaskTypeVariant(data.summary.most_frequent_type)"
               :label="data.summary.most_frequent_type"
@@ -156,7 +156,7 @@
             />
           </div>
           <div>
-            <span class="font-medium text-primary-light-content">Total Task Types:</span>
+            <span class="font-medium text-secondary">Total Task Types:</span>
             <span class="ml-2 font-semibold">{{ data.summary.total_task_types }}</span>
           </div>
         </div>
@@ -195,8 +195,8 @@ const getSortIcon = (field: keyof TaskTypeCostData) => {
     return 'fa-sort text-border-2'
   }
   return sortOrder.value === 'asc'
-    ? 'fa-sort-up text-primary-content'
-    : 'fa-sort-down text-primary-content'
+    ? 'fa-sort-up text-sage-content'
+    : 'fa-sort-down text-sage-content'
 }
 
 const sortedTaskTypes = computed(() => {
@@ -255,7 +255,7 @@ const getTaskTypeVariant = (taskType: string): BadgeVariant => {
 }
 
 const getEfficiencyColor = (avgCost: number) => {
-  if (!props.data?.task_types) return 'text-primary-light-content'
+  if (!props.data?.task_types) return 'text-secondary'
 
   const allCosts = props.data.task_types.map((t) => t.avg_cost_per_task)
   const avgOfAll = allCosts.reduce((sum, cost) => sum + cost, 0) / allCosts.length

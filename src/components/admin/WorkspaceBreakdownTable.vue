@@ -6,8 +6,8 @@
 
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner animate-spin text-2xl text-primary-light-content mb-2"></i>
-        <p class="text-sm text-primary-light-content">Loading workspace data...</p>
+        <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
+        <p class="text-sm text-secondary">Loading workspace data...</p>
       </div>
     </div>
 
@@ -19,8 +19,8 @@
     </div>
 
     <div v-else-if="!data?.workspaces.length" class="text-center py-12">
-      <i class="fa fa-database text-4xl text-primary-light-content mb-4"></i>
-      <p class="text-lg font-medium text-primary-light-content">No workspace data available</p>
+      <i class="fa fa-database text-4xl text-secondary mb-4"></i>
+      <p class="text-lg font-medium text-secondary">No workspace data available</p>
     </div>
 
     <div v-else class="overflow-x-auto">
@@ -28,7 +28,7 @@
         <thead class="bg-base-200">
           <tr>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
               @click="sort('workspace_name')"
             >
               <div class="flex items-center gap-1">
@@ -37,7 +37,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
               @click="sort('total_cost')"
             >
               <div class="flex items-center gap-1">
@@ -46,7 +46,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
               @click="sort('task_count')"
             >
               <div class="flex items-center gap-1">
@@ -55,7 +55,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
               @click="sort('company_count')"
             >
               <div class="flex items-center gap-1">
@@ -64,7 +64,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
               @click="sort('avg_cost_per_task')"
             >
               <div class="flex items-center gap-1">
@@ -73,7 +73,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-primary-light-content uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
               @click="sort('avg_cost_per_company')"
             >
               <div class="flex items-center gap-1">
@@ -94,23 +94,21 @@
                 <div class="flex-shrink-0 w-2 h-2 bg-primary rounded-full mr-3"></div>
                 <div>
                   <div class="text-sm font-medium">{{ workspace.workspace_name }}</div>
-                  <div class="text-xs text-primary-light-content">
-                    ID: {{ workspace.workspace_id }}
-                  </div>
+                  <div class="text-xs text-secondary">ID: {{ workspace.workspace_id }}</div>
                 </div>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-semibold text-primary-light-content">
+              <div class="text-sm font-semibold text-secondary">
                 {{ formatCurrency(workspace.total_cost) }}
               </div>
-              <div class="text-xs text-primary-light-content">
+              <div class="text-xs text-secondary">
                 {{ getPercentage(workspace.total_cost) }}% of total
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-sm font-medium">{{ formatNumber(workspace.task_count) }}</div>
-              <div class="text-xs text-primary-light-content">
+              <div class="text-xs text-secondary">
                 {{
                   workspace.total_input_tokens + workspace.total_output_tokens > 0
                     ? formatNumber(workspace.total_input_tokens + workspace.total_output_tokens) +
@@ -168,8 +166,8 @@ const getSortIcon = (field: keyof WorkspaceCostData) => {
     return 'fa-sort text-border-2'
   }
   return sortOrder.value === 'asc'
-    ? 'fa-sort-up text-primary-content'
-    : 'fa-sort-down text-primary-content'
+    ? 'fa-sort-up text-sage-content'
+    : 'fa-sort-down text-sage-content'
 }
 
 const sortedWorkspaces = computed(() => {

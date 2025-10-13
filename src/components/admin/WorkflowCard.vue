@@ -69,7 +69,7 @@
               size="sm"
               clearable
             />
-            <div v-else class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md">
+            <div v-else class="text-sm text-secondary bg-base-200 px-3 py-2 rounded-md">
               {{ workflow.workflow_id || $t('admin.workflows.notConfigured', 'Not configured') }}
             </div>
           </div>
@@ -88,10 +88,7 @@
               size="sm"
               clearable
             />
-            <div
-              v-else
-              class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md font-mono"
-            >
+            <div v-else class="text-sm text-secondary bg-base-200 px-3 py-2 rounded-md font-mono">
               {{
                 workflow.api_key_obfuscated || $t('admin.workflows.notConfigured', 'Not configured')
               }}
@@ -106,12 +103,12 @@
             <select
               v-if="isEditing"
               v-model="editData.llm"
-              class="w-full px-3 py-2 rounded-md bg-base-200 border border-border text-primary-light-content text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              class="w-full px-3 py-2 rounded-md bg-base-200 border border-border text-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
             >
               <option value="claude">Claude</option>
               <option value="mistral">Mistral</option>
             </select>
-            <div v-else class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md">
+            <div v-else class="text-sm text-secondary bg-base-200 px-3 py-2 rounded-md">
               {{ workflow.llm ? capitalizeFirst(workflow.llm) : 'Claude' }}
             </div>
           </div>
@@ -146,7 +143,7 @@
     v-if="isAnimating || isZoomed"
     class="bg-base-200/50 rounded-lg border-2 border-dashed border-primary-stroke min-h-[200px] flex items-center justify-center transition-all duration-300"
   >
-    <div class="text-center text-primary-light-content/60">
+    <div class="text-center text-secondary/60">
       <i class="fa fa-edit text-2xl mb-2"></i>
       <p class="text-sm">Editing...</p>
     </div>
@@ -199,7 +196,7 @@
           <label class="block text-sm font-medium text-base mb-2">
             {{ $t('admin.workflows.workflowId', 'Workflow ID') }}
           </label>
-          <div class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md">
+          <div class="text-sm text-secondary bg-base-200 px-3 py-2 rounded-md">
             {{ workflow.workflow_id || $t('admin.workflows.notConfigured', 'Not configured') }}
           </div>
         </div>
@@ -209,9 +206,7 @@
           <label class="block text-sm font-medium text-base mb-2">
             {{ $t('admin.workflows.apiKey', 'API Key') }}
           </label>
-          <div
-            class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md font-mono"
-          >
+          <div class="text-sm text-secondary bg-base-200 px-3 py-2 rounded-md font-mono">
             {{
               workflow.api_key_obfuscated || $t('admin.workflows.notConfigured', 'Not configured')
             }}
@@ -223,7 +218,7 @@
           <label class="block text-sm font-medium text-base mb-2">
             {{ $t('admin.workflows.llm', 'Language Model') }}
           </label>
-          <div class="text-sm text-primary-light-content bg-base-200 px-3 py-2 rounded-md">
+          <div class="text-sm text-secondary bg-base-200 px-3 py-2 rounded-md">
             {{ workflow.llm ? capitalizeFirst(workflow.llm) : 'Claude' }}
           </div>
         </div>
@@ -329,7 +324,7 @@ const statusConfig = computed(() => {
     label: 'Not Configured',
     badgeIcon: 'fa fa-times',
     iconBg: 'bg-slate/10 group-hover:bg-slate/20',
-    iconColor: 'text-primary-light-content',
+    iconColor: 'text-secondary',
   }
 })
 
