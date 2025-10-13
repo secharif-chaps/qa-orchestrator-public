@@ -2,30 +2,30 @@
 
 /* Sage Color Palette (Primary Brand Color) */
 :root {
-    --sage-50: #f5f8f7;
-    --sage-100: #e8f0ee;
-    --sage-200: #d1e1dd;
-    --sage-300: #a9c1b8;
-    --sage-400: #7a9b95;
-    --sage-500: #607c7f;
-    --sage-600: #5d7374;
-    --sage-700: #4f6162;
-    --sage-800: #445556;
-    --sage-900: #374648;
-    --sage-950: #2d393a;
+    --color-sage-50: #f5f8f7;
+    --color-sage-100: #e8f0ee;
+    --color-sage-200: #d1e1dd;
+    --color-sage-300: #a9c1b8;
+    --color-sage-400: #7a9b95;
+    --color-sage-500: #607c7f;
+    --color-sage-600: #5d7374;
+    --color-sage-700: #4f6162;
+    --color-sage-800: #445556;
+    --color-sage-900: #374648;
+    --color-sage-950: #2d393a;
 }
 
 /* Override Keycloak default styles */
 body {
-    @apply bg-gray-50 font-sans;
+    @apply bg-slate-50 font-sans;
 }
 
 .login-pf {
-    @apply bg-gray-50;
+    @apply bg-slate-50;
 }
 
 .login-pf body {
-    @apply bg-gray-50;
+    @apply bg-slate-50;
 }
 
 /* Main login container */
@@ -44,7 +44,7 @@ body {
 
 /* Card container - Matches custom Card component */
 .card-pf {
-    @apply bg-white rounded-2xl border border-gray-200 max-w-md w-full;
+    @apply bg-white rounded-2xl border border-slate-200 max-w-md w-full;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
@@ -55,7 +55,7 @@ body {
 /* Header styling */
 .login-pf-page .form-signin h1,
 .login-pf-page .form-signin .kc-page-title {
-    @apply text-2xl font-bold text-gray-900 text-center mb-6;
+    @apply text-2xl font-bold text-slate-900 text-center mb-6;
 }
 
 /* Form styling */
@@ -64,7 +64,7 @@ body {
 }
 
 .login-pf-page .form-control {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sage-200 focus:border-sage-200 text-base transition-all duration-200;
+    @apply w-full px-4 py-3 border border-slate-300 rounded-lg placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sage-200 focus:border-sage-200 text-base transition-all duration-200;
 }
 
 .login-pf-page .form-control:focus {
@@ -90,11 +90,11 @@ body {
 }
 
 .login-pf-page .checkbox input[type="checkbox"] {
-    @apply h-4 w-4 text-sage-600 border-gray-300 rounded focus:ring-sage-500;
+    @apply h-4 w-4 text-sage-600 border-slate-300 rounded focus:ring-sage-500;
 }
 
 .login-pf-page .checkbox label {
-    @apply ml-2 text-sm text-gray-900;
+    @apply ml-2 text-sm text-slate-900;
 }
 
 /* Error messages */
@@ -121,7 +121,7 @@ body {
 
 /* Labels */
 .login-pf-page label {
-    @apply block text-sm font-medium text-gray-700 mb-1;
+    @apply block text-sm font-medium text-slate-700 mb-1;
 }
 
 /* Footer links */
