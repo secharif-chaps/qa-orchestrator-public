@@ -9,10 +9,15 @@
           {{ $t('login.heading', 'Sign in to your account') }}
         </h2>
       </div>
-      <div class="mt-8">
+      <div class="mt-8 space-y-4">
         <div v-if="error" class="text-red-600 text-sm text-center mb-4">
           {{ error }}
         </div>
+
+        <Alert variant="info" title="Debug">
+          {{keycloakUrl }}
+          {{ keycloakRealm }}
+        </Alert>
 
         <div>
           <Button
@@ -38,6 +43,7 @@ import { useAuth } from '@/composables/useAuth'
 import { ref } from 'vue'
 import Button from '@/components/ui/Button.vue'
 import { useI18n } from 'vue-i18n'
+import Alert from '@/components/ui/Alert.vue'
 
 const { t } = useI18n()
 const { signIn } = useAuth()
@@ -58,4 +64,8 @@ const handleLogin = async () => {
     isLoading.value = false
   }
 }
+
+const keycloakUrl = import.meta.env.VITE_KEYCLOAK_URL
+const keycloakRealm = import.meta.env.VITE_KEYCLOAK_CLIENT_ID
+
 </script>
