@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen">
+  <div>
     <div class="flex flex-col gap-6">
       <div class="">
         <div class="flex items-center justify-between">
