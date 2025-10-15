@@ -18,6 +18,7 @@ export default {
     tabs: {
       profile: 'Profile',
       appearance: 'Appearance',
+      'ai-preferences': 'AI Assistant',
       preferences: 'Preferences',
       security: 'Security',
     },
@@ -1443,6 +1444,77 @@ export default {
           disabled: 'Disabled',
           noTokens: 'No Tokens',
         },
+      },
+    },
+  },
+  aiPreferences: {
+    setup: {
+      title: 'Set Up Your AI Assistant',
+      description:
+        'Tell us about your role and goals so we can provide personalized quick actions and recommendations tailored to your needs.',
+      optional: 'Optional',
+      fields: {
+        role: {
+          label: 'Your Role',
+          placeholder: 'e.g., Sales Representative, Marketing Manager, CEO',
+          helper: 'What is your professional role?',
+        },
+        goals: {
+          label: 'Your Goals',
+          placeholder:
+            'e.g., I want to identify which companies would benefit from our product and understand their pain points',
+          helper: 'What are you trying to achieve when researching companies?',
+        },
+        desiredOutput: {
+          label: 'Desired Output Format',
+          placeholder:
+            'e.g., Generate personalized outreach emails highlighting pain points with specific company references',
+          helper: 'How would you like the AI to format its recommendations?',
+        },
+        documentation: {
+          label: 'Product/Service Documentation',
+          placeholder:
+            'e.g., Our product is a B2B SaaS platform that helps companies streamline workflow automation',
+          helper: 'Describe your product or service to help personalize recommendations (optional)',
+        },
+      },
+      actions: {
+        save: 'Save & Continue',
+        cancel: 'Cancel',
+      },
+      success: {
+        title: 'Success!',
+        message:
+          'Your AI preferences have been saved. Quick actions will now be personalized based on your profile.',
+      },
+      error: {
+        title: 'Error',
+        message: 'Failed to save your preferences. Please try again.',
+      },
+      help: {
+        title: 'Tips for Better Results',
+        tip1: 'Be specific about your role and goals for more relevant recommendations',
+        tip2: 'Describe your desired output format clearly to get better-formatted results',
+        tip3: 'Include product details to receive more personalized and contextual suggestions',
+      },
+    },
+    settings: {
+      title: 'AI Assistant Preferences',
+      description: 'Update your AI preferences to refine personalized recommendations',
+      lastUpdated: 'Last updated: {date}',
+      notConfigured: 'Not configured',
+      actions: {
+        edit: 'Edit Preferences',
+        save: 'Save Changes',
+        cancel: 'Cancel',
+      },
+      success: {
+        title: 'Updated Successfully',
+        message: 'Your AI preferences have been updated.',
+      },
+      error: {
+        title: 'Update Failed',
+        message: 'Failed to update your preferences. Please try again.',
       },
     },
   },
