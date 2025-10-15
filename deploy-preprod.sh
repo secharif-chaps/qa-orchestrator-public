@@ -8,7 +8,7 @@ set -e  # Exit on error
 # Configuration
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DEPLOY_DIR="$SCRIPT_DIR"  # mint-server root directory
-SERVER_IP="10.0.1.2"  # Updated to new server IP
+SERVER_IP="localhost"  # Updated to new server IP
 
 # Colors for output
 RED='\033[0;31m'
@@ -36,9 +36,9 @@ echo -e "${YELLOW}Pulling latest code...${NC}"
 git pull origin main
 
 # Also pull frontend code if it's a separate repository
-if [ -d "../mint-front/.git" ]; then
-    echo -e "${YELLOW}Updating mint-front repository...${NC}"
-    cd ../mint-front
+if [ -d "../screen-front/.git" ]; then
+    echo -e "${YELLOW}Updating screen-front repository...${NC}"
+    cd ../screen-front
     git pull origin main
     cd "$DEPLOY_DIR"
 fi
@@ -69,7 +69,7 @@ export $(cat .env | grep -v '^#' | xargs)
 
 # Create frontend .env.production file with correct URLs
 echo -e "${YELLOW}Configuring frontend environment...${NC}"
-cat > ../mint-front/.env.production << EOF
+cat > ../screen-front/.env.production << EOF
 VITE_KEYCLOAK_URL=http://$SERVER_IP:8080
 VITE_KEYCLOAK_REALM=mint-dev
 VITE_KEYCLOAK_CLIENT_ID=mint-front
