@@ -102,6 +102,30 @@ async def global_chat(
             prepared_contexts['folder'] = folder_data
             logger.info(f"Added folder context: {folder_data.get('name', 'Unknown')}")
 
+        # Assist action context (Chapse Assist feature)
+        if chat_request.contexts and 'assist_action' in chat_request.contexts:
+            assist_data = chat_request.contexts['assist_action']
+
+            # Build enriched system message for Chapse Assist
+            action = assist_data.get('action', {})
+            user_prefs = assist_data.get('user_preferences', {})
+
+            system_message = f"""You are Chapse Assist, an AI assistant helping a {user_prefs.get('role', 'professional')}.
+
+USER CONTEXT:
+Role: {user_prefs.get('role', 'Not specified')}
+Goals: {user_prefs.get('goals', 'Not specified')}
+Desired Output: {user_prefs.get('desired_output', 'Not specified')}
+Documentation: {user_prefs.get('documentation', 'None provided')}
+
+TASK: {action.get('description', action.get('label', 'Generate output'))}
+
+Generate output according to the user's desired format and goals. Be specific, actionable, and professional. Use the company data provided in the context to personalize your response."""
+
+            prepared_contexts['assist_action'] = assist_data
+            prepared_contexts['system_message'] = system_message
+            logger.info(f"Added assist_action context: {action.get('label', 'Unknown action')}")
+
         # Convert chat history to simple format
         chat_history = []
         if chat_request.chat_history:
@@ -116,6 +140,10 @@ async def global_chat(
             "username": workspace_context.username,
             "workspace_name": workspace_context.workspace.name
         }
+
+        # Add system message to system context if present (for assist_action)
+        if 'system_message' in prepared_contexts:
+            system_context['system_message'] = prepared_contexts['system_message']
 
         # Send message to Dify with all contexts
         response_data = await dify_client.send_global_chat_message(

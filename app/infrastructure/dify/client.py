@@ -343,6 +343,11 @@ class DifyClient:
             "user": system_context.get("username", "user")
         }
 
+        # Add system message if present (for assist_action context)
+        if "system_message" in system_context:
+            payload["inputs"]["system_message"] = system_context["system_message"]
+            logger.debug(f"Added system_message to Dify payload")
+
         # Add chat history if provided
         if chat_history:
             payload["inputs"]["chat_history"] = json.dumps(chat_history, ensure_ascii=False)
@@ -406,3 +411,187 @@ class DifyClient:
             error_msg = f"Error in Dify global chat workflow: {str(e)}"
             logger.error(error_msg)
             raise Exception(error_msg) from e
+
+    async def generate_quick_actions(
+        self,
+        user_preferences: Dict[str, Any],
+        company_data: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Generate quick actions using Dify workflow based on user preferences and company data
+
+        Args:
+            user_preferences: User's AI preferences (role, goals, desired_output, documentation)
+            company_data: Full company data
+
+        Returns:
+            Dict with 'actions' list containing id, label, description, icon
+        """
+        # Chapse Assist workflow credentials (to be configured in Dify)
+        # TODO: Move these to workflow_configs table or environment variables
+        quick_actions_workflow_id = "QUICK_ACTIONS_WORKFLOW_ID"  # Placeholder
+        quick_actions_api_key = "app-jGJl5PAPQnAE0IzFAfkV3XjO"  # Using same API key for now
+
+        url = f"{self.base_url}/chat-messages"
+
+        logger.info(f"Generating quick actions for company: {company_data.get('name', 'Unknown')}")
+        logger.debug(f"User role: {user_preferences.get('role', 'Unknown')}")
+
+        # Prepare the payload for Dify API
+        import json
+
+        # Combine user preferences and company data into context
+        combined_context = {
+            "user_preferences": user_preferences,
+            "company": company_data
+        }
+
+        # Create the query with explicit JSON format instruction
+        query = f"""Based on the provided user preferences and company data, generate 3 quick action recommendations.
+
+User Role: {user_preferences.get('role', 'professional')}
+User Goals: {user_preferences.get('goals', 'Not specified')}
+
+IMPORTANT: You MUST respond with ONLY a valid JSON object in this exact format. Do not include any markdown, explanations, or additional text. Only output the JSON:
+
+{{
+  "actions": [
+    {{
+      "id": "unique_id_1",
+      "label": "Short action label",
+      "description": "Brief description of what this action does",
+      "icon": "fa fa-icon-name"
+    }},
+    {{
+      "id": "unique_id_2",
+      "label": "Short action label",
+      "description": "Brief description",
+      "icon": "fa fa-icon-name"
+    }},
+    {{
+      "id": "unique_id_3",
+      "label": "Short action label",
+      "description": "Brief description",
+      "icon": "fa fa-icon-name"
+    }}
+  ]
+}}
+
+Use Font Awesome 5 icons (fa fa-envelope, fa fa-file-alt, fa fa-search, fa fa-users, fa fa-chart-line, etc.).
+Make actions specific, actionable, and relevant to the user's role and company context."""
+
+        payload = {
+            "inputs": {
+                "context": json.dumps(combined_context, ensure_ascii=False)
+            },
+            "query": query,
+            "response_mode": "blocking",
+            "conversation_id": "",
+            "user": "chapse_assist"
+        }
+
+        headers = {
+            "Authorization": f"Bearer {quick_actions_api_key}",
+            "Content-Type": "application/json"
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.post(
+                    url,
+                    json=payload,
+                    headers=headers
+                )
+
+                logger.info(f"Dify quick actions response status: {response.status_code}")
+
+                if response.status_code != 200:
+                    error_msg = f"Dify quick actions API returned non-200 status code: {response.status_code}"
+                    logger.error(f"{error_msg}. Response: {response.text}")
+                    raise Exception(error_msg)
+
+                try:
+                    response_text = response.text.strip()
+                    if not response_text:
+                        logger.warning("Dify quick actions API returned empty response")
+                        raise Exception("Empty response from AI")
+
+                    json_response = response.json()
+
+                    if json_response is None:
+                        logger.warning("Dify quick actions API returned null response")
+                        raise Exception("Null response from AI")
+
+                    # Extract the answer from Dify response format
+                    if "answer" in json_response:
+                        answer = json_response["answer"]
+
+                        # Parse the JSON from the answer
+                        try:
+                            # Enhanced JSON extraction logic
+                            answer_clean = answer.strip()
+
+                            # Try to extract JSON from markdown code blocks
+                            import re
+
+                            # Try to find JSON in markdown code block
+                            json_match = re.search(r'```json\s*(\{[\s\S]*?\})\s*```', answer_clean)
+                            if json_match:
+                                answer_clean = json_match.group(1)
+                            else:
+                                # Try to find JSON in generic code block
+                                json_match = re.search(r'```\s*(\{[\s\S]*?\})\s*```', answer_clean)
+                                if json_match:
+                                    answer_clean = json_match.group(1)
+                                else:
+                                    # Try to extract JSON directly (look for first { to last })
+                                    json_match = re.search(r'\{[\s\S]*\}', answer_clean)
+                                    if json_match:
+                                        answer_clean = json_match.group(0)
+
+                            answer_clean = answer_clean.strip()
+
+                            logger.debug(f"Extracted JSON string: {answer_clean[:200]}...")
+
+                            actions_data = json.loads(answer_clean)
+
+                            if "actions" in actions_data and isinstance(actions_data["actions"], list):
+                                # Validate that we have at least 1 action
+                                if len(actions_data["actions"]) == 0:
+                                    logger.error("No actions in response")
+                                    raise Exception("No actions generated by AI")
+
+                                # Limit to maximum 3 actions
+                                if len(actions_data["actions"]) > 3:
+                                    actions_data["actions"] = actions_data["actions"][:3]
+
+                                logger.info(f"Successfully generated {len(actions_data['actions'])} quick actions")
+                                return actions_data
+                            else:
+                                logger.error(f"Invalid actions structure in response: {actions_data}")
+                                raise Exception("Invalid response structure from AI")
+
+                        except json.JSONDecodeError as e:
+                            logger.error(f"Failed to parse AI response as JSON. Response: {answer[:500]}")
+                            logger.error(f"JSON decode error: {str(e)}")
+                            raise Exception(f"Failed to parse AI response: {str(e)}")
+                    else:
+                        logger.warning(f"Unexpected Dify quick actions response format: {json_response}")
+                        raise Exception("Unexpected response format from AI")
+
+                except Exception as e:
+                    logger.error(f"Error processing Dify quick actions response: {str(e)}")
+                    raise
+
+        except httpx.TimeoutException as e:
+            error_msg = f"Quick actions request to Dify timed out after 30 seconds"
+            logger.error(error_msg)
+            raise Exception(error_msg) from e
+        except httpx.HTTPError as e:
+            error_msg = f"HTTP error occurred in Dify quick actions request: {str(e)}"
+            logger.error(error_msg)
+            raise Exception(error_msg) from e
+        except Exception as e:
+            error_msg = f"Error generating quick actions: {str(e)}"
+            logger.error(error_msg)
+            raise
