@@ -46,6 +46,11 @@ export const useSidebarStore = defineStore('sidebar', () => {
 
   // Set sidebar state
   function setState(newState: SidebarState) {
+    // If leaving chapse state while in fullscreen, exit fullscreen
+    if (state.value === 'chapse' && isFullscreen.value && newState !== 'chapse') {
+      isFullscreen.value = false
+    }
+
     previousState.value = state.value
     state.value = newState
     saveState()

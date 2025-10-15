@@ -67,6 +67,15 @@
             @click="$router.push('/team')"
           />
 
+          <!-- Settings button -->
+          <Button
+            variant="tertiary"
+            dark
+            icon="fa fa-cog"
+            icon-only
+            @click="$router.push('/settings')"
+          />
+
           <Button
             variant="tertiary"
             dark

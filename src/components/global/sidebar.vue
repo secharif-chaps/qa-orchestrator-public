@@ -13,11 +13,16 @@
       :leave-from-class="transitionClasses.leaveFrom"
       :leave-to-class="transitionClasses.leaveTo"
     >
-      <component :is="currentComponent" :key="sidebarStore.state" />
+      <component
+        :is="currentComponent"
+        :key="sidebarStore.state"
+        :pending-assist-action="pendingAssistAction"
+        @assist-action-processed="pendingAssistAction = null"
+      />
     </Transition>
 
     <!-- Footer Actions -->
-    <div class="border-t border-sage-800 px-4 py-3 flex items-center justify-around">
+    <div class="w-full border-t border-sage-800 px-4 py-3 flex items-center justify-around">
       <button
         class="flex flex-col items-center gap-1 text-sage-300 hover:text-white transition-colors"
         @click="$router.push('/settings/profile')"
@@ -45,7 +50,7 @@
 
 <script lang="ts" setup>
 import { useSidebarStore } from '@/stores/sidebar'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import TokenSidebar from '@/components/sidebar/TokenSidebar.vue'
 import ChapseSidebar from '@/components/sidebar/ChapseSidebar.vue'
 import NotificationsSidebar from '@/components/sidebar/NotificationsSidebar.vue'
@@ -54,6 +59,34 @@ import { useTheme } from '@/composables/useTheme'
 
 const sidebarStore = useSidebarStore()
 const sidebarEl = ref<HTMLElement>()
+
+// Store pending assist action event data
+const pendingAssistAction = ref<any>(null)
+
+// Handle Chapse Assist quick action events
+const handleAssistActionEvent = (event: CustomEvent) => {
+  console.log('📩 Global sidebar received chapse-assist-action event:', event.detail)
+
+  // Store the event data for ChapseSidebar to pick up
+  pendingAssistAction.value = event.detail
+
+  // Switch to chapse sidebar
+  sidebarStore.setState('chapse')
+
+  console.log('✅ Sidebar switched to chapse state')
+}
+
+// Add event listener on mount
+onMounted(() => {
+  console.log('🎧 Global sidebar: Adding event listener for chapse-assist-action')
+  window.addEventListener('chapse-assist-action', handleAssistActionEvent as EventListener)
+  console.log('✅ Global sidebar: Event listener added')
+})
+
+// Remove event listener on unmount
+onUnmounted(() => {
+  window.removeEventListener('chapse-assist-action', handleAssistActionEvent as EventListener)
+})
 
 // Horizontal scroll configuration
 const SCROLL_THRESHOLD = 50 // Pixels of accumulated horizontal scroll needed to switch tabs
