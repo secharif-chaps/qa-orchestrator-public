@@ -62,6 +62,7 @@ const router = useRouter()
 const tabs = [
   { id: 'profile', name: '/settings/profile', icon: 'fas fa-user' },
   { id: 'appearance', name: '/settings/appearance', icon: 'fas fa-palette' },
+  { id: 'ai-preferences', name: '/settings/ai-preferences', icon: 'fas fa-magic' },
   { id: 'security', name: '/settings/security', icon: 'fas fa-shield-alt' },
 ]
 
