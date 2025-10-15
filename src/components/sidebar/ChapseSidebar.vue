@@ -146,6 +146,18 @@ import withBody from '@/assets/chapse/default.svg'
 import type { ChapseContext } from '@/composables/useChapseChat'
 import { useSidebarStore } from '@/stores/sidebar'
 
+// Props
+interface Props {
+  pendingAssistAction?: any
+}
+
+const props = defineProps<Props>()
+
+// Emits
+const emit = defineEmits<{
+  'assist-action-processed': []
+}>()
+
 // Router
 const route = useRoute()
 
@@ -235,10 +247,31 @@ const suggestions = computed<Suggestion[]>(() => {
   return []
 })
 
-// Load chat history on mount
-onMounted(() => {
+// Load chat history on mount and process any pending action
+onMounted(async () => {
   loadHistory()
+
+  // Check if there's a pending assist action when component mounts
+  await nextTick()
+  if (props.pendingAssistAction) {
+    console.log('🎯 ChapseSidebar mounted with pending action, processing immediately...')
+    await handleAssistAction(props.pendingAssistAction)
+    emit('assist-action-processed')
+  }
 })
+
+// Watch for new pending assist actions (when component is already mounted)
+watch(
+  () => props.pendingAssistAction,
+  async (actionData, oldData) => {
+    // Only process if it's a new action (not the initial mount or same reference)
+    if (actionData && actionData !== oldData) {
+      console.log('📩 ChapseSidebar received new pending assist action:', actionData)
+      await handleAssistAction(actionData)
+      emit('assist-action-processed')
+    }
+  }
+)
 
 // Auto-scroll to bottom when messages change
 watch(
@@ -263,6 +296,54 @@ const handleSendMessage = async () => {
 
   // Clear active contexts after sending
   activeContexts.value = []
+}
+
+// Handle Chapse Assist quick action
+const handleAssistAction = async (eventData: any) => {
+  try {
+    console.log('Processing assist action:', eventData)
+
+    const { action, user_preferences, companyId } = eventData
+
+    // Construct the assist_action prompt from user preferences and action
+    const assistActionPrompt = `You are a ${user_preferences.role}. Your goal is to ${user_preferences.goals}. Generate output that is ${user_preferences.desired_output}.
+
+Quick Action: ${action.label}
+${action.description}
+
+Use the company data provided in the context to complete this action.`
+
+    // Create a ChapseContext object from the assist_action
+    const assistContext: ChapseContext = {
+      id: `assist_action_${action.id}`,
+      type: 'assist_action' as any, // This is a new context type
+      name: action.label,
+      data: {
+        assist_action: assistActionPrompt,
+        action_id: action.id,
+        company_id: companyId,
+      },
+    }
+
+    // Add the context to active contexts
+    console.log('Adding context:', assistContext)
+    addContext(assistContext)
+
+    // Pre-fill the message textarea with the action label
+    userMessage.value = action.label
+    console.log('Message pre-filled:', userMessage.value)
+
+    console.log('✅ Quick action context added to ChapseSidebar')
+
+    // Automatically send the message after a short delay
+    await nextTick()
+    setTimeout(() => {
+      console.log('Sending message automatically...')
+      handleSendMessage()
+    }, 100)
+  } catch (error) {
+    console.error('❌ Error in handleAssistAction:', error)
+  }
 }
 
 // Handle suggestion button click

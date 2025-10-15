@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Company Info Card - Full Width -->
-    <div class="flex gap-4">
+    <div class="space-y-4 xl:space-y-0 xl:flex gap-4">
       <Card class="flex-1">
         <div class="flex items-start gap-6">
           <!-- Company Info -->
@@ -93,7 +93,7 @@
         </div>
       </Card>
 
-      <Card>
+      <Card class="xl:max-w-md">
         <p>Présence en ligne</p>
         <div class="flex bg-base-200 items-center gap-3 rounded-card px-4 py-3">
           <i class="fa-solid fa-link fa-fw text-secondary"></i>
@@ -123,6 +123,21 @@
         </div>
       </Card>
     </div>
+
+    <!-- Chapse Assist Alert (Onboarding) -->
+    <ChapseAssistAlert
+      @setup="handleAssistSetup"
+      @dismiss="handleAssistDismiss"
+    />
+
+    <!-- Chapse Assist Quick Actions -->
+    <ChapseAssistQuickActions
+      v-if="company?.id"
+      :company-id="company.id"
+      @action-click="handleQuickActionClick"
+      @load-success="handleQuickActionsSuccess"
+      @load-error="handleQuickActionsError"
+    />
 
     <div>
       <h4 class="font-semibold">Analyses</h4>
@@ -165,12 +180,15 @@ meta:
 <script lang="ts" setup>
 import AnalysisCard from '@/components/company/AnalysisCard.vue'
 import SectionModal from '@/components/company/SectionModal.vue'
+import ChapseAssistAlert from '@/components/features/chapse-assist/ChapseAssistAlert.vue'
+import ChapseAssistQuickActions from '@/components/features/chapse-assist/ChapseAssistQuickActions.vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import { companyByIdQuery } from '@/queries/companies'
 import { useQuery } from '@pinia/colada'
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { TaskType, TaskStatus } from '@/types/task'
+import type { QuickAction } from '@/types/ai-preferences'
 import Tag from '@/components/ui/Tag.vue'
 import Card from '@/components/ui/Card.vue'
 import { useRestartTask } from '@/mutations/tasks'
@@ -399,5 +417,37 @@ const getSocialIcon = (platform: string) => {
   }
 
   return iconMap[platform.toLowerCase()] || 'fa-globe'
+}
+
+/**
+ * Chapse Assist Event Handlers
+ */
+
+// Handle setup button click (navigates to AI preferences setup)
+const handleAssistSetup = () => {
+  console.log('User clicked setup AI preferences')
+  router.push({ name: '/ai-preferences-setup' })
+}
+
+// Handle alert dismiss
+const handleAssistDismiss = () => {
+  console.log('User dismissed Chapse Assist alert')
+}
+
+// Handle quick action button click
+const handleQuickActionClick = (action: QuickAction) => {
+  console.log('User clicked quick action:', action)
+  // The openQuickAction function in useChapseAssist composable
+  // will dispatch the custom event that ChapseSidebar listens for
+}
+
+// Handle successful quick actions load
+const handleQuickActionsSuccess = (actions: QuickAction[]) => {
+  console.log('✅ Quick actions loaded successfully:', actions.length)
+}
+
+// Handle quick actions load error
+const handleQuickActionsError = (error: string) => {
+  console.error('❌ Failed to load quick actions:', error)
 }
 </script>
