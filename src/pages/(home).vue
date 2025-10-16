@@ -17,7 +17,7 @@
         <img
           src="@/assets/chapse/head.svg"
           alt="Chapse head character"
-          class="h-20 w-auto object-contain"
+          class="h-12 w-auto object-contain"
           loading="lazy"
           style="image-rendering: -webkit-optimize-contrast; image-rendering: smooth"
         />
