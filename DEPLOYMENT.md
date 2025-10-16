@@ -13,7 +13,7 @@ This guide covers deploying the Mint application stack (Frontend, Backend, Keycl
 - **Reverse Proxy**: Nginx routing all services
 
 ## Prerequisites
-
+l
 1. Server with Docker and Docker Compose installed
 2. SSH access to the server (10.0.1.1)
 3. Git access (SSH key configured for cloning repositories)
