@@ -11,7 +11,7 @@
           <Breadcrumbs />
         </div>
         <div
-          class="bg-white min-h-[calc(100vh-125apx)] dark:bg-sage-900 w-full"
+          class="bg-white min-h-[calc(100vh-125px)] dark:bg-sage-900 w-full"
         >
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 py-24">
           <slot />
