@@ -7,7 +7,14 @@
             class="flex items-center space-x-2 text-xl text-sage-200 dark:text-white pl-6 relative"
           >
             <img :src="logo_small" class="!h-10 !w-auto" />
-            <h1 class="font-extrabold">ChapsMind</h1>
+            <h1 class="font-extralight">
+              <span class="opacity-25">
+                Chaps
+              </span>
+              <span class=" -ml-2 opacity-100 font-extrabold">
+                Mind
+              </span>
+              </h1>
           </div>
         </RouterLink>
         <div class="max-w-md grow"></div>

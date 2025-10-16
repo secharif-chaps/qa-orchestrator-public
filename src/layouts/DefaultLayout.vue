@@ -22,7 +22,7 @@
         class="h-full grow shrink-0 transition-all duration-300"
         :class="[isFullscreen ? 'w-screen' : isOpen ? 'w-[320px]' : 'w-0']"
       >
-        <div class="pt-[70px] h-screen fixed" :class="[isFullscreen ? 'w-full' : ' w-fit']">
+        <div class="pt-[70px] h-screen fixed" :class="[isFullscreen ? 'w-full' : ' w-[320px]']">
           <Sidebar />
         </div>
       </div>
