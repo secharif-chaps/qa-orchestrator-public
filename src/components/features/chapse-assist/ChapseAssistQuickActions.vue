@@ -64,22 +64,22 @@
         v-for="action in quickActions"
         :key="action.id"
         @click="handleActionClick(action)"
-        class="group bg-base-200 hover:bg-accent-100 border border-primary-stroke hover:border-accent-500 rounded-lg p-4 text-left transition-all duration-200 hover:shadow-shadow-2"
+        class="group bg-base-200 hover:bg-accent-100 dark:hover:bg-accent-400/20 border border-primary-stroke hover:border-accent-500 rounded-lg p-4 text-left transition-all duration-200 hover:shadow-shadow-2 "
       >
         <div class="flex items-start gap-4">
           <!-- Icon -->
           <div
-            class="flex-shrink-0 w-10 h-10 rounded-lg bg-primary-light flex items-center justify-center group-hover:bg-accent-500 group-hover:text-accent-50 transition-colors"
+            class="flex-shrink-0 w-10 h-10 rounded-full bg-sage-950  flex items-center justify-center group-hover:bg-accent-500 group-hover:text-accent-50 transition-all duration-300"
           >
             <i :class="action.icon" class="text-lg"></i>
           </div>
 
           <!-- Content -->
           <div class="flex-1 min-w-0">
-            <h4 class="font-semibold text-base mb-1 group-hover:text-accent-900 transition-colors">
+            <h4 class="font-semibold text-base mb-1 group-hover:text-accent-900 dark:group-hover:text-accent-100 transition-colors">
               {{ action.label }}
             </h4>
-            <p class="text-sm text-secondary group-hover:text-accent-900 transition-colors line-clamp-2">
+            <p class="text-sm text-secondary group-hover:text-accent-900 transition-colors line-clamp-2 dark:group-hover:text-accent-100">
               {{ action.description }}
             </p>
           </div>

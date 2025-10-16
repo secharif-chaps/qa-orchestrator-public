@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col justify-between h-screen">
+  <div class="flex flex-col  h-screen">
     <!-- Header -->
     <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
       <h2 class="text-headline-2xl">{{ $t('sidebar.chapse.title', 'Chaps-e') }}</h2>
@@ -53,7 +53,7 @@
     </div>
 
     <!-- Messages Container -->
-    <div ref="messagesContainer" class="overflow-y-auto px-4 py-4 grow max-h-[calc(100vh-450px)]">
+    <div ref="messagesContainer" class="overflow-y-auto px-4 py-4 grow max-h-[calc(100vh-400px)] max-w-[100%] relative ">
       <ChatMessage v-for="message in messages" :key="message.id" :message="message" />
 
       <!-- Loading Indicator -->

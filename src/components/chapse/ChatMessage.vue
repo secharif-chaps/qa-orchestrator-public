@@ -7,13 +7,13 @@
     }"
   >
     <!-- Chaps-e Avatar (left side for assistant messages) -->
-    <!-- <div
-      v-if="message.role === 'assistant'"
+    <div
+      v-if="message.role === 'assistant' && isFullscreen"
       class="flex-shrink-0 w-8 h-8 rounded-full bg-sage-900 flex items-center justify-center"
     >
       <img v-if="chapseAvatar" :src="chapseAvatar" class="w-6 h-6" alt="Chaps-e" />
       <i v-else class="fa fa-robot text-secondary text-sm"></i>
-    </div> -->
+    </div>
 
     <!-- Message Content -->
     <div class="max-w-[100%] rounded-xl px-4 py-3 text-sm" :class="messageClasses">
@@ -39,11 +39,16 @@
 import { computed } from 'vue'
 import type { ChapseMessage } from '@/composables/useChapseChat'
 import chapseHead from '@/assets/chapse/head.svg'
+import { useSidebarStore } from '@/stores/sidebar';
 
 const props = defineProps<{
   message: ChapseMessage
   showTimestamp?: boolean
 }>()
+
+const sidebarStore = useSidebarStore()
+
+const isFullscreen = computed(() => sidebarStore.isFullscreen)
 
 const chapseAvatar = computed(() => {
   if (props.message.role === 'assistant' && props.message.avatar === 'chapse') {
@@ -54,7 +59,7 @@ const chapseAvatar = computed(() => {
 
 const messageClasses = computed(() => {
   if (props.message.role === 'assistant') {
-    return 'bg-sage-900 dark:bg-slate-900 text-base dark:text-gray-100'
+    return 'bg-sage-900 dark:bg-sage-900 text-base dark:text-gray-100'
   } else {
     return 'bg-sage-300 text-sage-950 dark:bg-sage-300/20 dark:text-sage-300'
   }
