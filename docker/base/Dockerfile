@@ -1,4 +1,3 @@
-# Dockerfile for Celery workers and Flower
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -7,26 +6,35 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     gcc \
     libpq-dev \
+    netcat-traditional \
     curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install poetry
+# Install Poetry
 RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python3 - && \
     cd /usr/local/bin && \
     ln -s /opt/poetry/bin/poetry && \
     poetry --version
 
-# Copy dependency files
+# Copy poetry configuration files
 COPY pyproject.toml poetry.lock* ./
 
-# Configure poetry to not create virtualenv
+# Configure poetry to not use a virtual environment
 RUN poetry config virtualenvs.create false
 
 # Install dependencies
 RUN poetry install --no-interaction --no-ansi
 
-# Copy application code
-COPY . .
+# Copy the rest of the application
+COPY src .
+COPY ../../app .
 
-# The CMD will be overridden by docker-compose command
+# Make the entrypoint script executable
+RUN chmod +x entrypoint.sh
+
+# Expose the port
+EXPOSE 8000
+
+# Set the entrypoint
+ENTRYPOINT ["./entrypoint.sh"] 
