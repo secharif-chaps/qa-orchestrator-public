@@ -22,7 +22,7 @@
     </Transition>
 
     <!-- Footer Actions -->
-    <div class="w-full border-t border-sage-800 px-4 py-3 flex items-center justify-around">
+    <div class="w-[320px] fixed right-0 bottom-0 border-t border-sage-800 z-50 px-4 py-3 grid grid-cols-3">
       <button
         class="flex flex-col items-center gap-1 text-sage-300 hover:text-white transition-colors"
         @click="$router.push('/settings/profile')"

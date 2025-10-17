@@ -57,6 +57,7 @@ declare module 'vue-router/auto-routes' {
     '/team/apis': RouteRecordInfo<'/team/apis', '/team/apis', Record<never, never>, Record<never, never>>,
     '/team/settings': RouteRecordInfo<'/team/settings', '/team/settings', Record<never, never>, Record<never, never>>,
     '/team/users': RouteRecordInfo<'/team/users', '/team/users', Record<never, never>, Record<never, never>>,
+    '/tokens/history': RouteRecordInfo<'/tokens/history', '/tokens/history', Record<never, never>, Record<never, never>>,
     '/ui-demo': RouteRecordInfo<'/ui-demo', '/ui-demo', Record<never, never>, Record<never, never>>,
   }
 }

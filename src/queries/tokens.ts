@@ -17,7 +17,7 @@ export const moduleTokensQuery = defineQueryOptions(({ workspaceId, module }: { 
   query: () => getModuleTokens(workspaceId, module),
 }))
 
-// Query for all workspace modules (admin)
+// Query for all workspace modules (workspace members can view their own)
 export const workspaceModulesQuery = defineQueryOptions(({ workspaceId }: { workspaceId: number }) => ({
   key: TOKEN_QUERY_KEYS.workspaceModules(workspaceId),
   query: () => getWorkspaceModules(workspaceId),

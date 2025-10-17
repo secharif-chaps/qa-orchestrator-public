@@ -61,6 +61,8 @@ export const getCompanies = async (filters: {
   size: number
   name: string
   archived?: boolean
+  sort?: string
+  order?: 'asc' | 'desc'
 }) => {
   const params = new URLSearchParams({
     page: filters.page.toString(),
@@ -73,6 +75,14 @@ export const getCompanies = async (filters: {
 
   if (filters.archived) {
     params.append('archived', 'true')
+  }
+
+  if (filters.sort) {
+    params.append('sort', filters.sort)
+  }
+
+  if (filters.order) {
+    params.append('order', filters.order)
   }
 
   const response = await apiClient.get<PaginatedResponse<Company>>(

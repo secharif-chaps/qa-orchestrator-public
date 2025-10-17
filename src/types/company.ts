@@ -181,3 +181,7 @@ export interface Company {
 
   team?: TeamMember[]
 }
+
+
+
+

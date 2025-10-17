@@ -5,7 +5,7 @@
       <h2 class="text-headline-2xl">{{ $t('sidebar.tokens.title', 'Credits') }}</h2>
       <Tag
         variant="success"
-        :label="$t('sidebar.tokens.credits', '{count} credits', { count: totalTokens })"
+        :label="`${totalTokens} ${$t('sidebar.tokens.credits', 'credits')}`"
         icon="fa fa-coins"
         rounded
         size="md"
@@ -22,91 +22,121 @@
       <!-- Token History -->
       <div v-else class="space-y-6">
         <!-- Today Section -->
-        <div v-if="mockHistory.today.length > 0">
+        <div v-if="groupedHistory.today.length > 0">
           <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider mb-3">
-            {{ $t('sidebar.tokens.yesterday', 'Yesterday') }}
+            {{ $t('sidebar.tokens.today', "Aujourd'hui") }}
           </h3>
           <div class="space-y-2">
             <div
-              v-for="item in mockHistory.today"
-              :key="item.id"
+              v-for="company in groupedHistory.today"
+              :key="company.id"
               class="bg-sage-800/50 rounded-lg p-3 hover:bg-sage-800 transition-colors"
             >
               <div class="flex items-start gap-3">
                 <!-- Icon -->
                 <div
-                  class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                  :class="item.icon.bg"
+                  class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-purple-500/20"
                 >
-                  <i :class="[item.icon.icon, item.icon.color, 'text-sm']"></i>
+                  <i class="fa fa-building text-purple-400 text-sm"></i>
                 </div>
 
                 <!-- Content -->
                 <div class="flex-1 min-w-0">
                   <div class="flex items-start justify-between gap-2">
-                    <h4 class="text-sm font-medium text-white truncate">{{ item.title }}</h4>
+                    <h4 class="text-sm font-medium text-white truncate">{{ company.name }}</h4>
                     <span
-                      class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0"
-                      :class="
-                        item.amount < 0
-                          ? 'bg-red-500/20 text-red-300'
-                          : 'bg-green-500/20 text-green-300'
-                      "
+                      class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 bg-red-500/20 text-red-300"
                     >
-                      {{ item.amount > 0 ? '+' : '' }}{{ item.amount }}
+                      -1
                     </span>
                   </div>
-                  <p class="text-xs text-sage-400 mt-1">{{ item.description }}</p>
+                  <p class="text-xs text-sage-400 mt-1">
+                    {{ $t('sidebar.tokens.createdBy', 'Fiche créée par') }} {{ company.owner_username }}
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Date Section (26 septembre) -->
-        <div v-if="mockHistory.date.length > 0">
+        <!-- Yesterday Section -->
+        <div v-if="groupedHistory.yesterday.length > 0">
           <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider mb-3">
-            26 septembre
+            {{ $t('sidebar.tokens.yesterday', 'Hier') }}
           </h3>
           <div class="space-y-2">
             <div
-              v-for="item in mockHistory.date"
-              :key="item.id"
+              v-for="company in groupedHistory.yesterday"
+              :key="company.id"
               class="bg-sage-800/50 rounded-lg p-3 hover:bg-sage-800 transition-colors"
             >
               <div class="flex items-start gap-3">
                 <!-- Icon -->
                 <div
-                  class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                  :class="item.icon.bg"
+                  class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-purple-500/20"
                 >
-                  <i :class="[item.icon.icon, item.icon.color, 'text-sm']"></i>
+                  <i class="fa fa-building text-purple-400 text-sm"></i>
                 </div>
 
                 <!-- Content -->
                 <div class="flex-1 min-w-0">
                   <div class="flex items-start justify-between gap-2">
-                    <h4 class="text-sm font-medium text-white truncate">{{ item.title }}</h4>
+                    <h4 class="text-sm font-medium text-white truncate">{{ company.name }}</h4>
                     <span
-                      class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0"
-                      :class="
-                        item.amount < 0
-                          ? 'bg-red-500/20 text-red-300'
-                          : 'bg-green-500/20 text-green-300'
-                      "
+                      class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 bg-red-500/20 text-red-300"
                     >
-                      {{ item.amount > 0 ? '+' : '' }}{{ item.amount }}
+                      -1
                     </span>
                   </div>
-                  <p class="text-xs text-sage-400 mt-1">{{ item.description }}</p>
+                  <p class="text-xs text-sage-400 mt-1">
+                    {{ $t('sidebar.tokens.createdBy', 'Fiche créée par') }} {{ company.owner_username }}
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- See All History Link -->
-        <div class="pt-2">
+        <!-- Other Date Sections -->
+        <div v-for="(companies, dateKey) in groupedHistory.dates" :key="dateKey">
+          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider mb-3">
+            {{ dateKey }}
+          </h3>
+          <div class="space-y-2">
+            <div
+              v-for="company in companies"
+              :key="company.id"
+              class="bg-sage-800/50 rounded-lg p-3 hover:bg-sage-800 transition-colors"
+            >
+              <div class="flex items-start gap-3">
+                <!-- Icon -->
+                <div
+                  class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-purple-500/20"
+                >
+                  <i class="fa fa-building text-purple-400 text-sm"></i>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between gap-2">
+                    <h4 class="text-sm font-medium text-white truncate">{{ company.name }}</h4>
+                    <span
+                      class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 bg-red-500/20 text-red-300"
+                    >
+                      -1
+                    </span>
+                  </div>
+                  <p class="text-xs text-sage-400 mt-1">
+                    {{ $t('sidebar.tokens.createdBy', 'Fiche créée par') }} {{ company.owner_username }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- See All History Link (hidden when on history page) -->
+        <div v-if="!isOnHistoryPage" class="pt-2">
           <button
             class="text-sm text-sage-300 hover:text-white transition-colors flex items-center gap-2"
             @click="$router.push('/tokens/history')"
@@ -118,48 +148,65 @@
       </div>
     </div>
 
-    <!-- Contact Card -->
-    <div class="px-4 pb-4">
-      <div
-        class="bg-gradient-to-br from-rose-900/20 to-sage-900/20 rounded-lg p-4 border border-rose-500/20"
+    <!-- Contact Support Alert -->
+    <div class="px-4 pb-4 dark">
+      <Alert
+        variant="info"
+        :title="$t('sidebar.tokens.needMore', 'Need more Credits?')"
+        :message="
+          $t(
+            'sidebar.tokens.contactSupport',
+            'Contact ChapsVision support to request additional credits',
+          )
+        "
+        icon="fa fa-envelope"
       >
-        <h3 class="text-sm font-semibold text-white mb-2">
-          {{ $t('sidebar.tokens.needMore', 'Need more Credits?') }}
-        </h3>
-        <p class="text-xs text-sage-300 mb-3">
-          {{ $t('sidebar.tokens.advisor', 'Your ChapsVision advisor') }}<br />
-          <span class="font-semibold text-white">Victoire ECHEKÉMAT</span>
-        </p>
-        <Button
-          variant="secondary"
-          size="sm"
-          :label="$t('sidebar.tokens.contact', 'Contact')"
-          icon="fa fa-envelope"
-          @click="handleContact"
-        />
-      </div>
+        <template #actions>
+          <Button
+            variant="tertiary"
+            size="sm"
+            :label="$t('sidebar.tokens.contactButton', 'Contact Support')"
+            icon="fa fa-envelope"
+            @click="handleContact"
+          />
+        </template>
+      </Alert>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useQuery } from '@pinia/colada'
+import { useRoute } from 'vue-router'
 import { workspaceModulesQuery } from '@/queries/tokens'
+import { recentCompaniesQuery } from '@/queries/companies'
 import { useAuthStore } from '@/stores/auth'
 import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
+import Alert from '@/components/ui/Alert.vue'
+import type { Company } from '@/types/company'
 
 const authStore = useAuthStore()
+const route = useRoute()
+
+// Check if we're on the token history page
+const isOnHistoryPage = computed(() => route.path === '/tokens/history')
 
 // Get workspace ID from current workspace
 const workspaceId = computed(() => authStore.currentWorkspace?.id || 1)
 
 // Fetch workspace modules to get total tokens
-const { data: modulesData, isLoading } = useQuery(
+const { data: modulesData, isLoading: isLoadingTokens } = useQuery(
   workspaceModulesQuery,
   () => ({ workspaceId: workspaceId.value }),
   { enabled: () => !!workspaceId.value },
+)
+
+// Fetch recent companies for token history (10 most recent)
+const { data: recentCompanies, isLoading: isLoadingCompanies } = useQuery(
+  recentCompaniesQuery,
+  () => ({ limit: 10 }),
 )
 
 // Calculate total tokens across all modules
@@ -168,72 +215,64 @@ const totalTokens = computed(() => {
   return modulesData.value.modules.reduce((sum, module) => sum + module.token_count, 0)
 })
 
-// Mock token history data
-const mockHistory = ref({
-  today: [
-    {
-      id: 1,
-      title: 'La meilleur recette de pesto',
-      description: 'Nouvelle veille créée par Albus Dumbledore',
-      amount: -57,
-      icon: {
-        icon: 'fa fa-file-alt',
-        color: 'text-orange-400',
-        bg: 'bg-orange-500/20',
-      },
-    },
-    {
-      id: 2,
-      title: 'Le bon Pesto',
-      description: 'Nouvelle Fiche Entreprise créée par Albus Dumbledore',
-      amount: -57,
-      icon: {
-        icon: 'fa fa-building',
-        color: 'text-purple-400',
-        bg: 'bg-purple-500/20',
-      },
-    },
-  ],
-  date: [
-    {
-      id: 3,
-      title: 'La meilleur recette de pesto',
-      description: 'Nouvelle veille créée par Albus Dumbledore',
-      amount: -57,
-      icon: {
-        icon: 'fa fa-file-alt',
-        color: 'text-orange-400',
-        bg: 'bg-orange-500/20',
-      },
-    },
-    {
-      id: 4,
-      title: 'Le bon Pesto',
-      description: 'Nouvelle Fiche Entreprise créée par Albus Dumbledore',
-      amount: -57,
-      icon: {
-        icon: 'fa fa-building',
-        color: 'text-purple-400',
-        bg: 'bg-purple-500/20',
-      },
-    },
-    {
-      id: 5,
-      title: 'Le bon Pesto',
-      description: 'Nouvelle Fiche Entreprise créée par Albus Dumbledore',
-      amount: -57,
-      icon: {
-        icon: 'fa fa-building',
-        color: 'text-purple-400',
-        bg: 'bg-purple-500/20',
-      },
-    },
-  ],
+// Helper function to format relative date
+const formatRelativeDate = (dateString: string) => {
+  const date = new Date(dateString)
+  const today = new Date()
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+
+  // Reset time to compare dates only
+  date.setHours(0, 0, 0, 0)
+  today.setHours(0, 0, 0, 0)
+  yesterday.setHours(0, 0, 0, 0)
+
+  if (date.getTime() === today.getTime()) {
+    return 'today'
+  } else if (date.getTime() === yesterday.getTime()) {
+    return 'yesterday'
+  } else {
+    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
+  }
+}
+
+// Group companies by date sections
+const groupedHistory = computed(() => {
+  if (!recentCompanies.value) return { today: [], yesterday: [], dates: {} }
+
+  const groups: {
+    today: Company[]
+    yesterday: Company[]
+    dates: Record<string, Company[]>
+  } = {
+    today: [],
+    yesterday: [],
+    dates: {},
+  }
+
+  recentCompanies.value.forEach((company) => {
+    const dateKey = formatRelativeDate(company.created_at)
+
+    if (dateKey === 'today') {
+      groups.today.push(company)
+    } else if (dateKey === 'yesterday') {
+      groups.yesterday.push(company)
+    } else {
+      if (!groups.dates[dateKey]) {
+        groups.dates[dateKey] = []
+      }
+      groups.dates[dateKey].push(company)
+    }
+  })
+
+  return groups
 })
 
-// Handle contact button
+// Combined loading state
+const isLoading = computed(() => isLoadingTokens.value || isLoadingCompanies.value)
+
+// Handle contact button - opens email client
 const handleContact = () => {
-  // TODO: Implement contact modal or navigation
-  console.log('Contact advisor')
+  window.location.href = 'mailto:support.chapsmind@chapsvision.com?subject=Token Refill Request'
 }
 </script>

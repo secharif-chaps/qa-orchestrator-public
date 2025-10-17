@@ -7,9 +7,9 @@ import type {
   ModuleName,
 } from '@/types/tokens'
 
-// Admin Endpoints
+// Workspace Endpoints (non-admin - workspace members can view their own)
 export const getWorkspaceModules = async (workspaceId: number) => {
-  const response = await apiClient.get<ModulesResponse>(`/admin/workspaces/${workspaceId}/modules`)
+  const response = await apiClient.get<ModulesResponse>(`/workspaces/${workspaceId}/modules`)
   return response
 }
 

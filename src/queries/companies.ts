@@ -5,8 +5,13 @@ export const COMPANY_QUERY_KEYS = {
   root: ['companies'] as const,
   recent: (limit: number) => [...COMPANY_QUERY_KEYS.root, 'recent', limit] as const,
   byId: (id: string) => [...COMPANY_QUERY_KEYS.root, id] as const,
-  withFilters: (filters: { page: number; size: number; name: string }) =>
-    [...COMPANY_QUERY_KEYS.root, { filters }] as const,
+  withFilters: (filters: {
+    page: number
+    size: number
+    name: string
+    sort?: string
+    order?: 'asc' | 'desc'
+  }) => [...COMPANY_QUERY_KEYS.root, { filters }] as const,
 }
 
 export const companyByIdQuery = defineQueryOptions(({ id }: { id: string }) => ({
@@ -26,7 +31,17 @@ export const recentCompaniesQuery = defineQueryOptions(({ limit }: { limit: numb
 }))
 
 export const companiesQuery = defineQueryOptions(
-  ({ filters }: { filters: { page: number; size: number; name: string } }) => ({
+  ({
+    filters,
+  }: {
+    filters: {
+      page: number
+      size: number
+      name: string
+      sort?: string
+      order?: 'asc' | 'desc'
+    }
+  }) => ({
     key: COMPANY_QUERY_KEYS.withFilters(filters),
     query: () => getCompanies(filters),
   }),

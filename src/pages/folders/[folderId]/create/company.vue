@@ -131,7 +131,7 @@ const { mutateAsync: addToFolder } = useAddItemToFolder()
 // Token validation with real backend integration
 const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
 
-// Query for screen module tokens
+// Query for screen module tokens - only run when workspace ID is available
 const {
   data: screenTokenData,
   isLoading: tokenDataLoading,
@@ -139,7 +139,7 @@ const {
 } = useQuery(
   moduleTokensQuery,
   () => ({
-    workspaceId: currentWorkspace.value?.id || 0,
+    workspaceId: currentWorkspace.value!.id, // Non-null assertion since enabled check ensures it exists
     module: 'screen' as ModuleName,
   }),
   {
