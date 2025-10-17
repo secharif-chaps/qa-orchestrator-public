@@ -19,44 +19,33 @@
         <i class="fa fa-spinner fa-spin text-sage-400"></i>
       </div>
 
+      <!-- Error State -->
+      <div v-else-if="error" class="px-4 py-6">
+        <div class="text-center">
+          <i class="fa fa-exclamation-triangle text-2xl text-error mb-2"></i>
+          <p class="text-sm text-sage-400">
+            {{ $t('sidebar.notifications.errorLoading', 'Unable to load notifications') }}
+          </p>
+        </div>
+      </div>
+
       <!-- Notifications -->
       <div v-else-if="notifications.length > 0" class="divide-y divide-sage-800">
-        <div
+        <NotificationItem
           v-for="notification in notifications"
           :key="notification.id"
-          class="px-4 py-3 hover:bg-sage-800/30 transition-colors cursor-pointer"
-          :class="{ 'bg-sage-800/20': !notification.read }"
-          @click="handleNotificationClick(notification)"
-        >
-          <div class="flex items-start gap-3">
-            <!-- Icon -->
-            <Badge
-              variant="secondary"
-              :color="notification.icon.color"
-              :icon="notification.icon.icon"
-            >
-            </Badge>
-
-            <!-- Content -->
-            <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-2 mb-1">
-                <h4 class="text-sm font-medium text-white">{{ notification.title }}</h4>
-                <span
-                  v-if="!notification.read"
-                  class="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1.5"
-                ></span>
-              </div>
-              <p class="text-xs text-sage-400 mb-2">{{ notification.message }}</p>
-              <div class="flex items-center gap-3 text-xs text-sage-500">
-                <span>{{ notification.time }}</span>
-                <span v-if="notification.category" class="flex items-center gap-1">
-                  <i class="fa fa-tag"></i>
-                  {{ notification.category }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+          :id="notification.id"
+          :icon="notification.icon.icon"
+          :icon-color="notification.icon.color"
+          :title="notification.title"
+          :message="notification.message"
+          :time="notification.time"
+          :read="notification.read"
+          :category="notification.category"
+          :action-url="notification.action"
+          @click="handleNotificationClick"
+          @mark-as-read="markNotificationAsRead"
+        />
       </div>
 
       <!-- Empty State -->
@@ -93,10 +82,16 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import Badge, { type BadgeColor } from '../ui/Badge.vue'
+import { useRouter } from 'vue-router'
+import { useQuery } from '@pinia/colada'
+import NotificationItem from '../ui/NotificationItem.vue'
+import { type BadgeColor } from '../ui/Badge.vue'
+import { workspaceActivitiesQuery, currentWorkspaceQuery } from '@/queries/workspace'
+import { formatRelativeTime } from '@/utils/time'
+import { useI18n } from 'vue-i18n'
 
 interface Notification {
-  id: number
+  id: string
   title: string
   message: string
   time: string
@@ -109,88 +104,55 @@ interface Notification {
   action?: string
 }
 
-// Mock loading state
-const isLoading = ref(false)
+const router = useRouter()
+const { t } = useI18n()
 
-// Mock notifications data
-const notifications = ref<Notification[]>([
+// Track read notifications (in real app, this would be persisted)
+const readNotifications = ref<Set<string>>(new Set())
+
+// Fetch current workspace to get workspace ID
+const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
+
+// Fetch workspace activities
+const {
+  data: activitiesData,
+  isLoading,
+  error,
+} = useQuery(
+  workspaceActivitiesQuery,
+  () => ({ workspaceId: currentWorkspace.value?.id ?? 0 }),
   {
-    id: 1,
-    title: 'Nouvelle entreprise ajoutée',
-    message: 'Albus Dumbledore a créé la fiche "Pesto Industries"',
-    time: 'Il y a 5 minutes',
-    category: 'Équipe',
-    read: false,
-    icon: {
-      icon: 'fa fa-building',
-      color: 'accent',
-    },
-    action: '/companies/123',
+    enabled: () => !!currentWorkspace.value?.id,
   },
-  {
-    id: 2,
-    title: 'Dossier partagé',
-    message: 'Hermione Granger a partagé le dossier "Clients Q4 2024" avec vous',
-    time: 'Il y a 1 heure',
-    category: 'Partage',
-    read: false,
-    icon: {
-      icon: 'fa fa-folder',
-      color: 'success',
-    },
-    action: '/folders/456',
-  },
-  {
-    id: 3,
-    title: 'Crédits ajoutés',
-    message: 'Votre compte a été crédité de 500 tokens',
-    time: 'Il y a 2 heures',
-    category: 'Système',
-    read: true,
-    icon: {
-      icon: 'fa fa-coins',
-      color: 'error',
-    },
-  },
-  {
-    id: 4,
-    title: 'Veille mise à jour',
-    message: 'La veille "Tech Startups" a trouvé 3 nouvelles entreprises',
-    time: 'Il y a 3 heures',
-    category: 'Veille',
-    read: true,
-    icon: {
-      icon: 'fa fa-rss',
-      color: 'info',
-    },
-    action: '/veille/789',
-  },
-  {
-    id: 5,
-    title: 'Rapport généré',
-    message: 'Votre export CSV "Entreprises Tech" est prêt',
-    time: 'Hier',
-    category: 'Export',
-    read: true,
-    icon: {
-      icon: 'fa fa-file-csv',
-      color: 'warning',
-    },
-  },
-  {
-    id: 6,
-    title: 'Commentaire ajouté',
-    message: 'Ron Weasley a commenté la fiche "Magic Corp"',
-    time: 'Il y a 2 jours',
-    category: 'Équipe',
-    read: true,
-    icon: {
-      icon: 'fa fa-comment',
-      color: 'info',
-    },
-    action: '/companies/321',
-  },
-])
+)
+
+// Transform activities into notifications (limit to 20 most recent)
+const notifications = computed<Notification[]>(() => {
+  if (!activitiesData.value) return []
+
+  return activitiesData.value.slice(0, 20).map((activity) => {
+    const isCompany = activity.type === 'company'
+    const notificationId = `${activity.type}-${activity.id}`
+
+    return {
+      id: notificationId,
+      title: isCompany
+        ? t('sidebar.notifications.companyCreated', 'New company added')
+        : t('sidebar.notifications.folderCreated', 'New folder created'),
+      message: `${activity.owner_username} ${t('sidebar.notifications.activityMessage', 'created')} ${activity.name}`,
+      time: formatRelativeTime(activity.created_at),
+      category: isCompany
+        ? t('sidebar.notifications.categoryCompany', 'Company')
+        : t('sidebar.notifications.categoryFolder', 'Folder'),
+      read: readNotifications.value.has(notificationId),
+      icon: {
+        icon: isCompany ? 'fa fa-building' : 'fa fa-folder',
+        color: isCompany ? 'accent' : 'success',
+      },
+      action: isCompany ? `/companies/${activity.id}` : `/folders/${activity.id}`,
+    }
+  })
+})
 
 // Computed unread count
 const unreadCount = computed(() => {
@@ -198,18 +160,22 @@ const unreadCount = computed(() => {
 })
 
 // Mark all as read
-const markAllAsRead = () => {
+function markAllAsRead() {
   notifications.value.forEach((n) => {
-    n.read = true
+    readNotifications.value.add(n.id)
   })
 }
 
+// Mark single notification as read
+function markNotificationAsRead(id: number | string) {
+  readNotifications.value.add(String(id))
+}
+
 // Handle notification click
-const handleNotificationClick = (notification: Notification) => {
-  notification.read = true
-  if (notification.action) {
-    // TODO: Navigate to action
-    console.log('Navigate to:', notification.action)
+function handleNotificationClick(id: number | string) {
+  const notification = notifications.value.find((n) => n.id === id)
+  if (notification?.action) {
+    router.push(notification.action)
   }
 }
 </script>
