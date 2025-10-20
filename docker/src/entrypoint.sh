@@ -1,12 +1,5 @@
 #!/bin/sh
 
-# Wait for PostgreSQL to be ready
-echo "Waiting for PostgreSQL..."
-while ! nc -z ${DATABASE_HOST:-db} ${DATABASE_PORT:-5432}; do
-  sleep 1
-done
-echo "PostgreSQL is up"
-
 # Run database migrations
 echo "Running database migrations..."
 alembic upgrade head

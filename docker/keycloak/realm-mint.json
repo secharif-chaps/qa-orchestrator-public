@@ -30,7 +30,7 @@
       "clientId": "mint-back",
       "name": "Mint BackEnd Application",
       "enabled": true,
-      "baseUrl": "http://localhost:8000",
+      "baseUrl": "http://localhost/api",
       "redirectUris": ["*"],
       "webOrigins": ["*"],
       "publicClient": true,
@@ -43,12 +43,12 @@
       "clientId": "mint-front",
       "name": "Mint FrontEnd Application",
       "enabled": true,
-      "baseUrl": "http://10.0.1.2:3000",
-      "redirectUris": ["http://10.0.1.2:3000/*", "http://localhost:3000/*"],
-      "webOrigins": ["http://10.0.1.2:3000", "http://localhost:3000"],
+      "baseUrl": "http://localhost",
+      "redirectUris": ["http://localhost/*"],
+      "webOrigins": ["http://localhost"],
       "publicClient": true,
       "attributes": {
-        "post.logout.redirect.uris": "http://10.0.1.2:3000/*##http://localhost:3000/*"
+        "post.logout.redirect.uris": "http://localhost/*"
       },
       "defaultClientScopes": [
         "web-origins",

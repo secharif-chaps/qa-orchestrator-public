@@ -17,8 +17,8 @@ RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python
     ln -s /opt/poetry/bin/poetry && \
     poetry --version
 
-# Copy poetry configuration files
-COPY pyproject.toml poetry.lock* ./
+# Copy src configuration files
+COPY ./docker/src .
 
 # Configure poetry to not use a virtual environment
 RUN poetry config virtualenvs.create false
@@ -27,7 +27,7 @@ RUN poetry config virtualenvs.create false
 RUN poetry install --no-interaction --no-ansi
 
 # Copy the rest of the application
-COPY . .
+COPY ./app/ app
 
 # Make the entrypoint script executable
 RUN chmod +x entrypoint.sh
