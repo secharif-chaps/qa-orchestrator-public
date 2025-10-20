@@ -8,60 +8,31 @@ stages:
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
-  IMAGE_NAME_BACKEND: ${CI_REGISTRY_IMAGE}/mint-back
+  IMAGE_NAME: ${CI_REGISTRY_IMAGE}/mint-back
+  IMAGE_TAG: preprod
   DOCKER_BUILDKIT: 1
 
-# Build and push Docker image on main branch
-build-and-push-backend:
-  stage: build
+.build:
   image: docker:24-dind
   services:
     - docker:24-dind
-  before_script:
-    # If RELEASE_VERSION is not defined, image is tagged with `latest`
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - |
-      echo "Building backend Docker image..."
-      echo " DEBUG : docker build --no-cache --pull -t ${IMAGE_NAME_BACKEND}:${CI_COMMIT_SHORT_SHA} -t ${IMAGE_NAME_BACKEND}:latest ."
-      docker build --no-cache --pull -t "${IMAGE_NAME_BACKEND}:${CI_COMMIT_SHORT_SHA}" -t "${IMAGE_NAME_BACKEND}:latest" .
-      echo "Pushing images to registry..."
-      docker push $IMAGE_NAME_BACKEND:$CI_COMMIT_SHORT_SHA
-      docker push $IMAGE_NAME_BACKEND:latest
-      echo "✅ Backend image published successfully!"
-      echo "📦 Image: $IMAGE_NAME_BACKEND:$CI_COMMIT_SHORT_SHA"
-      echo "📦 Image: $IMAGE_NAME_BACKEND:latest"
+    - echo Building $IMAGE_NAME:$IMAGE_TAG
+    - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+
+build-and-push-backend:
+  stage: publish
+  extends: .build
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   after_script:
+    - docker push $IMAGE_NAME:${IMAGE_TAG}
     - docker logout $CI_REGISTRY
   only:
     - main
 
-# Optional: Build on merge requests for testing (without pushing)
-test-build-backend:
+build:
   stage: build
-  image: docker:24-dind
-  services:
-    - name: docker:24-dind
-  script:
-    - echo "Testing backend Docker build..."
-    - docker build --tag mint-back:test .
-    - echo "✅ Backend build test passed!"
+  extends: .build
   only:
     - merge_requests
-
-
-# Optional: Run tests before building (uncomment when tests are ready)
-# test-backend:
-#   stage: build
-#   image: python:3.11
-#   before_script:
-#     - cd mint-back
-#     - curl -sSL https://install.python-poetry.org | python3 -
-#     - export PATH="$HOME/.local/bin:$PATH"
-#     - poetry config virtualenvs.create false
-#     - poetry install --no-interaction --no-ansi
-#   script:
-#     - poetry run pytest tests/
-#   only:
-#     - main
-#     - merge_requests
