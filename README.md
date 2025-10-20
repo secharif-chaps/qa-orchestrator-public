@@ -3,15 +3,13 @@
 ## Installation
 
 ```bash
-git clone --recurse-submodules ssh://git@git.mediaspeech.com:17890/mint/infra.git
-git submodule foreach git checkout main
+docker login registry.git.mediaspeech.com
 docker compose up -d
 ```
 
 ## Upgrade
 
 ```bash
-git submodule update --remote --recursive
 docker compose pull
 docker compose up -d
 ```
