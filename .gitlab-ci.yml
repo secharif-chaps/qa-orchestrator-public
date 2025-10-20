@@ -20,7 +20,7 @@ variables:
     - echo Building $IMAGE_NAME:$IMAGE_TAG
     - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" .
 
-build-and-push-backend:
+publish:
   stage: publish
   extends: .build
   before_script:
