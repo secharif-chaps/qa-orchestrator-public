@@ -6,7 +6,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./front/docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./backend/docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - backend
       - keycloak
