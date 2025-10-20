@@ -254,17 +254,66 @@ async def dify_task_callback(
         if success:
             task.status = TaskStatus.SUCCEEDED
             task.error = None
-            
+
             if task_data:
                 logger.info(f"Updating company data for task type: {task.type.value}")
                 service._update_company_data(company, task.type.value, task_data)
-            
+
             logger.info(f"✅ Task {task_id} completed successfully via Dify callback")
+
+            # NEW: If this was a prerequisite task, trigger dependent tasks
+            if task.is_prerequisite:
+                from app.services.task_dependency_service import TaskDependencyService
+                from app.models.workflow_config import WorkflowConfig
+                from app.workers.dify_tasks import execute_dify_workflow
+
+                logger.info(f"🔓 Task {task_id} is a prerequisite - checking for dependent tasks")
+                dependency_service = TaskDependencyService(service.db)
+                unblocked_tasks = dependency_service.unblock_dependent_tasks(task_id)
+
+                if unblocked_tasks:
+                    logger.info(f"🚀 Triggering {len(unblocked_tasks)} unblocked tasks")
+
+                    # Queue all unblocked tasks
+                    for unblocked_task in unblocked_tasks:
+                        workflow_config = service.db.query(WorkflowConfig).filter(
+                            WorkflowConfig.task_type == unblocked_task.type.value
+                        ).first()
+
+                        if not workflow_config or not workflow_config.workflow_id:
+                            logger.error(f"No workflow config for {unblocked_task.type.value}")
+                            unblocked_task.status = TaskStatus.ERROR
+                            unblocked_task.error = "No workflow configuration found"
+                            service.db.commit()
+                            continue
+
+                        logger.info(f"🚀 Queueing task {unblocked_task.id} ({unblocked_task.type.value})")
+                        execute_dify_workflow.delay(
+                            task_id=unblocked_task.id,
+                            company_id=company.id,
+                            task_type=unblocked_task.type.value,
+                            workflow_id=workflow_config.workflow_id,
+                            api_key=workflow_config.api_key,
+                            llm=workflow_config.llm
+                        )
+                else:
+                    logger.info(f"ℹ️  No dependent tasks to unblock for task {task_id}")
         else:
             task.status = TaskStatus.ERROR
             task.error = error_msg or "Task failed without specific error message"
             logger.error(f"❌ Task {task_id} failed via Dify callback: {task.error}")
-        
+
+            # NEW: If prerequisite task failed, mark dependent tasks as error
+            if task.is_prerequisite:
+                from app.services.task_dependency_service import TaskDependencyService
+
+                logger.error(f"🚫 Prerequisite task {task_id} failed - marking dependent tasks as error")
+                dependency_service = TaskDependencyService(service.db)
+                failed_tasks = dependency_service.mark_dependents_as_failed(task_id, task.error)
+
+                if failed_tasks:
+                    logger.error(f"🚫 Marked {len(failed_tasks)} dependent tasks as failed")
+
         # Update timestamp and save
         task.updated_at = datetime.utcnow()
         service.db.commit()
