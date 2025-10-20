@@ -60,6 +60,14 @@
                   :title="`${errorCount} tâches en erreur (${Math.round(errorPercentage)}%)`"
                 ></div>
 
+                <!-- Blocked segment -->
+                <div
+                  v-if="blockedPercentage > 0"
+                  class="bg-slate-500 h-full transition-all duration-500 ease-out"
+                  :style="{ width: `${blockedPercentage}%` }"
+                  :title="`${blockedCount} tâches bloquées (${Math.round(blockedPercentage)}%)`"
+                ></div>
+
                 <!-- Pending segment -->
                 <div
                   v-if="pendingPercentage > 0"
@@ -87,6 +95,10 @@
                   <span v-if="pendingCount > 0" class="flex items-center gap-1.5">
                     <div class="w-2 h-2 bg-secondary rounded-full"></div>
                     {{ pendingCount }} en attente
+                  </span>
+                  <span v-if="blockedCount > 0" class="flex items-center gap-1.5">
+                    <div class="w-2 h-2 bg-slate-500 rounded-full"></div>
+                    {{ blockedCount }} bloquées
                   </span>
                 </div>
               </div>
@@ -259,7 +271,7 @@ const getTokenInfo = (taskType: TaskType) => {
   }
 }
 
-// Task configuration - all 8 tasks that can run in parallel
+// Task configuration - all 9 tasks that can run in parallel
 const taskConfigs: TaskConfig[] = [
   {
     type: 'profile',
@@ -301,6 +313,11 @@ const taskConfigs: TaskConfig[] = [
     name: 'Emplois',
     description: "Offres d'emploi et recrutement",
   },
+  {
+    type: 'data_collection',
+    name: 'Collecte de données',
+    description: 'Collecte de données structurées',
+  },
 ]
 
 const { mutate: restart } = useRestartTask()
@@ -337,6 +354,7 @@ const getTaskIcon = (taskType: TaskType): string => {
     csr: 'fas fa-leaf',
     press: 'fas fa-newspaper',
     team: 'fas fa-users',
+    data_collection: 'fas fa-database',
   }
   return iconMap[taskType] || 'fas fa-question'
 }
@@ -353,6 +371,8 @@ const getTaskClass = (task: { status: TaskStatus | null }): string => {
       return `${baseClasses} border-warning-500`
     case 'pending':
       return `${baseClasses} border-info-500`
+    case 'blocked':
+      return `${baseClasses} border-slate-500`
     default:
       return `${baseClasses} border-primary-stroke opacity-60`
   }
@@ -368,6 +388,8 @@ const getIconContainerClass = (status: TaskStatus | null): string => {
       return 'bg-warning-500/10 text-warning-500'
     case 'pending':
       return 'bg-info-500/10 text-info-500'
+    case 'blocked':
+      return 'bg-slate-500/10 text-slate-500'
     default:
       return 'bg-base-200 text-secondary'
   }
@@ -383,6 +405,8 @@ const getStatusVariant = (status: TaskStatus | null) => {
       return 'warning'
     case 'pending':
       return 'info'
+    case 'blocked':
+      return 'slate'
     default:
       return 'accent'
   }
@@ -398,6 +422,8 @@ const getStatusLabel = (status: TaskStatus | null): string => {
       return 'En cours'
     case 'pending':
       return 'En attente'
+    case 'blocked':
+      return 'En attente (bloquée)'
     default:
       return 'Non démarrée'
   }
@@ -440,6 +466,10 @@ const pendingCount = computed(() => {
   return pendingFromExisting + notStartedTasks
 })
 
+const blockedCount = computed(
+  () => tasks.value?.filter((t: TaskResponse) => t.status === 'blocked').length || 0,
+)
+
 const totalTasks = computed(() => taskConfigs.length)
 
 const hasErrorsOrPending = computed(() => errorCount.value > 0 || pendingCount.value > 0)
@@ -477,6 +507,10 @@ const runningPercentage = computed(() =>
 
 const errorPercentage = computed(() =>
   totalTasks.value > 0 ? (errorCount.value / totalTasks.value) * 100 : 0,
+)
+
+const blockedPercentage = computed(() =>
+  totalTasks.value > 0 ? (blockedCount.value / totalTasks.value) * 100 : 0,
 )
 
 const pendingPercentage = computed(() =>
