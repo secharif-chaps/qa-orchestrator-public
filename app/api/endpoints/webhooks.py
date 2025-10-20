@@ -211,7 +211,7 @@ async def dify_task_callback(
         # Extract the actual result data (could be in various places)
         if success:
             # Determine the key to use based on actual task type from database
-            data_key = task.type.value if task.type.value in ["products", "timeline", "profile", "digital", "jobs", "csr", "press", "team"] else "products"
+            data_key = task.type.value if task.type.value in ["products", "timeline", "profile", "digital", "jobs", "csr", "press", "team", "data_collection"] else "products"
             
             # Try different possible locations for the result
             if "result" in body:
