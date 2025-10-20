@@ -7,12 +7,14 @@ export type TaskType =
   | 'csr'
   | 'press'
   | 'team'
-export type TaskStatus = 'pending' | 'running' | 'succeeded' | 'error'
+  | 'data_collection'
+export type TaskStatus = 'pending' | 'blocked' | 'running' | 'succeeded' | 'error'
 
 export interface TaskBase {
   type: TaskType
   status: TaskStatus
   error?: string | null
+  is_prerequisite?: boolean
 }
 
 export interface TaskCreate extends TaskBase {
@@ -27,4 +29,5 @@ export interface TaskResponse extends TaskBase {
   input_tokens?: number | null
   output_tokens?: number | null
   total_cost?: number | null
+  is_prerequisite?: boolean
 }
