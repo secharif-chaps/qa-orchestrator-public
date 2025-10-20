@@ -134,6 +134,7 @@
     <ChapseAssistQuickActions
       v-if="company?.id"
       :company-id="company.id"
+      :company="company"
       @action-click="handleQuickActionClick"
       @load-success="handleQuickActionsSuccess"
       @load-error="handleQuickActionsError"

@@ -64,22 +64,41 @@
         v-for="action in quickActions"
         :key="action.id"
         @click="handleActionClick(action)"
-        class="group bg-base-200 hover:bg-accent-100 dark:hover:bg-accent-400/20 border border-primary-stroke hover:border-accent-500 rounded-lg p-4 text-left transition-all duration-200 hover:shadow-shadow-2 "
+        :disabled="!areTasksSuccessful"
+        class="group bg-base-200 border border-primary-stroke rounded-lg p-4 text-left transition-all duration-200"
+        :class="{
+          'opacity-50 cursor-not-allowed': !areTasksSuccessful,
+          'hover:bg-accent-100 dark:hover:bg-accent-400/20 hover:border-accent-500 hover:shadow-shadow-2':
+            areTasksSuccessful,
+        }"
       >
         <div class="flex items-start gap-4">
           <!-- Icon -->
           <div
-            class="flex-shrink-0 w-10 h-10 rounded-full bg-sage-950  flex items-center justify-center group-hover:bg-accent-500 group-hover:text-accent-50 transition-all duration-300"
+            class="flex-shrink-0 w-10 h-10 rounded-full bg-sage-200 dark:bg-sage-950 flex items-center justify-center transition-all duration-300"
+            :class="{
+              'group-hover:bg-accent-500 group-hover:text-accent-50': areTasksSuccessful,
+            }"
           >
             <i :class="action.icon" class="text-lg"></i>
           </div>
 
           <!-- Content -->
           <div class="flex-1 min-w-0">
-            <h4 class="font-semibold text-base mb-1 group-hover:text-accent-900 dark:group-hover:text-accent-100 transition-colors">
+            <h4
+              class="font-semibold text-base mb-1 transition-colors"
+              :class="{
+                'group-hover:text-accent-900 dark:group-hover:text-accent-100': areTasksSuccessful,
+              }"
+            >
               {{ action.label }}
             </h4>
-            <p class="text-sm text-secondary group-hover:text-accent-900 transition-colors line-clamp-2 dark:group-hover:text-accent-100">
+            <p
+              class="text-sm text-secondary transition-colors line-clamp-2"
+              :class="{
+                'group-hover:text-accent-900 dark:group-hover:text-accent-100': areTasksSuccessful,
+              }"
+            >
               {{ action.description }}
             </p>
           </div>
@@ -87,7 +106,10 @@
           <!-- Arrow Icon -->
           <div class="flex-shrink-0">
             <i
-              class="fa fa-arrow-right text-secondary group-hover:text-accent-500 transition-colors"
+              class="fa fa-arrow-right text-secondary transition-colors"
+              :class="{
+                'group-hover:text-accent-500': areTasksSuccessful,
+              }"
             ></i>
           </div>
         </div>
@@ -95,22 +117,13 @@
     </div>
 
     <!-- Empty State (No Actions) -->
-    <div
-      v-else
-      class="bg-base-200 rounded-card border border-primary-stroke p-6 text-center"
-    >
+    <div v-else class="bg-base-200 rounded-card border border-primary-stroke p-6 text-center">
       <i class="fa fa-magic text-3xl text-secondary mb-3"></i>
       <h4 class="font-semibold mb-2">No Quick Actions Available</h4>
       <p class="text-sm text-secondary">
         Configure your AI preferences to see personalized recommendations.
       </p>
-      <Button
-        variant="primary"
-        size="sm"
-        icon="fa fa-cog"
-        class="mt-4"
-        @click="goToSetup"
-      >
+      <Button variant="primary" size="sm" icon="fa fa-cog" class="mt-4" @click="goToSetup">
         Configure AI Preferences
       </Button>
     </div>
@@ -118,17 +131,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { useChapseAssist } from '@/composables/useChapseAssist'
 import Button from '@/components/ui/Button.vue'
+import { useChapseAssist } from '@/composables/useChapseAssist'
 import type { QuickAction } from '@/types/ai-preferences'
+import type { Company } from '@/types/company'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 interface Props {
   /**
    * Company ID to generate actions for
    */
   companyId: number
+
+  /**
+   * Company data (to check task statuses)
+   */
+  company?: Company
 
   /**
    * Section title
@@ -170,6 +189,19 @@ const {
 const hasLoadedOnce = ref(false)
 
 /**
+ * Check if all company tasks have succeeded
+ * Quick actions should only be enabled if tasks completed successfully
+ */
+const areTasksSuccessful = computed(() => {
+  if (!props.company?.tasks || props.company.tasks.length === 0) {
+    return false
+  }
+
+  // Check if all tasks have succeeded status
+  return props.company.tasks.every((task) => task.status === 'succeeded')
+})
+
+/**
  * Load quick actions
  */
 async function loadActions() {
@@ -187,6 +219,12 @@ async function loadActions() {
  * Handle action button click
  */
 function handleActionClick(action: QuickAction) {
+  // Don't execute action if tasks haven't succeeded
+  if (!areTasksSuccessful.value) {
+    console.log('Quick action disabled: Company tasks have not succeeded yet')
+    return
+  }
+
   emit('actionClick', action)
   openQuickAction(action, props.companyId)
 }
@@ -228,7 +266,7 @@ watch(
     if (newId !== oldId && newId && hasAiPreferences.value) {
       loadActions()
     }
-  }
+  },
 )
 
 /**

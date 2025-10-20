@@ -32,7 +32,6 @@ import { computed } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { workspaceModulesQuery } from '@/queries/tokens'
 import { getModuleDisplayConfig } from '@/config/modules'
-import type { ModuleName } from '@/types/tokens'
 
 const { workspaceId } = defineProps<{ workspaceId: number }>()
 
