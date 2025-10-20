@@ -214,15 +214,16 @@ class CompanyService:
     
     def create_company(self, name: str, website: str, owner_username: str, workspace_id: int) -> Company:
         """Securely create a new company"""
-        print(f"🏭 CompanyService.create_company - START - Name: {name[:50]}, Owner: {owner_username}, Workspace: {workspace_id}")
-        
+        from app.services.task_dependency_service import TaskDependencyService
+
+        logger.info(f"🏭 Creating company: {name[:50]}, Owner: {owner_username}, Workspace: {workspace_id}")
+
         # Additional validation
-        print(f"🔍 Validating owner username: {owner_username}")
         if not owner_username or len(owner_username) > 100:
-            print(f"❌ Invalid owner username: {owner_username}")
+            logger.error(f"❌ Invalid owner username: {owner_username}")
             raise ValidationError("Invalid owner username")
-        
-        print(f"🔄 Creating company entity via secure_query...")
+
+        # Create company
         company = self.secure_query.safe_create_entity(
             Company,
             name=name,
@@ -230,65 +231,85 @@ class CompanyService:
             owner_username=owner_username,
             workspace_id=workspace_id
         )
-        print(f"✅ Company entity created - ID: {company.id}")
-        
-        # Create the 9 default tasks with pending status
-        default_tasks = [
-            ('profile', 'Profil'),
-            ('digital', 'Digital'),
-            ('csr', 'RSE'),
-            ('press', 'Presse'),
-            ('timeline', 'Timeline'),
-            ('products', 'Produits'),
-            ('team', 'Équipe'),
-            ('jobs', 'Emplois'),
-            ('data_collection', 'Data Collection')
+        logger.info(f"✅ Company entity created - ID: {company.id}")
+
+        # Define task configurations with dependency information
+        # data_collection is the prerequisite that must run first
+        task_configs = [
+            {'type': 'data_collection', 'is_prerequisite': True},  # Must run first
+            {'type': 'profile', 'is_prerequisite': False},
+            {'type': 'digital', 'is_prerequisite': False},
+            {'type': 'csr', 'is_prerequisite': False},
+            {'type': 'press', 'is_prerequisite': False},
+            {'type': 'timeline', 'is_prerequisite': False},
+            {'type': 'products', 'is_prerequisite': False},
+            {'type': 'team', 'is_prerequisite': False},
+            {'type': 'jobs', 'is_prerequisite': False},
         ]
-        
-        for task_type, task_name in default_tasks:
-            task = Task(
-                company_id=company.id,
-                type=TaskType(task_type),
-                status=TaskStatus.PENDING
-            )
+
+        # Create all tasks with appropriate initial status
+        prerequisite_task = None
+        dependent_tasks = []
+
+        for config in task_configs:
+            if config['is_prerequisite']:
+                # Prerequisite task starts as PENDING (ready to run)
+                task = Task(
+                    company_id=company.id,
+                    type=TaskType(config['type']),
+                    status=TaskStatus.PENDING,
+                    is_prerequisite=True
+                )
+                prerequisite_task = task
+                logger.info(f"📌 Created prerequisite task: {task.type.value}")
+            else:
+                # Dependent tasks start as BLOCKED (waiting for prerequisite)
+                task = Task(
+                    company_id=company.id,
+                    type=TaskType(config['type']),
+                    status=TaskStatus.BLOCKED,
+                    is_prerequisite=False
+                )
+                dependent_tasks.append(task)
+
             company.tasks.append(task)
-        
+
         self.db.commit()
         self.db.refresh(company)
-        
-        # Queue tasks for execution instead of executing directly
-        for task in company.tasks:
-            # Get workflow configuration from database before queuing
-            workflow_config = self.db.query(WorkflowConfig).filter(
-                WorkflowConfig.task_type == task.type.value
-            ).first()
-            
-            if not workflow_config:
-                logger.error(f"No workflow configuration found for task type: {task.type.value}")
-                task.status = TaskStatus.ERROR
-                task.error = f"No workflow configuration found for task type: {task.type.value}"
-                self.db.commit()
-                continue
-            
-            if not workflow_config.workflow_id or not workflow_config.api_key:
-                logger.error(f"Incomplete workflow configuration for task type: {task.type.value}")
-                task.status = TaskStatus.ERROR
-                task.error = f"Incomplete workflow configuration for task type: {task.type.value}"
-                self.db.commit()
-                continue
-            
-            logger.info(f"Queueing task {task.id} ({task.type.value}) for company {company.id}")
+
+        # Create dependency relationships
+        dependency_service = TaskDependencyService(self.db)
+        for dependent_task in dependent_tasks:
+            dependency_service.create_dependency(
+                task_id=dependent_task.id,
+                depends_on_task_id=prerequisite_task.id
+            )
+
+        logger.info(f"🔗 Created {len(dependent_tasks)} task dependencies")
+
+        # Queue ONLY the prerequisite task (data_collection)
+        workflow_config = self.db.query(WorkflowConfig).filter(
+            WorkflowConfig.task_type == prerequisite_task.type.value
+        ).first()
+
+        if not workflow_config or not workflow_config.workflow_id or not workflow_config.api_key:
+            logger.error(f"Invalid workflow configuration for {prerequisite_task.type.value}")
+            prerequisite_task.status = TaskStatus.ERROR
+            prerequisite_task.error = f"No workflow configuration found"
+            self.db.commit()
+        else:
+            logger.info(f"🚀 Queueing prerequisite task {prerequisite_task.id} ({prerequisite_task.type.value})")
             execute_dify_workflow.delay(
-                task_id=task.id,
+                task_id=prerequisite_task.id,
                 company_id=company.id,
-                task_type=task.type.value,
+                task_type=prerequisite_task.type.value,
                 workflow_id=workflow_config.workflow_id,
                 api_key=workflow_config.api_key,
                 llm=workflow_config.llm
             )
-        
-        logger.info(f"Created company '{name}' and queued {len(default_tasks)} tasks for user '{owner_username}'")
-        
+
+        logger.info(f"✅ Created company '{name}' with 1 prerequisite task and {len(dependent_tasks)} dependent tasks")
+
         return company
     
     def update_company(self, company: Company) -> Company:
