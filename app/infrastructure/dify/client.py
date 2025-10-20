@@ -103,12 +103,13 @@ class DifyClient:
             "llm": llm  # Add LLM parameter to the inputs
         }
 
-        # Add boolean flags for data_collection task (all enabled by default)
+        # Add string flags for data_collection task (all enabled by default)
+        # Dify expects string values "true" or "false", not boolean
         if task_type == "data_collection":
-            inputs["mistral"] = True
-            inputs["claude"] = True
-            inputs["webscraping"] = True
-            inputs["wikipedia"] = True
+            inputs["mistral"] = "true"
+            inputs["claude"] = "true"
+            inputs["webscraping"] = "true"
+            inputs["wikipedia"] = "true"
 
         # Add token callback URL if provided
         if token_callback_url:
