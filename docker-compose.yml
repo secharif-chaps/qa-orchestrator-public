@@ -1,0 +1,168 @@
+services:
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - keycloak
+  #    - frontend
+    networks:
+      - mint-network
+
+  # Vue Frontend
+  frontend:
+    build:
+      context: ./front/
+    restart: always
+    environment:
+      VITE_API_URL: http://localhost/api
+      VITE_KEYCLOAK_URL: http://localhost:8080
+      VITE_KEYCLOAK_REALM: mint-dev
+      VITE_KEYCLOAK_CLIENT_ID: mint-front
+    networks:
+      - mint-network
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend/
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: always
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/mint_db
+      KEYCLOAK_SERVER_URL: http://keycloak:8080
+      KEYCLOAK_REALM: mint-dev
+      KEYCLOAK_CLIENT_ID: mint-back
+      KEYCLOAK_CLIENT_SECRET: 
+      KEYCLOAK_ADMIN_USERNAME: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      CORS_ORIGIN: http://localhost
+      API_PORT: 8000
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672//
+      MAX_CONCURRENT_WORKFLOWS: 10
+      BACKEND_BASE_URL: http://localhost
+    networks:
+      - mint-network
+
+  # Celery Worker for Task Processing
+  backend_celery_worker:
+    build:
+      context: ./backend/
+    entrypoint: celery -A app.core.celery_app worker --loglevel=info --concurrency=4 --pool=solo
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/mint_db
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672//
+      MAX_CONCURRENT_WORKFLOWS: 10
+      BACKEND_BASE_URL: http://localhost
+      KEYCLOAK_SERVER_URL: http://keycloak:8080
+      KEYCLOAK_REALM: mint-dev
+      KEYCLOAK_CLIENT_ID: mint-back
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    volumes:
+      - ./app:/app/app
+    networks:
+      - mint-network
+
+  backend_celery_flower:
+    build:
+      context: ./backend/
+    entrypoint: celery -A app.core.celery_app flower --port=5555 --broker=amqp://guest:guest@rabbitmq:5672//
+    restart: always
+    ports:
+      - "5555:5555"
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672//
+      FLOWER_BASIC_AUTH: admin:admin
+    depends_on:
+      - rabbitmq
+    networks:
+      - mint-network
+
+  # Keycloak for Authentication
+  keycloak:
+    image: keycloak/keycloak:26.3
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: xforwarded
+      KC_HOSTNAME_URL: http://localhost/auth
+    command: start --import-realm
+    volumes:
+      - ./keycloak/realm-mint.json:/opt/keycloak/data/import/realm-mint.json
+      - ./keycloak/themes/mint:/opt/keycloak/themes/mint
+    depends_on:
+      - db
+    networks:
+      - mint-network
+
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: mint_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/initdb.d:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mint-network
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    restart: always
+    ports:
+      - "5672:5672"     # AMQP port
+      - "15672:15672"   # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - mint-network
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+
+networks:
+  mint-network:
+    driver: bridge
