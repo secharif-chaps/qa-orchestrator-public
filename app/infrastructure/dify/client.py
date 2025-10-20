@@ -110,6 +110,8 @@ class DifyClient:
             inputs["claude"] = "true"
             inputs["webscraping"] = "true"
             inputs["wikipedia"] = "true"
+            # data_collection workflow expects "callback_url" instead of "callback_webhook"
+            inputs["callback_url"] = success_callback
 
         # Add token callback URL if provided
         if token_callback_url:
