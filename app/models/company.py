@@ -24,7 +24,13 @@ class Company(Base):
     csr = Column(JSON, default=dict)
     press = Column(JSON, default=dict)
     team = Column(JSON, default=list)
-    
+
+    # Raw knowledge fields from data collection task
+    raw_mistral_knowledge = Column(String, nullable=True)
+    raw_claude_knowledge = Column(String, nullable=True)
+    raw_wikipedia_knowledge = Column(String, nullable=True)
+    raw_scraped_website_knowledge = Column(String, nullable=True)
+
     # Error field
     error = Column(String, nullable=True)
     

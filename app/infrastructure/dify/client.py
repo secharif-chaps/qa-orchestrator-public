@@ -102,7 +102,14 @@ class DifyClient:
             "callback_payload": callback_payload_template,
             "llm": llm  # Add LLM parameter to the inputs
         }
-        
+
+        # Add boolean flags for data_collection task (all enabled by default)
+        if task_type == "data_collection":
+            inputs["mistral"] = True
+            inputs["claude"] = True
+            inputs["webscraping"] = True
+            inputs["wikipedia"] = True
+
         # Add token callback URL if provided
         if token_callback_url:
             inputs["token_callback_url"] = token_callback_url

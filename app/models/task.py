@@ -19,6 +19,7 @@ class TaskType(str, Enum):
     csr = "csr"
     press = "press"
     team = "team"
+    data_collection = "data_collection"
 
 class Task(Base):
     __tablename__ = "tasks"

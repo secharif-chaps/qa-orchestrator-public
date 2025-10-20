@@ -232,7 +232,7 @@ class CompanyService:
         )
         print(f"✅ Company entity created - ID: {company.id}")
         
-        # Create the 8 default tasks with pending status
+        # Create the 9 default tasks with pending status
         default_tasks = [
             ('profile', 'Profil'),
             ('digital', 'Digital'),
@@ -241,7 +241,8 @@ class CompanyService:
             ('timeline', 'Timeline'),
             ('products', 'Produits'),
             ('team', 'Équipe'),
-            ('jobs', 'Emplois')
+            ('jobs', 'Emplois'),
+            ('data_collection', 'Data Collection')
         ]
         
         for task_type, task_name in default_tasks:
@@ -401,12 +402,19 @@ class CompanyService:
             company.products = data.get("products", {}) if isinstance(data, dict) else {}
         elif query_type == "jobs":
             company.jobs = data.get("jobs", {}) if isinstance(data, dict) else {}
-        elif query_type == "csr":   
+        elif query_type == "csr":
             company.csr = data.get("csr", {}) if isinstance(data, dict) else {}
         elif query_type == "press":
             company.press = data.get("press", {}) if isinstance(data, dict) else {}
         elif query_type == "team":
             company.team = data.get("team", []) if isinstance(data, dict) else []
+        elif query_type == "data_collection":
+            # Handle data collection response with nested knowledge structure
+            knowledge_data = data.get("knowledge", {}) if isinstance(data, dict) else {}
+            company.raw_mistral_knowledge = knowledge_data.get("mistral", "")
+            company.raw_claude_knowledge = knowledge_data.get("claude", "")
+            company.raw_wikipedia_knowledge = knowledge_data.get("wikipedia", "")
+            company.raw_scraped_website_knowledge = knowledge_data.get("scraped", "")
     
     def update_task_tokens(self, task_id: int, token_data: TaskTokenUpdate) -> Task:
         """Update token usage information for a task"""
