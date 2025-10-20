@@ -1,6 +1,8 @@
 [submodule "front"]
 	path = front
 	url = ssh://git@git.mediaspeech.com:17890/mint/screen-front.git
+	branch = main
 [submodule "backend"]
 	path = backend
 	url = ssh://git@git.mediaspeech.com:17890/mint/screen-poc.git
+	branch = main
