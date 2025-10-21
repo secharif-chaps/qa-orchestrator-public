@@ -13,7 +13,11 @@
     />
 
     <!-- No Data State -->
-    <div v-else-if="!company?.jobs.offers">no data state</div>
+    <NoData v-else-if="!hasJobsData">
+      <p class="text-secondary text-lg font-medium">
+        {{ $t('profile.sections.jobs.noData') }}
+      </p>
+    </NoData>
 
     <!-- Main content -->
     <div v-if="company?.jobs.offers" class="space-y-6">
@@ -94,7 +98,11 @@
             key="no-results"
             class="col-span-full"
           >
-            <div>no results state</div>
+            <NoData>
+              <p class="text-secondary text-lg font-medium">
+                {{ $t('jobs.listings.noResults', { query: searchQuery }) }}
+              </p>
+            </NoData>
           </div>
         </TransitionGroup>
       </div>
@@ -113,6 +121,7 @@ import JobCard from '@/components/company/jobs/JobCard.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import Input from '@/components/ui/Input.vue'
+import NoData from '@/components/ui/NoData.vue'
 
 const route = useRoute()
 
@@ -163,6 +172,14 @@ const filteredJobs = computed(() => {
       job.requirements?.toLowerCase().includes(query)
     )
   })
+})
+
+const hasJobsData = computed(() => {
+  const jobsData = company.value?.jobs
+  if (!jobsData) return false
+
+  // Check if there's any meaningful content
+  return !!(jobsData.insights || (jobsData.offers && jobsData.offers.length > 0))
 })
 </script>
 

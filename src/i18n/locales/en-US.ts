@@ -523,6 +523,7 @@ export default {
       title: 'No Products Available',
       description: 'Products information will be displayed here once available.',
     },
+    noResults: 'No products found matching your search',
   },
   profile: {
     title: 'Company Profile',
@@ -539,6 +540,7 @@ export default {
         range: 'Product Range',
         partnerBrands: 'Partner Brands',
         privateLabels: '{company} Private Labels',
+        noData: 'No product data available',
       },
       target: {
         title: 'Target audience',
@@ -558,6 +560,7 @@ export default {
         diversity: 'Diversity & Inclusion',
         ethics: 'Ethical Practices',
         awards: 'Awards & Certifications',
+        noData: 'No CSR data available',
       },
       digital: {
         title: 'Digital strategy',
@@ -575,6 +578,16 @@ export default {
         insights: {
           title: 'Press Coverage Insights',
         },
+        noData: 'No press coverage data available',
+      },
+      jobs: {
+        noData: 'No job offers data available',
+      },
+      team: {
+        noData: 'No team data available',
+      },
+      timeline: {
+        noData: 'No timeline data available',
       },
       metrics: {
         establishment: 'Year of establishment',

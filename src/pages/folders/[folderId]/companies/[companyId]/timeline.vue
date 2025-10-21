@@ -6,13 +6,20 @@
     />
     <!-- Error State -->
     <SectionErrorState
-      v-if="company && task?.status === 'error'"
+      v-else-if="company && task?.status === 'error'"
       :error-message="task.error"
       :task="task"
     />
 
+    <!-- No Data State -->
+    <NoData v-else-if="!hasTimelineData">
+      <p class="text-secondary text-lg font-medium">
+        {{ $t('profile.sections.timeline.noData') }}
+      </p>
+    </NoData>
+
     <!-- Timeline visualization -->
-    <div v-if="company?.timeline.events" class="relative">
+    <div v-else class="relative">
       <!-- Timeline events -->
       <div class="bg-base-100 p-4 rounded-lg">
         <div class="flex items-center justify-between mb-6">
@@ -33,7 +40,14 @@
           <Event v-for="(event, index) in filteredEvents" :key="index" :event="event" />
         </div>
 
-        <div v-if="filteredEvents.length === 0 && searchQuery">todo empty state</div>
+        <!-- No results message -->
+        <div v-if="filteredEvents.length === 0 && searchQuery">
+          <NoData>
+            <p class="text-secondary text-lg font-medium">
+              {{ $t('timeline.search.noResults', { query: searchQuery }) }}
+            </p>
+          </NoData>
+        </div>
       </div>
     </div>
   </div>
@@ -47,6 +61,7 @@ import { computed, ref } from 'vue'
 import Event from '@/components/company/timeline/Event.vue'
 import { companyTasksQuery } from '@/queries/tasks'
 import Input from '@/components/ui/Input.vue'
+import NoData from '@/components/ui/NoData.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 
@@ -102,5 +117,13 @@ const filteredEvents = computed(() => {
       (event.category && event.category.toLowerCase().includes(query))
     )
   })
+})
+
+const hasTimelineData = computed(() => {
+  const timelineData = company.value?.timeline
+  if (!timelineData) return false
+
+  // Check if there's any meaningful timeline data
+  return !!(timelineData.events && timelineData.events.length > 0)
 })
 </script>

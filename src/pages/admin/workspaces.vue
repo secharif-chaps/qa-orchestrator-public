@@ -338,18 +338,18 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { ref, computed, reactive, onMounted, onUnmounted } from 'vue'
-import { useQuery } from '@pinia/colada'
-import { useRouter } from 'vue-router'
-import { allWorkspacesQuery, currentWorkspaceQuery } from '@/queries/workspace'
-import { useDeleteWorkspace, usePickWorkspace } from '@/mutations/workspace'
-import type { WorkspaceResponse, WorkspaceListItem, WorkspaceQueryParams } from '@/types/workspace'
-import WorkspaceDeleteModal from '@/components/workspace/WorkspaceDeleteModal.vue'
-import WorkspacePickModal from '@/components/workspace/WorkspacePickModal.vue'
 import Button from '@/components/ui/Button.vue'
 import Input from '@/components/ui/Input.vue'
 import Pagination from '@/components/ui/Pagination.vue'
+import WorkspaceDeleteModal from '@/components/workspace/WorkspaceDeleteModal.vue'
+import WorkspacePickModal from '@/components/workspace/WorkspacePickModal.vue'
+import { useDeleteWorkspace, usePickWorkspace } from '@/mutations/workspace'
+import { allWorkspacesQuery, currentWorkspaceQuery } from '@/queries/workspace'
 import type { PaginationMeta } from '@/types/pagination'
+import type { WorkspaceListItem, WorkspaceQueryParams, WorkspaceResponse } from '@/types/workspace'
+import { useQuery } from '@pinia/colada'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 

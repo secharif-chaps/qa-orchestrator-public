@@ -13,7 +13,11 @@
     />
 
     <!-- No Data State -->
-    <div v-else-if="!products || Object.keys(products).length === 0">no data state</div>
+    <NoData v-else-if="!hasProductsData">
+      <p class="text-secondary text-lg font-medium">
+        {{ $t('profile.sections.products.noData') }}
+      </p>
+    </NoData>
 
     <!-- Main content -->
     <div v-else class="space-y-6">
@@ -63,7 +67,11 @@
       </div>
 
       <!-- No Results State -->
-      <div v-if="Object.keys(filteredProducts).length === 0 && searchQuery">no results state</div>
+      <NoData v-if="Object.keys(filteredProducts).length === 0 && searchQuery">
+        <p class="text-secondary text-lg font-medium">
+          {{ $t('products.noResults', 'No products found matching your search') }}
+        </p>
+      </NoData>
     </div>
   </div>
 </template>
@@ -73,6 +81,7 @@ import ProductsHeader from '@/components/company/products/ProductsHeader.vue'
 import ProductGridItem from '@/components/company/products/ProductGridItem.vue'
 import ProductListItem from '@/components/company/products/ProductListItem.vue'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
+import NoData from '@/components/ui/NoData.vue'
 import { useRoute } from 'vue-router'
 import { computed, ref } from 'vue'
 import { useQuery } from '@pinia/colada'
@@ -167,6 +176,17 @@ const toggleViewMode = () => {
 const toggleShowAllProducts = (category: string) => {
   showAllProducts.value[category] = !showAllProducts.value[category]
 }
+
+const hasProductsData = computed(() => {
+  const productsData = company.value?.products
+  if (!productsData) return false
+
+  // Check if there's any meaningful content
+  return !!(
+    productsData.insights ||
+    (productsData.categories && Object.keys(productsData.categories).length > 0)
+  )
+})
 </script>
 
 <style scoped>

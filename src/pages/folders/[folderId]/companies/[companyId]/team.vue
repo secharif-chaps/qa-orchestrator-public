@@ -12,10 +12,14 @@
     />
 
     <!-- No Data State -->
-    <div v-else-if="!company?.team">no data state</div>
+    <NoData v-else-if="!hasTeamData">
+      <p class="text-secondary text-lg font-medium">
+        {{ $t('profile.sections.team.noData') }}
+      </p>
+    </NoData>
 
     <!-- Main content -->
-    <div v-if="company?.team" class="space-y-6">
+    <div v-else-if="hasTeamData" class="space-y-6">
       <!-- Team Header with Stats -->
       <TeamPageHeader
         :team="company?.team"
@@ -169,6 +173,7 @@ import TeamPageHeader from '@/components/company/team/TeamPageHeader.vue'
 import TeamMembersList from '@/components/company/team/TeamMembersList.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
+import NoData from '@/components/ui/NoData.vue'
 import { useScreenshot } from '@/composables/useScreenshot'
 import type { TeamMember } from '@/types/company'
 
@@ -438,4 +443,12 @@ const scrollToMemberInHierarchy = (member: TeamMember) => {
     })
   }
 }
+
+const hasTeamData = computed(() => {
+  const teamData = company.value?.team
+  if (!teamData) return false
+
+  // Check if there's any meaningful team data
+  return !!(teamData && Array.isArray(teamData) && teamData.length > 0)
+})
 </script>
