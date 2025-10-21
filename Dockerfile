@@ -17,17 +17,20 @@ RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python
     ln -s /opt/poetry/bin/poetry && \
     poetry --version
 
-# Copy src configuration files
-COPY ./docker/src .
+# Copy dependency files
+COPY pyproject.toml poetry.lock ./
 
 # Configure poetry to not use a virtual environment
 RUN poetry config virtualenvs.create false
 
 # Install dependencies
-RUN poetry install --no-interaction --no-ansi
+RUN poetry install --no-interaction --no-ansi --no-root
 
 # Copy the rest of the application
-COPY ./app/ app
+COPY ./app/ app/
+COPY ./alembic/ alembic/
+COPY alembic.ini run.py ./
+COPY ./docker/entrypoint.sh ./
 
 # Make the entrypoint script executable
 RUN chmod +x entrypoint.sh
