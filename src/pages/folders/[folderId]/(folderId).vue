@@ -162,29 +162,37 @@
         </div>
 
         <!-- Empty State -->
-        <div v-else class="bg-base-100 rounded-lg shadow-sm p-12 text-center">
-          <i class="fas fa-folder-open text-4xl text-secondary/50 mb-4"></i>
-          <h3 class="text-lg font-medium mb-2">
-            {{
-              searchTerm
-                ? $t('folder.empty.noResults', 'No items found')
-                : $t('folder.empty.title', 'No items in this folder')
-            }}
-          </h3>
-          <p class="text-secondary mb-6">
-            {{
-              searchTerm
-                ? $t('folder.empty.tryDifferentSearch', 'Try a different search term')
-                : $t('folder.empty.description', 'Start by adding items to this folder')
-            }}
-          </p>
-          <Button
-            v-if="searchTerm"
-            @click="searchTerm = ''"
-            :label="$t('folder.clearSearch', 'Clear Search')"
-            variant="secondary"
-          />
-        </div>
+        <Card v-else class="py-6">
+          <div class="flex flex-col items-center gap-4">
+            <i class="fas fa-folder-open text-4xl text-secondary/50"></i>
+            <h3 class="text-lg font-medium">
+              {{
+                searchTerm
+                  ? $t('folder.empty.noResults', 'Aucun résultat trouvé')
+                  : $t('folder.empty.title', 'Dossier vide')
+              }}
+            </h3>
+            <p class="text-secondary">
+              {{
+                searchTerm
+                  ? $t(
+                      'folder.empty.tryDifferentSearch',
+                      'Essayez avec un autre terme de recherche',
+                    )
+                  : $t(
+                      'folder.empty.description',
+                      'Créez votre premier élément pour commencer à organiser vos entreprises',
+                    )
+              }}
+            </p>
+            <Button
+              v-if="searchTerm"
+              @click="searchTerm = ''"
+              :label="$t('folder.clearSearch', 'Effacer la recherche')"
+              variant="secondary"
+            />
+          </div>
+        </Card>
       </div>
     </div>
 
@@ -218,22 +226,23 @@ meta:
 </route>
 
 <script setup lang="ts">
-import Alert from '@/components/ui/Alert.vue'
-import Tag from '@/components/ui/Tag.vue'
-import Button from '@/components/ui/Button.vue'
-import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
 import CompanyArchiveModal from '@/components/companies/CompanyArchiveModal.vue'
 import CompanyRestoreModal from '@/components/companies/CompanyRestoreModal.vue'
-import FoldersHeader from '@/components/folders/FoldersHeader.vue'
-import type { FolderItem } from '@/types/folder'
-import type { Company } from '@/types/company'
-import { ref, computed, onMounted, watch } from 'vue'
-import { folderByIdQuery } from '@/queries/folders'
-import { useQuery } from '@pinia/colada'
-import { useRoute, useRouter } from 'vue-router'
+import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
 import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
+import FoldersHeader from '@/components/folders/FoldersHeader.vue'
+import Alert from '@/components/ui/Alert.vue'
+import Button from '@/components/ui/Button.vue'
+import Card from '@/components/ui/Card.vue'
+import Tag from '@/components/ui/Tag.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import { folderByIdQuery } from '@/queries/folders'
+import type { Company } from '@/types/company'
+import type { FolderItem } from '@/types/folder'
+import { useQuery } from '@pinia/colada'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 
 // Constants
 const VIEW_MODE_STORAGE_KEY = 'folder-view-mode'

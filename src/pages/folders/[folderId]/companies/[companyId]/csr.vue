@@ -13,7 +13,11 @@
     />
 
     <!-- No Data State -->
-    <div v-else-if="!company?.csr">no data state</div>
+    <NoData v-else-if="!hasCsrData">
+      <p class="text-secondary text-lg font-medium">
+        {{ $t('profile.sections.csr.noData') }}
+      </p>
+    </NoData>
 
     <!-- Main Content -->
     <div v-else class="flex flex-col gap-6">
@@ -231,16 +235,17 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import { useQuery } from '@pinia/colada'
-import { companyByIdQuery } from '@/queries/companies'
-import { companyTasksQuery } from '@/queries/tasks'
-import { useRoute } from 'vue-router'
-import { computed } from 'vue'
-import { getSourcedValue } from '@/components/helpers/sourcedValues'
-import Source from '@/components/company/Source.vue'
-import ChapseAlert from '@/components/ui/ChapseAlert.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
+import Source from '@/components/company/Source.vue'
+import { getSourcedValue } from '@/components/helpers/sourcedValues'
+import ChapseAlert from '@/components/ui/ChapseAlert.vue'
+import NoData from '@/components/ui/NoData.vue'
+import { companyByIdQuery } from '@/queries/companies'
+import { companyTasksQuery } from '@/queries/tasks'
+import { useQuery } from '@pinia/colada'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
 
@@ -262,4 +267,22 @@ const { data: company } = useQuery(companyByIdQuery, () => ({
     return hasRunningTasks ? 5000 : false
   },
 }))
+
+const hasCsrData = computed(() => {
+  const csr = company.value?.csr
+  if (!csr) return false
+
+  // Check if there's any meaningful content
+  return !!(
+    csr.insights ||
+    csr.responsibility ||
+    (csr.awards_certifications && csr.awards_certifications.length > 0) ||
+    (csr.charity_actions && csr.charity_actions.length > 0) ||
+    (csr.community_involvement && csr.community_involvement.length > 0) ||
+    (csr.diversity_inclusion && csr.diversity_inclusion.length > 0) ||
+    (csr.ethical_practices && csr.ethical_practices.length > 0) ||
+    (csr.responsibility_initiatives && csr.responsibility_initiatives.length > 0) ||
+    (csr.sustainability_programs && csr.sustainability_programs.length > 0)
+  )
+})
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 rounded-lg shadow-sm p-6">
+  <Card>
     <div class="flex items-center justify-between mb-6">
       <div>
         <h2 class="text-xl font-semibold">
@@ -128,14 +128,15 @@
         {{ $t('tokens.refresh', 'Refresh') }}
       </button>
     </div>
-  </div>
+  </Card>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useQuery } from '@pinia/colada'
-import { workspaceModulesQuery } from '@/queries/tokens'
 import { useUpdateWorkspaceModules } from '@/mutations/tokens'
+import { workspaceModulesQuery } from '@/queries/tokens'
+import { useQuery } from '@pinia/colada'
+import { computed, ref } from 'vue'
+import Card from '../ui/Card.vue'
 import ModuleTokenCard from './ModuleTokenCard.vue'
 
 interface Props {

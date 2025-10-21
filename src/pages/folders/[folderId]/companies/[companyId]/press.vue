@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen">
+  <div>
     <!-- Loading State -->
     <SectionLoadingState
       v-if="company && (task?.status === 'pending' || task?.status === 'running')"
@@ -13,7 +13,11 @@
     />
 
     <!-- No Data State -->
-    <div v-else-if="!hasAnyPressData">no data state</div>
+    <NoData v-else-if="!hasAnyPressData">
+      <p class="text-secondary text-lg font-medium">
+        {{ $t('profile.sections.press.noData') }}
+      </p>
+    </NoData>
 
     <!-- Main Content -->
     <div v-else class="mx-auto">
@@ -230,15 +234,16 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import { useQuery } from '@pinia/colada'
-import { companyByIdQuery } from '@/queries/companies'
-import { companyTasksQuery } from '@/queries/tasks'
-import { useRoute } from 'vue-router'
-import { computed } from 'vue'
-import Source from '@/components/company/Source.vue'
-import ChapseAlert from '@/components/ui/ChapseAlert.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
+import Source from '@/components/company/Source.vue'
+import ChapseAlert from '@/components/ui/ChapseAlert.vue'
+import NoData from '@/components/ui/NoData.vue'
+import { companyByIdQuery } from '@/queries/companies'
+import { companyTasksQuery } from '@/queries/tasks'
+import { useQuery } from '@pinia/colada'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
 

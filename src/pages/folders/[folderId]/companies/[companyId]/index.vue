@@ -125,10 +125,7 @@
     </div>
 
     <!-- Chapse Assist Alert (Onboarding) -->
-    <ChapseAssistAlert
-      @setup="handleAssistSetup"
-      @dismiss="handleAssistDismiss"
-    />
+    <ChapseAssistAlert @setup="handleAssistSetup" @dismiss="handleAssistDismiss" />
 
     <!-- Chapse Assist Quick Actions -->
     <ChapseAssistQuickActions
@@ -168,7 +165,10 @@
     </div>
   </div>
 
-  <!-- Section Modal -->
+  <!-- Raw Knowledge Debug Section (only for suh/nmr) -->
+  <RawKnowledgeDebug v-if="isDebugUser" />
+
+  <!-- Section Modal -->@index
   <SectionModal v-model="showSectionModal" v-model:section="activeSection" />
 </template>
 
@@ -180,31 +180,39 @@ meta:
 
 <script lang="ts" setup>
 import AnalysisCard from '@/components/company/AnalysisCard.vue'
+import RawKnowledgeDebug from '@/components/company/profile/RawKnowledgeDebug.vue'
 import SectionModal from '@/components/company/SectionModal.vue'
 import ChapseAssistAlert from '@/components/features/chapse-assist/ChapseAssistAlert.vue'
 import ChapseAssistQuickActions from '@/components/features/chapse-assist/ChapseAssistQuickActions.vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
-import { companyByIdQuery } from '@/queries/companies'
-import { useQuery } from '@pinia/colada'
-import { computed, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import type { TaskType, TaskStatus } from '@/types/task'
-import type { QuickAction } from '@/types/ai-preferences'
-import Tag from '@/components/ui/Tag.vue'
 import Card from '@/components/ui/Card.vue'
+import Tag from '@/components/ui/Tag.vue'
 import { useRestartTask } from '@/mutations/tasks'
+import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
+import { useAuthStore } from '@/stores/auth'
+import type { QuickAction } from '@/types/ai-preferences'
+import type { TaskStatus, TaskType } from '@/types/task'
+import { useQuery } from '@pinia/colada'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
+const authStore = useAuthStore()
 
 const showSectionModal = ref(false)
 const activeSection = ref<TaskType | null>(null)
 
 const companyId = computed(() => route.params.companyId as string)
 const folderId = computed(() => route.params.folderId as string)
+
+const isDebugUser = computed(() => {
+  const username = authStore.user?.profile?.preferred_username?.toLowerCase()
+  return username === 'nmr' || username === 'suh'
+})
 
 // Use the company data composable
 const { data: company } = useQuery(companyByIdQuery, () => ({ id: companyId.value }), {
@@ -239,129 +247,140 @@ const getTaskId = (taskType: TaskType): number | null => {
   return task?.id || null
 }
 
+// Check if data_collection task is running (blocks all other tasks)
+const isDataCollectionRunning = computed(() => {
+  const status = getTaskStatus('data_collection')
+  return status === 'pending' || status === 'running'
+})
+
 // Analysis cards configuration
-const analysisCards = computed(() => [
-  {
-    section: 'profile' as TaskType,
-    title: t('company.analysisCards.profile.title', 'Company Profile'),
-    description: t(
-      'company.analysisCards.profile.description',
-      'View detailed company information, business lines, and key metrics',
-    ),
-    icon: 'fas fa-building',
-    insights: company.value?.profile?.businessLine?.value || company.value?.digital?.insights,
-    taskStatus: getTaskStatus('profile') || getTaskStatus('digital'),
-    errorMessage: getTaskError('profile') || getTaskError('digital'),
-    taskId: getTaskId('profile') || getTaskId('digital'),
-    disabled: false,
-  },
-  {
-    section: 'timeline' as TaskType,
-    title: t('company.analysisCards.timeline.title', 'Timeline & History'),
-    description: t(
-      'company.analysisCards.timeline.description',
-      'Company history, milestones, and key events over time',
-    ),
-    icon: 'fas fa-calendar-days',
-    insights: t(
-      'company.analysisCards.timeline.insights',
-      'Discover the company history and key events',
-    ),
-    taskStatus: getTaskStatus('timeline'),
-    errorMessage: getTaskError('timeline'),
-    taskId: getTaskId('timeline'),
-    disabled: false,
-  },
-  {
-    section: 'products' as TaskType,
-    title: t('company.analysisCards.products.title', 'Products & Services'),
-    description: t(
-      'company.analysisCards.products.description',
-      'Browse products, services, and offerings',
-    ),
-    icon: 'fas fa-box',
-    insights:
-      company.value?.products?.insights ||
-      t('company.analysisCards.products.insights', 'Discover the company products and services'),
-    taskStatus: getTaskStatus('products'),
-    errorMessage: getTaskError('products'),
-    taskId: getTaskId('products'),
-    disabled: false,
-  },
-  {
-    section: 'team' as TaskType,
-    title: t('company.analysisCards.team.title', 'Team & Management'),
-    description: t(
-      'company.analysisCards.team.description',
-      'Leadership team, organizational structure, and key personnel',
-    ),
-    icon: 'fas fa-users',
-    insights: t(
-      'company.analysisCards.team.insights',
-      'Discover the organizational structure and key members',
-    ),
-    taskStatus: getTaskStatus('team'),
-    errorMessage: getTaskError('team'),
-    taskId: getTaskId('team'),
-    disabled: false,
-  },
-  {
-    section: 'jobs' as TaskType,
-    title: t('company.analysisCards.jobs.title', 'Job Offers'),
-    description: t(
-      'company.analysisCards.jobs.description',
-      'Current job openings and career opportunities',
-    ),
-    icon: 'fas fa-briefcase',
-    insights: company.value?.jobs?.insights?.hiring_focus?.value,
-    taskStatus: getTaskStatus('jobs'),
-    errorMessage: getTaskError('jobs'),
-    taskId: getTaskId('jobs'),
-    disabled: false,
-  },
-  {
-    section: 'press' as TaskType,
-    title: t('company.analysisCards.press.title', 'Press & Media'),
-    description: t(
-      'company.analysisCards.press.description',
-      'Press releases, news articles, and media coverage',
-    ),
-    icon: 'fas fa-newspaper',
-    insights: company.value?.press?.insights,
-    taskStatus: getTaskStatus('press'),
-    errorMessage: getTaskError('press'),
-    taskId: getTaskId('press'),
-    disabled: false,
-  },
-  {
-    section: 'csr' as TaskType,
-    title: t('company.analysisCards.csr.title', 'Corporate Social Responsibility'),
-    description: t(
-      'company.analysisCards.csr.description',
-      'CSR initiatives, sustainability programs, and social impact',
-    ),
-    icon: 'fas fa-leaf',
-    insights: company.value?.csr?.insights,
-    taskStatus: getTaskStatus('csr'),
-    errorMessage: getTaskError('csr'),
-    taskId: getTaskId('csr'),
-    disabled: false,
-  },
-  {
-    section: 'digital' as TaskType,
-    title: t('company.analysisCards.communications.title', 'Corporate Communications'),
-    description: t(
-      'company.analysisCards.communications.description',
-      'Press releases, public statements, and official communications',
-    ),
-    icon: 'fas fa-bullhorn',
-    insights: null,
-    taskStatus: null,
-    errorMessage: null,
-    taskId: null,
-    disabled: true,
-  },
-])
+const analysisCards = computed(() => {
+  // If data_collection is running, show all cards as loading
+  const dataCollectionStatus = isDataCollectionRunning.value ? 'running' : null
+
+  return [
+    {
+      section: 'profile' as TaskType,
+      title: t('company.analysisCards.profile.title', 'Company Profile'),
+      description: t(
+        'company.analysisCards.profile.description',
+        'View detailed company information, business lines, and key metrics',
+      ),
+      icon: 'fas fa-building',
+      insights: company.value?.profile?.businessLine?.value || company.value?.digital?.insights,
+      taskStatus: dataCollectionStatus || getTaskStatus('profile') || getTaskStatus('digital'),
+      errorMessage: getTaskError('profile') || getTaskError('digital'),
+      taskId: getTaskId('profile') || getTaskId('digital'),
+      disabled: false,
+    },
+    {
+      section: 'timeline' as TaskType,
+      title: t('company.analysisCards.timeline.title', 'Timeline & History'),
+      description: t(
+        'company.analysisCards.timeline.description',
+        'Company history, milestones, and key events over time',
+      ),
+      icon: 'fas fa-calendar-days',
+      insights: t(
+        'company.analysisCards.timeline.insights',
+        'Discover the company history and key events',
+      ),
+      taskStatus: dataCollectionStatus || getTaskStatus('timeline'),
+      errorMessage: getTaskError('timeline'),
+      taskId: getTaskId('timeline'),
+      disabled: false,
+    },
+    {
+      section: 'products' as TaskType,
+      title: t('company.analysisCards.products.title', 'Products & Services'),
+      description: t(
+        'company.analysisCards.products.description',
+        'Browse products, services, and offerings',
+      ),
+      icon: 'fas fa-box',
+      insights:
+        company.value?.products?.insights ||
+        t('company.analysisCards.products.insights', 'Discover the company products and services'),
+      taskStatus: dataCollectionStatus || getTaskStatus('products'),
+      errorMessage: getTaskError('products'),
+      taskId: getTaskId('products'),
+      disabled: false,
+    },
+    {
+      section: 'team' as TaskType,
+      title: t('company.analysisCards.team.title', 'Team & Management'),
+      description: t(
+        'company.analysisCards.team.description',
+        'Leadership team, organizational structure, and key personnel',
+      ),
+      icon: 'fas fa-users',
+      insights: t(
+        'company.analysisCards.team.insights',
+        'Discover the organizational structure and key members',
+      ),
+      taskStatus: dataCollectionStatus || getTaskStatus('team'),
+      errorMessage: getTaskError('team'),
+      taskId: getTaskId('team'),
+      disabled: false,
+    },
+    {
+      section: 'jobs' as TaskType,
+      title: t('company.analysisCards.jobs.title', 'Job Offers'),
+      description: t(
+        'company.analysisCards.jobs.description',
+        'Current job openings and career opportunities',
+      ),
+      icon: 'fas fa-briefcase',
+      insights: company.value?.jobs?.insights?.hiring_focus?.value,
+      taskStatus: dataCollectionStatus || getTaskStatus('jobs'),
+      errorMessage: getTaskError('jobs'),
+      taskId: getTaskId('jobs'),
+      disabled: false,
+    },
+    {
+      section: 'press' as TaskType,
+      title: t('company.analysisCards.press.title', 'Press & Media'),
+      description: t(
+        'company.analysisCards.press.description',
+        'Press releases, news articles, and media coverage',
+      ),
+      icon: 'fas fa-newspaper',
+      insights: company.value?.press?.insights,
+      taskStatus: dataCollectionStatus || getTaskStatus('press'),
+      errorMessage: getTaskError('press'),
+      taskId: getTaskId('press'),
+      disabled: false,
+    },
+    {
+      section: 'csr' as TaskType,
+      title: t('company.analysisCards.csr.title', 'Corporate Social Responsibility'),
+      description: t(
+        'company.analysisCards.csr.description',
+        'CSR initiatives, sustainability programs, and social impact',
+      ),
+      icon: 'fas fa-leaf',
+      insights: company.value?.csr?.insights,
+      taskStatus: dataCollectionStatus || getTaskStatus('csr'),
+      errorMessage: getTaskError('csr'),
+      taskId: getTaskId('csr'),
+      disabled: false,
+    },
+    {
+      section: 'digital' as TaskType,
+      title: t('company.analysisCards.communications.title', 'Corporate Communications'),
+      description: t(
+        'company.analysisCards.communications.description',
+        'Press releases, public statements, and official communications',
+      ),
+      icon: 'fas fa-bullhorn',
+      insights: null,
+      taskStatus: null,
+      errorMessage: null,
+      taskId: null,
+      disabled: true,
+    },
+  ]
+})
 
 // Open section in modal
 const openSection = (section: TaskType) => {

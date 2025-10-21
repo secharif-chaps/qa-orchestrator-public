@@ -112,7 +112,7 @@ export default {
         tag1: 'Exemple',
         tag2: 'Aperçu',
         interfaceDescription:
-          'Expérimentez l\'apparence de votre interface avec les paramètres de thème actuels.',
+          "Expérimentez l'apparence de votre interface avec les paramètres de thème actuels.",
         card: {
           title: 'Titre de la Carte Exemple',
           description: 'Cette carte démontre le style du thème actuel',
@@ -328,7 +328,7 @@ export default {
       title: 'Crédits',
       credits: '{count} crédits',
       yesterday: 'Hier',
-      viewHistory: 'Voir tout l\'historique',
+      viewHistory: "Voir tout l'historique",
       needMore: 'Besoin de plus de Crédits ?',
       advisor: 'Votre conseiller ChapsVision',
       contact: 'Contacter',
@@ -464,7 +464,7 @@ export default {
     error: 'Erreur',
     close: 'Fermer',
     dismiss: 'Ignorer',
-    breadcrumb: 'Fil d\'Ariane',
+    breadcrumb: "Fil d'Ariane",
     preview: {
       items: {
         newMessage: 'Nouveau Message Reçu',
@@ -566,6 +566,7 @@ export default {
       title: 'Aucun Produit Disponible',
       description: 'Les informations sur les produits seront affichées ici une fois disponibles.',
     },
+    noResults: 'Aucun produit trouvé correspondant à votre recherche',
   },
   profile: {
     title: "Profil de l'Entreprise",
@@ -582,6 +583,7 @@ export default {
         range: 'Gamme de produits',
         partnerBrands: 'Marques partenaires',
         privateLabels: 'Marques propres {company}',
+        noData: 'Aucune donnée produit disponible',
       },
       target: {
         title: 'Public cible',
@@ -591,7 +593,7 @@ export default {
       csr: {
         title: "Responsabilité Sociale d'Entreprise",
         insights: {
-          title: 'AI-Generated Insights',
+          title: 'Aperçu RSE',
         },
         responsibility: 'Déclaration de responsabilité',
         responsibility_initiatives: 'Initiatives de responsabilité',
@@ -601,6 +603,7 @@ export default {
         diversity: 'Diversité et inclusion',
         ethics: 'Pratiques éthiques',
         awards: 'Prix et certifications',
+        noData: 'Aucune donnée RSE disponible',
       },
       digital: {
         title: 'Stratégie digitale',
@@ -618,6 +621,16 @@ export default {
         insights: {
           title: 'Aperçu de la Couverture Presse',
         },
+        noData: 'Aucune donnée de couverture presse disponible',
+      },
+      jobs: {
+        noData: "Aucune donnée d'offres d'emploi disponible",
+      },
+      team: {
+        noData: "Aucune donnée d'équipe disponible",
+      },
+      timeline: {
+        noData: 'Aucune donnée de chronologie disponible',
       },
       metrics: {
         establishment: 'Année de création',
@@ -629,7 +642,7 @@ export default {
   team: {
     title: 'Équipe & Management',
     tabs: {
-      users: 'Membres de l\'Équipe',
+      users: "Membres de l'Équipe",
       settings: 'Paramètres',
       apis: 'APIs Externes',
     },
@@ -637,20 +650,20 @@ export default {
       loading: 'Chargement des utilisateurs...',
       error: {
         title: 'Erreur lors du chargement des utilisateurs',
-        description: 'Échec du chargement des membres de l\'équipe',
+        description: "Échec du chargement des membres de l'équipe",
       },
       pagination: {
         itemName: 'utilisateurs',
       },
     },
     settings: {
-      title: 'Paramètres de l\'Équipe',
-      comingSoon: 'Les paramètres d\'équipe seront bientôt disponibles',
+      title: "Paramètres de l'Équipe",
+      comingSoon: "Les paramètres d'équipe seront bientôt disponibles",
     },
     apis: {
       title: 'APIs Externes',
       description:
-        'Connectez des APIs externes pour les utiliser comme sources de données dans vos workflows. Ajoutez vos identifiants API pour intégrer des services tiers et étendre vos capacités d\'automatisation.',
+        "Connectez des APIs externes pour les utiliser comme sources de données dans vos workflows. Ajoutez vos identifiants API pour intégrer des services tiers et étendre vos capacités d'automatisation.",
       added: 'Ajouté',
       active: 'Actif',
       inactive: 'Inactif',
@@ -658,17 +671,18 @@ export default {
       add_new: 'Ajouter une API Externe',
       add_description: 'Connecter une nouvelle source de données',
       new_api: 'Nouvelle API Externe',
-      name: 'Nom de l\'API',
+      name: "Nom de l'API",
       namePlaceholder: 'ex., API Météo',
-      url: 'URL de l\'API',
+      url: "URL de l'API",
       urlLabel: 'URL :',
       urlPlaceholder: 'https://api.exemple.com/v1',
       api_key: 'Clé API',
       apiKeyLabel: 'Clé API :',
       apiKeyPlaceholder: 'Votre clé API',
-      save: 'Enregistrer l\'API',
+      save: "Enregistrer l'API",
       no_apis: 'Aucune API Externe',
-      no_apis_description: 'Ajoutez des APIs externes pour connecter de nouvelles sources de données',
+      no_apis_description:
+        'Ajoutez des APIs externes pour connecter de nouvelles sources de données',
       add_first: 'Ajouter Votre Première API',
     },
     loading: {
@@ -735,8 +749,8 @@ export default {
     },
     empty: {
       noUsers: {
-        title: 'Aucun utilisateur dans l\'espace de travail',
-        description: 'Ajoutez votre premier membre d\'équipe pour commencer la collaboration',
+        title: "Aucun utilisateur dans l'espace de travail",
+        description: "Ajoutez votre premier membre d'équipe pour commencer la collaboration",
       },
       noResults: {
         title: 'Aucun utilisateur trouvé',
@@ -745,7 +759,7 @@ export default {
       },
       loading: {
         title: 'Chargement des utilisateurs...',
-        description: 'Veuillez patienter pendant que nous chargeons vos membres d\'équipe',
+        description: "Veuillez patienter pendant que nous chargeons vos membres d'équipe",
       },
       default: 'Aucun utilisateur',
     },
@@ -757,11 +771,11 @@ export default {
         required: 'Le nom est requis',
       },
       username: {
-        required: 'Le nom d\'utilisateur est requis',
-        minLength: 'Le nom d\'utilisateur doit contenir au moins 3 caractères',
+        required: "Le nom d'utilisateur est requis",
+        minLength: "Le nom d'utilisateur doit contenir au moins 3 caractères",
       },
       email: {
-        required: 'L\'email est requis',
+        required: "L'email est requis",
         invalid: 'Veuillez entrer une adresse email valide',
       },
       password: {
@@ -772,7 +786,7 @@ export default {
     permissionsList: {
       workspaceRead: {
         name: 'Accès de Base',
-        description: 'Voir le contenu de l\'espace de travail et les entreprises',
+        description: "Voir le contenu de l'espace de travail et les entreprises",
       },
       companyView: {
         name: 'Voir les Entreprises',
@@ -780,15 +794,15 @@ export default {
       },
       companyCreate: {
         name: 'Créer des Entreprises',
-        description: 'Ajouter de nouvelles entreprises à l\'espace de travail',
+        description: "Ajouter de nouvelles entreprises à l'espace de travail",
       },
       companyDelete: {
         name: 'Supprimer des Entreprises',
-        description: 'Retirer des entreprises de l\'espace de travail',
+        description: "Retirer des entreprises de l'espace de travail",
       },
       workspaceWrite: {
-        name: 'Gestion d\'Équipe',
-        description: 'Gérer les utilisateurs et paramètres de l\'espace de travail',
+        name: "Gestion d'Équipe",
+        description: "Gérer les utilisateurs et paramètres de l'espace de travail",
       },
     },
   },
@@ -954,7 +968,7 @@ export default {
       button: 'Faire une nouvelle recherche',
     },
     fields: {
-      employeeCount: 'Nombre d\'employés',
+      employeeCount: "Nombre d'employés",
       headquarters: 'Siège Social',
       ceo: 'PDG',
       revenue: 'Revenus',
@@ -968,13 +982,13 @@ export default {
     },
     analysisCards: {
       profile: {
-        title: 'Profil de l\'Entreprise',
+        title: "Profil de l'Entreprise",
         description: 'Consultez les informations détaillées, les activités et les indicateurs clés',
         insights: 'Informations du Profil',
       },
       timeline: {
         title: 'Chronologie & Historique',
-        description: 'Historique de l\'entreprise, jalons et événements clés',
+        description: "Historique de l'entreprise, jalons et événements clés",
         insights: 'Informations Historiques',
       },
       products: {
@@ -988,7 +1002,7 @@ export default {
         insights: 'Informations Équipe',
       },
       jobs: {
-        title: 'Offres d\'Emploi',
+        title: "Offres d'Emploi",
         description: 'Postes vacants actuels et opportunités de carrière',
         insights: 'Informations Recrutement',
       },
@@ -998,12 +1012,12 @@ export default {
         insights: 'Informations Médias',
       },
       csr: {
-        title: 'Responsabilité Sociale d\'Entreprise',
+        title: "Responsabilité Sociale d'Entreprise",
         description: 'Initiatives RSE, programmes de durabilité et impact social',
         insights: 'Informations RSE',
       },
       communications: {
-        title: 'Communications d\'Entreprise',
+        title: "Communications d'Entreprise",
         description: 'Communiqués de presse, déclarations publiques et communications officielles',
         insights: 'Informations Communication',
       },
@@ -1012,27 +1026,29 @@ export default {
       workflowTitle: 'Debug : Workflow de recherche',
     },
     validation: {
-      loadingWorkspace: 'Chargement de l\'espace de travail...',
+      loadingWorkspace: "Chargement de l'espace de travail...",
       loadingTokens: 'Chargement des jetons...',
       moduleDisabled: 'Le module Stream est désactivé',
-      insufficientTokens: 'Jetons insuffisants. Vous avez besoin d\'au moins 1 jeton pour créer une entreprise.',
-      invalidNameFormat: 'Le nom de l\'entreprise doit contenir au moins 2 caractères alphabétiques',
+      insufficientTokens:
+        "Jetons insuffisants. Vous avez besoin d'au moins 1 jeton pour créer une entreprise.",
+      invalidNameFormat: "Le nom de l'entreprise doit contenir au moins 2 caractères alphabétiques",
       invalidWebsiteFormat: 'Veuillez entrer une URL de site web valide',
-      nameRequired: 'Le nom de l\'entreprise est requis',
-      websiteRequired: 'L\'URL du site web est requise',
-      createError: 'Une erreur s\'est produite lors de la création de l\'entreprise',
+      nameRequired: "Le nom de l'entreprise est requis",
+      websiteRequired: "L'URL du site web est requise",
+      createError: "Une erreur s'est produite lors de la création de l'entreprise",
       networkError: 'Erreur réseau - veuillez réessayer',
     },
     empty: {
       noResults: {
         title: 'Aucune entreprise trouvée',
-        description: 'Aucune entreprise ne correspond à "{query}". Essayez d\'ajuster vos termes de recherche.',
-        descriptionNoQuery: 'Essayez d\'ajuster vos termes de recherche',
+        description:
+          'Aucune entreprise ne correspond à "{query}". Essayez d\'ajuster vos termes de recherche.',
+        descriptionNoQuery: "Essayez d'ajuster vos termes de recherche",
       },
       noCompanies: {
         title: 'Aucune entreprise pour le moment',
         description:
-          'Commencez par créer votre première entreprise pour suivre et gérer vos relations d\'affaires.',
+          "Commencez par créer votre première entreprise pour suivre et gérer vos relations d'affaires.",
       },
     },
     archive: {
@@ -1059,7 +1075,7 @@ export default {
         },
       },
       time: {
-        justNow: 'à l\'instant',
+        justNow: "à l'instant",
         minutesAgo: 'il y a {minutes}m',
         hoursAgo: 'il y a {hours}h',
         daysAgo: 'il y a {days}j',
@@ -1080,7 +1096,7 @@ export default {
     modules: {
       screen: {
         name: 'Screen',
-        description: 'Recherche et screening d\'entreprises',
+        description: "Recherche et screening d'entreprises",
       },
       target: {
         name: 'Target',
@@ -1088,7 +1104,7 @@ export default {
       },
       explore: {
         name: 'Explore',
-        description: 'Outils d\'exploration de marché',
+        description: "Outils d'exploration de marché",
       },
       stream: {
         name: 'Stream',
@@ -1198,11 +1214,11 @@ export default {
     },
     validation: {
       username: {
-        required: 'Le nom d\'utilisateur est requis',
-        minLength: 'Le nom d\'utilisateur doit contenir au moins 3 caractères',
+        required: "Le nom d'utilisateur est requis",
+        minLength: "Le nom d'utilisateur doit contenir au moins 3 caractères",
       },
       email: {
-        required: 'L\'email est requis',
+        required: "L'email est requis",
         invalid: 'Veuillez entrer une adresse email valide',
       },
       temporaryPassword: {
@@ -1230,7 +1246,7 @@ export default {
     },
     edit: {
       title: 'Modifier le dossier',
-      subtitle: 'Mettez à jour les paramètres et l\'apparence de votre dossier',
+      subtitle: "Mettez à jour les paramètres et l'apparence de votre dossier",
       error: {
         title: 'Erreur',
         description: 'Échec du chargement du dossier',
@@ -1292,9 +1308,9 @@ export default {
     },
     empty: {
       noResults: 'Aucun dossier trouvé',
-      title: 'Aucun dossier pour le moment',
+      title: 'Le dossier est vide pour le moment',
       tryDifferentSearch: 'Essayez un autre terme de recherche',
-      description: 'Créez votre premier dossier pour organiser vos entreprises',
+      description: 'Créez un nouvel élément pour commencer',
     },
     clearSearch: 'Effacer la recherche',
   },
@@ -1338,17 +1354,20 @@ export default {
       },
       screen: {
         name: 'Screen',
-        description: 'Intelligence approfondie des entreprises et screening complet avec analyses avancées',
+        description:
+          'Intelligence approfondie des entreprises et screening complet avec analyses avancées',
         category: 'Business Intelligence',
       },
       target: {
         name: 'Target',
-        description: 'Veille de marché alimentée par IA avec alertes intelligentes et outils de surveillance complets',
+        description:
+          'Veille de marché alimentée par IA avec alertes intelligentes et outils de surveillance complets',
         category: 'Analyse de Marché',
       },
       explore: {
         name: 'Explore',
-        description: 'Graphe de connaissances interactif pour visualisation et découverte avancées de données',
+        description:
+          'Graphe de connaissances interactif pour visualisation et découverte avancées de données',
         category: 'Cartographie',
       },
       discover: {
@@ -1398,7 +1417,7 @@ export default {
         error: 'Erreur',
         errorsFound: 'Erreurs de Validation Trouvées',
         errorsFoundMessage:
-          'Vous pouvez soit corriger les erreurs dans votre fichier CSV et le télécharger à nouveau, soit continuer l\'importation qui ignorera les lignes invalides.',
+          "Vous pouvez soit corriger les erreurs dans votre fichier CSV et le télécharger à nouveau, soit continuer l'importation qui ignorera les lignes invalides.",
       },
       tokens: {
         title: 'Utilisation des Jetons',
@@ -1407,8 +1426,8 @@ export default {
         available: 'jetons disponibles',
         tokensAvailable: 'Vous avez {count} jetons disponibles',
         insufficient: 'Jetons insuffisants',
-        insufficientMessage: 'Vous avez besoin de {required} jetons mais n\'en avez que {available}',
-        moduleDisabled: 'L\'import CSV nécessite l\'activation du module Stream',
+        insufficientMessage: "Vous avez besoin de {required} jetons mais n'en avez que {available}",
+        moduleDisabled: "L'import CSV nécessite l'activation du module Stream",
       },
       actions: {
         cancel: 'Annuler',
@@ -1421,41 +1440,42 @@ export default {
         uploadAnother: 'Télécharger un Autre CSV',
       },
       results: {
-        title: 'Résultats de l\'Import',
+        title: "Résultats de l'Import",
         success: 'Importées avec succès',
-        failed: 'Échec de l\'import',
+        failed: "Échec de l'import",
         successCount: '{count} entreprises importées avec succès',
-        failedCount: '{count} entreprises n\'ont pas pu être importées',
+        failedCount: "{count} entreprises n'ont pas pu être importées",
         viewCompanies: 'Voir les Entreprises',
       },
       errors: {
         invalidFile: 'Format de fichier invalide. Veuillez télécharger un fichier CSV.',
         emptyFile: 'Le fichier CSV est vide',
         missingColumns: 'Colonnes requises manquantes : {columns}',
-        parseError: 'Erreur lors de l\'analyse du fichier CSV',
+        parseError: "Erreur lors de l'analyse du fichier CSV",
         uploadError: 'Erreur lors du téléchargement du fichier',
         validationError: 'Erreur lors de la validation des entreprises',
-        importError: 'Erreur lors de l\'importation des entreprises',
+        importError: "Erreur lors de l'importation des entreprises",
       },
     },
   },
   help: {
     noContent: {
-      title: 'Aucun Contenu d\'Aide Disponible',
-      message: 'Vous n\'avez accès à aucune section d\'aide en fonction de vos permissions actuelles.',
+      title: "Aucun Contenu d'Aide Disponible",
+      message:
+        "Vous n'avez accès à aucune section d'aide en fonction de vos permissions actuelles.",
     },
     selectTopic: {
-      placeholder: 'Sélectionner un sujet d\'aide',
-      title: 'Sélectionner un Sujet d\'Aide',
+      placeholder: "Sélectionner un sujet d'aide",
+      title: "Sélectionner un Sujet d'Aide",
       message: 'Choisissez un sujet dans la barre latérale pour voir la documentation détaillée.',
     },
     loading: {
-      content: 'Chargement du contenu d\'aide...',
+      content: "Chargement du contenu d'aide...",
     },
     categories: {
       admin: 'Administration',
-      company: 'Analyse d\'Entreprises',
-      workspace: 'Gestion de l\'Espace de Travail',
+      company: "Analyse d'Entreprises",
+      workspace: "Gestion de l'Espace de Travail",
     },
   },
   login: {
@@ -1463,23 +1483,23 @@ export default {
     signingIn: 'Connexion en cours...',
     signInButton: 'Se connecter avec Keycloak',
     errors: {
-      genericError: 'Une erreur s\'est produite lors de la connexion',
+      genericError: "Une erreur s'est produite lors de la connexion",
     },
   },
   errors: {
     notFound: {
       title: 'Page Non Trouvée',
-      message: 'La page que vous recherchez n\'existe pas ou a été déplacée.',
-      goHome: 'Aller à l\'Accueil',
+      message: "La page que vous recherchez n'existe pas ou a été déplacée.",
+      goHome: "Aller à l'Accueil",
       goBack: 'Retour',
-      help: 'Besoin d\'Aide ?',
+      help: "Besoin d'Aide ?",
     },
     forbidden: {
       title: 'Accès Refusé',
-      message: 'Vous n\'avez pas la permission d\'accéder à cette ressource.',
-      goHome: 'Aller à l\'Accueil',
+      message: "Vous n'avez pas la permission d'accéder à cette ressource.",
+      goHome: "Aller à l'Accueil",
       goBack: 'Retour',
-      contactAdmin: 'Contacter l\'Administrateur',
+      contactAdmin: "Contacter l'Administrateur",
       token: {
         moduleDisabled: '{module} Désactivé',
         insufficientTokens: 'Jetons Insuffisants',
@@ -1487,7 +1507,7 @@ export default {
         moduleDisabledMessage:
           'Le module {module} a été désactivé pour votre espace de travail. Contactez votre administrateur pour activer cette fonctionnalité.',
         insufficientTokensMessage:
-          'Vous n\'avez pas assez de jetons pour accéder au module {module}. Contactez votre administrateur pour ajouter plus de jetons.',
+          "Vous n'avez pas assez de jetons pour accéder au module {module}. Contactez votre administrateur pour ajouter plus de jetons.",
         unavailable: 'Cette fonctionnalité est actuellement indisponible.',
         status: {
           disabled: 'Désactivé',

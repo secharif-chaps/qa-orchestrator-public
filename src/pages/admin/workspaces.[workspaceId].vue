@@ -1,29 +1,6 @@
 <template>
   <div class="">
     <div>
-      <!-- Header -->
-      <div class="mb-8">
-        <div class="flex items-center gap-4 mb-4">
-          <button
-            @click="$router.push('/admin/workspaces')"
-            class="text-secondary hover:text-base transition-colors p-2"
-          >
-            <i class="fa fa-arrow-left"></i>
-          </button>
-          <div>
-            <h1 class="text-3xl font-bold text-base">
-              {{ workspace?.name || $t('workspace.detail.title', 'Workspace Details') }}
-            </h1>
-            <p class="text-secondary mt-2">
-              {{
-                workspace?.description ||
-                $t('workspace.detail.description', 'Workspace information and settings')
-              }}
-            </p>
-          </div>
-        </div>
-      </div>
-
       <!-- Loading State -->
       <div v-if="isLoading" class="bg-base-100 rounded-lg shadow-sm p-8 text-center">
         <div
@@ -49,7 +26,7 @@
       <!-- Workspace Details -->
       <div v-else-if="workspace" class="space-y-6">
         <!-- Basic Info Card -->
-        <div class="bg-base-100 rounded-lg shadow-sm p-6">
+        <Card>
           <h2 class="text-xl font-semibold mb-4">
             {{ $t('workspace.detail.basicInfo', 'Basic Information') }}
           </h2>
@@ -100,10 +77,10 @@
               </div>
             </div>
           </div>
-        </div>
+        </Card>
 
         <!-- User Management Section -->
-        <div class="bg-base-100 rounded-lg shadow-sm p-6">
+        <Card>
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold">
               {{ $t('workspace.detail.members', 'Members') }}
@@ -232,27 +209,10 @@
               {{ $t('user.create.button', 'Add User') }}
             </button>
           </div>
-        </div>
+        </Card>
 
         <!-- Token Management Section -->
         <WorkspaceTokensManager :workspace-id="workspaceId" />
-
-        <div class="bg-base-100 rounded-lg shadow-sm p-6">
-          <h2 class="text-xl font-semibold mb-4">
-            {{ $t('workspace.detail.settings', 'Settings') }}
-          </h2>
-          <div class="text-center p-8 text-secondary">
-            <i class="fa fa-cog text-4xl mb-4 opacity-50"></i>
-            <p>
-              {{
-                $t(
-                  'workspace.detail.settingsPlaceholder',
-                  'Workspace settings will be implemented here',
-                )
-              }}
-            </p>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -322,22 +282,22 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { useQuery } from '@pinia/colada'
-import { useI18n } from 'vue-i18n'
-import { workspaceDetailsQuery } from '@/queries/workspace'
-import { workspaceUsersQuery } from '@/queries/user'
+import WorkspaceTokensManager from '@/components/tokens/WorkspaceTokensManager.vue'
+import Tag from '@/components/ui/Tag.vue'
+import CreateUserModal from '@/components/user/CreateUserModal.vue'
 import {
   useCreateWorkspaceUser,
   useDeleteWorkspaceUser,
-  useToggleUserStatus,
   useResendPasswordReset,
+  useToggleUserStatus,
 } from '@/mutations/user'
+import { workspaceUsersQuery } from '@/queries/user'
+import { workspaceDetailsQuery } from '@/queries/workspace'
 import type { WorkspaceUserCreate, WorkspaceUserListItem } from '@/types/user'
-import CreateUserModal from '@/components/user/CreateUserModal.vue'
-import WorkspaceTokensManager from '@/components/tokens/WorkspaceTokensManager.vue'
-import Tag from '@/components/ui/Tag.vue'
+import { useQuery } from '@pinia/colada'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const { t } = useI18n()
@@ -469,6 +429,7 @@ const handleClickOutside = (event: MouseEvent) => {
 }
 
 // Add click outside listener
+import Card from '@/components/ui/Card.vue'
 import { onMounted, onUnmounted } from 'vue'
 
 onMounted(() => {

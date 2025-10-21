@@ -159,7 +159,7 @@
           {{
             foldersStore.filterName
               ? $t('folder.empty.noResults', 'No folders found')
-              : $t('folder.empty.title', 'No folders yet')
+              : $t('folder.emptys.title', 'No folders yet')
           }}
         </h3>
         <p class="text-secondary mb-6">
@@ -211,19 +211,19 @@ meta:
 </route>
 
 <script setup lang="ts">
+import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
+import FolderHierarchyRow from '@/components/folders/FolderHierarchyRow.vue'
+import FolderItem from '@/components/folders/FolderItem.vue'
+import FolderRestoreModal from '@/components/folders/FolderRestoreModal.vue'
 import Alert from '@/components/ui/Alert.vue'
 import Button from '@/components/ui/Button.vue'
 import ButtonGroup from '@/components/ui/ButtonGroup.vue'
-import FolderItem from '@/components/folders/FolderItem.vue'
-import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
-import FolderRestoreModal from '@/components/folders/FolderRestoreModal.vue'
-import FolderHierarchyRow from '@/components/folders/FolderHierarchyRow.vue'
 import Pagination from '@/components/ui/Pagination.vue'
-import type { Folder } from '@/types/folder'
-import { ref, computed, onMounted, watch } from 'vue'
 import { foldersQuery, foldersWithItemsQuery } from '@/queries/folders'
-import { useQuery } from '@pinia/colada'
 import { useFoldersStore } from '@/stores/folders'
+import type { Folder } from '@/types/folder'
+import { useQuery } from '@pinia/colada'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 // Constants
