@@ -86,7 +86,8 @@ services:
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672//
       FLOWER_BASIC_AUTH: admin:admin
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     networks:
       - mint-network
 
