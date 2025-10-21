@@ -13,7 +13,7 @@ class ApiClient {
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}, retry = true): Promise<T> {
-    const url = `${this.baseURL}/api${endpoint}`
+    const url = `${this.baseURL}${endpoint}`
 
     // Get auth store and access token
     const authStore = useAuthStore()
