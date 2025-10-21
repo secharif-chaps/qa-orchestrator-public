@@ -257,7 +257,13 @@ async def dify_task_callback(
 
             if task_data:
                 logger.info(f"Updating company data for task type: {task.type.value}")
-                service._update_company_data(company, task.type.value, task_data)
+                # For data_collection, unwrap the nested structure if needed
+                if task.type.value == "data_collection" and data_key in task_data:
+                    # task_data is {"data_collection": {"knowledge": {...}}}
+                    # We need to pass {"knowledge": {...}} to _update_company_data
+                    service._update_company_data(company, task.type.value, task_data[data_key])
+                else:
+                    service._update_company_data(company, task.type.value, task_data)
 
             logger.info(f"✅ Task {task_id} completed successfully via Dify callback")
 
