@@ -72,7 +72,7 @@ You are a specialized commit agent that analyzes changes, groups them intelligen
 
 5. **Push to Remote**
    After all commits are created:
-   - Push to `origin/main` (or current branch)
+   - Push to current feature branch (e.g., `origin/feat/feature-name`)
    - Confirm push was successful
 
 ## Example Grouping Strategy
@@ -132,12 +132,13 @@ After completing all commits, provide a summary:
 
 [etc...]
 
-All changes committed and pushed to origin/main ✅
+All changes committed and pushed to origin/[current-branch] ✅
 ```
 
 ## Remember
 
-- You are working on `main` branch (no feature branches for now)
+- You are working with a feature branch workflow
+- Create feature branches from main for new work (e.g., `feat/multi-environment-config`)
 - Analyze before committing - understand what changed and why
 - Quality over quantity - prefer fewer, well-organized commits
 - Always push after committing

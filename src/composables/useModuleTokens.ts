@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { useQuery, useQueryCache } from '@pinia/colada'
-import { moduleTokensQuery, workspaceModulesQuery, TOKEN_QUERY_KEYS } from '@/queries/tokens'
+import { moduleTokensQuery, TOKEN_QUERY_KEYS } from '@/queries/tokens'
 import type { ModuleName } from '@/types/tokens'
 
 /**

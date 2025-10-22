@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { jwtDecode } from 'jwt-decode'
+import { useEndpointResolver } from '@/composables/useEndpointResolver'
 
 export const useAuthStore = defineStore(
   'auth',
@@ -37,16 +38,18 @@ export const useAuthStore = defineStore(
       return userRoles.value
     })
 
+    const { endpoints } = useEndpointResolver()
+
     // Initialize UserManager
     const initializeUserManager = () => {
       if (userManager.value) return userManager.value
 
       const keycloakConfig = {
-        authority: `${import.meta.env.VITE_KEYCLOAK_URL}/realms/${import.meta.env.VITE_KEYCLOAK_REALM}`,
-        client_id: import.meta.env.VITE_KEYCLOAK_CLIENT_ID as string,
-        redirect_uri: `${import.meta.env.VITE_BASE_URL}/auth/callback`,
-        silent_redirect_uri: `${import.meta.env.VITE_BASE_URL}/auth/silent-callback`,
-        post_logout_redirect_uri: `${import.meta.env.VITE_BASE_URL}/login`,
+        authority: `${endpoints.value.keycloakUrl}/realms/${endpoints.value.keycloakRealm}`,
+        client_id: endpoints.value.keycloakClientId as string,
+        redirect_uri: `${endpoints.value.baseUrl}/auth/callback`,
+        silent_redirect_uri: `${endpoints.value.baseUrl}/auth/silent-callback`,
+        post_logout_redirect_uri: `${endpoints.value.baseUrl}/login`,
         response_type: 'code',
         scope: 'openid profile email',
         automaticSilentRenew: true,
