@@ -12,7 +12,6 @@ class WorkspaceMemberStatus(str, Enum):
 
 class ModuleName(str, Enum):
     SCREEN = "screen"
-    STREAM = "stream"
     TARGET = "target"
     EXPLORE = "explore"
 
