@@ -5,7 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useEndpointResolver } from '@/composables/useEndpointResolver'
 
 const { endpoints } = useEndpointResolver()
-const API_BASE_URL = endpoints.value.baseUrl
+const API_BASE_URL = endpoints.value.apiUrl
 
 class ApiClient {
   private baseURL: string

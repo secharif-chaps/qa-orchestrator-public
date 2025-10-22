@@ -43,7 +43,6 @@ import { ref } from 'vue'
 import Button from '@/components/ui/Button.vue'
 import { useI18n } from 'vue-i18n'
 import Alert from '@/components/ui/Alert.vue'
-import { useEndpointResolver } from '@/composables/useEndpointResolver'
 
 const { t } = useI18n()
 const { signIn } = useAuth()
@@ -64,8 +63,4 @@ const handleLogin = async () => {
     isLoading.value = false
   }
 }
-
-const { endpoints } = useEndpointResolver()
-const keycloakUrl = endpoints.value.keycloakUrl
-const keycloakRealm = endpoints.value.keycloakRealm
 </script>
