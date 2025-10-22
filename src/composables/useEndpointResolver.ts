@@ -12,7 +12,6 @@ export const useEndpointResolver = () => {
 
     const baseUrl =  window.location.origin
 
-
     const endpoints = computed(() => {
 
         const endpoints: Endpoints = {
@@ -23,8 +22,15 @@ export const useEndpointResolver = () => {
             keycloakUrl: ``,
         }
 
+        if( baseUrl.includes('localhost:3000') ) {
+            endpoints.apiUrl = import.meta.env.VITE_DEV_BACKEND_API
+            endpoints.keycloakRealm = import.meta.env.VITE_DEV_KEYCLOAK_REALM
+            endpoints.keycloakClientId = import.meta.env.VITE_DEV_KEYCLOAK_CLIENT_ID
+            endpoints.keycloakUrl = import.meta.env.VITE_DEV_KEYCLOAK_URL
+            endpoints.baseUrl = import.meta.env.VITE_LOCAL_BASE_URL
+
         // if local dev 
-        if( baseUrl.includes('localhost') ) {
+        } else if( baseUrl.includes('localhost') ) {
             endpoints.apiUrl = import.meta.env.VITE_DEV_BACKEND_API
             endpoints.keycloakRealm = import.meta.env.VITE_DEV_KEYCLOAK_REALM
             endpoints.keycloakClientId = import.meta.env.VITE_DEV_KEYCLOAK_CLIENT_ID
