@@ -22,7 +22,7 @@
     </Transition>
 
     <!-- Footer Actions -->
-    <div class="w-[320px] fixed right-0 bottom-0 border-t border-sage-800 z-50 px-4 py-3 grid grid-cols-3">
+    <div v-if="sidebarStore.isOpen()" class="w-[320px] fixed right-0 bottom-0 border-t border-sage-800 z-50 px-4 py-3 grid grid-cols-3 delay-500">
       <button
         class="flex flex-col items-center gap-1 text-sage-300 hover:text-white transition-colors"
         @click="$router.push('/settings/profile')"
@@ -43,8 +43,9 @@
       >
         <i class="fa fa-universal-access text-lg"></i>
         <span class="text-xs">{{ $t('sidebar.footer.accessibility', 'Accessibility') }}</span>
-      </button>
-    </div>
+        </button>
+      </div>
+
   </div>
 </template>
 
@@ -56,6 +57,7 @@ import ChapseSidebar from '@/components/sidebar/ChapseSidebar.vue'
 import NotificationsSidebar from '@/components/sidebar/NotificationsSidebar.vue'
 import FoldersSidebar from '@/components/sidebar/FoldersSidebar.vue'
 import { useTheme } from '@/composables/useTheme'
+
 
 const sidebarStore = useSidebarStore()
 const sidebarEl = ref<HTMLElement>()
