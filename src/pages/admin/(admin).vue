@@ -84,6 +84,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import Tag from '@/components/ui/Tag.vue'
 import Alert from '@/components/ui/Alert.vue'
+import { useEndpointResolver } from '@/composables/useEndpointResolver'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -102,7 +103,8 @@ const executeEmergencyProtocol = async () => {
   isExecuting.value = true
   lastExecutionResult.value = null
 
-  const apiUrl = import.meta.env.VITE_BACKEND_API || 'http://localhost:3000'
+  const { endpoints } = useEndpointResolver()
+  const apiUrl = endpoints.value.apiUrl
 
   try {
     const response = await fetch(`${apiUrl}/api/admin/tasks/fail-stuck`, {

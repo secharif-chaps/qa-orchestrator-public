@@ -2,8 +2,10 @@
  * API client configuration
  */
 import { useAuthStore } from '@/stores/auth'
+import { useEndpointResolver } from '@/composables/useEndpointResolver'
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_API || 'http://localhost:8000'
+const { endpoints } = useEndpointResolver()
+const API_BASE_URL = endpoints.value.baseUrl
 
 class ApiClient {
   private baseURL: string

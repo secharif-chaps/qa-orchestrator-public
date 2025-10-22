@@ -758,14 +758,32 @@ Run from the mint-new repository root:
 
 ### Standard Workflow
 
-1. Plan your tasks, review with user
-2. Write code following [project structure](#project-structure) and [standards](#development-standards)
-3. Test implementations:
+1. Create feature branch from main (e.g., `feat/feature-name`)
+2. Plan your tasks, review with user
+3. Write code following [project structure](#project-structure) and [standards](#development-standards)
+4. Test implementations:
    - Write tests for logic and components
    - Use Playwright MCP server to test like a real user
-4. Stage changes with `git add` once feature works
-5. Review changes and analyze need for refactoring
-6. Use `/commit` or commit manually with proper format
+5. Stage changes with `git add` once feature works
+6. Review changes and analyze need for refactoring
+7. Use `/commit` or commit manually with proper format
+8. Push feature branch and create merge/pull request
+
+### Git Workflow (Feature Branch)
+
+**Branch Naming Conventions**:
+- `feat/feature-name` - New features
+- `fix/bug-name` - Bug fixes
+- `refactor/refactor-name` - Code refactoring
+- `docs/doc-name` - Documentation updates
+- `chore/task-name` - Maintenance tasks
+
+**Critical Rules**:
+- **NEVER** commit directly to main branch
+- **ALWAYS** work in feature branches
+- **ALWAYS** create merge/pull request before merging to main
+- **ALWAYS** use gitmoji + conventional commits format
+- Use `/commit` command for intelligent commit grouping
 
 ### Testing with Playwright MCP
 
