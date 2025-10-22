@@ -7,7 +7,7 @@
       :class="getBadgeClasses(module)"
     >
       <i :class="module.icon" class="text-sm" />
-      <span class="text-sm font-medium">{{ module.label }}</span>
+      <span class="text-sm font-medium text-nowrap">{{ module.label }}</span>
 
       <!-- Coming Soon label -->
       <span
