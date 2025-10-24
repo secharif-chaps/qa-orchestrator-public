@@ -199,7 +199,7 @@ async def dify_task_callback(
         success = True
         error_msg = None
         task_data = None
-        
+
         # Check for error indicators
         if "error" in body and body["error"]:
             success = False
@@ -207,48 +207,66 @@ async def dify_task_callback(
         elif "status" in body and body["status"] in ["failed", "error"]:
             success = False
             error_msg = body.get("message", "Task failed without specific error")
-        
-        # Extract the actual result data (could be in various places)
+
+        # Extract the actual result data - now simplified for string-based responses
         if success:
-            # Determine the key to use based on actual task type from database
-            data_key = task.type.value if task.type.value in ["products", "timeline", "profile", "digital", "jobs", "csr", "press", "team", "data_collection"] else "products"
-            
-            # Try different possible locations for the result
-            if "result" in body:
-                # Direct result
-                if isinstance(body["result"], str):
-                    try:
-                        task_data = {data_key: json.loads(body["result"])}
-                    except json.JSONDecodeError:
-                        task_data = {data_key: body["result"]}
-                else:
-                    task_data = {data_key: body["result"]}
-            elif "data" in body:
-                # Result in data field
-                if "outputs" in body["data"]:
+            # For data_collection task, extract the 4 string fields directly
+            if task.type.value == "data_collection":
+                logger.info(f"🔍 DEBUG - Processing data_collection task")
+                logger.info(f"🔍 DEBUG - Body keys: {list(body.keys())}")
+
+                # Dify returns the fields directly in the body or in data.outputs
+                if "data" in body and "outputs" in body["data"]:
+                    logger.info(f"🔍 DEBUG - Found data.outputs")
                     outputs = body["data"]["outputs"]
-                    if "result" in outputs:
-                        if isinstance(outputs["result"], str):
-                            try:
-                                task_data = {data_key: json.loads(outputs["result"])}
-                            except json.JSONDecodeError:
-                                task_data = {data_key: outputs["result"]}
-                        else:
-                            task_data = {data_key: outputs["result"]}
-                    else:
-                        task_data = {data_key: outputs}
+                elif "outputs" in body:
+                    logger.info(f"🔍 DEBUG - Found outputs")
+                    outputs = body["outputs"]
+                elif "knowledge" in body:
+                    logger.info(f"🔍 DEBUG - Found knowledge field")
+                    outputs = body["knowledge"]
                 else:
-                    task_data = {data_key: body["data"]}
-            elif "outputs" in body:
-                # Direct outputs
-                task_data = {data_key: body["outputs"]}
-            elif data_key in body:
-                # Data is sent directly with the field name as key (e.g., {"timeline": {...}})
-                task_data = {data_key: body[data_key]}
+                    logger.info(f"🔍 DEBUG - Using entire body as outputs")
+                    outputs = body
+
+                logger.info(f"🔍 DEBUG - Outputs keys: {list(outputs.keys()) if isinstance(outputs, dict) else 'not a dict'}")
+                logger.info(f"🔍 DEBUG - Outputs type: {type(outputs)}")
+
+                # Extract the 4 string fields
+                task_data = {
+                    "mistral": outputs.get("mistral", ""),
+                    "claude": outputs.get("claude", ""),
+                    "wikipedia": outputs.get("wikipedia", ""),
+                    "scraped": outputs.get("scraped", "")
+                }
+
+                logger.info(f"🔍 DEBUG - Extracted task_data keys: {list(task_data.keys())}")
+                logger.info(f"🔍 DEBUG - mistral length: {len(task_data['mistral'])}")
+                logger.info(f"🔍 DEBUG - claude length: {len(task_data['claude'])}")
+                logger.info(f"🔍 DEBUG - wikipedia length: {len(task_data['wikipedia'])}")
+                logger.info(f"🔍 DEBUG - scraped length: {len(task_data['scraped'])}")
             else:
-                # Use entire body as result if nothing else matches
-                logger.warning(f"Could not find standard result location, using entire body")
-                task_data = {data_key: body}
+                # For other tasks (profile, digital, etc.), extract the single string field
+                task_type_key = task.type.value
+
+                # Try different possible locations for the result
+                if "data" in body and "outputs" in body["data"]:
+                    outputs = body["data"]["outputs"]
+                elif "outputs" in body:
+                    outputs = body["outputs"]
+                else:
+                    outputs = body
+
+                # Extract the value for this task type
+                # Handle two cases:
+                # 1. Dify sends wrapped data: {"press": {...}}
+                # 2. Dify sends unwrapped data: {"insights": "...", "articles": [...], ...}
+                if task_type_key in outputs:
+                    # Case 1: Data is wrapped in a key matching the task type
+                    task_data = {task_type_key: outputs[task_type_key]}
+                else:
+                    # Case 2: The entire outputs object IS the data for this task
+                    task_data = {task_type_key: outputs}
         
         # Update task and company based on result
         if success:
@@ -257,13 +275,10 @@ async def dify_task_callback(
 
             if task_data:
                 logger.info(f"Updating company data for task type: {task.type.value}")
-                # For data_collection, unwrap the nested structure if needed
-                if task.type.value == "data_collection" and data_key in task_data:
-                    # task_data is {"data_collection": {"knowledge": {...}}}
-                    # We need to pass {"knowledge": {...}} to _update_company_data
-                    service._update_company_data(company, task.type.value, task_data[data_key])
-                else:
-                    service._update_company_data(company, task.type.value, task_data)
+                # Pass the task_data directly - it's already in the correct format
+                # For data_collection: {"mistral": "", "claude": "", "wikipedia": "", "scraped": ""}
+                # For other tasks: {task_type_key: outputs}
+                service._update_company_data(company, task.type.value, task_data)
 
             logger.info(f"✅ Task {task_id} completed successfully via Dify callback")
 

@@ -74,6 +74,10 @@ class TaskResponse(BaseModel):
     type: TaskType
     status: TaskStatus
     error: Optional[str] = None
+    is_prerequisite: bool = False
+    input_tokens: Optional[int] = None
+    output_tokens: Optional[int] = None
+    total_cost: Optional[float] = None
     created_at: datetime
     updated_at: datetime
 

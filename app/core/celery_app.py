@@ -1,5 +1,6 @@
 """Celery configuration for Mint application."""
 from celery import Celery
+from celery.schedules import crontab
 from kombu import Queue
 import os
 
@@ -49,6 +50,14 @@ celery_app.conf.update(
     # Result backend settings
     result_expires=3600,  # Results expire after 1 hour
     result_persistent=True,  # Persist results to survive restart
+
+    # Celery Beat schedule for periodic tasks
+    beat_schedule={
+        'cleanup-stale-tasks': {
+            'task': 'cleanup_stale_running_tasks',
+            'schedule': 120.0,  # Run every 2 minutes (120 seconds)
+        },
+    },
 )
 
 # Export the app
