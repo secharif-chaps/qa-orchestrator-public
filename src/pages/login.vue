@@ -14,10 +14,6 @@
           {{ error }}
         </div>
 
-        <Alert variant="info" title="Debug">
-          {{ endpoints }}
-        </Alert>
-
         <div>
           <Button
             @click="handleLogin"

@@ -43,14 +43,6 @@
             @click="toggleLocale"
           />
 
-          <Button
-            variant="tertiary"
-            dark
-            :icon="'fa fa-home'"
-            icon-only
-            @click="$router.push('/')"
-          />
-
           <!-- Admin button - only visible to users with admin.workspaces permission -->
           <Button
             v-if="hasAdminPermission"
@@ -62,23 +54,14 @@
           />
 
           <!-- Team button - visible to users with workspace.read permission -->
-          <Button
+          <!-- <Button
             v-if="hasTeamPermission"
             variant="tertiary"
             dark
             icon="fa fa-users"
             icon-only
             @click="$router.push('/team')"
-          />
-
-          <!-- Settings button -->
-          <Button
-            variant="tertiary"
-            dark
-            icon="fa fa-cog"
-            icon-only
-            @click="$router.push('/settings')"
-          />
+          /> -->
 
           <Button
             variant="tertiary"

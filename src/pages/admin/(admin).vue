@@ -13,43 +13,43 @@
 
       <!-- Admin Features Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div
+        <Card
           v-for="feature in visibleFeatures"
           :key="feature.id"
-          :class="[
-            'bg-base-100 rounded-lg border border-primary-stroke hover:ring-4 ring-offset-2 transition-all duration-200 cursor-pointer group',
-            feature.ringColor,
-          ]"
+          ring="accent"
+          class="group hover:ring-offset-2 ring-offset-base-100 ring-0 ring-accent-400   hover:ring-4 hover:shadow-none cursor-pointer"
           @click="feature.navigate()"
         >
           <div class="p-6">
             <div class="flex items-center mb-4">
-              <div
-                :class="[
-                  'w-12 h-12 rounded-lg flex items-center justify-center transition-colors',
-                  feature.iconBgColor,
-                  feature.iconTextColor,
-                  feature.iconHoverBgColor,
-                ]"
+              <Badge
+                variant="secondary"
+                color="sage"
+                :label="feature.badgeLabel"
               >
                 <i :class="[feature.icon, 'text-xl']"></i>
-              </div>
+              </Badge>
               <div class="ml-4">
                 <h3 class="text-lg font-semibold">
                   {{ $t(feature.titleKey, feature.titleDefault) }}
                 </h3>
-                <Tag :variant="feature.badgeVariant" size="sm" :label="feature.badgeLabel" />
+                <Tag variant="sage" appearance="light" size="sm" :label="feature.badgeLabel" />
               </div>
             </div>
+
             <p class="text-secondary text-sm mb-4">
               {{ $t(feature.descriptionKey, feature.descriptionDefault) }}
             </p>
-            <div :class="['flex items-center text-sm font-medium', feature.actionTextColor]">
+            <div class="group-hover:translate-x-2 transition-transform">
+
+            <div class="flex items-center text-sm font-medium text-accent-600 ">
               <span>{{ $t(feature.actionKey, feature.actionDefault) }}</span>
-              <i class="fa fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+              <i class="fa fa-arrow-right ml-2 "></i>
             </div>
           </div>
-        </div>
+
+          </div>
+        </Card>
       </div>
 
       <!-- Access Restricted Message -->
@@ -85,6 +85,8 @@ import { useAuthStore } from '@/stores/auth'
 import Tag from '@/components/ui/Tag.vue'
 import Alert from '@/components/ui/Alert.vue'
 import { useEndpointResolver } from '@/composables/useEndpointResolver'
+import Card from '@/components/ui/Card.vue'
+import Badge from '@/components/ui/Badge.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -181,6 +183,25 @@ const features: AdminFeature[] = [
     actionTextColor: 'text-sage-content',
     permission: 'admin.workspaces',
     navigate: () => router.push('/admin/workspaces'),
+  },
+  {
+    id: 'users',
+    titleKey: 'admin.features.users.title',
+    titleDefault: 'User Management',
+    descriptionKey: 'admin.features.users.description',
+    descriptionDefault: 'Manage user workspace assignments and user access',
+    icon: 'fa fa-users',
+    iconBgColor: 'bg-secondary/10',
+    iconTextColor: 'text-almond-600',
+    iconHoverBgColor: 'group-hover:bg-secondary/20',
+    ringColor: 'ring-accent/50',
+    badgeVariant: 'primary',
+    badgeLabel: 'Admin Required',
+    actionKey: 'admin.features.manage',
+    actionDefault: 'Manage',
+    actionTextColor: 'text-almond-600',
+    permission: 'admin.workspaces',
+    navigate: () => router.push('/admin/users'),
   },
   {
     id: 'ui-demo',
