@@ -23,7 +23,7 @@ export const useEndpointResolver = () => {
         }
 
         if( baseUrl.includes('localhost:3000') ) {
-            endpoints.apiUrl = import.meta.env.VITE_DEV_BACKEND_API
+            endpoints.apiUrl = import.meta.env.VITE_LOCAL_BACKEND_API
             endpoints.keycloakRealm = import.meta.env.VITE_DEV_KEYCLOAK_REALM
             endpoints.keycloakClientId = import.meta.env.VITE_DEV_KEYCLOAK_CLIENT_ID
             endpoints.keycloakUrl = import.meta.env.VITE_DEV_KEYCLOAK_URL
