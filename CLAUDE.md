@@ -85,6 +85,39 @@ A modern Vue 3 application with TypeScript, Tailwind CSS v4, and comprehensive t
 6. **ALWAYS** prefer named exports over default exports
 7. Add meaningful comments explaining **why**, not **what**
 
+### Component Architecture
+
+**CRITICAL**: Break down complex pages into focused components. Pages orchestrate, components render.
+
+**Component Decomposition Rules**:
+
+1. **Pages should stay focused** (aim for < 200 lines, but complex logic may require more)
+2. **ALWAYS check for existing components** in `src/components/ui/` before creating new ones
+3. **Extract into components**:
+   - Custom dropdowns → Styled `Dropdown.vue` with slots (NOT headless)
+   - Data tables → `Table.vue` + `TableHeader.vue` + `TableRow.vue` + `TableEmpty.vue`
+   - Forms with >3 fields
+   - Any repeated UI patterns
+4. **Create generic UI components** for reusable patterns:
+   - Put in `src/components/ui/`
+   - Document in `src/components/CLAUDE.md`
+   - Examples: `Dropdown.vue`, `Table.vue`, `Modal.vue`, `Tabs.vue`
+5. **Component hierarchy** should be 2-3 levels deep max
+
+**Example structure** (User Management):
+```
+pages/admin/users.vue (data + layout)
+├── components/admin/UserFilters.vue (search + dropdowns)
+│   └── ui/Dropdown.vue (generic styled dropdown)
+├── components/admin/UserTable.vue (table wrapper)
+│   ├── components/admin/UserTableHeader.vue
+│   ├── components/admin/UserTableRow.vue
+│   └── components/admin/UserTableEmpty.vue
+└── components/admin/UserWorkspaceModal.vue
+```
+
+See `src/components/CLAUDE.md` for detailed component best practices.
+
 ### 🎨 Semantic Color System
 
 The MINT design system uses DaisyUI-inspired semantic color tokens for consistent, accessible theming.

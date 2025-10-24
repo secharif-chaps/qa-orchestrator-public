@@ -1,5 +1,138 @@
 # Vue Components Best Practices
 
+## Component Decomposition Philosophy
+
+**CRITICAL**: Pages should be small orchestrators, not monolithic UI files. Break down complex UIs into focused components.
+
+### Page vs Component Responsibilities
+
+**Pages (`src/pages/*.vue`)** should:
+- Handle data fetching (queries, mutations)
+- Manage page-level state
+- Define layout structure
+- Delegate all UI rendering to components
+- Stay focused and readable (aim for < 200 lines, but complex logic may require more)
+
+**Components** should:
+- Focus on one thing (single responsibility)
+- Be small and readable (< 200 lines)
+- Receive data via props, emit events
+- Not fetch data directly (except in specific cases)
+
+### Component Granularity Rules
+
+1. **ALWAYS extract complex UI into components**:
+   - Custom dropdowns → `Dropdown.vue`
+   - Data tables → `Table.vue` + `TableRow.vue`
+   - Forms with >3 fields → `FormName.vue`
+   - Modals with complex content → `ModalName.vue`
+
+2. **ALWAYS check for existing components first**:
+   - Look in `src/components/ui/` for generic components
+   - Look in `src/components/features/` for feature-specific components
+   - Reuse before creating new
+
+3. **Create generic UI components** when you need:
+   - Dropdowns, modals, tabs, accordions, tooltips
+   - Data display patterns (tables, lists, grids, cards)
+   - Form controls beyond basic inputs
+   - **Document them immediately** after creation
+
+4. **Component hierarchy example** (User Management page):
+   ```
+   pages/admin/users.vue (data + layout)
+   ├── components/admin/UserFilters.vue (search + filters)
+   │   └── ui/Dropdown.vue (generic styled dropdown with slots)
+   ├── components/admin/UserTable.vue (table wrapper)
+   │   ├── components/admin/UserTableHeader.vue (table header)
+   │   ├── components/admin/UserTableRow.vue (single row)
+   │   └── components/admin/UserTableEmpty.vue (empty state)
+   └── components/admin/UserWorkspaceModal.vue (assignment modal)
+   ```
+
+   **Note**: Break tables into header, row, and empty state components for clarity and reusability.
+
+### When NOT to Extract Components
+
+- Simple, non-repeating markup (< 20 lines)
+- Page-specific content that won't be reused
+- Over-engineering (UserTableHeaderCell.vue is too granular)
+
+---
+
+## Layout & Spacing
+
+**CRITICAL**: Use flexbox with gap utilities for spacing. **NEVER** use margin-based spacing between sibling elements.
+
+### Spacing Philosophy
+
+- **Parent controls spacing** using `flex flex-col gap-{size}` or `flex gap-{size}`
+- **Children have NO margins** between siblings
+- Creates harmonious, consistent, and maintainable layouts
+- Changing spacing = change one `gap` value, not scattered margin classes
+
+### Page/Component Layout Pattern
+
+```vue
+<!-- ✅ CORRECT: Parent uses gap for spacing -->
+<template>
+  <div class="flex flex-col gap-4">
+    <PageHeader />
+    <SearchFilters />
+    <Alert v-if="error" />
+    <DataTable />
+    <Pagination />
+  </div>
+</template>
+
+<!-- ❌ INCORRECT: Margin-based spacing -->
+<template>
+  <div>
+    <PageHeader class="mb-8" />
+    <SearchFilters class="mb-6" />
+    <Alert v-if="error" class="mb-6" />
+    <DataTable class="mb-4" />
+    <Pagination />
+  </div>
+</template>
+```
+
+### Gap Size Guidelines
+
+- `gap-2` (8px) - Tight spacing (related items, form fields)
+- `gap-4` (16px) - Standard spacing (page sections, card content)
+- `gap-6` (24px) - Comfortable spacing (major sections)
+- `gap-8` (32px) - Generous spacing (distinct sections)
+
+### Horizontal Layouts
+
+```vue
+<!-- Horizontal flex with gap -->
+<div class="flex gap-3">
+  <Button variant="primary" label="Save" />
+  <Button variant="secondary" label="Cancel" />
+</div>
+```
+
+### Exceptions (When Margins ARE Allowed)
+
+Margins are ONLY allowed for:
+- **Internal component spacing** (e.g., spacing between heading and paragraph within a component)
+- **Micro-spacing** within a single UI element (e.g., icon margin in a button)
+- **Responsive adjustments** that can't be achieved with gap
+
+```vue
+<!-- ✅ Allowed: Internal spacing within a single semantic unit -->
+<div class="bg-white p-6">
+  <h2 class="text-xl font-bold mb-2">Title</h2>
+  <p class="text-gray-600">Description text</p>
+</div>
+```
+
+---
+
+## Syntax Best Practices
+
 - Name files consistently using PascalCase (`UserProfile.vue`)
 - ALWAYS use PascalCase for component names in source code
 - Compose names from the most general to the most specific: `SearchButtonClear.vue` not `ClearSearchButton.vue`
@@ -203,6 +336,53 @@ Example usage:
 <Tag variant="success" dot label="Screen Module" />
 <Tag variant="slate" dot label="Stream Module" />
 ```
+
+### Dropdown (Generic UI Component)
+
+When creating custom dropdowns (filters, sorts, selects), create a **generic styled Dropdown component** with slots:
+
+**Approach**: Styled component with default styling and customization slots (NOT headless)
+
+**Key features**:
+- Default styling that matches design system
+- Open/close state management
+- Click-outside handling
+- Keyboard navigation support
+- Customizable via slots and props
+- Position/alignment options
+
+**Example structure**:
+
+```vue
+<Dropdown v-model="isOpen" align="left" :close-on-select="true">
+  <template #trigger>
+    <Button variant="secondary" icon="fa fa-filter">
+      {{ selectedOption }}
+    </Button>
+  </template>
+
+  <template #content>
+    <DropdownItem @click="selectOption('Option 1')">
+      <i class="fa fa-check" /> Option 1
+    </DropdownItem>
+    <DropdownItem @click="selectOption('Option 2')">
+      Option 2
+    </DropdownItem>
+    <DropdownDivider />
+    <DropdownItem variant="danger" @click="clearSelection()">
+      Clear
+    </DropdownItem>
+  </template>
+</Dropdown>
+```
+
+**When to create**:
+- Custom filter dropdowns (workspace filter, sort options)
+- Context menus (right-click actions)
+- Action menus (more options button)
+- Custom select patterns beyond native `<select>`
+
+**TODO**: Create `Dropdown.vue`, `DropdownItem.vue`, `DropdownDivider.vue` components when needed
 
 ## Examples
 

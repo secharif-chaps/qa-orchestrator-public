@@ -18,6 +18,120 @@ This is a Vue 3 + TypeScript application using:
 
 ## Core Responsibilities
 
+### 0. Component Architecture (CRITICAL)
+
+**Pages should stay focused and readable, components should do the rendering.**
+
+#### Component Decomposition Workflow
+
+**BEFORE writing any code, ask yourself**:
+1. Is there an existing component I can reuse? Check `src/components/ui/` first
+2. Is this page getting too long (> 200 lines)? Extract components if needed
+3. Is this UI pattern reusable? Create a generic component in `src/components/ui/`
+
+**Note**: 200 lines is a guideline, not a strict rule. Complex logic may require more, but always prefer component extraction for UI.
+
+#### Extraction Rules
+
+**ALWAYS extract into components**:
+- Custom dropdowns → Styled `Dropdown.vue` with slots in `src/components/ui/` (NOT headless)
+- Data tables → `Table.vue` + `TableHeader.vue` + `TableRow.vue` + `TableEmpty.vue`
+- Forms with > 3 fields → `FormName.vue` (feature-specific)
+- Modals with complex content → `ModalName.vue` (feature-specific)
+- Any repeated UI pattern → Component
+
+**Component hierarchy example**:
+```
+pages/admin/users.vue (queries + layout)
+├── components/admin/UserFilters.vue (search + dropdowns)
+│   └── components/ui/Dropdown.vue (styled with slots)
+├── components/admin/UserTable.vue (table wrapper)
+│   ├── components/admin/UserTableHeader.vue (header)
+│   ├── components/admin/UserTableRow.vue (single row)
+│   └── components/admin/UserTableEmpty.vue (empty state)
+└── components/admin/UserWorkspaceModal.vue (modal)
+```
+
+#### Generic UI Components Approach
+
+**Styled components with slots** (NOT headless):
+- Provide default styling matching design system
+- Allow customization via slots and props
+- Handle common logic (open/close, positioning, keyboard nav)
+- Example: `Dropdown.vue` with trigger/content slots
+
+Create generic components in `src/components/ui/` for:
+- **Dropdowns**: Custom select/filter dropdowns with styled options
+- **Modals**: Dialog/modal wrappers (check if exists first!)
+- **Tables**: Data table patterns (with header, row, empty components)
+- **Tabs**: Tab navigation patterns
+- **Tooltips**: Hover/info tooltips
+- **Accordions**: Collapsible sections
+- **Form controls**: Beyond basic Input/Button
+
+**After creating a generic component**:
+1. Add it to `src/components/CLAUDE.md` with full examples
+2. Reference in this file if it's a major design system component
+
+### 0.5. Layout & Spacing (CRITICAL)
+
+**ALWAYS use flexbox with gap for spacing. NEVER use margin-based spacing between siblings.**
+
+#### Spacing Rules (Non-Negotiable)
+
+1. **Parent controls spacing** with `flex flex-col gap-{size}` or `flex gap-{size}`
+2. **NEVER use `mb-*` or `mt-*`** between sibling elements
+3. **Children have zero margins** between each other
+4. This creates harmonious, consistent, maintainable layouts
+
+#### Pattern for ALL Pages/Components
+
+```vue
+<!-- ✅ CORRECT: Parent with gap -->
+<template>
+  <div class="flex flex-col gap-4">
+    <PageHeader />
+    <Filters />
+    <Alert v-if="error" />
+    <DataTable />
+    <Pagination />
+  </div>
+</template>
+
+<!-- ❌ INCORRECT: Scattered margins -->
+<template>
+  <div>
+    <PageHeader class="mb-8" />
+    <Filters class="mb-6" />
+    <Alert v-if="error" class="mb-6" />
+    <DataTable class="mb-4" />
+    <Pagination />
+  </div>
+</template>
+```
+
+#### Gap Size Guidelines
+
+- `gap-2` (8px) - Tight (related items, form fields)
+- `gap-4` (16px) - Standard (page sections)
+- `gap-6` (24px) - Comfortable (major sections)
+- `gap-8` (32px) - Generous (distinct sections)
+
+#### Exceptions (Only Time Margins Are Allowed)
+
+Margins are ONLY allowed for:
+- **Internal spacing** within a single semantic unit (e.g., `<h2 class="mb-2">` followed by `<p>`)
+- **Micro-spacing** within UI elements (e.g., icon margin in button)
+- **Cannot be done with gap** (rare edge cases)
+
+**Example of allowed internal spacing**:
+```vue
+<div class="bg-white p-6">
+  <h2 class="text-xl font-bold mb-2">Title</h2>
+  <p class="text-gray-600">Description</p>
+</div>
+```
+
 ### 1. Design System Compliance
 
 Every component, style, and interaction must follow the established design system precisely:
