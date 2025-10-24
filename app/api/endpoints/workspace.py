@@ -34,6 +34,11 @@ from app.schemas.workspace_user import (
     UserStatusRequest,
     PasswordResetResponse
 )
+from app.schemas.admin_user import (
+    AdminUserResponse,
+    AdminUserListResponse,
+    AssignWorkspaceRequest
+)
 from app.schemas.user import TokenData
 from app.core.dependencies import get_current_user
 from app.core.security import verify_workspace_admin_access
@@ -740,81 +745,159 @@ async def send_password_reset(
         )
 
 
-@router.put("/admin/{workspace_id}/pick", response_model=WorkspaceResponse)
-async def pick_workspace(
-    workspace_id: int,
+# Admin User Management Endpoints
+
+
+@router.get("/admin/users", response_model=AdminUserListResponse)
+async def get_all_users(
+    page: int = Query(1, ge=1, description="Page number (starting from 1)"),
+    limit: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
+    search: Optional[str] = Query(None, description="Search by username or email"),
+    workspace_filter: Optional[str] = Query(None, description="Filter by workspace: 'none', workspace_id, or null for all"),
+    sort: str = Query('created_at', description="Sort field: username, workspace, created_at"),
+    order: SortOrder = Query(SortOrder.DESC, description="Sort order"),
     current_user: TokenData = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Pick a workspace as current workspace (admin only)"""
-    print(f"DEBUG: pick_workspace called for workspace_id={workspace_id}")
-    print(f"DEBUG: current_user.sub={current_user.sub}")
-    print(f"DEBUG: current_user.username={getattr(current_user, 'username', 'NOT SET')}")
-    print(f"DEBUG: current_user.email={getattr(current_user, 'email', 'NOT SET')}")
-    
+    """Get all users across all workspaces with filtering and sorting (admin only)"""
     # Verify admin access
     verify_workspace_admin_access(current_user)
-    print(f"DEBUG: Admin access verified")
-    
+
+    # Build query with workspace join
+    query = db.query(
+        WorkspaceMember.user_id,
+        WorkspaceMember.username,
+        WorkspaceMember.email,
+        WorkspaceMember.workspace_id,
+        Workspace.name.label('workspace_name'),
+        Workspace.slug.label('workspace_slug'),
+        WorkspaceMember.status,
+        WorkspaceMember.created_at
+    ).outerjoin(Workspace, WorkspaceMember.workspace_id == Workspace.id)
+
+    # Apply search filter
+    if search:
+        search_pattern = f"%{search}%"
+        query = query.filter(
+            (WorkspaceMember.username.ilike(search_pattern)) |
+            (WorkspaceMember.email.ilike(search_pattern))
+        )
+
+    # Apply workspace filter
+    if workspace_filter:
+        if workspace_filter.lower() == 'none':
+            query = query.filter(WorkspaceMember.workspace_id.is_(None))
+        else:
+            try:
+                workspace_id = int(workspace_filter)
+                query = query.filter(WorkspaceMember.workspace_id == workspace_id)
+            except ValueError:
+                pass  # Invalid workspace_filter, ignore
+
+    # Get total count before pagination
+    total = query.count()
+
+    # Apply sorting
+    if sort == 'username':
+        query = query.order_by(
+            WorkspaceMember.username.asc() if order == SortOrder.ASC
+            else WorkspaceMember.username.desc()
+        )
+    elif sort == 'workspace':
+        # Sort by workspace name, handling NULL values
+        query = query.order_by(
+            case(
+                (Workspace.name.is_(None), ''),
+                else_=Workspace.name
+            ).asc() if order == SortOrder.ASC
+            else case(
+                (Workspace.name.is_(None), ''),
+                else_=Workspace.name
+            ).desc()
+        )
+    else:  # created_at
+        query = query.order_by(
+            WorkspaceMember.created_at.asc() if order == SortOrder.ASC
+            else WorkspaceMember.created_at.desc()
+        )
+
+    # Apply pagination
+    offset = (page - 1) * limit
+    results = query.offset(offset).limit(limit).all()
+
+    # Convert to response objects
+    users = []
+    for row in results:
+        users.append(AdminUserResponse(
+            user_id=row.user_id,
+            username=row.username,
+            email=row.email,
+            workspace_id=row.workspace_id,
+            workspace_name=row.workspace_name,
+            workspace_slug=row.workspace_slug,
+            status=row.status,
+            created_at=row.created_at
+        ))
+
+    # Create pagination metadata
+    meta = create_pagination_meta(total=total, page=page, per_page=limit)
+
+    return AdminUserListResponse(data=users, pagination=meta)
+
+
+@router.put("/admin/users/{user_id}/workspace", response_model=WorkspaceMemberResponse)
+async def assign_user_workspace(
+    user_id: str,
+    request: AssignWorkspaceRequest,
+    current_user: TokenData = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Assign user to workspace or change their workspace (admin only)"""
+    # Verify admin access
+    verify_workspace_admin_access(current_user)
+
     # Verify workspace exists
-    workspace = db.query(Workspace).filter(Workspace.id == workspace_id).first()
+    workspace = db.query(Workspace).filter(Workspace.id == request.workspace_id).first()
     if not workspace:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Workspace not found"
         )
-    print(f"DEBUG: Workspace found: {workspace.name}")
-    
-    # Check if user is already a member of this workspace
+
+    # Check if user already has workspace_member entry
     existing_member = db.query(WorkspaceMember).filter(
-        WorkspaceMember.workspace_id == workspace_id,
-        WorkspaceMember.user_id == current_user.sub
+        WorkspaceMember.user_id == user_id
     ).first()
-    print(f"DEBUG: Existing member: {existing_member}")
-    
+
     if existing_member:
-        # If user is already a member but revoked, reactivate them
-        if existing_member.status == WorkspaceMemberStatus.REVOKED:
-            print(f"DEBUG: Reactivating revoked member")
-            existing_member.status = WorkspaceMemberStatus.ACTIVE
-        
-        # Update the updated_at timestamp to mark this as the current workspace
-        print(f"DEBUG: Updating timestamp to mark as current workspace")
+        # Update existing entry
+        existing_member.workspace_id = request.workspace_id
+        existing_member.status = WorkspaceMemberStatus.ACTIVE
+        # Update the updated_at timestamp
         from sqlalchemy.sql import func
         existing_member.updated_at = func.now()
         db.commit()
         db.refresh(existing_member)
+        return existing_member
     else:
-        print(f"DEBUG: Creating new workspace member")
-        # Add user as a member of this workspace
-        try:
-            # Safely get email with fallback
-            user_email = getattr(current_user, 'email', None)
-            if not user_email:
-                user_email = f"{getattr(current_user, 'username', current_user.sub)}@example.com"
-            
-            member = WorkspaceMember(
-                workspace_id=workspace_id,
-                user_id=current_user.sub,
-                username=getattr(current_user, 'username', None) or current_user.sub,
-                email=user_email,
-                status=WorkspaceMemberStatus.ACTIVE
-            )
-            print(f"DEBUG: New member data - username: {member.username}, email: {member.email}")
-            
-            db.add(member)
-            db.commit()
-            db.refresh(member)
-            print(f"DEBUG: Member created successfully")
-        except Exception as e:
-            print(f"ERROR: Failed to create workspace member: {str(e)}")
-            import traceback
-            traceback.print_exc()
-            raise
-    
-    # Note: The actual workspace switching is handled by the frontend
-    # by triggering a token refresh with updated workspace_id claim
-    # This endpoint just ensures the user is a member of the target workspace
-    
-    print(f"DEBUG: Returning workspace: {workspace.name}")
-    return workspace
+        # Create new entry
+        # Try to get username and email from current_user if this is the admin themselves
+        if user_id == current_user.sub:
+            username = getattr(current_user, 'username', None) or current_user.sub
+            email = getattr(current_user, 'email', None) or f"{username}@example.com"
+        else:
+            # For other users, use basic info (ideally would fetch from Keycloak)
+            username = user_id
+            email = f"{user_id}@example.com"
+
+        member = WorkspaceMember(
+            workspace_id=request.workspace_id,
+            user_id=user_id,
+            username=username,
+            email=email,
+            status=WorkspaceMemberStatus.ACTIVE
+        )
+        db.add(member)
+        db.commit()
+        db.refresh(member)
+        return member
