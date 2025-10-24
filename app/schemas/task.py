@@ -17,6 +17,7 @@ class TaskResponse(BaseModel):
     type: TaskType
     status: TaskStatus
     error: str | None = None
+    is_prerequisite: bool = False
     created_at: datetime
     updated_at: datetime
     input_tokens: int | None = None

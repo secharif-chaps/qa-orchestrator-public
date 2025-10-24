@@ -27,10 +27,17 @@ def _parse_json_fields(company: Company) -> Company:
     if not company:
         return company
     
-    # Parse profile field
+    # Parse profile field if it's a JSON string
     if company.profile is None:
         company.profile = {}
-    
+    elif isinstance(company.profile, str):
+        try:
+            import json
+            company.profile = json.loads(company.profile)
+        except (json.JSONDecodeError, TypeError) as e:
+            logger.warning(f"Failed to parse profile field for company {company.id}: {e}")
+            company.profile = {}
+
     # Parse digital field if it's a JSON string
     if company.digital is None:
         company.digital = {}

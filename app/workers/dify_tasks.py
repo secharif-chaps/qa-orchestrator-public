@@ -176,3 +176,56 @@ def check_queue_health() -> dict:
         "max_concurrent_workflows": MAX_CONCURRENT_WORKFLOWS,
         "worker": "active"
     }
+
+
+@celery_app.task(name='cleanup_stale_running_tasks')
+def cleanup_stale_running_tasks() -> dict:
+    """
+    Periodic task to clean up tasks stuck in RUNNING state.
+    Runs every 2 minutes and marks tasks as ERROR if they've been running for more than 10 minutes.
+    """
+    from datetime import datetime, timedelta
+
+    logger.info("🧹 Running stale task cleanup...")
+
+    with SessionLocal() as db:
+        # Find tasks that have been in RUNNING state for more than 10 minutes
+        timeout_threshold = datetime.utcnow() - timedelta(minutes=10)
+
+        stale_tasks = db.query(TaskModel).filter(
+            TaskModel.status == TaskStatus.RUNNING,
+            TaskModel.updated_at < timeout_threshold
+        ).all()
+
+        if not stale_tasks:
+            logger.info("✅ No stale tasks found")
+            return {"cleaned_count": 0, "status": "success"}
+
+        logger.warning(f"🚨 Found {len(stale_tasks)} stale tasks (running > 10 minutes)")
+
+        cleaned_count = 0
+        for task in stale_tasks:
+            logger.warning(
+                f"🚨 Marking task {task.id} as ERROR - "
+                f"Type: {task.type.value}, Company: {task.company_id}, "
+                f"Running since: {task.updated_at}"
+            )
+            task.status = TaskStatus.ERROR
+            task.error = "Task timeout - stuck in running state for more than 10 minutes"
+            cleaned_count += 1
+
+        db.commit()
+
+        logger.info(f"✅ Cleaned up {cleaned_count} stale tasks")
+
+        # Log current concurrency status after cleanup
+        from app.core.concurrency import DifyConcurrencyManager
+        concurrency_manager = DifyConcurrencyManager(db)
+        running_count = concurrency_manager.get_running_count()
+        logger.info(f"📊 After cleanup: {running_count}/{concurrency_manager.max_concurrent} workflows running")
+
+        return {
+            "cleaned_count": cleaned_count,
+            "status": "success",
+            "running_workflows": running_count
+        }
