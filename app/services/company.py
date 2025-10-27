@@ -437,12 +437,26 @@ class CompanyService:
         elif query_type == "team":
             company.team = data.get("team", []) if isinstance(data, dict) else []
         elif query_type == "data_collection":
-            # Handle data collection response with nested knowledge structure
-            knowledge_data = data.get("knowledge", {}) if isinstance(data, dict) else {}
-            company.raw_mistral_knowledge = knowledge_data.get("mistral", "")
-            company.raw_claude_knowledge = knowledge_data.get("claude", "")
-            company.raw_wikipedia_knowledge = knowledge_data.get("wikipedia", "")
-            company.raw_scraped_website_knowledge = knowledge_data.get("scraped", "")
+            # Handle data collection response - support both nested and flat structures
+            # Try nested structure first (data.knowledge.mistral), then fall back to flat (data.mistral)
+            if isinstance(data, dict):
+                # Check if data is nested under "knowledge" key
+                if "knowledge" in data and isinstance(data["knowledge"], dict):
+                    knowledge_data = data["knowledge"]
+                else:
+                    # Flat structure - data contains the fields directly
+                    knowledge_data = data
+
+                company.raw_mistral_knowledge = knowledge_data.get("mistral", "")
+                company.raw_claude_knowledge = knowledge_data.get("claude", "")
+                company.raw_wikipedia_knowledge = knowledge_data.get("wikipedia", "")
+                company.raw_scraped_website_knowledge = knowledge_data.get("scraped", "")
+            else:
+                # Not a dict, set all to empty
+                company.raw_mistral_knowledge = ""
+                company.raw_claude_knowledge = ""
+                company.raw_wikipedia_knowledge = ""
+                company.raw_scraped_website_knowledge = ""
     
     def update_task_tokens(self, task_id: int, token_data: TaskTokenUpdate) -> Task:
         """Update token usage information for a task"""
