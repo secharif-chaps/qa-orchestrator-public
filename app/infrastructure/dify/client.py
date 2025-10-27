@@ -104,6 +104,30 @@ class DifyClient:
             "llm": llm  # Add LLM parameter to the inputs
         }
 
+        # For non-data_collection tasks, include knowledge data from data_collection results
+        if task_type != "data_collection" and self.db is not None:
+            try:
+                from app.models.company import Company
+                company = self.db.query(Company).filter(Company.id == company_id).first()
+
+                if company:
+                    # Add knowledge fields to inputs (these come from data_collection task)
+                    inputs["mistral"] = company.raw_mistral_knowledge or ""
+                    inputs["claude"] = company.raw_claude_knowledge or ""
+                    inputs["wikipedia"] = company.raw_wikipedia_knowledge or ""
+                    inputs["scraped"] = company.raw_scraped_website_knowledge or ""
+
+                    logger.info(f"📚 Added knowledge data to {task_type} workflow inputs:")
+                    logger.info(f"  - Mistral: {len(inputs['mistral'])} chars")
+                    logger.info(f"  - Claude: {len(inputs['claude'])} chars")
+                    logger.info(f"  - Wikipedia: {len(inputs['wikipedia'])} chars")
+                    logger.info(f"  - Scraped: {len(inputs['scraped'])} chars")
+                else:
+                    logger.warning(f"Company {company_id} not found - cannot add knowledge data")
+            except Exception as e:
+                logger.error(f"Failed to retrieve knowledge data for company {company_id}: {e}")
+                # Continue without knowledge data rather than failing
+
         # Add string flags for data_collection task (all enabled by default)
         # Dify expects string values "true" or "false", not boolean
         if task_type == "data_collection":

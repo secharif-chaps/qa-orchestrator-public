@@ -126,9 +126,9 @@ def execute_dify_workflow(self, task_id: int, company_id: int, task_type: str, w
             
             logger.info(f"Triggering Dify workflow for task {task_id} ({task_type}) - Company: {company.name}")
             logger.info(f"Using workflow_id: {workflow_id[:8]}...")  # Log first 8 chars for debugging
-            
-            # Create Dify client and trigger workflow
-            dify_client = DifyClient()
+
+            # Create Dify client and trigger workflow (pass db session for knowledge data access)
+            dify_client = DifyClient(db=db)
             
             # Execute the async Dify workflow trigger with provided workflow_id and api_key
             result = run_async_task(
