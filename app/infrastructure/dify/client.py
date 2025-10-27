@@ -22,11 +22,12 @@ class DifyClient:
         if self.db is None:
             # No database available - workflows must be configured in database
             return None, None, None
-        
+
         try:
             service = WorkflowConfigService(self.db)
             config = service.get_config_by_task_type(task_type)
-            if config and config.workflow_id and config.api_key:
+            if config and config.api_key:
+                # workflow_id is now optional for Chat Apps
                 return config.workflow_id, config.api_key, config.llm
             else:
                 # No config found in database
@@ -67,14 +68,13 @@ class DifyClient:
             Response data from Dify (acknowledgment if async, results if sync)
         """
         # Use provided parameters if available, otherwise get from database
-        if workflow_id is None or api_key is None or llm is None:
+        if api_key is None or llm is None:
             db_workflow_id, db_api_key, db_llm = self._get_workflow_config(task_type)
-            workflow_id = workflow_id or db_workflow_id
             api_key = api_key or db_api_key
             llm = llm or db_llm
-        
-        if not workflow_id or not api_key:
-            error_msg = f"No workflow configuration found for task type: {task_type}"
+
+        if not api_key:
+            error_msg = f"No API key found for task type: {task_type}"
             logger.error(error_msg)
             raise Exception(error_msg)
         
@@ -116,18 +116,20 @@ class DifyClient:
         # Add token callback URL if provided
         if token_callback_url:
             inputs["token_callback_url"] = token_callback_url
-            
+
+        # Chat API payload structure
         payload = {
             "inputs": inputs,
+            "query": f"Execute {task_type} task for company: {company_name}",
             "response_mode": "blocking",
+            "conversation_id": "",
             "user": f"company_{company_id}"
         }
-        
-        logger.info(f"Triggering Dify {task_type} workflow for {company_name} ({website}) - Task ID: {task_id}")
-        logger.info(f"Workflow ID: {workflow_id}")
+
+        logger.info(f"Triggering Dify {task_type} chat workflow for {company_name} ({website}) - Task ID: {task_id}")
         logger.info(f"LLM: {llm}")
         logger.info(f"Dify Base URL: {self.base_url}")
-        logger.info(f"Full URL: {self.base_url}/workflows/{workflow_id}/run")
+        logger.info(f"Full URL: {self.base_url}/chat-messages")
         logger.info(f"Mode: {'Async (fire-and-forget)' if async_mode else 'Sync (wait for response)'}")
         logger.info(f"Success callback: {success_callback}")
         logger.info(f"Error callback: {error_callback}")
@@ -137,7 +139,7 @@ class DifyClient:
                 # Fire-and-forget mode: Send request but don't wait for workflow completion
                 async with httpx.AsyncClient() as client:
                     response = await client.post(
-                        f"{self.base_url}/workflows/{workflow_id}/run",
+                        f"{self.base_url}/chat-messages",
                         json=payload,
                         headers=headers,
                         timeout=10.0  # Just wait for acknowledgment, not completion
@@ -155,7 +157,7 @@ class DifyClient:
                 # Synchronous mode: Wait for the full response (fallback option)
                 async with httpx.AsyncClient() as client:
                     response = await client.post(
-                        f"{self.base_url}/workflows/{workflow_id}/run",
+                        f"{self.base_url}/chat-messages",
                         json=payload,
                         headers=headers,
                         timeout=300.0  # 5 minutes timeout for blocking mode
@@ -167,24 +169,24 @@ class DifyClient:
                         raise Exception(error_msg)
                     
                     response_data = response.json()
-                    logger.info(f"Dify {task_type} workflow response received for {company_name} (sync mode)")
-                    
-                    # Extract the actual workflow output
-                    if "data" in response_data and "outputs" in response_data["data"]:
-                        outputs = response_data["data"]["outputs"]
-                        
-                        # Parse the result if it's a string
-                        if "result" in outputs and isinstance(outputs["result"], str):
+                    logger.info(f"Dify {task_type} chat workflow response received for {company_name} (sync mode)")
+
+                    # Extract the answer from chat-messages API response
+                    if "answer" in response_data:
+                        answer = response_data["answer"]
+
+                        # Parse the answer if it's a JSON string
+                        if isinstance(answer, str):
                             import json
                             try:
-                                parsed_result = json.loads(outputs["result"])
+                                parsed_result = json.loads(answer)
                                 logger.info(f"Successfully parsed Dify {task_type} data for {company_name}")
                                 return {task_type: parsed_result}
                             except json.JSONDecodeError:
                                 logger.warning(f"Could not parse {task_type} result as JSON, returning as-is")
-                                return {task_type: outputs}
+                                return {task_type: answer}
                         else:
-                            return {task_type: outputs}
+                            return {task_type: answer}
                     else:
                         logger.warning(f"Unexpected Dify {task_type} response structure: {response_data}")
                         return {task_type: response_data}
