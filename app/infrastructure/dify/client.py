@@ -39,8 +39,8 @@ class DifyClient:
     async def trigger_workflow(
         self,
         task_type: str,
-        company_name: str, 
-        website: str, 
+        company_name: str,
+        website: str,
         success_callback: str,
         error_callback: str,
         task_id: int,
@@ -52,8 +52,8 @@ class DifyClient:
         llm: Optional[str] = None
     ) -> Dict[str, Any]:
         """
-        Generic method to trigger any workflow type
-        
+        Generic method to trigger any workflow type using Workflow Apps API
+
         Args:
             task_type: Type of task (products, timeline, etc.)
             company_name: Company name
@@ -63,11 +63,12 @@ class DifyClient:
             task_id: Task ID for callback reference
             company_id: Company ID for callback reference
             async_mode: If True, returns immediately (fire-and-forget)
-            
+
         Returns:
             Response data from Dify (acknowledgment if async, results if sync)
         """
         # Use provided parameters if available, otherwise get from database
+        # Note: workflow_id is optional - if not provided, Dify uses the last published version
         if api_key is None or llm is None:
             db_workflow_id, db_api_key, db_llm = self._get_workflow_config(task_type)
             api_key = api_key or db_api_key
@@ -77,23 +78,23 @@ class DifyClient:
             error_msg = f"No API key found for task type: {task_type}"
             logger.error(error_msg)
             raise Exception(error_msg)
-        
+
         # Default LLM if not provided
         if not llm:
             llm = "mistral"
-        
+
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
         }
-        
+
         # Prepare the callback payload that Dify should send back
         callback_payload_template = {
             "task_id": task_id,
             "company_id": company_id,
             "task_type": task_type
         }
-        
+
         inputs = {
             "company": company_name,
             "website": website,
@@ -117,80 +118,67 @@ class DifyClient:
         if token_callback_url:
             inputs["token_callback_url"] = token_callback_url
 
-        # Chat API payload structure
+        # Workflow Apps API payload structure
         payload = {
             "inputs": inputs,
-            "query": f"Execute {task_type} task for company: {company_name}",
             "response_mode": "blocking",
-            "conversation_id": "",
             "user": f"company_{company_id}"
         }
 
-        logger.info(f"Triggering Dify {task_type} chat workflow for {company_name} ({website}) - Task ID: {task_id}")
+        logger.info(f"Triggering Dify {task_type} workflow for {company_name} ({website}) - Task ID: {task_id}")
         logger.info(f"LLM: {llm}")
         logger.info(f"Dify Base URL: {self.base_url}")
-        logger.info(f"Full URL: {self.base_url}/chat-messages")
+        logger.info(f"Full URL: {self.base_url}/workflows/run")
         logger.info(f"Mode: {'Async (fire-and-forget)' if async_mode else 'Sync (wait for response)'}")
         logger.info(f"Success callback: {success_callback}")
         logger.info(f"Error callback: {error_callback}")
-        
+
         try:
             if async_mode:
                 # Fire-and-forget mode: Send request but don't wait for workflow completion
                 async with httpx.AsyncClient() as client:
                     response = await client.post(
-                        f"{self.base_url}/chat-messages",
+                        f"{self.base_url}/workflows/run",
                         json=payload,
                         headers=headers,
                         timeout=10.0  # Just wait for acknowledgment, not completion
                     )
-                    
+
                     if response.status_code not in [200, 201, 202]:
                         error_msg = f"Dify {task_type} workflow trigger failed with status: {response.status_code}"
                         logger.error(f"{error_msg}. Response: {response.text}")
                         raise Exception(error_msg)
-                    
+
                     logger.info(f"✅ Dify {task_type} workflow triggered successfully for task {task_id} (async mode)")
                     return {"status": "triggered", "task_id": task_id, "message": f"{task_type} workflow started, will callback when complete"}
-            
+
             else:
                 # Synchronous mode: Wait for the full response (fallback option)
                 async with httpx.AsyncClient() as client:
                     response = await client.post(
-                        f"{self.base_url}/chat-messages",
+                        f"{self.base_url}/workflows/run",
                         json=payload,
                         headers=headers,
                         timeout=300.0  # 5 minutes timeout for blocking mode
                     )
-                    
+
                     if response.status_code != 200:
                         error_msg = f"Dify {task_type} workflow returned non-200 status code: {response.status_code}"
                         logger.error(f"{error_msg}. Response: {response.text}")
                         raise Exception(error_msg)
-                    
+
                     response_data = response.json()
-                    logger.info(f"Dify {task_type} chat workflow response received for {company_name} (sync mode)")
+                    logger.info(f"Dify {task_type} workflow response received for {company_name} (sync mode)")
 
-                    # Extract the answer from chat-messages API response
-                    if "answer" in response_data:
-                        answer = response_data["answer"]
-
-                        # Parse the answer if it's a JSON string
-                        if isinstance(answer, str):
-                            import json
-                            try:
-                                parsed_result = json.loads(answer)
-                                logger.info(f"Successfully parsed Dify {task_type} data for {company_name}")
-                                return {task_type: parsed_result}
-                            except json.JSONDecodeError:
-                                logger.warning(f"Could not parse {task_type} result as JSON, returning as-is")
-                                return {task_type: answer}
-                        else:
-                            return {task_type: answer}
+                    # Extract data from Workflow Apps API response
+                    if "data" in response_data and "outputs" in response_data["data"]:
+                        outputs = response_data["data"]["outputs"]
+                        logger.info(f"Successfully received Dify {task_type} data for {company_name}")
+                        return outputs
                     else:
                         logger.warning(f"Unexpected Dify {task_type} response structure: {response_data}")
-                        return {task_type: response_data}
-                    
+                        return response_data
+
         except httpx.TimeoutException as e:
             if async_mode:
                 # In async mode, timeout might mean Dify accepted but is still processing
