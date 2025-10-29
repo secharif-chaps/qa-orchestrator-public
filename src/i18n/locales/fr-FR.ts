@@ -575,6 +575,9 @@ export default {
       description: "Récupération des informations complètes de l'entreprise...",
     },
     sections: {
+      insights: {
+        title: 'Aperçu',
+      },
       products: {
         title: 'Produits et services',
         insights: {
