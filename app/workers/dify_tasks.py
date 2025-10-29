@@ -70,7 +70,7 @@ def run_async_task(coro):
     name='execute_dify_workflow',
     queue='dify_workflows'
 )
-def execute_dify_workflow(self, task_id: int, company_id: int, task_type: str, workflow_id: str, api_key: str, llm: str = "mistral"):
+def execute_dify_workflow(self, task_id: int, company_id: int, task_type: str, api_key: str, llm: str = "mistral"):
     """Execute Dify workflow with dynamic concurrency control."""
     logger.info(f"Starting workflow execution: Task {task_id}, Type: {task_type}, Company: {company_id}")
     
@@ -125,12 +125,11 @@ def execute_dify_workflow(self, task_id: int, company_id: int, task_type: str, w
             logger.info(f"🔗 CALLBACK URL DEBUG - Task {task_type} - Token callback: {token_callback}")
             
             logger.info(f"Triggering Dify workflow for task {task_id} ({task_type}) - Company: {company.name}")
-            logger.info(f"Using workflow_id: {workflow_id[:8]}...")  # Log first 8 chars for debugging
 
             # Create Dify client and trigger workflow (pass db session for knowledge data access)
             dify_client = DifyClient(db=db)
-            
-            # Execute the async Dify workflow trigger with provided workflow_id and api_key
+
+            # Execute the async Dify workflow trigger with provided api_key
             result = run_async_task(
                 dify_client.trigger_workflow(
                     task_type=task_type,
@@ -142,7 +141,6 @@ def execute_dify_workflow(self, task_id: int, company_id: int, task_type: str, w
                     company_id=company.id,
                     async_mode=True,
                     token_callback_url=token_callback,
-                    workflow_id=workflow_id,
                     api_key=api_key,
                     llm=llm
                 )
