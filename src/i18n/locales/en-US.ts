@@ -112,7 +112,8 @@ export default {
         sample: 'This is a sample of your current theme',
         tag1: 'Sample',
         tag2: 'Preview',
-        interfaceDescription: 'Experience how your interface looks with the current theme settings.',
+        interfaceDescription:
+          'Experience how your interface looks with the current theme settings.',
         card: {
           title: 'Sample Card Title',
           description: 'This card demonstrates the current theme styling',
@@ -532,6 +533,9 @@ export default {
       description: 'Fetching comprehensive company information...',
     },
     sections: {
+      insights: {
+        title: 'Insights',
+      },
       products: {
         title: 'Products and services',
         insights: {
@@ -1187,7 +1191,8 @@ export default {
       },
       screen: {
         name: 'Screen',
-        description: 'Deep company intelligence and comprehensive business screening with advanced analytics',
+        description:
+          'Deep company intelligence and comprehensive business screening with advanced analytics',
         category: 'Business Intelligence',
       },
       target: {
