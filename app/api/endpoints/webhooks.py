@@ -313,7 +313,6 @@ async def dify_task_callback(
                             task_id=unblocked_task.id,
                             company_id=company.id,
                             task_type=unblocked_task.type.value,
-                            workflow_id=workflow_config.workflow_id,
                             api_key=workflow_config.api_key,
                             llm=workflow_config.llm
                         )
