@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col  h-screen">
+  <div class="flex flex-col h-[calc(100vh-140px)]">
     <!-- Header -->
     <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
       <h2 class="text-headline-2xl">{{ $t('sidebar.chapse.title', 'Chaps-e') }}</h2>
