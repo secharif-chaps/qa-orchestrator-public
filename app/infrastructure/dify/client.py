@@ -17,24 +17,23 @@ class DifyClient:
         # Fallback API key if database is not available
         self.fallback_api_key = settings.DIFY_API_KEY
     
-    def _get_workflow_config(self, task_type: str) -> tuple[Optional[str], Optional[str], Optional[str]]:
-        """Get workflow ID, API key and LLM for task type from database"""
+    def _get_workflow_config(self, task_type: str) -> tuple[Optional[str], Optional[str]]:
+        """Get API key and LLM for task type from database"""
         if self.db is None:
             # No database available - workflows must be configured in database
-            return None, None, None
+            return None, None
 
         try:
             service = WorkflowConfigService(self.db)
             config = service.get_config_by_task_type(task_type)
             if config and config.api_key:
-                # workflow_id is now optional for Chat Apps
-                return config.workflow_id, config.api_key, config.llm
+                return config.api_key, config.llm
             else:
                 # No config found in database
-                return None, None, None
+                return None, None
         except Exception as e:
             logger.warning(f"Failed to get workflow config from database: {e}")
-            return None, None, None
+            return None, None
     
     async def trigger_workflow(
         self,
@@ -47,7 +46,6 @@ class DifyClient:
         company_id: int,
         async_mode: bool = True,
         token_callback_url: str = None,
-        workflow_id: Optional[str] = None,
         api_key: Optional[str] = None,
         llm: Optional[str] = None
     ) -> Dict[str, Any]:
@@ -68,9 +66,8 @@ class DifyClient:
             Response data from Dify (acknowledgment if async, results if sync)
         """
         # Use provided parameters if available, otherwise get from database
-        # Note: workflow_id is optional - if not provided, Dify uses the last published version
         if api_key is None or llm is None:
-            db_workflow_id, db_api_key, db_llm = self._get_workflow_config(task_type)
+            db_api_key, db_llm = self._get_workflow_config(task_type)
             api_key = api_key or db_api_key
             llm = llm or db_llm
 

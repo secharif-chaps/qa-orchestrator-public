@@ -299,7 +299,7 @@ class CompanyService:
             WorkflowConfig.task_type == prerequisite_task.type.value
         ).first()
 
-        if not workflow_config or not workflow_config.workflow_id or not workflow_config.api_key:
+        if not workflow_config or not workflow_config.api_key:
             logger.error(f"Invalid workflow configuration for {prerequisite_task.type.value}")
             prerequisite_task.status = TaskStatus.ERROR
             prerequisite_task.error = f"No workflow configuration found"
@@ -310,7 +310,6 @@ class CompanyService:
                 task_id=prerequisite_task.id,
                 company_id=company.id,
                 task_type=prerequisite_task.type.value,
-                workflow_id=workflow_config.workflow_id,
                 api_key=workflow_config.api_key,
                 llm=workflow_config.llm
             )
