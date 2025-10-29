@@ -7,7 +7,6 @@ from pydantic import BaseModel, validator
 class WorkflowConfigResponse(BaseModel):
     task_type: str
     title: str
-    workflow_id: Optional[str]
     api_key_obfuscated: Optional[str]
     has_api_key: bool
     llm: str
@@ -17,10 +16,9 @@ class WorkflowConfigResponse(BaseModel):
 
 
 class WorkflowConfigUpdate(BaseModel):
-    workflow_id: Optional[str] = None
     api_key: Optional[str] = None
     llm: Optional[Literal["claude", "mistral", "gpt"]] = None
-    
+
     @validator('llm')
     def validate_llm(cls, v):
         if v is not None and v not in ["claude", "mistral", "gpt"]:
@@ -41,12 +39,11 @@ class WorkflowConfigService:
     def get_all_configs(self) -> List[WorkflowConfigResponse]:
         """Get all workflow configs with obfuscated API keys"""
         configs = self.db.query(WorkflowConfig).order_by(WorkflowConfig.task_type).all()
-        
+
         return [
             WorkflowConfigResponse(
                 task_type=config.task_type,
                 title=config.title,
-                workflow_id=config.workflow_id,
                 api_key_obfuscated=self.obfuscate_api_key(config.api_key),
                 has_api_key=bool(config.api_key),
                 llm=config.llm
