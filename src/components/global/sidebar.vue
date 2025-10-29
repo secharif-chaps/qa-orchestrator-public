@@ -1,7 +1,7 @@
 <template>
   <div
     ref="sidebarEl"
-    class="flex w-full flex-col justify-between bg-sage-950 dark:bg-sidebar h-screen text-white overflow-hidden"
+    class="flex w-full flex-col justify-between bg-sage-950 dark:bg-sidebar text-white overflow-hidden"
     @wheel="handleWheel"
   >
     <Transition
@@ -22,7 +22,7 @@
     </Transition>
 
     <!-- Footer Actions -->
-    <div v-if="sidebarStore.isOpen()" class="w-[320px] fixed right-0 bottom-0 border-t border-sage-800 z-50 px-4 py-3 grid grid-cols-3 delay-500">
+    <div class="w-[320px] border-t border-sage-800 z-50 px-4 py-3 grid grid-cols-3 delay-500">
       <button
         class="flex flex-col items-center gap-1 text-sage-300 hover:text-white transition-colors"
         @click="$router.push('/settings/profile')"
@@ -45,7 +45,6 @@
         <span class="text-xs">{{ $t('sidebar.footer.accessibility', 'Accessibility') }}</span>
         </button>
       </div>
-
   </div>
 </template>
 

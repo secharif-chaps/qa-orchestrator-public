@@ -168,7 +168,7 @@
   <!-- Raw Knowledge Debug Section (only for suh/nmr) -->
   <RawKnowledgeDebug v-if="isDebugUser" />
 
-  <!-- Section Modal -->@index
+  <!-- Section Modal -->
   <SectionModal v-model="showSectionModal" v-model:section="activeSection" />
 </template>
 
