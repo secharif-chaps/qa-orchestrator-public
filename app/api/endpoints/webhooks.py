@@ -301,10 +301,10 @@ async def dify_task_callback(
                             WorkflowConfig.task_type == unblocked_task.type.value
                         ).first()
 
-                        if not workflow_config or not workflow_config.workflow_id:
-                            logger.error(f"No workflow config for {unblocked_task.type.value}")
+                        if not workflow_config or not workflow_config.api_key:
+                            logger.error(f"No workflow config or API key for {unblocked_task.type.value}")
                             unblocked_task.status = TaskStatus.ERROR
-                            unblocked_task.error = "No workflow configuration found"
+                            unblocked_task.error = "No workflow configuration or API key found"
                             service.db.commit()
                             continue
 
