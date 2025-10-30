@@ -1,10 +1,7 @@
 <template>
   <div class="space-y-6">
-    <Card>
-      <div
-        v-if="tasks && completedCount < tasks.length"
-        class="w-full bg-base-200 rounded-full h-3 overflow-hidden flex"
-      >
+    <Card v-if="tasks && completedCount < tasks.length">
+      <div class="w-full bg-base-200 rounded-full h-3 overflow-hidden flex">
         <!-- Completed segment -->
         <div
           v-if="completedPercentage > 0"
