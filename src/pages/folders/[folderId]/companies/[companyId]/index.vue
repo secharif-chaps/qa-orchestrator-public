@@ -1,7 +1,10 @@
 <template>
   <div class="space-y-6">
     <Card>
-      <div class="w-full bg-base-200 rounded-full h-3 overflow-hidden flex">
+      <div
+        v-if="tasks && completedCount < tasks.length"
+        class="w-full bg-base-200 rounded-full h-3 overflow-hidden flex"
+      >
         <!-- Completed segment -->
         <div
           v-if="completedPercentage > 0"
@@ -47,6 +50,7 @@
     <div class="space-y-4 xl:space-y-0 xl:flex gap-4">
       <Card class="flex-1 relative">
         <div
+          v-if="isTaskRunning('profile')"
           class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card"
         >
           <div class="flex items-center gap-3 text-base text-secondary">
@@ -161,6 +165,7 @@
 
       <Card class="xl:max-w-md relative">
         <div
+          v-if="isTaskRunning('digital')"
           class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card"
         >
           <div class="flex items-center gap-3 text-base text-secondary">
