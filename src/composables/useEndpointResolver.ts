@@ -38,7 +38,7 @@ export const useEndpointResolver = () => {
             endpoints.baseUrl = import.meta.env.VITE_DEV_BASE_URL
 
         // if preprod environment
-        } else if( baseUrl.includes('10.0.1.2') ) {
+        } else if( baseUrl.includes('10.0.1.2') || baseUrl.includes('mint.preprod.chapsmind.com') ) {
             endpoints.apiUrl = import.meta.env.VITE_PREPROD_BACKEND_API
             endpoints.keycloakRealm = import.meta.env.VITE_PREPROD_KEYCLOAK_REALM
             endpoints.keycloakClientId = import.meta.env.VITE_PREPROD_KEYCLOAK_CLIENT_ID
