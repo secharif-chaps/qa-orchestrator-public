@@ -3,7 +3,7 @@
     <div class="flex gap-4 items-center justify-between">
       <div class="flex items-center gap-4">
         <div
-          class="relative size-12 rounded-card overflow-hidden bg-white ring-2 ring-primary-stroke flex-shrink-0"
+          class="relative size-12 rounded-lg overflow-hidden bg-white ring-2 ring-primary-stroke flex-shrink-0"
         >
           <img
             v-if="getCompanyDomain(company?.website)"
@@ -22,7 +22,7 @@
         </div>
         <h1 class="text-2xl font-bold">{{ company?.name }}</h1>
       </div>
-      <div>
+      <div class="flex items-center gap-2">
         <Button
           v-if="isDebugUser"
           variant="tertiary"
@@ -66,6 +66,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import TasksFlowModal from '@/components/company/TasksFlowModal.vue'
 import { useAuthStore } from '@/stores/auth'
+import Export from '@/components/company/Export.vue'
 
 const route = useRoute()
 const router = useRouter()

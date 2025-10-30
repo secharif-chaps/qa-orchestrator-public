@@ -3,7 +3,7 @@
     <!-- Folder Header -->
     <div
       @click.stop="$emit('toggle')"
-      class="flex items-center gap-2 px-2 py-1.5 transition-colors group cursor-pointer bg-sage-800 relative z-10 rounded-card justify-between"
+      class="flex items-center gap-2 px-2 py-3 transition-colors group cursor-pointer bg-sage-800 relative z-10 rounded-card justify-between"
     >
       <div class="flex items-center gap-2">
         <!-- Expand/Collapse Arrow -->

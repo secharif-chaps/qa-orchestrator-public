@@ -1,15 +1,74 @@
 <template>
   <div class="space-y-6">
+    <Card>
+      <div class="w-full bg-base-200 rounded-full h-3 overflow-hidden flex">
+        <!-- Completed segment -->
+        <div
+          v-if="completedPercentage > 0"
+          class="bg-success-500 h-full transition-all duration-500 ease-out"
+          :style="{ width: `${completedPercentage}%` }"
+          :title="`${completedCount} tâches terminées (${Math.round(completedPercentage)}%)`"
+        ></div>
+
+        <!-- Running segment -->
+        <div
+          v-if="runningPercentage > 0"
+          class="bg-info-500 h-full transition-all duration-500 ease-out"
+          :style="{ width: `${runningPercentage}%` }"
+          :title="`${runningCount} tâches en cours (${Math.round(runningPercentage)}%)`"
+        ></div>
+
+        <!-- Error segment -->
+        <div
+          v-if="errorPercentage > 0"
+          class="bg-error-500 h-full transition-all duration-500 ease-out"
+          :style="{ width: `${errorPercentage}%` }"
+          :title="`${errorCount} tâches en erreur (${Math.round(errorPercentage)}%)`"
+        ></div>
+
+        <!-- Blocked segment -->
+        <div
+          v-if="blockedPercentage > 0"
+          class="bg-sage-100 h-full transition-all duration-500 ease-out"
+          :style="{ width: `${blockedPercentage}%` }"
+          :title="`${blockedCount} tâches bloquées (${Math.round(blockedPercentage)}%)`"
+        ></div>
+
+        <!-- Pending segment -->
+        <div
+          v-if="pendingPercentage > 0"
+          class="bg-sage-200 h-full transition-all duration-500 ease-out"
+          :style="{ width: `${pendingPercentage}%` }"
+          :title="`${pendingCount} tâches en attente (${Math.round(pendingPercentage)}%)`"
+        ></div>
+      </div>
+    </Card>
     <!-- Company Info Card - Full Width -->
     <div class="space-y-4 xl:space-y-0 xl:flex gap-4">
-      <Card class="flex-1">
+      <Card class="flex-1 relative">
+        <div
+          class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card"
+        >
+          <div class="flex items-center gap-3 text-base text-secondary">
+            <i class="fas fa-spinner fa-spin text-xl"></i>
+            <span>Analyse en cours...</span>
+          </div>
+        </div>
         <div class="flex items-start gap-6">
           <!-- Company Info -->
           <div class="flex-1 min-w-0 flex flex-col gap-2">
-            <div>
-              <h3 v-if="company?.profile?.catchphrase" class="font-bold">
+            <div v-if="!isTaskRunning('profile')">
+              <h3 class="font-bold" v-if="company?.profile?.businessLine">
                 {{ getSourcedValue(company.profile.businessLine) }}
               </h3>
+              <h3 class="font-bold" v-else>
+                {{ t('company.fields.notSpecified', 'Not specified') }}
+              </h3>
+            </div>
+            <div v-else>
+              <div class="flex flex-wrap gap-2">
+                <div class="bg-sage-100 rounded-lg h-12 w-full"></div>
+              </div>
             </div>
             <div>
               <p>{{ company?.products?.insights }}</p>
@@ -23,7 +82,11 @@
                   <span class="text-sm truncate">
                     {{ t('company.fields.employeeCount', 'Employee Count') }}
                   </span>
-                  <span class="text-xs text-secondary">
+                  <div
+                    v-if="isTaskRunning('profile')"
+                    class="bg-sage-100 rounded-full h-3 w-12"
+                  ></div>
+                  <span v-else class="text-xs text-secondary">
                     {{
                       company?.profile?.employeeCount?.value ||
                       t('company.fields.notSpecified', 'Not specified')
@@ -33,16 +96,17 @@
               </div>
 
               <!-- HQ -->
-              <div
-                v-if="company?.profile?.hq"
-                class="flex items-center gap-3 rounded-card px-4 py-3"
-              >
+              <div class="flex items-center gap-3 rounded-card px-4 py-3">
                 <i class="fa-solid fa-map-marker fa-fw text-secondary"></i>
                 <div class="flex flex-col gap-1">
                   <span class="text-sm truncate">
                     {{ t('company.fields.headquarters', 'Headquarters') }}
                   </span>
-                  <span class="text-xs text-secondary">
+                  <span
+                    v-if="isTaskRunning('profile')"
+                    class="bg-sage-100 rounded-full h-3 w-12"
+                  ></span>
+                  <span v-else class="text-xs text-secondary">
                     {{
                       company?.profile?.hq?.value ||
                       t('company.fields.notSpecified', 'Not specified')
@@ -52,14 +116,15 @@
               </div>
 
               <!-- CEO -->
-              <div
-                v-if="company?.profile?.ceo"
-                class="flex items-center gap-3 rounded-card px-4 py-3"
-              >
+              <div class="flex items-center gap-3 rounded-card px-4 py-3">
                 <i class="fa-solid fa-user-tie fa-fw text-secondary"></i>
                 <div class="flex flex-col gap-1">
                   <span class="text-sm truncate"> {{ t('company.fields.ceo', 'CEO') }} </span>
-                  <span class="text-xs text-secondary">
+                  <span
+                    v-if="isTaskRunning('profile')"
+                    class="bg-sage-100 rounded-full h-3 w-12"
+                  ></span>
+                  <span v-else class="text-xs text-secondary">
                     {{
                       company?.profile?.ceo?.value ||
                       t('company.fields.notSpecified', 'Not specified')
@@ -69,16 +134,17 @@
               </div>
 
               <!-- Revenue -->
-              <div
-                v-if="company?.profile?.revenue"
-                class="flex items-center gap-3 rounded-card px-4 py-3"
-              >
+              <div class="flex items-center gap-3 rounded-card px-4 py-3">
                 <i class="fa-solid fa-money-bill fa-fw text-secondary"></i>
                 <div class="flex flex-col gap-1">
                   <span class="text-sm truncate">
                     {{ t('company.fields.revenue', 'Revenue') }}
                   </span>
-                  <span class="text-xs text-secondary">
+                  <span
+                    v-if="isTaskRunning('profile')"
+                    class="bg-sage-100 rounded-full h-3 w-12"
+                  ></span>
+                  <span v-else class="text-xs text-secondary">
                     {{
                       company?.profile?.revenue?.value ||
                       t('company.fields.notSpecified', 'Not specified')
@@ -93,7 +159,15 @@
         </div>
       </Card>
 
-      <Card class="xl:max-w-md">
+      <Card class="xl:max-w-md relative">
+        <div
+          class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card"
+        >
+          <div class="flex items-center gap-3 text-base text-secondary">
+            <i class="fas fa-spinner fa-spin text-xl"></i>
+            <span>Analyse en cours...</span>
+          </div>
+        </div>
         <p>Présence en ligne</p>
         <div class="flex bg-base-200 items-center gap-3 rounded-card px-4 py-3">
           <i class="fa-solid fa-link fa-fw text-secondary"></i>
@@ -120,6 +194,13 @@
               </span>
             </Tag>
           </div>
+          <div v-if="isTaskRunning('profile')" class="flex flex-wrap gap-2">
+            <div v-for="i in 4" :key="i" class="bg-sage-100 rounded-full h-4 w-12"></div>
+          </div>
+
+          <span v-else class="text-xs text-secondary">
+            {{ t('company.fields.notSpecified', 'Not specified') }}
+          </span>
         </div>
       </Card>
     </div>
@@ -194,7 +275,7 @@ import { useAuthStore } from '@/stores/auth'
 import type { QuickAction } from '@/types/ai-preferences'
 import type { TaskStatus, TaskType } from '@/types/task'
 import { useQuery } from '@pinia/colada'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -207,7 +288,6 @@ const showSectionModal = ref(false)
 const activeSection = ref<TaskType | null>(null)
 
 const companyId = computed(() => route.params.companyId as string)
-const folderId = computed(() => route.params.folderId as string)
 
 const isDebugUser = computed(() => {
   const username = authStore.user?.profile?.preferred_username?.toLowerCase()
@@ -215,16 +295,47 @@ const isDebugUser = computed(() => {
 })
 
 // Use the company data composable
-const { data: company } = useQuery(companyByIdQuery, () => ({ id: companyId.value }), {
-  enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
-})
+const { data: company, refetch: refetchCompany } = useQuery(companyByIdQuery, () => ({
+  id: companyId.value,
+}))
 
 // Restart task mutation
 const { mutate: restartTaskMutation } = useRestartTask()
 
-const { data: tasks } = useQuery(companyTasksQuery, () => ({
+const { data: tasks, refetch: refetchTasks } = useQuery(companyTasksQuery, () => ({
   companyId: companyId.value,
 }))
+
+const isTaskRunning = (taskType: TaskType): boolean => {
+  if (!tasks.value) return false
+  const task = tasks.value?.find((t) => t.type === taskType)
+  return task?.status === 'running' || task?.status === 'pending' || task?.status === 'blocked'
+}
+
+const shouldRefetch = computed(() => {
+  if (!tasks.value) return false
+  let shouldRefetch = false
+  for (const task of tasks.value?.values() || []) {
+    if (isTaskRunning(task.type)) {
+      shouldRefetch = true
+    }
+  }
+  return shouldRefetch
+})
+
+const refetch = () => {
+  if (shouldRefetch.value) {
+    refetchCompany()
+    refetchTasks()
+  }
+
+  console.log('Refetching company and tasks')
+  setTimeout(refetch, 5000)
+}
+
+onMounted(() => {
+  refetch()
+})
 
 // Helper function to get task status by type
 const getTaskStatus = (taskType: TaskType): TaskStatus | null => {
@@ -403,12 +514,6 @@ const handleRestartTask = async (taskId: number) => {
   }
 }
 
-// Format website URL
-const formatWebsiteUrl = (website?: string) => {
-  if (!website) return '#'
-  return website.startsWith('http') ? website : `https://${website}`
-}
-
 // Format date
 const formatDate = (dateString: string) => {
   if (!dateString) return 'N/A'
@@ -470,4 +575,67 @@ const handleQuickActionsSuccess = (actions: QuickAction[]) => {
 const handleQuickActionsError = (error: string) => {
   console.error('❌ Failed to load quick actions:', error)
 }
+
+// Calculate task status percentages
+const completedPercentage = computed(() => {
+  if (!tasks.value) return 0
+  const completedCount = tasks.value.filter((t) => t.status === 'succeeded').length
+  return (completedCount / tasks.value.length) * 100
+})
+
+const runningPercentage = computed(() => {
+  if (!tasks.value) return 0
+  const runningCount = tasks.value.filter(
+    (t) => t.status === 'running' || t.status === 'pending',
+  ).length
+  return (runningCount / tasks.value.length) * 100
+})
+
+const errorPercentage = computed(() => {
+  if (!tasks.value) return 0
+  const errorCount = tasks.value.filter((t) => t.status === 'error').length
+  return (errorCount / tasks.value.length) * 100
+})
+
+const blockedPercentage = computed(() => {
+  if (!tasks.value) return 0
+  const blockedCount = tasks.value.filter((t) => t.status === 'blocked').length
+  return (blockedCount / tasks.value.length) * 100
+})
+
+const pendingPercentage = computed(() => {
+  if (!tasks.value) return 0
+  const pendingCount = tasks.value.filter((t) => t.status === 'pending').length
+  return (pendingCount / tasks.value.length) * 100
+})
+
+const runningCount = computed(() => {
+  if (!tasks.value) return 0
+  const runningCount = tasks.value.filter((t) => t.status === 'running').length
+  return runningCount
+})
+
+const errorCount = computed(() => {
+  if (!tasks.value) return 0
+  const errorCount = tasks.value.filter((t) => t.status === 'error').length
+  return errorCount
+})
+
+const blockedCount = computed(() => {
+  if (!tasks.value) return 0
+  const blockedCount = tasks.value.filter((t) => t.status === 'blocked').length
+  return blockedCount
+})
+
+const pendingCount = computed(() => {
+  if (!tasks.value) return 0
+  const pendingCount = tasks.value.filter((t) => t.status === 'pending').length
+  return pendingCount
+})
+
+const completedCount = computed(() => {
+  if (!tasks.value) return 0
+  const completedCount = tasks.value.filter((t) => t.status === 'succeeded').length
+  return completedCount
+})
 </script>

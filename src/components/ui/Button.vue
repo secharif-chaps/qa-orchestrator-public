@@ -82,7 +82,7 @@ const buttonClasses = computed(() => {
       classes.push(
         'bg-sage-800 dark:bg-sage-300',
         'text-white dark:text-sage-900',
-        'hover:bg-sage-900',
+        'hover:bg-sage-900 hover:dark:bg-sage-400 dark:hover:text-sage-950',
         'active:bg-green-950',
         'focus-visible:bg-sage-800 focus-visible:ring-accent-500',
         'disabled:bg-gray-100 disabled:text-gray-800',
@@ -91,7 +91,7 @@ const buttonClasses = computed(() => {
     case 'secondary':
       classes.push(
         'bg-transparent border border-sage-800 dark:border-sage-300 text-sage-800 dark:text-sage-300',
-        'hover:bg-sage-100 hover:text-sage-900 dark:hover:bg-sage-200/10',
+        'hover:bg-sage-100 hover:text-sage-900 dark:hover:bg-sage-200/10 dark:hover:text-sage-50',
         'active:bg-sage-200 active:text-sage-950 dark:active:bg-sage-900',
         'focus-visible:bg-transparent focus-visible:ring-accent-500',
         'disabled:border-transparent disabled:text-gray-800 disabled:bg-gray-100',
