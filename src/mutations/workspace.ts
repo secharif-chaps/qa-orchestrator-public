@@ -142,8 +142,8 @@ export const usePickWorkspace = defineMutation(() => {
   const queryCache = useQueryCache()
 
   const { mutate, ...mutation } = useMutation({
-    mutation: (id: number) => pickWorkspace(id),
-    onSuccess: (pickedWorkspace, id) => {
+    mutation: ({ id, userId }: { id: number; userId: string }) => pickWorkspace(id, userId),
+    onSuccess: (pickedWorkspace, { id }) => {
       // Show success notification
       toast.success(`Switched to workspace "${pickedWorkspace.name}"!`)
 

@@ -17,6 +17,7 @@ export const useAuthStore = defineStore(
     const isAuthenticated = computed(() => !!user.value && !user.value.expired)
     const currentUser = computed(() => user.value)
     const accessToken = computed(() => user.value?.access_token || null)
+    const userId = computed(() => user.value?.profile?.sub || null)
     const username = computed(
       () => user.value?.profile?.preferred_username || user.value?.profile?.sub || 'unknown',
     )
@@ -241,6 +242,7 @@ export const useAuthStore = defineStore(
       isAuthenticated,
       currentUser,
       accessToken,
+      userId,
       username,
       userRoles,
       userPermissions,

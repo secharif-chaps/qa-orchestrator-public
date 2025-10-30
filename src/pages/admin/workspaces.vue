@@ -350,8 +350,10 @@ import type { WorkspaceListItem, WorkspaceQueryParams, WorkspaceResponse } from 
 import { useQuery } from '@pinia/colada'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 // Query parameters state
 const queryParams = reactive<WorkspaceQueryParams>({
@@ -513,7 +515,10 @@ const showPickModal = (workspace: WorkspaceResponse) => {
 
 const handlePick = async (id: number) => {
   try {
-    await pickWorkspace(id)
+    if (!authStore.userId) {
+      throw new Error('User ID not available')
+    }
+    await pickWorkspace({ id, userId: authStore.userId })
     workspaceToPick.value = null
     // Success notification and page refresh will be handled by the mutation
   } catch (error) {

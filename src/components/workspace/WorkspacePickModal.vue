@@ -4,7 +4,7 @@
     @click.self="$emit('cancel')"
   >
     <div
-      class="bg-gradient-to-br from-bg1 to-bg2 rounded-xl shadow-2xl border border-primary-stroke p-6 max-w-xl w-full mx-4"
+      class="bg-base-100 rounded-xl shadow-2xl border border-primary-stroke p-6 max-w-xl w-full mx-4"
     >
       <!-- Header -->
       <div class="flex items-center justify-between mb-6">
