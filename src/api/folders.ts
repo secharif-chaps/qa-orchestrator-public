@@ -14,8 +14,8 @@ export const getFolderById = async (folderId: string, filters?: {archived?: bool
   console.log('queryStringqueryStringqueryString', filters)
 
   const url = queryString
-    ? `/folders/${folderId}?${queryString}`
-    : `/folders/${folderId}`
+    ? `/folders/${folderId}/?${queryString}`
+    : `/folders/${folderId}/`
 
   const response = await apiClient.get<Folder>(url)
   return response
@@ -40,7 +40,7 @@ export const getFolders = async (filters: { page: number; size: number; name: st
   }
 
   const response = await apiClient.get<PaginatedResponse<Folder>>(
-    `/folders?${params.toString()}`,
+    `/folders/?${params.toString()}`,
   )
   return response
 }
@@ -65,46 +65,46 @@ export const getFoldersWithItems = async (filters: { page: number; size: number;
   }
 
   const response = await apiClient.get<PaginatedResponse<Folder>>(
-    `/folders?${params.toString()}`,
+    `/folders/?${params.toString()}`,
   )
   return response
 }
 
 export const createFolder = async (folder: FolderCreate) => {
-  const response = await apiClient.post<Folder>('/folders', folder)
+  const response = await apiClient.post<Folder>('/folders/', folder)
   return response
 }
 
 export const updateFolder = async (folderId: string, folder: FolderUpdate) => {
-  const response = await apiClient.put<Folder>(`/folders/${folderId}`, folder)
+  const response = await apiClient.put<Folder>(`/folders/${folderId}/`, folder)
   return response
 }
 
 export const toggleFolderFavorite = async (folderId: string, isFavorite: boolean) => {
-  const response = await apiClient.patch<Folder>(`/folders/${folderId}`, {
+  const response = await apiClient.patch<Folder>(`/folders/${folderId}/`, {
     is_favorite: isFavorite
   })
   return response
 }
 
 export const deleteFolder = async (folderId: string) => {
-  const response = await apiClient.delete(`/folders/${folderId}`)
+  const response = await apiClient.delete(`/folders/${folderId}/`)
   return response
 }
 
 export const restoreFolder = async (folderId: string) => {
-  const response = await apiClient.post<Folder>(`/folders/${folderId}/restore`, {})
+  const response = await apiClient.post<Folder>(`/folders/${folderId}/restore/`, {})
   return response
 }
 
 export const addItemToFolder = async (folderId: string, item: FolderItemAdd) => {
-  const response = await apiClient.post(`/folders/${folderId}/items`, item)
+  const response = await apiClient.post(`/folders/${folderId}/items/`, item)
   return response
 }
 
 export const removeItemFromFolder = async (folderId: string, itemId: string, itemType: 'company') => {
   const params = new URLSearchParams({ item_type: itemType })
-  const response = await apiClient.delete(`/folders/${folderId}/items/${itemId}?${params.toString()}`)
+  const response = await apiClient.delete(`/folders/${folderId}/items/${itemId}/?${params.toString()}`)
   return response
 }
 
