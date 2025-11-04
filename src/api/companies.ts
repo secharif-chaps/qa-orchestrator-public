@@ -92,7 +92,7 @@ export const getCompanies = async (filters: {
 }
 
 export const createCompany = async (company: { name: string; website: string }) => {
-  const response = await apiClient.post<Company>('/companies', company)
+  const response = await apiClient.post<Company>('/companies/', company)
   return response
 }
 
