@@ -368,9 +368,9 @@ class CompanyService:
 
     def _prepare_task_callbacks(self, task: Task) -> tuple[str, str, str]:
         """Helper method to prepare callback URLs for task execution"""
-        success_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/callback"
+        success_callback = f"{settings.BACKEND_BASE_URL}/webhooks/dify/tasks/{task.id}/callback"
         error_callback = success_callback  # Same endpoint, different status in payload
-        token_callback = f"{settings.BACKEND_BASE_URL}/api/webhooks/dify/tasks/{task.id}/tokens"
+        token_callback = f"{settings.BACKEND_BASE_URL}/webhooks/dify/tasks/{task.id}/tokens"
         
         # Debug logging for callback URLs
         logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
