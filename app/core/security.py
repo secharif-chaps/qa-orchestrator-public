@@ -169,25 +169,28 @@ def verify_cost_admin_access(current_user: TokenData) -> TokenData:
     return current_user
 
 
-def verify_workspace_permission(current_user: TokenData, workspace_id: int, permission: str, db: Session = None) -> TokenData:
+def verify_workspace_permission(current_user: TokenData, workspace_id: int, permission: str, db: Session | None = None) -> TokenData:
     """
-    Verify that the current user has a specific permission for a workspace
-    Uses both JWT token and database permissions
-    
+    Verify that the current user has a specific permission for a workspace.
+
+    Uses JWT-only permission check for security. Database parameter is ignored
+    to maintain backward compatibility with existing code.
+
     Args:
         current_user: Current authenticated user
         workspace_id: ID of the workspace to check permission for
         permission: Required permission (e.g., 'workspace.manage', 'workspace.users.read')
-        db: Database session (optional, for database permission check)
-        
+        db: Database session (DEPRECATED - ignored for security)
+
     Returns:
         TokenData if user has permission
-        
+
     Raises:
         AuthorizationError: If user doesn't have the required permission
     """
-    # First check JWT token permissions (backward compatibility)
+    # JWT-only permission check (no database fallback to prevent race conditions)
     jwt_has_permission = False
+
     if current_user.roles:
         # Check for exact permission match
         if permission in current_user.roles:
@@ -198,24 +201,10 @@ def verify_workspace_permission(current_user: TokenData, workspace_id: int, perm
         # Legacy role mapping
         elif permission == "workspace.write" and "workspace.write" in current_user.roles:
             jwt_has_permission = True
-    
-    # If we have a database session, also check database permissions
-    db_has_permission = False
-    if db is not None and current_user.sub:
-        permission_service = PermissionService(db)
-        
-        # Check for exact permission
-        if permission_service.has_permission(current_user.sub, permission, workspace_id):
-            db_has_permission = True
-        
-        # Check for admin permissions (global)
-        elif permission.startswith('workspace.') and permission_service.has_permission(current_user.sub, "admin.workspaces"):
-            db_has_permission = True
-    
-    # User has permission if either JWT or database grants it
-    if jwt_has_permission or db_has_permission:
+
+    if jwt_has_permission:
         return current_user
-    
+
     raise AuthorizationError(f"Permission denied: {permission} required for workspace {workspace_id}")
 
 
@@ -229,66 +218,19 @@ def verify_workspace_permission_with_db(current_user: TokenData, workspace_id: i
 def verify_user_or_admin_access(resource_owner: str, current_user: TokenData) -> TokenData:
     """
     Verify that the current user is either the resource owner or an admin
-    
+
     Args:
         resource_owner: Username of the resource owner
         current_user: Current authenticated user
-        
+
     Returns:
         TokenData if user has access
-        
+
     Raises:
         AuthorizationError: If user doesn't have access
     """
     if current_user.username != resource_owner:
         if not current_user.roles or "admin" not in current_user.roles:
             raise AuthorizationError("You don't have permission to access this resource")
-    
+
     return current_user
-
-
-def sanitize_input(input_string: str, max_length: int = 255) -> str:
-    """
-    Sanitize user input to prevent injection attacks
-    
-    Args:
-        input_string: Input to sanitize
-        max_length: Maximum allowed length
-        
-    Returns:
-        Sanitized string
-        
-    Raises:
-        HTTPException: If input is invalid
-    """
-    if not input_string:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Input cannot be empty"
-        )
-    
-    # Remove dangerous characters
-    sanitized = input_string.strip()
-    
-    # Check length
-    if len(sanitized) > max_length:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Input too long (max {max_length} characters)"
-        )
-    
-    # Check for SQL injection patterns
-    dangerous_patterns = [
-        "SELECT", "INSERT", "UPDATE", "DELETE", "DROP", "CREATE", "ALTER",
-        "UNION", "SCRIPT", "JAVASCRIPT", "VBSCRIPT", "ONLOAD", "ONERROR"
-    ]
-    
-    upper_input = sanitized.upper()
-    for pattern in dangerous_patterns:
-        if pattern in upper_input:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Input contains potentially dangerous content"
-            )
-    
-    return sanitized

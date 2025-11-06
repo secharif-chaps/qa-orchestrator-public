@@ -10,7 +10,7 @@ from app.services.token_manager import TokenManager
 from app.core.dependencies import get_company_service, get_current_user, get_token_manager
 from app.core.workspace import get_user_workspace, WorkspaceContext
 from app.models.workspace import ModuleName
-from app.core.security import verify_company_ownership, verify_company_workspace_access, verify_company_modify_permission, sanitize_input
+from app.core.security import verify_company_ownership, verify_company_workspace_access, verify_company_modify_permission
 from app.schemas.company import (
     CompanyCreate, 
     CompanyUpdate, 
@@ -111,9 +111,8 @@ async def get_company_by_name(
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
     """Get a company by name (only if it belongs to user's workspace)"""
-    # Sanitize the name input
-    sanitized_name = sanitize_input(name, max_length=100)
-    company = service.get_company_by_name(sanitized_name)
+    # Input validation is handled by Pydantic models and path parameters
+    company = service.get_company_by_name(name.strip())
     return verify_company_workspace_access(company, workspace_context)
 
 @router.post("/", response_model=CompanyResponse)
@@ -136,17 +135,14 @@ async def create_company(
         )
         print(f"✅ Token consumed successfully")
         
-        # Step 2: Sanitize inputs
-        print(f"🧹 Sanitizing inputs - Name: {company_data.name[:50]}, Website: {company_data.website[:50]}")
-        sanitized_name = sanitize_input(company_data.name, max_length=100)
-        sanitized_website = sanitize_input(company_data.website, max_length=255)
-        print(f"✅ Sanitized - Name: {sanitized_name[:50]}, Website: {sanitized_website[:50]}")
-        
+        # Step 2: Input validation already handled by Pydantic CompanyCreate model
+        print(f"📝 Processing company - Name: {company_data.name[:50]}, Website: {str(company_data.website)[:50]}")
+
         # Step 3: Create company using the authenticated user's username as the owner
         print(f"🔄 Calling service.create_company for authenticated user: {workspace_context.username} in workspace: {workspace_context.workspace_id}")
         result = service.create_company(
-            name=sanitized_name,
-            website=sanitized_website,
+            name=company_data.name,
+            website=str(company_data.website),
             owner_username=workspace_context.username,
             workspace_id=workspace_context.workspace_id
         )
@@ -210,13 +206,9 @@ async def update_company(
     # Get existing company and verify it belongs to workspace
     company = service.get_company(company_id)
     verify_company_workspace_access(company, workspace_context)
-    
-    # Sanitize inputs if provided
-    if company_data.name:
-        company_data.name = sanitize_input(company_data.name, max_length=100)
-    if company_data.website:
-        company_data.website = sanitize_input(company_data.website, max_length=255)
-    
+
+    # Input validation already handled by Pydantic CompanyUpdate model
+
     # Update fields
     if company_data.name:
         company.name = company_data.name

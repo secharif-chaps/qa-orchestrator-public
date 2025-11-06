@@ -1,32 +1,100 @@
+import re
+import json
 from typing import Dict, List, Optional, Any
-from pydantic import BaseModel, Field, ConfigDict, field_validator
+from urllib.parse import urlparse
+from pydantic import BaseModel, Field, ConfigDict, field_validator, HttpUrl
 from datetime import datetime
+
 from app.models.task import TaskStatus, TaskType
-from app.core.validators import InputValidator
 from app.schemas.pagination import PaginatedResponse
+
 
 class CompanyBase(BaseModel):
     name: str = Field(..., min_length=2, max_length=100, description="Company name")
-    website: str = Field(..., min_length=4, max_length=255, description="Company website URL")
-    
+    website: HttpUrl = Field(..., description="Company website URL")
+
     @field_validator('name')
     @classmethod
-    def validate_name(cls, v):
-        """Validate and sanitize company name"""
-        return InputValidator.validate_company_name(v)
-    
+    def validate_name(cls, v: str) -> str:
+        """Validate and sanitize company name.
+
+        Args:
+            v: Company name to validate
+
+        Returns:
+            Validated company name
+
+        Raises:
+            ValueError: If name is invalid
+        """
+        if not v or not v.strip():
+            raise ValueError('Company name cannot be empty or only whitespace')
+
+        # Trim whitespace
+        sanitized = v.strip()
+
+        # Check minimum length
+        if len(sanitized) < 2:
+            raise ValueError('Company name must be at least 2 characters long')
+
+        # Check maximum length
+        if len(sanitized) > 100:
+            raise ValueError('Company name too long (max 100 characters)')
+
+        # Company name cannot be only numbers
+        if sanitized.isdigit():
+            raise ValueError('Company name cannot be only numbers')
+
+        # Check for too many repeated characters (potential spam)
+        if re.search(r'(.)\1{5,}', sanitized):
+            raise ValueError('Company name contains too many repeated characters')
+
+        # Allow alphanumeric, spaces, and common business characters: - _ . & ( )
+        if not re.match(r'^[a-zA-Z0-9\s\-_.&()]+$', sanitized):
+            raise ValueError('Company name contains invalid characters. Only letters, numbers, spaces, and - _ . & ( ) are allowed')
+
+        return sanitized
+
     @field_validator('website')
     @classmethod
-    def validate_website(cls, v):
-        """Validate and sanitize website URL"""
-        return InputValidator.validate_website_url(v)
+    def validate_website(cls, v: HttpUrl) -> str:
+        """Validate website URL.
+
+        Args:
+            v: Website URL to validate (already validated by HttpUrl type)
+
+        Returns:
+            Validated website URL as string
+
+        Raises:
+            ValueError: If URL is invalid
+        """
+        # HttpUrl from Pydantic already validates:
+        # - Proper URL format
+        # - Valid scheme (http/https)
+        # - Valid domain
+
+        url_str = str(v)
+
+        # Additional security checks for suspicious patterns
+        url_lower = url_str.lower()
+        suspicious_patterns = [
+            'javascript:', 'data:', 'file:', 'ftp:',
+            'localhost', '127.0.0.1', '0.0.0.0'
+        ]
+
+        for pattern in suspicious_patterns:
+            if pattern in url_lower:
+                raise ValueError(f'URL contains suspicious content: {pattern}')
+
+        return url_str
 
 class CompanyCreate(CompanyBase):
     pass  # Only inherits name and website from CompanyBase
 
 class CompanyUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=2, max_length=100, description="Company name")
-    website: Optional[str] = Field(None, min_length=4, max_length=255, description="Company website URL")
+    website: Optional[HttpUrl] = Field(None, description="Company website URL")
     profile: Optional[Dict[str, Any]] = Field(None, description="Company profile data")
     digital: Optional[Dict[str, Any]] = Field(None, description="Digital presence data")
     timeline: Optional[Dict[str, Any]] = Field(None, description="Company timeline data")
@@ -35,37 +103,104 @@ class CompanyUpdate(BaseModel):
     csr: Optional[Dict[str, Any]] = Field(None, description="CSR data")
     press: Optional[Dict[str, Any]] = Field(None, description="Press data")
     team: Optional[List[Dict[str, Any]]] = Field(None, description="Team data")
-    
+
     @field_validator('name')
     @classmethod
-    def validate_name(cls, v):
-        """Validate and sanitize company name"""
-        if v is not None:
-            return InputValidator.validate_company_name(v)
-        return v
-    
+    def validate_name(cls, v: str | None) -> str | None:
+        """Validate and sanitize company name."""
+        if v is None:
+            return v
+
+        if not v or not v.strip():
+            raise ValueError('Company name cannot be empty or only whitespace')
+
+        sanitized = v.strip()
+
+        if len(sanitized) < 2:
+            raise ValueError('Company name must be at least 2 characters long')
+
+        if len(sanitized) > 100:
+            raise ValueError('Company name too long (max 100 characters)')
+
+        if sanitized.isdigit():
+            raise ValueError('Company name cannot be only numbers')
+
+        if re.search(r'(.)\1{5,}', sanitized):
+            raise ValueError('Company name contains too many repeated characters')
+
+        if not re.match(r'^[a-zA-Z0-9\s\-_.&()]+$', sanitized):
+            raise ValueError('Company name contains invalid characters')
+
+        return sanitized
+
     @field_validator('website')
     @classmethod
-    def validate_website(cls, v):
-        """Validate and sanitize website URL"""
-        if v is not None:
-            return InputValidator.validate_website_url(v)
-        return v
-    
-    @field_validator('profile', 'digital', 'timeline', 'products', 'jobs', 'csr', 'press')
+    def validate_website(cls, v: HttpUrl | None) -> str | None:
+        """Validate website URL."""
+        if v is None:
+            return v
+
+        url_str = str(v)
+        url_lower = url_str.lower()
+
+        suspicious_patterns = [
+            'javascript:', 'data:', 'file:', 'ftp:',
+            'localhost', '127.0.0.1', '0.0.0.0'
+        ]
+
+        for pattern in suspicious_patterns:
+            if pattern in url_lower:
+                raise ValueError(f'URL contains suspicious content: {pattern}')
+
+        return url_str
+
+    @field_validator('profile', 'digital', 'timeline', 'products', 'jobs', 'csr', 'press', 'team')
     @classmethod
-    def validate_json_fields(cls, v, info):
-        """Validate JSON field data"""
-        if v is not None:
-            return InputValidator.validate_json_field(v, info.field_name)
-        return v
-    
-    @field_validator('team')
-    @classmethod
-    def validate_team(cls, v):
-        """Validate team data"""
-        if v is not None:
-            return InputValidator.validate_json_field(v, 'team')
+    def validate_json_fields(cls, v: Any, info) -> Any:
+        """Validate JSON field data to prevent attacks.
+
+        Args:
+            v: JSON data to validate
+            info: Field validation info
+
+        Returns:
+            Validated data
+
+        Raises:
+            ValueError: If data is invalid
+        """
+        if v is None:
+            return v
+
+        max_depth = 10
+        max_size = 10000  # characters
+
+        # Check serialized size
+        try:
+            json_str = json.dumps(v)
+        except (TypeError, ValueError):
+            raise ValueError(f"Invalid JSON data in field: {info.field_name}")
+
+        if len(json_str) > max_size:
+            raise ValueError(f"Field {info.field_name} data too large (max {max_size} characters)")
+
+        # Check nesting depth
+        def check_depth(obj: Any, current_depth: int = 0) -> None:
+            if current_depth > max_depth:
+                raise ValueError(f"Field {info.field_name} has too many nested levels (max {max_depth})")
+
+            if isinstance(obj, dict):
+                if len(obj) > 100:
+                    raise ValueError(f"Field {info.field_name} object has too many keys (max 100)")
+                for value in obj.values():
+                    check_depth(value, current_depth + 1)
+            elif isinstance(obj, list):
+                if len(obj) > 1000:
+                    raise ValueError(f"Field {info.field_name} array too large (max 1000 items)")
+                for item in obj:
+                    check_depth(item, current_depth + 1)
+
+        check_depth(v)
         return v
 
 class TaskResponse(BaseModel):
