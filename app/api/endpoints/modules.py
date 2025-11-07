@@ -23,9 +23,16 @@ async def get_workspace_modules(
     current_user: TokenData = Depends(get_current_user),
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
-    """Get all workspace module configurations (workspace members can view their own)"""
-    # Verify user has access to this workspace
-    if workspace_context.workspace.id != workspace_id:
+    """Get all workspace module configurations.
+
+    Workspace members can view their own workspace.
+    Users with admin.workspaces role can view any workspace.
+    """
+    # Check if user has admin.workspaces role or belongs to the workspace
+    is_workspace_admin = current_user.roles and "admin.workspaces" in current_user.roles
+    is_workspace_member = workspace_context.workspace.id == workspace_id
+
+    if not (is_workspace_admin or is_workspace_member):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access denied to this workspace"
@@ -60,9 +67,16 @@ async def get_module_tokens(
     current_user: TokenData = Depends(get_current_user),
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
-    """Get current token count for module"""
-    # Verify user has access to this workspace
-    if workspace_context.workspace.id != workspace_id:
+    """Get current token count for module.
+
+    Workspace members can view their own workspace modules.
+    Users with admin.workspaces role can view any workspace modules.
+    """
+    # Check if user has admin.workspaces role or belongs to the workspace
+    is_workspace_admin = current_user.roles and "admin.workspaces" in current_user.roles
+    is_workspace_member = workspace_context.workspace.id == workspace_id
+
+    if not (is_workspace_admin or is_workspace_member):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Access denied to this workspace"
