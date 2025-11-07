@@ -1,27 +1,35 @@
-"""
-Admin endpoints requiring admin role
+"""Admin endpoints requiring admin role.
+
+This module contains all admin-only endpoints that require specific admin roles.
+Uses fastapi-keycloak for automatic role-based access control via dependency injection.
 """
 
-from typing import List
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi_keycloak import OIDCUser
 from sqlalchemy.orm import Session
 
-from app.services.company import CompanyService
-from app.services.token_manager import TokenManager
-from app.services.workflow_config import WorkflowConfigService, WorkflowConfigResponse, WorkflowConfigUpdate
-from app.core.dependencies import get_company_service, get_current_user, get_token_manager
-from app.core.security import verify_admin_access, verify_workspace_admin_access, verify_workflow_admin_access
-from app.schemas.company import CompanyResponse
-from app.schemas.user import TokenData
-from app.schemas.module import (
-    WorkspaceModulesResponse, WorkspaceModuleResponse, ModuleUpdateRequest, 
-    AddTokensRequest, ModuleTokensResponse
-)
-from app.models.workspace import ModuleName
+from app.core.dependencies import get_company_service, get_token_manager
+from app.core.keycloak import idp
 from app.database import get_db
 from app.models.task import Task, TaskStatus
-from app.core.celery_app import celery_app
-from datetime import datetime
+from app.models.workspace import ModuleName
+from app.schemas.company import CompanyResponse
+from app.schemas.module import (
+    AddTokensRequest,
+    ModuleTokensResponse,
+    ModuleUpdateRequest,
+    WorkspaceModuleResponse,
+    WorkspaceModulesResponse,
+)
+from app.services.company import CompanyService
+from app.services.token_manager import TokenManager
+from app.services.workflow_config import (
+    WorkflowConfigResponse,
+    WorkflowConfigService,
+    WorkflowConfigUpdate,
+)
 
 router = APIRouter(
     prefix="/admin",
@@ -29,13 +37,15 @@ router = APIRouter(
 )
 
 
-@router.get("/companies", response_model=List[CompanyResponse])
+@router.get("/companies", response_model=list[CompanyResponse])
 async def get_all_companies_admin(
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))
 ):
-    """Get all companies (admin only)"""
-    verify_admin_access(current_user)
+    """Get all companies (admin only).
+
+    Requires admin role for access.
+    """
     return service.get_all_companies()  # No username filter for admin
 
 
@@ -43,10 +53,12 @@ async def get_all_companies_admin(
 async def get_company_admin(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))
 ):
-    """Get any company by ID (admin only)"""
-    verify_admin_access(current_user)
+    """Get any company by ID (admin only).
+
+    Requires admin role for access.
+    """
     company = service.get_company(company_id)
     if not company:
         raise HTTPException(
@@ -60,10 +72,12 @@ async def get_company_admin(
 async def delete_company_admin(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))
 ):
-    """Delete any company (admin only)"""
-    verify_admin_access(current_user)
+    """Delete any company (admin only).
+
+    Requires admin role for access.
+    """
     success = service.delete_company(company_id)
     if not success:
         raise HTTPException(
@@ -73,14 +87,16 @@ async def delete_company_admin(
     return {"success": True}
 
 
-@router.get("/users/{username}/companies", response_model=List[CompanyResponse])
+@router.get("/users/{username}/companies", response_model=list[CompanyResponse])
 async def get_user_companies_admin(
     username: str,
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))
 ):
-    """Get companies for a specific user (admin only)"""
-    verify_admin_access(current_user)
+    """Get companies for a specific user (admin only).
+
+    Requires admin role for access.
+    """
     return service.get_all_companies(username=username)
 
 
@@ -90,10 +106,12 @@ async def get_user_companies_admin(
 async def get_workspace_modules_admin(
     workspace_id: int,
     token_manager: TokenManager = Depends(get_token_manager),
-    current_user: TokenData = Depends(get_current_user)
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"]))
 ):
-    """Get workspace module configurations (admin only)"""
-    verify_workspace_admin_access(current_user)
+    """Get workspace module configurations (workspace admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     if not token_manager.validate_workspace_access(workspace_id):
         raise HTTPException(
@@ -121,10 +139,12 @@ async def update_workspace_modules_admin(
     workspace_id: int,
     updates: dict[ModuleName, ModuleUpdateRequest],
     token_manager: TokenManager = Depends(get_token_manager),
-    current_user: TokenData = Depends(get_current_user)
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"]))
 ):
-    """Update module enablement and token counts (admin only)"""
-    verify_workspace_admin_access(current_user)
+    """Update module enablement and token counts (workspace admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     if not token_manager.validate_workspace_access(workspace_id):
         raise HTTPException(
@@ -163,10 +183,12 @@ async def add_module_tokens_admin(
     module: ModuleName,
     request: AddTokensRequest,
     token_manager: TokenManager = Depends(get_token_manager),
-    current_user: TokenData = Depends(get_current_user)
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"]))
 ):
-    """Add tokens to specific module (admin only)"""
-    verify_workspace_admin_access(current_user)
+    """Add tokens to specific module (workspace admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     if not token_manager.validate_workspace_access(workspace_id):
         raise HTTPException(
@@ -192,10 +214,12 @@ async def toggle_module_admin(
     workspace_id: int,
     module: ModuleName,
     token_manager: TokenManager = Depends(get_token_manager),
-    current_user: TokenData = Depends(get_current_user)
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"]))
 ):
-    """Enable/disable module (admin only)"""
-    verify_workspace_admin_access(current_user)
+    """Enable/disable module (workspace admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     if not token_manager.validate_workspace_access(workspace_id):
         raise HTTPException(
@@ -222,13 +246,15 @@ async def toggle_module_admin(
 
 # Workflow Configuration Endpoints
 
-@router.get("/workflows", response_model=List[WorkflowConfigResponse])
+@router.get("/workflows", response_model=list[WorkflowConfigResponse])
 async def get_all_workflow_configs(
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_user)
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workflows"]))
 ):
-    """Get all workflow configurations with obfuscated API keys (admin only)"""
-    verify_workflow_admin_access(current_user)
+    """Get all workflow configurations with obfuscated API keys (workflow admin only).
+
+    Requires admin.workflows role for access.
+    """
     
     service = WorkflowConfigService(db)
     return service.get_all_configs()
@@ -239,10 +265,12 @@ async def update_workflow_config(
     task_type: str,
     update_data: WorkflowConfigUpdate,
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_user)
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workflows"]))
 ):
-    """Update workflow configuration (admin only)"""
-    verify_workflow_admin_access(current_user)
+    """Update workflow configuration (workflow admin only).
+
+    Requires admin.workflows role for access.
+    """
     
     service = WorkflowConfigService(db)
     updated_config = service.update_config(task_type, update_data)
@@ -269,14 +297,13 @@ async def update_workflow_config(
 @router.post("/tasks/fail-stuck")
 async def fail_stuck_tasks(
     db: Session = Depends(get_db),
-    current_user: TokenData = Depends(get_current_user)
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"]))
 ):
-    """
-    Fail all pending and running tasks and clear the task queue.
+    """Fail all pending and running tasks and clear the task queue.
+
     This is used to unlock the system when tasks get stuck.
     Requires admin.workspaces permission.
     """
-    verify_workspace_admin_access(current_user)
     
     # Get all pending and running tasks
     stuck_tasks = db.query(Task).filter(

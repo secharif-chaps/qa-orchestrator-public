@@ -4,14 +4,15 @@ Security middleware for request validation and sanitization
 
 import time
 import json
-import logging
 from typing import Callable
 from fastapi import Request, Response, HTTPException, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-logger = logging.getLogger(__name__)
+from app.core.logging_config import get_logger
 from app.core.validators import RequestValidator, ValidationError
+
+logger = get_logger(__name__)
 
 
 class SecurityMiddleware(BaseHTTPMiddleware):
@@ -43,11 +44,7 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         # Skip logging for OPTIONS preflight requests
         if request.method == "OPTIONS":
             return await call_next(request)
-        
-        # Skip all security checks for /api/companies/ route (debug mode)
-        if request.url.path == "/api/companies/":
-            return await call_next(request)
-        
+
         try:
             await self._check_rate_limit(request)
             await self._validate_request_size(request)
@@ -55,29 +52,57 @@ class SecurityMiddleware(BaseHTTPMiddleware):
             await self._validate_security_headers(request)
             
             response = await call_next(request)
-            
+
             # Only log errors
             if response.status_code >= 400:
-                print(f"🚨 {request.method} {request.url.path} - {response.status_code}")
-            
+                logger.warning(
+                    "Request returned error status",
+                    extra={
+                        "method": request.method,
+                        "path": request.url.path,
+                        "status_code": response.status_code
+                    }
+                )
+
             response = self._add_security_headers(response)
             return response
-            
+
         except ValidationError as e:
-            print(f"🛡️ Security blocked: {request.method} {request.url.path} - {e.detail}")
+            logger.warning(
+                "Security validation failed",
+                extra={
+                    "method": request.method,
+                    "path": request.url.path,
+                    "error": e.detail
+                }
+            )
             return JSONResponse(
                 status_code=e.status_code,
                 content={"detail": e.detail, "type": "validation_error"}
             )
         except HTTPException as e:
-            print(f"🛡️ Security blocked: {request.method} {request.url.path} - {e.detail}")
+            logger.warning(
+                "Security check blocked request",
+                extra={
+                    "method": request.method,
+                    "path": request.url.path,
+                    "error": e.detail
+                }
+            )
             return JSONResponse(
                 status_code=e.status_code,
                 content={"detail": e.detail}
             )
         except Exception as e:
-            print(f"🛡️ Security error: {type(e).__name__}: {str(e)}")
-            logger.error(f"Security middleware error: {type(e).__name__}: {str(e)}", exc_info=True)
+            logger.error(
+                "Security middleware error",
+                exc_info=True,
+                extra={
+                    "method": request.method,
+                    "path": request.url.path,
+                    "error_type": type(e).__name__
+                }
+            )
             return JSONResponse(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content={"detail": "Internal server error"}
@@ -205,19 +230,39 @@ class JSONValidationMiddleware(BaseHTTPMiddleware):
                         request._receive = receive
                         
                     except json.JSONDecodeError:
-                        print(f"📋 Invalid JSON in {request.method} {request.url.path}")
+                        logger.warning(
+                            "Invalid JSON in request",
+                            extra={
+                                "method": request.method,
+                                "path": request.url.path
+                            }
+                        )
                         return JSONResponse(
                             status_code=status.HTTP_400_BAD_REQUEST,
                             content={"detail": "Invalid JSON format"}
                         )
                     except ValidationError as e:
-                        print(f"📋 JSON validation failed: {e.detail}")
+                        logger.warning(
+                            "JSON validation failed",
+                            extra={
+                                "method": request.method,
+                                "path": request.url.path,
+                                "error": e.detail
+                            }
+                        )
                         return JSONResponse(
                             status_code=e.status_code,
                             content={"detail": e.detail}
                         )
             except Exception as e:
-                print(f"📋 JSON processing error: {str(e)}")
+                logger.error(
+                    "JSON processing error",
+                    exc_info=True,
+                    extra={
+                        "method": request.method,
+                        "path": request.url.path
+                    }
+                )
                 return JSONResponse(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     content={"detail": "Request processing error"}
