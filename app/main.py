@@ -5,6 +5,7 @@ from app.api.router import api_router
 from app.core.config import settings
 from app.core.middleware import SecurityMiddleware, JSONValidationMiddleware
 from app.core.database_security import setup_database_security
+from app.core.keycloak import idp
 from app.database import engine
 
 app = FastAPI(
@@ -34,7 +35,7 @@ development_origins = [
 ]
 
 print(f"CORS allowed origins: {development_origins}")
-print(f"CORS allowed methods: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD")
+print("CORS allowed methods: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD")
 
 app.add_middleware(
     CORSMiddleware,
