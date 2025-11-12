@@ -115,12 +115,20 @@ def execute_dify_workflow(self, task_id: int, company_id: int, task_type: str, a
             success_callback = f"{settings.BACKEND_BASE_URL}/webhooks/dify/tasks/{task.id}/callback"
             error_callback = success_callback  # Same endpoint, different status in payload
             token_callback = f"{settings.BACKEND_BASE_URL}/webhooks/dify/tasks/{task.id}/tokens"
-            
+
             # Debug logging for callback URLs
-            logger.info(f"🔗 CALLBACK URL DEBUG - Task {task_type} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
-            logger.info(f"🔗 CALLBACK URL DEBUG - Task {task_type} - Success callback: {success_callback}")
-            logger.info(f"🔗 CALLBACK URL DEBUG - Task {task_type} - Token callback: {token_callback}")
-            
+            logger.info(
+                f"🔗 URL DEBUG [dify_tasks.process_dify_workflow] Task {task_type}",
+                extra={
+                    "task_id": task_id,
+                    "task_type": task_type,
+                    "BACKEND_BASE_URL": settings.BACKEND_BASE_URL,
+                    "success_callback": success_callback,
+                    "error_callback": error_callback,
+                    "token_callback": token_callback,
+                }
+            )
+
             logger.info(f"Triggering Dify workflow for task {task_id} ({task_type}) - Company: {company.name}")
 
             # Create Dify service and trigger workflow (pass db session for knowledge data access)
