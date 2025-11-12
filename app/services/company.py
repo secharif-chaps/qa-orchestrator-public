@@ -372,12 +372,20 @@ class CompanyService:
         success_callback = f"{settings.BACKEND_BASE_URL}/webhooks/dify/tasks/{task.id}/callback"
         error_callback = success_callback  # Same endpoint, different status in payload
         token_callback = f"{settings.BACKEND_BASE_URL}/webhooks/dify/tasks/{task.id}/tokens"
-        
+
         # Debug logging for callback URLs
-        logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
-        logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Success callback: {success_callback}")
-        logger.info(f"🔗 CALLBACK URL DEBUG - Task {task.type.value} - Token callback: {token_callback}")
-        
+        logger.info(
+            f"🔗 URL DEBUG [CompanyService._prepare_task_callbacks] Task {task.type.value}",
+            extra={
+                "task_id": task.id,
+                "task_type": task.type.value,
+                "BACKEND_BASE_URL": settings.BACKEND_BASE_URL,
+                "success_callback": success_callback,
+                "error_callback": error_callback,
+                "token_callback": token_callback,
+            }
+        )
+
         return success_callback, error_callback, token_callback
 
     async def _execute_task(self, task: Task, company: Company) -> None:

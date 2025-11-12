@@ -196,6 +196,15 @@ class DifyService:
             "llm": llm,
         }
 
+        logger.info(
+            f"🔍 URL DEBUG [{task_type}] Step 1: Initial callback_webhook set",
+            extra={
+                "task_type": task_type,
+                "task_id": task_id,
+                "callback_webhook": success_callback,
+            }
+        )
+
         # Add knowledge data for non-data_collection workflows
         if task_type != "data_collection":
             knowledge = self._get_knowledge_data(company_id)
@@ -203,6 +212,14 @@ class DifyService:
             inputs["claude"] = knowledge["claude"]
             inputs["wikipedia"] = knowledge["wikipedia"]
             inputs["scraped"] = knowledge["scraped"]
+
+            logger.info(
+                f"🔍 URL DEBUG [{task_type}] Step 2: Added knowledge data (non-data_collection)",
+                extra={
+                    "task_type": task_type,
+                    "callback_webhook": inputs["callback_webhook"],
+                }
+            )
 
         # Add data collection flags for data_collection workflow
         if task_type == "data_collection":
@@ -212,6 +229,15 @@ class DifyService:
             inputs["wikipedia"] = "true"
             # data_collection workflow expects "callback_url" instead of "callback_webhook"
             inputs["callback_url"] = success_callback
+
+            logger.info(
+                f"🔍 URL DEBUG [{task_type}] Step 2: Set callback_url for data_collection",
+                extra={
+                    "task_type": task_type,
+                    "callback_url": success_callback,
+                    "callback_webhook": inputs.get("callback_webhook", "NOT SET"),
+                }
+            )
 
         # Add token callback URL if provided
         if token_callback_url:
@@ -241,6 +267,19 @@ class DifyService:
                 "inputs_keys": list(inputs.keys()),
                 "user": f"company_{company_id}",
             },
+        )
+
+        # Log the final callback URLs before sending to Dify
+        logger.info(
+            f"🔍 URL DEBUG [{task_type}] Step 3: FINAL URLs before Dify API call",
+            extra={
+                "task_type": task_type,
+                "task_id": task_id,
+                "callback_url": inputs.get("callback_url", "NOT SET"),
+                "callback_webhook": inputs.get("callback_webhook", "NOT SET"),
+                "token_callback_url": inputs.get("token_callback_url", "NOT SET"),
+                "all_input_keys": list(inputs.keys()),
+            }
         )
 
         # Log the inputs being sent (excluding sensitive data)
