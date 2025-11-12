@@ -1,4 +1,4 @@
-from typing import List, Optional, Dict, Any, Tuple
+from typing import List, Optional, Tuple
 from sqlalchemy.orm import Session
 from sqlalchemy import asc, desc
 
@@ -82,6 +82,6 @@ class SQLAlchemyCompanyRepository:
         
         # Single result log
         filter_info = f" (filtered by '{name_filter}')" if name_filter else ""
-        print(f"📊 Found {total_count} companies{filter_info}, returning {len(companies)} for page {pagination_params.page}")
+        logger.info(f"📊 Found {total_count} companies{filter_info}, returning {len(companies)} for page {pagination_params.page}")
         
         return companies, total_count 

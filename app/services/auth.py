@@ -1,10 +1,8 @@
 from keycloak import KeycloakOpenID, KeycloakAdmin
-from jose import JWTError, jwt
-from fastapi import HTTPException, status
+from jose import jwt
 from app.core.config import settings
 from app.schemas.user import TokenData
 from typing import Optional, Dict, Any
-import json
 
 
 class KeycloakService:
@@ -38,7 +36,7 @@ class KeycloakService:
             return token
         except Exception as e:
             # Log error without exposing sensitive information
-            print(f"Authentication failed for user {username}: Authentication error")
+            logger.debug(f"Authentication failed for user {username}: Authentication error")
             return None
 
     async def refresh_token(self, refresh_token: str) -> Optional[Dict[str, Any]]:
@@ -60,13 +58,13 @@ class KeycloakService:
     async def get_user_info(self, access_token: str) -> Optional[Dict[str, Any]]:
         """Get user info from access token"""
         try:
-            print(f"Calling userinfo endpoint with token: {access_token[:20]}...")
-            print(f"Keycloak server URL: {settings.KEYCLOAK_SERVER_URL}")
+            logger.debug(f"Calling userinfo endpoint with token: {access_token[:20]}...")
+            logger.debug(f"Keycloak server URL: {settings.KEYCLOAK_SERVER_URL}")
             userinfo = self.keycloak_openid.userinfo(access_token)
-            print(f"Userinfo response: {userinfo}")
+            logger.debug(f"Userinfo response: {userinfo}")
             return userinfo
         except Exception as e:
-            print(f"Userinfo error: {type(e).__name__}: {str(e)}")
+            logger.debug(f"Userinfo error: {type(e).__name__}: {str(e)}")
             return None
 
     async def verify_token(self, token: str) -> Optional[TokenData]:
@@ -151,20 +149,20 @@ class KeycloakService:
             return None
             
         except Exception as e:
-            print(f"Token verification error: {str(e)}")
+            logger.debug(f"Token verification error: {str(e)}")
             return None
 
     async def introspect_token(self, token: str) -> Optional[Dict[str, Any]]:
         """Introspect token (server-side validation)"""
         try:
-            print(f"Calling introspect endpoint with token: {token[:20]}...")
+            logger.debug(f"Calling introspect endpoint with token: {token[:20]}...")
             token_info = self.keycloak_openid.introspect(token)
-            print(f"Introspect response: {token_info}")
+            logger.debug(f"Introspect response: {token_info}")
             if token_info.get("active"):
                 return token_info
             return None
         except Exception as e:
-            print(f"Introspect error: {type(e).__name__}: {str(e)}")
+            logger.debug(f"Introspect error: {type(e).__name__}: {str(e)}")
             return None
 
 

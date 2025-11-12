@@ -1,7 +1,6 @@
 from typing import List, Optional, Dict, Any
 from uuid import UUID
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_
 from datetime import datetime
 
 from app.models import Folder, FolderItem, Company

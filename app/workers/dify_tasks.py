@@ -1,7 +1,6 @@
 """Dify workflow task worker with dynamic concurrency control."""
 from app.core.celery_app import celery_app, MAX_CONCURRENT_WORKFLOWS
 from celery import Task
-from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.task import Task as TaskModel, TaskStatus
 from app.models.company import Company
@@ -9,8 +8,6 @@ from app.core.config import settings
 from app.core.concurrency import DifyConcurrencyManager
 import logging
 import asyncio
-import time
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -73,10 +70,10 @@ def run_async_task(coro):
 def execute_dify_workflow(self, task_id: int, company_id: int, task_type: str, api_key: str, llm: str = "mistral"):
     """Execute Dify workflow with dynamic concurrency control."""
     logger.info(f"Starting workflow execution: Task {task_id}, Type: {task_type}, Company: {company_id}")
-    
+
     # Import here to avoid circular import
-    from app.infrastructure.dify.client import DifyClient
-    
+    from app.services.dify import DifyService
+
     with SessionLocal() as db:
         # Initialize concurrency manager
         concurrency_manager = DifyConcurrencyManager(db)
@@ -126,12 +123,12 @@ def execute_dify_workflow(self, task_id: int, company_id: int, task_type: str, a
             
             logger.info(f"Triggering Dify workflow for task {task_id} ({task_type}) - Company: {company.name}")
 
-            # Create Dify client and trigger workflow (pass db session for knowledge data access)
-            dify_client = DifyClient(db=db)
+            # Create Dify service and trigger workflow (pass db session for knowledge data access)
+            dify_service = DifyService(db=db)
 
             # Execute the async Dify workflow trigger with provided api_key
             result = run_async_task(
-                dify_client.trigger_workflow(
+                dify_service.run_workflow(
                     task_type=task_type,
                     company_name=company.name,
                     website=company.website,
@@ -139,7 +136,7 @@ def execute_dify_workflow(self, task_id: int, company_id: int, task_type: str, a
                     error_callback=error_callback,
                     task_id=task.id,
                     company_id=company.id,
-                    async_mode=True,
+                    response_mode="blocking",  # blocking mode for async execution
                     token_callback_url=token_callback,
                     api_key=api_key,
                     llm=llm

@@ -1,9 +1,13 @@
 """Pytest configuration and fixtures for security tests."""
 
+import os
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
+
+# Override Keycloak settings for local testing
+os.environ["KEYCLOAK_SERVER_URL"] = "http://localhost:8080"
 
 from app.main import app
 from app.database import Base

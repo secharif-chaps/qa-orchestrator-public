@@ -1,16 +1,13 @@
 from typing import List
 import logging
-from fastapi import APIRouter, Depends, HTTPException, status, Request
-from fastapi.responses import JSONResponse
-from pydantic import ValidationError
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.services.company import CompanyService
 from app.core.dependencies import get_company_service, get_current_user
 from app.core.workspace import get_user_workspace, WorkspaceContext
 from app.core.security import verify_company_workspace_access
-from app.schemas.task import TaskCreate, TaskResponse, TaskTokenUpdate
+from app.schemas.task import TaskResponse, TaskTokenUpdate
 from app.schemas.user import TokenData
-from app.models.task import TaskType
 
 # Configure logging
 logger = logging.getLogger(__name__)

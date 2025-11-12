@@ -1,18 +1,18 @@
-"""
-Cost Analysis API endpoints for admin users
+"""Cost Analysis API endpoints for admin users.
+
+All endpoints require admin.costs role for access.
 """
 
 from datetime import datetime, date, timedelta
-from typing import Optional, List, Dict, Any
+from typing import Optional, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi_keycloak import OIDCUser
 from sqlalchemy.orm import Session
-from sqlalchemy import func, and_, or_
+from sqlalchemy import func
 
 from app.database import get_db
-from app.core.dependencies import get_current_user
-from app.core.security import verify_cost_admin_access
-from app.schemas.user import TokenData
-from app.models import Task, TaskStatus, TaskType
+from app.core.keycloak import idp
+from app.models import Task, TaskStatus
 from app.models.company import Company
 from app.models.workspace import Workspace
 
@@ -23,17 +23,14 @@ router = APIRouter(prefix="/cost-analysis", tags=["cost-analysis"])
 async def get_global_cost_analysis(
     start_date: Optional[date] = Query(None, description="Start date for analysis (inclusive)"),
     end_date: Optional[date] = Query(None, description="End date for analysis (inclusive)"),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])),
     db: Session = Depends(get_db)
 ):
-    """
-    Get global cost analysis across all workspaces.
-    Requires admin.costs permission.
-    
+    """Get global cost analysis across all workspaces.
+
+    Requires admin.costs role for access.
     By default, returns data for the current month.
     """
-    # Verify admin.costs permission
-    verify_cost_admin_access(current_user)
     
     # Set default date range if not provided (current month)
     if not start_date:
@@ -98,17 +95,14 @@ async def get_cost_by_workspace(
     start_date: Optional[date] = Query(None, description="Start date for analysis (inclusive)"),
     end_date: Optional[date] = Query(None, description="End date for analysis (inclusive)"),
     workspace_id: Optional[int] = Query(None, description="Filter by specific workspace ID"),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])),
     db: Session = Depends(get_db)
 ):
-    """
-    Get cost analysis broken down by workspace.
-    Requires admin.costs permission.
-    
+    """Get cost analysis broken down by workspace.
+
+    Requires admin.costs role for access.
     By default, returns data for the current month.
     """
-    # Verify admin.costs permission
-    verify_cost_admin_access(current_user)
     
     # Set default date range if not provided (current month)
     if not start_date:
@@ -192,17 +186,14 @@ async def get_cost_by_task_type(
     start_date: Optional[date] = Query(None, description="Start date for analysis (inclusive)"),
     end_date: Optional[date] = Query(None, description="End date for analysis (inclusive)"),
     workspace_id: Optional[int] = Query(None, description="Filter by specific workspace ID"),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])),
     db: Session = Depends(get_db)
 ):
-    """
-    Get cost analysis broken down by task type.
-    Requires admin.costs permission.
-    
+    """Get cost analysis broken down by task type.
+
+    Requires admin.costs role for access.
     By default, returns data for the current month.
     """
-    # Verify admin.costs permission
-    verify_cost_admin_access(current_user)
     
     # Set default date range if not provided (current month)
     if not start_date:
@@ -286,17 +277,14 @@ async def get_cost_trends(
     end_date: Optional[date] = Query(None, description="End date for analysis (inclusive)"),
     granularity: str = Query("daily", description="Granularity: daily, weekly, or monthly"),
     workspace_id: Optional[int] = Query(None, description="Filter by specific workspace ID"),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])),
     db: Session = Depends(get_db)
 ):
-    """
-    Get cost trends over time.
-    Requires admin.costs permission.
-    
+    """Get cost trends over time.
+
+    Requires admin.costs role for access.
     By default, returns daily data for the current month.
     """
-    # Verify admin.costs permission
-    verify_cost_admin_access(current_user)
     
     # Set default date range if not provided
     if not start_date:
@@ -385,17 +373,14 @@ async def get_cost_trends(
 
 @router.post("/refresh-materialized-views")
 async def refresh_materialized_views(
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])),
     db: Session = Depends(get_db)
 ):
-    """
-    Refresh the materialized views for cost analysis.
-    Requires admin.costs permission.
-    
+    """Refresh the materialized views for cost analysis.
+
+    Requires admin.costs role for access.
     This should be called periodically to update the cached cost data.
     """
-    # Verify admin.costs permission
-    verify_cost_admin_access(current_user)
     
     try:
         # Refresh workspace cost summary view

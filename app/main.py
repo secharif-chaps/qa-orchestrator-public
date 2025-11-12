@@ -1,12 +1,17 @@
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
 from app.core.config import settings
+from app.core.logging_config import setup_logging, get_logger
 from app.core.middleware import SecurityMiddleware, JSONValidationMiddleware
 from app.core.database_security import setup_database_security
-from app.core.keycloak import idp
 from app.database import engine
+
+# Initialize logging with configured level
+setup_logging(level=getattr(settings, "LOG_LEVEL", "INFO"))
+logger = get_logger(__name__)
 
 app = FastAPI(
     title="Mint Backend API",
@@ -18,7 +23,8 @@ app = FastAPI(
 setup_database_security(engine)
 
 # Debug logging for CORS settings
-print(f"CORS Origin setting: {settings.CORS_ORIGIN}")
+logger.info(f"CORS Origin setting: {settings.CORS_ORIGIN}")
+logger.info(f"Backend Base URL: {settings.BACKEND_BASE_URL}")
 
 # Add CORS middleware FIRST (to handle preflight requests properly)
 # Allow common development origins for local testing
@@ -34,8 +40,8 @@ development_origins = [
     "http://10.0.1.2:8000",  # Backend on preprod server
 ]
 
-print(f"CORS allowed origins: {development_origins}")
-print("CORS allowed methods: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD")
+logger.info(f"CORS allowed origins: {development_origins}")
+logger.info("CORS allowed methods: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD")
 
 app.add_middleware(
     CORSMiddleware,

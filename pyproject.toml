@@ -9,7 +9,7 @@ package-mode = false
 python = "^3.9"
 fastapi = ">=0.115"
 uvicorn = "0.22.0"
-sqlalchemy = "2.0.17"
+sqlalchemy = ">=2.0.35"
 psycopg2-binary = ">=2.9.10"
 pydantic = ">=2.10"
 pydantic-settings = "2.0.1"
@@ -27,6 +27,7 @@ flower = "^2.0.1"
 kombu = "^5.3.4"
 starlette = ">=0.36"
 fastapi-keycloak = "1.1.1"
+dify-client = "^0.1.10"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"

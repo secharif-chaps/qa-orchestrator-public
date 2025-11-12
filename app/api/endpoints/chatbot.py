@@ -5,7 +5,7 @@ Handles context-aware conversations independent of specific resources
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.workspace import get_user_workspace, WorkspaceContext
 from app.core.dependencies import get_company_service
-from app.infrastructure.dify.client import DifyClient
+from app.services.dify import DifyService
 from app.schemas.chatbot import GlobalChatRequest, ChatResponse
 from app.services.company import CompanyService
 import logging
@@ -43,8 +43,8 @@ async def global_chat(
     logger.debug(f"Language: {chat_request.language}")
 
     try:
-        # Initialize Dify client
-        dify_client = DifyClient()
+        # Initialize Dify service
+        dify_service = DifyService()
 
         # Prepare contexts for Dify
         prepared_contexts = {}
@@ -146,7 +146,7 @@ Generate output according to the user's desired format and goals. Be specific, a
             system_context['system_message'] = prepared_contexts['system_message']
 
         # Send message to Dify with all contexts
-        response_data = await dify_client.send_global_chat_message(
+        response_data = await dify_service.send_global_chat_message(
             message=chat_request.message,
             contexts=prepared_contexts,
             system_context=system_context,

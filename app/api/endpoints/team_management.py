@@ -1,39 +1,32 @@
-"""
-Team Management Endpoints
+"""Team Management Endpoints.
 
-Provides endpoints for managing users within workspaces
+Provides endpoints for managing users within workspaces.
 Route: /api/workspaces/{workspaceId}/users
+
+All endpoints require workspace.write role for access.
 """
 
-from typing import List, Optional
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
+from fastapi_keycloak import OIDCUser
 from sqlalchemy.orm import Session
-from sqlalchemy import func, or_, and_
+from sqlalchemy import or_
 
 from app.database import get_db
-from app.core.dependencies import get_current_user
+from app.core.keycloak import idp
 from app.models.workspace import Workspace, WorkspaceMember, WorkspaceMemberStatus
 # NOTE: No User model - user references handled via username strings only
-from app.schemas.user import TokenData
 from app.schemas.team_management import (
     WorkspaceUser,
     WorkspaceUserCreate,
     WorkspaceUserUpdate,
-    WorkspaceUserListParams,
     TeamUserStatus,
     TeamUserSortField
 )
 from app.schemas.pagination import PaginatedResponse, create_pagination_meta
-from app.services.workspace_user import WorkspaceUserService
-from app.core.security import verify_workspace_permission_with_db
 from app.services.permission import PermissionService
 
 router = APIRouter(prefix="/workspaces", tags=["team-management"])
-
-
-def verify_workspace_write_permission(workspace_id: int, current_user: TokenData, db: Session):
-    """Verify user has workspace.write permission for the specified workspace"""
-    verify_workspace_permission_with_db(current_user, workspace_id, "workspace.write", db)
 
 
 @router.get("/{workspace_id}/users", response_model=PaginatedResponse[WorkspaceUser])
@@ -45,13 +38,13 @@ async def list_workspace_users(
     sort: TeamUserSortField = Query(TeamUserSortField.CREATED_AT, description="Field to sort by"),
     order: str = Query("desc", pattern="^(asc|desc)$", description="Sort order"),
     status: TeamUserStatus = Query(TeamUserStatus.ACTIVE, description="Filter by user status"),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
     db: Session = Depends(get_db)
 ):
-    """List workspace users with pagination, search, and filtering"""
-    
-    # Verify workspace.write permission
-    verify_workspace_write_permission(workspace_id, current_user, db)
+    """List workspace users with pagination, search, and filtering.
+
+    Requires workspace.write role for access.
+    """
     
     # Verify workspace exists
     workspace = db.query(Workspace).filter(Workspace.id == workspace_id).first()
@@ -160,13 +153,13 @@ async def list_workspace_users(
 async def create_workspace_user(
     workspace_id: int = Path(..., description="Workspace ID"),
     user_data: WorkspaceUserCreate = ...,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
     db: Session = Depends(get_db)
 ):
-    """Create a new user in the workspace"""
-    
-    # Verify workspace.write permission
-    verify_workspace_write_permission(workspace_id, current_user, db)
+    """Create a new user in the workspace.
+
+    Requires workspace.write role for access.
+    """
     
     # Verify workspace exists
     workspace = db.query(Workspace).filter(Workspace.id == workspace_id).first()
@@ -235,13 +228,13 @@ async def update_workspace_user(
     workspace_id: int = Path(..., description="Workspace ID"),
     user_id: int = Path(..., description="User ID"),
     user_update: WorkspaceUserUpdate = ...,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
     db: Session = Depends(get_db)
 ):
-    """Update workspace user (disable/enable, permissions)"""
-    
-    # Verify workspace.write permission
-    verify_workspace_write_permission(workspace_id, current_user, db)
+    """Update workspace user (disable/enable, permissions).
+
+    Requires workspace.write role for access.
+    """
     
     # Get the workspace member
     member = db.query(WorkspaceMember).filter(
@@ -275,7 +268,7 @@ async def update_workspace_user(
                 user_id=member.user_id,
                 workspace_id=workspace_id,
                 new_permissions=user_update.permissions,
-                granted_by=current_user.sub
+                granted_by=user.sub
             )
         
         db.commit()
@@ -283,10 +276,10 @@ async def update_workspace_user(
         
         # Get updated permissions from database
         user_permissions = permission_service.get_user_permissions_list(member.user_id, workspace_id)
-        
+
         # Fallback if no permissions found
-        if not user_permissions and member.user_id == current_user.sub:
-            user_permissions = current_user.roles or ["workspace.read"]
+        if not user_permissions and member.user_id == user.sub:
+            user_permissions = user.roles or ["workspace.read"]
         elif not user_permissions:
             user_permissions = ["workspace.read"]
         
@@ -316,13 +309,13 @@ async def update_workspace_user(
 async def get_workspace_user(
     workspace_id: int = Path(..., description="Workspace ID"),
     user_id: int = Path(..., description="User ID"),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
     db: Session = Depends(get_db)
 ):
-    """Get single workspace user details"""
-    
-    # Verify workspace.write permission
-    verify_workspace_write_permission(workspace_id, current_user, db)
+    """Get single workspace user details.
+
+    Requires workspace.write role for access.
+    """
     
     # Get the workspace member
     member = db.query(WorkspaceMember).filter(

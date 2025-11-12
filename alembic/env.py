@@ -13,7 +13,6 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Import the SQLAlchemy models
-from app.models.company import Company
 from app.database import Base
 
 # this is the Alembic Config object, which provides

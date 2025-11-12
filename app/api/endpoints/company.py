@@ -7,10 +7,10 @@ logger = logging.getLogger(__name__)
 
 from app.services.company import CompanyService
 from app.services.token_manager import TokenManager
-from app.core.dependencies import get_company_service, get_current_user, get_token_manager
+from app.core.dependencies import get_company_service, get_token_manager
 from app.core.workspace import get_user_workspace, WorkspaceContext
 from app.models.workspace import ModuleName
-from app.core.security import verify_company_ownership, verify_company_workspace_access, verify_company_modify_permission
+from app.core.security import verify_company_workspace_access, verify_company_modify_permission
 from app.schemas.company import (
     CompanyCreate, 
     CompanyUpdate, 
@@ -22,8 +22,7 @@ from app.schemas.company import (
 )
 from app.schemas.pagination import PaginationParams, PaginatedResponse, SortOrder
 from app.schemas.chat import ChatRequest, ChatResponse
-from app.schemas.user import TokenData
-from app.infrastructure.dify.client import DifyClient
+from app.services.dify import DifyService
 
 router = APIRouter(
     prefix="/companies",
@@ -37,7 +36,7 @@ async def get_recent_companies(
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
     """Get recent companies with their folder information"""
-    print(f"🏢 GET /companies/recent - User: {workspace_context.username}, Limit: {limit}")
+    logger.info(f"🏢 GET /companies/recent - User: {workspace_context.username}, Limit: {limit}")
     return service.get_recent_companies(
         workspace_id=workspace_context.workspace_id,
         limit=limit
@@ -60,7 +59,7 @@ async def get_companies(
 
     # Single line request log
     filter_info = f"name='{name}'" if name else "no filters"
-    print(f"🏢 GET /companies - User: {workspace_context.username} - Page: {page}, Size: {effective_per_page}, {filter_info}")
+    logger.info(f"🏢 GET /companies - User: {workspace_context.username} - Page: {page}, Size: {effective_per_page}, {filter_info}")
 
     pagination_params = PaginationParams(
         page=page,
@@ -83,21 +82,21 @@ async def get_company(
 ):
     """Get a company by ID (only if it belongs to user's workspace)"""
     try:
-        print(f"🏢 GET /api/companies/{company_id} - User: {workspace_context.username}, Workspace: {workspace_context.workspace_id}")
+        logger.info(f"🏢 GET /api/companies/{company_id} - User: {workspace_context.username}, Workspace: {workspace_context.workspace_id}")
         company = service.get_company(company_id)
         if not company:
-            print(f"❌ Company {company_id} not found")
+            logger.error(f"❌ Company {company_id} not found")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Company not found"
             )
-        print(f"✅ Company {company_id} found, verifying workspace access")
+        logger.info(f"✅ Company {company_id} found, verifying workspace access")
         return verify_company_workspace_access(company, workspace_context)
     except HTTPException:
         # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        print(f"❌ Unexpected error in get_company: {str(e)}")
+        logger.error(f"❌ Unexpected error in get_company: {str(e)}")
         logger.error(f"Unexpected error in get_company endpoint: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -123,38 +122,38 @@ async def create_company(
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
     """Create a new company"""
-    print(f"🏢 POST /api/companies/ - START - User: {workspace_context.username}, Data: {company_data.name[:50]}...")
+    logger.info(f"🏢 POST /api/companies/ - START - User: {workspace_context.username}, Data: {company_data.name[:50]}...")
     
     try:
         # Step 1: Consume token immediately (for 'screen' module - company creation/search/screening)
-        print(f"🪙 Checking and consuming token for screen module in workspace: {workspace_context.workspace_id}")
+        logger.info(f"🪙 Checking and consuming token for screen module in workspace: {workspace_context.workspace_id}")
         token_manager.consume_tokens(
             workspace_id=workspace_context.workspace_id,
             module_name=ModuleName.SCREEN,
             tokens=1
         )
-        print(f"✅ Token consumed successfully")
+        logger.info(f"✅ Token consumed successfully")
         
         # Step 2: Input validation already handled by Pydantic CompanyCreate model
-        print(f"📝 Processing company - Name: {company_data.name[:50]}, Website: {str(company_data.website)[:50]}")
+        logger.info(f"📝 Processing company - Name: {company_data.name[:50]}, Website: {str(company_data.website)[:50]}")
 
         # Step 3: Create company using the authenticated user's username as the owner
-        print(f"🔄 Calling service.create_company for authenticated user: {workspace_context.username} in workspace: {workspace_context.workspace_id}")
+        logger.info(f"🔄 Calling service.create_company for authenticated user: {workspace_context.username} in workspace: {workspace_context.workspace_id}")
         result = service.create_company(
             name=company_data.name,
             website=str(company_data.website),
             owner_username=workspace_context.username,
             workspace_id=workspace_context.workspace_id
         )
-        print(f"✅ Company created successfully - ID: {result.id}, Name: {result.name}")
+        logger.info(f"✅ Company created successfully - ID: {result.id}, Name: {result.name}")
         return result
         
     except ValidationError as e:
-        print(f"❌ Validation error: {str(e)}")
+        logger.error(f"❌ Validation error: {str(e)}")
         # Rollback token on validation failure
         try:
             token_manager.rollback_tokens(workspace_context.workspace_id, ModuleName.SCREEN, 1)
-            print(f"🔄 Token rolled back due to validation error")
+            logger.info(f"🔄 Token rolled back due to validation error")
         except Exception as rollback_error:
             logger.error(f"Failed to rollback token: {rollback_error}")
         
@@ -163,11 +162,11 @@ async def create_company(
             detail=f"Validation error: {str(e)}"
         )
     except ValueError as e:
-        print(f"❌ Value error: {str(e)}")
+        logger.error(f"❌ Value error: {str(e)}")
         # Rollback token on value error
         try:
             token_manager.rollback_tokens(workspace_context.workspace_id, ModuleName.SCREEN, 1)
-            print(f"🔄 Token rolled back due to value error")
+            logger.info(f"🔄 Token rolled back due to value error")
         except Exception as rollback_error:
             logger.error(f"Failed to rollback token: {rollback_error}")
         
@@ -176,14 +175,14 @@ async def create_company(
             detail=f"Invalid input: {str(e)}"
         )
     except Exception as e:
-        print(f"❌ Unexpected error creating company: {str(e)}")
+        logger.error(f"❌ Unexpected error creating company: {str(e)}")
         logger.error(f"Unexpected error in create_company: {str(e)}", exc_info=True)
         
         # Rollback token on any other failure (but skip token-related errors)
         if not ("insufficient_tokens" in str(e) or "not enabled" in str(e)):
             try:
                 token_manager.rollback_tokens(workspace_context.workspace_id, ModuleName.SCREEN, 1)
-                print(f"🔄 Token rolled back due to unexpected error")
+                logger.info(f"🔄 Token rolled back due to unexpected error")
             except Exception as rollback_error:
                 logger.error(f"Failed to rollback token: {rollback_error}")
         
@@ -283,9 +282,9 @@ async def chat_with_company(
         company = service.get_company(company_id)
         verify_company_workspace_access(company, workspace_context)
         
-        # Initialize Dify client
-        dify_client = DifyClient()
-        
+        # Initialize Dify service
+        dify_service = DifyService()
+
         # Prepare company context for the chat
         company_context = {
             "id": company.id,
@@ -300,14 +299,14 @@ async def chat_with_company(
             "press": company.press,
             "team": company.team
         }
-        
+
         # Convert chat history to simple format if provided
         chat_history = []
         if chat_request.chat_history:
             chat_history = [{"role": msg.role, "content": msg.content} for msg in chat_request.chat_history]
-        
+
         # Send message to Dify
-        response_data = await dify_client.send_chat_message(
+        response_data = await dify_service.send_chat_message(
             message=chat_request.message,
             company_context=company_context,
             chat_history=chat_history
@@ -333,7 +332,7 @@ async def restore_company(
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
     """Restore a soft-deleted company"""
-    print(f"🏢 POST /api/companies/{company_id}/restore - User: {workspace_context.username}")
+    logger.info(f"🏢 POST /api/companies/{company_id}/restore - User: {workspace_context.username}")
     
     # Verify modification permission
     verify_company_modify_permission(workspace_context, 'company.update')
@@ -356,7 +355,7 @@ async def get_archived_companies(
     workspace_context: WorkspaceContext = Depends(get_user_workspace)
 ):
     """Get all archived (soft-deleted) companies in the workspace"""
-    print(f"🏢 GET /api/companies/archived/list - User: {workspace_context.username}")
+    logger.info(f"🏢 GET /api/companies/archived/list - User: {workspace_context.username}")
     
     archived_companies = service.get_archived_companies(workspace_id=workspace_context.workspace_id)
     return archived_companies

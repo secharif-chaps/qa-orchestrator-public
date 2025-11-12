@@ -1,23 +1,22 @@
-from typing import List, Optional
+from typing import List
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi_keycloak import OIDCUser
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 # NOTE: No User model - user references handled via username strings only
-from app.core.dependencies import get_current_user
-from app.schemas.user import TokenData
+from app.core.keycloak import idp
 from app.schemas.folder import (
-    FolderCreate, 
-    FolderUpdate, 
-    FolderResponse, 
+    FolderCreate,
+    FolderUpdate,
+    FolderResponse,
     FolderWithItemsResponse,
     FolderItemAdd,
     FolderItemResponse
 )
 from app.services.folder import FolderService
 from app.core.workspace import get_user_workspace, WorkspaceContext
-from app.core.security import verify_workspace_permission_with_db
 
 
 router = APIRouter()
@@ -26,21 +25,19 @@ router = APIRouter()
 @router.post("/", response_model=FolderResponse)
 def create_folder(
     folder: FolderCreate,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
-    """Create a new folder in the workspace"""
+    """Create a new folder in the workspace.
+
+    Requires workspace.write role for access.
+    """
     import logging
     logger = logging.getLogger(__name__)
-    
+
     try:
         logger.info(f"📁 POST /folders - START - User: {workspace_context.username}, Folder: {folder.name}")
-        
-        # Check workspace write permission
-        logger.debug(f"📁 Checking workspace write permission for user {current_user.username} in workspace {workspace_context.workspace_id}")
-        verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
-        logger.debug(f"✅ Permission check passed")
         
         logger.debug(f"📁 Creating folder with owner_username={workspace_context.username}, workspace_id={workspace_context.workspace_id}")
         folder_obj = FolderService.create_folder(
@@ -72,13 +69,14 @@ def create_folder(
 def list_folders(
     archived: bool = Query(False),
     favorites: bool = Query(False),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.read"])),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
-    """List all folders in the workspace"""
-    # Check workspace read permission
-    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.read", db)
+    """List all folders in the workspace.
+
+    Requires workspace.read role for access.
+    """
     
     folders = FolderService.list_folders(
         db=db,
@@ -115,21 +113,19 @@ def list_folders(
 def get_folder(
     folder_id: UUID,
     archived: bool = Query(False),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.read"])),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
-    """Get a folder with its items, with optional filtering by archived status"""
+    """Get a folder with its items, with optional filtering by archived status.
+
+    Requires workspace.read role for access.
+    """
     import logging
     logger = logging.getLogger(__name__)
-    
+
     try:
         logger.info(f"📁 GET /folders/{folder_id} - START - User: {workspace_context.username}")
-        
-        # Check workspace read permission
-        logger.debug(f"📁 Checking workspace read permission")
-        verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.read", db)
-        logger.debug(f"✅ Permission check passed")
         
         logger.debug(f"📁 Getting folder with items - folder_id={folder_id}, workspace_id={workspace_context.workspace_id}")
         folder_data = FolderService.get_folder_with_items(
@@ -163,13 +159,14 @@ def get_folder(
 def update_folder(
     folder_id: UUID,
     folder_update: FolderUpdate,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
-    """Update a folder"""
-    # Check workspace write permission
-    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
+    """Update a folder.
+
+    Requires workspace.write role for access.
+    """
     
     folder = FolderService.get_folder(
         db=db,
@@ -214,13 +211,14 @@ def update_folder(
 def patch_folder(
     folder_id: UUID,
     folder_update: FolderUpdate,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
-    """Partially update a folder (for favorite toggle, etc.)"""
-    # Check workspace write permission
-    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
+    """Partially update a folder (for favorite toggle, etc.).
+
+    Requires workspace.write role for access.
+    """
     
     folder = FolderService.get_folder(
         db=db,
@@ -264,13 +262,14 @@ def patch_folder(
 @router.delete("/{folder_id}", response_model=FolderResponse)
 def delete_folder(
     folder_id: UUID,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
-    """Soft delete a folder"""
-    # Check workspace write permission
-    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
+    """Soft delete a folder.
+
+    Requires workspace.write role for access.
+    """
     
     folder = FolderService.get_folder(
         db=db,
@@ -310,13 +309,14 @@ def delete_folder(
 @router.post("/{folder_id}/restore", response_model=FolderResponse)
 def restore_folder(
     folder_id: UUID,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
-    """Restore a soft-deleted folder"""
-    # Check workspace write permission
-    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
+    """Restore a soft-deleted folder.
+
+    Requires workspace.write role for access.
+    """
     
     folder = FolderService.get_folder(
         db=db,
@@ -364,20 +364,20 @@ def restore_folder(
 def add_item_to_folder(
     folder_id: UUID,
     item: FolderItemAdd,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
-    """Add an item to a folder"""
+    """Add an item to a folder.
+
+    Requires workspace.write role for access.
+    """
     import logging
     logger = logging.getLogger(__name__)
-    
+
     try:
         logger.debug(f"Adding item to folder - folder_id: {folder_id}, item_id: {item.item_id}, item_type: {item.item_type}")
-        logger.debug(f"User context - user_id: {current_user.sub}, username: {workspace_context.username}")
-        
-        # Check workspace write permission
-        verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
+        logger.debug(f"User context - user_id: {user.sub}, username: {workspace_context.username}")
         
         folder = FolderService.get_folder(
             db=db,
@@ -412,13 +412,14 @@ def remove_item_from_folder(
     folder_id: UUID,
     item_id: UUID,
     item_type: str = Query(..., pattern="^(company|contact|document)$"),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
     workspace_context: WorkspaceContext = Depends(get_user_workspace),
     db: Session = Depends(get_db)
 ):
-    """Remove an item from a folder"""
-    # Check workspace write permission
-    verify_workspace_permission_with_db(current_user, workspace_context.workspace_id, "workspace.write", db)
+    """Remove an item from a folder.
+
+    Requires workspace.write role for access.
+    """
     
     folder = FolderService.get_folder(
         db=db,

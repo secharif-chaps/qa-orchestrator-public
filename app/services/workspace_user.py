@@ -4,7 +4,7 @@ Workspace User Management Service
 Combines Keycloak user management with workspace member tracking
 """
 
-from typing import List, Optional, Dict, Any
+from typing import Optional, Dict, Any
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 import logging
