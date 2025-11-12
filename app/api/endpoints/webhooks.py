@@ -308,12 +308,18 @@ async def dify_task_callback(
                             service.db.commit()
                             continue
 
+                        # Prepare callback URLs in FastAPI context before queueing to Celery
+                        success_callback, error_callback, token_callback = service._prepare_task_callbacks(unblocked_task)
+
                         logger.info(f"🚀 Queueing task {unblocked_task.id} ({unblocked_task.type.value})")
                         execute_dify_workflow.delay(
                             task_id=unblocked_task.id,
                             company_id=company.id,
                             task_type=unblocked_task.type.value,
                             api_key=workflow_config.api_key,
+                            success_callback=success_callback,
+                            error_callback=error_callback,
+                            token_callback=token_callback,
                             llm=workflow_config.llm
                         )
                 else:
