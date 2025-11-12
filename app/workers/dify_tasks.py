@@ -4,7 +4,6 @@ from celery import Task
 from app.database import SessionLocal
 from app.models.task import Task as TaskModel, TaskStatus
 from app.models.company import Company
-from app.core.config import settings
 from app.core.concurrency import DifyConcurrencyManager
 import logging
 import asyncio
@@ -67,7 +66,17 @@ def run_async_task(coro):
     name='execute_dify_workflow',
     queue='dify_workflows'
 )
-def execute_dify_workflow(self, task_id: int, company_id: int, task_type: str, api_key: str, llm: str = "mistral"):
+def execute_dify_workflow(
+    self,
+    task_id: int,
+    company_id: int,
+    task_type: str,
+    api_key: str,
+    success_callback: str,
+    error_callback: str,
+    token_callback: str,
+    llm: str = "mistral"
+):
     """Execute Dify workflow with dynamic concurrency control."""
     logger.info(f"Starting workflow execution: Task {task_id}, Type: {task_type}, Company: {company_id}")
 
@@ -111,21 +120,19 @@ def execute_dify_workflow(self, task_id: int, company_id: int, task_type: str, a
         logger.info(f"Task {task_id}: Started workflow ({running_count}/{concurrency_manager.max_concurrent} running)")
         
         try:
-            # Prepare callback URLs (replicate logic from CompanyService)
-            success_callback = f"{settings.BACKEND_BASE_URL}/webhooks/dify/tasks/{task.id}/callback"
-            error_callback = success_callback  # Same endpoint, different status in payload
-            token_callback = f"{settings.BACKEND_BASE_URL}/webhooks/dify/tasks/{task.id}/tokens"
+            # Callback URLs are passed as parameters from the backend
+            # No need to construct them here - eliminates BACKEND_BASE_URL dependency in worker
 
             # Debug logging for callback URLs
             logger.info(
-                f"🔗 URL DEBUG [dify_tasks.process_dify_workflow] Task {task_type}",
+                f"🔗 URL DEBUG [dify_tasks.execute_dify_workflow] Task {task_type}",
                 extra={
                     "task_id": task_id,
                     "task_type": task_type,
-                    "BACKEND_BASE_URL": settings.BACKEND_BASE_URL,
                     "success_callback": success_callback,
                     "error_callback": error_callback,
                     "token_callback": token_callback,
+                    "note": "URLs passed as parameters from backend",
                 }
             )
 
