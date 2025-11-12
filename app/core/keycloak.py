@@ -13,7 +13,13 @@ Usage:
 
 import time
 from fastapi_keycloak import FastAPIKeycloak
-from requests.exceptions import RequestException, Timeout, ConnectionError
+from requests.exceptions import (
+    RequestException,
+    Timeout,
+    ConnectionError,
+    HTTPError,
+    SSLError,
+)
 from app.core.config import settings
 from app.core.logging_config import get_logger
 
@@ -40,8 +46,14 @@ def _initialize_keycloak_with_retry(
         ConnectionError: If connection fails after all retry attempts
     """
     backoff = initial_backoff
+    # Construct expected OpenID configuration URL for debugging
+    openid_config_url = (
+        f"{settings.KEYCLOAK_SERVER_URL}/realms/{settings.KEYCLOAK_REALM}"
+        f"/.well-known/openid-configuration"
+    )
 
     for attempt in range(1, max_retries + 1):
+        start_time = time.time()
         try:
             logger.info(
                 f"Initializing Keycloak client (attempt {attempt}/{max_retries})",
@@ -50,6 +62,7 @@ def _initialize_keycloak_with_retry(
                     "realm": settings.KEYCLOAK_REALM,
                     "client_id": settings.KEYCLOAK_CLIENT_ID,
                     "timeout": 60,
+                    "openid_config_url": openid_config_url,
                 },
             )
 
@@ -65,6 +78,7 @@ def _initialize_keycloak_with_retry(
                 timeout=60,  # Increased from default 10s to handle production latency
             )
 
+            elapsed_time = time.time() - start_time
             logger.info(
                 "Keycloak client initialized successfully",
                 extra={
@@ -72,39 +86,180 @@ def _initialize_keycloak_with_retry(
                     "realm": settings.KEYCLOAK_REALM,
                     "client_id": settings.KEYCLOAK_CLIENT_ID,
                     "attempt": attempt,
+                    "elapsed_seconds": round(elapsed_time, 2),
                 },
             )
 
             return idp_instance
 
-        except (Timeout, ConnectionError, RequestException) as e:
+        except SSLError as e:
+            # SSL-specific error (certificate validation, handshake failure)
+            elapsed_time = time.time() - start_time
+            error_details = {
+                "exception_type": "SSLError",
+                "error_message": str(e),
+                "server_url": settings.KEYCLOAK_SERVER_URL,
+                "openid_config_url": openid_config_url,
+                "elapsed_seconds": round(elapsed_time, 2),
+                "ssl_error_details": repr(e),
+                "attempt": attempt,
+                "max_retries": max_retries,
+            }
+
             if attempt == max_retries:
                 logger.critical(
-                    "Failed to initialize Keycloak client after all retries",
+                    "SSL handshake failed after all retries - check SSL certificates and TLS configuration",
                     exc_info=True,
-                    extra={
-                        "server_url": settings.KEYCLOAK_SERVER_URL,
-                        "realm": settings.KEYCLOAK_REALM,
-                        "max_retries": max_retries,
-                        "error": str(e),
-                    },
+                    extra=error_details,
                 )
                 raise ConnectionError(
-                    f"Failed to connect to Keycloak at {settings.KEYCLOAK_SERVER_URL} "
+                    f"SSL connection to Keycloak failed at {settings.KEYCLOAK_SERVER_URL} "
+                    f"after {max_retries} attempts. SSL Error: {str(e)}"
+                ) from e
+
+            logger.warning(
+                f"SSL error during Keycloak connection (attempt {attempt}/{max_retries}), retrying in {backoff}s",
+                extra={**error_details, "backoff_seconds": backoff},
+            )
+
+            time.sleep(backoff)
+            backoff *= 2
+
+        except Timeout as e:
+            # Timeout error - request took longer than configured timeout
+            elapsed_time = time.time() - start_time
+            error_details = {
+                "exception_type": "Timeout",
+                "error_message": str(e),
+                "server_url": settings.KEYCLOAK_SERVER_URL,
+                "openid_config_url": openid_config_url,
+                "elapsed_seconds": round(elapsed_time, 2),
+                "configured_timeout": 60,
+                "attempt": attempt,
+                "max_retries": max_retries,
+            }
+
+            if attempt == max_retries:
+                logger.critical(
+                    "Connection to Keycloak timed out after all retries - Keycloak may be slow or unreachable",
+                    exc_info=True,
+                    extra=error_details,
+                )
+                raise ConnectionError(
+                    f"Timeout connecting to Keycloak at {settings.KEYCLOAK_SERVER_URL} "
+                    f"after {max_retries} attempts (60s timeout). Error: {str(e)}"
+                ) from e
+
+            logger.warning(
+                f"Timeout during Keycloak connection (attempt {attempt}/{max_retries}), retrying in {backoff}s",
+                extra={**error_details, "backoff_seconds": backoff},
+            )
+
+            time.sleep(backoff)
+            backoff *= 2
+
+        except HTTPError as e:
+            # HTTP error (4xx, 5xx response codes)
+            elapsed_time = time.time() - start_time
+            status_code = e.response.status_code if hasattr(e, "response") else None
+            response_text = (
+                e.response.text[:500] if hasattr(e, "response") else None
+            )  # Limit to 500 chars
+
+            error_details = {
+                "exception_type": "HTTPError",
+                "error_message": str(e),
+                "server_url": settings.KEYCLOAK_SERVER_URL,
+                "openid_config_url": openid_config_url,
+                "elapsed_seconds": round(elapsed_time, 2),
+                "http_status_code": status_code,
+                "response_text": response_text,
+                "attempt": attempt,
+                "max_retries": max_retries,
+            }
+
+            if attempt == max_retries:
+                logger.critical(
+                    f"HTTP error from Keycloak after all retries (status: {status_code})",
+                    exc_info=True,
+                    extra=error_details,
+                )
+                raise ConnectionError(
+                    f"HTTP error from Keycloak at {settings.KEYCLOAK_SERVER_URL} "
+                    f"after {max_retries} attempts. Status: {status_code}, Error: {str(e)}"
+                ) from e
+
+            logger.warning(
+                f"HTTP error during Keycloak connection (status: {status_code}, attempt {attempt}/{max_retries}), retrying in {backoff}s",
+                extra={**error_details, "backoff_seconds": backoff},
+            )
+
+            time.sleep(backoff)
+            backoff *= 2
+
+        except ConnectionError as e:
+            # Network connection error (DNS, refused connection, etc.)
+            elapsed_time = time.time() - start_time
+            error_details = {
+                "exception_type": "ConnectionError",
+                "error_message": str(e),
+                "server_url": settings.KEYCLOAK_SERVER_URL,
+                "openid_config_url": openid_config_url,
+                "elapsed_seconds": round(elapsed_time, 2),
+                "attempt": attempt,
+                "max_retries": max_retries,
+            }
+
+            if attempt == max_retries:
+                logger.critical(
+                    "Network connection to Keycloak failed after all retries - check DNS, firewall, and network connectivity",
+                    exc_info=True,
+                    extra=error_details,
+                )
+                raise ConnectionError(
+                    f"Network error connecting to Keycloak at {settings.KEYCLOAK_SERVER_URL} "
                     f"after {max_retries} attempts. Error: {str(e)}"
                 ) from e
 
             logger.warning(
-                f"Keycloak connection failed (attempt {attempt}/{max_retries}), retrying in {backoff}s",
-                extra={
-                    "server_url": settings.KEYCLOAK_SERVER_URL,
-                    "backoff_seconds": backoff,
-                    "error": str(e),
-                },
+                f"Network error during Keycloak connection (attempt {attempt}/{max_retries}), retrying in {backoff}s",
+                extra={**error_details, "backoff_seconds": backoff},
             )
 
             time.sleep(backoff)
-            backoff *= 2  # Exponential backoff: 2s, 4s, 8s, 16s, 32s
+            backoff *= 2
+
+        except RequestException as e:
+            # Generic requests exception (catch-all for other request errors)
+            elapsed_time = time.time() - start_time
+            error_details = {
+                "exception_type": type(e).__name__,
+                "error_message": str(e),
+                "server_url": settings.KEYCLOAK_SERVER_URL,
+                "openid_config_url": openid_config_url,
+                "elapsed_seconds": round(elapsed_time, 2),
+                "attempt": attempt,
+                "max_retries": max_retries,
+            }
+
+            if attempt == max_retries:
+                logger.critical(
+                    f"Request to Keycloak failed after all retries ({type(e).__name__})",
+                    exc_info=True,
+                    extra=error_details,
+                )
+                raise ConnectionError(
+                    f"Request error connecting to Keycloak at {settings.KEYCLOAK_SERVER_URL} "
+                    f"after {max_retries} attempts. Error: {str(e)}"
+                ) from e
+
+            logger.warning(
+                f"Request error during Keycloak connection ({type(e).__name__}, attempt {attempt}/{max_retries}), retrying in {backoff}s",
+                extra={**error_details, "backoff_seconds": backoff},
+            )
+
+            time.sleep(backoff)
+            backoff *= 2
 
     # This should never be reached, but satisfies type checker
     raise ConnectionError("Unexpected error in Keycloak initialization")
