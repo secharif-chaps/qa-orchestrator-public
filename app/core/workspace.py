@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import List
 from fastapi import HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from app.core.dependencies import get_current_user
@@ -58,12 +58,12 @@ def get_user_workspace(
         # If no database membership found, fall back to JWT token
         elif current_user.workspace_id:
             workspace_id = current_user.workspace_id
-            print(f"DEBUG get_user_workspace: Using JWT fallback, workspace_id={workspace_id}")
+            logger.debug(f"DEBUG get_user_workspace: Using JWT fallback, workspace_id={workspace_id}")
     else:
         # Priority 2: Use workspace from JWT token for regular users
         if current_user.workspace_id:
             workspace_id = current_user.workspace_id
-            print(f"DEBUG get_user_workspace: Regular user JWT workspace_id={workspace_id}")
+            logger.debug(f"DEBUG get_user_workspace: Regular user JWT workspace_id={workspace_id}")
         else:
             # Priority 3: Database lookup fallback - use most recently updated membership
             member = db.query(WorkspaceMember).filter(
@@ -73,7 +73,7 @@ def get_user_workspace(
             
             if member:
                 workspace_id = member.workspace_id
-                print(f"DEBUG get_user_workspace: Regular user DB fallback, workspace_id={workspace_id}")
+                logger.debug(f"DEBUG get_user_workspace: Regular user DB fallback, workspace_id={workspace_id}")
     
     if not workspace_id:
         raise HTTPException(

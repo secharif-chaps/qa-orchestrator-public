@@ -2,13 +2,13 @@
 Permission Service for granular permission management
 """
 
-from typing import List, Optional, Dict, Set
+from typing import List, Optional
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_
+from sqlalchemy import or_
 from fastapi import HTTPException, status
 import logging
 
-from app.models.permission import UserWorkspacePermission, PermissionType
+from app.models.permission import UserWorkspacePermission
 from app.models.workspace import Workspace
 from app.schemas.permission import (
     UserPermissionCreate,
@@ -17,7 +17,6 @@ from app.schemas.permission import (
     PermissionGrantRequest,
     PermissionRevokeRequest
 )
-from app.schemas.user import TokenData
 from app.services.keycloak_admin import keycloak_admin_service
 
 logger = logging.getLogger(__name__)
@@ -304,7 +303,7 @@ class PermissionService:
                     # Get all user permissions for this workspace to sync with Keycloak
                     all_user_permissions = self.get_user_permissions_list(user_id, workspace_id)
                     
-                    print(f"🔄 Setting roles {all_user_permissions} to user id {user_id}")
+                    logger.info(f"🔄 Setting roles {all_user_permissions} to user id {user_id}")
                     
                     # Sync roles with Keycloak
                     keycloak_sync_success = await keycloak_admin_service.sync_user_realm_roles(

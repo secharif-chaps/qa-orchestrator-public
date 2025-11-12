@@ -1,8 +1,12 @@
 """Celery configuration for Mint application."""
 from celery import Celery
-from celery.schedules import crontab
 from kombu import Queue
 import os
+from app.core.logging_config import setup_logging
+
+# Initialize logging for Celery workers
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+setup_logging(level=LOG_LEVEL)
 
 # Get broker URL from environment or use default
 RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq:5672//")

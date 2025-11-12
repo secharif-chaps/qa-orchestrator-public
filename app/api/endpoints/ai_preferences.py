@@ -9,7 +9,7 @@ from app.core.dependencies import get_company_service
 from app.database import get_db
 from app.services.user_preferences import UserPreferencesService
 from app.services.company import CompanyService
-from app.infrastructure.dify.client import DifyClient
+from app.services.dify import DifyService
 from app.schemas.ai_preferences import (
     AiPreferencesCreate,
     AiPreferencesResponse,
@@ -105,7 +105,7 @@ async def generate_quick_actions(
 
     # 3. Call Dify to generate quick actions
     try:
-        dify_client = DifyClient()
+        dify_service = DifyService()
 
         # Prepare user preferences context
         user_context = {
@@ -131,7 +131,7 @@ async def generate_quick_actions(
         }
 
         # Generate actions via Dify
-        result = await dify_client.generate_quick_actions(
+        result = await dify_service.generate_quick_actions(
             user_preferences=user_context,
             company_data=company_context
         )

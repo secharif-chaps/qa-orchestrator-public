@@ -265,10 +265,157 @@ class CompanyCreate(BaseModel):
 
 ### Authentication & Authorization
 
-**Use fastapi-keycloak** for route protection:
+**All authentication is now handled via fastapi-keycloak** with JWT-only permission checking.
+
+#### Basic Route Protection
+
+Use `idp.get_current_user()` dependency with `required_roles` parameter:
 
 ```python
-from fastapi import Depends
+from fastapi import Depends, APIRouter
+from fastapi_keycloak import OIDCUser
+from app.core.keycloak import idp
+
+router = APIRouter()
+
+@router.get("/admin/companies")
+async def list_all_companies(
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))
+):
+    """Admin endpoint - requires 'admin' role.
+
+    Requires admin role for access.
+    """
+    # Role checking happens automatically via dependency
+    # If user lacks 'admin' role, returns 403 automatically
+    return {"companies": [...]}
+```
+
+#### Permission Hierarchy
+
+**Global Admin Roles**:
+- `admin` - Full system access (admin endpoints)
+- `admin.workspaces` - Workspace administration
+- `admin.workflows` - Workflow configuration
+- `admin.costs` - Cost analysis access
+
+**User-Level Roles** (apply to user's own workspace):
+- `workspace.read` - Read access to user's workspace
+- `workspace.write` - Modify workspace and manage team
+- `company.view` - View companies in user's workspace
+- `company.create` - Create/search companies
+- `company.update` - Update companies (future)
+- `company.delete` - Delete companies
+
+#### Common Patterns
+
+**Single Role Required**:
+```python
+@router.post("/companies")
+def create_company(
+    data: CompanyCreate,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+):
+    """Requires company.create role for access."""
+    # User automatically has company.create role if we reach here
+```
+
+**Multiple Roles (OR logic)**:
+```python
+# User needs ANY ONE of these roles
+user: OIDCUser = Depends(idp.get_current_user(
+    required_roles=["admin", "admin.workspaces"]
+))
+```
+
+**Workspace Context**:
+For user workspace operations, combine role check with workspace context:
+
+```python
+from app.core.workspace import get_user_workspace, WorkspaceContext
+
+@router.get("/folders")
+def list_folders(
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.read"])),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    db: Session = Depends(get_db)
+):
+    """Requires workspace.read role for access."""
+    # workspace_context.workspace_id contains user's workspace
+    # workspace_context.username contains user's username
+```
+
+#### Advanced: Conditional Role Checks
+
+For conditional logic WITHIN endpoints, use helper functions from `app/core/auth.py`:
+
+```python
+from app.core.auth import verify_role_access, verify_any_role_access
+
+@router.get("/items")
+def get_items(
+    include_sensitive: bool = False,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.read"]))
+):
+    """Conditionally require higher permissions based on query params."""
+    items = get_base_items()
+
+    if include_sensitive:
+        # Additional role check for sensitive data
+        verify_role_access(user, "admin")  # Raises 403 if not admin
+        items = include_sensitive_fields(items)
+
+    return items
+```
+
+**Helper Functions**:
+- `verify_role_access(user, role)` - Check single role, raise 403 if missing
+- `verify_any_role_access(user, roles)` - Check if user has ANY of the roles
+
+#### Resource-Level Checks
+
+For business logic validation (ownership, workspace membership), use functions from `app/core/security.py`:
+
+```python
+from app.core.security import (
+    verify_company_workspace_access,
+    verify_company_modify_permission
+)
+
+@router.get("/companies/{company_id}")
+def get_company(
+    company_id: int,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.view"])),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    db: Session = Depends(get_db)
+):
+    """Requires company.view role for access."""
+    company = db.query(Company).filter(Company.id == company_id).first()
+
+    # Verify company belongs to user's workspace
+    verify_company_workspace_access(company, workspace_context)
+
+    return company
+```
+
+#### Migration Notes
+
+**OLD Pattern (deprecated)**:
+```python
+# ❌ Don't use these anymore
+from app.core.dependencies import get_current_user
+from app.core.security import verify_admin_access
+
+@router.get("/admin/users")
+def list_users(current_user: TokenData = Depends(get_current_user)):
+    verify_admin_access(current_user)  # Manual check
+    return {"users": [...]}
+```
+
+**NEW Pattern (current)**:
+```python
+# ✅ Use this pattern
 from fastapi_keycloak import OIDCUser
 from app.core.keycloak import idp
 
@@ -276,16 +423,27 @@ from app.core.keycloak import idp
 def list_users(
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))
 ):
-    """Automatic role checking via dependency."""
+    """Requires admin role for access."""
+    # Role checking automatic via dependency
     return {"users": [...]}
 ```
 
-**Permission Hierarchy**:
-- `admin` - Full system access
-- `workspace_admin` - Workspace management
-- `company.create` - Create companies
-- `company.view` - View companies
-- `company.delete` - Delete companies
+#### Docstring Convention
+
+**ALWAYS document required roles in docstrings**:
+
+```python
+@router.post("/folders")
+def create_folder(
+    folder: FolderCreate,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
+    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+):
+    """Create a new folder in the workspace.
+
+    Requires workspace.write role for access.
+    """
+```
 
 ---
 

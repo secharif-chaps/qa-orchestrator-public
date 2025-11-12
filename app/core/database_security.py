@@ -4,8 +4,8 @@ Database security utilities and enhanced query protection
 
 import time
 import logging
-from typing import Any, Dict, List, Optional, Union
-from sqlalchemy import text, event
+from typing import Any, Dict
+from sqlalchemy import event
 from sqlalchemy.orm import Session
 from sqlalchemy.engine import Engine
 from contextlib import contextmanager

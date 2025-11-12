@@ -3,7 +3,7 @@ Service for managing task dependencies and execution order
 """
 from typing import List
 from sqlalchemy.orm import Session
-from app.models.task import Task, TaskDependency, TaskStatus, TaskType
+from app.models.task import Task, TaskDependency, TaskStatus
 import logging
 
 logger = logging.getLogger(__name__)

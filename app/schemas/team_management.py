@@ -2,7 +2,6 @@
 Schemas for team management feature
 """
 
-from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field, EmailStr, validator
 from enum import Enum

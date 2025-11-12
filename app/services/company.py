@@ -1,20 +1,21 @@
 from typing import List, Dict, Any, Optional
 import logging
+from datetime import datetime
 from sqlalchemy.orm import Session
 from app.models.company import Company
 from app.models.task import Task, TaskType, TaskStatus
 from app.models.workflow_config import WorkflowConfig
 from app.schemas.company import (
-    CompanyCreate, CompanyUpdate, CompanyResponse,
+    CompanyResponse,
     CompanyCSVRow, CompanyCSVValidationError, CompanyCSVValidationResponse,
     CompanyCSVImportResponse, CompanyCSVImportResult
 )
 from app.schemas.task import TaskTokenUpdate
 from app.schemas.pagination import PaginationParams, PaginatedResponse, create_pagination_meta
-from app.infrastructure.dify.client import DifyClient
+from app.services.dify import DifyService
 from app.core.database_security import SecureQueryBuilder
 from app.core.validators import ValidationError, InputValidator
-from app.infrastructure.database.repositories.company_repository_impl import SQLAlchemyCompanyRepository
+from app.repositories.company_repository_impl import SQLAlchemyCompanyRepository
 from app.core.config import settings
 from app.workers.dify_tasks import execute_dify_workflow
 from app.services.token_manager import TokenManager
@@ -140,7 +141,7 @@ def _parse_json_fields(company: Company) -> Company:
 class CompanyService:
     def __init__(self, db: Session):
         self.db = db
-        self.dify_client = DifyClient(db)  # Pass database session for workflow config access
+        self.dify_service = DifyService(db)  # Pass database session for workflow config access
         self.secure_query = SecureQueryBuilder(db)
         self.repository = SQLAlchemyCompanyRepository(db)
     
@@ -388,9 +389,9 @@ class CompanyService:
             
             # Prepare callback URLs using helper method
             success_callback, error_callback, token_callback = self._prepare_task_callbacks(task)
-            
-            # Trigger Dify workflow with callbacks (ASYNC mode - fire and forget)
-            result = await self.dify_client.trigger_workflow(
+
+            # Trigger Dify workflow with callbacks (streaming mode - fire and forget)
+            result = await self.dify_service.run_workflow(
                 task_type=task.type.value,
                 company_name=company.name,
                 website=company.website,
@@ -398,15 +399,18 @@ class CompanyService:
                 error_callback=error_callback,
                 task_id=task.id,
                 company_id=company.id,
-                async_mode=True,
+                response_mode="streaming",  # Fire-and-forget mode
                 token_callback_url=token_callback
             )
-            
-            # In async mode, we just log the trigger confirmation
-            logger.info(f"✅ Dify {task.type.value} workflow triggered (async): {result}")
-            
-            # Task remains in RUNNING state - will be updated via callback
-            # No need to update company data here - callback will handle it
+
+            logger.info(f"✅ Dify {task.type.value} workflow triggered (fire-and-forget): {result}")
+
+            # Task remains in RUNNING state - will be updated via webhook callback
+            # The callback at /webhooks/dify/tasks/{task_id}/callback will handle:
+            # - Processing the workflow data
+            # - Marking task as SUCCEEDED
+            # - Unblocking dependent tasks
+            # - Queueing dependent tasks
             self.db.commit()
             
         except Exception as e:
@@ -519,7 +523,6 @@ class CompanyService:
     def get_recent_companies(self, workspace_id: int, limit: int = 5) -> List[CompanyResponse]:
         """Get recent companies with their folder information"""
         from app.models.folder import FolderItem, Folder
-        from sqlalchemy import func
 
         # Get recent companies ordered by created_at
         companies = (

@@ -9,113 +9,13 @@ These tests verify that:
 """
 
 import pytest
-from fastapi import HTTPException
 
 from app.core.security import (
-    verify_admin_access,
-    verify_workspace_admin_access,
-    verify_workflow_admin_access,
-    verify_cost_admin_access,
     verify_workspace_permission,
     verify_company_modify_permission,
     AuthorizationError
 )
 from app.schemas.user import TokenData
-
-
-class TestAdminAccess:
-    """Test suite for admin access verification."""
-
-    def test_admin_access_with_admin_role(self, admin_user):
-        """Test that user with admin role can access admin functions."""
-        result = verify_admin_access(admin_user)
-        assert result == admin_user
-
-    def test_admin_access_without_admin_role(self, regular_user):
-        """Test that user without admin role cannot access admin functions."""
-        with pytest.raises(AuthorizationError) as exc_info:
-            verify_admin_access(regular_user)
-        assert "Admin access required" in str(exc_info.value.detail)
-
-    def test_admin_access_with_no_roles(self, no_permission_user):
-        """Test that user with no roles cannot access admin functions."""
-        with pytest.raises(AuthorizationError):
-            verify_admin_access(no_permission_user)
-
-    def test_admin_access_with_none_roles(self):
-        """Test that user with None roles cannot access admin functions."""
-        user = TokenData(username="test", sub="test-uuid", roles=None)
-        with pytest.raises(AuthorizationError):
-            verify_admin_access(user)
-
-
-class TestWorkspaceAdminAccess:
-    """Test suite for workspace admin access verification."""
-
-    def test_workspace_admin_access_with_correct_role(self, workspace_admin_user):
-        """Test that user with admin.workspaces role can access workspace admin functions."""
-        result = verify_workspace_admin_access(workspace_admin_user)
-        assert result == workspace_admin_user
-
-    def test_workspace_admin_access_without_correct_role(self, admin_user):
-        """Test that user with only admin role gets workspace admin access."""
-        # Admin role alone should NOT grant workspace admin access
-        admin_only = TokenData(
-            username="admin",
-            sub="admin-uuid",
-            roles=["admin"],
-            workspace_id=1
-        )
-        with pytest.raises(AuthorizationError) as exc_info:
-            verify_workspace_admin_access(admin_only)
-        assert "admin.workspaces" in str(exc_info.value.detail)
-
-    def test_workspace_admin_access_with_no_permissions(self, no_permission_user):
-        """Test that user with no permissions cannot access workspace admin functions."""
-        with pytest.raises(AuthorizationError):
-            verify_workspace_admin_access(no_permission_user)
-
-
-class TestWorkflowAdminAccess:
-    """Test suite for workflow admin access verification."""
-
-    def test_workflow_admin_access_with_correct_role(self):
-        """Test that user with admin.workflows role can access workflow admin functions."""
-        user = TokenData(
-            username="workflow_admin",
-            sub="wfadmin-uuid",
-            roles=["admin.workflows"],
-            workspace_id=1
-        )
-        result = verify_workflow_admin_access(user)
-        assert result == user
-
-    def test_workflow_admin_access_without_correct_role(self, regular_user):
-        """Test that user without admin.workflows role cannot access workflow admin functions."""
-        with pytest.raises(AuthorizationError) as exc_info:
-            verify_workflow_admin_access(regular_user)
-        assert "admin.workflows" in str(exc_info.value.detail)
-
-
-class TestCostAdminAccess:
-    """Test suite for cost admin access verification."""
-
-    def test_cost_admin_access_with_correct_role(self):
-        """Test that user with admin.costs role can access cost admin functions."""
-        user = TokenData(
-            username="cost_admin",
-            sub="costadmin-uuid",
-            roles=["admin.costs"],
-            workspace_id=1
-        )
-        result = verify_cost_admin_access(user)
-        assert result == user
-
-    def test_cost_admin_access_without_correct_role(self, regular_user):
-        """Test that user without admin.costs role cannot access cost admin functions."""
-        with pytest.raises(AuthorizationError) as exc_info:
-            verify_cost_admin_access(regular_user)
-        assert "admin.costs" in str(exc_info.value.detail)
 
 
 class TestWorkspacePermission:

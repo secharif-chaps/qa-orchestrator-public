@@ -6,7 +6,7 @@ import re
 import html
 from typing import Any, Optional
 from urllib.parse import urlparse
-from pydantic import validator, ValidationError
+from pydantic import ValidationError
 from fastapi import HTTPException, status
 
 

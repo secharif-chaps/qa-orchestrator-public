@@ -1,14 +1,14 @@
-"""
-Security monitoring and administration endpoints
+"""Security monitoring and administration endpoints.
+
+All admin endpoints require admin role for access.
 """
 
 from typing import Dict, Any
 from fastapi import APIRouter, Depends
+from fastapi_keycloak import OIDCUser
 
-from app.core.dependencies import get_current_user
-from app.core.security import verify_admin_access
+from app.core.keycloak import idp
 from app.core.database_security import get_database_stats
-from app.schemas.user import TokenData
 
 router = APIRouter(
     prefix="/security",
@@ -18,10 +18,12 @@ router = APIRouter(
 
 @router.get("/stats", response_model=Dict[str, Any])
 async def get_security_stats(
-    current_user: TokenData = Depends(get_current_user)
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))
 ):
-    """Get security statistics (admin only)"""
-    verify_admin_access(current_user)
+    """Get security statistics (admin only).
+
+    Requires admin role for access.
+    """
     
     # Get database statistics
     db_stats = get_database_stats()

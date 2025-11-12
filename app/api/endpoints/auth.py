@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from app.schemas.user import LoginRequest, RefreshTokenRequest, Token, User, TokenData
+from app.schemas.user import LoginRequest, RefreshTokenRequest, Token
 from app.services.auth import keycloak_service
 from typing import Dict, Any
 import logging

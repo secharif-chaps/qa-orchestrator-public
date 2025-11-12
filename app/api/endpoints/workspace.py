@@ -1,13 +1,15 @@
 from typing import List, Optional
 from datetime import timezone
 from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi_keycloak import OIDCUser
 from sqlalchemy.orm import Session
 from sqlalchemy import func, case
 from app.database import get_db
 from app.core.workspace import (
-    get_user_workspace, 
+    get_user_workspace,
     WorkspaceContext
 )
+from app.core.keycloak import idp
 from app.models.workspace import Workspace, WorkspaceMember, WorkspaceMemberStatus
 # NOTE: No User model - user references handled via username strings only
 from app.models.company import Company
@@ -23,7 +25,7 @@ from app.schemas.workspace import (
     WorkspaceWithMemberCount,
     ActivityResponse
 )
-from app.schemas.pagination import PaginatedResponse, PaginationParams, SortOrder, create_pagination_meta
+from app.schemas.pagination import PaginatedResponse, SortOrder, create_pagination_meta
 from app.schemas.workspace_user import (
     WorkspaceUserCreate,
     WorkspaceUserUpdate,
@@ -41,7 +43,6 @@ from app.schemas.admin_user import (
 )
 from app.schemas.user import TokenData
 from app.core.dependencies import get_current_user
-from app.core.security import verify_workspace_admin_access
 from app.services.workspace_user import WorkspaceUserService
 
 router = APIRouter(prefix="/workspace", tags=["workspace"])
@@ -315,12 +316,13 @@ async def get_all_workspaces(
     sort: str = Query('created_at', description="Field to sort by (name, created_at, member_count)"),
     order: SortOrder = Query(SortOrder.DESC, description="Sort order"),
     search: Optional[str] = Query(None, description="Search workspaces by name or slug"),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Get all workspaces with member counts (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Get all workspaces with member counts (admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     # Build the base query with member count
     query = db.query(
@@ -396,12 +398,13 @@ async def get_all_workspaces(
 @router.get("/admin/{workspace_id}/details", response_model=WorkspaceWithMemberCount)
 async def get_workspace_details(
     workspace_id: int,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Get single workspace with member count (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Get single workspace with member count (admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     # Query workspace with member count using efficient JOIN
     result = db.query(
@@ -451,12 +454,13 @@ async def get_workspace_details(
 @router.post("/admin", response_model=WorkspaceResponse)
 async def create_workspace(
     workspace_data: WorkspaceCreate,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Create a new workspace (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Create a new workspace (admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     # Check if slug already exists
     existing_workspace = db.query(Workspace).filter(
@@ -487,12 +491,13 @@ async def create_workspace(
 async def update_workspace(
     workspace_id: int,
     workspace_data: WorkspaceUpdate,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Update a workspace (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Update a workspace (admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     # Get workspace to update
     workspace = db.query(Workspace).filter(Workspace.id == workspace_id).first()
@@ -533,12 +538,13 @@ async def update_workspace(
 @router.delete("/admin/{workspace_id}")
 async def delete_workspace(
     workspace_id: int,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Delete a workspace (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Delete a workspace (admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     # Get workspace to delete
     workspace = db.query(Workspace).filter(Workspace.id == workspace_id).first()
@@ -576,12 +582,13 @@ async def delete_workspace(
 @router.get("/admin/{workspace_id}/members", response_model=List[WorkspaceMemberResponse])
 async def get_workspace_members_admin(
     workspace_id: int,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Get members of any workspace (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Get members of any workspace (admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     # Verify workspace exists
     workspace = db.query(Workspace).filter(Workspace.id == workspace_id).first()
@@ -604,12 +611,13 @@ async def get_workspace_members_admin(
 async def create_workspace_user(
     workspace_id: int,
     user_data: WorkspaceUserCreate,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Create a new Keycloak user and add to workspace (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Create a new Keycloak user and add to workspace (admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     user_service = WorkspaceUserService(db)
     return await user_service.create_user(workspace_id, user_data)
@@ -622,12 +630,13 @@ async def get_workspace_users(
     limit: int = 20,
     search: Optional[str] = None,
     status: Optional[str] = None,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Get paginated list of workspace users (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Get paginated list of workspace users (admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     # Create query parameters
     query = UserQueryParams(
@@ -645,12 +654,13 @@ async def get_workspace_users(
 async def get_workspace_user(
     workspace_id: int,
     user_id: str,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Get specific workspace user details (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Get specific workspace user details (admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     user_service = WorkspaceUserService(db)
     user = await user_service.get_user(workspace_id, user_id)
@@ -669,12 +679,13 @@ async def update_workspace_user(
     workspace_id: int,
     user_id: str,
     user_data: WorkspaceUserUpdate,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Update workspace user details (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Update workspace user details (admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     user_service = WorkspaceUserService(db)
     return await user_service.update_user(workspace_id, user_id, user_data)
@@ -685,12 +696,13 @@ async def toggle_user_status(
     workspace_id: int,
     user_id: str,
     status_data: UserStatusRequest,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Enable or disable user account (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Enable or disable user account (admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     user_service = WorkspaceUserService(db)
     return await user_service.toggle_user_status(workspace_id, user_id, status_data.enabled)
@@ -700,12 +712,13 @@ async def toggle_user_status(
 async def remove_workspace_user(
     workspace_id: int,
     user_id: str,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Remove user from workspace (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Remove user from workspace (admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     user_service = WorkspaceUserService(db)
     success = await user_service.delete_user(workspace_id, user_id)
@@ -723,12 +736,13 @@ async def remove_workspace_user(
 async def send_password_reset(
     workspace_id: int,
     user_id: str,
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Send password reset email to user (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Send password reset email to user (admin only).
+
+    Requires admin.workspaces role for access.
+    """
     
     user_service = WorkspaceUserService(db)
     success = await user_service.send_password_reset(workspace_id, user_id)
@@ -756,12 +770,13 @@ async def get_all_users(
     workspace_filter: Optional[str] = Query(None, description="Filter by workspace: 'none', workspace_id, or null for all"),
     sort: str = Query('created_at', description="Sort field: username, workspace, created_at"),
     order: SortOrder = Query(SortOrder.DESC, description="Sort order"),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Get all users across all workspaces with filtering and sorting (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Get all users across all workspaces with filtering and sorting (admin only).
+
+    Requires admin.workspaces role for access.
+    """
 
     # Build query with workspace join
     query = db.query(
@@ -849,12 +864,13 @@ async def get_all_users(
 async def assign_user_workspace(
     user_id: str,
     request: AssignWorkspaceRequest,
-    current_user: TokenData = Depends(get_current_user),
+    current_user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.workspaces"])),
     db: Session = Depends(get_db)
 ):
-    """Assign user to workspace or change their workspace (admin only)"""
-    # Verify admin access
-    verify_workspace_admin_access(current_user)
+    """Assign user to workspace or change their workspace (admin only).
+
+    Requires admin.workspaces role for access.
+    """
 
     # Verify workspace exists
     workspace = db.query(Workspace).filter(Workspace.id == request.workspace_id).first()

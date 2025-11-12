@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from app.database import get_db
-from app.infrastructure.database.repositories.company_repository_impl import SQLAlchemyCompanyRepository
 from app.services.company import CompanyService
 from app.services.token_manager import TokenManager
 from app.services.auth import keycloak_service
@@ -35,7 +34,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         token_data = await keycloak_service.verify_token(token)
         
         if not token_data:
-            print(f"🔐 Auth failed - Invalid token")
+            logger.debug(f"🔐 Auth failed - Invalid token")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials",
@@ -45,7 +44,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         return token_data
         
     except Exception as e:
-        print(f"🔐 Auth error: {str(e)}")
+        logger.debug(f"🔐 Auth error: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",

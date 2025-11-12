@@ -82,7 +82,7 @@ class TestSQLInjectionPrevention:
         """
         # Try to import sanitize_input - should fail after refactoring
         with pytest.raises(ImportError):
-            from app.core.security import sanitize_input
+            pass
 
     def test_no_request_validator_class(self):
         """Test that RequestValidator class has been removed.
@@ -91,7 +91,7 @@ class TestSQLInjectionPrevention:
         Validation should be done by Pydantic models and FastAPI.
         """
         with pytest.raises(ImportError):
-            from app.core.validators import RequestValidator
+            pass
 
     def test_no_input_validator_class(self):
         """Test that InputValidator class has been removed.
@@ -100,7 +100,7 @@ class TestSQLInjectionPrevention:
         Validation should be done by Pydantic field validators.
         """
         with pytest.raises(ImportError):
-            from app.core.validators import InputValidator
+            pass
 
     def test_company_name_with_sql_injection_attempt(self):
         """Test that SQL injection attempts in company name fail validation."""

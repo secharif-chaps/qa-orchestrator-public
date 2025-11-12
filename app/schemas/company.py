@@ -1,12 +1,10 @@
 import re
 import json
 from typing import Dict, List, Optional, Any
-from urllib.parse import urlparse
 from pydantic import BaseModel, Field, ConfigDict, field_validator, HttpUrl
 from datetime import datetime
 
 from app.models.task import TaskStatus, TaskType
-from app.schemas.pagination import PaginatedResponse
 
 
 class CompanyBase(BaseModel):
@@ -221,6 +219,7 @@ class TaskResponse(BaseModel):
 class CompanyResponse(CompanyBase):
     id: int
     owner_username: str
+    website: str  # Override to str since validator converts HttpUrl to str
     profile: Dict[str, Any] = Field(default_factory=dict)
     digital: Dict[str, Any] = Field(default_factory=dict)
     timeline: Dict[str, Any] = Field(default_factory=dict)
