@@ -28,6 +28,7 @@ kombu = "^5.3.4"
 starlette = ">=0.36"
 fastapi-keycloak = "1.1.1"
 dify-client = "^0.1.10"
+PyJWT = "^2.8.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
