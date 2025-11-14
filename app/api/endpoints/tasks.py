@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.services.company import CompanyService
 from app.core.dependencies import get_company_service, get_current_user
-from app.core.workspace import get_user_workspace, WorkspaceContext
+from app.core.organization import get_user_organization, OrganizationContext
 from app.core.security import verify_company_workspace_access
 from app.schemas.task import TaskResponse, TaskTokenUpdate
 from app.schemas.user import TokenData
@@ -73,11 +73,11 @@ async def get_company_tasks(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
     current_user: TokenData = Depends(get_current_user),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Get all tasks for a company (if user has access to the company's workspace)"""
+    """Get all tasks for a company (if user has access to the company's organization)"""
     company = service.get_company(company_id)
-    verify_company_workspace_access(company, workspace_context)
+    verify_company_workspace_access(company, org_context)
     return company.tasks
 
 @router.post("/{task_id}/restart", response_model=TaskResponse)
@@ -85,11 +85,11 @@ async def restart_task(
     task_id: int,
     service: CompanyService = Depends(get_company_service),
     current_user: TokenData = Depends(get_current_user),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Restart a specific task (if user has access to the company's workspace)"""
-    # Get companies for the user's workspace
-    user_companies = service.get_all_companies(workspace_id=workspace_context.workspace.id)
+    """Restart a specific task (if user has access to the company's organization)"""
+    # Get companies for the user's organization
+    user_companies = service.get_all_companies(organization_id=org_context.organization_id)
     
     task = None
     for company in user_companies:
@@ -115,11 +115,12 @@ async def update_task_tokens(
     task_id: int,
     token_data: TaskTokenUpdate,
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user)
+    current_user: TokenData = Depends(get_current_user),
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Update token usage information for a task (used by Dify workflows)"""
     # First, find the task and verify ownership
-    user_companies = service.get_all_companies(workspace_id=current_user.workspace_id)
+    user_companies = service.get_all_companies(organization_id=org_context.organization_id)
     
     task = None
     for company in user_companies:

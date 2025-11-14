@@ -12,7 +12,9 @@ Usage:
 """
 
 import time
-from fastapi_keycloak import FastAPIKeycloak
+from typing import Optional, List, Any
+from pydantic import Field
+from fastapi_keycloak import FastAPIKeycloak, OIDCUser as BaseOIDCUser
 from requests.exceptions import (
     RequestException,
     Timeout,
@@ -24,6 +26,18 @@ from app.core.config import settings
 from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
+
+
+class OIDCUser(BaseOIDCUser):
+    """Extended OIDCUser with organization claim support.
+
+    This extends the base fastapi-keycloak OIDCUser to include the
+    'organization' claim from Keycloak Organizations feature.
+
+    The organization claim format from Keycloak is:
+    ["OrgName", {"OrgName": {"id": "uuid"}}]
+    """
+    organization: Optional[Any] = None  # Can be list, dict, or string depending on Keycloak config
 
 
 def _initialize_keycloak_with_retry(
@@ -77,6 +91,9 @@ def _initialize_keycloak_with_retry(
                 callback_uri=settings.KEYCLOAK_CALLBACK_URI,
                 timeout=60,  # Increased from default 10s to handle production latency
             )
+
+            # Monkey-patch the user model to use our custom OIDCUser with organization support
+            idp_instance.user_model = OIDCUser
 
             elapsed_time = time.time() - start_time
             logger.info(

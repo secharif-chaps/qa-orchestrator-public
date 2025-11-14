@@ -69,6 +69,27 @@ class WorkspaceListResponse(BaseModel):
     total: int
 
 
+# Keycloak Organization Schemas (for /organizations endpoints)
+class OrganizationResponse(BaseModel):
+    """Response schema for Keycloak organizations.
+
+    Organizations are managed in Keycloak and have different structure than database workspaces:
+    - id is a UUID string (not integer)
+    - created_at/updated_at are optional (may not be available from Keycloak API)
+    - member_count is calculated from Keycloak membership
+    """
+    id: str  # Keycloak organization UUID
+    name: str
+    description: Optional[str] = None
+    slug: str  # Alias or derived from name
+    created_at: Optional[datetime] = None  # May not be available from Keycloak
+    updated_at: Optional[datetime] = None
+    member_count: int = 0
+
+    class Config:
+        from_attributes = True
+
+
 class ActivityResponse(BaseModel):
     """Response model for workspace activity items (companies and folders)"""
     type: Literal["company", "folder"]

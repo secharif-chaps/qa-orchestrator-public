@@ -21,7 +21,7 @@ class PermissionType(str, Enum):
     COMPANY_DELETE = "company.delete"
     
     # Admin permissions (global only)
-    ADMIN_WORKSPACES = "admin.workspaces"
+    ADMIN_ORGANIZATIONS = "admin.organizations"
 
 
 class UserPermissionBase(BaseModel):

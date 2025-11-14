@@ -359,12 +359,12 @@ class PermissionService:
             True if user can manage permissions
         """
         # User can manage if they have:
-        # 1. admin.workspaces (global)
+        # 1. admin.organizations (global)
         # 2. workspace.write for this workspace
         # 3. workspace.users.manage for this workspace
-        
+
         return (
-            self.has_permission(user_id, "admin.workspaces") or
+            self.has_permission(user_id, "admin.organizations") or
             self.has_permission(user_id, "workspace.write", workspace_id) or
             self.has_permission(user_id, "workspace.users.manage", workspace_id)
         )

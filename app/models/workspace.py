@@ -29,11 +29,12 @@ class Workspace(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
     # Relationships
-    companies = relationship("Company", back_populates="workspace")
+    # NOTE: Companies and Folders relationships removed - they now use organization_id (UUID) instead of workspace_id
+    # companies = relationship("Company", back_populates="workspace")  # REMOVED: No foreign key after Keycloak org migration
     members = relationship("WorkspaceMember", back_populates="workspace")
     user_permissions = relationship("UserWorkspacePermission", back_populates="workspace")
     modules = relationship("WorkspaceModule", back_populates="workspace")
-    folders = relationship("Folder", back_populates="workspace")
+    # folders = relationship("Folder", back_populates="workspace")  # REMOVED: No foreign key after Keycloak org migration
 
 
 class WorkspaceMember(Base):

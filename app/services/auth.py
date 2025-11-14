@@ -165,6 +165,62 @@ class KeycloakService:
             logger.debug(f"Introspect error: {type(e).__name__}: {str(e)}")
             return None
 
+    def assign_user_to_organization(self, user_id: str, organization_id: str) -> bool:
+        """Assign a user to a Keycloak organization.
+
+        This method uses the Keycloak Admin API to manage organization membership.
+        The user will be removed from their current organization (if any) and
+        added to the specified organization.
+
+        Args:
+            user_id: Keycloak user UUID (from JWT sub claim)
+            organization_id: Keycloak organization UUID
+
+        Returns:
+            True if successful, False otherwise
+
+        Raises:
+            ValueError: If keycloak_admin is not initialized
+            Exception: If Keycloak API call fails
+        """
+        if not self.keycloak_admin:
+            raise ValueError("Keycloak admin connection not initialized")
+
+        try:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info(f"Assigning user {user_id} to organization {organization_id}")
+
+            # Get user's current organizations
+            current_orgs = self.keycloak_admin.get_user_organizations(user_id)
+            logger.debug(f"User {user_id} current organizations: {current_orgs}")
+
+            # Remove user from current organizations
+            for org in current_orgs:
+                org_id = org.get('id')
+                if org_id:
+                    logger.info(f"Removing user {user_id} from organization {org_id}")
+                    self.keycloak_admin.delete_user_from_organization(
+                        user_id=user_id,
+                        organization_id=org_id
+                    )
+
+            # Add user to new organization
+            logger.info(f"Adding user {user_id} to organization {organization_id}")
+            self.keycloak_admin.add_user_to_organization(
+                user_id=user_id,
+                organization_id=organization_id
+            )
+
+            logger.info(f"Successfully assigned user {user_id} to organization {organization_id}")
+            return True
+
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Failed to assign user to organization: {str(e)}", exc_info=True)
+            raise
+
 
 # Global instance
 keycloak_service = KeycloakService()

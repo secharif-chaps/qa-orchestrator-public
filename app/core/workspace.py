@@ -38,16 +38,16 @@ def get_user_workspace(
 ) -> WorkspaceContext:
     """
     Get user's assigned workspace with JWT-first approach.
-    Priority: 1) Database lookup for admin.workspaces users, 2) JWT workspace claims, 3) Database lookup fallback
+    Priority: 1) Database lookup for admin.organizations users, 2) JWT workspace claims, 3) Database lookup fallback
     """
-    
+
     workspace_id = None
-    
-    # Check if user has admin.workspaces role
-    has_admin_workspaces = current_user.roles and "admin.workspaces" in current_user.roles
-    
-    if has_admin_workspaces:
-        # Priority 1: For admin.workspaces users, always use database lookup to support workspace switching
+
+    # Check if user has admin.organizations role
+    has_admin_organizations = current_user.roles and "admin.organizations" in current_user.roles
+
+    if has_admin_organizations:
+        # Priority 1: For admin.organizations users, always use database lookup to support workspace switching
         member = db.query(WorkspaceMember).filter(
             WorkspaceMember.user_id == current_user.sub,
             WorkspaceMember.status == WorkspaceMemberStatus.ACTIVE
