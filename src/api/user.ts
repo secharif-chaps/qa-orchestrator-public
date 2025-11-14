@@ -1,54 +1,79 @@
 import { apiClient } from './client'
-import type { 
-  WorkspaceUserResponse, 
-  WorkspaceUserCreate, 
-  WorkspaceUserUpdate,
-  WorkspaceUserListResponse
+import type {
+  OrganizationUserResponse,
+  OrganizationUserCreate,
+  OrganizationUserUpdate,
+  OrganizationUserListResponse,
 } from '@/types/user'
 
-// Workspace user management endpoints
-export const getWorkspaceUsers = async (workspaceId: number, page = 1, limit = 20): Promise<WorkspaceUserListResponse> => {
-  const response = await apiClient.get<WorkspaceUserListResponse>(
-    `/workspace/admin/${workspaceId}/users?page=${page}&limit=${limit}`
+// Organization user management endpoints
+// RESTful API using Keycloak organization UUIDs (string)
+export const getOrganizationUsers = async (
+  organizationId: string,
+  page = 1,
+  limit = 20,
+): Promise<OrganizationUserListResponse> => {
+  const response = await apiClient.get<OrganizationUserListResponse>(
+    `/organizations/${organizationId}/users?page=${page}&limit=${limit}`,
   )
   return response
 }
 
-export const createWorkspaceUser = async (workspaceId: number, user: WorkspaceUserCreate): Promise<WorkspaceUserResponse> => {
-  const response = await apiClient.post<WorkspaceUserResponse>(
-    `/workspace/admin/${workspaceId}/users`, 
-    user
+export const createOrganizationUser = async (
+  organizationId: string,
+  user: OrganizationUserCreate,
+): Promise<OrganizationUserResponse> => {
+  const response = await apiClient.post<OrganizationUserResponse>(
+    `/organizations/${organizationId}/users`,
+    user,
   )
   return response
 }
 
-export const updateWorkspaceUser = async (workspaceId: number, userId: string, user: WorkspaceUserUpdate): Promise<WorkspaceUserResponse> => {
-  const response = await apiClient.put<WorkspaceUserResponse>(
-    `/workspace/admin/${workspaceId}/users/${userId}`, 
-    user
+export const updateOrganizationUser = async (
+  organizationId: string,
+  userId: string,
+  user: OrganizationUserUpdate,
+): Promise<OrganizationUserResponse> => {
+  const response = await apiClient.put<OrganizationUserResponse>(
+    `/organizations/${organizationId}/users/${userId}`,
+    user,
   )
   return response
 }
 
-export const deleteWorkspaceUser = async (workspaceId: number, userId: string): Promise<void> => {
-  await apiClient.delete(`/workspace/admin/${workspaceId}/users/${userId}`)
+export const deleteOrganizationUser = async (
+  organizationId: string,
+  userId: string,
+): Promise<void> => {
+  await apiClient.delete(`/organizations/${organizationId}/users/${userId}`)
 }
 
-export const getWorkspaceUser = async (workspaceId: number, userId: string): Promise<WorkspaceUserResponse> => {
-  const response = await apiClient.get<WorkspaceUserResponse>(
-    `/workspace/admin/${workspaceId}/users/${userId}`
+export const getOrganizationUser = async (
+  organizationId: string,
+  userId: string,
+): Promise<OrganizationUserResponse> => {
+  const response = await apiClient.get<OrganizationUserResponse>(
+    `/organizations/${organizationId}/users/${userId}`,
   )
   return response
 }
 
-export const resendPasswordReset = async (workspaceId: number, userId: string): Promise<void> => {
-  await apiClient.post(`/workspace/admin/${workspaceId}/users/${userId}/reset-password`, {})
+export const resendPasswordReset = async (
+  organizationId: string,
+  userId: string,
+): Promise<void> => {
+  await apiClient.post(`/organizations/${organizationId}/users/${userId}/reset-password`, {})
 }
 
-export const toggleUserStatus = async (workspaceId: number, userId: string, enabled: boolean): Promise<WorkspaceUserResponse> => {
-  const response = await apiClient.patch<WorkspaceUserResponse>(
-    `/workspace/admin/${workspaceId}/users/${userId}/status`,
-    { enabled }
+export const toggleUserStatus = async (
+  organizationId: string,
+  userId: string,
+  enabled: boolean,
+): Promise<OrganizationUserResponse> => {
+  const response = await apiClient.patch<OrganizationUserResponse>(
+    `/organizations/${organizationId}/users/${userId}/status`,
+    { enabled },
   )
   return response
 }

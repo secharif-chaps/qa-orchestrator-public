@@ -2,7 +2,7 @@ import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
-import { currentWorkspaceQuery } from '@/queries/workspace'
+import { currentOrganizationQuery } from '@/queries/organization'
 import type { ChapseContext } from './useChapseChat'
 
 export function useChapseContext() {
@@ -29,9 +29,9 @@ export function useChapseContext() {
     }
   )
 
-  // Fetch current workspace
-  const { data: workspace, isLoading: isLoadingWorkspace } = useQuery(
-    currentWorkspaceQuery,
+  // Fetch current organization
+  const { data: organization, isLoading: isLoadingOrganization } = useQuery(
+    currentOrganizationQuery,
     () => ({})
   )
 
@@ -81,15 +81,15 @@ export function useChapseContext() {
       contexts.push(folderContext)
     }
 
-    // Workspace context (always available)
-    if (workspace.value) {
-      const workspaceContext: ChapseContext = {
-        type: 'workspace',
-        id: workspace.value.id,
-        name: workspace.value.name || 'Workspace',
-        data: workspace.value
+    // Organization context (always available)
+    if (organization.value) {
+      const organizationContext: ChapseContext = {
+        type: 'organization', // Keep type as 'organization' for compatibility with ChapseContext interface
+        id: organization.value.id,
+        name: organization.value.name || 'Organization',
+        data: organization.value
       }
-      contexts.push(workspaceContext)
+      contexts.push(organizationContext)
     }
 
     availableContexts.value = contexts
@@ -97,7 +97,7 @@ export function useChapseContext() {
 
   // Watch route changes and update available contexts
   watch(
-    [() => route.path, company, workspace],
+    [() => route.path, company, organization],
     () => {
       updateAvailableContexts()
     },
@@ -135,7 +135,7 @@ export function useChapseContext() {
   }
 
   // Check if context is available
-  const isContextAvailable = (contextType: 'company' | 'folder' | 'workspace'): boolean => {
+  const isContextAvailable = (contextType: 'company' | 'folder' | 'organization'): boolean => {
     return availableContexts.value.some(ctx => ctx.type === contextType)
   }
 
@@ -151,7 +151,7 @@ export function useChapseContext() {
         return 'fa fa-building'
       case 'folder':
         return 'fa fa-folder'
-      case 'workspace':
+      case 'organization':
         return 'fa fa-users'
       default:
         return 'fa fa-tag'
@@ -177,7 +177,7 @@ export function useChapseContext() {
     activeContexts,
     availableContexts,
     isLoadingCompany,
-    isLoadingWorkspace,
+    isLoadingOrganization,
 
     // Computed
     hasActiveContexts,

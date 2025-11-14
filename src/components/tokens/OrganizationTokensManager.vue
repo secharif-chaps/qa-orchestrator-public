@@ -101,7 +101,7 @@
         :module="module.name"
         :token-count="module.token_count"
         :is-enabled="module.enabled"
-        :workspace-id="workspaceId"
+        :organization-id="organizationId"
         :show-admin-controls="true"
         @refresh="refreshTokens"
       />
@@ -132,15 +132,15 @@
 </template>
 
 <script setup lang="ts">
-import { useUpdateWorkspaceModules } from '@/mutations/tokens'
-import { workspaceModulesQuery } from '@/queries/tokens'
+import { useUpdateOrganizationModules } from '@/mutations/tokens'
+import { organizationModulesQuery } from '@/queries/tokens'
 import { useQuery } from '@pinia/colada'
 import { computed, ref } from 'vue'
 import Card from '../ui/Card.vue'
 import ModuleTokenCard from './ModuleTokenCard.vue'
 
 interface Props {
-  workspaceId: number
+  organizationId: string
 }
 
 const props = defineProps<Props>()
@@ -149,18 +149,18 @@ const props = defineProps<Props>()
 const isRefreshing = ref(false)
 const hasChanges = ref(false)
 
-// Query for workspace modules
+// Query for organization modules
 const {
   data: modules,
   isLoading,
   error,
   refetch,
-} = useQuery(workspaceModulesQuery, () => ({ workspaceId: props.workspaceId }), {
-  enabled: computed(() => !!props.workspaceId),
+} = useQuery(organizationModulesQuery, () => ({ organizationId: props.organizationId }), {
+  enabled: computed(() => !!props.organizationId),
 })
 
 // Mutation for bulk updates
-const { updateModules, isLoading: isSaving } = useUpdateWorkspaceModules()
+const { updateModules, isLoading: isSaving } = useUpdateOrganizationModules()
 
 // Computed statistics
 const totalTokens = computed(() => {

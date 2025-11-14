@@ -207,7 +207,7 @@
 <route lang="yaml">
 meta:
   permissions:
-    - workspace.read
+    - organization.read
 </route>
 
 <script setup lang="ts">

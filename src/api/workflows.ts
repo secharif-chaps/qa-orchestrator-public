@@ -6,14 +6,12 @@ import { apiClient } from './client'
 export interface WorkflowConfig {
   task_type: string
   title: string
-  workflow_id: string | null
   api_key_obfuscated: string | null
   has_api_key: boolean
   llm?: 'claude' | 'mistral' | null
 }
 
 export interface WorkflowUpdateRequest {
-  workflow_id?: string | null
   api_key?: string | null
   llm?: 'claude' | 'mistral' | null
 }

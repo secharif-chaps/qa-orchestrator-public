@@ -149,7 +149,7 @@ const getCategoryTitle = (category: string) => {
   const titles: Record<string, string> = {
     admin: t('help.categories.admin', 'Administration'),
     company: t('help.categories.company', 'Company Screening'),
-    workspace: t('help.categories.workspace', 'Workspace Management'),
+    organization: t('help.categories.organization', 'organization Management'),
   }
   return titles[category] || category
 }

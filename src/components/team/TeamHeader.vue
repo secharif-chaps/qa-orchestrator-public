@@ -6,7 +6,7 @@
           {{ $t('team.title', 'Team Management') }}
         </h1>
         <p class="text-secondary mt-2">
-          {{ $t('team.description', 'Manage users in your workspace') }}
+          {{ $t('team.description', 'Manage users in your organization') }}
         </p>
       </div>
 
@@ -135,31 +135,31 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import type { WorkspaceUserQueryParams } from '@/types/team'
+import type { OrganizationUserQueryParams } from '@/types/team'
 import Button from '@/components/ui/Button.vue'
 import Input from '../ui/Input.vue'
 
 const props = defineProps<{
   search: string
-  sort: WorkspaceUserQueryParams['sort']
-  order: WorkspaceUserQueryParams['order']
-  status: WorkspaceUserQueryParams['status']
+  sort: OrganizationUserQueryParams['sort']
+  order: OrganizationUserQueryParams['order']
+  status: OrganizationUserQueryParams['status']
   pageSize: number
 }>()
 
 const emit = defineEmits<{
   'create-user': []
   'update:search': [value: string]
-  'update:sort': [value: WorkspaceUserQueryParams['sort']]
+  'update:sort': [value: OrganizationUserQueryParams['sort']]
   'toggle-order': []
-  'update:status': [value: WorkspaceUserQueryParams['status']]
+  'update:status': [value: OrganizationUserQueryParams['status']]
   'update:page-size': [value: number]
 }>()
 
 const authStore = useAuthStore()
 
-// Only users with workspace.write can manage users (add, edit, disable)
-const canManageUsers = computed(() => authStore.hasPermission('workspace.write'))
+// Only users with organization.write can manage users (add, edit, disable)
+const canManageUsers = computed(() => authStore.hasPermission('organization.write'))
 
 // Dropdown state
 const showSortDropdown = ref(false)
@@ -176,12 +176,12 @@ const getSortDisplayText = () => {
   return `${sortLabels[props.sort]} (${orderText})`
 }
 
-const updateSort = (newSort: WorkspaceUserQueryParams['sort']) => {
+const updateSort = (newSort: OrganizationUserQueryParams['sort']) => {
   emit('update:sort', newSort)
   showSortDropdown.value = false
 }
 
-const updateOrder = (newOrder: WorkspaceUserQueryParams['order']) => {
+const updateOrder = (newOrder: OrganizationUserQueryParams['order']) => {
   if (newOrder !== props.order) {
     emit('toggle-order')
   }

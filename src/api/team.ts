@@ -1,63 +1,77 @@
 import { apiClient } from './client'
-import { getCurrentWorkspace } from './workspace'
-import type { 
-  WorkspaceUser,
-  WorkspaceUserResponse,
-  WorkspaceUserQueryParams,
-  CreateWorkspaceUserRequest,
-  UpdateWorkspaceUserRequest
+import { useAuthStore } from '@/stores/auth'
+import type {
+  OrganizationUser,
+  OrganizationUserResponse,
+  OrganizationUserQueryParams,
+  CreateOrganizationUserRequest,
+  UpdateOrganizationUserRequest,
 } from '@/types/team'
 
-let currentWorkspaceId: number | null = null
-
-const getCurrentWorkspaceId = async (): Promise<number> => {
-  if (!currentWorkspaceId) {
-    const workspace = await getCurrentWorkspace()
-    currentWorkspaceId = workspace.id
+const getOrganizationId = (): string => {
+  const authStore = useAuthStore()
+  const orgId = authStore.organizationId
+  if (!orgId) {
+    throw new Error('No organization context available. User must be logged in.')
   }
-  return currentWorkspaceId
+  return orgId
 }
 
-export const getWorkspaceUsers = async (params?: WorkspaceUserQueryParams): Promise<WorkspaceUserResponse> => {
-  const workspaceId = await getCurrentWorkspaceId()
+export const getOrganizationUsers = async (
+  params?: OrganizationUserQueryParams,
+): Promise<OrganizationUserResponse> => {
+  const organizationId = getOrganizationId()
   const searchParams = new URLSearchParams()
-  
+
   if (params?.page) searchParams.set('page', params.page.toString())
   if (params?.limit) searchParams.set('limit', params.limit.toString())
   if (params?.sort) searchParams.set('sort', params.sort)
   if (params?.order) searchParams.set('order', params.order)
   if (params?.search) searchParams.set('search', params.search)
   if (params?.status) searchParams.set('status', params.status)
-  
+
   const queryString = searchParams.toString()
-  const url = `/workspaces/${workspaceId}/users${queryString ? `?${queryString}` : ''}`
-  
-  const response = await apiClient.get<WorkspaceUserResponse>(url)
+  const url = `/organizations/${organizationId}/users${queryString ? `?${queryString}` : ''}`
+
+  const response = await apiClient.get<OrganizationUserResponse>(url)
   return response
 }
 
-export const createWorkspaceUser = async (user: CreateWorkspaceUserRequest): Promise<WorkspaceUser> => {
-  const workspaceId = await getCurrentWorkspaceId()
-  const response = await apiClient.post<WorkspaceUser>(`/workspaces/${workspaceId}/users`, user)
+export const createOrganizationUser = async (
+  user: CreateOrganizationUserRequest,
+): Promise<OrganizationUser> => {
+  const organizationId = getOrganizationId()
+  const response = await apiClient.post<OrganizationUser>(
+    `/organizations/${organizationId}/users`,
+    user,
+  )
   return response
 }
 
-export const updateWorkspaceUser = async (userId: number, updates: UpdateWorkspaceUserRequest): Promise<WorkspaceUser> => {
-  const workspaceId = await getCurrentWorkspaceId()
-  const response = await apiClient.patch<WorkspaceUser>(`/workspaces/${workspaceId}/users/${userId}`, updates)
+export const updateOrganizationUser = async (
+  userId: number,
+  updates: UpdateOrganizationUserRequest,
+): Promise<OrganizationUser> => {
+  const organizationId = getOrganizationId()
+  const response = await apiClient.patch<OrganizationUser>(
+    `/organizations/${organizationId}/users/${userId}`,
+    updates,
+  )
   return response
 }
 
-export const getWorkspaceUser = async (userId: number): Promise<WorkspaceUser> => {
-  const workspaceId = await getCurrentWorkspaceId()
-  const response = await apiClient.get<WorkspaceUser>(`/workspaces/${workspaceId}/users/${userId}`)
+export const getOrganizationUser = async (userId: number): Promise<OrganizationUser> => {
+  const organizationId = getOrganizationId()
+  const response = await apiClient.get<OrganizationUser>(
+    `/organizations/${organizationId}/users/${userId}`,
+  )
   return response
 }
 
-export const disableWorkspaceUser = async (userId: number): Promise<WorkspaceUser> => {
-  return updateWorkspaceUser(userId, { is_disabled: true })
+export const disableOrganizationUser = async (userId: number): Promise<OrganizationUser> => {
+  return updateOrganizationUser(userId, { is_disabled: true })
 }
 
-export const enableWorkspaceUser = async (userId: number): Promise<WorkspaceUser> => {
-  return updateWorkspaceUser(userId, { is_disabled: false })
+export const enableOrganizationUser = async (userId: number): Promise<OrganizationUser> => {
+  return updateOrganizationUser(userId, { is_disabled: false })
 }

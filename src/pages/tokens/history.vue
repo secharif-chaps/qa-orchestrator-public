@@ -8,7 +8,7 @@
         </h1>
       </div>
       <p class="text-sm text-gray-600 dark:text-gray-400">
-        {{ $t('tokens.history.subtitle', 'View all token usage for your workspace') }}
+        {{ $t('tokens.history.subtitle', 'View all token usage for your organization') }}
       </p>
     </div>
 
@@ -104,7 +104,8 @@
                         {{ company.name }}
                       </h4>
                       <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        {{ $t('tokens.history.createdBy', 'Created by') }} {{ company.owner_username }}
+                        {{ $t('tokens.history.createdBy', 'Created by') }}
+                        {{ company.owner_username }}
                       </p>
                     </div>
                     <div class="flex items-center gap-3">
@@ -179,27 +180,25 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useQuery } from '@pinia/colada'
-import { workspaceModulesQuery } from '@/queries/tokens'
+import { organizationModulesQuery } from '@/queries/tokens'
+import { currentOrganizationQuery } from '@/queries/organization'
 import { companiesQuery } from '@/queries/companies'
-import { useAuthStore } from '@/stores/auth'
 import Tag from '@/components/ui/Tag.vue'
 import Alert from '@/components/ui/Alert.vue'
 import type { Company } from '@/types/company'
-
-const authStore = useAuthStore()
 
 // Pagination
 const page = ref(1)
 const pageSize = ref(20)
 
-// Get workspace ID from current workspace
-const workspaceId = computed(() => authStore.currentWorkspace?.id || 1)
+// Get current organization
+const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
 
-// Fetch workspace modules to get total tokens
+// Fetch organization modules to get total tokens
 const { data: modulesData } = useQuery(
-  workspaceModulesQuery,
-  () => ({ workspaceId: workspaceId.value }),
-  { enabled: () => !!workspaceId.value },
+  organizationModulesQuery,
+  () => ({ organizationId: currentOrganization.value!.id }),
+  { enabled: computed(() => !!currentOrganization.value?.id) },
 )
 
 // Fetch companies with pagination and sorting

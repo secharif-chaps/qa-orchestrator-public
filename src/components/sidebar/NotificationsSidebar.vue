@@ -86,7 +86,7 @@ import { useRouter } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import NotificationItem from '../ui/NotificationItem.vue'
 import { type BadgeColor } from '../ui/Badge.vue'
-import { workspaceActivitiesQuery, currentWorkspaceQuery } from '@/queries/workspace'
+import { organizationActivitiesQuery } from '@/queries/organization'
 import { formatRelativeTime } from '@/utils/time'
 import { useI18n } from 'vue-i18n'
 
@@ -110,36 +110,27 @@ const { t } = useI18n()
 // Track read notifications (in real app, this would be persisted)
 const readNotifications = ref<Set<string>>(new Set())
 
-// Fetch current workspace to get workspace ID
-const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
-
-// Fetch workspace activities
+// Fetch organization activities
 const {
   data: activitiesData,
   isLoading,
   error,
-} = useQuery(
-  workspaceActivitiesQuery,
-  () => ({ workspaceId: currentWorkspace.value?.id ?? 0 }),
-  {
-    enabled: () => !!currentWorkspace.value?.id,
-  },
-)
+} = useQuery(organizationActivitiesQuery, () => ({}))
 
 // Transform activities into notifications (limit to 20 most recent)
 const notifications = computed<Notification[]>(() => {
   if (!activitiesData.value) return []
 
-  return activitiesData.value.slice(0, 20).map((activity) => {
+  return activitiesData.value.slice(0, 20).map((activity, index) => {
     const isCompany = activity.type === 'company'
-    const notificationId = `${activity.type}-${activity.id}`
+    const notificationId = `${activity.type}-${activity.name}-${index}`
 
     return {
       id: notificationId,
       title: isCompany
         ? t('sidebar.notifications.companyCreated', 'New company added')
         : t('sidebar.notifications.folderCreated', 'New folder created'),
-      message: `${activity.owner_username} ${t('sidebar.notifications.activityMessage', 'created')} ${activity.name}`,
+      message: `${activity.owner} ${t('sidebar.notifications.activityMessage', 'created')} ${activity.name}`,
       time: formatRelativeTime(activity.created_at),
       category: isCompany
         ? t('sidebar.notifications.categoryCompany', 'Company')
@@ -149,7 +140,8 @@ const notifications = computed<Notification[]>(() => {
         icon: isCompany ? 'fa fa-building' : 'fa fa-folder',
         color: isCompany ? 'accent' : 'success',
       },
-      action: isCompany ? `/companies/${activity.id}` : `/folders/${activity.id}`,
+      // Note: No action link since we don't have IDs in the new API
+      action: undefined,
     }
   })
 })

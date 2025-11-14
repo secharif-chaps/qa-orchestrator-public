@@ -179,7 +179,8 @@
 import { computed } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { useRoute } from 'vue-router'
-import { workspaceModulesQuery } from '@/queries/tokens'
+import { organizationModulesQuery } from '@/queries/tokens'
+import { currentOrganizationQuery } from '@/queries/organization'
 import { recentCompaniesQuery } from '@/queries/companies'
 import { useAuthStore } from '@/stores/auth'
 import Tag from '@/components/ui/Tag.vue'
@@ -193,14 +194,14 @@ const route = useRoute()
 // Check if we're on the token history page
 const isOnHistoryPage = computed(() => route.path === '/tokens/history')
 
-// Get workspace ID from current workspace
-const workspaceId = computed(() => authStore.currentWorkspace?.id || 1)
+// Fetch current organization
+const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
 
-// Fetch workspace modules to get total tokens
+// Fetch organization modules to get total tokens
 const { data: modulesData, isLoading: isLoadingTokens } = useQuery(
-  workspaceModulesQuery,
-  () => ({ workspaceId: workspaceId.value }),
-  { enabled: () => !!workspaceId.value },
+  organizationModulesQuery,
+  () => ({ organizationId: currentOrganization.value?.id || '' }),
+  { enabled: () => !!currentOrganization.value?.id },
 )
 
 // Fetch recent companies for token history (10 most recent)

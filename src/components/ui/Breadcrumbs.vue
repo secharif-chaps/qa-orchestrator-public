@@ -65,7 +65,7 @@
  *
  * Examples:
  * - /companies/123/profile → 🏠 Home > Companies > Acme Corp > Profile
- * - /admin/workspaces → 🏠 Home > Admin > Workspaces
+ * - /admin/organizations → 🏠 Home > Adminorganizationaces
  * - /settings/appearance → 🏠 Home > Settings > Appearance
  */
 import { useBreadcrumbs } from '@/composables/useBreadcrumbs'

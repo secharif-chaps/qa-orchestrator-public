@@ -6,13 +6,13 @@ import type { ModuleName } from '@/types/tokens'
 /**
  * Composable for managing module tokens
  */
-export const useModuleTokens = (workspaceId: number) => {
+export const useModuleTokens = (organizationId: string) => {
   const queryCache = useQueryCache()
 
   const getTokenCount = (module: ModuleName) => {
     const { data, isLoading, error } = useQuery(
       moduleTokensQuery,
-      () => ({ workspaceId, module })
+      () => ({ organizationId, module })
     )
 
     return {
@@ -34,12 +34,12 @@ export const useModuleTokens = (workspaceId: number) => {
 
   const refreshTokenData = (module?: ModuleName) => {
     if (module) {
-      queryCache.invalidateQueries({ 
-        key: TOKEN_QUERY_KEYS.moduleTokens(workspaceId, module) 
+      queryCache.invalidateQueries({
+        key: TOKEN_QUERY_KEYS.moduleTokens(organizationId, module)
       })
     } else {
-      queryCache.invalidateQueries({ 
-        key: TOKEN_QUERY_KEYS.root 
+      queryCache.invalidateQueries({
+        key: TOKEN_QUERY_KEYS.root
       })
     }
   }

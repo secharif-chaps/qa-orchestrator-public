@@ -293,7 +293,7 @@ export default {
     settings: 'Settings',
     help: 'Help',
     team: 'Team',
-    workspaces: 'Workspaces',
+    organizations: 'organizations',
     admin: 'Admin',
     footer: {
       profile: 'Profile',
@@ -708,7 +708,7 @@ export default {
     },
     empty: {
       noUsers: {
-        title: 'No users in workspace',
+        title: 'No users in organization',
         description: 'Add your first team member to get started with collaboration',
       },
       noResults: {
@@ -743,9 +743,9 @@ export default {
       },
     },
     permissionsList: {
-      workspaceRead: {
+      organizationRead: {
         name: 'Basic Access',
-        description: 'View workspace content and companies',
+        description: 'View organization content and companies',
       },
       companyView: {
         name: 'View Companies',
@@ -753,15 +753,15 @@ export default {
       },
       companyCreate: {
         name: 'Create Companies',
-        description: 'Add new companies to the workspace',
+        description: 'Add new companies to the organization',
       },
       companyDelete: {
         name: 'Delete Companies',
-        description: 'Remove companies from the workspace',
+        description: 'Remove companies from the organization',
       },
-      workspaceWrite: {
+      organizationWrite: {
         name: 'Team Management',
-        description: 'Manage workspace users and settings',
+        description: 'Manage organization users and settings',
       },
     },
   },
@@ -779,16 +779,16 @@ export default {
         title: 'System Overview',
       },
       stats: {
-        workspaces: 'Total Workspaces',
+        organizations: 'Total organizations',
         users: 'Active Users',
         companies: 'Companies',
         health: 'System Health',
       },
     },
     features: {
-      workspaces: {
-        title: 'Workspace Management',
-        description: 'Manage all workspaces, users, and workspace settings',
+      organizations: {
+        title: 'organization Management',
+        description: 'Manage all organizations, users, and organization settings',
       },
       uiDemo: {
         title: 'UI Components Demo',
@@ -980,7 +980,7 @@ export default {
       workflowTitle: 'Debug: Search Workflow',
     },
     validation: {
-      loadingWorkspace: 'Loading workspace...',
+      loadingorganization: 'Loading organization...',
       loadingTokens: 'Loading tokens...',
       moduleDisabled: 'The Stream module is disabled',
       insufficientTokens: 'Insufficient tokens. You need at least 1 token to create a company.',
@@ -1212,44 +1212,44 @@ export default {
       },
     },
   },
-  workspace: {
+  organization: {
     admin: {
-      title: 'Workspace Management',
-      description: 'Manage all workspaces in the system',
+      title: 'organization Management',
+      description: 'Manage all organizations in the system',
     },
     create: {
-      title: 'Create Workspace',
-      description: 'Create a new workspace for your organization',
-      button: 'Create Workspace',
-      submit: 'Create Workspace',
+      title: 'Create organization',
+      description: 'Create a new organization for your organization',
+      button: 'Create organization',
+      submit: 'Create organization',
       preview: 'Preview',
     },
     form: {
       name: {
-        label: 'Workspace Name',
-        placeholder: 'Enter workspace name...',
-        help: 'This will be the display name for your workspace',
+        label: 'organization Name',
+        placeholder: 'Enter organization name...',
+        help: 'This will be the display name for your organization',
       },
       slug: {
-        label: 'Workspace Slug',
+        label: 'organization Slug',
         help: 'URL-friendly identifier (lowercase, no spaces)',
       },
       description: {
         label: 'Description',
-        placeholder: 'Describe the purpose of this workspace...',
-        help: 'Brief description to help users understand this workspace',
+        placeholder: 'Describe the purpose of this organization...',
+        help: 'Brief description to help users understand this organization',
       },
     },
     detail: {
-      title: 'Workspace Details',
-      description: 'Workspace information and settings',
+      title: 'organization Details',
+      description: 'organization information and settings',
       basicInfo: 'Basic Information',
       members: 'Members',
       settings: 'Settings',
-      settingsPlaceholder: 'Workspace settings will be implemented here',
+      settingsPlaceholder: 'organization settings will be implemented here',
     },
     search: {
-      placeholder: 'Search workspaces...',
+      placeholder: 'Search organizations...',
     },
     sort: {
       label: 'Sort by',
@@ -1264,15 +1264,15 @@ export default {
       description: 'Description',
     },
     empty: {
-      noResults: 'No workspaces found',
-      title: 'No workspaces yet',
+      noResults: 'No organizations found',
+      title: 'No organizations yet',
       tryDifferentSearch: 'Try a different search term',
-      description: 'Create your first workspace to get started',
+      description: 'Create your first organization to get started',
     },
     justCreated: 'Just created',
-    loading: 'Loading workspaces...',
-    name: 'Workspace Name',
-    slug: 'Workspace Slug',
+    loading: 'Loading organizations...',
+    name: 'organization Name',
+    slug: 'organization Slug',
     description: 'Description',
     created: 'Created',
     updated: 'Updated',
@@ -1280,11 +1280,11 @@ export default {
     actions: 'Actions',
     current: 'Current',
     noDescription: 'No description',
-    alreadyCurrent: 'Already in this workspace',
-    pick: 'Switch to this workspace',
+    alreadyCurrent: 'Already in this organization',
+    pick: 'Switch to this organization',
     view: 'View Details',
-    delete: 'Delete Workspace',
-    cannotDeleteDefault: 'Cannot delete the default workspace',
+    delete: 'Delete organization',
+    cannotDeleteDefault: 'Cannot delete the default organization',
     clearSearch: 'Clear Search',
   },
   user: {
@@ -1309,7 +1309,7 @@ export default {
     },
     delete: {
       title: 'Remove User',
-      description: 'Are you sure you want to remove this user from the workspace?',
+      description: 'Are you sure you want to remove this user from the organization?',
       button: 'Remove User',
     },
     validation: {
@@ -1424,7 +1424,7 @@ export default {
     categories: {
       admin: 'Administration',
       company: 'Company Screening',
-      workspace: 'Workspace Management',
+      organization: 'organization Management',
     },
   },
   login: {
@@ -1454,7 +1454,7 @@ export default {
         insufficientTokens: 'Insufficient Tokens',
         accessRestricted: 'Access Restricted',
         moduleDisabledMessage:
-          'The {module} module has been disabled for your workspace. Contact your administrator to enable this feature.',
+          'The {module} module has been disabled for your organization. Contact your administrator to enable this feature.',
         insufficientTokensMessage:
           "You don't have enough tokens to access the {module} module. Contact your administrator to add more tokens.",
         unavailable: 'This feature is currently unavailable.',

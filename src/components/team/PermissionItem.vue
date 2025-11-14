@@ -3,7 +3,9 @@
     class="flex items-center justify-between p-4 border border-primary-stroke rounded-lg transition-all duration-200"
     :class="[
       value ? 'bg-primary/5 border-primary/20' : 'bg-base-100 hover:bg-base-200/50',
-      disabled || (permission.key === 'workspace.write' && !canManageWorkspace) ? 'opacity-60' : '',
+      disabled || (permission.key === 'organization.write' && !canManageorganization)
+        ? 'opacity-60'
+        : '',
     ]"
   >
     <div class="flex-1">
@@ -33,7 +35,7 @@
       <Switch.Root
         :id="`permission-${permission.key}`"
         v-model="value"
-        :disabled="disabled || (permission.key === 'workspace.write' && !canManageWorkspace)"
+        :disabled="disabled || (permission.key === 'organization.write' && !canManageorganization)"
         class="relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
         :class="[value ? 'bg-primary' : 'bg-base-200 border border-primary-stroke']"
       >
@@ -61,7 +63,7 @@ const props = defineProps<{
   permission: Permission
   isSelected: boolean
   disabled?: boolean
-  canManageWorkspace?: boolean
+  canManageorganization?: boolean
 }>()
 
 const value = ref(props.isSelected)

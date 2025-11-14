@@ -1,4 +1,4 @@
-export interface WorkspaceUser {
+export interface OrganizationUser {
   id: number
   email: string
   username: string
@@ -11,11 +11,11 @@ export interface WorkspaceUser {
   created_by: number | null
 }
 
-export interface WorkspaceUserListItem extends WorkspaceUser {
+export interface OrganizationUserListItem extends OrganizationUser {
   display_name: string
 }
 
-export interface WorkspaceUserQueryParams {
+export interface OrganizationUserQueryParams {
   page: number
   limit: number
   search: string
@@ -24,8 +24,8 @@ export interface WorkspaceUserQueryParams {
   status: 'active' | 'disabled' | 'all'
 }
 
-export interface WorkspaceUserResponse {
-  data: WorkspaceUser[]
+export interface OrganizationUserResponse {
+  data: OrganizationUser[]
   pagination: {
     page: number
     limit: number
@@ -36,7 +36,7 @@ export interface WorkspaceUserResponse {
   }
 }
 
-export interface CreateWorkspaceUserRequest {
+export interface CreateOrganizationUserRequest {
   email: string
   username: string
   password: string
@@ -45,7 +45,7 @@ export interface CreateWorkspaceUserRequest {
   permissions?: string[]
 }
 
-export interface UpdateWorkspaceUserRequest {
+export interface UpdateOrganizationUserRequest {
   is_disabled?: boolean
   permissions?: string[]
   first_name?: string

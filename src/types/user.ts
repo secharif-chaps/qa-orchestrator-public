@@ -1,4 +1,4 @@
-export interface WorkspaceUserResponse {
+export interface OrganizationUserResponse {
   id: string // Keycloak user ID
   username: string
   email: string
@@ -11,7 +11,7 @@ export interface WorkspaceUserResponse {
   status: 'ACTIVE' | 'INACTIVE' | 'PENDING'
 }
 
-export interface WorkspaceUserCreate {
+export interface OrganizationUserCreate {
   username: string
   email: string
   firstName?: string
@@ -19,7 +19,7 @@ export interface WorkspaceUserCreate {
   temporaryPassword: string
 }
 
-export interface WorkspaceUserUpdate {
+export interface OrganizationUserUpdate {
   username?: string
   email?: string
   firstName?: string
@@ -27,15 +27,15 @@ export interface WorkspaceUserUpdate {
   enabled?: boolean
 }
 
-export interface WorkspaceUserListResponse {
-  users: WorkspaceUserResponse[]
+export interface OrganizationUserListResponse {
+  users: OrganizationUserResponse[]
   total: number
   page: number
   limit: number
 }
 
 // For UI display
-export interface WorkspaceUserListItem extends WorkspaceUserResponse {
+export interface OrganizationUserListItem extends OrganizationUserResponse {
   displayName: string
   initials: string
 }

@@ -7,7 +7,7 @@
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
         ></div>
         <p class="text-secondary">
-          {{ $t('workspace.loading', 'Loading workspace...') }}
+          {{ $t('organization.loading', 'Loading organization...') }}
         </p>
       </div>
 
@@ -23,57 +23,55 @@
         </div>
       </div>
 
-      <!-- Workspace Details -->
-      <div v-else-if="workspace" class="space-y-6">
+      <!-- Organization Details -->
+      <div v-else-if="organization" class="space-y-6">
         <!-- Basic Info Card -->
         <Card>
           <h2 class="text-xl font-semibold mb-4">
-            {{ $t('workspace.detail.basicInfo', 'Basic Information') }}
+            {{ $t('organization.detail.basicInfo', 'Basic Information') }}
           </h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label class="block text-sm font-medium text-secondary mb-1">{{
-                $t('workspace.name', 'Name')
+                $t('organization.name', 'Name')
               }}</label>
-              <p class="text-base font-medium">{{ workspace.name }}</p>
+              <p class="text-base font-medium">{{ organization.name }}</p>
             </div>
             <div>
               <label class="block text-sm font-medium text-secondary mb-1">{{
-                $t('workspace.slug', 'Slug')
+                $t('organization.id', 'ID')
               }}</label>
-              <code class="text-sm bg-base-300 px-2 py-1 rounded">{{ workspace.slug }}</code>
+              <code class="text-sm bg-base-300 px-2 py-1 rounded">{{ organization.id }}</code>
             </div>
-            <div class="md:col-span-2" v-if="workspace.description">
+            <div class="md:col-span-2" v-if="organization.description">
               <label class="block text-sm font-medium text-secondary mb-1">{{
-                $t('workspace.description', 'Description')
+                $t('organization.description', 'Description')
               }}</label>
-              <p class="text-base">{{ workspace.description }}</p>
+              <p class="text-base">{{ organization.description }}</p>
+            </div>
+            <div v-if="organization.created_at">
+              <label class="block text-sm font-medium text-secondary mb-1">{{
+                $t('organization.created', 'Created')
+              }}</label>
+              <p class="text-base">{{ formatDate(organization.created_at) }}</p>
+            </div>
+            <div v-if="organization.updated_at">
+              <label class="block text-sm font-medium text-secondary mb-1">{{
+                $t('organization.updated', 'Last Updated')
+              }}</label>
+              <p class="text-base">{{ formatDate(organization.updated_at) }}</p>
             </div>
             <div>
               <label class="block text-sm font-medium text-secondary mb-1">{{
-                $t('workspace.created', 'Created')
-              }}</label>
-              <p class="text-base">{{ formatDate(workspace.created_at) }}</p>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-secondary mb-1">{{
-                $t('workspace.updated', 'Last Updated')
-              }}</label>
-              <p class="text-base">{{ formatDate(workspace.updated_at) }}</p>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-secondary mb-1">{{
-                $t('workspace.members', 'Members')
+                $t('organization.members', 'Members')
               }}</label>
               <div class="flex items-center gap-2">
                 <span
                   class="inline-flex items-center justify-center w-8 h-8 bg-primary/10 text-secondary rounded-full text-sm font-medium"
                 >
-                  {{ workspace.member_count }}
+                  {{ users?.length || 0 }}
                 </span>
-                <span class="text-base">{{
-                  workspace.member_count === 1 ? 'member' : 'members'
-                }}</span>
+                <span class="text-base">{{ users?.length === 1 ? 'member' : 'members' }}</span>
               </div>
             </div>
           </div>
@@ -83,7 +81,7 @@
         <Card>
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold">
-              {{ $t('workspace.detail.members', 'Members') }}
+              {{ $t('organization.detail.members', 'Members') }}
             </h2>
             <button
               @click="showCreateUserModal = true"
@@ -117,9 +115,10 @@
           </div>
 
           <!-- Users List -->
-          <div v-else-if="users && users.users.length > 0" class="space-y-3">
+
+          <div v-else-if="users && users?.length > 0" class="space-y-3">
             <div
-              v-for="user in usersWithDisplayInfo"
+              v-for="user in users"
               :key="user.id"
               class="flex items-center justify-between p-4 bg-base-200 rounded-lg hover:bg-base-300/50 transition-colors"
             >
@@ -128,7 +127,7 @@
                 <div
                   class="w-10 h-10 bg-primary/10 text-secondary rounded-full flex items-center justify-center font-medium"
                 >
-                  {{ user.initials }}
+                  {{ user.username.slice(0, 2).toUpperCase() }}
                 </div>
 
                 <!-- User Info -->
@@ -212,7 +211,7 @@
         </Card>
 
         <!-- Token Management Section -->
-        <WorkspaceTokensManager :workspace-id="workspaceId" />
+        <OrganizationTokensManager :organization-id="organizationId" />
       </div>
     </div>
 
@@ -240,7 +239,7 @@
             {{
               $t(
                 'user.delete.description',
-                'Are you sure you want to remove this user from the workspace?',
+                'Are you sure you want to remove this user from the organization?',
               )
             }}
           </p>
@@ -278,22 +277,22 @@
 <route lang="yaml">
 meta:
   permissions:
-    - admin.workspaces
+    - admin.organizations
 </route>
 
 <script setup lang="ts">
-import WorkspaceTokensManager from '@/components/tokens/WorkspaceTokensManager.vue'
+import OrganizationTokensManager from '@/components/tokens/OrganizationTokensManager.vue'
 import Tag from '@/components/ui/Tag.vue'
 import CreateUserModal from '@/components/user/CreateUserModal.vue'
 import {
-  useCreateWorkspaceUser,
-  useDeleteWorkspaceUser,
+  useCreateOrganizationUser,
+  useDeleteOrganizationUser,
   useResendPasswordReset,
   useToggleUserStatus,
 } from '@/mutations/user'
-import { workspaceUsersQuery } from '@/queries/user'
-import { workspaceDetailsQuery } from '@/queries/workspace'
-import type { WorkspaceUserCreate, WorkspaceUserListItem } from '@/types/user'
+import { organizationUsersQuery } from '@/queries/user'
+import { organizationByIdQuery } from '@/queries/organization-admin'
+import type { OrganizationUserCreate, OrganizationUserListItem } from '@/types/user'
 import { useQuery } from '@pinia/colada'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -302,51 +301,38 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 const { t } = useI18n()
 
-const workspaceId = computed(() => parseInt(route.params.workspaceId as string))
+const organizationId = computed(() => route.params.organizationId as string)
 
-// Query for workspace details
+// Query for organization details
 const {
-  data: workspace,
+  data: organization,
   isLoading,
   error,
-} = useQuery(workspaceDetailsQuery, () => ({ id: workspaceId.value }), {
-  enabled: computed(() => !isNaN(workspaceId.value)),
+} = useQuery(organizationByIdQuery, () => ({ id: organizationId.value }), {
+  enabled: computed(() => !!organizationId.value),
 })
 
-// Query for workspace users
+// Query for organization users
 const {
-  data: users,
+  data: usersData,
   isLoading: usersLoading,
   error: usersError,
-} = useQuery(workspaceUsersQuery, () => ({ workspaceId: workspaceId.value }), {
-  enabled: computed(() => !isNaN(workspaceId.value)),
+} = useQuery(organizationUsersQuery, () => ({ organizationId: organizationId.value }), {
+  enabled: computed(() => !!organizationId.value),
 })
 
+const users = computed(() => usersData.value?.data || [])
+
 // User mutations
-const { createUser, isLoading: isCreatingUser } = useCreateWorkspaceUser(workspaceId.value)
-const { deleteUser, isLoading: isDeletingUser } = useDeleteWorkspaceUser(workspaceId.value)
-const { toggleStatus } = useToggleUserStatus(workspaceId.value)
-const { resendReset } = useResendPasswordReset(workspaceId.value)
+const { createUser, isLoading: isCreatingUser } = useCreateOrganizationUser(organizationId.value)
+const { deleteUser, isLoading: isDeletingUser } = useDeleteOrganizationUser(organizationId.value)
+const { toggleStatus } = useToggleUserStatus(organizationId.value)
+const { resendReset } = useResendPasswordReset(organizationId.value)
 
 // UI state
 const showCreateUserModal = ref(false)
-const userToDelete = ref<WorkspaceUserListItem | null>(null)
+const userToDelete = ref<OrganizationUserListItem | null>(null)
 const activeUserActions = ref<string | null>(null)
-
-// Computed properties
-const usersWithDisplayInfo = computed<WorkspaceUserListItem[]>(() => {
-  if (!users.value?.users) return []
-
-  return users.value.users.map((user) => ({
-    ...user,
-    displayName:
-      user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.username,
-    initials:
-      user.firstName && user.lastName
-        ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
-        : user.username.slice(0, 2).toUpperCase(),
-  }))
-})
 
 // Format date helper
 const formatDate = (dateString: string) => {
@@ -360,20 +346,20 @@ const formatDate = (dateString: string) => {
 }
 
 // User status helpers
-const getUserStatusVariant = (user: WorkspaceUserListItem) => {
+const getUserStatusVariant = (user: OrganizationUserListItem) => {
   if (!user.enabled) return 'error'
   if (!user.emailVerified) return 'warning'
   return 'success'
 }
 
-const getUserStatusText = (user: WorkspaceUserListItem) => {
+const getUserStatusText = (user: OrganizationUserListItem) => {
   if (!user.enabled) return t('user.status.disabled', 'Disabled')
   if (!user.emailVerified) return t('user.status.pending', 'Pending')
   return t('user.status.active', 'Active')
 }
 
 // User management actions
-const handleCreateUser = async (userData: WorkspaceUserCreate) => {
+const handleCreateUser = async (userData: OrganizationUserCreate) => {
   try {
     await createUser(userData)
     showCreateUserModal.value = false
@@ -382,7 +368,7 @@ const handleCreateUser = async (userData: WorkspaceUserCreate) => {
   }
 }
 
-const confirmDeleteUser = (user: WorkspaceUserListItem) => {
+const confirmDeleteUser = (user: OrganizationUserListItem) => {
   userToDelete.value = user
   activeUserActions.value = null
 }

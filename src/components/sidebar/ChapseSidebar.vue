@@ -53,7 +53,10 @@
     </div>
 
     <!-- Messages Container -->
-    <div ref="messagesContainer" class="overflow-y-auto px-4 py-4 grow max-h-[calc(100vh-400px)] max-w-[100%] relative ">
+    <div
+      ref="messagesContainer"
+      class="overflow-y-auto px-4 py-4 grow max-h-[calc(100vh-400px)] max-w-[100%] relative"
+    >
       <ChatMessage v-for="message in messages" :key="message.id" :message="message" />
 
       <!-- Loading Indicator -->
@@ -209,8 +212,8 @@ const suggestions = computed<Suggestion[]>(() => {
         message: 'Montre-moi mes entreprises récentes',
       },
       {
-        label: "Résume l'activité de mon workspace",
-        message: "Résume l'activité de mon workspace",
+        label: "Résume l'activité de mon organization",
+        message: "Résume l'activité de mon organization",
       },
     ]
   }
@@ -270,7 +273,7 @@ watch(
       await handleAssistAction(actionData)
       emit('assist-action-processed')
     }
-  }
+  },
 )
 
 // Auto-scroll to bottom when messages change

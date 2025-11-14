@@ -48,7 +48,7 @@ export interface Company {
   updated_by: string
 
   owner_username: string
-  workspace_id: number
+  organization_id: string
 
   // Optional folder information (populated for recent companies)
   folder_id?: string

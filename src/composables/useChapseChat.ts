@@ -11,7 +11,7 @@ export interface ChapseMessage {
 }
 
 export interface ChapseContext {
-  type: 'company' | 'folder' | 'workspace'
+  type: 'company' | 'folder' | 'organization'
   id: string | number
   name: string
   data?: any

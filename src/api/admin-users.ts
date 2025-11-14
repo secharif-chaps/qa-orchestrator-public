@@ -6,12 +6,12 @@ import { apiClient } from './client'
 import type {
   AdminUserListResponse,
   AdminUserQueryParams,
-  AssignWorkspaceRequest,
+  AssignOrganizationRequest,
 } from '@/types/admin-user'
-import type { WorkspaceMemberResponse } from '@/types/workspace'
+import type { OrganizationMemberResponse } from '@/types/organization'
 
 /**
- * Get all users across all workspaces with filtering and sorting
+ * Get all users across all organizations with filtering and sorting
  */
 export const getAllUsers = async (params: AdminUserQueryParams) => {
   const queryParams = new URLSearchParams({
@@ -25,19 +25,19 @@ export const getAllUsers = async (params: AdminUserQueryParams) => {
     queryParams.append('search', params.search)
   }
 
-  if (params.workspace_filter !== undefined && params.workspace_filter !== null) {
-    queryParams.append('workspace_filter', params.workspace_filter)
+  if (params.organization_filter !== undefined && params.organization_filter !== null) {
+    queryParams.append('organization_filter', params.organization_filter)
   }
 
-  return apiClient.get<AdminUserListResponse>(`/workspace/admin/users?${queryParams}`)
+  return apiClient.get<AdminUserListResponse>(`/users?${queryParams}`)
 }
 
 /**
- * Assign a user to a workspace or change their workspace
+ * Assign a user to an organization or change their organization
  */
-export const assignUserWorkspace = async (userId: string, workspaceId: number) => {
-  return apiClient.put<WorkspaceMemberResponse>(
-    `/workspace/admin/users/${userId}/workspace`,
-    { workspace_id: workspaceId } satisfies AssignWorkspaceRequest,
+export const assignUserOrganization = async (userId: string, organizationId: string) => {
+  return apiClient.put<OrganizationMemberResponse>(
+    `/users/${userId}/organization`,
+    { organization_id: organizationId } satisfies AssignOrganizationRequest,
   )
 }

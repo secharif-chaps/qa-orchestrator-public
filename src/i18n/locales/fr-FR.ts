@@ -290,10 +290,10 @@ export default {
     home: 'Accueil',
     search: 'Recherche',
     cards: 'Cartes',
-    workspaces: 'Espaces de travail',
+    organizations: 'Espaces de travail',
     settings: 'Paramètres',
     help: 'Aide',
-    workspace: 'Équipe',
+    organization: 'Équipe',
     team: 'Équipe',
     admin: 'Admin',
     footer: {
@@ -341,9 +341,9 @@ export default {
       placeholder: 'Écrivez un message...',
     },
   },
-  workspaces: {
+  organizations: {
     title: 'Gestion des espaces de travail',
-    description: 'Gérez tous les espaces de travail de votre organisation',
+    description: 'Gérez tous les espaces de travail de votre organization',
     fields: {
       name: 'Nom',
       slug: 'Identifiant',
@@ -787,7 +787,7 @@ export default {
       },
     },
     permissionsList: {
-      workspaceRead: {
+      organizationRead: {
         name: 'Accès de Base',
         description: "Voir le contenu de l'espace de travail et les entreprises",
       },
@@ -803,7 +803,7 @@ export default {
         name: 'Supprimer des Entreprises',
         description: "Retirer des entreprises de l'espace de travail",
       },
-      workspaceWrite: {
+      organizationWrite: {
         name: "Gestion d'Équipe",
         description: "Gérer les utilisateurs et paramètres de l'espace de travail",
       },
@@ -823,14 +823,14 @@ export default {
         title: 'Aperçu Système',
       },
       stats: {
-        workspaces: 'Total Espaces de travail',
+        organizations: 'Total Espaces de travail',
         users: 'Utilisateurs Actifs',
         companies: 'Entreprises',
         health: 'Santé Système',
       },
     },
     features: {
-      workspaces: {
+      organizations: {
         title: 'Gestion des Espaces de travail',
         description: 'Gérez tous les espaces de travail, utilisateurs et paramètres',
       },
@@ -904,7 +904,7 @@ export default {
         },
         team: {
           title: 'Équipe & Management',
-          description: 'Équipe dirigeante, structure organisationnelle et personnel clé.',
+          description: 'Équipe dirigeante, structure organizationnelle et personnel clé.',
         },
         jobs: {
           title: "Offres d'Emploi",
@@ -1001,7 +1001,7 @@ export default {
       },
       team: {
         title: 'Équipe & Management',
-        description: 'Équipe dirigeante, structure organisationnelle et personnel clé',
+        description: 'Équipe dirigeante, structure organizationnelle et personnel clé',
         insights: 'Informations Équipe',
       },
       jobs: {
@@ -1029,7 +1029,7 @@ export default {
       workflowTitle: 'Debug : Workflow de recherche',
     },
     validation: {
-      loadingWorkspace: "Chargement de l'espace de travail...",
+      loadingorganization: "Chargement de l'espace de travail...",
       loadingTokens: 'Chargement des jetons...',
       moduleDisabled: 'Le module Stream est désactivé',
       insufficientTokens:
@@ -1115,14 +1115,14 @@ export default {
       },
     },
   },
-  workspace: {
+  organization: {
     admin: {
       title: 'Gestion des Espaces de Travail',
       description: 'Gérez tous les espaces de travail du système',
     },
     create: {
       title: 'Créer un Espace de Travail',
-      description: 'Créez un nouvel espace de travail pour votre organisation',
+      description: 'Créez un nouvel espace de travail pour votre organization',
       button: 'Créer un Espace de Travail',
       submit: 'Créer un Espace de Travail',
       preview: 'Aperçu',
@@ -1478,7 +1478,7 @@ export default {
     categories: {
       admin: 'Administration',
       company: "Analyse d'Entreprises",
-      workspace: "Gestion de l'Espace de Travail",
+      organization: "Gestion de l'Espace de Travail",
     },
   },
   login: {

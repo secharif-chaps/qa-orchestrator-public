@@ -7,5 +7,5 @@
 <route lang="yaml">
 meta:
   permissions:
-    - workspace.read
+    - organization.read
 </route>

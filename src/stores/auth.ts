@@ -39,6 +39,33 @@ export const useAuthStore = defineStore(
       return userRoles.value
     })
 
+    // Organization context from JWT token
+    const organizationId = computed<string | null>(() => {
+      if (!user.value?.access_token) return null
+
+      try {
+        const token = jwtDecode(user.value.access_token) as {
+          organization_id?: string
+        }
+        return token.organization_id || null
+      } catch {
+        return null
+      }
+    })
+
+    const organizationName = computed<string | null>(() => {
+      if (!user.value?.access_token) return null
+
+      try {
+        const token = jwtDecode(user.value.access_token) as {
+          organization_name?: string
+        }
+        return token.organization_name || null
+      } catch {
+        return null
+      }
+    })
+
     const { endpoints } = useEndpointResolver()
 
     // Initialize UserManager
@@ -246,6 +273,8 @@ export const useAuthStore = defineStore(
       username,
       userRoles,
       userPermissions,
+      organizationId,
+      organizationName,
 
       // Actions
       initialize,

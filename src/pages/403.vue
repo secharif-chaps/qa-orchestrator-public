@@ -102,7 +102,7 @@ const tokenErrorMessage = computed(() => {
   if (reason.value === 'module_disabled') {
     return t(
       'errors.forbidden.token.moduleDisabledMessage',
-      'The {module} module has been disabled for your workspace. Contact your administrator to enable this feature.',
+      'The {module} module has been disabled for your organization. Contact your administrator to enable this feature.',
       { module: errorModule.value || 'requested' },
     )
   }

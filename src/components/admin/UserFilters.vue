@@ -12,34 +12,34 @@
         />
       </div>
 
-      <!-- Workspace Filter Dropdown -->
+      <!-- Organization Filter Dropdown -->
       <Dropdown align="left" width="md">
         <template #trigger>
           <Button variant="secondary" icon="fa fa-filter">
-            {{ workspaceFilterLabel }}
+            {{ organizationFilterLabel }}
           </Button>
         </template>
 
         <template #content="{ close }">
-          <DropdownItem @click="selectWorkspaceFilter(null, close)">
+          <DropdownItem @click="selectOrganizationFilter(null, close)">
             <i class="fa fa-users"></i>
             {{ $t('admin.users.filter.allUsers', 'All users') }}
           </DropdownItem>
 
-          <DropdownItem @click="selectWorkspaceFilter('none', close)">
+          <DropdownItem @click="selectOrganizationFilter('none', close)">
             <i class="fa fa-user-slash"></i>
-            {{ $t('admin.users.filter.noWorkspace', 'No workspace') }}
+            {{ $t('admin.users.filter.noOrganization', 'No organization') }}
           </DropdownItem>
 
           <DropdownDivider />
 
           <DropdownItem
-            v-for="workspace in workspaces"
-            :key="workspace.id"
-            @click="selectWorkspaceFilter(workspace.id.toString(), close)"
+            v-for="organization in organizations"
+            :key="organization.id"
+            @click="selectOrganizationFilter(organization.id, close)"
           >
             <i class="fa fa-building"></i>
-            {{ workspace.name }}
+            {{ organization.name }}
           </DropdownItem>
         </template>
       </Dropdown>
@@ -63,9 +63,9 @@
             {{ $t('admin.users.sort.username', 'Username') }}
           </DropdownItem>
 
-          <DropdownItem @click="selectSort('workspace', close)">
+          <DropdownItem @click="selectSort('organization', close)">
             <i class="fa fa-building"></i>
-            {{ $t('admin.users.sort.workspace', 'Workspace') }}
+            {{ $t('admin.users.sort.organization', 'Organization') }}
           </DropdownItem>
 
           <DropdownItem @click="selectSort('created_at', close)">
@@ -102,42 +102,42 @@ import Button from '@/components/ui/Button.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
 import DropdownDivider from '@/components/ui/DropdownDivider.vue'
-import type { WorkspaceResponse } from '@/types/workspace'
+import type { OrganizationAdminResponse } from '@/types/organization'
 import type { AdminUserQueryParams } from '@/types/admin-user'
 
 interface Props {
   search: string
-  workspaceFilter: string | null
+  organizationFilter: string | null
   sort: AdminUserQueryParams['sort']
   order: AdminUserQueryParams['order']
-  workspaces: WorkspaceResponse[]
+  organizations: OrganizationAdminResponse[]
 }
 
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
   'update:search': [value: string]
-  'update:workspace-filter': [value: string | null]
+  'update:organization-filter': [value: string | null]
   'update:sort': [value: AdminUserQueryParams['sort']]
   'update:order': [value: AdminUserQueryParams['order']]
 }>()
 
 // Computed labels
-const workspaceFilterLabel = computed(() => {
-  if (props.workspaceFilter === null) {
+const organizationFilterLabel = computed(() => {
+  if (props.organizationFilter === null) {
     return 'All users'
   }
-  if (props.workspaceFilter === 'none') {
-    return 'No workspace'
+  if (props.organizationFilter === 'none') {
+    return 'No organization'
   }
-  const workspace = props.workspaces.find((w) => w.id.toString() === props.workspaceFilter)
-  return workspace ? workspace.name : 'Filter by workspace'
+  const organization = props.organizations.find((org) => org.id === props.organizationFilter)
+  return organization ? organization.name : 'Filter by organization'
 })
 
 const sortLabel = computed(() => {
   const sortLabels = {
     username: 'Username',
-    workspace: 'Workspace',
+    organization: 'Organization',
     created_at: 'Created Date',
   }
   const orderText = props.order === 'asc' ? 'A-Z' : 'Z-A'
@@ -149,8 +149,8 @@ const handleSearchInput = (value: string) => {
   emit('update:search', value)
 }
 
-const selectWorkspaceFilter = (filter: string | null, close: () => void) => {
-  emit('update:workspace-filter', filter)
+const selectOrganizationFilter = (filter: string | null, close: () => void) => {
+  emit('update:organization-filter', filter)
   close()
 }
 

@@ -15,13 +15,13 @@
         </div>
 
         <!-- Token Counter -->
-        <div v-if="currentWorkspace" class="flex items-center gap-4">
+        <div v-if="currentOrganization" class="flex items-center gap-4">
           <div class="text-right">
             <TokenCounter
               module="screen"
               :token-count="screenTokenCount"
               :is-enabled="screenModuleEnabled"
-              :is-loading="tokenDataLoading || !currentWorkspace?.id"
+              :is-loading="tokenDataLoading || !currentOrganization?.id"
               :is-refreshing="isRefreshingTokens"
               show-label
               show-status
@@ -362,7 +362,7 @@ import {
   type CSVImportResponse,
 } from '@/api/companies'
 import { useAddItemToFolder } from '@/mutations/folders'
-import { currentWorkspaceQuery } from '@/queries/workspace'
+import { currentOrganizationQuery } from '@/queries/organization'
 import { moduleTokensQuery } from '@/queries/tokens'
 import type { ModuleName } from '@/types/tokens'
 
@@ -382,7 +382,7 @@ const isValidating = ref(false)
 const isImporting = ref(false)
 
 // Token validation with real backend integration
-const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
+const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
 
 // Query for screen module tokens
 const {
@@ -392,11 +392,11 @@ const {
 } = useQuery(
   moduleTokensQuery,
   () => ({
-    workspaceId: currentWorkspace.value?.id || 0,
+    organizationId: currentOrganization.value?.id || '',
     module: 'screen' as ModuleName,
   }),
   {
-    enabled: computed(() => !!currentWorkspace.value?.id),
+    enabled: computed(() => !!currentOrganization.value?.id),
   },
 )
 
@@ -406,7 +406,7 @@ const screenModuleEnabled = computed(() => screenTokenData.value?.enabled ?? fal
 
 const showInsufficientTokenAlert = computed(() => {
   // Don't show alert if data is still loading
-  if (!currentWorkspace.value?.id || tokenDataLoading.value) {
+  if (!currentOrganization.value?.id || tokenDataLoading.value) {
     return false
   }
 
