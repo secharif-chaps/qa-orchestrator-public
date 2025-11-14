@@ -11,7 +11,7 @@
             {{
               $t(
                 'company.management.description',
-                'View and manage all companies in your workspace',
+                'View and manage all companies in your organization',
               )
             }}
           </p>

@@ -17,16 +17,12 @@
           v-for="feature in visibleFeatures"
           :key="feature.id"
           ring="accent"
-          class="group hover:ring-offset-2 ring-offset-base-100 ring-0 ring-accent-400   hover:ring-4 hover:shadow-none cursor-pointer"
+          class="group hover:ring-offset-2 ring-offset-base-100 ring-0 ring-accent-400 hover:ring-4 hover:shadow-none cursor-pointer"
           @click="feature.navigate()"
         >
           <div class="p-6">
             <div class="flex items-center mb-4">
-              <Badge
-                variant="secondary"
-                color="sage"
-                :label="feature.badgeLabel"
-              >
+              <Badge variant="secondary" color="sage" :label="feature.badgeLabel">
                 <i :class="[feature.icon, 'text-xl']"></i>
               </Badge>
               <div class="ml-4">
@@ -41,13 +37,11 @@
               {{ $t(feature.descriptionKey, feature.descriptionDefault) }}
             </p>
             <div class="group-hover:translate-x-2 transition-transform">
-
-            <div class="flex items-center text-sm font-medium text-accent-600 ">
-              <span>{{ $t(feature.actionKey, feature.actionDefault) }}</span>
-              <i class="fa fa-arrow-right ml-2 "></i>
+              <div class="flex items-center text-sm font-medium text-accent-600">
+                <span>{{ $t(feature.actionKey, feature.actionDefault) }}</span>
+                <i class="fa fa-arrow-right ml-2"></i>
+              </div>
             </div>
-          </div>
-
           </div>
         </Card>
       </div>
@@ -73,76 +67,22 @@
 <route lang="yaml">
 meta:
   permissions:
-    - admin.workspaces
+    - admin.organizations
     - admin.workflows
     - admin.costs
 </route>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import Tag from '@/components/ui/Tag.vue'
 import Alert from '@/components/ui/Alert.vue'
-import { useEndpointResolver } from '@/composables/useEndpointResolver'
 import Card from '@/components/ui/Card.vue'
 import Badge from '@/components/ui/Badge.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
-
-// Sophie's Emergency Section State
-const showConfirmDialog = ref(false)
-const isExecuting = ref(false)
-const lastExecutionResult = ref<{
-  success: boolean
-  message: string
-} | null>(null)
-
-// Sophie's Emergency Protocol
-const executeEmergencyProtocol = async () => {
-  showConfirmDialog.value = false
-  isExecuting.value = true
-  lastExecutionResult.value = null
-
-  const { endpoints } = useEndpointResolver()
-  const apiUrl = endpoints.value.apiUrl
-
-  try {
-    const response = await fetch(`${apiUrl}/api/admin/tasks/fail-stuck`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    })
-
-    if (response.ok) {
-      const data = await response.json()
-      lastExecutionResult.value = {
-        success: true,
-        message: `Successfully failed ${data.tasks_failed} stuck tasks and cleared the queue! ${data.queue_status}. Nicolas would be proud! 🎉`,
-      }
-    } else if (response.status === 403) {
-      lastExecutionResult.value = {
-        success: false,
-        message: 'Access denied! You need admin.workspaces permission to use this feature.',
-      }
-    } else {
-      lastExecutionResult.value = {
-        success: false,
-        message: 'Something went wrong. Maybe try turning it off and on again? 🤷',
-      }
-    }
-  } catch (error) {
-    lastExecutionResult.value = {
-      success: false,
-      message: `Network error: ${error}. The internet might be broken! 😱`,
-    }
-  } finally {
-    isExecuting.value = false
-  }
-}
 
 interface AdminFeature {
   id: string
@@ -166,11 +106,11 @@ interface AdminFeature {
 
 const features: AdminFeature[] = [
   {
-    id: 'workspaces',
-    titleKey: 'admin.features.workspaces.title',
-    titleDefault: 'Workspace Management',
-    descriptionKey: 'admin.features.workspaces.description',
-    descriptionDefault: 'Manage all workspaces, users, and workspace settings',
+    id: 'organizations',
+    titleKey: 'admin.features.organizations.title',
+    titleDefault: 'Organization Management',
+    descriptionKey: 'admin.features.organizations.description',
+    descriptionDefault: 'Manage organization modules, tokens, and settings',
     icon: 'fa fa-building',
     iconBgColor: 'bg-primary/10',
     iconTextColor: 'text-sage-content',
@@ -181,15 +121,15 @@ const features: AdminFeature[] = [
     actionKey: 'admin.features.manage',
     actionDefault: 'Manage',
     actionTextColor: 'text-sage-content',
-    permission: 'admin.workspaces',
-    navigate: () => router.push('/admin/workspaces'),
+    permission: 'admin.organizations',
+    navigate: () => router.push('/admin/organizations'),
   },
   {
     id: 'users',
     titleKey: 'admin.features.users.title',
     titleDefault: 'User Management',
     descriptionKey: 'admin.features.users.description',
-    descriptionDefault: 'Manage user workspace assignments and user access',
+    descriptionDefault: 'Manage user organization assignments and user access',
     icon: 'fa fa-users',
     iconBgColor: 'bg-secondary/10',
     iconTextColor: 'text-almond-600',
@@ -200,7 +140,7 @@ const features: AdminFeature[] = [
     actionKey: 'admin.features.manage',
     actionDefault: 'Manage',
     actionTextColor: 'text-almond-600',
-    permission: 'admin.workspaces',
+    permission: 'admin.organizations',
     navigate: () => router.push('/admin/users'),
   },
   {
@@ -240,25 +180,6 @@ const features: AdminFeature[] = [
     permission: 'admin.workflows',
     navigate: () => router.push('/admin/workflows'),
   },
-  {
-    id: 'costs',
-    titleKey: 'admin.features.costs.title',
-    titleDefault: 'Cost Analysis',
-    descriptionKey: 'admin.features.costs.description',
-    descriptionDefault: 'Monitor token usage and costs for MINT screening workflows',
-    icon: 'fa fa-dollar-sign',
-    iconBgColor: 'bg-orange-500/10',
-    iconTextColor: 'text-orange-500',
-    iconHoverBgColor: 'group-hover:bg-orange-500/20',
-    ringColor: 'ring-orange-500/50',
-    badgeVariant: 'warning',
-    badgeLabel: 'Token Tracking',
-    actionKey: 'admin.features.analyze',
-    actionDefault: 'Analyze',
-    actionTextColor: 'text-orange-500',
-    permission: 'admin.costs',
-    navigate: () => router.push('/admin/costs'),
-  },
 ]
 
 const visibleFeatures = computed(() => {
@@ -268,5 +189,5 @@ const visibleFeatures = computed(() => {
 })
 
 const hasAnyAdminAccess = computed(() => visibleFeatures.value.length > 0)
-const hasWorkspaceAccess = computed(() => authStore.hasPermission('admin.workspaces'))
+const hasorganizationAccess = computed(() => authStore.hasPermission('admin.organizations'))
 </script>

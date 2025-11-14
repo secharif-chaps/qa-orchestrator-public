@@ -204,9 +204,9 @@ export function useBreadcrumbs() {
           break
 
         // Admin pages
-        case 'workspaces':
+        case 'organizations':
           items.push({
-            name: 'Workspaces',
+            name: 'organizations',
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -261,9 +261,9 @@ export function useBreadcrumbs() {
               current: isLast,
             })
           } else if (pathSegments[i - 1] === 'admin' && segment.includes('.')) {
-            // This might be a workspace ID
+            // This might be a organization ID
             items.push({
-              name: 'Workspace',
+              name: 'organization',
               to: isLast ? undefined : currentPath,
               current: isLast,
             })

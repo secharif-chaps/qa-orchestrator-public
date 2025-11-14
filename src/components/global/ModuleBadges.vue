@@ -30,13 +30,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useQuery } from '@pinia/colada'
-import { workspaceModulesQuery } from '@/queries/tokens'
+import { organizationModulesQuery } from '@/queries/tokens'
 import { getModuleDisplayConfig } from '@/config/modules'
 
-const { workspaceId } = defineProps<{ workspaceId: number }>()
+const { organizationId } = defineProps<{ organizationId: string }>()
 
-// Fetch workspace modules
-const { data: modulesData, isLoading } = useQuery(workspaceModulesQuery, () => ({ workspaceId }))
+// Fetch organization modules
+const { data: modulesData, isLoading } = useQuery(organizationModulesQuery, () => ({ organizationId }))
 
 // Transform modules data for display
 const modules = computed(() => {

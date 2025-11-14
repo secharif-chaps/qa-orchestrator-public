@@ -27,8 +27,8 @@ const ACTION_TOKEN_COSTS: Record<string, Record<string, number>> = {
 /**
  * Composable for token validation and action authorization
  */
-export const useTokenValidation = (workspaceId: number) => {
-  const moduleTokens = useModuleTokens(workspaceId)
+export const useTokenValidation = (organizationId: number) => {
+  const moduleTokens = useModuleTokens(organizationId)
   const companyPermissions = useCompanyPermissions()
 
   const validateAction = (module: ModuleName, action: string) => {

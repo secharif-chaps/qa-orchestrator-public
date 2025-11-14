@@ -28,20 +28,12 @@
         </div>
 
         <!-- Status Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div class="bg-base-100 rounded-lg border border-primary-stroke p-4">
             <div class="flex items-center">
               <Tag variant="success" icon="fa fa-check" size="sm" />
               <span class="ml-3 text-sm font-medium"
                 >{{ activeCount }} {{ $t('admin.workflows.status.active', 'Active') }}</span
-              >
-            </div>
-          </div>
-          <div class="bg-base-100 rounded-lg border border-primary-stroke p-4">
-            <div class="flex items-center">
-              <Tag variant="warning" icon="fa fa-exclamation" size="sm" />
-              <span class="ml-3 text-sm font-medium"
-                >{{ partialCount }} {{ $t('admin.workflows.status.partial', 'Partial') }}</span
               >
             </div>
           </div>
@@ -127,18 +119,8 @@ const updatingWorkflow = ref<string | null>(null)
 const showSuccessToast = ref(false)
 
 // Status counts
-const activeCount = computed(
-  () => workflows.value.filter((w) => w.workflow_id && w.has_api_key).length,
-)
-const partialCount = computed(
-  () =>
-    workflows.value.filter(
-      (w) => (w.workflow_id || w.has_api_key) && !(w.workflow_id && w.has_api_key),
-    ).length,
-)
-const inactiveCount = computed(
-  () => workflows.value.filter((w) => !w.workflow_id && !w.has_api_key).length,
-)
+const activeCount = computed(() => workflows.value.filter((w) => w.has_api_key).length)
+const inactiveCount = computed(() => workflows.value.filter((w) => !w.has_api_key).length)
 
 // Load workflows on mount
 onMounted(async () => {
@@ -162,7 +144,7 @@ const loadWorkflows = async () => {
 // Handle workflow updates
 const handleWorkflowUpdate = async (
   taskType: string,
-  data: { workflow_id?: string | null; api_key?: string | null; llm?: 'claude' | 'mistral' | null },
+  data: { api_key?: string | null; llm?: 'claude' | 'mistral' | null },
 ) => {
   try {
     updatingWorkflow.value = taskType

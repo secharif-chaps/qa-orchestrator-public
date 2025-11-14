@@ -8,13 +8,13 @@
         {{
           $t(
             'team.permissions.description',
-            'Select which actions this user can perform in the workspace',
+            'Select which actions this user can perform in the organization',
           )
         }}
       </p>
     </div>
 
-    <div v-if="canManageWorkspace" class="grid grid-cols-1 gap-2">
+    <div v-if="canManageorganization" class="grid grid-cols-1 gap-2">
       <PermissionItem
         v-for="permission in availablePermissions"
         :key="permission.key"
@@ -25,7 +25,10 @@
       />
     </div>
 
-    <div v-if="!canManageWorkspace" class="bg-primary/10 border border-primary/20 rounded-lg p-4">
+    <div
+      v-if="!canManageorganization"
+      class="bg-primary/10 border border-primary/20 rounded-lg p-4"
+    >
       <div class="flex items-start gap-3">
         <div class="flex-shrink-0">
           <i class="fa fa-info-circle text-secondary text-lg"></i>
@@ -47,7 +50,7 @@
     </div>
 
     <div
-      v-if="permissions.includes('workspace.write')"
+      v-if="permissions.includes('organization.write')"
       class="bg-error/10 border border-error/20 rounded-lg p-4"
     >
       <div class="flex items-start gap-3">
@@ -59,8 +62,8 @@
           <p class="text-secondary mt-1">
             {{
               $t(
-                'team.permissions.workspaceManageWarning',
-                'Users with Team Management permission can add, edit, and manage other users in the workspace. Grant this permission carefully.',
+                'team.permissions.organizationManageWarning',
+                'Users with Team Management permission can add, edit, and manage other users in the organization. Grant this permission carefully.',
               )
             }}
           </p>
@@ -79,7 +82,7 @@ const { t } = useI18n()
 
 const props = defineProps<{
   permissions: string[]
-  canManageWorkspace?: boolean
+  canManageorganization?: boolean
   disabled?: boolean
 }>()
 
@@ -90,11 +93,11 @@ const emit = defineEmits<{
 const availablePermissions = computed(() => [
   // Basic permissions
   {
-    key: 'workspace.read',
-    name: t('team.permissionsList.workspaceRead.name', 'Basic Access'),
+    key: 'organization.read',
+    name: t('team.permissionsList.organizationRead.name', 'Basic Access'),
     description: t(
-      'team.permissionsList.workspaceRead.description',
-      'View workspace content and companies',
+      'team.permissionsList.organizationRead.description',
+      'View organization content and companies',
     ),
     icon: 'fa fa-eye',
   },
@@ -113,7 +116,7 @@ const availablePermissions = computed(() => [
     name: t('team.permissionsList.companyCreate.name', 'Create Companies'),
     description: t(
       'team.permissionsList.companyCreate.description',
-      'Add new companies to the workspace',
+      'Add new companies to the organization',
     ),
     icon: 'fa fa-plus-circle',
   },
@@ -122,17 +125,17 @@ const availablePermissions = computed(() => [
     name: t('team.permissionsList.companyDelete.name', 'Delete Companies'),
     description: t(
       'team.permissionsList.companyDelete.description',
-      'Remove companies from the workspace',
+      'Remove companies from the organization',
     ),
     icon: 'fa fa-trash',
   },
   // Admin permission
   {
-    key: 'workspace.write',
-    name: t('team.permissionsList.workspaceWrite.name', 'Team Management'),
+    key: 'organization.write',
+    name: t('team.permissionsList.organizationWrite.name', 'Team Management'),
     description: t(
-      'team.permissionsList.workspaceWrite.description',
-      'Manage workspace users and settings',
+      'team.permissionsList.organizationWrite.description',
+      'Manage organization users and settings',
     ),
     icon: 'fa fa-users-cog',
   },
@@ -142,7 +145,7 @@ const togglePermission = (permission: string) => {
     return
   }
 
-  if (permission === 'workspace.write' && !props.canManageWorkspace) {
+  if (permission === 'organization.write' && !props.canManageorganization) {
     return
   }
 

@@ -108,24 +108,24 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import type { WorkspaceUser } from '@/types/team'
+import type { OrganizationUser } from '@/types/team'
 
 import Button from '@/components/ui/Button.vue'
 
 const props = defineProps<{
-  user: WorkspaceUser
+  user: OrganizationUser
 }>()
 
 defineEmits<{
-  'edit-user': [user: WorkspaceUser]
+  'edit-user': [user: OrganizationUser]
   'disable-user': [userId: number]
   'enable-user': [userId: number]
 }>()
 
 const authStore = useAuthStore()
 
-// Only users with workspace.write can manage users (add, edit, disable)
-const canManageUsers = computed(() => authStore.hasPermission('workspace.write'))
+// Only users with organization.write can manage users (add, edit, disable)
+const canManageUsers = computed(() => authStore.hasPermission('organization.write'))
 
 const userDisplayName = computed(() => {
   return `${props.user.first_name} ${props.user.last_name}`.trim() || props.user.username

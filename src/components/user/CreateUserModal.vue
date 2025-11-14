@@ -167,7 +167,7 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { WorkspaceUserCreate } from '@/types/user'
+import type { OrganizationUserCreate } from '@/types/user'
 
 const { t } = useI18n()
 
@@ -176,7 +176,7 @@ interface Props {
 }
 
 interface Emits {
-  confirm: [user: WorkspaceUserCreate]
+  confirm: [user: OrganizationUserCreate]
   cancel: []
 }
 
@@ -184,7 +184,7 @@ defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 // Form state
-const form = reactive<WorkspaceUserCreate>({
+const form = reactive<OrganizationUserCreate>({
   username: '',
   email: '',
   firstName: '',

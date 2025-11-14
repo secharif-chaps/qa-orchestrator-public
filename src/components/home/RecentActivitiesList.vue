@@ -14,7 +14,7 @@
       <Alert
         variant="error"
         title="Unable to load recent activities"
-        message="There was a problem loading workspace activities. Please try again later."
+        message="There was a problem loading organization activities. Please try again later."
         icon="fa fa-exclamation-triangle"
       />
     </div>

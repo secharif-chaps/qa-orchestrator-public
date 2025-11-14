@@ -1,24 +1,35 @@
 import { defineQueryOptions } from '@pinia/colada'
-import { 
-  getWorkspaceUsers,
-  getWorkspaceUser,
-} from '@/api/user'
+import { getOrganizationUsers, getOrganizationUser } from '@/api/user'
 
 // Define query keys for cache management
 export const USER_QUERY_KEYS = {
   root: ['users'] as const,
-  workspace: (workspaceId: number) => ['users', 'workspace', workspaceId] as const,
-  workspaceUsers: (workspaceId: number, page = 1, limit = 20) => ['users', 'workspace', workspaceId, 'list', page, limit] as const,
-  workspaceUser: (workspaceId: number, userId: string) => ['users', 'workspace', workspaceId, 'user', userId] as const,
+  organization: (organizationId: string) => ['users', 'organization', organizationId] as const,
+  organizationUsers: (organizationId: string, page = 1, limit = 20) =>
+    ['users', 'organization', organizationId, 'list', page, limit] as const,
+  organizationUser: (organizationId: string, userId: string) =>
+    ['users', 'organization', organizationId, 'user', userId] as const,
 }
 
-// Workspace user queries
-export const workspaceUsersQuery = defineQueryOptions(({ workspaceId, page = 1, limit = 20 }: { workspaceId: number, page?: number, limit?: number }) => ({
-  key: USER_QUERY_KEYS.workspaceUsers(workspaceId, page, limit),
-  query: () => getWorkspaceUsers(workspaceId, page, limit),
-}))
+// organization user queries
+export const organizationUsersQuery = defineQueryOptions(
+  ({
+    organizationId,
+    page = 1,
+    limit = 20,
+  }: {
+    organizationId: string
+    page?: number
+    limit?: number
+  }) => ({
+    key: USER_QUERY_KEYS.organizationUsers(organizationId, page, limit),
+    query: () => getOrganizationUsers(organizationId, page, limit),
+  }),
+)
 
-export const workspaceUserQuery = defineQueryOptions(({ workspaceId, userId }: { workspaceId: number, userId: string }) => ({
-  key: USER_QUERY_KEYS.workspaceUser(workspaceId, userId),
-  query: () => getWorkspaceUser(workspaceId, userId),
-}))
+export const organizationUserQuery = defineQueryOptions(
+  ({ organizationId, userId }: { organizationId: string; userId: string }) => ({
+    key: USER_QUERY_KEYS.organizationUser(organizationId, userId),
+    query: () => getOrganizationUser(organizationId, userId),
+  }),
+)

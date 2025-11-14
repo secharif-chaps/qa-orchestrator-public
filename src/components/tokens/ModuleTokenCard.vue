@@ -137,7 +137,7 @@ interface Props {
   module: ModuleName
   tokenCount: number
   isEnabled: boolean
-  workspaceId: number
+  organizationId: number
   showAdminControls?: boolean
   isLoading?: boolean
 }
@@ -235,7 +235,7 @@ const canAddTokens = computed(() => {
 const handleToggle = async () => {
   try {
     await toggleModule({
-      workspaceId: props.workspaceId,
+      organizationId: props.organizationId,
       module: props.module,
       enabled: !props.isEnabled,
     })
@@ -249,8 +249,8 @@ const addQuickTokens = async (amount: number) => {
   if (!props.isEnabled || addTokensMutation.isLoading.value) return
 
   try {
-    // Set up the mutation with current workspace and module
-    addTokensMutation.workspaceId.value = props.workspaceId
+    // Set up the mutation with current organization and module
+    addTokensMutation.organizationId.value = props.organizationId
     addTokensMutation.module.value = props.module
     addTokensMutation.tokensToAdd.value = amount
 
@@ -266,8 +266,8 @@ const handleAddTokens = async () => {
   if (!canAddTokens.value) return
 
   try {
-    // Set up the mutation with current workspace and module
-    addTokensMutation.workspaceId.value = props.workspaceId
+    // Set up the mutation with current organization and module
+    addTokensMutation.organizationId.value = props.organizationId
     addTokensMutation.module.value = props.module
     addTokensMutation.tokensToAdd.value = tokensToAdd.value
 

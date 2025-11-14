@@ -56,24 +56,6 @@
 
         <!-- Content -->
         <div class="space-y-4">
-          <!-- Workflow ID -->
-          <div>
-            <label class="block text-sm font-medium text-base mb-2">
-              {{ $t('admin.workflows.workflowId', 'Workflow ID') }}
-            </label>
-            <Input
-              v-if="isEditing"
-              v-model="editData.workflow_id"
-              :placeholder="$t('admin.workflows.workflowIdPlaceholder', 'Enter Dify workflow ID')"
-              icon="fa fa-project-diagram"
-              size="sm"
-              clearable
-            />
-            <div v-else class="text-sm text-secondary bg-base-200 px-3 py-2 rounded-md">
-              {{ workflow.workflow_id || $t('admin.workflows.notConfigured', 'Not configured') }}
-            </div>
-          </div>
-
           <!-- API Key -->
           <div>
             <label class="block text-sm font-medium text-base mb-2">
@@ -191,16 +173,6 @@
 
       <!-- Content -->
       <div class="space-y-4">
-        <!-- Workflow ID -->
-        <div>
-          <label class="block text-sm font-medium text-base mb-2">
-            {{ $t('admin.workflows.workflowId', 'Workflow ID') }}
-          </label>
-          <div class="text-sm text-secondary bg-base-200 px-3 py-2 rounded-md">
-            {{ workflow.workflow_id || $t('admin.workflows.notConfigured', 'Not configured') }}
-          </div>
-        </div>
-
         <!-- API Key -->
         <div>
           <label class="block text-sm font-medium text-base mb-2">
@@ -245,7 +217,6 @@ const emit = defineEmits<{
   update: [
     taskType: string,
     data: {
-      workflow_id?: string | null
       api_key?: string | null
       llm?: 'claude' | 'mistral' | null
     },
@@ -262,7 +233,6 @@ const floatingCardRef = ref<HTMLElement | null>(null)
 const originalRect = ref<DOMRect | null>(null)
 
 const editData = ref({
-  workflow_id: '',
   api_key: '',
   llm: 'claude' as 'claude' | 'mistral',
 })
@@ -272,7 +242,6 @@ watch(
   () => workflow,
   (newWorkflow) => {
     editData.value = {
-      workflow_id: newWorkflow.workflow_id || '',
       api_key: '',
       llm: newWorkflow.llm || 'claude',
     }
@@ -296,26 +265,15 @@ const iconClass = computed(() => iconMapping[workflow.task_type] || 'fa fa-cog')
 
 // Status configuration based on workflow state
 const statusConfig = computed(() => {
-  const hasWorkflowId = !!workflow.workflow_id
   const hasApiKey = workflow.has_api_key
 
-  if (hasWorkflowId && hasApiKey) {
+  if (hasApiKey) {
     return {
       variant: 'success' as const,
       label: 'Active',
       badgeIcon: 'fa fa-check',
       iconBg: 'bg-success/10 group-hover:bg-success/20',
       iconColor: 'text-success',
-    }
-  }
-
-  if (hasWorkflowId || hasApiKey) {
-    return {
-      variant: 'warning' as const,
-      label: 'Partial',
-      badgeIcon: 'fa fa-exclamation',
-      iconBg: 'bg-warning/10 group-hover:bg-warning/20',
-      iconColor: 'text-warning',
     }
   }
 
@@ -330,13 +288,11 @@ const statusConfig = computed(() => {
 
 // Check if there are changes to save
 const hasChanges = computed(() => {
-  const originalWorkflowId = workflow.workflow_id || ''
-  const newWorkflowId = editData.value.workflow_id || ''
   const hasNewApiKey = !!editData.value.api_key
   const originalLlm = workflow.llm || 'claude'
   const newLlm = editData.value.llm
 
-  return originalWorkflowId !== newWorkflowId || hasNewApiKey || originalLlm !== newLlm
+  return hasNewApiKey || originalLlm !== newLlm
 })
 
 // Enter zoom mode with smooth animation
@@ -465,7 +421,6 @@ const cancelEdit = () => {
   exitZoomMode()
   // Reset edit data
   editData.value = {
-    workflow_id: workflow.workflow_id || '',
     api_key: '',
     llm: workflow.llm || 'claude',
   }
@@ -476,17 +431,9 @@ const saveChanges = () => {
   if (!hasChanges.value) return
 
   const updateData: {
-    workflow_id?: string | null
     api_key?: string | null
     llm?: 'claude' | 'mistral' | null
   } = {}
-
-  // Include workflow_id if changed
-  const originalWorkflowId = workflow.workflow_id || ''
-  const newWorkflowId = editData.value.workflow_id || ''
-  if (originalWorkflowId !== newWorkflowId) {
-    updateData.workflow_id = newWorkflowId || null
-  }
 
   // Include api_key if provided
   if (editData.value.api_key) {

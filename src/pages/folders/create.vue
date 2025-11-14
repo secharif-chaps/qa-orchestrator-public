@@ -104,7 +104,7 @@
 <route lang="yaml">
 meta:
   permissions:
-    - workspace.write
+    - organization.write
 </route>
 
 <script setup lang="ts">

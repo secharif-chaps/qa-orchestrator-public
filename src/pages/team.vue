@@ -36,20 +36,20 @@
 <route lang="yaml">
 meta:
   permissions:
-    - workspace.read
+    - organization.read
 </route>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useQuery } from '@pinia/colada'
-import { currentWorkspaceQuery } from '@/queries/workspace'
+import { currentOrganizationQuery } from '@/queries/organization'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-// Get current workspace
-const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
+// Get current organization
+const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
 
 // Tab management
 const route = useRoute()

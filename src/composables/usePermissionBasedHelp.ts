@@ -24,9 +24,10 @@ export const usePermissionBasedHelp = () => {
       content: '', // Will be loaded dynamically
     },
     {
-      permission: 'admin.workspaces',
-      title: 'Workspace Management',
-      description: 'Manage workspaces, users, tokens, and module configurations across the platform.',
+      permission: 'admin.organizations',
+      title: 'organization Management',
+      description:
+        'Manage organizations, users, tokens, and module configurations across the platform.',
       content: '',
     },
     {
@@ -54,14 +55,14 @@ export const usePermissionBasedHelp = () => {
       content: '',
     },
     {
-      permission: 'workspace.read',
-      title: 'Workspace Team (Read Access)',
-      description: 'View team information, member roles, and workspace settings.',
+      permission: 'organization.read',
+      title: 'organization Team (Read Access)',
+      description: 'View team information, member roles, and organization settings.',
       content: '',
     },
     {
-      permission: 'workspace.write',
-      title: 'Workspace Team Management',
+      permission: 'organization.write',
+      title: 'organization Team Management',
       description: 'Manage team members, roles, and permissions with full administrative control.',
       content: '',
     },
@@ -69,9 +70,7 @@ export const usePermissionBasedHelp = () => {
 
   // Get available help sections based on user permissions
   const availableHelpSections = computed(() => {
-    return helpSections.filter(section => 
-      authStore.hasPermission(section.permission)
-    )
+    return helpSections.filter((section) => authStore.hasPermission(section.permission))
   })
 
   // Load markdown content for a specific permission
@@ -94,7 +93,7 @@ export const usePermissionBasedHelp = () => {
           ...section,
           content,
         }
-      })
+      }),
     )
     return sectionsWithContent
   }
@@ -106,13 +105,13 @@ export const usePermissionBasedHelp = () => {
 
   // Get help section by permission
   const getHelpSection = (permission: string) => {
-    return availableHelpSections.value.find(section => section.permission === permission)
+    return availableHelpSections.value.find((section) => section.permission === permission)
   }
 
   // Get all unique permission categories for grouping
   const helpCategories = computed(() => {
     const categories = new Set<string>()
-    availableHelpSections.value.forEach(section => {
+    availableHelpSections.value.forEach((section) => {
       const category = section.permission.split('.')[0]
       categories.add(category)
     })
@@ -122,15 +121,15 @@ export const usePermissionBasedHelp = () => {
   // Group help sections by category
   const helpSectionsByCategory = computed(() => {
     const grouped: Record<string, HelpSection[]> = {}
-    
-    availableHelpSections.value.forEach(section => {
+
+    availableHelpSections.value.forEach((section) => {
       const category = section.permission.split('.')[0]
       if (!grouped[category]) {
         grouped[category] = []
       }
       grouped[category].push(section)
     })
-    
+
     return grouped
   })
 

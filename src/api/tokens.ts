@@ -7,29 +7,29 @@ import type {
   ModuleName,
 } from '@/types/tokens'
 
-// Workspace Endpoints (non-admin - workspace members can view their own)
-export const getWorkspaceModules = async (workspaceId: number) => {
-  const response = await apiClient.get<ModulesResponse>(`/workspaces/${workspaceId}/modules`)
+// Organization Endpoints (non-admin - organization members can view their own)
+export const getOrganizationModules = async (organizationId: string) => {
+  const response = await apiClient.get<ModulesResponse>(`/organizations/${organizationId}/modules`)
   return response
 }
 
-export const updateWorkspaceModules = async (workspaceId: number, updates: Record<ModuleName, TokenUpdateRequest>) => {
-  const response = await apiClient.put<ModulesResponse>(`/admin/workspaces/${workspaceId}/modules`, updates)
+export const updateOrganizationModules = async (organizationId: string, updates: Record<ModuleName, TokenUpdateRequest>) => {
+  const response = await apiClient.put<ModulesResponse>(`/organizations/${organizationId}/modules`, updates)
   return response
 }
 
-export const addModuleTokens = async (workspaceId: number, module: ModuleName, data: AddTokensRequest) => {
-  const response = await apiClient.post<ModuleTokenResponse>(`/admin/workspaces/${workspaceId}/modules/${module}/tokens`, data)
+export const addModuleTokens = async (organizationId: string, module: ModuleName, data: AddTokensRequest) => {
+  const response = await apiClient.post<ModuleTokenResponse>(`/organizations/${organizationId}/modules/${module}/tokens`, data)
   return response
 }
 
-export const toggleModule = async (workspaceId: number, module: ModuleName, enabled: boolean) => {
-  const response = await apiClient.put<ModuleTokenResponse>(`/admin/workspaces/${workspaceId}/modules/${module}/toggle`, { enabled })
+export const toggleModule = async (organizationId: string, module: ModuleName, enabled: boolean) => {
+  const response = await apiClient.put<ModuleTokenResponse>(`/organizations/${organizationId}/modules/${module}/toggle`, { enabled })
   return response
 }
 
 // Token Validation Endpoints
-export const getModuleTokens = async (workspaceId: number, module: ModuleName) => {
-  const response = await apiClient.get<ModuleTokenResponse>(`/workspaces/${workspaceId}/modules/${module}/tokens`)
+export const getModuleTokens = async (organizationId: string, module: ModuleName) => {
+  const response = await apiClient.get<ModuleTokenResponse>(`/organizations/${organizationId}/modules/${module}/tokens`)
   return response
 }

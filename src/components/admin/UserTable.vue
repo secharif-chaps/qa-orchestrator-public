@@ -7,7 +7,7 @@
         v-for="user in users"
         :key="user.user_id"
         :user="user"
-        @assign-workspace="$emit('assign-workspace', $event)"
+        @assign-organization="$emit('assign-organization', $event)"
       />
     </div>
 
@@ -33,7 +33,7 @@ interface Props {
 defineProps<Props>()
 
 defineEmits<{
-  'assign-workspace': [user: AdminUserResponse]
+  'assign-organization': [user: AdminUserResponse]
   'clear-filters': []
 }>()
 </script>

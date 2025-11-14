@@ -1,26 +1,26 @@
 import { ref } from 'vue'
 import { useMutation, useQueryCache } from '@pinia/colada'
 import {
-  createWorkspaceUser,
-  updateWorkspaceUser,
-  deleteWorkspaceUser,
+  createOrganizationUser,
+  updateOrganizationUser,
+  deleteOrganizationUser,
   toggleUserStatus,
   resendPasswordReset,
 } from '@/api/user'
 import { USER_QUERY_KEYS } from '@/queries/user'
 import { toast } from '@/utils/toast'
-import type { WorkspaceUserCreate, WorkspaceUserUpdate } from '@/types/user'
+import type { OrganizationUserCreate, OrganizationUserUpdate } from '@/types/user'
 
-export const useCreateWorkspaceUser = (workspaceId: number) => {
+export const useCreateOrganizationUser = (organizationId: string) => {
   const queryCache = useQueryCache()
   const isLoading = ref(false)
 
   const { mutateAsync } = useMutation({
-    mutation: (user: WorkspaceUserCreate) => createWorkspaceUser(workspaceId, user),
+    mutation: (user: OrganizationUserCreate) => createOrganizationUser(organizationId, user),
     onSuccess: () => {
-      // Invalidate workspace users query to refresh the list
+      // Invalidate organization users query to refresh the list
       queryCache.invalidateQueries({
-        key: USER_QUERY_KEYS.workspace(workspaceId),
+        key: USER_QUERY_KEYS.organization(organizationId),
       })
       toast.success('User Created')
     },
@@ -33,7 +33,7 @@ export const useCreateWorkspaceUser = (workspaceId: number) => {
     },
   })
 
-  const createUser = async (user: WorkspaceUserCreate) => {
+  const createUser = async (user: OrganizationUserCreate) => {
     isLoading.value = true
     try {
       const result = await mutateAsync(user)
@@ -49,16 +49,16 @@ export const useCreateWorkspaceUser = (workspaceId: number) => {
   }
 }
 
-export const useUpdateWorkspaceUser = (workspaceId: number) => {
+export const useUpdateOrganizationUser = (organizationId: string) => {
   const queryCache = useQueryCache()
   const isLoading = ref(false)
 
   const { mutateAsync } = useMutation({
-    mutation: ({ userId, user }: { userId: string; user: WorkspaceUserUpdate }) =>
-      updateWorkspaceUser(workspaceId, userId, user),
+    mutation: ({ userId, user }: { userId: string; user: OrganizationUserUpdate }) =>
+      updateOrganizationUser(organizationId, userId, user),
     onSuccess: () => {
       queryCache.invalidateQueries({
-        key: USER_QUERY_KEYS.workspace(workspaceId),
+        key: USER_QUERY_KEYS.organization(organizationId),
       })
       toast.success('User Updated')
     },
@@ -71,7 +71,7 @@ export const useUpdateWorkspaceUser = (workspaceId: number) => {
     },
   })
 
-  const updateUser = async (userId: string, user: WorkspaceUserUpdate) => {
+  const updateUser = async (userId: string, user: OrganizationUserUpdate) => {
     isLoading.value = true
     try {
       const result = await mutateAsync({ userId, user })
@@ -87,15 +87,15 @@ export const useUpdateWorkspaceUser = (workspaceId: number) => {
   }
 }
 
-export const useDeleteWorkspaceUser = (workspaceId: number) => {
+export const useDeleteOrganizationUser = (organizationId: string) => {
   const queryCache = useQueryCache()
   const isLoading = ref(false)
 
   const { mutateAsync } = useMutation({
-    mutation: (userId: string) => deleteWorkspaceUser(workspaceId, userId),
+    mutation: (userId: string) => deleteOrganizationUser(organizationId, userId),
     onSuccess: () => {
       queryCache.invalidateQueries({
-        key: USER_QUERY_KEYS.workspace(workspaceId),
+        key: USER_QUERY_KEYS.organization(organizationId),
       })
       toast.success('User Deleted')
     },
@@ -123,16 +123,16 @@ export const useDeleteWorkspaceUser = (workspaceId: number) => {
   }
 }
 
-export const useToggleUserStatus = (workspaceId: number) => {
+export const useToggleUserStatus = (organizationId: string) => {
   const queryCache = useQueryCache()
   const isLoading = ref(false)
 
   const { mutateAsync } = useMutation({
     mutation: ({ userId, enabled }: { userId: string; enabled: boolean }) =>
-      toggleUserStatus(workspaceId, userId, enabled),
+      toggleUserStatus(organizationId, userId, enabled),
     onSuccess: (_, { enabled }) => {
       queryCache.invalidateQueries({
-        key: USER_QUERY_KEYS.workspace(workspaceId),
+        key: USER_QUERY_KEYS.organization(organizationId),
       })
       toast.success('User Status Updated')
     },
@@ -161,11 +161,11 @@ export const useToggleUserStatus = (workspaceId: number) => {
   }
 }
 
-export const useResendPasswordReset = (workspaceId: number) => {
+export const useResendPasswordReset = (organizationId: string) => {
   const isLoading = ref(false)
 
   const { mutateAsync } = useMutation({
-    mutation: (userId: string) => resendPasswordReset(workspaceId, userId),
+    mutation: (userId: string) => resendPasswordReset(organizationId, userId),
     onSuccess: () => {
       toast.success('Password Reset Sent')
     },

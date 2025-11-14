@@ -23,7 +23,7 @@
           {{
             isEditing
               ? $t('team.edit.description', 'Update user information and permissions')
-              : $t('team.create.description', 'Add a new user to your workspace')
+              : $t('team.create.description', 'Add a new user to your organization')
           }}
         </p>
       </div>
@@ -159,7 +159,7 @@
         <div>
           <TeamPermissionsSelect
             v-model:permissions="form.permissions"
-            :can-manage-workspace="canManageWorkspace"
+            :can-manage-organization="canManageorganization"
             :disabled="isLoading"
           />
         </div>
@@ -196,22 +196,22 @@ import { ref, computed, reactive, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import type {
-  WorkspaceUser,
-  CreateWorkspaceUserRequest,
-  UpdateWorkspaceUserRequest,
+  OrganizationUser,
+  CreateOrganizationUserRequest,
+  UpdateOrganizationUserRequest,
 } from '@/types/team'
 import TeamPermissionsSelect from './TeamPermissionsSelect.vue'
 
 const { t } = useI18n()
 
 const props = defineProps<{
-  user?: WorkspaceUser
+  user?: OrganizationUser
   isLoading?: boolean
 }>()
 
 const emit = defineEmits<{
-  'create-user': [user: CreateWorkspaceUserRequest]
-  'update-user': [data: { userId: number; updates: UpdateWorkspaceUserRequest }]
+  'create-user': [user: CreateOrganizationUserRequest]
+  'update-user': [data: { userId: number; updates: UpdateOrganizationUserRequest }]
   cancel: []
 }>()
 
@@ -219,8 +219,8 @@ const authStore = useAuthStore()
 
 const isEditing = computed(() => !!props.user)
 
-const canManageWorkspace = computed(() => {
-  return authStore.hasPermission('workspace.write')
+const canManageorganization = computed(() => {
+  return authStore.hasPermission('organization.write')
 })
 
 const form = reactive({

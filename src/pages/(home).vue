@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth'
 import { recentCompaniesQuery } from '@/queries/companies'
-import { workspaceActivitiesQuery, currentWorkspaceQuery } from '@/queries/workspace'
+import { organizationActivitiesQuery, currentOrganizationQuery } from '@/queries/organization'
 import Button from '@/components/ui/Button.vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import ModulesShowcase from '@/components/home/ModulesShowcase.vue'
@@ -86,8 +86,8 @@ const userDisplayName = computed(() => {
   return user.profile.given_name || user.profile.preferred_username || user.profile.name || 'User'
 })
 
-// Fetch current workspace to get workspace ID
-const { data: currentWorkspace } = useQuery(currentWorkspaceQuery, () => ({}))
+// Fetch current organization from JWT token
+const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
 
 // Fetch recent companies (5 most recent with folder info)
 const {
@@ -98,18 +98,12 @@ const {
   limit: 5,
 }))
 
-// Fetch workspace activities (only if workspace ID is available)
+// Fetch organization activities (no organization ID needed - from JWT)
 const {
-  data: workspaceActivitiesData,
+  data: organizationActivitiesData,
   isLoading: isActivitiesLoading,
   error: activitiesError,
-} = useQuery(
-  workspaceActivitiesQuery,
-  () => ({ workspaceId: currentWorkspace.value?.id ?? 0, limit: 5 }),
-  {
-    enabled: () => !!currentWorkspace.value?.id,
-  },
-)
+} = useQuery(organizationActivitiesQuery, () => ({}))
 
 const updateTime = () => {
   const now = new Date()
@@ -171,22 +165,22 @@ const recentProjects = computed(() => {
   })
 })
 
-// Transform workspace activities for display
+// Transform organization activities for display
 const recentActivities = computed(() => {
-  if (!workspaceActivitiesData.value) return []
+  if (!organizationActivitiesData.value) return []
 
   // Defensive check - ensure it's an array
-  const activities = Array.isArray(workspaceActivitiesData.value)
-    ? workspaceActivitiesData.value.slice(0, 7)
+  const activities = Array.isArray(organizationActivitiesData.value)
+    ? organizationActivitiesData.value.slice(0, 7)
     : []
 
   if (activities.length === 0) return []
 
   return activities.map((activity, index) => {
-    const username = activity.owner_username || 'Unknown'
+    const username = activity.owner || 'Unknown'
 
     return {
-      id: activity.id || index,
+      id: index, // No ID in new API, use index
       icon: activity.type === 'company' ? 'fa fa-building' : 'fa fa-folder',
       target: activity.name,
       username,

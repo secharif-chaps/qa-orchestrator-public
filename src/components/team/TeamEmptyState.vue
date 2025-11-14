@@ -43,13 +43,13 @@ defineEmits<{
 
 const authStore = useAuthStore()
 
-// Only users with workspace.write can manage users (add, edit, disable)
-const canManageUsers = computed(() => authStore.hasPermission('workspace.write'))
+// Only users with organization.write can manage users (add, edit, disable)
+const canManageUsers = computed(() => authStore.hasPermission('organization.write'))
 
 const title = computed(() => {
   switch (props.type) {
     case 'no-users':
-      return t('team.empty.noUsers.title', 'No users in workspace')
+      return t('team.empty.noUsers.title', 'No users in organization')
     case 'no-results':
       return t('team.empty.noResults.title', 'No users found')
     case 'loading':

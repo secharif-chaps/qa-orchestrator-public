@@ -9,7 +9,7 @@
             {{ $t('admin.users.title', 'User Management') }}
           </h1>
           <p class="text-secondary">
-            {{ $t('admin.users.description', 'Manage user workspace assignments') }}
+            {{ $t('admin.users.description', 'Manage user organization assignments') }}
           </p>
         </div>
       </div>
@@ -17,12 +17,12 @@
       <!-- Filters -->
       <UserFilters
         :search="queryParams.search ?? ''"
-        :workspace-filter="queryParams.workspace_filter ?? null"
+        :organization-filter="queryParams.organization_filter ?? null"
         :sort="queryParams.sort"
         :order="queryParams.order"
-        :workspaces="availableWorkspaces"
+        :organizations="availableOrganizations"
         @update:search="handleSearchUpdate"
-        @update:workspace-filter="handleWorkspaceFilterUpdate"
+        @update:organization-filter="handleOrganizationFilterUpdate"
         @update:sort="handleSortUpdate"
         @update:order="handleOrderUpdate"
       />
@@ -53,7 +53,7 @@
       v-else-if="users"
       :users="users.data"
       :has-filters="hasActiveFilters"
-      @assign-workspace="showAssignModal"
+      @assign-organization="showAssignModal"
       @clear-filters="clearFilters"
     />
 
@@ -66,13 +66,13 @@
       @update-per-page="updatePageSize"
     />
 
-    <!-- User Workspace Assignment Modal -->
-    <UserWorkspaceModal
+    <!-- User Organization Assignment Modal -->
+    <UserOrganizationModal
       v-if="userToAssign"
       :user="userToAssign"
-      :workspaces="availableWorkspaces"
+      :organizations="availableOrganizations"
       :is-loading="isAssigning"
-      @confirm="handleAssignWorkspace"
+      @confirm="handleAssignOrganization"
       @cancel="userToAssign = null"
     />
   </div>
@@ -81,7 +81,7 @@
 <route lang="yaml">
 meta:
   permissions:
-    - admin.workspaces
+    - admin.organizations
   requiresAuth: true
   title: 'User Management'
 </route>
@@ -94,12 +94,12 @@ import Pagination from '@/components/ui/Pagination.vue'
 import UserFilters from '@/components/admin/UserFilters.vue'
 import UserTable from '@/components/admin/UserTable.vue'
 
-import { useAssignUserWorkspace } from '@/mutations/admin-users'
+import { useAssignUserOrganization } from '@/mutations/admin-users'
 import { adminUsersQuery } from '@/queries/admin-users'
-import { allWorkspacesQuery } from '@/queries/workspace'
+import { allOrganizationsQuery } from '@/queries/organization-admin'
 import type { PaginationMeta } from '@/types/pagination'
 import type { AdminUserResponse, AdminUserQueryParams } from '@/types/admin-user'
-import UserWorkspaceModal from '@/components/admin/UserWorkspaceModal.vue'
+import UserOrganizationModal from '@/components/admin/UserOrganizationModal.vue'
 
 // Query parameters state
 const queryParams = reactive<AdminUserQueryParams>({
@@ -108,7 +108,7 @@ const queryParams = reactive<AdminUserQueryParams>({
   sort: 'created_at',
   order: 'desc',
   search: '',
-  workspace_filter: null,
+  organization_filter: null,
 })
 
 // Debounce timer for search
@@ -121,7 +121,7 @@ const {
   error,
 } = useQuery(adminUsersQuery, () => ({ params: queryParams }))
 
-const { data: workspacesResponse } = useQuery(allWorkspacesQuery, () => ({
+const { data: organizationsResponse } = useQuery(allOrganizationsQuery, () => ({
   page: 1,
   limit: 100,
   sort: 'name' as const,
@@ -130,7 +130,7 @@ const { data: workspacesResponse } = useQuery(allWorkspacesQuery, () => ({
 }))
 
 // Mutations
-const { assignWorkspace, isLoading: isAssigning } = useAssignUserWorkspace()
+const { assignOrganization, isLoading: isAssigning } = useAssignUserOrganization()
 
 // Modal state
 const userToAssign = ref<AdminUserResponse | null>(null)
@@ -138,8 +138,8 @@ const userToAssign = ref<AdminUserResponse | null>(null)
 // Users data
 const users = computed(() => usersResponse.value)
 
-// Available workspaces for filter dropdown
-const availableWorkspaces = computed(() => workspacesResponse.value?.data || [])
+// Available organizations for filter dropdown
+const availableOrganizations = computed(() => organizationsResponse.value?.data || [])
 
 // Pagination meta is already in the correct format from the backend
 const paginationMeta = computed<PaginationMeta | null>(() => {
@@ -160,7 +160,7 @@ const pageSizeOptions = [10, 20, 50, 100]
 
 // Check if any filters are active
 const hasActiveFilters = computed(() => {
-  return queryParams.search !== '' || queryParams.workspace_filter !== null
+  return queryParams.search !== '' || queryParams.organization_filter !== null
 })
 
 // Event handlers
@@ -175,8 +175,8 @@ const handleSearchUpdate = (search: string) => {
   }, 300) // 300ms debounce
 }
 
-const handleWorkspaceFilterUpdate = (filter: string | null) => {
-  queryParams.workspace_filter = filter
+const handleOrganizationFilterUpdate = (filter: string | null) => {
+  queryParams.organization_filter = filter
   queryParams.page = 1
 }
 
@@ -197,7 +197,7 @@ const updatePageSize = (limit: number) => {
 
 const clearFilters = () => {
   queryParams.search = ''
-  queryParams.workspace_filter = null
+  queryParams.organization_filter = null
   queryParams.page = 1
 }
 
@@ -206,14 +206,14 @@ const showAssignModal = (user: AdminUserResponse) => {
   userToAssign.value = user
 }
 
-const handleAssignWorkspace = async (workspaceId: number) => {
+const handleAssignOrganization = async (organizationId: string) => {
   if (!userToAssign.value) return
 
   try {
-    await assignWorkspace({ userId: userToAssign.value.user_id, workspaceId })
+    await assignOrganization({ userId: userToAssign.value.user_id, organizationId })
     userToAssign.value = null
   } catch (error) {
-    console.error('Failed to assign workspace:', error)
+    console.error('Failed to assign organization:', error)
   }
 }
 </script>

@@ -1,24 +1,24 @@
 import { defineQueryOptions } from '@pinia/colada'
-import { getModuleTokens, getWorkspaceModules } from '@/api/tokens'
+import { getModuleTokens, getOrganizationModules } from '@/api/tokens'
 import type { ModuleName } from '@/types/tokens'
 
 // Export query keys for cache management
 export const TOKEN_QUERY_KEYS = {
   root: ['tokens'] as const,
-  moduleTokens: (workspaceId: number, module: ModuleName) => 
-    [...TOKEN_QUERY_KEYS.root, 'module', workspaceId, module] as const,
-  workspaceModules: (workspaceId: number) => 
-    [...TOKEN_QUERY_KEYS.root, 'workspace', workspaceId] as const,
+  moduleTokens: (organizationId: string, module: ModuleName) =>
+    [...TOKEN_QUERY_KEYS.root, 'module', organizationId, module] as const,
+  organizationModules: (organizationId: string) =>
+    [...TOKEN_QUERY_KEYS.root, 'organization', organizationId] as const,
 }
 
 // Query for single module token count
-export const moduleTokensQuery = defineQueryOptions(({ workspaceId, module }: { workspaceId: number; module: ModuleName }) => ({
-  key: TOKEN_QUERY_KEYS.moduleTokens(workspaceId, module),
-  query: () => getModuleTokens(workspaceId, module),
+export const moduleTokensQuery = defineQueryOptions(({ organizationId, module }: { organizationId: string; module: ModuleName }) => ({
+  key: TOKEN_QUERY_KEYS.moduleTokens(organizationId, module),
+  query: () => getModuleTokens(organizationId, module),
 }))
 
-// Query for all workspace modules (workspace members can view their own)
-export const workspaceModulesQuery = defineQueryOptions(({ workspaceId }: { workspaceId: number }) => ({
-  key: TOKEN_QUERY_KEYS.workspaceModules(workspaceId),
-  query: () => getWorkspaceModules(workspaceId),
+// Query for all organization modules (organization members can view their own)
+export const organizationModulesQuery = defineQueryOptions(({ organizationId }: { organizationId: string }) => ({
+  key: TOKEN_QUERY_KEYS.organizationModules(organizationId),
+  query: () => getOrganizationModules(organizationId),
 }))

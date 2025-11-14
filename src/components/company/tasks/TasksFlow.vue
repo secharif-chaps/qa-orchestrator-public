@@ -211,7 +211,7 @@ const authStore = useAuthStore()
 
 // Check if user has admin permissions to view token data
 const hasAdminAccess = computed(() =>
-  authStore.hasAnyRole(['admin.workspaces', 'admin.users', 'admin.all']),
+  authStore.hasAnyRole(['admin.organizations', 'admin.users', 'admin.all']),
 )
 
 // Helper functions for token formatting

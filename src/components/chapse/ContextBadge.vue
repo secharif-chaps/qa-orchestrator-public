@@ -37,7 +37,7 @@ const icon = computed(() => {
       return 'fa fa-building'
     case 'folder':
       return 'fa fa-folder'
-    case 'workspace':
+    case 'organization':
       return 'fa fa-users'
     default:
       return 'fa fa-tag'
@@ -52,7 +52,7 @@ const badgeClasses = computed(() => {
       return `${baseClasses} bg-sage-300 text-sage-950 border-sage-300/30 dark:bg-sage-300/20 dark:border-sage-300/40`
     case 'folder':
       return `${baseClasses} bg-almond-300 text-almond-950 border-almond-300/30 dark:bg-almond-300/20 dark:text-almond-300 dark:border-almond-300/40`
-    case 'workspace':
+    case 'organization':
       return `${baseClasses} bg-sage-300 text-sage-950 border-sage-300/30 dark:bg-sage-300/20 dark:text-sage-300 dark:border-sage-300/40`
     default:
       return `${baseClasses} bg-sage-300 text-sage-950 border-sage-300/30 dark:bg-sage-300/20 dark:text-sage-300 dark:border-sage-300/40`

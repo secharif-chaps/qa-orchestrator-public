@@ -10,9 +10,9 @@
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-lg font-semibold text-base">
           {{
-            user.workspace_name
-              ? $t('admin.users.modal.changeWorkspace', 'Change User Workspace')
-              : $t('admin.users.modal.assignWorkspace', 'Assign User to Workspace')
+            user.organization_name
+              ? $t('admin.users.modal.changeOrganization', 'Change User Organization')
+              : $t('admin.users.modal.assignOrganization', 'Assign User to Organization')
           }}
         </h3>
         <Button variant="tertiary" icon="fa fa-times" icon-only @click="$emit('cancel')" />
@@ -30,40 +30,40 @@
           </div>
         </div>
 
-        <!-- Current Workspace -->
-        <div v-if="user.workspace_name" class="mt-3 pt-3 border-t border-primary-stroke">
-          <div class="text-xs text-secondary mb-1">Current workspace:</div>
+        <!-- Current Organization -->
+        <div v-if="user.organization_name" class="mt-3 pt-3 border-t border-primary-stroke">
+          <div class="text-xs text-secondary mb-1">Current organization:</div>
           <div class="flex items-center gap-2">
             <span
               class="text-sm bg-primary-light text-primary-light-content border border-primary-stroke px-2 py-1 rounded"
             >
-              {{ user.workspace_name }}
+              {{ user.organization_name }}
             </span>
           </div>
         </div>
         <div v-else class="mt-3 pt-3 border-t border-primary-stroke">
-          <div class="text-xs text-secondary italic">No workspace assigned</div>
+          <div class="text-xs text-secondary italic">No organization assigned</div>
         </div>
       </div>
 
-      <!-- Workspace Selection -->
+      <!-- Organization Selection -->
       <div class="mb-6">
         <h4 class="text-sm font-medium text-secondary mb-3">
-          {{ $t('admin.users.modal.selectWorkspace', 'Select workspace:') }}
+          {{ $t('admin.users.modal.selectOrganization', 'Select organization:') }}
         </h4>
 
         <div class="space-y-2 max-h-96 overflow-y-auto">
           <button
-            v-for="workspace in workspaces"
-            :key="workspace.id"
-            @click="selectedWorkspaceId = workspace.id"
+            v-for="organization in organizations"
+            :key="organization.id"
+            @click="selectedOrganizationId = organization.id"
             class="w-full text-left p-3 rounded-lg border transition-colors"
             :class="{
-              'border-primary bg-primary/5': selectedWorkspaceId === workspace.id,
-              'border-primary-stroke hover:bg-base-200': selectedWorkspaceId !== workspace.id,
-              'opacity-50': workspace.id === user.workspace_id,
+              'border-primary bg-primary/5': selectedOrganizationId === organization.id,
+              'border-primary-stroke hover:bg-base-200': selectedOrganizationId !== organization.id,
+              'opacity-50': organization.id === user.organization_id,
             }"
-            :disabled="workspace.id === user.workspace_id"
+            :disabled="organization.id === user.organization_id"
           >
             <div class="flex items-center justify-between">
               <div class="flex-1">
@@ -71,45 +71,45 @@
                   <i
                     class="fa fa-building text-sm"
                     :class="{
-                      'text-primary': selectedWorkspaceId === workspace.id,
-                      'text-secondary': selectedWorkspaceId !== workspace.id,
+                      'text-primary': selectedOrganizationId === organization.id,
+                      'text-secondary': selectedOrganizationId !== organization.id,
                     }"
                   ></i>
-                  <span class="font-medium">{{ workspace.name }}</span>
+                  <span class="font-medium">{{ organization.name }}</span>
                   <span
-                    v-if="workspace.id === user.workspace_id"
+                    v-if="organization.id === user.organization_id"
                     class="text-xs text-secondary"
                   >
                     (current)
                   </span>
                 </div>
-                <div v-if="workspace.description" class="text-sm text-secondary mt-1">
-                  {{ workspace.description }}
+                <div v-if="organization.description" class="text-sm text-secondary mt-1">
+                  {{ organization.description }}
                 </div>
               </div>
-              <div v-if="selectedWorkspaceId === workspace.id">
+              <div v-if="selectedOrganizationId === organization.id">
                 <i class="fa fa-check-circle text-primary"></i>
               </div>
             </div>
           </button>
 
           <!-- Empty state -->
-          <div v-if="workspaces.length === 0" class="text-center py-8">
+          <div v-if="organizations.length === 0" class="text-center py-8">
             <i class="fa fa-building text-4xl text-secondary/50 mb-2"></i>
-            <p class="text-sm text-secondary">No workspaces available</p>
+            <p class="text-sm text-secondary">No organizations available</p>
           </div>
         </div>
       </div>
 
       <!-- Info Alert -->
       <Alert
-        v-if="user.workspace_name && selectedWorkspaceId !== user.workspace_id"
+        v-if="user.organization_name && selectedOrganizationId !== user.organization_id"
         variant="warning"
-        :title="$t('admin.users.modal.warning.title', 'Workspace Change')"
+        :title="$t('admin.users.modal.warning.title', 'Organization Change')"
         :message="
           $t(
             'admin.users.modal.warning.message',
-            'Changing this user\'s workspace will move them to the new workspace. Their data will remain in the original workspace.',
+            'Changing this user\'s organization will move them to the new organization. Their data will remain in the original organization.',
           )
         "
         icon="fa fa-info-circle"
@@ -132,12 +132,12 @@
           :label="
             isLoading
               ? $t('admin.users.modal.assigning', 'Assigning...')
-              : user.workspace_name
-                ? $t('admin.users.modal.changeWorkspace', 'Change Workspace')
-                : $t('admin.users.modal.assignWorkspace', 'Assign Workspace')
+              : user.organization_name
+                ? $t('admin.users.modal.changeOrganization', 'Change Organization')
+                : $t('admin.users.modal.assignOrganization', 'Assign Organization')
           "
           :loading="isLoading"
-          :disabled="isLoading || selectedWorkspaceId === null || selectedWorkspaceId === user.workspace_id"
+          :disabled="isLoading || selectedOrganizationId === null || selectedOrganizationId === user.organization_id"
           @click="handleConfirm"
         />
       </div>
@@ -150,28 +150,28 @@ import { ref } from 'vue'
 import Alert from '@/components/ui/Alert.vue'
 import Button from '@/components/ui/Button.vue'
 import type { AdminUserResponse } from '@/types/admin-user'
-import type { WorkspaceResponse } from '@/types/workspace'
+import type { OrganizationAdminResponse } from '@/types/organization'
 
 interface Props {
   user: AdminUserResponse
-  workspaces: WorkspaceResponse[]
+  organizations: OrganizationAdminResponse[]
   isLoading?: boolean
 }
 
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  confirm: [workspaceId: number]
+  confirm: [organizationId: string]
   cancel: []
 }>()
 
-// Selected workspace ID
-const selectedWorkspaceId = ref<number | null>(props.user.workspace_id)
+// Selected organization ID
+const selectedOrganizationId = ref<string | null>(props.user.organization_id)
 
 // Handle confirm
 const handleConfirm = () => {
-  if (selectedWorkspaceId.value !== null) {
-    emit('confirm', selectedWorkspaceId.value)
+  if (selectedOrganizationId.value !== null) {
+    emit('confirm', selectedOrganizationId.value)
   }
 }
 </script>

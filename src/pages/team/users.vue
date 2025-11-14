@@ -90,24 +90,24 @@
 <route lang="yaml">
 meta:
   permissions:
-    - workspace.read
+    - organization.read
 </route>
 
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
 import { useQuery } from '@pinia/colada'
-import { workspaceUsersQuery } from '@/queries/team'
+import { organizationUsersQuery } from '@/queries/team'
 import {
-  useCreateWorkspaceUser,
-  useUpdateWorkspaceUser,
-  useToggleWorkspaceUser,
+  useCreateOrganizationUser,
+  useUpdateOrganizationUser,
+  useToggleOrganizationUser,
 } from '@/mutations/team'
 import type {
-  WorkspaceUser,
-  WorkspaceUserQueryParams,
-  WorkspaceUserListItem,
-  CreateWorkspaceUserRequest,
-  UpdateWorkspaceUserRequest,
+  OrganizationUser,
+  OrganizationUserQueryParams,
+  OrganizationUserListItem,
+  CreateOrganizationUserRequest,
+  UpdateOrganizationUserRequest,
 } from '@/types/team'
 import TeamHeader from '@/components/team/TeamHeader.vue'
 import TeamUserItem from '@/components/team/TeamUserItem.vue'
@@ -115,7 +115,7 @@ import TeamUserModal from '@/components/team/TeamUserModal.vue'
 import TeamEmptyState from '@/components/team/TeamEmptyState.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 
-const queryParams = reactive<WorkspaceUserQueryParams>({
+const queryParams = reactive<OrganizationUserQueryParams>({
   page: 1,
   limit: 20,
   sort: 'created_at',
@@ -124,14 +124,18 @@ const queryParams = reactive<WorkspaceUserQueryParams>({
   status: 'active',
 })
 
-const { data: usersResponse, isLoading, error } = useQuery(workspaceUsersQuery, () => queryParams)
+const {
+  data: usersResponse,
+  isLoading,
+  error,
+} = useQuery(organizationUsersQuery, () => queryParams)
 
-const createMutation = useCreateWorkspaceUser()
-const updateMutation = useUpdateWorkspaceUser()
-const toggleMutation = useToggleWorkspaceUser()
+const createMutation = useCreateOrganizationUser()
+const updateMutation = useUpdateOrganizationUser()
+const toggleMutation = useToggleOrganizationUser()
 
 const showCreateModal = ref(false)
-const editingUser = ref<WorkspaceUser | null>(null)
+const editingUser = ref<OrganizationUser | null>(null)
 
 const users = computed(() => usersResponse.value?.data || [])
 const paginationMeta = computed(() => usersResponse.value?.meta)
@@ -147,7 +151,7 @@ const currentPage = computed({
 // Page size options
 const pageSizeOptions = [10, 20, 50, 100]
 
-const usersWithDisplayName = computed<WorkspaceUserListItem[]>(() => {
+const usersWithDisplayName = computed<OrganizationUserListItem[]>(() => {
   return users.value.map((user) => ({
     ...user,
     display_name: `${user.first_name} ${user.last_name}`.trim() || user.username,
@@ -159,7 +163,7 @@ const updateSearch = (search: string) => {
   queryParams.page = 1
 }
 
-const updateSort = (sort: WorkspaceUserQueryParams['sort']) => {
+const updateSort = (sort: OrganizationUserQueryParams['sort']) => {
   queryParams.sort = sort
   queryParams.page = 1
 }
@@ -169,7 +173,7 @@ const toggleOrder = () => {
   queryParams.page = 1
 }
 
-const updateStatus = (status: WorkspaceUserQueryParams['status']) => {
+const updateStatus = (status: OrganizationUserQueryParams['status']) => {
   queryParams.status = status
   queryParams.page = 1
 }
@@ -185,7 +189,7 @@ const clearSearch = () => {
   queryParams.page = 1
 }
 
-const editUser = (user: WorkspaceUser) => {
+const editUser = (user: OrganizationUser) => {
   editingUser.value = user
 }
 
@@ -194,7 +198,7 @@ const closeModal = () => {
   editingUser.value = null
 }
 
-const handleCreateUser = async (userData: CreateWorkspaceUserRequest) => {
+const handleCreateUser = async (userData: CreateOrganizationUserRequest) => {
   try {
     await createMutation.createUser()
     closeModal()
@@ -208,7 +212,7 @@ const handleUpdateUser = async ({
   updates,
 }: {
   userId: number
-  updates: UpdateWorkspaceUserRequest
+  updates: UpdateOrganizationUserRequest
 }) => {
   try {
     await updateMutation.updateUser({ userId, updates })

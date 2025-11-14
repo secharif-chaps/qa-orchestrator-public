@@ -1,16 +1,16 @@
 import { ref } from 'vue'
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { 
-  createWorkspaceUser, 
-  updateWorkspaceUser, 
-  disableWorkspaceUser, 
-  enableWorkspaceUser 
+  createOrganizationUser, 
+  updateOrganizationUser, 
+  disableOrganizationUser, 
+  enableOrganizationUser 
 } from '@/api/team'
-import type { CreateWorkspaceUserRequest, UpdateWorkspaceUserRequest } from '@/types/team'
+import type { CreateOrganizationUserRequest, UpdateOrganizationUserRequest } from '@/types/team'
 import { TEAM_QUERY_KEYS } from '@/queries/team'
 import { toast } from '@/utils/toast'
 
-export const useCreateWorkspaceUser = defineMutation(() => {
+export const useCreateOrganizationUser = defineMutation(() => {
   const email = ref('')
   const username = ref('')
   const password = ref('')
@@ -21,7 +21,7 @@ export const useCreateWorkspaceUser = defineMutation(() => {
   const queryCache = useQueryCache()
 
   const { mutate, ...mutation } = useMutation({
-    mutation: (user: CreateWorkspaceUserRequest) => createWorkspaceUser(user),
+    mutation: (user: CreateOrganizationUserRequest) => createOrganizationUser(user),
     onSuccess: (newUser) => {
       toast.success(`User "${newUser.first_name} ${newUser.last_name}" created successfully!`)
 
@@ -68,12 +68,12 @@ export const useCreateWorkspaceUser = defineMutation(() => {
   }
 })
 
-export const useUpdateWorkspaceUser = defineMutation(() => {
+export const useUpdateOrganizationUser = defineMutation(() => {
   const queryCache = useQueryCache()
 
   const { mutate, ...mutation } = useMutation({
-    mutation: ({ userId, updates }: { userId: number; updates: UpdateWorkspaceUserRequest }) =>
-      updateWorkspaceUser(userId, updates),
+    mutation: ({ userId, updates }: { userId: number; updates: UpdateOrganizationUserRequest }) =>
+      updateOrganizationUser(userId, updates),
     onSuccess: (updatedUser, { userId }) => {
       toast.success(`User "${updatedUser.first_name} ${updatedUser.last_name}" updated successfully!`)
 
@@ -92,11 +92,11 @@ export const useUpdateWorkspaceUser = defineMutation(() => {
   }
 })
 
-export const useToggleWorkspaceUser = defineMutation(() => {
+export const useToggleOrganizationUser = defineMutation(() => {
   const queryCache = useQueryCache()
 
   const { mutate: disable, ...disableMutation } = useMutation({
-    mutation: (userId: number) => disableWorkspaceUser(userId),
+    mutation: (userId: number) => disableOrganizationUser(userId),
     onSuccess: (updatedUser) => {
       toast.success(`User "${updatedUser.first_name} ${updatedUser.last_name}" has been disabled`)
       
@@ -110,7 +110,7 @@ export const useToggleWorkspaceUser = defineMutation(() => {
   })
 
   const { mutate: enable, ...enableMutation } = useMutation({
-    mutation: (userId: number) => enableWorkspaceUser(userId),
+    mutation: (userId: number) => enableOrganizationUser(userId),
     onSuccess: (updatedUser) => {
       toast.success(`User "${updatedUser.first_name} ${updatedUser.last_name}" has been enabled`)
       

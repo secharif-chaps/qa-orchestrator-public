@@ -40,7 +40,7 @@ export interface Folder {
   created_at: string
   updated_at: string
   owner: string
-  workspace_id: number
+  organization_id: string
 
   // Items contained in this folder (populated when getting folder details)
   items?: FolderItem[]

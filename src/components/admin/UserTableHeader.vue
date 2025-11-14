@@ -3,7 +3,7 @@
     <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
       <div class="col-span-3">{{ $t('admin.users.table.username', 'Username') }}</div>
       <div class="col-span-3">{{ $t('admin.users.table.email', 'Email') }}</div>
-      <div class="col-span-3">{{ $t('admin.users.table.workspace', 'Workspace') }}</div>
+      <div class="col-span-3">{{ $t('admin.users.table.organization', 'Organization') }}</div>
       <div class="col-span-2">{{ $t('admin.users.table.created', 'Created') }}</div>
       <div class="col-span-1 text-right">{{ $t('admin.users.table.actions', 'Actions') }}</div>
     </div>

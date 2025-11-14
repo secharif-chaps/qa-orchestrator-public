@@ -15,16 +15,16 @@
         <div class="text-sm text-secondary">{{ user.email }}</div>
       </div>
 
-      <!-- Workspace -->
+      <!-- Organization -->
       <div class="col-span-3">
         <span
-          v-if="user.workspace_name"
+          v-if="user.organization_name"
           class="text-sm bg-primary-light text-primary-light-content border border-primary-stroke px-2 py-1 rounded"
         >
-          {{ user.workspace_name }}
+          {{ user.organization_name }}
         </span>
         <span v-else class="text-sm text-secondary italic">
-          {{ $t('admin.users.noWorkspace', 'No workspace') }}
+          {{ $t('admin.users.noOrganization', 'No organization') }}
         </span>
       </div>
 
@@ -42,8 +42,8 @@
             icon-only
             variant="secondary"
             icon="fa fa-crosshairs"
-            :label="$t('admin.users.changeWorkspace', 'Change workspace')"
-            @click="$emit('assign-workspace', user)"
+            :label="$t('admin.users.changeOrganization', 'Change organization')"
+            @click="$emit('assign-organization', user)"
           />
         </div>
       </div>
@@ -62,7 +62,7 @@ interface Props {
 defineProps<Props>()
 
 defineEmits<{
-  'assign-workspace': [user: AdminUserResponse]
+  'assign-organization': [user: AdminUserResponse]
 }>()
 
 // Format date helper
