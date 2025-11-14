@@ -13,9 +13,9 @@ variables:
   DOCKER_BUILDKIT: 1
 
 .build:
-  image: docker:24-dind
+  image: docker:29-dind
   services:
-    - docker:24-dind
+    - docker:29-dind
   script:
     - echo Building $IMAGE_NAME:$IMAGE_TAG
     - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" .
