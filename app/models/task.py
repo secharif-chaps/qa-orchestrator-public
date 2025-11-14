@@ -27,6 +27,10 @@ class Task(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
+
+    # Organization-based multi-tenancy
+    organization_id = Column(String, index=True, nullable=True)  # Keycloak organization UUID
+
     type = Column(SQLEnum(TaskType, values_callable=lambda obj: [e.value for e in obj], name="task_type_enum"), nullable=False)
     status = Column(SQLEnum(TaskStatus, values_callable=lambda obj: [e.value for e in obj], name="task_status_enum"), default=TaskStatus.PENDING)
     error = Column(String, nullable=True)

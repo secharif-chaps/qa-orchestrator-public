@@ -16,7 +16,7 @@ from app.schemas.folder import (
     FolderItemResponse
 )
 from app.services.folder import FolderService
-from app.core.workspace import get_user_workspace, WorkspaceContext
+from app.core.organization import get_user_organization, OrganizationContext
 
 
 router = APIRouter()
@@ -26,7 +26,7 @@ router = APIRouter()
 def create_folder(
     folder: FolderCreate,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Create a new folder in the workspace.
@@ -37,13 +37,14 @@ def create_folder(
     logger = logging.getLogger(__name__)
 
     try:
-        logger.info(f"📁 POST /folders - START - User: {workspace_context.username}, Folder: {folder.name}")
+        logger.info(f"📁 POST /folders - START - User: {org_context.username}, Folder: {folder.name}")
         
-        logger.debug(f"📁 Creating folder with owner_username={workspace_context.username}, workspace_id={workspace_context.workspace_id}")
+        logger.debug(f"📁 Creating folder with owner_id={org_context.user_id}, owner_username={org_context.username}, organization_id={org_context.organization_id}")
         folder_obj = FolderService.create_folder(
             db=db,
-            workspace_id=workspace_context.workspace_id,
-            owner=workspace_context.username,
+            organization_id=org_context.organization_id,
+            owner_id=org_context.user_id,
+            owner_username=org_context.username,
             folder_data=folder
         )
         logger.info(f"✅ Folder created successfully - ID: {folder_obj.id}, Name: {folder_obj.name}")
@@ -56,12 +57,12 @@ def create_folder(
         if hasattr(folder_obj, 'owner'):
             logger.debug(f"📁 owner value: {folder_obj.owner}")
         
-        logger.info(f"📁 About to return folder object")
+        logger.info("📁 About to return folder object")
         return folder_obj
         
     except Exception as e:
         logger.error(f"❌ Error in create_folder: {type(e).__name__}: {str(e)}")
-        logger.error(f"❌ Full exception details:", exc_info=True)
+        logger.error("❌ Full exception details:", exc_info=True)
         raise
 
 
@@ -70,7 +71,7 @@ def list_folders(
     archived: bool = Query(False),
     favorites: bool = Query(False),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.read"])),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """List all folders in the workspace.
@@ -80,7 +81,7 @@ def list_folders(
     
     folders = FolderService.list_folders(
         db=db,
-        workspace_id=workspace_context.workspace_id,
+        organization_id=org_context.organization_id,
         archived=archived,
         favorites_only=favorites
     )
@@ -92,7 +93,7 @@ def list_folders(
         
         folder_dict = {
             "id": folder.id,
-            "workspace_id": folder.workspace_id,
+            "organization_id": folder.organization_id,
             "owner": folder.owner or "Unknown",
             "name": folder.name,
             "color": folder.color,
@@ -114,7 +115,7 @@ def get_folder(
     folder_id: UUID,
     archived: bool = Query(False),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.read"])),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Get a folder with its items, with optional filtering by archived status.
@@ -125,18 +126,18 @@ def get_folder(
     logger = logging.getLogger(__name__)
 
     try:
-        logger.info(f"📁 GET /folders/{folder_id} - START - User: {workspace_context.username}")
+        logger.info(f"📁 GET /folders/{folder_id} - START - User: {org_context.username}")
         
-        logger.debug(f"📁 Getting folder with items - folder_id={folder_id}, workspace_id={workspace_context.workspace_id}")
+        logger.debug(f"📁 Getting folder with items - folder_id={folder_id}, organization_id={org_context.organization_id}")
         folder_data = FolderService.get_folder_with_items(
             db=db,
             folder_id=folder_id,
-            workspace_id=workspace_context.workspace_id,
+            organization_id=org_context.organization_id,
             item_archived_filter=archived
         )
         
         if not folder_data:
-            logger.warning(f"❌ Folder {folder_id} not found in workspace {workspace_context.workspace_id}")
+            logger.warning(f"❌ Folder {folder_id} not found in organization {org_context.organization_id}")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Folder not found"
@@ -151,7 +152,7 @@ def get_folder(
         raise
     except Exception as e:
         logger.error(f"❌ Error in get_folder: {type(e).__name__}: {str(e)}")
-        logger.error(f"❌ Full exception details:", exc_info=True)
+        logger.error("❌ Full exception details:", exc_info=True)
         raise
 
 
@@ -160,7 +161,7 @@ def update_folder(
     folder_id: UUID,
     folder_update: FolderUpdate,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Update a folder.
@@ -171,7 +172,7 @@ def update_folder(
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
-        workspace_id=workspace_context.workspace_id
+        organization_id=org_context.organization_id
     )
     
     if not folder:
@@ -191,7 +192,7 @@ def update_folder(
     
     folder_dict = {
         "id": updated_folder.id,
-        "workspace_id": updated_folder.workspace_id,
+        "organization_id": updated_folder.organization_id,
         "owner": updated_folder.owner or "Unknown",
         "name": updated_folder.name,
         "color": updated_folder.color,
@@ -212,7 +213,7 @@ def patch_folder(
     folder_id: UUID,
     folder_update: FolderUpdate,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Partially update a folder (for favorite toggle, etc.).
@@ -223,7 +224,7 @@ def patch_folder(
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
-        workspace_id=workspace_context.workspace_id
+        organization_id=org_context.organization_id
     )
     
     if not folder:
@@ -243,7 +244,7 @@ def patch_folder(
     
     folder_dict = {
         "id": updated_folder.id,
-        "workspace_id": updated_folder.workspace_id,
+        "organization_id": updated_folder.organization_id,
         "owner": updated_folder.owner or "Unknown",
         "name": updated_folder.name,
         "color": updated_folder.color,
@@ -263,7 +264,7 @@ def patch_folder(
 def delete_folder(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Soft delete a folder.
@@ -274,7 +275,7 @@ def delete_folder(
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
-        workspace_id=workspace_context.workspace_id
+        organization_id=org_context.organization_id
     )
     
     if not folder:
@@ -290,7 +291,7 @@ def delete_folder(
     
     folder_dict = {
         "id": deleted_folder.id,
-        "workspace_id": deleted_folder.workspace_id,
+        "organization_id": deleted_folder.organization_id,
         "owner": deleted_folder.owner or "Unknown",
         "name": deleted_folder.name,
         "color": deleted_folder.color,
@@ -310,7 +311,7 @@ def delete_folder(
 def restore_folder(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Restore a soft-deleted folder.
@@ -321,7 +322,7 @@ def restore_folder(
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
-        workspace_id=workspace_context.workspace_id,
+        organization_id=org_context.organization_id,
         include_deleted=True
     )
     
@@ -344,7 +345,7 @@ def restore_folder(
     
     folder_dict = {
         "id": restored_folder.id,
-        "workspace_id": restored_folder.workspace_id,
+        "organization_id": restored_folder.organization_id,
         "owner": restored_folder.owner or "Unknown",
         "name": restored_folder.name,
         "color": restored_folder.color,
@@ -365,7 +366,7 @@ def add_item_to_folder(
     folder_id: UUID,
     item: FolderItemAdd,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Add an item to a folder.
@@ -377,12 +378,12 @@ def add_item_to_folder(
 
     try:
         logger.debug(f"Adding item to folder - folder_id: {folder_id}, item_id: {item.item_id}, item_type: {item.item_type}")
-        logger.debug(f"User context - user_id: {user.sub}, username: {workspace_context.username}")
+        logger.debug(f"User context - user_id: {user.sub}, username: {org_context.username}")
         
         folder = FolderService.get_folder(
             db=db,
             folder_id=folder_id,
-            workspace_id=workspace_context.workspace_id
+            organization_id=org_context.organization_id
         )
         
         if not folder:
@@ -396,7 +397,7 @@ def add_item_to_folder(
             folder_id=folder_id,
             item_id=item.item_id,
             item_type=item.item_type,
-            owner=workspace_context.username,
+            owner=org_context.username,
             position=item.position
         )
         
@@ -413,7 +414,7 @@ def remove_item_from_folder(
     item_id: UUID,
     item_type: str = Query(..., pattern="^(company|contact|document)$"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Remove an item from a folder.
@@ -424,7 +425,7 @@ def remove_item_from_folder(
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
-        workspace_id=workspace_context.workspace_id
+        organization_id=org_context.organization_id
     )
     
     if not folder:

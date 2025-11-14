@@ -12,14 +12,16 @@ class FolderService:
     @staticmethod
     def create_folder(
         db: Session,
-        workspace_id: int,
-        owner: str,
+        organization_id: str,
+        owner_id: str,
+        owner_username: str,
         folder_data: FolderCreate
     ) -> Folder:
         """Create a new folder"""
         folder = Folder(
-            workspace_id=workspace_id,
-            owner=owner,
+            organization_id=organization_id,
+            owner_id=owner_id,  # Keycloak user UUID
+            owner=owner_username,  # Username for display
             name=folder_data.name,
             color=folder_data.color,
             icon=folder_data.icon,
@@ -34,13 +36,13 @@ class FolderService:
     def get_folder(
         db: Session,
         folder_id: UUID,
-        workspace_id: int,
+        organization_id: str,
         include_deleted: bool = False
     ) -> Optional[Folder]:
         """Get a folder by ID"""
         query = db.query(Folder).filter(
             Folder.id == folder_id,
-            Folder.workspace_id == workspace_id
+            Folder.organization_id == organization_id
         )
         
         if not include_deleted:
@@ -93,11 +95,11 @@ class FolderService:
     def get_folder_with_items(
         db: Session,
         folder_id: UUID,
-        workspace_id: int,
+        organization_id: str,
         item_archived_filter: bool = False
     ) -> Optional[Dict[str, Any]]:
         """Get folder with summary of its items"""
-        folder = FolderService.get_folder(db, folder_id, workspace_id)
+        folder = FolderService.get_folder(db, folder_id, organization_id)
         if not folder:
             return None
         
@@ -119,19 +121,19 @@ class FolderService:
             'created_at': folder.created_at.isoformat() if folder.created_at else None,
             'updated_at': folder.updated_at.isoformat() if folder.updated_at else None,
             'owner': folder.owner,
-            'workspace_id': folder.workspace_id,
+            'organization_id': folder.organization_id,
             'items': items
         }
     
     @staticmethod
     def list_folders(
         db: Session,
-        workspace_id: int,
+        organization_id: str,
         archived: bool = False,
         favorites_only: bool = False
     ) -> List[Folder]:
-        """List all folders in a workspace with their items"""
-        query = db.query(Folder).filter(Folder.workspace_id == workspace_id)
+        """List all folders in an organization with their items"""
+        query = db.query(Folder).filter(Folder.organization_id == organization_id)
         
         if archived:
             query = query.filter(Folder.is_deleted == True)
@@ -264,21 +266,21 @@ class FolderService:
         db: Session,
         item_id: str,
         item_type: str,
-        workspace_id: int
+        organization_id: str
     ) -> List[Folder]:
         """Get all folders containing a specific item"""
         folder_items = db.query(FolderItem).filter(
             FolderItem.item_id == item_id,
             FolderItem.item_type == item_type
         ).all()
-        
+
         folder_ids = [fi.folder_id for fi in folder_items]
-        
+
         if not folder_ids:
             return []
-        
+
         return db.query(Folder).filter(
             Folder.id.in_(folder_ids),
-            Folder.workspace_id == workspace_id,
+            Folder.organization_id == organization_id,
             Folder.is_deleted == False
         ).all()

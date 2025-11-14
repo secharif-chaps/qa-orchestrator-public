@@ -1,10 +1,11 @@
 from pydantic import BaseModel, Field
 from typing import List
 from datetime import datetime
-from app.models.workspace import ModuleName
+from app.models.organization import ModuleName
 
 
-class WorkspaceModuleResponse(BaseModel):
+class OrganizationModuleResponse(BaseModel):
+    """Response model for organization module configuration."""
     name: ModuleName
     enabled: bool
     token_count: int = Field(ge=0, description="Number of tokens available for this module")
@@ -15,8 +16,17 @@ class WorkspaceModuleResponse(BaseModel):
         from_attributes = True
 
 
-class WorkspaceModulesResponse(BaseModel):
-    modules: List[WorkspaceModuleResponse]
+# Backward compatibility aliases (deprecated)
+WorkspaceModuleResponse = OrganizationModuleResponse
+
+
+class OrganizationModulesResponse(BaseModel):
+    """Response model for list of organization modules."""
+    modules: List[OrganizationModuleResponse]
+
+
+# Backward compatibility alias (deprecated)
+WorkspaceModulesResponse = OrganizationModulesResponse
 
 
 class ModuleUpdateRequest(BaseModel):

@@ -14,7 +14,6 @@ from app.database import get_db
 from app.core.keycloak import idp
 from app.models import Task, TaskStatus
 from app.models.company import Company
-from app.models.workspace import Workspace
 
 router = APIRouter(prefix="/cost-analysis", tags=["cost-analysis"])
 
@@ -26,7 +25,7 @@ async def get_global_cost_analysis(
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])),
     db: Session = Depends(get_db)
 ):
-    """Get global cost analysis across all workspaces.
+    """Get global cost analysis across all organizations.
 
     Requires admin.costs role for access.
     By default, returns data for the current month.
@@ -63,15 +62,15 @@ async def get_global_cost_analysis(
         Task.created_at <= end_datetime
     ).scalar()
     
-    # Count unique workspaces with tasks
-    workspace_count = db.query(func.count(func.distinct(Company.workspace_id))).join(
+    # Count unique organizations with tasks
+    organization_count = db.query(func.count(func.distinct(Company.organization_id))).join(
         Task, Company.id == Task.company_id
     ).filter(
         Task.status == TaskStatus.SUCCEEDED,
         Task.created_at >= start_datetime,
         Task.created_at <= end_datetime
     ).scalar()
-    
+
     return {
         "period": {
             "start_date": start_date.isoformat(),
@@ -80,7 +79,7 @@ async def get_global_cost_analysis(
         "global_summary": {
             "total_tasks": global_stats.total_tasks or 0,
             "total_companies": company_count or 0,
-            "total_workspaces": workspace_count or 0,
+            "total_organizations": organization_count or 0,
             "total_input_tokens": global_stats.total_input_tokens or 0,
             "total_output_tokens": global_stats.total_output_tokens or 0,
             "total_cost": float(global_stats.total_cost or 0),
@@ -90,15 +89,15 @@ async def get_global_cost_analysis(
     }
 
 
-@router.get("/by-workspace", response_model=Dict[str, Any])
-async def get_cost_by_workspace(
+@router.get("/by-organization", response_model=Dict[str, Any])
+async def get_cost_by_organization(
     start_date: Optional[date] = Query(None, description="Start date for analysis (inclusive)"),
     end_date: Optional[date] = Query(None, description="End date for analysis (inclusive)"),
-    workspace_id: Optional[int] = Query(None, description="Filter by specific workspace ID"),
+    organization_id: Optional[str] = Query(None, description="Filter by specific organization ID"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])),
     db: Session = Depends(get_db)
 ):
-    """Get cost analysis broken down by workspace.
+    """Get cost analysis broken down by organization.
 
     Requires admin.costs role for access.
     By default, returns data for the current month.
@@ -115,10 +114,9 @@ async def get_cost_by_workspace(
     start_datetime = datetime.combine(start_date, datetime.min.time())
     end_datetime = datetime.combine(end_date, datetime.max.time())
     
-    # Build base query
+    # Build base query - group by organization_id
     query = db.query(
-        Workspace.id.label("workspace_id"),
-        Workspace.name.label("workspace_name"),
+        Company.organization_id.label("organization_id"),
         func.count(func.distinct(Company.id)).label("company_count"),
         func.count(Task.id).label("task_count"),
         func.sum(Task.input_tokens).label("total_input_tokens"),
@@ -126,57 +124,54 @@ async def get_cost_by_workspace(
         func.sum(Task.total_cost).label("total_cost"),
         func.avg(Task.total_cost).label("avg_cost_per_task")
     ).join(
-        Company, Workspace.id == Company.workspace_id
-    ).join(
         Task, Company.id == Task.company_id
     ).filter(
         Task.status == TaskStatus.SUCCEEDED,
         Task.created_at >= start_datetime,
         Task.created_at <= end_datetime
     ).group_by(
-        Workspace.id, Workspace.name
+        Company.organization_id
     ).order_by(
         func.sum(Task.total_cost).desc()
     )
-    
-    # Apply workspace filter if provided
-    if workspace_id:
-        query = query.filter(Workspace.id == workspace_id)
-    
-    workspace_results = query.all()
-    
+
+    # Apply organization filter if provided
+    if organization_id:
+        query = query.filter(Company.organization_id == organization_id)
+
+    organization_results = query.all()
+
     # Format results
-    workspaces_data = []
-    for ws in workspace_results:
-        workspaces_data.append({
-            "workspace_id": ws.workspace_id,
-            "workspace_name": ws.workspace_name,
-            "company_count": ws.company_count or 0,
-            "task_count": ws.task_count or 0,
-            "total_input_tokens": ws.total_input_tokens or 0,
-            "total_output_tokens": ws.total_output_tokens or 0,
-            "total_cost": float(ws.total_cost or 0),
-            "avg_cost_per_task": float(ws.avg_cost_per_task or 0),
-            "avg_cost_per_company": float(ws.total_cost or 0) / ws.company_count if ws.company_count else 0
+    organizations_data = []
+    for org in organization_results:
+        organizations_data.append({
+            "organization_id": org.organization_id,
+            "company_count": org.company_count or 0,
+            "task_count": org.task_count or 0,
+            "total_input_tokens": org.total_input_tokens or 0,
+            "total_output_tokens": org.total_output_tokens or 0,
+            "total_cost": float(org.total_cost or 0),
+            "avg_cost_per_task": float(org.avg_cost_per_task or 0),
+            "avg_cost_per_company": float(org.total_cost or 0) / org.company_count if org.company_count else 0
         })
-    
+
     # Calculate totals
-    total_cost = sum(ws["total_cost"] for ws in workspaces_data)
-    total_tasks = sum(ws["task_count"] for ws in workspaces_data)
-    total_companies = sum(ws["company_count"] for ws in workspaces_data)
-    
+    total_cost = sum(org["total_cost"] for org in organizations_data)
+    total_tasks = sum(org["task_count"] for org in organizations_data)
+    total_companies = sum(org["company_count"] for org in organizations_data)
+
     return {
         "period": {
             "start_date": start_date.isoformat(),
             "end_date": end_date.isoformat()
         },
-        "workspaces": workspaces_data,
+        "organizations": organizations_data,
         "summary": {
-            "total_workspaces": len(workspaces_data),
+            "total_organizations": len(organizations_data),
             "total_cost": total_cost,
             "total_tasks": total_tasks,
             "total_companies": total_companies,
-            "avg_cost_per_workspace": total_cost / len(workspaces_data) if workspaces_data else 0
+            "avg_cost_per_organization": total_cost / len(organizations_data) if organizations_data else 0
         }
     }
 
@@ -185,7 +180,7 @@ async def get_cost_by_workspace(
 async def get_cost_by_task_type(
     start_date: Optional[date] = Query(None, description="Start date for analysis (inclusive)"),
     end_date: Optional[date] = Query(None, description="End date for analysis (inclusive)"),
-    workspace_id: Optional[int] = Query(None, description="Filter by specific workspace ID"),
+    organization_id: Optional[str] = Query(None, description="Filter by specific organization ID"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])),
     db: Session = Depends(get_db)
 ):
@@ -226,12 +221,12 @@ async def get_cost_by_task_type(
         func.sum(Task.total_cost).desc()
     )
     
-    # Apply workspace filter if provided
-    if workspace_id:
+    # Apply organization filter if provided
+    if organization_id:
         query = query.join(
             Company, Task.company_id == Company.id
         ).filter(
-            Company.workspace_id == workspace_id
+            Company.organization_id == organization_id
         )
     
     task_type_results = query.all()
@@ -259,7 +254,7 @@ async def get_cost_by_task_type(
             "start_date": start_date.isoformat(),
             "end_date": end_date.isoformat()
         },
-        "workspace_id": workspace_id,
+        "organization_id": organization_id,
         "task_types": task_types_data,
         "summary": {
             "total_task_types": len(task_types_data),
@@ -276,7 +271,7 @@ async def get_cost_trends(
     start_date: Optional[date] = Query(None, description="Start date for analysis (inclusive)"),
     end_date: Optional[date] = Query(None, description="End date for analysis (inclusive)"),
     granularity: str = Query("daily", description="Granularity: daily, weekly, or monthly"),
-    workspace_id: Optional[int] = Query(None, description="Filter by specific workspace ID"),
+    organization_id: Optional[str] = Query(None, description="Filter by specific organization ID"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])),
     db: Session = Depends(get_db)
 ):
@@ -322,12 +317,12 @@ async def get_cost_trends(
         date_trunc
     )
     
-    # Apply workspace filter if provided
-    if workspace_id:
+    # Apply organization filter if provided
+    if organization_id:
         query = query.join(
             Company, Task.company_id == Company.id
         ).filter(
-            Company.workspace_id == workspace_id
+            Company.organization_id == organization_id
         )
     
     trend_results = query.all()
@@ -359,7 +354,7 @@ async def get_cost_trends(
             "end_date": end_date.isoformat()
         },
         "granularity": granularity,
-        "workspace_id": workspace_id,
+        "organization_id": organization_id,
         "trends": trends_data,
         "summary": {
             "total_periods": len(trends_data),
@@ -383,9 +378,9 @@ async def refresh_materialized_views(
     """
     
     try:
-        # Refresh workspace cost summary view
-        db.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY workspace_cost_summary")
-        
+        # Refresh organization cost summary view
+        db.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY organization_cost_summary")
+
         # Refresh task type cost summary view
         db.execute("REFRESH MATERIALIZED VIEW CONCURRENTLY task_type_cost_summary")
         

@@ -56,7 +56,7 @@ class FolderItemSimple(BaseModel):
 
 class FolderResponse(FolderBase):
     id: UUID
-    workspace_id: int
+    organization_id: str
     owner: str
     is_favorite: bool
     is_deleted: bool
@@ -91,5 +91,5 @@ class FolderWithItemsResponse(BaseModel):
     created_at: Optional[str]
     updated_at: Optional[str]
     owner: str
-    workspace_id: int
+    organization_id: str
     items: List[FolderItemSummary]

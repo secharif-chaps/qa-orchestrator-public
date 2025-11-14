@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'd6d3b27e531e'
-down_revision = '003'
+down_revision = '005_rename_workspace_modules'
 branch_labels = None
 depends_on = None
 
@@ -20,25 +20,32 @@ def upgrade():
     # Add BLOCKED status to task_status_enum
     op.execute("ALTER TYPE task_status_enum ADD VALUE IF NOT EXISTS 'blocked'")
 
-    # Create task_dependencies table
-    op.create_table(
-        'task_dependencies',
-        sa.Column('id', sa.Integer(), primary_key=True),
-        sa.Column('task_id', sa.Integer(), nullable=False),
-        sa.Column('depends_on_task_id', sa.Integer(), nullable=False),
-        sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-        sa.ForeignKeyConstraint(['task_id'], ['tasks.id'], ondelete='CASCADE'),
-        sa.ForeignKeyConstraint(['depends_on_task_id'], ['tasks.id'], ondelete='CASCADE'),
-        sa.UniqueConstraint('task_id', 'depends_on_task_id', name='uq_task_dependency')
-    )
+    # Create task_dependencies table if it doesn't exist
+    op.execute("""
+        CREATE TABLE IF NOT EXISTS task_dependencies (
+            id SERIAL PRIMARY KEY,
+            task_id INTEGER NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+            depends_on_task_id INTEGER NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+            created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now() NOT NULL,
+            CONSTRAINT uq_task_dependency UNIQUE (task_id, depends_on_task_id)
+        )
+    """)
 
-    # Create indexes
-    op.create_index('idx_task_dependencies_task_id', 'task_dependencies', ['task_id'])
-    op.create_index('idx_task_dependencies_depends_on_task_id', 'task_dependencies', ['depends_on_task_id'])
+    # Create indexes if they don't exist
+    op.execute("CREATE INDEX IF NOT EXISTS idx_task_dependencies_task_id ON task_dependencies(task_id)")
+    op.execute("CREATE INDEX IF NOT EXISTS idx_task_dependencies_depends_on_task_id ON task_dependencies(depends_on_task_id)")
 
-    # Add is_prerequisite flag to tasks table
-    op.add_column('tasks', sa.Column('is_prerequisite', sa.Boolean(), server_default='false', nullable=False))
-    op.create_index('idx_tasks_is_prerequisite', 'tasks', ['is_prerequisite'])
+    # Add is_prerequisite flag to tasks table if it doesn't exist
+    op.execute("""
+        DO $$
+        BEGIN
+            IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                          WHERE table_name='tasks' AND column_name='is_prerequisite') THEN
+                ALTER TABLE tasks ADD COLUMN is_prerequisite BOOLEAN DEFAULT false NOT NULL;
+            END IF;
+        END $$;
+    """)
+    op.execute("CREATE INDEX IF NOT EXISTS idx_tasks_is_prerequisite ON tasks(is_prerequisite)")
 
 
 def downgrade():

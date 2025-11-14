@@ -46,11 +46,16 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
+    """Legacy token data schema.
+
+    NOTE: This schema is deprecated and kept only for backward compatibility
+    with old authentication code. New code should use fastapi-keycloak's OIDCUser
+    and OrganizationContext from app.core.organization instead.
+    """
     username: Optional[str] = None
     sub: Optional[str] = None
     roles: Optional[List[str]] = None
-    workspace_id: Optional[int] = None
-    workspace_slug: Optional[str] = None
+    organization_id: Optional[str] = None  # Keycloak organization UUID (replaces workspace_id)
 
 
 class LoginRequest(BaseModel):

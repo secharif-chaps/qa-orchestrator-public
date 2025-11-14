@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Boolean, DateTime, ForeignKey, text
+from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey, Integer, text
 from sqlalchemy.dialects.postgresql import UUID, ARRAY
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -9,8 +9,14 @@ class Folder(Base):
     __tablename__ = "folders"
 
     id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
-    workspace_id = Column(Integer, ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=False)
-    owner = Column(String, nullable=True)
+
+    # Organization-based multi-tenancy (replaces workspace_id)
+    organization_id = Column(String, index=True, nullable=False)  # Keycloak organization UUID
+
+    # Owner fields - Keycloak user identification
+    owner_id = Column(String, index=True, nullable=True)  # Keycloak user UUID (from JWT sub claim)
+    owner = Column(String, nullable=True)  # Username for display (denormalized, kept for backward compat)
+
     name = Column(String, nullable=False)
     color = Column(String, nullable=True)
     icon = Column(String, nullable=True)
@@ -21,7 +27,6 @@ class Folder(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationships
-    workspace = relationship("Workspace", back_populates="folders")
     items = relationship("FolderItem", back_populates="folder", cascade="all, delete-orphan")
 
 

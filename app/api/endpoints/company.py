@@ -8,8 +8,8 @@ logger = logging.getLogger(__name__)
 from app.services.company import CompanyService
 from app.services.token_manager import TokenManager
 from app.core.dependencies import get_company_service, get_token_manager
-from app.core.workspace import get_user_workspace, WorkspaceContext
-from app.models.workspace import ModuleName
+from app.core.organization import get_user_organization, OrganizationContext
+from app.models.organization import ModuleName
 from app.core.security import verify_company_workspace_access, verify_company_modify_permission
 from app.schemas.company import (
     CompanyCreate, 
@@ -33,12 +33,12 @@ router = APIRouter(
 async def get_recent_companies(
     limit: int = Query(5, ge=1, le=20, description="Number of recent companies to return"),
     service: CompanyService = Depends(get_company_service),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Get recent companies with their folder information"""
-    logger.info(f"🏢 GET /companies/recent - User: {workspace_context.username}, Limit: {limit}")
+    logger.info(f"🏢 GET /companies/recent - User: {org_context.username}, Limit: {limit}")
     return service.get_recent_companies(
-        workspace_id=workspace_context.workspace_id,
+        organization_id=org_context.organization_id,
         limit=limit
     )
 
@@ -52,14 +52,14 @@ async def get_companies(
     name: str = Query(None, description="Filter companies by name (partial match)"),
     archived: bool = Query(False, description="Include archived (soft-deleted) companies"),
     service: CompanyService = Depends(get_company_service),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Get paginated companies for the current workspace"""
     effective_per_page = size if size is not None else per_page
 
     # Single line request log
     filter_info = f"name='{name}'" if name else "no filters"
-    logger.info(f"🏢 GET /companies - User: {workspace_context.username} - Page: {page}, Size: {effective_per_page}, {filter_info}")
+    logger.info(f"🏢 GET /companies - User: {org_context.username} - Page: {page}, Size: {effective_per_page}, {filter_info}")
 
     pagination_params = PaginationParams(
         page=page,
@@ -69,7 +69,7 @@ async def get_companies(
     )
     return service.get_paginated_companies(
         pagination_params,
-        workspace_id=workspace_context.workspace_id,
+        organization_id=org_context.organization_id,
         name_filter=name,
         include_archived=archived
     )
@@ -78,11 +78,11 @@ async def get_companies(
 async def get_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Get a company by ID (only if it belongs to user's workspace)"""
     try:
-        logger.info(f"🏢 GET /api/companies/{company_id} - User: {workspace_context.username}, Workspace: {workspace_context.workspace_id}")
+        logger.info(f"🏢 GET /api/companies/{company_id} - User: {org_context.username}, Workspace: {org_context.organization_id}")
         company = service.get_company(company_id)
         if not company:
             logger.error(f"❌ Company {company_id} not found")
@@ -91,7 +91,7 @@ async def get_company(
                 detail="Company not found"
             )
         logger.info(f"✅ Company {company_id} found, verifying workspace access")
-        return verify_company_workspace_access(company, workspace_context)
+        return verify_company_workspace_access(company, org_context)
     except HTTPException:
         # Re-raise HTTP exceptions as-is
         raise
@@ -107,28 +107,28 @@ async def get_company(
 async def get_company_by_name(
     name: str,
     service: CompanyService = Depends(get_company_service),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Get a company by name (only if it belongs to user's workspace)"""
     # Input validation is handled by Pydantic models and path parameters
     company = service.get_company_by_name(name.strip())
-    return verify_company_workspace_access(company, workspace_context)
+    return verify_company_workspace_access(company, org_context)
 
 @router.post("/", response_model=CompanyResponse)
 async def create_company(
     company_data: CompanyCreate,
     service: CompanyService = Depends(get_company_service),
     token_manager: TokenManager = Depends(get_token_manager),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Create a new company"""
-    logger.info(f"🏢 POST /api/companies/ - START - User: {workspace_context.username}, Data: {company_data.name[:50]}...")
+    logger.info(f"🏢 POST /api/companies/ - START - User: {org_context.username}, Data: {company_data.name[:50]}...")
     
     try:
         # Step 1: Consume token immediately (for 'screen' module - company creation/search/screening)
-        logger.info(f"🪙 Checking and consuming token for screen module in workspace: {workspace_context.workspace_id}")
+        logger.info(f"🪙 Checking and consuming token for screen module in workspace: {org_context.organization_id}")
         token_manager.consume_tokens(
-            workspace_id=workspace_context.workspace_id,
+            organization_id=org_context.organization_id,
             module_name=ModuleName.SCREEN,
             tokens=1
         )
@@ -137,13 +137,14 @@ async def create_company(
         # Step 2: Input validation already handled by Pydantic CompanyCreate model
         logger.info(f"📝 Processing company - Name: {company_data.name[:50]}, Website: {str(company_data.website)[:50]}")
 
-        # Step 3: Create company using the authenticated user's username as the owner
-        logger.info(f"🔄 Calling service.create_company for authenticated user: {workspace_context.username} in workspace: {workspace_context.workspace_id}")
+        # Step 3: Create company using the authenticated user's ID and username as the owner
+        logger.info(f"🔄 Calling service.create_company for authenticated user: {org_context.username} ({org_context.user_id}) in organization: {org_context.organization_id}")
         result = service.create_company(
             name=company_data.name,
             website=str(company_data.website),
-            owner_username=workspace_context.username,
-            workspace_id=workspace_context.workspace_id
+            owner_id=org_context.user_id,
+            owner_username=org_context.username,
+            organization_id=org_context.organization_id
         )
         logger.info(f"✅ Company created successfully - ID: {result.id}, Name: {result.name}")
         return result
@@ -152,7 +153,7 @@ async def create_company(
         logger.error(f"❌ Validation error: {str(e)}")
         # Rollback token on validation failure
         try:
-            token_manager.rollback_tokens(workspace_context.workspace_id, ModuleName.SCREEN, 1)
+            token_manager.rollback_tokens(org_context.organization_id, ModuleName.SCREEN, 1)
             logger.info(f"🔄 Token rolled back due to validation error")
         except Exception as rollback_error:
             logger.error(f"Failed to rollback token: {rollback_error}")
@@ -165,7 +166,7 @@ async def create_company(
         logger.error(f"❌ Value error: {str(e)}")
         # Rollback token on value error
         try:
-            token_manager.rollback_tokens(workspace_context.workspace_id, ModuleName.SCREEN, 1)
+            token_manager.rollback_tokens(org_context.organization_id, ModuleName.SCREEN, 1)
             logger.info(f"🔄 Token rolled back due to value error")
         except Exception as rollback_error:
             logger.error(f"Failed to rollback token: {rollback_error}")
@@ -181,7 +182,7 @@ async def create_company(
         # Rollback token on any other failure (but skip token-related errors)
         if not ("insufficient_tokens" in str(e) or "not enabled" in str(e)):
             try:
-                token_manager.rollback_tokens(workspace_context.workspace_id, ModuleName.SCREEN, 1)
+                token_manager.rollback_tokens(org_context.organization_id, ModuleName.SCREEN, 1)
                 logger.info(f"🔄 Token rolled back due to unexpected error")
             except Exception as rollback_error:
                 logger.error(f"Failed to rollback token: {rollback_error}")
@@ -196,15 +197,15 @@ async def update_company(
     company_id: int,
     company_data: CompanyUpdate,
     service: CompanyService = Depends(get_company_service),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Update a company (requires company.update permission)"""
     # Verify user has permission to update companies
-    verify_company_modify_permission(workspace_context, "company.update")
+    verify_company_modify_permission(org_context, "company.update")
     
     # Get existing company and verify it belongs to workspace
     company = service.get_company(company_id)
-    verify_company_workspace_access(company, workspace_context)
+    verify_company_workspace_access(company, org_context)
 
     # Input validation already handled by Pydantic CompanyUpdate model
 
@@ -239,12 +240,12 @@ async def update_company(
 async def soft_delete_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Soft delete a company (archive)"""
     
     # Verify user has permission to delete companies
-    verify_company_modify_permission(workspace_context, "company.delete")
+    verify_company_modify_permission(org_context, "company.delete")
     
     # Get company and verify access
     company = service.get_company(company_id)
@@ -255,7 +256,7 @@ async def soft_delete_company(
         )
     
     # Verify workspace access
-    verify_company_workspace_access(company, workspace_context)
+    verify_company_workspace_access(company, org_context)
     
     # Soft delete the company
     deleted_company = service.soft_delete_company(company_id)
@@ -272,15 +273,15 @@ async def chat_with_company(
     company_id: int,
     chat_request: ChatRequest,
     service: CompanyService = Depends(get_company_service),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Chat with AI about a company using Dify workflow"""
-    logger.info(f"Chat request for company {company_id} by user {workspace_context.username}")
+    logger.info(f"Chat request for company {company_id} by user {org_context.username}")
     
     try:
         # Get company and verify it belongs to workspace
         company = service.get_company(company_id)
-        verify_company_workspace_access(company, workspace_context)
+        verify_company_workspace_access(company, org_context)
         
         # Initialize Dify service
         dify_service = DifyService()
@@ -329,13 +330,13 @@ async def chat_with_company(
 async def restore_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Restore a soft-deleted company"""
-    logger.info(f"🏢 POST /api/companies/{company_id}/restore - User: {workspace_context.username}")
+    logger.info(f"🏢 POST /api/companies/{company_id}/restore - User: {org_context.username}")
     
     # Verify modification permission
-    verify_company_modify_permission(workspace_context, 'company.update')
+    verify_company_modify_permission(org_context, 'company.update')
     
     # Restore the company
     restored_company = service.restore_company(company_id)
@@ -346,18 +347,18 @@ async def restore_company(
         )
     
     # Verify workspace access after restore
-    return verify_company_workspace_access(restored_company, workspace_context)
+    return verify_company_workspace_access(restored_company, org_context)
 
 
 @router.get("/archived/list", response_model=List[CompanyResponse])
 async def get_archived_companies(
     service: CompanyService = Depends(get_company_service),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Get all archived (soft-deleted) companies in the workspace"""
-    logger.info(f"🏢 GET /api/companies/archived/list - User: {workspace_context.username}")
+    logger.info(f"🏢 GET /api/companies/archived/list - User: {org_context.username}")
     
-    archived_companies = service.get_archived_companies(workspace_id=workspace_context.workspace_id)
+    archived_companies = service.get_archived_companies(organization_id=org_context.organization_id)
     return archived_companies
 
 
@@ -366,21 +367,21 @@ async def validate_csv_companies(
     validation_request: CompanyCSVValidationRequest,
     service: CompanyService = Depends(get_company_service),
     token_manager: TokenManager = Depends(get_token_manager),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """
     Validate CSV company data without creating companies.
     Also checks if user has sufficient tokens for valid companies.
     """
-    logger.info(f"📋 CSV validation request - User: {workspace_context.username}, Rows: {len(validation_request.companies)}")
+    logger.info(f"📋 CSV validation request - User: {org_context.username}, Rows: {len(validation_request.companies)}")
     
     # Verify user has permission to create companies
-    verify_company_modify_permission(workspace_context, "company.create")
+    verify_company_modify_permission(org_context, "company.create")
     
     # Validate companies and check token availability
     return service.validate_csv_companies(
         companies=validation_request.companies,
-        workspace_id=workspace_context.workspace_id,
+        organization_id=org_context.organization_id,
         token_manager=token_manager
     )
 
@@ -390,18 +391,18 @@ async def import_csv_companies(
     import_request: CompanyCSVImportRequest,
     service: CompanyService = Depends(get_company_service),
     token_manager: TokenManager = Depends(get_token_manager),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Import companies from CSV data"""
-    logger.info(f"📋 CSV import request - User: {workspace_context.username}, Rows: {len(import_request.companies)}")
+    logger.info(f"📋 CSV import request - User: {org_context.username}, Rows: {len(import_request.companies)}")
     
     # Verify user has permission to create companies
-    verify_company_modify_permission(workspace_context, "company.create")
+    verify_company_modify_permission(org_context, "company.create")
     
     # First validate to get token requirements
     validation = service.validate_csv_companies(
         companies=import_request.companies,
-        workspace_id=workspace_context.workspace_id,
+        organization_id=org_context.organization_id,
         token_manager=token_manager
     )
     
@@ -419,7 +420,7 @@ async def import_csv_companies(
             # Consume tokens for all valid companies at once
             logger.info(f"🪙 Consuming {tokens_needed} tokens for CSV import")
             token_manager.consume_tokens(
-                workspace_id=workspace_context.workspace_id,
+                organization_id=org_context.organization_id,
                 module_name=ModuleName.SCREEN,
                 tokens=tokens_needed
             )
@@ -434,8 +435,8 @@ async def import_csv_companies(
         # Import the companies
         result = service.import_csv_companies(
             companies=import_request.companies,
-            owner_username=workspace_context.username,
-            workspace_id=workspace_context.workspace_id,
+            owner_username=org_context.username,
+            organization_id=org_context.organization_id,
             skip_invalid=import_request.skip_invalid
         )
         
@@ -444,7 +445,7 @@ async def import_csv_companies(
             tokens_to_rollback = tokens_needed - result.successful
             try:
                 token_manager.rollback_tokens(
-                    workspace_context.workspace_id,
+                    org_context.organization_id,
                     ModuleName.SCREEN,
                     tokens_to_rollback
                 )
@@ -459,7 +460,7 @@ async def import_csv_companies(
         if tokens_needed > 0:
             try:
                 token_manager.rollback_tokens(
-                    workspace_context.workspace_id,
+                    org_context.organization_id,
                     ModuleName.SCREEN,
                     tokens_needed
                 )

@@ -402,11 +402,11 @@ class KeycloakAdminService:
         """
         Sync user realm roles to match target roles list
         This will add missing roles and remove extra roles
-        
+
         Args:
             user_id: Keycloak user ID
             target_roles: List of role names that the user should have
-        
+
         Returns:
             True if sync was successful, False otherwise
         """
@@ -414,19 +414,19 @@ class KeycloakAdminService:
             # Get all available realm roles
             all_realm_roles = await self.get_realm_roles()
             role_name_to_obj = {role['name']: role for role in all_realm_roles}
-            
+
             # Get current user roles
             current_user_roles = await self.get_user_realm_roles(user_id)
             current_role_names = {role['name'] for role in current_user_roles}
-            
+
             target_role_names = set(target_roles)
-            
+
             # Determine roles to add and remove
             roles_to_add = target_role_names - current_role_names
             roles_to_remove = current_role_names - target_role_names
-            
+
             success = True
-            
+
             # Add missing roles
             if roles_to_add:
                 roles_to_add_objs = []
@@ -435,25 +435,177 @@ class KeycloakAdminService:
                         roles_to_add_objs.append(role_name_to_obj[role_name])
                     else:
                         logger.warning(f"Role '{role_name}' not found in realm")
-                
+
                 if roles_to_add_objs:
                     if not await self.assign_realm_roles_to_user(user_id, roles_to_add_objs):
                         success = False
-            
+
             # Remove extra roles
             if roles_to_remove:
                 roles_to_remove_objs = [role for role in current_user_roles if role['name'] in roles_to_remove]
                 if roles_to_remove_objs:
                     if not await self.remove_realm_roles_from_user(user_id, roles_to_remove_objs):
                         success = False
-            
+
             if success:
                 logger.info(f"Successfully synced roles for user {user_id}: +{len(roles_to_add)}, -{len(roles_to_remove)}")
-            
+
             return success
-            
+
         except Exception as e:
             logger.error(f"Error syncing user roles: {e}")
+            return False
+
+    # Organization-specific methods
+
+    async def get_organization_members(
+        self,
+        organization_id: str,
+        first: int = 0,
+        max_results: int = 100,
+        search: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Get members of a specific Keycloak organization
+
+        Args:
+            organization_id: Keycloak organization UUID
+            first: Offset for pagination (0-indexed)
+            max_results: Maximum number of results to return
+            search: Optional search query for filtering users by name, email, or username
+
+        Returns:
+            List of organization members with their details
+        """
+        try:
+            # Build endpoint with pagination
+            endpoint = f"/organizations/{organization_id}/members?first={first}&max={max_results}"
+
+            # Add search parameter if provided
+            if search:
+                endpoint += f"&search={search}"
+
+            response = await self._make_admin_request("GET", endpoint)
+
+            if response.status_code == 200:
+                return response.json()
+            elif response.status_code == 404:
+                logger.warning(f"Organization {organization_id} not found")
+                return []
+            else:
+                logger.error(f"Failed to get organization members: {response.status_code} - {response.text}")
+                return []
+
+        except Exception as e:
+            logger.error(f"Error getting organization members: {e}")
+            return []
+
+    async def count_organization_members(self, organization_id: str) -> int:
+        """
+        Get total count of members in an organization
+
+        Args:
+            organization_id: Keycloak organization UUID
+
+        Returns:
+            Total number of members
+        """
+        try:
+            # Keycloak doesn't have a direct count endpoint for org members
+            # So we need to fetch all members and count them
+            # For better performance in production, consider caching this value
+            endpoint = f"/organizations/{organization_id}/members?first=0&max=1"
+            response = await self._make_admin_request("GET", endpoint)
+
+            if response.status_code == 200:
+                # Try to get count from headers if available
+                total = response.headers.get('X-Total-Count')
+                if total:
+                    return int(total)
+
+                # Fallback: fetch all and count (not ideal for large orgs)
+                all_members = await self.get_organization_members(organization_id, first=0, max_results=10000)
+                return len(all_members)
+            elif response.status_code == 404:
+                logger.warning(f"Organization {organization_id} not found")
+                return 0
+            else:
+                logger.error(f"Failed to count organization members: {response.status_code}")
+                return 0
+
+        except Exception as e:
+            logger.error(f"Error counting organization members: {e}")
+            return 0
+
+    async def add_user_to_organization(self, organization_id: str, user_id: str) -> bool:
+        """
+        Add a user to an organization
+
+        Args:
+            organization_id: Keycloak organization UUID
+            user_id: Keycloak user UUID
+
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            # POST to /organizations/{id}/members with user_id in body
+            # Keycloak expects the user ID as a JSON string in the request body
+            response = await self._make_admin_request(
+                "POST",
+                f"/organizations/{organization_id}/members",
+                data=user_id  # Send user_id as JSON string in body
+            )
+
+            if response.status_code in [204, 201]:
+                return True
+            elif response.status_code == 404:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Organization or user not found"
+                )
+            else:
+                logger.error(f"Failed to add user to organization: {response.status_code} - {response.text}")
+                return False
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Error adding user to organization: {e}")
+            return False
+
+    async def remove_user_from_organization(self, organization_id: str, user_id: str) -> bool:
+        """
+        Remove a user from an organization
+
+        Args:
+            organization_id: Keycloak organization UUID
+            user_id: Keycloak user UUID
+
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            response = await self._make_admin_request(
+                "DELETE",
+                f"/organizations/{organization_id}/members/{user_id}"
+            )
+
+            if response.status_code == 204:
+                return True
+            elif response.status_code == 404:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Organization or user not found"
+                )
+            else:
+                logger.error(f"Failed to remove user from organization: {response.status_code} - {response.text}")
+                return False
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Error removing user from organization: {e}")
             return False
 
 

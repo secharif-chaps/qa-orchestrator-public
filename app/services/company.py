@@ -19,7 +19,7 @@ from app.repositories.company_repository_impl import SQLAlchemyCompanyRepository
 from app.core.config import settings
 from app.workers.dify_tasks import execute_dify_workflow
 from app.services.token_manager import TokenManager
-from app.models.workspace import ModuleName
+from app.models.organization import ModuleName
 
 logger = logging.getLogger(__name__)
 
@@ -161,20 +161,20 @@ class CompanyService:
         company = query.first()
         return _parse_json_fields(company)
     
-    def get_all_companies(self, workspace_id: Optional[int] = None, include_deleted: bool = False) -> List[Company]:
-        """Securely get all companies, optionally filtered by workspace"""
+    def get_all_companies(self, organization_id: Optional[str] = None, include_deleted: bool = False) -> List[Company]:
+        """Securely get all companies, optionally filtered by organization"""
         query = self.db.query(Company)
         if not include_deleted:
             query = query.filter(Company.is_deleted == False)
-        if workspace_id:
-            query = query.filter(Company.workspace_id == workspace_id)
+        if organization_id:
+            query = query.filter(Company.organization_id == organization_id)
         companies = query.all()
         # Parse JSON fields for all companies
         return [_parse_json_fields(company) for company in companies]
     
-    def get_paginated_companies(self, pagination_params: PaginationParams, workspace_id: Optional[int] = None, name_filter: Optional[str] = None, include_archived: bool = False) -> PaginatedResponse[CompanyResponse]:
+    def get_paginated_companies(self, pagination_params: PaginationParams, organization_id: Optional[str] = None, name_filter: Optional[str] = None, include_archived: bool = False) -> PaginatedResponse[CompanyResponse]:
         """Get paginated companies with sorting and filtering"""
-        companies, total_count = self.repository.get_paginated(pagination_params, workspace_id, name_filter, include_archived)
+        companies, total_count = self.repository.get_paginated(pagination_params, organization_id, name_filter, include_archived)
         
         # Convert SQLAlchemy models to Pydantic response models
         company_responses = []
@@ -220,11 +220,11 @@ class CompanyService:
         
         return PaginatedResponse(data=company_responses, meta=meta)
     
-    def create_company(self, name: str, website: str, owner_username: str, workspace_id: int) -> Company:
+    def create_company(self, name: str, website: str, owner_id: str, owner_username: str, organization_id: str) -> Company:
         """Securely create a new company"""
         from app.services.task_dependency_service import TaskDependencyService
 
-        logger.info(f"🏭 Creating company: {name[:50]}, Owner: {owner_username}, Workspace: {workspace_id}")
+        logger.info(f"🏭 Creating company: {name[:50]}, Owner: {owner_username} ({owner_id}), Organization: {organization_id}")
 
         # Additional validation
         if not owner_username or len(owner_username) > 100:
@@ -236,8 +236,9 @@ class CompanyService:
             Company,
             name=name,
             website=website,
+            owner_id=owner_id,
             owner_username=owner_username,
-            workspace_id=workspace_id
+            organization_id=organization_id
         )
         logger.info(f"✅ Company entity created - ID: {company.id}")
 
@@ -526,22 +527,22 @@ class CompanyService:
             self.db.refresh(company)
         return _parse_json_fields(company)
     
-    def get_archived_companies(self, workspace_id: Optional[int] = None) -> List[Company]:
+    def get_archived_companies(self, organization_id: Optional[str] = None) -> List[Company]:
         """Get all soft-deleted (archived) companies"""
         query = self.db.query(Company).filter(Company.is_deleted == True)
-        if workspace_id:
-            query = query.filter(Company.workspace_id == workspace_id)
+        if organization_id:
+            query = query.filter(Company.organization_id == organization_id)
         companies = query.all()
         return [_parse_json_fields(company) for company in companies]
 
-    def get_recent_companies(self, workspace_id: int, limit: int = 5) -> List[CompanyResponse]:
+    def get_recent_companies(self, organization_id: str, limit: int = 5) -> List[CompanyResponse]:
         """Get recent companies with their folder information"""
         from app.models.folder import FolderItem, Folder
 
         # Get recent companies ordered by created_at
         companies = (
             self.db.query(Company)
-            .filter(Company.workspace_id == workspace_id)
+            .filter(Company.organization_id == organization_id)
             .filter(Company.is_deleted == False)
             .order_by(Company.created_at.desc())
             .limit(limit)
@@ -576,7 +577,7 @@ class CompanyService:
 
         return company_responses
     
-    def validate_csv_companies(self, companies: List[CompanyCSVRow], workspace_id: int,
+    def validate_csv_companies(self, companies: List[CompanyCSVRow], organization_id: str,
                                token_manager: TokenManager) -> CompanyCSVValidationResponse:
         """Validate a list of companies from CSV without creating them"""
         errors = []
@@ -606,7 +607,7 @@ class CompanyService:
             # Check if company already exists in database (skip if name is empty - will be caught by validation)
             if company_row.name.strip():
                 existing = self.get_company_by_name(company_row.name)
-                if existing and existing.workspace_id == workspace_id:
+                if existing and existing.organization_id == organization_id:
                     errors.append(CompanyCSVValidationError(
                         row_number=company_row.row_number,
                         field="name",
@@ -661,7 +662,7 @@ class CompanyService:
         )
     
     def import_csv_companies(self, companies: List[CompanyCSVRow], owner_username: str,
-                            workspace_id: int, skip_invalid: bool = True) -> CompanyCSVImportResponse:
+                            organization_id: str, skip_invalid: bool = True) -> CompanyCSVImportResponse:
         """Import companies from CSV, creating them with tasks"""
         results = []
         successful = 0
@@ -691,7 +692,7 @@ class CompanyService:
             # Check if company already exists in database (skip if name is empty - will be caught by validation)
             if company_row.name.strip():
                 existing = self.get_company_by_name(company_row.name)
-                if existing and existing.workspace_id == workspace_id:
+                if existing and existing.organization_id == organization_id:
                     validation_errors.append(company_row.row_number)
                     invalid_rows.add(company_row.row_number)
                     continue
@@ -738,7 +739,7 @@ class CompanyService:
                     name=company_row.name,
                     website=company_row.website,
                     owner_username=owner_username,
-                    workspace_id=workspace_id
+                    organization_id=organization_id
                 )
                 
                 results.append(CompanyCSVImportResult(
