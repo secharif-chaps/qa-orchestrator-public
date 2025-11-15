@@ -70,13 +70,13 @@ def create_folder(
 def list_folders(
     archived: bool = Query(False),
     favorites: bool = Query(False),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.read"])),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """List all folders in the workspace.
 
-    Requires workspace.read role for access.
+    Requires organization.read role for access.
     """
     
     folders = FolderService.list_folders(
@@ -114,13 +114,13 @@ def list_folders(
 def get_folder(
     folder_id: UUID,
     archived: bool = Query(False),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.read"])),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Get a folder with its items, with optional filtering by archived status.
 
-    Requires workspace.read role for access.
+    Requires organization.read role for access.
     """
     import logging
     logger = logging.getLogger(__name__)

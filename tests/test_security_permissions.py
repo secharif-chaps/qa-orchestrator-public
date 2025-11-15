@@ -26,10 +26,10 @@ class TestWorkspacePermission:
         user = TokenData(
             username="user",
             sub="user-uuid",
-            roles=["workspace.read"],
+            roles=["organization.read"],
             workspace_id=1
         )
-        result = verify_workspace_permission(user, 1, "workspace.read")
+        result = verify_workspace_permission(user, 1, "organization.read")
         assert result == user
 
     def test_workspace_permission_with_admin_role(self, workspace_admin_user):
@@ -72,12 +72,12 @@ class TestWorkspacePermission:
         user = TokenData(
             username="user",
             sub="user-uuid",
-            roles=["workspace.read"],
+            roles=["organization.read"],
             workspace_id=1
         )
         with pytest.raises(AuthorizationError) as exc_info:
             # User from workspace 1 trying to access workspace 2
-            verify_workspace_permission(user, 2, "workspace.read")
+            verify_workspace_permission(user, 2, "organization.read")
         # This test currently expects the permission check to pass based on JWT roles
         # After fixing the JWT OR DB vulnerability, this should properly check workspace_id
 

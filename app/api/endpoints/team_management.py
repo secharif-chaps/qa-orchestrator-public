@@ -125,9 +125,9 @@ async def list_workspace_users(
         
         # If no database permissions found, fall back to JWT roles for current user
         if not user_permissions and member.user_id == current_user.sub:
-            user_permissions = current_user.roles or ["workspace.read"]
+            user_permissions = current_user.roles or ["organization.read"]
         elif not user_permissions:
-            user_permissions = ["workspace.read"]  # Default for other users
+            user_permissions = ["organization.read"]  # Default for other users
         
         user = WorkspaceUser(
             id=member.id,
@@ -211,7 +211,7 @@ async def create_workspace_user(
             created_at=new_member.created_at.isoformat(),
             updated_at=new_member.updated_at.isoformat() if new_member.updated_at else new_member.created_at.isoformat(),
             is_disabled=False,
-            permissions=user_data.permissions or ["workspace.read"],  # Use provided permissions or default
+            permissions=user_data.permissions or ["organization.read"],  # Use provided permissions or default
             created_by=None  # Would track the creating user ID
         )
         
@@ -279,9 +279,9 @@ async def update_workspace_user(
 
         # Fallback if no permissions found
         if not user_permissions and member.user_id == user.sub:
-            user_permissions = user.roles or ["workspace.read"]
+            user_permissions = user.roles or ["organization.read"]
         elif not user_permissions:
-            user_permissions = ["workspace.read"]
+            user_permissions = ["organization.read"]
         
         # Convert to response format
         return WorkspaceUser(
@@ -335,9 +335,9 @@ async def get_workspace_user(
     
     # If no database permissions found, fall back to JWT roles for current user
     if not user_permissions and member.user_id == current_user.sub:
-        user_permissions = current_user.roles or ["workspace.read"]
+        user_permissions = current_user.roles or ["organization.read"]
     elif not user_permissions:
-        user_permissions = ["workspace.read"]  # Default
+        user_permissions = ["organization.read"]  # Default
     
     # Convert to response format
     return WorkspaceUser(

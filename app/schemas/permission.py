@@ -11,7 +11,7 @@ from enum import Enum
 class PermissionType(str, Enum):
     """Standard permission types"""
     # Workspace permissions (workspace-specific only)
-    WORKSPACE_READ = "workspace.read"
+    WORKSPACE_READ = "organization.read"
     WORKSPACE_WRITE = "workspace.write"
     
     # Company permissions (workspace-specific)
