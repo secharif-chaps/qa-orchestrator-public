@@ -28,6 +28,36 @@ def upgrade():
     """Create complete initial database schema"""
 
     # ============================================================================
+    # 0. DROP EXISTING OBJECTS (ensure clean slate)
+    # ============================================================================
+    print("Dropping existing objects if they exist...")
+
+    # Drop materialized views
+    op.execute('DROP MATERIALIZED VIEW IF EXISTS organization_cost_summary CASCADE')
+    op.execute('DROP MATERIALIZED VIEW IF EXISTS task_type_cost_summary CASCADE')
+
+    # Drop triggers and functions
+    op.execute('DROP TRIGGER IF EXISTS trigger_update_user_preferences_updated_at ON user_preferences')
+    op.execute('DROP FUNCTION IF EXISTS update_user_preferences_updated_at() CASCADE')
+
+    # Drop tables (in dependency order)
+    op.execute('DROP TABLE IF EXISTS user_preferences CASCADE')
+    op.execute('DROP TABLE IF EXISTS folder_items CASCADE')
+    op.execute('DROP TABLE IF EXISTS folders CASCADE')
+    op.execute('DROP TABLE IF EXISTS workflow_configs CASCADE')
+    op.execute('DROP TABLE IF EXISTS organization_modules CASCADE')
+    op.execute('DROP TABLE IF EXISTS task_dependencies CASCADE')
+    op.execute('DROP TABLE IF EXISTS tasks CASCADE')
+    op.execute('DROP TABLE IF EXISTS companies CASCADE')
+
+    # Drop enum types
+    op.execute('DROP TYPE IF EXISTS modulename CASCADE')
+    op.execute('DROP TYPE IF EXISTS task_status_enum CASCADE')
+    op.execute('DROP TYPE IF EXISTS task_type_enum CASCADE')
+
+    print("✅ Cleanup complete")
+
+    # ============================================================================
     # 1. CREATE ENUM TYPES
     # ============================================================================
     print("Creating enum types...")
