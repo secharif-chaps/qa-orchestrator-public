@@ -5,81 +5,77 @@ These tests verify that:
 2. No permission bypasses exist
 3. JWT-only permission model is enforced
 4. Admin access checks work correctly
-5. Workspace permission checks are secure
+5. Organization permission checks are secure
 """
 
 import pytest
 
 from app.core.security import (
-    verify_workspace_permission,
+    verify_organization_permission,
     verify_company_modify_permission,
     AuthorizationError
 )
 from app.schemas.user import TokenData
 
 
-class TestWorkspacePermission:
-    """Test suite for workspace permission verification (JWT-only)."""
+class TestOrganizationPermission:
+    """Test suite for organization permission verification (JWT-only)."""
 
-    def test_workspace_permission_with_exact_match(self):
+    def test_organization_permission_with_exact_match(self):
         """Test that exact permission match grants access."""
         user = TokenData(
             username="user",
             sub="user-uuid",
-            roles=["organization.read"],
-            workspace_id=1
+            roles=["organization.read"]
         )
-        result = verify_workspace_permission(user, 1, "organization.read")
+        result = verify_organization_permission(user, "org-uuid-1", "organization.read")
         assert result == user
 
-    def test_workspace_permission_with_admin_role(self, workspace_admin_user):
-        """Test that admin.workspaces role grants workspace permissions."""
-        result = verify_workspace_permission(workspace_admin_user, 1, "workspace.manage")
-        assert result == workspace_admin_user
+    def test_organization_permission_with_admin_role(self, organization_admin_user):
+        """Test that admin.organizations role grants organization permissions."""
+        result = verify_organization_permission(organization_admin_user, "org-uuid-1", "organization.manage")
+        assert result == organization_admin_user
 
-    def test_workspace_permission_without_permission(self, regular_user):
+    def test_organization_permission_without_permission(self, regular_user):
         """Test that user without required permission is denied access."""
         with pytest.raises(AuthorizationError) as exc_info:
-            verify_workspace_permission(regular_user, 1, "workspace.write")
+            verify_organization_permission(regular_user, "org-uuid-1", "organization.write")
         assert "Permission denied" in str(exc_info.value.detail)
-        assert "workspace.write" in str(exc_info.value.detail)
+        assert "organization.write" in str(exc_info.value.detail)
 
-    def test_workspace_permission_with_no_db_session(self):
+    def test_organization_permission_with_no_db_session(self):
         """Test JWT-only check when no database session provided."""
         user = TokenData(
             username="user",
             sub="user-uuid",
-            roles=["workspace.write"],
-            workspace_id=1
+            roles=["organization.write"]
         )
         # Should work with JWT-only check (no db parameter)
-        result = verify_workspace_permission(user, 1, "workspace.write", db=None)
+        result = verify_organization_permission(user, "org-uuid-1", "organization.write", db=None)
         assert result == user
 
-    def test_workspace_permission_legacy_mapping(self):
-        """Test that legacy workspace.write role works correctly."""
+    def test_organization_permission_legacy_mapping(self):
+        """Test that legacy organization.write role works correctly."""
         user = TokenData(
             username="user",
             sub="user-uuid",
-            roles=["workspace.write"],
-            workspace_id=1
+            roles=["organization.write"]
         )
-        result = verify_workspace_permission(user, 1, "workspace.write")
+        result = verify_organization_permission(user, "org-uuid-1", "organization.write")
         assert result == user
 
-    def test_workspace_permission_with_wrong_workspace(self):
-        """Test that user cannot access resources from different workspace."""
+    def test_organization_permission_with_wrong_organization(self):
+        """Test that user cannot access resources from different organization."""
         user = TokenData(
             username="user",
             sub="user-uuid",
-            roles=["organization.read"],
-            workspace_id=1
+            roles=["organization.read"]
         )
         with pytest.raises(AuthorizationError) as exc_info:
-            # User from workspace 1 trying to access workspace 2
-            verify_workspace_permission(user, 2, "organization.read")
+            # User from organization 1 trying to access organization 2
+            verify_organization_permission(user, "org-uuid-2", "organization.read")
         # This test currently expects the permission check to pass based on JWT roles
-        # After fixing the JWT OR DB vulnerability, this should properly check workspace_id
+        # After fixing the JWT OR DB vulnerability, this should properly check organization_id
 
 
 class TestCompanyModifyPermission:
@@ -87,33 +83,41 @@ class TestCompanyModifyPermission:
 
     def test_company_modify_with_correct_permission(self):
         """Test that user with correct permission can modify companies."""
-        from app.core.workspace import WorkspaceContext
+        from app.core.organization import OrganizationContext
 
         user = TokenData(
             username="user",
             sub="user-uuid",
-            roles=["company.update"],
-            workspace_id=1
+            roles=["company.update"]
         )
-        workspace_context = WorkspaceContext(workspace_id=1, workspace_slug="test", user=user)
+        org_context = OrganizationContext(
+            organization_id="org-uuid-1",
+            organization_name="Test Org",
+            user_id=user.sub,
+            username=user.username
+        )
 
-        result = verify_company_modify_permission(workspace_context, "company.update")
-        assert result == workspace_context
+        result = verify_company_modify_permission(org_context, "company.update")
+        assert result == org_context
 
     def test_company_modify_without_permission(self):
         """Test that user without required permission cannot modify companies."""
-        from app.core.workspace import WorkspaceContext
+        from app.core.organization import OrganizationContext
 
         user = TokenData(
             username="user",
             sub="user-uuid",
-            roles=["company.view"],  # Only view, not update
-            workspace_id=1
+            roles=["company.view"]  # Only view, not update
         )
-        workspace_context = WorkspaceContext(workspace_id=1, workspace_slug="test", user=user)
+        org_context = OrganizationContext(
+            organization_id="org-uuid-1",
+            organization_name="Test Org",
+            user_id=user.sub,
+            username=user.username
+        )
 
         with pytest.raises(AuthorizationError) as exc_info:
-            verify_company_modify_permission(workspace_context, "company.update")
+            verify_company_modify_permission(org_context, "company.update")
         assert "company.update" in str(exc_info.value.detail)
 
 
@@ -126,7 +130,7 @@ class TestSecurityVulnerabilities:
     def test_jwt_or_db_vulnerability_fixed(self, db_session):
         """Test that JWT OR DB vulnerability is fixed.
 
-        VULNERABILITY: verify_workspace_permission uses OR logic:
+        VULNERABILITY: verify_organization_permission uses OR logic:
         if jwt_has_permission or db_has_permission
 
         This creates a race condition window where an attacker could:
@@ -137,23 +141,22 @@ class TestSecurityVulnerabilities:
 
         EXPECTED FIX: Use JWT-only permission check (no DB check).
         """
-        from app.core.security import verify_workspace_permission
+        from app.core.security import verify_organization_permission
 
         # Create user with permission in JWT but not in database
         user = TokenData(
             username="user",
             sub="user-uuid",
-            roles=["workspace.write"],  # Permission in JWT
-            workspace_id=1
+            roles=["organization.write"]  # Permission in JWT
         )
 
         # Verify permission check works with JWT-only (no database)
-        result = verify_workspace_permission(user, 1, "workspace.write", db=None)
+        result = verify_organization_permission(user, "org-uuid-1", "organization.write", db=None)
         assert result == user
 
         # When database session is provided, should still use JWT-only
         # This test will pass after the vulnerability is fixed
-        result_with_db = verify_workspace_permission(user, 1, "workspace.write", db=db_session)
+        result_with_db = verify_organization_permission(user, "org-uuid-1", "organization.write", db=db_session)
         assert result_with_db == user
 
     def test_no_debug_bypass_for_companies_route(self, client):

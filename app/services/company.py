@@ -611,7 +611,7 @@ class CompanyService:
                     errors.append(CompanyCSVValidationError(
                         row_number=company_row.row_number,
                         field="name",
-                        error=f"Company '{company_row.name}' already exists in this workspace"
+                        error=f"Company '{company_row.name}' already exists in this organization"
                     ))
             
             # Validate name
@@ -640,7 +640,7 @@ class CompanyService:
         tokens_required = valid_count
         
         # Check available tokens
-        module = token_manager.get_module_tokens(workspace_id, ModuleName.SCREEN)
+        module = token_manager.get_module_tokens(organization_id, ModuleName.SCREEN)
         available_tokens = module.token_count if module else 0
         has_sufficient_tokens = available_tokens >= tokens_required
         

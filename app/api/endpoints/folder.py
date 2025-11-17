@@ -25,13 +25,13 @@ router = APIRouter()
 @router.post("/", response_model=FolderResponse)
 def create_folder(
     folder: FolderCreate,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
-    """Create a new folder in the workspace.
+    """Create a new folder in the organization.
 
-    Requires workspace.write role for access.
+    Requires organization.write role for access.
     """
     import logging
     logger = logging.getLogger(__name__)
@@ -74,7 +74,7 @@ def list_folders(
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
-    """List all folders in the workspace.
+    """List all folders in the organization.
 
     Requires organization.read role for access.
     """
@@ -160,13 +160,13 @@ def get_folder(
 def update_folder(
     folder_id: UUID,
     folder_update: FolderUpdate,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Update a folder.
 
-    Requires workspace.write role for access.
+    Requires organization.write role for access.
     """
     
     folder = FolderService.get_folder(
@@ -212,13 +212,13 @@ def update_folder(
 def patch_folder(
     folder_id: UUID,
     folder_update: FolderUpdate,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Partially update a folder (for favorite toggle, etc.).
 
-    Requires workspace.write role for access.
+    Requires organization.write role for access.
     """
     
     folder = FolderService.get_folder(
@@ -263,13 +263,13 @@ def patch_folder(
 @router.delete("/{folder_id}", response_model=FolderResponse)
 def delete_folder(
     folder_id: UUID,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Soft delete a folder.
 
-    Requires workspace.write role for access.
+    Requires organization.write role for access.
     """
     
     folder = FolderService.get_folder(
@@ -310,13 +310,13 @@ def delete_folder(
 @router.post("/{folder_id}/restore", response_model=FolderResponse)
 def restore_folder(
     folder_id: UUID,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Restore a soft-deleted folder.
 
-    Requires workspace.write role for access.
+    Requires organization.write role for access.
     """
     
     folder = FolderService.get_folder(
@@ -365,13 +365,13 @@ def restore_folder(
 def add_item_to_folder(
     folder_id: UUID,
     item: FolderItemAdd,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Add an item to a folder.
 
-    Requires workspace.write role for access.
+    Requires organization.write role for access.
     """
     import logging
     logger = logging.getLogger(__name__)
@@ -413,13 +413,13 @@ def remove_item_from_folder(
     folder_id: UUID,
     item_id: UUID,
     item_type: str = Query(..., pattern="^(company|contact|document)$"),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Remove an item from a folder.
 
-    Requires workspace.write role for access.
+    Requires organization.write role for access.
     """
     
     folder = FolderService.get_folder(

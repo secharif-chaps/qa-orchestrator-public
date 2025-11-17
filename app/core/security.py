@@ -44,7 +44,7 @@ def verify_company_ownership(company: Optional[Company], current_user: TokenData
     return company
 
 
-def verify_company_workspace_access(company: Optional[Company], org_context: OrganizationContext) -> Company:
+def verify_company_organization_access(company: Optional[Company], org_context: OrganizationContext) -> Company:
     """
     Verify that the company belongs to the user's organization
 

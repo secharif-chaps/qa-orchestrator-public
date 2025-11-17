@@ -41,9 +41,7 @@ async def get_current_organization(
 
     return OrganizationResponse(
         id=org_context.organization_id,
-        name=org_context.organization_name,
-        user_id=org_context.user_id,
-        username=org_context.username
+        name=org_context.organization_name
     )
 
 

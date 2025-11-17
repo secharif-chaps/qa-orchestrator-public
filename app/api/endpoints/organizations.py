@@ -14,7 +14,7 @@ from app.core.keycloak import idp
 from app.core.config import settings
 from app.core.logging_config import get_logger
 from app.database import get_db
-from app.schemas.workspace import OrganizationResponse
+from app.schemas.organization import OrganizationResponse
 from app.schemas.pagination import PaginatedResponse, SortOrder, create_pagination_meta
 from app.services.keycloak_admin import keycloak_admin_service
 
@@ -217,7 +217,7 @@ async def get_organization(
 
 
 # Organization Users Management Endpoints
-# These endpoints use Keycloak organization UUIDs (string) instead of workspace IDs (int)
+# Note: All organization data is managed in Keycloak via organization UUIDs (strings)
 
 
 @router.get("/{organization_id}/users")

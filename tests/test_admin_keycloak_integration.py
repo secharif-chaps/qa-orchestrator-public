@@ -3,7 +3,7 @@
 Tests verify:
 1. Role-based access control via fastapi-keycloak dependency injection
 2. Automatic 401/403 responses for unauthorized/forbidden access
-3. All role combinations (admin, admin.workspaces, admin.workflows)
+3. All role combinations (admin, admin.organizations, admin.workflows)
 4. Proper access control for all admin endpoints
 
 These are integration tests that mock the Keycloak JWT validation
@@ -110,8 +110,8 @@ class TestAdminEndpointsAccess:
 
     @patch("app.core.keycloak.idp.get_current_user")
     def test_admin_delete_company_without_admin_role(self, mock_get_user, client):
-        """Workspace admin without admin role gets 401/403 on DELETE."""
-        mock_get_user.side_effect = create_mock_get_current_user(["admin.workspaces"])
+        """Organization admin without admin role gets 401/403 on DELETE."""
+        mock_get_user.side_effect = create_mock_get_current_user(["admin.organizations"])
 
         response = client.delete("/api/admin/companies/1")
 
@@ -127,76 +127,76 @@ class TestAdminEndpointsAccess:
         assert response.status_code != 403
 
 
-class TestWorkspaceAdminEndpointsAccess:
-    """Test workspace admin endpoints require 'admin.workspaces' role."""
+class TestOrganizationAdminEndpointsAccess:
+    """Test organization admin endpoints require 'admin.organizations' role."""
 
     @patch("app.core.keycloak.idp.get_current_user")
-    def test_workspace_modules_with_workspace_admin_role(self, mock_get_user, client):
-        """Workspace admin can access GET /admin/workspaces/{id}/modules."""
-        mock_get_user.side_effect = create_mock_get_current_user(["admin.workspaces"])
+    def test_organization_modules_with_organization_admin_role(self, mock_get_user, client):
+        """Organization admin can access GET /admin/organizations/{id}/modules."""
+        mock_get_user.side_effect = create_mock_get_current_user(["admin.organizations"])
 
-        response = client.get("/api/admin/workspaces/1/modules")
+        response = client.get("/api/admin/organizations/org-uuid-1/modules")
 
         # Should not be forbidden
         assert response.status_code != 403
 
     @patch("app.core.keycloak.idp.get_current_user")
-    def test_workspace_modules_without_workspace_admin_role(self, mock_get_user, client):
-        """Admin without admin.workspaces role gets 401/403."""
+    def test_organization_modules_without_organization_admin_role(self, mock_get_user, client):
+        """Admin without admin.organizations role gets 401/403."""
         mock_get_user.side_effect = create_mock_get_current_user(["admin"])
 
-        response = client.get("/api/admin/workspaces/1/modules")
+        response = client.get("/api/admin/organizations/org-uuid-1/modules")
 
         assert response.status_code in [401, 403]
 
     @patch("app.core.keycloak.idp.get_current_user")
-    def test_update_workspace_modules_with_workspace_admin(self, mock_get_user, client):
-        """Workspace admin can access PUT /admin/workspaces/{id}/modules."""
-        mock_get_user.side_effect = create_mock_get_current_user(["admin.workspaces"])
+    def test_update_organization_modules_with_organization_admin(self, mock_get_user, client):
+        """Organization admin can access PUT /admin/organizations/{id}/modules."""
+        mock_get_user.side_effect = create_mock_get_current_user(["admin.organizations"])
 
-        response = client.put("/api/admin/workspaces/1/modules", json={})
+        response = client.put("/api/admin/organizations/org-uuid-1/modules", json={})
 
         assert response.status_code != 403
 
     @patch("app.core.keycloak.idp.get_current_user")
-    def test_update_workspace_modules_without_role(self, mock_get_user, client):
-        """Regular user gets 401/403 on PUT /admin/workspaces/{id}/modules."""
+    def test_update_organization_modules_without_role(self, mock_get_user, client):
+        """Regular user gets 401/403 on PUT /admin/organizations/{id}/modules."""
         mock_get_user.side_effect = create_mock_get_current_user(["company.view"])
 
-        response = client.put("/api/admin/workspaces/1/modules", json={})
+        response = client.put("/api/admin/organizations/org-uuid-1/modules", json={})
 
         assert response.status_code in [401, 403]
 
     @patch("app.core.keycloak.idp.get_current_user")
-    def test_add_module_tokens_with_workspace_admin(self, mock_get_user, client):
-        """Workspace admin can access POST /admin/workspaces/{id}/modules/{module}/tokens."""
-        mock_get_user.side_effect = create_mock_get_current_user(["admin.workspaces"])
+    def test_add_module_tokens_with_organization_admin(self, mock_get_user, client):
+        """Organization admin can access POST /admin/organizations/{id}/modules/{module}/tokens."""
+        mock_get_user.side_effect = create_mock_get_current_user(["admin.organizations"])
 
-        response = client.post("/api/admin/workspaces/1/modules/chapse_assist/tokens", json={"tokens": 100})
-
-        assert response.status_code != 403
-
-    @patch("app.core.keycloak.idp.get_current_user")
-    def test_toggle_module_with_workspace_admin(self, mock_get_user, client):
-        """Workspace admin can access PUT /admin/workspaces/{id}/modules/{module}/toggle."""
-        mock_get_user.side_effect = create_mock_get_current_user(["admin.workspaces"])
-
-        response = client.put("/api/admin/workspaces/1/modules/chapse_assist/toggle")
+        response = client.post("/api/admin/organizations/org-uuid-1/modules/chapse_assist/tokens", json={"tokens": 100})
 
         assert response.status_code != 403
 
     @patch("app.core.keycloak.idp.get_current_user")
-    def test_fail_stuck_tasks_with_workspace_admin(self, mock_get_user, client):
-        """Workspace admin can access POST /admin/tasks/fail-stuck."""
-        mock_get_user.side_effect = create_mock_get_current_user(["admin.workspaces"])
+    def test_toggle_module_with_organization_admin(self, mock_get_user, client):
+        """Organization admin can access PUT /admin/organizations/{id}/modules/{module}/toggle."""
+        mock_get_user.side_effect = create_mock_get_current_user(["admin.organizations"])
+
+        response = client.put("/api/admin/organizations/org-uuid-1/modules/chapse_assist/toggle")
+
+        assert response.status_code != 403
+
+    @patch("app.core.keycloak.idp.get_current_user")
+    def test_fail_stuck_tasks_with_organization_admin(self, mock_get_user, client):
+        """Organization admin can access POST /admin/tasks/fail-stuck."""
+        mock_get_user.side_effect = create_mock_get_current_user(["admin.organizations"])
 
         response = client.post("/api/admin/tasks/fail-stuck")
 
         assert response.status_code != 403
 
     @patch("app.core.keycloak.idp.get_current_user")
-    def test_fail_stuck_tasks_without_workspace_admin(self, mock_get_user, client):
-        """Workflow admin without admin.workspaces gets 401/403."""
+    def test_fail_stuck_tasks_without_organization_admin(self, mock_get_user, client):
+        """Workflow admin without admin.organizations gets 401/403."""
         mock_get_user.side_effect = create_mock_get_current_user(["admin.workflows"])
 
         response = client.post("/api/admin/tasks/fail-stuck")
@@ -248,8 +248,8 @@ class TestWorkflowAdminEndpointsAccess:
 
     @patch("app.core.keycloak.idp.get_current_user")
     def test_update_workflow_config_without_role(self, mock_get_user, client):
-        """Workspace admin without admin.workflows gets 401/403."""
-        mock_get_user.side_effect = create_mock_get_current_user(["admin.workspaces"])
+        """Organization admin without admin.workflows gets 401/403."""
+        mock_get_user.side_effect = create_mock_get_current_user(["admin.organizations"])
 
         response = client.put("/api/admin/workflows/data_collection", json={
             "workflow_id": "test-workflow-id"
@@ -271,18 +271,18 @@ class TestCrossRoleAccess:
         assert response.status_code in [401, 403]
 
     @patch("app.core.keycloak.idp.get_current_user")
-    def test_admin_cannot_access_workspace_admin_endpoints(self, mock_get_user, client):
-        """Admin without admin.workspaces cannot access workspace endpoints."""
+    def test_admin_cannot_access_organization_admin_endpoints(self, mock_get_user, client):
+        """Admin without admin.organizations cannot access organization endpoints."""
         mock_get_user.side_effect = create_mock_get_current_user(["admin"])
 
-        response = client.get("/api/admin/workspaces/1/modules")
+        response = client.get("/api/admin/organizations/org-uuid-1/modules")
 
         assert response.status_code in [401, 403]
 
     @patch("app.core.keycloak.idp.get_current_user")
-    def test_workspace_admin_cannot_access_workflow_endpoints(self, mock_get_user, client):
-        """Workspace admin cannot access workflow admin endpoints."""
-        mock_get_user.side_effect = create_mock_get_current_user(["admin.workspaces"])
+    def test_organization_admin_cannot_access_workflow_endpoints(self, mock_get_user, client):
+        """Organization admin cannot access workflow admin endpoints."""
+        mock_get_user.side_effect = create_mock_get_current_user(["admin.organizations"])
 
         response = client.get("/api/admin/workflows")
 
@@ -295,12 +295,12 @@ class TestMultipleRoles:
     @patch("app.core.keycloak.idp.get_current_user")
     def test_user_with_all_roles_has_full_access(self, mock_get_user, client):
         """User with all admin roles can access all admin endpoints."""
-        mock_get_user.side_effect = create_mock_get_current_user(["admin", "admin.workspaces", "admin.workflows"])
+        mock_get_user.side_effect = create_mock_get_current_user(["admin", "admin.organizations", "admin.workflows"])
 
         # Test access to each type of endpoint
         responses = [
             client.get("/api/admin/companies"),
-            client.get("/api/admin/workspaces/1/modules"),
+            client.get("/api/admin/organizations/org-uuid-1/modules"),
             client.get("/api/admin/workflows"),
         ]
 
@@ -309,16 +309,16 @@ class TestMultipleRoles:
             assert response.status_code != 403
 
     @patch("app.core.keycloak.idp.get_current_user")
-    def test_user_with_admin_and_workspace_roles(self, mock_get_user, client):
-        """User with admin + admin.workspaces can access both endpoint types."""
-        mock_get_user.side_effect = create_mock_get_current_user(["admin", "admin.workspaces"])
+    def test_user_with_admin_and_organization_roles(self, mock_get_user, client):
+        """User with admin + admin.organizations can access both endpoint types."""
+        mock_get_user.side_effect = create_mock_get_current_user(["admin", "admin.organizations"])
 
         # Can access admin endpoints
         response1 = client.get("/api/admin/companies")
         assert response1.status_code != 403
 
-        # Can access workspace admin endpoints
-        response2 = client.get("/api/admin/workspaces/1/modules")
+        # Can access organization admin endpoints
+        response2 = client.get("/api/admin/organizations/org-uuid-1/modules")
         assert response2.status_code != 403
 
         # Cannot access workflow admin endpoints

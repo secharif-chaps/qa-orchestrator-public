@@ -326,8 +326,8 @@ class DifyClient:
 
         Args:
             message: User's chat message
-            contexts: Multiple context types (company, folder, workspace)
-            system_context: System-level context (language, username, workspace_name)
+            contexts: Multiple context types (company, folder, organization)
+            system_context: System-level context (language, username, organization_name)
             chat_history: Previous chat messages (optional)
 
         Returns:
@@ -350,7 +350,7 @@ class DifyClient:
         # Combine all contexts into a single input
         combined_context = {
             "system": system_context,
-            **contexts  # Spread company, folder, workspace contexts
+            **contexts  # Spread company, folder, organization contexts
         }
 
         payload = {

@@ -10,8 +10,8 @@ from app.core.organization import get_user_organization, OrganizationContext
 from app.core.keycloak import idp
 from app.schemas.module import (
     ModuleTokensResponse,
-    WorkspaceModulesResponse,
-    WorkspaceModuleResponse,
+    OrganizationModulesResponse,
+    OrganizationModuleResponse,
     ModuleUpdateRequest,
     AddTokensRequest
 )
@@ -24,7 +24,7 @@ router = APIRouter(
 )
 
 
-@router.get("/{organization_id}/modules", response_model=WorkspaceModulesResponse)
+@router.get("/{organization_id}/modules", response_model=OrganizationModulesResponse)
 async def get_organization_modules(
     organization_id: str,
     token_manager: TokenManager = Depends(get_token_manager),
@@ -48,7 +48,7 @@ async def get_organization_modules(
 
     modules = token_manager.get_all_organization_modules(organization_id)
     module_responses = [
-        WorkspaceModuleResponse(
+        OrganizationModuleResponse(
             name=module.module_name,
             enabled=module.enabled,
             token_count=module.token_count,
@@ -58,7 +58,7 @@ async def get_organization_modules(
         for module in modules
     ]
 
-    return WorkspaceModulesResponse(modules=module_responses)
+    return OrganizationModulesResponse(modules=module_responses)
 
 
 @router.get("/{organization_id}/modules/{module}/tokens", response_model=ModuleTokensResponse)
@@ -99,7 +99,7 @@ async def get_module_tokens(
 # Admin endpoints for module management
 
 
-@router.put("/{organization_id}/modules", response_model=WorkspaceModulesResponse)
+@router.put("/{organization_id}/modules", response_model=OrganizationModulesResponse)
 async def update_organization_modules(
     organization_id: str,
     updates: dict[ModuleName, ModuleUpdateRequest],
@@ -122,7 +122,7 @@ async def update_organization_modules(
     # Return updated modules
     modules = token_manager.get_all_organization_modules(organization_id)
     module_responses = [
-        WorkspaceModuleResponse(
+        OrganizationModuleResponse(
             name=module.module_name,
             enabled=module.enabled,
             token_count=module.token_count,
@@ -132,7 +132,7 @@ async def update_organization_modules(
         for module in modules
     ]
 
-    return WorkspaceModulesResponse(modules=module_responses)
+    return OrganizationModulesResponse(modules=module_responses)
 
 
 @router.post("/{organization_id}/modules/{module}/tokens", response_model=ModuleTokensResponse)

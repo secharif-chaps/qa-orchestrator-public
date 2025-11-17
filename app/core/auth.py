@@ -22,7 +22,7 @@ def verify_role_access(user: OIDCUser, required_role: str) -> OIDCUser:
 
     Args:
         user: OIDC user from JWT token
-        required_role: Role string (e.g., "admin", "workspace_admin")
+        required_role: Role string (e.g., "admin", "admin.organizations")
 
     Returns:
         OIDCUser if authorized
@@ -73,7 +73,7 @@ def verify_any_role_access(user: OIDCUser, required_roles: list[str]) -> OIDCUse
 
     Example:
         user = Depends(idp.get_current_user())
-        verify_any_role_access(user, ["admin", "workspace_admin"])
+        verify_any_role_access(user, ["admin", "admin.organizations"])
     """
     if not user.roles or not any(role in user.roles for role in required_roles):
         logger.warning(

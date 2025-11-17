@@ -85,12 +85,13 @@ keycloak_payload = {
 
 ### 1. Admin Creates User
 ```bash
-POST /workspace/admin/{workspaceId}/users
+POST /api/organizations/{organizationId}/users
 {
   "username": "newuser",
   "email": "newuser@company.com",
-  "firstName": "New",
-  "lastName": "User"
+  "first_name": "New",
+  "last_name": "User",
+  "permissions": ["organization.read", "company.view"]
 }
 ```
 

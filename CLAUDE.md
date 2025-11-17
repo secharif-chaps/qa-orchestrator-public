@@ -80,7 +80,7 @@ from app.core.logging_config import get_logger
 logger = get_logger(__name__)
 
 # Use structured logging with extra context
-logger.info("Processing company", extra={"company_id": company_id, "workspace_id": workspace_id})
+logger.info("Processing company", extra={"company_id": company_id, "organization_id": organization_id})
 logger.warning("Rate limit approaching", extra={"user": username, "requests": count})
 logger.error("Failed to connect to Dify", exc_info=True, extra={"workflow_id": wf_id})
 ```
@@ -104,22 +104,22 @@ logger.error("Failed to connect to Dify", exc_info=True, extra={"workflow_id": w
 
 ```python
 # Use Python 3.10+ union syntax with |
-def get_company_by_id(company_id: int, workspace_id: int) -> Company | None:
-    """Retrieve company by ID within workspace.
+def get_company_by_id(company_id: int, organization_id: str) -> Company | None:
+    """Retrieve company by ID within organization.
 
     Args:
         company_id: Company primary key
-        workspace_id: Workspace ID for authorization check
+        organization_id: Organization UUID for authorization check
 
     Returns:
         Company instance if found, None otherwise
 
     Raises:
-        AuthorizationError: If company not in specified workspace
+        AuthorizationError: If company not in specified organization
     """
     company = db.query(Company).filter(Company.id == company_id).first()
-    if company and company.workspace_id != workspace_id:
-        raise AuthorizationError("Company not in workspace")
+    if company and company.organization_id != organization_id:
+        raise AuthorizationError("Company not in organization")
     return company
 ```
 
@@ -134,16 +134,17 @@ def get_company_by_id(company_id: int, workspace_id: int) -> Company | None:
 **Use Google-style docstrings** for all public functions:
 
 ```python
-def create_company(data: CompanyCreate, user: str, workspace_id: int) -> Company:
-    """Create a new company in the specified workspace.
+def create_company(data: CompanyCreate, user_id: str, username: str, organization_id: str) -> Company:
+    """Create a new company in the specified organization.
 
     This function creates a company record and triggers initial data collection
     tasks via Dify workflows.
 
     Args:
         data: Company creation data from API request
-        user: Username of the creating user (from JWT)
-        workspace_id: Target workspace ID
+        user_id: Keycloak user UUID (from JWT sub claim)
+        username: Username of the creating user (from JWT)
+        organization_id: Target organization UUID (from JWT organization claim)
 
     Returns:
         Newly created Company instance with relationships loaded
@@ -156,8 +157,9 @@ def create_company(data: CompanyCreate, user: str, workspace_id: int) -> Company
     Example:
         company = create_company(
             data=CompanyCreate(name="Acme Corp", website="acme.com"),
-            user="john@example.com",
-            workspace_id=1
+            user_id="user-uuid-123",
+            username="john@example.com",
+            organization_id="org-uuid-456"
         )
     """
     # Implementation here
@@ -195,7 +197,7 @@ class CompanyService:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_company(self, data: CompanyCreate, owner_id: str, workspace_id: int) -> Company:
+    def create_company(self, data: CompanyCreate, owner_id: str, organization_id: str) -> Company:
         """Business logic for company creation."""
         # Validation
         # Database operations
@@ -206,11 +208,12 @@ class CompanyService:
 @router.post("/")
 def create_company_endpoint(
     data: CompanyCreate,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"]))
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """API endpoint delegates to service layer."""
     service = CompanyService(db=get_db())
-    company = service.create_company(data, user.sub, user.workspace_id)
+    company = service.create_company(data, user.sub, org_context.organization_id)
     return company
 ```
 
@@ -226,9 +229,9 @@ class CompanyRepository:
     def find_by_id(self, company_id: int) -> Company | None:
         return self.db.query(Company).filter(Company.id == company_id).first()
 
-    def find_by_workspace(self, workspace_id: int, skip: int = 0, limit: int = 100) -> list[Company]:
+    def find_by_organization(self, organization_id: str, skip: int = 0, limit: int = 100) -> list[Company]:
         return self.db.query(Company).filter(
-            Company.workspace_id == workspace_id,
+            Company.organization_id == organization_id,
             Company.is_deleted == False
         ).offset(skip).limit(limit).all()
 ```
@@ -295,14 +298,14 @@ async def list_all_companies(
 
 **Global Admin Roles**:
 - `admin` - Full system access (admin endpoints)
-- `admin.workspaces` - Workspace administration
+- `admin.organizations` - Organization administration
 - `admin.workflows` - Workflow configuration
 - `admin.costs` - Cost analysis access
 
-**User-Level Roles** (apply to user's own workspace):
-- `workspace.read` - Read access to user's workspace
-- `workspace.write` - Modify workspace and manage team
-- `company.view` - View companies in user's workspace
+**User-Level Roles** (apply to user's own organization):
+- `organization.read` - Read access to user's organization
+- `organization.write` - Modify organization and manage team
+- `company.view` - View companies in user's organization
 - `company.create` - Create/search companies
 - `company.update` - Update companies (future)
 - `company.delete` - Delete companies
@@ -315,7 +318,7 @@ async def list_all_companies(
 def create_company(
     data: CompanyCreate,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Requires company.create role for access."""
     # User automatically has company.create role if we reach here
@@ -325,25 +328,25 @@ def create_company(
 ```python
 # User needs ANY ONE of these roles
 user: OIDCUser = Depends(idp.get_current_user(
-    required_roles=["admin", "admin.workspaces"]
+    required_roles=["admin", "admin.organizations"]
 ))
 ```
 
-**Workspace Context**:
-For user workspace operations, combine role check with workspace context:
+**Organization Context**:
+For user organization operations, combine role check with organization context:
 
 ```python
-from app.core.workspace import get_user_workspace, WorkspaceContext
+from app.core.organization import get_user_organization, OrganizationContext
 
 @router.get("/folders")
 def list_folders(
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.read"])),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
+    org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
-    """Requires workspace.read role for access."""
-    # workspace_context.workspace_id contains user's workspace
-    # workspace_context.username contains user's username
+    """Requires organization.read role for access."""
+    # org_context.organization_id contains user's organization UUID
+    # org_context.username contains user's username
 ```
 
 #### Advanced: Conditional Role Checks
@@ -356,7 +359,7 @@ from app.core.auth import verify_role_access, verify_any_role_access
 @router.get("/items")
 def get_items(
     include_sensitive: bool = False,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.read"]))
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"]))
 ):
     """Conditionally require higher permissions based on query params."""
     items = get_base_items()
@@ -375,11 +378,11 @@ def get_items(
 
 #### Resource-Level Checks
 
-For business logic validation (ownership, workspace membership), use functions from `app/core/security.py`:
+For business logic validation (ownership, organization membership), use functions from `app/core/security.py`:
 
 ```python
 from app.core.security import (
-    verify_company_workspace_access,
+    verify_company_organization_access,
     verify_company_modify_permission
 )
 
@@ -387,14 +390,14 @@ from app.core.security import (
 def get_company(
     company_id: int,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.view"])),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Requires company.view role for access."""
     company = db.query(Company).filter(Company.id == company_id).first()
 
-    # Verify company belongs to user's workspace
-    verify_company_workspace_access(company, workspace_context)
+    # Verify company belongs to user's organization
+    verify_company_organization_access(company, org_context)
 
     return company
 ```
@@ -436,12 +439,12 @@ def list_users(
 @router.post("/folders")
 def create_folder(
     folder: FolderCreate,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["workspace.write"])),
-    workspace_context: WorkspaceContext = Depends(get_user_workspace)
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
+    org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Create a new folder in the workspace.
+    """Create a new folder in the organization.
 
-    Requires workspace.write role for access.
+    Requires organization.write role for access.
     """
 ```
 
@@ -518,10 +521,10 @@ def test_create_company_success(db_session, mock_user):
     company = service.create_company(
         data=CompanyCreate(name="Test Co", website="test.com"),
         owner_id=mock_user.sub,
-        workspace_id=1
+        organization_id="org-uuid-123"
     )
     assert company.name == "Test Co"
-    assert company.workspace_id == 1
+    assert company.organization_id == "org-uuid-123"
 
 def test_create_company_unauthorized(db_session, mock_user_no_perms):
     """Test company creation fails without permission."""

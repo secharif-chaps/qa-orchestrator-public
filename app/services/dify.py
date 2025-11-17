@@ -600,12 +600,12 @@ class DifyService:
         """Send a message to the global Chaps-e chat workflow.
 
         This method handles global chat with multiple context types (company, folder,
-        workspace) and system context (language, username, etc.).
+        organization) and system context (language, username, etc.).
 
         Args:
             message: User's chat message text
-            contexts: Multiple context types (company, folder, workspace)
-            system_context: System-level context (language, username, workspace_name)
+            contexts: Multiple context types (company, folder, organization)
+            system_context: System-level context (language, username, organization_name)
             chat_history: Optional list of previous chat messages
             api_key: Optional API key override (uses fallback if None)
 

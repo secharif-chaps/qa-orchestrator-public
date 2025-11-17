@@ -10,7 +10,7 @@ from app.services.token_manager import TokenManager
 from app.core.dependencies import get_company_service, get_token_manager
 from app.core.organization import get_user_organization, OrganizationContext
 from app.models.organization import ModuleName
-from app.core.security import verify_company_workspace_access, verify_company_modify_permission
+from app.core.security import verify_company_organization_access, verify_company_modify_permission
 from app.schemas.company import (
     CompanyCreate, 
     CompanyUpdate, 
@@ -54,7 +54,7 @@ async def get_companies(
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Get paginated companies for the current workspace"""
+    """Get paginated companies for the current organization"""
     effective_per_page = size if size is not None else per_page
 
     # Single line request log
@@ -80,9 +80,9 @@ async def get_company(
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Get a company by ID (only if it belongs to user's workspace)"""
+    """Get a company by ID (only if it belongs to user's organization)"""
     try:
-        logger.info(f"🏢 GET /api/companies/{company_id} - User: {org_context.username}, Workspace: {org_context.organization_id}")
+        logger.info(f"🏢 GET /api/companies/{company_id} - User: {org_context.username}, Organization: {org_context.organization_id}")
         company = service.get_company(company_id)
         if not company:
             logger.error(f"❌ Company {company_id} not found")
@@ -90,8 +90,8 @@ async def get_company(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Company not found"
             )
-        logger.info(f"✅ Company {company_id} found, verifying workspace access")
-        return verify_company_workspace_access(company, org_context)
+        logger.info(f"✅ Company {company_id} found, verifying organization access")
+        return verify_company_organization_access(company, org_context)
     except HTTPException:
         # Re-raise HTTP exceptions as-is
         raise
@@ -109,10 +109,10 @@ async def get_company_by_name(
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Get a company by name (only if it belongs to user's workspace)"""
+    """Get a company by name (only if it belongs to user's organization)"""
     # Input validation is handled by Pydantic models and path parameters
     company = service.get_company_by_name(name.strip())
-    return verify_company_workspace_access(company, org_context)
+    return verify_company_organization_access(company, org_context)
 
 @router.post("/", response_model=CompanyResponse)
 async def create_company(
@@ -126,7 +126,7 @@ async def create_company(
     
     try:
         # Step 1: Consume token immediately (for 'screen' module - company creation/search/screening)
-        logger.info(f"🪙 Checking and consuming token for screen module in workspace: {org_context.organization_id}")
+        logger.info(f"🪙 Checking and consuming token for screen module in organization: {org_context.organization_id}")
         token_manager.consume_tokens(
             organization_id=org_context.organization_id,
             module_name=ModuleName.SCREEN,
@@ -203,9 +203,9 @@ async def update_company(
     # Verify user has permission to update companies
     verify_company_modify_permission(org_context, "company.update")
     
-    # Get existing company and verify it belongs to workspace
+    # Get existing company and verify it belongs to organization
     company = service.get_company(company_id)
-    verify_company_workspace_access(company, org_context)
+    verify_company_organization_access(company, org_context)
 
     # Input validation already handled by Pydantic CompanyUpdate model
 
@@ -255,8 +255,8 @@ async def soft_delete_company(
             detail="Company not found"
         )
     
-    # Verify workspace access
-    verify_company_workspace_access(company, org_context)
+    # Verify organization access
+    verify_company_organization_access(company, org_context)
     
     # Soft delete the company
     deleted_company = service.soft_delete_company(company_id)
@@ -279,9 +279,9 @@ async def chat_with_company(
     logger.info(f"Chat request for company {company_id} by user {org_context.username}")
     
     try:
-        # Get company and verify it belongs to workspace
+        # Get company and verify it belongs to organization
         company = service.get_company(company_id)
-        verify_company_workspace_access(company, org_context)
+        verify_company_organization_access(company, org_context)
         
         # Initialize Dify service
         dify_service = DifyService()
@@ -346,8 +346,8 @@ async def restore_company(
             detail="Company not found or not deleted"
         )
     
-    # Verify workspace access after restore
-    return verify_company_workspace_access(restored_company, org_context)
+    # Verify organization access after restore
+    return verify_company_organization_access(restored_company, org_context)
 
 
 @router.get("/archived/list", response_model=List[CompanyResponse])
@@ -355,7 +355,7 @@ async def get_archived_companies(
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Get all archived (soft-deleted) companies in the workspace"""
+    """Get all archived (soft-deleted) companies in the organization"""
     logger.info(f"🏢 GET /api/companies/archived/list - User: {org_context.username}")
     
     archived_companies = service.get_archived_companies(organization_id=org_context.organization_id)

@@ -113,26 +113,26 @@ The backend API is available at `http://localhost:8000/api/`
 
 ### Available Permissions
 
-#### Workspace Permissions (workspace-specific)
-- **workspace.read**: View workspace content (basic access)
-- **workspace.write**: Modify workspace content and manage team members
+#### Organization Permissions (organization-specific)
+- **organization.read**: View organization content (basic access)
+- **organization.write**: Modify organization content and manage team members
 
-#### Company Permissions (workspace-specific)  
-- **company.view**: View companies in workspace
+#### Company Permissions (organization-specific)
+- **company.view**: View companies in organization
 - **company.create**: Search and create companies (search form functionality)
 - **company.update**: Update existing companies (future feature)
-- **company.delete**: Delete companies from workspace
+- **company.delete**: Delete companies from organization
 
 #### Global Admin Permissions
-- **admin.workspaces**: Global workspace administration
+- **admin.organizations**: Global organization administration
 
 ### Permission Implementation Rules
 
 #### When Adding New Features
 1. **ALWAYS ask user about permissions** before implementing
 2. **Check if existing permission covers the feature**:
-   - company.create = search + create companies  
-   - workspace.write = workspace modifications + user management
+   - company.create = search + create companies
+   - organization.write = organization modifications + user management
 3. **Only create NEW permissions if existing ones don't fit**
 4. **User MUST decide** on permission choice before implementation
 
@@ -147,17 +147,17 @@ The backend API is available at `http://localhost:8000/api/`
 - Check permissions BEFORE executing business logic
 
 #### Permission Naming Convention
-- Format: `resource.action` (e.g., company.create, workspace.write)
-- Workspace permissions: workspace-specific only
+- Format: `resource.action` (e.g., company.create, organization.write)
+- Organization permissions: organization-specific only
 - Admin permissions: global only
-- Company permissions: workspace-specific only
+- Company permissions: organization-specific only
 
 ### Example Permission Checks
 ```python
-# Backend - Always check before action
-verify_company_permission(workspace_context, "company.create")
+# Backend - Always check before action (using fastapi-keycloak)
+user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"]))
 
-# Frontend - Show/hide UI elements  
+# Frontend - Show/hide UI elements
 <PrimaryButton v-if="canCreateCompany">Create Company</PrimaryButton>
 ```
 
@@ -182,7 +182,7 @@ This creates multiple test users with different permission levels:
 - `company_manager` / `manager123` - Full company management
 - `company_creator` / `creator123` - Can create companies
 - `company_viewer` / `viewer123` - Read-only access
-- `workspace_manager` / `workspace123` - Workspace management
+- `organization_manager` / `orgmanager123` - Organization management
 - `no_access` / `noaccess123` - No permissions (for testing 403 errors)
 
 #### Getting Authentication Token
@@ -272,28 +272,33 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## Database Schema Guidelines
 
-### User Reference Architecture
-**CRITICAL**: This application does NOT use a separate users table with UUID foreign keys.
+### User and Organization Reference Architecture
+**CRITICAL**: This application does NOT use database tables for users or organizations.
 
-- **User References**: All user references are done via **username strings** only
+- **User References**: User IDs are Keycloak UUIDs stored as strings
+- **Organization References**: Organization IDs are Keycloak Organization UUIDs stored as strings
 - **No Users Table**: There is NO `users` table in the database
+- **No Organizations Table**: There is NO `organizations` or `organization_members` table
 - **Authentication**: User authentication is handled entirely by Keycloak
-- **User Data**: User information is stored in Keycloak, not in the application database
+- **User & Organization Data**: All stored in Keycloak, not in application database
 
 ### Table Schema Rules
-- **folders.owner**: `VARCHAR` field containing username string (NOT UUID FK)
-- **folder_items.owner**: `VARCHAR` field containing username string (NOT UUID FK) 
-- **companies.owner_username**: `VARCHAR` field containing username string
-- **workspace_members.username**: `VARCHAR` field containing username string
+- **folders.owner_id**: `VARCHAR/UUID` field containing Keycloak user ID
+- **folders.owner_username**: `VARCHAR` field containing username (denormalized for display)
+- **folders.organization_id**: `VARCHAR/UUID` field containing Keycloak organization ID
+- **companies.owner_id**: `VARCHAR/UUID` field containing Keycloak user ID
+- **companies.owner_username**: `VARCHAR` field containing username (denormalized for display)
+- **companies.organization_id**: `VARCHAR/UUID` field containing Keycloak organization ID
 
 ### Model Relationships
-- **NO foreign key relationships to users table** (because it doesn't exist)
-- **NO SQLAlchemy relationships to User model** (because it doesn't exist)
-- All user references are simple string fields containing usernames
-- User data is fetched from Keycloak when needed, not from database joins
+- **NO foreign key relationships to users table** (doesn't exist)
+- **NO foreign key relationships to organizations table** (doesn't exist)
+- **NO SQLAlchemy relationships to User or Organization models** (don't exist)
+- All user/organization references are simple string/UUID fields
+- User and organization data is fetched from Keycloak when needed
 
 ### Migration Rules
-- Never create `users` table
-- Never create UUID foreign keys to users
-- Always use VARCHAR/String fields for user references
-- User references should be nullable in most cases (owner can be empty)
+- Never create `users` or `organizations` tables
+- Never create foreign keys to users or organizations
+- Always use VARCHAR/String/UUID fields for user and organization references
+- Organization ID extracted from JWT token (Keycloak Organizations feature)

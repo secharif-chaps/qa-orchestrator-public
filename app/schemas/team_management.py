@@ -20,8 +20,8 @@ class TeamUserSortField(str, Enum):
     USERNAME = "username"
 
 
-class WorkspaceUser(BaseModel):
-    """Response model for workspace user"""
+class OrganizationUser(BaseModel):
+    """Response model for organization user"""
     id: int = Field(..., description="User ID")
     email: str = Field(..., description="Email address")
     username: str = Field(..., description="Username")
@@ -37,8 +37,8 @@ class WorkspaceUser(BaseModel):
         from_attributes = True
 
 
-class WorkspaceUserCreate(BaseModel):
-    """Schema for creating a new workspace user"""
+class OrganizationUserCreate(BaseModel):
+    """Schema for creating a new organization user"""
     email: EmailStr = Field(..., description="Email address for the new user")
     username: str = Field(..., min_length=3, max_length=50, description="Username for the new user")
     password: str = Field(..., min_length=8, max_length=128, description="Password for the new user")
@@ -53,16 +53,16 @@ class WorkspaceUserCreate(BaseModel):
         return v.lower()
 
 
-class WorkspaceUserUpdate(BaseModel):
-    """Schema for updating workspace user details"""
+class OrganizationUserUpdate(BaseModel):
+    """Schema for updating organization user details"""
     is_disabled: Optional[bool] = Field(None, description="Whether to disable/enable the user")
     permissions: Optional[List[str]] = Field(None, description="Updated permissions for the user")
     first_name: Optional[str] = Field(None, max_length=100, description="Updated first name")
     last_name: Optional[str] = Field(None, max_length=100, description="Updated last name")
 
 
-class WorkspaceUserListParams(BaseModel):
-    """Query parameters for listing workspace users"""
+class OrganizationUserListParams(BaseModel):
+    """Query parameters for listing organization users"""
     page: int = Field(1, ge=1, description="Page number (starting from 1)")
     limit: int = Field(20, ge=1, le=100, description="Items per page")
     search: Optional[str] = Field(None, max_length=100, description="Search term for name, email, username")
