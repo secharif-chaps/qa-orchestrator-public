@@ -44,10 +44,10 @@ class FolderService:
             Folder.id == folder_id,
             Folder.organization_id == organization_id
         )
-        
+
         if not include_deleted:
-            query = query.filter(not Folder.is_deleted)
-        
+            query = query.filter(Folder.is_deleted == False)
+
         return query.first()
     
     @staticmethod
@@ -133,18 +133,33 @@ class FolderService:
         favorites_only: bool = False
     ) -> List[Folder]:
         """List all folders in an organization with their items"""
+        import logging
+        logger = logging.getLogger(__name__)
+
+        logger.debug(f"📁 list_folders - organization_id: {organization_id}, archived: {archived}, favorites_only: {favorites_only}")
+
         query = db.query(Folder).filter(Folder.organization_id == organization_id)
-        
+
         if archived:
-            query = query.filter(Folder.is_deleted)
+            logger.debug("📁 Filtering for archived (deleted) folders")
+            query = query.filter(Folder.is_deleted == True)
         else:
-            query = query.filter(not Folder.is_deleted)
-        
+            logger.debug("📁 Filtering for non-archived folders")
+            query = query.filter(Folder.is_deleted == False)
+
         if favorites_only:
-            query = query.filter(Folder.is_favorite)
-        
+            logger.debug("📁 Filtering for favorites only")
+            query = query.filter(Folder.is_favorite == True)
+
+        # Log the SQL query
+        logger.debug(f"📁 SQL Query: {query}")
+
         folders = query.order_by(Folder.created_at.desc()).all()
-        
+
+        logger.info(f"📁 list_folders result: Found {len(folders)} folders")
+        for folder in folders:
+            logger.debug(f"📁   - Folder: {folder.id} | {folder.name} | org: {folder.organization_id} | deleted: {folder.is_deleted}")
+
         # Don't assign items to the SQLAlchemy models directly
         # The endpoint will handle the response serialization
         return folders
@@ -282,5 +297,5 @@ class FolderService:
         return db.query(Folder).filter(
             Folder.id.in_(folder_ids),
             Folder.organization_id == organization_id,
-            not Folder.is_deleted
+            Folder.is_deleted == False
         ).all()

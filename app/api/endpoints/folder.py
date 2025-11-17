@@ -78,19 +78,27 @@ def list_folders(
 
     Requires organization.read role for access.
     """
-    
+    import logging
+    logger = logging.getLogger(__name__)
+
+    logger.info(f"📁 GET /folders - START - User: {org_context.username}, Organization: {org_context.organization_id}")
+    logger.debug(f"📁 Query params - archived: {archived}, favorites: {favorites}")
+
     folders = FolderService.list_folders(
         db=db,
         organization_id=org_context.organization_id,
         archived=archived,
         favorites_only=favorites
     )
-    
+
+    logger.info(f"📁 Found {len(folders)} folders for organization {org_context.organization_id}")
+
     # Build the response with items for each folder
     response_folders = []
     for folder in folders:
+        logger.debug(f"📁 Processing folder {folder.id} - {folder.name}")
         folder_items = FolderService._get_folder_items_summary(db, folder.id)
-        
+
         folder_dict = {
             "id": folder.id,
             "organization_id": folder.organization_id,
@@ -106,7 +114,8 @@ def list_folders(
             "items": folder_items
         }
         response_folders.append(folder_dict)
-    
+
+    logger.info(f"✅ Returning {len(response_folders)} folders")
     return response_folders
 
 
