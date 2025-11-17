@@ -28,7 +28,7 @@
       <div class="flex items-start justify-between">
         <div class="flex items-center gap-3">
           <div
-            class="w-12 h-12 rounded-lg flex items-center justify-center bg-almond-50 text-almond-600"
+            class="w-12 h-12 rounded-lg flex items-center justify-center bg-sage-50 dark:bg-sage-900 text-sage-600 dark:text-sage-400"
           >
             <i :class="folderIcon" class="text-xl"></i>
           </div>
@@ -42,7 +42,7 @@
             </div>
             <div class="flex items-center gap-2">
               <span class="text-sm text-secondary">
-                {{ $t('folder.itemCount', '{count} items', { count: itemCount }) }}
+                {{ itemCount }} {{ $t('folder.itemCount', '{count} items', { count: itemCount }) }}
               </span>
               <div v-if="folder.tags && folder.tags.length > 0" class="flex items-center gap-1">
                 <Tag
@@ -120,11 +120,11 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="grid grid-cols-2 gap-2">
+      <div v-else class="grid grid-cols-1 gap-2">
         <div
-          v-for="i in 4"
+          v-for="i in 3"
           :key="i"
-          class="rounded-md border-2 border-dashed border-primary-stroke bg-base-200 h-24"
+          class="rounded-md border-2 border-dashed border-primary-stroke bg-base-200 dark:bg-base-100 h-16"
         ></div>
       </div>
     </div>
@@ -141,7 +141,6 @@
 
 <script setup lang="ts">
 import Tag from '@/components/ui/Tag.vue'
-import Button from '@/components/ui/Button.vue'
 import type { Folder } from '@/types/folder'
 import { toggleFolderFavorite } from '@/api/folders'
 import { computed, ref } from 'vue'
