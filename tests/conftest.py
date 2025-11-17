@@ -46,9 +46,7 @@ def admin_user() -> TokenData:
     return TokenData(
         username="admin",
         sub="admin-uuid-1234",
-        roles=["admin", "admin.workspaces"],
-        workspace_id=1,
-        workspace_slug="test-workspace"
+        roles=["admin", "admin.organizations"]
     )
 
 
@@ -58,9 +56,7 @@ def regular_user() -> TokenData:
     return TokenData(
         username="user",
         sub="user-uuid-5678",
-        roles=["company.view"],
-        workspace_id=1,
-        workspace_slug="test-workspace"
+        roles=["company.view"]
     )
 
 
@@ -70,19 +66,15 @@ def no_permission_user() -> TokenData:
     return TokenData(
         username="noperm",
         sub="noperm-uuid-9999",
-        roles=[],
-        workspace_id=1,
-        workspace_slug="test-workspace"
+        roles=[]
     )
 
 
 @pytest.fixture
-def workspace_admin_user() -> TokenData:
-    """Create workspace admin user."""
+def organization_admin_user() -> TokenData:
+    """Create organization admin user."""
     return TokenData(
-        username="workspace_admin",
-        sub="wsadmin-uuid-4321",
-        roles=["admin.workspaces", "workspace.write"],
-        workspace_id=1,
-        workspace_slug="test-workspace"
+        username="organization_admin",
+        sub="orgadmin-uuid-4321",
+        roles=["admin.organizations", "organization.write"]
     )

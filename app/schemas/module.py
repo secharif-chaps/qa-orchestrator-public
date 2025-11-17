@@ -16,17 +16,9 @@ class OrganizationModuleResponse(BaseModel):
         from_attributes = True
 
 
-# Backward compatibility aliases (deprecated)
-WorkspaceModuleResponse = OrganizationModuleResponse
-
-
 class OrganizationModulesResponse(BaseModel):
     """Response model for list of organization modules."""
     modules: List[OrganizationModuleResponse]
-
-
-# Backward compatibility alias (deprecated)
-WorkspaceModulesResponse = OrganizationModulesResponse
 
 
 class ModuleUpdateRequest(BaseModel):

@@ -10,7 +10,7 @@ class Folder(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
 
-    # Organization-based multi-tenancy (replaces workspace_id)
+    # Organization-based multi-tenancy via Keycloak Organizations
     organization_id = Column(String, index=True, nullable=False)  # Keycloak organization UUID
 
     # Owner fields - Keycloak user identification

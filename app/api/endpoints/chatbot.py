@@ -3,7 +3,7 @@ Global Chaps-e Chatbot API Endpoints
 Handles context-aware conversations independent of specific resources
 """
 from fastapi import APIRouter, Depends, HTTPException
-from app.core.workspace import get_user_workspace, WorkspaceContext
+from app.core.organization import get_user_organization, OrganizationContext
 from app.core.dependencies import get_company_service
 from app.services.dify import DifyService
 from app.schemas.chatbot import GlobalChatRequest, ChatResponse
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 @router.post("", response_model=ChatResponse)
 async def global_chat(
     chat_request: GlobalChatRequest,
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     company_service: CompanyService = Depends(get_company_service)
 ):
     """
@@ -26,18 +26,18 @@ async def global_chat(
     Supports multiple context types:
     - company: Company-specific context
     - folder: Folder-specific context (future)
-    - workspace: Workspace business context
+    - organization: Organization business context
 
     Args:
         chat_request: Chat request with message, contexts, history, and language
-        workspace_context: Current user workspace context
+        org_context: Current user organization context
         company_service: Company service for fetching company data
-        workspace_service: Workspace service for fetching workspace data
+        organization_service: Organization service for fetching organization data
 
     Returns:
         ChatResponse with AI response
     """
-    logger.info(f"Global chat request by user {workspace_context.username}")
+    logger.info(f"Global chat request by user {org_context.username}")
     logger.debug(f"Message: {chat_request.message[:100]}...")
     logger.debug(f"Contexts: {list(chat_request.contexts.keys()) if chat_request.contexts else 'None'}")
     logger.debug(f"Language: {chat_request.language}")
@@ -59,9 +59,9 @@ async def global_chat(
                     # Fetch full company data from database
                     company = company_service.get_company(int(company_id))
 
-                    # Verify workspace access
-                    if company.workspace_id != workspace_context.workspace_id:
-                        logger.warning(f"User attempted to access company {company_id} outside their workspace")
+                    # Verify organization access
+                    if company.organization_id != org_context.organization_id:
+                        logger.warning(f"User attempted to access company {company_id} outside their organization")
                         raise HTTPException(status_code=403, detail="Access denied to this company")
 
                     prepared_contexts['company'] = {
@@ -82,19 +82,19 @@ async def global_chat(
                     logger.error(f"Error fetching company {company_id}: {str(e)}")
                     # Continue without company context rather than failing
 
-        # Workspace context (use workspace_context)
-        if workspace_context:
-            prepared_contexts['workspace'] = {
-                "id": workspace_context.workspace_id,
-                "name": workspace_context.workspace.name,
-                # Add Phase 2 workspace context fields when available:
-                # "business_type": workspace.business_type,
-                # "business_goals": workspace.business_goals,
-                # "target_market": workspace.target_market,
-                # "products_services": workspace.products_services,
-                # "sales_strategy_notes": workspace.sales_strategy_notes
+        # Organization context (use org_context)
+        if org_context:
+            prepared_contexts['organization'] = {
+                "id": org_context.organization_id,
+                "name": org_context.organization.name,
+                # Add Phase 2 organization context fields when available:
+                # "business_type": organization.business_type,
+                # "business_goals": organization.business_goals,
+                # "target_market": organization.target_market,
+                # "products_services": organization.products_services,
+                # "sales_strategy_notes": organization.sales_strategy_notes
             }
-            logger.info(f"Added workspace context: {workspace_context.workspace.name}")
+            logger.info(f"Added organization context: {org_context.organization.name}")
 
         # Folder context (Phase 1 - basic support)
         if chat_request.contexts and 'folder' in chat_request.contexts:
@@ -137,8 +137,8 @@ Generate output according to the user's desired format and goals. Be specific, a
         # Add language to system context
         system_context = {
             "language": chat_request.language or "fr",
-            "username": workspace_context.username,
-            "workspace_name": workspace_context.workspace.name
+            "username": org_context.username,
+            "organization_name": org_context.organization.name
         }
 
         # Add system message to system context if present (for assist_action)
@@ -153,7 +153,7 @@ Generate output according to the user's desired format and goals. Be specific, a
             chat_history=chat_history
         )
 
-        logger.info(f"Successfully processed global chat request")
+        logger.info("Successfully processed global chat request")
 
         return ChatResponse(
             response=response_data.get("output", response_data.get("answer", "No response")),

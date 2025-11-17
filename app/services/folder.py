@@ -46,7 +46,7 @@ class FolderService:
         )
         
         if not include_deleted:
-            query = query.filter(Folder.is_deleted == False)
+            query = query.filter(not Folder.is_deleted)
         
         return query.first()
     
@@ -136,12 +136,12 @@ class FolderService:
         query = db.query(Folder).filter(Folder.organization_id == organization_id)
         
         if archived:
-            query = query.filter(Folder.is_deleted == True)
+            query = query.filter(Folder.is_deleted)
         else:
-            query = query.filter(Folder.is_deleted == False)
+            query = query.filter(not Folder.is_deleted)
         
         if favorites_only:
-            query = query.filter(Folder.is_favorite == True)
+            query = query.filter(Folder.is_favorite)
         
         folders = query.order_by(Folder.created_at.desc()).all()
         
@@ -212,7 +212,7 @@ class FolderService:
             ).first()
             
             if existing:
-                logger.debug(f"Item already exists in folder, updating position if provided")
+                logger.debug("Item already exists in folder, updating position if provided")
                 # Update position if provided
                 if position is not None:
                     existing.position = position
@@ -282,5 +282,5 @@ class FolderService:
         return db.query(Folder).filter(
             Folder.id.in_(folder_ids),
             Folder.organization_id == organization_id,
-            Folder.is_deleted == False
+            not Folder.is_deleted
         ).all()

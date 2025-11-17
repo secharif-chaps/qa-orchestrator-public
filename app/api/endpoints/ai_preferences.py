@@ -4,7 +4,7 @@ AI Preferences endpoints for Chapse Assist feature
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.core.workspace import get_user_workspace, WorkspaceContext
+from app.core.organization import get_user_organization, OrganizationContext
 from app.core.dependencies import get_company_service
 from app.database import get_db
 from app.services.user_preferences import UserPreferencesService
@@ -28,12 +28,12 @@ logger = logging.getLogger(__name__)
 
 @router.get("", response_model=AiPreferencesResponse)
 async def get_ai_preferences(
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Get current user's AI preferences"""
     service = UserPreferencesService(db)
-    ai_preferences = service.get_ai_preferences(workspace_context.username)
+    ai_preferences = service.get_ai_preferences(org_context.username)
 
     if not ai_preferences:
         raise HTTPException(
@@ -47,7 +47,7 @@ async def get_ai_preferences(
 @router.post("", response_model=AiPreferencesResponse, status_code=status.HTTP_200_OK)
 async def create_or_update_ai_preferences(
     preferences_data: AiPreferencesCreate,
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Create or update user's AI preferences"""
@@ -55,7 +55,7 @@ async def create_or_update_ai_preferences(
 
     # Create or update AI preferences (service handles upsert)
     ai_preferences = service.set_ai_preferences(
-        workspace_context.username,
+        org_context.username,
         preferences_data.model_dump()
     )
 
@@ -65,16 +65,16 @@ async def create_or_update_ai_preferences(
 @router.post("/quick-actions", response_model=QuickActionsResponse)
 async def generate_quick_actions(
     request: QuickActionsRequest,
-    workspace_context: WorkspaceContext = Depends(get_user_workspace),
+    org_context: OrganizationContext = Depends(get_user_organization),
     company_service: CompanyService = Depends(get_company_service),
     db: Session = Depends(get_db)
 ):
     """Generate quick actions for a company using AI"""
-    logger.info(f"Quick actions request for company {request.company_id} by user {workspace_context.username}")
+    logger.info(f"Quick actions request for company {request.company_id} by user {org_context.username}")
 
     # 1. Get user's AI preferences
     preferences_service = UserPreferencesService(db)
-    ai_preferences = preferences_service.get_ai_preferences(workspace_context.username)
+    ai_preferences = preferences_service.get_ai_preferences(org_context.username)
 
     if not ai_preferences:
         raise HTTPException(
@@ -82,12 +82,12 @@ async def generate_quick_actions(
             detail="AI preferences not configured. Please set up your preferences first."
         )
 
-    # 2. Get company data and verify workspace access
+    # 2. Get company data and verify organization access
     try:
         company = company_service.get_company(request.company_id)
 
-        if company.workspace_id != workspace_context.workspace_id:
-            logger.warning(f"User {workspace_context.username} attempted to access company {request.company_id} outside their workspace")
+        if company.organization_id != org_context.organization_id:
+            logger.warning(f"User {org_context.username} attempted to access company {request.company_id} outside their organization")
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Access denied to this company"

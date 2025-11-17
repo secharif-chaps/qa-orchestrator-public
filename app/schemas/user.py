@@ -55,7 +55,7 @@ class TokenData(BaseModel):
     username: Optional[str] = None
     sub: Optional[str] = None
     roles: Optional[List[str]] = None
-    organization_id: Optional[str] = None  # Keycloak organization UUID (replaces workspace_id)
+    organization_id: Optional[str] = None  # Keycloak organization UUID
 
 
 class LoginRequest(BaseModel):

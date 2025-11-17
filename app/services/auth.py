@@ -34,7 +34,7 @@ class KeycloakService:
         try:
             token = self.keycloak_openid.token(username, password)
             return token
-        except Exception as e:
+        except Exception:
             # Log error without exposing sensitive information
             logger.debug(f"Authentication failed for user {username}: Authentication error")
             return None
@@ -44,7 +44,7 @@ class KeycloakService:
         try:
             token = self.keycloak_openid.refresh_token(refresh_token)
             return token
-        except Exception as e:
+        except Exception:
             return None
 
     async def logout(self, refresh_token: str) -> bool:
@@ -52,7 +52,7 @@ class KeycloakService:
         try:
             self.keycloak_openid.logout(refresh_token)
             return True
-        except Exception as e:
+        except Exception:
             return False
 
     async def get_user_info(self, access_token: str) -> Optional[Dict[str, Any]]:
@@ -97,22 +97,16 @@ class KeycloakService:
                 # Extract roles
                 realm_access = payload.get("realm_access", {})
                 roles = realm_access.get("roles", ["user"])
-                
-                # Extract workspace information from JWT
-                workspace_id = payload.get("workspace_id")  # Custom claim
-                workspace_slug = payload.get("workspace_slug")  # Custom claim
-                
+
                 # Ensure admin role is properly assigned
                 if username == "admin":
                     if "admin" not in roles:
                         roles.append("admin")
-                
+
                 return TokenData(
-                    username=username, 
-                    sub=sub, 
-                    roles=roles,
-                    workspace_id=workspace_id,
-                    workspace_slug=workspace_slug
+                    username=username,
+                    sub=sub,
+                    roles=roles
                 )
                 
             except jwt.ExpiredSignatureError:
@@ -133,15 +127,11 @@ class KeycloakService:
                     roles = ["user"]
                     if username == "admin":
                         roles.append("admin")
-                    
-                    # Note: Userinfo endpoint doesn't contain workspace claims
-                    # So we only get them from JWT decoding
+
                     return TokenData(
-                        username=username, 
-                        sub=sub, 
-                        roles=roles,
-                        workspace_id=None,
-                        workspace_slug=None
+                        username=username,
+                        sub=sub,
+                        roles=roles
                     )
             except Exception:
                 pass

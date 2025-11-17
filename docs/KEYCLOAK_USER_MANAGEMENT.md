@@ -1,160 +1,178 @@
-# Keycloak User Management for Workspace Administration
+# Keycloak Organization User Management
 
-This documentation covers the Keycloak user management endpoints that allow workspace administrators to create, manage, and delete users directly from the application.
+This documentation covers the organization user management endpoints that allow administrators to manage users directly from the application using Keycloak Admin API.
 
 ## Overview
 
-The workspace user management system integrates with Keycloak to provide complete user lifecycle management within workspaces. Admin users with the `admin.workspaces` role can perform all user management operations.
+The organization user management system integrates with Keycloak Organizations to provide complete user lifecycle management. Admin users with the `organization.write` permission can perform all user management operations for their organization.
 
 ## Features
 
-- ✅ Create Keycloak users with temporary passwords
-- ✅ List and search workspace users with pagination
-- ✅ Get detailed user information
-- ✅ Update user profiles
+- ✅ Create Keycloak users and add them to organizations
+- ✅ List and search organization users with pagination
+- ✅ Get detailed user information including permissions
+- ✅ Update user profiles (name, email, status)
 - ✅ Enable/disable user accounts
-- ✅ Send password reset emails
-- ✅ Remove users from workspaces
 - ✅ Comprehensive error handling and validation
-- ✅ Security best practices implementation
+- ✅ Keycloak Admin API integration
+- ✅ JWT-only permission model (no database permissions)
 
 ## API Endpoints
 
-### 1. Create User
-**POST** `/workspace/admin/{workspaceId}/users`
+### Base Route
+All endpoints use the base route: `/api/organizations/{organizationId}/users`
 
-Creates a new user in Keycloak and adds them to the specified workspace.
+### 1. List Organization Users
+**GET** `/api/organizations/{organizationId}/users`
 
-**Request Body:**
-```json
-{
-  "username": "johndoe",
-  "email": "john@example.com",
-  "firstName": "John",
-  "lastName": "Doe",
-  "temporaryPassword": "TempPass123!" // Optional - auto-generated if not provided
-}
-```
-
-**Response:**
-```json
-{
-  "id": "keycloak-user-uuid",
-  "username": "johndoe",
-  "email": "john@example.com",
-  "firstName": "John",
-  "lastName": "Doe",
-  "enabled": true,
-  "emailVerified": false,
-  "createdAt": "2024-01-15T10:30:00Z",
-  "lastLogin": null,
-  "status": "PENDING",
-  "temporaryPassword": "GeneratedPass123!"
-}
-```
-
-### 2. List Users
-**GET** `/workspace/admin/{workspaceId}/users`
-
-Retrieves a paginated list of users in the workspace.
+Retrieves a paginated list of users in the organization from Keycloak.
 
 **Query Parameters:**
-- `page` (int, default: 0) - Page number (0-based)
+- `page` (int, default: 1) - Page number (1-based)
 - `limit` (int, default: 20, max: 100) - Items per page
-- `search` (string) - Search term for username or email
-- `status` (string) - Filter by status: ACTIVE, INACTIVE, PENDING
+- `search` (string) - Search term for name, email, or username
+- `status` (enum) - Filter by status: ACTIVE, DISABLED, ALL
+- `sort` (enum) - Sort field: CREATED_AT, USERNAME, EMAIL
+- `order` (string) - Sort order: asc, desc (default: desc)
 
 **Response:**
 ```json
 {
-  "users": [
+  "data": [
     {
-      "id": "user-uuid-1",
-      "username": "johndoe",
+      "id": 12345678,
       "email": "john@example.com",
-      "firstName": "John",
-      "lastName": "Doe",
-      "enabled": true,
-      "emailVerified": true,
-      "createdAt": "2024-01-15T10:30:00Z",
-      "lastLogin": "2024-01-16T09:15:00Z",
-      "status": "ACTIVE"
+      "username": "johndoe",
+      "first_name": "John",
+      "last_name": "Doe",
+      "created_at": "1705328400000",
+      "is_active": true,
+      "status": "ACTIVE",
+      "permissions": ["organization.read", "company.view", "company.create"]
     }
   ],
-  "total": 25,
-  "page": 0,
-  "limit": 20
+  "meta": {
+    "total": 25,
+    "page": 1,
+    "per_page": 20,
+    "total_pages": 2
+  }
 }
 ```
 
-### 3. Get User Details
-**GET** `/workspace/admin/{workspaceId}/users/{userId}`
+### 2. Get User Details
+**GET** `/api/organizations/{organizationId}/users/{userId}`
 
-Retrieves detailed information about a specific user.
+Retrieves detailed information about a specific user in the organization.
+
+**Response:**
+```json
+{
+  "id": 12345678,
+  "email": "john@example.com",
+  "username": "johndoe",
+  "first_name": "John",
+  "last_name": "Doe",
+  "created_at": "1705328400000",
+  "is_active": true,
+  "status": "ACTIVE",
+  "permissions": ["organization.read", "organization.write", "company.view", "company.create"]
+}
+```
+
+### 3. Create User
+**POST** `/api/organizations/{organizationId}/users`
+
+Creates a new user in Keycloak and adds them to the specified organization.
+
+**Request Body:**
+```json
+{
+  "email": "newuser@example.com",
+  "username": "newuser",
+  "first_name": "New",
+  "last_name": "User",
+  "permissions": ["organization.read", "company.view"]
+}
+```
+
+**Response:**
+```json
+{
+  "id": 87654321,
+  "email": "newuser@example.com",
+  "username": "newuser",
+  "first_name": "New",
+  "last_name": "User",
+  "created_at": "1705414800000",
+  "is_active": true,
+  "status": "ACTIVE",
+  "permissions": ["organization.read", "company.view"],
+  "temporary_password": "GeneratedPass123!"
+}
+```
+
+**Notes:**
+- A temporary password is automatically generated
+- User will be required to change password on first login
+- Email is automatically verified (emailVerified: true)
+- User is added to the organization in Keycloak
 
 ### 4. Update User
-**PUT** `/workspace/admin/{workspaceId}/users/{userId}`
+**PUT** `/api/organizations/{organizationId}/users/{userId}`
 
-Updates user profile information.
-
-**Request Body:**
-```json
-{
-  "username": "newusername",
-  "email": "newemail@example.com",
-  "firstName": "Updated",
-  "lastName": "Name",
-  "enabled": true
-}
-```
-
-### 5. Toggle User Status
-**PATCH** `/workspace/admin/{workspaceId}/users/{userId}/status`
-
-Enables or disables a user account.
+Updates user profile information and permissions.
 
 **Request Body:**
 ```json
 {
-  "enabled": false
+  "email": "updated@example.com",
+  "first_name": "Updated",
+  "last_name": "Name",
+  "is_active": true,
+  "permissions": ["organization.read", "organization.write", "company.view"]
 }
 ```
-
-### 6. Remove User
-**DELETE** `/workspace/admin/{workspaceId}/users/{userId}`
-
-Removes a user from the workspace (soft delete - sets status to REVOKED).
 
 **Response:**
 ```json
 {
-  "message": "User removed from workspace successfully"
+  "id": 12345678,
+  "email": "updated@example.com",
+  "username": "johndoe",
+  "first_name": "Updated",
+  "last_name": "Name",
+  "created_at": "1705328400000",
+  "is_active": true,
+  "status": "ACTIVE",
+  "permissions": ["organization.read", "organization.write", "company.view"]
 }
 ```
 
-### 7. Send Password Reset
-**POST** `/workspace/admin/{workspaceId}/users/{userId}/reset-password`
-
-Sends a password reset email to the user via Keycloak.
-
-**Response:**
-```json
-{
-  "message": "Password reset email sent successfully",
-  "userId": "user-uuid"
-}
-```
+**Notes:**
+- Username cannot be changed
+- Permissions are synced with Keycloak realm roles
+- Email updates are reflected in Keycloak immediately
 
 ## Authentication & Authorization
 
 All endpoints require:
 1. Valid JWT authentication token
-2. `admin.workspaces` role in the token
+2. `organization.write` role in the token
 
 Example header:
 ```
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6...
 ```
+
+### Permission Levels
+
+**organization.read** - Basic read access to organization
+**organization.write** - Manage team members and organization settings
+**company.view** - View companies
+**company.create** - Create/search companies
+**company.delete** - Delete companies
+**admin.organizations** - Global organization administration
 
 ## Error Handling
 
@@ -162,15 +180,15 @@ The API returns standard HTTP status codes with detailed error messages:
 
 - **400 Bad Request** - Invalid input data or malformed request
 - **401 Unauthorized** - Missing or invalid authentication token
-- **403 Forbidden** - Insufficient permissions (missing admin.workspaces role)
-- **404 Not Found** - Workspace or user not found
+- **403 Forbidden** - Insufficient permissions (missing organization.write role)
+- **404 Not Found** - Organization or user not found
 - **409 Conflict** - Username or email already exists
 - **500 Internal Server Error** - Server or Keycloak connection issues
 
 Example error response:
 ```json
 {
-  "detail": "Username already exists"
+  "detail": "Username already exists in Keycloak"
 }
 ```
 
@@ -193,85 +211,137 @@ KEYCLOAK_ADMIN_PASSWORD=admin-password
 ## Security Features
 
 ### Password Generation
-- Minimum 8 characters (12 by default)
+- Minimum 12 characters by default
 - Contains uppercase, lowercase, digits, and special characters
 - Cryptographically secure random generation
-- Forces password reset on first login
+- Forces password reset on first login (temporary: true)
+
+### Email Verification
+- All users created with emailVerified: true
+- No email server required for user creation
+- Email changes reflected immediately in Keycloak
 
 ### Input Validation
 - Email format validation
 - Username format validation (alphanumeric + hyphens, underscores, dots)
 - Field length limits
-- SQL injection prevention
+- SQL injection prevention (though not applicable - using Keycloak API)
 
 ### Access Control
-- Role-based access control
-- Workspace-specific user isolation
-- Admin-only operations
+- Role-based access control via Keycloak
+- Organization-specific user isolation
+- JWT-only permission model (no database checks)
 
-## Database Integration
+## Keycloak Integration
 
-The system uses the existing `workspace_members` table to track user-workspace relationships:
+### Architecture
 
-```sql
--- Existing table structure
-CREATE TABLE workspace_members (
-    id SERIAL PRIMARY KEY,
-    workspace_id INTEGER REFERENCES workspaces(id),
-    user_id VARCHAR(255) NOT NULL,  -- Keycloak user ID
-    username VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    status VARCHAR(50) DEFAULT 'active',
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
 ```
+Team Management Flow:
+1. Frontend → Backend API (JWT authentication)
+2. Backend → Keycloak Admin API (create/update/list users)
+3. Keycloak → Keycloak Organizations (manage membership)
+4. Keycloak → Realm Roles (manage permissions)
+5. Backend ← Keycloak (user data + roles)
+6. Frontend ← Backend (OrganizationUser response)
+```
+
+### Keycloak Admin API Calls
+
+The system uses `keycloak_admin_service` to interact with Keycloak:
+
+- `get_organization_members()` - List organization members
+- `create_user()` - Create new user in Keycloak
+- `add_user_to_organization()` - Add user to organization
+- `update_user()` - Update user profile
+- `get_user_realm_roles()` - Get user's realm roles (permissions)
+- `sync_user_realm_roles()` - Sync user permissions with realm roles
 
 ## Testing
 
-Use the provided test script to validate the implementation:
+### Manual Testing
 
 ```bash
-python3 test_keycloak_endpoints.py
+# Get auth token
+TOKEN=$(python3 get_token.py)
+
+# List organization users
+curl -H "Authorization: Bearer $TOKEN" \
+  "http://localhost:8000/api/organizations/org-uuid-123/users?page=1&limit=20"
+
+# Create user
+curl -X POST \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@example.com",
+    "username": "testuser",
+    "first_name": "Test",
+    "last_name": "User",
+    "permissions": ["organization.read", "company.view"]
+  }' \
+  "http://localhost:8000/api/organizations/org-uuid-123/users"
+
+# Update user
+curl -X PUT \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "newemail@example.com",
+    "first_name": "Updated",
+    "last_name": "Name",
+    "is_active": true,
+    "permissions": ["organization.write", "company.create"]
+  }' \
+  "http://localhost:8000/api/organizations/org-uuid-123/users/user-uuid-456"
 ```
 
-Make sure to:
-1. Update the `ADMIN_TOKEN` variable with a valid JWT token
-2. Ensure Keycloak is running and accessible
-3. Verify the admin user has proper permissions
+### Test Users
+
+Use the provided test user script:
+
+```bash
+# Create test users
+./create_test_users.sh --non-interactive
+
+# Get token for organization admin
+python3 get_token.py team_manager teammanager123
+```
 
 ## Implementation Files
 
+- `app/api/endpoints/team_management.py` - FastAPI endpoints
 - `app/services/keycloak_admin.py` - Keycloak Admin API client
-- `app/services/workspace_user.py` - Workspace user management service
-- `app/schemas/workspace_user.py` - Pydantic schemas for request/response
-- `app/api/endpoints/workspace.py` - FastAPI endpoints (extended)
+- `app/schemas/team_management.py` - Pydantic schemas
+- `app/core/organization.py` - Organization context utilities
 
 ## Monitoring and Logging
 
 The system includes comprehensive logging for:
-- User creation/deletion events
+- User creation/update/deletion events
+- Keycloak API calls and responses
 - Authentication failures
-- Keycloak API errors
-- Database transaction errors
+- Permission checks
+- Organization access checks
 
 Check application logs for troubleshooting:
 ```bash
 # Example log entries
-INFO: User created successfully: testuser (uuid-123)
+INFO: Creating user in Keycloak: testuser (test@example.com)
+INFO: Adding user user-uuid-456 to organization org-uuid-123
+INFO: Syncing permissions for user user-uuid-456: ['organization.read', 'company.view']
 ERROR: Failed to create user in Keycloak: 409 - Username already exists
-WARNING: Failed to get Keycloak user uuid-456: User not found
+WARNING: Organization not found: org-uuid-999
 ```
 
 ## Best Practices
 
-1. **Always use temporary passwords** that force users to reset on first login
+1. **Always use organization.write permission** for team management
 2. **Monitor user creation rates** to prevent abuse
-3. **Regularly audit user permissions** and workspace memberships
-4. **Implement rate limiting** on user creation endpoints
-5. **Use strong admin credentials** for Keycloak access
-6. **Enable Keycloak logging** for audit trails
-7. **Test password reset flows** in your email configuration
+3. **Regularly audit user permissions** through Keycloak Admin Console
+4. **Use strong admin credentials** for Keycloak access
+5. **Enable Keycloak logging** for audit trails
+6. **Test permission changes** before applying to production
 
 ## Troubleshooting
 
@@ -280,41 +350,63 @@ WARNING: Failed to get Keycloak user uuid-456: User not found
 1. **"Failed to authenticate with Keycloak admin"**
    - Verify `KEYCLOAK_ADMIN_USERNAME` and `KEYCLOAK_ADMIN_PASSWORD`
    - Check Keycloak server accessibility
-   - Ensure admin-cli client exists in master realm
+   - Ensure admin-cli client exists and is properly configured
 
 2. **"Username already exists"**
    - Usernames must be unique across the entire Keycloak realm
    - Check existing users in Keycloak admin console
+   - Consider using email as username for uniqueness
 
-3. **"Failed to send password reset email"**
-   - Verify Keycloak email configuration
-   - Check SMTP settings in Keycloak realm
-   - Ensure user has a valid email address
+3. **"User not found in organization"**
+   - Verify organization UUID is correct
+   - Check user exists in Keycloak
+   - Ensure user is a member of the organization
 
-4. **"User not found in workspace"**
-   - Verify user exists in workspace_members table
-   - Check workspace ID is correct
-   - Ensure user hasn't been soft-deleted (status = 'revoked')
+4. **"Insufficient permissions"**
+   - Verify JWT token includes organization.write role
+   - Check user has access to the specific organization
+   - Review organization membership in Keycloak
 
 ### Debug Steps
 
-1. Check Keycloak admin console for user creation
-2. Query database for workspace_members entries
+1. Check Keycloak admin console for user existence
+2. Verify organization membership in Keycloak Organizations
 3. Review application logs for detailed error messages
-4. Test Keycloak connectivity with curl:
+4. Test Keycloak Admin API connectivity:
 
 ```bash
+# Get admin token
 curl -X POST "${KEYCLOAK_URL}/realms/master/protocol/openid-connect/token" \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d "grant_type=password&client_id=admin-cli&username=admin&password=admin"
+
+# List users
+curl -H "Authorization: Bearer $ADMIN_TOKEN" \
+  "${KEYCLOAK_URL}/admin/realms/your-realm/users"
 ```
+
+## Migration Notes
+
+This system replaces the old workspace user management that used database tables (`workspace_members`, `user_workspace_permissions`).
+
+**Key Differences:**
+- ✅ No database tables for users or membership
+- ✅ All data comes from Keycloak Organizations
+- ✅ Permissions are realm roles, not database records
+- ✅ JWT-only authentication (no database permission checks)
+- ✅ Organization membership managed in Keycloak
+
+**Advantages:**
+- Single source of truth (Keycloak)
+- Better security (centralized identity management)
+- Easier to scale (no database joins for permissions)
+- Works seamlessly with SSO and external identity providers
 
 ## Future Enhancements
 
-- [ ] Bulk user operations (create/delete multiple users)
-- [ ] User import from CSV/Excel files
-- [ ] Advanced user search and filtering
-- [ ] User activity tracking and analytics
+- [ ] Bulk user operations (import/export)
+- [ ] Advanced search and filtering
+- [ ] User activity tracking
 - [ ] Integration with external identity providers
+- [ ] Custom permission templates
 - [ ] Automated user provisioning workflows
-- [ ] Role and group management within workspaces

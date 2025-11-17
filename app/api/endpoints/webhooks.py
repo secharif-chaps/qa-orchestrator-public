@@ -146,15 +146,14 @@ async def dify_task_callback(
         
         # Extract task metadata (might be in different places depending on Dify configuration)
         company_id = None
-        task_type = "products"  # Default to products, but will be overridden if found in payload
         
         # Try to extract company_id from various possible locations
         if "callback_payload" in body:
             company_id = body["callback_payload"].get("company_id")
-            task_type = body["callback_payload"].get("task_type", "products")
+            body["callback_payload"].get("task_type", "products")
         elif "inputs" in body and "callback_payload" in body["inputs"]:
             company_id = body["inputs"]["callback_payload"].get("company_id")
-            task_type = body["inputs"]["callback_payload"].get("task_type", "products")
+            body["inputs"]["callback_payload"].get("task_type", "products")
         elif "company_id" in body:
             company_id = body["company_id"]
         
@@ -212,21 +211,21 @@ async def dify_task_callback(
         if success:
             # For data_collection task, extract the 4 string fields directly
             if task.type.value == "data_collection":
-                logger.info(f"🔍 DEBUG - Processing data_collection task")
+                logger.info("🔍 DEBUG - Processing data_collection task")
                 logger.info(f"🔍 DEBUG - Body keys: {list(body.keys())}")
 
                 # Dify returns the fields directly in the body or in data.outputs
                 if "data" in body and "outputs" in body["data"]:
-                    logger.info(f"🔍 DEBUG - Found data.outputs")
+                    logger.info("🔍 DEBUG - Found data.outputs")
                     outputs = body["data"]["outputs"]
                 elif "outputs" in body:
-                    logger.info(f"🔍 DEBUG - Found outputs")
+                    logger.info("🔍 DEBUG - Found outputs")
                     outputs = body["outputs"]
                 elif "knowledge" in body:
-                    logger.info(f"🔍 DEBUG - Found knowledge field")
+                    logger.info("🔍 DEBUG - Found knowledge field")
                     outputs = body["knowledge"]
                 else:
-                    logger.info(f"🔍 DEBUG - Using entire body as outputs")
+                    logger.info("🔍 DEBUG - Using entire body as outputs")
                     outputs = body
 
                 logger.info(f"🔍 DEBUG - Outputs keys: {list(outputs.keys()) if isinstance(outputs, dict) else 'not a dict'}")
@@ -384,12 +383,10 @@ async def dify_task_tokens(
         # Find the task across all companies
         companies = service.get_all_companies()
         task = None
-        company_id = None
         
         for company in companies:
             task = next((t for t in company.tasks if t.id == task_id), None)
             if task:
-                company_id = company.id
                 break
         
         if not task:

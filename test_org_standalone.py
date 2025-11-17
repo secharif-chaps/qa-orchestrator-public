@@ -36,7 +36,7 @@ def extract_organization_from_token(token_payload: dict) -> tuple[str, str] | No
             org_name = element
 
     if not org_dict or not org_name:
-        print(f"⚠️  Organization claim missing dict or string element")
+        print("⚠️  Organization claim missing dict or string element")
         return None
 
     if len(org_dict) != 1:
@@ -92,7 +92,7 @@ def test_user(username: str, password: str, expected_org_id: str, expected_org_n
     token = get_token(username, password)
     payload = decode_jwt(token)
 
-    print(f"\nToken 'organization' claim:")
+    print("\nToken 'organization' claim:")
     print(json.dumps(payload.get("organization"), indent=2))
 
     # Extract organization
@@ -100,20 +100,20 @@ def test_user(username: str, password: str, expected_org_id: str, expected_org_n
 
     if result:
         org_id, org_name = result
-        print(f"\n✅ Extraction successful:")
+        print("\n✅ Extraction successful:")
         print(f"   Organization ID: {org_id}")
         print(f"   Organization Name: {org_name}")
 
         # Verify
         if org_id == expected_org_id and org_name == expected_org_name:
-            print(f"\n✅ VERIFICATION PASSED")
+            print("\n✅ VERIFICATION PASSED")
         else:
-            print(f"\n❌ VERIFICATION FAILED")
+            print("\n❌ VERIFICATION FAILED")
             print(f"   Expected: {expected_org_name} ({expected_org_id})")
             print(f"   Got:      {org_name} ({org_id})")
         return True
     else:
-        print(f"\n❌ Extraction failed - no organization found")
+        print("\n❌ Extraction failed - no organization found")
         return False
 
 

@@ -14,7 +14,7 @@ class GlobalChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=2000, description="User's chat message")
     contexts: Optional[Dict[str, Dict[str, Any]]] = Field(
         default=None,
-        description="Context data keyed by type (company, folder, workspace)"
+        description="Context data keyed by type (company, folder, organization)"
     )
     chat_history: List[ChatMessage] = Field(
         default_factory=list,
@@ -34,9 +34,9 @@ class GlobalChatRequest(BaseModel):
                         "id": 123,
                         "name": "Example Company"
                     },
-                    "workspace": {
-                        "id": 1,
-                        "name": "My Workspace"
+                    "organization": {
+                        "id": "uuid-string",
+                        "name": "My Organization"
                     }
                 },
                 "chat_history": [

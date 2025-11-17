@@ -1,6 +1,5 @@
 from typing import List, Dict, Any, Optional
 import logging
-from datetime import datetime
 from sqlalchemy.orm import Session
 from app.models.company import Company
 from app.models.task import Task, TaskType, TaskStatus
@@ -149,7 +148,7 @@ class CompanyService:
         """Securely get company by ID"""
         query = self.secure_query.safe_filter_by_id(Company, company_id)
         if not include_deleted:
-            query = query.filter(Company.is_deleted == False)
+            query = query.filter(not Company.is_deleted)
         company = query.first()
         return _parse_json_fields(company)
     
@@ -157,7 +156,7 @@ class CompanyService:
         """Securely get company by name"""
         query = self.secure_query.safe_filter_by_string(Company, Company.name, name, exact_match=True)
         if not include_deleted:
-            query = query.filter(Company.is_deleted == False)
+            query = query.filter(not Company.is_deleted)
         company = query.first()
         return _parse_json_fields(company)
     
@@ -165,7 +164,7 @@ class CompanyService:
         """Securely get all companies, optionally filtered by organization"""
         query = self.db.query(Company)
         if not include_deleted:
-            query = query.filter(Company.is_deleted == False)
+            query = query.filter(not Company.is_deleted)
         if organization_id:
             query = query.filter(Company.organization_id == organization_id)
         companies = query.all()
@@ -304,7 +303,7 @@ class CompanyService:
         if not workflow_config or not workflow_config.api_key:
             logger.error(f"Invalid workflow configuration for {prerequisite_task.type.value}")
             prerequisite_task.status = TaskStatus.ERROR
-            prerequisite_task.error = f"No workflow configuration found"
+            prerequisite_task.error = "No workflow configuration found"
             self.db.commit()
         else:
             # Prepare callback URLs in FastAPI context before queueing to Celery
@@ -519,7 +518,7 @@ class CompanyService:
         """Restore a soft-deleted company"""
         company = self.db.query(Company).filter(
             Company.id == company_id,
-            Company.is_deleted == True
+            Company.is_deleted
         ).first()
         if company:
             company.is_deleted = False
@@ -529,7 +528,7 @@ class CompanyService:
     
     def get_archived_companies(self, organization_id: Optional[str] = None) -> List[Company]:
         """Get all soft-deleted (archived) companies"""
-        query = self.db.query(Company).filter(Company.is_deleted == True)
+        query = self.db.query(Company).filter(Company.is_deleted)
         if organization_id:
             query = query.filter(Company.organization_id == organization_id)
         companies = query.all()
@@ -543,7 +542,7 @@ class CompanyService:
         companies = (
             self.db.query(Company)
             .filter(Company.organization_id == organization_id)
-            .filter(Company.is_deleted == False)
+            .filter(not Company.is_deleted)
             .order_by(Company.created_at.desc())
             .limit(limit)
             .all()
@@ -561,7 +560,7 @@ class CompanyService:
                 .join(Folder, FolderItem.folder_id == Folder.id)
                 .filter(FolderItem.item_id == str(company.id))
                 .filter(FolderItem.item_type == 'company')
-                .filter(Folder.is_deleted == False)
+                .filter(not Folder.is_deleted)
                 .order_by(FolderItem.added_at.desc())  # Most recent folder first
                 .first()
             )
@@ -611,7 +610,7 @@ class CompanyService:
                     errors.append(CompanyCSVValidationError(
                         row_number=company_row.row_number,
                         field="name",
-                        error=f"Company '{company_row.name}' already exists in this workspace"
+                        error=f"Company '{company_row.name}' already exists in this organization"
                     ))
             
             # Validate name
@@ -640,7 +639,7 @@ class CompanyService:
         tokens_required = valid_count
         
         # Check available tokens
-        module = token_manager.get_module_tokens(workspace_id, ModuleName.SCREEN)
+        module = token_manager.get_module_tokens(organization_id, ModuleName.SCREEN)
         available_tokens = module.token_count if module else 0
         has_sufficient_tokens = available_tokens >= tokens_required
         

@@ -6,16 +6,12 @@ stages:
   - publish
 
 variables:
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: ""
   IMAGE_NAME: ${CI_REGISTRY_IMAGE}/mint-back
   IMAGE_TAG: preprod
   DOCKER_BUILDKIT: 1
 
 .build:
-  image: docker:29-dind
-  services:
-    - docker:29-dind
+  image: docker:29-cli
   script:
     - echo Building $IMAGE_NAME:$IMAGE_TAG
     - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" .

@@ -11,15 +11,18 @@ from pydantic import BaseModel, Field
 
 class OrganizationResponse(BaseModel):
     """
-    Organization context from JWT token.
+    Organization information from Keycloak.
 
-    Organizations are managed in Keycloak. This represents the organization
-    information extracted from the user's JWT token.
+    Organizations are managed in Keycloak. This represents organization data
+    either from JWT token or Keycloak Admin API.
     """
     id: str = Field(..., description="Keycloak organization UUID")
     name: str = Field(..., description="Organization name")
-    user_id: str = Field(..., description="Current user's Keycloak UUID")
-    username: str = Field(..., description="Current user's username")
+    description: Optional[str] = Field(None, description="Organization description")
+    slug: Optional[str] = Field(None, description="Organization URL-friendly slug")
+    created_at: Optional[datetime] = Field(None, description="When organization was created")
+    updated_at: Optional[datetime] = Field(None, description="When organization was last updated")
+    member_count: Optional[int] = Field(None, description="Number of members in organization")
 
     class Config:
         from_attributes = True

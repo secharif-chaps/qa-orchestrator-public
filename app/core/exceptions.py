@@ -48,7 +48,7 @@ class AuthorizationError(MintBaseException):
 
     Examples:
         - User missing required role
-        - User accessing resource outside their workspace
+        - User accessing resource outside their organization
         - Permission denied for specific action
     """
 
@@ -75,7 +75,7 @@ class ResourceNotFoundError(MintBaseException):
 
     Examples:
         - Company not found by ID
-        - Workspace not found
+        - Organization not found
         - User not found in Keycloak
     """
 

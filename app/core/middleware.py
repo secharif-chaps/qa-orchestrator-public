@@ -254,7 +254,7 @@ class JSONValidationMiddleware(BaseHTTPMiddleware):
                             status_code=e.status_code,
                             content={"detail": e.detail}
                         )
-            except Exception as e:
+            except Exception:
                 logger.error(
                     "JSON processing error",
                     exc_info=True,

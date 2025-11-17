@@ -10,7 +10,7 @@ This directory contains integration tests for fastapi-keycloak authentication.
 
 The integration tests verify:
 - ✅ Admin endpoints require `admin` role
-- ✅ Workspace admin endpoints require `admin.workspaces` role
+- ✅ Organization admin endpoints require `admin.organizations` role
 - ✅ Workflow admin endpoints require `admin.workflows` role
 - ✅ Users with wrong roles receive 403 Forbidden
 - ✅ Users with correct roles can access endpoints
@@ -82,7 +82,7 @@ poetry run pytest tests/test_admin_keycloak_integration.py --cov=app/api/endpoin
 ### Test Classes
 
 1. **TestAdminEndpointsAccess** - Tests for endpoints requiring `admin` role
-2. **TestWorkspaceAdminEndpointsAccess** - Tests for endpoints requiring `admin.workspaces` role
+2. **TestOrganizationAdminEndpointsAccess** - Tests for endpoints requiring `admin.organizations` role
 3. **TestWorkflowAdminEndpointsAccess** - Tests for endpoints requiring `admin.workflows` role
 4. **TestCrossRoleAccess** - Tests that roles don't grant access to wrong endpoints
 5. **TestMultipleRoles** - Tests for users with multiple admin roles
@@ -91,7 +91,7 @@ poetry run pytest tests/test_admin_keycloak_integration.py --cov=app/api/endpoin
 
 Tests use mock `OIDCUser` objects with different role combinations:
 - `mock_admin_user` - Has `admin` role
-- `mock_workspace_admin_user` - Has `admin.workspaces` role
+- `mock_organization_admin_user` - Has `admin.organizations` role
 - `mock_workflow_admin_user` - Has `admin.workflows` role
 - `mock_regular_user` - Has `company.view` role (no admin access)
 - `mock_no_roles_user` - Has no roles

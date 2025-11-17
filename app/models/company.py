@@ -10,7 +10,7 @@ class Company(Base):
     name = Column(String, index=True, nullable=False)
     website = Column(String, index=True, nullable=False)
 
-    # Organization-based multi-tenancy (replaces workspace_id)
+    # Organization-based multi-tenancy via Keycloak Organizations
     organization_id = Column(String, index=True, nullable=False)  # Keycloak organization UUID
 
     # Owner fields - Keycloak user identification

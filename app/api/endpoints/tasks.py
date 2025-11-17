@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.services.company import CompanyService
 from app.core.dependencies import get_company_service, get_current_user
 from app.core.organization import get_user_organization, OrganizationContext
-from app.core.security import verify_company_workspace_access
+from app.core.security import verify_company_organization_access
 from app.schemas.task import TaskResponse, TaskTokenUpdate
 from app.schemas.user import TokenData
 
@@ -77,7 +77,7 @@ async def get_company_tasks(
 ):
     """Get all tasks for a company (if user has access to the company's organization)"""
     company = service.get_company(company_id)
-    verify_company_workspace_access(company, org_context)
+    verify_company_organization_access(company, org_context)
     return company.tasks
 
 @router.post("/{task_id}/restart", response_model=TaskResponse)

@@ -5,7 +5,7 @@ This module provides minimal organization context endpoints. User and organizati
 management is handled directly in Keycloak, not in the application database.
 """
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -41,9 +41,7 @@ async def get_current_organization(
 
     return OrganizationResponse(
         id=org_context.organization_id,
-        name=org_context.organization_name,
-        user_id=org_context.user_id,
-        username=org_context.username
+        name=org_context.organization_name
     )
 
 

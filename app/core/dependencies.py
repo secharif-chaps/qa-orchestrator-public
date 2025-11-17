@@ -34,7 +34,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         token_data = await keycloak_service.verify_token(token)
         
         if not token_data:
-            logger.debug(f"🔐 Auth failed - Invalid token")
+            logger.debug("🔐 Auth failed - Invalid token")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials",
