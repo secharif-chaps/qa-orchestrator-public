@@ -169,7 +169,7 @@
               {{
                 searchTerm
                   ? $t('folder.empty.noResults', 'Aucun résultat trouvé')
-                  : $t('folder.empty.title', 'Dossier vide')
+                  : $t('folder.empty.title', 'Ce dossier est vide')
               }}
             </h3>
             <p class="text-secondary">
@@ -181,7 +181,7 @@
                     )
                   : $t(
                       'folder.empty.description',
-                      'Créez votre premier élément pour commencer à organiser vos entreprises',
+                      'Commencez par créer votre première entreprise dans ce dossier',
                     )
               }}
             </p>
