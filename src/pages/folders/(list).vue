@@ -159,7 +159,7 @@
           {{
             foldersStore.filterName
               ? $t('folder.empty.noResults', 'No folders found')
-              : $t('folder.emptys.title', 'No folders yet')
+              : $t('folder.emptyList.title', 'No folders yet')
           }}
         </h3>
         <p class="text-secondary mb-6">
@@ -167,7 +167,7 @@
             foldersStore.filterName
               ? $t('folder.empty.tryDifferentSearch', 'Try a different search term')
               : $t(
-                  'folder.empty.description',
+                  'folder.emptyList.description',
                   'Create your first folder to organize your companies',
                 )
           }}

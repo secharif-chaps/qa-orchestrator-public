@@ -1144,9 +1144,13 @@ export default {
       actions: 'Actions',
     },
     empty: {
-      noResults: 'No folders found',
-      title: 'No folders yet',
+      noResults: 'No results found',
+      title: 'This folder is empty',
       tryDifferentSearch: 'Try a different search term',
+      description: 'Start by creating your first company in this folder',
+    },
+    emptyList: {
+      title: 'No folders yet',
       description: 'Create your first folder to organize your companies',
     },
     clearSearch: 'Clear Search',

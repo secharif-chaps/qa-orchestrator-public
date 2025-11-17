@@ -1310,10 +1310,14 @@ export default {
       actions: 'Actions',
     },
     empty: {
-      noResults: 'Aucun dossier trouvé',
-      title: 'Le dossier est vide pour le moment',
-      tryDifferentSearch: 'Essayez un autre terme de recherche',
-      description: 'Créez un nouvel élément pour commencer',
+      noResults: 'Aucun résultat trouvé',
+      title: 'Ce dossier est vide',
+      tryDifferentSearch: 'Essayez avec un autre terme de recherche',
+      description: 'Commencez par créer votre première entreprise dans ce dossier',
+    },
+    emptyList: {
+      title: 'Aucun dossier pour le moment',
+      description: 'Créez votre premier dossier pour organiser vos entreprises',
     },
     clearSearch: 'Effacer la recherche',
   },
