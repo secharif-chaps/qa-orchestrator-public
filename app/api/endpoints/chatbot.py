@@ -153,7 +153,7 @@ Generate output according to the user's desired format and goals. Be specific, a
             chat_history=chat_history
         )
 
-        logger.info(f"Successfully processed global chat request")
+        logger.info("Successfully processed global chat request")
 
         return ChatResponse(
             response=response_data.get("output", response_data.get("answer", "No response")),

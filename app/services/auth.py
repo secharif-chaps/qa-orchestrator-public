@@ -34,7 +34,7 @@ class KeycloakService:
         try:
             token = self.keycloak_openid.token(username, password)
             return token
-        except Exception as e:
+        except Exception:
             # Log error without exposing sensitive information
             logger.debug(f"Authentication failed for user {username}: Authentication error")
             return None
@@ -44,7 +44,7 @@ class KeycloakService:
         try:
             token = self.keycloak_openid.refresh_token(refresh_token)
             return token
-        except Exception as e:
+        except Exception:
             return None
 
     async def logout(self, refresh_token: str) -> bool:
@@ -52,7 +52,7 @@ class KeycloakService:
         try:
             self.keycloak_openid.logout(refresh_token)
             return True
-        except Exception as e:
+        except Exception:
             return False
 
     async def get_user_info(self, access_token: str) -> Optional[Dict[str, Any]]:

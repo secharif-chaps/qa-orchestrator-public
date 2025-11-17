@@ -132,7 +132,7 @@ async def create_company(
             module_name=ModuleName.SCREEN,
             tokens=1
         )
-        logger.info(f"✅ Token consumed successfully")
+        logger.info("✅ Token consumed successfully")
         
         # Step 2: Input validation already handled by Pydantic CompanyCreate model
         logger.info(f"📝 Processing company - Name: {company_data.name[:50]}, Website: {str(company_data.website)[:50]}")
@@ -154,7 +154,7 @@ async def create_company(
         # Rollback token on validation failure
         try:
             token_manager.rollback_tokens(org_context.organization_id, ModuleName.SCREEN, 1)
-            logger.info(f"🔄 Token rolled back due to validation error")
+            logger.info("🔄 Token rolled back due to validation error")
         except Exception as rollback_error:
             logger.error(f"Failed to rollback token: {rollback_error}")
         
@@ -167,7 +167,7 @@ async def create_company(
         # Rollback token on value error
         try:
             token_manager.rollback_tokens(org_context.organization_id, ModuleName.SCREEN, 1)
-            logger.info(f"🔄 Token rolled back due to value error")
+            logger.info("🔄 Token rolled back due to value error")
         except Exception as rollback_error:
             logger.error(f"Failed to rollback token: {rollback_error}")
         
@@ -183,7 +183,7 @@ async def create_company(
         if not ("insufficient_tokens" in str(e) or "not enabled" in str(e)):
             try:
                 token_manager.rollback_tokens(org_context.organization_id, ModuleName.SCREEN, 1)
-                logger.info(f"🔄 Token rolled back due to unexpected error")
+                logger.info("🔄 Token rolled back due to unexpected error")
             except Exception as rollback_error:
                 logger.error(f"Failed to rollback token: {rollback_error}")
         
@@ -455,7 +455,7 @@ async def import_csv_companies(
         
         return result
         
-    except Exception as e:
+    except Exception:
         # On complete failure, rollback all tokens
         if tokens_needed > 0:
             try:

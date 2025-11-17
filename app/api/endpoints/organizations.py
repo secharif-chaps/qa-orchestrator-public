@@ -7,13 +7,11 @@ These endpoints interact with Keycloak Admin API to fetch organization data.
 from typing import Any, Dict, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from fastapi_keycloak import OIDCUser
-from sqlalchemy.orm import Session
 import requests
 
 from app.core.keycloak import idp
 from app.core.config import settings
 from app.core.logging_config import get_logger
-from app.database import get_db
 from app.schemas.organization import OrganizationResponse
 from app.schemas.pagination import PaginatedResponse, SortOrder, create_pagination_meta
 from app.services.keycloak_admin import keycloak_admin_service

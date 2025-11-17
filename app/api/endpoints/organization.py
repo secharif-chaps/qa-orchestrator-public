@@ -5,7 +5,7 @@ This module provides minimal organization context endpoints. User and organizati
 management is handled directly in Keycloak, not in the application database.
 """
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.database import get_db

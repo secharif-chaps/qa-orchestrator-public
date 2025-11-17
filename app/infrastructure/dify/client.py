@@ -302,7 +302,7 @@ class DifyClient:
                     return {"response": "I'm sorry, there was an error processing your message. Please try again.", "status": "error"}
                 
         except httpx.TimeoutException as e:
-            error_msg = f"Chat request to Dify timed out after 60 seconds"
+            error_msg = "Chat request to Dify timed out after 60 seconds"
             logger.error(error_msg)
             raise Exception(error_msg) from e
         except httpx.HTTPError as e:
@@ -367,7 +367,7 @@ class DifyClient:
         # Add system message if present (for assist_action context)
         if "system_message" in system_context:
             payload["inputs"]["system_message"] = system_context["system_message"]
-            logger.debug(f"Added system_message to Dify payload")
+            logger.debug("Added system_message to Dify payload")
 
         # Add chat history if provided
         if chat_history:
@@ -421,7 +421,7 @@ class DifyClient:
                     return {"output": "Je suis désolé, une erreur s'est produite lors du traitement de votre message. Veuillez réessayer.", "status": "error"}
 
         except httpx.TimeoutException as e:
-            error_msg = f"Global chat request to Dify timed out after 60 seconds"
+            error_msg = "Global chat request to Dify timed out after 60 seconds"
             logger.error(error_msg)
             raise Exception(error_msg) from e
         except httpx.HTTPError as e:
@@ -450,7 +450,6 @@ class DifyClient:
         """
         # Chapse Assist workflow credentials (to be configured in Dify)
         # TODO: Move these to workflow_configs table or environment variables
-        quick_actions_workflow_id = "QUICK_ACTIONS_WORKFLOW_ID"  # Placeholder
         quick_actions_api_key = "app-jGJl5PAPQnAE0IzFAfkV3XjO"  # Using same API key for now
 
         url = f"{self.base_url}/chat-messages"
@@ -605,7 +604,7 @@ Make actions specific, actionable, and relevant to the user's role and company c
                     raise
 
         except httpx.TimeoutException as e:
-            error_msg = f"Quick actions request to Dify timed out after 30 seconds"
+            error_msg = "Quick actions request to Dify timed out after 30 seconds"
             logger.error(error_msg)
             raise Exception(error_msg) from e
         except httpx.HTTPError as e:

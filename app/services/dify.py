@@ -1,9 +1,8 @@
 """Dify service wrapper around official Dify Python SDK."""
-import logging
 import httpx
 from typing import Dict, Any, Optional
 from sqlalchemy.orm import Session
-from dify_client import CompletionClient, ChatClient
+from dify_client import ChatClient
 from app.core.config import settings
 from app.core.exceptions import ExternalServiceError
 from app.core.logging_config import get_logger
@@ -259,7 +258,7 @@ class DifyService:
 
         # Log detailed request information
         logger.info(
-            f"🔍 Dify API Request Details",
+            "🔍 Dify API Request Details",
             extra={
                 "base_url": self.base_url,
                 "api_key_prefix": api_key[:10] + "..." if api_key else "None",
@@ -302,7 +301,7 @@ class DifyService:
             }
 
             logger.info(f"📡 Using Dify Workflow URL: {workflow_url}")
-            logger.debug(f"📡 Sending request to Dify API...")
+            logger.debug("📡 Sending request to Dify API...")
             logger.debug(f"📦 Request payload keys: {list(payload.keys())}")
 
             # Execute workflow via direct HTTP call
@@ -401,7 +400,7 @@ class DifyService:
                     response_data = response.json()
                 except Exception as e:
                     logger.error(
-                        f"Failed to parse JSON response from Dify",
+                        "Failed to parse JSON response from Dify",
                         extra={
                             "task_id": task_id,
                             "response_text": response.text[:500],
@@ -409,7 +408,7 @@ class DifyService:
                         },
                     )
                     raise ExternalServiceError(
-                        f"Failed to parse Dify response as JSON",
+                        "Failed to parse Dify response as JSON",
                         details={"error": str(e), "response_text": response.text[:500]},
                     ) from e
 
@@ -428,7 +427,7 @@ class DifyService:
                     return {"status": "success", "data": outputs}
                 else:
                     logger.error(
-                        f"❌ Unexpected workflow response structure",
+                        "❌ Unexpected workflow response structure",
                         extra={
                             "task_id": task_id,
                             "response_keys": list(response_data.keys()),
@@ -436,7 +435,7 @@ class DifyService:
                         },
                     )
                     raise ExternalServiceError(
-                        f"Unexpected response structure from Dify API",
+                        "Unexpected response structure from Dify API",
                         details={
                             "response_keys": list(response_data.keys()),
                             "task_type": task_type,
@@ -460,7 +459,7 @@ class DifyService:
                 },
             )
             raise ExternalServiceError(
-                f"Dify workflow request timed out after 5 minutes",
+                "Dify workflow request timed out after 5 minutes",
                 details={"task_type": task_type, "task_id": task_id},
             ) from e
         except httpx.HTTPError as e:

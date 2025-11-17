@@ -6,7 +6,7 @@ Route: /api/organizations/{organizationId}/users
 All endpoints require organization.write role for access.
 """
 
-from typing import Optional, List
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
 from fastapi_keycloak import OIDCUser
 from sqlalchemy.orm import Session

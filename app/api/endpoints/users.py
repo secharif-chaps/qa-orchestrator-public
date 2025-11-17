@@ -63,7 +63,7 @@ async def get_all_users(
 
     try:
         # Get total count of users
-        total_users = await keycloak_admin_service.count_users()
+        await keycloak_admin_service.count_users()
 
         # Calculate pagination
         first = (page - 1) * limit

@@ -71,7 +71,7 @@ class TestOrganizationPermission:
             sub="user-uuid",
             roles=["organization.read"]
         )
-        with pytest.raises(AuthorizationError) as exc_info:
+        with pytest.raises(AuthorizationError):
             # User from organization 1 trying to access organization 2
             verify_organization_permission(user, "org-uuid-2", "organization.read")
         # This test currently expects the permission check to pass based on JWT roles

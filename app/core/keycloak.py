@@ -12,8 +12,7 @@ Usage:
 """
 
 import time
-from typing import Optional, List, Any
-from pydantic import Field
+from typing import Optional, Any
 from fastapi_keycloak import FastAPIKeycloak, OIDCUser as BaseOIDCUser
 from requests.exceptions import (
     RequestException,
