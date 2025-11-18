@@ -219,7 +219,7 @@ async def get_organization(
 
 
 @router.get("/{organization_id}/users")
-async def get_organization_users(
+async def get_organization_users_admin(
     organization_id: str,
     page: int = Query(1, ge=1, description="Page number (1-indexed)"),
     limit: int = Query(20, ge=1, le=100, description="Items per page"),
@@ -310,7 +310,7 @@ async def get_organization_users(
 
 
 @router.get("/{organization_id}/users/{user_id}")
-async def get_organization_user(
+async def get_organization_user_admin(
     organization_id: str,
     user_id: str,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
@@ -374,7 +374,7 @@ async def get_organization_user(
 
 
 @router.post("/{organization_id}/users")
-async def create_organization_user(
+async def create_organization_user_admin(
     organization_id: str,
     user_data: Dict[str, Any],
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
@@ -534,7 +534,7 @@ async def create_organization_user(
 
 
 @router.put("/{organization_id}/users/{user_id}")
-async def update_organization_user(
+async def update_organization_user_admin(
     organization_id: str,
     user_id: str,
     user_data: Dict[str, Any],
