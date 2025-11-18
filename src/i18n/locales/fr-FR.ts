@@ -1092,6 +1092,7 @@ export default {
     credits: 'crédits',
     companies: 'entreprises',
     loading: 'Chargement des données de crédits...',
+    refresh: 'Actualiser le nombre de crédits',
     companyEquivalence: {
       none: 'Pas assez pour 1 création d\'entreprise',
       singular: '≈ 1 création d\'entreprise',

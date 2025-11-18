@@ -36,7 +36,7 @@
               size="sm"
               :loading="isRefreshing"
               :disabled="isRefreshing"
-              :title="$t('tokens.refresh', 'Refresh token count')"
+              :title="$t('tokens.refresh')"
               @click="$emit('refresh')"
             />
           </div>
@@ -120,12 +120,12 @@ const TOKENS_PER_COMPANY = 35
 const moduleName = computed(() => {
   // For screen module, just show "Screen" instead of "Screen Module"
   if (props.module === 'screen') {
-    return t('tokens.modules.screen.name', 'Screen')
+    return t('tokens.modules.screen.name')
   }
   // For other modules, show "{Module} Module"
-  const moduleName = props.module || 'screen'
-  return t('tokens.module', '{module} Module', {
-    module: t(`tokens.modules.${moduleName}.name`, moduleName),
+  const moduleKey = props.module || 'screen'
+  return t('tokens.module', {
+    module: t(`tokens.modules.${moduleKey}.name`),
   })
 })
 
@@ -136,8 +136,8 @@ const displayCount = computed(() => {
 })
 
 const tokenLabel = computed(() => {
-  if (props.tokenCount === 1) return t('tokens.token', 'token')
-  return t('tokens.credits', 'crédits')
+  if (props.tokenCount === 1) return t('tokens.token')
+  return t('tokens.credits')
 })
 
 const companyEquivalenceText = computed(() => {
@@ -146,16 +146,14 @@ const companyEquivalenceText = computed(() => {
   const companiesCount = Math.floor(props.tokenCount / TOKENS_PER_COMPANY)
 
   if (companiesCount === 0) {
-    return t('tokens.companyEquivalence.none', 'Not enough for 1 company creation')
+    return t('tokens.companyEquivalence.none')
   }
 
   if (companiesCount === 1) {
-    return t('tokens.companyEquivalence.singular', '≈ 1 company creation')
+    return t('tokens.companyEquivalence.singular')
   }
 
-  return t('tokens.companyEquivalence.plural', '≈ {count} company creations', {
-    count: companiesCount,
-  })
+  return t('tokens.companyEquivalence.plural', { count: companiesCount })
 })
 
 const tokenIconClasses = computed(() => {

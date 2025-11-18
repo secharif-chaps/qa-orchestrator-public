@@ -1041,6 +1041,7 @@ export default {
     credits: 'credits',
     companies: 'companies',
     loading: 'Loading token data...',
+    refresh: 'Refresh token count',
     companyEquivalence: {
       none: 'Not enough for 1 company creation',
       singular: '≈ 1 company creation',
