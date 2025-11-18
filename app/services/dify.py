@@ -805,9 +805,53 @@ Make actions specific, actionable, and relevant to the user's role and company c
             # Log response type for debugging
             logger.debug(f"Dify response type: {type(response)}, has answer: {hasattr(response, 'answer')}")
 
-            # Extract and parse answer
-            if hasattr(response, "answer"):
+            # Handle both Response object and parsed object
+            # ChatClient sometimes returns requests.Response object
+            if hasattr(response, 'json') and hasattr(response, 'status_code'):
+                # It's a requests.Response object, parse it
+                if response.status_code == 200:
+                    response_data = response.json()
+                    answer = response_data.get('answer', '')
+                    if not answer:
+                        logger.error(f"Response missing 'answer' field: {response_data}")
+                        raise ExternalServiceError(
+                            "Dify response missing answer field",
+                            details={"response": response_data}
+                        )
+                else:
+                    logger.error(
+                        f"Dify API returned error status {response.status_code}",
+                        extra={"status_code": response.status_code, "response": response.text[:500]}
+                    )
+                    raise ExternalServiceError(
+                        f"Dify API error: {response.status_code}",
+                        details={"status_code": response.status_code, "response": response.text[:500]}
+                    )
+            elif hasattr(response, "answer"):
+                # It's a parsed Dify response object
                 answer = response.answer
+            else:
+                # Unknown response type
+                error_details = {
+                    "response_type": str(type(response)),
+                    "response_str": str(response)
+                }
+                if hasattr(response, 'status_code'):
+                    error_details["status_code"] = response.status_code
+                if hasattr(response, 'text'):
+                    error_details["response_body"] = response.text[:500]
+
+                logger.error(
+                    f"Unexpected quick actions response format",
+                    extra=error_details
+                )
+                raise ExternalServiceError(
+                    "Unexpected response format from AI",
+                    details=error_details
+                )
+
+            # Now we have the answer string, parse it
+            if answer:
 
                 # Extract JSON from response (handle markdown code blocks)
                 import re
@@ -865,31 +909,9 @@ Make actions specific, actionable, and relevant to the user's role and company c
                         "Failed to parse AI response", details={"error": str(e)}
                     ) from e
             else:
-                # Response doesn't have answer attribute - likely an error response
-                error_details = {
-                    "response_type": str(type(response)),
-                    "response_str": str(response)
-                }
-
-                # Try to extract error details if it's a requests.Response object
-                if hasattr(response, 'status_code'):
-                    error_details["status_code"] = response.status_code
-                if hasattr(response, 'text'):
-                    error_details["response_body"] = response.text[:500]
-                if hasattr(response, 'json'):
-                    try:
-                        error_details["response_json"] = response.json()
-                    except:
-                        pass
-
-                logger.error(
-                    f"Unexpected quick actions response format",
-                    extra=error_details
-                )
-                raise ExternalServiceError(
-                    "Unexpected response format from AI",
-                    details=error_details
-                )
+                # No answer in response
+                logger.error("Dify response missing answer")
+                raise ExternalServiceError("Dify response missing answer")
 
         except ExternalServiceError:
             raise
