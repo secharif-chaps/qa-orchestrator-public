@@ -148,7 +148,7 @@ class CompanyService:
         """Securely get company by ID"""
         query = self.secure_query.safe_filter_by_id(Company, company_id)
         if not include_deleted:
-            query = query.filter(not Company.is_deleted)
+            query = query.filter(Company.is_deleted == False)
         company = query.first()
         return _parse_json_fields(company)
     
@@ -156,7 +156,7 @@ class CompanyService:
         """Securely get company by name"""
         query = self.secure_query.safe_filter_by_string(Company, Company.name, name, exact_match=True)
         if not include_deleted:
-            query = query.filter(not Company.is_deleted)
+            query = query.filter(Company.is_deleted == False)
         company = query.first()
         return _parse_json_fields(company)
     
@@ -164,7 +164,7 @@ class CompanyService:
         """Securely get all companies, optionally filtered by organization"""
         query = self.db.query(Company)
         if not include_deleted:
-            query = query.filter(not Company.is_deleted)
+            query = query.filter(Company.is_deleted == False)
         if organization_id:
             query = query.filter(Company.organization_id == organization_id)
         companies = query.all()
@@ -542,7 +542,7 @@ class CompanyService:
         companies = (
             self.db.query(Company)
             .filter(Company.organization_id == organization_id)
-            .filter(not Company.is_deleted)
+            .filter(Company.is_deleted == False)
             .order_by(Company.created_at.desc())
             .limit(limit)
             .all()
