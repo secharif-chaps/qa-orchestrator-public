@@ -5,6 +5,7 @@ Keycloak Admin Service for user management operations
 import httpx
 import secrets
 import string
+import time
 from typing import Dict, List, Optional, Any
 from fastapi import HTTPException, status
 from app.core.config import settings
@@ -15,29 +16,38 @@ logger = logging.getLogger(__name__)
 
 class KeycloakAdminService:
     """Service for Keycloak Admin API operations"""
-    
+
     def __init__(self):
         self.server_url = settings.KEYCLOAK_SERVER_URL
         self.realm = settings.KEYCLOAK_REALM
-        self.admin_username = settings.KEYCLOAK_ADMIN_USERNAME
-        self.admin_password = settings.KEYCLOAK_ADMIN_PASSWORD
         self.admin_client_id = settings.KEYCLOAK_ADMIN_CLIENT_ID
         self.admin_client_secret = settings.KEYCLOAK_ADMIN_CLIENT_SECRET
-        self._admin_token = None
-        self._token_expiry = None
-    
+        self._admin_token: Optional[str] = None
+        self._token_expiry: Optional[float] = None
+
+    def _is_token_valid(self) -> bool:
+        """Check if cached token is still valid (with 30 second buffer)"""
+        if not self._admin_token or not self._token_expiry:
+            return False
+        # Add 30 second buffer to refresh token before it actually expires
+        return time.time() < (self._token_expiry - 30)
+
     async def _get_admin_token(self) -> str:
-        """Get admin access token using admin credentials"""
+        """Get admin access token using client credentials grant (with caching)"""
+        # Return cached token if still valid
+        if self._is_token_valid():
+            logger.debug("Using cached admin token")
+            return self._admin_token
+
         try:
             token_url = f"{self.server_url}/realms/{self.realm}/protocol/openid-connect/token"
             logger.info(
-                "Attempting to get admin token from Keycloak",
+                "Requesting new admin token from Keycloak",
                 extra={
                     "token_url": token_url,
-                    "client_id": "admin-cli",
-                    "username": self.admin_username,
+                    "client_id": self.admin_client_id,
                     "realm": self.realm,
-                    "server_url": self.server_url
+                    "grant_type": "client_credentials"
                 }
             )
 
@@ -46,10 +56,9 @@ class KeycloakAdminService:
                     token_url,
                     headers={"Content-Type": "application/x-www-form-urlencoded"},
                     data={
-                        "grant_type": "password",
-                        "client_id": "admin-cli",
-                        "username": self.admin_username,
-                        "password": self.admin_password
+                        "grant_type": "client_credentials",
+                        "client_id": self.admin_client_id,
+                        "client_secret": self.admin_client_secret
                     }
                 )
 
@@ -57,8 +66,7 @@ class KeycloakAdminService:
                     "Received response from Keycloak token endpoint",
                     extra={
                         "status_code": response.status_code,
-                        "response_headers": dict(response.headers),
-                        "response_body_preview": response.text[:200] if response.status_code != 200 else "OK"
+                        "response_headers": dict(response.headers)
                     }
                 )
 
@@ -69,7 +77,7 @@ class KeycloakAdminService:
                             "status_code": response.status_code,
                             "response_text": response.text,
                             "token_url": token_url,
-                            "username": self.admin_username
+                            "client_id": self.admin_client_id
                         }
                     )
                     raise HTTPException(
@@ -78,8 +86,17 @@ class KeycloakAdminService:
                     )
 
                 token_data = response.json()
-                logger.info("Successfully obtained admin token from Keycloak")
-                return token_data["access_token"]
+
+                # Cache the token and calculate expiry time
+                self._admin_token = token_data["access_token"]
+                expires_in = token_data.get("expires_in", 300)  # Default 5 minutes
+                self._token_expiry = time.time() + expires_in
+
+                logger.info(
+                    "Successfully obtained and cached admin token",
+                    extra={"expires_in_seconds": expires_in}
+                )
+                return self._admin_token
 
         except httpx.RequestError as e:
             logger.error(
