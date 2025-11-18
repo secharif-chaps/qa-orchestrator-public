@@ -560,7 +560,7 @@ class CompanyService:
                 .join(Folder, FolderItem.folder_id == Folder.id)
                 .filter(FolderItem.item_id == str(company.id))
                 .filter(FolderItem.item_type == 'company')
-                .filter(not Folder.is_deleted)
+                .filter(Folder.is_deleted == False)
                 .order_by(FolderItem.added_at.desc())  # Most recent folder first
                 .first()
             )
