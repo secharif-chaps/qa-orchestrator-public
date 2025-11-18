@@ -33,30 +33,31 @@
     </div>
 
     <!-- Error State -->
-    <div
+    <Alert
       v-else-if="hasError"
-      class="bg-error-light border border-error-stroke rounded-lg p-6 text-center"
+      variant="error"
+      title="Failed to Load Quick Actions"
+      :message="actionsError || 'An error occurred while generating actions. Please try again.'"
+      icon="fa fa-exclamation-circle"
+      decoration-icon="fa fa-magic"
     >
-      <i class="fa fa-exclamation-circle text-3xl text-error-light-content mb-3"></i>
-      <h4 class="font-semibold text-error-light-content mb-2">Failed to Load Quick Actions</h4>
-      <p class="text-sm text-error-light-content mb-4">
-        {{ actionsError || 'An error occurred while generating actions. Please try again.' }}
-      </p>
-      <div class="flex gap-3 justify-center">
-        <Button variant="secondary" size="sm" icon="fa fa-refresh" @click="handleRetry">
-          Try Again
-        </Button>
-        <Button
-          v-if="actionsError?.includes('preferences')"
-          variant="primary"
-          size="sm"
-          icon="fa fa-cog"
-          @click="goToSetup"
-        >
-          Configure AI Preferences
-        </Button>
-      </div>
-    </div>
+      <template #actions>
+        <div class="flex gap-3">
+          <Button variant="secondary" size="sm" icon="fa fa-refresh" @click="handleRetry">
+            Try Again
+          </Button>
+          <Button
+            v-if="actionsError?.includes('preferences')"
+            variant="primary"
+            size="sm"
+            icon="fa fa-cog"
+            @click="goToSetup"
+          >
+            Configure AI Preferences
+          </Button>
+        </div>
+      </template>
+    </Alert>
 
     <!-- Quick Actions Grid -->
     <div v-else-if="hasActions" class="grid grid-cols-1 gap-3">
