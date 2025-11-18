@@ -125,12 +125,13 @@ async def create_company(
     logger.info(f"🏢 POST /api/companies/ - START - User: {org_context.username}, Data: {company_data.name[:50]}...")
     
     try:
-        # Step 1: Consume token immediately (for 'screen' module - company creation/search/screening)
-        logger.info(f"🪙 Checking and consuming token for screen module in organization: {org_context.organization_id}")
+        # Step 1: Consume tokens immediately (for 'screen' module - company creation/search/screening)
+        # Each company creation costs 35 tokens
+        logger.info(f"🪙 Checking and consuming 35 tokens for screen module in organization: {org_context.organization_id}")
         token_manager.consume_tokens(
             organization_id=org_context.organization_id,
             module_name=ModuleName.SCREEN,
-            tokens=1
+            tokens=35
         )
         logger.info("✅ Token consumed successfully")
         
@@ -151,12 +152,12 @@ async def create_company(
         
     except ValidationError as e:
         logger.error(f"❌ Validation error: {str(e)}")
-        # Rollback token on validation failure
+        # Rollback tokens on validation failure (35 tokens)
         try:
-            token_manager.rollback_tokens(org_context.organization_id, ModuleName.SCREEN, 1)
-            logger.info("🔄 Token rolled back due to validation error")
+            token_manager.rollback_tokens(org_context.organization_id, ModuleName.SCREEN, 35)
+            logger.info("🔄 35 tokens rolled back due to validation error")
         except Exception as rollback_error:
-            logger.error(f"Failed to rollback token: {rollback_error}")
+            logger.error(f"Failed to rollback tokens: {rollback_error}")
         
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -164,12 +165,12 @@ async def create_company(
         )
     except ValueError as e:
         logger.error(f"❌ Value error: {str(e)}")
-        # Rollback token on value error
+        # Rollback tokens on value error (35 tokens)
         try:
-            token_manager.rollback_tokens(org_context.organization_id, ModuleName.SCREEN, 1)
-            logger.info("🔄 Token rolled back due to value error")
+            token_manager.rollback_tokens(org_context.organization_id, ModuleName.SCREEN, 35)
+            logger.info("🔄 35 tokens rolled back due to value error")
         except Exception as rollback_error:
-            logger.error(f"Failed to rollback token: {rollback_error}")
+            logger.error(f"Failed to rollback tokens: {rollback_error}")
         
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -179,13 +180,13 @@ async def create_company(
         logger.error(f"❌ Unexpected error creating company: {str(e)}")
         logger.error(f"Unexpected error in create_company: {str(e)}", exc_info=True)
         
-        # Rollback token on any other failure (but skip token-related errors)
+        # Rollback tokens on any other failure (but skip token-related errors) - 35 tokens
         if not ("insufficient_tokens" in str(e) or "not enabled" in str(e)):
             try:
-                token_manager.rollback_tokens(org_context.organization_id, ModuleName.SCREEN, 1)
-                logger.info("🔄 Token rolled back due to unexpected error")
+                token_manager.rollback_tokens(org_context.organization_id, ModuleName.SCREEN, 35)
+                logger.info("🔄 35 tokens rolled back due to unexpected error")
             except Exception as rollback_error:
-                logger.error(f"Failed to rollback token: {rollback_error}")
+                logger.error(f"Failed to rollback tokens: {rollback_error}")
         
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
