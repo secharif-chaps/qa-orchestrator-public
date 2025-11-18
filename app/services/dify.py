@@ -37,6 +37,7 @@ class DifyService:
         self.db = db
         self.base_url = settings.DIFY_URL
         self.fallback_api_key = settings.DIFY_API_KEY
+        self.chat_api_key = settings.DIFY_CHAT_API_KEY
 
     def _get_workflow_config(self, task_type: str) -> tuple[Optional[str], Optional[str]]:
         """Get API key and LLM for task type from database.
@@ -724,15 +725,17 @@ class DifyService:
         Raises:
             ExternalServiceError: If quick actions generation fails
         """
-        # Use fallback API key if not provided
+        # Use chat API key if not provided (specific for quick actions chat app)
         if api_key is None:
-            api_key = self.fallback_api_key
+            api_key = self.chat_api_key
 
         logger.info(
             "Generating quick actions via Dify",
             extra={
                 "company": company_data.get("name", "Unknown"),
                 "role": user_preferences.get("role", "Unknown"),
+                "base_url": self.base_url,
+                "api_key_prefix": api_key[:10] + "..." if api_key else "None",
             },
         )
 
@@ -741,6 +744,11 @@ class DifyService:
             client = ChatClient(api_key=api_key)
             # Override the default base_url with our custom instance
             client.base_url = self.base_url
+
+            logger.info(
+                f"📡 ChatClient configured - will call: {client.base_url}/chat-messages",
+                extra={"base_url": client.base_url}
+            )
 
             # Prepare inputs
             import json
@@ -793,6 +801,9 @@ Make actions specific, actionable, and relevant to the user's role and company c
                 user="chapse_assist",
                 response_mode="blocking",
             )
+
+            # Log response type for debugging
+            logger.debug(f"Dify response type: {type(response)}, has answer: {hasattr(response, 'answer')}")
 
             # Extract and parse answer
             if hasattr(response, "answer"):
@@ -854,8 +865,31 @@ Make actions specific, actionable, and relevant to the user's role and company c
                         "Failed to parse AI response", details={"error": str(e)}
                     ) from e
             else:
-                logger.warning(f"Unexpected quick actions response format: {response}")
-                raise ExternalServiceError("Unexpected response format from AI")
+                # Response doesn't have answer attribute - likely an error response
+                error_details = {
+                    "response_type": str(type(response)),
+                    "response_str": str(response)
+                }
+
+                # Try to extract error details if it's a requests.Response object
+                if hasattr(response, 'status_code'):
+                    error_details["status_code"] = response.status_code
+                if hasattr(response, 'text'):
+                    error_details["response_body"] = response.text[:500]
+                if hasattr(response, 'json'):
+                    try:
+                        error_details["response_json"] = response.json()
+                    except:
+                        pass
+
+                logger.error(
+                    f"Unexpected quick actions response format",
+                    extra=error_details
+                )
+                raise ExternalServiceError(
+                    "Unexpected response format from AI",
+                    details=error_details
+                )
 
         except ExternalServiceError:
             raise
