@@ -7,10 +7,8 @@ These endpoints interact with Keycloak Admin API to fetch organization data.
 from typing import Any, Dict, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from fastapi_keycloak import OIDCUser
-import requests
 
 from app.core.keycloak import idp
-from app.core.config import settings
 from app.core.logging_config import get_logger
 from app.schemas.organization import OrganizationResponse
 from app.schemas.pagination import PaginatedResponse, SortOrder, create_pagination_meta
@@ -34,7 +32,8 @@ async def list_organizations(
     Requires admin.organizations role for access.
 
     Organizations are managed in Keycloak Organizations feature.
-    This endpoint fetches organizations via Keycloak Admin API using admin-cli credentials.
+    This endpoint fetches organizations via Keycloak Admin API using admin-cli credentials
+    with automatic retry logic, token caching, and connection pooling.
 
     Args:
         page: Page number (1-indexed)
@@ -47,30 +46,9 @@ async def list_organizations(
         Paginated list of organizations with metadata
     """
     try:
-        # Get admin access token using admin-cli client
-        token_url = f"{settings.KEYCLOAK_SERVER_URL}/realms/{settings.KEYCLOAK_REALM}/protocol/openid-connect/token"
-        token_response = requests.post(
-            token_url,
-            data={
-                "client_id": "admin-cli",
-                "client_secret": settings.KEYCLOAK_ADMIN_CLIENT_SECRET,
-                "grant_type": "client_credentials"
-            },
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
-            timeout=30
-        )
-        token_response.raise_for_status()
-        admin_token = token_response.json()["access_token"]
-
-        # Fetch organizations from Keycloak
-        orgs_url = f"{settings.KEYCLOAK_SERVER_URL}/admin/realms/{settings.KEYCLOAK_REALM}/organizations"
-        orgs_response = requests.get(
-            orgs_url,
-            headers={"Authorization": f"Bearer {admin_token}"},
-            timeout=30
-        )
-        orgs_response.raise_for_status()
-        organizations = orgs_response.json()
+        # Fetch all organizations from Keycloak using admin service
+        # This uses cached admin token, retry logic, and connection pooling
+        organizations = await keycloak_admin_service.get_organizations()
 
         logger.info(
             "Fetched organizations from Keycloak",
@@ -117,11 +95,18 @@ async def list_organizations(
 
         return PaginatedResponse(data=orgs_list, meta=meta)
 
-    except requests.exceptions.RequestException as e:
+    except HTTPException:
+        # Re-raise HTTPExceptions from keycloak_admin_service
+        raise
+    except Exception as e:
         logger.error(
             "Failed to fetch organizations from Keycloak",
-            exc_info=e,
-            extra={"user": user.preferred_username}
+            exc_info=True,
+            extra={
+                "user": user.preferred_username,
+                "error_type": type(e).__name__,
+                "error_message": str(e)
+            }
         )
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -138,44 +123,30 @@ async def get_organization(
 
     Requires admin.organizations role for access.
 
+    This endpoint fetches organization details via Keycloak Admin API using admin-cli
+    credentials with automatic retry logic, token caching, and connection pooling.
+
     Args:
         organization_id: Keycloak organization UUID
 
     Returns:
         Organization details
+
+    Raises:
+        HTTPException 404: If organization not found
+        HTTPException 503: If Keycloak service unavailable
     """
     try:
-        # Get admin access token
-        token_url = f"{settings.KEYCLOAK_SERVER_URL}/realms/{settings.KEYCLOAK_REALM}/protocol/openid-connect/token"
-        token_response = requests.post(
-            token_url,
-            data={
-                "client_id": "admin-cli",
-                "client_secret": settings.KEYCLOAK_ADMIN_CLIENT_SECRET,
-                "grant_type": "client_credentials"
-            },
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
-            timeout=30
-        )
-        token_response.raise_for_status()
-        admin_token = token_response.json()["access_token"]
+        # Fetch organization from Keycloak using admin service
+        # This uses cached admin token, retry logic, and connection pooling
+        org = await keycloak_admin_service.get_organization(organization_id)
 
-        # Fetch specific organization
-        org_url = f"{settings.KEYCLOAK_SERVER_URL}/admin/realms/{settings.KEYCLOAK_REALM}/organizations/{organization_id}"
-        org_response = requests.get(
-            org_url,
-            headers={"Authorization": f"Bearer {admin_token}"},
-            timeout=30
-        )
-
-        if org_response.status_code == 404:
+        if not org:
+            # Service returns None on error (logged internally)
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Organization {organization_id} not found"
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Failed to fetch organization from Keycloak"
             )
-
-        org_response.raise_for_status()
-        org = org_response.json()
 
         logger.info(
             "Fetched organization from Keycloak",
@@ -199,13 +170,18 @@ async def get_organization(
 
         return OrganizationResponse(**org_dict)
 
-    except requests.exceptions.RequestException as e:
+    except HTTPException:
+        # Re-raise HTTPExceptions from keycloak_admin_service or above
+        raise
+    except Exception as e:
         logger.error(
             "Failed to fetch organization from Keycloak",
-            exc_info=e,
+            exc_info=True,
             extra={
                 "organization_id": organization_id,
-                "user": user.preferred_username
+                "user": user.preferred_username,
+                "error_type": type(e).__name__,
+                "error_message": str(e)
             }
         )
         raise HTTPException(
