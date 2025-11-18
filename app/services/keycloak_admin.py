@@ -117,15 +117,18 @@ class KeycloakAdminService:
     async def _make_admin_request(self, method: str, endpoint: str, data: Optional[Dict] = None) -> httpx.Response:
         """Make authenticated request to Keycloak Admin API"""
         token = await self._get_admin_token()
-        
-        async with httpx.AsyncClient() as client:
+
+        # Configure timeout: 30 seconds for connect, 60 seconds for read
+        timeout = httpx.Timeout(30.0, read=60.0)
+
+        async with httpx.AsyncClient(timeout=timeout) as client:
             headers = {
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json"
             }
-            
+
             url = f"{self.server_url}/admin/realms/{self.realm}{endpoint}"
-            
+
             if method.upper() == "GET":
                 response = await client.get(url, headers=headers)
             elif method.upper() == "POST":
@@ -136,7 +139,7 @@ class KeycloakAdminService:
                 response = await client.delete(url, headers=headers)
             else:
                 raise ValueError(f"Unsupported HTTP method: {method}")
-            
+
             return response
     
     def _generate_temp_password(self, length: int = 12) -> str:
@@ -318,17 +321,32 @@ class KeycloakAdminService:
         """Get user details by ID"""
         try:
             response = await self._make_admin_request("GET", f"/users/{user_id}")
-            
+
             if response.status_code == 200:
                 return response.json()
             elif response.status_code == 404:
                 return None
             else:
-                logger.error(f"Failed to get user: {response.status_code} - {response.text}")
+                logger.error(
+                    "Failed to get user from Keycloak",
+                    extra={
+                        "user_id": user_id,
+                        "status_code": response.status_code,
+                        "response_text": response.text
+                    }
+                )
                 return None
-                
+
         except Exception as e:
-            logger.error(f"Error getting user: {e}")
+            logger.error(
+                "Exception while getting user from Keycloak",
+                exc_info=True,
+                extra={
+                    "user_id": user_id,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e)
+                }
+            )
             return None
     
     async def get_users(self, first: int = 0, max_results: int = 100) -> List[Dict[str, Any]]:
