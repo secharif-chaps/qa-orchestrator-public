@@ -395,41 +395,101 @@ async def create_organization_user(
         HTTPException 500: If Keycloak API call fails
     """
     logger.info(
-        "Creating organization user",
+        "=== Starting organization user creation ===",
         extra={
             "organization_id": organization_id,
             "username": user_data.get('username'),
-            "admin_user": user.preferred_username
+            "email": user_data.get('email'),
+            "firstName": user_data.get('firstName'),
+            "lastName": user_data.get('lastName'),
+            "admin_user": user.preferred_username,
+            "admin_user_id": user.sub
         }
     )
 
     try:
-        # Create user in Keycloak
+        # Step 1: Create user in Keycloak
+        logger.info(
+            "STEP 1: Calling keycloak_admin_service.create_user()",
+            extra={
+                "username": user_data.get('username'),
+                "email": user_data.get('email')
+            }
+        )
         created_user = await keycloak_admin_service.create_user(user_data)
 
+        logger.info(
+            "STEP 1 RESULT: User creation response received",
+            extra={
+                "created_user_keys": list(created_user.keys()) if created_user else None,
+                "has_id": 'id' in created_user if created_user else False,
+                "user_id": created_user.get('id') if created_user else None
+            }
+        )
+
         if not created_user or 'id' not in created_user:
+            logger.error(
+                "User creation failed - no user ID in response",
+                extra={
+                    "created_user": created_user,
+                    "username": user_data.get('username')
+                }
+            )
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Failed to create user in Keycloak"
             )
 
         user_id = created_user['id']
+        logger.info(
+            "User created successfully in Keycloak",
+            extra={
+                "user_id": user_id,
+                "username": created_user.get('username'),
+                "email": created_user.get('email')
+            }
+        )
 
-        # Add user to organization
+        # Step 2: Add user to organization
+        logger.info(
+            "STEP 2: Calling keycloak_admin_service.add_user_to_organization()",
+            extra={
+                "organization_id": organization_id,
+                "user_id": user_id
+            }
+        )
         add_success = await keycloak_admin_service.add_user_to_organization(
             organization_id=organization_id,
             user_id=user_id
         )
 
+        logger.info(
+            "STEP 2 RESULT: Add user to organization response",
+            extra={
+                "add_success": add_success,
+                "organization_id": organization_id,
+                "user_id": user_id
+            }
+        )
+
         if not add_success:
             logger.warning(
                 "User created but failed to add to organization",
-                extra={"user_id": user_id, "organization_id": organization_id}
+                extra={
+                    "user_id": user_id,
+                    "organization_id": organization_id,
+                    "username": created_user.get('username')
+                }
             )
 
         logger.info(
-            "Successfully created organization user",
-            extra={"user_id": user_id, "organization_id": organization_id}
+            "=== Successfully completed organization user creation ===",
+            extra={
+                "user_id": user_id,
+                "username": created_user.get('username'),
+                "organization_id": organization_id,
+                "added_to_org": add_success
+            }
         )
 
         return {
@@ -443,14 +503,27 @@ async def create_organization_user(
             'createdTimestamp': created_user.get('createdTimestamp')
         }
 
-    except HTTPException:
+    except HTTPException as he:
+        logger.error(
+            "HTTPException during organization user creation",
+            extra={
+                "status_code": he.status_code,
+                "detail": he.detail,
+                "organization_id": organization_id,
+                "username": user_data.get('username'),
+                "admin_user": user.preferred_username
+            }
+        )
         raise
     except Exception as e:
         logger.error(
-            "Failed to create organization user",
-            exc_info=e,
+            "Unexpected exception during organization user creation",
+            exc_info=True,
             extra={
+                "error_type": type(e).__name__,
+                "error_message": str(e),
                 "organization_id": organization_id,
+                "username": user_data.get('username'),
                 "admin_user": user.preferred_username
             }
         )
