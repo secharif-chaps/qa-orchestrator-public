@@ -2,6 +2,7 @@
 Keycloak Admin Service for user management operations
 """
 
+import asyncio
 import httpx
 import secrets
 import string
@@ -24,6 +25,8 @@ class KeycloakAdminService:
         self.admin_client_secret = settings.KEYCLOAK_ADMIN_CLIENT_SECRET
         self._admin_token: Optional[str] = None
         self._token_expiry: Optional[float] = None
+        # Async lock to prevent concurrent token refreshes
+        self._token_lock = asyncio.Lock()
 
     def _is_token_valid(self) -> bool:
         """Check if cached token is still valid (with 30 second buffer)"""
@@ -33,86 +36,161 @@ class KeycloakAdminService:
         return time.time() < (self._token_expiry - 30)
 
     async def _get_admin_token(self) -> str:
-        """Get admin access token using client credentials grant (with caching)"""
-        # Return cached token if still valid
+        """Get admin access token using client credentials grant (with caching and thread-safety)"""
+        # First check without lock (fast path)
         if self._is_token_valid():
-            logger.debug("Using cached admin token")
+            logger.debug("🔑 Using cached admin token")
             return self._admin_token
 
-        try:
-            token_url = f"{self.server_url}/realms/{self.realm}/protocol/openid-connect/token"
-            logger.info(
-                "Requesting new admin token from Keycloak",
-                extra={
-                    "token_url": token_url,
-                    "client_id": self.admin_client_id,
-                    "realm": self.realm,
-                    "grant_type": "client_credentials"
-                }
-            )
+        # Acquire lock for token refresh
+        async with self._token_lock:
+            # Double-check pattern: another request might have refreshed while we waited for lock
+            if self._is_token_valid():
+                logger.debug("🔒 Token refreshed by another request, using cached token")
+                return self._admin_token
 
-            async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    token_url,
-                    headers={"Content-Type": "application/x-www-form-urlencoded"},
-                    data={
-                        "grant_type": "client_credentials",
+            # Token refresh with retry logic
+            return await self._refresh_admin_token()
+
+    async def _refresh_admin_token(self) -> str:
+        """Internal method to refresh the admin token (called within lock) with retry logic"""
+        token_url = f"{self.server_url}/realms/{self.realm}/protocol/openid-connect/token"
+        max_retries = 3
+        retry_delay = 1.0  # Start with 1 second
+
+        for attempt in range(1, max_retries + 1):
+            try:
+                logger.info(
+                    f"🔄 Requesting new admin token from Keycloak (attempt {attempt}/{max_retries})",
+                    extra={
+                        "token_url": token_url,
                         "client_id": self.admin_client_id,
-                        "client_secret": self.admin_client_secret
+                        "realm": self.realm,
+                        "grant_type": "client_credentials",
+                        "attempt": attempt
                     }
                 )
 
-                logger.info(
-                    "Received response from Keycloak token endpoint",
+                # Configure timeout: 10 seconds connect, 30 seconds read
+                timeout = httpx.Timeout(10.0, read=30.0)
+
+                async with httpx.AsyncClient(timeout=timeout) as client:
+                    response = await client.post(
+                        token_url,
+                        headers={"Content-Type": "application/x-www-form-urlencoded"},
+                        data={
+                            "grant_type": "client_credentials",
+                            "client_id": self.admin_client_id,
+                            "client_secret": self.admin_client_secret
+                        }
+                    )
+
+                # Check response status
+                if response.status_code == 200:
+                    # Success! Cache token and return
+                    token_data = response.json()
+                    self._admin_token = token_data["access_token"]
+                    expires_in = token_data.get("expires_in", 300)  # Default 5 minutes
+                    self._token_expiry = time.time() + expires_in
+
+                    logger.info(
+                        "✅ Successfully obtained and cached admin token",
+                        extra={
+                            "expires_in_seconds": expires_in,
+                            "expires_at": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(self._token_expiry)),
+                            "attempt": attempt
+                        }
+                    )
+                    return self._admin_token
+
+                # Non-200 response - log and raise (don't retry auth errors)
+                logger.error(
+                    "❌ Failed to get admin token from Keycloak",
                     extra={
                         "status_code": response.status_code,
-                        "response_headers": dict(response.headers)
+                        "response_text": response.text,
+                        "token_url": token_url,
+                        "client_id": self.admin_client_id,
+                        "attempt": attempt
                     }
                 )
 
-                if response.status_code != 200:
+                # Don't retry authentication errors (401, 403)
+                if response.status_code in [401, 403]:
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail=f"Authentication failed with Keycloak: {response.text}"
+                    )
+
+                # For other errors, raise to trigger retry
+                raise httpx.HTTPStatusError(
+                    f"HTTP {response.status_code}",
+                    request=response.request,
+                    response=response
+                )
+
+            except httpx.RequestError as e:
+                # Network/timeout errors - retry with exponential backoff
+                is_last_attempt = attempt == max_retries
+
+                logger.warning(
+                    f"⚠️ Network error on attempt {attempt}/{max_retries}: {type(e).__name__}",
+                    extra={
+                        "error_type": type(e).__name__,
+                        "error_message": str(e),
+                        "server_url": self.server_url,
+                        "attempt": attempt,
+                        "will_retry": not is_last_attempt
+                    }
+                )
+
+                if is_last_attempt:
+                    # Last attempt failed, give up
                     logger.error(
-                        "Failed to get admin token from Keycloak",
+                        "❌ All retry attempts exhausted for admin token refresh",
+                        exc_info=True,
                         extra={
-                            "status_code": response.status_code,
-                            "response_text": response.text,
-                            "token_url": token_url,
-                            "client_id": self.admin_client_id
+                            "max_retries": max_retries,
+                            "error_type": type(e).__name__,
+                            "error_message": str(e)
                         }
                     )
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                        detail="Failed to authenticate with Keycloak admin"
+                        detail="Unable to connect to Keycloak server after multiple retries"
                     )
 
-                token_data = response.json()
+                # Exponential backoff: 1s, 2s, 4s
+                await asyncio.sleep(retry_delay)
+                retry_delay *= 2
 
-                # Cache the token and calculate expiry time
-                self._admin_token = token_data["access_token"]
-                expires_in = token_data.get("expires_in", 300)  # Default 5 minutes
-                self._token_expiry = time.time() + expires_in
+            except httpx.HTTPStatusError as e:
+                # HTTP errors (non-200 responses) - retry
+                is_last_attempt = attempt == max_retries
 
-                logger.info(
-                    "Successfully obtained and cached admin token",
-                    extra={"expires_in_seconds": expires_in}
-                )
-                return self._admin_token
+                if is_last_attempt:
+                    logger.error(
+                        "❌ All retry attempts exhausted for admin token refresh",
+                        extra={
+                            "status_code": e.response.status_code,
+                            "response_text": e.response.text
+                        }
+                    )
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail=f"Failed to get admin token: HTTP {e.response.status_code}"
+                    )
 
-        except httpx.RequestError as e:
-            logger.error(
-                "Network error connecting to Keycloak",
-                exc_info=True,
-                extra={
-                    "error_type": type(e).__name__,
-                    "error_message": str(e),
-                    "token_url": token_url,
-                    "server_url": self.server_url
-                }
-            )
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Unable to connect to Keycloak server"
-            )
+                # Exponential backoff
+                logger.warning(f"⚠️ HTTP error on attempt {attempt}/{max_retries}, retrying in {retry_delay}s")
+                await asyncio.sleep(retry_delay)
+                retry_delay *= 2
+
+        # Should never reach here due to exceptions, but for type safety
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to obtain admin token"
+        )
     
     async def _make_admin_request(self, method: str, endpoint: str, data: Optional[Dict] = None) -> httpx.Response:
         """Make authenticated request to Keycloak Admin API"""
