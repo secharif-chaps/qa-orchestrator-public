@@ -18,7 +18,7 @@
               :is-loading="tokenDataLoading || !currentOrganization?.id"
               :is-refreshing="isRefreshingTokens"
               show-label
-              show-status
+              show-company-equivalence
               @refresh="refreshScreenTokens"
             />
           </div>
@@ -31,7 +31,7 @@
       v-if="showInsufficientTokenAlert"
       module="screen"
       :current-tokens="screenTokenCount"
-      :required-tokens="1"
+      :required-tokens="35"
       @contact-admin="contactAdmin"
       @refresh="refreshScreenTokens"
       @dismiss="dismissTokenAlert"
@@ -156,7 +156,8 @@ const canPerformSearch = computed(() => {
   if (!currentOrganization.value?.id || tokenDataLoading.value) {
     return false
   }
-  return screenModuleEnabled.value && screenTokenCount.value > 0
+  // Require at least 35 tokens (cost of 1 company creation)
+  return screenModuleEnabled.value && screenTokenCount.value >= 35
 })
 
 const showInsufficientTokenAlert = computed(() => {
@@ -164,7 +165,8 @@ const showInsufficientTokenAlert = computed(() => {
   if (!currentOrganization.value?.id || tokenDataLoading.value) {
     return false
   }
-  return screenModuleEnabled.value && screenTokenCount.value === 0 && !showTokenAlert.value
+  // Show alert if tokens are below 35 (cost of 1 company creation)
+  return screenModuleEnabled.value && screenTokenCount.value < 35 && !showTokenAlert.value
 })
 
 // Token alert state
@@ -273,7 +275,7 @@ const submit = async () => {
     } else {
       companyError.value = t(
         'company.validation.insufficientTokens',
-        'Insufficient tokens. You need at least 1 token to create a company.',
+        'Insufficient tokens. You need at least 35 tokens to create a company.',
       )
     }
     return
@@ -318,7 +320,7 @@ const submit = async () => {
     if (error instanceof InsufficientTokensError) {
       companyError.value = t(
         'company.validation.insufficientTokens',
-        'Insufficient tokens. You need at least 1 token to create a company.',
+        'Insufficient tokens. You need at least 35 tokens to create a company.',
       )
       // Refresh token data to get current counts
       await refreshScreenTokens()

@@ -64,14 +64,22 @@
         </label>
         <div class="flex items-center gap-2 flex-wrap">
           <button
-            v-for="amount in quickAddAmounts"
-            :key="amount"
-            @click="addQuickTokens(amount)"
+            v-for="(amount, index) in quickAddAmounts"
+            :key="index"
+            @click="addQuickTokens(amount.tokens)"
             :disabled="!isEnabled || addTokensMutation.isLoading.value"
-            class="bg-base-300 hover:bg-primary hover:text-white border border-primary-stroke hover:border-primary text-sm px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+            class="bg-base-300 hover:bg-primary hover:text-white border border-primary-stroke hover:border-primary text-sm px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-start gap-0.5"
           >
-            <i class="fa fa-plus text-xs"></i>
-            {{ amount }}
+            <div class="flex items-center gap-1">
+              <i class="fa fa-plus text-xs"></i>
+              <span v-if="amount.companies" class="font-semibold">
+                {{ amount.companies }} {{ $t('tokens.companies', 'companies') }}
+              </span>
+              <span v-else class="font-semibold">{{ amount.tokens }}</span>
+            </div>
+            <span v-if="amount.companies" class="text-xs opacity-75">
+              ({{ amount.tokens.toLocaleString() }} {{ $t('tokens.tokens', 'tokens') }})
+            </span>
           </button>
 
           <!-- Loading indicator for quick buttons -->
@@ -158,24 +166,31 @@ const addTokensMutation = useAddModuleTokens()
 // State for token input (local to this component)
 const tokensToAdd = ref(0)
 
-// Quick add amounts - can be customized based on module or user preferences
+// Quick add amounts - for screen module, show company-based amounts (35 tokens per company)
+// For other modules, use simple token amounts
+const TOKENS_PER_COMPANY = 35
+
 const quickAddAmounts = computed(() => {
-  // Smart amounts based on current token count
+  // For screen module, offer company-based quick-add
+  if (props.module === 'screen') {
+    return [
+      { companies: 5, tokens: 5 * TOKENS_PER_COMPANY },    // 175 tokens
+      { companies: 10, tokens: 10 * TOKENS_PER_COMPANY },  // 350 tokens
+      { companies: 25, tokens: 25 * TOKENS_PER_COMPANY },  // 875 tokens
+      { companies: 50, tokens: 50 * TOKENS_PER_COMPANY },  // 1,750 tokens
+      { companies: 100, tokens: 100 * TOKENS_PER_COMPANY } // 3,500 tokens
+    ]
+  }
+
+  // For other modules, use simple token amounts based on current count
   const current = props.tokenCount
-  const baseAmounts = [5, 10, 25, 50, 100]
-
-  // If current count is very low, suggest smaller amounts first
   if (current < 10) {
-    return [5, 10, 25, 50]
+    return [5, 10, 25, 50].map(tokens => ({ tokens }))
   }
-
-  // If current count is medium, suggest balanced amounts
   if (current < 50) {
-    return [10, 25, 50, 100]
+    return [10, 25, 50, 100].map(tokens => ({ tokens }))
   }
-
-  // For higher counts, suggest larger amounts
-  return [25, 50, 100, 250]
+  return [25, 50, 100, 250].map(tokens => ({ tokens }))
 })
 
 // Module configurations
