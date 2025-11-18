@@ -30,8 +30,6 @@ class Settings(BaseSettings):
     KEYCLOAK_CLIENT_ID: str = "mint-back"
     KEYCLOAK_CLIENT_SECRET: Optional[str] = None
     KEYCLOAK_CALLBACK_URI: str = "http://localhost:8000/callback"
-    KEYCLOAK_ADMIN_USERNAME: str = "admin"
-    KEYCLOAK_ADMIN_PASSWORD: str = "admin"
     KEYCLOAK_ADMIN_CLIENT_ID: str = "admin-cli"
     KEYCLOAK_ADMIN_CLIENT_SECRET: str = "admin-cli-secret"
     
