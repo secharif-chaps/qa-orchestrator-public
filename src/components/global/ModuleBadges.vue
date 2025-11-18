@@ -1,8 +1,10 @@
 <template>
   <div v-if="!isLoading && modules.length > 0" class="flex items-center gap-2">
-    <div
+    <component
+      :is="getModuleComponent(module)"
       v-for="module in modules"
       :key="module.name"
+      :to="getModuleRoute(module)"
       class="flex items-center gap-2 px-3 py-1.5 rounded-full transition-all border"
       :class="getBadgeClasses(module)"
     >
@@ -23,13 +25,14 @@
         class="fa fa-info-circle text-xs ml-1 opacity-60"
         :title="$t('common.moduleUnavailable', 'Module unavailable')"
       />
-    </div>
+    </component>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useQuery } from '@pinia/colada'
+import { RouterLink } from 'vue-router'
 import { organizationModulesQuery } from '@/queries/tokens'
 import { getModuleDisplayConfig } from '@/config/modules'
 
@@ -50,13 +53,35 @@ const modules = computed(() => {
   })
 })
 
+// Determine which component to use (RouterLink for enabled screen module, div otherwise)
+function getModuleComponent(module: ReturnType<typeof getModuleDisplayConfig>) {
+  // Screen module is clickable when enabled
+  if (module.name === 'screen' && module.status === 'enabled') {
+    return RouterLink
+  }
+  return 'div'
+}
+
+// Get route for module (only screen module has a route)
+function getModuleRoute(module: ReturnType<typeof getModuleDisplayConfig>) {
+  if (module.name === 'screen' && module.status === 'enabled') {
+    return '/companies/create'
+  }
+  return undefined
+}
+
 // Get badge styling classes based on status and color
-const getBadgeClasses = (module: ReturnType<typeof getModuleDisplayConfig>) => {
+function getBadgeClasses(module: ReturnType<typeof getModuleDisplayConfig>) {
   const baseClasses = 'backdrop-blur-sm'
+
+  // Add cursor pointer and hover effect for clickable screen module
+  const interactiveClasses = module.name === 'screen' && module.status === 'enabled'
+    ? 'cursor-pointer hover:scale-105'
+    : ''
 
   // Disabled/unavailable state
   if (module.status === 'unavailable') {
-    return `${baseClasses} bg-sage-400/20 dark:bg-sage-400/20 text-sage-200 border-sage-700/30`
+    return `${baseClasses} ${interactiveClasses} bg-sage-400/20 dark:bg-sage-400/20 text-sage-200 border-sage-700/30`
   }
 
   // Color-coded classes for enabled and soon states
@@ -70,6 +95,6 @@ const getBadgeClasses = (module: ReturnType<typeof getModuleDisplayConfig>) => {
     yellow: 'bg-yellow-500/10 dark:bg-yellow-500/15 text-yellow-100 border-yellow-500/30',
   }
 
-  return `${baseClasses} ${colorClasses[module.color]}`
+  return `${baseClasses} ${interactiveClasses} ${colorClasses[module.color]}`
 }
 </script>

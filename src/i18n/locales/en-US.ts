@@ -920,6 +920,14 @@ export default {
     },
     create: {
       button: 'Make a new search',
+      inFolder: 'Create a new company screen in folder',
+      selectFolder: 'Select Folder',
+      chooseFolderPlaceholder: 'Choose a folder...',
+      noFolders: {
+        title: 'No folders available',
+        message: 'You need to create a folder before creating a company screen',
+        action: 'Create Folder',
+      },
     },
     fields: {
       employeeCount: 'Employee Count',
@@ -990,6 +998,7 @@ export default {
       websiteRequired: 'Website URL is required',
       createError: 'An error occurred while creating the company',
       networkError: 'Network error - please try again',
+      folderRequired: 'Please select a folder',
     },
     empty: {
       noResults: {

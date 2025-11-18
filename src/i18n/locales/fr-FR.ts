@@ -969,6 +969,14 @@ export default {
     },
     create: {
       button: 'Faire une nouvelle recherche',
+      inFolder: 'Créer une nouvelle fiche entreprise dans le dossier',
+      selectFolder: 'Sélectionner un dossier',
+      chooseFolderPlaceholder: 'Choisissez un dossier...',
+      noFolders: {
+        title: 'Aucun dossier disponible',
+        message: 'Vous devez créer un dossier avant de créer une fiche entreprise',
+        action: 'Créer un dossier',
+      },
     },
     fields: {
       employeeCount: "Nombre d'employés",
@@ -1040,6 +1048,7 @@ export default {
       websiteRequired: "L'URL du site web est requise",
       createError: "Une erreur s'est produite lors de la création de l'entreprise",
       networkError: 'Erreur réseau - veuillez réessayer',
+      folderRequired: 'Veuillez sélectionner un dossier',
     },
     empty: {
       noResults: {
