@@ -23,32 +23,34 @@
 
             <!-- Title and Secondary Text -->
             <div class="flex-1 min-w-0">
-              <h3 class="font-semibold text-base text-gray-900 dark:text-white">
-                {{ module.name }}
-              </h3>
+              <div class="flex items-center justify-between gap-2">
+                <h3 class="font-semibold text-base text-gray-900 dark:text-white">
+                  {{ module.name }}
+                </h3>
+                <div>
+                  <Tag
+                    :variant="
+                      module.unlocked
+                        ? 'success'
+                        : module.status === 'contact-sales'
+                          ? 'warning'
+                          : 'slate'
+                    "
+                    :label="
+                      module.unlocked
+                        ? $t('home.modules.status.active', 'Active')
+                        : module.status === 'contact-sales'
+                          ? $t('home.modules.status.proFeature', 'Pro Feature')
+                          : $t('home.modules.status.comingSoon', 'Coming Soon')
+                    "
+                    size="xs"
+                    rounded
+                  />
+                </div>
+              </div>
               <p class="text-sm text-gray-600 dark:text-gray-400">
                 {{ module.category }}
               </p>
-            </div>
-            <div>
-              <Tag
-                :variant="
-                  module.unlocked
-                    ? 'success'
-                    : module.status === 'contact-sales'
-                      ? 'warning'
-                      : 'slate'
-                "
-                :label="
-                  module.unlocked
-                    ? $t('home.modules.status.active', 'Active')
-                    : module.status === 'contact-sales'
-                      ? $t('home.modules.status.proFeature', 'Pro Feature')
-                      : $t('home.modules.status.comingSoon', 'Coming Soon')
-                "
-                size="xs"
-                rounded
-              />
             </div>
           </div>
           <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -59,6 +61,15 @@
         <!-- Action Buttons - stuck to bottom -->
         <div class="mt-4 flex items-center justify-between">
           <div class="flex space-x-2">
+            <Button
+              v-if="module.status === 'available'"
+              variant="secondary"
+              color="warning"
+              size="sm"
+              :label="$t('home.modules.actions.companyScreen', 'Create a Screen')"
+              icon="fa-solid fa-search"
+              @click="$router.push('/companies/create')"
+            />
             <Button
               v-if="module.status === 'contact-sales'"
               variant="secondary"
