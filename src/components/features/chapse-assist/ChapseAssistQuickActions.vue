@@ -132,6 +132,7 @@
 </template>
 
 <script setup lang="ts">
+import Alert from '@/components/ui/Alert.vue'
 import Button from '@/components/ui/Button.vue'
 import { useChapseAssist } from '@/composables/useChapseAssist'
 import type { QuickAction } from '@/types/ai-preferences'
