@@ -983,7 +983,7 @@ export default {
       loadingorganization: 'Loading organization...',
       loadingTokens: 'Loading tokens...',
       moduleDisabled: 'The Stream module is disabled',
-      insufficientTokens: 'Insufficient tokens. You need at least 1 token to create a company.',
+      insufficientTokens: 'Insufficient tokens. You need at least 35 tokens to create a company.',
       invalidNameFormat: 'Company name must contain at least 2 alphabetic characters',
       invalidWebsiteFormat: 'Please enter a valid website URL',
       nameRequired: 'Company name is required',
@@ -1038,6 +1038,7 @@ export default {
     module: '{module} Module',
     token: 'token',
     tokens: 'tokens',
+    companies: 'companies',
     loading: 'Loading token data...',
     status: {
       disabled: 'Disabled',
