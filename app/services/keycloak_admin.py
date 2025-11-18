@@ -29,13 +29,14 @@ class KeycloakAdminService:
     async def _get_admin_token(self) -> str:
         """Get admin access token using admin credentials"""
         try:
-            token_url = f"{self.server_url}/realms/master/protocol/openid-connect/token"
+            token_url = f"{self.server_url}/realms/{self.realm}/protocol/openid-connect/token"
             logger.info(
                 "Attempting to get admin token from Keycloak",
                 extra={
                     "token_url": token_url,
                     "client_id": "admin-cli",
                     "username": self.admin_username,
+                    "realm": self.realm,
                     "server_url": self.server_url
                 }
             )
