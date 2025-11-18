@@ -879,6 +879,117 @@ class KeycloakAdminService:
             logger.error(f"Error removing user from organization: {e}")
             return False
 
+    async def get_organizations(self) -> List[Dict[str, Any]]:
+        """
+        Get all organizations from Keycloak.
+
+        This method fetches all organizations using the Keycloak Admin API
+        with built-in retry logic, token caching, and connection pooling.
+
+        Returns:
+            List of organization dictionaries from Keycloak
+            Empty list if request fails
+
+        Note:
+            Search/filtering should be done by the caller after fetching all organizations
+        """
+        try:
+            endpoint = "/organizations"
+            response = await self._make_admin_request("GET", endpoint)
+
+            if response.status_code == 200:
+                orgs = response.json()
+                logger.info(
+                    "Successfully fetched organizations from Keycloak",
+                    extra={"organization_count": len(orgs)}
+                )
+                return orgs
+            else:
+                logger.error(
+                    "Failed to get organizations from Keycloak",
+                    extra={
+                        "status_code": response.status_code,
+                        "response_text": response.text[:500]
+                    }
+                )
+                return []
+
+        except Exception as e:
+            logger.error(
+                "Exception while getting organizations from Keycloak",
+                exc_info=True,
+                extra={
+                    "error_type": type(e).__name__,
+                    "error_message": str(e)
+                }
+            )
+            return []
+
+    async def get_organization(self, organization_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get a specific organization by ID from Keycloak.
+
+        This method fetches organization details using the Keycloak Admin API
+        with built-in retry logic, token caching, and connection pooling.
+
+        Args:
+            organization_id: Keycloak organization UUID
+
+        Returns:
+            Organization dictionary if found
+            None if organization not found or request fails
+
+        Raises:
+            HTTPException: If organization not found (404)
+        """
+        try:
+            endpoint = f"/organizations/{organization_id}"
+            response = await self._make_admin_request("GET", endpoint)
+
+            if response.status_code == 200:
+                org = response.json()
+                logger.info(
+                    "Successfully fetched organization from Keycloak",
+                    extra={
+                        "organization_id": organization_id,
+                        "organization_name": org.get('name')
+                    }
+                )
+                return org
+            elif response.status_code == 404:
+                logger.warning(
+                    "Organization not found in Keycloak",
+                    extra={"organization_id": organization_id}
+                )
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Organization {organization_id} not found"
+                )
+            else:
+                logger.error(
+                    "Failed to get organization from Keycloak",
+                    extra={
+                        "organization_id": organization_id,
+                        "status_code": response.status_code,
+                        "response_text": response.text[:500]
+                    }
+                )
+                return None
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(
+                "Exception while getting organization from Keycloak",
+                exc_info=True,
+                extra={
+                    "organization_id": organization_id,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e)
+                }
+            )
+            return None
+
 
 # Global instance
 keycloak_admin_service = KeycloakAdminService()
