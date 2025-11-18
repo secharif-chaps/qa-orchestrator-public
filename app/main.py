@@ -25,6 +25,12 @@ setup_database_security(engine)
 logger.info(f"CORS Origin setting: {settings.CORS_ORIGIN}")
 logger.info(f"Backend Base URL: {settings.BACKEND_BASE_URL}")
 
+# Keycloak configuration logging (temporary for debugging)
+logger.info(f"KEYCLOAK_SERVER_URL: {settings.KEYCLOAK_SERVER_URL}")
+logger.info(f"KEYCLOAK_REALM: {settings.KEYCLOAK_REALM}")
+logger.info(f"KEYCLOAK_ADMIN_USERNAME: {settings.KEYCLOAK_ADMIN_USERNAME}")
+logger.info(f"KEYCLOAK_ADMIN_CLIENT_SECRET: {settings.KEYCLOAK_ADMIN_CLIENT_SECRET}")
+
 # Add CORS middleware FIRST (to handle preflight requests properly)
 # Allow common development origins for local testing
 development_origins = [
