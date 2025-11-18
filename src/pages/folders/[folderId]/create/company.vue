@@ -18,7 +18,7 @@
               :is-loading="tokenDataLoading || !currentOrganization?.id"
               :is-refreshing="isRefreshingTokens"
               show-label
-              show-status
+              show-company-equivalence
               @refresh="refreshScreenTokens"
             />
           </div>

@@ -1038,8 +1038,14 @@ export default {
     module: '{module} Module',
     token: 'token',
     tokens: 'tokens',
+    credits: 'credits',
     companies: 'companies',
     loading: 'Loading token data...',
+    companyEquivalence: {
+      none: 'Not enough for 1 company creation',
+      singular: '≈ 1 company creation',
+      plural: '≈ {count} company creations',
+    },
     status: {
       disabled: 'Disabled',
       noTokens: 'No tokens',

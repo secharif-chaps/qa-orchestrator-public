@@ -26,11 +26,7 @@
           <!-- Module Label -->
           <div class="flex items-center gap-2 mb-1">
             <span class="text-xs font-medium text-secondary uppercase tracking-wide">
-              {{
-                $t('tokens.module', '{module} Module', {
-                  module: module || $t('tokens.modules.screen.name', 'Screen'),
-                })
-              }}
+              {{ moduleName }}
             </span>
             <Button
               v-if="showRefresh"
@@ -52,6 +48,13 @@
             </span>
             <span v-if="showLabel && !isLoading" class="text-sm text-secondary">
               {{ tokenLabel }}
+            </span>
+          </div>
+
+          <!-- Company Creation Equivalence (for screen module) -->
+          <div v-if="showCompanyEquivalence && !isLoading" class="mt-1.5">
+            <span class="text-xs text-secondary">
+              {{ companyEquivalenceText }}
             </span>
           </div>
 
@@ -91,6 +94,7 @@ interface Props {
   showLabel?: boolean
   showRefresh?: boolean
   showStatus?: boolean
+  showCompanyEquivalence?: boolean
   variant?: 'default' | 'compact' | 'detailed'
 }
 
@@ -101,6 +105,7 @@ const props = withDefaults(defineProps<Props>(), {
   showLabel: false,
   showRefresh: false,
   showStatus: false,
+  showCompanyEquivalence: false,
   variant: 'default',
 })
 
@@ -108,7 +113,22 @@ defineEmits<{
   refresh: []
 }>()
 
+// Constants
+const TOKENS_PER_COMPANY = 35
+
 // Computed properties
+const moduleName = computed(() => {
+  // For screen module, just show "Screen" instead of "Screen Module"
+  if (props.module === 'screen') {
+    return t('tokens.modules.screen.name', 'Screen')
+  }
+  // For other modules, show "{Module} Module"
+  const moduleName = props.module || 'screen'
+  return t('tokens.module', '{module} Module', {
+    module: t(`tokens.modules.${moduleName}.name`, moduleName),
+  })
+})
+
 const displayCount = computed(() => {
   if (props.isLoading) return '...'
   if (!props.isEnabled) return '--'
@@ -117,7 +137,25 @@ const displayCount = computed(() => {
 
 const tokenLabel = computed(() => {
   if (props.tokenCount === 1) return t('tokens.token', 'token')
-  return t('tokens.tokens', 'tokens')
+  return t('tokens.credits', 'crédits')
+})
+
+const companyEquivalenceText = computed(() => {
+  if (!props.isEnabled || props.module !== 'screen') return ''
+
+  const companiesCount = Math.floor(props.tokenCount / TOKENS_PER_COMPANY)
+
+  if (companiesCount === 0) {
+    return t('tokens.companyEquivalence.none', 'Not enough for 1 company creation')
+  }
+
+  if (companiesCount === 1) {
+    return t('tokens.companyEquivalence.singular', '≈ 1 company creation')
+  }
+
+  return t('tokens.companyEquivalence.plural', '≈ {count} company creations', {
+    count: companiesCount,
+  })
 })
 
 const tokenIconClasses = computed(() => {
