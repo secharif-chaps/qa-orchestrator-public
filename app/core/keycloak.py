@@ -70,18 +70,16 @@ def _initialize_keycloak_with_retry(
         try:
             # Log all Keycloak configuration parameters for debugging
             logger.info(
-                f"🔐 Attempting Keycloak connection (attempt {attempt}/{max_retries})",
-                extra={
-                    "server_url": settings.KEYCLOAK_SERVER_URL,
-                    "realm": settings.KEYCLOAK_REALM,
-                    "client_id": settings.KEYCLOAK_CLIENT_ID,
-                    "admin_client_id": settings.KEYCLOAK_ADMIN_CLIENT_ID,
-                    "callback_uri": settings.KEYCLOAK_CALLBACK_URI,
-                    "timeout": 60,
-                    "openid_config_url": openid_config_url,
-                    "has_client_secret": bool(settings.KEYCLOAK_CLIENT_SECRET),
-                    "has_admin_secret": bool(settings.KEYCLOAK_ADMIN_CLIENT_SECRET),
-                }
+                f"🔐 Attempting Keycloak connection (attempt {attempt}/{max_retries})\n"
+                f"  server_url: {settings.KEYCLOAK_SERVER_URL}\n"
+                f"  realm: {settings.KEYCLOAK_REALM}\n"
+                f"  client_id: {settings.KEYCLOAK_CLIENT_ID}\n"
+                f"  admin_client_id: {settings.KEYCLOAK_ADMIN_CLIENT_ID}\n"
+                f"  callback_uri: {settings.KEYCLOAK_CALLBACK_URI}\n"
+                f"  timeout: 60s\n"
+                f"  openid_config_url: {openid_config_url}\n"
+                f"  has_client_secret: {bool(settings.KEYCLOAK_CLIENT_SECRET)}\n"
+                f"  has_admin_secret: {bool(settings.KEYCLOAK_ADMIN_CLIENT_SECRET)}"
             )
 
             # Initialize FastAPIKeycloak with increased timeout (60s instead of default 10s)
@@ -102,18 +100,14 @@ def _initialize_keycloak_with_retry(
 
             elapsed_time = time.time() - start_time
             logger.info(
-                "✅ Keycloak client initialized successfully",
-                extra={
-                    "server_url": settings.KEYCLOAK_SERVER_URL,
-                    "realm": settings.KEYCLOAK_REALM,
-                    "client_id": settings.KEYCLOAK_CLIENT_ID,
-                    "admin_client_id": settings.KEYCLOAK_ADMIN_CLIENT_ID,
-                    "callback_uri": settings.KEYCLOAK_CALLBACK_URI,
-                    "openid_config_url": openid_config_url,
-                    "attempt": attempt,
-                    "elapsed_seconds": round(elapsed_time, 2),
-                    "total_retries": attempt - 1,
-                },
+                f"✅ Keycloak client initialized successfully\n"
+                f"  server_url: {settings.KEYCLOAK_SERVER_URL}\n"
+                f"  realm: {settings.KEYCLOAK_REALM}\n"
+                f"  client_id: {settings.KEYCLOAK_CLIENT_ID}\n"
+                f"  admin_client_id: {settings.KEYCLOAK_ADMIN_CLIENT_ID}\n"
+                f"  elapsed_seconds: {round(elapsed_time, 2)}\n"
+                f"  total_retries: {attempt - 1}\n"
+                f"  attempt: {attempt}"
             )
 
             return idp_instance
