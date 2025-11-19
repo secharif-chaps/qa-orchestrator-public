@@ -1,0 +1,65 @@
+services:
+  # Disable nginx for local development
+  nginx:
+    profiles:
+      - production  # Only run in production profile
+
+  # Override frontend with direct port exposure
+  frontend:
+    ports:
+      - "3000:3000"
+    environment:
+      # Point directly to backend service (no nginx proxy)
+      VITE_BASE_URL: http://localhost:8000/api
+      VITE_API_URL: http://localhost:8000/api
+      VITE_BACKEND_API: http://localhost:8000/api
+      VITE_KEYCLOAK_URL: http://localhost:8080
+      VITE_KEYCLOAK_REALM: mint-dev
+      VITE_KEYCLOAK_CLIENT_ID: mint-front
+
+  # Override backend to use local code and expose directly
+  backend:
+    build:
+      context: ../mint-server
+      dockerfile: Dockerfile
+    image: mint-back:local
+    ports:
+      - "8000:8000"  # Expose backend directly
+    environment:
+      # Override CORS to allow frontend on port 3000
+      CORS_ORIGIN: http://localhost:3000
+      BACKEND_BASE_URL: https://9a79f6ad7819.ngrok-free.app/api
+      LOG_LEVEL: INFO  # Use INFO level for local development
+      # Integration Keycloak settings
+      KEYCLOAK_SERVER_URL: https://sso.dwcode.team/auth
+      KEYCLOAK_REALM: mint
+      KEYCLOAK_CLIENT_ID: chapsmind-screen-back
+      KEYCLOAK_CLIENT_SECRET:
+      KEYCLOAK_ADMIN_CLIENT_ID: chapsmind-screen-admin
+      KEYCLOAK_ADMIN_CLIENT_SECRET: S9hl6GAkMgbbatwID3mg6P6gWItePYKZ
+    volumes:
+      # Mount local code for hot-reload
+      - ../mint-server/app:/app/app:ro
+      - ../mint-server/alembic:/app/alembic:ro
+      - ../mint-server/alembic.ini:/app/alembic.ini:ro
+
+  # Override celery worker to use local code
+  backend_celery_worker:
+    build:
+      context: ../mint-server
+      dockerfile: Dockerfile
+    image: mint-back:local
+    environment:
+      BACKEND_BASE_URL: https://9a79f6ad7819.ngrok-free.app/api
+      LOG_LEVEL: INFO  # Use INFO level for local development
+    volumes:
+      # Mount local code for hot-reload
+      - ../mint-server/app:/app/app:ro
+      - ../mint-server/alembic:/app/alembic:ro
+
+  # Override flower to use local code
+  backend_celery_flower:
+    build:
+      context: ../mint-server
+      dockerfile: Dockerfile
+    image: mint-back:local
