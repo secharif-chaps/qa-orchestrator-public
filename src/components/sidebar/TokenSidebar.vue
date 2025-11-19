@@ -150,31 +150,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Contact Support Alert -->
-    <div class="px-4 pb-4 dark">
-      <Alert
-        variant="info"
-        :title="$t('sidebar.tokens.needMore', 'Need more Credits?')"
-        :message="
-          $t(
-            'sidebar.tokens.contactSupport',
-            'Contact ChapsVision support to request additional credits',
-          )
-        "
-        icon="fa fa-envelope"
-      >
-        <template #actions>
-          <Button
-            variant="tertiary"
-            size="sm"
-            :label="$t('sidebar.tokens.contactButton', 'Contact Support')"
-            icon="fa fa-envelope"
-            @click="handleContact"
-          />
-        </template>
-      </Alert>
-    </div>
   </div>
 </template>
 
@@ -186,8 +161,6 @@ import { organizationModulesQuery } from '@/queries/tokens'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { recentCompaniesQuery } from '@/queries/companies'
 import Tag from '@/components/ui/Tag.vue'
-import Button from '@/components/ui/Button.vue'
-import Alert from '@/components/ui/Alert.vue'
 import type { Company } from '@/types/company'
 
 const route = useRoute()
@@ -271,9 +244,4 @@ const groupedHistory = computed(() => {
 
 // Combined loading state
 const isLoading = computed(() => isLoadingTokens.value || isLoadingCompanies.value)
-
-// Handle contact button - opens email client
-const handleContact = () => {
-  window.location.href = 'mailto:support.chapsmind@chapsvision.com?subject=Token Refill Request'
-}
 </script>
