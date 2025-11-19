@@ -68,16 +68,7 @@ def _initialize_keycloak_with_retry(
     for attempt in range(1, max_retries + 1):
         start_time = time.time()
         try:
-            logger.info(
-                f"Initializing Keycloak client (attempt {attempt}/{max_retries})",
-                extra={
-                    "server_url": settings.KEYCLOAK_SERVER_URL,
-                    "realm": settings.KEYCLOAK_REALM,
-                    "client_id": settings.KEYCLOAK_CLIENT_ID,
-                    "timeout": 60,
-                    "openid_config_url": openid_config_url,
-                },
-            )
+            logger.info(f"Attempting Keycloak connection (attempt {attempt}/{max_retries})")
 
             # Initialize FastAPIKeycloak with increased timeout (60s instead of default 10s)
             # This handles slow network or Keycloak response times in production
@@ -85,6 +76,7 @@ def _initialize_keycloak_with_retry(
                 server_url=settings.KEYCLOAK_SERVER_URL,
                 client_id=settings.KEYCLOAK_CLIENT_ID,
                 client_secret=settings.KEYCLOAK_CLIENT_SECRET,
+                admin_client_id=settings.KEYCLOAK_ADMIN_CLIENT_ID,
                 admin_client_secret=settings.KEYCLOAK_ADMIN_CLIENT_SECRET,
                 realm=settings.KEYCLOAK_REALM,
                 callback_uri=settings.KEYCLOAK_CALLBACK_URI,
