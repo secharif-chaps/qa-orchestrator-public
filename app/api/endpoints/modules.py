@@ -5,7 +5,7 @@ Token validation endpoints for organization modules
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_keycloak import OIDCUser
 from app.services.token_manager import TokenManager
-from app.core.dependencies import get_token_manager, get_current_user
+from app.core.dependencies import get_token_manager
 from app.core.organization import get_user_organization, OrganizationContext
 from app.core.keycloak import idp
 from app.schemas.module import (
@@ -15,7 +15,6 @@ from app.schemas.module import (
     ModuleUpdateRequest,
     AddTokensRequest
 )
-from app.schemas.user import TokenData
 from app.models.organization import ModuleName
 
 router = APIRouter(
@@ -28,7 +27,7 @@ router = APIRouter(
 async def get_organization_modules(
     organization_id: str,
     token_manager: TokenManager = Depends(get_token_manager),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Get all organization module configurations.
@@ -37,7 +36,7 @@ async def get_organization_modules(
     Users with admin.organizations role can view any organization.
     """
     # Check if user has admin.organizations role or belongs to the organization
-    is_org_admin = current_user.roles and "admin.organizations" in current_user.roles
+    is_org_admin = hasattr(user, 'roles') and user.roles and "admin.organizations" in user.roles
     is_org_member = org_context.organization_id == organization_id
 
     if not (is_org_admin or is_org_member):
@@ -66,7 +65,7 @@ async def get_module_tokens(
     organization_id: str,
     module: ModuleName,
     token_manager: TokenManager = Depends(get_token_manager),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
     """Get current token count for module.
@@ -75,7 +74,7 @@ async def get_module_tokens(
     Users with admin.organizations role can view any organization modules.
     """
     # Check if user has admin.organizations role or belongs to the organization
-    is_org_admin = current_user.roles and "admin.organizations" in current_user.roles
+    is_org_admin = hasattr(user, 'roles') and user.roles and "admin.organizations" in user.roles
     is_org_member = org_context.organization_id == organization_id
 
     if not (is_org_admin or is_org_member):

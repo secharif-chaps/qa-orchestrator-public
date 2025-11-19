@@ -86,7 +86,7 @@ async def global_chat(
         if org_context:
             prepared_contexts['organization'] = {
                 "id": org_context.organization_id,
-                "name": org_context.organization.name,
+                "name": org_context.organization_name,
                 # Add Phase 2 organization context fields when available:
                 # "business_type": organization.business_type,
                 # "business_goals": organization.business_goals,
@@ -94,7 +94,7 @@ async def global_chat(
                 # "products_services": organization.products_services,
                 # "sales_strategy_notes": organization.sales_strategy_notes
             }
-            logger.info(f"Added organization context: {org_context.organization.name}")
+            logger.info(f"Added organization context: {org_context.organization_name}")
 
         # Folder context (Phase 1 - basic support)
         if chat_request.contexts and 'folder' in chat_request.contexts:
