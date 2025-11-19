@@ -4,7 +4,7 @@
       <h3 class="font-semibold text-gray-900 dark:text-white">
         {{ $t('home.recentProjects.title') }}
       </h3>
-      <button class="text-xs text-sage-600 hover:text-sage-800">
+      <button class="text-xs text-sage-600 hover:text-sage-800" @click="router.push('/folders')">
         {{ $t('home.recentProjects.viewAll') }}
       </button>
     </div>

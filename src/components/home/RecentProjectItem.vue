@@ -8,9 +8,7 @@
       <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">
         {{ name }}
       </h4>
-      <p class="text-xs text-gray-500 dark:text-gray-400">
-        {{ folderName }} • {{ timeAgo }}
-      </p>
+      <p class="text-xs text-gray-500 dark:text-gray-400">{{ folderName }} • {{ timeAgo }}</p>
     </div>
     <Tag v-if="badge" :variant="badge.variant" :label="badge.label" size="xs" />
   </div>
@@ -19,6 +17,7 @@
 <script setup lang="ts">
 import Badge from '@/components/ui/Badge.vue'
 import Tag from '@/components/ui/Tag.vue'
+import { useRouter } from 'vue-router'
 
 interface Props {
   id: number
@@ -34,11 +33,11 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const emit = defineEmits<{
-  click: [{ id: number; folderId: string | null | undefined }]
-}>()
-
+const router = useRouter()
 function handleClick() {
-  emit('click', { id: props.id, folderId: props.folderId })
+  console.log(props.folderId)
+  if (props.folderId) {
+    router.push(`/folders/${props.folderId}/companies/${props.id}`)
+  }
 }
 </script>

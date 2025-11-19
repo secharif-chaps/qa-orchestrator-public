@@ -11,29 +11,6 @@
         </div>
       </div>
 
-      <div
-        class="bg-base-300 p-6 rounded-card border-2 border-primary-stroke flex items-center gap-8"
-      >
-        <img
-          src="@/assets/chapse/head.svg"
-          alt="Chapse head character"
-          class="h-12 w-auto object-contain"
-          loading="lazy"
-          style="image-rendering: -webkit-optimize-contrast; image-rendering: smooth"
-        />
-        <div class="flex flex-col gap-2">
-          <h2 class="text-xl font-semibold">{{ $t('home.assistant.greeting') }}</h2>
-          <div class="flex gap-2">
-            <Button variant="secondary" size="sm" icon="fa fa-file-pdf">{{
-              $t('home.assistant.actions.generatePdf')
-            }}</Button>
-            <Button variant="secondary" size="sm" icon="fa fa-search">{{
-              $t('home.assistant.actions.newSearch')
-            }}</Button>
-          </div>
-        </div>
-      </div>
-
       <!-- Main Content Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Recent Projects -->
@@ -85,9 +62,6 @@ const userDisplayName = computed(() => {
   if (!user) return 'User'
   return user.profile.given_name || user.profile.preferred_username || user.profile.name || 'User'
 })
-
-// Fetch current organization from JWT token
-const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
 
 // Fetch recent companies (5 most recent with folder info)
 const {

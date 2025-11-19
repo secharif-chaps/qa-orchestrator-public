@@ -47,11 +47,12 @@
                     <span
                       class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 bg-red-500/20 text-red-300"
                     >
-                      -1
+                      -35
                     </span>
                   </div>
                   <p class="text-xs text-sage-400 mt-1">
-                    {{ $t('sidebar.tokens.createdBy', 'Fiche créée par') }} {{ company.owner_username }}
+                    {{ $t('sidebar.tokens.createdBy', 'Fiche créée par') }}
+                    {{ company.owner_username }}
                   </p>
                 </div>
               </div>
@@ -85,11 +86,12 @@
                     <span
                       class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 bg-red-500/20 text-red-300"
                     >
-                      -1
+                      -35
                     </span>
                   </div>
                   <p class="text-xs text-sage-400 mt-1">
-                    {{ $t('sidebar.tokens.createdBy', 'Fiche créée par') }} {{ company.owner_username }}
+                    {{ $t('sidebar.tokens.createdBy', 'Fiche créée par') }}
+                    {{ company.owner_username }}
                   </p>
                 </div>
               </div>
@@ -123,11 +125,12 @@
                     <span
                       class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 bg-red-500/20 text-red-300"
                     >
-                      -1
+                      -35
                     </span>
                   </div>
                   <p class="text-xs text-sage-400 mt-1">
-                    {{ $t('sidebar.tokens.createdBy', 'Fiche créée par') }} {{ company.owner_username }}
+                    {{ $t('sidebar.tokens.createdBy', 'Fiche créée par') }}
+                    {{ company.owner_username }}
                   </p>
                 </div>
               </div>
@@ -182,13 +185,11 @@ import { useRoute } from 'vue-router'
 import { organizationModulesQuery } from '@/queries/tokens'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { recentCompaniesQuery } from '@/queries/companies'
-import { useAuthStore } from '@/stores/auth'
 import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 import Alert from '@/components/ui/Alert.vue'
 import type { Company } from '@/types/company'
 
-const authStore = useAuthStore()
 const route = useRoute()
 
 // Check if we're on the token history page
@@ -200,8 +201,7 @@ const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => (
 // Fetch organization modules to get total tokens
 const { data: modulesData, isLoading: isLoadingTokens } = useQuery(
   organizationModulesQuery,
-  () => ({ organizationId: currentOrganization.value?.id || '' }),
-  { enabled: () => !!currentOrganization.value?.id },
+  () => ({ organizationId: currentOrganization.value!.id }),
 )
 
 // Fetch recent companies for token history (10 most recent)
