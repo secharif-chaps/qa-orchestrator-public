@@ -237,6 +237,42 @@ def _initialize_keycloak_with_retry(
             time.sleep(backoff)
             backoff *= 2
 
+        except AttributeError as e:
+            # AttributeError during initialization - usually from fastapi-keycloak
+            # when response.json() returns None instead of valid JSON
+            # This happens when Keycloak returns empty/malformed response
+            elapsed_time = time.time() - start_time
+            error_details = {
+                "exception_type": "AttributeError",
+                "error_message": str(e),
+                "server_url": settings.KEYCLOAK_SERVER_URL,
+                "openid_config_url": openid_config_url,
+                "elapsed_seconds": round(elapsed_time, 2),
+                "attempt": attempt,
+                "max_retries": max_retries,
+                "hint": "Keycloak returned empty/null response during admin token request",
+            }
+
+            if attempt == max_retries:
+                logger.critical(
+                    "Keycloak initialization failed after all retries - received null/empty response from Keycloak",
+                    exc_info=True,
+                    extra=error_details,
+                )
+                raise ConnectionError(
+                    f"Keycloak at {settings.KEYCLOAK_SERVER_URL} returned null/empty response "
+                    f"after {max_retries} attempts. This usually indicates Keycloak is unreachable, "
+                    f"misconfigured, or returning invalid responses. Error: {str(e)}"
+                ) from e
+
+            logger.warning(
+                f"Keycloak returned null response (attempt {attempt}/{max_retries}), retrying in {backoff}s",
+                extra={**error_details, "backoff_seconds": backoff},
+            )
+
+            time.sleep(backoff)
+            backoff *= 2
+
         except RequestException as e:
             # Generic requests exception (catch-all for other request errors)
             elapsed_time = time.time() - start_time
