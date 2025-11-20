@@ -37,6 +37,7 @@ def setup_logging(level: str = "INFO") -> None:
     # Silence noisy third-party libraries
     logging.getLogger("urllib3").setLevel(logging.WARNING)
     logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+    logging.getLogger("httpx").setLevel(logging.WARNING)
 
 
 def get_logger(name: str) -> logging.Logger:
