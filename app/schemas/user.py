@@ -65,3 +65,20 @@ class LoginRequest(BaseModel):
 
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
+
+
+# Admin user management schemas
+class AdminUserResponse(BaseModel):
+    """Response schema for admin user list endpoint.
+
+    This schema represents user data returned from the admin users endpoint,
+    including organization membership and permissions from Keycloak.
+    """
+    user_id: str  # Keycloak user UUID
+    username: str
+    email: str
+    organization_id: Optional[str] = None  # Keycloak organization UUID
+    organization_name: Optional[str] = None
+    status: str  # "active" or "revoked"
+    created_at: str  # ISO timestamp
+    permissions: List[str]  # Application permission roles from Keycloak

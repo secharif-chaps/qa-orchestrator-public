@@ -632,19 +632,42 @@ class KeycloakAdminService:
             True if sync was successful, False otherwise
         """
         try:
+            # Define internal Keycloak roles that should never be removed
+            internal_roles = {
+                "uma_authorization",
+                "offline_access",
+                "default-roles-" + settings.KEYCLOAK_REALM.lower()
+            }
+
             # Get all available realm roles
             all_realm_roles = await self.get_realm_roles()
             role_name_to_obj = {role['name']: role for role in all_realm_roles}
 
             # Get current user roles
             current_user_roles = await self.get_user_realm_roles(user_id)
-            current_role_names = {role['name'] for role in current_user_roles}
+
+            # Filter out internal roles and realm-management roles from current roles
+            # We only want to manage application-level permissions
+            current_role_names = {
+                role['name'] for role in current_user_roles
+                if role['name'] not in internal_roles and
+                   not role['name'].startswith("realm-management")
+            }
 
             target_role_names = set(target_roles)
 
             # Determine roles to add and remove
+            # Now we're only comparing application roles, not internal Keycloak roles
             roles_to_add = target_role_names - current_role_names
             roles_to_remove = current_role_names - target_role_names
+
+            logger.info(
+                f"Role sync calculation for user {user_id}: "
+                f"current={list(current_role_names)}, "
+                f"target={list(target_role_names)}, "
+                f"to_add={list(roles_to_add)}, "
+                f"to_remove={list(roles_to_remove)}"
+            )
 
             success = True
 
@@ -989,6 +1012,71 @@ class KeycloakAdminService:
                 }
             )
             return None
+
+    async def get_user_organizations(self, user_id: str) -> List[Dict[str, Any]]:
+        """
+        Get all organizations that a user belongs to
+
+        Args:
+            user_id: Keycloak user UUID
+
+        Returns:
+            List of organization dictionaries with id and name
+        """
+        try:
+            logger.info(
+                "Fetching organizations for user from Keycloak",
+                extra={
+                    "user_id": user_id,
+                    "endpoint": f"{self.server_url}/admin/realms/{self.realm}/users/{user_id}/organizations"
+                }
+            )
+
+            response = await self._make_admin_request(
+                "GET",
+                f"/users/{user_id}/organizations"
+            )
+
+            if response.status_code == 200:
+                organizations = response.json()
+                logger.info(
+                    "Successfully retrieved user organizations",
+                    extra={
+                        "user_id": user_id,
+                        "organization_count": len(organizations)
+                    }
+                )
+                return organizations
+            elif response.status_code == 404:
+                logger.warning(
+                    "User not found when fetching organizations",
+                    extra={"user_id": user_id}
+                )
+                return []
+            else:
+                logger.error(
+                    "Failed to get user organizations",
+                    extra={
+                        "status_code": response.status_code,
+                        "response_text": response.text,
+                        "user_id": user_id
+                    }
+                )
+                return []
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(
+                "Exception while getting user organizations",
+                exc_info=True,
+                extra={
+                    "user_id": user_id,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e)
+                }
+            )
+            return []
 
 
 # Global instance

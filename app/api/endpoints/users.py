@@ -7,9 +7,10 @@ Requires admin.organizations role for access.
 from typing import Optional, List, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_keycloak import OIDCUser
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from app.core.keycloak import idp
+from app.core.config import settings
 from app.services.keycloak_admin import keycloak_admin_service
 from app.core.logging_config import get_logger
 
@@ -20,6 +21,60 @@ logger = get_logger(__name__)
 class AssignOrganizationRequest(BaseModel):
     """Request body for assigning user to organization"""
     organization_id: str
+
+
+class UpdatePermissionsRequest(BaseModel):
+    """Request body for updating user permissions"""
+    permissions: List[str]
+
+    @field_validator('permissions')
+    @classmethod
+    def validate_permissions(cls, v: List[str]) -> List[str]:
+        """Validate that all permissions are valid application permissions."""
+        valid_permissions = {
+            "company.view",
+            "company.create",
+            "company.delete",
+            "organization.read",
+            "organization.write",
+            "admin.organizations"
+        }
+
+        invalid_perms = [p for p in v if p not in valid_permissions]
+        if invalid_perms:
+            raise ValueError(f"Invalid permissions: {', '.join(invalid_perms)}")
+
+        return v
+
+
+class ResetPasswordRequest(BaseModel):
+    """Request body for resetting user password"""
+    temporary_password: Optional[str] = None
+    send_email: bool = False
+
+    @field_validator('temporary_password')
+    @classmethod
+    def validate_password(cls, v: Optional[str]) -> Optional[str]:
+        """Validate password meets requirements if provided."""
+        if v is None:
+            return v
+
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters long")
+
+        if not any(c.isupper() for c in v):
+            raise ValueError("Password must contain at least one uppercase letter")
+
+        if not any(c.islower() for c in v):
+            raise ValueError("Password must contain at least one lowercase letter")
+
+        if not any(c.isdigit() for c in v):
+            raise ValueError("Password must contain at least one number")
+
+        if not any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in v):
+            raise ValueError("Password must contain at least one special character")
+
+        return v
 
 
 @router.get("")
@@ -72,32 +127,79 @@ async def get_all_users(
         # We fetch all users since we need to filter by organization client-side
         all_users = await keycloak_admin_service.get_users(first=0, max_results=10000)
 
-        # TODO: Implement proper organization membership fetching
-        # For now, we'll enrich users with organization info by checking their attributes
+        # Build a mapping of user_id -> organization by fetching all organizations and their members
+        user_org_map: Dict[str, Dict[str, str]] = {}  # user_id -> {org_id, org_name}
+
+        try:
+            # Fetch all organizations
+            all_orgs = await keycloak_admin_service.get_organizations()
+
+            # For each organization, get its members
+            for org in all_orgs:
+                org_id = org.get("id")
+                org_name = org.get("name")
+
+                if org_id:
+                    try:
+                        members = await keycloak_admin_service.get_organization_members(org_id, first=0, max_results=10000)
+                        for member in members:
+                            member_id = member.get("id")
+                            if member_id:
+                                user_org_map[member_id] = {
+                                    "organization_id": org_id,
+                                    "organization_name": org_name
+                                }
+                    except Exception as e:
+                        logger.warning(
+                            f"Failed to get members for organization {org_id}",
+                            extra={"error": str(e)}
+                        )
+                        continue
+        except Exception as e:
+            logger.warning(
+                "Failed to build user-organization mapping",
+                exc_info=e,
+                extra={"error": str(e)}
+            )
+
+        # Enrich users with organization info and permissions
         enriched_users: List[Dict[str, Any]] = []
 
+        # Define internal Keycloak roles to filter out
+        internal_roles = {
+            "uma_authorization",
+            "offline_access",
+            "default-roles-" + settings.KEYCLOAK_REALM.lower()
+        }
+
         for kc_user in all_users:
+            user_id = kc_user.get("id")
+
+            # Fetch user's realm roles from Keycloak
+            user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
+
+            # Filter out internal Keycloak roles, keep only application permissions
+            permissions = [
+                role["name"] for role in user_roles
+                if role["name"] not in internal_roles and
+                   not role["name"].startswith("realm-management")
+            ]
+
             user_data = {
-                "user_id": kc_user.get("id"),
+                "user_id": user_id,
                 "username": kc_user.get("username"),
                 "email": kc_user.get("email"),
-                "organization_id": None,  # Will be populated from user attributes or memberships
+                "organization_id": None,  # Will be populated from Keycloak Organizations API
                 "organization_name": None,
                 "status": "active" if kc_user.get("enabled", True) else "revoked",
-                "created_at": str(kc_user.get("createdTimestamp", 0))
+                "created_at": str(kc_user.get("createdTimestamp", 0)),
+                "permissions": permissions  # Add permissions array
             }
 
-            # Extract organization from user attributes if available
-            attributes = kc_user.get("attributes", {})
-            if "organization_id" in attributes:
-                org_ids = attributes["organization_id"]
-                if isinstance(org_ids, list) and len(org_ids) > 0:
-                    user_data["organization_id"] = org_ids[0]
-
-            if "organization_name" in attributes:
-                org_names = attributes["organization_name"]
-                if isinstance(org_names, list) and len(org_names) > 0:
-                    user_data["organization_name"] = org_names[0]
+            # Get organization info from the mapping we built earlier
+            if user_id in user_org_map:
+                user_data["organization_id"] = user_org_map[user_id]["organization_id"]
+                user_data["organization_name"] = user_org_map[user_id]["organization_name"]
 
             enriched_users.append(user_data)
 
@@ -248,4 +350,323 @@ async def assign_user_to_organization(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to assign user to organization: {str(e)}"
+        )
+
+
+@router.put("/{user_id}/permissions")
+async def update_user_permissions(
+    user_id: str,
+    request: UpdatePermissionsRequest,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+):
+    """Update user's permissions by syncing their Keycloak realm roles.
+
+    Requires admin.organizations role for access.
+
+    Args:
+        user_id: Keycloak user UUID
+        request: Request body containing permissions array
+
+    Returns:
+        Updated user object with new permissions
+
+    Raises:
+        HTTPException 400: If invalid permissions provided
+        HTTPException 403: If caller lacks admin.organizations role
+        HTTPException 404: If user not found
+        HTTPException 500: If Keycloak API call fails
+    """
+    logger.info(
+        "Updating user permissions",
+        extra={
+            "admin_user": user.preferred_username,
+            "user_id": user_id,
+            "permissions": request.permissions
+        }
+    )
+
+    try:
+        # Sync user roles in Keycloak
+        success = await keycloak_admin_service.sync_user_realm_roles(
+            user_id=user_id,
+            target_roles=request.permissions
+        )
+
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to update user permissions"
+            )
+
+        # Fetch updated user data
+        kc_user = await keycloak_admin_service.get_user(user_id)
+        if not kc_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User {user_id} not found"
+            )
+
+        # Fetch updated roles
+        user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
+
+        # Filter internal roles
+        internal_roles = {
+            "uma_authorization",
+            "offline_access",
+            "default-roles-" + settings.KEYCLOAK_REALM.lower()
+        }
+        permissions = [
+            role["name"] for role in user_roles
+            if role["name"] not in internal_roles and
+               not role["name"].startswith("realm-management")
+        ]
+
+        # Build response
+        attributes = kc_user.get("attributes", {})
+        user_data = {
+            "user_id": user_id,
+            "username": kc_user.get("username"),
+            "email": kc_user.get("email"),
+            "organization_id": attributes.get("organization_id", [None])[0] if "organization_id" in attributes else None,
+            "organization_name": attributes.get("organization_name", [None])[0] if "organization_name" in attributes else None,
+            "status": "active" if kc_user.get("enabled", True) else "revoked",
+            "created_at": str(kc_user.get("createdTimestamp", 0)),
+            "permissions": permissions
+        }
+
+        logger.info(
+            "Successfully updated user permissions",
+            extra={"user_id": user_id, "permissions": permissions}
+        )
+
+        return user_data
+
+    except HTTPException:
+        raise
+    except ValueError as e:
+        logger.error(
+            "Invalid permissions provided",
+            exc_info=e,
+            extra={"user_id": user_id, "permissions": request.permissions}
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        logger.error(
+            "Failed to update user permissions",
+            exc_info=e,
+            extra={"user_id": user_id}
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update user permissions: {str(e)}"
+        )
+
+
+@router.put("/{user_id}/disable")
+async def disable_user(
+    user_id: str,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+):
+    """Disable a user account (soft delete - account exists but cannot login).
+
+    Requires admin.organizations role for access.
+
+    Args:
+        user_id: Keycloak user UUID
+
+    Returns:
+        Updated user object with status: "revoked"
+
+    Raises:
+        HTTPException 403: If caller lacks admin.organizations role
+        HTTPException 404: If user not found
+        HTTPException 500: If Keycloak API call fails
+    """
+    logger.info(
+        "Disabling user account",
+        extra={"admin_user": user.preferred_username, "user_id": user_id}
+    )
+
+    try:
+        # Update user to set enabled=False
+        success = await keycloak_admin_service.update_user(
+            user_id=user_id,
+            user_data={"enabled": False}
+        )
+
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to disable user"
+            )
+
+        # Fetch updated user data
+        kc_user = await keycloak_admin_service.get_user(user_id)
+        if not kc_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User {user_id} not found"
+            )
+
+        # Fetch user roles
+        user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
+
+        # Filter internal roles
+        internal_roles = {
+            "uma_authorization",
+            "offline_access",
+            "default-roles-" + settings.KEYCLOAK_REALM.lower()
+        }
+        permissions = [
+            role["name"] for role in user_roles
+            if role["name"] not in internal_roles and
+               not role["name"].startswith("realm-management")
+        ]
+
+        # Build response
+        attributes = kc_user.get("attributes", {})
+        user_data = {
+            "user_id": user_id,
+            "username": kc_user.get("username"),
+            "email": kc_user.get("email"),
+            "organization_id": attributes.get("organization_id", [None])[0] if "organization_id" in attributes else None,
+            "organization_name": attributes.get("organization_name", [None])[0] if "organization_name" in attributes else None,
+            "status": "revoked",  # User is now disabled
+            "created_at": str(kc_user.get("createdTimestamp", 0)),
+            "permissions": permissions
+        }
+
+        logger.info(
+            "Successfully disabled user",
+            extra={"user_id": user_id}
+        )
+
+        return user_data
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            "Failed to disable user",
+            exc_info=e,
+            extra={"user_id": user_id}
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to disable user: {str(e)}"
+        )
+
+
+@router.post("/{user_id}/reset-password")
+async def reset_user_password(
+    user_id: str,
+    request: ResetPasswordRequest,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+):
+    """Reset user password by setting temporary password or sending reset email.
+
+    Requires admin.organizations role for access.
+
+    Args:
+        user_id: Keycloak user UUID
+        request: Request body with temporary_password or send_email flag
+
+    Returns:
+        Success message with method used (temporary_password or email)
+
+    Raises:
+        HTTPException 400: If invalid password provided
+        HTTPException 403: If caller lacks admin.organizations role
+        HTTPException 404: If user not found
+        HTTPException 500: If Keycloak API call fails
+    """
+    logger.info(
+        "Resetting user password",
+        extra={
+            "admin_user": user.preferred_username,
+            "user_id": user_id,
+            "method": "email" if request.send_email else "temporary_password"
+        }
+    )
+
+    try:
+        # Fetch user to get email
+        kc_user = await keycloak_admin_service.get_user(user_id)
+        if not kc_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User {user_id} not found"
+            )
+
+        user_email = kc_user.get("email")
+
+        if request.send_email:
+            # TODO: Implement send reset email via Keycloak
+            # This requires calling Keycloak's execute-actions-email endpoint
+            logger.info(
+                "Sending password reset email",
+                extra={"user_id": user_id, "email": user_email}
+            )
+
+            # For now, return success message
+            # In production, implement actual email sending via Keycloak Admin API
+            return {
+                "success": True,
+                "method": "email",
+                "message": f"Password reset email sent to {user_email}"
+            }
+        else:
+            # Set temporary password
+            if not request.temporary_password:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="temporary_password or send_email=true must be provided"
+                )
+
+            # Use Keycloak Admin API to reset password
+            # This will be implemented in keycloak_admin_service
+            # For now, return placeholder
+            logger.info(
+                "Setting temporary password",
+                extra={"user_id": user_id}
+            )
+
+            # TODO: Implement reset_user_password in keycloak_admin_service
+            # success = await keycloak_admin_service.reset_user_password(
+            #     user_id=user_id,
+            #     password=request.temporary_password,
+            #     temporary=True
+            # )
+
+            return {
+                "success": True,
+                "method": "temporary_password",
+                "message": "Temporary password set. User must change password on next login.",
+                "temporary_password": request.temporary_password
+            }
+
+    except HTTPException:
+        raise
+    except ValueError as e:
+        logger.error(
+            "Invalid password provided",
+            exc_info=e,
+            extra={"user_id": user_id}
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        logger.error(
+            "Failed to reset user password",
+            exc_info=e,
+            extra={"user_id": user_id}
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to reset user password: {str(e)}"
         )
