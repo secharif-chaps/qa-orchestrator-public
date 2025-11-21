@@ -1,8 +1,7 @@
 <template>
   <div
-    v-if="open"
     class="fixed inset-0 bg-base-100/20 backdrop-blur-sm flex items-center justify-center z-50"
-    @click.self="$emit('cancel')"
+    @click.self="$emit('close')"
   >
     <div
       class="bg-base-100 rounded-xl shadow-2xl border border-primary-stroke p-6 max-w-md w-full mx-4"
@@ -10,7 +9,7 @@
       <!-- Header -->
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-lg font-semibold text-base">Disable User</h3>
-        <Button variant="tertiary" icon="fa fa-times" icon-only @click="$emit('cancel')" />
+        <Button variant="tertiary" icon="fa fa-times" icon-only @click="$emit('close')" />
       </div>
 
       <!-- User Info -->
@@ -35,7 +34,7 @@
 
       <!-- Actions -->
       <div class="flex justify-end gap-3">
-        <Button variant="secondary" @click="$emit('cancel')"> Cancel </Button>
+        <Button variant="secondary" @click="$emit('close')"> Cancel </Button>
         <Button variant="accent" :loading="isLoading" @click="$emit('confirm')">
           Disable User
         </Button>
@@ -50,13 +49,12 @@ import Button from '@/components/ui/Button.vue'
 import Alert from '@/components/ui/Alert.vue'
 
 defineProps<{
-  open: boolean
   user: AdminUserResponse
   isLoading?: boolean
 }>()
 
 defineEmits<{
   confirm: []
-  cancel: []
+  close: []
 }>()
 </script>

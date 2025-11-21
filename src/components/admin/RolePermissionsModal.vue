@@ -1,8 +1,7 @@
 <template>
   <div
-    v-if="open"
     class="fixed inset-0 bg-base-100/20 backdrop-blur-sm flex items-center justify-center z-50"
-    @click.self="$emit('cancel')"
+    @click.self="$emit('close')"
   >
     <div
       class="bg-base-100 rounded-xl shadow-2xl border border-primary-stroke p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
@@ -15,7 +14,7 @@
             Select a role for <span class="font-semibold">{{ user.username }}</span>
           </p>
         </div>
-        <Button variant="tertiary" icon="fa fa-times" icon-only @click="$emit('cancel')" />
+        <Button variant="tertiary" icon="fa fa-times" icon-only @click="$emit('close')" />
       </div>
 
       <!-- Warning for custom permissions -->
@@ -47,7 +46,7 @@
 
       <!-- Actions -->
       <div class="flex justify-end gap-3">
-        <Button variant="secondary" @click="$emit('cancel')"> Cancel </Button>
+        <Button variant="secondary" @click="$emit('close')"> Cancel </Button>
         <Button variant="primary" :disabled="!selectedRoleId" @click="handleSave">
           Save Permissions
         </Button>
@@ -65,13 +64,12 @@ import Alert from '@/components/ui/Alert.vue'
 import RoleBlock from './RoleBlock.vue'
 
 const props = defineProps<{
-  open: boolean
   user: AdminUserResponse
 }>()
 
 const emit = defineEmits<{
   confirm: [permissions: string[]]
-  cancel: []
+  close: []
 }>()
 
 const { getAllRoles, getUserRole, getPermissionsForRole } = useRoles()
@@ -84,15 +82,13 @@ const hasCustomPermissions = computed(() => {
   return getUserRole(props.user.permissions) === null
 })
 
-// Initialize selected role when modal opens or user changes
+// Initialize selected role when user changes
 watch(
-  () => [props.open, props.user.user_id],
+  () => props.user.user_id,
   () => {
-    if (props.open) {
-      // Try to match user's current permissions to a role
-      const matchedRole = getUserRole(props.user.permissions)
-      selectedRoleId.value = matchedRole?.id ?? null
-    }
+    // Try to match user's current permissions to a role
+    const matchedRole = getUserRole(props.user.permissions)
+    selectedRoleId.value = matchedRole?.id ?? null
   },
   { immediate: true },
 )
