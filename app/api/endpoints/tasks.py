@@ -1,13 +1,14 @@
 from typing import List
 import logging
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi_keycloak import OIDCUser
 
 from app.services.company import CompanyService
-from app.core.dependencies import get_company_service, get_current_user
+from app.core.dependencies import get_company_service
+from app.core.keycloak import idp
 from app.core.organization import get_user_organization, OrganizationContext
 from app.core.security import verify_company_organization_access
 from app.schemas.task import TaskResponse, TaskTokenUpdate
-from app.schemas.user import TokenData
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -72,10 +73,13 @@ router = APIRouter(
 async def get_company_tasks(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Get all tasks for a company (if user has access to the company's organization)"""
+    """Get all tasks for a company (if user has access to the company's organization).
+
+    Requires authentication.
+    """
     company = service.get_company(company_id)
     verify_company_organization_access(company, org_context)
     return company.tasks
@@ -84,13 +88,16 @@ async def get_company_tasks(
 async def restart_task(
     task_id: int,
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Restart a specific task (if user has access to the company's organization)"""
+    """Restart a specific task (if user has access to the company's organization).
+
+    Requires authentication.
+    """
     # Get companies for the user's organization
     user_companies = service.get_all_companies(organization_id=org_context.organization_id)
-    
+
     task = None
     for company in user_companies:
         for company_task in company.tasks:
@@ -99,13 +106,13 @@ async def restart_task(
                 break
         if task:
             break
-    
+
     if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Task with ID {task_id} not found or you don't have permission to access it"
         )
-    
+
     # Restart the task
     restarted_task = await service.restart_task(task_id)
     return restarted_task
@@ -115,13 +122,16 @@ async def update_task_tokens(
     task_id: int,
     token_data: TaskTokenUpdate,
     service: CompanyService = Depends(get_company_service),
-    current_user: TokenData = Depends(get_current_user),
+    user: OIDCUser = Depends(idp.get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Update token usage information for a task (used by Dify workflows)"""
+    """Update token usage information for a task (used by Dify workflows).
+
+    Requires authentication.
+    """
     # First, find the task and verify ownership
     user_companies = service.get_all_companies(organization_id=org_context.organization_id)
-    
+
     task = None
     for company in user_companies:
         for company_task in company.tasks:
@@ -130,13 +140,13 @@ async def update_task_tokens(
                 break
         if task:
             break
-    
+
     if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Task with ID {task_id} not found or you don't have permission to access it"
         )
-    
+
     # Update token information
     updated_task = service.update_task_tokens(task_id, token_data)
     return updated_task 
