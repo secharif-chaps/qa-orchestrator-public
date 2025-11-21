@@ -26,13 +26,14 @@ class Settings(BaseSettings):
     CORS_ORIGIN: str = "http://localhost:3000"
     
     # Keycloak settings
-    KEYCLOAK_SERVER_URL: str = "http://10.0.1.2:8080"
-    KEYCLOAK_REALM: str = "mint-dev"
+    
+    KEYCLOAK_SERVER_URL: str = "https://keycloak.preprod.chapsmind.com"
+    KEYCLOAK_REALM: str = "mint-preprod"
     KEYCLOAK_CLIENT_ID: str = "mint-back"
     KEYCLOAK_CLIENT_SECRET: Optional[str] = None
     KEYCLOAK_CALLBACK_URI: str = "http://localhost:8000/callback"
-    KEYCLOAK_ADMIN_CLIENT_ID: str = "admin-cli"
-    KEYCLOAK_ADMIN_CLIENT_SECRET: str = "admin-cli-secret"
+    KEYCLOAK_ADMIN_CLIENT_ID: str = "chapsmind-screen-admin"
+    KEYCLOAK_ADMIN_CLIENT_SECRET: str = "yZwW1YGzxKALy7GnWsHZ4szOwpRwVk6E"
     
     # JWT settings
     JWT_ALGORITHM: str = "RS256"
