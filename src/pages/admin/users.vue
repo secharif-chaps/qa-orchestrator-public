@@ -53,7 +53,10 @@
       v-else-if="users"
       :users="users.data"
       :has-filters="hasActiveFilters"
-      @assign-organization="showAssignModal"
+      @change-organization="showAssignModal"
+      @manage-permissions="showPermissionsModal"
+      @disable-user="showDisableModal"
+      @reset-password="showResetPasswordModal"
       @clear-filters="clearFilters"
     />
 
@@ -74,6 +77,27 @@
       :is-loading="isAssigning"
       @confirm="handleAssignOrganization"
       @cancel="userToAssign = null"
+    />
+
+    <!-- Role Permissions Modal -->
+    <RolePermissionsModal
+      v-if="userToManagePermissions"
+      :user="userToManagePermissions"
+      @close="userToManagePermissions = null"
+    />
+
+    <!-- Disable User Modal -->
+    <DisableUserModal
+      v-if="userToDisable"
+      :user="userToDisable"
+      @close="userToDisable = null"
+    />
+
+    <!-- Reset Password Modal -->
+    <ResetPasswordModal
+      v-if="userToResetPassword"
+      :user="userToResetPassword"
+      @close="userToResetPassword = null"
     />
   </div>
 </template>
@@ -100,6 +124,9 @@ import { allOrganizationsQuery } from '@/queries/organization-admin'
 import type { PaginationMeta } from '@/types/pagination'
 import type { AdminUserResponse, AdminUserQueryParams } from '@/types/admin-user'
 import UserOrganizationModal from '@/components/admin/UserOrganizationModal.vue'
+import RolePermissionsModal from '@/components/admin/RolePermissionsModal.vue'
+import DisableUserModal from '@/components/admin/DisableUserModal.vue'
+import ResetPasswordModal from '@/components/admin/ResetPasswordModal.vue'
 
 // Query parameters state
 const queryParams = reactive<AdminUserQueryParams>({
@@ -134,6 +161,9 @@ const { assignOrganization, isLoading: isAssigning } = useAssignUserOrganization
 
 // Modal state
 const userToAssign = ref<AdminUserResponse | null>(null)
+const userToManagePermissions = ref<AdminUserResponse | null>(null)
+const userToDisable = ref<AdminUserResponse | null>(null)
+const userToResetPassword = ref<AdminUserResponse | null>(null)
 
 // Users data
 const users = computed(() => usersResponse.value)
@@ -204,6 +234,18 @@ const clearFilters = () => {
 // Actions
 const showAssignModal = (user: AdminUserResponse) => {
   userToAssign.value = user
+}
+
+const showPermissionsModal = (user: AdminUserResponse) => {
+  userToManagePermissions.value = user
+}
+
+const showDisableModal = (user: AdminUserResponse) => {
+  userToDisable.value = user
+}
+
+const showResetPasswordModal = (user: AdminUserResponse) => {
+  userToResetPassword.value = user
 }
 
 const handleAssignOrganization = async (organizationId: string) => {

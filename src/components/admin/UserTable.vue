@@ -7,7 +7,10 @@
         v-for="user in users"
         :key="user.user_id"
         :user="user"
-        @assign-organization="$emit('assign-organization', $event)"
+        @change-organization="$emit('change-organization', $event)"
+        @manage-permissions="$emit('manage-permissions', $event)"
+        @disable-user="$emit('disable-user', $event)"
+        @reset-password="$emit('reset-password', $event)"
       />
     </div>
 
@@ -33,7 +36,10 @@ interface Props {
 defineProps<Props>()
 
 defineEmits<{
-  'assign-organization': [user: AdminUserResponse]
+  'change-organization': [user: AdminUserResponse]
+  'manage-permissions': [user: AdminUserResponse]
+  'disable-user': [user: AdminUserResponse]
+  'reset-password': [user: AdminUserResponse]
   'clear-filters': []
 }>()
 </script>
