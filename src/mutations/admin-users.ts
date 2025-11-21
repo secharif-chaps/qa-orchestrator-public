@@ -3,7 +3,7 @@
  */
 
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { assignUserOrganization } from '@/api/admin-users'
+import { assignUserOrganization, updateUserPermissions } from '@/api/admin-users'
 import { ADMIN_USER_QUERY_KEYS } from '@/queries/admin-users'
 import { ORGANIZATION_QUERY_KEYS } from '@/queries/organization-admin'
 import { toast } from '@/utils/toast'
@@ -46,5 +46,41 @@ export const useAssignUserOrganization = defineMutation(() => {
   return {
     ...mutation,
     assignOrganization: mutate,
+  }
+})
+
+/**
+ * Mutation to update user permissions (roles)
+ */
+export const useUpdateUserPermissions = defineMutation(() => {
+  const queryCache = useQueryCache()
+
+  const { mutate, ...mutation } = useMutation({
+    mutation: ({ userId, permissions }: { userId: string; permissions: string[] }) =>
+      updateUserPermissions(userId, permissions),
+    onSuccess: (_, { userId }) => {
+      toast.success('Permissions updated successfully!')
+
+      // Invalidate admin user queries to refresh the list
+      queryCache.invalidateQueries({ key: ADMIN_USER_QUERY_KEYS.root })
+
+      // If admin changed their own permissions, page needs to reload
+      // to update permissions throughout the application
+      const authStore = useAuthStore()
+      if (userId === authStore.user?.sub) {
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000)
+      }
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.message || 'Failed to update permissions'
+      toast.error(errorMessage)
+    },
+  })
+
+  return {
+    ...mutation,
+    updatePermissions: mutate,
   }
 })
