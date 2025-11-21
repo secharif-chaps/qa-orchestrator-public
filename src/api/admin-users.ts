@@ -41,3 +41,10 @@ export const assignUserOrganization = async (userId: string, organizationId: str
     { organization_id: organizationId } satisfies AssignOrganizationRequest,
   )
 }
+
+/**
+ * Update user's permissions (roles)
+ */
+export const updateUserPermissions = async (userId: string, permissions: string[]) => {
+  return apiClient.put(`/users/${userId}/permissions`, { permissions })
+}

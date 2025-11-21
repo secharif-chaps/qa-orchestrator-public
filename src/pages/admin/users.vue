@@ -83,6 +83,7 @@
     <RolePermissionsModal
       v-if="userToManagePermissions"
       :user="userToManagePermissions"
+      @confirm="handleUpdatePermissions"
       @close="userToManagePermissions = null"
     />
 
@@ -118,7 +119,7 @@ import Pagination from '@/components/ui/Pagination.vue'
 import UserFilters from '@/components/admin/UserFilters.vue'
 import UserTable from '@/components/admin/UserTable.vue'
 
-import { useAssignUserOrganization } from '@/mutations/admin-users'
+import { useAssignUserOrganization, useUpdateUserPermissions } from '@/mutations/admin-users'
 import { adminUsersQuery } from '@/queries/admin-users'
 import { allOrganizationsQuery } from '@/queries/organization-admin'
 import type { PaginationMeta } from '@/types/pagination'
@@ -158,6 +159,7 @@ const { data: organizationsResponse } = useQuery(allOrganizationsQuery, () => ({
 
 // Mutations
 const { assignOrganization, isLoading: isAssigning } = useAssignUserOrganization()
+const { updatePermissions, isLoading: isUpdatingPermissions } = useUpdateUserPermissions()
 
 // Modal state
 const userToAssign = ref<AdminUserResponse | null>(null)
@@ -256,6 +258,17 @@ const handleAssignOrganization = async (organizationId: string) => {
     userToAssign.value = null
   } catch (error) {
     console.error('Failed to assign organization:', error)
+  }
+}
+
+const handleUpdatePermissions = async (permissions: string[]) => {
+  if (!userToManagePermissions.value) return
+
+  try {
+    await updatePermissions({ userId: userToManagePermissions.value.user_id, permissions })
+    userToManagePermissions.value = null
+  } catch (error) {
+    console.error('Failed to update permissions:', error)
   }
 }
 </script>
