@@ -6,15 +6,14 @@
           <i class="fa fa-box-open"></i>
           <span>{{ $t('profile.sections.products.title') }}</span>
         </h3>
-        <RouterLink :to="`/companies/${companyId}/products`">
-          <Button
-            variant="tertiary"
-            label="View All"
-            icon="fa fa-arrow-right"
-            icon-position="right"
-            size="sm"
-          />
-        </RouterLink>
+        <Button
+          variant="tertiary"
+          label="View Products"
+          icon="fa fa-arrow-right"
+          icon-position="right"
+          size="sm"
+          @click="viewProducts"
+        />
       </div>
 
       <!-- Customer Type -->
@@ -136,7 +135,7 @@
 <script lang="ts" setup>
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
-import { useRoute, RouterLink } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Source from '../Source.vue'
@@ -144,8 +143,16 @@ import Alert from '@/components/ui/Alert.vue'
 import Button from '@/components/ui/Button.vue'
 
 const route = useRoute()
+const router = useRouter()
 
 const companyId = computed(() => route.params.companyId as string)
+
+// Function to switch to products section
+const viewProducts = () => {
+  router.push({
+    query: { ...route.query, section: 'products' },
+  })
+}
 
 const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,

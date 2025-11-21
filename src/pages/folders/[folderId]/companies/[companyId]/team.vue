@@ -139,11 +139,6 @@
                     <i class="fab fa-linkedin"></i>
                     <span>{{ $t('team.hierarchy.viewLinkedIn') }}</span>
                   </a>
-
-                  <div class="flex items-start gap-2 text-sm">
-                    <i class="fa fa-map-marker-alt mt-1"></i>
-                    <span>{{ getMockedAddress(selectedNode) }}</span>
-                  </div>
                 </div>
               </div>
             </Panel>
@@ -396,10 +391,6 @@ const getMockedLinkedInUrl = (node: any) => {
   if (!node) return '#'
   const fullName = `${node.firstName}${node.lastName}`.toLowerCase().replace(/[^a-z0-9]/g, '')
   return `https://www.linkedin.com/in/${fullName}`
-}
-
-const getMockedAddress = (node: any) => {
-  return '6 Rue Moyenne, 18000 Bourges'
 }
 
 // New methods for the enhanced team page

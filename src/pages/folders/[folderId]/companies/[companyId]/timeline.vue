@@ -27,13 +27,23 @@
             <i class="fa fa-list"></i>
             <span class="text-lg font-semibold">{{ $t('timeline.title') }}</span>
           </div>
-          <div class="w-64 relative">
-            <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-secondary"></i>
-            <Input
-              v-model="searchQuery"
-              :placeholder="$t('timeline.search.placeholder')"
-              icon="fa fa-search"
+          <div class="flex items-center gap-2">
+            <Button
+              variant="tertiary"
+              :icon="sortAscending ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"
+              icon-only
+              size="sm"
+              :title="sortAscending ? 'Oldest first' : 'Newest first'"
+              @click="toggleSortOrder"
             />
+            <div class="w-64 relative">
+              <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-secondary"></i>
+              <Input
+                v-model="searchQuery"
+                :placeholder="$t('timeline.search.placeholder')"
+                icon="fa fa-search"
+              />
+            </div>
           </div>
         </div>
         <div>
@@ -61,6 +71,7 @@ import { computed, ref } from 'vue'
 import Event from '@/components/company/timeline/Event.vue'
 import { companyTasksQuery } from '@/queries/tasks'
 import Input from '@/components/ui/Input.vue'
+import Button from '@/components/ui/Button.vue'
 import NoData from '@/components/ui/NoData.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
@@ -88,16 +99,23 @@ const { data: company } = useQuery(companyByIdQuery, () => ({
 }))
 
 const searchQuery = ref('')
+const sortAscending = ref(false) // Default to newest first (descending)
+
+const toggleSortOrder = () => {
+  sortAscending.value = !sortAscending.value
+}
 
 const getTimelineEvents = computed(() => {
   if (!company.value?.timeline?.events) return []
 
-  // Sort events by date (oldest to newest)
+  // Sort events by date
   return [...company.value.timeline.events].sort((a, b) => {
     // Extract just the year if it's the only format available
     const yearA = a.date.substring(0, 4)
     const yearB = b.date.substring(0, 4)
-    return parseInt(yearA) - parseInt(yearB)
+    const diff = parseInt(yearA) - parseInt(yearB)
+    // Return based on sort order: ascending (oldest first) or descending (newest first)
+    return sortAscending.value ? diff : -diff
   })
 })
 
