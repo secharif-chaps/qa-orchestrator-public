@@ -187,19 +187,23 @@ class SecurityMiddleware(BaseHTTPMiddleware):
     
     def _add_security_headers(self, response: Response) -> Response:
         """Add security headers to response"""
+        # More permissive CSP for documentation pages (Swagger UI needs inline scripts/styles)
+        # Strict CSP for API endpoints
+        csp_policy = "default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' cdn.jsdelivr.net; img-src 'self' data: cdn.jsdelivr.net"
+
         security_headers = {
             "X-Content-Type-Options": "nosniff",
             "X-Frame-Options": "DENY",
             "X-XSS-Protection": "1; mode=block",
             "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-            "Content-Security-Policy": "default-src 'self'",
+            "Content-Security-Policy": csp_policy,
             "Referrer-Policy": "strict-origin-when-cross-origin",
             "Permissions-Policy": "geolocation=(), camera=(), microphone=()"
         }
-        
+
         for header, value in security_headers.items():
             response.headers[header] = value
-        
+
         return response
 
 
