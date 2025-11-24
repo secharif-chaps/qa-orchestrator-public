@@ -138,7 +138,7 @@ Generate output according to the user's desired format and goals. Be specific, a
         system_context = {
             "language": chat_request.language or "fr",
             "username": org_context.username,
-            "organization_name": org_context.organization.name
+            "organization_name": org_context.organization_name
         }
 
         # Add system message to system context if present (for assist_action)
