@@ -4,6 +4,7 @@ from app.core.config import settings
 from app.core.logging_config import get_logger
 from app.schemas.user import TokenData
 from typing import Optional, Dict, Any
+import requests
 
 logger = get_logger(__name__)
 
@@ -36,13 +37,43 @@ class KeycloakService:
                 pass
 
     async def authenticate_user(self, username: str, password: str) -> Optional[Dict[str, Any]]:
-        """Authenticate user with Keycloak"""
+        """Authenticate user with Keycloak using direct HTTP request"""
         try:
-            token = self.keycloak_openid.token(username, password)
-            return token
-        except Exception:
-            # Log error without exposing sensitive information
-            logger.debug(f"Authentication failed for user {username}: Authentication error")
+            # Build token endpoint URL
+            # Note: settings.KEYCLOAK_SERVER_URL should be https://sso.deveryware.net/auth
+            server_url = settings.KEYCLOAK_SERVER_URL.removesuffix('/')
+            token_url = f"{server_url}/realms/{settings.KEYCLOAK_REALM}/protocol/openid-connect/token"
+
+            # Prepare request payload
+            payload = {
+                "grant_type": "password",
+                "client_id": settings.KEYCLOAK_CLIENT_ID,
+                "username": username,
+                "password": password
+            }
+
+            # Add client_secret if configured
+            if settings.KEYCLOAK_CLIENT_SECRET:
+                payload["client_secret"] = settings.KEYCLOAK_CLIENT_SECRET
+
+            logger.debug(f"Authenticating user {username} at {token_url}")
+
+            # Make HTTP request
+            response = requests.post(token_url, data=payload, timeout=10)
+
+            if response.status_code == 200:
+                logger.info(f"Successfully authenticated user {username}")
+                return response.json()
+            else:
+                logger.warning(f"Authentication failed for user {username}: HTTP {response.status_code}")
+                logger.debug(f"Response: {response.text[:200]}")
+                return None
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Network error during authentication for user {username}: {str(e)}")
+            return None
+        except Exception as e:
+            logger.error(f"Unexpected error during authentication for user {username}: {str(e)}")
             return None
 
     async def refresh_token(self, refresh_token: str) -> Optional[Dict[str, Any]]:
