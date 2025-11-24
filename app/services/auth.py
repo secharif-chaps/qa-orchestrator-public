@@ -11,7 +11,7 @@ logger = get_logger(__name__)
 class KeycloakService:
     def __init__(self):
         # Remove trailing /auth if present (library adds it automatically)
-        server_url = settings.KEYCLOAK_SERVER_URL.rstrip('/auth').rstrip('/')
+        server_url = settings.KEYCLOAK_SERVER_URL.removesuffix('/auth').removesuffix('/')
 
         self.keycloak_openid = KeycloakOpenID(
             server_url=server_url,
