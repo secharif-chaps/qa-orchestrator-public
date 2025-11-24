@@ -10,8 +10,11 @@ logger = get_logger(__name__)
 
 class KeycloakService:
     def __init__(self):
+        # Remove trailing /auth if present (library adds it automatically)
+        server_url = settings.KEYCLOAK_SERVER_URL.rstrip('/auth').rstrip('/')
+
         self.keycloak_openid = KeycloakOpenID(
-            server_url=settings.KEYCLOAK_SERVER_URL,
+            server_url=server_url,
             client_id=settings.KEYCLOAK_CLIENT_ID,
             realm_name=settings.KEYCLOAK_REALM,
             client_secret_key=settings.KEYCLOAK_CLIENT_SECRET
@@ -22,7 +25,7 @@ class KeycloakService:
         if settings.KEYCLOAK_CLIENT_SECRET:
             try:
                 self.keycloak_admin = KeycloakAdmin(
-                    server_url=settings.KEYCLOAK_SERVER_URL,
+                    server_url=server_url,
                     username=settings.KEYCLOAK_ADMIN_USERNAME,
                     password=settings.KEYCLOAK_ADMIN_PASSWORD,
                     realm_name=settings.KEYCLOAK_REALM,
