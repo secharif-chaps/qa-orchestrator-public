@@ -1,8 +1,11 @@
 from keycloak import KeycloakOpenID, KeycloakAdmin
 from jose import jwt
 from app.core.config import settings
+from app.core.logging_config import get_logger
 from app.schemas.user import TokenData
 from typing import Optional, Dict, Any
+
+logger = get_logger(__name__)
 
 
 class KeycloakService:

@@ -38,8 +38,18 @@ def upgrade() -> None:
 
     op.execute("""
         ALTER TABLE companies
+        ALTER COLUMN created_at SET DEFAULT NOW()
+    """)
+
+    op.execute("""
+        ALTER TABLE companies
         ALTER COLUMN updated_at TYPE TIMESTAMP WITH TIME ZONE
         USING updated_at AT TIME ZONE 'UTC'
+    """)
+
+    op.execute("""
+        ALTER TABLE companies
+        ALTER COLUMN updated_at SET DEFAULT NOW()
     """)
 
     # Step 3: Convert tasks table datetime columns
@@ -51,8 +61,18 @@ def upgrade() -> None:
 
     op.execute("""
         ALTER TABLE tasks
+        ALTER COLUMN created_at SET DEFAULT NOW()
+    """)
+
+    op.execute("""
+        ALTER TABLE tasks
         ALTER COLUMN updated_at TYPE TIMESTAMP WITH TIME ZONE
         USING updated_at AT TIME ZONE 'UTC'
+    """)
+
+    op.execute("""
+        ALTER TABLE tasks
+        ALTER COLUMN updated_at SET DEFAULT NOW()
     """)
 
     # Convert tasks started_at and completed_at columns if they exist
