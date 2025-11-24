@@ -1,6 +1,6 @@
-from datetime import datetime
 from sqlalchemy import Column, String, Integer, DateTime, JSON, Boolean
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from app.database import Base
 
 class Company(Base):
@@ -17,8 +17,8 @@ class Company(Base):
     owner_id = Column(String, index=True, nullable=True)  # Keycloak user UUID (from JWT sub claim)
     owner_username = Column(String, index=True, nullable=True)  # Username for display (denormalized)
 
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
     is_deleted = Column(Boolean, default=False, nullable=False)
 
     # JSON fields for complex data structures
