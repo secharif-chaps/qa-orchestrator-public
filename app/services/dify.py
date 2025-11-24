@@ -672,13 +672,42 @@ class DifyService:
             )
 
             # Extract answer from response
-            if hasattr(response, "answer"):
+            # Handle both Response object and parsed object (same pattern as generate_quick_actions)
+            # ChatClient sometimes returns requests.Response object
+            if hasattr(response, 'json') and hasattr(response, 'status_code'):
+                # It's a raw HTTP Response object, parse it manually
+                if response.status_code == 200:
+                    response_data = response.json()
+                    answer = response_data.get('answer', '')
+                    if answer:
+                        logger.info("Successfully extracted answer from Response object")
+                        return {
+                            "output": answer,
+                            "status": "success",
+                            "conversation_id": response_data.get("conversation_id", "")
+                        }
+                    else:
+                        logger.error(f"Response missing 'answer' field: {response_data}")
+                        return {
+                            "output": "Je suis désolé, je n'ai pas pu générer de réponse. Veuillez réessayer.",
+                            "status": "error",
+                        }
+                else:
+                    logger.error(f"Dify API error: {response.status_code} - {response.text[:500]}")
+                    return {
+                        "output": "Je suis désolé, je n'ai pas pu générer de réponse. Veuillez réessayer.",
+                        "status": "error",
+                    }
+            elif hasattr(response, "answer"):
+                # It's a parsed Dify SDK response object
+                logger.info("Successfully extracted answer from parsed SDK response")
                 return {
                     "output": response.answer,
                     "status": "success",
                     "conversation_id": getattr(response, "conversation_id", ""),
                 }
             else:
+                # Unknown response type
                 logger.warning(f"Unexpected global chat response format: {response}")
                 return {
                     "output": "Je suis désolé, je n'ai pas pu générer de réponse. Veuillez réessayer.",
