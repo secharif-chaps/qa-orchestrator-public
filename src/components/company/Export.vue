@@ -459,7 +459,11 @@ const createDigitalStrategySlide = (pptx, company: Company) => {
     fontFace: 'Arial',
   })
 
-  slide.addText(getValue(digital.strategy) || 'N/A', {
+  // digitalStrategy is a SourcedValue containing an object with strategy details
+  const digitalStrategyValue = getValue(digital.digitalStrategy)
+  const strategyText = digitalStrategyValue?.overallStrategy || digital.insights || 'N/A'
+
+  slide.addText(strategyText, {
     x: 1.0,
     y: 1.9,
     fontSize: 12,
@@ -493,9 +497,6 @@ const createDigitalStrategySlide = (pptx, company: Company) => {
 
   // Add sources section
   const digitalSources = getSourcesFromObject(company.digital)
-  const socialSources = digital.socialMedia
-    ? digital.socialMedia.flatMap((social) => (social.url?.source ? [social.url.source] : []))
-    : []
   addSourcesSection(slide, digitalSources)
 }
 
@@ -510,10 +511,51 @@ const createDigitalStrategySlide2 = (pptx, company: Company) => {
   const digital = company.digital || {}
 
   // COLUMN 1: Online Services
-  addListItemsImproved(slide, 'Online Services', digital.onlineServices, 1.0, 1.5, 4.0)
+  // onlineServices is SourcedValue<{ name: string; description: string }[]>, not SourcedValue<string>[]
+  const onlineServicesValue = getValue(digital.onlineServices)
+  if (onlineServicesValue && Array.isArray(onlineServicesValue) && onlineServicesValue.length > 0) {
+    slide.addText('Online Services', {
+      x: 1.0,
+      y: 1.5,
+      fontSize: 14,
+      bold: true,
+      color: COLORS.titleText,
+      fontFace: 'Arial',
+    })
+
+    const servicesText = onlineServicesValue.map((service) => `• ${service.name}`).join('\n')
+
+    slide.addText(servicesText, {
+      x: 1.0,
+      y: 1.9,
+      fontSize: 12,
+      color: COLORS.secondaryText,
+      fontFace: 'Arial',
+      breakLine: true,
+      w: 4.0,
+      valign: 'top',
+    })
+  } else {
+    slide.addText('Online Services', {
+      x: 1.0,
+      y: 1.5,
+      fontSize: 14,
+      bold: true,
+      color: COLORS.titleText,
+      fontFace: 'Arial',
+    })
+    slide.addText('No items available', {
+      x: 1.0,
+      y: 1.9,
+      fontSize: 12,
+      color: COLORS.secondaryText,
+      fontFace: 'Arial',
+    })
+  }
 
   // COLUMN 2: Social Media
-  if (digital.socialMedia && digital.socialMedia.length > 0) {
+  const socialMediaAccounts = digital.socialMediaAccounts
+  if (socialMediaAccounts && Array.isArray(socialMediaAccounts) && socialMediaAccounts.length > 0) {
     slide.addText('Social Media Presence', {
       x: 5.0,
       y: 1.5,
@@ -523,7 +565,7 @@ const createDigitalStrategySlide2 = (pptx, company: Company) => {
       fontFace: 'Arial',
     })
 
-    const socialMediaText = digital.socialMedia.map((social) => `• ${social.name}`).join('\n')
+    const socialMediaText = socialMediaAccounts.map((social) => `• ${social.platform}`).join('\n')
 
     slide.addText(socialMediaText, {
       x: 5.0,
@@ -538,10 +580,11 @@ const createDigitalStrategySlide2 = (pptx, company: Company) => {
   }
 
   // Add sources section
-  const socialSources = digital.socialMedia
-    ? digital.socialMedia.flatMap((social) => (social.url?.source ? [social.url.source] : []))
-    : []
-  addSourcesSection(slide, socialSources)
+  const sources: string[] = []
+  if (digital.onlineServices?.source) {
+    sources.push(digital.onlineServices.source)
+  }
+  addSourcesSection(slide, sources)
 }
 
 // Create slide for CSR initiatives
@@ -1038,8 +1081,8 @@ const downloadPPT = async (selectedOptions: string[] = []) => {
       createDigitalStrategySlide(pptx, company.value as Company)
       slideCount++
 
-      // Add second digital strategy slide if there are online services or social media
-      if (company.value.digital.onlineServices || company.value.digital.socialMedia) {
+      // Add second digital strategy slide if there are online services or social media accounts
+      if (company.value.digital.onlineServices || company.value.digital.socialMediaAccounts) {
         console.log('✅ Creating digital strategy slide 2/2')
         createDigitalStrategySlide2(pptx, company.value as Company)
         slideCount++
