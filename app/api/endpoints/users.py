@@ -279,7 +279,7 @@ async def assign_user_to_organization(
     """Assign a user to a different organization (organization admin only).
 
     This endpoint allows organization administrators to move users between organizations
-    in Keycloak. The user will be removed from their current organization and added
+    in Keycloak. The user will be removed from their current organization(s) and added
     to the specified organization.
 
     Args:
@@ -313,6 +313,71 @@ async def assign_user_to_organization(
         )
 
     try:
+        # First, get user's current organizations to remove them
+        current_orgs = await keycloak_admin_service.get_user_organizations(user_id)
+
+        logger.info(
+            "User's current organizations",
+            extra={
+                "user_id": user_id,
+                "current_orgs": [org.get("id") for org in current_orgs],
+                "current_org_names": [org.get("name") for org in current_orgs]
+            }
+        )
+
+        # Remove user from all current organizations (except the target one if already a member)
+        for org in current_orgs:
+            org_id = org.get("id")
+            if org_id and org_id != organization_id:
+                logger.info(
+                    "Removing user from old organization",
+                    extra={
+                        "user_id": user_id,
+                        "organization_id": org_id,
+                        "organization_name": org.get("name")
+                    }
+                )
+                try:
+                    await keycloak_admin_service.remove_user_from_organization(
+                        organization_id=org_id,
+                        user_id=user_id
+                    )
+                    logger.info(
+                        "Successfully removed user from old organization",
+                        extra={
+                            "user_id": user_id,
+                            "organization_id": org_id
+                        }
+                    )
+                except Exception as remove_error:
+                    # Log but continue - we still want to add to new org
+                    logger.warning(
+                        "Failed to remove user from old organization, continuing",
+                        extra={
+                            "user_id": user_id,
+                            "organization_id": org_id,
+                            "error": str(remove_error)
+                        }
+                    )
+
+        # Check if user is already in the target organization
+        is_already_member = any(org.get("id") == organization_id for org in current_orgs)
+
+        if is_already_member:
+            logger.info(
+                "User is already a member of target organization",
+                extra={
+                    "user_id": user_id,
+                    "organization_id": organization_id
+                }
+            )
+            return {
+                "success": True,
+                "message": f"User {user_id} successfully assigned to organization {organization_id}",
+                "user_id": user_id,
+                "organization_id": organization_id
+            }
+
         # Add user to the new organization using Keycloak Admin API
         success = await keycloak_admin_service.add_user_to_organization(
             organization_id=organization_id,
