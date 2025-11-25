@@ -211,8 +211,8 @@ class TaskResponse(BaseModel):
     input_tokens: Optional[int] = None
     output_tokens: Optional[int] = None
     total_cost: Optional[float] = None
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -234,8 +234,8 @@ class CompanyResponse(CompanyBase):
     raw_scraped_website_knowledge: Optional[str] = Field(None, description="Raw scraped website content")
     error: Optional[str] = None
     is_deleted: bool = Field(default=False)
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
     tasks: List[TaskResponse] = Field(default_factory=list)
     folder_id: Optional[str] = Field(None, description="Primary folder ID (if company is in folders)")
     folder_name: Optional[str] = Field(None, description="Primary folder name (if company is in folders)")

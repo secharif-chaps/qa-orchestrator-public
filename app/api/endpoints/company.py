@@ -31,7 +31,7 @@ router = APIRouter(
 
 @router.get("/recent", response_model=List[CompanyResponse])
 async def get_recent_companies(
-    limit: int = Query(5, ge=1, le=20, description="Number of recent companies to return"),
+    limit: int = Query(5, ge=1, le=100, description="Number of recent companies to return"),
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
