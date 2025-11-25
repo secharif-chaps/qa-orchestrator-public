@@ -114,13 +114,16 @@ import Tag from '@/components/ui/Tag.vue'
 import IconSelector from '@/components/folders/IconSelector.vue'
 import ColorSelector from '@/components/folders/ColorSelector.vue'
 import type { FolderCreate } from '@/types/folder'
-import { ref, computed, watch } from 'vue'
-import { createFolder } from '@/api/folders'
+import { ref, watch } from 'vue'
+import { useCreateFolder } from '@/mutations/folders'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const { t: $t } = useI18n()
+
+// Mutation for creating folders with optimistic UI
+const { createFolder, isLoading: isSubmitting } = useCreateFolder()
 
 // Form state
 const form = ref<FolderCreate & { is_favorite?: boolean }>({
@@ -132,7 +135,6 @@ const form = ref<FolderCreate & { is_favorite?: boolean }>({
 })
 
 const tagsInput = ref('')
-const isSubmitting = ref(false)
 
 // Validation
 const errors = ref<Record<string, string>>({})
@@ -210,7 +212,6 @@ const validateForm = () => {
 const handleSubmit = async () => {
   if (!validateForm()) return
 
-  isSubmitting.value = true
   try {
     const { is_favorite, ...folderData } = form.value
     await createFolder({
@@ -218,12 +219,11 @@ const handleSubmit = async () => {
       name: folderData.name.trim(),
     })
 
+    // Navigate immediately - folder already appears in cache via optimistic update
     router.push('/folders')
   } catch (error) {
+    // Error toast is shown by the mutation's onError handler
     console.error('Error creating folder:', error)
-    // TODO: Show error notification
-  } finally {
-    isSubmitting.value = false
   }
 }
 </script>

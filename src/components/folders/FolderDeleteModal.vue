@@ -85,9 +85,8 @@
 import Alert from '@/components/ui/Alert.vue'
 import Button from '@/components/ui/Button.vue'
 import type { Folder } from '@/types/folder'
-import { computed, ref } from 'vue'
-import { deleteFolder } from '@/api/folders'
-import { toast } from '@/utils/toast'
+import { computed } from 'vue'
+import { useDeleteFolder } from '@/mutations/folders'
 
 interface Props {
   folderToDelete: Folder | null
@@ -101,7 +100,8 @@ const emit = defineEmits<{
   deleteFolder: []
 }>()
 
-const isDeleting = ref(false)
+// Mutation for deleting folders with optimistic UI
+const { deleteFolder, isLoading: isDeleting } = useDeleteFolder()
 
 // Compute folder color classes based on the color prop
 const folderColorClasses = computed(() => {
@@ -127,25 +127,17 @@ const folderIcon = computed(() => {
 const handleDelete = async () => {
   if (!props.folderToDelete) return
 
-  isDeleting.value = true
   try {
+    // Close modal immediately - folder disappears via optimistic update
+    modelValue.value = false
+
     await deleteFolder(props.folderToDelete.id)
 
-    // Show success toast
-    toast.success(`folder "${props.folderToDelete.name}" has been deleted successfully`)
-
-    // Emit event first, then clean up
+    // Emit event for parent (no longer needed for refetch, but kept for compatibility)
     emit('deleteFolder')
-
-    // Small delay to ensure parent component processes the event
-    setTimeout(() => {
-      modelValue.value = false
-    }, 50)
   } catch (error) {
+    // Error toast is shown by the mutation's onError handler
     console.error('Error deleting folder:', error)
-    // TODO: Show error toast/notification
-  } finally {
-    isDeleting.value = false
   }
 }
 </script>

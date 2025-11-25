@@ -109,13 +109,13 @@
               variant="secondary"
               :label="$t('folder.form.cancel', 'Cancel')"
               @click="$router.push(`/folders/${route.params.folderId}`)"
-              :disabled="isSubmitting"
+              :disabled="isMutating"
             />
             <Button
               type="submit"
               variant="primary"
               :label="$t('folder.form.save', 'Save Changes')"
-              :loading="isSubmitting"
+              :loading="isMutating"
             />
           </div>
         </form>
@@ -168,13 +168,12 @@ const form = ref<FolderUpdate & { is_favorite?: boolean }>({
 })
 
 const tagsInput = ref('')
-const isSubmitting = ref(false)
 
 // Validation
 const errors = ref<Record<string, string>>({})
 
-// Update mutation
-const { mutateAsync: updateFolderMutation } = useUpdateFolder()
+// Update mutation with optimistic UI
+const { updateFolder: updateFolderMutation, isLoading: isMutating } = useUpdateFolder()
 
 // Initialize form with folder data when loaded
 watch(
@@ -266,7 +265,6 @@ const validateForm = () => {
 const handleSubmit = async () => {
   if (!validateForm()) return
 
-  isSubmitting.value = true
   try {
     const { is_favorite, ...folderData } = form.value
     await updateFolderMutation({
@@ -278,13 +276,11 @@ const handleSubmit = async () => {
       },
     })
 
-    // Redirect back to folder detail page
+    // Redirect back to folder detail page - changes already visible via optimistic update
     router.push(`/folders/${route.params.folderId}`)
   } catch (error) {
+    // Error toast is shown by the mutation's onError handler
     console.error('Error updating folder:', error)
-    // TODO: Show error notification
-  } finally {
-    isSubmitting.value = false
   }
 }
 </script>
