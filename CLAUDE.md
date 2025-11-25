@@ -796,7 +796,7 @@ Run from the mint-new repository root:
 3. Write code following [project structure](#project-structure) and [standards](#development-standards)
 4. Test implementations:
    - Write tests for logic and components
-   - Use Playwright MCP server to test like a real user
+   - Ask the user to manually test the feature
 5. Stage changes with `git add` once feature works
 6. Review changes and analyze need for refactoring
 7. Use `/commit` or commit manually with proper format
@@ -817,15 +817,6 @@ Run from the mint-new repository root:
 - **ALWAYS** create merge/pull request before merging to main
 - **ALWAYS** use gitmoji + conventional commits format
 - Use `/commit` command for intelligent commit grouping
-
-### Testing with Playwright MCP
-
-1. Navigate to the relevant page
-2. Wait for content to load completely
-3. Test primary user interactions
-4. Test secondary functionality (error states, edge cases)
-5. Check JS console for errors/warnings
-6. Document and fix any bugs immediately
 
 ---
 
