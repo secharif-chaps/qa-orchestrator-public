@@ -1015,7 +1015,10 @@ class KeycloakAdminService:
 
     async def get_user_organizations(self, user_id: str) -> List[Dict[str, Any]]:
         """
-        Get all organizations that a user belongs to
+        Get all organizations that a user belongs to.
+
+        Since Keycloak doesn't have a direct endpoint to get organizations for a user,
+        we iterate through all organizations and check membership.
 
         Args:
             user_id: Keycloak user UUID
@@ -1026,46 +1029,50 @@ class KeycloakAdminService:
         try:
             logger.info(
                 "Fetching organizations for user from Keycloak",
+                extra={"user_id": user_id}
+            )
+
+            # Get all organizations
+            all_orgs = await self.get_organizations()
+            user_orgs: List[Dict[str, Any]] = []
+
+            # Check each organization for user membership
+            for org in all_orgs:
+                org_id = org.get("id")
+                if not org_id:
+                    continue
+
+                try:
+                    # Get members of this organization
+                    members = await self.get_organization_members(org_id, first=0, max_results=10000)
+
+                    # Check if user is a member
+                    for member in members:
+                        if member.get("id") == user_id:
+                            user_orgs.append({
+                                "id": org_id,
+                                "name": org.get("name"),
+                                "description": org.get("description", "")
+                            })
+                            break  # User found in this org, move to next org
+
+                except Exception as e:
+                    logger.warning(
+                        f"Failed to check membership for organization {org_id}",
+                        extra={"error": str(e), "org_id": org_id}
+                    )
+                    continue
+
+            logger.info(
+                "Successfully retrieved user organizations",
                 extra={
                     "user_id": user_id,
-                    "endpoint": f"{self.server_url}/admin/realms/{self.realm}/users/{user_id}/organizations"
+                    "organization_count": len(user_orgs),
+                    "organization_names": [o.get("name") for o in user_orgs]
                 }
             )
+            return user_orgs
 
-            response = await self._make_admin_request(
-                "GET",
-                f"/users/{user_id}/organizations"
-            )
-
-            if response.status_code == 200:
-                organizations = response.json()
-                logger.info(
-                    "Successfully retrieved user organizations",
-                    extra={
-                        "user_id": user_id,
-                        "organization_count": len(organizations)
-                    }
-                )
-                return organizations
-            elif response.status_code == 404:
-                logger.warning(
-                    "User not found when fetching organizations",
-                    extra={"user_id": user_id}
-                )
-                return []
-            else:
-                logger.error(
-                    "Failed to get user organizations",
-                    extra={
-                        "status_code": response.status_code,
-                        "response_text": response.text,
-                        "user_id": user_id
-                    }
-                )
-                return []
-
-        except HTTPException:
-            raise
         except Exception as e:
             logger.error(
                 "Exception while getting user organizations",
