@@ -24,12 +24,12 @@
     </div>
 
     <!-- Folders List -->
-    <div class="flex-1 overflow-y-auto px-2 relative">
+    <div class="flex-1 overflow-y-auto px-2 pt-4 pb-12 relative">
       <div
-        class="fixed h-4 w-full bg-transparent bg-gradient-to-b from-sage-950 to-transparent z-20"
+        class="fixed h-4 w-full bg-transparent bg-gradient-to-b from-sage-950 to-transparent z-20 top-[180px]"
       ></div>
       <div
-        class="fixed bottom-18 h-4 w-full bg-transparent bg-gradient-to-t from-sage-950 to-transparent z-20"
+        class="fixed bottom-16 h-4 w-full bg-transparent bg-gradient-to-t from-sage-950 to-transparent z-20"
       ></div>
       <div v-if="isLoading" class="flex items-center justify-center py-8">
         <i class="fa fa-spinner fa-spin text-sage-400"></i>

@@ -46,7 +46,10 @@
     </div>
 
     <!-- Folder Items (Companies) -->
-    <div v-if="isExpanded && folder.items && folder.items.length > 0" class="ml-3 pl-3 relative">
+    <div
+      v-if="isExpanded && folder.items && folder.items.length > 0"
+      class="ml-3 pl-3 pb-2 relative"
+    >
       <!-- <div class="absolute w-0.5 bg-sage-300 h-[calc(100%-30px)] top-0 -left-0.5"></div> -->
       <div class="relative" v-for="item in visibleItems" :key="item.id">
         <div
