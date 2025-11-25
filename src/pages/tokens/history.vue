@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-base-100 p-6">
+  <div class="min-h-screen p-6">
     <!-- Header -->
     <div class="max-w-5xl mx-auto mb-6">
       <div class="flex items-center gap-4 mb-2">
@@ -155,10 +155,9 @@ import type { Company } from '@/types/company'
 const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
 
 // Fetch organization modules to get total tokens
-const { data: modulesData } = useQuery(
-  organizationModulesQuery,
-  () => ({ organizationId: currentOrganization.value!.id }),
-)
+const { data: modulesData } = useQuery(organizationModulesQuery, () => ({
+  organizationId: currentOrganization.value!.id,
+}))
 
 // Fetch recent companies using the same query as the sidebar
 // This query uses the /companies/recent endpoint which works correctly
