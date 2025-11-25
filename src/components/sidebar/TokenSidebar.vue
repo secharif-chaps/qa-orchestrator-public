@@ -21,6 +21,26 @@
 
       <!-- Token History -->
       <div v-else class="space-y-6">
+        <!-- Empty State -->
+        <div v-if="hasNoHistory" class="flex flex-col items-center justify-center py-8 text-center">
+          <div
+            class="w-14 h-14 rounded-full bg-sage-800/50 flex items-center justify-center mb-3"
+          >
+            <i class="fa fa-coins text-2xl text-sage-500"></i>
+          </div>
+          <h3 class="text-sm font-semibold text-white mb-1">
+            {{ $t('sidebar.tokens.noHistory', 'No usage history') }}
+          </h3>
+          <p class="text-xs text-sage-400 px-4">
+            {{
+              $t(
+                'sidebar.tokens.noHistoryDesc',
+                'Token usage will appear here when you create company cards.',
+              )
+            }}
+          </p>
+        </div>
+
         <!-- Today Section -->
         <div v-if="groupedHistory.today.length > 0">
           <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider mb-3">
@@ -138,8 +158,8 @@
           </div>
         </div>
 
-        <!-- See All History Link (hidden when on history page) -->
-        <div v-if="!isOnHistoryPage" class="pt-2">
+        <!-- See All History Link (hidden when on history page or when no history) -->
+        <div v-if="!isOnHistoryPage && !hasNoHistory" class="pt-2">
           <button
             class="text-sm text-sage-300 hover:text-white transition-colors flex items-center gap-2"
             @click="$router.push('/tokens/history')"
@@ -190,7 +210,11 @@ const totalTokens = computed(() => {
 })
 
 // Helper function to format relative date
-const formatRelativeDate = (dateString: string) => {
+const formatRelativeDate = (dateString: string | null | undefined) => {
+  if (!dateString) {
+    return 'unknown'
+  }
+
   const date = new Date(dateString)
   const today = new Date()
   const yesterday = new Date(today)
@@ -244,4 +268,14 @@ const groupedHistory = computed(() => {
 
 // Combined loading state
 const isLoading = computed(() => isLoadingTokens.value || isLoadingCompanies.value)
+
+// Check if there's no history to display
+const hasNoHistory = computed(() => {
+  const groups = groupedHistory.value
+  return (
+    groups.today.length === 0 &&
+    groups.yesterday.length === 0 &&
+    Object.keys(groups.dates).length === 0
+  )
+})
 </script>
