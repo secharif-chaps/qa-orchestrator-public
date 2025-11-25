@@ -56,19 +56,24 @@
     <div v-else class="max-w-5xl mx-auto">
       <!-- Empty State -->
       <div
-        v-if="!companiesData?.data || companiesData.data.length === 0"
+        v-if="!companiesData || companiesData.length === 0"
         class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-12 text-center"
       >
         <div
-          class="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
+          class="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center"
         >
-          <i class="fa fa-coins text-4xl text-gray-400"></i>
+          <i class="fa fa-coins text-4xl text-gray-400 dark:text-gray-500"></i>
         </div>
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
           {{ $t('tokens.history.noHistory', 'No token history yet') }}
         </h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ $t('tokens.history.noHistoryDesc', 'Token usage will appear here') }}
+        <p class="text-sm text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+          {{
+            $t(
+              'tokens.history.noHistoryDesc',
+              'When you create company cards, your token usage history will appear here.',
+            )
+          }}
         </p>
       </div>
 
@@ -126,70 +131,25 @@
         </div>
       </div>
 
-      <!-- Pagination -->
-      <div
-        v-if="companiesData && companiesData.total > 0"
-        class="mt-8 flex items-center justify-between"
-      >
+      <!-- Summary -->
+      <div v-if="companiesData && companiesData.length > 0" class="mt-8 text-center">
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          {{ $t('tokens.history.showing', 'Showing') }}
-          {{ (page - 1) * pageSize + 1 }} {{ $t('tokens.history.to', 'to') }}
-          {{ Math.min(page * pageSize, companiesData.total) }}
-          {{ $t('tokens.history.of', 'of') }} {{ companiesData.total }}
-          {{ $t('tokens.history.entries', 'entries') }}
+          {{ $t('tokens.history.totalEntries', { count: companiesData.length }) }}
         </p>
-
-        <div class="flex items-center gap-2">
-          <button
-            @click="page--"
-            :disabled="page === 1"
-            class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          >
-            {{ $t('tokens.history.previous', 'Previous') }}
-          </button>
-
-          <div class="flex items-center gap-1">
-            <button
-              v-for="pageNum in visiblePages"
-              :key="pageNum"
-              @click="page = pageNum"
-              :class="[
-                'w-10 h-10 rounded-lg text-sm font-medium transition-colors',
-                page === pageNum
-                  ? 'bg-sage-600 text-white'
-                  : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300',
-              ]"
-            >
-              {{ pageNum }}
-            </button>
-          </div>
-
-          <button
-            @click="page++"
-            :disabled="page >= totalPages"
-            class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          >
-            {{ $t('tokens.history.next', 'Next') }}
-          </button>
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { organizationModulesQuery } from '@/queries/tokens'
 import { currentOrganizationQuery } from '@/queries/organization'
-import { companiesQuery } from '@/queries/companies'
+import { recentCompaniesQuery } from '@/queries/companies'
 import Tag from '@/components/ui/Tag.vue'
 import Alert from '@/components/ui/Alert.vue'
 import type { Company } from '@/types/company'
-
-// Pagination
-const page = ref(1)
-const pageSize = ref(20)
 
 // Get current organization
 const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
@@ -198,22 +158,16 @@ const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => (
 const { data: modulesData } = useQuery(
   organizationModulesQuery,
   () => ({ organizationId: currentOrganization.value!.id }),
-  { enabled: computed(() => !!currentOrganization.value?.id) },
 )
 
-// Fetch companies with pagination and sorting
+// Fetch recent companies using the same query as the sidebar
+// This query uses the /companies/recent endpoint which works correctly
 const {
   data: companiesData,
   isLoading,
   error,
-} = useQuery(companiesQuery, () => ({
-  filters: {
-    page: page.value,
-    size: pageSize.value,
-    name: '',
-    sort: 'created_at',
-    order: 'desc',
-  },
+} = useQuery(recentCompaniesQuery, () => ({
+  limit: 100, // Get more for the history page
 }))
 
 // Calculate total tokens across all modules
@@ -222,52 +176,12 @@ const totalTokens = computed(() => {
   return modulesData.value.modules.reduce((sum, module) => sum + module.token_count, 0)
 })
 
-// Calculate total pages
-const totalPages = computed(() => {
-  if (!companiesData.value) return 0
-  return Math.ceil(companiesData.value.total / pageSize.value)
-})
-
-// Calculate visible page numbers for pagination
-const visiblePages = computed(() => {
-  const total = totalPages.value
-  const current = page.value
-  const pages: number[] = []
-
-  if (total <= 7) {
-    // Show all pages if 7 or less
-    for (let i = 1; i <= total; i++) {
-      pages.push(i)
-    }
-  } else {
-    // Always show first page
-    pages.push(1)
-
-    if (current > 3) {
-      pages.push(-1) // Ellipsis
-    }
-
-    // Show pages around current
-    const start = Math.max(2, current - 1)
-    const end = Math.min(total - 1, current + 1)
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i)
-    }
-
-    if (current < total - 2) {
-      pages.push(-1) // Ellipsis
-    }
-
-    // Always show last page
-    pages.push(total)
+// Helper function to format relative date
+const formatRelativeDate = (dateString: string | null | undefined) => {
+  if (!dateString) {
+    return 'Date inconnue'
   }
 
-  return pages.filter((p) => p !== -1) // Remove ellipsis placeholders for now
-})
-
-// Helper function to format relative date
-const formatRelativeDate = (dateString: string) => {
   const date = new Date(dateString)
   const today = new Date()
   const yesterday = new Date(today)
@@ -288,7 +202,11 @@ const formatRelativeDate = (dateString: string) => {
 }
 
 // Helper function to format full date and time
-const formatDateTime = (dateString: string) => {
+const formatDateTime = (dateString: string | null | undefined) => {
+  if (!dateString) {
+    return 'Date inconnue'
+  }
+
   const date = new Date(dateString)
   return date.toLocaleDateString('fr-FR', {
     day: 'numeric',
@@ -301,11 +219,11 @@ const formatDateTime = (dateString: string) => {
 
 // Group companies by date sections
 const groupedHistory = computed(() => {
-  if (!companiesData.value?.data) return {}
+  if (!companiesData.value || companiesData.value.length === 0) return {}
 
   const groups: Record<string, Company[]> = {}
 
-  companiesData.value.data.forEach((company) => {
+  companiesData.value.forEach((company) => {
     const dateKey = formatRelativeDate(company.created_at)
 
     if (!groups[dateKey]) {
