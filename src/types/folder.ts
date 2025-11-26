@@ -12,7 +12,7 @@ export interface FolderUpdate {
   color?: string
   icon?: string
   tags?: string[]
-  is_favorite?: boolean
+  // Note: is_favorite is managed via dedicated POST/DELETE /folders/{id}/favorite endpoints
 }
 
 export interface FolderItem {

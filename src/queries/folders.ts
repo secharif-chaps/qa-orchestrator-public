@@ -16,25 +16,26 @@ export const FOLDER_QUERY_KEYS = {
 }
 
 export const folderByIdQuery = defineQueryOptions(({ id, filters }: { id: string; filters?: { archived?: boolean } }) => ({
-  key: FOLDER_QUERY_KEYS.byId(id, filters),
+  key: FOLDER_QUERY_KEYS.byId(id || 'invalid', filters),
   query: () => {
     // Ensure we don't make API calls with invalid IDs
     if (!id || id === 'null' || id === 'undefined' || id.trim() === '') {
-      throw new Error('Invalid folder ID')
+      // Return a resolved promise with null to avoid errors during invalidation
+      return Promise.resolve(null)
     }
     return getFolderById(id, filters)
   },
 }))
 
 export const foldersQuery = defineQueryOptions(
-  ({ filters }: { filters: { page: number; size: number; name: string; archived?: boolean } }) => ({
+  ({ filters }: { filters: { page: number; size: number; name: string; archived?: boolean; favorites?: boolean } }) => ({
     key: FOLDER_QUERY_KEYS.withFilters(filters),
     query: () => getFolders(filters),
   }),
 )
 
 export const foldersWithItemsQuery = defineQueryOptions(
-  ({ filters }: { filters: { page: number; size: number; name: string; archived?: boolean } }) => ({
+  ({ filters }: { filters: { page: number; size: number; name: string; archived?: boolean; favorites?: boolean } }) => ({
     key: FOLDER_QUERY_KEYS.withItems(filters),
     query: () => getFoldersWithItems(filters),
   }),

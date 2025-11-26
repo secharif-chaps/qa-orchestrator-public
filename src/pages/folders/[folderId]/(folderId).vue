@@ -162,37 +162,34 @@
         </div>
 
         <!-- Empty State -->
-        <Card v-else class="py-6">
-          <div class="flex flex-col items-center gap-4">
-            <i class="fas fa-folder-open text-4xl text-secondary/50"></i>
-            <h3 class="text-lg font-medium">
-              {{
-                searchTerm
-                  ? $t('folder.empty.noResults', 'Aucun résultat trouvé')
-                  : $t('folder.empty.title', 'Ce dossier est vide')
-              }}
-            </h3>
-            <p class="text-secondary">
-              {{
-                searchTerm
-                  ? $t(
-                      'folder.empty.tryDifferentSearch',
-                      'Essayez avec un autre terme de recherche',
-                    )
-                  : $t(
-                      'folder.empty.description',
-                      'Commencez par créer votre première entreprise dans ce dossier',
-                    )
-              }}
-            </p>
+        <Alert
+          v-else-if="searchTerm === '' && filteredItems && filteredItems.length === 0"
+          variant="info"
+          icon="fa fa-folder-open"
+          class="py-6"
+          :title="$t('folder.empty.title', 'Ce dossier est vide')"
+          :message="$t('folder.empty.description', 'Ce dossier est vide')"
+        >
+        </Alert>
+
+        <Alert
+          v-else
+          variant="info"
+          icon="fa fa-folder-open"
+          class="py-6"
+          :title="$t('folder.empty.noResults', 'Aucun résultat trouvé')"
+          :message="
+            $t('folder.empty.tryDifferentSearch', 'Essayez avec un autre terme de recherche')
+          "
+        >
+          <template #actions>
             <Button
-              v-if="searchTerm"
-              @click="searchTerm = ''"
-              :label="$t('folder.clearSearch', 'Effacer la recherche')"
               variant="secondary"
+              :label="$t('folder.clearSearch', 'Effacer la recherche')"
+              @click="searchTerm = ''"
             />
-          </div>
-        </Card>
+          </template>
+        </Alert>
       </div>
     </div>
 
@@ -233,7 +230,6 @@ import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
 import FoldersHeader from '@/components/folders/FoldersHeader.vue'
 import Alert from '@/components/ui/Alert.vue'
 import Button from '@/components/ui/Button.vue'
-import Card from '@/components/ui/Card.vue'
 import Tag from '@/components/ui/Tag.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { folderByIdQuery } from '@/queries/folders'

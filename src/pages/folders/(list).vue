@@ -85,7 +85,6 @@
             @view-folder="$router.push(`/folders/${$event}`)"
             @delete-folder="confirmDelete"
             @restore-folder="confirmRestore"
-            @favorite-toggled="handleFavoriteToggled"
           />
         </div>
 
@@ -286,6 +285,7 @@ const { data, status, isLoading, refetch } = useQuery(
       size: foldersStore.size,
       name: foldersStore.debouncedName,
       archived: folderFilter.value === 'archived',
+      favorites: folderFilter.value === 'favorites',
     },
   }),
   {
@@ -307,6 +307,7 @@ const {
       size: foldersStore.size,
       name: foldersStore.debouncedName,
       archived: folderFilter.value === 'archived',
+      favorites: folderFilter.value === 'favorites',
     },
   }),
   {
@@ -323,16 +324,8 @@ const currentIsLoading = computed(() =>
   viewMode.value === 'grid' ? isLoading.value : isLoadingWithItems.value,
 )
 
-const folders = computed(() => {
-  const allFolders = currentData.value || []
-
-  // Apply client-side filtering for favorites only (archived is handled server-side)
-  if (folderFilter.value === 'favorites') {
-    return allFolders.filter((folder) => folder.is_favorite)
-  }
-
-  return allFolders
-})
+// Folders are now filtered server-side (both archived and favorites)
+const folders = computed(() => currentData.value || [])
 
 const foldersWithItems = computed(() => folders.value)
 
@@ -370,15 +363,6 @@ const handleRestoreFolder = async () => {
 const confirmRestore = (folder: Folder) => {
   folderToRestore.value = folder
   showRestoreModal.value = true
-}
-
-const handleFavoriteToggled = async (folder: Folder) => {
-  // Refresh the folders list after favorite toggle to update the filtered views
-  if (viewMode.value === 'grid') {
-    await refetch()
-  } else {
-    await refetchWithItems()
-  }
 }
 
 const updatePerPage = (newSize: number) => {

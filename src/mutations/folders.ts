@@ -1,10 +1,11 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { addItemToFolder, removeItemFromFolder, updateFolder, createFolder, deleteFolder } from '@/api/folders'
+import { addItemToFolder, removeItemFromFolder, updateFolder, createFolder, deleteFolder, toggleFolderFavorite } from '@/api/folders'
 import type { Folder, FolderCreate, FolderItemAdd, FolderUpdate } from '@/types/folder'
 import type { PaginatedResponse } from '@/types/pagination'
 import { FOLDER_QUERY_KEYS } from '@/queries/folders'
 import { useAuthStore } from '@/stores/auth'
 import { toast } from '@/utils/toast'
+import { useI18n } from 'vue-i18n'
 
 export const useAddItemToFolder = defineMutation(() => {
   const { mutate, mutateAsync, ...mutation } = useMutation({
@@ -363,6 +364,176 @@ export const useDeleteFolder = defineMutation(() => {
   return {
     ...mutation,
     deleteFolder: mutateAsync,
+    mutate,
+    mutateAsync,
+  }
+})
+
+/**
+ * Toggle a folder's favorite status with full optimistic UI support.
+ * The favorite state updates instantly in all views before the API responds.
+ */
+export const useToggleFolderFavorite = defineMutation(() => {
+  const queryCache = useQueryCache()
+  const { t } = useI18n()
+
+  const { mutate, mutateAsync, ...mutation } = useMutation({
+    mutation: ({ folderId, shouldBeFavorite }: { folderId: string; shouldBeFavorite: boolean }) =>
+      toggleFolderFavorite(folderId, shouldBeFavorite),
+
+    // Optimistic update BEFORE API call
+    onMutate: ({ folderId, shouldBeFavorite }: { folderId: string; shouldBeFavorite: boolean }) => {
+      // Store previous cache states for rollback
+      const previousStates = new Map<string, unknown>()
+
+      // Helper to update folder's is_favorite in paginated cache
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const updateFavoriteInCache = (queryKey: any) => {
+        const currentData = queryCache.getQueryData<PaginatedResponse<Folder> | Folder[]>(queryKey)
+
+        if (!currentData) return
+
+        // Store for rollback
+        previousStates.set(JSON.stringify(queryKey), currentData)
+
+        // Check if it's a paginated response or direct array
+        if (Array.isArray(currentData)) {
+          // Direct array - update the matching folder
+          queryCache.setQueryData(
+            queryKey,
+            currentData.map((folder) =>
+              folder.id === folderId
+                ? { ...folder, is_favorite: shouldBeFavorite }
+                : folder,
+            ),
+          )
+        } else if ('data' in currentData && Array.isArray(currentData.data)) {
+          // Paginated response - update the matching folder in data array
+          queryCache.setQueryData(queryKey, {
+            ...currentData,
+            data: currentData.data.map((folder) =>
+              folder.id === folderId
+                ? { ...folder, is_favorite: shouldBeFavorite }
+                : folder,
+            ),
+          })
+        }
+      }
+
+      // Helper to remove folder from favorites-only cache when unfavoriting
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const removeFromFavoritesCache = (queryKey: any) => {
+        const currentData = queryCache.getQueryData<PaginatedResponse<Folder> | Folder[]>(queryKey)
+
+        if (!currentData) return
+
+        // Store for rollback
+        previousStates.set(JSON.stringify(queryKey), currentData)
+
+        // Check if it's a paginated response or direct array
+        if (Array.isArray(currentData)) {
+          queryCache.setQueryData(
+            queryKey,
+            currentData.filter((folder) => folder.id !== folderId),
+          )
+        } else if ('data' in currentData && Array.isArray(currentData.data)) {
+          queryCache.setQueryData(queryKey, {
+            ...currentData,
+            data: currentData.data.filter((folder) => folder.id !== folderId),
+            meta: {
+              ...currentData.meta,
+              total: Math.max(0, currentData.meta.total - 1),
+            },
+          })
+        }
+      }
+
+      // Update folder by ID cache (detail page)
+      const folderByIdKey = FOLDER_QUERY_KEYS.byId(folderId)
+      const currentFolder = queryCache.getQueryData<Folder>(folderByIdKey)
+      if (currentFolder) {
+        previousStates.set(JSON.stringify(folderByIdKey), currentFolder)
+        queryCache.setQueryData(folderByIdKey, {
+          ...currentFolder,
+          is_favorite: shouldBeFavorite,
+        })
+      }
+
+      // Also check with archived filter
+      const folderByIdArchivedKey = FOLDER_QUERY_KEYS.byId(folderId, { archived: true })
+      const currentFolderArchived = queryCache.getQueryData<Folder>(folderByIdArchivedKey)
+      if (currentFolderArchived) {
+        previousStates.set(JSON.stringify(folderByIdArchivedKey), currentFolderArchived)
+        queryCache.setQueryData(folderByIdArchivedKey, {
+          ...currentFolderArchived,
+          is_favorite: shouldBeFavorite,
+        })
+      }
+
+      // Update common folder query caches (all folders - no favorites filter)
+      // Sidebar uses: { page: 1, size: 5, name: '' }
+      const sidebarKey = FOLDER_QUERY_KEYS.withItems({ page: 1, size: 5, name: '' })
+      updateFavoriteInCache(sidebarKey)
+
+      // List page grid view (various page/size combos) - "all" filter
+      const listGridKeys = [
+        FOLDER_QUERY_KEYS.withFilters({ page: 1, size: 6, name: '' }),
+        FOLDER_QUERY_KEYS.withFilters({ page: 1, size: 12, name: '' }),
+        FOLDER_QUERY_KEYS.withFilters({ page: 1, size: 21, name: '' }),
+        FOLDER_QUERY_KEYS.withFilters({ page: 1, size: 30, name: '' }),
+      ]
+      listGridKeys.forEach((key) => updateFavoriteInCache(key))
+
+      // List page table view - "all" filter
+      const listTableKeys = [
+        FOLDER_QUERY_KEYS.withItems({ page: 1, size: 6, name: '' }),
+        FOLDER_QUERY_KEYS.withItems({ page: 1, size: 12, name: '' }),
+        FOLDER_QUERY_KEYS.withItems({ page: 1, size: 21, name: '' }),
+        FOLDER_QUERY_KEYS.withItems({ page: 1, size: 30, name: '' }),
+      ]
+      listTableKeys.forEach((key) => updateFavoriteInCache(key))
+
+      // Handle favorites-filtered caches
+      // When removing from favorites, remove from favorites cache
+      // When adding to favorites, we'll let invalidation handle adding (safer)
+      if (!shouldBeFavorite) {
+        // Remove from favorites-only caches
+        const favoritesKey = FOLDER_QUERY_KEYS.favorites()
+        removeFromFavoritesCache(favoritesKey)
+      }
+
+      return { previousStates, folderId, shouldBeFavorite }
+    },
+
+    // Rollback on error
+    onError: (_error, _variables, context) => {
+      if (context?.previousStates) {
+        context.previousStates.forEach((value, key) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          queryCache.setQueryData(JSON.parse(key) as any, value)
+        })
+      }
+      toast.error(t('folder.favorite.error', 'Failed to update favorite status'))
+    },
+
+    // Success notification
+    onSuccess: (_data, { shouldBeFavorite }) => {
+      toast.success(
+        shouldBeFavorite
+          ? t('folder.favorite.added', 'Folder added to favorites')
+          : t('folder.favorite.removed', 'Folder removed from favorites')
+      )
+    },
+
+    // Always invalidate to ensure consistency
+    onSettled: () => {
+      queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
+    },
+  })
+
+  return {
+    ...mutation,
+    toggleFavorite: mutateAsync,
     mutate,
     mutateAsync,
   }
