@@ -22,6 +22,19 @@
         </div>
 
         <div class="flex items-center gap-2">
+          <!-- Favorite Toggle Button -->
+          <Button
+            variant="tertiary"
+            :icon="folder?.is_favorite ? 'fas fa-star' : 'far fa-star'"
+            :class="folder?.is_favorite ? 'text-yellow-500' : ''"
+            :label="
+              folder?.is_favorite
+                ? $t('folder.actions.unfavorite', 'Unfavorite')
+                : $t('folder.actions.favorite', 'Favorite')
+            "
+            :loading="isTogglingFavorite"
+            @click="toggleFavorite"
+          />
           <Button
             variant="tertiary"
             icon="fa fa-edit"
@@ -164,6 +177,7 @@ import ButtonGroup from '@/components/ui/ButtonGroup.vue'
 import { useI18n } from 'vue-i18n'
 import type { Folder } from '@/types/folder'
 import Input from '../ui/Input.vue'
+import { useToggleFolderFavorite } from '@/mutations/folders'
 
 interface Props {
   folder?: Folder | null
@@ -178,6 +192,20 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const showAddItemsDropdown = ref(false)
+
+// Use mutation for optimistic UI
+const { toggleFavorite: toggleFavoriteMutation, isLoading: isTogglingFavorite } = useToggleFolderFavorite()
+
+// Toggle favorite status
+async function toggleFavorite() {
+  if (!props.folder || isTogglingFavorite.value) return
+
+  const shouldBeFavorite = !props.folder.is_favorite
+  await toggleFavoriteMutation({
+    folderId: props.folder.id,
+    shouldBeFavorite,
+  })
+}
 
 // v-model for search term
 const searchTerm = defineModel<string>('searchTerm', { default: '' })

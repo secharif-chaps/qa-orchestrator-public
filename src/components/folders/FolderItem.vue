@@ -5,11 +5,17 @@
     clickable
     @mouseenter="isParentHovered = true"
     @mouseleave="isParentHovered = false"
+    class="relative"
   >
-    <!-- Favorite Toggle Button -->
+    <!-- Favorite Toggle Button / Indicator -->
     <button
       @click.stop="toggleFavorite"
-      class="absolute top-3 right-3 size-10 z-10 p-2 rounded-block hover:bg-base-200 transition-colors"
+      class="absolute top-3 right-3 size-8 z-10 flex items-center justify-center rounded-full transition-all duration-200"
+      :class="[
+        folder.is_favorite
+          ? 'bg-yellow-100 dark:bg-yellow-900/30'
+          : 'hover:bg-base-200',
+      ]"
       :title="folder.is_favorite ? 'Remove from favorites' : 'Add to favorites'"
       :disabled="isTogglingFavorite"
     >
@@ -17,11 +23,12 @@
         v-if="!isTogglingFavorite"
         :class="[
           folder.is_favorite
-            ? 'fa-jelly-fill fa-regular fa-star text-accent'
-            : 'fa-jelly fa-regular fa-star text-secondary hover:text-accent',
+            ? 'fas fa-star text-yellow-500'
+            : 'far fa-star text-secondary hover:text-yellow-500',
         ]"
+        class="text-sm"
       ></i>
-      <i v-else class="fas fa-spinner fa-spin text-secondary"></i>
+      <i v-else class="fas fa-spinner fa-spin text-secondary text-sm"></i>
     </button>
 
     <div class="flex flex-col gap-2">
@@ -142,9 +149,8 @@
 <script setup lang="ts">
 import Tag from '@/components/ui/Tag.vue'
 import type { Folder } from '@/types/folder'
-import { toggleFolderFavorite } from '@/api/folders'
+import { useToggleFolderFavorite } from '@/mutations/folders'
 import { computed, ref } from 'vue'
-import { toast } from '@/utils/toast'
 import Card from '../ui/Card.vue'
 
 interface Props {
@@ -156,12 +162,14 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   viewFolder: [id: string]
   deleteFolder: [folder: Folder]
-  favoriteToggled: [folder: Folder]
+  restoreFolder: [folder: Folder]
 }>()
 
 const isParentHovered = ref(false)
 const isChildHovered = ref(false)
-const isTogglingFavorite = ref(false)
+
+// Use mutation for optimistic UI
+const { toggleFavorite: toggleFavoriteMutation, isLoading: isTogglingFavorite } = useToggleFolderFavorite()
 
 // Compute folder color classes based on the color prop
 const folderColorClasses = computed(() => {
@@ -236,26 +244,13 @@ const handleCardClick = (event: MouseEvent) => {
   emit('viewFolder', props.folder.id)
 }
 
-const toggleFavorite = async () => {
+async function toggleFavorite() {
   if (isTogglingFavorite.value) return
 
-  isTogglingFavorite.value = true
-  try {
-    const newFavoriteStatus = !props.folder.is_favorite
-    const updatedFolder = await toggleFolderFavorite(props.folder.id, newFavoriteStatus)
-
-    // Update the local folder object
-    props.folder.is_favorite = newFavoriteStatus
-
-    // Emit event for parent to handle
-    emit('favoriteToggled', updatedFolder)
-
-    toast.success(newFavoriteStatus ? 'Folder added to favorites' : 'Folder removed from favorites')
-  } catch (error) {
-    console.error('Failed to toggle favorite:', error)
-    toast.error('Failed to update favorite status')
-  } finally {
-    isTogglingFavorite.value = false
-  }
+  const shouldBeFavorite = !props.folder.is_favorite
+  await toggleFavoriteMutation({
+    folderId: props.folder.id,
+    shouldBeFavorite,
+  })
 }
 </script>

@@ -80,11 +80,36 @@ export const updateFolder = async (folderId: string, folder: FolderUpdate) => {
   return response
 }
 
-export const toggleFolderFavorite = async (folderId: string, isFavorite: boolean) => {
-  const response = await apiClient.patch<Folder>(`/folders/${folderId}`, {
-    is_favorite: isFavorite
-  })
+/**
+ * Add a folder to the current user's favorites.
+ */
+export const addFolderFavorite = async (folderId: string) => {
+  const response = await apiClient.post<{ message: string; is_favorite: boolean }>(
+    `/folders/${folderId}/favorite`,
+    {} // Empty body for POST
+  )
   return response
+}
+
+/**
+ * Remove a folder from the current user's favorites.
+ */
+export const removeFolderFavorite = async (folderId: string) => {
+  await apiClient.delete(`/folders/${folderId}/favorite`)
+  // DELETE endpoint returns void, return the expected state
+  return { message: 'Folder removed from favorites', is_favorite: false }
+}
+
+/**
+ * Toggle a folder's favorite status for the current user.
+ * Uses dedicated POST/DELETE endpoints for user-scoped favorites.
+ */
+export const toggleFolderFavorite = async (folderId: string, shouldBeFavorite: boolean) => {
+  if (shouldBeFavorite) {
+    return addFolderFavorite(folderId)
+  } else {
+    return removeFolderFavorite(folderId)
+  }
 }
 
 export const deleteFolder = async (folderId: string) => {
@@ -114,6 +139,8 @@ export const foldersApi = {
   getFolders,
   createFolder,
   updateFolder,
+  addFolderFavorite,
+  removeFolderFavorite,
   toggleFolderFavorite,
   deleteFolder,
   restoreFolder,
