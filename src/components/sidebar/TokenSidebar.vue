@@ -189,13 +189,16 @@ const route = useRoute()
 const isOnHistoryPage = computed(() => route.path === '/tokens/history')
 
 // Fetch current organization
-const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
-
-// Fetch organization modules to get total tokens
-const { data: modulesData, isLoading: isLoadingTokens } = useQuery(
-  organizationModulesQuery,
-  () => ({ organizationId: currentOrganization.value!.id }),
+const { data: currentOrganization, isLoading: isLoadingOrg } = useQuery(
+  currentOrganizationQuery,
+  () => ({}),
 )
+
+// Fetch organization modules to get total tokens (only when organization is loaded)
+const { data: modulesData, isLoading: isLoadingTokens } = useQuery({
+  ...organizationModulesQuery({ organizationId: currentOrganization.value?.id ?? '' }),
+  enabled: () => !!currentOrganization.value?.id,
+})
 
 // Fetch recent companies for token history (10 most recent)
 const { data: recentCompanies, isLoading: isLoadingCompanies } = useQuery(
@@ -267,7 +270,9 @@ const groupedHistory = computed(() => {
 })
 
 // Combined loading state
-const isLoading = computed(() => isLoadingTokens.value || isLoadingCompanies.value)
+const isLoading = computed(
+  () => isLoadingOrg.value || isLoadingTokens.value || isLoadingCompanies.value,
+)
 
 // Check if there's no history to display
 const hasNoHistory = computed(() => {

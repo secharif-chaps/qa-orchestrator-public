@@ -315,6 +315,11 @@ export default {
       noNotifications: 'No notifications',
       upToDate: 'You are up to date! All notifications will appear here.',
       viewAll: 'View all notifications',
+      companyCreated: 'New company added',
+      folderCreated: 'New folder created',
+      activityMessage: 'created',
+      categoryCompany: 'Company',
+      categoryFolder: 'Folder',
       categories: {
         team: 'Team',
         share: 'Share',
@@ -331,6 +336,9 @@ export default {
       needMore: 'Need more Credits?',
       advisor: 'Your ChapsVision advisor',
       contact: 'Contact',
+      noHistory: 'No usage history',
+      noHistoryDesc: 'Token usage will appear here when you create company cards.',
+      createdBy: 'Card created by',
     },
     chapse: {
       title: 'Chaps-e',
@@ -1017,6 +1025,8 @@ export default {
       error: 'Failed to archive company "{name}". Please try again.',
     },
     delete: {
+      title: 'Delete Company',
+      button: 'Delete',
       success: 'Company "{name}" has been deleted successfully',
       error: 'Failed to delete company "{name}". Please try again.',
     },
@@ -1084,7 +1094,24 @@ export default {
   folder: {
     title: 'Folders',
     description: 'Organize your companies into folders',
-    search: 'Search folders...',
+    search: {
+      placeholder: 'Search items...',
+    },
+    view: {
+      grid: 'Grid View',
+      table: 'Table View',
+    },
+    actions: {
+      delete: 'Delete',
+      edit: 'Edit',
+      favorite: 'Favorite',
+      unfavorite: 'Unfavorite',
+      view: 'View',
+    },
+    itemCount: '{count} items',
+    items: {
+      add: 'Add Items',
+    },
     list: {
       error: {
         title: 'Error',
@@ -1209,6 +1236,7 @@ export default {
       actions: {
         contactSales: 'Contact Sales',
         open: 'Open',
+        companyScreen: 'Create a Screen',
       },
       screen: {
         name: 'Screen',
