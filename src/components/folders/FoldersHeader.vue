@@ -178,6 +178,7 @@ import { useI18n } from 'vue-i18n'
 import type { Folder } from '@/types/folder'
 import Input from '../ui/Input.vue'
 import { useToggleFolderFavorite } from '@/mutations/folders'
+import Tag from '../ui/Tag.vue'
 
 interface Props {
   folder?: Folder | null
@@ -194,7 +195,8 @@ const { t } = useI18n()
 const showAddItemsDropdown = ref(false)
 
 // Use mutation for optimistic UI
-const { toggleFavorite: toggleFavoriteMutation, isLoading: isTogglingFavorite } = useToggleFolderFavorite()
+const { toggleFavorite: toggleFavoriteMutation, isLoading: isTogglingFavorite } =
+  useToggleFolderFavorite()
 
 // Toggle favorite status
 async function toggleFavorite() {

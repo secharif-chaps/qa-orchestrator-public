@@ -316,6 +316,11 @@ export default {
       noNotifications: 'Aucune notification',
       upToDate: 'Vous êtes à jour ! Toutes vos notifications apparaîtront ici.',
       viewAll: 'Voir toutes les notifications',
+      companyCreated: 'Nouvelle entreprise ajoutée',
+      folderCreated: 'Nouveau dossier créé',
+      activityMessage: 'a créé',
+      categoryCompany: 'Entreprise',
+      categoryFolder: 'Dossier',
       categories: {
         team: 'Équipe',
         share: 'Partage',
@@ -332,6 +337,9 @@ export default {
       needMore: 'Besoin de plus de Crédits ?',
       advisor: 'Votre conseiller ChapsVision',
       contact: 'Contacter',
+      noHistory: "Aucun historique d'utilisation",
+      noHistoryDesc: "L'utilisation des crédits apparaîtra ici lorsque vous créerez des fiches entreprises.",
+      createdBy: 'Fiche créée par',
     },
     chapse: {
       title: 'Chaps-e',
@@ -1068,6 +1076,8 @@ export default {
       error: 'Échec de l\'archivage de l\'entreprise "{name}". Veuillez réessayer.',
     },
     delete: {
+      title: "Supprimer l'entreprise",
+      button: 'Supprimer',
       success: 'L\'entreprise "{name}" a été supprimée avec succès',
       error: 'Échec de la suppression de l\'entreprise "{name}". Veuillez réessayer.',
     },
@@ -1250,7 +1260,24 @@ export default {
   folder: {
     title: 'Dossiers',
     description: 'Organisez vos entreprises en dossiers',
-    search: 'Rechercher des dossiers...',
+    search: {
+      placeholder: 'Rechercher des éléments...',
+    },
+    view: {
+      grid: 'Vue grille',
+      table: 'Vue tableau',
+    },
+    actions: {
+      delete: 'Supprimer',
+      edit: 'Modifier',
+      favorite: 'Favori',
+      unfavorite: 'Retirer des favoris',
+      view: 'Voir',
+    },
+    itemCount: '{count} éléments',
+    items: {
+      add: 'Ajouter des éléments',
+    },
     list: {
       error: {
         title: 'Erreur',
@@ -1375,6 +1402,7 @@ export default {
       actions: {
         contactSales: 'Contacter les Ventes',
         open: 'Ouvrir',
+        companyScreen: 'Créer un Screen',
       },
       screen: {
         name: 'Screen',

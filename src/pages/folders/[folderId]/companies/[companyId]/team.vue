@@ -129,17 +129,6 @@
                     />
                   </div>
                 </div>
-
-                <div class="space-y-3 p-2">
-                  <a
-                    :href="getMockedLinkedInUrl(selectedNode)"
-                    target="_blank"
-                    class="flex items-center gap-2 text-sm text-secondary hover:underline"
-                  >
-                    <i class="fab fa-linkedin"></i>
-                    <span>{{ $t('team.hierarchy.viewLinkedIn') }}</span>
-                  </a>
-                </div>
               </div>
             </Panel>
           </VueFlow>
@@ -384,13 +373,6 @@ function doScreenshot() {
   }
 
   capture(vueFlowRef.value, { shouldDownload: true })
-}
-
-// Helper functions for mocked data
-const getMockedLinkedInUrl = (node: any) => {
-  if (!node) return '#'
-  const fullName = `${node.firstName}${node.lastName}`.toLowerCase().replace(/[^a-z0-9]/g, '')
-  return `https://www.linkedin.com/in/${fullName}`
 }
 
 // New methods for the enhanced team page
