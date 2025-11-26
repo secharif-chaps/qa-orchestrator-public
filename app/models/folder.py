@@ -21,7 +21,6 @@ class Folder(Base):
     color = Column(String, nullable=True)
     icon = Column(String, nullable=True)
     tags = Column(ARRAY(String), server_default=text("'{}'::text[]"), nullable=False)
-    is_favorite = Column(Boolean, server_default=text("false"), nullable=False)
     is_deleted = Column(Boolean, server_default=text("false"), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)

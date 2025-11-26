@@ -38,7 +38,7 @@ def create_folder(
 
     try:
         logger.info(f"📁 POST /folders - START - User: {org_context.username}, Folder: {folder.name}")
-        
+
         logger.debug(f"📁 Creating folder with owner_id={org_context.user_id}, owner_username={org_context.username}, organization_id={org_context.organization_id}")
         folder_obj = FolderService.create_folder(
             db=db,
@@ -48,18 +48,26 @@ def create_folder(
             folder_data=folder
         )
         logger.info(f"✅ Folder created successfully - ID: {folder_obj.id}, Name: {folder_obj.name}")
-        
-        # Debug the folder object before returning
-        logger.debug(f"📁 Folder object type: {type(folder_obj)}")
-        logger.debug(f"📁 Folder attributes: id={folder_obj.id}, name={folder_obj.name}, owner={getattr(folder_obj, 'owner', 'MISSING')}")
-        
-        # Check if owner is None (could cause serialization issues)
-        if hasattr(folder_obj, 'owner'):
-            logger.debug(f"📁 owner value: {folder_obj.owner}")
-        
+
+        # Build response with is_favorite (new folders are never favorited)
+        folder_dict = {
+            "id": folder_obj.id,
+            "organization_id": folder_obj.organization_id,
+            "owner": folder_obj.owner or "Unknown",
+            "name": folder_obj.name,
+            "color": folder_obj.color,
+            "icon": folder_obj.icon,
+            "tags": folder_obj.tags,
+            "is_favorite": False,  # New folders are never favorited
+            "is_deleted": folder_obj.is_deleted,
+            "created_at": folder_obj.created_at,
+            "updated_at": folder_obj.updated_at,
+            "items": []
+        }
+
         logger.info("📁 About to return folder object")
-        return folder_obj
-        
+        return folder_dict
+
     except Exception as e:
         logger.error(f"❌ Error in create_folder: {type(e).__name__}: {str(e)}")
         logger.error("❌ Full exception details:", exc_info=True)
@@ -74,9 +82,10 @@ def list_folders(
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
-    """List all folders in the organization.
+    """List all folders in the organization with user-specific favorite status.
 
     Requires organization.read role for access.
+    The is_favorite field is computed per-user from the user_folder_favorites table.
     """
     import logging
     logger = logging.getLogger(__name__)
@@ -84,9 +93,15 @@ def list_folders(
     logger.info(f"📁 GET /folders - START - User: {org_context.username}, Organization: {org_context.organization_id}")
     logger.debug(f"📁 Query params - archived: {archived}, favorites: {favorites}")
 
+    # Get user's favorite folder IDs for computing is_favorite per-user
+    user_favorite_ids = FolderService.get_user_favorite_folder_ids(
+        db, org_context.user_id, org_context.organization_id
+    )
+
     folders = FolderService.list_folders(
         db=db,
         organization_id=org_context.organization_id,
+        user_id=org_context.user_id,
         archived=archived,
         favorites_only=favorites
     )
@@ -107,7 +122,7 @@ def list_folders(
             "color": folder.color,
             "icon": folder.icon,
             "tags": folder.tags,
-            "is_favorite": folder.is_favorite,
+            "is_favorite": folder.id in user_favorite_ids,  # Computed per-user!
             "is_deleted": folder.is_deleted,
             "created_at": folder.created_at,
             "updated_at": folder.updated_at,
@@ -127,16 +142,17 @@ def get_folder(
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
-    """Get a folder with its items, with optional filtering by archived status.
+    """Get a folder with its items and user-specific favorite status.
 
     Requires organization.read role for access.
+    The is_favorite field is computed per-user from the user_folder_favorites table.
     """
     import logging
     logger = logging.getLogger(__name__)
 
     try:
         logger.info(f"📁 GET /folders/{folder_id} - START - User: {org_context.username}")
-        
+
         logger.debug(f"📁 Getting folder with items - folder_id={folder_id}, organization_id={org_context.organization_id}")
         folder_data = FolderService.get_folder_with_items(
             db=db,
@@ -144,19 +160,24 @@ def get_folder(
             organization_id=org_context.organization_id,
             item_archived_filter=archived
         )
-        
+
         if not folder_data:
             logger.warning(f"❌ Folder {folder_id} not found in organization {org_context.organization_id}")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Folder not found"
             )
-        
+
+        # Add user-specific favorite status
+        folder_data['is_favorite'] = FolderService.is_favorite(
+            db, folder_id, org_context.user_id
+        )
+
         logger.debug(f"📁 Folder data retrieved: {type(folder_data)}")
         logger.debug(f"📁 Folder data keys: {folder_data.keys() if isinstance(folder_data, dict) else 'Not a dict'}")
         logger.info(f"✅ Returning folder data for {folder_id}")
         return folder_data
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -177,28 +198,28 @@ def update_folder(
 
     Requires organization.write role for access.
     """
-    
+
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
         organization_id=org_context.organization_id
     )
-    
+
     if not folder:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Folder not found"
         )
-    
+
     updated_folder = FolderService.update_folder(
         db=db,
         folder=folder,
         folder_update=folder_update
     )
-    
+
     # Build the response with items for consistency
     folder_items = FolderService._get_folder_items_summary(db, updated_folder.id)
-    
+
     folder_dict = {
         "id": updated_folder.id,
         "organization_id": updated_folder.organization_id,
@@ -207,13 +228,13 @@ def update_folder(
         "color": updated_folder.color,
         "icon": updated_folder.icon,
         "tags": updated_folder.tags,
-        "is_favorite": updated_folder.is_favorite,
+        "is_favorite": FolderService.is_favorite(db, folder_id, org_context.user_id),
         "is_deleted": updated_folder.is_deleted,
         "created_at": updated_folder.created_at,
         "updated_at": updated_folder.updated_at,
         "items": folder_items
     }
-    
+
     return folder_dict
 
 
@@ -225,32 +246,33 @@ def patch_folder(
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
-    """Partially update a folder (for favorite toggle, etc.).
+    """Partially update a folder.
 
     Requires organization.write role for access.
+    Note: Favorites are managed via POST/DELETE /{folder_id}/favorite endpoints.
     """
-    
+
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
         organization_id=org_context.organization_id
     )
-    
+
     if not folder:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Folder not found"
         )
-    
+
     updated_folder = FolderService.update_folder(
         db=db,
         folder=folder,
         folder_update=folder_update
     )
-    
+
     # Build the response with items for consistency
     folder_items = FolderService._get_folder_items_summary(db, updated_folder.id)
-    
+
     folder_dict = {
         "id": updated_folder.id,
         "organization_id": updated_folder.organization_id,
@@ -259,13 +281,13 @@ def patch_folder(
         "color": updated_folder.color,
         "icon": updated_folder.icon,
         "tags": updated_folder.tags,
-        "is_favorite": updated_folder.is_favorite,
+        "is_favorite": FolderService.is_favorite(db, folder_id, org_context.user_id),
         "is_deleted": updated_folder.is_deleted,
         "created_at": updated_folder.created_at,
         "updated_at": updated_folder.updated_at,
         "items": folder_items
     }
-    
+
     return folder_dict
 
 
@@ -280,24 +302,24 @@ def delete_folder(
 
     Requires organization.write role for access.
     """
-    
+
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
         organization_id=org_context.organization_id
     )
-    
+
     if not folder:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Folder not found"
         )
-    
+
     deleted_folder = FolderService.soft_delete_folder(db=db, folder=folder)
-    
+
     # Build the response with items for consistency
     folder_items = FolderService._get_folder_items_summary(db, deleted_folder.id)
-    
+
     folder_dict = {
         "id": deleted_folder.id,
         "organization_id": deleted_folder.organization_id,
@@ -306,13 +328,13 @@ def delete_folder(
         "color": deleted_folder.color,
         "icon": deleted_folder.icon,
         "tags": deleted_folder.tags,
-        "is_favorite": deleted_folder.is_favorite,
+        "is_favorite": FolderService.is_favorite(db, folder_id, org_context.user_id),
         "is_deleted": deleted_folder.is_deleted,
         "created_at": deleted_folder.created_at,
         "updated_at": deleted_folder.updated_at,
         "items": folder_items
     }
-    
+
     return folder_dict
 
 
@@ -327,31 +349,31 @@ def restore_folder(
 
     Requires organization.write role for access.
     """
-    
+
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
         organization_id=org_context.organization_id,
         include_deleted=True
     )
-    
+
     if not folder:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Folder not found"
         )
-    
+
     if not folder.is_deleted:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Folder is not deleted"
         )
-    
+
     restored_folder = FolderService.restore_folder(db=db, folder=folder)
-    
+
     # Build the response with items for consistency
     folder_items = FolderService._get_folder_items_summary(db, restored_folder.id)
-    
+
     folder_dict = {
         "id": restored_folder.id,
         "organization_id": restored_folder.organization_id,
@@ -360,14 +382,87 @@ def restore_folder(
         "color": restored_folder.color,
         "icon": restored_folder.icon,
         "tags": restored_folder.tags,
-        "is_favorite": restored_folder.is_favorite,
+        "is_favorite": FolderService.is_favorite(db, folder_id, org_context.user_id),
         "is_deleted": restored_folder.is_deleted,
         "created_at": restored_folder.created_at,
         "updated_at": restored_folder.updated_at,
         "items": folder_items
     }
-    
+
     return folder_dict
+
+
+# ==================== User Favorites Endpoints ====================
+
+
+@router.post("/{folder_id}/favorite", status_code=status.HTTP_201_CREATED)
+def add_folder_favorite(
+    folder_id: UUID,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
+    org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db)
+):
+    """Add a folder to the current user's favorites.
+
+    Requires organization.read role for access.
+    """
+    import logging
+    logger = logging.getLogger(__name__)
+
+    logger.info(f"⭐ POST /folders/{folder_id}/favorite - User: {org_context.username}")
+
+    # Verify folder exists and belongs to organization
+    folder = FolderService.get_folder(db, folder_id, org_context.organization_id)
+    if not folder:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Folder not found"
+        )
+
+    added = FolderService.add_favorite(db, folder_id, org_context.user_id)
+    if not added:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Folder already in favorites"
+        )
+
+    logger.info(f"✅ Folder {folder_id} added to favorites for user {org_context.username}")
+    return {"message": "Folder added to favorites", "is_favorite": True}
+
+
+@router.delete("/{folder_id}/favorite", status_code=status.HTTP_200_OK)
+def remove_folder_favorite(
+    folder_id: UUID,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
+    org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db)
+):
+    """Remove a folder from the current user's favorites.
+
+    Requires organization.read role for access.
+    """
+    import logging
+    logger = logging.getLogger(__name__)
+
+    logger.info(f"⭐ DELETE /folders/{folder_id}/favorite - User: {org_context.username}")
+
+    # Verify folder exists and belongs to organization
+    folder = FolderService.get_folder(db, folder_id, org_context.organization_id)
+    if not folder:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Folder not found"
+        )
+
+    removed = FolderService.remove_favorite(db, folder_id, org_context.user_id)
+    if not removed:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Folder not in favorites"
+        )
+
+    logger.info(f"✅ Folder {folder_id} removed from favorites for user {org_context.username}")
+    return {"message": "Folder removed from favorites", "is_favorite": False}
 
 
 @router.post("/{folder_id}/items", response_model=FolderItemResponse)
