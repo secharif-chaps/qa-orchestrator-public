@@ -1,9 +1,9 @@
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Set
 from uuid import UUID
 from sqlalchemy.orm import Session
 from datetime import datetime
 
-from app.models import Folder, FolderItem, Company
+from app.models import Folder, FolderItem, Company, UserFolderFavorite
 from app.schemas.folder import FolderCreate, FolderUpdate
 
 
@@ -116,27 +116,36 @@ class FolderService:
             'color': folder.color,
             'icon': folder.icon,
             'tags': folder.tags,
-            'is_favorite': folder.is_favorite,
             'is_deleted': folder.is_deleted,
             'created_at': folder.created_at.isoformat() if folder.created_at else None,
             'updated_at': folder.updated_at.isoformat() if folder.updated_at else None,
             'owner': folder.owner,
             'organization_id': folder.organization_id,
             'items': items
+            # Note: is_favorite is computed per-user and added by the endpoint
         }
     
     @staticmethod
     def list_folders(
         db: Session,
         organization_id: str,
+        user_id: str,
         archived: bool = False,
         favorites_only: bool = False
     ) -> List[Folder]:
-        """List all folders in an organization with their items"""
+        """List all folders in an organization.
+
+        Args:
+            db: Database session
+            organization_id: Organization to filter by
+            user_id: Current user ID (required for favorites filtering)
+            archived: If True, show deleted folders; if False, show active folders
+            favorites_only: If True, only show folders favorited by this user
+        """
         import logging
         logger = logging.getLogger(__name__)
 
-        logger.debug(f"📁 list_folders - organization_id: {organization_id}, archived: {archived}, favorites_only: {favorites_only}")
+        logger.debug(f"📁 list_folders - organization_id: {organization_id}, user_id: {user_id}, archived: {archived}, favorites_only: {favorites_only}")
 
         query = db.query(Folder).filter(Folder.organization_id == organization_id)
 
@@ -148,8 +157,13 @@ class FolderService:
             query = query.filter(Folder.is_deleted == False)
 
         if favorites_only:
-            logger.debug("📁 Filtering for favorites only")
-            query = query.filter(Folder.is_favorite == True)
+            logger.debug("📁 Filtering for user's favorites only")
+            # Join with user_folder_favorites to filter by current user's favorites
+            query = query.join(
+                UserFolderFavorite,
+                (UserFolderFavorite.folder_id == Folder.id) &
+                (UserFolderFavorite.user_id == user_id)
+            )
 
         # Log the SQL query
         logger.debug(f"📁 SQL Query: {query}")
@@ -299,3 +313,89 @@ class FolderService:
             Folder.organization_id == organization_id,
             Folder.is_deleted == False
         ).all()
+
+    # ==================== User Favorites Methods ====================
+
+    @staticmethod
+    def add_favorite(
+        db: Session,
+        folder_id: UUID,
+        user_id: str
+    ) -> bool:
+        """Add a folder to user's favorites.
+
+        Returns:
+            True if favorite was added, False if already favorited
+        """
+        # Check if already favorited
+        existing = db.query(UserFolderFavorite).filter(
+            UserFolderFavorite.folder_id == folder_id,
+            UserFolderFavorite.user_id == user_id
+        ).first()
+
+        if existing:
+            return False  # Already favorited
+
+        favorite = UserFolderFavorite(
+            folder_id=folder_id,
+            user_id=user_id
+        )
+        db.add(favorite)
+        db.commit()
+        return True
+
+    @staticmethod
+    def remove_favorite(
+        db: Session,
+        folder_id: UUID,
+        user_id: str
+    ) -> bool:
+        """Remove a folder from user's favorites.
+
+        Returns:
+            True if favorite was removed, False if not favorited
+        """
+        favorite = db.query(UserFolderFavorite).filter(
+            UserFolderFavorite.folder_id == folder_id,
+            UserFolderFavorite.user_id == user_id
+        ).first()
+
+        if not favorite:
+            return False  # Not favorited
+
+        db.delete(favorite)
+        db.commit()
+        return True
+
+    @staticmethod
+    def is_favorite(
+        db: Session,
+        folder_id: UUID,
+        user_id: str
+    ) -> bool:
+        """Check if a folder is favorited by a user."""
+        return db.query(UserFolderFavorite).filter(
+            UserFolderFavorite.folder_id == folder_id,
+            UserFolderFavorite.user_id == user_id
+        ).first() is not None
+
+    @staticmethod
+    def get_user_favorite_folder_ids(
+        db: Session,
+        user_id: str,
+        organization_id: str
+    ) -> Set[UUID]:
+        """Get all folder IDs favorited by a user in an organization.
+
+        Returns:
+            Set of folder UUIDs that the user has favorited
+        """
+        favorites = db.query(UserFolderFavorite.folder_id).join(
+            Folder, UserFolderFavorite.folder_id == Folder.id
+        ).filter(
+            UserFolderFavorite.user_id == user_id,
+            Folder.organization_id == organization_id,
+            Folder.is_deleted == False
+        ).all()
+
+        return {f[0] for f in favorites}

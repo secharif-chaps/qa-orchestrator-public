@@ -20,7 +20,6 @@ class FolderUpdate(BaseModel):
     color: Optional[str] = Field(None, max_length=50)
     icon: Optional[str] = Field(None, max_length=50)
     tags: Optional[List[str]] = None
-    is_favorite: Optional[bool] = None
 
 
 class FolderItemBase(BaseModel):
