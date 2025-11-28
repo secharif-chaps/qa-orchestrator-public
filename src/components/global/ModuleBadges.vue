@@ -9,22 +9,15 @@
       :class="getBadgeClasses(module)"
     >
       <i :class="module.icon" class="text-sm" />
-      <span class="text-sm font-medium text-nowrap">{{ module.label }}</span>
+      <span class="text-sm font-medium text-nowrap">{{ $t(module.labelKey) }}</span>
 
       <!-- Coming Soon label -->
       <span
         v-if="module.status === 'soon'"
         class="ml-1 px-2 py-0.5 bg-almond-300 dark:bg-almond-600 text-sage-900 dark:text-sage-100 text-xs rounded-full"
       >
-        {{ $t('common.comingSoon', 'Coming soon') }}
+        {{ $t('common.comingSoon') }}
       </span>
-
-      <!-- Unavailable info icon -->
-      <i
-        v-if="module.status === 'unavailable'"
-        class="fa fa-info-circle text-xs ml-1 opacity-60"
-        :title="$t('common.moduleUnavailable', 'Module unavailable')"
-      />
     </component>
   </div>
 </template>
