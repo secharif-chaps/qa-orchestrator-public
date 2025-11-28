@@ -209,11 +209,19 @@ class SecurityMiddleware(BaseHTTPMiddleware):
 
 class JSONValidationMiddleware(BaseHTTPMiddleware):
     """Middleware for validating JSON payloads"""
-    
+
+    # Paths that use SSE (Server-Sent Events) streaming responses
+    # Body reading in middleware breaks SSE due to Starlette's BaseHTTPMiddleware limitations
+    SSE_PATHS = ["/api/chapse/chat"]
+
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """Validate JSON payload structure and content"""
         # Skip OPTIONS preflight requests
         if request.method == "OPTIONS":
+            return await call_next(request)
+
+        # Skip SSE endpoints - reading body breaks streaming responses
+        if any(request.url.path.startswith(path) for path in self.SSE_PATHS):
             return await call_next(request)
         
         # Only process JSON requests
