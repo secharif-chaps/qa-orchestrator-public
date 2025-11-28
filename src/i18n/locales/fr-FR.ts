@@ -463,6 +463,12 @@ export default {
     },
     comingSoon: 'Bientôt disponible',
     moduleUnavailable: 'Module non disponible',
+    modules: {
+      screen: 'Fiche entreprise',
+      target: 'Veille',
+      explore: 'Cartographie',
+      stream: 'Stream',
+    },
     notFound: 'Non trouvé',
     loading: 'Chargement...',
     na: 'N/D',

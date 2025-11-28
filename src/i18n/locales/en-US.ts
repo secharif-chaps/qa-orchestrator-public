@@ -429,6 +429,12 @@ export default {
     },
     comingSoon: 'Coming soon',
     moduleUnavailable: 'Module unavailable',
+    modules: {
+      screen: 'Company Card',
+      target: 'Watchfile',
+      explore: 'Knowledge Graph',
+      stream: 'Stream',
+    },
     notFound: 'Not found',
     loading: 'Loading...',
     na: 'N/A',

@@ -5,32 +5,32 @@ export type ModuleColor = 'purple' | 'green' | 'orange' | 'blue'
 
 export interface ModuleDisplayConfig {
   name: ModuleName
-  label: string
+  labelKey: string
   icon: string
   status: ModuleStatus
   color: ModuleColor
 }
 
 // Module display configuration
-// This maps internal module names to display names, icons, and colors
+// This maps internal module names to i18n keys, icons, and colors
 export const MODULE_CONFIG: Record<ModuleName, Omit<ModuleDisplayConfig, 'status' | 'name'>> = {
   screen: {
-    label: 'Fiche entreprise',
+    labelKey: 'common.modules.screen',
     icon: 'fa fa-building',
     color: 'indigo',
   },
   target: {
-    label: 'Veille',
+    labelKey: 'common.modules.target',
     icon: 'fa fa-file-alt',
     color: 'orange',
   },
   explore: {
-    label: 'Cartographie',
+    labelKey: 'common.modules.explore',
     icon: 'fa fa-map',
     color: 'almond',
   },
   stream: {
-    label: 'Stream',
+    labelKey: 'common.modules.stream',
     icon: 'fa fa-stream',
     color: 'yellow',
   },
