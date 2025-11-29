@@ -246,17 +246,6 @@ function handleClickOutside(event: MouseEvent) {
   }
 }
 
-// Debounce search
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-watch(searchQuery, () => {
-  if (searchTimeout) {
-    clearTimeout(searchTimeout)
-  }
-  searchTimeout = setTimeout(() => {
-    handleSearch()
-  }, 300)
-})
-
 // Lifecycle
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
@@ -264,8 +253,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
-  if (searchTimeout) {
-    clearTimeout(searchTimeout)
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer)
   }
 })
 </script>
