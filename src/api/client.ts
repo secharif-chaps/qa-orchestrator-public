@@ -4,6 +4,8 @@
 import { useAuthStore } from '@/stores/auth'
 import { useEndpointResolver } from '@/composables/useEndpointResolver'
 
+type AuthStore = ReturnType<typeof useAuthStore>
+
 const { endpoints } = useEndpointResolver()
 const API_BASE_URL = endpoints.value.apiUrl
 
@@ -32,11 +34,44 @@ class ApiClient {
       headers['Authorization'] = `Bearer ${token}`
     }
 
+    // Use manual redirect handling to preserve HTTPS on 307 redirects
     const response = await fetch(url, {
       headers,
+      redirect: 'manual',
       ...options,
     })
 
+    // Handle 307/308 redirects manually to preserve HTTPS protocol
+    if (response.status === 307 || response.status === 308) {
+      const redirectUrl = response.headers.get('Location')
+      if (redirectUrl) {
+        // Ensure redirect URL uses same protocol as original request
+        const originalProtocol = new URL(url).protocol
+        let finalRedirectUrl = redirectUrl
+
+        // If redirect switches to HTTP but original was HTTPS, fix it
+        if (originalProtocol === 'https:' && redirectUrl.startsWith('http://')) {
+          finalRedirectUrl = redirectUrl.replace('http://', 'https://')
+        }
+
+        const redirectResponse = await fetch(finalRedirectUrl, {
+          headers,
+          ...options,
+        })
+        return this.handleResponse<T>(redirectResponse, endpoint, options, retry, authStore)
+      }
+    }
+
+    return this.handleResponse<T>(response, endpoint, options, retry, authStore)
+  }
+
+  private async handleResponse<T>(
+    response: Response,
+    endpoint: string,
+    options: RequestInit,
+    retry: boolean,
+    authStore: AuthStore,
+  ): Promise<T> {
     // Handle 401 Unauthorized - token might be expired
     if (response.status === 401 && retry) {
       // Try to refresh the token
