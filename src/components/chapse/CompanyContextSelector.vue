@@ -203,13 +203,15 @@ function handleSearch() {
 
   if (!searchQuery.value.trim()) {
     companies.value = []
+    isSearching.value = false
     return
   }
 
+  // Show loader immediately while debouncing
+  isSearching.value = true
+
   // Debounce the search by 300ms
   searchDebounceTimer = setTimeout(async () => {
-    isSearching.value = true
-
     try {
       const response = await getCompanies({
         page: 1,
