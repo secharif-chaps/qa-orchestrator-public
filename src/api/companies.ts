@@ -86,7 +86,7 @@ export const getCompanies = async (filters: {
   }
 
   const response = await apiClient.get<PaginatedResponse<Company>>(
-    `/companies?${params.toString()}`,
+    `/companies/?${params.toString()}`,
   )
   return response
 }
