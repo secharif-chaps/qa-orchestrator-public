@@ -247,7 +247,8 @@ class ChapseService:
         user_id: str,
         organization_id: str,
         conversation_id: str | None = None,
-        company_ids: list[int] | None = None
+        company_ids: list[int] | None = None,
+        username: str | None = None
     ) -> AsyncGenerator[str, None]:
         """Stream a chat message to Dify and yield SSE events.
 
@@ -257,6 +258,7 @@ class ChapseService:
             organization_id: Organization UUID for company validation
             conversation_id: Optional existing conversation ID
             company_ids: Optional company IDs for context
+            username: User's first name for Dify to address them personally
 
         Yields:
             SSE event strings (data: {...})
@@ -280,7 +282,8 @@ class ChapseService:
             "user": user_id,
             "response_mode": "streaming",
             "inputs": {
-                "company_context": company_context_json
+                "company_context": company_context_json,
+                "username": username or "User"
             }
         }
 
