@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col h-full">
     <!-- Header -->
-    <div class="flex items-center justify-between px-4 py-3 border-b border-sage-700">
+    <div class="flex items-center justify-between px-4 py-2.5 border-b border-sage-700">
       <h3 class="text-sm font-semibold text-sage-100">
         {{ $t('chapse.conversations', 'Conversations') }}
       </h3>

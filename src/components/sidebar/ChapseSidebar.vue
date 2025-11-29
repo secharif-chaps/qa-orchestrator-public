@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-[calc(100vh-140px)]">
+  <div class="flex " :class="{ 'h-[calc(100vh-140px)]': !sidebarStore.isFullscreen, 'h-[calc(100vh-70px)]': sidebarStore.isFullscreen }">
     <!-- Conversation List (visible in fullscreen mode) -->
     <div
       v-if="sidebarStore.isFullscreen"
