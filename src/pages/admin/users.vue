@@ -132,7 +132,7 @@ import ResetPasswordModal from '@/components/admin/ResetPasswordModal.vue'
 // Query parameters state
 const queryParams = reactive<AdminUserQueryParams>({
   page: 1,
-  limit: 20,
+  limit: 10,
   sort: 'created_at',
   order: 'desc',
   search: '',
@@ -173,10 +173,26 @@ const users = computed(() => usersResponse.value)
 // Available organizations for filter dropdown
 const availableOrganizations = computed(() => organizationsResponse.value?.data || [])
 
-// Pagination meta is already in the correct format from the backend
+// Map backend pagination format to PaginationMeta format
+// Backend returns: { page, limit, total, total_pages }
+// Component expects: { current_page, per_page, total, last_page, from, to }
 const paginationMeta = computed<PaginationMeta | null>(() => {
   if (!users.value?.pagination) return null
-  return users.value.pagination
+
+  const p = users.value.pagination
+  const currentPage = p.page ?? p.current_page ?? 1
+  const perPage = p.limit ?? p.per_page ?? 10
+  const total = p.total ?? 0
+  const lastPage = p.total_pages ?? p.last_page ?? 1
+
+  return {
+    current_page: currentPage,
+    per_page: perPage,
+    total,
+    last_page: lastPage,
+    from: (currentPage - 1) * perPage + 1,
+    to: Math.min(currentPage * perPage, total),
+  }
 })
 
 // Current page for v-model binding

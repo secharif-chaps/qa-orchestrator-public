@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 rounded-lg shadow-sm overflow-hidden border border-primary-stroke">
+  <div class="bg-base-100 rounded-lg shadow-sm border border-primary-stroke">
     <UserTableHeader />
 
     <div class="divide-y divide-primary-stroke">

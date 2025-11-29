@@ -2,8 +2,6 @@
  * Admin user management types
  */
 
-import type { PaginationMeta } from './pagination'
-
 export interface AdminUserResponse {
   user_id: string
   username: string
@@ -12,11 +10,23 @@ export interface AdminUserResponse {
   organization_name: string | null
   status: 'active' | 'revoked'
   created_at: string
+  permissions: string[]
+}
+
+// Backend pagination format (different from standard PaginationMeta)
+export interface AdminUserPagination {
+  page?: number
+  current_page?: number
+  limit?: number
+  per_page?: number
+  total: number
+  total_pages?: number
+  last_page?: number
 }
 
 export interface AdminUserListResponse {
   data: AdminUserResponse[]
-  pagination: PaginationMeta
+  pagination: AdminUserPagination
 }
 
 export interface AdminUserQueryParams {
