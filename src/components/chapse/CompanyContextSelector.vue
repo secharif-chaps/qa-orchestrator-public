@@ -23,7 +23,7 @@
     >
       <div
         v-if="isOpen"
-        class="absolute z-50 mt-1 w-72 bg-sage-800 rounded-xl shadow-lg border border-sage-700 overflow-hidden"
+        class="absolute z-50 mt-1 w-64 bg-sage-800 rounded-xl shadow-lg border border-sage-700 overflow-hidden"
         :class="dropdownPosition"
       >
         <!-- Search Input -->
