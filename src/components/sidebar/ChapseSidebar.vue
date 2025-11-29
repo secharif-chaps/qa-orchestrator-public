@@ -23,9 +23,6 @@
       <div class="flex items-center justify-between border-b border-sage-700 px-4 py-2">
         <div class="flex items-center gap-3">
           <h2 class="text-headline-2xl">{{ $t('sidebar.chapse.title', 'Chaps-e') }}</h2>
-          <span v-if="currentConversationName" class="text-sm text-sage-400 truncate max-w-[200px]">
-            {{ currentConversationName }}
-          </span>
         </div>
         <div class="flex items-center gap-2">
           <Button
