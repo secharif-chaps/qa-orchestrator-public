@@ -1,9 +1,12 @@
 from typing import List, Optional, Tuple
+import logging
 from sqlalchemy.orm import Session
 from sqlalchemy import asc, desc
 
 from app.models.company import Company
 from app.schemas.pagination import PaginationParams
+
+logger = logging.getLogger(__name__)
 
 class SQLAlchemyCompanyRepository:
     """SQLAlchemy implementation of the Company repository"""
