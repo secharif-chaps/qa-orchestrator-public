@@ -1,226 +1,345 @@
-import { ref, computed } from 'vue'
-import { apiClient } from '@/api/client'
+/**
+ * Chapse AI Chat Composable
+ *
+ * Provides reactive chat functionality for the Chapse chatbot including:
+ * - Sending messages with SSE streaming
+ * - Loading and managing conversations
+ * - Company context management
+ */
+import { computed, type ComputedRef } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useQueryCache } from '@pinia/colada'
+import { useChapseStore, type CompanyContext } from '@/stores/chapse'
+import { useAuthStore } from '@/stores/auth'
+import { useEndpointResolver } from '@/composables/useEndpointResolver'
+import {
+  sendChatMessage,
+  getConversations,
+  getConversation,
+  deleteConversation as apiDeleteConversation,
+  renameConversation as apiRenameConversation,
+  updateConversationContext,
+} from '@/api/chapse'
+import { CHAPSE_QUERY_KEYS } from '@/queries/chapse'
 
-export interface ChapseMessage {
-  id: string
-  content: string
-  role: 'user' | 'assistant'
-  timestamp: number
-  avatar?: string
-}
-
-export interface ChapseContext {
-  type: 'company' | 'folder' | 'organization'
-  id: string | number
-  name: string
-  data?: any
-}
-
-interface ChatbotResponse {
-  response: string
-  status?: string
-}
-
-const STORAGE_KEY = 'chapse_chat_history'
-const MAX_HISTORY_SIZE = 50
+// =============================================================================
+// Composable
+// =============================================================================
 
 export function useChapseChat() {
   const { locale } = useI18n()
+  const store = useChapseStore()
+  const authStore = useAuthStore()
+  const { endpoints } = useEndpointResolver()
+  const queryCache = useQueryCache()
 
-  // Reactive state
-  const messages = ref<ChapseMessage[]>([])
-  const isLoading = ref(false)
-  const error = ref<string | null>(null)
-  const sessionId = ref<string>(generateSessionId())
+  // =========================================================================
+  // Computed Properties (from store)
+  // =========================================================================
 
-  // Initialize with welcome message
-  const initializeChat = () => {
-    if (messages.value.length === 0) {
-      const welcomeMessage: ChapseMessage = {
-        id: generateMessageId(),
-        content: locale.value === 'fr'
-          ? "Bonjour ! Je suis Chaps-e, votre assistant IA. Je peux vous aider avec des questions sur vos entreprises, sur l'utilisation du logiciel, et bien plus encore. Comment puis-je vous aider ?"
-          : "Hello! I'm Chaps-e, your AI assistant. I can help you with questions about your companies, how to use the software, and much more. How can I help you?",
-        role: 'assistant',
-        timestamp: Date.now(),
-        avatar: 'chapse'
-      }
-      messages.value.push(welcomeMessage)
+  const messages = computed(() => store.messages)
+  const isLoading = computed(() => store.isLoading)
+  const isStreaming = computed(() => store.isStreaming)
+  const error = computed(() => store.error)
+  const hasMessages = computed(() => store.hasMessages)
+  const currentConversationId = computed(() => store.currentConversationId)
+  const currentConversationName = computed(() => store.currentConversationName)
+  const conversations = computed(() => store.conversations)
+  const conversationsLoading = computed(() => store.conversationsLoading)
+  const hasMoreConversations = computed(() => store.hasMoreConversations)
+
+  // Company context computed
+  const companyContext = computed(() => store.companyContext)
+  const canAddMoreCompanies: ComputedRef<boolean> = computed(() => store.canAddMoreCompanies)
+  const companyContextCount = computed(() => store.companyContextCount)
+
+  // =========================================================================
+  // Send Message
+  // =========================================================================
+
+  async function sendMessage(content: string): Promise<void> {
+    if (!content.trim() || store.isLoading || store.isStreaming) return
+
+    const accessToken = authStore.accessToken
+    if (!accessToken) {
+      store.setError(locale.value === 'fr' ? 'Non authentifié' : 'Not authenticated')
+      return
     }
-  }
 
-  // Load chat history from localStorage
-  const loadHistory = () => {
-    try {
-      const stored = localStorage.getItem(`${STORAGE_KEY}_${sessionId.value}`)
-      if (stored) {
-        const parsed = JSON.parse(stored)
-        messages.value = parsed
-      } else {
-        initializeChat()
-      }
-    } catch (err) {
-      console.error('Failed to load chat history:', err)
-      initializeChat()
-    }
-  }
+    store.setError(null)
+    store.setLoading(true)
 
-  // Save chat history to localStorage
-  const saveHistory = () => {
-    try {
-      // Keep only last MAX_HISTORY_SIZE messages
-      const historyToSave = messages.value.slice(-MAX_HISTORY_SIZE)
-      localStorage.setItem(`${STORAGE_KEY}_${sessionId.value}`, JSON.stringify(historyToSave))
-    } catch (err) {
-      console.error('Failed to save chat history:', err)
-    }
-  }
+    // Add user message to store
+    store.addUserMessage(content.trim())
 
-  // Clear chat history
-  const clearHistory = () => {
-    try {
-      localStorage.removeItem(`${STORAGE_KEY}_${sessionId.value}`)
-      messages.value = []
-      initializeChat()
-    } catch (err) {
-      console.error('Failed to clear chat history:', err)
-    }
-  }
-
-  // Send message to Chaps-e
-  const sendMessage = async (content: string, contexts: ChapseContext[] = []) => {
-    if (!content.trim() || isLoading.value) return
-
-    error.value = null
-
-    // Add user message
-    const userMessage: ChapseMessage = {
-      id: generateMessageId(),
-      content: content.trim(),
-      role: 'user',
-      timestamp: Date.now()
-    }
-    messages.value.push(userMessage)
-    saveHistory()
-
-    isLoading.value = true
+    // Create streaming assistant message
+    store.addAssistantMessage('', true)
+    store.setStreamingState(true)
 
     try {
-      // Format chat history for API
-      const chatHistory = messages.value
-        .slice(0, -1) // Exclude the message we just added
-        .map(msg => ({
-          role: msg.role === 'user' ? 'user' : 'assistant',
-          content: msg.content
-        }))
+      let newConversationId: string | null = null
 
-      // Format contexts for API
-      const contextsPayload: any = {}
-      contexts.forEach(ctx => {
-        contextsPayload[ctx.type] = ctx.data || { id: ctx.id, name: ctx.name }
-      })
+      await sendChatMessage(
+        {
+          query: content.trim(),
+          conversation_id: store.currentConversationId,
+          company_ids: store.companyIds,
+        },
+        accessToken,
+        endpoints.value.apiUrl,
+        // onChunk - append to streaming message
+        (chunk: string) => {
+          store.appendToLastMessage(chunk)
+        },
+        // onConversationId - capture new conversation ID
+        (conversationId: string) => {
+          newConversationId = conversationId
+        },
+        // onError
+        (errorMessage: string) => {
+          store.setError(errorMessage)
+        },
+      )
 
-      // Make API call
-      const response: ChatbotResponse = await apiClient.post('/chatbot', {
-        message: content.trim(),
-        contexts: contextsPayload,
-        chat_history: chatHistory,
-        language: locale.value
-      })
+      // If this was a new conversation, update the store
+      if (newConversationId && !store.currentConversationId) {
+        store.setCurrentConversation(newConversationId, '')
 
-      // Parse response (handle stringified JSON if needed)
-      let responseText = response.response || "Je n'ai pas pu générer de réponse."
-
-      if (typeof responseText === 'string' && responseText.startsWith('{') && responseText.endsWith('}')) {
-        try {
-          const parsed = eval(`(${responseText})`)
-          if (parsed && typeof parsed === 'object' && 'output' in parsed) {
-            responseText = parsed.output
+        // Save company context for new conversation
+        if (store.companyIds.length > 0) {
+          try {
+            await updateConversationContext(newConversationId, store.companyIds)
+          } catch (err) {
+            console.error('Failed to save company context:', err)
           }
-        } catch (parseError) {
-          console.warn('Could not parse stringified response:', parseError)
         }
-      }
 
-      // Add assistant message
-      const assistantMessage: ChapseMessage = {
-        id: generateMessageId(),
-        content: responseText,
-        role: 'assistant',
-        timestamp: Date.now(),
-        avatar: 'chapse'
+        // Refresh conversations list
+        invalidateConversations()
       }
-      messages.value.push(assistantMessage)
-      saveHistory()
-
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error sending message:', err)
-      error.value = err.message || 'Une erreur est survenue. Veuillez réessayer.'
+      const errorMessage =
+        locale.value === 'fr'
+          ? "Désolé, une erreur s'est produite. Veuillez réessayer."
+          : 'Sorry, an error occurred. Please try again.'
+      store.setError(errorMessage)
 
-      // Add error message
-      const errorMessage: ChapseMessage = {
-        id: generateMessageId(),
-        content: locale.value === 'fr'
-          ? "Désolé, une erreur s'est produite lors du traitement de votre demande. Veuillez réessayer ou contacter un administrateur."
-          : "Sorry, an error occurred while processing your request. Please try again or contact an administrator.",
-        role: 'assistant',
-        timestamp: Date.now(),
-        avatar: 'chapse'
-      }
-      messages.value.push(errorMessage)
-      saveHistory()
+      // Update the streaming message with error
+      store.appendToLastMessage(errorMessage)
     } finally {
-      isLoading.value = false
+      store.finishStreaming()
+      store.setLoading(false)
     }
   }
 
-  // Computed properties
-  const hasMessages = computed(() => messages.value.length > 1) // More than just welcome message
+  // =========================================================================
+  // Conversations
+  // =========================================================================
 
-  // Helper functions
-  function generateMessageId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  async function loadConversations(refresh: boolean = false): Promise<void> {
+    if (store.conversationsLoading) return
+
+    store.setConversationsLoading(true)
+
+    try {
+      const lastId = refresh ? undefined : conversations.value[conversations.value.length - 1]?.id
+      const response = await getConversations(20, lastId)
+
+      if (refresh) {
+        store.setConversations(response.data, response.has_more)
+      } else {
+        store.appendConversations(response.data, response.has_more)
+      }
+    } catch (err) {
+      console.error('Error loading conversations:', err)
+      store.setError(
+        locale.value === 'fr'
+          ? 'Erreur lors du chargement des conversations'
+          : 'Error loading conversations',
+      )
+    } finally {
+      store.setConversationsLoading(false)
+    }
   }
 
-  function generateSessionId(): string {
-    const stored = sessionStorage.getItem('chapse_session_id')
-    if (stored) return stored
+  async function loadConversation(conversationId: string): Promise<void> {
+    if (!conversationId) return
 
-    const newId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    sessionStorage.setItem('chapse_session_id', newId)
-    return newId
+    store.setLoading(true)
+    store.setError(null)
+
+    try {
+      const response = await getConversation(conversationId)
+
+      // Set current conversation
+      store.setCurrentConversation(conversationId, response.name)
+
+      // Load messages
+      store.loadMessagesFromApi(response.messages)
+
+      // Load company context
+      const companies: CompanyContext[] = response.companies.map((c) => ({
+        id: c.id,
+        name: c.name,
+        siren: c.siren,
+      }))
+      store.setCompanyContext(companies)
+    } catch (err) {
+      console.error('Error loading conversation:', err)
+      store.setError(
+        locale.value === 'fr'
+          ? 'Erreur lors du chargement de la conversation'
+          : 'Error loading conversation',
+      )
+    } finally {
+      store.setLoading(false)
+    }
   }
 
-  // Format markdown in messages
-  const formatMarkdown = (text: string): string => {
+  async function deleteConversation(conversationId: string): Promise<boolean> {
+    try {
+      await apiDeleteConversation(conversationId)
+      store.removeConversation(conversationId)
+      invalidateConversations()
+      return true
+    } catch (err) {
+      console.error('Error deleting conversation:', err)
+      store.setError(
+        locale.value === 'fr'
+          ? 'Erreur lors de la suppression'
+          : 'Error deleting conversation',
+      )
+      return false
+    }
+  }
+
+  async function renameConversation(
+    conversationId: string,
+    name?: string,
+    autoGenerate: boolean = false,
+  ): Promise<boolean> {
+    try {
+      const response = await apiRenameConversation(conversationId, name, autoGenerate)
+      store.updateConversationName(conversationId, response.name)
+      return true
+    } catch (err) {
+      console.error('Error renaming conversation:', err)
+      return false
+    }
+  }
+
+  function startNewConversation(): void {
+    store.startNewConversation()
+  }
+
+  // =========================================================================
+  // Company Context
+  // =========================================================================
+
+  function addCompanyToContext(company: CompanyContext): boolean {
+    return store.addCompanyToContext(company)
+  }
+
+  function removeCompanyFromContext(companyId: number): void {
+    store.removeCompanyFromContext(companyId)
+  }
+
+  function clearCompanyContext(): void {
+    store.clearCompanyContext()
+  }
+
+  function isCompanyInContext(companyId: number): boolean {
+    return store.isCompanyInContext(companyId)
+  }
+
+  // Save context to server for existing conversation
+  async function saveCompanyContext(): Promise<boolean> {
+    if (!store.currentConversationId) return false
+
+    try {
+      await updateConversationContext(store.currentConversationId, store.companyIds)
+      return true
+    } catch (err) {
+      console.error('Error saving company context:', err)
+      return false
+    }
+  }
+
+  // =========================================================================
+  // Utility
+  // =========================================================================
+
+  function clearHistory(): void {
+    store.startNewConversation()
+    store.clearCompanyContext()
+  }
+
+  function invalidateConversations(): void {
+    queryCache.invalidateQueries({ key: CHAPSE_QUERY_KEYS.conversations() })
+  }
+
+  // Format markdown in messages (kept for compatibility)
+  function formatMarkdown(text: string): string {
     // Convert **text** to <strong>text</strong>
-    const boldFormatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
 
     // Convert *text* to <em>text</em> for italics
-    const italicsFormatted = boldFormatted.replace(/\*(.*?)\*/g, '<em>$1</em>')
+    formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>')
 
     // Convert numbered lists (1. Item) to HTML ordered lists
-    const listFormatted = italicsFormatted
+    formatted = formatted
       .replace(/(\d+\.\s.*?)(?=\n\d+\.|$)/gs, '<li>$1</li>')
       .replace(/(<li>.*?<\/li>)+/gs, '<ol class="list-decimal ml-4 my-2">$&</ol>')
 
     // Convert newlines to <br> tags
-    return listFormatted.replace(/\n/g, '<br>')
+    return formatted.replace(/\n/g, '<br>')
   }
+
+  // =========================================================================
+  // Return
+  // =========================================================================
 
   return {
-    // State
+    // State (from store)
     messages,
     isLoading,
+    isStreaming,
     error,
     hasMessages,
+    currentConversationId,
+    currentConversationName,
+    conversations,
+    conversationsLoading,
+    hasMoreConversations,
 
-    // Methods
+    // Company context
+    companyContext,
+    canAddMoreCompanies,
+    companyContextCount,
+
+    // Message methods
     sendMessage,
-    loadHistory,
+
+    // Conversation methods
+    loadConversations,
+    loadConversation,
+    deleteConversation,
+    renameConversation,
+    startNewConversation,
+
+    // Company context methods
+    addCompanyToContext,
+    removeCompanyFromContext,
+    clearCompanyContext,
+    isCompanyInContext,
+    saveCompanyContext,
+
+    // Utility methods
     clearHistory,
-    initializeChat,
-    formatMarkdown
+    formatMarkdown,
   }
 }
+
+// Re-export types for convenience
+export type { CompanyContext } from '@/stores/chapse'

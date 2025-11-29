@@ -37,12 +37,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { ChapseMessage } from '@/composables/useChapseChat'
+import type { ChatMessage as ChatMessageType } from '@/stores/chapse'
 import chapseHead from '@/assets/chapse/head.svg'
-import { useSidebarStore } from '@/stores/sidebar';
+import { useSidebarStore } from '@/stores/sidebar'
 
 const props = defineProps<{
-  message: ChapseMessage
+  message: ChatMessageType
   showTimestamp?: boolean
 }>()
 
@@ -51,7 +51,7 @@ const sidebarStore = useSidebarStore()
 const isFullscreen = computed(() => sidebarStore.isFullscreen)
 
 const chapseAvatar = computed(() => {
-  if (props.message.role === 'assistant' && props.message.avatar === 'chapse') {
+  if (props.message.role === 'assistant') {
     return chapseHead
   }
   return null

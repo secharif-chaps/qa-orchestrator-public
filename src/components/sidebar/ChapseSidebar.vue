@@ -1,165 +1,168 @@
 <template>
-  <div class="flex flex-col h-[calc(100vh-140px)]">
-    <!-- Header -->
-    <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
-      <h2 class="text-headline-2xl">{{ $t('sidebar.chapse.title', 'Chaps-e') }}</h2>
-      <div class="flex items-center gap-2">
-        <Button
-          variant="tertiary"
-          dark
-          icon="fa-solid fa-expand"
-          icon-only
-          @click="
-            sidebarStore.isFullscreen
-              ? sidebarStore.setFullscreen(false)
-              : sidebarStore.setFullscreen(true)
-          "
-          size="sm"
-        />
-        <Button
-          variant="tertiary"
-          dark
-          icon="fa-solid fa-trash"
-          icon-only
-          @click="handleClearHistory"
-          size="sm"
-        />
-      </div>
+  <div class="flex h-[calc(100vh-140px)]">
+    <!-- Conversation List (visible in fullscreen mode) -->
+    <div
+      v-if="sidebarStore.isFullscreen"
+      class="w-64 flex-shrink-0 border-r border-sage-700 bg-sage-850"
+    >
+      <ConversationList
+        :conversations="conversations"
+        :current-conversation-id="currentConversationId"
+        :loading="conversationsLoading"
+        :has-more="hasMoreConversations"
+        @select="handleSelectConversation"
+        @delete="handleDeleteConversation"
+        @new-conversation="handleNewConversation"
+        @load-more="handleLoadMoreConversations"
+      />
     </div>
 
-    <!-- Context Selector Buttons -->
-    <div
-      v-if="availableContexts.length > 0"
-      class="px-4 py-2 border-b border-sage-800 flex items-center gap-2 flex-wrap"
-    >
-      <span class="text-xs text-sage-200">{{ $t('sidebar.chapse.context', 'Context:') }}</span>
-      <button
-        v-for="context in availableContexts"
-        :key="`${context.type}-${context.id}`"
-        @click="handleAddContext(context)"
-        :disabled="isContextActive(context)"
-        class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-all"
-        :class="
-          isContextActive(context)
-            ? 'bg-sage-300 text-sage-950 cursor-not-allowed opacity-100'
-            : 'bg-sage-800 text-sage-200 hover:bg-sage-700 cursor-pointer'
-        "
-      >
-        <i :class="getContextIcon(context)" class="text-xs"></i>
-        <span>{{ context.name }}</span>
-        <i v-if="!isContextActive(context)" class="fa fa-plus text-[10px]"></i>
-        <i v-else class="fa fa-check text-[10px]"></i>
-      </button>
-    </div>
-
-    <!-- Messages Container -->
-    <div
-      ref="messagesContainer"
-      class="overflow-y-auto px-4 py-4 grow max-h-[calc(100vh-400px)] max-w-[100%] relative"
-    >
-      <ChatMessage v-for="message in messages" :key="message.id" :message="message" />
-
-      <!-- Loading Indicator -->
-      <div v-if="isLoading" class="flex gap-3 mb-4">
-        <div
-          class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center"
-        >
-          <img :src="chapseAvatar" class="w-6 h-6" alt="Chaps-e" />
+    <!-- Main Chat Area -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b border-sage-700 px-4 py-2">
+        <div class="flex items-center gap-3">
+          <h2 class="text-headline-2xl">{{ $t('sidebar.chapse.title', 'Chaps-e') }}</h2>
+          <span v-if="currentConversationName" class="text-sm text-sage-400 truncate max-w-[200px]">
+            {{ currentConversationName }}
+          </span>
         </div>
-        <div class="bg-almond-300/30 text-white text-sm rounded-xl px-4 py-3">
-          <i class="fa fa-spinner fa-spin mr-2"></i>
-          {{ $t('sidebar.chapse.thinking', 'Thinking...') }}
+        <div class="flex items-center gap-2">
+          <Button
+            variant="tertiary"
+            dark
+            :icon="sidebarStore.isFullscreen ? 'fa-solid fa-compress' : 'fa-solid fa-expand'"
+            icon-only
+            size="sm"
+            :title="sidebarStore.isFullscreen ? $t('chapse.exitFullscreen', 'Exit fullscreen') : $t('chapse.enterFullscreen', 'Enter fullscreen')"
+            @click="toggleFullscreen"
+          />
+          <Button
+            variant="tertiary"
+            dark
+            icon="fa-solid fa-plus"
+            icon-only
+            size="sm"
+            :title="$t('chapse.newConversation', 'New conversation')"
+            @click="handleNewConversation"
+          />
+          <Button
+            variant="tertiary"
+            dark
+            icon="fa-solid fa-trash"
+            icon-only
+            size="sm"
+            :title="$t('chapse.clearHistory', 'Clear history')"
+            @click="handleClearHistory"
+          />
         </div>
       </div>
 
-      <!-- Suggestion Buttons (shown when no messages) -->
+      <!-- Add Company from Page Button (when on company page and not in context) -->
       <div
-        v-if="!hasMessages && !isLoading && suggestions.length > 0"
-        class="w-full grow gap-2 flex flex-col items-center justify-center py-8"
+        v-if="availablePageContext && !isPageContextActive && canAddMoreCompanies"
+        class="px-4 py-2 border-b border-sage-700"
       >
-        <img :src="withBody" class="w-32 h-32 mb-4" />
-        <Button
-          v-for="suggestion in suggestions"
-          :key="suggestion.label"
-          variant="secondary"
-          dark
-          size="sm"
-          @click="sendSuggestion(suggestion.message)"
+        <button
+          class="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-sage-800 hover:bg-sage-700 transition-colors text-left"
+          @click="handleAddPageContext"
         >
-          {{ suggestion.label }}
-        </Button>
+          <i class="fa fa-building text-sage-400 text-sm"></i>
+          <span class="text-sm text-sage-200">
+            {{ $t('chapse.addThisCompany', 'Add') }}
+            <strong>{{ availablePageContext.name }}</strong>
+            {{ $t('chapse.toContext', 'to context') }}
+          </span>
+          <i class="fa fa-plus text-sage-400 text-xs ml-auto"></i>
+        </button>
       </div>
-    </div>
 
-    <!-- Active Context Badges -->
-    <div
-      v-if="hasActiveContexts"
-      class="px-4 py-2 border-t border-sage-800 flex items-center gap-2 flex-wrap"
-    >
-      <span class="text-xs text-sage-200">{{
-        $t('sidebar.chapse.activeContext', 'Active context:')
-      }}</span>
-      <ContextBadge
-        v-for="context in activeContexts"
-        :key="`active-${context.type}-${context.id}`"
-        :context="context"
-        dismissible
-        @dismiss="removeContext(context.id.toString())"
-      />
-    </div>
+      <!-- Messages Container -->
+      <div
+        ref="messagesContainer"
+        class="flex-1 overflow-y-auto px-4 py-4"
+      >
+        <!-- Welcome State (no messages) -->
+        <div
+          v-if="!hasMessages && !isLoading"
+          class="flex flex-col items-center justify-center h-full gap-4"
+        >
+          <img :src="withBody" class="w-32 h-32" alt="Chaps-e" />
+          <p class="text-sage-300 text-center max-w-xs">
+            {{ $t('chapse.welcomeMessage', 'Hello! I\'m Chaps-e, your AI assistant. How can I help you today?') }}
+          </p>
 
-    <!-- Input Area -->
-    <div class="relative p-4">
-      <textarea
-        ref="textareaRef"
+          <!-- Suggestions -->
+          <div v-if="suggestions.length > 0" class="flex flex-col gap-2 mt-4">
+            <Button
+              v-for="suggestion in suggestions"
+              :key="suggestion.label"
+              variant="secondary"
+              dark
+              size="sm"
+              @click="sendSuggestion(suggestion.message)"
+            >
+              {{ suggestion.label }}
+            </Button>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <template v-else>
+          <ChatMessage
+            v-for="message in messages"
+            :key="message.id"
+            :message="message"
+          />
+
+          <!-- Thinking Indicator (only shows before content arrives) -->
+          <div v-if="isThinking" class="flex gap-3 mb-4">
+            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-sage-800 flex items-center justify-center">
+              <img :src="chapseAvatar" class="w-6 h-6" alt="Chaps-e" />
+            </div>
+            <div class="bg-sage-800 text-sage-200 text-sm rounded-xl px-4 py-3">
+              <i class="fa fa-circle fa-beat text-primary text-xs mr-2"></i>
+              {{ $t('chapse.thinking', 'Thinking...') }}
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Chat Input -->
+      <ChatInput
         v-model="userMessage"
-        @keydown.enter.ctrl.prevent="handleSendMessage"
         :placeholder="$t('sidebar.chapse.placeholder', 'Write a message...')"
-        class="p-4 w-full h-32 bg-sage-900 rounded-block text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
-        :disabled="isLoading"
-      ></textarea>
-      <Button
-        variant="primary"
-        icon="fa fa-send"
-        icon-only
-        class="absolute right-6 bottom-8"
-        @click="handleSendMessage"
-        :disabled="isLoading || !userMessage.trim()"
+        :loading="isLoading"
+        :disabled="isStreaming"
+        :company-context="companyContext"
+        :can-add-more-companies="canAddMoreCompanies"
+        @send="handleSendMessage"
+        @add-context="handleAddCompanyContext"
+        @remove-context="handleRemoveCompanyContext"
       />
-    </div>
 
-    <!-- Error Alert -->
-    <div v-if="error" class="px-4 pb-4">
-      <Alert variant="error" :message="error" dismissible @dismiss="error = null" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, watch, onMounted, computed } from 'vue'
+import { ref, watch, nextTick, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useChapseChat } from '@/composables/useChapseChat'
+import { useChapseChat, type CompanyContext } from '@/composables/useChapseChat'
 import { useChapseContext } from '@/composables/useChapseContext'
+import { useSidebarStore } from '@/stores/sidebar'
+import { useChapseStore } from '@/stores/chapse'
 import ChatMessage from '@/components/chapse/ChatMessage.vue'
-import ContextBadge from '@/components/chapse/ContextBadge.vue'
-import Button from '../ui/Button.vue'
-import Alert from '../ui/Alert.vue'
+import ChatInput from '@/components/chapse/ChatInput.vue'
+import ConversationList from '@/components/chapse/ConversationList.vue'
+import Button from '@/components/ui/Button.vue'
 import chapseAvatar from '@/assets/chapse/head.svg'
 import withBody from '@/assets/chapse/default.svg'
-import type { ChapseContext } from '@/composables/useChapseChat'
-import { useSidebarStore } from '@/stores/sidebar'
+import { toast } from '@/utils/toast'
 
-// Props
-interface Props {
-  pendingAssistAction?: any
-}
-
-const props = defineProps<Props>()
-
-// Emits
-const emit = defineEmits<{
-  'assist-action-processed': []
-}>()
+// Stores
+const sidebarStore = useSidebarStore()
+const chapseStore = useChapseStore()
 
 // Router
 const route = useRoute()
@@ -168,34 +171,47 @@ const route = useRoute()
 const {
   messages,
   isLoading,
+  isStreaming,
   error,
   hasMessages,
+  currentConversationId,
+  currentConversationName,
+  conversations,
+  conversationsLoading,
+  hasMoreConversations,
+  companyContext,
+  canAddMoreCompanies,
   sendMessage,
-  loadHistory,
+  loadConversations,
+  loadConversation,
+  deleteConversation,
+  startNewConversation,
+  addCompanyToContext,
+  removeCompanyFromContext,
   clearHistory,
-  initializeChat,
 } = useChapseChat()
-
-const sidebarStore = useSidebarStore()
 
 // Context composable
 const {
-  activeContexts,
-  availableContexts,
-  hasActiveContexts,
-  addContext,
-  removeContext,
-  isContextActive,
-  getContextIcon,
-  shouldWarnContextSwitch,
+  availablePageContext,
+  isPageContextActive,
+  addPageContextToChat,
 } = useChapseContext()
 
 // Local state
 const userMessage = ref('')
 const messagesContainer = ref<HTMLElement | null>(null)
-const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
-// Context-aware suggestions based on current route
+// Thinking state: streaming is active but no content has arrived yet
+const isThinking = computed(() => {
+  if (!isStreaming.value) return false
+
+  // Check if the last message is an assistant message with no content
+  const lastMessage = messages.value[messages.value.length - 1]
+  return lastMessage?.role === 'assistant' && !lastMessage.content
+})
+
+// Suggestions based on route
 interface Suggestion {
   label: string
   message: string
@@ -204,77 +220,80 @@ interface Suggestion {
 const suggestions = computed<Suggestion[]>(() => {
   const routeName = route.name as string
 
-  // Home page suggestions
   if (routeName === '/(home)') {
     return [
-      {
-        label: 'Montre-moi mes entreprises récentes',
-        message: 'Montre-moi mes entreprises récentes',
-      },
-      {
-        label: "Résume l'activité de mon organization",
-        message: "Résume l'activité de mon organization",
-      },
+      { label: 'Montre-moi mes entreprises récentes', message: 'Montre-moi mes entreprises récentes' },
+      { label: "Résume l'activité de mon organization", message: "Résume l'activité de mon organization" },
     ]
   }
 
-  // Company page suggestions (must check before folder page)
-  // Routes: /folders/[folderId]/companies/[companyId], /folders/[folderId]/companies/[companyId]/,
-  // /folders/[folderId]/companies/[companyId]/profile, etc.
   if (routeName?.includes('/companies/[companyId]')) {
     return [
-      {
-        label: 'Fais-moi une synthèse de cette entreprise',
-        message: 'Fais-moi une synthèse de cette entreprise',
-      },
+      { label: 'Fais-moi une synthèse de cette entreprise', message: 'Fais-moi une synthèse de cette entreprise' },
       { label: 'Liste les technologies citées', message: 'Liste les technologies citées' },
     ]
   }
 
-  // Folder page suggestions
-  // Routes: /folders/[folderId], /folders/[folderId]/(folderId)
   if (routeName?.startsWith('/folders/[folderId]') && !routeName?.includes('/companies/')) {
     return [
-      {
-        label: 'Résume les entreprises de ce dossier',
-        message: 'Résume les entreprises de ce dossier',
-      },
-      {
-        label: 'Compare les entreprises de ce dossier',
-        message: 'Compare les entreprises de ce dossier',
-      },
+      { label: 'Résume les entreprises de ce dossier', message: 'Résume les entreprises de ce dossier' },
+      { label: 'Compare les entreprises de ce dossier', message: 'Compare les entreprises de ce dossier' },
     ]
   }
 
-  // No suggestions for other pages
   return []
 })
 
-// Load chat history on mount and process any pending action
-onMounted(async () => {
-  loadHistory()
+// Handlers
+async function handleSendMessage(message: string) {
+  if (!message.trim()) return
+  userMessage.value = ''
+  await sendMessage(message)
+}
 
-  // Check if there's a pending assist action when component mounts
-  await nextTick()
-  if (props.pendingAssistAction) {
-    console.log('🎯 ChapseSidebar mounted with pending action, processing immediately...')
-    await handleAssistAction(props.pendingAssistAction)
-    emit('assist-action-processed')
+function sendSuggestion(suggestion: string) {
+  handleSendMessage(suggestion)
+}
+
+function handleAddCompanyContext(company: CompanyContext) {
+  addCompanyToContext(company)
+}
+
+function handleRemoveCompanyContext(companyId: number) {
+  removeCompanyFromContext(companyId)
+}
+
+function handleAddPageContext() {
+  addPageContextToChat()
+}
+
+async function handleSelectConversation(conversationId: string) {
+  await loadConversation(conversationId)
+}
+
+async function handleDeleteConversation(conversationId: string) {
+  if (confirm('Are you sure you want to delete this conversation?')) {
+    await deleteConversation(conversationId)
   }
-})
+}
 
-// Watch for new pending assist actions (when component is already mounted)
-watch(
-  () => props.pendingAssistAction,
-  async (actionData, oldData) => {
-    // Only process if it's a new action (not the initial mount or same reference)
-    if (actionData && actionData !== oldData) {
-      console.log('📩 ChapseSidebar received new pending assist action:', actionData)
-      await handleAssistAction(actionData)
-      emit('assist-action-processed')
-    }
-  },
-)
+function handleNewConversation() {
+  startNewConversation()
+}
+
+async function handleLoadMoreConversations() {
+  await loadConversations(false)
+}
+
+function handleClearHistory() {
+  if (confirm('Are you sure you want to clear all messages?')) {
+    clearHistory()
+  }
+}
+
+function toggleFullscreen() {
+  sidebarStore.setFullscreen(!sidebarStore.isFullscreen)
+}
 
 // Auto-scroll to bottom when messages change
 watch(
@@ -288,94 +307,20 @@ watch(
   { deep: true },
 )
 
-// Handle send message
-const handleSendMessage = async () => {
-  if (!userMessage.value.trim() || isLoading.value) return
-
-  const messageToSend = userMessage.value.trim()
-  userMessage.value = ''
-
-  await sendMessage(messageToSend, activeContexts.value)
-
-  // Clear active contexts after sending
-  activeContexts.value = []
-}
-
-// Handle Chapse Assist quick action
-const handleAssistAction = async (eventData: any) => {
-  try {
-    console.log('Processing assist action:', eventData)
-
-    const { action, user_preferences, companyId } = eventData
-
-    // Construct the assist_action prompt from user preferences and action
-    const assistActionPrompt = `You are a ${user_preferences.role}. Your goal is to ${user_preferences.goals}. Generate output that is ${user_preferences.desired_output}.
-
-Quick Action: ${action.label}
-${action.description}
-
-Use the company data provided in the context to complete this action.`
-
-    // Create a ChapseContext object from the assist_action
-    const assistContext: ChapseContext = {
-      id: `assist_action_${action.id}`,
-      type: 'assist_action' as any, // This is a new context type
-      name: action.label,
-      data: {
-        assist_action: assistActionPrompt,
-        action_id: action.id,
-        company_id: companyId,
-      },
+// Show toast notification when error occurs
+watch(
+  error,
+  (newError) => {
+    if (newError) {
+      toast.error(newError)
+      // Clear error from store after showing toast
+      chapseStore.setError(null)
     }
+  },
+)
 
-    // Add the context to active contexts
-    console.log('Adding context:', assistContext)
-    addContext(assistContext)
-
-    // Pre-fill the message textarea with the action label
-    userMessage.value = action.label
-    console.log('Message pre-filled:', userMessage.value)
-
-    console.log('✅ Quick action context added to ChapseSidebar')
-
-    // Automatically send the message after a short delay
-    await nextTick()
-    setTimeout(() => {
-      console.log('Sending message automatically...')
-      handleSendMessage()
-    }, 100)
-  } catch (error) {
-    console.error('❌ Error in handleAssistAction:', error)
-  }
-}
-
-// Handle suggestion button click
-const sendSuggestion = (suggestion: string) => {
-  userMessage.value = suggestion
-  handleSendMessage()
-}
-
-// Handle add context
-const handleAddContext = (context: ChapseContext) => {
-  if (shouldWarnContextSwitch(context)) {
-    // Warn user about context switch
-    const confirmed = confirm(
-      `Voulez-vous remplacer le contexte actuel par ${context.name} ? Cela peut affecter la pertinence de la réponse.`,
-    )
-    if (!confirmed) return
-
-    // Remove existing company context
-    const existingCompany = activeContexts.value.find((ctx) => ctx.type === 'company')
-    if (existingCompany) {
-      removeContext(existingCompany.id.toString())
-    }
-  }
-
-  addContext(context)
-}
-
-// Handle clear history
-const handleClearHistory = () => {
-  clearHistory()
-}
+// Load conversations on mount
+onMounted(async () => {
+  await loadConversations(true)
+})
 </script>
