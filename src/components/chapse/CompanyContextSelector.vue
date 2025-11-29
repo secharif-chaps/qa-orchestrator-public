@@ -211,7 +211,7 @@ async function handleSearch() {
       size: 10,
       name: searchQuery.value.trim(),
     })
-    companies.value = response.items
+    companies.value = response.data ?? []
   } catch (error) {
     console.error('Error searching companies:', error)
     companies.value = []
