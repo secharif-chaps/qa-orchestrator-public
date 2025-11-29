@@ -23,19 +23,19 @@
     >
       <div
         v-if="isOpen"
-        class="absolute z-50 mt-1 w-72 bg-sage-800 rounded-xl shadow-lg border border-sage-700 overflow-hidden"
+        class="absolute z-[9999] mt-1 w-[145px] bg-sage-800 rounded-xl shadow-lg border border-sage-700 overflow-hidden"
         :class="dropdownPosition"
       >
         <!-- Search Input -->
         <div class="p-2 border-b border-sage-700">
           <div class="relative">
-            <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-sage-400 text-xs"></i>
+            <i class="fa fa-search absolute left-2 top-1/2 -translate-y-1/2 text-sage-400 text-[10px]"></i>
             <input
               ref="searchInputRef"
               v-model="searchQuery"
               type="text"
               :placeholder="$t('chapse.searchCompanies', 'Search companies...')"
-              class="w-full pl-9 pr-3 py-2 bg-sage-900 rounded-lg text-sm text-sage-100 placeholder-sage-500 focus:outline-none focus:ring-2 focus:ring-primary/50"
+              class="w-full pl-7 pr-2 py-1.5 bg-sage-900 rounded-lg text-xs text-sage-100 placeholder-sage-500 focus:outline-none focus:ring-2 focus:ring-primary/50"
               @input="handleSearch"
             />
           </div>
@@ -51,9 +51,9 @@
           <!-- Empty State -->
           <div
             v-else-if="searchQuery && filteredCompanies.length === 0"
-            class="py-6 px-4 text-center"
+            class="py-4 px-2 text-center"
           >
-            <p class="text-sm text-sage-400">
+            <p class="text-xs text-sage-400">
               {{ $t('chapse.noCompaniesFound', 'No companies found') }}
             </p>
           </div>
@@ -61,9 +61,9 @@
           <!-- Initial State -->
           <div
             v-else-if="!searchQuery && filteredCompanies.length === 0"
-            class="py-6 px-4 text-center"
+            class="py-4 px-2 text-center"
           >
-            <p class="text-sm text-sage-400">
+            <p class="text-xs text-sage-400">
               {{ $t('chapse.typeToSearch', 'Type to search companies') }}
             </p>
           </div>
@@ -74,25 +74,22 @@
               v-for="company in filteredCompanies"
               :key="company.id"
               type="button"
-              class="w-full flex items-center gap-3 px-3 py-2 hover:bg-sage-700 transition-colors text-left"
+              class="w-full flex items-center gap-2 px-2 py-1.5 hover:bg-sage-700 transition-colors text-left"
               :class="{ 'opacity-50 cursor-not-allowed': isCompanyInContext(company.id) }"
               :disabled="isCompanyInContext(company.id)"
               @click="selectCompany(company)"
             >
               <!-- Company Icon -->
               <div
-                class="flex-shrink-0 w-8 h-8 rounded-full bg-sage-600 flex items-center justify-center"
+                class="flex-shrink-0 w-6 h-6 rounded-full bg-sage-600 flex items-center justify-center"
               >
-                <i class="fa fa-building text-sage-300 text-xs"></i>
+                <i class="fa fa-building text-sage-300 text-[10px]"></i>
               </div>
 
               <!-- Company Info -->
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-sage-100 truncate">
+                <p class="text-xs font-medium text-sage-100 truncate">
                   {{ company.name }}
-                </p>
-                <p v-if="company.siren" class="text-xs text-sage-400 truncate">
-                  SIREN: {{ company.siren }}
                 </p>
               </div>
 
@@ -150,6 +147,7 @@ const isOpen = ref(false)
 const searchQuery = ref('')
 const isSearching = ref(false)
 const companies = ref<Company[]>([])
+let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null
 
 // Computed
 const dropdownPosition = computed(() => {
@@ -157,7 +155,7 @@ const dropdownPosition = computed(() => {
     case 'bottom-right':
       return 'right-0'
     case 'top-left':
-      return 'bottom-full mb-1 left-0'
+      return 'bottom-full mb-1 right-0'
     case 'top-right':
       return 'bottom-full mb-1 right-0'
     default:
@@ -197,27 +195,37 @@ function isCompanyInContext(companyId: number): boolean {
   return props.contextCompanyIds.includes(companyId)
 }
 
-async function handleSearch() {
+function handleSearch() {
+  // Clear previous timer
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer)
+  }
+
   if (!searchQuery.value.trim()) {
     companies.value = []
+    isSearching.value = false
     return
   }
 
+  // Show loader immediately while debouncing
   isSearching.value = true
 
-  try {
-    const response = await getCompanies({
-      page: 1,
-      size: 10,
-      name: searchQuery.value.trim(),
-    })
-    companies.value = response.items
-  } catch (error) {
-    console.error('Error searching companies:', error)
-    companies.value = []
-  } finally {
-    isSearching.value = false
-  }
+  // Debounce the search by 300ms
+  searchDebounceTimer = setTimeout(async () => {
+    try {
+      const response = await getCompanies({
+        page: 1,
+        size: 10,
+        name: searchQuery.value.trim(),
+      })
+      companies.value = response.data ?? []
+    } catch (error) {
+      console.error('Error searching companies:', error)
+      companies.value = []
+    } finally {
+      isSearching.value = false
+    }
+  }, 300)
 }
 
 function selectCompany(company: Company) {
@@ -240,17 +248,6 @@ function handleClickOutside(event: MouseEvent) {
   }
 }
 
-// Debounce search
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-watch(searchQuery, () => {
-  if (searchTimeout) {
-    clearTimeout(searchTimeout)
-  }
-  searchTimeout = setTimeout(() => {
-    handleSearch()
-  }, 300)
-})
-
 // Lifecycle
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
@@ -258,8 +255,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
-  if (searchTimeout) {
-    clearTimeout(searchTimeout)
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer)
   }
 })
 </script>

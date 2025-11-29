@@ -116,7 +116,7 @@
           />
 
           <!-- Thinking Indicator (only shows before content arrives) -->
-          <div v-if="isThinking" class="flex gap-3 mb-4">
+          <!-- <div v-if="isThinking" class="flex gap-3 mb-4">
             <div class="flex-shrink-0 w-8 h-8 rounded-full bg-sage-800 flex items-center justify-center">
               <img :src="chapseAvatar" class="w-6 h-6" alt="Chaps-e" />
             </div>
@@ -124,7 +124,7 @@
               <i class="fa fa-circle fa-beat text-primary text-xs mr-2"></i>
               {{ $t('chapse.thinking', 'Thinking...') }}
             </div>
-          </div>
+          </div> -->
         </template>
       </div>
 

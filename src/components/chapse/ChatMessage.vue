@@ -17,6 +17,9 @@
 
     <!-- Message Content -->
     <div class="max-w-[100%] rounded-xl px-4 py-3 text-sm" :class="messageClasses">
+      <div v-if="message.role === 'assistant' && formattedContent.length === 0">
+        <i class="fa fa-circle-notch fa-spin text-secondary text-sm"></i>
+      </div>
       <div v-html="formattedContent"></div>
 
       <!-- Timestamp -->
@@ -90,7 +93,10 @@ const formattedContent = computed(() => {
   formatted = formatted.replace(/(<li>.*?<\/li>)+/gs, '<ul class="list-disc ml-2 my-2">$&</ul>')
 
   // Convert newlines to <br>
-  formatted = formatted.replace(/\n/g, '<br>')
+  // formatted = formatted.replace(/\n/g, '<br>')
+
+  //convert link  [ChapsVision](https://www.chapsvision.com/about-us/). to <a href="https://www.chapsvision.com/about-us/" target="_blank">ChapsVision</a>
+  formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a class="text-blue-400 underline" href="$2" target="_blank">$1</a>')
 
   return formatted
 })
