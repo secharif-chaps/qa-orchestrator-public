@@ -23,7 +23,7 @@
     >
       <div
         v-if="isOpen"
-        class="absolute z-50 mt-1 w-64 bg-sage-800 rounded-xl shadow-lg border border-sage-700 overflow-hidden"
+        class="absolute z-[9999] mt-1 w-72 bg-sage-800 rounded-xl shadow-lg border border-sage-700 overflow-hidden"
         :class="dropdownPosition"
       >
         <!-- Search Input -->
@@ -157,7 +157,7 @@ const dropdownPosition = computed(() => {
     case 'bottom-right':
       return 'right-0'
     case 'top-left':
-      return 'bottom-full mb-1 right-0'
+      return 'bottom-full mb-1 left-0'
     case 'top-right':
       return 'bottom-full mb-1 right-0'
     default:
