@@ -106,11 +106,15 @@ class ChapseService:
 
         context_data = []
         for c in companies:
+            # Extract siren from profile JSON if available
+            profile = c.profile or {}
+            siren = profile.get("siren") if isinstance(profile, dict) else None
+
             context_data.append({
                 "id": c.id,
                 "name": c.name,
                 "website": c.website,
-                "siren": c.siren,
+                "siren": siren,
                 "profile": c.profile,
                 "digital": c.digital,
                 "products": c.products,
