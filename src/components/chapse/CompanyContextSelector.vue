@@ -157,7 +157,7 @@ const dropdownPosition = computed(() => {
     case 'bottom-right':
       return 'right-0'
     case 'top-left':
-      return 'bottom-full mb-1 left-0'
+      return 'bottom-full mb-1 right-0'
     case 'top-right':
       return 'bottom-full mb-1 right-0'
     default:
