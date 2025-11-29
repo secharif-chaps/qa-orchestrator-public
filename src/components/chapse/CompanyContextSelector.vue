@@ -147,6 +147,7 @@ const isOpen = ref(false)
 const searchQuery = ref('')
 const isSearching = ref(false)
 const companies = ref<Company[]>([])
+let searchDebounceTimer: ReturnType<typeof setTimeout> | null = null
 
 // Computed
 const dropdownPosition = computed(() => {
@@ -194,27 +195,35 @@ function isCompanyInContext(companyId: number): boolean {
   return props.contextCompanyIds.includes(companyId)
 }
 
-async function handleSearch() {
+function handleSearch() {
+  // Clear previous timer
+  if (searchDebounceTimer) {
+    clearTimeout(searchDebounceTimer)
+  }
+
   if (!searchQuery.value.trim()) {
     companies.value = []
     return
   }
 
-  isSearching.value = true
+  // Debounce the search by 300ms
+  searchDebounceTimer = setTimeout(async () => {
+    isSearching.value = true
 
-  try {
-    const response = await getCompanies({
-      page: 1,
-      size: 10,
-      name: searchQuery.value.trim(),
-    })
-    companies.value = response.data ?? []
-  } catch (error) {
-    console.error('Error searching companies:', error)
-    companies.value = []
-  } finally {
-    isSearching.value = false
-  }
+    try {
+      const response = await getCompanies({
+        page: 1,
+        size: 10,
+        name: searchQuery.value.trim(),
+      })
+      companies.value = response.data ?? []
+    } catch (error) {
+      console.error('Error searching companies:', error)
+      companies.value = []
+    } finally {
+      isSearching.value = false
+    }
+  }, 300)
 }
 
 function selectCompany(company: Company) {
