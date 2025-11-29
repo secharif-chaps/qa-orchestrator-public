@@ -302,9 +302,15 @@ class ChapseService:
                 "user_id": user_id,
                 "conversation_id": conversation_id,
                 "company_ids": validated_company_ids,
-                "query_length": len(query)
+                "query_length": len(query),
+                "company_context_length": len(company_context_json),
+                "inputs": payload.get("inputs", {})
             }
         )
+
+        # Debug log for company context
+        if validated_company_ids:
+            logger.info(f"🏢 Sending company context to Dify: {company_context_json[:500]}...")
 
         new_conversation_id = None
 
