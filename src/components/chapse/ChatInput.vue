@@ -1,10 +1,7 @@
 <template>
   <div class="relative">
-    <!-- Context Badges Row -->
-    <div
-      v-if="companyContext.length > 0"
-      class="flex items-center gap-2 px-4 py-2 border-t border-sage-700 flex-wrap"
-    >
+    <!-- Context Badges Row (always visible to allow adding companies) -->
+    <div class="flex items-center gap-2 px-4 py-2 border-t border-sage-700 flex-wrap">
       <span class="text-xs text-sage-400">
         {{ $t('chapse.context', 'Context:') }}
       </span>
