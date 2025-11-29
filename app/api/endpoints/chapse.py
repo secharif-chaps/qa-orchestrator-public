@@ -70,6 +70,9 @@ async def chat(
         }
     )
 
+    # Get user's first name for Dify to address them personally
+    username = user.given_name or user.preferred_username or "User"
+
     try:
         return StreamingResponse(
             service.stream_chat(
@@ -77,7 +80,8 @@ async def chat(
                 user_id=user.sub,
                 organization_id=org_context.organization_id,
                 conversation_id=request.conversation_id,
-                company_ids=request.company_ids
+                company_ids=request.company_ids,
+                username=username
             ),
             media_type="text/event-stream",
             headers={
