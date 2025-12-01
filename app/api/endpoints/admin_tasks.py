@@ -45,9 +45,8 @@ async def get_admin_tasks(
     status_filter: Optional[list[str]] = Query(None, alias="status"),
     type_filter: Optional[list[str]] = Query(None, alias="type"),
     organization_id: Optional[str] = Query(None),
-    hours: int = Query(24, ge=1, le=168),  # 1 hour to 7 days
     page: int = Query(1, ge=1),
-    size: int = Query(25, ge=1, le=100),
+    size: int = Query(20, ge=1, le=100),
     sort_by: str = Query("created_at"),
     sort_order: str = Query("desc"),
     db: Session = Depends(get_db),
@@ -61,9 +60,8 @@ async def get_admin_tasks(
         status_filter: Filter by status(es): pending, blocked, running, succeeded, error
         type_filter: Filter by task type(s)
         organization_id: Filter by specific organization UUID
-        hours: Time range in hours (tasks created within last N hours)
         page: Page number for pagination
-        size: Items per page (max 100)
+        size: Items per page (max 100, default 20)
         sort_by: Sort field: created_at, updated_at, status, type
         sort_order: Sort direction: asc, desc
     """
@@ -75,17 +73,13 @@ async def get_admin_tasks(
                 "status": status_filter,
                 "type": type_filter,
                 "organization_id": organization_id,
-                "hours": hours
             },
             "pagination": {"page": page, "size": size}
         }
     )
 
-    # Calculate time threshold
-    time_threshold = datetime.now(timezone.utc) - timedelta(hours=hours)
-
     # Build base query with company join for company_name
-    query = db.query(Task).join(Company).filter(Task.created_at >= time_threshold)
+    query = db.query(Task).join(Company)
 
     # Apply filters
     if status_filter:
