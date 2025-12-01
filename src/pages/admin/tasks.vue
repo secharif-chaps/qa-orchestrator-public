@@ -467,7 +467,7 @@ meta:
 </route>
 
 <script setup lang="ts">
-import { ref, computed, watch, onUnmounted } from 'vue'
+import { ref, computed, watch, onUnmounted, defineComponent, h } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { adminTasksQuery, adminOrganizationsQuery } from '@/queries/admin'
 import { useRestartAdminTasks } from '@/mutations/admin'
@@ -482,10 +482,11 @@ import DropdownItem from '@/components/ui/DropdownItem.vue'
 import DropdownDivider from '@/components/ui/DropdownDivider.vue'
 import { OModal } from '@owlint/feathers-vue'
 
-import { defineComponent, h } from 'vue'
+import Badge from '@/components/ui/Badge.vue'
 
-// Stat Card Component (inline using render function)
+// Stat Card Component (inline using render function with Badge for icon)
 const StatCard = defineComponent({
+  components: { Badge },
   props: {
     label: { type: String, required: true },
     value: { type: [Number, String], required: true },
@@ -496,34 +497,27 @@ const StatCard = defineComponent({
   setup(props) {
     const variantClasses = computed(() => {
       const variants: Record<string, string> = {
-        success: 'bg-success-light border-success-stroke text-success-light-content',
-        warning: 'bg-warning-light border-warning-stroke text-warning-light-content',
-        error: 'bg-error-light border-error-stroke text-error-light-content',
-        info: 'bg-info-light border-info-stroke text-info-light-content',
-        slate: 'bg-base-200 border-primary-stroke text-secondary',
+        success: 'border-success-stroke bg-success-50 text-success-light-950 dark:border-success-400/30 dark:bg-success-400/30 dark:text-success-50',
+        warning: 'border-warning-stroke bg-warning-50 text-warning-950 dark:border-warning-400/30 dark:bg-warning-400/30 dark:text-warning-50',
+        error: 'border-error-stroke bg-error-50 text-error-950 dark:border-error-400/30 dark:bg-error-400/30 dark:text-error-50',
+        info: 'border-info-stroke bg-info-50 text-info-950 dark:border-info-400/30 dark:bg-info-400/30 dark:text-info-50',
+        slate: 'border-gray-300 bg-gray-50 text-gray-950 dark:border-gray-400/30 dark:bg-gray-400/30 dark:text-gray-50',
       }
       return variants[props.variant] || variants.slate
     })
 
-    const iconClasses = computed(() => {
-      const variants: Record<string, string> = {
-        success: 'text-success',
-        warning: 'text-warning',
-        error: 'text-error',
-        info: 'text-info',
-        slate: 'text-secondary',
-      }
-      return variants[props.variant] || variants.slate
+    // Map stat card variant to badge color
+    const badgeColor = computed(() => {
+      if (props.variant === 'slate') return 'slate'
+      return props.variant
     })
 
-    return () => h('div', { class: `rounded-xl border p-4 ${variantClasses.value}` }, [
-      h('div', { class: 'flex items-center gap-3' }, [
-        h('div', { class: 'w-10 h-10 rounded-full bg-base-100/50 flex items-center justify-center' }, [
-          h('i', { class: `${props.icon} ${iconClasses.value}` })
-        ]),
-        h('div', {}, [
+    return () => h('div', { class: `relative rounded-xl border p-4 ${variantClasses.value}` }, [
+      h('div', { class: 'flex items-start gap-4' }, [
+        h(Badge, { color: badgeColor.value, variant: 'primary', size: 'md', icon: props.icon }),
+        h('div', { class: 'flex-1 min-w-0' }, [
           h('div', { class: 'text-2xl font-bold' }, props.value),
-          h('div', { class: 'text-sm opacity-80' }, props.label)
+          h('div', { class: 'text-sm leading-relaxed opacity-90' }, props.label)
         ])
       ])
     ])
