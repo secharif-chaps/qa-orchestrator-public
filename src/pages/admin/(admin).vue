@@ -70,6 +70,7 @@ meta:
     - admin.organizations
     - admin.workflows
     - admin.costs
+    - admin.tasks
 </route>
 
 <script setup lang="ts">
@@ -179,6 +180,25 @@ const features: AdminFeature[] = [
     actionTextColor: 'text-success',
     permission: 'admin.workflows',
     navigate: () => router.push('/admin/workflows'),
+  },
+  {
+    id: 'tasks',
+    titleKey: 'admin.features.tasks.title',
+    titleDefault: 'Task Monitoring',
+    descriptionKey: 'admin.features.tasks.description',
+    descriptionDefault: 'Monitor running tasks across all organizations and restart stuck processes',
+    icon: 'fa fa-tasks',
+    iconBgColor: 'bg-info/10',
+    iconTextColor: 'text-info',
+    iconHoverBgColor: 'group-hover:bg-info/20',
+    ringColor: 'ring-info/50',
+    badgeVariant: 'primary',
+    badgeLabel: 'Admin Required',
+    actionKey: 'admin.features.monitor',
+    actionDefault: 'Monitor',
+    actionTextColor: 'text-info',
+    permission: 'admin.tasks',
+    navigate: () => router.push('/admin/tasks'),
   },
 ]
 
