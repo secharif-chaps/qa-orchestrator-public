@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from fastapi import APIRouter, HTTPException, status, Request
 from pydantic import BaseModel, Field
@@ -7,10 +8,12 @@ import json
 
 from app.services.company import CompanyService
 from app.core.dependencies import get_company_service
-from app.models.task import TaskStatus
+from app.models.task import TaskStatus, Task
+from app.models.folder import FolderItem
 from app.core.config import settings
 from app.schemas.task import TaskTokenUpdate
 from app.core.concurrency import DifyConcurrencyManager
+from app.services.task_events import task_event_manager
 from fastapi import Depends
 
 logger = logging.getLogger(__name__)
@@ -343,14 +346,71 @@ async def dify_task_callback(
         task.updated_at = datetime.utcnow()
         service.db.commit()
         service.db.refresh(task)
-        
+
         # Log concurrency status when workflow completes
         concurrency_manager = DifyConcurrencyManager(service.db)
         running_count = concurrency_manager.get_running_count()
         logger.info(f"🎉 Dify callback for task {task_id} processed successfully - Running workflows: {running_count}/{concurrency_manager.max_concurrent}")
-        
+
         logger.info(f"🎉 Dify callback for task {task_id} processed successfully")
-        
+
+        # === SSE BROADCAST ===
+        # Broadcast task update to connected frontend clients
+        try:
+            # Check if all tasks for this company are now complete
+            all_tasks = service.db.query(Task).filter(Task.company_id == company.id).all()
+            completed_statuses = [TaskStatus.SUCCEEDED, TaskStatus.ERROR]
+            all_completed = all(t.status in completed_statuses for t in all_tasks)
+
+            if all_completed:
+                # All tasks done - send completion notification with company name
+                success_count = sum(1 for t in all_tasks if t.status == TaskStatus.SUCCEEDED)
+                error_count = sum(1 for t in all_tasks if t.status == TaskStatus.ERROR)
+
+                # Get folder_id from FolderItem junction table
+                folder_item = service.db.query(FolderItem).filter(
+                    FolderItem.item_id == str(company.id),
+                    FolderItem.item_type == "company"
+                ).first()
+                folder_id = str(folder_item.folder_id) if folder_item else None
+
+                asyncio.create_task(
+                    task_event_manager.broadcast_all_tasks_completed(
+                        user_id=company.owner_id,
+                        company_id=company.id,
+                        company_name=company.name,
+                        folder_id=folder_id,
+                        success_count=success_count,
+                        error_count=error_count
+                    )
+                )
+                logger.info(
+                    f"📢 All tasks completed notification sent for company {company.id}",
+                    extra={
+                        "company_id": company.id,
+                        "success_count": success_count,
+                        "error_count": error_count
+                    }
+                )
+            else:
+                # Individual task update - for cache invalidation
+                asyncio.create_task(
+                    task_event_manager.broadcast_task_update(
+                        user_id=company.owner_id,
+                        company_id=company.id,
+                        task_id=task.id,
+                        status=task.status.value,
+                        task_type=task.type.value,
+                        error=task.error
+                    )
+                )
+        except Exception as sse_error:
+            # SSE broadcast failure should not fail the webhook
+            logger.warning(
+                f"SSE broadcast failed for task {task_id}: {str(sse_error)}",
+                exc_info=True
+            )
+
         return {
             "message": "Dify callback processed successfully",
             "task_id": task_id,
