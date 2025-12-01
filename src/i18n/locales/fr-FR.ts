@@ -887,6 +887,17 @@ export default {
       },
     },
   },
+  tasks: {
+    events: {
+      ready: 'Votre Screen sur <span class="font-bold">{companyName}</span> est prêt !',
+      readyWithErrors:
+        'Votre Screen sur <span class="font-bold">{companyName}</span> est terminé avec quelques erreurs.',
+      view: 'Voir',
+      taskSucceeded: 'Tâche "{taskType}" terminée avec succès',
+      taskFailed: 'Tâche "{taskType}" échouée : {error}',
+      taskStatus: 'Tâche "{taskType}" statut : {status}',
+    },
+  },
   company: {
     loading: 'Chargement des entreprises...',
     name: 'Entreprise',

@@ -83,7 +83,7 @@ import { toast } from '@/utils/toast'
 const { t } = useI18n()
 
 interface Props {
-  companyToArchive: Company | null
+  companyToArchive?: Company | null
 }
 
 const props = defineProps<Props>()

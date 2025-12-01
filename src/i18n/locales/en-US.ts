@@ -843,6 +843,17 @@ export default {
       },
     },
   },
+  tasks: {
+    events: {
+      ready: 'Your Screen about <span class="font-bold">{companyName}</span> is ready!',
+      readyWithErrors:
+        'Your Screen about <span class="font-bold">{companyName}</span> completed with some errors.',
+      view: 'View',
+      taskSucceeded: 'Task "{taskType}" completed successfully',
+      taskFailed: 'Task "{taskType}" failed: {error}',
+      taskStatus: 'Task "{taskType}" status: {status}',
+    },
+  },
   company: {
     loading: 'Loading companies...',
     name: 'Company',

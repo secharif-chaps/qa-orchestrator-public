@@ -133,16 +133,10 @@ const { data: tasks } = useQuery(companyTasksQuery, () => ({
 
 const task = computed(() => tasks.value?.find((t) => t.type === 'jobs'))
 
-// Use the company data composable
+// Task data is kept fresh via SSE (Server-Sent Events) in useTaskEvents composable.
+// No polling needed - cache is invalidated automatically when tasks update.
 const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
-  // Poll every 5 seconds when any task is running
-  refetchInterval: () => {
-    const hasRunningTasks = company.value?.tasks?.some(
-      (t) => t.status === 'running' || t.status === 'pending',
-    )
-    return hasRunningTasks ? 5000 : false
-  },
 }))
 
 const searchQuery = ref('')

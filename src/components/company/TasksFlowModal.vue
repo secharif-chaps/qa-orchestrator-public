@@ -202,7 +202,7 @@
 
 <script setup lang="ts">
 import type { TaskType, TaskStatus, TaskResponse } from '@/types/task'
-import { computed, ref, watch, onUnmounted } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { companyTasksQuery } from '@/queries/tasks'
 import { useQuery } from '@pinia/colada'
@@ -222,7 +222,7 @@ interface Props {
   modelValue: boolean
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
@@ -234,11 +234,12 @@ const companyId = computed(() => route.params.companyId as string)
 const isRestarting = ref<TaskType | null>(null)
 const isStartingAll = ref(false)
 
-const { data: tasks, refetch: refetchTasks } = useQuery(companyTasksQuery, () => ({
+// Task data is now kept fresh via SSE (Server-Sent Events) in useTaskEvents composable
+// which invalidates the cache when tasks update. No polling needed.
+const { data: tasks } = useQuery(companyTasksQuery, () => ({
   companyId: companyId.value,
 }))
 
-const pollingInterval = ref<NodeJS.Timeout | null>(null)
 const { canCreateCompany } = useCompanyPermissions()
 const authStore = useAuthStore()
 
@@ -432,7 +433,7 @@ const getStatusLabel = (status: TaskStatus | null): string => {
 // Check if current user is a debug user
 const isDebugUser = computed(() => {
   const username = authStore.user?.profile?.preferred_username?.toLowerCase()
-  return username === 'nmr' || username === 'suh'
+  return username === 'nmr' || username === 'suh' || username === 'nmr-cv'
 })
 
 // Task actions
@@ -474,28 +475,6 @@ const totalTasks = computed(() => taskConfigs.length)
 
 const hasErrorsOrPending = computed(() => errorCount.value > 0 || pendingCount.value > 0)
 
-// Polling logic for running tasks
-const hasRunningTasks = computed(() => tasks.value?.some((t) => t.status === 'running') || false)
-
-const startPolling = () => {
-  if (pollingInterval.value) return // Already polling
-
-  pollingInterval.value = setInterval(() => {
-    if (hasRunningTasks.value) {
-      refetchTasks()
-    } else {
-      stopPolling()
-    }
-  }, 10000) // Poll every 10 seconds
-}
-
-const stopPolling = () => {
-  if (pollingInterval.value) {
-    clearInterval(pollingInterval.value)
-    pollingInterval.value = null
-  }
-}
-
 // Percentage calculations for segmented progress bar
 const completedPercentage = computed(() =>
   totalTasks.value > 0 ? (completedCount.value / totalTasks.value) * 100 : 0,
@@ -516,24 +495,6 @@ const blockedPercentage = computed(() =>
 const pendingPercentage = computed(() =>
   totalTasks.value > 0 ? (pendingCount.value / totalTasks.value) * 100 : 0,
 )
-
-// Watch for running tasks to start/stop polling
-watch(
-  hasRunningTasks,
-  (isRunning) => {
-    if (isRunning) {
-      startPolling()
-    } else {
-      stopPolling()
-    }
-  },
-  { immediate: true },
-)
-
-// Cleanup on unmount
-onUnmounted(() => {
-  stopPolling()
-})
 
 const restartTask = async (taskType: TaskType) => {
   if (!canCreateCompany.value) {

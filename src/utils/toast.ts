@@ -3,17 +3,24 @@
 
 type ToastType = 'success' | 'error' | 'warning' | 'info'
 
+interface ToastAction {
+  label: string
+  onClick: () => void
+}
+
 interface ToastOptions {
   duration?: number
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+  action?: ToastAction
 }
 
-const defaultOptions: Required<ToastOptions> = {
+const defaultOptions: ToastOptions & { duration: number; position: string } = {
   duration: 5000,
-  position: 'top-right'
+  position: 'top-right',
+  action: undefined,
 }
 
-const createToastElement = (message: string, type: ToastType, options: Required<ToastOptions>): HTMLElement => {
+const createToastElement = (message: string, type: ToastType, options: typeof defaultOptions): HTMLElement => {
   const toast = document.createElement('div')
   toast.className = `
     fixed z-50 max-w-sm w-full p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full
@@ -22,7 +29,14 @@ const createToastElement = (message: string, type: ToastType, options: Required<
   `.trim()
 
   const icon = getToastIcon(type)
-  
+
+  // Build action button HTML if provided
+  const actionHtml = options.action
+    ? `<button class="action-btn flex-shrink-0 ml-2 px-3 py-1 text-xs font-medium rounded bg-white/20 hover:bg-white/30 transition-colors">
+        ${options.action.label}
+      </button>`
+    : ''
+
   toast.innerHTML = `
     <div class="flex items-center gap-3">
       <div class="flex-shrink-0">
@@ -31,18 +45,30 @@ const createToastElement = (message: string, type: ToastType, options: Required<
       <div class="flex-1 text-sm font-medium">
         ${message}
       </div>
-      <button class="flex-shrink-0 ml-2 text-current opacity-70 hover:opacity-100 transition-opacity">
+      ${actionHtml}
+      <button class="close-btn flex-shrink-0 ml-2 text-current opacity-70 hover:opacity-100 transition-opacity">
         <i class="fa fa-times"></i>
       </button>
     </div>
   `
 
   // Add close functionality
-  const closeButton = toast.querySelector('button')
+  const closeButton = toast.querySelector('.close-btn')
   if (closeButton) {
     closeButton.addEventListener('click', () => {
       hideToast(toast)
     })
+  }
+
+  // Add action button functionality
+  if (options.action) {
+    const actionButton = toast.querySelector('.action-btn')
+    if (actionButton) {
+      actionButton.addEventListener('click', () => {
+        options.action?.onClick()
+        hideToast(toast)
+      })
+    }
   }
 
   return toast

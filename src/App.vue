@@ -14,7 +14,7 @@
       </UnauthenticatedLayout>
     </template>
   </div>
-  <PiniaColadaDevtools class="fixed !bottom-0 !left-0" position="bottom-left" />
+  <PiniaColadaDevtools />
 </template>
 
 <script setup lang="ts">
@@ -25,11 +25,16 @@ import UnauthenticatedLayout from './layouts/UnauthenticatedLayout.vue'
 import AuthLoader from './components/ui/AuthLoader.vue'
 import { useAuthStore } from './stores/auth'
 import { useSidebarStore } from './stores/sidebar'
+import { useTaskEvents } from './composables/useTaskEvents'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()
 const sidebarStore = useSidebarStore()
+
+// Initialize SSE connection for real-time task updates
+// This runs at app level so notifications work even when navigating between pages
+useTaskEvents()
 
 const STORAGE_KEY = 'user-locale'
 const { locale } = useI18n()
