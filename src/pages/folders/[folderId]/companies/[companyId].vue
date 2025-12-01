@@ -78,7 +78,7 @@ const folderId = computed(() => (route.params as { folderId: string }).folderId)
 
 const isDebugUser = computed(() => {
   const username = authStore.user?.profile?.preferred_username?.toLowerCase()
-  return username === 'nmr' || username === 'suh'
+  return username === 'nmr' || username === 'suh' || username === 'nmr-cv'
 })
 
 // Get company data

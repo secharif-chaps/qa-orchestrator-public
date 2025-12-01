@@ -277,7 +277,7 @@ import { useAuthStore } from '@/stores/auth'
 import type { QuickAction } from '@/types/ai-preferences'
 import type { TaskStatus, TaskType } from '@/types/task'
 import { useQuery } from '@pinia/colada'
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -293,18 +293,18 @@ const companyId = computed(() => route.params.companyId as string)
 
 const isDebugUser = computed(() => {
   const username = authStore.user?.profile?.preferred_username?.toLowerCase()
-  return username === 'nmr' || username === 'suh'
+  return username === 'nmr' || username === 'suh' || username === 'nmr-cv'
 })
 
 // Use the company data composable
-const { data: company, refetch: refetchCompany } = useQuery(companyByIdQuery, () => ({
+const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
 }))
 
 // Restart task mutation
 const { mutate: restartTaskMutation } = useRestartTask()
 
-const { data: tasks, refetch: refetchTasks } = useQuery(companyTasksQuery, () => ({
+const { data: tasks } = useQuery(companyTasksQuery, () => ({
   companyId: companyId.value,
 }))
 
@@ -314,30 +314,8 @@ const isTaskRunning = (taskType: TaskType): boolean => {
   return task?.status === 'running' || task?.status === 'pending' || task?.status === 'blocked'
 }
 
-const shouldRefetch = computed(() => {
-  if (!tasks.value) return false
-  let shouldRefetch = false
-  for (const task of tasks.value?.values() || []) {
-    if (isTaskRunning(task.type)) {
-      shouldRefetch = true
-    }
-  }
-  return shouldRefetch
-})
-
-const refetch = () => {
-  if (shouldRefetch.value) {
-    refetchCompany()
-    refetchTasks()
-  }
-
-  console.log('Refetching company and tasks')
-  setTimeout(refetch, 5000)
-}
-
-onMounted(() => {
-  refetch()
-})
+// Task data is kept fresh via SSE (Server-Sent Events) in useTaskEvents composable.
+// No polling needed - cache is invalidated automatically when tasks update.
 
 // Helper function to get task status by type
 const getTaskStatus = (taskType: TaskType): TaskStatus | null => {
