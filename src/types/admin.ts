@@ -28,21 +28,6 @@ export interface AdminTasksListResponse {
 }
 
 /**
- * Aggregated task statistics for dashboard summary cards
- */
-export interface AdminTaskStatsResponse {
-  total_tasks: number
-  running: number
-  pending: number
-  blocked: number
-  succeeded: number
-  error: number
-  success_rate: number
-  stuck_count: number
-  time_range_hours: number
-}
-
-/**
  * Request payload for bulk task restart
  */
 export interface BulkRestartRequest {
@@ -83,7 +68,6 @@ export interface AdminTasksFilters {
   status?: TaskStatus
   task_type?: TaskType
   organization_id?: string
-  time_range_hours?: number
   sort_by?: 'created_at' | 'updated_at' | 'status' | 'type'
   sort_order?: 'asc' | 'desc'
 }
