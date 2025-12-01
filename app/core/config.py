@@ -32,8 +32,8 @@ class Settings(BaseSettings):
     KEYCLOAK_CLIENT_ID: str = "mint-back"
     KEYCLOAK_CLIENT_SECRET: Optional[str] = None
     KEYCLOAK_CALLBACK_URI: str = "http://localhost:8000/callback"
-    KEYCLOAK_ADMIN_CLIENT_ID: str = "chapsmind-screen-admin"
-    KEYCLOAK_ADMIN_CLIENT_SECRET: str = "yZwW1YGzxKALy7GnWsHZ4szOwpRwVk6E"
+    KEYCLOAK_ADMIN_CLIENT_ID: str = "admin-cli"
+    KEYCLOAK_ADMIN_CLIENT_SECRET: str = "admin-cli-secret"
     
     # JWT settings
     JWT_ALGORITHM: str = "RS256"
