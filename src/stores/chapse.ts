@@ -158,6 +158,14 @@ export const useChapseStore = defineStore('chapse', () => {
     }
   }
 
+  function prependConversation(conversation: ChapseConversation): void {
+    // Add to the beginning of the list, avoiding duplicates
+    const exists = conversations.value.some((c) => c.id === conversation.id)
+    if (!exists) {
+      conversations.value = [conversation, ...conversations.value]
+    }
+  }
+
   function updateConversationName(conversationId: string, name: string): void {
     const conversation = conversations.value.find((c) => c.id === conversationId)
     if (conversation) {
@@ -305,6 +313,7 @@ export const useChapseStore = defineStore('chapse', () => {
     setConversations,
     appendConversations,
     removeConversation,
+    prependConversation,
     updateConversationName,
 
     // Company Context Actions

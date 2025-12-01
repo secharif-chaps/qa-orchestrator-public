@@ -116,16 +116,19 @@ const recentProjects = computed(() => {
     const createdDate = new Date(company.created_at)
     const now = new Date()
     const diffMs = now.getTime() - createdDate.getTime()
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+    const diffMinutes = Math.floor(diffMs / (1000 * 60))
+    const diffHours = Math.floor(diffMinutes / 60)
     const diffDays = Math.floor(diffHours / 24)
 
     let timeAgo = ''
     if (diffDays > 0) {
-      timeAgo = diffDays === 1 ? t('common.time.day') : `${diffDays} ${t('common.time.days')}`
+      timeAgo = t('common.time.daysAgo', { count: diffDays })
     } else if (diffHours > 0) {
-      timeAgo = t('common.time.hours', { count: diffHours })
+      timeAgo = t('common.time.hoursAgo', { count: diffHours })
+    } else if (diffMinutes > 0) {
+      timeAgo = t('common.time.minutesAgo', { count: diffMinutes })
     } else {
-      timeAgo = t('common.time.fewMinutes')
+      timeAgo = t('common.time.justNow')
     }
 
     return {
@@ -133,7 +136,7 @@ const recentProjects = computed(() => {
       name: company.name,
       folderName: company.folder_name || t('home.recentProjects.noFolder'),
       folderId: company.folder_id,
-      timeAgo: t('home.recentProjects.timeAgo', { time: timeAgo }),
+      timeAgo,
       badge: { variant: 'info' as const, label: t('home.recentProjects.badge.collaborative') },
     }
   })

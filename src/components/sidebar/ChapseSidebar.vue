@@ -156,6 +156,116 @@ import Button from '@/components/ui/Button.vue'
 import chapseAvatar from '@/assets/chapse/head.svg'
 import withBody from '@/assets/chapse/default.svg'
 import { toast } from '@/utils/toast'
+import { getCompanyById } from '@/api/companies'
+
+// =============================================================================
+// Props & Emits
+// =============================================================================
+
+interface AssistActionData {
+  action: {
+    id: string
+    label: string
+    description: string
+  }
+  user_preferences: {
+    role: string
+    goals: string
+    desired_output: string
+    documentation: string
+  }
+  companyId: number
+}
+
+const props = defineProps<{
+  /**
+   * Pending assist action from Smart Assist quick actions
+   */
+  pendingAssistAction?: AssistActionData | null
+}>()
+
+const emit = defineEmits<{
+  /**
+   * Emitted when the assist action has been processed
+   */
+  assistActionProcessed: []
+}>()
+
+// =============================================================================
+// Assist Action Processing
+// =============================================================================
+
+/**
+ * Process a smart assist action by:
+ * 1. Adding the company to context (if not already)
+ * 2. Starting a new conversation
+ * 3. Sending the action as a message with user preferences context
+ */
+async function processAssistAction(actionData: AssistActionData): Promise<void> {
+  console.log('🤖 Processing assist action:', actionData)
+
+  try {
+    // Start a new conversation for the assist action
+    startNewConversation()
+
+    // Try to fetch company data and add to context
+    try {
+      const company = await getCompanyById(String(actionData.companyId))
+      if (company) {
+        addCompanyToContext({
+          id: company.id,
+          name: company.name,
+          siren: company.siren || undefined,
+        })
+      }
+    } catch (err) {
+      console.warn('Could not fetch company for context:', err)
+    }
+
+    // Build the assist action message
+    // Include the action description and user preferences for context
+    const message = buildAssistActionMessage(actionData)
+
+    // Send the message
+    await sendMessage(message)
+
+    console.log('✅ Assist action processed successfully')
+  } catch (err) {
+    console.error('Failed to process assist action:', err)
+    toast.error('Failed to execute smart action')
+  }
+}
+
+/**
+ * Build a message from the assist action data
+ * This constructs a prompt that includes user preferences as context
+ */
+function buildAssistActionMessage(actionData: AssistActionData): string {
+  const { action, user_preferences } = actionData
+
+  // Build a structured message that the AI can understand
+  const parts = [
+    `**Action demandée:** ${action.label}`,
+    `**Description:** ${action.description}`,
+    '',
+    '**Contexte utilisateur:**',
+    `- Rôle: ${user_preferences.role}`,
+    `- Objectifs: ${user_preferences.goals}`,
+    `- Format de sortie souhaité: ${user_preferences.desired_output}`,
+  ]
+
+  // Add documentation context if provided
+  if (user_preferences.documentation) {
+    parts.push(`- Documentation: ${user_preferences.documentation}`)
+  }
+
+  parts.push(
+    '',
+    'Merci de répondre à cette demande en tenant compte de mon profil et de mes préférences.',
+  )
+
+  return parts.join('\n')
+}
 
 // Stores
 const sidebarStore = useSidebarStore()
@@ -314,6 +424,20 @@ watch(
       chapseStore.setError(null)
     }
   },
+)
+
+// Watch for pending assist action and process it
+watch(
+  () => props.pendingAssistAction,
+  async (actionData) => {
+    if (actionData) {
+      console.log('🎯 ChapseSidebar: Received pending assist action', actionData)
+      await processAssistAction(actionData)
+      // Notify parent that action has been processed
+      emit('assistActionProcessed')
+    }
+  },
+  { immediate: true },
 )
 
 // Load conversations on mount
