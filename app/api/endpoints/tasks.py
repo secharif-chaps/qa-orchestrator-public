@@ -1,17 +1,18 @@
 from typing import List
-import logging
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_keycloak import OIDCUser
 
-from app.services.company import CompanyService
 from app.core.dependencies import get_company_service
 from app.core.keycloak import idp
+from app.core.logging_config import get_logger
 from app.core.organization import get_user_organization, OrganizationContext
 from app.core.security import verify_company_organization_access
 from app.schemas.task import TaskResponse, TaskTokenUpdate
+from app.services.company import CompanyService
+from app.services.task_service import TaskService
 
-# Configure logging
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 router = APIRouter(
     prefix="/tasks",
@@ -76,12 +77,24 @@ async def get_company_tasks(
     user: OIDCUser = Depends(idp.get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Get all tasks for a company (if user has access to the company's organization).
+    """Get all tasks for a company with automatic stale task cleanup.
+
+    Performs lazy cleanup of tasks stuck in RUNNING state for more than
+    the configured timeout (default 5 minutes) before returning task list.
 
     Requires authentication.
     """
     company = service.get_company(company_id)
     verify_company_organization_access(company, org_context)
+
+    # Lazy cleanup of stale tasks before returning
+    task_service = TaskService(service.db)
+    cleaned_count = task_service.cleanup_stale_tasks_for_company(company_id)
+
+    if cleaned_count > 0:
+        # Refresh company to get updated task statuses
+        service.db.refresh(company)
+
     return company.tasks
 
 @router.post("/{task_id}/restart", response_model=TaskResponse)
