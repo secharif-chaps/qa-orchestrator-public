@@ -114,8 +114,21 @@ export function useChapseChat() {
           }
         }
 
-        // Refresh conversations list
-        invalidateConversations()
+        // Add the new conversation to the list immediately
+        // This provides instant feedback without waiting for a refresh
+        const newConversation = {
+          id: newConversationId,
+          name: '', // Name will be empty until auto-generated
+          created_at: Math.floor(Date.now() / 1000),
+          updated_at: Math.floor(Date.now() / 1000),
+          company_ids: store.companyIds,
+          companies: store.companyContext.map((c) => ({
+            id: c.id,
+            name: c.name,
+            siren: c.siren || null,
+          })),
+        }
+        store.prependConversation(newConversation)
       }
     } catch (err: unknown) {
       console.error('Error sending message:', err)
