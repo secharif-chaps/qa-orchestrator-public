@@ -28,6 +28,7 @@ from app.schemas.admin_tasks import (
 )
 from app.services.company import CompanyService
 from app.services.keycloak_admin import keycloak_admin_service
+from app.services.task_service import TaskService
 
 logger = get_logger(__name__)
 
@@ -54,6 +55,9 @@ async def get_admin_tasks(
 ):
     """Get all tasks across all organizations with filtering and pagination.
 
+    Performs lazy cleanup of all stale tasks (running > 5 minutes) before
+    returning results to ensure accurate task statuses.
+
     Requires admin.tasks role for access.
 
     Args:
@@ -77,6 +81,15 @@ async def get_admin_tasks(
             "pagination": {"page": page, "size": size}
         }
     )
+
+    # Lazy cleanup of all stale tasks before fetching
+    task_service = TaskService(db)
+    cleaned_count = task_service.cleanup_all_stale_tasks()
+    if cleaned_count > 0:
+        logger.info(
+            f"Admin tasks endpoint cleaned up {cleaned_count} stale tasks",
+            extra={"user": user.preferred_username, "cleaned_count": cleaned_count}
+        )
 
     # Build base query with company join for company_name
     query = db.query(Task).join(Company)

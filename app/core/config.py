@@ -43,6 +43,10 @@ class Settings(BaseSettings):
     RABBITMQ_URL: str = "amqp://guest:guest@rabbitmq:5672//"
     MAX_CONCURRENT_WORKFLOWS: int = 10
 
+    # Task timeout settings
+    # Tasks running longer than this are considered stale and will be marked as ERROR
+    TASK_TIMEOUT_MINUTES: int = 5
+
     model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 
