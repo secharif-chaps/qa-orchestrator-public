@@ -40,10 +40,10 @@
 
     <!-- Error State -->
     <Alert
-      v-else-if="statsError || tasksError"
+      v-else-if="tasksError"
       variant="error"
       title="Error Loading Data"
-      :message="(statsError?.message || tasksError?.message) ?? 'Failed to load task data'"
+      :message="tasksError?.message ?? 'Failed to load task data'"
       icon="fa fa-exclamation-triangle"
     >
       <template #actions>
@@ -367,58 +367,6 @@
         </div>
       </Card>
 
-      <!-- Failed Tasks Section -->
-      <div v-if="failedTasks.length > 0">
-        <h2 class="text-lg font-semibold mb-4">
-          <i class="fa fa-exclamation-circle text-error mr-2"></i>
-          Recent Failed Tasks
-        </h2>
-        <Card class="!p-0 overflow-hidden">
-          <div class="divide-y divide-primary-stroke">
-            <div
-              v-for="task in failedTasks"
-              :key="task.id"
-              class="p-4 hover:bg-base-200/50 transition-colors"
-            >
-              <div class="flex items-start justify-between gap-4">
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-3 mb-2">
-                    <span class="font-medium">{{ task.company_name }}</span>
-                    <Tag variant="error" size="xs" :label="formatTaskType(task.type)" />
-                    <span class="text-sm text-secondary">
-                      {{ formatRelativeTime(task.updated_at) }}
-                    </span>
-                  </div>
-                  <div
-                    v-if="task.error"
-                    class="text-sm text-error-light-content bg-error-light/50 rounded-lg p-3 font-mono"
-                  >
-                    <div
-                      :class="{ 'line-clamp-2': !expandedErrors.has(task.id) }"
-                    >
-                      {{ task.error }}
-                    </div>
-                    <button
-                      v-if="task.error.length > 100"
-                      @click="toggleErrorExpand(task.id)"
-                      class="text-xs text-error mt-2 hover:underline"
-                    >
-                      {{ expandedErrors.has(task.id) ? 'Show less' : 'Show more' }}
-                    </button>
-                  </div>
-                </div>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  icon="fa fa-redo"
-                  label="Restart"
-                  @click="handleRestartSingle(task.id)"
-                />
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
     </template>
 
     <!-- Bulk Restart Confirmation Modal -->
@@ -520,8 +468,8 @@ meta:
 
 <script setup lang="ts">
 import { ref, computed, watch, onUnmounted } from 'vue'
-import { useQuery, useQueryCache } from '@pinia/colada'
-import { adminTasksQuery, adminTaskStatsQuery, adminOrganizationsQuery, ADMIN_QUERY_KEYS } from '@/queries/admin'
+import { useQuery } from '@pinia/colada'
+import { adminTasksQuery, adminOrganizationsQuery } from '@/queries/admin'
 import { useRestartAdminTasks } from '@/mutations/admin'
 import type { AdminTaskResponse, AdminTasksFilters, BulkRestartResponse } from '@/types/admin'
 import type { TaskStatus, TaskType } from '@/types/task'
@@ -585,11 +533,10 @@ const StatCard = defineComponent({
 // Task types constant
 const taskTypes: TaskType[] = ['profile', 'digital', 'timeline', 'products', 'jobs', 'csr', 'press', 'team', 'data_collection']
 
-// Reactive filters
+// Reactive filters (no time_range_hours - we paginate through all tasks)
 const filters = ref<AdminTasksFilters>({
   page: 1,
   size: 20,
-  time_range_hours: 24,
   sort_by: 'created_at',
   sort_order: 'desc',
 })
@@ -607,15 +554,7 @@ const expandedErrors = ref(new Set<number>())
 const showRestartModal = ref(false)
 const lastRestartResult = ref<BulkRestartResponse | null>(null)
 
-// Query cache
-const queryCache = useQueryCache()
-
-// Queries
-const { data: stats, error: statsError, isLoading: statsLoading, refetch: refetchStats } = useQuery(
-  adminTaskStatsQuery,
-  () => ({ timeRangeHours: filters.value.time_range_hours ?? 24 })
-)
-
+// Query - single query for tasks, stats computed client-side from current page
 const { data: tasks, error: tasksError, isLoading: tasksLoading, refetch: refetchTasks } = useQuery(
   adminTasksQuery,
   () => ({ filters: filters.value })
@@ -634,8 +573,43 @@ const {
   isPending: isRestarting,
 } = useRestartAdminTasks()
 
+// Computed stats from current page tasks
+const stats = computed(() => {
+  const items = tasks.value?.items ?? []
+
+  // Count by status
+  const running = items.filter(t => t.status === 'running').length
+  const pending = items.filter(t => t.status === 'pending').length
+  const blocked = items.filter(t => t.status === 'blocked').length
+  const succeeded = items.filter(t => t.status === 'succeeded').length
+  const error = items.filter(t => t.status === 'error').length
+
+  // Calculate success rate (succeeded / (succeeded + error))
+  const completed = succeeded + error
+  const success_rate = completed > 0 ? succeeded / completed : 0
+
+  // Count stuck tasks (running > 3 minutes)
+  const stuck_count = items.filter(task => {
+    if (task.status !== 'running') return false
+    const created = new Date(task.created_at)
+    const diffMin = Math.floor((Date.now() - created.getTime()) / 60000)
+    return diffMin > 3
+  }).length
+
+  return {
+    total_tasks: items.length,
+    running,
+    pending,
+    blocked,
+    succeeded,
+    error,
+    success_rate,
+    stuck_count,
+  }
+})
+
 // Computed
-const isLoading = computed(() => statsLoading.value || tasksLoading.value)
+const isLoading = computed(() => tasksLoading.value)
 
 const hasActiveFilters = computed(() => {
   return filters.value.status || filters.value.task_type || filters.value.organization_id
@@ -655,10 +629,6 @@ const selectedOrgLabel = computed(() => {
   if (!filters.value.organization_id) return 'All Organizations'
   const org = organizations.value?.organizations.find(o => o.id === filters.value.organization_id)
   return org?.name ?? 'Unknown'
-})
-
-const failedTasks = computed(() => {
-  return (tasks.value?.items ?? []).filter(t => t.status === 'error')
 })
 
 const runningTasks = computed(() => {
@@ -757,20 +727,6 @@ function formatElapsedTime(createdAt: string): string {
   return `${diffHour}h ${diffMin % 60}m`
 }
 
-function formatRelativeTime(dateStr: string): string {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffMin = Math.floor(diffMs / 60000)
-
-  if (diffMin < 1) return 'just now'
-  if (diffMin < 60) return `${diffMin}m ago`
-  const diffHour = Math.floor(diffMin / 60)
-  if (diffHour < 24) return `${diffHour}h ago`
-  const diffDay = Math.floor(diffHour / 24)
-  return `${diffDay}d ago`
-}
-
 function getElapsedTimeClass(task: AdminTaskResponse): string {
   if (task.status !== 'running') return 'text-secondary'
 
@@ -864,7 +820,7 @@ function toggleErrorExpand(taskId: number) {
 async function refreshAll() {
   isRefreshing.value = true
   try {
-    await Promise.all([refetchStats(), refetchTasks()])
+    await refetchTasks()
     lastRefresh.value = new Date()
   } finally {
     isRefreshing.value = false
