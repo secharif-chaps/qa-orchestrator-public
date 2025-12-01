@@ -5,28 +5,28 @@
       @click.stop="$emit('toggle')"
       class="flex items-center gap-2 px-2 py-3 transition-colors group cursor-pointer bg-sage-800 relative z-10 rounded-card justify-between"
     >
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 min-w-0 flex-1">
         <!-- Expand/Collapse Arrow -->
         <button
           v-if="folder.items && folder.items.length > 0"
-          class="w-3 flex items-center justify-center"
+          class="w-3 flex-shrink-0 flex items-center justify-center"
         >
           <i
             :class="isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'"
             class="fa text-xs text-sage-300 transition-transform"
           ></i>
         </button>
-        <div v-else class="w-3"></div>
+        <div v-else class="w-3 flex-shrink-0"></div>
 
         <!-- Folder Icon -->
         <i
-          class="fa text-sm text-sage-300"
+          class="fa text-sm text-sage-300 flex-shrink-0"
           :class="{ 'fa-folder': !isExpanded, 'fa-folder-open': isExpanded }"
         ></i>
 
         <!-- Folder Name -->
         <span
-          class="text-sm text-white truncate hover:underline inline-block"
+          class="text-sm text-white truncate hover:underline"
           @click.prevent="$emit('navigateFolder', folder.id)"
           >{{ folder.name }}</span
         >
