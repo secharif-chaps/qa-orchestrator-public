@@ -36,7 +36,7 @@
       <button
         class="mt-2 text-xs text-secondary hover:text-secondary/80 transition-colors font-medium flex items-center gap-1 self-start"
       >
-        <span>Voir plus</span>
+        <span>{{ $t('company.analysisCard.viewMore', 'View more') }}</span>
         <i class="fas fa-arrow-right text-[10px]"></i>
       </button>
     </div>
@@ -48,7 +48,7 @@
     >
       <div class="flex items-center gap-3 text-base text-secondary">
         <i class="fas fa-spinner fa-spin text-xl"></i>
-        <span>Analyse en cours...</span>
+        <span>{{ $t('company.analysisCard.loading', 'Analysis in progress...') }}</span>
       </div>
     </div>
 
@@ -60,8 +60,8 @@
       <div class="flex flex-col items-center gap-4 w-full">
         <Alert
           variant="error"
-          title="Erreur"
-          :message="errorMessage || 'Une erreur est survenue lors de l\'analyse'"
+          :title="$t('company.analysisCard.error.title', 'Error')"
+          :message="errorMessage || $t('company.analysisCard.error.message', 'An error occurred during analysis')"
           icon="fa fa-exclamation-triangle"
           :dismissible="false"
         />
@@ -70,7 +70,7 @@
 
     <!-- No Data State -->
     <div v-else-if="!hasInsights && !isLoading" class="mt-4 pt-4 border-t border-primary-stroke">
-      <p class="text-sm text-secondary italic">Aucune donnée disponible pour cette section</p>
+      <p class="text-sm text-secondary italic">{{ $t('company.analysisCard.noData', 'No data available for this section') }}</p>
     </div>
 
     <!-- Disabled Overlay -->
@@ -78,7 +78,7 @@
       v-if="disabled"
       class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card"
     >
-      <Tag variant="accent" label="Bientôt disponible" size="sm" />
+      <Tag variant="accent" :label="$t('company.analysisCard.comingSoon', 'Coming soon')" size="sm" />
     </div>
   </div>
 </template>
@@ -88,6 +88,9 @@ import { computed, ref } from 'vue'
 import Tag from '@/components/ui/Tag.vue'
 import Alert from '@/components/ui/Alert.vue'
 import type { TaskStatus } from '@/types/task'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   title: string
@@ -136,15 +139,15 @@ const statusVariant = computed(() => {
 const statusLabel = computed(() => {
   switch (props.taskStatus) {
     case 'succeeded':
-      return 'Terminé'
+      return t('company.analysisCard.status.succeeded', 'Completed')
     case 'error':
-      return 'Erreur'
+      return t('company.analysisCard.status.error', 'Error')
     case 'running':
-      return 'En cours'
+      return t('company.analysisCard.status.running', 'In progress')
     case 'pending':
-      return 'En attente'
+      return t('company.analysisCard.status.pending', 'Pending')
     default:
-      return 'Non démarré'
+      return t('company.analysisCard.status.notStarted', 'Not started')
   }
 })
 

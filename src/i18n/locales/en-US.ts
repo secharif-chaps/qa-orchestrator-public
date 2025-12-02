@@ -968,6 +968,7 @@ export default {
       onlinePresence: 'Online Presence',
       socialMedia: 'Social Media',
       analysis: 'Analysis',
+      analyses: 'Analyses',
     },
     analysisCards: {
       profile: {
@@ -1070,6 +1071,42 @@ export default {
         hoursAgo: '{hours}h ago',
         daysAgo: '{days}d ago',
       },
+    },
+    export: {
+      button: 'Export',
+    },
+    onlinePresence: {
+      title: 'Online Presence',
+      website: 'Website',
+      socialMedia: 'Social Media Presence',
+    },
+    tasks: {
+      completed: '{count} completed ({percentage}%)',
+      running: '{count} running ({percentage}%)',
+      error: '{count} errors ({percentage}%)',
+      blocked: '{count} blocked ({percentage}%)',
+      pending: '{count} pending ({percentage}%)',
+      analysisInProgress: 'Analysis in progress...',
+    },
+    analysisCard: {
+      viewMore: 'View more',
+      loading: 'Analysis in progress...',
+      noData: 'No data available for this section',
+      comingSoon: 'Coming soon',
+      error: {
+        title: 'Error',
+        message: 'An error occurred during analysis',
+      },
+      status: {
+        succeeded: 'Completed',
+        error: 'Error',
+        running: 'In progress',
+        pending: 'Pending',
+        notStarted: 'Not started',
+      },
+    },
+    footer: {
+      createdBy: 'Created by {username} on {date}',
     },
   },
   tokens: {
@@ -1544,6 +1581,28 @@ export default {
           disabled: 'Disabled',
           noTokens: 'No Tokens',
         },
+      },
+    },
+  },
+  chapseAssist: {
+    alert: {
+      title: 'Get Personalized AI Recommendations',
+      actionLabel: 'Set Up Now',
+      dismissLabel: 'Maybe Later',
+    },
+    quickActions: {
+      title: 'Chaps-e Smart Assist',
+      refresh: 'Refresh',
+      loading: 'Generating personalized actions...',
+      tryAgain: 'Try Again',
+      configure: 'Configure AI Preferences',
+      error: {
+        title: 'Failed to Load Quick Actions',
+        message: 'An error occurred while generating actions. Please try again.',
+      },
+      empty: {
+        title: 'No Quick Actions Available',
+        message: 'Configure your AI preferences to see personalized recommendations.',
       },
     },
   },
