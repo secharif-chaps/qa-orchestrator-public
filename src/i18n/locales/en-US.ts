@@ -1604,6 +1604,7 @@ export default {
       error: {
         title: 'Failed to Load Quick Actions',
         message: 'An error occurred while generating actions. Please try again.',
+        preferencesCheck: 'Failed to Check Preferences',
       },
       empty: {
         title: 'No Quick Actions Available',

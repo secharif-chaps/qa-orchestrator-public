@@ -1659,6 +1659,7 @@ export default {
         title: 'Échec du chargement des actions rapides',
         message:
           "Une erreur s'est produite lors de la génération des actions. Veuillez réessayer.",
+        preferencesCheck: 'Échec de la vérification des préférences',
       },
       empty: {
         title: 'Aucune action rapide disponible',
