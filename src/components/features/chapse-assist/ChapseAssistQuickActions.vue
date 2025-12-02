@@ -1,13 +1,17 @@
 <template>
   <!-- DEBUG: Show current state -->
   <div class="text-xs text-secondary mb-2 p-2 bg-warning-light rounded">
-    DEBUG: isCheckingPreferences={{ isCheckingPreferences }},
+    DEBUG: companyId={{ debugCompanyId }},
+    autoLoad={{ autoLoad }},
+    isCheckingPreferences={{ isCheckingPreferences }},
     hasAiPreferences={{ hasAiPreferences }},
     isLoadingActions={{ isLoadingActions }},
     hasActions={{ hasActions }},
     hasError={{ hasError }},
     hasLoadedOnce={{ hasLoadedOnce }},
-    preferencesCheckError={{ preferencesCheckError }}
+    preferencesCheckError={{ preferencesCheckError }},
+    actionsError={{ actionsError }},
+    quickActionsLength={{ quickActions.length }}
   </div>
 
   <!-- Initial Loading State (checking preferences) -->
@@ -229,6 +233,9 @@ const props = defineProps<Props>()
 // Computed props with translations as defaults
 const title = computed(() => props.title ?? t('chapseAssist.quickActions.title', 'Chaps-e Smart Assist'))
 const autoLoad = computed(() => props.autoLoad ?? true)
+
+// Debug computed
+const debugCompanyId = computed(() => props.companyId)
 
 const emit = defineEmits<{
   actionClick: [action: QuickAction]
