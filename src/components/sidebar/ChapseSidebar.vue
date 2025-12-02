@@ -440,6 +440,49 @@ watch(
   { immediate: true },
 )
 
+// Auto-attach company context when on company page with new conversation
+// This provides better UX by automatically setting context based on current page
+watch(
+  [availablePageContext, () => chapseStore.isNewConversation, () => chapseStore.hasMessages],
+  ([pageContext, isNew, hasMessages]) => {
+    // Only auto-attach if:
+    // 1. We have a page context (company page)
+    // 2. The conversation is new (no conversation ID)
+    // 3. No messages have been sent yet
+    // 4. The company is not already in context
+    if (pageContext && isNew && !hasMessages && !isPageContextActive.value) {
+      console.log('🔗 Auto-attaching company context:', pageContext.name)
+      addCompanyToContext(pageContext)
+    }
+  },
+  { immediate: true },
+)
+
+// When switching to a different company page with a new conversation,
+// replace the context with the new company
+watch(
+  availablePageContext,
+  (newContext, oldContext) => {
+    // Only replace context if:
+    // 1. Context changed to a different company
+    // 2. Conversation is new and has no messages
+    // 3. There's only one company in context (the old page's company)
+    if (
+      newContext &&
+      oldContext &&
+      newContext.id !== oldContext.id &&
+      chapseStore.isNewConversation &&
+      !chapseStore.hasMessages &&
+      companyContext.value.length === 1 &&
+      companyContext.value[0].id === oldContext.id
+    ) {
+      console.log('🔄 Switching company context from', oldContext.name, 'to', newContext.name)
+      removeCompanyFromContext(oldContext.id)
+      addCompanyToContext(newContext)
+    }
+  },
+)
+
 // Load conversations on mount
 onMounted(async () => {
   await loadConversations(true)

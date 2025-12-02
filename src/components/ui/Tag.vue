@@ -1,5 +1,12 @@
 <template>
-  <span :class="badgeClasses" class="inline-flex items-center gap-1.5 font-medium transition-all">
+  <component
+    :is="href ? 'a' : 'span'"
+    :href="href"
+    :target="href ? target : undefined"
+    :rel="href && target === '_blank' ? 'noopener noreferrer' : undefined"
+    :class="[badgeClasses, href ? 'cursor-pointer hover:opacity-80' : '']"
+    class="inline-flex items-center gap-1.5 font-medium transition-all"
+  >
     <!-- Icon -->
     <i v-if="icon" :class="[icon, iconClasses]"></i>
 
@@ -15,13 +22,13 @@
     <!-- Close button for dismissible badges -->
     <button
       v-if="dismissible"
-      @click="$emit('dismiss')"
+      @click.prevent.stop="$emit('dismiss')"
       class="ml-1 -mr-0.5 hover:opacity-80 transition-opacity"
       :aria-label="dismissLabel || 'Dismiss'"
     >
       <i class="fa fa-times" :class="closeIconClasses"></i>
     </button>
-  </span>
+  </component>
 </template>
 
 <script setup lang="ts">
@@ -49,6 +56,10 @@ interface Props {
   rounded?: boolean
   dismissible?: boolean
   dismissLabel?: string
+  /** URL to link to - renders as <a> instead of <span> */
+  href?: string
+  /** Link target (e.g., '_blank' for new tab) */
+  target?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {

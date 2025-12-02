@@ -1603,6 +1603,7 @@ export default {
       empty: {
         title: 'No Quick Actions Available',
         message: 'Configure your AI preferences to see personalized recommendations.',
+        loadedMessage: 'Unable to generate quick actions for this company. Try refreshing or check back later.',
       },
     },
   },

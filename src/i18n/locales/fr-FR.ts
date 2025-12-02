@@ -1658,6 +1658,7 @@ export default {
       empty: {
         title: 'Aucune action rapide disponible',
         message: 'Configurez vos préférences IA pour voir des recommandations personnalisées.',
+        loadedMessage: 'Impossible de générer des actions rapides pour cette entreprise. Essayez de rafraîchir ou revenez plus tard.',
       },
     },
   },
