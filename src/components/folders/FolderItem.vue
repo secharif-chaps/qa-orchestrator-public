@@ -49,7 +49,7 @@
             </div>
             <div class="flex items-center gap-2">
               <span class="text-sm text-secondary">
-                {{ itemCount }} {{ $t('folder.itemCount', '{count} items', { count: itemCount }) }}
+                {{ $t('folder.itemCount', itemCount) }}
               </span>
               <div v-if="folder.tags && folder.tags.length > 0" class="flex items-center gap-1">
                 <Tag
@@ -139,8 +139,8 @@
     <!-- Footer with creation date and owner -->
     <div>
       <div class="flex justify-between items-center text-xs text-secondary">
-        <span>Created {{ formatDate(folder.created_at) }}</span>
-        <span>by @{{ folder.owner }}</span>
+        <span>{{ $t('folder.grid.created') }} {{ formatDate(folder.created_at) }}</span>
+        <span>{{ $t('folder.grid.by') }} @{{ folder.owner }}</span>
       </div>
     </div>
   </Card>
@@ -151,7 +151,10 @@ import Tag from '@/components/ui/Tag.vue'
 import type { Folder } from '@/types/folder'
 import { useToggleFolderFavorite } from '@/mutations/folders'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Card from '../ui/Card.vue'
+
+const { t, locale } = useI18n()
 
 interface Props {
   folder: Folder
@@ -234,9 +237,10 @@ const getLogoUrl = (website?: string) => {
 }
 
 // Methods
-const formatDate = (dateString: string) => {
-  if (!dateString) return 'N/A'
-  return new Date(dateString).toLocaleDateString()
+function formatDate(dateString: string): string {
+  if (!dateString) return t('common.na')
+  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+  return new Date(dateString).toLocaleDateString(localeCode)
 }
 
 const handleCardClick = (event: MouseEvent) => {

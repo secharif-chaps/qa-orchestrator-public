@@ -1017,6 +1017,7 @@ export default {
       onlinePresence: 'Présence en Ligne',
       socialMedia: 'Réseaux Sociaux',
       analysis: 'Analyse',
+      analyses: 'Analyses',
     },
     analysisCards: {
       profile: {
@@ -1121,6 +1122,42 @@ export default {
         hoursAgo: 'il y a {hours}h',
         daysAgo: 'il y a {days}j',
       },
+    },
+    export: {
+      button: 'Exporter',
+    },
+    onlinePresence: {
+      title: 'Présence en ligne',
+      website: 'Site web',
+      socialMedia: 'Présence sur les réseaux sociaux',
+    },
+    tasks: {
+      completed: '{count} terminées ({percentage}%)',
+      running: '{count} en cours ({percentage}%)',
+      error: '{count} erreurs ({percentage}%)',
+      blocked: '{count} bloquées ({percentage}%)',
+      pending: '{count} en attente ({percentage}%)',
+      analysisInProgress: 'Analyse en cours...',
+    },
+    analysisCard: {
+      viewMore: 'Voir plus',
+      loading: 'Analyse en cours...',
+      noData: 'Aucune donnée disponible pour cette section',
+      comingSoon: 'Bientôt disponible',
+      error: {
+        title: 'Erreur',
+        message: "Une erreur s'est produite lors de l'analyse",
+      },
+      status: {
+        succeeded: 'Terminé',
+        error: 'Erreur',
+        running: 'En cours',
+        pending: 'En attente',
+        notStarted: 'Non démarré',
+      },
+    },
+    footer: {
+      createdBy: 'Créé par {username} le {date}',
     },
   },
   tokens: {
@@ -1293,9 +1330,23 @@ export default {
       unfavorite: 'Retirer des favoris',
       view: 'Voir',
     },
-    itemCount: '{count} éléments',
+    itemCount: '{count} élément | {count} éléments',
+    itemsChip: '{count} élément | {count} éléments',
     items: {
       add: 'Ajouter des éléments',
+      empty: 'Aucun élément dans ce dossier',
+    },
+    header: {
+      itemsCount: '{count} élément | {count} éléments',
+      createdOn: 'créé le {date}',
+      by: 'par',
+    },
+    grid: {
+      created: 'Créé le',
+      by: 'par',
+    },
+    itemTypes: {
+      company: 'Fiche entreprise',
     },
     list: {
       error: {
@@ -1586,5 +1637,122 @@ export default {
         },
       },
     },
+  },
+  chapseAssist: {
+    alert: {
+      title: 'Obtenez des recommandations IA personnalisées',
+      actionLabel: 'Configurer maintenant',
+      dismissLabel: 'Plus tard',
+    },
+    quickActions: {
+      title: 'Chaps-e Smart Assist',
+      refresh: 'Actualiser',
+      loading: 'Génération des actions personnalisées...',
+      tryAgain: 'Réessayer',
+      configure: 'Configurer les préférences IA',
+      error: {
+        title: 'Échec du chargement des actions rapides',
+        message:
+          "Une erreur s'est produite lors de la génération des actions. Veuillez réessayer.",
+      },
+      empty: {
+        title: 'Aucune action rapide disponible',
+        message: 'Configurez vos préférences IA pour voir des recommandations personnalisées.',
+      },
+    },
+  },
+  aiPreferences: {
+    setup: {
+      title: 'Configurez votre assistant IA',
+      description:
+        'Parlez-nous de votre rôle et de vos objectifs pour que nous puissions vous fournir des actions rapides et des recommandations personnalisées adaptées à vos besoins.',
+      optional: 'Optionnel',
+      fields: {
+        role: {
+          label: 'Votre rôle',
+          placeholder: 'ex. Commercial, Responsable Marketing, Directeur',
+          helper: 'Quel est votre rôle professionnel ?',
+        },
+        goals: {
+          label: 'Vos objectifs',
+          placeholder:
+            'ex. Je veux identifier les entreprises qui bénéficieraient de notre produit et comprendre leurs problématiques',
+          helper: "Qu'essayez-vous d'accomplir lors de vos recherches d'entreprises ?",
+        },
+        desiredOutput: {
+          label: 'Format de sortie souhaité',
+          placeholder:
+            'ex. Générer des emails de prospection personnalisés mettant en avant les problématiques avec des références spécifiques à l\'entreprise',
+          helper: "Comment souhaitez-vous que l'IA formate ses recommandations ?",
+        },
+        documentation: {
+          label: 'Documentation produit/service',
+          placeholder:
+            'ex. Notre produit est une plateforme SaaS B2B qui aide les entreprises à automatiser leurs workflows',
+          helper:
+            'Décrivez votre produit ou service pour aider à personnaliser les recommandations (optionnel)',
+        },
+      },
+      actions: {
+        save: 'Enregistrer et continuer',
+        cancel: 'Annuler',
+      },
+      success: {
+        title: 'Succès !',
+        message:
+          'Vos préférences IA ont été enregistrées. Les actions rapides seront désormais personnalisées selon votre profil.',
+      },
+      error: {
+        title: 'Erreur',
+        message: "Échec de l'enregistrement de vos préférences. Veuillez réessayer.",
+      },
+      help: {
+        title: 'Conseils pour de meilleurs résultats',
+        tip1: 'Soyez précis sur votre rôle et vos objectifs pour des recommandations plus pertinentes',
+        tip2:
+          'Décrivez clairement votre format de sortie souhaité pour obtenir des résultats mieux formatés',
+        tip3:
+          'Incluez les détails du produit pour recevoir des suggestions plus personnalisées et contextuelles',
+      },
+    },
+    settings: {
+      title: 'Préférences de l\'assistant IA',
+      description: 'Mettez à jour vos préférences IA pour affiner les recommandations personnalisées',
+      lastUpdated: 'Dernière mise à jour : {date}',
+      notConfigured: 'Non configuré',
+      actions: {
+        edit: 'Modifier les préférences',
+        save: 'Enregistrer les modifications',
+        cancel: 'Annuler',
+      },
+      success: {
+        title: 'Mise à jour réussie',
+        message: 'Vos préférences IA ont été mises à jour.',
+      },
+      error: {
+        title: 'Échec de la mise à jour',
+        message: "Échec de la mise à jour de vos préférences. Veuillez réessayer.",
+      },
+    },
+  },
+  breadcrumb: {
+    companies: 'Entreprises',
+    folders: 'Dossiers',
+    team: 'Équipe',
+    admin: 'Admin',
+    settings: 'Paramètres',
+    search: 'Recherche',
+    profile: 'Profil',
+    jobs: 'Emplois',
+    timeline: 'Historique',
+    products: 'Produits',
+    press: 'Presse',
+    edit: 'Modifier',
+    create: 'Créer',
+    company: 'Entreprise',
+    organizations: 'Organisations',
+    costs: 'Coûts',
+    appearance: 'Apparence',
+    security: 'Sécurité',
   },
 }

@@ -40,8 +40,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useChapseAssist } from '@/composables/useChapseAssist'
 import Button from '@/components/ui/Button.vue'
+
+const { t } = useI18n()
 
 interface Props {
   /**
@@ -80,15 +83,15 @@ interface Props {
   forceShow?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  title: 'Get Personalized AI Recommendations',
-  message: '',
-  actionLabel: 'Set Up Now',
-  dismissLabel: 'Maybe Later',
-  showDismiss: true,
-  dismissKey: 'chapse_assist_alert_dismissed',
-  forceShow: false,
-})
+const props = defineProps<Props>()
+
+// Computed props with translations as defaults
+const title = computed(() => props.title ?? t('chapseAssist.alert.title', 'Get Personalized AI Recommendations'))
+const actionLabel = computed(() => props.actionLabel ?? t('chapseAssist.alert.actionLabel', 'Set Up Now'))
+const dismissLabel = computed(() => props.dismissLabel ?? t('chapseAssist.alert.dismissLabel', 'Maybe Later'))
+const showDismiss = computed(() => props.showDismiss ?? true)
+const dismissKey = computed(() => props.dismissKey ?? 'chapse_assist_alert_dismissed')
+const forceShow = computed(() => props.forceShow ?? false)
 
 const emit = defineEmits<{
   setup: []
@@ -107,7 +110,7 @@ const isChecking = ref(true)
  */
 const shouldShow = computed(() => {
   // Force show if requested
-  if (props.forceShow) return true
+  if (forceShow.value) return true
 
   // Don't show if dismissed
   if (isDismissed.value) return false
@@ -137,7 +140,7 @@ function handleDismiss() {
 
   // Save dismiss state to localStorage
   try {
-    localStorage.setItem(props.dismissKey, Date.now().toString())
+    localStorage.setItem(dismissKey.value, Date.now().toString())
   } catch (error) {
     console.error('Failed to save dismiss state:', error)
   }
@@ -150,7 +153,7 @@ function handleDismiss() {
  */
 function checkDismissState() {
   try {
-    const dismissedAt = localStorage.getItem(props.dismissKey)
+    const dismissedAt = localStorage.getItem(dismissKey.value)
     if (dismissedAt) {
       // Check if dismissed within last 7 days
       const dismissedTime = parseInt(dismissedAt, 10)
@@ -161,7 +164,7 @@ function checkDismissState() {
         isDismissed.value = true
       } else {
         // Clear old dismiss state
-        localStorage.removeItem(props.dismissKey)
+        localStorage.removeItem(dismissKey.value)
       }
     }
   } catch (error) {

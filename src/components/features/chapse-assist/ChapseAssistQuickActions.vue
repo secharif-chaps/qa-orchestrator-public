@@ -19,7 +19,7 @@
         @click="handleRefresh"
         :disabled="isLoadingActions"
       >
-        Refresh
+        {{ $t('chapseAssist.quickActions.refresh', 'Refresh') }}
       </Button>
     </div>
 
@@ -29,22 +29,22 @@
       class="bg-base-200 rounded-card border border-primary-stroke p-6 flex flex-col items-center justify-center gap-4"
     >
       <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-      <p class="text-sm text-secondary">Generating personalized actions...</p>
+      <p class="text-sm text-secondary">{{ $t('chapseAssist.quickActions.loading', 'Generating personalized actions...') }}</p>
     </div>
 
     <!-- Error State -->
     <Alert
       v-else-if="hasError"
       variant="error"
-      title="Failed to Load Quick Actions"
-      :message="actionsError || 'An error occurred while generating actions. Please try again.'"
+      :title="$t('chapseAssist.quickActions.error.title', 'Failed to Load Quick Actions')"
+      :message="actionsError || $t('chapseAssist.quickActions.error.message', 'An error occurred while generating actions. Please try again.')"
       icon="fa fa-exclamation-circle"
       decoration-icon="fa fa-magic"
     >
       <template #actions>
         <div class="flex gap-3">
           <Button variant="secondary" size="sm" icon="fa fa-refresh" @click="handleRetry">
-            Try Again
+            {{ $t('chapseAssist.quickActions.tryAgain', 'Try Again') }}
           </Button>
           <Button
             v-if="actionsError?.includes('preferences')"
@@ -53,7 +53,7 @@
             icon="fa fa-cog"
             @click="goToSetup"
           >
-            Configure AI Preferences
+            {{ $t('chapseAssist.quickActions.configure', 'Configure AI Preferences') }}
           </Button>
         </div>
       </template>
@@ -120,12 +120,12 @@
     <!-- Empty State (No Actions) -->
     <div v-else class="bg-base-200 rounded-card border border-primary-stroke p-6 text-center">
       <i class="fa fa-magic text-3xl text-secondary mb-3"></i>
-      <h4 class="font-semibold mb-2">No Quick Actions Available</h4>
+      <h4 class="font-semibold mb-2">{{ $t('chapseAssist.quickActions.empty.title', 'No Quick Actions Available') }}</h4>
       <p class="text-sm text-secondary">
-        Configure your AI preferences to see personalized recommendations.
+        {{ $t('chapseAssist.quickActions.empty.message', 'Configure your AI preferences to see personalized recommendations.') }}
       </p>
       <Button variant="primary" size="sm" icon="fa fa-cog" class="mt-4" @click="goToSetup">
-        Configure AI Preferences
+        {{ $t('chapseAssist.quickActions.configure', 'Configure AI Preferences') }}
       </Button>
     </div>
   </div>
@@ -139,6 +139,9 @@ import type { QuickAction } from '@/types/ai-preferences'
 import type { Company } from '@/types/company'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   /**
@@ -162,10 +165,11 @@ interface Props {
   autoLoad?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  title: 'Chaps-e Smart Assist',
-  autoLoad: true,
-})
+const props = defineProps<Props>()
+
+// Computed props with translations as defaults
+const title = computed(() => props.title ?? t('chapseAssist.quickActions.title', 'Chaps-e Smart Assist'))
+const autoLoad = computed(() => props.autoLoad ?? true)
 
 const emit = defineEmits<{
   actionClick: [action: QuickAction]
@@ -279,7 +283,7 @@ onMounted(async () => {
   await checkHasPreferences()
 
   // Only load actions if preferences exist
-  if (props.autoLoad && props.companyId && hasAiPreferences.value) {
+  if (autoLoad.value && props.companyId && hasAiPreferences.value) {
     loadActions()
   }
 })

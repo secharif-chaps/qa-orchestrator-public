@@ -7,7 +7,7 @@
           v-if="completedPercentage > 0"
           class="bg-success-500 h-full transition-all duration-500 ease-out"
           :style="{ width: `${completedPercentage}%` }"
-          :title="`${completedCount} tâches terminées (${Math.round(completedPercentage)}%)`"
+          :title="t('company.tasks.completed', { count: completedCount, percentage: Math.round(completedPercentage) })"
         ></div>
 
         <!-- Running segment -->
@@ -15,7 +15,7 @@
           v-if="runningPercentage > 0"
           class="bg-info-500 h-full transition-all duration-500 ease-out"
           :style="{ width: `${runningPercentage}%` }"
-          :title="`${runningCount} tâches en cours (${Math.round(runningPercentage)}%)`"
+          :title="t('company.tasks.running', { count: runningCount, percentage: Math.round(runningPercentage) })"
         ></div>
 
         <!-- Error segment -->
@@ -23,7 +23,7 @@
           v-if="errorPercentage > 0"
           class="bg-error-500 h-full transition-all duration-500 ease-out"
           :style="{ width: `${errorPercentage}%` }"
-          :title="`${errorCount} tâches en erreur (${Math.round(errorPercentage)}%)`"
+          :title="t('company.tasks.error', { count: errorCount, percentage: Math.round(errorPercentage) })"
         ></div>
 
         <!-- Blocked segment -->
@@ -31,7 +31,7 @@
           v-if="blockedPercentage > 0"
           class="bg-sage-100 h-full transition-all duration-500 ease-out"
           :style="{ width: `${blockedPercentage}%` }"
-          :title="`${blockedCount} tâches bloquées (${Math.round(blockedPercentage)}%)`"
+          :title="t('company.tasks.blocked', { count: blockedCount, percentage: Math.round(blockedPercentage) })"
         ></div>
 
         <!-- Pending segment -->
@@ -39,7 +39,7 @@
           v-if="pendingPercentage > 0"
           class="bg-sage-200 h-full transition-all duration-500 ease-out"
           :style="{ width: `${pendingPercentage}%` }"
-          :title="`${pendingCount} tâches en attente (${Math.round(pendingPercentage)}%)`"
+          :title="t('company.tasks.pending', { count: pendingCount, percentage: Math.round(pendingPercentage) })"
         ></div>
       </div>
     </Card>
@@ -52,7 +52,7 @@
         >
           <div class="flex items-center gap-3 text-base text-secondary">
             <i class="fas fa-spinner fa-spin text-xl"></i>
-            <span>Analyse en cours...</span>
+            <span>{{ t('company.analysis.loading', 'Loading analysis...') }}</span>
           </div>
         </div>
         <div class="flex items-start gap-6">
@@ -167,20 +167,20 @@
         >
           <div class="flex items-center gap-3 text-base text-secondary">
             <i class="fas fa-spinner fa-spin text-xl"></i>
-            <span>Analyse en cours...</span>
+            <span>{{ t('company.analysis.loading', 'Loading analysis...') }}</span>
           </div>
         </div>
-        <p>Présence en ligne</p>
+        <p>{{ t('company.onlinePresence.title', 'Online Presence') }}</p>
         <div class="flex bg-base-200 items-center gap-3 rounded-card px-4 py-3">
           <i class="fa-solid fa-link fa-fw text-secondary"></i>
           <div class="flex flex-col gap-1 w-44">
-            <span class="text-sm truncate"> Site web </span>
+            <span class="text-sm truncate"> {{ t('company.onlinePresence.website', 'Website') }} </span>
             <span class="text-xs text-secondary truncate">
-              {{ company?.website || 'Non renseigné' }}
+              {{ company?.website || t('company.fields.notSpecified', 'Not specified') }}
             </span>
           </div>
         </div>
-        <p>Présence sur les réseaux sociaux</p>
+        <p>{{ t('company.onlinePresence.socialMedia', 'Social Media Presence') }}</p>
         <div>
           <div v-if="company?.digital?.socialMediaAccounts" class="flex flex-wrap gap-2">
             <Tag
@@ -221,7 +221,7 @@
     />
 
     <div>
-      <h4 class="font-semibold">Analyses</h4>
+      <h4 class="font-semibold">{{ t('company.sections.analyses', 'Analyses') }}</h4>
     </div>
 
     <!-- Analysis Cards Grid -->
@@ -244,7 +244,7 @@
 
     <!-- Footer -->
     <div v-if="company" class="text-xs text-secondary italic text-center">
-      Created by {{ company.owner_username }} on {{ formatDate(company.created_at) }}
+      {{ t('company.footer.createdBy', { username: company.owner_username, date: formatDate(company.created_at) }) }}
     </div>
   </div>
 
@@ -283,7 +283,7 @@ import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 
 const showSectionModal = ref(false)
@@ -494,10 +494,11 @@ const handleRestartTask = async (taskId: number) => {
   }
 }
 
-// Format date
+// Format date with locale support
 const formatDate = (dateString: string) => {
-  if (!dateString) return 'N/A'
-  return new Date(dateString).toLocaleDateString()
+  if (!dateString) return t('common.na', 'N/A')
+  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+  return new Date(dateString).toLocaleDateString(localeCode)
 }
 
 // Helper function to get social media icon

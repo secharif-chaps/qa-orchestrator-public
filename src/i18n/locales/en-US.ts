@@ -968,6 +968,7 @@ export default {
       onlinePresence: 'Online Presence',
       socialMedia: 'Social Media',
       analysis: 'Analysis',
+      analyses: 'Analyses',
     },
     analysisCards: {
       profile: {
@@ -1071,6 +1072,42 @@ export default {
         daysAgo: '{days}d ago',
       },
     },
+    export: {
+      button: 'Export',
+    },
+    onlinePresence: {
+      title: 'Online Presence',
+      website: 'Website',
+      socialMedia: 'Social Media Presence',
+    },
+    tasks: {
+      completed: '{count} completed ({percentage}%)',
+      running: '{count} running ({percentage}%)',
+      error: '{count} errors ({percentage}%)',
+      blocked: '{count} blocked ({percentage}%)',
+      pending: '{count} pending ({percentage}%)',
+      analysisInProgress: 'Analysis in progress...',
+    },
+    analysisCard: {
+      viewMore: 'View more',
+      loading: 'Analysis in progress...',
+      noData: 'No data available for this section',
+      comingSoon: 'Coming soon',
+      error: {
+        title: 'Error',
+        message: 'An error occurred during analysis',
+      },
+      status: {
+        succeeded: 'Completed',
+        error: 'Error',
+        running: 'In progress',
+        pending: 'Pending',
+        notStarted: 'Not started',
+      },
+    },
+    footer: {
+      createdBy: 'Created by {username} on {date}',
+    },
   },
   tokens: {
     module: '{module} Module',
@@ -1127,9 +1164,23 @@ export default {
       unfavorite: 'Unfavorite',
       view: 'View',
     },
-    itemCount: '{count} items',
+    itemCount: '{count} item | {count} items',
+    itemsChip: '{count} item | {count} items',
     items: {
       add: 'Add Items',
+      empty: 'No items in this folder',
+    },
+    header: {
+      itemsCount: '{count} item | {count} items',
+      createdOn: 'created on {date}',
+      by: 'by',
+    },
+    grid: {
+      created: 'Created',
+      by: 'by',
+    },
+    itemTypes: {
+      company: 'Company Card',
     },
     list: {
       error: {
@@ -1533,6 +1584,28 @@ export default {
       },
     },
   },
+  chapseAssist: {
+    alert: {
+      title: 'Get Personalized AI Recommendations',
+      actionLabel: 'Set Up Now',
+      dismissLabel: 'Maybe Later',
+    },
+    quickActions: {
+      title: 'Chaps-e Smart Assist',
+      refresh: 'Refresh',
+      loading: 'Generating personalized actions...',
+      tryAgain: 'Try Again',
+      configure: 'Configure AI Preferences',
+      error: {
+        title: 'Failed to Load Quick Actions',
+        message: 'An error occurred while generating actions. Please try again.',
+      },
+      empty: {
+        title: 'No Quick Actions Available',
+        message: 'Configure your AI preferences to see personalized recommendations.',
+      },
+    },
+  },
   aiPreferences: {
     setup: {
       title: 'Set Up Your AI Assistant',
@@ -1603,5 +1676,25 @@ export default {
         message: 'Failed to update your preferences. Please try again.',
       },
     },
+  },
+  breadcrumb: {
+    companies: 'Companies',
+    folders: 'Folders',
+    team: 'Team',
+    admin: 'Admin',
+    settings: 'Settings',
+    search: 'Search',
+    profile: 'Profile',
+    jobs: 'Jobs',
+    timeline: 'Timeline',
+    products: 'Products',
+    press: 'Press',
+    edit: 'Edit',
+    create: 'Create',
+    company: 'Company',
+    organizations: 'Organizations',
+    costs: 'Costs',
+    appearance: 'Appearance',
+    security: 'Security',
   },
 }
