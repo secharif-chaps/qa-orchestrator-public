@@ -480,6 +480,10 @@ export default {
       placeholder: 'Search...',
       noResults: 'No events found matching "{query}"',
     },
+    sort: {
+      oldestFirst: 'Oldest first',
+      newestFirst: 'Newest first',
+    },
   },
   communications: {
     title: 'Corporate Communications',
@@ -1603,6 +1607,7 @@ export default {
       empty: {
         title: 'No Quick Actions Available',
         message: 'Configure your AI preferences to see personalized recommendations.',
+        loadedMessage: 'Unable to generate quick actions for this company. Try refreshing or check back later.',
       },
     },
   },

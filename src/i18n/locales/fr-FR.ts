@@ -521,6 +521,10 @@ export default {
       placeholder: 'Rechercher...',
       noResults: 'Aucun événement trouvé correspondant à "{query}"',
     },
+    sort: {
+      oldestFirst: 'Plus ancien',
+      newestFirst: 'Plus récent',
+    },
   },
   communications: {
     title: "Communications d'Entreprise",
@@ -1658,6 +1662,7 @@ export default {
       empty: {
         title: 'Aucune action rapide disponible',
         message: 'Configurez vos préférences IA pour voir des recommandations personnalisées.',
+        loadedMessage: 'Impossible de générer des actions rapides pour cette entreprise. Essayez de rafraîchir ou revenez plus tard.',
       },
     },
   },

@@ -117,16 +117,22 @@
       </button>
     </div>
 
-    <!-- Empty State (No Actions) -->
-    <div v-else class="bg-base-200 rounded-card border border-primary-stroke p-6 text-center">
+    <!-- Empty State (No Actions) - Only show after we've attempted to load -->
+    <div v-else-if="hasLoadedOnce" class="bg-base-200 rounded-card border border-primary-stroke p-6 text-center">
       <i class="fa fa-magic text-3xl text-secondary mb-3"></i>
       <h4 class="font-semibold mb-2">{{ $t('chapseAssist.quickActions.empty.title', 'No Quick Actions Available') }}</h4>
       <p class="text-sm text-secondary">
-        {{ $t('chapseAssist.quickActions.empty.message', 'Configure your AI preferences to see personalized recommendations.') }}
+        {{ $t('chapseAssist.quickActions.empty.loadedMessage', 'Unable to generate quick actions for this company. Try refreshing or check back later.') }}
       </p>
-      <Button variant="primary" size="sm" icon="fa fa-cog" class="mt-4" @click="goToSetup">
-        {{ $t('chapseAssist.quickActions.configure', 'Configure AI Preferences') }}
+      <Button variant="secondary" size="sm" icon="fa fa-refresh" class="mt-4" @click="handleRetry">
+        {{ $t('chapseAssist.quickActions.tryAgain', 'Try Again') }}
       </Button>
+    </div>
+
+    <!-- Initial State (Not yet loaded) - Show loading placeholder -->
+    <div v-else class="bg-base-200 rounded-card border border-primary-stroke p-6 flex flex-col items-center justify-center gap-4">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+      <p class="text-sm text-secondary">{{ $t('chapseAssist.quickActions.loading', 'Generating personalized actions...') }}</p>
     </div>
   </div>
 </template>
@@ -213,11 +219,13 @@ const areTasksSuccessful = computed(() => {
 async function loadActions() {
   try {
     const actions = await fetchQuickActions(props.companyId)
-    hasLoadedOnce.value = true
     emit('loadSuccess', actions)
   } catch (error: any) {
     console.error('Failed to load quick actions:', error)
     emit('loadError', actionsError.value || 'Failed to load actions')
+  } finally {
+    // Always mark as loaded so we show appropriate state (not infinite loading)
+    hasLoadedOnce.value = true
   }
 }
 

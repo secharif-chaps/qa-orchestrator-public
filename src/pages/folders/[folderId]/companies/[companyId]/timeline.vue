@@ -31,11 +31,12 @@
             <Button
               variant="tertiary"
               :icon="sortAscending ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"
-              icon-only
               size="sm"
-              :title="sortAscending ? 'Oldest first' : 'Newest first'"
+              :title="sortAscending ? $t('timeline.sort.oldestFirst') : $t('timeline.sort.newestFirst')"
               @click="toggleSortOrder"
-            />
+            >
+              {{ sortAscending ? $t('timeline.sort.oldestFirst', 'Oldest first') : $t('timeline.sort.newestFirst', 'Newest first') }}
+            </Button>
             <div class="w-64 relative">
               <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-secondary"></i>
               <Input

@@ -171,21 +171,42 @@
           </div>
         </div>
         <p>{{ t('company.onlinePresence.title', 'Online Presence') }}</p>
-        <div class="flex bg-base-200 items-center gap-3 rounded-card px-4 py-3">
+        <a
+          v-if="company?.website"
+          :href="formatWebsiteUrl(company.website)"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex bg-base-200 items-center gap-3 rounded-card px-4 py-3 hover:bg-base-300 transition-colors cursor-pointer"
+        >
+          <i class="fa-solid fa-link fa-fw text-secondary"></i>
+          <div class="flex flex-col gap-1 w-44">
+            <span class="text-sm truncate"> {{ t('company.onlinePresence.website', 'Website') }} </span>
+            <span class="text-xs text-secondary truncate underline">
+              {{ company.website }}
+            </span>
+          </div>
+          <i class="fa-solid fa-external-link fa-fw text-secondary text-xs ml-auto"></i>
+        </a>
+        <div v-else class="flex bg-base-200 items-center gap-3 rounded-card px-4 py-3">
           <i class="fa-solid fa-link fa-fw text-secondary"></i>
           <div class="flex flex-col gap-1 w-44">
             <span class="text-sm truncate"> {{ t('company.onlinePresence.website', 'Website') }} </span>
             <span class="text-xs text-secondary truncate">
-              {{ company?.website || t('company.fields.notSpecified', 'Not specified') }}
+              {{ t('company.fields.notSpecified', 'Not specified') }}
             </span>
           </div>
         </div>
         <p>{{ t('company.onlinePresence.socialMedia', 'Social Media Presence') }}</p>
         <div>
-          <div v-if="company?.digital?.socialMediaAccounts" class="flex flex-wrap gap-2">
+          <!-- Loading state -->
+          <div v-if="isTaskRunning('digital')" class="flex flex-wrap gap-2">
+            <div v-for="i in 4" :key="i" class="bg-sage-100 rounded-full h-4 w-12"></div>
+          </div>
+          <!-- Social media accounts -->
+          <div v-else-if="company?.digital?.socialMediaAccounts?.value?.length" class="flex flex-wrap gap-2">
             <Tag
               variant="slate"
-              v-for="account in company?.digital?.socialMediaAccounts.value"
+              v-for="account in company.digital.socialMediaAccounts.value"
               :key="account.platform"
               :href="getSourcedValue(account.url)"
               target="_blank"
@@ -196,10 +217,7 @@
               </span>
             </Tag>
           </div>
-          <div v-if="isTaskRunning('profile')" class="flex flex-wrap gap-2">
-            <div v-for="i in 4" :key="i" class="bg-sage-100 rounded-full h-4 w-12"></div>
-          </div>
-
+          <!-- No data -->
           <span v-else class="text-xs text-secondary">
             {{ t('company.fields.notSpecified', 'Not specified') }}
           </span>
@@ -523,6 +541,17 @@ const getSocialIcon = (platform: string) => {
   }
 
   return iconMap[platform.toLowerCase()] || 'fa-globe'
+}
+
+// Helper function to format website URL (ensure it starts with http/https)
+const formatWebsiteUrl = (url: string): string => {
+  if (!url) return ''
+  // If URL already has a protocol, return as-is
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url
+  }
+  // Default to https
+  return `https://${url}`
 }
 
 /**

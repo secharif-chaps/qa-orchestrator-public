@@ -440,6 +440,53 @@ watch(
   { immediate: true },
 )
 
+// Auto-attach/replace/remove company context based on current page
+// This provides better UX by automatically managing context based on navigation
+watch(
+  availablePageContext,
+  (newContext, oldContext) => {
+    // Only act if conversation is new with no messages
+    if (!chapseStore.isNewConversation || chapseStore.hasMessages) {
+      return
+    }
+
+    // Case 1: Leaving a company page (going to non-company page)
+    // Remove the auto-attached context if it was the only one
+    if (!newContext && oldContext) {
+      if (companyContext.value.length === 1 && companyContext.value[0].id === oldContext.id) {
+        console.log('🔗 Removing auto-attached context (left company page):', oldContext.name)
+        removeCompanyFromContext(oldContext.id)
+      }
+      return
+    }
+
+    // Case 2: No new context to attach
+    if (!newContext) {
+      return
+    }
+
+    // Case 3: Switching from one company to another
+    if (oldContext && newContext.id !== oldContext.id) {
+      console.log('🔄 Switching company context from', oldContext.name, 'to', newContext.name)
+
+      // Remove old context if it was auto-attached (only one in context)
+      if (companyContext.value.length === 1 && companyContext.value[0].id === oldContext.id) {
+        removeCompanyFromContext(oldContext.id)
+      }
+
+      // Add new context if not already there
+      if (!isPageContextActive.value) {
+        addCompanyToContext(newContext)
+      }
+    } else if (!isPageContextActive.value) {
+      // Case 4: Initial attachment - no old context or same company
+      console.log('🔗 Auto-attaching company context:', newContext.name)
+      addCompanyToContext(newContext)
+    }
+  },
+  { immediate: true },
+)
+
 // Load conversations on mount
 onMounted(async () => {
   await loadConversations(true)
