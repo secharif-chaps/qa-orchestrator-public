@@ -1,5 +1,51 @@
 <template>
-  <div v-if="hasAiPreferences" class="space-y-4">
+  <!-- Initial Loading State (checking preferences) -->
+  <div
+    v-if="isCheckingPreferences"
+    class="space-y-4"
+  >
+    <div class="flex items-center gap-3">
+      <img
+        src="@/assets/chapse/head.svg"
+        alt="Chapse Assistant"
+        class="h-8 w-8 object-contain"
+        loading="lazy"
+      />
+      <h3 class="text-lg font-semibold">{{ title }}</h3>
+    </div>
+    <div class="bg-base-200 rounded-card border border-primary-stroke p-6 flex flex-col items-center justify-center gap-4">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+      <p class="text-sm text-secondary">{{ $t('chapseAssist.quickActions.checkingPreferences', 'Checking AI preferences...') }}</p>
+    </div>
+  </div>
+
+  <!-- Error checking preferences -->
+  <div v-else-if="preferencesCheckError" class="space-y-4">
+    <div class="flex items-center gap-3">
+      <img
+        src="@/assets/chapse/head.svg"
+        alt="Chapse Assistant"
+        class="h-8 w-8 object-contain"
+        loading="lazy"
+      />
+      <h3 class="text-lg font-semibold">{{ title }}</h3>
+    </div>
+    <Alert
+      variant="error"
+      :title="$t('chapseAssist.quickActions.error.preferencesCheck', 'Failed to Check Preferences')"
+      :message="preferencesCheckError"
+      icon="fa fa-exclamation-circle"
+    >
+      <template #actions>
+        <Button variant="secondary" size="sm" icon="fa fa-refresh" @click="retryPreferencesCheck">
+          {{ $t('chapseAssist.quickActions.tryAgain', 'Try Again') }}
+        </Button>
+      </template>
+    </Alert>
+  </div>
+
+  <!-- Main Content (only shown after preferences check succeeds AND user has preferences) -->
+  <div v-else-if="hasAiPreferences" class="space-y-4">
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -23,7 +69,7 @@
       </Button>
     </div>
 
-    <!-- Loading State -->
+    <!-- Loading State (generating actions) -->
     <div
       v-if="isLoadingActions"
       class="bg-base-200 rounded-card border border-primary-stroke p-6 flex flex-col items-center justify-center gap-4"
@@ -129,11 +175,7 @@
       </Button>
     </div>
 
-    <!-- Initial State (Not yet loaded) - Show loading placeholder -->
-    <div v-else class="bg-base-200 rounded-card border border-primary-stroke p-6 flex flex-col items-center justify-center gap-4">
-      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-      <p class="text-sm text-secondary">{{ $t('chapseAssist.quickActions.loading', 'Generating personalized actions...') }}</p>
-    </div>
+    <!-- Initial State (Not yet loaded) - Component doesn't render anything until first load attempt completes -->
   </div>
 </template>
 
@@ -171,11 +213,12 @@ interface Props {
   autoLoad?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  autoLoad: true,
+})
 
 // Computed props with translations as defaults
 const title = computed(() => props.title ?? t('chapseAssist.quickActions.title', 'Chaps-e Smart Assist'))
-const autoLoad = computed(() => props.autoLoad ?? true)
 
 const emit = defineEmits<{
   actionClick: [action: QuickAction]
@@ -199,6 +242,8 @@ const {
 
 // Local state
 const hasLoadedOnce = ref(false)
+const isCheckingPreferences = ref(true) // Start as true since we check on mount
+const preferencesCheckError = ref<string | null>(null)
 
 /**
  * Check if all company tasks have succeeded
@@ -284,14 +329,43 @@ watch(
 )
 
 /**
+ * Check preferences and handle errors
+ */
+async function doCheckPreferences() {
+  isCheckingPreferences.value = true
+  preferencesCheckError.value = null
+
+  try {
+    await checkHasPreferences()
+  } catch (error: any) {
+    console.error('Error checking AI preferences:', error)
+    preferencesCheckError.value = error.message || 'Failed to check AI preferences'
+  } finally {
+    isCheckingPreferences.value = false
+  }
+}
+
+/**
+ * Retry checking preferences
+ */
+async function retryPreferencesCheck() {
+  await doCheckPreferences()
+
+  // If preferences exist after retry, load actions
+  if (hasAiPreferences.value && props.autoLoad && props.companyId) {
+    loadActions()
+  }
+}
+
+/**
  * Initialize component
  */
 onMounted(async () => {
   // Check if user has AI preferences first
-  await checkHasPreferences()
+  await doCheckPreferences()
 
   // Only load actions if preferences exist
-  if (autoLoad.value && props.companyId && hasAiPreferences.value) {
+  if (props.autoLoad && props.companyId && hasAiPreferences.value) {
     loadActions()
   }
 })

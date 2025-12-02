@@ -1597,12 +1597,14 @@ export default {
     quickActions: {
       title: 'Chaps-e Smart Assist',
       refresh: 'Refresh',
+      checkingPreferences: 'Checking AI preferences...',
       loading: 'Generating personalized actions...',
       tryAgain: 'Try Again',
       configure: 'Configure AI Preferences',
       error: {
         title: 'Failed to Load Quick Actions',
         message: 'An error occurred while generating actions. Please try again.',
+        preferencesCheck: 'Failed to Check Preferences',
       },
       empty: {
         title: 'No Quick Actions Available',
