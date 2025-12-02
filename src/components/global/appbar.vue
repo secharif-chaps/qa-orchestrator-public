@@ -23,7 +23,7 @@
 
           <!-- Dev mode only theme toggle -->
           <Button
-            v-if="isDev"
+            v-if="isDebugUser"
             variant="tertiary"
             dark
             :icon="isDark ? 'fa fa-sun' : 'fa fa-moon'"
@@ -33,7 +33,7 @@
 
           <!-- Dev mode only language toggle -->
           <Button
-            v-if="isDev"
+            v-if="isDebugUser"
             variant="tertiary"
             dark
             :icon="'fa fa-language'"
@@ -122,15 +122,18 @@ const authStore = useAuthStore()
 const { signOut } = authStore
 const sidebarStore = useSidebarStore()
 
-const { theme, isDark, setTheme } = useTheme()
+const { isDark, setTheme } = useTheme()
 const { locale } = useI18n()
 
 // Permission checks for navigation buttons
 const hasAdminPermission = computed(() => authStore.hasPermission('admin.organizations'))
-const hasTeamPermission = computed(() => authStore.hasPermission('organization.read'))
-
 // Dev mode detection
 const isDev = import.meta.env.DEV
+
+const isDebugUser = computed(() => {
+  const username = authStore.user?.profile?.preferred_username?.toLowerCase()
+  return username === 'nmr' || username === 'suh' || username === 'nmr-cv'
+})
 
 // Theme toggle function
 const toggleTheme = () => {
