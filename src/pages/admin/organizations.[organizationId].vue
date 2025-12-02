@@ -1,196 +1,120 @@
 <template>
-  <div class="">
-    <div>
-      <!-- Loading State -->
-      <div v-if="isLoading" class="bg-base-100 rounded-lg shadow-sm p-8 text-center">
-        <div
-          class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
-        ></div>
-        <p class="text-secondary">
-          {{ $t('organization.loading', 'Loading organization...') }}
-        </p>
-      </div>
-
-      <!-- Error State -->
+  <div class="flex flex-col gap-6">
+    <!-- Loading State -->
+    <div v-if="isLoading" class="bg-base-100 rounded-lg shadow-sm p-8 text-center">
       <div
-        v-else-if="error"
-        class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"
-      >
-        <div class="flex items-center gap-2">
-          <i class="fa fa-exclamation-triangle"></i>
-          <span class="font-medium">Error:</span>
-          <span>{{ error.message }}</span>
-        </div>
-      </div>
+        class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
+      ></div>
+      <p class="text-secondary">
+        {{ $t('organization.loading', 'Loading organization...') }}
+      </p>
+    </div>
 
-      <!-- Organization Details -->
-      <div v-else-if="organization" class="space-y-6">
-        <!-- Basic Info Card -->
-        <Card>
-          <h2 class="text-xl font-semibold mb-4">
-            {{ $t('organization.detail.basicInfo', 'Basic Information') }}
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-sm font-medium text-secondary mb-1">{{
-                $t('organization.name', 'Name')
-              }}</label>
-              <p class="text-base font-medium">{{ organization.name }}</p>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-secondary mb-1">{{
-                $t('organization.id', 'ID')
-              }}</label>
-              <code class="text-sm bg-base-300 px-2 py-1 rounded">{{ organization.id }}</code>
-            </div>
-            <div class="md:col-span-2" v-if="organization.description">
-              <label class="block text-sm font-medium text-secondary mb-1">{{
-                $t('organization.description', 'Description')
-              }}</label>
-              <p class="text-base">{{ organization.description }}</p>
-            </div>
-            <div v-if="organization.created_at">
-              <label class="block text-sm font-medium text-secondary mb-1">{{
-                $t('organization.created', 'Created')
-              }}</label>
-              <p class="text-base">{{ formatDate(organization.created_at) }}</p>
-            </div>
-            <div v-if="organization.updated_at">
-              <label class="block text-sm font-medium text-secondary mb-1">{{
-                $t('organization.updated', 'Last Updated')
-              }}</label>
-              <p class="text-base">{{ formatDate(organization.updated_at) }}</p>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-secondary mb-1">{{
-                $t('organization.members', 'Members')
-              }}</label>
-              <div class="flex items-center gap-2">
-                <span
-                  class="inline-flex items-center justify-center w-8 h-8 bg-primary/10 text-secondary rounded-full text-sm font-medium"
-                >
-                  {{ users?.length || 0 }}
-                </span>
-                <span class="text-base">{{ users?.length === 1 ? 'member' : 'members' }}</span>
-              </div>
-            </div>
+    <!-- Error State -->
+    <Alert
+      v-else-if="error"
+      variant="error"
+      title="Error"
+      :message="error.message"
+    />
+
+    <!-- Organization Details -->
+    <template v-else-if="organization">
+      <!-- Basic Info Card -->
+      <Card>
+        <h2 class="text-xl font-semibold mb-4">
+          {{ $t('organization.detail.basicInfo', 'Basic Information') }}
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-secondary mb-1">{{
+              $t('organization.name', 'Name')
+            }}</label>
+            <p class="text-base font-medium">{{ organization.name }}</p>
           </div>
-        </Card>
-
-        <!-- User Management Section -->
-        <Card>
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-semibold">
-              {{ $t('organization.detail.members', 'Members') }}
-            </h2>
-            <button
-              @click="showCreateUserModal = true"
-              class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80 transition-colors flex items-center gap-2"
-            >
-              <i class="fa fa-user-plus"></i>
-              {{ $t('user.create.button', 'Add User') }}
-            </button>
+          <div>
+            <label class="block text-sm font-medium text-secondary mb-1">{{
+              $t('organization.id', 'ID')
+            }}</label>
+            <code class="text-sm bg-base-300 px-2 py-1 rounded">{{ organization.id }}</code>
           </div>
-
-          <!-- Users Loading State -->
-          <div v-if="usersLoading" class="text-center p-8">
-            <div
-              class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"
-            ></div>
-            <p class="text-secondary">
-              {{ $t('user.loading', 'Loading users...') }}
-            </p>
+          <div class="md:col-span-2" v-if="organization.description">
+            <label class="block text-sm font-medium text-secondary mb-1">{{
+              $t('organization.description', 'Description')
+            }}</label>
+            <p class="text-base">{{ organization.description }}</p>
           </div>
-
-          <!-- Users Error State -->
-          <div
-            v-else-if="usersError"
-            class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"
-          >
+          <div v-if="organization.created_at">
+            <label class="block text-sm font-medium text-secondary mb-1">{{
+              $t('organization.created', 'Created')
+            }}</label>
+            <p class="text-base">{{ formatDate(organization.created_at) }}</p>
+          </div>
+          <div v-if="organization.updated_at">
+            <label class="block text-sm font-medium text-secondary mb-1">{{
+              $t('organization.updated', 'Last Updated')
+            }}</label>
+            <p class="text-base">{{ formatDate(organization.updated_at) }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-secondary mb-1">{{
+              $t('organization.members', 'Members')
+            }}</label>
             <div class="flex items-center gap-2">
-              <i class="fa fa-exclamation-triangle"></i>
-              <span class="font-medium">Error:</span>
-              <span>{{ usersError.message }}</span>
+              <span
+                class="inline-flex items-center justify-center w-8 h-8 bg-primary/10 text-secondary rounded-full text-sm font-medium"
+              >
+                {{ usersResponse?.pagination?.total || 0 }}
+              </span>
+              <span class="text-base">{{ (usersResponse?.pagination?.total || 0) === 1 ? 'member' : 'members' }}</span>
             </div>
           </div>
+        </div>
+      </Card>
 
-          <!-- Users List -->
+      <!-- User Management Section -->
+      <Card>
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold">
+            {{ $t('organization.detail.members', 'Members') }}
+          </h2>
+          <Button
+            variant="primary"
+            icon="fa fa-user-plus"
+            :label="$t('user.create.button', 'Add User')"
+            @click="showCreateUserModal = true"
+          />
+        </div>
 
-          <div v-else-if="users && users?.length > 0" class="space-y-3">
-            <div
-              v-for="user in users"
-              :key="user.id"
-              class="flex items-center justify-between p-4 bg-base-200 rounded-lg hover:bg-base-300/50 transition-colors"
-            >
-              <div class="flex items-center gap-3">
-                <!-- User Avatar -->
-                <div
-                  class="w-10 h-10 bg-primary/10 text-secondary rounded-full flex items-center justify-center font-medium"
-                >
-                  {{ user.username.slice(0, 2).toUpperCase() }}
-                </div>
+        <!-- Users Loading State -->
+        <div v-if="usersLoading" class="text-center p-8">
+          <div
+            class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"
+          ></div>
+          <p class="text-secondary">
+            {{ $t('user.loading', 'Loading users...') }}
+          </p>
+        </div>
 
-                <!-- User Info -->
-                <div>
-                  <div class="font-medium">{{ user.displayName }}</div>
-                  <div class="text-sm text-secondary">{{ user.email }}</div>
-                  <div class="text-xs text-secondary">@{{ user.username }}</div>
-                </div>
-              </div>
+        <!-- Users Error State -->
+        <Alert
+          v-else-if="usersError"
+          variant="error"
+          title="Error"
+          :message="usersError.message"
+        />
 
-              <!-- User Status & Actions -->
-              <div class="flex items-center gap-2">
-                <!-- Status Badge -->
-                <Tag
-                  :variant="getUserStatusVariant(user)"
-                  :label="getUserStatusText(user)"
-                  size="xs"
-                />
-
-                <!-- Actions Dropdown -->
-                <div class="relative">
-                  <button
-                    @click="toggleUserActions(user.id)"
-                    class="text-secondary hover:text-base transition-colors p-2"
-                  >
-                    <i class="fa fa-ellipsis-v"></i>
-                  </button>
-
-                  <div
-                    v-if="activeUserActions === user.id"
-                    class="absolute right-0 mt-2 w-48 bg-base-100 border border-primary-stroke rounded-lg shadow-lg z-10"
-                  >
-                    <button
-                      @click="resendPasswordReset(user.id)"
-                      class="w-full text-left px-4 py-2 text-sm hover:bg-base-200 transition-colors"
-                    >
-                      <i class="fa fa-key mr-2"></i>
-                      {{ $t('user.actions.resetPassword', 'Reset Password') }}
-                    </button>
-                    <button
-                      @click="toggleUserStatus(user.id, !user.enabled)"
-                      class="w-full text-left px-4 py-2 text-sm hover:bg-base-200 transition-colors"
-                    >
-                      <i :class="user.enabled ? 'fa fa-ban' : 'fa fa-check'" class="mr-2"></i>
-                      {{
-                        user.enabled
-                          ? $t('user.actions.disable', 'Disable User')
-                          : $t('user.actions.enable', 'Enable User')
-                      }}
-                    </button>
-                    <hr class="border-primary-stroke" />
-                    <button
-                      @click="confirmDeleteUser(user)"
-                      class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                    >
-                      <i class="fa fa-trash mr-2"></i>
-                      {{ $t('user.actions.delete', 'Remove User') }}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- Users Table -->
+        <template v-else>
+          <UsersTable
+            v-if="users && users.length > 0"
+            :users="users"
+            :has-filters="false"
+            @change-organization="showAssignModal"
+            @manage-permissions="showPermissionsModal"
+            @disable-user="showDisableModal"
+            @reset-password="showResetPasswordModal"
+          />
 
           <!-- Empty Users State -->
           <div v-else class="text-center p-8">
@@ -201,21 +125,31 @@
             <p class="text-secondary mb-6">
               {{ $t('user.empty.description', 'Create your first user to get started') }}
             </p>
-            <button
+            <Button
+              variant="primary"
+              :label="$t('user.create.button', 'Add User')"
               @click="showCreateUserModal = true"
-              class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/80 transition-colors"
-            >
-              {{ $t('user.create.button', 'Add User') }}
-            </button>
+            />
           </div>
-        </Card>
 
-        <!-- Token Management Section -->
-        <OrganizationTokensManager :organization-id="organizationId" />
-      </div>
-    </div>
+          <!-- Pagination -->
+          <Pagination
+            v-if="users && users.length > 0"
+            v-model:current-page="currentPage"
+            :meta="paginationMeta"
+            :page-size-options="pageSizeOptions"
+            item-name="users"
+            class="mt-4"
+            @update-per-page="updatePageSize"
+          />
+        </template>
+      </Card>
 
-    <!-- add User Modal -->
+      <!-- Token Management Section -->
+      <OrganizationTokensManager :organization-id="organizationId" />
+    </template>
+
+    <!-- Create User Modal -->
     <CreateUserModal
       v-if="showCreateUserModal"
       :is-loading="isCreatingUser"
@@ -223,54 +157,37 @@
       @cancel="showCreateUserModal = false"
     />
 
-    <!-- Delete User Confirmation -->
-    <div
-      v-if="userToDelete"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-    >
-      <div class="bg-base-100 rounded-lg shadow-xl w-full max-w-md">
-        <div class="px-6 py-4 border-b border-primary-stroke">
-          <h2 class="text-xl font-semibold">
-            {{ $t('user.delete.title', 'Remove User') }}
-          </h2>
-        </div>
-        <div class="px-6 py-4">
-          <p class="text-secondary mb-4">
-            {{
-              $t(
-                'user.delete.description',
-                'Are you sure you want to remove this user from the organization?',
-              )
-            }}
-          </p>
-          <div class="bg-base-200 p-3 rounded-lg">
-            <div class="font-medium">{{ userToDelete.displayName }}</div>
-            <div class="text-sm text-secondary">{{ userToDelete.email }}</div>
-          </div>
-        </div>
-        <div class="px-6 py-4 border-t border-primary-stroke flex justify-end gap-3">
-          <button
-            @click="userToDelete = null"
-            :disabled="isDeletingUser"
-            class="px-4 py-2 text-secondary hover:text-base transition-colors disabled:opacity-50"
-          >
-            {{ $t('common.cancel', 'Cancel') }}
-          </button>
-          <button
-            @click="handleDeleteUser"
-            :disabled="isDeletingUser"
-            class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center gap-2"
-          >
-            <div
-              v-if="isDeletingUser"
-              class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"
-            ></div>
-            <i v-else class="fa fa-trash"></i>
-            {{ $t('user.delete.button', 'Remove User') }}
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- User Organization Assignment Modal -->
+    <UserOrganizationModal
+      v-if="userToAssign"
+      :user="userToAssign"
+      :organizations="availableOrganizations"
+      :is-loading="isAssigning"
+      @confirm="handleAssignOrganization"
+      @cancel="userToAssign = null"
+    />
+
+    <!-- Role Permissions Modal -->
+    <RolePermissionsModal
+      v-if="userToManagePermissions"
+      :user="userToManagePermissions"
+      @confirm="handleUpdatePermissions"
+      @close="userToManagePermissions = null"
+    />
+
+    <!-- Disable User Modal -->
+    <DisableUserModal
+      v-if="userToDisable"
+      :user="userToDisable"
+      @close="userToDisable = null"
+    />
+
+    <!-- Reset Password Modal -->
+    <ResetPasswordModal
+      v-if="userToResetPassword"
+      :user="userToResetPassword"
+      @close="userToResetPassword = null"
+    />
   </div>
 </template>
 
@@ -281,27 +198,54 @@ meta:
 </route>
 
 <script setup lang="ts">
-import OrganizationTokensManager from '@/components/tokens/OrganizationTokensManager.vue'
-import Tag from '@/components/ui/Tag.vue'
-import CreateUserModal from '@/components/user/CreateUserModal.vue'
-import {
-  useCreateOrganizationUser,
-  useDeleteOrganizationUser,
-  useResendPasswordReset,
-  useToggleUserStatus,
-} from '@/mutations/user'
-import { organizationUsersQuery } from '@/queries/user'
-import { organizationByIdQuery } from '@/queries/organization-admin'
-import type { OrganizationUserCreate, OrganizationUserListItem } from '@/types/user'
+import { computed, reactive, ref } from 'vue'
 import { useQuery } from '@pinia/colada'
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
+// Components
+import Alert from '@/components/ui/Alert.vue'
+import Button from '@/components/ui/Button.vue'
+import Card from '@/components/ui/Card.vue'
+import Pagination from '@/components/ui/Pagination.vue'
+import UsersTable from '@/components/admin/UsersTable.vue'
+import OrganizationTokensManager from '@/components/tokens/OrganizationTokensManager.vue'
+import CreateUserModal from '@/components/user/CreateUserModal.vue'
+import UserOrganizationModal from '@/components/admin/UserOrganizationModal.vue'
+import RolePermissionsModal from '@/components/admin/RolePermissionsModal.vue'
+import DisableUserModal from '@/components/admin/DisableUserModal.vue'
+import ResetPasswordModal from '@/components/admin/ResetPasswordModal.vue'
+
+// Queries & Mutations
+import { organizationByIdQuery, allOrganizationsQuery } from '@/queries/organization-admin'
+import { adminUsersQuery } from '@/queries/admin-users'
+import { useCreateOrganizationUser } from '@/mutations/user'
+import { useAssignUserOrganization, useUpdateUserPermissions } from '@/mutations/admin-users'
+
+// Types
+import type { AdminUserResponse, AdminUserQueryParams } from '@/types/admin-user'
+import type { OrganizationUserCreate } from '@/types/user'
+import type { PaginationMeta } from '@/types/pagination'
+
 const route = useRoute()
-const { t } = useI18n()
 
 const organizationId = computed(() => route.params.organizationId as string)
+
+// Query parameters state for users
+const queryParams = reactive<AdminUserQueryParams>({
+  page: 1,
+  limit: 10,
+  sort: 'created_at',
+  order: 'desc',
+  search: '',
+  organization_filter: organizationId.value, // Filter by current organization
+})
+
+// Update organization_filter when organizationId changes
+import { watch } from 'vue'
+watch(organizationId, (newId) => {
+  queryParams.organization_filter = newId
+  queryParams.page = 1
+})
 
 // Query for organization details
 const {
@@ -312,30 +256,75 @@ const {
   enabled: computed(() => !!organizationId.value),
 })
 
-// Query for organization users
+// Query for organization users using admin users endpoint with organization filter
 const {
-  data: usersData,
+  data: usersResponse,
   isLoading: usersLoading,
   error: usersError,
-} = useQuery(organizationUsersQuery, () => ({ organizationId: organizationId.value }), {
+} = useQuery(adminUsersQuery, () => ({ params: queryParams }), {
   enabled: computed(() => !!organizationId.value),
 })
 
-const users = computed(() => usersData.value?.data || [])
+// Query for all organizations (for the change organization modal)
+const { data: organizationsResponse } = useQuery(allOrganizationsQuery, () => ({
+  page: 1,
+  limit: 100,
+  sort: 'name' as const,
+  order: 'asc' as const,
+  search: undefined,
+}))
 
-// User mutations
+const users = computed(() => usersResponse.value?.data || [])
+const availableOrganizations = computed(() => organizationsResponse.value?.data || [])
+
+// Mutations
 const { createUser, isLoading: isCreatingUser } = useCreateOrganizationUser(organizationId.value)
-const { deleteUser, isLoading: isDeletingUser } = useDeleteOrganizationUser(organizationId.value)
-const { toggleStatus } = useToggleUserStatus(organizationId.value)
-const { resendReset } = useResendPasswordReset(organizationId.value)
+const { assignOrganization, isLoading: isAssigning } = useAssignUserOrganization()
+const { updatePermissions } = useUpdateUserPermissions()
 
-// UI state
+// Modal state
 const showCreateUserModal = ref(false)
-const userToDelete = ref<OrganizationUserListItem | null>(null)
-const activeUserActions = ref<string | null>(null)
+const userToAssign = ref<AdminUserResponse | null>(null)
+const userToManagePermissions = ref<AdminUserResponse | null>(null)
+const userToDisable = ref<AdminUserResponse | null>(null)
+const userToResetPassword = ref<AdminUserResponse | null>(null)
+
+// Pagination
+const paginationMeta = computed<PaginationMeta | null>(() => {
+  if (!usersResponse.value?.pagination) return null
+
+  const p = usersResponse.value.pagination
+  const currentPage = p.page ?? p.current_page ?? 1
+  const perPage = p.limit ?? p.per_page ?? 10
+  const total = p.total ?? 0
+  const lastPage = p.total_pages ?? p.last_page ?? 1
+
+  return {
+    current_page: currentPage,
+    per_page: perPage,
+    total,
+    last_page: lastPage,
+    from: (currentPage - 1) * perPage + 1,
+    to: Math.min(currentPage * perPage, total),
+  }
+})
+
+const currentPage = computed({
+  get: () => queryParams.page,
+  set: (value: number) => {
+    queryParams.page = value
+  },
+})
+
+const pageSizeOptions = [10, 20, 50, 100]
+
+function updatePageSize(limit: number) {
+  queryParams.limit = limit
+  queryParams.page = 1
+}
 
 // Format date helper
-const formatDate = (dateString: string) => {
+function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -345,84 +334,52 @@ const formatDate = (dateString: string) => {
   })
 }
 
-// User status helpers
-const getUserStatusVariant = (user: OrganizationUserListItem) => {
-  if (!user.enabled) return 'error'
-  if (!user.emailVerified) return 'warning'
-  return 'success'
+// Actions
+function showAssignModal(user: AdminUserResponse) {
+  userToAssign.value = user
 }
 
-const getUserStatusText = (user: OrganizationUserListItem) => {
-  if (!user.enabled) return t('user.status.disabled', 'Disabled')
-  if (!user.emailVerified) return t('user.status.pending', 'Pending')
-  return t('user.status.active', 'Active')
+function showPermissionsModal(user: AdminUserResponse) {
+  userToManagePermissions.value = user
 }
 
-// User management actions
-const handleCreateUser = async (userData: OrganizationUserCreate) => {
+function showDisableModal(user: AdminUserResponse) {
+  userToDisable.value = user
+}
+
+function showResetPasswordModal(user: AdminUserResponse) {
+  userToResetPassword.value = user
+}
+
+async function handleCreateUser(userData: OrganizationUserCreate) {
   try {
     await createUser(userData)
     showCreateUserModal.value = false
-  } catch (error) {
-    console.error('Failed to add user:', error)
+  } catch (err) {
+    console.error('Failed to add user:', err)
   }
 }
 
-const confirmDeleteUser = (user: OrganizationUserListItem) => {
-  userToDelete.value = user
-  activeUserActions.value = null
-}
-
-const handleDeleteUser = async () => {
-  if (!userToDelete.value) return
+async function handleAssignOrganization(newOrganizationId: string) {
+  if (!userToAssign.value) return
 
   try {
-    await deleteUser(userToDelete.value.id)
-    userToDelete.value = null
-  } catch (error) {
-    console.error('Failed to delete user:', error)
+    await assignOrganization({ userId: userToAssign.value.user_id, organizationId: newOrganizationId })
+    userToAssign.value = null
+    // User will be removed from the list since they're now in a different organization
+  } catch (err) {
+    console.error('Failed to assign organization:', err)
   }
 }
 
-const toggleUserActions = (userId: string) => {
-  activeUserActions.value = activeUserActions.value === userId ? null : userId
-}
+async function handleUpdatePermissions(permissions: string[]) {
+  if (!userToManagePermissions.value) return
 
-const toggleUserStatus = async (userId: string, enabled: boolean) => {
   try {
-    await toggleStatus(userId, enabled)
-    activeUserActions.value = null
-  } catch (error) {
-    console.error('Failed to toggle user status:', error)
+    await updatePermissions({ userId: userToManagePermissions.value.user_id, permissions })
+    userToManagePermissions.value = null
+  } catch (err) {
+    console.error('Failed to update permissions:', err)
   }
 }
-
-const resendPasswordReset = async (userId: string) => {
-  try {
-    await resendReset(userId)
-    activeUserActions.value = null
-  } catch (error) {
-    console.error('Failed to resend password reset:', error)
-  }
-}
-
-// Close user actions dropdown when clicking outside
-const handleClickOutside = (event: MouseEvent) => {
-  const target = event.target as Element
-  if (!target.closest('.relative')) {
-    activeUserActions.value = null
-  }
-}
-
-// Add click outside listener
-import Card from '@/components/ui/Card.vue'
-import { onMounted, onUnmounted } from 'vue'
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
 </script>

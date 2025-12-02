@@ -1,9 +1,9 @@
 <template>
   <div class="bg-base-100 rounded-lg shadow-sm border border-primary-stroke">
-    <UserTableHeader />
+    <UsersTableHeader />
 
     <div class="divide-y divide-primary-stroke">
-      <UserTableRow
+      <UsersTableRow
         v-for="user in users"
         :key="user.user_id"
         :user="user"
@@ -14,7 +14,7 @@
       />
     </div>
 
-    <UserTableEmpty
+    <UsersTableEmpty
       v-if="users.length === 0"
       :has-filters="hasFilters"
       @clear-filters="$emit('clear-filters')"
@@ -23,9 +23,9 @@
 </template>
 
 <script setup lang="ts">
-import UserTableHeader from './UserTableHeader.vue'
-import UserTableRow from './UserTableRow.vue'
-import UserTableEmpty from './UserTableEmpty.vue'
+import UsersTableHeader from './UsersTableHeader.vue'
+import UsersTableRow from './UsersTableRow.vue'
+import UsersTableEmpty from './UsersTableEmpty.vue'
 import type { AdminUserResponse } from '@/types/admin-user'
 
 interface Props {
