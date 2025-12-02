@@ -32,7 +32,7 @@
 
         <!-- Items count -->
         <div class="col-span-2">
-          <Tag variant="slate" :label="`${folder.items?.length || 0} items`" size="sm" />
+          <Tag variant="slate" :label="$t('folder.itemsChip', folder.items?.length || 0)" size="sm" />
         </div>
 
         <!-- Created date -->
@@ -103,7 +103,7 @@
 
           <!-- Item type -->
           <div class="col-span-2">
-            <Tag variant="primary" :label="item.type" size="xs" />
+            <Tag variant="primary" :label="formatItemType(item.type)" size="xs" />
           </div>
 
           <!-- Item created date -->
@@ -140,9 +140,12 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Tag from '@/components/ui/Tag.vue'
 import Button from '@/components/ui/Button.vue'
 import type { Folder } from '@/types/folder'
+
+const { t, locale } = useI18n()
 
 interface Props {
   folder: Folder
@@ -163,9 +166,18 @@ const toggleExpanded = () => {
 }
 
 // Helper function to format dates
-const formatDate = (dateString: string) => {
-  if (!dateString) return 'N/A'
-  return new Date(dateString).toLocaleDateString()
+function formatDate(dateString: string): string {
+  if (!dateString) return t('common.na')
+  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+  return new Date(dateString).toLocaleDateString(localeCode)
+}
+
+// Helper to format item type
+function formatItemType(type: string): string {
+  if (type === 'company') {
+    return t('folder.itemTypes.company')
+  }
+  return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
 // Helper function to extract domain from website URL

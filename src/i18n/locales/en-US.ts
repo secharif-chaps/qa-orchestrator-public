@@ -1127,9 +1127,23 @@ export default {
       unfavorite: 'Unfavorite',
       view: 'View',
     },
-    itemCount: '{count} items',
+    itemCount: '{count} item | {count} items',
+    itemsChip: '{count} item | {count} items',
     items: {
       add: 'Add Items',
+      empty: 'No items in this folder',
+    },
+    header: {
+      itemsCount: '{count} item | {count} items',
+      createdOn: 'created on {date}',
+      by: 'by',
+    },
+    grid: {
+      created: 'Created',
+      by: 'by',
+    },
+    itemTypes: {
+      company: 'Company Card',
     },
     list: {
       error: {
@@ -1603,5 +1617,25 @@ export default {
         message: 'Failed to update your preferences. Please try again.',
       },
     },
+  },
+  breadcrumb: {
+    companies: 'Companies',
+    folders: 'Folders',
+    team: 'Team',
+    admin: 'Admin',
+    settings: 'Settings',
+    search: 'Search',
+    profile: 'Profile',
+    jobs: 'Jobs',
+    timeline: 'Timeline',
+    products: 'Products',
+    press: 'Press',
+    edit: 'Edit',
+    create: 'Create',
+    company: 'Company',
+    organizations: 'Organizations',
+    costs: 'Costs',
+    appearance: 'Appearance',
+    security: 'Security',
   },
 }

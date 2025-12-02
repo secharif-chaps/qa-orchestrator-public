@@ -112,7 +112,7 @@
                     </div>
                   </div>
                   <div class="col-span-2">
-                    <Tag variant="primary" :label="item.type" size="sm" />
+                    <Tag variant="primary" :label="formatItemType(item.type)" size="sm" />
                   </div>
                   <div class="col-span-2">
                     <span class="text-sm text-secondary">{{ formatDate(item.created_at) }}</span>
@@ -245,7 +245,7 @@ const VIEW_MODE_STORAGE_KEY = 'folder-view-mode'
 
 const route = useRoute('/folders/[folderId]')
 const router = useRouter()
-const { t: $t } = useI18n()
+const { t: $t, locale } = useI18n()
 const { canDeleteCompany } = useCompanyPermissions()
 
 const showDeleteModal = ref(false)
@@ -304,7 +304,16 @@ const getLogoUrl = (website?: string) => {
 // Methods
 const formatDate = (dateString: string) => {
   if (!dateString) return $t('common.na', 'N/A')
-  return new Date(dateString).toLocaleDateString()
+  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+  return new Date(dateString).toLocaleDateString(localeCode)
+}
+
+// Helper to format item type
+const formatItemType = (type: string): string => {
+  if (type === 'company') {
+    return $t('folder.itemTypes.company')
+  }
+  return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
 const navigateToItem = (item: FolderItem) => {

@@ -1,6 +1,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
+import { useI18n } from 'vue-i18n'
 import { companyByIdQuery } from '@/queries/companies'
 import { folderByIdQuery } from '@/queries/folders'
 
@@ -15,6 +16,7 @@ export interface BreadcrumbItem {
  */
 export function useBreadcrumbs() {
   const route = useRoute()
+  const { t } = useI18n()
 
   // Get company data if we're on a company page
   const companyId = computed(() => {
@@ -67,7 +69,7 @@ export function useBreadcrumbs() {
           // Only add 'Companies' breadcrumb if it's not under folders
           if (!pathSegments.includes('folders')) {
             items.push({
-              name: 'Companies',
+              name: t('breadcrumb.companies', 'Companies'),
               to: isLast ? undefined : '/companies',
               current: isLast,
             })
@@ -79,7 +81,7 @@ export function useBreadcrumbs() {
 
         case 'folders':
           items.push({
-            name: 'Folders',
+            name: t('breadcrumb.folders', 'Folders'),
             to: '/folders',
             current: isLast,
           })
@@ -87,7 +89,7 @@ export function useBreadcrumbs() {
 
         case 'team':
           items.push({
-            name: 'Team',
+            name: t('breadcrumb.team', 'Team'),
             to: undefined,
             current: isLast,
           })
@@ -95,7 +97,7 @@ export function useBreadcrumbs() {
 
         case 'admin':
           items.push({
-            name: 'Admin',
+            name: t('breadcrumb.admin', 'Admin'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -103,7 +105,7 @@ export function useBreadcrumbs() {
 
         case 'settings':
           items.push({
-            name: 'Settings',
+            name: t('breadcrumb.settings', 'Settings'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -119,7 +121,7 @@ export function useBreadcrumbs() {
 
         case 'search':
           items.push({
-            name: 'Search',
+            name: t('breadcrumb.search', 'Search'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -132,7 +134,7 @@ export function useBreadcrumbs() {
 
         case 'profile':
           items.push({
-            name: 'Profile',
+            name: t('breadcrumb.profile', 'Profile'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -140,7 +142,7 @@ export function useBreadcrumbs() {
 
         case 'jobs':
           items.push({
-            name: 'Jobs',
+            name: t('breadcrumb.jobs', 'Jobs'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -148,7 +150,7 @@ export function useBreadcrumbs() {
 
         case 'timeline':
           items.push({
-            name: 'Timeline',
+            name: t('breadcrumb.timeline', 'Timeline'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -156,7 +158,7 @@ export function useBreadcrumbs() {
 
         case 'products':
           items.push({
-            name: 'Products',
+            name: t('breadcrumb.products', 'Products'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -164,7 +166,7 @@ export function useBreadcrumbs() {
 
         case 'press':
           items.push({
-            name: 'Press',
+            name: t('breadcrumb.press', 'Press'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -174,7 +176,7 @@ export function useBreadcrumbs() {
           // For folder edit pages
           if (pathSegments.includes('folders')) {
             items.push({
-              name: 'Edit',
+              name: t('breadcrumb.edit', 'Edit'),
               to: isLast ? undefined : currentPath,
               current: isLast,
             })
@@ -185,7 +187,7 @@ export function useBreadcrumbs() {
           // For folder create pages
           if (pathSegments.includes('folders')) {
             items.push({
-              name: 'Create',
+              name: t('breadcrumb.create', 'Create'),
               to: isLast ? undefined : currentPath,
               current: isLast,
             })
@@ -196,7 +198,7 @@ export function useBreadcrumbs() {
           // For specific create pages like /folders/[id]/create/company
           if (pathSegments.includes('folders') && pathSegments.includes('create')) {
             items.push({
-              name: 'Company',
+              name: t('breadcrumb.company', 'Company'),
               to: isLast ? undefined : currentPath,
               current: isLast,
             })
@@ -206,7 +208,7 @@ export function useBreadcrumbs() {
         // Admin pages
         case 'organizations':
           items.push({
-            name: 'organizations',
+            name: t('breadcrumb.organizations', 'Organizations'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -214,7 +216,7 @@ export function useBreadcrumbs() {
 
         case 'costs':
           items.push({
-            name: 'Costs',
+            name: t('breadcrumb.costs', 'Costs'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -223,7 +225,7 @@ export function useBreadcrumbs() {
         // Settings pages
         case 'appearance':
           items.push({
-            name: 'Appearance',
+            name: t('breadcrumb.appearance', 'Appearance'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -231,7 +233,7 @@ export function useBreadcrumbs() {
 
         case 'security':
           items.push({
-            name: 'Security',
+            name: t('breadcrumb.security', 'Security'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })

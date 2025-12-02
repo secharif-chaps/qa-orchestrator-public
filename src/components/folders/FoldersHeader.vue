@@ -15,8 +15,9 @@
               {{ folder?.name || $t('folder.loading', 'Loading folder...') }}
             </h1>
             <p class="text-secondary mt-2" v-if="folder">
-              {{ folder.items?.length || 0 }} items • created on
-              {{ formatDate(folder.created_at) }} by @{{ folder.owner }}
+              {{ $t('folder.header.itemsCount', itemsCount) }} •
+              {{ $t('folder.header.createdOn', { date: formatDate(folder.created_at) }) }}
+              {{ $t('folder.header.by') }} @{{ folder.owner }}
             </p>
           </div>
         </div>
@@ -191,7 +192,7 @@ const emit = defineEmits<{
   'delete-folder': []
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const showAddItemsDropdown = ref(false)
 
 // Use mutation for optimistic UI
@@ -223,14 +224,14 @@ const filterOptions = computed(() => [
   {
     value: 'all',
     icon: 'fas fa-building',
-    title: 'All companies',
-    label: 'All',
+    title: t('folder.filter.all'),
+    label: t('folder.filter.allLabel'),
   },
   {
     value: 'archived',
     icon: 'fas fa-archive',
-    title: 'Archived companies',
-    label: 'Archived',
+    title: t('folder.filter.archived'),
+    label: t('folder.filter.archivedLabel'),
   },
 ])
 
@@ -238,23 +239,29 @@ const filterOptions = computed(() => [
 const viewModeOptions = computed(() => [
   {
     value: 'table',
-    label: 'Table',
+    label: t('folder.viewMode.table'),
     icon: 'fa fa-list',
-    title: t('folder.view.table', 'Table View'),
+    title: t('folder.viewMode.tableView'),
   },
   {
     value: 'grid',
-    label: 'Grid',
+    label: t('folder.viewMode.grid'),
     icon: 'fa fa-th-large',
-    title: t('folder.view.grid', 'Grid View'),
+    title: t('folder.viewMode.gridView'),
   },
 ])
 
 // Methods
-const formatDate = (dateString: string) => {
-  if (!dateString) return 'N/A'
-  return new Date(dateString).toLocaleDateString()
+function formatDate(dateString: string): string {
+  if (!dateString) return t('common.na')
+  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+  return new Date(dateString).toLocaleDateString(localeCode)
 }
+
+// Computed for item count
+const itemsCount = computed(() => {
+  return props.folder?.items?.length || 0
+})
 
 // Compute folder color classes based on the color prop
 const folderColorClasses = computed(() => {

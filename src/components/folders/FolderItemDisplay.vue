@@ -64,7 +64,7 @@
 
     <div class="flex items-center justify-between text-sm text-secondary">
       <span>{{ $t('folder.item.created', 'Created') }} {{ formatDate(item.created_at) }}</span>
-      <span v-if="item.owner">by @{{ item.owner }}</span>
+      <span v-if="item.owner">{{ $t('folder.grid.by') }} @{{ item.owner }}</span>
     </div>
   </Card>
 
@@ -96,7 +96,7 @@ const emit = defineEmits<{
   deleteCompany: [item: FolderItem]
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { canDeleteCompany } = useCompanyPermissions()
 const showFallbackIcon = ref(false)
 const isParentHovered = ref(false)
@@ -129,12 +129,16 @@ const getLogoUrl = (website?: string) => {
   return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
 }
 
-const formatDate = (dateString: string) => {
-  if (!dateString) return 'N/A'
-  return new Date(dateString).toLocaleDateString()
+function formatDate(dateString: string): string {
+  if (!dateString) return t('common.na')
+  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+  return new Date(dateString).toLocaleDateString(localeCode)
 }
 
-const formatType = (type: string) => {
+function formatType(type: string): string {
+  if (type === 'company') {
+    return t('folder.itemTypes.company')
+  }
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
 </script>

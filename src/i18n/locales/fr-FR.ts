@@ -1293,9 +1293,23 @@ export default {
       unfavorite: 'Retirer des favoris',
       view: 'Voir',
     },
-    itemCount: '{count} éléments',
+    itemCount: '{count} élément | {count} éléments',
+    itemsChip: '{count} élément | {count} éléments',
     items: {
       add: 'Ajouter des éléments',
+      empty: 'Aucun élément dans ce dossier',
+    },
+    header: {
+      itemsCount: '{count} élément | {count} éléments',
+      createdOn: 'créé le {date}',
+      by: 'par',
+    },
+    grid: {
+      created: 'Créé le',
+      by: 'par',
+    },
+    itemTypes: {
+      company: 'Fiche entreprise',
     },
     list: {
       error: {
@@ -1586,5 +1600,25 @@ export default {
         },
       },
     },
+  },
+  breadcrumb: {
+    companies: 'Entreprises',
+    folders: 'Dossiers',
+    team: 'Équipe',
+    admin: 'Admin',
+    settings: 'Paramètres',
+    search: 'Recherche',
+    profile: 'Profil',
+    jobs: 'Emplois',
+    timeline: 'Historique',
+    products: 'Produits',
+    press: 'Presse',
+    edit: 'Modifier',
+    create: 'Créer',
+    company: 'Entreprise',
+    organizations: 'Organisations',
+    costs: 'Coûts',
+    appearance: 'Apparence',
+    security: 'Sécurité',
   },
 }
