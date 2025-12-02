@@ -480,6 +480,10 @@ export default {
       placeholder: 'Search...',
       noResults: 'No events found matching "{query}"',
     },
+    sort: {
+      oldestFirst: 'Oldest first',
+      newestFirst: 'Newest first',
+    },
   },
   communications: {
     title: 'Corporate Communications',

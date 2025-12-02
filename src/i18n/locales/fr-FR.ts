@@ -521,6 +521,10 @@ export default {
       placeholder: 'Rechercher...',
       noResults: 'Aucun événement trouvé correspondant à "{query}"',
     },
+    sort: {
+      oldestFirst: 'Plus ancien',
+      newestFirst: 'Plus récent',
+    },
   },
   communications: {
     title: "Communications d'Entreprise",
