@@ -440,20 +440,33 @@ watch(
   { immediate: true },
 )
 
-// Auto-attach/replace company context when on company page with new conversation
-// This provides better UX by automatically setting context based on current page
+// Auto-attach/replace/remove company context based on current page
+// This provides better UX by automatically managing context based on navigation
 watch(
   availablePageContext,
   (newContext, oldContext) => {
-    // Only act if we have a new page context and conversation is new with no messages
-    if (!newContext || !chapseStore.isNewConversation || chapseStore.hasMessages) {
+    // Only act if conversation is new with no messages
+    if (!chapseStore.isNewConversation || chapseStore.hasMessages) {
       return
     }
 
-    // If switching from one company to another, replace the context
+    // Case 1: Leaving a company page (going to non-company page)
+    // Remove the auto-attached context if it was the only one
+    if (!newContext && oldContext) {
+      if (companyContext.value.length === 1 && companyContext.value[0].id === oldContext.id) {
+        console.log('🔗 Removing auto-attached context (left company page):', oldContext.name)
+        removeCompanyFromContext(oldContext.id)
+      }
+      return
+    }
+
+    // Case 2: No new context to attach
+    if (!newContext) {
+      return
+    }
+
+    // Case 3: Switching from one company to another
     if (oldContext && newContext.id !== oldContext.id) {
-      // Clear all auto-attached contexts and set the new one
-      // This ensures we replace rather than add
       console.log('🔄 Switching company context from', oldContext.name, 'to', newContext.name)
 
       // Remove old context if it was auto-attached (only one in context)
@@ -466,7 +479,7 @@ watch(
         addCompanyToContext(newContext)
       }
     } else if (!isPageContextActive.value) {
-      // Initial attachment - no old context or same company
+      // Case 4: Initial attachment - no old context or same company
       console.log('🔗 Auto-attaching company context:', newContext.name)
       addCompanyToContext(newContext)
     }
