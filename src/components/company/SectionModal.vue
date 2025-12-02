@@ -32,7 +32,7 @@
             <component :is="sectionComponent" v-if="sectionComponent" />
             <div v-else class="text-center text-secondary py-12">
               <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
-              <p>Section non disponible</p>
+              <p>{{ t('company.sections.notAvailable', 'Section not available') }}</p>
             </div>
           </div>
         </div>
@@ -44,8 +44,11 @@
 <script setup lang="ts">
 import { computed, watch, defineAsyncComponent } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Button from '@/components/ui/Button.vue'
 import type { TaskType } from '@/types/task'
+
+const { t } = useI18n()
 
 // Lazy load section components
 const ProfilePage = defineAsyncComponent(
@@ -95,50 +98,50 @@ const route = useRoute()
 // Section configurations
 const sections: Record<TaskType, SectionConfig> = {
   profile: {
-    name: "Profil de l'entreprise",
-    description: 'Informations générales et présence digitale',
+    name: t('company.analysisCards.profile.title', 'Company Profile'),
+    description: t('company.analysisCards.profile.description', 'View detailed company information, business lines, and key metrics'),
     icon: 'fas fa-building',
     component: ProfilePage,
   },
   timeline: {
-    name: 'Activités & Événements',
-    description: 'Historique et moments clés',
+    name: t('company.analysisCards.timeline.title', 'Timeline & History'),
+    description: t('company.analysisCards.timeline.description', 'Company history, milestones, and key events over time'),
     icon: 'fas fa-calendar-days',
     component: TimelinePage,
   },
   products: {
-    name: 'Produits & Services',
-    description: 'Catalogue et gamme de produits',
+    name: t('company.analysisCards.products.title', 'Products & Services'),
+    description: t('company.analysisCards.products.description', 'Browse products, services, and offerings'),
     icon: 'fas fa-box',
     component: ProductsPage,
   },
   team: {
-    name: 'Équipe & Management',
-    description: 'Organigramme et membres clés',
+    name: t('company.analysisCards.team.title', 'Team & Management'),
+    description: t('company.analysisCards.team.description', 'Leadership team, organizational structure, and key personnel'),
     icon: 'fas fa-users',
     component: TeamPage,
   },
   jobs: {
-    name: "Offres d'emploi",
-    description: 'Recrutement et opportunités',
+    name: t('company.analysisCards.jobs.title', 'Job Offers'),
+    description: t('company.analysisCards.jobs.description', 'Current job openings and career opportunities'),
     icon: 'fas fa-briefcase',
     component: JobsPage,
   },
   press: {
-    name: 'Presse & Médias',
-    description: 'Articles et communiqués',
+    name: t('company.analysisCards.press.title', 'Press & Media'),
+    description: t('company.analysisCards.press.description', 'Press releases, news articles, and media coverage'),
     icon: 'fas fa-newspaper',
     component: PressPage,
   },
   digital: {
-    name: 'Présence digitale',
-    description: 'Réseaux sociaux et stratégie numérique',
+    name: t('company.onlinePresence.title', 'Online Presence'),
+    description: t('company.onlinePresence.socialMedia', 'Social Media Presence'),
     icon: 'fas fa-globe',
     component: ProfilePage, // Included in profile
   },
   csr: {
-    name: 'Responsabilité sociale',
-    description: 'RSE et développement durable',
+    name: t('company.analysisCards.csr.title', 'Corporate Social Responsibility'),
+    description: t('company.analysisCards.csr.description', 'CSR initiatives, sustainability programs, and social impact'),
     icon: 'fas fa-leaf',
     component: CsrPage,
   },
