@@ -8,7 +8,7 @@
       }"
     >
       <div class="flex items-center gap-3">
-        <span class="font-medium">Workflow de recherche</span>
+        <span class="font-medium">{{ t('company.debug.workflowTitle', 'Search Workflow') }}</span>
         <div class="flex items-center">
           <span class="text-xs text-secondary font-medium"
             >{{ completedCount }}/{{ totalTasks }}</span
@@ -28,7 +28,7 @@
             v-if="completedPercentage > 0"
             class="bg-green-400 h-full transition-all duration-500 ease-out"
             :style="{ width: `${completedPercentage}%` }"
-            :title="`${completedCount} tâches terminées (${Math.round(completedPercentage)}%)`"
+            :title="t('company.tasks.completed', { count: completedCount, percentage: Math.round(completedPercentage) })"
           ></div>
 
           <!-- Running segment -->
@@ -36,7 +36,7 @@
             v-if="runningPercentage > 0"
             class="bg-orange-400 h-full transition-all duration-500 ease-out"
             :style="{ width: `${runningPercentage}%` }"
-            :title="`${runningCount} tâches en cours (${Math.round(runningPercentage)}%)`"
+            :title="t('company.tasks.running', { count: runningCount, percentage: Math.round(runningPercentage) })"
           ></div>
 
           <!-- Error segment -->
@@ -44,7 +44,7 @@
             v-if="errorPercentage > 0"
             class="bg-red-400 h-full transition-all duration-500 ease-out"
             :style="{ width: `${errorPercentage}%` }"
-            :title="`${errorCount} tâches en erreur (${Math.round(errorPercentage)}%)`"
+            :title="t('company.tasks.error', { count: errorCount, percentage: Math.round(errorPercentage) })"
           ></div>
 
           <!-- Pending segment -->
@@ -52,7 +52,7 @@
             v-if="pendingPercentage > 0"
             class="bg-gray-200 dark:bg-gray-800 h-full transition-all duration-500 ease-out"
             :style="{ width: `${pendingPercentage}%` }"
-            :title="`${pendingCount} tâches en attente (${Math.round(pendingPercentage)}%)`"
+            :title="t('company.tasks.pending', { count: pendingCount, percentage: Math.round(pendingPercentage) })"
           ></div>
         </div>
 
@@ -61,19 +61,19 @@
           <div class="flex items-center gap-4">
             <span class="flex items-center gap-1">
               <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-              {{ completedCount }} terminées
+              {{ t('company.tasks.completedShort', { count: completedCount }) }}
             </span>
             <span v-if="runningCount > 0" class="flex items-center gap-1">
               <div class="w-2 h-2 bg-orange-400 rounded-full"></div>
-              {{ runningCount }} en cours
+              {{ t('company.tasks.runningShort', { count: runningCount }) }}
             </span>
             <span v-if="errorCount > 0" class="flex items-center gap-1">
               <div class="w-2 h-2 bg-red-400 rounded-full"></div>
-              {{ errorCount }} en erreur
+              {{ t('company.tasks.errorShort', { count: errorCount }) }}
             </span>
             <span v-if="pendingCount > 0" class="flex items-center gap-1">
               <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
-              {{ pendingCount }} en attente
+              {{ t('company.tasks.pendingShort', { count: pendingCount }) }}
             </span>
           </div>
         </div>
@@ -157,7 +157,7 @@
       <div v-if="hasErrorsOrPending" class="mt-6 pt-6 border-t border-primary-stroke">
         <div class="flex items-center justify-between">
           <div class="text-sm text-secondary">
-            Des tâches peuvent être redémarrées ou ne sont pas encore lancées
+            {{ t('company.tasks.canBeRestarted', 'Tasks can be restarted or have not been started yet') }}
           </div>
           <Button
             variant="secondary"
@@ -166,7 +166,7 @@
             @click="startAllPendingTasks"
             :loading="isStartingAll"
           >
-            Démarrer toutes les tâches
+            {{ t('company.tasks.startAll', 'Start all tasks') }}
           </Button>
         </div>
       </div>
@@ -178,6 +178,7 @@
 import type { TaskType, TaskStatus, TaskResponse } from '@/types/task'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { companyTasksQuery } from '@/queries/tasks'
 import { useQuery } from '@pinia/colada'
 import { useRestartTask } from '@/mutations/tasks'
@@ -186,6 +187,8 @@ import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { useAuthStore } from '@/stores/auth'
 import Button from '@/components/ui/Button.vue'
 import Tag from '@/components/ui/Tag.vue'
+
+const { t } = useI18n()
 
 interface TaskConfig {
   type: TaskType
@@ -242,43 +245,43 @@ const getTokenInfo = (taskType: TaskType) => {
 const taskConfigs: TaskConfig[] = [
   {
     type: 'profile',
-    name: 'Profil',
-    description: "Informations générales de l'entreprise",
+    name: t('company.analysisCards.profile.title', 'Company Profile'),
+    description: t('company.analysisCards.profile.description', 'View detailed company information, business lines, and key metrics'),
   },
   {
     type: 'digital',
-    name: 'Digital',
-    description: 'Présence numérique et réseaux sociaux',
+    name: t('company.onlinePresence.title', 'Online Presence'),
+    description: t('company.onlinePresence.socialMedia', 'Social Media Presence'),
   },
   {
     type: 'csr',
-    name: 'RSE',
-    description: 'Responsabilité sociale et environnementale',
+    name: t('company.analysisCards.csr.title', 'Corporate Social Responsibility'),
+    description: t('company.analysisCards.csr.description', 'CSR initiatives, sustainability programs, and social impact'),
   },
   {
     type: 'press',
-    name: 'Presse',
-    description: 'Articles et communiqués de presse',
+    name: t('company.analysisCards.press.title', 'Press & Media'),
+    description: t('company.analysisCards.press.description', 'Press releases, news articles, and media coverage'),
   },
   {
     type: 'timeline',
-    name: 'Timeline',
-    description: 'Historique et événements importants',
+    name: t('company.analysisCards.timeline.title', 'Timeline & History'),
+    description: t('company.analysisCards.timeline.description', 'Company history, milestones, and key events over time'),
   },
   {
     type: 'products',
-    name: 'Produits',
-    description: 'Catalogue et gamme de produits',
+    name: t('company.analysisCards.products.title', 'Products & Services'),
+    description: t('company.analysisCards.products.description', 'Browse products, services, and offerings'),
   },
   {
     type: 'team',
-    name: 'Équipe',
-    description: 'Organigramme et membres clés',
+    name: t('company.analysisCards.team.title', 'Team & Management'),
+    description: t('company.analysisCards.team.description', 'Leadership team, organizational structure, and key personnel'),
   },
   {
     type: 'jobs',
-    name: 'Emplois',
-    description: "Offres d'emploi et recrutement",
+    name: t('company.analysisCards.jobs.title', 'Job Offers'),
+    description: t('company.analysisCards.jobs.description', 'Current job openings and career opportunities'),
   },
 ]
 
@@ -377,15 +380,15 @@ const getStatusVariant = (status: TaskStatus | null) => {
 const getStatusLabel = (status: TaskStatus | null): string => {
   switch (status) {
     case 'succeeded':
-      return 'Terminée'
+      return t('company.analysisCard.status.succeeded', 'Completed')
     case 'error':
-      return 'Erreur'
+      return t('company.analysisCard.status.error', 'Error')
     case 'running':
-      return 'En cours'
+      return t('company.analysisCard.status.running', 'In progress')
     case 'pending':
-      return 'En attente'
+      return t('company.analysisCard.status.pending', 'Pending')
     default:
-      return 'Non démarrée'
+      return t('company.analysisCard.status.notStarted', 'Not started')
   }
 }
 

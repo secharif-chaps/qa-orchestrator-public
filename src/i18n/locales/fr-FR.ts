@@ -1022,6 +1022,7 @@ export default {
       socialMedia: 'Réseaux Sociaux',
       analysis: 'Analyse',
       analyses: 'Analyses',
+      notAvailable: 'Section non disponible',
     },
     analysisCards: {
       profile: {
@@ -1142,6 +1143,16 @@ export default {
       blocked: '{count} bloquées ({percentage}%)',
       pending: '{count} en attente ({percentage}%)',
       analysisInProgress: 'Analyse en cours...',
+      completedShort: '{count} terminées',
+      runningShort: '{count} en cours',
+      errorShort: '{count} en erreur',
+      blockedShort: '{count} bloquées',
+      pendingShort: '{count} en attente',
+      canBeRestarted: 'Des tâches peuvent être redémarrées ou ne sont pas encore lancées',
+      startAll: 'Démarrer toutes les tâches',
+      completedCount: '{completed}/{total} tâches terminées',
+      dataCollection: 'Collecte de données',
+      dataCollectionDescription: 'Collecte de données structurées',
     },
     analysisCard: {
       viewMore: 'Voir plus',
@@ -1157,6 +1168,7 @@ export default {
         error: 'Erreur',
         running: 'En cours',
         pending: 'En attente',
+        blocked: 'En attente (bloquée)',
         notStarted: 'Non démarré',
       },
     },
