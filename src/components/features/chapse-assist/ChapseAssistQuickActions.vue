@@ -228,14 +228,16 @@ interface Props {
   autoLoad?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  autoLoad: true,
+})
 
 // Computed props with translations as defaults
 const title = computed(() => props.title ?? t('chapseAssist.quickActions.title', 'Chaps-e Smart Assist'))
-const autoLoad = computed(() => props.autoLoad ?? true)
 
 // Debug computed
 const debugCompanyId = computed(() => props.companyId)
+const autoLoad = computed(() => props.autoLoad)
 
 const emit = defineEmits<{
   actionClick: [action: QuickAction]
