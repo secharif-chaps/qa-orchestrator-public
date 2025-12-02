@@ -198,10 +198,15 @@
         </div>
         <p>{{ t('company.onlinePresence.socialMedia', 'Social Media Presence') }}</p>
         <div>
-          <div v-if="company?.digital?.socialMediaAccounts" class="flex flex-wrap gap-2">
+          <!-- Loading state -->
+          <div v-if="isTaskRunning('digital')" class="flex flex-wrap gap-2">
+            <div v-for="i in 4" :key="i" class="bg-sage-100 rounded-full h-4 w-12"></div>
+          </div>
+          <!-- Social media accounts -->
+          <div v-else-if="company?.digital?.socialMediaAccounts?.value?.length" class="flex flex-wrap gap-2">
             <Tag
               variant="slate"
-              v-for="account in company?.digital?.socialMediaAccounts.value"
+              v-for="account in company.digital.socialMediaAccounts.value"
               :key="account.platform"
               :href="getSourcedValue(account.url)"
               target="_blank"
@@ -212,10 +217,7 @@
               </span>
             </Tag>
           </div>
-          <div v-if="isTaskRunning('profile')" class="flex flex-wrap gap-2">
-            <div v-for="i in 4" :key="i" class="bg-sage-100 rounded-full h-4 w-12"></div>
-          </div>
-
+          <!-- No data -->
           <span v-else class="text-xs text-secondary">
             {{ t('company.fields.notSpecified', 'Not specified') }}
           </span>
