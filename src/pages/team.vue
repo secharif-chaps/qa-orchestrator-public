@@ -76,7 +76,8 @@ const tabs = computed(() => [
 const router = useRouter()
 onMounted(() => {
   if (route.path === '/team') {
-    router.replace('/team/users')
+    // Redirect to settings instead of users (users tab is disabled)
+    router.replace('/team/settings')
   }
 })
 </script>

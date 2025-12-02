@@ -49,7 +49,7 @@
     </div>
 
     <!-- Users Table -->
-    <UserTable
+    <UsersTable
       v-else-if="users"
       :users="users.data"
       :has-filters="hasActiveFilters"
@@ -117,7 +117,7 @@ import { useQuery } from '@pinia/colada'
 import Alert from '@/components/ui/Alert.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import UserFilters from '@/components/admin/UserFilters.vue'
-import UserTable from '@/components/admin/UserTable.vue'
+import UsersTable from '@/components/admin/UsersTable.vue'
 
 import { useAssignUserOrganization, useUpdateUserPermissions } from '@/mutations/admin-users'
 import { adminUsersQuery } from '@/queries/admin-users'
