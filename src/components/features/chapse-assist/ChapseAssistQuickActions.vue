@@ -1,19 +1,4 @@
 <template>
-  <!-- DEBUG: Show current state -->
-  <div class="text-xs text-secondary mb-2 p-2 bg-warning-light rounded">
-    DEBUG: companyId={{ debugCompanyId }},
-    autoLoad={{ autoLoad }},
-    isCheckingPreferences={{ isCheckingPreferences }},
-    hasAiPreferences={{ hasAiPreferences }},
-    isLoadingActions={{ isLoadingActions }},
-    hasActions={{ hasActions }},
-    hasError={{ hasError }},
-    hasLoadedOnce={{ hasLoadedOnce }},
-    preferencesCheckError={{ preferencesCheckError }},
-    actionsError={{ actionsError }},
-    quickActionsLength={{ quickActions.length }}
-  </div>
-
   <!-- Initial Loading State (checking preferences) -->
   <div
     v-if="isCheckingPreferences"
@@ -235,10 +220,6 @@ const props = withDefaults(defineProps<Props>(), {
 // Computed props with translations as defaults
 const title = computed(() => props.title ?? t('chapseAssist.quickActions.title', 'Chaps-e Smart Assist'))
 
-// Debug computed
-const debugCompanyId = computed(() => props.companyId)
-const autoLoad = computed(() => props.autoLoad)
-
 const emit = defineEmits<{
   actionClick: [action: QuickAction]
   loadSuccess: [actions: QuickAction[]]
@@ -355,11 +336,9 @@ async function doCheckPreferences() {
   preferencesCheckError.value = null
 
   try {
-    console.log('🔍 Checking AI preferences...')
     await checkHasPreferences()
-    console.log('✅ AI preferences check complete, hasAiPreferences:', hasAiPreferences.value)
   } catch (error: any) {
-    console.error('❌ Error checking AI preferences:', error)
+    console.error('Error checking AI preferences:', error)
     preferencesCheckError.value = error.message || 'Failed to check AI preferences'
   } finally {
     isCheckingPreferences.value = false
@@ -373,7 +352,7 @@ async function retryPreferencesCheck() {
   await doCheckPreferences()
 
   // If preferences exist after retry, load actions
-  if (hasAiPreferences.value && autoLoad.value && props.companyId) {
+  if (hasAiPreferences.value && props.autoLoad && props.companyId) {
     loadActions()
   }
 }
@@ -386,15 +365,8 @@ onMounted(async () => {
   await doCheckPreferences()
 
   // Only load actions if preferences exist
-  if (autoLoad.value && props.companyId && hasAiPreferences.value) {
-    console.log('🚀 Auto-loading quick actions for company:', props.companyId)
+  if (props.autoLoad && props.companyId && hasAiPreferences.value) {
     loadActions()
-  } else {
-    console.log('⏭️ Skipping auto-load:', {
-      autoLoad: autoLoad.value,
-      companyId: props.companyId,
-      hasAiPreferences: hasAiPreferences.value
-    })
   }
 })
 </script>
