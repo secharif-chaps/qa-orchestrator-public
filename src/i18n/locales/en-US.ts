@@ -1597,6 +1597,7 @@ export default {
     quickActions: {
       title: 'Chaps-e Smart Assist',
       refresh: 'Refresh',
+      checkingPreferences: 'Checking AI preferences...',
       loading: 'Generating personalized actions...',
       tryAgain: 'Try Again',
       configure: 'Configure AI Preferences',

@@ -1,5 +1,26 @@
 <template>
-  <div v-if="hasAiPreferences" class="space-y-4">
+  <!-- Initial Loading State (checking preferences) -->
+  <div
+    v-if="isCheckingPreferences"
+    class="space-y-4"
+  >
+    <div class="flex items-center gap-3">
+      <img
+        src="@/assets/chapse/head.svg"
+        alt="Chapse Assistant"
+        class="h-8 w-8 object-contain"
+        loading="lazy"
+      />
+      <h3 class="text-lg font-semibold">{{ title }}</h3>
+    </div>
+    <div class="bg-base-200 rounded-card border border-primary-stroke p-6 flex flex-col items-center justify-center gap-4">
+      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+      <p class="text-sm text-secondary">{{ $t('chapseAssist.quickActions.checkingPreferences', 'Checking AI preferences...') }}</p>
+    </div>
+  </div>
+
+  <!-- Main Content (only shown after preferences check) -->
+  <div v-else-if="hasAiPreferences" class="space-y-4">
     <!-- Header -->
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -23,7 +44,7 @@
       </Button>
     </div>
 
-    <!-- Loading State -->
+    <!-- Loading State (generating actions) -->
     <div
       v-if="isLoadingActions"
       class="bg-base-200 rounded-card border border-primary-stroke p-6 flex flex-col items-center justify-center gap-4"
@@ -195,6 +216,7 @@ const {
 
 // Local state
 const hasLoadedOnce = ref(false)
+const isCheckingPreferences = ref(true) // Start as true since we check on mount
 
 /**
  * Check if all company tasks have succeeded
@@ -284,7 +306,12 @@ watch(
  */
 onMounted(async () => {
   // Check if user has AI preferences first
-  await checkHasPreferences()
+  try {
+    await checkHasPreferences()
+  } finally {
+    // Always mark preferences check as complete
+    isCheckingPreferences.value = false
+  }
 
   // Only load actions if preferences exist
   if (autoLoad.value && props.companyId && hasAiPreferences.value) {
