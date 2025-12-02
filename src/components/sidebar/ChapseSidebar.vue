@@ -440,47 +440,38 @@ watch(
   { immediate: true },
 )
 
-// Auto-attach company context when on company page with new conversation
+// Auto-attach/replace company context when on company page with new conversation
 // This provides better UX by automatically setting context based on current page
-watch(
-  [availablePageContext, () => chapseStore.isNewConversation, () => chapseStore.hasMessages],
-  ([pageContext, isNew, hasMessages]) => {
-    // Only auto-attach if:
-    // 1. We have a page context (company page)
-    // 2. The conversation is new (no conversation ID)
-    // 3. No messages have been sent yet
-    // 4. The company is not already in context
-    if (pageContext && isNew && !hasMessages && !isPageContextActive.value) {
-      console.log('🔗 Auto-attaching company context:', pageContext.name)
-      addCompanyToContext(pageContext)
-    }
-  },
-  { immediate: true },
-)
-
-// When switching to a different company page with a new conversation,
-// replace the context with the new company
 watch(
   availablePageContext,
   (newContext, oldContext) => {
-    // Only replace context if:
-    // 1. Context changed to a different company
-    // 2. Conversation is new and has no messages
-    // 3. There's only one company in context (the old page's company)
-    if (
-      newContext &&
-      oldContext &&
-      newContext.id !== oldContext.id &&
-      chapseStore.isNewConversation &&
-      !chapseStore.hasMessages &&
-      companyContext.value.length === 1 &&
-      companyContext.value[0].id === oldContext.id
-    ) {
+    // Only act if we have a new page context and conversation is new with no messages
+    if (!newContext || !chapseStore.isNewConversation || chapseStore.hasMessages) {
+      return
+    }
+
+    // If switching from one company to another, replace the context
+    if (oldContext && newContext.id !== oldContext.id) {
+      // Clear all auto-attached contexts and set the new one
+      // This ensures we replace rather than add
       console.log('🔄 Switching company context from', oldContext.name, 'to', newContext.name)
-      removeCompanyFromContext(oldContext.id)
+
+      // Remove old context if it was auto-attached (only one in context)
+      if (companyContext.value.length === 1 && companyContext.value[0].id === oldContext.id) {
+        removeCompanyFromContext(oldContext.id)
+      }
+
+      // Add new context if not already there
+      if (!isPageContextActive.value) {
+        addCompanyToContext(newContext)
+      }
+    } else if (!isPageContextActive.value) {
+      // Initial attachment - no old context or same company
+      console.log('🔗 Auto-attaching company context:', newContext.name)
       addCompanyToContext(newContext)
     }
   },
+  { immediate: true },
 )
 
 // Load conversations on mount
