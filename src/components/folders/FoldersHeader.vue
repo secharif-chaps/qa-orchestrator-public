@@ -5,7 +5,7 @@
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-4">
           <div
-            class="w-16 h-16 rounded-lg flex items-center justify-center border border-primary-stroke"
+            class="w-16 h-16 rounded-lg flex items-center justify-center"
             :class="folderColorClasses"
           >
             <i :class="folderIcon" class="text-3xl"></i>
@@ -267,22 +267,22 @@ const itemsCount = computed(() => {
 const folderColorClasses = computed(() => {
   const color = props.folder?.color || 'blue'
   const colorMap: Record<string, string> = {
-    blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',
-    green: 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400',
-    yellow: 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400',
-    red: 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400',
-    purple: 'bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
-    gray: 'bg-gray-100 dark:bg-gray-900/20 text-gray-600 dark:text-gray-400',
-    orange: 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400',
-    pink: 'bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400',
-    cyan: 'bg-cyan-100 dark:bg-cyan-900/20 text-cyan-600 dark:text-cyan-400',
-    fuchsia: 'bg-fuchsia-100 dark:bg-fuchsia-900/20 text-fuchsia-600 dark:text-fuchsia-400',
-    rose: 'bg-rose-100 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400',
-    emerald: 'bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400',
-    teal: 'bg-teal-100 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400',
-    sky: 'bg-sky-100 dark:bg-sky-900/20 text-sky-600 dark:text-sky-400',
-    indigo: 'bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400',
-    violet: 'bg-violet-100 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400',
+    blue: 'bg-blue-100 dark:bg-blue-400/20 text-blue-600 dark:text-blue-400',
+    green: 'bg-green-100 dark:bg-green-400/20 text-green-600 dark:text-green-400',
+    yellow: 'bg-yellow-100 dark:bg-yellow-400/20 text-yellow-600 dark:text-yellow-400',
+    red: 'bg-red-100 dark:bg-red-400/20 text-red-600 dark:text-red-400',
+    purple: 'bg-purple-100 dark:bg-purple-400/20 text-purple-600 dark:text-purple-400',
+    gray: 'bg-gray-100 dark:bg-gray-400/20 text-gray-600 dark:text-gray-400',
+    orange: 'bg-orange-100 dark:bg-orange-400/20 text-orange-600 dark:text-orange-400',
+    pink: 'bg-pink-100 dark:bg-pink-400/20 text-pink-600 dark:text-pink-400',
+    cyan: 'bg-cyan-100 dark:bg-cyan-400/20 text-cyan-600 dark:text-cyan-400',
+    fuchsia: 'bg-fuchsia-100 dark:bg-fuchsia-400/20 text-fuchsia-600 dark:text-fuchsia-400',
+    rose: 'bg-rose-100 dark:bg-rose-400/20 text-rose-600 dark:text-rose-400',
+    emerald: 'bg-emerald-100 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400',
+    teal: 'bg-teal-100 dark:bg-teal-400/20 text-teal-600 dark:text-teal-400',
+    sky: 'bg-sky-100 dark:bg-sky-400/20 text-sky-600 dark:text-sky-400',
+    indigo: 'bg-indigo-100 dark:bg-indigo-400/20 text-indigo-600 dark:text-indigo-400',
+    violet: 'bg-violet-100 dark:bg-violet-400/20 text-violet-600 dark:text-violet-400',
   }
   return colorMap[color] || colorMap.blue
 })

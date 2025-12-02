@@ -35,9 +35,10 @@
       <div class="flex items-start justify-between">
         <div class="flex items-center gap-3">
           <div
-            class="w-12 h-12 rounded-lg flex items-center justify-center bg-sage-50 dark:bg-sage-900 text-sage-600 dark:text-sage-400"
+          :class="folderColorClasses"
+            class="w-12 h-12 rounded-lg flex items-center justify-center "
           >
-            <i :class="folderIcon" class="text-xl"></i>
+            <i :class="[folderIcon]" class="text-xl"></i>
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2 mb-1">
@@ -74,49 +75,18 @@
         class="mb-4 relative rounded-xl overflow-hidden"
       >
         <div
-          class="grid grid-cols-1 gap-2 bg-base-200 p-4 rounded-xl max-h-64 overflow-y-auto"
+          class="flex flex-col justify-start gap-2 bg-base-200 p-4 rounded-xl h-64 overflow-y-auto"
           @mouseenter="isChildHovered = true"
           @mouseleave="isChildHovered = false"
         >
           <!-- Show first 4 items or first 3 + overflow indicator -->
-          <div
-            @click.prevent="
-              index < 3 || folder.items.length <= 4
-                ? $router.push(`/folders/${folder.id}/companies/${item.id}`)
-                : $router.push(`/folders/${folder.id}`)
-            "
+          <CompanyCardItem
             v-for="(item, index) in previewItems"
             :key="item.id"
-            class="bg-base-100 rounded-md p-2 border border-primary-stroke min-h-[60px] flex items-center hover:ring-2 ring-primary/50 ring-offset-bg2"
-          >
-            <div class="flex items-center gap-2 min-w-0">
-              <div
-                class="w-10 h-10 rounded bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center flex-shrink-0"
-              >
-                <img
-                  v-if="item.type === 'company' && getCompanyDomain(item.website)"
-                  :src="getLogoUrl(item.website)"
-                  :alt="`${item.name} logo`"
-                  class="w-full h-full object-contain p-0.5"
-                  @error="item.showFallbackIcon = true"
-                  v-show="!item.showFallbackIcon"
-                />
-                <div
-                  v-show="
-                    item.showFallbackIcon ||
-                    !getCompanyDomain(item.website) ||
-                    item.type !== 'company'
-                  "
-                  class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
-                >
-                  <i class="fas fa-building text-secondary text-xs"></i>
-                </div>
-              </div>
-              <div class="flex-1 min-w-0">
-                <div class="text-sm font-medium truncate">{{ item.name }}</div>
-              </div>
-            </div>
-          </div>
+            :name="item.name"
+            :website="item.website"
+            @click="handleItemClick(item.id, index)"
+          />
           <div
             class="absolute top-0 left-0 h-6 w-full bg-gradient-to-b from-bg2 to-transparent z-10"
           ></div>
@@ -127,12 +97,27 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="grid grid-cols-1 gap-2">
+      <div v-else class="p-4 rounded-xl bg-base-200 h-64 mb-4">
+        <div class="flex flex-col justify-start gap-2 ">
+
         <div
-          v-for="i in 3"
-          :key="i"
-          class="rounded-md border-2 border-dashed border-primary-stroke bg-base-200 dark:bg-base-100 h-16"
-        ></div>
+          
+          @click.prevent="$router.push(`/folders/${folder.id}/create/company`)"
+          class="group rounded-md border-2 border-dashed border-primary-stroke bg-base-200 dark:bg-base-100 h-16 hover:bg-base-300"
+        >
+      <div class="flex items-center justify-center h-full">
+
+        <div class="flex items-center justify-center h-full gap-2">
+          <span class="w-8 h-8 rounded-lg bg-sage-100 group-hover:bg-sage-200 dark:bg-sage-800 group-hover:dark:bg-sage-700 flex items-center justify-center">
+            <i class="fas fa-plus text-secondary text-sm"></i>
+          </span>
+          <span class="text-sm text-secondary">{{ $t('folder.addItems.company', 'Add Company') }}</span>
+
+          </div>
+          </div>
+        </div>
+      </div>
+
       </div>
     </div>
 
@@ -152,9 +137,12 @@ import type { Folder } from '@/types/folder'
 import { useToggleFolderFavorite } from '@/mutations/folders'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import Card from '../ui/Card.vue'
+import CompanyCardItem from './CompanyCardItem.vue'
 
 const { t, locale } = useI18n()
+const router = useRouter()
 
 interface Props {
   folder: Folder
@@ -178,22 +166,22 @@ const { toggleFavorite: toggleFavoriteMutation, isLoading: isTogglingFavorite } 
 const folderColorClasses = computed(() => {
   const color = props.folder?.color || 'blue'
   const colorMap: Record<string, string> = {
-    blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',
-    green: 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400',
-    yellow: 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 dark:text-yellow-400',
-    red: 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400',
-    purple: 'bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
-    gray: 'bg-gray-100 dark:bg-gray-900/20 text-gray-600 dark:text-gray-400',
-    orange: 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400',
-    pink: 'bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400',
-    cyan: 'bg-cyan-100 dark:bg-cyan-900/20 text-cyan-600 dark:text-cyan-400',
-    fuchsia: 'bg-fuchsia-100 dark:bg-fuchsia-900/20 text-fuchsia-600 dark:text-fuchsia-400',
-    rose: 'bg-rose-100 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400',
-    emerald: 'bg-emerald-100 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400',
-    teal: 'bg-teal-100 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400',
-    sky: 'bg-sky-100 dark:bg-sky-900/20 text-sky-600 dark:text-sky-400',
-    indigo: 'bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400',
-    violet: 'bg-violet-100 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400',
+    blue: 'bg-blue-100 dark:bg-blue-400/20 text-blue-600 dark:text-blue-400',
+    green: 'bg-green-100 dark:bg-green-400/20 text-green-600 dark:text-green-400',
+    yellow: 'bg-yellow-100 dark:bg-yellow-400/20 text-yellow-600 dark:text-yellow-400',
+    red: 'bg-red-100 dark:bg-red-400/20 text-red-600 dark:text-red-400',
+    purple: 'bg-purple-100 dark:bg-purple-400/20 text-purple-600 dark:text-purple-400',
+    gray: 'bg-gray-100 dark:bg-gray-400/20 text-gray-600 dark:text-gray-400',
+    orange: 'bg-orange-100 dark:bg-orange-400/20 text-orange-600 dark:text-orange-400',
+    pink: 'bg-pink-100 dark:bg-pink-400/20 text-pink-600 dark:text-pink-400',
+    cyan: 'bg-cyan-100 dark:bg-cyan-400/20 text-cyan-600 dark:text-cyan-400',
+    fuchsia: 'bg-fuchsia-100 dark:bg-fuchsia-400/20 text-fuchsia-600 dark:text-fuchsia-400',
+    rose: 'bg-rose-100 dark:bg-rose-400/20 text-rose-600 dark:text-rose-400',
+    emerald: 'bg-emerald-100 dark:bg-emerald-400/20 text-emerald-600 dark:text-emerald-400',
+    teal: 'bg-teal-100 dark:bg-teal-400/20 text-teal-600 dark:text-teal-400',
+    sky: 'bg-sky-100 dark:bg-sky-400/20 text-sky-600 dark:text-sky-400',
+    indigo: 'bg-indigo-100 dark:bg-indigo-400/20 text-indigo-600 dark:text-indigo-400',
+    violet: 'bg-violet-100 dark:bg-violet-400/20 text-violet-600 dark:text-violet-400',
   }
   return colorMap[color] || colorMap.blue
 })
@@ -215,27 +203,6 @@ const previewItems = computed(() => {
   return props.folder.items
 })
 
-// Helper function to extract domain from website URL
-const getCompanyDomain = (website?: string) => {
-  if (!website) return null
-  try {
-    // Remove protocol and www
-    let domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '')
-    // Remove trailing slash and any path
-    domain = domain.split('/')[0]
-    return domain
-  } catch {
-    return null
-  }
-}
-
-// Helper function to get logo URL from logo.dev
-const getLogoUrl = (website?: string) => {
-  const domain = getCompanyDomain(website)
-  if (!domain) return ''
-  return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
-}
-
 // Methods
 function formatDate(dateString: string): string {
   if (!dateString) return t('common.na')
@@ -246,6 +213,14 @@ function formatDate(dateString: string): string {
 const handleCardClick = (event: MouseEvent) => {
   // Only emit viewFolder if not clicking on the favorite button
   emit('viewFolder', props.folder.id)
+}
+
+function handleItemClick(itemId: string, index: number) {
+  if (index < 3 || props.folder.items.length <= 4) {
+    router.push(`/folders/${props.folder.id}/companies/${itemId}`)
+  } else {
+    router.push(`/folders/${props.folder.id}`)
+  }
 }
 
 async function toggleFavorite() {
