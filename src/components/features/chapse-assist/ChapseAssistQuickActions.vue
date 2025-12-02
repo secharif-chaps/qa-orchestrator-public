@@ -129,11 +129,7 @@
       </Button>
     </div>
 
-    <!-- Initial State (Not yet loaded) - Show loading placeholder -->
-    <div v-else class="bg-base-200 rounded-card border border-primary-stroke p-6 flex flex-col items-center justify-center gap-4">
-      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-      <p class="text-sm text-secondary">{{ $t('chapseAssist.quickActions.loading', 'Generating personalized actions...') }}</p>
-    </div>
+    <!-- Initial State (Not yet loaded) - Component doesn't render anything until first load attempt completes -->
   </div>
 </template>
 
