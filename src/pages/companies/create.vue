@@ -253,7 +253,8 @@ const {
 } = useQuery(
   moduleTokensQuery,
   () => ({
-    organizationId: currentOrganization.value!.id,
+    // Provide safe default when organization not yet loaded
+    organizationId: currentOrganization.value?.id ?? '',
     module: 'screen' as ModuleName,
   }),
   {
