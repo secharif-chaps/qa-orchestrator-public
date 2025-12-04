@@ -28,15 +28,8 @@
       <!-- Basic Information -->
       <BasicInformationSection :user="user" />
 
-      <!-- Authentication Details -->
-      <AuthenticationDetailsSection :user="user" />
-
-      <!-- Roles and Permissions -->
-      <RolesPermissionsSection :user-roles="userRoles" />
-
       <!-- Profile Actions -->
       <ProfileActionsSection
-        :user="user"
         :refreshing="refreshing"
         @refresh-user="refreshUser"
         @sign-out="handleSignOut"
@@ -47,11 +40,9 @@
 
 <script setup lang="ts">
 import BasicInformationSection from '@/components/settings/profile/BasicInformationSection.vue'
-import AuthenticationDetailsSection from '@/components/settings/profile/AuthenticationDetailsSection.vue'
-import RolesPermissionsSection from '@/components/settings/profile/RolesPermissionsSection.vue'
 import ProfileActionsSection from '@/components/settings/profile/ProfileActionsSection.vue'
 import { useAuth } from '@/composables/useAuth'
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const { user, getUser, signOut } = useAuth()
 
@@ -60,19 +51,6 @@ const refreshing = ref(false)
 // Reactive states
 const pending = ref(true)
 const error = ref(null)
-
-// Computed properties
-const userRoles = computed(() => {
-  if (!user?.profile) return []
-
-  // Extract roles from different possible locations
-  const realmRoles = user.profile.realm_access?.roles || []
-  const resourceRoles = user.profile.resource_access
-    ? Object.values(user.profile.resource_access).flatMap((resource) => resource.roles || [])
-    : []
-
-  return [...new Set([...realmRoles, ...resourceRoles])]
-})
 
 // Methods
 const refreshUser = async () => {
