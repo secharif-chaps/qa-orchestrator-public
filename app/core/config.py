@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     
     # Dify settings
     DIFY_API_KEY: str = "app-jGJl5PAPQnAE0IzFAfkV3XjO"  # Fallback API key for chat workflows
-    DIFY_URL: str = "http://10.0.1.1/v1"
+    DIFY_URL: str = "http://10.6.1.10/v1"
     DIFY_CHAT_API_KEY: str = "app-jGJl5PAPQnAE0IzFAfkV3XjO"  # API key for quick actions chat app
     
     # CORS settings
