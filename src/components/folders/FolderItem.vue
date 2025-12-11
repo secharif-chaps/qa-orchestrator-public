@@ -57,7 +57,7 @@
                   v-for="tag in folder.tags.slice(0, 2)"
                   :key="tag"
                   :label="tag"
-                  variant="slate"
+                  variant="secondary"
                   size="xs"
                 />
                 <span v-if="folder.tags.length > 2" class="text-xs text-secondary">
@@ -132,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
+import { Tag } from '@owlint/feathers-vue'
 import type { Folder } from '@/types/folder'
 import { useToggleFolderFavorite } from '@/mutations/folders'
 import { computed, ref } from 'vue'

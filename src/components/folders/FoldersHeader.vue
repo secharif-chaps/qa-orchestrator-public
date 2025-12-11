@@ -55,14 +55,9 @@
       <!-- Search and Filters -->
       <div class="flex items-center justify-between gap-4 rounded-lg">
         <!-- Search Input -->
-        <div class="flex-1 max-w-md relative">
-          <i
-            class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
-          ></i>
-          <Input
+        <div class="flex-1 max-w-md">
+          <Searchbar
             v-model="searchTerm"
-            type="text"
-            icon="fa-solid fa-search"
             :placeholder="$t('folder.search.placeholder', 'Search items...')"
           />
         </div>
@@ -127,7 +122,7 @@
                       {{ $t('folder.addItems.watchfileDescription', 'Monitor company changes') }}
                     </div>
                   </div>
-                  <Tag variant="slate" size="xs" label="Soon" />
+                  <Tag variant="secondary" size="xs" label="Soon" />
                 </button>
 
                 <!-- GraphRag - Disabled -->
@@ -152,7 +147,7 @@
                       }}
                     </div>
                   </div>
-                  <Tag variant="slate" size="xs" label="Soon" />
+                  <Tag variant="secondary" size="xs" label="Soon" />
                 </button>
               </div>
             </div>
@@ -173,13 +168,11 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import Button from '@/components/ui/Button.vue'
+import { Button, Searchbar, Tag } from '@owlint/feathers-vue'
 import ButtonGroup from '@/components/ui/ButtonGroup.vue'
 import { useI18n } from 'vue-i18n'
 import type { Folder } from '@/types/folder'
-import Input from '../ui/Input.vue'
 import { useToggleFolderFavorite } from '@/mutations/folders'
-import Tag from '../ui/Tag.vue'
 
 interface Props {
   folder?: Folder | null

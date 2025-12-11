@@ -34,9 +34,9 @@
       <!-- Error Alert -->
       <Alert
         v-if="currentStatus === 'error'"
-        variant="error"
+        variant="danger"
         :title="$t('folder.list.error.title', 'Error')"
-        :message="$t('folder.list.error.description', 'Failed to load folders')"
+        :description="$t('folder.list.error.description', 'Failed to load folders')"
         icon="fa fa-exclamation-triangle"
       />
 
@@ -214,8 +214,7 @@ import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
 import FolderHierarchyRow from '@/components/folders/FolderHierarchyRow.vue'
 import FolderItem from '@/components/folders/FolderItem.vue'
 import FolderRestoreModal from '@/components/folders/FolderRestoreModal.vue'
-import Alert from '@/components/ui/Alert.vue'
-import Button from '@/components/ui/Button.vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 import ButtonGroup from '@/components/ui/ButtonGroup.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import { foldersQuery, foldersWithItemsQuery } from '@/queries/folders'

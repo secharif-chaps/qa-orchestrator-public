@@ -14,9 +14,9 @@
       <!-- Error State -->
       <Alert
         v-else-if="status === 'error'"
-        variant="error"
+        variant="danger"
         :title="$t('folder.detail.error.title', 'Error')"
-        :message="$t('folder.detail.error.description', 'Failed to load folder')"
+        :description="$t('folder.detail.error.description', 'Failed to load folder')"
         icon="fa fa-exclamation-triangle"
       />
 
@@ -112,7 +112,7 @@
                     </div>
                   </div>
                   <div class="col-span-2">
-                    <Tag variant="primary" :label="formatItemType(item.type)" size="sm" />
+                    <Tag intent="accent" :label="formatItemType(item.type)" size="sm" />
                   </div>
                   <div class="col-span-2">
                     <span class="text-sm text-secondary">{{ formatDate(item.created_at) }}</span>
@@ -168,7 +168,7 @@
           icon="fa fa-folder-open"
           class="py-6"
           :title="$t('folder.empty.title', 'Ce dossier est vide')"
-          :message="$t('folder.empty.description', 'Ce dossier est vide')"
+          :description="$t('folder.empty.description', 'Ce dossier est vide')"
         >
         </Alert>
 
@@ -178,7 +178,7 @@
           icon="fa fa-folder-open"
           class="py-6"
           :title="$t('folder.empty.noResults', 'Aucun résultat trouvé')"
-          :message="
+          :description="
             $t('folder.empty.tryDifferentSearch', 'Essayez avec un autre terme de recherche')
           "
         >
@@ -228,9 +228,7 @@ import CompanyRestoreModal from '@/components/companies/CompanyRestoreModal.vue'
 import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
 import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
 import FoldersHeader from '@/components/folders/FoldersHeader.vue'
-import Alert from '@/components/ui/Alert.vue'
-import Button from '@/components/ui/Button.vue'
-import Tag from '@/components/ui/Tag.vue'
+import { Alert, Button, Tag } from '@owlint/feathers-vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { folderByIdQuery } from '@/queries/folders'
 import type { Company } from '@/types/company'

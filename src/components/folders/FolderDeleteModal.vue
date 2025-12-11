@@ -51,7 +51,7 @@
           v-if="folderToDelete?.items && folderToDelete.items.length > 0"
           variant="warning"
           :title="$t('folder.delete.warning.title', 'Items will not be deleted')"
-          :message="
+          :description="
             $t(
               'folder.delete.warning.message',
               'Companies in this folder will remain accessible but will no longer be organized in this folder.',
@@ -82,8 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import Alert from '@/components/ui/Alert.vue'
-import Button from '@/components/ui/Button.vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 import type { Folder } from '@/types/folder'
 import { computed } from 'vue'
 import { useDeleteFolder } from '@/mutations/folders'
