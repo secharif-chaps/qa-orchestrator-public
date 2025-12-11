@@ -14,10 +14,10 @@
           <!-- Filters and Search -->
           <div class="flex items-center gap-4">
             <!-- Filter Buttons -->
-            <ButtonGroup v-model="folderFilter" :options="filterOptions" />
+            <Toggle v-model="folderFilter" :options="filterOptions" variant="bordered" />
 
             <!-- View Mode Toggle -->
-            <ButtonGroup v-model="viewMode" :options="viewModeOptions" />
+            <Toggle v-model="viewMode" :options="viewModeOptions" variant="bordered" />
 
             <!-- Search Input -->
             <!-- <Input
@@ -214,8 +214,7 @@ import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
 import FolderHierarchyRow from '@/components/folders/FolderHierarchyRow.vue'
 import FolderItem from '@/components/folders/FolderItem.vue'
 import FolderRestoreModal from '@/components/folders/FolderRestoreModal.vue'
-import { Alert, Button } from '@owlint/feathers-vue'
-import ButtonGroup from '@/components/ui/ButtonGroup.vue'
+import { Alert, Button, Toggle } from '@owlint/feathers-vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import { foldersQuery, foldersWithItemsQuery } from '@/queries/folders'
 import { useFoldersStore } from '@/stores/folders'
@@ -237,41 +236,36 @@ const foldersStore = useFoldersStore()
 const folderFilter = ref<'all' | 'favorites' | 'archived'>('all')
 const viewMode = ref<'grid' | 'table'>('grid')
 
-// Filter options for ButtonGroup
+// Filter options for Toggle
 const filterOptions = computed(() => [
   {
     value: 'all',
     icon: 'fas fa-folder',
-    title: $t('folder.filter.all', 'All folders'),
     label: $t('folder.filter.allLabel', 'All'),
   },
   {
     value: 'favorites',
     icon: 'fas fa-star',
-    title: $t('folder.filter.favorites', 'Favorite folders'),
     label: $t('folder.filter.favoritesLabel', 'Favorites'),
   },
   {
     value: 'archived',
     icon: 'fas fa-archive',
-    title: $t('folder.filter.archived', 'Archived folders'),
     label: $t('folder.filter.archivedLabel', 'Archived'),
   },
 ])
 
-// View mode options for ButtonGroup
+// View mode options for Toggle
 const viewModeOptions = computed(() => [
   {
     value: 'table',
     label: $t('folder.viewMode.table', 'Table'),
     icon: 'fa fa-list',
-    title: $t('folder.viewMode.tableView', 'Table View'),
   },
   {
     value: 'grid',
     label: $t('folder.viewMode.grid', 'Grid'),
     icon: 'fa fa-th-large',
-    title: $t('folder.viewMode.gridView', 'Grid View'),
   },
 ])
 

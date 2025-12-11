@@ -155,10 +155,10 @@
 
           <div class="flex items-center gap-4">
             <!-- Filter Buttons -->
-            <ButtonGroup v-model="companyFilter" :options="filterOptions" />
+            <Toggle v-model="companyFilter" :options="filterOptions" variant="bordered" />
 
             <!-- View Mode Toggle -->
-            <ButtonGroup v-model="viewMode" :options="viewModeOptions" />
+            <Toggle v-model="viewMode" :options="viewModeOptions" variant="bordered" />
           </div>
         </div>
       </div>
@@ -168,8 +168,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { Button, Searchbar, Tag } from '@owlint/feathers-vue'
-import ButtonGroup from '@/components/ui/ButtonGroup.vue'
+import { Button, Searchbar, Tag, Toggle } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
 import type { Folder } from '@/types/folder'
 import { useToggleFolderFavorite } from '@/mutations/folders'
@@ -212,35 +211,31 @@ const viewMode = defineModel<'table' | 'grid'>('viewMode', { required: true })
 // v-model for companyFilter
 const companyFilter = defineModel<'all' | 'archived'>('companyFilter', { required: true })
 
-// Filter options for ButtonGroup
+// Filter options for Toggle
 const filterOptions = computed(() => [
   {
     value: 'all',
     icon: 'fas fa-building',
-    title: t('folder.filter.all'),
     label: t('folder.filter.allLabel'),
   },
   {
     value: 'archived',
     icon: 'fas fa-archive',
-    title: t('folder.filter.archived'),
     label: t('folder.filter.archivedLabel'),
   },
 ])
 
-// View mode options for ButtonGroup
+// View mode options for Toggle
 const viewModeOptions = computed(() => [
   {
     value: 'table',
     label: t('folder.viewMode.table'),
     icon: 'fa fa-list',
-    title: t('folder.viewMode.tableView'),
   },
   {
     value: 'grid',
     label: t('folder.viewMode.grid'),
     icon: 'fa fa-th-large',
-    title: t('folder.viewMode.gridView'),
   },
 ])
 
