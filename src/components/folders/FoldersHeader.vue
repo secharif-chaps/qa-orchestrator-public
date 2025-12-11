@@ -27,7 +27,7 @@
           <Button
             variant="tertiary"
             :icon="folder?.is_favorite ? 'fas fa-star' : 'far fa-star'"
-            :class="folder?.is_favorite ? 'text-yellow-500' : ''"
+            :class="folder?.is_favorite ? 'text-amber-600 ' : ''"
             :label="
               folder?.is_favorite
                 ? $t('folder.actions.unfavorite', 'Unfavorite')
@@ -62,7 +62,7 @@
           />
         </div>
 
-        <div class="flex gap-2">
+        <div class="flex gap-2 items-center">
           <div class="relative text-center">
             <Button
               variant="secondary"
@@ -155,10 +155,10 @@
 
           <div class="flex items-center gap-4">
             <!-- Filter Buttons -->
-            <Toggle v-model="companyFilter" :options="filterOptions" variant="bordered" />
+            <Toggle v-model="companyFilter" :options="filterOptions" variant="pill" />
 
             <!-- View Mode Toggle -->
-            <Toggle v-model="viewMode" :options="viewModeOptions" variant="bordered" />
+            <Toggle v-model="viewMode" :options="viewModeOptions" variant="pill" />
           </div>
         </div>
       </div>

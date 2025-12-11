@@ -14,10 +14,10 @@
           <!-- Filters and Search -->
           <div class="flex items-center gap-4">
             <!-- Filter Buttons -->
-            <Toggle v-model="folderFilter" :options="filterOptions" variant="bordered" />
+            <Toggle v-model="folderFilter" :options="filterOptions" variant="pill" />
 
             <!-- View Mode Toggle -->
-            <Toggle v-model="viewMode" :options="viewModeOptions" variant="bordered" />
+            <Toggle v-model="viewMode" :options="viewModeOptions" variant="pill" />
 
             <!-- Search Input -->
             <!-- <Input
