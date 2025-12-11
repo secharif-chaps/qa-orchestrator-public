@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@owlint/feathers-vue':
-        specifier: ^0.2.36
-        version: 0.2.36(typescript@5.8.3)
+        specifier: ^0.3.11-beta.3
+        version: 0.3.11-beta.4(typescript@5.8.3)
       '@pinia/colada':
         specifier: ^0.17.1
         version: 0.17.1(pinia@3.0.3(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3)))
@@ -561,8 +561,8 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@owlint/feathers-vue@0.2.36':
-    resolution: {integrity: sha1-2MXtEAKALfQkaxDXHsbHdrtmAMs=, tarball: https://git.fenrys.io/api/v4/projects/454/packages/npm/@owlint/feathers-vue/-/@owlint/feathers-vue-0.2.36.tgz}
+  '@owlint/feathers-vue@0.3.11-beta.4':
+    resolution: {integrity: sha1-F/ZV9X7b1Otp7NZOCtGZd67B75c=, tarball: https://git.fenrys.io/api/v4/projects/454/packages/npm/@owlint/feathers-vue/-/@owlint/feathers-vue-0.3.11-beta.4.tgz}
 
   '@pinia/colada-devtools@0.1.5':
     resolution: {integrity: sha512-KqWS6Uu8cOO6LTwbA5TxrMpExmZdffJiBYTDkp1l87JNNQ+Kj6tuYyrC3MuYz2ZY+OpwDGWX7IHlkDEaCu+PYQ==}
@@ -1945,6 +1945,11 @@ packages:
     peerDependencies:
       vue: '>= 3.2.0'
 
+  reka-ui@2.6.1:
+    resolution: {integrity: sha512-XK7cJDQoNuGXfCNzBBo/81Yg/OgjPwvbabnlzXG2VsdSgNsT6iIkuPBPr+C0Shs+3bb0x0lbPvgQAhMSCKm5Ww==}
+    peerDependencies:
+      vue: '>= 3.2.0'
+
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
     engines: {node: '>=4'}
@@ -2728,11 +2733,11 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.19.1
 
-  '@owlint/feathers-vue@0.2.36(typescript@5.8.3)':
+  '@owlint/feathers-vue@0.3.11-beta.4(typescript@5.8.3)':
     dependencies:
       '@headlessui/vue': 1.7.23(vue@3.5.18(typescript@5.8.3))
       gsap: 3.13.0
-      reka-ui: 2.4.1(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))
+      reka-ui: 2.6.1(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))
       tailwindcss: 4.1.10
       vue: 3.5.18(typescript@5.8.3)
       vue-i18n: 10.0.8(vue@3.5.18(typescript@5.8.3))
@@ -4093,6 +4098,23 @@ snapshots:
   readdirp@4.1.2: {}
 
   reka-ui@2.4.1(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3)):
+    dependencies:
+      '@floating-ui/dom': 1.7.3
+      '@floating-ui/vue': 1.1.8(vue@3.5.18(typescript@5.8.3))
+      '@internationalized/date': 3.8.2
+      '@internationalized/number': 3.6.4
+      '@tanstack/vue-virtual': 3.13.12(vue@3.5.18(typescript@5.8.3))
+      '@vueuse/core': 12.8.2(typescript@5.8.3)
+      '@vueuse/shared': 12.8.2(typescript@5.8.3)
+      aria-hidden: 1.2.6
+      defu: 6.1.4
+      ohash: 2.0.11
+      vue: 3.5.18(typescript@5.8.3)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - typescript
+
+  reka-ui@2.6.1(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3)):
     dependencies:
       '@floating-ui/dom': 1.7.3
       '@floating-ui/vue': 1.1.8(vue@3.5.18(typescript@5.8.3))

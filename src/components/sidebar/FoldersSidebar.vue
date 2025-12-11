@@ -3,24 +3,21 @@
     <!-- Header -->
     <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
       <h2 class="text-headline-2xl">{{ $t('sidebar.foldersSidebar.title', 'Folders') }}</h2>
-      <RouterLink to="/folders" class="text-xs text-sage-300 hover:text-white transition-colors">
-        {{ $t('sidebar.foldersSidebar.viewAll', 'View all folders →') }}
-      </RouterLink>
+      <Button
+        variant="tertiary"
+        size="sm"
+        :label="$t('sidebar.foldersSidebar.viewAll', 'View all folders')"
+        @click="$router.push('/folders')"
+      />
     </div>
 
     <!-- Search -->
     <div class="px-4 pt-4 pb-2">
-      <div class="relative">
-        <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-sage-400 text-sm"></i>
-        <Input
-          v-model="searchTerm"
-          type="text"
-          icon="fa fa-search"
-          :placeholder="$t('sidebar.foldersSidebar.search', 'Search a folder...')"
-          dark
-          size="sm"
-        />
-      </div>
+      <Searchbar
+        v-model="searchTerm"
+        :placeholder="$t('sidebar.foldersSidebar.search', 'Search a folder...')"
+        size="sm"
+      />
     </div>
 
     <!-- Folders List -->
@@ -106,8 +103,8 @@ import { useRouter } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { foldersWithItemsQuery } from '@/queries/folders'
 import type { Folder } from '@/types/folder'
+import { Button, Searchbar } from '@owlint/feathers-vue'
 import FolderRow from './FolderRow.vue'
-import Input from '../ui/Input.vue'
 
 const router = useRouter()
 

@@ -2,9 +2,9 @@
   <div class="flex items-start gap-3">
     <!-- Icon with badge -->
     <div class="relative flex-shrink-0">
-      <Badge variant="secondary" color="sage" :icon="icon" size="md" />
+      <Badge variant="secondary" color="sage" :icon="icon" />
       <div class="absolute -bottom-0.5 -right-0.5">
-        <Badge variant="primary" color="success" icon="fa fa-plus" size="xs" />
+        <Badge variant="secondary" color="sage" icon="fa fa-plus" size="xs" />
       </div>
     </div>
 
@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import Badge from '@/components/ui/Badge.vue'
+import { Badge } from '@owlint/feathers-vue'
 
 interface Props {
   icon: string

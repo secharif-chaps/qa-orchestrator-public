@@ -10,18 +10,14 @@
   >
     <div class="flex items-start gap-3">
       <!-- Icon Badge -->
-      <Badge variant="secondary" :color="iconColor" :icon="icon" size="md" />
+      <Badge variant="secondary" :color="iconColor" :icon="icon" />
 
       <!-- Content -->
       <div class="flex-1 min-w-0">
         <!-- Title and Unread Indicator -->
         <div class="flex items-start justify-between gap-2 mb-1">
           <h4 class="text-sm font-medium text-white">{{ title }}</h4>
-          <span
-            v-if="!read"
-            class="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1.5"
-            aria-label="Unread"
-          ></span>
+          <Bullet v-if="!read" intent="info" aria-label="Unread" />
         </div>
 
         <!-- Message -->
@@ -30,10 +26,7 @@
         <!-- Time and Category -->
         <div class="flex items-center gap-3 text-xs text-sage-500">
           <span>{{ time }}</span>
-          <span v-if="category" class="flex items-center gap-1">
-            <i class="fa fa-tag"></i>
-            {{ category }}
-          </span>
+          <Tag v-if="category" :label="category" variant="secondary" size="xs" />
         </div>
       </div>
     </div>
@@ -42,7 +35,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import Badge, { type BadgeColor } from './Badge.vue'
+import { Badge, Bullet, Tag } from '@owlint/feathers-vue'
+
+// Vuellar Badge colors
+type BadgeColor = 'sage' | 'almond' | 'pink' | 'indigo' | 'yellow' | 'cherry' | 'cyan'
 
 interface Props {
   id: string | number

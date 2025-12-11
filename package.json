@@ -16,7 +16,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@owlint/feathers-vue": "^0.2.36",
+    "@owlint/feathers-vue": "^0.3.11-beta.3",
     "@pinia/colada": "^0.17.1",
     "@pinia/colada-devtools": "^0.1.5",
     "@tailwindcss/vite": "^4.1.11",

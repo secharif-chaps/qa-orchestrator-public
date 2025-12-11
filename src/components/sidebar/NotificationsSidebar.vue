@@ -3,13 +3,13 @@
     <!-- Header -->
     <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
       <h2 class="text-headline-2xl">{{ $t('sidebar.notifications.title', 'Notifications') }}</h2>
-      <button
+      <Button
         v-if="unreadCount > 0"
-        class="text-xs text-sage-300 hover:text-white transition-colors"
+        variant="tertiary"
+        size="sm"
+        :label="$t('sidebar.notifications.markAllRead', 'Mark all as read')"
         @click="markAllAsRead"
-      >
-        {{ $t('sidebar.notifications.markAllRead', 'Mark all as read') }}
-      </button>
+      />
     </div>
 
     <!-- Notifications List -->
@@ -20,13 +20,11 @@
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="px-4 py-6">
-        <div class="text-center">
-          <i class="fa fa-exclamation-triangle text-2xl text-error mb-2"></i>
-          <p class="text-sm text-sage-400">
-            {{ $t('sidebar.notifications.errorLoading', 'Unable to load notifications') }}
-          </p>
-        </div>
+      <div v-else-if="error" class="flex flex-col items-center justify-center py-8 gap-3 px-4">
+        <Badge variant="secondary" icon="fa fa-exclamation-triangle" size="lg" />
+        <p class="text-sm text-sage-400 text-center">
+          {{ $t('sidebar.notifications.errorLoading', 'Unable to load notifications') }}
+        </p>
       </div>
 
       <!-- Notifications -->
@@ -49,33 +47,33 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="flex flex-col items-center justify-center py-12 px-4">
-        <div class="w-16 h-16 rounded-full bg-sage-800/50 flex items-center justify-center mb-4">
-          <i class="fa fa-bell text-2xl text-sage-500"></i>
+      <div v-else class="flex flex-col items-center justify-center py-12 px-4 gap-4">
+        <Badge variant="secondary" icon="fa fa-bell" size="lg" />
+        <div class="text-center">
+          <h3 class="text-sm font-medium text-white mb-2">
+            {{ $t('sidebar.notifications.noNotifications', 'No notifications') }}
+          </h3>
+          <p class="text-xs text-sage-400">
+            {{
+              $t(
+                'sidebar.notifications.upToDate',
+                'You are up to date! All notifications will appear here.',
+              )
+            }}
+          </p>
         </div>
-        <h3 class="text-sm font-medium text-white mb-2">
-          {{ $t('sidebar.notifications.noNotifications', 'No notifications') }}
-        </h3>
-        <p class="text-xs text-sage-400 text-center">
-          {{
-            $t(
-              'sidebar.notifications.upToDate',
-              'You are up to date! All notifications will appear here.',
-            )
-          }}
-        </p>
       </div>
     </div>
 
     <!-- Footer Actions -->
-    <div class="border-t border-sage-800 px-4 py-3">
-      <button
-        class="w-full text-sm text-sage-300 hover:text-white transition-colors flex items-center justify-center gap-2"
+    <div class="border-t border-sage-800 px-4 py-3 flex justify-center">
+      <Button
+        variant="tertiary"
+        size="sm"
+        :label="$t('sidebar.notifications.viewAll', 'View all notifications')"
+        icon-right="fa fa-arrow-right"
         @click="$router.push('/notifications')"
-      >
-        {{ $t('sidebar.notifications.viewAll', 'View all notifications') }}
-        <i class="fa fa-arrow-right text-xs"></i>
-      </button>
+      />
     </div>
   </div>
 </template>
@@ -84,11 +82,14 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuery } from '@pinia/colada'
+import { Badge, Button } from '@owlint/feathers-vue'
 import NotificationItem from '../ui/NotificationItem.vue'
-import { type BadgeColor } from '../ui/Badge.vue'
 import { organizationActivitiesQuery } from '@/queries/organization'
 import { formatRelativeTime } from '@/utils/time'
 import { useI18n } from 'vue-i18n'
+
+// Vuellar Badge colors
+type BadgeColor = 'sage' | 'almond' | 'pink' | 'indigo' | 'yellow' | 'cherry' | 'cyan'
 
 interface Notification {
   id: string
@@ -138,9 +139,8 @@ const notifications = computed<Notification[]>(() => {
       read: readNotifications.value.has(notificationId),
       icon: {
         icon: isCompany ? 'fa fa-building' : 'fa fa-folder',
-        color: isCompany ? 'accent' : 'success',
+        color: isCompany ? 'pink' : 'sage',
       },
-      // Note: No action link since we don't have IDs in the new API
       action: undefined,
     }
   })

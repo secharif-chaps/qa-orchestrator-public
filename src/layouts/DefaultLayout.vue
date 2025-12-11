@@ -22,7 +22,7 @@
         class="h-full grow shrink-0 transition-all duration-300"
         :class="[isFullscreen ? 'w-screen' : isOpen ? 'w-[320px]' : 'w-0']"
       >
-        <div class="pt-[70px] h-screen fixed" :class="[isFullscreen ? 'w-full' : ' w-[320px]']">
+        <div class="pt-[70px] h-screen fixed dark" :class="[isFullscreen ? 'w-full' : ' w-[320px]']">
           <Sidebar />
         </div>
       </div>
@@ -34,16 +34,12 @@
 import Appbar from '@/components/global/appbar.vue'
 import Sidebar from '@/components/global/sidebar.vue'
 import Breadcrumbs from '@/components/ui/Breadcrumbs.vue'
-import Button from '@/components/ui/Button.vue'
 import { useSidebarStore } from '@/stores/sidebar'
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
 
 const sidebarStore = useSidebarStore()
 
 const isFullscreen = computed(() => sidebarStore.isFullscreen)
 
 const isOpen = computed(() => sidebarStore.isOpen())
-
-const route = useRoute()
 </script>
