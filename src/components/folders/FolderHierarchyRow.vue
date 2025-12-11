@@ -32,7 +32,7 @@
 
         <!-- Items count -->
         <div class="col-span-2">
-          <Tag variant="slate" :label="$t('folder.itemsChip', folder.items?.length || 0)" size="sm" />
+          <Tag variant="secondary" :label="$t('folder.itemsChip', folder.items?.length || 0)" size="sm" />
         </div>
 
         <!-- Created date -->
@@ -103,7 +103,7 @@
 
           <!-- Item type -->
           <div class="col-span-2">
-            <Tag variant="primary" :label="formatItemType(item.type)" size="xs" />
+            <Tag intent="accent" :label="formatItemType(item.type)" size="xs" />
           </div>
 
           <!-- Item created date -->
@@ -141,8 +141,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Tag from '@/components/ui/Tag.vue'
-import Button from '@/components/ui/Button.vue'
+import { Tag, Button } from '@owlint/feathers-vue'
 import type { Folder } from '@/types/folder'
 
 const { t, locale } = useI18n()

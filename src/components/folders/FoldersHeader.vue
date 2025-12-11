@@ -27,7 +27,7 @@
           <Button
             variant="tertiary"
             :icon="folder?.is_favorite ? 'fas fa-star' : 'far fa-star'"
-            :class="folder?.is_favorite ? 'text-yellow-500' : ''"
+            :class="folder?.is_favorite ? 'text-amber-600 ' : ''"
             :label="
               folder?.is_favorite
                 ? $t('folder.actions.unfavorite', 'Unfavorite')
@@ -55,19 +55,14 @@
       <!-- Search and Filters -->
       <div class="flex items-center justify-between gap-4 rounded-lg">
         <!-- Search Input -->
-        <div class="flex-1 max-w-md relative">
-          <i
-            class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
-          ></i>
-          <Input
+        <div class="flex-1 max-w-md">
+          <Searchbar
             v-model="searchTerm"
-            type="text"
-            icon="fa-solid fa-search"
             :placeholder="$t('folder.search.placeholder', 'Search items...')"
           />
         </div>
 
-        <div class="flex gap-2">
+        <div class="flex gap-2 items-center">
           <div class="relative text-center">
             <Button
               variant="secondary"
@@ -127,7 +122,7 @@
                       {{ $t('folder.addItems.watchfileDescription', 'Monitor company changes') }}
                     </div>
                   </div>
-                  <Tag variant="slate" size="xs" label="Soon" />
+                  <Tag variant="secondary" size="xs" label="Soon" />
                 </button>
 
                 <!-- GraphRag - Disabled -->
@@ -152,7 +147,7 @@
                       }}
                     </div>
                   </div>
-                  <Tag variant="slate" size="xs" label="Soon" />
+                  <Tag variant="secondary" size="xs" label="Soon" />
                 </button>
               </div>
             </div>
@@ -160,10 +155,10 @@
 
           <div class="flex items-center gap-4">
             <!-- Filter Buttons -->
-            <ButtonGroup v-model="companyFilter" :options="filterOptions" />
+            <Toggle v-model="companyFilter" :options="filterOptions" variant="pill" />
 
             <!-- View Mode Toggle -->
-            <ButtonGroup v-model="viewMode" :options="viewModeOptions" />
+            <Toggle v-model="viewMode" :options="viewModeOptions" variant="pill" />
           </div>
         </div>
       </div>
@@ -173,13 +168,10 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import Button from '@/components/ui/Button.vue'
-import ButtonGroup from '@/components/ui/ButtonGroup.vue'
+import { Button, Searchbar, Tag, Toggle } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
 import type { Folder } from '@/types/folder'
-import Input from '../ui/Input.vue'
 import { useToggleFolderFavorite } from '@/mutations/folders'
-import Tag from '../ui/Tag.vue'
 
 interface Props {
   folder?: Folder | null
@@ -219,35 +211,31 @@ const viewMode = defineModel<'table' | 'grid'>('viewMode', { required: true })
 // v-model for companyFilter
 const companyFilter = defineModel<'all' | 'archived'>('companyFilter', { required: true })
 
-// Filter options for ButtonGroup
+// Filter options for Toggle
 const filterOptions = computed(() => [
   {
     value: 'all',
     icon: 'fas fa-building',
-    title: t('folder.filter.all'),
     label: t('folder.filter.allLabel'),
   },
   {
     value: 'archived',
     icon: 'fas fa-archive',
-    title: t('folder.filter.archived'),
     label: t('folder.filter.archivedLabel'),
   },
 ])
 
-// View mode options for ButtonGroup
+// View mode options for Toggle
 const viewModeOptions = computed(() => [
   {
     value: 'table',
     label: t('folder.viewMode.table'),
     icon: 'fa fa-list',
-    title: t('folder.viewMode.tableView'),
   },
   {
     value: 'grid',
     label: t('folder.viewMode.grid'),
     icon: 'fa fa-th-large',
-    title: t('folder.viewMode.gridView'),
   },
 ])
 

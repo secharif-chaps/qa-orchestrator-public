@@ -77,7 +77,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import type { FolderItem } from '@/types/folder'
 import { useI18n } from 'vue-i18n'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'

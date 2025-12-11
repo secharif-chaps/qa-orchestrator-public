@@ -72,7 +72,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Folder } from '@/types/folder'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import { restoreFolder as apiRestoreFolder } from '@/api/folders'
 import { toast } from '@/utils/toast'
 
