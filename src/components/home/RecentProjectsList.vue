@@ -4,9 +4,12 @@
       <h3 class="font-semibold text-gray-900 dark:text-white">
         {{ $t('home.recentProjects.title') }}
       </h3>
-      <button class="text-xs text-sage-600 hover:text-sage-800" @click="router.push('/folders')">
-        {{ $t('home.recentProjects.viewAll') }}
-      </button>
+      <Button
+        variant="tertiary"
+        size="sm"
+        :label="$t('home.recentProjects.viewAll')"
+        @click="router.push('/folders')"
+      />
     </div>
 
     <!-- Loading State -->
@@ -17,10 +20,10 @@
     <!-- Error State -->
     <div v-else-if="error" class="py-6">
       <Alert
-        variant="error"
+        variant="danger"
         title="Unable to load recent projects"
-        message="There was a problem loading your recent projects. Please try again later."
-        icon="fa fa-exclamation-triangle"
+        description="There was a problem loading your recent projects. Please try again later."
+        icon="fa-exclamation-triangle"
       />
     </div>
 
@@ -53,8 +56,8 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { Alert, Button } from '@owlint/feathers-vue'
 import Card from '@/components/ui/Card.vue'
-import Alert from '@/components/ui/Alert.vue'
 import RecentProjectItem from './RecentProjectItem.vue'
 
 interface Project {
@@ -64,7 +67,7 @@ interface Project {
   folderId?: string | null
   timeAgo: string
   badge?: {
-    variant: 'info' | 'success' | 'warning' | 'error' | 'primary' | 'slate'
+    intent: 'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'info'
     label: string
   }
 }

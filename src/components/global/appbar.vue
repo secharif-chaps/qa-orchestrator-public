@@ -1,6 +1,6 @@
 <template>
   <div class="w-full z-20">
-    <div class="bg-sage-950 fixed top-0 w-full z-20 h-[68px] pr-6">
+    <div class="dark bg-sage-950 fixed top-0 w-full z-20 h-[68px] pr-6">
       <div class="flex items-center justify-between h-full">
         <RouterLink to="/">
           <div
@@ -22,50 +22,32 @@
           </div> -->
 
           <!-- Dev mode only theme toggle -->
-          <Button
+          <VButton
             v-if="isDebugUser"
             variant="tertiary"
-            dark
             :icon="isDark ? 'fa fa-sun' : 'fa fa-moon'"
-            icon-only
             @click="toggleTheme"
           />
 
           <!-- Dev mode only language toggle -->
-          <Button
+          <VButton
             v-if="isDebugUser"
             variant="tertiary"
-            dark
-            :icon="'fa fa-language'"
-            icon-only
+            icon="fa fa-language"
             @click="toggleLocale"
           />
 
           <!-- Admin button - only visible to users with admin.organizations permission -->
-          <Button
+          <VButton
             v-if="hasAdminPermission"
             variant="tertiary"
-            dark
             icon="fa fa-shield"
-            icon-only
             @click="$router.push('/admin')"
           />
 
-          <!-- Team button - visible to users with organization.read permission -->
-          <!-- <Button
-            v-if="hasTeamPermission"
+          <VButton
             variant="tertiary"
-            dark
-            icon="fa fa-users"
-            icon-only
-            @click="$router.push('/team')"
-          /> -->
-
-          <Button
-            variant="tertiary"
-            dark
             icon="fa fa-arrow-right-from-bracket"
-            icon-only
             @click="handleLogout"
           />
 
@@ -111,6 +93,7 @@ import logo_small from '@/assets/CHAPSVISION_LOGO_ChapsVision_logo_icone_amande.
 import { useTheme } from '@/composables/useTheme'
 import { useAuthStore } from '@/stores/auth'
 import { useSidebarStore } from '@/stores/sidebar'
+import { Button as VButton } from '@owlint/feathers-vue'
 import Button from '@/components/ui/Button.vue'
 import { useQuery } from '@pinia/colada'
 import { currentOrganizationQuery } from '@/queries/organization'
@@ -127,8 +110,6 @@ const { locale } = useI18n()
 
 // Permission checks for navigation buttons
 const hasAdminPermission = computed(() => authStore.hasPermission('admin.organizations'))
-// Dev mode detection
-const isDev = import.meta.env.DEV
 
 const isDebugUser = computed(() => {
   const username = authStore.user?.profile?.preferred_username?.toLowerCase()

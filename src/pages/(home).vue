@@ -40,7 +40,6 @@
 import { useAuth } from '@/composables/useAuth'
 import { recentCompaniesQuery } from '@/queries/companies'
 import { organizationActivitiesQuery, currentOrganizationQuery } from '@/queries/organization'
-import Button from '@/components/ui/Button.vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import ModulesShowcase from '@/components/home/ModulesShowcase.vue'
 import RecentProjectsList from '@/components/home/RecentProjectsList.vue'
@@ -137,7 +136,7 @@ const recentProjects = computed(() => {
       folderName: company.folder_name || t('home.recentProjects.noFolder'),
       folderId: company.folder_id,
       timeAgo,
-      badge: { variant: 'info' as const, label: t('home.recentProjects.badge.collaborative') },
+      badge: { intent: 'info' as const, label: t('home.recentProjects.badge.collaborative') },
     }
   })
 })

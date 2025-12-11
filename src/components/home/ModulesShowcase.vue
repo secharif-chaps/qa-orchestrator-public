@@ -13,12 +13,11 @@
         <!-- Card Content - grows to fill space -->
         <div class="flex-1 flex flex-col gap-4">
           <div class="flex items-start space-x-3">
-            <!-- Avatar Badge -->
+            <!-- Avatar -->
             <Badge
-              variant="secondary"
-              :color="module.unlocked ? module.color : 'slate'"
+              :color="module.unlocked ? module.color : 'sage'"
               :icon="module.icon"
-              size="md"
+              variant="secondary"
             />
 
             <!-- Title and Secondary Text -->
@@ -29,12 +28,12 @@
                 </h3>
                 <div>
                   <Tag
-                    :variant="
+                    :intent="
                       module.unlocked
                         ? 'success'
                         : module.status === 'contact-sales'
                           ? 'warning'
-                          : 'slate'
+                          : 'neutral'
                     "
                     :label="
                       module.unlocked
@@ -44,7 +43,6 @@
                           : $t('home.modules.status.comingSoon', 'Coming Soon')
                     "
                     size="xs"
-                    rounded
                   />
                 </div>
               </div>
@@ -64,7 +62,7 @@
             <Button
               v-if="module.status === 'available'"
               variant="secondary"
-              color="warning"
+              intent="warning"
               size="sm"
               :label="$t('home.modules.actions.companyScreen', 'Create a Screen')"
               icon="fa-solid fa-search"
@@ -73,7 +71,7 @@
             <Button
               v-if="module.status === 'contact-sales'"
               variant="secondary"
-              color="warning"
+              intent="warning"
               size="sm"
               :label="$t('home.modules.actions.contactSales', 'Contact Sales')"
               icon="fa-solid fa-envelope"
@@ -106,9 +104,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import Badge from '@/components/ui/Badge.vue'
-import Tag from '@/components/ui/Tag.vue'
-import Button from '@/components/ui/Button.vue'
+import { Tag, Button, Badge } from '@owlint/feathers-vue'
 import Card from '../ui/Card.vue'
 
 interface Module {
@@ -120,18 +116,7 @@ interface Module {
   soon: boolean
   status: 'contact-sales' | 'coming-soon' | 'available' | 'external'
   favorite: boolean
-  color:
-    | 'sage'
-    | 'almond'
-    | 'success'
-    | 'warning'
-    | 'error'
-    | 'info'
-    | 'accent'
-    | 'slate'
-    | 'yellow'
-    | 'indigo'
-    | 'orange'
+  color: "indigo" | "sage" | "almond" | "yellow" | "pink" | "cherry" | "cyan" | undefined
 }
 
 const router = useRouter()
@@ -164,7 +149,7 @@ const modules = computed<Module[]>(() => [
     soon: false,
     status: 'contact-sales',
     favorite: true,
-    color: 'orange',
+    color: 'cherry',
   },
   {
     name: t('home.modules.explore.name', 'Explore'),
@@ -202,14 +187,5 @@ const handleModuleAction = (module: Module) => {
 const handleContactSales = (module: Module) => {
   // Implement contact sales functionality
   console.log('Contact sales for:', module.name)
-}
-
-const handleShare = (module: Module) => {
-  // Implement share functionality
-  console.log('Share module:', module.name)
-}
-
-const handleFavorite = (module: Module) => {
-  module.favorite = !module.favorite
 }
 </script>

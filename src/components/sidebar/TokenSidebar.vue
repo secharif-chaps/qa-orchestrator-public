@@ -4,10 +4,9 @@
     <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
       <h2 class="text-headline-2xl">{{ $t('sidebar.tokens.title', 'Credits') }}</h2>
       <Tag
-        variant="success"
+        intent="success"
         :label="`${totalTokens} ${$t('sidebar.tokens.credits', 'credits')}`"
         icon="fa fa-coins"
-        rounded
         size="md"
       />
     </div>
@@ -20,153 +19,83 @@
       </div>
 
       <!-- Token History -->
-      <div v-else class="space-y-6">
+      <div v-else class="flex flex-col gap-6">
         <!-- Empty State -->
-        <div v-if="hasNoHistory" class="flex flex-col items-center justify-center py-8 text-center">
-          <div
-            class="w-14 h-14 rounded-full bg-sage-800/50 flex items-center justify-center mb-3"
-          >
-            <i class="fa fa-coins text-2xl text-sage-500"></i>
+        <div v-if="hasNoHistory" class="flex flex-col items-center justify-center py-8 gap-3">
+          <Badge variant="secondary" icon="fa fa-coins" size="lg" />
+          <div class="text-center">
+            <h3 class="text-sm font-semibold text-white mb-1">
+              {{ $t('sidebar.tokens.noHistory', 'No usage history') }}
+            </h3>
+            <p class="text-xs text-sage-400 px-4">
+              {{
+                $t(
+                  'sidebar.tokens.noHistoryDesc',
+                  'Token usage will appear here when you create company cards.',
+                )
+              }}
+            </p>
           </div>
-          <h3 class="text-sm font-semibold text-white mb-1">
-            {{ $t('sidebar.tokens.noHistory', 'No usage history') }}
-          </h3>
-          <p class="text-xs text-sage-400 px-4">
-            {{
-              $t(
-                'sidebar.tokens.noHistoryDesc',
-                'Token usage will appear here when you create company cards.',
-              )
-            }}
-          </p>
         </div>
 
         <!-- Today Section -->
-        <div v-if="groupedHistory.today.length > 0">
-          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider mb-3">
+        <div v-if="groupedHistory.today.length > 0" class="flex flex-col gap-3">
+          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider">
             {{ $t('sidebar.tokens.today', "Aujourd'hui") }}
           </h3>
-          <div class="space-y-2">
-            <div
+          <div class="flex flex-col gap-2">
+            <TokenHistoryItem
               v-for="company in groupedHistory.today"
               :key="company.id"
-              class="bg-sage-800/50 rounded-lg p-3 hover:bg-sage-800 transition-colors"
-            >
-              <div class="flex items-start gap-3">
-                <!-- Icon -->
-                <div
-                  class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-purple-500/20"
-                >
-                  <i class="fa fa-building text-purple-400 text-sm"></i>
-                </div>
-
-                <!-- Content -->
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between gap-2">
-                    <h4 class="text-sm font-medium text-white truncate">{{ company.name }}</h4>
-                    <span
-                      class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 bg-red-500/20 text-red-300"
-                    >
-                      -35
-                    </span>
-                  </div>
-                  <p class="text-xs text-sage-400 mt-1">
-                    {{ $t('sidebar.tokens.createdBy', 'Fiche créée par') }}
-                    {{ company.owner_username }}
-                  </p>
-                </div>
-              </div>
-            </div>
+              :name="company.name"
+              :owner-username="company.owner_username"
+            />
           </div>
         </div>
 
         <!-- Yesterday Section -->
-        <div v-if="groupedHistory.yesterday.length > 0">
-          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider mb-3">
+        <div v-if="groupedHistory.yesterday.length > 0" class="flex flex-col gap-3">
+          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider">
             {{ $t('sidebar.tokens.yesterday', 'Hier') }}
           </h3>
-          <div class="space-y-2">
-            <div
+          <div class="flex flex-col gap-2">
+            <TokenHistoryItem
               v-for="company in groupedHistory.yesterday"
               :key="company.id"
-              class="bg-sage-800/50 rounded-lg p-3 hover:bg-sage-800 transition-colors"
-            >
-              <div class="flex items-start gap-3">
-                <!-- Icon -->
-                <div
-                  class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-purple-500/20"
-                >
-                  <i class="fa fa-building text-purple-400 text-sm"></i>
-                </div>
-
-                <!-- Content -->
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between gap-2">
-                    <h4 class="text-sm font-medium text-white truncate">{{ company.name }}</h4>
-                    <span
-                      class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 bg-red-500/20 text-red-300"
-                    >
-                      -35
-                    </span>
-                  </div>
-                  <p class="text-xs text-sage-400 mt-1">
-                    {{ $t('sidebar.tokens.createdBy', 'Fiche créée par') }}
-                    {{ company.owner_username }}
-                  </p>
-                </div>
-              </div>
-            </div>
+              :name="company.name"
+              :owner-username="company.owner_username"
+            />
           </div>
         </div>
 
         <!-- Other Date Sections -->
-        <div v-for="(companies, dateKey) in groupedHistory.dates" :key="dateKey">
-          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider mb-3">
+        <div
+          v-for="(companies, dateKey) in groupedHistory.dates"
+          :key="dateKey"
+          class="flex flex-col gap-3"
+        >
+          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider">
             {{ dateKey }}
           </h3>
-          <div class="space-y-2">
-            <div
+          <div class="flex flex-col gap-2">
+            <TokenHistoryItem
               v-for="company in companies"
               :key="company.id"
-              class="bg-sage-800/50 rounded-lg p-3 hover:bg-sage-800 transition-colors"
-            >
-              <div class="flex items-start gap-3">
-                <!-- Icon -->
-                <div
-                  class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-purple-500/20"
-                >
-                  <i class="fa fa-building text-purple-400 text-sm"></i>
-                </div>
-
-                <!-- Content -->
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-start justify-between gap-2">
-                    <h4 class="text-sm font-medium text-white truncate">{{ company.name }}</h4>
-                    <span
-                      class="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 bg-red-500/20 text-red-300"
-                    >
-                      -35
-                    </span>
-                  </div>
-                  <p class="text-xs text-sage-400 mt-1">
-                    {{ $t('sidebar.tokens.createdBy', 'Fiche créée par') }}
-                    {{ company.owner_username }}
-                  </p>
-                </div>
-              </div>
-            </div>
+              :name="company.name"
+              :owner-username="company.owner_username"
+            />
           </div>
         </div>
 
-        <!-- See All History Link (hidden when on history page or when no history) -->
+        <!-- See All History Link -->
         <div v-if="!isOnHistoryPage && !hasNoHistory" class="pt-2">
-          <button
-            class="text-sm text-sage-300 hover:text-white transition-colors flex items-center gap-2"
+          <Button
+            variant="tertiary"
+            size="sm"
+            :label="$t('sidebar.tokens.viewHistory', 'View all history')"
+            icon-right="fa fa-arrow-right"
             @click="$router.push('/tokens/history')"
-          >
-            {{ $t('sidebar.tokens.viewHistory', 'View all history') }}
-            <i class="fa fa-arrow-right text-xs"></i>
-          </button>
+          />
         </div>
       </div>
     </div>
@@ -177,10 +106,11 @@
 import { computed } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { useRoute } from 'vue-router'
+import { Tag, Badge, Button } from '@owlint/feathers-vue'
 import { organizationModulesQuery } from '@/queries/tokens'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { recentCompaniesQuery } from '@/queries/companies'
-import Tag from '@/components/ui/Tag.vue'
+import TokenHistoryItem from './TokenHistoryItem.vue'
 import type { Company } from '@/types/company'
 
 const route = useRoute()
@@ -213,10 +143,8 @@ const totalTokens = computed(() => {
 })
 
 // Helper function to format relative date
-const formatRelativeDate = (dateString: string | null | undefined) => {
-  if (!dateString) {
-    return 'unknown'
-  }
+function formatRelativeDate(dateString: string | null | undefined) {
+  if (!dateString) return 'unknown'
 
   const date = new Date(dateString)
   const today = new Date()

@@ -12,20 +12,16 @@
     <!-- Error State -->
     <div v-else-if="error" class="py-6">
       <Alert
-        variant="error"
+        variant="danger"
         title="Unable to load recent activities"
-        message="There was a problem loading organization activities. Please try again later."
-        icon="fa fa-exclamation-triangle"
+        description="There was a problem loading organization activities. Please try again later."
+        icon="fa-exclamation-triangle"
       />
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="activities.length === 0" class="py-8 text-center">
-      <div
-        class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
-      >
-        <i class="fa fa-clock-rotate-left text-2xl text-gray-400"></i>
-      </div>
+    <div v-else-if="activities.length === 0" class="py-8 flex flex-col items-center gap-4">
+      <Badge variant="secondary" icon="fa fa-clock-rotate-left" size="lg" />
       <p class="text-sm text-gray-500 dark:text-gray-400">No recent activities</p>
     </div>
 
@@ -44,8 +40,8 @@
 </template>
 
 <script setup lang="ts">
+import { Alert, Badge } from '@owlint/feathers-vue'
 import Card from '@/components/ui/Card.vue'
-import Alert from '@/components/ui/Alert.vue'
 import RecentActivityItem from './RecentActivityItem.vue'
 
 interface Activity {
