@@ -13,12 +13,14 @@
             @error="showFallbackIcon = true"
             v-show="!showFallbackIcon"
           />
-          <div
+          <Badge
             v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
-            class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/20"
-          >
-            <i class="fa fa-building text-4xl text-secondary"></i>
-          </div>
+            variant="secondary"
+            color="sage"
+            icon="fa fa-building"
+            size="lg"
+            class="w-full h-full rounded-none"
+          />
         </div>
         <h1 class="text-2xl font-bold">{{ company?.name }}</h1>
       </div>
@@ -29,15 +31,15 @@
           size="sm"
           icon="fa fa-bug"
           icon-only
-          :title="t('company.debug.workflowTitle', 'Debug: Search Workflow')"
+          :title="t('company.debug.workflowTitle')"
           @click="showTasksModal = true"
         />
         <Button
           v-if="canDeleteCompany && company"
           variant="tertiary"
-          color="danger"
+          intent="danger"
           icon="fa fa-trash"
-          :label="$t('company.delete.button', 'Delete')"
+          :label="t('company.delete.button')"
           @click="confirmDelete"
         />
         <Export />
@@ -56,8 +58,8 @@
 </template>
 
 <script lang="ts" setup>
+import { Badge, Button } from '@owlint/feathers-vue'
 import CompanyArchiveModal from '@/components/companies/CompanyArchiveModal.vue'
-import Button from '@/components/ui/Button.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { companyByIdQuery } from '@/queries/companies'
 import { useQuery } from '@pinia/colada'

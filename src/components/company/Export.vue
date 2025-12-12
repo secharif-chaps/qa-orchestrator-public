@@ -13,9 +13,9 @@
 </template>
 
 <script lang="ts" setup>
+import { Button } from '@owlint/feathers-vue'
 import { companyByIdQuery } from '@/queries/companies'
 import type { SourcedValue } from '@/types/company'
-import Button from '@/components/ui/Button.vue'
 import pptxgen from 'pptxgenjs'
 import { ref } from 'vue'
 import ExportModal from './ExportModal.vue'

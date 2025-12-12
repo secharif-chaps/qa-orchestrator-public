@@ -28,6 +28,7 @@ import { useSidebarStore } from './stores/sidebar'
 import { useTaskEvents } from './composables/useTaskEvents'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { useIconConfig } from '@owlint/feathers-vue'
 
 const authStore = useAuthStore()
 const sidebarStore = useSidebarStore()
@@ -72,6 +73,10 @@ watch(
     }
   },
 )
+
+const { setDefaultLibrary, setDefaultFaStyle } = useIconConfig()
+setDefaultLibrary('font-awesome')
+setDefaultFaStyle('fa-regular')
 </script>
 
 <style>

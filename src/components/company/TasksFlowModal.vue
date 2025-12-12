@@ -126,7 +126,7 @@
                     <div class="flex items-center gap-2 mb-1">
                       <h3 class="font-semibold text-sm">{{ task.name }}</h3>
                       <Tag
-                        :variant="getStatusVariant(task.status)"
+                        :intent="getStatusIntent(task.status)"
                         :label="getStatusLabel(task.status)"
                         size="xs"
                       />
@@ -201,6 +201,7 @@
 </template>
 
 <script setup lang="ts">
+import { Button, Tag } from '@owlint/feathers-vue'
 import type { TaskType, TaskStatus, TaskResponse } from '@/types/task'
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -210,8 +211,6 @@ import { useQuery } from '@pinia/colada'
 import { useRestartTask } from '@/mutations/tasks'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { useAuthStore } from '@/stores/auth'
-import Button from '@/components/ui/Button.vue'
-import Tag from '@/components/ui/Tag.vue'
 
 const { t } = useI18n()
 
@@ -399,18 +398,18 @@ const getIconContainerClass = (status: TaskStatus | null): string => {
   }
 }
 
-const getStatusVariant = (status: TaskStatus | null) => {
+const getStatusIntent = (status: TaskStatus | null) => {
   switch (status) {
     case 'succeeded':
       return 'success'
     case 'error':
-      return 'error'
+      return 'danger'
     case 'running':
       return 'warning'
     case 'pending':
       return 'info'
     case 'blocked':
-      return 'slate'
+      return 'neutral'
     default:
       return 'accent'
   }
