@@ -9,7 +9,7 @@
     <div class="px-6 py-6">
       <div class="flex flex-col gap-4">
         <!-- Current Session -->
-        <div class="border border-sage-400 dark:border-base-300 bg-base-200 rounded-lg p-4">
+        <div class="border border-sage-300 dark:border-base-300 bg-base-200 rounded-lg p-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
               <div
