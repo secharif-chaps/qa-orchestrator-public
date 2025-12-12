@@ -9,11 +9,11 @@
     <div class="px-6 py-6">
       <div class="flex flex-col gap-4">
         <!-- Current Session -->
-        <div class="border border-primary bg-primary-light/30 rounded-lg p-4">
+        <div class="border border-primary bg-base-200 rounded-lg p-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
               <div
-                class="w-10 h-10 rounded-lg bg-primary text-primary-content flex items-center justify-center"
+                class="w-10 h-10 rounded-lg bg-rose-100 border border-rose-200 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400 flex items-center justify-center"
               >
                 <i class="fas fa-desktop"></i>
               </div>
