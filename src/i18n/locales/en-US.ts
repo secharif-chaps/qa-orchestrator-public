@@ -443,6 +443,7 @@ export default {
     noData: 'No data available',
     save: 'Save',
     error: 'Error',
+    cancel: 'Cancel',
     close: 'Close',
     dismiss: 'Dismiss',
     breadcrumb: 'Breadcrumb',
@@ -1046,6 +1047,16 @@ export default {
       },
     },
     archive: {
+      title: 'Archive Company',
+      subtitle: 'This will move the company to the archive.',
+      details: 'Company Details',
+      warning: {
+        message:
+          'Archiving a company will hide it from the main list. You can restore it later from the archived view.',
+      },
+      confirm: {
+        button: 'Archive Company',
+      },
       success: 'Company "{name}" has been archived successfully',
       error: 'Failed to archive company "{name}". Please try again.',
     },
@@ -1185,6 +1196,14 @@ export default {
     items: {
       add: 'Add Items',
       empty: 'No items in this folder',
+    },
+    addItems: {
+      companyScreen: 'Company Screen',
+      companyDescription: 'Create a company card to monitor company information',
+      watchfile: 'Watchfile',
+      watchfileDescription: 'Set up monitoring for specific topics',
+      graphrag: 'Knowledge Graph',
+      graphragDescription: 'Explore connections and relationships',
     },
     header: {
       itemsCount: '{count} item | {count} items',

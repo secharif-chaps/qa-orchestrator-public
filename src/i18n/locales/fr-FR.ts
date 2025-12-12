@@ -1097,6 +1097,16 @@ export default {
       },
     },
     archive: {
+      title: "Archiver l'entreprise",
+      subtitle: "L'entreprise sera déplacée vers les archives.",
+      details: "Détails de l'entreprise",
+      warning: {
+        message:
+          "L'archivage d'une entreprise la masquera de la liste principale. Vous pourrez la restaurer ultérieurement depuis la vue des archives.",
+      },
+      confirm: {
+        button: "Archiver l'entreprise",
+      },
       success: 'L\'entreprise "{name}" a été archivée avec succès',
       error: 'Échec de l\'archivage de l\'entreprise "{name}". Veuillez réessayer.',
     },
@@ -1351,6 +1361,14 @@ export default {
     items: {
       add: 'Ajouter des éléments',
       empty: 'Aucun élément dans ce dossier',
+    },
+    addItems: {
+      companyScreen: 'Fiche entreprise',
+      companyDescription: 'Créez une fiche entreprise pour suivre les informations',
+      watchfile: 'Veille',
+      watchfileDescription: 'Configurez une surveillance sur des sujets spécifiques',
+      graphrag: 'Cartographie',
+      graphragDescription: 'Explorez les connexions et relations',
     },
     header: {
       itemsCount: '{count} élément | {count} éléments',

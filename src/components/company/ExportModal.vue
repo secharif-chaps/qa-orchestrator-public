@@ -1,17 +1,18 @@
 <template>
-  <OModal
-    v-model="isOpen"
-    :display-modal="isOpen"
+  <Modal
+    v-model:display-modal="isOpen"
     title="Export Options"
     size="xl"
     icon="fas fa-download"
     color="sage"
   >
     <template #description>
-      <p class="text-secondary">Select which sections to include in your PowerPoint export:</p>
+      Select which sections to include in your PowerPoint export:
+    </template>
 
+    <div class="flex flex-col gap-4">
       <!-- Select All / None toggle -->
-      <div class="flex justify-between mb-4">
+      <div class="flex justify-between items-center">
         <span v-if="showSavedMessage" class="text-xs text-secondary animate-fade-out">
           <i class="fa fa-check-circle mr-1"></i>Preferences saved
         </span>
@@ -23,7 +24,7 @@
         />
       </div>
 
-      <div class="space-y-4">
+      <div class="flex flex-col gap-4">
         <div
           v-for="(option, index) in exportOptions"
           :key="index"
@@ -36,33 +37,25 @@
             </p>
           </div>
 
-          <Switch.Root
+          <Switch
+            :id="`export-option-${index}`"
             v-model="option.selected"
-            class="w-11 h-6 bg-red-400/30 rounded-full relative focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75 data-[state=checked]:bg-primary transition-colors duration-200"
-            @update:checked="preferencesChanged = true"
-          >
-            <Switch.Thumb
-              class="block w-4 h-4 bg-base-100 rounded-full shadow-lg transform transition-transform duration-200 translate-x-1 data-[state=checked]:translate-x-6"
-            />
-          </Switch.Root>
+            @update:model-value="preferencesChanged = true"
+          />
         </div>
       </div>
-    </template>
+    </div>
 
     <template #footer>
-      <div class="flex justify-end gap-3">
-        <Button variant="secondary" label="Cancel" @click="close" />
-        <Button variant="primary" label="Export" icon="fa fa-download" @click="exportPPT" />
-      </div>
+      <Button variant="secondary" label="Cancel" @click="close" />
+      <Button variant="primary" label="Export" icon="fa fa-download" @click="exportPPT" />
     </template>
-  </OModal>
+  </Modal>
 </template>
 
 <script lang="ts" setup>
+import { Button, Modal, Switch } from '@owlint/feathers-vue'
 import type { Company } from '@/types/company'
-import { OModal } from '@owlint/feathers-vue'
-import Button from '@/components/ui/Button.vue'
-import { Switch } from 'reka-ui/namespaced'
 import { computed, onMounted, ref, watch } from 'vue'
 
 const props = defineProps<{
