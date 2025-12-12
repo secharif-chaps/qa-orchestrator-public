@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 border border-primary-stroke rounded-lg">
+  <div class="bg-base-100 border border-primary-stroke rounded-card">
     <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.security.sessions.title') }}</h2>
       <p class="text-sm text-secondary mt-1">
@@ -7,18 +7,18 @@
       </p>
     </div>
     <div class="px-6 py-6">
-      <div class="space-y-4">
+      <div class="flex flex-col gap-4">
         <!-- Current Session -->
-        <div
-          class="border border-primary/20 dark:border-primary bg-primary/10 dark:bg-slate-900 rounded-lg p-4"
-        >
+        <div class="border border-sage-300 dark:border-base-300 bg-base-200 rounded-lg p-4">
           <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-              <div class="flex-shrink-0">
-                <i class="fas fa-desktop text-secondary"></i>
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 rounded-lg bg-rose-100 border border-rose-200 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400 flex items-center justify-center"
+              >
+                <i class="fas fa-desktop"></i>
               </div>
               <div>
-                <h3 class="text-sm font-medium text-secondary">
+                <h3 class="text-sm font-medium">
                   {{ $t('settings.security.sessions.current.title') }}
                 </h3>
                 <p class="text-xs text-secondary">{{ userAgent }}</p>
@@ -36,12 +36,12 @@
         <div
           v-for="session in otherSessions"
           :key="session.id"
-          class="border border-slate-200 dark:border-slate-700 rounded-lg p-4"
+          class="border border-primary-stroke rounded-lg p-4"
         >
           <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-              <div class="flex-shrink-0">
-                <i :class="session.deviceIcon" class="text-secondary"></i>
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-base-200 text-secondary flex items-center justify-center">
+                <i :class="session.deviceIcon"></i>
               </div>
               <div>
                 <h3 class="text-sm font-medium">{{ session.device }}</h3>
@@ -63,7 +63,7 @@
         </div>
 
         <!-- Sign Out All Devices -->
-        <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+        <div class="pt-4 border-t border-primary-stroke">
           <div class="flex items-center justify-between">
             <div>
               <h3 class="text-sm font-medium">
@@ -89,7 +89,7 @@
 
 <script setup lang="ts">
 import Tag from '@/components/ui/Tag.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 interface Session {
   id: string
@@ -99,27 +99,25 @@ interface Session {
   lastActive: Date
 }
 
-interface Props {
+defineProps<{
   otherSessions: Session[]
   userAgent: string
-}
-
-const props = defineProps<Props>()
+}>()
 
 const emit = defineEmits<{
   revokeSession: [sessionId: string]
   signOutAllDevices: []
 }>()
 
-const handleRevokeSession = (sessionId: string) => {
+function handleRevokeSession(sessionId: string) {
   emit('revokeSession', sessionId)
 }
 
-const handleSignOutAllDevices = () => {
+function handleSignOutAllDevices() {
   emit('signOutAllDevices')
 }
 
-const formatDate = (date: Date) => {
+function formatDate(date: Date) {
   return date.toLocaleString()
 }
 </script>

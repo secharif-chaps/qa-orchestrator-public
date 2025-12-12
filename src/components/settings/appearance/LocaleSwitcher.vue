@@ -1,54 +1,65 @@
 <template>
-  <div class="locale-switcher">
-    <label class="block text-sm font-medium text-secondary mb-2">{{
-      $t('settings.language.title')
-    }}</label>
-
-    <Select.Root v-model="currentLocale" @update:model-value="changeLocale">
-      <Select.Trigger
-        class="w-full appearance-none rounded-md bg-base-100 py-1.5 pl-3 pr-8 text-base text-secondary outline outline-1 -outline-offset-1 outline-slate-300 dark:outline-slate-600 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-primary sm:text-sm/6"
-      >
-        <Select.Value />
-        <Select.Icon class="ml-2">
-          <i class="fas fa-chevron-down text-secondary" aria-hidden="true"></i>
-        </Select.Icon>
-      </Select.Trigger>
-
-      <Select.Portal>
-        <Select.Content
-          class="bg-base-100 border border-slate-300 dark:border-slate-600 rounded-md shadow-lg"
+  <div class="flex flex-col gap-4">
+    <div
+      v-for="localeOption in localeOptions"
+      :key="localeOption.value"
+      class="flex items-center justify-between p-4 border border-primary-stroke rounded-lg hover:border-primary/70 transition-colors cursor-pointer"
+      :class="{ 'border-primary bg-base-200': currentLocale === localeOption.value }"
+      @click="changeLocale(localeOption.value)"
+    >
+      <div class="flex items-center gap-4">
+        <div
+          class="w-10 h-10 rounded-lg flex items-center justify-center"
+          :class="
+            currentLocale === localeOption.value
+              ? 'bg-rose-100 border border-rose-200 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
+              : 'bg-base-200 text-secondary'
+          "
         >
-          <Select.Viewport class="p-1">
-            <Select.Item
-              value="en-US"
-              class="px-3 py-2 text-sm text-secondary hover:bg-base-200 cursor-pointer rounded"
-            >
-              <Select.ItemText>English</Select.ItemText>
-            </Select.Item>
-            <Select.Item
-              value="fr-FR"
-              class="px-3 py-2 text-sm text-secondary hover:bg-base-200 cursor-pointer rounded"
-            >
-              <Select.ItemText>Français</Select.ItemText>
-            </Select.Item>
-          </Select.Viewport>
-        </Select.Content>
-      </Select.Portal>
-    </Select.Root>
+          <i :class="localeOption.icon" class="text-lg"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-medium">{{ localeOption.label }}</h3>
+          <p class="text-sm text-secondary">{{ localeOption.description }}</p>
+        </div>
+      </div>
+      <div>
+        <Switch
+          :id="`locale-${localeOption.value}`"
+          :model-value="currentLocale === localeOption.value"
+          @update:model-value="() => changeLocale(localeOption.value)"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Select } from 'reka-ui/namespaced'
+import { Switch } from '@owlint/feathers-vue'
 
 const { locale } = useI18n()
 const currentLocale = ref(locale.value)
 
 const STORAGE_KEY = 'user-locale'
 
-const changeLocale = (value: string) => {
+const localeOptions = [
+  {
+    value: 'en-US',
+    label: 'English',
+    description: 'Use English language',
+    icon: 'fas fa-language',
+  },
+  {
+    value: 'fr-FR',
+    label: 'Français',
+    description: 'Utiliser la langue française',
+    icon: 'fas fa-language',
+  },
+]
+
+function changeLocale(value: string) {
   currentLocale.value = value
   locale.value = value
   localStorage.setItem(STORAGE_KEY, value)

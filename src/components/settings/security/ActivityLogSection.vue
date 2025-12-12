@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 border border-primary-stroke rounded-lg">
+  <div class="bg-base-100 border border-primary-stroke rounded-card">
     <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.security.activity.title') }}</h2>
       <p class="text-sm text-secondary mt-1">
@@ -7,21 +7,17 @@
       </p>
     </div>
     <div class="px-6 py-6">
-      <div class="space-y-3">
+      <div class="flex flex-col gap-3">
         <div
           v-for="activity in recentActivity"
           :key="activity.id"
-          class="flex items-center space-x-3 p-3 border border-slate-200 dark:border-slate-700 rounded-lg"
+          class="flex items-center gap-3 p-3 border border-primary-stroke rounded-lg"
         >
-          <div class="flex-shrink-0">
-            <i
-              :class="[
-                activity.type === 'security'
-                  ? 'text-red-500 dark:text-red-400'
-                  : 'text-green-500 dark:text-green-400',
-                activity.icon,
-              ]"
-            ></i>
+          <div
+            class="w-10 h-10 rounded-lg flex items-center justify-center"
+            :class="getActivityIconClass(activity.type)"
+          >
+            <i :class="activity.icon"></i>
           </div>
           <div class="flex-1">
             <p class="text-sm font-medium">{{ activity.title }}</p>
@@ -50,13 +46,22 @@ interface Activity {
   timestamp: Date
 }
 
-interface Props {
+defineProps<{
   recentActivity: Activity[]
+}>()
+
+function getActivityIconClass(type: string) {
+  switch (type) {
+    case 'security':
+      return 'bg-error-light text-error-light-content'
+    case 'login':
+      return 'bg-success-light text-success-light-content'
+    default:
+      return 'bg-info-light text-info-light-content'
+  }
 }
 
-const props = defineProps<Props>()
-
-const formatDate = (date: Date) => {
+function formatDate(date: Date) {
   return date.toLocaleString()
 }
 </script>

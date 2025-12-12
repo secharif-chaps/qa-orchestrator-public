@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-6">
+  <div class="flex flex-col gap-6">
     <!-- Language Settings -->
     <LocaleSection />
 
@@ -15,7 +15,7 @@ import { useTheme } from '@/composables/useTheme'
 
 const { theme: currentTheme, setTheme } = useTheme()
 
-const handleThemeChange = (themeValue: string) => {
+function handleThemeChange(themeValue: string) {
   setTheme(themeValue as 'light' | 'dark' | 'system')
 }
 </script>

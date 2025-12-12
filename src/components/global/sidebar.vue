@@ -24,15 +24,8 @@
     <!-- Footer Actions -->
     <div
       v-if="!sidebarStore.isFullscreen"
-      class="w-[320px] border-t border-sage-800 z-50 px-4 py-3 grid grid-cols-3 delay-500"
+      class="w-[320px] border-t border-sage-800 z-50 px-4 py-3 grid grid-cols-2 delay-500"
     >
-      <button
-        class="flex flex-col items-center gap-1 text-sage-300 hover:text-white transition-colors"
-        @click="$router.push('/settings/profile')"
-      >
-        <i class="fa fa-user text-lg"></i>
-        <span class="text-xs">{{ $t('sidebar.footer.profile', 'Profile') }}</span>
-      </button>
       <button
         class="flex flex-col items-center gap-1 text-sage-300 hover:text-white transition-colors"
         @click="$router.push('/settings')"

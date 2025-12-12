@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 border border-primary-stroke rounded-lg">
+  <div class="bg-base-100 border border-primary-stroke rounded-card">
     <div class="px-6 py-4 border-b border-primary-stroke">
       <h2 class="text-lg font-semibold">{{ $t('settings.security.twoFactor.title') }}</h2>
       <p class="text-sm text-secondary mt-1">
@@ -7,14 +7,19 @@
       </p>
     </div>
     <div class="px-6 py-6">
-      <div class="space-y-4">
+      <div class="flex flex-col gap-4">
         <!-- Authenticator App -->
-        <div
-          class="flex items-center justify-between p-4 border border-slate-200 dark:border-slate-700 rounded-lg"
-        >
-          <div class="flex items-center space-x-3">
-            <div class="flex-shrink-0">
-              <i class="fas fa-mobile-alt text-secondary"></i>
+        <div class="flex items-center justify-between p-4 border border-primary-stroke rounded-lg">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-lg flex items-center justify-center"
+              :class="
+                twoFactorEnabled
+                  ? 'bg-success text-success-content'
+                  : 'bg-base-200 text-secondary'
+              "
+            >
+              <i class="fas fa-mobile-alt"></i>
             </div>
             <div>
               <h3 class="text-sm font-medium">
@@ -25,7 +30,7 @@
               </p>
             </div>
           </div>
-          <div class="flex items-center space-x-2">
+          <div class="flex items-center gap-2">
             <Tag
               :variant="twoFactorEnabled ? 'success' : 'slate'"
               :label="
@@ -50,9 +55,16 @@
 
         <!-- Security Keys -->
         <div class="flex items-center justify-between p-4 border border-primary-stroke rounded-lg">
-          <div class="flex items-center space-x-3">
-            <div class="flex-shrink-0">
-              <i class="fas fa-key text-secondary"></i>
+          <div class="flex items-center gap-3">
+            <div
+              class="w-10 h-10 rounded-lg flex items-center justify-center"
+              :class="
+                securityKeysCount > 0
+                  ? 'bg-success text-success-content'
+                  : 'bg-base-200 text-secondary'
+              "
+            >
+              <i class="fas fa-key"></i>
             </div>
             <div>
               <h3 class="text-sm font-medium">
@@ -63,7 +75,7 @@
               </p>
             </div>
           </div>
-          <div class="flex items-center space-x-2">
+          <div class="flex items-center gap-2">
             <Tag
               :variant="securityKeysCount > 0 ? 'success' : 'slate'"
               :label="
@@ -87,25 +99,23 @@
 
 <script setup lang="ts">
 import Tag from '@/components/ui/Tag.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
-interface Props {
+defineProps<{
   twoFactorEnabled: boolean
   securityKeysCount: number
-}
-
-const props = defineProps<Props>()
+}>()
 
 const emit = defineEmits<{
   toggleTwoFactor: []
   manageSecurityKeys: []
 }>()
 
-const handleToggleTwoFactor = () => {
+function handleToggleTwoFactor() {
   emit('toggleTwoFactor')
 }
 
-const handleManageSecurityKeys = () => {
+function handleManageSecurityKeys() {
   emit('manageSecurityKeys')
 }
 </script>
