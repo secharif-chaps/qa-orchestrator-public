@@ -1,21 +1,12 @@
 <template>
-  <div class="space-y-6">
-    <!-- Header -->
-    <div>
-      <h2 class="text-2xl font-bold">{{ $t('aiPreferences.settings.title') }}</h2>
-      <p class="text-secondary mt-2">{{ $t('aiPreferences.settings.description') }}</p>
-      <p v-if="lastUpdated" class="text-sm text-secondary mt-1">
-        {{ $t('aiPreferences.settings.lastUpdated', { date: lastUpdated }) }}
-      </p>
-    </div>
-
+  <div class="flex flex-col gap-6">
     <!-- Loading State -->
     <div v-if="isLoading" class="flex justify-center items-center py-12">
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
     </div>
 
     <!-- Not Configured State -->
-    <div v-else-if="!hasPreferences" class="bg-base-200 rounded-card border border-primary-stroke p-8">
+    <div v-else-if="!hasPreferences" class="bg-base-100 rounded-card border border-primary-stroke p-8">
       <div class="flex flex-col items-center text-center gap-4">
         <img
           src="@/assets/chapse/head.svg"
@@ -23,27 +14,32 @@
           class="h-20 w-auto object-contain"
           loading="lazy"
         />
-        <div>
-          <h3 class="text-xl font-semibold mb-2">
+        <div class="flex flex-col gap-2">
+          <h3 class="text-xl font-semibold">
             {{ $t('aiPreferences.settings.notConfigured') }}
           </h3>
-          <p class="text-secondary mb-4">
+          <p class="text-secondary">
             Set up your AI preferences to enable personalized quick actions and recommendations.
           </p>
         </div>
         <Button
           variant="primary"
           icon="fa fa-magic"
+          label="Set Up AI Preferences"
           @click="goToSetup"
-        >
-          Set Up AI Preferences
-        </Button>
+        />
       </div>
     </div>
 
     <!-- Edit Form -->
-    <div v-else class="bg-base-200 rounded-card border border-primary-stroke p-8">
-      <form @submit.prevent="handleSubmit" class="space-y-6">
+    <div v-else class="bg-base-100 rounded-card border border-primary-stroke p-6">
+      <!-- Last Updated Info -->
+      <div v-if="lastUpdated" class="flex items-center gap-2 text-sm text-secondary mb-6">
+        <i class="fas fa-clock"></i>
+        <span>{{ $t('aiPreferences.settings.lastUpdated', { date: lastUpdated }) }}</span>
+      </div>
+
+      <form @submit.prevent="handleSubmit" class="flex flex-col gap-6">
         <!-- Role Field -->
         <Input
           id="role"
@@ -51,130 +47,59 @@
           :label="$t('aiPreferences.setup.fields.role.label')"
           :placeholder="$t('aiPreferences.setup.fields.role.placeholder')"
           :error="errors.role"
-          :helper="$t('aiPreferences.setup.fields.role.helper')"
           icon="fa fa-user-tie"
           required
-          clearable
         />
 
         <!-- Goals Field -->
-        <div class="space-y-2">
-          <label for="goals" class="block text-sm font-medium">
-            {{ $t('aiPreferences.setup.fields.goals.label') }}
-            <span class="text-warning ml-1">*</span>
-          </label>
-          <textarea
-            id="goals"
-            v-model="form.goals_text"
-            :placeholder="$t('aiPreferences.setup.fields.goals.placeholder')"
-            :class="[
-              'w-full px-4 py-3 border rounded-lg transition-all duration-200',
-              'focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-200',
-              'dark:focus:ring-primary-700 dark:focus:border-primary-700',
-              'bg-base-100 border-primary-stroke placeholder:text-secondary/60',
-              'dark:placeholder:text-sage-300 resize-none',
-              errors.goals_text ? 'border-warning focus:border-warning focus:ring-warning/20' : '',
-            ]"
-            rows="4"
-            required
-            maxlength="2000"
-          ></textarea>
-          <div class="flex justify-between items-center">
-            <div v-if="errors.goals_text" class="flex items-center gap-2 text-sm text-warning">
-              <i class="fa fa-exclamation-circle text-xs"></i>
-              <span>{{ errors.goals_text }}</span>
-            </div>
-            <div v-else class="text-xs text-secondary">
-              {{ $t('aiPreferences.setup.fields.goals.helper') }}
-            </div>
-            <div class="text-xs text-secondary">
-              {{ form.goals_text.length }}/2000
-            </div>
-          </div>
-        </div>
+        <Textarea
+          id="goals"
+          v-model="form.goals_text"
+          :label="$t('aiPreferences.setup.fields.goals.label')"
+          :placeholder="$t('aiPreferences.setup.fields.goals.placeholder')"
+          :error="errors.goals_text"
+          :maxlength="2000"
+          :rows="4"
+          required
+        />
 
         <!-- Desired Output Field -->
-        <div class="space-y-2">
-          <label for="desired-output" class="block text-sm font-medium">
-            {{ $t('aiPreferences.setup.fields.desiredOutput.label') }}
-            <span class="text-warning ml-1">*</span>
-          </label>
-          <textarea
-            id="desired-output"
-            v-model="form.desired_output_text"
-            :placeholder="$t('aiPreferences.setup.fields.desiredOutput.placeholder')"
-            :class="[
-              'w-full px-4 py-3 border rounded-lg transition-all duration-200',
-              'focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-200',
-              'dark:focus:ring-primary-700 dark:focus:border-primary-700',
-              'bg-base-100 border-primary-stroke placeholder:text-secondary/60',
-              'dark:placeholder:text-sage-300 resize-none',
-              errors.desired_output_text
-                ? 'border-warning focus:border-warning focus:ring-warning/20'
-                : '',
-            ]"
-            rows="4"
-            required
-            maxlength="2000"
-          ></textarea>
-          <div class="flex justify-between items-center">
-            <div
-              v-if="errors.desired_output_text"
-              class="flex items-center gap-2 text-sm text-warning"
-            >
-              <i class="fa fa-exclamation-circle text-xs"></i>
-              <span>{{ errors.desired_output_text }}</span>
-            </div>
-            <div v-else class="text-xs text-secondary">
-              {{ $t('aiPreferences.setup.fields.desiredOutput.helper') }}
-            </div>
-            <div class="text-xs text-secondary">
-              {{ form.desired_output_text.length }}/2000
-            </div>
-          </div>
-        </div>
+        <Textarea
+          id="desired-output"
+          v-model="form.desired_output_text"
+          :label="$t('aiPreferences.setup.fields.desiredOutput.label')"
+          :placeholder="$t('aiPreferences.setup.fields.desiredOutput.placeholder')"
+          :error="errors.desired_output_text"
+          :maxlength="2000"
+          :rows="4"
+          required
+        />
 
         <!-- Documentation Field (Optional) -->
-        <div class="space-y-2">
-          <label for="documentation" class="block text-sm font-medium">
-            {{ $t('aiPreferences.setup.fields.documentation.label') }}
-            <span class="text-sm font-normal text-secondary ml-2">({{
-              $t('aiPreferences.setup.optional')
-            }})</span>
-          </label>
-          <textarea
-            id="documentation"
-            v-model="form.documentation_text"
-            :placeholder="$t('aiPreferences.setup.fields.documentation.placeholder')"
-            class="w-full px-4 py-3 border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-200 dark:focus:ring-primary-700 dark:focus:border-primary-700 bg-base-100 border-primary-stroke placeholder:text-secondary/60 dark:placeholder:text-sage-300 resize-none"
-            rows="4"
-            maxlength="5000"
-          ></textarea>
-          <div class="flex justify-between items-center">
-            <div class="text-xs text-secondary">
-              {{ $t('aiPreferences.setup.fields.documentation.helper') }}
-            </div>
-            <div class="text-xs text-secondary">
-              {{ form.documentation_text?.length || 0 }}/5000
-            </div>
-          </div>
-        </div>
+        <Textarea
+          id="documentation"
+          v-model="form.documentation_text"
+          :label="$t('aiPreferences.setup.fields.documentation.label')"
+          :placeholder="$t('aiPreferences.setup.fields.documentation.placeholder')"
+          :maxlength="5000"
+          :rows="4"
+        />
 
         <!-- Success Message -->
         <Alert
           v-if="successMessage"
           variant="success"
           :title="$t('aiPreferences.settings.success.title')"
-          :message="successMessage"
+          :description="successMessage"
           icon="fa fa-check-circle"
         />
 
         <!-- Error Message -->
         <Alert
           v-if="errorMessage"
-          variant="error"
+          variant="danger"
           :title="$t('aiPreferences.settings.error.title')"
-          :message="errorMessage"
+          :description="errorMessage"
           icon="fa fa-exclamation-circle"
         />
 
@@ -194,12 +119,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getAiPreferences, saveAiPreferences } from '@/api/ai-preferences'
-import Input from '@/components/ui/Input.vue'
-import Button from '@/components/ui/Button.vue'
-import Alert from '@/components/ui/Alert.vue'
+import { Input, Textarea, Button, Alert } from '@owlint/feathers-vue'
 import type { AiPreferencesCreate } from '@/types/ai-preferences'
 
 const router = useRouter()

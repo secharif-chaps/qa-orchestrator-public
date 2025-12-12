@@ -1,80 +1,133 @@
 <template>
-  <div class="">
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold">{{ $t('settings.title') }}</h1>
-      <p class="text-secondary mt-2">{{ $t('settings.description') }}</p>
+  <div class="flex flex-col gap-6">
+    <!-- Header with Toggle Navigation -->
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold">{{ $t('settings.title') }}</h1>
+        <p class="text-secondary mt-1">{{ $t('settings.description') }}</p>
+      </div>
+
+      <!-- Navigation Toggle (only show when on a subpage) -->
+      <div v-if="isOnSubpage" class="flex items-center">
+        <Toggle v-model="currentSection" :options="sectionOptions" variant="pill" />
+      </div>
     </div>
 
-    <div class="lg:grid lg:grid-cols-4 lg:gap-8">
-      <!-- Desktop Sidebar Navigation -->
-      <div class="hidden lg:block lg:col-span-1">
-        <nav class="space-y-1 sticky top-8">
-          <RouterLink
-            v-for="tab in tabs"
-            :key="tab.id"
-            :to="`/settings/${tab.id}`"
-            class="group flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors"
-            :class="
-              currentTab === tab.id
-                ? 'bg-base-100 text-secondary border-primary'
-                : 'text-secondary hover:text-secondary hover:bg-base-200'
-            "
-          >
-            <i :class="tab.icon" class="mr-3 text-sm"></i>
-            {{ $t(`settings.tabs.${tab.id}`) }}
-          </RouterLink>
-        </nav>
-      </div>
+    <!-- Main Content -->
+    <div v-if="isOnSubpage">
+      <RouterView />
+    </div>
 
-      <!-- Mobile Tab Navigation -->
-      <div class="lg:hidden mb-6">
-        <Tabs.Root :model-value="currentTab" @update:model-value="handleTabChange">
-          <Tabs.List class="flex space-x-1 rounded-lg bg-base-100 p-1">
-            <Tabs.Trigger
-              v-for="tab in tabs"
-              :key="tab.id"
-              :value="tab.id"
-              class="flex-1 rounded-md py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 data-[state=active]:bg-white data-[state=active]:text-indigo-700 dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-white data-[state=active]:shadow-sm"
-            >
-              <i :class="tab.icon" class="mr-2"></i>
-              {{ $t(`settings.tabs.${tab.id}`) }}
-            </Tabs.Trigger>
-          </Tabs.List>
-        </Tabs.Root>
-      </div>
+    <!-- Settings Index (cards linking to sections) -->
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <RouterLink
+        v-for="section in sections"
+        :key="section.id"
+        :to="`/settings/${section.id}`"
+        class="group bg-base-100 border border-primary-stroke rounded-card p-6 hover:border-primary/50 hover:shadow-shadow-2 transition-all duration-200 flex flex-col h-full"
+      >
+        <!-- Icon -->
+        <div
+          class="w-12 h-12 rounded-lg flex items-center justify-center transition-colors"
+          :class="section.bgColor"
+        >
+          <i :class="[section.icon, 'text-xl', section.iconColor]"></i>
+        </div>
 
-      <!-- Main Content -->
-      <div class="lg:col-span-3">
-        <RouterView />
-      </div>
+        <!-- Content -->
+        <div class="flex flex-col gap-2 mt-4 flex-1">
+          <h3 class="text-lg font-semibold group-hover:text-primary transition-colors">
+            {{ section.title }}
+          </h3>
+          <p class="text-sm text-secondary">
+            {{ section.description }}
+          </p>
+        </div>
+
+        <!-- Arrow - Always at bottom -->
+        <div class="flex items-center text-secondary group-hover:text-primary transition-colors mt-4 pt-4 border-t border-primary-stroke/50">
+          <span class="text-sm font-medium">{{ $t('settings.viewSection', 'Configure') }}</span>
+          <i class="fas fa-arrow-right ml-2 text-xs transform group-hover:translate-x-1 transition-transform"></i>
+        </div>
+      </RouterLink>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Tabs } from 'reka-ui/namespaced'
-import { computed } from 'vue'
-import { RouterView, useRoute, useRouter } from 'vue-router'
+import { Toggle } from '@owlint/feathers-vue'
+import { computed, watch } from 'vue'
+import { RouterView, RouterLink, useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 
-const tabs = [
-  { id: 'profile', name: '/settings/profile', icon: 'fas fa-user' },
-  { id: 'appearance', name: '/settings/appearance', icon: 'fas fa-palette' },
-  { id: 'ai-preferences', name: '/settings/ai-preferences', icon: 'fas fa-magic' },
-]
+// Section definitions
+const sections = computed(() => [
+  {
+    id: 'appearance',
+    title: t('settings.tabs.appearance'),
+    description: t('settings.appearance.theme.description'),
+    icon: 'fas fa-palette',
+    bgColor: 'bg-primary-light',
+    iconColor: 'text-primary-light-content',
+  },
+  {
+    id: 'ai-preferences',
+    title: t('settings.tabs.ai-preferences'),
+    description: t('aiPreferences.settings.description'),
+    icon: 'fas fa-magic',
+    bgColor: 'bg-accent-light',
+    iconColor: 'text-accent-light-content',
+  },
+  {
+    id: 'security',
+    title: t('settings.tabs.security'),
+    description: t('settings.security.sessions.description'),
+    icon: 'fas fa-shield-alt',
+    bgColor: 'bg-success-light',
+    iconColor: 'text-success-light-content',
+  },
+])
 
-const currentTab = computed(() => {
-  return tabs.find((tab) => tab.name === route.name)?.id || 'profile'
+// Toggle options for navigation
+const sectionOptions = computed(() => [
+  {
+    value: 'appearance',
+    icon: 'fas fa-palette',
+    label: t('settings.tabs.appearance'),
+  },
+  {
+    value: 'ai-preferences',
+    icon: 'fas fa-magic',
+    label: t('settings.tabs.ai-preferences'),
+  },
+  {
+    value: 'security',
+    icon: 'fas fa-shield-alt',
+    label: t('settings.tabs.security'),
+  },
+])
+
+// Determine if we're on a subpage
+const isOnSubpage = computed(() => {
+  const path = route.path
+  return path !== '/settings' && path !== '/settings/'
 })
 
-const handleTabChange = (value: string) => {
-  router.replace(`/settings/${value}`)
-}
-
-// Redirect to profile if no tab specified
-if (route.path === '/settings' || route.path === '/settings/') {
-  router.replace('/settings/profile')
-}
+// Current section based on route
+const currentSection = computed({
+  get: () => {
+    const path = route.path
+    if (path.includes('/appearance')) return 'appearance'
+    if (path.includes('/ai-preferences')) return 'ai-preferences'
+    if (path.includes('/security')) return 'security'
+    return 'appearance'
+  },
+  set: (value: string) => {
+    router.push(`/settings/${value}`)
+  },
+})
 </script>

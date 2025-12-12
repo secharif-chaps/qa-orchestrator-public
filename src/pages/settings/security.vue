@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-6">
+  <div class="flex flex-col gap-6">
     <!-- Session Management -->
     <SessionManagementSection
       :other-sessions="otherSessions"
@@ -61,7 +61,17 @@ const otherSessions = ref([
   },
 ])
 
-const recentActivity = ref([
+interface Activity {
+  id: string
+  type: 'login' | 'security' | 'update'
+  icon: string
+  title: string
+  description: string
+  location?: string
+  timestamp: Date
+}
+
+const recentActivity = ref<Activity[]>([
   {
     id: '1',
     type: 'login',
