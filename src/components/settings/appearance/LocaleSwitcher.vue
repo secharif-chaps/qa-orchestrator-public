@@ -4,7 +4,7 @@
       v-for="localeOption in localeOptions"
       :key="localeOption.value"
       class="flex items-center justify-between p-4 border border-primary-stroke rounded-lg hover:border-primary/70 transition-colors cursor-pointer"
-      :class="{ 'border-primary bg-primary-light/30': currentLocale === localeOption.value }"
+      :class="{ 'border-primary bg-base-200': currentLocale === localeOption.value }"
       @click="changeLocale(localeOption.value)"
     >
       <div class="flex items-center gap-4">
@@ -12,7 +12,7 @@
           class="w-10 h-10 rounded-lg flex items-center justify-center"
           :class="
             currentLocale === localeOption.value
-              ? 'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
+              ? 'bg-rose-100 border border-rose-200 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
               : 'bg-base-200 text-secondary'
           "
         >

@@ -12,7 +12,7 @@
           v-for="themeOption in themeOptions"
           :key="themeOption.value"
           class="flex items-center justify-between p-4 border border-primary-stroke rounded-lg hover:border-primary/70 transition-colors cursor-pointer"
-          :class="{ 'border-primary bg-primary-light/30': currentTheme === themeOption.value }"
+          :class="{ 'border-primary bg-base-200': currentTheme === themeOption.value }"
           @click="handleThemeChange(themeOption.value)"
         >
           <div class="flex items-center gap-4">
@@ -20,7 +20,7 @@
               class="w-10 h-10 rounded-lg flex items-center justify-center"
               :class="
                 currentTheme === themeOption.value
-                  ? 'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
+                  ? 'bg-rose-100 border border-rose-200 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
                   : 'bg-base-200 text-secondary'
               "
             >
