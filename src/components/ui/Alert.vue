@@ -34,7 +34,6 @@
 
       <!-- Close button -->
       <Button
-        icon-only
         variant="tertiary"
         v-if="dismissible || closable"
         @click="handleClose"
@@ -48,7 +47,7 @@
 
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
-import Button from './Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Badge from './Badge.vue'
 
 type AlertVariant = 'info' | 'success' | 'warning' | 'error' | 'accent' | 'neutral'

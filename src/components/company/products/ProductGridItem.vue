@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import Tag from '@/components/ui/Tag.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import { ref, computed } from 'vue'
 
 interface Props {

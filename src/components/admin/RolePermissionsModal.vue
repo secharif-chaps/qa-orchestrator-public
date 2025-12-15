@@ -14,7 +14,7 @@
             Select a role for <span class="font-semibold">{{ user.username }}</span>
           </p>
         </div>
-        <Button variant="tertiary" icon="fa fa-times" icon-only @click="$emit('close')" />
+        <Button variant="tertiary" icon="fa fa-times" @click="$emit('close')" />
       </div>
 
       <!-- Warning for custom permissions -->
@@ -46,10 +46,8 @@
 
       <!-- Actions -->
       <div class="flex justify-end gap-3">
-        <Button variant="secondary" @click="$emit('close')"> Cancel </Button>
-        <Button variant="primary" :disabled="!selectedRoleId" @click="handleSave">
-          Save Permissions
-        </Button>
+        <Button variant="secondary" label="Cancel" @click="$emit('close')" />
+        <Button variant="primary" label="Save Permissions" :disabled="!selectedRoleId" @click="handleSave" />
       </div>
     </div>
   </div>
@@ -59,7 +57,7 @@
 import { ref, computed, watch } from 'vue'
 import type { AdminUserResponse } from '@/types/admin-user'
 import { useRoles } from '@/composables/useRoles'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Alert from '@/components/ui/Alert.vue'
 import RoleBlock from './RoleBlock.vue'
 

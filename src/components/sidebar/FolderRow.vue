@@ -35,9 +35,7 @@
       <!-- Add Company Button -->
       <Button
         variant="tertiary"
-        dark
         icon="fa fa-plus-circle"
-        icon-only
         size="sm"
         @click.stop="$emit('addCompany', folder.id)"
         title="Ajouter une entreprise"
@@ -77,7 +75,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { Folder, FolderItem } from '@/types/folder'
-import Button from '../ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 const props = defineProps<{
   folder: Folder

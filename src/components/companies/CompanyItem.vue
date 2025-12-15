@@ -142,17 +142,14 @@
             variant="tertiary"
             size="sm"
             icon="fa fa-eye"
-            icon-only
             :title="$t('cards.actions.view')"
             @click.stop="$emit('viewCompany', company.id)"
           />
           <Button
             v-if="canDeleteCompany"
             variant="tertiary"
-            color="danger"
             size="sm"
             icon="fa fa-trash"
-            icon-only
             :title="$t('cards.actions.delete')"
             @click.stop="$emit('deleteCompany', company)"
           />
@@ -164,7 +161,7 @@
 
 <script setup lang="ts">
 import Tag from '@/components/ui/Tag.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import type { Company } from '@/types/company'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { ref } from 'vue'

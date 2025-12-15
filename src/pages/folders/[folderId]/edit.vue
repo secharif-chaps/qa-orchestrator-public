@@ -132,7 +132,7 @@ meta:
 
 <script setup lang="ts">
 import Input from '@/components/ui/Input.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
 import Alert from '@/components/ui/Alert.vue'
 import IconSelector from '@/components/folders/IconSelector.vue'

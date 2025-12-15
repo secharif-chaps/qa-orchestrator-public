@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import Alert from '@/components/ui/Alert.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import type { ModuleName } from '@/types/tokens'
 
 interface Props {

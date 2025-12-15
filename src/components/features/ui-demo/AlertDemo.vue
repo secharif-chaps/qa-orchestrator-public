@@ -160,8 +160,8 @@
         icon="fa fa-user-circle"
       >
         <template #actions>
-          <Button variant="primary" size="sm"> Complete Profile </Button>
-          <Button variant="tertiary" size="sm"> Remind Me Later </Button>
+          <Button variant="primary" size="sm" label="Complete Profile" />
+          <Button variant="tertiary" size="sm" label="Remind Me Later" />
         </template>
       </Alert>
     </section>
@@ -186,7 +186,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Alert from '@/components/ui/Alert.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 const showAlert1 = ref(true)
 const showAlert2 = ref(true)

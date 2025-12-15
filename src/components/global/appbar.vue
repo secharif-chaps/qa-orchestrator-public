@@ -22,7 +22,7 @@
           </div> -->
 
           <!-- Dev mode only theme toggle -->
-          <VButton
+          <Button
             v-if="isDebugUser"
             variant="tertiary"
             :icon="isDark ? 'fa fa-sun' : 'fa fa-moon'"
@@ -30,7 +30,7 @@
           />
 
           <!-- Dev mode only language toggle -->
-          <VButton
+          <Button
             v-if="isDebugUser"
             variant="tertiary"
             icon="fa fa-language"
@@ -38,14 +38,14 @@
           />
 
           <!-- Admin button - only visible to users with admin.organizations permission -->
-          <VButton
+          <Button
             v-if="hasAdminPermission"
             variant="tertiary"
             icon="fa fa-shield"
             @click="$router.push('/admin')"
           />
 
-          <VButton
+          <Button
             variant="tertiary"
             icon="fa fa-arrow-right-from-bracket"
             @click="handleLogout"
@@ -55,31 +55,23 @@
 
           <Button
             :variant="isTokensActive ? 'accent' : 'tertiary'"
-            dark
-            :icon="'fa fa-circle-dollar'"
-            icon-only
+            icon="fa fa-circle-dollar"
             @click="toggleTokens"
           />
           <Button
             :variant="isChaapseActive ? 'accent' : 'tertiary'"
-            dark
-            :icon="'fa fa-robot'"
-            icon-only
+            icon="fa fa-robot"
             @click="toggleChapse"
           />
 
           <Button
             :variant="isNotificationsActive ? 'accent' : 'tertiary'"
-            dark
-            :icon="'fa fa-bell'"
-            icon-only
+            icon="fa fa-bell"
             @click="toggleNotifications"
           />
           <Button
             :variant="isFoldersActive ? 'accent' : 'tertiary'"
-            dark
-            :icon="'fa fa-grip-lines'"
-            icon-only
+            icon="fa fa-grip-lines"
             @click="toggleFolders"
           />
         </div>
@@ -93,8 +85,7 @@ import logo_small from '@/assets/CHAPSVISION_LOGO_ChapsVision_logo_icone_amande.
 import { useTheme } from '@/composables/useTheme'
 import { useAuthStore } from '@/stores/auth'
 import { useSidebarStore } from '@/stores/sidebar'
-import { Button as VButton } from '@owlint/feathers-vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { currentOrganizationQuery } from '@/queries/organization'
 import ModuleBadges from '@/components/global/ModuleBadges.vue'

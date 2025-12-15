@@ -48,7 +48,6 @@
           <Button
             :variant="isEditing ? 'primary' : 'tertiary'"
             :icon="isEditing ? 'fa fa-times' : 'fa fa-pen'"
-            icon-only
             size="sm"
             @click="toggleEdit"
           />
@@ -165,7 +164,6 @@
         <Button
           :variant="isEditing ? 'primary' : 'tertiary'"
           :icon="isEditing ? 'fa fa-times' : 'fa fa-pen'"
-          icon-only
           size="sm"
           @click="toggleEdit"
         />
@@ -203,7 +201,7 @@
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import type { WorkflowConfig } from '@/api/workflows'
 import Tag from '@/components/ui/Tag.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Input from '@/components/ui/Input.vue'
 
 interface Props {

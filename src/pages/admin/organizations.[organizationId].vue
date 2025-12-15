@@ -204,7 +204,7 @@ import { useRoute } from 'vue-router'
 
 // Components
 import Alert from '@/components/ui/Alert.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Card from '@/components/ui/Card.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import UsersTable from '@/components/admin/UsersTable.vue'

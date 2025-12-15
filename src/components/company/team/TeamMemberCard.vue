@@ -70,7 +70,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import type { TeamMember } from '@/types/company'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 const props = defineProps<{
   member: TeamMember

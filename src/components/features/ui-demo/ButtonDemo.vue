@@ -8,20 +8,10 @@
         different states.
       </p>
       <div class="flex flex-wrap gap-3">
-        <Button variant="primary" label="Primary" icon="fa fa-arrow-right" icon-position="right" />
-        <Button
-          variant="secondary"
-          label="Secondary"
-          icon="fa fa-arrow-right"
-          icon-position="right"
-        />
-        <Button
-          variant="tertiary"
-          label="Tertiary"
-          icon="fa fa-arrow-right"
-          icon-position="right"
-        />
-        <Button variant="accent" label="Accent" icon="fa fa-arrow-right" icon-position="right" />
+        <Button variant="primary" label="Primary" iconRight="fa fa-arrow-right" />
+        <Button variant="secondary" label="Secondary" iconRight="fa fa-arrow-right" />
+        <Button variant="tertiary" label="Tertiary" iconRight="fa fa-arrow-right" />
+        <Button variant="accent" label="Accent" iconRight="fa fa-arrow-right" />
       </div>
     </section>
 
@@ -38,26 +28,16 @@
         </div>
         <div class="flex flex-wrap gap-3">
           <span class="text-sm text-secondary w-24">Right Icons:</span>
-          <Button
-            variant="primary"
-            icon="fa fa-arrow-right"
-            icon-position="right"
-            label="Continue"
-          />
-          <Button
-            variant="secondary"
-            icon="fa fa-external-link"
-            icon-position="right"
-            label="Open"
-          />
-          <Button variant="accent" icon="fa fa-arrow-right" icon-position="right" label="Next" />
+          <Button variant="primary" iconRight="fa fa-arrow-right" label="Continue" />
+          <Button variant="secondary" iconRight="fa fa-external-link" label="Open" />
+          <Button variant="accent" iconRight="fa fa-arrow-right" label="Next" />
         </div>
         <div class="flex flex-wrap gap-3">
           <span class="text-sm text-secondary w-24">Icon Only:</span>
-          <Button variant="primary" icon="fa fa-heart" icon-only />
-          <Button variant="secondary" icon="fa fa-bookmark" icon-only />
-          <Button variant="tertiary" icon="fa fa-share" icon-only />
-          <Button variant="accent" icon="fa fa-star" icon-only />
+          <Button variant="primary" icon="fa fa-heart" />
+          <Button variant="secondary" icon="fa fa-bookmark" />
+          <Button variant="tertiary" icon="fa fa-share" />
+          <Button variant="accent" icon="fa fa-star" />
         </div>
       </div>
     </section>
@@ -71,21 +51,21 @@
           <Button variant="primary" label="Small" size="sm" />
           <Button variant="secondary" icon="fa fa-cog" label="Settings" size="sm" />
           <Button variant="accent" label="Accent" size="sm" />
-          <Button variant="tertiary" icon="fa fa-info" icon-only size="sm" />
+          <Button variant="tertiary" icon="fa fa-info" size="sm" />
         </div>
         <div class="flex items-center gap-3">
           <span class="text-sm text-secondary w-20">Medium:</span>
           <Button variant="primary" label="Medium" size="md" />
           <Button variant="secondary" icon="fa fa-save" label="Save" size="md" />
           <Button variant="accent" label="Accent" size="md" />
-          <Button variant="tertiary" icon="fa fa-more" icon-only size="md" />
+          <Button variant="tertiary" icon="fa fa-more" size="md" />
         </div>
         <div class="flex items-center gap-3">
           <span class="text-sm text-secondary w-20">Large:</span>
           <Button variant="primary" label="Large" size="lg" />
           <Button variant="secondary" icon="fa fa-upload" label="Upload" size="lg" />
           <Button variant="accent" label="Accent" size="lg" />
-          <Button variant="tertiary" icon="fa fa-search" icon-only size="lg" />
+          <Button variant="tertiary" icon="fa fa-search" size="lg" />
         </div>
       </div>
     </section>
@@ -174,12 +154,7 @@
               <Button variant="tertiary" label="1" size="sm" />
               <Button variant="primary" label="2" size="sm" />
             </div>
-            <Button
-              variant="secondary"
-              icon="fa fa-chevron-right"
-              icon-position="right"
-              label="Next"
-            />
+            <Button variant="secondary" iconRight="fa fa-chevron-right" label="Next" />
           </div>
         </div>
 
@@ -187,9 +162,9 @@
         <div class="bg-base-100 p-4 rounded-lg border border-primary-stroke">
           <h3 class="text-sm font-medium mb-3">Icon Actions</h3>
           <div class="flex gap-2">
-            <Button variant="tertiary" icon="fa fa-heart" icon-only />
-            <Button variant="tertiary" icon="fa fa-bookmark" icon-only />
-            <Button variant="tertiary" icon="fa fa-share" icon-only />
+            <Button variant="tertiary" icon="fa fa-heart" />
+            <Button variant="tertiary" icon="fa fa-bookmark" />
+            <Button variant="tertiary" icon="fa fa-share" />
             <Button variant="secondary" icon="fa fa-comment" label="Comment" />
           </div>
         </div>
@@ -200,7 +175,7 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 const loadingButtons = reactive({
   primary: false,

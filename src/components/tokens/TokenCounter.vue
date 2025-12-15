@@ -32,7 +32,6 @@
               v-if="showRefresh"
               variant="tertiary"
               icon="fa fa-refresh"
-              icon-only
               size="sm"
               :loading="isRefreshing"
               :disabled="isRefreshing"
@@ -81,7 +80,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { ModuleName } from '@/types/tokens'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 const { t } = useI18n()
 

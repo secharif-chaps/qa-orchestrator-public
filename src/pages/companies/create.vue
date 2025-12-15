@@ -173,7 +173,7 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Input from '@/components/ui/Input.vue'
 import Alert from '@/components/ui/Alert.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'

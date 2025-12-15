@@ -44,7 +44,6 @@
         <Button
           variant="primary"
           icon="fa fa-paper-plane"
-          icon-only
           size="sm"
           class="absolute right-3 bottom-3"
           :disabled="!canSend"
@@ -66,7 +65,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import ContextBadge from './ContextBadge.vue'
 import CompanyContextSelector from './CompanyContextSelector.vue'
 import type { CompanyContext } from '@/stores/chapse'

@@ -13,7 +13,6 @@
           :label="$t('settings.profile.actions.signOut')"
           icon="fa fa-sign-out-alt"
           variant="secondary"
-          color="danger"
           @click="handleSignOut"
         />
       </div>
@@ -22,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 interface Props {
   refreshing: boolean

@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useCompaniesStore } from '@/stores/companies'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import ButtonGroup from '@/components/ui/ButtonGroup.vue'
 import { useI18n } from 'vue-i18n'
 

@@ -209,7 +209,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { saveAiPreferences } from '@/api/ai-preferences'
 import Input from '@/components/ui/Input.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Alert from '@/components/ui/Alert.vue'
 import type { AiPreferencesCreate } from '@/types/ai-preferences'
 

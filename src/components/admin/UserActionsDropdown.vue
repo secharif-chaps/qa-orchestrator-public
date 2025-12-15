@@ -1,7 +1,7 @@
 <template>
   <Dropdown align="right" width="md" :close-on-select="true">
     <template #trigger>
-      <Button variant="tertiary" size="sm" icon="fa fa-ellipsis-v" icon-only />
+      <Button variant="tertiary" size="sm" icon="fa fa-ellipsis-v" />
     </template>
 
     <template #content="{ close }">
@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import Dropdown from '@/components/ui/Dropdown.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 const emit = defineEmits<{
   'change-organization': []

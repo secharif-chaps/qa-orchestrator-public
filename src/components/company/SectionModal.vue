@@ -45,7 +45,7 @@
 import { computed, watch, defineAsyncComponent } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import type { TaskType } from '@/types/task'
 
 const { t } = useI18n()

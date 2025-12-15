@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 

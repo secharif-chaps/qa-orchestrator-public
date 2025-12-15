@@ -69,7 +69,6 @@
           <Button
             variant="tertiary"
             icon="fa fa-edit"
-            icon-only
             size="sm"
             :title="$t('team.edit', 'Edit user')"
             @click="$emit('edit-user', user)"
@@ -78,9 +77,7 @@
           <Button
             v-if="user.is_disabled"
             variant="tertiary"
-            color="warning"
             icon="fa fa-check"
-            icon-only
             size="sm"
             :title="$t('team.enable', 'Enable user')"
             @click="$emit('enable-user', user.id)"
@@ -89,9 +86,7 @@
           <Button
             v-else
             variant="tertiary"
-            color="danger"
             icon="fa fa-ban"
-            icon-only
             size="sm"
             :title="$t('team.disable', 'Disable user')"
             @click="$emit('disable-user', user.id)"
@@ -110,7 +105,7 @@ import { computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import type { OrganizationUser } from '@/types/team'
 
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 const props = defineProps<{
   user: OrganizationUser
