@@ -1,4 +1,4 @@
--- Create Keycloak database and user
-CREATE USER keycloak WITH PASSWORD '!ChangeMe!';
-CREATE DATABASE keycloak OWNER keycloak;
-GRANT ALL PRIVILEGES ON DATABASE keycloak TO keycloak;
+-- Create Keycloak database (uses postgres superuser as per docker-compose config)
+-- Note: Keycloak connects as postgres user (KC_DB_USERNAME=postgres)
+CREATE DATABASE keycloak;
+GRANT ALL PRIVILEGES ON DATABASE keycloak TO postgres;

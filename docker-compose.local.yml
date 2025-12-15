@@ -1,0 +1,79 @@
+services:
+  # Disable nginx for local development
+  nginx:
+    profiles:
+      - production  # Only run in production profile
+
+  # Disable frontend in Docker - use 'pnpm dev' locally for hot-reload
+  # To run frontend in Docker instead: docker compose --profile frontend up -d
+  frontend:
+    profiles:
+      - frontend
+    build:
+      context: ../front
+      dockerfile: Dockerfile
+    image: mint-front:local
+    ports:
+      - "3000:80"
+    environment:
+      # These are build-time vars, set in .env file for local dev
+      VITE_BASE_URL: http://localhost:8000/api
+      VITE_API_URL: http://localhost:8000/api
+      VITE_KEYCLOAK_URL: http://localhost:8080
+      VITE_KEYCLOAK_REALM: chapsmind
+      VITE_KEYCLOAK_CLIENT_ID: chapsmind-front
+
+  # Override backend to use local code and expose directly
+  backend:
+    build:
+      context: ../back
+      dockerfile: Dockerfile
+    image: mint-back:local
+    ports:
+      - "8000:8000"  # Expose backend directly
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    environment:
+      # Override CORS to allow frontend on port 3000
+      CORS_ORIGIN: http://localhost:3000
+      BACKEND_BASE_URL: http://localhost:8000/api
+      LOG_LEVEL: INFO  # Use INFO level for local development
+      # Local Keycloak settings
+      KEYCLOAK_SERVER_URL: http://keycloak:8080
+      KEYCLOAK_REALM: chapsmind
+      KEYCLOAK_CLIENT_ID: chapsmind-screen-back
+      KEYCLOAK_CLIENT_SECRET: chapsmind-screen-back-secret
+      KEYCLOAK_ADMIN_CLIENT_ID: chapsmind-admin
+      KEYCLOAK_ADMIN_CLIENT_SECRET: chapsmind-admin-secret
+    volumes:
+      # Mount local code for hot-reload
+      - ../back/app:/app/app
+      - ../back/alembic:/app/alembic
+      - ../back/alembic.ini:/app/alembic.ini
+      - ../back/scripts:/app/scripts
+
+  # Override celery worker to use local code
+  backend_celery_worker:
+    build:
+      context: ../back
+      dockerfile: Dockerfile
+    image: mint-back:local
+    environment:
+      BACKEND_BASE_URL: http://localhost:8000/api
+      LOG_LEVEL: INFO  # Use INFO level for local development
+    volumes:
+      # Mount local code for hot-reload
+      - ../back/app:/app/app
+      - ../back/alembic:/app/alembic
+
+  # Override flower to use local code
+  backend_celery_flower:
+    build:
+      context: ../back
+      dockerfile: Dockerfile
+    image: mint-back:local
