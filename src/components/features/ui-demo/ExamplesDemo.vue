@@ -57,8 +57,8 @@
             />
           </div>
           <div class="mt-4 flex gap-2">
-            <Button @click="submitForm"> Submit </Button>
-            <Button @click="resetForm"> Reset </Button>
+            <Button label="Submit" @click="submitForm" />
+            <Button label="Reset" @click="resetForm" />
           </div>
         </div>
       </div>
@@ -258,7 +258,7 @@ import Badge from '@/components/ui/Badge.vue'
 import Tag from '@/components/ui/Tag.vue'
 import Alert from '@/components/ui/Alert.vue'
 import Input from '@/components/ui/Input.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 const searchQuery = ref('')
 const activeFilters = ref(['Active', 'Verified', 'Premium'])

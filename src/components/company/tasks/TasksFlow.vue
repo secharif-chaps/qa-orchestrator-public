@@ -185,7 +185,7 @@ import { useRestartTask } from '@/mutations/tasks'
 import { onUnmounted } from 'vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { useAuthStore } from '@/stores/auth'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
 
 const { t } = useI18n()

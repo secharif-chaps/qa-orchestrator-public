@@ -27,27 +27,21 @@
         <div class="flex items-center gap-2">
           <Button
             variant="tertiary"
-            dark
             :icon="sidebarStore.isFullscreen ? 'fa-solid fa-compress' : 'fa-solid fa-expand'"
-            icon-only
             size="sm"
             :title="sidebarStore.isFullscreen ? $t('chapse.exitFullscreen', 'Exit fullscreen') : $t('chapse.enterFullscreen', 'Enter fullscreen')"
             @click="toggleFullscreen"
           />
           <Button
             variant="tertiary"
-            dark
             icon="fa-solid fa-plus"
-            icon-only
             size="sm"
             :title="$t('chapse.newConversation', 'New conversation')"
             @click="handleNewConversation"
           />
           <Button
             variant="tertiary"
-            dark
             icon="fa-solid fa-trash"
-            icon-only
             size="sm"
             :title="$t('chapse.clearHistory', 'Clear history')"
             @click="handleClearHistory"
@@ -95,12 +89,10 @@
               v-for="suggestion in suggestions"
               :key="suggestion.label"
               variant="secondary"
-              dark
               size="sm"
+              :label="suggestion.label"
               @click="sendSuggestion(suggestion.message)"
-            >
-              {{ suggestion.label }}
-            </Button>
+            />
           </div>
         </div>
 
@@ -152,7 +144,7 @@ import { useChapseStore } from '@/stores/chapse'
 import ChatMessage from '@/components/chapse/ChatMessage.vue'
 import ChatInput from '@/components/chapse/ChatInput.vue'
 import ConversationList from '@/components/chapse/ConversationList.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import chapseAvatar from '@/assets/chapse/head.svg'
 import withBody from '@/assets/chapse/default.svg'
 import { toast } from '@/utils/toast'

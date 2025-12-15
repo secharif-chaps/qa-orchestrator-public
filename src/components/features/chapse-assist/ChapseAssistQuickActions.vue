@@ -37,9 +37,7 @@
       icon="fa fa-exclamation-circle"
     >
       <template #actions>
-        <Button variant="secondary" size="sm" icon="fa fa-refresh" @click="retryPreferencesCheck">
-          {{ $t('chapseAssist.quickActions.tryAgain', 'Try Again') }}
-        </Button>
+        <Button variant="secondary" size="sm" icon="fa fa-refresh" :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')" @click="retryPreferencesCheck" />
       </template>
     </Alert>
   </div>
@@ -62,11 +60,10 @@
         variant="tertiary"
         size="sm"
         icon="fa fa-refresh"
+        :label="$t('chapseAssist.quickActions.refresh', 'Refresh')"
         @click="handleRefresh"
         :disabled="isLoadingActions"
-      >
-        {{ $t('chapseAssist.quickActions.refresh', 'Refresh') }}
-      </Button>
+      />
     </div>
 
     <!-- Loading State (generating actions) -->
@@ -89,18 +86,15 @@
     >
       <template #actions>
         <div class="flex gap-3">
-          <Button variant="secondary" size="sm" icon="fa fa-refresh" @click="handleRetry">
-            {{ $t('chapseAssist.quickActions.tryAgain', 'Try Again') }}
-          </Button>
+          <Button variant="secondary" size="sm" icon="fa fa-refresh" :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')" @click="handleRetry" />
           <Button
             v-if="actionsError?.includes('preferences')"
             variant="primary"
             size="sm"
             icon="fa fa-cog"
+            :label="$t('chapseAssist.quickActions.configure', 'Configure AI Preferences')"
             @click="goToSetup"
-          >
-            {{ $t('chapseAssist.quickActions.configure', 'Configure AI Preferences') }}
-          </Button>
+          />
         </div>
       </template>
     </Alert>
@@ -170,9 +164,7 @@
       <p class="text-sm text-secondary">
         {{ $t('chapseAssist.quickActions.empty.loadedMessage', 'Unable to generate quick actions for this company. Try refreshing or check back later.') }}
       </p>
-      <Button variant="secondary" size="sm" icon="fa fa-refresh" class="mt-4" @click="handleRetry">
-        {{ $t('chapseAssist.quickActions.tryAgain', 'Try Again') }}
-      </Button>
+      <Button variant="secondary" size="sm" icon="fa fa-refresh" class="mt-4" :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')" @click="handleRetry" />
     </div>
 
     <!-- Initial State (Not yet loaded) - Component doesn't render anything until first load attempt completes -->
@@ -181,7 +173,7 @@
 
 <script setup lang="ts">
 import Alert from '@/components/ui/Alert.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import { useChapseAssist } from '@/composables/useChapseAssist'
 import type { QuickAction } from '@/types/ai-preferences'
 import type { Company } from '@/types/company'

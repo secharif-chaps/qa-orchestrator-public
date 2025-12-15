@@ -136,7 +136,7 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import type { OrganizationUserQueryParams } from '@/types/team'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Input from '../ui/Input.vue'
 
 const props = defineProps<{

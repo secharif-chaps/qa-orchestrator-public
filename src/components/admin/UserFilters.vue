@@ -15,9 +15,7 @@
       <!-- Organization Filter Dropdown -->
       <Dropdown align="left" width="md">
         <template #trigger>
-          <Button variant="secondary" icon="fa fa-filter">
-            {{ organizationFilterLabel }}
-          </Button>
+          <Button variant="secondary" icon="fa fa-filter" :label="organizationFilterLabel" />
         </template>
 
         <template #content="{ close }">
@@ -47,9 +45,7 @@
       <!-- Sort Dropdown -->
       <Dropdown align="right" width="md">
         <template #trigger>
-          <Button variant="secondary" icon="fa fa-sort">
-            {{ sortLabel }}
-          </Button>
+          <Button variant="secondary" icon="fa fa-sort" :label="sortLabel" />
         </template>
 
         <template #content="{ close }">
@@ -98,7 +94,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Input from '@/components/ui/Input.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
 import DropdownDivider from '@/components/ui/DropdownDivider.vue'

@@ -73,7 +73,7 @@ import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { useRoute, RouterLink } from 'vue-router'
 import { computed } from 'vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 const route = useRoute()
 

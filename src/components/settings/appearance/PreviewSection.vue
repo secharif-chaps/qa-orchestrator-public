@@ -103,7 +103,6 @@
               <Button
                 :label="$t('settings.appearance.preview.buttons.danger', 'Danger Button')"
                 variant="tertiary"
-                color="danger"
               />
             </div>
 
@@ -167,7 +166,7 @@
 <script setup lang="ts">
 import { Switch } from 'reka-ui/namespaced'
 import Tag from '@/components/ui/Tag.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

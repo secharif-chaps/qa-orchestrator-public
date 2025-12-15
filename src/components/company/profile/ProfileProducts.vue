@@ -140,7 +140,7 @@ import { computed } from 'vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Source from '../Source.vue'
 import Alert from '@/components/ui/Alert.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 const route = useRoute()
 const router = useRouter()

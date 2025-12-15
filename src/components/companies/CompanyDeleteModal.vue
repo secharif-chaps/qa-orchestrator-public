@@ -106,8 +106,7 @@
           @click="showDeleteModal = false"
         />
         <Button
-          variant="primary"
-          color="danger"
+          variant="accent"
           icon="fa fa-trash"
           :label="$t('company.delete.confirm.button', 'Delete Company')"
           :loading="deleteLoading"
@@ -123,7 +122,7 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Company } from '@/types/company'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Input from '@/components/ui/Input.vue'
 import { deleteCompany as apiDeleteCompany } from '@/api/companies'
 import { toast } from '@/utils/toast'

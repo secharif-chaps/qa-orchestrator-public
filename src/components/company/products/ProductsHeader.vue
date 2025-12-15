@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
 
 interface Props {

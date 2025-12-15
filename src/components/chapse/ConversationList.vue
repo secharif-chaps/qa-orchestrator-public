@@ -7,9 +7,7 @@
       </h3>
       <Button
         variant="tertiary"
-        dark
         icon="fa fa-plus"
-        icon-only
         size="sm"
         :title="$t('chapse.newConversation', 'New conversation')"
         @click="$emit('new-conversation')"
@@ -60,14 +58,12 @@
         <div v-if="hasMore" class="px-3 py-2">
           <Button
             variant="tertiary"
-            dark
             size="sm"
             :loading="loading"
-            class="w-full"
+            label="Load more"
+            block
             @click="$emit('load-more')"
-          >
-            {{ $t('chapse.loadMore', 'Load more') }}
-          </Button>
+          />
         </div>
       </template>
     </div>
@@ -78,7 +74,7 @@
 import { computed } from 'vue'
 import type { ChapseConversation } from '@/api/chapse'
 import ConversationItem from './ConversationItem.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 interface Props {
   conversations: ChapseConversation[]

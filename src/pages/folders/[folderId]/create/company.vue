@@ -101,7 +101,7 @@ meta:
 
 <script lang="ts" setup>
 import { OIcon } from '@owlint/feathers-vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Input from '@/components/ui/Input.vue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

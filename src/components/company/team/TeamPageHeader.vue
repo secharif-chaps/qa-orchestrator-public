@@ -113,7 +113,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import type { TeamMember } from '@/types/company'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Alert from '@/components/ui/Alert.vue'
 import Tag from '@/components/ui/Tag.vue'
 

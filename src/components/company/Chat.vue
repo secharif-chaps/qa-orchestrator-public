@@ -71,7 +71,7 @@
 <script lang="ts" setup>
 import { apiClient } from '@/api/client'
 import { companyByIdQuery } from '@/queries/companies'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { ref, nextTick, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'

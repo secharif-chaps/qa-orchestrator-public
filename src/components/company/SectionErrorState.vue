@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts" setup>
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import chapseErrorImage from '@/assets/chapse/error_light.svg'
 import type { TaskResponse, TaskType } from '@/types/task'
 import { ref } from 'vue'

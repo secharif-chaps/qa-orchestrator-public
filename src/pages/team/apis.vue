@@ -201,7 +201,7 @@ meta:
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
 import Input from '@/components/ui/Input.vue'
 

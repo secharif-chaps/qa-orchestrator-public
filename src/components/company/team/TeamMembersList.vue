@@ -88,7 +88,7 @@ import { computed, ref } from 'vue'
 import type { TeamMember } from '@/types/company'
 import TeamMemberCard from './TeamMemberCard.vue'
 import Input from '@/components/ui/Input.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 const props = defineProps<{
   team: TeamMember[]

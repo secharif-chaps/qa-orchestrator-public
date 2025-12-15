@@ -20,18 +20,16 @@
           variant="secondary"
           size="sm"
           icon="fa fa-magic"
+          :label="actionLabel"
           @click="handleSetup"
-        >
-          {{ actionLabel }}
-        </Button>
+        />
         <Button
           v-if="showDismiss"
           variant="secondary"
           size="sm"
+          :label="dismissLabel"
           @click="handleDismiss"
-        >
-          {{ dismissLabel }}
-        </Button>
+        />
       </div>
     </div>
   </div>
@@ -42,7 +40,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useChapseAssist } from '@/composables/useChapseAssist'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 
 const { t } = useI18n()
 

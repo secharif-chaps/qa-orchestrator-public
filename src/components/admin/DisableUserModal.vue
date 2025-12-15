@@ -9,7 +9,7 @@
       <!-- Header -->
       <div class="flex items-center justify-between mb-6">
         <h3 class="text-lg font-semibold text-base">Disable User</h3>
-        <Button variant="tertiary" icon="fa fa-times" icon-only @click="$emit('close')" />
+        <Button variant="tertiary" icon="fa fa-times" @click="$emit('close')" />
       </div>
 
       <!-- User Info -->
@@ -34,10 +34,8 @@
 
       <!-- Actions -->
       <div class="flex justify-end gap-3">
-        <Button variant="secondary" @click="$emit('close')"> Cancel </Button>
-        <Button variant="accent" :loading="isLoading" @click="$emit('confirm')">
-          Disable User
-        </Button>
+        <Button variant="secondary" label="Cancel" @click="$emit('close')" />
+        <Button variant="accent" label="Disable User" :loading="isLoading" @click="$emit('confirm')" />
       </div>
     </div>
   </div>
@@ -45,7 +43,7 @@
 
 <script setup lang="ts">
 import type { AdminUserResponse } from '@/types/admin-user'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Alert from '@/components/ui/Alert.vue'
 
 defineProps<{

@@ -104,7 +104,7 @@ meta:
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { workflowsApi, type WorkflowConfig } from '@/api/workflows'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Alert from '@/components/ui/Alert.vue'
 import Tag from '@/components/ui/Tag.vue'
 import WorkflowCard from '@/components/admin/WorkflowCard.vue'

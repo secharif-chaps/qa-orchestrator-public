@@ -15,7 +15,7 @@
               : $t('admin.users.modal.assignOrganization', 'Assign User to Organization')
           }}
         </h3>
-        <Button variant="tertiary" icon="fa fa-times" icon-only @click="$emit('cancel')" />
+        <Button variant="tertiary" icon="fa fa-times" @click="$emit('cancel')" />
       </div>
 
       <!-- User Info -->
@@ -148,7 +148,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Alert from '@/components/ui/Alert.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import type { AdminUserResponse } from '@/types/admin-user'
 import type { OrganizationAdminResponse } from '@/types/organization'
 

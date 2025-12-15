@@ -142,7 +142,7 @@ import { useQuery } from '@pinia/colada'
 import { getAllOrganizations } from '@/api/organization'
 import Alert from '@/components/ui/Alert.vue'
 import Tag from '@/components/ui/Tag.vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import Input from '@/components/ui/Input.vue'
 
 const router = useRouter()

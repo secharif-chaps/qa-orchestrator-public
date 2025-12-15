@@ -36,7 +36,7 @@
 <script setup lang="ts">
 import { useAuth } from '@/composables/useAuth'
 import { ref } from 'vue'
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
 import Alert from '@/components/ui/Alert.vue'
 

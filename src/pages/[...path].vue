@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import Button from '@/components/ui/Button.vue'
+import { Button } from '@owlint/feathers-vue'
 </script>
 
 <route lang="yaml">
