@@ -1,15 +1,23 @@
-"""Pytest configuration and fixtures for security tests."""
+"""Pytest configuration and fixtures for integration tests.
+
+This conftest provides fixtures for tests that need the full FastAPI app.
+For unit tests that don't need the app, use tests/unit/conftest.py instead.
+"""
 
 import os
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from fastapi.testclient import TestClient
 
 # Override Keycloak settings for local testing
-os.environ["KEYCLOAK_SERVER_URL"] = "http://localhost:8080"
+# These must be set before any app imports
+os.environ["KEYCLOAK_SERVER_URL"] = os.environ.get("KEYCLOAK_SERVER_URL", "http://keycloak:8080")
+os.environ["KEYCLOAK_REALM"] = os.environ.get("KEYCLOAK_REALM", "chapsmind")
+os.environ["KEYCLOAK_CLIENT_ID"] = os.environ.get("KEYCLOAK_CLIENT_ID", "chapsmind-screen-back")
+os.environ["KEYCLOAK_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_CLIENT_SECRET", "chapsmind-screen-back-secret")
+os.environ["KEYCLOAK_ADMIN_CLIENT_ID"] = os.environ.get("KEYCLOAK_ADMIN_CLIENT_ID", "chapsmind-admin")
+os.environ["KEYCLOAK_ADMIN_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_ADMIN_CLIENT_SECRET", "chapsmind-admin-secret")
 
-from app.main import app
 from app.database import Base
 from app.schemas.user import TokenData
 
@@ -36,7 +44,13 @@ def db_session():
 
 @pytest.fixture
 def client():
-    """Create a FastAPI test client."""
+    """Create a FastAPI test client.
+
+    This fixture imports the app lazily to avoid Keycloak connection
+    issues when running unit tests that don't need the client.
+    """
+    from fastapi.testclient import TestClient
+    from app.main import app
     return TestClient(app)
 
 

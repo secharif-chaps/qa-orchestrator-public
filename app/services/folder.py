@@ -1,14 +1,30 @@
+"""Folder service layer for folder operations, sharing, and access control.
+
+This module provides business logic for:
+- Folder CRUD operations
+- Folder item management
+- Folder sharing (share_folder, unshare_folder, get_folder_shares, update_share_role)
+- Access control (has_folder_access, get_user_folder_role, is_folder_owner)
+- User favorites
+- Orphaned folder management
+"""
+
 from typing import List, Optional, Dict, Any, Set
 from uuid import UUID
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from datetime import datetime
 
 from app.models import Folder, FolderItem, Company, UserFolderFavorite
+from app.models.folder import FolderShare, ShareRole
 from app.schemas.folder import FolderCreate, FolderUpdate
 
 
 class FolderService:
-    
+    """Service class for folder operations."""
+
+    # ==================== Folder CRUD Methods ====================
+
     @staticmethod
     def create_folder(
         db: Session,
@@ -17,7 +33,18 @@ class FolderService:
         owner_username: str,
         folder_data: FolderCreate
     ) -> Folder:
-        """Create a new folder"""
+        """Create a new folder.
+
+        Args:
+            db: Database session
+            organization_id: Organization UUID for multi-tenancy
+            owner_id: Keycloak user UUID of the folder owner
+            owner_username: Username for display (denormalized)
+            folder_data: Folder creation data
+
+        Returns:
+            Newly created Folder instance
+        """
         folder = Folder(
             organization_id=organization_id,
             owner_id=owner_id,  # Keycloak user UUID
@@ -31,7 +58,7 @@ class FolderService:
         db.commit()
         db.refresh(folder)
         return folder
-    
+
     @staticmethod
     def get_folder(
         db: Session,
@@ -39,7 +66,17 @@ class FolderService:
         organization_id: str,
         include_deleted: bool = False
     ) -> Optional[Folder]:
-        """Get a folder by ID"""
+        """Get a folder by ID.
+
+        Args:
+            db: Database session
+            folder_id: Folder UUID to retrieve
+            organization_id: Organization UUID for access validation
+            include_deleted: If True, include soft-deleted folders
+
+        Returns:
+            Folder instance if found, None otherwise
+        """
         query = db.query(Folder).filter(
             Folder.id == folder_id,
             Folder.organization_id == organization_id
@@ -49,30 +86,30 @@ class FolderService:
             query = query.filter(Folder.is_deleted == False)
 
         return query.first()
-    
+
     @staticmethod
     def _get_folder_items_summary(
-        db: Session, 
+        db: Session,
         folder_id: UUID,
         item_archived_filter: bool = False
     ) -> List[Dict[str, Any]]:
-        """Get complete items for a folder - returns dicts for internal use"""
+        """Get complete items for a folder - returns dicts for internal use."""
         items = []
         folder_items = db.query(FolderItem).filter(
             FolderItem.folder_id == folder_id
         ).order_by(FolderItem.position.nullsfirst(), FolderItem.added_at).all()
-        
+
         for item in folder_items:
             if item.item_type == 'company':
                 try:
                     company_id = int(item.item_id)
                     company_query = db.query(Company).filter(Company.id == company_id)
-                    
+
                     # Apply the archived filter
                     company_query = company_query.filter(Company.is_deleted == item_archived_filter)
-                    
+
                     company = company_query.first()
-                    
+
                     if company:
                         items.append({
                             'id': str(item.item_id),
@@ -88,9 +125,9 @@ class FolderService:
                 except (ValueError, TypeError):
                     continue
             # Add support for other item types (contact, document) here in the future
-        
+
         return items
-    
+
     @staticmethod
     def get_folder_with_items(
         db: Session,
@@ -98,18 +135,18 @@ class FolderService:
         organization_id: str,
         item_archived_filter: bool = False
     ) -> Optional[Dict[str, Any]]:
-        """Get folder with summary of its items"""
+        """Get folder with summary of its items."""
         folder = FolderService.get_folder(db, folder_id, organization_id)
         if not folder:
             return None
-        
+
         # Get folder items with company details, applying filters
         items = FolderService._get_folder_items_summary(
-            db, 
-            folder_id, 
+            db,
+            folder_id,
             item_archived_filter=item_archived_filter
         )
-        
+
         return {
             'id': str(folder.id),
             'name': folder.name,
@@ -124,7 +161,7 @@ class FolderService:
             'items': items
             # Note: is_favorite is computed per-user and added by the endpoint
         }
-    
+
     @staticmethod
     def list_folders(
         db: Session,
@@ -133,92 +170,121 @@ class FolderService:
         archived: bool = False,
         favorites_only: bool = False
     ) -> List[Folder]:
-        """List all folders in an organization.
+        """List folders accessible to a user (owned + shared).
+
+        This method returns only folders that the user owns or has been explicitly
+        shared with. It filters by organization and optionally by archived status
+        or favorites.
 
         Args:
             db: Database session
             organization_id: Organization to filter by
-            user_id: Current user ID (required for favorites filtering)
+            user_id: Current user ID for ownership and sharing checks
             archived: If True, show deleted folders; if False, show active folders
             favorites_only: If True, only show folders favorited by this user
+
+        Returns:
+            List of Folder instances the user has access to
         """
         import logging
         logger = logging.getLogger(__name__)
 
-        logger.debug(f"📁 list_folders - organization_id: {organization_id}, user_id: {user_id}, archived: {archived}, favorites_only: {favorites_only}")
+        logger.debug(
+            f"list_folders - organization_id: {organization_id}, "
+            f"user_id: {user_id}, archived: {archived}, favorites_only: {favorites_only}"
+        )
 
-        query = db.query(Folder).filter(Folder.organization_id == organization_id)
+        # Build base query with ownership OR sharing filter
+        # This uses a LEFT JOIN with folder_shares to include both owned and shared folders
+        query = db.query(Folder).outerjoin(
+            FolderShare,
+            FolderShare.folder_id == Folder.id
+        ).filter(
+            Folder.organization_id == organization_id,
+            or_(
+                Folder.owner_id == user_id,  # User owns the folder
+                FolderShare.user_id == user_id  # User has been shared the folder
+            )
+        )
 
+        # Apply archived filter
         if archived:
-            logger.debug("📁 Filtering for archived (deleted) folders")
+            logger.debug("Filtering for archived (deleted) folders")
             query = query.filter(Folder.is_deleted == True)
         else:
-            logger.debug("📁 Filtering for non-archived folders")
+            logger.debug("Filtering for non-archived folders")
             query = query.filter(Folder.is_deleted == False)
 
+        # Apply favorites filter
         if favorites_only:
-            logger.debug("📁 Filtering for user's favorites only")
-            # Join with user_folder_favorites to filter by current user's favorites
+            logger.debug("Filtering for user's favorites only")
             query = query.join(
                 UserFolderFavorite,
                 (UserFolderFavorite.folder_id == Folder.id) &
                 (UserFolderFavorite.user_id == user_id)
             )
 
+        # Ensure distinct results since a user could own AND be shared a folder
+        # (though this shouldn't happen, we handle it gracefully)
+        query = query.distinct()
+
         # Log the SQL query
-        logger.debug(f"📁 SQL Query: {query}")
+        logger.debug(f"SQL Query: {query}")
 
         folders = query.order_by(Folder.created_at.desc()).all()
 
-        logger.info(f"📁 list_folders result: Found {len(folders)} folders")
+        logger.info(f"list_folders result: Found {len(folders)} folders")
         for folder in folders:
-            logger.debug(f"📁   - Folder: {folder.id} | {folder.name} | org: {folder.organization_id} | deleted: {folder.is_deleted}")
+            logger.debug(
+                f"  - Folder: {folder.id} | {folder.name} | "
+                f"org: {folder.organization_id} | deleted: {folder.is_deleted}"
+            )
 
-        # Don't assign items to the SQLAlchemy models directly
-        # The endpoint will handle the response serialization
         return folders
-    
+
     @staticmethod
     def update_folder(
         db: Session,
         folder: Folder,
         folder_update: FolderUpdate
     ) -> Folder:
-        """Update a folder"""
+        """Update a folder."""
         update_data = folder_update.dict(exclude_unset=True)
-        
+
         for field, value in update_data.items():
             setattr(folder, field, value)
-        
+
         folder.updated_at = datetime.utcnow()
         db.commit()
         db.refresh(folder)
         return folder
-    
+
     @staticmethod
     def soft_delete_folder(
         db: Session,
         folder: Folder
     ) -> Folder:
-        """Soft delete a folder"""
+        """Soft delete a folder."""
         folder.is_deleted = True
         folder.updated_at = datetime.utcnow()
         db.commit()
         db.refresh(folder)
         return folder
-    
+
     @staticmethod
     def restore_folder(
         db: Session,
         folder: Folder
     ) -> Folder:
-        """Restore a soft-deleted folder"""
+        """Restore a soft-deleted folder."""
         folder.is_deleted = False
         folder.updated_at = datetime.utcnow()
         db.commit()
         db.refresh(folder)
         return folder
-    
+
+    # ==================== Folder Item Methods ====================
+
     @staticmethod
     def add_item_to_folder(
         db: Session,
@@ -228,10 +294,10 @@ class FolderService:
         owner: str,  # Username
         position: Optional[int] = None
     ) -> FolderItem:
-        """Add an item to a folder"""
+        """Add an item to a folder."""
         import logging
         logger = logging.getLogger(__name__)
-        
+
         try:
             # Check if item already exists in folder
             existing = db.query(FolderItem).filter(
@@ -239,7 +305,7 @@ class FolderService:
                 FolderItem.item_id == item_id,
                 FolderItem.item_type == item_type
             ).first()
-            
+
             if existing:
                 logger.debug("Item already exists in folder, updating position if provided")
                 # Update position if provided
@@ -248,9 +314,12 @@ class FolderService:
                     db.commit()
                     db.refresh(existing)
                 return existing
-            
-            logger.debug(f"Creating new folder item - folder_id: {folder_id}, item_id: {item_id}, item_type: {item_type}, owner: {owner}")
-            
+
+            logger.debug(
+                f"Creating new folder item - folder_id: {folder_id}, "
+                f"item_id: {item_id}, item_type: {item_type}, owner: {owner}"
+            )
+
             folder_item = FolderItem(
                 folder_id=folder_id,
                 item_id=item_id,
@@ -261,14 +330,14 @@ class FolderService:
             db.add(folder_item)
             db.commit()
             db.refresh(folder_item)
-            
+
             logger.debug(f"Successfully created folder item with id: {folder_item.id}")
             return folder_item
         except Exception as e:
             logger.error(f"Error in add_item_to_folder: {str(e)}", exc_info=True)
             db.rollback()
             raise
-    
+
     @staticmethod
     def remove_item_from_folder(
         db: Session,
@@ -276,20 +345,20 @@ class FolderService:
         item_id: str,
         item_type: str
     ) -> bool:
-        """Remove an item from a folder"""
+        """Remove an item from a folder."""
         folder_item = db.query(FolderItem).filter(
             FolderItem.folder_id == folder_id,
             FolderItem.item_id == item_id,
             FolderItem.item_type == item_type
         ).first()
-        
+
         if folder_item:
             db.delete(folder_item)
             db.commit()
             return True
-        
+
         return False
-    
+
     @staticmethod
     def get_folders_for_item(
         db: Session,
@@ -297,7 +366,7 @@ class FolderService:
         item_type: str,
         organization_id: str
     ) -> List[Folder]:
-        """Get all folders containing a specific item"""
+        """Get all folders containing a specific item."""
         folder_items = db.query(FolderItem).filter(
             FolderItem.item_id == item_id,
             FolderItem.item_type == item_type
@@ -313,6 +382,299 @@ class FolderService:
             Folder.organization_id == organization_id,
             Folder.is_deleted == False
         ).all()
+
+    # ==================== Folder Sharing Methods ====================
+
+    @staticmethod
+    def share_folder(
+        db: Session,
+        folder_id: UUID,
+        user_id: str,
+        user_username: str,
+        role: ShareRole
+    ) -> FolderShare:
+        """Share a folder with a user.
+
+        Creates a new FolderShare record granting the specified user access
+        to the folder with the given role.
+
+        Args:
+            db: Database session
+            folder_id: UUID of the folder to share
+            user_id: Keycloak user UUID to share with
+            user_username: Username for display (denormalized)
+            role: ShareRole enum (READER or WRITER)
+
+        Returns:
+            Newly created FolderShare instance
+
+        Raises:
+            ValueError: If a share already exists for this folder-user combination
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+
+        # Check for existing share
+        existing = db.query(FolderShare).filter(
+            FolderShare.folder_id == folder_id,
+            FolderShare.user_id == user_id
+        ).first()
+
+        if existing:
+            logger.warning(
+                f"Share already exists for folder {folder_id} and user {user_id}"
+            )
+            raise ValueError(f"Folder is already shared with user {user_username}")
+
+        # Create new share
+        share = FolderShare(
+            folder_id=folder_id,
+            user_id=user_id,
+            user_username=user_username,
+            role=role
+        )
+        db.add(share)
+        db.commit()
+        db.refresh(share)
+
+        logger.info(
+            f"Created folder share: folder={folder_id}, user={user_id}, role={role.value}"
+        )
+        return share
+
+    @staticmethod
+    def unshare_folder(
+        db: Session,
+        folder_id: UUID,
+        user_id: str
+    ) -> bool:
+        """Remove a user's access to a folder.
+
+        Args:
+            db: Database session
+            folder_id: UUID of the folder
+            user_id: Keycloak user UUID to remove access for
+
+        Returns:
+            True if share was removed, False if no share existed
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+
+        share = db.query(FolderShare).filter(
+            FolderShare.folder_id == folder_id,
+            FolderShare.user_id == user_id
+        ).first()
+
+        if not share:
+            logger.debug(f"No share found for folder {folder_id} and user {user_id}")
+            return False
+
+        db.delete(share)
+        db.commit()
+
+        logger.info(f"Removed folder share: folder={folder_id}, user={user_id}")
+        return True
+
+    @staticmethod
+    def get_folder_shares(
+        db: Session,
+        folder_id: UUID
+    ) -> List[FolderShare]:
+        """Get all shares for a folder.
+
+        Args:
+            db: Database session
+            folder_id: UUID of the folder
+
+        Returns:
+            List of FolderShare instances for the folder
+        """
+        return db.query(FolderShare).filter(
+            FolderShare.folder_id == folder_id
+        ).order_by(FolderShare.created_at.desc()).all()
+
+    @staticmethod
+    def update_share_role(
+        db: Session,
+        folder_id: UUID,
+        user_id: str,
+        role: ShareRole
+    ) -> Optional[FolderShare]:
+        """Update a user's share role for a folder.
+
+        Args:
+            db: Database session
+            folder_id: UUID of the folder
+            user_id: Keycloak user UUID
+            role: New ShareRole to set
+
+        Returns:
+            Updated FolderShare instance, or None if no share exists
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+
+        share = db.query(FolderShare).filter(
+            FolderShare.folder_id == folder_id,
+            FolderShare.user_id == user_id
+        ).first()
+
+        if not share:
+            logger.debug(f"No share found for folder {folder_id} and user {user_id}")
+            return None
+
+        old_role = share.role
+        share.role = role
+        db.commit()
+        db.refresh(share)
+
+        logger.info(
+            f"Updated folder share role: folder={folder_id}, user={user_id}, "
+            f"old_role={old_role.value}, new_role={role.value}"
+        )
+        return share
+
+    # ==================== Access Control Methods ====================
+
+    @staticmethod
+    def has_folder_access(
+        db: Session,
+        folder_id: UUID,
+        user_id: str,
+        organization_id: str
+    ) -> bool:
+        """Check if a user has access to a folder.
+
+        A user has access if they are the owner OR have a share record.
+        Also validates that the folder belongs to the specified organization.
+
+        Args:
+            db: Database session
+            folder_id: UUID of the folder to check
+            user_id: Keycloak user UUID to check access for
+            organization_id: Organization UUID to validate against
+
+        Returns:
+            True if user has access, False otherwise
+        """
+        # First check if folder exists in the organization
+        folder = db.query(Folder).filter(
+            Folder.id == folder_id,
+            Folder.organization_id == organization_id
+        ).first()
+
+        if not folder:
+            return False
+
+        # Check if user is owner
+        if folder.owner_id == user_id:
+            return True
+
+        # Check if user has a share
+        share = db.query(FolderShare).filter(
+            FolderShare.folder_id == folder_id,
+            FolderShare.user_id == user_id
+        ).first()
+
+        return share is not None
+
+    @staticmethod
+    def get_user_folder_role(
+        db: Session,
+        folder_id: UUID,
+        user_id: str
+    ) -> Optional[str]:
+        """Get a user's role for a folder.
+
+        Args:
+            db: Database session
+            folder_id: UUID of the folder
+            user_id: Keycloak user UUID
+
+        Returns:
+            'owner' if user owns the folder
+            'writer' if user has writer share
+            'reader' if user has reader share
+            None if user has no access
+        """
+        # Check if user is owner
+        folder = db.query(Folder).filter(Folder.id == folder_id).first()
+
+        if not folder:
+            return None
+
+        if folder.owner_id == user_id:
+            return "owner"
+
+        # Check share role
+        share = db.query(FolderShare).filter(
+            FolderShare.folder_id == folder_id,
+            FolderShare.user_id == user_id
+        ).first()
+
+        if not share:
+            return None
+
+        return share.role.value  # Returns 'reader' or 'writer'
+
+    @staticmethod
+    def is_folder_owner(
+        db: Session,
+        folder_id: UUID,
+        user_id: str
+    ) -> bool:
+        """Check if a user is the owner of a folder.
+
+        Args:
+            db: Database session
+            folder_id: UUID of the folder
+            user_id: Keycloak user UUID
+
+        Returns:
+            True if user is the folder owner, False otherwise
+        """
+        folder = db.query(Folder).filter(
+            Folder.id == folder_id,
+            Folder.owner_id == user_id
+        ).first()
+
+        return folder is not None
+
+    # ==================== Orphaned Folder Methods ====================
+
+    @staticmethod
+    def flag_folder_orphaned(
+        db: Session,
+        folder_id: UUID
+    ) -> bool:
+        """Flag a folder as orphaned.
+
+        Used when a folder owner leaves the organization or is disabled.
+        Orphaned folders require admin action to claim or reassign.
+
+        Args:
+            db: Database session
+            folder_id: UUID of the folder to flag
+
+        Returns:
+            True if folder was flagged, False if folder not found
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+
+        folder = db.query(Folder).filter(Folder.id == folder_id).first()
+
+        if not folder:
+            logger.debug(f"Folder {folder_id} not found for orphan flagging")
+            return False
+
+        folder.is_orphaned = True
+        folder.updated_at = datetime.utcnow()
+        db.commit()
+
+        logger.info(f"Flagged folder as orphaned: {folder_id}")
+        return True
 
     # ==================== User Favorites Methods ====================
 

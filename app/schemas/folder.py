@@ -1,7 +1,39 @@
+"""Pydantic schemas for Folder and FolderShare operations.
+
+This module defines:
+- Folder CRUD schemas (create, update, response)
+- FolderItem schemas for junction table operations
+- FolderShare schemas for user-level sharing operations
+- ShareRole enum for share permission levels
+"""
+
+from enum import Enum
 from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel, Field
 from uuid import UUID
+
+
+# ==============================================================================
+# Share Role Enum
+# ==============================================================================
+
+
+class FolderShareRole(str, Enum):
+    """Share role enum for folder sharing permissions.
+
+    Attributes:
+        reader: Can view folder and its contents, but cannot modify
+        writer: Can view folder and add items (if has module permission),
+                but cannot edit/delete folder or manage sharing
+    """
+    reader = "reader"
+    writer = "writer"
+
+
+# ==============================================================================
+# Folder Schemas
+# ==============================================================================
 
 
 class FolderBase(BaseModel):
@@ -20,6 +52,11 @@ class FolderUpdate(BaseModel):
     color: Optional[str] = Field(None, max_length=50)
     icon: Optional[str] = Field(None, max_length=50)
     tags: Optional[List[str]] = None
+
+
+# ==============================================================================
+# Folder Item Schemas
+# ==============================================================================
 
 
 class FolderItemBase(BaseModel):
@@ -53,20 +90,6 @@ class FolderItemSimple(BaseModel):
     owner: str
 
 
-class FolderResponse(FolderBase):
-    id: UUID
-    organization_id: str
-    owner: str
-    is_favorite: bool
-    is_deleted: bool
-    created_at: datetime
-    updated_at: datetime
-    items: Optional[List[FolderItemSimple]] = Field(default_factory=list)  # Add items summary
-
-    class Config:
-        from_attributes = True
-
-
 class FolderItemSummary(BaseModel):
     id: str
     type: str
@@ -79,16 +102,159 @@ class FolderItemSummary(BaseModel):
     is_deleted: bool = False
 
 
+# ==============================================================================
+# Folder Response Schemas
+# ==============================================================================
+
+
+class FolderResponse(FolderBase):
+    """Standard folder response with basic information and access control fields.
+
+    Attributes:
+        id: Folder UUID
+        organization_id: Organization UUID
+        owner: Owner username (display name)
+        owner_id: Owner Keycloak UUID (for access control checks)
+        is_owner: True if current user is the folder owner
+        share_role: User's share role ('owner', 'writer', 'reader', or None)
+        is_favorite: Whether current user has favorited this folder
+        is_deleted: Whether folder is soft-deleted
+        created_at: Creation timestamp
+        updated_at: Last update timestamp
+        items: List of items in the folder
+    """
+    id: UUID
+    organization_id: str
+    owner: str
+    owner_id: Optional[str] = Field(None, description="Owner Keycloak UUID")
+    is_owner: bool = Field(False, description="True if current user is folder owner")
+    share_role: Optional[str] = Field(
+        None,
+        description="User's role for this folder: 'owner', 'writer', 'reader', or null"
+    )
+    is_favorite: bool
+    is_deleted: bool
+    created_at: datetime
+    updated_at: datetime
+    items: Optional[List[FolderItemSimple]] = Field(default_factory=list)
+
+    class Config:
+        from_attributes = True
+
+
 class FolderWithItemsResponse(BaseModel):
+    """Folder response with complete item details and access control fields.
+
+    Attributes:
+        id: Folder UUID (as string)
+        name: Folder name
+        color: Optional color
+        icon: Optional icon
+        tags: List of tags
+        owner: Owner username (display name)
+        owner_id: Owner Keycloak UUID (for access control checks)
+        is_owner: True if current user is the folder owner
+        share_role: User's share role ('owner', 'writer', 'reader', or None)
+        is_favorite: Whether current user has favorited this folder
+        is_deleted: Whether folder is soft-deleted
+        created_at: Creation timestamp
+        updated_at: Last update timestamp
+        organization_id: Organization UUID
+        items: List of items with details
+    """
     id: str
     name: str
     color: Optional[str]
     icon: Optional[str]
     tags: List[str]
+    owner: str
+    owner_id: Optional[str] = Field(None, description="Owner Keycloak UUID")
+    is_owner: bool = Field(False, description="True if current user is folder owner")
+    share_role: Optional[str] = Field(
+        None,
+        description="User's role for this folder: 'owner', 'writer', 'reader', or null"
+    )
     is_favorite: bool
     is_deleted: bool
     created_at: Optional[str]
     updated_at: Optional[str]
-    owner: str
     organization_id: str
     items: List[FolderItemSummary]
+
+
+# ==============================================================================
+# Folder Share Schemas
+# ==============================================================================
+
+
+class FolderShareCreate(BaseModel):
+    """Schema for creating a folder share.
+
+    Attributes:
+        user_id: Keycloak user UUID to share with
+        user_username: Username for display (denormalized)
+        role: Share role (reader or writer)
+    """
+    user_id: str = Field(..., description="Keycloak user UUID to share with")
+    user_username: str = Field(..., description="Username for display")
+    role: FolderShareRole = Field(
+        default=FolderShareRole.reader,
+        description="Share role - reader (view only) or writer (can add items)"
+    )
+
+
+class FolderShareUpdate(BaseModel):
+    """Schema for updating a folder share role.
+
+    Attributes:
+        role: New share role (reader or writer)
+    """
+    role: FolderShareRole = Field(
+        ...,
+        description="New share role - reader (view only) or writer (can add items)"
+    )
+
+
+class FolderShareResponse(BaseModel):
+    """Schema for folder share response.
+
+    Attributes:
+        id: Share record UUID
+        folder_id: UUID of the shared folder
+        user_id: Keycloak user UUID who has access
+        user_username: Username for display
+        role: Share role (reader or writer)
+        created_at: Timestamp when share was created
+    """
+    id: UUID
+    folder_id: UUID
+    user_id: str
+    user_username: str
+    role: FolderShareRole
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# ==============================================================================
+# User Search Schemas (for share modal autocomplete)
+# ==============================================================================
+
+
+class UserSearchResult(BaseModel):
+    """Schema for user search result in share modal.
+
+    Attributes:
+        user_id: Keycloak user UUID
+        username: Username for display
+        email: User's email address
+        has_write_permission: Whether user has organization.write permission
+    """
+    user_id: str = Field(..., description="Keycloak user UUID")
+    username: str = Field(..., description="Username for display")
+    email: Optional[str] = Field(None, description="User's email address")
+    has_write_permission: bool = Field(
+        False,
+        description="Whether user has organization.write permission (can be Writer)"
+    )
