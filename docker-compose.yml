@@ -82,7 +82,7 @@ services:
 
   # Keycloak for Authentication
   keycloak:
-    image: keycloak/keycloak:26.3
+    image: keycloak/keycloak:26.0
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -96,14 +96,19 @@ services:
       KC_HOSTNAME_STRICT: "false"
       KC_HOSTNAME_STRICT_HTTPS: "false"
       KC_HTTP_ENABLED: "true"
-      KC_PROXY_HEADERS: xforwarded
-      KC_HOSTNAME_URL: http://localhost/auth
-    command: start --import-realm
+      KC_FEATURES: organization
+    command: start-dev --import-realm
     volumes:
-      - ./files/realm-mint.json:/opt/keycloak/data/import/realm-mint.json
-      - ./files/mint:/opt/keycloak/themes/mint
+      - ./files/realm-chapsmind.json:/opt/keycloak/data/import/realm-chapsmind.json
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080;echo -e 'GET /health/ready HTTP/1.1\r\nhost: localhost\r\nConnection: close\r\n\r\n' >&3;if [ $? -eq 0 ]; then echo 'Healthcheck Successful';exit 0;else echo 'Healthcheck Failed';exit 1;fi;"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
     networks:
       - mint-network
 
