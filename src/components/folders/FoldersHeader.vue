@@ -155,7 +155,7 @@
                       {{ $t('folder.addItems.watchfileDescription', 'Monitor company changes') }}
                     </div>
                   </div>
-                  <Tag variant="secondary" size="xs" label="Soon" />
+                  <Tag variant="secondary" size="xs" :label="$t('common.soon')" />
                 </button>
 
                 <!-- GraphRag - Disabled -->
@@ -180,7 +180,7 @@
                       }}
                     </div>
                   </div>
-                  <Tag variant="secondary" size="xs" label="Soon" />
+                  <Tag variant="secondary" size="xs" :label="$t('common.soon')" />
                 </button>
               </div>
             </div>

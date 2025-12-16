@@ -14,7 +14,7 @@
       :class="[
         folder.is_favorite ? 'bg-yellow-100 dark:bg-yellow-900/30' : 'hover:bg-base-200',
       ]"
-      :title="folder.is_favorite ? 'Remove from favorites' : 'Add to favorites'"
+      :title="folder.is_favorite ? $t('folder.actions.removeFromFavorites') : $t('folder.actions.addToFavorites')"
       :disabled="isTogglingFavorite"
     >
       <i
