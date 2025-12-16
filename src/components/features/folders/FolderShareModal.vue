@@ -113,8 +113,7 @@
               <Toggle
                 v-model="selectedRole"
                 variant="pill"
-                :options="roleOptions"
-                :disabled-options="selectedUser.has_write_permission ? [] : ['writer']"
+                :options="getRoleOptionsForUser(selectedUser)"
               />
 
               <Button
@@ -191,8 +190,7 @@
               <Toggle
                 :model-value="share.role"
                 variant="pill"
-                :options="roleOptions"
-                :disabled-options="share.has_write_permission ? [] : ['writer']"
+                :options="getRoleOptionsForShare(share)"
                 @update:model-value="(value: ShareRole) => updateShareRole(share, value)"
               />
 
@@ -231,7 +229,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { Avatar, Button, Label, Modal, Searchbar, Tag, Toggle } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { useI18n } from 'vue-i18n'
@@ -253,16 +251,19 @@ const isOpen = defineModel<boolean>({ required: true })
 
 const { t, locale } = useI18n()
 
-// Role options for Toggle
-const roleOptions = computed(() => [
-  { value: 'reader', label: t('folder.share.reader', 'Reader') },
-  { value: 'writer', label: t('folder.share.writer', 'Writer') },
-])
-
-const getRoleOptions = () => {
+// Get role options with disabled property based on user's write permission
+function getRoleOptionsForUser(user: ShareableUser) {
   return [
-    { value: 'reader', label: t('folder.share.reader', 'Reader') },
-    { value: 'writer', label: t('folder.share.writer', 'Writer') },
+    { value: 'reader', label: t('folder.share.reader', 'Reader'), disabled: false },
+    { value: 'writer', label: t('folder.share.writer', 'Writer'), disabled: !user.has_write_permission },
+  ]
+}
+
+// Get role options for existing share based on user's write permission
+function getRoleOptionsForShare(share: FolderShare) {
+  return [
+    { value: 'reader', label: t('folder.share.reader', 'Reader'), disabled: false },
+    { value: 'writer', label: t('folder.share.writer', 'Writer'), disabled: !share.has_write_permission },
   ]
 }
 
