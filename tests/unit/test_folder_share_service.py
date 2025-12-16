@@ -73,14 +73,14 @@ class TestShareFolder:
             folder_id=sample_folder.id,
             user_id="shared-user-uuid-001",
             user_username="shareduser1",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
 
         assert share is not None
         assert share.folder_id == sample_folder.id
         assert share.user_id == "shared-user-uuid-001"
         assert share.user_username == "shareduser1"
-        assert share.role == ShareRole.READER
+        assert share.role == ShareRole.reader
         assert share.created_at is not None
 
     def test_share_folder_creates_share_with_writer_role(self, db_session, sample_folder):
@@ -90,11 +90,11 @@ class TestShareFolder:
             folder_id=sample_folder.id,
             user_id="shared-user-uuid-002",
             user_username="shareduser2",
-            role=ShareRole.WRITER
+            role=ShareRole.writer
         )
 
         assert share is not None
-        assert share.role == ShareRole.WRITER
+        assert share.role == ShareRole.writer
 
     def test_share_folder_prevents_duplicate_shares(self, db_session, sample_folder):
         """Test that share_folder raises error for duplicate shares."""
@@ -104,7 +104,7 @@ class TestShareFolder:
             folder_id=sample_folder.id,
             user_id="shared-user-uuid-001",
             user_username="shareduser1",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
 
         # Attempt to create duplicate share should raise error
@@ -114,7 +114,7 @@ class TestShareFolder:
                 folder_id=sample_folder.id,
                 user_id="shared-user-uuid-001",
                 user_username="shareduser1",
-                role=ShareRole.WRITER
+                role=ShareRole.writer
             )
 
 
@@ -129,7 +129,7 @@ class TestUnshareFolder:
             folder_id=sample_folder.id,
             user_id="shared-user-uuid-001",
             user_username="shareduser1",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
 
         # Verify share exists
@@ -171,21 +171,21 @@ class TestGetFolderShares:
             folder_id=sample_folder.id,
             user_id="user-uuid-001",
             user_username="user1",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
         FolderService.share_folder(
             db=db_session,
             folder_id=sample_folder.id,
             user_id="user-uuid-002",
             user_username="user2",
-            role=ShareRole.WRITER
+            role=ShareRole.writer
         )
         FolderService.share_folder(
             db=db_session,
             folder_id=sample_folder.id,
             user_id="user-uuid-003",
             user_username="user3",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
 
         shares = FolderService.get_folder_shares(db_session, sample_folder.id)
@@ -226,7 +226,7 @@ class TestListFoldersWithSharing:
             folder_id=second_folder.id,
             user_id="owner-uuid-456",
             user_username="testuser",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
 
         folders = FolderService.list_folders(
@@ -263,7 +263,7 @@ class TestHasFolderAccess:
             folder_id=sample_folder.id,
             user_id="shared-user-uuid-001",
             user_username="shareduser",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
 
         result = FolderService.has_folder_access(
@@ -321,7 +321,7 @@ class TestGetUserFolderRole:
             folder_id=sample_folder.id,
             user_id="writer-user-uuid",
             user_username="writeruser",
-            role=ShareRole.WRITER
+            role=ShareRole.writer
         )
 
         role = FolderService.get_user_folder_role(
@@ -339,7 +339,7 @@ class TestGetUserFolderRole:
             folder_id=sample_folder.id,
             user_id="reader-user-uuid",
             user_username="readeruser",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
 
         role = FolderService.get_user_folder_role(
@@ -381,7 +381,7 @@ class TestIsFolderOwner:
             folder_id=sample_folder.id,
             user_id="shared-user-uuid",
             user_username="shareduser",
-            role=ShareRole.WRITER
+            role=ShareRole.writer
         )
 
         result = FolderService.is_folder_owner(
@@ -432,7 +432,7 @@ class TestUpdateShareRole:
             folder_id=sample_folder.id,
             user_id="user-uuid-001",
             user_username="user1",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
 
         # Update to writer
@@ -440,11 +440,11 @@ class TestUpdateShareRole:
             db=db_session,
             folder_id=sample_folder.id,
             user_id="user-uuid-001",
-            role=ShareRole.WRITER
+            role=ShareRole.writer
         )
 
         assert share is not None
-        assert share.role == ShareRole.WRITER
+        assert share.role == ShareRole.writer
 
     def test_update_share_role_returns_none_for_nonexistent_share(self, db_session, sample_folder):
         """Test that update_share_role returns None for non-existent share."""
@@ -452,7 +452,7 @@ class TestUpdateShareRole:
             db=db_session,
             folder_id=sample_folder.id,
             user_id="nonexistent-user-uuid",
-            role=ShareRole.WRITER
+            role=ShareRole.writer
         )
 
         assert result is None

@@ -168,7 +168,8 @@ class FolderService:
         organization_id: str,
         user_id: str,
         archived: bool = False,
-        favorites_only: bool = False
+        favorites_only: bool = False,
+        username: str | None = None
     ) -> List[Folder]:
         """List folders accessible to a user (owned + shared).
 
@@ -182,17 +183,28 @@ class FolderService:
             user_id: Current user ID for ownership and sharing checks
             archived: If True, show deleted folders; if False, show active folders
             favorites_only: If True, only show folders favorited by this user
+            username: Optional username for legacy fallback when owner_id is NULL
 
         Returns:
             List of Folder instances the user has access to
         """
         import logging
+        from sqlalchemy import and_
         logger = logging.getLogger(__name__)
 
         logger.debug(
             f"list_folders - organization_id: {organization_id}, "
             f"user_id: {user_id}, archived: {archived}, favorites_only: {favorites_only}"
         )
+
+        # Build ownership conditions
+        # Primary: match by owner_id
+        # Fallback: match by owner (username) if owner_id is NULL (legacy data)
+        ownership_conditions = [Folder.owner_id == user_id]
+        if username:
+            ownership_conditions.append(
+                and_(Folder.owner_id.is_(None), Folder.owner == username)
+            )
 
         # Build base query with ownership OR sharing filter
         # This uses a LEFT JOIN with folder_shares to include both owned and shared folders
@@ -202,7 +214,7 @@ class FolderService:
         ).filter(
             Folder.organization_id == organization_id,
             or_(
-                Folder.owner_id == user_id,  # User owns the folder
+                *ownership_conditions,  # User owns the folder (by ID or username)
                 FolderShare.user_id == user_id  # User has been shared the folder
             )
         )
@@ -542,7 +554,8 @@ class FolderService:
         db: Session,
         folder_id: UUID,
         user_id: str,
-        organization_id: str
+        organization_id: str,
+        username: str | None = None
     ) -> bool:
         """Check if a user has access to a folder.
 
@@ -554,10 +567,14 @@ class FolderService:
             folder_id: UUID of the folder to check
             user_id: Keycloak user UUID to check access for
             organization_id: Organization UUID to validate against
+            username: Optional username for legacy fallback when owner_id is NULL
 
         Returns:
             True if user has access, False otherwise
         """
+        import logging
+        logger = logging.getLogger(__name__)
+
         # First check if folder exists in the organization
         folder = db.query(Folder).filter(
             Folder.id == folder_id,
@@ -567,8 +584,17 @@ class FolderService:
         if not folder:
             return False
 
-        # Check if user is owner
-        if folder.owner_id == user_id:
+        # Check if user is owner (by owner_id)
+        if folder.owner_id and folder.owner_id == user_id:
+            return True
+
+        # Legacy fallback: if owner_id is NULL, check owner (username) field
+        # This ensures backward compatibility for folders created before owner_id was populated
+        if folder.owner_id is None and username and folder.owner == username:
+            logger.warning(
+                f"Folder {folder_id} has NULL owner_id - using legacy username check. "
+                f"Consider running migration to populate owner_id."
+            )
             return True
 
         # Check if user has a share
@@ -761,3 +787,122 @@ class FolderService:
         ).all()
 
         return {f[0] for f in favorites}
+
+    # ==================== Company Access Control Methods ====================
+
+    @staticmethod
+    def user_has_company_access(
+        db: Session,
+        company_id: int,
+        user_id: str,
+        organization_id: str,
+        username: str | None = None
+    ) -> bool:
+        """Check if a user has access to a company via folder sharing.
+
+        A user has access to a company if the company belongs to at least one
+        folder that the user owns or has been shared with (reader or writer).
+
+        Args:
+            db: Database session
+            company_id: Company ID to check access for
+            user_id: Keycloak user UUID to check
+            organization_id: Organization UUID for validation
+            username: Optional username for legacy fallback when owner_id is NULL
+
+        Returns:
+            True if user has access to the company, False otherwise
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+
+        # Find all folders containing this company in the organization
+        folder_items = db.query(FolderItem).join(
+            Folder, FolderItem.folder_id == Folder.id
+        ).filter(
+            FolderItem.item_id == str(company_id),
+            FolderItem.item_type == 'company',
+            Folder.organization_id == organization_id,
+            Folder.is_deleted == False
+        ).all()
+
+        if not folder_items:
+            logger.debug(
+                f"Company {company_id} not found in any folder in organization {organization_id}"
+            )
+            return False
+
+        # Check if user has access to any of these folders
+        for folder_item in folder_items:
+            folder_id = folder_item.folder_id
+            if FolderService.has_folder_access(
+                db, folder_id, user_id, organization_id, username=username
+            ):
+                logger.debug(
+                    f"User {user_id} has access to company {company_id} via folder {folder_id}"
+                )
+                return True
+
+        logger.debug(
+            f"User {user_id} does not have access to company {company_id}"
+        )
+        return False
+
+    @staticmethod
+    def get_accessible_company_ids(
+        db: Session,
+        user_id: str,
+        organization_id: str,
+        username: str | None = None
+    ) -> Set[int]:
+        """Get all company IDs that a user can access via folder sharing.
+
+        Returns the set of company IDs from all folders the user owns or
+        has been shared with.
+
+        Args:
+            db: Database session
+            user_id: Keycloak user UUID
+            organization_id: Organization UUID
+            username: Optional username for legacy fallback when owner_id is NULL
+
+        Returns:
+            Set of company IDs the user has access to
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+
+        # Get all folders accessible to the user (owned + shared)
+        accessible_folders = FolderService.list_folders(
+            db=db,
+            organization_id=organization_id,
+            user_id=user_id,
+            archived=False,
+            username=username
+        )
+
+        if not accessible_folders:
+            logger.debug(f"User {user_id} has no accessible folders")
+            return set()
+
+        folder_ids = [f.id for f in accessible_folders]
+
+        # Get all company IDs from these folders
+        folder_items = db.query(FolderItem.item_id).filter(
+            FolderItem.folder_id.in_(folder_ids),
+            FolderItem.item_type == 'company'
+        ).all()
+
+        company_ids = set()
+        for item in folder_items:
+            try:
+                company_ids.add(int(item[0]))
+            except (ValueError, TypeError):
+                continue
+
+        logger.debug(
+            f"User {user_id} has access to {len(company_ids)} companies "
+            f"via {len(accessible_folders)} folders"
+        )
+
+        return company_ids

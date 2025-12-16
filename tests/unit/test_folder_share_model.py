@@ -38,7 +38,7 @@ class TestFolderShareCreation:
             folder_id=sample_folder.id,
             user_id="shared-user-uuid-789",
             user_username="shareduser",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
         db_session.add(share)
         db_session.commit()
@@ -48,7 +48,7 @@ class TestFolderShareCreation:
         assert share.folder_id == sample_folder.id
         assert share.user_id == "shared-user-uuid-789"
         assert share.user_username == "shareduser"
-        assert share.role == ShareRole.READER
+        assert share.role == ShareRole.reader
         assert share.created_at is not None
 
     def test_create_folder_share_with_writer_role(self, db_session, sample_folder):
@@ -57,13 +57,13 @@ class TestFolderShareCreation:
             folder_id=sample_folder.id,
             user_id="shared-user-uuid-789",
             user_username="shareduser",
-            role=ShareRole.WRITER
+            role=ShareRole.writer
         )
         db_session.add(share)
         db_session.commit()
         db_session.refresh(share)
 
-        assert share.role == ShareRole.WRITER
+        assert share.role == ShareRole.writer
 
 
 class TestFolderShareUniqueConstraint:
@@ -78,7 +78,7 @@ class TestFolderShareUniqueConstraint:
             folder_id=sample_folder.id,
             user_id=user_id,
             user_username="shareduser",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
         db_session.add(share1)
         db_session.commit()
@@ -88,7 +88,7 @@ class TestFolderShareUniqueConstraint:
             folder_id=sample_folder.id,
             user_id=user_id,
             user_username="shareduser",
-            role=ShareRole.WRITER
+            role=ShareRole.writer
         )
         db_session.add(share2)
 
@@ -114,7 +114,7 @@ class TestFolderShareUniqueConstraint:
             folder_id=sample_folder.id,
             user_id=user_id,
             user_username="shareduser",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
         db_session.add(share1)
 
@@ -123,7 +123,7 @@ class TestFolderShareUniqueConstraint:
             folder_id=folder2.id,
             user_id=user_id,
             user_username="shareduser",
-            role=ShareRole.WRITER
+            role=ShareRole.writer
         )
         db_session.add(share2)
         db_session.commit()
@@ -142,12 +142,12 @@ class TestFolderShareRoleEnum:
             folder_id=sample_folder.id,
             user_id="user-uuid-1",
             user_username="user1",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
         db_session.add(share)
         db_session.commit()
 
-        assert share.role == ShareRole.READER
+        assert share.role == ShareRole.reader
         assert share.role.value == "reader"
 
     def test_role_accepts_writer_value(self, db_session, sample_folder):
@@ -156,12 +156,12 @@ class TestFolderShareRoleEnum:
             folder_id=sample_folder.id,
             user_id="user-uuid-2",
             user_username="user2",
-            role=ShareRole.WRITER
+            role=ShareRole.writer
         )
         db_session.add(share)
         db_session.commit()
 
-        assert share.role == ShareRole.WRITER
+        assert share.role == ShareRole.writer
         assert share.role.value == "writer"
 
 
@@ -175,13 +175,13 @@ class TestFolderShareCascadeDelete:
             folder_id=sample_folder.id,
             user_id="user-uuid-1",
             user_username="user1",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
         share2 = FolderShare(
             folder_id=sample_folder.id,
             user_id="user-uuid-2",
             user_username="user2",
-            role=ShareRole.WRITER
+            role=ShareRole.writer
         )
         db_session.add_all([share1, share2])
         db_session.commit()
@@ -214,7 +214,7 @@ class TestFolderShareRelationship:
             folder_id=sample_folder.id,
             user_id="user-uuid-1",
             user_username="user1",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
         db_session.add(share)
         db_session.commit()
@@ -231,13 +231,13 @@ class TestFolderShareRelationship:
             folder_id=sample_folder.id,
             user_id="user-uuid-1",
             user_username="user1",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
         share2 = FolderShare(
             folder_id=sample_folder.id,
             user_id="user-uuid-2",
             user_username="user2",
-            role=ShareRole.WRITER
+            role=ShareRole.writer
         )
         db_session.add_all([share1, share2])
         db_session.commit()

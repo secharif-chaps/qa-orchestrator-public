@@ -242,7 +242,8 @@ def list_folders(
         organization_id=org_context.organization_id,
         user_id=org_context.user_id,
         archived=archived,
-        favorites_only=favorites
+        favorites_only=favorites,
+        username=org_context.username
     )
 
     logger.info(
@@ -285,7 +286,8 @@ def get_folder(
 
     # Check access - returns 404 for security (not 403)
     if not FolderService.has_folder_access(
-        db, folder_id, org_context.user_id, org_context.organization_id
+        db, folder_id, org_context.user_id, org_context.organization_id,
+        username=org_context.username
     ):
         logger.warning(
             "Folder not found or no access",
@@ -616,7 +618,7 @@ def create_folder_share(
         )
 
     # Map Pydantic enum to SQLAlchemy enum
-    role = ShareRole.WRITER if share_data.role.value == "writer" else ShareRole.READER
+    role = ShareRole.writer if share_data.role.value == "writer" else ShareRole.reader
 
     try:
         share = FolderService.share_folder(
@@ -824,7 +826,7 @@ def update_folder_share(
         )
 
     # Map Pydantic enum to SQLAlchemy enum
-    role = ShareRole.WRITER if share_update.role.value == "writer" else ShareRole.READER
+    role = ShareRole.writer if share_update.role.value == "writer" else ShareRole.reader
 
     share = FolderService.update_share_role(db, folder_id, share_user_id, role)
 
@@ -873,7 +875,8 @@ def add_folder_favorite(
 
     # Check access - user must have access to favorite a folder
     if not FolderService.has_folder_access(
-        db, folder_id, org_context.user_id, org_context.organization_id
+        db, folder_id, org_context.user_id, org_context.organization_id,
+        username=org_context.username
     ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -920,7 +923,8 @@ def remove_folder_favorite(
 
     # Check access - user must have access to unfavorite a folder
     if not FolderService.has_folder_access(
-        db, folder_id, org_context.user_id, org_context.organization_id
+        db, folder_id, org_context.user_id, org_context.organization_id,
+        username=org_context.username
     ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -954,14 +958,14 @@ def remove_folder_favorite(
 def add_item_to_folder(
     folder_id: UUID,
     item: FolderItemAdd,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["screen.create"])),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Add an item to a folder.
 
-    Requires screen.create role AND (owner OR writer role for folder).
-    Readers cannot add items even with screen.create permission.
+    Requires company.create role AND (owner OR writer role for folder).
+    Readers cannot add items even with company.create permission.
     """
     logger.info(
         "POST /folders/{folder_id}/items - Adding item",

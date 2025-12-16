@@ -534,19 +534,42 @@ class CompanyService:
         companies = query.all()
         return [_parse_json_fields(company) for company in companies]
 
-    def get_recent_companies(self, organization_id: str, limit: int = 5) -> List[CompanyResponse]:
-        """Get recent companies with their folder information"""
+    def get_recent_companies(
+        self,
+        organization_id: str,
+        limit: int = 5,
+        accessible_company_ids: set | None = None
+    ) -> List[CompanyResponse]:
+        """Get recent companies with their folder information.
+
+        Args:
+            organization_id: Organization UUID to filter by
+            limit: Maximum number of companies to return
+            accessible_company_ids: Optional set of company IDs the user has access to.
+                If provided, only companies in this set are returned.
+                If None, all companies in the organization are returned (legacy behavior).
+
+        Returns:
+            List of CompanyResponse objects with folder information
+        """
         from app.models.folder import FolderItem, Folder
 
-        # Get recent companies ordered by created_at
-        companies = (
+        # Build base query
+        query = (
             self.db.query(Company)
             .filter(Company.organization_id == organization_id)
             .filter(Company.is_deleted == False)
-            .order_by(Company.created_at.desc())
-            .limit(limit)
-            .all()
         )
+
+        # Filter by accessible company IDs if provided
+        if accessible_company_ids is not None:
+            if not accessible_company_ids:
+                # User has no accessible companies
+                return []
+            query = query.filter(Company.id.in_(accessible_company_ids))
+
+        # Get recent companies ordered by created_at
+        companies = query.order_by(Company.created_at.desc()).limit(limit).all()
 
         # Build response with folder information
         company_responses = []

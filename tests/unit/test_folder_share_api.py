@@ -42,7 +42,7 @@ def shared_folder_with_writer(db_session, sample_folder):
         folder_id=sample_folder.id,
         user_id="writer-user-uuid",
         user_username="writeruser",
-        role=ShareRole.WRITER
+        role=ShareRole.writer
     )
     return sample_folder
 
@@ -55,7 +55,7 @@ def shared_folder_with_reader(db_session, sample_folder):
         folder_id=sample_folder.id,
         user_id="reader-user-uuid",
         user_username="readeruser",
-        role=ShareRole.READER
+        role=ShareRole.reader
     )
     return sample_folder
 
@@ -71,13 +71,13 @@ class TestShareEndpointOwnerAccess:
             folder_id=sample_folder.id,
             user_id="new-shared-user-uuid",
             user_username="newshareduser",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
 
         assert share is not None
         assert share.folder_id == sample_folder.id
         assert share.user_id == "new-shared-user-uuid"
-        assert share.role == ShareRole.READER
+        assert share.role == ShareRole.reader
 
     def test_is_folder_owner_check_works(self, db_session, sample_folder):
         """Test that is_folder_owner correctly identifies owner."""
@@ -126,14 +126,14 @@ class TestGetSharesEndpoint:
             folder_id=sample_folder.id,
             user_id="user-1",
             user_username="user1",
-            role=ShareRole.READER
+            role=ShareRole.reader
         )
         FolderService.share_folder(
             db=db_session,
             folder_id=sample_folder.id,
             user_id="user-2",
             user_username="user2",
-            role=ShareRole.WRITER
+            role=ShareRole.writer
         )
 
         shares = FolderService.get_folder_shares(db_session, sample_folder.id)
@@ -192,11 +192,11 @@ class TestUpdateShareRoleEndpoint:
             db_session,
             shared_folder_with_reader.id,
             "reader-user-uuid",
-            ShareRole.WRITER
+            ShareRole.writer
         )
 
         assert share is not None
-        assert share.role == ShareRole.WRITER
+        assert share.role == ShareRole.writer
 
         # Verify new role
         new_role = FolderService.get_user_folder_role(

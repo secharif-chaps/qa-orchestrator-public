@@ -32,9 +32,7 @@ class UpdatePermissionsRequest(BaseModel):
     def validate_permissions(cls, v: List[str]) -> List[str]:
         """Validate that all permissions are valid application permissions."""
         valid_permissions = {
-            "company.view",
             "company.create",
-            "company.delete",
             "organization.read",
             "organization.write",
             "admin.organizations"

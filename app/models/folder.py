@@ -29,12 +29,14 @@ class ShareRole(enum.Enum):
     """Share role enum for folder sharing permissions.
 
     Attributes:
-        READER: Can view folder and its contents, but cannot modify
-        WRITER: Can view folder and add items (if has module permission),
+        reader: Can view folder and its contents, but cannot modify
+        writer: Can view folder and add items (if has module permission),
                 but cannot edit/delete folder or manage sharing
+
+    Note: Enum names must be lowercase to match PostgreSQL enum values.
     """
-    READER = "reader"
-    WRITER = "writer"
+    reader = "reader"
+    writer = "writer"
 
 
 class Folder(Base):
@@ -155,7 +157,7 @@ class FolderShare(Base):
     role = Column(
         Enum(ShareRole, name="share_role", create_type=False),
         nullable=False,
-        default=ShareRole.READER
+        default=ShareRole.reader
     )
 
     # Timestamp when share was created
