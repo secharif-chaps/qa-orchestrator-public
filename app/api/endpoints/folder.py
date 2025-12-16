@@ -647,7 +647,7 @@ def create_folder_share(
 
 
 @router.get("/{folder_id}/shares", response_model=List[FolderShareResponse])
-def get_folder_shares(
+async def get_folder_shares(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
@@ -657,6 +657,9 @@ def get_folder_shares(
 
     Requires organization.read role AND folder ownership.
     Returns 403 if user is not the folder owner.
+
+    Each share includes has_write_permission to indicate if the user
+    can be assigned the Writer role.
     """
     logger.info(
         "GET /folders/{folder_id}/shares - Listing shares",
@@ -695,15 +698,33 @@ def get_folder_shares(
 
     shares = FolderService.get_folder_shares(db, folder_id)
 
+    # Enrich shares with has_write_permission from Keycloak
+    enriched_shares = []
+    for share in shares:
+        # Fetch user's roles from Keycloak
+        user_roles = await keycloak_admin_service.get_user_realm_roles(share.user_id)
+        role_names = {r.get("name") for r in user_roles}
+        has_write_permission = "organization.write" in role_names
+
+        enriched_shares.append(FolderShareResponse(
+            id=share.id,
+            folder_id=share.folder_id,
+            user_id=share.user_id,
+            user_username=share.user_username,
+            role=share.role,
+            created_at=share.created_at,
+            has_write_permission=has_write_permission
+        ))
+
     logger.debug(
         "Returning folder shares",
         extra={
             "folder_id": str(folder_id),
-            "share_count": len(shares)
+            "share_count": len(enriched_shares)
         }
     )
 
-    return shares
+    return enriched_shares
 
 
 @router.delete("/{folder_id}/shares/{share_user_id}", status_code=status.HTTP_200_OK)

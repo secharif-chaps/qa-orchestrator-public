@@ -225,6 +225,7 @@ class FolderShareResponse(BaseModel):
         user_username: Username for display
         role: Share role (reader or writer)
         created_at: Timestamp when share was created
+        has_write_permission: Whether user has organization.write permission
     """
     id: UUID
     folder_id: UUID
@@ -232,6 +233,10 @@ class FolderShareResponse(BaseModel):
     user_username: str
     role: FolderShareRole
     created_at: datetime
+    has_write_permission: bool = Field(
+        default=False,
+        description="Whether user has organization.write permission (can be assigned Writer role)"
+    )
 
     class Config:
         from_attributes = True
