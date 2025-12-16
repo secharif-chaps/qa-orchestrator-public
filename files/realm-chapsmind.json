@@ -29,9 +29,7 @@
       ],
       "realmRoles": [
         "admin",
-        "company.view",
         "company.create",
-        "company.delete",
         "organization.read",
         "organization.write",
         "admin.organizations",
@@ -53,9 +51,9 @@
         }
       ],
       "realmRoles": [
-        "company.view",
         "company.create",
-        "company.delete"
+        "organization.read",
+        "organization.write"
       ]
     },
     {
@@ -73,27 +71,7 @@
         }
       ],
       "realmRoles": [
-        "company.view"
-      ]
-    },
-    {
-      "username": "team_manager",
-      "enabled": true,
-      "emailVerified": true,
-      "firstName": "Team",
-      "lastName": "Manager",
-      "email": "teammanager@chapsmind.local",
-      "credentials": [
-        {
-          "type": "password",
-          "value": "teammanager123",
-          "temporary": false
-        }
-      ],
-      "realmRoles": [
-        "company.view",
-        "organization.read",
-        "organization.write"
+        "organization.read"
       ]
     },
     {
@@ -285,38 +263,20 @@
   "roles": {
     "realm": [
       {
-        "name": "company.view",
-        "description": "View companies in organization",
-        "composite": false,
-        "clientRole": false
-      },
-      {
         "name": "company.create",
-        "description": "Create companies in organization",
-        "composite": false,
-        "clientRole": false
-      },
-      {
-        "name": "company.update",
-        "description": "Update companies in organization",
-        "composite": false,
-        "clientRole": false
-      },
-      {
-        "name": "company.delete",
-        "description": "Delete companies in organization",
+        "description": "Can add items (company screens) to folders",
         "composite": false,
         "clientRole": false
       },
       {
         "name": "organization.read",
-        "description": "Read organization details and members",
+        "description": "Read folders and companies shared with user",
         "composite": false,
         "clientRole": false
       },
       {
         "name": "organization.write",
-        "description": "Manage organization members and settings",
+        "description": "Create folders, create items in folders, edit/share/delete owned folders",
         "composite": false,
         "clientRole": false
       },
@@ -344,10 +304,7 @@
         "composite": true,
         "composites": {
           "realm": [
-            "company.view",
             "company.create",
-            "company.update",
-            "company.delete",
             "organization.read",
             "organization.write",
             "admin.organizations",
