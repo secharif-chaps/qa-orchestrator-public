@@ -2,18 +2,21 @@ import logging
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from pydantic import ValidationError
+from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 
+from app.database import get_db
 from app.services.company import CompanyService
+from app.services.folder import FolderService
 from app.services.token_manager import TokenManager
 from app.core.dependencies import get_company_service, get_token_manager
 from app.core.organization import get_user_organization, OrganizationContext
 from app.models.organization import ModuleName
 from app.core.security import verify_company_organization_access, verify_company_modify_permission
 from app.schemas.company import (
-    CompanyCreate, 
-    CompanyUpdate, 
+    CompanyCreate,
+    CompanyUpdate,
     CompanyResponse,
     CompanyCSVValidationRequest,
     CompanyCSVValidationResponse,
@@ -33,13 +36,25 @@ router = APIRouter(
 async def get_recent_companies(
     limit: int = Query(5, ge=1, le=100, description="Number of recent companies to return"),
     service: CompanyService = Depends(get_company_service),
-    org_context: OrganizationContext = Depends(get_user_organization)
+    org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db)
 ):
-    """Get recent companies with their folder information"""
+    """Get recent companies with their folder information.
+
+    Only returns companies that the user has access to via folder sharing.
+    """
     logger.info(f"🏢 GET /companies/recent - User: {org_context.username}, Limit: {limit}")
+
+    # Get accessible company IDs for this user
+    accessible_company_ids = FolderService.get_accessible_company_ids(
+        db, org_context.user_id, org_context.organization_id,
+        username=org_context.username
+    )
+
     return service.get_recent_companies(
         organization_id=org_context.organization_id,
-        limit=limit
+        limit=limit,
+        accessible_company_ids=accessible_company_ids
     )
 
 @router.get("/", response_model=PaginatedResponse[CompanyResponse])
@@ -78,9 +93,14 @@ async def get_companies(
 async def get_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
-    org_context: OrganizationContext = Depends(get_user_organization)
+    org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db)
 ):
-    """Get a company by ID (only if it belongs to user's organization)"""
+    """Get a company by ID (only if user has access via folder sharing).
+
+    Access is granted if the company belongs to at least one folder that
+    the user owns or has been shared with.
+    """
     try:
         logger.info(f"🏢 GET /api/companies/{company_id} - User: {org_context.username}, Organization: {org_context.organization_id}")
         company = service.get_company(company_id)
@@ -90,8 +110,26 @@ async def get_company(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Company not found"
             )
+
+        # Verify organization access first
         logger.info(f"✅ Company {company_id} found, verifying organization access")
-        return verify_company_organization_access(company, org_context)
+        verify_company_organization_access(company, org_context)
+
+        # Check folder-based access control
+        if not FolderService.user_has_company_access(
+            db, company_id, org_context.user_id, org_context.organization_id,
+            username=org_context.username
+        ):
+            logger.warning(
+                f"❌ User {org_context.username} does not have folder access to company {company_id}"
+            )
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Company not found"
+            )
+
+        logger.info(f"✅ User {org_context.username} has access to company {company_id}")
+        return company
     except HTTPException:
         # Re-raise HTTP exceptions as-is
         raise
@@ -200,9 +238,9 @@ async def update_company(
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Update a company (requires company.update permission)"""
+    """Update a company (requires organization.write permission)"""
     # Verify user has permission to update companies
-    verify_company_modify_permission(org_context, "company.update")
+    verify_company_modify_permission(org_context, "organization.write")
     
     # Get existing company and verify it belongs to organization
     company = service.get_company(company_id)
@@ -243,10 +281,10 @@ async def soft_delete_company(
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Soft delete a company (archive)"""
-    
+    """Soft delete a company (archive) - requires organization.write permission"""
+
     # Verify user has permission to delete companies
-    verify_company_modify_permission(org_context, "company.delete")
+    verify_company_modify_permission(org_context, "organization.write")
     
     # Get company and verify access
     company = service.get_company(company_id)
@@ -333,11 +371,11 @@ async def restore_company(
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization)
 ):
-    """Restore a soft-deleted company"""
+    """Restore a soft-deleted company - requires organization.write permission"""
     logger.info(f"🏢 POST /api/companies/{company_id}/restore - User: {org_context.username}")
-    
+
     # Verify modification permission
-    verify_company_modify_permission(org_context, 'company.update')
+    verify_company_modify_permission(org_context, 'organization.write')
     
     # Restore the company
     restored_company = service.restore_company(company_id)

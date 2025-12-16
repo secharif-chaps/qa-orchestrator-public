@@ -1,3 +1,12 @@
+"""Folder API endpoints with sharing and access control.
+
+This module provides REST API endpoints for:
+- Folder CRUD operations (with owner-only write access)
+- Folder sharing management (owner-only)
+- Folder items management (role-based access)
+- User favorites
+"""
+
 from typing import List
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status, Query
@@ -5,21 +14,161 @@ from fastapi_keycloak import OIDCUser
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-# NOTE: No User model - user references handled via username strings only
 from app.core.keycloak import idp
+from app.core.logging_config import get_logger
 from app.schemas.folder import (
     FolderCreate,
     FolderUpdate,
     FolderResponse,
     FolderWithItemsResponse,
     FolderItemAdd,
-    FolderItemResponse
+    FolderItemResponse,
+    FolderShareCreate,
+    FolderShareUpdate,
+    FolderShareResponse,
+    UserSearchResult,
 )
+from app.models.folder import ShareRole
 from app.services.folder import FolderService
+from app.services.keycloak_admin import keycloak_admin_service
 from app.core.organization import get_user_organization, OrganizationContext
 
 
 router = APIRouter()
+logger = get_logger(__name__)
+
+
+def _build_folder_response(
+    db: Session,
+    folder,
+    user_id: str,
+    user_favorite_ids: set = None
+) -> dict:
+    """Build folder response dict with access control fields.
+
+    This helper builds a consistent folder response including:
+    - owner_id: For frontend access control checks
+    - is_owner: Boolean indicating if current user owns folder
+    - share_role: User's role ('owner', 'writer', 'reader', or None)
+    - is_favorite: User-specific favorite status
+
+    Args:
+        db: Database session
+        folder: Folder model instance
+        user_id: Current user's Keycloak UUID
+        user_favorite_ids: Optional set of favorited folder IDs (for list views)
+
+    Returns:
+        Dict ready for FolderResponse serialization
+    """
+    # Determine user's role for this folder
+    share_role = FolderService.get_user_folder_role(db, folder.id, user_id)
+    is_owner = share_role == "owner"
+
+    # Determine favorite status
+    if user_favorite_ids is not None:
+        is_favorite = folder.id in user_favorite_ids
+    else:
+        is_favorite = FolderService.is_favorite(db, folder.id, user_id)
+
+    # Get folder items
+    folder_items = FolderService._get_folder_items_summary(db, folder.id)
+
+    return {
+        "id": folder.id,
+        "organization_id": folder.organization_id,
+        "owner": folder.owner or "Unknown",
+        "owner_id": folder.owner_id,
+        "is_owner": is_owner,
+        "share_role": share_role,
+        "name": folder.name,
+        "color": folder.color,
+        "icon": folder.icon,
+        "tags": folder.tags,
+        "is_favorite": is_favorite,
+        "is_deleted": folder.is_deleted,
+        "created_at": folder.created_at,
+        "updated_at": folder.updated_at,
+        "items": folder_items
+    }
+
+
+# ==============================================================================
+# User Search Endpoint (for share modal autocomplete)
+# IMPORTANT: This must be defined BEFORE /{folder_id} routes to avoid matching
+# ==============================================================================
+
+
+@router.get("/users/search", response_model=List[UserSearchResult])
+async def search_users_for_sharing(
+    q: str = Query(..., min_length=1, description="Search query for username/email"),
+    limit: int = Query(10, ge=1, le=50, description="Maximum results to return"),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
+    org_context: OrganizationContext = Depends(get_user_organization),
+):
+    """Search users in organization for share modal autocomplete.
+
+    Requires organization.write role for access (only users who can share folders).
+    Returns users matching the search query within the current organization.
+
+    The response includes has_write_permission to help the frontend determine
+    if a user can be assigned the Writer role.
+    """
+    logger.info(
+        "GET /folders/users/search - Searching users",
+        extra={
+            "user": org_context.username,
+            "query": q,
+            "limit": limit,
+            "organization_id": org_context.organization_id
+        }
+    )
+
+    # Search organization members via Keycloak Admin API
+    members = await keycloak_admin_service.get_organization_members(
+        organization_id=org_context.organization_id,
+        first=0,
+        max_results=limit,
+        search=q
+    )
+
+    results = []
+    for member in members:
+        user_id = member.get("id")
+        username = member.get("username", "")
+        email = member.get("email", "")
+
+        # Skip current user (can't share with self)
+        if user_id == org_context.user_id:
+            continue
+
+        # Check if user has organization.write permission
+        # This requires fetching user's roles from Keycloak
+        user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
+        role_names = {r.get("name") for r in user_roles}
+        has_write_permission = "organization.write" in role_names
+
+        results.append(UserSearchResult(
+            user_id=user_id,
+            username=username,
+            email=email,
+            has_write_permission=has_write_permission
+        ))
+
+    logger.debug(
+        "User search results",
+        extra={
+            "query": q,
+            "result_count": len(results)
+        }
+    )
+
+    return results
+
+
+# ==============================================================================
+# Folder CRUD Endpoints
+# ==============================================================================
 
 
 @router.post("/", response_model=FolderResponse)
@@ -32,46 +181,31 @@ def create_folder(
     """Create a new folder in the organization.
 
     Requires organization.write role for access.
+    The creating user becomes the folder owner.
     """
-    import logging
-    logger = logging.getLogger(__name__)
-
-    try:
-        logger.info(f"📁 POST /folders - START - User: {org_context.username}, Folder: {folder.name}")
-
-        logger.debug(f"📁 Creating folder with owner_id={org_context.user_id}, owner_username={org_context.username}, organization_id={org_context.organization_id}")
-        folder_obj = FolderService.create_folder(
-            db=db,
-            organization_id=org_context.organization_id,
-            owner_id=org_context.user_id,
-            owner_username=org_context.username,
-            folder_data=folder
-        )
-        logger.info(f"✅ Folder created successfully - ID: {folder_obj.id}, Name: {folder_obj.name}")
-
-        # Build response with is_favorite (new folders are never favorited)
-        folder_dict = {
-            "id": folder_obj.id,
-            "organization_id": folder_obj.organization_id,
-            "owner": folder_obj.owner or "Unknown",
-            "name": folder_obj.name,
-            "color": folder_obj.color,
-            "icon": folder_obj.icon,
-            "tags": folder_obj.tags,
-            "is_favorite": False,  # New folders are never favorited
-            "is_deleted": folder_obj.is_deleted,
-            "created_at": folder_obj.created_at,
-            "updated_at": folder_obj.updated_at,
-            "items": []
+    logger.info(
+        "POST /folders - Creating folder",
+        extra={
+            "user": org_context.username,
+            "folder_name": folder.name,
+            "organization_id": org_context.organization_id
         }
+    )
 
-        logger.info("📁 About to return folder object")
-        return folder_dict
+    folder_obj = FolderService.create_folder(
+        db=db,
+        organization_id=org_context.organization_id,
+        owner_id=org_context.user_id,
+        owner_username=org_context.username,
+        folder_data=folder
+    )
 
-    except Exception as e:
-        logger.error(f"❌ Error in create_folder: {type(e).__name__}: {str(e)}")
-        logger.error("❌ Full exception details:", exc_info=True)
-        raise
+    logger.info(
+        "Folder created successfully",
+        extra={"folder_id": str(folder_obj.id), "folder_name": folder_obj.name}
+    )
+
+    return _build_folder_response(db, folder_obj, org_context.user_id)
 
 
 @router.get("/", response_model=List[FolderResponse])
@@ -82,16 +216,21 @@ def list_folders(
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
-    """List all folders in the organization with user-specific favorite status.
+    """List folders accessible to the current user (owned + shared).
 
     Requires organization.read role for access.
-    The is_favorite field is computed per-user from the user_folder_favorites table.
+    Returns only folders the user owns or has been explicitly shared with.
+    The is_favorite field is computed per-user.
     """
-    import logging
-    logger = logging.getLogger(__name__)
-
-    logger.info(f"📁 GET /folders - START - User: {org_context.username}, Organization: {org_context.organization_id}")
-    logger.debug(f"📁 Query params - archived: {archived}, favorites: {favorites}")
+    logger.info(
+        "GET /folders - Listing folders",
+        extra={
+            "user": org_context.username,
+            "organization_id": org_context.organization_id,
+            "archived": archived,
+            "favorites": favorites
+        }
+    )
 
     # Get user's favorite folder IDs for computing is_favorite per-user
     user_favorite_ids = FolderService.get_user_favorite_folder_ids(
@@ -103,34 +242,24 @@ def list_folders(
         organization_id=org_context.organization_id,
         user_id=org_context.user_id,
         archived=archived,
-        favorites_only=favorites
+        favorites_only=favorites,
+        username=org_context.username
     )
 
-    logger.info(f"📁 Found {len(folders)} folders for organization {org_context.organization_id}")
-
-    # Build the response with items for each folder
-    response_folders = []
-    for folder in folders:
-        logger.debug(f"📁 Processing folder {folder.id} - {folder.name}")
-        folder_items = FolderService._get_folder_items_summary(db, folder.id)
-
-        folder_dict = {
-            "id": folder.id,
-            "organization_id": folder.organization_id,
-            "owner": folder.owner or "Unknown",
-            "name": folder.name,
-            "color": folder.color,
-            "icon": folder.icon,
-            "tags": folder.tags,
-            "is_favorite": folder.id in user_favorite_ids,  # Computed per-user!
-            "is_deleted": folder.is_deleted,
-            "created_at": folder.created_at,
-            "updated_at": folder.updated_at,
-            "items": folder_items
+    logger.info(
+        "Found folders",
+        extra={
+            "count": len(folders),
+            "organization_id": org_context.organization_id
         }
-        response_folders.append(folder_dict)
+    )
 
-    logger.info(f"✅ Returning {len(response_folders)} folders")
+    # Build response with access control fields
+    response_folders = [
+        _build_folder_response(db, folder, org_context.user_id, user_favorite_ids)
+        for folder in folders
+    ]
+
     return response_folders
 
 
@@ -142,48 +271,65 @@ def get_folder(
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
-    """Get a folder with its items and user-specific favorite status.
+    """Get a folder with its items.
 
     Requires organization.read role for access.
-    The is_favorite field is computed per-user from the user_folder_favorites table.
+    Returns 404 if user has no access to the folder (owner or shared).
     """
-    import logging
-    logger = logging.getLogger(__name__)
+    logger.info(
+        "GET /folders/{folder_id} - Getting folder",
+        extra={
+            "user": org_context.username,
+            "folder_id": str(folder_id)
+        }
+    )
 
-    try:
-        logger.info(f"📁 GET /folders/{folder_id} - START - User: {org_context.username}")
-
-        logger.debug(f"📁 Getting folder with items - folder_id={folder_id}, organization_id={org_context.organization_id}")
-        folder_data = FolderService.get_folder_with_items(
-            db=db,
-            folder_id=folder_id,
-            organization_id=org_context.organization_id,
-            item_archived_filter=archived
+    # Check access - returns 404 for security (not 403)
+    if not FolderService.has_folder_access(
+        db, folder_id, org_context.user_id, org_context.organization_id,
+        username=org_context.username
+    ):
+        logger.warning(
+            "Folder not found or no access",
+            extra={
+                "folder_id": str(folder_id),
+                "user_id": org_context.user_id
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Folder not found"
         )
 
-        if not folder_data:
-            logger.warning(f"❌ Folder {folder_id} not found in organization {org_context.organization_id}")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Folder not found"
-            )
+    folder_data = FolderService.get_folder_with_items(
+        db=db,
+        folder_id=folder_id,
+        organization_id=org_context.organization_id,
+        item_archived_filter=archived
+    )
 
-        # Add user-specific favorite status
-        folder_data['is_favorite'] = FolderService.is_favorite(
-            db, folder_id, org_context.user_id
+    if not folder_data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Folder not found"
         )
 
-        logger.debug(f"📁 Folder data retrieved: {type(folder_data)}")
-        logger.debug(f"📁 Folder data keys: {folder_data.keys() if isinstance(folder_data, dict) else 'Not a dict'}")
-        logger.info(f"✅ Returning folder data for {folder_id}")
-        return folder_data
+    # Add access control fields
+    folder = FolderService.get_folder(db, folder_id, org_context.organization_id)
+    share_role = FolderService.get_user_folder_role(db, folder_id, org_context.user_id)
 
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"❌ Error in get_folder: {type(e).__name__}: {str(e)}")
-        logger.error("❌ Full exception details:", exc_info=True)
-        raise
+    folder_data['owner_id'] = folder.owner_id if folder else None
+    folder_data['is_owner'] = share_role == "owner"
+    folder_data['share_role'] = share_role
+    folder_data['is_favorite'] = FolderService.is_favorite(
+        db, folder_id, org_context.user_id
+    )
+
+    logger.debug(
+        "Returning folder data",
+        extra={"folder_id": str(folder_id), "share_role": share_role}
+    )
+    return folder_data
 
 
 @router.put("/{folder_id}", response_model=FolderResponse)
@@ -194,10 +340,18 @@ def update_folder(
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
-    """Update a folder.
+    """Update a folder (owner only).
 
-    Requires organization.write role for access.
+    Requires organization.write role AND folder ownership.
+    Returns 403 if user is not the folder owner.
     """
+    logger.info(
+        "PUT /folders/{folder_id} - Updating folder",
+        extra={
+            "user": org_context.username,
+            "folder_id": str(folder_id)
+        }
+    )
 
     folder = FolderService.get_folder(
         db=db,
@@ -211,31 +365,28 @@ def update_folder(
             detail="Folder not found"
         )
 
+    # Check ownership - only owner can update folder metadata
+    if not FolderService.is_folder_owner(db, folder_id, org_context.user_id):
+        logger.warning(
+            "Non-owner attempted to update folder",
+            extra={
+                "folder_id": str(folder_id),
+                "user_id": org_context.user_id,
+                "owner_id": folder.owner_id
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the folder owner can edit folder settings"
+        )
+
     updated_folder = FolderService.update_folder(
         db=db,
         folder=folder,
         folder_update=folder_update
     )
 
-    # Build the response with items for consistency
-    folder_items = FolderService._get_folder_items_summary(db, updated_folder.id)
-
-    folder_dict = {
-        "id": updated_folder.id,
-        "organization_id": updated_folder.organization_id,
-        "owner": updated_folder.owner or "Unknown",
-        "name": updated_folder.name,
-        "color": updated_folder.color,
-        "icon": updated_folder.icon,
-        "tags": updated_folder.tags,
-        "is_favorite": FolderService.is_favorite(db, folder_id, org_context.user_id),
-        "is_deleted": updated_folder.is_deleted,
-        "created_at": updated_folder.created_at,
-        "updated_at": updated_folder.updated_at,
-        "items": folder_items
-    }
-
-    return folder_dict
+    return _build_folder_response(db, updated_folder, org_context.user_id)
 
 
 @router.patch("/{folder_id}", response_model=FolderResponse)
@@ -246,11 +397,19 @@ def patch_folder(
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
-    """Partially update a folder.
+    """Partially update a folder (owner only).
 
-    Requires organization.write role for access.
+    Requires organization.write role AND folder ownership.
+    Returns 403 if user is not the folder owner.
     Note: Favorites are managed via POST/DELETE /{folder_id}/favorite endpoints.
     """
+    logger.info(
+        "PATCH /folders/{folder_id} - Patching folder",
+        extra={
+            "user": org_context.username,
+            "folder_id": str(folder_id)
+        }
+    )
 
     folder = FolderService.get_folder(
         db=db,
@@ -264,31 +423,27 @@ def patch_folder(
             detail="Folder not found"
         )
 
+    # Check ownership - only owner can update folder metadata
+    if not FolderService.is_folder_owner(db, folder_id, org_context.user_id):
+        logger.warning(
+            "Non-owner attempted to patch folder",
+            extra={
+                "folder_id": str(folder_id),
+                "user_id": org_context.user_id
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the folder owner can edit folder settings"
+        )
+
     updated_folder = FolderService.update_folder(
         db=db,
         folder=folder,
         folder_update=folder_update
     )
 
-    # Build the response with items for consistency
-    folder_items = FolderService._get_folder_items_summary(db, updated_folder.id)
-
-    folder_dict = {
-        "id": updated_folder.id,
-        "organization_id": updated_folder.organization_id,
-        "owner": updated_folder.owner or "Unknown",
-        "name": updated_folder.name,
-        "color": updated_folder.color,
-        "icon": updated_folder.icon,
-        "tags": updated_folder.tags,
-        "is_favorite": FolderService.is_favorite(db, folder_id, org_context.user_id),
-        "is_deleted": updated_folder.is_deleted,
-        "created_at": updated_folder.created_at,
-        "updated_at": updated_folder.updated_at,
-        "items": folder_items
-    }
-
-    return folder_dict
+    return _build_folder_response(db, updated_folder, org_context.user_id)
 
 
 @router.delete("/{folder_id}", response_model=FolderResponse)
@@ -298,10 +453,18 @@ def delete_folder(
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
-    """Soft delete a folder.
+    """Soft delete a folder (owner only).
 
-    Requires organization.write role for access.
+    Requires organization.write role AND folder ownership.
+    Returns 403 if user is not the folder owner.
     """
+    logger.info(
+        "DELETE /folders/{folder_id} - Deleting folder",
+        extra={
+            "user": org_context.username,
+            "folder_id": str(folder_id)
+        }
+    )
 
     folder = FolderService.get_folder(
         db=db,
@@ -315,27 +478,23 @@ def delete_folder(
             detail="Folder not found"
         )
 
+    # Check ownership - only owner can delete folder
+    if not FolderService.is_folder_owner(db, folder_id, org_context.user_id):
+        logger.warning(
+            "Non-owner attempted to delete folder",
+            extra={
+                "folder_id": str(folder_id),
+                "user_id": org_context.user_id
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the folder owner can delete the folder"
+        )
+
     deleted_folder = FolderService.soft_delete_folder(db=db, folder=folder)
 
-    # Build the response with items for consistency
-    folder_items = FolderService._get_folder_items_summary(db, deleted_folder.id)
-
-    folder_dict = {
-        "id": deleted_folder.id,
-        "organization_id": deleted_folder.organization_id,
-        "owner": deleted_folder.owner or "Unknown",
-        "name": deleted_folder.name,
-        "color": deleted_folder.color,
-        "icon": deleted_folder.icon,
-        "tags": deleted_folder.tags,
-        "is_favorite": FolderService.is_favorite(db, folder_id, org_context.user_id),
-        "is_deleted": deleted_folder.is_deleted,
-        "created_at": deleted_folder.created_at,
-        "updated_at": deleted_folder.updated_at,
-        "items": folder_items
-    }
-
-    return folder_dict
+    return _build_folder_response(db, deleted_folder, org_context.user_id)
 
 
 @router.post("/{folder_id}/restore", response_model=FolderResponse)
@@ -345,10 +504,18 @@ def restore_folder(
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
-    """Restore a soft-deleted folder.
+    """Restore a soft-deleted folder (owner only).
 
-    Requires organization.write role for access.
+    Requires organization.write role AND folder ownership.
+    Returns 403 if user is not the folder owner.
     """
+    logger.info(
+        "POST /folders/{folder_id}/restore - Restoring folder",
+        extra={
+            "user": org_context.username,
+            "folder_id": str(folder_id)
+        }
+    )
 
     folder = FolderService.get_folder(
         db=db,
@@ -363,6 +530,20 @@ def restore_folder(
             detail="Folder not found"
         )
 
+    # Check ownership - only owner can restore folder
+    if not FolderService.is_folder_owner(db, folder_id, org_context.user_id):
+        logger.warning(
+            "Non-owner attempted to restore folder",
+            extra={
+                "folder_id": str(folder_id),
+                "user_id": org_context.user_id
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the folder owner can restore the folder"
+        )
+
     if not folder.is_deleted:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -371,28 +552,326 @@ def restore_folder(
 
     restored_folder = FolderService.restore_folder(db=db, folder=folder)
 
-    # Build the response with items for consistency
-    folder_items = FolderService._get_folder_items_summary(db, restored_folder.id)
-
-    folder_dict = {
-        "id": restored_folder.id,
-        "organization_id": restored_folder.organization_id,
-        "owner": restored_folder.owner or "Unknown",
-        "name": restored_folder.name,
-        "color": restored_folder.color,
-        "icon": restored_folder.icon,
-        "tags": restored_folder.tags,
-        "is_favorite": FolderService.is_favorite(db, folder_id, org_context.user_id),
-        "is_deleted": restored_folder.is_deleted,
-        "created_at": restored_folder.created_at,
-        "updated_at": restored_folder.updated_at,
-        "items": folder_items
-    }
-
-    return folder_dict
+    return _build_folder_response(db, restored_folder, org_context.user_id)
 
 
-# ==================== User Favorites Endpoints ====================
+# ==============================================================================
+# Folder Sharing Endpoints
+# ==============================================================================
+
+
+@router.post("/{folder_id}/shares", response_model=FolderShareResponse, status_code=status.HTTP_201_CREATED)
+def create_folder_share(
+    folder_id: UUID,
+    share_data: FolderShareCreate,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
+    org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db)
+):
+    """Share a folder with a user (owner only).
+
+    Requires organization.write role AND folder ownership.
+    Returns 403 if user is not the folder owner.
+    """
+    logger.info(
+        "POST /folders/{folder_id}/shares - Creating share",
+        extra={
+            "user": org_context.username,
+            "folder_id": str(folder_id),
+            "share_user_id": share_data.user_id,
+            "share_role": share_data.role.value
+        }
+    )
+
+    # Check folder exists
+    folder = FolderService.get_folder(
+        db=db,
+        folder_id=folder_id,
+        organization_id=org_context.organization_id
+    )
+
+    if not folder:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Folder not found"
+        )
+
+    # Check ownership - only owner can manage sharing
+    if not FolderService.is_folder_owner(db, folder_id, org_context.user_id):
+        logger.warning(
+            "Non-owner attempted to share folder",
+            extra={
+                "folder_id": str(folder_id),
+                "user_id": org_context.user_id
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the folder owner can manage sharing"
+        )
+
+    # Prevent sharing with self
+    if share_data.user_id == org_context.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot share folder with yourself"
+        )
+
+    # Map Pydantic enum to SQLAlchemy enum
+    role = ShareRole.writer if share_data.role.value == "writer" else ShareRole.reader
+
+    try:
+        share = FolderService.share_folder(
+            db=db,
+            folder_id=folder_id,
+            user_id=share_data.user_id,
+            user_username=share_data.user_username,
+            role=role
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+
+    logger.info(
+        "Folder share created",
+        extra={
+            "folder_id": str(folder_id),
+            "share_user_id": share_data.user_id,
+            "share_id": str(share.id)
+        }
+    )
+
+    return share
+
+
+@router.get("/{folder_id}/shares", response_model=List[FolderShareResponse])
+async def get_folder_shares(
+    folder_id: UUID,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
+    org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db)
+):
+    """List all shares for a folder (owner only).
+
+    Requires organization.read role AND folder ownership.
+    Returns 403 if user is not the folder owner.
+
+    Each share includes has_write_permission to indicate if the user
+    can be assigned the Writer role.
+    """
+    logger.info(
+        "GET /folders/{folder_id}/shares - Listing shares",
+        extra={
+            "user": org_context.username,
+            "folder_id": str(folder_id)
+        }
+    )
+
+    # Check folder exists
+    folder = FolderService.get_folder(
+        db=db,
+        folder_id=folder_id,
+        organization_id=org_context.organization_id
+    )
+
+    if not folder:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Folder not found"
+        )
+
+    # Check ownership - only owner can view shares
+    if not FolderService.is_folder_owner(db, folder_id, org_context.user_id):
+        logger.warning(
+            "Non-owner attempted to view folder shares",
+            extra={
+                "folder_id": str(folder_id),
+                "user_id": org_context.user_id
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the folder owner can view sharing settings"
+        )
+
+    shares = FolderService.get_folder_shares(db, folder_id)
+
+    # Enrich shares with has_write_permission from Keycloak
+    enriched_shares = []
+    for share in shares:
+        # Fetch user's roles from Keycloak
+        user_roles = await keycloak_admin_service.get_user_realm_roles(share.user_id)
+        role_names = {r.get("name") for r in user_roles}
+        has_write_permission = "organization.write" in role_names
+
+        enriched_shares.append(FolderShareResponse(
+            id=share.id,
+            folder_id=share.folder_id,
+            user_id=share.user_id,
+            user_username=share.user_username,
+            role=share.role,
+            created_at=share.created_at,
+            has_write_permission=has_write_permission
+        ))
+
+    logger.debug(
+        "Returning folder shares",
+        extra={
+            "folder_id": str(folder_id),
+            "share_count": len(enriched_shares)
+        }
+    )
+
+    return enriched_shares
+
+
+@router.delete("/{folder_id}/shares/{share_user_id}", status_code=status.HTTP_200_OK)
+def delete_folder_share(
+    folder_id: UUID,
+    share_user_id: str,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
+    org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db)
+):
+    """Remove a user's access to a folder (owner only).
+
+    Requires organization.write role AND folder ownership.
+    Returns 403 if user is not the folder owner.
+    """
+    logger.info(
+        "DELETE /folders/{folder_id}/shares/{user_id} - Removing share",
+        extra={
+            "user": org_context.username,
+            "folder_id": str(folder_id),
+            "share_user_id": share_user_id
+        }
+    )
+
+    # Check folder exists
+    folder = FolderService.get_folder(
+        db=db,
+        folder_id=folder_id,
+        organization_id=org_context.organization_id
+    )
+
+    if not folder:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Folder not found"
+        )
+
+    # Check ownership - only owner can manage sharing
+    if not FolderService.is_folder_owner(db, folder_id, org_context.user_id):
+        logger.warning(
+            "Non-owner attempted to remove folder share",
+            extra={
+                "folder_id": str(folder_id),
+                "user_id": org_context.user_id
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the folder owner can manage sharing"
+        )
+
+    removed = FolderService.unshare_folder(db, folder_id, share_user_id)
+
+    if not removed:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Share not found"
+        )
+
+    logger.info(
+        "Folder share removed",
+        extra={
+            "folder_id": str(folder_id),
+            "share_user_id": share_user_id
+        }
+    )
+
+    return {"message": "Share removed successfully"}
+
+
+@router.patch("/{folder_id}/shares/{share_user_id}", response_model=FolderShareResponse)
+def update_folder_share(
+    folder_id: UUID,
+    share_user_id: str,
+    share_update: FolderShareUpdate,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
+    org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db)
+):
+    """Update a user's share role (owner only).
+
+    Requires organization.write role AND folder ownership.
+    Returns 403 if user is not the folder owner.
+    """
+    logger.info(
+        "PATCH /folders/{folder_id}/shares/{user_id} - Updating share role",
+        extra={
+            "user": org_context.username,
+            "folder_id": str(folder_id),
+            "share_user_id": share_user_id,
+            "new_role": share_update.role.value
+        }
+    )
+
+    # Check folder exists
+    folder = FolderService.get_folder(
+        db=db,
+        folder_id=folder_id,
+        organization_id=org_context.organization_id
+    )
+
+    if not folder:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Folder not found"
+        )
+
+    # Check ownership - only owner can manage sharing
+    if not FolderService.is_folder_owner(db, folder_id, org_context.user_id):
+        logger.warning(
+            "Non-owner attempted to update folder share",
+            extra={
+                "folder_id": str(folder_id),
+                "user_id": org_context.user_id
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the folder owner can manage sharing"
+        )
+
+    # Map Pydantic enum to SQLAlchemy enum
+    role = ShareRole.writer if share_update.role.value == "writer" else ShareRole.reader
+
+    share = FolderService.update_share_role(db, folder_id, share_user_id, role)
+
+    if not share:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Share not found"
+        )
+
+    logger.info(
+        "Folder share updated",
+        extra={
+            "folder_id": str(folder_id),
+            "share_user_id": share_user_id,
+            "new_role": share_update.role.value
+        }
+    )
+
+    return share
+
+
+# ==============================================================================
+# User Favorites Endpoints
+# ==============================================================================
 
 
 @router.post("/{folder_id}/favorite", status_code=status.HTTP_201_CREATED)
@@ -405,15 +884,21 @@ def add_folder_favorite(
     """Add a folder to the current user's favorites.
 
     Requires organization.read role for access.
+    User must have access to the folder (owner or shared).
     """
-    import logging
-    logger = logging.getLogger(__name__)
+    logger.info(
+        "POST /folders/{folder_id}/favorite - Adding favorite",
+        extra={
+            "user": org_context.username,
+            "folder_id": str(folder_id)
+        }
+    )
 
-    logger.info(f"⭐ POST /folders/{folder_id}/favorite - User: {org_context.username}")
-
-    # Verify folder exists and belongs to organization
-    folder = FolderService.get_folder(db, folder_id, org_context.organization_id)
-    if not folder:
+    # Check access - user must have access to favorite a folder
+    if not FolderService.has_folder_access(
+        db, folder_id, org_context.user_id, org_context.organization_id,
+        username=org_context.username
+    ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Folder not found"
@@ -426,7 +911,14 @@ def add_folder_favorite(
             detail="Folder already in favorites"
         )
 
-    logger.info(f"✅ Folder {folder_id} added to favorites for user {org_context.username}")
+    logger.info(
+        "Folder added to favorites",
+        extra={
+            "folder_id": str(folder_id),
+            "user": org_context.username
+        }
+    )
+
     return {"message": "Folder added to favorites", "is_favorite": True}
 
 
@@ -440,15 +932,21 @@ def remove_folder_favorite(
     """Remove a folder from the current user's favorites.
 
     Requires organization.read role for access.
+    User must have access to the folder (owner or shared).
     """
-    import logging
-    logger = logging.getLogger(__name__)
+    logger.info(
+        "DELETE /folders/{folder_id}/favorite - Removing favorite",
+        extra={
+            "user": org_context.username,
+            "folder_id": str(folder_id)
+        }
+    )
 
-    logger.info(f"⭐ DELETE /folders/{folder_id}/favorite - User: {org_context.username}")
-
-    # Verify folder exists and belongs to organization
-    folder = FolderService.get_folder(db, folder_id, org_context.organization_id)
-    if not folder:
+    # Check access - user must have access to unfavorite a folder
+    if not FolderService.has_folder_access(
+        db, folder_id, org_context.user_id, org_context.organization_id,
+        username=org_context.username
+    ):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Folder not found"
@@ -461,55 +959,98 @@ def remove_folder_favorite(
             detail="Folder not in favorites"
         )
 
-    logger.info(f"✅ Folder {folder_id} removed from favorites for user {org_context.username}")
+    logger.info(
+        "Folder removed from favorites",
+        extra={
+            "folder_id": str(folder_id),
+            "user": org_context.username
+        }
+    )
+
     return {"message": "Folder removed from favorites", "is_favorite": False}
+
+
+# ==============================================================================
+# Folder Items Endpoints
+# ==============================================================================
 
 
 @router.post("/{folder_id}/items", response_model=FolderItemResponse)
 def add_item_to_folder(
     folder_id: UUID,
     item: FolderItemAdd,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
     """Add an item to a folder.
 
-    Requires organization.write role for access.
+    Requires company.create role AND (owner OR writer role for folder).
+    Readers cannot add items even with company.create permission.
     """
-    import logging
-    logger = logging.getLogger(__name__)
+    logger.info(
+        "POST /folders/{folder_id}/items - Adding item",
+        extra={
+            "user": org_context.username,
+            "folder_id": str(folder_id),
+            "item_id": item.item_id,
+            "item_type": item.item_type
+        }
+    )
 
-    try:
-        logger.debug(f"Adding item to folder - folder_id: {folder_id}, item_id: {item.item_id}, item_type: {item.item_type}")
-        logger.debug(f"User context - user_id: {user.sub}, username: {org_context.username}")
-        
-        folder = FolderService.get_folder(
-            db=db,
-            folder_id=folder_id,
-            organization_id=org_context.organization_id
+    # Check folder exists and get user's role
+    folder = FolderService.get_folder(
+        db=db,
+        folder_id=folder_id,
+        organization_id=org_context.organization_id
+    )
+
+    if not folder:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Folder not found"
         )
-        
-        if not folder:
+
+    # Check role-based access - must be owner or writer
+    role = FolderService.get_user_folder_role(db, folder_id, org_context.user_id)
+
+    if role not in ("owner", "writer"):
+        if role == "reader":
+            logger.warning(
+                "Reader attempted to add item to folder",
+                extra={
+                    "folder_id": str(folder_id),
+                    "user_id": org_context.user_id
+                }
+            )
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Readers cannot add items to folders"
+            )
+        else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Folder not found"
             )
-        
-        folder_item = FolderService.add_item_to_folder(
-            db=db,
-            folder_id=folder_id,
-            item_id=item.item_id,
-            item_type=item.item_type,
-            owner=org_context.username,
-            position=item.position
-        )
-        
-        logger.debug(f"Successfully added item to folder - folder_item_id: {folder_item.id}")
-        return folder_item
-    except Exception as e:
-        logger.error(f"Error adding item to folder: {str(e)}", exc_info=True)
-        raise
+
+    folder_item = FolderService.add_item_to_folder(
+        db=db,
+        folder_id=folder_id,
+        item_id=item.item_id,
+        item_type=item.item_type,
+        owner=org_context.username,
+        position=item.position
+    )
+
+    logger.info(
+        "Item added to folder",
+        extra={
+            "folder_id": str(folder_id),
+            "folder_item_id": str(folder_item.id)
+        }
+    )
+
+    return folder_item
 
 
 @router.delete("/{folder_id}/items/{item_id}")
@@ -521,34 +1062,66 @@ def remove_item_from_folder(
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
 ):
-    """Remove an item from a folder.
+    """Remove an item from a folder (owner only).
 
-    Requires organization.write role for access.
+    Requires organization.write role AND folder ownership.
+    Writers cannot delete items from folders.
     """
-    
+    logger.info(
+        "DELETE /folders/{folder_id}/items/{item_id} - Removing item",
+        extra={
+            "user": org_context.username,
+            "folder_id": str(folder_id),
+            "item_id": str(item_id),
+            "item_type": item_type
+        }
+    )
+
     folder = FolderService.get_folder(
         db=db,
         folder_id=folder_id,
         organization_id=org_context.organization_id
     )
-    
+
     if not folder:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Folder not found"
         )
-    
+
+    # Check ownership - only owner can delete items
+    if not FolderService.is_folder_owner(db, folder_id, org_context.user_id):
+        logger.warning(
+            "Non-owner attempted to remove item from folder",
+            extra={
+                "folder_id": str(folder_id),
+                "user_id": org_context.user_id
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the folder owner can remove items"
+        )
+
     removed = FolderService.remove_item_from_folder(
         db=db,
         folder_id=folder_id,
-        item_id=item_id,
+        item_id=str(item_id),
         item_type=item_type
     )
-    
+
     if not removed:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Item not found in folder"
         )
-    
+
+    logger.info(
+        "Item removed from folder",
+        extra={
+            "folder_id": str(folder_id),
+            "item_id": str(item_id)
+        }
+    )
+
     return {"message": "Item removed from folder"}
