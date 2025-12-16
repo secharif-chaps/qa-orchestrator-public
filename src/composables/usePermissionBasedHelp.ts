@@ -11,11 +11,16 @@ interface HelpSection {
 /**
  * Permission-based help system composable
  * Provides help content based on user's current permissions
+ *
+ * Updated to use new permission model:
+ * - company.* permissions replaced with screen.create / organization.read
+ * - Legacy permissions kept for backward compatibility
  */
-export const usePermissionBasedHelp = () => {
+export function usePermissionBasedHelp() {
   const authStore = useAuthStore()
 
   // Define help sections with their required permissions
+  // Updated to use new permission model with legacy fallbacks
   const helpSections: HelpSection[] = [
     {
       permission: 'admin.costs',
@@ -25,7 +30,7 @@ export const usePermissionBasedHelp = () => {
     },
     {
       permission: 'admin.organizations',
-      title: 'organization Management',
+      title: 'Organization Management',
       description:
         'Manage organizations, users, tokens, and module configurations across the platform.',
       content: '',
@@ -37,44 +42,55 @@ export const usePermissionBasedHelp = () => {
       content: '',
     },
     {
-      permission: 'company.create',
+      // Updated: screen.create is the new permission for creating companies
+      permission: 'screen.create',
       title: 'Creating Company Screenings',
       description: 'Learn how to create new company screening tasks for risk assessment.',
       content: '',
     },
     {
-      permission: 'company.view',
+      // Updated: organization.read is the base access for viewing
+      permission: 'organization.read',
       title: 'Viewing Company Screenings',
       description: 'Access and navigate company screening lists and detailed results.',
       content: '',
     },
     {
-      permission: 'company.delete',
-      title: 'Deleting Company Screenings',
-      description: 'Safely remove company screening records while maintaining compliance.',
-      content: '',
-    },
-    {
-      permission: 'organization.read',
-      title: 'organization Team (Read Access)',
-      description: 'View team information, member roles, and organization settings.',
-      content: '',
-    },
-    {
       permission: 'organization.write',
-      title: 'organization Team Management',
-      description: 'Manage team members, roles, and permissions with full administrative control.',
+      title: 'Folder Management',
+      description: 'Create and manage folders to organize your company screenings.',
+      content: '',
+    },
+    {
+      permission: 'target.create',
+      title: 'Creating Target Watchfiles',
+      description: 'Set up and manage target monitoring watchfiles.',
       content: '',
     },
   ]
 
   // Get available help sections based on user permissions
   const availableHelpSections = computed(() => {
-    return helpSections.filter((section) => authStore.hasPermission(section.permission))
+    return helpSections.filter((section) => {
+      // Check for the new permission
+      if (authStore.hasPermission(section.permission)) {
+        return true
+      }
+
+      // Legacy permission fallbacks
+      if (section.permission === 'screen.create') {
+        return authStore.hasPermission('company.create')
+      }
+      if (section.permission === 'organization.read') {
+        return authStore.hasPermission('company.view')
+      }
+
+      return false
+    })
   })
 
   // Load markdown content for a specific permission
-  const loadHelpContent = async (permission: string): Promise<string> => {
+  async function loadHelpContent(permission: string): Promise<string> {
     try {
       const module = await import(`@/assets/help/${permission}.md?raw`)
       return module.default
@@ -85,7 +101,7 @@ export const usePermissionBasedHelp = () => {
   }
 
   // Get help sections with loaded content
-  const getHelpSectionsWithContent = async (): Promise<HelpSection[]> => {
+  async function getHelpSectionsWithContent(): Promise<HelpSection[]> {
     const sectionsWithContent = await Promise.all(
       availableHelpSections.value.map(async (section) => {
         const content = await loadHelpContent(section.permission)
@@ -104,7 +120,7 @@ export const usePermissionBasedHelp = () => {
   })
 
   // Get help section by permission
-  const getHelpSection = (permission: string) => {
+  function getHelpSection(permission: string) {
     return availableHelpSections.value.find((section) => section.permission === permission)
   }
 
@@ -143,3 +159,6 @@ export const usePermissionBasedHelp = () => {
     getHelpSection,
   }
 }
+
+// Export for backward compatibility
+export const usePermissionBasedHelpComposable = usePermissionBasedHelp

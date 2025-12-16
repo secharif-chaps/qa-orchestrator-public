@@ -18,15 +18,6 @@
 
             <!-- View Mode Toggle -->
             <Toggle v-model="viewMode" :options="viewModeOptions" variant="pill" />
-
-            <!-- Search Input -->
-            <!-- <Input
-              v-model="foldersStore.filterName"
-              :placeholder="$t('folder.search', 'Search folders...')"
-              icon="fa fa-search"
-              clearable
-              class="w-full sm:w-96"
-            /> -->
           </div>
         </div>
       </div>
@@ -57,8 +48,9 @@
           v-if="viewMode === 'grid'"
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          <!-- Create New Folder Card -->
+          <!-- Create New Folder Card (only shown if user can create folders) -->
           <div
+            v-if="canCreateFolder"
             class="rounded-card p-6 border-2 border-dashed border-primary-stroke hover:border-primary/50 hover:bg-base-200/50 transition-all duration-200 cursor-pointer group flex flex-col items-center justify-center min-h-[280px]"
             @click="$router.push('/folders/create')"
           >
@@ -90,8 +82,9 @@
 
         <!-- Hierarchical Table View -->
         <div v-else class="bg-base-100 rounded-lg overflow-hidden border border-primary-stroke">
-          <!-- Create New Folder Row -->
+          <!-- Create New Folder Row (only shown if user can create folders) -->
           <div
+            v-if="canCreateFolder"
             class="px-6 py-4 border-b border-primary-stroke bg-base-200/50 hover:bg-base-200 transition-colors cursor-pointer"
             @click="$router.push('/folders/create')"
           >
@@ -116,9 +109,10 @@
           <!-- Table Header -->
           <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
             <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
-              <div class="col-span-6">{{ $t('folder.table.name', 'Name') }}</div>
+              <div class="col-span-5">{{ $t('folder.table.name', 'Name') }}</div>
               <div class="col-span-2">{{ $t('folder.table.items', 'Items') }}</div>
-              <div class="col-span-2">{{ $t('folder.table.created', 'Created') }}</div>
+              <div class="col-span-2">{{ $t('folder.table.owner', 'Owner') }}</div>
+              <div class="col-span-1">{{ $t('folder.table.created', 'Created') }}</div>
               <div class="col-span-2 text-right">{{ $t('folder.table.actions', 'Actions') }}</div>
             </div>
           </div>
@@ -165,21 +159,26 @@
           {{
             foldersStore.filterName
               ? $t('folder.empty.tryDifferentSearch', 'Try a different search term')
-              : $t(
-                  'folder.emptyList.description',
-                  'Create your first folder to organize your companies',
-                )
+              : canCreateFolder
+                ? $t(
+                    'folder.emptyList.description',
+                    'Create your first folder to organize your companies',
+                  )
+                : $t(
+                    'folder.emptyList.descriptionReadOnly',
+                    'No folders have been shared with you yet',
+                  )
           }}
         </p>
         <Button
-          v-if="!foldersStore.filterName"
+          v-if="!foldersStore.filterName && canCreateFolder"
           @click="$router.push('/folders/create')"
           :label="$t('folder.create.button', 'Create Folder')"
           variant="primary"
           icon="fa fa-plus"
         />
         <Button
-          v-else
+          v-else-if="foldersStore.filterName"
           @click="foldersStore.filterName = ''"
           :label="$t('folder.clearSearch', 'Clear Search')"
           variant="secondary"
@@ -218,6 +217,7 @@ import { Alert, Button, Toggle } from '@owlint/feathers-vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import { foldersQuery, foldersWithItemsQuery } from '@/queries/folders'
 import { useFoldersStore } from '@/stores/folders'
+import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import type { Folder } from '@/types/folder'
 import { useQuery } from '@pinia/colada'
 import { computed, onMounted, ref, watch } from 'vue'
@@ -231,6 +231,9 @@ const pageSizeOptions = [6, 12, 21, 30]
 
 const { t: $t } = useI18n()
 const foldersStore = useFoldersStore()
+
+// Get folder creation permission (no folder context needed for this)
+const { canCreateFolder } = useFolderPermissions()
 
 // Filter and view state
 const folderFilter = ref<'all' | 'favorites' | 'archived'>('all')
@@ -330,35 +333,35 @@ const folderToDelete = ref<Folder | null>(null)
 const showRestoreModal = ref(false)
 const folderToRestore = ref<Folder | null>(null)
 
-const handleDeleteFolder = async () => {
+function handleDeleteFolder() {
   // Refresh the folders list after successful deletion
   if (viewMode.value === 'grid') {
-    await refetch()
+    refetch()
   } else {
-    await refetchWithItems()
+    refetchWithItems()
   }
 }
 
-const confirmDelete = (folder: Folder) => {
+function confirmDelete(folder: Folder) {
   folderToDelete.value = folder
   showDeleteModal.value = true
 }
 
-const handleRestoreFolder = async () => {
+function handleRestoreFolder() {
   // Refresh the folders list after successful deletion
   if (viewMode.value === 'grid') {
-    await refetch()
+    refetch()
   } else {
-    await refetchWithItems()
+    refetchWithItems()
   }
 }
 
-const confirmRestore = (folder: Folder) => {
+function confirmRestore(folder: Folder) {
   folderToRestore.value = folder
   showRestoreModal.value = true
 }
 
-const updatePerPage = (newSize: number) => {
+function updatePerPage(newSize: number) {
   foldersStore.size = newSize
   // Reset to first page when changing page size
   foldersStore.page = 1

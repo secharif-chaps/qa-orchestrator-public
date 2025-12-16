@@ -4,33 +4,39 @@
  * This composable provides a frontend abstraction layer over backend permissions.
  * Roles are combinations of permissions that make permission management easier
  * for admins, while the backend still validates individual permissions.
+ *
+ * Permission Model:
+ * - organization.read: Can read folders and companies shared with user
+ * - organization.write: Can create folders, edit/share/delete owned folders
+ * - company.create: Can add items (company screens) to folders
+ * - admin.organizations: Global admin access
  */
 
 import type { Role, RoleId } from '@/types/role'
+import { isLegacyPermission, mapLegacyToNewPermissions } from '@/types/role'
 
 /**
  * Role definitions with their associated permissions
+ *
+ * Permission model:
+ * - reader: organization.read only
+ * - writer: organization.read + organization.write + company.create
+ * - admin: all permissions including admin.organizations
  */
 const ROLES: Record<RoleId, Role> = {
   reader: {
     id: 'reader',
     name: 'Reader',
-    description: 'View-only access to companies and organization',
-    permissions: ['company.view', 'organization.read'],
+    description: 'View-only access to folders and companies',
+    permissions: ['organization.read'],
     color: 'primary',
     icon: 'fa-eye',
   },
   writer: {
     id: 'writer',
     name: 'Writer',
-    description: 'Full access to companies and organization management',
-    permissions: [
-      'company.view',
-      'company.create',
-      'company.delete',
-      'organization.read',
-      'organization.write',
-    ],
+    description: 'Create and manage folders and companies',
+    permissions: ['organization.read', 'organization.write', 'company.create'],
     color: 'secondary',
     icon: 'fa-pencil',
   },
@@ -40,15 +46,27 @@ const ROLES: Record<RoleId, Role> = {
     description: 'Complete administrative access',
     permissions: [
       'admin.organizations',
-      'company.view',
-      'company.create',
-      'company.delete',
       'organization.read',
       'organization.write',
+      'company.create',
     ],
     color: 'accent',
     icon: 'fa-shield-check',
   },
+}
+
+/**
+ * Normalize permissions by removing legacy permissions and mapping to new model
+ */
+function normalizePermissions(permissions: string[]): string[] {
+  // Check if any legacy permissions are present
+  const hasLegacy = permissions.some(isLegacyPermission)
+
+  if (hasLegacy) {
+    return mapLegacyToNewPermissions(permissions)
+  }
+
+  return permissions
 }
 
 /**
@@ -60,13 +78,17 @@ export function useRoles() {
    *
    * Matches the user's permissions against predefined roles.
    * Returns the role if permissions exactly match, otherwise null.
+   * Handles legacy permissions by mapping them to the new model first.
    *
    * @param permissions - Array of permission strings from user
    * @returns Matching role or null if no exact match
    */
   function getUserRole(permissions: string[]): Role | null {
+    // Normalize permissions (convert legacy to new model)
+    const normalizedPermissions = normalizePermissions(permissions)
+
     // Sort permissions for comparison
-    const sortedPermissions = [...permissions].sort()
+    const sortedPermissions = [...normalizedPermissions].sort()
 
     // Check each role for exact match
     for (const role of Object.values(ROLES)) {
@@ -126,6 +148,27 @@ export function useRoles() {
     return ROLES[roleId]?.permissions ?? []
   }
 
+  /**
+   * Check if user has legacy permissions that should be migrated
+   *
+   * @param permissions - Array of permission strings
+   * @returns True if user has any legacy permissions
+   */
+  function hasLegacyPermissions(permissions: string[]): boolean {
+    return permissions.some(isLegacyPermission)
+  }
+
+  /**
+   * Get suggested new permissions based on current permissions
+   * Useful for showing admins what permissions would change during migration
+   *
+   * @param permissions - Current permission strings
+   * @returns Suggested new permission strings
+   */
+  function getSuggestedNewPermissions(permissions: string[]): string[] {
+    return normalizePermissions(permissions)
+  }
+
   return {
     ROLES,
     getUserRole,
@@ -133,5 +176,8 @@ export function useRoles() {
     getAllRoles,
     isRole,
     getPermissionsForRole,
+    hasLegacyPermissions,
+    getSuggestedNewPermissions,
+    normalizePermissions,
   }
 }

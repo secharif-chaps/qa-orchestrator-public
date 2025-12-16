@@ -251,7 +251,7 @@ watch(
       form.username = ''
       form.email = ''
       form.password = ''
-      form.permissions = ['company.view'] // Default permission for new users
+      form.permissions = ['organization.read'] // Default permission for new users
     }
   },
   { immediate: true },

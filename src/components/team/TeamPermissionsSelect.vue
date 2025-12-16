@@ -91,53 +91,35 @@ const emit = defineEmits<{
 }>()
 
 const availablePermissions = computed(() => [
-  // Basic permissions
+  // Basic access - can read shared folders and companies
   {
     key: 'organization.read',
     name: t('team.permissionsList.organizationRead.name', 'Basic Access'),
     description: t(
       'team.permissionsList.organizationRead.description',
-      'View organization content and companies',
+      'View folders and companies shared with this user',
     ),
     icon: 'fa fa-eye',
   },
-  // Company permissions
-  {
-    key: 'company.view',
-    name: t('team.permissionsList.companyView.name', 'View Companies'),
-    description: t(
-      'team.permissionsList.companyView.description',
-      'Access detailed company information',
-    ),
-    icon: 'fa fa-building',
-  },
-  {
-    key: 'company.create',
-    name: t('team.permissionsList.companyCreate.name', 'Create Companies'),
-    description: t(
-      'team.permissionsList.companyCreate.description',
-      'Add new companies to the organization',
-    ),
-    icon: 'fa fa-plus-circle',
-  },
-  {
-    key: 'company.delete',
-    name: t('team.permissionsList.companyDelete.name', 'Delete Companies'),
-    description: t(
-      'team.permissionsList.companyDelete.description',
-      'Remove companies from the organization',
-    ),
-    icon: 'fa fa-trash',
-  },
-  // Admin permission
+  // Organization write - can create folders, edit/delete owned folders
   {
     key: 'organization.write',
-    name: t('team.permissionsList.organizationWrite.name', 'Team Management'),
+    name: t('team.permissionsList.organizationWrite.name', 'Folder Management'),
     description: t(
       'team.permissionsList.organizationWrite.description',
-      'Manage organization users and settings',
+      'Create folders, edit and delete owned folders, manage team members',
     ),
-    icon: 'fa fa-users-cog',
+    icon: 'fa fa-folder-plus',
+  },
+  // Company create - can add items to folders
+  {
+    key: 'company.create',
+    name: t('team.permissionsList.companyCreate.name', 'Add Items'),
+    description: t(
+      'team.permissionsList.companyCreate.description',
+      'Add company screens and other items to folders',
+    ),
+    icon: 'fa fa-plus-circle',
   },
 ])
 const togglePermission = (permission: string) => {

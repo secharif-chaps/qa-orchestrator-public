@@ -7,7 +7,7 @@
     >
       <div class="grid grid-cols-12 gap-4 items-center">
         <!-- Name with expand/collapse icon -->
-        <div class="col-span-6 flex items-center gap-3">
+        <div class="col-span-5 flex items-center gap-3">
           <button
             class="w-6 h-6 flex items-center justify-center text-secondary hover:text-secondary transition-colors"
             @click.stop="toggleExpanded"
@@ -25,18 +25,41 @@
             <i :class="folderIcon" class="text-lg"></i>
           </div>
 
-          <div class="flex-1">
+          <div class="flex-1 flex items-center gap-2">
             <h3 class="font-medium">{{ folder.name }}</h3>
+            <!-- Shared badge -->
+            <Tag
+              v-if="isSharedWithMe"
+              :label="$t('folder.shared.badge', 'Shared')"
+              intent="info"
+              size="xs"
+            />
+            <!-- Role badge -->
+            <Tag
+              v-if="isSharedWithMe && shareRoleLabel"
+              :label="shareRoleLabel"
+              variant="secondary"
+              size="xs"
+            />
           </div>
         </div>
 
         <!-- Items count -->
         <div class="col-span-2">
-          <Tag variant="secondary" :label="$t('folder.itemsChip', folder.items?.length || 0)" size="sm" />
+          <Tag
+            variant="secondary"
+            :label="$t('folder.itemsChip', folder.items?.length || 0)"
+            size="sm"
+          />
+        </div>
+
+        <!-- Owner -->
+        <div class="col-span-2">
+          <span class="text-sm text-secondary">@{{ folder.owner }}</span>
         </div>
 
         <!-- Created date -->
-        <div class="col-span-2">
+        <div class="col-span-1">
           <span class="text-sm text-secondary">{{ formatDate(folder.created_at) }}</span>
         </div>
 
@@ -50,7 +73,9 @@
               :label="$t('folder.actions.view', 'View')"
               @click.stop="$emit('view-folder', folder.id)"
             />
+            <!-- Delete button only for owners -->
             <Button
+              v-if="canDeleteFolder"
               variant="tertiary"
               size="sm"
               color="danger"
@@ -73,7 +98,7 @@
       >
         <div class="grid grid-cols-12 gap-4 items-center">
           <!-- Item name with indentation -->
-          <div class="col-span-6 flex items-center gap-3 pl-8">
+          <div class="col-span-5 flex items-center gap-3 pl-8">
             <div
               class="w-8 h-8 rounded-lg bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center justify-center flex-shrink-0"
             >
@@ -106,8 +131,13 @@
             <Tag intent="accent" :label="formatItemType(item.type)" size="xs" />
           </div>
 
-          <!-- Item created date -->
+          <!-- Item owner -->
           <div class="col-span-2">
+            <span class="text-xs text-secondary">@{{ item.owner_username || item.owner }}</span>
+          </div>
+
+          <!-- Item created date -->
+          <div class="col-span-1">
             <span class="text-xs text-secondary">{{ formatDate(item.created_at) }}</span>
           </div>
 
@@ -139,10 +169,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Tag, Button } from '@owlint/feathers-vue'
 import type { Folder } from '@/types/folder'
+import { useFolderPermissions } from '@/composables/useFolderPermissions'
 
 const { t, locale } = useI18n()
 
@@ -158,9 +189,21 @@ defineEmits<{
   'view-item': [itemId: string]
 }>()
 
+// Folder permissions
+const folderRef = toRef(props, 'folder')
+const { canDeleteFolder, isSharedWithMe } = useFolderPermissions(folderRef)
+
+// Compute share role label for display
+const shareRoleLabel = computed(() => {
+  if (!props.folder.share_role) return ''
+  return props.folder.share_role === 'writer'
+    ? t('folder.share.writer', 'Writer')
+    : t('folder.share.reader', 'Reader')
+})
+
 const isExpanded = ref(false)
 
-const toggleExpanded = () => {
+function toggleExpanded() {
   isExpanded.value = !isExpanded.value
 }
 
@@ -180,7 +223,7 @@ function formatItemType(type: string): string {
 }
 
 // Helper function to extract domain from website URL
-const getCompanyDomain = (website?: string) => {
+function getCompanyDomain(website?: string) {
   if (!website) return null
   try {
     // Remove protocol and www
@@ -194,7 +237,7 @@ const getCompanyDomain = (website?: string) => {
 }
 
 // Helper function to get logo URL from logo.dev
-const getLogoUrl = (website?: string) => {
+function getLogoUrl(website?: string) {
   const domain = getCompanyDomain(website)
   if (!domain) return ''
   return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`

@@ -12,9 +12,7 @@
       @click.stop="toggleFavorite"
       class="absolute top-3 right-3 size-8 z-10 flex items-center justify-center rounded-full transition-all duration-200"
       :class="[
-        folder.is_favorite
-          ? 'bg-yellow-100 dark:bg-yellow-900/30'
-          : 'hover:bg-base-200',
+        folder.is_favorite ? 'bg-yellow-100 dark:bg-yellow-900/30' : 'hover:bg-base-200',
       ]"
       :title="folder.is_favorite ? 'Remove from favorites' : 'Add to favorites'"
       :disabled="isTogglingFavorite"
@@ -34,10 +32,7 @@
     <div class="flex flex-col gap-2">
       <div class="flex items-start justify-between">
         <div class="flex items-center gap-3">
-          <div
-          :class="folderColorClasses"
-            class="w-12 h-12 rounded-lg flex items-center justify-center "
-          >
+          <div :class="folderColorClasses" class="w-12 h-12 rounded-lg flex items-center justify-center">
             <i :class="[folderIcon]" class="text-xl"></i>
           </div>
           <div class="flex-1 min-w-0">
@@ -47,11 +42,25 @@
               >
                 {{ folder.name }}
               </h3>
+              <!-- Shared with me badge -->
+              <Tag
+                v-if="isSharedWithMe"
+                :label="$t('folder.shared.badge', 'Shared')"
+                intent="info"
+                size="xs"
+              />
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
               <span class="text-sm text-secondary">
                 {{ $t('folder.itemCount', itemCount) }}
               </span>
+              <!-- Share role indicator -->
+              <Tag
+                v-if="isSharedWithMe && shareRoleLabel"
+                :label="shareRoleLabel"
+                variant="secondary"
+                size="xs"
+              />
               <div v-if="folder.tags && folder.tags.length > 0" class="flex items-center gap-1">
                 <Tag
                   v-for="tag in folder.tags.slice(0, 2)"
@@ -98,26 +107,38 @@
 
       <!-- Empty State -->
       <div v-else class="p-4 rounded-xl bg-base-200 h-64 mb-4">
-        <div class="flex flex-col justify-start gap-2 ">
-
-        <div
-          
-          @click.prevent="$router.push(`/folders/${folder.id}/create/company`)"
-          class="group rounded-md border-2 border-dashed border-primary-stroke bg-base-200 dark:bg-base-100 h-16 hover:bg-base-300"
-        >
-      <div class="flex items-center justify-center h-full">
-
-        <div class="flex items-center justify-center h-full gap-2">
-          <span class="w-8 h-8 rounded-lg bg-sage-100 group-hover:bg-sage-200 dark:bg-sage-800 group-hover:dark:bg-sage-700 flex items-center justify-center">
-            <i class="fas fa-plus text-secondary text-sm"></i>
-          </span>
-          <span class="text-sm text-secondary">{{ $t('folder.addItems.company', 'Add Company') }}</span>
-
+        <div class="flex flex-col justify-start gap-2">
+          <!-- Only show add button if user can create items -->
+          <div
+            v-if="canCreateItems"
+            @click.prevent="$router.push(`/folders/${folder.id}/create/company`)"
+            class="group rounded-md border-2 border-dashed border-primary-stroke bg-base-200 dark:bg-base-100 h-16 hover:bg-base-300"
+          >
+            <div class="flex items-center justify-center h-full">
+              <div class="flex items-center justify-center h-full gap-2">
+                <span
+                  class="w-8 h-8 rounded-lg bg-sage-100 group-hover:bg-sage-200 dark:bg-sage-800 group-hover:dark:bg-sage-700 flex items-center justify-center"
+                >
+                  <i class="fas fa-plus text-secondary text-sm"></i>
+                </span>
+                <span class="text-sm text-secondary">{{
+                  $t('folder.addItems.company', 'Add Company')
+                }}</span>
+              </div>
+            </div>
           </div>
+          <!-- Read-only empty state for readers -->
+          <div
+            v-else
+            class="rounded-md border-2 border-dashed border-primary-stroke bg-base-200 dark:bg-base-100 h-16"
+          >
+            <div class="flex items-center justify-center h-full">
+              <span class="text-sm text-secondary">{{
+                $t('folder.empty.readOnly', 'No items in this folder')
+              }}</span>
+            </div>
           </div>
         </div>
-      </div>
-
       </div>
     </div>
 
@@ -125,7 +146,15 @@
     <div>
       <div class="flex justify-between items-center text-xs text-secondary">
         <span>{{ $t('folder.grid.created') }} {{ formatDate(folder.created_at) }}</span>
-        <span>{{ $t('folder.grid.by') }} @{{ folder.owner }}</span>
+        <span>
+          <!-- Show "by @owner" for shared folders, or just owner for owned folders -->
+          <template v-if="isSharedWithMe">
+            {{ $t('folder.grid.owner', 'Owner:') }} @{{ folder.owner }}
+          </template>
+          <template v-else>
+            {{ $t('folder.grid.by') }} @{{ folder.owner }}
+          </template>
+        </span>
       </div>
     </div>
   </Card>
@@ -135,7 +164,8 @@
 import { Tag } from '@owlint/feathers-vue'
 import type { Folder } from '@/types/folder'
 import { useToggleFolderFavorite } from '@/mutations/folders'
-import { computed, ref } from 'vue'
+import { useFolderPermissions } from '@/composables/useFolderPermissions'
+import { computed, ref, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import Card from '../ui/Card.vue'
@@ -159,8 +189,21 @@ const emit = defineEmits<{
 const isParentHovered = ref(false)
 const isChildHovered = ref(false)
 
+// Folder permissions
+const folderRef = toRef(props, 'folder')
+const { isSharedWithMe, canCreateItems } = useFolderPermissions(folderRef)
+
 // Use mutation for optimistic UI
-const { toggleFavorite: toggleFavoriteMutation, isLoading: isTogglingFavorite } = useToggleFolderFavorite()
+const { toggleFavorite: toggleFavoriteMutation, isLoading: isTogglingFavorite } =
+  useToggleFolderFavorite()
+
+// Compute share role label for display
+const shareRoleLabel = computed(() => {
+  if (!props.folder.share_role) return ''
+  return props.folder.share_role === 'writer'
+    ? t('folder.share.writer', 'Writer')
+    : t('folder.share.reader', 'Reader')
+})
 
 // Compute folder color classes based on the color prop
 const folderColorClasses = computed(() => {
@@ -210,7 +253,7 @@ function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString(localeCode)
 }
 
-const handleCardClick = (event: MouseEvent) => {
+function handleCardClick() {
   // Only emit viewFolder if not clicking on the favorite button
   emit('viewFolder', props.folder.id)
 }
@@ -232,4 +275,8 @@ async function toggleFavorite() {
     shouldBeFavorite,
   })
 }
+
+// Suppress unused variable warnings for hover refs used only in template bindings
+void isParentHovered.value
+void isChildHovered.value
 </script>

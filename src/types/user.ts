@@ -17,6 +17,7 @@ export interface OrganizationUserCreate {
   firstName?: string
   lastName?: string
   temporaryPassword: string
+  permissions?: string[] // Initial permissions for the user
 }
 
 export interface OrganizationUserUpdate {

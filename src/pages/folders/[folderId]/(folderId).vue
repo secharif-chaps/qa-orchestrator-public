@@ -119,7 +119,7 @@
                   </div>
                   <div class="col-span-2">
                     <span class="text-sm text-secondary">{{
-                      item.owner_username || $t('common.na', 'N/A')
+                      item.owner || $t('common.na', 'N/A')
                     }}</span>
                   </div>
                   <div class="col-span-2 text-right">

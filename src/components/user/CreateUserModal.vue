@@ -59,34 +59,6 @@
           </p>
         </div>
 
-        <!-- First Name -->
-        <!-- <div>
-          <label class="block text-sm font-medium text-secondary mb-1">
-            {{ $t('user.firstName', 'First Name') }}
-          </label>
-          <input
-            v-model="form.firstName"
-            type="text"
-            :disabled="isLoading"
-            class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-            :placeholder="$t('user.firstNamePlaceholder', 'Enter first name')"
-          />
-        </div> -->
-
-        <!-- Last Name -->
-        <!-- <div>
-          <label class="block text-sm font-medium text-secondary mb-1">
-            {{ $t('user.lastName', 'Last Name') }}
-          </label>
-          <input
-            v-model="form.lastName"
-            type="text"
-            :disabled="isLoading"
-            class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-            :placeholder="$t('user.lastNamePlaceholder', 'Enter last name')"
-          />
-        </div> -->
-
         <!-- Temporary Password -->
         <div>
           <label class="block text-sm font-medium text-secondary mb-1">
@@ -135,6 +107,50 @@
             {{ $t('user.generatePassword', 'Generate Random Password') }}
           </button>
         </div>
+
+        <!-- Initial Role Selection -->
+        <div class="border-t border-primary-stroke pt-4">
+          <label class="block text-sm font-medium text-secondary mb-2">
+            {{ $t('user.initialRole', 'Initial Role') }}
+          </label>
+          <p class="text-xs text-secondary mb-3">
+            {{
+              $t(
+                'user.initialRoleDescription',
+                'Select the initial permissions for this user. Can be changed later.',
+              )
+            }}
+          </p>
+          <div class="flex flex-col gap-2">
+            <label
+              v-for="role in availableRoles"
+              :key="role.id"
+              class="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors"
+              :class="
+                selectedRoleId === role.id
+                  ? 'border-primary bg-primary/5'
+                  : 'border-primary-stroke hover:border-primary/30'
+              "
+            >
+              <input
+                type="radio"
+                :value="role.id"
+                v-model="selectedRoleId"
+                :disabled="isLoading"
+                class="w-4 h-4 text-primary focus:ring-primary border-primary-stroke"
+              />
+              <div class="flex items-center gap-2 flex-1">
+                <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <i :class="['fa', role.icon, 'text-primary text-sm']"></i>
+                </div>
+                <div>
+                  <p class="font-medium text-sm">{{ role.name }}</p>
+                  <p class="text-xs text-secondary">{{ role.description }}</p>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
       </form>
 
       <!-- Actions -->
@@ -167,9 +183,11 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoles } from '@/composables/useRoles'
 import type { OrganizationUserCreate } from '@/types/user'
 
 const { t } = useI18n()
+const { getAllRoles, getPermissionsForRole } = useRoles()
 
 interface Props {
   isLoading?: boolean
@@ -182,6 +200,14 @@ interface Emits {
 
 defineProps<Props>()
 const emit = defineEmits<Emits>()
+
+// Get available roles (exclude admin from initial creation)
+const availableRoles = computed(() => {
+  return getAllRoles().filter((role) => role.id !== 'admin')
+})
+
+// Default to 'reader' role (organization.read only)
+const selectedRoleId = ref<string>('reader')
 
 // Form state
 const form = reactive<OrganizationUserCreate>({
@@ -201,17 +227,18 @@ const isFormValid = computed(() => {
     form.username.trim() !== '' &&
     form.email.trim() !== '' &&
     form.temporaryPassword.trim() !== '' &&
-    isValidEmail(form.email)
+    isValidEmail(form.email) &&
+    selectedRoleId.value !== ''
   )
 })
 
-const isValidEmail = (email: string) => {
+function isValidEmail(email: string) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
 }
 
 // Generate random password
-const generatePassword = () => {
+function generatePassword() {
   const length = 12
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
   let password = ''
@@ -235,7 +262,7 @@ const generatePassword = () => {
 }
 
 // Form validation
-const validateForm = () => {
+function validateForm() {
   errors.value = {}
 
   if (!form.username.trim()) {
@@ -269,9 +296,15 @@ const validateForm = () => {
 }
 
 // Handle form submission
-const handleSubmit = () => {
+function handleSubmit() {
   if (!validateForm()) return
 
-  emit('confirm', { ...form })
+  // Get permissions for selected role
+  const permissions = getPermissionsForRole(selectedRoleId.value as 'reader' | 'writer' | 'admin')
+
+  emit('confirm', {
+    ...form,
+    permissions, // Include permissions with the user creation
+  })
 }
 </script>

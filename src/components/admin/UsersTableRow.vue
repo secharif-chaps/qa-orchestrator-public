@@ -98,9 +98,7 @@ const userRole = computed(() => getUserRole(props.user.permissions))
 const displayedPermissions = [
   'organization.read',
   'organization.write',
-  'company.view',
   'company.create',
-  'company.delete',
   'admin.organizations',
 ]
 
