@@ -11,13 +11,35 @@
             <i :class="folderIcon" class="text-3xl"></i>
           </div>
           <div>
-            <h1 class="text-3xl font-bold">
-              {{ folder?.name || $t('folder.loading', 'Loading folder...') }}
-            </h1>
+            <div class="flex items-center gap-2">
+              <h1 class="text-3xl font-bold">
+                {{ folder?.name || $t('folder.loading', 'Loading folder...') }}
+              </h1>
+              <!-- Shared badge if not owner -->
+              <Tag
+                v-if="isSharedWithMe"
+                :label="$t('folder.shared.badge', 'Shared')"
+                intent="info"
+                size="sm"
+              />
+              <!-- Role badge if shared -->
+              <Tag
+                v-if="isSharedWithMe && shareRoleLabel"
+                :label="shareRoleLabel"
+                variant="secondary"
+                size="sm"
+              />
+            </div>
             <p class="text-secondary mt-2" v-if="folder">
-              {{ $t('folder.header.itemsCount', itemsCount) }} •
+              {{ $t('folder.header.itemsCount', itemsCount) }} |
               {{ $t('folder.header.createdOn', { date: formatDate(folder.created_at) }) }}
-              {{ $t('folder.header.by') }} @{{ folder.owner }}
+              <!-- Show owner info differently for shared vs owned folders -->
+              <template v-if="isSharedWithMe">
+                | {{ $t('folder.grid.owner', 'Owner:') }} @{{ folder.owner }}
+              </template>
+              <template v-else>
+                {{ $t('folder.header.by') }} @{{ folder.owner }}
+              </template>
             </p>
           </div>
         </div>
@@ -36,18 +58,27 @@
             :loading="isTogglingFavorite"
             @click="toggleFavorite"
           />
+
+          <!-- Share Button (only for owners) -->
+          <FolderShareButton v-if="folder" :folder="folder" />
+
+          <!-- Edit Button (only for owners) -->
           <Button
+            v-if="canEditFolder"
             variant="tertiary"
             icon="fa fa-edit"
             :label="$t('folder.actions.edit', 'Edit')"
-            @click="$emit('edit-folder')"
+            @click="handleEditFolder"
           />
+
+          <!-- Delete Button (only for owners) -->
           <Button
+            v-if="canDeleteFolder"
             variant="tertiary"
             color="danger"
             icon="fa fa-trash"
             :label="$t('folder.actions.delete', 'Delete')"
-            @click="$emit('delete-folder')"
+            @click="handleDeleteFolder"
           />
         </div>
       </div>
@@ -57,13 +88,15 @@
         <!-- Search Input -->
         <div class="flex-1 max-w-md">
           <Searchbar
+            id="folder-search-input"
             v-model="searchTerm"
             :placeholder="$t('folder.search.placeholder', 'Search items...')"
           />
         </div>
 
         <div class="flex gap-2 items-center">
-          <div class="relative text-center">
+          <!-- Add Items Dropdown (only if user can create items) -->
+          <div v-if="canCreateItems" class="relative text-center">
             <Button
               variant="secondary"
               icon="fa fa-plus"
@@ -167,11 +200,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { Button, Searchbar, Tag, Toggle } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
 import type { Folder } from '@/types/folder'
 import { useToggleFolderFavorite } from '@/mutations/folders'
+import { useFolderPermissions } from '@/composables/useFolderPermissions'
+import FolderShareButton from '@/components/features/folders/FolderShareButton.vue'
 
 interface Props {
   folder?: Folder | null
@@ -187,6 +222,11 @@ const emit = defineEmits<{
 const { t, locale } = useI18n()
 const showAddItemsDropdown = ref(false)
 
+// Folder permissions
+const folderRef = toRef(props, 'folder')
+const { canEditFolder, canDeleteFolder, canCreateItems, isSharedWithMe } =
+  useFolderPermissions(folderRef)
+
 // Use mutation for optimistic UI
 const { toggleFavorite: toggleFavoriteMutation, isLoading: isTogglingFavorite } =
   useToggleFolderFavorite()
@@ -201,6 +241,23 @@ async function toggleFavorite() {
     shouldBeFavorite,
   })
 }
+
+// Emit handlers to satisfy eslint
+function handleEditFolder() {
+  emit('edit-folder')
+}
+
+function handleDeleteFolder() {
+  emit('delete-folder')
+}
+
+// Compute share role label for display
+const shareRoleLabel = computed(() => {
+  if (!props.folder?.share_role) return ''
+  return props.folder.share_role === 'writer'
+    ? t('folder.share.writer', 'Writer')
+    : t('folder.share.reader', 'Reader')
+})
 
 // v-model for search term
 const searchTerm = defineModel<string>('searchTerm', { default: '' })

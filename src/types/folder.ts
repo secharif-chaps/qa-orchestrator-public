@@ -42,6 +42,11 @@ export interface Folder {
   owner: string
   organization_id: string
 
+  // Sharing-related fields (added for private folders feature)
+  owner_id: string // Keycloak user UUID of the folder owner
+  is_owner: boolean // Whether the current user is the folder owner
+  share_role?: ShareRole | null // Current user's share role (null if owner)
+
   // Items contained in this folder (populated when getting folder details)
   items?: FolderItem[]
   // Item count for list view
@@ -52,4 +57,36 @@ export interface FolderItemAdd {
   item_id: string
   type: 'company'
   position?: number
+}
+
+// Folder sharing types
+export type ShareRole = 'reader' | 'writer'
+
+export interface FolderShare {
+  id: string
+  folder_id: string
+  user_id: string
+  user_username: string
+  role: ShareRole
+  created_at: string
+  // User permission info for UI (whether user can be assigned as writer)
+  has_write_permission?: boolean
+}
+
+export interface FolderShareCreate {
+  user_id: string
+  user_username: string
+  role: ShareRole
+}
+
+export interface FolderShareUpdate {
+  role: ShareRole
+}
+
+// User search result for sharing modal
+export interface ShareableUser {
+  user_id: string
+  username: string
+  email?: string
+  has_write_permission: boolean // Whether user has organization.write permission
 }
