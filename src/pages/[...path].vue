@@ -16,7 +16,7 @@
         </p>
       </div>
 
-      <div class="space-x-4">
+      <div class="space-x-4 flex">
         <Button
           :label="$t('errors.notFound.goHome', 'Go to Home')"
           variant="primary"

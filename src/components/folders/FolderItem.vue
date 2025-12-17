@@ -7,31 +7,10 @@
     @mouseleave="isParentHovered = false"
     class="relative"
   >
-    <!-- Favorite Toggle Button / Indicator -->
-    <button
-      @click.stop="toggleFavorite"
-      class="absolute top-3 right-3 size-8 z-10 flex items-center justify-center rounded-full transition-all duration-200"
-      :class="[
-        folder.is_favorite ? 'bg-yellow-100 dark:bg-yellow-900/30' : 'hover:bg-base-200',
-      ]"
-      :title="folder.is_favorite ? $t('folder.actions.removeFromFavorites') : $t('folder.actions.addToFavorites')"
-      :disabled="isTogglingFavorite"
-    >
-      <i
-        v-if="!isTogglingFavorite"
-        :class="[
-          folder.is_favorite
-            ? 'fas fa-star text-yellow-500'
-            : 'far fa-star text-secondary hover:text-yellow-500',
-        ]"
-        class="text-sm"
-      ></i>
-      <i v-else class="fas fa-spinner fa-spin text-secondary text-sm"></i>
-    </button>
 
     <div class="flex flex-col gap-2">
       <div class="flex items-start justify-between">
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 w-full">
           <div :class="folderColorClasses" class="w-12 h-12 rounded-lg flex items-center justify-center">
             <i :class="[folderIcon]" class="text-xl"></i>
           </div>
@@ -47,8 +26,31 @@
                 v-if="isSharedWithMe"
                 :label="$t('folder.shared.badge', 'Shared')"
                 intent="info"
+                class="ml-auto mr-0"
                 size="xs"
               />
+                  <!-- Favorite Toggle Button / Indicator -->
+            <button
+              @click.stop="toggleFavorite"
+              class="size-8 z-10 flex items-center justify-center rounded-full transition-all duration-200"
+              :class="[
+                folder.is_favorite ? 'bg-yellow-100 dark:bg-yellow-900/30' : 'hover:bg-base-200',
+                isSharedWithMe ? 'ml-0' : 'ml-auto'
+              ]"
+              :title="folder.is_favorite ? $t('folder.actions.removeFromFavorites') : $t('folder.actions.addToFavorites')"
+              :disabled="isTogglingFavorite"
+            >
+              <i
+                v-if="!isTogglingFavorite"
+                :class="[
+                  folder.is_favorite
+                    ? 'fas fa-star text-yellow-500'
+                    : 'far fa-star text-secondary hover:text-yellow-500',
+                ]"
+                class="text-sm"
+              ></i>
+              <i v-else class="fas fa-spinner fa-spin text-secondary text-sm"></i>
+            </button>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
               <span class="text-sm text-secondary">
@@ -259,7 +261,7 @@ function handleCardClick() {
 }
 
 function handleItemClick(itemId: string, index: number) {
-  if (index < 3 || props.folder.items.length <= 4) {
+  if (index < 3 || props.folder.items && props.folder.items.length <= 4) {
     router.push(`/folders/${props.folder.id}/companies/${itemId}`)
   } else {
     router.push(`/folders/${props.folder.id}`)
