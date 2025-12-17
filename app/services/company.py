@@ -17,8 +17,7 @@ from app.core.validators import ValidationError, InputValidator
 from app.repositories.company_repository_impl import SQLAlchemyCompanyRepository
 from app.core.config import settings
 from app.workers.dify_tasks import execute_dify_workflow
-from app.services.token_manager import TokenManager
-from app.models.organization import ModuleName
+from app.services.token_manager import TokenManager, TOKENS_PER_COMPANY
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +25,7 @@ def _parse_json_fields(company: Company) -> Company:
     """Helper function to parse JSON string fields into proper JSON objects"""
     if not company:
         return company
-    
+
     # Parse profile field if it's a JSON string
     if company.profile is None:
         company.profile = {}
@@ -48,7 +47,7 @@ def _parse_json_fields(company: Company) -> Company:
         except (json.JSONDecodeError, TypeError) as e:
             logger.warning(f"Failed to parse digital field for company {company.id}: {e}")
             company.digital = {}
-    
+
     # Parse csr field if it's a JSON string (handle markdown code blocks)
     if company.csr is None:
         company.csr = {}
@@ -63,7 +62,7 @@ def _parse_json_fields(company: Company) -> Company:
         except (json.JSONDecodeError, TypeError) as e:
             logger.warning(f"Failed to parse csr field for company {company.id}: {e}")
             company.csr = {}
-    
+
     # Parse other fields
     for field_name in ['timeline', 'products', 'jobs', 'press']:
         field_value = getattr(company, field_name)
@@ -76,7 +75,7 @@ def _parse_json_fields(company: Company) -> Company:
             except (json.JSONDecodeError, TypeError) as e:
                 logger.warning(f"Failed to parse {field_name} field for company {company.id}: {e}")
                 setattr(company, field_name, {})
-    
+
     # Handle team field specially - needs to be a list for CompanyResponse
     if company.team is None:
         company.team = []
@@ -91,7 +90,7 @@ def _parse_json_fields(company: Company) -> Company:
             if isinstance(team_analysis, dict):
                 # Try to extract team members from different possible locations
                 team_members = []
-                
+
                 # Check for team members in various possible keys
                 if 'team' in team_analysis:
                     team_members = team_analysis.get('team', [])
@@ -99,12 +98,12 @@ def _parse_json_fields(company: Company) -> Company:
                     team_members = team_analysis.get('members', [])
                 elif 'subordinates' in team_analysis:
                     team_members = team_analysis.get('subordinates', [])
-                
+
                 # If still no team members found, convert the whole structure to a list
                 if not team_members and team_analysis:
                     # Store the team analysis as a single-item list to preserve the data
                     team_members = [team_analysis]
-                
+
                 company.team = team_members if isinstance(team_members, list) else []
             else:
                 company.team = []
@@ -134,7 +133,7 @@ def _parse_json_fields(company: Company) -> Company:
         # If it's not a list, dict, string or None, log and set to empty list
         logger.warning(f"Unexpected team field type for company {company.id}: {type(company.team)}")
         company.team = []
-    
+
     return company
 
 class CompanyService:
@@ -143,7 +142,7 @@ class CompanyService:
         self.dify_service = DifyService(db)  # Pass database session for workflow config access
         self.secure_query = SecureQueryBuilder(db)
         self.repository = SQLAlchemyCompanyRepository(db)
-    
+
     def get_company(self, company_id: int, include_deleted: bool = False) -> Optional[Company]:
         """Securely get company by ID"""
         query = self.secure_query.safe_filter_by_id(Company, company_id)
@@ -151,7 +150,7 @@ class CompanyService:
             query = query.filter(Company.is_deleted == False)
         company = query.first()
         return _parse_json_fields(company)
-    
+
     def get_company_by_name(self, name: str, include_deleted: bool = False) -> Optional[Company]:
         """Securely get company by name"""
         query = self.secure_query.safe_filter_by_string(Company, Company.name, name, exact_match=True)
@@ -159,7 +158,7 @@ class CompanyService:
             query = query.filter(Company.is_deleted == False)
         company = query.first()
         return _parse_json_fields(company)
-    
+
     def get_all_companies(self, organization_id: Optional[str] = None, include_deleted: bool = False) -> List[Company]:
         """Securely get all companies, optionally filtered by organization"""
         query = self.db.query(Company)
@@ -170,36 +169,36 @@ class CompanyService:
         companies = query.all()
         # Parse JSON fields for all companies
         return [_parse_json_fields(company) for company in companies]
-    
+
     def get_paginated_companies(self, pagination_params: PaginationParams, organization_id: Optional[str] = None, name_filter: Optional[str] = None, include_archived: bool = False) -> PaginatedResponse[CompanyResponse]:
         """Get paginated companies with sorting and filtering"""
         companies, total_count = self.repository.get_paginated(pagination_params, organization_id, name_filter, include_archived)
-        
+
         # Convert SQLAlchemy models to Pydantic response models
         company_responses = []
         for company in companies:
             try:
                 # Parse JSON fields
                 company = _parse_json_fields(company)
-                
+
                 # Convert to CompanyResponse using from_attributes
                 company_response = CompanyResponse.model_validate(company)
                 company_responses.append(company_response)
             except Exception as e:
                 # Log the error but don't fail the entire request
                 logger.error(f"Failed to validate company {company.id}: {e}")
-                
+
                 # Try to create a minimal valid response
                 try:
                     # Ensure team is a list
                     if not isinstance(company.team, list):
                         company.team = []
-                    
+
                     # Ensure all dict fields are dicts
                     for field in ['profile', 'digital', 'timeline', 'products', 'jobs', 'csr', 'press']:
                         if not isinstance(getattr(company, field, None), dict):
                             setattr(company, field, {})
-                    
+
                     # Try validation again
                     company_response = CompanyResponse.model_validate(company)
                     company_responses.append(company_response)
@@ -209,25 +208,25 @@ class CompanyService:
                     logger.error(f"Failed to create fallback response for company {company.id}: {fallback_error}")
                     # Optionally, you could add a placeholder or continue without this company
                     continue
-        
+
         # Create pagination metadata
         meta = create_pagination_meta(
             total=total_count,
             page=pagination_params.page,
             per_page=pagination_params.per_page
         )
-        
+
         return PaginatedResponse(data=company_responses, meta=meta)
-    
+
     def create_company(self, name: str, website: str, owner_id: str, owner_username: str, organization_id: str) -> Company:
         """Securely create a new company"""
         from app.services.task_dependency_service import TaskDependencyService
 
-        logger.info(f"🏭 Creating company: {name[:50]}, Owner: {owner_username} ({owner_id}), Organization: {organization_id}")
+        logger.info(f"Creating company: {name[:50]}, Owner: {owner_username} ({owner_id}), Organization: {organization_id}")
 
         # Additional validation
         if not owner_username or len(owner_username) > 100:
-            logger.error(f"❌ Invalid owner username: {owner_username}")
+            logger.error(f"Invalid owner username: {owner_username}")
             raise ValidationError("Invalid owner username")
 
         # Create company
@@ -239,7 +238,7 @@ class CompanyService:
             owner_username=owner_username,
             organization_id=organization_id
         )
-        logger.info(f"✅ Company entity created - ID: {company.id}")
+        logger.info(f"Company entity created - ID: {company.id}")
 
         # Define task configurations with dependency information
         # data_collection is the prerequisite that must run first
@@ -269,7 +268,7 @@ class CompanyService:
                     is_prerequisite=True
                 )
                 prerequisite_task = task
-                logger.info(f"📌 Created prerequisite task: {task.type.value}")
+                logger.info(f"Created prerequisite task: {task.type.value}")
             else:
                 # Dependent tasks start as BLOCKED (waiting for prerequisite)
                 task = Task(
@@ -293,7 +292,7 @@ class CompanyService:
                 depends_on_task_id=prerequisite_task.id
             )
 
-        logger.info(f"🔗 Created {len(dependent_tasks)} task dependencies")
+        logger.info(f"Created {len(dependent_tasks)} task dependencies")
 
         # Queue ONLY the prerequisite task (data_collection)
         workflow_config = self.db.query(WorkflowConfig).filter(
@@ -309,7 +308,7 @@ class CompanyService:
             # Prepare callback URLs in FastAPI context before queueing to Celery
             success_callback, error_callback, token_callback = self._prepare_task_callbacks(prerequisite_task)
 
-            logger.info(f"🚀 Queueing prerequisite task {prerequisite_task.id} ({prerequisite_task.type.value})")
+            logger.info(f"Queueing prerequisite task {prerequisite_task.id} ({prerequisite_task.type.value})")
             execute_dify_workflow.delay(
                 task_id=prerequisite_task.id,
                 company_id=company.id,
@@ -321,33 +320,33 @@ class CompanyService:
                 llm=workflow_config.llm
             )
 
-        logger.info(f"✅ Created company '{name}' with 1 prerequisite task and {len(dependent_tasks)} dependent tasks")
+        logger.info(f"Created company '{name}' with 1 prerequisite task and {len(dependent_tasks)} dependent tasks")
 
         return company
-    
+
     def update_company(self, company: Company) -> Company:
         """Securely update company"""
         with self.secure_query.secure_query_context():
             self.db.commit()
             self.db.refresh(company)
         return company
-    
+
     def delete_company(self, company_id: int) -> bool:
         """Securely delete company"""
         company = self.get_company(company_id)
         if not company:
             return False
-        
+
         return self.secure_query.safe_delete_entity(company)
 
     async def create_and_start_task(self, company_id: int, task_type: str) -> Task:
         company = self.get_company(company_id)
         if not company:
             raise ValueError(f"Company with ID {company_id} not found")
-        
+
         task_type = TaskType(task_type)
         existing_task = next((t for t in company.tasks if t.type == task_type), None)
-        
+
         if existing_task:
             if existing_task.status != TaskStatus.RUNNING:
                 existing_task.status = TaskStatus.PENDING
@@ -355,7 +354,7 @@ class CompanyService:
                 await self._execute_task(existing_task, company)
                 return existing_task
             return existing_task
-        
+
         task = Task(company_id=company_id, type=task_type)
         company.tasks.append(task)
         self.db.commit()
@@ -381,7 +380,7 @@ class CompanyService:
 
         # Debug logging for callback URLs
         logger.info(
-            f"🔗 URL DEBUG [CompanyService._prepare_task_callbacks] Task {task.type.value}",
+            f"URL DEBUG [CompanyService._prepare_task_callbacks] Task {task.type.value}",
             extra={
                 "task_id": task.id,
                 "task_type": task.type.value,
@@ -398,9 +397,9 @@ class CompanyService:
         try:
             task.status = TaskStatus.RUNNING
             self.db.commit()
-            
+
             logger.info(f"Using Dify workflow (async) for {task.type.value} task - Company: {company.name}")
-            
+
             # Prepare callback URLs using helper method
             success_callback, error_callback, token_callback = self._prepare_task_callbacks(task)
 
@@ -417,7 +416,7 @@ class CompanyService:
                 token_callback_url=token_callback
             )
 
-            logger.info(f"✅ Dify {task.type.value} workflow triggered (fire-and-forget): {result}")
+            logger.info(f"Dify {task.type.value} workflow triggered (fire-and-forget): {result}")
 
             # Task remains in RUNNING state - will be updated via webhook callback
             # The callback at /webhooks/dify/tasks/{task_id}/callback will handle:
@@ -426,7 +425,7 @@ class CompanyService:
             # - Unblocking dependent tasks
             # - Queueing dependent tasks
             self.db.commit()
-            
+
         except Exception as e:
             task.status = TaskStatus.ERROR
             task.error = str(e)
@@ -474,13 +473,13 @@ class CompanyService:
                 company.raw_claude_knowledge = ""
                 company.raw_wikipedia_knowledge = ""
                 company.raw_scraped_website_knowledge = ""
-    
+
     def update_task_tokens(self, task_id: int, token_data: TaskTokenUpdate) -> Task:
         """Update token usage information for a task"""
         task = self.db.query(Task).filter(Task.id == task_id).first()
         if not task:
             raise ValueError(f"Task with ID {task_id} not found")
-        
+
         # Update token fields
         if token_data.input_tokens is not None:
             task.input_tokens = token_data.input_tokens
@@ -488,23 +487,23 @@ class CompanyService:
             task.output_tokens = token_data.output_tokens
         if token_data.total_cost is not None:
             task.total_cost = token_data.total_cost
-        
+
         # Calculate cost if not provided but tokens are available
-        if (task.total_cost is None and 
-            task.input_tokens is not None and 
+        if (task.total_cost is None and
+            task.input_tokens is not None and
             task.output_tokens is not None):
             # Claude Sonnet 4 pricing per your specification
             input_cost_per_1m = 3.15  # USD per 1M input tokens
             output_cost_per_1m = 15.75  # USD per 1M output tokens
-            
+
             input_cost = (task.input_tokens / 1_000_000) * input_cost_per_1m
             output_cost = (task.output_tokens / 1_000_000) * output_cost_per_1m
             task.total_cost = input_cost + output_cost
-        
+
         self.db.commit()
         self.db.refresh(task)
         return task
-    
+
     def soft_delete_company(self, company_id: int) -> Optional[Company]:
         """Soft delete a company"""
         company = self.get_company(company_id)
@@ -513,7 +512,7 @@ class CompanyService:
             self.db.commit()
             self.db.refresh(company)
         return company
-    
+
     def restore_company(self, company_id: int) -> Optional[Company]:
         """Restore a soft-deleted company"""
         company = self.db.query(Company).filter(
@@ -525,7 +524,7 @@ class CompanyService:
             self.db.commit()
             self.db.refresh(company)
         return _parse_json_fields(company)
-    
+
     def get_archived_companies(self, organization_id: Optional[str] = None) -> List[Company]:
         """Get all soft-deleted (archived) companies"""
         query = self.db.query(Company).filter(Company.is_deleted)
@@ -598,12 +597,16 @@ class CompanyService:
             company_responses.append(company_response)
 
         return company_responses
-    
+
     def validate_csv_companies(self, companies: List[CompanyCSVRow], organization_id: str,
                                token_manager: TokenManager) -> CompanyCSVValidationResponse:
-        """Validate a list of companies from CSV without creating them"""
+        """Validate a list of companies from CSV without creating them.
+
+        Uses global token balance instead of module-specific tokens.
+        Each company creation costs TOKENS_PER_COMPANY (35) tokens.
+        """
         errors = []
-        
+
         # First, identify duplicate names and mark all instances as duplicates
         name_count = {}
         for company_row in companies:
@@ -612,9 +615,9 @@ class CompanyService:
                     name_count[company_row.name].append(company_row.row_number)
                 else:
                     name_count[company_row.name] = [company_row.row_number]
-        
+
         duplicates = {name: rows for name, rows in name_count.items() if len(rows) > 1}
-        
+
         for company_row in companies:
             # Check for duplicate names within the CSV
             if company_row.name in duplicates:
@@ -625,7 +628,7 @@ class CompanyService:
                     error=f"Duplicate company name in CSV (also on row {other_rows[0]})"
                 ))
                 continue  # Skip other validations for duplicate rows
-            
+
             # Check if company already exists in database (skip if name is empty - will be caught by validation)
             if company_row.name.strip():
                 existing = self.get_company_by_name(company_row.name)
@@ -635,7 +638,7 @@ class CompanyService:
                         field="name",
                         error=f"Company '{company_row.name}' already exists in this organization"
                     ))
-            
+
             # Validate name
             try:
                 InputValidator.validate_company_name(company_row.name)
@@ -645,7 +648,7 @@ class CompanyService:
                     field="name",
                     error=str(e)
                 ))
-            
+
             # Validate website
             try:
                 InputValidator.validate_website_url(company_row.website)
@@ -655,17 +658,18 @@ class CompanyService:
                     field="website",
                     error=str(e)
                 ))
-        
+
         # Calculate valid companies count (count unique error row numbers since a row can have multiple errors)
         error_rows = set(error.row_number for error in errors if error.row_number > 0)
         valid_count = len(companies) - len(error_rows)
-        tokens_required = valid_count
-        
-        # Check available tokens
-        module = token_manager.get_module_tokens(organization_id, ModuleName.SCREEN)
-        available_tokens = module.token_count if module else 0
+
+        # Calculate tokens required - each company costs TOKENS_PER_COMPANY tokens
+        tokens_required = valid_count * TOKENS_PER_COMPANY
+
+        # Check available tokens from global balance
+        available_tokens = token_manager.get_balance(organization_id)
         has_sufficient_tokens = available_tokens >= tokens_required
-        
+
         # Add token insufficiency as a validation error if needed
         if not has_sufficient_tokens and valid_count > 0:
             errors.append(CompanyCSVValidationError(
@@ -673,7 +677,7 @@ class CompanyService:
                 field="tokens",
                 error=f"Insufficient tokens. Required: {tokens_required}, Available: {available_tokens}"
             ))
-        
+
         return CompanyCSVValidationResponse(
             valid_count=valid_count,
             error_count=len(errors),
@@ -682,17 +686,17 @@ class CompanyService:
             tokens_required=tokens_required,
             tokens_available=available_tokens
         )
-    
+
     def import_csv_companies(self, companies: List[CompanyCSVRow], owner_username: str,
                             organization_id: str, skip_invalid: bool = True) -> CompanyCSVImportResponse:
         """Import companies from CSV, creating them with tasks"""
         results = []
         successful = 0
-        
+
         # First validate all companies (without token manager for internal validation)
         validation_errors = []
         invalid_rows = set()
-        
+
         # First, identify duplicate names and mark all instances as invalid
         name_count = {}
         for company_row in companies:
@@ -701,16 +705,16 @@ class CompanyService:
                     name_count[company_row.name].append(company_row.row_number)
                 else:
                     name_count[company_row.name] = [company_row.row_number]
-        
+
         duplicates = {name: rows for name, rows in name_count.items() if len(rows) > 1}
-        
+
         for company_row in companies:
             # Check for duplicate names within the CSV
             if company_row.name in duplicates:
                 validation_errors.append(company_row.row_number)
                 invalid_rows.add(company_row.row_number)
                 continue
-            
+
             # Check if company already exists in database (skip if name is empty - will be caught by validation)
             if company_row.name.strip():
                 existing = self.get_company_by_name(company_row.name)
@@ -718,7 +722,7 @@ class CompanyService:
                     validation_errors.append(company_row.row_number)
                     invalid_rows.add(company_row.row_number)
                     continue
-            
+
             # Validate name and website
             try:
                 InputValidator.validate_company_name(company_row.name)
@@ -726,7 +730,7 @@ class CompanyService:
             except ValidationError:
                 validation_errors.append(company_row.row_number)
                 invalid_rows.add(company_row.row_number)
-        
+
         # If skip_invalid is False and there are errors, fail the entire import
         if not skip_invalid and len(validation_errors) > 0:
             return CompanyCSVImportResponse(
@@ -742,7 +746,7 @@ class CompanyService:
                     ) for company in companies
                 ]
             )
-        
+
         # Process each valid company
         for company_row in companies:
             if company_row.row_number in invalid_rows:
@@ -754,7 +758,7 @@ class CompanyService:
                     error="Validation error"
                 ))
                 continue
-            
+
             try:
                 # Create the company (reusing existing create_company logic)
                 company = self.create_company(
@@ -763,7 +767,7 @@ class CompanyService:
                     owner_username=owner_username,
                     organization_id=organization_id
                 )
-                
+
                 results.append(CompanyCSVImportResult(
                     row_number=company_row.row_number,
                     success=True,
@@ -772,7 +776,7 @@ class CompanyService:
                     error=None
                 ))
                 successful += 1
-                
+
             except Exception as e:
                 logger.error(f"Failed to create company from CSV row {company_row.row_number}: {str(e)}")
                 results.append(CompanyCSVImportResult(
@@ -781,7 +785,7 @@ class CompanyService:
                     name=company_row.name,
                     error=str(e)
                 ))
-        
+
         return CompanyCSVImportResponse(
             total_rows=len(companies),
             successful=successful,
