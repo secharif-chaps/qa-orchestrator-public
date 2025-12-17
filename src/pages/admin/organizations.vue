@@ -82,7 +82,7 @@
             </div>
           </div>
           <div class="flex items-center gap-3">
-            <Tag variant="slate" :label="`${org.member_count} members`" size="sm" />
+            <Tag variant="slate" :label="`${org.member_count} ${$t('admin.organizations.members', 'Members')}`" size="sm" />
             <i class="fa fa-chevron-right text-secondary"></i>
           </div>
         </div>
@@ -99,7 +99,7 @@
     <div v-if="organizations && organizations.length > 0" class="flex items-center justify-between">
       <p class="text-sm text-secondary">
         {{
-          $t('admin.organizations.showing', 'Showing {from} to {to} of {total}', {
+          $t('admin.organizations.showing', {
             from: (currentPage - 1) * pageSize + 1,
             to: Math.min(currentPage * pageSize, totalOrganizations),
             total: totalOrganizations,
@@ -158,7 +158,6 @@ const {
   data: organizationsData,
   isLoading,
   error,
-  refetch,
 } = useQuery({
   key: computed(() => ['organizations', currentPage.value, pageSize.value, searchQuery.value]),
   query: async () => {
@@ -177,9 +176,6 @@ const organizations = computed(() => organizationsData.value?.data || [])
 const totalOrganizations = computed(() => organizationsData.value?.meta?.total || 0)
 
 // Methods
-function navigateToOrganization(orgId: string) {
-  router.push(`/admin/organizations/${orgId}`)
-}
 
 function previousPage() {
   if (currentPage.value > 1) {

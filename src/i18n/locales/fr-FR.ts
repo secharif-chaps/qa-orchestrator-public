@@ -891,6 +891,10 @@ export default {
         title: 'Échec du chargement des workflows',
       },
     },
+    organizations: {
+      showing: 'Affichage de {from} à {to} sur {total} organisations',
+      members: 'Membres'
+    },
   },
   tasks: {
     events: {

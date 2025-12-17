@@ -848,6 +848,10 @@ export default {
         title: 'Failed to Load Workflows',
       },
     },
+    organizations:{
+      showing: 'Showing {from} to {to} of {total} organizations',
+      members: 'Members'
+    }
   },
   tasks: {
     events: {
