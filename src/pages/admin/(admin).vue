@@ -22,9 +22,7 @@
         >
           <div class="p-6">
             <div class="flex items-center mb-4">
-              <Badge variant="secondary" color="sage" :label="feature.badgeLabel">
-                <i :class="[feature.icon, 'text-xl']"></i>
-              </Badge>
+              <Badge variant="secondary" color="sage" :icon="feature.icon" />
               <div class="ml-4">
                 <h3 class="text-lg font-semibold">
                   {{ $t(feature.titleKey, feature.titleDefault) }}
@@ -51,13 +49,13 @@
         <Alert
           variant="warning"
           :title="$t('admin.dashboard.limitedAccess.title', 'Limited Access')"
-          :message="
+          :description="
             $t(
               'admin.dashboard.limitedAccess.message',
               'You have access to basic admin features. Contact your administrator for additional permissions.',
             )
           "
-          icon="fa fa-lock"
+          icon="fa-lock"
         />
       </div>
     </div>
@@ -78,9 +76,8 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import Tag from '@/components/ui/Tag.vue'
-import Alert from '@/components/ui/Alert.vue'
+import { Alert, Badge } from '@owlint/feathers-vue'
 import Card from '@/components/ui/Card.vue'
-import Badge from '@/components/ui/Badge.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

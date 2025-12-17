@@ -42,9 +42,10 @@
     <!-- Error State -->
     <Alert
       v-else-if="error"
-      variant="error"
+      variant="danger"
       title="Error"
-      :message="errorMessage"
+      :description="errorMessage"
+      icon="fa-exclamation-circle"
     />
 
     <!-- Token Balance Display -->
@@ -119,6 +120,7 @@
           </label>
           <div class="flex items-center gap-3">
             <Input
+              id="custom-token-amount"
               v-model="customAmount"
               type="number"
               :placeholder="$t('tokens.enterAmount', 'Enter token amount...')"
@@ -126,7 +128,6 @@
               :max="100000"
               :disabled="addTokensMutation.isLoading.value"
               class="max-w-xs"
-              @enter="handleCustomAdd"
             />
             <Button
               variant="primary"
@@ -167,10 +168,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useQuery } from '@pinia/colada'
-import { Button } from '@owlint/feathers-vue'
+import { Alert, Button, Input } from '@owlint/feathers-vue'
 import Card from '../ui/Card.vue'
-import Alert from '../ui/Alert.vue'
-import Input from '../ui/Input.vue'
 import ModuleStatusCard from './ModuleStatusCard.vue'
 import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/tokens'
 import { useAddGlobalTokens } from '@/mutations/tokens'

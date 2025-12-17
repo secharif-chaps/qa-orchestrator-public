@@ -90,6 +90,7 @@
               companyToDelete.name
             }}</code>
             <Input
+              id="delete-confirmation"
               v-model="confirmationText"
               :placeholder="$t('company.delete.confirm.placeholder', 'Enter company name...')"
               class="bg-base-300"
@@ -122,8 +123,7 @@
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Company } from '@/types/company'
-import { Button } from '@owlint/feathers-vue'
-import Input from '@/components/ui/Input.vue'
+import { Button, Input } from '@owlint/feathers-vue'
 import { deleteCompany as apiDeleteCompany } from '@/api/companies'
 import { toast } from '@/utils/toast'
 

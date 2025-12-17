@@ -38,7 +38,6 @@ import { useAuth } from '@/composables/useAuth'
 import { ref } from 'vue'
 import { Button } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
-import Alert from '@/components/ui/Alert.vue'
 
 const { t } = useI18n()
 const { signIn } = useAuth()

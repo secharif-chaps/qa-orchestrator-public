@@ -43,27 +43,24 @@
     />
 
     <!-- No Folders Alert -->
-    <Alert
+    <div
       v-if="needsFolderSelection && !foldersLoading && (!foldersData || foldersData.length === 0)"
-      variant="info"
-      :title="$t('company.create.noFolders.title', 'No folders available')"
-      :message="
-        $t(
-          'company.create.noFolders.message',
-          'You need to create a folder before creating a company screen',
-        )
-      "
-      icon="fa fa-folder-plus"
+      class="flex flex-col gap-4"
     >
-      <template #actions>
-        <Button
-          variant="primary"
-          :label="$t('company.create.noFolders.action', 'Create Folder')"
-          icon="fa fa-plus"
-          @click="navigateToFolderCreate"
-        />
-      </template>
-    </Alert>
+      <Alert
+        variant="info"
+        :title="$t('company.create.noFolders.title', 'No folders available')"
+        :description="
+          $t(
+            'company.create.noFolders.message',
+            'You need to create a folder before creating a company screen',
+          )
+        "
+        icon="fa-folder-plus"
+        :action="$t('company.create.noFolders.action', 'Create Folder')"
+        @click="navigateToFolderCreate"
+      />
+    </div>
 
     <!-- Search Form Card -->
     <div
@@ -124,8 +121,7 @@
             data-cy="company-name-input"
             required
             :label="$t('search.fields.companyName.label')"
-            icon="fas fa-building"
-            clearable
+            icon="fa-building"
           />
 
           <Input
@@ -136,8 +132,7 @@
             data-cy="website-input"
             required
             :label="$t('search.fields.website.label')"
-            icon="fas fa-globe"
-            clearable
+            icon="fa-globe"
           />
         </div>
 
@@ -172,9 +167,7 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import { Button } from '@owlint/feathers-vue'
-import Input from '@/components/ui/Input.vue'
-import Alert from '@/components/ui/Alert.vue'
+import { Alert, Button, Input } from '@owlint/feathers-vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'

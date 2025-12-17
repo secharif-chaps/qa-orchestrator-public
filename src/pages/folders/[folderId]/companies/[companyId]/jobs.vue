@@ -76,9 +76,9 @@
           </div>
           <div class="w-64">
             <Input
-              icon="fa fa-search"
-              id="search"
+              id="jobs-search"
               v-model="searchQuery"
+              icon="fa-search"
               :placeholder="$t('jobs.listings.search.placeholder')"
             />
           </div>
@@ -120,7 +120,7 @@ import { getSourcedSource, getSourcedValue } from '@/components/helpers/sourcedV
 import JobCard from '@/components/company/jobs/JobCard.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
-import Input from '@/components/ui/Input.vue'
+import { Input } from '@owlint/feathers-vue'
 import NoData from '@/components/ui/NoData.vue'
 
 const route = useRoute()
