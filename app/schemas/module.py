@@ -1,14 +1,26 @@
-from pydantic import BaseModel, Field
-from typing import List
+"""Pydantic schemas for organization modules.
+
+These schemas are for module configuration (enabled/disabled state) only.
+Token management has been moved to global token balance in schemas/token.py.
+"""
+
 from datetime import datetime
+from typing import List
+
+from pydantic import BaseModel
+
 from app.models.organization import ModuleName
 
 
 class OrganizationModuleResponse(BaseModel):
-    """Response model for organization module configuration."""
+    """Response model for organization module configuration.
+
+    Note: token_count has been removed - tokens are now managed globally
+    at the organization level via /organizations/{id}/tokens endpoints.
+    """
+
     name: ModuleName
     enabled: bool
-    token_count: int = Field(ge=0, description="Number of tokens available for this module")
     created_at: datetime
     updated_at: datetime | None = None
 
@@ -18,27 +30,27 @@ class OrganizationModuleResponse(BaseModel):
 
 class OrganizationModulesResponse(BaseModel):
     """Response model for list of organization modules."""
+
     modules: List[OrganizationModuleResponse]
 
 
 class ModuleUpdateRequest(BaseModel):
+    """Request model for updating module configuration.
+
+    Note: token_count has been removed - use /organizations/{id}/tokens
+    endpoints for token management.
+    """
+
     enabled: bool | None = None
-    token_count: int | None = Field(None, ge=0)
 
 
-class ModuleTokensResponse(BaseModel):
+class ModuleToggleResponse(BaseModel):
+    """Response model for module toggle operation."""
+
     module: ModuleName
-    token_count: int = Field(ge=0)
     enabled: bool
+    created_at: datetime
+    updated_at: datetime | None = None
 
-
-class AddTokensRequest(BaseModel):
-    tokens: int = Field(gt=0, description="Number of tokens to add")
-
-
-class TokenError(BaseModel):
-    error: str = "insufficient_tokens"
-    message: str
-    current_tokens: int
-    required_tokens: int
-    module: ModuleName
+    class Config:
+        from_attributes = True
