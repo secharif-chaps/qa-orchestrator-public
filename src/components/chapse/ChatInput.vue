@@ -46,7 +46,7 @@
           icon="fa fa-paper-plane"
           size="sm"
           class="absolute right-3 bottom-3"
-          :disabled="!canSend"
+          :disabled="!canSend && !loading"
           :loading="loading"
           @click="handleSend"
         />
@@ -118,6 +118,7 @@ const canSend = computed(() => {
 // Methods
 function handleSend() {
   if (!canSend.value) return
+  if (props.loading) return
 
   emit('send', message.value.trim())
   message.value = ''
