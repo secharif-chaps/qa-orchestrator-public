@@ -23,10 +23,10 @@
 
         <!-- Content -->
         <div class="flex-1 min-w-0">
-          <!-- Module Label -->
+          <!-- Label -->
           <div class="flex items-center gap-2 mb-1">
             <span class="text-xs font-medium text-secondary uppercase tracking-wide">
-              {{ moduleName }}
+              {{ label }}
             </span>
             <Button
               v-if="showRefresh"
@@ -50,20 +50,12 @@
             </span>
           </div>
 
-          <!-- Company Creation Equivalence (for screen module) -->
+          <!-- Company Creation Equivalence -->
           <div v-if="showCompanyEquivalence && !isLoading" class="mt-1.5">
             <span class="text-xs text-secondary">
               {{ companyEquivalenceText }}
             </span>
           </div>
-
-          <!-- Status Badge -->
-          <!-- <div v-if="showStatus && !isLoading" class="mt-2">
-            <div :class="statusBadgeClasses" class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full">
-              <div :class="statusDotClasses" class="w-1.5 h-1.5 rounded-full"></div>
-              {{ statusText }}
-            </div>
-          </div> -->
 
           <!-- Loading State -->
           <div v-if="isLoading" class="mt-2 flex items-center gap-2 text-xs text-secondary">
@@ -79,32 +71,31 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { ModuleName } from '@/types/tokens'
 import { Button } from '@owlint/feathers-vue'
 
 const { t } = useI18n()
 
+// Token cost for company creation - 35 tokens per company
+const TOKENS_PER_COMPANY = 35
+
 interface Props {
-  module?: ModuleName
   tokenCount: number
-  isEnabled?: boolean
+  label?: string
   isLoading?: boolean
   isRefreshing?: boolean
   showLabel?: boolean
   showRefresh?: boolean
-  showStatus?: boolean
   showCompanyEquivalence?: boolean
   variant?: 'default' | 'compact' | 'detailed'
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  isEnabled: true,
+  label: 'Token Balance',
   isLoading: false,
   isRefreshing: false,
   showLabel: false,
   showRefresh: false,
-  showStatus: false,
-  showCompanyEquivalence: false,
+  showCompanyEquivalence: true,
   variant: 'default',
 })
 
@@ -112,25 +103,9 @@ defineEmits<{
   refresh: []
 }>()
 
-// Constants
-const TOKENS_PER_COMPANY = 35
-
 // Computed properties
-const moduleName = computed(() => {
-  // For screen module, just show "Screen" instead of "Screen Module"
-  if (props.module === 'screen') {
-    return t('tokens.modules.screen.name')
-  }
-  // For other modules, show "{Module} Module"
-  const moduleKey = props.module || 'screen'
-  return t('tokens.module', {
-    module: t(`tokens.modules.${moduleKey}.name`),
-  })
-})
-
 const displayCount = computed(() => {
   if (props.isLoading) return '...'
-  if (!props.isEnabled) return '--'
   return props.tokenCount.toLocaleString()
 })
 
@@ -140,53 +115,28 @@ const tokenLabel = computed(() => {
 })
 
 const companyEquivalenceText = computed(() => {
-  if (!props.isEnabled || props.module !== 'screen') return ''
-
   const companiesCount = Math.floor(props.tokenCount / TOKENS_PER_COMPANY)
 
   if (companiesCount === 0) {
-    return t('tokens.companyEquivalence.none')
+    return t('tokens.companyEquivalence.none', 'Not enough for company creation')
   }
 
   if (companiesCount === 1) {
-    return t('tokens.companyEquivalence.singular')
+    return t('tokens.companyEquivalence.singular', 'Enough for 1 company')
   }
 
   return t('tokens.companyEquivalence.plural', { count: companiesCount })
 })
 
 const tokenIconClasses = computed(() => {
-  if (!props.isEnabled) return 'bg-secondary/10 text-secondary'
   if (props.tokenCount === 0) return 'bg-warning/10 text-warning'
-  if (props.tokenCount < 10) return 'bg-warning/15 text-warning'
+  if (props.tokenCount < TOKENS_PER_COMPANY) return 'bg-warning/15 text-warning'
   return 'bg-success/10 text-success'
 })
 
 const tokenCountClasses = computed(() => {
-  if (!props.isEnabled) return 'text-secondary'
   if (props.tokenCount === 0) return 'text-warning'
-  if (props.tokenCount < 10) return 'text-warning'
+  if (props.tokenCount < TOKENS_PER_COMPANY) return 'text-warning'
   return 'text-success'
-})
-
-const statusBadgeClasses = computed(() => {
-  if (!props.isEnabled) return 'bg-secondary/10 text-secondary'
-  if (props.tokenCount === 0) return 'bg-warning/10 text-warning'
-  if (props.tokenCount < 10) return 'bg-warning/10 text-warning'
-  return 'bg-success/10 text-success'
-})
-
-const statusDotClasses = computed(() => {
-  if (!props.isEnabled) return 'bg-secondary'
-  if (props.tokenCount === 0) return 'bg-warning'
-  if (props.tokenCount < 10) return 'bg-warning'
-  return 'bg-success'
-})
-
-const statusText = computed(() => {
-  if (!props.isEnabled) return t('tokens.status.disabled', 'Disabled')
-  if (props.tokenCount === 0) return t('tokens.status.noTokens', 'No tokens')
-  if (props.tokenCount < 10) return t('tokens.status.low', 'Low')
-  return t('tokens.status.active', 'Active')
 })
 </script>

@@ -12,14 +12,13 @@
         <div v-if="currentOrganization" class="flex items-center gap-4">
           <div class="text-right">
             <TokenCounter
-              module="screen"
-              :token-count="screenTokenCount"
-              :is-enabled="screenModuleEnabled"
+              :token-count="tokenBalance"
+              :label="$t('tokens.balance', 'Token Balance')"
               :is-loading="tokenDataLoading || !currentOrganization?.id"
               :is-refreshing="isRefreshingTokens"
               show-label
               show-company-equivalence
-              @refresh="refreshScreenTokens"
+              @refresh="refreshTokenData"
             />
           </div>
         </div>
@@ -36,10 +35,10 @@
     <InsufficientTokensAlert
       v-if="showInsufficientTokenAlert"
       module="screen"
-      :current-tokens="screenTokenCount"
+      :current-tokens="tokenBalance"
       :required-tokens="35"
       @contact-admin="contactAdmin"
-      @refresh="refreshScreenTokens"
+      @refresh="refreshTokenData"
       @dismiss="dismissTokenAlert"
     />
 
@@ -184,12 +183,14 @@ import { useQuery } from '@pinia/colada'
 import { useCreateCompany } from '@/mutations/companies'
 import { useAddItemToFolder } from '@/mutations/folders'
 import { currentOrganizationQuery } from '@/queries/organization'
-import { moduleTokensQuery } from '@/queries/tokens'
+import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/tokens'
 import { foldersQuery, folderByIdQuery } from '@/queries/folders'
 import { InsufficientTokensError } from '@/api/client'
-import type { ModuleName } from '@/types/tokens'
 import TokenCounter from '@/components/tokens/TokenCounter.vue'
 import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
+
+// Token cost for company creation
+const TOKENS_PER_COMPANY = 35
 
 const { t } = useI18n()
 const router = useRouter()
@@ -203,8 +204,19 @@ const websiteError = ref('')
 const selectedFolderId = ref<string | null>(null)
 
 // Mutations
-const { isLoading: mutationLoading, mutateAsync } = useCreateCompany()
+const { isLoading: mutationLoading, mutateAsync, organizationId: mutationOrgId } = useCreateCompany()
 const { mutateAsync: addToFolder } = useAddItemToFolder()
+
+// Set organization ID on mutation for optimistic cache update
+watch(
+  () => currentOrganization.value?.id,
+  (orgId) => {
+    if (orgId) {
+      mutationOrgId.value = orgId
+    }
+  },
+  { immediate: true },
+)
 
 // Get folder ID from route query parameter
 const routeFolderId = computed(() => route.query.folderId as string | undefined)
@@ -245,38 +257,51 @@ const selectedFolder = computed(() => {
   return foldersData.value.find((f) => f.id === selectedFolderId.value)
 })
 
-// Token management
+// Global token balance query
 const {
-  data: screenTokenData,
+  data: balanceData,
   isLoading: tokenDataLoading,
-  refetch: refetchTokens,
+  refetch: refetchBalance,
 } = useQuery(
-  moduleTokensQuery,
+  organizationBalanceQuery,
   () => ({
-    // Provide safe default when organization not yet loaded
     organizationId: currentOrganization.value?.id ?? '',
-    module: 'screen' as ModuleName,
   }),
   {
     enabled: computed(() => !!currentOrganization.value?.id),
   },
 )
 
-const screenTokenCount = computed(() => screenTokenData.value?.token_count ?? 0)
-const screenModuleEnabled = computed(() => screenTokenData.value?.enabled ?? false)
+// Module enablement query (to check if screen module is enabled)
+const { data: modulesData } = useQuery(
+  organizationModulesQuery,
+  () => ({
+    organizationId: currentOrganization.value?.id ?? '',
+  }),
+  {
+    enabled: computed(() => !!currentOrganization.value?.id),
+  },
+)
+
+const tokenBalance = computed(() => balanceData.value?.balance ?? 0)
+const screenModuleEnabled = computed(() => {
+  if (!modulesData.value?.modules) return false
+  const screenModule = modulesData.value.modules.find((m) => m.name === 'screen')
+  return screenModule?.enabled ?? false
+})
 
 const canPerformSearch = computed(() => {
   if (!currentOrganization.value?.id || tokenDataLoading.value) {
     return false
   }
-  return screenModuleEnabled.value && screenTokenCount.value >= 35
+  return screenModuleEnabled.value && tokenBalance.value >= TOKENS_PER_COMPANY
 })
 
 const showInsufficientTokenAlert = computed(() => {
   if (!currentOrganization.value?.id || tokenDataLoading.value) {
     return false
   }
-  return screenModuleEnabled.value && screenTokenCount.value < 35 && !showTokenAlert.value
+  return screenModuleEnabled.value && tokenBalance.value < TOKENS_PER_COMPANY && !showTokenAlert.value
 })
 
 const showTokenAlert = ref(false)
@@ -359,10 +384,10 @@ watch([company, website], ([newCompany, newWebsite]) => {
 })
 
 // Token methods
-const refreshScreenTokens = async () => {
+const refreshTokenData = async () => {
   isRefreshingTokens.value = true
   try {
-    await refetchTokens()
+    await refetchBalance()
   } finally {
     isRefreshingTokens.value = false
   }
@@ -449,7 +474,7 @@ const submit = async () => {
         'company.validation.insufficientTokens',
         'Insufficient tokens. You need at least 35 tokens to create a company.',
       )
-      await refreshScreenTokens()
+      await refreshTokenData()
       return
     }
 

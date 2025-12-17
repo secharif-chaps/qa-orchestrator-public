@@ -1,7 +1,7 @@
 <template>
-  <div class="max-w-4xl mx-auto space-y-6" data-cy="company-csv-upload-page">
+  <div class="max-w-4xl mx-auto flex flex-col gap-6" data-cy="company-csv-upload-page">
     <!-- Page Header -->
-    <div class="space-y-2">
+    <div class="flex flex-col gap-2">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-semibold">
@@ -18,14 +18,13 @@
         <div v-if="currentOrganization" class="flex items-center gap-4">
           <div class="text-right">
             <TokenCounter
-              module="screen"
-              :token-count="screenTokenCount"
-              :is-enabled="screenModuleEnabled"
+              :token-count="tokenBalance"
+              :label="$t('tokens.balance', 'Token Balance')"
               :is-loading="tokenDataLoading || !currentOrganization?.id"
               :is-refreshing="isRefreshingTokens"
               show-label
-              show-status
-              @refresh="refreshScreenTokens"
+              show-company-equivalence
+              @refresh="refreshTokenData"
             />
           </div>
         </div>
@@ -36,20 +35,20 @@
     <InsufficientTokensAlert
       v-if="showInsufficientTokenAlert"
       module="screen"
-      :current-tokens="screenTokenCount"
+      :current-tokens="tokenBalance"
       :required-tokens="validationResult?.tokens_required || 1"
       @contact-admin="contactAdmin"
-      @refresh="refreshScreenTokens"
+      @refresh="refreshTokenData"
       @dismiss="dismissTokenAlert"
     />
 
     <!-- CSV Upload Form -->
-    <div class="bg-base-100 border border-primary-stroke rounded-lg p-6 space-y-6">
+    <div class="bg-base-100 border border-primary-stroke rounded-lg p-6 flex flex-col gap-6">
       <!-- File Upload -->
-      <div class="space-y-4">
+      <div class="flex flex-col gap-4">
         <h2 class="text-lg font-medium">{{ $t('csv.upload.step1', 'Step 1: Upload CSV File') }}</h2>
 
-        <div class="space-y-4">
+        <div class="flex flex-col gap-4">
           <!-- File Input -->
           <div class="border-2 border-dashed border-primary-stroke rounded-lg p-6 text-center">
             <input
@@ -60,7 +59,7 @@
               @change="handleFileSelect"
             />
 
-            <div v-if="!selectedFile" class="space-y-2">
+            <div v-if="!selectedFile" class="flex flex-col gap-2">
               <i class="fa fa-upload text-3xl text-secondary"></i>
               <div>
                 <p class="text-secondary">
@@ -74,7 +73,7 @@
               </div>
             </div>
 
-            <div v-else class="space-y-2">
+            <div v-else class="flex flex-col gap-2">
               <i class="fa fa-file-csv text-3xl text-success"></i>
               <p class="font-medium">{{ selectedFile.name }}</p>
               <p class="text-sm text-secondary">
@@ -96,10 +95,9 @@
               <i class="fa fa-info-circle mr-2"></i>
               {{ $t('csv.upload.formatTitle', 'CSV Format Requirements') }}
             </h3>
-            <ul class="text-sm text-info space-y-1 ml-6">
-              <li>• {{ $t('csv.upload.format1', 'Include a header row with column names') }}</li>
+            <ul class="text-sm text-info flex flex-col gap-1 ml-6">
+              <li>{{ $t('csv.upload.format1', 'Include a header row with column names') }}</li>
               <li>
-                •
                 {{
                   $t(
                     'csv.upload.format2',
@@ -108,22 +106,22 @@
                 }}
               </li>
               <li>
-                • {{ $t('csv.upload.format3', 'Website column: Website, URL, Site, Domain, etc.') }}
+                {{ $t('csv.upload.format3', 'Website column: Website, URL, Site, Domain, etc.') }}
               </li>
-              <li>• {{ $t('csv.upload.format4', 'Use commas to separate columns') }}</li>
+              <li>{{ $t('csv.upload.format4', 'Use commas to separate columns') }}</li>
             </ul>
           </div>
         </div>
       </div>
 
       <!-- Parse Results -->
-      <div v-if="parseResult" class="space-y-4">
+      <div v-if="parseResult" class="flex flex-col gap-4">
         <h2 class="text-lg font-medium">
           {{ $t('csv.upload.step2', 'Step 2: Review Parsed Data') }}
         </h2>
 
         <!-- Parse Errors -->
-        <div v-if="parseResult.errors.length > 0" class="space-y-2">
+        <div v-if="parseResult.errors.length > 0" class="flex flex-col gap-2">
           <Alert
             v-for="(error, index) in parseResult.errors"
             :key="index"
@@ -133,7 +131,7 @@
         </div>
 
         <!-- Parsed Companies Preview -->
-        <div v-if="parseResult.companies.length > 0" class="space-y-4">
+        <div v-if="parseResult.companies.length > 0" class="flex flex-col gap-4">
           <div class="flex items-center justify-between">
             <p class="text-sm text-secondary">
               {{
@@ -197,7 +195,7 @@
       </div>
 
       <!-- Validation Results -->
-      <div v-if="validationResult" class="space-y-4">
+      <div v-if="validationResult" class="flex flex-col gap-4">
         <h2 class="text-lg font-medium">
           {{ $t('csv.upload.step3', 'Step 3: Validation Results') }}
         </h2>
@@ -237,9 +235,9 @@
         />
 
         <!-- Validation Errors -->
-        <div v-if="validationResult.errors.length > 0" class="space-y-4">
+        <div v-if="validationResult.errors.length > 0" class="flex flex-col gap-4">
           <h3 class="font-medium text-error">Validation Errors</h3>
-          <div class="space-y-2 max-h-60 overflow-y-auto">
+          <div class="flex flex-col gap-2 max-h-60 overflow-y-auto">
             <div
               v-for="error in validationResult.errors"
               :key="`${error.row_number}-${error.field}`"
@@ -287,7 +285,7 @@
       </div>
 
       <!-- Import Results -->
-      <div v-if="importResult" class="space-y-4">
+      <div v-if="importResult" class="flex flex-col gap-4">
         <h2 class="text-lg font-medium">{{ $t('csv.upload.results', 'Import Results') }}</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -306,7 +304,7 @@
         </div>
 
         <!-- Import Details -->
-        <div v-if="importResult.failed > 0" class="space-y-2 max-h-60 overflow-y-auto">
+        <div v-if="importResult.failed > 0" class="flex flex-col gap-2 max-h-60 overflow-y-auto">
           <h3 class="font-medium text-error">Failed Imports</h3>
           <div
             v-for="result in importResult.results.filter((r) => !r.success)"
@@ -363,8 +361,7 @@ import {
 } from '@/api/companies'
 import { useAddItemToFolder } from '@/mutations/folders'
 import { currentOrganizationQuery } from '@/queries/organization'
-import { moduleTokensQuery } from '@/queries/tokens'
-import type { ModuleName } from '@/types/tokens'
+import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/tokens'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -381,28 +378,42 @@ const importResult = ref<CSVImportResponse | null>(null)
 const isValidating = ref(false)
 const isImporting = ref(false)
 
-// Token validation with real backend integration
+// Fetch current organization
 const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
 
-// Query for screen module tokens
+// Global token balance query
 const {
-  data: screenTokenData,
+  data: balanceData,
   isLoading: tokenDataLoading,
-  refetch: refetchTokens,
+  refetch: refetchBalance,
 } = useQuery(
-  moduleTokensQuery,
+  organizationBalanceQuery,
   () => ({
-    organizationId: currentOrganization.value?.id || '',
-    module: 'screen' as ModuleName,
+    organizationId: currentOrganization.value?.id ?? '',
   }),
   {
     enabled: computed(() => !!currentOrganization.value?.id),
   },
 )
 
-// Computed properties based on real token data
-const screenTokenCount = computed(() => screenTokenData.value?.token_count ?? 0)
-const screenModuleEnabled = computed(() => screenTokenData.value?.enabled ?? false)
+// Module enablement query (to check if screen module is enabled)
+const { data: modulesData } = useQuery(
+  organizationModulesQuery,
+  () => ({
+    organizationId: currentOrganization.value?.id ?? '',
+  }),
+  {
+    enabled: computed(() => !!currentOrganization.value?.id),
+  },
+)
+
+// Computed properties based on global token balance
+const tokenBalance = computed(() => balanceData.value?.balance ?? 0)
+const screenModuleEnabled = computed(() => {
+  if (!modulesData.value?.modules) return false
+  const screenModule = modulesData.value.modules.find((m) => m.name === 'screen')
+  return screenModule?.enabled ?? false
+})
 
 const showInsufficientTokenAlert = computed(() => {
   // Don't show alert if data is still loading
@@ -536,10 +547,10 @@ const resetUpload = () => {
 }
 
 // Token methods
-const refreshScreenTokens = async () => {
+const refreshTokenData = async () => {
   isRefreshingTokens.value = true
   try {
-    await refetchTokens()
+    await refetchBalance()
   } finally {
     isRefreshingTokens.value = false
   }

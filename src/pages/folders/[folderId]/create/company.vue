@@ -1,7 +1,7 @@
 <template>
-  <div class="max-w-4xl mx-auto space-y-6" data-cy="company-search-page">
+  <div class="max-w-4xl mx-auto flex flex-col gap-6" data-cy="company-search-page">
     <!-- Page Header -->
-    <div class="space-y-2">
+    <div class="flex flex-col gap-2">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-semibold">{{ $t('search.title') }}</h1>
@@ -12,14 +12,13 @@
         <div v-if="currentOrganization" class="flex items-center gap-4">
           <div class="text-right">
             <TokenCounter
-              module="screen"
-              :token-count="screenTokenCount"
-              :is-enabled="screenModuleEnabled"
+              :token-count="tokenBalance"
+              :label="$t('tokens.balance', 'Token Balance')"
               :is-loading="tokenDataLoading || !currentOrganization?.id"
               :is-refreshing="isRefreshingTokens"
               show-label
               show-company-equivalence
-              @refresh="refreshScreenTokens"
+              @refresh="refreshTokenData"
             />
           </div>
         </div>
@@ -30,10 +29,10 @@
     <InsufficientTokensAlert
       v-if="showInsufficientTokenAlert"
       module="screen"
-      :current-tokens="screenTokenCount"
+      :current-tokens="tokenBalance"
       :required-tokens="35"
       @contact-admin="contactAdmin"
-      @refresh="refreshScreenTokens"
+      @refresh="refreshTokenData"
       @dismiss="dismissTokenAlert"
     />
 
@@ -42,9 +41,9 @@
       class="bg-base-100 border border-primary-stroke rounded-lg p-6"
       :title="$t('search.companyIdentity')"
     >
-      <form @submit.prevent="startSearch" class="space-y-6">
+      <form @submit.prevent="startSearch" class="flex flex-col gap-6">
         <!-- Form Fields -->
-        <div class="space-y-4">
+        <div class="flex flex-col gap-4">
           <Input
             id="company"
             v-model="company"
@@ -100,7 +99,6 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import { OIcon } from '@owlint/feathers-vue'
 import { Button } from '@owlint/feathers-vue'
 import Input from '@/components/ui/Input.vue'
 import { computed, ref, watch } from 'vue'
@@ -110,11 +108,13 @@ import { useQuery } from '@pinia/colada'
 import { useCreateCompany } from '@/mutations/companies'
 import { useAddItemToFolder } from '@/mutations/folders'
 import { currentOrganizationQuery } from '@/queries/organization'
-import { moduleTokensQuery } from '@/queries/tokens'
+import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/tokens'
 import { InsufficientTokensError } from '@/api/client'
-import type { ModuleName } from '@/types/tokens'
 import TokenCounter from '@/components/tokens/TokenCounter.vue'
 import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
+
+// Token cost for company creation
+const TOKENS_PER_COMPANY = 35
 
 const { t } = useI18n()
 const router = useRouter()
@@ -125,31 +125,56 @@ const website = ref('')
 const companyError = ref('')
 const websiteError = ref('')
 
-const { isLoading: mutationLoading, mutateAsync } = useCreateCompany()
+const { isLoading: mutationLoading, mutateAsync, organizationId: mutationOrgId } = useCreateCompany()
 const { mutateAsync: addToFolder } = useAddItemToFolder()
 
-// Token validation with real backend integration
+// Fetch current organization
 const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
 
-// Query for screen module tokens - only run when organization ID is available
+// Global token balance query
 const {
-  data: screenTokenData,
+  data: balanceData,
   isLoading: tokenDataLoading,
-  refetch: refetchTokens,
+  refetch: refetchBalance,
 } = useQuery(
-  moduleTokensQuery,
+  organizationBalanceQuery,
   () => ({
-    organizationId: currentOrganization.value!.id, // Non-null assertion since enabled check ensures it exists
-    module: 'screen' as ModuleName,
+    organizationId: currentOrganization.value?.id ?? '',
   }),
   {
     enabled: computed(() => !!currentOrganization.value?.id),
   },
 )
 
-// Computed properties based on real token data
-const screenTokenCount = computed(() => screenTokenData.value?.token_count ?? 0)
-const screenModuleEnabled = computed(() => screenTokenData.value?.enabled ?? false)
+// Module enablement query (to check if screen module is enabled)
+const { data: modulesData } = useQuery(
+  organizationModulesQuery,
+  () => ({
+    organizationId: currentOrganization.value?.id ?? '',
+  }),
+  {
+    enabled: computed(() => !!currentOrganization.value?.id),
+  },
+)
+
+// Set organization ID on mutation for optimistic cache update
+watch(
+  () => currentOrganization.value?.id,
+  (orgId) => {
+    if (orgId) {
+      mutationOrgId.value = orgId
+    }
+  },
+  { immediate: true },
+)
+
+// Computed properties based on global token balance
+const tokenBalance = computed(() => balanceData.value?.balance ?? 0)
+const screenModuleEnabled = computed(() => {
+  if (!modulesData.value?.modules) return false
+  const screenModule = modulesData.value.modules.find((m) => m.name === 'screen')
+  return screenModule?.enabled ?? false
+})
 
 const canPerformSearch = computed(() => {
   // Don't allow search if organization or token data is not loaded yet
@@ -157,7 +182,7 @@ const canPerformSearch = computed(() => {
     return false
   }
   // Require at least 35 tokens (cost of 1 company creation)
-  return screenModuleEnabled.value && screenTokenCount.value >= 35
+  return screenModuleEnabled.value && tokenBalance.value >= TOKENS_PER_COMPANY
 })
 
 const showInsufficientTokenAlert = computed(() => {
@@ -166,7 +191,7 @@ const showInsufficientTokenAlert = computed(() => {
     return false
   }
   // Show alert if tokens are below 35 (cost of 1 company creation)
-  return screenModuleEnabled.value && screenTokenCount.value < 35 && !showTokenAlert.value
+  return screenModuleEnabled.value && tokenBalance.value < TOKENS_PER_COMPANY && !showTokenAlert.value
 })
 
 // Token alert state
@@ -221,19 +246,11 @@ watch([company, website], ([newCompany, newWebsite]) => {
   }
 })
 
-// Reset the form data
-const resetData = () => {
-  company.value = ''
-  website.value = ''
-  companyError.value = ''
-  websiteError.value = ''
-}
-
 // Token methods
-const refreshScreenTokens = async () => {
+const refreshTokenData = async () => {
   isRefreshingTokens.value = true
   try {
-    await refetchTokens()
+    await refetchBalance()
   } finally {
     isRefreshingTokens.value = false
   }
@@ -271,7 +288,7 @@ const submit = async () => {
   // Check token availability
   if (!canPerformSearch.value) {
     if (!screenModuleEnabled.value) {
-      companyError.value = t('company.validation.moduleDisabled', 'The Stream module is disabled')
+      companyError.value = t('company.validation.moduleDisabled', 'The Screen module is disabled')
     } else {
       companyError.value = t(
         'company.validation.insufficientTokens',
@@ -323,7 +340,7 @@ const submit = async () => {
         'Insufficient tokens. You need at least 35 tokens to create a company.',
       )
       // Refresh token data to get current counts
-      await refreshScreenTokens()
+      await refreshTokenData()
       return
     }
 

@@ -1,103 +1,128 @@
+/**
+ * Pinia Colada mutations for global token management.
+ *
+ * These mutations handle token additions and module toggling.
+ * Module-specific token mutations have been removed as tokens are now global.
+ */
+
 import { ref } from 'vue'
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { updateOrganizationModules, addModuleTokens, toggleModule } from '@/api/tokens'
-import type { ModuleName, TokenUpdateRequest, AddTokensRequest } from '@/types/tokens'
-import { TOKEN_QUERY_KEYS } from '@/queries/tokens'
+import { addOrganizationTokens, toggleModule } from '@/api/tokens'
+import type { ModuleName } from '@/types/tokens'
+import { ORGANIZATION_TOKEN_KEYS } from '@/queries/tokens'
 import { toast } from '@/utils/toast'
 
-// Update organization modules configuration
-export const useUpdateOrganizationModules = defineMutation(() => {
+// ============================================================================
+// Add Global Tokens Mutation
+// ============================================================================
+
+/**
+ * Mutation to add tokens to an organization's global balance.
+ * Requires admin.organizations role.
+ *
+ * @example
+ * const { addTokens, isPending, organizationId, amount } = useAddGlobalTokens()
+ *
+ * organizationId.value = 'org-uuid-123'
+ * amount.value = 175 // 5 companies worth (5 * 35)
+ * await addTokens()
+ */
+export const useAddGlobalTokens = defineMutation(() => {
   const organizationId = ref<string | null>(null)
+  const amount = ref<number>(0)
   const queryCache = useQueryCache()
 
   const { mutate, ...mutation } = useMutation({
-    mutation: ({ organizationId, updates }: { organizationId: string; updates: Record<ModuleName, TokenUpdateRequest> }) =>
-      updateOrganizationModules(organizationId, updates),
+    mutation: ({ organizationId, amount }: { organizationId: string; amount: number }) =>
+      addOrganizationTokens(organizationId, amount),
     onSuccess: (response, { organizationId }) => {
-      toast.success('Module configuration updated successfully!')
+      toast.success(`Added ${response.balance} tokens to organization`)
 
-      // Invalidate all token queries for this organization
-      queryCache.invalidateQueries({ key: TOKEN_QUERY_KEYS.organizationModules(organizationId) })
-      queryCache.invalidateQueries({ key: TOKEN_QUERY_KEYS.root })
-    },
-    onError: (error: any) => {
-      const errorMessage = error?.message || 'Failed to update module configuration'
-      toast.error(errorMessage)
-    },
-  })
-
-  return {
-    ...mutation,
-    organizationId,
-    updateModules: mutate,
-  }
-})
-
-// Add tokens to a specific module
-export const useAddModuleTokens = defineMutation(() => {
-  const organizationId = ref<string | null>(null)
-  const module = ref<ModuleName | null>(null)
-  const tokensToAdd = ref<number>(0)
-  const queryCache = useQueryCache()
-
-  const { mutate, ...mutation } = useMutation({
-    mutation: ({ organizationId, module, data }: { organizationId: string; module: ModuleName; data: AddTokensRequest }) =>
-      addModuleTokens(organizationId, module, data),
-    onSuccess: (response, { organizationId, module }) => {
-      toast.success(`Added ${response.token_count} tokens to ${module} module`)
-
-      // Invalidate token queries
-      queryCache.invalidateQueries({ key: TOKEN_QUERY_KEYS.moduleTokens(organizationId, module) })
-      queryCache.invalidateQueries({ key: TOKEN_QUERY_KEYS.organizationModules(organizationId) })
+      // Invalidate balance and history queries for this organization
+      queryCache.invalidateQueries({ key: ORGANIZATION_TOKEN_KEYS.balance(organizationId) })
+      // Invalidate all history queries for this organization (regardless of filters)
+      queryCache.invalidateQueries({
+        key: ORGANIZATION_TOKEN_KEYS.root,
+        predicate: (query) => {
+          const key = query.key as readonly unknown[]
+          return (
+            key[0] === 'organization-tokens' &&
+            key[1] === 'history' &&
+            key[2] === organizationId
+          )
+        },
+      })
 
       // Reset form
-      tokensToAdd.value = 0
+      amount.value = 0
     },
-    onError: (error: any) => {
-      const errorMessage = error?.message || 'Failed to add tokens'
+    onError: (error: unknown) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add tokens'
       toast.error(errorMessage)
     },
   })
 
-  const addTokens = () => {
-    if (!organizationId.value || !module.value || tokensToAdd.value <= 0) {
-      throw new Error('Organization ID, module, and token amount are required')
+  function addTokens() {
+    if (!organizationId.value) {
+      throw new Error('Organization ID is required')
+    }
+    if (amount.value <= 0) {
+      throw new Error('Token amount must be positive')
     }
 
     return mutate({
       organizationId: organizationId.value,
-      module: module.value,
-      data: { tokens: tokensToAdd.value },
+      amount: amount.value,
     })
   }
 
   return {
     ...mutation,
     organizationId,
-    module,
-    tokensToAdd,
+    amount,
     addTokens,
     mutate,
   }
 })
 
-// Toggle module enabled status
+// ============================================================================
+// Toggle Module Mutation
+// ============================================================================
+
+/**
+ * Mutation to toggle a module's enabled status.
+ * Tokens are no longer per-module, this only affects module enablement.
+ *
+ * @example
+ * const { toggleModule, isPending } = useToggleModule()
+ * await toggleModule({
+ *   organizationId: 'org-uuid-123',
+ *   module: 'screen',
+ *   enabled: true
+ * })
+ */
 export const useToggleModule = defineMutation(() => {
   const queryCache = useQueryCache()
 
   const { mutate, ...mutation } = useMutation({
-    mutation: ({ organizationId, module, enabled }: { organizationId: string; module: ModuleName; enabled: boolean }) =>
-      toggleModule(organizationId, module, enabled),
-    onSuccess: (response, { organizationId, module, enabled }) => {
+    mutation: ({
+      organizationId,
+      module,
+      enabled,
+    }: {
+      organizationId: string
+      module: ModuleName
+      enabled: boolean
+    }) => toggleModule(organizationId, module, enabled),
+    onSuccess: (response, { organizationId, enabled }) => {
       const action = enabled ? 'enabled' : 'disabled'
-      toast.success(`${module} module ${action} successfully`)
+      toast.success(`${response.module} module ${action} successfully`)
 
-      // Invalidate token queries
-      queryCache.invalidateQueries({ key: TOKEN_QUERY_KEYS.moduleTokens(organizationId, module) })
-      queryCache.invalidateQueries({ key: TOKEN_QUERY_KEYS.organizationModules(organizationId) })
+      // Invalidate modules query
+      queryCache.invalidateQueries({ key: ORGANIZATION_TOKEN_KEYS.modules(organizationId) })
     },
-    onError: (error: any) => {
-      const errorMessage = error?.message || 'Failed to toggle module'
+    onError: (error: unknown) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to toggle module'
       toast.error(errorMessage)
     },
   })
