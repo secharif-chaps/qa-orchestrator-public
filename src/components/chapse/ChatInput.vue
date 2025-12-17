@@ -85,14 +85,14 @@ interface Props {
   canAddMoreCompanies?: boolean
 }
 
-const {canAddMoreCompanies, companyContext, disabled, loading, modelValue, placeholder} = withDefaults(defineProps<Props>(), {
-  modelValue: '',
-  placeholder: 'Write a message...',
-  loading: false,
-  disabled: false,
-  companyContext: () => [],
-  canAddMoreCompanies: true,
-})
+const {
+  canAddMoreCompanies,
+  companyContext,
+  disabled,
+  loading,
+  modelValue = '',
+  placeholder = '',
+} = defineProps<Props>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
