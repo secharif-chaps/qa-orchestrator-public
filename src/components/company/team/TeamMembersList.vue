@@ -4,10 +4,10 @@
     <div class="flex flex-col sm:flex-row gap-4">
       <div class="flex-1">
         <Input
+          id="team-search"
           v-model="searchQuery"
           :placeholder="$t('team.searchPlaceholder', 'Search by name or position...')"
-          icon="fa fa-search"
-          clearable
+          icon="fa-search"
         />
       </div>
 
@@ -87,8 +87,7 @@
 import { computed, ref } from 'vue'
 import type { TeamMember } from '@/types/company'
 import TeamMemberCard from './TeamMemberCard.vue'
-import Input from '@/components/ui/Input.vue'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Input } from '@owlint/feathers-vue'
 
 const props = defineProps<{
   team: TeamMember[]

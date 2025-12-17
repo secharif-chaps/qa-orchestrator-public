@@ -37,12 +37,12 @@
             >
               {{ sortAscending ? $t('timeline.sort.oldestFirst', 'Oldest first') : $t('timeline.sort.newestFirst', 'Newest first') }}
             </Button>
-            <div class="w-64 relative">
-              <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-secondary"></i>
+            <div class="w-64">
               <Input
+                id="timeline-search"
                 v-model="searchQuery"
                 :placeholder="$t('timeline.search.placeholder')"
-                icon="fa fa-search"
+                icon="fa-search"
               />
             </div>
           </div>
@@ -71,8 +71,7 @@ import { useRoute } from 'vue-router'
 import { computed, ref } from 'vue'
 import Event from '@/components/company/timeline/Event.vue'
 import { companyTasksQuery } from '@/queries/tasks'
-import Input from '@/components/ui/Input.vue'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Input } from '@owlint/feathers-vue'
 import NoData from '@/components/ui/NoData.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'

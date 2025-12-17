@@ -52,8 +52,7 @@
             data-cy="company-name-input"
             required
             :label="$t('search.fields.companyName.label')"
-            icon="fas fa-building"
-            clearable
+            icon="fa-building"
           />
 
           <Input
@@ -64,8 +63,7 @@
             data-cy="website-input"
             required
             :label="$t('search.fields.website.label')"
-            icon="fas fa-globe"
-            clearable
+            icon="fa-globe"
           />
         </div>
 
@@ -99,8 +97,7 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import { Button } from '@owlint/feathers-vue'
-import Input from '@/components/ui/Input.vue'
+import { Button, Input } from '@owlint/feathers-vue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'

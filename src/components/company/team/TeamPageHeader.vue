@@ -98,23 +98,17 @@
       v-if="hasInsights"
       variant="info"
       :title="$t('team.insights.title', 'Team Insights')"
-      :message="teamInsights"
-      icon="fa fa-lightbulb"
-      decoration-icon="fa fa-sparkles"
+      :description="teamInsights"
+      icon="fa-lightbulb"
       class="mt-6"
-    >
-      <template #status>
-        <Tag variant="primary" icon="fa fa-sparkles" label="AI" size="xs" rounded />
-      </template>
-    </Alert>
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { computed } from 'vue'
 import type { TeamMember } from '@/types/company'
-import { Button } from '@owlint/feathers-vue'
-import Alert from '@/components/ui/Alert.vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
 
 const props = defineProps<{

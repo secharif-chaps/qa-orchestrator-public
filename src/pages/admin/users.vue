@@ -31,10 +31,10 @@
     <!-- Error Alert -->
     <Alert
       v-if="error"
-      variant="error"
+      variant="danger"
       title="Error"
-      :message="String(error)"
-      dismissible
+      :description="String(error)"
+      icon="fa-exclamation-circle"
     />
 
     <!-- Loading State -->
@@ -114,7 +114,7 @@ meta:
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
 import { useQuery } from '@pinia/colada'
-import Alert from '@/components/ui/Alert.vue'
+import { Alert } from '@owlint/feathers-vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import UserFilters from '@/components/admin/UserFilters.vue'
 import UsersTable from '@/components/admin/UsersTable.vue'

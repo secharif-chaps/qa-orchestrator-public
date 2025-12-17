@@ -20,17 +20,13 @@
       </div>
 
       <!-- Info Alert -->
-      <Alert variant="info" class="mb-6" icon="fa fa-info-circle">
-        <div>
-          <p class="text-sm">
-            A password reset email will be sent to
-            <span class="font-semibold">{{ user.email }}</span>
-          </p>
-          <p class="text-sm mt-1">
-            The user will be required to change their password on next login.
-          </p>
-        </div>
-      </Alert>
+      <Alert
+        variant="info"
+        class="mb-6"
+        icon="fa-info-circle"
+        :title="`Password reset email will be sent to ${user.email}`"
+        description="The user will be required to change their password on next login."
+      />
 
       <!-- Actions -->
       <div class="flex justify-end gap-3">
@@ -43,8 +39,7 @@
 
 <script setup lang="ts">
 import type { AdminUserResponse } from '@/types/admin-user'
-import { Button } from '@owlint/feathers-vue'
-import Alert from '@/components/ui/Alert.vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 
 defineProps<{
   user: AdminUserResponse

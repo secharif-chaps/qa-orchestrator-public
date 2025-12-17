@@ -28,10 +28,8 @@
           :label="$t('aiPreferences.setup.fields.role.label')"
           :placeholder="$t('aiPreferences.setup.fields.role.placeholder')"
           :error="errors.role"
-          :helper="$t('aiPreferences.setup.fields.role.helper')"
-          icon="fa fa-user-tie"
+          icon="fa-user-tie"
           required
-          clearable
         />
 
         <!-- Goals Field -->
@@ -142,17 +140,17 @@
           v-if="successMessage"
           variant="success"
           :title="$t('aiPreferences.setup.success.title')"
-          :message="successMessage"
-          icon="fa fa-check-circle"
+          :description="successMessage"
+          icon="fa-check-circle"
         />
 
         <!-- Error Message -->
         <Alert
           v-if="errorMessage"
-          variant="error"
+          variant="danger"
           :title="$t('aiPreferences.setup.error.title')"
-          :message="errorMessage"
-          icon="fa fa-exclamation-circle"
+          :description="errorMessage"
+          icon="fa-exclamation-circle"
         />
 
         <!-- Form Actions -->
@@ -208,9 +206,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { saveAiPreferences } from '@/api/ai-preferences'
-import Input from '@/components/ui/Input.vue'
-import { Button } from '@owlint/feathers-vue'
-import Alert from '@/components/ui/Alert.vue'
+import { Alert, Button, Input } from '@owlint/feathers-vue'
 import type { AiPreferencesCreate } from '@/types/ai-preferences'
 
 const router = useRouter()

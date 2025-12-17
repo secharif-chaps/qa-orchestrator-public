@@ -62,12 +62,11 @@
             </label>
             <Input
               v-if="isEditing"
+              id="workflow-api-key"
               v-model="editData.api_key"
               type="password"
               :placeholder="$t('admin.workflows.apiKeyPlaceholder', 'Enter Dify API key')"
-              icon="fa fa-key"
-              size="sm"
-              clearable
+              icon="fa-key"
             />
             <div v-else class="text-sm text-secondary bg-base-200 px-3 py-2 rounded-md font-mono">
               {{
@@ -201,8 +200,7 @@
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import type { WorkflowConfig } from '@/api/workflows'
 import Tag from '@/components/ui/Tag.vue'
-import { Button } from '@owlint/feathers-vue'
-import Input from '@/components/ui/Input.vue'
+import { Button, Input } from '@owlint/feathers-vue'
 
 interface Props {
   workflow: WorkflowConfig

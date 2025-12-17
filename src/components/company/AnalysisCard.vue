@@ -59,11 +59,10 @@
     >
       <div class="flex flex-col items-center gap-4 w-full">
         <Alert
-          variant="error"
+          variant="danger"
           :title="$t('company.analysisCard.error.title', 'Error')"
-          :message="errorMessage || $t('company.analysisCard.error.message', 'An error occurred during analysis')"
-          icon="fa fa-exclamation-triangle"
-          :dismissible="false"
+          :description="errorMessage || $t('company.analysisCard.error.message', 'An error occurred during analysis')"
+          icon="fa-exclamation-triangle"
         />
       </div>
     </div>
@@ -86,7 +85,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import Tag from '@/components/ui/Tag.vue'
-import Alert from '@/components/ui/Alert.vue'
+import { Alert } from '@owlint/feathers-vue'
 import type { TaskStatus } from '@/types/task'
 import { useI18n } from 'vue-i18n'
 

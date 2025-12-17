@@ -30,16 +30,17 @@
       />
       <h3 class="text-lg font-semibold">{{ title }}</h3>
     </div>
-    <Alert
-      variant="error"
-      :title="$t('chapseAssist.quickActions.error.preferencesCheck', 'Failed to Check Preferences')"
-      :message="preferencesCheckError"
-      icon="fa fa-exclamation-circle"
-    >
-      <template #actions>
+    <div class="flex flex-col gap-3">
+      <Alert
+        variant="danger"
+        :title="$t('chapseAssist.quickActions.error.preferencesCheck', 'Failed to Check Preferences')"
+        :description="preferencesCheckError ?? ''"
+        icon="fa-exclamation-circle"
+      />
+      <div class="flex justify-end">
         <Button variant="secondary" size="sm" icon="fa fa-refresh" :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')" @click="retryPreferencesCheck" />
-      </template>
-    </Alert>
+      </div>
+    </div>
   </div>
 
   <!-- Main Content (only shown after preferences check succeeds AND user has preferences) -->
@@ -76,28 +77,25 @@
     </div>
 
     <!-- Error State -->
-    <Alert
-      v-else-if="hasError"
-      variant="error"
-      :title="$t('chapseAssist.quickActions.error.title', 'Failed to Load Quick Actions')"
-      :message="actionsError || $t('chapseAssist.quickActions.error.message', 'An error occurred while generating actions. Please try again.')"
-      icon="fa fa-exclamation-circle"
-      decoration-icon="fa fa-magic"
-    >
-      <template #actions>
-        <div class="flex gap-3">
-          <Button variant="secondary" size="sm" icon="fa fa-refresh" :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')" @click="handleRetry" />
-          <Button
-            v-if="actionsError?.includes('preferences')"
-            variant="primary"
-            size="sm"
-            icon="fa fa-cog"
-            :label="$t('chapseAssist.quickActions.configure', 'Configure AI Preferences')"
-            @click="goToSetup"
-          />
-        </div>
-      </template>
-    </Alert>
+    <div v-else-if="hasError" class="flex flex-col gap-3">
+      <Alert
+        variant="danger"
+        :title="$t('chapseAssist.quickActions.error.title', 'Failed to Load Quick Actions')"
+        :description="actionsError || $t('chapseAssist.quickActions.error.message', 'An error occurred while generating actions. Please try again.')"
+        icon="fa-exclamation-circle"
+      />
+      <div class="flex gap-3 justify-end">
+        <Button variant="secondary" size="sm" icon="fa fa-refresh" :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')" @click="handleRetry" />
+        <Button
+          v-if="actionsError?.includes('preferences')"
+          variant="primary"
+          size="sm"
+          icon="fa fa-cog"
+          :label="$t('chapseAssist.quickActions.configure', 'Configure AI Preferences')"
+          @click="goToSetup"
+        />
+      </div>
+    </div>
 
     <!-- Quick Actions Grid -->
     <div v-else-if="hasActions" class="grid grid-cols-1 gap-3">
@@ -172,8 +170,7 @@
 </template>
 
 <script setup lang="ts">
-import Alert from '@/components/ui/Alert.vue'
-import { Button } from '@owlint/feathers-vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 import { useChapseAssist } from '@/composables/useChapseAssist'
 import type { QuickAction } from '@/types/ai-preferences'
 import type { Company } from '@/types/company'

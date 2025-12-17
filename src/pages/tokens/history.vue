@@ -117,10 +117,10 @@
     <!-- Error State -->
     <div v-else-if="error" class="max-w-5xl mx-auto">
       <Alert
-        variant="error"
+        variant="danger"
         title="Unable to load token history"
-        :message="errorMessage"
-        icon="fa fa-exclamation-triangle"
+        :description="errorMessage"
+        icon="fa-exclamation-triangle"
       />
     </div>
 
@@ -237,11 +237,10 @@
 import { computed, reactive } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { useI18n } from 'vue-i18n'
-import { Button } from '@owlint/feathers-vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 import { organizationBalanceQuery, tokenHistoryQuery } from '@/queries/tokens'
 import { currentOrganizationQuery } from '@/queries/organization'
 import Tag from '@/components/ui/Tag.vue'
-import Alert from '@/components/ui/Alert.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import type { TransactionType, ReferenceType, TokenHistoryFilters } from '@/types/tokens'
 import type { PaginationMeta } from '@/types/pagination'

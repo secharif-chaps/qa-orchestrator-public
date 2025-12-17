@@ -22,14 +22,13 @@
     <div class="flex items-center justify-between gap-4">
       <div class="flex-1 max-w-md">
         <div class="relative">
-          <i
-            class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
-          ></i>
           <Input
+            id="team-search"
             :model-value="props.search"
-            @input="emit('update:search', $event.target.value)"
+            @update:model-value="emit('update:search', $event)"
             type="text"
             :placeholder="$t('team.search.placeholder', 'Search users...')"
+            icon="fa-search"
           />
         </div>
       </div>
@@ -136,8 +135,7 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import type { OrganizationUserQueryParams } from '@/types/team'
-import { Button } from '@owlint/feathers-vue'
-import Input from '../ui/Input.vue'
+import { Button, Input } from '@owlint/feathers-vue'
 
 const props = defineProps<{
   search: string

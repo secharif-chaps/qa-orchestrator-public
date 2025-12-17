@@ -4,10 +4,10 @@
       <!-- Search Input -->
       <div class="flex-1">
         <Input
+          id="user-search"
           :model-value="search"
-          icon="fa fa-search"
+          icon="fa-search"
           :placeholder="$t('admin.users.search.placeholder', 'Search by username or email...')"
-          clearable
           @update:model-value="handleSearchInput"
         />
       </div>
@@ -93,8 +93,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import Input from '@/components/ui/Input.vue'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Input } from '@owlint/feathers-vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
 import DropdownDivider from '@/components/ui/DropdownDivider.vue'

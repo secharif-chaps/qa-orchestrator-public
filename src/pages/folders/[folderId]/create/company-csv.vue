@@ -125,8 +125,9 @@
           <Alert
             v-for="(error, index) in parseResult.errors"
             :key="index"
-            variant="error"
-            :message="error"
+            variant="danger"
+            :description="error"
+            icon="fa-exclamation-circle"
           />
         </div>
 
@@ -219,9 +220,9 @@
         <!-- Token Sufficiency -->
         <Alert
           v-if="!validationResult.has_sufficient_tokens"
-          variant="error"
+          variant="danger"
           :title="$t('csv.upload.tokens.insufficient', 'Insufficient tokens')"
-          :message="
+          :description="
             $t(
               'csv.upload.tokens.insufficientMessage',
               'You need {required} tokens but only have {available} available',
@@ -231,7 +232,7 @@
               },
             )
           "
-          icon="fa fa-coins"
+          icon="fa-coins"
         />
 
         <!-- Validation Errors -->
@@ -348,8 +349,7 @@ import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
-import { Button } from '@owlint/feathers-vue'
-import Alert from '@/components/ui/Alert.vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 import TokenCounter from '@/components/tokens/TokenCounter.vue'
 import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
 import { parseCSVAdvanced, type CSVParseResult } from '@/utils/csvParser'

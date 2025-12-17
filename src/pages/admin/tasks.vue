@@ -39,17 +39,16 @@
     </div>
 
     <!-- Error State -->
-    <Alert
-      v-else-if="tasksError"
-      variant="error"
-      title="Error Loading Data"
-      :message="tasksError?.message ?? 'Failed to load task data'"
-      icon="fa fa-exclamation-triangle"
-    >
-      <template #actions>
-        <Button variant="secondary" size="sm" icon="fa fa-refresh" label="Retry" @click="refreshAll" />
-      </template>
-    </Alert>
+    <div v-else-if="tasksError" class="flex flex-col gap-4">
+      <Alert
+        variant="danger"
+        title="Error Loading Data"
+        :description="tasksError?.message ?? 'Failed to load task data'"
+        icon="fa-exclamation-triangle"
+        action="Retry"
+        @click="refreshAll"
+      />
+    </div>
 
     <!-- Main Content -->
     <template v-else>
@@ -99,19 +98,11 @@
         v-if="(stats?.stuck_count ?? 0) > 0"
         variant="warning"
         :title="`${stats?.stuck_count} Stuck Task${(stats?.stuck_count ?? 0) > 1 ? 's' : ''} Detected`"
-        message="Tasks running longer than expected may need attention. Review and restart if necessary."
-        icon="fa fa-exclamation-triangle"
-      >
-        <template #actions>
-          <Button
-            variant="secondary"
-            size="sm"
-            label="Select All Stuck"
-            icon="fa fa-check-square"
-            @click="selectAllStuck"
-          />
-        </template>
-      </Alert>
+        description="Tasks running longer than expected may need attention. Review and restart if necessary."
+        icon="fa-exclamation-triangle"
+        action="Select All Stuck"
+        @click="selectAllStuck"
+      />
 
       <!-- Filters -->
       <Card class="!p-4">
@@ -473,16 +464,12 @@ import { adminTasksQuery, adminOrganizationsQuery } from '@/queries/admin'
 import { useRestartAdminTasks } from '@/mutations/admin'
 import type { AdminTaskResponse, AdminTasksFilters, BulkRestartResponse } from '@/types/admin'
 import type { TaskStatus, TaskType } from '@/types/task'
-import Alert from '@/components/ui/Alert.vue'
-import { Button } from '@owlint/feathers-vue'
+import { Alert, Badge, Button, OModal } from '@owlint/feathers-vue'
 import Card from '@/components/ui/Card.vue'
 import Tag from '@/components/ui/Tag.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
 import DropdownDivider from '@/components/ui/DropdownDivider.vue'
-import { OModal } from '@owlint/feathers-vue'
-
-import Badge from '@/components/ui/Badge.vue'
 
 // Stat Card Component (inline using render function with Badge for icon)
 const StatCard = defineComponent({
@@ -506,15 +493,21 @@ const StatCard = defineComponent({
       return variants[props.variant] || variants.slate
     })
 
-    // Map stat card variant to badge color
-    const badgeColor = computed(() => {
-      if (props.variant === 'slate') return 'slate'
-      return props.variant
+    // Map stat card variant to badge intent (Vuellar uses intent for semantic colors)
+    const badgeIntent = computed(() => {
+      const intentMap: Record<string, string> = {
+        success: 'success',
+        warning: 'warning',
+        error: 'danger',
+        info: 'info',
+        slate: 'neutral',
+      }
+      return intentMap[props.variant] || 'neutral'
     })
 
     return () => h('div', { class: `relative rounded-xl border p-4 ${variantClasses.value}` }, [
       h('div', { class: 'flex items-start gap-4' }, [
-        h(Badge, { color: badgeColor.value, variant: 'primary', size: 'md', icon: props.icon }),
+        h(Badge, { intent: badgeIntent.value, variant: 'secondary', size: 'sm', icon: props.icon }),
         h('div', { class: 'flex-1 min-w-0' }, [
           h('div', { class: 'text-2xl font-bold' }, props.value),
           h('div', { class: 'text-sm leading-relaxed opacity-90' }, props.label)
