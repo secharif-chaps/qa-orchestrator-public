@@ -85,6 +85,7 @@ async def list_organizations(
                 'description': org.get('description'),
                 'slug': org.get('alias', org.get('name', '').lower().replace(' ', '-')),
                 'created_at': None,  # Not available from Keycloak API
+                'updated_at': None,  # Not available from Keycloak API
                 'member_count': await keycloak_admin_service.count_organization_members(org.get('id'))
             }
             orgs_list.append(OrganizationResponse(**org_dict))
