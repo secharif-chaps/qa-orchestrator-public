@@ -32,8 +32,8 @@ COPY ./alembic/ alembic/
 COPY alembic.ini run.py ./
 COPY ./docker/entrypoint.sh ./
 
-# Make the entrypoint script executable and fix line endings
-RUN chmod +x entrypoint.sh && sed -i 's/\r$//' entrypoint.sh
+# Make the entrypoint script executable
+RUN chmod +x entrypoint.sh
 
 # Expose the port
 EXPOSE 8000
