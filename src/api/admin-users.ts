@@ -48,3 +48,20 @@ export const assignUserOrganization = async (userId: string, organizationId: str
 export const updateUserPermissions = async (userId: string, permissions: string[]) => {
   return apiClient.put(`/users/${userId}/permissions`, { permissions })
 }
+
+export interface ResetPasswordResponse {
+  success: boolean
+  method: string
+  message: string
+  temporary_password: string
+}
+
+/**
+ * Reset user password by setting a new temporary password
+ * User will be required to change password on next login
+ */
+export const resetUserPassword = async (userId: string, temporaryPassword: string) => {
+  return apiClient.post<ResetPasswordResponse>(`/users/${userId}/reset-password`, {
+    temporary_password: temporaryPassword,
+  })
+}
