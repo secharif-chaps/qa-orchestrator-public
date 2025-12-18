@@ -14,7 +14,7 @@
       />
       <CompanyContextSelector
         v-if="canAddMoreCompanies"
-        :context-company-ids="companyContext.map((c) => c.id)"
+        :context-company-ids="companyContext.map((c: { id: any }) => c.id)"
         :context-count="companyContext.length"
         :max-companies="3"
         :show-limit="true"
@@ -46,7 +46,7 @@
           icon="fa fa-paper-plane"
           size="sm"
           class="absolute right-3 bottom-3"
-          :disabled="!canSend"
+          :disabled="!canSend && !loading"
           :loading="loading"
           @click="handleSend"
         />
@@ -85,14 +85,14 @@ interface Props {
   canAddMoreCompanies?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  modelValue: '',
-  placeholder: 'Write a message...',
-  loading: false,
-  disabled: false,
-  companyContext: () => [],
-  canAddMoreCompanies: true,
-})
+const {
+  canAddMoreCompanies,
+  companyContext,
+  disabled,
+  loading,
+  modelValue = '',
+  placeholder = '',
+} = defineProps<Props>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]
@@ -106,18 +106,19 @@ const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
 // Local message state (two-way binding)
 const message = computed({
-  get: () => props.modelValue,
+  get: () => modelValue,
   set: (value: string) => emit('update:modelValue', value),
 })
 
 // Computed
 const canSend = computed(() => {
-  return message.value.trim().length > 0 && !props.loading && !props.disabled
+  return message.value.trim().length > 0 && !loading && !disabled
 })
 
 // Methods
-function handleSend() {
+const handleSend = () => {
   if (!canSend.value) return
+  if (loading) return
 
   emit('send', message.value.trim())
   message.value = ''
@@ -130,7 +131,7 @@ function handleSend() {
   })
 }
 
-function autoResize() {
+const autoResize = () => {
   if (!textareaRef.value) return
 
   // Reset height to auto to get the correct scrollHeight
@@ -140,7 +141,7 @@ function autoResize() {
 }
 
 // Focus the textarea
-function focus() {
+const focus = () => {
   textareaRef.value?.focus()
 }
 
@@ -151,7 +152,7 @@ defineExpose({
 
 // Auto-resize on initial value
 watch(
-  () => props.modelValue,
+  () => modelValue,
   () => {
     nextTick(() => {
       autoResize()
