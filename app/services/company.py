@@ -361,16 +361,63 @@ class CompanyService:
         await self._execute_task(task, company)
         return task
 
-    async def restart_task(self, task_id: int) -> Optional[Task]:
-        for company in self.get_all_companies():
-            task = next((t for t in company.tasks if t.id == task_id), None)
-            if task:
-                task.status = TaskStatus.PENDING
-                task.error = None
-                self.db.commit()
-                await self._execute_task(task, company)
-                return task
-        return None
+    def restart_task(self, task_id: int) -> Optional[Task]:
+        """Restart a task by queueing it via Celery (fire-and-forget).
+
+        This method resets the task status and queues it for execution via Celery,
+        returning immediately without waiting for the workflow to complete.
+
+        Args:
+            task_id: The ID of the task to restart
+
+        Returns:
+            The restarted Task instance, or None if task not found
+        """
+        # Query task directly with its company relationship
+        task = self.db.query(Task).filter(Task.id == task_id).first()
+        if not task:
+            logger.warning(f"Task {task_id} not found for restart")
+            return None
+
+        company = self.db.query(Company).filter(Company.id == task.company_id).first()
+        if not company:
+            logger.error(f"Company {task.company_id} not found for task {task_id}")
+            return None
+
+        # Reset task status
+        task.status = TaskStatus.PENDING
+        task.error = None
+        self.db.commit()
+
+        # Get workflow configuration for this task type
+        workflow_config = self.db.query(WorkflowConfig).filter(
+            WorkflowConfig.task_type == task.type.value
+        ).first()
+
+        if not workflow_config or not workflow_config.api_key:
+            logger.error(f"Invalid workflow configuration for {task.type.value}")
+            task.status = TaskStatus.ERROR
+            task.error = "No workflow configuration found"
+            self.db.commit()
+            return task
+
+        # Prepare callback URLs
+        success_callback, error_callback, token_callback = self._prepare_task_callbacks(task)
+
+        # Queue task via Celery (fire-and-forget)
+        logger.info(f"Queueing restart of task {task.id} ({task.type.value}) for company {company.name}")
+        execute_dify_workflow.delay(
+            task_id=task.id,
+            company_id=company.id,
+            task_type=task.type.value,
+            api_key=workflow_config.api_key,
+            success_callback=success_callback,
+            error_callback=error_callback,
+            token_callback=token_callback,
+            llm=workflow_config.llm
+        )
+
+        return task
 
     def _prepare_task_callbacks(self, task: Task) -> tuple[str, str, str]:
         """Helper method to prepare callback URLs for task execution"""
