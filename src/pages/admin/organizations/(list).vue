@@ -55,7 +55,7 @@
             </div>
           </div>
           <div class="flex items-center gap-3">
-            <Tag variant="slate" :label="`${org.member_count} members`" size="sm" />
+            <Tag variant="slate" :label="`${org.member_count} ${$t('admin.organizations.members', 'Members')}`" size="sm" />
             <i class="fa fa-chevron-right text-secondary"></i>
           </div>
         </div>
