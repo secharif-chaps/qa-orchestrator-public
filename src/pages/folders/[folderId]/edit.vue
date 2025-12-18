@@ -138,8 +138,8 @@ import Alert from '@/components/ui/Alert.vue'
 import IconSelector from '@/components/folders/IconSelector.vue'
 import ColorSelector from '@/components/folders/ColorSelector.vue'
 import type { FolderUpdate } from '@/types/folder'
-import { ref, computed, watch, onMounted } from 'vue'
-import { useUpdateFolder } from '@/mutations/folders'
+import { ref, watch } from 'vue'
+import { useUpdateFolder, useToggleFolderFavorite } from '@/mutations/folders'
 import { folderByIdQuery } from '@/queries/folders'
 import { useQuery } from '@pinia/colada'
 import { useRouter, useRoute } from 'vue-router'
@@ -174,6 +174,7 @@ const errors = ref<Record<string, string>>({})
 
 // Update mutation with optimistic UI
 const { updateFolder: updateFolderMutation, isLoading: isMutating } = useUpdateFolder()
+const { toggleFavorite } = useToggleFolderFavorite()
 
 // Initialize form with folder data when loaded
 watch(
@@ -267,14 +268,23 @@ const handleSubmit = async () => {
 
   try {
     const { is_favorite, ...folderData } = form.value
+
+    // Update folder metadata (name, icon, color, tags)
     await updateFolderMutation({
       folderId: route.params.folderId,
       folder: {
         ...folderData,
         name: folderData.name?.trim(),
-        is_favorite,
       },
     })
+
+    // If favorite status changed, toggle it via dedicated endpoint
+    if (folder.value && is_favorite !== folder.value.is_favorite) {
+      await toggleFavorite({
+        folderId: route.params.folderId as string,
+        shouldBeFavorite: !!is_favorite,
+      })
+    }
 
     // Redirect back to folder detail page - changes already visible via optimistic update
     router.push(`/folders/${route.params.folderId}`)

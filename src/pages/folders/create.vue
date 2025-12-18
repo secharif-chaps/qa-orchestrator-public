@@ -115,7 +115,7 @@ import IconSelector from '@/components/folders/IconSelector.vue'
 import ColorSelector from '@/components/folders/ColorSelector.vue'
 import type { FolderCreate } from '@/types/folder'
 import { ref, watch } from 'vue'
-import { useCreateFolder } from '@/mutations/folders'
+import { useCreateFolder, useToggleFolderFavorite } from '@/mutations/folders'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -124,6 +124,7 @@ const { t: $t } = useI18n()
 
 // Mutation for creating folders with optimistic UI
 const { createFolder, isLoading: isSubmitting } = useCreateFolder()
+const { toggleFavorite } = useToggleFolderFavorite()
 
 // Form state
 const form = ref<FolderCreate & { is_favorite?: boolean }>({
@@ -214,10 +215,17 @@ const handleSubmit = async () => {
 
   try {
     const { is_favorite, ...folderData } = form.value
-    await createFolder({
+
+    // Create the folder first
+    const createdFolder = await createFolder({
       ...folderData,
       name: folderData.name.trim(),
     })
+
+    // If marked as favorite, toggle the favorite status via dedicated endpoint
+    if (is_favorite && createdFolder?.id) {
+      await toggleFavorite({ folderId: createdFolder.id, shouldBeFavorite: true })
+    }
 
     // Navigate immediately - folder already appears in cache via optimistic update
     router.push('/folders')
