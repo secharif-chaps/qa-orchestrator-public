@@ -47,9 +47,33 @@ class CompanyBase(BaseModel):
         if re.search(r'(.)\1{5,}', sanitized):
             raise ValueError('Company name contains too many repeated characters')
 
-        # Allow alphanumeric, spaces, and common business characters: - _ . & ( )
-        if not re.match(r'^[a-zA-Z0-9\s\-_.&()]+$', sanitized):
-            raise ValueError('Company name contains invalid characters. Only letters, numbers, spaces, and - _ . & ( ) are allowed')
+        # Allow Unicode letters, digits, spaces, and common punctuation used in business names
+        # Also explicitly allow apostrophes and accented characters by checking Unicode categories
+        import unicodedata
+
+        allowed_punct = set("-_.&()'")
+
+        for ch in sanitized:
+            if ch.isspace() or ch.isdigit():
+                continue
+            cat = unicodedata.category(ch)
+            # Categories starting with 'L' are letters (including accented letters)
+            if cat.startswith('L'):
+                continue
+            if ch in allowed_punct:
+                continue
+            raise ValueError("""Company name contains invalid characters. Only letters, numbers, spaces, and - _ . & ( ) \'' are allowed""")
+
+        # Additional checks to prevent obvious SQL/XSS injection patterns
+        lower = sanitized.lower()
+        if any(x in lower for x in ['javascript:', 'data:', '<', '>']):
+            raise ValueError('Company name contains invalid or suspicious content')
+        if ';' in sanitized or '--' in sanitized:
+            raise ValueError('Company name contains invalid or suspicious content')
+        # Common SQL injection patterns
+        import re as _re
+        if _re.search(r"'\s*or\b", lower) or ' or 1=1' in lower or 'union select' in lower:
+            raise ValueError('Company name contains invalid or suspicious content')
 
         return sanitized
 
@@ -126,8 +150,31 @@ class CompanyUpdate(BaseModel):
         if re.search(r'(.)\1{5,}', sanitized):
             raise ValueError('Company name contains too many repeated characters')
 
-        if not re.match(r'^[a-zA-Z0-9\s\-_.&()]+$', sanitized):
+        # Allow Unicode letters, digits, spaces, and common punctuation used in business names
+        # Also explicitly allow apostrophes and accented characters by checking Unicode categories
+        import unicodedata
+
+        allowed_punct = set("-_.&()'")
+
+        for ch in sanitized:
+            if ch.isspace() or ch.isdigit():
+                continue
+            cat = unicodedata.category(ch)
+            if cat.startswith('L'):
+                continue
+            if ch in allowed_punct:
+                continue
             raise ValueError('Company name contains invalid characters')
+
+        # Additional checks to prevent obvious SQL/XSS injection patterns
+        lower = sanitized.lower()
+        if any(x in lower for x in ['javascript:', 'data:', '<', '>']):
+            raise ValueError('Company name contains invalid or suspicious content')
+        if ';' in sanitized or '--' in sanitized:
+            raise ValueError('Company name contains invalid or suspicious content')
+        import re as _re
+        if _re.search(r"'\s*or\b", lower) or ' or 1=1' in lower or 'union select' in lower:
+            raise ValueError('Company name contains invalid or suspicious content')
 
         return sanitized
 
