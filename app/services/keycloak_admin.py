@@ -527,7 +527,69 @@ class KeycloakAdminService:
         except Exception as e:
             logger.error(f"Error sending password reset: {e}")
             return False
-    
+
+    async def set_user_password(
+        self, user_id: str, password: str, temporary: bool = True
+    ) -> bool:
+        """Set a new password for a user directly (without sending email).
+
+        This allows admins to reset a user's password by generating a new one
+        and sharing it with the user directly.
+
+        Args:
+            user_id: Keycloak user UUID
+            password: The new password to set
+            temporary: If True, user must change password on next login
+
+        Returns:
+            True if password was set successfully, False otherwise
+
+        Raises:
+            HTTPException 404: If user not found
+        """
+        try:
+            logger.info(
+                "Setting user password directly",
+                extra={"user_id": user_id, "temporary": temporary}
+            )
+
+            # Keycloak reset-password endpoint expects a credential representation
+            payload = {
+                "type": "password",
+                "value": password,
+                "temporary": temporary
+            }
+
+            response = await self._make_admin_request(
+                "PUT",
+                f"/users/{user_id}/reset-password",
+                payload
+            )
+
+            if response.status_code == 204:
+                logger.info(
+                    "User password set successfully",
+                    extra={"user_id": user_id, "temporary": temporary}
+                )
+                return True
+            elif response.status_code == 404:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User not found"
+                )
+            else:
+                logger.error(
+                    f"Failed to set user password: {response.status_code} - {response.text}",
+                    extra={"user_id": user_id}
+                )
+                return False
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Error setting user password: {e}", extra={"user_id": user_id})
+            return False
+
     async def count_users(self) -> int:
         """Get total count of users"""
         try:

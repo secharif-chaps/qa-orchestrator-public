@@ -629,19 +629,23 @@ async def reset_user_password(
     request: ResetPasswordRequest,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
 ):
-    """Reset user password by setting temporary password or sending reset email.
+    """Reset user password by setting temporary password.
 
     Requires admin.organizations role for access.
 
+    Note: Email-based password reset is not currently supported as email
+    is not configured in Keycloak. Use temporary_password to set a new
+    password directly.
+
     Args:
         user_id: Keycloak user UUID
-        request: Request body with temporary_password or send_email flag
+        request: Request body with temporary_password
 
     Returns:
-        Success message with method used (temporary_password or email)
+        Success message with the new temporary password
 
     Raises:
-        HTTPException 400: If invalid password provided
+        HTTPException 400: If invalid password provided or password missing
         HTTPException 403: If caller lacks admin.organizations role
         HTTPException 404: If user not found
         HTTPException 500: If Keycloak API call fails
@@ -650,13 +654,12 @@ async def reset_user_password(
         "Resetting user password",
         extra={
             "admin_user": user.preferred_username,
-            "user_id": user_id,
-            "method": "email" if request.send_email else "temporary_password"
+            "user_id": user_id
         }
     )
 
     try:
-        # Fetch user to get email
+        # Fetch user to verify they exist
         kc_user = await keycloak_admin_service.get_user(user_id)
         if not kc_user:
             raise HTTPException(
@@ -664,52 +667,42 @@ async def reset_user_password(
                 detail=f"User {user_id} not found"
             )
 
-        user_email = kc_user.get("email")
-
-        if request.send_email:
-            # TODO: Implement send reset email via Keycloak
-            # This requires calling Keycloak's execute-actions-email endpoint
-            logger.info(
-                "Sending password reset email",
-                extra={"user_id": user_id, "email": user_email}
+        # Require a temporary password (email reset is not supported)
+        if not request.temporary_password:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="temporary_password is required"
             )
 
-            # For now, return success message
-            # In production, implement actual email sending via Keycloak Admin API
-            return {
-                "success": True,
-                "method": "email",
-                "message": f"Password reset email sent to {user_email}"
-            }
-        else:
-            # Set temporary password
-            if not request.temporary_password:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="temporary_password or send_email=true must be provided"
-                )
+        # Set the new password via Keycloak Admin API
+        logger.info(
+            "Setting temporary password for user",
+            extra={"user_id": user_id, "username": kc_user.get("username")}
+        )
 
-            # Use Keycloak Admin API to reset password
-            # This will be implemented in keycloak_admin_service
-            # For now, return placeholder
-            logger.info(
-                "Setting temporary password",
-                extra={"user_id": user_id}
+        success = await keycloak_admin_service.set_user_password(
+            user_id=user_id,
+            password=request.temporary_password,
+            temporary=True  # User must change on next login
+        )
+
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to set user password in Keycloak"
             )
 
-            # TODO: Implement reset_user_password in keycloak_admin_service
-            # success = await keycloak_admin_service.reset_user_password(
-            #     user_id=user_id,
-            #     password=request.temporary_password,
-            #     temporary=True
-            # )
+        logger.info(
+            "Password reset successfully",
+            extra={"user_id": user_id, "username": kc_user.get("username")}
+        )
 
-            return {
-                "success": True,
-                "method": "temporary_password",
-                "message": "Temporary password set. User must change password on next login.",
-                "temporary_password": request.temporary_password
-            }
+        return {
+            "success": True,
+            "method": "temporary_password",
+            "message": "Temporary password set. User must change password on next login.",
+            "temporary_password": request.temporary_password
+        }
 
     except HTTPException:
         raise
