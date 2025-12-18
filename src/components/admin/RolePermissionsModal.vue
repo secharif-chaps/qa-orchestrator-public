@@ -26,43 +26,24 @@
       </div>
 
       <!-- Warning for legacy permissions -->
-      <Alert v-if="hasLegacy" variant="warning" class="mb-6" icon="fa fa-exclamation-triangle">
-        <div>
-          <p class="font-semibold">
-            {{ $t('admin.permissions.legacyWarning.title', 'Legacy Permissions Detected') }}
-          </p>
-          <p class="text-sm">
-            {{
-              $t(
-                'admin.permissions.legacyWarning.description',
-                'This user has old-style permissions. They will be automatically converted to the new permission model when you save.',
-              )
-            }}
-          </p>
-        </div>
-      </Alert>
+      <Alert
+        v-if="hasLegacy"
+        variant="warning"
+        class="mb-6"
+        icon="fa-exclamation-triangle"
+        :title="$t('admin.permissions.legacyWarning.title', 'Legacy Permissions Detected')"
+        :description="$t('admin.permissions.legacyWarning.description', 'This user has old-style permissions. They will be automatically converted to the new permission model when you save.')"
+      />
 
       <!-- Warning for custom permissions -->
       <Alert
         v-else-if="hasCustomPermissions"
         variant="warning"
         class="mb-6"
-        icon="fa fa-exclamation-triangle"
-      >
-        <div>
-          <p class="font-semibold">
-            {{ $t('admin.permissions.customWarning.title', 'Custom Permissions Detected') }}
-          </p>
-          <p class="text-sm">
-            {{
-              $t(
-                'admin.permissions.customWarning.description',
-                "This user has custom permissions that don't match any predefined role. Selecting a role will override their current permissions.",
-              )
-            }}
-          </p>
-        </div>
-      </Alert>
+        icon="fa-exclamation-triangle"
+        :title="$t('admin.permissions.customWarning.title', 'Custom Permissions Detected')"
+        :description="$t('admin.permissions.customWarning.description', `This user has custom permissions that don't match any predefined role. Selecting a role will override their current permissions.`)"
+      />
 
       <!-- Tab Selection: Roles vs Custom -->
       <div class="flex gap-2 mb-6 border-b border-primary-stroke">
@@ -282,8 +263,7 @@
 import { ref, computed, watch } from 'vue'
 import type { AdminUserResponse } from '@/types/admin-user'
 import { useRoles } from '@/composables/useRoles'
-import { Button } from '@owlint/feathers-vue'
-import Alert from '@/components/ui/Alert.vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
 import RoleBlock from './RoleBlock.vue'
 import PermissionCheckbox from './PermissionCheckbox.vue'

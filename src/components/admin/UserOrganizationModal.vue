@@ -106,14 +106,8 @@
         v-if="user.organization_name && selectedOrganizationId !== user.organization_id"
         variant="warning"
         :title="$t('admin.users.modal.warning.title', 'Organization Change')"
-        :message="
-          $t(
-            'admin.users.modal.warning.message',
-            'Changing this user\'s organization will move them to the new organization. Their data will remain in the original organization.',
-          )
-        "
-        icon="fa fa-info-circle"
-        :dismissible="false"
+        :description="$t('admin.users.modal.warning.message', `Changing this user's organization will move them to the new organization. Their data will remain in the original organization.`)"
+        icon="fa-info-circle"
         class="mb-4"
       />
 
@@ -147,8 +141,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import Alert from '@/components/ui/Alert.vue'
-import { Button } from '@owlint/feathers-vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 import type { AdminUserResponse } from '@/types/admin-user'
 import type { OrganizationAdminResponse } from '@/types/organization'
 

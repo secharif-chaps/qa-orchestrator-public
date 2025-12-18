@@ -12,40 +12,14 @@
       </div>
     </div>
 
-    <!-- Search and Filters -->
-    <div class="flex items-center justify-between gap-4">
-      <!-- Search Input -->
-      <div class="flex-1 max-w-md">
-        <div class="relative">
-          <i
-            class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
-          ></i>
-          <Input
-            v-model="searchQuery"
-            type="text"
-            :placeholder="$t('admin.organizations.search', 'Search organizations...')"
-            class="pl-10"
-          />
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <!-- Sort Dropdown -->
-        <div class="relative">
-          <button
-            @click="showSortDropdown = !showSortDropdown"
-            class="flex items-center gap-2 px-3 py-2 border border-primary-stroke rounded-lg hover:bg-base-200 transition-colors text-sm font-medium bg-base-100"
-          >
-            <span class="text-secondary">{{
-              $t('admin.organizations.sortBy', 'Sort by: Name')
-            }}</span>
-            <i
-              class="fa fa-chevron-down text-xs transition-transform"
-              :class="{ 'rotate-180': showSortDropdown }"
-            ></i>
-          </button>
-        </div>
-      </div>
+    <!-- Search -->
+    <div class="flex items-center gap-4">
+      <Searchbar
+        id="search-organizations"
+        v-model="searchQuery"
+        :placeholder="$t('admin.organizations.search', 'Search organizations...')"
+        class="max-w-md"
+      />
     </div>
 
     <!-- Loading State -->
@@ -56,10 +30,9 @@
     <!-- Error State -->
     <Alert
       v-else-if="error"
-      variant="error"
+      variant="danger"
       :title="$t('admin.organizations.error.title', 'Error Loading Organizations')"
-      :message="error.message"
-      icon="fa fa-exclamation-circle"
+      :description="errorMessage"
     />
 
     <!-- Organizations List -->
@@ -68,7 +41,7 @@
         v-for="org in organizations"
         :key="org.id"
         class="bg-base-200 rounded-card border border-primary-stroke p-6 hover:shadow-shadow-2 transition-all cursor-pointer"
-        @click="router.push(`/admin/organizations/${org.id}`)"
+        @click="router.push(`/admin/organizations/${org.id}/profile`)"
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
@@ -96,34 +69,13 @@
     </div>
 
     <!-- Pagination -->
-    <div v-if="organizations && organizations.length > 0" class="flex items-center justify-between">
-      <p class="text-sm text-secondary">
-        {{
-          $t('admin.organizations.showing', {
-            from: (currentPage - 1) * pageSize + 1,
-            to: Math.min(currentPage * pageSize, totalOrganizations),
-            total: totalOrganizations,
-          })
-        }}
-      </p>
-      <div class="flex items-center gap-2">
-        <Button
-          variant="tertiary"
-          icon="fa fa-chevron-left"
-          size="sm"
-          :disabled="currentPage === 1"
-          @click="previousPage"
-        />
-        <span class="text-sm">{{ currentPage }}</span>
-        <Button
-          variant="tertiary"
-          icon="fa fa-chevron-right"
-          size="sm"
-          :disabled="currentPage * pageSize >= totalOrganizations"
-          @click="nextPage"
-        />
-      </div>
-    </div>
+    <Pagination
+      v-if="organizations && organizations.length > 0 && totalOrganizations > 0"
+      v-model:current-page="currentPage"
+      :items-per-pages="pageSize"
+      :total="totalOrganizations"
+      @update:items-per-pages="updatePageSize"
+    />
   </div>
 </template>
 
@@ -140,16 +92,12 @@ import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { getAllOrganizations } from '@/api/organization'
-import Alert from '@/components/ui/Alert.vue'
-import Tag from '@/components/ui/Tag.vue'
-import { Button } from '@owlint/feathers-vue'
-import Input from '@/components/ui/Input.vue'
+import { Alert, Pagination, Searchbar, Tag } from '@owlint/feathers-vue'
 
 const router = useRouter()
 
 // State
 const searchQuery = ref('')
-const showSortDropdown = ref(false)
 const currentPage = ref(1)
 const pageSize = ref(20)
 
@@ -175,18 +123,20 @@ const {
 const organizations = computed(() => organizationsData.value?.data || [])
 const totalOrganizations = computed(() => organizationsData.value?.meta?.total || 0)
 
+// Extract error message safely
+const errorMessage = computed(() => {
+  const err = error.value
+  if (!err) return ''
+  if (typeof err === 'string') return err
+  if (err instanceof Error) return err.message
+  if (typeof err === 'object' && 'message' in err) return String((err as { message: unknown }).message)
+  return 'An error occurred'
+})
+
 // Methods
-
-function previousPage() {
-  if (currentPage.value > 1) {
-    currentPage.value--
-  }
-}
-
-function nextPage() {
-  if (currentPage.value * pageSize.value < totalOrganizations.value) {
-    currentPage.value++
-  }
+function updatePageSize(newSize: number) {
+  pageSize.value = newSize
+  currentPage.value = 1
 }
 
 // Watch search query and reset to page 1

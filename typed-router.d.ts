@@ -22,8 +22,12 @@ declare module 'vue-router/auto-routes' {
     '/[...path]': RouteRecordInfo<'/[...path]', '/:path(.*)', { path: ParamValue<true> }, { path: ParamValue<false> }>,
     '/403': RouteRecordInfo<'/403', '/403', Record<never, never>, Record<never, never>>,
     '/admin/(admin)': RouteRecordInfo<'/admin/(admin)', '/admin', Record<never, never>, Record<never, never>>,
-    '/admin/organizations': RouteRecordInfo<'/admin/organizations', '/admin/organizations', Record<never, never>, Record<never, never>>,
-    '/admin/organizations.[organizationId]': RouteRecordInfo<'/admin/organizations.[organizationId]', '/admin/organizations/:organizationId', { organizationId: ParamValue<true> }, { organizationId: ParamValue<false> }>,
+    '/admin/organizations/(list)': RouteRecordInfo<'/admin/organizations/(list)', '/admin/organizations', Record<never, never>, Record<never, never>>,
+    '/admin/organizations/[organizationId]': RouteRecordInfo<'/admin/organizations/[organizationId]', '/admin/organizations/:organizationId', { organizationId: ParamValue<true> }, { organizationId: ParamValue<false> }, '/admin/organizations/[organizationId]/(organizationId)' | '/admin/organizations/[organizationId]/members' | '/admin/organizations/[organizationId]/profile' | '/admin/organizations/[organizationId]/tokens'>,
+    '/admin/organizations/[organizationId]/(organizationId)': RouteRecordInfo<'/admin/organizations/[organizationId]/(organizationId)', '/admin/organizations/:organizationId', { organizationId: ParamValue<true> }, { organizationId: ParamValue<false> }>,
+    '/admin/organizations/[organizationId]/members': RouteRecordInfo<'/admin/organizations/[organizationId]/members', '/admin/organizations/:organizationId/members', { organizationId: ParamValue<true> }, { organizationId: ParamValue<false> }>,
+    '/admin/organizations/[organizationId]/profile': RouteRecordInfo<'/admin/organizations/[organizationId]/profile', '/admin/organizations/:organizationId/profile', { organizationId: ParamValue<true> }, { organizationId: ParamValue<false> }>,
+    '/admin/organizations/[organizationId]/tokens': RouteRecordInfo<'/admin/organizations/[organizationId]/tokens', '/admin/organizations/:organizationId/tokens', { organizationId: ParamValue<true> }, { organizationId: ParamValue<false> }>,
     '/admin/tasks': RouteRecordInfo<'/admin/tasks', '/admin/tasks', Record<never, never>, Record<never, never>>,
     '/admin/users': RouteRecordInfo<'/admin/users', '/admin/users', Record<never, never>, Record<never, never>>,
     '/admin.workflows': RouteRecordInfo<'/admin.workflows', '/admin/workflows', Record<never, never>, Record<never, never>>,
@@ -58,6 +62,5 @@ declare module 'vue-router/auto-routes' {
     '/team/settings': RouteRecordInfo<'/team/settings', '/team/settings', Record<never, never>, Record<never, never>>,
     '/team/users': RouteRecordInfo<'/team/users', '/team/users', Record<never, never>, Record<never, never>>,
     '/tokens/history': RouteRecordInfo<'/tokens/history', '/tokens/history', Record<never, never>, Record<never, never>>,
-    '/ui-demo': RouteRecordInfo<'/ui-demo', '/ui-demo', Record<never, never>, Record<never, never>>,
   }
 }

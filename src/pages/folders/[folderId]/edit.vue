@@ -32,10 +32,10 @@
       <!-- Error State -->
       <Alert
         v-else-if="status === 'error'"
-        variant="error"
+        variant="danger"
         :title="$t('folder.edit.error.title', 'Error')"
-        :message="$t('folder.edit.error.description', 'Failed to load folder')"
-        icon="fa fa-exclamation-triangle"
+        :description="$t('folder.edit.error.description', 'Failed to load folder')"
+        icon="fa-exclamation-triangle"
       />
 
       <!-- Form -->
@@ -51,6 +51,7 @@
               <span class="text-red-500">*</span>
             </label>
             <Input
+              id="folder-name"
               v-model="form.name"
               :placeholder="$t('folder.form.namePlaceholder', 'Enter folder name...')"
               :error="errors.name"
@@ -73,6 +74,7 @@
               >
             </label>
             <Input
+              id="folder-tags"
               v-model="tagsInput"
               :placeholder="$t('folder.form.tagsPlaceholder', 'Enter tags separated by commas...')"
             />
@@ -131,10 +133,8 @@ meta:
 </route>
 
 <script setup lang="ts">
-import Input from '@/components/ui/Input.vue'
-import { Button } from '@owlint/feathers-vue'
+import { Alert, Button, Input } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
-import Alert from '@/components/ui/Alert.vue'
 import IconSelector from '@/components/folders/IconSelector.vue'
 import ColorSelector from '@/components/folders/ColorSelector.vue'
 import type { FolderUpdate } from '@/types/folder'

@@ -2,12 +2,17 @@
   <div class="bg-base-100 rounded-lg p-4 border border-primary-stroke">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div
-          class="w-10 h-10 rounded-full flex items-center justify-center"
-          :class="isEnabled ? 'bg-primary/10 text-primary' : 'bg-base-300 text-secondary'"
+
+        <!-- Module Icon -->
+        <Badge
+          :intent="isEnabled ? 'success' : 'danger'"
+          :label="isEnabled ? $t('tokens.enabled', 'Enabled') : $t('tokens.disabled', 'Disabled')"
+          :icon="moduleIcon"
+          variant="secondary"
         >
-          <i :class="moduleIcon" class="text-lg"></i>
-        </div>
+        </Badge>
+
+        <!-- Module Info -->
         <div>
           <h3 class="font-medium capitalize">
             {{ $t(`tokens.modules.${module}.name`, module) }}
@@ -19,27 +24,12 @@
       </div>
 
       <!-- Enable/Disable Toggle -->
-      <div class="flex items-center gap-3">
-        <Tag
-          :variant="isEnabled ? 'success' : 'slate'"
-          :label="isEnabled ? $t('tokens.enabled', 'Enabled') : $t('tokens.disabled', 'Disabled')"
-          size="sm"
-          :dot="true"
-        />
-
-        <label class="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            :checked="isEnabled"
-            :disabled="isToggling"
-            class="sr-only peer"
-            @change="handleToggle"
-          />
-          <div
-            class="relative w-11 h-6 bg-base-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-primary-stroke after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"
-          ></div>
-        </label>
-      </div>
+      <Switch
+        :id="`module-toggle-${module}`"
+        :model-value="isEnabled"
+        :disabled="isToggling"
+        @update:model-value="handleToggle"
+      />
     </div>
   </div>
 </template>
@@ -47,9 +37,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Tag from '@/components/ui/Tag.vue'
 import { useToggleModule } from '@/mutations/tokens'
 import type { ModuleName } from '@/types/tokens'
+import { Badge, Switch } from '@owlint/feathers-vue'
 
 const { t } = useI18n()
 

@@ -20,17 +20,13 @@
       </div>
 
       <!-- Warning Alert -->
-      <Alert variant="warning" class="mb-6" icon="fa fa-exclamation-triangle">
-        <div>
-          <p class="font-semibold">This action will:</p>
-          <ul class="text-sm mt-1 list-disc list-inside">
-            <li>Prevent the user from logging in</li>
-            <li>Revoke all active sessions</li>
-            <li>Preserve all user data</li>
-          </ul>
-          <p class="text-sm mt-2">You can re-enable the user later if needed.</p>
-        </div>
-      </Alert>
+      <Alert
+        variant="warning"
+        class="mb-6"
+        icon="fa-exclamation-triangle"
+        title="This action will:"
+        description="• Prevent the user from logging in • Revoke all active sessions • Preserve all user data. You can re-enable the user later if needed."
+      />
 
       <!-- Actions -->
       <div class="flex justify-end gap-3">
@@ -43,8 +39,7 @@
 
 <script setup lang="ts">
 import type { AdminUserResponse } from '@/types/admin-user'
-import { Button } from '@owlint/feathers-vue'
-import Alert from '@/components/ui/Alert.vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 
 defineProps<{
   user: AdminUserResponse

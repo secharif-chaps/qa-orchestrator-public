@@ -127,6 +127,7 @@
               {{ $t('team.apis.name', 'API Name') }}
             </label>
             <Input
+              id="api-name"
               v-model="newApi.name"
               :placeholder="$t('team.apis.namePlaceholder', 'e.g., Weather API')"
               class="w-full"
@@ -138,6 +139,7 @@
               {{ $t('team.apis.url', 'API URL') }}
             </label>
             <Input
+              id="api-url"
               v-model="newApi.url"
               :placeholder="$t('team.apis.urlPlaceholder', 'https://api.example.com/v1')"
               class="w-full"
@@ -149,6 +151,7 @@
               {{ $t('team.apis.api_key', 'API Key') }}
             </label>
             <Input
+              id="api-key"
               v-model="newApi.apiKey"
               type="password"
               :placeholder="$t('team.apis.apiKeyPlaceholder', 'Your API key')"
@@ -201,9 +204,8 @@ meta:
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Input } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
-import Input from '@/components/ui/Input.vue'
 
 // External APIs management (mock data)
 interface ExternalApi {

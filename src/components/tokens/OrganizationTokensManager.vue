@@ -1,38 +1,33 @@
 <template>
   <Card>
+    <!-- Header -->
     <div class="flex items-center justify-between mb-6">
       <div>
         <h2 class="text-xl font-semibold">
-          {{ $t('tokens.moduleManagement', 'Module & Token Management') }}
+          {{ $t('tokens.management', 'Token Management') }}
         </h2>
         <p class="text-secondary mt-1">
-          {{ $t('tokens.moduleDescription', 'Configure module access and token allocations') }}
+          {{ $t('tokens.managementDescription', 'Manage your organization token balance') }}
         </p>
       </div>
 
       <div class="flex items-center gap-2">
-        <button
-          @click="refreshAllTokens"
+        <Button
+          variant="tertiary"
+          icon="fa fa-refresh"
+          :loading="isRefreshing"
           :disabled="isRefreshing"
-          class="text-secondary hover:text-base transition-colors p-2"
-          :title="$t('tokens.refreshAll', 'Refresh all token counts')"
-        >
-          <i :class="{ 'animate-spin': isRefreshing }" class="fa fa-refresh"></i>
-        </button>
+          :title="$t('tokens.refresh', 'Refresh token balance')"
+          icon-only
+          @click="handleRefresh"
+        />
 
-        <button
-          v-if="hasChanges"
-          @click="saveAllChanges"
-          :disabled="isSaving"
-          class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80 transition-colors text-sm disabled:opacity-50 flex items-center gap-2"
-        >
-          <div
-            v-if="isSaving"
-            class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"
-          ></div>
-          <i v-else class="fa fa-save"></i>
-          {{ $t('tokens.saveChanges', 'Save Changes') }}
-        </button>
+        <Button
+          variant="secondary"
+          icon="fa fa-history"
+          :label="$t('tokens.viewHistory', 'View History')"
+          @click="$router.push('/tokens/history')"
+        />
       </div>
     </div>
 
@@ -40,104 +35,147 @@
     <div v-if="isLoading" class="text-center p-8">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
       <p class="text-secondary">
-        {{ $t('tokens.loading', 'Loading token configuration...') }}
+        {{ $t('tokens.loading', 'Loading token balance...') }}
       </p>
     </div>
 
     <!-- Error State -->
-    <div
+    <Alert
       v-else-if="error"
-      class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6"
-    >
-      <div class="flex items-center gap-2">
-        <i class="fa fa-exclamation-triangle"></i>
-        <span class="font-medium">Error:</span>
-        <span>{{ error.message }}</span>
+      variant="danger"
+      title="Error"
+      :description="errorMessage"
+      icon="fa-exclamation-circle"
+    />
+
+    <!-- Token Balance Display -->
+    <div v-else class="flex flex-col gap-6">
+      <!-- Global Balance Card -->
+      <div class="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-6 border border-primary-stroke">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-primary/20 rounded-xl flex items-center justify-center">
+              <i class="fa fa-coins text-2xl text-primary"></i>
+            </div>
+            <div>
+              <p class="text-sm text-secondary mb-1">
+                {{ $t('tokens.globalBalance', 'Organization Token Balance') }}
+              </p>
+              <div class="flex items-baseline gap-2">
+                <span class="text-4xl font-bold text-primary">
+                  {{ balance.toLocaleString() }}
+                </span>
+                <span class="text-secondary">
+                  {{ $t('tokens.credits', 'credits') }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-right">
+            <p class="text-sm text-secondary mb-1">
+              {{ $t('tokens.companyEquivalent', 'Company Equivalent') }}
+            </p>
+            <div class="flex items-baseline gap-1 justify-end">
+              <span class="text-2xl font-semibold" :class="companyEquivalentColor">
+                {{ companyEquivalent }}
+              </span>
+              <span class="text-secondary">
+                {{ companyEquivalent === 1 ? $t('tokens.company', 'company') : $t('tokens.companies', 'companies') }}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Usage Statistics -->
-    <div v-if="modules && modules.modules.length > 0" class="mb-8">
-      <h3 class="text-lg font-medium mb-4">
-        {{ $t('tokens.statistics', 'Token Statistics') }}
-      </h3>
+      <!-- Add Tokens Section -->
+      <div class="flex flex-col gap-4" data-testid="quick-add-section">
+        <h3 class="text-lg font-medium">
+          {{ $t('tokens.addTokens', 'Add Tokens') }}
+        </h3>
 
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-base-200 rounded-lg p-4">
-          <div class="text-sm text-secondary mb-1">
-            {{ $t('tokens.totalTokens', 'Total Tokens') }}
+        <!-- Quick Add Buttons -->
+        <div class="flex flex-col gap-3">
+          <label class="text-sm font-medium text-secondary">
+            {{ $t('tokens.quickAdd', 'Quick Add (by company count)') }}
+          </label>
+          <div class="flex flex-wrap items-center gap-2">
+            <Button
+              v-for="amount in quickAddAmounts"
+              :key="amount.companies"
+              variant="secondary"
+              size="sm"
+              :loading="addTokensMutation.isLoading.value && pendingAmount === amount.tokens"
+              :disabled="addTokensMutation.isLoading.value"
+              :label="`${amount.companies} screens (${amount.tokens.toLocaleString()})`"
+              @click="handleQuickAdd(amount.tokens)"
+            />
           </div>
-          <div class="text-2xl font-bold">{{ totalTokens }}</div>
         </div>
 
-        <div class="bg-base-200 rounded-lg p-4">
-          <div class="text-sm text-secondary mb-1">
-            {{ $t('tokens.enabledModules', 'Enabled Modules') }}
+        <!-- Custom Amount Input -->
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-secondary">
+            {{ $t('tokens.customAmount', 'Custom Amount') }}
+          </label>
+          <div class="flex items-center gap-3">
+            <Input
+              id="custom-token-amount"
+              v-model="customAmount"
+              type="number"
+              :placeholder="$t('tokens.enterAmount', 'Enter token amount...')"
+              :min="1"
+              :max="100000"
+              :disabled="addTokensMutation.isLoading.value"
+              class="max-w-xs"
+            />
+            <Button
+              variant="primary"
+              icon="fa fa-plus"
+              :label="$t('tokens.add', 'Add')"
+              :loading="addTokensMutation.isLoading.value && pendingAmount === Number(customAmount)"
+              :disabled="!canAddCustomAmount"
+              @click="handleCustomAdd"
+            />
           </div>
-          <div class="text-2xl font-bold text-green-600">{{ enabledModulesCount }}</div>
-        </div>
-
-        <div class="bg-base-200 rounded-lg p-4">
-          <div class="text-sm text-secondary mb-1">
-            {{ $t('tokens.disabledModules', 'Disabled Modules') }}
-          </div>
-          <div class="text-2xl font-bold text-red-600">{{ disabledModulesCount }}</div>
-        </div>
-
-        <div class="bg-base-200 rounded-lg p-4">
-          <div class="text-sm text-secondary mb-1">
-            {{ $t('tokens.lowTokenModules', 'Low Token Modules') }}
-          </div>
-          <div class="text-2xl font-bold text-yellow-600">{{ lowTokenModulesCount }}</div>
+          <p class="text-xs text-secondary">
+            {{ $t('tokens.addHelper', 'Enter the number of tokens to add, or use quick-add buttons above.') }}
+          </p>
         </div>
       </div>
-    </div>
 
-    <!-- Module Cards -->
-    <div v-if="modules" class="space-y-4 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-4">
-      <ModuleTokenCard
-        v-for="module in modules.modules"
-        :key="module.name"
-        :module="module.name"
-        :token-count="module.token_count"
-        :is-enabled="module.enabled"
-        :organization-id="organizationId"
-        :show-admin-controls="true"
-        @refresh="refreshTokens"
-      />
-    </div>
+      <!-- Module Status Section -->
+      <div class="flex flex-col gap-4 pt-4 border-t border-primary-stroke">
+        <h3 class="text-lg font-medium">
+          {{ $t('tokens.moduleStatus', 'Module Status') }}
+        </h3>
 
-    <!-- Empty State -->
-    <div v-else class="text-center p-8">
-      <i class="fa fa-cogs text-4xl text-secondary/50 mb-4"></i>
-      <h3 class="text-lg font-medium text-base mb-2">
-        {{ $t('tokens.empty.title', 'No modules configured') }}
-      </h3>
-      <p class="text-secondary mb-6">
-        {{
-          $t(
-            'tokens.empty.description',
-            'Module configuration will be displayed here once available',
-          )
-        }}
-      </p>
-      <button
-        @click="refreshTokens"
-        class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/80 transition-colors"
-      >
-        {{ $t('tokens.refresh', 'Refresh') }}
-      </button>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <ModuleStatusCard
+            v-for="module in modules"
+            :key="module.name"
+            :module="module.name"
+            :is-enabled="module.enabled"
+            :organization-id="organizationId"
+            @refresh="handleRefresh"
+          />
+        </div>
+      </div>
     </div>
   </Card>
 </template>
 
 <script setup lang="ts">
-import { useUpdateOrganizationModules } from '@/mutations/tokens'
-import { organizationModulesQuery } from '@/queries/tokens'
-import { useQuery } from '@pinia/colada'
 import { computed, ref } from 'vue'
+import { useQuery } from '@pinia/colada'
+import { Alert, Button, Input } from '@owlint/feathers-vue'
 import Card from '../ui/Card.vue'
-import ModuleTokenCard from './ModuleTokenCard.vue'
+import ModuleStatusCard from './ModuleStatusCard.vue'
+import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/tokens'
+import { useAddGlobalTokens } from '@/mutations/tokens'
+
+// Token cost per company creation
+const TOKENS_PER_COMPANY = 35
 
 interface Props {
   organizationId: string
@@ -147,61 +185,108 @@ const props = defineProps<Props>()
 
 // State
 const isRefreshing = ref(false)
-const hasChanges = ref(false)
+const customAmount = ref<number | string>('')
+const pendingAmount = ref<number | null>(null)
 
-// Query for organization modules
+// Query for global token balance
 const {
-  data: modules,
-  isLoading,
-  error,
-  refetch,
-} = useQuery(organizationModulesQuery, () => ({ organizationId: props.organizationId }), {
-  enabled: computed(() => !!props.organizationId),
+  data: balanceData,
+  isLoading: isLoadingBalance,
+  error: balanceError,
+  refetch: refetchBalance,
+} = useQuery({
+  ...organizationBalanceQuery({ organizationId: props.organizationId }),
+  enabled: () => !!props.organizationId,
 })
 
-// Mutation for bulk updates
-const { updateModules, isLoading: isSaving } = useUpdateOrganizationModules()
-
-// Computed statistics
-const totalTokens = computed(() => {
-  if (!modules.value?.modules) return 0
-  return modules.value.modules.reduce((sum, module) => sum + module.token_count, 0)
+// Query for module configurations
+const {
+  data: modulesData,
+  isLoading: isLoadingModules,
+  error: modulesError,
+  refetch: refetchModules,
+} = useQuery({
+  ...organizationModulesQuery({ organizationId: props.organizationId }),
+  enabled: () => !!props.organizationId,
 })
 
-const enabledModulesCount = computed(() => {
-  if (!modules.value?.modules) return 0
-  return modules.value.modules.filter((module) => module.enabled).length
+// Mutation for adding tokens
+const addTokensMutation = useAddGlobalTokens()
+
+// Computed values
+const isLoading = computed(() => isLoadingBalance.value || isLoadingModules.value)
+const error = computed(() => balanceError.value || modulesError.value)
+
+// Extract error message safely
+const errorMessage = computed(() => {
+  const err = error.value
+  if (!err) return ''
+  if (typeof err === 'string') return err
+  if (err instanceof Error) return err.message
+  if (typeof err === 'object' && 'message' in err) return String((err as { message: unknown }).message)
+  return 'An error occurred'
 })
 
-const disabledModulesCount = computed(() => {
-  if (!modules.value?.modules) return 0
-  return modules.value.modules.filter((module) => !module.enabled).length
+const balance = computed(() => balanceData.value?.balance ?? 0)
+const companyEquivalent = computed(() => Math.floor(balance.value / TOKENS_PER_COMPANY))
+
+const modules = computed(() => modulesData.value?.modules ?? [])
+
+const companyEquivalentColor = computed(() => {
+  if (companyEquivalent.value === 0) return 'text-error'
+  if (companyEquivalent.value < 5) return 'text-warning'
+  return 'text-success'
 })
 
-const lowTokenModulesCount = computed(() => {
-  if (!modules.value?.modules) return 0
-  return modules.value.modules.filter((module) => module.enabled && module.token_count < 10).length
+// Quick add amounts: 5, 10, 25, 50, 100 companies
+const quickAddAmounts = computed(() => [
+  { companies: 5, tokens: 5 * TOKENS_PER_COMPANY },
+  { companies: 10, tokens: 10 * TOKENS_PER_COMPANY },
+  { companies: 25, tokens: 25 * TOKENS_PER_COMPANY },
+  { companies: 50, tokens: 50 * TOKENS_PER_COMPANY },
+  { companies: 100, tokens: 100 * TOKENS_PER_COMPANY },
+])
+
+const canAddCustomAmount = computed(() => {
+  const amount = Number(customAmount.value)
+  return amount > 0 && amount <= 100000 && !addTokensMutation.isLoading.value
 })
 
 // Methods
-const refreshTokens = async () => {
-  await refetch()
-}
-
-const refreshAllTokens = async () => {
+async function handleRefresh() {
   isRefreshing.value = true
   try {
-    await refreshTokens()
-    // Add a small delay for visual feedback
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    await Promise.all([refetchBalance(), refetchModules()])
+    // Small delay for visual feedback
+    await new Promise((resolve) => setTimeout(resolve, 300))
   } finally {
     isRefreshing.value = false
   }
 }
 
-const saveAllChanges = async () => {
-  // This would be used if we implement bulk editing functionality
-  // For now, individual changes are saved immediately
-  hasChanges.value = false
+async function handleQuickAdd(amount: number) {
+  pendingAmount.value = amount
+  try {
+    addTokensMutation.organizationId.value = props.organizationId
+    addTokensMutation.amount.value = amount
+    await addTokensMutation.addTokens()
+  } finally {
+    pendingAmount.value = null
+  }
+}
+
+async function handleCustomAdd() {
+  const amount = Number(customAmount.value)
+  if (!canAddCustomAmount.value) return
+
+  pendingAmount.value = amount
+  try {
+    addTokensMutation.organizationId.value = props.organizationId
+    addTokensMutation.amount.value = amount
+    await addTokensMutation.addTokens()
+    customAmount.value = ''
+  } finally {
+    pendingAmount.value = null
+  }
 }
 </script>

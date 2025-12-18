@@ -167,7 +167,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import Badge, { type BadgeVariant } from '@/components/ui/Badge.vue'
+import Tag from '@/components/ui/Tag.vue'
 import type { TaskTypeCostResponse, TaskTypeCostData } from '@/api/cost-analysis'
 
 interface Props {
@@ -240,16 +240,16 @@ const getTaskCountPercentage = (count: number) => {
   return total > 0 ? ((count / total) * 100).toFixed(1) : '0'
 }
 
-const getTaskTypeVariant = (taskType: string): BadgeVariant => {
-  const variants: Record<string, BadgeVariant> = {
+const getTaskTypeVariant = (taskType: string) => {
+  const variants: Record<string, string> = {
     profile: 'primary',
     digital: 'info',
     timeline: 'success',
     products: 'warning',
     jobs: 'error',
     csr: 'slate',
-    press: 'purple',
-    team: 'teal',
+    press: 'slate',
+    team: 'slate',
   }
   return variants[taskType] || 'slate'
 }

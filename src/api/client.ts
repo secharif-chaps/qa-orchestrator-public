@@ -148,18 +148,29 @@ class ApiError extends Error {
   }
 }
 
+/**
+ * Error thrown when token balance is insufficient for an operation.
+ *
+ * Supports both the old module-based format (current_tokens) and
+ * the new global token format (current_balance) for backward compatibility.
+ */
 class InsufficientTokensError extends Error {
-  public readonly currentTokens: number
+  public readonly currentBalance: number
   public readonly requiredTokens: number
-  public readonly module: string
 
-  constructor(data: any) {
-    const message = data.message || 'Insufficient tokens for this operation'
+  constructor(data: Record<string, unknown>) {
+    const message = (data.message as string) || 'Insufficient tokens for this operation'
     super(message)
     this.name = 'InsufficientTokensError'
-    this.currentTokens = data.current_tokens || 0
-    this.requiredTokens = data.required_tokens || 1
-    this.module = data.module || 'unknown'
+    // Support both old (current_tokens) and new (current_balance) field names
+    this.currentBalance =
+      (data.current_balance as number) ?? (data.current_tokens as number) ?? 0
+    this.requiredTokens = (data.required_tokens as number) ?? 1
+  }
+
+  // Alias for backward compatibility
+  get currentTokens(): number {
+    return this.currentBalance
   }
 }
 

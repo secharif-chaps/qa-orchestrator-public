@@ -4,7 +4,7 @@
     <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
       <h2 class="text-headline-2xl">{{ $t('sidebar.tokens.title', 'Credits') }}</h2>
       <Tag
-        intent="success"
+        variant="success"
         :label="`${totalTokens} ${$t('sidebar.tokens.credits', 'credits')}`"
         icon="fa fa-coins"
         size="md"
@@ -22,7 +22,7 @@
       <div v-else class="flex flex-col gap-6">
         <!-- Empty State -->
         <div v-if="hasNoHistory" class="flex flex-col items-center justify-center py-8 gap-3">
-          <Badge variant="secondary" icon="fa fa-coins" size="lg" />
+          <Tag variant="sage" icon="fa fa-coins" size="lg" />
           <div class="text-center">
             <h3 class="text-sm font-semibold text-white mb-1">
               {{ $t('sidebar.tokens.noHistory', 'No usage history') }}
@@ -106,8 +106,9 @@
 import { computed } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { useRoute } from 'vue-router'
-import { Tag, Badge, Button } from '@owlint/feathers-vue'
-import { organizationModulesQuery } from '@/queries/tokens'
+import { Button } from '@owlint/feathers-vue'
+import Tag from '@/components/ui/Tag.vue'
+import { organizationBalanceQuery } from '@/queries/tokens'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { recentCompaniesQuery } from '@/queries/companies'
 import TokenHistoryItem from './TokenHistoryItem.vue'
@@ -124,23 +125,19 @@ const { data: currentOrganization, isLoading: isLoadingOrg } = useQuery(
   () => ({}),
 )
 
-// Fetch organization modules to get total tokens (only when organization is loaded)
-const { data: modulesData, isLoading: isLoadingTokens } = useQuery({
-  ...organizationModulesQuery({ organizationId: currentOrganization.value?.id ?? '' }),
+// Fetch global token balance (new global system) using the spread pattern
+const { data: balanceData, isLoading: isLoadingBalance } = useQuery({
+  ...organizationBalanceQuery({ organizationId: currentOrganization.value?.id ?? '' }),
   enabled: () => !!currentOrganization.value?.id,
 })
 
 // Fetch recent companies for token history (10 most recent)
 const { data: recentCompanies, isLoading: isLoadingCompanies } = useQuery(
-  recentCompaniesQuery,
-  () => ({ limit: 10 }),
+  recentCompaniesQuery({ limit: 10 }),
 )
 
-// Calculate total tokens across all modules
-const totalTokens = computed(() => {
-  if (!modulesData.value?.modules) return 0
-  return modulesData.value.modules.reduce((sum, module) => sum + module.token_count, 0)
-})
+// Get total tokens from global balance (no longer summing modules)
+const totalTokens = computed(() => balanceData.value?.balance ?? 0)
 
 // Helper function to format relative date
 function formatRelativeDate(dateString: string | null | undefined) {
@@ -199,7 +196,7 @@ const groupedHistory = computed(() => {
 
 // Combined loading state
 const isLoading = computed(
-  () => isLoadingOrg.value || isLoadingTokens.value || isLoadingCompanies.value,
+  () => isLoadingOrg.value || isLoadingBalance.value || isLoadingCompanies.value,
 )
 
 // Check if there's no history to display

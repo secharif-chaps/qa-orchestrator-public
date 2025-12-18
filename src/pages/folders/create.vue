@@ -28,6 +28,7 @@
               <span class="text-red-500">*</span>
             </label>
             <Input
+              id="folder-name"
               v-model="form.name"
               :placeholder="$t('folder.form.namePlaceholder', 'Enter folder name...')"
               :error="errors.name"
@@ -50,6 +51,7 @@
               >
             </label>
             <Input
+              id="folder-tags"
               v-model="tagsInput"
               :placeholder="$t('folder.form.tagsPlaceholder', 'Enter tags separated by commas...')"
             />
@@ -108,8 +110,7 @@ meta:
 </route>
 
 <script setup lang="ts">
-import Input from '@/components/ui/Input.vue'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Input } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
 import IconSelector from '@/components/folders/IconSelector.vue'
 import ColorSelector from '@/components/folders/ColorSelector.vue'

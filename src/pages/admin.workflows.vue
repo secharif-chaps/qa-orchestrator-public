@@ -62,10 +62,10 @@
       <!-- Error State -->
       <Alert
         v-else-if="error"
-        variant="error"
+        variant="danger"
         :title="$t('admin.workflows.error.title', 'Failed to Load Workflows')"
-        :message="error"
-        icon="fa fa-exclamation-triangle"
+        :description="error"
+        icon="fa-exclamation-triangle"
         class="mb-6"
       />
 
@@ -104,8 +104,7 @@ meta:
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { workflowsApi, type WorkflowConfig } from '@/api/workflows'
-import { Button } from '@owlint/feathers-vue'
-import Alert from '@/components/ui/Alert.vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
 import WorkflowCard from '@/components/admin/WorkflowCard.vue'
 
