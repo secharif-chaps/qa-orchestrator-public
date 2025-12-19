@@ -314,7 +314,8 @@ export default {
       markAllRead: 'Mark all as read',
       noNotifications: 'No notifications',
       upToDate: 'You are up to date! All notifications will appear here.',
-      viewAll: 'View all notifications',
+      // Temporarily disabled: Re-enable once /notifications page is implemented
+      // viewAll: 'View all notifications',
       companyCreated: 'New company added',
       folderCreated: 'New folder created',
       activityMessage: 'created',
