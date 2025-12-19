@@ -15,8 +15,21 @@
       <i v-else class="fa fa-robot text-secondary text-sm"></i>
     </div>
 
-    <!-- Message Content -->
-    <div class="max-w-[100%] rounded-xl px-4 py-3 text-sm" :class="messageClasses">
+    <!-- Smart Action Message (special styling) -->
+    <div
+      v-if="message.isSmartAction"
+      class="max-w-[100%] rounded-xl px-4 py-3 text-sm bg-accent-200 text-accent-800 font-medium flex items-center gap-2"
+    >
+      <i :class="message.smartActionIcon || 'fa-solid fa-wand-magic-sparkles'" class="text-base"></i>
+      <span>{{ message.smartActionLabel }}</span>
+    </div>
+
+    <!-- Regular Message Content -->
+    <div
+      v-else
+      class="max-w-[100%] rounded-xl px-4 py-3 text-sm"
+      :class="messageClasses"
+    >
       <div v-if="message.role === 'assistant' && formattedContent.length === 0">
         <i class="fa fa-circle-notch fa-spin text-secondary text-sm"></i>
       </div>
@@ -69,14 +82,24 @@ const messageClasses = computed(() => {
 })
 
 const formattedContent = computed(() => {
-  // Format markdown - keep it simple for now
+  // Format markdown
   let formatted = props.message.content
 
-  // Convert ### Heading to bold heading
-  formatted = formatted.replace(/^### (.+)$/gm, '<strong class="block text-base mt-1 mb-1">$1</strong>')
+  // Convert headings (must be done before bold to avoid conflicts)
+  // ## Heading 2
+  formatted = formatted.replace(/^## (.+)$/gm, '<h2 class="text-lg font-bold mt-4 mb-2">$1</h2>')
+  // ### Heading 3
+  formatted = formatted.replace(/^### (.+)$/gm, '<h3 class="text-base font-bold mt-3 mb-1">$1</h3>')
+  // #### Heading 4 (including patterns like "#### 1." or just "####")
+  formatted = formatted.replace(/^####\s*(\d+\.?\s*)?(.*)$/gm, (_, num, text) => {
+    const content = (num || '') + (text || '')
+    return content.trim()
+      ? `<h4 class="text-sm font-bold mt-3 mb-1">${content.trim()}</h4>`
+      : ''
+  })
 
   // Convert --- to horizontal divider
-  formatted = formatted.replace(/^---$/gm, '<hr class="border-sage-700 my-1">')
+  formatted = formatted.replace(/^---$/gm, '<hr class="border-sage-700 my-2">')
 
   // Convert **text** to <strong>text</strong>
   formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -84,19 +107,26 @@ const formattedContent = computed(() => {
   // Convert *text* to <em>text</em>
   formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>')
 
-  // Convert numbered lists (remove "1. " from content)
-  formatted = formatted.replace(/\d+\.\s(.*?)(?=\n\d+\.|$)/gs, '<li>$1</li>')
-  formatted = formatted.replace(/(<li>.*?<\/li>)+/gs, '<ol class="list-decimal ml-2 my-2">$&</ol>')
+  // Convert bullet lists (- item) - must be done before numbered lists
+  formatted = formatted.replace(/^- (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
 
-  // Convert bullet lists (remove "- " from content)
-  formatted = formatted.replace(/- (.*?)(?=\n-|$)/gs, '<li>$1</li>')
-  formatted = formatted.replace(/(<li>.*?<\/li>)+/gs, '<ul class="list-disc ml-2 my-2">$&</ul>')
+  // Wrap consecutive <li> elements in <ul>
+  formatted = formatted.replace(/((?:<li class="ml-4 list-disc">.*?<\/li>\n?)+)/g, '<ul class="my-2">$1</ul>')
 
-  // Convert newlines to <br>
-  // formatted = formatted.replace(/\n/g, '<br>')
+  // Convert numbered lists (1. item)
+  formatted = formatted.replace(/^\d+\.\s+(.+)$/gm, '<li class="ml-4 list-decimal">$1</li>')
 
-  //convert link  [ChapsVision](https://www.chapsvision.com/about-us/). to <a href="https://www.chapsvision.com/about-us/" target="_blank">ChapsVision</a>
+  // Wrap consecutive numbered <li> elements in <ol>
+  formatted = formatted.replace(/((?:<li class="ml-4 list-decimal">.*?<\/li>\n?)+)/g, '<ol class="my-2">$1</ol>')
+
+  // Convert links [text](url)
   formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a class="text-blue-400 underline" href="$2" target="_blank">$1</a>')
+
+  // Convert newlines to <br> for proper spacing (but not inside block elements)
+  formatted = formatted.replace(/\n(?!<)/g, '<br>')
+
+  // Clean up multiple <br> tags
+  formatted = formatted.replace(/(<br>){3,}/g, '<br><br>')
 
   return formatted
 })
