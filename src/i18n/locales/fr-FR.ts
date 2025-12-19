@@ -315,7 +315,8 @@ export default {
       markAllRead: 'Tout marquer comme lu',
       noNotifications: 'Aucune notification',
       upToDate: 'Vous êtes à jour ! Toutes vos notifications apparaîtront ici.',
-      viewAll: 'Voir toutes les notifications',
+      // Temporarily disabled: Re-enable once /notifications page is implemented
+      // viewAll: 'Voir toutes les notifications',
       companyCreated: 'Nouvelle entreprise ajoutée',
       folderCreated: 'Nouveau dossier créé',
       activityMessage: 'a créé',
