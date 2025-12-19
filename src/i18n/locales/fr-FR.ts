@@ -911,6 +911,7 @@ export default {
     loading: 'Chargement des entreprises...',
     name: 'Entreprise',
     created: 'Créé',
+    createdAt: 'Créé le',
     owner: 'Propriétaire',
     status: 'Statut',
     actions: 'Actions',
