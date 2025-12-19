@@ -130,8 +130,8 @@ async def restart_task(
             detail=f"Task with ID {task_id} not found or you don't have permission to access it"
         )
 
-    # Restart the task
-    restarted_task = await service.restart_task(task_id)
+    # Restart the task (fire-and-forget via Celery)
+    restarted_task = service.restart_task(task_id)
     return restarted_task
 
 @router.patch("/{task_id}/tokens", response_model=TaskResponse)
