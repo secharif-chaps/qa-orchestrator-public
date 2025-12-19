@@ -869,6 +869,7 @@ export default {
     loading: 'Loading companies...',
     name: 'Company',
     created: 'Created',
+    createdAt: 'Created on',
     owner: 'Owner',
     status: 'Status',
     actions: 'Actions',
