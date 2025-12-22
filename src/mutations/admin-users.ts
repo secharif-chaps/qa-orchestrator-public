@@ -32,7 +32,7 @@ export const useAssignUserOrganization = defineMutation(() => {
       // If admin changed their own organization, page needs to reload
       // to update the organization context throughout the application
       const authStore = useAuthStore()
-      if (userId === authStore.user?.sub) {
+      if (userId === authStore.user?.profile?.sub) {
         setTimeout(() => {
           window.location.reload()
         }, 1000)
@@ -68,7 +68,7 @@ export const useUpdateUserPermissions = defineMutation(() => {
       // If admin changed their own permissions, page needs to reload
       // to update permissions throughout the application
       const authStore = useAuthStore()
-      if (userId === authStore.user?.sub) {
+      if (userId === authStore.user?.profile?.sub) {
         setTimeout(() => {
           window.location.reload()
         }, 1000)
