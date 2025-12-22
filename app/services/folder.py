@@ -255,6 +255,73 @@ class FolderService:
         return folders
 
     @staticmethod
+    def list_all_org_folders(
+        db: Session,
+        organization_id: str,
+        archived: bool = False,
+        favorites_only: bool = False,
+        user_id: str | None = None
+    ) -> List[Folder]:
+        """List ALL folders in an organization (for managers).
+
+        Unlike list_folders which returns only owned/shared folders, this method
+        returns ALL folders in the organization regardless of ownership or sharing.
+        This is intended for users with organization.manage permission.
+
+        Args:
+            db: Database session
+            organization_id: Organization to filter by
+            archived: If True, show deleted folders; if False, show active folders
+            favorites_only: If True, only show folders favorited by this user
+            user_id: User ID for favorites filtering (required if favorites_only=True)
+
+        Returns:
+            List of all Folder instances in the organization
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+
+        logger.debug(
+            f"list_all_org_folders - organization_id: {organization_id}, "
+            f"archived: {archived}, favorites_only: {favorites_only}"
+        )
+
+        # Build base query for ALL folders in organization
+        query = db.query(Folder).filter(
+            Folder.organization_id == organization_id
+        )
+
+        # Apply archived filter
+        if archived:
+            logger.debug("Filtering for archived (deleted) folders")
+            query = query.filter(Folder.is_deleted == True)
+        else:
+            logger.debug("Filtering for non-archived folders")
+            query = query.filter(Folder.is_deleted == False)
+
+        # Apply favorites filter (requires user_id)
+        if favorites_only:
+            if not user_id:
+                raise ValueError("user_id is required when favorites_only=True")
+            logger.debug("Filtering for user's favorites only")
+            query = query.join(
+                UserFolderFavorite,
+                (UserFolderFavorite.folder_id == Folder.id) &
+                (UserFolderFavorite.user_id == user_id)
+            )
+
+        folders = query.order_by(Folder.created_at.desc()).all()
+
+        logger.info(f"list_all_org_folders result: Found {len(folders)} folders")
+        for folder in folders:
+            logger.debug(
+                f"  - Folder: {folder.id} | {folder.name} | "
+                f"owner: {folder.owner} | deleted: {folder.is_deleted}"
+            )
+
+        return folders
+
+    @staticmethod
     def update_folder(
         db: Session,
         folder: Folder,

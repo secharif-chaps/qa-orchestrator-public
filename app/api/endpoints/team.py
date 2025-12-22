@@ -22,7 +22,6 @@ from app.schemas.team import (
     TeamMember,
     UpdateTeamMemberPermissions,
     TeamMemberPasswordReset,
-    PermissionTier,
 )
 from app.services.keycloak_admin import keycloak_admin_service
 
@@ -55,11 +54,10 @@ async def list_team_members(
         500: If Keycloak API fails
     """
     try:
-        # Get organization members from Keycloak
         keycloak_members = await keycloak_admin_service.get_organization_members(
             organization_id=org_context.organization_id,
             first=0,
-            max_results=1000,  # Get all members (adjust if org has >1000 members)
+            max_results=1000,  
             search=search,
         )
 
@@ -70,16 +68,13 @@ async def list_team_members(
             )
             return []
 
-        # Build team member list with permission tiers
         team_members = []
         for member in keycloak_members:
             user_id = member.get('id')
 
-            # Get user's realm roles from Keycloak
             user_roles_response = await keycloak_admin_service.get_user_realm_roles(user_id)
             user_roles = [role['name'] for role in user_roles_response] if user_roles_response else []
 
-            # Determine permission tier from roles
             permission_tier = get_tier_from_roles(user_roles)
 
             team_member = TeamMember(
@@ -88,14 +83,13 @@ async def list_team_members(
                 email=member.get('email', ''),
                 first_name=member.get('firstName'),
                 last_name=member.get('lastName'),
-                avatar_url=None,  # Not stored in Keycloak
+                avatar_url=None,  
                 permission_tier=permission_tier,
                 is_current_user=(user_id == user.sub),
                 created_at=member.get('createdTimestamp'),
             )
             team_members.append(team_member)
 
-        # Sort: current user first, then alphabetically by username
         team_members.sort(key=lambda m: (not m.is_current_user, m.username.lower()))
 
         logger.info(
@@ -154,10 +148,10 @@ async def update_member_permissions(
         500: If Keycloak update fails
     """
     try:
-        # Verify user has required role
+        
         verify_any_role_access(user, ["organization.manage", "admin.organizations"])
 
-        # Prevent self-permission changes (safety measure)
+        
         if user_id == user.sub:
             logger.warning(
                 "User attempted to change own permissions",
@@ -168,7 +162,7 @@ async def update_member_permissions(
                 detail="Cannot modify your own permissions",
             )
 
-        # Verify user exists and is in organization
+        
         keycloak_user = await keycloak_admin_service.get_user(user_id)
         if not keycloak_user:
             raise HTTPException(
@@ -176,11 +170,11 @@ async def update_member_permissions(
                 detail="User not found",
             )
 
-        # Get target roles for new tier
+        
         target_roles = get_roles_for_tier(update_data.permission_tier)
 
-        # Atomically sync all roles for the tier
-        # This removes old tier roles and adds new tier roles in one operation
+        
+        
         success = await keycloak_admin_service.sync_user_realm_roles(
             user_id=user_id,
             target_roles=target_roles,
@@ -192,7 +186,7 @@ async def update_member_permissions(
                 detail="Failed to update permissions in Keycloak",
             )
 
-        # Fetch updated user data to confirm changes
+        
         updated_user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
         updated_roles = [role['name'] for role in updated_user_roles] if updated_user_roles else []
 
@@ -265,10 +259,10 @@ async def reset_member_password(
         500: If password reset fails
     """
     try:
-        # Verify user has required role
+        
         verify_any_role_access(user, ["organization.manage", "admin.organizations"])
 
-        # Verify user exists
+        
         keycloak_user = await keycloak_admin_service.get_user(user_id)
         if not keycloak_user:
             raise HTTPException(
@@ -276,13 +270,13 @@ async def reset_member_password(
                 detail="User not found",
             )
 
-        # Generate secure temporary password (12 chars, mixed case + digits + special)
+        
         import secrets
         import string
         alphabet = string.ascii_letters + string.digits + "!@#$%^&*"
         temp_password = ''.join(secrets.choice(alphabet) for _ in range(12))
 
-        # Set password in Keycloak (temporary=True forces change on next login)
+        
         success = await keycloak_admin_service.set_user_password(
             user_id=user_id,
             password=temp_password,

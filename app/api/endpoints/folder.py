@@ -79,6 +79,7 @@ def _build_folder_response(
         "organization_id": folder.organization_id,
         "owner": folder.owner or "Unknown",
         "owner_id": folder.owner_id,
+        "owner_username": folder.owner or "Unknown",
         "is_owner": is_owner,
         "share_role": share_role,
         "name": folder.name,
@@ -212,6 +213,7 @@ def create_folder(
 def list_folders(
     archived: bool = Query(False),
     favorites: bool = Query(False),
+    include_all: bool = Query(False, description="Include all org folders (managers only)"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
@@ -221,6 +223,10 @@ def list_folders(
     Requires organization.read role for access.
     Returns only folders the user owns or has been explicitly shared with.
     The is_favorite field is computed per-user.
+
+    If include_all=true and user has organization.manage (or admin) role:
+    - Returns ALL folders in organization (including private ones from other users)
+    - Useful for team oversight by managers
     """
     logger.info(
         "GET /folders - Listing folders",
@@ -228,23 +234,57 @@ def list_folders(
             "user": org_context.username,
             "organization_id": org_context.organization_id,
             "archived": archived,
-            "favorites": favorites
+            "favorites": favorites,
+            "include_all": include_all
         }
     )
 
-    # Get user's favorite folder IDs for computing is_favorite per-user
     user_favorite_ids = FolderService.get_user_favorite_folder_ids(
         db, org_context.user_id, org_context.organization_id
     )
 
-    folders = FolderService.list_folders(
-        db=db,
-        organization_id=org_context.organization_id,
-        user_id=org_context.user_id,
-        archived=archived,
-        favorites_only=favorites,
-        username=org_context.username
-    )
+    if include_all:
+        user_roles = user.realm_access.get('roles', [])
+        has_manager_permission = 'organization.manage' in user_roles or 'admin.organizations' in user_roles
+
+        if not has_manager_permission:
+            logger.warning(
+                "Non-manager attempted to use include_all parameter",
+                extra={
+                    "user": org_context.username,
+                    "user_id": org_context.user_id,
+                    "roles": user_roles
+                }
+            )
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Requires organization.manage permission to view all organization folders"
+            )
+
+        logger.info(
+            "Manager viewing all organization folders",
+            extra={
+                "user": org_context.username,
+                "organization_id": org_context.organization_id
+            }
+        )
+
+        folders = FolderService.list_all_org_folders(
+            db=db,
+            organization_id=org_context.organization_id,
+            archived=archived,
+            favorites_only=favorites,
+            user_id=org_context.user_id
+        )
+    else:
+        folders = FolderService.list_folders(
+            db=db,
+            organization_id=org_context.organization_id,
+            user_id=org_context.user_id,
+            archived=archived,
+            favorites_only=favorites,
+            username=org_context.username
+        )
 
     logger.info(
         "Found folders",
