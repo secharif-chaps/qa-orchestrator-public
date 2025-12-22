@@ -53,14 +53,11 @@ declare module 'vue-router/auto-routes' {
     '/folders/create': RouteRecordInfo<'/folders/create', '/folders/create', Record<never, never>, Record<never, never>>,
     '/help': RouteRecordInfo<'/help', '/help', Record<never, never>, Record<never, never>>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
-    '/settings': RouteRecordInfo<'/settings', '/settings', Record<never, never>, Record<never, never>, '/settings/ai-preferences' | '/settings/appearance' | '/settings/security'>,
+    '/settings': RouteRecordInfo<'/settings', '/settings', Record<never, never>, Record<never, never>, '/settings/ai-preferences' | '/settings/appearance' | '/settings/security' | '/settings/team-management'>,
     '/settings/ai-preferences': RouteRecordInfo<'/settings/ai-preferences', '/settings/ai-preferences', Record<never, never>, Record<never, never>>,
     '/settings/appearance': RouteRecordInfo<'/settings/appearance', '/settings/appearance', Record<never, never>, Record<never, never>>,
     '/settings/security': RouteRecordInfo<'/settings/security', '/settings/security', Record<never, never>, Record<never, never>>,
-    '/team': RouteRecordInfo<'/team', '/team', Record<never, never>, Record<never, never>, '/team/apis' | '/team/settings' | '/team/users'>,
-    '/team/apis': RouteRecordInfo<'/team/apis', '/team/apis', Record<never, never>, Record<never, never>>,
-    '/team/settings': RouteRecordInfo<'/team/settings', '/team/settings', Record<never, never>, Record<never, never>>,
-    '/team/users': RouteRecordInfo<'/team/users', '/team/users', Record<never, never>, Record<never, never>>,
+    '/settings/team-management': RouteRecordInfo<'/settings/team-management', '/settings/team-management', Record<never, never>, Record<never, never>>,
     '/tokens/history': RouteRecordInfo<'/tokens/history', '/tokens/history', Record<never, never>, Record<never, never>>,
   }
 }
