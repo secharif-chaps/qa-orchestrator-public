@@ -1,77 +1,32 @@
 import { apiClient } from './client'
-import { useAuthStore } from '@/stores/auth'
-import type {
-  OrganizationUser,
-  OrganizationUserResponse,
-  OrganizationUserQueryParams,
-  CreateOrganizationUserRequest,
-  UpdateOrganizationUserRequest,
-} from '@/types/team'
+import type { TeamMember, UpdateTeamMemberPermissions, TeamMemberPasswordReset } from '@/types/team'
 
-const getOrganizationId = (): string => {
-  const authStore = useAuthStore()
-  const orgId = authStore.organizationId
-  if (!orgId) {
-    throw new Error('No organization context available. User must be logged in.')
+/**
+ * List all team members in the user's organization
+ */
+export const getTeamMembers = async (search?: string) => {
+  const params = new URLSearchParams()
+  if (search) {
+    params.append('search', search)
   }
-  return orgId
+
+  const url = params.toString() ? `/team/members?${params}` : '/team/members'
+  return apiClient.get<TeamMember[]>(url)
 }
 
-export const getOrganizationUsers = async (
-  params?: OrganizationUserQueryParams,
-): Promise<OrganizationUserResponse> => {
-  const organizationId = getOrganizationId()
-  const searchParams = new URLSearchParams()
-
-  if (params?.page) searchParams.set('page', params.page.toString())
-  if (params?.limit) searchParams.set('limit', params.limit.toString())
-  if (params?.sort) searchParams.set('sort', params.sort)
-  if (params?.order) searchParams.set('order', params.order)
-  if (params?.search) searchParams.set('search', params.search)
-  if (params?.status) searchParams.set('status', params.status)
-
-  const queryString = searchParams.toString()
-  const url = `/organizations/${organizationId}/users${queryString ? `?${queryString}` : ''}`
-
-  const response = await apiClient.get<OrganizationUserResponse>(url)
-  return response
+/**
+ * Update team member permission tier
+ */
+export const updateMemberPermissions = async (
+  userId: string,
+  data: UpdateTeamMemberPermissions,
+) => {
+  return apiClient.patch<TeamMember>(`/team/members/${userId}/permissions`, data)
 }
 
-export const createOrganizationUser = async (
-  user: CreateOrganizationUserRequest,
-): Promise<OrganizationUser> => {
-  const organizationId = getOrganizationId()
-  const response = await apiClient.post<OrganizationUser>(
-    `/organizations/${organizationId}/users`,
-    user,
-  )
-  return response
-}
-
-export const updateOrganizationUser = async (
-  userId: number,
-  updates: UpdateOrganizationUserRequest,
-): Promise<OrganizationUser> => {
-  const organizationId = getOrganizationId()
-  const response = await apiClient.patch<OrganizationUser>(
-    `/organizations/${organizationId}/users/${userId}`,
-    updates,
-  )
-  return response
-}
-
-export const getOrganizationUser = async (userId: number): Promise<OrganizationUser> => {
-  const organizationId = getOrganizationId()
-  const response = await apiClient.get<OrganizationUser>(
-    `/organizations/${organizationId}/users/${userId}`,
-  )
-  return response
-}
-
-export const disableOrganizationUser = async (userId: number): Promise<OrganizationUser> => {
-  return updateOrganizationUser(userId, { is_disabled: true })
-}
-
-export const enableOrganizationUser = async (userId: number): Promise<OrganizationUser> => {
-  return updateOrganizationUser(userId, { is_disabled: false })
+/**
+ * Reset team member password
+ */
+export const resetMemberPassword = async (userId: string) => {
+  return apiClient.post<TeamMemberPasswordReset>(`/team/members/${userId}/reset-password`)
 }

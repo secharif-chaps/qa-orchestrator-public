@@ -1,133 +1,39 @@
-import { ref } from 'vue'
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { 
-  createOrganizationUser, 
-  updateOrganizationUser, 
-  disableOrganizationUser, 
-  enableOrganizationUser 
-} from '@/api/team'
-import type { CreateOrganizationUserRequest, UpdateOrganizationUserRequest } from '@/types/team'
+import { updateMemberPermissions, resetMemberPassword } from '@/api/team'
 import { TEAM_QUERY_KEYS } from '@/queries/team'
-import { toast } from '@/utils/toast'
+import type { UpdateTeamMemberPermissions } from '@/types/team'
 
-export const useCreateOrganizationUser = defineMutation(() => {
-  const email = ref('')
-  const username = ref('')
-  const password = ref('')
-  const firstName = ref('')
-  const lastName = ref('')
-  const permissions = ref<string[]>([])
-
+/**
+ * Mutation to update team member permissions
+ */
+export const useUpdateMemberPermissions = defineMutation(() => {
   const queryCache = useQueryCache()
 
   const { mutate, ...mutation } = useMutation({
-    mutation: (user: CreateOrganizationUserRequest) => createOrganizationUser(user),
-    onSuccess: (newUser) => {
-      toast.success(`User "${newUser.first_name} ${newUser.last_name}" created successfully!`)
-
-      queryCache.invalidateQueries({ key: TEAM_QUERY_KEYS.users })
-
-      email.value = ''
-      username.value = ''
-      password.value = ''
-      firstName.value = ''
-      lastName.value = ''
-      permissions.value = []
-    },
-    onError: (error: any) => {
-      const errorMessage = error?.message || 'Failed to create user'
-      toast.error(errorMessage)
-    },
-  })
-
-  const createUserWithForm = () => {
-    if (!email.value.trim() || !username.value.trim() || !password.value.trim() || !firstName.value.trim() || !lastName.value.trim()) {
-      throw new Error('All fields are required')
-    }
-
-    return mutate({
-      email: email.value.trim(),
-      username: username.value.trim(),
-      password: password.value.trim(),
-      first_name: firstName.value.trim(),
-      last_name: lastName.value.trim(),
-      permissions: permissions.value,
-    })
-  }
-
-  return {
-    ...mutation,
-    email,
-    username,
-    password,
-    firstName,
-    lastName,
-    permissions,
-    createUser: createUserWithForm,
-    mutate,
-  }
-})
-
-export const useUpdateOrganizationUser = defineMutation(() => {
-  const queryCache = useQueryCache()
-
-  const { mutate, ...mutation } = useMutation({
-    mutation: ({ userId, updates }: { userId: number; updates: UpdateOrganizationUserRequest }) =>
-      updateOrganizationUser(userId, updates),
-    onSuccess: (updatedUser, { userId }) => {
-      toast.success(`User "${updatedUser.first_name} ${updatedUser.last_name}" updated successfully!`)
-
-      queryCache.invalidateQueries({ key: TEAM_QUERY_KEYS.user(userId) })
-      queryCache.invalidateQueries({ key: TEAM_QUERY_KEYS.users })
-    },
-    onError: (error: any) => {
-      const errorMessage = error?.message || 'Failed to update user'
-      toast.error(errorMessage)
+    mutation: ({ userId, data }: { userId: string; data: UpdateTeamMemberPermissions }) =>
+      updateMemberPermissions(userId, data),
+    onSuccess: () => {
+      // Invalidate all team queries to refresh the list
+      queryCache.invalidateQueries({ key: TEAM_QUERY_KEYS.root })
     },
   })
 
   return {
     ...mutation,
-    updateUser: mutate,
+    updatePermissions: mutate,
   }
 })
 
-export const useToggleOrganizationUser = defineMutation(() => {
-  const queryCache = useQueryCache()
-
-  const { mutate: disable, ...disableMutation } = useMutation({
-    mutation: (userId: number) => disableOrganizationUser(userId),
-    onSuccess: (updatedUser) => {
-      toast.success(`User "${updatedUser.first_name} ${updatedUser.last_name}" has been disabled`)
-      
-      queryCache.invalidateQueries({ key: TEAM_QUERY_KEYS.user(updatedUser.id) })
-      queryCache.invalidateQueries({ key: TEAM_QUERY_KEYS.users })
-    },
-    onError: (error: any) => {
-      const errorMessage = error?.message || 'Failed to disable user'
-      toast.error(errorMessage)
-    },
-  })
-
-  const { mutate: enable, ...enableMutation } = useMutation({
-    mutation: (userId: number) => enableOrganizationUser(userId),
-    onSuccess: (updatedUser) => {
-      toast.success(`User "${updatedUser.first_name} ${updatedUser.last_name}" has been enabled`)
-      
-      queryCache.invalidateQueries({ key: TEAM_QUERY_KEYS.user(updatedUser.id) })
-      queryCache.invalidateQueries({ key: TEAM_QUERY_KEYS.users })
-    },
-    onError: (error: any) => {
-      const errorMessage = error?.message || 'Failed to enable user'
-      toast.error(errorMessage)
-    },
+/**
+ * Mutation to reset team member password
+ */
+export const useResetMemberPassword = defineMutation(() => {
+  const { mutate, ...mutation } = useMutation({
+    mutation: (userId: string) => resetMemberPassword(userId),
   })
 
   return {
-    disableUser: disable,
-    enableUser: enable,
-    isDisabling: disableMutation.isLoading,
-    isEnabling: enableMutation.isLoading,
-    isLoading: disableMutation.isLoading.value || enableMutation.isLoading.value,
+    ...mutation,
+    resetPassword: mutate,
   }
 })
