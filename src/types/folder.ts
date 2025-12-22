@@ -44,6 +44,7 @@ export interface Folder {
 
   // Sharing-related fields (added for private folders feature)
   owner_id: string // Keycloak user UUID of the folder owner
+  owner_username: string // Username of the folder owner (for global view)
   is_owner: boolean // Whether the current user is the folder owner
   share_role?: ShareRole | null // Current user's share role (null if owner)
 

@@ -32,6 +32,7 @@ export const getFolders = async (filters: {
   name: string
   archived?: boolean
   favorites?: boolean
+  include_all?: boolean
 }) => {
   const params = new URLSearchParams({
     page: filters.page.toString(),
@@ -50,6 +51,10 @@ export const getFolders = async (filters: {
     params.append('favorites', 'true')
   }
 
+  if (filters.include_all) {
+    params.append('include_all', 'true')
+  }
+
   const response = await apiClient.get<PaginatedResponse<Folder>>(
     `/folders/?${params.toString()}`,
   )
@@ -62,6 +67,7 @@ export const getFoldersWithItems = async (filters: {
   name: string
   archived?: boolean
   favorites?: boolean
+  include_all?: boolean
 }) => {
   const params = new URLSearchParams({
     page: filters.page.toString(),
@@ -79,6 +85,10 @@ export const getFoldersWithItems = async (filters: {
 
   if (filters.favorites) {
     params.append('favorites', 'true')
+  }
+
+  if (filters.include_all) {
+    params.append('include_all', 'true')
   }
 
   const response = await apiClient.get<PaginatedResponse<Folder>>(
