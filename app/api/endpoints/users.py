@@ -12,6 +12,11 @@ from pydantic import BaseModel, field_validator
 from app.core.keycloak import idp
 from app.core.config import settings
 from app.services.keycloak_admin import keycloak_admin_service
+from app.services.user_import import import_users_bulk
+from app.schemas.user_import import (
+    BulkUserImportRequest,
+    BulkUserImportResponse,
+)
 from app.core.logging_config import get_logger
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -725,4 +730,91 @@ async def reset_user_password(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to reset user password: {str(e)}"
+        )
+
+
+@router.post("/import", response_model=BulkUserImportResponse)
+async def bulk_import_users(
+    request: BulkUserImportRequest,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+):
+    """Bulk import users from CSV/Excel data.
+
+    This endpoint allows administrators to import multiple users at once.
+    Users are created in Keycloak with temporary passwords (must change on first login),
+    assigned to the specified organization, and granted organization.read permission.
+
+    Requires admin.organizations role for access.
+
+    Features:
+    - Supports up to 100 users per import
+    - Duplicate detection (email and username) against existing users
+    - Duplicate detection within the import file itself
+    - Partial success supported (some rows can fail while others succeed)
+    - Optional password generation for users without passwords in CSV
+
+    Args:
+        request: Bulk import request containing:
+            - organization_id: Target Keycloak organization UUID
+            - users: List of user rows (max 100)
+            - generate_passwords: Whether to generate passwords for users without one
+
+    Returns:
+        BulkUserImportResponse with:
+            - success_count: Number of successfully imported users
+            - error_count: Number of failed imports
+            - total_count: Total number of users in request
+            - results: Detailed result per row including:
+                - success/failure status
+                - error message if failed
+                - generated password if applicable
+
+    Raises:
+        HTTPException 400: If validation fails (empty users, invalid data)
+        HTTPException 403: If caller lacks admin.organizations role
+        HTTPException 404: If target organization not found
+        HTTPException 500: If Keycloak API call fails
+    """
+    logger.info(
+        "Bulk user import request received",
+        extra={
+            "admin_user": user.preferred_username,
+            "organization_id": request.organization_id,
+            "user_count": len(request.users),
+            "generate_passwords": request.generate_passwords,
+        }
+    )
+
+    try:
+        result = await import_users_bulk(
+            request=request,
+            admin_username=user.preferred_username,
+        )
+
+        logger.info(
+            "Bulk user import completed",
+            extra={
+                "admin_user": user.preferred_username,
+                "organization_id": request.organization_id,
+                "success_count": result.success_count,
+                "error_count": result.error_count,
+            }
+        )
+
+        return result
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            "Unexpected error during bulk user import",
+            exc_info=e,
+            extra={
+                "admin_user": user.preferred_username,
+                "organization_id": request.organization_id,
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to import users: {str(e)}"
         )
