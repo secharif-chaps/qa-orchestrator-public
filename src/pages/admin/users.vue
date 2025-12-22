@@ -12,6 +12,12 @@
             {{ $t('admin.users.description', 'Manage user organization assignments') }}
           </p>
         </div>
+        <Button
+          variant="secondary"
+          icon="fa fa-file-import"
+          :label="$t('admin.import.title', 'Import Users')"
+          @click="router.push('/admin/users/import')"
+        />
       </div>
 
       <!-- Filters -->
@@ -113,8 +119,9 @@ meta:
 
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useQuery } from '@pinia/colada'
-import { Alert } from '@owlint/feathers-vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import UserFilters from '@/components/admin/UserFilters.vue'
 import UsersTable from '@/components/admin/UsersTable.vue'
@@ -128,6 +135,8 @@ import UserOrganizationModal from '@/components/admin/UserOrganizationModal.vue'
 import RolePermissionsModal from '@/components/admin/RolePermissionsModal.vue'
 import DisableUserModal from '@/components/admin/DisableUserModal.vue'
 import ResetPasswordModal from '@/components/admin/ResetPasswordModal.vue'
+
+const router = useRouter()
 
 // Query parameters state
 const queryParams = reactive<AdminUserQueryParams>({

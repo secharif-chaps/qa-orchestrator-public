@@ -11,12 +11,20 @@
             {{ $t('organization.membersDescription', 'Manage users in this organization') }}
           </p>
         </div>
-        <Button
-          variant="primary"
-          icon="fa fa-user-plus"
-          :label="$t('user.create.button', 'Add User')"
-          @click="showCreateUserModal = true"
-        />
+        <div class="flex gap-2">
+          <Button
+            variant="secondary"
+            icon="fa fa-file-import"
+            :label="$t('admin.import.title', 'Import Users')"
+            @click="navigateToImport"
+          />
+          <Button
+            variant="primary"
+            icon="fa fa-user-plus"
+            :label="$t('user.create.button', 'Add User')"
+            @click="showCreateUserModal = true"
+          />
+        </div>
       </div>
 
       <!-- Users Loading State -->
@@ -121,6 +129,7 @@
 
 <script setup lang="ts">
 import { computed, reactive, ref, inject, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { Alert, Button, Pagination } from '@owlint/feathers-vue'
 
@@ -143,8 +152,17 @@ import { useAssignUserOrganization, useUpdateUserPermissions } from '@/mutations
 import type { AdminUserResponse, AdminUserQueryParams } from '@/types/admin-user'
 import type { OrganizationUserCreate } from '@/types/user'
 
+const router = useRouter()
+
 // Inject organization ID from parent layout
 const organizationId = inject<ReturnType<typeof computed<string>>>('organizationId')
+
+// Navigate to import page (single import page with org pre-selected via query param)
+function navigateToImport(): void {
+  if (organizationId?.value) {
+    router.push(`/admin/users/import?organizationId=${organizationId.value}`)
+  }
+}
 
 // Query parameters state for users
 const queryParams = reactive<AdminUserQueryParams>({
