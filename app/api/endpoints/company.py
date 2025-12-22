@@ -10,10 +10,12 @@ This module provides endpoints for:
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi_keycloak import OIDCUser
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_company_service, get_token_manager
+from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.organization import OrganizationContext, get_user_organization
 from app.core.security import (
@@ -112,12 +114,14 @@ async def get_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     db: Session = Depends(get_db),
 ):
     """Get a company by ID (only if user has access via folder sharing).
 
     Access is granted if the company belongs to at least one folder that
     the user owns or has been shared with.
+    Managers (organization.manage or admin.organizations) can access all companies.
     """
     try:
         logger.info(
@@ -136,15 +140,19 @@ async def get_company(
         verify_company_organization_access(company, org_context)
 
         # Check folder-based access control
+        # Managers (organization.manage or admin.organizations) can access all companies
+        user_roles = user.realm_access.get('roles', [])
         if not FolderService.user_has_company_access(
             db,
             company_id,
             org_context.user_id,
             org_context.organization_id,
             username=org_context.username,
+            user_roles=user_roles
         ):
             logger.warning(
-                f"User {org_context.username} does not have folder access to company {company_id}"
+                f"User {org_context.username} does not have folder access to company {company_id}",
+                extra={"user_roles": user_roles}
             )
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Company not found"

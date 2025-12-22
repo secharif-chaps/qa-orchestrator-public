@@ -325,15 +325,19 @@ def get_folder(
     )
 
     # Check access - returns 404 for security (not 403)
+    # Managers (organization.manage or admin.organizations) can access all folders
+    user_roles = user.realm_access.get('roles', [])
     if not FolderService.has_folder_access(
         db, folder_id, org_context.user_id, org_context.organization_id,
-        username=org_context.username
+        username=org_context.username,
+        user_roles=user_roles
     ):
         logger.warning(
             "Folder not found or no access",
             extra={
                 "folder_id": str(folder_id),
-                "user_id": org_context.user_id
+                "user_id": org_context.user_id,
+                "user_roles": user_roles
             }
         )
         raise HTTPException(
