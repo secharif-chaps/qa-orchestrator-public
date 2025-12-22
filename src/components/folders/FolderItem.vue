@@ -227,6 +227,8 @@ const folderColorClasses = computed(() => {
     sky: 'bg-sky-100 dark:bg-sky-400/20 text-sky-600 dark:text-sky-400',
     indigo: 'bg-indigo-100 dark:bg-indigo-400/20 text-indigo-600 dark:text-indigo-400',
     violet: 'bg-violet-100 dark:bg-violet-400/20 text-violet-600 dark:text-violet-400',
+    amber: 'bg-amber-100 dark:bg-amber-400/20 text-amber-600 dark:text-amber-400',
+    lime: 'bg-lime-100 dark:bg-lime-400/20 text-lime-600 dark:text-lime-400',
   }
   return colorMap[color] || colorMap.blue
 })
