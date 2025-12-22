@@ -139,19 +139,11 @@ const addCardBackground = (slide, options = {}) => {
     w: 9.0,
     h: 4.5,
     fill: { color: COLORS.cardBackground },
-    lineSize: 0,
-    rounded: true,
-    shadow: {
-      type: 'outer',
-      angle: 45,
-      blur: 3,
-      offset: 2,
-      color: 'COCOCO',
-      opacity: 0.2,
-    },
+    line: { type: 'none' },
+    rectRadius: 0.1, // Rounding radius (0-1) for rounded rectangles
   }
 
-  slide.addShape('ROUNDED_RECTANGLE', { ...defaultOptions, ...options })
+  slide.addShape('roundRect', { ...defaultOptions, ...options })
 }
 
 // Function to add slide title
@@ -637,22 +629,14 @@ const createTitleSlide = (pptx, company: Company) => {
   slide.background = { color: COLORS.background }
 
   // Create card background with different dimensions
-  slide.addShape('ROUNDED_RECTANGLE', {
+  slide.addShape('roundRect', {
     x: 0.5,
     y: 1.5,
     w: 9.0,
     h: 3.0,
     fill: { color: COLORS.cardBackground },
-    lineSize: 0,
-    rounded: true,
-    shadow: {
-      type: 'outer',
-      angle: 45,
-      blur: 3,
-      offset: 2,
-      color: 'COCOCO',
-      opacity: 0.2,
-    },
+    line: { type: 'none' },
+    rectRadius: 0.1, // Rounding radius (0-1) for rounded rectangles
   })
 
   // Add company name in large font as main title
