@@ -3,11 +3,12 @@
  */
 
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { assignUserOrganization, updateUserPermissions } from '@/api/admin-users'
+import { assignUserOrganization, updateUserPermissions, resetUserPassword } from '@/api/admin-users'
 import { ADMIN_USER_QUERY_KEYS } from '@/queries/admin-users'
 import { ORGANIZATION_QUERY_KEYS } from '@/queries/organization-admin'
 import { toast } from '@/utils/toast'
 import { useAuthStore } from '@/stores/auth'
+import type { ResetPasswordResponse } from '@/api/admin-users'
 
 /**
  * Mutation to assign a user to an organization or change their organization
@@ -82,5 +83,28 @@ export const useUpdateUserPermissions = defineMutation(() => {
   return {
     ...mutation,
     updatePermissions: mutate,
+  }
+})
+
+/**
+ * Mutation to reset user password by setting a new temporary password
+ */
+export const useResetUserPassword = defineMutation(() => {
+  const { mutate, mutateAsync, ...mutation } = useMutation({
+    mutation: ({ userId, temporaryPassword }: { userId: string; temporaryPassword: string }) =>
+      resetUserPassword(userId, temporaryPassword),
+    onSuccess: () => {
+      toast.success('Password reset successfully!')
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.message || 'Failed to reset password'
+      toast.error(errorMessage)
+    },
+  })
+
+  return {
+    ...mutation,
+    resetPassword: mutate,
+    resetPasswordAsync: mutateAsync,
   }
 })

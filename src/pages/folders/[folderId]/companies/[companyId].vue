@@ -22,7 +22,12 @@
             class="w-full h-full rounded-none"
           />
         </div>
-        <h1 class="text-2xl font-bold">{{ company?.name }}</h1>
+        <div class="flex flex-col gap-1">
+          <h1 class="text-2xl font-bold">{{ company?.name }}</h1>
+          <span v-if="company?.created_at" class="text-sm text-secondary">
+            {{ t('company.createdAt') }} {{ formatDate(company.created_at) }}
+          </span>
+        </div>
       </div>
       <div class="flex items-center gap-2">
         <Button
@@ -72,7 +77,7 @@ import Export from '@/components/company/Export.vue'
 
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 
 const companyId = computed(() => (route.params as { companyId: string }).companyId)
@@ -146,5 +151,12 @@ const getCompanyDomain = (website?: string) => {
   } catch {
     return null
   }
+}
+
+// Helper function to format date
+function formatDate(dateString: string): string {
+  if (!dateString) return t('common.na')
+  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+  return new Date(dateString).toLocaleDateString(localeCode)
 }
 </script>

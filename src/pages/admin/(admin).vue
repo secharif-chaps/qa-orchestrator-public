@@ -142,24 +142,6 @@ const features: AdminFeature[] = [
     navigate: () => router.push('/admin/users'),
   },
   {
-    id: 'ui-demo',
-    titleKey: 'admin.features.uiDemo.title',
-    titleDefault: 'UI Components Demo',
-    descriptionKey: 'admin.features.uiDemo.description',
-    descriptionDefault: 'Preview and test all UI components and design system',
-    icon: 'fa fa-palette',
-    iconBgColor: 'bg-teal-500/10',
-    iconTextColor: 'text-teal-500',
-    iconHoverBgColor: 'group-hover:bg-teal-500/20',
-    ringColor: 'ring-teal-500/50',
-    badgeVariant: 'teal',
-    badgeLabel: 'Developer Tool',
-    actionKey: 'admin.features.explore',
-    actionDefault: 'Explore',
-    actionTextColor: 'text-teal-500',
-    navigate: () => router.push('/ui-demo'),
-  },
-  {
     id: 'workflows',
     titleKey: 'admin.features.workflows.title',
     titleDefault: 'Workflow Management',
@@ -206,5 +188,4 @@ const visibleFeatures = computed(() => {
 })
 
 const hasAnyAdminAccess = computed(() => visibleFeatures.value.length > 0)
-const hasorganizationAccess = computed(() => authStore.hasPermission('admin.organizations'))
 </script>

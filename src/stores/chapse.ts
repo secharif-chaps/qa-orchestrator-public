@@ -21,6 +21,56 @@ export interface ChatMessage {
   role: 'user' | 'assistant'
   timestamp: number
   isStreaming?: boolean
+  // Smart action metadata - when message is triggered by a quick action
+  isSmartAction?: boolean
+  smartActionLabel?: string
+  smartActionIcon?: string
+}
+
+// Marker prefix for smart action messages (stored in content for persistence)
+export const SMART_ACTION_MARKER_PREFIX = '<!--SMART_ACTION:'
+export const SMART_ACTION_MARKER_SUFFIX = '-->'
+
+/**
+ * Parse smart action metadata from message content if present
+ * Returns the metadata and the clean content without the marker
+ */
+export function parseSmartActionMarker(content: string): {
+  isSmartAction: boolean
+  label?: string
+  icon?: string
+  cleanContent: string
+} {
+  if (!content.startsWith(SMART_ACTION_MARKER_PREFIX)) {
+    return { isSmartAction: false, cleanContent: content }
+  }
+
+  const markerEndIndex = content.indexOf(SMART_ACTION_MARKER_SUFFIX)
+  if (markerEndIndex === -1) {
+    return { isSmartAction: false, cleanContent: content }
+  }
+
+  try {
+    const jsonStr = content.slice(SMART_ACTION_MARKER_PREFIX.length, markerEndIndex)
+    const metadata = JSON.parse(jsonStr)
+    const cleanContent = content.slice(markerEndIndex + SMART_ACTION_MARKER_SUFFIX.length).trim()
+
+    return {
+      isSmartAction: true,
+      label: metadata.label,
+      icon: metadata.icon,
+      cleanContent,
+    }
+  } catch {
+    return { isSmartAction: false, cleanContent: content }
+  }
+}
+
+/**
+ * Build a smart action marker to prefix message content
+ */
+export function buildSmartActionMarker(label: string, icon: string): string {
+  return `${SMART_ACTION_MARKER_PREFIX}${JSON.stringify({ label, icon })}${SMART_ACTION_MARKER_SUFFIX}\n`
 }
 
 export interface CompanyContext {
@@ -80,13 +130,22 @@ export const useChapseStore = defineStore('chapse', () => {
   // Message Actions
   // =========================================================================
 
-  function addUserMessage(content: string): string {
+  interface SmartActionMetadata {
+    label: string
+    icon: string
+  }
+
+  function addUserMessage(content: string, smartAction?: SmartActionMetadata): string {
     const messageId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     messages.value.push({
       id: messageId,
       content,
       role: 'user',
       timestamp: Date.now(),
+      // Add smart action metadata if provided
+      isSmartAction: !!smartAction,
+      smartActionLabel: smartAction?.label,
+      smartActionIcon: smartAction?.icon,
     })
     return messageId
   }
@@ -245,12 +304,19 @@ export const useChapseStore = defineStore('chapse', () => {
     // Convert API messages to chat messages
     // API messages contain both query and answer in single object
     for (const msg of apiMessages) {
+      // Parse smart action marker from query if present
+      const parsed = parseSmartActionMarker(msg.query)
+
       // Add user message
       messages.value.push({
         id: `user_${msg.id}`,
         content: msg.query,
         role: 'user',
         timestamp: msg.created_at * 1000,
+        // Add smart action metadata if detected
+        isSmartAction: parsed.isSmartAction,
+        smartActionLabel: parsed.label,
+        smartActionIcon: parsed.icon,
       })
 
       // Add assistant message

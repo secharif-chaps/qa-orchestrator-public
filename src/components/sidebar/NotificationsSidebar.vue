@@ -66,7 +66,11 @@
     </div>
 
     <!-- Footer Actions -->
-    <div class="border-t border-sage-800 px-4 py-3 flex justify-center">
+    <!--
+      Temporarily disabled: "View all notifications" button causes 404 error
+      TODO: Re-enable once /notifications page is implemented
+    -->
+    <!-- <div class="border-t border-sage-800 px-4 py-3 flex justify-center">
       <Button
         variant="tertiary"
         size="sm"
@@ -74,7 +78,7 @@
         icon-right="fa fa-arrow-right"
         @click="$router.push('/notifications')"
       />
-    </div>
+    </div> -->
   </div>
 </template>
 

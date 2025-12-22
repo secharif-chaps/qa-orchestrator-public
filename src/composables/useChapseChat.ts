@@ -57,7 +57,12 @@ export function useChapseChat() {
   // Send Message
   // =========================================================================
 
-  async function sendMessage(content: string): Promise<void> {
+  interface SmartActionOptions {
+    label: string
+    icon: string
+  }
+
+  async function sendMessage(content: string, smartAction?: SmartActionOptions): Promise<void> {
     if (!content.trim() || store.isLoading || store.isStreaming) return
 
     const accessToken = authStore.accessToken
@@ -69,8 +74,8 @@ export function useChapseChat() {
     store.setError(null)
     store.setLoading(true)
 
-    // Add user message to store
-    store.addUserMessage(content.trim())
+    // Add user message to store with optional smart action metadata
+    store.addUserMessage(content.trim(), smartAction)
 
     // Create streaming assistant message
     store.addAssistantMessage('', true)
@@ -103,7 +108,19 @@ export function useChapseChat() {
 
       // If this was a new conversation, update the store
       if (newConversationId && !store.currentConversationId) {
-        store.setCurrentConversation(newConversationId, '')
+        // For smart actions, use the action label as the conversation name
+        // This prevents the marker from showing in the title
+        const conversationName = smartAction?.label || ''
+        store.setCurrentConversation(newConversationId, conversationName)
+
+        // Rename the conversation if it's a smart action (to override Dify's auto-generated name)
+        if (smartAction?.label) {
+          try {
+            await apiRenameConversation(newConversationId, smartAction.label)
+          } catch (err) {
+            console.error('Failed to rename smart action conversation:', err)
+          }
+        }
 
         // Save company context for new conversation
         if (store.companyIds.length > 0) {
@@ -118,7 +135,7 @@ export function useChapseChat() {
         // This provides instant feedback without waiting for a refresh
         const newConversation = {
           id: newConversationId,
-          name: '', // Name will be empty until auto-generated
+          name: conversationName, // Use smart action label if available
           created_at: Math.floor(Date.now() / 1000),
           updated_at: Math.floor(Date.now() / 1000),
           company_ids: store.companyIds,

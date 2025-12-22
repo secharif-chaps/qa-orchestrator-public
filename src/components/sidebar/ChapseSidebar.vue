@@ -140,7 +140,7 @@ import { useRoute } from 'vue-router'
 import { useChapseChat, type CompanyContext } from '@/composables/useChapseChat'
 import { useChapseContext } from '@/composables/useChapseContext'
 import { useSidebarStore } from '@/stores/sidebar'
-import { useChapseStore } from '@/stores/chapse'
+import { useChapseStore, buildSmartActionMarker } from '@/stores/chapse'
 import ChatMessage from '@/components/chapse/ChatMessage.vue'
 import ChatInput from '@/components/chapse/ChatInput.vue'
 import ConversationList from '@/components/chapse/ConversationList.vue'
@@ -159,6 +159,7 @@ interface AssistActionData {
     id: string
     label: string
     description: string
+    icon: string
   }
   user_preferences: {
     role: string
@@ -214,12 +215,11 @@ async function processAssistAction(actionData: AssistActionData): Promise<void> 
       console.warn('Could not fetch company for context:', err)
     }
 
-    // Build the assist action message
-    // Include the action description and user preferences for context
-    const message = buildAssistActionMessage(actionData)
+    // Build the assist action message with marker prefix for persistence
+    const { message, label, icon } = buildAssistActionMessage(actionData)
 
-    // Send the message
-    await sendMessage(message)
+    // Send the message with smart action metadata for special rendering
+    await sendMessage(message, { label, icon })
 
     console.log('✅ Assist action processed successfully')
   } catch (err) {
@@ -231,8 +231,13 @@ async function processAssistAction(actionData: AssistActionData): Promise<void> 
 /**
  * Build a message from the assist action data
  * This constructs a prompt that includes user preferences as context
+ * Returns the full message (with marker prefix for persistence), label, and icon
  */
-function buildAssistActionMessage(actionData: AssistActionData): string {
+function buildAssistActionMessage(actionData: AssistActionData): {
+  message: string
+  label: string
+  icon: string
+} {
   const { action, user_preferences } = actionData
 
   // Build a structured message that the AI can understand
@@ -256,7 +261,17 @@ function buildAssistActionMessage(actionData: AssistActionData): string {
     'Merci de répondre à cette demande en tenant compte de mon profil et de mes préférences.',
   )
 
-  return parts.join('\n')
+  const promptContent = parts.join('\n')
+
+  // Get icon from action data, with a fallback
+  const icon = action.icon || 'fa-solid fa-wand-magic-sparkles'
+
+  // Build the message with marker prefix for persistence
+  // The marker allows us to detect smart action messages when loading from history
+  const marker = buildSmartActionMarker(action.label, icon)
+  const message = marker + promptContent
+
+  return { message, label: action.label, icon }
 }
 
 // Stores
