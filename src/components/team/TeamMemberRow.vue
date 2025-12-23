@@ -14,13 +14,7 @@
         <div class="flex-1 min-w-0">
           <div class="font-medium flex items-center gap-2">
             {{ memberDisplayName }}
-            <Tag
-              v-if="member.is_current_user"
-              variant="primary"
-              label="You"
-              size="xs"
-              rounded
-            />
+            <Tag v-if="member.is_current_user" variant="primary" :label="t('settings.team.you', 'You')" size="xs" rounded />
           </div>
           <div class="text-sm text-secondary">@{{ member.username }}</div>
         </div>
@@ -40,18 +34,21 @@
               class="flex items-center justify-between w-full px-3 py-2 text-sm border border-base-300 rounded-lg bg-base-100 hover:bg-base-200 transition-colors min-w-48"
               :class="{
                 'ring-2 ring-primary': isOpen,
-                'opacity-50 cursor-not-allowed': !canManage
+                'opacity-50 cursor-not-allowed': !canManage,
               }"
               :disabled="!canManage"
             >
               <span v-if="selectedTier" class="flex items-center gap-2">
                 <i :class="getPermissionIcon(selectedTier)" class="text-sm"></i>
-                {{ permissionOptions.find(p => p.value === selectedTier)?.label }}
+                {{ permissionOptions.find((p) => p.value === selectedTier)?.label }}
               </span>
               <span v-else class="text-secondary">
                 {{ t('settings.team.selectPermission', 'Select permission...') }}
               </span>
-              <i class="fa fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': isOpen }"></i>
+              <i
+                class="fa fa-chevron-down text-xs transition-transform"
+                :class="{ 'rotate-180': isOpen }"
+              ></i>
             </button>
           </template>
 
@@ -93,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, type ComputedRef } from 'vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import { Tag, Button } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
@@ -111,20 +108,11 @@ const emit = defineEmits<{
   'reset-password': [member: TeamMember]
 }>()
 
-// Track selected tier locally
-const selectedTier = ref<PermissionTier>(props.member.permission_tier)
-
-// Watch for changes in the member's permission tier (from external updates)
-watch(
-  () => props.member.permission_tier,
-  (newTier) => {
-    selectedTier.value = newTier
-  }
-)
+// Computed property that always reflects the member's current permission tier
+const selectedTier = computed(() => props.member.permission_tier)
 
 // Function to handle permission selection
 function selectPermission(tier: PermissionTier, closeDropdown: () => void) {
-  selectedTier.value = tier
   emit('update-permissions', props.member.id, tier)
   closeDropdown()
 }
@@ -153,7 +141,9 @@ const memberDisplayName = computed(() => {
   return props.member.username
 })
 
-const permissionOptions = computed(() => [
+const permissionOptions: ComputedRef<
+  { value: PermissionTier; label: string; description: string }[]
+> = computed(() => [
   {
     value: 'reader',
     label: t('settings.team.permissions.reader', 'Reader'),
