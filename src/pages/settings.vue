@@ -95,8 +95,8 @@ const sections = computed(() => [
     title: t('settings.tabs.team', 'Team Management'),
     description: t('settings.team.cardDescription', 'Manage team members and permissions'),
     icon: 'fas fa-users',
-    bgColor: 'bg-secondary-light',
-    iconColor: 'text-secondary-light-content',
+    bgColor: 'bg-warning-light',
+    iconColor: 'text-warning-light-content',
   },
 ])
 

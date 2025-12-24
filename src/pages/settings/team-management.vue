@@ -80,9 +80,8 @@
           </div>
         </div>
 
-        <!-- Password Reset Modal -->
         <ResetPasswordModal
-          v-if="showPasswordModal"
+          v-if="showPasswordModal && canManageTeam"
           :temporary-password="tempPassword"
           :member="selectedMember!"
           @close="closePasswordModal"
