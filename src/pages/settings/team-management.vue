@@ -8,7 +8,7 @@
         </p>
       </div>
 
-      <div class="max-w-md w-full">
+      <div class="max-w-md min-w-xs w-full">
         <Input
           v-model="searchQuery"
           id="searchPlaceholder"
@@ -56,18 +56,14 @@
         </div>
 
         <!-- Team Members Table -->
-        <div v-else class="bg-base-100 overflow-visible">
+        <div v-else class="bg-base-100 rounded-lg border border-primary-stroke overflow-visible">
           <!-- Table Header -->
           <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
             <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
               <div class="col-span-4">{{ t('settings.team.table.member', 'Member') }}</div>
               <div class="col-span-3">{{ t('settings.team.table.email', 'Email') }}</div>
-              <div class="col-span-3">
-                {{ t('settings.team.table.permissions', 'Permissions') }}
-              </div>
-              <div class="col-span-2 text-right">
-                {{ t('settings.team.table.actions', 'Actions') }}
-              </div>
+              <div class="col-span-3">{{ t('settings.team.table.permissions', 'Permissions') }}</div>
+              <div class="col-span-2 text-right">{{ t('settings.team.table.actions', 'Actions') }}</div>
             </div>
           </div>
 
@@ -86,7 +82,7 @@
 
         <!-- Password Reset Modal -->
         <ResetPasswordModal
-          v-if="showPasswordModal && selectedMember?.permission_tier == 'manager'"
+          v-if="showPasswordModal"
           :temporary-password="tempPassword"
           :member="selectedMember!"
           @close="closePasswordModal"

@@ -1,10 +1,10 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { updateMemberPermissions, resetMemberPassword } from '@/api/team'
 import { TEAM_QUERY_KEYS } from '@/queries/team'
-import type { UpdateTeamMemberPermissions } from '@/types/team'
+import type { UpdateTeamMemberPermissions, TeamMember } from '@/types/team'
 
 /**
- * Mutation to update team member permissions
+ * Mutation to update team member permissions with optimistic UI updates
  */
 export const useUpdateMemberPermissions = defineMutation(() => {
   const queryCache = useQueryCache()
@@ -12,9 +12,65 @@ export const useUpdateMemberPermissions = defineMutation(() => {
   const { mutate, ...mutation } = useMutation({
     mutation: ({ userId, data }: { userId: string; data: UpdateTeamMemberPermissions }) =>
       updateMemberPermissions(userId, data),
-    onSuccess: () => {
-      // Invalidate all team queries to refresh the list
-      queryCache.invalidateQueries({ key: TEAM_QUERY_KEYS.root })
+    onMutate: async ({ userId, data }) => {
+      // Cancel any outgoing refetches to avoid overwriting optimistic update
+      await queryCache.cancelQueries({ key: TEAM_QUERY_KEYS.root })
+
+      // Snapshot previous values for rollback
+      const previousData = new Map<string, TeamMember[]>()
+
+      // Helper function to update team members in cache
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const updateMembersInCache = (queryKey: any) => {
+        const cachedData = queryCache.getQueryData<TeamMember[]>(queryKey)
+        if (cachedData) {
+          // Store snapshot for rollback
+          previousData.set(JSON.stringify(queryKey), cachedData)
+
+          // Optimistically update the cache
+          const updatedData = cachedData.map((member: TeamMember) =>
+            member.id === userId
+              ? { ...member, permission_tier: data.permission_tier }
+              : member,
+          )
+
+          queryCache.setQueryData(queryKey, updatedData)
+        }
+      }
+
+      // Update members query without search
+      updateMembersInCache(TEAM_QUERY_KEYS.members(undefined))
+
+      // Update members query with empty search
+      updateMembersInCache(TEAM_QUERY_KEYS.members(''))
+
+      return { previousData }
+    },
+    onError: (_error, _variables, context) => {
+      // Rollback to previous state on error
+      if (context?.previousData) {
+        context.previousData.forEach((data, key) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          queryCache.setQueryData(JSON.parse(key) as any, data)
+        })
+      }
+    },
+    onSuccess: (updatedMember, { userId }) => {
+      // Helper function to update with server response
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const updateWithServerData = (queryKey: any) => {
+        const cachedData = queryCache.getQueryData<TeamMember[]>(queryKey)
+        if (cachedData) {
+          const updatedData = cachedData.map((member: TeamMember) =>
+            member.id === userId ? updatedMember : member,
+          )
+          queryCache.setQueryData(queryKey, updatedData)
+        }
+      }
+
+      // Update with server response for consistency
+      updateWithServerData(TEAM_QUERY_KEYS.members(undefined))
+      updateWithServerData(TEAM_QUERY_KEYS.members(''))
     },
   })
 

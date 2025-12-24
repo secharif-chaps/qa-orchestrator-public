@@ -238,21 +238,17 @@ export const useAuthStore = defineStore(
       }
     }
 
-    // Role checking utilities
-    const hasRole = (role: string): boolean => {
-      return userRoles.value.includes(role)
-    }
-
-    const hasAnyRole = (roles: string[]): boolean => {
-      return roles.some((role) => hasRole(role))
-    }
-
-    const hasAllRoles = (roles: string[]): boolean => {
-      return roles.every((role) => hasRole(role))
-    }
-
+    // Permission checking utilities
     const hasPermission = (permission: string): boolean => {
-      return hasRole(permission)
+      return userRoles.value.includes(permission)
+    }
+
+    const hasAnyPermission = (permissions: string[]): boolean => {
+      return permissions.some((permission) => hasPermission(permission))
+    }
+
+    const hasAllPermissions = (permissions: string[]): boolean => {
+      return permissions.every((permission) => hasPermission(permission))
     }
 
     // Initialize on store creation
@@ -287,11 +283,10 @@ export const useAuthStore = defineStore(
       getCurrentUsername,
       refreshToken,
 
-      // Role utilities
-      hasRole,
-      hasAnyRole,
-      hasAllRoles,
+      // Permission utilities
       hasPermission,
+      hasAnyPermission,
+      hasAllPermissions,
     }
   },
   {

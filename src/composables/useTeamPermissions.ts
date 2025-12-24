@@ -18,13 +18,10 @@ export const useTeamPermissions = () => {
 
   /**
    * Can manage team members (change permissions, reset passwords)
-   * Requires: organization.manage OR admin.organizations role
+   * Requires: organization.manage OR admin.organizations permission
    */
   const canManageTeam = computed(() => {
-    const hasOrgManage = authStore.hasPermission('organization.manage')
-    const hasAdminOrg = authStore.hasRole('admin.organizations')
-
-    return hasOrgManage || hasAdminOrg
+    return authStore.hasAnyPermission(['organization.manage', 'admin.organizations'])
   })
 
   return {
