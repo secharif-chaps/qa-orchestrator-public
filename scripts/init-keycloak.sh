@@ -240,6 +240,28 @@ else
     echo "⚠️  Browser flow not found, skipping authentication configuration"
 fi
 
+# Create organization.manage realm role if it doesn't exist
+echo "🔧 Creating organization.manage realm role..."
+REALM_ROLES=$(curl -sf "$KEYCLOAK_URL/admin/realms/$REALM/roles" \
+    -H "Authorization: Bearer $ADMIN_TOKEN")
+
+ORG_MANAGE_ROLE_EXISTS=$(echo "$REALM_ROLES" | jq '.[] | select(.name=="organization.manage")')
+
+if [ -z "$ORG_MANAGE_ROLE_EXISTS" ]; then
+    curl -sf -X POST "$KEYCLOAK_URL/admin/realms/$REALM/roles" \
+        -H "Authorization: Bearer $ADMIN_TOKEN" \
+        -H "Content-Type: application/json" \
+        -d '{
+            "name": "organization.manage",
+            "description": "Manage organization members and settings - grants access to team management features",
+            "composite": false,
+            "clientRole": false
+        }'
+    echo "✅ Created organization.manage role"
+else
+    echo "✅ organization.manage role already exists"
+fi
+
 # Create a default organization
 echo "🏢 Checking for default organization..."
 ORGS=$(curl -sf "$KEYCLOAK_URL/admin/realms/$REALM/organizations" \
