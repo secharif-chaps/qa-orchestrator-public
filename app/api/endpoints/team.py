@@ -186,7 +186,6 @@ async def update_member_permissions(
                 detail="Failed to update permissions in Keycloak",
             )
 
-        
         updated_user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
         updated_roles = [role['name'] for role in updated_user_roles] if updated_user_roles else []
 
