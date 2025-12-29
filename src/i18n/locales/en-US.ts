@@ -1775,18 +1775,24 @@ export default {
           label: 'Your Role',
           placeholder: 'e.g., Sales Representative, Marketing Manager, CEO',
           helper: 'What is your professional role?',
+          required: "Role is required",
+          tooLong: "Role must be less than 255 characters",
         },
         goals: {
           label: 'Your Goals',
           placeholder:
             'e.g., I want to identify which companies would benefit from our product and understand their pain points',
           helper: 'What are you trying to achieve when researching companies?',
+          required: "Goals are required",
+          tooLong: "Goals must be less than 2000 characters",
         },
         desiredOutput: {
           label: 'Desired Output Format',
           placeholder:
             'e.g., Generate personalized outreach emails highlighting pain points with specific company references',
           helper: 'How would you like the AI to format its recommendations?',
+          required: "Desired output is required",
+          tooLong: "Desired output must be less than 2000 characters",
         },
         documentation: {
           label: 'Product/Service Documentation',
@@ -1814,12 +1820,17 @@ export default {
         tip2: 'Describe your desired output format clearly to get better-formatted results',
         tip3: 'Include product details to receive more personalized and contextual suggestions',
       },
+      validation: {
+        formInvalid: "Please fix the errors in the form",
+      },
     },
     settings: {
       title: 'AI Assistant Preferences',
       description: 'Update your AI preferences to refine personalized recommendations',
       lastUpdated: 'Last updated: {date}',
       notConfigured: 'Not configured',
+      setUpDescription: 'Set up your AI preferences to enable personalized quick actions and recommendations.',
+      setUpButton: 'Set Up AI Preferences',
       actions: {
         edit: 'Edit Preferences',
         save: 'Save Changes',
@@ -1827,11 +1838,15 @@ export default {
       },
       success: {
         title: 'Updated Successfully',
-        message: 'Your AI preferences have been updated.',
+        message: 'Your AI preferences have been updated successfully.',
       },
       error: {
         title: 'Update Failed',
         message: 'Failed to update your preferences. Please try again.',
+      },
+      messages: {
+        loadError: "Failed to load your preferences. Please try again.",
+        authError: "You must be logged in to update AI preferences",
       },
     },
   },

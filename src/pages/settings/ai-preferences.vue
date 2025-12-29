@@ -19,13 +19,13 @@
             {{ $t('aiPreferences.settings.notConfigured') }}
           </h3>
           <p class="text-secondary">
-            Set up your AI preferences to enable personalized quick actions and recommendations.
+            {{ $t('aiPreferences.settings.setUpDescription') }}
           </p>
         </div>
         <Button
           variant="primary"
           icon="fa fa-magic"
-          label="Set Up AI Preferences"
+          :label="$t('aiPreferences.settings.setUpButton')"
           @click="goToSetup"
         />
       </div>
@@ -52,39 +52,58 @@
         />
 
         <!-- Goals Field -->
-        <Textarea
-          id="goals"
-          v-model="form.goals_text"
-          :label="$t('aiPreferences.setup.fields.goals.label')"
-          :placeholder="$t('aiPreferences.setup.fields.goals.placeholder')"
-          :error="errors.goals_text"
-          :maxlength="2000"
-          :rows="4"
-          required
-        />
+        <div class="relative flex flex-col" >
+          <label for="goals">
+            {{ $t('aiPreferences.setup.fields.goals.label') }}
+            <span class="text-warning ml-1">*</span>
+          </label>
+          <Textarea
+            id="goals"
+            v-model="form.goals_text"
+            :label="$t('aiPreferences.setup.fields.goals.label')"
+            :placeholder="$t('aiPreferences.setup.fields.goals.placeholder')"
+            :error="errors.goals_text"
+            :maxlength="2000"
+            :rows="4"
+            required
+          />
+        </div>
 
         <!-- Desired Output Field -->
-        <Textarea
-          id="desired-output"
-          v-model="form.desired_output_text"
-          :label="$t('aiPreferences.setup.fields.desiredOutput.label')"
-          :placeholder="$t('aiPreferences.setup.fields.desiredOutput.placeholder')"
-          :error="errors.desired_output_text"
-          :maxlength="2000"
-          :rows="4"
-          required
-        />
+        <div>
+          <label for="desiredOutput">
+            {{ $t('aiPreferences.setup.fields.desiredOutput.label') }}
+            <span class="text-warning ml-1">*</span>
+          </label>
+          <Textarea
+            id="desired-output"
+            v-model="form.desired_output_text"
+            :label="$t('aiPreferences.setup.fields.desiredOutput.label')"
+            :placeholder="$t('aiPreferences.setup.fields.desiredOutput.placeholder')"
+            :error="errors.desired_output_text"
+            :maxlength="2000"
+            :rows="4"
+            required
+          />
+        </div>
 
         <!-- Documentation Field (Optional) -->
-        <Textarea
-          id="documentation"
-          v-model="form.documentation_text"
-          :label="$t('aiPreferences.setup.fields.documentation.label')"
-          :placeholder="$t('aiPreferences.setup.fields.documentation.placeholder')"
-          :maxlength="5000"
-          :rows="4"
-        />
-
+        <div>
+          <label for="documentation">
+            {{ $t('aiPreferences.setup.fields.documentation.label') }}
+            <span class="text-sm font-normal text-secondary ml-2">({{
+              $t('aiPreferences.setup.optional')
+            }})</span>
+          </label>
+          <Textarea
+            id="documentation"
+            v-model="form.documentation_text"
+            :label="$t('aiPreferences.setup.fields.documentation.label')"
+            :placeholder="$t('aiPreferences.setup.fields.documentation.placeholder')"
+            :maxlength="5000"
+            :rows="4"
+          />
+        </div>
         <!-- Success Message -->
         <Alert
           v-if="successMessage"
@@ -121,11 +140,13 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { getAiPreferences, saveAiPreferences } from '@/api/ai-preferences'
 import { Input, Textarea, Button, Alert } from '@owlint/feathers-vue'
 import type { AiPreferencesCreate } from '@/types/ai-preferences'
 
 const router = useRouter()
+const { t } = useI18n()
 
 // Loading state
 const isLoading = ref(true)
@@ -182,7 +203,7 @@ async function loadPreferences() {
       hasPreferences.value = false
     } else {
       console.error('Failed to load preferences:', error)
-      errorMessage.value = 'Failed to load your preferences. Please try again.'
+      errorMessage.value = t('aiPreferences.settings.messages.loadError')
     }
   } finally {
     isLoading.value = false
@@ -202,28 +223,28 @@ function validateForm(): boolean {
 
   // Validate role
   if (!form.role.trim()) {
-    errors.role = 'Role is required'
+    errors.role = t('aiPreferences.setup.role.required')
     isValid = false
   } else if (form.role.length > 255) {
-    errors.role = 'Role must be less than 255 characters'
+    errors.role = t('aiPreferences.setup.role.tooLong')
     isValid = false
   }
 
   // Validate goals
   if (!form.goals_text.trim()) {
-    errors.goals_text = 'Goals are required'
+    errors.goals_text = t('aiPreferences.setup.goals.required')
     isValid = false
   } else if (form.goals_text.length > 2000) {
-    errors.goals_text = 'Goals must be less than 2000 characters'
+    errors.goals_text = t('aiPreferences.setup.goals.tooLong')
     isValid = false
   }
 
   // Validate desired output
   if (!form.desired_output_text.trim()) {
-    errors.desired_output_text = 'Desired output is required'
+    errors.desired_output_text = t('aiPreferences.setup.desiredOutput.required')
     isValid = false
   } else if (form.desired_output_text.length > 2000) {
-    errors.desired_output_text = 'Desired output must be less than 2000 characters'
+    errors.desired_output_text = t('aiPreferences.setup.desiredOutput.tooLong')
     isValid = false
   }
 
@@ -240,7 +261,7 @@ async function handleSubmit() {
 
   // Validate form
   if (!validateForm()) {
-    errorMessage.value = 'Please fix the errors in the form'
+    errorMessage.value = t('aiPreferences.setup.validation.formInvalid')
     return
   }
 
@@ -251,7 +272,7 @@ async function handleSubmit() {
     await saveAiPreferences(form)
 
     // Show success message
-    successMessage.value = 'Your AI preferences have been updated successfully.'
+    successMessage.value = t('aiPreferences.settings.success.message')
 
     // Update last updated date
     const now = new Date()
@@ -269,10 +290,10 @@ async function handleSubmit() {
     console.error('Failed to update AI preferences:', error)
 
     if (error.status === 401) {
-      errorMessage.value = 'You must be logged in to update AI preferences'
+      errorMessage.value = t('aiPreferences.settings.messages.authError')
     } else {
       errorMessage.value =
-        error.message || 'Failed to update AI preferences. Please try again.'
+        error.message || t('aiPreferences.settings.error.message')
     }
   } finally {
     isSaving.value = false

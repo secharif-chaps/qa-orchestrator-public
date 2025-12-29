@@ -1829,18 +1829,24 @@ export default {
           label: 'Votre rôle',
           placeholder: 'ex. Commercial, Responsable Marketing, Directeur',
           helper: 'Quel est votre rôle professionnel ?',
+          required: "Le rôle est requis",
+          tooLong: "Le rôle doit contenir moins de 255 caractères",
         },
         goals: {
           label: 'Vos objectifs',
           placeholder:
             'ex. Je veux identifier les entreprises qui bénéficieraient de notre produit et comprendre leurs problématiques',
           helper: "Qu'essayez-vous d'accomplir lors de vos recherches d'entreprises ?",
+          required: "Les objectifs sont requis",
+          tooLong: "Les objectifs doivent contenir moins de 2000 caractères",
         },
         desiredOutput: {
           label: 'Format de sortie souhaité',
           placeholder:
             'ex. Générer des emails de prospection personnalisés mettant en avant les problématiques avec des références spécifiques à l\'entreprise',
           helper: "Comment souhaitez-vous que l'IA formate ses recommandations ?",
+          required: "Le format de sortie souhaité est requis",
+          tooLong: "Le format de sortie souhaité doit contenir moins de 2000 caractères",
         },
         documentation: {
           label: 'Documentation produit/service',
@@ -1871,12 +1877,17 @@ export default {
         tip3:
           'Incluez les détails du produit pour recevoir des suggestions plus personnalisées et contextuelles',
       },
+      validation: {
+        formInvalid: "Veuillez corriger les erreurs dans le formulaire",
+      },
     },
     settings: {
       title: 'Préférences de l\'assistant IA',
       description: 'Mettez à jour vos préférences IA pour affiner les recommandations personnalisées',
       lastUpdated: 'Dernière mise à jour : {date}',
       notConfigured: 'Non configuré',
+      setUpDescription: "Configurez vos préférences d'IA pour activer les actions rapides personnalisées et les recommandations.",
+      setUpButton: "Configurer les préférences d'IA",
       actions: {
         edit: 'Modifier les préférences',
         save: 'Enregistrer les modifications',
@@ -1884,11 +1895,15 @@ export default {
       },
       success: {
         title: 'Mise à jour réussie',
-        message: 'Vos préférences IA ont été mises à jour.',
+        message: 'Vos préférences IA ont été mises à jour avec succès.',
       },
       error: {
         title: 'Échec de la mise à jour',
         message: "Échec de la mise à jour de vos préférences. Veuillez réessayer.",
+      },
+      messages: {
+        loadError: "Échec du chargement de vos préférences. Veuillez réessayer.",
+        authError: "Vous devez être connecté pour mettre à jour les préférences IA",
       },
     },
   },
