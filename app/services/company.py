@@ -1,3 +1,14 @@
+"""Company service module for business logic operations.
+
+This module provides the CompanyService class for managing company entities,
+including CRUD operations, task management, and data updates from Dify callbacks.
+
+After Task Group 11 cleanup, this service:
+- Writes section data to normalized tables only (no JSON columns)
+- Reads section data from normalized tables for API responses
+- Maintains raw_*_knowledge fields on Company model for data collection
+"""
+
 from typing import List, Dict, Any, Optional
 import logging
 from sqlalchemy.orm import Session
@@ -12,6 +23,10 @@ from app.schemas.company import (
 from app.schemas.task import TaskTokenUpdate
 from app.schemas.pagination import PaginationParams, PaginatedResponse, create_pagination_meta
 from app.services.dify import DifyService
+from app.services.company_section_service import (
+    write_section_data,
+    read_all_section_data,
+)
 from app.core.database_security import SecureQueryBuilder
 from app.core.validators import ValidationError, InputValidator
 from app.repositories.company_repository_impl import SQLAlchemyCompanyRepository
@@ -21,120 +36,47 @@ from app.services.token_manager import TokenManager, TOKENS_PER_COMPANY
 
 logger = logging.getLogger(__name__)
 
-def _parse_json_fields(company: Company) -> Company:
-    """Helper function to parse JSON string fields into proper JSON objects"""
-    if not company:
-        return company
 
-    # Parse profile field if it's a JSON string
-    if company.profile is None:
-        company.profile = {}
-    elif isinstance(company.profile, str):
-        try:
-            import json
-            company.profile = json.loads(company.profile)
-        except (json.JSONDecodeError, TypeError) as e:
-            logger.warning(f"Failed to parse profile field for company {company.id}: {e}")
-            company.profile = {}
+def _build_company_response(db: Session, company: Company) -> CompanyResponse:
+    """Build CompanyResponse from Company model and normalized tables.
 
-    # Parse digital field if it's a JSON string
-    if company.digital is None:
-        company.digital = {}
-    elif isinstance(company.digital, str):
-        try:
-            import json
-            company.digital = json.loads(company.digital)
-        except (json.JSONDecodeError, TypeError) as e:
-            logger.warning(f"Failed to parse digital field for company {company.id}: {e}")
-            company.digital = {}
+    Reads section data from normalized tables instead of JSON columns.
 
-    # Parse csr field if it's a JSON string (handle markdown code blocks)
-    if company.csr is None:
-        company.csr = {}
-    elif isinstance(company.csr, str):
-        try:
-            import json
-            # Remove markdown code block wrapper if present
-            csr_text = company.csr.strip()
-            if csr_text.startswith('```json') and csr_text.endswith('```'):
-                csr_text = csr_text[7:-3].strip()  # Remove ```json and ```
-            company.csr = json.loads(csr_text)
-        except (json.JSONDecodeError, TypeError) as e:
-            logger.warning(f"Failed to parse csr field for company {company.id}: {e}")
-            company.csr = {}
+    Args:
+        db: Database session for reading section data
+        company: Company model instance
 
-    # Parse other fields
-    for field_name in ['timeline', 'products', 'jobs', 'press']:
-        field_value = getattr(company, field_name)
-        if field_value is None:
-            setattr(company, field_name, {})
-        elif isinstance(field_value, str):
-            try:
-                import json
-                setattr(company, field_name, json.loads(field_value))
-            except (json.JSONDecodeError, TypeError) as e:
-                logger.warning(f"Failed to parse {field_name} field for company {company.id}: {e}")
-                setattr(company, field_name, {})
+    Returns:
+        CompanyResponse with all section data populated
+    """
+    # Read all section data from normalized tables
+    section_data = read_all_section_data(db, company.id)
 
-    # Handle team field specially - needs to be a list for CompanyResponse
-    if company.team is None:
-        company.team = []
-    elif isinstance(company.team, dict):
-        # Handle different dictionary structures
-        if 'team' in company.team:
-            # Handle nested team structure from data processing
-            company.team = company.team.get('team', [])
-        elif 'teamAnalysis' in company.team:
-            # Handle new teamAnalysis structure - extract the team members
-            team_analysis = company.team.get('teamAnalysis', {})
-            if isinstance(team_analysis, dict):
-                # Try to extract team members from different possible locations
-                team_members = []
+    # Build response with section data
+    return CompanyResponse(
+        id=company.id,
+        name=company.name,
+        website=company.website,
+        owner_username=company.owner_username or "",
+        profile=section_data.get("profile", {}),
+        digital=section_data.get("digital", {}),
+        timeline=section_data.get("timeline", {}),
+        products=section_data.get("products", {}),
+        jobs=section_data.get("jobs", {}),
+        csr=section_data.get("csr", {}),
+        press=section_data.get("press", {}),
+        team=section_data.get("team", []),
+        raw_mistral_knowledge=company.raw_mistral_knowledge,
+        raw_claude_knowledge=company.raw_claude_knowledge,
+        raw_wikipedia_knowledge=company.raw_wikipedia_knowledge,
+        raw_scraped_website_knowledge=company.raw_scraped_website_knowledge,
+        error=company.error,
+        is_deleted=company.is_deleted,
+        created_at=company.created_at,
+        updated_at=company.updated_at,
+        tasks=[],  # Tasks loaded separately if needed
+    )
 
-                # Check for team members in various possible keys
-                if 'team' in team_analysis:
-                    team_members = team_analysis.get('team', [])
-                elif 'members' in team_analysis:
-                    team_members = team_analysis.get('members', [])
-                elif 'subordinates' in team_analysis:
-                    team_members = team_analysis.get('subordinates', [])
-
-                # If still no team members found, convert the whole structure to a list
-                if not team_members and team_analysis:
-                    # Store the team analysis as a single-item list to preserve the data
-                    team_members = [team_analysis]
-
-                company.team = team_members if isinstance(team_members, list) else []
-            else:
-                company.team = []
-        else:
-            # Unknown dictionary structure - try to convert to list or set empty
-            logger.warning(f"Unknown team dictionary structure for company {company.id}: {list(company.team.keys())[:5]}")
-            # Store as single-item list to preserve data
-            company.team = [company.team] if company.team else []
-    elif isinstance(company.team, str):
-        try:
-            import json
-            team_data = json.loads(company.team)
-            if isinstance(team_data, dict):
-                # Recursively handle the parsed dictionary
-                company.team = team_data
-                # Call this section again to handle the dictionary
-                return _parse_json_fields(company)
-            elif isinstance(team_data, list):
-                company.team = team_data
-            else:
-                logger.warning(f"Unexpected team data type for company {company.id}: {type(team_data)}")
-                company.team = []
-        except (json.JSONDecodeError, TypeError) as e:
-            logger.warning(f"Failed to parse team field for company {company.id}: {e}")
-            company.team = []
-    elif not isinstance(company.team, list):
-        # If it's not a list, dict, string or None, log and set to empty list
-        logger.warning(f"Unexpected team field type for company {company.id}: {type(company.team)}")
-        company.team = []
-
-    return company
 
 class CompanyService:
     def __init__(self, db: Session):
@@ -144,20 +86,33 @@ class CompanyService:
         self.repository = SQLAlchemyCompanyRepository(db)
 
     def get_company(self, company_id: int, include_deleted: bool = False) -> Optional[Company]:
-        """Securely get company by ID"""
+        """Securely get company by ID.
+
+        Returns the Company model. Use get_company_response() for API responses
+        that need section data from normalized tables.
+        """
         query = self.secure_query.safe_filter_by_id(Company, company_id)
         if not include_deleted:
             query = query.filter(Company.is_deleted == False)
-        company = query.first()
-        return _parse_json_fields(company)
+        return query.first()
+
+    def get_company_response(self, company_id: int, include_deleted: bool = False) -> Optional[CompanyResponse]:
+        """Get company as CompanyResponse with all section data.
+
+        This method reads section data from normalized tables and builds
+        a complete CompanyResponse for API responses.
+        """
+        company = self.get_company(company_id, include_deleted)
+        if not company:
+            return None
+        return _build_company_response(self.db, company)
 
     def get_company_by_name(self, name: str, include_deleted: bool = False) -> Optional[Company]:
         """Securely get company by name"""
         query = self.secure_query.safe_filter_by_string(Company, Company.name, name, exact_match=True)
         if not include_deleted:
             query = query.filter(Company.is_deleted == False)
-        company = query.first()
-        return _parse_json_fields(company)
+        return query.first()
 
     def get_all_companies(self, organization_id: Optional[str] = None, include_deleted: bool = False) -> List[Company]:
         """Securely get all companies, optionally filtered by organization"""
@@ -166,9 +121,7 @@ class CompanyService:
             query = query.filter(Company.is_deleted == False)
         if organization_id:
             query = query.filter(Company.organization_id == organization_id)
-        companies = query.all()
-        # Parse JSON fields for all companies
-        return [_parse_json_fields(company) for company in companies]
+        return query.all()
 
     def get_paginated_companies(self, pagination_params: PaginationParams, organization_id: Optional[str] = None, name_filter: Optional[str] = None, include_archived: bool = False) -> PaginatedResponse[CompanyResponse]:
         """Get paginated companies with sorting and filtering"""
@@ -178,36 +131,13 @@ class CompanyService:
         company_responses = []
         for company in companies:
             try:
-                # Parse JSON fields
-                company = _parse_json_fields(company)
-
-                # Convert to CompanyResponse using from_attributes
-                company_response = CompanyResponse.model_validate(company)
+                # Build response from normalized tables
+                company_response = _build_company_response(self.db, company)
                 company_responses.append(company_response)
             except Exception as e:
                 # Log the error but don't fail the entire request
-                logger.error(f"Failed to validate company {company.id}: {e}")
-
-                # Try to create a minimal valid response
-                try:
-                    # Ensure team is a list
-                    if not isinstance(company.team, list):
-                        company.team = []
-
-                    # Ensure all dict fields are dicts
-                    for field in ['profile', 'digital', 'timeline', 'products', 'jobs', 'csr', 'press']:
-                        if not isinstance(getattr(company, field, None), dict):
-                            setattr(company, field, {})
-
-                    # Try validation again
-                    company_response = CompanyResponse.model_validate(company)
-                    company_responses.append(company_response)
-                    logger.info(f"Successfully created fallback response for company {company.id}")
-                except Exception as fallback_error:
-                    # If still failing, skip this company but log it
-                    logger.error(f"Failed to create fallback response for company {company.id}: {fallback_error}")
-                    # Optionally, you could add a placeholder or continue without this company
-                    continue
+                logger.error(f"Failed to build response for company {company.id}: {e}")
+                continue
 
         # Create pagination metadata
         meta = create_pagination_meta(
@@ -480,28 +410,20 @@ class CompanyService:
             # Log the error for debugging but don't re-raise to avoid crashing the backend
             logger.error(f"Task execution failed for company {company.name} (task {task.type.value}): {str(e)}", exc_info=True)
 
-
     def _update_company_data(self, company: Company, query_type: str, data: Dict[str, Any]) -> None:
-        # Store the data directly since it's already been extracted properly
-        if query_type == "profile":
-            company.profile = data.get("profile", {}) if isinstance(data, dict) else {}
-        elif query_type == "digital":
-            company.digital = data.get("digital", {}) if isinstance(data, dict) else {}
-        elif query_type == "timeline":
-            company.timeline = data.get("timeline", {}) if isinstance(data, dict) else {}
-        elif query_type == "products":
-            company.products = data.get("products", {}) if isinstance(data, dict) else {}
-        elif query_type == "jobs":
-            company.jobs = data.get("jobs", {}) if isinstance(data, dict) else {}
-        elif query_type == "csr":
-            company.csr = data.get("csr", {}) if isinstance(data, dict) else {}
-        elif query_type == "press":
-            company.press = data.get("press", {}) if isinstance(data, dict) else {}
-        elif query_type == "team":
-            company.team = data.get("team", []) if isinstance(data, dict) else []
-        elif query_type == "data_collection":
-            # Handle data collection response - support both nested and flat structures
-            # Try nested structure first (data.knowledge.mistral), then fall back to flat (data.mistral)
+        """Update company data from Dify callback.
+
+        After Task Group 11 cleanup, this method:
+        - Writes section data to normalized tables only (profile, digital, etc.)
+        - Writes data_collection results to Company raw_*_knowledge fields
+
+        Args:
+            company: Company model instance
+            query_type: Type of data (profile, digital, data_collection, etc.)
+            data: Dify callback data
+        """
+        if query_type == "data_collection":
+            # data_collection writes to Company model raw_*_knowledge fields
             if isinstance(data, dict):
                 # Check if data is nested under "knowledge" key
                 if "knowledge" in data and isinstance(data["knowledge"], dict):
@@ -520,6 +442,9 @@ class CompanyService:
                 company.raw_claude_knowledge = ""
                 company.raw_wikipedia_knowledge = ""
                 company.raw_scraped_website_knowledge = ""
+        else:
+            # All other query types write to normalized tables
+            write_section_data(self.db, company.id, query_type, data)
 
     def update_task_tokens(self, task_id: int, token_data: TaskTokenUpdate) -> Task:
         """Update token usage information for a task"""
@@ -570,15 +495,14 @@ class CompanyService:
             company.is_deleted = False
             self.db.commit()
             self.db.refresh(company)
-        return _parse_json_fields(company)
+        return company
 
     def get_archived_companies(self, organization_id: Optional[str] = None) -> List[Company]:
         """Get all soft-deleted (archived) companies"""
         query = self.db.query(Company).filter(Company.is_deleted)
         if organization_id:
             query = query.filter(Company.organization_id == organization_id)
-        companies = query.all()
-        return [_parse_json_fields(company) for company in companies]
+        return query.all()
 
     def get_recent_companies(
         self,
@@ -620,8 +544,8 @@ class CompanyService:
         # Build response with folder information
         company_responses = []
         for company in companies:
-            # Parse JSON fields
-            company = _parse_json_fields(company)
+            # Build response from normalized tables
+            company_response = _build_company_response(self.db, company)
 
             # Find the first folder this company belongs to
             folder_item = (
@@ -634,8 +558,6 @@ class CompanyService:
                 .first()
             )
 
-            # Create CompanyResponse with folder info
-            company_response = CompanyResponse.model_validate(company)
             if folder_item:
                 folder_item_obj, folder_obj = folder_item
                 company_response.folder_id = str(folder_obj.id)
