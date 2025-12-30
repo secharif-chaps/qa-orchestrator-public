@@ -69,6 +69,14 @@ class FolderItemAdd(FolderItemBase):
     pass
 
 
+class FolderItemMove(BaseModel):
+    """Schema for moving an item between folders."""
+    source_folder_id: UUID
+    destination_folder_id: UUID
+    item_id: str
+    item_type: str = Field(..., pattern="^(company|contact|document)$")
+
+
 class FolderItemResponse(FolderItemBase):
     id: UUID
     folder_id: UUID

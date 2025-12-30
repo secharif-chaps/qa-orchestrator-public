@@ -372,6 +372,75 @@ class FolderService:
         return False
 
     @staticmethod
+    def move_item_to_folder(
+        db: Session,
+        source_folder_id: UUID,
+        destination_folder_id: UUID,
+        item_id: str,
+        item_type: str
+    ) -> Optional[FolderItem]:
+        """Move an item from one folder to another.
+
+        This updates the folder_id of the FolderItem record, effectively moving
+        the item from the source folder to the destination folder.
+
+        Args:
+            db: Database session
+            source_folder_id: UUID of the source folder
+            destination_folder_id: UUID of the destination folder
+            item_id: ID of the item to move
+            item_type: Type of item ('company', 'contact', etc.)
+
+        Returns:
+            Updated FolderItem if successful, None if item not found in source folder
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+
+        # Find the folder item in the source folder
+        folder_item = db.query(FolderItem).filter(
+            FolderItem.folder_id == source_folder_id,
+            FolderItem.item_id == item_id,
+            FolderItem.item_type == item_type
+        ).first()
+
+        if not folder_item:
+            logger.warning(
+                f"Item not found in source folder - item_id: {item_id}, "
+                f"source_folder_id: {source_folder_id}"
+            )
+            return None
+
+        # Check if item already exists in destination folder
+        existing_in_destination = db.query(FolderItem).filter(
+            FolderItem.folder_id == destination_folder_id,
+            FolderItem.item_id == item_id,
+            FolderItem.item_type == item_type
+        ).first()
+
+        if existing_in_destination:
+            logger.info(
+                f"Item already exists in destination folder, removing from source - "
+                f"item_id: {item_id}, destination_folder_id: {destination_folder_id}"
+            )
+            # Delete from source since it's already in destination
+            db.delete(folder_item)
+            db.commit()
+            return existing_in_destination
+
+        # Update the folder_id to move the item
+        logger.info(
+            f"Moving item from folder {source_folder_id} to {destination_folder_id} - "
+            f"item_id: {item_id}, item_type: {item_type}"
+        )
+        folder_item.folder_id = destination_folder_id
+        folder_item.added_at = datetime.utcnow()  # Update timestamp to reflect move
+        db.commit()
+        db.refresh(folder_item)
+
+        return folder_item
+
+    @staticmethod
     def get_folders_for_item(
         db: Session,
         item_id: str,

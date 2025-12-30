@@ -22,6 +22,7 @@ from app.schemas.folder import (
     FolderResponse,
     FolderWithItemsResponse,
     FolderItemAdd,
+    FolderItemMove,
     FolderItemResponse,
     FolderShareCreate,
     FolderShareUpdate,
@@ -1125,3 +1126,125 @@ def remove_item_from_folder(
     )
 
     return {"message": "Item removed from folder"}
+
+
+@router.post("/items/move")
+def move_item_between_folders(
+    move_data: FolderItemMove,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
+    org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db)
+):
+    """Move an item from one folder to another.
+
+    This endpoint moves a company (or other item) from a source folder to a destination folder
+    by updating the folder_id in the folder_items table.
+
+    Requires organization.write role AND write access (owner or writer) to both folders.
+    """
+    logger.info(
+        "POST /folders/items/move - Moving item between folders",
+        extra={
+            "user": org_context.username,
+            "source_folder_id": str(move_data.source_folder_id),
+            "destination_folder_id": str(move_data.destination_folder_id),
+            "item_id": move_data.item_id,
+            "item_type": move_data.item_type
+        }
+    )
+
+    # Validate source folder exists and user has access
+    source_folder = FolderService.get_folder(
+        db=db,
+        folder_id=move_data.source_folder_id,
+        organization_id=org_context.organization_id
+    )
+
+    if not source_folder:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Source folder not found"
+        )
+
+    # Check write access to source folder (owner or writer)
+    source_role = FolderService.get_user_folder_role(
+        db, move_data.source_folder_id, org_context.user_id
+    )
+    if not source_role or source_role not in ['owner', 'writer']:
+        logger.warning(
+            "User lacks write access to source folder",
+            extra={
+                "folder_id": str(move_data.source_folder_id),
+                "user_id": org_context.user_id,
+                "role": source_role
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You need write access to the source folder to move items"
+        )
+
+    # Validate destination folder exists and user has access
+    destination_folder = FolderService.get_folder(
+        db=db,
+        folder_id=move_data.destination_folder_id,
+        organization_id=org_context.organization_id
+    )
+
+    if not destination_folder:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Destination folder not found"
+        )
+
+    # Check write access to destination folder (owner or writer)
+    dest_role = FolderService.get_user_folder_role(
+        db, move_data.destination_folder_id, org_context.user_id
+    )
+    if not dest_role or dest_role not in ['owner', 'writer']:
+        logger.warning(
+            "User lacks write access to destination folder",
+            extra={
+                "folder_id": str(move_data.destination_folder_id),
+                "user_id": org_context.user_id,
+                "role": dest_role
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You need write access to the destination folder to add items"
+        )
+
+    # Move the item
+    moved_item = FolderService.move_item_to_folder(
+        db=db,
+        source_folder_id=move_data.source_folder_id,
+        destination_folder_id=move_data.destination_folder_id,
+        item_id=move_data.item_id,
+        item_type=move_data.item_type
+    )
+
+    if not moved_item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Item not found in source folder"
+        )
+
+    logger.info(
+        "Item moved successfully",
+        extra={
+            "source_folder_id": str(move_data.source_folder_id),
+            "destination_folder_id": str(move_data.destination_folder_id),
+            "item_id": move_data.item_id
+        }
+    )
+
+    return {
+        "message": "Item moved successfully",
+        "item": {
+            "id": str(moved_item.id),
+            "folder_id": str(moved_item.folder_id),
+            "item_id": moved_item.item_id,
+            "item_type": moved_item.item_type
+        }
+    }
