@@ -1496,6 +1496,23 @@ export default {
       reader: 'Lecteur',
       writer: 'Éditeur',
     },
+    moveCompany: {
+      button: 'Déplacer vers un dossier',
+      title: 'Déplacer l\'entreprise vers un dossier',
+      selectFolder: 'Sélectionnez un dossier de destination',
+      searchPlaceholder: 'Rechercher des dossiers...',
+      noFolders: 'Aucun dossier accessible en écriture',
+      currentFolder: 'Dossier actuel (ne peut pas être sélectionné)',
+      loadError: 'Échec du chargement des dossiers',
+      success: 'Entreprise déplacée vers {folderName}',
+      error: 'Échec du déplacement de l\'entreprise',
+      move: 'Déplacer',
+    },
+    permissions: {
+      owner: 'Propriétaire',
+      writer: 'Éditeur',
+      reader: 'Lecteur',
+    },
     itemTypes: {
       company: 'Fiche entreprise',
     },

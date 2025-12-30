@@ -50,6 +50,7 @@
               @view-item="$router.push(`/folders/${route.params.folderId}/companies/${$event}`)"
               @remove-item="confirmRemoveItem"
               @delete-company="confirmArchiveCompany"
+              @move-company="confirmMoveCompany"
             />
           </div>
 
@@ -133,6 +134,15 @@
                         :hidden="companyFilter === 'archived'"
                       />
                       <Button
+                        v-if="item.type === 'company' && canDeleteCompany && companyFilter !== 'archived'"
+                        variant="tertiary"
+                        size="sm"
+                        icon="fa fa-exchange-alt"
+                        icon-only
+                        :title="$t('folder.moveCompany.button', 'Move to Folder')"
+                        @click.stop="confirmMoveCompany(item)"
+                      />
+                      <Button
                         v-if="item.type === 'company' && canDeleteCompany"
                         variant="tertiary"
                         color="danger"
@@ -213,6 +223,14 @@
       :company-to-restore="companyToArchive"
       @restore-company="handleRestoreCompany"
     />
+
+    <!-- Move Company Modal -->
+    <CompanyMoveModal
+      v-model:display-modal="showMoveModal"
+      :company="companyToMove"
+      :current-folder-id="route.params.folderId"
+      @move="handleMoveCompany"
+    />
   </div>
 </template>
 
@@ -225,18 +243,21 @@ meta:
 <script setup lang="ts">
 import CompanyArchiveModal from '@/components/companies/CompanyArchiveModal.vue'
 import CompanyRestoreModal from '@/components/companies/CompanyRestoreModal.vue'
+import CompanyMoveModal from '@/components/folders/CompanyMoveModal.vue'
 import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
 import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
 import FoldersHeader from '@/components/folders/FoldersHeader.vue'
 import { Alert, Button, Tag } from '@owlint/feathers-vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { folderByIdQuery } from '@/queries/folders'
+import { useMoveCompanyToFolder } from '@/mutations/folders'
 import type { Company } from '@/types/company'
 import type { FolderItem } from '@/types/folder'
 import { useQuery } from '@pinia/colada'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
+import { toast } from '@/utils/toast'
 
 // Constants
 const VIEW_MODE_STORAGE_KEY = 'folder-view-mode'
@@ -249,10 +270,14 @@ const { canDeleteCompany } = useCompanyPermissions()
 const showDeleteModal = ref(false)
 const showArchiveCompanyModal = ref(false)
 const showRestoreCompanyModal = ref(false)
+const showMoveModal = ref(false)
 const companyToArchive = ref<Company | null>(null)
+const companyToMove = ref<FolderItem | null>(null)
 const searchTerm = ref('')
 const viewMode = ref<'table' | 'grid'>('grid')
 const companyFilter = ref<'all' | 'archived'>('all')
+
+const { mutateAsync: moveCompany } = useMoveCompanyToFolder()
 
 const {
   data: folder,
@@ -357,6 +382,43 @@ const handleRestoreCompany = async () => {
   // Refresh the folder items after successful restoration
   await refetch()
   companyToArchive.value = null
+}
+
+const confirmMoveCompany = (item: FolderItem) => {
+  companyToMove.value = item
+  showMoveModal.value = true
+}
+
+const handleMoveCompany = async (payload: {
+  destinationFolderId: string
+  destinationFolderName: string
+}) => {
+  if (!companyToMove.value) {
+    console.error('No company selected for move')
+    return
+  }
+
+  try {
+    await moveCompany({
+      sourceFolderId: route.params.folderId as string,
+      destinationFolderId: payload.destinationFolderId,
+      companyId: companyToMove.value.id,
+      destinationFolderName: payload.destinationFolderName,
+    })
+
+    console.log('=== FOLDER PAGE: Move completed successfully ===')
+    toast.success(
+      $t('folder.moveCompany.success', { folderName: payload.destinationFolderName }),
+    )
+
+    showMoveModal.value = false
+    companyToMove.value = null
+
+    await refetch()
+
+  } catch (error) {
+    toast.error($t('folder.moveCompany.error', 'Failed to move company'))
+  }
 }
 
 // Load saved view mode from localStorage

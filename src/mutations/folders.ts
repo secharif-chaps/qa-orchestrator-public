@@ -1,5 +1,5 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { addItemToFolder, removeItemFromFolder, updateFolder, createFolder, deleteFolder, toggleFolderFavorite } from '@/api/folders'
+import { addItemToFolder, removeItemFromFolder, updateFolder, createFolder, deleteFolder, toggleFolderFavorite, moveItemBetweenFolders } from '@/api/folders'
 import type { Folder, FolderCreate, FolderItemAdd, FolderUpdate } from '@/types/folder'
 import type { PaginatedResponse } from '@/types/pagination'
 import { FOLDER_QUERY_KEYS } from '@/queries/folders'
@@ -28,6 +28,89 @@ export const useRemoveItemFromFolder = defineMutation(() => {
 
   return {
     ...mutation,
+    mutate,
+    mutateAsync,
+  }
+})
+
+/**
+ * Move a company from one folder to another.
+ * Uses the dedicated move API endpoint that updates the folder_id in the database.
+ */
+export const useMoveCompanyToFolder = defineMutation(() => {
+  const queryCache = useQueryCache()
+  const { t } = useI18n()
+
+  const { mutate, mutateAsync, ...mutation } = useMutation({
+    mutation: async ({
+      sourceFolderId,
+      destinationFolderId,
+      companyId,
+    }: {
+      sourceFolderId: string
+      destinationFolderId: string
+      companyId: string
+      destinationFolderName?: string
+    }) => {
+      console.log('=== MOVE COMPANY: Starting operation ===')
+      console.log('Source Folder ID:', sourceFolderId)
+      console.log('Destination Folder ID:', destinationFolderId)
+      console.log('Company ID:', companyId)
+
+      try {
+        // Move company between folders using the dedicated API endpoint
+        console.log('Moving company between folders...')
+        const result = await moveItemBetweenFolders({
+          source_folder_id: sourceFolderId,
+          destination_folder_id: destinationFolderId,
+          item_id: companyId,
+          item_type: 'company',
+        })
+        console.log('✓ Company moved successfully:', result)
+
+        console.log('=== MOVE COMPANY: Operation completed successfully ===')
+        return result
+      } catch (error) {
+        console.error('=== MOVE COMPANY: Operation failed ===')
+        console.error('Error details:', error)
+        if (error instanceof Error) {
+          console.error('Error message:', error.message)
+          console.error('Error stack:', error.stack)
+        }
+        throw error
+      }
+    },
+
+    onError: (error) => {
+      console.error('Mutation onError handler triggered:', error)
+      toast.error(t('folder.moveCompany.error', 'Failed to move company'))
+    },
+
+    onSuccess: (_data, variables) => {
+      console.log('Mutation onSuccess handler triggered')
+      if (variables.destinationFolderName) {
+        toast.success(
+          t('folder.moveCompany.success', { folderName: variables.destinationFolderName }),
+        )
+      } else {
+        toast.success(t('folder.moveCompany.success', { folderName: 'destination folder' }))
+      }
+    },
+
+    onSettled: (_data, _error, variables) => {
+      console.log('Mutation onSettled: Invalidating queries...')
+      queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.byId(variables.sourceFolderId) })
+      queryCache.invalidateQueries({
+        key: FOLDER_QUERY_KEYS.byId(variables.destinationFolderId),
+      })
+      queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
+      console.log('Queries invalidated')
+    },
+  })
+
+  return {
+    ...mutation,
+    moveCompany: mutateAsync,
     mutate,
     mutateAsync,
   }
@@ -176,7 +259,10 @@ export const useCreateFolder = defineMutation(() => {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         owner: authStore.username,
+        owner_id: authStore.userId || '',
         organization_id: authStore.organizationId || '',
+        is_owner: true,
+        share_role: null,
         items: [],
         items_count: 0,
       }

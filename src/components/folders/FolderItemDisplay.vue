@@ -52,6 +52,14 @@
           @click.stop="handleClick"
         />
         <Button
+          v-if="item.type === 'company' && canMoveCompany"
+          variant="tertiary"
+          icon="fa fa-exchange-alt"
+          icon-only
+          :title="$t('folder.moveCompany.button', 'Move to Folder')"
+          @click.stop="$emit('moveCompany', item)"
+        />
+        <Button
           v-if="item.type === 'company' && canDeleteCompany"
           variant="tertiary"
           icon="fa fa-trash"
@@ -94,6 +102,7 @@ const emit = defineEmits<{
   viewItem: [id: string]
   removeItem: [item: FolderItem]
   deleteCompany: [item: FolderItem]
+  moveCompany: [item: FolderItem]
 }>()
 
 const { t, locale } = useI18n()
@@ -101,6 +110,10 @@ const { canDeleteCompany } = useCompanyPermissions()
 const showFallbackIcon = ref(false)
 const isParentHovered = ref(false)
 const isChildHovered = ref(false)
+
+// For move functionality, we use the same permission as delete
+// (owners and writers can move companies)
+const canMoveCompany = canDeleteCompany
 
 const handleClick = () => {
   if (props.item.type === 'company') {
