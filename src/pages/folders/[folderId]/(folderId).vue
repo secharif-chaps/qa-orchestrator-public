@@ -46,6 +46,7 @@
               :key="item.id"
               :item="item"
               :is-archived="companyFilter === 'archived'"
+              :can-move-items="canMoveItems"
               mode="grid"
               @view-item="$router.push(`/folders/${route.params.folderId}/companies/${$event}`)"
               @remove-item="confirmRemoveItem"
@@ -134,7 +135,7 @@
                         :hidden="companyFilter === 'archived'"
                       />
                       <Button
-                        v-if="item.type === 'company' && canDeleteCompany && companyFilter !== 'archived'"
+                        v-if="item.type === 'company' && canMoveItems && companyFilter !== 'archived'"
                         variant="tertiary"
                         size="sm"
                         icon="fa fa-exchange-alt"
@@ -249,6 +250,7 @@ import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
 import FoldersHeader from '@/components/folders/FoldersHeader.vue'
 import { Alert, Button, Tag } from '@owlint/feathers-vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import { folderByIdQuery } from '@/queries/folders'
 import { useMoveCompanyToFolder } from '@/mutations/folders'
 import type { Company } from '@/types/company'
@@ -290,6 +292,9 @@ const {
     archived: companyFilter.value === 'archived',
   },
 }))
+
+// Folder permissions based on current folder
+const { canMoveItems } = useFolderPermissions(folder)
 
 // Computed property for filtered items
 const filteredItems = computed(() => {

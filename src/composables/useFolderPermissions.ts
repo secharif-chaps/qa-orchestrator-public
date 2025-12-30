@@ -1,4 +1,4 @@
-import { computed, type ComputedRef, type Ref } from 'vue'
+import { computed, type Ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import type { Folder, ShareRole } from '@/types/folder'
 
@@ -80,6 +80,15 @@ export function useFolderPermissions(folder?: Ref<Folder | null | undefined>) {
   })
 
   /**
+   * Check if current user can move items from/to the folder
+   * Requires being owner OR having Writer share role
+   */
+  const canMoveItems = computed(() => {
+    if (!folder?.value) return false
+    return folder.value.is_owner === true || folder.value.share_role === 'writer'
+  })
+
+  /**
    * Get the current user's role in the folder context
    * Returns 'owner', 'writer', 'reader', or null if no access
    */
@@ -126,6 +135,7 @@ export function useFolderPermissions(folder?: Ref<Folder | null | undefined>) {
     canManageSharing,
     canCreateItems,
     canDeleteItems,
+    canMoveItems,
 
     // Role information
     userFolderRole,

@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Button } from '@owlint/feathers-vue'
 import type { FolderItem } from '@/types/folder'
 import { useI18n } from 'vue-i18n'
@@ -94,6 +94,7 @@ import Card from '../ui/Card.vue'
 interface Props {
   item: FolderItem
   mode: 'grid' | 'table'
+  canMoveItems?: boolean
 }
 
 const props = defineProps<Props>()
@@ -111,9 +112,8 @@ const showFallbackIcon = ref(false)
 const isParentHovered = ref(false)
 const isChildHovered = ref(false)
 
-// For move functionality, we use the same permission as delete
-// (owners and writers can move companies)
-const canMoveCompany = canDeleteCompany
+// For move functionality, use the prop passed from parent (based on folder permissions)
+const canMoveCompany = computed(() => props.canMoveItems ?? false)
 
 const handleClick = () => {
   if (props.item.type === 'company') {

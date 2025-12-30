@@ -100,6 +100,12 @@
             </div>
 
             <div class="flex items-center gap-2">
+              <!-- Selected tick icon -->
+              <i
+                v-if="selectedFolderId === folder.id"
+                class="fa fa-check text-primary text-lg"
+              ></i>
+
               <Tag
                 v-if="folder.is_owner"
                 :label="$t('folder.permissions.owner', 'Owner')"
