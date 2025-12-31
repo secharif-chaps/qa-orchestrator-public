@@ -94,21 +94,22 @@ export interface Company {
   digital: {
     insights?: string
     digitalStrategy?: SourcedValue<{
-      overallStrategy: string
-      digitalTransformation: string
-      eCommerceCapabilities: string
-      mobileStrategy: string
-      digitalMarketingApproach: string
+      overallStrategy?: SourcedValue<string>
+      digitalTransformation?: SourcedValue<string>
+      eCommerceCapabilities?: SourcedValue<string>
+      mobileStrategy?: SourcedValue<string>
+      digitalMarketingApproach?: SourcedValue<string>
     }>
-    onlineServices?: SourcedValue<
-      {
+    onlineServices?: SourcedValue<{
+      services: {
         name: string
         description: string
       }[]
-    >
+    }>
     socialMediaAccounts?: {
       platform: string
       url: string
+      source?: string
     }[]
 
     loyaltyProgram?: SourcedValue<string>
@@ -118,20 +119,20 @@ export interface Company {
     insights?: string
 
     events?: {
-      date: string
-      title: string
-      description: string
-      category: string
-      location: string
-      impact: string
-      source: string
+      date: string | SourcedValue<string>
+      title: string | SourcedValue<string>
+      description: string | SourcedValue<string>
+      category: string | SourcedValue<string>
+      location?: string | SourcedValue<string>
+      impact?: string | SourcedValue<string>
+      source?: string
     }[]
   }
 
   products?: {
     insights?: string
-    customerType?: string
-    marketingPositioning?: string
+    customerType?: SourcedValue<string>
+    marketingPositioning?: SourcedValue<string>
     range?: SourcedValue<string>[]
     partnerBrands?: SourcedValue<string>[]
     privateLabels?: SourcedValue<string>[]
@@ -142,16 +143,17 @@ export interface Company {
 
   jobs: {
     offers?: {
-      title: string
-      location: string
-      department: string
-      description: string
-      requirements: string
-      posted_date: string
+      title?: string | SourcedValue<string>
+      location?: string | SourcedValue<string>
+      department?: string | SourcedValue<string>
+      description?: string | SourcedValue<string>
+      requirements?: string | SourcedValue<string>
+      posted_date?: string | SourcedValue<string>
+      source?: string
     }[]
     insights?: {
       total_openings: SourcedValue<number>
-      top_departments: SourcedValue<string[]>
+      top_departments: SourcedValue<string[] | string>
       hiring_focus: SourcedValue<string>
       growth_indicators: SourcedValue<string>
     }
@@ -159,7 +161,7 @@ export interface Company {
 
   csr: {
     insights?: string
-    responsibility?: string
+    responsibility?: string | SourcedValue<string>
     responsibility_initiatives?: SourcedValue<string>[]
     charity_actions?: SourcedValue<string>[]
     sustainability_programs?: SourcedValue<string>[]

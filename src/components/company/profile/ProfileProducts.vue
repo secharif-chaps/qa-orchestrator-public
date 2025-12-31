@@ -17,24 +17,26 @@
       </div>
 
       <!-- Customer Type -->
-      <div v-if="company?.products?.customerType">
+      <div v-if="getSourcedValue(company?.products?.customerType)">
         <h4 class="font-medium text-secondary mb-2 flex items-center gap-2">
           <i class="fa fa-users"></i>
           Customer Type
         </h4>
         <p class="text-sm text-secondary">
-          {{ company.products.customerType }}
+          {{ getSourcedValue(company?.products?.customerType) }}
+          <Source :sourced-value="company?.products?.customerType" />
         </p>
       </div>
 
       <!-- Marketing Positioning -->
-      <div v-if="company?.products?.marketingPositioning">
+      <div v-if="getSourcedValue(company?.products?.marketingPositioning)">
         <h4 class="font-medium text-secondary mb-2 flex items-center gap-2">
           <i class="fa fa-bullseye"></i>
           Marketing Positioning
         </h4>
         <p class="text-sm text-secondary">
-          {{ company.products.marketingPositioning }}
+          {{ getSourcedValue(company?.products?.marketingPositioning) }}
+          <Source :sourced-value="company?.products?.marketingPositioning" />
         </p>
       </div>
 

@@ -77,16 +77,16 @@ const mockApiResponse: Company = {
     insights: 'Strong digital presence with omnichannel strategy',
     digitalStrategy: {
       value: {
-        overallStrategy: 'Omnichannel approach',
-        digitalTransformation: 'Heavy AR/VR investment',
-        eCommerceCapabilities: 'Full platform',
-        mobileStrategy: 'Native apps',
-        digitalMarketingApproach: 'Influencer partnerships',
+        overallStrategy: { value: 'Omnichannel approach', source: 'https://lvmh.com/digital' },
+        digitalTransformation: { value: 'Heavy AR/VR investment', source: 'https://lvmh.com/digital' },
+        eCommerceCapabilities: { value: 'Full platform', source: 'https://lvmh.com/digital' },
+        mobileStrategy: { value: 'Native apps', source: 'https://lvmh.com/digital' },
+        digitalMarketingApproach: { value: 'Influencer partnerships', source: 'https://lvmh.com/digital' },
       },
       source: 'https://lvmh.com/digital',
     },
     onlineServices: {
-      value: [{ name: 'Virtual Try-On', description: 'AR-powered try-on' }],
+      value: { services: [{ name: 'Virtual Try-On', description: 'AR-powered try-on' }] },
       source: 'https://lvmh.com/features',
     },
     socialMediaAccounts: [
@@ -113,8 +113,8 @@ const mockApiResponse: Company = {
   },
   products: {
     insights: 'Diverse product portfolio',
-    customerType: 'High-net-worth individuals',
-    marketingPositioning: 'Premium luxury positioning',
+    customerType: { value: 'High-net-worth individuals', source: 'https://lvmh.com/customers' },
+    marketingPositioning: { value: 'Premium luxury positioning', source: 'https://lvmh.com/brand' },
     range: [
       { value: 'Leather Goods Collection', source: 'https://lvmh.com/products' },
     ],
