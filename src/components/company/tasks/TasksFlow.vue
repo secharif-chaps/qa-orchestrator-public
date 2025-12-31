@@ -394,6 +394,8 @@ const getStatusLabel = (status: TaskStatus | null): string => {
 
 // Task actions
 const canRestartTask = (task: { status: TaskStatus | null }): boolean => {
+  // In dev mode, allow restarting any task (for testing)
+  if (isDev) return true
   return task.status === 'error' || task.status === 'pending'
 }
 
