@@ -33,7 +33,8 @@ from app.schemas.company import (
     CompanyUpdate,
 )
 from app.schemas.pagination import PaginatedResponse, PaginationParams, SortOrder
-from app.services.company import CompanyService
+from app.services.company import CompanyService, _build_company_response
+from app.services.company_section_service import read_all_section_data
 from app.services.dify import DifyService
 from app.services.folder import FolderService
 from app.services.token_manager import TOKENS_PER_COMPANY, TokenManager
@@ -124,12 +125,17 @@ async def get_company(
             f"GET /api/companies/{company_id} - User: {org_context.username}, "
             f"Organization: {org_context.organization_id}"
         )
-        company = service.get_company(company_id)
-        if not company:
+
+        # Get the company response (which reads from normalized tables)
+        company_response = service.get_company_response(company_id)
+        if not company_response:
             logger.error(f"Company {company_id} not found")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Company not found"
             )
+
+        # Get the Company model for access checks
+        company = service.get_company(company_id)
 
         # Verify organization access first
         logger.info(f"Company {company_id} found, verifying organization access")
@@ -151,7 +157,7 @@ async def get_company(
             )
 
         logger.info(f"User {org_context.username} has access to company {company_id}")
-        return company
+        return company_response
     except HTTPException:
         raise
     except Exception as e:
@@ -167,10 +173,12 @@ async def get_company_by_name(
     name: str,
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db),
 ):
     """Get a company by name (only if it belongs to user's organization)."""
     company = service.get_company_by_name(name.strip())
-    return verify_company_organization_access(company, org_context)
+    verify_company_organization_access(company, org_context)
+    return _build_company_response(db, company)
 
 
 @router.post("/", response_model=CompanyResponse)
@@ -179,6 +187,7 @@ async def create_company(
     service: CompanyService = Depends(get_company_service),
     token_manager: TokenManager = Depends(get_token_manager),
     org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db),
 ):
     """Create a new company.
 
@@ -224,15 +233,17 @@ async def create_company(
             f"{org_context.username} ({org_context.user_id}) "
             f"in organization: {org_context.organization_id}"
         )
-        result = service.create_company(
+        company = service.create_company(
             name=company_data.name,
             website=str(company_data.website),
             owner_id=org_context.user_id,
             owner_username=org_context.username,
             organization_id=org_context.organization_id,
         )
-        logger.info(f"Company created successfully - ID: {result.id}, Name: {result.name}")
-        return result
+        logger.info(f"Company created successfully - ID: {company.id}, Name: {company.name}")
+
+        # Return CompanyResponse built from normalized tables
+        return _build_company_response(db, company)
 
     except ValidationError as e:
         # Note: Per requirements, no token refunds on failure
@@ -263,36 +274,31 @@ async def update_company(
     company_data: CompanyUpdate,
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db),
 ):
-    """Update a company (requires organization.write permission)."""
+    """Update a company (requires organization.write permission).
+
+    Note: Section data (profile, digital, etc.) cannot be updated via this endpoint.
+    Section data is managed by the Dify workflow callbacks.
+    """
     verify_company_modify_permission(org_context, "organization.write")
 
     company = service.get_company(company_id)
     verify_company_organization_access(company, org_context)
 
+    # Only update core company fields
     if company_data.name:
         company.name = company_data.name
     if company_data.website:
         company.website = company_data.website
 
-    if company_data.profile:
-        company.profile = company_data.profile
-    if company_data.digital:
-        company.digital = company_data.digital
-    if company_data.timeline:
-        company.timeline = company_data.timeline
-    if company_data.products:
-        company.products = company_data.products
-    if company_data.jobs:
-        company.jobs = company_data.jobs
-    if company_data.csr:
-        company.csr = company_data.csr
-    if company_data.press:
-        company.press = company_data.press
-    if company_data.team:
-        company.team = company_data.team
+    # Note: Section data (profile, digital, timeline, etc.) is now managed by
+    # normalized tables and updated via Dify callbacks, not through this endpoint.
+    # The CompanyUpdate schema still has these fields for backward compatibility,
+    # but they are ignored here.
 
-    return service.update_company(company)
+    updated_company = service.update_company(company)
+    return _build_company_response(db, updated_company)
 
 
 @router.delete("/{company_id}", response_model=CompanyResponse)
@@ -300,6 +306,7 @@ async def soft_delete_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db),
 ):
     """Soft delete a company (archive) - requires organization.write permission."""
     verify_company_modify_permission(org_context, "organization.write")
@@ -319,7 +326,7 @@ async def soft_delete_company(
             detail="Failed to archive company",
         )
 
-    return deleted_company
+    return _build_company_response(db, deleted_company)
 
 
 @router.post("/{company_id}/chatbot", response_model=ChatResponse)
@@ -328,6 +335,7 @@ async def chat_with_company(
     chat_request: ChatRequest,
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db),
 ):
     """Chat with AI about a company using Dify workflow."""
     logger.info(f"Chat request for company {company_id} by user {org_context.username}")
@@ -338,18 +346,21 @@ async def chat_with_company(
 
         dify_service = DifyService()
 
+        # Read section data from normalized tables
+        section_data = read_all_section_data(db, company.id)
+
         company_context = {
             "id": company.id,
             "name": company.name,
             "website": company.website,
-            "profile": company.profile,
-            "digital": company.digital,
-            "timeline": company.timeline,
-            "products": company.products,
-            "jobs": company.jobs,
-            "csr": company.csr,
-            "press": company.press,
-            "team": company.team,
+            "profile": section_data.get("profile", {}),
+            "digital": section_data.get("digital", {}),
+            "timeline": section_data.get("timeline", {}),
+            "products": section_data.get("products", {}),
+            "jobs": section_data.get("jobs", {}),
+            "csr": section_data.get("csr", {}),
+            "press": section_data.get("press", {}),
+            "team": section_data.get("team", []),
         }
 
         chat_history = []
@@ -383,6 +394,7 @@ async def restore_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db),
 ):
     """Restore a soft-deleted company - requires organization.write permission."""
     logger.info(
@@ -398,20 +410,23 @@ async def restore_company(
             detail="Company not found or not deleted",
         )
 
-    return verify_company_organization_access(restored_company, org_context)
+    verify_company_organization_access(restored_company, org_context)
+    return _build_company_response(db, restored_company)
 
 
 @router.get("/archived/list", response_model=List[CompanyResponse])
 async def get_archived_companies(
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db),
 ):
     """Get all archived (soft-deleted) companies in the organization."""
     logger.info(
         f"GET /api/companies/archived/list - User: {org_context.username}"
     )
 
-    return service.get_archived_companies(organization_id=org_context.organization_id)
+    companies = service.get_archived_companies(organization_id=org_context.organization_id)
+    return [_build_company_response(db, company) for company in companies]
 
 
 @router.post("/csv/validate", response_model=CompanyCSVValidationResponse)
