@@ -74,16 +74,18 @@ def _get_sourced_value(data: dict, key: str) -> tuple[str | None, str | None]:
     return None, None
 
 
-def _get_string_value(data: dict, key: str) -> str | None:
+def _get_string_value(data: dict | str | None, key: str) -> str | None:
     """Extract a plain string value from Dify data (for insights, etc.).
 
     Args:
-        data: Dictionary containing the Dify data
+        data: Dictionary containing the Dify data, or a string, or None
         key: Key to extract
 
     Returns:
         String value or None
     """
+    if not isinstance(data, dict):
+        return None
     value = data.get(key)
     if isinstance(value, str):
         return value
@@ -101,9 +103,10 @@ def save_profile_data(db: Session, company_id: int, data: dict) -> None:
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data containing profile section
+        data: Dify callback data (at root level, not nested under "profile")
     """
-    profile_data = data.get("profile", {})
+    # Data comes at root level from Dify, not nested under "profile"
+    profile_data = data
     if not profile_data:
         logger.debug(f"No profile data to save for company {company_id}")
         return
@@ -235,9 +238,10 @@ def save_digital_data(db: Session, company_id: int, data: dict) -> None:
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data containing digital section
+        data: Dify callback data (at root level, not nested under "digital")
     """
-    digital_data = data.get("digital", {})
+    # Data comes at root level from Dify, not nested under "digital"
+    digital_data = data
     if not digital_data:
         logger.debug(f"No digital data to save for company {company_id}")
         return
@@ -257,8 +261,8 @@ def save_digital_data(db: Session, company_id: int, data: dict) -> None:
     digital.insights = _get_string_value(digital_data, "insights")
     digital.insights_source = "Chaps-e"
 
-    # Digital strategy fields (nested under digitalStrategy)
-    strategy = digital_data.get("digitalStrategy", {})
+    # Digital strategy fields (nested under digital_strategy - snake_case)
+    strategy = digital_data.get("digital_strategy", {})
     if isinstance(strategy, dict):
         # Handle value wrapper if present
         if "value" in strategy:
@@ -266,46 +270,48 @@ def save_digital_data(db: Session, company_id: int, data: dict) -> None:
         (
             digital.overall_strategy,
             digital.overall_strategy_source,
-        ) = _get_sourced_value(strategy, "overallStrategy")
+        ) = _get_sourced_value(strategy, "overall_strategy")
         (
             digital.digital_transformation,
             digital.digital_transformation_source,
-        ) = _get_sourced_value(strategy, "digitalTransformation")
+        ) = _get_sourced_value(strategy, "digital_transformation")
         (
             digital.ecommerce_capabilities,
             digital.ecommerce_capabilities_source,
-        ) = _get_sourced_value(strategy, "eCommerceCapabilities")
+        ) = _get_sourced_value(strategy, "e_commerce_capabilities")
         (
             digital.mobile_strategy,
             digital.mobile_strategy_source,
-        ) = _get_sourced_value(strategy, "mobileStrategy")
+        ) = _get_sourced_value(strategy, "mobile_strategy")
         (
             digital.digital_marketing_approach,
             digital.digital_marketing_approach_source,
-        ) = _get_sourced_value(strategy, "digitalMarketingApproach")
+        ) = _get_sourced_value(strategy, "digital_marketing_approach")
 
-    # Loyalty program (top level)
-    (
-        digital.loyalty_program,
-        digital.loyalty_program_source,
-    ) = _get_sourced_value(digital_data, "loyaltyProgram")
+    # Loyalty program - now an array, extract first program's description
+    loyalty_programs = digital_data.get("loyalty_programs", [])
+    if isinstance(loyalty_programs, list) and len(loyalty_programs) > 0:
+        first_program = loyalty_programs[0]
+        if isinstance(first_program, dict):
+            # Get name and description from SourcedValue pattern
+            name_data = first_program.get("name", {})
+            desc_data = first_program.get("description", {})
+            name = name_data.get("value", "") if isinstance(name_data, dict) else ""
+            desc = desc_data.get("value", "") if isinstance(desc_data, dict) else ""
+            source = name_data.get("source", "") if isinstance(name_data, dict) else ""
+            digital.loyalty_program = f"{name}: {desc}" if name else desc
+            digital.loyalty_program_source = source
 
     db.flush()
 
-    # Save online services (1:N)
-    online_services = digital_data.get("onlineServices", {})
-    if isinstance(online_services, dict) and "value" in online_services:
-        services_value = online_services.get("value", {})
-        if isinstance(services_value, dict):
-            _save_online_services(db, company_id, services_value.get("services", []))
-        elif isinstance(services_value, list):
-            _save_online_services(db, company_id, services_value)
-    elif isinstance(online_services, list):
+    # Save online services (1:N) - snake_case key
+    online_services = digital_data.get("online_services", [])
+    if isinstance(online_services, list):
         _save_online_services(db, company_id, online_services)
 
-    # Save social media accounts (1:N)
+    # Save social media accounts (1:N) - snake_case key
     _save_social_media_accounts(
-        db, company_id, digital_data.get("socialMediaAccounts", [])
+        db, company_id, digital_data.get("social_media_accounts", [])
     )
 
     logger.info(f"Saved digital data for company {company_id}")
@@ -324,16 +330,25 @@ def _save_online_services(
         if not isinstance(service_data, dict):
             continue
 
-        # Handle both direct values and sourced values
-        name = service_data.get("name")
-        if isinstance(name, dict):
-            name = name.get("value")
-        name_source = service_data.get("name_source")
+        # Extract name and source from SourcedValue pattern
+        name_data = service_data.get("name")
+        name = None
+        name_source = None
+        if isinstance(name_data, dict):
+            name = name_data.get("value")
+            name_source = name_data.get("source")
+        elif isinstance(name_data, str):
+            name = name_data
 
-        desc = service_data.get("description")
-        if isinstance(desc, dict):
-            desc = desc.get("value")
-        desc_source = service_data.get("description_source")
+        # Extract description and source from SourcedValue pattern
+        desc_data = service_data.get("description")
+        desc = None
+        desc_source = None
+        if isinstance(desc_data, dict):
+            desc = desc_data.get("value")
+            desc_source = desc_data.get("source")
+        elif isinstance(desc_data, str):
+            desc = desc_data
 
         service = CompanyOnlineService(
             company_id=company_id,
@@ -360,22 +375,32 @@ def _save_social_media_accounts(
         if not isinstance(account_data, dict):
             continue
 
-        # Platform and URL might be direct values or sourced values
-        platform = account_data.get("platform")
-        if isinstance(platform, dict):
-            platform = platform.get("value")
-        platform_source = account_data.get("source")
+        # Extract platform and source from SourcedValue pattern
+        platform_data = account_data.get("platform")
+        platform = None
+        platform_source = None
+        if isinstance(platform_data, dict):
+            platform = platform_data.get("value")
+            platform_source = platform_data.get("source")
+        elif isinstance(platform_data, str):
+            platform = platform_data
 
-        url = account_data.get("url")
-        if isinstance(url, dict):
-            url = url.get("value")
+        # Extract URL and source from SourcedValue pattern
+        url_data = account_data.get("url")
+        url = None
+        url_source = None
+        if isinstance(url_data, dict):
+            url = url_data.get("value")
+            url_source = url_data.get("source")
+        elif isinstance(url_data, str):
+            url = url_data
 
         account = CompanySocialMediaAccount(
             company_id=company_id,
             platform=platform,
             platform_source=platform_source,
             url=url,
-            url_source=platform_source,  # Same source for both
+            url_source=url_source,
         )
         db.add(account)
 
@@ -491,9 +516,10 @@ def save_timeline_data(db: Session, company_id: int, data: dict) -> None:
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data containing timeline section
+        data: Dify callback data (at root level, not nested under "timeline")
     """
-    timeline_data = data.get("timeline", {})
+    # Data comes at root level from Dify, not nested under "timeline"
+    timeline_data = data
     if not timeline_data:
         logger.debug(f"No timeline data to save for company {company_id}")
         return
@@ -621,9 +647,10 @@ def save_products_data(db: Session, company_id: int, data: dict) -> None:
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data containing products section
+        data: Dify callback data (at root level, not nested under "products")
     """
-    products_data = data.get("products", {})
+    # Data comes at root level from Dify, not nested under "products"
+    products_data = data
     if not products_data:
         logger.debug(f"No products data to save for company {company_id}")
         return
@@ -643,15 +670,15 @@ def save_products_data(db: Session, company_id: int, data: dict) -> None:
     products.insights = _get_string_value(products_data, "insights")
     products.insights_source = "Chaps-e"
 
-    # Customer type and marketing positioning
+    # Customer type and marketing positioning (snake_case keys)
     (
         products.customer_type,
         products.customer_type_source,
-    ) = _get_sourced_value(products_data, "customerType")
+    ) = _get_sourced_value(products_data, "customer_type")
     (
         products.marketing_positioning,
         products.marketing_positioning_source,
-    ) = _get_sourced_value(products_data, "marketingPositioning")
+    ) = _get_sourced_value(products_data, "marketing_positioning")
 
     db.flush()
 
@@ -671,47 +698,51 @@ def _save_product_items(db: Session, company_id: int, products_data: dict) -> No
         CompanyProductItem.company_id == company_id
     ).delete()
 
+    def extract_item_value(item: dict | str) -> tuple[str | None, str | None]:
+        """Extract value and source from product item (handles nested name/value pattern)."""
+        if isinstance(item, str):
+            return item, None
+        if isinstance(item, dict):
+            # Check for nested name SourcedValue pattern: { name: { value, source } }
+            name_data = item.get("name")
+            if isinstance(name_data, dict):
+                return name_data.get("value"), name_data.get("source")
+            # Fallback to direct value/source pattern
+            return item.get("value"), item.get("source")
+        return None, None
+
     # Save range items
     for item in products_data.get("range", []):
-        if isinstance(item, dict):
-            value, source = item.get("value"), item.get("source")
-        else:
-            value, source = item, None
+        value, source = extract_item_value(item)
+        if value:
+            db.add(CompanyProductItem(
+                company_id=company_id,
+                type=ProductItemType.range,
+                value=value,
+                value_source=source,
+            ))
 
-        db.add(CompanyProductItem(
-            company_id=company_id,
-            type=ProductItemType.range,
-            value=value,
-            value_source=source,
-        ))
+    # Save partner brands (snake_case key)
+    for item in products_data.get("partner_brands", []):
+        value, source = extract_item_value(item)
+        if value:
+            db.add(CompanyProductItem(
+                company_id=company_id,
+                type=ProductItemType.partner_brand,
+                value=value,
+                value_source=source,
+            ))
 
-    # Save partner brands
-    for item in products_data.get("partnerBrands", []):
-        if isinstance(item, dict):
-            value, source = item.get("value"), item.get("source")
-        else:
-            value, source = item, None
-
-        db.add(CompanyProductItem(
-            company_id=company_id,
-            type=ProductItemType.partner_brand,
-            value=value,
-            value_source=source,
-        ))
-
-    # Save private labels
-    for item in products_data.get("privateLabels", []):
-        if isinstance(item, dict):
-            value, source = item.get("value"), item.get("source")
-        else:
-            value, source = item, None
-
-        db.add(CompanyProductItem(
-            company_id=company_id,
-            type=ProductItemType.private_label,
-            value=value,
-            value_source=source,
-        ))
+    # Save private labels (snake_case key)
+    for item in products_data.get("private_labels", []):
+        value, source = extract_item_value(item)
+        if value:
+            db.add(CompanyProductItem(
+                company_id=company_id,
+                type=ProductItemType.private_label,
+                value=value,
+                value_source=source,
+            ))
 
     db.flush()
 
@@ -825,9 +856,10 @@ def save_jobs_data(db: Session, company_id: int, data: dict) -> None:
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data containing jobs section
+        data: Dify callback data (at root level, not nested under "jobs")
     """
-    jobs_data = data.get("jobs", {})
+    # Data comes at root level from Dify, not nested under "jobs"
+    jobs_data = data
     if not jobs_data:
         logger.debug(f"No jobs data to save for company {company_id}")
         return
@@ -843,11 +875,11 @@ def save_jobs_data(db: Session, company_id: int, data: dict) -> None:
         jobs = CompanyJobs(company_id=company_id)
         db.add(jobs)
 
-    # Extract insights (nested structure)
-    insights = jobs_data.get("insights", {})
-    if isinstance(insights, dict):
+    # Extract insights_data (structured data from Dify prompt's insights_data field)
+    insights_data = jobs_data.get("insights_data", {})
+    if isinstance(insights_data, dict):
         # Total openings
-        total_openings_data = insights.get("total_openings", {})
+        total_openings_data = insights_data.get("total_openings", {})
         if isinstance(total_openings_data, dict):
             value = total_openings_data.get("value")
             if isinstance(value, (int, float)):
@@ -857,7 +889,7 @@ def save_jobs_data(db: Session, company_id: int, data: dict) -> None:
             jobs.insights_total_openings_source = total_openings_data.get("source")
 
         # Top departments
-        top_depts_data = insights.get("top_departments", {})
+        top_depts_data = insights_data.get("top_departments", {})
         if isinstance(top_depts_data, dict):
             value = top_depts_data.get("value")
             if isinstance(value, list):
@@ -870,13 +902,13 @@ def save_jobs_data(db: Session, company_id: int, data: dict) -> None:
         (
             jobs.insights_hiring_focus,
             jobs.insights_hiring_focus_source,
-        ) = _get_sourced_value(insights, "hiring_focus")
+        ) = _get_sourced_value(insights_data, "hiring_focus")
 
         # Growth indicators
         (
             jobs.insights_growth_indicators,
             jobs.insights_growth_indicators_source,
-        ) = _get_sourced_value(insights, "growth_indicators")
+        ) = _get_sourced_value(insights_data, "growth_indicators")
 
     db.flush()
 
@@ -1007,9 +1039,10 @@ def save_csr_data(db: Session, company_id: int, data: dict) -> None:
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data containing CSR section
+        data: Dify callback data (at root level, not nested under "csr")
     """
-    csr_data = data.get("csr", {})
+    # Data comes at root level from Dify, not nested under "csr"
+    csr_data = data
     if not csr_data:
         logger.debug(f"No CSR data to save for company {company_id}")
         return
@@ -1036,7 +1069,7 @@ def save_csr_data(db: Session, company_id: int, data: dict) -> None:
 
     db.flush()
 
-    # Save CSR initiatives (1:N)
+    # Save CSR initiatives (1:N) - from unified initiatives array
     _save_csr_initiatives(db, company_id, csr_data)
 
     logger.info(f"Saved CSR data for company {company_id}")
@@ -1049,37 +1082,43 @@ def _save_csr_initiatives(db: Session, company_id: int, csr_data: dict) -> None:
         CompanyCsrInitiative.company_id == company_id
     ).delete()
 
-    # Map of field names to initiative types
+    # Map of type strings to enum values
     type_mapping = {
-        "responsibility_initiatives": CsrInitiativeType.responsibility,
-        "charity_actions": CsrInitiativeType.charity,
-        "sustainability_programs": CsrInitiativeType.sustainability,
-        "community_involvement": CsrInitiativeType.community,
-        "diversity_inclusion": CsrInitiativeType.diversity,
-        "ethical_practices": CsrInitiativeType.ethics,
-        "awards_certifications": CsrInitiativeType.awards,
+        "responsibility": CsrInitiativeType.responsibility,
+        "charity": CsrInitiativeType.charity,
+        "sustainability": CsrInitiativeType.sustainability,
+        "community": CsrInitiativeType.community,
+        "diversity": CsrInitiativeType.diversity,
+        "ethics": CsrInitiativeType.ethics,
+        "awards": CsrInitiativeType.awards,
     }
 
-    for field_name, init_type in type_mapping.items():
-        items = csr_data.get(field_name, [])
-        if not isinstance(items, list):
+    # Read from unified initiatives array with type field
+    initiatives = csr_data.get("initiatives", [])
+    if not isinstance(initiatives, list):
+        return
+
+    for item in initiatives:
+        if not isinstance(item, dict):
             continue
 
-        for item in items:
-            if isinstance(item, dict):
-                value = item.get("value")
-                source = item.get("source")
-            else:
-                value = item
-                source = None
+        # Get type and map to enum
+        type_str = item.get("type", "")
+        init_type = type_mapping.get(type_str)
+        if not init_type:
+            logger.warning(f"Unknown CSR initiative type: {type_str}")
+            continue
 
-            if value:
-                db.add(CompanyCsrInitiative(
-                    company_id=company_id,
-                    type=init_type,
-                    value=value,
-                    value_source=source,
-                ))
+        value = item.get("value")
+        source = item.get("source")
+
+        if value:
+            db.add(CompanyCsrInitiative(
+                company_id=company_id,
+                type=init_type,
+                value=value,
+                value_source=source,
+            ))
 
     db.flush()
 
@@ -1152,11 +1191,17 @@ def save_press_data(db: Session, company_id: int, data: dict) -> None:
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data containing press section
+        data: Dify callback data (at root level, not nested under "press")
     """
-    press_data = data.get("press", {})
+    # Data comes at root level from Dify, not nested under "press"
+    press_data = data
     if not press_data:
         logger.debug(f"No press data to save for company {company_id}")
+        return
+
+    # Validate data is a dict
+    if not isinstance(press_data, dict):
+        logger.warning(f"Press data for company {company_id} is not a dict: {type(press_data)}")
         return
 
     # Check for existing press record
@@ -1330,21 +1375,21 @@ def _save_team_members_recursive(
         if not isinstance(member_data, dict):
             continue
 
-        # Extract member fields
+        # Extract member fields using snake_case keys (Dify output format)
         position, position_source = _get_sourced_value(member_data, "position")
-        first_name, first_name_source = _get_sourced_value(member_data, "firstName")
-        last_name, last_name_source = _get_sourced_value(member_data, "lastName")
-        linkedin, linkedin_source = _get_sourced_value(member_data, "linkedinUrl")
+        first_name, first_name_source = _get_sourced_value(member_data, "first_name")
+        last_name, last_name_source = _get_sourced_value(member_data, "last_name")
+        linkedin, linkedin_source = _get_sourced_value(member_data, "linkedin_url")
 
-        # Handle direct string values (not sourced)
+        # Handle direct string values (not sourced) - fallback
         if not position:
             position = member_data.get("position")
         if not first_name:
-            first_name = member_data.get("firstName")
+            first_name = member_data.get("first_name")
         if not last_name:
-            last_name = member_data.get("lastName")
+            last_name = member_data.get("last_name")
         if not linkedin:
-            linkedin = member_data.get("linkedinUrl")
+            linkedin = member_data.get("linkedin_url")
 
         member = CompanyTeamMember(
             company_id=company_id,

@@ -444,7 +444,10 @@ class CompanyService:
                 company.raw_scraped_website_knowledge = ""
         else:
             # All other query types write to normalized tables
-            write_section_data(self.db, company.id, query_type, data)
+            # Data comes from webhook wrapped as {query_type: actual_data}
+            # Extract the actual data for the section writers which expect root-level data
+            section_data = data.get(query_type, data) if isinstance(data, dict) else data
+            write_section_data(self.db, company.id, query_type, section_data)
 
     def update_task_tokens(self, task_id: int, token_data: TaskTokenUpdate) -> Task:
         """Update token usage information for a task"""
