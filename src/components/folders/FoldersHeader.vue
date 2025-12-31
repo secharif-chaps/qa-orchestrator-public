@@ -96,95 +96,55 @@
 
         <div class="flex gap-2 items-center">
           <!-- Add Items Dropdown (only if user can create items) -->
-          <div v-if="canCreateItems" class="relative text-center">
-            <Button
-              variant="secondary"
-              icon="fa fa-plus"
-              :label="$t('folder.items.add', 'Add Items')"
-              @click="showAddItemsDropdown = !showAddItemsDropdown"
-            />
+          <Dropdown v-if="canCreateItems" align="left" width="xl">
+            <template #trigger>
+              <Button
+                variant="secondary"
+                icon="fa fa-plus"
+                :label="$t('folder.items.add', 'Add Items')"
+              />
+            </template>
 
-            <!-- Backdrop to close dropdown -->
-            <div
-              v-if="showAddItemsDropdown"
-              class="fixed inset-0 z-40"
-              @click="showAddItemsDropdown = false"
-            ></div>
+            <template #content="{ close }">
+              <!-- Company Screen - Enabled -->
+              <DropdownItem
+                icon="fas fa-building"
+                icon-bg-color="bg-blue-100 dark:bg-blue-900/20"
+                icon-color="text-blue-600 dark:text-blue-400"
+                :label="$t('folder.addItems.companyScreen', 'Company Screen')"
+                :description="$t('folder.addItems.companyDescription', 'Add company profiles')"
+                @click="$router.push(`/folders/${$route.params.folderId}/create/company`); close()"
+              />
 
-            <!-- Dropdown Menu -->
-            <div
-              v-if="showAddItemsDropdown"
-              class="absolute left-0 transform top-full mt-2 w-80 bg-base-100 border border-primary-stroke rounded-lg shadow-lg z-50"
-            >
-              <div class="p-2">
-                <!-- Company Screen - Enabled -->
-                <button
-                  class="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-base-300 rounded-md transition-colors"
-                  @click="$router.push(`/folders/${$route.params.folderId}/create/company`)"
-                >
-                  <div
-                    class="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center"
-                  >
-                    <i class="fas fa-building text-blue-600 dark:text-blue-400 text-sm"></i>
-                  </div>
-                  <div class="flex-1">
-                    <div class="font-medium text-sm">
-                      {{ $t('folder.addItems.companyScreen', 'Company Screen') }}
-                    </div>
-                    <div class="text-xs text-secondary">
-                      {{ $t('folder.addItems.companyDescription', 'Add company profiles') }}
-                    </div>
-                  </div>
-                </button>
-
-                <!-- Watchfile - Disabled -->
-                <button
-                  class="w-full flex items-center gap-3 px-3 py-2 text-left opacity-50 cursor-not-allowed rounded-md"
-                  disabled
-                >
-                  <div
-                    class="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/20 flex items-center justify-center"
-                  >
-                    <i class="fas fa-eye text-green-600 dark:text-green-400 text-sm"></i>
-                  </div>
-                  <div class="flex-1">
-                    <div class="font-medium text-sm">
-                      {{ $t('folder.addItems.watchfile', 'Watchfile') }}
-                    </div>
-                    <div class="text-xs text-secondary">
-                      {{ $t('folder.addItems.watchfileDescription', 'Monitor company changes') }}
-                    </div>
-                  </div>
+              <!-- Watchfile - Disabled -->
+              <DropdownItem
+                disabled
+                icon="fas fa-eye"
+                icon-bg-color="bg-green-100 dark:bg-green-900/20"
+                icon-color="text-green-600 dark:text-green-400"
+                :label="$t('folder.addItems.watchfile', 'Watchfile')"
+                :description="$t('folder.addItems.watchfileDescription', 'Monitor company changes')"
+              >
+                <template #suffix>
                   <Tag variant="secondary" size="xs" :label="$t('common.soon')" />
-                </button>
+                </template>
+              </DropdownItem>
 
-                <!-- GraphRag - Disabled -->
-                <button
-                  class="w-full flex items-center gap-3 px-3 py-2 text-left opacity-50 cursor-not-allowed rounded-md"
-                  disabled
-                >
-                  <div
-                    class="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center"
-                  >
-                    <i
-                      class="fas fa-project-diagram text-purple-600 dark:text-purple-400 text-sm"
-                    ></i>
-                  </div>
-                  <div class="flex-1">
-                    <div class="font-medium text-sm">
-                      {{ $t('folder.addItems.graphrag', 'Knowledge graph') }}
-                    </div>
-                    <div class="text-xs text-secondary">
-                      {{
-                        $t('folder.addItems.graphragDescription', 'explore ecosystem with GraphRAG')
-                      }}
-                    </div>
-                  </div>
+              <!-- GraphRag - Disabled -->
+              <DropdownItem
+                disabled
+                icon="fas fa-project-diagram"
+                icon-bg-color="bg-purple-100 dark:bg-purple-900/20"
+                icon-color="text-purple-600 dark:text-purple-400"
+                :label="$t('folder.addItems.graphrag', 'Knowledge graph')"
+                :description="$t('folder.addItems.graphragDescription', 'explore ecosystem with GraphRAG')"
+              >
+                <template #suffix>
                   <Tag variant="secondary" size="xs" :label="$t('common.soon')" />
-                </button>
-              </div>
-            </div>
-          </div>
+                </template>
+              </DropdownItem>
+            </template>
+          </Dropdown>
 
           <div class="flex items-center gap-4">
             <!-- Filter Buttons -->
@@ -200,13 +160,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRef } from 'vue'
+import { computed, toRef } from 'vue'
 import { Button, Searchbar, Tag, Toggle } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
 import type { Folder } from '@/types/folder'
 import { useToggleFolderFavorite } from '@/mutations/folders'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import FolderShareButton from '@/components/features/folders/FolderShareButton.vue'
+import Dropdown from '@/components/ui/Dropdown.vue'
+import DropdownItem from '@/components/ui/DropdownItem.vue'
 
 interface Props {
   folder?: Folder | null
@@ -220,7 +182,6 @@ const emit = defineEmits<{
 }>()
 
 const { t, locale } = useI18n()
-const showAddItemsDropdown = ref(false)
 
 // Folder permissions
 const folderRef = toRef(props, 'folder')

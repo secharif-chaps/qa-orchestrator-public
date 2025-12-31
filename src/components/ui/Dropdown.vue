@@ -5,6 +5,9 @@
       <slot name="trigger" :is-open="isOpen" />
     </div>
 
+    <!-- Backdrop for click-outside handling -->
+    <div v-if="isOpen && backdrop" class="fixed inset-0 z-40" @click="close"></div>
+
     <!-- Dropdown content -->
     <Transition
       enter-active-class="transition duration-100 ease-out"
@@ -19,7 +22,7 @@
         class="absolute z-50 mt-2 rounded-lg border border-primary-stroke bg-base-100 shadow-shadow-3 overflow-hidden"
         :class="[widthClass, alignmentClass]"
       >
-        <div class="py-1">
+        <div class="p-2">
           <slot name="content" :close="close" />
         </div>
       </div>
@@ -32,14 +35,16 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 interface Props {
   align?: 'left' | 'right'
-  width?: 'auto' | 'sm' | 'md' | 'lg' | 'full'
+  width?: 'auto' | 'sm' | 'md' | 'lg' | 'xl' | 'full'
   closeOnSelect?: boolean
+  backdrop?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   align: 'left',
   width: 'md',
   closeOnSelect: true,
+  backdrop: true,
 })
 
 const emit = defineEmits<{
@@ -62,6 +67,7 @@ const widthClass = computed(() => {
     sm: 'w-48',
     md: 'w-56',
     lg: 'w-64',
+    xl: 'w-80',
     full: 'w-full',
   }
   return widths[props.width]
@@ -87,9 +93,9 @@ const open = () => {
   emit('open')
 }
 
-// Click outside handler
+// Click outside handler (fallback when backdrop is disabled)
 const handleClickOutside = (event: MouseEvent) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
+  if (!props.backdrop && dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
     close()
   }
 }
