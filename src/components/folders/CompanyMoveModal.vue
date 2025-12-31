@@ -15,11 +15,10 @@
         <div class="flex items-center gap-3">
           <div class="w-12 h-12 flex items-center justify-center bg-base-100 rounded-lg border border-primary-stroke">
             <img
-              v-if="!company.showFallbackIcon && company.website"
-              :src="`https://img.logo.dev/${getDomainFromUrl(company.website)}?token=pk_X-WVIfJTT_CnLpNPWEautQ&size=60`"
+              v-if="companyLogoUrl"
+              :src="companyLogoUrl"
               :alt="`${company.name} logo`"
               class="w-10 h-10 object-contain"
-              @error="company.showFallbackIcon = true"
             />
             <i v-else class="fa fa-building text-2xl text-secondary"></i>
           </div>
@@ -94,7 +93,7 @@
               <div>
                 <div class="font-medium">{{ folder.name }}</div>
                 <div class="text-xs text-secondary">
-                  {{ folder.items_count || 0 }} {{ $t('folder.items', 'items') }}
+                  {{ folder.items?.length || 0 }} {{ $t('folder.items', 'items') }}
                 </div>
               </div>
             </div>
@@ -156,6 +155,7 @@ interface Props {
   company: FolderItem | null
   currentFolderId: string
   displayModal: boolean
+  companyLogoUrl?: string
 }
 
 interface Emits {
@@ -261,15 +261,6 @@ function handleClose() {
   debouncedSearchQuery.value = ''
   selectedFolderId.value = null
   isMoving.value = false
-}
-
-function getDomainFromUrl(url: string): string {
-  try {
-    const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`)
-    return urlObj.hostname
-  } catch {
-    return url
-  }
 }
 
 function getFolderColor(color?: string): string {

@@ -230,6 +230,7 @@
       v-model:display-modal="showMoveModal"
       :company="companyToMove"
       :current-folder-id="route.params.folderId"
+      :company-logo-url="companyToMove ? getLogoUrl(companyToMove.website) : undefined"
       @move="handleMoveCompany"
     />
   </div>
