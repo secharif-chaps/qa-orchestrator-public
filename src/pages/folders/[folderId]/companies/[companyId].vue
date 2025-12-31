@@ -84,6 +84,8 @@ const companyId = computed(() => (route.params as { companyId: string }).company
 const folderId = computed(() => (route.params as { folderId: string }).folderId)
 
 const isDebugUser = computed(() => {
+  // Always show debug button in dev mode
+  if (import.meta.env.DEV) return true
   const username = authStore.user?.profile?.preferred_username?.toLowerCase()
   return username === 'nmr' || username === 'suh' || username === 'nmr-cv'
 })

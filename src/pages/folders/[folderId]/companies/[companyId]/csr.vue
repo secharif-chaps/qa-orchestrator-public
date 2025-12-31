@@ -27,12 +27,13 @@
       </ChapseAlert>
 
       <!-- CSR Responsibility Statement -->
-      <div v-if="company?.csr?.responsibility" class="bg-base-100 rounded-lg p-6">
+      <div v-if="responsibilityValue" class="bg-base-100 rounded-lg p-6">
         <h4 class="font-semibold text-secondary mb-3">
           {{ $t('profile.sections.csr.responsibility') }}
         </h4>
         <p class="text-sm text-secondary leading-relaxed">
-          {{ company.csr.responsibility }}
+          {{ responsibilityValue }}
+          <Source v-if="company?.csr?.responsibility" :source="getSourcedSource(company.csr.responsibility)" />
         </p>
       </div>
 
@@ -53,7 +54,7 @@
               <i class="fa-solid fa-circle text-secondary text-[6px] mt-1.5"></i>
               <div class="flex-1 min-w-0">
                 <span class="text-sm">{{ getSourcedValue(initiative) }}</span>
-                <Source :source="initiative.sources[0]" />
+                <Source :source="initiative.source" />
               </div>
             </li>
             <li
@@ -80,7 +81,7 @@
               <i class="fa-solid fa-circle text-secondary text-[6px] mt-1.5"></i>
               <div class="flex-1 min-w-0">
                 <span class="text-sm">{{ getSourcedValue(action) }}</span>
-                <Source :source="action.sources[0]" />
+                <Source :source="action.source" />
               </div>
             </li>
             <li v-if="!company?.csr?.charity_actions?.length" class="text-sm text-secondary italic">
@@ -104,7 +105,7 @@
               <i class="fa-solid fa-circle text-secondary text-[6px] mt-1.5"></i>
               <div class="flex-1 min-w-0">
                 <span class="text-sm">{{ getSourcedValue(program) }}</span>
-                <Source :source="program.sources[0]" />
+                <Source :source="program.source" />
               </div>
             </li>
             <li
@@ -131,7 +132,7 @@
               <i class="fa-solid fa-circle text-secondary text-[6px] mt-1.5"></i>
               <div class="flex-1 min-w-0">
                 <span class="text-sm">{{ getSourcedValue(involvement) }}</span>
-                <Source :source="involvement.sources[0]" />
+                <Source :source="involvement.source" />
               </div>
             </li>
             <li
@@ -158,7 +159,7 @@
               <i class="fa-solid fa-circle text-secondary text-[6px] mt-1.5"></i>
               <div class="flex-1 min-w-0">
                 <span class="text-sm">{{ getSourcedValue(initiative) }}</span>
-                <Source :source="initiative.sources[0]" />
+                <Source :source="initiative.source" />
               </div>
             </li>
             <li
@@ -185,7 +186,7 @@
               <i class="fa-solid fa-circle text-secondary text-[6px] mt-1.5"></i>
               <div class="flex-1 min-w-0">
                 <span class="text-sm">{{ getSourcedValue(practice) }}</span>
-                <Source :source="practice.sources[0]" />
+                <Source :source="practice.source" />
               </div>
             </li>
             <li
@@ -212,7 +213,7 @@
               <i class="fa-solid fa-circle text-secondary text-[6px] mt-1.5"></i>
               <div class="flex-1 min-w-0">
                 <span class="text-sm">{{ getSourcedValue(award) }}</span>
-                <Source :source="award.sources[0]" />
+                <Source :source="award.source" />
               </div>
             </li>
             <li
@@ -238,7 +239,7 @@ meta:
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import Source from '@/components/company/Source.vue'
-import { getSourcedValue } from '@/components/helpers/sourcedValues'
+import { getSourcedValue, getSourcedSource } from '@/components/helpers/sourcedValues'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
 import NoData from '@/components/ui/NoData.vue'
 import { companyByIdQuery } from '@/queries/companies'
@@ -262,6 +263,14 @@ const task = computed(() => tasks.value?.find((t) => t.type === 'csr'))
 const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
 }))
+
+// Extract responsibility value (handles both string and SourcedValue)
+const responsibilityValue = computed(() => {
+  const resp = company.value?.csr?.responsibility
+  if (!resp) return null
+  if (typeof resp === 'string') return resp
+  return getSourcedValue(resp)
+})
 
 const hasCsrData = computed(() => {
   const csr = company.value?.csr

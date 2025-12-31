@@ -275,51 +275,52 @@ const getTokenInfo = (taskType: TaskType) => {
 }
 
 // Task configuration - all 9 tasks that can run in parallel
+// Using internal/dev names for easier debugging
 const taskConfigs: TaskConfig[] = [
   {
     type: 'profile',
-    name: t('company.analysisCards.profile.title', 'Company Profile'),
-    description: t('company.analysisCards.profile.description', 'View detailed company information, business lines, and key metrics'),
+    name: 'profile',
+    description: 'Company profile, business lines, key metrics',
   },
   {
     type: 'digital',
-    name: t('company.onlinePresence.title', 'Online Presence'),
-    description: t('company.onlinePresence.socialMedia', 'Social Media Presence'),
+    name: 'digital',
+    description: 'Online presence, social media, digital strategy',
   },
   {
     type: 'csr',
-    name: t('company.analysisCards.csr.title', 'Corporate Social Responsibility'),
-    description: t('company.analysisCards.csr.description', 'CSR initiatives, sustainability programs, and social impact'),
+    name: 'csr',
+    description: 'CSR initiatives, sustainability, social impact',
   },
   {
     type: 'press',
-    name: t('company.analysisCards.press.title', 'Press & Media'),
-    description: t('company.analysisCards.press.description', 'Press releases, news articles, and media coverage'),
+    name: 'press',
+    description: 'Press releases, news, media coverage',
   },
   {
     type: 'timeline',
-    name: t('company.analysisCards.timeline.title', 'Timeline & History'),
-    description: t('company.analysisCards.timeline.description', 'Company history, milestones, and key events over time'),
+    name: 'timeline',
+    description: 'Company history, milestones, key events',
   },
   {
     type: 'products',
-    name: t('company.analysisCards.products.title', 'Products & Services'),
-    description: t('company.analysisCards.products.description', 'Browse products, services, and offerings'),
+    name: 'products',
+    description: 'Products, services, offerings',
   },
   {
     type: 'team',
-    name: t('company.analysisCards.team.title', 'Team & Management'),
-    description: t('company.analysisCards.team.description', 'Leadership team, organizational structure, and key personnel'),
+    name: 'team',
+    description: 'Leadership team, org structure, key personnel',
   },
   {
     type: 'jobs',
-    name: t('company.analysisCards.jobs.title', 'Job Offers'),
-    description: t('company.analysisCards.jobs.description', 'Current job openings and career opportunities'),
+    name: 'jobs',
+    description: 'Job openings, career opportunities',
   },
   {
     type: 'data_collection',
-    name: t('company.tasks.dataCollection', 'Data Collection'),
-    description: t('company.tasks.dataCollectionDescription', 'Structured data collection'),
+    name: 'data_collection',
+    description: 'Structured data collection (scraping)',
   },
 ]
 
@@ -432,8 +433,10 @@ const getStatusLabel = (status: TaskStatus | null): string => {
   }
 }
 
-// Check if current user is a debug user
+// Check if current user is a debug user or in dev mode
 const isDebugUser = computed(() => {
+  // Always allow in dev mode
+  if (import.meta.env.DEV) return true
   const username = authStore.user?.profile?.preferred_username?.toLowerCase()
   return username === 'nmr' || username === 'suh' || username === 'nmr-cv'
 })

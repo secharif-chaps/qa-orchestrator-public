@@ -44,7 +44,7 @@
                 class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
-                <Source v-for="source in item.sources" :key="source" :source="source" />
+                <Source :source="item.source" />
               </div>
             </div>
           </div>
@@ -62,8 +62,7 @@
                 class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
-
-                <Source v-for="source in item.sources" :key="source" :source="source" />
+                <Source :source="item.source" />
               </div>
             </div>
           </div>
@@ -84,7 +83,7 @@
                 class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
-                <Source v-for="source in item.sources" :key="source" :source="source" />
+                <Source :source="item.source" />
               </div>
             </div>
           </div>
@@ -102,7 +101,7 @@
                 class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
-                <Source v-for="source in item.sources" :key="source" :source="source" />
+                <Source :source="item.source" />
               </div>
             </div>
           </div>
@@ -120,7 +119,7 @@
                 class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
-                <Source v-for="source in item.sources" :key="source" :source="source" />
+                <Source :source="item.source" />
               </div>
             </div>
           </div>
@@ -138,7 +137,7 @@
                 class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
-                <Source v-for="source in item.sources" :key="source" :source="source" />
+                <Source :source="item.source" />
               </div>
             </div>
           </div>
@@ -162,7 +161,7 @@
                 class="bg-base-200 rounded-lg p-3"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
-                <Source v-for="source in item.sources" :key="source" :source="source" />
+                <Source :source="item.source" />
               </div>
             </div>
           </div>
@@ -180,7 +179,7 @@
                 class="bg-base-200 rounded-lg p-3"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
-                <Source v-for="source in item.sources" :key="source" :source="source" />
+                <Source :source="item.source" />
               </div>
             </div>
           </div>

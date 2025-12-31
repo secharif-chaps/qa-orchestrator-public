@@ -39,7 +39,7 @@
             <div class="text-sm text-secondary">
               <ul class="list-disc list-inside space-y-1">
                 <li
-                  v-for="department in getSourcedValue(company?.jobs?.insights?.top_departments)"
+                  v-for="department in topDepartmentsList"
                   :key="department"
                 >
                   {{ department }}
@@ -149,6 +149,27 @@ const jobOffersInsights = computed(() => {
   return company.value?.jobs?.insights
 })
 
+// Handle top_departments which can be array or comma-separated string
+const topDepartmentsList = computed((): string[] => {
+  const rawValue = getSourcedValue(company.value?.jobs?.insights?.top_departments)
+  if (!rawValue) return []
+  // If it's already an array, return it
+  if (Array.isArray(rawValue)) return rawValue
+  // If it's a string, split by comma
+  if (typeof rawValue === 'string') {
+    return rawValue.split(',').map((s) => s.trim()).filter((s) => s.length > 0)
+  }
+  return []
+})
+
+// Helper to extract string value from SourcedValue or plain string
+const extractStringValue = (field: any): string => {
+  if (!field) return ''
+  if (typeof field === 'string') return field
+  if (typeof field === 'object' && field.value) return String(field.value)
+  return ''
+}
+
 // Filter jobs based on search query
 const filteredJobs = computed(() => {
   if (!searchQuery.value.trim()) {
@@ -158,12 +179,18 @@ const filteredJobs = computed(() => {
   const query = searchQuery.value.toLowerCase().trim()
 
   return jobOffers.value.filter((job) => {
+    const title = extractStringValue(job.title).toLowerCase()
+    const department = extractStringValue(job.department).toLowerCase()
+    const location = extractStringValue(job.location).toLowerCase()
+    const description = extractStringValue(job.description).toLowerCase()
+    const requirements = extractStringValue(job.requirements).toLowerCase()
+
     return (
-      job.title?.toLowerCase().includes(query) ||
-      job.department?.toLowerCase().includes(query) ||
-      job.location?.toLowerCase().includes(query) ||
-      job.description?.toLowerCase().includes(query) ||
-      job.requirements?.toLowerCase().includes(query)
+      title.includes(query) ||
+      department.includes(query) ||
+      location.includes(query) ||
+      description.includes(query) ||
+      requirements.includes(query)
     )
   })
 })
