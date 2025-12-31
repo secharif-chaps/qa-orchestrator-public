@@ -62,9 +62,9 @@
         <Button
           v-if="item.type === 'company' && canDeleteCompany"
           variant="tertiary"
-          icon="fa fa-trash"
+          :icon="isArchived ? 'fa fa-undo' : 'fa fa-trash'"
           icon-only
-          :title="$t('company.delete.title', 'Delete Company')"
+          :title="isArchived ? $t('company.restore.title', 'Restore Company') : $t('company.delete.title', 'Delete Company')"
           @click.stop="$emit('deleteCompany', item)"
         />
       </div>
@@ -95,6 +95,7 @@ interface Props {
   item: FolderItem
   mode: 'grid' | 'table'
   canMoveItems?: boolean
+  isArchived?: boolean
 }
 
 const props = defineProps<Props>()
