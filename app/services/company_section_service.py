@@ -1335,8 +1335,24 @@ def save_team_data(db: Session, company_id: int, data: dict) -> None:
         company_id: Company ID to save data for
         data: Dify callback data containing team section
     """
-    team_data = data.get("team", [])
-    if not team_data:
+    # Check for team data in multiple formats:
+    # 1. Direct "team" key: {"team": [...]}
+    # 2. teamAnalysis structure: {"teamAnalysis": {"team": [...]}}
+    members = []
+
+    if "team" in data:
+        team_data = data.get("team", [])
+        if isinstance(team_data, list):
+            members = team_data
+        elif isinstance(team_data, dict):
+            members = team_data.get("members", []) or team_data.get("team", [])
+
+    if not members and "teamAnalysis" in data:
+        team_analysis = data.get("teamAnalysis", {})
+        if isinstance(team_analysis, dict):
+            members = team_analysis.get("team", [])
+
+    if not members:
         logger.debug(f"No team data to save for company {company_id}")
         return
 
@@ -1344,16 +1360,6 @@ def save_team_data(db: Session, company_id: int, data: dict) -> None:
     db.query(CompanyTeamMember).filter(
         CompanyTeamMember.company_id == company_id
     ).delete()
-
-    # Get the members list
-    members = team_data
-    if isinstance(team_data, dict):
-        members = team_data.get("members", [])
-        if not members:
-            # Try teamAnalysis structure
-            team_analysis = team_data.get("teamAnalysis", {})
-            if isinstance(team_analysis, dict):
-                members = team_analysis.get("team", [])
 
     if not isinstance(members, list):
         members = []
