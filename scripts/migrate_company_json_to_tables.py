@@ -111,28 +111,51 @@ def migrate_digital(session, company_id: int, digital: dict) -> bool:
         # Extract main digital fields
         insights = digital.get('insights')
 
-        # Digital strategy is nested
-        strategy = digital.get('digitalStrategy', {})
-        if isinstance(strategy, dict) and 'value' in strategy:
-            strategy = strategy.get('value', {})
+        # Digital strategy is nested - handle both old and new formats
+        strategy_data = digital.get('digitalStrategy', {})
+        strategy_source = None
+        if isinstance(strategy_data, dict):
+            if 'value' in strategy_data:
+                strategy = strategy_data.get('value', {})
+                # Handle both 'source' (new) and 'sources' (old) format
+                strategy_source = strategy_data.get('source') or (strategy_data.get('sources', [None])[0] if strategy_data.get('sources') else None)
+            else:
+                strategy = strategy_data
+        else:
+            strategy = {}
 
-        overall_strategy, overall_strategy_source = extract_sourced_value(
+        # Extract strategy fields - they may be plain strings (old) or SourcedValue (new)
+        overall_strategy, os_src = extract_sourced_value(
             strategy.get('overallStrategy') if isinstance(strategy, dict) else None
         )
-        digital_transformation, digital_transformation_source = extract_sourced_value(
+        overall_strategy_source = os_src or strategy_source
+
+        digital_transformation, dt_src = extract_sourced_value(
             strategy.get('digitalTransformation') if isinstance(strategy, dict) else None
         )
-        ecommerce, ecommerce_source = extract_sourced_value(
+        digital_transformation_source = dt_src or strategy_source
+
+        ecommerce, ec_src = extract_sourced_value(
             strategy.get('eCommerceCapabilities') if isinstance(strategy, dict) else None
         )
-        mobile, mobile_source = extract_sourced_value(
+        ecommerce_source = ec_src or strategy_source
+
+        mobile, ms_src = extract_sourced_value(
             strategy.get('mobileStrategy') if isinstance(strategy, dict) else None
         )
-        marketing, marketing_source = extract_sourced_value(
+        mobile_source = ms_src or strategy_source
+
+        marketing, ma_src = extract_sourced_value(
             strategy.get('digitalMarketingApproach') if isinstance(strategy, dict) else None
         )
+        marketing_source = ma_src or strategy_source
 
-        loyalty, loyalty_source = extract_sourced_value(digital.get('loyaltyProgram'))
+        loyalty_data = digital.get('loyaltyProgram') or digital.get('loyaltyPrograms')
+        loyalty, loyalty_source = extract_sourced_value(loyalty_data)
+        # Handle case where loyalty is a complex object (list of programs)
+        if isinstance(loyalty, (list, dict)):
+            import json
+            loyalty = json.dumps(loyalty) if loyalty else None
 
         session.execute(text("""
             INSERT INTO company_digital (
@@ -162,10 +185,19 @@ def migrate_digital(session, company_id: int, digital: dict) -> bool:
         })
 
         # Migrate online services
+        # Handle both old format (sources array) and new format (source string)
         online_services = digital.get('onlineServices', {})
         if isinstance(online_services, dict) and 'value' in online_services:
-            services_list = online_services.get('value', {}).get('services', [])
-            source = online_services.get('source')
+            value = online_services.get('value', [])
+            # value can be a list of services directly or a dict with 'services' key
+            if isinstance(value, list):
+                services_list = value
+            elif isinstance(value, dict):
+                services_list = value.get('services', [])
+            else:
+                services_list = []
+            # Handle both 'source' (new) and 'sources' (old) format
+            source = online_services.get('source') or (online_services.get('sources', [None])[0] if online_services.get('sources') else None)
         else:
             services_list = []
             source = None
@@ -183,7 +215,18 @@ def migrate_digital(session, company_id: int, digital: dict) -> bool:
                 })
 
         # Migrate social media accounts
-        social_accounts = digital.get('socialMediaAccounts', [])
+        # Handle both old format (dict with value/sources) and new format (list)
+        social_data = digital.get('socialMediaAccounts', [])
+        if isinstance(social_data, dict) and 'value' in social_data:
+            social_accounts = social_data.get('value', [])
+            social_source = social_data.get('source') or (social_data.get('sources', [None])[0] if social_data.get('sources') else None)
+        elif isinstance(social_data, list):
+            social_accounts = social_data
+            social_source = None
+        else:
+            social_accounts = []
+            social_source = None
+
         for account in social_accounts:
             if isinstance(account, dict):
                 session.execute(text("""
@@ -193,7 +236,7 @@ def migrate_digital(session, company_id: int, digital: dict) -> bool:
                     'company_id': company_id,
                     'platform': account.get('platform'),
                     'url': account.get('url'),
-                    'source': account.get('source'),
+                    'source': account.get('source') or social_source,
                 })
 
         return True
