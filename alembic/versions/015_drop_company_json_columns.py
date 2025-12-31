@@ -31,7 +31,36 @@ def upgrade():
     """Drop JSON columns from companies table.
 
     The data in these columns has been migrated to normalized tables.
+
+    IMPORTANT: Run scripts/migrate_company_json_to_tables.py BEFORE this migration!
     """
+    # Safety check: verify data was migrated before dropping columns
+    connection = op.get_bind()
+
+    # Count companies with JSON data
+    result = connection.execute(sa.text("""
+        SELECT COUNT(*) FROM companies
+        WHERE profile IS NOT NULL
+           OR digital IS NOT NULL
+           OR timeline IS NOT NULL
+    """))
+    json_companies = result.scalar()
+
+    # Count companies with normalized data
+    result = connection.execute(sa.text("""
+        SELECT COUNT(*) FROM company_profile
+    """))
+    normalized_companies = result.scalar()
+
+    if json_companies > 0 and normalized_companies == 0:
+        raise RuntimeError(
+            f"SAFETY CHECK FAILED: Found {json_companies} companies with JSON data "
+            f"but 0 companies in normalized tables. "
+            f"Run 'python scripts/migrate_company_json_to_tables.py' first!"
+        )
+
+    print(f"Safety check passed: {normalized_companies} companies in normalized tables")
+
     # Drop JSON columns - these are replaced by normalized tables
     op.drop_column('companies', 'profile')
     op.drop_column('companies', 'digital')
