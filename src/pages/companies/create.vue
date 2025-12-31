@@ -200,6 +200,9 @@ const selectedFolderId = ref<string | null>(null)
 const { isLoading: mutationLoading, mutateAsync, organizationId: mutationOrgId } = useCreateCompany()
 const { mutateAsync: addToFolder } = useAddItemToFolder()
 
+// Fetch current organization
+const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
+
 // Set organization ID on mutation for optimistic cache update
 watch(
   () => currentOrganization.value?.id,
@@ -220,8 +223,6 @@ const needsFolderSelection = computed(() => !routeFolderId.value)
 // Target folder ID (from route or selected)
 const targetFolderId = computed(() => routeFolderId.value || selectedFolderId.value)
 
-// Fetch current organization
-const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
 
 // Fetch folders (only when folder selection is needed)
 const { data: foldersData, isLoading: foldersLoading } = useQuery(
