@@ -174,6 +174,7 @@ import { Alert, Button } from '@owlint/feathers-vue'
 import { useChapseAssist } from '@/composables/useChapseAssist'
 import type { QuickAction } from '@/types/ai-preferences'
 import type { Company } from '@/types/company'
+import type { TaskResponse } from '@/types/task'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -190,6 +191,11 @@ interface Props {
    * Company data (to check task statuses)
    */
   company?: Company
+
+  /**
+   * Tasks data (fetched separately from company)
+   */
+  tasks?: TaskResponse[]
 
   /**
    * Section title
@@ -237,14 +243,18 @@ const preferencesCheckError = ref<string | null>(null)
 /**
  * Check if all company tasks have succeeded
  * Quick actions should only be enabled if tasks completed successfully
+ * Uses props.tasks (fetched separately) or falls back to props.company?.tasks
  */
 const areTasksSuccessful = computed(() => {
-  if (!props.company?.tasks || props.company.tasks.length === 0) {
+  // Prefer tasks prop (fetched separately), fallback to company.tasks
+  const tasksList = props.tasks || props.company?.tasks
+
+  if (!tasksList || tasksList.length === 0) {
     return false
   }
 
   // Check if all tasks have succeeded status
-  return props.company.tasks.every((task) => task.status === 'succeeded')
+  return tasksList.every((task) => task.status === 'succeeded')
 })
 
 /**

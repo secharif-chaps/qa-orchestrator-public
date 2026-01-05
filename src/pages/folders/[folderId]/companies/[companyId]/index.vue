@@ -233,6 +233,7 @@
       v-if="company?.id"
       :company-id="company.id"
       :company="company"
+      :tasks="tasks"
       @action-click="handleQuickActionClick"
       @load-success="handleQuickActionsSuccess"
       @load-error="handleQuickActionsError"
