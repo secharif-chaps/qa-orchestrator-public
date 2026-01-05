@@ -106,19 +106,59 @@ class ChapseService:
 
         context_data = []
         for c in companies:
-            # Extract siren from profile JSON if available
-            profile = c.profile or {}
-            siren = profile.get("siren") if isinstance(profile, dict) else None
+            # Build profile dict from normalized section data
+            profile_dict = None
+            if c.profile_data:
+                profile_dict = {
+                    "insights": c.profile_data.insights,
+                    "group_name": c.profile_data.group_name,
+                    "business_line": c.profile_data.business_line,
+                    "catchphrase": c.profile_data.catchphrase,
+                    "establishment_year": c.profile_data.establishment_year,
+                    "employee_count": c.profile_data.employee_count,
+                    "revenue": c.profile_data.revenue,
+                    "ceo": c.profile_data.ceo,
+                    "hq": c.profile_data.hq,
+                }
+
+            # Build digital dict from normalized section data
+            digital_dict = None
+            if c.digital_data:
+                digital_dict = {
+                    "insights": c.digital_data.insights,
+                    "overall_strategy": c.digital_data.overall_strategy,
+                    "digital_transformation": c.digital_data.digital_transformation,
+                    "ecommerce_capabilities": c.digital_data.ecommerce_capabilities,
+                    "mobile_strategy": c.digital_data.mobile_strategy,
+                    "digital_marketing_approach": c.digital_data.digital_marketing_approach,
+                    "loyalty_program": c.digital_data.loyalty_program,
+                }
+
+            # Build products dict from normalized section data
+            products_dict = None
+            if c.products_data:
+                products_dict = {
+                    "insights": c.products_data.insights,
+                    "customer_type": c.products_data.customer_type,
+                    "marketing_positioning": c.products_data.marketing_positioning,
+                }
+
+            # Build csr dict from normalized section data
+            csr_dict = None
+            if c.csr_data:
+                csr_dict = {
+                    "insights": c.csr_data.insights,
+                    "responsibility": c.csr_data.responsibility,
+                }
 
             context_data.append({
                 "id": c.id,
                 "name": c.name,
                 "website": c.website,
-                "siren": siren,
-                "profile": c.profile,
-                "digital": c.digital,
-                "products": c.products,
-                "csr": c.csr,
+                "profile": profile_dict,
+                "digital": digital_dict,
+                "products": products_dict,
+                "csr": csr_dict,
             })
 
         return json.dumps(context_data, ensure_ascii=False)
