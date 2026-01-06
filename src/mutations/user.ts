@@ -8,6 +8,7 @@ import {
   resendPasswordReset,
 } from '@/api/user'
 import { USER_QUERY_KEYS } from '@/queries/user'
+import { ADMIN_USER_QUERY_KEYS } from '@/queries/admin-users'
 import { toast } from '@/utils/toast'
 import type { OrganizationUserCreate, OrganizationUserUpdate } from '@/types/user'
 
@@ -21,6 +22,10 @@ export const useCreateOrganizationUser = (organizationId: string) => {
       // Invalidate organization users query to refresh the list
       queryCache.invalidateQueries({
         key: USER_QUERY_KEYS.organization(organizationId),
+      })
+      // Also invalidate admin users queries to refresh admin pages
+      queryCache.invalidateQueries({
+        key: ADMIN_USER_QUERY_KEYS.root,
       })
       toast.success('User Created')
     },
@@ -60,6 +65,10 @@ export const useUpdateOrganizationUser = (organizationId: string) => {
       queryCache.invalidateQueries({
         key: USER_QUERY_KEYS.organization(organizationId),
       })
+      // Also invalidate admin users queries to refresh admin pages
+      queryCache.invalidateQueries({
+        key: ADMIN_USER_QUERY_KEYS.root,
+      })
       toast.success('User Updated')
     },
     onError: (error: any) => {
@@ -97,6 +106,10 @@ export const useDeleteOrganizationUser = (organizationId: string) => {
       queryCache.invalidateQueries({
         key: USER_QUERY_KEYS.organization(organizationId),
       })
+      // Also invalidate admin users queries to refresh admin pages
+      queryCache.invalidateQueries({
+        key: ADMIN_USER_QUERY_KEYS.root,
+      })
       toast.success('User Deleted')
     },
     onError: (error: any) => {
@@ -130,9 +143,13 @@ export const useToggleUserStatus = (organizationId: string) => {
   const { mutateAsync } = useMutation({
     mutation: ({ userId, enabled }: { userId: string; enabled: boolean }) =>
       toggleUserStatus(organizationId, userId, enabled),
-    onSuccess: (_, { enabled }) => {
+    onSuccess: () => {
       queryCache.invalidateQueries({
         key: USER_QUERY_KEYS.organization(organizationId),
+      })
+      // Also invalidate admin users queries to refresh admin pages
+      queryCache.invalidateQueries({
+        key: ADMIN_USER_QUERY_KEYS.root,
       })
       toast.success('User Status Updated')
     },
