@@ -157,7 +157,7 @@
         <div class="flex justify-end gap-3 pt-4">
           <Button
             variant="secondary"
-            :label="$t('common.actions.cancel')"
+            :label="$t('common.cancel')"
             @click="handleCancel"
             :disabled="isSaving"
           />
@@ -204,12 +204,14 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { saveAiPreferences } from '@/api/ai-preferences'
 import { Alert, Button, Input } from '@owlint/feathers-vue'
 import type { AiPreferencesCreate } from '@/types/ai-preferences'
 
 const router = useRouter()
+const { t } = useI18n()
 
 // Form state
 const form = reactive<AiPreferencesCreate>({
@@ -244,28 +246,28 @@ function validateForm(): boolean {
 
   // Validate role
   if (!form.role.trim()) {
-    errors.role = 'Role is required'
+    errors.role = t('aiPreferences.setup.role.required')
     isValid = false
   } else if (form.role.length > 255) {
-    errors.role = 'Role must be less than 255 characters'
+    errors.role = t('aiPreferences.setup.role.tooLong')
     isValid = false
   }
 
   // Validate goals
   if (!form.goals_text.trim()) {
-    errors.goals_text = 'Goals are required'
+    errors.goals_text = t('aiPreferences.setup.goals.required')
     isValid = false
   } else if (form.goals_text.length > 2000) {
-    errors.goals_text = 'Goals must be less than 2000 characters'
+    errors.goals_text = t('aiPreferences.setup.goals.tooLong')
     isValid = false
   }
 
   // Validate desired output
   if (!form.desired_output_text.trim()) {
-    errors.desired_output_text = 'Desired output is required'
+    errors.desired_output_text = t('aiPreferences.setup.desiredOutput.required')
     isValid = false
   } else if (form.desired_output_text.length > 2000) {
-    errors.desired_output_text = 'Desired output must be less than 2000 characters'
+    errors.desired_output_text = t('aiPreferences.setup.desiredOutput.tooLong')
     isValid = false
   }
 
@@ -282,7 +284,7 @@ async function handleSubmit() {
 
   // Validate form
   if (!validateForm()) {
-    errorMessage.value = 'Please fix the errors in the form'
+    errorMessage.value = t('aiPreferences.setup.validation.formInvalid')
     return
   }
 
@@ -293,8 +295,7 @@ async function handleSubmit() {
     await saveAiPreferences(form)
 
     // Show success message
-    successMessage.value =
-      'Your AI preferences have been saved successfully. Quick actions will now be personalized based on your role and goals.'
+    successMessage.value = t('aiPreferences.setup.success.message')
 
     // Redirect after 2 seconds
     setTimeout(() => {
@@ -304,10 +305,10 @@ async function handleSubmit() {
     console.error('Failed to save AI preferences:', error)
 
     if (error.status === 401) {
-      errorMessage.value = 'You must be logged in to save AI preferences'
+      errorMessage.value = t('aiPreferences.settings.messages.authError')
     } else {
       errorMessage.value =
-        error.message || 'Failed to save AI preferences. Please try again.'
+        error.message || t('aiPreferences.setup.error.message')
     }
   } finally {
     isSaving.value = false
