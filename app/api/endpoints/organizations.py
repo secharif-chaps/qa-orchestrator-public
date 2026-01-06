@@ -458,13 +458,55 @@ async def create_organization_user_admin(
                 }
             )
 
+        # Step 3: Assign permissions/roles if provided
+        permissions = user_data.get('permissions', [])
+        if permissions:
+            logger.info(
+                "STEP 3: Assigning permissions to user",
+                extra={
+                    "user_id": user_id,
+                    "permissions": permissions
+                }
+            )
+
+            # Sync user roles with provided permissions
+            role_sync_success = await keycloak_admin_service.sync_user_realm_roles(
+                user_id=user_id,
+                target_roles=permissions
+            )
+
+            logger.info(
+                "STEP 3 RESULT: Permission assignment response",
+                extra={
+                    "role_sync_success": role_sync_success,
+                    "user_id": user_id,
+                    "permissions": permissions
+                }
+            )
+
+            if not role_sync_success:
+                logger.warning(
+                    "User created and added to organization but failed to assign permissions",
+                    extra={
+                        "user_id": user_id,
+                        "organization_id": organization_id,
+                        "permissions": permissions
+                    }
+                )
+        else:
+            logger.info(
+                "No permissions provided, user created with default permissions only",
+                extra={"user_id": user_id}
+            )
+
         logger.info(
             "=== Successfully completed organization user creation ===",
             extra={
                 "user_id": user_id,
                 "username": created_user.get('username'),
                 "organization_id": organization_id,
-                "added_to_org": add_success
+                "added_to_org": add_success,
+                "permissions_assigned": len(permissions) if permissions else 0
             }
         )
 
