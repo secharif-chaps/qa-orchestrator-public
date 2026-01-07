@@ -260,14 +260,13 @@ import { useQuery } from '@pinia/colada'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { toast } from '@/utils/toast'
 
 // Constants
 const VIEW_MODE_STORAGE_KEY = 'folder-view-mode'
 
 const route = useRoute('/folders/[folderId]')
 const router = useRouter()
-const { t: $t, locale } = useI18n()
+const { t, locale } = useI18n()
 const { canDeleteCompany } = useCompanyPermissions()
 
 const showDeleteModal = ref(false)
@@ -332,7 +331,7 @@ const getLogoUrl = (website?: string) => {
 
 // Methods
 const formatDate = (dateString: string) => {
-  if (!dateString) return $t('common.na', 'N/A')
+  if (!dateString) return t('common.na')
   const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
   return new Date(dateString).toLocaleDateString(localeCode)
 }
@@ -340,7 +339,7 @@ const formatDate = (dateString: string) => {
 // Helper to format item type
 const formatItemType = (type: string): string => {
   if (type === 'company') {
-    return $t('folder.itemTypes.company')
+    return t('folder.itemTypes.company')
   }
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
@@ -368,7 +367,7 @@ const confirmArchiveCompany = (item: FolderItem) => {
       name: item.name,
       website: item.website,
       created_at: item.created_at,
-      owner_username: item.owner_username,
+      owner_username: item.owner,
     } as Company
     if (companyFilter.value === 'archived') {
       showRestoreCompanyModal.value = true
@@ -400,31 +399,18 @@ const handleMoveCompany = async (payload: {
   destinationFolderName: string
 }) => {
   if (!companyToMove.value) {
-    console.error('No company selected for move')
     return
   }
 
-  try {
-    await moveCompany({
-      sourceFolderId: route.params.folderId as string,
-      destinationFolderId: payload.destinationFolderId,
-      companyId: companyToMove.value.id,
-      destinationFolderName: payload.destinationFolderName,
-    })
+  await moveCompany({
+    sourceFolderId: route.params.folderId as string,
+    destinationFolderId: payload.destinationFolderId,
+    companyId: companyToMove.value.id, // Use id (which is the company ID)
+    destinationFolderName: payload.destinationFolderName,
+  })
 
-    console.log('=== FOLDER PAGE: Move completed successfully ===')
-    toast.success(
-      $t('folder.moveCompany.success', { folderName: payload.destinationFolderName }),
-    )
-
-    showMoveModal.value = false
-    companyToMove.value = null
-
-    await refetch()
-
-  } catch (error) {
-    toast.error($t('folder.moveCompany.error', 'Failed to move company'))
-  }
+  showMoveModal.value = false
+  companyToMove.value = null
 }
 
 // Load saved view mode from localStorage

@@ -145,6 +145,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { refDebounced } from '@vueuse/core'
 import { Button, Label, Modal, Searchbar, Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { useI18n } from 'vue-i18n'
@@ -174,17 +175,18 @@ const isOpen = computed({
 })
 
 const searchQuery = ref('')
-const debouncedSearchQuery = ref('')
+const debouncedSearchQuery = refDebounced(searchQuery, 300)
 const selectedFolderId = ref<string | null>(null)
 const isMoving = ref(false)
 
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-
-watch(searchQuery, (newQuery) => {
-  if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    debouncedSearchQuery.value = newQuery
-  }, 300)
+// Reset state when modal closes (from parent closing it after successful move)
+watch(() => props.displayModal, (newValue) => {
+  if (!newValue) {
+    // Modal was closed, reset all state
+    searchQuery.value = ''
+    selectedFolderId.value = null
+    isMoving.value = false
+  }
 })
 
 const {
@@ -234,7 +236,6 @@ function selectFolder(folderId: string) {
 
 function handleMove() {
   if (!selectedFolderId.value) {
-    console.warn('No folder selected for move')
     return
   }
 
@@ -243,7 +244,6 @@ function handleMove() {
   )
 
   if (!selectedFolder) {
-    console.error('Selected folder not found:', selectedFolderId.value)
     return
   }
 
@@ -258,7 +258,6 @@ function handleMove() {
 function handleClose() {
   isOpen.value = false
   searchQuery.value = ''
-  debouncedSearchQuery.value = ''
   selectedFolderId.value = null
   isMoving.value = false
 }

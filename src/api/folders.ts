@@ -157,12 +157,15 @@ export const removeItemFromFolder = async (
 }
 
 export const moveItemBetweenFolders = async (data: {
-  source_folder_id: string
+  current_folder_id: string
   destination_folder_id: string
   item_id: string
   item_type: 'company'
 }) => {
-  const response = await apiClient.post('/folders/items/move', data)
+  const response = await apiClient.patch(
+    `/folders/${data.current_folder_id}/items/${data.item_id}?item_type=${data.item_type}`,
+    { folder_id: data.destination_folder_id }
+  )
   return response
 }
 
