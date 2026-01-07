@@ -43,8 +43,9 @@ export interface CSVImportResponse {
   results: CSVImportResult[]
 }
 
-export const getCompanyById = async (companyId: string) => {
-  const response = await apiClient.get<Company>(`/companies/${companyId}`)
+export const getCompanyById = async (companyId: string, language?: string) => {
+  const params = language ? `?language=${language}` : ''
+  const response = await apiClient.get<Company>(`/companies/${companyId}${params}`)
   return response
 }
 

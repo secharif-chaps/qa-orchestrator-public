@@ -4,7 +4,8 @@ import { getCompanies, getCompanyById, getRecentCompanies } from '@/api/companie
 export const COMPANY_QUERY_KEYS = {
   root: ['companies'] as const,
   recent: (limit: number) => [...COMPANY_QUERY_KEYS.root, 'recent', limit] as const,
-  byId: (id: string) => [...COMPANY_QUERY_KEYS.root, id] as const,
+  byId: (id: string, language?: string) =>
+    [...COMPANY_QUERY_KEYS.root, id, language ?? 'default'] as const,
   withFilters: (filters: {
     page: number
     size: number
@@ -14,16 +15,18 @@ export const COMPANY_QUERY_KEYS = {
   }) => [...COMPANY_QUERY_KEYS.root, { filters }] as const,
 }
 
-export const companyByIdQuery = defineQueryOptions(({ id }: { id: string }) => ({
-  key: COMPANY_QUERY_KEYS.byId(id),
-  query: () => {
-    // Ensure we don't make API calls with invalid IDs
-    if (!id || id === 'null' || id === 'undefined' || id.trim() === '') {
-      throw new Error('Invalid company ID')
-    }
-    return getCompanyById(id)
-  },
-}))
+export const companyByIdQuery = defineQueryOptions(
+  ({ id, language }: { id: string; language?: string }) => ({
+    key: COMPANY_QUERY_KEYS.byId(id, language),
+    query: () => {
+      // Ensure we don't make API calls with invalid IDs
+      if (!id || id === 'null' || id === 'undefined' || id.trim() === '') {
+        throw new Error('Invalid company ID')
+      }
+      return getCompanyById(id, language)
+    },
+  }),
+)
 
 export const recentCompaniesQuery = defineQueryOptions(({ limit }: { limit: number }) => ({
   key: COMPANY_QUERY_KEYS.recent(limit),
