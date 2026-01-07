@@ -9,12 +9,27 @@ export interface TranslationLanguage {
   name: string
 }
 
+export interface TranslationJob {
+  id: number
+  company_id: number
+  language_code: string
+  status: 'pending' | 'running' | 'completed' | 'failed'
+  total_fields: number
+  translated_fields: number
+  progress_percentage: number
+  error_message: string | null
+  created_at: string
+  started_at: string | null
+  completed_at: string | null
+}
+
 export interface LanguageTranslationStatus {
   language_name: string
   status: 'complete' | 'partial' | 'none'
   fields_translated: number
   fields_total: number
   percentage: number
+  active_job: TranslationJob | null
 }
 
 export interface CompanyTranslationStatus {
@@ -27,6 +42,7 @@ export interface TranslateResponse {
   language_code: string
   fields_queued: number
   message: string
+  job: TranslationJob | null
 }
 
 /**
@@ -55,7 +71,7 @@ export async function getCompanyTranslationStatus(
  *
  * @param companyId - Company ID to translate
  * @param languageCode - Target language code
- * @returns Translation request response
+ * @returns Translation request response with job details
  */
 export async function requestTranslation(
   companyId: number | string,
@@ -64,4 +80,14 @@ export async function requestTranslation(
   return apiClient.post<TranslateResponse>(`/translation/translate/${companyId}`, {
     language_code: languageCode,
   })
+}
+
+/**
+ * Get translation job progress.
+ *
+ * @param jobId - Translation job ID
+ * @returns Translation job details
+ */
+export async function getTranslationJob(jobId: number): Promise<TranslationJob> {
+  return apiClient.get<TranslationJob>(`/translation/job/${jobId}`)
 }
