@@ -5,7 +5,7 @@ Route: /api/team/*
 
 Permission Requirements:
 - GET /members: organization.read (view team)
-- PATCH /members/{user_id}/permissions: organization.manage OR admin.organizations (change permissions)
+- PATCH /members/{user_id}: organization.manage OR admin.organizations (change permissions)
 - POST /members/{user_id}/reset-password: organization.manage OR admin.organizations (reset password)
 """
 
@@ -119,7 +119,7 @@ async def list_team_members(
         )
 
 
-@router.patch("/members/{user_id}/permissions", response_model=TeamMember)
+@router.patch("/members/{user_id}", response_model=TeamMember)
 async def update_member_permissions(
     user_id: str = Path(..., description="Keycloak user UUID"),
     update_data: UpdateTeamMemberPermissions = ...,

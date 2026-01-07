@@ -6,18 +6,8 @@ abstracting individual Keycloak roles into permission tiers.
 
 from typing import Optional
 from pydantic import BaseModel, Field, field_validator
-from enum import Enum
 
-
-class PermissionTier(str, Enum):
-    """Permission tier for team members.
-
-    Simplified 3-tier model that abstracts Keycloak realm roles.
-    """
-
-    READER = "reader"
-    WRITER = "writer"
-    MANAGER = "manager"
+from app.core.permissions import PermissionTier
 
 
 class TeamMember(BaseModel):
