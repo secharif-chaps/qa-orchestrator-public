@@ -35,6 +35,8 @@ from .folder import Folder, FolderItem, FolderShare, ShareRole
 from .user_folder_favorite import UserFolderFavorite
 from .user_preferences import UserPreferences
 from .chapse_conversation_context import ChapseConversationContext
+from .translation import Translation
+from .translation_job import TranslationJob, TranslationJobStatus
 
 __all__ = [
     "Company",
@@ -80,4 +82,8 @@ __all__ = [
     "UserPreferences",
     # Conversation models
     "ChapseConversationContext",
+    # Translation models
+    "Translation",
+    "TranslationJob",
+    "TranslationJobStatus",
 ]
