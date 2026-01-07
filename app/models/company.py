@@ -180,3 +180,10 @@ class Company(Base):
         back_populates="company",
         cascade="all, delete-orphan"
     )
+
+    # Translations relationship (1:N)
+    translations = relationship(
+        "Translation",
+        back_populates="company",
+        cascade="all, delete-orphan"
+    )

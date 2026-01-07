@@ -26,6 +26,12 @@ from app.services.dify import DifyService
 from app.services.company_section_service import (
     write_section_data,
     read_all_section_data,
+    apply_translations_to_section_data,
+)
+from app.services.translation import (
+    TranslationService,
+    TRANSLATION_TABLE_LANGUAGES,
+    FRENCH_COLUMN_LANGUAGE,
 )
 from app.core.database_security import SecureQueryBuilder
 from app.core.validators import ValidationError, InputValidator
@@ -37,20 +43,38 @@ from app.services.token_manager import TokenManager, TOKENS_PER_COMPANY
 logger = logging.getLogger(__name__)
 
 
-def _build_company_response(db: Session, company: Company) -> CompanyResponse:
+def _build_company_response(
+    db: Session,
+    company: Company,
+    language: str | None = None,
+) -> CompanyResponse:
     """Build CompanyResponse from Company model and normalized tables.
 
     Reads section data from normalized tables instead of JSON columns.
+    Optionally applies translations for the specified language.
 
     Args:
         db: Database session for reading section data
         company: Company model instance
+        language: Optional language code (fr, es, de, pt) for translations.
+                  French (fr) reads from _value_fr columns on source tables.
+                  Other languages read from the translations table.
 
     Returns:
         CompanyResponse with all section data populated
     """
     # Read all section data from normalized tables
     section_data = read_all_section_data(db, company.id)
+
+    # Apply translations if a supported language is requested
+    # French uses _value_fr columns, other languages use translations table
+    supported_languages = TRANSLATION_TABLE_LANGUAGES | {FRENCH_COLUMN_LANGUAGE}
+    if language and language in supported_languages:
+        translation_service = TranslationService(db)
+        translations_map = translation_service.get_translations_map(company.id, language)
+        section_data = apply_translations_to_section_data(
+            section_data, translations_map, company.id
+        )
 
     # Build response with section data
     return CompanyResponse(

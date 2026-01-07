@@ -111,6 +111,7 @@ async def get_companies(
 @router.get("/{company_id}", response_model=CompanyResponse)
 async def get_company(
     company_id: int,
+    language: str = Query(None, description="Language code for translations (fr, es, de, pt)"),
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db),
@@ -119,23 +120,23 @@ async def get_company(
 
     Access is granted if the company belongs to at least one folder that
     the user owns or has been shared with.
+
+    Optionally specify a language code (fr, es, de, pt) to get translated content.
+    French (fr) reads from _value_fr columns, others use the translations table.
     """
     try:
         logger.info(
             f"GET /api/companies/{company_id} - User: {org_context.username}, "
-            f"Organization: {org_context.organization_id}"
+            f"Organization: {org_context.organization_id}, Language: {language}"
         )
 
-        # Get the company response (which reads from normalized tables)
-        company_response = service.get_company_response(company_id)
-        if not company_response:
+        # Get the Company model for access checks
+        company = service.get_company(company_id)
+        if not company:
             logger.error(f"Company {company_id} not found")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Company not found"
             )
-
-        # Get the Company model for access checks
-        company = service.get_company(company_id)
 
         # Verify organization access first
         logger.info(f"Company {company_id} found, verifying organization access")
@@ -157,7 +158,9 @@ async def get_company(
             )
 
         logger.info(f"User {org_context.username} has access to company {company_id}")
-        return company_response
+
+        # Build response with optional translation
+        return _build_company_response(db, company, language=language)
     except HTTPException:
         raise
     except Exception as e:
