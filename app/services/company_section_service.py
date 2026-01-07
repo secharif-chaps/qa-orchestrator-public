@@ -1552,10 +1552,8 @@ FIELD_TO_RESPONSE_MAP: dict[tuple[str, str], tuple[str, str, bool]] = {
     ("company_products", "insights"): ("products", "insights", False),
     ("company_products", "customer_type"): ("products", "customerType", True),
     ("company_products", "marketing_positioning"): ("products", "marketingPositioning", True),
-    # Jobs section - company_id as record_id
-    ("company_jobs", "insights_top_departments"): ("jobs", "insightsTopDepartments", False),
-    ("company_jobs", "insights_hiring_focus"): ("jobs", "insightsHiringFocus", False),
-    ("company_jobs", "insights_growth_indicators"): ("jobs", "insightsGrowthIndicators", False),
+    # Jobs section insights - handled specially in apply_translations_to_section_data
+    # because they are nested inside jobs.insights.{field}.value
     # CSR section - company_id as record_id
     ("company_csr", "insights"): ("csr", "insights", False),
     ("company_csr", "responsibility"): ("csr", "responsibility", True),
@@ -1648,6 +1646,23 @@ def apply_translations_to_section_data(
                             key = ("company_job_offers", offer_id, field)
                             if key in translations_map:
                                 offer[field] = translations_map[key]
+
+    # Jobs insights (nested inside jobs.insights.{field}.value)
+    if "jobs" in section_data and "insights" in section_data["jobs"]:
+        jobs_insights = section_data["jobs"]["insights"]
+        if isinstance(jobs_insights, dict):
+            # Map database field names to JSON field names
+            insights_field_map = {
+                "insights_top_departments": "top_departments",
+                "insights_hiring_focus": "hiring_focus",
+                "insights_growth_indicators": "growth_indicators",
+            }
+            for db_field, json_field in insights_field_map.items():
+                key = ("company_jobs", company_id, db_field)
+                if key in translations_map and json_field in jobs_insights:
+                    insight_obj = jobs_insights[json_field]
+                    if isinstance(insight_obj, dict) and "value" in insight_obj:
+                        insight_obj["value"] = translations_map[key]
 
     # Team members
     # Note: Team members structure doesn't currently include 'id' field
