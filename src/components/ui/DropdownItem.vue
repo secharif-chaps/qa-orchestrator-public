@@ -4,7 +4,7 @@
     v-if="description"
     type="button"
     class="w-full flex items-center gap-3 px-3 py-2 text-left rounded-md transition-colors"
-    :class="[richVariantClasses, disabledClasses]"
+    :class="richVariantClasses"
     :disabled="disabled"
     @click="handleClick"
   >
@@ -12,9 +12,9 @@
     <div
       v-if="icon"
       class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-      :class="iconBgColor"
+      :class="iconColors.bg"
     >
-      <i :class="[icon, iconColor, 'text-sm']"></i>
+      <i :class="[icon, iconColors.text, 'text-sm']"></i>
     </div>
 
     <!-- Content -->
@@ -32,7 +32,7 @@
     v-else
     type="button"
     class="w-full text-left px-4 py-2 text-sm transition-colors flex items-center gap-2"
-    :class="[simpleVariantClasses, disabledClasses]"
+    :class="simpleVariantClasses"
     :disabled="disabled"
     @click="handleClick"
   >
@@ -43,13 +43,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+type IconColor = 'blue' | 'green' | 'purple' | 'red' | 'yellow' | 'gray' | 'sage' | 'pink'
+
 interface Props {
   variant?: 'default' | 'danger' | 'warning' | 'info'
   disabled?: boolean
   // Rich content props
   icon?: string
-  iconBgColor?: string
-  iconColor?: string
+  color?: IconColor
   label?: string
   description?: string
 }
@@ -57,8 +58,22 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   variant: 'default',
   disabled: false,
-  iconBgColor: 'bg-base-200',
-  iconColor: 'text-secondary',
+  color: 'gray',
+})
+
+// Color mapping for icon box - encapsulates Tailwind classes
+const iconColors = computed(() => {
+  const colorMap: Record<IconColor, { bg: string; text: string }> = {
+    blue: { bg: 'bg-blue-100 dark:bg-blue-900/20', text: 'text-blue-600 dark:text-blue-400' },
+    green: { bg: 'bg-green-100 dark:bg-green-900/20', text: 'text-green-600 dark:text-green-400' },
+    purple: { bg: 'bg-purple-100 dark:bg-purple-900/20', text: 'text-purple-600 dark:text-purple-400' },
+    red: { bg: 'bg-red-100 dark:bg-red-900/20', text: 'text-red-600 dark:text-red-400' },
+    yellow: { bg: 'bg-yellow-100 dark:bg-yellow-900/20', text: 'text-yellow-600 dark:text-yellow-400' },
+    gray: { bg: 'bg-gray-100 dark:bg-gray-900/20', text: 'text-gray-600 dark:text-gray-400' },
+    sage: { bg: 'bg-sage-100 dark:bg-sage-900/20', text: 'text-sage-600 dark:text-sage-400' },
+    pink: { bg: 'bg-pink-100 dark:bg-pink-900/20', text: 'text-pink-600 dark:text-pink-400' },
+  }
+  return colorMap[props.color]
 })
 
 const emit = defineEmits<{
@@ -68,14 +83,14 @@ const emit = defineEmits<{
 // Simple layout variant classes (backward compatible)
 const simpleVariantClasses = computed(() => {
   if (props.disabled) {
-    return 'text-secondary/50 cursor-not-allowed'
+    return 'text-secondary/50 cursor-not-allowed opacity-50'
   }
 
   const variants = {
-    default: 'text-base hover:bg-base-200',
-    danger: 'text-error hover:bg-error-light',
-    warning: 'text-warning hover:bg-warning-light',
-    info: 'text-info hover:bg-info-light',
+    default: 'text-base hover:bg-base-200 cursor-pointer',
+    danger: 'text-error hover:bg-error-light cursor-pointer',
+    warning: 'text-warning hover:bg-warning-light cursor-pointer',
+    info: 'text-info hover:bg-info-light cursor-pointer',
   }
   return variants[props.variant]
 })
@@ -85,11 +100,7 @@ const richVariantClasses = computed(() => {
   if (props.disabled) {
     return 'opacity-50 cursor-not-allowed'
   }
-  return 'hover:bg-base-300'
-})
-
-const disabledClasses = computed(() => {
-  return props.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+  return 'hover:bg-base-300 cursor-pointer'
 })
 
 const handleClick = () => {

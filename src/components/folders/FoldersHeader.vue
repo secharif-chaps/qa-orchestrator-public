@@ -109,8 +109,7 @@
               <!-- Company Screen - Enabled -->
               <DropdownItem
                 icon="fas fa-building"
-                icon-bg-color="bg-blue-100 dark:bg-blue-900/20"
-                icon-color="text-blue-600 dark:text-blue-400"
+                color="blue"
                 :label="$t('folder.addItems.companyScreen', 'Company Screen')"
                 :description="$t('folder.addItems.companyDescription', 'Add company profiles')"
                 @click="$router.push(`/folders/${$route.params.folderId}/create/company`); close()"
@@ -120,8 +119,7 @@
               <DropdownItem
                 disabled
                 icon="fas fa-eye"
-                icon-bg-color="bg-green-100 dark:bg-green-900/20"
-                icon-color="text-green-600 dark:text-green-400"
+                color="green"
                 :label="$t('folder.addItems.watchfile', 'Watchfile')"
                 :description="$t('folder.addItems.watchfileDescription', 'Monitor company changes')"
               >
@@ -134,8 +132,7 @@
               <DropdownItem
                 disabled
                 icon="fas fa-project-diagram"
-                icon-bg-color="bg-purple-100 dark:bg-purple-900/20"
-                icon-color="text-purple-600 dark:text-purple-400"
+                color="purple"
                 :label="$t('folder.addItems.graphrag', 'Knowledge graph')"
                 :description="$t('folder.addItems.graphragDescription', 'explore ecosystem with GraphRAG')"
               >

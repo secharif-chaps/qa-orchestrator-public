@@ -76,7 +76,7 @@
             <span class="text-error">*</span>
           </label>
           <Select
-            v-model="selectedFolderName"
+            v-model="selectedFolderId"
             :options="folderOptions"
             :placeholder="$t('company.create.chooseFolderPlaceholder', 'Choose a folder...')"
             icon="fa fa-folder"
@@ -165,7 +165,7 @@ const company = ref('')
 const website = ref('')
 const companyError = ref('')
 const websiteError = ref('')
-const selectedFolderName = ref<string>('')
+const selectedFolderId = ref<string | null>(null)
 
 // Mutations
 const { isLoading: mutationLoading, mutateAsync, organizationId: mutationOrgId } = useCreateCompany()
@@ -210,10 +210,13 @@ const { data: foldersData, isLoading: foldersLoading } = useQuery(
   },
 )
 
-// Transform folders to Select options format
+// Transform folders to Select options format with { label, value }
 const folderOptions = computed(() => {
   if (!foldersData.value?.data) return []
-  return foldersData.value.data.map((folder) => folder.name)
+  return foldersData.value.data.map((folder) => ({
+    label: folder.name,
+    value: folder.id,
+  }))
 })
 
 // Fetch folder details (when folder ID is in route)
@@ -221,14 +224,11 @@ const { data: folderData } = useQuery(folderByIdQuery, () => ({ id: routeFolderI
   enabled: computed(() => !!routeFolderId.value),
 })
 
-// Selected folder object (derived from folder name)
+// Selected folder object (derived from folder ID)
 const selectedFolder = computed(() => {
-  if (!selectedFolderName.value || !foldersData.value?.data) return null
-  return foldersData.value.data.find((f) => f.name === selectedFolderName.value)
+  if (!selectedFolderId.value || !foldersData.value?.data) return null
+  return foldersData.value.data.find((f) => f.id === selectedFolderId.value)
 })
-
-// Selected folder ID (derived from selected folder)
-const selectedFolderId = computed(() => selectedFolder.value?.id || null)
 
 // Global token balance query
 const {
@@ -302,7 +302,7 @@ const canSubmit = computed(() => {
   }
 
   // If folder selection is needed, must have selected a folder
-  if (needsFolderSelection.value && !selectedFolderName.value) {
+  if (needsFolderSelection.value && !selectedFolderId.value) {
     return false
   }
 
