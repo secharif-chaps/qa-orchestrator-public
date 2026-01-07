@@ -45,7 +45,7 @@ logger = get_logger(__name__)
 # =============================================================================
 # Defines which fields in each table are translatable.
 # Format: {table_name: [field_names]}
-# Only fields that have _value_fr columns are translatable.
+# Translations are stored in the normalized 'translations' table.
 
 TRANSLATABLE_FIELDS: dict[str, list[str]] = {
     # 1:1 Section Tables (record_id = company_id)
@@ -130,8 +130,7 @@ ONE_TO_ONE_TABLES = {
 }
 
 # Supported languages for translation API
-# French translations are stored in _value_fr columns on the tables themselves.
-# Other languages (es, de, pt) use the normalized translations table.
+# All languages use the normalized translations table.
 SUPPORTED_LANGUAGES = [
     {"code": "fr", "name": "French"},
     {"code": "es", "name": "Spanish"},
@@ -139,11 +138,8 @@ SUPPORTED_LANGUAGES = [
     {"code": "pt", "name": "Portuguese"},
 ]
 
-# Languages that use the translations table (excludes French)
-TRANSLATION_TABLE_LANGUAGES = {"es", "de", "pt"}
-
-# French uses _value_fr columns on the tables directly
-FRENCH_COLUMN_LANGUAGE = "fr"
+# All supported language codes
+SUPPORTED_LANGUAGE_CODES = {"fr", "es", "de", "pt"}
 
 
 @dataclass
@@ -216,12 +212,8 @@ class TranslationService:
             lang_code = lang["code"]
             lang_name = lang["name"]
 
-            if lang_code == "fr":
-                # French uses _value_fr columns
-                translated = self._count_french_translations(company_id)
-            else:
-                # Other languages use translations table
-                translated = self._count_table_translations(company_id, lang_code)
+            # All languages use translations table
+            translated = self._count_table_translations(company_id, lang_code)
 
             # Determine status
             if translated == 0:
@@ -267,11 +259,7 @@ class TranslationService:
         Returns:
             List of fields that need translation.
         """
-        # Handle French separately - it uses _value_fr columns
-        if language_code == FRENCH_COLUMN_LANGUAGE:
-            return self._get_fields_to_translate_french(company_id)
-
-        if language_code not in TRANSLATION_TABLE_LANGUAGES:
+        if language_code not in SUPPORTED_LANGUAGE_CODES:
             logger.warning(
                 f"Language {language_code} not supported for translation"
             )
@@ -348,86 +336,6 @@ class TranslationService:
 
         return fields_to_translate
 
-    def _get_fields_to_translate_french(
-        self,
-        company_id: int,
-    ) -> list[FieldToTranslate]:
-        """Get fields that need French translation (stored in _value_fr columns).
-
-        Args:
-            company_id: Company ID
-
-        Returns:
-            List of fields needing French translation.
-        """
-        fields_to_translate: list[FieldToTranslate] = []
-
-        # Check 1:1 section tables
-        for table_name in ONE_TO_ONE_TABLES:
-            fields = TRANSLATABLE_FIELDS.get(table_name, [])
-            record = self._get_section_record(company_id, table_name)
-
-            if not record:
-                continue
-
-            for field_name in fields:
-                source_value = getattr(record, field_name, None)
-                if not source_value:
-                    continue
-
-                # Check if French translation exists in _value_fr column
-                fr_column = f"{field_name}_value_fr"
-                if hasattr(record, fr_column):
-                    existing_fr = getattr(record, fr_column, None)
-                    if existing_fr:
-                        # Already translated
-                        continue
-
-                source_hash = self._hash_value(source_value)
-                fields_to_translate.append(
-                    FieldToTranslate(
-                        table_name=table_name,
-                        record_id=company_id,
-                        field_name=field_name,
-                        source_value=source_value,
-                        source_value_hash=source_hash,
-                    )
-                )
-
-        # Check 1:N child tables
-        child_records = self._get_child_records(company_id)
-        for table_name, records in child_records.items():
-            fields = TRANSLATABLE_FIELDS.get(table_name, [])
-
-            for record in records:
-                record_id = record.id
-
-                for field_name in fields:
-                    source_value = getattr(record, field_name, None)
-                    if not source_value:
-                        continue
-
-                    # Check if French translation exists in _value_fr column
-                    fr_column = f"{field_name}_value_fr"
-                    if hasattr(record, fr_column):
-                        existing_fr = getattr(record, fr_column, None)
-                        if existing_fr:
-                            # Already translated
-                            continue
-
-                    source_hash = self._hash_value(source_value)
-                    fields_to_translate.append(
-                        FieldToTranslate(
-                            table_name=table_name,
-                            record_id=record_id,
-                            field_name=field_name,
-                            source_value=source_value,
-                            source_value_hash=source_hash,
-                        )
-                    )
-
-        return fields_to_translate
-
     def save_translation(
         self,
         company_id: int,
@@ -440,8 +348,7 @@ class TranslationService:
     ) -> Translation | None:
         """Save a translation to the database.
 
-        For French, saves to _value_fr column on the source table.
-        For other languages, saves to the translations table.
+        All languages are saved to the translations table.
 
         Args:
             company_id: Company ID
@@ -453,18 +360,8 @@ class TranslationService:
             source_value_hash: Hash of source value
 
         Returns:
-            Created or updated Translation record (None for French).
+            Created or updated Translation record.
         """
-        # Handle French specially - save to _value_fr column
-        if language_code == FRENCH_COLUMN_LANGUAGE:
-            self._save_french_translation(
-                table_name=table_name,
-                record_id=record_id,
-                field_name=field_name,
-                value=value,
-            )
-            return None
-
         # Check if translation exists
         existing = (
             self.db.query(Translation)
@@ -498,47 +395,6 @@ class TranslationService:
         self.db.commit()
         self.db.refresh(translation)
         return translation
-
-    def _save_french_translation(
-        self,
-        table_name: str,
-        record_id: int,
-        field_name: str,
-        value: str,
-    ) -> None:
-        """Save a French translation to the _value_fr column.
-
-        Args:
-            table_name: Source table name
-            record_id: Source record ID (company_id for 1:1 tables)
-            field_name: Field name
-            value: Translated value
-        """
-        fr_column = f"{field_name}_value_fr"
-
-        # Get the record based on table type
-        if table_name in ONE_TO_ONE_TABLES:
-            record = self._get_section_record(record_id, table_name)
-        else:
-            record = self._get_child_record_by_id(table_name, record_id)
-
-        if not record:
-            logger.warning(
-                f"Record not found for French translation: {table_name}[{record_id}]"
-            )
-            return
-
-        if not hasattr(record, fr_column):
-            logger.warning(
-                f"French column {fr_column} not found on {table_name}"
-            )
-            return
-
-        setattr(record, fr_column, value)
-        self.db.commit()
-        logger.debug(
-            f"Saved French translation to {table_name}.{fr_column}[{record_id}]"
-        )
 
     def _get_child_record_by_id(
         self,
@@ -627,32 +483,6 @@ class TranslationService:
             for record in records:
                 for field_name in fields:
                     if getattr(record, field_name, None):
-                        count += 1
-
-        return count
-
-    def _count_french_translations(self, company_id: int) -> int:
-        """Count French translations (from _value_fr columns)."""
-        count = 0
-
-        # Count 1:1 section French translations
-        for table_name in ONE_TO_ONE_TABLES:
-            fields = TRANSLATABLE_FIELDS.get(table_name, [])
-            record = self._get_section_record(company_id, table_name)
-            if record:
-                for field_name in fields:
-                    fr_field = f"{field_name}_value_fr"
-                    if hasattr(record, fr_field) and getattr(record, fr_field, None):
-                        count += 1
-
-        # Count 1:N child French translations
-        child_records = self._get_child_records(company_id)
-        for table_name, records in child_records.items():
-            fields = TRANSLATABLE_FIELDS.get(table_name, [])
-            for record in records:
-                for field_name in fields:
-                    fr_field = f"{field_name}_value_fr"
-                    if hasattr(record, fr_field) and getattr(record, fr_field, None):
                         count += 1
 
         return count
@@ -751,8 +581,7 @@ class TranslationService:
     ) -> dict[tuple[str, int, str], str]:
         """Get all translations for a company/language as a lookup map.
 
-        For French, reads from _value_fr columns on the source tables.
-        For other languages, reads from the translations table.
+        All languages read from the translations table.
 
         Args:
             company_id: Company ID
@@ -761,61 +590,9 @@ class TranslationService:
         Returns:
             Dictionary mapping (table_name, record_id, field_name) to translated value.
         """
-        # Handle French - read from _value_fr columns
-        if language_code == FRENCH_COLUMN_LANGUAGE:
-            return self._get_french_translations_map(company_id)
-
-        # Other languages - read from translations table
         translations = self._get_existing_translations(company_id, language_code)
         return {
             (t.table_name, t.record_id, t.field_name): t.value
             for t in translations
             if t.value
         }
-
-    def _get_french_translations_map(
-        self,
-        company_id: int,
-    ) -> dict[tuple[str, int, str], str]:
-        """Get French translations from _value_fr columns.
-
-        Args:
-            company_id: Company ID
-
-        Returns:
-            Dictionary mapping (table_name, record_id, field_name) to translated value.
-        """
-        translations_map: dict[tuple[str, int, str], str] = {}
-
-        # Read from 1:1 section tables
-        for table_name in ONE_TO_ONE_TABLES:
-            fields = TRANSLATABLE_FIELDS.get(table_name, [])
-            record = self._get_section_record(company_id, table_name)
-
-            if not record:
-                continue
-
-            for field_name in fields:
-                fr_column = f"{field_name}_value_fr"
-                if hasattr(record, fr_column):
-                    value = getattr(record, fr_column, None)
-                    if value:
-                        # For 1:1 tables, record_id is company_id
-                        translations_map[(table_name, company_id, field_name)] = value
-
-        # Read from 1:N child tables
-        child_records = self._get_child_records(company_id)
-        for table_name, records in child_records.items():
-            fields = TRANSLATABLE_FIELDS.get(table_name, [])
-
-            for record in records:
-                record_id = record.id
-
-                for field_name in fields:
-                    fr_column = f"{field_name}_value_fr"
-                    if hasattr(record, fr_column):
-                        value = getattr(record, fr_column, None)
-                        if value:
-                            translations_map[(table_name, record_id, field_name)] = value
-
-        return translations_map

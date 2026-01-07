@@ -30,8 +30,7 @@ from app.services.company_section_service import (
 )
 from app.services.translation import (
     TranslationService,
-    TRANSLATION_TABLE_LANGUAGES,
-    FRENCH_COLUMN_LANGUAGE,
+    SUPPORTED_LANGUAGE_CODES,
 )
 from app.core.database_security import SecureQueryBuilder
 from app.core.validators import ValidationError, InputValidator
@@ -57,8 +56,7 @@ def _build_company_response(
         db: Database session for reading section data
         company: Company model instance
         language: Optional language code (fr, es, de, pt) for translations.
-                  French (fr) reads from _value_fr columns on source tables.
-                  Other languages read from the translations table.
+                  All languages read from the translations table.
 
     Returns:
         CompanyResponse with all section data populated
@@ -67,9 +65,7 @@ def _build_company_response(
     section_data = read_all_section_data(db, company.id)
 
     # Apply translations if a supported language is requested
-    # French uses _value_fr columns, other languages use translations table
-    supported_languages = TRANSLATION_TABLE_LANGUAGES | {FRENCH_COLUMN_LANGUAGE}
-    if language and language in supported_languages:
+    if language and language in SUPPORTED_LANGUAGE_CODES:
         translation_service = TranslationService(db)
         translations_map = translation_service.get_translations_map(company.id, language)
         section_data = apply_translations_to_section_data(
