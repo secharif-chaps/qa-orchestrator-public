@@ -1274,6 +1274,25 @@ export default {
     footer: {
       createdBy: 'Créé par {username} le {date}',
     },
+    translation: {
+      button: 'Traduire',
+      clickToTranslate: 'Cliquer pour traduire',
+      currentlyViewing: 'Actuellement affiché',
+      clickToView: 'Cliquer pour afficher dans cette langue',
+      inProgress: 'Traduction en cours...',
+      progressDetail: '{translated}/{total} champs ({percent}%)',
+      viewingDefault: 'Affichage dans la langue originale',
+      viewingIn: 'Affichage en {language}',
+      alreadyInProgress: 'Traduction déjà en cours',
+      started: 'Traduction lancée pour {count} champs vers {language}',
+      failed: 'La demande de traduction a échoué. Veuillez réessayer.',
+      languages: {
+        fr: 'Français',
+        es: 'Espagnol',
+        de: 'Allemand',
+        pt: 'Portugais',
+      },
+    }
   },
   tokens: {
     module: 'Module {module}',
