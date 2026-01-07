@@ -83,7 +83,7 @@ import ProductListItem from '@/components/company/products/ProductListItem.vue'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
 import NoData from '@/components/ui/NoData.vue'
 import { useRoute } from 'vue-router'
-import { computed, ref } from 'vue'
+import { computed, ref, inject } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
@@ -100,11 +100,13 @@ const { data: tasks } = useQuery(companyTasksQuery, () => ({
 
 const task = computed(() => tasks.value?.find((t) => t.type === 'products'))
 
+const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
 // Use the company data composable
 const { data: company } = useQuery(
   companyByIdQuery,
   () => ({
     id: companyId.value,
+    language: selectedLanguage.value
   }),
   // Task data is kept fresh via SSE (Server-Sent Events) in useTaskEvents composable.
   // No polling needed - cache is invalidated automatically when tasks update.

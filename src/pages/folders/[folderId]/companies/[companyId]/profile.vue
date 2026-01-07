@@ -54,7 +54,7 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
@@ -81,10 +81,13 @@ const { data: tasks } = useQuery(companyTasksQuery, () => ({
 
 const task = computed(() => tasks.value?.find((t) => t.type === 'profile'))
 
+const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
+
 const { data: company } = useQuery(
   companyByIdQuery,
   () => ({
     id: companyId.value,
+    language: selectedLanguage.value,
   }),
   // Task data is kept fresh via SSE (Server-Sent Events) in useTaskEvents composable.
   // No polling needed - cache is invalidated automatically when tasks update.
