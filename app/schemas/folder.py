@@ -71,10 +71,7 @@ class FolderItemAdd(FolderItemBase):
 
 class FolderItemMove(BaseModel):
     """Schema for moving an item between folders."""
-    source_folder_id: UUID
-    destination_folder_id: UUID
-    item_id: str
-    item_type: str = Field(..., pattern="^(company|contact|document)$")
+    folder_id: UUID = Field(..., description="Destination folder ID")
 
 
 class FolderItemResponse(FolderItemBase):
@@ -82,6 +79,15 @@ class FolderItemResponse(FolderItemBase):
     folder_id: UUID
     added_at: datetime
     owner: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+
+class FolderItemMoveResponse(BaseModel):
+    """Response schema for moving an item to a folder."""
+    message: str
+    item: FolderItemResponse
 
     class Config:
         from_attributes = True

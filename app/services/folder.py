@@ -13,11 +13,14 @@ from typing import List, Optional, Dict, Any, Set
 from uuid import UUID
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from datetime import datetime
+from datetime import datetime, timezone
+import logging
 
 from app.models import Folder, FolderItem, Company, UserFolderFavorite
 from app.models.folder import FolderShare, ShareRole
 from app.schemas.folder import FolderCreate, FolderUpdate
+
+logger = logging.getLogger(__name__)
 
 
 class FolderService:
@@ -188,9 +191,7 @@ class FolderService:
         Returns:
             List of Folder instances the user has access to
         """
-        import logging
         from sqlalchemy import and_
-        logger = logging.getLogger(__name__)
 
         logger.debug(
             f"list_folders - organization_id: {organization_id}, "
@@ -307,9 +308,6 @@ class FolderService:
         position: Optional[int] = None
     ) -> FolderItem:
         """Add an item to a folder."""
-        import logging
-        logger = logging.getLogger(__name__)
-
         try:
             # Check if item already exists in folder
             existing = db.query(FolderItem).filter(
@@ -372,42 +370,40 @@ class FolderService:
         return False
 
     @staticmethod
-    def move_item_to_folder(
+    def update_item_folder(
         db: Session,
-        source_folder_id: UUID,
-        destination_folder_id: UUID,
+        folder_id: UUID,
         item_id: str,
-        item_type: str
+        item_type: str,
+        destination_folder_id: UUID,
+        organization_id: str
     ) -> Optional[FolderItem]:
-        """Move an item from one folder to another.
+        """Update the folder_id of an item (move it to a different folder).
 
-        This updates the folder_id of the FolderItem record, effectively moving
-        the item from the source folder to the destination folder.
+        This is a RESTful PATCH operation that updates the folder_id attribute
+        of a FolderItem, effectively moving the item to a new folder.
 
         Args:
             db: Database session
-            source_folder_id: UUID of the source folder
-            destination_folder_id: UUID of the destination folder
+            folder_id: Current folder ID (used to find the item)
             item_id: ID of the item to move
             item_type: Type of item ('company', 'contact', etc.)
+            destination_folder_id: New folder ID to move the item to
+            organization_id: Organization ID for validation
 
         Returns:
-            Updated FolderItem if successful, None if item not found in source folder
+            Updated FolderItem if successful, None if item not found
         """
-        import logging
-        logger = logging.getLogger(__name__)
-
-        # Find the folder item in the source folder
+        # Find the folder item
         folder_item = db.query(FolderItem).filter(
-            FolderItem.folder_id == source_folder_id,
+            FolderItem.folder_id == folder_id,
             FolderItem.item_id == item_id,
             FolderItem.item_type == item_type
         ).first()
 
         if not folder_item:
             logger.warning(
-                f"Item not found in source folder - item_id: {item_id}, "
-                f"source_folder_id: {source_folder_id}"
+                f"Item not found in folder - item_id: {item_id}, folder_id: {folder_id}"
             )
             return None
 
@@ -430,11 +426,11 @@ class FolderService:
 
         # Update the folder_id to move the item
         logger.info(
-            f"Moving item from folder {source_folder_id} to {destination_folder_id} - "
+            f"Moving item from folder {folder_id} to {destination_folder_id} - "
             f"item_id: {item_id}, item_type: {item_type}"
         )
         folder_item.folder_id = destination_folder_id
-        folder_item.added_at = datetime.utcnow()  # Update timestamp to reflect move
+        folder_item.added_at = datetime.now(timezone.utc)  # Update timestamp to reflect move
         db.commit()
         db.refresh(folder_item)
 
@@ -492,8 +488,6 @@ class FolderService:
         Raises:
             ValueError: If a share already exists for this folder-user combination
         """
-        import logging
-        logger = logging.getLogger(__name__)
 
         # Check for existing share
         existing = db.query(FolderShare).filter(
@@ -539,8 +533,6 @@ class FolderService:
         Returns:
             True if share was removed, False if no share existed
         """
-        import logging
-        logger = logging.getLogger(__name__)
 
         share = db.query(FolderShare).filter(
             FolderShare.folder_id == folder_id,
@@ -593,8 +585,6 @@ class FolderService:
         Returns:
             Updated FolderShare instance, or None if no share exists
         """
-        import logging
-        logger = logging.getLogger(__name__)
 
         share = db.query(FolderShare).filter(
             FolderShare.folder_id == folder_id,
@@ -641,8 +631,6 @@ class FolderService:
         Returns:
             True if user has access, False otherwise
         """
-        import logging
-        logger = logging.getLogger(__name__)
 
         # First check if folder exists in the organization
         folder = db.query(Folder).filter(
@@ -755,8 +743,6 @@ class FolderService:
         Returns:
             True if folder was flagged, False if folder not found
         """
-        import logging
-        logger = logging.getLogger(__name__)
 
         folder = db.query(Folder).filter(Folder.id == folder_id).first()
 
@@ -882,8 +868,6 @@ class FolderService:
         Returns:
             True if user has access to the company, False otherwise
         """
-        import logging
-        logger = logging.getLogger(__name__)
 
         # Find all folders containing this company in the organization
         folder_items = db.query(FolderItem).join(
@@ -938,8 +922,6 @@ class FolderService:
         Returns:
             Set of company IDs the user has access to
         """
-        import logging
-        logger = logging.getLogger(__name__)
 
         # Get all folders accessible to the user (owned + shared)
         accessible_folders = FolderService.list_folders(
