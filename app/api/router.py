@@ -2,7 +2,8 @@ from fastapi import APIRouter
 from app.api.endpoints import (
     company, tasks, auth, admin, admin_tasks, security, webhooks,
     team_management, modules, cost_analysis, folder, concurrency,
-    ai_preferences, organization, organizations, users, chapse, tokens
+    ai_preferences, organization, organizations, users, chapse, tokens,
+    translation
 )
 
 api_router = APIRouter()
@@ -27,3 +28,4 @@ api_router.include_router(chapse.router)
 api_router.include_router(ai_preferences.router)
 api_router.include_router(admin_tasks.router)  # Admin task monitoring
 api_router.include_router(admin_tasks.org_router)  # Admin organizations for task monitoring
+api_router.include_router(translation.router)
