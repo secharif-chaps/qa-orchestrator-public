@@ -1276,6 +1276,7 @@ export default {
     },
     translation: {
       button: 'Traduire',
+      original: 'Original',
       clickToTranslate: 'Cliquer pour traduire',
       currentlyViewing: 'Actuellement affiché',
       clickToView: 'Cliquer pour afficher dans cette langue',

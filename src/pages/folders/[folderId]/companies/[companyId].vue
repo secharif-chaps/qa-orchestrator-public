@@ -49,6 +49,23 @@
             />
           </template>
           <template #content="{ close }">
+            <!-- Original language option -->
+            <DropdownItem
+              :class="{ 'bg-primary-light': !selectedLanguage }"
+              @click="resetToOriginal(); close()"
+            >
+              <div class="flex items-center justify-between w-full gap-2">
+                <span>{{ t('company.translation.original', 'Original') }}</span>
+                <i
+                  v-if="!selectedLanguage"
+                  class="fa fa-eye text-primary"
+                  :title="t('company.translation.currentlyViewing', 'Currently viewing')"
+                />
+              </div>
+            </DropdownItem>
+            <!-- Separator -->
+            <div class="border-t border-base-300 my-1" />
+            <!-- Language options -->
             <DropdownItem
               v-for="lang in translationLanguages"
               :key="lang.code"
@@ -232,7 +249,7 @@ onUnmounted(() => {
  * Get translation status for a specific language.
  * Returns 'none', 'partial', or 'complete'.
  */
-function getLanguageStatus(languageCode: string): 'none' | 'partial' | 'complete' {
+const getLanguageStatus = (languageCode: string): 'none' | 'partial' | 'complete' => {
   if (!translationStatus.value?.translations) return 'none'
   return translationStatus.value.translations[languageCode]?.status ?? 'none'
 }
@@ -240,7 +257,7 @@ function getLanguageStatus(languageCode: string): 'none' | 'partial' | 'complete
 /**
  * Check if a language is currently being translated.
  */
-function isLanguageTranslating(languageCode: string): boolean {
+const isLanguageTranslating = (languageCode: string): boolean => {
   // Check optimistic state first
   if (optimisticTranslations.value.has(languageCode)) {
     return true
@@ -254,7 +271,7 @@ function isLanguageTranslating(languageCode: string): boolean {
 /**
  * Get progress percentage for a language translation.
  */
-function getProgressPercent(languageCode: string): number {
+const getProgressPercent = (languageCode: string): number => {
   const langStatus = translationStatus.value?.translations?.[languageCode]
   if (!langStatus?.active_job) return 0
   return Math.round(langStatus.active_job.progress_percentage)
@@ -263,7 +280,7 @@ function getProgressPercent(languageCode: string): number {
 /**
  * Get progress title for tooltip.
  */
-function getProgressTitle(languageCode: string): string {
+const getProgressTitle = (languageCode: string): string => {
   const langStatus = translationStatus.value?.translations?.[languageCode]
   if (!langStatus?.active_job) {
     return t('company.translation.inProgress', 'Translation in progress...')
@@ -277,11 +294,21 @@ function getProgressTitle(languageCode: string): string {
 }
 
 /**
+ * Reset to viewing the original (English) content.
+ */
+const resetToOriginal = () => {
+  if (selectedLanguage.value) {
+    selectedLanguage.value = undefined
+    toast.info(t('company.translation.viewingDefault', 'Viewing in original language'))
+  }
+}
+
+/**
  * Handle translation action for a language.
  * If translation is complete, switch to viewing in that language.
  * If not complete, request translation.
  */
-async function handleTranslate(languageCode: string) {
+const handleTranslate = async (languageCode: string) => {
   if (!companyId.value) return
 
   const langStatus = getLanguageStatus(languageCode)
@@ -351,7 +378,7 @@ async function handleTranslate(languageCode: string) {
 /**
  * Get translated language name from code.
  */
-function getLanguageName(languageCode: string): string {
+const getLanguageName = (languageCode: string): string => {
   // Use i18n translation for language names
   const translationKey = `company.translation.languages.${languageCode}`
   const translated = t(translationKey)
@@ -417,7 +444,7 @@ const getCompanyDomain = (website?: string) => {
 }
 
 // Helper function to format date
-function formatDate(dateString: string): string {
+const formatDate = (dateString: string): string => {
   if (!dateString) return t('common.na')
   const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
   return new Date(dateString).toLocaleDateString(localeCode)
