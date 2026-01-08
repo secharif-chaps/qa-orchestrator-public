@@ -69,11 +69,25 @@ class FolderItemAdd(FolderItemBase):
     pass
 
 
+class FolderItemMove(BaseModel):
+    """Schema for moving an item between folders."""
+    folder_id: UUID = Field(..., description="Destination folder ID")
+
+
 class FolderItemResponse(FolderItemBase):
     id: UUID
     folder_id: UUID
     added_at: datetime
     owner: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+
+class FolderItemMoveResponse(BaseModel):
+    """Response schema for moving an item to a folder."""
+    message: str
+    item: FolderItemResponse
 
     class Config:
         from_attributes = True
@@ -115,6 +129,7 @@ class FolderResponse(FolderBase):
         organization_id: Organization UUID
         owner: Owner username (display name)
         owner_id: Owner Keycloak UUID (for access control checks)
+        owner_username: Owner username (for global view display)
         is_owner: True if current user is the folder owner
         share_role: User's share role ('owner', 'writer', 'reader', or None)
         is_favorite: Whether current user has favorited this folder
@@ -127,6 +142,7 @@ class FolderResponse(FolderBase):
     organization_id: str
     owner: str
     owner_id: Optional[str] = Field(None, description="Owner Keycloak UUID")
+    owner_username: str = Field(..., description="Owner username for display in global view")
     is_owner: bool = Field(False, description="True if current user is folder owner")
     share_role: Optional[str] = Field(
         None,

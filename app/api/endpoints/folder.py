@@ -22,6 +22,8 @@ from app.schemas.folder import (
     FolderResponse,
     FolderWithItemsResponse,
     FolderItemAdd,
+    FolderItemMove,
+    FolderItemMoveResponse,
     FolderItemResponse,
     FolderShareCreate,
     FolderShareUpdate,
@@ -79,6 +81,7 @@ def _build_folder_response(
         "organization_id": folder.organization_id,
         "owner": folder.owner or "Unknown",
         "owner_id": folder.owner_id,
+        "owner_username": folder.owner or "Unknown",
         "is_owner": is_owner,
         "share_role": share_role,
         "name": folder.name,
@@ -212,6 +215,7 @@ def create_folder(
 def list_folders(
     archived: bool = Query(False),
     favorites: bool = Query(False),
+    include_all: bool = Query(False, description="Include all org folders (managers only)"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db)
@@ -221,6 +225,10 @@ def list_folders(
     Requires organization.read role for access.
     Returns only folders the user owns or has been explicitly shared with.
     The is_favorite field is computed per-user.
+
+    If include_all=true and user has organization.manage (or admin) role:
+    - Returns ALL folders in organization (including private ones from other users)
+    - Useful for team oversight by managers
     """
     logger.info(
         "GET /folders - Listing folders",
@@ -228,23 +236,57 @@ def list_folders(
             "user": org_context.username,
             "organization_id": org_context.organization_id,
             "archived": archived,
-            "favorites": favorites
+            "favorites": favorites,
+            "include_all": include_all
         }
     )
 
-    # Get user's favorite folder IDs for computing is_favorite per-user
     user_favorite_ids = FolderService.get_user_favorite_folder_ids(
         db, org_context.user_id, org_context.organization_id
     )
 
-    folders = FolderService.list_folders(
-        db=db,
-        organization_id=org_context.organization_id,
-        user_id=org_context.user_id,
-        archived=archived,
-        favorites_only=favorites,
-        username=org_context.username
-    )
+    if include_all:
+        user_roles = user.realm_access.get('roles', [])
+        has_manager_permission = 'organization.manage' in user_roles or 'admin.organizations' in user_roles
+
+        if not has_manager_permission:
+            logger.warning(
+                "Non-manager attempted to use include_all parameter",
+                extra={
+                    "user": org_context.username,
+                    "user_id": org_context.user_id,
+                    "roles": user_roles
+                }
+            )
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Requires organization.manage permission to view all organization folders"
+            )
+
+        logger.info(
+            "Manager viewing all organization folders",
+            extra={
+                "user": org_context.username,
+                "organization_id": org_context.organization_id
+            }
+        )
+
+        folders = FolderService.list_all_org_folders(
+            db=db,
+            organization_id=org_context.organization_id,
+            archived=archived,
+            favorites_only=favorites,
+            user_id=org_context.user_id
+        )
+    else:
+        folders = FolderService.list_folders(
+            db=db,
+            organization_id=org_context.organization_id,
+            user_id=org_context.user_id,
+            archived=archived,
+            favorites_only=favorites,
+            username=org_context.username
+        )
 
     logger.info(
         "Found folders",
@@ -285,15 +327,19 @@ def get_folder(
     )
 
     # Check access - returns 404 for security (not 403)
+    # Managers (organization.manage or admin.organizations) can access all folders
+    user_roles = user.realm_access.get('roles', [])
     if not FolderService.has_folder_access(
         db, folder_id, org_context.user_id, org_context.organization_id,
-        username=org_context.username
+        username=org_context.username,
+        user_roles=user_roles
     ):
         logger.warning(
             "Folder not found or no access",
             extra={
                 "folder_id": str(folder_id),
-                "user_id": org_context.user_id
+                "user_id": org_context.user_id,
+                "user_roles": user_roles
             }
         )
         raise HTTPException(
@@ -1125,3 +1171,124 @@ def remove_item_from_folder(
     )
 
     return {"message": "Item removed from folder"}
+
+
+@router.patch("/{folder_id}/items/{item_id}", response_model=FolderItemMoveResponse)
+def update_folder_item(
+    folder_id: UUID,
+    item_id: str,
+    item_type: str,
+    move_data: FolderItemMove,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.write"])),
+    org_context: OrganizationContext = Depends(get_user_organization),
+    db: Session = Depends(get_db)
+):
+    """Update an item's folder (move item to a different folder).
+
+    This RESTful endpoint updates the folder_id attribute of an item,
+    effectively moving it from the current folder to the destination folder.
+
+    Requires organization.write role AND write access (owner or writer) to both folders.
+    """
+    logger.info(
+        "PATCH /folders/{folder_id}/items/{item_id} - Moving item to new folder",
+        extra={
+            "user": org_context.username,
+            "current_folder_id": str(folder_id),
+            "destination_folder_id": str(move_data.folder_id),
+            "item_id": item_id,
+            "item_type": item_type
+        }
+    )
+
+    # Validate current folder exists and user has access
+    current_folder = FolderService.get_folder(
+        db=db,
+        folder_id=folder_id,
+        organization_id=org_context.organization_id
+    )
+
+    if not current_folder:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Current folder not found"
+        )
+
+    # Check write access to current folder (owner or writer)
+    current_role = FolderService.get_user_folder_role(
+        db, folder_id, org_context.user_id
+    )
+    if not current_role or current_role not in ['owner', 'writer']:
+        logger.warning(
+            "User lacks write access to current folder",
+            extra={
+                "folder_id": str(folder_id),
+                "user_id": org_context.user_id,
+                "role": current_role
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You need write access to the current folder to move items"
+        )
+
+    # Validate destination folder exists and user has access
+    destination_folder = FolderService.get_folder(
+        db=db,
+        folder_id=move_data.folder_id,
+        organization_id=org_context.organization_id
+    )
+
+    if not destination_folder:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Destination folder not found"
+        )
+
+    # Check write access to destination folder (owner or writer)
+    dest_role = FolderService.get_user_folder_role(
+        db, move_data.folder_id, org_context.user_id
+    )
+    if not dest_role or dest_role not in ['owner', 'writer']:
+        logger.warning(
+            "User lacks write access to destination folder",
+            extra={
+                "folder_id": str(move_data.folder_id),
+                "user_id": org_context.user_id,
+                "role": dest_role
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You need write access to the destination folder to add items"
+        )
+
+    # Move the item
+    moved_item = FolderService.update_item_folder(
+        db=db,
+        folder_id=folder_id,
+        item_id=item_id,
+        item_type=item_type,
+        destination_folder_id=move_data.folder_id,
+        organization_id=org_context.organization_id
+    )
+
+    if not moved_item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Item not found in current folder"
+        )
+
+    logger.info(
+        "Item moved successfully",
+        extra={
+            "current_folder_id": str(folder_id),
+            "destination_folder_id": str(move_data.folder_id),
+            "item_id": item_id
+        }
+    )
+
+    return FolderItemMoveResponse(
+        message="Item moved successfully",
+        item=moved_item
+    )
