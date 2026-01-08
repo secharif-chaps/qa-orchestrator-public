@@ -21,24 +21,34 @@
 
 ### Component Granularity Rules
 
-1. **ALWAYS extract complex UI into components**:
+1. **ALWAYS extract list items into separate components**:
+   - When rendering a list with `v-for`, create a dedicated item component
+   - Session lists → `SessionItem.vue`
+   - Activity logs → `ActivityEventItem.vue`
+   - User lists → `UserItem.vue`
+   - Notification lists → `NotificationItem.vue`
+   - This improves readability, testability, and reusability
+   - Parent component handles data fetching and list state
+   - Item component handles single item rendering and events
+
+2. **ALWAYS extract complex UI into components**:
    - Custom dropdowns → `Dropdown.vue`
    - Data tables → `Table.vue` + `TableRow.vue`
    - Forms with >3 fields → `FormName.vue`
    - Modals with complex content → `ModalName.vue`
 
-2. **ALWAYS check for existing components first**:
+3. **ALWAYS check for existing components first**:
    - Look in `src/components/ui/` for generic components
    - Look in `src/components/features/` for feature-specific components
    - Reuse before creating new
 
-3. **Create generic UI components** when you need:
+4. **Create generic UI components** when you need:
    - Dropdowns, modals, tabs, accordions, tooltips
    - Data display patterns (tables, lists, grids, cards)
    - Form controls beyond basic inputs
    - **Document them immediately** after creation
 
-4. **Component hierarchy example** (User Management page):
+5. **Component hierarchy example** (User Management page):
    ```
    pages/admin/users.vue (data + layout)
    ├── components/admin/UserFilters.vue (search + filters)

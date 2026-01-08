@@ -36,63 +36,20 @@
       <!-- Sessions List -->
       <div v-else class="flex flex-col gap-4">
         <!-- Current Session -->
-        <div
+        <SessionItem
           v-if="currentSession"
-          class="border border-sage-300 dark:border-base-300 bg-base-200 rounded-lg p-4"
-        >
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div
-                class="w-10 h-10 rounded-lg bg-rose-100 border border-rose-200 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400 flex items-center justify-center"
-              >
-                <i class="fas fa-desktop"></i>
-              </div>
-              <div>
-                <h3 class="text-sm font-medium">
-                  {{ $t('settings.security.sessions.webSession') }}
-                </h3>
-                <p class="text-xs text-secondary">
-                  <i class="fas fa-globe mr-1"></i>{{ currentSession.ipAddress }}
-                </p>
-                <p class="text-xs text-secondary">
-                  <i class="fas fa-clock mr-1"></i>{{ formatRelativeTime(currentSession.lastAccess) }}
-                </p>
-              </div>
-            </div>
-            <Tag variant="success" :label="$t('settings.security.sessions.current.badge')" />
-          </div>
-        </div>
+          :session="currentSession"
+          :is-current="true"
+        />
 
         <!-- Other Sessions -->
-        <div
+        <SessionItem
           v-for="session in otherSessions"
           :key="session.id"
-          class="border border-primary-stroke rounded-lg p-4"
-        >
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-lg bg-base-200 text-secondary flex items-center justify-center">
-                <i class="fas fa-desktop"></i>
-              </div>
-              <div>
-                <h3 class="text-sm font-medium">{{ $t('settings.security.sessions.webSession') }}</h3>
-                <p class="text-xs text-secondary">
-                  <i class="fas fa-globe mr-1"></i>{{ session.ipAddress }}
-                </p>
-                <p class="text-xs text-secondary">
-                  <i class="fas fa-clock mr-1"></i>{{ formatRelativeTime(session.lastAccess) }}
-                </p>
-              </div>
-            </div>
-            <Button
-              :label="$t('settings.security.actions.revoke')"
-              variant="secondary"
-              color="danger"
-              size="sm"
-              @click="() => handleRevokeSession(session.id)"
-            />
-          </div>
-        </div>
+          :session="session"
+          :is-current="false"
+          @revoke="handleRevokeSession"
+        />
 
         <!-- No Other Sessions -->
         <p
@@ -129,8 +86,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import Tag from '@/components/ui/Tag.vue'
 import { Alert, Button } from '@owlint/feathers-vue'
+import SessionItem from './SessionItem.vue'
 import type { Session } from '@/types/account'
 
 const props = defineProps<{
@@ -153,23 +110,6 @@ const currentSession = computed(() => {
 const otherSessions = computed(() => {
   return props.sessions.filter((s) => !s.isCurrent)
 })
-
-// Helper functions
-function formatRelativeTime(dateString: string): string {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffMins = Math.floor(diffMs / 60000)
-  const diffHours = Math.floor(diffMs / 3600000)
-  const diffDays = Math.floor(diffMs / 86400000)
-
-  if (diffMins < 1) return 'Just now'
-  if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`
-  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
-  if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`
-
-  return date.toLocaleDateString()
-}
 
 function handleRevokeSession(sessionId: string) {
   emit('revokeSession', sessionId)
