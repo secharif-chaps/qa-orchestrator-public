@@ -237,6 +237,10 @@ export default {
           title: 'Sign out all devices',
           description: 'Sign out of all other sessions and devices',
         },
+        error: 'Error loading sessions',
+        errorDescription: 'Unable to load your active sessions. Please try again.',
+        noOtherSessions: 'No other active sessions',
+        webSession: 'Web Session',
       },
       twoFactor: {
         title: 'Two-Factor Authentication',
@@ -254,6 +258,10 @@ export default {
       activity: {
         title: 'Activity Log',
         description: 'Recent security and account activity',
+        error: 'Error loading activity',
+        errorDescription: 'Unable to load your activity log. Please try again.',
+        noEvents: 'No activity events found',
+        loadMore: 'Load more',
       },
       recovery: {
         title: 'Account Recovery',
