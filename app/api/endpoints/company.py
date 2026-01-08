@@ -122,7 +122,7 @@ async def get_company(
     the user owns or has been shared with.
 
     Optionally specify a language code (fr, es, de, pt) to get translated content.
-    French (fr) reads from _value_fr columns, others use the translations table.
+    All translations are fetched from the normalized translations table.
     """
     try:
         logger.info(

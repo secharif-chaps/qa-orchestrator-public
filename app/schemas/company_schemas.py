@@ -7,7 +7,7 @@ with SourcedValue pattern support. These schemas are used for:
 - Ensuring frontend compatibility
 
 The SourcedValue[T] generic provides a consistent pattern for values with source
-attribution and optional French translation placeholder.
+attribution. Translations are handled via the translations table.
 
 Schemas follow the frontend TypeScript interfaces for compatibility while
 supporting the normalized database structure.
@@ -62,8 +62,9 @@ class SourcedValue(BaseModel, Generic[T]):
     """Generic schema for values with source attribution.
 
     This schema represents a value that comes from a specific source
-    (URL, tool name, or AI-generated "Chaps-e") with optional favicon
-    and French translation placeholder.
+    (URL, tool name, or AI-generated "Chaps-e") with optional favicon.
+    Translations are handled via the translations table and applied
+    by modifying the value field when a language parameter is passed.
 
     Type Parameters:
         T: The type of the value field (str, int, list, etc.)
@@ -72,7 +73,6 @@ class SourcedValue(BaseModel, Generic[T]):
         value: The actual value of type T
         source: Source URL or tool name (validated)
         favicon: Optional favicon URL for the source
-        value_fr: Optional French translation placeholder
 
     Examples:
         >>> sv = SourcedValue[str](value="LVMH", source="https://wikipedia.org/wiki/LVMH")
@@ -82,7 +82,6 @@ class SourcedValue(BaseModel, Generic[T]):
     value: T
     source: str
     favicon: Optional[str] = None
-    value_fr: Optional[str] = None
 
     model_config = ConfigDict(
         # Allow extra fields for forward compatibility
@@ -135,11 +134,11 @@ class ProfileResponse(BaseModel):
     Contains core company information with SourcedValue pattern.
     Matches frontend Company.profile interface.
 
-    Fields without value_fr (proper nouns, numbers, locations):
-    - groupName, ceo, hq, establishmentYear, employeeCount, revenue
-
-    Fields with value_fr (translatable):
+    Translatable fields (via translations table):
     - insights, businessLine, catchphrase
+
+    Non-translatable fields (proper nouns, numbers, locations):
+    - groupName, ceo, hq, establishmentYear, employeeCount, revenue
     """
     insights: Optional[SourcedValue[str]] = None
     groupName: Optional[SourcedValue[str]] = None

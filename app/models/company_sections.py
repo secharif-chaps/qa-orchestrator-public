@@ -2,7 +2,7 @@
 
 This module defines 1:1 section models for normalized company data storage.
 Each section model represents a specific aspect of company information
-with SourcedValue pattern support (value, source, value_fr columns).
+with SourcedValue pattern support (value, source columns).
 
 Models:
 - CompanyProfile: General company profile information
