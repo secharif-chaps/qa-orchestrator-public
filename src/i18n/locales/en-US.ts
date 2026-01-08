@@ -1895,4 +1895,12 @@ export default {
     appearance: 'Appearance',
     security: 'Security',
   },
+  logout: {
+    title: 'Confirm Logout',
+    subtitle: 'This action will end your session',
+    message: 'Are you sure you want to log out of your account?',
+    cancel: 'Cancel',
+    confirm: 'Logout',
+    tooltip: 'Logout',
+  },
 }

@@ -48,6 +48,7 @@
           <Button
             variant="tertiary"
             icon="fa fa-arrow-right-from-bracket"
+            :title="$t('logout.tooltip')"
             @click="handleLogout"
           />
 
@@ -77,6 +78,13 @@
         </div>
       </div>
     </div>
+
+    <!-- Logout Confirmation Modal -->
+    <LogoutConfirmationModal
+      v-model="showLogoutModal"
+      :is-loading="isLoggingOut"
+      @confirm="confirmLogout"
+    />
   </div>
 </template>
 
@@ -89,7 +97,8 @@ import { Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { currentOrganizationQuery } from '@/queries/organization'
 import ModuleBadges from '@/components/global/ModuleBadges.vue'
-import { computed } from 'vue'
+import LogoutConfirmationModal from '@/components/global/LogoutConfirmationModal.vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const authStore = useAuthStore()
@@ -131,12 +140,25 @@ const toggleChapse = () => sidebarStore.toggleState('chapse')
 const toggleNotifications = () => sidebarStore.toggleState('notifications')
 const toggleFolders = () => sidebarStore.toggleState('folders')
 
-// handle logout
-const handleLogout = async () => {
+// Logout modal state
+const showLogoutModal = ref(false)
+const isLoggingOut = ref(false)
+
+// Show logout confirmation modal
+const handleLogout = () => {
+  showLogoutModal.value = true
+}
+
+// Confirm logout action
+const confirmLogout = async () => {
+  isLoggingOut.value = true
   try {
     await signOut()
   } catch (error) {
     console.error('Logout error:', error)
+  } finally {
+    isLoggingOut.value = false
+    showLogoutModal.value = false
   }
 }
 </script>
