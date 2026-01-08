@@ -46,10 +46,12 @@
               :key="item.id"
               :item="item"
               :is-archived="companyFilter === 'archived'"
+              :can-move-items="canMoveItems"
               mode="grid"
               @view-item="$router.push(`/folders/${route.params.folderId}/companies/${$event}`)"
               @remove-item="confirmRemoveItem"
               @delete-company="confirmArchiveCompany"
+              @move-company="confirmMoveCompany"
             />
           </div>
 
@@ -133,6 +135,15 @@
                         :hidden="companyFilter === 'archived'"
                       />
                       <Button
+                        v-if="item.type === 'company' && canMoveItems && companyFilter !== 'archived'"
+                        variant="tertiary"
+                        size="sm"
+                        icon="fa fa-exchange-alt"
+                        icon-only
+                        :title="$t('folder.moveCompany.button', 'Move to Folder')"
+                        @click.stop="confirmMoveCompany(item)"
+                      />
+                      <Button
                         v-if="item.type === 'company' && canDeleteCompany"
                         variant="tertiary"
                         color="danger"
@@ -213,6 +224,15 @@
       :company-to-restore="companyToArchive"
       @restore-company="handleRestoreCompany"
     />
+
+    <!-- Move Company Modal -->
+    <CompanyMoveModal
+      v-model:display-modal="showMoveModal"
+      :company="companyToMove"
+      :current-folder-id="route.params.folderId"
+      :company-logo-url="companyToMove ? getLogoUrl(companyToMove.website) : undefined"
+      @move="handleMoveCompany"
+    />
   </div>
 </template>
 
@@ -225,12 +245,15 @@ meta:
 <script setup lang="ts">
 import CompanyArchiveModal from '@/components/companies/CompanyArchiveModal.vue'
 import CompanyRestoreModal from '@/components/companies/CompanyRestoreModal.vue'
+import CompanyMoveModal from '@/components/folders/CompanyMoveModal.vue'
 import FolderDeleteModal from '@/components/folders/FolderDeleteModal.vue'
 import FolderItemDisplay from '@/components/folders/FolderItemDisplay.vue'
 import FoldersHeader from '@/components/folders/FoldersHeader.vue'
 import { Alert, Button, Tag } from '@owlint/feathers-vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
+import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import { folderByIdQuery } from '@/queries/folders'
+import { useMoveCompanyToFolder } from '@/mutations/folders'
 import type { Company } from '@/types/company'
 import type { FolderItem } from '@/types/folder'
 import { useQuery } from '@pinia/colada'
@@ -243,16 +266,20 @@ const VIEW_MODE_STORAGE_KEY = 'folder-view-mode'
 
 const route = useRoute('/folders/[folderId]')
 const router = useRouter()
-const { t: $t, locale } = useI18n()
+const { t, locale } = useI18n()
 const { canDeleteCompany } = useCompanyPermissions()
 
 const showDeleteModal = ref(false)
 const showArchiveCompanyModal = ref(false)
 const showRestoreCompanyModal = ref(false)
+const showMoveModal = ref(false)
 const companyToArchive = ref<Company | null>(null)
+const companyToMove = ref<FolderItem | null>(null)
 const searchTerm = ref('')
 const viewMode = ref<'table' | 'grid'>('grid')
 const companyFilter = ref<'all' | 'archived'>('all')
+
+const { mutateAsync: moveCompany } = useMoveCompanyToFolder()
 
 const {
   data: folder,
@@ -265,6 +292,9 @@ const {
     archived: companyFilter.value === 'archived',
   },
 }))
+
+// Folder permissions based on current folder
+const { canMoveItems } = useFolderPermissions(folder)
 
 // Computed property for filtered items
 const filteredItems = computed(() => {
@@ -301,7 +331,7 @@ const getLogoUrl = (website?: string) => {
 
 // Methods
 const formatDate = (dateString: string) => {
-  if (!dateString) return $t('common.na', 'N/A')
+  if (!dateString) return t('common.na')
   const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
   return new Date(dateString).toLocaleDateString(localeCode)
 }
@@ -309,7 +339,7 @@ const formatDate = (dateString: string) => {
 // Helper to format item type
 const formatItemType = (type: string): string => {
   if (type === 'company') {
-    return $t('folder.itemTypes.company')
+    return t('folder.itemTypes.company')
   }
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
@@ -337,7 +367,7 @@ const confirmArchiveCompany = (item: FolderItem) => {
       name: item.name,
       website: item.website,
       created_at: item.created_at,
-      owner_username: item.owner_username,
+      owner_username: item.owner,
     } as Company
     if (companyFilter.value === 'archived') {
       showRestoreCompanyModal.value = true
@@ -357,6 +387,30 @@ const handleRestoreCompany = async () => {
   // Refresh the folder items after successful restoration
   await refetch()
   companyToArchive.value = null
+}
+
+const confirmMoveCompany = (item: FolderItem) => {
+  companyToMove.value = item
+  showMoveModal.value = true
+}
+
+const handleMoveCompany = async (payload: {
+  destinationFolderId: string
+  destinationFolderName: string
+}) => {
+  if (!companyToMove.value) {
+    return
+  }
+
+  await moveCompany({
+    sourceFolderId: route.params.folderId as string,
+    destinationFolderId: payload.destinationFolderId,
+    companyId: companyToMove.value.id, // Use id (which is the company ID)
+    destinationFolderName: payload.destinationFolderName,
+  })
+
+  showMoveModal.value = false
+  companyToMove.value = null
 }
 
 // Load saved view mode from localStorage

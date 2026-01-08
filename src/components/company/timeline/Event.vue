@@ -22,7 +22,7 @@
       <!-- Event Header -->
       <div class="flex items-start justify-between mb-3">
         <h3 class="text-lg font-semibold leading-tight">
-          {{ event.title }}
+          {{ eventTitle }}
         </h3>
       </div>
 
@@ -30,22 +30,22 @@
       <div class="flex gap-2 mb-4 flex-wrap">
         <Tag variant="primary" size="sm" class="flex items-center gap-1">
           <i class="fa fa-clipboard text-xs"></i>
-          {{ event.category }}
+          {{ eventCategory }}
         </Tag>
 
-        <Tag v-if="event.location" variant="slate" size="sm" class="flex items-center gap-1">
+        <Tag v-if="eventLocation" variant="slate" size="sm" class="flex items-center gap-1">
           <i class="fa fa-map-marker-alt text-xs"></i>
-          {{ event.location }}
+          {{ eventLocation }}
         </Tag>
       </div>
 
       <!-- Description -->
       <p class="text-secondary mb-4 leading-relaxed">
-        {{ event.description }}
+        {{ eventDescription }}
       </p>
 
       <!-- Impact Section -->
-      <div v-if="event.impact" class="bg-base-300 border border-primary-stroke rounded-lg p-4 mb-4">
+      <div v-if="eventImpact" class="bg-base-300 border border-primary-stroke rounded-lg p-4 mb-4">
         <div class="flex items-center gap-2 mb-2">
           <i class="fa fa-bolt text-yellow-500 text-sm"></i>
           <span class="text-xs uppercase font-semibold text-secondary tracking-wide">
@@ -53,13 +53,13 @@
           </span>
         </div>
         <p class="text-sm text-secondary italic leading-relaxed">
-          {{ event.impact }}
+          {{ eventImpact }}
         </p>
       </div>
 
       <!-- Source -->
-      <div v-if="event.source" class="flex justify-end">
-        <Source :source="event.source" />
+      <div v-if="eventSource" class="flex justify-end">
+        <Source :source="eventSource" />
       </div>
     </div>
   </div>
@@ -69,14 +69,15 @@
 import Tag from '@/components/ui/Tag.vue'
 import { computed } from 'vue'
 import Source from '../Source.vue'
+import type { SourcedValue } from '@/types/company'
 
 interface TimelineEvent {
-  date: string
-  title: string
-  description: string
-  category: string
-  location?: string
-  impact?: string
+  date: string | SourcedValue<string>
+  title: string | SourcedValue<string>
+  description: string | SourcedValue<string>
+  category: string | SourcedValue<string>
+  location?: string | SourcedValue<string>
+  impact?: string | SourcedValue<string>
   source?: string
 }
 
@@ -84,9 +85,25 @@ const props = defineProps<{
   event: TimelineEvent
 }>()
 
+// Helper to extract value from SourcedValue or return plain string
+const extractValue = (field: string | SourcedValue<string> | undefined): string | undefined => {
+  if (!field) return undefined
+  if (typeof field === 'string') return field
+  return field.value
+}
+
+// Computed properties to extract values
+const eventTitle = computed(() => extractValue(props.event.title) || '')
+const eventCategory = computed(() => extractValue(props.event.category) || '')
+const eventLocation = computed(() => extractValue(props.event.location))
+const eventDescription = computed(() => extractValue(props.event.description) || '')
+const eventImpact = computed(() => extractValue(props.event.impact))
+const eventSource = computed(() => props.event.source)
+
 // Format date for display (handle partial dates like YYYY or YYYY-MM)
 const formattedDate = computed(() => {
-  const dateStr = props.event.date
+  const dateField = props.event.date
+  const dateStr = extractValue(dateField)
 
   if (!dateStr) return 'N/A'
 

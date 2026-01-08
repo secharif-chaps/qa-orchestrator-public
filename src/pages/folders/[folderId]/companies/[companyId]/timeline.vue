@@ -99,19 +99,37 @@ const toggleSortOrder = () => {
   sortAscending.value = !sortAscending.value
 }
 
+// Helper to extract value from SourcedValue or return plain string
+const extractDateValue = (field: any): string => {
+  if (!field) return ''
+  if (typeof field === 'string') return field
+  if (typeof field === 'object' && field.value) return field.value
+  return ''
+}
+
 const getTimelineEvents = computed(() => {
   if (!company.value?.timeline?.events) return []
 
   // Sort events by date
   return [...company.value.timeline.events].sort((a, b) => {
-    // Extract just the year if it's the only format available
-    const yearA = a.date.substring(0, 4)
-    const yearB = b.date.substring(0, 4)
+    // Extract date value (handle SourcedValue or plain string)
+    const dateA = extractDateValue(a.date)
+    const dateB = extractDateValue(b.date)
+    const yearA = dateA.substring(0, 4) || '0'
+    const yearB = dateB.substring(0, 4) || '0'
     const diff = parseInt(yearA) - parseInt(yearB)
     // Return based on sort order: ascending (oldest first) or descending (newest first)
     return sortAscending.value ? diff : -diff
   })
 })
+
+// Helper to extract string value for search
+const extractStringValue = (field: any): string => {
+  if (!field) return ''
+  if (typeof field === 'string') return field
+  if (typeof field === 'object' && field.value) return String(field.value)
+  return ''
+}
 
 const filteredEvents = computed(() => {
   if (!searchQuery.value.trim()) {
@@ -121,12 +139,17 @@ const filteredEvents = computed(() => {
   const query = searchQuery.value.toLowerCase().trim()
 
   return getTimelineEvents.value.filter((event) => {
-    // Search in title, description, location, and category
+    // Search in title, description, location, and category (handle SourcedValue)
+    const title = extractStringValue(event.title).toLowerCase()
+    const description = extractStringValue(event.description).toLowerCase()
+    const location = extractStringValue(event.location).toLowerCase()
+    const category = extractStringValue(event.category).toLowerCase()
+
     return (
-      (event.title && event.title.toLowerCase().includes(query)) ||
-      (event.description && event.description.toLowerCase().includes(query)) ||
-      (event.location && event.location.toLowerCase().includes(query)) ||
-      (event.category && event.category.toLowerCase().includes(query))
+      title.includes(query) ||
+      description.includes(query) ||
+      location.includes(query) ||
+      category.includes(query)
     )
   })
 })

@@ -139,19 +139,11 @@ const addCardBackground = (slide, options = {}) => {
     w: 9.0,
     h: 4.5,
     fill: { color: COLORS.cardBackground },
-    lineSize: 0,
-    rounded: true,
-    shadow: {
-      type: 'outer',
-      angle: 45,
-      blur: 3,
-      offset: 2,
-      color: 'COCOCO',
-      opacity: 0.2,
-    },
+    line: { type: 'none' },
+    rectRadius: 0.1, // Rounding radius (0-1) for rounded rectangles
   }
 
-  slide.addShape('ROUNDED_RECTANGLE', { ...defaultOptions, ...options })
+  slide.addShape('roundRect', { ...defaultOptions, ...options })
 }
 
 // Function to add slide title
@@ -402,7 +394,7 @@ const createTargetAudienceSlide = (pptx, company: Company) => {
     fontFace: 'Arial',
   })
 
-  slide.addText(products.customerType || 'N/A', {
+  slide.addText(getValue(products.customerType) || 'N/A', {
     x: 1.0,
     y: 1.9,
     w: 4.0,
@@ -423,7 +415,7 @@ const createTargetAudienceSlide = (pptx, company: Company) => {
     fontFace: 'Arial',
   })
 
-  slide.addText(products.marketingPositioning || 'N/A', {
+  slide.addText(getValue(products.marketingPositioning) || 'N/A', {
     x: 5.0,
     y: 1.9,
     fontSize: 12,
@@ -637,22 +629,14 @@ const createTitleSlide = (pptx, company: Company) => {
   slide.background = { color: COLORS.background }
 
   // Create card background with different dimensions
-  slide.addShape('ROUNDED_RECTANGLE', {
+  slide.addShape('roundRect', {
     x: 0.5,
     y: 1.5,
     w: 9.0,
     h: 3.0,
     fill: { color: COLORS.cardBackground },
-    lineSize: 0,
-    rounded: true,
-    shadow: {
-      type: 'outer',
-      angle: 45,
-      blur: 3,
-      offset: 2,
-      color: 'COCOCO',
-      opacity: 0.2,
-    },
+    line: { type: 'none' },
+    rectRadius: 0.1, // Rounding radius (0-1) for rounded rectangles
   })
 
   // Add company name in large font as main title
@@ -753,9 +737,17 @@ const createTimelineSlide = (pptx, company: Company) => {
       fontFace: 'Arial',
     })
 
+    // Helper to extract value from SourcedValue or plain string
+    const extractVal = (field: any): string => {
+      if (!field) return ''
+      if (typeof field === 'string') return field
+      if (typeof field === 'object' && field.value) return String(field.value)
+      return ''
+    }
+
     const eventLines = company.timeline.events
       .slice(0, 15) // Limit to first 15 events
-      .map((event) => `${event.date} - ${event.title}`)
+      .map((event) => `${extractVal(event.date)} - ${extractVal(event.title)}`)
 
     slide.addText(eventLines.join('\n'), {
       x: 5.0,
@@ -922,9 +914,17 @@ const createJobsSlide = (pptx, company: Company) => {
       fontFace: 'Arial',
     })
 
+    // Helper to extract value from SourcedValue or plain string
+    const extractJobVal = (field: any): string => {
+      if (!field) return ''
+      if (typeof field === 'string') return field
+      if (typeof field === 'object' && field.value) return String(field.value)
+      return ''
+    }
+
     const jobLines = company.jobs.offers
       .slice(0, 10) // Limit to first 10 jobs to avoid overcrowding
-      .map((job) => `${job.title} - ${job.location}`)
+      .map((job) => `${extractJobVal(job.title)} - ${extractJobVal(job.location)}`)
 
     slide.addText(jobLines.join('\n'), {
       x: 5.0,

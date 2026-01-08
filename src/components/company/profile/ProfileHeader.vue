@@ -81,8 +81,8 @@
                 </div>
               </div>
 
-              <!-- Founded -->
-              <div v-if="company?.profile?.founded" class="flex items-start gap-2">
+              <!-- Establishment Year -->
+              <div v-if="company?.profile?.establishmentYear" class="flex items-start gap-2">
                 <div
                   class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0"
                 >
@@ -91,13 +91,13 @@
                 <div class="min-w-0">
                   <p class="text-xs text-secondary/70">Founded</p>
                   <p class="text-sm font-medium text-secondary">
-                    {{ getSourcedValue(company?.profile?.founded) }}
+                    {{ getSourcedValue(company?.profile?.establishmentYear) }}
                   </p>
                 </div>
               </div>
 
-              <!-- Industry -->
-              <div v-if="company?.profile?.industry" class="flex items-start gap-2">
+              <!-- Business Line -->
+              <div v-if="company?.profile?.businessLine" class="flex items-start gap-2">
                 <div
                   class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0"
                 >
@@ -106,7 +106,7 @@
                 <div class="min-w-0">
                   <p class="text-xs text-secondary/70">Industry</p>
                   <p class="text-sm font-medium text-secondary truncate">
-                    {{ getSourcedValue(company?.profile?.industry) }}
+                    {{ getSourcedValue(company?.profile?.businessLine) }}
                   </p>
                 </div>
               </div>
@@ -114,14 +114,14 @@
 
             <!-- Social Media Links -->
             <div
-              v-if="company?.digital?.socialMediaAccounts?.value?.length"
+              v-if="company?.digital?.socialMediaAccounts?.length"
               class="flex items-center gap-3"
             >
               <div class="flex gap-2">
                 <a
-                  v-for="account in company?.digital?.socialMediaAccounts.value"
+                  v-for="account in company?.digital?.socialMediaAccounts"
                   :key="account.platform"
-                  :href="getSourcedValue(account.url) as string"
+                  :href="account.url"
                   target="_blank"
                   class="w-8 h-8 rounded-lg bg-base-100 hover:bg-primary hover:text-white text-secondary flex items-center justify-center transition-all duration-200 border border-primary-stroke hover:shadow-md hover:scale-110"
                   :title="account.platform"
