@@ -71,10 +71,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useQueryCache } from '@pinia/colada'
 import type { Folder } from '@/types/folder'
 import { Button } from '@owlint/feathers-vue'
 import { restoreFolder as apiRestoreFolder } from '@/api/folders'
+import { FOLDER_QUERY_KEYS } from '@/queries/folders'
 import { toast } from '@/utils/toast'
+
+const queryCache = useQueryCache()
 
 interface Props {
   folderToRestore: Folder | null
@@ -100,6 +104,9 @@ const restoreFolder = async () => {
 
   try {
     await apiRestoreFolder(props.folderToRestore.id.toString())
+
+    // Invalidate folder queries to refresh sidebar
+    queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
     // Show success toast
     toast.success(`Folder "${props.folderToRestore.name}" has been restored successfully`)

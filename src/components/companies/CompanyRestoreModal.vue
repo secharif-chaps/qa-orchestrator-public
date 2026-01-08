@@ -79,12 +79,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useQueryCache } from '@pinia/colada'
 import type { Company } from '@/types/company'
 import { Button } from '@owlint/feathers-vue'
 import { restoreCompany as apiRestoreCompany } from '@/api/companies'
+import { FOLDER_QUERY_KEYS } from '@/queries/folders'
 import { toast } from '@/utils/toast'
 
 const { t } = useI18n()
+const queryCache = useQueryCache()
 
 interface Props {
   companyToRestore: Company | null
@@ -110,6 +113,9 @@ const restoreCompany = async () => {
 
   try {
     await apiRestoreCompany(props.companyToRestore.id.toString())
+
+    // Invalidate folder queries to refresh sidebar
+    queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
     // Show success toast
     toast.success(

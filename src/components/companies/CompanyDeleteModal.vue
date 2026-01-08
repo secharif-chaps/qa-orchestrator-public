@@ -122,12 +122,15 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useQueryCache } from '@pinia/colada'
 import type { Company } from '@/types/company'
 import { Button, Input } from '@owlint/feathers-vue'
 import { deleteCompany as apiDeleteCompany } from '@/api/companies'
+import { FOLDER_QUERY_KEYS } from '@/queries/folders'
 import { toast } from '@/utils/toast'
 
 const { t } = useI18n()
+const queryCache = useQueryCache()
 
 interface Props {
   companyToDelete: Company | null
@@ -158,6 +161,9 @@ const deleteCompany = async () => {
 
   try {
     await apiDeleteCompany(props.companyToDelete.id.toString())
+
+    // Invalidate folder queries to refresh sidebar
+    queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
     // Show success toast
     toast.success(

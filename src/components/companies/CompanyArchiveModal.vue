@@ -52,11 +52,14 @@
 import { Button, Modal } from '@owlint/feathers-vue'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useQueryCache } from '@pinia/colada'
 import type { Company } from '@/types/company'
 import { deleteCompany as apiArchiveCompany } from '@/api/companies'
+import { FOLDER_QUERY_KEYS } from '@/queries/folders'
 import { toast } from '@/utils/toast'
 
 const { t } = useI18n()
+const queryCache = useQueryCache()
 
 interface Props {
   companyToArchive?: Company | null
@@ -82,6 +85,9 @@ const archiveCompany = async () => {
 
   try {
     await apiArchiveCompany(props.companyToArchive.id.toString())
+
+    // Invalidate folder queries to refresh sidebar
+    queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
     // Show success toast
     toast.success(

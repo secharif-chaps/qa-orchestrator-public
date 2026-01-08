@@ -8,9 +8,16 @@ import { toast } from '@/utils/toast'
 import { useI18n } from 'vue-i18n'
 
 export const useAddItemToFolder = defineMutation(() => {
+  const queryCache = useQueryCache()
+
   const { mutate, mutateAsync, ...mutation } = useMutation({
     mutation: ({ folderId, item }: { folderId: string; item: FolderItemAdd }) =>
       addItemToFolder(folderId, item),
+
+    // Invalidate folder queries to refresh sidebar and folder views
+    onSuccess: () => {
+      queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
+    },
   })
 
   return {
@@ -21,9 +28,16 @@ export const useAddItemToFolder = defineMutation(() => {
 })
 
 export const useRemoveItemFromFolder = defineMutation(() => {
+  const queryCache = useQueryCache()
+
   const { mutate, mutateAsync, ...mutation } = useMutation({
     mutation: ({ folderId, itemId, itemType }: { folderId: string; itemId: string; itemType: 'company' }) =>
       removeItemFromFolder(folderId, itemId, itemType),
+
+    // Invalidate folder queries to refresh sidebar and folder views
+    onSuccess: () => {
+      queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
+    },
   })
 
   return {
@@ -183,6 +197,11 @@ export const useMoveCompanyToFolder = defineMutation(() => {
         })
       }
       toast.error(t('folder.moveCompany.error'))
+    },
+
+    // Always invalidate to ensure consistency after move completes
+    onSettled: () => {
+      queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
     },
   })
 
