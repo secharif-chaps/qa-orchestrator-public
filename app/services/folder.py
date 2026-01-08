@@ -23,6 +23,22 @@ from app.schemas.folder import FolderCreate, FolderUpdate
 logger = logging.getLogger(__name__)
 
 
+def _user_is_manager(user_roles: List[str]) -> bool:
+    """Check if user has manager permissions.
+
+    A user is considered a manager if they have either:
+    - organization.manage role (can manage their organization)
+    - admin.organizations role (global admin)
+
+    Args:
+        user_roles: List of realm roles from Keycloak
+
+    Returns:
+        True if user is a manager, False otherwise
+    """
+    return 'organization.manage' in user_roles or 'admin.organizations' in user_roles
+
+
 class FolderService:
     """Service class for folder operations."""
 
@@ -251,6 +267,73 @@ class FolderService:
             logger.debug(
                 f"  - Folder: {folder.id} | {folder.name} | "
                 f"org: {folder.organization_id} | deleted: {folder.is_deleted}"
+            )
+
+        return folders
+
+    @staticmethod
+    def list_all_org_folders(
+        db: Session,
+        organization_id: str,
+        archived: bool = False,
+        favorites_only: bool = False,
+        user_id: str | None = None
+    ) -> List[Folder]:
+        """List ALL folders in an organization (for managers).
+
+        Unlike list_folders which returns only owned/shared folders, this method
+        returns ALL folders in the organization regardless of ownership or sharing.
+        This is intended for users with organization.manage permission.
+
+        Args:
+            db: Database session
+            organization_id: Organization to filter by
+            archived: If True, show deleted folders; if False, show active folders
+            favorites_only: If True, only show folders favorited by this user
+            user_id: User ID for favorites filtering (required if favorites_only=True)
+
+        Returns:
+            List of all Folder instances in the organization
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+
+        logger.debug(
+            f"list_all_org_folders - organization_id: {organization_id}, "
+            f"archived: {archived}, favorites_only: {favorites_only}"
+        )
+
+        # Build base query for ALL folders in organization
+        query = db.query(Folder).filter(
+            Folder.organization_id == organization_id
+        )
+
+        # Apply archived filter
+        if archived:
+            logger.debug("Filtering for archived (deleted) folders")
+            query = query.filter(Folder.is_deleted == True)
+        else:
+            logger.debug("Filtering for non-archived folders")
+            query = query.filter(Folder.is_deleted == False)
+
+        # Apply favorites filter (requires user_id)
+        if favorites_only:
+            if not user_id:
+                raise ValueError("user_id is required when favorites_only=True")
+            logger.debug("Filtering for user's favorites only")
+            query = query.join(
+                UserFolderFavorite,
+                (UserFolderFavorite.folder_id == Folder.id) &
+                (UserFolderFavorite.user_id == user_id)
+            )
+
+        folders = query.order_by(Folder.created_at.desc()).all()
+
+        logger.info(f"list_all_org_folders result: Found {len(folders)} folders")
+        for folder in folders:
+            logger.debug(
+                f"  - Folder: {folder.id} | {folder.name} | "
+                f"owner: {folder.owner} | deleted: {folder.is_deleted}"
             )
 
         return folders
@@ -614,11 +697,16 @@ class FolderService:
         folder_id: UUID,
         user_id: str,
         organization_id: str,
-        username: str | None = None
+        username: str | None = None,
+        user_roles: List[str] | None = None
     ) -> bool:
         """Check if a user has access to a folder.
 
-        A user has access if they are the owner OR have a share record.
+        A user has access if they:
+        - Are a manager (organization.manage or admin.organizations role)
+        - Are the folder owner
+        - Have a share record for the folder
+
         Also validates that the folder belongs to the specified organization.
 
         Args:
@@ -627,6 +715,7 @@ class FolderService:
             user_id: Keycloak user UUID to check access for
             organization_id: Organization UUID to validate against
             username: Optional username for legacy fallback when owner_id is NULL
+            user_roles: Optional list of user roles for manager check
 
         Returns:
             True if user has access, False otherwise
@@ -640,6 +729,11 @@ class FolderService:
 
         if not folder:
             return False
+
+        # Managers have access to ALL folders in their organization
+        if user_roles and _user_is_manager(user_roles):
+            logger.info(f"Manager access granted to folder {folder_id} for user {user_id}")
+            return True
 
         # Check if user is owner (by owner_id)
         if folder.owner_id and folder.owner_id == user_id:
@@ -851,12 +945,14 @@ class FolderService:
         company_id: int,
         user_id: str,
         organization_id: str,
-        username: str | None = None
+        username: str | None = None,
+        user_roles: List[str] | None = None
     ) -> bool:
         """Check if a user has access to a company via folder sharing.
 
-        A user has access to a company if the company belongs to at least one
-        folder that the user owns or has been shared with (reader or writer).
+        A user has access to a company if they:
+        - Are a manager (organization.manage or admin.organizations role)
+        - The company belongs to at least one folder the user owns or has been shared with
 
         Args:
             db: Database session
@@ -864,10 +960,23 @@ class FolderService:
             user_id: Keycloak user UUID to check
             organization_id: Organization UUID for validation
             username: Optional username for legacy fallback when owner_id is NULL
+            user_roles: Optional list of user roles for manager check
 
         Returns:
             True if user has access to the company, False otherwise
         """
+
+        # Managers have access to ALL companies in their organization
+        if user_roles and _user_is_manager(user_roles):
+            # Verify the company exists in the organization
+            company = db.query(Company).filter(
+                Company.id == company_id,
+                Company.organization_id == organization_id
+            ).first()
+            if company:
+                logger.info(f"Manager access granted to company {company_id} for user {user_id}")
+                return True
+            return False
 
         # Find all folders containing this company in the organization
         folder_items = db.query(FolderItem).join(
@@ -889,7 +998,7 @@ class FolderService:
         for folder_item in folder_items:
             folder_id = folder_item.folder_id
             if FolderService.has_folder_access(
-                db, folder_id, user_id, organization_id, username=username
+                db, folder_id, user_id, organization_id, username=username, user_roles=user_roles
             ):
                 logger.debug(
                     f"User {user_id} has access to company {company_id} via folder {folder_id}"
