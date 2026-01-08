@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.api.endpoints import (
-    company, tasks, auth, admin, admin_tasks, security, webhooks,
+    account, company, tasks, auth, admin, admin_tasks, security, webhooks,
     modules, cost_analysis, folder, concurrency, team,
     ai_preferences, organization, organizations, users, chapse, tokens
 )
@@ -8,6 +8,7 @@ from app.api.endpoints import (
 api_router = APIRouter()
 
 # Include routes from different modules
+api_router.include_router(account.router)  # User self-service account management
 api_router.include_router(auth.router)
 api_router.include_router(company.router)
 api_router.include_router(tasks.router)
