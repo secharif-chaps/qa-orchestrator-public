@@ -1,22 +1,15 @@
 import { defineQueryOptions } from '@pinia/colada'
-import { getOrganizationUsers, getOrganizationUser } from '@/api/team'
-import type { OrganizationUserQueryParams } from '@/types/team'
+import { getTeamMembers } from '@/api/team'
 
 export const TEAM_QUERY_KEYS = {
   root: ['team'] as const,
-  users: ['team', 'users'] as const,
-  usersList: (params?: OrganizationUserQueryParams) => ['team', 'users', 'list', params] as const,
-  user: (id: number) => ['team', 'users', id] as const,
+  members: (search?: string) => [...TEAM_QUERY_KEYS.root, 'members', { search }] as const,
 }
 
-export const organizationUsersQuery = defineQueryOptions(
-  (params: OrganizationUserQueryParams = {}) => ({
-    key: TEAM_QUERY_KEYS.usersList(params),
-    query: () => getOrganizationUsers(params),
-  }),
-)
-
-export const organizationUserQuery = defineQueryOptions(({ userId }: { userId: number }) => ({
-  key: TEAM_QUERY_KEYS.user(userId),
-  query: () => getOrganizationUser(userId),
+/**
+ * Query for team members list
+ */
+export const teamMembersQuery = defineQueryOptions(({ search }: { search?: string }) => ({
+  key: TEAM_QUERY_KEYS.members(search),
+  query: () => getTeamMembers(search),
 }))

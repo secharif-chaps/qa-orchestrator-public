@@ -5,7 +5,9 @@
       class="px-6 py-4 hover:bg-base-200 transition-colors cursor-pointer"
       @click="toggleExpanded"
     >
-      <div class="grid grid-cols-12 gap-4 items-center">
+      <div
+        :class="globalView ? 'grid grid-cols-14 gap-4 items-center' : 'grid grid-cols-12 gap-4 items-center'"
+      >
         <!-- Name with expand/collapse icon -->
         <div class="col-span-5 flex items-center gap-3">
           <button
@@ -27,35 +29,61 @@
 
           <div class="flex-1 flex items-center gap-2">
             <h3 class="font-medium">{{ folder.name }}</h3>
-            <!-- Shared badge -->
-            <Tag
-              v-if="isSharedWithMe"
+            <!-- Privacy Tags (Global View Only) -->
+            <template v-if="globalView">
+              <UiTag
+                v-if="folder.is_owner && !hasShares"
+                variant="slate"
+                label="Private"
+                size="xs"
+                rounded
+              />
+              <UiTag
+                v-else-if="hasShares"
+                variant="info"
+                icon="fa fa-share-nodes"
+                label="Shared"
+                size="xs"
+                rounded
+              />
+            </template>
+            <!-- Shared badge (non-global view) -->
+            <UiTag
+              v-else-if="isSharedWithMe"
               :label="$t('folder.shared.badge', 'Shared')"
-              intent="info"
+              variant="info"
               size="xs"
             />
             <!-- Role badge -->
-            <Tag
-              v-if="isSharedWithMe && shareRoleLabel"
+            <UiTag
+              v-if="!globalView && isSharedWithMe && shareRoleLabel"
               :label="shareRoleLabel"
-              variant="secondary"
+              variant="slate"
               size="xs"
             />
           </div>
         </div>
 
+        <!-- Owner Column (Global View Only) -->
+        <div v-if="globalView" class="col-span-2 flex items-center gap-2">
+          <div
+            class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium"
+            :class="folder.is_owner ? 'bg-primary text-white' : 'bg-secondary text-white'"
+          >
+            {{ ownerInitials }}
+          </div>
+          <span class="text-sm text-secondary">
+            {{ folder.is_owner ? 'You' : folder.owner_username }}
+          </span>
+        </div>
+
         <!-- Items count -->
         <div class="col-span-2">
-          <Tag
-            variant="secondary"
+          <UiTag
+            variant="slate"
             :label="$t('folder.itemsChip', folder.items?.length || 0)"
             size="sm"
           />
-        </div>
-
-        <!-- Owner -->
-        <div class="col-span-2">
-          <span class="text-sm text-secondary">@{{ folder.owner }}</span>
         </div>
 
         <!-- Created date -->
@@ -128,12 +156,12 @@
 
           <!-- Item type -->
           <div class="col-span-2">
-            <Tag intent="accent" :label="formatItemType(item.type)" size="xs" />
+            <UiTag variant="accent" :label="formatItemType(item.type)" size="xs" />
           </div>
 
           <!-- Item owner -->
           <div class="col-span-2">
-            <span class="text-xs text-secondary">@{{ item.owner_username || item.owner }}</span>
+            <span class="text-xs text-secondary">{{ item.owner || '' }}</span>
           </div>
 
           <!-- Item created date -->
@@ -171,7 +199,8 @@
 <script setup lang="ts">
 import { ref, computed, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Tag, Button } from '@owlint/feathers-vue'
+import UiTag from '@/components/ui/Tag.vue'
+import { Button } from '@owlint/feathers-vue'
 import type { Folder } from '@/types/folder'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
 
@@ -179,14 +208,18 @@ const { t, locale } = useI18n()
 
 interface Props {
   folder: Folder
+  globalView?: boolean
 }
 
 const props = defineProps<Props>()
 
+const globalView = computed(() => props.globalView ?? false)
+
+
 defineEmits<{
   'view-folder': [id: string]
   'delete-folder': [folder: Folder]
-  'view-item': [itemId: string]
+  'view-item': [payload: { itemId: string; folderId: string }]
 }>()
 
 // Folder permissions
@@ -270,5 +303,18 @@ const folderColorClasses = computed(() => {
 // Compute folder icon
 const folderIcon = computed(() => {
   return props.folder?.icon || 'fas fa-folder'
+})
+
+// Compute owner initials for global view
+const ownerInitials = computed(() => {
+  if (!props.globalView) return ''
+  const username = props.folder.owner_username || props.folder.owner || ''
+  return username.substring(0, 2).toUpperCase()
+})
+
+// Check if folder has shares (for privacy tags in global view)
+const hasShares = computed(() => {
+  // If folder is not owned by current user but they have access, it's shared
+  return !props.folder.is_owner && props.folder.share_role != null
 })
 </script>
