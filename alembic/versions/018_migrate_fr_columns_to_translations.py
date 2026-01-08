@@ -130,18 +130,19 @@ def upgrade():
 
             # Insert non-null French values into translations table
             connection.execute(sa.text(f"""
-                INSERT INTO translations (table_name, record_id, field_name, language_code, translated_value, created_at)
+                INSERT INTO translations (table_name, record_id, field_name, language_code, value, created_at, company_id)
                 SELECT
                     '{table_name}',
                     company_id,
                     '{field_name}',
                     'fr',
                     {fr_column},
-                    NOW()
+                    NOW(),
+                    company_id
                 FROM {table_name}
                 WHERE {fr_column} IS NOT NULL
                 ON CONFLICT (table_name, record_id, field_name, language_code)
-                DO UPDATE SET translated_value = EXCLUDED.translated_value
+                DO UPDATE SET value = EXCLUDED.value
             """))
             print(f"    Migrated {field_name} -> translations")
 
@@ -160,18 +161,19 @@ def upgrade():
 
             # Insert non-null French values into translations table
             connection.execute(sa.text(f"""
-                INSERT INTO translations (table_name, record_id, field_name, language_code, translated_value, created_at)
+                INSERT INTO translations (table_name, record_id, field_name, language_code, value, created_at, company_id)
                 SELECT
                     '{table_name}',
                     id,
                     '{field_name}',
                     'fr',
                     {fr_column},
-                    NOW()
+                    NOW(),
+                    company_id
                 FROM {table_name}
                 WHERE {fr_column} IS NOT NULL
                 ON CONFLICT (table_name, record_id, field_name, language_code)
-                DO UPDATE SET translated_value = EXCLUDED.translated_value
+                DO UPDATE SET value = EXCLUDED.value
             """))
             print(f"    Migrated {field_name} -> translations")
 
@@ -238,7 +240,7 @@ def downgrade():
         for field_name, fr_column in columns:
             connection.execute(sa.text(f"""
                 UPDATE {table_name} t
-                SET {fr_column} = tr.translated_value
+                SET {fr_column} = tr.value
                 FROM translations tr
                 WHERE tr.table_name = '{table_name}'
                   AND tr.record_id = t.company_id
@@ -252,7 +254,7 @@ def downgrade():
         for field_name, fr_column in columns:
             connection.execute(sa.text(f"""
                 UPDATE {table_name} t
-                SET {fr_column} = tr.translated_value
+                SET {fr_column} = tr.value
                 FROM translations tr
                 WHERE tr.table_name = '{table_name}'
                   AND tr.record_id = t.id
