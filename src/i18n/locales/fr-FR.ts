@@ -237,6 +237,10 @@ export default {
           title: 'Déconnecter tous les appareils',
           description: 'Se déconnecter de toutes les autres sessions et appareils',
         },
+        error: 'Erreur de chargement des sessions',
+        errorDescription: 'Impossible de charger vos sessions actives. Veuillez réessayer.',
+        noOtherSessions: 'Aucune autre session active',
+        webSession: 'Session Web',
       },
       twoFactor: {
         title: 'Authentification à deux facteurs',
@@ -254,6 +258,10 @@ export default {
       activity: {
         title: "Journal d'activité",
         description: 'Activité récente de sécurité et de compte',
+        error: "Erreur de chargement de l'activité",
+        errorDescription: "Impossible de charger votre journal d'activité. Veuillez réessayer.",
+        noEvents: "Aucun événement d'activité trouvé",
+        loadMore: 'Charger plus',
       },
       recovery: {
         title: 'Récupération de compte',
