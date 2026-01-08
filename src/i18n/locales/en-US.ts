@@ -1331,6 +1331,23 @@ export default {
       reader: 'Reader',
       writer: 'Writer',
     },
+    moveCompany: {
+      button: 'Move to Folder',
+      title: 'Move Company to Folder',
+      selectFolder: 'Select a destination folder',
+      searchPlaceholder: 'Search folders...',
+      noFolders: 'No writable folders available',
+      currentFolder: 'Current folder (cannot select)',
+      loadError: 'Failed to load folders',
+      success: 'Company moved to {folderName}',
+      error: 'Failed to move company',
+      move: 'Move',
+    },
+    permissions: {
+      owner: 'Owner',
+      writer: 'Writer',
+      reader: 'Reader',
+    },
     itemTypes: {
       company: 'Company Card',
     },

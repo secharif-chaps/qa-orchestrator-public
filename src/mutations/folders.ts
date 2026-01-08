@@ -1,5 +1,5 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { addItemToFolder, removeItemFromFolder, updateFolder, createFolder, deleteFolder, toggleFolderFavorite } from '@/api/folders'
+import { addItemToFolder, removeItemFromFolder, updateFolder, createFolder, deleteFolder, toggleFolderFavorite, moveItemBetweenFolders } from '@/api/folders'
 import type { Folder, FolderCreate, FolderItemAdd, FolderUpdate } from '@/types/folder'
 import type { PaginatedResponse } from '@/types/pagination'
 import { FOLDER_QUERY_KEYS } from '@/queries/folders'
@@ -28,6 +28,167 @@ export const useRemoveItemFromFolder = defineMutation(() => {
 
   return {
     ...mutation,
+    mutate,
+    mutateAsync,
+  }
+})
+
+/**
+ * Move a company from one folder to another with optimistic UI support.
+ * The company is removed instantly from the UI before the API responds.
+ */
+export const useMoveCompanyToFolder = defineMutation(() => {
+  const queryCache = useQueryCache()
+  const { t } = useI18n()
+
+  const { mutate, mutateAsync, ...mutation } = useMutation({
+    mutation: async ({
+      sourceFolderId,
+      destinationFolderId,
+      companyId,
+    }: {
+      sourceFolderId: string
+      destinationFolderId: string
+      companyId: string
+      destinationFolderName?: string
+    }) => {
+      return await moveItemBetweenFolders({
+        current_folder_id: sourceFolderId,
+        destination_folder_id: destinationFolderId,
+        item_id: companyId,
+        item_type: 'company',
+      })
+    },
+
+    // Optimistic update BEFORE API call - remove item from source folder only
+    onMutate: ({
+      sourceFolderId,
+      companyId,
+      destinationFolderName,
+    }: {
+      sourceFolderId: string
+      destinationFolderId: string
+      companyId: string
+      destinationFolderName?: string
+    }) => {
+      // Store previous cache states for rollback
+      const previousStates = new Map<string, unknown>()
+
+      // Helper to update folder in paginated cache
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const updateInPaginatedCache = (queryKey: any, updateFn: (folders: Folder[]) => Folder[]) => {
+        const currentData = queryCache.getQueryData<PaginatedResponse<Folder> | Folder[]>(queryKey)
+
+        if (!currentData) return
+
+        // Store for rollback
+        previousStates.set(JSON.stringify(queryKey), currentData)
+
+        // Check if it's a paginated response or direct array
+        if (Array.isArray(currentData)) {
+          // Direct array - apply update function
+          queryCache.setQueryData(queryKey, updateFn(currentData))
+        } else if ('data' in currentData && Array.isArray(currentData.data)) {
+          // Paginated response - apply update function to data array
+          queryCache.setQueryData(queryKey, {
+            ...currentData,
+            data: updateFn(currentData.data),
+          })
+        }
+      }
+
+      // Update source folder cache - try both with and without filters
+      // The component uses filters: { archived: false }, so we need to update that cache key
+      const sourceFolderKeyNoFilter = FOLDER_QUERY_KEYS.byId(sourceFolderId)
+      const sourceFolderKeyWithFilter = FOLDER_QUERY_KEYS.byId(sourceFolderId, { archived: false })
+
+      // Try to get data from filtered cache key first (this is what the component uses)
+      let sourceFolder = queryCache.getQueryData<Folder>(sourceFolderKeyWithFilter)
+      const usingFilterKey = !!sourceFolder
+
+      if (!sourceFolder) {
+        sourceFolder = queryCache.getQueryData<Folder>(sourceFolderKeyNoFilter)
+      }
+
+      // Find the item to move - use loose equality to handle string/number mismatch
+      const itemToMove = sourceFolder?.items?.find((item) => item.id == companyId)
+
+      if (sourceFolder && itemToMove) {
+        // Save source folder state for rollback
+        const cacheKeyToUse = usingFilterKey ? sourceFolderKeyWithFilter : sourceFolderKeyNoFilter
+        previousStates.set(JSON.stringify(cacheKeyToUse), sourceFolder)
+
+        const updatedItems = sourceFolder.items?.filter((item) => item.id != companyId)
+        const updatedFolder = {
+          ...sourceFolder,
+          items: updatedItems,
+          items_count: Math.max(0, (sourceFolder.items_count || 0) - 1),
+        }
+        queryCache.setQueryData(cacheKeyToUse, updatedFolder)
+
+        // Also update the other cache key if it exists
+        const otherKey = usingFilterKey ? sourceFolderKeyNoFilter : sourceFolderKeyWithFilter
+        const otherFolder = queryCache.getQueryData<Folder>(otherKey)
+        if (otherFolder) {
+          previousStates.set(JSON.stringify(otherKey), otherFolder)
+          queryCache.setQueryData(otherKey, updatedFolder)
+        }
+      }
+
+      // Update folder list caches (sidebar, list view, etc.)
+      const updateFolderItems = (folders: Folder[]) => {
+        return folders.map(folder => {
+          if (folder.id === sourceFolderId && itemToMove) {
+            return {
+              ...folder,
+              items: folder.items?.filter((item) => item.id != companyId),
+              items_count: Math.max(0, (folder.items_count || 0) - 1),
+            }
+          }
+          return folder
+        })
+      }
+
+      // Update common folder query caches
+      // Sidebar uses: { page: 1, size: 5, name: '' }
+      const sidebarKey = FOLDER_QUERY_KEYS.withItems({ page: 1, size: 5, name: '' })
+      updateInPaginatedCache(sidebarKey, updateFolderItems)
+
+      // List page table view (various page/size combos)
+      const listTableKeys = [
+        FOLDER_QUERY_KEYS.withItems({ page: 1, size: 6, name: '' }),
+        FOLDER_QUERY_KEYS.withItems({ page: 1, size: 12, name: '' }),
+        FOLDER_QUERY_KEYS.withItems({ page: 1, size: 21, name: '' }),
+        FOLDER_QUERY_KEYS.withItems({ page: 1, size: 30, name: '' }),
+      ]
+      listTableKeys.forEach((key) => updateInPaginatedCache(key, updateFolderItems))
+
+      // Show success toast immediately
+      if (destinationFolderName) {
+        toast.success(t('folder.moveCompany.success', { folderName: destinationFolderName }))
+      }
+
+      return {
+        previousStates,
+        sourceFolderId,
+      }
+    },
+
+    // Rollback on error
+    onError: (_error, _variables, context) => {
+      if (context?.previousStates) {
+        context.previousStates.forEach((value, key) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          queryCache.setQueryData(JSON.parse(key) as any, value)
+        })
+      }
+      toast.error(t('folder.moveCompany.error'))
+    },
+  })
+
+  return {
+    ...mutation,
+    moveCompany: mutateAsync,
     mutate,
     mutateAsync,
   }
@@ -176,7 +337,10 @@ export const useCreateFolder = defineMutation(() => {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         owner: authStore.username,
+        owner_id: authStore.userId || '',
         organization_id: authStore.organizationId || '',
+        is_owner: true,
+        share_role: null,
         items: [],
         items_count: 0,
       }

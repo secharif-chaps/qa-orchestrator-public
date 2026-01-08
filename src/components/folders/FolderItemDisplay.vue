@@ -52,11 +52,19 @@
           @click.stop="handleClick"
         />
         <Button
+          v-if="item.type === 'company' && canMoveCompany"
+          variant="tertiary"
+          icon="fa fa-exchange-alt"
+          icon-only
+          :title="$t('folder.moveCompany.button', 'Move to Folder')"
+          @click.stop="$emit('moveCompany', item)"
+        />
+        <Button
           v-if="item.type === 'company' && canDeleteCompany"
           variant="tertiary"
-          icon="fa fa-trash"
+          :icon="isArchived ? 'fa fa-undo' : 'fa fa-trash'"
           icon-only
-          :title="$t('company.delete.title', 'Delete Company')"
+          :title="isArchived ? $t('company.restore.title', 'Restore Company') : $t('company.delete.title', 'Delete Company')"
           @click.stop="$emit('deleteCompany', item)"
         />
       </div>
@@ -76,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Button } from '@owlint/feathers-vue'
 import type { FolderItem } from '@/types/folder'
 import { useI18n } from 'vue-i18n'
@@ -86,6 +94,8 @@ import Card from '../ui/Card.vue'
 interface Props {
   item: FolderItem
   mode: 'grid' | 'table'
+  canMoveItems?: boolean
+  isArchived?: boolean
 }
 
 const props = defineProps<Props>()
@@ -94,6 +104,7 @@ const emit = defineEmits<{
   viewItem: [id: string]
   removeItem: [item: FolderItem]
   deleteCompany: [item: FolderItem]
+  moveCompany: [item: FolderItem]
 }>()
 
 const { t, locale } = useI18n()
@@ -101,6 +112,9 @@ const { canDeleteCompany } = useCompanyPermissions()
 const showFallbackIcon = ref(false)
 const isParentHovered = ref(false)
 const isChildHovered = ref(false)
+
+// For move functionality, use the prop passed from parent (based on folder permissions)
+const canMoveCompany = computed(() => props.canMoveItems ?? false)
 
 const handleClick = () => {
   if (props.item.type === 'company') {
