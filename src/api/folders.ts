@@ -156,6 +156,19 @@ export const removeItemFromFolder = async (
   return response
 }
 
+export const moveItemBetweenFolders = async (data: {
+  current_folder_id: string
+  destination_folder_id: string
+  item_id: string
+  item_type: 'company'
+}) => {
+  const response = await apiClient.patch(
+    `/folders/${data.current_folder_id}/items/${data.item_id}?item_type=${data.item_type}`,
+    { folder_id: data.destination_folder_id }
+  )
+  return response
+}
+
 // =====================================================
 // Folder Sharing API Functions
 // =====================================================
@@ -229,6 +242,7 @@ export const foldersApi = {
   restoreFolder,
   addItemToFolder,
   removeItemFromFolder,
+  moveItemBetweenFolders,
   // Sharing functions
   getFolderShares,
   createFolderShare,

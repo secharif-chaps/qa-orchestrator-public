@@ -7,28 +7,52 @@
       </p>
     </div>
     <div class="px-6 py-6">
-      <div class="flex flex-col gap-3">
+      <!-- Loading State -->
+      <div v-if="isLoading && events.length === 0" class="flex flex-col gap-3">
         <div
-          v-for="activity in recentActivity"
-          :key="activity.id"
-          class="flex items-center gap-3 p-3 border border-primary-stroke rounded-lg"
+          v-for="i in 3"
+          :key="i"
+          class="flex items-center gap-3 p-3 border border-primary-stroke rounded-lg animate-pulse"
         >
-          <div
-            class="w-10 h-10 rounded-lg flex items-center justify-center"
-            :class="getActivityIconClass(activity.type)"
-          >
-            <i :class="activity.icon"></i>
+          <div class="w-10 h-10 rounded-lg bg-base-200"></div>
+          <div class="flex-1 flex flex-col gap-2">
+            <div class="h-4 bg-base-200 rounded w-1/3"></div>
+            <div class="h-3 bg-base-200 rounded w-1/2"></div>
           </div>
-          <div class="flex-1">
-            <p class="text-sm font-medium">{{ activity.title }}</p>
-            <p class="text-xs text-secondary">{{ activity.description }}</p>
-            <p class="text-xs text-secondary">
-              {{ formatDate(activity.timestamp) }}
-            </p>
-          </div>
-          <div v-if="activity.location" class="text-xs text-secondary">
-            {{ activity.location }}
-          </div>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <Alert
+        v-else-if="error"
+        variant="danger"
+        :title="$t('settings.security.activity.error')"
+        :message="error.message || $t('settings.security.activity.errorDescription')"
+        icon="fa fa-exclamation-circle"
+      />
+
+      <!-- Events List -->
+      <div v-else class="flex flex-col gap-3">
+        <!-- Empty State -->
+        <p v-if="events.length === 0" class="text-sm text-secondary text-center py-8">
+          {{ $t('settings.security.activity.noEvents') }}
+        </p>
+
+        <!-- Event Items -->
+        <ActivityEventItem
+          v-for="event in events"
+          :key="event.id"
+          :event="event"
+        />
+
+        <!-- Load More Button -->
+        <div v-if="hasMore" class="flex justify-center pt-4">
+          <Button
+            :label="isLoading ? $t('common.loading') : $t('settings.security.activity.loadMore')"
+            variant="secondary"
+            :disabled="isLoading"
+            @click="handleLoadMore"
+          />
         </div>
       </div>
     </div>
@@ -36,32 +60,22 @@
 </template>
 
 <script setup lang="ts">
-interface Activity {
-  id: string
-  type: 'login' | 'security' | 'update'
-  icon: string
-  title: string
-  description: string
-  location?: string
-  timestamp: Date
-}
+import { Alert, Button } from '@owlint/feathers-vue'
+import ActivityEventItem from './ActivityEventItem.vue'
+import type { ActivityEvent } from '@/types/account'
 
 defineProps<{
-  recentActivity: Activity[]
+  events: ActivityEvent[]
+  isLoading: boolean
+  error?: Error | null
+  hasMore: boolean
 }>()
 
-function getActivityIconClass(type: string) {
-  switch (type) {
-    case 'security':
-      return 'bg-error-light text-error-light-content'
-    case 'login':
-      return 'bg-success-light text-success-light-content'
-    default:
-      return 'bg-info-light text-info-light-content'
-  }
-}
+const emit = defineEmits<{
+  loadMore: []
+}>()
 
-function formatDate(date: Date) {
-  return date.toLocaleString()
+function handleLoadMore() {
+  emit('loadMore')
 }
 </script>

@@ -7,63 +7,60 @@
       </p>
     </div>
     <div class="px-6 py-6">
-      <div class="flex flex-col gap-4">
-        <!-- Current Session -->
-        <div class="border border-sage-300 dark:border-base-300 bg-base-200 rounded-lg p-4">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div
-                class="w-10 h-10 rounded-lg bg-rose-100 border border-rose-200 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400 flex items-center justify-center"
-              >
-                <i class="fas fa-desktop"></i>
-              </div>
-              <div>
-                <h3 class="text-sm font-medium">
-                  {{ $t('settings.security.sessions.current.title') }}
-                </h3>
-                <p class="text-xs text-secondary">{{ userAgent }}</p>
-                <p class="text-xs text-secondary">
-                  {{ $t('settings.security.sessions.current.lastActive') }}:
-                  {{ formatDate(new Date()) }}
-                </p>
-              </div>
+      <!-- Loading State -->
+      <div v-if="isLoading" class="flex flex-col gap-4">
+        <div
+          v-for="i in 3"
+          :key="i"
+          class="border border-primary-stroke rounded-lg p-4 animate-pulse"
+        >
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-base-200"></div>
+            <div class="flex-1 flex flex-col gap-2">
+              <div class="h-4 bg-base-200 rounded w-1/3"></div>
+              <div class="h-3 bg-base-200 rounded w-1/4"></div>
             </div>
-            <Tag variant="success" :label="$t('settings.security.sessions.current.badge')" />
           </div>
         </div>
+      </div>
+
+      <!-- Error State -->
+      <Alert
+        v-else-if="error"
+        variant="danger"
+        :title="$t('settings.security.sessions.error')"
+        :message="error.message || $t('settings.security.sessions.errorDescription')"
+        icon="fa fa-exclamation-circle"
+      />
+
+      <!-- Sessions List -->
+      <div v-else class="flex flex-col gap-4">
+        <!-- Current Session -->
+        <SessionItem
+          v-if="currentSession"
+          :session="currentSession"
+          :is-current="true"
+        />
 
         <!-- Other Sessions -->
-        <div
+        <SessionItem
           v-for="session in otherSessions"
           :key="session.id"
-          class="border border-primary-stroke rounded-lg p-4"
+          :session="session"
+          :is-current="false"
+          @revoke="handleRevokeSession"
+        />
+
+        <!-- No Other Sessions -->
+        <p
+          v-if="otherSessions.length === 0 && currentSession"
+          class="text-sm text-secondary text-center py-4"
         >
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-lg bg-base-200 text-secondary flex items-center justify-center">
-                <i :class="session.deviceIcon"></i>
-              </div>
-              <div>
-                <h3 class="text-sm font-medium">{{ session.device }}</h3>
-                <p class="text-xs text-secondary">{{ session.location }}</p>
-                <p class="text-xs text-secondary">
-                  {{ $t('settings.security.sessions.lastActive') }}:
-                  {{ formatDate(session.lastActive) }}
-                </p>
-              </div>
-            </div>
-            <Button
-              :label="$t('settings.security.actions.revoke')"
-              variant="secondary"
-              color="danger"
-              size="sm"
-              @click="() => handleRevokeSession(session.id)"
-            />
-          </div>
-        </div>
+          {{ $t('settings.security.sessions.noOtherSessions') }}
+        </p>
 
         <!-- Sign Out All Devices -->
-        <div class="pt-4 border-t border-primary-stroke">
+        <div v-if="otherSessions.length > 0" class="pt-4 border-t border-primary-stroke">
           <div class="flex items-center justify-between">
             <div>
               <h3 class="text-sm font-medium">
@@ -88,20 +85,16 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
-import { Button } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { Alert, Button } from '@owlint/feathers-vue'
+import SessionItem from './SessionItem.vue'
+import type { Session } from '@/types/account'
 
-interface Session {
-  id: string
-  device: string
-  deviceIcon: string
-  location: string
-  lastActive: Date
-}
-
-defineProps<{
-  otherSessions: Session[]
-  userAgent: string
+const props = defineProps<{
+  sessions: Session[]
+  currentSessionId?: string | null
+  isLoading: boolean
+  error?: Error | null
 }>()
 
 const emit = defineEmits<{
@@ -109,15 +102,20 @@ const emit = defineEmits<{
   signOutAllDevices: []
 }>()
 
+// Computed properties
+const currentSession = computed(() => {
+  return props.sessions.find((s) => s.isCurrent)
+})
+
+const otherSessions = computed(() => {
+  return props.sessions.filter((s) => !s.isCurrent)
+})
+
 function handleRevokeSession(sessionId: string) {
   emit('revokeSession', sessionId)
 }
 
 function handleSignOutAllDevices() {
   emit('signOutAllDevices')
-}
-
-function formatDate(date: Date) {
-  return date.toLocaleString()
 }
 </script>
