@@ -44,7 +44,7 @@
 
     <!-- No Folders Alert -->
     <div
-      v-if="needsFolderSelection && !foldersLoading && (!foldersData || foldersData.length === 0)"
+      v-if="needsFolderSelection && !foldersLoading && (!foldersData?.data || foldersData.data.length === 0)"
       class="flex flex-col gap-4"
     >
       <Alert
@@ -64,7 +64,7 @@
 
     <!-- Search Form Card -->
     <div
-      v-if="!needsFolderSelection || (foldersData && foldersData.length > 0)"
+      v-if="!needsFolderSelection || (foldersData?.data && foldersData.data.length > 0)"
       class="bg-base-100 border border-primary-stroke rounded-lg p-6"
       :title="$t('search.companyIdentity')"
     >
@@ -75,40 +75,12 @@
             {{ $t('company.create.selectFolder', 'Select Folder') }}
             <span class="text-error">*</span>
           </label>
-          <Dropdown align="left" width="full" :close-on-select="true">
-            <template #trigger="{ isOpen }">
-              <button
-                type="button"
-                class="flex items-center justify-between w-full px-4 py-2 border border-primary-stroke rounded-lg bg-base-100 hover:bg-base-200 transition-colors"
-                :class="{ 'ring-2 ring-primary': isOpen }"
-              >
-                <span v-if="selectedFolderId" class="flex items-center gap-2">
-                  <i class="fa fa-folder text-sage-600 dark:text-sage-400"></i>
-                  {{ selectedFolder?.name }}
-                </span>
-                <span v-else class="text-gray-500">
-                  {{ $t('company.create.chooseFolderPlaceholder', 'Choose a folder...') }}
-                </span>
-                <i class="fa fa-chevron-down text-sm" :class="{ 'rotate-180': isOpen }"></i>
-              </button>
-            </template>
-
-            <template #content="{ close }">
-              <div class="max-h-60 overflow-y-auto">
-                <button
-                  v-for="folder in foldersData"
-                  :key="folder.id"
-                  type="button"
-                  class="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-base-200 transition-colors"
-                  @click="(selectFolder(folder.id), close())"
-                >
-                  <i class="fa fa-folder text-sage-600 dark:text-sage-400"></i>
-                  <span class="flex-1">{{ folder.name }}</span>
-                  <i v-if="selectedFolderId === folder.id" class="fa fa-check text-success"></i>
-                </button>
-              </div>
-            </template>
-          </Dropdown>
+          <Select
+            v-model="selectedFolderId"
+            :options="folderOptions"
+            :placeholder="$t('company.create.chooseFolderPlaceholder', 'Choose a folder...')"
+            icon="fa fa-folder"
+          />
         </div>
 
         <!-- Form Fields -->
@@ -167,8 +139,7 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import { Alert, Button, Input } from '@owlint/feathers-vue'
-import Dropdown from '@/components/ui/Dropdown.vue'
+import { Alert, Button, Input, Select } from '@owlint/feathers-vue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
@@ -223,7 +194,6 @@ const needsFolderSelection = computed(() => !routeFolderId.value)
 // Target folder ID (from route or selected)
 const targetFolderId = computed(() => routeFolderId.value || selectedFolderId.value)
 
-
 // Fetch folders (only when folder selection is needed)
 const { data: foldersData, isLoading: foldersLoading } = useQuery(
   foldersQuery,
@@ -240,15 +210,24 @@ const { data: foldersData, isLoading: foldersLoading } = useQuery(
   },
 )
 
+// Transform folders to Select options format with { label, value }
+const folderOptions = computed(() => {
+  if (!foldersData.value?.data) return []
+  return foldersData.value.data.map((folder) => ({
+    label: folder.name,
+    value: folder.id,
+  }))
+})
+
 // Fetch folder details (when folder ID is in route)
 const { data: folderData } = useQuery(folderByIdQuery, () => ({ id: routeFolderId.value || '' }), {
   enabled: computed(() => !!routeFolderId.value),
 })
 
-// Selected folder object
+// Selected folder object (derived from folder ID)
 const selectedFolder = computed(() => {
-  if (!selectedFolderId.value || !foldersData.value) return null
-  return foldersData.value.find((f) => f.id === selectedFolderId.value)
+  if (!selectedFolderId.value || !foldersData.value?.data) return null
+  return foldersData.value.data.find((f) => f.id === selectedFolderId.value)
 })
 
 // Global token balance query
@@ -329,11 +308,6 @@ const canSubmit = computed(() => {
 
   return true
 })
-
-// Folder selection
-function selectFolder(folderId: string) {
-  selectedFolderId.value = folderId
-}
 
 // Navigation
 function navigateToFolderCreate() {
