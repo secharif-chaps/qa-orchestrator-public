@@ -69,11 +69,25 @@ class FolderItemAdd(FolderItemBase):
     pass
 
 
+class FolderItemMove(BaseModel):
+    """Schema for moving an item between folders."""
+    folder_id: UUID = Field(..., description="Destination folder ID")
+
+
 class FolderItemResponse(FolderItemBase):
     id: UUID
     folder_id: UUID
     added_at: datetime
     owner: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+
+class FolderItemMoveResponse(BaseModel):
+    """Response schema for moving an item to a folder."""
+    message: str
+    item: FolderItemResponse
 
     class Config:
         from_attributes = True
