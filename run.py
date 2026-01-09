@@ -5,6 +5,7 @@ Run script for the Global Service Microservice
 import uvicorn
 from app.core.config import settings
 
+# Start FastAPI / gRPC app
 if __name__ == "__main__":
     # Configure uvicorn logging to use our log level
     log_level = settings.LOG_LEVEL.lower()

@@ -25,14 +25,19 @@ RUN poetry config virtualenvs.create false
 RUN poetry install --no-interaction --no-ansi --no-root
 
 # Copy app code
+COPY ./protos/ protos/
+COPY ./scripts/ scripts/
 COPY ./app/ app/
 COPY ./alembic/ alembic/
 COPY alembic.ini run.py ./
 COPY ./docker/entrypoint.sh ./
 
+# Generate gRPC protos at BUILD TIME (not runtime)
+RUN python scripts/generate_protos.py
+
 # Make entrypoint executable
 RUN chmod +x entrypoint.sh && sed -i 's/\r$//' entrypoint.sh
 
-EXPOSE 8000
+EXPOSE 8001 50051
 
 ENTRYPOINT ["./entrypoint.sh"]

@@ -59,6 +59,10 @@ logs
 .fleet
 .idea
 
+# gRPC generated files
+app/grpc_generated/*
+!app/grpc_generated/__init__.py
+
 # Local env files
 .env
 .env.*

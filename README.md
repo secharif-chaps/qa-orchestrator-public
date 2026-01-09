@@ -112,7 +112,11 @@ alembic revision --autogenerate -m "Description of changes"
 ```bash
 pytest
 ```
-
+### Runing gRPC tests:
+```bash
+docker compose -f docker-compose.yml -f docker-compose.local.yml  exec -e PYTHONPATH=/app global-service poetry run pytest tests/grpc/test_grpc_server.py -v
+```
+ 
 ## License
 
 This project is licensed under the MIT License. 

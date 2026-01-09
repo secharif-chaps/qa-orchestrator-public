@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     API_PORT: int = 8001
     BACKEND_BASE_URL: str = "http://localhost:8001"  # Default for local dev, override with env var
 
+    # GRPC settings
+    GRPC_PORT: int = 50051
+    
     # Logging settings
     LOG_LEVEL: str = "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
 
