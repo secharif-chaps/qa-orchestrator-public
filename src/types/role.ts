@@ -11,7 +11,7 @@
  * - admin.organizations: Global admin access
  */
 
-export type RoleId = 'reader' | 'writer' | 'admin'
+export type RoleId = 'reader' | 'writer' | 'manager' | 'admin'
 
 export type RoleColor = 'primary' | 'secondary' | 'accent'
 
@@ -30,6 +30,7 @@ export interface Role {
 export const VALID_PERMISSIONS = [
   'organization.read',
   'organization.write',
+  'organization.manage',
   'company.create',
   'admin.organizations',
 ] as const
@@ -42,7 +43,7 @@ export type Permission = (typeof VALID_PERMISSIONS)[number]
 export const PERMISSION_CATEGORIES = {
   base: {
     label: 'Base Access',
-    permissions: ['organization.read', 'organization.write'] as const,
+    permissions: ['organization.read', 'organization.write', 'organization.manage'] as const,
   },
   modules: {
     label: 'Module Permissions',
@@ -71,6 +72,11 @@ export const PERMISSION_METADATA: Record<
     label: 'Write Access',
     description: 'Create folders, edit/share/delete owned folders',
     icon: 'fa-folder-plus',
+  },
+  'organization.manage': {
+    label: 'Team Management',
+    description: 'Manage team members and their permissions',
+    icon: 'fa-users-cog',
   },
   'company.create': {
     label: 'Add Items',

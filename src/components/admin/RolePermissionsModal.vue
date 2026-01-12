@@ -127,6 +127,20 @@
               "
               icon="fa-pencil"
             />
+
+            <!-- organization.manage (toggle) -->
+            <PermissionCheckbox
+              v-model="selectedPermissions"
+              permission="organization.manage"
+              :label="$t('admin.permissions.organizationManage.label', 'Team Management')"
+              :description="
+                $t(
+                  'admin.permissions.organizationManage.description',
+                  'Manage team members and their permissions',
+                )
+              "
+              icon="fa-users-cog"
+            />
           </div>
         </div>
 

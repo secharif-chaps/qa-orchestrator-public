@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 border border-primary-stroke rounded-card">
+  <div class="bg-base-100 border border-primary-stroke rounded-card overflow-hidden">
     <div class="px-6 py-4 border-b border-primary-stroke flex justify-between items-center">
       <div>
         <h2 class="text-lg font-semibold">{{ t('settings.team.title', 'Team Management') }}</h2>
