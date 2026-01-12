@@ -47,7 +47,8 @@
         <!-- Favorites Section -->
         <div v-if="favoriteFolders.length > 0">
           <div
-            class="flex items-center gap-2 px-2 py-1.5 text-sage-300 rounded-md cursor-pointer transition-colors group"
+            class="flex items-center gap-2 px-2 py-1.5 text-sage-300 rounded-md cursor-pointer transition-colors group hover:bg-sage-800/50"
+            @click="$router.push('/folders')"
           >
             <i class="fa fa-heart text-sm"></i>
             <span class="text-sm font-medium flex-1">{{
@@ -73,7 +74,8 @@
         <!-- Regular Folders -->
         <div v-if="regularFolders.length > 0" class="space-y-3">
           <div
-            class="flex items-center gap-2 px-2 py-1.5 text-sage-300 rounded-md cursor-pointer transition-colors group"
+            class="flex items-center gap-2 px-2 py-1.5 text-sage-300 rounded-md cursor-pointer transition-colors group hover:bg-sage-800/50"
+            @click="$router.push('/folders')"
           >
             <i class="fa fa-folders text-sm"></i>
             <span class="text-sm font-medium flex-1">{{

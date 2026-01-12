@@ -104,15 +104,15 @@
         <Button
           variant="tertiary"
           :label="$t('common.cancel', 'Cancel')"
-          @click="showDeleteModal = false"
+          @click="handleClose"
         />
         <Button
           variant="accent"
           icon="fa fa-trash"
           :label="$t('company.delete.confirm.button', 'Delete Company')"
-          :loading="deleteLoading"
-          :disabled="!isConfirmed || deleteLoading"
-          @click="deleteCompany"
+          :loading="isLoading"
+          :disabled="!isConfirmed || isLoading"
+          @click="handleDelete"
         />
       </div>
     </div>
@@ -121,13 +121,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import type { Company } from '@/types/company'
 import { Button, Input } from '@owlint/feathers-vue'
-import { deleteCompany as apiDeleteCompany } from '@/api/companies'
-import { toast } from '@/utils/toast'
-
-const { t } = useI18n()
+import { useDeleteCompany } from '@/mutations/companies'
 
 interface Props {
   companyToDelete: Company | null
@@ -144,46 +140,37 @@ const emit = defineEmits<{
   'delete-company': []
 }>()
 
-const deleteLoading = ref(false)
 const confirmationText = ref('')
 
 const isConfirmed = computed(() => {
   return confirmationText.value.trim() === props.companyToDelete?.name.trim()
 })
 
-const deleteCompany = async () => {
+// Use mutation for deleting with cache invalidation
+const { deleteCompany, isLoading } = useDeleteCompany()
+
+const handleClose = () => {
+  showDeleteModal.value = false
+  confirmationText.value = ''
+}
+
+const handleDelete = async () => {
   if (!props.companyToDelete?.id || !isConfirmed.value) return
 
-  deleteLoading.value = true
-
   try {
-    await apiDeleteCompany(props.companyToDelete.id.toString())
+    await deleteCompany({
+      companyId: props.companyToDelete.id.toString(),
+      companyName: props.companyToDelete.name,
+    })
 
-    // Show success toast
-    toast.success(
-      t('company.delete.success', 'Company "{name}" has been deleted successfully', {
-        name: props.companyToDelete.name,
-      }),
-    )
-
-    // Emit event first, then clean up
+    // Emit event for parent
     emit('delete-company')
 
-    // Small delay to ensure parent component processes the event
-    setTimeout(() => {
-      showDeleteModal.value = false
-      confirmationText.value = ''
-    }, 50)
-  } catch (err) {
-    console.error('Failed to delete company:', err)
-    // Show error toast
-    toast.error(
-      t('company.delete.error', 'Failed to delete company "{name}". Please try again.', {
-        name: props.companyToDelete.name,
-      }),
-    )
-  } finally {
-    deleteLoading.value = false
+    // Close modal and reset
+    handleClose()
+  } catch (error) {
+    // Error toast is shown by the mutation's onError handler
+    console.error('Error deleting company:', error)
   }
 }
 

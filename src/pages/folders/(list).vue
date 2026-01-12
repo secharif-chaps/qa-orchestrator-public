@@ -310,9 +310,9 @@ const viewScopeOptions = computed(() => [
   },
 ])
 
-// Query for grid view (folders only)
+// Query for grid view (uses same query as table for unified caching)
 const { data, status, isLoading, refetch } = useQuery(
-  foldersQuery,
+  foldersWithItemsQuery,
   () => ({
     filters: {
       page: foldersStore.page,
