@@ -1,10 +1,13 @@
 import { ref } from 'vue'
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { createCompany } from '@/api/companies'
+import { createCompany, deleteCompany, restoreCompany } from '@/api/companies'
 import { COMPANY_QUERY_KEYS } from '@/queries/companies'
 import { ORGANIZATION_TOKEN_KEYS } from '@/queries/tokens'
+import { FOLDER_QUERY_KEYS } from '@/queries/folders'
 import type { Company } from '@/types/company'
 import type { TokenBalanceResponse } from '@/types/tokens'
+import { toast } from '@/utils/toast'
+import { useI18n } from 'vue-i18n'
 
 // Cost per company creation (screen module)
 const TOKENS_PER_COMPANY = 35
@@ -57,6 +60,126 @@ export const useCreateCompany = defineMutation(() => {
     name,
     website,
     organizationId,
+    mutate,
+    mutateAsync,
+  }
+})
+
+/**
+ * Archive a company (soft delete).
+ * Invalidates folder caches on success to refetch fresh data.
+ */
+export const useArchiveCompany = defineMutation(() => {
+  const queryCache = useQueryCache()
+  const { t } = useI18n()
+
+  const { mutate, mutateAsync, ...mutation } = useMutation({
+    mutation: ({ companyId }: { companyId: string; companyName: string }) =>
+      deleteCompany(companyId),
+
+    onError: (_error, { companyName }) => {
+      toast.error(
+        t('company.archive.error', 'Failed to archive company "{name}". Please try again.', {
+          name: companyName,
+        }),
+      )
+    },
+
+    onSuccess: (_data, { companyName }) => {
+      // Invalidate folder caches to refetch fresh data
+      queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
+
+      toast.success(
+        t('company.archive.success', 'Company "{name}" has been archived successfully', {
+          name: companyName,
+        }),
+      )
+    },
+  })
+
+  return {
+    ...mutation,
+    archiveCompany: mutateAsync,
+    mutate,
+    mutateAsync,
+  }
+})
+
+/**
+ * Permanently delete a company.
+ * Invalidates folder caches on success to refetch fresh data.
+ */
+export const useDeleteCompany = defineMutation(() => {
+  const queryCache = useQueryCache()
+  const { t } = useI18n()
+
+  const { mutate, mutateAsync, ...mutation } = useMutation({
+    mutation: ({ companyId }: { companyId: string; companyName: string }) =>
+      deleteCompany(companyId),
+
+    onError: (_error, { companyName }) => {
+      toast.error(
+        t('company.delete.error', 'Failed to delete company "{name}". Please try again.', {
+          name: companyName,
+        }),
+      )
+    },
+
+    onSuccess: (_data, { companyName }) => {
+      // Invalidate folder caches to refetch fresh data
+      queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
+
+      toast.success(
+        t('company.delete.success', 'Company "{name}" has been deleted successfully', {
+          name: companyName,
+        }),
+      )
+    },
+  })
+
+  return {
+    ...mutation,
+    deleteCompany: mutateAsync,
+    mutate,
+    mutateAsync,
+  }
+})
+
+/**
+ * Restore an archived company.
+ * Invalidates folder caches on success to refetch fresh data.
+ */
+export const useRestoreCompany = defineMutation(() => {
+  const queryCache = useQueryCache()
+  const { t } = useI18n()
+
+  const { mutate, mutateAsync, ...mutation } = useMutation({
+    mutation: ({ companyId }: { companyId: string; companyName: string }) =>
+      restoreCompany(companyId),
+
+    onError: (_error, { companyName }) => {
+      toast.error(
+        t('company.restore.error', 'Failed to restore company "{name}". Please try again.', {
+          name: companyName,
+        }),
+      )
+    },
+
+    onSuccess: (_data, { companyName }) => {
+      // Invalidate folder caches to refetch fresh data
+      queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
+
+      toast.success(
+        t('company.restore.success', 'Company "{name}" has been restored successfully', {
+          name: companyName,
+        }),
+      )
+    },
+  })
+
+  return {
+    ...mutation,
+    restoreCompany: mutateAsync,
     mutate,
     mutateAsync,
   }

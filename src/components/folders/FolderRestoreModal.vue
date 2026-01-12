@@ -60,9 +60,9 @@
           variant="primary"
           icon="fa fa-undo"
           :label="$t('folder.restore.confirm.button', 'Restore Folder')"
-          :loading="restoreLoading"
-          :disabled="restoreLoading"
-          @click="restoreFolder"
+          :loading="isLoading"
+          :disabled="isLoading"
+          @click="handleRestore"
         />
       </div>
     </div>
@@ -70,11 +70,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import type { Folder } from '@/types/folder'
 import { Button } from '@owlint/feathers-vue'
-import { restoreFolder as apiRestoreFolder } from '@/api/folders'
-import { toast } from '@/utils/toast'
+import { useRestoreFolder } from '@/mutations/folders'
 
 interface Props {
   folderToRestore: Folder | null
@@ -91,30 +89,26 @@ const emit = defineEmits<{
   'restore-folder': []
 }>()
 
-const restoreLoading = ref(false)
+// Use mutation for restoring with cache invalidation
+const { restoreFolder, isLoading } = useRestoreFolder()
 
-const restoreFolder = async () => {
+const handleRestore = async () => {
   if (!props.folderToRestore?.id) return
 
-  restoreLoading.value = true
-
   try {
-    await apiRestoreFolder(props.folderToRestore.id.toString())
+    await restoreFolder({
+      folderId: props.folderToRestore.id.toString(),
+      folderName: props.folderToRestore.name,
+    })
 
-    // Show success toast
-    toast.success(`Folder "${props.folderToRestore.name}" has been restored successfully`)
-
-    // Emit event first, then close modal
+    // Emit event for parent
     emit('restore-folder')
 
-    setTimeout(() => {
-      showRestoreModal.value = false
-    }, 50)
-  } catch (err) {
-    console.error('Failed to restore folder:', err)
-    toast.error(`Failed to restore folder "${props.folderToRestore.name}". Please try again.`)
-  } finally {
-    restoreLoading.value = false
+    // Close modal
+    showRestoreModal.value = false
+  } catch (error) {
+    // Error toast is shown by the mutation's onError handler
+    console.error('Error restoring folder:', error)
   }
 }
 </script>
