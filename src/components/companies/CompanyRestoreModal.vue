@@ -67,9 +67,9 @@
           variant="primary"
           icon="fa fa-undo"
           :label="$t('company.restore.confirm.button', 'Restore Company')"
-          :loading="restoreLoading"
-          :disabled="restoreLoading"
-          @click="restoreCompany"
+          :loading="isLoading"
+          :disabled="isLoading"
+          @click="handleRestore"
         />
       </div>
     </div>
@@ -77,17 +77,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useQueryCache } from '@pinia/colada'
 import type { Company } from '@/types/company'
 import { Button } from '@owlint/feathers-vue'
-import { restoreCompany as apiRestoreCompany } from '@/api/companies'
-import { FOLDER_QUERY_KEYS } from '@/queries/folders'
-import { toast } from '@/utils/toast'
-
-const { t } = useI18n()
-const queryCache = useQueryCache()
+import { useRestoreCompany } from '@/mutations/companies'
 
 interface Props {
   companyToRestore: Company | null
@@ -104,41 +96,26 @@ const emit = defineEmits<{
   'restore-company': []
 }>()
 
-const restoreLoading = ref(false)
+// Use mutation for restoring with cache invalidation
+const { restoreCompany, isLoading } = useRestoreCompany()
 
-const restoreCompany = async () => {
+const handleRestore = async () => {
   if (!props.companyToRestore?.id) return
 
-  restoreLoading.value = true
-
   try {
-    await apiRestoreCompany(props.companyToRestore.id.toString())
+    await restoreCompany({
+      companyId: props.companyToRestore.id.toString(),
+      companyName: props.companyToRestore.name,
+    })
 
-    // Invalidate folder queries to refresh sidebar
-    queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
-
-    // Show success toast
-    toast.success(
-      t('company.restore.success', 'Company "{name}" has been restored successfully', {
-        name: props.companyToRestore.name,
-      }),
-    )
-
-    // Emit event first, then close modal
+    // Emit event for parent
     emit('restore-company')
 
-    setTimeout(() => {
-      showRestoreModal.value = false
-    }, 50)
-  } catch (err) {
-    console.error('Failed to restore company:', err)
-    toast.error(
-      t('company.restore.error', 'Failed to restore company "{name}". Please try again.', {
-        name: props.companyToRestore.name,
-      }),
-    )
-  } finally {
-    restoreLoading.value = false
+    // Close modal
+    showRestoreModal.value = false
+  } catch (error) {
+    // Error toast is shown by the mutation's onError handler
+    console.error('Error restoring company:', error)
   }
 }
 </script>
