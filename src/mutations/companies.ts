@@ -1,9 +1,10 @@
 import { ref } from 'vue'
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { createCompany, deleteCompany, restoreCompany } from '@/api/companies'
+import { createCompany, deleteCompany, restoreCompany, refreshCompany } from '@/api/companies'
 import { COMPANY_QUERY_KEYS } from '@/queries/companies'
 import { ORGANIZATION_TOKEN_KEYS } from '@/queries/tokens'
 import { FOLDER_QUERY_KEYS } from '@/queries/folders'
+import { TASK_QUERY_KEYS } from '@/queries/tasks'
 import type { Company } from '@/types/company'
 import type { TokenBalanceResponse } from '@/types/tokens'
 import { toast } from '@/utils/toast'
@@ -183,4 +184,33 @@ export const useRestoreCompany = defineMutation(() => {
     mutate,
     mutateAsync,
   }
+})
+
+/**
+ * Refresh company data by re-running all tasks.
+ * Invalidates company caches on success to refetch fresh data.
+ */
+export const useRefreshCompany = defineMutation(() => {
+  const queryCache = useQueryCache()
+  const { t } = useI18n()
+
+  const { mutate, mutateAsync, ...mutation } = useMutation({
+    mutation: ({ companyId }: { companyId: string; companyName: string }) =>
+      refreshCompany(companyId),
+
+    onError: (_error, { companyName }) => {
+      toast.error(t('company.refresh.error', { name: companyName }))
+    },
+
+    onSuccess: (_data, { companyName, companyId }) => {
+      // Invalidate company cache to refetch updated tasks
+      queryCache.invalidateQueries({ key: COMPANY_QUERY_KEYS.root })
+      // Invalidate tasks cache for this company
+      queryCache.invalidateQueries({ key: TASK_QUERY_KEYS.byCompanyId(companyId) })
+      // Token balance will be reduced by 35
+      toast.success(t('company.refresh.success', { name: companyName }))
+    },
+  })
+
+  return { ...mutation, refreshCompany: mutateAsync, mutate, mutateAsync }
 })

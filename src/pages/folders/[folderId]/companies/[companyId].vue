@@ -45,17 +45,35 @@
           :title="t('company.debug.workflowTitle')"
           @click="showTasksModal = true"
         />
+        <span v-if="isOwner" :title="refreshButtonTooltip">
+          <Button
+            variant="tertiary"
+            icon="fa fa-refresh"
+            :label="t('company.refresh.button')"
+            :disabled="hasRunningTasks || !allTasksSucceeded || !hasEnoughTokens"
+            :loading="isRefreshing"
+            @click="openRefreshModal"
+          />
+        </span>
       </div>
     </div>
 
     <RouterView />
 
+    <!-- Refresh company Modal -->
+    <CompanyRefreshModal
+      v-if="company"
+      v-model="showRefreshModal"
+      :company="company"
+      @refresh-company="handleRefreshCompany"
+    />
     <TasksFlowModal v-model="showTasksModal" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { Badge, Button } from '@owlint/feathers-vue'
+import CompanyRefreshModal from '@/components/companies/CompanyRefreshModal.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { useQuery } from '@pinia/colada'
 import { computed, ref, watch, provide } from 'vue'
@@ -66,6 +84,10 @@ import CompanyTranslation from '@/components/company/CompanyTranslation.vue'
 import CompanyDeleteButton from '@/components/company/CompanyDeleteButton.vue'
 import Export from '@/components/company/Export.vue'
 import TasksFlowModal from '@/components/company/TasksFlowModal.vue'
+import { organizationBalanceQuery } from '@/queries/tokens'
+import { currentOrganizationQuery } from '@/queries/organization'
+import { useRefreshCompany } from '@/mutations/companies'
+import { companyTasksQuery } from '@/queries/tasks'
 
 const route = useRoute()
 const router = useRouter()
@@ -102,9 +124,45 @@ const {
   },
 )
 
+// Get company tasks
+const { data: tasks } = useQuery(companyTasksQuery, () => ({ companyId: companyId.value }), {
+  enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
+})
+
 // Modal state
 const showTasksModal = ref(false)
 const showFallbackIcon = ref(false)
+const showRefreshModal = ref(false)
+
+// Get current organization
+const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
+
+// Get token balance for refresh button
+const { data: tokenBalanceData } = useQuery({
+  ...organizationBalanceQuery({ organizationId: currentOrganization.value?.id ?? '' }),
+  enabled: () => !!currentOrganization.value?.id,
+})
+
+// Use refresh mutation
+const { isLoading: isRefreshing } = useRefreshCompany()
+
+// Computed properties for refresh button
+const isOwner = computed(() => authStore.userId === company.value?.owner_id)
+const allTasksSucceeded = computed(() =>
+  tasks.value?.every(task => task.status === 'succeeded') ?? false
+)
+const hasRunningTasks = computed(() =>
+  tasks.value?.some(task => task.status === 'running') ?? false
+)
+const tokenBalance = computed(() => tokenBalanceData.value?.balance ?? 0)
+const hasEnoughTokens = computed(() => tokenBalance.value >= 35)
+
+const refreshButtonTooltip = computed(() => {
+  if (hasRunningTasks.value) return t('company.refresh.tooltip.tasksRunning')
+  if (!allTasksSucceeded.value) return t('company.refresh.tooltip.waitForTasks')
+  if (!hasEnoughTokens.value) return t('company.refresh.tooltip.insufficientTokens')
+  return ''
+})
 
 // Reset fallback icon when company changes
 watch(company, () => {
@@ -122,6 +180,16 @@ watch([error, status], ([newError, newStatus]) => {
     router.push(`/folders/${folderId.value}`)
   }
 })
+
+const handleRefreshCompany = () => {
+  // Modal handles the refresh logic, just close it here if needed
+}
+
+const openRefreshModal = () => {
+  if (company.value) {
+    showRefreshModal.value = true
+  }
+}
 
 // Helper function to get logo URL from logo.dev
 const getLogoUrl = (website?: string) => {
