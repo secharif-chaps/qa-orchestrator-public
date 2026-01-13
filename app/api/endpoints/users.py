@@ -40,6 +40,7 @@ class UpdatePermissionsRequest(BaseModel):
             "company.create",
             "organization.read",
             "organization.write",
+            "organization.manage",
             "admin.organizations"
         }
 
