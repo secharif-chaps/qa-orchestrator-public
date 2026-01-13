@@ -15,14 +15,14 @@ TRUNCATE TABLE workflow_configs RESTART IDENTITY CASCADE;
 
 INSERT INTO workflow_configs (task_type, title, api_key, llm, created_at, updated_at) VALUES
     ('data_collection', 'Data Collection', 'app-qSdKHTLoR0WiESMRcVBKSzlI', 'mistral', NOW(), NOW()),
-    ('csr', 'CSR & Sustainability', 'app-k8W9ZQkZUIcsvBo5ZWgY3RLE', 'mistral', NOW(), NOW()),
-    ('digital', 'Digital Presence', 'app-sU5GPQX6og1nwtckA57iCDeL', 'mistral', NOW(), NOW()),
-    ('jobs', 'Job Offers', 'app-nZiwseUyw8f6H208ohPx0o1K', 'mistral', NOW(), NOW()),
-    ('press', 'Press & Media', 'app-ET1gBTLFPsVD8qlYSL46O3Hd', 'mistral', NOW(), NOW()),
-    ('products', 'Products & Services', 'app-WpGZCTFDaBzCUS9M4LeoQHGa', 'mistral', NOW(), NOW()),
-    ('profile', 'Company Profile', 'app-4K16XfNZP4ZhUutfoLEZYiKy', 'mistral', NOW(), NOW()),
-    ('team', 'Team & Leadership', 'app-LTspKNxtk6nTJOH4YkBdyU2Q', 'mistral', NOW(), NOW()),
-    ('timeline', 'Company Timeline', 'app-qX4RISdrrif2aSPAaLVz7tto', 'mistral', NOW(), NOW());
+    ('csr', 'CSR & Sustainability', 'app-jizNzZPfLpljyHTqStbGtMvt', 'mistral', NOW(), NOW()),
+    ('digital', 'Digital Presence', 'app-C8hqxmezKsu9u7PysTIDCn58', 'mistral', NOW(), NOW()),
+    ('jobs', 'Job Offers', 'app-4LwahL1q2ivVs7cg32qLKY75', 'mistral', NOW(), NOW()),
+    ('press', 'Press & Media', 'app-jROOB0dHSSP8bPBt4TdF5NGt', 'mistral', NOW(), NOW()),
+    ('products', 'Products & Services', 'app-dFdONFETxJDqzAhiYQMDvKGf', 'mistral', NOW(), NOW()),
+    ('profile', 'Company Profile', 'app-UDymomMk5nxIZm8CLQ8jsGxh', 'mistral', NOW(), NOW()),
+    ('team', 'Team & Leadership', 'app-l1c9mbAxNitn7sEJyxLH2Dsg', 'mistral', NOW(), NOW()),
+    ('timeline', 'Company Timeline', 'app-8g6lEf82QJBABiTzAPzHHM69', 'mistral', NOW(), NOW());
 
 SELECT task_type, title, api_key, llm FROM workflow_configs ORDER BY task_type;
 EOF
