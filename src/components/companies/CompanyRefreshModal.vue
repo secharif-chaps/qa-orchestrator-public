@@ -7,67 +7,69 @@
     color=""
   >
     <template #description>
-      {{ t('company.refresh.subtitle') }}
+      <div class="flex flex-col gap-4">
+        <p class="text-secondary">
+          {{ t('company.refresh.subtitle') }}
+        </p>
+
+        <p class="text-sm text-secondary">
+          {{ t('company.refresh.warning.message') }}
+        </p>
+
+        <!-- Token Consumption Notice -->
+        <div class="bg-warning-light text-warning-light-content border border-warning-stroke rounded-lg p-4">
+          <div class="flex items-center gap-3">
+            <i class="fa fa-warning text-xl"></i>
+            <div class="flex flex-col gap-1">
+              <div class="font-bold text-base">{{ t('company.refresh.consumptionNotice') }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Token Information -->
+        <div class="bg-base-200 rounded-lg p-4">
+          <div class="flex flex-col gap-3">
+            <h4 class="font-medium text-base">
+              {{ t('company.refresh.tokens.title') }}
+            </h4>
+
+            <div class="flex flex-col gap-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-secondary">{{ t('company.refresh.tokens.current') }}:</span>
+                <span :class="tokenBalanceColor">{{ tokenBalance }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-secondary">{{ t('company.refresh.tokens.cost') }}:</span>
+                <span class="text-error">35</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-secondary">{{ t('company.refresh.tokens.remaining') }}:</span>
+                <span :class="remainingTokensColor">{{ remainingTokens }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Company Details -->
+        <div v-if="company" class="bg-base-200 rounded-lg p-4">
+          <div class="flex flex-col gap-3">
+            <h4 class="font-medium text-base">
+              {{ t('company.refresh.details') }}
+            </h4>
+            <div class="flex flex-col gap-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-secondary">{{ t('company.name') }}:</span>
+                <span class="font-medium">{{ company.name }}</span>
+              </div>
+              <div v-if="company.website" class="flex justify-between">
+                <span class="text-secondary">{{ t('company.website') }}:</span>
+                <span class="text-xs">{{ company.website }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </template>
-
-    <div class="flex flex-col gap-4">
-      <p class="text-sm text-secondary">
-        {{ t('company.refresh.warning.message') }}
-      </p>
-
-      <!-- Token Consumption Notice -->
-      <div class="bg-warning-light text-warning-light-content border border-warning-stroke rounded-lg p-4">
-        <div class="flex items-center gap-3">
-          <i class="fa fa-warning text-xl"></i>
-          <div class="flex flex-col gap-1">
-            <div class="font-bold text-base">{{ t('company.refresh.consumptionNotice') }}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Token Information -->
-      <div class="bg-base-200 rounded-lg p-4">
-        <div class="flex flex-col gap-3">
-          <h4 class="font-medium text-base">
-            {{ t('company.refresh.tokens.title') }}
-          </h4>
-
-          <div class="flex flex-col gap-2 text-sm">
-            <div class="flex justify-between">
-              <span class="text-secondary">{{ t('company.refresh.tokens.current') }}:</span>
-              <span :class="tokenBalanceColor">{{ tokenBalance }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-secondary">{{ t('company.refresh.tokens.cost') }}:</span>
-              <span class="text-error">35</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-secondary">{{ t('company.refresh.tokens.remaining') }}:</span>
-              <span :class="remainingTokensColor">{{ remainingTokens }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Company Details -->
-      <div v-if="company" class="bg-base-200 rounded-lg p-4">
-        <div class="flex flex-col gap-3">
-          <h4 class="font-medium text-base">
-            {{ t('company.refresh.details') }}
-          </h4>
-          <div class="flex flex-col gap-2 text-sm">
-            <div class="flex justify-between">
-              <span class="text-secondary">{{ t('company.name') }}:</span>
-              <span class="font-medium">{{ company.name }}</span>
-            </div>
-            <div v-if="company.website" class="flex justify-between">
-              <span class="text-secondary">{{ t('company.website') }}:</span>
-              <span class="text-xs">{{ company.website }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <template #footer>
       <Button
