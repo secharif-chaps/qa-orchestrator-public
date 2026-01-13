@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     KEYCLOAK_REALM: str = "mint-preprod"
     KEYCLOAK_CLIENT_ID: str = "mint-back"
     KEYCLOAK_CLIENT_SECRET: Optional[str] = None
-    KEYCLOAK_CALLBACK_URI: str = "http://localhost:8000/callback"
+    KEYCLOAK_CALLBACK_URI: str = "http://localhost:8001/callback"
     KEYCLOAK_ADMIN_CLIENT_ID: str = "admin-cli"
     KEYCLOAK_ADMIN_CLIENT_SECRET: str = "admin-cli-secret"
     
