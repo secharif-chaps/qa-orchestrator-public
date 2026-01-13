@@ -21,7 +21,7 @@ export const updateMemberPermissions = async (
   userId: string,
   data: UpdateTeamMemberPermissions,
 ) => {
-  return apiClient.patch<TeamMember>(`/team/members/${userId}/permissions`, data)
+  return apiClient.patch<TeamMember>(`/team/members/${userId}`, data)
 }
 
 /**
