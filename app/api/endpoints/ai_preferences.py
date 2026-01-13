@@ -9,6 +9,7 @@ from app.core.dependencies import get_company_service
 from app.database import get_db
 from app.services.user_preferences import UserPreferencesService
 from app.services.company import CompanyService
+from app.services.company_section_service import read_all_section_data
 from app.services.dify import DifyService
 from app.schemas.ai_preferences import (
     AiPreferencesCreate,
@@ -115,19 +116,22 @@ async def generate_quick_actions(
             "documentation": ai_preferences.get("documentation_text")
         }
 
-        # Prepare company context (all fields)
+        # Read section data from normalized tables
+        section_data = read_all_section_data(db, company.id)
+
+        # Prepare company context (all fields from normalized tables)
         company_context = {
             "id": company.id,
             "name": company.name,
             "website": company.website,
-            "profile": company.profile,
-            "digital": company.digital,
-            "timeline": company.timeline,
-            "products": company.products,
-            "jobs": company.jobs,
-            "csr": company.csr,
-            "press": company.press,
-            "team": company.team
+            "profile": section_data.get("profile", {}),
+            "digital": section_data.get("digital", {}),
+            "timeline": section_data.get("timeline", {}),
+            "products": section_data.get("products", {}),
+            "jobs": section_data.get("jobs", {}),
+            "csr": section_data.get("csr", {}),
+            "press": section_data.get("press", {}),
+            "team": section_data.get("team", [])
         }
 
         # Generate actions via Dify

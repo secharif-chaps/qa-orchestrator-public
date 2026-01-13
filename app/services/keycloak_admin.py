@@ -1075,6 +1075,264 @@ class KeycloakAdminService:
             )
             return None
 
+    # Session Management Methods
+
+    async def get_user_sessions(self, user_id: str) -> List[Dict[str, Any]]:
+        """
+        Get all active sessions for a user.
+
+        Args:
+            user_id: Keycloak user UUID
+
+        Returns:
+            List of session dictionaries with id, ipAddress, start, lastAccess, clients
+
+        Raises:
+            HTTPException 404: If user not found
+        """
+        try:
+            logger.info(
+                "Fetching user sessions from Keycloak",
+                extra={"user_id": user_id}
+            )
+
+            response = await self._make_admin_request("GET", f"/users/{user_id}/sessions")
+
+            if response.status_code == 200:
+                sessions = response.json()
+                logger.info(
+                    "Successfully fetched user sessions",
+                    extra={"user_id": user_id, "session_count": len(sessions)}
+                )
+                return sessions
+            elif response.status_code == 404:
+                logger.warning(
+                    "User not found when fetching sessions",
+                    extra={"user_id": user_id}
+                )
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User not found"
+                )
+            else:
+                logger.error(
+                    "Failed to get user sessions from Keycloak",
+                    extra={
+                        "user_id": user_id,
+                        "status_code": response.status_code,
+                        "response_text": response.text[:500]
+                    }
+                )
+                return []
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(
+                "Exception while getting user sessions",
+                exc_info=True,
+                extra={
+                    "user_id": user_id,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e)
+                }
+            )
+            return []
+
+    async def revoke_session(self, session_id: str) -> bool:
+        """
+        Revoke a specific session by ID.
+
+        Args:
+            session_id: Keycloak session UUID
+
+        Returns:
+            True if session was revoked successfully
+
+        Raises:
+            HTTPException 404: If session not found
+        """
+        try:
+            logger.info(
+                "Revoking session in Keycloak",
+                extra={"session_id": session_id}
+            )
+
+            response = await self._make_admin_request("DELETE", f"/sessions/{session_id}")
+
+            if response.status_code == 204:
+                logger.info(
+                    "Successfully revoked session",
+                    extra={"session_id": session_id}
+                )
+                return True
+            elif response.status_code == 404:
+                logger.warning(
+                    "Session not found when revoking",
+                    extra={"session_id": session_id}
+                )
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Session not found"
+                )
+            else:
+                logger.error(
+                    "Failed to revoke session in Keycloak",
+                    extra={
+                        "session_id": session_id,
+                        "status_code": response.status_code,
+                        "response_text": response.text[:500]
+                    }
+                )
+                return False
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(
+                "Exception while revoking session",
+                exc_info=True,
+                extra={
+                    "session_id": session_id,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e)
+                }
+            )
+            return False
+
+    async def revoke_all_user_sessions(self, user_id: str) -> bool:
+        """
+        Revoke all sessions for a user (logout from all devices).
+
+        Args:
+            user_id: Keycloak user UUID
+
+        Returns:
+            True if all sessions were revoked successfully
+
+        Raises:
+            HTTPException 404: If user not found
+        """
+        try:
+            logger.info(
+                "Revoking all user sessions in Keycloak",
+                extra={"user_id": user_id}
+            )
+
+            response = await self._make_admin_request("DELETE", f"/users/{user_id}/sessions")
+
+            if response.status_code == 204:
+                logger.info(
+                    "Successfully revoked all user sessions",
+                    extra={"user_id": user_id}
+                )
+                return True
+            elif response.status_code == 404:
+                logger.warning(
+                    "User not found when revoking all sessions",
+                    extra={"user_id": user_id}
+                )
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User not found"
+                )
+            else:
+                logger.error(
+                    "Failed to revoke all user sessions in Keycloak",
+                    extra={
+                        "user_id": user_id,
+                        "status_code": response.status_code,
+                        "response_text": response.text[:500]
+                    }
+                )
+                return False
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(
+                "Exception while revoking all user sessions",
+                exc_info=True,
+                extra={
+                    "user_id": user_id,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e)
+                }
+            )
+            return False
+
+    async def get_user_events(
+        self,
+        user_id: str,
+        first: int = 0,
+        max_results: int = 20,
+        event_types: Optional[List[str]] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Get user events (activity log) from Keycloak.
+
+        Note: Events must be enabled in Keycloak realm settings.
+
+        Args:
+            user_id: Keycloak user UUID
+            first: Offset for pagination (0-indexed)
+            max_results: Maximum number of events to return
+            event_types: Optional list of event types to filter (LOGIN, LOGIN_ERROR, LOGOUT, etc.)
+
+        Returns:
+            List of event dictionaries with time, type, ipAddress, details
+        """
+        try:
+            logger.info(
+                "Fetching user events from Keycloak",
+                extra={
+                    "user_id": user_id,
+                    "first": first,
+                    "max_results": max_results,
+                    "event_types": event_types
+                }
+            )
+
+            # Build query parameters
+            endpoint = f"/events?user={user_id}&first={first}&max={max_results}"
+
+            # Add event type filters if specified
+            if event_types:
+                for event_type in event_types:
+                    endpoint += f"&type={event_type}"
+
+            response = await self._make_admin_request("GET", endpoint)
+
+            if response.status_code == 200:
+                events = response.json()
+                logger.info(
+                    "Successfully fetched user events",
+                    extra={"user_id": user_id, "event_count": len(events)}
+                )
+                return events
+            else:
+                logger.error(
+                    "Failed to get user events from Keycloak",
+                    extra={
+                        "user_id": user_id,
+                        "status_code": response.status_code,
+                        "response_text": response.text[:500]
+                    }
+                )
+                return []
+
+        except Exception as e:
+            logger.error(
+                "Exception while getting user events",
+                exc_info=True,
+                extra={
+                    "user_id": user_id,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e)
+                }
+            )
+            return []
+
     async def get_user_organizations(self, user_id: str) -> List[Dict[str, Any]]:
         """
         Get all organizations that a user belongs to.
