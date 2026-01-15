@@ -56,13 +56,14 @@ const emit = defineEmits<{
 }>()
 
 // Mutation for toggling module
-const { toggleModule, isLoading: isToggling } = useToggleModule()
+const { toggleModule, isPending: isToggling } = useToggleModule()
 
 // Module icon mapping
 const moduleIcons: Record<ModuleName, string> = {
   screen: 'fa fa-search',
   target: 'fa fa-bullseye',
   explore: 'fa fa-compass',
+  translation: 'fa fa-language',
 }
 
 // Computed properties
@@ -78,6 +79,7 @@ function getDefaultDescription(module: ModuleName): string {
     screen: 'Search and create company profiles',
     target: 'Target specific companies',
     explore: 'Explore company relationships',
+    translation: 'Translate company data to other languages',
   }
   return descriptions[module] || 'Module functionality'
 }

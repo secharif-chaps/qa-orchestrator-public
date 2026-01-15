@@ -296,7 +296,8 @@ import { useAuthStore } from '@/stores/auth'
 import type { QuickAction } from '@/types/ai-preferences'
 import type { TaskStatus, TaskType } from '@/types/task'
 import { useQuery } from '@pinia/colada'
-import { computed, ref } from 'vue'
+import { computed, ref, inject } from 'vue'
+import type { Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -310,14 +311,18 @@ const activeSection = ref<TaskType | null>(null)
 
 const companyId = computed(() => route.params.companyId as string)
 
+// Inject selected language from parent [companyId].vue
+const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
+
 const isDebugUser = computed(() => {
   const username = authStore.user?.profile?.preferred_username?.toLowerCase()
   return username === 'nmr' || username === 'suh' || username === 'nmr-cv'
 })
 
-// Use the company data composable
+// Use the company data composable with language for translations
 const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
+  language: selectedLanguage.value,
 }))
 
 // Restart task mutation

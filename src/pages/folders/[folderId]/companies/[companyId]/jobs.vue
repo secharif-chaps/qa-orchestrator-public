@@ -111,7 +111,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, ref, inject } from 'vue'
+import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
@@ -127,6 +128,9 @@ const route = useRoute()
 
 const companyId = computed(() => route.params.companyId as string)
 
+// Inject selected language from parent [companyId].vue
+const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
+
 const { data: tasks } = useQuery(companyTasksQuery, () => ({
   companyId: companyId.value,
 }))
@@ -137,6 +141,7 @@ const task = computed(() => tasks.value?.find((t) => t.type === 'jobs'))
 // No polling needed - cache is invalidated automatically when tasks update.
 const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
+  language: selectedLanguage.value,
 }))
 
 const searchQuery = ref('')

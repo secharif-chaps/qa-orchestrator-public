@@ -68,7 +68,8 @@
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { useRoute } from 'vue-router'
-import { computed, ref } from 'vue'
+import { computed, ref, inject } from 'vue'
+import type { Ref } from 'vue'
 import Event from '@/components/company/timeline/Event.vue'
 import { companyTasksQuery } from '@/queries/tasks'
 import { Button, Input } from '@owlint/feathers-vue'
@@ -80,6 +81,9 @@ const route = useRoute()
 
 const companyId = computed(() => route.params.companyId as string)
 
+// Inject selected language from parent [companyId].vue
+const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
+
 const { data: tasks, refetch: refetchTasks } = useQuery(companyTasksQuery, () => ({
   companyId: companyId.value,
 }))
@@ -90,6 +94,7 @@ const task = computed(() => tasks.value?.find((t) => t.type === 'timeline'))
 // No polling needed - cache is invalidated automatically when tasks update.
 const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
+  language: selectedLanguage.value,
 }))
 
 const searchQuery = ref('')

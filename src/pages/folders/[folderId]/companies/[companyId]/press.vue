@@ -241,7 +241,7 @@ import NoData from '@/components/ui/NoData.vue'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import { useQuery } from '@pinia/colada'
-import { computed } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -253,11 +253,13 @@ const { data: tasks } = useQuery(companyTasksQuery, () => ({
 }))
 
 const task = computed(() => tasks.value?.find((t) => t.type === 'press'))
-
+const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
 const { data: company } = useQuery(
   companyByIdQuery,
   () => ({
     id: companyId.value,
+    language: selectedLanguage.value,
+
   }),
   // Task data is kept fresh via SSE (Server-Sent Events) in useTaskEvents composable.
   // No polling needed - cache is invalidated automatically when tasks update.

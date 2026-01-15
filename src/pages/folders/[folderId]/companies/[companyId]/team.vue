@@ -145,7 +145,8 @@ import { Background } from '@vue-flow/background'
 import { Panel, VueFlow, useVueFlow } from '@vue-flow/core'
 import '@vue-flow/core/dist/style.css'
 import '@vue-flow/core/dist/theme-default.css'
-import { computed, nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch, inject } from 'vue'
+import type { Ref } from 'vue'
 
 import { useTheme } from '@/composables/useTheme'
 import { useRoute } from 'vue-router'
@@ -167,6 +168,9 @@ const route = useRoute()
 
 const companyId = computed(() => route.params.companyId as string)
 
+// Inject selected language from parent [companyId].vue
+const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
+
 const { data: tasks } = useQuery(companyTasksQuery, () => ({
   companyId: companyId.value,
 }))
@@ -177,6 +181,7 @@ const task = computed(() => tasks.value?.find((t) => t.type === 'team'))
 // No polling needed - cache is invalidated automatically when tasks update.
 const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,
+  language: selectedLanguage.value,
 }))
 
 const { fitView, vueFlowRef } = useVueFlow()
