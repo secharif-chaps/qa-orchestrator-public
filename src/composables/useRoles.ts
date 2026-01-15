@@ -21,6 +21,7 @@ import { isLegacyPermission, mapLegacyToNewPermissions } from '@/types/role'
  * Permission model:
  * - reader: organization.read only
  * - writer: organization.read + organization.write + company.create
+ * - manager: writer permissions + organization.manage (team management)
  * - admin: all permissions including admin.organizations
  */
 const ROLES: Record<RoleId, Role> = {
@@ -39,6 +40,14 @@ const ROLES: Record<RoleId, Role> = {
     permissions: ['organization.read', 'organization.write', 'company.create'],
     color: 'secondary',
     icon: 'fa-pencil',
+  },
+  manager: {
+    id: 'manager',
+    name: 'Manager',
+    description: 'Writer permissions plus team management',
+    permissions: ['organization.read', 'organization.write', 'organization.manage', 'company.create'],
+    color: 'secondary',
+    icon: 'fa-users-cog',
   },
   admin: {
     id: 'admin',
