@@ -40,7 +40,7 @@
           @click="showTasksModal = true"
         />
         <Export />
-        <Dropdown v-if="company && translationLanguages?.length" align="left" width="sm">
+        <Dropdown v-if="company && isTranslationEnabled && translationLanguages?.length" align="left" width="sm">
           <template #trigger>
             <Button
               variant="tertiary"
@@ -134,6 +134,7 @@ import CompanyArchiveModal from '@/components/companies/CompanyArchiveModal.vue'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { companyByIdQuery } from '@/queries/companies'
 import { translationLanguagesQuery, companyTranslationStatusQuery } from '@/queries/translation'
+import { organizationModulesQuery } from '@/queries/tokens'
 import { requestTranslation } from '@/api/translation'
 import { useQuery, useQueryCache } from '@pinia/colada'
 import { computed, ref, watch, onUnmounted, provide } from 'vue'
@@ -186,6 +187,22 @@ const {
 
 // Permissions
 const { canDeleteCompany } = useCompanyPermissions()
+
+// Organization modules - check if translation is enabled
+const { data: organizationModules } = useQuery(
+  organizationModulesQuery,
+  () => ({ organizationId: authStore.organizationId || '' }),
+  {
+    enabled: () => !!authStore.organizationId,
+  },
+)
+
+// Check if translation module is enabled for the organization
+const isTranslationEnabled = computed(() => {
+  if (!organizationModules.value?.modules) return false
+  const translationModule = organizationModules.value.modules.find((m) => m.name === 'translation')
+  return translationModule?.enabled ?? false
+})
 
 // Translation languages
 const { data: translationLanguages } = useQuery(translationLanguagesQuery, () => ({}))
