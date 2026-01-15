@@ -34,8 +34,6 @@
       <!-- Action Buttons -->
       <div class="flex items-center gap-2">
         <CompanyTranslation v-model="selectedLanguage" :company-id="companyId" />
-        <Export />
-        <CompanyDeleteButton :company="company" />
         <Button
           v-if="isDebugUser"
           variant="tertiary"
@@ -55,6 +53,8 @@
             @click="openRefreshModal"
           />
         </span>
+        <CompanyDeleteButton :company="company" />
+        <Export />
       </div>
     </div>
 

@@ -207,7 +207,8 @@ export const useRefreshCompany = defineMutation(() => {
       queryCache.invalidateQueries({ key: COMPANY_QUERY_KEYS.root })
       // Invalidate tasks cache for this company
       queryCache.invalidateQueries({ key: TASK_QUERY_KEYS.byCompanyId(companyId) })
-      // Token balance will be reduced by 35
+      // Invalidate token balance since 35 tokens were consumed
+      queryCache.invalidateQueries({ key: ORGANIZATION_TOKEN_KEYS.root })
       toast.success(t('company.refresh.success', { name: companyName }))
     },
   })
