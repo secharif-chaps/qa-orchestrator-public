@@ -90,6 +90,14 @@ const sections = computed(() => [
     bgColor: 'bg-success-light',
     iconColor: 'text-success-light-content',
   },
+  {
+    id: 'team-management',
+    title: t('settings.tabs.team', 'Team Management'),
+    description: t('settings.team.cardDescription', 'Manage team members and permissions'),
+    icon: 'fas fa-users',
+    bgColor: 'bg-warning-light',
+    iconColor: 'text-warning-light-content',
+  },
 ])
 
 // Toggle options for navigation
@@ -109,6 +117,11 @@ const sectionOptions = computed(() => [
     icon: 'fas fa-shield-alt',
     label: t('settings.tabs.security'),
   },
+  {
+    value: 'team-management',
+    icon: 'fas fa-users',
+    label: t('settings.tabs.team', 'Team Management'),
+  },
 ])
 
 // Determine if we're on a subpage
@@ -124,6 +137,7 @@ const currentSection = computed({
     if (path.includes('/appearance')) return 'appearance'
     if (path.includes('/ai-preferences')) return 'ai-preferences'
     if (path.includes('/security')) return 'security'
+    if (path.includes('/team-management')) return 'team-management'
     return 'appearance'
   },
   set: (value: string) => {

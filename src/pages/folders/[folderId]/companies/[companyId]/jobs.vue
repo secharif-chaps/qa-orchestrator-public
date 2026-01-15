@@ -20,7 +20,7 @@
     </NoData>
 
     <!-- Main content -->
-    <div v-if="company?.jobs.offers" class="space-y-6">
+    <div v-if="hasJobsData" class="space-y-6">
       <!-- Insights Section -->
       <div class="rounded-lg p-4" v-if="jobOffersInsights">
         <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">

@@ -51,10 +51,12 @@ import TokenSidebar from '@/components/sidebar/TokenSidebar.vue'
 import ChapseSidebar from '@/components/sidebar/ChapseSidebar.vue'
 import NotificationsSidebar from '@/components/sidebar/NotificationsSidebar.vue'
 import FoldersSidebar from '@/components/sidebar/FoldersSidebar.vue'
-import { useTheme } from '@/composables/useTheme'
+import { toast } from '@/utils/toast'
+import { useI18n } from 'vue-i18n'
 
 const sidebarStore = useSidebarStore()
 const sidebarEl = ref<HTMLElement>()
+const { t } = useI18n()
 
 // Store pending assist action event data
 const pendingAssistAction = ref<any>(null)
@@ -206,11 +208,8 @@ const transitionClasses = computed(() => {
 })
 
 const toggleAccessibilityMode = () => {
-  const document = window.document
-  if (document.documentElement.getAttribute('data-theme') === 'contrast') {
-    document.documentElement.setAttribute('data-theme', 'light')
-  } else {
-    document.documentElement.setAttribute('data-theme', 'contrast')
-  }
+  toast.info(t('common.comingSoon', 'This feature is coming soon!'), {
+    duration: 3000,
+  })
 }
 </script>

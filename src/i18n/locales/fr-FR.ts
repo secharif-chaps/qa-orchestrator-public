@@ -1972,4 +1972,12 @@ export default {
     appearance: 'Apparence',
     security: 'Sécurité',
   },
+  logout: {
+    title: 'Confirmer la déconnexion',
+    subtitle: 'Cette action mettra fin à votre session',
+    message: 'Êtes-vous sûr de vouloir vous déconnecter de votre compte ?',
+    cancel: 'Annuler',
+    confirm: 'Se déconnecter',
+    tooltip: 'Se déconnecter',
+  },
 }

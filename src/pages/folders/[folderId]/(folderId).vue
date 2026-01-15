@@ -215,6 +215,7 @@
     <CompanyArchiveModal
       v-model="showArchiveCompanyModal"
       :company-to-archive="companyToArchive"
+      :folder-id="route.params.folderId"
       @archive-company="handleArchiveCompany"
     />
 

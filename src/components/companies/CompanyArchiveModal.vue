@@ -39,9 +39,9 @@
         intent="danger"
         icon="fa fa-box-archive"
         :label="t('company.archive.confirm.button')"
-        :loading="archiveLoading"
-        :disabled="archiveLoading"
-        @click="archiveCompany"
+        :loading="isLoading"
+        :disabled="isLoading"
+        @click="handleArchive"
       />
       <Button variant="tertiary" :label="t('common.cancel')" @click="showArchiveModal = false" />
     </template>
@@ -50,11 +50,9 @@
 
 <script setup lang="ts">
 import { Button, Modal } from '@owlint/feathers-vue'
-import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Company } from '@/types/company'
-import { deleteCompany as apiArchiveCompany } from '@/api/companies'
-import { toast } from '@/utils/toast'
+import { useArchiveCompany } from '@/mutations/companies'
 
 const { t } = useI18n()
 
@@ -73,40 +71,26 @@ const emit = defineEmits<{
   'archive-company': []
 }>()
 
-const archiveLoading = ref(false)
+// Use mutation for archiving with cache invalidation
+const { archiveCompany, isLoading } = useArchiveCompany()
 
-const archiveCompany = async () => {
+const handleArchive = async () => {
   if (!props.companyToArchive?.id) return
 
-  archiveLoading.value = true
-
   try {
-    await apiArchiveCompany(props.companyToArchive.id.toString())
+    await archiveCompany({
+      companyId: props.companyToArchive.id.toString(),
+      companyName: props.companyToArchive.name,
+    })
 
-    // Show success toast
-    toast.success(
-      t('company.archive.success', 'Company "{name}" has been archived successfully', {
-        name: props.companyToArchive.name,
-      }),
-    )
-
-    // Emit event first, then clean up
+    // Emit event for parent
     emit('archive-company')
 
-    // Small delay to ensure parent component processes the event
-    setTimeout(() => {
-      showArchiveModal.value = false
-    }, 50)
-  } catch (err) {
-    console.error('Failed to archive company:', err)
-    // Show error toast
-    toast.error(
-      t('company.archive.error', 'Failed to archive company "{name}". Please try again.', {
-        name: props.companyToArchive.name,
-      }),
-    )
-  } finally {
-    archiveLoading.value = false
+    // Close modal
+    showArchiveModal.value = false
+  } catch (error) {
+    // Error toast is shown by the mutation's onError handler
+    console.error('Error archiving company:', error)
   }
 }
 </script>

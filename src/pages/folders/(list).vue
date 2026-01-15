@@ -7,12 +7,24 @@
           <div>
             <h1 class="text-2xl font-bold">{{ $t('folder.title', 'Folders') }}</h1>
             <p class="text-secondary mt-1">
-              {{ $t('folder.description', 'Organize your companies into folders') }}
+              {{
+                globalView
+                  ? $t('folder.descriptionGlobal', 'All folders in your organization')
+                  : $t('folder.description', 'Organize your companies into folders')
+              }}
             </p>
           </div>
 
           <!-- Filters and Search -->
           <div class="flex items-center gap-4">
+            <!-- Global View Toggle (Managers Only) -->
+            <Toggle
+              v-if="canManageTeam"
+              v-model="globalView"
+              :options="viewScopeOptions"
+              variant="pill"
+            />
+
             <!-- Filter Buttons -->
             <Toggle v-model="folderFilter" :options="filterOptions" variant="pill" />
 
@@ -108,10 +120,16 @@
 
           <!-- Table Header -->
           <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
-            <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
+            <div
+              :class="
+                globalView
+                  ? 'grid grid-cols-14 gap-4 text-sm font-medium text-secondary'
+                  : 'grid grid-cols-12 gap-4 text-sm font-medium text-secondary'
+              "
+            >
               <div class="col-span-5">{{ $t('folder.table.name', 'Name') }}</div>
+              <div v-if="globalView" class="col-span-2">{{ $t('folder.table.owner', 'Owner') }}</div>
               <div class="col-span-2">{{ $t('folder.table.items', 'Items') }}</div>
-              <div class="col-span-2">{{ $t('folder.table.owner', 'Owner') }}</div>
               <div class="col-span-1">{{ $t('folder.table.created', 'Created') }}</div>
               <div class="col-span-2 text-right">{{ $t('folder.table.actions', 'Actions') }}</div>
             </div>
@@ -123,6 +141,7 @@
               v-for="folder in foldersWithItems"
               :key="folder.id"
               :folder="folder"
+              :global-view="globalView"
               @view-folder="$router.push(`/folders/${$event}`)"
               @delete-folder="confirmDelete"
               @restore-folder="confirmRestore"
@@ -218,6 +237,7 @@ import Pagination from '@/components/ui/Pagination.vue'
 import { foldersQuery, foldersWithItemsQuery } from '@/queries/folders'
 import { useFoldersStore } from '@/stores/folders'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
+import { useTeamPermissions } from '@/composables/useTeamPermissions'
 import type { Folder } from '@/types/folder'
 import { useQuery } from '@pinia/colada'
 import { computed, onMounted, ref, watch } from 'vue'
@@ -235,9 +255,13 @@ const foldersStore = useFoldersStore()
 // Get folder creation permission (no folder context needed for this)
 const { canCreateFolder } = useFolderPermissions()
 
+// Get team management permission for global view toggle
+const { canManageTeam } = useTeamPermissions()
+
 // Filter and view state
 const folderFilter = ref<'all' | 'favorites' | 'archived'>('all')
 const viewMode = ref<'grid' | 'table'>('grid')
+const globalView = ref(false)
 
 // Filter options for Toggle
 const filterOptions = computed(() => [
@@ -272,9 +296,23 @@ const viewModeOptions = computed(() => [
   },
 ])
 
-// Query for grid view (folders only)
+// View scope options for global toggle (managers only)
+const viewScopeOptions = computed(() => [
+  {
+    value: false,
+    label: $t('folder.viewScope.myFolders', 'My Folders'),
+    icon: 'fa fa-user',
+  },
+  {
+    value: true,
+    label: $t('folder.viewScope.allFolders', 'All Folders'),
+    icon: 'fa fa-users',
+  },
+])
+
+// Query for grid view (uses same query as table for unified caching)
 const { data, status, isLoading, refetch } = useQuery(
-  foldersQuery,
+  foldersWithItemsQuery,
   () => ({
     filters: {
       page: foldersStore.page,
@@ -282,6 +320,7 @@ const { data, status, isLoading, refetch } = useQuery(
       name: foldersStore.debouncedName,
       archived: folderFilter.value === 'archived',
       favorites: folderFilter.value === 'favorites',
+      include_all: globalView.value,
     },
   }),
   {
@@ -304,6 +343,7 @@ const {
       name: foldersStore.debouncedName,
       archived: folderFilter.value === 'archived',
       favorites: folderFilter.value === 'favorites',
+      include_all: globalView.value,
     },
   }),
   {
