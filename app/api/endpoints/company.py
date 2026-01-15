@@ -23,6 +23,7 @@ from app.core.security import (
     verify_company_organization_access,
 )
 from app.database import get_db
+from app.models.company import Company
 from app.models.organization import ModuleName, ReferenceType
 from app.models.task import TaskStatus
 from app.schemas.chat import ChatRequest, ChatResponse
@@ -437,89 +438,166 @@ async def refresh_company(
 ):
     """Refresh company data by re-running all tasks.
 
-    Only the company owner can refresh. Consumes 35 tokens.
-    All tasks must be in SUCCEEDED status.
+    Args:
+        company_id: ID of the company to refresh
+        service: Company service instance
+        token_manager: Token management service
+        org_context: User's organization context
+        user: Authenticated user from Keycloak
+        db: Database session
+
+    Returns:
+        CompanyResponse with updated company data
+
+    Raises:
+        HTTPException 404: Company not found
+        HTTPException 403: User is not the company owner
+        HTTPException 400: Not all tasks have succeeded
+        HTTPException 500: Unexpected server error
     """
     logger.info(
-        f"POST /api/companies/{company_id}/refresh - User: {org_context.username}"
+        "Refreshing company data",
+        extra={
+            "company_id": company_id,
+            "user_id": org_context.user_id,
+            "username": org_context.username,
+            "organization_id": org_context.organization_id,
+        }
     )
 
     try:
-        # Get company and verify organization access
-        logger.info(f"Getting company {company_id}")
-        company = service.get_company(company_id)
-        if not company:
-            logger.error(f"Company {company_id} not found")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Company not found"
-            )
-        logger.info(f"Company {company_id} found: {company.name}")
-        verify_company_organization_access(company, org_context)
-
-        # Verify current user is the owner
-        logger.info(f"Checking ownership: company.owner_id={company.owner_id}, user_id={org_context.user_id}")
-        if company.owner_id != org_context.user_id:
-            logger.warning(f"User {org_context.user_id} is not owner of company {company_id} (owner: {company.owner_id})")
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Only the company owner can refresh company data"
-            )
-
-        # Verify all tasks are in SUCCEEDED status
-        logger.info(f"Checking task statuses for company {company_id}")
-        tasks = service.get_company_tasks(company_id)
-        logger.info(f"Company {company_id} has {len(tasks)} tasks")
-        for task in tasks:
-            logger.info(f"Task {task.id}: type={task.type}, status={task.status}")
-        
-        if not all(task.status == TaskStatus.SUCCEEDED for task in tasks):
-            failed_tasks = [task for task in tasks if task.status != TaskStatus.SUCCEEDED]
-            logger.warning(f"Some tasks not succeeded for company {company_id}: {[f'{t.id}({t.type}:{t.status})' for t in failed_tasks]}")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="All tasks must be completed successfully before refreshing"
-            )
-        # Ensure SCREEN module is enabled for token consumption
-        logger.info(f"Ensuring SCREEN module is enabled for organization {org_context.organization_id}")
-        screen_module = token_manager.get_or_create_module(org_context.organization_id, ModuleName.SCREEN)
-        if not screen_module.enabled:
-            logger.info("SCREEN module is disabled, enabling it")
-            token_manager.update_module_config(
-                organization_id=org_context.organization_id,
-                module_name=ModuleName.SCREEN,
-                enabled=True,
-            )
-            logger.info("SCREEN module enabled")
-        # Consume 35 tokens from screen module
-        logger.info(f"Consuming {TOKENS_PER_COMPANY} tokens for company refresh")
-        token_manager.consume_tokens(
-            org_id=org_context.organization_id,
-            amount=TOKENS_PER_COMPANY,
-            module_name=ModuleName.SCREEN,
-            reference_type=ReferenceType.company,
-            reference_id=company_id,
-            user_id=org_context.user_id,
+        company = _get_and_verify_company(company_id, org_context, service)
+        _verify_ownership(company, org_context)
+        _verify_all_tasks_succeeded(company_id, service)
+        _ensure_module_and_consume_tokens(
+            company_id, org_context, token_manager
         )
-        logger.info("Tokens consumed successfully")
 
-        # Call service.refresh_company
-        logger.info(f"Calling service.refresh_company({company_id})")
         refreshed_company = service.refresh_company(company_id)
-        logger.info(f"Company refresh completed for {company_id}")
 
-        response = _build_company_response(db, refreshed_company)
-        logger.info(f"Returning response for company {company_id}")
-        return response
+        logger.info(
+            "Company refresh completed successfully",
+            extra={
+                "company_id": company_id,
+                "company_name": refreshed_company.name,
+            }
+        )
+
+        return _build_company_response(db, refreshed_company)
 
     except HTTPException:
-        # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        logger.error(f"Unexpected error in refresh_company endpoint: {str(e)}", exc_info=True)
+        logger.error(
+            "Unexpected error during company refresh",
+            exc_info=True,
+            extra={
+                "company_id": company_id,
+                "user_id": org_context.user_id,
+                "error": str(e),
+            }
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An internal server error occurred while refreshing the company",
         )
+
+
+def _get_and_verify_company(
+    company_id: int, org_context: OrganizationContext, service: CompanyService
+) -> Company:
+    """Get company and verify organization access."""
+    company = service.get_company(company_id)
+    if not company:
+        logger.error(
+            "Company not found",
+            extra={"company_id": company_id}
+        )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Company not found"
+        )
+    verify_company_organization_access(company, org_context)
+    return company
+
+
+def _verify_ownership(company: Company, org_context: OrganizationContext) -> None:
+    """Verify that the current user owns the company."""
+    if company.owner_id != org_context.user_id:
+        logger.warning(
+            "User attempted to refresh company they don't own",
+            extra={
+                "company_id": company.id,
+                "company_owner_id": company.owner_id,
+                "requester_user_id": org_context.user_id,
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only the company owner can refresh company data"
+        )
+
+
+def _verify_all_tasks_succeeded(company_id: int, service: CompanyService) -> None:
+    """Verify all company tasks have succeeded before allowing refresh."""
+    tasks = service.get_company_tasks(company_id)
+
+    if not all(task.status == TaskStatus.SUCCEEDED for task in tasks):
+        failed_tasks = [
+            {"id": t.id, "type": t.type, "status": t.status}
+            for t in tasks if t.status != TaskStatus.SUCCEEDED
+        ]
+        logger.warning(
+            "Cannot refresh company - not all tasks succeeded",
+            extra={
+                "company_id": company_id,
+                "total_tasks": len(tasks),
+                "failed_tasks": failed_tasks,
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="All tasks must be completed successfully before refreshing"
+        )
+
+
+def _ensure_module_and_consume_tokens(
+    company_id: int,
+    org_context: OrganizationContext,
+    token_manager: TokenManager
+) -> None:
+    """Ensure SCREEN module is enabled and consume tokens for refresh operation."""
+    screen_module = token_manager.get_or_create_module(
+        org_context.organization_id, ModuleName.SCREEN
+    )
+
+    if not screen_module.enabled:
+        token_manager.update_module_config(
+            organization_id=org_context.organization_id,
+            module_name=ModuleName.SCREEN,
+            enabled=True,
+        )
+        logger.info(
+            "SCREEN module enabled for organization",
+            extra={"organization_id": org_context.organization_id}
+        )
+
+    token_manager.consume_tokens(
+        org_id=org_context.organization_id,
+        amount=TOKENS_PER_COMPANY,
+        module_name=ModuleName.SCREEN,
+        reference_type=ReferenceType.company,
+        reference_id=company_id,
+        user_id=org_context.user_id,
+    )
+
+    logger.info(
+        "Tokens consumed for company refresh",
+        extra={
+            "company_id": company_id,
+            "tokens_consumed": TOKENS_PER_COMPANY,
+            "organization_id": org_context.organization_id,
+        }
+    )
 
 
 @router.get("/archived/list", response_model=List[CompanyResponse])
