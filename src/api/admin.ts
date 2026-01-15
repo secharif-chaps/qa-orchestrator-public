@@ -6,6 +6,7 @@ import type {
   BulkRestartResponse,
   AdminTasksFilters,
 } from '@/types/admin'
+import type { UsageStats } from '@/types/usage'
 
 /**
  * Get paginated list of tasks across all organizations
@@ -44,4 +45,27 @@ export const restartAdminTasks = async (taskIds: number[]) => {
  */
 export const getAdminOrganizations = async () => {
   return apiClient.get<AdminOrganizationsListResponse>('/admin/organizations')
+}
+
+/**
+ * Get usage statistics for the admin dashboard.
+ *
+ * Returns aggregated metrics for companies, tasks, and users within
+ * the specified date range. Data is used to populate KPI cards, charts,
+ * and organization breakdown table.
+ *
+ * Requires admin.organizations permission.
+ *
+ * @param startDate - Start of date range in ISO format (YYYY-MM-DD)
+ * @param endDate - End of date range in ISO format (YYYY-MM-DD)
+ * @returns UsageStats with companies_count, task_success_rate, active_users_count,
+ *          companies_over_time, and companies_by_organization
+ */
+export const getUsageStats = async (startDate: string, endDate: string) => {
+  const params = new URLSearchParams({
+    start_date: startDate,
+    end_date: endDate,
+  })
+
+  return apiClient.get<UsageStats>(`/admin/usage-stats?${params.toString()}`)
 }
