@@ -12,7 +12,7 @@ export type TransactionType = 'add' | 'consume' | 'adjustment'
 export type ReferenceType = 'company' | 'csv_import' | 'manual' | 'system'
 
 // Module names - 'stream' has been removed per global token system migration
-export type ModuleName = 'screen' | 'target' | 'explore'
+export type ModuleName = 'screen' | 'target' | 'explore' | 'translation'
 
 /**
  * Module configuration without token count.

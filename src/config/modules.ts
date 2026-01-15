@@ -29,18 +29,25 @@ export const MODULE_CONFIG: Record<ModuleName, Omit<ModuleDisplayConfig, 'status
     icon: 'fa-solid fa-project-diagram',
     color: 'almond',
   },
-  stream: {
-    labelKey: 'common.modules.stream',
-    icon: 'fa-solid fa-rss',
-    color: 'yellow',
+  translation: {
+    labelKey: 'common.modules.translation',
+    icon: 'fa-solid fa-language',
+    color: 'cyan',
   },
+}
+
+// Default config for unknown modules
+const DEFAULT_MODULE_CONFIG: Omit<ModuleDisplayConfig, 'status' | 'name'> = {
+  labelKey: 'common.modules.unknown',
+  icon: 'fa-solid fa-cube',
+  color: 'sage',
 }
 
 export const getModuleDisplayConfig = (
   name: ModuleName,
   enabled: boolean,
 ): ModuleDisplayConfig => {
-  const config = MODULE_CONFIG[name]
+  const config = MODULE_CONFIG[name] || DEFAULT_MODULE_CONFIG
 
   return {
     name,
