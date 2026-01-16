@@ -21,6 +21,7 @@ from app.core.permissions import get_roles_for_tier, get_tier_from_roles
 from app.schemas.team import (
     TeamMember,
     UpdateTeamMemberPermissions,
+    ResetPasswordRequest,
     TeamMemberPasswordReset,
 )
 from app.services.keycloak_admin import keycloak_admin_service
@@ -236,6 +237,7 @@ async def update_member_permissions(
 @router.post("/members/{user_id}/reset-password", response_model=TeamMemberPasswordReset)
 async def reset_member_password(
     user_id: str = Path(..., description="Keycloak user UUID"),
+    request: ResetPasswordRequest = None,
     user: OIDCUser = Depends(idp.get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
@@ -243,10 +245,11 @@ async def reset_member_password(
 
     Requires organization.manage OR admin.organizations role for access.
 
-    Generates secure temporary password and forces password change on next login.
+    Sets password as temporary, forcing user to change it on next login.
 
     Args:
         user_id: Target user's Keycloak UUID
+        request: Request body with temporary_password
         user: Current authenticated user from Keycloak
         org_context: Organization context extracted from JWT
 
@@ -254,14 +257,13 @@ async def reset_member_password(
         Temporary password and success message
 
     Raises:
+        400: If password validation fails
         404: If user not found
         500: If password reset fails
     """
     try:
-        
         verify_any_role_access(user, ["organization.manage", "admin.organizations"])
 
-        
         keycloak_user = await keycloak_admin_service.get_user(user_id)
         if not keycloak_user:
             raise HTTPException(
@@ -269,13 +271,8 @@ async def reset_member_password(
                 detail="User not found",
             )
 
-        
-        import secrets
-        import string
-        alphabet = string.ascii_letters + string.digits + "!@#$%^&*"
-        temp_password = ''.join(secrets.choice(alphabet) for _ in range(12))
+        temp_password = request.temporary_password
 
-        
         success = await keycloak_admin_service.set_user_password(
             user_id=user_id,
             password=temp_password,
