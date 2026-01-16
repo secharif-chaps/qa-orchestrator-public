@@ -20,6 +20,12 @@ export default {
       appearance: 'Apparence',
       preferences: 'Préférences',
       security: 'Sécurité',
+      team: 'Équipe',
+      credits: 'Crédits',
+      'ai-preferences': 'Préférences IA',
+    },
+    credits: {
+      cardDescription: 'Consultez les statistiques de consommation de crédits',
     },
     profile: {
       error: {
@@ -1952,6 +1958,56 @@ export default {
       },
     },
   },
+  credits: {
+    unit: 'crédits',
+    balance: {
+      label: 'Solde disponible',
+      current: 'Solde actuel',
+    },
+    usage: {
+      title: 'Répartition des crédits',
+      total: 'Total consommé',
+      noData: 'Aucune consommation pour cette période',
+    },
+    forecast: {
+      title: 'Capacité restante',
+    },
+    module: {
+      disabled: 'Module désactivé',
+      costPerItem: '1 {item} = {cost} crédits',
+      remaining: '{item} restantes',
+      canCreate: 'Vous pouvez encore créer',
+      getQuote: 'Obtenir un devis',
+    },
+    modules: {
+      all: 'Tous',
+      screen: 'Screen',
+      target: 'Target',
+      explore: 'Explore',
+    },
+    period: {
+      select: 'Période',
+      '7d': '7 derniers jours',
+      '30d': '30 derniers jours',
+      '90d': '90 derniers jours',
+      custom: 'Personnalisé',
+      startDate: 'Début',
+      endDate: 'Fin',
+    },
+    topUsers: {
+      title: 'Classement des utilisateurs',
+      rank: 'Rang',
+      user: 'Utilisateur',
+      credits: 'Crédits',
+      search: 'Rechercher...',
+      noData: 'Aucun utilisateur trouvé',
+      itemName: 'utilisateurs',
+    },
+    dailyUsage: {
+      title: 'Consommation quotidienne',
+      noData: 'Aucune consommation pour cette période',
+    },
+  },
   breadcrumb: {
     companies: 'Entreprises',
     folders: 'Dossiers',
@@ -1971,6 +2027,7 @@ export default {
     costs: 'Coûts',
     appearance: 'Apparence',
     security: 'Sécurité',
+    credits: 'Crédits',
   },
   logout: {
     title: 'Confirmer la déconnexion',

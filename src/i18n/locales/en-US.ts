@@ -21,6 +21,11 @@ export default {
       'ai-preferences': 'AI Assistant',
       preferences: 'Preferences',
       security: 'Security',
+      team: 'Team Management',
+      credits: 'Credits',
+    },
+    credits: {
+      cardDescription: 'View credit usage and statistics',
     },
     profile: {
       error: {
@@ -1895,6 +1900,56 @@ export default {
       },
     },
   },
+  credits: {
+    unit: 'credits',
+    balance: {
+      label: 'Available balance',
+      current: 'Current balance',
+    },
+    usage: {
+      title: 'Credit distribution',
+      total: 'Total consumed',
+      noData: 'No consumption for this period',
+    },
+    forecast: {
+      title: 'Remaining capacity',
+    },
+    module: {
+      disabled: 'Module disabled',
+      costPerItem: '1 {item} = {cost} credits',
+      remaining: '{item} remaining',
+      canCreate: 'You can still create',
+      getQuote: 'Get a quote',
+    },
+    modules: {
+      all: 'All',
+      screen: 'Screen',
+      target: 'Target',
+      explore: 'Explore',
+    },
+    period: {
+      select: 'Period',
+      '7d': 'Last 7 days',
+      '30d': 'Last 30 days',
+      '90d': 'Last 90 days',
+      custom: 'Custom',
+      startDate: 'Start',
+      endDate: 'End',
+    },
+    topUsers: {
+      title: 'User ranking',
+      rank: 'Rank',
+      user: 'User',
+      credits: 'Credits',
+      search: 'Search...',
+      noData: 'No users found',
+      itemName: 'users',
+    },
+    dailyUsage: {
+      title: 'Daily consumption',
+      noData: 'No consumption for this period',
+    },
+  },
   breadcrumb: {
     companies: 'Companies',
     folders: 'Folders',
@@ -1914,6 +1969,7 @@ export default {
     costs: 'Costs',
     appearance: 'Appearance',
     security: 'Security',
+    credits: 'Credits',
   },
   logout: {
     title: 'Confirm Logout',

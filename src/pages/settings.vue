@@ -9,7 +9,7 @@
 
       <!-- Navigation Toggle (only show when on a subpage) -->
       <div v-if="isOnSubpage" class="flex items-center">
-        <Toggle v-model="currentSection" :options="sectionOptions" variant="pill" />
+        <Toggle  v-model="currentSection" :options="sectionOptions" />
       </div>
     </div>
 
@@ -59,70 +59,104 @@ import { Toggle } from '@owlint/feathers-vue'
 import { computed, watch } from 'vue'
 import { RouterView, RouterLink, useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
+const authStore = useAuthStore()
+
+// Check if user can manage organization (for credits tab)
+const canManageOrganization = computed(() => authStore.hasPermission('organization.manage'))
 
 // Section definitions
-const sections = computed(() => [
-  {
-    id: 'appearance',
-    title: t('settings.tabs.appearance'),
-    description: t('settings.appearance.theme.description'),
-    icon: 'fas fa-palette',
-    bgColor: 'bg-primary-light',
-    iconColor: 'text-primary-light-content',
-  },
-  {
-    id: 'ai-preferences',
-    title: t('settings.tabs.ai-preferences'),
-    description: t('aiPreferences.settings.description'),
-    icon: 'fas fa-magic',
-    bgColor: 'bg-accent-light',
-    iconColor: 'text-accent-light-content',
-  },
-  {
-    id: 'security',
-    title: t('settings.tabs.security'),
-    description: t('settings.security.sessions.description'),
-    icon: 'fas fa-shield-alt',
-    bgColor: 'bg-success-light',
-    iconColor: 'text-success-light-content',
-  },
-  {
-    id: 'team-management',
-    title: t('settings.tabs.team', 'Team Management'),
-    description: t('settings.team.cardDescription', 'Manage team members and permissions'),
-    icon: 'fas fa-users',
-    bgColor: 'bg-warning-light',
-    iconColor: 'text-warning-light-content',
-  },
-])
+const sections = computed(() => {
+  const baseSections = [
+    {
+      id: 'appearance',
+      title: t('settings.tabs.appearance'),
+      description: t('settings.appearance.theme.description'),
+      icon: 'fas fa-palette',
+      bgColor: 'bg-primary-light',
+      iconColor: 'text-primary-light-content',
+    },
+    {
+      id: 'ai-preferences',
+      title: t('settings.tabs.ai-preferences'),
+      description: t('aiPreferences.settings.description'),
+      icon: 'fas fa-magic',
+      bgColor: 'bg-accent-light',
+      iconColor: 'text-accent-light-content',
+    },
+    {
+      id: 'security',
+      title: t('settings.tabs.security'),
+      description: t('settings.security.sessions.description'),
+      icon: 'fas fa-shield-alt',
+      bgColor: 'bg-success-light',
+      iconColor: 'text-success-light-content',
+    },
+    {
+      id: 'team-management',
+      title: t('settings.tabs.team', 'Team Management'),
+      description: t('settings.team.cardDescription', 'Manage team members and permissions'),
+      icon: 'fas fa-users',
+      bgColor: 'bg-warning-light',
+      iconColor: 'text-warning-light-content',
+    },
+  ]
+
+  // Add credits section for managers
+  if (canManageOrganization.value) {
+    baseSections.push({
+      id: 'credits',
+      title: t('settings.tabs.credits', 'Crédits'),
+      description: t('settings.credits.cardDescription', 'View credit usage and statistics'),
+      icon: 'fas fa-coins',
+      bgColor: 'bg-info-light',
+      iconColor: 'text-info-light-content',
+    })
+  }
+
+  return baseSections
+})
 
 // Toggle options for navigation
-const sectionOptions = computed(() => [
-  {
-    value: 'appearance',
-    icon: 'fas fa-palette',
-    label: t('settings.tabs.appearance'),
-  },
-  {
-    value: 'ai-preferences',
-    icon: 'fas fa-magic',
-    label: t('settings.tabs.ai-preferences'),
-  },
-  {
-    value: 'security',
-    icon: 'fas fa-shield-alt',
-    label: t('settings.tabs.security'),
-  },
-  {
-    value: 'team-management',
-    icon: 'fas fa-users',
-    label: t('settings.tabs.team', 'Team Management'),
-  },
-])
+const sectionOptions = computed(() => {
+  const baseOptions = [
+    {
+      value: 'appearance',
+      icon: 'fas fa-palette',
+      label: t('settings.tabs.appearance'),
+    },
+    {
+      value: 'ai-preferences',
+      icon: 'fas fa-magic',
+      label: t('settings.tabs.ai-preferences'),
+    },
+    {
+      value: 'security',
+      icon: 'fas fa-shield-alt',
+      label: t('settings.tabs.security'),
+    },
+    {
+      value: 'team-management',
+      icon: 'fas fa-users',
+      label: t('settings.tabs.team', 'Team Management'),
+    },
+  ]
+
+  // Add credits option for managers
+  if (canManageOrganization.value) {
+    baseOptions.push({
+      value: 'credits',
+      icon: 'fas fa-coins',
+      label: t('settings.tabs.credits', 'Crédits'),
+    })
+  }
+
+  return baseOptions
+})
 
 // Determine if we're on a subpage
 const isOnSubpage = computed(() => {
@@ -138,6 +172,7 @@ const currentSection = computed({
     if (path.includes('/ai-preferences')) return 'ai-preferences'
     if (path.includes('/security')) return 'security'
     if (path.includes('/team-management')) return 'team-management'
+    if (path.includes('/credits')) return 'credits'
     return 'appearance'
   },
   set: (value: string) => {
