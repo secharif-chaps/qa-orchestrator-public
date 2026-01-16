@@ -1960,6 +1960,7 @@ export default {
   },
   credits: {
     unit: 'crédits',
+    usedCredits: 'crédits utilisés',
     balance: {
       label: 'Solde disponible',
       current: 'Solde actuel',

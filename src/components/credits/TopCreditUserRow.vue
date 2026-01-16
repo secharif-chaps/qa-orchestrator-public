@@ -28,10 +28,11 @@
       </div>
     </td>
 
-    <!-- Credits consumed -->
+    <!-- Credits consumed as badge -->
     <td class="px-4 py-3 text-right">
-      <span class="font-semibold">{{ formattedCredits }}</span>
-      <span class="text-sm text-secondary ml-1">{{ $t('credits.unit', 'crédits') }}</span>
+      <span class="inline-flex items-center px-3 py-1 rounded-full bg-primary-light text-primary text-sm font-medium">
+        {{ formattedCredits }} {{ $t('credits.usedCredits') }}
+      </span>
     </td>
   </tr>
 </template>

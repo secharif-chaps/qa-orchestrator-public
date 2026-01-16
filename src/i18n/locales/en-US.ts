@@ -1902,6 +1902,7 @@ export default {
   },
   credits: {
     unit: 'credits',
+    usedCredits: 'credits used',
     balance: {
       label: 'Available balance',
       current: 'Current balance',
