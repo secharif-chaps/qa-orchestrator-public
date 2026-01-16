@@ -3,6 +3,7 @@
 This module contains models for Keycloak organization-based multi-tenancy:
 - Organization: Organization-level settings including global token balance
 - OrganizationModule: Module configuration (enabled/disabled) per organization
+- OrganizationFeatureFlag: Feature flag configuration (add-on capabilities) per organization
 - TokenTransaction: Audit log for all token operations
 
 Organizations are managed in Keycloak, not in the database. The Organization
@@ -19,6 +20,7 @@ from sqlalchemy import (
     UniqueConstraint,
     ForeignKey,
     Index,
+    JSON,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -27,15 +29,15 @@ from app.database import Base
 
 
 class ModuleName(str, Enum):
-    """Available modules for feature gating.
+    """Available core modules for feature gating.
 
-    Valid modules are: screen, target, explore, translation.
+    Valid modules are: screen, target, explore.
     Note: 'stream' module has been removed from the system.
+    Note: 'translation' is now a FeatureFlag, not a core module.
     """
     SCREEN = "screen"
     TARGET = "target"
     EXPLORE = "explore"
-    TRANSLATION = "translation"
 
 
 class TransactionType(str, Enum):
@@ -66,6 +68,15 @@ class ReferenceType(str, Enum):
     csv_import = "csv_import"
     manual = "manual"
     system = "system"
+
+
+class FeatureFlag(str, Enum):
+    """Organization-level feature flags for add-on capabilities.
+
+    Feature flags are OFF by default. Unlike core modules (screen, target, explore),
+    feature flags represent optional enhancements that can be enabled per organization.
+    """
+    TRANSLATION = "translation"
 
 
 class Organization(Base):
@@ -206,4 +217,40 @@ class OrganizationModule(Base):
     # Constraints
     __table_args__ = (
         UniqueConstraint('organization_id', 'module_name', name='uq_organization_modules_organization_module'),
+    )
+
+
+class OrganizationFeatureFlag(Base):
+    """Organization feature flag configuration.
+
+    Tracks which add-on features are enabled for each organization.
+    Features are OFF by default - only enabled flags are stored.
+
+    Attributes:
+        id: Auto-incrementing primary key
+        organization_id: Keycloak organization UUID
+        flag: The feature flag enum value
+        enabled: Whether the feature is enabled
+        enabled_at: Timestamp when feature was enabled
+        config: Optional JSON configuration for the feature
+        created_at: Record creation timestamp
+        updated_at: Last update timestamp
+    """
+    __tablename__ = "organization_feature_flags"
+
+    id = Column(Integer, primary_key=True, index=True)
+    organization_id = Column(String, nullable=False, index=True)
+    flag = Column(
+        SQLEnum(FeatureFlag, name='featureflag', values_callable=lambda x: [e.value for e in x]),
+        nullable=False
+    )
+    enabled = Column(Boolean, default=False, nullable=False)
+    enabled_at = Column(DateTime(timezone=True), nullable=True)
+    config = Column(JSON, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    __table_args__ = (
+        UniqueConstraint('organization_id', 'flag', name='uq_organization_feature_flags_org_flag'),
+        Index('ix_organization_feature_flags_org_enabled', 'organization_id', 'enabled'),
     )

@@ -26,10 +26,12 @@ from .task import Task, TaskStatus, TaskType
 from .organization import (
     Organization,
     OrganizationModule,
+    OrganizationFeatureFlag,
     TokenTransaction,
     ModuleName,
     TransactionType,
     ReferenceType,
+    FeatureFlag,
 )
 from .folder import Folder, FolderItem, FolderShare, ShareRole
 from .user_folder_favorite import UserFolderFavorite
@@ -68,10 +70,12 @@ __all__ = [
     # Organization models
     "Organization",
     "OrganizationModule",
+    "OrganizationFeatureFlag",
     "TokenTransaction",
     "ModuleName",
     "TransactionType",
     "ReferenceType",
+    "FeatureFlag",
     # Folder models
     "Folder",
     "FolderItem",
