@@ -1927,14 +1927,14 @@ export default {
         itemPlural: 'Company cards',
       },
       target: {
-        label: 'Watch',
-        item: 'watch',
-        itemPlural: 'Watches',
+        label: 'Watchfile',
+        item: 'watchfile',
+        itemPlural: 'Watchfiles',
       },
       explore: {
-        label: 'Mapping',
-        item: 'mapping',
-        itemPlural: 'Mappings',
+        label: 'Graph',
+        item: 'graph',
+        itemPlural: 'Graphs',
       },
     },
     modules: {
