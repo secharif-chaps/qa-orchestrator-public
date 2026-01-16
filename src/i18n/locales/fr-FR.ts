@@ -1979,6 +1979,21 @@ export default {
       remaining: '{item} restantes',
       canCreate: 'Vous pouvez encore créer',
       getQuote: 'Obtenir un devis',
+      screen: {
+        label: 'Fiche entreprise',
+        item: 'fiche entreprise',
+        itemPlural: 'Fiches entreprises',
+      },
+      target: {
+        label: 'Veille',
+        item: 'veille',
+        itemPlural: 'Veilles',
+      },
+      explore: {
+        label: 'Cartographie',
+        item: 'cartographie',
+        itemPlural: 'Cartographies',
+      },
     },
     modules: {
       all: 'Tous',

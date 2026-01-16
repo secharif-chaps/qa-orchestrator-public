@@ -1921,6 +1921,21 @@ export default {
       remaining: '{item} remaining',
       canCreate: 'You can still create',
       getQuote: 'Get a quote',
+      screen: {
+        label: 'Company card',
+        item: 'company card',
+        itemPlural: 'Company cards',
+      },
+      target: {
+        label: 'Watch',
+        item: 'watch',
+        itemPlural: 'Watches',
+      },
+      explore: {
+        label: 'Mapping',
+        item: 'mapping',
+        itemPlural: 'Mappings',
+      },
     },
     modules: {
       all: 'All',
