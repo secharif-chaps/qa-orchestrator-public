@@ -5,7 +5,7 @@ This module provides utilities to extract organization information from JWT toke
 and manage organization-based access control.
 """
 
-from typing import Any
+from typing import Any, TYPE_CHECKING
 from fastapi import Depends, HTTPException, status, Request
 from fastapi_keycloak import OIDCUser
 from pydantic import BaseModel
@@ -13,6 +13,9 @@ import jwt
 
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
+
+if TYPE_CHECKING:
+    from app.models.organization import FeatureFlag
 
 logger = get_logger(__name__)
 
@@ -214,3 +217,45 @@ def get_user_organization(
         user_id=user.sub,
         username=user.preferred_username
     )
+
+
+def require_feature(flag: "FeatureFlag"):
+    """Dependency factory to require a feature flag to be enabled.
+
+    Returns a FastAPI dependency that checks if the specified feature is enabled
+    for the user's organization. Raises 403 if the feature is not enabled.
+
+    Args:
+        flag: The FeatureFlag enum value to check
+
+    Returns:
+        A callable dependency that returns None if feature is enabled
+
+    Raises:
+        HTTPException: 403 Forbidden if feature not enabled for organization
+
+    Example:
+        @router.get("/translate")
+        async def translate(
+            _feature: None = Depends(require_feature(FeatureFlag.TRANSLATION)),
+            org_context: OrganizationContext = Depends(get_user_organization),
+        ):
+            # Feature is guaranteed to be enabled if we reach here
+            pass
+    """
+    from app.database import get_db
+    from sqlalchemy.orm import Session
+
+    async def check_feature(
+        org_context: OrganizationContext = Depends(get_user_organization),
+        db: Session = Depends(get_db)
+    ) -> None:
+        from app.services.feature_flags import has_feature
+
+        if not has_feature(db, org_context.organization_id, flag):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Feature '{flag.value}' is not enabled for this organization"
+            )
+
+    return check_feature
