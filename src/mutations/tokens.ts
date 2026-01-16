@@ -94,7 +94,7 @@ export const useAddGlobalTokens = defineMutation(() => {
  * Tokens are no longer per-module, this only affects module enablement.
  *
  * @example
- * const { toggleModule, isPending } = useToggleModule()
+ * const { toggleModule, isLoading } = useToggleModule()
  * await toggleModule({
  *   organizationId: 'org-uuid-123',
  *   module: 'screen',
