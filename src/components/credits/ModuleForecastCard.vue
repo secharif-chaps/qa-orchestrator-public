@@ -1,7 +1,10 @@
 <template>
   <div
-    class="bg-base-100 rounded-lg p-4 border border-primary-stroke"
-    :class="{ 'opacity-60': !forecast.enabled }"
+    class="rounded-xl border p-4"
+    :class="[
+      forecast.enabled ? [moduleColors.cardBg, moduleColors.cardBorder] : 'bg-base-100 border-base-300',
+      { 'opacity-60': !forecast.enabled }
+    ]"
   >
     <div class="flex flex-col gap-3">
       <!-- Header with icon and module name -->
@@ -12,40 +15,39 @@
             :class="forecast.enabled ? moduleColors.iconBg : 'bg-base-200'"
           >
             <i
-              :class="[forecast.icon, forecast.enabled ? moduleColors.iconText : 'text-secondary']"
+              :class="[moduleColors.icon, forecast.enabled ? moduleColors.iconText : 'text-secondary']"
             ></i>
           </div>
-          <h4 class="font-medium">{{ forecast.label }}</h4>
+          <h4 class="font-semibold text-base">{{ forecast.label }}</h4>
         </div>
         <!-- Refresh icon for enabled, disabled badge for disabled -->
         <button v-if="forecast.enabled" class="text-secondary hover:text-primary transition-colors">
-          <i class="fa fa-rotate-right text-sm"></i>
+          <i class="fa fa-rotate-right"></i>
         </button>
         <Tag v-else variant="secondary" size="sm" :label="$t('credits.module.disabled')" />
       </div>
 
       <!-- Enabled state with count -->
       <template v-if="forecast.enabled">
-        <!-- Cost per item -->
-        <div v-if="forecast.cost" class="text-xs text-secondary">
-          <i class="fa fa-clock mr-1"></i>
-          {{ $t('credits.module.costPerItem', {
+        <!-- Cost per item info -->
+        <div v-if="forecast.cost" class="flex items-center gap-2 text-sm text-secondary">
+          <i class="fa fa-circle-info"></i>
+          <span>{{ $t('credits.module.costPerItem', {
             cost: forecast.cost,
             item: forecast.itemLabel
-          }) }}
+          }) }}</span>
         </div>
 
         <!-- Remaining info -->
         <div class="text-sm text-secondary">
-          {{ $t('credits.module.canCreate', 'Vous pouvez encore créer') }} :
+          {{ $t('credits.module.canCreate') }} :
         </div>
 
-        <!-- Remaining count badge -->
+        <!-- Remaining count pill - smaller with white background -->
         <div
-          class="inline-flex items-center gap-2 px-3 py-2 rounded-md w-fit"
-          :class="moduleColors.countBg"
+          class="inline-flex items-center px-3 py-1.5 rounded-full w-fit bg-white border border-base-300 shadow-sm"
         >
-          <span class="font-semibold" :class="moduleColors.countText">
+          <span class="font-medium text-sm text-base-content">
             {{ formattedCount }} {{ forecast.itemLabelPlural }}
           </span>
         </div>
@@ -69,30 +71,40 @@ interface Props {
 
 const props = defineProps<Props>()
 
-// Module-specific color configurations matching the appbar badge colors
+// Tailwind safelist: bg-indigo-50/50 bg-rose-50/50 bg-almond-50/50
+// border-indigo-200 border-rose-200 border-almond-200
+// bg-indigo-100 bg-rose-100 bg-almond-100
+// text-indigo-600 text-rose-600 text-almond-600
+
+// Module-specific color configurations matching the appbar badges
+// screen = indigo, target = cherry (rose in tailwind), explore = almond
 const MODULE_COLORS: Record<ModuleName, {
+  cardBg: string
+  cardBorder: string
   iconBg: string
   iconText: string
-  countBg: string
-  countText: string
+  icon: string
 }> = {
   screen: {
+    cardBg: 'bg-indigo-50/50',
+    cardBorder: 'border-indigo-200',
     iconBg: 'bg-indigo-100',
     iconText: 'text-indigo-600',
-    countBg: 'bg-indigo-50',
-    countText: 'text-indigo-700',
+    icon: 'fa-solid fa-building',
   },
   target: {
+    cardBg: 'bg-rose-50/50',
+    cardBorder: 'border-rose-200',
     iconBg: 'bg-rose-100',
     iconText: 'text-rose-600',
-    countBg: 'bg-rose-50',
-    countText: 'text-rose-700',
+    icon: 'fa-solid fa-bullseye',
   },
   explore: {
-    iconBg: 'bg-primary-light',
-    iconText: 'text-primary',
-    countBg: 'bg-primary-light',
-    countText: 'text-primary',
+    cardBg: 'bg-almond-50/50',
+    cardBorder: 'border-almond-200',
+    iconBg: 'bg-almond-100',
+    iconText: 'text-almond-600',
+    icon: 'fa-solid fa-project-diagram',
   },
 }
 
