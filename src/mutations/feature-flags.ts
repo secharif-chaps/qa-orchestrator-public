@@ -42,5 +42,5 @@ export const useToggleFeatureFlag = defineMutation(() => {
   return {
     ...mutation,
     toggleFeatureFlag: toggle,
-    isPending,}
+  }
 })

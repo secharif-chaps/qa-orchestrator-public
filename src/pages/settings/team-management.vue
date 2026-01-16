@@ -139,7 +139,16 @@ function handleUpdatePermissions(userId: string, tier: PermissionTier) {
 }
 
 async function handleResetPassword(member: TeamMember) {
-  resetPassword(member.id)
+  try {
+    const result = await resetPassword(member.id)
+    if (result) {
+      selectedMember.value = member
+      tempPassword.value = result.temporary_password
+      showPasswordModal.value = true
+    }
+  } catch (error) {
+    console.error('Failed to reset password:', error)
+  }
 }
 
 function closePasswordModal() {
