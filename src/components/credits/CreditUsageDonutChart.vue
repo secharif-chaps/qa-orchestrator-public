@@ -1,14 +1,14 @@
 <template>
   <Card padding="p-6" class="flex flex-col h-full">
     <h3 class="text-lg font-semibold">
-      {{ $t('credits.usage.title', 'Répartition des crédits') }}
+      {{ $t('credits.usage.title') }}
     </h3>
 
     <!-- Loading state -->
     <div v-if="loading" class="flex justify-center py-12 flex-1">
       <div class="text-center">
         <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">{{ $t('common.loading', 'Chargement...') }}</p>
+        <p class="text-sm text-secondary">{{ $t('common.loading') }}</p>
       </div>
     </div>
 
@@ -17,41 +17,71 @@
       <div class="text-center">
         <i class="fa fa-chart-pie text-2xl text-secondary mb-2"></i>
         <p class="text-sm text-secondary">
-          {{ $t('credits.usage.noData', 'Aucune consommation pour cette période') }}
+          {{ $t('credits.usage.noData') }}
         </p>
       </div>
     </div>
 
     <!-- Chart -->
     <template v-else>
-      <!-- Chart and Legend -->
-      <div class="flex items-center gap-6 flex-1">
-        <!-- Donut Chart - takes available space -->
-        <div class="flex-1 aspect-square max-w-[280px]">
-          <Doughnut :data="chartData" :options="chartOptions" />
-        </div>
+      <!-- Chart with positioned labels -->
+      <div class="flex-1 flex items-center justify-center py-4">
+        <div class="relative">
+          <!-- Donut Chart -->
+          <div class="w-[200px] h-[200px]">
+            <Doughnut :data="chartData" :options="chartOptions" />
+          </div>
 
-        <!-- Legend -->
-        <div class="flex flex-col gap-3">
-          <CreditUsageLegendItem
-            v-for="item in usageData"
-            :key="item.module"
-            :color="getModuleColor(item.module)"
-            :label="item.label"
-            :value="item.creditsConsumed"
-            :percentage="item.percentage"
-          />
+          <!-- Label positions around the chart -->
+          <!-- Top right -->
+          <div
+            v-if="usageData[2] && usageData[2].percentage > 0"
+            class="absolute -top-2 -right-4 transform translate-x-full"
+          >
+            <span
+              class="inline-block px-2 py-1 text-xs font-medium rounded-md border whitespace-nowrap"
+              :style="getLabelStyle(usageData[2].module)"
+            >
+              {{ usageData[2].percentage.toFixed(0) }}% de {{ usageData[2].label }}
+            </span>
+          </div>
+
+          <!-- Right middle -->
+          <div
+            v-if="usageData[0] && usageData[0].percentage > 0"
+            class="absolute top-1/2 -right-4 transform translate-x-full -translate-y-1/2"
+          >
+            <span
+              class="inline-block px-2 py-1 text-xs font-medium rounded-md border whitespace-nowrap"
+              :style="getLabelStyle(usageData[0].module)"
+            >
+              {{ usageData[0].percentage.toFixed(0) }}% de {{ usageData[0].label }}
+            </span>
+          </div>
+
+          <!-- Bottom -->
+          <div
+            v-if="usageData[1] && usageData[1].percentage > 0"
+            class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 translate-y-full"
+          >
+            <span
+              class="inline-block px-2 py-1 text-xs font-medium rounded-md border whitespace-nowrap"
+              :style="getLabelStyle(usageData[1].module)"
+            >
+              {{ usageData[1].percentage.toFixed(0) }}% de {{ usageData[1].label }}
+            </span>
+          </div>
         </div>
       </div>
 
       <!-- Total - at bottom -->
       <div class="pt-4 mt-auto border-t border-primary-stroke flex justify-between items-center">
         <span class="text-sm text-secondary">
-          {{ $t('credits.usage.total', 'Total consommé') }}
+          {{ $t('credits.usage.total') }}
         </span>
         <span class="font-semibold">
           {{ formattedTotal }}
-          <span class="text-sm text-secondary ml-1">{{ $t('credits.unit', 'crédits') }}</span>
+          <span class="text-sm text-secondary ml-1">{{ $t('credits.unit') }}</span>
         </span>
       </div>
     </template>
@@ -74,7 +104,6 @@ import { Doughnut } from 'vue-chartjs'
 import type { ModuleUsage, ModuleName } from '@/types/credits'
 import { MODULE_CHART_COLORS } from '@/types/credits'
 import Card from '@/components/ui/Card.vue'
-import CreditUsageLegendItem from './CreditUsageLegendItem.vue'
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend)
@@ -99,6 +128,15 @@ const formattedTotal = computed(() => {
 
 const getModuleColor = (module: string): string => {
   return MODULE_CHART_COLORS[module as ModuleName] || '#888888'
+}
+
+const getLabelStyle = (module: string) => {
+  const color = getModuleColor(module)
+  return {
+    backgroundColor: color + '20',
+    borderColor: color,
+    color: color,
+  }
 }
 
 const chartData = computed(() => {
