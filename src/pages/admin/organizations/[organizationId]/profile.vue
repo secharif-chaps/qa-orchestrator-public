@@ -62,6 +62,33 @@
         />
       </div>
     </Card>
+
+    <!-- Global Features Section -->
+    <Card>
+      <h2 class="text-xl font-semibold mb-4">
+        {{ $t('featureFlags.globalFeatures', 'Global Features') }}
+      </h2>
+      <p class="text-sm text-secondary mb-4">
+        {{ $t('featureFlags.description', 'Add-on capabilities that enhance core modules. These features are disabled by default.') }}
+      </p>
+
+      <!-- Loading State -->
+      <div v-if="isLoadingFeatureFlags" class="text-center p-4">
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+      </div>
+
+      <!-- Feature Flag Cards -->
+      <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <FeatureFlagCard
+          v-for="featureFlag in featureFlags"
+          :key="featureFlag.flag"
+          :flag="featureFlag.flag"
+          :is-enabled="featureFlag.enabled"
+          :organization-id="organizationIdValue"
+          @refresh="refetchFeatureFlags"
+        />
+      </div>
+    </Card>
   </div>
 </template>
 
@@ -70,8 +97,11 @@ import { computed, inject } from 'vue'
 import { useQuery } from '@pinia/colada'
 import Card from '@/components/ui/Card.vue'
 import ModuleStatusCard from '@/components/tokens/ModuleStatusCard.vue'
+import FeatureFlagCard from '@/components/tokens/FeatureFlagCard.vue'
 import { organizationModulesQuery } from '@/queries/tokens'
+import { organizationFeatureFlagsQuery } from '@/queries/feature-flags'
 import type { OrganizationAdminResponse } from '@/types/organization'
+import type { FeatureFlagName } from '@/types/feature-flags'
 
 // Inject organization data from parent layout
 const organization = inject<ReturnType<typeof computed<OrganizationAdminResponse | null>>>('organization')
@@ -91,6 +121,24 @@ const {
 })
 
 const modules = computed(() => modulesData.value?.modules ?? [])
+
+// Query for feature flags
+const {
+  data: featureFlagsData,
+  isLoading: isLoadingFeatureFlags,
+  refetch: refetchFeatureFlags,
+} = useQuery({
+  ...organizationFeatureFlagsQuery({ organizationId: organizationId?.value || '' }),
+  enabled: () => !!organizationId?.value,
+})
+
+const featureFlags = computed(() => {
+  const flags = featureFlagsData.value?.feature_flags ?? []
+  return flags.map((f) => ({
+    flag: f.flag as FeatureFlagName,
+    enabled: f.enabled,
+  }))
+})
 
 // Format date helper
 function formatDate(dateString: string) {

@@ -9,6 +9,7 @@
       :class="{ 'pointer-events-none opacity-50': module.status === 'unavailable' }"
     >
       <Tag
+        class="hidden lg:block"
         :label="$t(module.labelKey)"
         :icon="module.icon"
         :color="module.color"

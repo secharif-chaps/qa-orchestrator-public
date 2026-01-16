@@ -11,8 +11,9 @@ export type TransactionType = 'add' | 'consume' | 'adjustment'
 // Reference type enum - matches backend ReferenceType
 export type ReferenceType = 'company' | 'csv_import' | 'manual' | 'system'
 
-// Module names - 'stream' has been removed per global token system migration
-export type ModuleName = 'screen' | 'target' | 'explore' | 'translation'
+// Module names - core product modules an organization can subscribe to
+// Note: 'translation' is now a feature flag, not a module (see feature-flags.ts)
+export type ModuleName = 'screen' | 'target' | 'explore'
 
 /**
  * Module configuration without token count.
