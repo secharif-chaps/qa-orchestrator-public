@@ -52,12 +52,13 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 import type { TimeSeriesDataPoint } from '@/types/usage'
 
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
+// Register Chart.js components (including Filler for area fill)
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
 
 interface Props {
   /** Time series data points for the chart */
@@ -72,9 +73,9 @@ interface Props {
 
 const props = defineProps<Props>()
 
-/** Primary indigo color from design system palette */
-const primaryColor = 'rgb(99, 102, 241)'
-const primaryColorAlpha = 'rgba(99, 102, 241, 0.1)'
+/** Pink accent color from design system palette (rose-500) */
+const primaryColor = 'rgb(184, 150, 187)'
+const primaryColorAlpha = 'rgba(184, 150, 187, 0.15)'
 
 /**
  * Format ISO date string to a readable format.
@@ -176,7 +177,7 @@ const chartOptions = computed(() => ({
       backgroundColor: 'rgba(0, 0, 0, 0.8)',
       titleColor: '#fff',
       bodyColor: '#fff',
-      borderColor: 'rgba(99, 102, 241, 0.5)',
+      borderColor: 'rgba(184, 150, 187, 0.5)',
       borderWidth: 1,
       padding: 12,
       displayColors: false,

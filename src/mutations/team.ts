@@ -1,6 +1,7 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { updateMemberPermissions, resetMemberPassword } from '@/api/team'
 import { TEAM_QUERY_KEYS } from '@/queries/team'
+import { toast } from '@/utils/toast'
 import type { UpdateTeamMemberPermissions, TeamMember } from '@/types/team'
 
 /**
@@ -54,6 +55,7 @@ export const useUpdateMemberPermissions = defineMutation(() => {
           queryCache.setQueryData(JSON.parse(key) as any, data)
         })
       }
+      toast.error('Failed to update permissions')
     },
     onSuccess: (updatedMember, { userId }) => {
       // Helper function to update with server response
@@ -71,6 +73,8 @@ export const useUpdateMemberPermissions = defineMutation(() => {
       // Update with server response for consistency
       updateWithServerData(TEAM_QUERY_KEYS.members(undefined))
       updateWithServerData(TEAM_QUERY_KEYS.members(''))
+
+      toast.success('Permissions updated successfully')
     },
   })
 
@@ -84,12 +88,19 @@ export const useUpdateMemberPermissions = defineMutation(() => {
  * Mutation to reset team member password
  */
 export const useResetMemberPassword = defineMutation(() => {
-  const { mutate, ...mutation } = useMutation({
-    mutation: (userId: string) => resetMemberPassword(userId),
+  const { mutateAsync, ...mutation } = useMutation({
+    mutation: ({ userId, temporaryPassword }: { userId: string; temporaryPassword: string }) =>
+      resetMemberPassword(userId, { temporary_password: temporaryPassword }),
+    onSuccess: () => {
+      toast.success('Password reset successfully')
+    },
+    onError: () => {
+      toast.error('Failed to reset password')
+    },
   })
 
   return {
     ...mutation,
-    resetPassword: mutate,
+    resetPasswordAsync: mutateAsync,
   }
 })
