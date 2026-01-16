@@ -1,5 +1,5 @@
 import { apiClient } from './client'
-import type { TeamMember, UpdateTeamMemberPermissions, TeamMemberPasswordReset } from '@/types/team'
+import type { TeamMember, UpdateTeamMemberPermissions, ResetPasswordRequest, TeamMemberPasswordReset } from '@/types/team'
 
 /**
  * List all team members in the user's organization
@@ -25,8 +25,8 @@ export const updateMemberPermissions = async (
 }
 
 /**
- * Reset team member password
+ * Reset team member password with a custom temporary password
  */
-export const resetMemberPassword = async (userId: string) => {
-  return apiClient.post<TeamMemberPasswordReset>(`/team/members/${userId}/reset-password`)
+export const resetMemberPassword = async (userId: string, data: ResetPasswordRequest) => {
+  return apiClient.post<TeamMemberPasswordReset>(`/team/members/${userId}/reset-password`, data)
 }

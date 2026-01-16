@@ -89,7 +89,11 @@ export const useUpdateMemberPermissions = defineMutation(() => {
  */
 export const useResetMemberPassword = defineMutation(() => {
   const { mutateAsync, ...mutation } = useMutation({
-    mutation: (userId: string) => resetMemberPassword(userId),
+    mutation: ({ userId, temporaryPassword }: { userId: string; temporaryPassword: string }) =>
+      resetMemberPassword(userId, { temporary_password: temporaryPassword }),
+    onSuccess: () => {
+      toast.success('Password reset successfully')
+    },
     onError: () => {
       toast.error('Failed to reset password')
     },
@@ -97,6 +101,6 @@ export const useResetMemberPassword = defineMutation(() => {
 
   return {
     ...mutation,
-    resetPassword: mutateAsync,
+    resetPasswordAsync: mutateAsync,
   }
 })

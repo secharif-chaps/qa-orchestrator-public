@@ -75,15 +75,15 @@
               :member="member"
               :can-manage="canManageTeam && !member.is_current_user"
               @update-permissions="handleUpdatePermissions"
-              @reset-password="handleResetPassword"
+              @reset-password="openResetPasswordModal"
             />
           </div>
         </div>
 
+        <!-- Reset Password Modal -->
         <ResetPasswordModal
-          v-if="showPasswordModal && canManageTeam"
-          :temporary-password="tempPassword"
-          :member="selectedMember!"
+          v-if="selectedMember && canManageTeam"
+          :member="selectedMember"
           @close="closePasswordModal"
         />
       </div>
@@ -105,7 +105,7 @@ import { useQuery } from '@pinia/colada'
 import { Input, Alert } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
 import { teamMembersQuery } from '@/queries/team'
-import { useUpdateMemberPermissions, useResetMemberPassword } from '@/mutations/team'
+import { useUpdateMemberPermissions } from '@/mutations/team'
 import { useTeamPermissions } from '@/composables/useTeamPermissions'
 import TeamMemberRow from '@/components/team/TeamMemberRow.vue'
 import ResetPasswordModal from '@/components/team/ResetPasswordModal.vue'
@@ -127,33 +127,19 @@ const {
 
 // Mutations
 const { updatePermissions } = useUpdateMemberPermissions()
-const { resetPassword } = useResetMemberPassword()
 
 // Password reset modal state
-const showPasswordModal = ref(false)
-const tempPassword = ref('')
 const selectedMember = ref<TeamMember | null>(null)
 
 function handleUpdatePermissions(userId: string, tier: PermissionTier) {
   updatePermissions({ userId, data: { permission_tier: tier } })
 }
 
-async function handleResetPassword(member: TeamMember) {
-  try {
-    const result = await resetPassword(member.id)
-    if (result) {
-      selectedMember.value = member
-      tempPassword.value = result.temporary_password
-      showPasswordModal.value = true
-    }
-  } catch (error) {
-    console.error('Failed to reset password:', error)
-  }
+function openResetPasswordModal(member: TeamMember) {
+  selectedMember.value = member
 }
 
 function closePasswordModal() {
-  showPasswordModal.value = false
-  tempPassword.value = ''
   selectedMember.value = null
 }
 </script>

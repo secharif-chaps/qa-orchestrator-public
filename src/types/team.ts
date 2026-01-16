@@ -20,6 +20,10 @@ export interface UpdateTeamMemberPermissions {
   permission_tier: PermissionTier
 }
 
+export interface ResetPasswordRequest {
+  temporary_password: string
+}
+
 export interface TeamMemberPasswordReset {
   temporary_password: string
   message: string
