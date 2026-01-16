@@ -3,7 +3,7 @@ from app.api.endpoints import (
     account, company, tasks, auth, admin, admin_tasks, security, webhooks,
     modules, cost_analysis, folder, concurrency, team,
     ai_preferences, organization, organizations, users, chapse, tokens,
-    translation
+    translation, feature_flags
 )
 
 api_router = APIRouter()
@@ -30,3 +30,4 @@ api_router.include_router(ai_preferences.router)
 api_router.include_router(admin_tasks.router)  # Admin task monitoring
 api_router.include_router(admin_tasks.org_router)  # Admin organizations for task monitoring
 api_router.include_router(translation.router)
+api_router.include_router(feature_flags.router)  # Organization feature flags management
