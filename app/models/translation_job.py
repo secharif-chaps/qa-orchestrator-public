@@ -23,14 +23,13 @@ class TranslationJob(Base):
     """Translation job record for tracking progress.
 
     Tracks translation jobs for a company/language pair, including
-    progress information and task IDs for Celery integration.
+    progress information. Jobs run via FastAPI BackgroundTasks.
 
     Attributes:
         id: Primary key
         company_id: Company being translated
         language_code: Target language code
         status: Job status (pending, running, completed, failed)
-        celery_task_id: Celery task ID for tracking
         total_fields: Total number of fields to translate
         translated_fields: Number of fields translated so far
         error_message: Error message if job failed
@@ -53,7 +52,6 @@ class TranslationJob(Base):
         nullable=False,
         default=TranslationJobStatus.pending,
     )
-    celery_task_id = Column(String(255), nullable=True, index=True)
     total_fields = Column(Integer, nullable=False, default=0)
     translated_fields = Column(Integer, nullable=False, default=0)
     error_message = Column(Text, nullable=True)

@@ -6,16 +6,26 @@ Provides endpoints for:
 - Getting translation status for a company
 - Requesting translations for a company/language
 - Checking translation job progress
+
+Architecture Note:
+    Translation uses FastAPI BackgroundTasks instead of Celery for simplicity.
+    This decision was made because:
+    - Translation typically completes in 2-3 seconds
+    - Low concurrent translation volume expected
+    - Avoids Celery/RabbitMQ infrastructure complexity
+    - Simpler Kubernetes deployment (no separate worker)
+
+    See docs/architecture/adr-001-translation-background-tasks.md for details.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.core.logging_config import get_logger
-from app.core.organization import get_user_organization, OrganizationContext
+from app.core.organization import get_user_organization, OrganizationContext, require_feature
 from app.core.security import verify_company_organization_access
 from app.database import get_db
-from app.models import Company, TranslationJob, TranslationJobStatus
+from app.models import Company, TranslationJob, TranslationJobStatus, FeatureFlag
 from app.schemas.translation import (
     LanguageResponse,
     LanguageTranslationStatus,
@@ -25,6 +35,7 @@ from app.schemas.translation import (
     TranslationJobResponse,
 )
 from app.services.translation import TranslationService, SUPPORTED_LANGUAGES
+from app.services.translation_runner import run_translation_background
 
 router = APIRouter(
     prefix="/translation",
@@ -68,13 +79,14 @@ async def list_languages() -> list[LanguageResponse]:
 async def get_translation_status(
     company_id: int,
     org_context: OrganizationContext = Depends(get_user_organization),
+    _feature: None = Depends(require_feature(FeatureFlag.TRANSLATION)),
     db: Session = Depends(get_db),
 ) -> CompanyTranslationStatusResponse:
     """Get translation status for a company across all languages.
 
     Includes active job information for languages currently being translated.
 
-    Requires organization.read role for access.
+    Requires organization.read role and translation feature enabled.
 
     Args:
         company_id: Company ID to check translation status for
@@ -140,9 +152,12 @@ async def get_translation_status(
 async def get_translation_job(
     job_id: int,
     org_context: OrganizationContext = Depends(get_user_organization),
+    _feature: None = Depends(require_feature(FeatureFlag.TRANSLATION)),
     db: Session = Depends(get_db),
 ) -> TranslationJobResponse:
     """Get translation job progress.
+
+    Requires translation feature enabled.
 
     Args:
         job_id: Translation job ID
@@ -172,19 +187,25 @@ async def get_translation_job(
 async def request_translation(
     company_id: int,
     request: TranslateRequest,
+    background_tasks: BackgroundTasks,
     org_context: OrganizationContext = Depends(get_user_organization),
+    _feature: None = Depends(require_feature(FeatureFlag.TRANSLATION)),
     db: Session = Depends(get_db),
 ) -> TranslateResponse:
     """Request translation of company fields to a specific language.
 
-    This endpoint creates a translation job and queues it for processing.
+    This endpoint creates a translation job and runs it in the background.
     If a job is already running for this company/language, returns the existing job.
 
-    Requires organization.read role for access.
+    Translation runs via FastAPI BackgroundTasks (not Celery) for simplicity.
+    Typical translation time is 2-3 seconds for ~15 fields.
+
+    Requires organization.read role and translation feature enabled.
 
     Args:
         company_id: Company ID to translate
         request: Translation request with target language
+        background_tasks: FastAPI background tasks handler
 
     Returns:
         Translation job details.
@@ -257,18 +278,13 @@ async def request_translation(
     db.commit()
     db.refresh(job)
 
-    # Queue translation task via Celery
-    from app.workers.translation_tasks import translate_company_fields
-
-    task = translate_company_fields.delay(
+    # Run translation in background (non-blocking)
+    background_tasks.add_task(
+        run_translation_background,
+        job_id=job.id,
         company_id=company_id,
         language_code=request.language_code,
-        job_id=job.id,
     )
-
-    # Update job with celery task ID
-    job.celery_task_id = task.id
-    db.commit()
 
     logger.info(
         f"Translation job created for company {company_id} to {request.language_code}",
@@ -277,7 +293,6 @@ async def request_translation(
             "language_code": request.language_code,
             "fields_count": len(fields_to_translate),
             "job_id": job.id,
-            "celery_task_id": task.id,
             "username": org_context.username,
         },
     )
