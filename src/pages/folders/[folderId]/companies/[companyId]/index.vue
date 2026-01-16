@@ -43,6 +43,7 @@
         ></div>
       </div>
     </Card>
+
     <!-- Company Info Card - Full Width -->
     <div class="space-y-4 xl:space-y-0 xl:flex gap-4">
       <Card class="flex-1 relative">

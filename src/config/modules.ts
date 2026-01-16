@@ -13,6 +13,7 @@ export interface ModuleDisplayConfig {
 }
 
 // Module display configuration using Vuellar Tag colors
+// Note: 'translation' is now a feature flag, not a module (see feature-flags config)
 export const MODULE_CONFIG: Record<ModuleName, Omit<ModuleDisplayConfig, 'status' | 'name'>> = {
   screen: {
     labelKey: 'common.modules.screen',
@@ -28,11 +29,6 @@ export const MODULE_CONFIG: Record<ModuleName, Omit<ModuleDisplayConfig, 'status
     labelKey: 'common.modules.explore',
     icon: 'fa-solid fa-project-diagram',
     color: 'almond',
-  },
-  translation: {
-    labelKey: 'common.modules.translation',
-    icon: 'fa-solid fa-language',
-    color: 'cyan',
   },
 }
 
