@@ -91,14 +91,14 @@ interface Props {
 
 const props = defineProps<Props>()
 
-/** Color palette matching the existing chart design system */
+/** Color palette using pink accent as primary from design system */
 const colors = [
-  'rgb(99, 102, 241)', // indigo (primary)
+  'rgb(184, 150, 187)', // rose-500 (pink accent - primary)
+  'rgb(239, 201, 243)', // rose-200 (lighter pink)
+  'rgb(146, 110, 155)', // rose-700 (darker pink)
   'rgb(16, 185, 129)', // emerald
   'rgb(245, 158, 11)', // amber
-  'rgb(239, 68, 68)', // red
   'rgb(20, 184, 166)', // teal
-  'rgb(168, 85, 247)', // purple
   'rgb(59, 130, 246)', // blue
   'rgb(34, 197, 94)', // green
   'rgb(156, 163, 175)', // gray (for "Other")
@@ -230,7 +230,7 @@ const chartOptions = computed(() => ({
       backgroundColor: 'rgba(0, 0, 0, 0.8)',
       titleColor: '#fff',
       bodyColor: '#fff',
-      borderColor: 'rgba(99, 102, 241, 0.5)',
+      borderColor: 'rgba(184, 150, 187, 0.5)',
       borderWidth: 1,
       padding: 12,
       callbacks: {
