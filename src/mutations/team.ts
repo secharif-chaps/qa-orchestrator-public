@@ -84,12 +84,12 @@ export const useUpdateMemberPermissions = defineMutation(() => {
  * Mutation to reset team member password
  */
 export const useResetMemberPassword = defineMutation(() => {
-  const { mutate, ...mutation } = useMutation({
+  const { mutateAsync, ...mutation } = useMutation({
     mutation: (userId: string) => resetMemberPassword(userId),
   })
 
   return {
     ...mutation,
-    resetPassword: mutate,
+    resetPassword: mutateAsync,
   }
 })
