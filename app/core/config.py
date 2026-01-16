@@ -47,6 +47,10 @@ class Settings(BaseSettings):
     # Tasks running longer than this are considered stale and will be marked as ERROR
     TASK_TIMEOUT_MINUTES: int = 5
 
+    # SYSTRAN Translation API settings
+    SYSTRAN_API_KEY: Optional[str] = None
+    SYSTRAN_API_URL: str = "https://api-translate.systran.net"
+
     model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 

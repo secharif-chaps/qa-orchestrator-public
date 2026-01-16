@@ -110,10 +110,8 @@ class CompanyOnlineService(Base):
         company_id: Foreign key to companies table
         name: Service name
         name_source: Source URL for service name
-        name_value_fr: French translation placeholder
         description: Service description
         description_source: Source URL for description
-        description_value_fr: French translation placeholder
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
@@ -130,12 +128,10 @@ class CompanyOnlineService(Base):
     # Name (translatable)
     name = Column(Text, nullable=True)
     name_source = Column(Text, nullable=True)
-    name_value_fr = Column(Text, nullable=True)
 
     # Description (translatable)
     description = Column(Text, nullable=True)
     description_source = Column(Text, nullable=True)
-    description_value_fr = Column(Text, nullable=True)
 
     # Timestamp
     created_at = Column(
@@ -206,18 +202,14 @@ class CompanyTimelineEvent(Base):
         date_source: Source URL for date
         title: Event title
         title_source: Source URL for title
-        title_value_fr: French translation placeholder
         description: Event description
         description_source: Source URL for description
-        description_value_fr: French translation placeholder
         category: Event category (e.g., Foundation, Acquisition)
         category_source: Source URL for category
-        category_value_fr: French translation placeholder
         location: Event location
         location_source: Source URL for location
         impact: Event impact description
         impact_source: Source URL for impact
-        impact_value_fr: French translation placeholder
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
@@ -238,17 +230,14 @@ class CompanyTimelineEvent(Base):
     # Title (translatable)
     title = Column(Text, nullable=True)
     title_source = Column(Text, nullable=True)
-    title_value_fr = Column(Text, nullable=True)
 
     # Description (translatable)
     description = Column(Text, nullable=True)
     description_source = Column(Text, nullable=True)
-    description_value_fr = Column(Text, nullable=True)
 
     # Category (translatable)
     category = Column(Text, nullable=True)
     category_source = Column(Text, nullable=True)
-    category_value_fr = Column(Text, nullable=True)
 
     # Location (not translatable - proper noun/place)
     location = Column(Text, nullable=True)
@@ -257,7 +246,6 @@ class CompanyTimelineEvent(Base):
     # Impact (translatable)
     impact = Column(Text, nullable=True)
     impact_source = Column(Text, nullable=True)
-    impact_value_fr = Column(Text, nullable=True)
 
     # Timestamp
     created_at = Column(
@@ -283,7 +271,6 @@ class CompanyProductItem(Base):
         type: Product item type (range, partner_brand, private_label)
         value: Product name or description
         value_source: Source URL for product info
-        value_value_fr: French translation (only for 'range' type)
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
@@ -310,7 +297,6 @@ class CompanyProductItem(Base):
     # Value with source (translation only for 'range' type)
     value = Column(Text, nullable=True)
     value_source = Column(Text, nullable=True)
-    value_value_fr = Column(Text, nullable=True)
 
     # Timestamp
     created_at = Column(
@@ -333,9 +319,7 @@ class CompanyProductCategory(Base):
         id: Primary key
         company_id: Foreign key to companies table
         category_name: Category name
-        category_name_value_fr: French translation placeholder
         items: Array of product item names
-        items_value_fr: French translations for items array
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
@@ -351,11 +335,9 @@ class CompanyProductCategory(Base):
 
     # Category name (translatable)
     category_name = Column(Text, nullable=True)
-    category_name_value_fr = Column(Text, nullable=True)
 
     # Items array (translatable)
     items = Column(ARRAY(Text), nullable=True)
-    items_value_fr = Column(ARRAY(Text), nullable=True)
 
     # Timestamp
     created_at = Column(
@@ -379,18 +361,14 @@ class CompanyJobOffer(Base):
         company_id: Foreign key to companies table
         title: Job title
         title_source: Source URL for job posting
-        title_value_fr: French translation placeholder
         location: Job location
         location_source: Source URL for location
         department: Department name
         department_source: Source URL for department
-        department_value_fr: French translation placeholder
         description: Job description
         description_source: Source URL for description
-        description_value_fr: French translation placeholder
         requirements: Job requirements
         requirements_source: Source URL for requirements
-        requirements_value_fr: French translation placeholder
         posted_date: Date job was posted
         posted_date_source: Source URL for posting date
         created_at: Record creation timestamp
@@ -409,7 +387,6 @@ class CompanyJobOffer(Base):
     # Title (translatable)
     title = Column(Text, nullable=True)
     title_source = Column(Text, nullable=True)
-    title_value_fr = Column(Text, nullable=True)
 
     # Location (not translatable - place name)
     location = Column(Text, nullable=True)
@@ -418,17 +395,14 @@ class CompanyJobOffer(Base):
     # Department (translatable)
     department = Column(Text, nullable=True)
     department_source = Column(Text, nullable=True)
-    department_value_fr = Column(Text, nullable=True)
 
     # Description (translatable)
     description = Column(Text, nullable=True)
     description_source = Column(Text, nullable=True)
-    description_value_fr = Column(Text, nullable=True)
 
     # Requirements (translatable)
     requirements = Column(Text, nullable=True)
     requirements_source = Column(Text, nullable=True)
-    requirements_value_fr = Column(Text, nullable=True)
 
     # Posted date (not translatable - date)
     posted_date = Column(Text, nullable=True)
@@ -457,7 +431,6 @@ class CompanyCsrInitiative(Base):
         type: Initiative type (from CsrInitiativeType enum)
         value: Initiative description
         value_source: Source URL for initiative info
-        value_value_fr: French translation placeholder
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
@@ -484,7 +457,6 @@ class CompanyCsrInitiative(Base):
     # Value with source (translatable)
     value = Column(Text, nullable=True)
     value_source = Column(Text, nullable=True)
-    value_value_fr = Column(Text, nullable=True)
 
     # Timestamp
     created_at = Column(
@@ -509,7 +481,6 @@ class CompanyPressItem(Base):
         type: Press item type (from PressItemType enum)
         value: Press item description or headline
         value_source: Source URL for press item
-        value_value_fr: French translation placeholder
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
@@ -536,7 +507,6 @@ class CompanyPressItem(Base):
     # Value with source (translatable)
     value = Column(Text, nullable=True)
     value_source = Column(Text, nullable=True)
-    value_value_fr = Column(Text, nullable=True)
 
     # Timestamp
     created_at = Column(
@@ -562,7 +532,6 @@ class CompanyTeamMember(Base):
         parent_id: Self-referential FK for hierarchy (NULL for CEO)
         position: Job title/position
         position_source: Source URL for position info
-        position_value_fr: French translation placeholder
         first_name: First name
         first_name_source: Source URL for first name
         last_name: Last name
@@ -596,7 +565,6 @@ class CompanyTeamMember(Base):
     # Position (translatable)
     position = Column(Text, nullable=True)
     position_source = Column(Text, nullable=True)
-    position_value_fr = Column(Text, nullable=True)
 
     # First name (proper noun - not translatable)
     first_name = Column(Text, nullable=True)

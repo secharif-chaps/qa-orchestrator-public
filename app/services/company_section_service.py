@@ -1525,3 +1525,205 @@ def read_all_section_data(db: Session, company_id: int) -> dict[str, Any]:
         "press": get_press_data(db, company_id),
         "team": get_team_data(db, company_id),
     }
+
+
+# =============================================================================
+# TRANSLATION APPLICATION
+# =============================================================================
+# Field mapping from table/field to section path in API response
+# Format: (table_name, field_name) -> (section_key, response_field_name, is_value_object)
+
+FIELD_TO_RESPONSE_MAP: dict[tuple[str, str], tuple[str, str, bool]] = {
+    # Profile section - company_id as record_id
+    ("company_profile", "insights"): ("profile", "insights", False),
+    ("company_profile", "business_line"): ("profile", "businessLine", True),
+    ("company_profile", "catchphrase"): ("profile", "catchphrase", True),
+    # Digital section - company_id as record_id
+    ("company_digital", "insights"): ("digital", "insights", False),
+    ("company_digital", "overall_strategy"): ("digital", "overallStrategy", True),
+    ("company_digital", "digital_transformation"): ("digital", "digitalTransformation", True),
+    ("company_digital", "ecommerce_capabilities"): ("digital", "ecommerceCapabilities", True),
+    ("company_digital", "mobile_strategy"): ("digital", "mobileStrategy", True),
+    ("company_digital", "digital_marketing_approach"): ("digital", "digitalMarketingApproach", True),
+    ("company_digital", "loyalty_program"): ("digital", "loyaltyProgram", True),
+    # Timeline section - company_id as record_id
+    ("company_timeline", "insights"): ("timeline", "insights", False),
+    # Products section - company_id as record_id
+    ("company_products", "insights"): ("products", "insights", False),
+    ("company_products", "customer_type"): ("products", "customerType", True),
+    ("company_products", "marketing_positioning"): ("products", "marketingPositioning", True),
+    # Jobs section insights - handled specially in apply_translations_to_section_data
+    # because they are nested inside jobs.insights.{field}.value
+    # CSR section - company_id as record_id
+    ("company_csr", "insights"): ("csr", "insights", False),
+    ("company_csr", "responsibility"): ("csr", "responsibility", True),
+    # Press section - company_id as record_id
+    ("company_press", "insights"): ("press", "insights", False),
+}
+
+
+def apply_translations_to_section_data(
+    section_data: dict[str, Any],
+    translations_map: dict[tuple[str, int, str], str],
+    company_id: int,
+) -> dict[str, Any]:
+    """Apply translations to section data.
+
+    Modifies section_data in place by replacing field values with translations
+    where available.
+
+    Args:
+        section_data: Section data dictionary from read_all_section_data
+        translations_map: Translation lookup map from TranslationService.get_translations_map
+        company_id: Company ID (used as record_id for 1:1 tables)
+
+    Returns:
+        Modified section_data with translations applied
+    """
+    if not translations_map:
+        return section_data
+
+    # Apply translations for 1:1 section tables
+    for (table_name, field_name), (section_key, response_field, is_value_obj) in FIELD_TO_RESPONSE_MAP.items():
+        key = (table_name, company_id, field_name)
+        if key not in translations_map:
+            continue
+
+        translated_value = translations_map[key]
+        section = section_data.get(section_key, {})
+
+        if not section:
+            continue
+
+        if is_value_obj:
+            # Field is a value object like {"value": "...", "source": "..."}
+            if response_field in section and isinstance(section[response_field], dict):
+                section[response_field]["value"] = translated_value
+        else:
+            # Field is a simple string
+            if response_field in section:
+                section[response_field] = translated_value
+
+    # Apply translations for 1:N child records
+    # Timeline events
+    if "timeline" in section_data and "events" in section_data["timeline"]:
+        events = section_data["timeline"]["events"]
+        if isinstance(events, list):
+            for event in events:
+                if isinstance(event, dict):
+                    event_id = event.get("id")
+                    if event_id:
+                        for field in ["title", "description", "category", "impact"]:
+                            key = ("company_timeline_events", event_id, field)
+                            if key in translations_map:
+                                event[field] = translations_map[key]
+
+    # Online services (in digital section)
+    # Structure: digital.onlineServices.value.services = [...]
+    if "digital" in section_data and "onlineServices" in section_data["digital"]:
+        online_services_obj = section_data["digital"]["onlineServices"]
+        if isinstance(online_services_obj, dict) and "value" in online_services_obj:
+            services_value = online_services_obj["value"]
+            if isinstance(services_value, dict) and "services" in services_value:
+                for service in services_value["services"]:
+                    if isinstance(service, dict):
+                        service_id = service.get("id")
+                        if service_id:
+                            for field in ["name", "description"]:
+                                key = ("company_online_services", service_id, field)
+                                if key in translations_map:
+                                    service[field] = translations_map[key]
+
+    # Job offers
+    if "jobs" in section_data and "offers" in section_data["jobs"]:
+        offers = section_data["jobs"]["offers"]
+        if isinstance(offers, list):
+            for offer in offers:
+                if isinstance(offer, dict):
+                    offer_id = offer.get("id")
+                    if offer_id:
+                        for field in ["title", "department", "description", "requirements"]:
+                            key = ("company_job_offers", offer_id, field)
+                            if key in translations_map:
+                                offer[field] = translations_map[key]
+
+    # Jobs insights (nested inside jobs.insights.{field}.value)
+    if "jobs" in section_data and "insights" in section_data["jobs"]:
+        jobs_insights = section_data["jobs"]["insights"]
+        if isinstance(jobs_insights, dict):
+            # Map database field names to JSON field names
+            insights_field_map = {
+                "insights_top_departments": "top_departments",
+                "insights_hiring_focus": "hiring_focus",
+                "insights_growth_indicators": "growth_indicators",
+            }
+            for db_field, json_field in insights_field_map.items():
+                key = ("company_jobs", company_id, db_field)
+                if key in translations_map and json_field in jobs_insights:
+                    insight_obj = jobs_insights[json_field]
+                    if isinstance(insight_obj, dict) and "value" in insight_obj:
+                        insight_obj["value"] = translations_map[key]
+
+    # Team members
+    # Note: Team members structure doesn't currently include 'id' field
+    # Translation for team members requires updating get_team_data to include id
+    if "team" in section_data:
+        for member in section_data.get("team", []):
+            if isinstance(member, dict):
+                member_id = member.get("id")
+                if member_id:
+                    key = ("company_team_members", member_id, "position")
+                    if key in translations_map:
+                        member["position"] = translations_map[key]
+
+    # Product categories
+    # Note: categories is currently {category_name: items_list} dict, not a list
+    # Translation for categories requires updating the data structure
+    if "products" in section_data and "categories" in section_data["products"]:
+        categories = section_data["products"]["categories"]
+        if isinstance(categories, list):
+            for category in categories:
+                if isinstance(category, dict):
+                    category_id = category.get("id")
+                    if category_id:
+                        key = ("company_product_categories", category_id, "category_name")
+                        if key in translations_map:
+                            category["categoryName"] = translations_map[key]
+
+    # CSR initiatives
+    # Note: CSR structure uses keys like 'responsibility_initiatives', 'charity_actions', etc.
+    # not 'environmental', 'social', 'governance'
+    if "csr" in section_data:
+        csr_keys = [
+            "responsibility_initiatives", "charity_actions", "sustainability_programs",
+            "community_involvement", "diversity_inclusion", "ethical_practices", "awards_certifications"
+        ]
+        for init_type in csr_keys:
+            if init_type in section_data["csr"]:
+                items = section_data["csr"][init_type]
+                if isinstance(items, list):
+                    for item in items:
+                        if isinstance(item, dict):
+                            item_id = item.get("id")
+                            if item_id:
+                                key = ("company_csr_initiatives", item_id, "value")
+                                if key in translations_map:
+                                    item["value"] = translations_map[key]
+
+    # Press items
+    # Note: Press structure uses keys like 'mentions', 'achievements', etc.
+    if "press" in section_data:
+        press_keys = ["mentions", "achievements", "partnerships", "innovations", "financial_news"]
+        for press_type in press_keys:
+            if press_type in section_data["press"]:
+                items = section_data["press"][press_type]
+                if isinstance(items, list):
+                    for item in items:
+                        if isinstance(item, dict):
+                            item_id = item.get("id")
+                            if item_id:
+                                key = ("company_press_items", item_id, "value")
+                                if key in translations_map:
+                                    item["value"] = translations_map[key]
+
+    return section_data

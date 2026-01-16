@@ -2,7 +2,7 @@
 
 This module defines 1:1 section models for normalized company data storage.
 Each section model represents a specific aspect of company information
-with SourcedValue pattern support (value, source, value_fr columns).
+with SourcedValue pattern support (value, source columns).
 
 Models:
 - CompanyProfile: General company profile information
@@ -34,15 +34,12 @@ class CompanyProfile(Base):
         company_id: Primary key and foreign key to companies table
         insights: AI-generated summary of company profile
         insights_source: Source of insights (typically "Chaps-e")
-        insights_value_fr: French translation placeholder
         group_name: Parent group or holding company name
         group_name_source: Source URL for group name
         business_line: Main business activity description
         business_line_source: Source URL for business line
-        business_line_value_fr: French translation placeholder
         catchphrase: Company slogan or tagline
         catchphrase_source: Source URL for catchphrase
-        catchphrase_value_fr: French translation placeholder
         establishment_year: Year company was founded
         establishment_year_source: Source URL for establishment year
         employee_count: Number of employees
@@ -69,7 +66,6 @@ class CompanyProfile(Base):
     # Insights (translatable)
     insights = Column(Text, nullable=True)
     insights_source = Column(Text, nullable=True)
-    insights_value_fr = Column(Text, nullable=True)
 
     # Group name (proper noun - no translation)
     group_name = Column(Text, nullable=True)
@@ -78,12 +74,10 @@ class CompanyProfile(Base):
     # Business line (translatable)
     business_line = Column(Text, nullable=True)
     business_line_source = Column(Text, nullable=True)
-    business_line_value_fr = Column(Text, nullable=True)
 
     # Catchphrase (translatable)
     catchphrase = Column(Text, nullable=True)
     catchphrase_source = Column(Text, nullable=True)
-    catchphrase_value_fr = Column(Text, nullable=True)
 
     # Establishment year (number - no translation)
     establishment_year = Column(Text, nullable=True)
@@ -133,25 +127,18 @@ class CompanyDigital(Base):
         company_id: Primary key and foreign key to companies table
         insights: AI-generated digital strategy summary
         insights_source: Source of insights
-        insights_value_fr: French translation placeholder
         overall_strategy: Overall digital strategy description
         overall_strategy_source: Source URL
-        overall_strategy_value_fr: French translation placeholder
         digital_transformation: Digital transformation initiatives
         digital_transformation_source: Source URL
-        digital_transformation_value_fr: French translation placeholder
         ecommerce_capabilities: E-commerce platform capabilities
         ecommerce_capabilities_source: Source URL
-        ecommerce_capabilities_value_fr: French translation placeholder
         mobile_strategy: Mobile app and presence strategy
         mobile_strategy_source: Source URL
-        mobile_strategy_value_fr: French translation placeholder
         digital_marketing_approach: Digital marketing approach
         digital_marketing_approach_source: Source URL
-        digital_marketing_approach_value_fr: French translation placeholder
         loyalty_program: Loyalty program description
         loyalty_program_source: Source URL
-        loyalty_program_value_fr: French translation placeholder
         created_at: Record creation timestamp
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
@@ -167,37 +154,30 @@ class CompanyDigital(Base):
     # Insights (translatable)
     insights = Column(Text, nullable=True)
     insights_source = Column(Text, nullable=True)
-    insights_value_fr = Column(Text, nullable=True)
 
     # Overall strategy (translatable)
     overall_strategy = Column(Text, nullable=True)
     overall_strategy_source = Column(Text, nullable=True)
-    overall_strategy_value_fr = Column(Text, nullable=True)
 
     # Digital transformation (translatable)
     digital_transformation = Column(Text, nullable=True)
     digital_transformation_source = Column(Text, nullable=True)
-    digital_transformation_value_fr = Column(Text, nullable=True)
 
     # E-commerce capabilities (translatable)
     ecommerce_capabilities = Column(Text, nullable=True)
     ecommerce_capabilities_source = Column(Text, nullable=True)
-    ecommerce_capabilities_value_fr = Column(Text, nullable=True)
 
     # Mobile strategy (translatable)
     mobile_strategy = Column(Text, nullable=True)
     mobile_strategy_source = Column(Text, nullable=True)
-    mobile_strategy_value_fr = Column(Text, nullable=True)
 
     # Digital marketing approach (translatable)
     digital_marketing_approach = Column(Text, nullable=True)
     digital_marketing_approach_source = Column(Text, nullable=True)
-    digital_marketing_approach_value_fr = Column(Text, nullable=True)
 
     # Loyalty program (translatable)
     loyalty_program = Column(Text, nullable=True)
     loyalty_program_source = Column(Text, nullable=True)
-    loyalty_program_value_fr = Column(Text, nullable=True)
 
     # Timestamps
     created_at = Column(
@@ -226,7 +206,6 @@ class CompanyTimeline(Base):
         company_id: Primary key and foreign key to companies table
         insights: AI-generated timeline summary
         insights_source: Source of insights
-        insights_value_fr: French translation placeholder
         created_at: Record creation timestamp
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
@@ -242,7 +221,6 @@ class CompanyTimeline(Base):
     # Insights (translatable)
     insights = Column(Text, nullable=True)
     insights_source = Column(Text, nullable=True)
-    insights_value_fr = Column(Text, nullable=True)
 
     # Timestamps
     created_at = Column(
@@ -272,13 +250,10 @@ class CompanyProducts(Base):
         company_id: Primary key and foreign key to companies table
         insights: AI-generated products summary
         insights_source: Source of insights
-        insights_value_fr: French translation placeholder
         customer_type: Target customer description
         customer_type_source: Source URL
-        customer_type_value_fr: French translation placeholder
         marketing_positioning: Market positioning strategy
         marketing_positioning_source: Source URL
-        marketing_positioning_value_fr: French translation placeholder
         created_at: Record creation timestamp
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
@@ -294,17 +269,14 @@ class CompanyProducts(Base):
     # Insights (translatable)
     insights = Column(Text, nullable=True)
     insights_source = Column(Text, nullable=True)
-    insights_value_fr = Column(Text, nullable=True)
 
     # Customer type (translatable)
     customer_type = Column(Text, nullable=True)
     customer_type_source = Column(Text, nullable=True)
-    customer_type_value_fr = Column(Text, nullable=True)
 
     # Marketing positioning (translatable)
     marketing_positioning = Column(Text, nullable=True)
     marketing_positioning_source = Column(Text, nullable=True)
-    marketing_positioning_value_fr = Column(Text, nullable=True)
 
     # Timestamps
     created_at = Column(
@@ -336,13 +308,10 @@ class CompanyJobs(Base):
         insights_total_openings_source: Source URL
         insights_top_departments: Most active hiring departments
         insights_top_departments_source: Source URL
-        insights_top_departments_value_fr: French translation placeholder
         insights_hiring_focus: Current hiring priorities
         insights_hiring_focus_source: Source URL
-        insights_hiring_focus_value_fr: French translation placeholder
         insights_growth_indicators: Hiring growth indicators
         insights_growth_indicators_source: Source URL
-        insights_growth_indicators_value_fr: French translation placeholder
         created_at: Record creation timestamp
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
@@ -362,17 +331,14 @@ class CompanyJobs(Base):
     # Top departments (translatable)
     insights_top_departments = Column(Text, nullable=True)
     insights_top_departments_source = Column(Text, nullable=True)
-    insights_top_departments_value_fr = Column(Text, nullable=True)
 
     # Hiring focus (translatable)
     insights_hiring_focus = Column(Text, nullable=True)
     insights_hiring_focus_source = Column(Text, nullable=True)
-    insights_hiring_focus_value_fr = Column(Text, nullable=True)
 
     # Growth indicators (translatable)
     insights_growth_indicators = Column(Text, nullable=True)
     insights_growth_indicators_source = Column(Text, nullable=True)
-    insights_growth_indicators_value_fr = Column(Text, nullable=True)
 
     # Timestamps
     created_at = Column(
@@ -401,10 +367,8 @@ class CompanyCsr(Base):
         company_id: Primary key and foreign key to companies table
         insights: AI-generated CSR summary
         insights_source: Source of insights
-        insights_value_fr: French translation placeholder
         responsibility: General responsibility statement
         responsibility_source: Source URL
-        responsibility_value_fr: French translation placeholder
         created_at: Record creation timestamp
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
@@ -420,12 +384,10 @@ class CompanyCsr(Base):
     # Insights (translatable)
     insights = Column(Text, nullable=True)
     insights_source = Column(Text, nullable=True)
-    insights_value_fr = Column(Text, nullable=True)
 
     # Responsibility (translatable)
     responsibility = Column(Text, nullable=True)
     responsibility_source = Column(Text, nullable=True)
-    responsibility_value_fr = Column(Text, nullable=True)
 
     # Timestamps
     created_at = Column(
@@ -454,7 +416,6 @@ class CompanyPress(Base):
         company_id: Primary key and foreign key to companies table
         insights: AI-generated press summary
         insights_source: Source of insights
-        insights_value_fr: French translation placeholder
         created_at: Record creation timestamp
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
@@ -470,7 +431,6 @@ class CompanyPress(Base):
     # Insights (translatable)
     insights = Column(Text, nullable=True)
     insights_source = Column(Text, nullable=True)
-    insights_value_fr = Column(Text, nullable=True)
 
     # Timestamps
     created_at = Column(

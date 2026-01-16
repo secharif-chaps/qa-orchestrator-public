@@ -29,12 +29,13 @@ from app.database import Base
 class ModuleName(str, Enum):
     """Available modules for feature gating.
 
-    Valid modules are: screen, target, explore.
+    Valid modules are: screen, target, explore, translation.
     Note: 'stream' module has been removed from the system.
     """
     SCREEN = "screen"
     TARGET = "target"
     EXPLORE = "explore"
+    TRANSLATION = "translation"
 
 
 class TransactionType(str, Enum):

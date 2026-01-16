@@ -13,11 +13,13 @@ RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq:5672//")
 MAX_CONCURRENT_WORKFLOWS = int(os.getenv("MAX_CONCURRENT_WORKFLOWS", "10"))
 
 # Create Celery app
+# Note: Translation tasks removed - now using FastAPI BackgroundTasks
+# See docs/architecture/adr-001-translation-background-tasks.md
 celery_app = Celery(
     "mint_tasks",
     broker=RABBITMQ_URL,
     backend='rpc://',  # RabbitMQ as result backend
-    include=['app.workers.dify_tasks']
+    include=['app.workers.dify_tasks', 'app.workers.translation_tasks']
 )
 
 # Configure Celery
@@ -40,11 +42,15 @@ celery_app.conf.update(
     },
     
     # Define queues
+    # Note: translations queue removed - now using FastAPI BackgroundTasks
     task_default_queue='dify_workflows',
     task_queues=(
-        Queue('dify_workflows', 
+        Queue('dify_workflows',
               routing_key='workflow.#',
               queue_arguments={'x-max-priority': 10}),
+        Queue('translations',
+              routing_key='translation.#',
+              queue_arguments={'x-max-priority': 5}),
     ),
     
     # Task time limits
