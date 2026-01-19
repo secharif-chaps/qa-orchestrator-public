@@ -1945,9 +1945,10 @@ export default {
     },
     period: {
       select: 'Period',
-      '7d': 'Last 7 days',
-      '30d': 'Last 30 days',
-      '90d': 'Last 90 days',
+      '7d': '7 days',
+      '30d': '30 days',
+      '90d': '90 days',
+      all: 'All time',
       custom: 'Custom',
       startDate: 'Start',
       endDate: 'End',

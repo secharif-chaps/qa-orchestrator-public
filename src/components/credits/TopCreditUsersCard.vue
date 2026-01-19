@@ -11,11 +11,7 @@
         <CreditModuleFilter v-model="selectedModule" />
 
         <!-- Period filter -->
-        <CreditDateFilter
-          v-model:period="selectedPeriod"
-          v-model:start-date="startDate"
-          v-model:end-date="endDate"
-        />
+        <CreditDateFilter v-model:period="selectedPeriod" />
 
         <!-- Search -->
         <Searchbar
@@ -81,8 +77,6 @@ defineEmits<{
 
 const selectedModule = defineModel<string>('module', { default: 'all' })
 const selectedPeriod = defineModel<string>('period', { default: '30d' })
-const startDate = defineModel<string>('startDate', { default: '' })
-const endDate = defineModel<string>('endDate', { default: '' })
 const searchQuery = defineModel<string>('search', { default: '' })
 const currentPage = defineModel<number>('page', { default: 1 })
 </script>

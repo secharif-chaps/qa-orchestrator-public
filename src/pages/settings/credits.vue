@@ -9,14 +9,12 @@
     <!-- Loading state for balance -->
     <div
       v-else-if="statsLoading"
-      class="bg-success-light rounded-lg p-6 border border-success-stroke animate-pulse"
+      class="bg-accent-light rounded-full py-4 px-8 animate-pulse"
     >
-      <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-lg bg-success/20"></div>
-        <div class="flex-1">
-          <div class="h-4 bg-success/20 rounded w-24 mb-2"></div>
-          <div class="h-8 bg-success/20 rounded w-40"></div>
-        </div>
+      <div class="flex items-center justify-center gap-2">
+        <div class="h-5 bg-accent/20 rounded w-24"></div>
+        <div class="h-5 bg-accent/20 rounded w-16"></div>
+        <div class="h-5 bg-accent/20 rounded w-14"></div>
       </div>
     </div>
 
@@ -39,8 +37,6 @@
     <TopCreditUsersCard
       v-model:module="topUsersModule"
       v-model:period="topUsersPeriod"
-      v-model:start-date="topUsersStartDate"
-      v-model:end-date="topUsersEndDate"
       v-model:search="topUsersSearch"
       v-model:page="topUsersPage"
       :users="topUsersData?.items || []"
@@ -53,8 +49,6 @@
     <DailyCreditUsageCard
       v-model:module="dailyUsageModule"
       v-model:period="dailyUsagePeriod"
-      v-model:start-date="dailyUsageStartDate"
-      v-model:end-date="dailyUsageEndDate"
       :daily-usage="dailyUsageData?.dailyUsage || []"
       :loading="dailyUsageLoading"
     />
@@ -113,22 +107,18 @@ const { data: creditStats, isLoading: statsLoading } = useQuery(() => ({
 
 const topUsersModule = ref('all')
 const topUsersPeriod = ref('30d')
-const topUsersStartDate = ref('')
-const topUsersEndDate = ref('')
 const topUsersSearch = ref('')
 const topUsersPage = ref(1)
 const topUsersSize = ref(10)
 
 // Reset page when filters change
-watch([topUsersModule, topUsersPeriod, topUsersStartDate, topUsersEndDate, topUsersSearch], () => {
+watch([topUsersModule, topUsersPeriod, topUsersSearch], () => {
   topUsersPage.value = 1
 })
 
 const topUsersFilters = computed(() => ({
   module: topUsersModule.value,
   period: topUsersPeriod.value,
-  startDate: topUsersStartDate.value || undefined,
-  endDate: topUsersEndDate.value || undefined,
   search: topUsersSearch.value || undefined,
   page: topUsersPage.value,
   size: topUsersSize.value,
@@ -164,14 +154,10 @@ const topUsersPaginationMeta = computed<PaginationMeta | null>(() => {
 
 const dailyUsageModule = ref('all')
 const dailyUsagePeriod = ref('30d')
-const dailyUsageStartDate = ref('')
-const dailyUsageEndDate = ref('')
 
 const dailyUsageFilters = computed(() => ({
   module: dailyUsageModule.value,
   period: dailyUsagePeriod.value,
-  startDate: dailyUsageStartDate.value || undefined,
-  endDate: dailyUsageEndDate.value || undefined,
 }))
 
 const { data: dailyUsageData, isLoading: dailyUsageLoading } = useQuery(() => ({

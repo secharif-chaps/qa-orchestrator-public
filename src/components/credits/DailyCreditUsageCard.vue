@@ -11,11 +11,7 @@
         <CreditModuleFilter v-model="selectedModule" />
 
         <!-- Period filter -->
-        <CreditDateFilter
-          v-model:period="selectedPeriod"
-          v-model:start-date="startDate"
-          v-model:end-date="endDate"
-        />
+        <CreditDateFilter v-model:period="selectedPeriod" />
       </div>
     </div>
 
@@ -64,8 +60,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const selectedModule = defineModel<string>('module', { default: 'all' })
 const selectedPeriod = defineModel<string>('period', { default: '30d' })
-const startDate = defineModel<string>('startDate', { default: '' })
-const endDate = defineModel<string>('endDate', { default: '' })
 
 const hasData = computed(() => {
   return props.dailyUsage.some(item => item.creditsConsumed > 0)

@@ -2003,9 +2003,10 @@ export default {
     },
     period: {
       select: 'Période',
-      '7d': '7 derniers jours',
-      '30d': '30 derniers jours',
-      '90d': '90 derniers jours',
+      '7d': '7 jours',
+      '30d': '30 jours',
+      '90d': '90 jours',
+      all: 'Tout',
       custom: 'Personnalisé',
       startDate: 'Début',
       endDate: 'Fin',
