@@ -1226,11 +1226,11 @@ export default {
     refresh: {
       button: 'Actualiser',
       title: 'Actualiser les données de l\'entreprise',
-      subtitle: 'Relancer toutes les tâches de collecte de données',
+      subtitle: 'Obtenir les dernières informations sur {name}',
       warning: {
         message: 'Les données actuelles seront remplacées lors de l\'arrivée des nouvelles données',
       },
-      consumptionNotice: '35 jetons seront consommés pour cette opération',
+      consumptionNotice: '35 jetons seront consommés',
       tokens: {
         title: 'Informations sur les jetons',
         current: 'Jetons actuels',

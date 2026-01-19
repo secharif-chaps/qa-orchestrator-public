@@ -1175,11 +1175,11 @@ export default {
     refresh: {
       button: 'Refresh',
       title: 'Refresh Company Data',
-      subtitle: 'Re-run all data collection tasks',
+      subtitle: 'Get the latest information about {name}',
       warning: {
         message: 'Current data will be overwritten when new data arrives',
       },
-      consumptionNotice: '35 tokens will be consumed for this operation',
+      consumptionNotice: '35 tokens will be consumed',
       tokens: {
         title: 'Token Information',
         current: 'Current tokens',

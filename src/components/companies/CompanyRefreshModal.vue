@@ -3,69 +3,33 @@
     v-model:display-modal="showRefreshModal"
     :title="t('company.refresh.title')"
     icon="fa fa-refresh"
-    size="lg"
+    size="md"
     color=""
   >
     <template #description>
       <div class="flex flex-col gap-4">
         <p class="text-secondary">
-          {{ t('company.refresh.subtitle') }}
+          {{ t('company.refresh.subtitle', { name: company?.name ?? '' }) }}
         </p>
 
         <p class="text-sm text-secondary">
           {{ t('company.refresh.warning.message') }}
         </p>
 
-        <!-- Token Consumption Notice -->
+        <!-- Token Consumption Notice with remaining tokens badge -->
         <div class="bg-warning-light text-warning-light-content border border-warning-stroke rounded-lg p-4">
-          <div class="flex items-center gap-3">
-            <i class="fa fa-warning text-xl"></i>
-            <div class="flex flex-col gap-1">
-              <div class="font-bold text-base">{{ t('company.refresh.consumptionNotice') }}</div>
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <i class="fa fa-warning text-xl"></i>
+              <div class="font-medium">{{ t('company.refresh.consumptionNotice') }}</div>
             </div>
-          </div>
-        </div>
-
-        <!-- Token Information -->
-        <div class="bg-base-200 rounded-lg p-4">
-          <div class="flex flex-col gap-3">
-            <h4 class="font-medium text-base">
-              {{ t('company.refresh.tokens.title') }}
-            </h4>
-
-            <div class="flex flex-col gap-2 text-sm">
-              <div class="flex justify-between">
-                <span class="text-secondary">{{ t('company.refresh.tokens.current') }}:</span>
-                <span :class="tokenBalanceColor">{{ tokenBalance }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-secondary">{{ t('company.refresh.tokens.cost') }}:</span>
-                <span class="text-error">35</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-secondary">{{ t('company.refresh.tokens.remaining') }}:</span>
-                <span :class="remainingTokensColor">{{ remainingTokens }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Company Details -->
-        <div v-if="company" class="bg-base-200 rounded-lg p-4">
-          <div class="flex flex-col gap-3">
-            <h4 class="font-medium text-base">
-              {{ t('company.refresh.details') }}
-            </h4>
-            <div class="flex flex-col gap-2 text-sm">
-              <div class="flex justify-between">
-                <span class="text-secondary">{{ t('company.name') }}:</span>
-                <span class="font-medium">{{ company.name }}</span>
-              </div>
-              <div v-if="company.website" class="flex justify-between">
-                <span class="text-secondary">{{ t('company.website') }}:</span>
-                <span class="text-xs">{{ company.website }}</span>
-              </div>
-            </div>
+            <span
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white rounded-full text-sm font-medium"
+              :class="remainingTokensColor"
+            >
+              <i class="fa fa-coins text-xs"></i>
+              {{ remainingTokens }}
+            </span>
           </div>
         </div>
       </div>
@@ -129,13 +93,9 @@ const tokenBalance = computed(() => tokenBalanceData.value?.balance ?? 0)
 const remainingTokens = computed(() => Math.max(0, tokenBalance.value - 35))
 const hasEnoughTokens = computed(() => tokenBalance.value >= 35)
 
-const tokenBalanceColor = computed(() => {
-  if (tokenBalance.value >= 35) return 'text-success'
-  return 'text-error'
-})
-
 const remainingTokensColor = computed(() => {
-  if (remainingTokens.value >= 0) return 'text-success'
+  if (remainingTokens.value > 0) return 'text-success'
+  if (remainingTokens.value === 0) return 'text-warning-light-content'
   return 'text-error'
 })
 
