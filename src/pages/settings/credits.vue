@@ -9,14 +9,12 @@
     <!-- Loading state for balance -->
     <div
       v-else-if="statsLoading"
-      class="bg-success-light rounded-lg p-6 border border-success-stroke animate-pulse"
+      class="bg-accent-light rounded-full py-4 px-8 animate-pulse"
     >
-      <div class="flex items-center gap-4">
-        <div class="w-12 h-12 rounded-lg bg-success/20"></div>
-        <div class="flex-1">
-          <div class="h-4 bg-success/20 rounded w-24 mb-2"></div>
-          <div class="h-8 bg-success/20 rounded w-40"></div>
-        </div>
+      <div class="flex items-center justify-center gap-2">
+        <div class="h-5 bg-accent/20 rounded w-24"></div>
+        <div class="h-5 bg-accent/20 rounded w-16"></div>
+        <div class="h-5 bg-accent/20 rounded w-14"></div>
       </div>
     </div>
 
