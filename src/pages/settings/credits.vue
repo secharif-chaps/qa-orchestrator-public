@@ -39,8 +39,6 @@
     <TopCreditUsersCard
       v-model:module="topUsersModule"
       v-model:period="topUsersPeriod"
-      v-model:start-date="topUsersStartDate"
-      v-model:end-date="topUsersEndDate"
       v-model:search="topUsersSearch"
       v-model:page="topUsersPage"
       :users="topUsersData?.items || []"
@@ -53,8 +51,6 @@
     <DailyCreditUsageCard
       v-model:module="dailyUsageModule"
       v-model:period="dailyUsagePeriod"
-      v-model:start-date="dailyUsageStartDate"
-      v-model:end-date="dailyUsageEndDate"
       :daily-usage="dailyUsageData?.dailyUsage || []"
       :loading="dailyUsageLoading"
     />
@@ -113,22 +109,18 @@ const { data: creditStats, isLoading: statsLoading } = useQuery(() => ({
 
 const topUsersModule = ref('all')
 const topUsersPeriod = ref('30d')
-const topUsersStartDate = ref('')
-const topUsersEndDate = ref('')
 const topUsersSearch = ref('')
 const topUsersPage = ref(1)
 const topUsersSize = ref(10)
 
 // Reset page when filters change
-watch([topUsersModule, topUsersPeriod, topUsersStartDate, topUsersEndDate, topUsersSearch], () => {
+watch([topUsersModule, topUsersPeriod, topUsersSearch], () => {
   topUsersPage.value = 1
 })
 
 const topUsersFilters = computed(() => ({
   module: topUsersModule.value,
   period: topUsersPeriod.value,
-  startDate: topUsersStartDate.value || undefined,
-  endDate: topUsersEndDate.value || undefined,
   search: topUsersSearch.value || undefined,
   page: topUsersPage.value,
   size: topUsersSize.value,
@@ -164,14 +156,10 @@ const topUsersPaginationMeta = computed<PaginationMeta | null>(() => {
 
 const dailyUsageModule = ref('all')
 const dailyUsagePeriod = ref('30d')
-const dailyUsageStartDate = ref('')
-const dailyUsageEndDate = ref('')
 
 const dailyUsageFilters = computed(() => ({
   module: dailyUsageModule.value,
   period: dailyUsagePeriod.value,
-  startDate: dailyUsageStartDate.value || undefined,
-  endDate: dailyUsageEndDate.value || undefined,
 }))
 
 const { data: dailyUsageData, isLoading: dailyUsageLoading } = useQuery(() => ({
