@@ -473,7 +473,12 @@ async def refresh_company(
             company_id, org_context, token_manager
         )
 
-        refreshed_company = service.refresh_company(company_id)
+        try:
+            refreshed_company = service.refresh_company(company_id)
+        except Exception as e:
+            # Refund tokens if refresh operation fails after consumption
+            _refund_tokens_on_failure(company_id, org_context, token_manager)
+            raise
 
         logger.info(
             "Company refresh completed successfully",
@@ -585,7 +590,7 @@ def _ensure_module_and_consume_tokens(
         org_id=org_context.organization_id,
         amount=TOKENS_PER_COMPANY,
         module_name=ModuleName.SCREEN,
-        reference_type=ReferenceType.company,
+        reference_type=ReferenceType.refresh,
         reference_id=company_id,
         user_id=org_context.user_id,
     )
@@ -595,6 +600,35 @@ def _ensure_module_and_consume_tokens(
         extra={
             "company_id": company_id,
             "tokens_consumed": TOKENS_PER_COMPANY,
+            "organization_id": org_context.organization_id,
+        }
+    )
+
+
+def _refund_tokens_on_failure(
+    company_id: int,
+    org_context: OrganizationContext,
+    token_manager: TokenManager
+) -> None:
+    """Refund tokens when refresh operation fails after consumption.
+
+    Uses add_tokens to credit back the consumed tokens with an audit trail.
+
+    Args:
+        company_id: ID of the company being refreshed
+        org_context: User's organization context
+        token_manager: Token management service
+    """
+    token_manager.add_tokens(
+        org_id=org_context.organization_id,
+        amount=TOKENS_PER_COMPANY,
+        user_id=org_context.user_id,
+    )
+    logger.info(
+        "Tokens refunded due to refresh failure",
+        extra={
+            "company_id": company_id,
+            "tokens_refunded": TOKENS_PER_COMPANY,
             "organization_id": org_context.organization_id,
         }
     )
