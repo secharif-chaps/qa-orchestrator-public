@@ -34,15 +34,7 @@
       <!-- Action Buttons -->
       <div class="flex items-center gap-2">
         <CompanyTranslation v-model="selectedLanguage" :company-id="companyId" />
-        <Button
-          v-if="isDebugUser"
-          variant="tertiary"
-          size="sm"
-          icon="fa fa-bug"
-          icon-only
-          :title="t('company.debug.workflowTitle')"
-          @click="showTasksModal = true"
-        />
+        <Export />
         <span v-if="isOwner" :title="refreshButtonTooltip">
           <Button
             variant="tertiary"
@@ -54,7 +46,15 @@
           />
         </span>
         <CompanyDeleteButton :company="company" />
-        <Export />
+        <Button
+          v-if="isDebugUser"
+          variant="tertiary"
+          size="sm"
+          icon="fa fa-bug"
+          icon-only
+          :title="t('company.debug.workflowTitle')"
+          @click="showTasksModal = true"
+        />
       </div>
     </div>
 
