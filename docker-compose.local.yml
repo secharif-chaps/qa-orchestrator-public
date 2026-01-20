@@ -50,6 +50,8 @@ services:
       KEYCLOAK_CLIENT_SECRET: chapsmind-screen-back-secret
       KEYCLOAK_ADMIN_CLIENT_ID: chapsmind-admin
       KEYCLOAK_ADMIN_CLIENT_SECRET: chapsmind-admin-secret
+      # Translation API (runs in backend via BackgroundTasks)
+      SYSTRAN_API_KEY: ${SYSTRAN_API_KEY}
     volumes:
       # Mount local code for hot-reload
       - ../back/app:/app/app

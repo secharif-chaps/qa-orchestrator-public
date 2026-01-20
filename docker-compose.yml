@@ -45,13 +45,15 @@ services:
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672//
       MAX_CONCURRENT_WORKFLOWS: 10
       BACKEND_BASE_URL: http://localhost
+      # Translation API (runs in backend via BackgroundTasks)
+      SYSTRAN_API_KEY: ${SYSTRAN_API_KEY}
     networks:
       - mint-network
 
   # Celery Worker for Task Processing
   backend_celery_worker:
     image: registry.git.mediaspeech.com/mint/screen-poc/mint-back:preprod
-    entrypoint: celery -A app.core.celery_app worker --loglevel=info --concurrency=4 --pool=solo
+    entrypoint: celery -A app.core.celery_app worker --loglevel=info --concurrency=4 --pool=solo --queues=dify_workflows
     restart: always
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/mint_db
