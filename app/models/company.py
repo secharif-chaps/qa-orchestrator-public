@@ -36,7 +36,7 @@ class Company(Base):
         updated_at: Record last update timestamp
         is_deleted: Soft delete flag
         raw_mistral_knowledge: Raw knowledge from Mistral
-        raw_claude_knowledge: Raw knowledge from Claude
+        raw_gpt_knowledge: Raw knowledge from GPT
         raw_wikipedia_knowledge: Raw knowledge from Wikipedia
         raw_scraped_website_knowledge: Raw scraped website content
         error: Error message if data collection failed
@@ -77,7 +77,7 @@ class Company(Base):
 
     # Raw knowledge fields from data collection task (preserved per spec)
     raw_mistral_knowledge = Column(String, nullable=True)
-    raw_claude_knowledge = Column(String, nullable=True)
+    raw_gpt_knowledge = Column(String, nullable=True)
     raw_wikipedia_knowledge = Column(String, nullable=True)
     raw_scraped_website_knowledge = Column(String, nullable=True)
 
