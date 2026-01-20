@@ -12,7 +12,7 @@
         </span>
         <!-- Trophy icon floating bottom-right -->
         <span
-          class="absolute bottom-0 right-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] shadow-sm"
+          class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] shadow-sm"
           :class="trophyClasses"
         >
           <i class="fa fa-trophy"></i>
