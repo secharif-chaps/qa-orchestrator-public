@@ -21,6 +21,11 @@ export default {
       'ai-preferences': 'AI Assistant',
       preferences: 'Preferences',
       security: 'Security',
+      team: 'Team Management',
+      credits: 'Credits',
+    },
+    credits: {
+      cardDescription: 'View credit usage and statistics',
     },
     profile: {
       error: {
@@ -1167,6 +1172,32 @@ export default {
       success: 'Company "{name}" has been restored successfully',
       error: 'Failed to restore company "{name}". Please try again.',
     },
+    refresh: {
+      button: 'Refresh',
+      title: 'Refresh Company Data',
+      subtitle: 'Get the latest information about {name}',
+      warning: {
+        message: 'Current data will be overwritten when new data arrives',
+      },
+      consumptionNotice: '35 tokens will be consumed',
+      tokens: {
+        title: 'Token Information',
+        current: 'Current tokens',
+        cost: 'Refresh cost',
+        remaining: 'After refresh',
+      },
+      details: 'Company Details',
+      confirm: {
+        button: 'Refresh Data',
+      },
+      success: 'Company "{name}" refresh has started',
+      error: 'Failed to refresh company "{name}"',
+      tooltip: {
+        insufficientTokens: 'Insufficient tokens',
+        waitForTasks: 'Wait for all tasks to complete',
+        tasksRunning: 'Tasks are currently running',
+      },
+    },
     item: {
       tasks: {
         count: '{count} tasks',
@@ -1895,6 +1926,73 @@ export default {
       },
     },
   },
+  credits: {
+    unit: 'credits',
+    usedCredits: 'credits used',
+    balance: {
+      label: 'Available balance',
+      current: 'Current balance',
+    },
+    usage: {
+      title: 'Credit distribution',
+      total: 'Total consumed',
+      noData: 'No consumption for this period',
+    },
+    forecast: {
+      title: 'Remaining capacity',
+    },
+    module: {
+      disabled: 'Module disabled',
+      costPerItem: '1 {item} = {cost} credits',
+      remaining: '{item} remaining',
+      canCreate: 'You can still create',
+      getQuote: 'Get a quote',
+      screen: {
+        label: 'Company card',
+        item: 'company card',
+        itemPlural: 'Company cards',
+      },
+      target: {
+        label: 'Watchfile',
+        item: 'watchfile',
+        itemPlural: 'Watchfiles',
+      },
+      explore: {
+        label: 'Graph',
+        item: 'graph',
+        itemPlural: 'Graphs',
+      },
+    },
+    modules: {
+      all: 'All',
+      screen: 'Screen',
+      target: 'Target',
+      explore: 'Explore',
+    },
+    period: {
+      select: 'Period',
+      '7d': '7 days',
+      '30d': '30 days',
+      '90d': '90 days',
+      all: 'All time',
+      custom: 'Custom',
+      startDate: 'Start',
+      endDate: 'End',
+    },
+    topUsers: {
+      title: 'User ranking',
+      rank: 'Rank',
+      user: 'User',
+      credits: 'Credits',
+      search: 'Search...',
+      noData: 'No users found',
+      itemName: 'users',
+    },
+    dailyUsage: {
+      title: 'Daily consumption',
+      noData: 'No consumption for this period',
+    },
+  },
   breadcrumb: {
     companies: 'Companies',
     folders: 'Folders',
@@ -1914,6 +2012,7 @@ export default {
     costs: 'Costs',
     appearance: 'Appearance',
     security: 'Security',
+    credits: 'Credits',
   },
   logout: {
     title: 'Confirm Logout',

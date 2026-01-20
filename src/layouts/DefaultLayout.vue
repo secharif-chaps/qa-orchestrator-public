@@ -2,7 +2,7 @@
   <div class="bg-sage-950 min-h-screen h-full min-w-screen w-full">
     <Appbar />
 
-    <div class="flex min-h-screen h-screen w-screen relative">
+    <div class="flex min-h-screen h-screen w-screen relative overflow-hidden">
       <div
         class="overflow-y-auto mt-[68px] max-h-[calc(100vh-68px)] rounded-tr-2xl transition-all duration-300"
         :class="[isFullscreen ? 'w-0' : 'w-full']"

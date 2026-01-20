@@ -20,6 +20,12 @@ export default {
       appearance: 'Apparence',
       preferences: 'Préférences',
       security: 'Sécurité',
+      team: 'Équipe',
+      credits: 'Crédits',
+      'ai-preferences': 'Préférences IA',
+    },
+    credits: {
+      cardDescription: 'Consultez les statistiques de consommation de crédits',
     },
     profile: {
       error: {
@@ -1217,6 +1223,32 @@ export default {
       success: 'L\'entreprise "{name}" a été restaurée avec succès',
       error: 'Échec de la restauration de l\'entreprise "{name}". Veuillez réessayer.',
     },
+    refresh: {
+      button: 'Actualiser',
+      title: 'Actualiser les données de l\'entreprise',
+      subtitle: 'Obtenir les dernières informations sur {name}',
+      warning: {
+        message: 'Les données actuelles seront remplacées lors de l\'arrivée des nouvelles données',
+      },
+      consumptionNotice: '35 jetons seront consommés',
+      tokens: {
+        title: 'Informations sur les jetons',
+        current: 'Jetons actuels',
+        cost: 'Coût d\'actualisation',
+        remaining: 'Après actualisation',
+      },
+      details: 'Détails de l\'entreprise',
+      confirm: {
+        button: 'Actualiser les données',
+      },
+      success: 'L\'actualisation de l\'entreprise "{name}" a commencé',
+      error: 'Échec de l\'actualisation de l\'entreprise "{name}"',
+      tooltip: {
+        insufficientTokens: 'Jetons insuffisants',
+        waitForTasks: 'Attendre que toutes les tâches soient terminées',
+        tasksRunning: 'Les tâches sont en cours d\'exécution',
+      },
+    },
     item: {
       tasks: {
         count: '{count} tâches',
@@ -1952,6 +1984,73 @@ export default {
       },
     },
   },
+  credits: {
+    unit: 'crédits',
+    usedCredits: 'crédits utilisés',
+    balance: {
+      label: 'Solde disponible',
+      current: 'Solde actuel',
+    },
+    usage: {
+      title: 'Répartition des crédits',
+      total: 'Total consommé',
+      noData: 'Aucune consommation pour cette période',
+    },
+    forecast: {
+      title: 'Capacité restante',
+    },
+    module: {
+      disabled: 'Module désactivé',
+      costPerItem: '1 {item} = {cost} crédits',
+      remaining: '{item} restantes',
+      canCreate: 'Vous pouvez encore créer',
+      getQuote: 'Obtenir un devis',
+      screen: {
+        label: 'Fiche entreprise',
+        item: 'fiche entreprise',
+        itemPlural: 'Fiches entreprises',
+      },
+      target: {
+        label: 'Veille',
+        item: 'veille',
+        itemPlural: 'Veilles',
+      },
+      explore: {
+        label: 'Cartographie',
+        item: 'cartographie',
+        itemPlural: 'Cartographies',
+      },
+    },
+    modules: {
+      all: 'Tous',
+      screen: 'Screen',
+      target: 'Target',
+      explore: 'Explore',
+    },
+    period: {
+      select: 'Période',
+      '7d': '7 jours',
+      '30d': '30 jours',
+      '90d': '90 jours',
+      all: 'Tout',
+      custom: 'Personnalisé',
+      startDate: 'Début',
+      endDate: 'Fin',
+    },
+    topUsers: {
+      title: 'Classement des utilisateurs',
+      rank: 'Rang',
+      user: 'Utilisateur',
+      credits: 'Crédits',
+      search: 'Rechercher...',
+      noData: 'Aucun utilisateur trouvé',
+      itemName: 'utilisateurs',
+    },
+    dailyUsage: {
+      title: 'Consommation quotidienne',
+      noData: 'Aucune consommation pour cette période',
+    },
+  },
   breadcrumb: {
     companies: 'Entreprises',
     folders: 'Dossiers',
@@ -1971,6 +2070,7 @@ export default {
     costs: 'Coûts',
     appearance: 'Apparence',
     security: 'Sécurité',
+    credits: 'Crédits',
   },
   logout: {
     title: 'Confirmer la déconnexion',
