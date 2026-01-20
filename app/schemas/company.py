@@ -276,7 +276,7 @@ class CompanyResponse(CompanyBase):
     press: Dict[str, Any] = Field(default_factory=dict)
     team: List[Dict[str, Any]] = Field(default_factory=list)
     raw_mistral_knowledge: Optional[str] = Field(None, description="Raw knowledge from Mistral AI")
-    raw_claude_knowledge: Optional[str] = Field(None, description="Raw knowledge from Claude AI")
+    raw_gpt_knowledge: Optional[str] = Field(None, description="Raw knowledge from GPT AI")
     raw_wikipedia_knowledge: Optional[str] = Field(None, description="Raw knowledge from Wikipedia")
     raw_scraped_website_knowledge: Optional[str] = Field(None, description="Raw scraped website content")
     error: Optional[str] = None

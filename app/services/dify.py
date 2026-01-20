@@ -39,50 +39,50 @@ class DifyService:
         self.fallback_api_key = settings.DIFY_API_KEY
         self.chat_api_key = settings.DIFY_CHAT_API_KEY
 
-    def _get_workflow_config(self, task_type: str) -> tuple[Optional[str], Optional[str]]:
-        """Get API key and LLM for task type from database.
+    def _get_workflow_config(self, task_type: str) -> Optional[str]:
+        """Get API key for task type from database.
 
         Args:
             task_type: Type of workflow task (e.g., 'data_collection', 'profile')
 
         Returns:
-            Tuple of (api_key, llm) or (None, None) if not found
+            API key or None if not found
 
         Raises:
             DatabaseError: If database query fails (logged and returns None)
         """
         if self.db is None:
-            return None, None
+            return None
 
         try:
             service = WorkflowConfigService(self.db)
             config = service.get_config_by_task_type(task_type)
             if config and config.api_key:
-                return config.api_key, config.llm
+                return config.api_key
             else:
-                return None, None
+                return None
         except Exception as e:
             logger.warning(f"Failed to get workflow config from database: {e}")
-            return None, None
+            return None
 
     def _get_knowledge_data(self, company_id: int) -> Dict[str, str]:
         """Retrieve knowledge data for a company from database.
 
         This fetches the raw knowledge data collected by the data_collection
-        workflow, which includes Mistral, Claude, Wikipedia, and scraped data.
+        workflow, which includes Mistral, GPT, Wikipedia, and scraped data.
 
         Args:
             company_id: Company ID to fetch knowledge for
 
         Returns:
-            Dictionary with keys: mistral, claude, wikipedia, scraped
+            Dictionary with keys: mistral, gpt, wikipedia, scraped
             Each value is the raw knowledge text or empty string if not available
 
         Raises:
             DatabaseError: If database query fails (logged and returns empty dict)
         """
         if self.db is None:
-            return {"mistral": "", "claude": "", "wikipedia": "", "scraped": ""}
+            return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": ""}
 
         try:
             from app.models.company import Company
@@ -92,7 +92,7 @@ class DifyService:
             if company:
                 knowledge = {
                     "mistral": company.raw_mistral_knowledge or "",
-                    "claude": company.raw_claude_knowledge or "",
+                    "gpt": company.raw_gpt_knowledge or "",
                     "wikipedia": company.raw_wikipedia_knowledge or "",
                     "scraped": company.raw_scraped_website_knowledge or "",
                 }
@@ -102,7 +102,7 @@ class DifyService:
                     extra={
                         "company_id": company_id,
                         "mistral_chars": len(knowledge["mistral"]),
-                        "claude_chars": len(knowledge["claude"]),
+                        "gpt_chars": len(knowledge["gpt"]),
                         "wikipedia_chars": len(knowledge["wikipedia"]),
                         "scraped_chars": len(knowledge["scraped"]),
                     },
@@ -111,7 +111,7 @@ class DifyService:
                 return knowledge
             else:
                 logger.warning(f"Company {company_id} not found")
-                return {"mistral": "", "claude": "", "wikipedia": "", "scraped": ""}
+                return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": ""}
 
         except Exception as e:
             logger.error(
@@ -119,7 +119,7 @@ class DifyService:
                 exc_info=True,
                 extra={"company_id": company_id},
             )
-            return {"mistral": "", "claude": "", "wikipedia": "", "scraped": ""}
+            return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": ""}
 
     async def run_workflow(
         self,
@@ -131,9 +131,7 @@ class DifyService:
         task_id: int,
         company_id: int,
         response_mode: str = "blocking",
-        token_callback_url: Optional[str] = None,
         api_key: Optional[str] = None,
-        llm: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Execute a Dify workflow using the official SDK.
 
@@ -161,11 +159,9 @@ class DifyService:
         Raises:
             ExternalServiceError: If workflow execution fails
         """
-        # Get API key and LLM from database if not provided
-        if api_key is None or llm is None:
-            db_api_key, db_llm = self._get_workflow_config(task_type)
-            api_key = api_key or db_api_key
-            llm = llm or db_llm
+        # Get API key from database if not provided
+        if api_key is None:
+            api_key = self._get_workflow_config(task_type)
 
         if not api_key:
             error_msg = f"No API key found for task type: {task_type}"
@@ -174,10 +170,6 @@ class DifyService:
                 f"No API key configured for {task_type} workflow",
                 details={"task_type": task_type},
             )
-
-        # Default LLM if not provided
-        if not llm:
-            llm = "mistral"
 
         # Prepare callback payload
         callback_payload = {
@@ -193,7 +185,6 @@ class DifyService:
             "callback_webhook": success_callback,
             "task_id": str(task_id),
             "callback_payload": callback_payload,
-            "llm": llm,
         }
 
         logger.info(
@@ -209,7 +200,7 @@ class DifyService:
         if task_type != "data_collection":
             knowledge = self._get_knowledge_data(company_id)
             inputs["mistral"] = knowledge["mistral"]
-            inputs["claude"] = knowledge["claude"]
+            inputs["gpt"] = knowledge["gpt"]
             inputs["wikipedia"] = knowledge["wikipedia"]
             inputs["scraped"] = knowledge["scraped"]
 
@@ -224,7 +215,7 @@ class DifyService:
         # Add data collection flags for data_collection workflow
         if task_type == "data_collection":
             inputs["mistral"] = "true"
-            inputs["claude"] = "true"
+            inputs["gpt"] = "true"
             inputs["webscraping"] = "true"
             inputs["wikipedia"] = "true"
             # data_collection workflow expects "callback_url" instead of "callback_webhook"
@@ -239,10 +230,6 @@ class DifyService:
                 }
             )
 
-        # Add token callback URL if provided
-        if token_callback_url:
-            inputs["token_callback_url"] = token_callback_url
-
         logger.info(
             f"🚀 Triggering Dify {task_type} workflow",
             extra={
@@ -251,7 +238,6 @@ class DifyService:
                 "website": website,
                 "task_id": task_id,
                 "company_id": company_id,
-                "llm": llm,
                 "response_mode": response_mode,
                 "callback_url": success_callback,
             },
