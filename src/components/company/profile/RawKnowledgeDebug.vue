@@ -18,16 +18,16 @@
       </div>
     </Card>
 
-    <!-- Claude Knowledge -->
-    <Card v-if="company?.raw_claude_knowledge" class="bg-base-200">
+    <!-- GPT Knowledge -->
+    <Card v-if="company?.raw_gpt_knowledge" class="bg-base-200">
       <template #header>
         <div class="flex items-center gap-2">
           <i class="fa fa-robot text-info"></i>
-          <h3 class="font-semibold">Raw Claude Knowledge</h3>
+          <h3 class="font-semibold">Raw GPT Knowledge</h3>
         </div>
       </template>
       <div class="bg-base-100 rounded-lg p-4 font-mono text-sm text-secondary overflow-x-auto">
-        <pre class="whitespace-pre-wrap break-words">{{ company.raw_claude_knowledge }}</pre>
+        <pre class="whitespace-pre-wrap break-words">{{ company.raw_gpt_knowledge }}</pre>
       </div>
     </Card>
 
@@ -77,7 +77,7 @@ const { data: company } = useQuery(companyByIdQuery, () => ({
 const hasAnyRawData = computed(() => {
   return (
     company.value?.raw_mistral_knowledge ||
-    company.value?.raw_claude_knowledge ||
+    company.value?.raw_gpt_knowledge ||
     company.value?.raw_wikipedia_knowledge ||
     company.value?.raw_scraped_website_knowledge
   )

@@ -75,24 +75,6 @@
             </div>
           </div>
 
-          <!-- LLM Selection -->
-          <div>
-            <label class="block text-sm font-medium text-base mb-2">
-              {{ $t('admin.workflows.llm', 'Language Model') }}
-            </label>
-            <select
-              v-if="isEditing"
-              v-model="editData.llm"
-              class="w-full px-3 py-2 rounded-md bg-base-200 border border-border text-secondary text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-            >
-              <option value="claude">Claude</option>
-              <option value="mistral">Mistral</option>
-            </select>
-            <div v-else class="text-sm text-secondary bg-base-200 px-3 py-2 rounded-md">
-              {{ workflow.llm ? capitalizeFirst(workflow.llm) : 'Claude' }}
-            </div>
-          </div>
-
           <!-- Action Buttons (Edit Mode Only) -->
           <div v-if="isEditing" class="flex items-center gap-3 pt-2">
             <Button
@@ -181,16 +163,6 @@
             }}
           </div>
         </div>
-
-        <!-- LLM Selection -->
-        <div>
-          <label class="block text-sm font-medium text-base mb-2">
-            {{ $t('admin.workflows.llm', 'Language Model') }}
-          </label>
-          <div class="text-sm text-secondary bg-base-200 px-3 py-2 rounded-md">
-            {{ workflow.llm ? capitalizeFirst(workflow.llm) : 'Claude' }}
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -214,7 +186,6 @@ const emit = defineEmits<{
     taskType: string,
     data: {
       api_key?: string | null
-      llm?: 'claude' | 'mistral' | null
     },
   ]
 }>()
@@ -230,16 +201,14 @@ const originalRect = ref<DOMRect | null>(null)
 
 const editData = ref({
   api_key: '',
-  llm: 'claude' as 'claude' | 'mistral',
 })
 
 // Initialize edit data when workflow changes
 watch(
   () => workflow,
-  (newWorkflow) => {
+  () => {
     editData.value = {
       api_key: '',
-      llm: newWorkflow.llm || 'claude',
     }
   },
   { immediate: true },
@@ -285,10 +254,7 @@ const statusConfig = computed(() => {
 // Check if there are changes to save
 const hasChanges = computed(() => {
   const hasNewApiKey = !!editData.value.api_key
-  const originalLlm = workflow.llm || 'claude'
-  const newLlm = editData.value.llm
-
-  return hasNewApiKey || originalLlm !== newLlm
+  return hasNewApiKey
 })
 
 // Enter zoom mode with smooth animation
@@ -418,7 +384,6 @@ const cancelEdit = () => {
   // Reset edit data
   editData.value = {
     api_key: '',
-    llm: workflow.llm || 'claude',
   }
 }
 
@@ -428,18 +393,11 @@ const saveChanges = () => {
 
   const updateData: {
     api_key?: string | null
-    llm?: 'claude' | 'mistral' | null
   } = {}
 
   // Include api_key if provided
   if (editData.value.api_key) {
     updateData.api_key = editData.value.api_key
-  }
-
-  // Include llm if changed
-  const originalLlm = workflow.llm || 'claude'
-  if (originalLlm !== editData.value.llm) {
-    updateData.llm = editData.value.llm
   }
 
   emit('update', workflow.task_type, updateData)

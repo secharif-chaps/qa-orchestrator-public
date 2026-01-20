@@ -329,7 +329,7 @@ const companyWithFolder: Company = {
 const companyWithRaw: Company = {
   ...mockApiResponse,
   raw_mistral_knowledge: 'Mistral AI response',
-  raw_claude_knowledge: 'Claude AI response',
+  raw_gpt_knowledge: 'GPT AI response',
   raw_wikipedia_knowledge: 'Wikipedia data',
   raw_scraped_website_knowledge: 'Scraped content',
 }

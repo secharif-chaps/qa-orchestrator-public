@@ -8,12 +8,10 @@ export interface WorkflowConfig {
   title: string
   api_key_obfuscated: string | null
   has_api_key: boolean
-  llm?: 'claude' | 'mistral' | null
 }
 
 export interface WorkflowUpdateRequest {
   api_key?: string | null
-  llm?: 'claude' | 'mistral' | null
 }
 
 export const workflowsApi = {
