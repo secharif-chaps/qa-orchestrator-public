@@ -278,7 +278,7 @@ async def dify_task_callback(
             if task_data:
                 logger.info(f"Updating company data for task type: {task.type.value}")
                 # Pass the task_data directly - it's already in the correct format
-                # For data_collection: {"mistral": "", "claude": "", "wikipedia": "", "scraped": ""}
+                # For data_collection: {"mistral": "", "gpt": "", "wikipedia": "", "scraped": ""}
                 # For other tasks: {task_type_key: outputs}
                 service._update_company_data(company, task.type.value, task_data)
 

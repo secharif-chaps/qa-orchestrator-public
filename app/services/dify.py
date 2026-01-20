@@ -261,13 +261,12 @@ class DifyService:
                 "task_id": task_id,
                 "callback_url": inputs.get("callback_url", "NOT SET"),
                 "callback_webhook": inputs.get("callback_webhook", "NOT SET"),
-                "token_callback_url": inputs.get("token_callback_url", "NOT SET"),
                 "all_input_keys": list(inputs.keys()),
             }
         )
 
         # Log the inputs being sent (excluding sensitive data)
-        safe_inputs = {k: v if k not in ["callback_webhook", "callback_url", "token_callback_url"] else "***" for k, v in inputs.items()}
+        safe_inputs = {k: v if k not in ["callback_webhook", "callback_url"] else "***" for k, v in inputs.items()}
         logger.debug(f"📦 Workflow inputs: {safe_inputs}")
 
         try:

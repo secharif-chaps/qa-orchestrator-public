@@ -157,7 +157,7 @@ class TestDifyCallbackWritesToNewTables:
         data = {
             "knowledge": {
                 "mistral": "Mistral data",
-                "claude": "Claude data",
+                "gpt": "GPT data",
                 "wikipedia": "Wikipedia data",
                 "scraped": "Scraped data",
             }
