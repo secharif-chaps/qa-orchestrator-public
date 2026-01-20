@@ -15,14 +15,14 @@ TRUNCATE TABLE workflow_configs RESTART IDENTITY CASCADE;
 
 INSERT INTO workflow_configs (task_type, title, api_key, created_at, updated_at) VALUES
     ('data_collection', 'Data Collection', 'app-qSdKHTLoR0WiESMRcVBKSzlI', NOW(), NOW()),
-    ('csr', 'CSR & Sustainability', 'app-jizNzZPfLpljyHTqStbGtMvt', NOW(), NOW()),
-    ('digital', 'Digital Presence', 'app-C8hqxmezKsu9u7PysTIDCn58', NOW(), NOW()),
-    ('jobs', 'Job Offers', 'app-4LwahL1q2ivVs7cg32qLKY75', NOW(), NOW()),
-    ('press', 'Press & Media', 'app-jROOB0dHSSP8bPBt4TdF5NGt', NOW(), NOW()),
-    ('products', 'Products & Services', 'app-dFdONFETxJDqzAhiYQMDvKGf', NOW(), NOW()),
-    ('profile', 'Company Profile', 'app-UDymomMk5nxIZm8CLQ8jsGxh', NOW(), NOW()),
-    ('team', 'Team & Leadership', 'app-l1c9mbAxNitn7sEJyxLH2Dsg', NOW(), NOW()),
-    ('timeline', 'Company Timeline', 'app-8g6lEf82QJBABiTzAPzHHM69', NOW(), NOW());
+    ('csr', 'CSR & Sustainability', 'app-k8W9ZQkZUIcsvBo5ZWgY3RLE', NOW(), NOW()),
+    ('digital', 'Digital Presence', 'app-sU5GPQX6og1nwtckA57iCDeL', NOW(), NOW()),
+    ('jobs', 'Job Offers', 'app-nZiwseUyw8f6H208ohPx0o1K', NOW(), NOW()),
+    ('press', 'Press & Media', 'app-ET1gBTLFPsVD8qlYSL46O3Hd', NOW(), NOW()),
+    ('products', 'Products & Services', 'app-WpGZCTFDaBzCUS9M4LeoQHGa', NOW(), NOW()),
+    ('profile', 'Company Profile', 'app-4K16XfNZP4ZhUutfoLEZYiKy', NOW(), NOW()),
+    ('team', 'Team & Leadership', 'app-LTspKNxtk6nTJOH4YkBdyU2Q', NOW(), NOW()),
+    ('timeline', 'Company Timeline', 'app-qX4RISdrrif2aSPAaLVz7tto', NOW(), NOW());
 
 SELECT task_type, title, api_key FROM workflow_configs ORDER BY task_type;
 EOF
