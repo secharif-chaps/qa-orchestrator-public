@@ -1223,6 +1223,32 @@ export default {
       success: 'L\'entreprise "{name}" a été restaurée avec succès',
       error: 'Échec de la restauration de l\'entreprise "{name}". Veuillez réessayer.',
     },
+    refresh: {
+      button: 'Actualiser',
+      title: 'Actualiser les données de l\'entreprise',
+      subtitle: 'Obtenir les dernières informations sur {name}',
+      warning: {
+        message: 'Les données actuelles seront remplacées lors de l\'arrivée des nouvelles données',
+      },
+      consumptionNotice: '35 jetons seront consommés',
+      tokens: {
+        title: 'Informations sur les jetons',
+        current: 'Jetons actuels',
+        cost: 'Coût d\'actualisation',
+        remaining: 'Après actualisation',
+      },
+      details: 'Détails de l\'entreprise',
+      confirm: {
+        button: 'Actualiser les données',
+      },
+      success: 'L\'actualisation de l\'entreprise "{name}" a commencé',
+      error: 'Échec de l\'actualisation de l\'entreprise "{name}"',
+      tooltip: {
+        insufficientTokens: 'Jetons insuffisants',
+        waitForTasks: 'Attendre que toutes les tâches soient terminées',
+        tasksRunning: 'Les tâches sont en cours d\'exécution',
+      },
+    },
     item: {
       tasks: {
         count: '{count} tâches',

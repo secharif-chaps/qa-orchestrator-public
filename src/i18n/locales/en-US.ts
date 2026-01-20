@@ -1172,6 +1172,32 @@ export default {
       success: 'Company "{name}" has been restored successfully',
       error: 'Failed to restore company "{name}". Please try again.',
     },
+    refresh: {
+      button: 'Refresh',
+      title: 'Refresh Company Data',
+      subtitle: 'Get the latest information about {name}',
+      warning: {
+        message: 'Current data will be overwritten when new data arrives',
+      },
+      consumptionNotice: '35 tokens will be consumed',
+      tokens: {
+        title: 'Token Information',
+        current: 'Current tokens',
+        cost: 'Refresh cost',
+        remaining: 'After refresh',
+      },
+      details: 'Company Details',
+      confirm: {
+        button: 'Refresh Data',
+      },
+      success: 'Company "{name}" refresh has started',
+      error: 'Failed to refresh company "{name}"',
+      tooltip: {
+        insufficientTokens: 'Insufficient tokens',
+        waitForTasks: 'Wait for all tasks to complete',
+        tasksRunning: 'Tasks are currently running',
+      },
+    },
     item: {
       tasks: {
         count: '{count} tasks',

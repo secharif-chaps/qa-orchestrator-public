@@ -107,6 +107,11 @@ export const restoreCompany = async (companyId: string) => {
   return response
 }
 
+export const refreshCompany = async (companyId: string) => {
+  const response = await apiClient.post<Company>(`/companies/${companyId}/refresh`, {})
+  return response
+}
+
 export const validateCSV = async (request: CSVValidationRequest): Promise<CSVValidationResponse> => {
   const response = await apiClient.post<CSVValidationResponse>('/companies/csv/validate', request)
   return response
@@ -124,6 +129,7 @@ export const companiesApi = {
   createCompany,
   deleteCompany,
   restoreCompany,
+  refreshCompany,
   validateCSV,
   importCSV,
 }

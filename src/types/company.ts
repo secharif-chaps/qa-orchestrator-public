@@ -71,6 +71,7 @@ export interface Company {
   created_by: string
   updated_by: string
 
+  owner_id?: string // Keycloak user UUID
   owner_username: string
   organization_id: string
 
