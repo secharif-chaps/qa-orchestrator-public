@@ -72,12 +72,12 @@ class TestCompanyCRUDWithoutJsonColumns:
 
         # These fields should still exist
         company.raw_mistral_knowledge = "Mistral knowledge"
-        company.raw_claude_knowledge = "Claude knowledge"
+        company.raw_gpt_knowledge = "GPT knowledge"
         company.raw_wikipedia_knowledge = "Wikipedia knowledge"
         company.raw_scraped_website_knowledge = "Scraped content"
 
         assert company.raw_mistral_knowledge == "Mistral knowledge"
-        assert company.raw_claude_knowledge == "Claude knowledge"
+        assert company.raw_gpt_knowledge == "GPT knowledge"
         assert company.raw_wikipedia_knowledge == "Wikipedia knowledge"
         assert company.raw_scraped_website_knowledge == "Scraped content"
 

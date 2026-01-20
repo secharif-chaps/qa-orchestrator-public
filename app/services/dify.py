@@ -147,9 +147,7 @@ class DifyService:
             task_id: Task ID for callback reference
             company_id: Company ID for callback reference
             response_mode: "blocking" (wait for completion) or "streaming" (SSE)
-            token_callback_url: Optional URL for token-by-token callbacks
             api_key: Optional API key override (fetched from DB if None)
-            llm: Optional LLM model override (fetched from DB if None, defaults to "mistral")
 
         Returns:
             Dictionary with workflow response data:
