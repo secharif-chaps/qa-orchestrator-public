@@ -143,9 +143,14 @@ def extract_enabled_modules(token_payload: dict[str, Any]) -> list[str]:
     return modules if isinstance(modules, list) else []
 
 
+def _get_current_user_dependency():
+    """Wrapper to lazily get the Keycloak user dependency."""
+    return idp.get_current_user()
+
+
 def get_user_organization(
     request: Request,
-    user: OIDCUser = Depends(idp.get_current_user())
+    user: OIDCUser = Depends(_get_current_user_dependency)
 ) -> OrganizationContext:
     """FastAPI dependency to extract organization context from JWT token.
     

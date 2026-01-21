@@ -32,6 +32,8 @@ test:
     - pip install poetry
     - poetry config virtualenvs.create false
     - poetry install --no-interaction
+    # Generate gRPC stubs before running tests
+    - python scripts/generate_protos.py
   script:
     - pytest tests/ -v --cov=app --cov-report=term-missing
   only:

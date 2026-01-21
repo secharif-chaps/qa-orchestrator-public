@@ -66,25 +66,26 @@ def test_grpc_interceptor_valid_jwt_auth():
     mock_handler.unary_unary = Mock()
     continuation = Mock(return_value=mock_handler)
     
-    # Mock the idp.get_current_user call
-    with patch('app.core.grpc.idp.get_current_user') as mock_get_user:
-        mock_get_user.return_value = mock_user
-        
+    # Mock the idp object entirely to avoid Keycloak initialization
+    mock_idp = MagicMock()
+    mock_idp.get_current_user.return_value = mock_user
+
+    with patch('app.core.grpc.idp', mock_idp):
         # Mock jwt.decode for token decoding
         with patch('app.core.grpc.jwt.decode') as mock_jwt_decode:
             mock_jwt_decode.return_value = {
                 "organization": [{"Company": {"id": "123"}}, "Company"],
                 "enabled_modules": ["Screen", "Target"]
             }
-            
+
             # Intercept the service
             result = interceptor.intercept_service(continuation, handler_call_details)
-            
+
             # Should return a wrapped handler
             assert result is not None
             assert hasattr(result, 'unary_unary')
             # Should have called get_current_user
-            mock_get_user.assert_called_once_with("header.payload.signature")
+            mock_idp.get_current_user.assert_called_once_with("header.payload.signature")
     print("✅ Test 3: gRPC interceptor valid JWT auth passed")
 
 
@@ -139,13 +140,14 @@ def test_grpc_interceptor_invalid_jwt():
     mock_handler.unary_unary = Mock()
     continuation = Mock(return_value=mock_handler)
     
-    # Mock get_current_user to raise exception
-    with patch('app.core.grpc.idp.get_current_user') as mock_get_user:
-        mock_get_user.side_effect = Exception("Invalid token")
-        
+    # Mock the idp object entirely to avoid Keycloak initialization
+    mock_idp = MagicMock()
+    mock_idp.get_current_user.side_effect = Exception("Invalid token")
+
+    with patch('app.core.grpc.idp', mock_idp):
         # Intercept the service
         result = interceptor.intercept_service(continuation, handler_call_details)
-        
+
         # Should return an error handler
         assert result is not None
         assert hasattr(result, 'unary_unary')

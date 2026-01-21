@@ -321,9 +321,29 @@ def _initialize_keycloak_with_retry(
     raise ConnectionError("Unexpected error in Keycloak initialization")
 
 
-# Initialize FastAPIKeycloak client with retry logic
+# Lazy initialization for Keycloak client
+# This avoids connection attempts during test collection or when Keycloak is not available
+_idp_instance: Optional[FastAPIKeycloak] = None
+
+
+def get_idp() -> FastAPIKeycloak:
+    """Get the Keycloak IDP instance, initializing it lazily if needed."""
+    global _idp_instance
+    if _idp_instance is None:
+        _idp_instance = _initialize_keycloak_with_retry()
+    return _idp_instance
+
+
+class _LazyIdp:
+    """Lazy proxy for FastAPIKeycloak that initializes on first use."""
+
+    def __getattr__(self, name):
+        return getattr(get_idp(), name)
+
+
+# Initialize FastAPIKeycloak client lazily
 # This will be used across all routers for authentication and authorization
-idp = _initialize_keycloak_with_retry()
+idp = _LazyIdp()
 
 # Additional helper for client credentials (service-to-service)
 async def validate_client_token(token: str) -> dict:
