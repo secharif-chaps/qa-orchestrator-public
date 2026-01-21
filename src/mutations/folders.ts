@@ -164,7 +164,7 @@ export const useMoveCompanyToFolder = defineMutation(() => {
       const entries = queryCache.getEntries({ key: FOLDER_QUERY_KEYS.root })
 
       for (const entry of entries) {
-        const data = entry.data as FolderCacheData | undefined
+        const data = entry.state.value.data as FolderCacheData | undefined
         if (!data) continue
 
         // Check single folder

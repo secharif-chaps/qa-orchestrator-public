@@ -17,7 +17,7 @@ export function updateAllFolderCaches(
   const entries = queryCache.getEntries({ key: FOLDER_QUERY_KEYS.root })
 
   entries.forEach(entry => {
-    const data = entry.data as FolderCacheData | undefined
+    const data = entry.state.value.data as FolderCacheData | undefined
     if (!data) return
 
     const keyStr = JSON.stringify(entry.key)
