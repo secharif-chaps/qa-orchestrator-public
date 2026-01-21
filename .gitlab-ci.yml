@@ -1,0 +1,65 @@
+# Global Service GitLab CI/CD Pipeline
+# Builds and publishes Docker image to GitLab Container Registry on main branch
+
+stages:
+  - lint
+  - test
+  - build
+  - publish
+
+variables:
+  IMAGE_NAME: ${CI_REGISTRY_IMAGE}/global-service
+  IMAGE_TAG: preprod
+  DOCKER_BUILDKIT: 1
+
+# Lint stage - Check code quality
+lint:
+  stage: lint
+  image: python:3.12-slim
+  before_script:
+    - pip install ruff
+  script:
+    - ruff check app/
+  only:
+    - merge_requests
+    - main
+
+# Test stage - Run pytest
+test:
+  stage: test
+  image: python:3.12-slim
+  before_script:
+    - pip install poetry
+    - poetry config virtualenvs.create false
+    - poetry install --no-interaction
+  script:
+    - pytest tests/ -v --cov=app --cov-report=term-missing
+  only:
+    - merge_requests
+    - main
+
+# Build template
+.build:
+  image: docker:29-cli
+  script:
+    - echo Building $IMAGE_NAME:$IMAGE_TAG
+    - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+
+# Build on merge requests
+build:
+  stage: build
+  extends: .build
+  only:
+    - merge_requests
+
+# Publish on main branch
+publish:
+  stage: publish
+  extends: .build
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  after_script:
+    - docker push $IMAGE_NAME:${IMAGE_TAG}
+    - docker logout $CI_REGISTRY
+  only:
+    - main
