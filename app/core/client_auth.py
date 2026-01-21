@@ -8,7 +8,7 @@ communication, using Keycloak token introspection with caching.
 
 import httpx
 from cachetools import TTLCache
-from typing import Dict, Optional
+from typing import Dict
 from datetime import datetime, timezone
 
 from app.core.config import settings
@@ -47,7 +47,7 @@ async def introspect_token(token: str) -> Dict:
     
     # Check cache first
     if token in _introspection_cache:
-        logger.debug(f"Token introspection result retrieved from cache")
+        logger.debug("Token introspection result retrieved from cache")
         return _introspection_cache[token]
     
     try:

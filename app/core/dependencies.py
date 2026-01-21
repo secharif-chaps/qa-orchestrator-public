@@ -12,9 +12,9 @@ from typing import Dict, Any, Optional
 from fastapi import Depends, HTTPException, status, Header
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-from app.core.keycloak import idp, validate_client_token
+from app.core.keycloak import idp
 from app.core.client_auth import introspect_token, ClientAuthError
-from app.core.organization import OrganizationContext, get_user_organization
+from app.core.organization import get_user_organization
 from app.core.logging import get_logger
 
 logger = get_logger(__name__)
