@@ -1,15 +1,15 @@
 <template>
   <div class="flex flex-col gap-6">
-    <!-- Header with Toggle Navigation -->
+    <!-- Header with Tab Navigation -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-2xl font-bold">{{ $t('settings.title') }}</h1>
         <p class="text-secondary mt-1">{{ $t('settings.description') }}</p>
       </div>
 
-      <!-- Navigation Toggle (only show when on a subpage) -->
+      <!-- Navigation Tabs (only show when on a subpage) -->
       <div v-if="isOnSubpage" class="flex items-center">
-        <Toggle  v-model="currentSection" :options="sectionOptions" />
+        <Tab :tabs="tabOptions" />
       </div>
     </div>
 
@@ -55,8 +55,8 @@
 </template>
 
 <script setup lang="ts">
-import { Toggle } from '@owlint/feathers-vue'
-import { computed, watch } from 'vue'
+import { Tab } from '@owlint/feathers-vue'
+import { computed } from 'vue'
 import { RouterView, RouterLink, useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
@@ -121,37 +121,50 @@ const sections = computed(() => {
   return baseSections
 })
 
-// Toggle options for navigation
-const sectionOptions = computed(() => {
+// Tab options for navigation
+const tabOptions = computed(() => {
+  const currentPath = route.path
+  const navigateTo = (id: string) => router.push(`/settings/${id}`)
+
   const baseOptions = [
     {
-      value: 'appearance',
+      id: 'appearance',
       icon: 'fas fa-palette',
-      label: t('settings.tabs.appearance'),
+      title: t('settings.tabs.appearance'),
+      isActive: currentPath.includes('/appearance'),
+      click: () => navigateTo('appearance'),
     },
     {
-      value: 'ai-preferences',
+      id: 'ai-preferences',
       icon: 'fas fa-magic',
-      label: t('settings.tabs.ai-preferences'),
+      title: t('settings.tabs.ai-preferences'),
+      isActive: currentPath.includes('/ai-preferences'),
+      click: () => navigateTo('ai-preferences'),
     },
     {
-      value: 'security',
+      id: 'security',
       icon: 'fas fa-shield-alt',
-      label: t('settings.tabs.security'),
+      title: t('settings.tabs.security'),
+      isActive: currentPath.includes('/security'),
+      click: () => navigateTo('security'),
     },
     {
-      value: 'team-management',
+      id: 'team-management',
       icon: 'fas fa-users',
-      label: t('settings.tabs.team', 'Team Management'),
+      title: t('settings.tabs.team', 'Team Management'),
+      isActive: currentPath.includes('/team-management'),
+      click: () => navigateTo('team-management'),
     },
   ]
 
   // Add credits option for managers
   if (canManageOrganization.value) {
     baseOptions.push({
-      value: 'credits',
+      id: 'credits',
       icon: 'fas fa-coins',
-      label: t('settings.tabs.credits', 'Crédits'),
+      title: t('settings.tabs.credits', 'Crédits'),
+      isActive: currentPath.includes('/credits'),
+      click: () => navigateTo('credits'),
     })
   }
 
@@ -164,19 +177,4 @@ const isOnSubpage = computed(() => {
   return path !== '/settings' && path !== '/settings/'
 })
 
-// Current section based on route
-const currentSection = computed({
-  get: () => {
-    const path = route.path
-    if (path.includes('/appearance')) return 'appearance'
-    if (path.includes('/ai-preferences')) return 'ai-preferences'
-    if (path.includes('/security')) return 'security'
-    if (path.includes('/team-management')) return 'team-management'
-    if (path.includes('/credits')) return 'credits'
-    return 'appearance'
-  },
-  set: (value: string) => {
-    router.push(`/settings/${value}`)
-  },
-})
 </script>
