@@ -5,6 +5,8 @@ from app.core.config import settings
 from app.core.logging_config import setup_logging, get_logger
 from app.database import engine
 from app.grpc_server import create_grpc_server
+from app.proxy.client import get_proxy_client, close_proxy_client
+from app.proxy.routes import router as proxy_router
 
 # Initialize logging with configured level
 setup_logging(level=getattr(settings, "LOG_LEVEL", "INFO"))
@@ -44,16 +46,26 @@ grpc_server = None
 @app.on_event("startup")
 async def startup_event():
     global grpc_server
+    # Initialize gRPC server
     grpc_server = create_grpc_server()
     grpc_server.start()
     logger.info("🚀 gRPC server started")
 
+    # Initialize proxy client (warm up connection pool)
+    await get_proxy_client()
+    logger.info(f"🔗 Proxy client initialized → {settings.BACKEND_BASE_URL}")
+
 
 @app.on_event("shutdown")
 async def shutdown_event():
+    # Shutdown gRPC server
     if grpc_server:
         logger.info("🛑 Shutting down gRPC server")
         grpc_server.stop(grace=5)
+
+    # Close proxy client
+    await close_proxy_client()
+    logger.info("🔌 Proxy client closed")
 
 # Health check endpoints
 @app.get("/health/live", tags=["health"])
@@ -72,3 +84,8 @@ def health_ready():
         return {"status": "ready"}
     except Exception:
         return {"status": "not_ready"}
+
+
+# Register proxy router - forwards all /api/* requests to the backend monolith
+# This MUST be registered last to act as a catch-all for /api/* routes
+app.include_router(proxy_router, prefix="/api", tags=["proxy"])
