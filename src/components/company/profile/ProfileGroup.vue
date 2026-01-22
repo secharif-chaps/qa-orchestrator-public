@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 rounded-lg p-4 relative h-full">
+  <div class="bg-base-100 rounded-lg p-4 relative flex-1">
     <div class="flex flex-col gap-2">
       <h4>Group</h4>
       <!-- Group name - individual property loading -->

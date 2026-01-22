@@ -77,83 +77,15 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <!-- Employee Count -->
-              <div class="flex items-center gap-3 rounded-card px-4 py-3">
-                <i class="fa-solid fa-users fa-fw"></i>
-                <div class="flex flex-col gap-1">
-                  <span class="text-sm truncate">
-                    {{ t('company.fields.employeeCount', 'Employee Count') }}
-                  </span>
-                  <div
-                    v-if="isTaskRunning('profile')"
-                    class="bg-sage-100 rounded-full h-3 w-12"
-                  ></div>
-                  <span v-else class="text-xs text-secondary">
-                    {{
-                      company?.profile?.employeeCount?.value ||
-                      t('company.fields.notSpecified', 'Not specified')
-                    }}
-                  </span>
-                </div>
-              </div>
-
-              <!-- HQ -->
-              <div class="flex items-center gap-3 rounded-card px-4 py-3">
-                <i class="fa-solid fa-map-marker fa-fw text-secondary"></i>
-                <div class="flex flex-col gap-1">
-                  <span class="text-sm truncate">
-                    {{ t('company.fields.headquarters', 'Headquarters') }}
-                  </span>
-                  <span
-                    v-if="isTaskRunning('profile')"
-                    class="bg-sage-100 rounded-full h-3 w-12"
-                  ></span>
-                  <span v-else class="text-xs text-secondary">
-                    {{
-                      company?.profile?.hq?.value ||
-                      t('company.fields.notSpecified', 'Not specified')
-                    }}
-                  </span>
-                </div>
-              </div>
-
-              <!-- CEO -->
-              <div class="flex items-center gap-3 rounded-card px-4 py-3">
-                <i class="fa-solid fa-user-tie fa-fw text-secondary"></i>
-                <div class="flex flex-col gap-1">
-                  <span class="text-sm truncate"> {{ t('company.fields.ceo', 'CEO') }} </span>
-                  <span
-                    v-if="isTaskRunning('profile')"
-                    class="bg-sage-100 rounded-full h-3 w-12"
-                  ></span>
-                  <span v-else class="text-xs text-secondary">
-                    {{
-                      company?.profile?.ceo?.value ||
-                      t('company.fields.notSpecified', 'Not specified')
-                    }}
-                  </span>
-                </div>
-              </div>
-
-              <!-- Revenue -->
-              <div class="flex items-center gap-3 rounded-card px-4 py-3">
-                <i class="fa-solid fa-money-bill fa-fw text-secondary"></i>
-                <div class="flex flex-col gap-1">
-                  <span class="text-sm truncate">
-                    {{ t('company.fields.revenue', 'Revenue') }}
-                  </span>
-                  <span
-                    v-if="isTaskRunning('profile')"
-                    class="bg-sage-100 rounded-full h-3 w-12"
-                  ></span>
-                  <span v-else class="text-xs text-secondary">
-                    {{
-                      company?.profile?.revenue?.value ||
-                      t('company.fields.notSpecified', 'Not specified')
-                    }}
-                  </span>
-                </div>
-              </div>
+              <ProfileInfoItem
+                v-for="item in companyInfoItems"
+                :key="item.label"
+                :icon="item.icon"
+                :label="item.label"
+                :value="item.value"
+                :loading="isTaskRunning('profile')"
+                :placeholder="t('company.fields.notSpecified', 'Not specified')"
+              />
             </div>
 
             <!-- Social Media -->
@@ -204,12 +136,12 @@
             <div v-for="i in 4" :key="i" class="bg-sage-100 rounded-full h-4 w-12"></div>
           </div>
           <!-- Social media accounts -->
-          <div v-else-if="company?.digital?.socialMediaAccounts?.value?.length" class="flex flex-wrap gap-2">
+          <div v-else-if="company?.digital?.socialMediaAccounts?.length" class="flex flex-wrap gap-2">
             <Tag
               variant="slate"
-              v-for="account in company.digital.socialMediaAccounts.value"
+              v-for="account in company.digital.socialMediaAccounts"
               :key="account.platform"
-              :href="getSourcedValue(account.url)"
+              :href="account.url"
               target="_blank"
             >
               <i class="fa" :class="getSocialIcon(account.platform)"></i>
@@ -290,6 +222,7 @@ import ChapseAssistQuickActions from '@/components/features/chapse-assist/Chapse
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Card from '@/components/ui/Card.vue'
 import Tag from '@/components/ui/Tag.vue'
+import ProfileInfoItem from '@/components/company/profile/ProfileInfoItem.vue'
 import { useRestartTask } from '@/mutations/tasks'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
@@ -368,6 +301,30 @@ const isDataCollectionRunning = computed(() => {
   const status = getTaskStatus('data_collection')
   return status === 'pending' || status === 'running'
 })
+
+// Company info items for the grid
+const companyInfoItems = computed(() => [
+  {
+    icon: 'fa fa-users',
+    label: t('company.fields.employeeCount', 'Employee Count'),
+    value: company.value?.profile?.employeeCount?.value,
+  },
+  {
+    icon: 'fa fa-map-marker',
+    label: t('company.fields.headquarters', 'Headquarters'),
+    value: company.value?.profile?.hq?.value,
+  },
+  {
+    icon: 'fa fa-user-tie',
+    label: t('company.fields.ceo', 'CEO'),
+    value: company.value?.profile?.ceo?.value,
+  },
+  {
+    icon: 'fa fa-money-bill',
+    label: t('company.fields.revenue', 'Revenue'),
+    value: company.value?.profile?.revenue?.value,
+  },
+])
 
 // Analysis cards configuration
 const analysisCards = computed(() => {
