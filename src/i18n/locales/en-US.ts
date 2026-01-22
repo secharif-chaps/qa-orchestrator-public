@@ -571,6 +571,11 @@ export default {
       title: 'Loading company profile...',
       description: 'Fetching comprehensive company information...',
     },
+    tabs: {
+      productsOverview: 'Products Overview',
+      partnersLabels: 'Partners & Labels',
+      digitalStrategy: 'Digital Strategy',
+    },
     sections: {
       insights: {
         title: 'Insights',
@@ -580,6 +585,10 @@ export default {
         insights: {
           title: 'Product Insights',
         },
+        viewProducts: 'View Products',
+        customerType: 'Customer Type',
+        marketingPositioning: 'Marketing Positioning',
+        partnersAndLabels: 'Partners & Labels',
         range: 'Product Range',
         partnerBrands: 'Partner Brands',
         privateLabels: '{company} Private Labels',
@@ -611,6 +620,11 @@ export default {
           title: 'Digital Strategy Insights',
         },
         strategy: 'Digital Strategy',
+        overallStrategy: 'Overall Strategy',
+        digitalTransformation: 'Digital Transformation',
+        eCommerceCapabilities: 'E-Commerce Capabilities',
+        mobileStrategy: 'Mobile Strategy',
+        digitalMarketingApproach: 'Digital Marketing Approach',
         loyaltyProgram: 'Loyalty Program',
         onlineServices: 'Online Services',
       },

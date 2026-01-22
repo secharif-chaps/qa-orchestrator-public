@@ -613,6 +613,11 @@ export default {
       title: "Chargement du profil de l'entreprise...",
       description: "Récupération des informations complètes de l'entreprise...",
     },
+    tabs: {
+      productsOverview: 'Aperçu des produits',
+      partnersLabels: 'Partenaires & Marques',
+      digitalStrategy: 'Stratégie digitale',
+    },
     sections: {
       insights: {
         title: 'Aperçu',
@@ -622,6 +627,10 @@ export default {
         insights: {
           title: 'Aperçu des Produits',
         },
+        viewProducts: 'Voir les produits',
+        customerType: 'Type de clientèle',
+        marketingPositioning: 'Positionnement marketing',
+        partnersAndLabels: 'Partenaires & Marques',
         range: 'Gamme de produits',
         partnerBrands: 'Marques partenaires',
         privateLabels: 'Marques propres {company}',
@@ -653,6 +662,11 @@ export default {
           title: 'Aperçu de la Stratégie Digitale',
         },
         strategy: 'Stratégie digitale',
+        overallStrategy: 'Stratégie globale',
+        digitalTransformation: 'Transformation numérique',
+        eCommerceCapabilities: 'Capacités e-commerce',
+        mobileStrategy: 'Stratégie mobile',
+        digitalMarketingApproach: 'Approche marketing digital',
         loyaltyProgram: 'Programme de fidélité',
         onlineServices: 'Services en ligne',
       },
