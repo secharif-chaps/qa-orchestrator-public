@@ -14,17 +14,17 @@ $DC exec -T db psql -U postgres -d mint_db << 'EOF'
 TRUNCATE TABLE workflow_configs RESTART IDENTITY CASCADE;
 
 INSERT INTO workflow_configs (task_type, title, api_key, llm, created_at, updated_at) VALUES
-    ('data_collection', 'Data Collection', 'app-qSdKHTLoR0WiESMRcVBKSzlI', 'mistral', NOW(), NOW()),
-    ('csr', 'CSR & Sustainability', 'app-jizNzZPfLpljyHTqStbGtMvt', 'mistral', NOW(), NOW()),
-    ('digital', 'Digital Presence', 'app-C8hqxmezKsu9u7PysTIDCn58', 'mistral', NOW(), NOW()),
-    ('jobs', 'Job Offers', 'app-4LwahL1q2ivVs7cg32qLKY75', 'mistral', NOW(), NOW()),
-    ('press', 'Press & Media', 'app-jROOB0dHSSP8bPBt4TdF5NGt', 'mistral', NOW(), NOW()),
-    ('products', 'Products & Services', 'app-dFdONFETxJDqzAhiYQMDvKGf', 'mistral', NOW(), NOW()),
-    ('profile', 'Company Profile', 'app-UDymomMk5nxIZm8CLQ8jsGxh', 'mistral', NOW(), NOW()),
-    ('team', 'Team & Leadership', 'app-l1c9mbAxNitn7sEJyxLH2Dsg', 'mistral', NOW(), NOW()),
-    ('timeline', 'Company Timeline', 'app-8g6lEf82QJBABiTzAPzHHM69', 'mistral', NOW(), NOW());
+    ('data_collection', 'Data Collection', 'app-qSdKHTLoR0WiESMRcVBKSzlI', NOW(), NOW()),
+    ('csr', 'CSR & Sustainability', 'app-jizNzZPfLpljyHTqStbGtMvt', NOW(), NOW()),
+    ('digital', 'Digital Presence', 'app-C8hqxmezKsu9u7PysTIDCn58', NOW(), NOW()),
+    ('jobs', 'Job Offers', 'app-4LwahL1q2ivVs7cg32qLKY75', NOW(), NOW()),
+    ('press', 'Press & Media', 'app-jROOB0dHSSP8bPBt4TdF5NGt', NOW(), NOW()),
+    ('products', 'Products & Services', 'app-dFdONFETxJDqzAhiYQMDvKGf', NOW(), NOW()),
+    ('profile', 'Company Profile', 'app-UDymomMk5nxIZm8CLQ8jsGxh', NOW(), NOW()),
+    ('team', 'Team & Leadership', 'app-l1c9mbAxNitn7sEJyxLH2Dsg', NOW(), NOW()),
+    ('timeline', 'Company Timeline', 'app-8g6lEf82QJBABiTzAPzHHM69', NOW(), NOW());
 
-SELECT task_type, title, api_key, llm FROM workflow_configs ORDER BY task_type;
+SELECT task_type, title, api_key FROM workflow_configs ORDER BY task_type;
 EOF
 
 echo ""
