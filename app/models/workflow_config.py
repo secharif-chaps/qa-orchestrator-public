@@ -10,6 +10,5 @@ class WorkflowConfig(Base):
     task_type = Column(String(50), unique=True, nullable=False)
     title = Column(String(100), nullable=False)
     api_key = Column(String(200), nullable=True)
-    llm = Column(String(20), nullable=False, default="mistral")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

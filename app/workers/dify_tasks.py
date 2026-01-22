@@ -73,9 +73,7 @@ def execute_dify_workflow(
     task_type: str,
     api_key: str,
     success_callback: str,
-    error_callback: str,
-    token_callback: str,
-    llm: str = "mistral"
+    error_callback: str
 ):
     """Execute Dify workflow with dynamic concurrency control."""
     logger.info(f"Starting workflow execution: Task {task_id}, Type: {task_type}, Company: {company_id}")
@@ -131,7 +129,6 @@ def execute_dify_workflow(
                     "task_type": task_type,
                     "success_callback": success_callback,
                     "error_callback": error_callback,
-                    "token_callback": token_callback,
                     "note": "URLs passed as parameters from backend",
                 }
             )
@@ -152,9 +149,7 @@ def execute_dify_workflow(
                     task_id=task.id,
                     company_id=company.id,
                     response_mode="blocking",  # blocking mode for async execution
-                    token_callback_url=token_callback,
-                    api_key=api_key,
-                    llm=llm
+                    api_key=api_key
                 )
             )
             

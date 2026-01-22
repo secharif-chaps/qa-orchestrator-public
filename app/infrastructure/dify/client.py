@@ -17,23 +17,23 @@ class DifyClient:
         # Fallback API key if database is not available
         self.fallback_api_key = settings.DIFY_API_KEY
     
-    def _get_workflow_config(self, task_type: str) -> tuple[Optional[str], Optional[str]]:
-        """Get API key and LLM for task type from database"""
+    def _get_workflow_config(self, task_type: str) -> Optional[str]:
+        """Get API key for task type from database"""
         if self.db is None:
             # No database available - workflows must be configured in database
-            return None, None
+            return None
 
         try:
             service = WorkflowConfigService(self.db)
             config = service.get_config_by_task_type(task_type)
             if config and config.api_key:
-                return config.api_key, config.llm
+                return config.api_key
             else:
                 # No config found in database
-                return None, None
+                return None
         except Exception as e:
             logger.warning(f"Failed to get workflow config from database: {e}")
-            return None, None
+            return None
     
     async def trigger_workflow(
         self,
@@ -45,9 +45,7 @@ class DifyClient:
         task_id: int,
         company_id: int,
         async_mode: bool = True,
-        token_callback_url: str = None,
-        api_key: Optional[str] = None,
-        llm: Optional[str] = None
+        api_key: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Generic method to trigger any workflow type using Workflow Apps API
@@ -65,20 +63,14 @@ class DifyClient:
         Returns:
             Response data from Dify (acknowledgment if async, results if sync)
         """
-        # Use provided parameters if available, otherwise get from database
-        if api_key is None or llm is None:
-            db_api_key, db_llm = self._get_workflow_config(task_type)
-            api_key = api_key or db_api_key
-            llm = llm or db_llm
+        # Use provided API key if available, otherwise get from database
+        if api_key is None:
+            api_key = self._get_workflow_config(task_type)
 
         if not api_key:
             error_msg = f"No API key found for task type: {task_type}"
             logger.error(error_msg)
             raise Exception(error_msg)
-
-        # Default LLM if not provided
-        if not llm:
-            llm = "mistral"
 
         headers = {
             "Authorization": f"Bearer {api_key}",
@@ -97,8 +89,7 @@ class DifyClient:
             "website": website,
             "callback_webhook": success_callback,
             "task_id": str(task_id),
-            "callback_payload": callback_payload_template,
-            "llm": llm  # Add LLM parameter to the inputs
+            "callback_payload": callback_payload_template
         }
 
         # For non-data_collection tasks, include knowledge data from data_collection results
@@ -110,13 +101,13 @@ class DifyClient:
                 if company:
                     # Add knowledge fields to inputs (these come from data_collection task)
                     inputs["mistral"] = company.raw_mistral_knowledge or ""
-                    inputs["claude"] = company.raw_claude_knowledge or ""
+                    inputs["gpt"] = company.raw_gpt_knowledge or ""
                     inputs["wikipedia"] = company.raw_wikipedia_knowledge or ""
                     inputs["scraped"] = company.raw_scraped_website_knowledge or ""
 
                     logger.info(f"📚 Added knowledge data to {task_type} workflow inputs:")
                     logger.info(f"  - Mistral: {len(inputs['mistral'])} chars")
-                    logger.info(f"  - Claude: {len(inputs['claude'])} chars")
+                    logger.info(f"  - GPT: {len(inputs['gpt'])} chars")
                     logger.info(f"  - Wikipedia: {len(inputs['wikipedia'])} chars")
                     logger.info(f"  - Scraped: {len(inputs['scraped'])} chars")
                 else:
@@ -129,15 +120,11 @@ class DifyClient:
         # Dify expects string values "true" or "false", not boolean
         if task_type == "data_collection":
             inputs["mistral"] = "true"
-            inputs["claude"] = "true"
+            inputs["gpt"] = "true"
             inputs["webscraping"] = "true"
             inputs["wikipedia"] = "true"
             # data_collection workflow expects "callback_url" instead of "callback_webhook"
             inputs["callback_url"] = success_callback
-
-        # Add token callback URL if provided
-        if token_callback_url:
-            inputs["token_callback_url"] = token_callback_url
 
         # Workflow Apps API payload structure
         payload = {
@@ -147,7 +134,6 @@ class DifyClient:
         }
 
         logger.info(f"Triggering Dify {task_type} workflow for {company_name} ({website}) - Task ID: {task_id}")
-        logger.info(f"LLM: {llm}")
         logger.info(f"Dify Base URL: {self.base_url}")
         logger.info(f"Full URL: {self.base_url}/workflows/run")
         logger.info(f"Mode: {'Async (fire-and-forget)' if async_mode else 'Sync (wait for response)'}")

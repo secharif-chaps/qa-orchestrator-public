@@ -89,7 +89,7 @@ def _build_company_response(
         press=section_data.get("press", {}),
         team=section_data.get("team", []),
         raw_mistral_knowledge=company.raw_mistral_knowledge,
-        raw_claude_knowledge=company.raw_claude_knowledge,
+        raw_gpt_knowledge=company.raw_gpt_knowledge,
         raw_wikipedia_knowledge=company.raw_wikipedia_knowledge,
         raw_scraped_website_knowledge=company.raw_scraped_website_knowledge,
         error=company.error,
@@ -258,7 +258,7 @@ class CompanyService:
             self.db.commit()
         else:
             # Prepare callback URLs in FastAPI context before queueing to Celery
-            success_callback, error_callback, token_callback = self._prepare_task_callbacks(prerequisite_task)
+            success_callback, error_callback = self._prepare_task_callbacks(prerequisite_task)
 
             logger.info(f"Queueing prerequisite task {prerequisite_task.id} ({prerequisite_task.type.value})")
             execute_dify_workflow.delay(
@@ -267,9 +267,7 @@ class CompanyService:
                 task_type=prerequisite_task.type.value,
                 api_key=workflow_config.api_key,
                 success_callback=success_callback,
-                error_callback=error_callback,
-                token_callback=token_callback,
-                llm=workflow_config.llm
+                error_callback=error_callback
             )
 
         logger.info(f"Created company '{name}' with 1 prerequisite task and {len(dependent_tasks)} dependent tasks")
@@ -354,7 +352,7 @@ class CompanyService:
             return task
 
         # Prepare callback URLs
-        success_callback, error_callback, token_callback = self._prepare_task_callbacks(task)
+        success_callback, error_callback = self._prepare_task_callbacks(task)
 
         # Queue task via Celery (fire-and-forget)
         logger.info(f"Queueing restart of task {task.id} ({task.type.value}) for company {company.name}")
@@ -364,18 +362,15 @@ class CompanyService:
             task_type=task.type.value,
             api_key=workflow_config.api_key,
             success_callback=success_callback,
-            error_callback=error_callback,
-            token_callback=token_callback,
-            llm=workflow_config.llm
+            error_callback=error_callback
         )
 
         return task
 
-    def _prepare_task_callbacks(self, task: Task) -> tuple[str, str, str]:
+    def _prepare_task_callbacks(self, task: Task) -> tuple[str, str]:
         """Helper method to prepare callback URLs for task execution"""
         success_callback = f"{settings.BACKEND_BASE_URL}/webhooks/dify/tasks/{task.id}/callback"
         error_callback = success_callback  # Same endpoint, different status in payload
-        token_callback = f"{settings.BACKEND_BASE_URL}/webhooks/dify/tasks/{task.id}/tokens"
 
         # Debug logging for callback URLs
         logger.info(
@@ -386,11 +381,10 @@ class CompanyService:
                 "BACKEND_BASE_URL": settings.BACKEND_BASE_URL,
                 "success_callback": success_callback,
                 "error_callback": error_callback,
-                "token_callback": token_callback,
             }
         )
 
-        return success_callback, error_callback, token_callback
+        return success_callback, error_callback
 
     async def _execute_task(self, task: Task, company: Company) -> None:
         try:
@@ -400,7 +394,7 @@ class CompanyService:
             logger.info(f"Using Dify workflow (async) for {task.type.value} task - Company: {company.name}")
 
             # Prepare callback URLs using helper method
-            success_callback, error_callback, token_callback = self._prepare_task_callbacks(task)
+            success_callback, error_callback = self._prepare_task_callbacks(task)
 
             # Trigger Dify workflow with callbacks (streaming mode - fire and forget)
             result = await self.dify_service.run_workflow(
@@ -411,8 +405,7 @@ class CompanyService:
                 error_callback=error_callback,
                 task_id=task.id,
                 company_id=company.id,
-                response_mode="streaming",  # Fire-and-forget mode
-                token_callback_url=token_callback
+                response_mode="streaming"  # Fire-and-forget mode
             )
 
             logger.info(f"Dify {task.type.value} workflow triggered (fire-and-forget): {result}")
@@ -455,13 +448,13 @@ class CompanyService:
                     knowledge_data = data
 
                 company.raw_mistral_knowledge = knowledge_data.get("mistral", "")
-                company.raw_claude_knowledge = knowledge_data.get("claude", "")
+                company.raw_gpt_knowledge = knowledge_data.get("gpt", "")
                 company.raw_wikipedia_knowledge = knowledge_data.get("wikipedia", "")
                 company.raw_scraped_website_knowledge = knowledge_data.get("scraped", "")
             else:
                 # Not a dict, set all to empty
                 company.raw_mistral_knowledge = ""
-                company.raw_claude_knowledge = ""
+                company.raw_gpt_knowledge = ""
                 company.raw_wikipedia_knowledge = ""
                 company.raw_scraped_website_knowledge = ""
         else:

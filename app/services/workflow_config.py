@@ -1,7 +1,7 @@
-from typing import List, Optional, Literal
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from app.models.workflow_config import WorkflowConfig
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 
 
 class WorkflowConfigResponse(BaseModel):
@@ -9,7 +9,6 @@ class WorkflowConfigResponse(BaseModel):
     title: str
     api_key_obfuscated: Optional[str]
     has_api_key: bool
-    llm: str
 
     class Config:
         from_attributes = True
@@ -17,13 +16,6 @@ class WorkflowConfigResponse(BaseModel):
 
 class WorkflowConfigUpdate(BaseModel):
     api_key: Optional[str] = None
-    llm: Optional[Literal["claude", "mistral", "gpt"]] = None
-
-    @validator('llm')
-    def validate_llm(cls, v):
-        if v is not None and v not in ["claude", "mistral", "gpt"]:
-            raise ValueError("LLM must be one of: claude, mistral, gpt")
-        return v
 
 
 class WorkflowConfigService:
@@ -45,8 +37,7 @@ class WorkflowConfigService:
                 task_type=config.task_type,
                 title=config.title,
                 api_key_obfuscated=self.obfuscate_api_key(config.api_key),
-                has_api_key=bool(config.api_key),
-                llm=config.llm
+                has_api_key=bool(config.api_key)
             )
             for config in configs
         ]
