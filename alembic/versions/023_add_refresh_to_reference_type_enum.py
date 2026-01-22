@@ -1,7 +1,7 @@
 """add refresh to reference_type enum
 
-Revision ID: a78f3889bdf3
-Revises: 020
+Revision ID: 023
+Revises: 022
 Create Date: 2026-01-19 17:02:53.911909
 
 """
@@ -9,8 +9,8 @@ from alembic import op
 
 
 # revision identifiers, used by Alembic.
-revision = 'a78f3889bdf3'
-down_revision = '020'
+revision = '023'
+down_revision = '022'
 branch_labels = None
 depends_on = None
 
