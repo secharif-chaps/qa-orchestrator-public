@@ -143,7 +143,7 @@ const loadWorkflows = async () => {
 // Handle workflow updates
 const handleWorkflowUpdate = async (
   taskType: string,
-  data: { api_key?: string | null; llm?: 'claude' | 'mistral' | null },
+  data: { api_key?: string | null },
 ) => {
   try {
     updatingWorkflow.value = taskType

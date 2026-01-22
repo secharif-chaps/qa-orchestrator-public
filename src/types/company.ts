@@ -193,7 +193,7 @@ export interface Company {
 
   // Raw knowledge fields (debug/admin only)
   raw_mistral_knowledge?: string | null
-  raw_claude_knowledge?: string | null
+  raw_gpt_knowledge?: string | null
   raw_wikipedia_knowledge?: string | null
   raw_scraped_website_knowledge?: string | null
 }
