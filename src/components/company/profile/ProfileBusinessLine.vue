@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-base-100 rounded-lg p-4 relative h-full">
+  <div class="bg-base-100 rounded-lg p-4 relative flex-1">
     <div class="flex flex-col gap-2">
       <h4>Line of business</h4>
       <!-- Business line - individual property loading -->
