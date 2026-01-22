@@ -41,7 +41,7 @@ services:
     environment:
       # Override CORS to allow frontend on port 3000
       CORS_ORIGIN: http://localhost:3000
-      BACKEND_BASE_URL: https://brigid-paradigmatic-toya.ngrok-free.dev/api
+      BACKEND_BASE_URL: https://isobel-trappy-sheldon.ngrok-free.dev/api
       LOG_LEVEL: INFO  # Use INFO level for local development
       # Local Keycloak settings
       KEYCLOAK_SERVER_URL: http://keycloak:8080
@@ -68,7 +68,7 @@ services:
       dockerfile: Dockerfile
     image: mint-back:local
     environment:
-      BACKEND_BASE_URL: https://brigid-paradigmatic-toya.ngrok-free.dev/api
+      BACKEND_BASE_URL: https://isobel-trappy-sheldon.ngrok-free.dev/api
       LOG_LEVEL: INFO  # Use INFO level for local development
     volumes:
       # Mount local code for hot-reload
@@ -82,25 +82,28 @@ services:
       dockerfile: Dockerfile
     image: mint-back:local
 
-  # Global Service
+  # Global Service (Gateway) - Proxies /api requests to backend monolith
   global-service:
     build:
       context: ../global-service
       dockerfile: Dockerfile
     image: global-service:local
     ports:
-      - "8001:8001"      # REST API
+      - "8001:8001"      # REST API (Gateway)
       - "50051:50051"    # gRPC server
     depends_on:
       db:
         condition: service_healthy
+      backend:
+        condition: service_started
     environment:
       LOG_LEVEL: INFO
       SERVICE_NAME: global-service
       API_HOST: "0.0.0.0"
       API_PORT: 8001
       GRPC_PORT: 50051
-      BACKEND_BASE_URL: http://localhost:8001/api
+      # Gateway proxies to the monolith backend (internal Docker network)
+      BACKEND_BASE_URL: http://backend:8000
       DATABASE_URL: postgresql://postgres:postgres@db:5432/global_db
       CORS_ORIGIN: http://localhost:3000,http://localhost:8001
       # Local Keycloak settings
