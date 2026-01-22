@@ -11,7 +11,7 @@ After Task Group 11 cleanup, this service:
 
 from typing import List, Dict, Any, Optional
 import logging
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.models.company import Company
 from app.models.task import Task, TaskType, TaskStatus
 from app.models.workflow_config import WorkflowConfig
@@ -33,6 +33,7 @@ from app.services.translation import (
     SUPPORTED_LANGUAGE_CODES,
 )
 from app.core.database_security import SecureQueryBuilder
+from app.core.exceptions import ResourceNotFoundError, ValidationError as ValidationException
 from app.core.validators import ValidationError, InputValidator
 from app.repositories.company_repository_impl import SQLAlchemyCompanyRepository
 from app.core.config import settings
@@ -77,6 +78,7 @@ def _build_company_response(
         id=company.id,
         name=company.name,
         website=company.website,
+        owner_id=company.owner_id,
         owner_username=company.owner_username or "",
         profile=section_data.get("profile", {}),
         digital=section_data.get("digital", {}),
@@ -114,7 +116,7 @@ class CompanyService:
         query = self.secure_query.safe_filter_by_id(Company, company_id)
         if not include_deleted:
             query = query.filter(Company.is_deleted == False)
-        return query.first()
+        return query.options(joinedload(Company.tasks)).first()
 
     def get_company_response(self, company_id: int, include_deleted: bool = False) -> Optional[CompanyResponse]:
         """Get company as CompanyResponse with all section data.
@@ -784,3 +786,133 @@ class CompanyService:
             failed=len(companies) - successful,
             results=results
         )
+
+    def refresh_company(self, company_id: int) -> Company:
+        """Reset all tasks and restart data collection workflow.
+
+        Args:
+            company_id: ID of the company to refresh
+
+        Returns:
+            Company instance with refreshed task states
+
+        Raises:
+            ResourceNotFoundError: If company doesn't exist
+            ValidationError: If data collection task is missing or workflow config is invalid
+        """
+        logger.info(
+            "Refreshing company tasks",
+            extra={"company_id": company_id}
+        )
+
+        company = self.get_company(company_id)
+        if not company:
+            raise ResourceNotFoundError(
+                "Company not found",
+                details={"company_id": company_id}
+            )
+
+        data_collection_task = self._find_data_collection_task(company)
+        self._reset_task_statuses(company, data_collection_task)
+        self.db.commit()
+
+        workflow_config = self._get_workflow_config(data_collection_task)
+        self._queue_refresh_workflow(company, data_collection_task, workflow_config)
+
+        return company
+
+    def _find_data_collection_task(self, company: Company) -> Task:
+        """Find the data collection task for the company."""
+        for task in company.tasks:
+            if task.type == TaskType.data_collection:
+                return task
+
+        logger.error(
+            "Data collection task not found",
+            extra={"company_id": company.id}
+        )
+        raise ValidationException(
+            "Data collection task not found for company",
+            details={"company_id": company.id}
+        )
+
+    def _reset_task_statuses(self, company: Company, data_collection_task: Task) -> None:
+        """Reset task statuses: data_collection to PENDING, others to BLOCKED."""
+        data_collection_task.status = TaskStatus.PENDING
+        data_collection_task.error = None
+
+        for task in company.tasks:
+            if task.type != TaskType.data_collection:
+                task.status = TaskStatus.BLOCKED
+                task.error = None
+
+        logger.info(
+            "Reset task statuses for company refresh",
+            extra={
+                "company_id": company.id,
+                "total_tasks": len(company.tasks)
+            }
+        )
+
+    def _get_workflow_config(self, task: Task) -> WorkflowConfig:
+        """Get workflow configuration for the task."""
+        workflow_config = self.db.query(WorkflowConfig).filter(
+            WorkflowConfig.task_type == task.type.value
+        ).first()
+
+        if not workflow_config or not workflow_config.api_key:
+            logger.error(
+                "Invalid workflow configuration",
+                extra={"task_type": task.type.value}
+            )
+            task.status = TaskStatus.ERROR
+            task.error = "No workflow configuration found"
+            self.db.commit()
+
+            raise ValidationException(
+                "No workflow configuration found for task type",
+                details={"task_type": task.type.value}
+            )
+
+        return workflow_config
+
+    def _queue_refresh_workflow(
+        self, company: Company, task: Task, workflow_config: WorkflowConfig
+    ) -> None:
+        """Queue the refresh workflow via Celery."""
+        success_callback, error_callback, token_callback = self._prepare_task_callbacks(task)
+
+        logger.info(
+            "Queueing refresh workflow",
+            extra={
+                "company_id": company.id,
+                "company_name": company.name,
+                "task_id": task.id,
+                "task_type": task.type.value,
+            }
+        )
+
+        execute_dify_workflow.delay(
+            task_id=task.id,
+            company_id=company.id,
+            task_type=task.type.value,
+            api_key=workflow_config.api_key,
+            success_callback=success_callback,
+            error_callback=error_callback,
+            token_callback=token_callback,
+            llm=workflow_config.llm
+        )
+
+    def get_company_tasks(self, company_id: int) -> list[Task]:
+        """Get all tasks for a company.
+
+        Args:
+            company_id: ID of the company
+
+        Returns:
+            List of Task instances for the company
+        """
+        company = self.get_company(company_id)
+        if not company:
+            return []
+        return company.tasks

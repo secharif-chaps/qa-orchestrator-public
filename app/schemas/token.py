@@ -24,6 +24,7 @@ class ReferenceType(str, Enum):
     """Reference types for token transactions."""
     company = "company"
     csv_import = "csv_import"
+    refresh = "refresh"
     manual = "manual"
     system = "system"
 

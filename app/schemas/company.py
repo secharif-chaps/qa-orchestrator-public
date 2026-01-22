@@ -265,6 +265,7 @@ class TaskResponse(BaseModel):
 
 class CompanyResponse(CompanyBase):
     id: int
+    owner_id: Optional[str] = Field(None, description="Keycloak user UUID of the company owner")
     owner_username: str
     website: str  # Override to str since validator converts HttpUrl to str
     profile: Dict[str, Any] = Field(default_factory=dict)

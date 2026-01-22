@@ -61,11 +61,13 @@ class ReferenceType(str, Enum):
     Attributes:
         company: Company creation
         csv_import: Bulk CSV import
+        refresh: Company data refresh
         manual: Manual admin operation
         system: System operation (migration, etc.)
     """
     company = "company"
     csv_import = "csv_import"
+    refresh = "refresh"
     manual = "manual"
     system = "system"
 
