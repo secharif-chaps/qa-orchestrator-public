@@ -25,6 +25,23 @@ from app.models.organization import FeatureFlag, OrganizationFeatureFlag
 logger = get_logger(__name__)
 
 
+def obfuscate_api_key(api_key: str | None) -> str | None:
+    """Obfuscate an API key for display.
+
+    Returns first 4 + "..." + last 4 characters.
+    Returns None if api_key is None or too short.
+
+    Args:
+        api_key: The API key to obfuscate
+
+    Returns:
+        Obfuscated API key string, or None if invalid
+    """
+    if api_key is None or len(api_key) < 8:
+        return None
+    return f"{api_key[:4]}...{api_key[-4:]}"
+
+
 def has_feature(db: Session, organization_id: str, flag: FeatureFlag) -> bool:
     """Check if a feature flag is enabled for an organization.
 
@@ -81,13 +98,14 @@ def enable_feature(
     """Enable a feature flag for an organization.
 
     Creates or updates the feature flag record with enabled=True.
+    If config is provided, it is merged with existing config to preserve api_key.
 
     Args:
         db: Database session
         organization_id: Keycloak organization UUID
         flag: The feature flag to enable
         enabled_by: User ID who enabled the feature (for audit)
-        config: Optional configuration for the feature
+        config: Optional configuration to merge with existing config
 
     Returns:
         The created or updated OrganizationFeatureFlag record
@@ -101,7 +119,10 @@ def enable_feature(
         feature.enabled = True
         feature.enabled_at = datetime.now(timezone.utc)
         if config is not None:
-            feature.config = config
+            # Merge new config with existing config to preserve api_key
+            existing_config = feature.config or {}
+            merged_config = {**existing_config, **config}
+            feature.config = merged_config
         logger.info(
             "Feature flag enabled",
             extra={
@@ -171,6 +192,87 @@ def disable_feature(
             },
         )
 
+    return feature
+
+
+def update_feature_config(
+    db: Session,
+    organization_id: str,
+    flag: FeatureFlag,
+    config: dict,
+    updated_by: str,
+) -> OrganizationFeatureFlag:
+    """Update feature flag config without changing enabled state.
+
+    Auto-enables flag if config contains non-empty api_key.
+    Auto-disables flag if config api_key is removed/empty.
+
+    Args:
+        db: Database session
+        organization_id: Keycloak organization UUID
+        flag: The feature flag to update
+        config: New configuration dict
+        updated_by: User ID who updated the config (for audit)
+
+    Returns:
+        The created or updated OrganizationFeatureFlag record
+    """
+    feature = db.query(OrganizationFeatureFlag).filter(
+        OrganizationFeatureFlag.organization_id == organization_id,
+        OrganizationFeatureFlag.flag == flag,
+    ).first()
+
+    # Determine if we should auto-enable/disable based on api_key
+    api_key = config.get("api_key")
+    has_api_key = api_key is not None and len(api_key.strip()) > 0
+
+    if feature:
+        # Merge new config with existing config
+        existing_config = feature.config or {}
+        merged_config = {**existing_config, **config}
+        feature.config = merged_config
+
+        # Auto-enable if api_key is set, auto-disable if removed
+        if has_api_key and not feature.enabled:
+            feature.enabled = True
+            feature.enabled_at = datetime.now(timezone.utc)
+        elif not has_api_key and feature.enabled:
+            feature.enabled = False
+            feature.enabled_at = None
+
+        logger.info(
+            "Feature flag config updated",
+            extra={
+                "organization_id": organization_id,
+                "flag": flag.value,
+                "updated_by": updated_by,
+                "enabled": feature.enabled,
+                "has_api_key": has_api_key,
+            },
+        )
+    else:
+        # Create new record
+        feature = OrganizationFeatureFlag(
+            organization_id=organization_id,
+            flag=flag,
+            enabled=has_api_key,
+            enabled_at=datetime.now(timezone.utc) if has_api_key else None,
+            config=config,
+        )
+        db.add(feature)
+        logger.info(
+            "Feature flag created with config",
+            extra={
+                "organization_id": organization_id,
+                "flag": flag.value,
+                "updated_by": updated_by,
+                "enabled": feature.enabled,
+                "has_api_key": has_api_key,
+            },
+        )
+
+    db.commit()
+    db.refresh(feature)
     return feature
 
 
