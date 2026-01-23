@@ -1,14 +1,17 @@
 <template>
-  <div class="border-b border-slate-200 dark:border-slate-700 last:border-b-0 pb-6 last:pb-0">
+  <div class="border-b border-base-200 last:border-b-0 pb-6 last:pb-0">
     <div class="flex items-center gap-3 mb-4">
-      <div
-        class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
+      <Badge
+        :icon="categoryIcon"
+        variant="secondary"
+        size="lg"
+        rounded
+        class="shrink-0"
       >
-        <i :class="categoryIcon" class="text-secondary"></i>
-      </div>
+      </Badge>
       <div class="flex-1">
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
-        <p class="text-sm text-secondary">{{ productList.length }} products in this category</p>
+        <p class="text-sm text-secondary">{{ t('products.countInCategory', { count: productList.length }) }}</p>
       </div>
       <Tag :label="productList.length.toString()" variant="slate" size="sm" />
     </div>
@@ -22,7 +25,7 @@
         <span class="text-secondary flex-1 capitalize">{{ product }}</span>
         <Tag v-if="isNewProduct(product)" variant="success" size="xs">
           <i class="fa-solid fa-star"></i>
-          New
+          {{ t('products.badges.new') }}
         </Tag>
       </div>
     </div>
@@ -31,7 +34,11 @@
 
 <script setup lang="ts">
 import Tag from '@/components/ui/Tag.vue'
+import { Badge } from '@owlint/feathers-vue'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   category: string

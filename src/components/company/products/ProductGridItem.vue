@@ -1,14 +1,17 @@
 <template>
-  <div class="bg-base-100 rounded-lg p-4">
+  <div class="bg-base-100 dark:bg-base-200 rounded-lg p-4">
     <div class="flex items-center gap-3 mb-4">
-      <div
-        class="w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
+      <Badge
+        :icon="categoryIcon"
+        variant="secondary"
+        size="lg"
+        rounded
+        class="shrink-0"
       >
-        <i :class="categoryIcon" class="text-secondary text-xl"></i>
-      </div>
+      </Badge>
       <div>
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
-        <p class="text-sm text-secondary">{{ productList.length }} products</p>
+        <p class="text-sm text-secondary">{{ t('products.count', { count: productList.length }) }}</p>
       </div>
     </div>
 
@@ -21,7 +24,7 @@
         <span class="text-sm flex-1 capitalize">{{ product }}</span>
         <Tag v-if="isNewProduct(product)" variant="success" size="xs">
           <i class="fa-solid fa-star"></i>
-          New
+          {{ t('products.badges.new') }}
         </Tag>
       </div>
     </div>
@@ -31,7 +34,7 @@
         variant="tertiary"
         size="sm"
         :icon="showAll ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"
-        :label="showAll ? 'Show Less' : `Show ${productList.length - maxDisplayItems} More`"
+        :label="showAll ? t('products.showLess') : t('products.showMore', { count: productList.length - maxDisplayItems })"
         @click="toggleShowAll"
       />
     </div>
@@ -40,8 +43,11 @@
 
 <script setup lang="ts">
 import Tag from '@/components/ui/Tag.vue'
-import { Button } from '@owlint/feathers-vue'
+import { Badge, Button } from '@owlint/feathers-vue'
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   category: string

@@ -2,15 +2,10 @@
   <div class="bg-base-100 rounded-lg p-4">
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
-        <div
-          class="w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-2xl"
-        >
-          <i class="fa-solid fa-box text-secondary"></i>
-        </div>
         <div>
-          <h2 class="text-xl font-semibold">Product Portfolio</h2>
+          <h2 class="text-xl font-semibold">{{ t('products.header.title') }}</h2>
           <p class="text-sm text-secondary">
-            {{ totalProductCount }} products across {{ categoryCount }} categories
+            {{ t('products.header.summary', { total: totalProductCount, categories: categoryCount }) }}
           </p>
         </div>
       </div>
@@ -19,16 +14,16 @@
           variant="tertiary"
           size="sm"
           :icon="viewMode === 'grid' ? 'fa fa-list' : 'fa fa-th-large'"
-          :label="viewMode === 'grid' ? 'List View' : 'Grid View'"
+          :label="viewMode === 'grid' ? t('products.viewMode.list') : t('products.viewMode.grid')"
           @click="$emit('toggleViewMode')"
         />
 
         <div class="w-64 relative">
           <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-secondary"></i>
-          <input
+          <Searchbar
+            id="product-search"
             :value="searchQuery"
-            placeholder="Search products..."
-            class="w-full sm:w-64 bg-base-300 border border-primary-stroke rounded-md p-2 pl-8 focus:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 ring-primary ring-offset-bg3"
+            :placeholder="t('products.search.placeholder')"
             @input="$emit('updateSearch', ($event.target as HTMLInputElement).value)"
           />
         </div>
@@ -38,8 +33,8 @@
     <!-- Category Filter Pills -->
     <div class="flex flex-wrap gap-2 mb-4">
       <Tag
-        label="All Categories"
-        :variant="selectedCategory === null ? 'primary' : 'slate'"
+        :label="t('products.categories.all')"
+        :variant="selectedCategory === null ? 'sage' : 'slate'"
         size="md"
         :icon="selectedCategory === null ? 'fa fa-check' : 'fa fa-layer-group'"
         rounded
@@ -62,8 +57,11 @@
 </template>
 
 <script setup lang="ts">
-import { Button } from '@owlint/feathers-vue'
+import { Button, Searchbar } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   totalProductCount: number
