@@ -9,9 +9,11 @@ Endpoints:
 - PATCH /organizations/{id}/feature-flags/{flag} - Toggle feature flag
 """
 
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_keycloak import OIDCUser
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator, HttpUrl
 from sqlalchemy.orm import Session
 
 from app.core.keycloak import idp
@@ -49,9 +51,54 @@ class FeatureFlagsResponse(BaseModel):
 
 
 class FeatureFlagToggleRequest(BaseModel):
-    """Request to toggle a feature flag."""
+    """Request to toggle a feature flag.
+
+    Attributes:
+        enabled: Whether to enable or disable the feature flag
+        config: Optional configuration for the feature flag (e.g., {"url": "https://..."})
+                When config contains a "url" field, it must be a valid HTTPS URL.
+    """
 
     enabled: bool
+    config: dict[str, Any] | None = None
+
+    @field_validator("config")
+    @classmethod
+    def validate_config_url(cls, v: dict[str, Any] | None) -> dict[str, Any] | None:
+        """Validate that if config contains a 'url' field, it must be a valid HTTPS URL.
+
+        Args:
+            v: The config dict to validate
+
+        Returns:
+            The validated config dict
+
+        Raises:
+            ValueError: If the URL is not a valid HTTPS URL
+        """
+        if v is None:
+            return v
+
+        if "url" in v:
+            url = v["url"]
+            if not url:
+                raise ValueError("URL cannot be empty")
+
+            # Validate URL format using Pydantic's HttpUrl
+            try:
+                parsed_url = HttpUrl(url)
+            except Exception:
+                raise ValueError(
+                    f"Invalid URL format: {url}. Must be a valid URL."
+                )
+
+            # Ensure HTTPS scheme
+            if parsed_url.scheme != "https":
+                raise ValueError(
+                    f"URL must use HTTPS scheme. Got: {parsed_url.scheme}://"
+                )
+
+        return v
 
 
 class FeatureFlagToggleResponse(BaseModel):
@@ -145,14 +192,15 @@ async def toggle_feature_flag(
 ):
     """Toggle a feature flag for an organization.
 
-    Enables or disables the specified feature flag.
+    Enables or disables the specified feature flag. Optionally accepts a config
+    object to store feature-specific configuration (e.g., external URL for discover).
 
     Requires admin.organizations role for access.
 
     Args:
         organization_id: Keycloak organization UUID
         flag: Feature flag to toggle
-        request: Toggle request with enabled state
+        request: Toggle request with enabled state and optional config
 
     Returns:
         FeatureFlagToggleResponse with updated flag state
@@ -163,12 +211,15 @@ async def toggle_feature_flag(
             "organization_id": organization_id,
             "flag": flag.value,
             "enabled": request.enabled,
+            "has_config": request.config is not None,
             "user": user.preferred_username,
         },
     )
 
     if request.enabled:
-        result = enable_feature(db, organization_id, flag, user.sub)
+        result = enable_feature(
+            db, organization_id, flag, user.sub, config=request.config
+        )
     else:
         result = disable_feature(db, organization_id, flag, user.sub)
 
