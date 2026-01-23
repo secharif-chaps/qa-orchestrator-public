@@ -86,178 +86,101 @@ async def get_all_users(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
     limit: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
     search: Optional[str] = Query(None, description="Search by username or email"),
-    organization_filter: Optional[str] = Query(None, description="Filter by organization ID or 'none' for unassigned users"),
-    sort: str = Query('created_at', description="Sort field: username, organization, created_at"),
+    sort: str = Query('created_at', description="Sort field: username, created_at"),
     order: str = Query('desc', description="Sort order: asc or desc"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
 ):
-    """Get all users across all organizations with filtering and sorting.
+    """Get all users with search and pagination using Keycloak's native API.
+
+    This endpoint is optimized for performance by using Keycloak's native search
+    and pagination instead of fetching all users. Organization and permissions
+    are NOT included in the response - use the dedicated endpoints to fetch
+    those on-demand.
 
     Requires admin.organizations role for access.
 
     Args:
         page: Page number (1-indexed)
         limit: Items per page (max 100)
-        search: Search by username or email
-        organization_filter: Filter by organization ID or 'none' for unassigned users
-        sort: Field to sort by (username, organization, created_at)
+        search: Search by username, email, first name, or last name (native Keycloak search)
+        sort: Field to sort by (username, created_at)
         order: Sort order (asc or desc)
 
     Returns:
-        Paginated list of users from Keycloak with organization info
+        Paginated list of users (without permissions or organization)
 
     Raises:
         HTTPException 500: If Keycloak API call fails
     """
+    import time
+    start_time = time.time()
+
     logger.info(
-        "Listing all users",
+        "Listing all users (optimized)",
         extra={
             "admin_user": user.preferred_username,
             "page": page,
             "limit": limit,
             "search": search,
-            "organization_filter": organization_filter
+            "sort": sort,
+            "order": order
         }
     )
 
     try:
-        # Get total count of users
-        await keycloak_admin_service.count_users()
-
-        # Calculate pagination
+        # Calculate pagination offset (0-indexed for Keycloak)
         first = (page - 1) * limit
 
-        # Fetch users from Keycloak (fetch more than limit for filtering)
-        # We fetch all users since we need to filter by organization client-side
-        all_users = await keycloak_admin_service.get_users(first=0, max_results=10000)
+        # Get total count with search filter (uses native Keycloak count)
+        total = await keycloak_admin_service.count_users_with_search(search)
 
-        # Build a mapping of user_id -> organization by fetching all organizations and their members
-        user_org_map: Dict[str, Dict[str, str]] = {}  # user_id -> {org_id, org_name}
+        # Fetch users using native Keycloak search and pagination
+        kc_users = await keycloak_admin_service.search_users(
+            search=search,
+            first=first,
+            max_results=limit
+        )
 
-        try:
-            # Fetch all organizations
-            all_orgs = await keycloak_admin_service.get_organizations()
-
-            # For each organization, get its members
-            for org in all_orgs:
-                org_id = org.get("id")
-                org_name = org.get("name")
-
-                if org_id:
-                    try:
-                        members = await keycloak_admin_service.get_organization_members(org_id, first=0, max_results=10000)
-                        for member in members:
-                            member_id = member.get("id")
-                            if member_id:
-                                user_org_map[member_id] = {
-                                    "organization_id": org_id,
-                                    "organization_name": org_name
-                                }
-                    except Exception as e:
-                        logger.warning(
-                            f"Failed to get members for organization {org_id}",
-                            extra={"error": str(e)}
-                        )
-                        continue
-        except Exception as e:
-            logger.warning(
-                "Failed to build user-organization mapping",
-                exc_info=e,
-                extra={"error": str(e)}
-            )
-
-        # Enrich users with organization info and permissions
-        enriched_users: List[Dict[str, Any]] = []
-
-        # Define internal Keycloak roles to filter out
-        internal_roles = {
-            "uma_authorization",
-            "offline_access",
-            "default-roles-" + settings.KEYCLOAK_REALM.lower()
-        }
-
-        for kc_user in all_users:
-            user_id = kc_user.get("id")
-
-            # Fetch user's realm roles from Keycloak
-            user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
-
-            # Filter out internal Keycloak roles, keep only application permissions
-            permissions = [
-                role["name"] for role in user_roles
-                if role["name"] not in internal_roles and
-                   not role["name"].startswith("realm-management")
-            ]
-
-            user_data = {
-                "user_id": user_id,
+        # Transform Keycloak users to response format (no permissions, no organization)
+        users_data: List[Dict[str, Any]] = []
+        for kc_user in kc_users:
+            users_data.append({
+                "user_id": kc_user.get("id"),
                 "username": kc_user.get("username"),
                 "email": kc_user.get("email"),
-                "organization_id": None,  # Will be populated from Keycloak Organizations API
-                "organization_name": None,
+                "first_name": kc_user.get("firstName"),
+                "last_name": kc_user.get("lastName"),
                 "status": "active" if kc_user.get("enabled", True) else "revoked",
                 "created_at": str(kc_user.get("createdTimestamp", 0)),
-                "permissions": permissions  # Add permissions array
-            }
+            })
 
-            # Get organization info from the mapping we built earlier
-            if user_id in user_org_map:
-                user_data["organization_id"] = user_org_map[user_id]["organization_id"]
-                user_data["organization_name"] = user_org_map[user_id]["organization_name"]
-
-            enriched_users.append(user_data)
-
-        # Apply search filter
-        if search:
-            search_lower = search.lower()
-            enriched_users = [
-                u for u in enriched_users
-                if (u["username"] and search_lower in u["username"].lower()) or
-                   (u["email"] and search_lower in u["email"].lower())
-            ]
-
-        # Apply organization filter
-        if organization_filter:
-            if organization_filter.lower() == "none":
-                enriched_users = [u for u in enriched_users if not u["organization_id"]]
-            else:
-                enriched_users = [u for u in enriched_users if u["organization_id"] == organization_filter]
-
-        # Sort users
+        # Sort users (Keycloak doesn't support all sort options natively)
         reverse = order.lower() == "desc"
         if sort == "username":
-            enriched_users.sort(key=lambda u: u["username"] or "", reverse=reverse)
-        elif sort == "organization":
-            enriched_users.sort(key=lambda u: u["organization_name"] or "", reverse=reverse)
+            users_data.sort(key=lambda u: (u["username"] or "").lower(), reverse=reverse)
         elif sort == "created_at":
-            enriched_users.sort(key=lambda u: int(u["created_at"]), reverse=reverse)
-
-        # Calculate total after filtering
-        total_filtered = len(enriched_users)
-
-        # Apply pagination
-        start_idx = first
-        end_idx = start_idx + limit
-        paginated_users = enriched_users[start_idx:end_idx]
+            users_data.sort(key=lambda u: int(u["created_at"]), reverse=reverse)
 
         # Calculate pagination metadata
-        total_pages = (total_filtered + limit - 1) // limit  # Ceiling division
+        total_pages = (total + limit - 1) // limit if total > 0 else 1
 
+        elapsed_time = time.time() - start_time
         logger.info(
-            "Retrieved users successfully",
+            "Retrieved users successfully (optimized)",
             extra={
-                "total": total_filtered,
+                "total": total,
                 "page": page,
-                "returned": len(paginated_users)
+                "returned": len(users_data),
+                "elapsed_seconds": round(elapsed_time, 3)
             }
         )
 
         return {
-            "data": paginated_users,
+            "data": users_data,
             "pagination": {
                 "page": page,
                 "limit": limit,
-                "total": total_filtered,
+                "total": total,
                 "total_pages": total_pages
             }
         }
@@ -266,11 +189,167 @@ async def get_all_users(
         logger.error(
             "Failed to fetch users from Keycloak",
             exc_info=e,
-            extra={"page": page, "limit": limit}
+            extra={"page": page, "limit": limit, "search": search}
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to fetch users: {str(e)}"
+        )
+
+
+@router.get("/{user_id}/permissions")
+async def get_user_permissions(
+    user_id: str,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+):
+    """Get user's current permissions (realm roles).
+
+    This endpoint fetches the user's realm roles from Keycloak and filters out
+    internal Keycloak roles, returning only application-level permissions.
+
+    Requires admin.organizations role for access.
+
+    Args:
+        user_id: Keycloak user UUID
+
+    Returns:
+        User permissions object with user_id, username, and permissions array
+
+    Raises:
+        HTTPException 404: If user not found
+        HTTPException 500: If Keycloak API call fails
+    """
+    logger.info(
+        "Fetching user permissions",
+        extra={
+            "admin_user": user.preferred_username,
+            "user_id": user_id
+        }
+    )
+
+    try:
+        # Fetch user to verify they exist and get username
+        kc_user = await keycloak_admin_service.get_user(user_id)
+        if not kc_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User {user_id} not found"
+            )
+
+        # Fetch user's realm roles from Keycloak
+        user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
+
+        # Define internal Keycloak roles to filter out
+        internal_roles = {
+            "uma_authorization",
+            "offline_access",
+            "default-roles-" + settings.KEYCLOAK_REALM.lower()
+        }
+
+        # Filter out internal Keycloak roles, keep only application permissions
+        permissions = [
+            role["name"] for role in user_roles
+            if role["name"] not in internal_roles and
+               not role["name"].startswith("realm-management")
+        ]
+
+        logger.info(
+            "Successfully fetched user permissions",
+            extra={
+                "user_id": user_id,
+                "username": kc_user.get("username"),
+                "permissions": permissions
+            }
+        )
+
+        return {
+            "user_id": user_id,
+            "username": kc_user.get("username"),
+            "permissions": permissions
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            "Failed to fetch user permissions",
+            exc_info=e,
+            extra={"user_id": user_id}
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to fetch user permissions: {str(e)}"
+        )
+
+
+@router.get("/{user_id}/organization")
+async def get_user_organization(
+    user_id: str,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+):
+    """Get user's current organization membership.
+
+    This endpoint fetches the user's organization from Keycloak Organizations.
+    Returns null for organization if the user is not a member of any organization.
+
+    Requires admin.organizations role for access.
+
+    Args:
+        user_id: Keycloak user UUID
+
+    Returns:
+        User organization object with user_id, username, and organization (or null)
+
+    Raises:
+        HTTPException 404: If user not found
+        HTTPException 500: If Keycloak API call fails
+    """
+    logger.info(
+        "Fetching user organization",
+        extra={
+            "admin_user": user.preferred_username,
+            "user_id": user_id
+        }
+    )
+
+    try:
+        # Fetch user to verify they exist and get username
+        kc_user = await keycloak_admin_service.get_user(user_id)
+        if not kc_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User {user_id} not found"
+            )
+
+        # Fetch user's organization using optimized method
+        organization = await keycloak_admin_service.get_user_organization_optimized(user_id)
+
+        logger.info(
+            "Successfully fetched user organization",
+            extra={
+                "user_id": user_id,
+                "username": kc_user.get("username"),
+                "organization": organization
+            }
+        )
+
+        return {
+            "user_id": user_id,
+            "username": kc_user.get("username"),
+            "organization": organization
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            "Failed to fetch user organization",
+            exc_info=e,
+            extra={"user_id": user_id}
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to fetch user organization: {str(e)}"
         )
 
 
