@@ -52,7 +52,7 @@ app.add_middleware(
 app.add_middleware(
     SecurityMiddleware,
     max_request_size=2097152,  # 2MB
-    rate_limit_requests=100,   # 100 requests per minute
+    rate_limit_requests=300,   # 300 requests per minute (increased for lazy-load patterns)
     rate_limit_window=60
 )
 

@@ -10,6 +10,38 @@ from pydantic import BaseModel, Field, field_validator
 from app.core.permissions import PermissionTier
 
 
+class TeamMemberListItem(BaseModel):
+    """Team member for list view without permission tier.
+
+    Permissions are lazy-loaded via separate endpoint for performance.
+    """
+
+    id: str = Field(..., description="Keycloak user UUID")
+    username: str
+    email: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    is_current_user: bool = False
+    created_at: Optional[int] = Field(None, description="Unix timestamp from Keycloak")
+
+    class Config:
+        from_attributes = True
+
+
+class TeamMemberListResponse(BaseModel):
+    """Paginated response for team members list."""
+
+    data: list[TeamMemberListItem]
+    pagination: dict = Field(..., description="Pagination metadata with total, page, limit, total_pages")
+
+
+class TeamMemberPermissions(BaseModel):
+    """Permission tier for a specific team member (lazy-loaded)."""
+
+    user_id: str = Field(..., description="Keycloak user UUID")
+    permission_tier: PermissionTier
+
+
 class TeamMember(BaseModel):
     """Team member representation with permission tier.
 
