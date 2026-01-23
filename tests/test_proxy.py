@@ -129,6 +129,12 @@ class TestProxyRoutes:
 class TestProxyIntegration:
     """Integration tests for the proxy (mocked backend)."""
 
+    def _mock_auth_success(self):
+        """Helper to create auth mock that returns success."""
+        from app.core.auth_middleware import GatewayUser, INTERNAL_REQUEST_HEADER, INTERNAL_REQUEST_SECRET
+        mock_user = GatewayUser(sub="user-123", preferred_username="testuser")
+        return (True, mock_user, {INTERNAL_REQUEST_HEADER: INTERNAL_REQUEST_SECRET})
+
     @pytest.mark.asyncio
     async def test_proxy_get_request(self):
         """Test GET request proxying."""
@@ -141,17 +147,20 @@ class TestProxyIntegration:
         mock_response.content = b'{"data": "test"}'
         mock_response.headers = httpx.Headers({"content-type": "application/json"})
 
-        with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
-            mock_client = AsyncMock()
-            mock_client.request = AsyncMock(return_value=mock_response)
-            mock_get_client.return_value = mock_client
+        with patch("app.proxy.routes.auth_middleware.validate_request") as mock_auth:
+            mock_auth.return_value = self._mock_auth_success()
 
-            # Use TestClient for sync testing
-            with TestClient(app) as client:
-                response = client.get("/api/test/endpoint")
+            with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
+                mock_client = AsyncMock()
+                mock_client.request = AsyncMock(return_value=mock_response)
+                mock_get_client.return_value = mock_client
 
-                assert response.status_code == 200
-                assert response.json() == {"data": "test"}
+                # Use TestClient for sync testing
+                with TestClient(app) as client:
+                    response = client.get("/api/test/endpoint")
+
+                    assert response.status_code == 200
+                    assert response.json() == {"data": "test"}
 
     @pytest.mark.asyncio
     async def test_proxy_post_request_with_body(self):
@@ -164,25 +173,28 @@ class TestProxyIntegration:
         mock_response.content = b'{"id": 1}'
         mock_response.headers = httpx.Headers({"content-type": "application/json"})
 
-        with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
-            mock_client = AsyncMock()
-            mock_client.request = AsyncMock(return_value=mock_response)
-            mock_get_client.return_value = mock_client
+        with patch("app.proxy.routes.auth_middleware.validate_request") as mock_auth:
+            mock_auth.return_value = self._mock_auth_success()
 
-            with TestClient(app) as client:
-                response = client.post(
-                    "/api/companies",
-                    json={"name": "Test Company"},
-                    headers={"Authorization": "Bearer token"},
-                )
+            with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
+                mock_client = AsyncMock()
+                mock_client.request = AsyncMock(return_value=mock_response)
+                mock_get_client.return_value = mock_client
 
-                assert response.status_code == 201
-                assert response.json() == {"id": 1}
+                with TestClient(app) as client:
+                    response = client.post(
+                        "/api/companies",
+                        json={"name": "Test Company"},
+                        headers={"Authorization": "Bearer token"},
+                    )
 
-                # Verify the request was made correctly
-                call_args = mock_client.request.call_args
-                assert call_args.kwargs["method"] == "POST"
-                assert "/api/companies" in call_args.kwargs["url"]
+                    assert response.status_code == 201
+                    assert response.json() == {"id": 1}
+
+                    # Verify the request was made correctly
+                    call_args = mock_client.request.call_args
+                    assert call_args.kwargs["method"] == "POST"
+                    assert "/api/companies" in call_args.kwargs["url"]
 
     @pytest.mark.asyncio
     async def test_proxy_preserves_query_params(self):
@@ -195,21 +207,24 @@ class TestProxyIntegration:
         mock_response.content = b'[]'
         mock_response.headers = httpx.Headers({"content-type": "application/json"})
 
-        with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
-            mock_client = AsyncMock()
-            mock_client.request = AsyncMock(return_value=mock_response)
-            mock_get_client.return_value = mock_client
+        with patch("app.proxy.routes.auth_middleware.validate_request") as mock_auth:
+            mock_auth.return_value = self._mock_auth_success()
 
-            with TestClient(app) as client:
-                response = client.get("/api/companies?page=1&size=10&search=test")
+            with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
+                mock_client = AsyncMock()
+                mock_client.request = AsyncMock(return_value=mock_response)
+                mock_get_client.return_value = mock_client
 
-                assert response.status_code == 200
+                with TestClient(app) as client:
+                    response = client.get("/api/companies?page=1&size=10&search=test")
 
-                # Verify query params were included
-                call_args = mock_client.request.call_args
-                assert "page=1" in call_args.kwargs["url"]
-                assert "size=10" in call_args.kwargs["url"]
-                assert "search=test" in call_args.kwargs["url"]
+                    assert response.status_code == 200
+
+                    # Verify query params were included
+                    call_args = mock_client.request.call_args
+                    assert "page=1" in call_args.kwargs["url"]
+                    assert "size=10" in call_args.kwargs["url"]
+                    assert "search=test" in call_args.kwargs["url"]
 
     @pytest.mark.asyncio
     async def test_proxy_timeout_returns_504(self):
@@ -217,16 +232,19 @@ class TestProxyIntegration:
         from fastapi.testclient import TestClient
         from app.main import app
 
-        with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
-            mock_client = AsyncMock()
-            mock_client.request = AsyncMock(side_effect=httpx.TimeoutException("timeout"))
-            mock_get_client.return_value = mock_client
+        with patch("app.proxy.routes.auth_middleware.validate_request") as mock_auth:
+            mock_auth.return_value = self._mock_auth_success()
 
-            with TestClient(app) as client:
-                response = client.get("/api/slow/endpoint")
+            with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
+                mock_client = AsyncMock()
+                mock_client.request = AsyncMock(side_effect=httpx.TimeoutException("timeout"))
+                mock_get_client.return_value = mock_client
 
-                assert response.status_code == 504
-                assert "timeout" in response.json()["detail"].lower()
+                with TestClient(app) as client:
+                    response = client.get("/api/slow/endpoint")
+
+                    assert response.status_code == 504
+                    assert "timeout" in response.json()["detail"].lower()
 
     @pytest.mark.asyncio
     async def test_proxy_connection_error_returns_503(self):
@@ -234,16 +252,19 @@ class TestProxyIntegration:
         from fastapi.testclient import TestClient
         from app.main import app
 
-        with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
-            mock_client = AsyncMock()
-            mock_client.request = AsyncMock(side_effect=httpx.ConnectError("connection refused"))
-            mock_get_client.return_value = mock_client
+        with patch("app.proxy.routes.auth_middleware.validate_request") as mock_auth:
+            mock_auth.return_value = self._mock_auth_success()
 
-            with TestClient(app) as client:
-                response = client.get("/api/unreachable")
+            with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
+                mock_client = AsyncMock()
+                mock_client.request = AsyncMock(side_effect=httpx.ConnectError("connection refused"))
+                mock_get_client.return_value = mock_client
 
-                assert response.status_code == 503
-                assert "unavailable" in response.json()["detail"].lower()
+                with TestClient(app) as client:
+                    response = client.get("/api/unreachable")
+
+                    assert response.status_code == 503
+                    assert "unavailable" in response.json()["detail"].lower()
 
 
 if __name__ == "__main__":
