@@ -134,30 +134,39 @@ async def update_organization_modules(
 async def toggle_module(
     organization_id: str,
     module: ModuleName,
+    body: ModuleUpdateRequest | None = None,
     token_manager: TokenManager = Depends(get_token_manager),
     user: OIDCUser = Depends(
         idp.get_current_user(required_roles=["admin.organizations"])
     ),
 ):
-    """Toggle module enabled/disabled state.
+    """Toggle or set module enabled/disabled state.
 
-    Flips the current enabled state of the specified module.
+    If request body contains `enabled`, sets the module to that state.
+    Otherwise, flips the current enabled state (toggle behavior).
 
     Requires admin.organizations role for access.
 
     Args:
         organization_id: Keycloak organization UUID
         module: Module name to toggle
+        body: Optional request body with explicit enabled state
 
     Returns:
         ModuleToggleResponse with updated module state
     """
     current_module = token_manager.get_or_create_module(organization_id, module)
 
+    # If body specifies enabled state, use it; otherwise toggle
+    if body is not None and body.enabled is not None:
+        new_enabled = body.enabled
+    else:
+        new_enabled = not current_module.enabled
+
     updated_module = token_manager.update_module_config(
         organization_id=organization_id,
         module_name=module,
-        enabled=not current_module.enabled,
+        enabled=new_enabled,
     )
 
     return ModuleToggleResponse(

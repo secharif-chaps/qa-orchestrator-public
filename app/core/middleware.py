@@ -210,9 +210,14 @@ class SecurityMiddleware(BaseHTTPMiddleware):
 class JSONValidationMiddleware(BaseHTTPMiddleware):
     """Middleware for validating JSON payloads"""
 
-    # Paths that use SSE (Server-Sent Events) streaming responses
-    # Body reading in middleware breaks SSE due to Starlette's BaseHTTPMiddleware limitations
-    SSE_PATHS = ["/api/chapse/chat"]
+    # Paths to skip JSON validation
+    # Body reading in BaseHTTPMiddleware breaks body restoration for FastAPI
+    # SSE endpoints and POST endpoints with Pydantic models need to be skipped
+    SKIP_PATHS = [
+        "/api/chapse/chat",  # SSE streaming
+        "/api/organizations/",  # Tokens and modules - body restoration breaks
+        "/api/companies/",  # Company creation - body restoration breaks
+    ]
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """Validate JSON payload structure and content"""
@@ -220,8 +225,8 @@ class JSONValidationMiddleware(BaseHTTPMiddleware):
         if request.method == "OPTIONS":
             return await call_next(request)
 
-        # Skip SSE endpoints - reading body breaks streaming responses
-        if any(request.url.path.startswith(path) for path in self.SSE_PATHS):
+        # Skip paths where body restoration breaks FastAPI
+        if any(request.url.path.startswith(path) for path in self.SKIP_PATHS):
             return await call_next(request)
         
         # Only process JSON requests

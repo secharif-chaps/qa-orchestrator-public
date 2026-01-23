@@ -74,7 +74,7 @@ async def get_organization_tokens(
 @router.post("/{organization_id}/tokens", response_model=TokenBalanceResponse)
 async def add_organization_tokens(
     organization_id: str,
-    request: AddTokensRequest,
+    token_data: AddTokensRequest,
     token_manager: TokenManager = Depends(get_token_manager),
     user: OIDCUser = Depends(
         idp.get_current_user(required_roles=["admin.organizations"])
@@ -87,14 +87,14 @@ async def add_organization_tokens(
 
     Args:
         organization_id: Keycloak organization UUID
-        request: AddTokensRequest with amount to add
+        token_data: AddTokensRequest with amount to add
 
     Returns:
         TokenBalanceResponse with updated balance
     """
     updated_org = token_manager.add_tokens(
         org_id=organization_id,
-        amount=request.amount,
+        amount=token_data.amount,
         user_id=user.sub,
     )
 
