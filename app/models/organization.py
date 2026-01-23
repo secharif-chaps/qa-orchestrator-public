@@ -77,8 +77,13 @@ class FeatureFlag(str, Enum):
 
     Feature flags are OFF by default. Unlike core modules (screen, target, explore),
     feature flags represent optional enhancements that can be enabled per organization.
+
+    Attributes:
+        TRANSLATION: Translation feature for translating company data
+        DISCOVER: External Discover dashboard integration with configurable URL
     """
     TRANSLATION = "translation"
+    DISCOVER = "discover"
 
 
 class Organization(Base):
