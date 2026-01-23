@@ -1,11 +1,8 @@
 <template>
-  <div class="bg-base-100 border border-primary-stroke rounded-card">
-    <div class="px-6 py-4 border-b border-primary-stroke flex justify-between items-center">
+  <div class="flex flex-col gap-4">
+    <div class="flex items-end justify-between">
       <div>
-        <h2 class="text-lg font-semibold">{{ t('settings.team.title', 'Team Management') }}</h2>
-        <p class="text-sm text-secondary mt-1">
-          {{ t('settings.team.description', 'Manage team members and their permissions') }}
-        </p>
+        <h2 class="text-xl font-semibold">{{ t('settings.team.title', 'Your members') }}</h2>
       </div>
 
       <Searchbar
@@ -49,7 +46,7 @@
         />
 
         <!-- Pagination -->
-        <div v-if="teamMembers.length > 0 && paginationMeta" class="px-6 pb-4">
+        <div v-if="teamMembers.length > 0 && paginationMeta">
           <Pagination
             v-model:current-page="currentPage"
             :meta="paginationMeta"
