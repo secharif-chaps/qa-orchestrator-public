@@ -7,11 +7,14 @@ import type {
   AdminUserListResponse,
   AdminUserQueryParams,
   AssignOrganizationRequest,
+  UserPermissionsResponse,
+  UserOrganizationResponse,
 } from '@/types/admin-user'
 import type { OrganizationMemberResponse } from '@/types/organization'
 
 /**
- * Get all users across all organizations with filtering and sorting
+ * Get all users with search and pagination (optimized)
+ * Does NOT include permissions or organization - use dedicated endpoints for those
  */
 export const getAllUsers = async (params: AdminUserQueryParams) => {
   const queryParams = new URLSearchParams({
@@ -25,11 +28,23 @@ export const getAllUsers = async (params: AdminUserQueryParams) => {
     queryParams.append('search', params.search)
   }
 
-  if (params.organization_filter !== undefined && params.organization_filter !== null) {
-    queryParams.append('organization_filter', params.organization_filter)
-  }
-
   return apiClient.get<AdminUserListResponse>(`/users?${queryParams}`)
+}
+
+/**
+ * Get user's current permissions (realm roles)
+ * Use this when opening the permissions management modal
+ */
+export const getUserPermissions = async (userId: string) => {
+  return apiClient.get<UserPermissionsResponse>(`/users/${userId}/permissions`)
+}
+
+/**
+ * Get user's current organization membership
+ * Use this when opening the organization assignment modal
+ */
+export const getUserOrganization = async (userId: string) => {
+  return apiClient.get<UserOrganizationResponse>(`/users/${userId}/organization`)
 }
 
 /**

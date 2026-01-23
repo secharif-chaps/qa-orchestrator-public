@@ -15,7 +15,7 @@
       <!-- User Info -->
       <div class="mb-6">
         <p class="text-sm text-secondary">
-          Are you sure you want to disable <span class="font-semibold">{{ user.username }}</span>?
+          Are you sure you want to disable <span class="font-semibold">{{ username }}</span>?
         </p>
       </div>
 
@@ -38,11 +38,11 @@
 </template>
 
 <script setup lang="ts">
-import type { AdminUserResponse } from '@/types/admin-user'
 import { Alert, Button } from '@owlint/feathers-vue'
 
 defineProps<{
-  user: AdminUserResponse
+  userId: string
+  username: string
   isLoading?: boolean
 }>()
 

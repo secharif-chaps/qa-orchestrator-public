@@ -3,7 +3,7 @@
 
     <!-- Page Header -->
 
-      <div class="flex items-start justify-between">
+      <div class="flex items-end justify-between">
         <div class="flex-1">
           <h1 class="text-2xl font-bold mb-2">
             {{ $t('admin.users.title', 'User Management') }}
@@ -12,6 +12,15 @@
             {{ $t('admin.users.description', 'Manage user organization assignments') }}
           </p>
         </div>
+        <div class="flex gap-2">
+          <UserFilters
+        :search="queryParams.search ?? ''"
+        :sort="queryParams.sort"
+        :order="queryParams.order"
+        @update:search="handleSearchUpdate"
+        @update:sort="handleSortUpdate"
+        @update:order="handleOrderUpdate"
+      />
         <Button
           variant="secondary"
           icon="fa fa-file-import"
@@ -20,18 +29,10 @@
         />
       </div>
 
+      </div>
+
       <!-- Filters -->
-      <UserFilters
-        :search="queryParams.search ?? ''"
-        :organization-filter="queryParams.organization_filter ?? null"
-        :sort="queryParams.sort"
-        :order="queryParams.order"
-        :organizations="availableOrganizations"
-        @update:search="handleSearchUpdate"
-        @update:organization-filter="handleOrganizationFilterUpdate"
-        @update:sort="handleSortUpdate"
-        @update:order="handleOrderUpdate"
-      />
+     
 
 
     <!-- Error Alert -->
@@ -78,9 +79,10 @@
     <!-- User Organization Assignment Modal -->
     <UserOrganizationModal
       v-if="userToAssign"
-      :user="userToAssign"
+      :user-id="userToAssign.userId"
+      :username="userToAssign.username"
       :organizations="availableOrganizations"
-      :is-loading="isAssigning"
+      :is-assigning="isAssigning"
       @confirm="handleAssignOrganization"
       @cancel="userToAssign = null"
     />
@@ -88,7 +90,8 @@
     <!-- Role Permissions Modal -->
     <RolePermissionsModal
       v-if="userToManagePermissions"
-      :user="userToManagePermissions"
+      :user-id="userToManagePermissions.userId"
+      :username="userToManagePermissions.username"
       @confirm="handleUpdatePermissions"
       @close="userToManagePermissions = null"
     />
@@ -96,14 +99,16 @@
     <!-- Disable User Modal -->
     <DisableUserModal
       v-if="userToDisable"
-      :user="userToDisable"
+      :user-id="userToDisable.userId"
+      :username="userToDisable.username"
       @close="userToDisable = null"
     />
 
     <!-- Reset Password Modal -->
     <ResetPasswordModal
       v-if="userToResetPassword"
-      :user="userToResetPassword"
+      :user-id="userToResetPassword.userId"
+      :username="userToResetPassword.username"
       @close="userToResetPassword = null"
     />
   </div>
@@ -130,7 +135,7 @@ import { useAssignUserOrganization, useUpdateUserPermissions } from '@/mutations
 import { adminUsersQuery } from '@/queries/admin-users'
 import { allOrganizationsQuery } from '@/queries/organization-admin'
 import type { PaginationMeta } from '@/types/pagination'
-import type { AdminUserResponse, AdminUserQueryParams } from '@/types/admin-user'
+import type { AdminUserListItem, AdminUserQueryParams } from '@/types/admin-user'
 import UserOrganizationModal from '@/components/admin/UserOrganizationModal.vue'
 import RolePermissionsModal from '@/components/admin/RolePermissionsModal.vue'
 import DisableUserModal from '@/components/admin/DisableUserModal.vue'
@@ -145,7 +150,6 @@ const queryParams = reactive<AdminUserQueryParams>({
   sort: 'created_at',
   order: 'desc',
   search: '',
-  organization_filter: null,
 })
 
 // Debounce timer for search
@@ -168,13 +172,17 @@ const { data: organizationsResponse } = useQuery(allOrganizationsQuery, () => ({
 
 // Mutations
 const { assignOrganization, isLoading: isAssigning } = useAssignUserOrganization()
-const { updatePermissions, isLoading: isUpdatingPermissions } = useUpdateUserPermissions()
+const { updatePermissions } = useUpdateUserPermissions()
 
-// Modal state
-const userToAssign = ref<AdminUserResponse | null>(null)
-const userToManagePermissions = ref<AdminUserResponse | null>(null)
-const userToDisable = ref<AdminUserResponse | null>(null)
-const userToResetPassword = ref<AdminUserResponse | null>(null)
+// Modal state - store only userId and username for on-demand loading
+interface ModalUserState {
+  userId: string
+  username: string
+}
+const userToAssign = ref<ModalUserState | null>(null)
+const userToManagePermissions = ref<ModalUserState | null>(null)
+const userToDisable = ref<ModalUserState | null>(null)
+const userToResetPassword = ref<ModalUserState | null>(null)
 
 // Users data
 const users = computed(() => usersResponse.value)
@@ -217,7 +225,7 @@ const pageSizeOptions = [10, 20, 50, 100]
 
 // Check if any filters are active
 const hasActiveFilters = computed(() => {
-  return queryParams.search !== '' || queryParams.organization_filter !== null
+  return queryParams.search !== ''
 })
 
 // Event handlers
@@ -232,10 +240,6 @@ const handleSearchUpdate = (search: string) => {
   }, 300) // 300ms debounce
 }
 
-const handleOrganizationFilterUpdate = (filter: string | null) => {
-  queryParams.organization_filter = filter
-  queryParams.page = 1
-}
 
 const handleSortUpdate = (sort: AdminUserQueryParams['sort']) => {
   queryParams.sort = sort
@@ -254,32 +258,31 @@ const updatePageSize = (limit: number) => {
 
 const clearFilters = () => {
   queryParams.search = ''
-  queryParams.organization_filter = null
   queryParams.page = 1
 }
 
 // Actions
-const showAssignModal = (user: AdminUserResponse) => {
-  userToAssign.value = user
+const showAssignModal = (user: AdminUserListItem) => {
+  userToAssign.value = { userId: user.user_id, username: user.username }
 }
 
-const showPermissionsModal = (user: AdminUserResponse) => {
-  userToManagePermissions.value = user
+const showPermissionsModal = (user: AdminUserListItem) => {
+  userToManagePermissions.value = { userId: user.user_id, username: user.username }
 }
 
-const showDisableModal = (user: AdminUserResponse) => {
-  userToDisable.value = user
+const showDisableModal = (user: AdminUserListItem) => {
+  userToDisable.value = { userId: user.user_id, username: user.username }
 }
 
-const showResetPasswordModal = (user: AdminUserResponse) => {
-  userToResetPassword.value = user
+const showResetPasswordModal = (user: AdminUserListItem) => {
+  userToResetPassword.value = { userId: user.user_id, username: user.username }
 }
 
 const handleAssignOrganization = async (organizationId: string) => {
   if (!userToAssign.value) return
 
   try {
-    await assignOrganization({ userId: userToAssign.value.user_id, organizationId })
+    await assignOrganization({ userId: userToAssign.value.userId, organizationId })
     userToAssign.value = null
   } catch (error) {
     console.error('Failed to assign organization:', error)
@@ -290,7 +293,7 @@ const handleUpdatePermissions = async (permissions: string[]) => {
   if (!userToManagePermissions.value) return
 
   try {
-    await updatePermissions({ userId: userToManagePermissions.value.user_id, permissions })
+    await updatePermissions({ userId: userToManagePermissions.value.userId, permissions })
     userToManagePermissions.value = null
   } catch (error) {
     console.error('Failed to update permissions:', error)
