@@ -8,31 +8,29 @@
           {{ jobTitle }}
         </h3>
         <div class="mt-2 space-y-2">
-          <div v-if="jobLocation" class="flex items-center text-sm text-secondary">
-            <i class="fa fa-map-marker w-4"></i>
+          <Tag v-if="jobLocation" variant="primary" size="sm" :icon="'fa fa-map-marker'" >
             {{ jobLocation }}
-          </div>
-          <div v-if="jobDepartment" class="flex items-center text-sm text-secondary">
-            <i class="fa fa-building w-4"></i>
+          </Tag>
+          <Tag v-if="jobDepartment" variant="primary" size="sm" :icon="'fa fa-building'" class="block">
             {{ jobDepartment }}
-          </div>
+          </Tag>
           <div v-if="jobPostedDate" class="flex items-center text-sm text-secondary">
             <i class="fa fa-calendar w-4"></i>
-            Posted: {{ jobPostedDate }}
+            {{ t('jobs.card.postedDate') }} {{ jobPostedDate }}
           </div>
         </div>
       </div>
     </div>
 
     <div v-if="jobDescription" class="mt-4">
-      <h4 class="font-medium mb-2">Description</h4>
+      <h4 class="font-medium mb-2">{{ t('jobs.card.description') }}</h4>
       <p class="text-sm text-secondary">
         {{ jobDescription }}
       </p>
     </div>
 
     <div v-if="jobRequirements" class="mt-4">
-      <h4 class="font-medium mb-2">Requirements</h4>
+      <h4 class="font-medium mb-2">{{ t('jobs.card.requirements') }}</h4>
       <p class="text-sm text-secondary">
         {{ jobRequirements }}
       </p>
@@ -46,8 +44,12 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Source from '../Source.vue'
 import type { SourcedValue } from '@/types/company'
+import { Tag } from '@owlint/feathers-vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   job: {
