@@ -1,19 +1,19 @@
 <template>
   <div class="relative flex items-start gap-6 pb-6">
     <!-- Date indicator -->
-    <div class="w-36 text-right pt-3">
-      <div class="text-sm font-medium text-secondary pt-2.5">
+    <div class="w-20 text-right pt-4">
+      <div class="text-sm font-medium text-secondary">
         {{ formattedDate }}
       </div>
     </div>
 
     <!-- Timeline line -->
-    <div class="absolute top-6 left-[163px] w-0.5 h-full bg-base-200"></div>
+    <div class="absolute top-6 left-[101px] w-0.5 h-full bg-base-300"></div>
 
     <!-- Timeline dot -->
     <div class="relative">
       <div
-        class="absolute top-6 -left-2.5 w-4 h-4 rounded-full bg-primary ring-4 ring-primary/20 border-2 border-white dark:border-slate-800"
+        class="absolute top-4 -left-2.5 w-4 h-4 rounded-full bg-sage-50 dark:bg-base-100 ring-4 ring-white dark:ring-base-100 border-2 border-base-300 dark:border-base-300"
       ></div>
     </div>
 
@@ -22,40 +22,35 @@
       <!-- Event Header -->
       <div class="flex items-start justify-between mb-3">
         <h3 class="text-lg font-semibold leading-tight">
-          {{ eventTitle }}
+          {{ displayedEvent.title }}
         </h3>
       </div>
 
       <!-- Tags/Badges -->
       <div class="flex gap-2 mb-4 flex-wrap">
-        <Tag variant="primary" size="sm" class="flex items-center gap-1">
+        <Tag size="sm" class="flex items-center gap-1">
           <i class="fa fa-clipboard text-xs"></i>
-          {{ eventCategory }}
+          {{ displayedEvent.category }}
         </Tag>
 
-        <Tag v-if="eventLocation" variant="slate" size="sm" class="flex items-center gap-1">
+        <Tag v-if="displayedEvent.location" variant="almond" size="sm" class="flex items-center gap-1">
           <i class="fa fa-map-marker-alt text-xs"></i>
-          {{ eventLocation }}
+          {{ displayedEvent.location }}
         </Tag>
       </div>
 
       <!-- Description -->
       <p class="text-secondary mb-4 leading-relaxed">
-        {{ eventDescription }}
+        {{ displayedEvent.description }}
       </p>
 
-      <!-- Impact Section -->
-      <div v-if="eventImpact" class="bg-base-300 border border-primary-stroke rounded-lg p-4 mb-4">
-        <div class="flex items-center gap-2 mb-2">
-          <i class="fa fa-bolt text-yellow-500 text-sm"></i>
-          <span class="text-xs uppercase font-semibold text-secondary tracking-wide">
-            Impact Analysis
-          </span>
-        </div>
-        <p class="text-sm text-secondary italic leading-relaxed">
-          {{ eventImpact }}
-        </p>
-      </div>
+      <Alert
+        v-if="displayedEvent.impact"
+        variant="primary"
+        icon="fa fa-bolt"
+        :title="t('timeline.event.impactAnalysis')"
+        :description="displayedEvent.impact"
+      />
 
       <!-- Source -->
       <div v-if="eventSource" class="flex justify-end">
@@ -68,16 +63,21 @@
 <script lang="ts" setup>
 import Tag from '@/components/ui/Tag.vue'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Source from '../Source.vue'
 import type { SourcedValue } from '@/types/company'
+import { Alert } from '@owlint/feathers-vue'
+import { getSourcedValue } from '@/components/helpers/sourcedValues'
+
+const { t } = useI18n()
 
 interface TimelineEvent {
-  date: string | SourcedValue<string>
-  title: string | SourcedValue<string>
-  description: string | SourcedValue<string>
-  category: string | SourcedValue<string>
-  location?: string | SourcedValue<string>
-  impact?: string | SourcedValue<string>
+  date: SourcedValue<string>
+  title: SourcedValue<string>
+  description: SourcedValue<string>
+  category: SourcedValue<string>
+  location?: SourcedValue<string>
+  impact?: SourcedValue<string>
   source?: string
 }
 
@@ -85,27 +85,25 @@ const props = defineProps<{
   event: TimelineEvent
 }>()
 
-// Helper to extract value from SourcedValue or return plain string
-const extractValue = (field: string | SourcedValue<string> | undefined): string | undefined => {
-  if (!field) return undefined
-  if (typeof field === 'string') return field
-  return field.value
-}
+const displayedEvent = computed(() => {
+  return {
+    date: getSourcedValue(props.event.date),
+    title: getSourcedValue(props.event.title),
+    category: getSourcedValue(props.event.category),
+    location: getSourcedValue(props.event.location),
+    description: getSourcedValue(props.event.description),
+    impact: getSourcedValue(props.event.impact),
+    source: props.event.source,
+  }
+})
 
-// Computed properties to extract values
-const eventTitle = computed(() => extractValue(props.event.title) || '')
-const eventCategory = computed(() => extractValue(props.event.category) || '')
-const eventLocation = computed(() => extractValue(props.event.location))
-const eventDescription = computed(() => extractValue(props.event.description) || '')
-const eventImpact = computed(() => extractValue(props.event.impact))
 const eventSource = computed(() => props.event.source)
 
 // Format date for display (handle partial dates like YYYY or YYYY-MM)
 const formattedDate = computed(() => {
-  const dateField = props.event.date
-  const dateStr = extractValue(dateField)
+  const dateStr = displayedEvent.value.date as string
 
-  if (!dateStr) return 'N/A'
+  if (!dateStr) return t('common.na')
 
   if (dateStr.length === 4) {
     return dateStr // Just the year
@@ -122,33 +120,9 @@ const formattedDate = computed(() => {
     const date = new Date(dateStr)
     return date.toLocaleDateString(undefined, {
       year: 'numeric',
-      month: 'long',
+      month: 'numeric',
       day: 'numeric',
     })
   }
 })
 </script>
-
-<style scoped>
-/* Enhanced timeline styles with animations */
-.timeline-event {
-  animation: slideInFromLeft 0.5s ease-out;
-}
-
-@keyframes slideInFromLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* Hover effects */
-.timeline-event:hover {
-  transform: translateY(-2px);
-  transition: transform 0.2s ease;
-}
-</style>
