@@ -49,15 +49,18 @@
 
     <!-- Actions column -->
     <template #cell(actions)="{ item }">
-      <td class="px-4 py-3 text-right">
+      <td class="px-4 py-3 ">
+        <div class="flex justify-end items-center">
+
         <Button
           v-if="canManageTeam && !item.is_current_user"
           variant="tertiary"
           icon="fa fa-key"
-          size="sm"
           :title="$t('settings.team.resetPassword', 'Reset Password')"
           @click="$emit('reset-password', item)"
         />
+      </div>
+
       </td>
     </template>
 
