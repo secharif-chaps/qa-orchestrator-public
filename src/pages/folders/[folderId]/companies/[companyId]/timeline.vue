@@ -24,7 +24,6 @@
       <div class="bg-base-100 p-4 rounded-lg">
         <div class="flex items-center justify-between mb-6">
           <div class="flex gap-2 items-center">
-            <i class="fa fa-list"></i>
             <span class="text-lg font-semibold">{{ $t('timeline.title') }}</span>
           </div>
           <div class="flex items-center gap-2">
@@ -38,11 +37,10 @@
               {{ sortAscending ? $t('timeline.sort.oldestFirst', 'Oldest first') : $t('timeline.sort.newestFirst', 'Newest first') }}
             </Button>
             <div class="w-64">
-              <Input
+              <Searchbar
                 id="timeline-search"
                 v-model="searchQuery"
                 :placeholder="$t('timeline.search.placeholder')"
-                icon="fa-search"
               />
             </div>
           </div>
@@ -72,7 +70,7 @@ import { computed, ref, inject } from 'vue'
 import type { Ref } from 'vue'
 import Event from '@/components/company/timeline/Event.vue'
 import { companyTasksQuery } from '@/queries/tasks'
-import { Button, Input } from '@owlint/feathers-vue'
+import { Button, Input, Searchbar } from '@owlint/feathers-vue'
 import NoData from '@/components/ui/NoData.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'

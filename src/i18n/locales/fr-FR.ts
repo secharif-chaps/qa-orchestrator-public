@@ -544,6 +544,9 @@ export default {
       oldestFirst: 'Plus ancien',
       newestFirst: 'Plus récent',
     },
+    event: {
+      impactAnalysis: "Analyse d'impact",
+    },
   },
   communications: {
     title: "Communications d'Entreprise",
@@ -586,6 +589,11 @@ export default {
       },
       noResults: 'Aucune offre d\'emploi trouvée correspondant à "{query}"',
     },
+    card: {
+      postedDate: 'Publié le :',
+      description: 'Description',
+      requirements: 'Exigences',
+    },
   },
   mentions: {
     title: 'Mentions',
@@ -606,6 +614,27 @@ export default {
       description: 'Les informations sur les produits seront affichées ici une fois disponibles.',
     },
     noResults: 'Aucun produit trouvé correspondant à votre recherche',
+    count: '{count} produits',
+    countInCategory: '{count} produits dans cette catégorie',
+    badges: {
+      new: 'Nouveau',
+    },
+    showLess: 'Voir moins',
+    showMore: 'Voir {count} de plus',
+    header: {
+      title: 'Portefeuille Produits',
+      summary: '{total} produits dans {categories} catégories',
+    },
+    viewMode: {
+      list: 'Vue liste',
+      grid: 'Vue grille',
+    },
+    search: {
+      placeholder: 'Rechercher des produits...',
+    },
+    categories: {
+      all: 'Toutes les catégories',
+    },
   },
   profile: {
     title: "Profil de l'Entreprise",

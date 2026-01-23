@@ -503,6 +503,9 @@ export default {
       oldestFirst: 'Oldest first',
       newestFirst: 'Newest first',
     },
+    event: {
+      impactAnalysis: 'Impact Analysis',
+    },
   },
   communications: {
     title: 'Corporate Communications',
@@ -544,6 +547,11 @@ export default {
       },
       noResults: 'No job offers found matching "{query}"',
     },
+    card: {
+      postedDate: 'Posted:',
+      description: 'Description',
+      requirements: 'Requirements',
+    },
   },
   mentions: {
     title: 'Mentions',
@@ -564,6 +572,27 @@ export default {
       description: 'Products information will be displayed here once available.',
     },
     noResults: 'No products found matching your search',
+    count: '{count} products',
+    countInCategory: '{count} products in this category',
+    badges: {
+      new: 'New',
+    },
+    showLess: 'Show Less',
+    showMore: 'Show {count} More',
+    header: {
+      title: 'Product Portfolio',
+      summary: '{total} products across {categories} categories',
+    },
+    viewMode: {
+      list: 'List View',
+      grid: 'Grid View',
+    },
+    search: {
+      placeholder: 'Search products...',
+    },
+    categories: {
+      all: 'All Categories',
+    },
   },
   profile: {
     title: 'Company Profile',
