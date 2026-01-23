@@ -432,16 +432,248 @@ class KeycloakAdminService:
         try:
             endpoint = f"/users?first={first}&max={max_results}"
             response = await self._make_admin_request("GET", endpoint)
-            
+
             if response.status_code == 200:
                 return response.json()
             else:
                 logger.error(f"Failed to get users: {response.status_code} - {response.text}")
                 return []
-                
+
         except Exception as e:
             logger.error(f"Error getting users: {e}")
             return []
+
+    async def search_users(
+        self,
+        search: Optional[str] = None,
+        first: int = 0,
+        max_results: int = 100
+    ) -> List[Dict[str, Any]]:
+        """
+        Search users using Keycloak's native search API.
+
+        This method leverages Keycloak's built-in search functionality which searches
+        across username, email, first name, and last name fields.
+
+        Args:
+            search: Search string for username, email, first name, last name.
+                    If None or empty, returns all users paginated.
+            first: Pagination offset (0-indexed)
+            max_results: Maximum results to return
+
+        Returns:
+            List of user dictionaries from Keycloak
+        """
+        try:
+            # Build query parameters
+            params = [f"first={first}", f"max={max_results}"]
+
+            if search and search.strip():
+                # URL encode the search parameter
+                from urllib.parse import quote
+                encoded_search = quote(search.strip())
+                params.append(f"search={encoded_search}")
+
+            endpoint = f"/users?{'&'.join(params)}"
+
+            logger.info(
+                "Searching users in Keycloak",
+                extra={
+                    "search": search,
+                    "first": first,
+                    "max_results": max_results,
+                    "endpoint": endpoint
+                }
+            )
+
+            response = await self._make_admin_request("GET", endpoint)
+
+            if response.status_code == 200:
+                users = response.json()
+                logger.info(
+                    "Successfully searched users",
+                    extra={"result_count": len(users), "search": search}
+                )
+                return users
+            else:
+                logger.error(
+                    "Failed to search users",
+                    extra={
+                        "status_code": response.status_code,
+                        "response_text": response.text[:500]
+                    }
+                )
+                return []
+
+        except Exception as e:
+            logger.error(
+                "Exception while searching users",
+                exc_info=True,
+                extra={
+                    "search": search,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e)
+                }
+            )
+            return []
+
+    async def count_users_with_search(self, search: Optional[str] = None) -> int:
+        """
+        Count users using Keycloak's native count API with optional search filter.
+
+        Args:
+            search: Optional search string to filter count.
+                    If None or empty, counts all users.
+
+        Returns:
+            Total count of matching users
+        """
+        try:
+            # Build endpoint with optional search parameter
+            endpoint = "/users/count"
+
+            if search and search.strip():
+                from urllib.parse import quote
+                encoded_search = quote(search.strip())
+                endpoint = f"/users/count?search={encoded_search}"
+
+            logger.info(
+                "Counting users in Keycloak",
+                extra={"search": search, "endpoint": endpoint}
+            )
+
+            response = await self._make_admin_request("GET", endpoint)
+
+            if response.status_code == 200:
+                # Keycloak returns count as plain text
+                count = int(response.text)
+                logger.info(
+                    "Successfully counted users",
+                    extra={"count": count, "search": search}
+                )
+                return count
+            else:
+                logger.error(
+                    "Failed to count users",
+                    extra={
+                        "status_code": response.status_code,
+                        "response_text": response.text[:500]
+                    }
+                )
+                return 0
+
+        except ValueError as e:
+            logger.error(
+                "Failed to parse user count response",
+                extra={"response_text": response.text, "error": str(e)}
+            )
+            return 0
+        except Exception as e:
+            logger.error(
+                "Exception while counting users",
+                exc_info=True,
+                extra={
+                    "search": search,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e)
+                }
+            )
+            return 0
+
+    async def get_user_organization_optimized(self, user_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get the organization for a single user efficiently.
+
+        This method fetches all organizations and checks membership in parallel
+        using asyncio.gather() for better performance.
+
+        Args:
+            user_id: Keycloak user UUID
+
+        Returns:
+            Organization dict with 'id' and 'name', or None if user has no organization
+        """
+        try:
+            logger.info(
+                "Getting organization for user",
+                extra={"user_id": user_id}
+            )
+
+            # First, get all organizations
+            all_orgs = await self.get_organizations()
+
+            if not all_orgs:
+                logger.info(
+                    "No organizations found",
+                    extra={"user_id": user_id}
+                )
+                return None
+
+            # Check membership in all organizations in parallel
+            async def check_membership(org: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+                org_id = org.get("id")
+                if not org_id:
+                    return None
+
+                try:
+                    # Get members of this organization (limited to check if user is member)
+                    members = await self.get_organization_members(
+                        org_id,
+                        first=0,
+                        max_results=10000  # Need to check all members
+                    )
+
+                    # Check if user is in members list
+                    for member in members:
+                        if member.get("id") == user_id:
+                            return {
+                                "id": org_id,
+                                "name": org.get("name")
+                            }
+                except Exception as e:
+                    logger.warning(
+                        f"Failed to check membership for org {org_id}",
+                        extra={"error": str(e), "org_id": org_id}
+                    )
+
+                return None
+
+            # Run all membership checks in parallel
+            results = await asyncio.gather(
+                *[check_membership(org) for org in all_orgs],
+                return_exceptions=True
+            )
+
+            # Find the first non-None result (user's organization)
+            for result in results:
+                if isinstance(result, dict) and result is not None:
+                    logger.info(
+                        "Found user organization",
+                        extra={
+                            "user_id": user_id,
+                            "organization_id": result.get("id"),
+                            "organization_name": result.get("name")
+                        }
+                    )
+                    return result
+
+            logger.info(
+                "User has no organization",
+                extra={"user_id": user_id}
+            )
+            return None
+
+        except Exception as e:
+            logger.error(
+                "Exception while getting user organization",
+                exc_info=True,
+                extra={
+                    "user_id": user_id,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e)
+                }
+            )
+            return None
     
     async def update_user(self, user_id: str, user_data: Dict[str, Any]) -> bool:
         """Update user details"""
