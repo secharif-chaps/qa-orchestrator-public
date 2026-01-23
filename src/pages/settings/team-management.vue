@@ -18,45 +18,45 @@
         />
       </div>
     </div>
-    <div class="">
-      <div class="flex flex-col gap-6">
-        <!-- Loading State -->
-        <div v-if="isLoading" class="flex items-center justify-center py-12">
-          <div class="text-center">
-            <i class="fa fa-spinner fa-spin text-3xl text-primary mb-3"></i>
-            <p class="text-secondary">
-              {{ t('settings.team.loading', 'Loading team members...') }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Error State -->
-        <div v-else-if="error" class="py-12">
-          <Alert
-            variant="danger"
-            icon="fa-exclamation-circle"
-            :title="t('settings.team.error.title', 'Error')"
-            :description="t('settings.team.error.description', 'Failed to load team members')"
-          />
-        </div>
-
-        <!-- Empty State -->
-        <div v-else-if="!teamMembers?.length" class="py-12 text-center">
-          <i class="fa fa-users text-5xl text-secondary/30 mb-4"></i>
-          <h3 class="text-lg font-semibold mb-2">
-            {{ t('settings.team.empty.title', 'No team members found') }}
-          </h3>
+    <div class="flex flex-col gap-4">
+      <!-- Loading State -->
+      <div v-if="isLoading" class="flex items-center justify-center py-12">
+        <div class="text-center">
+          <i class="fa fa-spinner fa-spin text-3xl text-primary mb-3"></i>
           <p class="text-secondary">
-            {{
-              searchQuery
-                ? t('settings.team.empty.searchDescription', 'Try a different search term')
-                : t('settings.team.empty.description', 'No team members in your organization')
-            }}
+            {{ t('settings.team.loading', 'Loading team members...') }}
           </p>
         </div>
+      </div>
 
-        <!-- Team Members Table -->
-        <div v-else class="bg-base-100 rounded-lg border border-primary-stroke overflow-visible">
+      <!-- Error State -->
+      <div v-else-if="error" class="py-12 px-6">
+        <Alert
+          variant="danger"
+          icon="fa-exclamation-circle"
+          :title="t('settings.team.error.title', 'Error')"
+          :description="t('settings.team.error.description', 'Failed to load team members')"
+        />
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="!teamMembers?.length" class="py-12 text-center">
+        <i class="fa fa-users text-5xl text-secondary/30 mb-4"></i>
+        <h3 class="text-lg font-semibold mb-2">
+          {{ t('settings.team.empty.title', 'No team members found') }}
+        </h3>
+        <p class="text-secondary">
+          {{
+            searchQuery
+              ? t('settings.team.empty.searchDescription', 'Try a different search term')
+              : t('settings.team.empty.description', 'No team members in your organization')
+          }}
+        </p>
+      </div>
+
+      <!-- Team Members Table -->
+      <template v-else>
+        <div class="bg-base-100 overflow-visible">
           <!-- Table Header -->
           <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
             <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
@@ -80,13 +80,22 @@
           </div>
         </div>
 
-        <!-- Reset Password Modal -->
-        <ResetPasswordModal
-          v-if="selectedMember && canManageTeam"
-          :member="selectedMember"
-          @close="closePasswordModal"
-        />
-      </div>
+        <!-- Pagination -->
+        <div class="px-6 pb-4">
+          <Pagination
+            v-model:current-page="currentPage"
+            :items-per-pages="queryParams.limit"
+            :total="totalMembers"
+          />
+        </div>
+      </template>
+
+      <!-- Reset Password Modal -->
+      <ResetPasswordModal
+        v-if="selectedMember && canManageTeam"
+        :member="selectedMember"
+        @close="closePasswordModal"
+      />
     </div>
   </div>
 </template>
@@ -100,46 +109,71 @@ title: 'Team Management'
 </route>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useQuery } from '@pinia/colada'
-import { Input, Alert } from '@owlint/feathers-vue'
+import { Input, Alert, Pagination } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
 import { teamMembersQuery } from '@/queries/team'
 import { useUpdateMemberPermissions } from '@/mutations/team'
 import { useTeamPermissions } from '@/composables/useTeamPermissions'
 import TeamMemberRow from '@/components/team/TeamMemberRow.vue'
 import ResetPasswordModal from '@/components/team/ResetPasswordModal.vue'
-import type { TeamMember, PermissionTier } from '@/types/team'
+import type { TeamMemberListItem, PermissionTier } from '@/types/team'
 
 const { t } = useI18n()
 const { canManageTeam } = useTeamPermissions()
 
 const searchQuery = ref('')
 
-// Query team members with search
+// Query parameters state
+const queryParams = reactive({
+  page: 1,
+  limit: 10,
+})
+
+// Query team members with pagination
 const {
-  data: teamMembers,
+  data: response,
   isLoading,
   error,
 } = useQuery(teamMembersQuery, () => ({
-  search: searchQuery.value,
+  page: queryParams.page,
+  limit: queryParams.limit,
+  search: searchQuery.value || undefined,
 }))
+
+// Computed properties for data
+const teamMembers = computed(() => response.value?.data || [])
+const totalMembers = computed(() => response.value?.pagination?.total ?? 0)
+
+// Pagination
+const currentPage = computed({
+  get: () => queryParams.page,
+  set: (value: number) => {
+    queryParams.page = value
+  },
+})
+
+// Reset to page 1 when search changes
+watch(searchQuery, () => {
+  queryParams.page = 1
+})
 
 // Mutations
 const { updatePermissions } = useUpdateMemberPermissions()
 
 // Password reset modal state
-const selectedMember = ref<TeamMember | null>(null)
+const selectedMember = ref<TeamMemberListItem | null>(null)
 
-function handleUpdatePermissions(userId: string, tier: PermissionTier) {
+const handleUpdatePermissions = (userId: string, tier: PermissionTier) => {
   updatePermissions({ userId, data: { permission_tier: tier } })
 }
 
-function openResetPasswordModal(member: TeamMember) {
+const openResetPasswordModal = (member: TeamMemberListItem) => {
   selectedMember.value = member
 }
 
-function closePasswordModal() {
+const closePasswordModal = () => {
   selectedMember.value = null
 }
 </script>

@@ -27,7 +27,7 @@
 
       <!-- Permission Tier Select (col-span-3) -->
       <div class="col-span-3">
-        <Dropdown align="left" width="full" :close-on-select="true">
+        <Dropdown align="left" width="full" :close-on-select="true" @open="fetchPermissions">
           <template #trigger="{ isOpen }">
             <button
               type="button"
@@ -38,10 +38,17 @@
               }"
               :disabled="!canManage"
             >
-              <span v-if="selectedTier" class="flex items-center gap-2">
+              <!-- Loading state -->
+              <span v-if="isLoadingPermissions" class="flex items-center gap-2 text-secondary">
+                <i class="fa fa-spinner fa-spin text-sm"></i>
+                {{ t('settings.team.loadingPermissions', 'Loading...') }}
+              </span>
+              <!-- Permission loaded -->
+              <span v-else-if="selectedTier" class="flex items-center gap-2">
                 <i :class="getPermissionIcon(selectedTier)" class="text-sm"></i>
                 {{ permissionOptions.find((p) => p.value === selectedTier)?.label }}
               </span>
+              <!-- Not loaded yet -->
               <span v-else class="text-secondary">
                 {{ t('settings.team.selectPermission', 'Select permission...') }}
               </span>
@@ -53,7 +60,12 @@
           </template>
 
           <template #content="{ close }">
-            <div class="py-1">
+            <!-- Loading state in dropdown -->
+            <div v-if="isLoadingPermissions" class="py-4 text-center">
+              <i class="fa fa-spinner fa-spin text-primary"></i>
+            </div>
+            <!-- Permission options -->
+            <div v-else class="py-1">
               <button
                 v-for="permission in permissionOptions"
                 :key="permission.value"
@@ -90,26 +102,54 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type ComputedRef } from 'vue'
+import { computed, ref, type ComputedRef } from 'vue'
+import { useQuery } from '@pinia/colada'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import { Tag, Button } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
-import type { TeamMember, PermissionTier } from '@/types/team'
+import { memberPermissionsQuery } from '@/queries/team'
+import type { TeamMemberListItem, PermissionTier } from '@/types/team'
 
 const { t } = useI18n()
 
 const props = defineProps<{
-  member: TeamMember
+  member: TeamMemberListItem
   canManage: boolean
 }>()
 
 const emit = defineEmits<{
   'update-permissions': [userId: string, tier: PermissionTier]
-  'reset-password': [member: TeamMember]
+  'reset-password': [member: TeamMemberListItem]
 }>()
 
-// Computed property that always reflects the member's current permission tier
-const selectedTier = computed(() => props.member.permission_tier)
+// Track if permissions have been fetched
+const permissionsFetched = ref(false)
+
+// Query for permissions (lazy-loaded when dropdown opens)
+const {
+  data: permissionsData,
+  isLoading: isLoadingPermissions,
+  refetch: refetchPermissions,
+} = useQuery(
+  memberPermissionsQuery,
+  () => ({ userId: props.member.id }),
+  {
+    enabled: () => permissionsFetched.value,
+  }
+)
+
+// Computed property that reflects the member's permission tier (from lazy-loaded data)
+const selectedTier = computed(() => permissionsData.value?.permission_tier)
+
+// Fetch permissions when dropdown opens
+const fetchPermissions = () => {
+  if (!permissionsFetched.value) {
+    permissionsFetched.value = true
+  } else {
+    // Refetch if already fetched (in case permissions changed)
+    refetchPermissions()
+  }
+}
 
 // Function to handle permission selection
 function selectPermission(tier: PermissionTier, closeDropdown: () => void) {

@@ -1,17 +1,38 @@
 import { apiClient } from './client'
-import type { TeamMember, UpdateTeamMemberPermissions, ResetPasswordRequest, TeamMemberPasswordReset } from '@/types/team'
+import type {
+  TeamMember,
+  TeamMemberListResponse,
+  TeamMemberPermissions,
+  UpdateTeamMemberPermissions,
+  ResetPasswordRequest,
+  TeamMemberPasswordReset,
+} from '@/types/team'
+
+export interface TeamMembersParams {
+  page: number
+  limit: number
+  search?: string
+}
 
 /**
- * List all team members in the user's organization
+ * List team members in the user's organization with pagination
  */
-export const getTeamMembers = async (search?: string) => {
-  const params = new URLSearchParams()
-  if (search) {
-    params.append('search', search)
+export const getTeamMembers = async (params: TeamMembersParams) => {
+  const searchParams = new URLSearchParams()
+  searchParams.set('page', params.page.toString())
+  searchParams.set('limit', params.limit.toString())
+  if (params.search) {
+    searchParams.set('search', params.search)
   }
 
-  const url = params.toString() ? `/team/members?${params}` : '/team/members'
-  return apiClient.get<TeamMember[]>(url)
+  return apiClient.get<TeamMemberListResponse>(`/team/members?${searchParams}`)
+}
+
+/**
+ * Get permission tier for a specific team member (lazy-loaded)
+ */
+export const getMemberPermissions = async (userId: string) => {
+  return apiClient.get<TeamMemberPermissions>(`/team/members/${userId}/permissions`)
 }
 
 /**
