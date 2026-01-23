@@ -8,16 +8,15 @@
         </p>
       </div>
 
-      <div class="max-w-md min-w-xs w-full">
-        <Input
-          v-model="searchQuery"
-          id="searchPlaceholder"
-          icon="fa fa-search"
-          :placeholder="t('settings.team.searchPlaceholder', 'Search by name, email, or username')"
-          clearable
-        />
-      </div>
+      <Searchbar
+        id="team-search"
+        :model-value="searchQuery"
+        :placeholder="t('settings.team.searchPlaceholder', 'Search by name, email, or username')"
+        class="w-96"
+        @update:model-value="handleSearchInput"
+      />
     </div>
+
     <div class="flex flex-col gap-4">
       <!-- Loading State -->
       <div v-if="isLoading" class="flex items-center justify-center py-12">
@@ -39,53 +38,22 @@
         />
       </div>
 
-      <!-- Empty State -->
-      <div v-else-if="!teamMembers?.length" class="py-12 text-center">
-        <i class="fa fa-users text-5xl text-secondary/30 mb-4"></i>
-        <h3 class="text-lg font-semibold mb-2">
-          {{ t('settings.team.empty.title', 'No team members found') }}
-        </h3>
-        <p class="text-secondary">
-          {{
-            searchQuery
-              ? t('settings.team.empty.searchDescription', 'Try a different search term')
-              : t('settings.team.empty.description', 'No team members in your organization')
-          }}
-        </p>
-      </div>
-
       <!-- Team Members Table -->
       <template v-else>
-        <div class="bg-base-100 overflow-visible">
-          <!-- Table Header -->
-          <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
-            <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
-              <div class="col-span-4">{{ t('settings.team.table.member', 'Member') }}</div>
-              <div class="col-span-3">{{ t('settings.team.table.email', 'Email') }}</div>
-              <div class="col-span-3">{{ t('settings.team.table.permissions', 'Permissions') }}</div>
-              <div class="col-span-2 text-right">{{ t('settings.team.table.actions', 'Actions') }}</div>
-            </div>
-          </div>
-
-          <!-- Team Member Rows -->
-          <div class="divide-y divide-primary-stroke overflow-visible">
-            <TeamMemberRow
-              v-for="member in teamMembers"
-              :key="member.id"
-              :member="member"
-              :can-manage="canManageTeam && !member.is_current_user"
-              @update-permissions="handleUpdatePermissions"
-              @reset-password="openResetPasswordModal"
-            />
-          </div>
-        </div>
+        <TeamMembersTable
+          :members="teamMembers"
+          :can-manage-team="canManageTeam"
+          :has-search="!!searchQuery"
+          @update-permissions="handleUpdatePermissions"
+          @reset-password="openResetPasswordModal"
+        />
 
         <!-- Pagination -->
-        <div class="px-6 pb-4">
+        <div v-if="teamMembers.length > 0 && paginationMeta" class="px-6 pb-4">
           <Pagination
             v-model:current-page="currentPage"
-            :items-per-pages="queryParams.limit"
-            :total="totalMembers"
+            :meta="paginationMeta"
+            item-name="members"
           />
         </div>
       </template>
@@ -111,14 +79,16 @@ title: 'Team Management'
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
 import { useQuery } from '@pinia/colada'
-import { Input, Alert, Pagination } from '@owlint/feathers-vue'
+import { Alert, Searchbar } from '@owlint/feathers-vue'
 import { useI18n } from 'vue-i18n'
 import { teamMembersQuery } from '@/queries/team'
 import { useUpdateMemberPermissions } from '@/mutations/team'
 import { useTeamPermissions } from '@/composables/useTeamPermissions'
-import TeamMemberRow from '@/components/team/TeamMemberRow.vue'
+import TeamMembersTable from '@/components/team/TeamMembersTable.vue'
 import ResetPasswordModal from '@/components/team/ResetPasswordModal.vue'
+import Pagination from '@/components/ui/Pagination.vue'
 import type { TeamMemberListItem, PermissionTier } from '@/types/team'
+import type { PaginationMeta } from '@/types/pagination'
 
 const { t } = useI18n()
 const { canManageTeam } = useTeamPermissions()
@@ -144,7 +114,24 @@ const {
 
 // Computed properties for data
 const teamMembers = computed(() => response.value?.data || [])
-const totalMembers = computed(() => response.value?.pagination?.total ?? 0)
+
+// Pagination meta for custom Pagination component
+const paginationMeta = computed<PaginationMeta | null>(() => {
+  if (!response.value?.pagination) return null
+
+  const p = response.value.pagination
+  const from = (p.page - 1) * p.limit + 1
+  const to = Math.min(p.page * p.limit, p.total)
+
+  return {
+    total: p.total,
+    per_page: p.limit,
+    current_page: p.page,
+    last_page: p.total_pages,
+    from,
+    to,
+  }
+})
 
 // Pagination
 const currentPage = computed({
@@ -153,6 +140,11 @@ const currentPage = computed({
     queryParams.page = value
   },
 })
+
+// Handle search input (Searchbar emits string | number)
+const handleSearchInput = (value: string | number) => {
+  searchQuery.value = String(value)
+}
 
 // Reset to page 1 when search changes
 watch(searchQuery, () => {
