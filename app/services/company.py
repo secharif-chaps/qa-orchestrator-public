@@ -873,7 +873,7 @@ class CompanyService:
         self, company: Company, task: Task, workflow_config: WorkflowConfig
     ) -> None:
         """Queue the refresh workflow via Celery."""
-        success_callback, error_callback, token_callback = self._prepare_task_callbacks(task)
+        success_callback, error_callback = self._prepare_task_callbacks(task)
 
         logger.info(
             "Queueing refresh workflow",
@@ -891,9 +891,7 @@ class CompanyService:
             task_type=task.type.value,
             api_key=workflow_config.api_key,
             success_callback=success_callback,
-            error_callback=error_callback,
-            token_callback=token_callback,
-            llm=workflow_config.llm
+            error_callback=error_callback
         )
 
     def get_company_tasks(self, company_id: int) -> list[Task]:
