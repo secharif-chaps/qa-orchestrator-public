@@ -69,7 +69,7 @@
         <div class="mb-6">
           <p class="text-sm text-secondary">
             {{ $t('user.resetPassword.description', 'Reset password for') }}
-            <span class="font-semibold">{{ user.username }}</span>
+            <span class="font-semibold">{{ username }}</span>
           </p>
         </div>
 
@@ -143,12 +143,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { AdminUserResponse } from '@/types/admin-user'
 import { Alert, Button } from '@owlint/feathers-vue'
 import { useResetUserPassword } from '@/mutations/admin-users'
 
 const props = defineProps<{
-  user: AdminUserResponse
+  userId: string
+  username: string
 }>()
 
 const emit = defineEmits<{
@@ -232,7 +232,7 @@ async function handleResetPassword() {
 
   try {
     await resetPasswordAsync({
-      userId: props.user.user_id,
+      userId: props.userId,
       temporaryPassword: password.value,
     })
 

@@ -2,15 +2,58 @@
  * Admin user management types
  */
 
+/**
+ * User list item (simplified - no permissions, no organization)
+ * Used in the paginated user list for fast loading
+ */
+export interface AdminUserListItem {
+  user_id: string
+  username: string
+  email: string
+  first_name: string | null
+  last_name: string | null
+  status: 'active' | 'revoked'
+  created_at: string
+}
+
+/**
+ * User permissions response (on-demand)
+ * Fetched when opening the permissions modal
+ */
+export interface UserPermissionsResponse {
+  user_id: string
+  username: string
+  permissions: string[]
+}
+
+/**
+ * User organization response (on-demand)
+ * Fetched when opening the organization modal
+ */
+export interface UserOrganizationResponse {
+  user_id: string
+  username: string
+  organization: {
+    id: string
+    name: string
+  } | null
+}
+
+/**
+ * Legacy type alias for backward compatibility
+ * @deprecated Use AdminUserListItem instead
+ */
 export interface AdminUserResponse {
   user_id: string
   username: string
   email: string
-  organization_id: string | null
-  organization_name: string | null
+  first_name?: string | null
+  last_name?: string | null
+  organization_id?: string | null
+  organization_name?: string | null
   status: 'active' | 'revoked'
   created_at: string
-  permissions: string[]
+  permissions?: string[]
 }
 
 // Backend pagination format (different from standard PaginationMeta)
@@ -25,7 +68,7 @@ export interface AdminUserPagination {
 }
 
 export interface AdminUserListResponse {
-  data: AdminUserResponse[]
+  data: AdminUserListItem[]
   pagination: AdminUserPagination
 }
 
@@ -33,8 +76,7 @@ export interface AdminUserQueryParams {
   page: number
   limit: number
   search?: string
-  organization_filter?: string | null
-  sort: 'username' | 'organization' | 'created_at'
+  sort: 'username' | 'created_at'
   order: 'asc' | 'desc'
 }
 

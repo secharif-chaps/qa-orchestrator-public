@@ -16,7 +16,7 @@
             {{
               $t(
                 'admin.permissions.description',
-                { username: user.username },
+                { username },
                 'Configure permissions for {username}',
               )
             }}
@@ -25,15 +25,34 @@
         <Button variant="tertiary" icon="fa fa-times" @click="$emit('close')" />
       </div>
 
-      <!-- Warning for legacy permissions -->
+      <!-- Loading State -->
+      <div v-if="isLoading" class="py-12 text-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+        <p class="text-secondary text-sm">{{ $t('admin.permissions.loading', 'Loading permissions...') }}</p>
+      </div>
+
+      <!-- Error State -->
       <Alert
-        v-if="hasLegacy"
-        variant="warning"
+        v-else-if="error"
+        variant="danger"
         class="mb-6"
-        icon="fa-exclamation-triangle"
-        :title="$t('admin.permissions.legacyWarning.title', 'Legacy Permissions Detected')"
-        :description="$t('admin.permissions.legacyWarning.description', 'This user has old-style permissions. They will be automatically converted to the new permission model when you save.')"
+        icon="fa-exclamation-circle"
+        :title="$t('admin.permissions.error.title', 'Error loading permissions')"
+        :description="String(error)"
       />
+
+      <!-- Content (only shown when loaded) -->
+      <template v-else-if="permissionsData">
+
+        <!-- Warning for legacy permissions -->
+        <Alert
+          v-if="hasLegacy"
+          variant="warning"
+          class="mb-6"
+          icon="fa-exclamation-triangle"
+          :title="$t('admin.permissions.legacyWarning.title', 'Legacy Permissions Detected')"
+          :description="$t('admin.permissions.legacyWarning.description', 'This user has old-style permissions. They will be automatically converted to the new permission model when you save.')"
+        />
 
       <!-- Warning for custom permissions -->
       <Alert
@@ -269,13 +288,15 @@
           @click="handleSave"
         />
       </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import type { AdminUserResponse } from '@/types/admin-user'
+import { useQuery } from '@pinia/colada'
+import { userPermissionsQuery } from '@/queries/admin-users'
 import { useRoles } from '@/composables/useRoles'
 import { Alert, Button } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
@@ -283,13 +304,21 @@ import RoleBlock from './RoleBlock.vue'
 import PermissionCheckbox from './PermissionCheckbox.vue'
 
 const props = defineProps<{
-  user: AdminUserResponse
+  userId: string
+  username: string
 }>()
 
 const emit = defineEmits<{
   confirm: [permissions: string[]]
   close: []
 }>()
+
+// Fetch user permissions on-demand
+const {
+  data: permissionsData,
+  isLoading,
+  error,
+} = useQuery(userPermissionsQuery, () => ({ userId: props.userId }))
 
 const { getAllRoles, getUserRole, hasLegacyPermissions, normalizePermissions } = useRoles()
 
@@ -300,12 +329,15 @@ const mode = ref<'roles' | 'custom'>('roles')
 // Custom permissions state - array of selected permission strings
 const selectedPermissions = ref<string[]>([])
 
+// User's current permissions from the fetched data
+const userPermissions = computed(() => permissionsData.value?.permissions ?? [])
+
 // Check if user has legacy permissions
-const hasLegacy = computed(() => hasLegacyPermissions(props.user.permissions))
+const hasLegacy = computed(() => hasLegacyPermissions(userPermissions.value))
 
 // Check if user has custom permissions (doesn't match any role)
 const hasCustomPermissions = computed(() => {
-  return getUserRole(props.user.permissions) === null && !hasLegacy.value
+  return getUserRole(userPermissions.value) === null && !hasLegacy.value
 })
 
 // Check if write access is enabled (for module permission dependencies)
@@ -326,15 +358,17 @@ const canSave = computed(() => {
   return true // Custom mode always allows save (at minimum organization.read)
 })
 
-// Initialize selected role and permissions when user changes
+// Initialize selected role and permissions when permissions data is loaded
 watch(
-  () => props.user.user_id,
-  () => {
+  permissionsData,
+  (data) => {
+    if (!data) return
+
     // Normalize permissions first (handle legacy)
-    const normalized = normalizePermissions(props.user.permissions)
+    const normalized = normalizePermissions(data.permissions)
 
     // Try to match user's current permissions to a role
-    const matchedRole = getUserRole(props.user.permissions)
+    const matchedRole = getUserRole(data.permissions)
     selectedRoleId.value = matchedRole?.id ?? null
 
     // Initialize custom permissions

@@ -2,45 +2,13 @@
   <div>
     <div class="flex items-center gap-4">
       <!-- Search Input -->
-      <div class="flex-1">
-        <Input
-          id="user-search"
-          :model-value="search"
-          icon="fa-search"
-          :placeholder="$t('admin.users.search.placeholder', 'Search by username or email...')"
-          @update:model-value="handleSearchInput"
-        />
-      </div>
-
-      <!-- Organization Filter Dropdown -->
-      <Dropdown align="left" width="md">
-        <template #trigger>
-          <Button variant="secondary" icon="fa fa-filter" :label="organizationFilterLabel" />
-        </template>
-
-        <template #content="{ close }">
-          <DropdownItem @click="selectOrganizationFilter(null, close)">
-            <i class="fa fa-users"></i>
-            {{ $t('admin.users.filter.allUsers', 'All users') }}
-          </DropdownItem>
-
-          <DropdownItem @click="selectOrganizationFilter('none', close)">
-            <i class="fa fa-user-slash"></i>
-            {{ $t('admin.users.filter.noOrganization', 'No organization') }}
-          </DropdownItem>
-
-          <DropdownDivider />
-
-          <DropdownItem
-            v-for="organization in organizations"
-            :key="organization.id"
-            @click="selectOrganizationFilter(organization.id, close)"
-          >
-            <i class="fa fa-building"></i>
-            {{ organization.name }}
-          </DropdownItem>
-        </template>
-      </Dropdown>
+      <Searchbar
+        id="user-search"
+        :model-value="search"
+        :placeholder="$t('admin.users.search.placeholder', 'Search by username or email...')"
+        @update:model-value="handleSearchInput"
+        class="w-96"
+      />
 
       <!-- Sort Dropdown -->
       <Dropdown align="right" width="md">
@@ -57,11 +25,6 @@
           <DropdownItem @click="selectSort('username', close)">
             <i class="fa fa-user"></i>
             {{ $t('admin.users.sort.username', 'Username') }}
-          </DropdownItem>
-
-          <DropdownItem @click="selectSort('organization', close)">
-            <i class="fa fa-building"></i>
-            {{ $t('admin.users.sort.organization', 'Organization') }}
           </DropdownItem>
 
           <DropdownItem @click="selectSort('created_at', close)">
@@ -93,46 +56,29 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Button, Input } from '@owlint/feathers-vue'
+import { Button, Searchbar } from '@owlint/feathers-vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
 import DropdownDivider from '@/components/ui/DropdownDivider.vue'
-import type { OrganizationAdminResponse } from '@/types/organization'
 import type { AdminUserQueryParams } from '@/types/admin-user'
 
 interface Props {
   search: string
-  organizationFilter: string | null
   sort: AdminUserQueryParams['sort']
   order: AdminUserQueryParams['order']
-  organizations: OrganizationAdminResponse[]
 }
 
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
   'update:search': [value: string]
-  'update:organization-filter': [value: string | null]
   'update:sort': [value: AdminUserQueryParams['sort']]
   'update:order': [value: AdminUserQueryParams['order']]
 }>()
 
-// Computed labels
-const organizationFilterLabel = computed(() => {
-  if (props.organizationFilter === null) {
-    return 'All users'
-  }
-  if (props.organizationFilter === 'none') {
-    return 'No organization'
-  }
-  const organization = props.organizations.find((org) => org.id === props.organizationFilter)
-  return organization ? organization.name : 'Filter by organization'
-})
-
 const sortLabel = computed(() => {
-  const sortLabels = {
+  const sortLabels: Record<AdminUserQueryParams['sort'], string> = {
     username: 'Username',
-    organization: 'Organization',
     created_at: 'Created Date',
   }
   const orderText = props.order === 'asc' ? 'A-Z' : 'Z-A'
@@ -140,13 +86,8 @@ const sortLabel = computed(() => {
 })
 
 // Event handlers
-const handleSearchInput = (value: string) => {
-  emit('update:search', value)
-}
-
-const selectOrganizationFilter = (filter: string | null, close: () => void) => {
-  emit('update:organization-filter', filter)
-  close()
+const handleSearchInput = (value: string | number) => {
+  emit('update:search', String(value))
 }
 
 const selectSort = (sort: AdminUserQueryParams['sort'], close: () => void) => {
