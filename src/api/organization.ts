@@ -6,6 +6,29 @@ import type {
   OrganizationQueryParams,
   Activity
 } from '@/types/organization'
+import type { AdminUserListItem, AdminUserListResponse } from '@/types/admin-user'
+
+// Backend organization member response (raw Keycloak format)
+interface OrganizationMemberRaw {
+  id: string
+  username: string
+  email: string
+  firstName?: string
+  lastName?: string
+  enabled: boolean
+  emailVerified?: boolean
+  createdTimestamp?: number
+}
+
+interface OrganizationMembersRawResponse {
+  data: OrganizationMemberRaw[]
+  meta: {
+    total: number
+    page: number
+    per_page: number
+    last_page: number
+  }
+}
 
 // Admin organization management endpoints
 // Organizations are managed in Keycloak, fetched via admin API
@@ -42,4 +65,48 @@ export const getCurrentOrganization = async (): Promise<OrganizationResponse> =>
 export const getOrganizationActivities = async (): Promise<Activity[]> => {
   const response = await apiClient.get<Activity[]>('/activities')
   return response
+}
+
+// Organization members (for admin org detail page)
+export interface OrganizationMembersParams {
+  organizationId: string
+  page: number
+  limit: number
+  search?: string
+}
+
+export const getOrganizationMembers = async (
+  params: OrganizationMembersParams
+): Promise<AdminUserListResponse> => {
+  const searchParams = new URLSearchParams()
+  searchParams.set('page', params.page.toString())
+  searchParams.set('limit', params.limit.toString())
+  if (params.search) searchParams.set('search', params.search)
+
+  const response = await apiClient.get<OrganizationMembersRawResponse>(
+    `/organizations/${params.organizationId}/users?${searchParams}`
+  )
+
+  // Map raw Keycloak format to AdminUserListItem format
+  const mappedData: AdminUserListItem[] = response.data.map((member) => ({
+    user_id: member.id,
+    username: member.username,
+    email: member.email,
+    first_name: member.firstName ?? null,
+    last_name: member.lastName ?? null,
+    status: member.enabled ? 'active' : 'revoked',
+    created_at: member.createdTimestamp
+      ? new Date(member.createdTimestamp).toISOString()
+      : new Date().toISOString(),
+  }))
+
+  return {
+    data: mappedData,
+    pagination: {
+      total: response.meta.total,
+      page: response.meta.page,
+      limit: response.meta.per_page,
+      total_pages: response.meta.last_page,
+    },
+  }
 }
