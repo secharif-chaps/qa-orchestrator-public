@@ -21,6 +21,7 @@ grpcio-reflection = "^1.76.0"
 fastapi-keycloak = "^1.1.1"
 cachetools = "^6.2.4"
 httpx = "^0.28.1"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 
 
 [tool.poetry.group.dev.dependencies]

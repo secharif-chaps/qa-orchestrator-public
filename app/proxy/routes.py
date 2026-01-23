@@ -2,7 +2,9 @@
 Proxy routes for forwarding /api/* requests to the monolith (Screen service).
 
 This module implements a transparent proxy that:
+- Validates JWT tokens at the gateway (Phase 1)
 - Forwards all /api/* requests to the backend
+- Adds internal trust headers for backend
 - Preserves headers, body, query params
 - Preserves response status, headers, body
 - Handles streaming responses (SSE)
@@ -18,6 +20,7 @@ from fastapi.responses import StreamingResponse
 
 from app.proxy.client import get_proxy_client, get_streaming_client
 from app.core.logging_config import get_logger
+from app.core.auth_middleware import auth_middleware
 
 logger = get_logger(__name__)
 
@@ -108,19 +111,44 @@ async def proxy_request(request: Request, path: str) -> Response:
     """
     Proxy all requests to the backend monolith.
 
-    This endpoint forwards all HTTP methods to the backend service,
-    preserving headers, body, query parameters, and handles
-    streaming responses (SSE) appropriately.
+    This endpoint:
+    1. Validates JWT token at the gateway (returns 401 if invalid)
+    2. Adds internal trust headers for the backend
+    3. Forwards all HTTP methods to the backend service
+    4. Preserves headers, body, query parameters
+    5. Handles streaming responses (SSE)
     """
     start_time = time.time()
+
+    # Phase 1: Validate JWT at gateway
+    is_valid, user, internal_headers = await auth_middleware.validate_request(request, path)
+
+    if not is_valid:
+        logger.warning(
+            f"🔒 AUTH REJECTED: {request.method} /api/{path}",
+            extra={"path": path, "method": request.method},
+        )
+        return Response(
+            content=b'{"detail": "Not authenticated"}',
+            status_code=401,
+            media_type="application/json",
+        )
+
+    # Log authenticated request
+    username = user.preferred_username if user else "anonymous"
+    logger.info(
+        f"🔐 AUTH OK: {username} → {request.method} /api/{path}",
+        extra={"path": path, "method": request.method, "user": username},
+    )
 
     # Build the target URL
     target_path = f"/api/{path}"
     if request.url.query:
         target_path = f"{target_path}?{request.url.query}"
 
-    # Prepare headers
+    # Prepare headers: filter hop-by-hop + add internal trust headers
     headers = filter_request_headers(dict(request.headers))
+    headers.update(internal_headers)  # Add gateway internal headers
 
     # Get request body
     body = await request.body()
@@ -140,11 +168,11 @@ async def proxy_request(request: Request, path: str) -> Response:
         # Handle SSE requests differently (need streaming client)
         if is_sse_request(request):
             return await _handle_sse_request(
-                request.method,
-                target_path,
-                headers,
-                body,
-                start_time,
+                method=request.method,
+                target_path=target_path,
+                headers=headers,  # Already includes internal headers
+                body=body,
+                start_time=start_time,
             )
 
         # Regular request
