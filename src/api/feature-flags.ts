@@ -25,6 +25,7 @@ export const getOrganizationFeatureFlags = async (
 
 /**
  * Toggle a feature flag for an organization.
+ * Optionally accepts config data (e.g., URL for discover flag).
  */
 export const toggleFeatureFlag = async (
   organizationId: string,

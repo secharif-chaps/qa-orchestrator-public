@@ -7,7 +7,7 @@
  */
 
 // Feature flag names - matches backend FeatureFlag enum
-export type FeatureFlagName = 'translation'
+export type FeatureFlagName = 'translation' | 'discover'
 
 /**
  * Feature flag configuration for an organization.
@@ -33,6 +33,7 @@ export interface FeatureFlagsResponse {
  */
 export interface FeatureFlagToggleRequest {
   enabled: boolean
+  config?: Record<string, unknown> | null
 }
 
 /**
@@ -63,6 +64,11 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagName, Omit<FeatureFlagDispla
     labelKey: 'featureFlags.translation.name',
     descriptionKey: 'featureFlags.translation.description',
     icon: 'fa fa-language',
+  },
+  discover: {
+    labelKey: 'featureFlags.discover.name',
+    descriptionKey: 'featureFlags.discover.description',
+    icon: 'fa fa-compass',
   },
 }
 

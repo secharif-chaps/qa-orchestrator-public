@@ -3,7 +3,7 @@
     <!-- Modules Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
       <Card
-        v-for="module in modules"
+        v-for="module in visibleModules"
         :key="module.name"
         hoverable
         clickable
@@ -91,7 +91,8 @@
               size="sm"
               :label="$t('home.modules.actions.open', 'Open')"
               icon="fa-solid fa-external-link"
-              @click="handleModuleAction(module)"
+              :disabled="!module.externalUrl"
+              @click="handleOpenExternal(module)"
             />
           </div>
         </div>
@@ -106,6 +107,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Tag, Button, Badge } from '@owlint/feathers-vue'
 import Card from '../ui/Card.vue'
+import type { FeatureFlagConfig } from '@/types/feature-flags'
 
 interface Module {
   name: string
@@ -117,12 +119,31 @@ interface Module {
   status: 'contact-sales' | 'coming-soon' | 'available' | 'external'
   favorite: boolean
   color: "indigo" | "sage" | "almond" | "yellow" | "pink" | "cherry" | "cyan" | undefined
+  externalUrl?: string | null
 }
+
+interface Props {
+  featureFlags?: FeatureFlagConfig[]
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  featureFlags: () => [],
+})
 
 const router = useRouter()
 const { t } = useI18n()
 
-const modules = computed<Module[]>(() => [
+// Find the discover feature flag
+const discoverFlag = computed(() =>
+  props.featureFlags.find((f) => f.flag === 'discover'),
+)
+
+// Check if discover is enabled and has a URL
+const isDiscoverEnabled = computed(() => discoverFlag.value?.enabled ?? false)
+const discoverUrl = computed(() => (discoverFlag.value?.config?.url as string) || null)
+
+// Static modules (non-feature-flag modules)
+const staticModules = computed<Module[]>(() => [
   {
     name: t('home.modules.screen.name', 'Screen'),
     description: t(
@@ -165,7 +186,27 @@ const modules = computed<Module[]>(() => [
     favorite: false,
     color: 'almond',
   },
-  {
+])
+
+// Dynamic Discover module - always visible, but status depends on feature flag
+const discoverModule = computed<Module>(() => {
+  // When feature flag is disabled: show as "Pro Feature" with "Contact Sales" button
+  // When feature flag is enabled: show as "Active" with "Open" button
+  if (!isDiscoverEnabled.value) {
+    return {
+      name: t('home.modules.discover.name', 'Discover'),
+      description: t('home.modules.discover.description', 'Share strategic insights'),
+      category: t('home.modules.discover.category', 'Search Data'),
+      icon: 'fa-solid fa-rss',
+      unlocked: false,
+      soon: false,
+      status: 'contact-sales',
+      favorite: false,
+      color: 'yellow',
+    }
+  }
+
+  return {
     name: t('home.modules.discover.name', 'Discover'),
     description: t('home.modules.discover.description', 'Share strategic insights'),
     category: t('home.modules.discover.category', 'Search Data'),
@@ -175,12 +216,18 @@ const modules = computed<Module[]>(() => [
     status: 'external',
     favorite: false,
     color: 'yellow',
-  },
-])
+    externalUrl: discoverUrl.value,
+  }
+})
 
-const handleModuleAction = (module: Module) => {
-  if (module.name === 'Screen' && module.unlocked) {
-    router.push('/folders')
+// Combine static modules with dynamic discover module
+const visibleModules = computed<Module[]>(() => {
+  return [...staticModules.value, discoverModule.value]
+})
+
+const handleOpenExternal = (module: Module) => {
+  if (module.externalUrl) {
+    window.open(module.externalUrl, '_blank')
   }
 }
 

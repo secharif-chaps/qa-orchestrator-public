@@ -30,16 +30,17 @@
 
       <!-- Modules Showcase -->
       <div class="">
-        <ModulesShowcase />
+        <ModulesShowcase :feature-flags="featureFlags" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useAuth } from '@/composables/useAuth'
+import { useAuthStore } from '@/stores/auth'
 import { recentCompaniesQuery } from '@/queries/companies'
 import { organizationActivitiesQuery, currentOrganizationQuery } from '@/queries/organization'
+import { organizationFeatureFlagsQuery } from '@/queries/feature-flags'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import ModulesShowcase from '@/components/home/ModulesShowcase.vue'
 import RecentProjectsList from '@/components/home/RecentProjectsList.vue'
@@ -47,9 +48,11 @@ import RecentActivitiesList from '@/components/home/RecentActivitiesList.vue'
 import { useQuery } from '@pinia/colada'
 import { formatRelativeTime } from '@/utils/time'
 import { useI18n } from 'vue-i18n'
+import type { FeatureFlagConfig } from '@/types/feature-flags'
 
 // Only access auth on client side
-const { user } = useAuth()
+const authStore = useAuthStore()
+const user = authStore.user
 const { t } = useI18n()
 
 // Reactive data
@@ -78,6 +81,20 @@ const {
   error: activitiesError,
 } = useQuery(organizationActivitiesQuery, () => ({}))
 
+// Fetch current organization
+const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
+
+// Fetch organization feature flags for ModulesShowcase
+const { data: featureFlagsData } = useQuery(
+  organizationFeatureFlagsQuery,
+  () => ({ organizationId: currentOrganization.value?.id || '' }),
+)
+
+// Transform feature flags data for ModulesShowcase
+const featureFlags = computed<FeatureFlagConfig[]>(() => {
+  return featureFlagsData.value?.feature_flags ?? []
+})
+
 const updateTime = () => {
   const now = new Date()
   currentTime.value = now.toLocaleTimeString('en-US', {
@@ -93,7 +110,7 @@ const updateTime = () => {
   })
 }
 
-const timeInterval = ref<any>(null)
+const timeInterval = ref<ReturnType<typeof setInterval> | null>(null)
 // Lifecycle
 onMounted(() => {
   updateTime()
@@ -103,7 +120,9 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  clearInterval(timeInterval.value)
+  if (timeInterval.value) {
+    clearInterval(timeInterval.value)
+  }
 })
 
 // Transform recent companies data for display
