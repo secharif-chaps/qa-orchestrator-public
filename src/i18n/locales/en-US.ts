@@ -2065,4 +2065,9 @@ export default {
     confirm: 'Logout',
     tooltip: 'Logout',
   },
+  pagination: {
+    page: 'Page:',
+    of: 'of',
+    displaying: 'Displaying {start} to {end} of {total} {itemName}',
+  },
 }

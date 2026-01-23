@@ -143,12 +143,12 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { TeamMember } from '@/types/team'
+import type { TeamMemberListItem } from '@/types/team'
 import { Alert, Button } from '@owlint/feathers-vue'
 import { useResetMemberPassword } from '@/mutations/team'
 
 const props = defineProps<{
-  member: TeamMember
+  member: TeamMemberListItem
 }>()
 
 const emit = defineEmits<{

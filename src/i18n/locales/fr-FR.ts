@@ -2123,4 +2123,9 @@ export default {
     confirm: 'Se déconnecter',
     tooltip: 'Se déconnecter',
   },
+  pagination: {
+    page: 'Page :',
+    of: 'sur',
+    displaying: 'Affichage de {start} à {end} sur {total} {itemName}',
+  },
 }
