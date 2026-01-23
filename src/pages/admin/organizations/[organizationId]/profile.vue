@@ -77,14 +77,15 @@
         <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
       </div>
 
-      <!-- Feature Flag Cards -->
-      <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Feature Flag Cards - Full width layout for URL input space -->
+      <div v-else class="grid grid-cols-1 gap-4">
         <FeatureFlagCard
           v-for="featureFlag in featureFlags"
           :key="featureFlag.flag"
           :flag="featureFlag.flag"
           :is-enabled="featureFlag.enabled"
           :organization-id="organizationIdValue"
+          :config="featureFlag.config"
           @refresh="refetchFeatureFlags"
         />
       </div>
@@ -137,6 +138,7 @@ const featureFlags = computed(() => {
   return flags.map((f) => ({
     flag: f.flag as FeatureFlagName,
     enabled: f.enabled,
+    config: f.config,
   }))
 })
 
