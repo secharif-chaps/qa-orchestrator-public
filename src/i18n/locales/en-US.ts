@@ -23,6 +23,7 @@ export default {
       security: 'Security',
       team: 'Team Management',
       credits: 'Credits',
+      sources: 'Sources'
     },
     credits: {
       cardDescription: 'View credit usage and statistics',
@@ -1363,6 +1364,25 @@ export default {
         name: 'Stream',
         description: 'Data streaming capabilities',
       },
+    },
+  },
+  dataSources: {
+    title: 'Data Sources',
+    description: 'Configure external data providers for company screening',
+    enabled: 'Enabled',
+    disabled: 'Disabled',
+    edit: 'Edit',
+    save: 'Save',
+    cancel: 'Cancel',
+    lastUpdated: 'Last updated',
+    apiKey: {
+      label: 'API Key',
+      placeholder: 'Enter API key...',
+      notConfigured: 'Not configured',
+    },
+    pappers: {
+      name: 'Pappers',
+      description: 'French company data provider (legal info, financials, officers)',
     },
   },
   folder: {

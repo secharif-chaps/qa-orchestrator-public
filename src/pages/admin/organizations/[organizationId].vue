@@ -103,6 +103,11 @@ const sectionOptions = computed(() => [
     icon: 'fas fa-users',
     label: t('organization.tabs.members', 'Members'),
   },
+  {
+    value: 'sources',
+    icon: 'fas fa-plug',
+    label: t('organization.tabs.sources', 'Sources'),
+  },
 ])
 
 // Current section based on route
@@ -111,6 +116,7 @@ const currentSection = computed({
     const path = route.path
     if (path.endsWith('/tokens')) return 'tokens'
     if (path.endsWith('/members')) return 'members'
+    if (path.endsWith('/sources')) return 'sources'
     return 'profile'
   },
   set: (value: string) => {

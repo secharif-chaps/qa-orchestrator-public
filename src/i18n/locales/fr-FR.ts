@@ -22,6 +22,7 @@ export default {
       security: 'Sécurité',
       team: 'Équipe',
       credits: 'Crédits',
+      sources: 'Sources',
       'ai-preferences': 'Préférences IA',
     },
     credits: {
@@ -1414,6 +1415,25 @@ export default {
         name: 'Stream',
         description: 'Capacités de streaming de données',
       },
+    },
+  },
+  dataSources: {
+    title: 'Sources de données',
+    description: 'Configurer les fournisseurs de données externes pour le screening',
+    enabled: 'Activé',
+    disabled: 'Désactivé',
+    edit: 'Modifier',
+    save: 'Enregistrer',
+    cancel: 'Annuler',
+    lastUpdated: 'Dernière mise à jour',
+    apiKey: {
+      label: 'Clé API',
+      placeholder: 'Entrez la clé API...',
+      notConfigured: 'Non configurée',
+    },
+    pappers: {
+      name: 'Pappers',
+      description: 'Fournisseur de données d\'entreprises françaises (infos légales, financières, dirigeants)',
     },
   },
   organization: {
