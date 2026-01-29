@@ -3,7 +3,7 @@
  */
 
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { assignUserOrganization, updateUserPermissions, resetUserPassword } from '@/api/admin-users'
+import { assignUserOrganization, updateUserPermissions, resetUserPassword, disableUser, enableUser } from '@/api/admin-users'
 import { ADMIN_USER_QUERY_KEYS } from '@/queries/admin-users'
 import { ORGANIZATION_QUERY_KEYS } from '@/queries/organization-admin'
 import { toast } from '@/utils/toast'
@@ -106,5 +106,65 @@ export const useResetUserPassword = defineMutation(() => {
     ...mutation,
     resetPassword: mutate,
     resetPasswordAsync: mutateAsync,
+  }
+})
+
+/**
+ * Mutation to disable a user account (soft delete)
+ */
+export const useDisableUser = defineMutation(() => {
+  const queryCache = useQueryCache()
+
+  const { mutate, ...mutation } = useMutation({
+    mutation: ({ userId }: { userId: string }) => disableUser(userId),
+    onSuccess: () => {
+      toast.success('User disabled successfully!')
+
+      // Invalidate admin user queries to refresh the list
+      queryCache.invalidateQueries({ key: ADMIN_USER_QUERY_KEYS.root })
+
+      // Invalidate organization queries to refresh member counts
+      queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.root })
+      queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.admin })
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.message || 'Failed to disable user'
+      toast.error(errorMessage)
+    },
+  })
+
+  return {
+    ...mutation,
+    disableUser: mutate,
+  }
+})
+
+/**
+ * Mutation to enable a previously disabled user account
+ */
+export const useEnableUser = defineMutation(() => {
+  const queryCache = useQueryCache()
+
+  const { mutate, ...mutation } = useMutation({
+    mutation: ({ userId }: { userId: string }) => enableUser(userId),
+    onSuccess: () => {
+      toast.success('User enabled successfully!')
+
+      // Invalidate admin user queries to refresh the list
+      queryCache.invalidateQueries({ key: ADMIN_USER_QUERY_KEYS.root })
+
+      // Invalidate organization queries to refresh member counts
+      queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.root })
+      queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.admin })
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.message || 'Failed to enable user'
+      toast.error(errorMessage)
+    },
+  })
+
+  return {
+    ...mutation,
+    enableUser: mutate,
   }
 })
