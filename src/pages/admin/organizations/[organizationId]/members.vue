@@ -54,6 +54,7 @@
           @change-organization="showAssignModal"
           @manage-permissions="showPermissionsModal"
           @disable-user="showDisableModal"
+          @enable-user="handleEnableUser"
           @reset-password="showResetPasswordModal"
         />
 
@@ -118,6 +119,8 @@
       v-if="userToDisable"
       :user-id="userToDisable.userId"
       :username="userToDisable.username"
+      :is-loading="isDisabling"
+      @confirm="handleDisableUser"
       @close="userToDisable = null"
     />
 
@@ -149,7 +152,7 @@ import ResetPasswordModal from '@/components/admin/ResetPasswordModal.vue'
 // Queries & Mutations
 import { allOrganizationsQuery, organizationMembersQuery } from '@/queries/organization-admin'
 import { useCreateOrganizationUser } from '@/mutations/user'
-import { useAssignUserOrganization, useUpdateUserPermissions } from '@/mutations/admin-users'
+import { useAssignUserOrganization, useUpdateUserPermissions, useDisableUser, useEnableUser } from '@/mutations/admin-users'
 
 // Types
 import type { AdminUserListItem } from '@/types/admin-user'
@@ -219,6 +222,8 @@ const errorMessage = computed(() => {
 const { createUser, isLoading: isCreatingUser } = useCreateOrganizationUser(organizationId?.value || '')
 const { assignOrganization, isLoading: isAssigning } = useAssignUserOrganization()
 const { updatePermissions } = useUpdateUserPermissions()
+const { disableUser, isLoading: isDisabling } = useDisableUser()
+const { enableUser } = useEnableUser()
 
 // Modal state - store only userId and username for lazy-loaded modals
 interface ModalUserState {
@@ -290,6 +295,25 @@ const handleUpdatePermissions = async (permissions: string[]) => {
     userToManagePermissions.value = null
   } catch (err) {
     console.error('Failed to update permissions:', err)
+  }
+}
+
+const handleDisableUser = async () => {
+  if (!userToDisable.value) return
+
+  try {
+    await disableUser({ userId: userToDisable.value.userId })
+    userToDisable.value = null
+  } catch (err) {
+    console.error('Failed to disable user:', err)
+  }
+}
+
+const handleEnableUser = async (user: AdminUserListItem) => {
+  try {
+    await enableUser({ userId: user.user_id })
+  } catch (err) {
+    console.error('Failed to enable user:', err)
   }
 }
 </script>
