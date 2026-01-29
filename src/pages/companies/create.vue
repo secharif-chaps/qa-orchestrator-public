@@ -42,9 +42,20 @@
       @dismiss="dismissTokenAlert"
     />
 
+    <!-- Loading State (while fetching folders) -->
+    <div
+      v-if="needsFolderSelection && foldersLoading"
+      class="bg-base-100 border border-primary-stroke rounded-lg p-6"
+    >
+      <div class="flex items-center justify-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <p class="ml-4 text-secondary">{{ $t('folder.loading', 'Loading folders...') }}</p>
+      </div>
+    </div>
+
     <!-- No Folders Alert -->
     <div
-      v-if="needsFolderSelection && !foldersLoading && (!foldersData?.data || foldersData.data.length === 0)"
+      v-if="needsFolderSelection && !foldersLoading && foldersArray !== null && (!foldersArray || foldersArray.length === 0)"
       class="flex flex-col gap-4"
     >
       <Alert
@@ -64,7 +75,7 @@
 
     <!-- Search Form Card -->
     <div
-      v-if="!needsFolderSelection || (foldersData?.data && foldersData.data.length > 0)"
+      v-if="!needsFolderSelection || (!foldersLoading && foldersArray && foldersArray.length > 0)"
       class="bg-base-100 border border-primary-stroke rounded-lg p-6"
       :title="$t('search.companyIdentity')"
     >
@@ -76,7 +87,7 @@
             <span class="text-error">*</span>
           </label>
           <Select
-            v-model="selectedFolderId"
+            v-model="selectedFolderName"
             :options="folderOptions"
             :placeholder="$t('company.create.chooseFolderPlaceholder', 'Choose a folder...')"
             icon="fa fa-folder"
@@ -210,13 +221,44 @@ const { data: foldersData, isLoading: foldersLoading } = useQuery(
   },
 )
 
-// Transform folders to Select options format with { label, value }
+// Extract folders array - handle both API response formats:
+// 1. Paginated: { data: [...], meta: {...} }
+// 2. Direct array: [...]
+const foldersArray = computed(() => {
+  if (!foldersData.value) return null
+  // Check if response is paginated (has .data property)
+  if (Array.isArray(foldersData.value)) {
+    return foldersData.value // Direct array format
+  }
+  return foldersData.value.data || null // Paginated format
+})
+
+// Transform folders to Select options - just folder names as strings
 const folderOptions = computed(() => {
-  if (!foldersData.value?.data) return []
-  return foldersData.value.data.map((folder) => ({
-    label: folder.name,
-    value: folder.id,
-  }))
+  if (!foldersArray.value) return []
+  return foldersArray.value.map((folder) => folder.name)
+})
+
+// Create mappings between folder names and IDs
+const folderIdToName = computed(() => {
+  if (!foldersArray.value) return new Map()
+  return new Map(foldersArray.value.map(f => [f.id, f.name]))
+})
+
+const folderNameToId = computed(() => {
+  if (!foldersArray.value) return new Map()
+  return new Map(foldersArray.value.map(f => [f.name, f.id]))
+})
+
+// Wrapper for v-model that converts between name (displayed) and ID (stored)
+const selectedFolderName = computed({
+  get: () => {
+    if (!selectedFolderId.value) return ''
+    return folderIdToName.value.get(selectedFolderId.value) || ''
+  },
+  set: (name: string) => {
+    selectedFolderId.value = folderNameToId.value.get(name) || ''
+  }
 })
 
 // Fetch folder details (when folder ID is in route)
@@ -226,8 +268,8 @@ const { data: folderData } = useQuery(folderByIdQuery, () => ({ id: routeFolderI
 
 // Selected folder object (derived from folder ID)
 const selectedFolder = computed(() => {
-  if (!selectedFolderId.value || !foldersData.value?.data) return null
-  return foldersData.value.data.find((f) => f.id === selectedFolderId.value)
+  if (!selectedFolderId.value || !foldersArray.value) return null
+  return foldersArray.value.find((f) => f.id === selectedFolderId.value)
 })
 
 // Global token balance query
