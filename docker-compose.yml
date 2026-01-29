@@ -84,7 +84,7 @@ services:
 
   # Keycloak for Authentication
   keycloak:
-    image: keycloak/keycloak:26.0
+    image: keycloak/keycloak:26.4.6
     restart: unless-stopped
     ports:
       - "8080:8080"
