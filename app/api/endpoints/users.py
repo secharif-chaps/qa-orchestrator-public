@@ -708,6 +708,101 @@ async def disable_user(
         )
 
 
+@router.put("/{user_id}/enable")
+async def enable_user(
+    user_id: str,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+):
+    """Enable a previously disabled user account.
+
+    Requires admin.organizations role for access.
+
+    Args:
+        user_id: Keycloak user UUID
+
+    Returns:
+        Updated user object with status: "active"
+
+    Raises:
+        HTTPException 403: If caller lacks admin.organizations role
+        HTTPException 404: If user not found
+        HTTPException 500: If Keycloak API call fails
+    """
+    logger.info(
+        "Enabling user account",
+        extra={"admin_user": user.preferred_username, "user_id": user_id}
+    )
+
+    try:
+        # Update user to set enabled=True
+        success = await keycloak_admin_service.update_user(
+            user_id=user_id,
+            user_data={"enabled": True}
+        )
+
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to enable user"
+            )
+
+        # Fetch updated user data
+        kc_user = await keycloak_admin_service.get_user(user_id)
+        if not kc_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User {user_id} not found"
+            )
+
+        # Fetch user roles
+        user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
+
+        # Filter internal roles
+        internal_roles = {
+            "uma_authorization",
+            "offline_access",
+            "default-roles-" + settings.KEYCLOAK_REALM.lower()
+        }
+        permissions = [
+            role["name"] for role in user_roles
+            if role["name"] not in internal_roles and
+               not role["name"].startswith("realm-management")
+        ]
+
+        # Build response
+        attributes = kc_user.get("attributes", {})
+        user_data = {
+            "user_id": user_id,
+            "username": kc_user.get("username"),
+            "email": kc_user.get("email"),
+            "organization_id": attributes.get("organization_id", [None])[0] if "organization_id" in attributes else None,
+            "organization_name": attributes.get("organization_name", [None])[0] if "organization_name" in attributes else None,
+            "status": "active",  # User is now enabled
+            "created_at": str(kc_user.get("createdTimestamp", 0)),
+            "permissions": permissions
+        }
+
+        logger.info(
+            "Successfully enabled user",
+            extra={"user_id": user_id}
+        )
+
+        return user_data
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            "Failed to enable user",
+            exc_info=e,
+            extra={"user_id": user_id}
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to enable user: {str(e)}"
+        )
+
+
 @router.post("/{user_id}/reset-password")
 async def reset_user_password(
     user_id: str,
