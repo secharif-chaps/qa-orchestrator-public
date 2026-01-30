@@ -55,7 +55,7 @@
 
     <!-- No Folders Alert -->
     <div
-      v-if="needsFolderSelection && !foldersLoading && foldersArray !== null && (!foldersArray || foldersArray.length === 0)"
+      v-if="!hasFoldersAvailable && needsFolderSelection && !foldersLoading && foldersArray !== null"
       class="flex flex-col gap-4"
     >
       <Alert
@@ -75,7 +75,7 @@
 
     <!-- Search Form Card -->
     <div
-      v-if="!needsFolderSelection || (!foldersLoading && foldersArray && foldersArray.length > 0)"
+      v-if="!needsFolderSelection || hasFoldersAvailable"
       class="bg-base-100 border border-primary-stroke rounded-lg p-6"
       :title="$t('search.companyIdentity')"
     >
@@ -87,8 +87,9 @@
             <span class="text-error">*</span>
           </label>
           <Select
-            v-model="selectedFolderName"
+            v-model="selectedFolderId"
             :options="folderOptions"
+            :display-value="displayFolderName"
             :placeholder="$t('company.create.chooseFolderPlaceholder', 'Choose a folder...')"
             icon="fa fa-folder"
           />
@@ -233,32 +234,21 @@ const foldersArray = computed(() => {
   return foldersData.value.data || null // Paginated format
 })
 
-// Transform folders to Select options - just folder names as strings
+// Transform folders to Select options - use folder IDs
 const folderOptions = computed(() => {
   if (!foldersArray.value) return []
-  return foldersArray.value.map((folder) => folder.name)
+  return foldersArray.value.map((folder) => folder.id)
 })
 
-// Create mappings between folder names and IDs
-const folderIdToName = computed(() => {
-  if (!foldersArray.value) return new Map()
-  return new Map(foldersArray.value.map(f => [f.id, f.name]))
-})
+// Display function for Select component - shows folder name for given ID
+const displayFolderName = (id: string) => {
+  if (!foldersArray.value) return ''
+  return foldersArray.value.find(f => f.id === id)?.name || ''
+}
 
-const folderNameToId = computed(() => {
-  if (!foldersArray.value) return new Map()
-  return new Map(foldersArray.value.map(f => [f.name, f.id]))
-})
-
-// Wrapper for v-model that converts between name (displayed) and ID (stored)
-const selectedFolderName = computed({
-  get: () => {
-    if (!selectedFolderId.value) return ''
-    return folderIdToName.value.get(selectedFolderId.value) || ''
-  },
-  set: (name: string) => {
-    selectedFolderId.value = folderNameToId.value.get(name) || ''
-  }
+// Computed property to check if folders are available (DRY for v-if conditions)
+const hasFoldersAvailable = computed(() => {
+  return needsFolderSelection.value && !foldersLoading.value && foldersArray.value !== null && foldersArray.value.length > 0
 })
 
 // Fetch folder details (when folder ID is in route)
