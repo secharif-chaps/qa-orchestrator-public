@@ -70,11 +70,12 @@
 
     <!-- Pagination -->
     <Pagination
-      v-if="organizations && organizations.length > 0 && totalOrganizations > 0"
+      v-if="paginationMeta"
       v-model:current-page="currentPage"
-      :items-per-pages="pageSize"
-      :total="totalOrganizations"
-      @update:items-per-pages="updatePageSize"
+      :meta="paginationMeta"
+      :page-size-options="pageSizeOptions"
+      item-name="organizations"
+      @update-per-page="updatePageSize"
     />
   </div>
 </template>
@@ -92,7 +93,9 @@ import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { getAllOrganizations } from '@/api/organization'
-import { Alert, Pagination, Searchbar, Tag } from '@owlint/feathers-vue'
+import { Alert, Searchbar, Tag } from '@owlint/feathers-vue'
+import Pagination from '@/components/ui/Pagination.vue'
+import type { PaginationMeta } from '@/types/pagination'
 
 const router = useRouter()
 
@@ -121,7 +124,26 @@ const {
 
 // Computed
 const organizations = computed(() => organizationsData.value?.data || [])
-const totalOrganizations = computed(() => organizationsData.value?.meta?.total || 0)
+
+// Transform API meta to PaginationMeta format
+const paginationMeta = computed((): PaginationMeta | null => {
+  const meta = organizationsData.value?.meta
+  if (!meta) return null
+
+  const from = (meta.page - 1) * meta.per_page + 1
+  const to = Math.min(meta.page * meta.per_page, meta.total)
+
+  return {
+    total: meta.total,
+    per_page: meta.per_page,
+    current_page: meta.page,
+    last_page: meta.total_pages,
+    from,
+    to,
+  }
+})
+
+const pageSizeOptions = [10, 20, 50, 100]
 
 // Extract error message safely
 const errorMessage = computed(() => {

@@ -22,11 +22,11 @@ interface OrganizationMemberRaw {
 
 interface OrganizationMembersRawResponse {
   data: OrganizationMemberRaw[]
-  meta: {
+  pagination: {
     total: number
     page: number
-    per_page: number
-    last_page: number
+    limit: number
+    total_pages: number
   }
 }
 
@@ -87,8 +87,10 @@ export const getOrganizationMembers = async (
     `/organizations/${params.organizationId}/users?${searchParams}`
   )
 
+  const responseData = response.data ?? []
+
   // Map raw Keycloak format to AdminUserListItem format
-  const mappedData: AdminUserListItem[] = response.data.map((member) => ({
+  const mappedData: AdminUserListItem[] = responseData.map((member) => ({
     user_id: member.id,
     username: member.username,
     email: member.email,
@@ -100,13 +102,20 @@ export const getOrganizationMembers = async (
       : new Date().toISOString(),
   }))
 
+  const pagination = response.pagination ?? {
+    total: mappedData.length,
+    page: params.page,
+    limit: params.limit,
+    total_pages: Math.ceil(mappedData.length / params.limit) || 1,
+  }
+
   return {
     data: mappedData,
     pagination: {
-      total: response.meta.total,
-      page: response.meta.page,
-      limit: response.meta.per_page,
-      total_pages: response.meta.last_page,
+      total: pagination.total,
+      page: pagination.page,
+      limit: pagination.limit,
+      total_pages: pagination.total_pages,
     },
   }
 }

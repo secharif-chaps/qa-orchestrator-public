@@ -75,12 +75,13 @@
 
         <!-- Pagination -->
         <Pagination
-          v-if="users && users.length > 0 && totalUsers > 0"
+          v-if="users && users.length > 0 && paginationMeta"
           v-model:current-page="currentPage"
-          :items-per-pages="queryParams.limit"
-          :total="totalUsers"
+          :meta="paginationMeta"
+          :page-size-options="pageSizeOptions"
+          item-name="members"
           class="mt-4"
-          @update:items-per-pages="updatePageSize"
+          @update-per-page="updatePageSize"
         />
       </template>
     </Card>
@@ -135,10 +136,11 @@
 import { computed, reactive, ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuery } from '@pinia/colada'
-import { Alert, Button, Pagination } from '@owlint/feathers-vue'
+import { Alert, Button } from '@owlint/feathers-vue'
 
 // Components
 import Card from '@/components/ui/Card.vue'
+import Pagination from '@/components/ui/Pagination.vue'
 import UsersTable from '@/components/admin/UsersTable.vue'
 import CreateUserModal from '@/components/user/CreateUserModal.vue'
 import UserOrganizationModal from '@/components/admin/UserOrganizationModal.vue'
@@ -154,6 +156,7 @@ import { useAssignUserOrganization, useUpdateUserPermissions } from '@/mutations
 // Types
 import type { AdminUserListItem } from '@/types/admin-user'
 import type { OrganizationUserCreate } from '@/types/user'
+import type { PaginationMeta } from '@/types/pagination'
 
 const router = useRouter()
 
@@ -202,8 +205,30 @@ const { data: organizationsResponse } = useQuery(allOrganizationsQuery, () => ({
 }))
 
 const users = computed(() => usersResponse.value?.data || [])
-const totalUsers = computed(() => usersResponse.value?.pagination?.total ?? 0)
 const availableOrganizations = computed(() => organizationsResponse.value?.data || [])
+
+// Transform API pagination to PaginationMeta format
+const paginationMeta = computed((): PaginationMeta | null => {
+  const pagination = usersResponse.value?.pagination
+  if (!pagination || pagination.total === undefined || pagination.page === undefined ||
+      pagination.limit === undefined || pagination.total_pages === undefined) {
+    return null
+  }
+
+  const from = (pagination.page - 1) * pagination.limit + 1
+  const to = Math.min(pagination.page * pagination.limit, pagination.total)
+
+  return {
+    total: pagination.total,
+    per_page: pagination.limit,
+    current_page: pagination.page,
+    last_page: pagination.total_pages,
+    from,
+    to,
+  }
+})
+
+const pageSizeOptions = [10, 20, 50, 100]
 
 // Extract error message safely
 const errorMessage = computed(() => {
