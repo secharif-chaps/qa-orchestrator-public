@@ -92,6 +92,7 @@ def _build_company_response(
         raw_gpt_knowledge=company.raw_gpt_knowledge,
         raw_wikipedia_knowledge=company.raw_wikipedia_knowledge,
         raw_scraped_website_knowledge=company.raw_scraped_website_knowledge,
+        raw_pappers_knowledge=company.raw_pappers_knowledge,
         error=company.error,
         is_deleted=company.is_deleted,
         created_at=company.created_at,
@@ -451,12 +452,14 @@ class CompanyService:
                 company.raw_gpt_knowledge = knowledge_data.get("gpt", "")
                 company.raw_wikipedia_knowledge = knowledge_data.get("wikipedia", "")
                 company.raw_scraped_website_knowledge = knowledge_data.get("scraped", "")
+                company.raw_pappers_knowledge = knowledge_data.get("pappers", "")
             else:
                 # Not a dict, set all to empty
                 company.raw_mistral_knowledge = ""
                 company.raw_gpt_knowledge = ""
                 company.raw_wikipedia_knowledge = ""
                 company.raw_scraped_website_knowledge = ""
+                company.raw_pappers_knowledge = ""
         else:
             # All other query types write to normalized tables
             # Data comes from webhook wrapped as {query_type: actual_data}

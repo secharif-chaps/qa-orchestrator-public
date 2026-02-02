@@ -82,8 +82,7 @@ class DifyService:
             DatabaseError: If database query fails (logged and returns empty dict)
         """
         if self.db is None:
-            return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": ""}
-
+            return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": "", "pappers": ""}
         try:
             from app.models.company import Company
 
@@ -95,6 +94,7 @@ class DifyService:
                     "gpt": company.raw_gpt_knowledge or "",
                     "wikipedia": company.raw_wikipedia_knowledge or "",
                     "scraped": company.raw_scraped_website_knowledge or "",
+                    "pappers": company.raw_pappers_knowledge or "",
                 }
 
                 logger.info(
@@ -105,13 +105,14 @@ class DifyService:
                         "gpt_chars": len(knowledge["gpt"]),
                         "wikipedia_chars": len(knowledge["wikipedia"]),
                         "scraped_chars": len(knowledge["scraped"]),
+                        "pappers_chars": len(knowledge["pappers"]),
                     },
                 )
 
                 return knowledge
             else:
                 logger.warning(f"Company {company_id} not found")
-                return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": ""}
+                return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": "", "pappers": ""}
 
         except Exception as e:
             logger.error(
@@ -119,7 +120,8 @@ class DifyService:
                 exc_info=True,
                 extra={"company_id": company_id},
             )
-            return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": ""}
+
+            return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": "", "pappers": ""}
 
     async def run_workflow(
         self,
@@ -218,6 +220,32 @@ class DifyService:
             inputs["wikipedia"] = "true"
             # data_collection workflow expects "callback_url" instead of "callback_webhook"
             inputs["callback_url"] = success_callback
+
+            # Add Pappers configuration
+            from app.services.feature_flags import has_feature, get_feature_config
+            from app.models.organization import FeatureFlag
+
+            # Get company's organization_id
+            from app.models.company import Company
+            company = self.db.query(Company).filter(Company.id == company_id).first()
+
+            if company:
+                pappers_enabled = has_feature(self.db, company.organization_id, FeatureFlag.PAPPERS)
+                pappers_config = get_feature_config(self.db, company.organization_id, FeatureFlag.PAPPERS)
+                pappers_api_key = pappers_config.get("api_key", "") if pappers_config else ""
+
+                inputs["pappers_enabled"] = str(pappers_enabled).lower()
+                inputs["pappers_api_key"] = pappers_api_key
+
+                logger.info(
+                    f"🔍 Pappers config for data_collection",
+                    extra={
+                        "company_id": company_id,
+                        "organization_id": company.organization_id,
+                        "pappers_enabled": pappers_enabled,
+                        "has_api_key": bool(pappers_api_key),
+                    }
+                )
 
             logger.info(
                 f"🔍 URL DEBUG [{task_type}] Step 2: Set callback_url for data_collection",

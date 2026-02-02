@@ -111,8 +111,10 @@ class CompanyBase(BaseModel):
 
         return url_str
 
+
 class CompanyCreate(CompanyBase):
     pass  # Only inherits name and website from CompanyBase
+
 
 class CompanyUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=2, max_length=100, description="Company name")
@@ -248,6 +250,7 @@ class CompanyUpdate(BaseModel):
         check_depth(v)
         return v
 
+
 class TaskResponse(BaseModel):
     id: int
     company_id: int
@@ -262,6 +265,7 @@ class TaskResponse(BaseModel):
     updated_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
+
 
 class CompanyResponse(CompanyBase):
     id: int
@@ -280,6 +284,7 @@ class CompanyResponse(CompanyBase):
     raw_gpt_knowledge: Optional[str] = Field(None, description="Raw knowledge from GPT AI")
     raw_wikipedia_knowledge: Optional[str] = Field(None, description="Raw knowledge from Wikipedia")
     raw_scraped_website_knowledge: Optional[str] = Field(None, description="Raw scraped website content")
+    raw_pappers_knowledge: Optional[str] = Field(None, description="Raw knowledge from Pappers")
     error: Optional[str] = None
     is_deleted: bool = Field(default=False)
     created_at: Optional[datetime] = None
@@ -290,11 +295,13 @@ class CompanyResponse(CompanyBase):
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class CompanyCSVRow(BaseModel):
     """Single row from CSV import"""
     row_number: int
     name: str
     website: str
+
 
 class CompanyCSVValidationError(BaseModel):
     """Validation error for a specific row"""
@@ -302,9 +309,11 @@ class CompanyCSVValidationError(BaseModel):
     field: str
     error: str
 
+
 class CompanyCSVValidationRequest(BaseModel):
     """Request to validate CSV data"""
     companies: List[CompanyCSVRow]
+
 
 class CompanyCSVValidationResponse(BaseModel):
     """Response from validation endpoint"""
@@ -315,10 +324,12 @@ class CompanyCSVValidationResponse(BaseModel):
     tokens_required: int
     tokens_available: int
 
+
 class CompanyCSVImportRequest(BaseModel):
     """Request to import validated CSV data"""
     companies: List[CompanyCSVRow]
     skip_invalid: bool = True  # Whether to skip invalid rows or fail entire import
+
 
 class CompanyCSVImportResult(BaseModel):
     """Result for a single company import"""
@@ -328,9 +339,10 @@ class CompanyCSVImportResult(BaseModel):
     name: Optional[str] = None
     error: Optional[str] = None
 
+
 class CompanyCSVImportResponse(BaseModel):
     """Response from import endpoint"""
     total_rows: int
     successful: int
     failed: int
-    results: List[CompanyCSVImportResult] 
+    results: List[CompanyCSVImportResult]
