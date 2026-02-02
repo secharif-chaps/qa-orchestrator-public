@@ -47,45 +47,41 @@ def test_grpc_interceptor_missing_auth():
 def test_grpc_interceptor_valid_jwt_auth():
     """Test 3: gRPC interceptor with valid JWT authentication (user)."""
     interceptor = GrpcAuthInterceptor()
-    
+
     # Mock handler call details with JWT token
     handler_call_details = Mock()
     handler_call_details.invocation_metadata = [
         ('authorization', 'Bearer header.payload.signature')  # JWT has 3 parts
     ]
     handler_call_details.method = "/test.Service/Method"
-    
-    # Mock the Keycloak user
+
+    # Mock the Keycloak user (OIDCUser) with all necessary attributes
+    # Organization and enabled_modules are now on the OIDCUser object directly
     mock_user = Mock()
     mock_user.sub = "user-123"
     mock_user.preferred_username = "testuser"
     mock_user.email = "test@example.com"
-    
+    mock_user.organization = [{"Company": {"id": "123"}}, "Company"]
+    mock_user.enabled_modules = ["Screen", "Target"]
+
     # Mock continuation
     mock_handler = Mock()
     mock_handler.unary_unary = Mock()
     continuation = Mock(return_value=mock_handler)
-    
+
     # Mock the idp object entirely to avoid Keycloak initialization
     mock_idp = MagicMock()
     mock_idp.get_current_user.return_value = mock_user
 
     with patch('app.core.grpc.idp', mock_idp):
-        # Mock jwt.decode for token decoding
-        with patch('app.core.grpc.jwt.decode') as mock_jwt_decode:
-            mock_jwt_decode.return_value = {
-                "organization": [{"Company": {"id": "123"}}, "Company"],
-                "enabled_modules": ["Screen", "Target"]
-            }
+        # Intercept the service
+        result = interceptor.intercept_service(continuation, handler_call_details)
 
-            # Intercept the service
-            result = interceptor.intercept_service(continuation, handler_call_details)
-
-            # Should return a wrapped handler
-            assert result is not None
-            assert hasattr(result, 'unary_unary')
-            # Should have called get_current_user
-            mock_idp.get_current_user.assert_called_once_with("header.payload.signature")
+        # Should return a wrapped handler
+        assert result is not None
+        assert hasattr(result, 'unary_unary')
+        # Should have called get_current_user
+        mock_idp.get_current_user.assert_called_once_with("header.payload.signature")
     print("✅ Test 3: gRPC interceptor valid JWT auth passed")
 
 
