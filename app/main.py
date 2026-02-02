@@ -22,22 +22,14 @@ app = FastAPI(
     description="Centralized organization-scoped resources service",
     version="0.1.0",
 )
-# Debug logging for CORS settings
-logger.info(f"CORS Origin setting: {settings.CORS_ORIGIN}")
+# Parse CORS origins from comma-separated config (no rebuild needed to change)
+cors_origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()]
+logger.info(f"CORS Origins: {cors_origins}")
 logger.info(f"Backend Base URL: {settings.BACKEND_BASE_URL}")
-
-# CORS configuration
-development_origins = [
-    settings.CORS_ORIGIN,
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=development_origins,
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

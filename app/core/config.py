@@ -18,8 +18,8 @@ class Settings(BaseSettings):
     # Database settings
     DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/global_db"
     
-    # CORS settings
-    CORS_ORIGIN: str = "http://localhost:3000"
+    # CORS settings (comma-separated list of allowed origins)
+    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173"
     
     # Keycloak settings
     
