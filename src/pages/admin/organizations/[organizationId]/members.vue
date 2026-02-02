@@ -78,7 +78,6 @@
           v-if="users && users.length > 0 && paginationMeta"
           v-model:current-page="currentPage"
           :meta="paginationMeta"
-          :page-size-options="pageSizeOptions"
           item-name="members"
           class="mt-4"
           @update-per-page="updatePageSize"
@@ -215,20 +214,15 @@ const paginationMeta = computed((): PaginationMeta | null => {
     return null
   }
 
-  const from = (pagination.page - 1) * pagination.limit + 1
-  const to = Math.min(pagination.page * pagination.limit, pagination.total)
 
   return {
     total: pagination.total,
     per_page: pagination.limit,
     current_page: pagination.page,
     last_page: pagination.total_pages,
-    from,
-    to,
   }
 })
 
-const pageSizeOptions = [10, 20, 50, 100]
 
 // Extract error message safely
 const errorMessage = computed(() => {

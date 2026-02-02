@@ -71,7 +71,6 @@
     <Pagination
       v-model:current-page="currentPage"
       :meta="paginationMeta"
-      :page-size-options="pageSizeOptions"
       item-name="users"
       @update-per-page="updatePageSize"
     />
@@ -192,7 +191,7 @@ const availableOrganizations = computed(() => organizationsResponse.value?.data 
 
 // Map backend pagination format to PaginationMeta format
 // Backend returns: { page, limit, total, total_pages }
-// Component expects: { current_page, per_page, total, last_page, from, to }
+// Component expects: { current_page, per_page, total, last_page}
 const paginationMeta = computed<PaginationMeta | null>(() => {
   if (!users.value?.pagination) return null
 
@@ -207,8 +206,6 @@ const paginationMeta = computed<PaginationMeta | null>(() => {
     per_page: perPage,
     total,
     last_page: lastPage,
-    from: (currentPage - 1) * perPage + 1,
-    to: Math.min(currentPage * perPage, total),
   }
 })
 
@@ -219,9 +216,6 @@ const currentPage = computed({
     queryParams.page = value
   },
 })
-
-// Page size options
-const pageSizeOptions = [10, 20, 50, 100]
 
 // Check if any filters are active
 const hasActiveFilters = computed(() => {

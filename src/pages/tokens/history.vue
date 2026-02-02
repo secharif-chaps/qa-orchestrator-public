@@ -319,8 +319,6 @@ const paginationMeta = computed<PaginationMeta | null>(() => {
     per_page: historyData.value.size,
     total: historyData.value.total,
     last_page: historyData.value.pages,
-    from: (historyData.value.page - 1) * historyData.value.size + 1,
-    to: Math.min(historyData.value.page * historyData.value.size, historyData.value.total),
   }
 })
 

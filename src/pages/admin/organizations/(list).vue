@@ -73,7 +73,6 @@
       v-if="paginationMeta"
       v-model:current-page="currentPage"
       :meta="paginationMeta"
-      :page-size-options="pageSizeOptions"
       item-name="organizations"
       @update-per-page="updatePageSize"
     />
@@ -127,23 +126,22 @@ const organizations = computed(() => organizationsData.value?.data || [])
 
 // Transform API meta to PaginationMeta format
 const paginationMeta = computed((): PaginationMeta | null => {
-  const meta = organizationsData.value?.meta
-  if (!meta) return null
+  const p = organizationsData.value?.meta
+  if (!p) return null
 
-  const from = (meta.page - 1) * meta.per_page + 1
-  const to = Math.min(meta.page * meta.per_page, meta.total)
+  const currentPage = p.page ?? 1
+  const perPage = p.per_page ?? 10
+  const total = p.total ?? 0
+  const lastPage = p.total_pages ?? 1
 
   return {
-    total: meta.total,
-    per_page: meta.per_page,
-    current_page: meta.page,
-    last_page: meta.total_pages,
-    from,
-    to,
+    total: total,
+    per_page: perPage,
+    current_page: currentPage,
+    last_page: lastPage,
   }
 })
 
-const pageSizeOptions = [10, 20, 50, 100]
 
 // Extract error message safely
 const errorMessage = computed(() => {

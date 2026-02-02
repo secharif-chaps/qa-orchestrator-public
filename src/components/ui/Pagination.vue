@@ -140,16 +140,12 @@ const resultText = computed(() => {
   const start = (props.meta.current_page - 1) * props.meta.per_page + 1
   const end = Math.min(props.meta.current_page * props.meta.per_page, props.meta.total)
 
-  return t(
-    'pagination.displaying',
-    `Displaying ${start} to ${end} of ${props.meta.total} ${props.itemName}`,
-    {
-      start,
-      end,
-      total: props.meta.total,
-      itemName: props.itemName,
-    },
-  )
+  return t('pagination.displaying', {
+    start,
+    end,
+    total: props.meta.total,
+    itemName: props.itemName,
+  })
 })
 
 // Function to handle direct page navigation

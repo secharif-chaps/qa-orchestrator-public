@@ -117,16 +117,12 @@ const paginationMeta = computed<PaginationMeta | null>(() => {
   if (!response.value?.pagination) return null
 
   const p = response.value.pagination
-  const from = (p.page - 1) * p.limit + 1
-  const to = Math.min(p.page * p.limit, p.total)
 
   return {
     total: p.total,
     per_page: p.limit,
     current_page: p.page,
     last_page: p.total_pages,
-    from,
-    to,
   }
 })
 
