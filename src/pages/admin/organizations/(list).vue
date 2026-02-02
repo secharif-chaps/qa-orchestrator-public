@@ -94,7 +94,7 @@ import { useQuery } from '@pinia/colada'
 import { getAllOrganizations } from '@/api/organization'
 import { Alert, Searchbar, Tag } from '@owlint/feathers-vue'
 import Pagination from '@/components/ui/Pagination.vue'
-import type { PaginationMeta } from '@/types/pagination'
+import { transformToPaginationMeta } from '@/utils/pagination'
 
 const router = useRouter()
 
@@ -125,22 +125,7 @@ const {
 const organizations = computed(() => organizationsData.value?.data || [])
 
 // Transform API meta to PaginationMeta format
-const paginationMeta = computed((): PaginationMeta | null => {
-  const p = organizationsData.value?.meta
-  if (!p) return null
-
-  const currentPage = p.page ?? 1
-  const perPage = p.per_page ?? 10
-  const total = p.total ?? 0
-  const lastPage = p.total_pages ?? 1
-
-  return {
-    total: total,
-    per_page: perPage,
-    current_page: currentPage,
-    last_page: lastPage,
-  }
-})
+const paginationMeta = computed(() => transformToPaginationMeta(organizationsData.value?.meta))
 
 
 // Extract error message safely

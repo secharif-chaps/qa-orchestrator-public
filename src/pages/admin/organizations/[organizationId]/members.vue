@@ -155,7 +155,9 @@ import { useAssignUserOrganization, useUpdateUserPermissions } from '@/mutations
 // Types
 import type { AdminUserListItem } from '@/types/admin-user'
 import type { OrganizationUserCreate } from '@/types/user'
-import type { PaginationMeta } from '@/types/pagination'
+
+// Utils
+import { transformToPaginationMeta } from '@/utils/pagination'
 
 const router = useRouter()
 
@@ -207,21 +209,7 @@ const users = computed(() => usersResponse.value?.data || [])
 const availableOrganizations = computed(() => organizationsResponse.value?.data || [])
 
 // Transform API pagination to PaginationMeta format
-const paginationMeta = computed((): PaginationMeta | null => {
-  const pagination = usersResponse.value?.pagination
-  if (!pagination || pagination.total === undefined || pagination.page === undefined ||
-      pagination.limit === undefined || pagination.total_pages === undefined) {
-    return null
-  }
-
-
-  return {
-    total: pagination.total,
-    per_page: pagination.limit,
-    current_page: pagination.page,
-    last_page: pagination.total_pages,
-  }
-})
+const paginationMeta = computed(() => transformToPaginationMeta(usersResponse.value?.pagination))
 
 
 // Extract error message safely
