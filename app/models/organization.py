@@ -84,6 +84,7 @@ class FeatureFlag(str, Enum):
     """
     TRANSLATION = "translation"
     DISCOVER = "discover"
+    PAPPERS = "pappers"
 
 
 class Organization(Base):

@@ -39,6 +39,7 @@ class Company(Base):
         raw_gpt_knowledge: Raw knowledge from GPT
         raw_wikipedia_knowledge: Raw knowledge from Wikipedia
         raw_scraped_website_knowledge: Raw scraped website content
+        raw_pappers_knowledge: Raw knowledge from Pappers
         error: Error message if data collection failed
         tasks: Relationship to Task model (1:N)
         profile_data: Relationship to CompanyProfile (1:1)
@@ -80,6 +81,7 @@ class Company(Base):
     raw_gpt_knowledge = Column(String, nullable=True)
     raw_wikipedia_knowledge = Column(String, nullable=True)
     raw_scraped_website_knowledge = Column(String, nullable=True)
+    raw_pappers_knowledge = Column(String, nullable=True)
 
     # Error field
     error = Column(String, nullable=True)
