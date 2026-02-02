@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# TODO: Consider migrating to uv for faster builds (10-100x faster than Poetry)
 # Install Poetry
 RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python3 - && \
     ln -s /opt/poetry/bin/poetry /usr/local/bin/poetry && \
