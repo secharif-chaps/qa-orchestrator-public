@@ -28,15 +28,17 @@ logger = get_logger(__name__)
 
 
 class OIDCUser(BaseOIDCUser):
-    """Extended OIDCUser with organization claim support.
+    """Extended OIDCUser with organization and enabled_modules claim support.
 
-    This extends the base fastapi-keycloak OIDCUser to include the
-    'organization' claim from Keycloak Organizations feature.
+    This extends the base fastapi-keycloak OIDCUser to include:
+    - 'organization' claim from Keycloak Organizations feature
+    - 'enabled_modules' claim for module-based access control
 
     The organization claim format from Keycloak is:
     ["OrgName", {"OrgName": {"id": "uuid"}}]
     """
     organization: Optional[Any] = None  # Can be list, dict, or string depending on Keycloak config
+    enabled_modules: list[str] = []  # List of enabled modules for this user's organization
 
 
 def _initialize_keycloak_with_retry(

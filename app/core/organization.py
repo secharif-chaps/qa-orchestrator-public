@@ -10,10 +10,9 @@ Copied and adapted from mint-server/app/core/organization.py
 
 from typing import Any
 from fastapi import Depends, HTTPException, status, Request
-from fastapi_keycloak import OIDCUser
 from pydantic import BaseModel
 
-from app.core.keycloak import idp
+from app.core.keycloak import idp, OIDCUser
 from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -21,7 +20,7 @@ logger = get_logger(__name__)
 
 class OrganizationContext(BaseModel):
     """Organization context extracted from JWT token.
-    
+
     Attributes:
         organization_id: Keycloak organization UUID
         organization_name: Keycloak organization name
@@ -36,28 +35,26 @@ class OrganizationContext(BaseModel):
     enabled_modules: list[str] = []  # Added for global service
 
 
-def extract_organization_from_token(token_payload: dict[str, Any]) -> tuple[str, str] | None:
-    """Extract organization ID and name from JWT token payload.
-    
+def _parse_organization_claim(organization_claim: Any) -> tuple[str, str] | None:
+    """Parse organization claim from Keycloak into (org_id, org_name).
+
+    Internal helper function that handles Keycloak's organization claim format.
+
     Keycloak Organizations feature adds organization data in varying formats:
     ```json
     // Format 1:
     "organization": [{"OrgName": {"id": "uuid"}}, "OrgName"]
-    
+
     // Format 2 (reversed):
     "organization": ["OrgName", {"OrgName": {"id": "uuid"}}]
     ```
-    
-    This function handles both formats and extracts the organization name and UUID.
-    
+
     Args:
-        token_payload: Decoded JWT token payload dictionary
-        
+        organization_claim: The organization claim value from the token
+
     Returns:
-        Tuple of (organization_id, organization_name) if found, None otherwise
+        Tuple of (organization_id, organization_name) if valid, None otherwise
     """
-    organization_claim = token_payload.get("organization")
-    
     if not organization_claim:
         logger.warning("No organization claim found in token")
         return None
@@ -129,17 +126,20 @@ def extract_organization_from_token(token_payload: dict[str, Any]) -> tuple[str,
     return (org_id, org_name)
 
 
-def extract_enabled_modules(token_payload: dict[str, Any]) -> list[str]:
-    """Extract enabled modules from token if present.
-    
+def extract_organization_from_validated_user(user: OIDCUser) -> tuple[str, str] | None:
+    """Extract organization ID and name from a validated OIDCUser.
+
+    This function accepts an OIDCUser object directly, which provides a security
+    guarantee: OIDCUser can only be created by fastapi-keycloak after successful
+    JWT validation. This ensures the organization claim comes from a validated token.
+
     Args:
-        token_payload: Decoded JWT token payload
-        
+        user: Validated OIDCUser from fastapi-keycloak (token already verified)
+
     Returns:
-        List of enabled module names, empty list if not present
+        Tuple of (organization_id, organization_name) if found, None otherwise
     """
-    modules = token_payload.get("enabled_modules", [])
-    return modules if isinstance(modules, list) else []
+    return _parse_organization_claim(user.organization)
 
 
 def _get_current_user_dependency():
@@ -189,8 +189,8 @@ def get_user_organization(
             detail="User must be assigned to an organization"
         )
 
-    # Extract organization from the user's organization claim
-    org_info = extract_organization_from_token({"organization": user.organization})
+    # Extract organization from the validated user object
+    org_info = extract_organization_from_validated_user(user)
 
     if not org_info:
         logger.error(
@@ -213,5 +213,5 @@ def get_user_organization(
         organization_name=org_name,
         user_id=user.sub,
         username=user.preferred_username,
-        enabled_modules=[]  # Can be extended if needed from user claims
+        enabled_modules=user.enabled_modules or []
     )

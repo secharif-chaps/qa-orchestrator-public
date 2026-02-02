@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 from app.core.keycloak import OIDCUser
 from app.core.client_auth import introspect_token, ClientAuthError
-from app.core.organization import extract_organization_from_token, OrganizationContext
+from app.core.organization import extract_organization_from_validated_user, OrganizationContext
 
 
 def test_1_user_jwt_validation():
@@ -65,15 +65,46 @@ async def test_2_client_credentials_validation():
                 assert result["client_id"] == "test-service"
 
 def test_3_organization_extraction():
-    """Test 3: Organization extraction from token."""
-    # Valid extraction
-    token = {"organization": [{"Company": {"id": "123"}}, "Company"]}
-    result = extract_organization_from_token(token)
+    """Test 3: Organization extraction from validated OIDCUser."""
+    now = int(datetime.now(timezone.utc).timestamp())
+
+    # Valid extraction - OIDCUser with proper organization claim
+    user_valid = OIDCUser(
+        sub="test-user",
+        preferred_username="testuser",
+        email="test@example.com",
+        email_verified=True,
+        iat=now,
+        exp=now + 3600,
+        organization=[{"Company": {"id": "123"}}, "Company"]
+    )
+    result = extract_organization_from_validated_user(user_valid)
     assert result == ("123", "Company")
-    
-    # Invalid extraction
-    token = {"organization": "invalid"}
-    result = extract_organization_from_token(token)
+
+    # Invalid extraction - OIDCUser with malformed organization claim
+    user_invalid = OIDCUser(
+        sub="test-user",
+        preferred_username="testuser",
+        email="test@example.com",
+        email_verified=True,
+        iat=now,
+        exp=now + 3600,
+        organization="invalid"
+    )
+    result = extract_organization_from_validated_user(user_invalid)
+    assert result is None
+
+    # No organization - OIDCUser without organization claim
+    user_no_org = OIDCUser(
+        sub="test-user",
+        preferred_username="testuser",
+        email="test@example.com",
+        email_verified=True,
+        iat=now,
+        exp=now + 3600,
+        organization=None
+    )
+    result = extract_organization_from_validated_user(user_no_org)
     assert result is None
 
 def test_4_organization_context_model():

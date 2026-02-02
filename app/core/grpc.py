@@ -9,9 +9,8 @@ import asyncio
 from typing import Callable, Optional
 from google.protobuf import message
 import logging
-from jose import jwt
 
-from app.core.keycloak import idp  # fastapi-keycloak instance
+from app.core.keycloak import idp, OIDCUser
 from app.core.client_auth import introspect_token, ClientAuthError
 
 logger = logging.getLogger(__name__)
@@ -81,19 +80,9 @@ class GrpcAuthInterceptor(grpc.ServerInterceptor):
         # USER JWT FLOW
         if is_jwt:
             try:
+                # idp.get_current_user validates the JWT and returns OIDCUser
+                # with organization and enabled_modules already extracted
                 user = idp.get_current_user(token)
-
-                # Decode token (no signature verification) for extra claims
-                try:
-                    decoded = jwt.decode(token, options={"verify_signature": False})
-                    organization = decoded.get("organization")
-                    enabled_modules = decoded.get("enabled_modules", [])
-                except Exception:
-                    # Log but don't fail authentication
-                    logger.debug("Failed to decode JWT for extra claims, continuing...")
-                    decoded = {}
-                    organization = None
-                    enabled_modules = []
 
                 logger.info(
                     "✅ gRPC authenticated as USER",
@@ -103,9 +92,6 @@ class GrpcAuthInterceptor(grpc.ServerInterceptor):
                 return self._wrap_handler_with_user(
                     handler=handler,
                     user=user,
-                    token_decoded=decoded,
-                    organization=organization,
-                    enabled_modules=enabled_modules,
                 )
 
             except Exception as exc:
@@ -149,33 +135,35 @@ class GrpcAuthInterceptor(grpc.ServerInterceptor):
     def _wrap_handler_with_user(
         self,
         handler: grpc.RpcMethodHandler,
-        user,
-        token_decoded: dict,
-        organization=None,
-        enabled_modules=None,
+        user: OIDCUser,
     ) -> grpc.RpcMethodHandler:
+        """Wrap handler with validated user context.
+
+        Args:
+            handler: The gRPC handler to wrap
+            user: Validated OIDCUser from fastapi-keycloak (guarantees token was verified)
+        """
         if not handler:
             return None
 
         def attach_user_context(original_handler):
             def wrapper(request: message.Message, context: grpc.ServicerContext):
+                # Build user context from validated OIDCUser
                 context.user = {
                     "type": "user",
                     "id": user.sub,
                     "username": user.preferred_username,
                     "email": getattr(user, "email", ""),
-                    "token_decoded": token_decoded,
-                    "organization": organization,
-                    "enabled_modules": enabled_modules or [],
+                    "organization": user.organization,
+                    "enabled_modules": user.enabled_modules or [],
                 }
 
-                if organization:
+                # Extract organization ID and name from validated user
+                if user.organization:
                     try:
-                        from app.core.organization import extract_organization_from_token
+                        from app.core.organization import extract_organization_from_validated_user
 
-                        org_info = extract_organization_from_token(
-                            {"organization": organization}
-                        )
+                        org_info = extract_organization_from_validated_user(user)
                         if org_info:
                             org_id, org_name = org_info
                             context.user["organization_id"] = org_id
