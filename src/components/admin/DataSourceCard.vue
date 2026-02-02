@@ -10,7 +10,7 @@
             :alt="source.name"
             class="w-8 h-8 object-contain"
           />
-          <i v-else class="fas fa-database text-xl text-secondary"></i>
+          <Icon v-else icon="fa-database" class="text-xl text-secondary" />
         </div>
         <div>
           <h3 class="font-semibold">{{ source.name }}</h3>
@@ -97,7 +97,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useQuery } from '@pinia/colada'
-import { Button, Input } from '@owlint/feathers-vue'
+import { Button, Input, Icon } from '@owlint/feathers-vue'
 import { dataSourceConfigQuery } from '@/queries/data-sources'
 import { useUpdateDataSourceConfig } from '@/mutations/data-sources'
 import type { DataSourceInfo } from '@/types/data-source'
