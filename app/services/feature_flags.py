@@ -24,6 +24,8 @@ from app.models.organization import FeatureFlag, OrganizationFeatureFlag
 
 logger = get_logger(__name__)
 
+MIN_API_KEY_LENGTH = 9
+
 
 def obfuscate_api_key(api_key: str | None) -> str | None:
     """Obfuscate an API key for display.
@@ -204,8 +206,8 @@ def update_feature_config(
 ) -> OrganizationFeatureFlag:
     """Update feature flag config without changing enabled state.
 
-    Auto-enables flag if config contains non-empty api_key.
-    Auto-disables flag if config api_key is removed/empty.
+    Auto-enables flag if config contains valid api_key (>= 9 chars).
+    Auto-disables flag if config api_key is removed/empty/too short.
 
     Args:
         db: Database session
@@ -222,9 +224,13 @@ def update_feature_config(
         OrganizationFeatureFlag.flag == flag,
     ).first()
 
-    # Determine if we should auto-enable/disable based on api_key
+    # Determine if api_key is valid (non-empty and >= MIN_API_KEY_LENGTH)
     api_key = config.get("api_key")
-    has_api_key = api_key is not None and len(api_key.strip()) > 0
+    has_valid_api_key = (api_key is not None and len(api_key.strip()) >= MIN_API_KEY_LENGTH)
+
+    # Clear invalid api_key
+    if api_key is not None and not has_valid_api_key:
+        config["api_key"] = ""
 
     if feature:
         # Merge new config with existing config
@@ -232,11 +238,11 @@ def update_feature_config(
         merged_config = {**existing_config, **config}
         feature.config = merged_config
 
-        # Auto-enable if api_key is set, auto-disable if removed
-        if has_api_key and not feature.enabled:
+        # Auto-enable if api_key is valid, auto-disable if invalid/removed
+        if has_valid_api_key and not feature.enabled:
             feature.enabled = True
             feature.enabled_at = datetime.now(timezone.utc)
-        elif not has_api_key and feature.enabled:
+        elif not has_valid_api_key and feature.enabled:
             feature.enabled = False
             feature.enabled_at = None
 
@@ -247,7 +253,7 @@ def update_feature_config(
                 "flag": flag.value,
                 "updated_by": updated_by,
                 "enabled": feature.enabled,
-                "has_api_key": has_api_key,
+                "has_valid_api_key": has_valid_api_key,
             },
         )
     else:
@@ -255,8 +261,8 @@ def update_feature_config(
         feature = OrganizationFeatureFlag(
             organization_id=organization_id,
             flag=flag,
-            enabled=has_api_key,
-            enabled_at=datetime.now(timezone.utc) if has_api_key else None,
+            enabled=has_valid_api_key,
+            enabled_at=datetime.now(timezone.utc) if has_valid_api_key else None,
             config=config,
         )
         db.add(feature)
@@ -267,7 +273,7 @@ def update_feature_config(
                 "flag": flag.value,
                 "updated_by": updated_by,
                 "enabled": feature.enabled,
-                "has_api_key": has_api_key,
+                "has_valid_api_key": has_valid_api_key,
             },
         )
 
