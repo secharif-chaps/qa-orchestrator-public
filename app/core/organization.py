@@ -13,6 +13,7 @@ import jwt
 
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
+from app.core.internal_jwt import is_internal_request
 
 if TYPE_CHECKING:
     from app.models.organization import FeatureFlag
@@ -134,33 +135,21 @@ def extract_organization_from_token(token_payload: dict[str, Any]) -> tuple[str,
     return (org_id, org_name)
 
 
-def _is_internal_request(request: Request) -> bool:
-    """Check if request is from the gateway (has valid internal header)."""
-    # Must match value in keycloak.py
-    INTERNAL_REQUEST_HEADER = "X-Internal-Request"
-    INTERNAL_REQUEST_SECRET = "gateway-internal-v1"
-    header_value = request.headers.get(INTERNAL_REQUEST_HEADER, "")
-    return header_value == INTERNAL_REQUEST_SECRET
+def _extract_org_from_user(user: OIDCUser) -> tuple[str, str] | None:
+    """Extract organization info from OIDCUser.organization claim.
 
+    For internal JWT requests, the organization is already extracted from the
+    internal JWT payload and stored in user.organization.
 
-def _extract_org_from_internal_header(request: Request) -> tuple[str, str] | None:
-    """Extract organization info from gateway-provided X-User-Organization header.
-
-    Header format: "OrgName:OrgId" or just "OrgName"
+    The organization format follows Keycloak's structure:
+    ["OrgName", {"OrgName": {"id": "uuid"}}]
     """
-    USER_ORG_HEADER = "X-User-Organization"
-    org_str = request.headers.get(USER_ORG_HEADER, "")
-
-    if not org_str:
+    if not user.organization:
         return None
 
-    if ":" in org_str:
-        org_name, org_id = org_str.split(":", 1)
-        return (org_id, org_name)
-
-    # If no ID, we can't properly scope resources
-    logger.warning(f"X-User-Organization header missing org ID: {org_str}")
-    return None
+    # Use the existing extract_organization_from_token function
+    # by wrapping the organization in a dict
+    return extract_organization_from_token({"organization": user.organization})
 
 
 def get_user_organization(
@@ -196,9 +185,10 @@ def get_user_organization(
             return get_companies_by_org(org_context.organization_id)
         ```
     """
-    # For internal requests, extract organization from gateway headers
-    if _is_internal_request(request):
-        org_info = _extract_org_from_internal_header(request)
+    # For internal requests (Authorization: Internal {token}), the OIDCUser
+    # was created from the internal JWT payload and already has organization info
+    if is_internal_request(request):
+        org_info = _extract_org_from_user(user)
         if org_info:
             org_id, org_name = org_info
             return OrganizationContext(
@@ -207,9 +197,10 @@ def get_user_organization(
                 user_id=user.sub,
                 username=user.preferred_username or ""
             )
-        # If no org in header, fall through to try JWT
+        # If no org in user, fall through to try JWT (shouldn't happen for internal requests)
+        logger.warning("Internal request user missing organization info")
 
-    # Get organization claim by decoding the raw JWT token
+    # For external requests (Bearer token), get organization claim by decoding the raw JWT token
     # FastAPI-Keycloak doesn't parse custom claims like 'organization' into OIDCUser
     # so we need to decode the JWT ourselves
 

@@ -326,71 +326,106 @@ _raw_idp = _initialize_keycloak_with_retry()
 
 
 # =============================================================================
-# Internal Trust Wrapper (Phase 1 - Gateway Integration)
+# Internal Trust Wrapper (Phase 2 - Internal JWT Authentication)
 # =============================================================================
 # This wrapper intercepts get_current_user() calls and checks for internal
-# requests from the gateway. If detected, it skips JWT validation and
-# extracts user info from gateway-provided headers.
+# requests from the gateway. If detected, it verifies the internal JWT
+# and extracts user info from the token payload.
+#
+# Security layers:
+# 1. JWT signature verification (HMAC-SHA256 with shared secret)
+# 2. IP allowlist validation (optional, if INTERNAL_ALLOWED_IPS is set)
 
-# Must match values in global-service/app/core/auth_middleware.py
-INTERNAL_REQUEST_HEADER = "X-Internal-Request"
-INTERNAL_REQUEST_SECRET = "gateway-internal-v1"
-USER_ID_HEADER = "X-User-Id"
-USER_NAME_HEADER = "X-User-Name"
-USER_ROLES_HEADER = "X-User-Roles"
-USER_ORG_HEADER = "X-User-Organization"
+from app.core.internal_jwt import (
+    is_internal_request,
+    verify_internal_request,
+    InternalJWTError,
+    TokenExpiredError,
+    TokenInvalidError,
+    IPNotAllowedError,
+)
 
 
-def _is_internal_request(request) -> bool:
-    """Check if request is from the gateway (has valid internal header)."""
-    header_value = request.headers.get(INTERNAL_REQUEST_HEADER, "")
-    return header_value == INTERNAL_REQUEST_SECRET
+def _create_user_from_internal_token(request) -> Optional[OIDCUser]:
+    """
+    Verify internal JWT and create OIDCUser from the token payload.
 
+    Performs both IP validation (if enabled) and JWT verification.
 
-def _create_user_from_headers(request) -> Optional[OIDCUser]:
-    """Create OIDCUser from gateway-provided headers."""
-    user_id = request.headers.get(USER_ID_HEADER)
-    if not user_id:
-        return None
+    Args:
+        request: FastAPI request object
 
-    username = request.headers.get(USER_NAME_HEADER, "")
-    roles_str = request.headers.get(USER_ROLES_HEADER, "")
-    org_str = request.headers.get(USER_ORG_HEADER, "")
+    Returns:
+        OIDCUser if verification succeeds, None otherwise
 
-    # Parse roles
-    roles = [r.strip() for r in roles_str.split(",") if r.strip()]
+    Raises:
+        HTTPException: If verification fails
+    """
+    from fastapi import HTTPException, status
 
-    # Parse organization (format: "OrgName:OrgId" or just "OrgName")
-    organization = None
-    if org_str:
-        if ":" in org_str:
-            org_name, org_id = org_str.split(":", 1)
+    try:
+        # Verify internal JWT and get payload (also validates IP if configured)
+        payload = verify_internal_request(request)
+
+        # Build organization claim in Keycloak format: ["OrgName", {"OrgName": {"id": "uuid"}}]
+        organization = None
+        if payload.org_name or payload.org_id:
+            org_name = payload.org_name or ""
+            org_id = payload.org_id or ""
             organization = [org_name, {org_name: {"id": org_id}}]
-        else:
-            organization = [org_str, {}]
 
-    return OIDCUser(
-        sub=user_id,
-        preferred_username=username,
-        realm_access={"roles": roles},
-        organization=organization,
-        # Required fields with default values for internal requests
-        iat=0,
-        exp=0,
-        iss="gateway-internal",
-        aud=[],
-        azp="",
-        email_verified=True,  # Assume email is verified for internal requests
-    )
+        return OIDCUser(
+            sub=payload.sub,
+            preferred_username=payload.username,
+            email=payload.email,
+            realm_access={"roles": payload.roles},
+            organization=organization,
+            # Required fields from internal token
+            iat=payload.iat,
+            exp=payload.exp,
+            iss=payload.iss,
+            aud=[],
+            azp="",
+            email_verified=True,  # Gateway verified via Keycloak
+        )
+
+    except IPNotAllowedError as e:
+        logger.warning(f"Internal request rejected: IP not allowed - {e}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: IP not in allowed range",
+        )
+
+    except TokenExpiredError as e:
+        logger.warning(f"Internal request rejected: token expired - {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Internal token has expired",
+        )
+
+    except TokenInvalidError as e:
+        logger.warning(f"Internal request rejected: invalid token - {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid internal token",
+        )
+
+    except InternalJWTError as e:
+        logger.error(f"Internal JWT error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal authentication error",
+        )
 
 
 class InternalTrustIDPWrapper:
     """
-    Wrapper for FastAPIKeycloak that trusts internal requests from the gateway.
+    Wrapper for FastAPIKeycloak that verifies internal JWTs from the gateway.
 
-    For internal requests (X-Internal-Request header present):
-    - Skips JWT validation completely (already done at gateway)
-    - Creates user from X-User-* headers
+    For internal requests (Authorization: Internal {token}):
+    - Verifies internal JWT signature (HMAC-SHA256)
+    - Validates source IP against allowlist (if configured)
+    - Creates user from verified token payload
 
     For external requests:
     - Validates JWT via Keycloak as normal
@@ -405,9 +440,9 @@ class InternalTrustIDPWrapper:
 
     def get_current_user(self, required_roles=None):
         """
-        Get current user with internal trust support.
+        Get current user with internal JWT verification support.
 
-        For internal requests: Skip JWT validation, use gateway headers
+        For internal requests: Verify internal JWT and extract user from payload
         For external requests: Validate JWT normally via Keycloak
 
         Returns a FastAPI dependency that can be used with Depends().
@@ -418,35 +453,41 @@ class InternalTrustIDPWrapper:
             request: Request,
         ) -> OIDCUser:
             # Check if this is an internal request from gateway FIRST
-            if _is_internal_request(request):
-                logger.debug("Internal request detected - skipping JWT validation")
-                user = _create_user_from_headers(request)
+            if is_internal_request(request):
+                logger.debug("Internal JWT request detected - verifying token")
+
+                # Verify JWT and create user (raises HTTPException on failure)
+                user = _create_user_from_internal_token(request)
 
                 if not user:
-                    logger.warning("Internal request missing user headers")
+                    logger.warning("Internal request failed to create user")
                     raise HTTPException(
                         status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="Missing user information in internal request"
+                        detail="Failed to verify internal request",
                     )
 
                 # Check required roles if specified
                 if required_roles:
-                    user_roles = set(user.realm_access.get("roles", []) if user.realm_access else [])
+                    user_roles = set(
+                        user.realm_access.get("roles", []) if user.realm_access else []
+                    )
                     if not any(role in user_roles for role in required_roles):
                         logger.warning(
                             f"Internal user {user.preferred_username} missing required roles: {required_roles}"
                         )
                         raise HTTPException(
                             status_code=status.HTTP_403_FORBIDDEN,
-                            detail="Insufficient permissions"
+                            detail="Insufficient permissions",
                         )
 
-                logger.debug(f"Internal auth OK: user={user.preferred_username}")
+                logger.debug(f"Internal JWT auth OK: user={user.preferred_username}")
                 return user
 
             # External request - validate JWT with Keycloak
             # Get the original dependency and call it
-            keycloak_dependency = self._wrapped.get_current_user(required_roles=required_roles)
+            keycloak_dependency = self._wrapped.get_current_user(
+                required_roles=required_roles
+            )
 
             # The keycloak dependency expects to be injected by FastAPI
             # We need to call it with the request
@@ -462,7 +503,7 @@ class InternalTrustIDPWrapper:
                 if not auth_header.startswith("Bearer "):
                     raise HTTPException(
                         status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="Not authenticated"
+                        detail="Not authenticated",
                     )
 
                 token = auth_header[7:]
@@ -474,11 +515,15 @@ class InternalTrustIDPWrapper:
 
                     # Check roles
                     if required_roles:
-                        user_roles = set(user.realm_access.get("roles", []) if user.realm_access else [])
+                        user_roles = set(
+                            user.realm_access.get("roles", [])
+                            if user.realm_access
+                            else []
+                        )
                         if not any(role in user_roles for role in required_roles):
                             raise HTTPException(
                                 status_code=status.HTTP_403_FORBIDDEN,
-                                detail="Insufficient permissions"
+                                detail="Insufficient permissions",
                             )
 
                     return user
@@ -486,7 +531,7 @@ class InternalTrustIDPWrapper:
                     logger.debug(f"Token validation failed: {e}")
                     raise HTTPException(
                         status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="Invalid authentication credentials"
+                        detail="Invalid authentication credentials",
                     )
 
         return get_user_with_internal_trust
