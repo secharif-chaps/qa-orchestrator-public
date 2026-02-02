@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
@@ -12,6 +14,7 @@ from app.proxy.routes import router as proxy_router
 # Initialize logging with configured level
 setup_logging(level=getattr(settings, "LOG_LEVEL", "INFO"))
 logger = get_logger(__name__)
+logger.debug(f".env file path: {os.path.abspath('.env') if os.path.exists('.env') else 'not found'}")
 
 # App initialization
 app = FastAPI(
