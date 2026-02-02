@@ -43,10 +43,12 @@ class OrganizationService(
                     )
                     return None
             
+            # TODO: Phase 1 - Fetch organization name and enabled_modules from database
+            # Currently hardcoded for phase 0 demo purposes
             return organization_pb2.GetOrganizationContextResponse(
                 organization_id=request.organization_id,
-                name="Demo Org",
-                enabled_modules=["Screen", "Target", "Explore"],
+                name="Demo Org",  # TODO: Fetch from Keycloak or database
+                enabled_modules=["Screen", "Target", "Explore"],  # TODO: Fetch from database
             )
             
         except Exception as e:
@@ -71,6 +73,8 @@ class OrganizationService(
                 )
                 return None
             
+            # TODO: Phase 1 - Fetch enabled modules from database for the organization
+            # Currently hardcoded for phase 0 demo purposes
             enabled = request.module_name in {"Screen", "Target", "Explore"}
             return organization_pb2.IsModuleEnabledResponse(enabled=enabled)
             
