@@ -8,7 +8,7 @@ communication, using Keycloak token introspection with caching.
 
 import httpx
 from cachetools import TTLCache
-from typing import Dict
+from typing import Any, Dict
 from datetime import datetime, timezone
 
 from app.core.config import settings
@@ -93,7 +93,7 @@ async def introspect_token(token: str) -> Dict:
     return result
 
 
-async def get_client_info(token: str) -> Dict[str, any]:
+async def get_client_info(token: str) -> Dict[str, Any]:
     """
     Get client information from validated token.
     
