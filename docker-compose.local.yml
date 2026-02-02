@@ -52,6 +52,10 @@ services:
       KEYCLOAK_ADMIN_CLIENT_SECRET: chapsmind-admin-secret
       # Translation API (runs in backend via BackgroundTasks)
       SYSTRAN_API_KEY: ${SYSTRAN_API_KEY}
+      # Internal JWT for gateway communication (local dev secret)
+      INTERNAL_JWT_SECRET: "local-dev-internal-jwt-secret-32chars"
+      # Allow Docker network IPs for internal auth
+      INTERNAL_ALLOWED_IPS: "172.16.0.0/12,192.168.0.0/16,10.0.0.0/8"
     volumes:
       # Mount local code for hot-reload
       - ../back/app:/app/app
@@ -113,6 +117,8 @@ services:
       KEYCLOAK_CLIENT_SECRET: chapsmind-screen-back-secret
       KEYCLOAK_ADMIN_CLIENT_ID: chapsmind-admin
       KEYCLOAK_ADMIN_CLIENT_SECRET: chapsmind-admin-secret
+      # Internal JWT for service-to-service communication (same as backend)
+      INTERNAL_JWT_SECRET: "local-dev-internal-jwt-secret-32chars"
     volumes:
       # Hot reload
       - ../global-service/app:/app/app

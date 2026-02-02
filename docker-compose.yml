@@ -48,6 +48,10 @@ services:
       BACKEND_BASE_URL: http://localhost
       # Translation API (runs in backend via BackgroundTasks)
       SYSTRAN_API_KEY: ${SYSTRAN_API_KEY}
+      # Internal JWT for gateway communication (same secret as global-service)
+      INTERNAL_JWT_SECRET: ${INTERNAL_JWT_SECRET}
+      # Optional: IP allowlist for internal auth (comma-separated CIDR)
+      INTERNAL_ALLOWED_IPS: ${INTERNAL_ALLOWED_IPS:-}
     networks:
       - mint-network
 
@@ -109,6 +113,8 @@ services:
       KEYCLOAK_CLIENT_SECRET:
       KEYCLOAK_ADMIN_CLIENT_ID: admin-cli
       KEYCLOAK_ADMIN_CLIENT_SECRET:
+      # Internal JWT for service-to-service communication (same secret as backend)
+      INTERNAL_JWT_SECRET: ${INTERNAL_JWT_SECRET}
     networks:
       - mint-network
 
