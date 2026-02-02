@@ -75,7 +75,7 @@ def _initialize_keycloak_with_retry(
         start_time = time.time()
         try:
             # Log all Keycloak configuration parameters for debugging
-            logger.info(
+            logger.debug(
                 f"🔐 Attempting Keycloak connection (attempt {attempt}/{max_retries})\n"
                 f"  server_url: {settings.KEYCLOAK_SERVER_URL}\n"
                 f"  realm: {settings.KEYCLOAK_REALM}\n"

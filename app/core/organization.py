@@ -12,7 +12,6 @@ from typing import Any
 from fastapi import Depends, HTTPException, status, Request
 from fastapi_keycloak import OIDCUser
 from pydantic import BaseModel
-from jose import jwt
 
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
@@ -152,51 +151,32 @@ def get_user_organization(
     request: Request,
     user: OIDCUser = Depends(_get_current_user_dependency)
 ) -> OrganizationContext:
-    """FastAPI dependency to extract organization context from JWT token.
-    
+    """FastAPI dependency to extract organization context from authenticated user.
+
     This dependency should be used in API endpoints that require organization-scoped
-    access. It extracts the organization UUID and name from the JWT token and
-    validates that the user belongs to an organization.
-    
+    access. It extracts the organization UUID and name from the already-validated
+    OIDCUser object (validated by fastapi-keycloak via the dependency chain).
+
+    SECURITY NOTE: We use user.organization directly from the validated OIDCUser
+    instead of re-decoding the JWT token. This is safer because:
+    1. The token has already been cryptographically verified by fastapi-keycloak
+    2. The claims are extracted during that validation and stored in user object
+    3. No risk of accidentally using this with an unvalidated token
+
     Args:
-        request: FastAPI Request object
+        request: FastAPI Request object (unused but kept for API compatibility)
         user: Current authenticated user from Keycloak (injected by FastAPI)
-        
+
     Returns:
         OrganizationContext with organization ID, name, user ID, and username
-        
+
     Raises:
         HTTPException: 403 Forbidden if user has no organization assignment
     """
-    # Extract the raw JWT token from the Authorization header
-    auth_header = request.headers.get("Authorization", "")
-    if not auth_header.startswith("Bearer "):
-        logger.error("Missing or invalid Authorization header")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authorization header"
-        )
-    
-    raw_token = auth_header.replace("Bearer ", "")
-    
-    # Decode the JWT without verification (it's already been verified by fastapi-keycloak)
-    # We just need to extract the claims
-    try:
-        decoded_token = jwt.decode(raw_token, options={"verify_signature": False})
-    except Exception as e:
-        logger.error(f"Failed to decode JWT token: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Failed to decode token"
-        )
-    
-    # Build token data dict with organization claim from the decoded JWT
-    token_data = decoded_token.copy()
-    
-    # Extract organization from token
-    org_info = extract_organization_from_token(token_data)
-    
-    if not org_info:
+    # Use the organization claim from the already-validated OIDCUser object
+    # The token was validated by fastapi-keycloak in the dependency chain
+    # (idp.get_current_user() verifies the JWT signature before returning the user)
+    if not user.organization:
         logger.error(
             "User has no organization assignment",
             extra={
@@ -208,16 +188,30 @@ def get_user_organization(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User must be assigned to an organization"
         )
-    
+
+    # Extract organization from the user's organization claim
+    org_info = extract_organization_from_token({"organization": user.organization})
+
+    if not org_info:
+        logger.error(
+            "Failed to parse organization claim",
+            extra={
+                "user": user.preferred_username,
+                "user_id": user.sub,
+                "organization_claim": user.organization
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User must be assigned to an organization"
+        )
+
     org_id, org_name = org_info
-    
-    # Extract enabled modules if present
-    enabled_modules = extract_enabled_modules(token_data)
-    
+
     return OrganizationContext(
         organization_id=org_id,
         organization_name=org_name,
         user_id=user.sub,
         username=user.preferred_username,
-        enabled_modules=enabled_modules
+        enabled_modules=[]  # Can be extended if needed from user claims
     )
