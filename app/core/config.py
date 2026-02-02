@@ -40,6 +40,12 @@ class Settings(BaseSettings):
     DB_POOL_TIMEOUT: int = 30
     DB_POOL_RECYCLE: int = 1800
 
+    # Internal JWT for service-to-service communication
+    # Must be the same value in all services (gateway + backends)
+    # Generate with: openssl rand -base64 32
+    INTERNAL_JWT_SECRET: str = ""
+    INTERNAL_JWT_EXPIRY_SECONDS: int = 60
+
     model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
 
