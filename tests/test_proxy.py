@@ -80,6 +80,38 @@ class TestProxyRoutes:
         assert "Host" not in filtered
         assert "Connection" not in filtered
 
+    def test_filter_request_headers_security(self):
+        """Test that security-sensitive headers are filtered to prevent spoofing."""
+        from app.proxy.routes import filter_request_headers
+
+        headers = {
+            "Authorization": "Bearer token",
+            "Content-Type": "application/json",
+            # Security headers that clients should not be able to spoof
+            "X-Forwarded-For": "192.168.1.1",  # Should be filtered
+            "X-Forwarded-Host": "evil.com",  # Should be filtered
+            "X-Forwarded-Proto": "https",  # Should be filtered
+            "X-Forwarded-Port": "443",  # Should be filtered
+            "X-Real-IP": "10.0.0.1",  # Should be filtered
+            "Forwarded": "for=192.168.1.1",  # Should be filtered
+            "Via": "1.1 proxy.example.com",  # Should be filtered
+        }
+
+        filtered = filter_request_headers(headers)
+
+        # Safe headers should pass through
+        assert "Authorization" in filtered
+        assert "Content-Type" in filtered
+
+        # Security-sensitive headers should be filtered
+        assert "X-Forwarded-For" not in filtered
+        assert "X-Forwarded-Host" not in filtered
+        assert "X-Forwarded-Proto" not in filtered
+        assert "X-Forwarded-Port" not in filtered
+        assert "X-Real-IP" not in filtered
+        assert "Forwarded" not in filtered
+        assert "Via" not in filtered
+
     def test_filter_response_headers(self):
         """Test that hop-by-hop headers are filtered from responses."""
         from app.proxy.routes import filter_response_headers

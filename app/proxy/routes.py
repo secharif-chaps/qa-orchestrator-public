@@ -32,8 +32,9 @@ logger = get_logger(__name__)
 
 router = APIRouter()
 
-# Headers to exclude from proxying (hop-by-hop headers)
+# Headers to exclude from proxying
 EXCLUDED_REQUEST_HEADERS = {
+    # Hop-by-hop headers (RFC 2616) - must not be forwarded by proxies
     "host",
     "connection",
     "keep-alive",
@@ -44,6 +45,16 @@ EXCLUDED_REQUEST_HEADERS = {
     "transfer-encoding",
     "upgrade",
     "content-length",  # httpx will recalculate this
+    # Security: Prevent client from spoofing forwarding headers
+    # Gateway sets these explicitly if needed via internal headers
+    "x-forwarded-for",
+    "x-forwarded-host",
+    "x-forwarded-proto",
+    "x-forwarded-port",
+    "x-real-ip",
+    "forwarded",  # RFC 7239 standard forwarding header
+    # Security: Prevent proxy chain info leakage
+    "via",
 }
 
 EXCLUDED_RESPONSE_HEADERS = {
