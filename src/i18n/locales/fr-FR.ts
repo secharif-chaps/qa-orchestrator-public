@@ -22,7 +22,6 @@ export default {
       security: 'Sécurité',
       team: 'Équipe',
       credits: 'Crédits',
-      sources: 'Sources',
       'ai-preferences': 'Préférences IA',
     },
     credits: {
@@ -1425,6 +1424,7 @@ export default {
     edit: 'Modifier',
     save: 'Enregistrer',
     cancel: 'Annuler',
+    enabledAt: 'Activé le',
     lastUpdated: 'Dernière mise à jour',
     apiKey: {
       label: 'Clé API',
@@ -1510,6 +1510,9 @@ export default {
     delete: "Supprimer l'Espace de Travail",
     cannotDeleteDefault: "Impossible de supprimer l'espace de travail par défaut",
     clearSearch: 'Effacer la Recherche',
+    tabs: {
+      sources: "Sources"
+    }
   },
   user: {
     create: {
