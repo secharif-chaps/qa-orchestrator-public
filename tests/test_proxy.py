@@ -112,18 +112,26 @@ class TestProxyRoutes:
         mock_request.headers = {"accept": "application/json"}
         assert is_sse_request(mock_request) is False
 
-    def test_is_sse_response(self):
-        """Test SSE response detection."""
-        from app.proxy.routes import is_sse_response
+    def test_has_request_body(self):
+        """Test request body detection using headers."""
+        from app.proxy.routes import has_request_body
 
-        # Mock SSE response
-        mock_response = MagicMock()
-        mock_response.headers = {"content-type": "text/event-stream"}
-        assert is_sse_response(mock_response) is True
+        # Mock request with content-length > 0
+        mock_request = MagicMock()
+        mock_request.headers = {"content-length": "100"}
+        assert has_request_body(mock_request) is True
 
-        # Mock non-SSE response
-        mock_response.headers = {"content-type": "application/json"}
-        assert is_sse_response(mock_response) is False
+        # Mock request with content-length = 0
+        mock_request.headers = {"content-length": "0"}
+        assert has_request_body(mock_request) is False
+
+        # Mock request with chunked transfer encoding
+        mock_request.headers = {"transfer-encoding": "chunked"}
+        assert has_request_body(mock_request) is True
+
+        # Mock request with no body indicators
+        mock_request.headers = {}
+        assert has_request_body(mock_request) is False
 
 
 class TestProxyIntegration:
@@ -141,24 +149,36 @@ class TestProxyIntegration:
         # Return internal JWT Authorization header (mocked token for testing)
         return (True, mock_user, {"Authorization": "Internal mock-internal-jwt-token"})
 
+    def _create_mock_streaming_response(self, status_code: int, content: bytes, content_type: str = "application/json"):
+        """Helper to create a mock streaming response for bidirectional streaming."""
+        mock_response = AsyncMock()
+        mock_response.status_code = status_code
+        mock_response.headers = httpx.Headers({"content-type": content_type})
+
+        # Mock aiter_bytes as an async generator
+        async def mock_aiter_bytes():
+            yield content
+
+        mock_response.aiter_bytes = mock_aiter_bytes
+        mock_response.aclose = AsyncMock()
+
+        return mock_response
+
     @pytest.mark.asyncio
     async def test_proxy_get_request(self):
-        """Test GET request proxying."""
+        """Test GET request proxying with bidirectional streaming."""
         from fastapi.testclient import TestClient
         from app.main import app
-
-        # Mock the proxy client
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.content = b'{"data": "test"}'
-        mock_response.headers = httpx.Headers({"content-type": "application/json"})
 
         with patch("app.proxy.routes.auth_middleware.validate_request") as mock_auth:
             mock_auth.return_value = self._mock_auth_success()
 
             with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
                 mock_client = AsyncMock()
-                mock_client.request = AsyncMock(return_value=mock_response)
+                mock_client.build_request = MagicMock(return_value=MagicMock())
+                mock_client.send = AsyncMock(
+                    return_value=self._create_mock_streaming_response(200, b'{"data": "test"}')
+                )
                 mock_get_client.return_value = mock_client
 
                 # Use TestClient for sync testing
@@ -170,21 +190,19 @@ class TestProxyIntegration:
 
     @pytest.mark.asyncio
     async def test_proxy_post_request_with_body(self):
-        """Test POST request with body proxying."""
+        """Test POST request with body proxying using bidirectional streaming."""
         from fastapi.testclient import TestClient
         from app.main import app
-
-        mock_response = MagicMock()
-        mock_response.status_code = 201
-        mock_response.content = b'{"id": 1}'
-        mock_response.headers = httpx.Headers({"content-type": "application/json"})
 
         with patch("app.proxy.routes.auth_middleware.validate_request") as mock_auth:
             mock_auth.return_value = self._mock_auth_success()
 
             with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
                 mock_client = AsyncMock()
-                mock_client.request = AsyncMock(return_value=mock_response)
+                mock_client.build_request = MagicMock(return_value=MagicMock())
+                mock_client.send = AsyncMock(
+                    return_value=self._create_mock_streaming_response(201, b'{"id": 1}')
+                )
                 mock_get_client.return_value = mock_client
 
                 with TestClient(app) as client:
@@ -197,8 +215,8 @@ class TestProxyIntegration:
                     assert response.status_code == 201
                     assert response.json() == {"id": 1}
 
-                    # Verify the request was made correctly
-                    call_args = mock_client.request.call_args
+                    # Verify the request was built correctly
+                    call_args = mock_client.build_request.call_args
                     assert call_args.kwargs["method"] == "POST"
                     assert "/api/companies" in call_args.kwargs["url"]
 
@@ -208,17 +226,15 @@ class TestProxyIntegration:
         from fastapi.testclient import TestClient
         from app.main import app
 
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.content = b'[]'
-        mock_response.headers = httpx.Headers({"content-type": "application/json"})
-
         with patch("app.proxy.routes.auth_middleware.validate_request") as mock_auth:
             mock_auth.return_value = self._mock_auth_success()
 
             with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
                 mock_client = AsyncMock()
-                mock_client.request = AsyncMock(return_value=mock_response)
+                mock_client.build_request = MagicMock(return_value=MagicMock())
+                mock_client.send = AsyncMock(
+                    return_value=self._create_mock_streaming_response(200, b'[]')
+                )
                 mock_get_client.return_value = mock_client
 
                 with TestClient(app) as client:
@@ -226,8 +242,8 @@ class TestProxyIntegration:
 
                     assert response.status_code == 200
 
-                    # Verify query params were included
-                    call_args = mock_client.request.call_args
+                    # Verify query params were included in build_request
+                    call_args = mock_client.build_request.call_args
                     assert "page=1" in call_args.kwargs["url"]
                     assert "size=10" in call_args.kwargs["url"]
                     assert "search=test" in call_args.kwargs["url"]
@@ -243,7 +259,8 @@ class TestProxyIntegration:
 
             with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
                 mock_client = AsyncMock()
-                mock_client.request = AsyncMock(side_effect=httpx.TimeoutException("timeout"))
+                mock_client.build_request = MagicMock(return_value=MagicMock())
+                mock_client.send = AsyncMock(side_effect=httpx.TimeoutException("timeout"))
                 mock_get_client.return_value = mock_client
 
                 with TestClient(app) as client:
@@ -263,7 +280,8 @@ class TestProxyIntegration:
 
             with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
                 mock_client = AsyncMock()
-                mock_client.request = AsyncMock(side_effect=httpx.ConnectError("connection refused"))
+                mock_client.build_request = MagicMock(return_value=MagicMock())
+                mock_client.send = AsyncMock(side_effect=httpx.ConnectError("connection refused"))
                 mock_get_client.return_value = mock_client
 
                 with TestClient(app) as client:

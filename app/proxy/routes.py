@@ -7,7 +7,8 @@ This module implements a transparent proxy that:
 - Forwards all /api/* requests with internal Authorization header
 - Preserves headers, body, query params
 - Preserves response status, headers, body
-- Handles streaming responses (SSE)
+- Streams request AND response bodies (bidirectional streaming, memory-efficient)
+- Handles Server-Sent Events (SSE) with dedicated streaming client
 - Logs requests/responses for debugging
 
 Security:
@@ -77,34 +78,23 @@ def filter_response_headers(headers: httpx.Headers) -> dict:
     }
 
 
+def has_request_body(request: Request) -> bool:
+    """Check if request has a body using headers (without reading it)."""
+    content_length = request.headers.get("content-length")
+    transfer_encoding = request.headers.get("transfer-encoding")
+    # Has body if content-length > 0 or chunked transfer encoding
+    if content_length:
+        try:
+            return int(content_length) > 0
+        except ValueError:
+            return False
+    return transfer_encoding == "chunked"
+
+
 def is_sse_request(request: Request) -> bool:
     """Check if this is a request for Server-Sent Events."""
     accept = request.headers.get("accept", "")
     return "text/event-stream" in accept
-
-
-def is_sse_response(response: httpx.Response) -> bool:
-    """Check if response is Server-Sent Events."""
-    content_type = response.headers.get("content-type", "")
-    return "text/event-stream" in content_type
-
-
-async def stream_response(response: httpx.Response) -> AsyncGenerator[bytes, None]:
-    """Stream response body chunk by chunk."""
-    async for chunk in response.aiter_bytes():
-        yield chunk
-
-
-async def stream_sse_response(
-    client: httpx.AsyncClient,
-    response: httpx.Response,
-) -> AsyncGenerator[bytes, None]:
-    """Stream SSE response and close client when done."""
-    try:
-        async for chunk in response.aiter_bytes():
-            yield chunk
-    finally:
-        await response.aclose()
 
 
 @router.api_route(
@@ -160,8 +150,8 @@ async def proxy_request(request: Request, path: str) -> Response:
             del headers[key]
     headers.update(internal_headers)  # Add gateway internal headers with correct case
 
-    # Get request body
-    body = await request.body()
+    # Check if request has body (without reading it into memory)
+    request_has_body = has_request_body(request)
 
     # Log the request
     logger.info(
@@ -169,57 +159,27 @@ async def proxy_request(request: Request, path: str) -> Response:
         extra={
             "method": request.method,
             "path": target_path,
-            "has_body": len(body) > 0,
+            "has_body": request_has_body,
             "is_sse": is_sse_request(request),
         },
     )
 
     try:
-        # Handle SSE requests differently (need streaming client)
+        # Handle SSE requests with dedicated client (long-lived connection)
         if is_sse_request(request):
             return await _handle_sse_request(
-                method=request.method,
+                request=request,
                 target_path=target_path,
                 headers=headers,  # Already includes internal headers
-                body=body,
                 start_time=start_time,
             )
 
-        # Regular request
-        client = await get_proxy_client()
-        response = await client.request(
-            method=request.method,
-            url=target_path,
+        # Regular request with bidirectional streaming (request + response bodies streamed)
+        return await _handle_regular_request(
+            request=request,
+            target_path=target_path,
             headers=headers,
-            content=body if body else None,
-        )
-
-        # Log the response
-        elapsed = (time.time() - start_time) * 1000
-        logger.info(
-            f"🔄 PROXY ← {response.status_code} ({elapsed:.0f}ms)",
-            extra={
-                "status_code": response.status_code,
-                "elapsed_ms": elapsed,
-                "path": target_path,
-            },
-        )
-
-        # Check if response is SSE (backend might send SSE even if not requested)
-        if is_sse_response(response):
-            return StreamingResponse(
-                stream_response(response),
-                status_code=response.status_code,
-                headers=filter_response_headers(response.headers),
-                media_type="text/event-stream",
-            )
-
-        # Return regular response
-        return Response(
-            content=response.content,
-            status_code=response.status_code,
-            headers=filter_response_headers(response.headers),
-            media_type=response.headers.get("content-type"),
+            start_time=start_time,
         )
 
     except httpx.TimeoutException as e:
@@ -259,22 +219,79 @@ async def proxy_request(request: Request, path: str) -> Response:
         )
 
 
-async def _handle_sse_request(
-    method: str,
+async def _handle_regular_request(
+    request: Request,
     target_path: str,
     headers: dict,
-    body: bytes,
+    start_time: float,
+) -> Response:
+    """
+    Handle regular requests with full bidirectional streaming.
+
+    Both request and response bodies are streamed without loading into RAM.
+    This is memory-efficient for large file uploads AND large file downloads.
+    """
+    client = await get_proxy_client()
+
+    # Build the httpx request with streaming body
+    backend_request = client.build_request(
+        method=request.method,
+        url=target_path,
+        headers=headers,
+        content=request.stream(),
+    )
+
+    # Send request and get streaming response (don't use context manager)
+    response = await client.send(backend_request, stream=True)
+
+    # Log the response
+    elapsed = (time.time() - start_time) * 1000
+    logger.info(
+        f"🔄 PROXY ← {response.status_code} ({elapsed:.0f}ms)",
+        extra={
+            "status_code": response.status_code,
+            "elapsed_ms": elapsed,
+            "path": target_path,
+        },
+    )
+
+    # Create streaming response generator with proper cleanup
+    async def stream_response_body() -> AsyncGenerator[bytes, None]:
+        """Stream response body and ensure proper cleanup."""
+        try:
+            async for chunk in response.aiter_bytes():
+                yield chunk
+        finally:
+            await response.aclose()
+            logger.debug(f"🔄 PROXY response stream closed: {target_path}")
+
+    return StreamingResponse(
+        stream_response_body(),
+        status_code=response.status_code,
+        headers=filter_response_headers(response.headers),
+        media_type=response.headers.get("content-type"),
+    )
+
+
+async def _handle_sse_request(
+    request: Request,
+    target_path: str,
+    headers: dict,
     start_time: float,
 ) -> Response:
     """Handle Server-Sent Events requests with streaming."""
-    logger.info(f"📡 SSE PROXY → {method} {target_path}")
+    logger.info(f"📡 SSE PROXY → {request.method} {target_path}")
+
+    # For SSE, we need to read the body first since request.stream() can only be consumed once
+    # and we need it inside the generator. SSE requests typically have small bodies (if any).
+    body = await request.body()
 
     async def sse_generator() -> AsyncGenerator[bytes, None]:
         """Generate SSE events from backend."""
         async with get_streaming_client() as client:
             try:
                 async with client.stream(
-                    method=method,
+                    method=request.method,
                     url=target_path,
                     headers=headers,
                     content=body if body else None,
