@@ -81,8 +81,13 @@
         </div>
 
         <!-- Timestamps -->
-        <div v-if="config?.updated_at" class="text-xs text-secondary">
-          {{ $t('dataSources.lastUpdated', 'Last updated') }}: {{ formatDate(config.updated_at) }}
+        <div v-if="config?.enabled_at || config?.updated_at" class="text-xs text-secondary">
+          <span v-if="config?.enabled_at">
+            {{ $t('dataSources.enabledAt', 'Enabled') }}: {{ formatDate(config.enabled_at) }}
+          </span> 
+          <span v-if="config?.updated_at" class="ml-3">
+            {{ $t('dataSources.lastUpdated', 'Updated') }}: {{ formatDate(config.updated_at) }}
+          </span>
         </div>
       </div>
     </div>
