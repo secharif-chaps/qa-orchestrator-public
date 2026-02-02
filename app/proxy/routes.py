@@ -8,7 +8,7 @@ This module implements a transparent proxy that:
 - Preserves headers, body, query params
 - Preserves response status, headers, body
 - Streams request AND response bodies (bidirectional streaming, memory-efficient)
-- Handles Server-Sent Events (SSE) with dedicated streaming client
+- Handles streaming responses (SSE, NDJSON, JSON streaming) with dedicated client
 - Logs requests/responses for debugging
 
 Security:
@@ -102,10 +102,31 @@ def has_request_body(request: Request) -> bool:
     return transfer_encoding == "chunked"
 
 
-def is_sse_request(request: Request) -> bool:
-    """Check if this is a request for Server-Sent Events."""
+# Content types that require streaming with dedicated client (long-lived connections)
+STREAMING_CONTENT_TYPES = {
+    "text/event-stream",      # Server-Sent Events (SSE)
+    "application/x-ndjson",   # Newline Delimited JSON (used by OpenAI, etc.)
+    "application/stream+json", # JSON streaming
+}
+
+
+def is_streaming_request(request: Request) -> bool:
+    """
+    Check if this request expects a streaming response.
+
+    Detects requests that need long-lived connections with dedicated client:
+    - SSE (text/event-stream)
+    - NDJSON streaming (application/x-ndjson)
+    - JSON streaming (application/stream+json)
+
+    Limitations:
+    - Detection is based on Accept header only (client must explicitly request streaming)
+    - Backend may still return streaming response even if not requested (handled by
+      bidirectional streaming in regular requests)
+    """
     accept = request.headers.get("accept", "")
-    return "text/event-stream" in accept
+    accept_lower = accept.lower()
+    return any(ct in accept_lower for ct in STREAMING_CONTENT_TYPES)
 
 
 @router.api_route(
@@ -164,6 +185,9 @@ async def proxy_request(request: Request, path: str) -> Response:
     # Check if request has body (without reading it into memory)
     request_has_body = has_request_body(request)
 
+    # Check if streaming request (SSE, NDJSON, etc.) - cache result to avoid double check
+    is_streaming = is_streaming_request(request)
+
     # Log the request
     logger.info(
         f"🔄 PROXY → {request.method} {target_path}",
@@ -171,14 +195,14 @@ async def proxy_request(request: Request, path: str) -> Response:
             "method": request.method,
             "path": target_path,
             "has_body": request_has_body,
-            "is_sse": is_sse_request(request),
+            "is_streaming": is_streaming,
         },
     )
 
     try:
-        # Handle SSE requests with dedicated client (long-lived connection)
-        if is_sse_request(request):
-            return await _handle_sse_request(
+        # Handle streaming requests with dedicated client (long-lived connection)
+        if is_streaming:
+            return await _handle_streaming_request(
                 request=request,
                 target_path=target_path,
                 headers=headers,  # Already includes internal headers
@@ -284,21 +308,35 @@ async def _handle_regular_request(
     )
 
 
-async def _handle_sse_request(
+async def _handle_streaming_request(
     request: Request,
     target_path: str,
     headers: dict,
     start_time: float,
 ) -> Response:
-    """Handle Server-Sent Events requests with streaming."""
-    logger.info(f"📡 SSE PROXY → {request.method} {target_path}")
+    """
+    Handle streaming requests (SSE, NDJSON, etc.) with dedicated client.
 
-    # For SSE, we need to read the body first since request.stream() can only be consumed once
-    # and we need it inside the generator. SSE requests typically have small bodies (if any).
+    Uses a dedicated streaming client with longer timeouts for long-lived connections.
+    Supports: text/event-stream (SSE), application/x-ndjson, application/stream+json.
+    """
+    # Determine the streaming content type from Accept header
+    accept = request.headers.get("accept", "text/event-stream").lower()
+    if "application/x-ndjson" in accept:
+        media_type = "application/x-ndjson"
+    elif "application/stream+json" in accept:
+        media_type = "application/stream+json"
+    else:
+        media_type = "text/event-stream"
+
+    logger.info(f"📡 STREAM PROXY → {request.method} {target_path} ({media_type})")
+
+    # Read the body upfront since request.stream() can only be consumed once
+    # and we need it inside the generator. Streaming requests typically have small bodies.
     body = await request.body()
 
-    async def sse_generator() -> AsyncGenerator[bytes, None]:
-        """Generate SSE events from backend."""
+    async def stream_generator() -> AsyncGenerator[bytes, None]:
+        """Generate streaming events from backend."""
         async with get_streaming_client() as client:
             try:
                 async with client.stream(
@@ -309,7 +347,7 @@ async def _handle_sse_request(
                 ) as response:
                     elapsed = (time.time() - start_time) * 1000
                     logger.info(
-                        f"📡 SSE CONNECTED ({elapsed:.0f}ms): {target_path}",
+                        f"📡 STREAM CONNECTED ({elapsed:.0f}ms): {target_path}",
                         extra={"status_code": response.status_code},
                     )
 
@@ -317,15 +355,19 @@ async def _handle_sse_request(
                         yield chunk
 
             except Exception as e:
-                logger.error(f"📡 SSE ERROR: {e}")
-                # Send error event to client
-                yield f"event: error\ndata: {str(e)}\n\n".encode()
+                logger.error(f"📡 STREAM ERROR: {e}")
+                # Send error in appropriate format
+                if media_type == "text/event-stream":
+                    yield f"event: error\ndata: {str(e)}\n\n".encode()
+                else:
+                    # NDJSON error format
+                    yield f'{{"error": "{str(e)}"}}\n'.encode()
 
-        logger.info(f"📡 SSE CLOSED: {target_path}")
+        logger.info(f"📡 STREAM CLOSED: {target_path}")
 
     return StreamingResponse(
-        sse_generator(),
-        media_type="text/event-stream",
+        stream_generator(),
+        media_type=media_type,
         headers={
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",

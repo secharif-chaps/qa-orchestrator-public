@@ -131,18 +131,35 @@ class TestProxyRoutes:
         assert "connection" not in filtered
         assert "transfer-encoding" not in filtered
 
-    def test_is_sse_request(self):
-        """Test SSE request detection."""
-        from app.proxy.routes import is_sse_request
+    def test_is_streaming_request(self):
+        """Test streaming request detection (SSE, NDJSON, JSON streaming)."""
+        from app.proxy.routes import is_streaming_request
 
-        # Mock request with SSE accept header
         mock_request = MagicMock()
-        mock_request.headers = {"accept": "text/event-stream"}
-        assert is_sse_request(mock_request) is True
 
-        # Mock request without SSE accept header
+        # SSE request
+        mock_request.headers = {"accept": "text/event-stream"}
+        assert is_streaming_request(mock_request) is True
+
+        # NDJSON request (used by OpenAI, etc.)
+        mock_request.headers = {"accept": "application/x-ndjson"}
+        assert is_streaming_request(mock_request) is True
+
+        # JSON streaming request
+        mock_request.headers = {"accept": "application/stream+json"}
+        assert is_streaming_request(mock_request) is True
+
+        # Mixed accept header with streaming type
+        mock_request.headers = {"accept": "text/event-stream, application/json"}
+        assert is_streaming_request(mock_request) is True
+
+        # Non-streaming request
         mock_request.headers = {"accept": "application/json"}
-        assert is_sse_request(mock_request) is False
+        assert is_streaming_request(mock_request) is False
+
+        # Empty accept header
+        mock_request.headers = {}
+        assert is_streaming_request(mock_request) is False
 
     def test_has_request_body(self):
         """Test request body detection using headers."""
