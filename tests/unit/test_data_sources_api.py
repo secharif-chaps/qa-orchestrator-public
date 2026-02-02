@@ -55,7 +55,7 @@ class TestDataSourcesAPI:
             website="https://test.com",
             organization_id="test-org-003",
             raw_mistral_knowledge="mistral data",
-            raw_claude_knowledge="claude data",
+            raw_gpt_knowledge="gpt data",
             raw_wikipedia_knowledge="wikipedia data",
             raw_scraped_website_knowledge="scraped data",
             raw_pappers_knowledge="pappers data",
@@ -106,7 +106,7 @@ class TestDataSourcesAPI:
         data = {
             "knowledge": {
                 "mistral": "mistral content",
-                "claude": "claude content",
+                "gpt": "gpt content",
                 "wikipedia": "wiki content",
                 "scraped": "scraped content",
                 "pappers": "pappers content",
