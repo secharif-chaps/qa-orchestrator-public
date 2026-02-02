@@ -48,6 +48,12 @@ def _initialize_keycloak_with_retry(
     This function retries the connection with exponential backoff to handle temporary
     connectivity issues or slow Keycloak initialization.
 
+    Note: This function uses time.sleep() (blocking) rather than asyncio.sleep() because:
+    1. FastAPIKeycloak uses the synchronous `requests` library internally
+    2. This is called at application startup (via main.py startup event) BEFORE
+       accepting user requests, so blocking the event loop is acceptable
+    3. The result is cached, so this only runs once per application lifetime
+
     Args:
         max_retries: Maximum number of retry attempts (default: 5)
         initial_backoff: Initial backoff delay in seconds (default: 2.0)

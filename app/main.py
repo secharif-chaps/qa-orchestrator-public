@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from app.core.config import settings
 from app.core.logging_config import setup_logging, get_logger
+from app.core.keycloak import get_idp
 from app.database import engine
 from app.grpc_server import create_grpc_server
 from app.proxy.client import get_proxy_client, close_proxy_client
@@ -46,6 +47,12 @@ grpc_server = None
 @app.on_event("startup")
 async def startup_event():
     global grpc_server
+
+    # Initialize Keycloak IDP eagerly at startup (before accepting requests)
+    # This ensures time.sleep() in retry logic doesn't block the event loop during user requests
+    get_idp()
+    logger.info("🔐 Keycloak IDP initialized")
+
     # Initialize gRPC server
     grpc_server = create_grpc_server()
     grpc_server.start()
