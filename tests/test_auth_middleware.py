@@ -352,12 +352,19 @@ class TestProxyIntegrationWithAuth:
 
     def test_proxy_passes_valid_auth(self):
         """Test that proxy passes requests with valid auth."""
+        import httpx
         from app.main import app
 
-        mock_response = MagicMock()
+        # Create mock streaming response (matching bidirectional streaming pattern)
+        mock_response = AsyncMock()
         mock_response.status_code = 200
-        mock_response.content = b'{"data": "test"}'
-        mock_response.headers = {"content-type": "application/json"}
+        mock_response.headers = httpx.Headers({"content-type": "application/json"})
+
+        async def mock_aiter_bytes():
+            yield b'{"data": "test"}'
+
+        mock_response.aiter_bytes = mock_aiter_bytes
+        mock_response.aclose = AsyncMock()
 
         mock_user = GatewayUser(
             sub="user-123",
@@ -374,7 +381,8 @@ class TestProxyIntegrationWithAuth:
 
             with patch("app.proxy.routes.get_proxy_client") as mock_get_client:
                 mock_client = AsyncMock()
-                mock_client.request = AsyncMock(return_value=mock_response)
+                mock_client.build_request = MagicMock(return_value=MagicMock())
+                mock_client.send = AsyncMock(return_value=mock_response)
                 mock_get_client.return_value = mock_client
 
                 with TestClient(app) as client:
