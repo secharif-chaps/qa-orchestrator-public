@@ -9,6 +9,8 @@ SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 
 # Schema names
 GLOBAL_SCHEMA = "global_schema"
+# TODO: Remove screen_schema after Phase 1 migration - global-service should only
+# access screen data via API proxy, not direct DB access (architecture separation)
 SCREEN_SCHEMA = "screen_schema"
 
 
