@@ -38,6 +38,16 @@ class Settings(BaseSettings):
     # JWT settings
     JWT_ALGORITHM: str = "RS256"
     JWT_AUDIENCE: str = "account"
+
+    # Internal JWT for gateway communication
+    # Must be the same value as in global-service (gateway)
+    # Generate with: openssl rand -base64 32
+    INTERNAL_JWT_SECRET: str = ""
+    INTERNAL_JWT_EXPIRY_SECONDS: int = 60
+    # Optional: Comma-separated list of allowed IP ranges (CIDR notation)
+    # for internal authentication. If empty, IP validation is disabled.
+    # Example: "10.244.0.0/16,172.16.0.0/12"
+    INTERNAL_ALLOWED_IPS: str = ""
     
     # RabbitMQ and Celery settings
     RABBITMQ_URL: str = "amqp://guest:guest@rabbitmq:5672//"
