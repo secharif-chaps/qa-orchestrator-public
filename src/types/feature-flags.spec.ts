@@ -24,9 +24,10 @@ import { FEATURE_FLAG_CONFIG, getFeatureFlagDisplayConfig } from './feature-flag
  */
 const discoverFlag: FeatureFlagName = 'discover'
 const translationFlag: FeatureFlagName = 'translation'
+const pappersFlag: FeatureFlagName = 'pappers'
 
 // Verify both flags are distinct valid values
-const validFlags: FeatureFlagName[] = ['discover', 'translation']
+const validFlags: FeatureFlagName[] = ['discover', 'translation', 'pappers']
 
 // =============================================================================
 // Test 2: Config serialization works correctly in toggle request
@@ -100,6 +101,7 @@ const hasEnabled: boolean = discoverDisplayConfig.enabled
 export {
   discoverFlag,
   translationFlag,
+  pappersFlag,
   validFlags,
   toggleRequestWithoutConfig,
   toggleRequestWithConfig,
