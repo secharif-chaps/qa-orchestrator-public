@@ -2,13 +2,18 @@
 Proxy routes for forwarding /api/* requests to the monolith (Screen service).
 
 This module implements a transparent proxy that:
-- Validates JWT tokens at the gateway (Phase 1)
-- Forwards all /api/* requests to the backend
-- Adds internal trust headers for backend
+- Validates user JWT tokens at the gateway using Keycloak
+- Creates short-lived internal JWTs for secure backend communication
+- Forwards all /api/* requests with internal Authorization header
 - Preserves headers, body, query params
 - Preserves response status, headers, body
 - Handles streaming responses (SSE)
 - Logs requests/responses for debugging
+
+Security:
+- External JWT validated against Keycloak public key
+- Internal JWT (60s TTL) signed with shared secret
+- Backend verifies internal JWT, no re-validation with Keycloak needed
 """
 
 import time
@@ -148,7 +153,12 @@ async def proxy_request(request: Request, path: str) -> Response:
 
     # Prepare headers: filter hop-by-hop + add internal trust headers
     headers = filter_request_headers(dict(request.headers))
-    headers.update(internal_headers)  # Add gateway internal headers
+    # Remove any existing Authorization header (case-insensitive) before adding internal JWT
+    # Python dicts are case-sensitive, but HTTP headers are case-insensitive
+    for key in list(headers.keys()):
+        if key.lower() == "authorization":
+            del headers[key]
+    headers.update(internal_headers)  # Add gateway internal headers with correct case
 
     # Get request body
     body = await request.body()

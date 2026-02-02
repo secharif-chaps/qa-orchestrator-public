@@ -6,10 +6,11 @@ Tests cover:
 2. Invalid JWT rejected at gateway (401)
 3. Missing token rejected (401) for protected routes
 4. Public routes accessible without token
-5. Internal headers are added to proxied requests
+5. Internal JWT is created for proxied requests
 """
 
 import pytest
+import jwt as pyjwt
 from unittest.mock import AsyncMock, MagicMock, patch
 from fastapi import Request
 from fastapi.testclient import TestClient
@@ -19,13 +20,10 @@ from app.core.auth_middleware import (
     is_public_route,
     validate_jwt_token,
     build_internal_headers,
+    extract_organization_info,
     GatewayUser,
-    INTERNAL_REQUEST_HEADER,
-    INTERNAL_REQUEST_SECRET,
-    USER_ID_HEADER,
-    USER_NAME_HEADER,
-    USER_ROLES_HEADER,
 )
+from app.core.internal_jwt import ALGORITHM, ISSUER
 
 
 class TestPublicRouteDetection:
@@ -56,51 +54,139 @@ class TestPublicRouteDetection:
         assert is_public_route("/companies") is False
 
 
-class TestBuildInternalHeaders:
-    """Test internal header building."""
+class TestExtractOrganizationInfo:
+    """Test organization info extraction."""
 
-    def test_internal_header_always_present(self):
-        """Test that internal request header is always added."""
-        headers = build_internal_headers(None)
-        assert INTERNAL_REQUEST_HEADER in headers
-        assert headers[INTERNAL_REQUEST_HEADER] == INTERNAL_REQUEST_SECRET
-
-    def test_user_headers_added_when_user_present(self):
-        """Test that user info headers are added when user is present."""
-        user = GatewayUser(
-            sub="user-123",
-            preferred_username="testuser",
-            realm_access={"roles": ["admin", "user"]},
-        )
-        headers = build_internal_headers(user)
-
-        assert headers[USER_ID_HEADER] == "user-123"
-        assert headers[USER_NAME_HEADER] == "testuser"
-        assert "admin" in headers[USER_ROLES_HEADER]
-        assert "user" in headers[USER_ROLES_HEADER]
-
-    def test_empty_roles_handled(self):
-        """Test that empty roles are handled correctly."""
-        user = GatewayUser(
-            sub="user-123",
-            preferred_username="testuser",
-            realm_access=None,
-        )
-        headers = build_internal_headers(user)
-
-        assert headers[USER_ROLES_HEADER] == ""
-
-    def test_organization_header_with_id(self):
-        """Test organization header with org name and ID."""
+    def test_extract_org_with_id(self):
+        """Test extracting organization with ID."""
         user = GatewayUser(
             sub="user-123",
             preferred_username="testuser",
             organization=["TestOrg", {"TestOrg": {"id": "org-456"}}],
         )
-        headers = build_internal_headers(user)
+        org_id, org_name = extract_organization_info(user)
 
-        assert "X-User-Organization" in headers
-        assert headers["X-User-Organization"] == "TestOrg:org-456"
+        assert org_id == "org-456"
+        assert org_name == "TestOrg"
+
+    def test_extract_org_without_id(self):
+        """Test extracting organization without ID."""
+        user = GatewayUser(
+            sub="user-123",
+            preferred_username="testuser",
+            organization=["TestOrg", {}],
+        )
+        org_id, org_name = extract_organization_info(user)
+
+        assert org_id == ""
+        assert org_name == "TestOrg"
+
+    def test_extract_org_string_format(self):
+        """Test extracting organization in string format."""
+        user = GatewayUser(
+            sub="user-123",
+            preferred_username="testuser",
+            organization="TestOrg",
+        )
+        org_id, org_name = extract_organization_info(user)
+
+        assert org_id == ""
+        assert org_name == "TestOrg"
+
+    def test_extract_org_none(self):
+        """Test extracting organization when None."""
+        user = GatewayUser(
+            sub="user-123",
+            preferred_username="testuser",
+            organization=None,
+        )
+        org_id, org_name = extract_organization_info(user)
+
+        assert org_id == ""
+        assert org_name == ""
+
+
+class TestBuildInternalHeaders:
+    """Test internal header building with JWT."""
+
+    @pytest.fixture
+    def mock_settings(self):
+        """Mock settings with valid configuration."""
+        with patch("app.core.auth_middleware.settings") as mock:
+            mock.INTERNAL_JWT_SECRET = "test-secret-at-least-32-characters-long"
+            mock.INTERNAL_JWT_EXPIRY_SECONDS = 60
+            yield mock
+
+    def test_no_headers_for_anonymous(self, mock_settings):
+        """Test that no headers are added for anonymous users."""
+        headers = build_internal_headers(None)
+        assert headers == {}
+
+    def test_internal_jwt_created_for_user(self, mock_settings):
+        """Test that internal JWT is created when user is present."""
+        with patch("app.core.internal_jwt.settings", mock_settings):
+            user = GatewayUser(
+                sub="user-123",
+                preferred_username="testuser",
+                email="test@example.com",
+                realm_access={"roles": ["admin", "user"]},
+                organization=["TestOrg", {"TestOrg": {"id": "org-456"}}],
+            )
+            headers = build_internal_headers(user)
+
+            assert "Authorization" in headers
+            assert headers["Authorization"].startswith("Internal ")
+
+            # Extract and verify the token
+            token = headers["Authorization"].replace("Internal ", "")
+            payload = pyjwt.decode(
+                token,
+                "test-secret-at-least-32-characters-long",
+                algorithms=[ALGORITHM],
+            )
+
+            assert payload["sub"] == "user-123"
+            assert payload["username"] == "testuser"
+            assert payload["email"] == "test@example.com"
+            assert payload["org_id"] == "org-456"
+            assert payload["org_name"] == "TestOrg"
+            assert "admin" in payload["roles"]
+            assert "user" in payload["roles"]
+            assert payload["iss"] == ISSUER
+
+    def test_internal_jwt_with_empty_roles(self, mock_settings):
+        """Test that internal JWT handles empty roles."""
+        with patch("app.core.internal_jwt.settings", mock_settings):
+            user = GatewayUser(
+                sub="user-123",
+                preferred_username="testuser",
+                realm_access=None,
+                organization=["TestOrg", {"TestOrg": {"id": "org-456"}}],
+            )
+            headers = build_internal_headers(user)
+
+            token = headers["Authorization"].replace("Internal ", "")
+            payload = pyjwt.decode(
+                token,
+                "test-secret-at-least-32-characters-long",
+                algorithms=[ALGORITHM],
+            )
+
+            assert payload["roles"] == []
+
+    def test_no_headers_without_secret(self):
+        """Test that no headers are added when secret is not configured."""
+        with patch("app.core.auth_middleware.settings") as mock:
+            mock.INTERNAL_JWT_SECRET = ""
+            mock.INTERNAL_JWT_EXPIRY_SECONDS = 60
+
+            user = GatewayUser(
+                sub="user-123",
+                preferred_username="testuser",
+            )
+            headers = build_internal_headers(user)
+
+            assert headers == {}
 
 
 class TestJWTValidation:
@@ -174,7 +260,8 @@ class TestAuthMiddlewareValidation:
 
         assert is_valid is True
         assert user is None
-        assert INTERNAL_REQUEST_HEADER in headers
+        # Public routes don't get internal headers (no user context)
+        assert headers == {}
 
     @pytest.mark.asyncio
     async def test_protected_route_rejected_without_token(self):
@@ -199,19 +286,26 @@ class TestAuthMiddlewareValidation:
         mock_user = GatewayUser(
             sub="user-123",
             preferred_username="testuser",
+            organization=["TestOrg", {"TestOrg": {"id": "org-456"}}],
         )
 
         with patch("app.core.auth_middleware.validate_jwt_token") as mock_validate:
             mock_validate.return_value = mock_user
 
-            is_valid, user, headers = await auth_middleware.validate_request(
-                mock_request, "companies"
-            )
+            with patch("app.core.auth_middleware.settings") as mock_settings:
+                mock_settings.INTERNAL_JWT_SECRET = "test-secret-at-least-32-characters-long"
+                mock_settings.INTERNAL_JWT_EXPIRY_SECONDS = 60
 
-            assert is_valid is True
-            assert user is not None
-            assert user.sub == "user-123"
-            assert INTERNAL_REQUEST_HEADER in headers
+                with patch("app.core.internal_jwt.settings", mock_settings):
+                    is_valid, user, headers = await auth_middleware.validate_request(
+                        mock_request, "companies"
+                    )
+
+                    assert is_valid is True
+                    assert user is not None
+                    assert user.sub == "user-123"
+                    assert "Authorization" in headers
+                    assert headers["Authorization"].startswith("Internal ")
 
     @pytest.mark.asyncio
     async def test_protected_route_rejected_with_invalid_token(self):
@@ -269,12 +363,13 @@ class TestProxyIntegrationWithAuth:
             sub="user-123",
             preferred_username="testuser",
             realm_access={"roles": ["user"]},
+            organization=["TestOrg", {"TestOrg": {"id": "org-456"}}],
         )
 
         with patch("app.proxy.routes.auth_middleware.validate_request") as mock_auth:
+            # Return valid auth with internal JWT header
             mock_auth.return_value = (True, mock_user, {
-                INTERNAL_REQUEST_HEADER: INTERNAL_REQUEST_SECRET,
-                USER_ID_HEADER: "user-123",
+                "Authorization": "Internal mock.token.here",
             })
 
             with patch("app.proxy.routes.get_proxy_client") as mock_get_client:

@@ -130,10 +130,16 @@ class TestProxyIntegration:
     """Integration tests for the proxy (mocked backend)."""
 
     def _mock_auth_success(self):
-        """Helper to create auth mock that returns success."""
-        from app.core.auth_middleware import GatewayUser, INTERNAL_REQUEST_HEADER, INTERNAL_REQUEST_SECRET
-        mock_user = GatewayUser(sub="user-123", preferred_username="testuser")
-        return (True, mock_user, {INTERNAL_REQUEST_HEADER: INTERNAL_REQUEST_SECRET})
+        """Helper to create auth mock that returns success with internal JWT header."""
+        from app.core.auth_middleware import GatewayUser
+        mock_user = GatewayUser(
+            sub="user-123",
+            preferred_username="testuser",
+            organization=["TestOrg", {"TestOrg": {"id": "org-456"}}],
+            realm_access={"roles": ["company.view"]},
+        )
+        # Return internal JWT Authorization header (mocked token for testing)
+        return (True, mock_user, {"Authorization": "Internal mock-internal-jwt-token"})
 
     @pytest.mark.asyncio
     async def test_proxy_get_request(self):

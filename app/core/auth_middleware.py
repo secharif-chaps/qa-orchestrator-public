@@ -1,14 +1,14 @@
 """
 Authentication middleware for the gateway.
 
-This middleware validates JWT tokens at the gateway level and adds
-internal trust headers for requests forwarded to the backend monolith.
+This middleware validates JWT tokens at the gateway level and creates
+internal JWTs for secure service-to-service communication with backends.
 
-Phase 1 Implementation:
-- Validates JWT tokens using Keycloak's public key
-- Returns 401 for invalid/missing tokens (except public routes)
-- Adds X-Internal-Request header for trusted internal communication
-- Forwards user info headers to backend
+Security:
+- Validates external JWT tokens using Keycloak's public key
+- Creates short-lived internal JWTs (60s) for backend communication
+- Internal JWTs contain user context (no separate headers needed)
+- HMAC-SHA256 signature prevents tampering
 """
 
 from typing import Optional, Set, Any
@@ -19,6 +19,7 @@ from fastapi import Request
 from pydantic import BaseModel
 from app.core.config import settings
 from app.core.logging_config import get_logger
+from app.core.internal_jwt import create_internal_token, InternalJWTError
 
 logger = get_logger(__name__)
 
@@ -34,16 +35,6 @@ class GatewayUser(BaseModel):
     realm_access: Optional[dict] = None
     organization: Optional[Any] = None
 
-
-# Internal request header name and secret
-INTERNAL_REQUEST_HEADER = "X-Internal-Request"
-INTERNAL_REQUEST_SECRET = "gateway-internal-v1"  # TODO: Move to env var in production
-
-# Headers to forward user info to backend
-USER_ID_HEADER = "X-User-Id"
-USER_NAME_HEADER = "X-User-Name"
-USER_ROLES_HEADER = "X-User-Roles"
-USER_ORG_HEADER = "X-User-Organization"
 
 # Public routes that don't require authentication
 # These paths are relative to /api/
@@ -150,58 +141,99 @@ async def validate_jwt_token(token: str) -> Optional[GatewayUser]:
             organization=payload.get("organization"),
         )
 
+        logger.debug(f"JWT validated successfully for user: {user.preferred_username}")
         return user
 
     except jwt.ExpiredSignatureError:
-        logger.debug("JWT token has expired")
+        logger.warning("JWT token has expired")
         return None
     except JWTError as e:
-        logger.debug(f"JWT validation failed: {e}")
+        logger.warning(f"JWT validation failed: {e}")
         return None
     except Exception as e:
         logger.error(f"Unexpected error validating JWT: {e}")
         return None
 
 
+def extract_organization_info(user: GatewayUser) -> tuple[str, str]:
+    """
+    Extract organization ID and name from user's organization claim.
+
+    Args:
+        user: GatewayUser with organization claim
+
+    Returns:
+        Tuple of (org_id, org_name), empty strings if not found
+    """
+    if not user.organization:
+        return "", ""
+
+    org_info = user.organization
+
+    # Organization claim format: ["OrgName", {"OrgName": {"id": "uuid"}}]
+    if isinstance(org_info, list) and len(org_info) >= 2:
+        org_name = org_info[0] if isinstance(org_info[0], str) else ""
+        org_dict = org_info[1] if len(org_info) > 1 else {}
+        if isinstance(org_dict, dict) and org_name in org_dict:
+            org_id = org_dict[org_name].get("id", "")
+            return org_id, org_name
+        return "", org_name
+    elif isinstance(org_info, str):
+        return "", org_info
+
+    return "", ""
+
+
 def build_internal_headers(user: Optional[GatewayUser]) -> dict:
     """
-    Build internal request headers to forward to backend.
+    Build internal request headers with signed JWT.
 
-    These headers tell the backend:
-    1. This is an internal request from the gateway (trusted)
-    2. User info extracted from the validated JWT
+    The internal JWT contains all user context, replacing the previous
+    approach of multiple X-User-* headers. This provides:
+    - Cryptographic signature (tamper-proof)
+    - Short expiration (60 seconds)
+    - Single header instead of multiple
+
+    Args:
+        user: GatewayUser if authenticated, None for public routes
+
+    Returns:
+        Dict with Authorization header containing internal JWT
     """
-    headers = {
-        INTERNAL_REQUEST_HEADER: INTERNAL_REQUEST_SECRET,
-    }
+    if not user:
+        return {}
 
-    if user:
-        headers[USER_ID_HEADER] = user.sub
-        headers[USER_NAME_HEADER] = user.preferred_username or ""
+    # Check if internal JWT is configured
+    if not settings.INTERNAL_JWT_SECRET:
+        logger.warning("INTERNAL_JWT_SECRET not configured - skipping internal JWT")
+        return {}
 
-        # Extract roles from realm_access
-        roles = []
-        if user.realm_access:
-            roles = user.realm_access.get("roles", [])
-        headers[USER_ROLES_HEADER] = ",".join(roles)
+    # Extract roles from realm_access
+    roles: list[str] = []
+    if user.realm_access:
+        roles = user.realm_access.get("roles", [])
 
-        # Extract organization info
-        if user.organization:
-            # Organization claim format: ["OrgName", {"OrgName": {"id": "uuid"}}]
-            org_info = user.organization
-            if isinstance(org_info, list) and len(org_info) >= 2:
-                # Get the org name (first element) and id (from second element)
-                org_name = org_info[0] if isinstance(org_info[0], str) else ""
-                org_dict = org_info[1] if len(org_info) > 1 else {}
-                if isinstance(org_dict, dict) and org_name in org_dict:
-                    org_id = org_dict[org_name].get("id", "")
-                    headers[USER_ORG_HEADER] = f"{org_name}:{org_id}"
-                else:
-                    headers[USER_ORG_HEADER] = org_name
-            elif isinstance(org_info, str):
-                headers[USER_ORG_HEADER] = org_info
+    # Extract organization info
+    org_id, org_name = extract_organization_info(user)
 
-    return headers
+    try:
+        # Create signed internal token
+        internal_token = create_internal_token(
+            user_id=user.sub,
+            username=user.preferred_username or "",
+            org_id=org_id,
+            org_name=org_name,
+            roles=roles,
+            email=user.email,
+        )
+
+        return {
+            "Authorization": f"Internal {internal_token}",
+        }
+
+    except InternalJWTError as e:
+        logger.error(f"Failed to create internal JWT: {e}")
+        return {}
 
 
 class GatewayAuthMiddleware:
