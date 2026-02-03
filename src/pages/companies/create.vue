@@ -42,9 +42,20 @@
       @dismiss="dismissTokenAlert"
     />
 
+    <!-- Loading State (while fetching folders) -->
+    <div
+      v-if="needsFolderSelection && foldersLoading"
+      class="bg-base-100 border border-primary-stroke rounded-lg p-6"
+    >
+      <div class="flex items-center justify-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <p class="ml-4 text-secondary">{{ $t('folder.loading', 'Loading folders...') }}</p>
+      </div>
+    </div>
+
     <!-- No Folders Alert -->
     <div
-      v-if="needsFolderSelection && !foldersLoading && (!foldersData?.data || foldersData.data.length === 0)"
+      v-if="!hasFoldersAvailable && needsFolderSelection && !foldersLoading && foldersArray !== null"
       class="flex flex-col gap-4"
     >
       <Alert
@@ -64,7 +75,7 @@
 
     <!-- Search Form Card -->
     <div
-      v-if="!needsFolderSelection || (foldersData?.data && foldersData.data.length > 0)"
+      v-if="!needsFolderSelection || hasFoldersAvailable"
       class="bg-base-100 border border-primary-stroke rounded-lg p-6"
       :title="$t('search.companyIdentity')"
     >
@@ -78,6 +89,7 @@
           <Select
             v-model="selectedFolderId"
             :options="folderOptions"
+            :display-value="displayFolderName"
             :placeholder="$t('company.create.chooseFolderPlaceholder', 'Choose a folder...')"
             icon="fa fa-folder"
           />
@@ -210,13 +222,33 @@ const { data: foldersData, isLoading: foldersLoading } = useQuery(
   },
 )
 
-// Transform folders to Select options format with { label, value }
+// Extract folders array - handle both API response formats:
+// 1. Paginated: { data: [...], meta: {...} }
+// 2. Direct array: [...]
+const foldersArray = computed(() => {
+  if (!foldersData.value) return null
+  // Check if response is paginated (has .data property)
+  if (Array.isArray(foldersData.value)) {
+    return foldersData.value // Direct array format
+  }
+  return foldersData.value.data || null // Paginated format
+})
+
+// Transform folders to Select options - use folder IDs
 const folderOptions = computed(() => {
-  if (!foldersData.value?.data) return []
-  return foldersData.value.data.map((folder) => ({
-    label: folder.name,
-    value: folder.id,
-  }))
+  if (!foldersArray.value) return []
+  return foldersArray.value.map((folder) => folder.id)
+})
+
+// Display function for Select component - shows folder name for given ID
+const displayFolderName = (id: string) => {
+  if (!foldersArray.value) return ''
+  return foldersArray.value.find(f => f.id === id)?.name || ''
+}
+
+// Computed property to check if folders are available (DRY for v-if conditions)
+const hasFoldersAvailable = computed(() => {
+  return needsFolderSelection.value && !foldersLoading.value && foldersArray.value !== null && foldersArray.value.length > 0
 })
 
 // Fetch folder details (when folder ID is in route)
@@ -226,8 +258,8 @@ const { data: folderData } = useQuery(folderByIdQuery, () => ({ id: routeFolderI
 
 // Selected folder object (derived from folder ID)
 const selectedFolder = computed(() => {
-  if (!selectedFolderId.value || !foldersData.value?.data) return null
-  return foldersData.value.data.find((f) => f.id === selectedFolderId.value)
+  if (!selectedFolderId.value || !foldersArray.value) return null
+  return foldersArray.value.find((f) => f.id === selectedFolderId.value)
 })
 
 // Global token balance query
