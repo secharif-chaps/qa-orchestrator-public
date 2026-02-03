@@ -90,6 +90,7 @@ import type { FolderItem } from '@/types/folder'
 import { useI18n } from 'vue-i18n'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import Card from '../ui/Card.vue'
+import { formatDate } from '@/utils/time'
 
 interface Props {
   item: FolderItem
@@ -107,7 +108,7 @@ const emit = defineEmits<{
   moveCompany: [item: FolderItem]
 }>()
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const { canDeleteCompany } = useCompanyPermissions()
 const showFallbackIcon = ref(false)
 const isParentHovered = ref(false)
@@ -141,12 +142,6 @@ const getLogoUrl = (website?: string) => {
   const domain = getCompanyDomain(website)
   if (!domain) return ''
   return `https://img.logo.dev/${domain}?token=pk_Buf4yyXmRC2HMagyfO0jrg&retina=true`
-}
-
-function formatDate(dateString: string): string {
-  if (!dateString) return t('common.na')
-  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
-  return new Date(dateString).toLocaleDateString(localeCode)
 }
 
 function formatType(type: string): string {

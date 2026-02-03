@@ -83,10 +83,10 @@
         <!-- Timestamps -->
         <div v-if="config?.enabled_at || config?.updated_at" class="text-xs text-secondary">
           <span v-if="config?.enabled_at">
-            {{ $t('dataSources.enabledAt', 'Enabled') }}: {{ formatDate(config.enabled_at) }}
+            {{ $t('dataSources.enabledAt', 'Enabled') }}: {{ formatDateTime(config.enabled_at) }}
           </span> 
           <span v-if="config?.updated_at" class="ml-3">
-            {{ $t('dataSources.lastUpdated', 'Updated') }}: {{ formatDate(config.updated_at) }}
+            {{ $t('dataSources.lastUpdated', 'Updated') }}: {{ formatDateTime(config.updated_at) }}
           </span>
         </div>
       </div>
@@ -100,6 +100,7 @@ import { useQuery } from '@pinia/colada'
 import { Button, Input, Icon } from '@owlint/feathers-vue'
 import { dataSourceConfigQuery } from '@/queries/data-sources'
 import { useUpdateDataSourceConfig } from '@/mutations/data-sources'
+import { formatDateTime } from '@/utils/time'
 import type { DataSourceInfo } from '@/types/data-source'
 
 const props = defineProps<{
@@ -144,15 +145,5 @@ async function saveApiKey() {
   isEditing.value = false
   newApiKey.value = ''
   refetch()
-}
-
-function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
 }
 </script>

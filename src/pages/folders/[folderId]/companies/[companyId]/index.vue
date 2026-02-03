@@ -234,10 +234,11 @@ import { computed, ref, inject } from 'vue'
 import type { Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
+import { formatDate } from '@/utils/time'
 
 const router = useRouter()
 const route = useRoute()
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const authStore = useAuthStore()
 
 const showSectionModal = ref(false)
@@ -474,13 +475,6 @@ const handleRestartTask = async (taskId: number) => {
   } catch (error) {
     console.error('❌ Error restarting task:', error)
   }
-}
-
-// Format date with locale support
-const formatDate = (dateString: string) => {
-  if (!dateString) return t('common.na', 'N/A')
-  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
-  return new Date(dateString).toLocaleDateString(localeCode)
 }
 
 // Helper function to get social media icon

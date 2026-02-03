@@ -170,10 +170,11 @@ import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import { computed, ref, toRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { formatDate } from '@/utils/time'
 import Card from '../ui/Card.vue'
 import CompanyCardItem from './CompanyCardItem.vue'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const router = useRouter()
 
 interface Props {
@@ -250,12 +251,6 @@ const previewItems = computed(() => {
   return props.folder.items
 })
 
-// Methods
-function formatDate(dateString: string): string {
-  if (!dateString) return t('common.na')
-  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
-  return new Date(dateString).toLocaleDateString(localeCode)
-}
 
 function handleCardClick() {
   // Only emit viewFolder if not clicking on the favorite button

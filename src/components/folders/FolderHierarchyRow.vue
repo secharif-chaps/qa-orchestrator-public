@@ -203,8 +203,9 @@ import UiTag from '@/components/ui/Tag.vue'
 import { Button } from '@owlint/feathers-vue'
 import type { Folder } from '@/types/folder'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
+import { formatDate } from '@/utils/time'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 
 interface Props {
   folder: Folder
@@ -238,13 +239,6 @@ const isExpanded = ref(false)
 
 function toggleExpanded() {
   isExpanded.value = !isExpanded.value
-}
-
-// Helper function to format dates
-function formatDate(dateString: string): string {
-  if (!dateString) return t('common.na')
-  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
-  return new Date(dateString).toLocaleDateString(localeCode)
 }
 
 // Helper to format item type

@@ -166,6 +166,7 @@ import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import FolderShareButton from '@/components/features/folders/FolderShareButton.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
+import { formatDate } from '@/utils/time'
 
 interface Props {
   folder?: Folder | null
@@ -253,13 +254,6 @@ const viewModeOptions = computed(() => [
     icon: 'fa fa-th-large',
   },
 ])
-
-// Methods
-function formatDate(dateString: string): string {
-  if (!dateString) return t('common.na')
-  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
-  return new Date(dateString).toLocaleDateString(localeCode)
-}
 
 // Computed for item count
 const itemsCount = computed(() => {

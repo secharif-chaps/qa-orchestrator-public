@@ -240,13 +240,14 @@ import { useI18n } from 'vue-i18n'
 import { Alert, Button } from '@owlint/feathers-vue'
 import { organizationBalanceQuery, tokenHistoryQuery } from '@/queries/tokens'
 import { currentOrganizationQuery } from '@/queries/organization'
+import { formatDateTime } from '@/utils/time'
 import Tag from '@/components/ui/Tag.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import type { TransactionType, ReferenceType, TokenHistoryFilters } from '@/types/tokens'
 import type { PaginationMeta } from '@/types/pagination'
 import type { BadgeVariant } from '@/components/ui/Tag.vue'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 
 // Filter state
 const filters = reactive<TokenHistoryFilters>({
@@ -323,21 +324,6 @@ const paginationMeta = computed<PaginationMeta | null>(() => {
     to: Math.min(historyData.value.page * historyData.value.size, historyData.value.total),
   }
 })
-
-// Helper functions
-function formatDateTime(dateString: string | null | undefined): string {
-  if (!dateString) return '-'
-
-  const date = new Date(dateString)
-  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
-  return date.toLocaleDateString(localeCode, {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
 
 function getTransactionTypeVariant(type: TransactionType): BadgeVariant {
   const variants: Record<TransactionType, BadgeVariant> = {

@@ -239,6 +239,7 @@ import {
   useDeleteFolderShare,
   useUpdateFolderShare,
 } from '@/mutations/folderShares'
+import { formatDate } from '@/utils/time'
 import type { FolderShare, ShareableUser, ShareRole } from '@/types/folder'
 
 interface Props {
@@ -249,7 +250,7 @@ const props = defineProps<Props>()
 
 const isOpen = defineModel<boolean>({ required: true })
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 
 // Get role options with disabled property based on user's write permission
 function getRoleOptionsForUser(user: ShareableUser) {
@@ -374,13 +375,6 @@ async function updateShareRole(share: FolderShare, newRole: ShareRole) {
     shareUserId: share.user_id,
     update: { role: newRole },
   })
-}
-
-// Format date
-function formatDate(dateString: string): string {
-  if (!dateString) return ''
-  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
-  return new Date(dateString).toLocaleDateString(localeCode)
 }
 
 // Handle modal close
