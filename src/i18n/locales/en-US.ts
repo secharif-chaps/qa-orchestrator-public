@@ -991,6 +991,28 @@ export default {
         emailInvalid: 'Invalid email format',
       },
     },
+    users: {
+      assignOrganization: {
+        success: 'Organization assigned successfully!',
+        error: 'Failed to assign organization',
+      },
+      updatePermissions: {
+        success: 'Permissions updated successfully!',
+        error: 'Failed to update permissions',
+      },
+      resetPassword: {
+        success: 'Password reset successfully!',
+        error: 'Failed to reset password',
+      },
+      disable: {
+        success: 'User disabled successfully!',
+        error: 'Failed to disable user',
+      },
+      enable: {
+        success: 'User enabled successfully!',
+        error: 'Failed to enable user',
+      },
+    },
   },
   tasks: {
     events: {
