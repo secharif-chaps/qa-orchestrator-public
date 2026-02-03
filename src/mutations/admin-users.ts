@@ -3,11 +3,12 @@
  */
 
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { assignUserOrganization, updateUserPermissions, resetUserPassword } from '@/api/admin-users'
+import { assignUserOrganization, updateUserPermissions, resetUserPassword, disableUser, enableUser } from '@/api/admin-users'
 import { ADMIN_USER_QUERY_KEYS } from '@/queries/admin-users'
 import { ORGANIZATION_QUERY_KEYS } from '@/queries/organization-admin'
 import { toast } from '@/utils/toast'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import type { ResetPasswordResponse } from '@/api/admin-users'
 
 /**
@@ -15,12 +16,13 @@ import type { ResetPasswordResponse } from '@/api/admin-users'
  */
 export const useAssignUserOrganization = defineMutation(() => {
   const queryCache = useQueryCache()
+  const { t } = useI18n()
 
   const { mutate, ...mutation } = useMutation({
     mutation: ({ userId, organizationId }: { userId: string; organizationId: string }) =>
       assignUserOrganization(userId, organizationId),
     onSuccess: (_, { userId }) => {
-      toast.success('Organization assigned successfully!')
+      toast.success(t('admin.users.assignOrganization.success'))
 
       // Invalidate admin user queries to refresh the list
       queryCache.invalidateQueries({ key: ADMIN_USER_QUERY_KEYS.root })
@@ -39,7 +41,7 @@ export const useAssignUserOrganization = defineMutation(() => {
       }
     },
     onError: (error: any) => {
-      const errorMessage = error?.message || 'Failed to assign organization'
+      const errorMessage = error?.message || t('admin.users.assignOrganization.error')
       toast.error(errorMessage)
     },
   })
@@ -55,12 +57,13 @@ export const useAssignUserOrganization = defineMutation(() => {
  */
 export const useUpdateUserPermissions = defineMutation(() => {
   const queryCache = useQueryCache()
+  const { t } = useI18n()
 
   const { mutate, ...mutation } = useMutation({
     mutation: ({ userId, permissions }: { userId: string; permissions: string[] }) =>
       updateUserPermissions(userId, permissions),
     onSuccess: (_, { userId }) => {
-      toast.success('Permissions updated successfully!')
+      toast.success(t('admin.users.updatePermissions.success'))
 
       // Invalidate admin user queries to refresh the list
       queryCache.invalidateQueries({ key: ADMIN_USER_QUERY_KEYS.root })
@@ -75,7 +78,7 @@ export const useUpdateUserPermissions = defineMutation(() => {
       }
     },
     onError: (error: any) => {
-      const errorMessage = error?.message || 'Failed to update permissions'
+      const errorMessage = error?.message || t('admin.users.updatePermissions.error')
       toast.error(errorMessage)
     },
   })
@@ -90,14 +93,16 @@ export const useUpdateUserPermissions = defineMutation(() => {
  * Mutation to reset user password by setting a new temporary password
  */
 export const useResetUserPassword = defineMutation(() => {
+  const { t } = useI18n()
+
   const { mutate, mutateAsync, ...mutation } = useMutation({
     mutation: ({ userId, temporaryPassword }: { userId: string; temporaryPassword: string }) =>
       resetUserPassword(userId, temporaryPassword),
     onSuccess: () => {
-      toast.success('Password reset successfully!')
+      toast.success(t('admin.users.resetPassword.success'))
     },
     onError: (error: any) => {
-      const errorMessage = error?.message || 'Failed to reset password'
+      const errorMessage = error?.message || t('admin.users.resetPassword.error')
       toast.error(errorMessage)
     },
   })
@@ -106,5 +111,67 @@ export const useResetUserPassword = defineMutation(() => {
     ...mutation,
     resetPassword: mutate,
     resetPasswordAsync: mutateAsync,
+  }
+})
+
+/**
+ * Mutation to disable a user account (soft delete)
+ */
+export const useDisableUser = defineMutation(() => {
+  const queryCache = useQueryCache()
+  const { t } = useI18n()
+
+  const { mutate, ...mutation } = useMutation({
+    mutation: ({ userId }: { userId: string }) => disableUser(userId),
+    onSuccess: () => {
+      toast.success(t('admin.users.disable.success'))
+
+      // Invalidate admin user queries to refresh the list
+      queryCache.invalidateQueries({ key: ADMIN_USER_QUERY_KEYS.root })
+
+      // Invalidate organization queries to refresh member counts
+      queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.root })
+      queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.admin })
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.message || t('admin.users.disable.error')
+      toast.error(errorMessage)
+    },
+  })
+
+  return {
+    ...mutation,
+    disableUser: mutate,
+  }
+})
+
+/**
+ * Mutation to enable a previously disabled user account
+ */
+export const useEnableUser = defineMutation(() => {
+  const queryCache = useQueryCache()
+  const { t } = useI18n()
+
+  const { mutate, ...mutation } = useMutation({
+    mutation: ({ userId }: { userId: string }) => enableUser(userId),
+    onSuccess: () => {
+      toast.success(t('admin.users.enable.success'))
+
+      // Invalidate admin user queries to refresh the list
+      queryCache.invalidateQueries({ key: ADMIN_USER_QUERY_KEYS.root })
+
+      // Invalidate organization queries to refresh member counts
+      queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.root })
+      queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.admin })
+    },
+    onError: (error: any) => {
+      const errorMessage = error?.message || t('admin.users.enable.error')
+      toast.error(errorMessage)
+    },
+  })
+
+  return {
+    ...mutation,
+    enableUser: mutate,
   }
 })

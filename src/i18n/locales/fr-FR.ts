@@ -1035,6 +1035,28 @@ export default {
         emailInvalid: 'Format d\'email invalide',
       },
     },
+    users: {
+      assignOrganization: {
+        success: 'Organisation assignée avec succès !',
+        error: 'Échec de l\'assignation de l\'organisation',
+      },
+      updatePermissions: {
+        success: 'Permissions mises à jour avec succès !',
+        error: 'Échec de la mise à jour des permissions',
+      },
+      resetPassword: {
+        success: 'Mot de passe réinitialisé avec succès !',
+        error: 'Échec de la réinitialisation du mot de passe',
+      },
+      disable: {
+        success: 'Utilisateur désactivé avec succès !',
+        error: 'Échec de la désactivation de l\'utilisateur',
+      },
+      enable: {
+        success: 'Utilisateur activé avec succès !',
+        error: 'Échec de l\'activation de l\'utilisateur',
+      },
+    },
   },
   tasks: {
     events: {

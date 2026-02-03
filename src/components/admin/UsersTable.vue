@@ -46,9 +46,11 @@
     <template #cell(actions)="{ item }">
       <td class="px-4 py-3 text-right">
         <UserActionsDropdown
+          :user-status="item.status"
           @change-organization="$emit('change-organization', item)"
           @manage-permissions="$emit('manage-permissions', item)"
           @disable-user="$emit('disable-user', item)"
+          @enable-user="$emit('enable-user', item)"
           @reset-password="$emit('reset-password', item)"
         />
       </td>
@@ -98,6 +100,7 @@ defineEmits<{
   'change-organization': [user: AdminUserListItem]
   'manage-permissions': [user: AdminUserListItem]
   'disable-user': [user: AdminUserListItem]
+  'enable-user': [user: AdminUserListItem]
   'reset-password': [user: AdminUserListItem]
   'clear-filters': []
 }>()

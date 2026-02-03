@@ -80,3 +80,19 @@ export const resetUserPassword = async (userId: string, temporaryPassword: strin
     temporary_password: temporaryPassword,
   })
 }
+
+/**
+ * Disable a user account (soft delete - account exists but cannot login)
+ * This sets enabled=false in Keycloak
+ */
+export const disableUser = async (userId: string) => {
+  return apiClient.put(`/users/${userId}/disable`, {})
+}
+
+/**
+ * Enable a previously disabled user account
+ * This sets enabled=true in Keycloak
+ */
+export const enableUser = async (userId: string) => {
+  return apiClient.put(`/users/${userId}/enable`, {})
+}
