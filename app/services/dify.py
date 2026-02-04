@@ -7,6 +7,9 @@ from app.core.config import settings
 from app.core.exceptions import ExternalServiceError
 from app.core.logging_config import get_logger
 from app.services.workflow_config import WorkflowConfigService
+from app.services.feature_flags import has_feature, get_feature_config
+from app.models.organization import FeatureFlag
+from app.models.company import Company
 
 logger = get_logger(__name__)
 
@@ -221,12 +224,6 @@ class DifyService:
             # data_collection workflow expects "callback_url" instead of "callback_webhook"
             inputs["callback_url"] = success_callback
 
-            # Add Pappers configuration
-            from app.services.feature_flags import has_feature, get_feature_config
-            from app.models.organization import FeatureFlag
-
-            # Get company's organization_id
-            from app.models.company import Company
             company = self.db.query(Company).filter(Company.id == company_id).first()
 
             if company:
