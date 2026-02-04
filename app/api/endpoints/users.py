@@ -6,21 +6,23 @@ Requires admin.organizations role for access.
 
 import asyncio
 import time
-from typing import Optional, List, Dict, Any, Tuple
+from typing import Any
+
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_keycloak import OIDCUser
 from pydantic import BaseModel, field_validator
 
-from app.core.keycloak import idp
 from app.core.config import settings
-from app.services.keycloak_admin import keycloak_admin_service
-from app.services.user_import import import_users_bulk
+from app.core.keycloak import idp
+from app.core.logging_config import get_logger
+from app.core.permissions import get_tier_from_roles
 from app.schemas.user_import import (
     BulkUserImportRequest,
     BulkUserImportResponse,
 )
-from app.core.logging_config import get_logger
+from app.services.keycloak_admin import keycloak_admin_service
+from app.services.user_import import import_users_bulk
 
 router = APIRouter(prefix="/users", tags=["users"])
 logger = get_logger(__name__)
@@ -32,7 +34,7 @@ MAX_CONCURRENT_ORG_REQUESTS = 5  # Maximum parallel Keycloak requests
 MAX_TOTAL_USERS_FROM_ORGS = 500  # Stop fetching when this many users found
 
 
-def _transform_kc_user(kc_user: Dict[str, Any]) -> Dict[str, Any]:
+def _transform_kc_user(kc_user: dict[str, Any]) -> dict[str, Any]:
     """Transform a Keycloak user dict into the API response format."""
     return {
         "user_id": kc_user.get("id"),
@@ -45,7 +47,7 @@ def _transform_kc_user(kc_user: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def _sort_users(users: List[Dict[str, Any]], sort: str, order: str) -> None:
+def _sort_users(users: list[dict[str, Any]], sort: str, order: str) -> None:
     """Sort users list in place by the given field and order."""
     reverse = order.lower() == "desc"
     if sort == "username":
@@ -56,7 +58,7 @@ def _sort_users(users: List[Dict[str, Any]], sort: str, order: str) -> None:
 
 async def _search_users_with_org(
     search: str,
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """Search users by name/email/username AND by organization name.
 
     Runs Keycloak user search and organization search in parallel,
@@ -96,7 +98,7 @@ async def _search_users_with_org(
             semaphore = asyncio.Semaphore(MAX_CONCURRENT_ORG_REQUESTS)
             users_from_orgs = 0
 
-            async def fetch_org_members(org: Dict[str, Any]) -> List[Dict[str, Any]]:
+            async def fetch_org_members(org: dict[str, Any]) -> list[dict[str, Any]]:
                 async with semaphore:
                     return await keycloak_admin_service.get_organization_members(
                         org.get("id"), first=0, max_results=MAX_MEMBERS_PER_ORG
@@ -134,7 +136,7 @@ async def _search_users_with_org(
 async def _list_users_paginated(
     first: int,
     limit: int,
-) -> Tuple[List[Dict[str, Any]], int]:
+) -> tuple[list[dict[str, Any]], int]:
     """List users without search using Keycloak's native pagination."""
     total = await keycloak_admin_service.count_users_with_search(None)
     kc_users = await keycloak_admin_service.search_users(
@@ -150,11 +152,11 @@ class AssignOrganizationRequest(BaseModel):
 
 class UpdatePermissionsRequest(BaseModel):
     """Request body for updating user permissions"""
-    permissions: List[str]
+    permissions: list[str]
 
     @field_validator('permissions')
     @classmethod
-    def validate_permissions(cls, v: List[str]) -> List[str]:
+    def validate_permissions(cls, v: list[str]) -> list[str]:
         """Validate that all permissions are valid application permissions."""
         valid_permissions = {
             "company.create",
@@ -173,12 +175,12 @@ class UpdatePermissionsRequest(BaseModel):
 
 class ResetPasswordRequest(BaseModel):
     """Request body for resetting user password"""
-    temporary_password: Optional[str] = None
+    temporary_password: str | None = None
     send_email: bool = False
 
     @field_validator('temporary_password')
     @classmethod
-    def validate_password(cls, v: Optional[str]) -> Optional[str]:
+    def validate_password(cls, v: str | None) -> str | None:
         """Validate password meets requirements if provided."""
         if v is None:
             return v
@@ -205,7 +207,7 @@ class ResetPasswordRequest(BaseModel):
 async def get_all_users(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
     limit: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
-    search: Optional[str] = Query(None, description="Search by username, name, email or organization"),
+    search: str | None = Query(None, description="Search by username, name, email or organization"),
     sort: str = Query('created_at', description="Sort field: username, created_at"),
     order: str = Query('desc', description="Sort order: asc or desc"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
@@ -249,18 +251,54 @@ async def get_all_users(
         if search and search.strip():
             # Hybrid search: Keycloak native + organization members
             kc_users = await _search_users_with_org(search)
-            users_data = [_transform_kc_user(u) for u in kc_users]
-            _sort_users(users_data, sort, order)
-            total = len(users_data)
-            first_idx = (page - 1) * limit
-            users_data = users_data[first_idx:first_idx + limit]
+            total = len(kc_users)
         else:
             # No search: use Keycloak's native pagination directly
             first = (page - 1) * limit
             kc_users, total = await _list_users_paginated(first, limit)
-            users_data = [_transform_kc_user(u) for u in kc_users]
-            _sort_users(users_data, sort, order)
 
+        # Fetch permissions for all users in parallel to compute roles
+        async def fetch_user_role(user_id: str) -> tuple[str, str | None]:
+            """Fetch permissions and compute role tier for a single user."""
+            try:
+                user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
+                internal_roles = {
+                    "uma_authorization",
+                    "offline_access",
+                    "default-roles-" + settings.KEYCLOAK_REALM.lower()
+                }
+                permissions = [
+                    role["name"] for role in user_roles
+                    if role["name"] not in internal_roles and
+                       not role["name"].startswith("realm-management")
+                ]
+                tier = get_tier_from_roles(permissions)
+                return user_id, tier.value
+            except Exception as e:
+                logger.warning(
+                    "Failed to fetch permissions for user",
+                    extra={"user_id": user_id, "error": str(e)}
+                )
+                return user_id, None
+
+        # Fetch roles in parallel
+        role_tasks = [fetch_user_role(kc_user.get("id")) for kc_user in kc_users]
+        role_results = await asyncio.gather(*role_tasks)
+        user_roles_map = dict(role_results)
+
+        # Transform Keycloak users to response format with permission_tier
+        users_data = [
+            {**_transform_kc_user(u), "permission_tier": user_roles_map.get(u.get("id"))}
+            for u in kc_users
+        ]
+        _sort_users(users_data, sort, order)
+
+        # Apply pagination for search results (already paginated for non-search)
+        if search and search.strip():
+            first_idx = (page - 1) * limit
+            users_data = users_data[first_idx:first_idx + limit]
+
+        # Calculate pagination metadata
         total_pages = (total + limit - 1) // limit if total > 0 else 1
 
         elapsed_time = time.time() - start_time
@@ -716,7 +754,7 @@ async def _update_user_enabled_status(
     user_id: str,
     enabled: bool,
     admin_username: str
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Update user enabled/disabled status in Keycloak.
 
     Shared helper function for enable_user and disable_user endpoints.
@@ -811,7 +849,7 @@ async def _update_user_enabled_status(
 async def disable_user(
     user_id: str,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Disable a user account (soft delete - account exists but cannot login).
 
     Requires admin.organizations role for access.
@@ -838,7 +876,7 @@ async def disable_user(
 async def enable_user(
     user_id: str,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Enable a previously disabled user account.
 
     Requires admin.organizations role for access.
