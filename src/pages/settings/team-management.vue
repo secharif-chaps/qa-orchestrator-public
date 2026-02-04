@@ -84,8 +84,8 @@ import { useTeamPermissions } from '@/composables/useTeamPermissions'
 import TeamMembersTable from '@/components/team/TeamMembersTable.vue'
 import ResetPasswordModal from '@/components/team/ResetPasswordModal.vue'
 import Pagination from '@/components/ui/Pagination.vue'
+import { transformToPaginationMeta } from '@/utils/pagination'
 import type { TeamMemberListItem, PermissionTier } from '@/types/team'
-import type { PaginationMeta } from '@/types/pagination'
 
 const { t } = useI18n()
 const { canManageTeam } = useTeamPermissions()
@@ -113,22 +113,7 @@ const {
 const teamMembers = computed(() => response.value?.data || [])
 
 // Pagination meta for custom Pagination component
-const paginationMeta = computed<PaginationMeta | null>(() => {
-  if (!response.value?.pagination) return null
-
-  const p = response.value.pagination
-  const from = (p.page - 1) * p.limit + 1
-  const to = Math.min(p.page * p.limit, p.total)
-
-  return {
-    total: p.total,
-    per_page: p.limit,
-    current_page: p.page,
-    last_page: p.total_pages,
-    from,
-    to,
-  }
-})
+const paginationMeta = computed(() => transformToPaginationMeta(response.value?.pagination))
 
 // Pagination
 const currentPage = computed({

@@ -72,7 +72,6 @@
     <Pagination
       v-model:current-page="currentPage"
       :meta="paginationMeta"
-      :page-size-options="pageSizeOptions"
       item-name="users"
       @update-per-page="updatePageSize"
     />
@@ -137,7 +136,7 @@ import UsersTable from '@/components/admin/UsersTable.vue'
 import { useAssignUserOrganization, useUpdateUserPermissions, useDisableUser, useEnableUser } from '@/mutations/admin-users'
 import { adminUsersQuery } from '@/queries/admin-users'
 import { allOrganizationsQuery } from '@/queries/organization-admin'
-import type { PaginationMeta } from '@/types/pagination'
+import { transformToPaginationMeta } from '@/utils/pagination'
 import type { AdminUserListItem, AdminUserQueryParams } from '@/types/admin-user'
 import UserOrganizationModal from '@/components/admin/UserOrganizationModal.vue'
 import RolePermissionsModal from '@/components/admin/RolePermissionsModal.vue'
@@ -195,27 +194,8 @@ const users = computed(() => usersResponse.value)
 // Available organizations for filter dropdown
 const availableOrganizations = computed(() => organizationsResponse.value?.data || [])
 
-// Map backend pagination format to PaginationMeta format
-// Backend returns: { page, limit, total, total_pages }
-// Component expects: { current_page, per_page, total, last_page, from, to }
-const paginationMeta = computed<PaginationMeta | null>(() => {
-  if (!users.value?.pagination) return null
-
-  const p = users.value.pagination
-  const currentPage = p.page ?? p.current_page ?? 1
-  const perPage = p.limit ?? p.per_page ?? 10
-  const total = p.total ?? 0
-  const lastPage = p.total_pages ?? p.last_page ?? 1
-
-  return {
-    current_page: currentPage,
-    per_page: perPage,
-    total,
-    last_page: lastPage,
-    from: (currentPage - 1) * perPage + 1,
-    to: Math.min(currentPage * perPage, total),
-  }
-})
+// Transform API pagination to PaginationMeta format
+const paginationMeta = computed(() => transformToPaginationMeta(users.value?.pagination))
 
 // Current page for v-model binding
 const currentPage = computed({
@@ -224,9 +204,6 @@ const currentPage = computed({
     queryParams.page = value
   },
 })
-
-// Page size options
-const pageSizeOptions = [10, 20, 50, 100]
 
 // Check if any filters are active
 const hasActiveFilters = computed(() => {

@@ -242,8 +242,8 @@ import { organizationBalanceQuery, tokenHistoryQuery } from '@/queries/tokens'
 import { currentOrganizationQuery } from '@/queries/organization'
 import Tag from '@/components/ui/Tag.vue'
 import Pagination from '@/components/ui/Pagination.vue'
+import { transformToPaginationMeta } from '@/utils/pagination'
 import type { TransactionType, ReferenceType, TokenHistoryFilters } from '@/types/tokens'
-import type { PaginationMeta } from '@/types/pagination'
 import type { BadgeVariant } from '@/components/ui/Tag.vue'
 
 const { t, locale } = useI18n()
@@ -311,18 +311,7 @@ const currentPage = computed({
   },
 })
 
-const paginationMeta = computed<PaginationMeta | null>(() => {
-  if (!historyData.value) return null
-
-  return {
-    current_page: historyData.value.page,
-    per_page: historyData.value.size,
-    total: historyData.value.total,
-    last_page: historyData.value.pages,
-    from: (historyData.value.page - 1) * historyData.value.size + 1,
-    to: Math.min(historyData.value.page * historyData.value.size, historyData.value.total),
-  }
-})
+const paginationMeta = computed(() => transformToPaginationMeta(historyData.value))
 
 // Helper functions
 function formatDateTime(dateString: string | null | undefined): string {

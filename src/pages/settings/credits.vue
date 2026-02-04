@@ -143,8 +143,6 @@ const topUsersPaginationMeta = computed<PaginationMeta | null>(() => {
     per_page: perPage,
     current_page: currentPage,
     last_page: lastPage,
-    from: (currentPage - 1) * perPage + 1,
-    to: Math.min(currentPage * perPage, total),
   }
 })
 
