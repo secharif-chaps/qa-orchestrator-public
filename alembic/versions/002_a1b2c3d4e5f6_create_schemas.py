@@ -1,12 +1,10 @@
-"""002 Create global_schema and screen_schema
+"""002 Create global_schema
 
 Revision ID: a1b2c3d4e5f6
 Revises: ea866042deeb
 Create Date: 2026-01-22 10:00:00.000000
 
-This migration creates the two PostgreSQL schemas:
-- global_schema: For organization-scoped resources (future tables)
-- screen_schema: For screen-specific data (migrated from monolith)
+This migration creates the global_schema for organization-scoped resources.
 """
 from typing import Sequence, Union
 
@@ -21,14 +19,10 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    """Create global_schema and screen_schema."""
-    # Create schemas using raw SQL
+    """Create global_schema."""
     op.execute("CREATE SCHEMA IF NOT EXISTS global_schema")
-    op.execute("CREATE SCHEMA IF NOT EXISTS screen_schema")
 
 
 def downgrade() -> None:
-    """Drop global_schema and screen_schema."""
-    # Drop schemas (CASCADE will drop all objects within)
-    op.execute("DROP SCHEMA IF EXISTS screen_schema CASCADE")
+    """Drop global_schema."""
     op.execute("DROP SCHEMA IF EXISTS global_schema CASCADE")

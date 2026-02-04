@@ -20,11 +20,6 @@ class TestDatabaseSchemaConstants:
         from app.database import GLOBAL_SCHEMA
         assert GLOBAL_SCHEMA == "global_schema"
 
-    def test_screen_schema_constant(self):
-        """Test that SCREEN_SCHEMA is correctly defined."""
-        from app.database import SCREEN_SCHEMA
-        assert SCREEN_SCHEMA == "screen_schema"
-
 
 class TestDatabaseEngines:
     """Test engine configuration."""
@@ -39,11 +34,6 @@ class TestDatabaseEngines:
         from app.database import global_engine
         assert global_engine is not None
 
-    def test_screen_engine_exists(self):
-        """Test that screen_engine is created."""
-        from app.database import screen_engine
-        assert screen_engine is not None
-
 
 class TestSessionFactories:
     """Test session factory configuration."""
@@ -57,11 +47,6 @@ class TestSessionFactories:
         """Test that GlobalSessionLocal is configured."""
         from app.database import GlobalSessionLocal
         assert GlobalSessionLocal is not None
-
-    def test_screen_session_local_exists(self):
-        """Test that ScreenSessionLocal is configured."""
-        from app.database import ScreenSessionLocal
-        assert ScreenSessionLocal is not None
 
 
 class TestDatabaseDependencies:
@@ -81,13 +66,6 @@ class TestDatabaseDependencies:
         result = get_global_db()
         assert isinstance(result, types.GeneratorType)
 
-    def test_get_screen_db_returns_generator(self):
-        """Test that get_screen_db returns a generator."""
-        from app.database import get_screen_db
-        import types
-        result = get_screen_db()
-        assert isinstance(result, types.GeneratorType)
-
 
 class TestBaseClasses:
     """Test SQLAlchemy base class configuration."""
@@ -101,11 +79,6 @@ class TestBaseClasses:
         """Test that GlobalBase is defined."""
         from app.database import GlobalBase
         assert GlobalBase is not None
-
-    def test_screen_base_exists(self):
-        """Test that ScreenBase is defined."""
-        from app.database import ScreenBase
-        assert ScreenBase is not None
 
 
 if __name__ == "__main__":

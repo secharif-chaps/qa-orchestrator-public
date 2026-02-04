@@ -9,9 +9,6 @@ SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 
 # Schema names
 GLOBAL_SCHEMA = "global_schema"
-# TODO: Remove screen_schema after Phase 1 migration - global-service should only
-# access screen data via API proxy, not direct DB access (architecture separation)
-SCREEN_SCHEMA = "screen_schema"
 
 
 def _create_engine_with_schema(schema: str | None = None) -> Engine:
@@ -41,18 +38,15 @@ def _create_engine_with_schema(schema: str | None = None) -> Engine:
 engine = _create_engine_with_schema()
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Schema-specific engines
+# Schema-specific engine
 global_engine = _create_engine_with_schema(GLOBAL_SCHEMA)
-screen_engine = _create_engine_with_schema(SCREEN_SCHEMA)
 
-# Schema-specific session factories
+# Schema-specific session factory
 GlobalSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=global_engine)
-ScreenSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=screen_engine)
 
 # Base classes for models - use schema parameter in __table_args__
 Base = declarative_base()
 GlobalBase = declarative_base()
-ScreenBase = declarative_base()
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -71,12 +65,3 @@ def get_global_db() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
-
-
-def get_screen_db() -> Generator[Session, None, None]:
-    """Get a database session for screen_schema."""
-    db = ScreenSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close() 
