@@ -11,7 +11,8 @@ Security layers:
 
 import jwt
 import ipaddress
-from typing import Optional, List
+from functools import lru_cache
+from typing import Optional
 from pydantic import BaseModel
 from fastapi import Request
 
@@ -63,30 +64,19 @@ class IPNotAllowedError(InternalJWTError):
     pass
 
 
-# Cache parsed IP networks to avoid re-parsing on every request
-_allowed_networks: Optional[List[ipaddress.IPv4Network | ipaddress.IPv6Network]] = None
-_allowed_networks_parsed: bool = False
-
-
-def _get_allowed_networks() -> List[ipaddress.IPv4Network | ipaddress.IPv6Network]:
+@lru_cache(maxsize=1)
+def _get_allowed_networks() -> tuple[ipaddress.IPv4Network | ipaddress.IPv6Network, ...]:
     """
     Parse and cache the allowed IP networks from config.
 
-    Returns empty list if INTERNAL_ALLOWED_IPS is not set (IP validation disabled).
+    Returns empty tuple if INTERNAL_ALLOWED_IPS is not set (IP validation disabled).
+    Uses @lru_cache for thread-safe caching without global mutable state.
     """
-    global _allowed_networks, _allowed_networks_parsed
-
-    if _allowed_networks_parsed:
-        return _allowed_networks or []
-
-    _allowed_networks_parsed = True
-
     if not settings.INTERNAL_ALLOWED_IPS:
         logger.info(
             "INTERNAL_ALLOWED_IPS not set - IP validation disabled for internal auth"
         )
-        _allowed_networks = []
-        return []
+        return ()
 
     networks = []
     for cidr in settings.INTERNAL_ALLOWED_IPS.split(","):
@@ -100,11 +90,10 @@ def _get_allowed_networks() -> List[ipaddress.IPv4Network | ipaddress.IPv6Networ
         except ValueError as e:
             logger.error(f"Invalid CIDR in INTERNAL_ALLOWED_IPS: {cidr} - {e}")
 
-    _allowed_networks = networks
     logger.info(
         f"Internal auth IP allowlist configured with {len(networks)} network(s)"
     )
-    return networks
+    return tuple(networks)
 
 
 def _get_client_ip(request: Request) -> str:

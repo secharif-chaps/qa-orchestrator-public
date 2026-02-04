@@ -23,6 +23,14 @@ from requests.exceptions import (
 )
 from app.core.config import settings
 from app.core.logging_config import get_logger
+from app.core.internal_jwt import (
+    is_internal_request,
+    verify_internal_request,
+    InternalJWTError,
+    TokenExpiredError,
+    TokenInvalidError,
+    IPNotAllowedError,
+)
 
 logger = get_logger(__name__)
 
@@ -324,28 +332,6 @@ def _initialize_keycloak_with_retry(
 # Initialize FastAPIKeycloak client with retry logic
 _raw_idp = _initialize_keycloak_with_retry()
 
-
-# =============================================================================
-# Internal Trust Wrapper (Phase 2 - Internal JWT Authentication)
-# =============================================================================
-# This wrapper intercepts get_current_user() calls and checks for internal
-# requests from the gateway. If detected, it verifies the internal JWT
-# and extracts user info from the token payload.
-#
-# Security layers:
-# 1. JWT signature verification (HMAC-SHA256 with shared secret)
-# 2. IP allowlist validation (optional, if INTERNAL_ALLOWED_IPS is set)
-
-from app.core.internal_jwt import (
-    is_internal_request,
-    verify_internal_request,
-    InternalJWTError,
-    TokenExpiredError,
-    TokenInvalidError,
-    IPNotAllowedError,
-)
-
-
 def _create_user_from_internal_token(request) -> Optional[OIDCUser]:
     """
     Verify internal JWT and create OIDCUser from the token payload.
@@ -438,7 +424,7 @@ class InternalTrustIDPWrapper:
         """Forward all other attributes to the wrapped idp."""
         return getattr(self._wrapped, name)
 
-    def get_current_user(self, required_roles=None):
+    def get_current_user(self, required_roles: list[str] | None = None):
         """
         Get current user with internal JWT verification support.
 
