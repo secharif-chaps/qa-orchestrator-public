@@ -20,6 +20,7 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 
 from app.core.logging_config import get_logger
+from app.core.encryption import encrypt, decrypt
 from app.models.organization import FeatureFlag, OrganizationFeatureFlag
 
 logger = get_logger(__name__)
@@ -90,6 +91,8 @@ def get_feature_config(
 ) -> dict | None:
     """Get the configuration for a feature flag.
 
+    API keys are automatically decrypted before being returned.
+
     Args:
         db: Database session
         organization_id: Keycloak organization UUID
@@ -104,7 +107,22 @@ def get_feature_config(
     ).first()
 
     if feature and feature.config:
-        return feature.config
+        config = feature.config.copy()
+        # Decrypt API key if present
+        if config.get("api_key"):
+            try:
+                config["api_key"] = decrypt(config["api_key"])
+            except Exception as e:
+                logger.error(
+                    "Failed to decrypt API key",
+                    extra={
+                        "organization_id": organization_id,
+                        "flag": flag.value,
+                        "error": str(e),
+                    },
+                )
+                config["api_key"] = None
+        return config
     return None
 
 
@@ -119,6 +137,7 @@ def enable_feature(
 
     Creates or updates the feature flag record with enabled=True.
     If config is provided, it is merged with existing config to preserve api_key.
+    API keys are automatically encrypted before storage.
 
     Args:
         db: Database session
@@ -134,6 +153,11 @@ def enable_feature(
         OrganizationFeatureFlag.organization_id == organization_id,
         OrganizationFeatureFlag.flag == flag,
     ).first()
+
+    # Encrypt API key if present in config
+    if config and config.get("api_key"):
+        config = config.copy()
+        config["api_key"] = encrypt(config["api_key"])
 
     if feature:
         feature.enabled = True
@@ -226,6 +250,7 @@ def update_feature_config(
 
     Auto-enables flag if config contains valid api_key (>= 9 chars).
     Auto-disables flag if config api_key is removed/empty/too short.
+    API keys are automatically encrypted before storage.
 
     Args:
         db: Database session
@@ -246,8 +271,11 @@ def update_feature_config(
     api_key = config.get("api_key")
     has_api_key = api_key is not None and len(api_key.strip()) > 0
 
-    # Clear invalid api_key
-    if api_key is not None and not has_api_key:
+    # Encrypt or clear api_key
+    config = config.copy()
+    if has_api_key:
+        config["api_key"] = encrypt(api_key)
+    elif api_key is not None:
         config["api_key"] = ""
 
     if feature:
