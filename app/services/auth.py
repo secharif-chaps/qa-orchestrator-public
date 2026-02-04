@@ -131,14 +131,9 @@ class KeycloakService:
                 username = payload.get("preferred_username")
                 sub = payload.get("sub")
                 
-                # Extract roles
+                # Extract roles from JWT - roles come ONLY from Keycloak
                 realm_access = payload.get("realm_access", {})
-                roles = realm_access.get("roles", ["user"])
-
-                # Ensure admin role is properly assigned
-                if username == "admin":
-                    if "admin" not in roles:
-                        roles.append("admin")
+                roles = realm_access.get("roles", [])
 
                 return TokenData(
                     username=username,
@@ -159,11 +154,10 @@ class KeycloakService:
                 if userinfo:
                     username = userinfo.get("preferred_username")
                     sub = userinfo.get("sub")
-                    
-                    # Check if user is admin (you can customize this logic)
-                    roles = ["user"]
-                    if username == "admin":
-                        roles.append("admin")
+
+                    # Roles from userinfo fallback - limited info available
+                    # For full role info, JWT decoding should succeed
+                    roles = []
 
                     return TokenData(
                         username=username,

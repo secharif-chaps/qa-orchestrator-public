@@ -32,7 +32,7 @@ class GatewayUser(BaseModel):
     sub: str
     preferred_username: Optional[str] = None
     email: Optional[str] = None
-    realm_access: Optional[dict] = None
+    realm_access: Optional[dict[str, Any]] = None
     organization: Optional[Any] = None
 
 
@@ -184,7 +184,7 @@ def extract_organization_info(user: GatewayUser) -> tuple[str, str]:
     return "", ""
 
 
-def build_internal_headers(user: Optional[GatewayUser]) -> dict:
+def build_internal_headers(user: Optional[GatewayUser]) -> dict[str, str]:
     """
     Build internal request headers with signed JWT.
 
