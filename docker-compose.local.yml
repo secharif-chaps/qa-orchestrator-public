@@ -52,6 +52,10 @@ services:
       KEYCLOAK_ADMIN_CLIENT_SECRET: chapsmind-admin-secret
       # Translation API (runs in backend via BackgroundTasks)
       SYSTRAN_API_KEY: ${SYSTRAN_API_KEY}
+      # Internal JWT for gateway communication (local dev secret)
+      INTERNAL_JWT_SECRET: "local-dev-internal-jwt-secret-32chars"
+      # Allow Docker network IPs for internal auth
+      INTERNAL_ALLOWED_IPS: "172.16.0.0/12,192.168.0.0/16,10.0.0.0/8"
     volumes:
       # Mount local code for hot-reload
       - ../back/app:/app/app
@@ -81,3 +85,46 @@ services:
       context: ../back
       dockerfile: Dockerfile
     image: mint-back:local
+
+  # Global Service (Gateway) - Proxies /api requests to backend monolith
+  global-service:
+    build:
+      context: ../global-service
+      dockerfile: Dockerfile
+    image: global-service:local
+    ports:
+      - "8001:8001"      # REST API (Gateway)
+      - "50051:50051"    # gRPC server
+    depends_on:
+      db:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    environment:
+      LOG_LEVEL: INFO
+      SERVICE_NAME: global-service
+      API_HOST: "0.0.0.0"
+      API_PORT: 8001
+      GRPC_PORT: 50051
+      # Gateway proxies to the monolith backend (internal Docker network)
+      BACKEND_BASE_URL: http://backend:8000
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/global_db
+      CORS_ORIGIN: http://localhost:3000,http://localhost:8001
+      # Local Keycloak settings
+      KEYCLOAK_SERVER_URL: http://keycloak:8080
+      KEYCLOAK_REALM: chapsmind
+      KEYCLOAK_CLIENT_ID: chapsmind-screen-back
+      KEYCLOAK_CLIENT_SECRET: chapsmind-screen-back-secret
+      KEYCLOAK_ADMIN_CLIENT_ID: chapsmind-admin
+      KEYCLOAK_ADMIN_CLIENT_SECRET: chapsmind-admin-secret
+      # Internal JWT for service-to-service communication (same as backend)
+      INTERNAL_JWT_SECRET: "local-dev-internal-jwt-secret-32chars"
+    volumes:
+      # Hot reload
+      - ../global-service/app:/app/app
+      - ../global-service/protos:/app/protos
+      - ../global-service/alembic:/app/alembic
+      - ../global-service/alembic.ini:/app/alembic.ini
+      - ../global-service/tests:/app/tests
+    networks:
+      - mint-network
