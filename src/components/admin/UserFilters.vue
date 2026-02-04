@@ -1,14 +1,26 @@
 <template>
   <div>
     <div class="flex items-center gap-4">
-      <!-- Search Input -->
-      <Searchbar
-        id="user-search"
-        :model-value="search"
-        :placeholder="$t('admin.users.search.placeholder', 'Search by username or email...')"
-        @update:model-value="handleSearchInput"
-        class="w-96"
-      />
+      <!-- Search Input with Clear Button -->
+      <div class="relative w-96">
+        <Searchbar
+          ref="searchbarRef"
+          id="user-search"
+          :model-value="search"
+          :placeholder="$t('admin.users.search.placeholder', 'Search by username or email...')"
+          @update:model-value="handleSearchInput"
+          class="w-full"
+        />
+        <button
+          v-if="search"
+          type="button"
+          class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-5 h-5 text-secondary hover:text-primary transition-colors"
+          :aria-label="$t('admin.users.search.clear', 'Clear search')"
+          @click="handleClearSearch"
+        >
+          <Icon icon="fa fa-times" class="text-secondary" />
+        </button>
+      </div>
 
       <!-- Sort Dropdown -->
       <Dropdown align="right" width="md">
@@ -55,8 +67,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { Button, Searchbar } from '@owlint/feathers-vue'
+import { computed, ref } from 'vue'
+import { Button, Icon, Searchbar } from '@owlint/feathers-vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
 import DropdownDivider from '@/components/ui/DropdownDivider.vue'
@@ -69,6 +81,9 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+// Template ref to access Searchbar's focus method
+const searchbarRef = ref<InstanceType<typeof Searchbar> | null>(null)
 
 const emit = defineEmits<{
   'update:search': [value: string]
@@ -88,6 +103,12 @@ const sortLabel = computed(() => {
 // Event handlers
 const handleSearchInput = (value: string | number) => {
   emit('update:search', String(value))
+}
+
+const handleClearSearch = () => {
+  emit('update:search', '')
+  // Refocus the search input after clearing
+  searchbarRef.value?.focus()
 }
 
 const selectSort = (sort: AdminUserQueryParams['sort'], close: () => void) => {
