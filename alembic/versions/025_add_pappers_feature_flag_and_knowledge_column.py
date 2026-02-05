@@ -1,3 +1,14 @@
+"""Add pappers to featureflag enum and companies table
+
+Revision ID: 025
+Revises: 024
+Create Date: 2026-02-05
+
+This migration adds the 'pappers' value to the featureflag PostgreSQL enum type
+and adds the raw_pappers_knowledge column to the companies table.
+The PAPPERS feature flag allows organizations to configure a Pappers API key
+for enriching company data with French business registry information.
+"""
 import sqlalchemy as sa
 
 from alembic import op
