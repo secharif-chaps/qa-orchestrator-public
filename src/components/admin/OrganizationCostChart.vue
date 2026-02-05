@@ -1,25 +1,25 @@
 <template>
   <div class="bg-base-100 rounded-lg border border-primary-stroke p-6">
-    <h3 class="text-lg font-semibold mb-4">Workspace Cost Distribution</h3>
+    <h3 class="text-lg font-semibold mb-4">{{ t('admin.costChart.title') }}</h3>
 
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
         <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">Loading chart data...</p>
+        <p class="text-sm text-secondary">{{ t('admin.costChart.loading') }}</p>
       </div>
     </div>
 
     <div v-else-if="error" class="flex justify-center py-12">
       <div class="text-center">
         <i class="fa fa-exclamation-triangle text-2xl text-error mb-2"></i>
-        <p class="text-sm text-error">Failed to load chart data</p>
+        <p class="text-sm text-error">{{ t('admin.costChart.error') }}</p>
       </div>
     </div>
 
     <div v-else-if="!data?.workspaces.length" class="flex justify-center py-12">
       <div class="text-center">
         <i class="fa fa-chart-pie text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">No workspace data available</p>
+        <p class="text-sm text-secondary">{{ t('admin.costChart.noData') }}</p>
       </div>
     </div>
 
@@ -49,9 +49,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Doughnut } from 'vue-chartjs'
 import type { WorkspaceCostResponse } from '@/api/cost-analysis'
+
+const { t } = useI18n()
 
 // Register ChartJS components
 ChartJS.register(ArcElement, Tooltip, Legend)
@@ -120,10 +123,10 @@ const chartOptions = computed(() => ({
 
           return [
             `${workspace.workspace_name}`,
-            `Cost: $${workspace.total_cost.toFixed(4)}`,
-            `Percentage: ${percentage}%`,
-            `Tasks: ${workspace.task_count}`,
-            `Companies: ${workspace.company_count}`,
+            `${t('admin.costChart.tooltip.cost')}: $${workspace.total_cost.toFixed(4)}`,
+            `${t('admin.costChart.tooltip.percentage')}: ${percentage}%`,
+            `${t('admin.costChart.tooltip.tasks')}: ${workspace.task_count}`,
+            `${t('admin.costChart.tooltip.companies')}: ${workspace.company_count}`,
           ]
         },
       },

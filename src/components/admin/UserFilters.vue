@@ -71,6 +71,9 @@ import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
 import DropdownDivider from '@/components/ui/DropdownDivider.vue'
 import type { AdminUserQueryParams } from '@/types/admin-user'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   search: string
@@ -90,8 +93,8 @@ const emit = defineEmits<{
 
 const sortLabel = computed(() => {
   const sortLabels: Record<AdminUserQueryParams['sort'], string> = {
-    username: 'Username',
-    created_at: 'Created Date',
+    username: t('admin.users.sort.username'),
+    created_at: t('admin.users.sort.createdDate'),
   }
   const orderText = props.order === 'asc' ? 'A-Z' : 'Z-A'
   return `${sortLabels[props.sort]} (${orderText})`

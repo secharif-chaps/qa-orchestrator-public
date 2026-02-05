@@ -3,9 +3,9 @@
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 class="text-3xl font-bold">Usage Dashboard</h1>
+        <h1 class="text-3xl font-bold">{{ $t('admin.usage.title', 'Usage Dashboard') }}</h1>
         <p class="text-secondary mt-1">
-          View application usage metrics across all organizations
+          {{ $t('admin.usage.description', 'View application usage metrics across all organizations') }}
         </p>
       </div>
       <UsageTimeRangeToggle
@@ -18,10 +18,10 @@
     <Alert
       v-if="error"
       variant="danger"
-      title="Error Loading Data"
+      :title="$t('admin.usage.error.title', 'Error Loading Data')"
       :description="errorMessage"
       icon="fa-exclamation-triangle"
-      action="Retry"
+      :action="$t('admin.usage.error.retry', 'Retry')"
       @click="refetch"
     />
 
@@ -76,6 +76,7 @@ meta:
  * Data is filtered by a configurable time range (7D, 30D, 90D, All time).
  */
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useQuery } from '@pinia/colada'
 import { Alert } from '@owlint/feathers-vue'
 import { usageStatsQuery } from '@/queries/admin-usage'
@@ -84,6 +85,8 @@ import UsageKpiGrid from '@/components/admin/usage/UsageKpiGrid.vue'
 import UsageLineChart from '@/components/admin/usage/UsageLineChart.vue'
 import UsageStackedBarChart from '@/components/admin/usage/UsageStackedBarChart.vue'
 import OrganizationUsageTable from '@/components/admin/usage/OrganizationUsageTable.vue'
+
+const { t } = useI18n()
 
 /** Type for time range key */
 type TimeRangeKey = '7d' | '30d' | '90d' | 'all'
@@ -160,11 +163,12 @@ const { data, isLoading, error, refetch } = useQuery(usageStatsQuery, () => ({
  * Handles various error types safely.
  */
 const errorMessage = computed((): string => {
-  if (!error.value) return 'Failed to load usage statistics'
+  const defaultMessage = t('admin.usage.error.message', 'Failed to load usage statistics')
+  if (!error.value) return defaultMessage
   if (error.value instanceof Error) return error.value.message
   if (typeof error.value === 'object' && 'message' in error.value) {
     return String((error.value as { message: unknown }).message)
   }
-  return 'Failed to load usage statistics'
+  return defaultMessage
 })
 </script>

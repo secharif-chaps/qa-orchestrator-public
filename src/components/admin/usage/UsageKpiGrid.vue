@@ -2,7 +2,7 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
     <!-- Companies Created KPI -->
     <StatCard
-      title="Companies Created"
+      :title="t('admin.usage.kpi.companiesCreated', 'Companies Created')"
       :value="formattedCompaniesCount"
       icon="building"
       color="indigo"
@@ -11,7 +11,7 @@
 
     <!-- Task Success Rate KPI -->
     <StatCard
-      title="Task Success Rate"
+      :title="t('admin.usage.kpi.taskSuccessRate', 'Task Success Rate')"
       :value="formattedSuccessRate"
       icon="check-circle"
       color="green"
@@ -20,7 +20,7 @@
 
     <!-- Active Users KPI -->
     <StatCard
-      title="Active Users"
+      :title="t('admin.usage.kpi.activeUsers', 'Active Users')"
       :value="formattedActiveUsers"
       icon="users"
       color="purple"
@@ -30,9 +30,9 @@
     <!-- Azure Cost placeholder KPI -->
     <div class="opacity-50">
       <StatCard
-        title="Azure Cost"
-        value="Coming Soon"
-        subtitle="Phase 2 feature"
+        :title="t('admin.usage.kpi.azureCost', 'Azure Cost')"
+        :value="t('common.comingSoon', 'Coming soon')"
+        :subtitle="t('admin.usage.kpi.phase2Feature', 'Phase 2 feature')"
         icon="dollar-sign"
         color="orange"
         :loading="loading"
@@ -54,8 +54,11 @@
  * Uses the existing StatCard component for consistent styling.
  */
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import StatCard from '@/components/dashboard/StatCard.vue'
 import type { UsageStats } from '@/types/usage'
+
+const { t } = useI18n()
 
 interface Props {
   /** Usage statistics data from the API */

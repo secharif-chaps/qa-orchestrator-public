@@ -17,9 +17,9 @@
 
       <p class="text-secondary text-sm flex-grow">
         <span v-if="loading" class="flex items-center gap-2">
-          <span>Loading...</span>
+          <span>{{ t('common.loading') }}</span>
         </span>
-        <p v-if="disabled" class="text-secondary">Coming soon</p>
+        <p v-if="disabled" class="text-secondary">{{ t('common.comingSoon') }}</p>
 
         <span v-else>{{ description }}</span>
       </p>
@@ -28,6 +28,10 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+
 defineProps({
   title: {
     type: String,

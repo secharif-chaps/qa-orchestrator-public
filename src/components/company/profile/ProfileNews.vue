@@ -9,7 +9,7 @@
         <RouterLink :to="`/companies/${companyId}/press`">
           <Button
             variant="tertiary"
-            label="View All"
+            :label="$t('profile.sections.news.viewAll', 'View All')"
             icon="fa fa-arrow-right"
             icon-position="right"
             size="sm"
@@ -21,31 +21,31 @@
       <div v-if="hasAnyPressData" class="grid grid-cols-2 gap-2">
         <div v-if="totalPressItems > 0" class="bg-base-200 rounded p-3">
           <div class="text-2xl font-bold text-secondary">{{ totalPressItems }}</div>
-          <div class="text-xs text-secondary">Total Press Items</div>
+          <div class="text-xs text-secondary">{{ $t('profile.sections.news.stats.totalPressItems', 'Total Press Items') }}</div>
         </div>
         <div v-if="company?.press?.financial_news?.length" class="bg-base-200 rounded p-3">
           <div class="text-2xl font-bold text-secondary">
             {{ company.press.financial_news.length }}
           </div>
-          <div class="text-xs text-secondary">Financial News</div>
+          <div class="text-xs text-secondary">{{ $t('profile.sections.news.stats.financialNews', 'Financial News') }}</div>
         </div>
         <div v-if="company?.press?.media_mentions?.length" class="bg-base-200 rounded p-3">
           <div class="text-2xl font-bold text-secondary">
             {{ company.press.media_mentions.length }}
           </div>
-          <div class="text-xs text-secondary">Media Mentions</div>
+          <div class="text-xs text-secondary">{{ $t('profile.sections.news.stats.mediaMentions', 'Media Mentions') }}</div>
         </div>
         <div v-if="company?.press?.product_launches?.length" class="bg-base-200 rounded p-3">
           <div class="text-2xl font-bold text-secondary">
             {{ company.press.product_launches.length }}
           </div>
-          <div class="text-xs text-secondary">Product Launches</div>
+          <div class="text-xs text-secondary">{{ $t('profile.sections.news.stats.productLaunches', 'Product Launches') }}</div>
         </div>
       </div>
 
       <!-- Latest Press Items Preview -->
       <div v-if="latestPressItems.length > 0" class="space-y-2">
-        <h4 class="text-sm font-medium text-secondary">Latest Updates</h4>
+        <h4 class="text-sm font-medium text-secondary">{{ $t('profile.sections.news.latestUpdates', 'Latest Updates') }}</h4>
         <div class="space-y-2">
           <div
             v-for="item in latestPressItems"

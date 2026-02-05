@@ -1,7 +1,7 @@
 <template>
   <div>
     <label class="block text-sm font-medium mb-2">
-      {{ $t('folder.form.color', 'Color') }}
+      {{ $t('folder.form.color') }}
     </label>
     <div class="relative">
       <button
@@ -10,7 +10,7 @@
         @click="showDropdown = !showDropdown"
       >
         <div class="w-6 h-6 rounded-lg" :class="getColorPreviewClasses()"></div>
-        <span class="flex-1 text-left capitalize">{{ selectedColor }}</span>
+        <span class="flex-1 text-left">{{ t(`folder.form.colors.${selectedColor}`) }}</span>
         <i class="fas fa-chevron-down text-secondary"></i>
       </button>
 
@@ -33,7 +33,7 @@
               selectedColor === color ? 'border-primary' : 'border-transparent',
             ]"
             @click="selectColor(color)"
-            :title="color"
+            :title="t(`folder.form.colors.${color}`)"
           ></button>
         </div>
       </div>
@@ -43,6 +43,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   modelValue: string

@@ -118,7 +118,7 @@
     <div v-else-if="error" class="max-w-5xl mx-auto">
       <Alert
         variant="danger"
-        title="Unable to load token history"
+        :title="$t('tokens.history.errorTitle')"
         :description="errorMessage"
         icon="fa-exclamation-triangle"
       />

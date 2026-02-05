@@ -50,7 +50,7 @@
             </div>
             <div>
               <h3 class="text-lg font-semibold">{{ org.name }}</h3>
-              <p class="text-sm text-secondary">{{ org.description || 'No description' }}</p>
+              <p class="text-sm text-secondary">{{ org.description || $t('organization.noDescription', 'No description') }}</p>
               <p class="text-xs text-secondary mt-1">ID: {{ org.id }}</p>
             </div>
           </div>

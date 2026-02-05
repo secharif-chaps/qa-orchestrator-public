@@ -146,6 +146,9 @@ import { ref, computed } from 'vue'
 import type { TeamMemberListItem } from '@/types/team'
 import { Alert, Button } from '@owlint/feathers-vue'
 import { useResetMemberPassword } from '@/mutations/team'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   member: TeamMemberListItem
@@ -201,32 +204,32 @@ function generatePassword() {
 // Validate password
 function validatePassword(): boolean {
   if (!password.value) {
-    error.value = 'Password is required'
+    error.value = t('common.validation.password.required')
     return false
   }
 
   if (password.value.length < 8) {
-    error.value = 'Password must be at least 8 characters'
+    error.value = t('common.validation.password.minLength')
     return false
   }
 
   if (!/[A-Z]/.test(password.value)) {
-    error.value = 'Password must contain at least one uppercase letter'
+    error.value = t('common.validation.password.uppercase')
     return false
   }
 
   if (!/[a-z]/.test(password.value)) {
-    error.value = 'Password must contain at least one lowercase letter'
+    error.value = t('common.validation.password.lowercase')
     return false
   }
 
   if (!/[0-9]/.test(password.value)) {
-    error.value = 'Password must contain at least one number'
+    error.value = t('common.validation.password.number')
     return false
   }
 
   if (!/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password.value)) {
-    error.value = 'Password must contain at least one special character'
+    error.value = t('common.validation.password.specialChar')
     return false
   }
 

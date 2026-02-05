@@ -1,12 +1,12 @@
 <template>
   <div class="bg-base-100 rounded-lg border border-primary-stroke p-6">
-    <h3 class="text-lg font-semibold mb-4">Companies Over Time</h3>
+    <h3 class="text-lg font-semibold mb-4">{{ t('admin.usage.lineChart.title') }}</h3>
 
     <!-- Loading state -->
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
         <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">Loading chart data...</p>
+        <p class="text-sm text-secondary">{{ t('admin.usage.lineChart.loading', 'Loading chart data...') }}</p>
       </div>
     </div>
 
@@ -18,7 +18,7 @@
     >
       <div class="text-center">
         <i class="fa fa-chart-line text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">No company data for selected period</p>
+        <p class="text-sm text-secondary">{{ t('admin.usage.lineChart.noData', 'No company data for selected period') }}</p>
       </div>
     </div>
 
@@ -43,6 +43,7 @@
  * - Formatted date labels
  */
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -56,6 +57,8 @@ import {
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 import type { TimeSeriesDataPoint } from '@/types/usage'
+
+const { t } = useI18n()
 
 // Register Chart.js components (including Filler for area fill)
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
@@ -147,7 +150,7 @@ const chartData = computed(() => {
     labels: filledData.map((point) => formatDate(point.period)),
     datasets: [
       {
-        label: 'Companies Created',
+        label: t('admin.usage.lineChart.label'),
         data: filledData.map((point) => point.count),
         borderColor: primaryColor,
         backgroundColor: primaryColorAlpha,
@@ -187,7 +190,7 @@ const chartOptions = computed(() => ({
         },
         label: (context: { parsed: { y: number } }) => {
           const count = context.parsed.y
-          return `${count} ${count === 1 ? 'company' : 'companies'} created`
+          return t('admin.usage.lineChart.tooltip', { count }, count)
         },
       },
     },

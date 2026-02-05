@@ -44,7 +44,7 @@
             <span>{{ $t('team.hierarchy.title', 'Organization Chart') }}</span>
           </h3>
           <div class="flex items-center gap-2">
-            <Tag variant="info" label="Interactive" size="xs" rounded />
+            <Tag variant="info" :label="$t('team.hierarchy.interactive')" size="xs" rounded />
             <Button
               @click="doScreenshot"
               variant="tertiary"

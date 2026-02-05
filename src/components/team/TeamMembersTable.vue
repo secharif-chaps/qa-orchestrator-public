@@ -64,22 +64,6 @@
       </td>
     </template>
 
-    <!-- Empty state -->
-    <template #empty>
-      <div class="p-12 text-center">
-        <i class="fa fa-users text-5xl text-secondary/30 mb-4"></i>
-        <h3 class="text-lg font-semibold mb-2">
-          {{ $t('settings.team.empty.title', 'No team members found') }}
-        </h3>
-        <p class="text-secondary">
-          {{
-            hasSearch
-              ? $t('settings.team.empty.searchDescription', 'Try a different search term')
-              : $t('settings.team.empty.description', 'No team members in your organization')
-          }}
-        </p>
-      </div>
-    </template>
   </Table>
 </template>
 
@@ -98,7 +82,6 @@ import type { TeamMemberListItem, PermissionTier } from '@/types/team'
 interface Props {
   members: TeamMemberListItem[]
   canManageTeam: boolean
-  hasSearch: boolean
 }
 
 defineProps<Props>()

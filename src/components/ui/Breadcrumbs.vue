@@ -9,7 +9,7 @@
             class="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
           >
             <i class="fa fa-home text-lg" aria-hidden="true"></i>
-            <span class="sr-only">Home</span>
+            <span class="sr-only">{{ t('sidebar.home') }}</span>
           </RouterLink>
         </div>
       </li>
@@ -68,7 +68,9 @@
  * - /admin/organizations → 🏠 Home > Adminorganizationaces
  * - /settings/appearance → 🏠 Home > Settings > Appearance
  */
+import { useI18n } from 'vue-i18n'
 import { useBreadcrumbs } from '@/composables/useBreadcrumbs'
 
+const { t } = useI18n()
 const { breadcrumbs } = useBreadcrumbs()
 </script>

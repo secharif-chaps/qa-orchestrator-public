@@ -8,7 +8,7 @@
       @click="toggleDropdown"
     >
       <i class="fa fa-plus text-xs"></i>
-      <span>{{ $t('chapse.addCompany', 'Add company') }}</span>
+      <span>{{ $t('sidebar.chapse.addCompany', 'Add company') }}</span>
       <span v-if="showLimit" class="text-sage-400">({{ contextCount }}/{{ maxCompanies }})</span>
     </button>
 
@@ -34,7 +34,7 @@
               ref="searchInputRef"
               v-model="searchQuery"
               type="text"
-              :placeholder="$t('chapse.searchCompanies', 'Search companies...')"
+              :placeholder="$t('sidebar.chapse.searchCompanies', 'Search companies...')"
               class="w-full pl-7 pr-2 py-1.5 bg-sage-900 rounded-lg text-xs text-sage-100 placeholder-sage-500 focus:outline-none focus:ring-2 focus:ring-primary/50"
               @input="handleSearch"
             />
@@ -54,7 +54,7 @@
             class="py-4 px-2 text-center"
           >
             <p class="text-xs text-sage-400">
-              {{ $t('chapse.noCompaniesFound', 'No companies found') }}
+              {{ $t('sidebar.chapse.noCompaniesFound', 'No companies found') }}
             </p>
           </div>
 
@@ -64,7 +64,7 @@
             class="py-4 px-2 text-center"
           >
             <p class="text-xs text-sage-400">
-              {{ $t('chapse.typeToSearch', 'Type to search companies') }}
+              {{ $t('sidebar.chapse.typeToSearch', 'Type to search companies') }}
             </p>
           </div>
 

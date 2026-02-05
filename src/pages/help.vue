@@ -176,7 +176,7 @@ watch(selectedSection, async (newSection) => {
       selectedSectionContent.value = marked(content)
     } catch (error) {
       console.error('Error loading help content:', error)
-      selectedSectionContent.value = '<p>Error loading help content.</p>'
+      selectedSectionContent.value = `<p>${t('help.error.loadingContent', 'Error loading help content.')}</p>`
     }
   } else {
     selectedSectionContent.value = ''

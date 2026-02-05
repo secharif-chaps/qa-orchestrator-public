@@ -8,7 +8,7 @@
             {{ $t('tokens.management', 'Token Management') }}
           </h2>
           <p class="text-secondary mt-1">
-            {{ $t('tokens.managementDescription', 'Manage your organization token balance') }}
+            {{ $t('tokens.managementDescription', 'Manage organization credits') }}
           </p>
         </div>
 
@@ -17,7 +17,7 @@
           icon="fa fa-refresh"
           :loading="isRefreshing"
           :disabled="isRefreshing"
-          :title="$t('tokens.refresh', 'Refresh token balance')"
+          :title="$t('tokens.refresh', 'Refresh')"
           icon-only
           @click="handleRefresh"
         />
@@ -27,7 +27,7 @@
       <div v-if="isLoading" class="text-center p-8">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
         <p class="text-secondary">
-          {{ $t('tokens.loading', 'Loading token balance...') }}
+          {{ $t('tokens.loading', 'Loading tokens...') }}
         </p>
       </div>
 
@@ -35,7 +35,7 @@
       <Alert
         v-else-if="error"
         variant="danger"
-        title="Error"
+        :title="$t('common.error', 'Error')"
         :description="errorMessage"
       />
 
@@ -50,7 +50,7 @@
               </div>
               <div>
                 <p class="text-sm text-secondary mb-1">
-                  {{ $t('tokens.globalBalance', 'Organization Token Balance') }}
+                  {{ $t('tokens.globalBalance', 'Global Balance') }}
                 </p>
                 <div class="flex items-baseline gap-2">
                   <span class="text-4xl font-bold text-primary">
@@ -88,7 +88,7 @@
           <!-- Quick Add Buttons -->
           <div class="flex flex-col gap-3">
             <label class="text-sm font-medium text-secondary">
-              {{ $t('tokens.quickAdd', 'Quick Add (by company count)') }}
+              {{ $t('tokens.quickAdd', 'Quick Add') }}
             </label>
             <div class="flex flex-wrap items-center gap-2">
               <Button
@@ -98,7 +98,7 @@
                 size="sm"
                 :loading="addTokensMutation.isLoading.value && pendingAmount === amount.tokens"
                 :disabled="addTokensMutation.isLoading.value"
-                :label="`${amount.companies} screens (${amount.tokens.toLocaleString()})`"
+                :label="$t('tokens.screensWithTokens', { count: amount.companies, tokens: amount.tokens.toLocaleString() })"
                 @click="handleQuickAdd(amount.tokens)"
               />
             </div>
@@ -115,7 +115,7 @@
                 id="custom-amount-input"
                 v-model="customAmount"
                 type="number"
-                :placeholder="$t('tokens.enterAmount', 'Enter token amount...')"
+                :placeholder="$t('tokens.enterAmount', 'Enter amount')"
                 :min="1"
                 :max="100000"
                 :disabled="addTokensMutation.isLoading.value"
@@ -131,7 +131,7 @@
               />
             </div>
             <p class="text-xs text-secondary">
-              {{ $t('tokens.addHelper', 'Enter the number of tokens to add, or use quick-add buttons above.') }}
+              {{ $t('tokens.addHelper', 'Enter a custom amount of credits to add') }}
             </p>
           </div>
         </div>
@@ -142,11 +142,14 @@
 
 <script setup lang="ts">
 import { computed, ref, inject } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useQuery } from '@pinia/colada'
 import { Alert, Button, Input } from '@owlint/feathers-vue'
 import Card from '@/components/ui/Card.vue'
 import { organizationBalanceQuery } from '@/queries/tokens'
 import { useAddGlobalTokens } from '@/mutations/tokens'
+
+const { t } = useI18n()
 
 // Token cost per company creation
 const TOKENS_PER_COMPANY = 35
@@ -180,7 +183,7 @@ const errorMessage = computed(() => {
   if (typeof err === 'string') return err
   if (err instanceof Error) return err.message
   if (typeof err === 'object' && 'message' in err) return String((err as { message: unknown }).message)
-  return 'An error occurred'
+  return t('common.genericError')
 })
 
 const balance = computed(() => balanceData.value?.balance ?? 0)

@@ -9,7 +9,7 @@
     >
       <div class="flex gap-4 items-center">
         <i class="fa fa-chevrons-right cursor-pointer icon-secondary" @click="$emit('hide')"></i>
-        <span class="text-sm">Ask our AI</span>
+        <span class="text-sm">{{ t('company.chat.askOurAi') }}</span>
       </div>
       <div class="absolute h-6 w-full bg-gradient-to-b from-bg1 to-transparent -bottom-6">
         <!-- <i class="fa fa-up-right-and-down-left-from-center"></i> -->
@@ -40,7 +40,7 @@
       </div>
       <div v-if="isLoading">
         <div class="text-xs p-4 inline-block rounded-xl bg-base-300 mr-auto">
-          <i class="fa fa-spinner fa-spin"></i> Thinking...
+          <i class="fa fa-spinner fa-spin"></i> {{ t('company.chat.thinking') }}
         </div>
       </div>
     </div>
@@ -48,7 +48,7 @@
       <textarea
         @keyup.enter="sendMessage"
         v-model="question"
-        placeholder="Write a message..."
+        :placeholder="t('company.chat.placeholder')"
         class="w-full bg-base-300 dark:bg-slate-900 border border-primary-stroke dark:border-slate-700 rounded-lg p-2 text-sm focus-within:outline-primary"
         :class="isFloating ? 'h-20' : 'h-32'"
         @keydown.enter.ctrl.prevent="sendMessage"
@@ -75,6 +75,9 @@ import { Button } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { ref, nextTick, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   isFloating?: boolean
@@ -88,7 +91,7 @@ const route = useRoute()
 // Chat state
 const messages = ref([
   {
-    text: 'Hello! I am Basil, your assistant. I can help you with questions about this company. What would you like to know?',
+    text: t('company.chat.welcomeMessage'),
     from: 'ai',
   },
 ])
@@ -150,7 +153,7 @@ const sendMessage = async () => {
 
     // Parse the response to extract actual content from stringified format
     let responseText =
-      response.response || "I received your message but couldn't generate a response."
+      response.response || t('company.chat.noResponse')
 
     // Check if response contains stringified JSON with 'output' field
     if (
@@ -178,7 +181,7 @@ const sendMessage = async () => {
   } catch (error) {
     console.error('Error sending message to backend:', error)
     messages.value.push({
-      text: 'Sorry, I encountered an error processing your request. Please try again.',
+      text: t('company.chat.errorMessage'),
       from: 'ai',
     })
   } finally {

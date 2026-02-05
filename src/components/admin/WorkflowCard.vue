@@ -80,7 +80,7 @@
             <Button
               variant="primary"
               icon="fa fa-save"
-              label="Save"
+              :label="t('admin.workflowCard.save', 'Save')"
               size="sm"
               :loading="loading"
               :disabled="!hasChanges"
@@ -89,7 +89,7 @@
             <Button
               variant="secondary"
               icon="fa fa-times"
-              label="Cancel"
+              :label="t('admin.workflowCard.cancel', 'Cancel')"
               size="sm"
               :disabled="loading"
               @click="cancelEdit"
@@ -107,7 +107,7 @@
   >
     <div class="text-center text-secondary/60">
       <i class="fa fa-edit text-2xl mb-2"></i>
-      <p class="text-sm">Editing...</p>
+      <p class="text-sm">{{ $t('admin.workflowCard.editing') }}</p>
     </div>
   </div>
 
@@ -170,9 +170,12 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { WorkflowConfig } from '@/api/workflows'
 import Tag from '@/components/ui/Tag.vue'
 import { Button, Input } from '@owlint/feathers-vue'
+
+const { t } = useI18n()
 
 interface Props {
   workflow: WorkflowConfig
@@ -235,7 +238,7 @@ const statusConfig = computed(() => {
   if (hasApiKey) {
     return {
       variant: 'success' as const,
-      label: 'Active',
+      label: t('admin.workflows.status.active', 'Active'),
       badgeIcon: 'fa fa-check',
       iconBg: 'bg-success/10 group-hover:bg-success/20',
       iconColor: 'text-success',
@@ -244,7 +247,7 @@ const statusConfig = computed(() => {
 
   return {
     variant: 'slate' as const,
-    label: 'Not Configured',
+    label: t('admin.workflows.status.notConfigured', 'Not Configured'),
     badgeIcon: 'fa fa-times',
     iconBg: 'bg-slate/10 group-hover:bg-slate/20',
     iconColor: 'text-secondary',

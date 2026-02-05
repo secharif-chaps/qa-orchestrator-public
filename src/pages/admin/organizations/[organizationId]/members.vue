@@ -8,7 +8,7 @@
             {{ $t('organization.detail.members', 'Members') }}
           </h2>
           <p class="text-secondary mt-1">
-            {{ $t('organization.membersDescription', 'Manage users in this organization') }}
+            {{ $t('organization.membersDescription', 'Manage organization members and their access') }}
           </p>
         </div>
         <div class="flex gap-2">
@@ -41,7 +41,7 @@
       <Alert
         v-else-if="usersError"
         variant="danger"
-        title="Error"
+        :title="$t('common.error', 'Error')"
         :description="errorMessage"
       />
 
@@ -65,7 +65,7 @@
             {{ $t('user.empty.title', 'No users found') }}
           </h3>
           <p class="text-secondary mb-6">
-            {{ $t('user.empty.description', 'Create your first user to get started') }}
+            {{ $t('user.empty.description', 'Add your first user to this organization') }}
           </p>
           <Button
             variant="primary"
@@ -79,7 +79,7 @@
           v-if="users && users.length > 0 && paginationMeta"
           v-model:current-page="currentPage"
           :meta="paginationMeta"
-          item-name="members"
+          :item-name="$t('organization.detail.members', 'Members').toLowerCase()"
           class="mt-4"
           @update-per-page="updatePageSize"
         />

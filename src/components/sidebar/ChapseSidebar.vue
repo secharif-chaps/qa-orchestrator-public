@@ -29,21 +29,21 @@
             variant="tertiary"
             :icon="sidebarStore.isFullscreen ? 'fa-solid fa-compress' : 'fa-solid fa-expand'"
             size="sm"
-            :title="sidebarStore.isFullscreen ? $t('chapse.exitFullscreen', 'Exit fullscreen') : $t('chapse.enterFullscreen', 'Enter fullscreen')"
+            :title="sidebarStore.isFullscreen ? $t('sidebar.chapse.exitFullscreen', 'Exit fullscreen') : $t('sidebar.chapse.enterFullscreen', 'Enter fullscreen')"
             @click="toggleFullscreen"
           />
           <Button
             variant="tertiary"
             icon="fa-solid fa-plus"
             size="sm"
-            :title="$t('chapse.newConversation', 'New conversation')"
+            :title="$t('sidebar.chapse.newConversation', 'New conversation')"
             @click="handleNewConversation"
           />
           <Button
             variant="tertiary"
             icon="fa-solid fa-trash"
             size="sm"
-            :title="$t('chapse.clearHistory', 'Clear history')"
+            :title="$t('sidebar.chapse.clearHistory', 'Clear history')"
             @click="handleClearHistory"
           />
         </div>
@@ -60,9 +60,9 @@
         >
           <i class="fa fa-building text-sage-400 text-sm"></i>
           <span class="text-sm text-sage-200">
-            {{ $t('chapse.addThisCompany', 'Add') }}
+            {{ $t('sidebar.chapse.addThisCompany', 'Add') }}
             <strong>{{ availablePageContext.name }}</strong>
-            {{ $t('chapse.toContext', 'to context') }}
+            {{ $t('sidebar.chapse.toContext', 'to context') }}
           </span>
           <i class="fa fa-plus text-sage-400 text-xs ml-auto"></i>
         </button>
@@ -80,7 +80,7 @@
         >
           <img :src="withBody" class="w-32 h-32" alt="Chaps-e" />
           <p class="text-sage-300 text-center max-w-xs">
-            {{ $t('chapse.welcomeMessage', 'Hello! I\'m Chaps-e, your AI assistant. How can I help you today?') }}
+            {{ $t('sidebar.chapse.welcomeMessage', 'Hello! I\'m Chaps-e, your AI assistant. How can I help you today?') }}
           </p>
 
           <!-- Suggestions -->
@@ -111,7 +111,7 @@
             </div>
             <div class="bg-sage-800 text-sage-200 text-sm rounded-xl px-4 py-3">
               <i class="fa fa-circle fa-beat text-primary text-xs mr-2"></i>
-              {{ $t('chapse.thinking', 'Thinking...') }}
+              {{ $t('sidebar.chapse.thinking', 'Thinking...') }}
             </div>
           </div> -->
         </template>
@@ -137,6 +137,7 @@
 <script setup lang="ts">
 import { ref, watch, nextTick, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useChapseChat, type CompanyContext } from '@/composables/useChapseChat'
 import { useChapseContext } from '@/composables/useChapseContext'
 import { useSidebarStore } from '@/stores/sidebar'
@@ -281,6 +282,9 @@ const chapseStore = useChapseStore()
 // Router
 const route = useRoute()
 
+// i18n
+const { t } = useI18n()
+
 // Chat composable
 const {
   messages,
@@ -385,8 +389,8 @@ async function handleSelectConversation(conversationId: string) {
   await loadConversation(conversationId)
 }
 
-async function handleDeleteConversation(conversationId: string) {
-  if (confirm('Are you sure you want to delete this conversation?')) {
+const handleDeleteConversation = async (conversationId: string) => {
+  if (confirm(t('sidebar.chapse.confirmDeleteConversation', 'Are you sure you want to delete this conversation?'))) {
     await deleteConversation(conversationId)
   }
 }
@@ -399,8 +403,8 @@ async function handleLoadMoreConversations() {
   await loadConversations(false)
 }
 
-function handleClearHistory() {
-  if (confirm('Are you sure you want to clear all messages?')) {
+const handleClearHistory = () => {
+  if (confirm(t('sidebar.chapse.confirmClearMessages', 'Are you sure you want to clear all messages?'))) {
     clearHistory()
   }
 }

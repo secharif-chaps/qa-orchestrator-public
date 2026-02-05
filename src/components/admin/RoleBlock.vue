@@ -14,8 +14,8 @@
       </div>
 
       <div class="flex-1">
-        <h3 class="font-semibold text-base">{{ role.name }}</h3>
-        <p class="text-sm text-secondary">{{ role.description }}</p>
+        <h3 class="font-semibold text-base">{{ $t(`admin.permissions.roles.${role.id}.name`) }}</h3>
+        <p class="text-sm text-secondary">{{ $t(`admin.permissions.roles.${role.id}.description`) }}</p>
       </div>
 
       <i v-if="selected" class="fa fa-circle-check text-primary size-6 flex-shrink-0"></i>

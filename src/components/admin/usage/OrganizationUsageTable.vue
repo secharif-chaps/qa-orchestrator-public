@@ -2,7 +2,7 @@
   <div class="bg-base-100 rounded-lg border border-primary-stroke">
     <!-- Header -->
     <div class="px-6 py-4 border-b border-primary-stroke">
-      <h3 class="text-lg font-semibold">Organization Breakdown</h3>
+      <h3 class="text-lg font-semibold">{{ t('admin.usage.table.title') }}</h3>
     </div>
 
     <!-- Loading state -->
@@ -24,7 +24,7 @@
     >
       <div class="text-center">
         <i class="fa fa-database text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">No organization data for selected period</p>
+        <p class="text-sm text-secondary">{{ t('admin.usage.table.noData', 'No organization data for selected period') }}</p>
       </div>
     </div>
 
@@ -34,13 +34,13 @@
         <thead class="bg-base-200">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase">
-              Organization
+              {{ t('admin.usage.table.organization') }}
             </th>
             <th
               class="px-6 py-3 text-right text-xs font-medium text-secondary uppercase cursor-pointer hover:bg-base-300 transition-colors"
               @click="toggleSort('companies_count')"
             >
-              Companies Created
+              {{ t('admin.usage.table.companiesCreated') }}
               <i
                 class="fa ml-1 text-xs"
                 :class="getSortIcon('companies_count')"
@@ -50,7 +50,7 @@
               class="px-6 py-3 text-right text-xs font-medium text-secondary uppercase cursor-pointer hover:bg-base-300 transition-colors"
               @click="toggleSort('percentage')"
             >
-              % of Total
+              {{ t('admin.usage.table.percentOfTotal') }}
               <i
                 class="fa ml-1 text-xs"
                 :class="getSortIcon('percentage')"
@@ -80,8 +80,11 @@
  * for rendering individual rows.
  */
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { OrganizationBreakdown } from '@/types/usage'
 import OrganizationUsageRow from './OrganizationUsageRow.vue'
+
+const { t } = useI18n()
 
 interface Props {
   /** Organization breakdown data */

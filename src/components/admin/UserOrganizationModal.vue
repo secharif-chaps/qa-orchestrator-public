@@ -49,7 +49,7 @@
 
           <!-- Current Organization -->
           <div v-if="currentOrganization" class="mt-3 pt-3 border-t border-primary-stroke">
-            <div class="text-xs text-secondary mb-1">Current organization:</div>
+            <div class="text-xs text-secondary mb-1">{{ $t('admin.userOrganization.currentOrganization', 'Current organization:') }}</div>
             <div class="flex items-center gap-2">
               <span
                 class="text-sm bg-primary-light text-primary-light-content border border-primary-stroke px-2 py-1 rounded"
@@ -59,7 +59,7 @@
             </div>
           </div>
           <div v-else class="mt-3 pt-3 border-t border-primary-stroke">
-            <div class="text-xs text-secondary italic">No organization assigned</div>
+            <div class="text-xs text-secondary italic">{{ $t('admin.userOrganization.noOrganization', 'No organization assigned') }}</div>
           </div>
         </div>
 
@@ -97,7 +97,7 @@
                       v-if="organization.id === currentOrganization?.id"
                       class="text-xs text-secondary"
                     >
-                      (current)
+                      {{ $t('admin.userOrganization.current', '(current)') }}
                     </span>
                   </div>
                   <div v-if="organization.description" class="text-sm text-secondary mt-1">
@@ -113,7 +113,7 @@
             <!-- Empty state -->
             <div v-if="organizations.length === 0" class="text-center py-8">
               <i class="fa fa-building text-4xl text-secondary/50 mb-2"></i>
-              <p class="text-sm text-secondary">No organizations available</p>
+              <p class="text-sm text-secondary">{{ $t('admin.userOrganization.noOrganizationsAvailable', 'No organizations available') }}</p>
             </div>
           </div>
         </div>
@@ -123,7 +123,7 @@
           v-if="currentOrganization && selectedOrganizationId !== currentOrganization.id"
           variant="warning"
           :title="$t('admin.users.modal.warning.title', 'Organization Change')"
-          :description="$t('admin.users.modal.warning.message', `Changing this user's organization will move them to the new organization. Their data will remain in the original organization.`)"
+          :description="$t('admin.users.modal.warning.message', 'Changing this user\'s organization will move them to the new organization. Their data will remain in the original organization.')"
           icon="fa-info-circle"
           class="mb-4"
         />
@@ -144,8 +144,8 @@
               isAssigning
                 ? $t('admin.users.modal.assigning', 'Assigning...')
                 : currentOrganization
-                  ? $t('admin.users.modal.changeOrganization', 'Change Organization')
-                  : $t('admin.users.modal.assignOrganization', 'Assign Organization')
+                  ? $t('admin.users.modal.changeOrganization', 'Change User Organization')
+                  : $t('admin.users.modal.assignOrganization', 'Assign User to Organization')
             "
             :loading="isAssigning"
             :disabled="isAssigning || selectedOrganizationId === null || selectedOrganizationId === currentOrganization?.id"

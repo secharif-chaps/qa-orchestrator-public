@@ -34,7 +34,7 @@
               <UiTag
                 v-if="folder.is_owner && !hasShares"
                 variant="slate"
-                label="Private"
+                :label="$t('folder.privacy.private')"
                 size="xs"
                 rounded
               />
@@ -42,7 +42,7 @@
                 v-else-if="hasShares"
                 variant="info"
                 icon="fa fa-share-nodes"
-                label="Shared"
+                :label="$t('folder.privacy.shared')"
                 size="xs"
                 rounded
               />
@@ -73,7 +73,7 @@
             {{ ownerInitials }}
           </div>
           <span class="text-sm text-secondary">
-            {{ folder.is_owner ? 'You' : folder.owner_username }}
+            {{ folder.is_owner ? $t('folder.owner.you') : folder.owner_username }}
           </span>
         </div>
 

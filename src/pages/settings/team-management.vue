@@ -37,22 +37,37 @@
 
       <!-- Team Members Table -->
       <template v-else>
-        <TeamMembersTable
-          :members="teamMembers"
-          :can-manage-team="canManageTeam"
-          :has-search="!!searchQuery"
-          @update-permissions="handleUpdatePermissions"
-          @reset-password="openResetPasswordModal"
-        />
+        <!-- Empty state -->
+        <div v-if="teamMembers.length === 0" class="p-12 text-center">
+          <i class="fa fa-users text-5xl text-secondary/30 mb-4"></i>
+          <h3 class="text-lg font-semibold mb-2">
+            {{ t('settings.team.empty.title', 'No team members found') }}
+          </h3>
+          <p class="text-secondary">
+            {{
+              searchQuery
+                ? t('settings.team.empty.searchDescription', 'Try a different search term')
+                : t('settings.team.empty.description', 'No team members in your organization')
+            }}
+          </p>
+        </div>
 
-        <!-- Pagination -->
-        <div v-if="teamMembers.length > 0 && paginationMeta">
+        <template v-else>
+          <TeamMembersTable
+            :members="teamMembers"
+            :can-manage-team="canManageTeam"
+            @update-permissions="handleUpdatePermissions"
+            @reset-password="openResetPasswordModal"
+          />
+
+          <!-- Pagination -->
           <Pagination
+            v-if="paginationMeta"
             v-model:current-page="currentPage"
             :meta="paginationMeta"
             item-name="members"
           />
-        </div>
+        </template>
       </template>
 
       <!-- Reset Password Modal -->

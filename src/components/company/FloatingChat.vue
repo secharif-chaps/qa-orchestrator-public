@@ -32,10 +32,10 @@
             ></span>
           </div>
           <div>
-            <h3 class="font-semibold">Basil AI Assistant</h3>
+            <h3 class="font-semibold">{{ t('company.chat.assistant.name') }}</h3>
             <p class="text-xs text-white/80 flex items-center gap-1">
               <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-              Online & ready to help
+              {{ t('company.chat.assistant.online') }}
             </p>
           </div>
         </div>
@@ -77,7 +77,7 @@
           class="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse"
         ></span>
       </div>
-      <span class="text-sm font-medium">Basil AI</span>
+      <span class="text-sm font-medium">{{ t('company.chat.assistant.shortName') }}</span>
       <i class="fa fa-chevron-up text-xs"></i>
     </div>
   </Transition>
@@ -87,7 +87,9 @@
 import Chat from '@/components/company/Chat.vue'
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const route = useRoute()
 const companyId = computed(() => route.params.companyId as string)
 
