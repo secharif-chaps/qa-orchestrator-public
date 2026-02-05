@@ -343,10 +343,20 @@ def get_idp() -> FastAPIKeycloak:
 
 
 class _LazyIdp:
-    """Lazy proxy for FastAPIKeycloak that initializes on first use."""
+    """Lazy proxy for FastAPIKeycloak that initializes on first use.
+
+    This proxy delays Keycloak initialization until a method is actually CALLED,
+    not just accessed. This allows module-level code like:
+        dependency = idp.get_current_user(extra_fields=[...])
+    to work without triggering Keycloak connection at import time.
+    The actual connection happens when FastAPI invokes the dependency at request time.
+    """
 
     def __getattr__(self, name):
-        return getattr(get_idp(), name)
+        # Return a wrapper that defers get_idp() until the method is called
+        def lazy_method_wrapper(*args, **kwargs):
+            return getattr(get_idp(), name)(*args, **kwargs)
+        return lazy_method_wrapper
 
 
 # Initialize FastAPIKeycloak client lazily
