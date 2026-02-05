@@ -992,6 +992,9 @@ export default {
       },
     },
     users: {
+      search: {
+        placeholder: 'Search by username, name, email or organization...',
+      },
       assignOrganization: {
         success: 'Organization assigned successfully!',
         error: 'Failed to assign organization',

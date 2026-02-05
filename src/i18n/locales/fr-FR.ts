@@ -1036,6 +1036,9 @@ export default {
       },
     },
     users: {
+      search: {
+        placeholder: 'Rechercher par nom d\'utilisateur, nom, email ou organisation...',
+      },
       assignOrganization: {
         success: 'Organisation assignée avec succès !',
         error: 'Échec de l\'assignation de l\'organisation',
