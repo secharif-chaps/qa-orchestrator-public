@@ -6,7 +6,6 @@
         v-for="module in visibleModules"
         :key="module.name"
         hoverable
-        clickable
         :disabled="module.soon"
         class="flex flex-col"
       >
@@ -102,12 +101,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { Tag, Button, Badge } from '@owlint/feathers-vue'
-import Card from '../ui/Card.vue'
 import type { FeatureFlagConfig } from '@/types/feature-flags'
+import { Badge, Button, Tag } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import Card from '../ui/Card.vue'
 
 interface Module {
   name: string
@@ -126,16 +124,13 @@ interface Props {
   featureFlags?: FeatureFlagConfig[]
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  featureFlags: () => [],
-})
+const { featureFlags = [] } = defineProps<Props>()
 
-const router = useRouter()
 const { t } = useI18n()
 
 // Find the discover feature flag
 const discoverFlag = computed(() =>
-  props.featureFlags.find((f) => f.flag === 'discover'),
+  featureFlags.find((f) => f.flag === 'discover'),
 )
 
 // Check if discover is enabled and has a URL
