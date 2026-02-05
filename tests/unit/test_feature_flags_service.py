@@ -1,4 +1,3 @@
-import pytest
 from app.models.organization import FeatureFlag, OrganizationFeatureFlag
 from app.services.feature_flags import (
     update_feature_config,

@@ -1,5 +1,5 @@
-from app.models.organization import FeatureFlag, OrganizationFeatureFlag
 from app.models.company import Company
+from app.models.organization import FeatureFlag, OrganizationFeatureFlag
 
 
 class TestPappersFeatureFlag:

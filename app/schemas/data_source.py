@@ -1,7 +1,8 @@
 """Pydantic schemas for data source configuration."""
 
-from pydantic import BaseModel
 from typing import Optional
+
+from pydantic import BaseModel
 
 
 class DataSourceConfigRequest(BaseModel):

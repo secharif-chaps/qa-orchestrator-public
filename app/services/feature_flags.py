@@ -17,10 +17,11 @@ Example usage:
 """
 
 from datetime import datetime, timezone
+
 from sqlalchemy.orm import Session
 
+from app.core.encryption import decrypt, encrypt
 from app.core.logging_config import get_logger
-from app.core.encryption import encrypt, decrypt
 from app.models.organization import FeatureFlag, OrganizationFeatureFlag
 
 logger = get_logger(__name__)
