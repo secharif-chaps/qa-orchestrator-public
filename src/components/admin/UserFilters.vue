@@ -1,14 +1,24 @@
 <template>
   <div>
     <div class="flex items-center gap-4">
-      <!-- Search Input -->
+      <!-- Search Input with Clear Button -->
       <Searchbar
+        ref="searchbar"
         id="user-search"
         :model-value="search"
         :placeholder="$t('admin.users.search.placeholder', 'Search by username or email...')"
         @update:model-value="handleSearchInput"
         class="w-96"
-      />
+      >
+        <Button
+          v-if="search"
+          icon="fa-close"
+          kind="gray"
+          size="sm"
+          :aria-label="$t('admin.users.search.clear', 'Clear search')"
+          @click="handleClearSearch"
+        />
+      </Searchbar>
 
       <!-- Sort Dropdown -->
       <Dropdown align="right" width="md">
@@ -55,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useTemplateRef } from 'vue'
 import { Button, Searchbar } from '@owlint/feathers-vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
@@ -69,6 +79,8 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const searchbarRef = useTemplateRef('searchbar')
 
 const emit = defineEmits<{
   'update:search': [value: string]
@@ -88,6 +100,12 @@ const sortLabel = computed(() => {
 // Event handlers
 const handleSearchInput = (value: string | number) => {
   emit('update:search', String(value))
+}
+
+const handleClearSearch = () => {
+  emit('update:search', '')
+  // Refocus the search input after clearing
+  searchbarRef.value?.focus()
 }
 
 const selectSort = (sort: AdminUserQueryParams['sort'], close: () => void) => {
