@@ -139,12 +139,18 @@ def extract_organization_from_validated_user(user: OIDCUser) -> tuple[str, str] 
     Returns:
         Tuple of (organization_id, organization_name) if found, None otherwise
     """
-    return _parse_organization_claim(user.organization)
+    # fastapi-keycloak puts custom claims in extra_fields
+    organization_claim = user.extra_fields.get("organization")
+    return _parse_organization_claim(organization_claim)
 
 
 def _get_current_user_dependency():
-    """Wrapper to lazily get the Keycloak user dependency."""
-    return idp.get_current_user()
+    """Wrapper to lazily get the Keycloak user dependency.
+
+    This function defers the call to idp.get_current_user() until request time,
+    avoiding Keycloak initialization at module import time.
+    """
+    return idp.get_current_user(extra_fields=["organization", "enabled_modules"])
 
 
 def get_user_organization(
@@ -157,10 +163,10 @@ def get_user_organization(
     access. It extracts the organization UUID and name from the already-validated
     OIDCUser object (validated by fastapi-keycloak via the dependency chain).
 
-    SECURITY NOTE: We use user.organization directly from the validated OIDCUser
+    SECURITY NOTE: We use user.extra_fields from the validated OIDCUser
     instead of re-decoding the JWT token. This is safer because:
     1. The token has already been cryptographically verified by fastapi-keycloak
-    2. The claims are extracted during that validation and stored in user object
+    2. The claims are extracted during that validation and stored in extra_fields
     3. No risk of accidentally using this with an unvalidated token
 
     Args:
@@ -173,10 +179,10 @@ def get_user_organization(
     Raises:
         HTTPException: 403 Forbidden if user has no organization assignment
     """
-    # Use the organization claim from the already-validated OIDCUser object
-    # The token was validated by fastapi-keycloak in the dependency chain
-    # (idp.get_current_user() verifies the JWT signature before returning the user)
-    if not user.organization:
+    # Get organization from extra_fields (fastapi-keycloak puts custom claims there)
+    organization_claim = user.extra_fields.get("organization")
+
+    if not organization_claim:
         logger.error(
             "User has no organization assignment",
             extra={
@@ -198,7 +204,7 @@ def get_user_organization(
             extra={
                 "user": user.preferred_username,
                 "user_id": user.sub,
-                "organization_claim": user.organization
+                "organization_claim": organization_claim
             }
         )
         raise HTTPException(
@@ -208,10 +214,13 @@ def get_user_organization(
 
     org_id, org_name = org_info
 
+    # Get enabled_modules from extra_fields
+    enabled_modules = user.extra_fields.get("enabled_modules") or []
+
     return OrganizationContext(
         organization_id=org_id,
         organization_name=org_name,
         user_id=user.sub,
         username=user.preferred_username,
-        enabled_modules=user.enabled_modules or []
+        enabled_modules=enabled_modules
     )

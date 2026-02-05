@@ -7,6 +7,7 @@ from app.core.config import settings
 from app.core.logging_config import setup_logging, get_logger
 from app.core.keycloak import get_idp
 from app.database import engine
+from app.api import api_router
 from app.grpc_server import create_grpc_server
 from app.proxy.client import get_proxy_client, close_proxy_client
 from app.proxy.routes import router as proxy_router
@@ -91,6 +92,10 @@ def health_ready():
     except Exception:
         return {"status": "not_ready"}
 
+
+# Register token API endpoints - these are handled locally by global-service
+# Must be registered BEFORE proxy router so they're matched first
+app.include_router(api_router, prefix="/api")
 
 # Register proxy router - forwards all /api/* requests to the backend monolith
 # This MUST be registered last to act as a catch-all for /api/* routes
