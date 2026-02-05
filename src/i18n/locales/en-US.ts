@@ -383,12 +383,12 @@ export default {
     fields: {
       companyName: {
         label: 'Company name',
-        placeholder: 'Sephora',
+        placeholder: 'ChapsVision',
         error: 'Company name must be at least 2 characters long',
       },
       website: {
         label: 'Website',
-        placeholder: 'https://www.sephora.fr',
+        placeholder: 'https://www.chapsvision.com',
         error: 'Please enter a valid URL (e.g., https://www.example.com)',
       },
     },
