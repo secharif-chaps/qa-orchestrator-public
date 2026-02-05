@@ -1196,6 +1196,57 @@ class KeycloakAdminService:
             logger.error(f"Error removing user from organization: {e}")
             return False
 
+    async def search_organizations(self, search: str) -> List[Dict[str, Any]]:
+        """
+        Search organizations by name using Keycloak's native search API.
+
+        Args:
+            search: Search string to match against organization names
+
+        Returns:
+            List of matching organization dictionaries from Keycloak
+        """
+        try:
+            from urllib.parse import quote
+            encoded_search = quote(search.strip())
+            endpoint = f"/organizations?search={encoded_search}"
+
+            logger.info(
+                "Searching organizations in Keycloak",
+                extra={"search": search, "endpoint": endpoint}
+            )
+
+            response = await self._make_admin_request("GET", endpoint)
+
+            if response.status_code == 200:
+                orgs = response.json()
+                logger.info(
+                    "Successfully searched organizations",
+                    extra={"result_count": len(orgs), "search": search}
+                )
+                return orgs
+            else:
+                logger.error(
+                    "Failed to search organizations",
+                    extra={
+                        "status_code": response.status_code,
+                        "response_text": response.text[:500]
+                    }
+                )
+                return []
+
+        except Exception as e:
+            logger.error(
+                "Exception while searching organizations",
+                exc_info=True,
+                extra={
+                    "search": search,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e)
+                }
+            )
+            return []
+
     async def get_organizations(self) -> List[Dict[str, Any]]:
         """
         Get all organizations from Keycloak.

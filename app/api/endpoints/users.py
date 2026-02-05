@@ -4,7 +4,10 @@ This module provides endpoints for managing users across all organizations.
 Requires admin.organizations role for access.
 """
 
-from typing import Optional, List, Dict, Any
+import asyncio
+import time
+from typing import Optional, List, Dict, Any, Tuple
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_keycloak import OIDCUser
 from pydantic import BaseModel, field_validator
@@ -21,6 +24,77 @@ from app.core.logging_config import get_logger
 
 router = APIRouter(prefix="/users", tags=["users"])
 logger = get_logger(__name__)
+
+
+def _transform_kc_user(kc_user: Dict[str, Any]) -> Dict[str, Any]:
+    """Transform a Keycloak user dict into the API response format."""
+    return {
+        "user_id": kc_user.get("id"),
+        "username": kc_user.get("username"),
+        "email": kc_user.get("email"),
+        "first_name": kc_user.get("firstName"),
+        "last_name": kc_user.get("lastName"),
+        "status": "active" if kc_user.get("enabled", True) else "revoked",
+        "created_at": str(kc_user.get("createdTimestamp", 0)),
+    }
+
+
+def _sort_users(users: List[Dict[str, Any]], sort: str, order: str) -> None:
+    """Sort users list in place by the given field and order."""
+    reverse = order.lower() == "desc"
+    if sort == "username":
+        users.sort(key=lambda u: (u["username"] or "").lower(), reverse=reverse)
+    elif sort == "created_at":
+        users.sort(key=lambda u: int(u["created_at"]), reverse=reverse)
+
+
+async def _search_users_with_org(
+    search: str,
+) -> List[Dict[str, Any]]:
+    """Search users by name/email/username AND by organization name.
+
+    Runs Keycloak user search and organization search in parallel,
+    then merges and deduplicates the results.
+    """
+    kc_users, matching_orgs = await asyncio.gather(
+        keycloak_admin_service.search_users(search=search, first=0, max_results=500),
+        keycloak_admin_service.search_organizations(search),
+    )
+
+    # Collect user IDs already found to avoid duplicates
+    seen_user_ids = {u.get("id") for u in kc_users}
+
+    # Fetch members of all matching organizations in parallel
+    if matching_orgs:
+        org_member_tasks = [
+            keycloak_admin_service.get_organization_members(
+                org.get("id"), first=0, max_results=500
+            )
+            for org in matching_orgs
+            if org.get("id")
+        ]
+        if org_member_tasks:
+            org_member_results = await asyncio.gather(*org_member_tasks)
+            for members in org_member_results:
+                for member in members:
+                    member_id = member.get("id")
+                    if member_id and member_id not in seen_user_ids:
+                        seen_user_ids.add(member_id)
+                        kc_users.append(member)
+
+    return kc_users
+
+
+async def _list_users_paginated(
+    first: int,
+    limit: int,
+) -> Tuple[List[Dict[str, Any]], int]:
+    """List users without search using Keycloak's native pagination."""
+    total = await keycloak_admin_service.count_users_with_search(None)
+    kc_users = await keycloak_admin_service.search_users(
+        search=None, first=first, max_results=limit
+    )
+    return kc_users, total
 
 
 class AssignOrganizationRequest(BaseModel):
@@ -85,24 +159,23 @@ class ResetPasswordRequest(BaseModel):
 async def get_all_users(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
     limit: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
-    search: Optional[str] = Query(None, description="Search by username or email"),
+    search: Optional[str] = Query(None, description="Search by username, name, email or organization"),
     sort: str = Query('created_at', description="Sort field: username, created_at"),
     order: str = Query('desc', description="Sort order: asc or desc"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
 ):
     """Get all users with search and pagination using Keycloak's native API.
 
-    This endpoint is optimized for performance by using Keycloak's native search
-    and pagination instead of fetching all users. Organization and permissions
-    are NOT included in the response - use the dedicated endpoints to fetch
-    those on-demand.
+    This endpoint searches across username, email, first name, last name (via
+    Keycloak's native search) and organization name (by fetching members of
+    matching organizations and merging results).
 
     Requires admin.organizations role for access.
 
     Args:
         page: Page number (1-indexed)
         limit: Items per page (max 100)
-        search: Search by username, email, first name, or last name (native Keycloak search)
+        search: Search by username, email, first name, last name, or organization name
         sort: Field to sort by (username, created_at)
         order: Sort order (asc or desc)
 
@@ -112,11 +185,10 @@ async def get_all_users(
     Raises:
         HTTPException 500: If Keycloak API call fails
     """
-    import time
     start_time = time.time()
 
     logger.info(
-        "Listing all users (optimized)",
+        "Listing all users",
         extra={
             "admin_user": user.preferred_username,
             "page": page,
@@ -128,45 +200,26 @@ async def get_all_users(
     )
 
     try:
-        # Calculate pagination offset (0-indexed for Keycloak)
-        first = (page - 1) * limit
+        if search and search.strip():
+            # Hybrid search: Keycloak native + organization members
+            kc_users = await _search_users_with_org(search)
+            users_data = [_transform_kc_user(u) for u in kc_users]
+            _sort_users(users_data, sort, order)
+            total = len(users_data)
+            first_idx = (page - 1) * limit
+            users_data = users_data[first_idx:first_idx + limit]
+        else:
+            # No search: use Keycloak's native pagination directly
+            first = (page - 1) * limit
+            kc_users, total = await _list_users_paginated(first, limit)
+            users_data = [_transform_kc_user(u) for u in kc_users]
+            _sort_users(users_data, sort, order)
 
-        # Get total count with search filter (uses native Keycloak count)
-        total = await keycloak_admin_service.count_users_with_search(search)
-
-        # Fetch users using native Keycloak search and pagination
-        kc_users = await keycloak_admin_service.search_users(
-            search=search,
-            first=first,
-            max_results=limit
-        )
-
-        # Transform Keycloak users to response format (no permissions, no organization)
-        users_data: List[Dict[str, Any]] = []
-        for kc_user in kc_users:
-            users_data.append({
-                "user_id": kc_user.get("id"),
-                "username": kc_user.get("username"),
-                "email": kc_user.get("email"),
-                "first_name": kc_user.get("firstName"),
-                "last_name": kc_user.get("lastName"),
-                "status": "active" if kc_user.get("enabled", True) else "revoked",
-                "created_at": str(kc_user.get("createdTimestamp", 0)),
-            })
-
-        # Sort users (Keycloak doesn't support all sort options natively)
-        reverse = order.lower() == "desc"
-        if sort == "username":
-            users_data.sort(key=lambda u: (u["username"] or "").lower(), reverse=reverse)
-        elif sort == "created_at":
-            users_data.sort(key=lambda u: int(u["created_at"]), reverse=reverse)
-
-        # Calculate pagination metadata
         total_pages = (total + limit - 1) // limit if total > 0 else 1
 
         elapsed_time = time.time() - start_time
         logger.info(
-            "Retrieved users successfully (optimized)",
+            "Retrieved users successfully",
             extra={
                 "total": total,
                 "page": page,
