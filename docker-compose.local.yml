@@ -56,6 +56,8 @@ services:
       INTERNAL_JWT_SECRET: "local-dev-internal-jwt-secret-32chars"
       # Allow Docker network IPs for internal auth
       INTERNAL_ALLOWED_IPS: "172.16.0.0/12,192.168.0.0/16,10.0.0.0/8"
+      # Encryption KEY
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
     volumes:
       # Mount local code for hot-reload
       - ../back/app:/app/app

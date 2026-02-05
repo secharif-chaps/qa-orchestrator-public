@@ -52,6 +52,8 @@ services:
       INTERNAL_JWT_SECRET: ${INTERNAL_JWT_SECRET}
       # Optional: IP allowlist for internal auth (comma-separated CIDR)
       INTERNAL_ALLOWED_IPS: ${INTERNAL_ALLOWED_IPS:-}
+      # Encryption KEY
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
     networks:
       - mint-network
 
