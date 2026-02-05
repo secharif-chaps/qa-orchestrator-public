@@ -139,23 +139,34 @@ def extract_organization_from_validated_user(user: OIDCUser) -> tuple[str, str] 
     Returns:
         Tuple of (organization_id, organization_name) if found, None otherwise
     """
-    # fastapi-keycloak puts custom claims in extra_fields
-    organization_claim = user.extra_fields.get("organization")
+    # fastapi-keycloak puts custom claims in extra_fields when using
+    # idp.get_current_user(extra_fields=["organization"]).
+    # For direct OIDCUser construction (e.g., tests), the field may be
+    # stored as a direct attribute due to pydantic's extra="allow" config.
+    organization_claim = user.extra_fields.get("organization") if user.extra_fields else None
+    if organization_claim is None:
+        organization_claim = getattr(user, "organization", None)
     return _parse_organization_claim(organization_claim)
 
 
-def _get_current_user_dependency():
-    """Wrapper to lazily get the Keycloak user dependency.
+def _create_user_dependency():
+    """Create the Keycloak user dependency with extra fields.
 
-    This function defers the call to idp.get_current_user() until request time,
-    avoiding Keycloak initialization at module import time.
+    This function is called at import time but only creates the dependency.
+    The actual Keycloak token validation happens at request time.
     """
     return idp.get_current_user(extra_fields=["organization", "enabled_modules"])
 
 
+# Create the dependency once at module level - this is safe because
+# idp.get_current_user() only creates a dependency function, it doesn't
+# actually connect to Keycloak until a request is made.
+_keycloak_user_dependency = _create_user_dependency()
+
+
 def get_user_organization(
     request: Request,
-    user: OIDCUser = Depends(_get_current_user_dependency)
+    user: OIDCUser = Depends(_keycloak_user_dependency)
 ) -> OrganizationContext:
     """FastAPI dependency to extract organization context from authenticated user.
 
