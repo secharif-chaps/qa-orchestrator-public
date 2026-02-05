@@ -1438,6 +1438,26 @@ export default {
       },
     },
   },
+  dataSources: {
+    title: 'Sources de données',
+    description: 'Configurer les fournisseurs de données externes pour le screening',
+    enabled: 'Activé',
+    disabled: 'Désactivé',
+    edit: 'Modifier',
+    save: 'Enregistrer',
+    cancel: 'Annuler',
+    enabledAt: 'Activé le',
+    lastUpdated: 'Dernière mise à jour',
+    apiKey: {
+      label: 'Clé API',
+      placeholder: 'Entrez la clé API...',
+      notConfigured: 'Non configurée',
+    },
+    pappers: {
+      name: 'Pappers',
+      description: 'Fournisseur de données d\'entreprises françaises (infos légales, financières, dirigeants)',
+    },
+  },
   organization: {
     admin: {
       title: 'Gestion des Espaces de Travail',
@@ -1512,6 +1532,9 @@ export default {
     delete: "Supprimer l'Espace de Travail",
     cannotDeleteDefault: "Impossible de supprimer l'espace de travail par défaut",
     clearSearch: 'Effacer la Recherche',
+    tabs: {
+      sources: "Sources"
+    }
   },
   user: {
     create: {

@@ -1,3 +1,5 @@
+import i18n from '@/i18n'
+
 /**
  * Format a timestamp as a relative time string
  * @param timestamp - ISO 8601 timestamp string or Date object
@@ -48,4 +50,34 @@ export function formatRelativeTime(timestamp: string | Date, locale: 'en' | 'fr'
   } else {
     return `${diffMonths} month${diffMonths > 1 ? 's' : ''} ago`
   }
+}
+
+/**
+ * Format a date string to localized date and time
+ * @param dateString - ISO 8601 date string
+ * @returns Localized date and time string (e.g., "Jan 15, 2024, 10:30 AM" or "15 janv. 2024, 10:30")
+ */
+export function formatDateTime(dateString: string): string {
+  if (!dateString) return i18n.global.t('common.na')
+  const localeCode = i18n.global.locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+
+  return new Date(dateString).toLocaleDateString(localeCode, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+/**
+ * Format a date string to localized date
+ * @param dateString - ISO 8601 date string
+ * @returns Localized date string (e.g., "1/15/2024" or "15/01/2024")
+ */
+export function formatDate(dateString: string): string {
+  if (!dateString) return i18n.global.t('common.na')
+  const localeCode = i18n.global.locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+
+  return new Date(dateString).toLocaleDateString(localeCode)
 }

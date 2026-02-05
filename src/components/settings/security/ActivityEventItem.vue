@@ -21,6 +21,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { formatDate } from '@/utils/time';
 import type { ActivityEvent, ActivityEventType } from '@/types/account'
 
 const props = defineProps<{
@@ -43,10 +44,5 @@ function getEventIconClass(type: ActivityEventType): string {
       // Blue/info for profile updates and other events
       return 'bg-blue-100 border border-blue-200 text-blue-600 dark:bg-blue-900/30 dark:border-blue-800 dark:text-blue-400'
   }
-}
-
-function formatDate(dateString: string): string {
-  const date = new Date(dateString)
-  return date.toLocaleString()
 }
 </script>

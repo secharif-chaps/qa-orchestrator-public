@@ -5,25 +5,9 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 import App from './App.vue'
 import router from './router'
+import i18n from './i18n'
 import '@/assets/main.css'
 
-import enUS from '@/i18n/locales/en-US'
-import frFR from '@/i18n/locales/fr-FR'
-
-const messages = {
-  'en-US': enUS,
-  'fr-FR': frFR,
-}
-
-import { createI18n } from 'vue-i18n'
-
-const i18n = createI18n({
-  legacy: false,
-  globalInjection: true,
-  locale: 'en-US',
-  fallbackLocale: 'en-US',
-  messages,
-})
 
 const app = createApp(App)
 

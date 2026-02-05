@@ -93,6 +93,7 @@ const isDiscoverFlag = computed(() => props.flag === 'discover')
 const defaultDescriptions: Record<FeatureFlagName, string> = {
   translation: 'Translate company data to other languages',
   discover: 'Access external Discover dashboard',
+  pappers: 'Fetch company data from Pappers API'
 }
 
 const defaultDescription = computed(() => defaultDescriptions[props.flag] || 'Feature functionality')

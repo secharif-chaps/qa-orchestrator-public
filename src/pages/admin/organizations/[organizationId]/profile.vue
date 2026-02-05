@@ -28,13 +28,13 @@
           <label class="block text-sm font-medium text-secondary mb-1">{{
             $t('organization.created', 'Created')
           }}</label>
-          <p class="text-base">{{ formatDate(organization.created_at) }}</p>
+          <p class="text-base">{{ formatDateTime(organization.created_at) }}</p>
         </div>
         <div v-if="organization?.updated_at">
           <label class="block text-sm font-medium text-secondary mb-1">{{
             $t('organization.updated', 'Last Updated')
           }}</label>
-          <p class="text-base">{{ formatDate(organization.updated_at) }}</p>
+          <p class="text-base">{{ formatDateTime(organization.updated_at) }}</p>
         </div>
       </div>
     </Card>
@@ -101,6 +101,7 @@ import ModuleStatusCard from '@/components/tokens/ModuleStatusCard.vue'
 import FeatureFlagCard from '@/components/tokens/FeatureFlagCard.vue'
 import { organizationModulesQuery } from '@/queries/tokens'
 import { organizationFeatureFlagsQuery } from '@/queries/feature-flags'
+import { formatDateTime } from '@/utils/time'
 import type { OrganizationAdminResponse } from '@/types/organization'
 import type { FeatureFlagName } from '@/types/feature-flags'
 
@@ -141,15 +142,4 @@ const featureFlags = computed(() => {
     config: f.config,
   }))
 })
-
-// Format date helper
-function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
 </script>
