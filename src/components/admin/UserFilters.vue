@@ -6,9 +6,9 @@
         ref="searchbar"
         id="user-search"
         :model-value="search"
-        :placeholder="$t('admin.users.search.placeholder', 'Search by username or email...')"
+        :placeholder="$t('admin.users.search.placeholder', 'Search by username, name, email or organization...')"
         @update:model-value="handleSearchInput"
-        class="w-96"
+        class="w-[28rem]"
       >
         <Button
           v-if="search"
