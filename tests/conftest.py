@@ -20,8 +20,7 @@ _mock_idp = MagicMock()
 # Patch Keycloak at the module level
 _patch_get_idp = patch("app.core.keycloak.get_idp", return_value=_mock_idp)
 _patch_init = patch(
-    "app.core.keycloak._initialize_keycloak_with_retry",
-    return_value=_mock_idp
+    "app.core.keycloak._initialize_keycloak_with_retry", return_value=_mock_idp
 )
 _patch_idp = patch("app.core.keycloak.idp", _mock_idp)
 
@@ -41,11 +40,8 @@ mock_user = OIDCUser(
     email_verified=True,
     iat=now,
     exp=now + 3600,
-    organization=[
-        "Test Org",
-        {"Test Org": {"id": "test-org-123"}}
-    ],
-    enabled_modules=["Screen", "Target"]
+    organization=["Test Org", {"Test Org": {"id": "test-org-123"}}],
+    enabled_modules=["Screen", "Target"],
 )
 
 # Make get_current_user() return a callable that returns the real OIDCUser
@@ -79,8 +75,7 @@ def pytest_configure(config):
     """Configure pytest with custom markers."""
     config.addinivalue_line(
         "markers",
-        "integration: marks tests as integration tests (require running "
-        "services)",
+        "integration: marks tests as integration tests (require running services)",
     )
 
 
@@ -120,10 +115,17 @@ def global_db_session():
     """
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
+    from sqlalchemy.pool import StaticPool
     from app.database import GlobalBase
 
     # Create in-memory SQLite database for tests
-    engine = create_engine("sqlite:///:memory:")
+    # Use check_same_thread=False to allow usage across FastAPI's thread pool
+    # Use StaticPool to ensure same connection is reused
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
 
     # Strip schema from all tables (SQLite doesn't support schemas like PostgreSQL)
     for table in GlobalBase.metadata.tables.values():
@@ -133,9 +135,7 @@ def global_db_session():
     GlobalBase.metadata.create_all(bind=engine)
 
     # Create session
-    TestingSessionLocal = sessionmaker(
-        autocommit=False, autoflush=False, bind=engine
-    )
+    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     session = TestingSessionLocal()
 
     try:

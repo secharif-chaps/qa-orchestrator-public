@@ -15,7 +15,9 @@ from app.proxy.routes import router as proxy_router
 # Initialize logging with configured level
 setup_logging(level=getattr(settings, "LOG_LEVEL", "INFO"))
 logger = get_logger(__name__)
-logger.debug(f".env file path: {os.path.abspath('.env') if os.path.exists('.env') else 'not found'}")
+logger.debug(
+    f".env file path: {os.path.abspath('.env') if os.path.exists('.env') else 'not found'}"
+)
 
 # App initialization
 app = FastAPI(
@@ -24,7 +26,9 @@ app = FastAPI(
     version="0.1.0",
 )
 # Parse CORS origins from comma-separated config (no rebuild needed to change)
-cors_origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()]
+cors_origins = [
+    origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()
+]
 logger.info(f"CORS Origins: {cors_origins}")
 logger.info(f"Backend Base URL: {settings.BACKEND_BASE_URL}")
 
@@ -39,6 +43,7 @@ app.add_middleware(
 
 # gRPC server lifecycle
 grpc_server = None
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -70,6 +75,7 @@ async def shutdown_event():
     await close_proxy_client()
     logger.info("🔌 Proxy client closed")
 
+
 # Health check endpoints
 @app.get("/health/live", tags=["health"])
 def health_live():
@@ -78,6 +84,7 @@ def health_live():
     Used to check if the service process is running.
     """
     return {"status": "alive"}
+
 
 @app.get("/health/ready", tags=["health"])
 def health_ready():

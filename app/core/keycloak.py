@@ -37,8 +37,13 @@ class OIDCUser(BaseOIDCUser):
     The organization claim format from Keycloak is:
     ["OrgName", {"OrgName": {"id": "uuid"}}]
     """
-    organization: Optional[Any] = None  # Can be list, dict, or string depending on Keycloak config
-    enabled_modules: list[str] = []  # List of enabled modules for this user's organization
+
+    organization: Optional[Any] = (
+        None  # Can be list, dict, or string depending on Keycloak config
+    )
+    enabled_modules: list[
+        str
+    ] = []  # List of enabled modules for this user's organization
 
 
 def _initialize_keycloak_with_retry(
@@ -356,6 +361,7 @@ class _LazyIdp:
         # Return a wrapper that defers get_idp() until the method is called
         def lazy_method_wrapper(*args, **kwargs):
             return getattr(get_idp(), name)(*args, **kwargs)
+
         return lazy_method_wrapper
 
 
@@ -363,13 +369,15 @@ class _LazyIdp:
 # This will be used across all routers for authentication and authorization
 idp = _LazyIdp()
 
+
 # Additional helper for client credentials (service-to-service)
 async def validate_client_token(token: str) -> dict:
     """
     Validate client credentials token via Keycloak introspection.
-    
+
     This is used for service-to-service authentication.
     """
     # This should be implemented in client_auth.py
     from app.core.client_auth import introspect_token
+
     return await introspect_token(token)

@@ -9,7 +9,6 @@ Tests the GET /organizations/{org_id}/tokens/history endpoint with:
 
 import pytest
 from datetime import datetime, timezone, timedelta
-from unittest.mock import MagicMock
 
 from app.models.organization import (
     Organization,
@@ -39,7 +38,7 @@ def test_user():
         exp=now + 3600,
         organization=["Test Org", {"Test Org": {"id": "test-org-123"}}],
         enabled_modules=["screen"],
-        roles=["company.view", "organization.read"],
+        realm_access={"roles": ["company.view", "organization.read"]},
     )
 
 
@@ -56,7 +55,7 @@ def admin_user():
         exp=now + 3600,
         organization=["Admin Org", {"Admin Org": {"id": "admin-org-456"}}],
         enabled_modules=["screen"],
-        roles=["admin.organizations"],
+        realm_access={"roles": ["admin.organizations"]},
     )
 
 
@@ -142,11 +141,8 @@ def test_get_transaction_history_success(
 ):
     """Test successfully retrieving transaction history."""
     # Mock the dependencies
-    from app.api.endpoints.tokens import (
-        get_token_manager,
-        idp,
-        get_user_organization,
-    )
+    from tests.conftest import _mock_idp
+    from app.api.endpoints.tokens import get_user_organization
     from app.core.organization import OrganizationContext
 
     # Create mock organization context
@@ -158,16 +154,17 @@ def test_get_transaction_history_success(
         enabled_modules=["screen"],
     )
 
-    # Override dependencies
-    client.app.dependency_overrides[idp.get_current_user] = (
-        lambda: lambda: test_user
+    # Override dependencies - use the actual dependency object from the mock
+    def get_test_user():
+        return test_user
+
+    client.app.dependency_overrides[_mock_idp.get_current_user.return_value] = (
+        get_test_user
     )
-    client.app.dependency_overrides[get_user_organization] = (
-        lambda: org_context
-    )
+    client.app.dependency_overrides[get_user_organization] = lambda: org_context
 
     # Make request
-    response = client.get(f"/organizations/{test_org_id}/tokens/history")
+    response = client.get(f"/api/organizations/{test_org_id}/tokens/history")
 
     assert response.status_code == 200
     data = response.json()
@@ -195,11 +192,10 @@ def test_get_transaction_history_success(
             assert current >= next_item
 
 
-def test_filter_by_transaction_type(
-    client, test_org_id, test_user, setup_test_data
-):
+def test_filter_by_transaction_type(client, test_org_id, test_user, setup_test_data):
     """Test filtering by transaction type."""
-    from app.api.endpoints.tokens import idp, get_user_organization
+    from tests.conftest import _mock_idp
+    from app.api.endpoints.tokens import get_user_organization
     from app.core.organization import OrganizationContext
 
     org_context = OrganizationContext(
@@ -210,16 +206,17 @@ def test_filter_by_transaction_type(
         enabled_modules=["screen"],
     )
 
-    client.app.dependency_overrides[idp.get_current_user] = (
-        lambda: lambda: test_user
+    def get_test_user():
+        return test_user
+
+    client.app.dependency_overrides[_mock_idp.get_current_user.return_value] = (
+        get_test_user
     )
-    client.app.dependency_overrides[get_user_organization] = (
-        lambda: org_context
-    )
+    client.app.dependency_overrides[get_user_organization] = lambda: org_context
 
     # Filter for 'consume' transactions
     response = client.get(
-        f"/organizations/{test_org_id}/tokens/history",
+        f"/api/organizations/{test_org_id}/tokens/history",
         params={"transaction_type": "consume"},
     )
 
@@ -234,11 +231,10 @@ def test_filter_by_transaction_type(
     assert data["total"] == 2
 
 
-def test_filter_by_reference_type(
-    client, test_org_id, test_user, setup_test_data
-):
+def test_filter_by_reference_type(client, test_org_id, test_user, setup_test_data):
     """Test filtering by reference type."""
-    from app.api.endpoints.tokens import idp, get_user_organization
+    from tests.conftest import _mock_idp
+    from app.api.endpoints.tokens import get_user_organization
     from app.core.organization import OrganizationContext
 
     org_context = OrganizationContext(
@@ -249,16 +245,17 @@ def test_filter_by_reference_type(
         enabled_modules=["screen"],
     )
 
-    client.app.dependency_overrides[idp.get_current_user] = (
-        lambda: lambda: test_user
+    def get_test_user():
+        return test_user
+
+    client.app.dependency_overrides[_mock_idp.get_current_user.return_value] = (
+        get_test_user
     )
-    client.app.dependency_overrides[get_user_organization] = (
-        lambda: org_context
-    )
+    client.app.dependency_overrides[get_user_organization] = lambda: org_context
 
     # Filter for 'manual' reference type
     response = client.get(
-        f"/organizations/{test_org_id}/tokens/history",
+        f"/api/organizations/{test_org_id}/tokens/history",
         params={"reference_type": "manual"},
     )
 
@@ -273,11 +270,10 @@ def test_filter_by_reference_type(
     assert data["total"] == 2
 
 
-def test_filter_by_date_range(
-    client, test_org_id, test_user, setup_test_data
-):
+def test_filter_by_date_range(client, test_org_id, test_user, setup_test_data):
     """Test filtering by date range."""
-    from app.api.endpoints.tokens import idp, get_user_organization
+    from tests.conftest import _mock_idp
+    from app.api.endpoints.tokens import get_user_organization
     from app.core.organization import OrganizationContext
 
     org_context = OrganizationContext(
@@ -288,19 +284,20 @@ def test_filter_by_date_range(
         enabled_modules=["screen"],
     )
 
-    client.app.dependency_overrides[idp.get_current_user] = (
-        lambda: lambda: test_user
+    def get_test_user():
+        return test_user
+
+    client.app.dependency_overrides[_mock_idp.get_current_user.return_value] = (
+        get_test_user
     )
-    client.app.dependency_overrides[get_user_organization] = (
-        lambda: org_context
-    )
+    client.app.dependency_overrides[get_user_organization] = lambda: org_context
 
     # Filter for last 3 days
     now = datetime.now(timezone.utc)
     date_from = now - timedelta(days=3)
 
     response = client.get(
-        f"/organizations/{test_org_id}/tokens/history",
+        f"/api/organizations/{test_org_id}/tokens/history",
         params={"date_from": date_from.isoformat()},
     )
 
@@ -312,15 +309,22 @@ def test_filter_by_date_range(
 
     # Verify all dates are after date_from
     for item in data["items"]:
-        item_date = datetime.fromisoformat(
-            item["created_at"].replace("Z", "+00:00")
-        )
+        item_date_str = item["created_at"].replace("Z", "+00:00")
+        item_date = datetime.fromisoformat(item_date_str)
+
+        # Ensure both dates are timezone-aware for comparison
+        if item_date.tzinfo is None:
+            item_date = item_date.replace(tzinfo=timezone.utc)
+        if date_from.tzinfo is None:
+            date_from = date_from.replace(tzinfo=timezone.utc)
+
         assert item_date >= date_from
 
 
 def test_pagination(client, test_org_id, test_user, setup_test_data):
     """Test pagination works correctly."""
-    from app.api.endpoints.tokens import idp, get_user_organization
+    from tests.conftest import _mock_idp
+    from app.api.endpoints.tokens import get_user_organization
     from app.core.organization import OrganizationContext
 
     org_context = OrganizationContext(
@@ -331,16 +335,17 @@ def test_pagination(client, test_org_id, test_user, setup_test_data):
         enabled_modules=["screen"],
     )
 
-    client.app.dependency_overrides[idp.get_current_user] = (
-        lambda: lambda: test_user
+    def get_test_user():
+        return test_user
+
+    client.app.dependency_overrides[_mock_idp.get_current_user.return_value] = (
+        get_test_user
     )
-    client.app.dependency_overrides[get_user_organization] = (
-        lambda: org_context
-    )
+    client.app.dependency_overrides[get_user_organization] = lambda: org_context
 
     # Page 1 with size 2
     response = client.get(
-        f"/organizations/{test_org_id}/tokens/history",
+        f"/api/organizations/{test_org_id}/tokens/history",
         params={"page": 1, "size": 2},
     )
 
@@ -355,7 +360,7 @@ def test_pagination(client, test_org_id, test_user, setup_test_data):
 
     # Page 2 with size 2
     response = client.get(
-        f"/organizations/{test_org_id}/tokens/history",
+        f"/api/organizations/{test_org_id}/tokens/history",
         params={"page": 2, "size": 2},
     )
 
@@ -370,7 +375,8 @@ def test_permission_denied_different_org(
     client, test_org_id, test_user, setup_test_data
 ):
     """Test that users cannot access other organizations' history."""
-    from app.api.endpoints.tokens import idp, get_user_organization
+    from tests.conftest import _mock_idp
+    from app.api.endpoints.tokens import get_user_organization
     from app.core.organization import OrganizationContext
 
     # Create context for a different organization
@@ -382,25 +388,25 @@ def test_permission_denied_different_org(
         enabled_modules=["screen"],
     )
 
-    client.app.dependency_overrides[idp.get_current_user] = (
-        lambda: lambda: test_user
+    def get_test_user():
+        return test_user
+
+    client.app.dependency_overrides[_mock_idp.get_current_user.return_value] = (
+        get_test_user
     )
-    client.app.dependency_overrides[get_user_organization] = (
-        lambda: org_context
-    )
+    client.app.dependency_overrides[get_user_organization] = lambda: org_context
 
     # Try to access test_org_id's history (should fail)
-    response = client.get(f"/organizations/{test_org_id}/tokens/history")
+    response = client.get(f"/api/organizations/{test_org_id}/tokens/history")
 
     assert response.status_code == 403
     assert "Access denied" in response.json()["detail"]
 
 
-def test_admin_can_access_any_org(
-    client, test_org_id, admin_user, setup_test_data
-):
+def test_admin_can_access_any_org(client, test_org_id, admin_user, setup_test_data):
     """Test that admins can access any organization's history."""
-    from app.api.endpoints.tokens import idp, get_user_organization
+    from tests.conftest import _mock_idp
+    from app.api.endpoints.tokens import get_user_organization
     from app.core.organization import OrganizationContext
 
     # Admin's own org is different
@@ -412,33 +418,33 @@ def test_admin_can_access_any_org(
         enabled_modules=["screen"],
     )
 
-    client.app.dependency_overrides[idp.get_current_user] = (
-        lambda: lambda: admin_user
+    def get_admin_user():
+        return admin_user
+
+    client.app.dependency_overrides[_mock_idp.get_current_user.return_value] = (
+        get_admin_user
     )
-    client.app.dependency_overrides[get_user_organization] = (
-        lambda: org_context
-    )
+    client.app.dependency_overrides[get_user_organization] = lambda: org_context
 
     # Admin should be able to access test_org_id's history
-    response = client.get(f"/organizations/{test_org_id}/tokens/history")
+    response = client.get(f"/api/organizations/{test_org_id}/tokens/history")
 
     assert response.status_code == 200
     data = response.json()
     assert data["total"] == setup_test_data["count"]
 
 
-def test_empty_history(client, test_user):
+def test_empty_history(client, test_user, global_db_session):
     """Test querying history for organization with no transactions."""
-    from app.api.endpoints.tokens import idp, get_user_organization
+    from tests.conftest import _mock_idp
+    from app.api.endpoints.tokens import get_user_organization
     from app.core.organization import OrganizationContext
-    from app.database import get_global_db
 
     # Create a new org with no transactions
     empty_org_id = "empty-org-789"
-    db = next(get_global_db())
     org = Organization(organization_id=empty_org_id, token_balance=0)
-    db.add(org)
-    db.commit()
+    global_db_session.add(org)
+    global_db_session.commit()
 
     org_context = OrganizationContext(
         organization_id=empty_org_id,
@@ -448,14 +454,15 @@ def test_empty_history(client, test_user):
         enabled_modules=["screen"],
     )
 
-    client.app.dependency_overrides[idp.get_current_user] = (
-        lambda: lambda: test_user
-    )
-    client.app.dependency_overrides[get_user_organization] = (
-        lambda: org_context
-    )
+    def get_test_user():
+        return test_user
 
-    response = client.get(f"/organizations/{empty_org_id}/tokens/history")
+    client.app.dependency_overrides[_mock_idp.get_current_user.return_value] = (
+        get_test_user
+    )
+    client.app.dependency_overrides[get_user_organization] = lambda: org_context
+
+    response = client.get(f"/api/organizations/{empty_org_id}/tokens/history")
 
     assert response.status_code == 200
     data = response.json()
@@ -467,7 +474,8 @@ def test_empty_history(client, test_user):
 
 def test_combined_filters(client, test_org_id, test_user, setup_test_data):
     """Test using multiple filters together."""
-    from app.api.endpoints.tokens import idp, get_user_organization
+    from tests.conftest import _mock_idp
+    from app.api.endpoints.tokens import get_user_organization
     from app.core.organization import OrganizationContext
 
     org_context = OrganizationContext(
@@ -478,16 +486,17 @@ def test_combined_filters(client, test_org_id, test_user, setup_test_data):
         enabled_modules=["screen"],
     )
 
-    client.app.dependency_overrides[idp.get_current_user] = (
-        lambda: lambda: test_user
+    def get_test_user():
+        return test_user
+
+    client.app.dependency_overrides[_mock_idp.get_current_user.return_value] = (
+        get_test_user
     )
-    client.app.dependency_overrides[get_user_organization] = (
-        lambda: org_context
-    )
+    client.app.dependency_overrides[get_user_organization] = lambda: org_context
 
     # Filter for consume transactions with company reference type
     response = client.get(
-        f"/organizations/{test_org_id}/tokens/history",
+        f"/api/organizations/{test_org_id}/tokens/history",
         params={
             "transaction_type": "consume",
             "reference_type": "company",

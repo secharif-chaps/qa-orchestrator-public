@@ -62,7 +62,9 @@ def migrate_organizations(source_session, target_session, dry_run: bool = False)
 
     # Read from source
     result = source_session.execute(
-        text("SELECT organization_id, token_balance, created_at, updated_at FROM organizations")
+        text(
+            "SELECT organization_id, token_balance, created_at, updated_at FROM organizations"
+        )
     )
     rows = result.fetchall()
     print(f"Found {len(rows)} organizations in source")
@@ -205,9 +207,7 @@ def migrate_organization_modules(source_session, target_session, dry_run: bool =
         )
         target_session.add(module)
         migrated += 1
-        print(
-            f"  [OK] Migrated: org={row.organization_id}, module={row.module_name}"
-        )
+        print(f"  [OK] Migrated: org={row.organization_id}, module={row.module_name}")
 
     return migrated
 
@@ -251,7 +251,9 @@ def migrate_organization_feature_flags(
     for row in rows:
         key = (row.organization_id, row.flag)
         if key in existing:
-            print(f"  [SKIP] Already exists: org={row.organization_id}, flag={row.flag}")
+            print(
+                f"  [SKIP] Already exists: org={row.organization_id}, flag={row.flag}"
+            )
             continue
 
         feature_flag = OrganizationFeatureFlag(

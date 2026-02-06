@@ -121,7 +121,9 @@ def get_organization_token_balance(
 def add_organization_tokens(
     org_id: str,
     request: AddTokensRequest,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
+    user: OIDCUser = Depends(
+        idp.get_current_user(required_roles=["admin.organizations"])
+    ),
     token_manager: TokenManager = Depends(get_token_manager),
 ) -> TokenBalanceResponse:
     """Add tokens to an organization's balance.
@@ -164,8 +166,7 @@ def add_organization_tokens(
 
 
 @router.get(
-    "/{org_id}/tokens/history",
-    response_model=PaginatedTokenTransactionResponse
+    "/{org_id}/tokens/history", response_model=PaginatedTokenTransactionResponse
 )
 def get_transaction_history(
     org_id: str,
