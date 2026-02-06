@@ -12,6 +12,7 @@ from app.core.organization import extract_organization_from_validated_user, Orga
 def test_1_user_jwt_validation():
     """Test 1: User JWT validation - OIDCUser model."""
     # OIDCUser from fastapi-keycloak requires iat, exp, email_verified
+    # Organization format matches Keycloak: [string_name, {name: {id: uuid}}]
     now = int(datetime.now(timezone.utc).timestamp())
     user = OIDCUser(
         sub="test-user-123",
@@ -20,7 +21,7 @@ def test_1_user_jwt_validation():
         email_verified=True,
         iat=now,
         exp=now + 3600,
-        organization=[{"Test Org": {"id": "org-123"}}, "Test Org"]
+        organization=["Test Org", {"Test Org": {"id": "org-123"}}]
     )
     assert user.sub == "test-user-123"
     assert user.preferred_username == "testuser"
@@ -69,6 +70,7 @@ def test_3_organization_extraction():
     now = int(datetime.now(timezone.utc).timestamp())
 
     # Valid extraction - OIDCUser with proper organization claim
+    # Organization format matches Keycloak: [string_name, {name: {id: uuid}}]
     user_valid = OIDCUser(
         sub="test-user",
         preferred_username="testuser",
@@ -76,7 +78,7 @@ def test_3_organization_extraction():
         email_verified=True,
         iat=now,
         exp=now + 3600,
-        organization=[{"Company": {"id": "123"}}, "Company"]
+        organization=["Company", {"Company": {"id": "123"}}]
     )
     result = extract_organization_from_validated_user(user_valid)
     assert result == ("123", "Company")

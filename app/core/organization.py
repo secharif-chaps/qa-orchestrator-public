@@ -149,19 +149,11 @@ def extract_organization_from_validated_user(user: OIDCUser) -> tuple[str, str] 
     return _parse_organization_claim(organization_claim)
 
 
-def _create_user_dependency():
-    """Create the Keycloak user dependency with extra fields.
-
-    This function is called at import time but only creates the dependency.
-    The actual Keycloak token validation happens at request time.
-    """
-    return idp.get_current_user(extra_fields=["organization", "enabled_modules"])
-
-
-# Create the dependency once at module level - this is safe because
-# idp.get_current_user() only creates a dependency function, it doesn't
-# actually connect to Keycloak until a request is made.
-_keycloak_user_dependency = _create_user_dependency()
+# Create the Keycloak user dependency with extra fields at module level.
+# The actual Keycloak connection happens lazily when a request is made (via _LazyIdp).
+# For tests, this dependency should be overridden in conftest.py using FastAPI's
+# app.dependency_overrides mechanism.
+_keycloak_user_dependency = idp.get_current_user(extra_fields=["organization", "enabled_modules"])
 
 
 def get_user_organization(
