@@ -103,3 +103,62 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         if "integration" in item.keywords:
             item.add_marker(skip_integration)
+
+
+# Test database fixtures
+
+
+@pytest.fixture(scope="function")
+def global_db_session():
+    """Create a test database session for global_schema.
+
+    Creates a fresh database session for each test with all tables.
+    Uses SQLite in-memory database for fast tests.
+    """
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from app.database import GlobalBase
+
+    # Create in-memory SQLite database for tests
+    engine = create_engine("sqlite:///:memory:")
+
+    # Create all tables
+    GlobalBase.metadata.create_all(bind=engine)
+
+    # Create session
+    TestingSessionLocal = sessionmaker(
+        autocommit=False, autoflush=False, bind=engine
+    )
+    session = TestingSessionLocal()
+
+    try:
+        yield session
+    finally:
+        session.close()
+        # Drop all tables after test
+        GlobalBase.metadata.drop_all(bind=engine)
+
+
+@pytest.fixture
+def client(global_db_session):
+    """Create a test client with database override."""
+    from fastapi.testclient import TestClient
+    from app.main import app
+    from app.database import get_global_db
+
+    # Override database dependency
+    def override_get_db():
+        try:
+            yield global_db_session
+        finally:
+            pass
+
+    app.dependency_overrides[get_global_db] = override_get_db
+
+    # Create test client
+    test_client = TestClient(app)
+
+    yield test_client
+
+    # Clean up overrides
+    app.dependency_overrides.clear()
