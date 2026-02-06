@@ -25,6 +25,12 @@ from app.core.logging_config import get_logger
 router = APIRouter(prefix="/users", tags=["users"])
 logger = get_logger(__name__)
 
+# Performance limits for organization-based user search
+MAX_ORGS_TO_SEARCH = 10  # Maximum organizations to fetch members from
+MAX_MEMBERS_PER_ORG = 100  # Maximum members to fetch per organization
+MAX_CONCURRENT_ORG_REQUESTS = 5  # Maximum parallel Keycloak requests
+MAX_TOTAL_USERS_FROM_ORGS = 500  # Stop fetching when this many users found
+
 
 def _transform_kc_user(kc_user: Dict[str, Any]) -> Dict[str, Any]:
     """Transform a Keycloak user dict into the API response format."""
@@ -55,6 +61,12 @@ async def _search_users_with_org(
 
     Runs Keycloak user search and organization search in parallel,
     then merges and deduplicates the results.
+
+    Performance limits applied:
+    - Max {MAX_ORGS_TO_SEARCH} organizations searched
+    - Max {MAX_MEMBERS_PER_ORG} members fetched per organization
+    - Max {MAX_CONCURRENT_ORG_REQUESTS} concurrent Keycloak requests
+    - Stops early when {MAX_TOTAL_USERS_FROM_ORGS} users found from orgs
     """
     kc_users, matching_orgs = await asyncio.gather(
         keycloak_admin_service.search_users(search=search, first=0, max_results=500),
@@ -64,23 +76,57 @@ async def _search_users_with_org(
     # Collect user IDs already found to avoid duplicates
     seen_user_ids = {u.get("id") for u in kc_users}
 
-    # Fetch members of all matching organizations in parallel
+    # Fetch members from matching organizations with limits
     if matching_orgs:
-        org_member_tasks = [
-            keycloak_admin_service.get_organization_members(
-                org.get("id"), first=0, max_results=500
+        # Limit number of organizations to search
+        orgs_to_search = [org for org in matching_orgs if org.get("id")][:MAX_ORGS_TO_SEARCH]
+
+        if len(matching_orgs) > MAX_ORGS_TO_SEARCH:
+            logger.warning(
+                "Organization search truncated due to too many matches",
+                extra={
+                    "search": search,
+                    "total_matching_orgs": len(matching_orgs),
+                    "orgs_searched": MAX_ORGS_TO_SEARCH,
+                }
             )
-            for org in matching_orgs
-            if org.get("id")
-        ]
-        if org_member_tasks:
-            org_member_results = await asyncio.gather(*org_member_tasks)
+
+        if orgs_to_search:
+            # Use semaphore for concurrency control
+            semaphore = asyncio.Semaphore(MAX_CONCURRENT_ORG_REQUESTS)
+            users_from_orgs = 0
+
+            async def fetch_org_members(org: Dict[str, Any]) -> List[Dict[str, Any]]:
+                async with semaphore:
+                    return await keycloak_admin_service.get_organization_members(
+                        org.get("id"), first=0, max_results=MAX_MEMBERS_PER_ORG
+                    )
+
+            org_member_results = await asyncio.gather(
+                *[fetch_org_members(org) for org in orgs_to_search]
+            )
+
             for members in org_member_results:
                 for member in members:
+                    # Early termination if we have enough users from orgs
+                    if users_from_orgs >= MAX_TOTAL_USERS_FROM_ORGS:
+                        logger.warning(
+                            "User search from organizations truncated",
+                            extra={
+                                "search": search,
+                                "max_users_reached": MAX_TOTAL_USERS_FROM_ORGS,
+                            }
+                        )
+                        break
+
                     member_id = member.get("id")
                     if member_id and member_id not in seen_user_ids:
                         seen_user_ids.add(member_id)
                         kc_users.append(member)
+                        users_from_orgs += 1
+                else:
+                    continue
+                break  # Break outer loop if inner loop was broken
 
     return kc_users
 
