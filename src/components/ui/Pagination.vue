@@ -3,7 +3,7 @@
     <!-- Left: Per page selector with results info -->
     <div class="flex flex-col gap-2">
       <div class="flex items-center gap-2">
-        <label class="text-sm text-secondary whitespace-nowrap sr-only">Show:</label>
+        <label class="text-sm text-secondary whitespace-nowrap sr-only">{{ $t('pagination.show') }}</label>
         <select
           :value="meta.per_page"
           @change="$emit('updatePerPage', parseInt(($event.target as HTMLSelectElement).value))"

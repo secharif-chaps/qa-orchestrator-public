@@ -27,7 +27,7 @@
                 <h3 class="text-lg font-semibold">
                   {{ $t(feature.titleKey, feature.titleDefault) }}
                 </h3>
-                <Tag variant="sage" appearance="light" size="sm" :label="feature.badgeLabel" />
+                <Tag variant="sage" appearance="light" size="sm" :label="$t(feature.badgeLabel, feature.badgeLabel === 'admin.adminRequired' ? 'Admin Required' : feature.badgeLabel)" />
               </div>
             </div>
 
@@ -49,12 +49,7 @@
         <Alert
           variant="warning"
           :title="$t('admin.dashboard.limitedAccess.title', 'Limited Access')"
-          :description="
-            $t(
-              'admin.dashboard.limitedAccess.message',
-              'You have access to basic admin features. Contact your administrator for additional permissions.',
-            )
-          "
+          :description="$t('admin.dashboard.limitedAccess.message', 'You have access to basic admin features. Contact your administrator for additional permissions.')"
           icon="fa-lock"
         />
       </div>
@@ -115,7 +110,7 @@ const features: AdminFeature[] = [
     iconHoverBgColor: 'group-hover:bg-primary/20',
     ringColor: 'ring-primary/50',
     badgeVariant: 'primary',
-    badgeLabel: 'Admin Required',
+    badgeLabel: 'admin.adminRequired',
     actionKey: 'admin.features.manage',
     actionDefault: 'Manage',
     actionTextColor: 'text-sage-content',
@@ -134,7 +129,7 @@ const features: AdminFeature[] = [
     iconHoverBgColor: 'group-hover:bg-secondary/20',
     ringColor: 'ring-accent/50',
     badgeVariant: 'primary',
-    badgeLabel: 'Admin Required',
+    badgeLabel: 'admin.adminRequired',
     actionKey: 'admin.features.manage',
     actionDefault: 'Manage',
     actionTextColor: 'text-almond-600',
@@ -153,7 +148,7 @@ const features: AdminFeature[] = [
     iconHoverBgColor: 'group-hover:bg-info/20',
     ringColor: 'ring-info/50',
     badgeVariant: 'primary',
-    badgeLabel: 'Admin Required',
+    badgeLabel: 'admin.adminRequired',
     actionKey: 'admin.features.view',
     actionDefault: 'View',
     actionTextColor: 'text-info',
@@ -191,7 +186,7 @@ const features: AdminFeature[] = [
     iconHoverBgColor: 'group-hover:bg-info/20',
     ringColor: 'ring-info/50',
     badgeVariant: 'primary',
-    badgeLabel: 'Admin Required',
+    badgeLabel: 'admin.adminRequired',
     actionKey: 'admin.features.monitor',
     actionDefault: 'Monitor',
     actionTextColor: 'text-info',

@@ -1,24 +1,24 @@
 <template>
   <Modal
     v-model:display-modal="isOpen"
-    title="Export Options"
+    :title="t('company.export.modal.title')"
     size="xl"
     icon="fas fa-download"
     color="sage"
   >
     <template #description>
-      Select which sections to include in your PowerPoint export:
+      {{ t('company.export.modal.description') }}
     </template>
 
     <div class="flex flex-col gap-4">
       <!-- Select All / None toggle -->
       <div class="flex justify-between items-center">
         <span v-if="showSavedMessage" class="text-xs text-secondary animate-fade-out">
-          <i class="fa fa-check-circle mr-1"></i>Preferences saved
+          <i class="fa fa-check-circle mr-1"></i>{{ t('company.export.modal.preferencesSaved') }}
         </span>
         <Button
           variant="tertiary"
-          :label="allSelected ? 'Deselect All' : 'Select All'"
+          :label="allSelected ? t('company.export.modal.deselectAll') : t('company.export.modal.selectAll')"
           size="sm"
           @click="toggleAll"
         />
@@ -47,8 +47,8 @@
     </div>
 
     <template #footer>
-      <Button variant="secondary" label="Cancel" @click="close" />
-      <Button variant="primary" label="Export" icon="fa fa-download" @click="exportPPT" />
+      <Button variant="secondary" :label="t('company.export.modal.cancel')" @click="close" />
+      <Button variant="primary" :label="t('company.export.modal.export')" icon="fa fa-download" @click="exportPPT" />
     </template>
   </Modal>
 </template>
@@ -57,6 +57,9 @@
 import { Button, Modal, Switch } from '@owlint/feathers-vue'
 import type { Company } from '@/types/company'
 import { computed, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   isOpen: boolean
@@ -83,78 +86,35 @@ watch(isOpen, (newValue) => {
 
 const emit = defineEmits(['close', 'export'])
 
-// Default export options
-const defaultOptions = [
-  {
-    id: 'titleSlide',
-    label: 'Title Slide',
-    description: 'Cover page with company name and date',
-    selected: true,
-  },
-  {
-    id: 'profile',
-    label: 'Company Profile',
-    description: 'Basic information, business lines, and key metrics',
-    selected: true,
-  },
-  {
-    id: 'productsServices',
-    label: 'Products and Services',
-    description: 'Product range, partner brands, and private labels',
-    selected: true,
-  },
-  {
-    id: 'targetAudience',
-    label: 'Target Audience & Customer Base',
-    description: 'Customer type and marketing positioning',
-    selected: true,
-  },
-  {
-    id: 'digitalStrategy',
-    label: 'Digital Strategy & Social Media',
-    description: 'Digital approach, loyalty programs, and online services',
-    selected: true,
-  },
-  {
-    id: 'csr',
-    label: 'Corporate Social Responsibility',
-    description: 'Responsibility initiatives and charity actions',
-    selected: true,
-  },
-  {
-    id: 'news',
-    label: 'Press & Media',
-    description: 'Press articles and media coverage',
-    selected: true,
-  },
-  {
-    id: 'timeline',
-    label: 'Timeline',
-    description: 'Company timeline events and milestones',
-    selected: true,
-  },
-  {
-    id: 'team',
-    label: 'Team & Management',
-    description: 'Leadership team and organizational structure',
-    selected: true,
-  },
-  {
-    id: 'jobs',
-    label: 'Job Opportunities',
-    description: 'Current job openings and hiring information',
-    selected: true,
-  },
-  {
-    id: 'press',
-    label: 'Press Coverage',
-    description: 'Media articles and press releases',
-    selected: true,
-  },
-]
+// Option IDs for export
+const optionIds = [
+  'titleSlide',
+  'profile',
+  'productsServices',
+  'targetAudience',
+  'digitalStrategy',
+  'csr',
+  'news',
+  'timeline',
+  'team',
+  'jobs',
+  'press',
+] as const
+
+// Helper to get translated option
+const getOptionLabel = (id: string) => t(`company.export.modal.options.${id}.label`)
+const getOptionDescription = (id: string) => t(`company.export.modal.options.${id}.description`)
+
+// Default export options with dynamic labels
+const createDefaultOptions = () => optionIds.map((id) => ({
+  id,
+  get label() { return getOptionLabel(id) },
+  get description() { return getOptionDescription(id) },
+  selected: true,
+}))
 
 // Define export options with checkboxes (all checked by default)
-const exportOptions = ref([...defaultOptions])
+const exportOptions = ref(createDefaultOptions())
 const showSavedMessage = ref(false)
 const preferencesChanged = ref(false)
 
@@ -165,11 +125,13 @@ onMounted(() => {
     try {
       const parsedOptions = JSON.parse(savedOptions)
       // Merge saved selections with default options to ensure we have all options
-      exportOptions.value = defaultOptions.map((defaultOpt) => {
-        const savedOpt = parsedOptions.find((opt) => opt.id === defaultOpt.id)
+      exportOptions.value = optionIds.map((id) => {
+        const savedOpt = parsedOptions.find((opt: { id: string }) => opt.id === id)
         return {
-          ...defaultOpt,
-          selected: savedOpt ? savedOpt.selected : defaultOpt.selected,
+          id,
+          get label() { return getOptionLabel(id) },
+          get description() { return getOptionDescription(id) },
+          selected: savedOpt ? savedOpt.selected : true,
         }
       })
     } catch (e) {

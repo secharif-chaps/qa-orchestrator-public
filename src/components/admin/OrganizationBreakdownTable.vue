@@ -1,26 +1,26 @@
 <template>
   <div class="bg-base-100 rounded-lg border border-primary-stroke">
     <div class="px-6 py-4 border-b border-primary-stroke">
-      <h3 class="text-lg font-semibold">organization Cost Breakdown</h3>
+      <h3 class="text-lg font-semibold">{{ t('admin.organizationBreakdown.title') }}</h3>
     </div>
 
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
         <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">Loading organization data...</p>
+        <p class="text-sm text-secondary">{{ t('admin.organizationBreakdown.loading') }}</p>
       </div>
     </div>
 
     <div v-else-if="error" class="flex justify-center py-12">
       <div class="text-center">
         <i class="fa fa-exclamation-triangle text-2xl text-error mb-2"></i>
-        <p class="text-sm text-error">Failed to load organization data</p>
+        <p class="text-sm text-error">{{ t('admin.organizationBreakdown.error') }}</p>
       </div>
     </div>
 
     <div v-else-if="!data?.organizations.length" class="text-center py-12">
       <i class="fa fa-database text-4xl text-secondary mb-4"></i>
-      <p class="text-lg font-medium text-secondary">No organization data available</p>
+      <p class="text-lg font-medium text-secondary">{{ t('admin.organizationBreakdown.noData') }}</p>
     </div>
 
     <div v-else class="overflow-x-auto">
@@ -32,7 +32,7 @@
               @click="sort('organization_name')"
             >
               <div class="flex items-center gap-1">
-                organization
+                {{ t('admin.organizationBreakdown.columns.organization') }}
                 <i class="fa text-xs" :class="getSortIcon('organization_name')"></i>
               </div>
             </th>
@@ -41,7 +41,7 @@
               @click="sort('total_cost')"
             >
               <div class="flex items-center gap-1">
-                Total Cost
+                {{ t('admin.organizationBreakdown.columns.totalCost') }}
                 <i class="fa text-xs" :class="getSortIcon('total_cost')"></i>
               </div>
             </th>
@@ -50,7 +50,7 @@
               @click="sort('task_count')"
             >
               <div class="flex items-center gap-1">
-                Tasks
+                {{ t('admin.organizationBreakdown.columns.tasks') }}
                 <i class="fa text-xs" :class="getSortIcon('task_count')"></i>
               </div>
             </th>
@@ -59,7 +59,7 @@
               @click="sort('company_count')"
             >
               <div class="flex items-center gap-1">
-                Companies
+                {{ t('admin.organizationBreakdown.columns.companies') }}
                 <i class="fa text-xs" :class="getSortIcon('company_count')"></i>
               </div>
             </th>
@@ -68,7 +68,7 @@
               @click="sort('avg_cost_per_task')"
             >
               <div class="flex items-center gap-1">
-                Avg Cost/Task
+                {{ t('admin.organizationBreakdown.columns.avgCostPerTask') }}
                 <i class="fa text-xs" :class="getSortIcon('avg_cost_per_task')"></i>
               </div>
             </th>
@@ -77,7 +77,7 @@
               @click="sort('avg_cost_per_company')"
             >
               <div class="flex items-center gap-1">
-                Avg Cost/Company
+                {{ t('admin.organizationBreakdown.columns.avgCostPerCompany') }}
                 <i class="fa text-xs" :class="getSortIcon('avg_cost_per_company')"></i>
               </div>
             </th>
@@ -94,7 +94,7 @@
                 <div class="flex-shrink-0 w-2 h-2 bg-primary rounded-full mr-3"></div>
                 <div>
                   <div class="text-sm font-medium">{{ organization.organization_name }}</div>
-                  <div class="text-xs text-secondary">ID: {{ organization.organization_id }}</div>
+                  <div class="text-xs text-secondary">{{ t('admin.organizationBreakdown.id') }} {{ organization.organization_id }}</div>
                 </div>
               </div>
             </td>
@@ -103,7 +103,7 @@
                 {{ formatCurrency(organization.total_cost) }}
               </div>
               <div class="text-xs text-secondary">
-                {{ getPercentage(organization.total_cost) }}% of total
+                {{ t('admin.organizationBreakdown.percentOfTotal', { percent: getPercentage(organization.total_cost) }) }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
@@ -111,10 +111,8 @@
               <div class="text-xs text-secondary">
                 {{
                   organization.total_input_tokens + organization.total_output_tokens > 0
-                    ? formatNumber(
-                        organization.total_input_tokens + organization.total_output_tokens,
-                      ) + ' tokens'
-                    : 'No tokens'
+                    ? t('admin.organizationBreakdown.tokens', { count: formatNumber(organization.total_input_tokens + organization.total_output_tokens) })
+                    : t('admin.organizationBreakdown.noTokens')
                 }}
               </div>
             </td>
@@ -140,7 +138,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { organizationCostResponse, organizationCostData } from '@/api/cost-analysis'
+
+const { t } = useI18n()
 
 interface Props {
   data?: organizationCostResponse

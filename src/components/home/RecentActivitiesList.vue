@@ -1,7 +1,7 @@
 <template>
   <Card>
     <h3 class="font-semibold text-gray-900 dark:text-white mb-4">
-      {{ $t('home.recentActivities.title') }}
+      {{ $t('home.recentActivities.title', 'Recent Activities') }}
     </h3>
 
     <!-- Loading State -->
@@ -13,8 +13,8 @@
     <div v-else-if="error" class="py-6">
       <Alert
         variant="danger"
-        title="Unable to load recent activities"
-        description="There was a problem loading organization activities. Please try again later."
+        :title="$t('home.recentActivities.error.title', 'Error')"
+        :description="$t('home.recentActivities.error.description', 'Failed to load activities')"
         icon="fa-exclamation-triangle"
       />
     </div>
@@ -22,7 +22,7 @@
     <!-- Empty State -->
     <div v-else-if="activities.length === 0" class="py-8 flex flex-col items-center gap-4">
       <Badge variant="secondary" icon="fa fa-clock-rotate-left" size="lg" />
-      <p class="text-sm text-gray-500 dark:text-gray-400">No recent activities</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('home.recentActivities.noRecentActivities', 'No recent activities') }}</p>
     </div>
 
     <!-- Recent Activities -->

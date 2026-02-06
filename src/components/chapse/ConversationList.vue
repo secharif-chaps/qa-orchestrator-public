@@ -60,7 +60,7 @@
             variant="tertiary"
             size="sm"
             :loading="loading"
-            label="Load more"
+            :label="$t('sidebar.chapse.loadMore')"
             block
             @click="$emit('load-more')"
           />
@@ -75,6 +75,9 @@ import { computed } from 'vue'
 import type { ChapseConversation } from '@/api/chapse'
 import ConversationItem from './ConversationItem.vue'
 import { Button } from '@owlint/feathers-vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   conversations: ChapseConversation[]
@@ -135,19 +138,19 @@ const groupedConversations = computed<ConversationGroup[]>(() => {
   const result: ConversationGroup[] = []
 
   if (groups.today.length > 0) {
-    result.push({ label: 'Today', conversations: groups.today })
+    result.push({ label: t('sidebar.chapse.dateGroups.today'), conversations: groups.today })
   }
   if (groups.yesterday.length > 0) {
-    result.push({ label: 'Yesterday', conversations: groups.yesterday })
+    result.push({ label: t('sidebar.chapse.dateGroups.yesterday'), conversations: groups.yesterday })
   }
   if (groups.lastWeek.length > 0) {
-    result.push({ label: 'Last 7 days', conversations: groups.lastWeek })
+    result.push({ label: t('sidebar.chapse.dateGroups.lastWeek'), conversations: groups.lastWeek })
   }
   if (groups.lastMonth.length > 0) {
-    result.push({ label: 'Last 30 days', conversations: groups.lastMonth })
+    result.push({ label: t('sidebar.chapse.dateGroups.lastMonth'), conversations: groups.lastMonth })
   }
   if (groups.older.length > 0) {
-    result.push({ label: 'Older', conversations: groups.older })
+    result.push({ label: t('sidebar.chapse.dateGroups.older'), conversations: groups.older })
   }
 
   return result

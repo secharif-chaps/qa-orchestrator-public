@@ -16,7 +16,7 @@
     <div class="flex items-center justify-between bg-warning-light border border-warning-stroke rounded-lg px-4 py-3">
       <div class="flex items-center gap-3">
         <i class="fa fa-coins text-warning"></i>
-        <span class="text-sm font-medium text-warning-light-content">Current tokens:</span>
+        <span class="text-sm font-medium text-warning-light-content">{{ $t('tokens.currentTokens') }}</span>
         <span class="text-xl font-bold text-warning-light-content">{{ currentTokens }}</span>
       </div>
 

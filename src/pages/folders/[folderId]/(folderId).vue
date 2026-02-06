@@ -62,7 +62,7 @@
             <!-- Table Header -->
             <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
               <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
-                <div class="col-span-4">{{ $t('folder.item.name', 'Item') }}</div>
+                <div class="col-span-4">{{ $t('folder.item.name', 'Name') }}</div>
                 <div class="col-span-2">{{ $t('folder.item.type', 'Type') }}</div>
                 <div class="col-span-2">{{ $t('folder.item.created', 'Created') }}</div>
                 <div class="col-span-2">{{ $t('folder.item.owner', 'Owner') }}</div>
@@ -140,7 +140,7 @@
                         size="sm"
                         icon="fa fa-exchange-alt"
                         icon-only
-                        :title="$t('folder.moveCompany.button', 'Move to Folder')"
+                        :title="$t('folder.moveCompany.button', 'Move Company')"
                         @click.stop="confirmMoveCompany(item)"
                       />
                       <Button
@@ -153,7 +153,7 @@
                         :title="
                           companyFilter === 'archived'
                             ? $t('company.restore.title', 'Restore Company')
-                            : $t('company.delete.title', 'Delete Company')
+                            : $t('company.delete.title', 'Archive Company')
                         "
                         @click.stop="confirmArchiveCompany(item)"
                       />
@@ -178,8 +178,8 @@
           variant="info"
           icon="fa fa-folder-open"
           class="py-6"
-          :title="$t('folder.empty.title', 'Ce dossier est vide')"
-          :description="$t('folder.empty.description', 'Ce dossier est vide')"
+          :title="$t('folder.empty.title', 'No companies found')"
+          :description="$t('folder.empty.description', 'Add companies to this folder')"
         >
         </Alert>
 
@@ -188,15 +188,13 @@
           variant="info"
           icon="fa fa-folder-open"
           class="py-6"
-          :title="$t('folder.empty.noResults', 'Aucun résultat trouvé')"
-          :description="
-            $t('folder.empty.tryDifferentSearch', 'Essayez avec un autre terme de recherche')
-          "
+          :title="$t('folder.empty.noResults', 'No results found')"
+          :description="$t('folder.empty.tryDifferentSearch', 'Try a different search term')"
         >
           <template #actions>
             <Button
               variant="secondary"
-              :label="$t('folder.clearSearch', 'Effacer la recherche')"
+              :label="$t('folder.clearSearch', 'Clear Search')"
               @click="searchTerm = ''"
             />
           </template>
@@ -332,7 +330,7 @@ const getLogoUrl = (website?: string) => {
 
 // Methods
 const formatDate = (dateString: string) => {
-  if (!dateString) return t('common.na')
+  if (!dateString) return t('common.na', 'N/A')
   const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
   return new Date(dateString).toLocaleDateString(localeCode)
 }
@@ -340,7 +338,7 @@ const formatDate = (dateString: string) => {
 // Helper to format item type
 const formatItemType = (type: string): string => {
   if (type === 'company') {
-    return t('folder.itemTypes.company')
+    return t('folder.itemTypes.company', 'Company')
   }
   return type.charAt(0).toUpperCase() + type.slice(1)
 }

@@ -159,17 +159,17 @@
                   <th
                     class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider"
                   >
-                    Row
+                    {{ $t('csv.upload.table.row', 'Row') }}
                   </th>
                   <th
                     class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider"
                   >
-                    Company Name
+                    {{ $t('csv.upload.table.companyName', 'Company Name') }}
                   </th>
                   <th
                     class="px-4 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider"
                   >
-                    Website
+                    {{ $t('csv.upload.table.website', 'Website') }}
                   </th>
                 </tr>
               </thead>
@@ -204,15 +204,15 @@
         <!-- Token Info -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-success/10 border border-success/20 rounded-lg p-4">
-            <div class="text-sm text-success">Valid Companies</div>
+            <div class="text-sm text-success">{{ $t('csv.upload.validation.validCompaniesLabel', 'Valid Companies') }}</div>
             <div class="text-2xl font-bold text-success">{{ validationResult.valid_count }}</div>
           </div>
           <div class="bg-error/10 border border-error/20 rounded-lg p-4">
-            <div class="text-sm text-error">Invalid Companies</div>
+            <div class="text-sm text-error">{{ $t('csv.upload.validation.invalidCompaniesLabel', 'Invalid Companies') }}</div>
             <div class="text-2xl font-bold text-error">{{ validationResult.error_count }}</div>
           </div>
           <div class="bg-info/10 border border-info/20 rounded-lg p-4">
-            <div class="text-sm text-info">Tokens Required</div>
+            <div class="text-sm text-info">{{ $t('csv.upload.tokens.tokensRequiredLabel', 'Tokens Required') }}</div>
             <div class="text-2xl font-bold text-info">{{ validationResult.tokens_required }}</div>
           </div>
         </div>
@@ -237,7 +237,7 @@
 
         <!-- Validation Errors -->
         <div v-if="validationResult.errors.length > 0" class="flex flex-col gap-4">
-          <h3 class="font-medium text-error">Validation Errors</h3>
+          <h3 class="font-medium text-error">{{ $t('csv.upload.validation.errorsTitle', 'Validation Errors') }}</h3>
           <div class="flex flex-col gap-2 max-h-60 overflow-y-auto">
             <div
               v-for="error in validationResult.errors"
@@ -291,22 +291,22 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-success/10 border border-success/20 rounded-lg p-4">
-            <div class="text-sm text-success">Successful</div>
+            <div class="text-sm text-success">{{ $t('csv.upload.results.successful', 'Successful') }}</div>
             <div class="text-2xl font-bold text-success">{{ importResult.successful }}</div>
           </div>
           <div class="bg-error/10 border border-error/20 rounded-lg p-4">
-            <div class="text-sm text-error">Failed</div>
+            <div class="text-sm text-error">{{ $t('csv.upload.results.failedLabel', 'Failed') }}</div>
             <div class="text-2xl font-bold text-error">{{ importResult.failed }}</div>
           </div>
           <div class="bg-info/10 border border-info/20 rounded-lg p-4">
-            <div class="text-sm text-info">Total Processed</div>
+            <div class="text-sm text-info">{{ $t('csv.upload.results.totalProcessed', 'Total Processed') }}</div>
             <div class="text-2xl font-bold text-info">{{ importResult.total_rows }}</div>
           </div>
         </div>
 
         <!-- Import Details -->
         <div v-if="importResult.failed > 0" class="flex flex-col gap-2 max-h-60 overflow-y-auto">
-          <h3 class="font-medium text-error">Failed Imports</h3>
+          <h3 class="font-medium text-error">{{ $t('csv.upload.results.failedImportsTitle', 'Failed Imports') }}</h3>
           <div
             v-for="result in importResult.results.filter((r) => !r.success)"
             :key="result.row_number"

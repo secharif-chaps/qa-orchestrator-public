@@ -6,7 +6,7 @@
         <Input
           id="team-search"
           v-model="searchQuery"
-          :placeholder="$t('team.searchPlaceholder', 'Search by name or position...')"
+          :placeholder="$t('team.searchPlaceholder')"
           icon="fa-search"
         />
       </div>
@@ -17,11 +17,11 @@
           v-model="selectedLevel"
           class="px-4 py-2 rounded-lg bg-base-200 border border-border text-secondary focus:outline-none focus:ring-2 focus:ring-primary/50"
         >
-          <option value="">{{ $t('team.allLevels', 'All Levels') }}</option>
-          <option value="0">CEO</option>
-          <option value="1">Executives</option>
-          <option value="2">Managers</option>
-          <option value="3">Team Members</option>
+          <option value="">{{ $t('team.levels.all') }}</option>
+          <option value="0">{{ $t('team.levels.ceo') }}</option>
+          <option value="1">{{ $t('team.levels.executives') }}</option>
+          <option value="2">{{ $t('team.levels.managers') }}</option>
+          <option value="3">{{ $t('team.levels.teamMembers') }}</option>
         </select>
 
         <!-- View Mode Toggle -->
@@ -32,7 +32,7 @@
             icon="fa fa-th"
             icon-only
             size="sm"
-            :title="$t('team.gridView', 'Grid View')"
+            :title="$t('team.views.grid')"
           />
           <Button
             @click="viewMode = 'list'"
@@ -40,7 +40,7 @@
             icon="fa fa-list"
             icon-only
             size="sm"
-            :title="$t('team.listView', 'List View')"
+            :title="$t('team.views.list')"
           />
         </div>
       </div>
@@ -77,7 +77,7 @@
         <i class="fa fa-search"></i>
       </div>
       <p class="text-secondary">
-        {{ $t('team.noResults', 'No team members found matching your criteria') }}
+        {{ $t('team.noResults') }}
       </p>
     </div>
   </div>

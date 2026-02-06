@@ -10,7 +10,10 @@
  * and exposes computed start/end dates for API filtering.
  */
 import { computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Toggle } from '@owlint/feathers-vue'
+
+const { t } = useI18n()
 
 /** Available time range keys that determine date filtering */
 type TimeRangeKey = '7d' | '30d' | '90d' | 'all'
@@ -36,12 +39,12 @@ const selectedRange = computed({
 })
 
 // Toggle options configuration
-const rangeOptions = [
-  { value: '7d', label: 'Last 7 days' },
-  { value: '30d', label: 'Last 30 days' },
-  { value: '90d', label: 'Last 90 days' },
-  { value: 'all', label: 'All time' },
-]
+const rangeOptions = computed(() => [
+  { value: '7d', label: t('admin.usage.timeRange.last7Days') },
+  { value: '30d', label: t('admin.usage.timeRange.last30Days') },
+  { value: '90d', label: t('admin.usage.timeRange.last90Days') },
+  { value: 'all', label: t('admin.usage.timeRange.allTime') },
+])
 
 /**
  * Computes the start date based on the selected time range.

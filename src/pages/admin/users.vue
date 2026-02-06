@@ -9,7 +9,7 @@
             {{ $t('admin.users.title', 'User Management') }}
           </h1>
           <p class="text-secondary">
-            {{ $t('admin.users.description', 'Manage user organization assignments') }}
+            {{ $t('admin.users.description', 'Manage all users across organizations') }}
           </p>
         </div>
         <div class="flex gap-2">
@@ -39,7 +39,7 @@
     <Alert
       v-if="error"
       variant="danger"
-      title="Error"
+      :title="$t('common.error')"
       :description="String(error)"
       icon="fa-exclamation-circle"
     />

@@ -2,7 +2,7 @@
   <div v-if="hasAnyRawData" class="col-span-12 space-y-4">
     <h2 class="text-xl font-semibold text-secondary flex items-center gap-2">
       <i class="fa fa-code text-lg"></i>
-      Raw Knowledge Data (Debug)
+      {{ t('profile.sections.debug.title') }}
     </h2>
 
     <!-- Mistral Knowledge -->
@@ -10,7 +10,7 @@
       <template #header>
         <div class="flex items-center gap-2">
           <i class="fa fa-brain text-accent"></i>
-          <h3 class="font-semibold">Raw Mistral Knowledge</h3>
+          <h3 class="font-semibold">{{ t('profile.sections.debug.mistral') }}</h3>
         </div>
       </template>
       <div class="bg-base-100 rounded-lg p-4 font-mono text-sm text-secondary overflow-x-auto">
@@ -23,7 +23,7 @@
       <template #header>
         <div class="flex items-center gap-2">
           <i class="fa fa-robot text-info"></i>
-          <h3 class="font-semibold">Raw GPT Knowledge</h3>
+          <h3 class="font-semibold">{{ t('profile.sections.debug.gpt') }}</h3>
         </div>
       </template>
       <div class="bg-base-100 rounded-lg p-4 font-mono text-sm text-secondary overflow-x-auto">
@@ -36,7 +36,7 @@
       <template #header>
         <div class="flex items-center gap-2">
           <i class="fa fa-book text-warning"></i>
-          <h3 class="font-semibold">Raw Wikipedia Knowledge</h3>
+          <h3 class="font-semibold">{{ t('profile.sections.debug.wikipedia') }}</h3>
         </div>
       </template>
       <div class="bg-base-100 rounded-lg p-4 font-mono text-sm text-secondary overflow-x-auto">
@@ -49,7 +49,7 @@
       <template #header>
         <div class="flex items-center gap-2">
           <i class="fa fa-globe text-success"></i>
-          <h3 class="font-semibold">Raw Scraped Website Content</h3>
+          <h3 class="font-semibold">{{ t('profile.sections.debug.website') }}</h3>
         </div>
       </template>
       <div class="bg-base-100 rounded-lg p-4 font-mono text-sm text-secondary overflow-x-auto">
@@ -63,9 +63,11 @@
 import { computed } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { companyByIdQuery } from '@/queries/companies'
 import Card from '@/components/ui/Card.vue'
 
+const { t } = useI18n()
 const route = useRoute()
 
 const companyId = computed(() => route.params.companyId as string)

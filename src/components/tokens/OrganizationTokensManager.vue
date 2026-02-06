@@ -43,7 +43,7 @@
     <Alert
       v-else-if="error"
       variant="danger"
-      title="Error"
+      :title="t('tokens.errorTitle')"
       :description="errorMessage"
       icon="fa-exclamation-circle"
     />
@@ -169,6 +169,9 @@
 import { computed, ref } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { Alert, Button, Input } from '@owlint/feathers-vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 import Card from '../ui/Card.vue'
 import ModuleStatusCard from './ModuleStatusCard.vue'
 import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/tokens'

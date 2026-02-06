@@ -27,7 +27,7 @@
                 <span
                   v-if="mapping.isRequired"
                   class="text-error text-sm"
-                  title="Required field"
+                  :title="$t('admin.import.requiredFieldTooltip')"
                 >
                   *
                 </span>

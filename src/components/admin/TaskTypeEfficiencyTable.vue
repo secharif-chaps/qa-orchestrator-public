@@ -1,26 +1,26 @@
 <template>
   <div class="bg-base-100 rounded-lg border border-primary-stroke">
     <div class="px-6 py-4 border-b border-primary-stroke">
-      <h3 class="text-lg font-semibold">Task Type Cost Efficiency</h3>
+      <h3 class="text-lg font-semibold">{{ t('admin.taskTypes.title') }}</h3>
     </div>
 
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
         <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">Loading task type data...</p>
+        <p class="text-sm text-secondary">{{ t('admin.taskTypes.loading') }}</p>
       </div>
     </div>
 
     <div v-else-if="error" class="flex justify-center py-12">
       <div class="text-center">
         <i class="fa fa-exclamation-triangle text-2xl text-error mb-2"></i>
-        <p class="text-sm text-error">Failed to load task type data</p>
+        <p class="text-sm text-error">{{ t('admin.taskTypes.error') }}</p>
       </div>
     </div>
 
     <div v-else-if="!data?.task_types.length" class="text-center py-12">
       <i class="fa fa-tasks text-4xl text-secondary mb-4"></i>
-      <p class="text-lg font-medium text-secondary">No task type data available</p>
+      <p class="text-lg font-medium text-secondary">{{ t('admin.taskTypes.noData') }}</p>
     </div>
 
     <div v-else class="overflow-x-auto">
@@ -32,7 +32,7 @@
               @click="sort('task_type')"
             >
               <div class="flex items-center gap-1">
-                Task Type
+                {{ t('admin.taskTypes.columns.taskType') }}
                 <i class="fa text-xs" :class="getSortIcon('task_type')"></i>
               </div>
             </th>
@@ -41,7 +41,7 @@
               @click="sort('total_cost')"
             >
               <div class="flex items-center gap-1">
-                Total Cost
+                {{ t('admin.taskTypes.columns.totalCost') }}
                 <i class="fa text-xs" :class="getSortIcon('total_cost')"></i>
               </div>
             </th>
@@ -50,7 +50,7 @@
               @click="sort('task_count')"
             >
               <div class="flex items-center gap-1">
-                Task Count
+                {{ t('admin.taskTypes.columns.taskCount') }}
                 <i class="fa text-xs" :class="getSortIcon('task_count')"></i>
               </div>
             </th>
@@ -59,7 +59,7 @@
               @click="sort('avg_cost_per_task')"
             >
               <div class="flex items-center gap-1">
-                Avg Cost/Task
+                {{ t('admin.taskTypes.columns.avgCostPerTask') }}
                 <i class="fa text-xs" :class="getSortIcon('avg_cost_per_task')"></i>
               </div>
             </th>
@@ -68,7 +68,7 @@
               @click="sort('avg_input_tokens')"
             >
               <div class="flex items-center gap-1">
-                Avg Input Tokens
+                {{ t('admin.taskTypes.columns.avgInputTokens') }}
                 <i class="fa text-xs" :class="getSortIcon('avg_input_tokens')"></i>
               </div>
             </th>
@@ -77,7 +77,7 @@
               @click="sort('avg_output_tokens')"
             >
               <div class="flex items-center gap-1">
-                Avg Output Tokens
+                {{ t('admin.taskTypes.columns.avgOutputTokens') }}
                 <i class="fa text-xs" :class="getSortIcon('avg_output_tokens')"></i>
               </div>
             </th>
@@ -102,13 +102,13 @@
                 {{ formatCurrency(taskType.total_cost) }}
               </div>
               <div class="text-xs text-secondary">
-                {{ getPercentage(taskType.total_cost) }}% of total
+                {{ getPercentage(taskType.total_cost) }}{{ t('admin.taskTypes.percentOfTotal') }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-sm font-medium">{{ formatNumber(taskType.task_count) }}</div>
               <div class="text-xs text-secondary">
-                {{ getTaskCountPercentage(taskType.task_count) }}% of all tasks
+                {{ getTaskCountPercentage(taskType.task_count) }}{{ t('admin.taskTypes.percentOfAllTasks') }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
@@ -140,7 +140,7 @@
       <div v-if="data?.summary" class="px-6 py-4 border-t border-primary-stroke bg-base-200">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div>
-            <span class="font-medium text-secondary">Most Expensive:</span>
+            <span class="font-medium text-secondary">{{ t('admin.taskTypes.summary.mostExpensive') }}:</span>
             <Tag
               :variant="getTaskTypeVariant(data.summary.most_expensive_type)"
               :label="data.summary.most_expensive_type"
@@ -148,7 +148,7 @@
             />
           </div>
           <div>
-            <span class="font-medium text-secondary">Most Frequent:</span>
+            <span class="font-medium text-secondary">{{ t('admin.taskTypes.summary.mostFrequent') }}:</span>
             <Tag
               :variant="getTaskTypeVariant(data.summary.most_frequent_type)"
               :label="data.summary.most_frequent_type"
@@ -156,7 +156,7 @@
             />
           </div>
           <div>
-            <span class="font-medium text-secondary">Total Task Types:</span>
+            <span class="font-medium text-secondary">{{ t('admin.taskTypes.summary.totalTaskTypes') }}:</span>
             <span class="ml-2 font-semibold">{{ data.summary.total_task_types }}</span>
           </div>
         </div>
@@ -167,8 +167,11 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Tag from '@/components/ui/Tag.vue'
 import type { TaskTypeCostResponse, TaskTypeCostData } from '@/api/cost-analysis'
+
+const { t } = useI18n()
 
 interface Props {
   data?: TaskTypeCostResponse
@@ -268,11 +271,11 @@ const getEfficiencyColor = (avgCost: number) => {
 const getEfficiencyLabel = (avgCost: number) => {
   if (!props.data?.task_types) return ''
 
-  const allCosts = props.data.task_types.map((t) => t.avg_cost_per_task)
+  const allCosts = props.data.task_types.map((taskType) => taskType.avg_cost_per_task)
   const avgOfAll = allCosts.reduce((sum, cost) => sum + cost, 0) / allCosts.length
 
-  if (avgCost < avgOfAll * 0.8) return 'Very efficient'
-  if (avgCost < avgOfAll * 1.2) return 'Average'
-  return 'Expensive'
+  if (avgCost < avgOfAll * 0.8) return t('admin.taskTypes.efficiency.veryEfficient')
+  if (avgCost < avgOfAll * 1.2) return t('admin.taskTypes.efficiency.average')
+  return t('admin.taskTypes.efficiency.expensive')
 }
 </script>

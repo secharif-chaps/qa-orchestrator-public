@@ -2,12 +2,12 @@
   <Card>
     <div class="flex items-center justify-between mb-4">
       <h3 class="font-semibold text-gray-900 dark:text-white">
-        {{ $t('home.recentProjects.title') }}
+        {{ $t('home.recentProjects.title', 'Recent Projects') }}
       </h3>
       <Button
         variant="tertiary"
         size="sm"
-        :label="$t('home.recentProjects.viewAll')"
+        :label="$t('home.recentProjects.viewAll', 'View All')"
         @click="router.push('/folders')"
       />
     </div>
@@ -21,8 +21,8 @@
     <div v-else-if="error" class="py-6">
       <Alert
         variant="danger"
-        title="Unable to load recent projects"
-        description="There was a problem loading your recent projects. Please try again later."
+        :title="$t('home.recentProjects.error.title', 'Error')"
+        :description="$t('home.recentProjects.error.description', 'Failed to load projects')"
         icon="fa-exclamation-triangle"
       />
     </div>
@@ -34,7 +34,7 @@
       >
         <i class="fa fa-folder-open text-2xl text-gray-400"></i>
       </div>
-      <p class="text-sm text-gray-500 dark:text-gray-400">No recent projects yet</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('home.recentProjects.noRecentProjects', 'No recent projects yet') }}</p>
     </div>
 
     <!-- Projects List -->

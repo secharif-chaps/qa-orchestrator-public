@@ -1,11 +1,11 @@
 <template>
   <div class="bg-base-100 rounded-lg p-4 relative flex-1">
     <div class="flex flex-col gap-2">
-      <h4>Group</h4>
+      <h4>{{ t('profile.sections.group.title') }}</h4>
       <!-- Group name - individual property loading -->
       <div>
         <p class="text-secondary">
-          {{ getSourcedValue(company?.profile?.groupName) ?? 'Not found' }}
+          {{ getSourcedValue(company?.profile?.groupName) ?? t('profile.sections.group.notFound') }}
         </p>
       </div>
       <div class="absolute top-2 right-2">
@@ -22,7 +22,9 @@ import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Source from '../Source.vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const route = useRoute()
 
 const companyId = computed(() => route.params.companyId as string)

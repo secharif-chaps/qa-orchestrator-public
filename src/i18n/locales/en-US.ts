@@ -1,3 +1,4 @@
+
 export default {
   welcome: 'Welcome',
   settings: {
@@ -26,6 +27,22 @@ export default {
     },
     credits: {
       cardDescription: 'View credit usage and statistics',
+    },
+    team: {
+      title: 'Your members',
+      resetPassword: 'Reset Password',
+      you: 'You',
+      table: {
+        member: 'Member',
+        email: 'Email',
+        permissions: 'Permissions',
+        actions: 'Actions',
+      },
+      empty: {
+        title: 'No team members found',
+        description: 'No team members in your organization',
+        searchDescription: 'Try a different search term',
+      },
     },
     profile: {
       error: {
@@ -356,10 +373,31 @@ export default {
     },
     chapse: {
       title: 'Chaps-e',
+      welcomeMessage: 'Hello! I\'m Chaps-e, your AI assistant. How can I help you today?',
+      addCompany: 'Add company',
+      addThisCompany: 'Add',
+      toContext: 'to context',
       context: 'Context:',
       activeContext: 'Active context:',
       thinking: 'Thinking...',
       placeholder: 'Write a message...',
+      confirmDeleteConversation: 'Are you sure you want to delete this conversation?',
+      confirmClearMessages: 'Are you sure you want to clear all messages?',
+      searchCompanies: 'Search companies...',
+      typeToSearch: 'Type to search companies',
+      toSend: 'To send',
+      clearHistory: 'Clear history',
+      newConversation: 'New conversation',
+      enterFullscreen: 'Enter fullscreen',
+      exitFullscreen: 'Exit fullscreen',
+      loadMore: 'Load more',
+      dateGroups: {
+        today: 'Today',
+        yesterday: 'Yesterday',
+        lastWeek: 'Last 7 days',
+        lastMonth: 'Last 30 days',
+        older: 'Older',
+      },
     },
   },
   cards: {
@@ -403,6 +441,10 @@ export default {
       processing: 'Processing login...',
       loginFailed: 'Login failed',
       tryAgain: 'Try again',
+    },
+    loader: {
+      title: 'Authenticating...',
+      message: 'Please wait while we verify your session',
     },
   },
   dashboard: {
@@ -458,6 +500,7 @@ export default {
     noData: 'No data available',
     save: 'Save',
     error: 'Error',
+    genericError: 'An error occurred',
     cancel: 'Cancel',
     close: 'Close',
     back: 'Back',
@@ -465,6 +508,20 @@ export default {
     done: 'Done',
     dismiss: 'Dismiss',
     breadcrumb: 'Breadcrumb',
+    keyboard: {
+      ctrl: 'Ctrl',
+      enter: 'Enter',
+    },
+    validation: {
+      password: {
+        required: 'Password is required',
+        minLength: 'Password must be at least 8 characters',
+        uppercase: 'Password must contain at least one uppercase letter',
+        lowercase: 'Password must contain at least one lowercase letter',
+        number: 'Password must contain at least one number',
+        specialChar: 'Password must contain at least one special character',
+      },
+    },
     preview: {
       items: {
         newMessage: 'New Message Received',
@@ -659,12 +716,33 @@ export default {
       },
       news: {
         title: 'Recent news',
+        viewAll: 'View All',
+        stats: {
+          totalPressItems: 'Total Press Items',
+          financialNews: 'Financial News',
+          mediaMentions: 'Media Mentions',
+          productLaunches: 'Product Launches',
+        },
+        latestUpdates: 'Latest Updates',
       },
       press: {
         insights: {
           title: 'Press Coverage Insights',
         },
         noData: 'No press coverage data available',
+        categories: {
+          financialNews: 'Financial News',
+          productLaunches: 'Product Launches',
+          executiveInterviews: 'Executive Interviews',
+          mediaMentions: 'Media Mentions',
+          pressReleases: 'Press Releases',
+          articles: 'Articles',
+          partnershipAnnouncements: 'Partnership Announcements',
+          awardsRecognition: 'Awards & Recognition',
+        },
+        stats: {
+          title: 'Press Coverage Stats',
+        },
       },
       jobs: {
         noData: 'No job offers data available',
@@ -674,6 +752,21 @@ export default {
       },
       timeline: {
         noData: 'No timeline data available',
+      },
+      businessLine: {
+        title: 'Line of business',
+        notFound: 'Not found',
+      },
+      group: {
+        title: 'Group',
+        notFound: 'Not found',
+      },
+      debug: {
+        title: 'Raw Knowledge Data (Debug)',
+        mistral: 'Raw Mistral Knowledge',
+        gpt: 'Raw GPT Knowledge',
+        wikipedia: 'Raw Wikipedia Knowledge',
+        website: 'Raw Scraped Website Content',
       },
       metrics: {
         establishment: 'Year of establishment',
@@ -738,7 +831,22 @@ export default {
     hierarchy: {
       title: 'Management Hierarchy',
       viewLinkedIn: 'View LinkedIn Profile',
+      interactive: 'Interactive',
+      screenshot: 'Take Screenshot',
     },
+    levels: {
+      all: 'All Levels',
+      ceo: 'CEO',
+      executives: 'Executives',
+      managers: 'Managers',
+      teamMembers: 'Team Members',
+    },
+    views: {
+      grid: 'Grid View',
+      list: 'List View',
+    },
+    noResults: 'No team members found matching your criteria',
+    searchPlaceholder: 'Search by name or position...',
     email: 'Email',
     emailPlaceholder: 'Enter email address',
     emailCannotChange: 'Email cannot be changed after creation',
@@ -869,8 +977,16 @@ export default {
     },
     features: {
       organizations: {
-        title: 'organization Management',
+        title: 'Organization Management',
         description: 'Manage all organizations, users, and organization settings',
+      },
+      users: {
+        title: 'User Management',
+        description: 'Manage user organization assignments and user access'
+      },
+      usage:{
+        title: 'Usage Dashboard',
+        description: 'View application usage metrics across all organizations'
       },
       uiDemo: {
         title: 'UI Components Demo',
@@ -880,14 +996,224 @@ export default {
         title: 'Workflow Management',
         description: 'Configure and manage automated workflows and processes',
       },
+      tasks: {
+        title: 'Task Monitoring',
+        description: 'Monitor running tasks across all organizations and restart stuck processes',
+      },
       costs: {
         title: 'Cost Analysis',
         description: 'Monitor token usage and costs for MINT screening workflows',
       },
       manage: 'Manage',
+      view: 'View',
       explore: 'Explore',
       configure: 'Configure',
       analyze: 'Analyze',
+      monitor: 'Monitor',
+    },
+    disableUser: {
+      title: 'Disable User',
+      confirmText: 'Are you sure you want to disable',
+      actionTitle: 'This action will:',
+      actionDescription: '• Prevent the user from logging in • Revoke all active sessions • Preserve all user data. You can re-enable the user later if needed.',
+      cancel: 'Cancel',
+      confirm: 'Disable User',
+    },
+    userActions: {
+      changeOrganization: 'Change Organization',
+      managePermissions: 'Manage Permissions',
+      enableUser: 'Enable User',
+      disableUser: 'Disable User',
+      resetPassword: 'Reset Password',
+    },
+    userOrganization: {
+      title: 'Change User Organization',
+      currentOrganization: 'Current organization:',
+      noOrganization: 'No organization assigned',
+      current: '(current)',
+      noOrganizationsAvailable: 'No organizations available',
+      selectOrganization: 'Select organization',
+      cancel: 'Cancel',
+      save: 'Save',
+    },
+    permissions: {
+      title: 'Manage Permissions',
+      description: 'Configure permissions for {username}',
+      loading: 'Loading permissions...',
+      save: 'Save Permissions',
+      alwaysOn: 'Always On',
+      error: {
+        title: 'Error loading permissions',
+      },
+      legacyWarning: {
+        title: 'Legacy Permissions Detected',
+        description: 'This user has old-style permissions. They will be automatically converted to the new permission model when you save.',
+      },
+      customWarning: {
+        title: 'Custom Permissions Detected',
+        description: "This user has custom permissions that don't match any predefined role. Selecting a role will override their current permissions.",
+      },
+      tabs: {
+        roles: 'Quick Roles',
+        custom: 'Custom Permissions',
+      },
+      sections: {
+        base: 'Base Access',
+        modules: 'Module Permissions',
+        modulesDescription: 'These permissions allow creating specific types of content. Requires Write Access.',
+        admin: 'Admin Permissions',
+        adminDescription: 'Administrative access grants full control. Use with caution.',
+      },
+      organizationRead: {
+        label: 'Read Access',
+        description: 'View folders and companies in the organization',
+      },
+      organizationWrite: {
+        label: 'Write Access',
+        description: 'Create and manage folders, manage owned content',
+      },
+      organizationManage: {
+        label: 'Team Management',
+        description: 'Manage team members and their permissions',
+      },
+      companyCreate: {
+        label: 'Add Items',
+        description: 'Add company screens and other items to folders',
+      },
+      targetCreate: {
+        label: 'Create Targets',
+        description: 'Create new watchfiles (Target module)',
+      },
+      requiresWriteAccess: 'Requires Write Access to be enabled',
+      adminOrganizations: {
+        label: 'Organization Admin',
+        description: 'Full administrative access to all organizations',
+      },
+      summary: {
+        title: 'Permissions Summary',
+        noPermissions: 'No permissions selected',
+      },
+      roles: {
+        reader: {
+          name: 'Reader',
+          description: 'View-only access to folders and companies',
+        },
+        writer: {
+          name: 'Writer',
+          description: 'Create and manage folders and companies',
+        },
+        manager: {
+          name: 'Manager',
+          description: 'Writer permissions plus team management',
+        },
+        admin: {
+          name: 'Admin',
+          description: 'Complete administrative access',
+        },
+      },
+    },
+    taskTypes: {
+      title: 'Task Type Cost Efficiency',
+      loading: 'Loading task type data...',
+      error: 'Failed to load task type data',
+      noData: 'No task type data available',
+      columns: {
+        taskType: 'Task Type',
+        totalCost: 'Total Cost',
+        taskCount: 'Task Count',
+        avgCostPerTask: 'Avg Cost/Task',
+        avgInputTokens: 'Avg Input Tokens',
+        avgOutputTokens: 'Avg Output Tokens',
+      },
+      percentOfTotal: '% of total',
+      percentOfAllTasks: '% of all tasks',
+      summary: {
+        mostExpensive: 'Most Expensive',
+        mostFrequent: 'Most Frequent',
+        totalTaskTypes: 'Total Task Types',
+      },
+      efficiency: {
+        veryEfficient: 'Very efficient',
+        average: 'Average',
+        expensive: 'Expensive',
+      },
+    },
+    organizationBreakdown: {
+      title: 'Organization Cost Breakdown',
+      loading: 'Loading organization data...',
+      error: 'Failed to load organization data',
+      noData: 'No organization data available',
+      columns: {
+        organization: 'Organization',
+        totalCost: 'Total Cost',
+        tasks: 'Tasks',
+        companies: 'Companies',
+        avgCostPerTask: 'Avg Cost/Task',
+        avgCostPerCompany: 'Avg Cost/Company',
+      },
+      id: 'ID:',
+      percentOfTotal: '{percent}% of total',
+      tokens: '{count} tokens',
+      noTokens: 'No tokens',
+    },
+    costChart: {
+      title: 'Workspace Cost Distribution',
+      loading: 'Loading chart data...',
+      error: 'Failed to load chart data',
+      noData: 'No workspace data available',
+      tooltip: {
+        cost: 'Cost',
+        percentage: 'Percentage',
+        tasks: 'Tasks',
+        companies: 'Companies',
+      },
+    },
+    usage: {
+      title: 'Usage Dashboard',
+      description: 'View application usage metrics across all organizations',
+      timeRange: {
+        last7Days: 'Last 7 days',
+        last30Days: 'Last 30 days',
+        last90Days: 'Last 90 days',
+        allTime: 'All time',
+      },
+      error: {
+        title: 'Error Loading Data',
+        retry: 'Retry',
+        message: 'Failed to load usage statistics',
+      },
+      stackedChart: {
+        title: 'Companies by Organization',
+        loading: 'Loading chart data...',
+        noData: 'No organization data for selected period',
+        companies: 'companies',
+      },
+      lineChart: {
+        title: 'Companies Over Time',
+        loading: 'Loading chart data...',
+        noData: 'No company data for selected period',
+        label: 'Companies Created',
+        tooltip: '{count} company created | {count} companies created',
+      },
+      kpi: {
+        companiesCreated: 'Companies Created',
+        taskSuccessRate: 'Task Success Rate',
+        activeUsers: 'Active Users',
+        azureCost: 'Azure Cost',
+        phase2Feature: 'Phase 2 feature',
+      },
+      table: {
+        title: 'Organization Breakdown',
+        organization: 'Organization',
+        companiesCreated: 'Companies Created',
+        percentOfTotal: '% of Total',
+        noData: 'No organization data for selected period',
+      },
+    },
+    workflowCard: {
+      save: 'Save',
+      cancel: 'Cancel',
+      editing: 'Editing...',
     },
     workflows: {
       title: 'Workflow Management',
@@ -908,9 +1234,16 @@ export default {
         title: 'Failed to Load Workflows',
       },
     },
-    organizations:{
+    organizations: {
+      title: 'Organization Management',
+      description: 'Manage all organizations in Keycloak',
+      search: 'Search organizations...',
       showing: 'Showing {from} to {to} of {total} organizations',
-      members: 'Members'
+      members: 'Members',
+      empty: 'No organizations found',
+      error: {
+        title: 'Error Loading Organizations',
+      },
     },
     import: {
       title: 'Import Users',
@@ -937,6 +1270,7 @@ export default {
       ignoredColumnsMessage: 'The following columns are not mapped: {columns}',
       requiredFieldsWarning: 'Required fields not mapped',
       requiredFieldsMessage: 'Username and Email columns must be mapped to proceed.',
+      requiredFieldTooltip: 'Required field',
       // Password handling - no password column
       noPasswordColumnTitle: 'No password column detected',
       noPasswordColumnMessage:
@@ -995,6 +1329,23 @@ export default {
       search: {
         placeholder: 'Search by username, name, email or organization...',
       },
+      title: 'User Management',
+      description: 'Manage user organization assignments',
+      loading: 'Loading users...',
+      modal: {
+        changeOrganization: 'Change User Organization',
+        assignOrganization: 'Assign User to Organization',
+        loading: 'Loading organization...',
+        selectOrganization: 'Select organization:',
+        assigning: 'Assigning...',
+        error: {
+          title: 'Error loading organization',
+        },
+        warning: {
+          title: 'Organization Change',
+          message: "Changing this user's organization will move them to the new organization. Their data will remain in the original organization.",
+        },
+      },
       assignOrganization: {
         success: 'Organization assigned successfully!',
         error: 'Failed to assign organization',
@@ -1016,6 +1367,109 @@ export default {
         error: 'Failed to enable user',
       },
     },
+    tasks: {
+      title: 'Task Monitoring',
+      description: 'Monitor and manage tasks across all organizations',
+      refresh: 'Refresh',
+      autoRefresh: {
+        on: 'Auto-refresh ON',
+        off: 'Auto-refresh OFF',
+      },
+      lastUpdated: {
+        seconds: 'Updated {seconds}s ago',
+        minutes: 'Updated {minutes}m ago',
+      },
+      loading: 'Loading task data...',
+      error: {
+        title: 'Error Loading Data',
+        description: 'Failed to load task data',
+        retry: 'Retry',
+      },
+      stats: {
+        totalTasks: 'Total Tasks',
+        running: 'Running',
+        pending: 'Pending',
+        blocked: 'Blocked',
+        failed: 'Failed',
+        successRate: 'Success Rate',
+      },
+      stuckAlert: {
+        title: '{count} Stuck Task Detected | {count} Stuck Tasks Detected',
+        description: 'Tasks running longer than expected may need attention. Review and restart if necessary.',
+        selectAll: 'Select All Stuck',
+      },
+      filters: {
+        allStatuses: 'All Statuses',
+        allTypes: 'All Types',
+        allOrganizations: 'All Organizations',
+        clearFilters: 'Clear Filters',
+        internal: 'Internal',
+      },
+      status: {
+        running: 'Running',
+        pending: 'Pending',
+        blocked: 'Blocked',
+        succeeded: 'Succeeded',
+        error: 'Error',
+      },
+      taskTypes: {
+        profile: 'Profile',
+        digital: 'Digital',
+        timeline: 'Timeline',
+        products: 'Products',
+        jobs: 'Jobs',
+        csr: 'CSR',
+        press: 'Press',
+        team: 'Team',
+        dataCollection: 'Data Collection',
+      },
+      table: {
+        id: 'ID',
+        company: 'Company',
+        organization: 'Organization',
+        type: 'Type',
+        status: 'Status',
+        elapsed: 'Elapsed',
+        actions: 'Actions',
+        noTasks: 'No tasks found matching your filters',
+        restartTask: 'Restart task',
+        viewError: 'View error',
+      },
+      selection: {
+        selected: '{count} selected',
+        restart: 'Restart {count} Task | Restart {count} Tasks',
+        clearSelection: 'Clear Selection',
+      },
+      pagination: {
+        showing: 'Showing {from} to {to} of {total} tasks',
+        page: 'Page {page} of {pages}',
+      },
+      modal: {
+        title: 'Confirm Bulk Restart',
+        description: 'You are about to restart {count} task. This action will: | You are about to restart {count} tasks. This action will:',
+        actions: {
+          cancel: 'Cancel the currently running tasks',
+          queue: 'Queue them for immediate re-execution',
+          reset: 'Reset their status to "pending"',
+        },
+        selectedTasks: 'Selected tasks:',
+        stuckWarning: '{count} of these tasks have been running for over 3 minutes and may be stuck.',
+        result: {
+          initiated: 'Restart Initiated',
+          noTasks: 'No Tasks Restarted',
+          restarted: '{count} task restarted successfully | {count} tasks restarted successfully',
+          skipped: '{count} task skipped | {count} tasks skipped',
+          skippedReasons: 'Skipped reasons:',
+          taskReason: 'Task #{id}: {reason}',
+        },
+        buttons: {
+          cancel: 'Cancel',
+          restarting: 'Restarting...',
+          restart: 'Restart {count} Task | Restart {count} Tasks',
+        },
+      },
+    },
+    adminRequired: 'Admin Required',
   },
   tasks: {
     events: {
@@ -1037,6 +1491,24 @@ export default {
     status: 'Status',
     actions: 'Actions',
     clearSearch: 'Clear Search',
+    chat: {
+      askOurAi: 'Ask our AI',
+      thinking: 'Thinking...',
+      placeholder: 'Write a message...',
+      welcomeMessage: 'Hello! I am Basil, your assistant. I can help you with questions about this company. What would you like to know?',
+      noResponse: "I received your message but couldn't generate a response.",
+      errorMessage: 'Sorry, I encountered an error processing your request. Please try again.',
+      assistant: {
+        name: 'Basil AI Assistant',
+        shortName: 'Basil AI',
+        online: 'Online & ready to help',
+      },
+    },
+    taskError: {
+      title: 'Error',
+      description: 'An error occurred while loading the page',
+      restartTask: 'Restart task',
+    },
     dashboard: {
       title: 'Company Dashboard',
       description: 'Company Information Dashboard',
@@ -1267,6 +1739,8 @@ export default {
       },
     },
     item: {
+      created: 'Created',
+      by: 'by',
       tasks: {
         count: '{count} tasks',
         status: {
@@ -1286,6 +1760,61 @@ export default {
     },
     export: {
       button: 'Export',
+      modal: {
+        title: 'Export Options',
+        description: 'Select which sections to include in your PowerPoint export:',
+        preferencesSaved: 'Preferences saved',
+        selectAll: 'Select All',
+        deselectAll: 'Deselect All',
+        cancel: 'Cancel',
+        export: 'Export',
+        options: {
+          titleSlide: {
+            label: 'Title Slide',
+            description: 'Cover page with company name and date',
+          },
+          profile: {
+            label: 'Company Profile',
+            description: 'Basic information, business lines, and key metrics',
+          },
+          productsServices: {
+            label: 'Products and Services',
+            description: 'Product range, partner brands, and private labels',
+          },
+          targetAudience: {
+            label: 'Target Audience & Customer Base',
+            description: 'Customer type and marketing positioning',
+          },
+          digitalStrategy: {
+            label: 'Digital Strategy & Social Media',
+            description: 'Digital approach, loyalty programs, and online services',
+          },
+          csr: {
+            label: 'Corporate Social Responsibility',
+            description: 'Responsibility initiatives and charity actions',
+          },
+          news: {
+            label: 'Press & Media',
+            description: 'Press articles and media coverage',
+          },
+          timeline: {
+            label: 'Timeline',
+            description: 'Company timeline events and milestones',
+          },
+          team: {
+            label: 'Team & Management',
+            description: 'Leadership team and organizational structure',
+          },
+          jobs: {
+            label: 'Job Opportunities',
+            description: 'Current job openings and hiring information',
+          },
+          press: {
+            label: 'Press Coverage',
+            description: 'Media articles and press releases',
+          },
+        },
+      },
     },
     onlinePresence: {
       title: 'Online Presence',
@@ -1359,7 +1888,22 @@ export default {
     credits: 'credits',
     companies: 'companies',
     loading: 'Loading token data...',
+    errorTitle: 'Error',
+    currentTokens: 'Current tokens:',
     refresh: 'Refresh token count',
+    moduleStatus: 'Module Status',
+    management: 'Token Management',
+    managementDescription: 'Manage your organization token balance',
+    globalBalance: 'Organization Token Balance',
+    companyEquivalent: 'Company Equivalent',
+    company: 'company',
+    addTokens: 'Add Tokens',
+    quickAdd: 'Quick Add (by company count)',
+    screensWithTokens: '{count} screens ({tokens})',
+    customAmount: 'Custom Amount',
+    enterAmount: 'Enter token amount...',
+    add: 'Add',
+    addHelper: 'Enter the number of tokens to add, or use quick-add buttons above.',
     companyEquivalence: {
       none: 'Not enough for 1 company creation',
       singular: '≈ 1 company creation',
@@ -1389,6 +1933,13 @@ export default {
         description: 'Data streaming capabilities',
       },
     },
+    history: {
+      errorTitle: 'Unable to load token history',
+    },
+  },
+  featureFlags: {
+    globalFeatures: 'Global Features',
+    description: 'Add-on capabilities that enhance core modules. These features are disabled by default.',
   },
   dataSources: {
     title: 'Data Sources',
@@ -1413,6 +1964,11 @@ export default {
   folder: {
     title: 'Folders',
     description: 'Organize your companies into folders',
+    descriptionGlobal: 'All folders in your organization',
+    viewScope: {
+      myFolders: 'My Folders',
+      allFolders: 'All Folders',
+    },
     search: {
       placeholder: 'Search items...',
     },
@@ -1498,6 +2054,13 @@ export default {
     itemTypes: {
       company: 'Company Card',
     },
+    privacy: {
+      private: 'Private',
+      shared: 'Shared',
+    },
+    owner: {
+      you: 'You',
+    },
     list: {
       error: {
         title: 'Error',
@@ -1544,6 +2107,27 @@ export default {
       cancel: 'Cancel',
       create: 'Create Folder',
       save: 'Save Changes',
+      color: 'Color',
+      colors: {
+        red: 'Red',
+        orange: 'Orange',
+        amber: 'Amber',
+        yellow: 'Yellow',
+        lime: 'Lime',
+        green: 'Green',
+        emerald: 'Emerald',
+        teal: 'Teal',
+        cyan: 'Cyan',
+        sky: 'Sky',
+        blue: 'Blue',
+        indigo: 'Indigo',
+        violet: 'Violet',
+        purple: 'Purple',
+        fuchsia: 'Fuchsia',
+        pink: 'Pink',
+        rose: 'Rose',
+        gray: 'Gray',
+      },
     },
     filter: {
       all: 'All folders',
@@ -1607,6 +2191,11 @@ export default {
       badge: {
         collaborative: 'Collaborative',
       },
+      noRecentProjects: 'No recent projects yet',
+      error: {
+        title: 'Unable to load recent projects',
+        description: 'There was a problem loading your recent projects. Please try again later.',
+      },
     },
     recentActivities: {
       title: 'Recent Activities',
@@ -1614,6 +2203,11 @@ export default {
       actions: {
         createdCompany: 'created a new Company Card about',
         createdFolder: 'created the Folder',
+      },
+      noRecentActivities: 'No recent activities',
+      error: {
+        title: 'Unable to load recent activities',
+        description: 'There was a problem loading organization activities. Please try again later.',
       },
     },
     modules: {
@@ -1679,12 +2273,19 @@ export default {
       },
     },
     detail: {
-      title: 'organization Details',
-      description: 'organization information and settings',
+      title: 'Organization Details',
+      description: 'Manage organization settings, tokens, and members',
       basicInfo: 'Basic Information',
       members: 'Members',
       settings: 'Settings',
       settingsPlaceholder: 'organization settings will be implemented here',
+    },
+    membersDescription: 'Manage users in this organization',
+    tabs: {
+      profile: 'Profile',
+      tokens: 'Tokens',
+      members: 'Members',
+      sources: 'Sources',
     },
     search: {
       placeholder: 'Search organizations...',
@@ -1710,6 +2311,7 @@ export default {
     justCreated: 'Just created',
     loading: 'Loading organizations...',
     name: 'organization Name',
+    id: 'ID',
     slug: 'organization Slug',
     description: 'Description',
     created: 'Created',
@@ -1724,15 +2326,27 @@ export default {
     delete: 'Delete organization',
     cannotDeleteDefault: 'Cannot delete the default organization',
     clearSearch: 'Clear Search',
-    tabs: {
-      sources: "Sources"
-    }
   },
   user: {
     create: {
       button: 'Add User',
+      title: 'Create New User',
+      description: 'Add a new user to the organization',
     },
     loading: 'Loading users...',
+    resetPassword: {
+      title: 'Reset Password',
+      button: 'Reset Password',
+      description: 'Reset password for this user',
+      infoTitle: 'Password Reset',
+      infoDescription: 'A temporary password will be generated. The user must change it on first login.',
+      newPassword: 'New Temporary Password',
+      placeholder: 'Enter new password',
+      success: 'Password Reset Successfully',
+      successDescription: 'The password has been reset. Share this temporary password with the user.',
+      temporaryPassword: 'Temporary Password',
+    },
+    generatePassword: 'Generate Random Password',
     status: {
       active: 'Active',
       pending: 'Pending',
@@ -1795,17 +2409,25 @@ export default {
       moreRows: '{count} more rows not shown',
       validateData: 'Validate Data',
       validating: 'Validating companies...',
+      table: {
+        row: 'Row',
+        companyName: 'Company Name',
+        website: 'Website',
+      },
       validation: {
         title: 'Validation Results',
         valid: 'Valid companies',
         invalid: 'Invalid companies',
         validCompanies: '{count} valid companies',
         invalidCompanies: '{count} invalid companies',
+        validCompaniesLabel: 'Valid Companies',
+        invalidCompaniesLabel: 'Invalid Companies',
         viewDetails: 'View Details',
         hideDetails: 'Hide Details',
         row: 'Row',
         company: 'Company',
         error: 'Error',
+        errorsTitle: 'Validation Errors',
         errorsFound: 'Validation Errors Found',
         errorsFoundMessage:
           'You can either fix the errors in your CSV file and re-upload, or proceed with import which will skip invalid rows.',
@@ -1814,6 +2436,7 @@ export default {
         title: 'Token Usage',
         required: 'tokens required',
         tokensRequired: '{count} tokens required',
+        tokensRequiredLabel: 'Tokens Required',
         available: 'tokens available',
         tokensAvailable: 'You have {count} tokens available',
         insufficient: 'Insufficient tokens',
@@ -1837,6 +2460,10 @@ export default {
         successCount: '{count} companies imported successfully',
         failedCount: '{count} companies failed to import',
         viewCompanies: 'View Companies',
+        successful: 'Successful',
+        failedLabel: 'Failed',
+        totalProcessed: 'Total Processed',
+        failedImportsTitle: 'Failed Imports',
       },
       errors: {
         invalidFile: 'Invalid file format. Please upload a CSV file.',
@@ -1850,6 +2477,8 @@ export default {
     },
   },
   help: {
+    title: 'Help',
+    description: 'Find answers to your questions and learn how to use the application',
     noContent: {
       title: 'No Help Content Available',
       message: "You don't have access to any help sections based on your current permissions.",
@@ -1862,10 +2491,13 @@ export default {
     loading: {
       content: 'Loading help content...',
     },
+    error: {
+      loadingContent: 'Error loading help content.',
+    },
     categories: {
       admin: 'Administration',
       company: 'Company Screening',
-      organization: 'organization Management',
+      organization: 'Organization Management',
     },
   },
   login: {
@@ -2114,6 +2746,7 @@ export default {
     tooltip: 'Logout',
   },
   pagination: {
+    show: 'Show:',
     page: 'Page:',
     of: 'of',
     displaying: 'Displaying {start} to {end} of {total} {itemName}',

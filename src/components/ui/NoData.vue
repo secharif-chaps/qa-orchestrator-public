@@ -7,12 +7,14 @@
     />
     <div class="text-center">
       <slot>
-        <p class="text-secondary text-lg">No data available</p>
+        <p class="text-secondary text-lg">{{ t('common.noData') }}</p>
       </slot>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// Simple no data state component with customizable content via slot
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 </script>

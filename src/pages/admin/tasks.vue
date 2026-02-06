@@ -26,26 +26,26 @@
           ]"
         >
           <i :class="['fa fa-sync-alt', { 'animate-spin': autoRefreshEnabled && isRefreshing }]"></i>
-          {{ autoRefreshEnabled ? 'Auto-refresh ON' : 'Auto-refresh OFF' }}
+          {{ autoRefreshEnabled ? $t('admin.tasks.autoRefresh.on') : $t('admin.tasks.autoRefresh.off') }}
         </button>
-        <Button variant="secondary" icon="fa fa-refresh" label="Refresh" @click="refreshAll" :loading="isRefreshing" />
+        <Button variant="secondary" icon="fa fa-refresh" :label="$t('admin.tasks.refresh')" @click="refreshAll" :loading="isRefreshing" />
       </div>
     </div>
 
     <!-- Loading State -->
     <div v-if="isLoading" class="flex flex-col items-center justify-center py-16 gap-4">
       <i class="fa fa-spinner animate-spin text-4xl text-primary"></i>
-      <p class="text-secondary">Loading task data...</p>
+      <p class="text-secondary">{{ $t('admin.tasks.loading') }}</p>
     </div>
 
     <!-- Error State -->
     <div v-else-if="tasksError" class="flex flex-col gap-4">
       <Alert
         variant="danger"
-        title="Error Loading Data"
-        :description="tasksError?.message ?? 'Failed to load task data'"
+        :title="$t('admin.tasks.error.title')"
+        :description="tasksError?.message ?? $t('admin.tasks.error.description')"
         icon="fa-exclamation-triangle"
-        action="Retry"
+        :action="$t('admin.tasks.error.retry')"
         @click="refreshAll"
       />
     </div>
@@ -55,37 +55,37 @@
       <!-- Summary Statistics -->
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         <StatCard
-          label="Total Tasks"
+          :label="$t('admin.tasks.stats.totalTasks')"
           :value="stats?.total_tasks ?? 0"
           icon="fa fa-tasks"
           variant="slate"
         />
         <StatCard
-          label="Running"
+          :label="$t('admin.tasks.stats.running')"
           :value="stats?.running ?? 0"
           icon="fa fa-play-circle"
           variant="info"
         />
         <StatCard
-          label="Pending"
+          :label="$t('admin.tasks.stats.pending')"
           :value="stats?.pending ?? 0"
           icon="fa fa-clock"
           variant="warning"
         />
         <StatCard
-          label="Blocked"
+          :label="$t('admin.tasks.stats.blocked')"
           :value="stats?.blocked ?? 0"
           icon="fa fa-ban"
           variant="slate"
         />
         <StatCard
-          label="Failed"
+          :label="$t('admin.tasks.stats.failed')"
           :value="stats?.error ?? 0"
           icon="fa fa-times-circle"
           variant="error"
         />
         <StatCard
-          label="Success Rate"
+          :label="$t('admin.tasks.stats.successRate')"
           :value="formatPercent(stats?.success_rate ?? 0)"
           icon="fa fa-check-circle"
           variant="success"
@@ -97,10 +97,10 @@
       <Alert
         v-if="(stats?.stuck_count ?? 0) > 0"
         variant="warning"
-        :title="`${stats?.stuck_count} Stuck Task${(stats?.stuck_count ?? 0) > 1 ? 's' : ''} Detected`"
-        description="Tasks running longer than expected may need attention. Review and restart if necessary."
+        :title="$t('admin.tasks.stuckAlert.title', { count: stats?.stuck_count ?? 0 }, stats?.stuck_count ?? 0)"
+        :description="$t('admin.tasks.stuckAlert.description')"
         icon="fa-exclamation-triangle"
-        action="Select All Stuck"
+        :action="$t('admin.tasks.stuckAlert.selectAll')"
         @click="selectAllStuck"
       />
 
@@ -120,23 +120,23 @@
             </template>
             <template #content="{ close }">
               <DropdownItem @click="filters.status = undefined; close()">
-                All Statuses
+                {{ $t('admin.tasks.filters.allStatuses') }}
               </DropdownItem>
               <DropdownDivider />
               <DropdownItem @click="filters.status = 'running'; close()">
-                <i class="fa fa-play-circle text-info mr-2"></i> Running
+                <i class="fa fa-play-circle text-info mr-2"></i> {{ $t('admin.tasks.status.running') }}
               </DropdownItem>
               <DropdownItem @click="filters.status = 'pending'; close()">
-                <i class="fa fa-clock text-warning mr-2"></i> Pending
+                <i class="fa fa-clock text-warning mr-2"></i> {{ $t('admin.tasks.status.pending') }}
               </DropdownItem>
               <DropdownItem @click="filters.status = 'blocked'; close()">
-                <i class="fa fa-ban text-secondary mr-2"></i> Blocked
+                <i class="fa fa-ban text-secondary mr-2"></i> {{ $t('admin.tasks.status.blocked') }}
               </DropdownItem>
               <DropdownItem @click="filters.status = 'succeeded'; close()">
-                <i class="fa fa-check-circle text-success mr-2"></i> Succeeded
+                <i class="fa fa-check-circle text-success mr-2"></i> {{ $t('admin.tasks.status.succeeded') }}
               </DropdownItem>
               <DropdownItem @click="filters.status = 'error'; close()">
-                <i class="fa fa-times-circle text-error mr-2"></i> Error
+                <i class="fa fa-times-circle text-error mr-2"></i> {{ $t('admin.tasks.status.error') }}
               </DropdownItem>
             </template>
           </Dropdown>
@@ -154,7 +154,7 @@
             </template>
             <template #content="{ close }">
               <DropdownItem @click="filters.task_type = undefined; close()">
-                All Types
+                {{ $t('admin.tasks.filters.allTypes') }}
               </DropdownItem>
               <DropdownDivider />
               <DropdownItem
@@ -180,7 +180,7 @@
             </template>
             <template #content="{ close }">
               <DropdownItem @click="filters.organization_id = undefined; close()">
-                All Organizations
+                {{ $t('admin.tasks.filters.allOrganizations') }}
               </DropdownItem>
               <DropdownDivider />
               <DropdownItem
@@ -190,7 +190,7 @@
               >
                 <span :class="{ 'text-secondary': org.is_internal }">
                   {{ org.name }}
-                  <Tag v-if="org.is_internal" variant="slate" size="xs" label="Internal" class="ml-2" />
+                  <Tag v-if="org.is_internal" variant="slate" size="xs" :label="$t('admin.tasks.filters.internal')" class="ml-2" />
                 </span>
               </DropdownItem>
             </template>
@@ -202,7 +202,7 @@
             variant="tertiary"
             size="sm"
             icon="fa fa-times"
-            label="Clear Filters"
+            :label="$t('admin.tasks.filters.clearFilters')"
             @click="clearFilters"
           />
 
@@ -212,20 +212,20 @@
           <!-- Bulk Actions -->
           <div v-if="selectedTaskIds.length > 0" class="flex items-center gap-3">
             <span class="text-sm text-secondary">
-              {{ selectedTaskIds.length }} selected
+              {{ $t('admin.tasks.selection.selected', { count: selectedTaskIds.length }) }}
             </span>
             <Button
               variant="primary"
               size="sm"
               icon="fa fa-redo"
-              :label="`Restart ${selectedTaskIds.length} Task${selectedTaskIds.length > 1 ? 's' : ''}`"
+              :label="$t('admin.tasks.selection.restart', { count: selectedTaskIds.length }, selectedTaskIds.length)"
               :loading="isRestarting"
               @click="handleBulkRestart"
             />
             <Button
               variant="tertiary"
               size="sm"
-              label="Clear Selection"
+              :label="$t('admin.tasks.selection.clearSelection')"
               @click="clearSelection"
             />
           </div>
@@ -247,20 +247,20 @@
                     class="rounded border-primary-stroke"
                   />
                 </th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">ID</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">Company</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">Organization</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">Type</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">Status</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">Elapsed</th>
-                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">Actions</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">{{ $t('admin.tasks.table.id') }}</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">{{ $t('admin.tasks.table.company') }}</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">{{ $t('admin.tasks.table.organization') }}</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">{{ $t('admin.tasks.table.type') }}</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">{{ $t('admin.tasks.table.status') }}</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">{{ $t('admin.tasks.table.elapsed') }}</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-secondary uppercase tracking-wide">{{ $t('admin.tasks.table.actions') }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-primary-stroke">
               <tr v-if="!tasks?.items?.length" class="bg-base-100">
                 <td colspan="8" class="px-4 py-12 text-center text-secondary">
                   <i class="fa fa-inbox text-3xl mb-3 block"></i>
-                  No tasks found matching your filters
+                  {{ $t('admin.tasks.table.noTasks') }}
                 </td>
               </tr>
               <tr
@@ -310,7 +310,7 @@
                       size="sm"
                       icon="fa fa-redo"
                       icon-only
-                      title="Restart task"
+                      :title="$t('admin.tasks.table.restartTask')"
                       @click="handleRestartSingle(task.id)"
                     />
                     <Button
@@ -319,7 +319,7 @@
                       size="sm"
                       icon="fa fa-eye"
                       icon-only
-                      title="View error"
+                      :title="$t('admin.tasks.table.viewError')"
                       @click="showError(task)"
                     />
                   </div>
@@ -333,7 +333,7 @@
         <div v-if="tasks && tasks.pages > 1" class="px-4 py-3 border-t border-primary-stroke bg-base-200/50">
           <div class="flex items-center justify-between">
             <span class="text-sm text-secondary">
-              Showing {{ (filters.page! - 1) * filters.size! + 1 }} to {{ Math.min(filters.page! * filters.size!, tasks.total) }} of {{ tasks.total }} tasks
+              {{ $t('admin.tasks.pagination.showing', { from: (filters.page! - 1) * filters.size! + 1, to: Math.min(filters.page! * filters.size!, tasks.total), total: tasks.total }) }}
             </span>
             <div class="flex items-center gap-2">
               <Button
@@ -344,7 +344,7 @@
                 @click="filters.page!--"
               />
               <span class="px-3 py-1 text-sm">
-                Page {{ filters.page }} of {{ tasks.pages }}
+                {{ $t('admin.tasks.pagination.page', { page: filters.page, pages: tasks.pages }) }}
               </span>
               <Button
                 variant="secondary"
@@ -364,7 +364,7 @@
     <OModal
       v-model="showRestartModal"
       :display-modal="showRestartModal"
-      title="Confirm Bulk Restart"
+      :title="$t('admin.tasks.modal.title')"
       size="md"
       icon="fa fa-redo"
       color="warning"
@@ -372,18 +372,17 @@
       <template #description>
         <div class="space-y-4">
           <p class="text-secondary">
-            You are about to restart <strong class="text-base-content">{{ selectedTaskIds.length }}</strong> task{{ selectedTaskIds.length > 1 ? 's' : '' }}.
-            This action will:
+            {{ $t('admin.tasks.modal.description', { count: selectedTaskIds.length }, selectedTaskIds.length) }}
           </p>
           <ul class="list-disc list-inside text-sm text-secondary space-y-1">
-            <li>Cancel the currently running tasks</li>
-            <li>Queue them for immediate re-execution</li>
-            <li>Reset their status to "pending"</li>
+            <li>{{ $t('admin.tasks.modal.actions.cancel') }}</li>
+            <li>{{ $t('admin.tasks.modal.actions.queue') }}</li>
+            <li>{{ $t('admin.tasks.modal.actions.reset') }}</li>
           </ul>
 
           <!-- Selected tasks summary -->
           <div class="bg-base-200 rounded-lg p-3 max-h-40 overflow-y-auto">
-            <p class="text-xs font-semibold text-secondary mb-2">Selected tasks:</p>
+            <p class="text-xs font-semibold text-secondary mb-2">{{ $t('admin.tasks.modal.selectedTasks') }}</p>
             <div class="space-y-1">
               <div
                 v-for="task in selectedTasksForModal"
@@ -400,7 +399,7 @@
           <Alert
             v-if="selectedStuckCount > 0"
             variant="warning"
-            :message="`${selectedStuckCount} of these tasks have been running for over 3 minutes and may be stuck.`"
+            :message="$t('admin.tasks.modal.stuckWarning', { count: selectedStuckCount })"
             icon="fa fa-exclamation-triangle"
           />
 
@@ -408,23 +407,23 @@
           <Alert
             v-if="lastRestartResult"
             :variant="lastRestartResult.skipped.length > 0 ? 'warning' : 'success'"
-            :title="lastRestartResult.restarted.length > 0 ? 'Restart Initiated' : 'No Tasks Restarted'"
+            :title="lastRestartResult.restarted.length > 0 ? $t('admin.tasks.modal.result.initiated') : $t('admin.tasks.modal.result.noTasks')"
             icon="fa fa-info-circle"
           >
             <div class="text-sm space-y-1">
               <p v-if="lastRestartResult.restarted.length > 0">
                 <i class="fa fa-check text-success mr-1"></i>
-                {{ lastRestartResult.restarted.length }} task{{ lastRestartResult.restarted.length > 1 ? 's' : '' }} restarted successfully
+                {{ $t('admin.tasks.modal.result.restarted', { count: lastRestartResult.restarted.length }, lastRestartResult.restarted.length) }}
               </p>
               <p v-if="lastRestartResult.skipped.length > 0">
                 <i class="fa fa-exclamation-triangle text-warning mr-1"></i>
-                {{ lastRestartResult.skipped.length }} task{{ lastRestartResult.skipped.length > 1 ? 's' : '' }} skipped
+                {{ $t('admin.tasks.modal.result.skipped', { count: lastRestartResult.skipped.length }, lastRestartResult.skipped.length) }}
               </p>
               <div v-if="Object.keys(lastRestartResult.skipped_reasons).length > 0" class="mt-2 text-xs text-secondary">
-                <p class="font-semibold">Skipped reasons:</p>
+                <p class="font-semibold">{{ $t('admin.tasks.modal.result.skippedReasons') }}</p>
                 <ul class="list-disc list-inside">
                   <li v-for="(reason, taskId) in lastRestartResult.skipped_reasons" :key="taskId">
-                    Task #{{ taskId }}: {{ reason }}
+                    {{ $t('admin.tasks.modal.result.taskReason', { id: taskId, reason: reason }) }}
                   </li>
                 </ul>
               </div>
@@ -435,10 +434,10 @@
 
       <template #footer>
         <div class="flex justify-end gap-3">
-          <Button variant="secondary" label="Cancel" @click="closeRestartModal" :disabled="isRestarting" />
+          <Button variant="secondary" :label="$t('admin.tasks.modal.buttons.cancel')" @click="closeRestartModal" :disabled="isRestarting" />
           <Button
             variant="primary"
-            :label="isRestarting ? 'Restarting...' : `Restart ${selectedTaskIds.length} Task${selectedTaskIds.length > 1 ? 's' : ''}`"
+            :label="isRestarting ? $t('admin.tasks.modal.buttons.restarting') : $t('admin.tasks.modal.buttons.restart', { count: selectedTaskIds.length }, selectedTaskIds.length)"
             icon="fa fa-redo"
             @click="confirmBulkRestart"
             :loading="isRestarting"
@@ -459,6 +458,7 @@ meta:
 
 <script setup lang="ts">
 import { ref, computed, watch, onUnmounted, defineComponent, h } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useQuery } from '@pinia/colada'
 import { adminTasksQuery, adminOrganizationsQuery } from '@/queries/admin'
 import { useRestartAdminTasks } from '@/mutations/admin'
@@ -494,8 +494,9 @@ const StatCard = defineComponent({
     })
 
     // Map stat card variant to badge intent (Vuellar uses intent for semantic colors)
-    const badgeIntent = computed(() => {
-      const intentMap: Record<string, string> = {
+    type BadgeIntent = 'success' | 'warning' | 'info' | 'neutral' | 'accent' | 'danger'
+    const badgeIntent = computed((): BadgeIntent => {
+      const intentMap: Record<string, BadgeIntent> = {
         success: 'success',
         warning: 'warning',
         error: 'danger',
@@ -519,6 +520,9 @@ const StatCard = defineComponent({
 
 // Task types constant
 const taskTypes: TaskType[] = ['profile', 'digital', 'timeline', 'products', 'jobs', 'csr', 'press', 'team', 'data_collection']
+
+// i18n
+const { t } = useI18n()
 
 // Reactive filters (no time_range_hours - we paginate through all tasks)
 const filters = ref<AdminTasksFilters>({
@@ -603,17 +607,17 @@ const hasActiveFilters = computed(() => {
 })
 
 const selectedStatusLabel = computed(() => {
-  if (!filters.value.status) return 'All Statuses'
-  return filters.value.status.charAt(0).toUpperCase() + filters.value.status.slice(1)
+  if (!filters.value.status) return t('admin.tasks.filters.allStatuses')
+  return t(`admin.tasks.status.${filters.value.status}`)
 })
 
 const selectedTypeLabel = computed(() => {
-  if (!filters.value.task_type) return 'All Types'
+  if (!filters.value.task_type) return t('admin.tasks.filters.allTypes')
   return formatTaskType(filters.value.task_type)
 })
 
 const selectedOrgLabel = computed(() => {
-  if (!filters.value.organization_id) return 'All Organizations'
+  if (!filters.value.organization_id) return t('admin.tasks.filters.allOrganizations')
   const org = organizations.value?.organizations.find(o => o.id === filters.value.organization_id)
   return org?.name ?? 'Unknown'
 })
@@ -648,9 +652,9 @@ const selectedStuckCount = computed(() => {
 
 const lastRefreshText = computed(() => {
   const seconds = Math.floor((Date.now() - lastRefresh.value.getTime()) / 1000)
-  if (seconds < 60) return `Updated ${seconds}s ago`
+  if (seconds < 60) return t('admin.tasks.lastUpdated.seconds', { seconds })
   const minutes = Math.floor(seconds / 60)
-  return `Updated ${minutes}m ago`
+  return t('admin.tasks.lastUpdated.minutes', { minutes })
 })
 
 // Methods
@@ -658,19 +662,21 @@ function formatPercent(value: number): string {
   return `${(value * 100).toFixed(1)}%`
 }
 
+// Task type translation keys mapping
+const taskTypeKeys: Record<TaskType, string> = {
+  profile: 'admin.tasks.taskTypes.profile',
+  digital: 'admin.tasks.taskTypes.digital',
+  timeline: 'admin.tasks.taskTypes.timeline',
+  products: 'admin.tasks.taskTypes.products',
+  jobs: 'admin.tasks.taskTypes.jobs',
+  csr: 'admin.tasks.taskTypes.csr',
+  press: 'admin.tasks.taskTypes.press',
+  team: 'admin.tasks.taskTypes.team',
+  data_collection: 'admin.tasks.taskTypes.dataCollection',
+}
+
 function formatTaskType(type: TaskType): string {
-  const labels: Record<TaskType, string> = {
-    profile: 'Profile',
-    digital: 'Digital',
-    timeline: 'Timeline',
-    products: 'Products',
-    jobs: 'Jobs',
-    csr: 'CSR',
-    press: 'Press',
-    team: 'Team',
-    data_collection: 'Data Collection',
-  }
-  return labels[type] || type
+  return t(taskTypeKeys[type]) || type
 }
 
 function getStatusVariant(status: TaskStatus): 'success' | 'warning' | 'error' | 'info' | 'slate' {

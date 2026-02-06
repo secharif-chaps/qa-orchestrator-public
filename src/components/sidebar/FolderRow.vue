@@ -38,7 +38,7 @@
         icon="fa fa-plus-circle"
         size="sm"
         @click.stop="$emit('addCompany', folder.id)"
-        title="Ajouter une entreprise"
+        :title="$t('sidebar.chapse.addCompany')"
       >
       </Button>
     </div>

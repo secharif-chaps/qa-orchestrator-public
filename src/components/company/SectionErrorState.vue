@@ -7,12 +7,12 @@
 
     <!-- Error Title -->
     <h3 class="text-xl font-semibold text-secondary mb-2">
-      {{ title }}
+      {{ displayTitle }}
     </h3>
 
     <!-- Error Description -->
     <p class="text-secondary max-w-md mx-auto mb-4 text-center">
-      {{ description }}
+      {{ displayDescription }}
     </p>
 
     <!-- Error details -->
@@ -28,7 +28,7 @@
       v-if="task"
       variant="primary"
       icon="fa fa-refresh"
-      label="Restart task"
+      :label="t('company.taskError.restartTask')"
       @click="restartTask(task.type)"
       :loading="isRestarting === task.type"
     />
@@ -39,8 +39,11 @@
 import { Button } from '@owlint/feathers-vue'
 import chapseErrorImage from '@/assets/chapse/error_light.svg'
 import type { TaskResponse, TaskType } from '@/types/task'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRestartTask } from '@/mutations/tasks'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   title?: string
@@ -51,12 +54,11 @@ interface Props {
 
 const state = 'error'
 
-const props = withDefaults(defineProps<Props>(), {
-  title: 'Error',
-  description: 'An error occurred while loading the page',
-  icon: 'fa fa-exclamation-triangle',
-  task: undefined,
-})
+const props = defineProps<Props>()
+
+const displayTitle = computed(() => props.title ?? t('company.taskError.title'))
+const displayDescription = computed(() => props.description ?? t('company.taskError.description'))
+const displayIcon = computed(() => props.icon ?? 'fa fa-exclamation-triangle')
 
 const { mutate: restart } = useRestartTask()
 const isRestarting = ref<TaskType | null>(null)

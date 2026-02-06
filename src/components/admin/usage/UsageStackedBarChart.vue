@@ -1,12 +1,12 @@
 <template>
   <div class="bg-base-100 rounded-lg border border-primary-stroke p-6">
-    <h3 class="text-lg font-semibold mb-4">Companies by Organization</h3>
+    <h3 class="text-lg font-semibold mb-4">{{ t('admin.usage.stackedChart.title') }}</h3>
 
     <!-- Loading state -->
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
         <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">Loading chart data...</p>
+        <p class="text-sm text-secondary">{{ t('admin.usage.stackedChart.loading', 'Loading chart data...') }}</p>
       </div>
     </div>
 
@@ -18,7 +18,7 @@
     >
       <div class="text-center">
         <i class="fa fa-chart-bar text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">No organization data for selected period</p>
+        <p class="text-sm text-secondary">{{ t('admin.usage.stackedChart.noData', 'No organization data for selected period') }}</p>
       </div>
     </div>
 
@@ -60,6 +60,7 @@
  * - Loading and empty states
  */
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -72,6 +73,8 @@ import {
 } from 'chart.js'
 import { Bar } from 'vue-chartjs'
 import type { TimeSeriesDataPoint, OrganizationBreakdown } from '@/types/usage'
+
+const { t } = useI18n()
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
@@ -237,7 +240,7 @@ const chartOptions = computed(() => ({
         label: (context: TooltipItem<'bar'>) => {
           const count = context.parsed.y
           const label = context.dataset.label || 'Unknown'
-          return `${label}: ${count.toFixed(1)} companies`
+          return `${label}: ${count.toFixed(1)} ${t('admin.usage.stackedChart.companies')}`
         },
       },
     },

@@ -3,7 +3,7 @@
     <!-- Context Badges Row (always visible to allow adding companies) -->
     <div class="flex items-center gap-2 px-4 py-2 border-t border-sage-700 flex-wrap">
       <span class="text-xs text-sage-400">
-        {{ $t('chapse.context', 'Context:') }}
+        {{ $t('sidebar.chapse.context', 'Context:') }}
       </span>
       <ContextBadge
         v-for="company in companyContext"
@@ -54,10 +54,10 @@
 
       <!-- Helper Text -->
       <p class="mt-2 text-xs text-sage-500">
-        <kbd class="px-1.5 py-0.5 bg-sage-800 rounded text-sage-400">Ctrl</kbd>
+        <kbd class="px-1.5 py-0.5 bg-sage-800 rounded text-sage-400">{{ $t('common.keyboard.ctrl') }}</kbd>
         +
-        <kbd class="px-1.5 py-0.5 bg-sage-800 rounded text-sage-400">Enter</kbd>
-        {{ $t('chapse.toSend', 'to send') }}
+        <kbd class="px-1.5 py-0.5 bg-sage-800 rounded text-sage-400">{{ $t('common.keyboard.enter') }}</kbd>
+        {{ $t('sidebar.chapse.toSend') }}
       </p>
     </div>
   </div>

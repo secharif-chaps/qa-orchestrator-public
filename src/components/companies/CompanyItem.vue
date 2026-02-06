@@ -68,8 +68,8 @@
     <!-- Footer with creation date and owner -->
     <div class="mt-4 pt-3 border-t border-primary-stroke">
       <div class="flex justify-between items-center text-xs text-secondary">
-        <span>Created {{ formatDate(company.created_at) }}</span>
-        <span v-if="company.owner">by {{ company.owner }}</span>
+        <span>{{ t('company.item.created') }} {{ formatDate(company.created_at) }}</span>
+        <span v-if="company.owner">{{ t('company.item.by') }} {{ company.owner }}</span>
       </div>
     </div>
   </div>

@@ -35,7 +35,7 @@
           <div v-if="company?.press?.financial_news?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-chart-line"></i>
-              Financial News
+              {{ $t('profile.sections.press.categories.financialNews', 'Financial News') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -53,7 +53,7 @@
           <div v-if="company?.press?.product_launches?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-rocket"></i>
-              Product Launches
+              {{ $t('profile.sections.press.categories.productLaunches', 'Product Launches') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -74,7 +74,7 @@
           >
             <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-microphone"></i>
-              Executive Interviews
+              {{ $t('profile.sections.press.categories.executiveInterviews', 'Executive Interviews') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -92,7 +92,7 @@
           <div v-if="company?.press?.media_mentions?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-newspaper"></i>
-              Media Mentions
+              {{ $t('profile.sections.press.categories.mediaMentions', 'Media Mentions') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -110,7 +110,7 @@
           <div v-if="company?.press?.press_releases?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-file-alt"></i>
-              Press Releases
+              {{ $t('profile.sections.press.categories.pressReleases', 'Press Releases') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -128,7 +128,7 @@
           <div v-if="company?.press?.articles?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-newspaper"></i>
-              Articles
+              {{ $t('profile.sections.press.categories.articles', 'Articles') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -152,7 +152,7 @@
           >
             <h2 class="text-lg font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-handshake"></i>
-              Partnership Announcements
+              {{ $t('profile.sections.press.categories.partnershipAnnouncements', 'Partnership Announcements') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -170,7 +170,7 @@
           <div v-if="company?.press?.awards_recognition?.length" class="bg-base-100 rounded-lg p-6">
             <h2 class="text-lg font-semibold text-secondary flex items-center gap-2 mb-4">
               <i class="fa fa-trophy"></i>
-              Awards & Recognition
+              {{ $t('profile.sections.press.categories.awardsRecognition', 'Awards & Recognition') }}
             </h2>
             <div class="space-y-3">
               <div
@@ -186,34 +186,34 @@
 
           <!-- Quick Stats -->
           <div class="bg-base-100 rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-secondary mb-4">Press Coverage Stats</h3>
+            <h3 class="text-lg font-semibold text-secondary mb-4">{{ $t('profile.sections.press.stats.title', 'Press Coverage Stats') }}</h3>
             <div class="space-y-3">
               <div class="flex justify-between items-center">
-                <span class="text-secondary text-sm">Financial News</span>
+                <span class="text-secondary text-sm">{{ $t('profile.sections.press.categories.financialNews', 'Financial News') }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.financial_news?.length || 0
                 }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-secondary text-sm">Product Launches</span>
+                <span class="text-secondary text-sm">{{ $t('profile.sections.press.categories.productLaunches', 'Product Launches') }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.product_launches?.length || 0
                 }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-secondary text-sm">Media Mentions</span>
+                <span class="text-secondary text-sm">{{ $t('profile.sections.press.categories.mediaMentions', 'Media Mentions') }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.media_mentions?.length || 0
                 }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-secondary text-sm">Press Releases</span>
+                <span class="text-secondary text-sm">{{ $t('profile.sections.press.categories.pressReleases', 'Press Releases') }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.press_releases?.length || 0
                 }}</span>
               </div>
               <div class="flex justify-between items-center">
-                <span class="text-secondary text-sm">Executive Interviews</span>
+                <span class="text-secondary text-sm">{{ $t('profile.sections.press.categories.executiveInterviews', 'Executive Interviews') }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.executive_interviews?.length || 0
                 }}</span>

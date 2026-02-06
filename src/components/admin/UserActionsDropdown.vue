@@ -10,7 +10,7 @@
         @click="handleChangeOrganization(close)"
       >
         <Icon icon="fa-building" class="text-secondary" />
-        <span>Change Organization</span>
+        <span>{{ t('admin.userActions.changeOrganization', 'Change Organization') }}</span>
       </button>
 
       <button
@@ -18,7 +18,7 @@
         @click="handleManagePermissions(close)"
       >
         <Icon icon="fa-shield" class="text-secondary" />
-        <span>Manage Permissions</span>
+        <span>{{ t('admin.userActions.managePermissions', 'Manage Permissions') }}</span>
       </button>
 
       <div class="my-1 border-t border-primary-stroke"></div>
@@ -30,7 +30,7 @@
         @click="handleEnableUser(close)"
       >
         <Icon icon="fa-user-check" class="text-success" />
-        <span>Enable User</span>
+        <span>{{ t('admin.userActions.enableUser', 'Enable User') }}</span>
       </button>
 
       <button
@@ -39,7 +39,7 @@
         @click="handleDisableUser(close)"
       >
         <Icon icon="fa-user-slash" class="text-warning" />
-        <span>Disable User</span>
+        <span>{{ t('admin.userActions.disableUser', 'Disable User') }}</span>
       </button>
 
       <button
@@ -47,7 +47,7 @@
         @click="handleResetPassword(close)"
       >
         <Icon icon="fa-key" class="text-info" />
-        <span>Reset Password</span>
+        <span>{{ t('admin.userActions.resetPassword', 'Reset Password') }}</span>
       </button>
     </template>
   </Dropdown>
@@ -55,8 +55,11 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import { Button, Icon } from '@owlint/feathers-vue'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   userStatus: string
