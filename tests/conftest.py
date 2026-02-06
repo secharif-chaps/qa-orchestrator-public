@@ -114,6 +114,9 @@ def global_db_session():
 
     Creates a fresh database session for each test with all tables.
     Uses SQLite in-memory database for fast tests.
+
+    Note: SQLite doesn't support PostgreSQL-style schemas, so we strip
+    the schema from table metadata before creating tables.
     """
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
@@ -121,6 +124,10 @@ def global_db_session():
 
     # Create in-memory SQLite database for tests
     engine = create_engine("sqlite:///:memory:")
+
+    # Strip schema from all tables (SQLite doesn't support schemas like PostgreSQL)
+    for table in GlobalBase.metadata.tables.values():
+        table.schema = None
 
     # Create all tables
     GlobalBase.metadata.create_all(bind=engine)
