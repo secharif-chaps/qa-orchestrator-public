@@ -1,9 +1,9 @@
-import { User, UserManager, WebStorageStateStore } from 'oidc-client'
+import { useEndpointResolver } from '@/composables/useEndpointResolver'
+import { jwtDecode } from 'jwt-decode'
+import { User, UserManager, WebStorageStateStore } from 'oidc-client-ts'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { jwtDecode } from 'jwt-decode'
-import { useEndpointResolver } from '@/composables/useEndpointResolver'
 
 export const useAuthStore = defineStore(
   'auth',
@@ -81,7 +81,7 @@ export const useAuthStore = defineStore(
         response_type: 'code',
         scope: 'openid profile email',
         automaticSilentRenew: true,
-        silentRequestTimeout: 10000,
+        silentRequestTimeoutInSeconds: 10,
         filterProtocolClaims: true,
         loadUserInfo: true,
         userStore: new WebStorageStateStore({ store: window.localStorage }),
@@ -181,14 +181,12 @@ export const useAuthStore = defineStore(
 
     const handleSilentCallback = async () => {
       const manager = initializeUserManager()
-      if (!manager) return null
+      if (!manager) return
 
       try {
-        const callbackUser = await manager.signinSilentCallback()
-        if (callbackUser) {
-          user.value = callbackUser
-        }
-        return callbackUser
+        // In oidc-client-ts v3, signinSilentCallback returns void
+        // The user is loaded through the userLoaded event handler
+        await manager.signinSilentCallback()
       } catch (error) {
         console.error('Silent callback error:', error)
         throw error
