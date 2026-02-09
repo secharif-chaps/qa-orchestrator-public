@@ -8,6 +8,9 @@ from app.schemas.user import TokenData
 from app.models.company import Company
 from app.core.organization import OrganizationContext
 
+# Re-export is_chapsvision_email from email_utils to avoid circular imports
+from app.core.email_utils import is_chapsvision_email
+
 
 class AuthorizationError(HTTPException):
     """Custom exception for authorization errors"""
@@ -21,14 +24,14 @@ class AuthorizationError(HTTPException):
 def verify_company_ownership(company: Optional[Company], current_user: TokenData) -> Company:
     """
     Verify that the current user owns the specified company
-    
+
     Args:
         company: Company object to check ownership for
         current_user: Current authenticated user
-        
+
     Returns:
         Company object if user owns it
-        
+
     Raises:
         HTTPException: If company doesn't exist or user doesn't own it
     """
@@ -37,10 +40,10 @@ def verify_company_ownership(company: Optional[Company], current_user: TokenData
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Company not found"
         )
-    
+
     if company.owner_username != current_user.username:
         raise AuthorizationError("You don't have permission to access this company")
-    
+
     return company
 
 

@@ -21,6 +21,7 @@ from app.schemas.user_import import (
     BulkUserImportRequest,
     BulkUserImportResponse,
 )
+from app.core.email_utils import is_chapsvision_email
 from app.services.keycloak_admin import keycloak_admin_service
 from app.services.user_import import import_users_bulk
 
@@ -691,7 +692,7 @@ async def update_user_permissions(
 
     Raises:
         HTTPException 400: If invalid permissions provided
-        HTTPException 403: If caller lacks admin.organizations role
+        HTTPException 403: If caller lacks admin.organizations role or non-ChapsVision user receives admin role
         HTTPException 404: If user not found
         HTTPException 500: If Keycloak API call fails
     """
@@ -705,6 +706,32 @@ async def update_user_permissions(
     )
 
     try:
+        # Check if admin.organizations permission is being assigned
+        if "admin.organizations" in request.permissions:
+            # Fetch user email from Keycloak BEFORE validation
+            kc_user = await keycloak_admin_service.get_user(user_id)
+            if not kc_user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"User {user_id} not found"
+                )
+
+            # Validate email domain for admin role
+            user_email = kc_user.get("email")
+            if not is_chapsvision_email(user_email):
+                logger.warning(
+                    "Unauthorized admin assignment attempt",
+                    extra={
+                        "user_id": user_id,
+                        "email": user_email,
+                        "requester": user.preferred_username
+                    }
+                )
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Admin role can only be assigned to ChapsVision employees"
+                )
+
         # Sync user roles in Keycloak
         success = await keycloak_admin_service.sync_user_realm_roles(
             user_id=user_id,
