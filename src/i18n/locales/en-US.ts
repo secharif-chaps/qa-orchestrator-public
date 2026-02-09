@@ -1739,7 +1739,7 @@ export default {
       },
     },
     item: {
-      created: 'Created',
+      created: 'Created on',
       by: 'by',
       tasks: {
         count: '{count} tasks',

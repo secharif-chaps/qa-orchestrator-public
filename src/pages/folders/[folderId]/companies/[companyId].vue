@@ -26,7 +26,7 @@
         <div class="flex flex-col gap-1">
           <h1 class="text-2xl font-bold">{{ company?.name }}</h1>
           <span v-if="company?.created_at" class="text-sm text-secondary">
-            {{ t('company.createdAt') }} {{ formatDate(company.created_at) }}
+            {{ t('company.createdAt') }} {{ formatFullDate(company.created_at) }}
           </span>
         </div>
       </div>
@@ -88,10 +88,11 @@ import { organizationBalanceQuery } from '@/queries/tokens'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { useRefreshCompany } from '@/mutations/companies'
 import { companyTasksQuery } from '@/queries/tasks'
+import { formatFullDate } from '@/utils/time'
 
 const route = useRoute()
 const router = useRouter()
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const authStore = useAuthStore()
 
 const companyId = computed(() => (route.params as { companyId: string }).companyId)
@@ -210,12 +211,5 @@ const getCompanyDomain = (website?: string) => {
   } catch {
     return null
   }
-}
-
-// Helper function to format date
-const formatDate = (dateString: string): string => {
-  if (!dateString) return t('common.na')
-  const localeCode = locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
-  return new Date(dateString).toLocaleDateString(localeCode)
 }
 </script>
