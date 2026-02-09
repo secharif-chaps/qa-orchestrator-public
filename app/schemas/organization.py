@@ -6,7 +6,8 @@ These schemas represent organization context extracted from JWT tokens.
 """
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, Field
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class OrganizationResponse(BaseModel):
@@ -24,8 +25,7 @@ class OrganizationResponse(BaseModel):
     updated_at: Optional[datetime] = Field(None, description="When organization was last updated")
     member_count: Optional[int] = Field(None, description="Number of members in organization")
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ActivityResponse(BaseModel):
@@ -40,5 +40,4 @@ class ActivityResponse(BaseModel):
     owner: str = Field(..., description="Username of the creator")
     created_at: datetime = Field(..., description="When the item was created")
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
