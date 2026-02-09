@@ -108,6 +108,12 @@
             :key="role.id"
             :role="role"
             :selected="selectedRoleId === role.id"
+            :disabled="role.id === 'admin' && !isChapsVisionUser"
+            :disabled-reason="
+              role.id === 'admin' && !isChapsVisionUser
+                ? $t('admin.permissions.adminChapsVisionOnly', 'Le rôle Admin est réservé aux collaborateurs ChapsVision')
+                : undefined
+            "
             @select="handleRoleSelect"
           />
         </div>
@@ -248,7 +254,7 @@
               }}
             </p>
             <div class="flex flex-col gap-3">
-              <!-- admin.organizations (with confirmation) -->
+              <!-- admin.organizations (with confirmation and ChapsVision restriction) -->
               <PermissionCheckbox
                 v-model="selectedPermissions"
                 permission="admin.organizations"
@@ -261,6 +267,12 @@
                 "
                 icon="fa-shield-check"
                 variant="danger"
+                :disabled="!isChapsVisionUser"
+                :disabled-reason="
+                  !isChapsVisionUser
+                    ? $t('admin.permissions.adminChapsVisionOnly', 'Le rôle Admin est réservé aux collaborateurs ChapsVision')
+                    : undefined
+                "
                 @change="handleAdminPermissionChange"
               />
             </div>
@@ -322,6 +334,7 @@ import ConfirmAdminRoleModal from './ConfirmAdminRoleModal.vue'
 const props = defineProps<{
   userId: string
   username: string
+  userEmail: string
 }>()
 
 const emit = defineEmits<{
@@ -363,6 +376,11 @@ const hasCustomPermissions = computed(() => {
 
 // Check if write access is enabled (for module permission dependencies)
 const hasWriteAccess = computed(() => selectedPermissions.value.includes('organization.write'))
+
+// Check if user is ChapsVision employee (case-insensitive)
+const isChapsVisionUser = computed(() => {
+  return props.userEmail.toLowerCase().endsWith('@chapsvision.com')
+})
 
 // Effective permissions (always includes organization.read)
 const effectivePermissions = computed(() => {

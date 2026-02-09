@@ -1,8 +1,9 @@
 <template>
   <div
-    class="flex cursor-pointer flex-col gap-3 rounded-lg border p-4 transition-all"
+    class="flex flex-col gap-3 rounded-lg border p-4 transition-all"
     :class="blockClasses"
-    @click="$emit('select', role.id)"
+    :title="disabled ? disabledReason : undefined"
+    @click="disabled ? null : $emit('select', role.id)"
   >
     <!-- Header -->
     <div class="flex items-center gap-3">
@@ -56,25 +57,32 @@ import Tag from '@/components/ui/Tag.vue'
 interface Props {
   role: Role
   selected: boolean
+  disabled?: boolean
+  disabledReason?: string
 }
 
 interface Emits {
   select: [roleId: string]
 }
 
-const { role, selected } = defineProps<Props>()
+const { role, selected, disabled } = defineProps<Props>()
 defineEmits<Emits>()
 
 const isAdmin = computed(() => role.id === 'admin')
 
 const blockClasses = computed(() => {
+  // Disabled state takes priority
+  if (disabled) {
+    return 'opacity-50 cursor-not-allowed border-gray-200'
+  }
+
   if (isAdmin.value) {
     return selected
-      ? 'border-error bg-error/5'
-      : 'border-error-stroke hover:border-error/30 hover:bg-base-200'
+      ? 'border-error bg-error/5 cursor-pointer'
+      : 'border-error-stroke hover:border-error/30 hover:bg-base-200 cursor-pointer'
   }
   return selected
-    ? 'border-primary bg-primary/5'
-    : 'border-primary-stroke hover:border-primary/30 hover:bg-base-200'
+    ? 'border-primary bg-primary/5 cursor-pointer'
+    : 'border-primary-stroke hover:border-primary/30 hover:bg-base-200 cursor-pointer'
 })
 </script>

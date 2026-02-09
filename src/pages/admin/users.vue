@@ -29,7 +29,6 @@
       </div>
     </div>
 
-    <!-- Filters -->
 
     <!-- Error Alert -->
     <Alert
@@ -88,6 +87,7 @@
       v-if="userToManagePermissions"
       :user-id="userToManagePermissions.userId"
       :username="userToManagePermissions.username"
+      :user-email="userToManagePermissions.email"
       @confirm="handleUpdatePermissions"
       @close="userToManagePermissions = null"
     />
@@ -179,10 +179,11 @@ const { updatePermissions } = useUpdateUserPermissions()
 const { disableUser, isLoading: isDisabling } = useDisableUser()
 const { enableUser } = useEnableUser()
 
-// Modal state - store only userId and username for on-demand loading
+// Modal state - store userId, username, and email for on-demand loading
 interface ModalUserState {
   userId: string
   username: string
+  email: string
 }
 const userToAssign = ref<ModalUserState | null>(null)
 const userToManagePermissions = ref<ModalUserState | null>(null)
@@ -245,19 +246,19 @@ const clearFilters = () => {
 
 // Actions
 const showAssignModal = (user: AdminUserListItem) => {
-  userToAssign.value = { userId: user.user_id, username: user.username }
+  userToAssign.value = { userId: user.user_id, username: user.username, email: user.email }
 }
 
 const showPermissionsModal = (user: AdminUserListItem) => {
-  userToManagePermissions.value = { userId: user.user_id, username: user.username }
+  userToManagePermissions.value = { userId: user.user_id, username: user.username, email: user.email }
 }
 
 const showDisableModal = (user: AdminUserListItem) => {
-  userToDisable.value = { userId: user.user_id, username: user.username }
+  userToDisable.value = { userId: user.user_id, username: user.username, email: user.email }
 }
 
 const showResetPasswordModal = (user: AdminUserListItem) => {
-  userToResetPassword.value = { userId: user.user_id, username: user.username }
+  userToResetPassword.value = { userId: user.user_id, username: user.username, email: user.email }
 }
 
 const handleAssignOrganization = async (organizationId: string) => {
