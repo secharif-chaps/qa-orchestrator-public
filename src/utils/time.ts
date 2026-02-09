@@ -81,3 +81,19 @@ export function formatDate(dateString: string): string {
 
   return new Date(dateString).toLocaleDateString(localeCode)
 }
+
+/**
+ * Format a date string to localized full date with month name
+ * @param dateString - ISO 8601 date string
+ * @returns Localized full date string (e.g., "February 3, 2026" or "3 février 2026")
+ */
+export function formatFullDate(dateString: string): string {
+  if (!dateString) return i18n.global.t('common.na')
+  const localeCode = i18n.global.locale.value === 'fr-FR' ? 'fr-FR' : 'en-US'
+
+  return new Date(dateString).toLocaleDateString(localeCode, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}

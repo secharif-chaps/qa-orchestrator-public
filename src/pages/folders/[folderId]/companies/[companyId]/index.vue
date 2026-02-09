@@ -196,7 +196,7 @@
 
     <!-- Footer -->
     <div v-if="company" class="text-xs text-secondary italic text-center">
-      {{ t('company.footer.createdBy', { username: company.owner_username, date: formatDate(company.created_at) }) }}
+      {{ t('company.footer.createdBy', { username: company.owner_username, date: formatFullDate(company.created_at) }) }}
     </div>
   </div>
 
@@ -234,7 +234,7 @@ import { computed, ref, inject } from 'vue'
 import type { Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { formatDate } from '@/utils/time'
+import { formatFullDate } from '@/utils/time'
 
 const router = useRouter()
 const route = useRoute()

@@ -68,7 +68,7 @@
     <!-- Footer with creation date and owner -->
     <div class="mt-4 pt-3 border-t border-primary-stroke">
       <div class="flex justify-between items-center text-xs text-secondary">
-        <span>{{ t('company.item.created') }} {{ formatDate(company.created_at) }}</span>
+        <span>{{ t('company.item.created') }} {{ formatFullDate(company.created_at) }}</span>
         <span v-if="company.owner">{{ t('company.item.by') }} {{ company.owner }}</span>
       </div>
     </div>
@@ -115,7 +115,7 @@
       <!-- Column 2: Created Date (2 cols) -->
       <div class="col-span-2">
         <div class="text-sm text-secondary">
-          {{ formatDate(company.created_at) }}
+          {{ formatFullDate(company.created_at) }}
         </div>
       </div>
 
@@ -166,6 +166,7 @@ import type { Company } from '@/types/company'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { formatFullDate } from '@/utils/time'
 
 const { t } = useI18n()
 
@@ -219,11 +220,6 @@ const formatWebsiteDisplay = (website: string) => {
   return website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
 }
 
-const formatDate = (dateString: string) => {
-  if (!dateString) return t('common.na', 'N/A')
-  return new Date(dateString).toLocaleDateString()
-}
-
 const formatRelativeTime = (dateString: string) => {
   if (!dateString) return t('common.na', 'N/A')
 
@@ -233,19 +229,13 @@ const formatRelativeTime = (dateString: string) => {
 
   if (diffInSeconds < 60) return t('company.item.time.justNow', 'just now')
   if (diffInSeconds < 3600)
-    return t('company.item.time.minutesAgo', '{minutes}m ago', {
-      minutes: Math.floor(diffInSeconds / 60),
-    })
+    return t('company.item.time.minutesAgo', { minutes: Math.floor(diffInSeconds / 60) })
   if (diffInSeconds < 86400)
-    return t('company.item.time.hoursAgo', '{hours}h ago', {
-      hours: Math.floor(diffInSeconds / 3600),
-    })
+    return t('company.item.time.hoursAgo', { hours: Math.floor(diffInSeconds / 3600) })
   if (diffInSeconds < 2592000)
-    return t('company.item.time.daysAgo', '{days}d ago', {
-      days: Math.floor(diffInSeconds / 86400),
-    })
+    return t('company.item.time.daysAgo', { days: Math.floor(diffInSeconds / 86400) })
 
-  return formatDate(dateString)
+  return formatFullDate(dateString)
 }
 
 const getTaskStatusText = (tasks: Array<{ status: string }>) => {
