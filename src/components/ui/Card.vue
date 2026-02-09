@@ -9,31 +9,35 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 interface Props {
   /** Whether the card should be clickable */
   clickable?: boolean
   /** Custom padding (overrides default p-4) */
   padding?: string
+  /** Whether the card should be hoverable */
+  hoverable?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  hoverable: false,
-  clickable: false,
-})
+const { hoverable = false, clickable = false, padding = '' } = defineProps<Props>()
 
 const cardClasses = computed(() => {
   const classes: string[] = []
 
-  if (props.clickable) {
+  if (clickable) {
     classes.push(
-      'cursor-pointer transition-colors duration-150 hover:shadow-shadow-1 transition-shadow duration-150',
+      'cursor-pointer transition-colors',
+    )
+  }
+  if (hoverable || clickable) {
+    classes.push(
+      'hover:shadow-shadow-1 transition-shadow duration-150',
     )
   }
 
-  if (props.padding) {
-    classes.push(props.padding)
+  if (padding) {
+    classes.push(padding)
   }
 
   return classes.join(' ')
