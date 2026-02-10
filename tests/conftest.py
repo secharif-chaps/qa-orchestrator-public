@@ -102,63 +102,90 @@ def pytest_collection_modifyitems(config, items):
 
 # Test database fixtures
 
+# Create testing session factory at module level for use in concurrency tests
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.pool import StaticPool
+from app.database import GlobalBase
+
+# Create a shared test engine
+_test_engine = create_async_engine(
+    "sqlite+aiosqlite:///:memory:",
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
+
+# Export this for use in concurrency tests
+TestingSessionLocal = async_sessionmaker(
+    _test_engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+    autocommit=False,
+    autoflush=False,
+)
+
+
+def _strip_schema_from_metadata(base):
+    """Strip schema from metadata for SQLite compatibility."""
+    for table in base.metadata.tables.values():
+        table.schema = None
+        # Also update table_args if it has schema
+        if hasattr(table, '__table_args__'):
+            if isinstance(table.__table_args__, dict):
+                table.__table_args__.pop('schema', None)
+
 
 @pytest.fixture(scope="function")
-def global_db_session():
-    """Create a test database session for global_schema.
+async def setup_test_db():
+    """Set up test database tables for tests.
 
-    Creates a fresh database session for each test with all tables.
-    Uses SQLite in-memory database for fast tests.
+    This fixture only sets up/tears down tables, doesn't provide a session.
+    Use this for tests that need to create their own sessions.
+    """
+    # Strip schema before creating tables (SQLite doesn't support schemas)
+    _strip_schema_from_metadata(GlobalBase)
+
+    # Create all tables before test
+    async with _test_engine.begin() as conn:
+        await conn.run_sync(GlobalBase.metadata.create_all)
+
+    yield
+
+    # Drop all tables after test
+    async with _test_engine.begin() as conn:
+        await conn.run_sync(GlobalBase.metadata.drop_all)
+
+
+@pytest.fixture(scope="function")
+async def global_db_session(setup_test_db):
+    """Create an async test database session for global_schema.
+
+    Creates a fresh async database session for each test with all tables.
+    Uses SQLite in-memory database for fast tests with async support.
 
     Note: SQLite doesn't support PostgreSQL-style schemas, so we strip
     the schema from table metadata before creating tables.
     """
-    from sqlalchemy import create_engine
-    from sqlalchemy.orm import sessionmaker
-    from sqlalchemy.pool import StaticPool
-    from app.database import GlobalBase
-
-    # Create in-memory SQLite database for tests
-    # Use check_same_thread=False to allow usage across FastAPI's thread pool
-    # Use StaticPool to ensure same connection is reused
-    engine = create_engine(
-        "sqlite:///:memory:",
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
-    )
-
-    # Strip schema from all tables (SQLite doesn't support schemas like PostgreSQL)
-    for table in GlobalBase.metadata.tables.values():
-        table.schema = None
-
-    # Create all tables
-    GlobalBase.metadata.create_all(bind=engine)
-
-    # Create session
-    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    session = TestingSessionLocal()
-
-    try:
-        yield session
-    finally:
-        session.close()
-        # Drop all tables after test
-        GlobalBase.metadata.drop_all(bind=engine)
+    async with TestingSessionLocal() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
 
 
 @pytest.fixture
 def client(global_db_session):
-    """Create a test client with database override."""
+    """Create a test client with database override.
+
+    Note: Uses TestClient which runs async endpoints in a thread pool.
+    For true async testing, use httpx.AsyncClient instead.
+    """
     from fastapi.testclient import TestClient
     from app.main import app
     from app.database import get_global_db
 
-    # Override database dependency
-    def override_get_db():
-        try:
-            yield global_db_session
-        finally:
-            pass
+    # Override database dependency with async fixture
+    async def override_get_db():
+        yield global_db_session
 
     app.dependency_overrides[get_global_db] = override_get_db
 

@@ -39,32 +39,32 @@ class TestSessionFactories:
     """Test session factory configuration."""
 
     def test_session_local_exists(self):
-        """Test that SessionLocal is configured."""
-        from app.database import SessionLocal
-        assert SessionLocal is not None
+        """Test that AsyncSessionLocal is configured."""
+        from app.database import AsyncSessionLocal
+        assert AsyncSessionLocal is not None
 
     def test_global_session_local_exists(self):
-        """Test that GlobalSessionLocal is configured."""
-        from app.database import GlobalSessionLocal
-        assert GlobalSessionLocal is not None
+        """Test that GlobalAsyncSessionLocal is configured."""
+        from app.database import GlobalAsyncSessionLocal
+        assert GlobalAsyncSessionLocal is not None
 
 
 class TestDatabaseDependencies:
     """Test FastAPI dependency functions."""
 
-    def test_get_db_returns_generator(self):
-        """Test that get_db returns a generator."""
+    def test_get_db_returns_async_generator(self):
+        """Test that get_db returns an async generator."""
         from app.database import get_db
         import types
         result = get_db()
-        assert isinstance(result, types.GeneratorType)
+        assert isinstance(result, types.AsyncGeneratorType)
 
-    def test_get_global_db_returns_generator(self):
-        """Test that get_global_db returns a generator."""
+    def test_get_global_db_returns_async_generator(self):
+        """Test that get_global_db returns an async generator."""
         from app.database import get_global_db
         import types
         result = get_global_db()
-        assert isinstance(result, types.GeneratorType)
+        assert isinstance(result, types.AsyncGeneratorType)
 
 
 class TestBaseClasses:
