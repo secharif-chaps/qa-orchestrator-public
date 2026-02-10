@@ -28,8 +28,8 @@
     <!-- Recent Activities -->
     <div v-else class="space-y-3">
       <RecentActivityItem
-        v-for="(activity, index) in activities"
-        :key="`${activity.type}-${activity.name}-${index}`"
+        v-for="activity in activities"
+        :key="activity.id"
         :activity="activity"
       />
     </div>

@@ -38,25 +38,25 @@ interface Props {
   activity: Activity
 }
 
-const props = defineProps<Props>()
+const { activity } = defineProps<Props>()
 
 const icon = computed(() =>
-  props.activity.type === 'company' ? 'fa fa-building' : 'fa fa-folder',
+  activity.type === 'company' ? 'fa fa-building' : 'fa fa-folder',
 )
 
-const username = computed(() => props.activity.owner || 'Unknown')
+const username = computed(() => activity.owner || 'Unknown')
 
-const time = computed(() => formatRelativeTime(props.activity.created_at))
+const time = computed(() => formatRelativeTime(activity.created_at))
 
 const activityRoute = computed(() => {
-  if (props.activity.type === 'folder' && props.activity.id) {
-    return { name: '/folders/[folderId]/(folderId)' as const, params: { folderId: props.activity.id } }
+  if (activity.type === 'folder' && activity.id) {
+    return { name: '/folders/[folderId]/(folderId)' as const, params: { folderId: activity.id } }
   }
   // Company - needs both folderId and id to build the route
-  if (props.activity.folder_id && props.activity.id) {
+  if (activity.folder_id && activity.id) {
     return {
       name: '/folders/[folderId]/companies/[companyId]/' as const,
-      params: { folderId: props.activity.folder_id, companyId: props.activity.id },
+      params: { folderId: activity.folder_id, companyId: activity.id },
     }
   }
 
