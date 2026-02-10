@@ -8,14 +8,18 @@ Provides dependencies for:
 3. Organization context extraction
 """
 
-from typing import Dict, Any, Optional
-from fastapi import Depends, HTTPException, status, Header
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from typing import Any, Dict, Optional
 
+from fastapi import Depends, Header, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy.orm import Session
+
+from app.core.client_auth import ClientAuthError, introspect_token
 from app.core.keycloak import idp
-from app.core.client_auth import introspect_token, ClientAuthError
+from app.core.logging_config import get_logger
 from app.core.organization import get_user_organization
-from app.core.logging import get_logger
+from app.database import get_global_db
+from app.services.token_manager import TokenManager
 
 logger = get_logger(__name__)
 
@@ -150,3 +154,16 @@ async def get_authenticated_entity(
 # Re-export organization dependencies
 # Directly use the function from organization.py
 get_organization_context = get_user_organization
+
+
+# TokenManager dependency
+def get_token_manager(db: Session = Depends(get_global_db)) -> TokenManager:
+    """FastAPI dependency to get TokenManager instance.
+
+    Args:
+        db: SQLAlchemy session for global_schema database.
+
+    Returns:
+        TokenManager instance configured with the database session.
+    """
+    return TokenManager(db=db)
