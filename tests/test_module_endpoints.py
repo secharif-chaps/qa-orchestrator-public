@@ -27,7 +27,7 @@ def test_org_id():
 
 
 @pytest.fixture
-def setup_test_modules(global_db_session, test_org_id):
+async def setup_test_modules(global_db_session, test_org_id):
     """Set up test organization with modules."""
     # Create organization
     org = Organization(organization_id=test_org_id, token_balance=1000)
@@ -54,7 +54,7 @@ def setup_test_modules(global_db_session, test_org_id):
     for module in modules:
         global_db_session.add(module)
 
-    global_db_session.commit()
+    await global_db_session.commit()
     return org, modules
 
 
@@ -100,13 +100,13 @@ class TestModuleEndpointsBasic:
 class TestTokenManagerModuleOperations:
     """Test TokenManager module operations directly."""
 
-    def test_get_all_organization_modules(
+    async def test_get_all_organization_modules(
         self, global_db_session, test_org_id, setup_test_modules
     ):
         """Test getting all modules for an organization."""
         token_manager = TokenManager(db=global_db_session)
 
-        modules = token_manager.get_all_organization_modules(test_org_id)
+        modules = await token_manager.get_all_organization_modules(test_org_id)
 
         assert len(modules) == 3
         modules_by_name = {m.module_name: m for m in modules}
@@ -114,27 +114,27 @@ class TestTokenManagerModuleOperations:
         assert modules_by_name[ModuleName.TARGET].enabled is False
         assert modules_by_name[ModuleName.EXPLORE].enabled is False
 
-    def test_get_or_create_module(
+    async def test_get_or_create_module(
         self, global_db_session, test_org_id, setup_test_modules
     ):
         """Test getting specific module configuration."""
         token_manager = TokenManager(db=global_db_session)
 
-        screen_module = token_manager.get_or_create_module(
+        screen_module = await token_manager.get_or_create_module(
             test_org_id, ModuleName.SCREEN
         )
 
         assert screen_module.module_name == ModuleName.SCREEN
         assert screen_module.enabled is True
 
-    def test_update_module_config(
+    async def test_update_module_config(
         self, global_db_session, test_org_id, setup_test_modules
     ):
         """Test updating module configuration."""
         token_manager = TokenManager(db=global_db_session)
 
         # Update target module to enabled
-        updated_module = token_manager.update_module_config(
+        updated_module = await token_manager.update_module_config(
             organization_id=test_org_id,
             module_name=ModuleName.TARGET,
             enabled=True,
@@ -143,10 +143,10 @@ class TestTokenManagerModuleOperations:
         assert updated_module.enabled is True
 
         # Verify it persisted
-        module = token_manager.get_or_create_module(test_org_id, ModuleName.TARGET)
+        module = await token_manager.get_or_create_module(test_org_id, ModuleName.TARGET)
         assert module.enabled is True
 
-    def test_update_nonexistent_module_creates_it(
+    async def test_update_nonexistent_module_creates_it(
         self, global_db_session
     ):
         """Test updating module for org without modules creates them."""
@@ -154,12 +154,12 @@ class TestTokenManagerModuleOperations:
         new_org_id = "new-org-456"
         org = Organization(organization_id=new_org_id, token_balance=500)
         global_db_session.add(org)
-        global_db_session.commit()
+        await global_db_session.commit()
 
         token_manager = TokenManager(db=global_db_session)
 
         # Update should create the module
-        module = token_manager.update_module_config(
+        module = await token_manager.update_module_config(
             organization_id=new_org_id,
             module_name=ModuleName.SCREEN,
             enabled=True,
@@ -173,7 +173,7 @@ class TestTokenManagerModuleOperations:
 class TestModuleBulkOperations:
     """Test bulk module operations."""
 
-    def test_enable_all_modules(
+    async def test_enable_all_modules(
         self, global_db_session, test_org_id, setup_test_modules
     ):
         """Test enabling all modules at once."""
@@ -181,17 +181,17 @@ class TestModuleBulkOperations:
 
         # Enable all modules
         for module_name in [ModuleName.TARGET, ModuleName.EXPLORE]:
-            token_manager.update_module_config(
+            await token_manager.update_module_config(
                 organization_id=test_org_id,
                 module_name=module_name,
                 enabled=True,
             )
 
         # Verify all are enabled
-        modules = token_manager.get_all_organization_modules(test_org_id)
+        modules = await token_manager.get_all_organization_modules(test_org_id)
         assert all(m.enabled for m in modules)
 
-    def test_disable_all_modules(
+    async def test_disable_all_modules(
         self, global_db_session, test_org_id, setup_test_modules
     ):
         """Test disabling all modules."""
@@ -203,32 +203,36 @@ class TestModuleBulkOperations:
             ModuleName.TARGET,
             ModuleName.EXPLORE,
         ]:
-            token_manager.update_module_config(
+            await token_manager.update_module_config(
                 organization_id=test_org_id,
                 module_name=module_name,
                 enabled=False,
             )
 
         # Verify all are disabled
-        modules = token_manager.get_all_organization_modules(test_org_id)
+        modules = await token_manager.get_all_organization_modules(test_org_id)
         assert all(not m.enabled for m in modules)
 
-    def test_partial_enablement(
+    async def test_partial_enablement(
         self, global_db_session, test_org_id, setup_test_modules
     ):
         """Test enabling only some modules."""
         token_manager = TokenManager(db=global_db_session)
 
         # Enable target, keep screen enabled, leave explore disabled
-        token_manager.update_module_config(
+        await token_manager.update_module_config(
             organization_id=test_org_id,
             module_name=ModuleName.TARGET,
             enabled=True,
         )
 
-        modules = token_manager.get_all_organization_modules(test_org_id)
+        modules = await token_manager.get_all_organization_modules(test_org_id)
         modules_by_name = {m.module_name: m for m in modules}
 
         assert modules_by_name[ModuleName.SCREEN].enabled is True
         assert modules_by_name[ModuleName.TARGET].enabled is True
         assert modules_by_name[ModuleName.EXPLORE].enabled is False
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

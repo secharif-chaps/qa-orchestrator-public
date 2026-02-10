@@ -60,12 +60,12 @@ def admin_user():
 
 
 @pytest.fixture
-def setup_test_data(global_db_session, test_org_id):
+async def setup_test_data(global_db_session, test_org_id):
     """Set up test organization and transactions."""
     # Create organization
     org = Organization(organization_id=test_org_id, token_balance=1000)
     global_db_session.add(org)
-    global_db_session.commit()
+    await global_db_session.commit()
 
     # Create various transactions
     now = datetime.now(timezone.utc)
@@ -127,7 +127,7 @@ def setup_test_data(global_db_session, test_org_id):
     for tx in transactions:
         global_db_session.add(tx)
 
-    global_db_session.commit()
+    await global_db_session.commit()
 
     return {
         "organization": org,
@@ -434,7 +434,7 @@ def test_admin_can_access_any_org(client, test_org_id, admin_user, setup_test_da
     assert data["total"] == setup_test_data["count"]
 
 
-def test_empty_history(client, test_user, global_db_session):
+async def test_empty_history(client, test_user, global_db_session):
     """Test querying history for organization with no transactions."""
     from tests.conftest import _mock_idp
     from app.api.endpoints.tokens import get_user_organization
@@ -444,7 +444,7 @@ def test_empty_history(client, test_user, global_db_session):
     empty_org_id = "empty-org-789"
     org = Organization(organization_id=empty_org_id, token_balance=0)
     global_db_session.add(org)
-    global_db_session.commit()
+    await global_db_session.commit()
 
     org_context = OrganizationContext(
         organization_id=empty_org_id,
