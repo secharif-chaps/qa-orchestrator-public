@@ -1,10 +1,10 @@
 <template>
   <div
-    class="fixed inset-0 bg-base-100/20 backdrop-blur-sm flex items-center justify-center z-50"
+    class="fixed inset-0 bg-base-100/20 backdrop-blur-sm flex items-center justify-center z-20"
     @click.self="$emit('close')"
   >
     <div
-      class="bg-base-100 rounded-xl shadow-2xl border border-primary-stroke p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+      class="bg-base-100 rounded-xl shadow-2xl border border-primary-stroke p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto flex flex-col gap-6"
     >
       <!-- Header -->
       <div class="flex items-center justify-between mb-6">
@@ -237,7 +237,7 @@
             }}
           </p>
           <div class="flex flex-col gap-3">
-            <!-- admin.organizations -->
+            <!-- admin.organizations (with confirmation) -->
             <PermissionCheckbox
               v-model="selectedPermissions"
               permission="admin.organizations"
@@ -250,6 +250,7 @@
               "
               icon="fa-shield-check"
               variant="danger"
+              @change="handleAdminPermissionChange"
             />
           </div>
         </div>
@@ -290,6 +291,12 @@
       </div>
       </template>
     </div>
+
+    <!-- Confirm Admin Role Modal -->
+    <ConfirmAdminRoleModal
+      v-model="showAdminConfirmModal"
+      @confirm="handleAdminConfirm"
+    />
   </div>
 </template>
 
@@ -302,6 +309,7 @@ import { Alert, Button } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
 import RoleBlock from './RoleBlock.vue'
 import PermissionCheckbox from './PermissionCheckbox.vue'
+import ConfirmAdminRoleModal from './ConfirmAdminRoleModal.vue'
 
 const props = defineProps<{
   userId: string
@@ -328,6 +336,11 @@ const mode = ref<'roles' | 'custom'>('roles')
 
 // Custom permissions state - array of selected permission strings
 const selectedPermissions = ref<string[]>([])
+
+// Admin confirmation modal state
+const showAdminConfirmModal = ref(false)
+const pendingAdminAction = ref<'role' | 'permission' | null>(null)
+const pendingRoleId = ref<string | null>(null)
 
 // User's current permissions from the fetched data
 const userPermissions = computed(() => permissionsData.value?.permissions ?? [])
@@ -399,9 +412,51 @@ watch(mode, (newMode) => {
   }
 })
 
+// Handle role selection with admin confirmation
 function handleRoleSelect(roleId: string) {
-  selectedRoleId.value = roleId
+  const role = allRoles.find((r) => r.id === roleId)
+  
+  // Check if selecting Admin role
+  if (role?.id === 'admin') {
+    pendingRoleId.value = roleId
+    pendingAdminAction.value = 'role'
+    showAdminConfirmModal.value = true
+  } else {
+    selectedRoleId.value = roleId
+  }
 }
+
+// Handle admin permission toggle with confirmation
+function handleAdminPermissionChange(checked: boolean) {
+  if (checked) {
+    pendingAdminAction.value = 'permission'
+    showAdminConfirmModal.value = true
+  } else {
+    // Remove permission without confirmation
+    selectedPermissions.value = selectedPermissions.value.filter(p => p !== 'admin.organizations')
+  }
+}
+
+// Confirm admin role/permission
+const handleAdminConfirm = () => {
+  if (pendingAdminAction.value === 'role' && pendingRoleId.value) {
+    selectedRoleId.value = pendingRoleId.value
+  } else if (pendingAdminAction.value === 'permission') {
+    selectedPermissions.value = [...selectedPermissions.value, 'admin.organizations']
+  }
+
+  pendingAdminAction.value = null
+  pendingRoleId.value = null
+}
+
+// Clean up when modal closes without confirmation (cancel/click outside)
+watch(showAdminConfirmModal, (isOpen) => {
+  if (!isOpen && pendingAdminAction.value !== null) {
+    selectedPermissions.value = selectedPermissions.value.filter((p) => p !== 'admin.organizations')
+    pendingAdminAction.value = null
+    pendingRoleId.value = null
+  }
+})
 
 function handleSave() {
   if (mode.value === 'roles' && selectedRoleId.value) {

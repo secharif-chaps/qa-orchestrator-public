@@ -499,6 +499,7 @@ export default {
     na: 'N/A',
     noData: 'No data available',
     save: 'Save',
+    confirm: 'Confirm',
     error: 'Error',
     genericError: 'An error occurred',
     cancel: 'Cancel',
@@ -1345,6 +1346,23 @@ export default {
           title: 'Organization Change',
           message: "Changing this user's organization will move them to the new organization. Their data will remain in the original organization.",
         },
+      },
+      table: {
+        name: "Name",
+        username: "Username",
+        email: "Email",
+        actions: "Actions",
+        status: "Status"
+      },
+      status: {
+        active: "Active"
+      },
+      actions: {
+        changeOrganization: "Change Organization",
+        managePermissions: "Manage Permissions",
+        enableUser: "Enable User",
+        disableUser: "Disable User",
+        resetPassword: "Reset Password"
       },
       assignOrganization: {
         success: 'Organization assigned successfully!',
@@ -2248,6 +2266,15 @@ export default {
     admin: {
       title: 'organization Management',
       description: 'Manage all organizations in the system',
+      confirmAdminRole: {
+        title: "Assign Admin Role?",
+        warningTitle: "High privilege role",
+        warningDescription: "This role grants full administrative access to the organization.",
+        description: "The Admin role includes:",
+        permissions: {
+          adminOrganizations: "Global admin access to all organizations",
+        }
+      }
     },
     create: {
       title: 'Create organization',
