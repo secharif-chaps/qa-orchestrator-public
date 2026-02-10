@@ -12,7 +12,7 @@ from typing import Any, Dict, Optional
 
 from fastapi import Depends, Header, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.client_auth import ClientAuthError, introspect_token
 from app.core.keycloak import idp
@@ -157,13 +157,13 @@ get_organization_context = get_user_organization
 
 
 # TokenManager dependency
-def get_token_manager(db: Session = Depends(get_global_db)) -> TokenManager:
+async def get_token_manager(db: AsyncSession = Depends(get_global_db)) -> TokenManager:
     """FastAPI dependency to get TokenManager instance.
 
     Args:
-        db: SQLAlchemy session for global_schema database.
+        db: Async SQLAlchemy session for global_schema database.
 
     Returns:
-        TokenManager instance configured with the database session.
+        TokenManager instance configured with the async database session.
     """
     return TokenManager(db=db)

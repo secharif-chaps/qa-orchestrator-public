@@ -14,8 +14,9 @@ Key operations:
 from datetime import datetime
 from typing import List, Optional
 
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from app.core.logging_config import get_logger
 from app.models.organization import (
@@ -45,56 +46,73 @@ class TokenManager:
     during concurrent token operations.
 
     Attributes:
-        db: SQLAlchemy database session
+        db: Async SQLAlchemy database session
     """
 
-    def __init__(self, db: Session):
-        """Initialize TokenManager with database session.
+    def __init__(self, db: AsyncSession):
+        """Initialize TokenManager with async database session.
 
         Args:
-            db: SQLAlchemy database session for token operations
+            db: Async SQLAlchemy database session for token operations
         """
         self.db = db
 
-    def _ensure_organization_exists(self, org_id: str) -> Organization:
-        """Ensure organization record exists, creating it if necessary.
+    async def _ensure_organization_exists(self, org_id: str) -> Organization:
+        """Ensure organization record exists using atomic upsert.
 
-        Uses lazy initialization - organization records are created on first
-        token operation if they don't exist. Handles race conditions where
-        multiple processes might try to create the same organization.
+        Uses PostgreSQL INSERT ... ON CONFLICT DO NOTHING for atomic,
+        race-condition-free organization creation. This avoids TOCTOU
+        (Time-of-Check to Time-of-Use) issues and eliminates unnecessary
+        IntegrityError exceptions under concurrent load.
+
+        The atomic upsert approach:
+        - Attempts INSERT
+        - If organization exists (conflict), does nothing
+        - No rollbacks, no wasted database operations
+        - Guaranteed correctness under concurrent requests
 
         Args:
             org_id: Keycloak organization UUID
 
         Returns:
-            Organization record (existing or newly created)
+            Organization: The guaranteed-to-exist organization record
+
+        Raises:
+            RuntimeError: If organization cannot be ensured (database issue)
         """
-        org = (
-            self.db.query(Organization)
-            .filter(Organization.organization_id == org_id)
-            .first()
+        # Atomic upsert - no race condition, no wasted rollbacks
+        stmt = (
+            insert(Organization)
+            .values(organization_id=org_id, token_balance=0)
+            .on_conflict_do_nothing(index_elements=["organization_id"])
         )
 
+        await self.db.execute(stmt)
+        try:
+            await self.db.commit()
+        except Exception as e:
+            await self.db.rollback()
+            logger.error(
+                f"Failed to ensure organization exists: {e}",
+                extra={"organization_id": org_id, "error": str(e)},
+            )
+            raise
+
+        # Fetch guaranteed-to-exist record
+        result = await self.db.execute(
+            select(Organization).filter(Organization.organization_id == org_id)
+        )
+        org = result.scalar_one_or_none()
+
         if not org:
-            org = Organization(organization_id=org_id, token_balance=0)
-            self.db.add(org)
-            try:
-                self.db.commit()
-            except IntegrityError:
-                self.db.rollback()
-                # Handle race condition - another process created it
-                org = (
-                    self.db.query(Organization)
-                    .filter(Organization.organization_id == org_id)
-                    .first()
-                )
-                if not org:
-                    raise
-            self.db.refresh(org)
+            # Should never happen - indicates serious database issue
+            raise RuntimeError(
+                f"Failed to ensure organization {org_id} exists"
+            )
 
         return org
 
-    def _check_module_enabled(self, org_id: str, module_name: ModuleName) -> None:
+    async def _check_module_enabled(self, org_id: str, module_name: ModuleName) -> None:
         """Check if module is enabled for organization.
 
         Args:
@@ -104,19 +122,18 @@ class TokenManager:
         Raises:
             ModuleNotEnabledException: If module is not enabled
         """
-        module = (
-            self.db.query(OrganizationModule)
-            .filter(
+        result = await self.db.execute(
+            select(OrganizationModule).filter(
                 OrganizationModule.organization_id == org_id,
                 OrganizationModule.module_name == module_name,
             )
-            .first()
         )
+        module = result.scalar_one_or_none()
 
         if not module or not module.enabled:
             raise ModuleNotEnabledException(module_name)
 
-    def get_balance(self, org_id: str) -> int:
+    async def get_balance(self, org_id: str) -> int:
         """Get current token balance for organization.
 
         Creates organization record via lazy initialization if it doesn't exist.
@@ -127,10 +144,10 @@ class TokenManager:
         Returns:
             Current token balance (0 for new organizations)
         """
-        org = self._ensure_organization_exists(org_id)
+        org = await self._ensure_organization_exists(org_id)
         return org.token_balance
 
-    def add_tokens(
+    async def add_tokens(
         self,
         org_id: str,
         amount: int,
@@ -156,15 +173,15 @@ class TokenManager:
             raise ValueError("Token amount must be positive")
 
         # Ensure organization exists first
-        self._ensure_organization_exists(org_id)
+        await self._ensure_organization_exists(org_id)
 
         # Lock organization row for update to prevent race conditions
-        org = (
-            self.db.query(Organization)
+        result = await self.db.execute(
+            select(Organization)
             .filter(Organization.organization_id == org_id)
             .with_for_update()
-            .first()
         )
+        org = result.scalar_one()
 
         # Update balance
         org.token_balance += amount
@@ -181,8 +198,21 @@ class TokenManager:
         )
         self.db.add(transaction)
 
-        self.db.commit()
-        self.db.refresh(org)
+        try:
+            await self.db.commit()
+            await self.db.refresh(org)
+        except Exception as e:
+            await self.db.rollback()
+            logger.error(
+                f"Failed to add tokens: {e}",
+                extra={
+                    "organization_id": org_id,
+                    "amount": amount,
+                    "user_id": user_id,
+                    "error": str(e),
+                },
+            )
+            raise
 
         logger.info(
             f"Added {amount} tokens to organization {org_id}. New balance: {new_balance}",
@@ -191,7 +221,7 @@ class TokenManager:
 
         return org
 
-    def consume_tokens(
+    async def consume_tokens(
         self,
         org_id: str,
         amount: int,
@@ -227,18 +257,18 @@ class TokenManager:
 
         # Check module is enabled first (if module_name provided)
         if module_name is not None:
-            self._check_module_enabled(org_id, module_name)
+            await self._check_module_enabled(org_id, module_name)
 
         # Ensure organization exists first
-        self._ensure_organization_exists(org_id)
+        await self._ensure_organization_exists(org_id)
 
         # Lock organization row for update to prevent race conditions
-        org = (
-            self.db.query(Organization)
+        result = await self.db.execute(
+            select(Organization)
             .filter(Organization.organization_id == org_id)
             .with_for_update()
-            .first()
         )
+        org = result.scalar_one()
 
         # Check sufficient balance
         if org.token_balance < amount:
@@ -263,8 +293,24 @@ class TokenManager:
         )
         self.db.add(transaction)
 
-        self.db.commit()
-        self.db.refresh(org)
+        try:
+            await self.db.commit()
+            await self.db.refresh(org)
+        except Exception as e:
+            await self.db.rollback()
+            logger.error(
+                f"Failed to consume tokens: {e}",
+                extra={
+                    "organization_id": org_id,
+                    "amount": amount,
+                    "module_name": module_name.value if module_name else None,
+                    "reference_type": reference_type.value,
+                    "reference_id": reference_id,
+                    "user_id": user_id,
+                    "error": str(e),
+                },
+            )
+            raise
 
         logger.info(
             f"Consumed {amount} tokens from organization {org_id}. "
@@ -281,7 +327,7 @@ class TokenManager:
 
         return org
 
-    def get_transaction_history(
+    async def get_transaction_history(
         self,
         org_id: str,
         transaction_type: Optional[TransactionType] = None,
@@ -307,7 +353,7 @@ class TokenManager:
         Returns:
             List of TokenTransaction records matching filters
         """
-        query = self.db.query(TokenTransaction).filter(
+        query = select(TokenTransaction).filter(
             TokenTransaction.organization_id == org_id
         )
 
@@ -331,9 +377,10 @@ class TokenManager:
         offset = (page - 1) * size
         query = query.offset(offset).limit(size)
 
-        return query.all()
+        result = await self.db.execute(query)
+        return list(result.scalars().all())
 
-    def get_transaction_count(
+    async def get_transaction_count(
         self,
         org_id: str,
         transaction_type: Optional[TransactionType] = None,
@@ -353,7 +400,9 @@ class TokenManager:
         Returns:
             Total count of matching transactions
         """
-        query = self.db.query(TokenTransaction).filter(
+        from sqlalchemy import func
+
+        query = select(func.count()).select_from(TokenTransaction).filter(
             TokenTransaction.organization_id == org_id
         )
 
@@ -369,14 +418,20 @@ class TokenManager:
         if date_to is not None:
             query = query.filter(TokenTransaction.created_at <= date_to)
 
-        return query.count()
+        result = await self.db.execute(query)
+        return result.scalar() or 0
 
     # Module management methods
 
-    def get_or_create_module(
+    async def get_or_create_module(
         self, organization_id: str, module_name: ModuleName
     ) -> OrganizationModule:
-        """Get or create a organization module configuration.
+        """Get or create a organization module configuration using atomic upsert.
+
+        Uses PostgreSQL INSERT ... ON CONFLICT DO NOTHING for atomic,
+        race-condition-free module creation. This avoids TOCTOU issues
+        and eliminates unnecessary IntegrityError exceptions under
+        concurrent load.
 
         Args:
             organization_id: Keycloak organization UUID
@@ -384,48 +439,63 @@ class TokenManager:
 
         Returns:
             OrganizationModule record
-        """
-        module = (
-            self.db.query(OrganizationModule)
-            .filter(
-                OrganizationModule.organization_id == organization_id,
-                OrganizationModule.module_name == module_name,
-            )
-            .first()
-        )
 
-        if not module:
-            module = OrganizationModule(
+        Raises:
+            RuntimeError: If module cannot be ensured (database issue)
+        """
+        # Atomic upsert - no race condition, no wasted rollbacks
+        stmt = (
+            insert(OrganizationModule)
+            .values(
                 organization_id=organization_id,
                 module_name=module_name,
                 enabled=False,
             )
-            self.db.add(module)
-            try:
-                self.db.commit()
-            except IntegrityError:
-                self.db.rollback()
-                # Handle race condition
-                module = (
-                    self.db.query(OrganizationModule)
-                    .filter(
-                        OrganizationModule.organization_id == organization_id,
-                        OrganizationModule.module_name == module_name,
-                    )
-                    .first()
-                )
-                if not module:
-                    raise
-            self.db.refresh(module)
+            .on_conflict_do_nothing(
+                index_elements=["organization_id", "module_name"]
+            )
+        )
+
+        await self.db.execute(stmt)
+        try:
+            await self.db.commit()
+        except Exception as e:
+            await self.db.rollback()
+            logger.error(
+                f"Failed to get or create module: {e}",
+                extra={
+                    "organization_id": organization_id,
+                    "module_name": module_name.value,
+                    "error": str(e),
+                },
+            )
+            raise
+
+        # Fetch guaranteed-to-exist record
+        result = await self.db.execute(
+            select(OrganizationModule).filter(
+                OrganizationModule.organization_id == organization_id,
+                OrganizationModule.module_name == module_name,
+            )
+        )
+        module = result.scalar_one_or_none()
+
+        if not module:
+            # Should never happen - indicates serious database issue
+            raise RuntimeError(
+                f"Failed to ensure module {module_name} exists "
+                f"for organization {organization_id}"
+            )
 
         return module
 
-    def get_all_organization_modules(
+    async def get_all_organization_modules(
         self, organization_id: str
     ) -> List[OrganizationModule]:
         """Get all modules for an organization.
 
-        Ensures all module types exist for the organization.
+        Ensures all module types exist for the organization using bulk upsert.
+        Optimized to use only 2 DB calls instead of N+1.
 
         Args:
             organization_id: Keycloak organization UUID
@@ -433,23 +503,57 @@ class TokenManager:
         Returns:
             List of all OrganizationModule records for the organization
         """
-        # Ensure all modules exist
-        for module_name in ModuleName:
-            self.get_or_create_module(organization_id, module_name)
+        # Bulk upsert - insert all missing modules in one query
+        # This is more efficient than calling get_or_create_module in a loop
+        values = [
+            {
+                "organization_id": organization_id,
+                "module_name": module_name,
+                "enabled": False,
+            }
+            for module_name in ModuleName
+        ]
 
-        return (
-            self.db.query(OrganizationModule)
-            .filter(OrganizationModule.organization_id == organization_id)
-            .all()
+        stmt = (
+            insert(OrganizationModule)
+            .values(values)
+            .on_conflict_do_nothing(
+                index_elements=["organization_id", "module_name"]
+            )
         )
 
-    def update_module_config(
+        await self.db.execute(stmt)
+        try:
+            await self.db.commit()
+        except Exception as e:
+            await self.db.rollback()
+            logger.error(
+                f"Failed to ensure modules exist: {e}",
+                extra={
+                    "organization_id": organization_id,
+                    "error": str(e),
+                },
+            )
+            raise
+
+        # Fetch all modules in one query (2 DB calls total: 1 upsert + 1 select)
+        result = await self.db.execute(
+            select(OrganizationModule).filter(
+                OrganizationModule.organization_id == organization_id
+            )
+        )
+        return list(result.scalars().all())
+
+    async def update_module_config(
         self,
         organization_id: str,
         module_name: ModuleName,
         enabled: Optional[bool] = None,
     ) -> OrganizationModule:
         """Update module configuration (enabled/disabled).
+
+        Uses row-level locking within a single transaction to prevent
+        race conditions during concurrent updates.
 
         Args:
             organization_id: Keycloak organization UUID
@@ -459,11 +563,42 @@ class TokenManager:
         Returns:
             Updated OrganizationModule record
         """
-        module = self.get_or_create_module(organization_id, module_name)
+        # Lock module row for update to prevent race conditions
+        result = await self.db.execute(
+            select(OrganizationModule)
+            .filter(
+                OrganizationModule.organization_id == organization_id,
+                OrganizationModule.module_name == module_name,
+            )
+            .with_for_update()
+        )
+        module = result.scalar_one_or_none()
 
-        if enabled is not None:
+        if not module:
+            # Create if doesn't exist (within same transaction)
+            module = OrganizationModule(
+                organization_id=organization_id,
+                module_name=module_name,
+                enabled=enabled if enabled is not None else False,
+            )
+            self.db.add(module)
+        elif enabled is not None:
             module.enabled = enabled
 
-        self.db.commit()
-        self.db.refresh(module)
+        try:
+            await self.db.commit()
+            await self.db.refresh(module)
+        except Exception as e:
+            await self.db.rollback()
+            logger.error(
+                f"Failed to update module config: {e}",
+                extra={
+                    "organization_id": organization_id,
+                    "module_name": module_name.value,
+                    "enabled": enabled,
+                    "error": str(e),
+                },
+            )
+            raise
+
         return module
