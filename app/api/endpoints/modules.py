@@ -13,7 +13,7 @@ Removed endpoints (use /organizations/{id}/tokens instead):
 - POST /organizations/{id}/modules/{module}/tokens - REMOVED
 """
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends
 
 from app.core.authorization import verify_organization_access
 from app.core.dependencies import get_token_manager
