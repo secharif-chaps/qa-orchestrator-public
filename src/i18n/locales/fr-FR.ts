@@ -534,6 +534,7 @@ export default {
     noData: 'Aucune donnée disponible',
     cancel: 'Annuler',
     save: 'Enregistrer',
+    confirm: 'Confirmer',
     error: 'Erreur',
     genericError: 'Une erreur s\'est produite',
     close: 'Fermer',
@@ -1492,6 +1493,23 @@ export default {
           message: 'Changer l\'organisation de cet utilisateur le transférera vers la nouvelle organisation. Ses données resteront dans l\'organisation d\'origine.',
         },
       },
+      table: {
+        name: "Nom",
+        username: "Nom d'utilisateur",
+        email: "E-mail",
+        actions: "Actions",
+        status: "Statut"
+      },
+      status: {
+        active: "Actif"
+      },
+      actions: {
+        changeOrganization: "Changer d'organisation",
+        managePermissions: "Gérer les permissions",
+        enableUser: "Activer l'utilisateur",
+        disableUser: "Désactiver l'utilisateur",
+        resetPassword: "Réinitialiser le mot de passe"
+      },
       assignOrganization: {
         success: 'Organisation assignée avec succès !',
         error: 'Échec de l\'assignation de l\'organisation',
@@ -2015,6 +2033,15 @@ export default {
     admin: {
       title: 'Gestion des Espaces de Travail',
       description: 'Gérez tous les espaces de travail du système',
+      confirmAdminRole: {
+        title: "Attribuer le rôle Admin ?",
+        warningTitle: "Rôle à privilèges élevés",
+        warningDescription: "Ce rôle donne un accès administratif complet à l'organisation.",
+        description: "Le rôle Admin inclut :",
+        permissions: {
+          adminOrganizations: "Accès administrateur global à toutes les espaces de travail",
+        }
+      }
     },
     create: {
       title: 'Créer un Espace de Travail',
