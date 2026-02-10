@@ -46,7 +46,6 @@ import ModulesShowcase from '@/components/home/ModulesShowcase.vue'
 import RecentProjectsList from '@/components/home/RecentProjectsList.vue'
 import RecentActivitiesList from '@/components/home/RecentActivitiesList.vue'
 import { useQuery } from '@pinia/colada'
-import { formatRelativeTime } from '@/utils/time'
 import { useI18n } from 'vue-i18n'
 import type { FeatureFlagConfig } from '@/types/feature-flags'
 
@@ -160,29 +159,12 @@ const recentProjects = computed(() => {
   })
 })
 
-// Transform organization activities for display
 const recentActivities = computed(() => {
   if (!organizationActivitiesData.value) return []
 
   // Defensive check - ensure it's an array
-  const activities = Array.isArray(organizationActivitiesData.value)
+  return Array.isArray(organizationActivitiesData.value)
     ? organizationActivitiesData.value.slice(0, 7)
     : []
-
-  if (activities.length === 0) return []
-
-  return activities.map((activity) => {
-    const username = activity.owner || 'Unknown'
-
-    return {
-      id: activity.id,
-      type: activity.type,
-      icon: activity.type === 'company' ? 'fa fa-building' : 'fa fa-folder',
-      target: activity.name,
-      username,
-      time: formatRelativeTime(activity.created_at),
-      folderId: activity.folder_id,
-    }
-  })
 })
 </script>

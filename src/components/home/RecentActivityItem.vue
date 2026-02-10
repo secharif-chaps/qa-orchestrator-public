@@ -14,7 +14,7 @@
     <div class="flex-1 min-w-0">
       <!-- Company/Folder Name -->
       <p class="text-sm font-semibold text-gray-900 dark:text-white">
-        {{ target }}
+        {{ activity.name }}
       </p>
       <!-- Meta info: user and timestamp -->
       <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
@@ -31,28 +31,32 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Badge } from '@owlint/feathers-vue'
+import type { Activity } from '@/types/organization'
+import { formatRelativeTime } from '@/utils/time'
 
 interface Props {
-  id: string
-  type: 'company' | 'folder'
-  icon: string
-  target: string
-  username: string
-  time: string
-  folderId?: string
+  activity: Activity
 }
 
 const props = defineProps<Props>()
 
+const icon = computed(() =>
+  props.activity.type === 'company' ? 'fa fa-building' : 'fa fa-folder',
+)
+
+const username = computed(() => props.activity.owner || 'Unknown')
+
+const time = computed(() => formatRelativeTime(props.activity.created_at))
+
 const activityRoute = computed(() => {
-  if (props.type === 'folder') {
-    return { name: '/folders/[folderId]/(folderId)' as const, params: { folderId: props.id } }
+  if (props.activity.type === 'folder' && props.activity.id) {
+    return { name: '/folders/[folderId]/(folderId)' as const, params: { folderId: props.activity.id } }
   }
-  // Company - needs folderId to build the route
-  if (props.folderId) {
+  // Company - needs both folderId and id to build the route
+  if (props.activity.folder_id && props.activity.id) {
     return {
       name: '/folders/[folderId]/companies/[companyId]/' as const,
-      params: { folderId: props.folderId, companyId: props.id },
+      params: { folderId: props.activity.folder_id, companyId: props.activity.id },
     }
   }
 

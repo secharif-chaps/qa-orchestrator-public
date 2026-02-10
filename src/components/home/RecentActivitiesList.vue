@@ -28,15 +28,9 @@
     <!-- Recent Activities -->
     <div v-else class="space-y-3">
       <RecentActivityItem
-        v-for="activity in activities"
-        :key="activity.id"
-        :id="activity.id"
-        :type="activity.type"
-        :icon="activity.icon"
-        :target="activity.target"
-        :username="activity.username"
-        :time="activity.time"
-        :folder-id="activity.folderId"
+        v-for="(activity, index) in activities"
+        :key="`${activity.type}-${activity.name}-${index}`"
+        :activity="activity"
       />
     </div>
   </Card>
@@ -46,16 +40,7 @@
 import { Alert, Badge } from '@owlint/feathers-vue'
 import Card from '@/components/ui/Card.vue'
 import RecentActivityItem from './RecentActivityItem.vue'
-
-interface Activity {
-  id: string
-  type: 'company' | 'folder'
-  icon: string
-  target: string
-  username: string
-  time: string
-  folderId?: string
-}
+import type { Activity } from '@/types/organization'
 
 interface Props {
   activities: Activity[]
