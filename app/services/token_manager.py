@@ -15,8 +15,10 @@ from datetime import datetime
 from typing import List, Optional
 
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.sql import Select
 
 from app.core.logging_config import get_logger
 from app.models.organization import (
@@ -57,6 +59,45 @@ class TokenManager:
         """
         self.db = db
 
+    async def _execute_upsert(
+        self,
+        stmt,
+        operation_name: str,
+        context: dict,
+    ) -> None:
+        """Execute atomic upsert with standardized error handling.
+
+        This helper method provides consistent error handling for all
+        INSERT ... ON CONFLICT DO NOTHING operations. It follows the DRY
+        principle by centralizing the execute-commit-rollback-log pattern.
+
+        Args:
+            stmt: SQLAlchemy insert statement with on_conflict_do_nothing
+            operation_name: Human-readable operation name for logging
+            context: Dictionary of context data for error logging
+
+        Raises:
+            SQLAlchemyError: If database operation fails (after rollback)
+
+        Example:
+            >>> stmt = insert(Organization).values(...).on_conflict_do_nothing(...)
+            >>> await self._execute_upsert(
+            ...     stmt,
+            ...     "ensure organization exists",
+            ...     {"organization_id": org_id}
+            ... )
+        """
+        await self.db.execute(stmt)
+        try:
+            await self.db.commit()
+        except SQLAlchemyError as e:
+            await self.db.rollback()
+            logger.error(
+                f"Failed to {operation_name}: {e}",
+                extra={**context, "error": str(e)},
+            )
+            raise
+
     async def _ensure_organization_exists(self, org_id: str) -> Organization:
         """Ensure organization record exists using atomic upsert.
 
@@ -87,16 +128,11 @@ class TokenManager:
             .on_conflict_do_nothing(index_elements=["organization_id"])
         )
 
-        await self.db.execute(stmt)
-        try:
-            await self.db.commit()
-        except Exception as e:
-            await self.db.rollback()
-            logger.error(
-                f"Failed to ensure organization exists: {e}",
-                extra={"organization_id": org_id, "error": str(e)},
-            )
-            raise
+        await self._execute_upsert(
+            stmt,
+            "ensure organization exists",
+            {"organization_id": org_id},
+        )
 
         # Fetch guaranteed-to-exist record
         result = await self.db.execute(
@@ -201,7 +237,7 @@ class TokenManager:
         try:
             await self.db.commit()
             await self.db.refresh(org)
-        except Exception as e:
+        except SQLAlchemyError as e:
             await self.db.rollback()
             logger.error(
                 f"Failed to add tokens: {e}",
@@ -296,7 +332,7 @@ class TokenManager:
         try:
             await self.db.commit()
             await self.db.refresh(org)
-        except Exception as e:
+        except SQLAlchemyError as e:
             await self.db.rollback()
             logger.error(
                 f"Failed to consume tokens: {e}",
@@ -327,6 +363,47 @@ class TokenManager:
 
         return org
 
+    def _build_transaction_filters(
+        self,
+        query: Select,
+        org_id: str,
+        transaction_type: Optional[TransactionType] = None,
+        reference_type: Optional[ReferenceType] = None,
+        date_from: Optional[datetime] = None,
+        date_to: Optional[datetime] = None,
+    ) -> Select:
+        """Build base query with transaction filters.
+
+        This helper method applies common filtering logic for both
+        get_transaction_history and get_transaction_count to follow DRY principle.
+
+        Args:
+            query: SQLAlchemy select query to apply filters to
+            org_id: Keycloak organization UUID
+            transaction_type: Optional filter by transaction type
+            reference_type: Optional filter by reference type
+            date_from: Optional filter for transactions after this date
+            date_to: Optional filter for transactions before this date
+
+        Returns:
+            Query with all filters applied
+        """
+        query = query.filter(TokenTransaction.organization_id == org_id)
+
+        if transaction_type is not None:
+            query = query.filter(TokenTransaction.transaction_type == transaction_type)
+
+        if reference_type is not None:
+            query = query.filter(TokenTransaction.reference_type == reference_type)
+
+        if date_from is not None:
+            query = query.filter(TokenTransaction.created_at >= date_from)
+
+        if date_to is not None:
+            query = query.filter(TokenTransaction.created_at <= date_to)
+
+        return query
+
     async def get_transaction_history(
         self,
         org_id: str,
@@ -353,22 +430,10 @@ class TokenManager:
         Returns:
             List of TokenTransaction records matching filters
         """
-        query = select(TokenTransaction).filter(
-            TokenTransaction.organization_id == org_id
+        query = select(TokenTransaction)
+        query = self._build_transaction_filters(
+            query, org_id, transaction_type, reference_type, date_from, date_to
         )
-
-        # Apply optional filters
-        if transaction_type is not None:
-            query = query.filter(TokenTransaction.transaction_type == transaction_type)
-
-        if reference_type is not None:
-            query = query.filter(TokenTransaction.reference_type == reference_type)
-
-        if date_from is not None:
-            query = query.filter(TokenTransaction.created_at >= date_from)
-
-        if date_to is not None:
-            query = query.filter(TokenTransaction.created_at <= date_to)
 
         # Order by most recent first
         query = query.order_by(TokenTransaction.created_at.desc())
@@ -402,21 +467,10 @@ class TokenManager:
         """
         from sqlalchemy import func
 
-        query = select(func.count()).select_from(TokenTransaction).filter(
-            TokenTransaction.organization_id == org_id
+        query = select(func.count()).select_from(TokenTransaction)
+        query = self._build_transaction_filters(
+            query, org_id, transaction_type, reference_type, date_from, date_to
         )
-
-        if transaction_type is not None:
-            query = query.filter(TokenTransaction.transaction_type == transaction_type)
-
-        if reference_type is not None:
-            query = query.filter(TokenTransaction.reference_type == reference_type)
-
-        if date_from is not None:
-            query = query.filter(TokenTransaction.created_at >= date_from)
-
-        if date_to is not None:
-            query = query.filter(TokenTransaction.created_at <= date_to)
 
         result = await self.db.execute(query)
         return result.scalar() or 0
@@ -456,20 +510,14 @@ class TokenManager:
             )
         )
 
-        await self.db.execute(stmt)
-        try:
-            await self.db.commit()
-        except Exception as e:
-            await self.db.rollback()
-            logger.error(
-                f"Failed to get or create module: {e}",
-                extra={
-                    "organization_id": organization_id,
-                    "module_name": module_name.value,
-                    "error": str(e),
-                },
-            )
-            raise
+        await self._execute_upsert(
+            stmt,
+            "get or create module",
+            {
+                "organization_id": organization_id,
+                "module_name": module_name.value,
+            },
+        )
 
         # Fetch guaranteed-to-exist record
         result = await self.db.execute(
@@ -522,19 +570,11 @@ class TokenManager:
             )
         )
 
-        await self.db.execute(stmt)
-        try:
-            await self.db.commit()
-        except Exception as e:
-            await self.db.rollback()
-            logger.error(
-                f"Failed to ensure modules exist: {e}",
-                extra={
-                    "organization_id": organization_id,
-                    "error": str(e),
-                },
-            )
-            raise
+        await self._execute_upsert(
+            stmt,
+            "ensure modules exist",
+            {"organization_id": organization_id},
+        )
 
         # Fetch all modules in one query (2 DB calls total: 1 upsert + 1 select)
         result = await self.db.execute(
@@ -588,7 +628,7 @@ class TokenManager:
         try:
             await self.db.commit()
             await self.db.refresh(module)
-        except Exception as e:
+        except SQLAlchemyError as e:
             await self.db.rollback()
             logger.error(
                 f"Failed to update module config: {e}",
