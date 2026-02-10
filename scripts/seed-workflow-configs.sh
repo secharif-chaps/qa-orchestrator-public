@@ -13,7 +13,7 @@ $DC exec -T db psql -U postgres -d mint_db << 'EOF'
 -- Clear existing configs (if any) and insert fresh data
 TRUNCATE TABLE workflow_configs RESTART IDENTITY CASCADE;
 
-INSERT INTO workflow_configs (task_type, title, api_key, llm, created_at, updated_at) VALUES
+INSERT INTO workflow_configs (task_type, title, api_key, created_at, updated_at) VALUES
     ('data_collection', 'Data Collection', 'app-qSdKHTLoR0WiESMRcVBKSzlI', NOW(), NOW()),
     ('csr', 'CSR & Sustainability', 'app-jizNzZPfLpljyHTqStbGtMvt', NOW(), NOW()),
     ('digital', 'Digital Presence', 'app-C8hqxmezKsu9u7PysTIDCn58', NOW(), NOW()),
