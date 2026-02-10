@@ -9,8 +9,9 @@ Provides REST endpoints for managing organization token balances:
 from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, Depends, Path, Query, status
 
+from app.core.authorization import verify_organization_access
 from app.core.dependencies import get_token_manager
 from app.core.keycloak import idp, OIDCUser
 from app.core.logging_config import get_logger
@@ -28,33 +29,8 @@ logger = get_logger(__name__)
 
 router = APIRouter(prefix="/organizations", tags=["tokens"])
 
-
-def _verify_org_access(
-    path_org_id: str,
-    org_context: OrganizationContext,
-    user: OIDCUser,
-) -> None:
-    """Verify user has access to the specified organization.
-
-    Users can access their own organization's tokens, or admins with
-    admin.organizations role can access any organization.
-
-    Args:
-        path_org_id: Organization ID from URL path
-        org_context: User's organization context from JWT
-        user: Current authenticated user
-
-    Raises:
-        HTTPException: 403 if user cannot access this organization
-    """
-    is_own_org = org_context.organization_id == path_org_id
-    is_admin = "admin.organizations" in (user.roles or [])
-
-    if not is_own_org and not is_admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access denied to this organization's tokens",
-        )
+# UUID validation pattern for org_id path parameters
+UUID_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
 
 
 @router.get(
@@ -62,7 +38,12 @@ def _verify_org_access(
     response_model=TokenBalanceResponse,
 )
 async def get_organization_token_balance(
-    org_id: str,
+    org_id: str = Path(
+        ...,
+        pattern=UUID_PATTERN,
+        description="Organization UUID",
+        examples=["550e8400-e29b-41d4-a716-446655440000"],
+    ),
     org_context: OrganizationContext = Depends(get_user_organization),
     user: OIDCUser = Depends(idp.get_current_user()),
     token_manager: TokenManager = Depends(get_token_manager),
@@ -73,7 +54,7 @@ async def get_organization_token_balance(
     admin.organizations role can view any organization's balance.
 
     Args:
-        org_id: Keycloak organization UUID from URL path.
+        org_id: Keycloak organization UUID from URL path (must be valid UUID format).
         org_context: User's organization context extracted from JWT.
         user: Current authenticated user from Keycloak.
         token_manager: TokenManager service instance.
@@ -82,9 +63,10 @@ async def get_organization_token_balance(
         TokenBalanceResponse with organization_id and current balance.
 
     Raises:
+        HTTPException: 400 if org_id is not a valid UUID format.
         HTTPException: 403 if user cannot access this organization's tokens.
     """
-    _verify_org_access(org_id, org_context, user)
+    verify_organization_access(org_id, org_context, user, "tokens")
 
     balance = await token_manager.get_balance(org_id)
 
@@ -106,8 +88,13 @@ async def get_organization_token_balance(
     status_code=status.HTTP_201_CREATED,
 )
 async def add_organization_tokens(
-    org_id: str,
-    request: AddTokensRequest,
+    org_id: str = Path(
+        ...,
+        pattern=UUID_PATTERN,
+        description="Organization UUID",
+        examples=["550e8400-e29b-41d4-a716-446655440000"],
+    ),
+    request: AddTokensRequest = ...,
     user: OIDCUser = Depends(
         idp.get_current_user(required_roles=["admin.organizations"])
     ),
@@ -119,7 +106,7 @@ async def add_organization_tokens(
     for audit purposes.
 
     Args:
-        org_id: Keycloak organization UUID from URL path.
+        org_id: Keycloak organization UUID from URL path (must be valid UUID format).
         request: AddTokensRequest containing the amount to add.
         user: Current authenticated admin user from Keycloak.
         token_manager: TokenManager service instance.
@@ -128,6 +115,7 @@ async def add_organization_tokens(
         TokenBalanceResponse with organization_id and new balance.
 
     Raises:
+        HTTPException: 400 if org_id is not a valid UUID format.
         HTTPException: 403 if user doesn't have admin.organizations role.
     """
     org = await token_manager.add_tokens(
@@ -157,7 +145,12 @@ async def add_organization_tokens(
     response_model=PaginatedTokenTransactionResponse,
 )
 async def get_transaction_history(
-    org_id: str,
+    org_id: str = Path(
+        ...,
+        pattern=UUID_PATTERN,
+        description="Organization UUID",
+        examples=["550e8400-e29b-41d4-a716-446655440000"],
+    ),
     transaction_type: Optional[TransactionType] = Query(
         None, description="Filter by transaction type"
     ),
@@ -182,7 +175,7 @@ async def get_transaction_history(
     admin.organizations role can view any organization's history.
 
     Args:
-        org_id: Keycloak organization UUID from URL path.
+        org_id: Keycloak organization UUID from URL path (must be valid UUID format).
         transaction_type: Optional filter by transaction type (add, consume, adjustment).
         reference_type: Optional filter by reference type (company, csv_import, etc.).
         date_from: Optional filter for transactions after this datetime.
@@ -197,9 +190,10 @@ async def get_transaction_history(
         PaginatedTokenTransactionResponse with items, total, page, size, and pages.
 
     Raises:
+        HTTPException: 400 if org_id is not a valid UUID format.
         HTTPException: 403 if user cannot access this organization's tokens.
     """
-    _verify_org_access(org_id, org_context, user)
+    verify_organization_access(org_id, org_context, user, "tokens")
 
     # Get transactions
     transactions = await token_manager.get_transaction_history(

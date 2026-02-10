@@ -13,8 +13,9 @@ Removed endpoints (use /organizations/{id}/tokens instead):
 - POST /organizations/{id}/modules/{module}/tokens - REMOVED
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 
+from app.core.authorization import verify_organization_access
 from app.core.dependencies import get_token_manager
 from app.core.keycloak import OIDCUser, idp
 from app.core.logging_config import get_logger
@@ -59,27 +60,8 @@ async def get_organization_modules(
     Raises:
         403: If user lacks access to the organization
     """
-    # Check if user has admin.organizations role or belongs to organization
-    is_org_admin = (
-        hasattr(user, "roles")
-        and user.roles
-        and "admin.organizations" in user.roles
-    )
-    is_org_member = org_context.organization_id == organization_id
-
-    if not (is_org_admin or is_org_member):
-        logger.warning(
-            "Access denied to organization modules",
-            extra={
-                "user": user.preferred_username,
-                "organization_id": organization_id,
-                "user_org": org_context.organization_id,
-            }
-        )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access denied to this organization",
-        )
+    # Verify user can access this organization (member OR admin)
+    verify_organization_access(organization_id, org_context, user, "modules")
 
     modules = await token_manager.get_all_organization_modules(organization_id)
     module_responses = [
