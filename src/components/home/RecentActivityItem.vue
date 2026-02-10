@@ -1,5 +1,8 @@
 <template>
-  <div class="flex items-start gap-3">
+  <RouterLink
+    :to="activityRoute"
+    class="flex items-start gap-3 rounded-lg p-2 -m-2 transition-colors hover:bg-base-200 cursor-pointer"
+  >
     <!-- Icon with badge -->
     <div class="relative flex-shrink-0">
       <Badge variant="secondary" color="sage" :icon="icon" />
@@ -22,18 +25,37 @@
         <span>{{ $t('home.recentActivities.by', { username: '@' + username }) }}</span>
       </div>
     </div>
-  </div>
+  </RouterLink>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Badge } from '@owlint/feathers-vue'
 
 interface Props {
+  id: string
+  type: 'company' | 'folder'
   icon: string
   target: string
   username: string
   time: string
+  folderId?: string
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+const activityRoute = computed(() => {
+  if (props.type === 'folder') {
+    return { name: '/folders/[folderId]/(folderId)' as const, params: { folderId: props.id } }
+  }
+  // Company - needs folderId to build the route
+  if (props.folderId) {
+    return {
+      name: '/folders/[folderId]/companies/[companyId]/' as const,
+      params: { folderId: props.folderId, companyId: props.id },
+    }
+  }
+
+  return { name: '/folders/(list)' as const }
+})
 </script>

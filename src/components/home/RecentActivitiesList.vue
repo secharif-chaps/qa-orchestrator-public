@@ -30,10 +30,13 @@
       <RecentActivityItem
         v-for="activity in activities"
         :key="activity.id"
+        :id="activity.id"
+        :type="activity.type"
         :icon="activity.icon"
         :target="activity.target"
         :username="activity.username"
         :time="activity.time"
+        :folder-id="activity.folderId"
       />
     </div>
   </Card>
@@ -45,11 +48,13 @@ import Card from '@/components/ui/Card.vue'
 import RecentActivityItem from './RecentActivityItem.vue'
 
 interface Activity {
-  id: number | string
+  id: string
+  type: 'company' | 'folder'
   icon: string
   target: string
   username: string
   time: string
+  folderId?: string
 }
 
 interface Props {

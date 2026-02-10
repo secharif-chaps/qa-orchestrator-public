@@ -171,15 +171,17 @@ const recentActivities = computed(() => {
 
   if (activities.length === 0) return []
 
-  return activities.map((activity, index) => {
+  return activities.map((activity) => {
     const username = activity.owner || 'Unknown'
 
     return {
-      id: index, // No ID in new API, use index
+      id: activity.id,
+      type: activity.type,
       icon: activity.type === 'company' ? 'fa fa-building' : 'fa fa-folder',
       target: activity.name,
       username,
       time: formatRelativeTime(activity.created_at),
+      folderId: activity.folder_id,
     }
   })
 })
