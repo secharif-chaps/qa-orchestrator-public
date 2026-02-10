@@ -88,10 +88,12 @@ class FeatureFlag(str, Enum):
     Attributes:
         TRANSLATION: Translation feature for translating company data
         DISCOVER: External Discover dashboard integration with configurable URL
+        PAPPERS: Pappers API integration for company data enrichment
     """
 
     TRANSLATION = "translation"
     DISCOVER = "discover"
+    PAPPERS = "pappers"
 
 
 class Organization(GlobalBase):
