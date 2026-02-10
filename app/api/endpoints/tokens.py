@@ -9,13 +9,12 @@ Provides REST endpoints for managing organization token balances:
 from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 
+from app.core.dependencies import get_token_manager
 from app.core.keycloak import idp, OIDCUser
 from app.core.logging_config import get_logger
 from app.core.organization import get_user_organization, OrganizationContext
-from app.database import get_global_db
 from app.models.organization import ReferenceType, TransactionType
 from app.schemas.token import (
     AddTokensRequest,
@@ -28,18 +27,6 @@ from app.services.token_manager import TokenManager
 logger = get_logger(__name__)
 
 router = APIRouter(prefix="/organizations", tags=["tokens"])
-
-
-def get_token_manager(db: Session = Depends(get_global_db)) -> TokenManager:
-    """FastAPI dependency to get TokenManager instance.
-
-    Args:
-        db: SQLAlchemy session for global_schema database.
-
-    Returns:
-        TokenManager instance configured with the database session.
-    """
-    return TokenManager(db=db)
 
 
 def _verify_org_access(
@@ -74,7 +61,7 @@ def _verify_org_access(
     "/{org_id}/tokens",
     response_model=TokenBalanceResponse,
 )
-def get_organization_token_balance(
+async def get_organization_token_balance(
     org_id: str,
     org_context: OrganizationContext = Depends(get_user_organization),
     user: OIDCUser = Depends(idp.get_current_user()),
@@ -99,7 +86,7 @@ def get_organization_token_balance(
     """
     _verify_org_access(org_id, org_context, user)
 
-    balance = token_manager.get_balance(org_id)
+    balance = await token_manager.get_balance(org_id)
 
     logger.info(
         f"Token balance queried for organization {org_id}",
@@ -118,7 +105,7 @@ def get_organization_token_balance(
     response_model=TokenBalanceResponse,
     status_code=status.HTTP_201_CREATED,
 )
-def add_organization_tokens(
+async def add_organization_tokens(
     org_id: str,
     request: AddTokensRequest,
     user: OIDCUser = Depends(
@@ -143,7 +130,7 @@ def add_organization_tokens(
     Raises:
         HTTPException: 403 if user doesn't have admin.organizations role.
     """
-    org = token_manager.add_tokens(
+    org = await token_manager.add_tokens(
         org_id=org_id,
         amount=request.amount,
         user_id=user.sub,
@@ -166,9 +153,10 @@ def add_organization_tokens(
 
 
 @router.get(
-    "/{org_id}/tokens/history", response_model=PaginatedTokenTransactionResponse
+    "/{org_id}/tokens/history",
+    response_model=PaginatedTokenTransactionResponse,
 )
-def get_transaction_history(
+async def get_transaction_history(
     org_id: str,
     transaction_type: Optional[TransactionType] = Query(
         None, description="Filter by transaction type"
@@ -214,7 +202,7 @@ def get_transaction_history(
     _verify_org_access(org_id, org_context, user)
 
     # Get transactions
-    transactions = token_manager.get_transaction_history(
+    transactions = await token_manager.get_transaction_history(
         org_id=org_id,
         transaction_type=transaction_type,
         reference_type=reference_type,
@@ -225,7 +213,7 @@ def get_transaction_history(
     )
 
     # Get total count for pagination
-    total = token_manager.get_transaction_count(
+    total = await token_manager.get_transaction_count(
         org_id=org_id,
         transaction_type=transaction_type,
         reference_type=reference_type,

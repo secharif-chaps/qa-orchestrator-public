@@ -119,7 +119,7 @@ async def get_organization_activities(
             )
             raise HTTPException(
                 status_code=response.status_code,
-                detail=f"Failed to fetch activities from backend: {response.text}"
+                detail="Unable to retrieve activities from the backend service. Please try again later."
             )
 
         # Parse and return activities
@@ -153,5 +153,5 @@ async def get_organization_activities(
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch organization activities: {str(e)}"
+            detail="Unable to retrieve recent activities. Please try again later."
         )

@@ -81,7 +81,7 @@ async def get_organization_modules(
             detail="Access denied to this organization",
         )
 
-    modules = token_manager.get_all_organization_modules(organization_id)
+    modules = await token_manager.get_all_organization_modules(organization_id)
     module_responses = [
         OrganizationModuleResponse(
             name=module.module_name,
@@ -140,14 +140,14 @@ async def update_organization_modules(
 
     # Update each module
     for module_name, update_request in updates.items():
-        token_manager.update_module_config(
+        await token_manager.update_module_config(
             organization_id=organization_id,
             module_name=module_name,
             enabled=update_request.enabled,
         )
 
     # Return updated modules
-    modules = token_manager.get_all_organization_modules(organization_id)
+    modules = await token_manager.get_all_organization_modules(organization_id)
     module_responses = [
         OrganizationModuleResponse(
             name=module.module_name,
@@ -189,7 +189,7 @@ async def toggle_module(
     Returns:
         ModuleToggleResponse with updated module state
     """
-    current_module = token_manager.get_or_create_module(
+    current_module = await token_manager.get_or_create_module(
         organization_id, module
     )
 
@@ -210,7 +210,7 @@ async def toggle_module(
         }
     )
 
-    updated_module = token_manager.update_module_config(
+    updated_module = await token_manager.update_module_config(
         organization_id=organization_id,
         module_name=module,
         enabled=new_enabled,
