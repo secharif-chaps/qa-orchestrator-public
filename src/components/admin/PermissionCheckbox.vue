@@ -67,10 +67,12 @@ const props = defineProps<{
   variant?: 'default' | 'danger'
 }>()
 
-const emit = defineEmits<{
+interface Emit {
   'update:modelValue': [value: string[]]
   change: [checked: boolean]
-}>()
+}
+
+const emit = defineEmits<Emit>()
 
 const isChecked = computed(() => props.modelValue.includes(props.permission))
 

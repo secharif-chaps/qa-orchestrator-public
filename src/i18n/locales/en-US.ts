@@ -1986,6 +1986,7 @@ export default {
       singular: '≈ 1 company creation',
       plural: '≈ {count} company creations',
     },
+    disabled: 'Disabled',
     status: {
       disabled: 'Disabled',
       noTokens: 'No tokens',

@@ -2051,6 +2051,7 @@ export default {
       singular: "≈ 1 création d'entreprise",
       plural: "≈ {count} créations d'entreprise",
     },
+    disabled: 'Désactivé',
     status: {
       disabled: 'Désactivé',
       noTokens: 'Aucun crédit',
