@@ -187,7 +187,7 @@ src/
 ### Prerequisites
 
 - **Node.js** `^20.19.0 || >=22.12.0`
-- **pnpm** (recommended) or npm
+- **Yarn 4** (via corepack) or npm
 
 ### Installation
 
@@ -196,11 +196,14 @@ src/
 git clone <repository-url>
 cd mint-front
 
+# Enable corepack (provides Yarn 4)
+corepack enable
+
 # Install dependencies
-pnpm install
+yarn install
 
 # Start development server
-pnpm dev
+yarn dev
 ```
 
 The application will be available at `http://localhost:3000` with hot module replacement enabled.
@@ -209,17 +212,17 @@ The application will be available at `http://localhost:3000` with hot module rep
 
 ```bash
 # Development
-pnpm dev              # Start development server
+yarn dev              # Start development server
 
 # Building
-pnpm build            # Build for production
-pnpm build-only       # Build without type checking
-pnpm preview          # Preview production build
+yarn build            # Build for production
+yarn build-only       # Build without type checking
+yarn preview          # Preview production build
 
 # Code Quality
-pnpm type-check       # Run TypeScript type checking
-pnpm lint             # Run ESLint with auto-fix
-pnpm format           # Format code with Prettier
+yarn type-check       # Run TypeScript type checking
+yarn lint             # Run ESLint with auto-fix
+yarn format           # Format code with Prettier
 ```
 
 ---
