@@ -3,18 +3,20 @@ FROM node:22.20.0-alpine AS build-stage
 
 WORKDIR /app
 
-# Copy package files and npm config
-COPY package*.json ./
-COPY .npmrc ./
+# Enable corepack for Yarn 4
+RUN corepack enable
+
+# Copy package files and yarn config
+COPY package.json yarn.lock .yarnrc.yml ./
 
 # Install dependencies
-RUN npm install
+RUN yarn install --immutable
 
 # Copy project files
 COPY . .
 
 # Build the app
-RUN npm run build-only
+RUN yarn build-only
 
 # Production stage
 FROM nginx:1.29
