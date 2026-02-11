@@ -261,7 +261,7 @@ class TokenManager:
         self,
         org_id: str,
         amount: int,
-        module_name: Optional[ModuleName],
+        module_name: ModuleName,
         reference_type: ReferenceType,
         reference_id: Optional[str],
         user_id: str,
@@ -275,7 +275,7 @@ class TokenManager:
         Args:
             org_id: Keycloak organization UUID
             amount: Number of tokens to consume (must be positive)
-            module_name: Module consuming the tokens (must be enabled). None to skip module check.
+            module_name: Module consuming the tokens (must be enabled)
             reference_type: Type of operation consuming tokens
             reference_id: Optional ID of the referenced entity (e.g., company_id)
             user_id: Keycloak user ID performing the operation
@@ -291,9 +291,8 @@ class TokenManager:
         if amount <= 0:
             raise ValueError("Token consumption amount must be positive")
 
-        # Check module is enabled first (if module_name provided)
-        if module_name is not None:
-            await self._check_module_enabled(org_id, module_name)
+        # Always check module is enabled before consuming tokens
+        await self._check_module_enabled(org_id, module_name)
 
         # Ensure organization exists first
         await self._ensure_organization_exists(org_id)
@@ -339,7 +338,7 @@ class TokenManager:
                 extra={
                     "organization_id": org_id,
                     "amount": amount,
-                    "module_name": module_name.value if module_name else None,
+                    "module_name": module_name.value,
                     "reference_type": reference_type.value,
                     "reference_id": reference_id,
                     "user_id": user_id,
@@ -354,7 +353,7 @@ class TokenManager:
             extra={
                 "organization_id": org_id,
                 "amount": amount,
-                "token_module": module_name.value if module_name else None,
+                "token_module": module_name.value,
                 "reference_type": reference_type.value,
                 "reference_id": reference_id,
                 "user_id": user_id,
