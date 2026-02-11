@@ -69,6 +69,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:modelValue': [value: string[]]
+  change: [checked: boolean]
 }>()
 
 const isChecked = computed(() => props.modelValue.includes(props.permission))
@@ -91,5 +92,6 @@ function handleChange(event: Event) {
   }
 
   emit('update:modelValue', newValue)
+  emit('change', target.checked)
 }
 </script>
