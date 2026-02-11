@@ -32,8 +32,9 @@
         >
       </div>
 
-      <!-- Add Company Button -->
+      <!-- Add Company Button (visible only for owners or writers) -->
       <Button
+        v-if="canAddCompany"
         variant="tertiary"
         icon="fa fa-plus-circle"
         size="sm"
@@ -89,6 +90,11 @@ defineEmits<{
   navigateCompany: [folderId: string, companyId: string]
   addCompany: [folderId: string]
 }>()
+
+// Check if user can add companies to this folder (owner or writer)
+const canAddCompany = computed(() => {
+  return props.folder.is_owner || props.folder.share_role === 'writer'
+})
 
 // Filter items based on search
 const visibleItems = computed(() => {
