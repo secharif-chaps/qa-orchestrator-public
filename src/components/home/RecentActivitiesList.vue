@@ -30,10 +30,7 @@
       <RecentActivityItem
         v-for="activity in activities"
         :key="activity.id"
-        :icon="activity.icon"
-        :target="activity.target"
-        :username="activity.username"
-        :time="activity.time"
+        :activity="activity"
       />
     </div>
   </Card>
@@ -43,14 +40,7 @@
 import { Alert, Badge } from '@owlint/feathers-vue'
 import Card from '@/components/ui/Card.vue'
 import RecentActivityItem from './RecentActivityItem.vue'
-
-interface Activity {
-  id: number | string
-  icon: string
-  target: string
-  username: string
-  time: string
-}
+import type { Activity } from '@/types/organization'
 
 interface Props {
   activities: Activity[]

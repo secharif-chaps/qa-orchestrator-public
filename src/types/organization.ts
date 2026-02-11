@@ -76,6 +76,10 @@ export interface Activity {
   owner: string
   /** When the item was created */
   created_at: string
+  /** ID of the item (company or folder) */
+  id: string
+  /** Folder ID (for companies, the folder containing them) */
+  folder_id?: string
 }
 
 /**
