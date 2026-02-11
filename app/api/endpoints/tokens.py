@@ -17,6 +17,7 @@ from app.core.dependencies import get_token_manager
 from app.core.keycloak import idp, OIDCUser
 from app.core.logging_config import get_logger
 from app.core.organization import get_user_organization, OrganizationContext
+from app.core.utils import calculate_pages
 from app.models.organization import ReferenceType, TransactionType
 from app.schemas.token import (
     AddTokensRequest,
@@ -214,7 +215,7 @@ async def get_transaction_history(
     )
 
     # Calculate total pages
-    pages = (total + size - 1) // size if total > 0 else 0
+    pages = calculate_pages(total, size)
 
     logger.debug(
         f"Transaction history queried for organization {org_id_str}",
