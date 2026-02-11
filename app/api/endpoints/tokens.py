@@ -8,6 +8,7 @@ Provides REST endpoints for managing organization token balances:
 
 from datetime import datetime
 from typing import Optional
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, Path, Query, status
 
@@ -29,18 +30,14 @@ logger = get_logger(__name__)
 
 router = APIRouter(prefix="/organizations", tags=["tokens"])
 
-# UUID validation pattern for org_id path parameters
-UUID_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
-
 
 @router.get(
     "/{org_id}/tokens",
     response_model=TokenBalanceResponse,
 )
 async def get_organization_token_balance(
-    org_id: str = Path(
+    org_id: UUID = Path(
         ...,
-        pattern=UUID_PATTERN,
         description="Organization UUID",
         examples=["550e8400-e29b-41d4-a716-446655440000"],
     ),
@@ -54,7 +51,7 @@ async def get_organization_token_balance(
     admin.organizations role can view any organization's balance.
 
     Args:
-        org_id: Keycloak organization UUID from URL path (must be valid UUID format).
+        org_id: Keycloak organization UUID from URL path (automatically validated).
         org_context: User's organization context extracted from JWT.
         user: Current authenticated user from Keycloak.
         token_manager: TokenManager service instance.
@@ -63,23 +60,24 @@ async def get_organization_token_balance(
         TokenBalanceResponse with organization_id and current balance.
 
     Raises:
-        HTTPException: 400 if org_id is not a valid UUID format.
+        HTTPException: 422 if org_id is not a valid UUID format.
         HTTPException: 403 if user cannot access this organization's tokens.
     """
-    verify_organization_access(org_id, org_context, user, "tokens")
+    org_id_str = str(org_id)
+    verify_organization_access(org_id_str, org_context, user, "tokens")
 
-    balance = await token_manager.get_balance(org_id)
+    balance = await token_manager.get_balance(org_id_str)
 
     logger.info(
-        f"Token balance queried for organization {org_id}",
+        f"Token balance queried for organization {org_id_str}",
         extra={
-            "organization_id": org_id,
+            "organization_id": org_id_str,
             "balance": balance,
             "user_id": user.sub,
         },
     )
 
-    return TokenBalanceResponse(organization_id=org_id, balance=balance)
+    return TokenBalanceResponse(organization_id=org_id_str, balance=balance)
 
 
 @router.post(
@@ -88,9 +86,8 @@ async def get_organization_token_balance(
     status_code=status.HTTP_201_CREATED,
 )
 async def add_organization_tokens(
-    org_id: str = Path(
+    org_id: UUID = Path(
         ...,
-        pattern=UUID_PATTERN,
         description="Organization UUID",
         examples=["550e8400-e29b-41d4-a716-446655440000"],
     ),
@@ -106,7 +103,7 @@ async def add_organization_tokens(
     for audit purposes.
 
     Args:
-        org_id: Keycloak organization UUID from URL path (must be valid UUID format).
+        org_id: Keycloak organization UUID from URL path (automatically validated).
         request: AddTokensRequest containing the amount to add.
         user: Current authenticated admin user from Keycloak.
         token_manager: TokenManager service instance.
@@ -115,19 +112,20 @@ async def add_organization_tokens(
         TokenBalanceResponse with organization_id and new balance.
 
     Raises:
-        HTTPException: 400 if org_id is not a valid UUID format.
+        HTTPException: 422 if org_id is not a valid UUID format.
         HTTPException: 403 if user doesn't have admin.organizations role.
     """
+    org_id_str = str(org_id)
     org = await token_manager.add_tokens(
-        org_id=org_id,
+        org_id=org_id_str,
         amount=request.amount,
         user_id=user.sub,
     )
 
     logger.info(
-        f"Added {request.amount} tokens to organization {org_id}",
+        f"Added {request.amount} tokens to organization {org_id_str}",
         extra={
-            "organization_id": org_id,
+            "organization_id": org_id_str,
             "amount": request.amount,
             "new_balance": org.token_balance,
             "admin_user_id": user.sub,
@@ -135,7 +133,7 @@ async def add_organization_tokens(
     )
 
     return TokenBalanceResponse(
-        organization_id=org_id,
+        organization_id=org_id_str,
         balance=org.token_balance,
     )
 
@@ -145,9 +143,8 @@ async def add_organization_tokens(
     response_model=PaginatedTokenTransactionResponse,
 )
 async def get_transaction_history(
-    org_id: str = Path(
+    org_id: UUID = Path(
         ...,
-        pattern=UUID_PATTERN,
         description="Organization UUID",
         examples=["550e8400-e29b-41d4-a716-446655440000"],
     ),
@@ -175,7 +172,7 @@ async def get_transaction_history(
     admin.organizations role can view any organization's history.
 
     Args:
-        org_id: Keycloak organization UUID from URL path (must be valid UUID format).
+        org_id: Keycloak organization UUID from URL path (automatically validated).
         transaction_type: Optional filter by transaction type (add, consume, adjustment).
         reference_type: Optional filter by reference type (company, csv_import, etc.).
         date_from: Optional filter for transactions after this datetime.
@@ -190,14 +187,15 @@ async def get_transaction_history(
         PaginatedTokenTransactionResponse with items, total, page, size, and pages.
 
     Raises:
-        HTTPException: 400 if org_id is not a valid UUID format.
+        HTTPException: 422 if org_id is not a valid UUID format.
         HTTPException: 403 if user cannot access this organization's tokens.
     """
-    verify_organization_access(org_id, org_context, user, "tokens")
+    org_id_str = str(org_id)
+    verify_organization_access(org_id_str, org_context, user, "tokens")
 
     # Get transactions
     transactions = await token_manager.get_transaction_history(
-        org_id=org_id,
+        org_id=org_id_str,
         transaction_type=transaction_type,
         reference_type=reference_type,
         date_from=date_from,
@@ -208,7 +206,7 @@ async def get_transaction_history(
 
     # Get total count for pagination
     total = await token_manager.get_transaction_count(
-        org_id=org_id,
+        org_id=org_id_str,
         transaction_type=transaction_type,
         reference_type=reference_type,
         date_from=date_from,
@@ -219,9 +217,9 @@ async def get_transaction_history(
     pages = (total + size - 1) // size if total > 0 else 0
 
     logger.debug(
-        f"Transaction history queried for organization {org_id}",
+        f"Transaction history queried for organization {org_id_str}",
         extra={
-            "organization_id": org_id,
+            "organization_id": org_id_str,
             "page": page,
             "size": size,
             "total": total,

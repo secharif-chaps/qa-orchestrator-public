@@ -13,7 +13,9 @@ Removed endpoints (use /organizations/{id}/tokens instead):
 - POST /organizations/{id}/modules/{module}/tokens - REMOVED
 """
 
-from fastapi import APIRouter, Depends
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, Path
 
 from app.core.authorization import verify_organization_access
 from app.core.dependencies import get_token_manager
@@ -37,7 +39,11 @@ router = APIRouter(prefix="/organizations", tags=["modules"])
 @router.get("/{organization_id}/modules",
             response_model=OrganizationModulesResponse)
 async def get_organization_modules(
-    organization_id: str,
+    organization_id: UUID = Path(
+        ...,
+        description="Organization UUID",
+        examples=["550e8400-e29b-41d4-a716-446655440000"],
+    ),
     token_manager: TokenManager = Depends(get_token_manager),
     user: OIDCUser = Depends(idp.get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
@@ -52,18 +58,20 @@ async def get_organization_modules(
     Users with admin.organizations role can view any organization.
 
     Args:
-        organization_id: Keycloak organization UUID
+        organization_id: Keycloak organization UUID (automatically validated).
 
     Returns:
         OrganizationModulesResponse with list of modules and enabled state
 
     Raises:
-        403: If user lacks access to the organization
+        HTTPException: 422 if organization_id is not a valid UUID format.
+        HTTPException: 403 if user lacks access to the organization.
     """
+    org_id_str = str(organization_id)
     # Verify user can access this organization (member OR admin)
-    verify_organization_access(organization_id, org_context, user, "modules")
+    verify_organization_access(org_id_str, org_context, user, "modules")
 
-    modules = await token_manager.get_all_organization_modules(organization_id)
+    modules = await token_manager.get_all_organization_modules(org_id_str)
     module_responses = [
         OrganizationModuleResponse(
             name=module.module_name,
@@ -77,7 +85,7 @@ async def get_organization_modules(
     logger.info(
         "Retrieved organization modules",
         extra={
-            "organization_id": organization_id,
+            "organization_id": org_id_str,
             "module_count": len(module_responses),
         }
     )
@@ -88,8 +96,12 @@ async def get_organization_modules(
 @router.put("/{organization_id}/modules",
             response_model=OrganizationModulesResponse)
 async def update_organization_modules(
-    organization_id: str,
-    updates: dict[ModuleName, ModuleUpdateRequest],
+    organization_id: UUID = Path(
+        ...,
+        description="Organization UUID",
+        examples=["550e8400-e29b-41d4-a716-446655440000"],
+    ),
+    updates: dict[ModuleName, ModuleUpdateRequest] = ...,
     token_manager: TokenManager = Depends(get_token_manager),
     user: OIDCUser = Depends(
         idp.get_current_user(required_roles=["admin.organizations"])
@@ -103,16 +115,21 @@ async def update_organization_modules(
     Requires admin.organizations role for access.
 
     Args:
-        organization_id: Keycloak organization UUID
+        organization_id: Keycloak organization UUID (automatically validated).
         updates: Dictionary of module name to update request
 
     Returns:
         OrganizationModulesResponse with updated module states
+
+    Raises:
+        HTTPException: 422 if organization_id is not a valid UUID format.
+        HTTPException: 403 if user doesn't have admin.organizations role.
     """
+    org_id_str = str(organization_id)
     logger.info(
         "Updating organization modules",
         extra={
-            "organization_id": organization_id,
+            "organization_id": org_id_str,
             "user": user.preferred_username,
             "updates": {
                 str(module): req.enabled for module, req in updates.items()
@@ -123,13 +140,13 @@ async def update_organization_modules(
     # Update each module
     for module_name, update_request in updates.items():
         await token_manager.update_module_config(
-            organization_id=organization_id,
+            organization_id=org_id_str,
             module_name=module_name,
             enabled=update_request.enabled,
         )
 
     # Return updated modules
-    modules = await token_manager.get_all_organization_modules(organization_id)
+    modules = await token_manager.get_all_organization_modules(org_id_str)
     module_responses = [
         OrganizationModuleResponse(
             name=module.module_name,
@@ -148,8 +165,12 @@ async def update_organization_modules(
     response_model=ModuleToggleResponse
 )
 async def toggle_module(
-    organization_id: str,
-    module: ModuleName,
+    organization_id: UUID = Path(
+        ...,
+        description="Organization UUID",
+        examples=["550e8400-e29b-41d4-a716-446655440000"],
+    ),
+    module: ModuleName = Path(..., description="Module name to toggle"),
     body: ModuleUpdateRequest | None = None,
     token_manager: TokenManager = Depends(get_token_manager),
     user: OIDCUser = Depends(
@@ -164,15 +185,20 @@ async def toggle_module(
     Requires admin.organizations role for access.
 
     Args:
-        organization_id: Keycloak organization UUID
+        organization_id: Keycloak organization UUID (automatically validated).
         module: Module name to toggle
         body: Optional request body with explicit enabled state
 
     Returns:
         ModuleToggleResponse with updated module state
+
+    Raises:
+        HTTPException: 422 if organization_id is not a valid UUID format.
+        HTTPException: 403 if user doesn't have admin.organizations role.
     """
+    org_id_str = str(organization_id)
     current_module = await token_manager.get_or_create_module(
-        organization_id, module
+        org_id_str, module
     )
 
     # If body specifies enabled state, use it; otherwise toggle
@@ -184,7 +210,7 @@ async def toggle_module(
     logger.info(
         "Toggling module",
         extra={
-            "organization_id": organization_id,
+            "organization_id": org_id_str,
             "module_name": str(module),
             "old_enabled": current_module.enabled,
             "new_enabled": new_enabled,
@@ -193,7 +219,7 @@ async def toggle_module(
     )
 
     updated_module = await token_manager.update_module_config(
-        organization_id=organization_id,
+        organization_id=org_id_str,
         module_name=module,
         enabled=new_enabled,
     )
