@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.core.organization import get_user_organization, OrganizationContext
 from app.models.company import Company
-from app.models.folder import Folder, FolderShare
+from app.models.folder import Folder, FolderShare, FolderItem
 from app.services.folder import FolderService
 from app.schemas.organization import OrganizationResponse, ActivityResponse
 from app.core.logging_config import get_logger
@@ -98,12 +98,31 @@ async def get_organization_activities(
             .all()
         )
 
+        # Get folder IDs for these companies
+        company_id_strings = [str(c.id) for c in companies]
+        folder_items = (
+            db.query(FolderItem.item_id, FolderItem.folder_id)
+            .filter(
+                FolderItem.item_id.in_(company_id_strings),
+                FolderItem.item_type == "company"
+            )
+            .order_by(FolderItem.added_at.desc())  # Most recent folder first
+            .all()
+        )
+        # Map company_id -> folder_id
+        company_folder_map = {}
+        for fi in folder_items:
+            if fi.item_id not in company_folder_map:
+                company_folder_map[fi.item_id] = str(fi.folder_id)
+
         for company in companies:
             activities.append(ActivityResponse(
                 type="company",
                 name=company.name,
                 owner=company.owner_username or "Unknown",
-                created_at=company.created_at
+                created_at=company.created_at,
+                id=str(company.id),
+                folder_id=company_folder_map.get(str(company.id)),
             ))
 
     # SECURITY: Query folders that:
@@ -130,7 +149,8 @@ async def get_organization_activities(
             type="folder",
             name=folder.name,
             owner=folder.owner or "Unknown",
-            created_at=folder.created_at
+            created_at=folder.created_at,
+            id=str(folder.id),
         ))
 
     # Sort by creation time (most recent first)

@@ -39,6 +39,8 @@ class ActivityResponse(BaseModel):
     name: str = Field(..., description="Name of the created item")
     owner: str = Field(..., description="Username of the creator")
     created_at: datetime = Field(..., description="When the item was created")
+    id: str = Field(..., description="ID of the item (company or folder)")
+    folder_id: Optional[str] = Field(None, description="Folder ID (for companies, the folder containing them)")
 
     class Config:
         from_attributes = True
