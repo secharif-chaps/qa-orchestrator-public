@@ -21,8 +21,8 @@ from app.core.keycloak import OIDCUser
 
 @pytest.fixture
 def test_org_id():
-    """Test organization ID (valid UUID format)."""
-    return "12345678-1234-1234-1234-123456789abc"
+    """Test organization ID (valid UUID v4 format)."""
+    return "12345678-1234-4234-a234-123456789abc"
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def test_user():
         email_verified=True,
         iat=now,
         exp=now + 3600,
-        organization=["Test Org", {"Test Org": {"id": "12345678-1234-1234-1234-123456789abc"}}],
+        organization=["Test Org", {"Test Org": {"id": "12345678-1234-4234-a234-123456789abc"}}],
         enabled_modules=["screen"],
         realm_access={"roles": ["company.view", "organization.read"]},
     )
@@ -53,7 +53,7 @@ def admin_user():
         email_verified=True,
         iat=now,
         exp=now + 3600,
-        organization=["Admin Org", {"Admin Org": {"id": "87654321-4321-4321-4321-cba987654321"}}],
+        organization=["Admin Org", {"Admin Org": {"id": "87654321-4321-4321-8321-cba987654321"}}],
         enabled_modules=["screen"],
         realm_access={"roles": ["admin.organizations"]},
     )
@@ -381,7 +381,7 @@ def test_permission_denied_different_org(
 
     # Create context for a different organization
     org_context = OrganizationContext(
-        organization_id="11111111-2222-3333-4444-555555555555",
+        organization_id="11111111-2222-4333-8444-555555555555",
         organization_name="Different Org",
         user_id=test_user.sub,
         username=test_user.preferred_username,
@@ -411,7 +411,7 @@ def test_admin_can_access_any_org(client, test_org_id, admin_user, setup_test_da
 
     # Admin's own org is different
     org_context = OrganizationContext(
-        organization_id="87654321-4321-4321-4321-cba987654321",
+        organization_id="87654321-4321-4321-8321-cba987654321",
         organization_name="Admin Org",
         user_id=admin_user.sub,
         username=admin_user.preferred_username,
@@ -441,7 +441,7 @@ async def test_empty_history(client, test_user, global_db_session):
     from app.core.organization import OrganizationContext
 
     # Create a new org with no transactions
-    empty_org_id = "99999999-8888-7777-6666-555555555555"
+    empty_org_id = "99999999-8888-4777-8666-555555555555"
     org = Organization(organization_id=empty_org_id, token_balance=0)
     global_db_session.add(org)
     await global_db_session.commit()
