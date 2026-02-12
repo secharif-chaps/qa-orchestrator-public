@@ -2184,6 +2184,13 @@ export default {
       myFolders: 'Mes dossiers',
       allFolders: 'Tous les dossiers',
     },
+    groups: {
+      mine: 'Mes dossiers',
+      shared: 'Partagés avec moi',
+    },
+    tooltip: {
+      createdBy: 'Créé par {username} le {date} à {time}',
+    },
     search: {
       placeholder: 'Rechercher des éléments...',
     },

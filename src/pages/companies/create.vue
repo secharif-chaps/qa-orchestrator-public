@@ -87,12 +87,44 @@
             <span class="text-error">*</span>
           </label>
           <Select
-            v-model="selectedFolderId"
-            :options="folderOptions"
-            :display-value="displayFolderName"
+            v-model="selectedFolderOption"
+            :groups="folderGroups"
             :placeholder="$t('company.create.chooseFolderPlaceholder', 'Choose a folder...')"
-            icon="fa fa-folder"
-          />
+            :icon="selectedFolderOption?.icon || 'fa fa-folder'"
+          >
+            <template #groups="{ groups }">
+              <template v-for="group in groups" :key="group.label">
+                <SelectGroup>
+                  <SelectLabel>{{ group.label }}</SelectLabel>
+                  <SelectItem
+                    v-for="option in group.options"
+                    :key="option.value"
+                    :option="option"
+                  >
+                    <template #icon>
+                      <Radio
+                        v-model="selectedFolderOption"
+                        :value="option"
+                        name="folder-select"
+                        :id="option.value"
+                      />
+                      <Icon :icon="option.icon" :style="{ color: option.color }" />
+                      <span>{{ option.label }}</span>
+                      <span
+                        v-if="option.createdAt && option.ownerUsername"
+                        class="text-xs text-gray-600 dark:text-gray-100"
+                      >
+                        — {{ formatFolderCreationInfo(option) }}
+                      </span>
+                    </template>
+                    <template #default>
+                      <span class="sr-only">{{ option.label }}</span>
+                    </template>
+                  </SelectItem>
+                </SelectGroup>
+              </template>
+            </template>
+          </Select>
         </div>
 
         <!-- Form Fields -->
@@ -151,7 +183,17 @@ meta:
 </route>
 
 <script lang="ts" setup>
-import { Alert, Button, Input, Select } from '@owlint/feathers-vue'
+import {
+  Alert,
+  Button,
+  Input,
+  Select,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  Icon,
+  Radio,
+} from '@owlint/feathers-vue'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
@@ -172,11 +214,30 @@ const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 
+// Folder option type (as returned by Select)
+interface FolderOption {
+  label: string
+  value: string
+  icon?: string
+  color?: string
+  isOwner?: boolean
+  createdAt?: string
+  ownerUsername?: string
+}
+
+// Folder group type for grouped Select
+interface FolderGroup {
+  label: string
+  options: FolderOption[]
+}
+
 // Form state
 const company = ref('')
 const website = ref('')
 const companyError = ref('')
 const websiteError = ref('')
+
+// Store just the folder ID internally
 const selectedFolderId = ref<string | null>(null)
 
 // Mutations
@@ -202,9 +263,6 @@ const routeFolderId = computed(() => route.query.folderId as string | undefined)
 
 // Determine if folder selection is needed
 const needsFolderSelection = computed(() => !routeFolderId.value)
-
-// Target folder ID (from route or selected)
-const targetFolderId = computed(() => routeFolderId.value || selectedFolderId.value)
 
 // Fetch folders (only when folder selection is needed)
 const { data: foldersData, isLoading: foldersLoading } = useQuery(
@@ -234,17 +292,83 @@ const foldersArray = computed(() => {
   return foldersData.value.data || null // Paginated format
 })
 
-// Transform folders to Select options - use folder IDs
+// Transform folders to Select options - { label, value, icon, color, isOwner, createdAt, ownerUsername } format
+// Only show folders user owns OR shared folders with write permission
 const folderOptions = computed(() => {
   if (!foldersArray.value) return []
-  return foldersArray.value.map((folder) => folder.id)
+  return foldersArray.value
+    .filter((folder) => folder.is_owner || folder.share_role === 'writer')
+    .map((folder) => ({
+      label: folder.name,
+      value: folder.id,
+      icon: folder.icon,
+      color: folder.color,
+      isOwner: folder.is_owner,
+      createdAt: folder.created_at,
+      ownerUsername: folder.owner_username,
+    }))
 })
 
-// Display function for Select component - shows folder name for given ID
-const displayFolderName = (id: string) => {
-  if (!foldersArray.value) return ''
-  return foldersArray.value.find(f => f.id === id)?.name || ''
+// Format folder creation info (shown in dropdown options only)
+const formatFolderCreationInfo = (option: FolderOption) => {
+  if (!option.createdAt || !option.ownerUsername) return ''
+  const date = new Date(option.createdAt)
+  const formattedDate = date.toLocaleDateString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+  const formattedTime = date.toLocaleTimeString('fr-FR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+  return t('folder.tooltip.createdBy', {
+    username: option.ownerUsername,
+    date: formattedDate,
+    time: formattedTime,
+  })
 }
+
+// Group folders by ownership for Select groups
+const folderGroups = computed<FolderGroup[]>(() => {
+  if (!folderOptions.value.length) return []
+
+  const myFolders = folderOptions.value.filter((f) => f.isOwner)
+  const sharedFolders = folderOptions.value.filter((f) => !f.isOwner)
+
+  const groups: FolderGroup[] = []
+
+  if (myFolders.length > 0) {
+    groups.push({
+      label: t('folder.groups.mine', 'My Folders'),
+      options: myFolders,
+    })
+  }
+
+  if (sharedFolders.length > 0) {
+    groups.push({
+      label: t('folder.groups.shared', 'Shared with me'),
+      options: sharedFolders,
+    })
+  }
+
+  return groups
+})
+
+// Writable computed that maps between folder ID and option object
+// This ensures we always return the same object reference from folderOptions
+const selectedFolderOption = computed({
+  get: () => {
+    if (!selectedFolderId.value) return null
+    return folderOptions.value.find((opt) => opt.value === selectedFolderId.value) ?? null
+  },
+  set: (option: FolderOption | null) => {
+    selectedFolderId.value = option?.value ?? null
+  },
+})
+
+// Target folder ID (from route or selected)
+const targetFolderId = computed(() => routeFolderId.value || selectedFolderId.value)
 
 // Computed property to check if folders are available (DRY for v-if conditions)
 const hasFoldersAvailable = computed(() => {
@@ -254,12 +378,6 @@ const hasFoldersAvailable = computed(() => {
 // Fetch folder details (when folder ID is in route)
 const { data: folderData } = useQuery(folderByIdQuery, () => ({ id: routeFolderId.value || '' }), {
   enabled: computed(() => !!routeFolderId.value),
-})
-
-// Selected folder object (derived from folder ID)
-const selectedFolder = computed(() => {
-  if (!selectedFolderId.value || !foldersArray.value) return null
-  return foldersArray.value.find((f) => f.id === selectedFolderId.value)
 })
 
 // Global token balance query
@@ -393,6 +511,7 @@ const refreshTokenData = async () => {
   }
 }
 
+// TODO: Implement contact admin functionality
 const contactAdmin = () => {
   console.log('Contact admin for token refill')
 }
