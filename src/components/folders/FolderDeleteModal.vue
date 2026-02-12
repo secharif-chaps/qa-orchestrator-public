@@ -38,7 +38,7 @@
               <div class="font-medium">{{ folderToDelete?.name }}</div>
               <div class="text-sm text-secondary">
                 {{
-                  $t('folder.itemCount', '{count} items', {
+                  $t('folder.itemCount', {
                     count: folderToDelete?.items?.length || folderToDelete?.items_count || 0,
                   })
                 }}
