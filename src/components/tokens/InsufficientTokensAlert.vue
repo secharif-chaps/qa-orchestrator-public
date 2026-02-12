@@ -13,11 +13,15 @@
     />
 
     <!-- Token counter and actions -->
-    <div class="flex items-center justify-between bg-warning-light border border-warning-stroke rounded-lg px-4 py-3">
+    <div
+      class="bg-warning-light border-warning-stroke flex items-center justify-between rounded-lg border px-4 py-3"
+    >
       <div class="flex items-center gap-3">
         <i class="fa fa-coins text-warning"></i>
-        <span class="text-sm font-medium text-warning-light-content">{{ $t('tokens.currentTokens') }}</span>
-        <span class="text-xl font-bold text-warning-light-content">{{ currentTokens }}</span>
+        <span class="text-warning-light-content text-sm font-medium">{{
+          $t('tokens.currentTokens')
+        }}</span>
+        <span class="text-warning-light-content text-xl font-bold">{{ currentTokens }}</span>
       </div>
 
       <div class="flex items-center gap-2">
@@ -41,12 +45,7 @@
           @click="$emit('refresh')"
         />
 
-        <Button
-          variant="tertiary"
-          icon="fa-times"
-          size="sm"
-          @click="$emit('dismiss')"
-        />
+        <Button variant="tertiary" icon="fa-times" size="sm" @click="$emit('dismiss')" />
       </div>
     </div>
   </div>

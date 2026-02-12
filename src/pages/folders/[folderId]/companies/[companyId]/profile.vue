@@ -26,7 +26,7 @@
       </div>
 
       <div class="col-span-3">
-        <div class="flex flex-col h-full gap-2">
+        <div class="flex h-full flex-col gap-2">
           <ProfileGroup />
           <ProfileBusinessLine />
         </div>
@@ -39,16 +39,16 @@
       </div>
 
       <!-- Tab Section -->
-      <Card class="col-span-12 ">
+      <Card class="col-span-12">
         <div class="flex flex-col gap-4">
           <!-- Header Row: Title on left, Tabs on right -->
           <div class="flex items-center justify-between">
-            <h3 class="flex items-center gap-2 font-bold text-secondary">
+            <h3 class="text-secondary flex items-center gap-2 font-bold">
               <div
-      class="w-8 h-8 rounded-lg bg-base-300 flex items-center justify-center flex-shrink-0"
-    >
-      <i class="text-secondary text-md" :class="currentTabIcon"></i>
-            </div>
+                class="bg-base-300 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg"
+              >
+                <i class="text-secondary text-md" :class="currentTabIcon"></i>
+              </div>
               <span>{{ currentTabTitle }}</span>
             </h3>
             <Toggle v-model="currentTab" :options="tabOptions" />

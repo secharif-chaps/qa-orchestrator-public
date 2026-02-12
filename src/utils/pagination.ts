@@ -30,7 +30,9 @@ export interface ApiPaginationRaw {
  * @param raw - Raw pagination data from API response (meta or pagination field)
  * @returns PaginationMeta for the Pagination component, or null if data is invalid
  */
-export const transformToPaginationMeta = (raw: ApiPaginationRaw | null | undefined): PaginationMeta | null => {
+export const transformToPaginationMeta = (
+  raw: ApiPaginationRaw | null | undefined,
+): PaginationMeta | null => {
   if (!raw) return null
 
   const currentPage = raw.page ?? raw.current_page ?? 1

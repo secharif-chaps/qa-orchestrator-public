@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col gap-3 rounded-lg border p-4 transition-all cursor-pointer"
+    class="flex cursor-pointer flex-col gap-3 rounded-lg border p-4 transition-all"
     :class="blockClasses"
     @click="$emit('select', role.id)"
   >

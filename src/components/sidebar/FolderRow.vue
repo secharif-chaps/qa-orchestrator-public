@@ -1,32 +1,32 @@
 <template>
-  <div class="ml-1 bg-sage-800 rounded-card">
+  <div class="bg-sage-800 rounded-card ml-1">
     <!-- Folder Header -->
     <div
       @click.stop="$emit('toggle')"
-      class="flex items-center gap-2 px-2 py-3 transition-colors group cursor-pointer bg-sage-800 relative z-10 rounded-card justify-between"
+      class="group bg-sage-800 rounded-card relative z-10 flex cursor-pointer items-center justify-between gap-2 px-2 py-3 transition-colors"
     >
-      <div class="flex items-center gap-2 min-w-0 flex-1">
+      <div class="flex min-w-0 flex-1 items-center gap-2">
         <!-- Expand/Collapse Arrow -->
         <button
           v-if="folder.items && folder.items.length > 0"
-          class="w-3 flex-shrink-0 flex items-center justify-center"
+          class="flex w-3 flex-shrink-0 items-center justify-center"
         >
           <i
             :class="isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'"
-            class="fa text-xs text-sage-300 transition-transform"
+            class="fa text-sage-300 text-xs transition-transform"
           ></i>
         </button>
         <div v-else class="w-3 flex-shrink-0"></div>
 
         <!-- Folder Icon -->
         <i
-          class="fa text-sm text-sage-300 flex-shrink-0"
+          class="fa text-sage-300 flex-shrink-0 text-sm"
           :class="{ 'fa-folder': !isExpanded, 'fa-folder-open': isExpanded }"
         ></i>
 
         <!-- Folder Name -->
         <span
-          class="text-sm text-white truncate hover:underline"
+          class="truncate text-sm text-white hover:underline"
           @click.prevent="$emit('navigateFolder', folder.id)"
           >{{ folder.name }}</span
         >
@@ -47,24 +47,24 @@
     <!-- Folder Items (Companies) -->
     <div
       v-if="isExpanded && folder.items && folder.items.length > 0"
-      class="ml-3 pl-3 pb-2 relative"
+      class="relative ml-3 pb-2 pl-3"
     >
       <!-- <div class="absolute w-0.5 bg-sage-300 h-[calc(100%-30px)] top-0 -left-0.5"></div> -->
       <div class="relative" v-for="item in visibleItems" :key="item.id">
         <div
-          class="absolute -left-[10px] -top-8 bottom-0 w-3 h-12 rounded-bl-card border-l-2 border-b-2 border-sage-300"
+          class="rounded-bl-card border-sage-300 absolute -top-8 bottom-0 -left-[10px] h-12 w-3 border-b-2 border-l-2"
         ></div>
         <div
-          class="flex ml-1 items-center gap-2 px-1.5 py-1.5 rounded-md hover:bg-sage-800/50 transition-colors cursor-pointer group"
+          class="hover:bg-sage-800/50 group ml-1 flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1.5 transition-colors"
           @click.prevent="$emit('navigateCompany', folder.id, item.id)"
         >
           <!-- Item Icon -->
-          <div class="w-5 h-5 rounded bg-orange-200 flex items-center justify-center flex-shrink-0">
+          <div class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded bg-orange-200">
             <i class="fa fa-file-lines text-xs text-black"></i>
           </div>
 
           <!-- Item Name -->
-          <span class="text-xs text-sage-300 flex-1 truncate group-hover:underline">{{
+          <span class="text-sage-300 flex-1 truncate text-xs group-hover:underline">{{
             item.name
           }}</span>
         </div>

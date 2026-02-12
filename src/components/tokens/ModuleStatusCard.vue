@@ -1,8 +1,7 @@
 <template>
-  <div class="bg-base-100 rounded-lg p-4 border border-primary-stroke">
+  <div class="bg-base-100 border-primary-stroke rounded-lg border p-4">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-
         <!-- Module Icon -->
         <Badge
           :intent="isEnabled ? 'success' : 'danger'"
@@ -17,7 +16,7 @@
           <h3 class="font-medium capitalize">
             {{ $t(`tokens.modules.${module}.name`, module) }}
           </h3>
-          <p class="text-sm text-secondary">
+          <p class="text-secondary text-sm">
             {{ moduleDescription }}
           </p>
         </div>
@@ -69,7 +68,7 @@ const moduleIcons: Record<ModuleName, string> = {
 const moduleIcon = computed(() => moduleIcons[props.module] || 'fa fa-cog')
 
 const moduleDescription = computed(() =>
-  t(`tokens.modules.${props.module}.description`, getDefaultDescription(props.module))
+  t(`tokens.modules.${props.module}.description`, getDefaultDescription(props.module)),
 )
 
 // Default descriptions for modules (core modules only)

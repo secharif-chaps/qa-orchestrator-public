@@ -369,12 +369,14 @@ export default {
       advisor: 'Votre conseiller ChapsVision',
       contact: 'Contacter',
       noHistory: "Aucun historique d'utilisation",
-      noHistoryDesc: "L'utilisation des crédits apparaîtra ici lorsque vous créerez des fiches entreprises.",
+      noHistoryDesc:
+        "L'utilisation des crédits apparaîtra ici lorsque vous créerez des fiches entreprises.",
       createdBy: 'Fiche créée par',
     },
     chapse: {
       title: 'Chaps-e',
-      welcomeMessage: 'Bonjour ! Je suis Chaps-e, votre assistant IA. Comment puis-je vous aider aujourd\'hui ?',
+      welcomeMessage:
+        "Bonjour ! Je suis Chaps-e, votre assistant IA. Comment puis-je vous aider aujourd'hui ?",
       addCompany: 'Ajouter une entreprise',
       addThisCompany: 'Ajouter',
       toContext: 'au contexte',
@@ -387,13 +389,13 @@ export default {
       searchCompanies: 'Rechercher des entreprises...',
       typeToSearch: 'Tapez pour rechercher des entreprises',
       toSend: 'Envoyer',
-      clearHistory: 'Effacer l\'historique',
+      clearHistory: "Effacer l'historique",
       newConversation: 'Nouvelle conversation',
       enterFullscreen: 'Plein écran',
       exitFullscreen: 'Quitter le plein écran',
       loadMore: 'Charger plus',
       dateGroups: {
-        today: 'Aujourd\'hui',
+        today: "Aujourd'hui",
         yesterday: 'Hier',
         lastWeek: '7 derniers jours',
         lastMonth: '30 derniers jours',
@@ -536,7 +538,7 @@ export default {
     save: 'Enregistrer',
     confirm: 'Confirmer',
     error: 'Erreur',
-    genericError: 'Une erreur s\'est produite',
+    genericError: "Une erreur s'est produite",
     close: 'Fermer',
     back: 'Retour',
     next: 'Suivant',
@@ -876,20 +878,20 @@ export default {
       title: 'Hiérarchie de Management',
       viewLinkedIn: 'Voir le Profil LinkedIn',
       interactive: 'Interactif',
-      screenshot: 'Capture d\'écran',
+      screenshot: "Capture d'écran",
     },
     levels: {
       all: 'Tous les niveaux',
       ceo: 'PDG',
       executives: 'Cadres dirigeants',
       managers: 'Managers',
-      teamMembers: 'Membres de l\'équipe',
+      teamMembers: "Membres de l'équipe",
     },
     views: {
       grid: 'Vue grille',
       list: 'Vue liste',
     },
-    noResults: 'Aucun membre de l\'équipe ne correspond à vos critères',
+    noResults: "Aucun membre de l'équipe ne correspond à vos critères",
     searchPlaceholder: 'Rechercher par nom ou poste...',
     email: 'E-mail',
     emailPlaceholder: "Saisir l'adresse e-mail",
@@ -1026,11 +1028,12 @@ export default {
       },
       users: {
         title: 'Gestion des Utilisateurs',
-        description: 'Gérer les assignations d\'organisation des utilisateurs et les accès'
+        description: "Gérer les assignations d'organisation des utilisateurs et les accès",
       },
-      usage:{
-        title: 'Tableau de Bord d\'Utilisation',
-        description: 'Voir les métriques d\'utilisation de l\'application pour toutes les organisations'
+      usage: {
+        title: "Tableau de Bord d'Utilisation",
+        description:
+          "Voir les métriques d'utilisation de l'application pour toutes les organisations",
       },
       uiDemo: {
         title: 'Démo Composants UI',
@@ -1042,7 +1045,8 @@ export default {
       },
       tasks: {
         title: 'Suivi des Tâches',
-        description: 'Surveiller les tâches en cours dans toutes les organisations et redémarrer les processus bloqués',
+        description:
+          'Surveiller les tâches en cours dans toutes les organisations et redémarrer les processus bloqués',
       },
       costs: {
         title: 'Analyse des Coûts',
@@ -1056,22 +1060,23 @@ export default {
       monitor: 'Surveiller',
     },
     disableUser: {
-      title: 'Désactiver l\'Utilisateur',
+      title: "Désactiver l'Utilisateur",
       confirmText: 'Êtes-vous sûr de vouloir désactiver',
       actionTitle: 'Cette action va :',
-      actionDescription: '• Empêcher l\'utilisateur de se connecter • Révoquer toutes les sessions actives • Conserver toutes les données utilisateur. Vous pourrez réactiver l\'utilisateur ultérieurement si nécessaire.',
+      actionDescription:
+        "• Empêcher l'utilisateur de se connecter • Révoquer toutes les sessions actives • Conserver toutes les données utilisateur. Vous pourrez réactiver l'utilisateur ultérieurement si nécessaire.",
       cancel: 'Annuler',
-      confirm: 'Désactiver l\'Utilisateur',
+      confirm: "Désactiver l'Utilisateur",
     },
     userActions: {
-      changeOrganization: 'Changer d\'Organisation',
+      changeOrganization: "Changer d'Organisation",
       managePermissions: 'Gérer les Permissions',
-      enableUser: 'Activer l\'Utilisateur',
-      disableUser: 'Désactiver l\'Utilisateur',
+      enableUser: "Activer l'Utilisateur",
+      disableUser: "Désactiver l'Utilisateur",
       resetPassword: 'Réinitialiser le Mot de Passe',
     },
     userOrganization: {
-      title: 'Changer l\'Organisation de l\'Utilisateur',
+      title: "Changer l'Organisation de l'Utilisateur",
       currentOrganization: 'Organisation actuelle :',
       noOrganization: 'Aucune organisation assignée',
       current: '(actuelle)',
@@ -1091,11 +1096,13 @@ export default {
       },
       legacyWarning: {
         title: 'Permissions héritées détectées',
-        description: 'Cet utilisateur a des permissions de l\'ancien modèle. Elles seront automatiquement converties au nouveau modèle lors de l\'enregistrement.',
+        description:
+          "Cet utilisateur a des permissions de l'ancien modèle. Elles seront automatiquement converties au nouveau modèle lors de l'enregistrement.",
       },
       customWarning: {
         title: 'Permissions personnalisées détectées',
-        description: 'Cet utilisateur a des permissions personnalisées qui ne correspondent à aucun rôle prédéfini. Sélectionner un rôle remplacera ses permissions actuelles.',
+        description:
+          'Cet utilisateur a des permissions personnalisées qui ne correspondent à aucun rôle prédéfini. Sélectionner un rôle remplacera ses permissions actuelles.',
       },
       tabs: {
         roles: 'Rôles rapides',
@@ -1104,21 +1111,23 @@ export default {
       sections: {
         base: 'Accès de base',
         modules: 'Permissions des modules',
-        modulesDescription: 'Ces permissions permettent de créer des types de contenu spécifiques. Nécessite l\'accès en écriture.',
+        modulesDescription:
+          "Ces permissions permettent de créer des types de contenu spécifiques. Nécessite l'accès en écriture.",
         admin: 'Permissions administrateur',
-        adminDescription: 'L\'accès administrateur donne un contrôle total. À utiliser avec précaution.',
+        adminDescription:
+          "L'accès administrateur donne un contrôle total. À utiliser avec précaution.",
       },
       organizationRead: {
         label: 'Accès en lecture',
-        description: 'Voir les dossiers et entreprises de l\'organisation',
+        description: "Voir les dossiers et entreprises de l'organisation",
       },
       organizationWrite: {
         label: 'Accès en écriture',
         description: 'Créer et gérer les dossiers, gérer le contenu possédé',
       },
       organizationManage: {
-        label: 'Gestion d\'équipe',
-        description: 'Gérer les membres de l\'équipe et leurs permissions',
+        label: "Gestion d'équipe",
+        description: "Gérer les membres de l'équipe et leurs permissions",
       },
       companyCreate: {
         label: 'Ajouter des éléments',
@@ -1128,7 +1137,7 @@ export default {
         label: 'Créer des cibles',
         description: 'Créer de nouveaux watchfiles (module Target)',
       },
-      requiresWriteAccess: 'Nécessite l\'accès en écriture activé',
+      requiresWriteAccess: "Nécessite l'accès en écriture activé",
       adminOrganizations: {
         label: 'Admin organisation',
         description: 'Accès administrateur complet à toutes les organisations',
@@ -1148,7 +1157,7 @@ export default {
         },
         manager: {
           name: 'Manager',
-          description: 'Permissions de rédacteur plus gestion d\'équipe',
+          description: "Permissions de rédacteur plus gestion d'équipe",
         },
         admin: {
           name: 'Administrateur',
@@ -1184,9 +1193,9 @@ export default {
     },
     organizationBreakdown: {
       title: 'Répartition des coûts par organisation',
-      loading: 'Chargement des données d\'organisation...',
-      error: 'Échec du chargement des données d\'organisation',
-      noData: 'Aucune donnée d\'organisation disponible',
+      loading: "Chargement des données d'organisation...",
+      error: "Échec du chargement des données d'organisation",
+      noData: "Aucune donnée d'organisation disponible",
       columns: {
         organization: 'Organisation',
         totalCost: 'Coût total',
@@ -1204,7 +1213,7 @@ export default {
       title: 'Répartition des coûts par espace de travail',
       loading: 'Chargement des données du graphique...',
       error: 'Échec du chargement des données du graphique',
-      noData: 'Aucune donnée d\'espace de travail disponible',
+      noData: "Aucune donnée d'espace de travail disponible",
       tooltip: {
         cost: 'Coût',
         percentage: 'Pourcentage',
@@ -1214,7 +1223,8 @@ export default {
     },
     usage: {
       title: "Tableau de bord d'utilisation",
-      description: "Voir les métriques d'utilisation de l'application pour toutes les organisations",
+      description:
+        "Voir les métriques d'utilisation de l'application pour toutes les organisations",
       timeRange: {
         last7Days: '7 derniers jours',
         last30Days: '30 derniers jours',
@@ -1317,7 +1327,8 @@ export default {
       },
       stuckAlert: {
         title: '{count} Tâche Bloquée Détectée | {count} Tâches Bloquées Détectées',
-        description: 'Des tâches en cours depuis trop longtemps nécessitent votre attention. Vérifiez et redémarrez si nécessaire.',
+        description:
+          'Des tâches en cours depuis trop longtemps nécessitent votre attention. Vérifiez et redémarrez si nécessaire.',
         selectAll: 'Sélectionner Toutes les Bloquées',
       },
       filters: {
@@ -1355,7 +1366,7 @@ export default {
         actions: 'Actions',
         noTasks: 'Aucune tâche trouvée correspondant à vos filtres',
         restartTask: 'Redémarrer la tâche',
-        viewError: 'Voir l\'erreur',
+        viewError: "Voir l'erreur",
       },
       selection: {
         selected: '{count} sélectionnée | {count} sélectionnées',
@@ -1368,18 +1379,21 @@ export default {
       },
       modal: {
         title: 'Confirmer le Redémarrage Groupé',
-        description: 'Vous êtes sur le point de redémarrer {count} tâche. Cette action va : | Vous êtes sur le point de redémarrer {count} tâches. Cette action va :',
+        description:
+          'Vous êtes sur le point de redémarrer {count} tâche. Cette action va : | Vous êtes sur le point de redémarrer {count} tâches. Cette action va :',
         actions: {
           cancel: 'Annuler les tâches en cours',
-          queue: 'Les remettre en file d\'attente pour exécution immédiate',
+          queue: "Les remettre en file d'attente pour exécution immédiate",
           reset: 'Réinitialiser leur statut à "en attente"',
         },
         selectedTasks: 'Tâches sélectionnées :',
-        stuckWarning: '{count} de ces tâches sont en cours depuis plus de 3 minutes et peuvent être bloquées.',
+        stuckWarning:
+          '{count} de ces tâches sont en cours depuis plus de 3 minutes et peuvent être bloquées.',
         result: {
           initiated: 'Redémarrage Initié',
           noTasks: 'Aucune Tâche Redémarrée',
-          restarted: '{count} tâche redémarrée avec succès | {count} tâches redémarrées avec succès',
+          restarted:
+            '{count} tâche redémarrée avec succès | {count} tâches redémarrées avec succès',
           skipped: '{count} tâche ignorée | {count} tâches ignorées',
           skippedReasons: 'Raisons des exclusions :',
           taskReason: 'Tâche #{id} : {reason}',
@@ -1395,19 +1409,20 @@ export default {
     import: {
       title: 'Importer des utilisateurs',
       description: 'Importer des utilisateurs depuis un fichier CSV ou Excel',
-      needHelpTitle: 'Besoin d\'un modèle ?',
-      needHelpMessage: 'Téléchargez notre fichier CSV exemple pour voir le format attendu avec des données d\'exemple.',
+      needHelpTitle: "Besoin d'un modèle ?",
+      needHelpMessage:
+        "Téléchargez notre fichier CSV exemple pour voir le format attendu avec des données d'exemple.",
       downloadSample: 'Télécharger un exemple CSV',
       dropZoneTitle: 'Glissez-déposez votre fichier ici',
       dropZoneSubtitle: 'Supporte les fichiers CSV et Excel (max 100 utilisateurs)',
       browseFiles: 'Parcourir les fichiers',
       rows: 'lignes',
-      parseError: 'Erreur lors de l\'analyse du fichier',
+      parseError: "Erreur lors de l'analyse du fichier",
       csvColumn: 'Colonne CSV',
       mapsTo: 'Correspond à',
       ignore: 'Ignorer la colonne',
       fields: {
-        username: 'Nom d\'utilisateur',
+        username: "Nom d'utilisateur",
         email: 'Email',
         firstname: 'Prénom',
         lastname: 'Nom',
@@ -1416,12 +1431,13 @@ export default {
       ignoredColumnsWarning: 'Certaines colonnes seront ignorées',
       ignoredColumnsMessage: 'Les colonnes suivantes ne sont pas mappées : {columns}',
       requiredFieldsWarning: 'Champs requis non mappés',
-      requiredFieldsMessage: 'Les colonnes Nom d\'utilisateur et Email doivent être mappées pour continuer.',
+      requiredFieldsMessage:
+        "Les colonnes Nom d'utilisateur et Email doivent être mappées pour continuer.",
       requiredFieldTooltip: 'Champ obligatoire',
       // Gestion des mots de passe - sans colonne mot de passe
       noPasswordColumnTitle: 'Aucune colonne mot de passe détectée',
       noPasswordColumnMessage:
-        'Des mots de passe aléatoires seront générés pour tous les utilisateurs. Vous pourrez les télécharger une fois l\'import terminé.',
+        "Des mots de passe aléatoires seront générés pour tous les utilisateurs. Vous pourrez les télécharger une fois l'import terminé.",
       // Gestion des mots de passe - avec colonne mot de passe
       passwordHandling: 'Gestion des mots de passe',
       usePasswordsFromFile: 'Utiliser les mots de passe du fichier',
@@ -1432,12 +1448,15 @@ export default {
         'Des mots de passe aléatoires seront générés pour tous les utilisateurs, ignorant les mots de passe du fichier.',
       // Clés historiques (gardées pour compatibilité)
       generatePasswords: 'Générer des mots de passe aléatoires',
-      generatePasswordsHint: 'Des mots de passe seront générés pour tous les utilisateurs. Ils devront les changer à la première connexion.',
-      generatePasswordsHintWithColumn: 'Des mots de passe seront générés uniquement pour les utilisateurs sans mot de passe dans le fichier.',
+      generatePasswordsHint:
+        'Des mots de passe seront générés pour tous les utilisateurs. Ils devront les changer à la première connexion.',
+      generatePasswordsHintWithColumn:
+        'Des mots de passe seront générés uniquement pour les utilisateurs sans mot de passe dans le fichier.',
       previewSummary: '{count} utilisateurs prêts à importer',
-      previewSkipped: '{count} utilisateurs seront ignorés en raison d\'erreurs',
+      previewSkipped: "{count} utilisateurs seront ignorés en raison d'erreurs",
       duplicatesFound: 'Emails en double trouvés',
-      duplicatesMessage: 'Les utilisateurs suivants ont des adresses email en double et seront ignorés :',
+      duplicatesMessage:
+        'Les utilisateurs suivants ont des adresses email en double et seront ignorés :',
       duplicate: 'Doublon',
       validationErrors: 'Erreurs de validation trouvées',
       willGenerate: 'Sera généré',
@@ -1446,16 +1465,19 @@ export default {
       showingPreview: 'Affichage de {shown} sur {total} utilisateurs',
       importButton: 'Importer les utilisateurs',
       successCount: '{count} utilisateurs importés avec succès',
-      successMessage: 'Tous les utilisateurs ont été importés et peuvent maintenant se connecter avec leurs mots de passe temporaires.',
-      errorCount: '{count} utilisateurs n\'ont pas pu être importés',
-      errorMessage: 'Certains utilisateurs n\'ont pas pu être importés. Voir les détails ci-dessous.',
+      successMessage:
+        'Tous les utilisateurs ont été importés et peuvent maintenant se connecter avec leurs mots de passe temporaires.',
+      errorCount: "{count} utilisateurs n'ont pas pu être importés",
+      errorMessage:
+        "Certains utilisateurs n'ont pas pu être importés. Voir les détails ci-dessous.",
       showDetails: 'Afficher les détails des erreurs',
       hideDetails: 'Masquer les détails',
       passwordsGenerated: 'Mots de passe temporaires générés',
-      passwordsMessage: 'Téléchargez le fichier des mots de passe pour le partager avec les utilisateurs. C\'est la seule fois où vous pouvez télécharger ce fichier.',
+      passwordsMessage:
+        "Téléchargez le fichier des mots de passe pour le partager avec les utilisateurs. C'est la seule fois où vous pouvez télécharger ce fichier.",
       downloadPasswords: 'Télécharger les mots de passe CSV',
       autoDownloaded: 'Fichier de mots de passe téléchargé automatiquement',
-      cancelTitle: 'Annuler l\'importation',
+      cancelTitle: "Annuler l'importation",
       cancelMessage: 'Êtes-vous sûr de vouloir annuler ? Toute progression sera perdue.',
       confirmCancel: 'Oui, annuler',
       selectOrganization: 'Organisation cible',
@@ -1467,52 +1489,53 @@ export default {
         results: 'Résultats',
       },
       errors: {
-        usernameRequired: 'Le nom d\'utilisateur est requis',
-        emailRequired: 'L\'email est requis',
-        emailInvalid: 'Format d\'email invalide',
+        usernameRequired: "Le nom d'utilisateur est requis",
+        emailRequired: "L'email est requis",
+        emailInvalid: "Format d'email invalide",
       },
     },
     users: {
       search: {
-        placeholder: 'Rechercher par nom d\'utilisateur, nom, email ou organisation...',
+        placeholder: "Rechercher par nom d'utilisateur, nom, email ou organisation...",
       },
       title: 'Gestion des Utilisateurs',
-      description: 'Gérer les assignations d\'organisation des utilisateurs',
+      description: "Gérer les assignations d'organisation des utilisateurs",
       loading: 'Chargement des utilisateurs...',
       modal: {
-        changeOrganization: 'Changer l\'Organisation de l\'Utilisateur',
+        changeOrganization: "Changer l'Organisation de l'Utilisateur",
         assignOrganization: 'Assigner un Utilisateur à une Organisation',
-        loading: 'Chargement de l\'organisation...',
+        loading: "Chargement de l'organisation...",
         selectOrganization: 'Sélectionner une organisation :',
         assigning: 'Assignation en cours...',
         error: {
-          title: 'Erreur de chargement de l\'organisation',
+          title: "Erreur de chargement de l'organisation",
         },
         warning: {
-          title: 'Changement d\'Organisation',
-          message: 'Changer l\'organisation de cet utilisateur le transférera vers la nouvelle organisation. Ses données resteront dans l\'organisation d\'origine.',
+          title: "Changement d'Organisation",
+          message:
+            "Changer l'organisation de cet utilisateur le transférera vers la nouvelle organisation. Ses données resteront dans l'organisation d'origine.",
         },
       },
       table: {
-        name: "Nom",
+        name: 'Nom',
         username: "Nom d'utilisateur",
-        email: "E-mail",
-        actions: "Actions",
-        status: "Statut"
+        email: 'E-mail',
+        actions: 'Actions',
+        status: 'Statut',
       },
       status: {
-        active: "Actif"
+        active: 'Actif',
       },
       actions: {
         changeOrganization: "Changer d'organisation",
-        managePermissions: "Gérer les permissions",
+        managePermissions: 'Gérer les permissions',
         enableUser: "Activer l'utilisateur",
         disableUser: "Désactiver l'utilisateur",
-        resetPassword: "Réinitialiser le mot de passe"
+        resetPassword: 'Réinitialiser le mot de passe',
       },
       assignOrganization: {
         success: 'Organisation assignée avec succès !',
-        error: 'Échec de l\'assignation de l\'organisation',
+        error: "Échec de l'assignation de l'organisation",
       },
       updatePermissions: {
         success: 'Permissions mises à jour avec succès !',
@@ -1524,11 +1547,11 @@ export default {
       },
       disable: {
         success: 'Utilisateur désactivé avec succès !',
-        error: 'Échec de la désactivation de l\'utilisateur',
+        error: "Échec de la désactivation de l'utilisateur",
       },
       enable: {
         success: 'Utilisateur activé avec succès !',
-        error: 'Échec de l\'activation de l\'utilisateur',
+        error: "Échec de l'activation de l'utilisateur",
       },
     },
   },
@@ -1556,9 +1579,11 @@ export default {
       askOurAi: 'Demandez à notre IA',
       thinking: 'Réflexion en cours...',
       placeholder: 'Écrivez un message...',
-      welcomeMessage: 'Bonjour ! Je suis Basil, votre assistant. Je peux vous aider avec des questions sur cette entreprise. Que souhaitez-vous savoir ?',
+      welcomeMessage:
+        'Bonjour ! Je suis Basil, votre assistant. Je peux vous aider avec des questions sur cette entreprise. Que souhaitez-vous savoir ?',
       noResponse: "J'ai reçu votre message mais je n'ai pas pu générer de réponse.",
-      errorMessage: "Désolé, j'ai rencontré une erreur lors du traitement de votre demande. Veuillez réessayer.",
+      errorMessage:
+        "Désolé, j'ai rencontré une erreur lors du traitement de votre demande. Veuillez réessayer.",
       assistant: {
         name: 'Basil Assistant IA',
         shortName: 'Basil IA',
@@ -1782,19 +1807,19 @@ export default {
     },
     refresh: {
       button: 'Actualiser',
-      title: 'Actualiser les données de l\'entreprise',
+      title: "Actualiser les données de l'entreprise",
       subtitle: 'Obtenir les dernières informations sur {name}',
       warning: {
-        message: 'Les données actuelles seront remplacées lors de l\'arrivée des nouvelles données',
+        message: "Les données actuelles seront remplacées lors de l'arrivée des nouvelles données",
       },
       consumptionNotice: '35 jetons seront consommés',
       tokens: {
         title: 'Informations sur les jetons',
         current: 'Jetons actuels',
-        cost: 'Coût d\'actualisation',
+        cost: "Coût d'actualisation",
         remaining: 'Après actualisation',
       },
-      details: 'Détails de l\'entreprise',
+      details: "Détails de l'entreprise",
       confirm: {
         button: 'Actualiser les données',
       },
@@ -1803,7 +1828,7 @@ export default {
       tooltip: {
         insufficientTokens: 'Jetons insuffisants',
         waitForTasks: 'Attendre que toutes les tâches soient terminées',
-        tasksRunning: 'Les tâches sont en cours d\'exécution',
+        tasksRunning: "Les tâches sont en cours d'exécution",
       },
     },
     item: {
@@ -1875,7 +1900,7 @@ export default {
           },
           jobs: {
             label: "Offres d'emploi",
-            description: "Postes ouverts et informations sur le recrutement",
+            description: 'Postes ouverts et informations sur le recrutement',
           },
           press: {
             label: 'Couverture presse',
@@ -1947,7 +1972,7 @@ export default {
         de: 'Allemand',
         pt: 'Portugais',
       },
-    }
+    },
   },
   tokens: {
     module: 'Module {module}',
@@ -1962,20 +1987,21 @@ export default {
     moduleStatus: 'Statut des modules',
     management: 'Gestion des crédits',
     managementDescription: 'Gérer le solde de crédits de votre organisation',
-    globalBalance: 'Solde de crédits de l\'organisation',
+    globalBalance: "Solde de crédits de l'organisation",
     companyEquivalent: 'Équivalent entreprises',
     company: 'entreprise',
     addTokens: 'Ajouter des crédits',
-    quickAdd: 'Ajout rapide (par nombre d\'entreprises)',
+    quickAdd: "Ajout rapide (par nombre d'entreprises)",
     screensWithTokens: '{count} écrans ({tokens})',
     customAmount: 'Montant personnalisé',
     enterAmount: 'Saisir le montant de crédits...',
     add: 'Ajouter',
-    addHelper: 'Saisissez le nombre de crédits à ajouter, ou utilisez les boutons d\'ajout rapide ci-dessus.',
+    addHelper:
+      "Saisissez le nombre de crédits à ajouter, ou utilisez les boutons d'ajout rapide ci-dessus.",
     companyEquivalence: {
-      none: 'Pas assez pour 1 création d\'entreprise',
-      singular: '≈ 1 création d\'entreprise',
-      plural: '≈ {count} créations d\'entreprise',
+      none: "Pas assez pour 1 création d'entreprise",
+      singular: "≈ 1 création d'entreprise",
+      plural: "≈ {count} créations d'entreprise",
     },
     status: {
       disabled: 'Désactivé',
@@ -2002,12 +2028,13 @@ export default {
       },
     },
     history: {
-      errorTitle: 'Impossible de charger l\'historique des crédits',
+      errorTitle: "Impossible de charger l'historique des crédits",
     },
   },
   featureFlags: {
     globalFeatures: 'Fonctionnalités globales',
-    description: 'Capacités supplémentaires qui améliorent les modules principaux. Ces fonctionnalités sont désactivées par défaut.',
+    description:
+      'Capacités supplémentaires qui améliorent les modules principaux. Ces fonctionnalités sont désactivées par défaut.',
   },
   dataSources: {
     title: 'Sources de données',
@@ -2026,7 +2053,8 @@ export default {
     },
     pappers: {
       name: 'Pappers',
-      description: 'Fournisseur de données d\'entreprises françaises (infos légales, financières, dirigeants)',
+      description:
+        "Fournisseur de données d'entreprises françaises (infos légales, financières, dirigeants)",
     },
   },
   organization: {
@@ -2034,14 +2062,14 @@ export default {
       title: 'Gestion des Espaces de Travail',
       description: 'Gérez tous les espaces de travail du système',
       confirmAdminRole: {
-        title: "Attribuer le rôle Admin ?",
-        warningTitle: "Rôle à privilèges élevés",
+        title: 'Attribuer le rôle Admin ?',
+        warningTitle: 'Rôle à privilèges élevés',
         warningDescription: "Ce rôle donne un accès administratif complet à l'organisation.",
-        description: "Le rôle Admin inclut :",
+        description: 'Le rôle Admin inclut :',
         permissions: {
-          adminOrganizations: "Accès administrateur global à toutes les espaces de travail",
-        }
-      }
+          adminOrganizations: 'Accès administrateur global à toutes les espaces de travail',
+        },
+      },
     },
     create: {
       title: 'Créer un Espace de Travail',
@@ -2067,12 +2095,12 @@ export default {
       },
     },
     detail: {
-      title: 'Détails de l\'Organisation',
-      description: 'Gérer les paramètres, tokens et membres de l\'organisation',
+      title: "Détails de l'Organisation",
+      description: "Gérer les paramètres, tokens et membres de l'organisation",
       basicInfo: 'Informations de Base',
       members: 'Membres',
       settings: 'Paramètres',
-      settingsPlaceholder: 'Les paramètres de l\'organisation seront implémentés ici',
+      settingsPlaceholder: "Les paramètres de l'organisation seront implémentés ici",
     },
     membersDescription: 'Gérer les utilisateurs dans cette organisation',
     tabs: {
@@ -2125,7 +2153,7 @@ export default {
     create: {
       button: 'Ajouter un Utilisateur',
       title: 'Créer un Nouvel Utilisateur',
-      description: 'Ajouter un nouvel utilisateur à l\'organisation',
+      description: "Ajouter un nouvel utilisateur à l'organisation",
     },
     loading: 'Chargement des utilisateurs...',
     resetPassword: {
@@ -2133,11 +2161,13 @@ export default {
       button: 'Réinitialiser le Mot de Passe',
       description: 'Réinitialiser le mot de passe de cet utilisateur',
       infoTitle: 'Réinitialisation du Mot de Passe',
-      infoDescription: 'Un mot de passe temporaire sera généré. L\'utilisateur devra le changer lors de sa première connexion.',
+      infoDescription:
+        "Un mot de passe temporaire sera généré. L'utilisateur devra le changer lors de sa première connexion.",
       newPassword: 'Nouveau Mot de Passe Temporaire',
       placeholder: 'Saisir le nouveau mot de passe',
       success: 'Mot de Passe Réinitialisé avec Succès',
-      successDescription: 'Le mot de passe a été réinitialisé. Partagez ce mot de passe temporaire avec l\'utilisateur.',
+      successDescription:
+        "Le mot de passe a été réinitialisé. Partagez ce mot de passe temporaire avec l'utilisateur.",
       temporaryPassword: 'Mot de Passe Temporaire',
     },
     generatePassword: 'Générer un mot de passe aléatoire',
@@ -2238,34 +2268,36 @@ export default {
     },
     share: {
       title: 'Partager le dossier',
-      description: 'Partagez ce dossier avec d\'autres utilisateurs de votre organisation',
+      description: "Partagez ce dossier avec d'autres utilisateurs de votre organisation",
       searchLabel: 'Ajouter des personnes',
-      searchPlaceholder: 'Rechercher par nom d\'utilisateur ou email...',
+      searchPlaceholder: "Rechercher par nom d'utilisateur ou email...",
       searching: 'Recherche en cours...',
       readOnly: 'Lecture seule',
       alreadyShared: 'Déjà partagé',
       noResults: 'Aucun utilisateur trouvé',
-      searchError: 'Échec de la recherche d\'utilisateurs. Vous n\'avez peut-être pas la permission de partager des dossiers.',
+      searchError:
+        "Échec de la recherche d'utilisateurs. Vous n'avez peut-être pas la permission de partager des dossiers.",
       add: 'Ajouter',
-      writerDisabledNote: 'Le rôle Éditeur est désactivé car cet utilisateur n\'a que des droits de lecture dans l\'organisation.',
+      writerDisabledNote:
+        "Le rôle Éditeur est désactivé car cet utilisateur n'a que des droits de lecture dans l'organisation.",
       currentShares: 'Personnes ayant accès',
       loadingShares: 'Chargement...',
       addedOn: 'Ajouté le',
-      remove: 'Supprimer l\'accès',
-      noShares: 'Ce dossier n\'est partagé avec personne pour le moment',
+      remove: "Supprimer l'accès",
+      noShares: "Ce dossier n'est partagé avec personne pour le moment",
       reader: 'Lecteur',
       writer: 'Éditeur',
     },
     moveCompany: {
       button: 'Déplacer vers un dossier',
-      title: 'Déplacer l\'entreprise vers un dossier',
+      title: "Déplacer l'entreprise vers un dossier",
       selectFolder: 'Sélectionnez un dossier de destination',
       searchPlaceholder: 'Rechercher des dossiers...',
       noFolders: 'Aucun dossier accessible en écriture',
       currentFolder: 'Dossier actuel (ne peut pas être sélectionné)',
       loadError: 'Échec du chargement des dossiers',
       success: 'Entreprise déplacée vers {folderName}',
-      error: 'Échec du déplacement de l\'entreprise',
+      error: "Échec du déplacement de l'entreprise",
       move: 'Déplacer',
     },
     permissions: {
@@ -2416,7 +2448,8 @@ export default {
       noRecentProjects: 'Aucun projet récent',
       error: {
         title: 'Impossible de charger les projets récents',
-        description: 'Un problème est survenu lors du chargement de vos projets récents. Veuillez réessayer plus tard.',
+        description:
+          'Un problème est survenu lors du chargement de vos projets récents. Veuillez réessayer plus tard.',
       },
     },
     recentActivities: {
@@ -2429,7 +2462,8 @@ export default {
       noRecentActivities: 'Aucune activité récente',
       error: {
         title: 'Impossible de charger les activités récentes',
-        description: 'Un problème est survenu lors du chargement des activités de l\'organisation. Veuillez réessayer plus tard.',
+        description:
+          "Un problème est survenu lors du chargement des activités de l'organisation. Veuillez réessayer plus tard.",
       },
     },
     modules: {
@@ -2640,14 +2674,14 @@ export default {
       configure: 'Configurer les préférences IA',
       error: {
         title: 'Échec du chargement des actions rapides',
-        message:
-          "Une erreur s'est produite lors de la génération des actions. Veuillez réessayer.",
+        message: "Une erreur s'est produite lors de la génération des actions. Veuillez réessayer.",
         preferencesCheck: 'Échec de la vérification des préférences',
       },
       empty: {
         title: 'Aucune action rapide disponible',
         message: 'Configurez vos préférences IA pour voir des recommandations personnalisées.',
-        loadedMessage: 'Impossible de générer des actions rapides pour cette entreprise. Essayez de rafraîchir ou revenez plus tard.',
+        loadedMessage:
+          'Impossible de générer des actions rapides pour cette entreprise. Essayez de rafraîchir ou revenez plus tard.',
       },
     },
   },
@@ -2662,24 +2696,24 @@ export default {
           label: 'Votre rôle',
           placeholder: 'ex. Commercial, Responsable Marketing, Directeur',
           helper: 'Quel est votre rôle professionnel ?',
-          required: "Le rôle est requis",
-          tooLong: "Le rôle doit contenir moins de 255 caractères",
+          required: 'Le rôle est requis',
+          tooLong: 'Le rôle doit contenir moins de 255 caractères',
         },
         goals: {
           label: 'Vos objectifs',
           placeholder:
             'ex. Je veux identifier les entreprises qui bénéficieraient de notre produit et comprendre leurs problématiques',
           helper: "Qu'essayez-vous d'accomplir lors de vos recherches d'entreprises ?",
-          required: "Les objectifs sont requis",
-          tooLong: "Les objectifs doivent contenir moins de 2000 caractères",
+          required: 'Les objectifs sont requis',
+          tooLong: 'Les objectifs doivent contenir moins de 2000 caractères',
         },
         desiredOutput: {
           label: 'Format de sortie souhaité',
           placeholder:
-            'ex. Générer des emails de prospection personnalisés mettant en avant les problématiques avec des références spécifiques à l\'entreprise',
+            "ex. Générer des emails de prospection personnalisés mettant en avant les problématiques avec des références spécifiques à l'entreprise",
           helper: "Comment souhaitez-vous que l'IA formate ses recommandations ?",
-          required: "Le format de sortie souhaité est requis",
-          tooLong: "Le format de sortie souhaité doit contenir moins de 2000 caractères",
+          required: 'Le format de sortie souhaité est requis',
+          tooLong: 'Le format de sortie souhaité doit contenir moins de 2000 caractères',
         },
         documentation: {
           label: 'Documentation produit/service',
@@ -2705,21 +2739,21 @@ export default {
       help: {
         title: 'Conseils pour de meilleurs résultats',
         tip1: 'Soyez précis sur votre rôle et vos objectifs pour des recommandations plus pertinentes',
-        tip2:
-          'Décrivez clairement votre format de sortie souhaité pour obtenir des résultats mieux formatés',
-        tip3:
-          'Incluez les détails du produit pour recevoir des suggestions plus personnalisées et contextuelles',
+        tip2: 'Décrivez clairement votre format de sortie souhaité pour obtenir des résultats mieux formatés',
+        tip3: 'Incluez les détails du produit pour recevoir des suggestions plus personnalisées et contextuelles',
       },
       validation: {
-        formInvalid: "Veuillez corriger les erreurs dans le formulaire",
+        formInvalid: 'Veuillez corriger les erreurs dans le formulaire',
       },
     },
     settings: {
-      title: 'Préférences de l\'assistant IA',
-      description: 'Mettez à jour vos préférences IA pour affiner les recommandations personnalisées',
+      title: "Préférences de l'assistant IA",
+      description:
+        'Mettez à jour vos préférences IA pour affiner les recommandations personnalisées',
       lastUpdated: 'Dernière mise à jour : {date}',
       notConfigured: 'Non configuré',
-      setUpDescription: "Configurez vos préférences d'IA pour activer les actions rapides personnalisées et les recommandations.",
+      setUpDescription:
+        "Configurez vos préférences d'IA pour activer les actions rapides personnalisées et les recommandations.",
       setUpButton: "Configurer les préférences d'IA",
       actions: {
         edit: 'Modifier les préférences',
@@ -2732,11 +2766,11 @@ export default {
       },
       error: {
         title: 'Échec de la mise à jour',
-        message: "Échec de la mise à jour de vos préférences. Veuillez réessayer.",
+        message: 'Échec de la mise à jour de vos préférences. Veuillez réessayer.',
       },
       messages: {
-        loadError: "Échec du chargement de vos préférences. Veuillez réessayer.",
-        authError: "Vous devez être connecté pour mettre à jour les préférences IA",
+        loadError: 'Échec du chargement de vos préférences. Veuillez réessayer.',
+        authError: 'Vous devez être connecté pour mettre à jour les préférences IA',
       },
     },
   },

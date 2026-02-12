@@ -1,7 +1,8 @@
 <template>
-  <div class="bg-accent-light rounded-full py-4 px-8">
-    <p class="text-center text-accent-light-content font-medium">
-      {{ $t('credits.balance.current', 'Solde actuel') }} : {{ formattedBalance }} {{ $t('credits.unit', 'crédits') }}
+  <div class="bg-accent-light rounded-full px-8 py-4">
+    <p class="text-accent-light-content text-center font-medium">
+      {{ $t('credits.balance.current', 'Solde actuel') }} : {{ formattedBalance }}
+      {{ $t('credits.unit', 'crédits') }}
     </p>
   </div>
 </template>

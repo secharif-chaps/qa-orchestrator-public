@@ -1,13 +1,17 @@
 <template>
-  <div class="bg-base-100 rounded-lg p-4 border border-primary-stroke">
+  <div class="bg-base-100 border-primary-stroke rounded-lg border p-4">
     <div class="flex flex-col gap-4">
       <!-- Main row: Badge, Info, Toggle -->
       <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3 min-w-0">
+        <div class="flex min-w-0 items-center gap-3">
           <!-- Feature Flag Icon -->
           <Badge
             :intent="isEnabled ? 'success' : 'danger'"
-            :label="isEnabled ? $t('featureFlags.enabled', 'Enabled') : $t('featureFlags.disabled', 'Disabled')"
+            :label="
+              isEnabled
+                ? $t('featureFlags.enabled', 'Enabled')
+                : $t('featureFlags.disabled', 'Disabled')
+            "
             :icon="flagIcon"
             variant="secondary"
             class="shrink-0"
@@ -19,7 +23,7 @@
             <h3 class="font-medium capitalize">
               {{ $t(flagConfig.labelKey, flagName) }}
             </h3>
-            <p class="text-sm text-secondary">
+            <p class="text-secondary text-sm">
               {{ $t(flagConfig.descriptionKey, defaultDescription) }}
             </p>
           </div>
@@ -46,8 +50,10 @@
           icon="fa fa-external-link"
           @blur="handleUrlBlur"
         />
-        <p class="text-xs text-secondary">
-          {{ $t('featureFlags.discover.urlHint', 'Enter the HTTPS URL for the Discover dashboard.') }}
+        <p class="text-secondary text-xs">
+          {{
+            $t('featureFlags.discover.urlHint', 'Enter the HTTPS URL for the Discover dashboard.')
+          }}
         </p>
       </div>
     </div>
@@ -93,10 +99,12 @@ const isDiscoverFlag = computed(() => props.flag === 'discover')
 const defaultDescriptions: Record<FeatureFlagName, string> = {
   translation: 'Translate company data to other languages',
   discover: 'Access external Discover dashboard',
-  pappers: 'Fetch company data from Pappers API'
+  pappers: 'Fetch company data from Pappers API',
 }
 
-const defaultDescription = computed(() => defaultDescriptions[props.flag] || 'Feature functionality')
+const defaultDescription = computed(
+  () => defaultDescriptions[props.flag] || 'Feature functionality',
+)
 
 // URL input state for discover flag
 const urlInput = ref<string>((props.config?.url as string) || '')

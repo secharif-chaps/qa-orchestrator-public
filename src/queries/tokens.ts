@@ -30,7 +30,12 @@ export const ORGANIZATION_TOKEN_KEYS = {
   balance: (organizationId: string) =>
     [...ORGANIZATION_TOKEN_KEYS.root, 'balance', organizationId] as const,
   history: (organizationId: string, filters: TokenHistoryFilters) =>
-    [...ORGANIZATION_TOKEN_KEYS.root, 'history', organizationId, serializeFilters(filters)] as const,
+    [
+      ...ORGANIZATION_TOKEN_KEYS.root,
+      'history',
+      organizationId,
+      serializeFilters(filters),
+    ] as const,
   modules: (organizationId: string) =>
     [...ORGANIZATION_TOKEN_KEYS.root, 'modules', organizationId] as const,
 }
@@ -57,7 +62,7 @@ export const organizationBalanceQuery = defineQueryOptions(
       }
       return getOrganizationBalance(organizationId)
     },
-  })
+  }),
 )
 
 // ============================================================================
@@ -84,7 +89,7 @@ export const tokenHistoryQuery = defineQueryOptions(
       }
       return getTokenHistory(organizationId, filters)
     },
-  })
+  }),
 )
 
 // ============================================================================
@@ -110,5 +115,5 @@ export const organizationModulesQuery = defineQueryOptions(
       }
       return getOrganizationModules(organizationId)
     },
-  })
+  }),
 )

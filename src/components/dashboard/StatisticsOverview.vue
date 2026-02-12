@@ -1,5 +1,5 @@
 <template>
-  <div v-if="stats" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div v-if="stats" class="grid grid-cols-1 gap-6 md:grid-cols-3">
     <StatCard
       :title="$t('dashboard.stats.totalCompanies', 'Total Companies')"
       :value="stats.total ? stats.total : 0"

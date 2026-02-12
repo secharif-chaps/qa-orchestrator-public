@@ -6,7 +6,7 @@
         {{ $t('credits.topUsers.title', 'Classement des utilisateurs') }}
       </h3>
 
-      <div class="flex items-center gap-3 flex-wrap">
+      <div class="flex flex-wrap items-center gap-3">
         <!-- Module filter -->
         <CreditModuleFilter v-model="selectedModule" />
 
@@ -26,8 +26,8 @@
     <!-- Loading state -->
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">{{ $t('common.loading', 'Chargement...') }}</p>
+        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
+        <p class="text-secondary text-sm">{{ $t('common.loading', 'Chargement...') }}</p>
       </div>
     </div>
 

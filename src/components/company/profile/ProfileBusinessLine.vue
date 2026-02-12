@@ -1,11 +1,14 @@
 <template>
-  <div class="bg-base-100 rounded-lg p-4 relative flex-1">
+  <div class="bg-base-100 relative flex-1 rounded-lg p-4">
     <div class="flex flex-col gap-2">
       <h4>{{ t('profile.sections.businessLine.title') }}</h4>
       <!-- Business line - individual property loading -->
-      <div class="text-sm flex flex-col gap-2">
+      <div class="flex flex-col gap-2 text-sm">
         <p class="text-secondary">
-          {{ getSourcedValue(company?.profile?.businessLine) ?? t('profile.sections.businessLine.notFound') }}
+          {{
+            getSourcedValue(company?.profile?.businessLine) ??
+            t('profile.sections.businessLine.notFound')
+          }}
         </p>
       </div>
       <div class="absolute top-2 right-2">

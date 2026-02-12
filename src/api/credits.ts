@@ -108,7 +108,9 @@ const transformTopCreditUser = (raw: RawTopCreditUser): TopCreditUser => ({
   creditsConsumed: raw.credits_consumed,
 })
 
-const transformTopCreditUsersResponse = (raw: RawTopCreditUsersResponse): TopCreditUsersResponse => ({
+const transformTopCreditUsersResponse = (
+  raw: RawTopCreditUsersResponse,
+): TopCreditUsersResponse => ({
   items: raw.items.map(transformTopCreditUser),
   total: raw.total,
   page: raw.page,
@@ -120,7 +122,9 @@ const transformDailyUsage = (raw: RawDailyUsage): DailyUsage => ({
   creditsConsumed: raw.credits_consumed,
 })
 
-const transformDailyCreditUsageResponse = (raw: RawDailyCreditUsageResponse): DailyCreditUsageResponse => ({
+const transformDailyCreditUsageResponse = (
+  raw: RawDailyCreditUsageResponse,
+): DailyCreditUsageResponse => ({
   dailyUsage: raw.daily_usage.map(transformDailyUsage),
 })
 
@@ -153,7 +157,7 @@ export const getCreditStats = async (organizationId: string): Promise<CreditStat
  */
 export const getTopCreditUsers = async (
   organizationId: string,
-  filters: TopCreditUsersFilters = {}
+  filters: TopCreditUsersFilters = {},
 ): Promise<TopCreditUsersResponse> => {
   const params = new URLSearchParams()
 
@@ -199,7 +203,7 @@ export const getTopCreditUsers = async (
  */
 export const getDailyCreditUsage = async (
   organizationId: string,
-  filters: DailyCreditUsageFilters = {}
+  filters: DailyCreditUsageFilters = {},
 ): Promise<DailyCreditUsageResponse> => {
   const params = new URLSearchParams()
 

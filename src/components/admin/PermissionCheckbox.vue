@@ -1,17 +1,15 @@
 <template>
   <div
-    class="flex items-center justify-between p-3 rounded-lg transition-colors"
+    class="flex items-center justify-between rounded-lg p-3 transition-colors"
     :class="[
       disabled ? 'bg-base-200/50 opacity-60' : 'bg-base-200 hover:bg-base-300/50',
-      variant === 'danger' ? 'border border-error-stroke/30' : '',
+      variant === 'danger' ? 'border-error-stroke/30 border' : '',
     ]"
   >
     <div class="flex items-center gap-3">
       <div
-        class="w-8 h-8 rounded-lg flex items-center justify-center"
-        :class="[
-          variant === 'danger' ? 'bg-error-light' : 'bg-primary/10',
-        ]"
+        class="flex h-8 w-8 items-center justify-center rounded-lg"
+        :class="[variant === 'danger' ? 'bg-error-light' : 'bg-primary/10']"
       >
         <i
           :class="[
@@ -23,35 +21,31 @@
         ></i>
       </div>
       <div class="flex-1">
-        <p class="font-medium text-sm">{{ label }}</p>
-        <p class="text-xs text-secondary">{{ description }}</p>
-        <p v-if="disabled && disabledReason" class="text-xs text-warning-light-content mt-1">
+        <p class="text-sm font-medium">{{ label }}</p>
+        <p class="text-secondary text-xs">{{ description }}</p>
+        <p v-if="disabled && disabledReason" class="text-warning-light-content mt-1 text-xs">
           <i class="fa fa-info-circle mr-1"></i>
           {{ disabledReason }}
         </p>
       </div>
     </div>
-    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+    <label class="relative inline-flex shrink-0 cursor-pointer items-center">
       <input
         type="checkbox"
         :checked="isChecked"
         :disabled="disabled"
-        class="sr-only peer"
+        class="peer sr-only"
         @change="handleChange"
       />
       <div
-        class="w-11 h-6 rounded-full peer peer-focus:ring-2 peer-focus:ring-primary/20 transition-colors"
+        class="peer peer-focus:ring-primary/20 h-6 w-11 rounded-full transition-colors peer-focus:ring-2"
         :class="[
-          isChecked
-            ? variant === 'danger'
-              ? 'bg-error'
-              : 'bg-primary'
-            : 'bg-base-300',
+          isChecked ? (variant === 'danger' ? 'bg-error' : 'bg-primary') : 'bg-base-300',
           disabled ? 'cursor-not-allowed' : 'cursor-pointer',
         ]"
       >
         <div
-          class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform"
+          class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform"
           :class="[isChecked ? 'translate-x-5' : 'translate-x-0']"
         ></div>
       </div>

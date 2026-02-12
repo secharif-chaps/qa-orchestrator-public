@@ -1,5 +1,5 @@
 <template>
-  <div class="my-1 border-t border-primary-stroke" />
+  <div class="border-primary-stroke my-1 border-t" />
 </template>
 
 <script setup lang="ts">

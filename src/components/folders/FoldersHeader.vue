@@ -2,10 +2,10 @@
   <div class="flex flex-col gap-4">
     <!-- Header -->
     <div>
-      <div class="flex items-center justify-between mb-6">
+      <div class="mb-6 flex items-center justify-between">
         <div class="flex items-center gap-4">
           <div
-            class="w-16 h-16 rounded-lg flex items-center justify-center"
+            class="flex h-16 w-16 items-center justify-center rounded-lg"
             :class="folderColorClasses"
           >
             <i :class="folderIcon" class="text-3xl"></i>
@@ -37,9 +37,7 @@
               <template v-if="isSharedWithMe">
                 | {{ $t('folder.grid.owner', 'Owner:') }} @{{ folder.owner }}
               </template>
-              <template v-else>
-                {{ $t('folder.header.by') }} @{{ folder.owner }}
-              </template>
+              <template v-else> {{ $t('folder.header.by') }} @{{ folder.owner }} </template>
             </p>
           </div>
         </div>
@@ -49,7 +47,7 @@
           <Button
             variant="tertiary"
             :icon="folder?.is_favorite ? 'fas fa-star' : 'far fa-star'"
-            :class="folder?.is_favorite ? 'text-amber-600 ' : ''"
+            :class="folder?.is_favorite ? 'text-amber-600' : ''"
             :label="
               folder?.is_favorite
                 ? $t('folder.actions.unfavorite', 'Unfavorite')
@@ -86,7 +84,7 @@
       <!-- Search and Filters -->
       <div class="flex items-center justify-between gap-4 rounded-lg">
         <!-- Search Input -->
-        <div class="flex-1 max-w-md">
+        <div class="max-w-md flex-1">
           <Searchbar
             id="folder-search-input"
             v-model="searchTerm"
@@ -94,7 +92,7 @@
           />
         </div>
 
-        <div class="flex gap-2 items-center">
+        <div class="flex items-center gap-2">
           <!-- Add Items Dropdown (only if user can create items) -->
           <Dropdown v-if="canCreateItems" align="left" width="xl">
             <template #trigger>
@@ -112,7 +110,10 @@
                 color="blue"
                 :label="$t('folder.addItems.companyScreen', 'Company Screen')"
                 :description="$t('folder.addItems.companyDescription', 'Add company profiles')"
-                @click="$router.push(`/folders/${$route.params.folderId}/create/company`); close()"
+                @click="
+                  $router.push(`/folders/${$route.params.folderId}/create/company`)
+                  close()
+                "
               />
 
               <!-- Watchfile - Disabled -->
@@ -134,7 +135,9 @@
                 icon="fas fa-project-diagram"
                 color="purple"
                 :label="$t('folder.addItems.graphrag', 'Knowledge graph')"
-                :description="$t('folder.addItems.graphragDescription', 'explore ecosystem with GraphRAG')"
+                :description="
+                  $t('folder.addItems.graphragDescription', 'explore ecosystem with GraphRAG')
+                "
               >
                 <template #suffix>
                   <Tag variant="secondary" size="xs" :label="$t('common.soon')" />

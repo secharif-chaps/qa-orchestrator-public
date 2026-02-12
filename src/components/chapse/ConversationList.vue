@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col h-full">
+  <div class="flex h-full flex-col">
     <!-- Header -->
-    <div class="flex items-center justify-between px-4 py-2.5 border-b border-sage-700">
-      <h3 class="text-sm font-semibold text-sage-100">
+    <div class="border-sage-700 flex items-center justify-between border-b px-4 py-2.5">
+      <h3 class="text-sage-100 text-sm font-semibold">
         {{ $t('chapse.conversations', 'Conversations') }}
       </h3>
       <Button
@@ -17,22 +17,25 @@
     <!-- Conversations List -->
     <div class="flex-1 overflow-y-auto px-2 py-2">
       <!-- Loading State -->
-      <div v-if="loading && conversations.length === 0" class="flex items-center justify-center py-8">
+      <div
+        v-if="loading && conversations.length === 0"
+        class="flex items-center justify-center py-8"
+      >
         <i class="fa fa-spinner fa-spin text-sage-400"></i>
       </div>
 
       <!-- Empty State -->
       <div
         v-else-if="conversations.length === 0"
-        class="flex flex-col items-center justify-center py-8 px-4 text-center"
+        class="flex flex-col items-center justify-center px-4 py-8 text-center"
       >
-        <div class="w-12 h-12 rounded-full bg-sage-700 flex items-center justify-center mb-3">
+        <div class="bg-sage-700 mb-3 flex h-12 w-12 items-center justify-center rounded-full">
           <i class="fa fa-comments text-sage-400"></i>
         </div>
-        <p class="text-sm text-sage-400">
+        <p class="text-sage-400 text-sm">
           {{ $t('chapse.noConversations', 'No conversations yet') }}
         </p>
-        <p class="text-xs text-sage-500 mt-1">
+        <p class="text-sage-500 mt-1 text-xs">
           {{ $t('chapse.startConversation', 'Start a new conversation to begin') }}
         </p>
       </div>
@@ -41,7 +44,7 @@
       <template v-else>
         <!-- Group by date -->
         <div v-for="group in groupedConversations" :key="group.label" class="mb-4">
-          <p class="text-xs font-medium text-sage-500 px-3 py-1 uppercase tracking-wide">
+          <p class="text-sage-500 px-3 py-1 text-xs font-medium tracking-wide uppercase">
             {{ group.label }}
           </p>
           <ConversationItem
@@ -141,13 +144,19 @@ const groupedConversations = computed<ConversationGroup[]>(() => {
     result.push({ label: t('sidebar.chapse.dateGroups.today'), conversations: groups.today })
   }
   if (groups.yesterday.length > 0) {
-    result.push({ label: t('sidebar.chapse.dateGroups.yesterday'), conversations: groups.yesterday })
+    result.push({
+      label: t('sidebar.chapse.dateGroups.yesterday'),
+      conversations: groups.yesterday,
+    })
   }
   if (groups.lastWeek.length > 0) {
     result.push({ label: t('sidebar.chapse.dateGroups.lastWeek'), conversations: groups.lastWeek })
   }
   if (groups.lastMonth.length > 0) {
-    result.push({ label: t('sidebar.chapse.dateGroups.lastMonth'), conversations: groups.lastMonth })
+    result.push({
+      label: t('sidebar.chapse.dateGroups.lastMonth'),
+      conversations: groups.lastMonth,
+    })
   }
   if (groups.older.length > 0) {
     result.push({ label: t('sidebar.chapse.dateGroups.older'), conversations: groups.older })

@@ -1,9 +1,6 @@
 <template>
   <!-- Initial Loading State (checking preferences) -->
-  <div
-    v-if="isCheckingPreferences"
-    class="space-y-4"
-  >
+  <div v-if="isCheckingPreferences" class="space-y-4">
     <div class="flex items-center gap-3">
       <img
         src="@/assets/chapse/head.svg"
@@ -13,9 +10,13 @@
       />
       <h3 class="text-lg font-semibold">{{ title }}</h3>
     </div>
-    <div class="bg-base-200 rounded-card border border-primary-stroke p-6 flex flex-col items-center justify-center gap-4">
-      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-      <p class="text-sm text-secondary">{{ $t('chapseAssist.quickActions.checkingPreferences', 'Checking AI preferences...') }}</p>
+    <div
+      class="bg-base-200 rounded-card border-primary-stroke flex flex-col items-center justify-center gap-4 border p-6"
+    >
+      <div class="border-primary h-10 w-10 animate-spin rounded-full border-b-2"></div>
+      <p class="text-secondary text-sm">
+        {{ $t('chapseAssist.quickActions.checkingPreferences', 'Checking AI preferences...') }}
+      </p>
     </div>
   </div>
 
@@ -33,12 +34,20 @@
     <div class="flex flex-col gap-3">
       <Alert
         variant="danger"
-        :title="$t('chapseAssist.quickActions.error.preferencesCheck', 'Failed to Check Preferences')"
+        :title="
+          $t('chapseAssist.quickActions.error.preferencesCheck', 'Failed to Check Preferences')
+        "
         :description="preferencesCheckError ?? ''"
         icon="fa-exclamation-circle"
       />
       <div class="flex justify-end">
-        <Button variant="secondary" size="sm" icon="fa fa-refresh" :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')" @click="retryPreferencesCheck" />
+        <Button
+          variant="secondary"
+          size="sm"
+          icon="fa fa-refresh"
+          :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')"
+          @click="retryPreferencesCheck"
+        />
       </div>
     </div>
   </div>
@@ -70,10 +79,12 @@
     <!-- Loading State (generating actions) -->
     <div
       v-if="isLoadingActions"
-      class="bg-base-200 rounded-card border border-primary-stroke p-6 flex flex-col items-center justify-center gap-4"
+      class="bg-base-200 rounded-card border-primary-stroke flex flex-col items-center justify-center gap-4 border p-6"
     >
-      <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-      <p class="text-sm text-secondary">{{ $t('chapseAssist.quickActions.loading', 'Generating personalized actions...') }}</p>
+      <div class="border-primary h-10 w-10 animate-spin rounded-full border-b-2"></div>
+      <p class="text-secondary text-sm">
+        {{ $t('chapseAssist.quickActions.loading', 'Generating personalized actions...') }}
+      </p>
     </div>
 
     <!-- Error State -->
@@ -81,11 +92,23 @@
       <Alert
         variant="danger"
         :title="$t('chapseAssist.quickActions.error.title', 'Failed to Load Quick Actions')"
-        :description="actionsError || $t('chapseAssist.quickActions.error.message', 'An error occurred while generating actions. Please try again.')"
+        :description="
+          actionsError ||
+          $t(
+            'chapseAssist.quickActions.error.message',
+            'An error occurred while generating actions. Please try again.',
+          )
+        "
         icon="fa-exclamation-circle"
       />
-      <div class="flex gap-3 justify-end">
-        <Button variant="secondary" size="sm" icon="fa fa-refresh" :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')" @click="handleRetry" />
+      <div class="flex justify-end gap-3">
+        <Button
+          variant="secondary"
+          size="sm"
+          icon="fa fa-refresh"
+          :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')"
+          @click="handleRetry"
+        />
         <Button
           v-if="actionsError?.includes('preferences')"
           variant="primary"
@@ -104,9 +127,9 @@
         :key="action.id"
         @click="handleActionClick(action)"
         :disabled="!areTasksSuccessful"
-        class="group bg-base-200 border border-primary-stroke rounded-lg p-4 text-left transition-all duration-200"
+        class="group bg-base-200 border-primary-stroke rounded-lg border p-4 text-left transition-all duration-200"
         :class="{
-          'opacity-50 cursor-not-allowed': !areTasksSuccessful,
+          'cursor-not-allowed opacity-50': !areTasksSuccessful,
           'hover:bg-accent-100 dark:hover:bg-accent-400/20 hover:border-accent-500 hover:shadow-shadow-2':
             areTasksSuccessful,
         }"
@@ -114,7 +137,7 @@
         <div class="flex items-start gap-4">
           <!-- Icon -->
           <div
-            class="flex-shrink-0 w-10 h-10 rounded-full bg-sage-200 dark:bg-sage-950 flex items-center justify-center transition-all duration-300"
+            class="bg-sage-200 dark:bg-sage-950 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full transition-all duration-300"
             :class="{
               'group-hover:bg-accent-500 group-hover:text-accent-50': areTasksSuccessful,
             }"
@@ -123,9 +146,9 @@
           </div>
 
           <!-- Content -->
-          <div class="flex-1 min-w-0">
+          <div class="min-w-0 flex-1">
             <h4
-              class="font-semibold text-base mb-1 transition-colors"
+              class="mb-1 text-base font-semibold transition-colors"
               :class="{
                 'group-hover:text-accent-900 dark:group-hover:text-accent-100': areTasksSuccessful,
               }"
@@ -133,7 +156,7 @@
               {{ action.label }}
             </h4>
             <p
-              class="text-sm text-secondary transition-colors line-clamp-2"
+              class="text-secondary line-clamp-2 text-sm transition-colors"
               :class="{
                 'group-hover:text-accent-900 dark:group-hover:text-accent-100': areTasksSuccessful,
               }"
@@ -156,13 +179,30 @@
     </div>
 
     <!-- Empty State (No Actions) - Only show after we've attempted to load -->
-    <div v-else-if="hasLoadedOnce" class="bg-base-200 rounded-card border border-primary-stroke p-6 text-center">
-      <i class="fa fa-magic text-3xl text-secondary mb-3"></i>
-      <h4 class="font-semibold mb-2">{{ $t('chapseAssist.quickActions.empty.title', 'No Quick Actions Available') }}</h4>
-      <p class="text-sm text-secondary">
-        {{ $t('chapseAssist.quickActions.empty.loadedMessage', 'Unable to generate quick actions for this company. Try refreshing or check back later.') }}
+    <div
+      v-else-if="hasLoadedOnce"
+      class="bg-base-200 rounded-card border-primary-stroke border p-6 text-center"
+    >
+      <i class="fa fa-magic text-secondary mb-3 text-3xl"></i>
+      <h4 class="mb-2 font-semibold">
+        {{ $t('chapseAssist.quickActions.empty.title', 'No Quick Actions Available') }}
+      </h4>
+      <p class="text-secondary text-sm">
+        {{
+          $t(
+            'chapseAssist.quickActions.empty.loadedMessage',
+            'Unable to generate quick actions for this company. Try refreshing or check back later.',
+          )
+        }}
       </p>
-      <Button variant="secondary" size="sm" icon="fa fa-refresh" class="mt-4" :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')" @click="handleRetry" />
+      <Button
+        variant="secondary"
+        size="sm"
+        icon="fa fa-refresh"
+        class="mt-4"
+        :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')"
+        @click="handleRetry"
+      />
     </div>
 
     <!-- Initial State (Not yet loaded) - Component doesn't render anything until first load attempt completes -->
@@ -213,7 +253,9 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // Computed props with translations as defaults
-const title = computed(() => props.title ?? t('chapseAssist.quickActions.title', 'Chaps-e Smart Assist'))
+const title = computed(
+  () => props.title ?? t('chapseAssist.quickActions.title', 'Chaps-e Smart Assist'),
+)
 
 const emit = defineEmits<{
   actionClick: [action: QuickAction]

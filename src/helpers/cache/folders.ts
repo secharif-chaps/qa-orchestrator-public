@@ -16,7 +16,7 @@ export function updateAllFolderCaches(
   const previousStates = new Map<string, unknown>()
   const entries = queryCache.getEntries({ key: FOLDER_QUERY_KEYS.root })
 
-  entries.forEach(entry => {
+  entries.forEach((entry) => {
     const data = entry.state.value.data as FolderCacheData | undefined
     if (!data) return
 
@@ -52,18 +52,14 @@ export function updateFolderInCache(
 
   // Array of folders
   if (Array.isArray(data)) {
-    return data.map(folder =>
-      folder.id === folderId ? updateFn(folder) : folder
-    )
+    return data.map((folder) => (folder.id === folderId ? updateFn(folder) : folder))
   }
 
   // Paginated response
   if ('data' in data && Array.isArray(data.data)) {
     return {
       ...data,
-      data: data.data.map(folder =>
-        folder.id === folderId ? updateFn(folder) : folder
-      ),
+      data: data.data.map((folder) => (folder.id === folderId ? updateFn(folder) : folder)),
     }
   }
 
@@ -73,10 +69,7 @@ export function updateFolderInCache(
 /**
  * Add a folder to list caches (skips single folder caches)
  */
-export function addFolderToCache(
-  data: FolderCacheData,
-  newFolder: Folder,
-): FolderCacheData {
+export function addFolderToCache(data: FolderCacheData, newFolder: Folder): FolderCacheData {
   // Single folder - skip
   if ('id' in data && typeof (data as Folder).id === 'string') {
     return data
@@ -84,13 +77,13 @@ export function addFolderToCache(
 
   // Array of folders
   if (Array.isArray(data)) {
-    if (data.some(f => f.id === newFolder.id)) return data
+    if (data.some((f) => f.id === newFolder.id)) return data
     return [newFolder, ...data]
   }
 
   // Paginated response
   if ('data' in data && Array.isArray(data.data)) {
-    if (data.data.some(f => f.id === newFolder.id)) return data
+    if (data.data.some((f) => f.id === newFolder.id)) return data
     return {
       ...data,
       data: [newFolder, ...data.data],
@@ -116,15 +109,15 @@ export function removeFolderFromCache(
 
   // Array of folders
   if (Array.isArray(data)) {
-    return data.filter(folder => folder.id !== folderId)
+    return data.filter((folder) => folder.id !== folderId)
   }
 
   // Paginated response
   if ('data' in data && Array.isArray(data.data)) {
-    const hadFolder = data.data.some(f => f.id === folderId)
+    const hadFolder = data.data.some((f) => f.id === folderId)
     return {
       ...data,
-      data: data.data.filter(folder => folder.id !== folderId),
+      data: data.data.filter((folder) => folder.id !== folderId),
       meta: { ...data.meta, total: Math.max(0, data.meta.total - (hadFolder ? 1 : 0)) },
     }
   }

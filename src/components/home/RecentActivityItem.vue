@@ -1,23 +1,23 @@
 <template>
   <RouterLink
     :to="activityRoute"
-    class="flex items-start gap-3 rounded-lg p-2 -m-2 transition-colors hover:bg-base-200 cursor-pointer"
+    class="hover:bg-base-200 -m-2 flex cursor-pointer items-start gap-3 rounded-lg p-2 transition-colors"
   >
     <!-- Icon with badge -->
     <div class="relative flex-shrink-0">
       <Badge variant="secondary" color="sage" :icon="icon" />
-      <div class="absolute -bottom-0.5 -right-0.5">
+      <div class="absolute -right-0.5 -bottom-0.5">
         <Badge variant="secondary" color="sage" icon="fa fa-plus" size="xs" />
       </div>
     </div>
 
-    <div class="flex-1 min-w-0">
+    <div class="min-w-0 flex-1">
       <!-- Company/Folder Name -->
       <p class="text-sm font-semibold text-gray-900 dark:text-white">
         {{ activity.name }}
       </p>
       <!-- Meta info: user and timestamp -->
-      <div class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+      <div class="mt-0.5 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
         <span class="flex items-center gap-1">
           <i class="fa fa-clock"></i>
           <span>{{ time }}</span>
@@ -40,9 +40,7 @@ interface Props {
 
 const { activity } = defineProps<Props>()
 
-const icon = computed(() =>
-  activity.type === 'company' ? 'fa fa-building' : 'fa fa-folder',
-)
+const icon = computed(() => (activity.type === 'company' ? 'fa fa-building' : 'fa fa-folder'))
 
 const username = computed(() => activity.owner || 'Unknown')
 

@@ -1,12 +1,12 @@
 <template>
   <Card>
-    <h3 class="font-semibold text-gray-900 dark:text-white mb-4">
+    <h3 class="mb-4 font-semibold text-gray-900 dark:text-white">
       {{ $t('home.recentActivities.title', 'Recent Activities') }}
     </h3>
 
     <!-- Loading State -->
     <div v-if="isLoading" class="flex items-center justify-center py-8">
-      <i class="fa fa-spinner fa-spin text-2xl text-sage-500"></i>
+      <i class="fa fa-spinner fa-spin text-sage-500 text-2xl"></i>
     </div>
 
     <!-- Error State -->
@@ -20,18 +20,16 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="activities.length === 0" class="py-8 flex flex-col items-center gap-4">
+    <div v-else-if="activities.length === 0" class="flex flex-col items-center gap-4 py-8">
       <Badge variant="secondary" icon="fa fa-clock-rotate-left" size="lg" />
-      <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('home.recentActivities.noRecentActivities', 'No recent activities') }}</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        {{ $t('home.recentActivities.noRecentActivities', 'No recent activities') }}
+      </p>
     </div>
 
     <!-- Recent Activities -->
     <div v-else class="space-y-3">
-      <RecentActivityItem
-        v-for="activity in activities"
-        :key="activity.id"
-        :activity="activity"
-      />
+      <RecentActivityItem v-for="activity in activities" :key="activity.id" :activity="activity" />
     </div>
   </Card>
 </template>

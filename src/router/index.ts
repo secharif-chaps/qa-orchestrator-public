@@ -22,7 +22,6 @@ const is404Route = (routeName: string | null | undefined): boolean => {
   return routeName === '/[...path]'
 }
 
-
 // Global navigation guard
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
@@ -64,20 +63,20 @@ router.beforeEach(async (to, from, next) => {
   // Check for required permissions if specified in route meta
   const requiredPermissions = to.meta.permissions as string[] | undefined
   if (requiredPermissions && requiredPermissions.length > 0) {
-    const hasPermission = requiredPermissions.some(permission => 
-      authStore.hasPermission(permission)
+    const hasPermission = requiredPermissions.some((permission) =>
+      authStore.hasPermission(permission),
     )
-    
+
     if (!hasPermission) {
       console.warn(`Access denied: User lacks required permissions for ${to.path}`, {
         required: requiredPermissions,
-        userPermissions: authStore.userPermissions
+        userPermissions: authStore.userPermissions,
       })
-      
+
       // Redirect to 403 forbidden page
       return next({
         path: '/403',
-        replace: true
+        replace: true,
       })
     }
   }

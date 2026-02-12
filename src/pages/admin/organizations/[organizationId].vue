@@ -1,10 +1,8 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Loading State -->
-    <div v-if="isLoading" class="bg-base-100 rounded-lg shadow-sm p-8 text-center">
-      <div
-        class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
-      ></div>
+    <div v-if="isLoading" class="bg-base-100 rounded-lg p-8 text-center shadow-sm">
+      <div class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
       <p class="text-secondary">
         {{ $t('organization.loading', 'Loading organizations...') }}
       </p>
@@ -25,7 +23,12 @@
         <div>
           <h1 class="text-2xl font-bold">{{ organization.name }}</h1>
           <p class="text-secondary mt-1">
-            {{ $t('organization.detail.description', 'Manage organization settings, tokens, and members') }}
+            {{
+              $t(
+                'organization.detail.description',
+                'Manage organization settings, tokens, and members',
+              )
+            }}
           </p>
         </div>
 
@@ -69,7 +72,10 @@ const {
   isLoading,
   error,
 } = useQuery(organizationByIdQuery, () => ({ id: organizationId.value }), {
-  enabled: () => !!organizationId.value && organizationId.value !== 'null' && organizationId.value !== 'undefined',
+  enabled: () =>
+    !!organizationId.value &&
+    organizationId.value !== 'null' &&
+    organizationId.value !== 'undefined',
 })
 
 // Extract error message safely
@@ -78,7 +84,8 @@ const errorMessage = computed(() => {
   if (!err) return ''
   if (typeof err === 'string') return err
   if (err instanceof Error) return err.message
-  if (typeof err === 'object' && 'message' in err) return String((err as { message: unknown }).message)
+  if (typeof err === 'object' && 'message' in err)
+    return String((err as { message: unknown }).message)
   return 'An error occurred'
 })
 
@@ -123,5 +130,4 @@ const currentSection = computed({
     router.push(`/admin/organizations/${organizationId.value}/${value}`)
   },
 })
-
 </script>

@@ -135,9 +135,7 @@ export function useCsvParser(): CsvParserReturn {
   function validateFile(file: File): string | null {
     // Check file extension
     const fileName = file.name.toLowerCase()
-    const hasValidExtension = SUPPORTED_FILE_EXTENSIONS.some((ext) =>
-      fileName.endsWith(ext),
-    )
+    const hasValidExtension = SUPPORTED_FILE_EXTENSIONS.some((ext) => fileName.endsWith(ext))
 
     if (!hasValidExtension) {
       return `Invalid file format. Supported formats: ${SUPPORTED_FILE_EXTENSIONS.join(', ')}`

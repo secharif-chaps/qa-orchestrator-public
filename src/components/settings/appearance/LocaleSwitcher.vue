@@ -3,16 +3,16 @@
     <div
       v-for="localeOption in localeOptions"
       :key="localeOption.value"
-      class="flex items-center justify-between p-4 border border-primary-stroke rounded-lg hover:border-primary/70 transition-colors cursor-pointer"
+      class="border-primary-stroke hover:border-primary/70 flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-colors"
       :class="{ 'border-primary bg-base-200': currentLocale === localeOption.value }"
       @click="changeLocale(localeOption.value)"
     >
       <div class="flex items-center gap-4">
         <div
-          class="w-10 h-10 rounded-lg flex items-center justify-center"
+          class="flex h-10 w-10 items-center justify-center rounded-lg"
           :class="
             currentLocale === localeOption.value
-              ? 'bg-rose-100 border border-rose-200 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
+              ? 'border border-rose-200 bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
               : 'bg-base-200 text-secondary'
           "
         >
@@ -20,7 +20,7 @@
         </div>
         <div>
           <h3 class="text-sm font-medium">{{ localeOption.label }}</h3>
-          <p class="text-sm text-secondary">{{ localeOption.description }}</p>
+          <p class="text-secondary text-sm">{{ localeOption.description }}</p>
         </div>
       </div>
       <div>

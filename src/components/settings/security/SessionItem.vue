@@ -1,18 +1,18 @@
 <template>
   <div
-    class="border rounded-lg p-4"
-    :class="isCurrent
-      ? 'border-sage-300 dark:border-base-300 bg-base-200'
-      : 'border-primary-stroke'
+    class="rounded-lg border p-4"
+    :class="
+      isCurrent ? 'border-sage-300 dark:border-base-300 bg-base-200' : 'border-primary-stroke'
     "
   >
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div
-          class="w-10 h-10 rounded-lg flex items-center justify-center"
-          :class="isCurrent
-            ? 'bg-rose-100 border border-rose-200 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
-            : 'bg-base-200 text-secondary'
+          class="flex h-10 w-10 items-center justify-center rounded-lg"
+          :class="
+            isCurrent
+              ? 'border border-rose-200 bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
+              : 'bg-base-200 text-secondary'
           "
         >
           <i class="fas fa-desktop"></i>
@@ -21,10 +21,10 @@
           <h3 class="text-sm font-medium">
             {{ $t('settings.security.sessions.webSession') }}
           </h3>
-          <p class="text-xs text-secondary">
+          <p class="text-secondary text-xs">
             <i class="fas fa-globe mr-1"></i>{{ session.ipAddress }}
           </p>
-          <p class="text-xs text-secondary">
+          <p class="text-secondary text-xs">
             <i class="fas fa-clock mr-1"></i>{{ formatRelativeTime(session.lastAccess) }}
           </p>
         </div>

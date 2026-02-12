@@ -1,14 +1,14 @@
 <template>
   <div
-    class="fixed inset-0 bg-base-100/20 backdrop-blur-sm flex items-center justify-center z-50"
+    class="bg-base-100/20 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
     @click.self="$emit('cancel')"
   >
     <div
-      class="bg-base-100 rounded-xl shadow-2xl border border-primary-stroke p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+      class="bg-base-100 border-primary-stroke mx-4 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border p-6 shadow-2xl"
     >
       <!-- Header -->
-      <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-semibold text-base">
+      <div class="mb-6 flex items-center justify-between">
+        <h3 class="text-base text-lg font-semibold">
           {{
             currentOrganization
               ? $t('admin.users.modal.changeOrganization', 'Change User Organization')
@@ -20,8 +20,10 @@
 
       <!-- Loading State -->
       <div v-if="isLoadingOrg" class="py-12 text-center">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-        <p class="text-secondary text-sm">{{ $t('admin.users.modal.loading', 'Loading organization...') }}</p>
+        <div class="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
+        <p class="text-secondary text-sm">
+          {{ $t('admin.users.modal.loading', 'Loading organization...') }}
+        </p>
       </div>
 
       <!-- Error State -->
@@ -37,47 +39,52 @@
       <!-- Content (only shown when loaded) -->
       <template v-else>
         <!-- User Info -->
-        <div class="mb-6 bg-base-200 p-4 rounded-lg border border-primary-stroke">
+        <div class="bg-base-200 border-primary-stroke mb-6 rounded-lg border p-4">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+            <div class="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
               <i class="fa fa-user text-secondary"></i>
             </div>
             <div>
-              <div class="font-medium text-base">{{ username }}</div>
+              <div class="text-base font-medium">{{ username }}</div>
             </div>
           </div>
 
           <!-- Current Organization -->
-          <div v-if="currentOrganization" class="mt-3 pt-3 border-t border-primary-stroke">
-            <div class="text-xs text-secondary mb-1">{{ $t('admin.userOrganization.currentOrganization', 'Current organization:') }}</div>
+          <div v-if="currentOrganization" class="border-primary-stroke mt-3 border-t pt-3">
+            <div class="text-secondary mb-1 text-xs">
+              {{ $t('admin.userOrganization.currentOrganization', 'Current organization:') }}
+            </div>
             <div class="flex items-center gap-2">
               <span
-                class="text-sm bg-primary-light text-primary-light-content border border-primary-stroke px-2 py-1 rounded"
+                class="bg-primary-light text-primary-light-content border-primary-stroke rounded border px-2 py-1 text-sm"
               >
                 {{ currentOrganization.name }}
               </span>
             </div>
           </div>
-          <div v-else class="mt-3 pt-3 border-t border-primary-stroke">
-            <div class="text-xs text-secondary italic">{{ $t('admin.userOrganization.noOrganization', 'No organization assigned') }}</div>
+          <div v-else class="border-primary-stroke mt-3 border-t pt-3">
+            <div class="text-secondary text-xs italic">
+              {{ $t('admin.userOrganization.noOrganization', 'No organization assigned') }}
+            </div>
           </div>
         </div>
 
         <!-- Organization Selection -->
         <div class="mb-6">
-          <h4 class="text-sm font-medium text-secondary mb-3">
+          <h4 class="text-secondary mb-3 text-sm font-medium">
             {{ $t('admin.users.modal.selectOrganization', 'Select organization:') }}
           </h4>
 
-          <div class="space-y-2 max-h-96 overflow-y-auto">
+          <div class="max-h-96 space-y-2 overflow-y-auto">
             <button
               v-for="organization in organizations"
               :key="organization.id"
               @click="selectedOrganizationId = organization.id"
-              class="w-full text-left p-3 rounded-lg border transition-colors"
+              class="w-full rounded-lg border p-3 text-left transition-colors"
               :class="{
                 'border-primary bg-primary/5': selectedOrganizationId === organization.id,
-                'border-primary-stroke hover:bg-base-200': selectedOrganizationId !== organization.id,
+                'border-primary-stroke hover:bg-base-200':
+                  selectedOrganizationId !== organization.id,
                 'opacity-50': organization.id === currentOrganization?.id,
               }"
               :disabled="organization.id === currentOrganization?.id"
@@ -95,12 +102,12 @@
                     <span class="font-medium">{{ organization.name }}</span>
                     <span
                       v-if="organization.id === currentOrganization?.id"
-                      class="text-xs text-secondary"
+                      class="text-secondary text-xs"
                     >
                       {{ $t('admin.userOrganization.current', '(current)') }}
                     </span>
                   </div>
-                  <div v-if="organization.description" class="text-sm text-secondary mt-1">
+                  <div v-if="organization.description" class="text-secondary mt-1 text-sm">
                     {{ organization.description }}
                   </div>
                 </div>
@@ -111,9 +118,16 @@
             </button>
 
             <!-- Empty state -->
-            <div v-if="organizations.length === 0" class="text-center py-8">
-              <i class="fa fa-building text-4xl text-secondary/50 mb-2"></i>
-              <p class="text-sm text-secondary">{{ $t('admin.userOrganization.noOrganizationsAvailable', 'No organizations available') }}</p>
+            <div v-if="organizations.length === 0" class="py-8 text-center">
+              <i class="fa fa-building text-secondary/50 mb-2 text-4xl"></i>
+              <p class="text-secondary text-sm">
+                {{
+                  $t(
+                    'admin.userOrganization.noOrganizationsAvailable',
+                    'No organizations available',
+                  )
+                }}
+              </p>
             </div>
           </div>
         </div>
@@ -123,13 +137,18 @@
           v-if="currentOrganization && selectedOrganizationId !== currentOrganization.id"
           variant="warning"
           :title="$t('admin.users.modal.warning.title', 'Organization Change')"
-          :description="$t('admin.users.modal.warning.message', 'Changing this user\'s organization will move them to the new organization. Their data will remain in the original organization.')"
+          :description="
+            $t(
+              'admin.users.modal.warning.message',
+              'Changing this user\'s organization will move them to the new organization. Their data will remain in the original organization.',
+            )
+          "
           icon="fa-info-circle"
           class="mb-4"
         />
 
         <!-- Actions -->
-        <div class="flex items-center gap-3 justify-end">
+        <div class="flex items-center justify-end gap-3">
           <Button
             variant="tertiary"
             :label="$t('common.cancel', 'Cancel')"
@@ -148,7 +167,11 @@
                   : $t('admin.users.modal.assignOrganization', 'Assign User to Organization')
             "
             :loading="isAssigning"
-            :disabled="isAssigning || selectedOrganizationId === null || selectedOrganizationId === currentOrganization?.id"
+            :disabled="
+              isAssigning ||
+              selectedOrganizationId === null ||
+              selectedOrganizationId === currentOrganization?.id
+            "
             @click="handleConfirm"
           />
         </div>

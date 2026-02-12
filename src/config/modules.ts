@@ -39,10 +39,7 @@ const DEFAULT_MODULE_CONFIG: Omit<ModuleDisplayConfig, 'status' | 'name'> = {
   color: 'sage',
 }
 
-export const getModuleDisplayConfig = (
-  name: ModuleName,
-  enabled: boolean,
-): ModuleDisplayConfig => {
+export const getModuleDisplayConfig = (name: ModuleName, enabled: boolean): ModuleDisplayConfig => {
   const config = MODULE_CONFIG[name] || DEFAULT_MODULE_CONFIG
 
   return {

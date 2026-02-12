@@ -2,16 +2,20 @@
   <div>
     <!-- Folder Row -->
     <div
-      class="px-6 py-4 hover:bg-base-200 transition-colors cursor-pointer"
+      class="hover:bg-base-200 cursor-pointer px-6 py-4 transition-colors"
       @click="toggleExpanded"
     >
       <div
-        :class="globalView ? 'grid grid-cols-14 gap-4 items-center' : 'grid grid-cols-12 gap-4 items-center'"
+        :class="
+          globalView
+            ? 'grid grid-cols-14 items-center gap-4'
+            : 'grid grid-cols-12 items-center gap-4'
+        "
       >
         <!-- Name with expand/collapse icon -->
         <div class="col-span-5 flex items-center gap-3">
           <button
-            class="w-6 h-6 flex items-center justify-center text-secondary hover:text-secondary transition-colors"
+            class="text-secondary hover:text-secondary flex h-6 w-6 items-center justify-center transition-colors"
             @click.stop="toggleExpanded"
           >
             <i
@@ -21,13 +25,13 @@
           </button>
 
           <div
-            class="w-10 h-10 rounded-lg flex items-center justify-center border border-primary-stroke"
+            class="border-primary-stroke flex h-10 w-10 items-center justify-center rounded-lg border"
             :class="folderColorClasses"
           >
             <i :class="folderIcon" class="text-lg"></i>
           </div>
 
-          <div class="flex-1 flex items-center gap-2">
+          <div class="flex flex-1 items-center gap-2">
             <h3 class="font-medium">{{ folder.name }}</h3>
             <!-- Privacy Tags (Global View Only) -->
             <template v-if="globalView">
@@ -67,12 +71,12 @@
         <!-- Owner Column (Global View Only) -->
         <div v-if="globalView" class="col-span-2 flex items-center gap-2">
           <div
-            class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium"
+            class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium"
             :class="folder.is_owner ? 'bg-primary text-white' : 'bg-secondary text-white'"
           >
             {{ ownerInitials }}
           </div>
-          <span class="text-sm text-secondary">
+          <span class="text-secondary text-sm">
             {{ folder.is_owner ? $t('folder.owner.you') : folder.owner_username }}
           </span>
         </div>
@@ -88,7 +92,7 @@
 
         <!-- Created date -->
         <div class="col-span-1">
-          <span class="text-sm text-secondary">{{ formatDate(folder.created_at) }}</span>
+          <span class="text-secondary text-sm">{{ formatDate(folder.created_at) }}</span>
         </div>
 
         <!-- Actions -->
@@ -121,20 +125,20 @@
       <div
         v-for="item in folder.items"
         :key="item.id"
-        class="px-6 py-3 hover:bg-base-200/50 transition-colors cursor-pointer border-l-4 border-primary/20 ml-12"
+        class="hover:bg-base-200/50 border-primary/20 ml-12 cursor-pointer border-l-4 px-6 py-3 transition-colors"
         @click="$emit('view-item', { itemId: item.id, folderId: folder.id })"
       >
-        <div class="grid grid-cols-12 gap-4 items-center">
+        <div class="grid grid-cols-12 items-center gap-4">
           <!-- Item name with indentation -->
           <div class="col-span-5 flex items-center gap-3 pl-8">
             <div
-              class="w-8 h-8 rounded-lg bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center justify-center flex-shrink-0"
+              class="ring-primary-stroke flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1"
             >
               <img
                 v-if="item.type === 'company' && getCompanyDomain(item.website)"
                 :src="getLogoUrl(item.website)"
                 :alt="`${item.name} logo`"
-                class="w-full h-full object-contain p-1"
+                class="h-full w-full object-contain p-1"
                 @error="item.showFallbackIcon = true"
                 v-show="!item.showFallbackIcon"
               />
@@ -144,13 +148,13 @@
                   !getCompanyDomain(item.website) ||
                   item.type !== 'company'
                 "
-                class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
+                class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
               >
                 <i class="fas fa-building text-secondary text-sm"></i>
               </div>
             </div>
             <div class="flex-1">
-              <h4 class="font-medium text-sm">{{ item.name }}</h4>
+              <h4 class="text-sm font-medium">{{ item.name }}</h4>
             </div>
           </div>
 
@@ -161,12 +165,12 @@
 
           <!-- Item owner -->
           <div class="col-span-2">
-            <span class="text-xs text-secondary">{{ item.owner || '' }}</span>
+            <span class="text-secondary text-xs">{{ item.owner || '' }}</span>
           </div>
 
           <!-- Item created date -->
           <div class="col-span-1">
-            <span class="text-xs text-secondary">{{ formatDate(item.created_at) }}</span>
+            <span class="text-secondary text-xs">{{ formatDate(item.created_at) }}</span>
           </div>
 
           <!-- Item actions -->
@@ -186,10 +190,10 @@
     <!-- Empty state for expanded folder -->
     <div
       v-else-if="isExpanded"
-      class="px-6 py-8 text-center bg-base-200/30 border-l-4 border-primary/20 ml-12"
+      class="bg-base-200/30 border-primary/20 ml-12 border-l-4 px-6 py-8 text-center"
     >
-      <i class="fas fa-folder-open text-2xl text-secondary/50 mb-2"></i>
-      <p class="text-sm text-secondary">
+      <i class="fas fa-folder-open text-secondary/50 mb-2 text-2xl"></i>
+      <p class="text-secondary text-sm">
         {{ $t('folder.items.empty', 'No items in this folder') }}
       </p>
     </div>
@@ -215,7 +219,6 @@ interface Props {
 const props = defineProps<Props>()
 
 const globalView = computed(() => props.globalView ?? false)
-
 
 defineEmits<{
   'view-folder': [id: string]

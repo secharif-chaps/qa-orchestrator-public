@@ -6,8 +6,8 @@
       :class="[
         'fixed inset-0 z-40 transition-all duration-300 ease-out',
         isZoomed && !isExiting
-          ? 'bg-black/20 backdrop-blur-sm opacity-100'
-          : 'bg-transparent backdrop-blur-none opacity-0',
+          ? 'bg-black/20 opacity-100 backdrop-blur-sm'
+          : 'bg-transparent opacity-0 backdrop-blur-none',
       ]"
       @click="exitZoomMode"
     />
@@ -18,16 +18,16 @@
     <div
       v-if="isAnimating || isZoomed"
       ref="floatingCardRef"
-      class="bg-base-100 rounded-lg shadow-2xl border border-primary-stroke fixed z-50"
+      class="bg-base-100 border-primary-stroke fixed z-50 rounded-lg border shadow-2xl"
     >
       <div class="p-6">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-4">
+        <div class="mb-4 flex items-center justify-between">
           <div class="flex items-center">
             <!-- Icon -->
             <div
               :class="[
-                'w-12 h-12 rounded-lg flex items-center justify-center transition-colors',
+                'flex h-12 w-12 items-center justify-center rounded-lg transition-colors',
                 statusConfig.iconBg,
               ]"
             >
@@ -57,7 +57,7 @@
         <div class="space-y-4">
           <!-- API Key -->
           <div>
-            <label class="block text-sm font-medium text-base mb-2">
+            <label class="mb-2 block text-base text-sm font-medium">
               {{ $t('admin.workflows.apiKey', 'API Key') }}
             </label>
             <Input
@@ -68,7 +68,7 @@
               :placeholder="$t('admin.workflows.apiKeyPlaceholder', 'Enter Dify API key')"
               icon="fa-key"
             />
-            <div v-else class="text-sm text-secondary bg-base-200 px-3 py-2 rounded-md font-mono">
+            <div v-else class="text-secondary bg-base-200 rounded-md px-3 py-2 font-mono text-sm">
               {{
                 workflow.api_key_obfuscated || $t('admin.workflows.notConfigured', 'Not configured')
               }}
@@ -103,10 +103,10 @@
   <!-- Placeholder Card (maintains grid layout) -->
   <div
     v-if="isAnimating || isZoomed"
-    class="bg-base-200/50 rounded-lg border-2 border-dashed border-primary-stroke min-h-[200px] flex items-center justify-center transition-all duration-300"
+    class="bg-base-200/50 border-primary-stroke flex min-h-[200px] items-center justify-center rounded-lg border-2 border-dashed transition-all duration-300"
   >
-    <div class="text-center text-secondary/60">
-      <i class="fa fa-edit text-2xl mb-2"></i>
+    <div class="text-secondary/60 text-center">
+      <i class="fa fa-edit mb-2 text-2xl"></i>
       <p class="text-sm">{{ $t('admin.workflowCard.editing') }}</p>
     </div>
   </div>
@@ -115,16 +115,16 @@
   <div
     v-else
     ref="cardRef"
-    class="bg-base-100 rounded-lg shadow-sm border border-primary-stroke hover:shadow-md transition-shadow duration-200"
+    class="bg-base-100 border-primary-stroke rounded-lg border shadow-sm transition-shadow duration-200 hover:shadow-md"
   >
     <div class="p-6">
       <!-- Header -->
-      <div class="flex items-center justify-between mb-4">
+      <div class="mb-4 flex items-center justify-between">
         <div class="flex items-center">
           <!-- Icon -->
           <div
             :class="[
-              'w-12 h-12 rounded-lg flex items-center justify-center transition-colors',
+              'flex h-12 w-12 items-center justify-center rounded-lg transition-colors',
               statusConfig.iconBg,
             ]"
           >
@@ -154,10 +154,10 @@
       <div class="space-y-4">
         <!-- API Key -->
         <div>
-          <label class="block text-sm font-medium text-base mb-2">
+          <label class="mb-2 block text-base text-sm font-medium">
             {{ $t('admin.workflows.apiKey', 'API Key') }}
           </label>
-          <div class="text-sm text-secondary bg-base-200 px-3 py-2 rounded-md font-mono">
+          <div class="text-secondary bg-base-200 rounded-md px-3 py-2 font-mono text-sm">
             {{
               workflow.api_key_obfuscated || $t('admin.workflows.notConfigured', 'Not configured')
             }}

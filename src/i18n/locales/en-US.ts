@@ -1,4 +1,3 @@
-
 export default {
   welcome: 'Welcome',
   settings: {
@@ -23,7 +22,7 @@ export default {
       preferences: 'Preferences',
       security: 'Security',
       team: 'Team Management',
-      credits: 'Credits'
+      credits: 'Credits',
     },
     credits: {
       cardDescription: 'View credit usage and statistics',
@@ -373,7 +372,7 @@ export default {
     },
     chapse: {
       title: 'Chaps-e',
-      welcomeMessage: 'Hello! I\'m Chaps-e, your AI assistant. How can I help you today?',
+      welcomeMessage: "Hello! I'm Chaps-e, your AI assistant. How can I help you today?",
       addCompany: 'Add company',
       addThisCompany: 'Add',
       toContext: 'to context',
@@ -983,11 +982,11 @@ export default {
       },
       users: {
         title: 'User Management',
-        description: 'Manage user organization assignments and user access'
+        description: 'Manage user organization assignments and user access',
       },
-      usage:{
+      usage: {
         title: 'Usage Dashboard',
-        description: 'View application usage metrics across all organizations'
+        description: 'View application usage metrics across all organizations',
       },
       uiDemo: {
         title: 'UI Components Demo',
@@ -1016,7 +1015,8 @@ export default {
       title: 'Disable User',
       confirmText: 'Are you sure you want to disable',
       actionTitle: 'This action will:',
-      actionDescription: '• Prevent the user from logging in • Revoke all active sessions • Preserve all user data. You can re-enable the user later if needed.',
+      actionDescription:
+        '• Prevent the user from logging in • Revoke all active sessions • Preserve all user data. You can re-enable the user later if needed.',
       cancel: 'Cancel',
       confirm: 'Disable User',
     },
@@ -1048,11 +1048,13 @@ export default {
       },
       legacyWarning: {
         title: 'Legacy Permissions Detected',
-        description: 'This user has old-style permissions. They will be automatically converted to the new permission model when you save.',
+        description:
+          'This user has old-style permissions. They will be automatically converted to the new permission model when you save.',
       },
       customWarning: {
         title: 'Custom Permissions Detected',
-        description: "This user has custom permissions that don't match any predefined role. Selecting a role will override their current permissions.",
+        description:
+          "This user has custom permissions that don't match any predefined role. Selecting a role will override their current permissions.",
       },
       tabs: {
         roles: 'Quick Roles',
@@ -1061,7 +1063,8 @@ export default {
       sections: {
         base: 'Base Access',
         modules: 'Module Permissions',
-        modulesDescription: 'These permissions allow creating specific types of content. Requires Write Access.',
+        modulesDescription:
+          'These permissions allow creating specific types of content. Requires Write Access.',
         admin: 'Admin Permissions',
         adminDescription: 'Administrative access grants full control. Use with caution.',
       },
@@ -1286,8 +1289,10 @@ export default {
         'Random passwords will be generated for all users, ignoring passwords in the file.',
       // Legacy keys (kept for compatibility)
       generatePasswords: 'Generate random passwords',
-      generatePasswordsHint: 'Passwords will be generated for all users. They must change it on first login.',
-      generatePasswordsHintWithColumn: 'Passwords will be generated only for users without a password in the file.',
+      generatePasswordsHint:
+        'Passwords will be generated for all users. They must change it on first login.',
+      generatePasswordsHintWithColumn:
+        'Passwords will be generated only for users without a password in the file.',
       previewSummary: '{count} users ready to import',
       previewSkipped: '{count} users will be skipped due to errors',
       duplicatesFound: 'Duplicate emails found',
@@ -1306,7 +1311,8 @@ export default {
       showDetails: 'Show error details',
       hideDetails: 'Hide details',
       passwordsGenerated: 'Temporary passwords generated',
-      passwordsMessage: 'Download the password file to share with users. This is the only time you can download this file.',
+      passwordsMessage:
+        'Download the password file to share with users. This is the only time you can download this file.',
       downloadPasswords: 'Download Passwords CSV',
       autoDownloaded: 'Password file automatically downloaded',
       cancelTitle: 'Cancel Import',
@@ -1344,25 +1350,26 @@ export default {
         },
         warning: {
           title: 'Organization Change',
-          message: "Changing this user's organization will move them to the new organization. Their data will remain in the original organization.",
+          message:
+            "Changing this user's organization will move them to the new organization. Their data will remain in the original organization.",
         },
       },
       table: {
-        name: "Name",
-        username: "Username",
-        email: "Email",
-        actions: "Actions",
-        status: "Status"
+        name: 'Name',
+        username: 'Username',
+        email: 'Email',
+        actions: 'Actions',
+        status: 'Status',
       },
       status: {
-        active: "Active"
+        active: 'Active',
       },
       actions: {
-        changeOrganization: "Change Organization",
-        managePermissions: "Manage Permissions",
-        enableUser: "Enable User",
-        disableUser: "Disable User",
-        resetPassword: "Reset Password"
+        changeOrganization: 'Change Organization',
+        managePermissions: 'Manage Permissions',
+        enableUser: 'Enable User',
+        disableUser: 'Disable User',
+        resetPassword: 'Reset Password',
       },
       assignOrganization: {
         success: 'Organization assigned successfully!',
@@ -1413,7 +1420,8 @@ export default {
       },
       stuckAlert: {
         title: '{count} Stuck Task Detected | {count} Stuck Tasks Detected',
-        description: 'Tasks running longer than expected may need attention. Review and restart if necessary.',
+        description:
+          'Tasks running longer than expected may need attention. Review and restart if necessary.',
         selectAll: 'Select All Stuck',
       },
       filters: {
@@ -1464,14 +1472,16 @@ export default {
       },
       modal: {
         title: 'Confirm Bulk Restart',
-        description: 'You are about to restart {count} task. This action will: | You are about to restart {count} tasks. This action will:',
+        description:
+          'You are about to restart {count} task. This action will: | You are about to restart {count} tasks. This action will:',
         actions: {
           cancel: 'Cancel the currently running tasks',
           queue: 'Queue them for immediate re-execution',
           reset: 'Reset their status to "pending"',
         },
         selectedTasks: 'Selected tasks:',
-        stuckWarning: '{count} of these tasks have been running for over 3 minutes and may be stuck.',
+        stuckWarning:
+          '{count} of these tasks have been running for over 3 minutes and may be stuck.',
         result: {
           initiated: 'Restart Initiated',
           noTasks: 'No Tasks Restarted',
@@ -1513,7 +1523,8 @@ export default {
       askOurAi: 'Ask our AI',
       thinking: 'Thinking...',
       placeholder: 'Write a message...',
-      welcomeMessage: 'Hello! I am Basil, your assistant. I can help you with questions about this company. What would you like to know?',
+      welcomeMessage:
+        'Hello! I am Basil, your assistant. I can help you with questions about this company. What would you like to know?',
       noResponse: "I received your message but couldn't generate a response.",
       errorMessage: 'Sorry, I encountered an error processing your request. Please try again.',
       assistant: {
@@ -1897,7 +1908,7 @@ export default {
         de: 'German',
         pt: 'Portuguese',
       },
-    }
+    },
   },
   tokens: {
     module: '{module} Module',
@@ -1957,7 +1968,8 @@ export default {
   },
   featureFlags: {
     globalFeatures: 'Global Features',
-    description: 'Add-on capabilities that enhance core modules. These features are disabled by default.',
+    description:
+      'Add-on capabilities that enhance core modules. These features are disabled by default.',
   },
   dataSources: {
     title: 'Data Sources',
@@ -2050,7 +2062,8 @@ export default {
       noResults: 'No users found',
       searchError: 'Failed to search users. You may not have permission to share folders.',
       add: 'Add',
-      writerDisabledNote: 'Writer role is disabled because this user only has read permissions in the organization.',
+      writerDisabledNote:
+        'Writer role is disabled because this user only has read permissions in the organization.',
       currentShares: 'People with access',
       loadingShares: 'Loading...',
       addedOn: 'Added',
@@ -2274,14 +2287,14 @@ export default {
       title: 'organization Management',
       description: 'Manage all organizations in the system',
       confirmAdminRole: {
-        title: "Assign Admin Role?",
-        warningTitle: "High privilege role",
-        warningDescription: "This role grants full administrative access to the organization.",
-        description: "The Admin role includes:",
+        title: 'Assign Admin Role?',
+        warningTitle: 'High privilege role',
+        warningDescription: 'This role grants full administrative access to the organization.',
+        description: 'The Admin role includes:',
         permissions: {
-          adminOrganizations: "Global admin access to all organizations",
-        }
-      }
+          adminOrganizations: 'Global admin access to all organizations',
+        },
+      },
     },
     create: {
       title: 'Create organization',
@@ -2373,11 +2386,13 @@ export default {
       button: 'Reset Password',
       description: 'Reset password for this user',
       infoTitle: 'Password Reset',
-      infoDescription: 'A temporary password will be generated. The user must change it on first login.',
+      infoDescription:
+        'A temporary password will be generated. The user must change it on first login.',
       newPassword: 'New Temporary Password',
       placeholder: 'Enter new password',
       success: 'Password Reset Successfully',
-      successDescription: 'The password has been reset. Share this temporary password with the user.',
+      successDescription:
+        'The password has been reset. Share this temporary password with the user.',
       temporaryPassword: 'Temporary Password',
     },
     generatePassword: 'Generate Random Password',
@@ -2593,7 +2608,8 @@ export default {
       empty: {
         title: 'No Quick Actions Available',
         message: 'Configure your AI preferences to see personalized recommendations.',
-        loadedMessage: 'Unable to generate quick actions for this company. Try refreshing or check back later.',
+        loadedMessage:
+          'Unable to generate quick actions for this company. Try refreshing or check back later.',
       },
     },
   },
@@ -2608,24 +2624,24 @@ export default {
           label: 'Your Role',
           placeholder: 'e.g., Sales Representative, Marketing Manager, CEO',
           helper: 'What is your professional role?',
-          required: "Role is required",
-          tooLong: "Role must be less than 255 characters",
+          required: 'Role is required',
+          tooLong: 'Role must be less than 255 characters',
         },
         goals: {
           label: 'Your Goals',
           placeholder:
             'e.g., I want to identify which companies would benefit from our product and understand their pain points',
           helper: 'What are you trying to achieve when researching companies?',
-          required: "Goals are required",
-          tooLong: "Goals must be less than 2000 characters",
+          required: 'Goals are required',
+          tooLong: 'Goals must be less than 2000 characters',
         },
         desiredOutput: {
           label: 'Desired Output Format',
           placeholder:
             'e.g., Generate personalized outreach emails highlighting pain points with specific company references',
           helper: 'How would you like the AI to format its recommendations?',
-          required: "Desired output is required",
-          tooLong: "Desired output must be less than 2000 characters",
+          required: 'Desired output is required',
+          tooLong: 'Desired output must be less than 2000 characters',
         },
         documentation: {
           label: 'Product/Service Documentation',
@@ -2654,7 +2670,7 @@ export default {
         tip3: 'Include product details to receive more personalized and contextual suggestions',
       },
       validation: {
-        formInvalid: "Please fix the errors in the form",
+        formInvalid: 'Please fix the errors in the form',
       },
     },
     settings: {
@@ -2662,7 +2678,8 @@ export default {
       description: 'Update your AI preferences to refine personalized recommendations',
       lastUpdated: 'Last updated: {date}',
       notConfigured: 'Not configured',
-      setUpDescription: 'Set up your AI preferences to enable personalized quick actions and recommendations.',
+      setUpDescription:
+        'Set up your AI preferences to enable personalized quick actions and recommendations.',
       setUpButton: 'Set Up AI Preferences',
       actions: {
         edit: 'Edit Preferences',
@@ -2678,8 +2695,8 @@ export default {
         message: 'Failed to update your preferences. Please try again.',
       },
       messages: {
-        loadError: "Failed to load your preferences. Please try again.",
-        authError: "You must be logged in to update AI preferences",
+        loadError: 'Failed to load your preferences. Please try again.',
+        authError: 'You must be logged in to update AI preferences',
       },
     },
   },

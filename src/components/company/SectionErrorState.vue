@@ -2,25 +2,25 @@
   <div v-if="state === 'error'" class="flex flex-col items-center">
     <!-- Chapse Error Image -->
     <div class="mb-6">
-      <img :src="chapseErrorImage" alt="Error" class="w-24 h-auto" />
+      <img :src="chapseErrorImage" alt="Error" class="h-auto w-24" />
     </div>
 
     <!-- Error Title -->
-    <h3 class="text-xl font-semibold text-secondary mb-2">
+    <h3 class="text-secondary mb-2 text-xl font-semibold">
       {{ displayTitle }}
     </h3>
 
     <!-- Error Description -->
-    <p class="text-secondary max-w-md mx-auto mb-4 text-center">
+    <p class="text-secondary mx-auto mb-4 max-w-md text-center">
       {{ displayDescription }}
     </p>
 
     <!-- Error details -->
     <div
       v-if="task?.error"
-      class="bg-error-500/10 border border-error-500/20 rounded-lg p-4 max-w-md mx-auto mb-6"
+      class="bg-error-500/10 border-error-500/20 mx-auto mb-6 max-w-md rounded-lg border p-4"
     >
-      <p class="text-sm text-error-500">{{ task?.error }}</p>
+      <p class="text-error-500 text-sm">{{ task?.error }}</p>
     </div>
 
     <!-- Retry action -->

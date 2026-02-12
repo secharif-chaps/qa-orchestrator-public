@@ -1,8 +1,8 @@
 <template>
   <Card>
-    <div class="text-center py-8">
-      <i :class="iconClass" class="text-3xl text-secondary mb-3"></i>
-      <h3 class="text-lg font-semibold mb-2">{{ title }}</h3>
+    <div class="py-8 text-center">
+      <i :class="iconClass" class="text-secondary mb-3 text-3xl"></i>
+      <h3 class="mb-2 text-lg font-semibold">{{ title }}</h3>
       <p class="text-secondary">{{ description }}</p>
       <slot name="actions"></slot>
     </div>

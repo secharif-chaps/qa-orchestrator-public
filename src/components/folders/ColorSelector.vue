@@ -1,15 +1,15 @@
 <template>
   <div>
-    <label class="block text-sm font-medium mb-2">
+    <label class="mb-2 block text-sm font-medium">
       {{ $t('folder.form.color') }}
     </label>
     <div class="relative">
       <button
         type="button"
-        class="w-full flex items-center gap-3 px-4 py-3 bg-base-200 border border-primary-stroke rounded-lg hover:border-primary/50 transition-colors"
+        class="bg-base-200 border-primary-stroke hover:border-primary/50 flex w-full items-center gap-3 rounded-lg border px-4 py-3 transition-colors"
         @click="showDropdown = !showDropdown"
       >
-        <div class="w-6 h-6 rounded-lg" :class="getColorPreviewClasses()"></div>
+        <div class="h-6 w-6 rounded-lg" :class="getColorPreviewClasses()"></div>
         <span class="flex-1 text-left">{{ t(`folder.form.colors.${selectedColor}`) }}</span>
         <i class="fas fa-chevron-down text-secondary"></i>
       </button>
@@ -20,14 +20,14 @@
       <!-- Color Grid Dropdown -->
       <div
         v-if="showDropdown"
-        class="absolute top-full mt-2 bg-base-100 border border-primary-stroke rounded-lg shadow-lg z-50 p-4"
+        class="bg-base-100 border-primary-stroke absolute top-full z-50 mt-2 rounded-lg border p-4 shadow-lg"
       >
         <div class="grid grid-cols-6 gap-2">
           <button
             v-for="color in availableColors"
             :key="color"
             type="button"
-            class="w-10 h-10 rounded-lg border-2 transition-all hover:scale-110"
+            class="h-10 w-10 rounded-lg border-2 transition-all hover:scale-110"
             :class="[
               getColorClasses(color),
               selectedColor === color ? 'border-primary' : 'border-transparent',

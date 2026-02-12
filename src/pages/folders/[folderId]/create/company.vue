@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-4xl mx-auto flex flex-col gap-6" data-cy="company-search-page">
+  <div class="mx-auto flex max-w-4xl flex-col gap-6" data-cy="company-search-page">
     <!-- Page Header -->
     <div class="flex flex-col gap-2">
       <div class="flex items-center justify-between">
@@ -38,7 +38,7 @@
 
     <!-- Search Form Card -->
     <div
-      class="bg-base-100 border border-primary-stroke rounded-lg p-6"
+      class="bg-base-100 border-primary-stroke rounded-lg border p-6"
       :title="$t('search.companyIdentity')"
     >
       <form @submit.prevent="startSearch" class="flex flex-col gap-6">
@@ -122,7 +122,11 @@ const website = ref('')
 const companyError = ref('')
 const websiteError = ref('')
 
-const { isLoading: mutationLoading, mutateAsync, organizationId: mutationOrgId } = useCreateCompany()
+const {
+  isLoading: mutationLoading,
+  mutateAsync,
+  organizationId: mutationOrgId,
+} = useCreateCompany()
 const { mutateAsync: addToFolder } = useAddItemToFolder()
 
 // Fetch current organization
@@ -188,7 +192,9 @@ const showInsufficientTokenAlert = computed(() => {
     return false
   }
   // Show alert if tokens are below 35 (cost of 1 company creation)
-  return screenModuleEnabled.value && tokenBalance.value < TOKENS_PER_COMPANY && !showTokenAlert.value
+  return (
+    screenModuleEnabled.value && tokenBalance.value < TOKENS_PER_COMPANY && !showTokenAlert.value
+  )
 })
 
 // Token alert state

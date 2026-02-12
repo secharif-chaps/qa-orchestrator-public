@@ -22,7 +22,7 @@ export function formatRelativeTime(timestamp: string | Date, locale: 'en' | 'fr'
   // French translations
   if (locale === 'fr') {
     if (diffSeconds < 60) {
-      return 'à l\'instant'
+      return "à l'instant"
     } else if (diffMinutes < 60) {
       return `${diffMinutes} minute${diffMinutes > 1 ? 's' : ''}`
     } else if (diffHours < 24) {

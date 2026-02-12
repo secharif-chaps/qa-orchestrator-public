@@ -1,74 +1,62 @@
 <template>
   <div v-if="company" class="h-full">
     <!-- Header with background pattern -->
-    <Card class="h-full p-6 flex flex-col gap-4">
-
-        <div class="flex items-start gap-6">
-          <!-- Logo Section -->
-            <div
-              class="relative size-14 rounded-xl overflow-hidden bg-white ring-2 ring-primary-stroke"
-            >
-              <img
-                v-if="getCompanyDomain(company?.website)"
-                :src="getLogoUrl(company?.website)"
-                :alt="`${company?.name} logo`"
-                class="w-full h-full object-contain p-2"
-                @error="showFallbackIcon = true"
-                v-show="!showFallbackIcon"
-              />
-              <div
-                v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
-                class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/20"
-              >
-                <i class="fa fa-building text-3xl text-secondary"></i>
-              </div>
-            </div>
-
-
-          <!-- Company Info Section -->
-          <div class="flex-1">
-            <!-- Company Name & Catchphrase -->
-            <div class="mb-4">
-              <h1 class="text-2xl font-bold text-secondary mb-1">
-                {{ company.name }}
-              </h1>
-              <p v-if="company.profile?.catchphrase" class="text-secondary italic text-sm">
-                "{{ getSourcedValue(company.profile?.catchphrase) }}"
-                <Source :sourced-value="company?.profile?.catchphrase" />
-              </p>
-            </div>
-
-            <!-- Social Media Links -->
-            <div
-              class="flex items-center gap-2"
-            >
-            <a v-if="company.website" :href="company.website" target="_blank">
-                <Button variant="tertiary"
-                  icon="fa fa-globe"
-                >
-                </Button>
-              </a>
-
-                <a
-                  v-for="account in company.digital?.socialMediaAccounts || []"
-                  :key="account.platform"
-                  :href="account.url"
-                  target="_blank"
-                  :title="account.platform"
-                >
-                  <Button variant="tertiary"
-                    :icon="getIcon(account.platform)"
-                    lib="fab"
-                  >
-                  </Button>
-                </a>
-
-            </div>
+    <Card class="flex h-full flex-col gap-4 p-6">
+      <div class="flex items-start gap-6">
+        <!-- Logo Section -->
+        <div
+          class="ring-primary-stroke relative size-14 overflow-hidden rounded-xl bg-white ring-2"
+        >
+          <img
+            v-if="getCompanyDomain(company?.website)"
+            :src="getLogoUrl(company?.website)"
+            :alt="`${company?.name} logo`"
+            class="h-full w-full object-contain p-2"
+            @error="showFallbackIcon = true"
+            v-show="!showFallbackIcon"
+          />
+          <div
+            v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
+            class="from-primary/10 to-primary/20 flex h-full w-full items-center justify-center bg-gradient-to-br"
+          >
+            <i class="fa fa-building text-secondary text-3xl"></i>
           </div>
         </div>
 
+        <!-- Company Info Section -->
+        <div class="flex-1">
+          <!-- Company Name & Catchphrase -->
+          <div class="mb-4">
+            <h1 class="text-secondary mb-1 text-2xl font-bold">
+              {{ company.name }}
+            </h1>
+            <p v-if="company.profile?.catchphrase" class="text-secondary text-sm italic">
+              "{{ getSourcedValue(company.profile?.catchphrase) }}"
+              <Source :sourced-value="company?.profile?.catchphrase" />
+            </p>
+          </div>
+
+          <!-- Social Media Links -->
+          <div class="flex items-center gap-2">
+            <a v-if="company.website" :href="company.website" target="_blank">
+              <Button variant="tertiary" icon="fa fa-globe"> </Button>
+            </a>
+
+            <a
+              v-for="account in company.digital?.socialMediaAccounts || []"
+              :key="account.platform"
+              :href="account.url"
+              target="_blank"
+              :title="account.platform"
+            >
+              <Button variant="tertiary" :icon="getIcon(account.platform)" lib="fab"> </Button>
+            </a>
+          </div>
+        </div>
+      </div>
+
       <!-- Quick Info Grid -->
-      <div class="grid grid-cols-2 gap-4 h-full">
+      <div class="grid h-full grid-cols-2 gap-4">
         <ProfileInfoItem
           v-for="item in infoItems"
           :key="item.label"

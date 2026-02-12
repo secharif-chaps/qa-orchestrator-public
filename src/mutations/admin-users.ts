@@ -3,7 +3,13 @@
  */
 
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { assignUserOrganization, updateUserPermissions, resetUserPassword, disableUser, enableUser } from '@/api/admin-users'
+import {
+  assignUserOrganization,
+  updateUserPermissions,
+  resetUserPassword,
+  disableUser,
+  enableUser,
+} from '@/api/admin-users'
 import { ADMIN_USER_QUERY_KEYS } from '@/queries/admin-users'
 import { ORGANIZATION_QUERY_KEYS } from '@/queries/organization-admin'
 import { toast } from '@/utils/toast'

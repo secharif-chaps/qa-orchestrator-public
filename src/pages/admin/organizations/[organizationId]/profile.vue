@@ -2,36 +2,36 @@
   <div class="flex flex-col gap-6">
     <!-- Basic Info Card -->
     <Card>
-      <h2 class="text-xl font-semibold mb-4">
+      <h2 class="mb-4 text-xl font-semibold">
         {{ $t('organization.detail.basicInfo', 'Basic Information') }}
       </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
-          <label class="block text-sm font-medium text-secondary mb-1">{{
+          <label class="text-secondary mb-1 block text-sm font-medium">{{
             $t('organization.name', 'Name')
           }}</label>
           <p class="text-base font-medium">{{ organization?.name }}</p>
         </div>
         <div>
-          <label class="block text-sm font-medium text-secondary mb-1">{{
+          <label class="text-secondary mb-1 block text-sm font-medium">{{
             $t('organization.id', 'ID')
           }}</label>
-          <code class="text-sm bg-base-300 px-2 py-1 rounded">{{ organization?.id }}</code>
+          <code class="bg-base-300 rounded px-2 py-1 text-sm">{{ organization?.id }}</code>
         </div>
         <div class="md:col-span-2" v-if="organization?.description">
-          <label class="block text-sm font-medium text-secondary mb-1">{{
+          <label class="text-secondary mb-1 block text-sm font-medium">{{
             $t('organization.description', 'Description')
           }}</label>
           <p class="text-base">{{ organization?.description }}</p>
         </div>
         <div v-if="organization?.created_at">
-          <label class="block text-sm font-medium text-secondary mb-1">{{
+          <label class="text-secondary mb-1 block text-sm font-medium">{{
             $t('organization.created', 'Created')
           }}</label>
           <p class="text-base">{{ formatDateTime(organization.created_at) }}</p>
         </div>
         <div v-if="organization?.updated_at">
-          <label class="block text-sm font-medium text-secondary mb-1">{{
+          <label class="text-secondary mb-1 block text-sm font-medium">{{
             $t('organization.updated', 'Last Updated')
           }}</label>
           <p class="text-base">{{ formatDateTime(organization.updated_at) }}</p>
@@ -41,17 +41,17 @@
 
     <!-- Module Status Section -->
     <Card>
-      <h2 class="text-xl font-semibold mb-4">
+      <h2 class="mb-4 text-xl font-semibold">
         {{ $t('tokens.moduleStatus', 'Module Status') }}
       </h2>
 
       <!-- Loading State -->
-      <div v-if="isLoadingModules" class="text-center p-4">
-        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+      <div v-if="isLoadingModules" class="p-4 text-center">
+        <div class="border-primary mx-auto h-6 w-6 animate-spin rounded-full border-b-2"></div>
       </div>
 
       <!-- Module Cards -->
-      <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-3">
         <ModuleStatusCard
           v-for="module in modules"
           :key="module.name"
@@ -65,16 +65,21 @@
 
     <!-- Global Features Section -->
     <Card>
-      <h2 class="text-xl font-semibold mb-4">
+      <h2 class="mb-4 text-xl font-semibold">
         {{ $t('featureFlags.globalFeatures', 'Global Features') }}
       </h2>
-      <p class="text-sm text-secondary mb-4">
-        {{ $t('featureFlags.description', 'Add-on capabilities that enhance core modules. These features are disabled by default.') }}
+      <p class="text-secondary mb-4 text-sm">
+        {{
+          $t(
+            'featureFlags.description',
+            'Add-on capabilities that enhance core modules. These features are disabled by default.',
+          )
+        }}
       </p>
 
       <!-- Loading State -->
-      <div v-if="isLoadingFeatureFlags" class="text-center p-4">
-        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+      <div v-if="isLoadingFeatureFlags" class="p-4 text-center">
+        <div class="border-primary mx-auto h-6 w-6 animate-spin rounded-full border-b-2"></div>
       </div>
 
       <!-- Feature Flag Cards - Full width layout for URL input space -->
@@ -106,7 +111,8 @@ import type { OrganizationAdminResponse } from '@/types/organization'
 import type { FeatureFlagName } from '@/types/feature-flags'
 
 // Inject organization data from parent layout
-const organization = inject<ReturnType<typeof computed<OrganizationAdminResponse | null>>>('organization')
+const organization =
+  inject<ReturnType<typeof computed<OrganizationAdminResponse | null>>>('organization')
 const organizationId = inject<ReturnType<typeof computed<string>>>('organizationId')
 
 // Get the organization ID value for child components

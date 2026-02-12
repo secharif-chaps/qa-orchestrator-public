@@ -1,12 +1,12 @@
 <template>
   <div
-    class="relative overflow-hidden rounded-block bg-base-200 border border-primary-stroke p-6"
+    class="rounded-block bg-base-200 border-primary-stroke relative overflow-hidden border p-6"
     role="alert"
     :aria-labelledby="title ? 'chapse-alert-title' : undefined"
   >
     <div class="flex items-center gap-8">
       <!-- Chapse Image (LEFT) -->
-      <div class="flex-shrink-0 ml-6 flex flex-col items-center">
+      <div class="ml-6 flex flex-shrink-0 flex-col items-center">
         <img
           :src="imageSource"
           :alt="imageAlt"
@@ -16,16 +16,16 @@
         <img
           :src="shadow"
           :alt="imageAlt"
-          class="h-3 w-auto object-contain relative -bottom-2 -left-0.5"
+          class="relative -bottom-2 -left-0.5 h-3 w-auto object-contain"
           loading="lazy"
         />
       </div>
       <!-- Content Section (RIGHT) -->
-      <div class="flex-1 min-w-0">
+      <div class="min-w-0 flex-1">
         <!-- Title -->
         <h3
           id="chapse-alert-title"
-          class="text-lg font-semibold text-black dark:text-white mb-3 flex items-center gap-2"
+          class="mb-3 flex items-center gap-2 text-lg font-semibold text-black dark:text-white"
         >
           <i class="fa-solid fa-wand-sparkles"></i>
           <span>
@@ -36,7 +36,7 @@
         <!-- Default slot for content -->
         <div
           v-if="$slots.default"
-          class="text-sm text-secondary dark:text-sage-300 leading-relaxed"
+          class="text-secondary dark:text-sage-300 text-sm leading-relaxed"
         >
           <slot />
         </div>

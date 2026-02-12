@@ -9,128 +9,126 @@
     <template #description>
       {{ $t('folder.moveCompany.selectFolder', 'Select a destination folder') }}
 
-    <div class="flex flex-col gap-6 mt-4">
-      <!-- Company Info Display -->
-      <div v-if="company" class="p-4 bg-base-200 rounded-lg border border-primary-stroke">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 flex items-center justify-center bg-base-100 rounded-lg border border-primary-stroke">
-            <img
-              v-if="companyLogoUrl"
-              :src="companyLogoUrl"
-              :alt="`${company.name} logo`"
-              class="w-10 h-10 object-contain"
-            />
-            <i v-else class="fa fa-building text-2xl text-secondary"></i>
+      <div class="mt-4 flex flex-col gap-6">
+        <!-- Company Info Display -->
+        <div v-if="company" class="bg-base-200 border-primary-stroke rounded-lg border p-4">
+          <div class="flex items-center gap-3">
+            <div
+              class="bg-base-100 border-primary-stroke flex h-12 w-12 items-center justify-center rounded-lg border"
+            >
+              <img
+                v-if="companyLogoUrl"
+                :src="companyLogoUrl"
+                :alt="`${company.name} logo`"
+                class="h-10 w-10 object-contain"
+              />
+              <i v-else class="fa fa-building text-secondary text-2xl"></i>
+            </div>
+            <div>
+              <div class="font-medium">{{ company.name }}</div>
+              <div v-if="company.website" class="text-secondary text-xs">{{ company.website }}</div>
+            </div>
           </div>
-          <div>
-            <div class="font-medium">{{ company.name }}</div>
-            <div v-if="company.website" class="text-xs text-secondary">{{ company.website }}</div>
+        </div>
+
+        <!-- Search Input -->
+        <div class="flex flex-col gap-3">
+          <Label id="folder-search">
+            {{ $t('folder.moveCompany.searchPlaceholder', 'Search folders...') }}
+          </Label>
+
+          <Searchbar
+            id="folder-search-input"
+            v-model="searchQuery"
+            :placeholder="$t('folder.moveCompany.searchPlaceholder', 'Search folders...')"
+          />
+        </div>
+
+        <!-- Folder List -->
+        <div class="flex flex-col gap-3">
+          <!-- Loading state -->
+          <div v-if="isLoadingFolders" class="text-secondary py-8 text-center">
+            <i class="fa fa-spinner fa-spin mr-2"></i>
+            {{ $t('common.loading', 'Loading...') }}
           </div>
-        </div>
-      </div>
 
-      <!-- Search Input -->
-      <div class="flex flex-col gap-3">
-        <Label id="folder-search">
-          {{ $t('folder.moveCompany.searchPlaceholder', 'Search folders...') }}
-        </Label>
-
-        <Searchbar
-          id="folder-search-input"
-          v-model="searchQuery"
-          :placeholder="$t('folder.moveCompany.searchPlaceholder', 'Search folders...')"
-        />
-      </div>
-
-      <!-- Folder List -->
-      <div class="flex flex-col gap-3">
-        <!-- Loading state -->
-        <div v-if="isLoadingFolders" class="py-8 text-center text-secondary">
-          <i class="fa fa-spinner fa-spin mr-2"></i>
-          {{ $t('common.loading', 'Loading...') }}
-        </div>
-
-        <!-- Error state -->
-        <div
-          v-else-if="folderError"
-          class="p-4 bg-error-light text-error-light-content border border-error-stroke rounded-lg text-sm"
-        >
-          <i class="fa fa-exclamation-triangle mr-2"></i>
-          {{ $t('folder.moveCompany.loadError', 'Failed to load folders') }}
-        </div>
-
-        <!-- Empty state -->
-        <div
-          v-else-if="!writableFolders || writableFolders.length === 0"
-          class="py-8 text-center text-secondary bg-base-200 rounded-lg"
-        >
-          <i class="fa fa-folder-open text-3xl mb-3 opacity-50"></i>
-          <p>{{ $t('folder.moveCompany.noFolders', 'No writable folders available') }}</p>
-        </div>
-
-        <!-- Folder list -->
-        <div
-          v-else
-          class="border border-primary-stroke rounded-lg divide-y divide-primary-stroke max-h-96 overflow-y-auto"
-        >
-          <button
-            v-for="folder in writableFolders"
-            :key="folder.id"
-            type="button"
-            class="w-full p-4 text-left hover:bg-base-200 transition-colors flex items-center justify-between"
-            :class="{
-              'bg-primary-light border-2 border-primary-stroke': selectedFolderId === folder.id,
-            }"
-            @click="selectFolder(folder.id)"
+          <!-- Error state -->
+          <div
+            v-else-if="folderError"
+            class="bg-error-light text-error-light-content border-error-stroke rounded-lg border p-4 text-sm"
           >
-            <div class="flex items-center gap-3">
-              <div
-                class="w-10 h-10 flex items-center justify-center rounded-lg"
-                :style="{ backgroundColor: getFolderColor(folder.color) }"
-              >
-                <i :class="folder.icon || 'fa fa-folder'" class="text-white text-lg"></i>
-              </div>
-              <div>
-                <div class="font-medium">{{ folder.name }}</div>
-                <div class="text-xs text-secondary">
-                  {{ folder.items?.length || 0 }} {{ $t('folder.items', 'items') }}
+            <i class="fa fa-exclamation-triangle mr-2"></i>
+            {{ $t('folder.moveCompany.loadError', 'Failed to load folders') }}
+          </div>
+
+          <!-- Empty state -->
+          <div
+            v-else-if="!writableFolders || writableFolders.length === 0"
+            class="text-secondary bg-base-200 rounded-lg py-8 text-center"
+          >
+            <i class="fa fa-folder-open mb-3 text-3xl opacity-50"></i>
+            <p>{{ $t('folder.moveCompany.noFolders', 'No writable folders available') }}</p>
+          </div>
+
+          <!-- Folder list -->
+          <div
+            v-else
+            class="border-primary-stroke divide-primary-stroke max-h-96 divide-y overflow-y-auto rounded-lg border"
+          >
+            <button
+              v-for="folder in writableFolders"
+              :key="folder.id"
+              type="button"
+              class="hover:bg-base-200 flex w-full items-center justify-between p-4 text-left transition-colors"
+              :class="{
+                'bg-primary-light border-primary-stroke border-2': selectedFolderId === folder.id,
+              }"
+              @click="selectFolder(folder.id)"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="flex h-10 w-10 items-center justify-center rounded-lg"
+                  :style="{ backgroundColor: getFolderColor(folder.color) }"
+                >
+                  <i :class="folder.icon || 'fa fa-folder'" class="text-lg text-white"></i>
+                </div>
+                <div>
+                  <div class="font-medium">{{ folder.name }}</div>
+                  <div class="text-secondary text-xs">
+                    {{ folder.items?.length || 0 }} {{ $t('folder.items', 'items') }}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="flex items-center gap-2">
-              <!-- Selected tick icon -->
-              <i
-                v-if="selectedFolderId === folder.id"
-                class="fa fa-check text-primary text-lg"
-              ></i>
+              <div class="flex items-center gap-2">
+                <!-- Selected tick icon -->
+                <i
+                  v-if="selectedFolderId === folder.id"
+                  class="fa fa-check text-primary text-lg"
+                ></i>
 
-              <Tag
-                v-if="folder.is_owner"
-                :label="$t('folder.permissions.owner', 'Owner')"
-                intent="primary"
-                size="xs"
-              />
-              <Tag
-                v-else-if="folder.share_role === 'writer'"
-                :label="$t('folder.permissions.writer', 'Writer')"
-                intent="secondary"
-                size="xs"
-              />
-            </div>
-          </button>
+                <Tag
+                  v-if="folder.is_owner"
+                  :label="$t('folder.permissions.owner', 'Owner')"
+                  intent="primary"
+                  size="xs"
+                />
+                <Tag
+                  v-else-if="folder.share_role === 'writer'"
+                  :label="$t('folder.permissions.writer', 'Writer')"
+                  intent="secondary"
+                  size="xs"
+                />
+              </div>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
     </template>
 
     <template #footer>
       <div class="flex gap-3">
-        <Button
-          variant="secondary"
-          :label="$t('common.cancel', 'Cancel')"
-          @click="handleClose"
-        />
+        <Button variant="secondary" :label="$t('common.cancel', 'Cancel')" @click="handleClose" />
         <Button
           variant="primary"
           :label="$t('folder.moveCompany.move', 'Move')"
@@ -180,14 +178,17 @@ const selectedFolderId = ref<string | null>(null)
 const isMoving = ref(false)
 
 // Reset state when modal closes (from parent closing it after successful move)
-watch(() => props.displayModal, (newValue) => {
-  if (!newValue) {
-    // Modal was closed, reset all state
-    searchQuery.value = ''
-    selectedFolderId.value = null
-    isMoving.value = false
-  }
-})
+watch(
+  () => props.displayModal,
+  (newValue) => {
+    if (!newValue) {
+      // Modal was closed, reset all state
+      searchQuery.value = ''
+      selectedFolderId.value = null
+      isMoving.value = false
+    }
+  },
+)
 
 const {
   data: foldersData,
@@ -219,7 +220,6 @@ const writableFolders = computed(() => {
     : foldersData.value.data || []
 
   const filtered = folders.filter((folder: Folder) => {
-
     // Exclude current folder
     if (folder.id === props.currentFolderId) return false
 
@@ -239,9 +239,7 @@ function handleMove() {
     return
   }
 
-  const selectedFolder = writableFolders.value.find(
-    (f: Folder) => f.id === selectedFolderId.value,
-  )
+  const selectedFolder = writableFolders.value.find((f: Folder) => f.id === selectedFolderId.value)
 
   if (!selectedFolder) {
     return

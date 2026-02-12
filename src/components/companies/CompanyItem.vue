@@ -2,34 +2,34 @@
   <!-- Card View -->
   <div
     v-if="mode === 'grid'"
-    class="bg-base-100 rounded-lg p-4 border border-primary-stroke hover:ring-4 hover:ring-primary/70 ring-offset-2 ring-offset-bg3 transition-all duration-200 cursor-pointer group"
+    class="bg-base-100 border-primary-stroke hover:ring-primary/70 ring-offset-bg3 group cursor-pointer rounded-lg border p-4 ring-offset-2 transition-all duration-200 hover:ring-4"
     @click="$emit('viewCompany', company.id)"
   >
-    <div class="flex items-start justify-between mb-4">
+    <div class="mb-4 flex items-start justify-between">
       <div class="flex items-center gap-3">
         <div
-          class="w-12 h-12 rounded-lg bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center justify-center"
+          class="ring-primary-stroke flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-white ring-1"
         >
           <img
             v-if="getCompanyDomain(company.website)"
             :src="getLogoUrl(company.website)"
             :alt="`${company.name} logo`"
-            class="w-full h-full object-contain p-1"
+            class="h-full w-full object-contain p-1"
             @error="showFallbackIcon = true"
             v-show="!showFallbackIcon"
           />
           <div
             v-show="showFallbackIcon || !getCompanyDomain(company.website)"
-            class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
+            class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
           >
             <i class="fas fa-building text-secondary text-xl"></i>
           </div>
         </div>
-        <div class="flex-1 min-w-0">
-          <h3 class="text-lg font-semibold group-hover:text-secondary transition-colors truncate">
+        <div class="min-w-0 flex-1">
+          <h3 class="group-hover:text-secondary truncate text-lg font-semibold transition-colors">
             {{ company.name }}
           </h3>
-          <p v-if="company.website" class="text-sm text-secondary truncate">
+          <p v-if="company.website" class="text-secondary truncate text-sm">
             {{ formatWebsiteDisplay(company.website) }}
           </p>
         </div>
@@ -40,12 +40,12 @@
     <div class="space-y-3">
       <!-- Website Link -->
       <div v-if="company.website" class="flex items-center gap-2">
-        <i class="fas fa-globe text-secondary text-sm w-4"></i>
+        <i class="fas fa-globe text-secondary w-4 text-sm"></i>
         <a
           :href="formatWebsiteUrl(company.website)"
           target="_blank"
           rel="noopener noreferrer"
-          class="text-sm text-secondary hover:text-sage-content/80 transition-colors truncate"
+          class="text-secondary hover:text-sage-content/80 truncate text-sm transition-colors"
           @click.stop
         >
           {{ company.website }}
@@ -55,9 +55,9 @@
 
       <!-- Tasks Info -->
       <div v-if="company.tasks && company.tasks.length > 0" class="flex items-center gap-2">
-        <i class="fas fa-tasks text-secondary text-sm w-4"></i>
+        <i class="fas fa-tasks text-secondary w-4 text-sm"></i>
         <div class="flex items-center gap-2">
-          <span class="text-sm text-secondary"> {{ company.tasks.length }} tasks </span>
+          <span class="text-secondary text-sm"> {{ company.tasks.length }} tasks </span>
           <Tag :variant="getTaskStatusVariant(company.tasks)" size="xs">
             {{ getTaskStatusText(company.tasks) }}
           </Tag>
@@ -66,8 +66,8 @@
     </div>
 
     <!-- Footer with creation date and owner -->
-    <div class="mt-4 pt-3 border-t border-primary-stroke">
-      <div class="flex justify-between items-center text-xs text-secondary">
+    <div class="border-primary-stroke mt-4 border-t pt-3">
+      <div class="text-secondary flex items-center justify-between text-xs">
         <span>{{ t('company.item.created') }} {{ formatFullDate(company.created_at) }}</span>
         <span v-if="company.owner">{{ t('company.item.by') }} {{ company.owner }}</span>
       </div>
@@ -77,36 +77,36 @@
   <!-- List/Table View -->
   <div
     v-else
-    class="px-6 py-4 transition-colors cursor-pointer hover:bg-base-200"
+    class="hover:bg-base-200 cursor-pointer px-6 py-4 transition-colors"
     @click="$emit('viewCompany', company.id)"
   >
-    <div class="grid grid-cols-12 gap-4 items-center">
+    <div class="grid grid-cols-12 items-center gap-4">
       <!-- Column 1: Company Name and Website (4 cols) -->
-      <div class="col-span-4 flex items-center gap-3 min-w-0">
+      <div class="col-span-4 flex min-w-0 items-center gap-3">
         <div
-          class="w-10 h-10 rounded-lg bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center justify-center flex-shrink-0"
+          class="ring-primary-stroke flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1"
         >
           <img
             v-if="getCompanyDomain(company.website)"
             :src="getLogoUrl(company.website)"
             :alt="`${company.name} logo`"
-            class="w-full h-full object-contain p-1"
+            class="h-full w-full object-contain p-1"
             @error="showFallbackIcon = true"
             v-show="!showFallbackIcon"
           />
           <div
             v-show="showFallbackIcon || !getCompanyDomain(company.website)"
-            class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
+            class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
           >
             <i class="fas fa-building text-secondary"></i>
           </div>
         </div>
 
-        <div class="flex-1 min-w-0">
-          <h3 class="font-medium hover:text-secondary transition-colors truncate">
+        <div class="min-w-0 flex-1">
+          <h3 class="hover:text-secondary truncate font-medium transition-colors">
             {{ company.name }}
           </h3>
-          <p v-if="company.website" class="text-sm text-secondary truncate">
+          <p v-if="company.website" class="text-secondary truncate text-sm">
             {{ formatWebsiteDisplay(company.website) }}
           </p>
         </div>
@@ -114,14 +114,14 @@
 
       <!-- Column 2: Created Date (2 cols) -->
       <div class="col-span-2">
-        <div class="text-sm text-secondary">
+        <div class="text-secondary text-sm">
           {{ formatFullDate(company.created_at) }}
         </div>
       </div>
 
       <!-- Column 3: Owner (2 cols) -->
       <div class="col-span-2">
-        <div class="text-sm text-secondary">
+        <div class="text-secondary text-sm">
           {{ company.owner_username || '—' }}
         </div>
       </div>
@@ -137,7 +137,7 @@
 
       <!-- Column 5: Actions (2 cols) -->
       <div class="col-span-2">
-        <div class="flex items-center gap-1 justify-end">
+        <div class="flex items-center justify-end gap-1">
           <Button
             variant="tertiary"
             size="sm"

@@ -1,18 +1,18 @@
 <template>
-  <div class="bg-base-100 border border-primary-stroke rounded-card">
-    <div class="px-6 py-4 border-b border-primary-stroke">
+  <div class="bg-base-100 border-primary-stroke rounded-card border">
+    <div class="border-primary-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.security.recovery.title') }}</h2>
-      <p class="text-sm text-secondary mt-1">
+      <p class="text-secondary mt-1 text-sm">
         {{ $t('settings.security.recovery.description') }}
       </p>
     </div>
     <div class="px-6 py-6">
       <div class="flex flex-col gap-4">
         <!-- Backup Codes -->
-        <div class="flex items-center justify-between p-4 border border-primary-stroke rounded-lg">
+        <div class="border-primary-stroke flex items-center justify-between rounded-lg border p-4">
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 rounded-lg flex items-center justify-center"
+              class="flex h-10 w-10 items-center justify-center rounded-lg"
               :class="
                 backupCodesGenerated
                   ? 'bg-success-light text-success-light-content'
@@ -25,7 +25,7 @@
               <h3 class="text-sm font-medium">
                 {{ $t('settings.security.recovery.backupCodes.title') }}
               </h3>
-              <p class="text-sm text-secondary">
+              <p class="text-secondary text-sm">
                 {{ $t('settings.security.recovery.backupCodes.description') }}
               </p>
             </div>
@@ -53,10 +53,10 @@
         </div>
 
         <!-- Recovery Email -->
-        <div class="flex items-center justify-between p-4 border border-primary-stroke rounded-lg">
+        <div class="border-primary-stroke flex items-center justify-between rounded-lg border p-4">
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 rounded-lg flex items-center justify-center"
+              class="flex h-10 w-10 items-center justify-center rounded-lg"
               :class="
                 recoveryEmail
                   ? 'bg-success-light text-success-light-content'
@@ -69,7 +69,7 @@
               <h3 class="text-sm font-medium">
                 {{ $t('settings.security.recovery.email.title') }}
               </h3>
-              <p class="text-sm text-secondary">
+              <p class="text-secondary text-sm">
                 {{ recoveryEmail || $t('settings.security.recovery.email.notSet') }}
               </p>
             </div>

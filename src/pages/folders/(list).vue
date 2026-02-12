@@ -44,9 +44,9 @@
       />
 
       <!-- Loading State -->
-      <div v-if="currentIsLoading" class="bg-base-100 rounded-lg shadow-sm p-8 text-center">
+      <div v-if="currentIsLoading" class="bg-base-100 rounded-lg p-8 text-center shadow-sm">
         <div
-          class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
+          class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
         ></div>
         <p class="text-secondary">
           {{ $t('folder.loading', 'Loading folders...') }}
@@ -58,25 +58,25 @@
         <!-- Grid View -->
         <div
           v-if="viewMode === 'grid'"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
         >
           <!-- Create New Folder Card (only shown if user can create folders) -->
           <div
             v-if="canCreateFolder"
-            class="rounded-card p-6 border-2 border-dashed border-primary-stroke hover:border-primary/50 hover:bg-base-200/50 transition-all duration-200 cursor-pointer group flex flex-col items-center justify-center min-h-[280px]"
+            class="rounded-card border-primary-stroke hover:border-primary/50 hover:bg-base-200/50 group flex min-h-[280px] cursor-pointer flex-col items-center justify-center border-2 border-dashed p-6 transition-all duration-200"
             @click="$router.push('/folders/create')"
           >
             <div
-              class="w-16 h-16 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors"
+              class="bg-primary/10 dark:bg-primary/20 group-hover:bg-primary/20 mb-4 flex h-16 w-16 items-center justify-center rounded-lg transition-colors"
             >
               <i class="fas fa-plus text-secondary text-2xl"></i>
             </div>
             <h3
-              class="text-lg font-semibold text-center mb-2 group-hover:text-secondary transition-colors"
+              class="group-hover:text-secondary mb-2 text-center text-lg font-semibold transition-colors"
             >
               {{ $t('folder.create.title', 'Create New Folder') }}
             </h3>
-            <p class="text-sm text-secondary text-center">
+            <p class="text-secondary text-center text-sm">
               {{ $t('folder.create.description', 'Organize your companies into folders') }}
             </p>
           </div>
@@ -93,24 +93,24 @@
         </div>
 
         <!-- Hierarchical Table View -->
-        <div v-else class="bg-base-100 rounded-lg overflow-hidden border border-primary-stroke">
+        <div v-else class="bg-base-100 border-primary-stroke overflow-hidden rounded-lg border">
           <!-- Create New Folder Row (only shown if user can create folders) -->
           <div
             v-if="canCreateFolder"
-            class="px-6 py-4 border-b border-primary-stroke bg-base-200/50 hover:bg-base-200 transition-colors cursor-pointer"
+            class="border-primary-stroke bg-base-200/50 hover:bg-base-200 cursor-pointer border-b px-6 py-4 transition-colors"
             @click="$router.push('/folders/create')"
           >
             <div class="flex items-center gap-3">
               <div
-                class="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
+                class="bg-primary/10 dark:bg-primary/20 flex h-8 w-8 items-center justify-center rounded-lg"
               >
                 <i class="fas fa-plus text-secondary text-sm"></i>
               </div>
               <div class="flex-1">
-                <h3 class="font-medium text-secondary">
+                <h3 class="text-secondary font-medium">
                   {{ $t('folder.create.title', 'Create New Folder') }}
                 </h3>
-                <p class="text-xs text-secondary mt-1">
+                <p class="text-secondary mt-1 text-xs">
                   {{ $t('folder.create.description', 'Organize your companies into folders') }}
                 </p>
               </div>
@@ -119,16 +119,18 @@
           </div>
 
           <!-- Table Header -->
-          <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
+          <div class="border-primary-stroke bg-base-200 border-b px-6 py-4">
             <div
               :class="
                 globalView
-                  ? 'grid grid-cols-14 gap-4 text-sm font-medium text-secondary'
-                  : 'grid grid-cols-12 gap-4 text-sm font-medium text-secondary'
+                  ? 'text-secondary grid grid-cols-14 gap-4 text-sm font-medium'
+                  : 'text-secondary grid grid-cols-12 gap-4 text-sm font-medium'
               "
             >
               <div class="col-span-5">{{ $t('folder.table.name', 'Name') }}</div>
-              <div v-if="globalView" class="col-span-2">{{ $t('folder.table.owner', 'Owner') }}</div>
+              <div v-if="globalView" class="col-span-2">
+                {{ $t('folder.table.owner', 'Owner') }}
+              </div>
               <div class="col-span-2">{{ $t('folder.table.items', 'Items') }}</div>
               <div class="col-span-1">{{ $t('folder.table.created', 'Created') }}</div>
               <div class="col-span-2 text-right">{{ $t('folder.table.actions', 'Actions') }}</div>
@@ -136,7 +138,7 @@
           </div>
 
           <!-- Table Body - Folders with expandable items -->
-          <div class="divide-y divide-primary-stroke">
+          <div class="divide-primary-stroke divide-y">
             <FolderHierarchyRow
               v-for="folder in foldersWithItems"
               :key="folder.id"
@@ -165,9 +167,9 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="bg-base-100 rounded-lg shadow-sm p-12 text-center">
-        <i class="fa fa-folder-open text-4xl text-secondary/50 mb-4"></i>
-        <h3 class="text-lg font-medium mb-2">
+      <div v-else class="bg-base-100 rounded-lg p-12 text-center shadow-sm">
+        <i class="fa fa-folder-open text-secondary/50 mb-4 text-4xl"></i>
+        <h3 class="mb-2 text-lg font-medium">
           {{
             foldersStore.filterName
               ? $t('folder.empty.noResults', 'No folders found')

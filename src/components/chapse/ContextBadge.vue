@@ -1,6 +1,6 @@
 <template>
   <div
-    class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-medium transition-all"
+    class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-medium transition-all"
     :class="badgeClasses"
   >
     <i :class="icon" class="text-xs"></i>
@@ -8,7 +8,7 @@
     <button
       v-if="dismissible"
       @click="$emit('dismiss')"
-      class="hover:bg-black/10 dark:hover:bg-white/10 rounded p-0.5 transition-colors flex-shrink-0"
+      class="flex-shrink-0 rounded p-0.5 transition-colors hover:bg-black/10 dark:hover:bg-white/10"
       :aria-label="`Remove ${label} context`"
     >
       <i class="fa fa-times text-xs"></i>

@@ -12,30 +12,42 @@
       </div>
 
       <!-- Admin Features Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card
           v-for="feature in visibleFeatures"
           :key="feature.id"
           ring="accent"
-          class="group hover:ring-offset-2 ring-offset-base-100 ring-0 ring-accent-400 hover:ring-4 hover:shadow-none cursor-pointer"
+          class="group ring-offset-base-100 ring-accent-400 cursor-pointer ring-0 hover:shadow-none hover:ring-4 hover:ring-offset-2"
           @click="feature.navigate()"
         >
           <div class="p-6">
-            <div class="flex items-center mb-4">
+            <div class="mb-4 flex items-center">
               <Badge variant="secondary" color="sage" :icon="feature.icon" />
               <div class="ml-4">
                 <h3 class="text-lg font-semibold">
                   {{ $t(feature.titleKey, feature.titleDefault) }}
                 </h3>
-                <Tag variant="sage" appearance="light" size="sm" :label="$t(feature.badgeLabel, feature.badgeLabel === 'admin.adminRequired' ? 'Admin Required' : feature.badgeLabel)" />
+                <Tag
+                  variant="sage"
+                  appearance="light"
+                  size="sm"
+                  :label="
+                    $t(
+                      feature.badgeLabel,
+                      feature.badgeLabel === 'admin.adminRequired'
+                        ? 'Admin Required'
+                        : feature.badgeLabel,
+                    )
+                  "
+                />
               </div>
             </div>
 
-            <p class="text-secondary text-sm mb-4">
+            <p class="text-secondary mb-4 text-sm">
               {{ $t(feature.descriptionKey, feature.descriptionDefault) }}
             </p>
-            <div class="group-hover:translate-x-2 transition-transform">
-              <div class="flex items-center text-sm font-medium text-accent-600">
+            <div class="transition-transform group-hover:translate-x-2">
+              <div class="text-accent-600 flex items-center text-sm font-medium">
                 <span>{{ $t(feature.actionKey, feature.actionDefault) }}</span>
                 <i class="fa fa-arrow-right ml-2"></i>
               </div>
@@ -49,7 +61,12 @@
         <Alert
           variant="warning"
           :title="$t('admin.dashboard.limitedAccess.title', 'Limited Access')"
-          :description="$t('admin.dashboard.limitedAccess.message', 'You have access to basic admin features. Contact your administrator for additional permissions.')"
+          :description="
+            $t(
+              'admin.dashboard.limitedAccess.message',
+              'You have access to basic admin features. Contact your administrator for additional permissions.',
+            )
+          "
           icon="fa-lock"
         />
       </div>
@@ -179,7 +196,8 @@ const features: AdminFeature[] = [
     titleKey: 'admin.features.tasks.title',
     titleDefault: 'Task Monitoring',
     descriptionKey: 'admin.features.tasks.description',
-    descriptionDefault: 'Monitor running tasks across all organizations and restart stuck processes',
+    descriptionDefault:
+      'Monitor running tasks across all organizations and restart stuck processes',
     icon: 'fa fa-tasks',
     iconBgColor: 'bg-info/10',
     iconTextColor: 'text-info',

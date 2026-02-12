@@ -32,7 +32,8 @@ vi.mock('@owlint/feathers-vue', () => ({
   },
   Button: {
     name: 'Button',
-    template: '<button class="button" :disabled="disabled" @click="$emit(\'click\')"><slot /></button>',
+    template:
+      '<button class="button" :disabled="disabled" @click="$emit(\'click\')"><slot /></button>',
     props: ['variant', 'intent', 'size', 'label', 'icon', 'disabled'],
     emits: ['click'],
   },

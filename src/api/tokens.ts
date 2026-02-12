@@ -26,7 +26,9 @@ import type {
  * @param organizationId - Keycloak organization UUID
  * @returns Token balance response with organization_id and balance
  */
-export async function getOrganizationBalance(organizationId: string): Promise<TokenBalanceResponse> {
+export async function getOrganizationBalance(
+  organizationId: string,
+): Promise<TokenBalanceResponse> {
   return apiClient.get<TokenBalanceResponse>(`/organizations/${organizationId}/tokens`)
 }
 
@@ -40,7 +42,7 @@ export async function getOrganizationBalance(organizationId: string): Promise<To
  */
 export async function addOrganizationTokens(
   organizationId: string,
-  amount: number
+  amount: number,
 ): Promise<TokenBalanceResponse> {
   const data: AddTokensRequest = { amount }
   return apiClient.post<TokenBalanceResponse>(`/organizations/${organizationId}/tokens`, data)
@@ -56,7 +58,7 @@ export async function addOrganizationTokens(
  */
 export async function getTokenHistory(
   organizationId: string,
-  filters: TokenHistoryFilters = {}
+  filters: TokenHistoryFilters = {},
 ): Promise<TokenHistoryResponse> {
   const params = new URLSearchParams()
 
@@ -113,10 +115,10 @@ export async function getOrganizationModules(organizationId: string): Promise<Mo
 export async function toggleModule(
   organizationId: string,
   module: ModuleName,
-  enabled: boolean
+  enabled: boolean,
 ): Promise<ModuleToggleResponse> {
   return apiClient.put<ModuleToggleResponse>(
     `/organizations/${organizationId}/modules/${module}/toggle`,
-    { enabled }
+    { enabled },
   )
 }

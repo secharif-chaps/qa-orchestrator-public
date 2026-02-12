@@ -1,22 +1,22 @@
 <template>
   <div
     class="flex flex-col overflow-y-auto"
-    :class="isFloating ? 'h-full bg-transparent' : 'h-[calc(80vh-5rem)] rounded-xl bg-base-100 p-4'"
+    :class="isFloating ? 'h-full bg-transparent' : 'bg-base-100 h-[calc(80vh-5rem)] rounded-xl p-4'"
   >
     <div
       v-if="!isFloating"
-      class="relative flex gap-4 items-center justify-between border-b pb-4 border-primary text-secondary"
+      class="border-primary text-secondary relative flex items-center justify-between gap-4 border-b pb-4"
     >
-      <div class="flex gap-4 items-center">
-        <i class="fa fa-chevrons-right cursor-pointer icon-secondary" @click="$emit('hide')"></i>
+      <div class="flex items-center gap-4">
+        <i class="fa fa-chevrons-right icon-secondary cursor-pointer" @click="$emit('hide')"></i>
         <span class="text-sm">{{ t('company.chat.askOurAi') }}</span>
       </div>
-      <div class="absolute h-6 w-full bg-gradient-to-b from-bg1 to-transparent -bottom-6">
+      <div class="from-bg1 absolute -bottom-6 h-6 w-full bg-gradient-to-b to-transparent">
         <!-- <i class="fa fa-up-right-and-down-left-from-center"></i> -->
       </div>
     </div>
     <div
-      class="grow flex flex-col gap-2 overflow-y-auto"
+      class="flex grow flex-col gap-2 overflow-y-auto"
       :class="isFloating ? 'p-4' : 'py-2'"
       ref="messagesContainer"
     >
@@ -29,7 +29,7 @@
         }"
       >
         <div
-          class="text-xs p-4 inline-block rounded-xl"
+          class="inline-block rounded-xl p-4 text-xs"
           :class="{
             'bg-base-300 dark:bg-slate-900': message.from === 'ai',
             'bg-primary/10 text-secondary dark:bg-primary/10 dark:text-sage-content':
@@ -39,17 +39,17 @@
         ></div>
       </div>
       <div v-if="isLoading">
-        <div class="text-xs p-4 inline-block rounded-xl bg-base-300 mr-auto">
+        <div class="bg-base-300 mr-auto inline-block rounded-xl p-4 text-xs">
           <i class="fa fa-spinner fa-spin"></i> {{ t('company.chat.thinking') }}
         </div>
       </div>
     </div>
-    <div class="relative" :class="isFloating ? 'p-4 border-t border-primary-stroke' : 'pt-2'">
+    <div class="relative" :class="isFloating ? 'border-primary-stroke border-t p-4' : 'pt-2'">
       <textarea
         @keyup.enter="sendMessage"
         v-model="question"
         :placeholder="t('company.chat.placeholder')"
-        class="w-full bg-base-300 dark:bg-slate-900 border border-primary-stroke dark:border-slate-700 rounded-lg p-2 text-sm focus-within:outline-primary"
+        class="bg-base-300 border-primary-stroke focus-within:outline-primary w-full rounded-lg border p-2 text-sm dark:border-slate-700 dark:bg-slate-900"
         :class="isFloating ? 'h-20' : 'h-32'"
         @keydown.enter.ctrl.prevent="sendMessage"
         :disabled="isLoading"
@@ -152,8 +152,7 @@ const sendMessage = async () => {
     })
 
     // Parse the response to extract actual content from stringified format
-    let responseText =
-      response.response || t('company.chat.noResponse')
+    let responseText = response.response || t('company.chat.noResponse')
 
     // Check if response contains stringified JSON with 'output' field
     if (

@@ -10,7 +10,7 @@
     <!-- Email column -->
     <template #cell(email)="{ item }">
       <td class="px-4 py-3">
-        <div class="text-sm text-secondary">{{ item.email }}</div>
+        <div class="text-secondary text-sm">{{ item.email }}</div>
       </td>
     </template>
 
@@ -59,12 +59,20 @@
     <!-- Empty state -->
     <template #empty>
       <div class="p-12 text-center">
-        <i class="fa fa-users text-4xl text-secondary/50 mb-4"></i>
-        <h3 class="text-lg font-medium text-base mb-2">
-          {{ hasFilters ? $t('admin.users.empty.filtered', 'No users found') : $t('admin.users.empty.title', 'No users found') }}
+        <i class="fa fa-users text-secondary/50 mb-4 text-4xl"></i>
+        <h3 class="mb-2 text-base text-lg font-medium">
+          {{
+            hasFilters
+              ? $t('admin.users.empty.filtered', 'No users found')
+              : $t('admin.users.empty.title', 'No users found')
+          }}
         </h3>
         <p class="text-secondary mb-6">
-          {{ hasFilters ? $t('admin.users.empty.filteredDescription', 'Try a different search or filter') : $t('admin.users.empty.description', 'No users in the system') }}
+          {{
+            hasFilters
+              ? $t('admin.users.empty.filteredDescription', 'Try a different search or filter')
+              : $t('admin.users.empty.description', 'No users in the system')
+          }}
         </p>
         <Button
           v-if="hasFilters"

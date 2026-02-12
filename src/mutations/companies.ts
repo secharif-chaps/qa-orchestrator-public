@@ -23,8 +23,7 @@ export const useCreateCompany = defineMutation(() => {
     mutation: (company: { name: string; website: string }) => createCompany(company),
     onSuccess: (newCompany: Company) => {
       // Get current recent companies from cache (limit 10)
-      const currentRecent =
-        queryCache.getQueryData<Company[]>(COMPANY_QUERY_KEYS.recent(10)) || []
+      const currentRecent = queryCache.getQueryData<Company[]>(COMPANY_QUERY_KEYS.recent(10)) || []
 
       // Prepend new company to the top (most recent first) and limit to 10 items
       const updatedRecent = [newCompany, ...currentRecent].slice(0, 10)

@@ -1,27 +1,23 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Mapping Table -->
-    <div class="overflow-hidden border border-primary-stroke rounded-xl">
+    <div class="border-primary-stroke overflow-hidden rounded-xl border">
       <table class="w-full">
         <thead class="bg-base-200">
           <tr>
-            <th class="px-4 py-3 text-left text-sm font-semibold text-sage-700 dark:text-sage-200">
+            <th class="text-sage-700 dark:text-sage-200 px-4 py-3 text-left text-sm font-semibold">
               {{ $t('admin.import.csvColumn') }}
             </th>
-            <th class="px-4 py-3 text-left text-sm font-semibold text-sage-700 dark:text-sage-200">
+            <th class="text-sage-700 dark:text-sage-200 px-4 py-3 text-left text-sm font-semibold">
               {{ $t('admin.import.mapsTo') }}
             </th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-primary-stroke">
-          <tr
-            v-for="mapping in mappings"
-            :key="mapping.csvColumn"
-            class="bg-base-100"
-          >
+        <tbody class="divide-primary-stroke divide-y">
+          <tr v-for="mapping in mappings" :key="mapping.csvColumn" class="bg-base-100">
             <td class="px-4 py-3">
               <div class="flex items-center gap-2">
-                <code class="px-2 py-1 bg-base-200 rounded text-sm">
+                <code class="bg-base-200 rounded px-2 py-1 text-sm">
                   {{ mapping.csvColumn }}
                 </code>
                 <span
@@ -36,8 +32,10 @@
             <td class="px-4 py-3">
               <select
                 :value="mapping.targetField || 'ignore'"
-                class="w-full max-w-xs px-3 py-2 bg-base-100 border border-primary-stroke rounded-lg text-sm text-sage-700 dark:text-sage-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                @change="handleMappingChange(mapping.csvColumn, ($event.target as HTMLSelectElement).value)"
+                class="bg-base-100 border-primary-stroke text-sage-700 dark:text-sage-200 focus:ring-primary focus:border-primary w-full max-w-xs rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+                @change="
+                  handleMappingChange(mapping.csvColumn, ($event.target as HTMLSelectElement).value)
+                "
               >
                 <option value="ignore">— {{ $t('admin.import.ignore') }}</option>
                 <option value="username">
@@ -97,48 +95,45 @@
       />
 
       <!-- Password mode selection when password column exists -->
-      <div
-        v-if="hasPasswordColumn"
-        class="p-4 bg-base-200 rounded-xl"
-      >
-        <p class="font-medium text-sage-700 dark:text-sage-200 mb-3">
+      <div v-if="hasPasswordColumn" class="bg-base-200 rounded-xl p-4">
+        <p class="text-sage-700 dark:text-sage-200 mb-3 font-medium">
           {{ $t('admin.import.passwordHandling') }}
         </p>
 
         <div class="flex flex-col gap-3">
           <!-- Option 1: Use from CSV -->
-          <label class="flex items-start gap-3 cursor-pointer">
+          <label class="flex cursor-pointer items-start gap-3">
             <input
               type="radio"
               name="password-mode"
               :checked="!generatePasswords"
-              class="mt-1 w-4 h-4 text-primary focus:ring-primary"
+              class="text-primary focus:ring-primary mt-1 h-4 w-4"
               @change="$emit('update:generatePasswords', false)"
             />
             <div>
-              <p class="font-medium text-sage-700 dark:text-sage-200">
+              <p class="text-sage-700 dark:text-sage-200 font-medium">
                 {{ $t('admin.import.usePasswordsFromFile') }}
               </p>
-              <p class="text-sm text-sage-500 dark:text-sage-400">
+              <p class="text-sage-500 dark:text-sage-400 text-sm">
                 {{ $t('admin.import.usePasswordsFromFileHint') }}
               </p>
             </div>
           </label>
 
           <!-- Option 2: Generate all -->
-          <label class="flex items-start gap-3 cursor-pointer">
+          <label class="flex cursor-pointer items-start gap-3">
             <input
               type="radio"
               name="password-mode"
               :checked="generatePasswords"
-              class="mt-1 w-4 h-4 text-primary focus:ring-primary"
+              class="text-primary focus:ring-primary mt-1 h-4 w-4"
               @change="$emit('update:generatePasswords', true)"
             />
             <div>
-              <p class="font-medium text-sage-700 dark:text-sage-200">
+              <p class="text-sage-700 dark:text-sage-200 font-medium">
                 {{ $t('admin.import.generateAllPasswords') }}
               </p>
-              <p class="text-sm text-sage-500 dark:text-sage-400">
+              <p class="text-sage-500 dark:text-sage-400 text-sm">
                 {{ $t('admin.import.generateAllPasswordsHint') }}
               </p>
             </div>
@@ -202,9 +197,7 @@ const unmappedColumns = computed(() => {
  * Check if a field is already used by another column
  */
 function isFieldUsed(field: TargetField, excludeColumn: string): boolean {
-  return props.mappings.some(
-    (m) => m.targetField === field && m.csvColumn !== excludeColumn,
-  )
+  return props.mappings.some((m) => m.targetField === field && m.csvColumn !== excludeColumn)
 }
 
 /**

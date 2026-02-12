@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen p-6">
     <!-- Header -->
-    <div class="max-w-5xl mx-auto mb-6">
-      <div class="flex items-center gap-4 mb-2">
+    <div class="mx-auto mb-6 max-w-5xl">
+      <div class="mb-2 flex items-center gap-4">
         <h1 class="text-headline-3xl font-bold">
           {{ $t('tokens.history.title', 'Token History') }}
         </h1>
@@ -13,22 +13,26 @@
     </div>
 
     <!-- Total Credits Card -->
-    <div class="max-w-5xl mx-auto mb-6">
+    <div class="mx-auto mb-6 max-w-5xl">
       <div
-        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6"
+        class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
       >
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase mb-1">
+            <h2 class="mb-1 text-sm font-semibold text-gray-600 uppercase dark:text-gray-400">
               {{ $t('tokens.history.totalCredits', 'Total Available Credits') }}
             </h2>
-            <p class="text-3xl font-bold text-sage-600 dark:text-sage-400">
+            <p class="text-sage-600 dark:text-sage-400 text-3xl font-bold">
               {{ totalTokens.toLocaleString() }}
             </p>
           </div>
           <Tag
             :variant="totalTokens > 0 ? 'success' : 'warning'"
-            :label="totalTokens > 0 ? $t('tokens.history.active', 'Active') : $t('tokens.history.empty', 'Empty')"
+            :label="
+              totalTokens > 0
+                ? $t('tokens.history.active', 'Active')
+                : $t('tokens.history.empty', 'Empty')
+            "
             size="lg"
             rounded
             :icon="totalTokens > 0 ? 'fa fa-check-circle' : 'fa fa-exclamation-circle'"
@@ -38,62 +42,68 @@
     </div>
 
     <!-- Filters Section -->
-    <div class="max-w-5xl mx-auto mb-6">
-      <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+    <div class="mx-auto mb-6 max-w-5xl">
+      <div
+        class="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+      >
         <div class="flex flex-wrap items-end gap-4">
           <!-- Transaction Type Filter -->
           <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium text-secondary">
+            <label class="text-secondary text-sm font-medium">
               {{ $t('tokens.history.transactionType', 'Transaction Type') }}
             </label>
             <select
               v-model="filters.transaction_type"
-              class="px-3 py-2 bg-base-200 border border-primary-stroke rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary min-w-40"
+              class="bg-base-200 border-primary-stroke focus:ring-primary/20 focus:border-primary min-w-40 rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             >
               <option value="">{{ $t('tokens.history.allTypes', 'All Types') }}</option>
               <option value="add">{{ $t('tokens.history.type.add', 'Add') }}</option>
               <option value="consume">{{ $t('tokens.history.type.consume', 'Consume') }}</option>
-              <option value="adjustment">{{ $t('tokens.history.type.adjustment', 'Adjustment') }}</option>
+              <option value="adjustment">
+                {{ $t('tokens.history.type.adjustment', 'Adjustment') }}
+              </option>
             </select>
           </div>
 
           <!-- Reference Type Filter -->
           <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium text-secondary">
+            <label class="text-secondary text-sm font-medium">
               {{ $t('tokens.history.referenceType', 'Reference Type') }}
             </label>
             <select
               v-model="filters.reference_type"
-              class="px-3 py-2 bg-base-200 border border-primary-stroke rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary min-w-40"
+              class="bg-base-200 border-primary-stroke focus:ring-primary/20 focus:border-primary min-w-40 rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             >
               <option value="">{{ $t('tokens.history.allReferences', 'All References') }}</option>
               <option value="company">{{ $t('tokens.history.ref.company', 'Company') }}</option>
               <option value="manual">{{ $t('tokens.history.ref.manual', 'Manual') }}</option>
-              <option value="csv_import">{{ $t('tokens.history.ref.csv_import', 'CSV Import') }}</option>
+              <option value="csv_import">
+                {{ $t('tokens.history.ref.csv_import', 'CSV Import') }}
+              </option>
               <option value="system">{{ $t('tokens.history.ref.system', 'System') }}</option>
             </select>
           </div>
 
           <!-- Date Range (simplified) -->
           <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium text-secondary">
+            <label class="text-secondary text-sm font-medium">
               {{ $t('tokens.history.dateFrom', 'Date From') }}
             </label>
             <input
               v-model="filters.date_from"
               type="date"
-              class="px-3 py-2 bg-base-200 border border-primary-stroke rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              class="bg-base-200 border-primary-stroke focus:ring-primary/20 focus:border-primary rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             />
           </div>
 
           <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium text-secondary">
+            <label class="text-secondary text-sm font-medium">
               {{ $t('tokens.history.dateTo', 'Date To') }}
             </label>
             <input
               v-model="filters.date_to"
               type="date"
-              class="px-3 py-2 bg-base-200 border border-primary-stroke rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              class="bg-base-200 border-primary-stroke focus:ring-primary/20 focus:border-primary rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             />
           </div>
 
@@ -111,11 +121,11 @@
 
     <!-- Loading State -->
     <div v-if="isLoading" class="flex items-center justify-center py-16">
-      <i class="fa fa-spinner fa-spin text-4xl text-sage-500"></i>
+      <i class="fa fa-spinner fa-spin text-sage-500 text-4xl"></i>
     </div>
 
     <!-- Error State -->
-    <div v-else-if="error" class="max-w-5xl mx-auto">
+    <div v-else-if="error" class="mx-auto max-w-5xl">
       <Alert
         variant="danger"
         :title="$t('tokens.history.errorTitle')"
@@ -125,21 +135,21 @@
     </div>
 
     <!-- Token History Table -->
-    <div v-else class="max-w-5xl mx-auto">
+    <div v-else class="mx-auto max-w-5xl">
       <!-- Empty State -->
       <div
         v-if="!historyData?.items?.length"
-        class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-12 text-center"
+        class="rounded-2xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800"
       >
         <div
-          class="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center"
+          class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700"
         >
           <i class="fa fa-coins text-4xl text-gray-400 dark:text-gray-500"></i>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+        <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
           {{ $t('tokens.history.noHistory', 'No token history yet') }}
         </h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+        <p class="mx-auto max-w-md text-sm text-gray-600 dark:text-gray-400">
           {{
             $t(
               'tokens.history.noHistoryDesc',
@@ -151,26 +161,28 @@
 
       <!-- Transaction Table -->
       <div v-else class="flex flex-col gap-4">
-        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div
+          class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+        >
           <table class="w-full">
             <thead class="bg-base-200">
               <tr>
-                <th class="text-left px-4 py-3 text-sm font-semibold text-secondary">
+                <th class="text-secondary px-4 py-3 text-left text-sm font-semibold">
                   {{ $t('tokens.history.table.date', 'Date') }}
                 </th>
-                <th class="text-left px-4 py-3 text-sm font-semibold text-secondary">
+                <th class="text-secondary px-4 py-3 text-left text-sm font-semibold">
                   {{ $t('tokens.history.table.type', 'Type') }}
                 </th>
-                <th class="text-right px-4 py-3 text-sm font-semibold text-secondary">
+                <th class="text-secondary px-4 py-3 text-right text-sm font-semibold">
                   {{ $t('tokens.history.table.amount', 'Amount') }}
                 </th>
-                <th class="text-right px-4 py-3 text-sm font-semibold text-secondary">
+                <th class="text-secondary px-4 py-3 text-right text-sm font-semibold">
                   {{ $t('tokens.history.table.balanceAfter', 'Balance After') }}
                 </th>
-                <th class="text-left px-4 py-3 text-sm font-semibold text-secondary">
+                <th class="text-secondary px-4 py-3 text-left text-sm font-semibold">
                   {{ $t('tokens.history.table.reference', 'Reference') }}
                 </th>
-                <th class="text-left px-4 py-3 text-sm font-semibold text-secondary">
+                <th class="text-secondary px-4 py-3 text-left text-sm font-semibold">
                   {{ $t('tokens.history.table.user', 'User') }}
                 </th>
               </tr>
@@ -199,19 +211,24 @@
                     {{ transaction.amount > 0 ? '+' : '' }}{{ transaction.amount.toLocaleString() }}
                   </span>
                 </td>
-                <td class="px-4 py-3 text-right text-sm text-secondary">
+                <td class="text-secondary px-4 py-3 text-right text-sm">
                   {{ transaction.balance_after.toLocaleString() }}
                 </td>
                 <td class="px-4 py-3 text-sm">
                   <div class="flex items-center gap-2">
-                    <i :class="getReferenceTypeIcon(transaction.reference_type)" class="text-secondary"></i>
-                    <span class="capitalize">{{ transaction.reference_type.replace('_', ' ') }}</span>
-                    <span v-if="transaction.reference_id" class="text-xs text-secondary">
+                    <i
+                      :class="getReferenceTypeIcon(transaction.reference_type)"
+                      class="text-secondary"
+                    ></i>
+                    <span class="capitalize">{{
+                      transaction.reference_type.replace('_', ' ')
+                    }}</span>
+                    <span v-if="transaction.reference_id" class="text-secondary text-xs">
                       ({{ truncateId(transaction.reference_id) }})
                     </span>
                   </div>
                 </td>
-                <td class="px-4 py-3 text-sm text-secondary">
+                <td class="text-secondary px-4 py-3 text-sm">
                   {{ truncateId(transaction.created_by) || '-' }}
                 </td>
               </tr>
@@ -274,7 +291,11 @@ const { data: balanceData, isLoading: isLoadingBalance } = useQuery({
 })
 
 // Fetch token history with filters using the spread pattern
-const { data: historyData, isLoading: isLoadingHistory, error } = useQuery({
+const {
+  data: historyData,
+  isLoading: isLoadingHistory,
+  error,
+} = useQuery({
   ...tokenHistoryQuery({
     organizationId: currentOrganization.value?.id ?? '',
     filters: {
@@ -290,7 +311,7 @@ const { data: historyData, isLoading: isLoadingHistory, error } = useQuery({
 
 // Computed values
 const isLoading = computed(
-  () => isLoadingOrg.value || isLoadingBalance.value || isLoadingHistory.value
+  () => isLoadingOrg.value || isLoadingBalance.value || isLoadingHistory.value,
 )
 
 const totalTokens = computed(() => balanceData.value?.balance ?? 0)
@@ -301,7 +322,8 @@ const errorMessage = computed(() => {
   if (!err) return 'There was a problem loading the token history. Please try again later.'
   if (typeof err === 'string') return err
   if (err instanceof Error) return err.message
-  if (typeof err === 'object' && 'message' in err) return String((err as { message: unknown }).message)
+  if (typeof err === 'object' && 'message' in err)
+    return String((err as { message: unknown }).message)
   return 'There was a problem loading the token history. Please try again later.'
 })
 

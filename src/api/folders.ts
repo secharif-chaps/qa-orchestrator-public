@@ -55,9 +55,7 @@ export const getFolders = async (filters: {
     params.append('include_all', 'true')
   }
 
-  const response = await apiClient.get<PaginatedResponse<Folder>>(
-    `/folders/?${params.toString()}`,
-  )
+  const response = await apiClient.get<PaginatedResponse<Folder>>(`/folders/?${params.toString()}`)
   return response
 }
 
@@ -91,9 +89,7 @@ export const getFoldersWithItems = async (filters: {
     params.append('include_all', 'true')
   }
 
-  const response = await apiClient.get<PaginatedResponse<Folder>>(
-    `/folders/?${params.toString()}`,
-  )
+  const response = await apiClient.get<PaginatedResponse<Folder>>(`/folders/?${params.toString()}`)
   return response
 }
 
@@ -174,7 +170,7 @@ export const moveItemBetweenFolders = async (data: {
 }) => {
   const response = await apiClient.patch(
     `/folders/${data.current_folder_id}/items/${data.item_id}?item_type=${data.item_type}`,
-    { folder_id: data.destination_folder_id }
+    { folder_id: data.destination_folder_id },
   )
   return response
 }
@@ -235,7 +231,9 @@ export const searchUsersForSharing = async (query: string, limit: number = 10) =
     q: query,
     limit: limit.toString(),
   })
-  const response = await apiClient.get<ShareableUser[]>(`/folders/users/search?${params.toString()}`)
+  const response = await apiClient.get<ShareableUser[]>(
+    `/folders/users/search?${params.toString()}`,
+  )
   return response
 }
 

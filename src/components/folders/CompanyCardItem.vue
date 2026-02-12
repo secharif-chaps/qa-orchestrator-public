@@ -1,16 +1,16 @@
 <template>
   <div
     @click="$emit('click')"
-    class="bg-base-100 rounded-md p-2 border border-primary-stroke h-16 flex items-center hover:ring-2 ring-primary/50 ring-offset-bg2 cursor-pointer"
+    class="bg-base-100 border-primary-stroke ring-primary/50 ring-offset-bg2 flex h-16 cursor-pointer items-center rounded-md border p-2 hover:ring-2"
   >
-    <div class="flex items-center gap-2 min-w-0">
+    <div class="flex min-w-0 items-center gap-2">
       <!-- Company Logo -->
       <div
-        class="w-10 h-10 rounded bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center flex-shrink-0"
+        class="ring-primary-stroke flex h-10 w-10 flex-shrink-0 items-center overflow-hidden rounded bg-white ring-1"
       >
         <div
           v-if="showFallbackIcon"
-          class="w-full h-full flex items-center justify-center bg-sage-100 dark:bg-sage-800"
+          class="bg-sage-100 dark:bg-sage-800 flex h-full w-full items-center justify-center"
         >
           <i class="fas fa-building text-secondary text-xl"></i>
         </div>
@@ -18,14 +18,14 @@
           v-if="companyDomain && !showFallbackIcon"
           :src="logoUrl"
           :alt="`${name} logo`"
-          class="w-full h-full object-contain p-0.5"
+          class="h-full w-full object-contain p-0.5"
           @error="handleImageError"
         />
       </div>
 
       <!-- Company Name -->
-      <div class="flex-1 min-w-0">
-        <div class="text-sm font-medium truncate">{{ name }}</div>
+      <div class="min-w-0 flex-1">
+        <div class="truncate text-sm font-medium">{{ name }}</div>
       </div>
     </div>
   </div>

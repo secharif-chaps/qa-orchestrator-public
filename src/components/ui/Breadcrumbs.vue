@@ -1,12 +1,12 @@
 <template>
-  <nav class="flex z-10 relative" aria-label="Breadcrumb" v-if="breadcrumbs.length > 0">
+  <nav class="relative z-10 flex" aria-label="Breadcrumb" v-if="breadcrumbs.length > 0">
     <ol role="list" class="flex items-center space-x-4">
       <!-- Home icon - always first -->
       <li>
         <div>
           <RouterLink
             to="/"
-            class="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
+            class="text-gray-400 transition-colors hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300"
           >
             <i class="fa fa-home text-lg" aria-hidden="true"></i>
             <span class="sr-only">{{ t('sidebar.home') }}</span>

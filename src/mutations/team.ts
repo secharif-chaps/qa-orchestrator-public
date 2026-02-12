@@ -30,9 +30,7 @@ export const useUpdateMemberPermissions = defineMutation(() => {
 
           // Optimistically update the cache
           const updatedData = cachedData.map((member: TeamMember) =>
-            member.id === userId
-              ? { ...member, permission_tier: data.permission_tier }
-              : member,
+            member.id === userId ? { ...member, permission_tier: data.permission_tier } : member,
           )
 
           queryCache.setQueryData(queryKey, updatedData)

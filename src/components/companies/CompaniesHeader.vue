@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-4">
     <!-- Header -->
     <div>
-      <div class="flex items-center justify-between mb-6">
+      <div class="mb-6 flex items-center justify-between">
         <div>
           <h1 class="text-3xl font-bold">
             {{ $t('company.management.title', 'Company Management') }}
@@ -28,16 +28,16 @@
       <!-- Search and Filters -->
       <div class="flex items-center justify-between gap-4 rounded-lg">
         <!-- Search Input -->
-        <div class="flex-1 max-w-md">
+        <div class="max-w-md flex-1">
           <div class="relative">
             <i
-              class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary"
+              class="fa fa-search text-secondary absolute top-1/2 left-3 -translate-y-1/2 transform"
             ></i>
             <input
               v-model="companiesStore.filterName"
               type="text"
               :placeholder="$t('company.search.placeholder', 'Search companies...')"
-              class="w-full pl-10 pr-4 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary bg-base-100"
+              class="border-primary-stroke focus:ring-primary/20 focus:border-primary bg-base-100 w-full rounded-lg border py-2 pr-4 pl-10 focus:ring-2"
             />
           </div>
         </div>

@@ -178,7 +178,9 @@ describe('Global Token System UI Components', () => {
       ]
 
       // Verify component has quick-add section
-      expect(wrapper.find('[data-testid="quick-add-section"]').exists() || html.includes('Quick')).toBe(true)
+      expect(
+        wrapper.find('[data-testid="quick-add-section"]').exists() || html.includes('Quick'),
+      ).toBe(true)
     })
   })
 

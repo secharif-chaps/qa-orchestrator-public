@@ -1,10 +1,10 @@
 <template>
-  <div class="w-full z-20">
-    <div class="dark bg-sage-950 fixed top-0 w-full z-20 h-[68px] pr-6">
-      <div class="flex items-center justify-between h-full">
+  <div class="z-20 w-full">
+    <div class="dark bg-sage-950 fixed top-0 z-20 h-[68px] w-full pr-6">
+      <div class="flex h-full items-center justify-between">
         <RouterLink to="/">
           <div
-            class="flex items-center space-x-2 text-xl text-sage-200 dark:text-white pl-6 relative"
+            class="text-sage-200 relative flex items-center space-x-2 pl-6 text-xl dark:text-white"
           >
             <img :src="logo_small" class="!h-10 !w-auto" />
             <h1>
@@ -52,7 +52,7 @@
             @click="handleLogout"
           />
 
-          <div class="w-px h-4 bg-sage-600 dark:bg-sage-400"></div>
+          <div class="bg-sage-600 dark:bg-sage-400 h-4 w-px"></div>
 
           <Button
             :variant="isTokensActive ? 'accent' : 'tertiary'"

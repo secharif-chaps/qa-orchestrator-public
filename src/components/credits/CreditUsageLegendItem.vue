@@ -1,12 +1,9 @@
 <template>
   <div class="flex items-center gap-2">
-    <div
-      class="w-3 h-3 rounded-full flex-shrink-0"
-      :style="{ backgroundColor: color }"
-    ></div>
-    <div class="flex-1 min-w-0">
-      <div class="text-sm font-medium truncate">{{ label }}</div>
-      <div class="text-xs text-secondary">{{ formattedValue }}</div>
+    <div class="h-3 w-3 flex-shrink-0 rounded-full" :style="{ backgroundColor: color }"></div>
+    <div class="min-w-0 flex-1">
+      <div class="truncate text-sm font-medium">{{ label }}</div>
+      <div class="text-secondary text-xs">{{ formattedValue }}</div>
     </div>
   </div>
 </template>

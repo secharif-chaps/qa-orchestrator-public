@@ -1,11 +1,11 @@
 <template>
   <div class="min-h-screen">
-    <div class="flex flex-col gap-6 max-w-2xl mx-auto py-8 px-4">
+    <div class="mx-auto flex max-w-2xl flex-col gap-6 px-4 py-8">
       <!-- Header -->
       <div>
-        <div class="flex items-center gap-4 mb-2">
+        <div class="mb-2 flex items-center gap-4">
           <div
-            class="w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
+            class="bg-primary/10 dark:bg-primary/20 flex h-12 w-12 items-center justify-center rounded-lg"
           >
             <i class="fas fa-plus text-secondary text-xl"></i>
           </div>
@@ -19,11 +19,11 @@
       </div>
 
       <!-- Form -->
-      <div class="bg-base-100 rounded-lg p-6 border border-primary-stroke">
+      <div class="bg-base-100 border-primary-stroke rounded-lg border p-6">
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Folder Name -->
           <div>
-            <label class="block text-sm font-medium mb-2">
+            <label class="mb-2 block text-sm font-medium">
               {{ $t('folder.form.name', 'Folder Name') }}
               <span class="text-red-500">*</span>
             </label>
@@ -44,9 +44,9 @@
 
           <!-- Tags -->
           <div>
-            <label class="block text-sm font-medium mb-2">
+            <label class="mb-2 block text-sm font-medium">
               {{ $t('folder.form.tags', 'Tags') }}
-              <span class="text-secondary text-xs ml-1"
+              <span class="text-secondary ml-1 text-xs"
                 >({{ $t('folder.form.tagsOptional', 'optional') }})</span
               >
             </label>
@@ -55,7 +55,7 @@
               v-model="tagsInput"
               :placeholder="$t('folder.form.tagsPlaceholder', 'Enter tags separated by commas...')"
             />
-            <div v-if="form.tags && form.tags.length > 0" class="flex flex-wrap gap-2 mt-2">
+            <div v-if="form.tags && form.tags.length > 0" class="mt-2 flex flex-wrap gap-2">
               <Tag
                 v-for="tag in form.tags"
                 :key="tag"
@@ -74,15 +74,15 @@
               id="is_favorite"
               v-model="form.is_favorite"
               type="checkbox"
-              class="w-5 h-5 rounded border-primary-stroke text-secondary focus:ring-primary/20"
+              class="border-primary-stroke text-secondary focus:ring-primary/20 h-5 w-5 rounded"
             />
-            <label for="is_favorite" class="text-sm font-medium cursor-pointer">
+            <label for="is_favorite" class="cursor-pointer text-sm font-medium">
               {{ $t('folder.form.favorite', 'Mark as favorite') }}
             </label>
           </div>
 
           <!-- Actions -->
-          <div class="flex justify-end gap-3 pt-6 border-t border-primary-stroke">
+          <div class="border-primary-stroke flex justify-end gap-3 border-t pt-6">
             <Button
               type="button"
               variant="secondary"

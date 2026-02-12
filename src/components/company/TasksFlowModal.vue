@@ -3,22 +3,29 @@
     <Transition name="modal">
       <div
         v-if="modelValue"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
         @click.self="emit('update:modelValue', false)"
       >
         <div
-          class="bg-base-100 rounded-card border border-primary-stroke shadow-shadow-3 w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
+          class="bg-base-100 rounded-card border-primary-stroke shadow-shadow-3 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden border"
         >
           <!-- Header -->
-          <div class="flex items-center justify-between p-6 border-b border-primary-stroke">
+          <div class="border-primary-stroke flex items-center justify-between border-b p-6">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <div class="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
                 <i class="fas fa-bug text-secondary"></i>
               </div>
               <div>
-                <h2 class="text-lg font-semibold">{{ t('company.debug.workflowTitle', 'Search Workflow') }}</h2>
-                <p class="text-sm text-secondary">
-                  {{ t('company.tasks.completedCount', '{completed}/{total} tasks completed', { completed: completedCount, total: totalTasks }) }}
+                <h2 class="text-lg font-semibold">
+                  {{ t('company.debug.workflowTitle', 'Search Workflow') }}
+                </h2>
+                <p class="text-secondary text-sm">
+                  {{
+                    t('company.tasks.completedCount', '{completed}/{total} tasks completed', {
+                      completed: completedCount,
+                      total: totalTasks,
+                    })
+                  }}
                 </p>
               </div>
             </div>
@@ -35,13 +42,18 @@
             <!-- Progress Overview -->
             <div class="mb-6">
               <!-- Segmented progress bar -->
-              <div class="w-full bg-base-200 rounded-full h-3 overflow-hidden flex">
+              <div class="bg-base-200 flex h-3 w-full overflow-hidden rounded-full">
                 <!-- Completed segment -->
                 <div
                   v-if="completedPercentage > 0"
                   class="bg-success-500 h-full transition-all duration-500 ease-out"
                   :style="{ width: `${completedPercentage}%` }"
-                  :title="t('company.tasks.completed', { count: completedCount, percentage: Math.round(completedPercentage) })"
+                  :title="
+                    t('company.tasks.completed', {
+                      count: completedCount,
+                      percentage: Math.round(completedPercentage),
+                    })
+                  "
                 ></div>
 
                 <!-- Running segment -->
@@ -49,7 +61,12 @@
                   v-if="runningPercentage > 0"
                   class="bg-warning-500 h-full transition-all duration-500 ease-out"
                   :style="{ width: `${runningPercentage}%` }"
-                  :title="t('company.tasks.running', { count: runningCount, percentage: Math.round(runningPercentage) })"
+                  :title="
+                    t('company.tasks.running', {
+                      count: runningCount,
+                      percentage: Math.round(runningPercentage),
+                    })
+                  "
                 ></div>
 
                 <!-- Error segment -->
@@ -57,15 +74,25 @@
                   v-if="errorPercentage > 0"
                   class="bg-error-500 h-full transition-all duration-500 ease-out"
                   :style="{ width: `${errorPercentage}%` }"
-                  :title="t('company.tasks.error', { count: errorCount, percentage: Math.round(errorPercentage) })"
+                  :title="
+                    t('company.tasks.error', {
+                      count: errorCount,
+                      percentage: Math.round(errorPercentage),
+                    })
+                  "
                 ></div>
 
                 <!-- Blocked segment -->
                 <div
                   v-if="blockedPercentage > 0"
-                  class="bg-slate-500 h-full transition-all duration-500 ease-out"
+                  class="h-full bg-slate-500 transition-all duration-500 ease-out"
                   :style="{ width: `${blockedPercentage}%` }"
-                  :title="t('company.tasks.blocked', { count: blockedCount, percentage: Math.round(blockedPercentage) })"
+                  :title="
+                    t('company.tasks.blocked', {
+                      count: blockedCount,
+                      percentage: Math.round(blockedPercentage),
+                    })
+                  "
                 ></div>
 
                 <!-- Pending segment -->
@@ -73,31 +100,36 @@
                   v-if="pendingPercentage > 0"
                   class="bg-base-200 h-full transition-all duration-500 ease-out"
                   :style="{ width: `${pendingPercentage}%` }"
-                  :title="t('company.tasks.pending', { count: pendingCount, percentage: Math.round(pendingPercentage) })"
+                  :title="
+                    t('company.tasks.pending', {
+                      count: pendingCount,
+                      percentage: Math.round(pendingPercentage),
+                    })
+                  "
                 ></div>
               </div>
 
               <!-- Status summary -->
-              <div class="flex items-center justify-between mt-3 text-xs text-secondary">
+              <div class="text-secondary mt-3 flex items-center justify-between text-xs">
                 <div class="flex items-center gap-4">
                   <span class="flex items-center gap-1.5">
-                    <div class="w-2 h-2 bg-success-500 rounded-full"></div>
+                    <div class="bg-success-500 h-2 w-2 rounded-full"></div>
                     {{ t('company.tasks.completedShort', { count: completedCount }) }}
                   </span>
                   <span v-if="runningCount > 0" class="flex items-center gap-1.5">
-                    <div class="w-2 h-2 bg-warning-500 rounded-full"></div>
+                    <div class="bg-warning-500 h-2 w-2 rounded-full"></div>
                     {{ t('company.tasks.runningShort', { count: runningCount }) }}
                   </span>
                   <span v-if="errorCount > 0" class="flex items-center gap-1.5">
-                    <div class="w-2 h-2 bg-error-500 rounded-full"></div>
+                    <div class="bg-error-500 h-2 w-2 rounded-full"></div>
                     {{ t('company.tasks.errorShort', { count: errorCount }) }}
                   </span>
                   <span v-if="pendingCount > 0" class="flex items-center gap-1.5">
-                    <div class="w-2 h-2 bg-secondary rounded-full"></div>
+                    <div class="bg-secondary h-2 w-2 rounded-full"></div>
                     {{ t('company.tasks.pendingShort', { count: pendingCount }) }}
                   </span>
                   <span v-if="blockedCount > 0" class="flex items-center gap-1.5">
-                    <div class="w-2 h-2 bg-slate-500 rounded-full"></div>
+                    <div class="h-2 w-2 rounded-full bg-slate-500"></div>
                     {{ t('company.tasks.blockedShort', { count: blockedCount }) }}
                   </span>
                 </div>
@@ -109,13 +141,13 @@
               <div
                 v-for="task in taskList"
                 :key="task.type"
-                class="flex items-center justify-between p-4 rounded-card border transition-all duration-300"
+                class="rounded-card flex items-center justify-between border p-4 transition-all duration-300"
                 :class="getTaskClass(task)"
               >
                 <!-- Task Info -->
                 <div class="flex items-center gap-3">
                   <div
-                    class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                    class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full"
                     :class="getIconContainerClass(task.status)"
                   >
                     <i v-if="task.status === 'running'" class="fas fa-spinner-third fa-spin"></i>
@@ -123,22 +155,22 @@
                   </div>
 
                   <div class="min-w-0 flex-1">
-                    <div class="flex items-center gap-2 mb-1">
-                      <h3 class="font-semibold text-sm">{{ task.name }}</h3>
+                    <div class="mb-1 flex items-center gap-2">
+                      <h3 class="text-sm font-semibold">{{ task.name }}</h3>
                       <Tag
                         :intent="getStatusIntent(task.status)"
                         :label="getStatusLabel(task.status)"
                         size="xs"
                       />
                     </div>
-                    <p class="text-xs text-secondary truncate">
+                    <p class="text-secondary truncate text-xs">
                       {{ task.description }}
                     </p>
 
                     <!-- Token information for admins -->
                     <div
                       v-if="hasAdminAccess && getTokenInfo(task.type)?.hasTokenData"
-                      class="mt-2 flex items-center gap-3 text-xs text-secondary"
+                      class="text-secondary mt-2 flex items-center gap-3 text-xs"
                     >
                       <span v-if="getTokenInfo(task.type)?.inputTokens">
                         <i class="fas fa-arrow-down text-info-500"></i>
@@ -156,7 +188,7 @@
 
                     <!-- Error message -->
                     <div v-if="task.error && task.status === 'error'" class="mt-2">
-                      <span class="text-xs text-error-500">{{ task.error }}</span>
+                      <span class="text-error-500 text-xs">{{ task.error }}</span>
                     </div>
                   </div>
                 </div>
@@ -178,10 +210,15 @@
             </div>
 
             <!-- Global Actions -->
-            <div v-if="hasErrorsOrPending" class="mt-6 pt-6 border-primary-stroke">
+            <div v-if="hasErrorsOrPending" class="border-primary-stroke mt-6 pt-6">
               <div class="flex items-center justify-between">
-                <div class="text-sm text-secondary">
-                  {{ t('company.tasks.canBeRestarted', 'Tasks can be restarted or have not been started yet') }}
+                <div class="text-secondary text-sm">
+                  {{
+                    t(
+                      'company.tasks.canBeRestarted',
+                      'Tasks can be restarted or have not been started yet',
+                    )
+                  }}
                 </div>
                 <Button
                   variant="secondary"

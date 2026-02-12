@@ -3,7 +3,7 @@
     <div>
       <!-- Header -->
       <div class="mb-8">
-        <div class="flex items-center justify-between mb-6">
+        <div class="mb-6 flex items-center justify-between">
           <div>
             <h1 class="text-3xl font-bold">
               {{ $t('admin.workflows.title', 'Workflow Management') }}
@@ -28,8 +28,8 @@
         </div>
 
         <!-- Status Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div class="bg-base-100 rounded-lg border border-primary-stroke p-4">
+        <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div class="bg-base-100 border-primary-stroke rounded-lg border p-4">
             <div class="flex items-center">
               <Tag variant="success" icon="fa fa-check" size="sm" />
               <span class="ml-3 text-sm font-medium"
@@ -37,7 +37,7 @@
               >
             </div>
           </div>
-          <div class="bg-base-100 rounded-lg border border-primary-stroke p-4">
+          <div class="bg-base-100 border-primary-stroke rounded-lg border p-4">
             <div class="flex items-center">
               <Tag variant="slate" icon="fa fa-times" size="sm" />
               <span class="ml-3 text-sm font-medium"
@@ -52,7 +52,7 @@
       <!-- Loading State -->
       <div v-if="loading && !workflows.length" class="flex justify-center py-16">
         <div class="text-center">
-          <i class="fa fa-spinner animate-spin text-4xl text-secondary mb-4"></i>
+          <i class="fa fa-spinner text-secondary mb-4 animate-spin text-4xl"></i>
           <p class="text-secondary">
             {{ $t('admin.workflows.loading', 'Loading workflows...') }}
           </p>
@@ -70,7 +70,7 @@
       />
 
       <!-- Workflow Cards Grid -->
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div v-else class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         <WorkflowCard
           v-for="workflow in workflows"
           :key="workflow.task_type"
@@ -83,7 +83,7 @@
       <!-- Success Toast -->
       <div
         v-if="showSuccessToast"
-        class="fixed bottom-4 right-4 bg-success text-white px-4 py-3 rounded-lg shadow-lg transition-all duration-300 z-50"
+        class="bg-success fixed right-4 bottom-4 z-50 rounded-lg px-4 py-3 text-white shadow-lg transition-all duration-300"
       >
         <div class="flex items-center">
           <i class="fa fa-check-circle mr-2"></i>
@@ -141,10 +141,7 @@ const loadWorkflows = async () => {
 }
 
 // Handle workflow updates
-const handleWorkflowUpdate = async (
-  taskType: string,
-  data: { api_key?: string | null },
-) => {
+const handleWorkflowUpdate = async (taskType: string, data: { api_key?: string | null }) => {
   try {
     updatingWorkflow.value = taskType
 

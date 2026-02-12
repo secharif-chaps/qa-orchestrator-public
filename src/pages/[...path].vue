@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center">
-    <div class="text-center max-w-md px-4">
+  <div class="flex min-h-screen items-center justify-center">
+    <div class="max-w-md px-4 text-center">
       <div class="mb-8">
-        <h1 class="text-6xl font-bold text-secondary">404</h1>
-        <h2 class="text-2xl font-semibold mt-4">
+        <h1 class="text-secondary text-6xl font-bold">404</h1>
+        <h2 class="mt-4 text-2xl font-semibold">
           {{ $t('errors.notFound.title', 'Page Not Found') }}
         </h2>
         <p class="text-secondary mt-2">
@@ -16,7 +16,7 @@
         </p>
       </div>
 
-      <div class="space-x-4 flex">
+      <div class="flex space-x-4">
         <Button
           :label="$t('errors.notFound.goHome', 'Go to Home')"
           variant="primary"
@@ -29,7 +29,7 @@
         />
       </div>
 
-      <div class="mt-8 text-sm text-secondary">
+      <div class="text-secondary mt-8 text-sm">
         <p>
           {{
             $t(

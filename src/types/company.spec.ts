@@ -8,12 +8,7 @@
  * Run: pnpm run type-check
  */
 
-import type {
-  SourcedValue,
-  Company,
-  TeamMember,
-  PressItem,
-} from './company'
+import type { SourcedValue, Company, TeamMember, PressItem } from './company'
 
 // =============================================================================
 // Test 1: Company interface matches API response
@@ -78,10 +73,16 @@ const mockApiResponse: Company = {
     digitalStrategy: {
       value: {
         overallStrategy: { value: 'Omnichannel approach', source: 'https://lvmh.com/digital' },
-        digitalTransformation: { value: 'Heavy AR/VR investment', source: 'https://lvmh.com/digital' },
+        digitalTransformation: {
+          value: 'Heavy AR/VR investment',
+          source: 'https://lvmh.com/digital',
+        },
         eCommerceCapabilities: { value: 'Full platform', source: 'https://lvmh.com/digital' },
         mobileStrategy: { value: 'Native apps', source: 'https://lvmh.com/digital' },
-        digitalMarketingApproach: { value: 'Influencer partnerships', source: 'https://lvmh.com/digital' },
+        digitalMarketingApproach: {
+          value: 'Influencer partnerships',
+          source: 'https://lvmh.com/digital',
+        },
       },
       source: 'https://lvmh.com/digital',
     },
@@ -89,9 +90,7 @@ const mockApiResponse: Company = {
       value: { services: [{ name: 'Virtual Try-On', description: 'AR-powered try-on' }] },
       source: 'https://lvmh.com/features',
     },
-    socialMediaAccounts: [
-      { platform: 'Instagram', url: 'https://instagram.com/lvmh' },
-    ],
+    socialMediaAccounts: [{ platform: 'Instagram', url: 'https://instagram.com/lvmh' }],
     loyaltyProgram: {
       value: 'VIP membership program',
       source: 'https://lvmh.com/vip',
@@ -115,15 +114,9 @@ const mockApiResponse: Company = {
     insights: 'Diverse product portfolio',
     customerType: { value: 'High-net-worth individuals', source: 'https://lvmh.com/customers' },
     marketingPositioning: { value: 'Premium luxury positioning', source: 'https://lvmh.com/brand' },
-    range: [
-      { value: 'Leather Goods Collection', source: 'https://lvmh.com/products' },
-    ],
-    partnerBrands: [
-      { value: 'Tiffany & Co.', source: 'https://lvmh.com/brands' },
-    ],
-    privateLabels: [
-      { value: 'Maison Francis Kurkdjian', source: 'https://lvmh.com/brands' },
-    ],
+    range: [{ value: 'Leather Goods Collection', source: 'https://lvmh.com/products' }],
+    partnerBrands: [{ value: 'Tiffany & Co.', source: 'https://lvmh.com/brands' }],
+    privateLabels: [{ value: 'Maison Francis Kurkdjian', source: 'https://lvmh.com/brands' }],
     categories: {
       Fashion: ['Clothing', 'Accessories', 'Footwear'],
     },
@@ -170,9 +163,7 @@ const mockApiResponse: Company = {
   },
   press: {
     insights: 'Significant press coverage',
-    articles: [
-      { value: 'Record Q4 earnings', source: 'https://reuters.com/article/lvmh' },
-    ],
+    articles: [{ value: 'Record Q4 earnings', source: 'https://reuters.com/article/lvmh' }],
     press_releases: [],
     media_mentions: [],
     awards_recognition: [
@@ -180,9 +171,7 @@ const mockApiResponse: Company = {
     ],
     product_launches: [],
     executive_interviews: [],
-    financial_news: [
-      { value: 'Strong Asian market growth', source: 'https://bloomberg.com/lvmh' },
-    ],
+    financial_news: [{ value: 'Strong Asian market growth', source: 'https://bloomberg.com/lvmh' }],
     partnership_announcements: [
       { value: 'Partnership with Apple for AR', source: 'https://techcrunch.com/lvmh-apple' },
     ],

@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-base-100 border border-primary-stroke rounded-card">
-    <div class="px-6 py-4 border-b border-primary-stroke">
+  <div class="bg-base-100 border-primary-stroke rounded-card border">
+    <div class="border-primary-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.language.title') }}</h2>
-      <p class="text-sm text-secondary mt-1">
+      <p class="text-secondary mt-1 text-sm">
         {{ $t('settings.appearance.language.description') }}
       </p>
     </div>

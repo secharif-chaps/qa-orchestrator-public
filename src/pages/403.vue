@@ -1,12 +1,12 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-base-300">
+  <div class="bg-base-300 flex min-h-screen items-center justify-center">
     <div class="text-center">
       <div class="mb-8">
-        <h1 class="text-6xl font-bold text-secondary">403</h1>
+        <h1 class="text-secondary text-6xl font-bold">403</h1>
 
         <!-- Token-specific error messages -->
         <div v-if="isTokenError">
-          <h2 class="text-2xl font-semibold mt-4">
+          <h2 class="mt-4 text-2xl font-semibold">
             {{ tokenErrorTitle }}
           </h2>
           <p class="text-secondary mt-2">
@@ -16,15 +16,15 @@
           <!-- Token status display -->
           <div
             v-if="errorModule"
-            class="mt-4 inline-flex items-center gap-2 bg-base-200 px-4 py-2 rounded-lg"
+            class="bg-base-200 mt-4 inline-flex items-center gap-2 rounded-lg px-4 py-2"
           >
             <i class="fa fa-coins text-secondary"></i>
             <span class="text-sm">
               <span class="font-medium capitalize">{{ errorModule }}</span> Module
-              <span v-if="reason === 'module_disabled'" class="text-red-600 ml-2"
+              <span v-if="reason === 'module_disabled'" class="ml-2 text-red-600"
                 >• {{ $t('errors.forbidden.token.status.disabled', 'Disabled') }}</span
               >
-              <span v-else-if="reason === 'insufficient_tokens'" class="text-red-600 ml-2"
+              <span v-else-if="reason === 'insufficient_tokens'" class="ml-2 text-red-600"
                 >• {{ $t('errors.forbidden.token.status.noTokens', 'No Tokens') }}</span
               >
             </span>
@@ -33,7 +33,7 @@
 
         <!-- Regular permission error -->
         <div v-else>
-          <h2 class="text-2xl font-semibold mt-4">
+          <h2 class="mt-4 text-2xl font-semibold">
             {{ $t('errors.forbidden.title', 'Access Forbidden') }}
           </h2>
           <p class="text-secondary mt-2">
@@ -55,7 +55,7 @@
         />
       </div>
 
-      <div class="mt-8 text-sm text-secondary">
+      <div class="text-secondary mt-8 text-sm">
         <p>
           {{
             $t(

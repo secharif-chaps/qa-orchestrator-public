@@ -1,16 +1,16 @@
 <template>
   <div class="flex flex-col gap-4">
     <!-- Company Header -->
-    <div class="flex gap-4 items-center justify-between">
+    <div class="flex items-center justify-between gap-4">
       <div class="flex items-center gap-4">
         <div
-          class="relative size-12 rounded-lg overflow-hidden bg-white ring-2 ring-primary-stroke flex-shrink-0"
+          class="ring-primary-stroke relative size-12 flex-shrink-0 overflow-hidden rounded-lg bg-white ring-2"
         >
           <img
             v-if="getCompanyDomain(company?.website)"
             :src="getLogoUrl(company?.website)"
             :alt="`${company?.name} logo`"
-            class="w-full h-full object-contain"
+            class="h-full w-full object-contain"
             @error="showFallbackIcon = true"
             v-show="!showFallbackIcon"
           />
@@ -20,12 +20,12 @@
             color="sage"
             icon="fa fa-building"
             size="lg"
-            class="w-full h-full rounded-none"
+            class="h-full w-full rounded-none"
           />
         </div>
         <div class="flex flex-col gap-1">
           <h1 class="text-2xl font-bold">{{ company?.name }}</h1>
-          <span v-if="company?.created_at" class="text-sm text-secondary">
+          <span v-if="company?.created_at" class="text-secondary text-sm">
             {{ t('company.createdAt') }} {{ formatFullDate(company.created_at) }}
           </span>
         </div>
@@ -116,14 +116,9 @@ const {
   data: company,
   error,
   status,
-} = useQuery(
-  companyByIdQuery,
-  () => ({ id: companyId.value, language: selectedLanguage.value }),
-  {
-    enabled: () =>
-      !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
-  },
-)
+} = useQuery(companyByIdQuery, () => ({ id: companyId.value, language: selectedLanguage.value }), {
+  enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
+})
 
 // Get company tasks
 const { data: tasks } = useQuery(companyTasksQuery, () => ({ companyId: companyId.value }), {
@@ -149,11 +144,11 @@ const { isLoading: isRefreshing } = useRefreshCompany()
 
 // Computed properties for refresh button
 const isOwner = computed(() => authStore.userId === company.value?.owner_id)
-const allTasksSucceeded = computed(() =>
-  tasks.value?.every(task => task.status === 'succeeded') ?? false
+const allTasksSucceeded = computed(
+  () => tasks.value?.every((task) => task.status === 'succeeded') ?? false,
 )
-const hasRunningTasks = computed(() =>
-  tasks.value?.some(task => task.status === 'running') ?? false
+const hasRunningTasks = computed(
+  () => tasks.value?.some((task) => task.status === 'running') ?? false,
 )
 const tokenBalance = computed(() => tokenBalanceData.value?.balance ?? 0)
 const hasEnoughTokens = computed(() => tokenBalance.value >= 35)

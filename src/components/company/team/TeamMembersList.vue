@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-4">
     <!-- Search and Filter Bar -->
-    <div class="flex flex-col sm:flex-row gap-4">
+    <div class="flex flex-col gap-4 sm:flex-row">
       <div class="flex-1">
         <Input
           id="team-search"
@@ -15,7 +15,7 @@
         <!-- Level Filter -->
         <select
           v-model="selectedLevel"
-          class="px-4 py-2 rounded-lg bg-base-200 border border-border text-secondary focus:outline-none focus:ring-2 focus:ring-primary/50"
+          class="bg-base-200 border-border text-secondary focus:ring-primary/50 rounded-lg border px-4 py-2 focus:ring-2 focus:outline-none"
         >
           <option value="">{{ $t('team.levels.all') }}</option>
           <option value="0">{{ $t('team.levels.ceo') }}</option>
@@ -25,7 +25,7 @@
         </select>
 
         <!-- View Mode Toggle -->
-        <div class="flex bg-base-200 rounded-lg p-1">
+        <div class="bg-base-200 flex rounded-lg p-1">
           <Button
             @click="viewMode = 'grid'"
             :variant="viewMode === 'grid' ? 'primary' : 'tertiary'"
@@ -49,7 +49,7 @@
     <!-- Team Members Grid/List -->
     <div v-if="filteredMembers.length > 0">
       <!-- Grid View -->
-      <div v-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div v-if="viewMode === 'grid'" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         <TeamMemberCard
           v-for="item in filteredMembers"
           :key="`${item.member.position}-${item.member.firstName}-${item.member.lastName}`"
@@ -73,7 +73,7 @@
 
     <!-- No Results -->
     <div v-else class="bg-base-100 rounded-lg p-8 text-center">
-      <div class="text-4xl text-secondary mb-3">
+      <div class="text-secondary mb-3 text-4xl">
         <i class="fa fa-search"></i>
       </div>
       <p class="text-secondary">

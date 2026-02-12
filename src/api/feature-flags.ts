@@ -18,9 +18,7 @@ import type {
 export const getOrganizationFeatureFlags = async (
   organizationId: string,
 ): Promise<FeatureFlagsResponse> => {
-  return apiClient.get<FeatureFlagsResponse>(
-    `/organizations/${organizationId}/feature-flags`,
-  )
+  return apiClient.get<FeatureFlagsResponse>(`/organizations/${organizationId}/feature-flags`)
 }
 
 /**

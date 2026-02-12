@@ -1,18 +1,18 @@
 <template>
-  <tr class="border-b border-primary-stroke last:border-b-0 hover:bg-base-200/50 transition-colors">
+  <tr class="border-primary-stroke hover:bg-base-200/50 border-b transition-colors last:border-b-0">
     <!-- Rank -->
     <td class="px-4 py-3 text-center">
       <!-- Medal style for top 3 -->
       <div v-if="isTopThree" class="relative inline-flex">
         <span
-          class="inline-flex items-center justify-center w-9 h-9 rounded-full text-sm font-bold shadow-md"
+          class="inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold shadow-md"
           :class="medalClasses"
         >
           {{ user.rank }}
         </span>
         <!-- Trophy icon floating bottom-right -->
         <span
-          class="absolute -bottom-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-[10px] shadow-sm"
+          class="absolute -right-2 -bottom-2 flex h-5 w-5 items-center justify-center rounded-full text-[10px] shadow-sm"
           :class="trophyClasses"
         >
           <i class="fa fa-trophy"></i>
@@ -21,7 +21,7 @@
       <!-- Regular rank for others -->
       <span
         v-else
-        class="inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-medium bg-base-200 text-secondary"
+        class="bg-base-200 text-secondary inline-flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium"
       >
         {{ user.rank }}
       </span>
@@ -32,7 +32,7 @@
       <div class="flex items-center gap-3">
         <!-- Avatar -->
         <div
-          class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary"
+          class="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium"
         >
           {{ user.initials }}
         </div>
@@ -40,14 +40,16 @@
         <!-- Name and email -->
         <div>
           <div class="font-medium">{{ user.fullName }}</div>
-          <div class="text-sm text-secondary">{{ user.email }}</div>
+          <div class="text-secondary text-sm">{{ user.email }}</div>
         </div>
       </div>
     </td>
 
     <!-- Credits consumed as badge -->
     <td class="px-4 py-3 text-right">
-      <span class="inline-flex items-center px-3 py-1 rounded-full bg-primary-light text-primary text-sm font-medium">
+      <span
+        class="bg-primary-light text-primary inline-flex items-center rounded-full px-3 py-1 text-sm font-medium"
+      >
         {{ formattedCredits }} {{ $t('credits.usedCredits') }}
       </span>
     </td>

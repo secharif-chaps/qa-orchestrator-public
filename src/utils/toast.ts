@@ -20,7 +20,11 @@ const defaultOptions: ToastOptions & { duration: number; position: string } = {
   action: undefined,
 }
 
-const createToastElement = (message: string, type: ToastType, options: typeof defaultOptions): HTMLElement => {
+const createToastElement = (
+  message: string,
+  type: ToastType,
+  options: typeof defaultOptions,
+): HTMLElement => {
   const toast = document.createElement('div')
   toast.className = `
     fixed z-50 max-w-sm w-full p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full
@@ -79,7 +83,7 @@ const getToastStyles = (type: ToastType): string => {
     success: 'bg-green-50 border border-green-200 text-green-800',
     error: 'bg-red-50 border border-red-200 text-red-800',
     warning: 'bg-yellow-50 border border-yellow-200 text-yellow-800',
-    info: 'bg-blue-50 border border-blue-200 text-blue-800'
+    info: 'bg-blue-50 border border-blue-200 text-blue-800',
   }
   return styles[type]
 }
@@ -89,7 +93,7 @@ const getToastIcon = (type: ToastType): string => {
     success: 'fa fa-check-circle',
     error: 'fa fa-exclamation-circle',
     warning: 'fa fa-exclamation-triangle',
-    info: 'fa fa-info-circle'
+    info: 'fa fa-info-circle',
   }
   return icons[type]
 }
@@ -99,14 +103,14 @@ const getPositionStyles = (position: string): string => {
     'top-right': 'top-4 right-4',
     'top-left': 'top-4 left-4',
     'bottom-right': 'bottom-4 right-4',
-    'bottom-left': 'bottom-4 left-4'
+    'bottom-left': 'bottom-4 left-4',
   }
   return positions[position as keyof typeof positions] || positions['top-right']
 }
 
 const showToast = (toast: HTMLElement): void => {
   document.body.appendChild(toast)
-  
+
   // Trigger animation
   setTimeout(() => {
     toast.classList.remove('translate-x-full')
@@ -117,7 +121,7 @@ const showToast = (toast: HTMLElement): void => {
 const hideToast = (toast: HTMLElement): void => {
   toast.classList.remove('translate-x-0')
   toast.classList.add('translate-x-full')
-  
+
   setTimeout(() => {
     if (toast.parentNode) {
       toast.parentNode.removeChild(toast)
@@ -128,9 +132,9 @@ const hideToast = (toast: HTMLElement): void => {
 const createToast = (message: string, type: ToastType, options: ToastOptions = {}): void => {
   const finalOptions = { ...defaultOptions, ...options }
   const toast = createToastElement(message, type, finalOptions)
-  
+
   showToast(toast)
-  
+
   // Auto-hide after duration
   setTimeout(() => {
     hideToast(toast)

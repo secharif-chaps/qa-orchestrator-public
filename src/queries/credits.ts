@@ -29,8 +29,7 @@ const serializeFilters = <T extends object>(filters: T): string => {
  */
 export const CREDIT_QUERY_KEYS = {
   root: ['credits'] as const,
-  stats: (orgId: string) =>
-    [...CREDIT_QUERY_KEYS.root, 'stats', orgId] as const,
+  stats: (orgId: string) => [...CREDIT_QUERY_KEYS.root, 'stats', orgId] as const,
   topUsers: (orgId: string, filters: TopCreditUsersFilters) =>
     [...CREDIT_QUERY_KEYS.root, 'top-users', orgId, serializeFilters(filters)] as const,
   dailyUsage: (orgId: string, filters: DailyCreditUsageFilters) =>
@@ -51,17 +50,15 @@ export const CREDIT_QUERY_KEYS = {
  *   () => ({ orgId: organizationId })
  * )
  */
-export const creditStatsQuery = defineQueryOptions(
-  ({ orgId }: { orgId: string }) => ({
-    key: CREDIT_QUERY_KEYS.stats(orgId),
-    query: () => {
-      if (!orgId || orgId.trim() === '') {
-        throw new Error('Invalid organization ID')
-      }
-      return getCreditStats(orgId)
-    },
-  })
-)
+export const creditStatsQuery = defineQueryOptions(({ orgId }: { orgId: string }) => ({
+  key: CREDIT_QUERY_KEYS.stats(orgId),
+  query: () => {
+    if (!orgId || orgId.trim() === '') {
+      throw new Error('Invalid organization ID')
+    }
+    return getCreditStats(orgId)
+  },
+}))
 
 // ============================================================================
 // Top Credit Users Query
@@ -87,7 +84,7 @@ export const topCreditUsersQuery = defineQueryOptions(
       }
       return getTopCreditUsers(orgId, filters)
     },
-  })
+  }),
 )
 
 // ============================================================================
@@ -114,5 +111,5 @@ export const dailyCreditUsageQuery = defineQueryOptions(
       }
       return getDailyCreditUsage(orgId, filters)
     },
-  })
+  }),
 )

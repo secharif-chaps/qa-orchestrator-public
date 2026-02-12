@@ -45,7 +45,12 @@ const ROLES: Record<RoleId, Role> = {
     id: 'manager',
     name: 'Manager',
     description: 'Writer permissions plus team management',
-    permissions: ['organization.read', 'organization.write', 'organization.manage', 'company.create'],
+    permissions: [
+      'organization.read',
+      'organization.write',
+      'organization.manage',
+      'company.create',
+    ],
     color: 'secondary',
     icon: 'fa-users-cog',
   },

@@ -3,7 +3,7 @@
     <!-- Trigger Button -->
     <button
       type="button"
-      class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all bg-sage-700 text-sage-200 hover:bg-sage-600 disabled:opacity-50 disabled:cursor-not-allowed"
+      class="bg-sage-700 text-sage-200 hover:bg-sage-600 inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
       :disabled="disabled"
       @click="toggleDropdown"
     >
@@ -23,19 +23,21 @@
     >
       <div
         v-if="isOpen"
-        class="absolute z-[9999] mt-1 w-[145px] bg-sage-800 rounded-xl shadow-lg border border-sage-700 overflow-hidden"
+        class="bg-sage-800 border-sage-700 absolute z-[9999] mt-1 w-[145px] overflow-hidden rounded-xl border shadow-lg"
         :class="dropdownPosition"
       >
         <!-- Search Input -->
-        <div class="p-2 border-b border-sage-700">
+        <div class="border-sage-700 border-b p-2">
           <div class="relative">
-            <i class="fa fa-search absolute left-2 top-1/2 -translate-y-1/2 text-sage-400 text-[10px]"></i>
+            <i
+              class="fa fa-search text-sage-400 absolute top-1/2 left-2 -translate-y-1/2 text-[10px]"
+            ></i>
             <input
               ref="searchInputRef"
               v-model="searchQuery"
               type="text"
               :placeholder="$t('sidebar.chapse.searchCompanies', 'Search companies...')"
-              class="w-full pl-7 pr-2 py-1.5 bg-sage-900 rounded-lg text-xs text-sage-100 placeholder-sage-500 focus:outline-none focus:ring-2 focus:ring-primary/50"
+              class="bg-sage-900 text-sage-100 placeholder-sage-500 focus:ring-primary/50 w-full rounded-lg py-1.5 pr-2 pl-7 text-xs focus:ring-2 focus:outline-none"
               @input="handleSearch"
             />
           </div>
@@ -51,9 +53,9 @@
           <!-- Empty State -->
           <div
             v-else-if="searchQuery && filteredCompanies.length === 0"
-            class="py-4 px-2 text-center"
+            class="px-2 py-4 text-center"
           >
-            <p class="text-xs text-sage-400">
+            <p class="text-sage-400 text-xs">
               {{ $t('sidebar.chapse.noCompaniesFound', 'No companies found') }}
             </p>
           </div>
@@ -61,9 +63,9 @@
           <!-- Initial State -->
           <div
             v-else-if="!searchQuery && filteredCompanies.length === 0"
-            class="py-4 px-2 text-center"
+            class="px-2 py-4 text-center"
           >
-            <p class="text-xs text-sage-400">
+            <p class="text-sage-400 text-xs">
               {{ $t('sidebar.chapse.typeToSearch', 'Type to search companies') }}
             </p>
           </div>
@@ -74,30 +76,27 @@
               v-for="company in filteredCompanies"
               :key="company.id"
               type="button"
-              class="w-full flex items-center gap-2 px-2 py-1.5 hover:bg-sage-700 transition-colors text-left"
-              :class="{ 'opacity-50 cursor-not-allowed': isCompanyInContext(company.id) }"
+              class="hover:bg-sage-700 flex w-full items-center gap-2 px-2 py-1.5 text-left transition-colors"
+              :class="{ 'cursor-not-allowed opacity-50': isCompanyInContext(company.id) }"
               :disabled="isCompanyInContext(company.id)"
               @click="selectCompany(company)"
             >
               <!-- Company Icon -->
               <div
-                class="flex-shrink-0 w-6 h-6 rounded-full bg-sage-600 flex items-center justify-center"
+                class="bg-sage-600 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full"
               >
                 <i class="fa fa-building text-sage-300 text-[10px]"></i>
               </div>
 
               <!-- Company Info -->
-              <div class="flex-1 min-w-0">
-                <p class="text-xs font-medium text-sage-100 truncate">
+              <div class="min-w-0 flex-1">
+                <p class="text-sage-100 truncate text-xs font-medium">
                   {{ company.name }}
                 </p>
               </div>
 
               <!-- Already Added Indicator -->
-              <i
-                v-if="isCompanyInContext(company.id)"
-                class="fa fa-check text-primary text-xs"
-              ></i>
+              <i v-if="isCompanyInContext(company.id)" class="fa fa-check text-primary text-xs"></i>
             </button>
           </div>
         </div>

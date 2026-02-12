@@ -6,7 +6,7 @@
         {{ $t('credits.dailyUsage.title', 'Consommation quotidienne') }}
       </h3>
 
-      <div class="flex items-center gap-3 flex-wrap">
+      <div class="flex flex-wrap items-center gap-3">
         <!-- Module filter -->
         <CreditModuleFilter v-model="selectedModule" />
 
@@ -18,16 +18,16 @@
     <!-- Loading state -->
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">{{ $t('common.loading', 'Chargement...') }}</p>
+        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
+        <p class="text-secondary text-sm">{{ $t('common.loading', 'Chargement...') }}</p>
       </div>
     </div>
 
     <!-- Empty state -->
     <div v-else-if="!hasData" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-chart-bar text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">
+        <i class="fa fa-chart-bar text-secondary mb-2 text-2xl"></i>
+        <p class="text-secondary text-sm">
           {{ $t('credits.dailyUsage.noData', 'Aucune consommation pour cette période') }}
         </p>
       </div>
@@ -62,6 +62,6 @@ const selectedModule = defineModel<string>('module', { default: 'all' })
 const selectedPeriod = defineModel<string>('period', { default: '30d' })
 
 const hasData = computed(() => {
-  return props.dailyUsage.some(item => item.creditsConsumed > 0)
+  return props.dailyUsage.some((item) => item.creditsConsumed > 0)
 })
 </script>

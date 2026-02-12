@@ -2,10 +2,10 @@
   <div class="flex flex-col gap-4">
     <!-- Customer Type -->
     <div v-if="getSourcedValue(company?.products?.customerType)">
-      <h4 class="font-medium text-secondary mb-2 flex items-center gap-2">
+      <h4 class="text-secondary mb-2 flex items-center gap-2 font-medium">
         {{ $t('profile.sections.products.customerType', 'Customer Type') }}
       </h4>
-      <p class="text-sm text-secondary">
+      <p class="text-secondary text-sm">
         {{ getSourcedValue(company?.products?.customerType) }}
         <Source :sourced-value="company?.products?.customerType" />
       </p>
@@ -13,18 +13,17 @@
 
     <!-- Marketing Positioning -->
     <div v-if="getSourcedValue(company?.products?.marketingPositioning)">
-      <h4 class="font-medium text-secondary mb-2 flex items-center gap-2">
-
+      <h4 class="text-secondary mb-2 flex items-center gap-2 font-medium">
         {{ $t('profile.sections.products.marketingPositioning', 'Marketing Positioning') }}
       </h4>
-      <p class="text-sm text-secondary">
+      <p class="text-secondary text-sm">
         {{ getSourcedValue(company?.products?.marketingPositioning) }}
         <Source :sourced-value="company?.products?.marketingPositioning" />
       </p>
     </div>
 
     <!-- No data message -->
-    <div v-if="!hasAnyProductData" class="text-secondary text-center py-4">
+    <div v-if="!hasAnyProductData" class="text-secondary py-4 text-center">
       {{ $t('common.noData') }}
     </div>
 

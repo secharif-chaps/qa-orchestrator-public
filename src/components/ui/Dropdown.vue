@@ -22,7 +22,7 @@
         <div
           v-if="isOpen"
           ref="dropdownRef"
-          class="fixed z-50 rounded-lg border border-primary-stroke bg-base-100 shadow-shadow-3 overflow-hidden"
+          class="border-primary-stroke bg-base-100 shadow-shadow-3 fixed z-50 overflow-hidden rounded-lg border"
           :class="widthClass"
           :style="dropdownStyle"
         >

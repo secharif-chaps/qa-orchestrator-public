@@ -7,6 +7,7 @@
 ### Page vs Component Responsibilities
 
 **Pages (`src/pages/*.vue`)** should:
+
 - Handle data fetching (queries, mutations)
 - Manage page-level state
 - Define layout structure
@@ -14,6 +15,7 @@
 - Stay focused and readable (aim for < 200 lines, but complex logic may require more)
 
 **Components** should:
+
 - Focus on one thing (single responsibility)
 - Be small and readable (< 200 lines)
 - Receive data via props, emit events
@@ -49,6 +51,7 @@
    - **Document them immediately** after creation
 
 5. **Component hierarchy example** (User Management page):
+
    ```
    pages/admin/users.vue (data + layout)
    ├── components/admin/UserFilters.vue (search + filters)
@@ -127,6 +130,7 @@
 ### Exceptions (When Margins ARE Allowed)
 
 Margins are ONLY allowed for:
+
 - **Internal component spacing** (e.g., spacing between heading and paragraph within a component)
 - **Micro-spacing** within a single UI element (e.g., icon margin in a button)
 - **Responsive adjustments** that can't be achieved with gap
@@ -354,6 +358,7 @@ When creating custom dropdowns (filters, sorts, selects), create a **generic sty
 **Approach**: Styled component with default styling and customization slots (NOT headless)
 
 **Key features**:
+
 - Default styling that matches design system
 - Open/close state management
 - Click-outside handling
@@ -387,6 +392,7 @@ When creating custom dropdowns (filters, sorts, selects), create a **generic sty
 ```
 
 **When to create**:
+
 - Custom filter dropdowns (workspace filter, sort options)
 - Context menus (right-click actions)
 - Action menus (more options button)
@@ -500,19 +506,19 @@ Follow this structure for consistent card design:
 ```vue
 <template>
   <div
-    class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 hover:shadow-shadow-2 transition-all duration-300 overflow-hidden"
+    class="hover:shadow-shadow-2 overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 dark:border-gray-700 dark:bg-gray-800"
   >
     <!-- Header with Avatar and Title -->
     <div class="p-6 pb-4">
-      <div class="flex items-start space-x-3 mb-4">
+      <div class="mb-4 flex items-start space-x-3">
         <!-- Avatar -->
-        <div class="w-10 h-10 rounded-full bg-sage-600 text-white flex items-center justify-center">
+        <div class="bg-sage-600 flex h-10 w-10 items-center justify-center rounded-full text-white">
           <i class="fa-solid fa-icon text-sm"></i>
         </div>
 
         <!-- Title and Secondary Text -->
         <div class="flex-1">
-          <h3 class="font-semibold text-base text-gray-900 dark:text-white mb-1">
+          <h3 class="mb-1 text-base font-semibold text-gray-900 dark:text-white">
             Title goes here
           </h3>
           <p class="text-sm text-gray-600 dark:text-gray-400">Secondary text</p>
@@ -524,11 +530,11 @@ Follow this structure for consistent card design:
     </div>
 
     <!-- Visual Background Area (Optional) -->
-    <div class="relative h-32 mx-6 mb-4 rounded-xl overflow-hidden">
-      <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-almond-200 to-sage-300">
+    <div class="relative mx-6 mb-4 h-32 overflow-hidden rounded-xl">
+      <div class="from-almond-200 to-sage-300 absolute inset-0 rounded-xl bg-gradient-to-br">
         <!-- Geometric Pattern Overlay -->
         <div class="absolute inset-0 opacity-20">
-          <svg class="w-full h-full" viewBox="0 0 200 120" fill="none">
+          <svg class="h-full w-full" viewBox="0 0 200 120" fill="none">
             <circle cx="160" cy="30" r="25" fill="#5D7374" />
             <rect x="20" y="60" width="40" height="40" rx="8" fill="#DCEFE3" />
             <path d="M100 20 L140 40 L120 80 L80 80 Z" fill="#EFC9F3" opacity="0.6" />
@@ -538,14 +544,14 @@ Follow this structure for consistent card design:
     </div>
 
     <!-- Description -->
-    <div class="px-6 mb-6">
-      <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+    <div class="mb-6 px-6">
+      <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
         Description text goes here
       </p>
     </div>
 
     <!-- Actions Footer -->
-    <div class="px-6 pb-6 flex items-center justify-between">
+    <div class="flex items-center justify-between px-6 pb-6">
       <div class="flex space-x-2">
         <Button variant="secondary" size="sm" label="Action" icon="fa-solid fa-external-link" />
       </div>
@@ -553,12 +559,12 @@ Follow this structure for consistent card design:
       <!-- Secondary Actions -->
       <div class="flex items-center space-x-2">
         <button
-          class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+          class="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
         >
           <i class="fa-solid fa-share-nodes text-sm"></i>
         </button>
         <button
-          class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-rose-500 hover:bg-gray-100 transition-colors"
+          class="flex h-8 w-8 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-rose-500"
         >
           <i class="fa-regular fa-heart text-sm"></i>
         </button>
@@ -582,7 +588,7 @@ Follow this structure for consistent card design:
 Use responsive grid patterns for card collections:
 
 ```vue
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
   <!-- Cards go here -->
 </div>
 ```

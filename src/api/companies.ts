@@ -112,7 +112,9 @@ export const refreshCompany = async (companyId: string) => {
   return response
 }
 
-export const validateCSV = async (request: CSVValidationRequest): Promise<CSVValidationResponse> => {
+export const validateCSV = async (
+  request: CSVValidationRequest,
+): Promise<CSVValidationResponse> => {
   const response = await apiClient.post<CSVValidationResponse>('/companies/csv/validate', request)
   return response
 }

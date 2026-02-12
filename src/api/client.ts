@@ -163,8 +163,7 @@ class InsufficientTokensError extends Error {
     super(message)
     this.name = 'InsufficientTokensError'
     // Support both old (current_tokens) and new (current_balance) field names
-    this.currentBalance =
-      (data.current_balance as number) ?? (data.current_tokens as number) ?? 0
+    this.currentBalance = (data.current_balance as number) ?? (data.current_tokens as number) ?? 0
     this.requiredTokens = (data.required_tokens as number) ?? 1
   }
 

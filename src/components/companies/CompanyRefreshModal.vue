@@ -12,19 +12,21 @@
           {{ t('company.refresh.subtitle', { name: company?.name ?? '' }) }}
         </p>
 
-        <p class="text-sm text-secondary">
+        <p class="text-secondary text-sm">
           {{ t('company.refresh.warning.message') }}
         </p>
 
         <!-- Token Consumption Notice with remaining tokens badge -->
-        <div class="bg-warning-light text-warning-light-content border border-warning-stroke rounded-lg p-4">
+        <div
+          class="bg-warning-light text-warning-light-content border-warning-stroke rounded-lg border p-4"
+        >
           <div class="flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <i class="fa fa-warning text-xl"></i>
               <div class="font-medium">{{ t('company.refresh.consumptionNotice') }}</div>
             </div>
             <span
-              class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white rounded-full text-sm font-medium"
+              class="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-sm font-medium"
               :class="remainingTokensColor"
             >
               <i class="fa fa-coins text-xs"></i>

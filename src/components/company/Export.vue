@@ -1,6 +1,11 @@
 <template>
   <div>
-    <Button variant="tertiary" icon="fa fa-download" :label="$t('company.export.button', 'Export')" @click="showModal = true" />
+    <Button
+      variant="tertiary"
+      icon="fa fa-download"
+      :label="$t('company.export.button', 'Export')"
+      @click="showModal = true"
+    />
 
     <ExportModal
       v-if="company"

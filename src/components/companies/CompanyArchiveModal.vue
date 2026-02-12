@@ -11,13 +11,13 @@
     </template>
 
     <div v-if="companyToArchive" class="flex flex-col gap-4">
-      <p class="text-sm text-secondary">
+      <p class="text-secondary text-sm">
         {{ t('company.archive.warning.message') }}
       </p>
 
       <!-- Company Details -->
       <div class="bg-base-200 rounded-lg p-4">
-        <h4 class="font-medium text-base mb-3">
+        <h4 class="mb-3 text-base font-medium">
           {{ t('company.archive.details') }}
         </h4>
         <div class="flex flex-col gap-2 text-sm">

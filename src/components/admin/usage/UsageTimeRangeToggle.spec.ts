@@ -31,7 +31,10 @@ vi.mock('@owlint/feathers-vue', () => ({
         // Simulate toggle click for testing
       },
     },
-    setup(props: { modelValue: string }, { emit }: { emit: (event: string, value: unknown) => void }) {
+    setup(
+      props: { modelValue: string },
+      { emit }: { emit: (event: string, value: unknown) => void },
+    ) {
       return {
         handleClick: () => {
           // Cycles through options when clicked

@@ -109,7 +109,7 @@ export interface DailyCreditUsageFilters {
  * Colors match the module badge colors in the appbar.
  */
 export const MODULE_CHART_COLORS: Record<ModuleName, string> = {
-  screen: '#6366f1',   // Indigo (matching module badge)
-  target: '#f43f5e',   // Rose/Cherry (matching module badge)
-  explore: '#8BAF9C',  // Sage green (matching module badge)
+  screen: '#6366f1', // Indigo (matching module badge)
+  target: '#f43f5e', // Rose/Cherry (matching module badge)
+  explore: '#8BAF9C', // Sage green (matching module badge)
 }

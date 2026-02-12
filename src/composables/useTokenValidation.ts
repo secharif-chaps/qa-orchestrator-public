@@ -99,7 +99,7 @@ export function useTokenValidation(organizationId: string) {
    */
   function getInsufficientTokensMessage(
     module: ModuleName,
-    action: string = 'create_company'
+    action: string = 'create_company',
   ): InsufficientTokensError | null {
     const tokenCost = ACTION_TOKEN_COSTS[action] ?? TOKENS_PER_COMPANY
     const moduleEnabled = isModuleEnabled(module)
@@ -142,7 +142,9 @@ export function useTokenValidation(organizationId: string) {
       isLoading: computed(() => globalTokens.isLoading.value || isLoadingModules.value),
       error: globalTokens.error,
       hasAnyTokens: computed(() => globalTokens.balance.value > 0),
-      canUseModule: computed(() => moduleEnabled.value && globalTokens.balance.value >= TOKENS_PER_COMPANY),
+      canUseModule: computed(
+        () => moduleEnabled.value && globalTokens.balance.value >= TOKENS_PER_COMPANY,
+      ),
       companyEquivalent: globalTokens.companyEquivalent,
     }
   }

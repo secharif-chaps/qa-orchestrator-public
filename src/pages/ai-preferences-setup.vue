@@ -1,8 +1,8 @@
 <template>
-  <div class="max-w-4xl mx-auto py-8 px-4">
+  <div class="mx-auto max-w-4xl px-4 py-8">
     <!-- Header -->
-    <div class="text-center mb-8">
-      <div class="flex justify-center mb-6">
+    <div class="mb-8 text-center">
+      <div class="mb-6 flex justify-center">
         <img
           src="@/assets/chapse/head.svg"
           alt="Chapse Assistant"
@@ -10,16 +10,16 @@
           loading="lazy"
         />
       </div>
-      <h1 class="text-3xl font-bold text-primary mb-3">
+      <h1 class="text-primary mb-3 text-3xl font-bold">
         {{ $t('aiPreferences.setup.title') }}
       </h1>
-      <p class="text-base text-secondary max-w-2xl mx-auto">
+      <p class="text-secondary mx-auto max-w-2xl text-base">
         {{ $t('aiPreferences.setup.description') }}
       </p>
     </div>
 
     <!-- Setup Form -->
-    <div class="bg-base-200 rounded-card border border-primary-stroke p-8 shadow-shadow-2">
+    <div class="bg-base-200 rounded-card border-primary-stroke shadow-shadow-2 border p-8">
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <!-- Role Field -->
         <Input
@@ -43,8 +43,8 @@
             v-model="form.goals_text"
             :placeholder="$t('aiPreferences.setup.fields.goals.placeholder')"
             :class="[
-              'w-full px-4 py-3 border rounded-lg transition-all duration-200',
-              'focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-200',
+              'w-full rounded-lg border px-4 py-3 transition-all duration-200',
+              'focus:ring-primary-200 focus:border-primary-200 focus:ring-2 focus:outline-none',
               'dark:focus:ring-primary-700 dark:focus:border-primary-700',
               'bg-base-100 border-primary-stroke placeholder:text-secondary/60',
               'dark:placeholder:text-sage-300 resize-none',
@@ -54,17 +54,15 @@
             required
             maxlength="2000"
           ></textarea>
-          <div class="flex justify-between items-center">
-            <div v-if="errors.goals_text" class="flex items-center gap-2 text-sm text-warning">
+          <div class="flex items-center justify-between">
+            <div v-if="errors.goals_text" class="text-warning flex items-center gap-2 text-sm">
               <i class="fa fa-exclamation-circle text-xs"></i>
               <span>{{ errors.goals_text }}</span>
             </div>
-            <div v-else class="text-xs text-secondary">
+            <div v-else class="text-secondary text-xs">
               {{ $t('aiPreferences.setup.fields.goals.helper') }}
             </div>
-            <div class="text-xs text-secondary">
-              {{ form.goals_text.length }}/2000
-            </div>
+            <div class="text-secondary text-xs">{{ form.goals_text.length }}/2000</div>
           </div>
         </div>
 
@@ -79,8 +77,8 @@
             v-model="form.desired_output_text"
             :placeholder="$t('aiPreferences.setup.fields.desiredOutput.placeholder')"
             :class="[
-              'w-full px-4 py-3 border rounded-lg transition-all duration-200',
-              'focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-200',
+              'w-full rounded-lg border px-4 py-3 transition-all duration-200',
+              'focus:ring-primary-200 focus:border-primary-200 focus:ring-2 focus:outline-none',
               'dark:focus:ring-primary-700 dark:focus:border-primary-700',
               'bg-base-100 border-primary-stroke placeholder:text-secondary/60',
               'dark:placeholder:text-sage-300 resize-none',
@@ -92,20 +90,18 @@
             required
             maxlength="2000"
           ></textarea>
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div
               v-if="errors.desired_output_text"
-              class="flex items-center gap-2 text-sm text-warning"
+              class="text-warning flex items-center gap-2 text-sm"
             >
               <i class="fa fa-exclamation-circle text-xs"></i>
               <span>{{ errors.desired_output_text }}</span>
             </div>
-            <div v-else class="text-xs text-secondary">
+            <div v-else class="text-secondary text-xs">
               {{ $t('aiPreferences.setup.fields.desiredOutput.helper') }}
             </div>
-            <div class="text-xs text-secondary">
-              {{ form.desired_output_text.length }}/2000
-            </div>
+            <div class="text-secondary text-xs">{{ form.desired_output_text.length }}/2000</div>
           </div>
         </div>
 
@@ -113,23 +109,23 @@
         <div class="space-y-2">
           <label for="documentation" class="block text-sm font-medium">
             {{ $t('aiPreferences.setup.fields.documentation.label') }}
-            <span class="text-sm font-normal text-secondary ml-2">({{
-              $t('aiPreferences.setup.optional')
-            }})</span>
+            <span class="text-secondary ml-2 text-sm font-normal"
+              >({{ $t('aiPreferences.setup.optional') }})</span
+            >
           </label>
           <textarea
             id="documentation"
             v-model="form.documentation_text"
             :placeholder="$t('aiPreferences.setup.fields.documentation.placeholder')"
-            class="w-full px-4 py-3 border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:border-primary-200 dark:focus:ring-primary-700 dark:focus:border-primary-700 bg-base-100 border-primary-stroke placeholder:text-secondary/60 dark:placeholder:text-sage-300 resize-none"
+            class="focus:ring-primary-200 focus:border-primary-200 dark:focus:ring-primary-700 dark:focus:border-primary-700 bg-base-100 border-primary-stroke placeholder:text-secondary/60 dark:placeholder:text-sage-300 w-full resize-none rounded-lg border px-4 py-3 transition-all duration-200 focus:ring-2 focus:outline-none"
             rows="4"
             maxlength="5000"
           ></textarea>
-          <div class="flex justify-between items-center">
-            <div class="text-xs text-secondary">
+          <div class="flex items-center justify-between">
+            <div class="text-secondary text-xs">
               {{ $t('aiPreferences.setup.fields.documentation.helper') }}
             </div>
-            <div class="text-xs text-secondary">
+            <div class="text-secondary text-xs">
               {{ form.documentation_text?.length || 0 }}/5000
             </div>
           </div>
@@ -173,26 +169,26 @@
     </div>
 
     <!-- Help Section -->
-    <div class="mt-8 bg-info-light border border-info-stroke rounded-lg p-6">
+    <div class="bg-info-light border-info-stroke mt-8 rounded-lg border p-6">
       <div class="flex gap-4">
         <div class="flex-shrink-0">
-          <i class="fa fa-lightbulb text-2xl text-info-light-content"></i>
+          <i class="fa fa-lightbulb text-info-light-content text-2xl"></i>
         </div>
         <div>
-          <h3 class="font-semibold text-base text-info-light-content mb-2">
+          <h3 class="text-info-light-content mb-2 text-base font-semibold">
             {{ $t('aiPreferences.setup.help.title') }}
           </h3>
-          <ul class="space-y-2 text-sm text-info-light-content">
+          <ul class="text-info-light-content space-y-2 text-sm">
             <li class="flex items-start gap-2">
-              <i class="fa fa-check text-xs mt-1"></i>
+              <i class="fa fa-check mt-1 text-xs"></i>
               <span>{{ $t('aiPreferences.setup.help.tip1') }}</span>
             </li>
             <li class="flex items-start gap-2">
-              <i class="fa fa-check text-xs mt-1"></i>
+              <i class="fa fa-check mt-1 text-xs"></i>
               <span>{{ $t('aiPreferences.setup.help.tip2') }}</span>
             </li>
             <li class="flex items-start gap-2">
-              <i class="fa fa-check text-xs mt-1"></i>
+              <i class="fa fa-check mt-1 text-xs"></i>
               <span>{{ $t('aiPreferences.setup.help.tip3') }}</span>
             </li>
           </ul>
@@ -307,8 +303,7 @@ async function handleSubmit() {
     if (error.status === 401) {
       errorMessage.value = t('aiPreferences.settings.messages.authError')
     } else {
-      errorMessage.value =
-        error.message || t('aiPreferences.setup.error.message')
+      errorMessage.value = error.message || t('aiPreferences.setup.error.message')
     }
   } finally {
     isSaving.value = false

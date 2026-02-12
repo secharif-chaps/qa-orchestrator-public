@@ -28,8 +28,8 @@
       />
 
       <!-- Team Members List -->
-      <div class="bg-base-100 p-6 rounded-lg">
-        <h3 class="text-lg font-semibold text-secondary mb-4 flex items-center gap-2">
+      <div class="bg-base-100 rounded-lg p-6">
+        <h3 class="text-secondary mb-4 flex items-center gap-2 text-lg font-semibold">
           <i class="fa fa-address-card"></i>
           <span>{{ $t('team.members.title', 'Team Members') }}</span>
         </h3>
@@ -37,9 +37,9 @@
       </div>
 
       <!-- Hierarchy Graph -->
-      <div class="bg-base-100 p-6 rounded-lg">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold text-secondary flex items-center gap-2">
+      <div class="bg-base-100 rounded-lg p-6">
+        <div class="mb-4 flex items-center justify-between">
+          <h3 class="text-secondary flex items-center gap-2 text-lg font-semibold">
             <i class="fa fa-sitemap"></i>
             <span>{{ $t('team.hierarchy.title', 'Organization Chart') }}</span>
           </h3>
@@ -56,7 +56,7 @@
           </div>
         </div>
 
-        <div class="h-[500px] w-full relative">
+        <div class="relative h-[500px] w-full">
           <VueFlow
             :nodes="layoutedNodes"
             :edges="edges"
@@ -68,7 +68,7 @@
                 applyLayoutAndFitView()
               }
             "
-            class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg"
+            class="rounded-lg border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800"
           >
             <template #node-team-member="props">
               <TeamMemberNode
@@ -88,7 +88,7 @@
             <Panel
               position="top-left"
               v-if="selectedNode"
-              class="bg-base-100 rounded-lg max-w-[300px] ring-4 ring-offset-2 ring-offset-bg1"
+              class="bg-base-100 ring-offset-bg1 max-w-[300px] rounded-lg ring-4 ring-offset-2"
               :class="{
                 'ring-orange-400 dark:ring-orange-500/20': selectedNode.level > 1,
                 'ring-purple-600 dark:ring-purple-500/20': selectedNode.level <= 1,
@@ -96,7 +96,7 @@
             >
               <div v-if="selectedNode" class="p-0.5">
                 <div
-                  class="flex items-center gap-3 p-2 rounded-lg"
+                  class="flex items-center gap-3 rounded-lg p-2"
                   :class="[
                     selectedNode.level > 1
                       ? 'bg-orange-50 dark:bg-orange-900'
@@ -104,11 +104,11 @@
                   ]"
                 >
                   <div
-                    class="min-w-12 grow-0 h-12 rounded-full flex items-center justify-center"
+                    class="flex h-12 min-w-12 grow-0 items-center justify-center rounded-full"
                     :class="[
                       selectedNode.level > 1
-                        ? 'bg-orange-200 dark:bg-base-300 text-orange-600'
-                        : 'bg-purple-200 dark:bg-base-300 text-purple-600',
+                        ? 'dark:bg-base-300 bg-orange-200 text-orange-600'
+                        : 'dark:bg-base-300 bg-purple-200 text-purple-600',
                     ]"
                   >
                     <i class="fa fa-user text-xl"></i>

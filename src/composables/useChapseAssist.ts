@@ -11,11 +11,7 @@
 
 import { ref, computed } from 'vue'
 import { getAiPreferences, generateQuickActions } from '@/api/ai-preferences'
-import type {
-  AiPreferences,
-  QuickAction,
-  CachedQuickActions,
-} from '@/types/ai-preferences'
+import type { AiPreferences, QuickAction, CachedQuickActions } from '@/types/ai-preferences'
 
 const CACHE_KEY_PREFIX = 'chapse_assist_actions_'
 const CACHE_DURATION = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
@@ -193,7 +189,7 @@ export function useChapseAssist() {
    */
   async function retryFetchActions(
     companyId: number,
-    maxRetries: number = 3
+    maxRetries: number = 3,
   ): Promise<QuickAction[]> {
     let lastError: Error | null = null
 

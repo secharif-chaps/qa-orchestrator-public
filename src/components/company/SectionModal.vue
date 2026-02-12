@@ -3,23 +3,23 @@
     <Transition name="modal">
       <div
         v-if="modelValue"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-all duration-300"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm transition-all duration-300"
         @click.self="close"
       >
         <div
-          class="bg-base-100 rounded-card border border-primary-stroke shadow-shadow-3 w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col"
+          class="bg-base-100 rounded-card border-primary-stroke shadow-shadow-3 flex max-h-[90vh] w-full max-w-6xl flex-col overflow-hidden border"
         >
           <!-- Header -->
           <div
-            class="flex items-center justify-between p-6 border-b border-primary-stroke bg-base-200"
+            class="border-primary-stroke bg-base-200 flex items-center justify-between border-b p-6"
           >
             <div class="flex items-center gap-3">
-              <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <div class="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-full">
                 <i :class="[sectionConfig?.icon, 'text-secondary text-lg']"></i>
               </div>
               <div>
                 <h2 class="text-xl font-semibold">{{ sectionConfig?.name }}</h2>
-                <p class="text-sm text-secondary">
+                <p class="text-secondary text-sm">
                   {{ sectionConfig?.description }}
                 </p>
               </div>
@@ -28,10 +28,10 @@
           </div>
 
           <!-- Content -->
-          <div class="flex-1 overflow-y-auto overflow-x-hidden p-6">
+          <div class="flex-1 overflow-x-hidden overflow-y-auto p-6">
             <component :is="sectionComponent" v-if="sectionComponent" />
-            <div v-else class="text-center text-secondary py-12">
-              <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+            <div v-else class="text-secondary py-12 text-center">
+              <i class="fas fa-exclamation-triangle mb-4 text-4xl"></i>
               <p>{{ t('company.sections.notAvailable', 'Section not available') }}</p>
             </div>
           </div>
@@ -99,37 +99,55 @@ const route = useRoute()
 const sections: Record<TaskType, SectionConfig> = {
   profile: {
     name: t('company.analysisCards.profile.title', 'Company Profile'),
-    description: t('company.analysisCards.profile.description', 'View detailed company information, business lines, and key metrics'),
+    description: t(
+      'company.analysisCards.profile.description',
+      'View detailed company information, business lines, and key metrics',
+    ),
     icon: 'fas fa-building',
     component: ProfilePage,
   },
   timeline: {
     name: t('company.analysisCards.timeline.title', 'Timeline & History'),
-    description: t('company.analysisCards.timeline.description', 'Company history, milestones, and key events over time'),
+    description: t(
+      'company.analysisCards.timeline.description',
+      'Company history, milestones, and key events over time',
+    ),
     icon: 'fas fa-calendar-days',
     component: TimelinePage,
   },
   products: {
     name: t('company.analysisCards.products.title', 'Products & Services'),
-    description: t('company.analysisCards.products.description', 'Browse products, services, and offerings'),
+    description: t(
+      'company.analysisCards.products.description',
+      'Browse products, services, and offerings',
+    ),
     icon: 'fas fa-box',
     component: ProductsPage,
   },
   team: {
     name: t('company.analysisCards.team.title', 'Team & Management'),
-    description: t('company.analysisCards.team.description', 'Leadership team, organizational structure, and key personnel'),
+    description: t(
+      'company.analysisCards.team.description',
+      'Leadership team, organizational structure, and key personnel',
+    ),
     icon: 'fas fa-users',
     component: TeamPage,
   },
   jobs: {
     name: t('company.analysisCards.jobs.title', 'Job Offers'),
-    description: t('company.analysisCards.jobs.description', 'Current job openings and career opportunities'),
+    description: t(
+      'company.analysisCards.jobs.description',
+      'Current job openings and career opportunities',
+    ),
     icon: 'fas fa-briefcase',
     component: JobsPage,
   },
   press: {
     name: t('company.analysisCards.press.title', 'Press & Media'),
-    description: t('company.analysisCards.press.description', 'Press releases, news articles, and media coverage'),
+    description: t(
+      'company.analysisCards.press.description',
+      'Press releases, news articles, and media coverage',
+    ),
     icon: 'fas fa-newspaper',
     component: PressPage,
   },
@@ -141,7 +159,10 @@ const sections: Record<TaskType, SectionConfig> = {
   },
   csr: {
     name: t('company.analysisCards.csr.title', 'Corporate Social Responsibility'),
-    description: t('company.analysisCards.csr.description', 'CSR initiatives, sustainability programs, and social impact'),
+    description: t(
+      'company.analysisCards.csr.description',
+      'CSR initiatives, sustainability programs, and social impact',
+    ),
     icon: 'fas fa-leaf',
     component: CsrPage,
   },

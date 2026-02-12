@@ -1,8 +1,8 @@
 <template>
   <div class="relative">
     <!-- Context Badges Row (always visible to allow adding companies) -->
-    <div class="flex items-center gap-2 px-4 py-2 border-t border-sage-700 flex-wrap">
-      <span class="text-xs text-sage-400">
+    <div class="border-sage-700 flex flex-wrap items-center gap-2 border-t px-4 py-2">
+      <span class="text-sage-400 text-xs">
         {{ $t('sidebar.chapse.context', 'Context:') }}
       </span>
       <ContextBadge
@@ -21,7 +21,7 @@
         position="top-left"
         @select="$emit('add-context', $event)"
       />
-      <span v-else class="text-xs text-sage-500">
+      <span v-else class="text-sage-500 text-xs">
         {{ $t('chapse.maxCompanies', '(max 3)') }}
       </span>
     </div>
@@ -34,7 +34,7 @@
           v-model="message"
           :placeholder="placeholder"
           :disabled="disabled"
-          class="w-full min-h-[80px] max-h-[200px] p-4 pr-14 bg-sage-900 rounded-xl text-sm text-sage-100 placeholder-sage-500 resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50"
+          class="bg-sage-900 text-sage-100 placeholder-sage-500 focus:ring-primary/50 max-h-[200px] min-h-[80px] w-full resize-none rounded-xl p-4 pr-14 text-sm focus:ring-2 focus:outline-none disabled:opacity-50"
           @keydown.enter.ctrl.prevent="handleSend"
           @keydown.enter.meta.prevent="handleSend"
           @input="autoResize"
@@ -53,10 +53,14 @@
       </div>
 
       <!-- Helper Text -->
-      <p class="mt-2 text-xs text-sage-500">
-        <kbd class="px-1.5 py-0.5 bg-sage-800 rounded text-sage-400">{{ $t('common.keyboard.ctrl') }}</kbd>
+      <p class="text-sage-500 mt-2 text-xs">
+        <kbd class="bg-sage-800 text-sage-400 rounded px-1.5 py-0.5">{{
+          $t('common.keyboard.ctrl')
+        }}</kbd>
         +
-        <kbd class="px-1.5 py-0.5 bg-sage-800 rounded text-sage-400">{{ $t('common.keyboard.enter') }}</kbd>
+        <kbd class="bg-sage-800 text-sage-400 rounded px-1.5 py-0.5">{{
+          $t('common.keyboard.enter')
+        }}</kbd>
         {{ $t('sidebar.chapse.toSend') }}
       </p>
     </div>

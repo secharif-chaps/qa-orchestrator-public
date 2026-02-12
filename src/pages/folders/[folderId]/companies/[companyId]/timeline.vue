@@ -21,9 +21,9 @@
     <!-- Timeline visualization -->
     <div v-else class="relative">
       <!-- Timeline events -->
-      <div class="bg-base-100 p-4 rounded-lg">
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex gap-2 items-center">
+      <div class="bg-base-100 rounded-lg p-4">
+        <div class="mb-6 flex items-center justify-between">
+          <div class="flex items-center gap-2">
             <span class="text-lg font-semibold">{{ $t('timeline.title') }}</span>
           </div>
           <div class="flex items-center gap-2">
@@ -31,10 +31,16 @@
               variant="tertiary"
               :icon="sortAscending ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"
               size="sm"
-              :title="sortAscending ? $t('timeline.sort.oldestFirst') : $t('timeline.sort.newestFirst')"
+              :title="
+                sortAscending ? $t('timeline.sort.oldestFirst') : $t('timeline.sort.newestFirst')
+              "
               @click="toggleSortOrder"
             >
-              {{ sortAscending ? $t('timeline.sort.oldestFirst', 'Oldest first') : $t('timeline.sort.newestFirst', 'Newest first') }}
+              {{
+                sortAscending
+                  ? $t('timeline.sort.oldestFirst', 'Oldest first')
+                  : $t('timeline.sort.newestFirst', 'Newest first')
+              }}
             </Button>
             <div class="w-64">
               <Searchbar

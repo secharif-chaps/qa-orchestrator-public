@@ -19,7 +19,7 @@ export const useAuth = () => {
     getAccessToken: authStore.getAccessToken,
     getCurrentUsername: authStore.getCurrentUsername,
     refreshToken: authStore.refreshToken,
-    
+
     hasPermission: authStore.hasPermission,
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <Card>
-    <div class="flex items-center justify-between mb-4">
+    <div class="mb-4 flex items-center justify-between">
       <h3 class="font-semibold text-gray-900 dark:text-white">
         {{ $t('home.recentProjects.title', 'Recent Projects') }}
       </h3>
@@ -14,7 +14,7 @@
 
     <!-- Loading State -->
     <div v-if="isLoading" class="flex items-center justify-center py-8">
-      <i class="fa fa-spinner fa-spin text-2xl text-sage-500"></i>
+      <i class="fa fa-spinner fa-spin text-sage-500 text-2xl"></i>
     </div>
 
     <!-- Error State -->
@@ -30,11 +30,13 @@
     <!-- Empty State -->
     <div v-else-if="projects.length === 0" class="py-8 text-center">
       <div
-        class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center"
+        class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800"
       >
         <i class="fa fa-folder-open text-2xl text-gray-400"></i>
       </div>
-      <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('home.recentProjects.noRecentProjects', 'No recent projects yet') }}</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        {{ $t('home.recentProjects.noRecentProjects', 'No recent projects yet') }}
+      </p>
     </div>
 
     <!-- Projects List -->

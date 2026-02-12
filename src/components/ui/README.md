@@ -5,9 +5,11 @@ This directory contains custom UI components that should be used throughout the 
 ## Available Components
 
 ### Alert (`Alert.vue`)
+
 A flexible alert component for displaying messages, warnings, and notifications.
 
 **When to use:**
+
 - System messages and notifications
 - Error messages
 - Success confirmations
@@ -17,15 +19,18 @@ A flexible alert component for displaying messages, warnings, and notifications.
 **Variants:** `info`, `success`, `warning`, `error`
 
 ### Input (`Input.vue`)
+
 A modern input field component with icon support and validation states.
 
 **When to use:**
+
 - Form inputs
 - Search fields
 - Text entry fields
 - Any place requiring user text input
 
 **Features:**
+
 - Icon support
 - Error states
 - Helper text
@@ -33,9 +38,11 @@ A modern input field component with icon support and validation states.
 - Size variations
 
 ### Badge (`Badge.vue`)
+
 A versatile badge component for status indicators and labels.
 
 **When to use:**
+
 - Status indicators (online/offline, active/inactive)
 - Token counts
 - User roles and permissions

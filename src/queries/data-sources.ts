@@ -16,5 +16,5 @@ export const dataSourceConfigQuery = defineQueryOptions(
       }
       return getDataSourceConfig(organizationId, source)
     },
-  })
+  }),
 )

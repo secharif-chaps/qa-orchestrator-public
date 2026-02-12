@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Modules Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
       <Card
         v-for="module in visibleModules"
         :key="module.name"
@@ -10,7 +10,7 @@
         class="flex flex-col"
       >
         <!-- Card Content - grows to fill space -->
-        <div class="flex-1 flex flex-col gap-4">
+        <div class="flex flex-1 flex-col gap-4">
           <div class="flex items-start space-x-3">
             <!-- Avatar -->
             <Badge
@@ -20,9 +20,9 @@
             />
 
             <!-- Title and Secondary Text -->
-            <div class="flex-1 min-w-0">
+            <div class="min-w-0 flex-1">
               <div class="flex items-center justify-between gap-2">
-                <h3 class="font-semibold text-base text-gray-900 dark:text-white">
+                <h3 class="text-base font-semibold text-gray-900 dark:text-white">
                   {{ module.name }}
                 </h3>
                 <div>
@@ -50,7 +50,7 @@
               </p>
             </div>
           </div>
-          <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+          <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
             {{ module.description }}
           </p>
         </div>
@@ -116,7 +116,7 @@ interface Module {
   soon: boolean
   status: 'contact-sales' | 'coming-soon' | 'available' | 'external'
   favorite: boolean
-  color: "indigo" | "sage" | "almond" | "yellow" | "pink" | "cherry" | "cyan" | undefined
+  color: 'indigo' | 'sage' | 'almond' | 'yellow' | 'pink' | 'cherry' | 'cyan' | undefined
   externalUrl?: string | null
 }
 
@@ -129,9 +129,7 @@ const { featureFlags = [] } = defineProps<Props>()
 const { t } = useI18n()
 
 // Find the discover feature flag
-const discoverFlag = computed(() =>
-  featureFlags.find((f) => f.flag === 'discover'),
-)
+const discoverFlag = computed(() => featureFlags.find((f) => f.flag === 'discover'))
 
 // Check if discover is enabled and has a URL
 const isDiscoverEnabled = computed(() => discoverFlag.value?.enabled ?? false)

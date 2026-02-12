@@ -3,15 +3,15 @@
     <template #trigger="{ isOpen }">
       <button
         type="button"
-        class="flex items-center justify-between w-full px-3 py-2 text-sm border border-base-300 rounded-lg bg-base-100 hover:bg-base-200 transition-colors min-w-48"
+        class="border-base-300 bg-base-100 hover:bg-base-200 flex w-full min-w-48 items-center justify-between rounded-lg border px-3 py-2 text-sm transition-colors"
         :class="{
-          'ring-2 ring-primary': isOpen,
-          'opacity-50 cursor-not-allowed': !canManage,
+          'ring-primary ring-2': isOpen,
+          'cursor-not-allowed opacity-50': !canManage,
         }"
         :disabled="!canManage"
       >
         <!-- Loading state -->
-        <span v-if="isLoadingPermissions" class="flex items-center gap-2 text-secondary">
+        <span v-if="isLoadingPermissions" class="text-secondary flex items-center gap-2">
           <i class="fa fa-spinner fa-spin text-sm"></i>
           {{ $t('settings.team.loadingPermissions', 'Loading...') }}
         </span>
@@ -42,14 +42,14 @@
           v-for="permission in permissionOptions"
           :key="permission.value"
           type="button"
-          class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-base-200 transition-colors"
+          class="hover:bg-base-200 flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors"
           :class="{ 'bg-primary-light': selectedTier === permission.value }"
           @click="selectPermission(permission.value, close)"
         >
-          <i :class="getPermissionIcon(permission.value)" class="text-base w-4"></i>
+          <i :class="getPermissionIcon(permission.value)" class="w-4 text-base"></i>
           <div class="flex-1">
             <div class="font-medium">{{ permission.label }}</div>
-            <div class="text-xs text-secondary">{{ permission.description }}</div>
+            <div class="text-secondary text-xs">{{ permission.description }}</div>
           </div>
           <i v-if="selectedTier === permission.value" class="fa fa-check text-success"></i>
         </button>
@@ -89,13 +89,9 @@ const {
   data: permissionsData,
   isLoading: isLoadingPermissions,
   refetch: refetchPermissions,
-} = useQuery(
-  memberPermissionsQuery,
-  () => ({ userId: props.memberId }),
-  {
-    enabled: () => permissionsFetched.value,
-  }
-)
+} = useQuery(memberPermissionsQuery, () => ({ userId: props.memberId }), {
+  enabled: () => permissionsFetched.value,
+})
 
 // Computed property that reflects the member's permission tier
 const selectedTier = computed(() => permissionsData.value?.permission_tier)

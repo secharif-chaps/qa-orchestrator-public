@@ -11,9 +11,12 @@
       <!-- Original language option -->
       <DropdownItem
         :class="{ 'bg-primary-light': !modelValue }"
-        @click="resetToOriginal(); close()"
+        @click="
+          resetToOriginal()
+          close()
+        "
       >
-        <div class="flex items-center justify-between w-full gap-2">
+        <div class="flex w-full items-center justify-between gap-2">
           <span>{{ t('company.translation.original', 'Original') }}</span>
           <i
             v-if="!modelValue"
@@ -23,21 +26,24 @@
         </div>
       </DropdownItem>
       <!-- Separator -->
-      <div class="border-t border-base-300 my-1" />
+      <div class="border-base-300 my-1 border-t" />
       <!-- Language options -->
       <DropdownItem
         v-for="lang in translationLanguages"
         :key="lang.code"
         :disabled="isLanguageTranslating(lang.code)"
         :class="{ 'bg-primary-light': modelValue === lang.code }"
-        @click="handleTranslate(lang.code); close()"
+        @click="
+          handleTranslate(lang.code)
+          close()
+        "
       >
-        <div class="flex items-center justify-between w-full gap-2">
+        <div class="flex w-full items-center justify-between gap-2">
           <span>{{ getLanguageName(lang.code) }}</span>
           <!-- Loading spinner for in-progress translations -->
           <span
             v-if="isLanguageTranslating(lang.code)"
-            class="flex items-center gap-1 text-info"
+            class="text-info flex items-center gap-1"
             :title="getProgressTitle(lang.code)"
           >
             <i class="fa fa-spinner fa-spin" />
@@ -123,7 +129,8 @@ const { data: translationStatus, refetch: refetchStatus } = useQuery(
   companyTranslationStatusQuery,
   () => ({ companyId: props.companyId }),
   {
-    enabled: () => !!props.companyId && props.companyId !== 'null' && props.companyId !== 'undefined',
+    enabled: () =>
+      !!props.companyId && props.companyId !== 'null' && props.companyId !== 'undefined',
   },
 )
 

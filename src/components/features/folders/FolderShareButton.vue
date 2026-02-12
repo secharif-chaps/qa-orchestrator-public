@@ -7,10 +7,7 @@
       @click="showModal = true"
     />
 
-    <FolderShareModal
-      v-model="showModal"
-      :folder-id="folderId"
-    />
+    <FolderShareModal v-model="showModal" :folder-id="folderId" />
   </div>
 </template>
 

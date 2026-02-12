@@ -12,13 +12,17 @@
 
     <div class="flex flex-col gap-4">
       <!-- Select All / None toggle -->
-      <div class="flex justify-between items-center">
-        <span v-if="showSavedMessage" class="text-xs text-secondary animate-fade-out">
+      <div class="flex items-center justify-between">
+        <span v-if="showSavedMessage" class="text-secondary animate-fade-out text-xs">
           <i class="fa fa-check-circle mr-1"></i>{{ t('company.export.modal.preferencesSaved') }}
         </span>
         <Button
           variant="tertiary"
-          :label="allSelected ? t('company.export.modal.deselectAll') : t('company.export.modal.selectAll')"
+          :label="
+            allSelected
+              ? t('company.export.modal.deselectAll')
+              : t('company.export.modal.selectAll')
+          "
           size="sm"
           @click="toggleAll"
         />
@@ -30,9 +34,9 @@
           :key="index"
           class="flex items-center justify-between"
         >
-          <div class="flex-1 mr-4">
-            <label class="font-medium text-sm">{{ option.label }}</label>
-            <p v-if="option.description" class="text-secondary text-xs mt-1">
+          <div class="mr-4 flex-1">
+            <label class="text-sm font-medium">{{ option.label }}</label>
+            <p v-if="option.description" class="text-secondary mt-1 text-xs">
               {{ option.description }}
             </p>
           </div>
@@ -48,7 +52,12 @@
 
     <template #footer>
       <Button variant="secondary" :label="t('company.export.modal.cancel')" @click="close" />
-      <Button variant="primary" :label="t('company.export.modal.export')" icon="fa fa-download" @click="exportPPT" />
+      <Button
+        variant="primary"
+        :label="t('company.export.modal.export')"
+        icon="fa fa-download"
+        @click="exportPPT"
+      />
     </template>
   </Modal>
 </template>
@@ -106,12 +115,17 @@ const getOptionLabel = (id: string) => t(`company.export.modal.options.${id}.lab
 const getOptionDescription = (id: string) => t(`company.export.modal.options.${id}.description`)
 
 // Default export options with dynamic labels
-const createDefaultOptions = () => optionIds.map((id) => ({
-  id,
-  get label() { return getOptionLabel(id) },
-  get description() { return getOptionDescription(id) },
-  selected: true,
-}))
+const createDefaultOptions = () =>
+  optionIds.map((id) => ({
+    id,
+    get label() {
+      return getOptionLabel(id)
+    },
+    get description() {
+      return getOptionDescription(id)
+    },
+    selected: true,
+  }))
 
 // Define export options with checkboxes (all checked by default)
 const exportOptions = ref(createDefaultOptions())
@@ -129,8 +143,12 @@ onMounted(() => {
         const savedOpt = parsedOptions.find((opt: { id: string }) => opt.id === id)
         return {
           id,
-          get label() { return getOptionLabel(id) },
-          get description() { return getOptionDescription(id) },
+          get label() {
+            return getOptionLabel(id)
+          },
+          get description() {
+            return getOptionDescription(id)
+          },
           selected: savedOpt ? savedOpt.selected : true,
         }
       })
