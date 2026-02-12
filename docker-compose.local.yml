@@ -128,5 +128,6 @@ services:
       - ../global-service/alembic:/app/alembic
       - ../global-service/alembic.ini:/app/alembic.ini
       - ../global-service/tests:/app/tests
+      - ../global-service/scripts:/app/scripts
     networks:
       - mint-network
