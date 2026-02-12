@@ -7,6 +7,7 @@ from app.core.config import settings
 from app.core.logging_config import setup_logging, get_logger
 from app.core.keycloak import get_idp
 from app.database import engine
+from app.api import api_router
 from app.grpc_server import create_grpc_server
 from app.proxy.client import get_proxy_client, close_proxy_client
 from app.proxy.routes import router as proxy_router
@@ -14,7 +15,9 @@ from app.proxy.routes import router as proxy_router
 # Initialize logging with configured level
 setup_logging(level=getattr(settings, "LOG_LEVEL", "INFO"))
 logger = get_logger(__name__)
-logger.debug(f".env file path: {os.path.abspath('.env') if os.path.exists('.env') else 'not found'}")
+logger.debug(
+    f".env file path: {os.path.abspath('.env') if os.path.exists('.env') else 'not found'}"
+)
 
 # App initialization
 app = FastAPI(
@@ -23,7 +26,9 @@ app = FastAPI(
     version="0.1.0",
 )
 # Parse CORS origins from comma-separated config (no rebuild needed to change)
-cors_origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()]
+cors_origins = [
+    origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()
+]
 logger.info(f"CORS Origins: {cors_origins}")
 logger.info(f"Backend Base URL: {settings.BACKEND_BASE_URL}")
 
@@ -38,6 +43,7 @@ app.add_middleware(
 
 # gRPC server lifecycle
 grpc_server = None
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -69,6 +75,7 @@ async def shutdown_event():
     await close_proxy_client()
     logger.info("🔌 Proxy client closed")
 
+
 # Health check endpoints
 @app.get("/health/live", tags=["health"])
 def health_live():
@@ -77,6 +84,7 @@ def health_live():
     Used to check if the service process is running.
     """
     return {"status": "alive"}
+
 
 @app.get("/health/ready", tags=["health"])
 def health_ready():
@@ -91,6 +99,10 @@ def health_ready():
     except Exception:
         return {"status": "not_ready"}
 
+
+# Register token API endpoints - these are handled locally by global-service
+# Must be registered BEFORE proxy router so they're matched first
+app.include_router(api_router, prefix="/api")
 
 # Register proxy router - forwards all /api/* requests to the backend monolith
 # This MUST be registered last to act as a catch-all for /api/* routes
