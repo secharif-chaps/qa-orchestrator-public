@@ -107,7 +107,6 @@ import { Alert, Button } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
 import WorkflowCard from '@/components/admin/WorkflowCard.vue'
 
-
 // Reactive state
 const workflows = ref<WorkflowConfig[]>([])
 const loading = ref(false)

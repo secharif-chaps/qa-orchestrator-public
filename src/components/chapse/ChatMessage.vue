@@ -32,7 +32,7 @@
       <div v-if="message.role === 'assistant' && formattedContent.length === 0">
         <i class="fa fa-circle-notch fa-spin text-secondary text-sm"></i>
       </div>
-      <div v-html="formattedContent"></div>
+      <div v-sanitize-html="formattedContent"></div>
 
       <!-- Timestamp -->
       <div v-if="showTimestamp" class="mt-2 text-[10px] opacity-60">

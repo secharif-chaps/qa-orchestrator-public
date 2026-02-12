@@ -201,8 +201,9 @@ async function loadPreferences() {
     } else {
       hasPreferences.value = false
     }
-  } catch (error: any) {
-    if (error.status === 404) {
+  } catch (error: unknown) {
+    const httpError = error as { status?: number }
+    if (httpError.status === 404) {
       hasPreferences.value = false
     } else {
       console.error('Failed to load preferences:', error)
@@ -289,13 +290,14 @@ async function handleSubmit() {
     setTimeout(() => {
       successMessage.value = ''
     }, 3000)
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to update AI preferences:', error)
+    const httpError = error as { status?: number; message?: string }
 
-    if (error.status === 401) {
+    if (httpError.status === 401) {
       errorMessage.value = t('aiPreferences.settings.messages.authError')
     } else {
-      errorMessage.value = error.message || t('aiPreferences.settings.error.message')
+      errorMessage.value = httpError.message || t('aiPreferences.settings.error.message')
     }
   } finally {
     isSaving.value = false

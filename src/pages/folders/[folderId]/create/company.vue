@@ -332,7 +332,7 @@ const submit = async () => {
     })
     // Redirect to the newly created company page
     router.push(`/folders/${folderId}/companies/${newCompany.id}`)
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Handle any unexpected errors during the search process
     console.error('Error during search:', error)
 
@@ -348,9 +348,10 @@ const submit = async () => {
     }
 
     // Display user-friendly error message
-    if (error?.message) {
+    const message = error instanceof Error ? error.message : undefined
+    if (message) {
       // Extract meaningful error message
-      if (error.message.includes('Validation error')) {
+      if (message.includes('Validation error')) {
         companyError.value = t(
           'company.validation.invalidNameFormat',
           'Company name must contain at least 2 alphabetic characters',
@@ -359,10 +360,10 @@ const submit = async () => {
           'company.validation.invalidWebsiteFormat',
           'Please enter a valid website URL',
         )
-      } else if (error.message.includes('Invalid input')) {
+      } else if (message.includes('Invalid input')) {
         companyError.value = t('company.validation.nameRequired', 'Company name is required')
         websiteError.value = t('company.validation.websiteRequired', 'Website URL is required')
-      } else if (error.message.includes('unauthorized') || error.message.includes('401')) {
+      } else if (message.includes('unauthorized') || message.includes('401')) {
         // Authentication error - will be handled by navigateTo('/login') in API service
       } else {
         // Generic error

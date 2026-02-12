@@ -162,6 +162,33 @@ import NoData from '@/components/ui/NoData.vue'
 import { useScreenshot } from '@/composables/useScreenshot'
 import type { TeamMember } from '@/types/company'
 
+interface TeamNodeData {
+  position: string
+  firstName: string
+  lastName: string
+  level: number
+  selected?: boolean
+}
+
+interface TeamNode {
+  id: string
+  type: string
+  position: { x: number; y: number }
+  data: TeamNodeData
+}
+
+interface TeamEdge {
+  id: string
+  source: string
+  target: string
+  data: { level: number }
+  style: Record<string, string | number>
+}
+
+interface LayoutNode extends TeamNode {
+  subordinateIds: string[]
+}
+
 const { isDark } = useTheme()
 
 const route = useRoute()
@@ -190,8 +217,8 @@ const { fitView, vueFlowRef } = useVueFlow()
 const nodes = computed(() => {
   if (!company.value?.team) return []
 
-  const generateNodes = (members: any[], level = 0): any[] => {
-    let nodes: any[] = []
+  const generateNodes = (members: TeamMember[], level = 0): TeamNode[] => {
+    let nodes: TeamNode[] = []
 
     for (const member of members) {
       const nodeId = `${member.position}-${member.firstName}-${member.lastName}`
@@ -224,8 +251,8 @@ const nodes = computed(() => {
 const edges = computed(() => {
   if (!company.value?.team) return []
 
-  const generateEdges = (members: any[], level = 0): any[] => {
-    let edges: any[] = []
+  const generateEdges = (members: TeamMember[], level = 0): TeamEdge[] => {
+    let edges: TeamEdge[] = []
 
     for (const member of members) {
       const sourceId = `${member.position}-${member.firstName}-${member.lastName}`
@@ -267,7 +294,7 @@ const applyLayout = () => {
   const VERTICAL_SPACING = 100
 
   // First, let's create a map of nodes and their subordinates
-  const nodeMap = new Map<string, any>()
+  const nodeMap = new Map<string, LayoutNode>()
   nodes.value.forEach((node) => {
     nodeMap.set(node.id, {
       ...node,
@@ -310,7 +337,7 @@ const applyLayout = () => {
     nodesAtLevel.forEach((node) => {
       if (node.subordinateIds.length > 0) {
         // Get positions of all subordinates
-        const subordinatePositions = node.subordinateIds.map((id) => nodeMap.get(id).position)
+        const subordinatePositions = node.subordinateIds.map((id) => nodeMap.get(id)!.position)
 
         // Calculate the center position based on subordinates
         const minX = Math.min(...subordinatePositions.map((pos) => pos.x))
@@ -328,7 +355,7 @@ const applyLayout = () => {
 
   // Convert positions back to the format expected by VueFlow
   const updatedNodes = nodes.value.map((node) => {
-    const nodeWithPosition = nodeMap.get(node.id)
+    const nodeWithPosition = nodeMap.get(node.id)!
     return {
       ...node,
       position: {
@@ -342,7 +369,7 @@ const applyLayout = () => {
 }
 
 // Watch for changes in nodes and edges to apply layout
-const layoutedNodes = ref([])
+const layoutedNodes = ref<TeamNode[]>([])
 const isInitialized = ref(false)
 
 const applyLayoutAndFitView = () => {
@@ -358,8 +385,8 @@ const applyLayoutAndFitView = () => {
 
 watch([nodes, edges], applyLayoutAndFitView, { immediate: true })
 
-const selectedNode = ref<any>(null)
-const openTeamMemberCard = (data: any) => {
+const selectedNode = ref<TeamNodeData | null>(null)
+const openTeamMemberCard = (data: TeamNodeData) => {
   selectedNode.value = data
 }
 

@@ -55,7 +55,7 @@ const getSourcesFromArray = <T,>(items: SourcedValue<T>[] | undefined): string[]
 }
 
 // Helper function to get sources from object properties
-const getSourcesFromObject = (obj: Record<string, any> | undefined): string[] => {
+const getSourcesFromObject = (obj: Record<string, unknown> | undefined): string[] => {
   if (!obj) return []
 
   const sources: string[] = []
@@ -67,7 +67,7 @@ const getSourcesFromObject = (obj: Record<string, any> | undefined): string[] =>
       } else if (Array.isArray(value)) {
         sources.push(...getSourcesFromArray(value))
       } else {
-        sources.push(...getSourcesFromObject(value))
+        sources.push(...getSourcesFromObject(value as Record<string, unknown>))
       }
     }
   })
@@ -186,8 +186,6 @@ const addInfoBlock = (slide, label, sourcedValue: SourcedValue<string> | undefin
     w: 4.0,
   })
 }
-
-
 
 // Better bullet point function using single text block
 const addListItemsImproved = (
@@ -710,7 +708,7 @@ const createTimelineSlide = (pptx, company: Company) => {
     })
 
     // Helper to extract value from SourcedValue or plain string
-    const extractVal = (field: any): string => {
+    const extractVal = (field: SourcedValue<string> | string | undefined): string => {
       if (!field) return ''
       if (typeof field === 'string') return field
       if (typeof field === 'object' && field.value) return String(field.value)
@@ -887,7 +885,7 @@ const createJobsSlide = (pptx, company: Company) => {
     })
 
     // Helper to extract value from SourcedValue or plain string
-    const extractJobVal = (field: any): string => {
+    const extractJobVal = (field: SourcedValue<string> | string | undefined): string => {
       if (!field) return ''
       if (typeof field === 'string') return field
       if (typeof field === 'object' && field.value) return String(field.value)
@@ -914,7 +912,7 @@ const createJobsSlide = (pptx, company: Company) => {
   const sources = company.jobs?.insights
     ? Object.values(company.jobs.insights)
         .filter((insight) => insight && typeof insight === 'object' && 'source' in insight)
-        .map((insight) => (insight as any).source)
+        .map((insight) => (insight as { source: string }).source)
         .filter((source) => source && source.trim() !== '')
     : []
   addSourcesSection(slide, sources)

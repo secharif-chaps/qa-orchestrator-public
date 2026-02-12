@@ -45,8 +45,9 @@ export const useAssignUserOrganization = defineMutation(() => {
         }, 1000)
       }
     },
-    onError: (error: any) => {
-      const errorMessage = error?.message || t('admin.users.assignOrganization.error')
+    onError: (error: unknown) => {
+      const errorMessage =
+        error instanceof Error ? error.message : t('admin.users.assignOrganization.error')
       toast.error(errorMessage)
     },
   })
@@ -82,8 +83,9 @@ export const useUpdateUserPermissions = defineMutation(() => {
         }, 1000)
       }
     },
-    onError: (error: any) => {
-      const errorMessage = error?.message || t('admin.users.updatePermissions.error')
+    onError: (error: unknown) => {
+      const errorMessage =
+        error instanceof Error ? error.message : t('admin.users.updatePermissions.error')
       toast.error(errorMessage)
     },
   })
@@ -106,8 +108,9 @@ export const useResetUserPassword = defineMutation(() => {
     onSuccess: () => {
       toast.success(t('admin.users.resetPassword.success'))
     },
-    onError: (error: any) => {
-      const errorMessage = error?.message || t('admin.users.resetPassword.error')
+    onError: (error: unknown) => {
+      const errorMessage =
+        error instanceof Error ? error.message : t('admin.users.resetPassword.error')
       toast.error(errorMessage)
     },
   })
@@ -138,8 +141,8 @@ export const useDisableUser = defineMutation(() => {
       queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.root })
       queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.admin })
     },
-    onError: (error: any) => {
-      const errorMessage = error?.message || t('admin.users.disable.error')
+    onError: (error: unknown) => {
+      const errorMessage = error instanceof Error ? error.message : t('admin.users.disable.error')
       toast.error(errorMessage)
     },
   })
@@ -169,8 +172,8 @@ export const useEnableUser = defineMutation(() => {
       queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.root })
       queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.admin })
     },
-    onError: (error: any) => {
-      const errorMessage = error?.message || t('admin.users.enable.error')
+    onError: (error: unknown) => {
+      const errorMessage = error instanceof Error ? error.message : t('admin.users.enable.error')
       toast.error(errorMessage)
     },
   })

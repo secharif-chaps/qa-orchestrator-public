@@ -256,8 +256,8 @@ async function handleResetPassword() {
     // Store the password for display and show success state
     newPassword.value = password.value
     isSuccess.value = true
-  } catch (err: any) {
-    error.value = err?.message || 'Failed to reset password'
+  } catch (err: unknown) {
+    error.value = err instanceof Error ? err.message : 'Failed to reset password'
   }
 }
 

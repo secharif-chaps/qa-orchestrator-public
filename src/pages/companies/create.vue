@@ -598,7 +598,7 @@ const submit = async () => {
 
     // Redirect to company page
     router.push(`/folders/${targetFolderId.value}/companies/${newCompany.id}`)
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error during company creation:', error)
 
     if (error instanceof InsufficientTokensError) {
@@ -610,8 +610,9 @@ const submit = async () => {
       return
     }
 
-    if (error?.message) {
-      if (error.message.includes('Validation error')) {
+    const message = error instanceof Error ? error.message : undefined
+    if (message) {
+      if (message.includes('Validation error')) {
         companyError.value = t(
           'company.validation.invalidNameFormat',
           'Company name must contain at least 2 alphabetic characters',
@@ -620,7 +621,7 @@ const submit = async () => {
           'company.validation.invalidWebsiteFormat',
           'Please enter a valid website URL',
         )
-      } else if (error.message.includes('Invalid input')) {
+      } else if (message.includes('Invalid input')) {
         companyError.value = t('company.validation.nameRequired', 'Company name is required')
         websiteError.value = t('company.validation.websiteRequired', 'Website URL is required')
       } else {

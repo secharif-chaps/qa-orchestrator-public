@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, type TooltipItem } from 'chart.js'
 import { Doughnut } from 'vue-chartjs'
 import type { WorkspaceCostResponse } from '@/api/cost-analysis'
 
@@ -114,7 +114,7 @@ const chartOptions = computed(() => ({
       borderColor: 'rgba(99, 102, 241, 0.5)',
       borderWidth: 1,
       callbacks: {
-        label: (context: any) => {
+        label: (context: TooltipItem<'doughnut'>) => {
           const workspace = props.data?.workspaces[context.dataIndex]
           if (!workspace) return ''
 

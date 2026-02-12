@@ -47,7 +47,6 @@ interface TeamMemberData {
 }
 
 defineProps<NodeProps<TeamMemberData>>()
-
 </script>
 
 <style scoped>

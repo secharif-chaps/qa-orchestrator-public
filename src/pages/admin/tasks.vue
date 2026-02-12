@@ -647,7 +647,6 @@ import DropdownDivider from '@/components/ui/DropdownDivider.vue'
 
 // Stat Card Component (inline using render function with Badge for icon)
 const StatCard = defineComponent({
-  components: { Badge },
   props: {
     label: { type: String, required: true },
     value: { type: [Number, String], required: true },

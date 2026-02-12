@@ -306,7 +306,7 @@ async function loadActions() {
   try {
     const actions = await fetchQuickActions(props.companyId)
     emit('loadSuccess', actions)
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to load quick actions:', error)
     emit('loadError', actionsError.value || 'Failed to load actions')
   } finally {
@@ -378,9 +378,10 @@ async function doCheckPreferences() {
 
   try {
     await checkHasPreferences()
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error checking AI preferences:', error)
-    preferencesCheckError.value = error.message || 'Failed to check AI preferences'
+    preferencesCheckError.value =
+      error instanceof Error ? error.message : 'Failed to check AI preferences'
   } finally {
     isCheckingPreferences.value = false
   }

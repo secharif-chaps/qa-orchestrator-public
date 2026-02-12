@@ -80,6 +80,7 @@ import { Button, Searchbar } from '@owlint/feathers-vue'
 import NoData from '@/components/ui/NoData.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
+import type { SourcedValue } from '@/types/company'
 
 const route = useRoute()
 
@@ -109,7 +110,7 @@ const toggleSortOrder = () => {
 }
 
 // Helper to extract value from SourcedValue or return plain string
-const extractDateValue = (field: any): string => {
+const extractDateValue = (field: SourcedValue<string> | string | undefined): string => {
   if (!field) return ''
   if (typeof field === 'string') return field
   if (typeof field === 'object' && field.value) return field.value
@@ -133,7 +134,7 @@ const getTimelineEvents = computed(() => {
 })
 
 // Helper to extract string value for search
-const extractStringValue = (field: any): string => {
+const extractStringValue = (field: SourcedValue<string> | string | undefined): string => {
   if (!field) return ''
   if (typeof field === 'string') return field
   if (typeof field === 'object' && field.value) return String(field.value)

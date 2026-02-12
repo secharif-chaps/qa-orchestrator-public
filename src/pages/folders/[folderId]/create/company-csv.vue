@@ -501,7 +501,7 @@ const validateCompanies = async () => {
     validationResult.value = await validateCSV({
       companies: parseResult.value.companies,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Validation error:', error)
     // Handle validation errors appropriately
   } finally {
@@ -538,7 +538,7 @@ const importCompanies = async () => {
         }
       }
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Import error:', error)
     // Handle import errors appropriately
   } finally {

@@ -297,13 +297,14 @@ async function handleSubmit() {
     setTimeout(() => {
       router.push({ name: '/(home)' })
     }, 2000)
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to save AI preferences:', error)
+    const httpError = error as { status?: number; message?: string }
 
-    if (error.status === 401) {
+    if (httpError.status === 401) {
       errorMessage.value = t('aiPreferences.settings.messages.authError')
     } else {
-      errorMessage.value = error.message || t('aiPreferences.setup.error.message')
+      errorMessage.value = httpError.message || t('aiPreferences.setup.error.message')
     }
   } finally {
     isSaving.value = false

@@ -108,6 +108,7 @@ import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
+import type { SourcedValue } from '@/types/company'
 import JobCard from '@/components/company/jobs/JobCard.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
@@ -161,7 +162,7 @@ const topDepartmentsList = computed((): string[] => {
 })
 
 // Helper to extract string value from SourcedValue or plain string
-const extractStringValue = (field: any): string => {
+const extractStringValue = (field: SourcedValue<string> | string | undefined): string => {
   if (!field) return ''
   if (typeof field === 'string') return field
   if (typeof field === 'object' && field.value) return String(field.value)

@@ -77,7 +77,7 @@ interface SectionConfig {
   name: string
   description: string
   icon: string
-  component: any
+  component: ReturnType<typeof defineAsyncComponent>
 }
 
 interface Props {

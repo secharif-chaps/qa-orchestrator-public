@@ -59,7 +59,7 @@ const sidebarEl = ref<HTMLElement>()
 const { t } = useI18n()
 
 // Store pending assist action event data
-const pendingAssistAction = ref<any>(null)
+const pendingAssistAction = ref<Record<string, unknown> | null>(null)
 
 // Handle Chapse Assist quick action events
 const handleAssistActionEvent = (event: CustomEvent) => {

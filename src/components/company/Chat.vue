@@ -35,7 +35,7 @@
             'bg-primary/10 text-secondary dark:bg-primary/10 dark:text-sage-content':
               message.from === 'user',
           }"
-          v-html="formatMarkdown(message.text)"
+          v-sanitize-html="formatMarkdown(message.text)"
         ></div>
       </div>
       <div v-if="isLoading">

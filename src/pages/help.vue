@@ -105,7 +105,7 @@
             <div
               v-if="selectedSectionContent"
               class="prose prose-gray dark:prose-invert max-w-none space-y-4"
-              v-html="selectedSectionContent"
+              v-sanitize-html="selectedSectionContent"
             ></div>
             <div v-else class="flex items-center justify-center py-8">
               <div class="text-center">
@@ -140,7 +140,7 @@ const {
   availableHelpSections,
 } = usePermissionBasedHelp()
 
-const selectedSection = ref<any>(null)
+const selectedSection = ref<{ permission: string; title: string; description: string } | null>(null)
 const selectedSectionContent = ref<string>('')
 const selectedSectionPermission = ref<string>('')
 
