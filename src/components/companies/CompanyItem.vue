@@ -264,5 +264,3 @@ const getTaskStatusVariant = (tasks: Array<{ status: string }>) => {
   return 'info'
 }
 </script>
-
-<style scoped></style>
