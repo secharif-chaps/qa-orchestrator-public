@@ -92,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import Tag from '@/components/ui/Tag.vue'
 import { Alert } from '@owlint/feathers-vue'
 import type { TaskStatus } from '@/types/task'

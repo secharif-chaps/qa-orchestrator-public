@@ -15,7 +15,7 @@
       </li>
 
       <!-- Breadcrumb items -->
-      <li v-for="(item, index) in breadcrumbs" :key="item.name">
+      <li v-for="item in breadcrumbs" :key="item.name">
         <div class="flex items-center">
           <i
             class="fa fa-chevron-right text-sm text-gray-400 dark:text-gray-500"

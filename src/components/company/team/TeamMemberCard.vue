@@ -77,7 +77,7 @@ const props = defineProps<{
   level?: number
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   viewInHierarchy: [member: TeamMember]
 }>()
 

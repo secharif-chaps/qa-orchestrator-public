@@ -153,7 +153,6 @@ import ChatMessage from '@/components/chapse/ChatMessage.vue'
 import ChatInput from '@/components/chapse/ChatInput.vue'
 import ConversationList from '@/components/chapse/ConversationList.vue'
 import { Button } from '@owlint/feathers-vue'
-import chapseAvatar from '@/assets/chapse/head.svg'
 import withBody from '@/assets/chapse/default.svg'
 import { toast } from '@/utils/toast'
 import { getCompanyById } from '@/api/companies'
@@ -300,7 +299,6 @@ const {
   error,
   hasMessages,
   currentConversationId,
-  currentConversationName,
   conversations,
   conversationsLoading,
   hasMoreConversations,
@@ -322,15 +320,6 @@ const { availablePageContext, isPageContextActive, addPageContextToChat } = useC
 // Local state
 const userMessage = ref('')
 const messagesContainer = ref<HTMLElement | null>(null)
-
-// Thinking state: streaming is active but no content has arrived yet
-const isThinking = computed(() => {
-  if (!isStreaming.value) return false
-
-  // Check if the last message is an assistant message with no content
-  const lastMessage = messages.value[messages.value.length - 1]
-  return lastMessage?.role === 'assistant' && !lastMessage.content
-})
 
 // Suggestions based on route
 interface Suggestion {

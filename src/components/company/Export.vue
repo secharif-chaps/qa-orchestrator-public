@@ -187,40 +187,7 @@ const addInfoBlock = (slide, label, sourcedValue: SourcedValue<string> | undefin
   })
 }
 
-// Function to create list items
-const addListItems = (slide, title, items: SourcedValue<string>[] | undefined, x, y) => {
-  slide.addText(title, {
-    x,
-    y,
-    fontSize: 14,
-    bold: true,
-    color: COLORS.titleText,
-    fontFace: 'Arial',
-  })
 
-  if (!items || items.length === 0) {
-    slide.addText('No items available', {
-      x,
-      y: y + 0.4,
-      fontSize: 12,
-      color: COLORS.secondaryText,
-      fontFace: 'Arial',
-    })
-    return
-  }
-
-  items.forEach((item, index) => {
-    slide.addText(`• ${getValue(item)}`, {
-      x,
-      y: y + 0.4 + index * 0.3,
-      fontSize: 12,
-      color: COLORS.secondaryText,
-      fontFace: 'Arial',
-      breakLine: true,
-      w: 4.0,
-    })
-  })
-}
 
 // Better bullet point function using single text block
 const addListItemsImproved = (

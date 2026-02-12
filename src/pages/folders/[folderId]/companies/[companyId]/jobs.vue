@@ -107,11 +107,11 @@ import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
-import { getSourcedSource, getSourcedValue } from '@/components/helpers/sourcedValues'
+import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import JobCard from '@/components/company/jobs/JobCard.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
-import { Input, Searchbar } from '@owlint/feathers-vue'
+import { Searchbar } from '@owlint/feathers-vue'
 import NoData from '@/components/ui/NoData.vue'
 
 const route = useRoute()

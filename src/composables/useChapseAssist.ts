@@ -95,7 +95,7 @@ export function useChapseAssist() {
       }
 
       return data.actions
-    } catch (error) {
+    } catch {
       // Invalid cache data, remove it
       localStorage.removeItem(cacheKey)
       return null

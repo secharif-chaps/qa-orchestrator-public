@@ -168,15 +168,6 @@ describe('Global Token System UI Components', () => {
       // Which equals: 175, 350, 875, 1750, 3500 tokens
       const html = wrapper.html()
 
-      // Check that quick-add amounts are calculated correctly
-      const expectedAmounts = [
-        { companies: 5, tokens: 5 * TOKENS_PER_COMPANY },
-        { companies: 10, tokens: 10 * TOKENS_PER_COMPANY },
-        { companies: 25, tokens: 25 * TOKENS_PER_COMPANY },
-        { companies: 50, tokens: 50 * TOKENS_PER_COMPANY },
-        { companies: 100, tokens: 100 * TOKENS_PER_COMPANY },
-      ]
-
       // Verify component has quick-add section
       expect(
         wrapper.find('[data-testid="quick-add-section"]').exists() || html.includes('Quick'),
@@ -235,7 +226,7 @@ describe('Global Token System UI Components', () => {
         await nextTick()
 
         // Component should emit or handle toggle
-        expect(wrapper.emitted('refresh') || wrapper.emitted('toggle')).toBeTruthy
+        expect(wrapper.emitted('refresh') || wrapper.emitted('toggle')).toBeTruthy()
       }
     })
   })

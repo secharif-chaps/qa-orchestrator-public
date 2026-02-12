@@ -100,11 +100,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { foldersWithItemsQuery } from '@/queries/folders'
-import type { Folder } from '@/types/folder'
 import { Button, Searchbar } from '@owlint/feathers-vue'
 import FolderRow from './FolderRow.vue'
 
@@ -169,12 +168,6 @@ const toggleFolder = (folderId: string) => {
   saveExpandedState()
 }
 
-// Toggle section expansion
-const toggleSection = (section: 'favorites') => {
-  expandedSections.value[section] = !expandedSections.value[section]
-  saveSectionsState()
-}
-
 // Navigation handlers
 const navigateToFolder = (folderId: string) => {
   router.push(`/folders/${folderId}`)
@@ -202,10 +195,6 @@ const loadExpandedState = () => {
       console.error('Failed to parse expanded folders state', e)
     }
   }
-}
-
-const saveSectionsState = () => {
-  localStorage.setItem(STORAGE_KEY_SECTIONS, JSON.stringify(expandedSections.value))
 }
 
 const loadSectionsState = () => {

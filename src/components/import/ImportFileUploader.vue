@@ -133,7 +133,7 @@ const emit = defineEmits<{
   clear: []
 }>()
 
-const { t } = useI18n()
+useI18n()
 
 // State
 const fileInputRef = ref<HTMLInputElement | null>(null)

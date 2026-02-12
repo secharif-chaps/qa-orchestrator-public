@@ -9,7 +9,7 @@
  */
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { CompanySummary, ChapseConversation } from '@/api/chapse'
+import type { ChapseConversation } from '@/api/chapse'
 
 // =============================================================================
 // Types

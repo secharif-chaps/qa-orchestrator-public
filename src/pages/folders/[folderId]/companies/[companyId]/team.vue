@@ -190,7 +190,7 @@ const { fitView, vueFlowRef } = useVueFlow()
 const nodes = computed(() => {
   if (!company.value?.team) return []
 
-  const generateNodes = (members: any[], level = 0, parentId = null): any[] => {
+  const generateNodes = (members: any[], level = 0): any[] => {
     let nodes: any[] = []
 
     for (const member of members) {
@@ -210,7 +210,7 @@ const nodes = computed(() => {
       nodes.push(node)
 
       if (member.subordinates && member.subordinates.length > 0) {
-        const childNodes = generateNodes(member.subordinates, level + 1, nodeId)
+        const childNodes = generateNodes(member.subordinates, level + 1)
         nodes = nodes.concat(childNodes)
       }
     }

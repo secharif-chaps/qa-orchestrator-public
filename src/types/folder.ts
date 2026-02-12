@@ -1,5 +1,3 @@
-import type { Company } from './company'
-
 export interface FolderCreate {
   name: string
   color?: string

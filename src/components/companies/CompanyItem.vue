@@ -220,24 +220,6 @@ const formatWebsiteDisplay = (website: string) => {
   return website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
 }
 
-const formatRelativeTime = (dateString: string) => {
-  if (!dateString) return t('common.na', 'N/A')
-
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-
-  if (diffInSeconds < 60) return t('company.item.time.justNow', 'just now')
-  if (diffInSeconds < 3600)
-    return t('company.item.time.minutesAgo', { minutes: Math.floor(diffInSeconds / 60) })
-  if (diffInSeconds < 86400)
-    return t('company.item.time.hoursAgo', { hours: Math.floor(diffInSeconds / 3600) })
-  if (diffInSeconds < 2592000)
-    return t('company.item.time.daysAgo', { days: Math.floor(diffInSeconds / 86400) })
-
-  return formatFullDate(dateString)
-}
-
 const getTaskStatusText = (tasks: Array<{ status: string }>) => {
   if (!tasks || tasks.length === 0) return t('company.item.tasks.status.new', 'New')
 

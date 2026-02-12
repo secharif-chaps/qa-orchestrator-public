@@ -334,7 +334,7 @@ function handleFileParsed(data: ParsedFileData): void {
 /**
  * Handle file error
  */
-function handleFileError(message: string): void {
+function handleFileError(): void {
   parsedData.value = null
 }
 

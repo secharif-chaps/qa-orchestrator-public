@@ -408,11 +408,6 @@ const saveChanges = () => {
   exitZoomMode()
 }
 
-// Helper function to capitalize first letter
-const capitalizeFirst = (str: string) => {
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
 // ESC key support
 const handleEscKey = (event: KeyboardEvent) => {
   if (event.key === 'Escape' && isZoomed.value) {

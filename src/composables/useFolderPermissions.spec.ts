@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ref } from 'vue'
 import { useFolderPermissions } from './useFolderPermissions'
-import type { Folder, ShareRole } from '@/types/folder'
+import type { Folder } from '@/types/folder'
 
 // Mock the auth store
 const mockHasPermission = vi.fn()

@@ -154,7 +154,7 @@ const props = withDefaults(defineProps<Props>(), {
   validationErrors: () => [],
 })
 
-const { t } = useI18n()
+useI18n()
 
 /**
  * Users to display (limited for preview)

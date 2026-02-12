@@ -109,14 +109,13 @@
 import { computed } from 'vue'
 import type { TeamMember } from '@/types/company'
 import { Alert, Button } from '@owlint/feathers-vue'
-import Tag from '@/components/ui/Tag.vue'
 
 const props = defineProps<{
   team: TeamMember[]
   teamInsights?: string
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   export: []
 }>()
 

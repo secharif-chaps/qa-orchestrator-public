@@ -102,13 +102,11 @@ meta:
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { workflowsApi, type WorkflowConfig } from '@/api/workflows'
 import { Alert, Button } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
 import WorkflowCard from '@/components/admin/WorkflowCard.vue'
 
-const router = useRouter()
 
 // Reactive state
 const workflows = ref<WorkflowConfig[]>([])

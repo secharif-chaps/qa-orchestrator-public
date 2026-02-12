@@ -182,7 +182,7 @@ const emit = defineEmits<{
   'delete-folder': []
 }>()
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 
 // Folder permissions
 const folderRef = toRef(props, 'folder')

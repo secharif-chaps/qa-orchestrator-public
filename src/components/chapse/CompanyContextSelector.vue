@@ -106,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import { getCompanies } from '@/api/companies'
 import type { Company } from '@/types/company'
 import type { CompanyContext } from '@/stores/chapse'

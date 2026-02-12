@@ -131,11 +131,11 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const emit = defineEmits<{
+defineEmits<{
   done: []
 }>()
 
-const { t } = useI18n()
+useI18n()
 
 // State
 const showErrors = ref(false)

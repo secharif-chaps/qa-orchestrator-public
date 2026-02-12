@@ -75,7 +75,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { Folder, FolderItem } from '@/types/folder'
+import type { Folder } from '@/types/folder'
 import { Button } from '@owlint/feathers-vue'
 
 const props = defineProps<{

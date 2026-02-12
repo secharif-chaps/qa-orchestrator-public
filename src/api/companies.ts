@@ -1,4 +1,4 @@
-import { type Company, type CompanyCreate } from '@/types/company'
+import { type Company } from '@/types/company'
 import { apiClient } from './client'
 import type { PaginatedResponse } from '@/types/pagination'
 import type { ParsedCompany } from '@/utils/csvParser'

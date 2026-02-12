@@ -5,7 +5,6 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { importUsers } from '@/api/user-import'
 import { ADMIN_USER_QUERY_KEYS } from '@/queries/admin-users'
-import { ORGANIZATION_QUERY_KEYS } from '@/queries/organization-admin'
 import { toast } from '@/utils/toast'
 import type { BulkImportRequest, BulkImportResponse } from '@/types/user-import'
 

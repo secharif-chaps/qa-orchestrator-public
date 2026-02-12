@@ -93,7 +93,7 @@ const props = defineProps<{
   team: TeamMember[]
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   viewInHierarchy: [member: TeamMember]
 }>()
 

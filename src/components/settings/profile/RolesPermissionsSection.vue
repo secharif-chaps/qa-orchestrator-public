@@ -28,5 +28,5 @@ import { computed } from 'vue'
 
 const isDev = computed(() => import.meta.env.DEV)
 
-const { userRoles, userPermissions } = useAuthStore()
+const { userPermissions } = useAuthStore()
 </script>

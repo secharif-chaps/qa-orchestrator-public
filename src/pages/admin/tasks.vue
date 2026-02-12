@@ -1001,14 +1001,6 @@ function showError(task: AdminTaskResponse) {
   expandedErrors.value.add(task.id)
 }
 
-function toggleErrorExpand(taskId: number) {
-  if (expandedErrors.value.has(taskId)) {
-    expandedErrors.value.delete(taskId)
-  } else {
-    expandedErrors.value.add(taskId)
-  }
-}
-
 async function refreshAll() {
   isRefreshing.value = true
   try {

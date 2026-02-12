@@ -125,7 +125,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { marked } from 'marked'
 import { usePermissionBasedHelp } from '@/composables/usePermissionBasedHelp'
 import { useI18n } from 'vue-i18n'

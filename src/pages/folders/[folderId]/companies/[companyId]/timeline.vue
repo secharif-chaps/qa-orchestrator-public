@@ -76,7 +76,7 @@ import { computed, ref, inject } from 'vue'
 import type { Ref } from 'vue'
 import Event from '@/components/company/timeline/Event.vue'
 import { companyTasksQuery } from '@/queries/tasks'
-import { Button, Input, Searchbar } from '@owlint/feathers-vue'
+import { Button, Searchbar } from '@owlint/feathers-vue'
 import NoData from '@/components/ui/NoData.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
@@ -88,7 +88,7 @@ const companyId = computed(() => route.params.companyId as string)
 // Inject selected language from parent [companyId].vue
 const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
 
-const { data: tasks, refetch: refetchTasks } = useQuery(companyTasksQuery, () => ({
+const { data: tasks } = useQuery(companyTasksQuery, () => ({
   companyId: companyId.value,
 }))
 

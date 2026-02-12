@@ -15,7 +15,6 @@ import { ORGANIZATION_QUERY_KEYS } from '@/queries/organization-admin'
 import { toast } from '@/utils/toast'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
-import type { ResetPasswordResponse } from '@/api/admin-users'
 
 /**
  * Mutation to assign a user to an organization or change their organization

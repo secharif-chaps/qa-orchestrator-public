@@ -165,7 +165,7 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const { t } = useI18n()
+useI18n()
 
 const isOpen = computed({
   get: () => props.displayModal,

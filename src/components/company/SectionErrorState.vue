@@ -58,7 +58,6 @@ const props = defineProps<Props>()
 
 const displayTitle = computed(() => props.title ?? t('company.taskError.title'))
 const displayDescription = computed(() => props.description ?? t('company.taskError.description'))
-const displayIcon = computed(() => props.icon ?? 'fa fa-exclamation-triangle')
 
 const { mutate: restart } = useRestartTask()
 const isRestarting = ref<TaskType | null>(null)

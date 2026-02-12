@@ -114,12 +114,6 @@ const infoItems = computed(() => [
   },
 ])
 
-// Format website URL
-const formatWebsiteUrl = (website?: string) => {
-  if (!website) return '#'
-  return website.startsWith('http') ? website : `https://${website}`
-}
-
 // Helper function to extract domain from website URL
 const getCompanyDomain = (website?: string) => {
   if (!website) return null

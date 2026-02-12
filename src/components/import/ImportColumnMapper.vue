@@ -167,7 +167,7 @@ const emit = defineEmits<{
   'update:generatePasswords': [value: boolean]
 }>()
 
-const { t } = useI18n()
+useI18n()
 
 /**
  * Check if all required fields are mapped

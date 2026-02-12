@@ -379,7 +379,7 @@ import { useAddItemToFolder } from '@/mutations/folders'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/tokens'
 
-const { t } = useI18n()
+useI18n()
 const router = useRouter()
 const route = useRoute()
 

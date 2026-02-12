@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
+import { Handle, Position, type NodeProps } from '@vue-flow/core'
 
 // todo check if the team member is the head of the company
 
@@ -46,9 +46,8 @@ interface TeamMemberData {
   selected: boolean
 }
 
-const props = defineProps<NodeProps<TeamMemberData>>()
+defineProps<NodeProps<TeamMemberData>>()
 
-const { edges } = useVueFlow()
 </script>
 
 <style scoped>
