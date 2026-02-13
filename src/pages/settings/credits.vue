@@ -1,25 +1,19 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Balance Banner -->
-    <CreditBalanceBanner
-      v-if="creditStats"
-      :balance="creditStats.balance"
-    />
+    <CreditBalanceBanner v-if="creditStats" :balance="creditStats.balance" />
 
     <!-- Loading state for balance -->
-    <div
-      v-else-if="statsLoading"
-      class="bg-accent-light rounded-full py-4 px-8 animate-pulse"
-    >
+    <div v-else-if="statsLoading" class="bg-accent-light animate-pulse rounded-full px-8 py-4">
       <div class="flex items-center justify-center gap-2">
-        <div class="h-5 bg-accent/20 rounded w-24"></div>
-        <div class="h-5 bg-accent/20 rounded w-16"></div>
-        <div class="h-5 bg-accent/20 rounded w-14"></div>
+        <div class="bg-accent/20 h-5 w-24 rounded"></div>
+        <div class="bg-accent/20 h-5 w-16 rounded"></div>
+        <div class="bg-accent/20 h-5 w-14 rounded"></div>
       </div>
     </div>
 
     <!-- Usage Donut Chart and Module Forecasts -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <!-- Donut Chart -->
       <CreditUsageDonutChart
         :usage-data="creditStats?.usageByModule || []"

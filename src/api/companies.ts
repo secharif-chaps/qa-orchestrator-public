@@ -1,4 +1,4 @@
-import { type Company, type CompanyCreate } from '@/types/company'
+import { type Company } from '@/types/company'
 import { apiClient } from './client'
 import type { PaginatedResponse } from '@/types/pagination'
 import type { ParsedCompany } from '@/utils/csvParser'
@@ -112,7 +112,9 @@ export const refreshCompany = async (companyId: string) => {
   return response
 }
 
-export const validateCSV = async (request: CSVValidationRequest): Promise<CSVValidationResponse> => {
+export const validateCSV = async (
+  request: CSVValidationRequest,
+): Promise<CSVValidationResponse> => {
   const response = await apiClient.post<CSVValidationResponse>('/companies/csv/validate', request)
   return response
 }

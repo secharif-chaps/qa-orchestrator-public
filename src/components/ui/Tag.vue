@@ -11,7 +11,7 @@
     <i v-if="icon" :class="[icon, iconClasses]"></i>
 
     <!-- Dot indicator -->
-    <span v-else-if="dot" :class="dotClasses" class="w-1.5 h-1.5 rounded-full"></span>
+    <span v-else-if="dot" :class="dotClasses" class="h-1.5 w-1.5 rounded-full"></span>
 
     <!-- Label -->
     <span v-if="label">{{ label }}</span>
@@ -23,7 +23,7 @@
     <button
       v-if="dismissible"
       @click.prevent.stop="$emit('dismiss')"
-      class="ml-1 -mr-0.5 hover:opacity-80 transition-opacity"
+      class="-mr-0.5 ml-1 transition-opacity hover:opacity-80"
       :aria-label="dismissLabel || 'Dismiss'"
     >
       <i class="fa fa-times" :class="closeIconClasses"></i>

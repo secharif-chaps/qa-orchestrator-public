@@ -7,10 +7,10 @@
 
     <!-- Digital Strategy - detailed breakdown -->
     <div v-if="company?.digital?.digitalStrategy" class="flex flex-col gap-3">
-      <h4 class="font-medium text-secondary">{{ $t('profile.sections.digital.strategy') }}</h4>
+      <h4 class="text-secondary font-medium">{{ $t('profile.sections.digital.strategy') }}</h4>
 
       <div v-if="digitalStrategy?.overallStrategy" class="text-sm">
-        <h5 class="font-medium text-secondary mb-1">
+        <h5 class="text-secondary mb-1 font-medium">
           {{ $t('profile.sections.digital.overallStrategy', 'Overall Strategy') }}
         </h5>
         <p class="text-secondary">
@@ -20,7 +20,7 @@
       </div>
 
       <div v-if="digitalStrategy?.digitalTransformation" class="text-sm">
-        <h5 class="font-medium text-secondary mb-1">
+        <h5 class="text-secondary mb-1 font-medium">
           {{ $t('profile.sections.digital.digitalTransformation', 'Digital Transformation') }}
         </h5>
         <p class="text-secondary">
@@ -30,7 +30,7 @@
       </div>
 
       <div v-if="digitalStrategy?.eCommerceCapabilities" class="text-sm">
-        <h5 class="font-medium text-secondary mb-1">
+        <h5 class="text-secondary mb-1 font-medium">
           {{ $t('profile.sections.digital.eCommerceCapabilities', 'E-Commerce Capabilities') }}
         </h5>
         <p class="text-secondary">
@@ -40,7 +40,7 @@
       </div>
 
       <div v-if="digitalStrategy?.mobileStrategy" class="text-sm">
-        <h5 class="font-medium text-secondary mb-1">
+        <h5 class="text-secondary mb-1 font-medium">
           {{ $t('profile.sections.digital.mobileStrategy', 'Mobile Strategy') }}
         </h5>
         <p class="text-secondary">
@@ -50,8 +50,10 @@
       </div>
 
       <div v-if="digitalStrategy?.digitalMarketingApproach" class="text-sm">
-        <h5 class="font-medium text-secondary mb-1">
-          {{ $t('profile.sections.digital.digitalMarketingApproach', 'Digital Marketing Approach') }}
+        <h5 class="text-secondary mb-1 font-medium">
+          {{
+            $t('profile.sections.digital.digitalMarketingApproach', 'Digital Marketing Approach')
+          }}
         </h5>
         <p class="text-secondary">
           {{ getSourcedValue(digitalStrategy.digitalMarketingApproach) }}
@@ -62,16 +64,12 @@
 
     <!-- Online Services -->
     <div v-if="onlineServices?.length">
-      <h4 class="font-medium text-secondary mb-2">
+      <h4 class="text-secondary mb-2 font-medium">
         {{ $t('profile.sections.digital.onlineServices') }}
       </h4>
       <div class="flex flex-col gap-2">
-        <div
-          v-for="service in onlineServices"
-          :key="service.name"
-          class="bg-base-200 rounded p-3"
-        >
-          <h5 class="font-medium text-secondary mb-1">{{ service.name }}</h5>
+        <div v-for="service in onlineServices" :key="service.name" class="bg-base-200 rounded p-3">
+          <h5 class="text-secondary mb-1 font-medium">{{ service.name }}</h5>
           <p class="text-secondary text-sm">{{ service.description }}</p>
         </div>
         <Source :source="onlineServicesSource" />
@@ -80,17 +78,17 @@
 
     <!-- Loyalty Program -->
     <div v-if="company?.digital?.loyaltyProgram">
-      <h4 class="font-medium text-secondary mb-2">
+      <h4 class="text-secondary mb-2 font-medium">
         {{ $t('profile.sections.digital.loyaltyProgram') }}
       </h4>
-      <p class="text-sm text-secondary">
+      <p class="text-secondary text-sm">
         {{ getSourcedValue(company.digital.loyaltyProgram) || $t('common.notFound') }}
       </p>
       <Source :sourced-value="company.digital.loyaltyProgram" />
     </div>
 
     <!-- No data message -->
-    <div v-if="!hasAnyDigitalData" class="text-secondary text-center py-4">
+    <div v-if="!hasAnyDigitalData" class="text-secondary py-4 text-center">
       {{ $t('common.noData') }}
     </div>
   </div>

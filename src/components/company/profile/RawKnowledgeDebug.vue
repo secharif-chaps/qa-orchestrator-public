@@ -1,6 +1,6 @@
 <template>
   <div v-if="hasAnyRawData" class="col-span-12 space-y-4">
-    <h2 class="text-xl font-semibold text-secondary flex items-center gap-2">
+    <h2 class="text-secondary flex items-center gap-2 text-xl font-semibold">
       <i class="fa fa-code text-lg"></i>
       {{ t('profile.sections.debug.title') }}
     </h2>
@@ -13,8 +13,8 @@
           <h3 class="font-semibold">{{ t('profile.sections.debug.mistral') }}</h3>
         </div>
       </template>
-      <div class="bg-base-100 rounded-lg p-4 font-mono text-sm text-secondary overflow-x-auto">
-        <pre class="whitespace-pre-wrap break-words">{{ company.raw_mistral_knowledge }}</pre>
+      <div class="bg-base-100 text-secondary overflow-x-auto rounded-lg p-4 font-mono text-sm">
+        <pre class="break-words whitespace-pre-wrap">{{ company.raw_mistral_knowledge }}</pre>
       </div>
     </Card>
 
@@ -26,8 +26,8 @@
           <h3 class="font-semibold">{{ t('profile.sections.debug.gpt') }}</h3>
         </div>
       </template>
-      <div class="bg-base-100 rounded-lg p-4 font-mono text-sm text-secondary overflow-x-auto">
-        <pre class="whitespace-pre-wrap break-words">{{ company.raw_gpt_knowledge }}</pre>
+      <div class="bg-base-100 text-secondary overflow-x-auto rounded-lg p-4 font-mono text-sm">
+        <pre class="break-words whitespace-pre-wrap">{{ company.raw_gpt_knowledge }}</pre>
       </div>
     </Card>
 
@@ -39,8 +39,8 @@
           <h3 class="font-semibold">{{ t('profile.sections.debug.wikipedia') }}</h3>
         </div>
       </template>
-      <div class="bg-base-100 rounded-lg p-4 font-mono text-sm text-secondary overflow-x-auto">
-        <pre class="whitespace-pre-wrap break-words">{{ company.raw_wikipedia_knowledge }}</pre>
+      <div class="bg-base-100 text-secondary overflow-x-auto rounded-lg p-4 font-mono text-sm">
+        <pre class="break-words whitespace-pre-wrap">{{ company.raw_wikipedia_knowledge }}</pre>
       </div>
     </Card>
 
@@ -52,8 +52,10 @@
           <h3 class="font-semibold">{{ t('profile.sections.debug.website') }}</h3>
         </div>
       </template>
-      <div class="bg-base-100 rounded-lg p-4 font-mono text-sm text-secondary overflow-x-auto">
-        <pre class="whitespace-pre-wrap break-words">{{ company.raw_scraped_website_knowledge }}</pre>
+      <div class="bg-base-100 text-secondary overflow-x-auto rounded-lg p-4 font-mono text-sm">
+        <pre class="break-words whitespace-pre-wrap">{{
+          company.raw_scraped_website_knowledge
+        }}</pre>
       </div>
     </Card>
   </div>

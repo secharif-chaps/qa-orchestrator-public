@@ -6,7 +6,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
-import { ref } from 'vue'
 import type { FeatureFlagConfig } from '@/types/feature-flags'
 
 // Mock vue-i18n
@@ -32,7 +31,8 @@ vi.mock('@owlint/feathers-vue', () => ({
   },
   Button: {
     name: 'Button',
-    template: '<button class="button" :disabled="disabled" @click="$emit(\'click\')"><slot /></button>',
+    template:
+      '<button class="button" :disabled="disabled" @click="$emit(\'click\')"><slot /></button>',
     props: ['variant', 'intent', 'size', 'label', 'icon', 'disabled'],
     emits: ['click'],
   },

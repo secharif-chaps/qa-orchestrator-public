@@ -2,14 +2,14 @@
   <div class="relative">
     <!-- Main Counter Card -->
     <div
-      class="bg-gradient-to-br from-bg1 to-bg2 border border-primary-stroke rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200"
+      class="from-bg1 to-bg2 border-primary-stroke rounded-xl border bg-gradient-to-br p-4 shadow-sm transition-all duration-200 hover:shadow-md"
     >
       <div class="flex items-center gap-3">
         <!-- Animated Token Icon -->
         <div class="relative">
           <div
             :class="tokenIconClasses"
-            class="w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold transition-all duration-200 group-hover:scale-105"
+            class="flex h-12 w-12 items-center justify-center rounded-xl text-lg font-bold transition-all duration-200 group-hover:scale-105"
           >
             <i :class="{ 'animate-spin': isLoading || isRefreshing }" class="fa fa-coins"></i>
           </div>
@@ -17,15 +17,15 @@
           <!-- Loading pulse overlay -->
           <div
             v-if="isLoading || isRefreshing"
-            class="absolute inset-0 rounded-xl bg-primary/20 animate-pulse"
+            class="bg-primary/20 absolute inset-0 animate-pulse rounded-xl"
           ></div>
         </div>
 
         <!-- Content -->
-        <div class="flex-1 min-w-0">
+        <div class="min-w-0 flex-1">
           <!-- Label -->
-          <div class="flex items-center gap-2 mb-1">
-            <span class="text-xs font-medium text-secondary uppercase tracking-wide">
+          <div class="mb-1 flex items-center gap-2">
+            <span class="text-secondary text-xs font-medium tracking-wide uppercase">
               {{ label }}
             </span>
             <Button
@@ -45,21 +45,21 @@
             <span :class="tokenCountClasses" class="text-2xl font-bold tabular-nums">
               {{ displayCount }}
             </span>
-            <span v-if="showLabel && !isLoading" class="text-sm text-secondary">
+            <span v-if="showLabel && !isLoading" class="text-secondary text-sm">
               {{ tokenLabel }}
             </span>
           </div>
 
           <!-- Company Creation Equivalence -->
           <div v-if="showCompanyEquivalence && !isLoading" class="mt-1.5">
-            <span class="text-xs text-secondary">
+            <span class="text-secondary text-xs">
               {{ companyEquivalenceText }}
             </span>
           </div>
 
           <!-- Loading State -->
-          <div v-if="isLoading" class="mt-2 flex items-center gap-2 text-xs text-secondary">
-            <div class="w-2 h-2 bg-primary/60 rounded-full animate-pulse"></div>
+          <div v-if="isLoading" class="text-secondary mt-2 flex items-center gap-2 text-xs">
+            <div class="bg-primary/60 h-2 w-2 animate-pulse rounded-full"></div>
             {{ $t('tokens.loading', 'Loading token data...') }}
           </div>
         </div>

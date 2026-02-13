@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-4xl mx-auto flex flex-col gap-6" data-cy="company-search-page">
+  <div class="mx-auto flex max-w-4xl flex-col gap-6" data-cy="company-search-page">
     <!-- Page Header -->
     <div class="flex flex-col gap-2">
       <div class="flex items-center justify-between">
@@ -45,17 +45,19 @@
     <!-- Loading State (while fetching folders) -->
     <div
       v-if="needsFolderSelection && foldersLoading"
-      class="bg-base-100 border border-primary-stroke rounded-lg p-6"
+      class="bg-base-100 border-primary-stroke rounded-lg border p-6"
     >
       <div class="flex items-center justify-center py-8">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        <p class="ml-4 text-secondary">{{ $t('folder.loading', 'Loading folders...') }}</p>
+        <div class="border-primary h-8 w-8 animate-spin rounded-full border-b-2"></div>
+        <p class="text-secondary ml-4">{{ $t('folder.loading', 'Loading folders...') }}</p>
       </div>
     </div>
 
     <!-- No Folders Alert -->
     <div
-      v-if="!hasFoldersAvailable && needsFolderSelection && !foldersLoading && foldersArray !== null"
+      v-if="
+        !hasFoldersAvailable && needsFolderSelection && !foldersLoading && foldersArray !== null
+      "
       class="flex flex-col gap-4"
     >
       <Alert
@@ -76,7 +78,7 @@
     <!-- Search Form Card -->
     <div
       v-if="!needsFolderSelection || hasFoldersAvailable"
-      class="bg-base-100 border border-primary-stroke rounded-lg p-6"
+      class="bg-base-100 border-primary-stroke rounded-lg border p-6"
       :title="$t('search.companyIdentity')"
     >
       <form @submit.prevent="submit" class="flex flex-col gap-6">
@@ -96,11 +98,7 @@
               <template v-for="group in groups" :key="group.label">
                 <SelectGroup>
                   <SelectLabel>{{ group.label }}</SelectLabel>
-                  <SelectItem
-                    v-for="option in group.options"
-                    :key="option.value"
-                    :option="option"
-                  >
+                  <SelectItem v-for="option in group.options" :key="option.value" :option="option">
                     <template #icon>
                       <Radio
                         v-model="selectedFolderOption"
@@ -241,7 +239,11 @@ const websiteError = ref('')
 const selectedFolderId = ref<string | null>(null)
 
 // Mutations
-const { isLoading: mutationLoading, mutateAsync, organizationId: mutationOrgId } = useCreateCompany()
+const {
+  isLoading: mutationLoading,
+  mutateAsync,
+  organizationId: mutationOrgId,
+} = useCreateCompany()
 const { mutateAsync: addToFolder } = useAddItemToFolder()
 
 // Fetch current organization
@@ -372,7 +374,12 @@ const targetFolderId = computed(() => routeFolderId.value || selectedFolderId.va
 
 // Computed property to check if folders are available (DRY for v-if conditions)
 const hasFoldersAvailable = computed(() => {
-  return needsFolderSelection.value && !foldersLoading.value && foldersArray.value !== null && foldersArray.value.length > 0
+  return (
+    needsFolderSelection.value &&
+    !foldersLoading.value &&
+    foldersArray.value !== null &&
+    foldersArray.value.length > 0
+  )
 })
 
 // Fetch folder details (when folder ID is in route)
@@ -424,7 +431,9 @@ const showInsufficientTokenAlert = computed(() => {
   if (!currentOrganization.value?.id || tokenDataLoading.value) {
     return false
   }
-  return screenModuleEnabled.value && tokenBalance.value < TOKENS_PER_COMPANY && !showTokenAlert.value
+  return (
+    screenModuleEnabled.value && tokenBalance.value < TOKENS_PER_COMPANY && !showTokenAlert.value
+  )
 })
 
 const showTokenAlert = ref(false)
@@ -585,7 +594,7 @@ const submit = async () => {
 
     // Redirect to company page
     router.push(`/folders/${targetFolderId.value}/companies/${newCompany.id}`)
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error during company creation:', error)
 
     if (error instanceof InsufficientTokensError) {
@@ -597,8 +606,9 @@ const submit = async () => {
       return
     }
 
-    if (error?.message) {
-      if (error.message.includes('Validation error')) {
+    const message = error instanceof Error ? error.message : undefined
+    if (message) {
+      if (message.includes('Validation error')) {
         companyError.value = t(
           'company.validation.invalidNameFormat',
           'Company name must contain at least 2 alphabetic characters',
@@ -607,7 +617,7 @@ const submit = async () => {
           'company.validation.invalidWebsiteFormat',
           'Please enter a valid website URL',
         )
-      } else if (error.message.includes('Invalid input')) {
+      } else if (message.includes('Invalid input')) {
         companyError.value = t('company.validation.nameRequired', 'Company name is required')
         websiteError.value = t('company.validation.websiteRequired', 'Website URL is required')
       } else {

@@ -6,13 +6,13 @@
     </td>
 
     <!-- Companies Count -->
-    <td class="px-6 py-4 whitespace-nowrap text-center">
+    <td class="px-6 py-4 text-center whitespace-nowrap">
       <span class="text-sm font-medium">{{ formattedCount }}</span>
     </td>
 
     <!-- Percentage of Total -->
-    <td class="px-6 py-4 whitespace-nowrap text-right">
-      <span class="text-sm text-secondary">{{ formattedPercentage }}</span>
+    <td class="px-6 py-4 text-right whitespace-nowrap">
+      <span class="text-secondary text-sm">{{ formattedPercentage }}</span>
     </td>
   </tr>
 </template>

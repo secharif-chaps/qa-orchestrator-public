@@ -21,19 +21,19 @@
 
     <!-- Main Content -->
     <div v-else class="mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div v-if="company?.press?.insights" class="lg:col-span-3">
           <ChapseAlert variant="mage" :title="$t('profile.sections.press.insights.title')">
             {{ company.press.insights }}
           </ChapseAlert>
         </div>
         <!-- Main Content Area -->
-        <div class="lg:col-span-2 space-y-6">
+        <div class="space-y-6 lg:col-span-2">
           <!-- Press Insights -->
 
           <!-- Financial News -->
           <div v-if="company?.press?.financial_news?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
+            <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-chart-line"></i>
               {{ $t('profile.sections.press.categories.financialNews', 'Financial News') }}
             </h2>
@@ -41,7 +41,7 @@
               <div
                 v-for="(item, index) in company.press.financial_news"
                 :key="index"
-                class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
+                class="bg-base-200 hover:bg-base-200/80 rounded-lg p-4 transition-colors"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
@@ -51,7 +51,7 @@
 
           <!-- Product Launches -->
           <div v-if="company?.press?.product_launches?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
+            <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-rocket"></i>
               {{ $t('profile.sections.press.categories.productLaunches', 'Product Launches') }}
             </h2>
@@ -59,7 +59,7 @@
               <div
                 v-for="(item, index) in company.press.product_launches"
                 :key="index"
-                class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
+                class="bg-base-200 hover:bg-base-200/80 rounded-lg p-4 transition-colors"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
@@ -72,15 +72,17 @@
             v-if="company?.press?.executive_interviews?.length"
             class="bg-base-100 rounded-lg p-6"
           >
-            <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
+            <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-microphone"></i>
-              {{ $t('profile.sections.press.categories.executiveInterviews', 'Executive Interviews') }}
+              {{
+                $t('profile.sections.press.categories.executiveInterviews', 'Executive Interviews')
+              }}
             </h2>
             <div class="space-y-3">
               <div
                 v-for="(item, index) in company.press.executive_interviews"
                 :key="index"
-                class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
+                class="bg-base-200 hover:bg-base-200/80 rounded-lg p-4 transition-colors"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
@@ -90,7 +92,7 @@
 
           <!-- Media Mentions -->
           <div v-if="company?.press?.media_mentions?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
+            <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-newspaper"></i>
               {{ $t('profile.sections.press.categories.mediaMentions', 'Media Mentions') }}
             </h2>
@@ -98,7 +100,7 @@
               <div
                 v-for="(item, index) in company.press.media_mentions"
                 :key="index"
-                class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
+                class="bg-base-200 hover:bg-base-200/80 rounded-lg p-4 transition-colors"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
@@ -108,7 +110,7 @@
 
           <!-- Press Releases -->
           <div v-if="company?.press?.press_releases?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
+            <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-file-alt"></i>
               {{ $t('profile.sections.press.categories.pressReleases', 'Press Releases') }}
             </h2>
@@ -116,7 +118,7 @@
               <div
                 v-for="(item, index) in company.press.press_releases"
                 :key="index"
-                class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
+                class="bg-base-200 hover:bg-base-200/80 rounded-lg p-4 transition-colors"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
@@ -126,7 +128,7 @@
 
           <!-- Articles (backward compatibility) -->
           <div v-if="company?.press?.articles?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-xl font-semibold text-secondary flex items-center gap-2 mb-4">
+            <h2 class="text-secondary mb-4 flex items-center gap-2 text-xl font-semibold">
               <i class="fa fa-newspaper"></i>
               {{ $t('profile.sections.press.categories.articles', 'Articles') }}
             </h2>
@@ -134,7 +136,7 @@
               <div
                 v-for="(item, index) in company.press.articles"
                 :key="index"
-                class="bg-base-200 rounded-lg p-4 hover:bg-base-200/80 transition-colors"
+                class="bg-base-200 hover:bg-base-200/80 rounded-lg p-4 transition-colors"
               >
                 <span class="text-secondary mr-2">{{ item.value }}</span>
                 <Source :source="item.source" />
@@ -144,15 +146,20 @@
         </div>
 
         <!-- Sidebar -->
-        <div class="lg:col-span-1 space-y-6">
+        <div class="space-y-6 lg:col-span-1">
           <!-- Partnership Announcements -->
           <div
             v-if="company?.press?.partnership_announcements?.length"
             class="bg-base-100 rounded-lg p-6"
           >
-            <h2 class="text-lg font-semibold text-secondary flex items-center gap-2 mb-4">
+            <h2 class="text-secondary mb-4 flex items-center gap-2 text-lg font-semibold">
               <i class="fa fa-handshake"></i>
-              {{ $t('profile.sections.press.categories.partnershipAnnouncements', 'Partnership Announcements') }}
+              {{
+                $t(
+                  'profile.sections.press.categories.partnershipAnnouncements',
+                  'Partnership Announcements',
+                )
+              }}
             </h2>
             <div class="space-y-3">
               <div
@@ -168,9 +175,11 @@
 
           <!-- Awards & Recognition -->
           <div v-if="company?.press?.awards_recognition?.length" class="bg-base-100 rounded-lg p-6">
-            <h2 class="text-lg font-semibold text-secondary flex items-center gap-2 mb-4">
+            <h2 class="text-secondary mb-4 flex items-center gap-2 text-lg font-semibold">
               <i class="fa fa-trophy"></i>
-              {{ $t('profile.sections.press.categories.awardsRecognition', 'Awards & Recognition') }}
+              {{
+                $t('profile.sections.press.categories.awardsRecognition', 'Awards & Recognition')
+              }}
             </h2>
             <div class="space-y-3">
               <div
@@ -186,34 +195,49 @@
 
           <!-- Quick Stats -->
           <div class="bg-base-100 rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-secondary mb-4">{{ $t('profile.sections.press.stats.title', 'Press Coverage Stats') }}</h3>
+            <h3 class="text-secondary mb-4 text-lg font-semibold">
+              {{ $t('profile.sections.press.stats.title', 'Press Coverage Stats') }}
+            </h3>
             <div class="space-y-3">
-              <div class="flex justify-between items-center">
-                <span class="text-secondary text-sm">{{ $t('profile.sections.press.categories.financialNews', 'Financial News') }}</span>
+              <div class="flex items-center justify-between">
+                <span class="text-secondary text-sm">{{
+                  $t('profile.sections.press.categories.financialNews', 'Financial News')
+                }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.financial_news?.length || 0
                 }}</span>
               </div>
-              <div class="flex justify-between items-center">
-                <span class="text-secondary text-sm">{{ $t('profile.sections.press.categories.productLaunches', 'Product Launches') }}</span>
+              <div class="flex items-center justify-between">
+                <span class="text-secondary text-sm">{{
+                  $t('profile.sections.press.categories.productLaunches', 'Product Launches')
+                }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.product_launches?.length || 0
                 }}</span>
               </div>
-              <div class="flex justify-between items-center">
-                <span class="text-secondary text-sm">{{ $t('profile.sections.press.categories.mediaMentions', 'Media Mentions') }}</span>
+              <div class="flex items-center justify-between">
+                <span class="text-secondary text-sm">{{
+                  $t('profile.sections.press.categories.mediaMentions', 'Media Mentions')
+                }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.media_mentions?.length || 0
                 }}</span>
               </div>
-              <div class="flex justify-between items-center">
-                <span class="text-secondary text-sm">{{ $t('profile.sections.press.categories.pressReleases', 'Press Releases') }}</span>
+              <div class="flex items-center justify-between">
+                <span class="text-secondary text-sm">{{
+                  $t('profile.sections.press.categories.pressReleases', 'Press Releases')
+                }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.press_releases?.length || 0
                 }}</span>
               </div>
-              <div class="flex justify-between items-center">
-                <span class="text-secondary text-sm">{{ $t('profile.sections.press.categories.executiveInterviews', 'Executive Interviews') }}</span>
+              <div class="flex items-center justify-between">
+                <span class="text-secondary text-sm">{{
+                  $t(
+                    'profile.sections.press.categories.executiveInterviews',
+                    'Executive Interviews',
+                  )
+                }}</span>
                 <span class="text-secondary font-medium">{{
                   company?.press?.executive_interviews?.length || 0
                 }}</span>
@@ -259,7 +283,6 @@ const { data: company } = useQuery(
   () => ({
     id: companyId.value,
     language: selectedLanguage.value,
-
   }),
   // Task data is kept fresh via SSE (Server-Sent Events) in useTaskEvents composable.
   // No polling needed - cache is invalidated automatically when tasks update.

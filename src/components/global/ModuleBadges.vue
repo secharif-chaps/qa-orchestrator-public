@@ -35,7 +35,7 @@ const modules = computed(() => {
   if (!modulesData.value?.modules) return []
 
   return modulesData.value.modules.map((module) =>
-    getModuleDisplayConfig(module.name, module.enabled)
+    getModuleDisplayConfig(module.name, module.enabled),
   )
 })
 

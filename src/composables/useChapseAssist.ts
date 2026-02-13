@@ -11,11 +11,12 @@
 
 import { ref, computed } from 'vue'
 import { getAiPreferences, generateQuickActions } from '@/api/ai-preferences'
-import type {
-  AiPreferences,
-  QuickAction,
-  CachedQuickActions,
-} from '@/types/ai-preferences'
+import type { AiPreferences, QuickAction, CachedQuickActions } from '@/types/ai-preferences'
+
+interface HttpError {
+  status?: number
+  message?: string
+}
 
 const CACHE_KEY_PREFIX = 'chapse_assist_actions_'
 const CACHE_DURATION = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
@@ -39,8 +40,8 @@ export function useChapseAssist() {
       preferences.value = response
       hasAiPreferences.value = true
       return true
-    } catch (error: any) {
-      if (error.status === 404) {
+    } catch (error: unknown) {
+      if ((error as HttpError).status === 404) {
         hasAiPreferences.value = false
         preferences.value = null
         return false
@@ -99,7 +100,7 @@ export function useChapseAssist() {
       }
 
       return data.actions
-    } catch (error) {
+    } catch {
       // Invalid cache data, remove it
       localStorage.removeItem(cacheKey)
       return null
@@ -163,20 +164,21 @@ export function useChapseAssist() {
 
       quickActions.value = actions
       return actions
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to fetch quick actions:', error)
+      const httpError = error as HttpError
 
-      if (error.status === 404) {
+      if (httpError.status === 404) {
         // Check error message to determine if it's AI preferences or company not found
-        const errorMessage = error.message?.toLowerCase() || ''
+        const errorMessage = httpError.message?.toLowerCase() || ''
         if (errorMessage.includes('preferences')) {
           actionsError.value = 'Please configure your AI preferences first'
         } else {
           actionsError.value = 'Company not found'
         }
-      } else if (error.status === 403) {
+      } else if (httpError.status === 403) {
         actionsError.value = 'Access denied to this company'
-      } else if (error.status === 500) {
+      } else if (httpError.status === 500) {
         actionsError.value = 'Failed to generate actions. Please try again.'
       } else {
         actionsError.value = 'Failed to load quick actions'
@@ -193,18 +195,18 @@ export function useChapseAssist() {
    */
   async function retryFetchActions(
     companyId: number,
-    maxRetries: number = 3
+    maxRetries: number = 3,
   ): Promise<QuickAction[]> {
     let lastError: Error | null = null
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
         return await fetchQuickActions(companyId)
-      } catch (error: any) {
-        lastError = error
+      } catch (error: unknown) {
+        lastError = error instanceof Error ? error : new Error(String(error))
 
         // Don't retry on 403/404 errors
-        if (error.status === 403 || error.status === 404) {
+        if ((error as HttpError).status === 403 || (error as HttpError).status === 404) {
           throw error
         }
 

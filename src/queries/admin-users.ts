@@ -13,7 +13,8 @@ export const ADMIN_USER_QUERY_KEYS = {
   root: ['admin', 'users'] as const,
   list: (params: AdminUserQueryParams) => [...ADMIN_USER_QUERY_KEYS.root, 'list', params] as const,
   permissions: (userId: string) => [...ADMIN_USER_QUERY_KEYS.root, 'permissions', userId] as const,
-  organization: (userId: string) => [...ADMIN_USER_QUERY_KEYS.root, 'organization', userId] as const,
+  organization: (userId: string) =>
+    [...ADMIN_USER_QUERY_KEYS.root, 'organization', userId] as const,
 }
 
 /**

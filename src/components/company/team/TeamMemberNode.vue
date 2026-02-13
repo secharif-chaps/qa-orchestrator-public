@@ -1,28 +1,28 @@
 <template>
   <div
-    class="bg-white dark:bg-slate-900 p-4 rounded-lg shadow-lg w-[300px] hover:ring-4"
+    class="w-[300px] rounded-lg bg-white p-4 shadow-lg hover:ring-4 dark:bg-slate-900"
     :class="{
-      ' ring-purple-600': data.level <= 1,
-      ' ring-orange-400': data.level > 1,
+      'ring-purple-600': data.level <= 1,
+      'ring-orange-400': data.level > 1,
       'ring-4': selected,
     }"
   >
     <div class="flex items-center gap-2">
       <div
-        class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center shrink-0"
+        class="flex size-10 shrink-0 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700"
       >
         <i class="fa fa-user text-bg1"></i>
       </div>
       <div class="flex flex-col">
         <div class="font-semibold">{{ data.firstName }} {{ data.lastName }}</div>
-        <div class="text-sm text-secondary">{{ data.position }}</div>
+        <div class="text-secondary text-sm">{{ data.position }}</div>
       </div>
     </div>
 
     <Handle
       type="target"
       :position="Position.Top"
-      class="!border-4 !bg-white dark:!bg-slate-900 !border-slate-200 dark:!border-slate-700"
+      class="!border-4 !border-slate-200 !bg-white dark:!border-slate-700 dark:!bg-slate-900"
       :class="{
         'opacity-0': data.level === 0,
         '!bg-purple-600': data.level === 1,
@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { Handle, Position, useVueFlow, type NodeProps } from '@vue-flow/core'
+import { Handle, Position, type NodeProps } from '@vue-flow/core'
 
 // todo check if the team member is the head of the company
 
@@ -46,9 +46,7 @@ interface TeamMemberData {
   selected: boolean
 }
 
-const props = defineProps<NodeProps<TeamMemberData>>()
-
-const { edges } = useVueFlow()
+defineProps<NodeProps<TeamMemberData>>()
 </script>
 
 <style scoped>

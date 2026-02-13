@@ -1,39 +1,44 @@
 <template>
   <div class="relative flex items-start gap-6 pb-6">
     <!-- Date indicator -->
-    <div class="w-20 text-right pt-4">
-      <div class="text-sm font-medium text-secondary">
+    <div class="w-20 pt-4 text-right">
+      <div class="text-secondary text-sm font-medium">
         {{ formattedDate }}
       </div>
     </div>
 
     <!-- Timeline line -->
-    <div class="absolute top-6 left-[101px] w-0.5 h-full bg-base-300"></div>
+    <div class="bg-base-300 absolute top-6 left-[101px] h-full w-0.5"></div>
 
     <!-- Timeline dot -->
     <div class="relative">
       <div
-        class="absolute top-4 -left-2.5 w-4 h-4 rounded-full bg-sage-50 dark:bg-base-100 ring-4 ring-white dark:ring-base-100 border-2 border-base-300 dark:border-base-300"
+        class="bg-sage-50 dark:bg-base-100 dark:ring-base-100 border-base-300 dark:border-base-300 absolute top-4 -left-2.5 h-4 w-4 rounded-full border-2 ring-4 ring-white"
       ></div>
     </div>
 
     <!-- Event content -->
-    <div class="flex-1 bg-base-100 border border-primary-stroke rounded-lg p-5">
+    <div class="bg-base-100 border-primary-stroke flex-1 rounded-lg border p-5">
       <!-- Event Header -->
-      <div class="flex items-start justify-between mb-3">
-        <h3 class="text-lg font-semibold leading-tight">
+      <div class="mb-3 flex items-start justify-between">
+        <h3 class="text-lg leading-tight font-semibold">
           {{ displayedEvent.title }}
         </h3>
       </div>
 
       <!-- Tags/Badges -->
-      <div class="flex gap-2 mb-4 flex-wrap">
+      <div class="mb-4 flex flex-wrap gap-2">
         <Tag size="sm" class="flex items-center gap-1">
           <i class="fa fa-clipboard text-xs"></i>
           {{ displayedEvent.category }}
         </Tag>
 
-        <Tag v-if="displayedEvent.location" variant="almond" size="sm" class="flex items-center gap-1">
+        <Tag
+          v-if="displayedEvent.location"
+          variant="almond"
+          size="sm"
+          class="flex items-center gap-1"
+        >
           <i class="fa fa-map-marker-alt text-xs"></i>
           {{ displayedEvent.location }}
         </Tag>

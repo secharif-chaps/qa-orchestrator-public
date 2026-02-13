@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-6">
     <!-- Global Balance Card -->
     <Card>
-      <div class="flex items-center justify-between mb-6">
+      <div class="mb-6 flex items-center justify-between">
         <div>
           <h2 class="text-xl font-semibold">
             {{ $t('tokens.management', 'Token Management') }}
@@ -24,8 +24,8 @@
       </div>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="text-center p-8">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+      <div v-if="isLoading" class="p-8 text-center">
+        <div class="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
         <p class="text-secondary">
           {{ $t('tokens.loading', 'Loading tokens...') }}
         </p>
@@ -42,18 +42,20 @@
       <!-- Token Balance Display -->
       <div v-else class="flex flex-col gap-6">
         <!-- Global Balance Card -->
-        <div class="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-6 border border-primary-stroke">
+        <div
+          class="from-primary/5 to-primary/10 border-primary-stroke rounded-xl border bg-gradient-to-br p-6"
+        >
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
-              <div class="w-14 h-14 bg-primary/20 rounded-xl flex items-center justify-center">
-                <i class="fa fa-coins text-2xl text-primary"></i>
+              <div class="bg-primary/20 flex h-14 w-14 items-center justify-center rounded-xl">
+                <i class="fa fa-coins text-primary text-2xl"></i>
               </div>
               <div>
-                <p class="text-sm text-secondary mb-1">
+                <p class="text-secondary mb-1 text-sm">
                   {{ $t('tokens.globalBalance', 'Global Balance') }}
                 </p>
                 <div class="flex items-baseline gap-2">
-                  <span class="text-4xl font-bold text-primary">
+                  <span class="text-primary text-4xl font-bold">
                     {{ balance.toLocaleString() }}
                   </span>
                   <span class="text-secondary">
@@ -64,15 +66,19 @@
             </div>
 
             <div class="text-right">
-              <p class="text-sm text-secondary mb-1">
+              <p class="text-secondary mb-1 text-sm">
                 {{ $t('tokens.companyEquivalent', 'Company Equivalent') }}
               </p>
-              <div class="flex items-baseline gap-1 justify-end">
+              <div class="flex items-baseline justify-end gap-1">
                 <span class="text-2xl font-semibold" :class="companyEquivalentColor">
                   {{ companyEquivalent }}
                 </span>
                 <span class="text-secondary">
-                  {{ companyEquivalent === 1 ? $t('tokens.company', 'company') : $t('tokens.companies', 'companies') }}
+                  {{
+                    companyEquivalent === 1
+                      ? $t('tokens.company', 'company')
+                      : $t('tokens.companies', 'companies')
+                  }}
                 </span>
               </div>
             </div>
@@ -87,7 +93,7 @@
 
           <!-- Quick Add Buttons -->
           <div class="flex flex-col gap-3">
-            <label class="text-sm font-medium text-secondary">
+            <label class="text-secondary text-sm font-medium">
               {{ $t('tokens.quickAdd', 'Quick Add') }}
             </label>
             <div class="flex flex-wrap items-center gap-2">
@@ -98,7 +104,12 @@
                 size="sm"
                 :loading="addTokensMutation.isLoading.value && pendingAmount === amount.tokens"
                 :disabled="addTokensMutation.isLoading.value"
-                :label="$t('tokens.screensWithTokens', { count: amount.companies, tokens: amount.tokens.toLocaleString() })"
+                :label="
+                  $t('tokens.screensWithTokens', {
+                    count: amount.companies,
+                    tokens: amount.tokens.toLocaleString(),
+                  })
+                "
                 @click="handleQuickAdd(amount.tokens)"
               />
             </div>
@@ -106,12 +117,12 @@
 
           <!-- Custom Amount Input -->
           <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium text-secondary">
+            <label class="text-secondary text-sm font-medium">
               {{ $t('tokens.customAmount', 'Custom Amount') }}
             </label>
             <div class="flex items-center gap-3">
               <Input
-              class="w-sm"
+                class="w-sm"
                 id="custom-amount-input"
                 v-model="customAmount"
                 type="number"
@@ -125,12 +136,14 @@
                 variant="primary"
                 icon="fa fa-plus"
                 :label="$t('tokens.add', 'Add')"
-                :loading="addTokensMutation.isLoading.value && pendingAmount === Number(customAmount)"
+                :loading="
+                  addTokensMutation.isLoading.value && pendingAmount === Number(customAmount)
+                "
                 :disabled="!canAddCustomAmount"
                 @click="handleCustomAdd"
               />
             </div>
-            <p class="text-xs text-secondary">
+            <p class="text-secondary text-xs">
               {{ $t('tokens.addHelper', 'Enter a custom amount of credits to add') }}
             </p>
           </div>
@@ -182,7 +195,8 @@ const errorMessage = computed(() => {
   if (!err) return ''
   if (typeof err === 'string') return err
   if (err instanceof Error) return err.message
-  if (typeof err === 'object' && 'message' in err) return String((err as { message: unknown }).message)
+  if (typeof err === 'object' && 'message' in err)
+    return String((err as { message: unknown }).message)
   return t('common.genericError')
 })
 

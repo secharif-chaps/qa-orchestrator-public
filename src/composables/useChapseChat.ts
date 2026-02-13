@@ -236,9 +236,7 @@ export function useChapseChat() {
     } catch (err) {
       console.error('Error deleting conversation:', err)
       store.setError(
-        locale.value === 'fr'
-          ? 'Erreur lors de la suppression'
-          : 'Error deleting conversation',
+        locale.value === 'fr' ? 'Erreur lors de la suppression' : 'Error deleting conversation',
       )
       return false
     }

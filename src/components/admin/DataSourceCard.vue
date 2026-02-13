@@ -1,46 +1,48 @@
 <template>
-  <div class="border border-base-300 rounded-lg p-4">
+  <div class="border-base-300 rounded-lg border p-4">
     <div class="flex items-start justify-between gap-4">
       <!-- Source Info -->
       <div class="flex items-center gap-4">
-        <div class="w-12 h-12 bg-base-200 rounded-lg flex items-center justify-center">
+        <div class="bg-base-200 flex h-12 w-12 items-center justify-center rounded-lg">
           <img
             v-if="source.logo"
             :src="source.logo"
             :alt="source.name"
-            class="w-8 h-8 object-contain"
+            class="h-8 w-8 object-contain"
           />
-          <Icon v-else icon="fa-database" class="text-xl text-secondary" />
+          <Icon v-else icon="fa-database" class="text-secondary text-xl" />
         </div>
         <div>
           <h3 class="font-semibold">{{ source.name }}</h3>
-          <p class="text-sm text-secondary">{{ source.description }}</p>
+          <p class="text-secondary text-sm">{{ source.description }}</p>
         </div>
       </div>
 
       <!-- Status Badge -->
       <span
         :class="[
-          'px-2 py-1 text-xs font-medium rounded-full',
-          config?.enabled
-            ? 'bg-success/10 text-success'
-            : 'bg-base-200 text-secondary'
+          'rounded-full px-2 py-1 text-xs font-medium',
+          config?.enabled ? 'bg-success/10 text-success' : 'bg-base-200 text-secondary',
         ]"
       >
-        {{ config?.enabled ? $t('dataSources.enabled', 'Enabled') : $t('dataSources.disabled', 'Disabled') }}
+        {{
+          config?.enabled
+            ? $t('dataSources.enabled', 'Enabled')
+            : $t('dataSources.disabled', 'Disabled')
+        }}
       </span>
     </div>
 
     <!-- API Key Section -->
-    <div class="mt-4 pt-4 border-t border-base-300">
+    <div class="border-base-300 mt-4 border-t pt-4">
       <div class="flex flex-col gap-3">
-        <label class="text-sm font-medium text-secondary">
+        <label class="text-secondary text-sm font-medium">
           {{ $t('dataSources.apiKey.label', 'API Key') }}
         </label>
 
         <!-- Display Mode -->
         <div v-if="!isEditing" class="flex items-center justify-between">
-          <code class="text-sm bg-base-200 px-3 py-2 rounded flex-1">
+          <code class="bg-base-200 flex-1 rounded px-3 py-2 text-sm">
             {{ config?.api_key_masked || $t('dataSources.apiKey.notConfigured', 'Not configured') }}
           </code>
           <Button
@@ -81,10 +83,10 @@
         </div>
 
         <!-- Timestamps -->
-        <div v-if="config?.enabled_at || config?.updated_at" class="text-xs text-secondary">
+        <div v-if="config?.enabled_at || config?.updated_at" class="text-secondary text-xs">
           <span v-if="config?.enabled_at">
             {{ $t('dataSources.enabledAt', 'Enabled') }}: {{ formatDateTime(config.enabled_at) }}
-          </span> 
+          </span>
           <span v-if="config?.updated_at" class="ml-3">
             {{ $t('dataSources.lastUpdated', 'Updated') }}: {{ formatDateTime(config.updated_at) }}
           </span>
@@ -141,7 +143,7 @@ async function saveApiKey() {
   updateMutation.apiKey.value = newApiKey.value
 
   updateMutation.updateConfig()
-  
+
   isEditing.value = false
   newApiKey.value = ''
   refetch()

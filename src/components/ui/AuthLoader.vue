@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-surface">
+  <div class="bg-surface flex min-h-screen items-center justify-center">
     <div class="text-center">
-      <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
-      <h2 class="text-xl font-semibold text-foreground mb-2">{{ t('auth.loader.title') }}</h2>
+      <div class="border-primary mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-b-2"></div>
+      <h2 class="text-foreground mb-2 text-xl font-semibold">{{ t('auth.loader.title') }}</h2>
       <p class="text-secondary">{{ t('auth.loader.message') }}</p>
     </div>
   </div>

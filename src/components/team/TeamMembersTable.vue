@@ -6,14 +6,14 @@
         <div class="flex items-center gap-3">
           <!-- Circular Avatar -->
           <div
-            class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold text-sm flex-shrink-0"
+            class="bg-primary flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white"
           >
             {{ getMemberInitials(item) }}
           </div>
 
           <!-- Name + Username -->
           <div class="min-w-0">
-            <div class="font-medium flex items-center gap-2">
+            <div class="flex items-center gap-2 font-medium">
               {{ getMemberDisplayName(item) }}
               <Tag
                 v-if="item.is_current_user"
@@ -23,7 +23,7 @@
                 rounded
               />
             </div>
-            <div class="text-sm text-secondary">@{{ item.username }}</div>
+            <div class="text-secondary text-sm">@{{ item.username }}</div>
           </div>
         </div>
       </td>
@@ -32,7 +32,7 @@
     <!-- Email column -->
     <template #cell(email)="{ item }">
       <td class="px-4 py-3">
-        <div class="text-sm text-secondary truncate">{{ item.email }}</div>
+        <div class="text-secondary truncate text-sm">{{ item.email }}</div>
       </td>
     </template>
 
@@ -49,21 +49,18 @@
 
     <!-- Actions column -->
     <template #cell(actions)="{ item }">
-      <td class="px-4 py-3 ">
-        <div class="flex justify-end items-center">
-
-        <Button
-          v-if="canManageTeam && !item.is_current_user"
-          variant="tertiary"
-          icon="fa fa-key"
-          :title="$t('settings.team.resetPassword', 'Reset Password')"
-          @click="$emit('reset-password', item)"
-        />
-      </div>
-
+      <td class="px-4 py-3">
+        <div class="flex items-center justify-end">
+          <Button
+            v-if="canManageTeam && !item.is_current_user"
+            variant="tertiary"
+            icon="fa fa-key"
+            :title="$t('settings.team.resetPassword', 'Reset Password')"
+            @click="$emit('reset-password', item)"
+          />
+        </div>
       </td>
     </template>
-
   </Table>
 </template>
 

@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-base-100 rounded-lg p-4 border border-primary-stroke">
+  <div class="bg-base-100 border-primary-stroke rounded-lg border p-4">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div
-          class="w-10 h-10 rounded-full flex items-center justify-center"
+          class="flex h-10 w-10 items-center justify-center rounded-full"
           :class="isEnabled ? 'bg-primary/10 text-primary' : 'bg-base-300 text-secondary'"
         >
           <i :class="moduleIcon" class="text-lg"></i>
@@ -12,7 +12,7 @@
           <h3 class="font-medium capitalize">
             {{ $t(`tokens.modules.${module}.name`, module) }}
           </h3>
-          <p class="text-sm text-secondary">
+          <p class="text-secondary text-sm">
             {{ moduleDescription }}
           </p>
         </div>
@@ -27,16 +27,16 @@
           :dot="true"
         />
 
-        <label class="relative inline-flex items-center cursor-pointer">
+        <label class="relative inline-flex cursor-pointer items-center">
           <input
             type="checkbox"
             :checked="isEnabled"
             :disabled="isToggling"
-            class="sr-only peer"
+            class="peer sr-only"
             @change="handleToggle"
           />
           <div
-            class="relative w-11 h-6 bg-base-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-primary-stroke after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"
+            class="bg-base-300 peer-focus:ring-primary/20 peer after:border-primary-stroke peer-checked:bg-primary relative h-6 w-11 rounded-full peer-focus:ring-4 peer-focus:outline-none peer-disabled:cursor-not-allowed peer-disabled:opacity-50 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"
           ></div>
         </label>
       </div>
@@ -79,7 +79,7 @@ const moduleIcons: Record<ModuleName, string> = {
 const moduleIcon = computed(() => moduleIcons[props.module] || 'fa fa-cog')
 
 const moduleDescription = computed(() =>
-  t(`tokens.modules.${props.module}.description`, getDefaultDescription(props.module))
+  t(`tokens.modules.${props.module}.description`, getDefaultDescription(props.module)),
 )
 
 // Default descriptions for modules

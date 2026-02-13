@@ -59,7 +59,10 @@ export interface FeatureFlagDisplayConfig {
 /**
  * Feature flag display configurations.
  */
-export const FEATURE_FLAG_CONFIG: Record<FeatureFlagName, Omit<FeatureFlagDisplayConfig, 'enabled' | 'flag'>> = {
+export const FEATURE_FLAG_CONFIG: Record<
+  FeatureFlagName,
+  Omit<FeatureFlagDisplayConfig, 'enabled' | 'flag'>
+> = {
   translation: {
     labelKey: 'featureFlags.translation.name',
     descriptionKey: 'featureFlags.translation.description',
@@ -74,7 +77,7 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagName, Omit<FeatureFlagDispla
     labelKey: 'featureFlags.pappers.name',
     descriptionKey: 'featureFlags.pappers.description',
     icon: 'fa fa-plug',
-  }
+  },
 }
 
 /**

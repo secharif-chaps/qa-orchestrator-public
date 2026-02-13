@@ -1,7 +1,7 @@
 <template>
-  <div class="h-[calc(100vh-140px)] flex flex-col min-w-[320px]">
+  <div class="flex h-[calc(100vh-140px)] min-w-[320px] flex-col">
     <!-- Header -->
-    <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
+    <div class="border-sage-800 flex items-center justify-between border-b-2 px-4 py-2 shadow">
       <h2 class="text-headline-2xl">{{ $t('sidebar.foldersSidebar.title', 'Folders') }}</h2>
       <Button
         variant="tertiary"
@@ -21,12 +21,12 @@
     </div>
 
     <!-- Folders List -->
-    <div class="flex-1 overflow-y-auto px-2 pt-4 pb-12 relative">
+    <div class="relative flex-1 overflow-y-auto px-2 pt-4 pb-12">
       <div
-        class="fixed h-4 w-full bg-transparent bg-gradient-to-b from-sage-950 to-transparent z-20 top-[180px]"
+        class="from-sage-950 fixed top-[180px] z-20 h-4 w-full bg-transparent bg-gradient-to-b to-transparent"
       ></div>
       <div
-        class="fixed bottom-16 h-4 w-full bg-transparent bg-gradient-to-t from-sage-950 to-transparent z-20"
+        class="from-sage-950 fixed bottom-16 z-20 h-4 w-full bg-transparent bg-gradient-to-t to-transparent"
       ></div>
       <div v-if="isLoading" class="flex items-center justify-center py-8">
         <i class="fa fa-spinner fa-spin text-sage-400"></i>
@@ -34,7 +34,7 @@
 
       <div
         v-else-if="filteredFolders.length === 0"
-        class="px-4 py-8 text-center text-sage-400 text-sm"
+        class="text-sage-400 px-4 py-8 text-center text-sm"
       >
         {{
           searchTerm
@@ -47,11 +47,11 @@
         <!-- Favorites Section -->
         <div v-if="favoriteFolders.length > 0">
           <div
-            class="flex items-center gap-2 px-2 py-1.5 text-sage-300 rounded-md cursor-pointer transition-colors group hover:bg-sage-800/50"
+            class="text-sage-300 group hover:bg-sage-800/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors"
             @click="$router.push('/folders')"
           >
             <i class="fa fa-heart text-sm"></i>
-            <span class="text-sm font-medium flex-1">{{
+            <span class="flex-1 text-sm font-medium">{{
               $t('sidebar.foldersSidebar.favorites', 'Favorites')
             }}</span>
           </div>
@@ -74,11 +74,11 @@
         <!-- Regular Folders -->
         <div v-if="regularFolders.length > 0" class="space-y-3">
           <div
-            class="flex items-center gap-2 px-2 py-1.5 text-sage-300 rounded-md cursor-pointer transition-colors group hover:bg-sage-800/50"
+            class="text-sage-300 group hover:bg-sage-800/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors"
             @click="$router.push('/folders')"
           >
             <i class="fa fa-folders text-sm"></i>
-            <span class="text-sm font-medium flex-1">{{
+            <span class="flex-1 text-sm font-medium">{{
               $t('sidebar.foldersSidebar.allFolders', 'Folders')
             }}</span>
           </div>
@@ -100,11 +100,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 import { foldersWithItemsQuery } from '@/queries/folders'
-import type { Folder } from '@/types/folder'
 import { Button, Searchbar } from '@owlint/feathers-vue'
 import FolderRow from './FolderRow.vue'
 
@@ -169,12 +168,6 @@ const toggleFolder = (folderId: string) => {
   saveExpandedState()
 }
 
-// Toggle section expansion
-const toggleSection = (section: 'favorites') => {
-  expandedSections.value[section] = !expandedSections.value[section]
-  saveSectionsState()
-}
-
 // Navigation handlers
 const navigateToFolder = (folderId: string) => {
   router.push(`/folders/${folderId}`)
@@ -202,10 +195,6 @@ const loadExpandedState = () => {
       console.error('Failed to parse expanded folders state', e)
     }
   }
-}
-
-const saveSectionsState = () => {
-  localStorage.setItem(STORAGE_KEY_SECTIONS, JSON.stringify(expandedSections.value))
 }
 
 const loadSectionsState = () => {

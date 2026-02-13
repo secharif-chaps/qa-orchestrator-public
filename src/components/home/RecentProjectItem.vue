@@ -1,11 +1,11 @@
 <template>
   <div
-    class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
+    class="flex cursor-pointer items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50"
     @click="handleClick"
   >
     <Badge variant="secondary" color="pink" icon="fa fa-building" />
-    <div class="flex-1 min-w-0">
-      <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">
+    <div class="min-w-0 flex-1">
+      <h4 class="truncate text-sm font-medium text-gray-900 dark:text-white">
         {{ name }}
       </h4>
       <p class="text-xs text-gray-500 dark:text-gray-400">{{ folderName }} • {{ timeAgo }}</p>

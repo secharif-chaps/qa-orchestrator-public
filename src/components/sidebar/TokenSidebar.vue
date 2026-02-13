@@ -1,7 +1,7 @@
 <template>
-  <div class="h-[calc(100vh-140px)] flex flex-col">
+  <div class="flex h-[calc(100vh-140px)] flex-col">
     <!-- Header with Total Credits -->
-    <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
+    <div class="border-sage-800 flex items-center justify-between border-b-2 px-4 py-2 shadow">
       <h2 class="text-headline-2xl">{{ $t('sidebar.tokens.title', 'Credits') }}</h2>
       <Tag
         variant="success"
@@ -21,13 +21,13 @@
       <!-- Token History -->
       <div v-else class="flex flex-col gap-6">
         <!-- Empty State -->
-        <div v-if="hasNoHistory" class="flex flex-col items-center justify-center py-8 gap-3">
+        <div v-if="hasNoHistory" class="flex flex-col items-center justify-center gap-3 py-8">
           <Tag variant="sage" icon="fa fa-coins" size="lg" />
           <div class="text-center">
-            <h3 class="text-sm font-semibold text-white mb-1">
+            <h3 class="mb-1 text-sm font-semibold text-white">
               {{ $t('sidebar.tokens.noHistory', 'No usage history') }}
             </h3>
-            <p class="text-xs text-sage-400 px-4">
+            <p class="text-sage-400 px-4 text-xs">
               {{
                 $t(
                   'sidebar.tokens.noHistoryDesc',
@@ -40,7 +40,7 @@
 
         <!-- Today Section -->
         <div v-if="groupedHistory.today.length > 0" class="flex flex-col gap-3">
-          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider">
+          <h3 class="text-sage-400 text-xs font-semibold tracking-wider uppercase">
             {{ $t('sidebar.tokens.today', "Aujourd'hui") }}
           </h3>
           <div class="flex flex-col gap-2">
@@ -55,7 +55,7 @@
 
         <!-- Yesterday Section -->
         <div v-if="groupedHistory.yesterday.length > 0" class="flex flex-col gap-3">
-          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider">
+          <h3 class="text-sage-400 text-xs font-semibold tracking-wider uppercase">
             {{ $t('sidebar.tokens.yesterday', 'Hier') }}
           </h3>
           <div class="flex flex-col gap-2">
@@ -74,7 +74,7 @@
           :key="dateKey"
           class="flex flex-col gap-3"
         >
-          <h3 class="text-xs font-semibold text-sage-400 uppercase tracking-wider">
+          <h3 class="text-sage-400 text-xs font-semibold tracking-wider uppercase">
             {{ dateKey }}
           </h3>
           <div class="flex flex-col gap-2">

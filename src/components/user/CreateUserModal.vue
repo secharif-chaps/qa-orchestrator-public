@@ -1,20 +1,20 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-base-100 rounded-lg shadow-xl w-full max-w-md">
+  <div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+    <div class="bg-base-100 w-full max-w-md rounded-lg shadow-xl">
       <!-- Header -->
-      <div class="px-6 py-4 border-b border-primary-stroke">
+      <div class="border-primary-stroke border-b px-6 py-4">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold">
             {{ $t('user.create.title', 'Create New User') }}
           </h2>
           <button
             @click="$emit('cancel')"
-            class="text-secondary hover:text-base transition-colors p-1"
+            class="text-secondary p-1 transition-colors hover:text-base"
           >
             <i class="fa fa-times"></i>
           </button>
         </div>
-        <p class="text-secondary text-sm mt-1">
+        <p class="text-secondary mt-1 text-sm">
           {{
             $t('user.create.description', 'User will be prompted to reset password on first login')
           }}
@@ -22,10 +22,10 @@
       </div>
 
       <!-- Form -->
-      <form @submit.prevent="handleSubmit" class="px-6 py-4 space-y-4">
+      <form @submit.prevent="handleSubmit" class="space-y-4 px-6 py-4">
         <!-- Username -->
         <div>
-          <label class="block text-sm font-medium text-secondary mb-1">
+          <label class="text-secondary mb-1 block text-sm font-medium">
             {{ $t('user.username', 'Username') }} *
           </label>
           <input
@@ -33,17 +33,17 @@
             type="text"
             required
             :disabled="isLoading"
-            class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+            class="border-primary-stroke focus:ring-primary w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
             :placeholder="$t('user.usernamePlaceholder', 'Enter username')"
           />
-          <p v-if="errors.username" class="text-red-600 text-xs mt-1">
+          <p v-if="errors.username" class="mt-1 text-xs text-red-600">
             {{ errors.username }}
           </p>
         </div>
 
         <!-- Email -->
         <div>
-          <label class="block text-sm font-medium text-secondary mb-1">
+          <label class="text-secondary mb-1 block text-sm font-medium">
             {{ $t('user.email', 'Email') }} *
           </label>
           <input
@@ -51,17 +51,17 @@
             type="email"
             required
             :disabled="isLoading"
-            class="w-full px-3 py-2 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+            class="border-primary-stroke focus:ring-primary w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
             :placeholder="$t('user.emailPlaceholder', 'Enter email address')"
           />
-          <p v-if="errors.email" class="text-red-600 text-xs mt-1">
+          <p v-if="errors.email" class="mt-1 text-xs text-red-600">
             {{ errors.email }}
           </p>
         </div>
 
         <!-- Temporary Password -->
         <div>
-          <label class="block text-sm font-medium text-secondary mb-1">
+          <label class="text-secondary mb-1 block text-sm font-medium">
             {{ $t('user.temporaryPassword', 'Temporary Password') }} *
           </label>
           <div class="relative">
@@ -70,19 +70,19 @@
               :type="showPassword ? 'text' : 'password'"
               required
               :disabled="isLoading"
-              class="w-full px-3 py-2 pr-10 border border-primary-stroke rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+              class="border-primary-stroke focus:ring-primary w-full rounded-lg border px-3 py-2 pr-10 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
               :placeholder="$t('user.passwordPlaceholder', 'Enter temporary password')"
             />
             <button
               type="button"
               @click="showPassword = !showPassword"
-              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary hover:text-base"
+              class="text-secondary absolute top-1/2 right-3 -translate-y-1/2 transform hover:text-base"
               :disabled="isLoading"
             >
               <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
             </button>
           </div>
-          <p class="text-xs text-secondary mt-1">
+          <p class="text-secondary mt-1 text-xs">
             {{
               $t(
                 'user.passwordHelp',
@@ -90,7 +90,7 @@
               )
             }}
           </p>
-          <p v-if="errors.temporaryPassword" class="text-red-600 text-xs mt-1">
+          <p v-if="errors.temporaryPassword" class="mt-1 text-xs text-red-600">
             {{ errors.temporaryPassword }}
           </p>
         </div>
@@ -109,11 +109,11 @@
         </div>
 
         <!-- Initial Role Selection -->
-        <div class="border-t border-primary-stroke pt-4">
-          <label class="block text-sm font-medium text-secondary mb-2">
+        <div class="border-primary-stroke border-t pt-4">
+          <label class="text-secondary mb-2 block text-sm font-medium">
             {{ $t('user.initialRole', 'Initial Role') }}
           </label>
-          <p class="text-xs text-secondary mb-3">
+          <p class="text-secondary mb-3 text-xs">
             {{
               $t(
                 'user.initialRoleDescription',
@@ -125,7 +125,7 @@
             <label
               v-for="role in availableRoles"
               :key="role.id"
-              class="flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors"
+              class="flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors"
               :class="
                 selectedRoleId === role.id
                   ? 'border-primary bg-primary/5'
@@ -137,15 +137,15 @@
                 :value="role.id"
                 v-model="selectedRoleId"
                 :disabled="isLoading"
-                class="w-4 h-4 text-primary focus:ring-primary border-primary-stroke"
+                class="text-primary focus:ring-primary border-primary-stroke h-4 w-4"
               />
-              <div class="flex items-center gap-2 flex-1">
-                <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <div class="flex flex-1 items-center gap-2">
+                <div class="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-lg">
                   <i :class="['fa', role.icon, 'text-primary text-sm']"></i>
                 </div>
                 <div>
-                  <p class="font-medium text-sm">{{ role.name }}</p>
-                  <p class="text-xs text-secondary">{{ role.description }}</p>
+                  <p class="text-sm font-medium">{{ role.name }}</p>
+                  <p class="text-secondary text-xs">{{ role.description }}</p>
                 </div>
               </div>
             </label>
@@ -154,23 +154,23 @@
       </form>
 
       <!-- Actions -->
-      <div class="px-6 py-4 border-t border-primary-stroke flex justify-end gap-3">
+      <div class="border-primary-stroke flex justify-end gap-3 border-t px-6 py-4">
         <button
           type="button"
           @click="$emit('cancel')"
           :disabled="isLoading"
-          class="px-4 py-2 text-secondary hover:text-base transition-colors disabled:opacity-50"
+          class="text-secondary px-4 py-2 transition-colors hover:text-base disabled:opacity-50"
         >
           {{ $t('common.cancel', 'Cancel') }}
         </button>
         <button
           @click="handleSubmit"
           :disabled="isLoading || !isFormValid"
-          class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          class="bg-primary hover:bg-primary/80 flex items-center gap-2 rounded-lg px-6 py-2 text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           <div
             v-if="isLoading"
-            class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"
+            class="h-4 w-4 animate-spin rounded-full border-b-2 border-white"
           ></div>
           <i v-else class="fa fa-user-plus"></i>
           {{ $t('user.create.button', 'Add User') }}

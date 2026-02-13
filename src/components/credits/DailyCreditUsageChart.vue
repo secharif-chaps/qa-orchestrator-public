@@ -40,19 +40,21 @@ const formatDate = (dateStr: string): string => {
 }
 
 const chartData = computed(() => {
-  const labels = props.dailyUsage.map(item => formatDate(item.date))
-  const data = props.dailyUsage.map(item => item.creditsConsumed)
+  const labels = props.dailyUsage.map((item) => formatDate(item.date))
+  const data = props.dailyUsage.map((item) => item.creditsConsumed)
 
   return {
     labels,
-    datasets: [{
-      label: 'Crédits consommés',
-      data,
-      backgroundColor: 'rgba(139, 175, 156, 0.6)', // Primary color with opacity
-      borderColor: 'rgb(139, 175, 156)',
-      borderWidth: 1,
-      borderRadius: 4,
-    }],
+    datasets: [
+      {
+        label: 'Crédits consommés',
+        data,
+        backgroundColor: 'rgba(139, 175, 156, 0.6)', // Primary color with opacity
+        borderColor: 'rgb(139, 175, 156)',
+        borderWidth: 1,
+        borderRadius: 4,
+      },
+    ],
   }
 })
 

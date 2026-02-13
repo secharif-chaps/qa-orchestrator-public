@@ -2,17 +2,17 @@
   <div class="flex flex-col items-center">
     <!-- Chapse Error Image -->
     <div class="mb-6">
-      <img :src="chapseLoadingImage" alt="Loading" class="w-24 h-auto" />
+      <img :src="chapseLoadingImage" alt="Loading" class="h-auto w-24" />
     </div>
 
     <!-- Error Title -->
-    <h3 class="text-xl font-semibold text-secondary mb-2 flex items-center gap-2">
+    <h3 class="text-secondary mb-2 flex items-center gap-2 text-xl font-semibold">
       <i :class="icon" class="animate-spin"></i>
       <span>{{ title }}</span>
     </h3>
 
     <!-- Error Description -->
-    <p class="text-secondary max-w-md mx-auto mb-4 text-center">
+    <p class="text-secondary mx-auto mb-4 max-w-md text-center">
       {{ description }}
     </p>
   </div>

@@ -2,8 +2,10 @@
   <div
     class="rounded-xl border p-4"
     :class="[
-      forecast.enabled ? [moduleConfig.cardBg, moduleConfig.cardBorder] : 'bg-base-100 border-base-300',
-      { 'opacity-60': !forecast.enabled }
+      forecast.enabled
+        ? [moduleConfig.cardBg, moduleConfig.cardBorder]
+        : 'bg-base-100 border-base-300',
+      { 'opacity-60': !forecast.enabled },
     ]"
   >
     <div class="flex flex-col gap-3">
@@ -11,14 +13,17 @@
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div
-            class="w-10 h-10 rounded-lg flex items-center justify-center"
+            class="flex h-10 w-10 items-center justify-center rounded-lg"
             :class="forecast.enabled ? moduleConfig.iconBg : 'bg-base-200'"
           >
             <i
-              :class="[moduleConfig.icon, forecast.enabled ? moduleConfig.iconText : 'text-secondary']"
+              :class="[
+                moduleConfig.icon,
+                forecast.enabled ? moduleConfig.iconText : 'text-secondary',
+              ]"
             ></i>
           </div>
-          <h4 class="font-semibold text-base">{{ moduleLabel }}</h4>
+          <h4 class="text-base font-semibold">{{ moduleLabel }}</h4>
         </div>
         <!-- Refresh icon for enabled, disabled badge for disabled -->
         <button v-if="forecast.enabled" class="text-secondary hover:text-primary transition-colors">
@@ -30,24 +35,24 @@
       <!-- Enabled state with count -->
       <template v-if="forecast.enabled">
         <!-- Cost per item info -->
-        <div v-if="forecast.cost" class="flex items-center gap-2 text-sm text-secondary">
+        <div v-if="forecast.cost" class="text-secondary flex items-center gap-2 text-sm">
           <i class="fa fa-circle-info"></i>
-          <span>{{ $t('credits.module.costPerItem', {
-            cost: forecast.cost,
-            item: itemLabel
-          }) }}</span>
+          <span>{{
+            $t('credits.module.costPerItem', {
+              cost: forecast.cost,
+              item: itemLabel,
+            })
+          }}</span>
         </div>
 
         <!-- Remaining info -->
-        <div class="text-sm text-secondary">
-          {{ $t('credits.module.canCreate') }} :
-        </div>
+        <div class="text-secondary text-sm">{{ $t('credits.module.canCreate') }} :</div>
 
         <!-- Remaining count pill - smaller with white background -->
         <div
-          class="inline-flex items-center px-3 py-1.5 rounded-full w-fit bg-white border border-base-300 shadow-sm"
+          class="border-base-300 inline-flex w-fit items-center rounded-full border bg-white px-3 py-1.5 shadow-sm"
         >
-          <span class="font-medium text-sm text-base-content">
+          <span class="text-base-content text-sm font-medium">
             {{ formattedCount }} {{ itemPluralLabel }}
           </span>
         </div>
@@ -81,16 +86,19 @@ const props = defineProps<Props>()
 
 // Module-specific configurations matching the appbar badges
 // screen = indigo, target = cherry (rose in tailwind), explore = almond
-const MODULE_CONFIG: Record<ModuleName, {
-  cardBg: string
-  cardBorder: string
-  iconBg: string
-  iconText: string
-  icon: string
-  labelKey: string
-  itemKey: string
-  itemPluralKey: string
-}> = {
+const MODULE_CONFIG: Record<
+  ModuleName,
+  {
+    cardBg: string
+    cardBorder: string
+    iconBg: string
+    iconText: string
+    icon: string
+    labelKey: string
+    itemKey: string
+    itemPluralKey: string
+  }
+> = {
   screen: {
     cardBg: 'bg-indigo-50/50',
     cardBorder: 'border-indigo-200',

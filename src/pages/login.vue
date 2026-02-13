@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-base-300 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
+  <div class="bg-base-300 flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md space-y-8">
       <div>
         <div class="flex justify-center">
           <i class="fa-solid fa-leaf text-secondary text-7xl"></i>
@@ -10,7 +10,7 @@
         </h2>
       </div>
       <div class="mt-8 space-y-4">
-        <div v-if="error" class="text-red-600 text-sm text-center mb-4">
+        <div v-if="error" class="mb-4 text-center text-sm text-red-600">
           {{ error }}
         </div>
 

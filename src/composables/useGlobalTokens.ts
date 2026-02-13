@@ -71,11 +71,7 @@ export function useGlobalTokens(organizationId: string) {
       key: ORGANIZATION_TOKEN_KEYS.root,
       predicate: (query) => {
         const key = query.key as readonly unknown[]
-        return (
-          key[0] === 'organization-tokens' &&
-          key[1] === 'history' &&
-          key[2] === organizationId
-        )
+        return key[0] === 'organization-tokens' && key[1] === 'history' && key[2] === organizationId
       },
     })
   }

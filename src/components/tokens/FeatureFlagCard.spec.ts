@@ -33,13 +33,15 @@ vi.mock('@owlint/feathers-vue', () => ({
   },
   Switch: {
     name: 'Switch',
-    template: '<input type="checkbox" class="switch" :checked="modelValue" @change="$emit(\'update:modelValue\', $event.target.checked)" />',
+    template:
+      '<input type="checkbox" class="switch" :checked="modelValue" @change="$emit(\'update:modelValue\', $event.target.checked)" />',
     props: ['id', 'modelValue', 'disabled'],
     emits: ['update:modelValue'],
   },
   Input: {
     name: 'Input',
-    template: '<input type="text" class="input" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" @blur="$emit(\'blur\')" :disabled="disabled" :placeholder="placeholder" />',
+    template:
+      '<input type="text" class="input" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" @blur="$emit(\'blur\')" :disabled="disabled" :placeholder="placeholder" />',
     props: ['modelValue', 'type', 'label', 'placeholder', 'error', 'disabled', 'icon'],
     emits: ['update:modelValue', 'blur'],
   },

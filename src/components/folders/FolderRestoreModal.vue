@@ -2,20 +2,20 @@
   <!-- Restore Confirmation Modal -->
   <div
     v-if="showRestoreModal && folderToRestore"
-    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
   >
-    <div class="bg-base-100 rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div class="bg-base-100 mx-4 w-full max-w-md rounded-lg shadow-xl">
       <!-- Header -->
-      <div class="p-6 border-b border-primary-stroke">
+      <div class="border-primary-stroke border-b p-6">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
             <i class="fa fa-undo text-green-600"></i>
           </div>
           <div>
-            <h3 class="text-lg font-semibold text-base">
+            <h3 class="text-base text-lg font-semibold">
               {{ $t('folder.restore.title', 'Restore Folder') }}
             </h3>
-            <p class="text-sm text-secondary">
+            <p class="text-secondary text-sm">
               {{
                 $t('folder.restore.subtitle', 'This will move the folder back to the active list.')
               }}
@@ -26,7 +26,7 @@
 
       <!-- Content -->
       <div class="p-6">
-        <p class="text-sm text-secondary mb-4">
+        <p class="text-secondary mb-4 text-sm">
           {{
             $t(
               'folder.restore.warning.message',
@@ -36,8 +36,8 @@
         </p>
 
         <!-- Folder Details -->
-        <div class="mb-6 bg-base-200 rounded-lg p-4">
-          <h4 class="font-medium text-base mb-3">
+        <div class="bg-base-200 mb-6 rounded-lg p-4">
+          <h4 class="mb-3 text-base font-medium">
             {{ $t('folder.restore.details', 'Folder Details') }}
           </h4>
           <div class="space-y-2 text-sm">
@@ -50,7 +50,7 @@
       </div>
 
       <!-- Footer -->
-      <div class="p-6 border-t border-primary-stroke flex items-center justify-end gap-3">
+      <div class="border-primary-stroke flex items-center justify-end gap-3 border-t p-6">
         <Button
           variant="secondary"
           :label="$t('common.cancel', 'Cancel')"

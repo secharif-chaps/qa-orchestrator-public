@@ -6,7 +6,9 @@
         ref="searchbar"
         id="user-search"
         :model-value="search"
-        :placeholder="$t('admin.users.search.placeholder', 'Search by username, name, email or organization...')"
+        :placeholder="
+          $t('admin.users.search.placeholder', 'Search by username, name, email or organization...')
+        "
         @update:model-value="handleSearchInput"
         class="w-[28rem]"
       >
@@ -28,7 +30,7 @@
 
         <template #content="{ close }">
           <!-- Sort by Username -->
-          <div class="px-4 py-2 text-xs font-semibold text-secondary uppercase">
+          <div class="text-secondary px-4 py-2 text-xs font-semibold uppercase">
             {{ $t('admin.users.sort.sortBy', 'Sort by') }}
           </div>
 
@@ -45,7 +47,7 @@
           <DropdownDivider />
 
           <!-- Sort order -->
-          <div class="px-4 py-2 text-xs font-semibold text-secondary uppercase">
+          <div class="text-secondary px-4 py-2 text-xs font-semibold uppercase">
             {{ $t('admin.users.sort.order', 'Order') }}
           </div>
 

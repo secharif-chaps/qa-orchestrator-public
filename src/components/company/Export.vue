@@ -1,6 +1,11 @@
 <template>
   <div>
-    <Button variant="tertiary" icon="fa fa-download" :label="$t('company.export.button', 'Export')" @click="showModal = true" />
+    <Button
+      variant="tertiary"
+      icon="fa fa-download"
+      :label="$t('company.export.button', 'Export')"
+      @click="showModal = true"
+    />
 
     <ExportModal
       v-if="company"
@@ -50,7 +55,7 @@ const getSourcesFromArray = <T,>(items: SourcedValue<T>[] | undefined): string[]
 }
 
 // Helper function to get sources from object properties
-const getSourcesFromObject = (obj: Record<string, any> | undefined): string[] => {
+const getSourcesFromObject = (obj: Record<string, unknown> | undefined): string[] => {
   if (!obj) return []
 
   const sources: string[] = []
@@ -62,7 +67,7 @@ const getSourcesFromObject = (obj: Record<string, any> | undefined): string[] =>
       } else if (Array.isArray(value)) {
         sources.push(...getSourcesFromArray(value))
       } else {
-        sources.push(...getSourcesFromObject(value))
+        sources.push(...getSourcesFromObject(value as Record<string, unknown>))
       }
     }
   })
@@ -179,41 +184,6 @@ const addInfoBlock = (slide, label, sourcedValue: SourcedValue<string> | undefin
     fontFace: 'Arial',
     breakLine: true,
     w: 4.0,
-  })
-}
-
-// Function to create list items
-const addListItems = (slide, title, items: SourcedValue<string>[] | undefined, x, y) => {
-  slide.addText(title, {
-    x,
-    y,
-    fontSize: 14,
-    bold: true,
-    color: COLORS.titleText,
-    fontFace: 'Arial',
-  })
-
-  if (!items || items.length === 0) {
-    slide.addText('No items available', {
-      x,
-      y: y + 0.4,
-      fontSize: 12,
-      color: COLORS.secondaryText,
-      fontFace: 'Arial',
-    })
-    return
-  }
-
-  items.forEach((item, index) => {
-    slide.addText(`• ${getValue(item)}`, {
-      x,
-      y: y + 0.4 + index * 0.3,
-      fontSize: 12,
-      color: COLORS.secondaryText,
-      fontFace: 'Arial',
-      breakLine: true,
-      w: 4.0,
-    })
   })
 }
 
@@ -738,7 +708,7 @@ const createTimelineSlide = (pptx, company: Company) => {
     })
 
     // Helper to extract value from SourcedValue or plain string
-    const extractVal = (field: any): string => {
+    const extractVal = (field: SourcedValue<string> | string | undefined): string => {
       if (!field) return ''
       if (typeof field === 'string') return field
       if (typeof field === 'object' && field.value) return String(field.value)
@@ -915,7 +885,7 @@ const createJobsSlide = (pptx, company: Company) => {
     })
 
     // Helper to extract value from SourcedValue or plain string
-    const extractJobVal = (field: any): string => {
+    const extractJobVal = (field: SourcedValue<string> | string | undefined): string => {
       if (!field) return ''
       if (typeof field === 'string') return field
       if (typeof field === 'object' && field.value) return String(field.value)
@@ -942,7 +912,7 @@ const createJobsSlide = (pptx, company: Company) => {
   const sources = company.jobs?.insights
     ? Object.values(company.jobs.insights)
         .filter((insight) => insight && typeof insight === 'object' && 'source' in insight)
-        .map((insight) => (insight as any).source)
+        .map((insight) => (insight as { source: string }).source)
         .filter((source) => source && source.trim() !== '')
     : []
   addSourcesSection(slide, sources)

@@ -1,9 +1,5 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import {
-  createFolderShare,
-  deleteFolderShare,
-  updateFolderShare,
-} from '@/api/folders'
+import { createFolderShare, deleteFolderShare, updateFolderShare } from '@/api/folders'
 import type { FolderShare, FolderShareCreate, FolderShareUpdate } from '@/types/folder'
 import { toast } from '@/utils/toast'
 import { useI18n } from 'vue-i18n'

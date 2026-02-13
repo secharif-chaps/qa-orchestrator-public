@@ -1,8 +1,8 @@
 <template>
   <div
-    class="bg-base-200 min-h-52 rounded-card border border-primary-stroke p-6 hover:shadow-shadow-2 transition-all duration-300 cursor-pointer group relative overflow-hidden flex flex-col gap-4 h-full"
+    class="bg-base-200 rounded-card border-primary-stroke hover:shadow-shadow-2 group relative flex h-full min-h-52 cursor-pointer flex-col gap-4 overflow-hidden border p-6 transition-all duration-300"
     :class="{
-      'opacity-60 cursor-not-allowed': disabled,
+      'cursor-not-allowed opacity-60': disabled,
       'hover:border-primary/50': !disabled && !isLoading,
     }"
     @click="handleClick"
@@ -15,26 +15,26 @@
     <!-- Header -->
     <div class="flex items-start gap-4">
       <div
-        class="size-8 rounded-card flex items-center justify-center flex-shrink-0 transition-colors"
+        class="rounded-card flex size-8 flex-shrink-0 items-center justify-center transition-colors"
       >
         <i v-if="isLoading" class="fas fa-spinner fa-spin text-xl" :class="iconColorClass"></i>
         <i v-else :class="[icon, 'text-xl', iconColorClass]"></i>
       </div>
 
-      <div class="flex-1 min-w-0">
-        <h3 class="text-lg font-semibold mb-1 transition-colors">
+      <div class="min-w-0 flex-1">
+        <h3 class="mb-1 text-lg font-semibold transition-colors">
           {{ title }}
         </h3>
       </div>
     </div>
 
     <!-- AI Insights Preview -->
-    <div v-if="hasInsights" class="flex-1 flex flex-col">
-      <p class="text-sm text-secondary">
+    <div v-if="hasInsights" class="flex flex-1 flex-col">
+      <p class="text-secondary text-sm">
         {{ insights }}
       </p>
       <button
-        class="mt-2 text-xs text-secondary hover:text-secondary/80 transition-colors font-medium flex items-center gap-1 self-start"
+        class="text-secondary hover:text-secondary/80 mt-2 flex items-center gap-1 self-start text-xs font-medium transition-colors"
       >
         <span>{{ $t('company.analysisCard.viewMore', 'View more') }}</span>
         <i class="fas fa-arrow-right text-[10px]"></i>
@@ -44,9 +44,9 @@
     <!-- Loading State Overlay -->
     <div
       v-if="isLoading"
-      class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card"
+      class="bg-base-100/80 rounded-card absolute inset-0 flex items-center justify-center backdrop-blur-sm"
     >
-      <div class="flex items-center gap-3 text-base text-secondary">
+      <div class="text-secondary flex items-center gap-3 text-base">
         <i class="fas fa-spinner fa-spin text-xl"></i>
         <span>{{ $t('company.analysisCard.loading', 'Analysis in progress...') }}</span>
       </div>
@@ -55,35 +55,44 @@
     <!-- Error State Overlay -->
     <div
       v-if="hasError"
-      class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card p-6"
+      class="bg-base-100/80 rounded-card absolute inset-0 flex items-center justify-center p-6 backdrop-blur-sm"
     >
-      <div class="flex flex-col items-center gap-4 w-full">
+      <div class="flex w-full flex-col items-center gap-4">
         <Alert
           variant="danger"
           :title="$t('company.analysisCard.error.title', 'Error')"
-          :description="errorMessage || $t('company.analysisCard.error.message', 'An error occurred during analysis')"
+          :description="
+            errorMessage ||
+            $t('company.analysisCard.error.message', 'An error occurred during analysis')
+          "
           icon="fa-exclamation-triangle"
         />
       </div>
     </div>
 
     <!-- No Data State -->
-    <div v-else-if="!hasInsights && !isLoading" class="mt-4 pt-4 border-t border-primary-stroke">
-      <p class="text-sm text-secondary italic">{{ $t('company.analysisCard.noData', 'No data available for this section') }}</p>
+    <div v-else-if="!hasInsights && !isLoading" class="border-primary-stroke mt-4 border-t pt-4">
+      <p class="text-secondary text-sm italic">
+        {{ $t('company.analysisCard.noData', 'No data available for this section') }}
+      </p>
     </div>
 
     <!-- Disabled Overlay -->
     <div
       v-if="disabled"
-      class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card"
+      class="bg-base-100/80 rounded-card absolute inset-0 flex items-center justify-center backdrop-blur-sm"
     >
-      <Tag variant="accent" :label="$t('company.analysisCard.comingSoon', 'Coming soon')" size="sm" />
+      <Tag
+        variant="accent"
+        :label="$t('company.analysisCard.comingSoon', 'Coming soon')"
+        size="sm"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import Tag from '@/components/ui/Tag.vue'
 import { Alert } from '@owlint/feathers-vue'
 import type { TaskStatus } from '@/types/task'

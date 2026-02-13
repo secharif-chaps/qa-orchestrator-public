@@ -4,10 +4,7 @@
     :orientation="orientation"
     :linear="linear"
     class="mb-12"
-    :class="[
-      'flex w-full',
-      orientation === 'horizontal' ? 'gap-2' : 'flex-col gap-4',
-    ]"
+    :class="['flex w-full', orientation === 'horizontal' ? 'gap-2' : 'flex-col gap-4']"
   >
     <StepperItem
       v-for="(step, index) in steps"
@@ -19,15 +16,15 @@
       :class="[
         'group relative cursor-pointer',
         orientation === 'horizontal'
-          ? 'flex-1 flex justify-center gap-2 px-2'
+          ? 'flex flex-1 justify-center gap-2 px-2'
           : 'flex items-start gap-3',
       ]"
     >
       <!-- Step Indicator (circular button with icon) -->
       <StepperTrigger
         :class="[
-          'inline-flex items-center justify-center rounded-full shrink-0 shadow-sm transition-all duration-200',
-          'border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-accent',
+          'inline-flex shrink-0 items-center justify-center rounded-full shadow-sm transition-all duration-200',
+          'focus-visible:ring-accent border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
           sizeClasses.indicator,
           getIndicatorClasses(state),
         ]"
@@ -35,17 +32,10 @@
       >
         <StepperIndicator class="flex items-center justify-center">
           <!-- Completed state: checkmark -->
-          <i
-            v-if="state === 'completed'"
-            class="fa-solid fa-check"
-            :class="sizeClasses.icon"
-          />
+          <i v-if="state === 'completed'" class="fa-solid fa-check" :class="sizeClasses.icon" />
           <!-- Active or Inactive: show custom icon or step number -->
           <template v-else>
-            <i
-              v-if="step.icon"
-              :class="[step.icon, sizeClasses.icon]"
-            />
+            <i v-if="step.icon" :class="[step.icon, sizeClasses.icon]" />
             <span v-else :class="sizeClasses.number">{{ index + 1 }}</span>
           </template>
         </StepperIndicator>
@@ -55,7 +45,7 @@
       <StepperSeparator
         v-if="orientation === 'horizontal' && index !== steps.length - 1"
         :class="[
-          'absolute block h-0.5 rounded-full shrink-0 transition-colors duration-200',
+          'absolute block h-0.5 shrink-0 rounded-full transition-colors duration-200',
           sizeClasses.separatorPosition,
           getSeparatorClasses(state),
         ]"
@@ -65,7 +55,7 @@
       <div
         v-if="orientation === 'horizontal'"
         :class="[
-          'absolute text-center left-0 w-full mt-2 transition-opacity duration-200',
+          'absolute left-0 mt-2 w-full text-center transition-opacity duration-200',
           sizeClasses.textPosition,
           step.disabled ? 'opacity-50' : '',
         ]"
@@ -82,7 +72,7 @@
         <StepperDescription
           v-if="step.description"
           :class="[
-            'hidden sm:block transition-colors duration-200',
+            'hidden transition-colors duration-200 sm:block',
             sizeClasses.description,
             getDescriptionClasses(state),
           ]"
@@ -117,7 +107,7 @@
         <StepperSeparator
           v-if="index !== steps.length - 1"
           :class="[
-            'w-0.5 h-8 mt-2 ml-4 rounded-full transition-colors duration-200',
+            'mt-2 ml-4 h-8 w-0.5 rounded-full transition-colors duration-200',
             getSeparatorClasses(state),
           ]"
         />

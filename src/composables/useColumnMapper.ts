@@ -76,9 +76,7 @@ export function useColumnMapper(): ColumnMapperReturn {
    * Get list of columns that are set to ignore
    */
   const unmappedColumns = computed(() => {
-    return mappings.value
-      .filter((m) => m.targetField === null)
-      .map((m) => m.csvColumn)
+    return mappings.value.filter((m) => m.targetField === null).map((m) => m.csvColumn)
   })
 
   /**

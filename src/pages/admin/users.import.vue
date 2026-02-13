@@ -3,13 +3,14 @@
     <!-- Page Header -->
     <div class="flex items-center gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-sage-900 dark:text-white">
+        <h1 class="text-sage-900 text-2xl font-bold dark:text-white">
           {{ $t('admin.import.title') }}
         </h1>
         <p class="text-sage-600 dark:text-sage-400">
-          {{ preselectedOrgName
-            ? `${$t('admin.import.description')} - ${preselectedOrgName}`
-            : $t('admin.import.description')
+          {{
+            preselectedOrgName
+              ? `${$t('admin.import.description')} - ${preselectedOrgName}`
+              : $t('admin.import.description')
           }}
         </p>
       </div>
@@ -20,7 +21,7 @@
       v-if="isLoadingOrganizations && !organizationsData"
       class="flex items-center justify-center py-16"
     >
-      <i class="fa-solid fa-spinner animate-spin text-2xl text-primary" />
+      <i class="fa-solid fa-spinner text-primary animate-spin text-2xl" />
     </div>
 
     <!-- Error Loading Organizations -->

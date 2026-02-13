@@ -4,9 +4,9 @@
     <button
       v-if="!isOpen"
       @click="toggleChat"
-      class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center group animate-float"
+      class="from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 group animate-float fixed right-6 bottom-6 z-50 flex h-14 w-14 transform items-center justify-center rounded-full bg-gradient-to-br text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
     >
-      <i class="fa fa-comments text-xl group-hover:rotate-12 transition-transform duration-300"></i>
+      <i class="fa fa-comments text-xl transition-transform duration-300 group-hover:rotate-12"></i>
     </button>
   </Transition>
 
@@ -14,27 +14,27 @@
   <Transition name="chat-window">
     <div
       v-if="isOpen"
-      class="fixed bottom-6 right-6 z-50 w-96 h-[600px] max-h-[80vh] bg-base-100 dark:bg-slate-900 rounded-2xl shadow-2xl border border-primary-stroke dark:border-slate-700 flex flex-col overflow-hidden animate-slideUp"
+      class="bg-base-100 border-primary-stroke animate-slideUp fixed right-6 bottom-6 z-50 flex h-[600px] max-h-[80vh] w-96 flex-col overflow-hidden rounded-2xl border shadow-2xl dark:border-slate-700 dark:bg-slate-900"
     >
       <!-- Chat header with glass effect -->
       <div
-        class="relative bg-gradient-to-r from-primary/90 to-primary/70 backdrop-blur-sm p-4 flex items-center justify-between text-white"
+        class="from-primary/90 to-primary/70 relative flex items-center justify-between bg-gradient-to-r p-4 text-white backdrop-blur-sm"
       >
         <!-- AI Assistant info -->
         <div class="flex items-center gap-3">
           <div class="relative">
-            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
               <i class="fa fa-robot text-lg"></i>
             </div>
             <!-- Online indicator -->
             <span
-              class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-white rounded-full animate-pulse"
+              class="absolute right-0 bottom-0 h-3 w-3 animate-pulse rounded-full border-2 border-white bg-green-400"
             ></span>
           </div>
           <div>
             <h3 class="font-semibold">{{ t('company.chat.assistant.name') }}</h3>
-            <p class="text-xs text-white/80 flex items-center gap-1">
-              <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+            <p class="flex items-center gap-1 text-xs text-white/80">
+              <span class="h-2 w-2 animate-pulse rounded-full bg-green-400"></span>
               {{ t('company.chat.assistant.online') }}
             </p>
           </div>
@@ -44,13 +44,13 @@
         <div class="flex gap-2">
           <button
             @click="minimizeChat"
-            class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center"
+            class="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
           >
             <i class="fa fa-minus text-sm"></i>
           </button>
           <button
             @click="closeChat"
-            class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 transition-colors flex items-center justify-center"
+            class="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-white/20"
           >
             <i class="fa fa-times"></i>
           </button>
@@ -69,12 +69,12 @@
     <div
       v-if="isMinimized"
       @click="restoreChat"
-      class="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-primary to-primary-600 text-white px-4 py-2 rounded-full shadow-lg hover:shadow-xl cursor-pointer transform hover:scale-105 transition-all duration-300 flex items-center gap-3"
+      class="from-primary to-primary-600 fixed right-6 bottom-6 z-50 flex transform cursor-pointer items-center gap-3 rounded-full bg-gradient-to-r px-4 py-2 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
     >
       <div class="relative">
         <i class="fa fa-robot"></i>
         <span
-          class="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse"
+          class="absolute -top-1 -right-1 h-2 w-2 animate-pulse rounded-full bg-green-400"
         ></span>
       </div>
       <span class="text-sm font-medium">{{ t('company.chat.assistant.shortName') }}</span>

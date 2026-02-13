@@ -1,20 +1,20 @@
 <template>
   <div
     v-if="modelValue"
-    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
     @click.self="$emit('update:modelValue', false)"
   >
-    <div class="bg-base-100 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+    <div class="bg-base-100 mx-4 w-full max-w-md rounded-lg p-6 shadow-xl">
       <!-- Header -->
-      <div class="flex items-center gap-3 mb-4">
+      <div class="mb-4 flex items-center gap-3">
         <div
-          class="w-12 h-12 rounded-lg bg-red-100 dark:bg-red-900/20 flex items-center justify-center"
+          class="flex h-12 w-12 items-center justify-center rounded-lg bg-red-100 dark:bg-red-900/20"
         >
-          <i class="fas fa-trash text-red-600 dark:text-red-400 text-xl"></i>
+          <i class="fas fa-trash text-xl text-red-600 dark:text-red-400"></i>
         </div>
         <div>
           <h3 class="text-lg font-semibold">{{ $t('folder.delete.title', 'Delete Folder') }}</h3>
-          <p class="text-sm text-secondary">
+          <p class="text-secondary text-sm">
             {{ $t('folder.delete.subtitle', 'This action cannot be undone') }}
           </p>
         </div>
@@ -26,17 +26,17 @@
           {{ $t('folder.delete.message', 'Are you sure you want to delete this folder?') }}
         </p>
 
-        <div class="bg-base-200 border border-primary-stroke rounded-lg p-4">
+        <div class="bg-base-200 border-primary-stroke rounded-lg border p-4">
           <div class="flex items-center gap-3">
             <div
-              class="w-8 h-8 rounded-lg flex items-center justify-center"
+              class="flex h-8 w-8 items-center justify-center rounded-lg"
               :class="folderColorClasses"
             >
               <i :class="folderIcon" class="text-sm"></i>
             </div>
             <div>
               <div class="font-medium">{{ folderToDelete?.name }}</div>
-              <div class="text-sm text-secondary">
+              <div class="text-secondary text-sm">
                 {{
                   $t('folder.itemCount', {
                     count: folderToDelete?.items?.length || folderToDelete?.items_count || 0,

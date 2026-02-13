@@ -1,13 +1,15 @@
 <template>
-  <div v-if="meta" class="grid grid-cols-3 gap-4 items-center">
+  <div v-if="meta" class="grid grid-cols-3 items-center gap-4">
     <!-- Left: Per page selector with results info -->
     <div class="flex flex-col gap-2">
       <div class="flex items-center gap-2">
-        <label class="text-sm text-secondary whitespace-nowrap sr-only">{{ $t('pagination.show') }}</label>
+        <label class="text-secondary sr-only text-sm whitespace-nowrap">{{
+          $t('pagination.show')
+        }}</label>
         <select
           :value="meta.per_page"
           @change="$emit('updatePerPage', parseInt(($event.target as HTMLSelectElement).value))"
-          class="px-3 py-1.5 bg-base-200 border border-primary-stroke rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary min-w-16"
+          class="bg-base-200 border-primary-stroke focus:ring-primary/20 focus:border-primary min-w-16 rounded-md border px-3 py-1.5 text-sm focus:ring-2 focus:outline-none"
         >
           <option v-for="option in pageSizeOptions" :key="option" :value="option">
             {{ option }}
@@ -15,13 +17,13 @@
         </select>
       </div>
 
-      <div class="text-sm text-secondary whitespace-nowrap">
+      <div class="text-secondary text-sm whitespace-nowrap">
         {{ resultText }}
       </div>
     </div>
 
     <!-- Center: Page navigation -->
-    <div class="flex-1 flex justify-center">
+    <div class="flex flex-1 justify-center">
       <Pagination.Root
         v-model:page="currentPage"
         :total="meta.total"
@@ -31,12 +33,12 @@
       >
         <Pagination.List v-slot="{ items }" class="flex items-center gap-2">
           <Pagination.First
-            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-secondary hover:text-secondary transition-colors"
+            class="bg-base-200 hover:bg-base-300 ring-primary ring-offset-bg1 text-secondary hover:text-secondary flex h-10 w-10 items-center justify-center rounded-md p-0 ring-offset-2 transition-colors hover:ring-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:ring-0 disabled:hover:ring-offset-0"
           >
             <i class="fas fa-chevron-double-left text-sm"></i>
           </Pagination.First>
           <Pagination.Prev
-            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-secondary hover:text-secondary transition-colors"
+            class="bg-base-200 hover:bg-base-300 ring-primary ring-offset-bg1 text-secondary hover:text-secondary flex h-10 w-10 items-center justify-center rounded-md p-0 ring-offset-2 transition-colors hover:ring-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:ring-0 disabled:hover:ring-offset-0"
           >
             <i class="fas fa-chevron-left text-sm"></i>
           </Pagination.Prev>
@@ -44,14 +46,14 @@
           <template v-for="(item, index) in items" :key="index">
             <Pagination.Ellipsis
               v-if="item.type === 'ellipsis'"
-              class="flex h-10 w-10 items-center justify-center text-secondary hover:ring-2 hover:ring-primary hover:ring-offset-2 hover:ring-offset-bg1"
+              class="text-secondary hover:ring-primary hover:ring-offset-bg1 flex h-10 w-10 items-center justify-center hover:ring-2 hover:ring-offset-2"
             >
               <i class="fas fa-ellipsis-h text-sm"></i>
             </Pagination.Ellipsis>
 
             <Pagination.ListItem
               v-else
-              class="h-10 w-10 p-0 hover:bg-base-300 rounded-md flex items-center justify-center cursor-pointer transition-colors hover:ring-2 hover:ring-primary hover:ring-offset-2 hover:ring-offset-bg1"
+              class="hover:bg-base-300 hover:ring-primary hover:ring-offset-bg1 flex h-10 w-10 cursor-pointer items-center justify-center rounded-md p-0 transition-colors hover:ring-2 hover:ring-offset-2"
               :class="{
                 'bg-primary/10 border-primary text-sage-content': item.value === meta.current_page,
                 'bg-base-200 text-secondary hover:text-sage-content':
@@ -64,12 +66,12 @@
           </template>
 
           <Pagination.Next
-            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-secondary hover:text-secondary transition-colors"
+            class="bg-base-200 hover:bg-base-300 ring-primary ring-offset-bg1 text-secondary hover:text-secondary flex h-10 w-10 items-center justify-center rounded-md p-0 ring-offset-2 transition-colors hover:ring-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:ring-0 disabled:hover:ring-offset-0"
           >
             <i class="fas fa-chevron-right text-sm"></i>
           </Pagination.Next>
           <Pagination.Last
-            class="h-10 w-10 p-0 bg-base-200 hover:bg-base-300 disabled:opacity-50 hover:ring-2 disabled:hover:ring-0 disabled:hover:ring-offset-0 ring-primary ring-offset-2 ring-offset-bg1 disabled:cursor-not-allowed rounded-md flex items-center justify-center text-secondary hover:text-secondary transition-colors"
+            class="bg-base-200 hover:bg-base-300 ring-primary ring-offset-bg1 text-secondary hover:text-secondary flex h-10 w-10 items-center justify-center rounded-md p-0 ring-offset-2 transition-colors hover:ring-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:ring-0 disabled:hover:ring-offset-0"
           >
             <i class="fas fa-chevron-double-right text-sm"></i>
           </Pagination.Last>
@@ -78,8 +80,8 @@
     </div>
 
     <!-- Right: Direct page input -->
-    <div class="flex items-center gap-2 justify-end">
-      <label class="text-sm text-secondary whitespace-nowrap">{{
+    <div class="flex items-center justify-end gap-2">
+      <label class="text-secondary text-sm whitespace-nowrap">{{
         $t('pagination.page', 'Page:')
       }}</label>
       <input
@@ -89,10 +91,10 @@
         type="number"
         :min="1"
         :max="meta.last_page"
-        class="w-16 px-2 py-1.5 bg-base-200 border border-primary-stroke rounded-md text-sm text-center focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+        class="bg-base-200 border-primary-stroke focus:ring-primary/20 focus:border-primary w-16 rounded-md border px-2 py-1.5 text-center text-sm focus:ring-2 focus:outline-none"
         :placeholder="String(meta.current_page)"
       />
-      <span class="text-sm text-secondary whitespace-nowrap"
+      <span class="text-secondary text-sm whitespace-nowrap"
         >{{ $t('pagination.of', 'of') }} {{ meta.last_page }}</span
       >
     </div>

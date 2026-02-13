@@ -9,9 +9,7 @@ import type { UserImportResult } from '@/types/user-import'
  */
 function generatePasswordsCsvContent(results: UserImportResult[]): string {
   // Filter to only successful imports with generated passwords
-  const usersWithPasswords = results.filter(
-    (r) => r.success && r.generated_password,
-  )
+  const usersWithPasswords = results.filter((r) => r.success && r.generated_password)
 
   if (usersWithPasswords.length === 0) {
     return ''
@@ -19,9 +17,7 @@ function generatePasswordsCsvContent(results: UserImportResult[]): string {
 
   // Build CSV content
   const headers = 'username,email,temporary_password'
-  const rows = usersWithPasswords.map(
-    (r) => `${r.username},${r.email},${r.generated_password}`,
-  )
+  const rows = usersWithPasswords.map((r) => `${r.username},${r.email},${r.generated_password}`)
 
   return [headers, ...rows].join('\n')
 }
@@ -32,10 +28,7 @@ function generatePasswordsCsvContent(results: UserImportResult[]): string {
  * @param results - The import results containing generated passwords
  * @param fileName - Optional custom filename (defaults to timestamp-based name)
  */
-export function downloadPasswordsCsv(
-  results: UserImportResult[],
-  fileName?: string,
-): void {
+export function downloadPasswordsCsv(results: UserImportResult[], fileName?: string): void {
   const content = generatePasswordsCsvContent(results)
 
   if (!content) {

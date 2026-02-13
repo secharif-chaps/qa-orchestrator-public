@@ -3,11 +3,11 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { mount, flushPromises, config} from '@vue/test-utils'
+import { mount, flushPromises, config } from '@vue/test-utils'
 import { ref } from 'vue'
 
 config.global.mocks = {
-  $t: (key: string, fallback?: string) => fallback || key
+  $t: (key: string, fallback?: string) => fallback || key,
 }
 
 // Mock vue-i18n
@@ -71,13 +71,15 @@ vi.mock('@/mutations/data-sources', () => ({
 vi.mock('@owlint/feathers-vue', () => ({
   Button: {
     name: 'Button',
-    template: '<button class="button" :disabled="disabled" @click="$emit(\'click\')"><slot />{{ label }}</button>',
+    template:
+      '<button class="button" :disabled="disabled" @click="$emit(\'click\')"><slot />{{ label }}</button>',
     props: ['variant', 'size', 'label', 'icon', 'loading', 'disabled'],
     emits: ['click'],
   },
   Input: {
     name: 'Input',
-    template: '<input :id="id" type="text" class="input" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" :disabled="disabled" :placeholder="placeholder" />',
+    template:
+      '<input :id="id" type="text" class="input" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" :disabled="disabled" :placeholder="placeholder" />',
     props: ['id', 'modelValue', 'type', 'placeholder', 'disabled'],
     emits: ['update:modelValue'],
   },
@@ -97,7 +99,7 @@ describe('DataSourceCard', () => {
       { value: 'sources', icon: 'fas fa-plug', label: 'Sources' },
     ]
 
-    const sourcesTab = sectionOptions.find(opt => opt.value === 'sources')
+    const sourcesTab = sectionOptions.find((opt) => opt.value === 'sources')
 
     expect(sourcesTab).toBeDefined()
     expect(sourcesTab?.value).toBe('sources')
@@ -167,7 +169,7 @@ describe('DataSourceCard', () => {
       await flushPromises()
 
       const buttons = wrapper.findAll('.button')
-      const saveButton = buttons.find(btn => btn.text().includes('Save'))
+      const saveButton = buttons.find((btn) => btn.text().includes('Save'))
       if (saveButton) {
         await saveButton.trigger('click')
         await flushPromises()

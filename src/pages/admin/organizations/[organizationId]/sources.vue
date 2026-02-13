@@ -1,13 +1,18 @@
 <template>
   <div class="flex flex-col gap-6">
     <Card>
-      <div class="flex items-center justify-between mb-6">
+      <div class="mb-6 flex items-center justify-between">
         <div>
           <h2 class="text-xl font-semibold">
             {{ $t('dataSources.title', 'Data Sources') }}
           </h2>
           <p class="text-secondary mt-1">
-            {{ $t('dataSources.description', 'Configure external data providers for company screening') }}
+            {{
+              $t(
+                'dataSources.description',
+                'Configure external data providers for company screening',
+              )
+            }}
           </p>
         </div>
       </div>
@@ -41,7 +46,10 @@ const availableSources = computed<DataSourceInfo[]>(() => [
   {
     source: 'pappers',
     name: t('dataSources.pappers.name', 'Pappers'),
-    description: t('dataSources.pappers.description', 'French company data provider (legal info, financials, officers)'),
+    description: t(
+      'dataSources.pappers.description',
+      'French company data provider (legal info, financials, officers)',
+    ),
     logo: '/src/assets/logos/pappers.svg',
   },
 ])

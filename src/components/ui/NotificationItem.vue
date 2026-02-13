@@ -13,18 +13,18 @@
       <Badge variant="secondary" :color="iconColor" :icon="icon" />
 
       <!-- Content -->
-      <div class="flex-1 min-w-0">
+      <div class="min-w-0 flex-1">
         <!-- Title and Unread Indicator -->
-        <div class="flex items-start justify-between gap-2 mb-1">
+        <div class="mb-1 flex items-start justify-between gap-2">
           <h4 class="text-sm font-medium text-white">{{ title }}</h4>
           <Bullet v-if="!read" intent="info" aria-label="Unread" />
         </div>
 
         <!-- Message -->
-        <p class="text-xs text-sage-400 mb-2 line-clamp-2">{{ message }}</p>
+        <p class="text-sage-400 mb-2 line-clamp-2 text-xs">{{ message }}</p>
 
         <!-- Time and Category -->
-        <div class="flex items-center gap-3 text-xs text-sage-500">
+        <div class="text-sage-500 flex items-center gap-3 text-xs">
           <span>{{ time }}</span>
           <Tag v-if="category" :label="category" variant="secondary" size="xs" />
         </div>

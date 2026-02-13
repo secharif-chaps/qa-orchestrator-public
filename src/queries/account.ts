@@ -9,13 +9,14 @@ import type { ActivityEventsParams } from '@/types/account'
 export const ACCOUNT_QUERY_KEYS = {
   root: ['account'] as const,
   sessions: () => [...ACCOUNT_QUERY_KEYS.root, 'sessions'] as const,
-  events: (params: ActivityEventsParams) => [
-    ...ACCOUNT_QUERY_KEYS.root,
-    'events',
-    params.page ?? 1,
-    params.size ?? 20,
-    params.eventType ?? 'all',
-  ] as const,
+  events: (params: ActivityEventsParams) =>
+    [
+      ...ACCOUNT_QUERY_KEYS.root,
+      'events',
+      params.page ?? 1,
+      params.size ?? 20,
+      params.eventType ?? 'all',
+    ] as const,
 }
 
 /**

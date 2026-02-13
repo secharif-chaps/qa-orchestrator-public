@@ -1,26 +1,26 @@
 <template>
-  <div class="bg-base-100 rounded-lg border border-primary-stroke">
-    <div class="px-6 py-4 border-b border-primary-stroke">
+  <div class="bg-base-100 border-primary-stroke rounded-lg border">
+    <div class="border-primary-stroke border-b px-6 py-4">
       <h3 class="text-lg font-semibold">{{ t('admin.taskTypes.title') }}</h3>
     </div>
 
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">{{ t('admin.taskTypes.loading') }}</p>
+        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
+        <p class="text-secondary text-sm">{{ t('admin.taskTypes.loading') }}</p>
       </div>
     </div>
 
     <div v-else-if="error" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-exclamation-triangle text-2xl text-error mb-2"></i>
-        <p class="text-sm text-error">{{ t('admin.taskTypes.error') }}</p>
+        <i class="fa fa-exclamation-triangle text-error mb-2 text-2xl"></i>
+        <p class="text-error text-sm">{{ t('admin.taskTypes.error') }}</p>
       </div>
     </div>
 
-    <div v-else-if="!data?.task_types.length" class="text-center py-12">
-      <i class="fa fa-tasks text-4xl text-secondary mb-4"></i>
-      <p class="text-lg font-medium text-secondary">{{ t('admin.taskTypes.noData') }}</p>
+    <div v-else-if="!data?.task_types.length" class="py-12 text-center">
+      <i class="fa fa-tasks text-secondary mb-4 text-4xl"></i>
+      <p class="text-secondary text-lg font-medium">{{ t('admin.taskTypes.noData') }}</p>
     </div>
 
     <div v-else class="overflow-x-auto">
@@ -28,7 +28,7 @@
         <thead class="bg-base-200">
           <tr>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
               @click="sort('task_type')"
             >
               <div class="flex items-center gap-1">
@@ -37,7 +37,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
               @click="sort('total_cost')"
             >
               <div class="flex items-center gap-1">
@@ -46,7 +46,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
               @click="sort('task_count')"
             >
               <div class="flex items-center gap-1">
@@ -55,7 +55,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
               @click="sort('avg_cost_per_task')"
             >
               <div class="flex items-center gap-1">
@@ -64,7 +64,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
               @click="sort('avg_input_tokens')"
             >
               <div class="flex items-center gap-1">
@@ -73,7 +73,7 @@
               </div>
             </th>
             <th
-              class="px-6 py-3 text-left text-xs font-medium text-secondary uppercase tracking-wider cursor-pointer hover:bg-base-300"
+              class="text-secondary hover:bg-base-300 cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider uppercase"
               @click="sort('avg_output_tokens')"
             >
               <div class="flex items-center gap-1">
@@ -83,7 +83,7 @@
             </th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-primary-stroke">
+        <tbody class="divide-primary-stroke divide-y">
           <tr
             v-for="taskType in sortedTaskTypes"
             :key="taskType.task_type"
@@ -98,17 +98,18 @@
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-semibold text-secondary">
+              <div class="text-secondary text-sm font-semibold">
                 {{ formatCurrency(taskType.total_cost) }}
               </div>
-              <div class="text-xs text-secondary">
+              <div class="text-secondary text-xs">
                 {{ getPercentage(taskType.total_cost) }}{{ t('admin.taskTypes.percentOfTotal') }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-sm font-medium">{{ formatNumber(taskType.task_count) }}</div>
-              <div class="text-xs text-secondary">
-                {{ getTaskCountPercentage(taskType.task_count) }}{{ t('admin.taskTypes.percentOfAllTasks') }}
+              <div class="text-secondary text-xs">
+                {{ getTaskCountPercentage(taskType.task_count)
+                }}{{ t('admin.taskTypes.percentOfAllTasks') }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
@@ -118,17 +119,17 @@
               >
                 {{ formatCurrency(taskType.avg_cost_per_task) }}
               </div>
-              <div class="text-xs text-secondary">
+              <div class="text-secondary text-xs">
                 {{ getEfficiencyLabel(taskType.avg_cost_per_task) }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-secondary">
+              <div class="text-secondary text-sm">
                 {{ formatNumber(taskType.avg_input_tokens) }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-secondary">
+              <div class="text-secondary text-sm">
                 {{ formatNumber(taskType.avg_output_tokens) }}
               </div>
             </td>
@@ -137,10 +138,12 @@
       </table>
 
       <!-- Summary Info -->
-      <div v-if="data?.summary" class="px-6 py-4 border-t border-primary-stroke bg-base-200">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+      <div v-if="data?.summary" class="border-primary-stroke bg-base-200 border-t px-6 py-4">
+        <div class="grid grid-cols-1 gap-4 text-sm md:grid-cols-3">
           <div>
-            <span class="font-medium text-secondary">{{ t('admin.taskTypes.summary.mostExpensive') }}:</span>
+            <span class="text-secondary font-medium"
+              >{{ t('admin.taskTypes.summary.mostExpensive') }}:</span
+            >
             <Tag
               :variant="getTaskTypeVariant(data.summary.most_expensive_type)"
               :label="data.summary.most_expensive_type"
@@ -148,7 +151,9 @@
             />
           </div>
           <div>
-            <span class="font-medium text-secondary">{{ t('admin.taskTypes.summary.mostFrequent') }}:</span>
+            <span class="text-secondary font-medium"
+              >{{ t('admin.taskTypes.summary.mostFrequent') }}:</span
+            >
             <Tag
               :variant="getTaskTypeVariant(data.summary.most_frequent_type)"
               :label="data.summary.most_frequent_type"
@@ -156,7 +161,9 @@
             />
           </div>
           <div>
-            <span class="font-medium text-secondary">{{ t('admin.taskTypes.summary.totalTaskTypes') }}:</span>
+            <span class="text-secondary font-medium"
+              >{{ t('admin.taskTypes.summary.totalTaskTypes') }}:</span
+            >
             <span class="ml-2 font-semibold">{{ data.summary.total_task_types }}</span>
           </div>
         </div>

@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center">
+  <div class="flex min-h-screen items-center justify-center">
     <div class="text-center">
       <div
         v-if="isLoading"
-        class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"
+        class="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-indigo-600"
       ></div>
       <p v-if="isLoading" class="mt-4 text-gray-600">
         {{ $t('auth.callback.processing', 'Processing login...') }}

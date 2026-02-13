@@ -1,12 +1,14 @@
 <template>
-  <div class="bg-base-100 rounded-lg border border-primary-stroke p-6">
-    <h3 class="text-lg font-semibold mb-4">{{ t('admin.usage.stackedChart.title') }}</h3>
+  <div class="bg-base-100 border-primary-stroke rounded-lg border p-6">
+    <h3 class="mb-4 text-lg font-semibold">{{ t('admin.usage.stackedChart.title') }}</h3>
 
     <!-- Loading state -->
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">{{ t('admin.usage.stackedChart.loading', 'Loading chart data...') }}</p>
+        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
+        <p class="text-secondary text-sm">
+          {{ t('admin.usage.stackedChart.loading', 'Loading chart data...') }}
+        </p>
       </div>
     </div>
 
@@ -17,8 +19,10 @@
       class="flex justify-center py-12"
     >
       <div class="text-center">
-        <i class="fa fa-chart-bar text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">{{ t('admin.usage.stackedChart.noData', 'No organization data for selected period') }}</p>
+        <i class="fa fa-chart-bar text-secondary mb-2 text-2xl"></i>
+        <p class="text-secondary text-sm">
+          {{ t('admin.usage.stackedChart.noData', 'No organization data for selected period') }}
+        </p>
       </div>
     </div>
 
@@ -29,17 +33,17 @@
       </div>
 
       <!-- Custom Legend -->
-      <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+      <div class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
         <div
           v-for="(org, index) in limitedOrganizations"
           :key="org.organization_id"
           class="flex items-center gap-2"
         >
           <div
-            class="w-3 h-3 rounded-full flex-shrink-0"
+            class="h-3 w-3 flex-shrink-0 rounded-full"
             :style="{ backgroundColor: colors[index % colors.length] }"
           ></div>
-          <span class="text-sm text-secondary truncate">{{ org.organization_name }}</span>
+          <span class="text-secondary truncate text-sm">{{ org.organization_name }}</span>
         </div>
       </div>
     </template>

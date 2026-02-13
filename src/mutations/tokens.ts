@@ -46,9 +46,7 @@ export const useAddGlobalTokens = defineMutation(() => {
         predicate: (query) => {
           const key = query.key as readonly unknown[]
           return (
-            key[0] === 'organization-tokens' &&
-            key[1] === 'history' &&
-            key[2] === organizationId
+            key[0] === 'organization-tokens' && key[1] === 'history' && key[2] === organizationId
           )
         },
       })

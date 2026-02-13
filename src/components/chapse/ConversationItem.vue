@@ -1,24 +1,20 @@
 <template>
   <div
-    class="group flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors"
-    :class="[
-      isActive
-        ? 'bg-sage-700 text-white'
-        : 'hover:bg-sage-800/50 text-sage-200',
-    ]"
+    class="group flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 transition-colors"
+    :class="[isActive ? 'bg-sage-700 text-white' : 'hover:bg-sage-800/50 text-sage-200']"
     @click="$emit('select', conversation.id)"
   >
     <!-- Conversation Icon -->
-    <div class="flex-shrink-0 w-6 h-6 rounded-full bg-sage-600 flex items-center justify-center">
-      <i class="fa fa-comment text-xs text-sage-200"></i>
+    <div class="bg-sage-600 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full">
+      <i class="fa fa-comment text-sage-200 text-xs"></i>
     </div>
 
     <!-- Conversation Info -->
-    <div class="flex-1 min-w-0">
-      <p class="text-sm font-medium truncate">
+    <div class="min-w-0 flex-1">
+      <p class="truncate text-sm font-medium">
         {{ conversation.name || $t('chapse.untitledConversation', 'New conversation') }}
       </p>
-      <p v-if="showDate" class="text-xs text-sage-400 truncate">
+      <p v-if="showDate" class="text-sage-400 truncate text-xs">
         {{ formattedDate }}
       </p>
     </div>
@@ -26,10 +22,10 @@
     <!-- Company Context Indicator -->
     <div
       v-if="conversation.companies && conversation.companies.length > 0"
-      class="flex-shrink-0 flex items-center gap-1"
+      class="flex flex-shrink-0 items-center gap-1"
     >
       <span
-        class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-sage-600 text-xs text-sage-200"
+        class="bg-sage-600 text-sage-200 inline-flex h-5 w-5 items-center justify-center rounded-full text-xs"
         :title="companyNames"
       >
         {{ conversation.companies.length }}
@@ -39,7 +35,7 @@
     <!-- Delete Button (visible on hover) -->
     <button
       v-if="deletable"
-      class="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-error/20 hover:text-error transition-all"
+      class="hover:bg-error/20 hover:text-error flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full opacity-0 transition-all group-hover:opacity-100"
       :title="$t('chapse.deleteConversation', 'Delete conversation')"
       @click.stop="$emit('delete', conversation.id)"
     >

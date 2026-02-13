@@ -1,8 +1,10 @@
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
     <ActionCard
       :title="$t('dashboard.quickActions.searchCompanies.title', 'Search Companies')"
-      :description="$t('dashboard.quickActions.searchCompanies.description', 'Find and explore companies')"
+      :description="
+        $t('dashboard.quickActions.searchCompanies.description', 'Find and explore companies')
+      "
       icon="search"
       color="blue"
       to="/search"
@@ -10,7 +12,9 @@
 
     <ActionCard
       :title="$t('dashboard.quickActions.allCompanies.title', 'All Companies')"
-      :description="$t('dashboard.quickActions.allCompanies.description', 'View companies database')"
+      :description="
+        $t('dashboard.quickActions.allCompanies.description', 'View companies database')
+      "
       icon="building"
       color="green"
       to="/companies"

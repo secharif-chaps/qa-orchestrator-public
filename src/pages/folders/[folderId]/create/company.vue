@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-4xl mx-auto flex flex-col gap-6" data-cy="company-search-page">
+  <div class="mx-auto flex max-w-4xl flex-col gap-6" data-cy="company-search-page">
     <!-- Page Header -->
     <div class="flex flex-col gap-2">
       <div class="flex items-center justify-between">
@@ -38,7 +38,7 @@
 
     <!-- Search Form Card -->
     <div
-      class="bg-base-100 border border-primary-stroke rounded-lg p-6"
+      class="bg-base-100 border-primary-stroke rounded-lg border p-6"
       :title="$t('search.companyIdentity')"
     >
       <form @submit.prevent="startSearch" class="flex flex-col gap-6">
@@ -122,7 +122,11 @@ const website = ref('')
 const companyError = ref('')
 const websiteError = ref('')
 
-const { isLoading: mutationLoading, mutateAsync, organizationId: mutationOrgId } = useCreateCompany()
+const {
+  isLoading: mutationLoading,
+  mutateAsync,
+  organizationId: mutationOrgId,
+} = useCreateCompany()
 const { mutateAsync: addToFolder } = useAddItemToFolder()
 
 // Fetch current organization
@@ -188,7 +192,9 @@ const showInsufficientTokenAlert = computed(() => {
     return false
   }
   // Show alert if tokens are below 35 (cost of 1 company creation)
-  return screenModuleEnabled.value && tokenBalance.value < TOKENS_PER_COMPANY && !showTokenAlert.value
+  return (
+    screenModuleEnabled.value && tokenBalance.value < TOKENS_PER_COMPANY && !showTokenAlert.value
+  )
 })
 
 // Token alert state
@@ -326,7 +332,7 @@ const submit = async () => {
     })
     // Redirect to the newly created company page
     router.push(`/folders/${folderId}/companies/${newCompany.id}`)
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Handle any unexpected errors during the search process
     console.error('Error during search:', error)
 
@@ -342,9 +348,10 @@ const submit = async () => {
     }
 
     // Display user-friendly error message
-    if (error?.message) {
+    const message = error instanceof Error ? error.message : undefined
+    if (message) {
       // Extract meaningful error message
-      if (error.message.includes('Validation error')) {
+      if (message.includes('Validation error')) {
         companyError.value = t(
           'company.validation.invalidNameFormat',
           'Company name must contain at least 2 alphabetic characters',
@@ -353,10 +360,10 @@ const submit = async () => {
           'company.validation.invalidWebsiteFormat',
           'Please enter a valid website URL',
         )
-      } else if (error.message.includes('Invalid input')) {
+      } else if (message.includes('Invalid input')) {
         companyError.value = t('company.validation.nameRequired', 'Company name is required')
         websiteError.value = t('company.validation.websiteRequired', 'Website URL is required')
-      } else if (error.message.includes('unauthorized') || error.message.includes('401')) {
+      } else if (message.includes('unauthorized') || message.includes('401')) {
         // Authentication error - will be handled by navigateTo('/login') in API service
       } else {
         // Generic error

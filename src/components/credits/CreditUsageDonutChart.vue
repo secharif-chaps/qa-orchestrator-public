@@ -1,22 +1,22 @@
 <template>
-  <Card padding="p-6" class="flex flex-col h-full">
+  <Card padding="p-6" class="flex h-full flex-col">
     <h3 class="text-lg font-semibold">
       {{ $t('credits.usage.title') }}
     </h3>
 
     <!-- Loading state -->
-    <div v-if="loading" class="flex justify-center py-12 flex-1">
+    <div v-if="loading" class="flex flex-1 justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">{{ $t('common.loading') }}</p>
+        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
+        <p class="text-secondary text-sm">{{ $t('common.loading') }}</p>
       </div>
     </div>
 
     <!-- Empty state -->
-    <div v-else-if="!hasData" class="flex justify-center py-12 flex-1">
+    <div v-else-if="!hasData" class="flex flex-1 justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-chart-pie text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">
+        <i class="fa fa-chart-pie text-secondary mb-2 text-2xl"></i>
+        <p class="text-secondary text-sm">
           {{ $t('credits.usage.noData') }}
         </p>
       </div>
@@ -25,10 +25,10 @@
     <!-- Chart -->
     <template v-else>
       <!-- Chart with positioned labels -->
-      <div class="flex-1 flex items-center justify-center py-4">
+      <div class="flex flex-1 items-center justify-center py-4">
         <div class="relative">
           <!-- Donut Chart -->
-          <div class="w-[200px] h-[200px]">
+          <div class="h-[200px] w-[200px]">
             <Doughnut :data="chartData" :options="chartOptions" />
           </div>
 
@@ -36,10 +36,10 @@
           <!-- Top right -->
           <div
             v-if="usageData[2] && usageData[2].percentage > 0"
-            class="absolute -top-2 -right-4 transform translate-x-full"
+            class="absolute -top-2 -right-4 translate-x-full transform"
           >
             <span
-              class="inline-block px-2 py-1 text-xs font-medium rounded-md border whitespace-nowrap"
+              class="inline-block rounded-md border px-2 py-1 text-xs font-medium whitespace-nowrap"
               :style="getLabelStyle(usageData[2].module)"
             >
               {{ usageData[2].percentage.toFixed(0) }}% de {{ usageData[2].label }}
@@ -49,10 +49,10 @@
           <!-- Right middle -->
           <div
             v-if="usageData[0] && usageData[0].percentage > 0"
-            class="absolute top-1/2 -right-4 transform translate-x-full -translate-y-1/2"
+            class="absolute top-1/2 -right-4 translate-x-full -translate-y-1/2 transform"
           >
             <span
-              class="inline-block px-2 py-1 text-xs font-medium rounded-md border whitespace-nowrap"
+              class="inline-block rounded-md border px-2 py-1 text-xs font-medium whitespace-nowrap"
               :style="getLabelStyle(usageData[0].module)"
             >
               {{ usageData[0].percentage.toFixed(0) }}% de {{ usageData[0].label }}
@@ -62,10 +62,10 @@
           <!-- Bottom -->
           <div
             v-if="usageData[1] && usageData[1].percentage > 0"
-            class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 translate-y-full"
+            class="absolute -bottom-2 left-1/2 -translate-x-1/2 translate-y-full transform"
           >
             <span
-              class="inline-block px-2 py-1 text-xs font-medium rounded-md border whitespace-nowrap"
+              class="inline-block rounded-md border px-2 py-1 text-xs font-medium whitespace-nowrap"
               :style="getLabelStyle(usageData[1].module)"
             >
               {{ usageData[1].percentage.toFixed(0) }}% de {{ usageData[1].label }}
@@ -75,13 +75,13 @@
       </div>
 
       <!-- Total - at bottom -->
-      <div class="pt-4 mt-auto border-t border-primary-stroke flex justify-between items-center">
-        <span class="text-sm text-secondary">
+      <div class="border-primary-stroke mt-auto flex items-center justify-between border-t pt-4">
+        <span class="text-secondary text-sm">
           {{ $t('credits.usage.total') }}
         </span>
         <span class="font-semibold">
           {{ formattedTotal }}
-          <span class="text-sm text-secondary ml-1">{{ $t('credits.unit') }}</span>
+          <span class="text-secondary ml-1 text-sm">{{ $t('credits.unit') }}</span>
         </span>
       </div>
     </template>
@@ -93,13 +93,7 @@
  * Donut chart showing credit usage breakdown by module.
  */
 import { computed } from 'vue'
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  type TooltipItem,
-} from 'chart.js'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, type TooltipItem } from 'chart.js'
 import { Doughnut } from 'vue-chartjs'
 import type { ModuleUsage, ModuleName } from '@/types/credits'
 import { MODULE_CHART_COLORS } from '@/types/credits'
@@ -118,7 +112,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const hasData = computed(() => {
-  return props.usageData.some(item => item.creditsConsumed > 0)
+  return props.usageData.some((item) => item.creditsConsumed > 0)
 })
 
 const formattedTotal = computed(() => {
@@ -140,19 +134,21 @@ const getLabelStyle = (module: string) => {
 }
 
 const chartData = computed(() => {
-  const labels = props.usageData.map(item => item.label)
-  const data = props.usageData.map(item => item.creditsConsumed)
-  const backgroundColor = props.usageData.map(item => getModuleColor(item.module))
+  const labels = props.usageData.map((item) => item.label)
+  const data = props.usageData.map((item) => item.creditsConsumed)
+  const backgroundColor = props.usageData.map((item) => getModuleColor(item.module))
 
   return {
     labels,
-    datasets: [{
-      data,
-      backgroundColor,
-      borderColor: 'transparent',
-      borderWidth: 0,
-      hoverOffset: 4,
-    }],
+    datasets: [
+      {
+        data,
+        backgroundColor,
+        borderColor: 'transparent',
+        borderWidth: 0,
+        hoverOffset: 4,
+      },
+    ],
   }
 })
 

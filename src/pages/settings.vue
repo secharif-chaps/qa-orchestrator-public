@@ -19,35 +19,39 @@
     </div>
 
     <!-- Settings Index (cards linking to sections) -->
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div v-else class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       <RouterLink
         v-for="section in sections"
         :key="section.id"
         :to="`/settings/${section.id}`"
-        class="group bg-base-100 border border-primary-stroke rounded-card p-6 hover:border-primary/50 hover:shadow-shadow-2 transition-all duration-200 flex flex-col h-full"
+        class="group bg-base-100 border-primary-stroke rounded-card hover:border-primary/50 hover:shadow-shadow-2 flex h-full flex-col border p-6 transition-all duration-200"
       >
         <!-- Icon -->
         <div
-          class="w-12 h-12 rounded-lg flex items-center justify-center transition-colors"
+          class="flex h-12 w-12 items-center justify-center rounded-lg transition-colors"
           :class="section.bgColor"
         >
           <i :class="[section.icon, 'text-xl', section.iconColor]"></i>
         </div>
 
         <!-- Content -->
-        <div class="flex flex-col gap-2 mt-4 flex-1">
-          <h3 class="text-lg font-semibold group-hover:text-primary transition-colors">
+        <div class="mt-4 flex flex-1 flex-col gap-2">
+          <h3 class="group-hover:text-primary text-lg font-semibold transition-colors">
             {{ section.title }}
           </h3>
-          <p class="text-sm text-secondary">
+          <p class="text-secondary text-sm">
             {{ section.description }}
           </p>
         </div>
 
         <!-- Arrow - Always at bottom -->
-        <div class="flex items-center text-secondary group-hover:text-primary transition-colors mt-4 pt-4 border-t border-primary-stroke/50">
+        <div
+          class="text-secondary group-hover:text-primary border-primary-stroke/50 mt-4 flex items-center border-t pt-4 transition-colors"
+        >
           <span class="text-sm font-medium">{{ $t('settings.viewSection', 'Configure') }}</span>
-          <i class="fas fa-arrow-right ml-2 text-xs transform group-hover:translate-x-1 transition-transform"></i>
+          <i
+            class="fas fa-arrow-right ml-2 transform text-xs transition-transform group-hover:translate-x-1"
+          ></i>
         </div>
       </RouterLink>
     </div>
@@ -176,5 +180,4 @@ const isOnSubpage = computed(() => {
   const path = route.path
   return path !== '/settings' && path !== '/settings/'
 })
-
 </script>

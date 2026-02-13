@@ -2,13 +2,15 @@
   <div class="flex flex-col gap-6">
     <!-- User Management Card -->
     <Card>
-      <div class="flex items-center justify-between mb-6">
+      <div class="mb-6 flex items-center justify-between">
         <div>
           <h2 class="text-xl font-semibold">
             {{ $t('organization.detail.members', 'Members') }}
           </h2>
           <p class="text-secondary mt-1">
-            {{ $t('organization.membersDescription', 'Manage organization members and their access') }}
+            {{
+              $t('organization.membersDescription', 'Manage organization members and their access')
+            }}
           </p>
         </div>
         <div class="flex gap-2">
@@ -28,10 +30,8 @@
       </div>
 
       <!-- Users Loading State -->
-      <div v-if="usersLoading" class="text-center p-8">
-        <div
-          class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"
-        ></div>
+      <div v-if="usersLoading" class="p-8 text-center">
+        <div class="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
         <p class="text-secondary">
           {{ $t('user.loading', 'Loading users...') }}
         </p>
@@ -59,9 +59,9 @@
         />
 
         <!-- Empty Users State -->
-        <div v-else class="text-center p-8">
-          <i class="fa fa-users text-4xl text-secondary/50 mb-4"></i>
-          <h3 class="text-lg font-medium text-base mb-2">
+        <div v-else class="p-8 text-center">
+          <i class="fa fa-users text-secondary/50 mb-4 text-4xl"></i>
+          <h3 class="mb-2 text-base text-lg font-medium">
             {{ $t('user.empty.title', 'No users found') }}
           </h3>
           <p class="text-secondary mb-6">
@@ -153,7 +153,12 @@ import ResetPasswordModal from '@/components/admin/ResetPasswordModal.vue'
 // Queries & Mutations
 import { allOrganizationsQuery, organizationMembersQuery } from '@/queries/organization-admin'
 import { useCreateOrganizationUser } from '@/mutations/user'
-import { useAssignUserOrganization, useUpdateUserPermissions, useDisableUser, useEnableUser } from '@/mutations/admin-users'
+import {
+  useAssignUserOrganization,
+  useUpdateUserPermissions,
+  useDisableUser,
+  useEnableUser,
+} from '@/mutations/admin-users'
 
 // Types
 import type { AdminUserListItem } from '@/types/admin-user'
@@ -196,7 +201,7 @@ const {
   }),
   {
     enabled: () => !!organizationId?.value,
-  }
+  },
 )
 
 // Query for all organizations (for the change organization modal)
@@ -214,19 +219,21 @@ const availableOrganizations = computed(() => organizationsResponse.value?.data 
 // Transform API pagination to PaginationMeta format
 const paginationMeta = computed(() => transformToPaginationMeta(usersResponse.value?.pagination))
 
-
 // Extract error message safely
 const errorMessage = computed(() => {
   const err = usersError.value
   if (!err) return ''
   if (typeof err === 'string') return err
   if (err instanceof Error) return err.message
-  if (typeof err === 'object' && 'message' in err) return String((err as { message: unknown }).message)
+  if (typeof err === 'object' && 'message' in err)
+    return String((err as { message: unknown }).message)
   return 'An error occurred'
 })
 
 // Mutations
-const { createUser, isLoading: isCreatingUser } = useCreateOrganizationUser(organizationId?.value || '')
+const { createUser, isLoading: isCreatingUser } = useCreateOrganizationUser(
+  organizationId?.value || '',
+)
 const { assignOrganization, isLoading: isAssigning } = useAssignUserOrganization()
 const { updatePermissions } = useUpdateUserPermissions()
 const { disableUser, isLoading: isDisabling } = useDisableUser()
@@ -287,7 +294,10 @@ const handleAssignOrganization = async (newOrganizationId: string) => {
   if (!userToAssign.value) return
 
   try {
-    await assignOrganization({ userId: userToAssign.value.userId, organizationId: newOrganizationId })
+    await assignOrganization({
+      userId: userToAssign.value.userId,
+      organizationId: newOrganizationId,
+    })
     userToAssign.value = null
   } catch (err) {
     console.error('Failed to assign organization:', err)

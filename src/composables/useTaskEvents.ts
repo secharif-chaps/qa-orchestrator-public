@@ -147,7 +147,9 @@ export function useTaskEvents() {
         if (error_count === 0) {
           toast.success(t('tasks.events.ready', { companyName: company_name }), { action })
         } else {
-          toast.warning(t('tasks.events.readyWithErrors', { companyName: company_name }), { action })
+          toast.warning(t('tasks.events.readyWithErrors', { companyName: company_name }), {
+            action,
+          })
         }
 
         console.log('[SSE] All tasks completed:', event.data)

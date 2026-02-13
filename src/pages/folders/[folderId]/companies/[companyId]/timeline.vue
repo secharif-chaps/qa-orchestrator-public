@@ -21,9 +21,9 @@
     <!-- Timeline visualization -->
     <div v-else class="relative">
       <!-- Timeline events -->
-      <div class="bg-base-100 p-4 rounded-lg">
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex gap-2 items-center">
+      <div class="bg-base-100 rounded-lg p-4">
+        <div class="mb-6 flex items-center justify-between">
+          <div class="flex items-center gap-2">
             <span class="text-lg font-semibold">{{ $t('timeline.title') }}</span>
           </div>
           <div class="flex items-center gap-2">
@@ -31,10 +31,16 @@
               variant="tertiary"
               :icon="sortAscending ? 'fa fa-arrow-up' : 'fa fa-arrow-down'"
               size="sm"
-              :title="sortAscending ? $t('timeline.sort.oldestFirst') : $t('timeline.sort.newestFirst')"
+              :title="
+                sortAscending ? $t('timeline.sort.oldestFirst') : $t('timeline.sort.newestFirst')
+              "
               @click="toggleSortOrder"
             >
-              {{ sortAscending ? $t('timeline.sort.oldestFirst', 'Oldest first') : $t('timeline.sort.newestFirst', 'Newest first') }}
+              {{
+                sortAscending
+                  ? $t('timeline.sort.oldestFirst', 'Oldest first')
+                  : $t('timeline.sort.newestFirst', 'Newest first')
+              }}
             </Button>
             <div class="w-64">
               <Searchbar
@@ -70,10 +76,11 @@ import { computed, ref, inject } from 'vue'
 import type { Ref } from 'vue'
 import Event from '@/components/company/timeline/Event.vue'
 import { companyTasksQuery } from '@/queries/tasks'
-import { Button, Input, Searchbar } from '@owlint/feathers-vue'
+import { Button, Searchbar } from '@owlint/feathers-vue'
 import NoData from '@/components/ui/NoData.vue'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
+import type { SourcedValue } from '@/types/company'
 
 const route = useRoute()
 
@@ -82,7 +89,7 @@ const companyId = computed(() => route.params.companyId as string)
 // Inject selected language from parent [companyId].vue
 const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
 
-const { data: tasks, refetch: refetchTasks } = useQuery(companyTasksQuery, () => ({
+const { data: tasks } = useQuery(companyTasksQuery, () => ({
   companyId: companyId.value,
 }))
 
@@ -103,7 +110,7 @@ const toggleSortOrder = () => {
 }
 
 // Helper to extract value from SourcedValue or return plain string
-const extractDateValue = (field: any): string => {
+const extractDateValue = (field: SourcedValue<string> | string | undefined): string => {
   if (!field) return ''
   if (typeof field === 'string') return field
   if (typeof field === 'object' && field.value) return field.value
@@ -127,7 +134,7 @@ const getTimelineEvents = computed(() => {
 })
 
 // Helper to extract string value for search
-const extractStringValue = (field: any): string => {
+const extractStringValue = (field: SourcedValue<string> | string | undefined): string => {
   if (!field) return ''
   if (typeof field === 'string') return field
   if (typeof field === 'object' && field.value) return String(field.value)

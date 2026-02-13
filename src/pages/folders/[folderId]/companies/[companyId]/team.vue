@@ -28,8 +28,8 @@
       />
 
       <!-- Team Members List -->
-      <div class="bg-base-100 p-6 rounded-lg">
-        <h3 class="text-lg font-semibold text-secondary mb-4 flex items-center gap-2">
+      <div class="bg-base-100 rounded-lg p-6">
+        <h3 class="text-secondary mb-4 flex items-center gap-2 text-lg font-semibold">
           <i class="fa fa-address-card"></i>
           <span>{{ $t('team.members.title', 'Team Members') }}</span>
         </h3>
@@ -37,9 +37,9 @@
       </div>
 
       <!-- Hierarchy Graph -->
-      <div class="bg-base-100 p-6 rounded-lg">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold text-secondary flex items-center gap-2">
+      <div class="bg-base-100 rounded-lg p-6">
+        <div class="mb-4 flex items-center justify-between">
+          <h3 class="text-secondary flex items-center gap-2 text-lg font-semibold">
             <i class="fa fa-sitemap"></i>
             <span>{{ $t('team.hierarchy.title', 'Organization Chart') }}</span>
           </h3>
@@ -56,7 +56,7 @@
           </div>
         </div>
 
-        <div class="h-[500px] w-full relative">
+        <div class="relative h-[500px] w-full">
           <VueFlow
             :nodes="layoutedNodes"
             :edges="edges"
@@ -68,7 +68,7 @@
                 applyLayoutAndFitView()
               }
             "
-            class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg"
+            class="rounded-lg border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800"
           >
             <template #node-team-member="props">
               <TeamMemberNode
@@ -88,7 +88,7 @@
             <Panel
               position="top-left"
               v-if="selectedNode"
-              class="bg-base-100 rounded-lg max-w-[300px] ring-4 ring-offset-2 ring-offset-bg1"
+              class="bg-base-100 ring-offset-bg1 max-w-[300px] rounded-lg ring-4 ring-offset-2"
               :class="{
                 'ring-orange-400 dark:ring-orange-500/20': selectedNode.level > 1,
                 'ring-purple-600 dark:ring-purple-500/20': selectedNode.level <= 1,
@@ -96,7 +96,7 @@
             >
               <div v-if="selectedNode" class="p-0.5">
                 <div
-                  class="flex items-center gap-3 p-2 rounded-lg"
+                  class="flex items-center gap-3 rounded-lg p-2"
                   :class="[
                     selectedNode.level > 1
                       ? 'bg-orange-50 dark:bg-orange-900'
@@ -104,11 +104,11 @@
                   ]"
                 >
                   <div
-                    class="min-w-12 grow-0 h-12 rounded-full flex items-center justify-center"
+                    class="flex h-12 min-w-12 grow-0 items-center justify-center rounded-full"
                     :class="[
                       selectedNode.level > 1
-                        ? 'bg-orange-200 dark:bg-base-300 text-orange-600'
-                        : 'bg-purple-200 dark:bg-base-300 text-purple-600',
+                        ? 'dark:bg-base-300 bg-orange-200 text-orange-600'
+                        : 'dark:bg-base-300 bg-purple-200 text-purple-600',
                     ]"
                   >
                     <i class="fa fa-user text-xl"></i>
@@ -162,6 +162,33 @@ import NoData from '@/components/ui/NoData.vue'
 import { useScreenshot } from '@/composables/useScreenshot'
 import type { TeamMember } from '@/types/company'
 
+interface TeamNodeData {
+  position: string
+  firstName: string
+  lastName: string
+  level: number
+  selected?: boolean
+}
+
+interface TeamNode {
+  id: string
+  type: string
+  position: { x: number; y: number }
+  data: TeamNodeData
+}
+
+interface TeamEdge {
+  id: string
+  source: string
+  target: string
+  data: { level: number }
+  style: Record<string, string | number>
+}
+
+interface LayoutNode extends TeamNode {
+  subordinateIds: string[]
+}
+
 const { isDark } = useTheme()
 
 const route = useRoute()
@@ -190,8 +217,8 @@ const { fitView, vueFlowRef } = useVueFlow()
 const nodes = computed(() => {
   if (!company.value?.team) return []
 
-  const generateNodes = (members: any[], level = 0, parentId = null): any[] => {
-    let nodes: any[] = []
+  const generateNodes = (members: TeamMember[], level = 0): TeamNode[] => {
+    let nodes: TeamNode[] = []
 
     for (const member of members) {
       const nodeId = `${member.position}-${member.firstName}-${member.lastName}`
@@ -210,7 +237,7 @@ const nodes = computed(() => {
       nodes.push(node)
 
       if (member.subordinates && member.subordinates.length > 0) {
-        const childNodes = generateNodes(member.subordinates, level + 1, nodeId)
+        const childNodes = generateNodes(member.subordinates, level + 1)
         nodes = nodes.concat(childNodes)
       }
     }
@@ -224,8 +251,8 @@ const nodes = computed(() => {
 const edges = computed(() => {
   if (!company.value?.team) return []
 
-  const generateEdges = (members: any[], level = 0): any[] => {
-    let edges: any[] = []
+  const generateEdges = (members: TeamMember[], level = 0): TeamEdge[] => {
+    let edges: TeamEdge[] = []
 
     for (const member of members) {
       const sourceId = `${member.position}-${member.firstName}-${member.lastName}`
@@ -267,7 +294,7 @@ const applyLayout = () => {
   const VERTICAL_SPACING = 100
 
   // First, let's create a map of nodes and their subordinates
-  const nodeMap = new Map<string, any>()
+  const nodeMap = new Map<string, LayoutNode>()
   nodes.value.forEach((node) => {
     nodeMap.set(node.id, {
       ...node,
@@ -310,7 +337,7 @@ const applyLayout = () => {
     nodesAtLevel.forEach((node) => {
       if (node.subordinateIds.length > 0) {
         // Get positions of all subordinates
-        const subordinatePositions = node.subordinateIds.map((id) => nodeMap.get(id).position)
+        const subordinatePositions = node.subordinateIds.map((id) => nodeMap.get(id)!.position)
 
         // Calculate the center position based on subordinates
         const minX = Math.min(...subordinatePositions.map((pos) => pos.x))
@@ -328,7 +355,7 @@ const applyLayout = () => {
 
   // Convert positions back to the format expected by VueFlow
   const updatedNodes = nodes.value.map((node) => {
-    const nodeWithPosition = nodeMap.get(node.id)
+    const nodeWithPosition = nodeMap.get(node.id)!
     return {
       ...node,
       position: {
@@ -342,7 +369,7 @@ const applyLayout = () => {
 }
 
 // Watch for changes in nodes and edges to apply layout
-const layoutedNodes = ref([])
+const layoutedNodes = ref<TeamNode[]>([])
 const isInitialized = ref(false)
 
 const applyLayoutAndFitView = () => {
@@ -358,8 +385,8 @@ const applyLayoutAndFitView = () => {
 
 watch([nodes, edges], applyLayoutAndFitView, { immediate: true })
 
-const selectedNode = ref<any>(null)
-const openTeamMemberCard = (data: any) => {
+const selectedNode = ref<TeamNodeData | null>(null)
+const openTeamMemberCard = (data: TeamNodeData) => {
   selectedNode.value = data
 }
 

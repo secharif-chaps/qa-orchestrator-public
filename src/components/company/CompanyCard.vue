@@ -4,7 +4,7 @@
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
         <i v-if="icon" :class="[icon, 'text-secondary text-xl']"></i>
-        <h1 class="text-2xl font-bold text-base">{{ title }}</h1>
+        <h1 class="text-2xl text-base font-bold">{{ title }}</h1>
       </div>
 
       <div class="flex items-center gap-2">

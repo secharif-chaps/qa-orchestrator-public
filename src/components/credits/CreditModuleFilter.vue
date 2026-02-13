@@ -1,9 +1,5 @@
 <template>
-  <Toggle
-    v-model="selectedModule"
-    :options="moduleOptions"
-    variant="pill"
-  />
+  <Toggle v-model="selectedModule" :options="moduleOptions" variant="pill" />
 </template>
 
 <script setup lang="ts">
@@ -54,7 +50,7 @@ const moduleOptions = computed(() => {
       value: 'explore',
       label: t('credits.modules.explore', 'Explore'),
       icon: 'fa fa-diagram-project',
-    }
+    },
   )
 
   return options

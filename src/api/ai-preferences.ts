@@ -26,9 +26,7 @@ export async function getAiPreferences(): Promise<AiPreferences> {
  * @param preferences - AI preferences data
  * @returns Updated AI preferences
  */
-export async function saveAiPreferences(
-  preferences: AiPreferencesCreate
-): Promise<AiPreferences> {
+export async function saveAiPreferences(preferences: AiPreferencesCreate): Promise<AiPreferences> {
   const response = await apiClient.post<AiPreferences>('/ai-preferences', preferences)
   return response
 }
@@ -41,13 +39,11 @@ export async function saveAiPreferences(
  * @throws 403 if user doesn't have access to the company
  * @throws 500 if AI generation fails
  */
-export async function generateQuickActions(
-  companyId: number
-): Promise<QuickActionsResponse> {
+export async function generateQuickActions(companyId: number): Promise<QuickActionsResponse> {
   const request: QuickActionsRequest = { company_id: companyId }
   const response = await apiClient.post<QuickActionsResponse>(
     '/ai-preferences/quick-actions',
-    request
+    request,
   )
   return response
 }

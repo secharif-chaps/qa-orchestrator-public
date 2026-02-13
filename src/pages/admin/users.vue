@@ -1,26 +1,25 @@
 <template>
   <div class="flex flex-col gap-4">
-
     <!-- Page Header -->
 
-      <div class="flex items-end justify-between">
-        <div class="flex-1">
-          <h1 class="text-2xl font-bold mb-2">
-            {{ $t('admin.users.title', 'User Management') }}
-          </h1>
-          <p class="text-secondary">
-            {{ $t('admin.users.description', 'Manage all users across organizations') }}
-          </p>
-        </div>
-        <div class="flex gap-2">
-          <UserFilters
-        :search="queryParams.search ?? ''"
-        :sort="queryParams.sort"
-        :order="queryParams.order"
-        @update:search="handleSearchUpdate"
-        @update:sort="handleSortUpdate"
-        @update:order="handleOrderUpdate"
-      />
+    <div class="flex items-end justify-between">
+      <div class="flex-1">
+        <h1 class="mb-2 text-2xl font-bold">
+          {{ $t('admin.users.title', 'User Management') }}
+        </h1>
+        <p class="text-secondary">
+          {{ $t('admin.users.description', 'Manage all users across organizations') }}
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <UserFilters
+          :search="queryParams.search ?? ''"
+          :sort="queryParams.sort"
+          :order="queryParams.order"
+          @update:search="handleSearchUpdate"
+          @update:sort="handleSortUpdate"
+          @update:order="handleOrderUpdate"
+        />
         <Button
           variant="secondary"
           icon="fa fa-file-import"
@@ -28,12 +27,9 @@
           @click="router.push('/admin/users/import')"
         />
       </div>
+    </div>
 
-      </div>
-
-      <!-- Filters -->
-     
-
+    <!-- Filters -->
 
     <!-- Error Alert -->
     <Alert
@@ -47,9 +43,9 @@
     <!-- Loading State -->
     <div
       v-if="isLoading"
-      class="bg-base-100 rounded-lg shadow-sm p-8 text-center border border-primary-stroke"
+      class="bg-base-100 border-primary-stroke rounded-lg border p-8 text-center shadow-sm"
     >
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+      <div class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
       <p class="text-secondary">
         {{ $t('admin.users.loading', 'Loading users...') }}
       </p>
@@ -133,7 +129,12 @@ import Pagination from '@/components/ui/Pagination.vue'
 import UserFilters from '@/components/admin/UserFilters.vue'
 import UsersTable from '@/components/admin/UsersTable.vue'
 
-import { useAssignUserOrganization, useUpdateUserPermissions, useDisableUser, useEnableUser } from '@/mutations/admin-users'
+import {
+  useAssignUserOrganization,
+  useUpdateUserPermissions,
+  useDisableUser,
+  useEnableUser,
+} from '@/mutations/admin-users'
 import { adminUsersQuery } from '@/queries/admin-users'
 import { allOrganizationsQuery } from '@/queries/organization-admin'
 import { transformToPaginationMeta } from '@/utils/pagination'
@@ -221,7 +222,6 @@ const handleSearchUpdate = (search: string) => {
     queryParams.page = 1
   }, 300) // 300ms debounce
 }
-
 
 const handleSortUpdate = (sort: AdminUserQueryParams['sort']) => {
   queryParams.sort = sort

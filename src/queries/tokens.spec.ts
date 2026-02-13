@@ -9,7 +9,11 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ORGANIZATION_TOKEN_KEYS } from './tokens'
-import type { TokenBalanceResponse, TokenHistoryResponse, TokenHistoryFilters } from '@/types/tokens'
+import type {
+  TokenBalanceResponse,
+  TokenHistoryResponse,
+  TokenHistoryFilters,
+} from '@/types/tokens'
 
 // Mock the API client
 const mockGet = vi.fn()
@@ -34,7 +38,9 @@ vi.mock('@/utils/toast', () => ({
 /**
  * Test factory for creating mock balance response
  */
-function createMockBalanceResponse(overrides: Partial<TokenBalanceResponse> = {}): TokenBalanceResponse {
+function createMockBalanceResponse(
+  overrides: Partial<TokenBalanceResponse> = {},
+): TokenBalanceResponse {
   return {
     organization_id: 'org-uuid-123',
     balance: 350,
@@ -45,7 +51,9 @@ function createMockBalanceResponse(overrides: Partial<TokenBalanceResponse> = {}
 /**
  * Test factory for creating mock history response
  */
-function createMockHistoryResponse(overrides: Partial<TokenHistoryResponse> = {}): TokenHistoryResponse {
+function createMockHistoryResponse(
+  overrides: Partial<TokenHistoryResponse> = {},
+): TokenHistoryResponse {
   return {
     items: [
       {
@@ -232,7 +240,7 @@ describe('tokenHistoryQuery', () => {
     })
 
     expect(mockGet).toHaveBeenCalledWith(
-      expect.stringContaining('/organizations/org-uuid-123/tokens/history?')
+      expect.stringContaining('/organizations/org-uuid-123/tokens/history?'),
     )
     const calledUrl = mockGet.mock.calls[0][0] as string
     expect(calledUrl).toContain('transaction_type=consume')

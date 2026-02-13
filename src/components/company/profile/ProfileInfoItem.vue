@@ -1,17 +1,15 @@
 <template>
-  <div class="flex items-center p-4 gap-4 border border-base-300 rounded-xl">
-    <div
-      class="w-8 h-8 rounded-lg bg-base-300 flex items-center justify-center flex-shrink-0"
-    >
+  <div class="border-base-300 flex items-center gap-4 rounded-xl border p-4">
+    <div class="bg-base-300 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg">
       <i class="text-secondary text-md" :class="icon"></i>
     </div>
     <div class="min-w-0">
-      <p class="text-xs text-secondary/70">{{ label }}</p>
-      <div v-if="loading" class="bg-base-300 rounded-full h-4 w-20 animate-pulse"></div>
-      <p v-else-if="value" class="text-sm font-medium text-secondary">
+      <p class="text-secondary/70 text-xs">{{ label }}</p>
+      <div v-if="loading" class="bg-base-300 h-4 w-20 animate-pulse rounded-full"></div>
+      <p v-else-if="value" class="text-secondary text-sm font-medium">
         {{ value }}
       </p>
-      <p v-else class="text-sm font-medium text-secondary/70">{{ placeholder }}</p>
+      <p v-else class="text-secondary/70 text-sm font-medium">{{ placeholder }}</p>
     </div>
   </div>
 </template>

@@ -1,12 +1,14 @@
 <template>
-  <div class="bg-base-100 rounded-lg border border-primary-stroke p-6">
-    <h3 class="text-lg font-semibold mb-4">{{ t('admin.usage.lineChart.title') }}</h3>
+  <div class="bg-base-100 border-primary-stroke rounded-lg border p-6">
+    <h3 class="mb-4 text-lg font-semibold">{{ t('admin.usage.lineChart.title') }}</h3>
 
     <!-- Loading state -->
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">{{ t('admin.usage.lineChart.loading', 'Loading chart data...') }}</p>
+        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
+        <p class="text-secondary text-sm">
+          {{ t('admin.usage.lineChart.loading', 'Loading chart data...') }}
+        </p>
       </div>
     </div>
 
@@ -17,8 +19,10 @@
       class="flex justify-center py-12"
     >
       <div class="text-center">
-        <i class="fa fa-chart-line text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">{{ t('admin.usage.lineChart.noData', 'No company data for selected period') }}</p>
+        <i class="fa fa-chart-line text-secondary mb-2 text-2xl"></i>
+        <p class="text-secondary text-sm">
+          {{ t('admin.usage.lineChart.noData', 'No company data for selected period') }}
+        </p>
       </div>
     </div>
 
@@ -61,7 +65,16 @@ import type { TimeSeriesDataPoint } from '@/types/usage'
 const { t } = useI18n()
 
 // Register Chart.js components (including Filler for area fill)
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+)
 
 interface Props {
   /** Time series data points for the chart */

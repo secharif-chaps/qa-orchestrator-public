@@ -64,11 +64,13 @@ describe('Folder Sharing Integration Tests', () => {
       // Setup: User is the owner with organization.write and screen.create permissions
       mockUserPermissions.value = ['organization.write', 'screen.create', 'organization.read']
 
-      const ownedFolder = ref(createMockFolder({
-        is_owner: true,
-        share_role: null,
-        owner_id: 'current-user-id',
-      }))
+      const ownedFolder = ref(
+        createMockFolder({
+          is_owner: true,
+          share_role: null,
+          owner_id: 'current-user-id',
+        }),
+      )
 
       const {
         canEditFolder,
@@ -94,11 +96,13 @@ describe('Folder Sharing Integration Tests', () => {
       // Setup: User is a writer with screen.create permission
       mockUserPermissions.value = ['organization.read', 'organization.write', 'screen.create']
 
-      const sharedFolder = ref(createMockFolder({
-        is_owner: false,
-        share_role: 'writer' as ShareRole,
-        owner_id: 'different-owner-id',
-      }))
+      const sharedFolder = ref(
+        createMockFolder({
+          is_owner: false,
+          share_role: 'writer' as ShareRole,
+          owner_id: 'different-owner-id',
+        }),
+      )
 
       const {
         canEditFolder,
@@ -126,11 +130,13 @@ describe('Folder Sharing Integration Tests', () => {
       // Setup: User is a reader with only organization.read permission
       mockUserPermissions.value = ['organization.read']
 
-      const sharedFolder = ref(createMockFolder({
-        is_owner: false,
-        share_role: 'reader' as ShareRole,
-        owner_id: 'different-owner-id',
-      }))
+      const sharedFolder = ref(
+        createMockFolder({
+          is_owner: false,
+          share_role: 'reader' as ShareRole,
+          owner_id: 'different-owner-id',
+        }),
+      )
 
       const {
         canEditFolder,
@@ -162,10 +168,12 @@ describe('Folder Sharing Integration Tests', () => {
       // Setup: User has organization.write but is only a writer on this folder
       mockUserPermissions.value = ['organization.read', 'organization.write', 'screen.create']
 
-      const sharedFolder = ref(createMockFolder({
-        is_owner: false,
-        share_role: 'writer' as ShareRole,
-      }))
+      const sharedFolder = ref(
+        createMockFolder({
+          is_owner: false,
+          share_role: 'writer' as ShareRole,
+        }),
+      )
 
       const { canDeleteFolder, canEditFolder } = useFolderPermissions(sharedFolder)
 
@@ -177,10 +185,12 @@ describe('Folder Sharing Integration Tests', () => {
     it('writer cannot manage sharing on the folder', () => {
       mockUserPermissions.value = ['organization.read', 'organization.write', 'screen.create']
 
-      const sharedFolder = ref(createMockFolder({
-        is_owner: false,
-        share_role: 'writer' as ShareRole,
-      }))
+      const sharedFolder = ref(
+        createMockFolder({
+          is_owner: false,
+          share_role: 'writer' as ShareRole,
+        }),
+      )
 
       const { canManageSharing } = useFolderPermissions(sharedFolder)
 
@@ -190,10 +200,12 @@ describe('Folder Sharing Integration Tests', () => {
     it('writer cannot delete items from the folder', () => {
       mockUserPermissions.value = ['organization.read', 'organization.write', 'screen.create']
 
-      const sharedFolder = ref(createMockFolder({
-        is_owner: false,
-        share_role: 'writer' as ShareRole,
-      }))
+      const sharedFolder = ref(
+        createMockFolder({
+          is_owner: false,
+          share_role: 'writer' as ShareRole,
+        }),
+      )
 
       const { canDeleteItems } = useFolderPermissions(sharedFolder)
 
@@ -206,10 +218,12 @@ describe('Folder Sharing Integration Tests', () => {
       // Edge case: reader with screen.create (unusual but possible)
       mockUserPermissions.value = ['organization.read', 'screen.create']
 
-      const sharedFolder = ref(createMockFolder({
-        is_owner: false,
-        share_role: 'reader' as ShareRole,
-      }))
+      const sharedFolder = ref(
+        createMockFolder({
+          is_owner: false,
+          share_role: 'reader' as ShareRole,
+        }),
+      )
 
       const { canCreateItems } = useFolderPermissions(sharedFolder)
 
@@ -220,10 +234,12 @@ describe('Folder Sharing Integration Tests', () => {
     it('reader cannot perform any write actions', () => {
       mockUserPermissions.value = ['organization.read']
 
-      const sharedFolder = ref(createMockFolder({
-        is_owner: false,
-        share_role: 'reader' as ShareRole,
-      }))
+      const sharedFolder = ref(
+        createMockFolder({
+          is_owner: false,
+          share_role: 'reader' as ShareRole,
+        }),
+      )
 
       const {
         canEditFolder,
@@ -264,10 +280,12 @@ describe('Folder Sharing Integration Tests', () => {
       // Writer without screen.create
       mockUserPermissions.value = ['organization.read', 'organization.write']
 
-      const sharedFolder = ref(createMockFolder({
-        is_owner: false,
-        share_role: 'writer' as ShareRole,
-      }))
+      const sharedFolder = ref(
+        createMockFolder({
+          is_owner: false,
+          share_role: 'writer' as ShareRole,
+        }),
+      )
 
       const { canCreateItems } = useFolderPermissions(sharedFolder)
 
@@ -279,10 +297,12 @@ describe('Folder Sharing Integration Tests', () => {
       // Owner without screen.create
       mockUserPermissions.value = ['organization.read', 'organization.write']
 
-      const ownedFolder = ref(createMockFolder({
-        is_owner: true,
-        share_role: null,
-      }))
+      const ownedFolder = ref(
+        createMockFolder({
+          is_owner: true,
+          share_role: null,
+        }),
+      )
 
       const { canCreateItems } = useFolderPermissions(ownedFolder)
 
@@ -331,10 +351,12 @@ describe('Folder Sharing Integration Tests', () => {
       mockUserPermissions.value = ['organization.read', 'organization.write', 'screen.create']
 
       // User is not owner and has no share role (shouldn't happen in practice, but test defensive code)
-      const folder = ref(createMockFolder({
-        is_owner: false,
-        share_role: null,
-      }))
+      const folder = ref(
+        createMockFolder({
+          is_owner: false,
+          share_role: null,
+        }),
+      )
 
       const { hasAnyAccess, userFolderRole } = useFolderPermissions(folder)
 

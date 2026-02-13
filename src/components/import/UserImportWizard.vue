@@ -1,92 +1,75 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Stepper -->
-    <Stepper
-      v-model="currentStep"
-      :steps="steps"
-      size="md"
-      :linear="true"
-    />
+    <Stepper v-model="currentStep" :steps="steps" size="md" :linear="true" />
 
     <!-- Step Content -->
 
-      <!-- Step 1: Upload -->
-      <div v-if="currentStep === 1" class="flex flex-col gap-6">
-        <!-- Organization Selector (only for global import) -->
-        <div v-if="showOrganizationSelector">
-          <label
-            for="organization-select"
-            class="block text-sm font-medium text-sage-700 dark:text-sage-200 mb-2"
-          >
-            {{ $t('admin.import.selectOrganization') }}
-            <span class="text-error">*</span>
-          </label>
-          <select
-            id="organization-select"
-            v-model="selectedOrganizationId"
-            class="w-full max-w-md px-3 py-2 bg-base-100 border border-primary-stroke rounded-lg text-sm text-sage-700 dark:text-sage-200 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          >
-            <option value="" disabled>
-              {{ $t('admin.import.selectOrganizationPlaceholder') }}
-            </option>
-            <option
-              v-for="org in organizations"
-              :key="org.id"
-              :value="org.id"
-            >
-              {{ org.name }}
-            </option>
-          </select>
-        </div>
-
-        <ImportFileUploader
-          :disabled="isLoading"
-          @parsed="handleFileParsed"
-          @error="handleFileError"
-          @clear="handleFileClear"
-        />
+    <!-- Step 1: Upload -->
+    <div v-if="currentStep === 1" class="flex flex-col gap-6">
+      <!-- Organization Selector (only for global import) -->
+      <div v-if="showOrganizationSelector">
+        <label
+          for="organization-select"
+          class="text-sage-700 dark:text-sage-200 mb-2 block text-sm font-medium"
+        >
+          {{ $t('admin.import.selectOrganization') }}
+          <span class="text-error">*</span>
+        </label>
+        <select
+          id="organization-select"
+          v-model="selectedOrganizationId"
+          class="bg-base-100 border-primary-stroke text-sage-700 dark:text-sage-200 focus:ring-primary focus:border-primary w-full max-w-md rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+        >
+          <option value="" disabled>
+            {{ $t('admin.import.selectOrganizationPlaceholder') }}
+          </option>
+          <option v-for="org in organizations" :key="org.id" :value="org.id">
+            {{ org.name }}
+          </option>
+        </select>
       </div>
 
-      <!-- Step 2: Map Columns -->
-      <div v-else-if="currentStep === 2 && parsedData">
-        <ImportColumnMapper
-          :mappings="columnMappings"
-          :generate-passwords="generatePasswords"
-          :headers="parsedData.headers"
-          @update:mappings="columnMappings = $event"
-          @update:generate-passwords="generatePasswords = $event"
-        />
-      </div>
+      <ImportFileUploader
+        :disabled="isLoading"
+        @parsed="handleFileParsed"
+        @error="handleFileError"
+        @clear="handleFileClear"
+      />
+    </div>
 
-      <!-- Step 3: Review -->
-      <div v-else-if="currentStep === 3">
-        <ImportPreview
-          :users="transformedUsers"
-          :generate-passwords="generatePasswords"
-          :duplicates="duplicates"
-          :validation-errors="validationErrors"
-        />
-      </div>
+    <!-- Step 2: Map Columns -->
+    <div v-else-if="currentStep === 2 && parsedData">
+      <ImportColumnMapper
+        :mappings="columnMappings"
+        :generate-passwords="generatePasswords"
+        :headers="parsedData.headers"
+        @update:mappings="columnMappings = $event"
+        @update:generate-passwords="generatePasswords = $event"
+      />
+    </div>
 
-      <!-- Step 4: Results -->
-      <div v-else-if="currentStep === 4 && importResults">
-        <ImportResults
-          :results="importResults"
-          @done="handleDone"
-        />
-      </div>
+    <!-- Step 3: Review -->
+    <div v-else-if="currentStep === 3">
+      <ImportPreview
+        :users="transformedUsers"
+        :generate-passwords="generatePasswords"
+        :duplicates="duplicates"
+        :validation-errors="validationErrors"
+      />
+    </div>
 
+    <!-- Step 4: Results -->
+    <div v-else-if="currentStep === 4 && importResults">
+      <ImportResults :results="importResults" @done="handleDone" />
+    </div>
 
     <!-- Navigation Buttons -->
     <div
       v-if="currentStep < 4"
-      class="flex justify-between items-center pt-4 border-t border-primary-stroke"
+      class="border-primary-stroke flex items-center justify-between border-t pt-4"
     >
-      <Button
-        variant="tertiary"
-        :label="$t('common.cancel')"
-        @click="handleCancel"
-      />
+      <Button variant="tertiary" :label="$t('common.cancel')" @click="handleCancel" />
 
       <div class="flex gap-3">
         <Button
@@ -119,10 +102,7 @@
     </div>
 
     <!-- Cancel Confirmation Modal -->
-    <Modal
-      v-model:display-modal="showCancelModal"
-      :title="$t('admin.import.cancelTitle')"
-    >
+    <Modal v-model:display-modal="showCancelModal" :title="$t('admin.import.cancelTitle')">
       <p class="text-sage-600 dark:text-sage-300">
         {{ $t('admin.import.cancelMessage') }}
       </p>
@@ -267,7 +247,11 @@ const validationErrors = computed<ValidationError[]>(() => {
 
   transformedUsers.value.forEach((user, idx) => {
     if (!user.username || user.username.trim() === '') {
-      errors.push({ row: idx, field: 'username', message: t('admin.import.errors.usernameRequired') })
+      errors.push({
+        row: idx,
+        field: 'username',
+        message: t('admin.import.errors.usernameRequired'),
+      })
     }
     if (!user.email || user.email.trim() === '') {
       errors.push({ row: idx, field: 'email', message: t('admin.import.errors.emailRequired') })
@@ -312,13 +296,14 @@ const canProceed = computed(() => {
   switch (currentStep.value) {
     case 1:
       // Need file parsed and organization selected (if required)
-      return parsedData.value !== null && (effectiveOrganizationId.value !== undefined)
+      return parsedData.value !== null && effectiveOrganizationId.value !== undefined
     case 2:
       // Need all required fields mapped
       return columnMapper.isValid.value
     case 3:
       // Need at least one valid user
-      const validCount = transformedUsers.value.length - validationErrors.value.length - duplicates.value.length
+      const validCount =
+        transformedUsers.value.length - validationErrors.value.length - duplicates.value.length
       return validCount > 0
     default:
       return true
@@ -349,7 +334,7 @@ function handleFileParsed(data: ParsedFileData): void {
 /**
  * Handle file error
  */
-function handleFileError(message: string): void {
+function handleFileError(): void {
   parsedData.value = null
 }
 
@@ -428,7 +413,11 @@ function handleDone(): void {
 }
 
 // Sync column mappings with composable
-watch(columnMappings, (newMappings) => {
-  columnMapper.mappings.value = newMappings
-}, { deep: true })
+watch(
+  columnMappings,
+  (newMappings) => {
+    columnMapper.mappings.value = newMappings
+  },
+  { deep: true },
+)
 </script>

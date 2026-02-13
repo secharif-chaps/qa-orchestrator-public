@@ -51,10 +51,9 @@ export const getUserOrganization = async (userId: string) => {
  * Assign a user to an organization or change their organization
  */
 export const assignUserOrganization = async (userId: string, organizationId: string) => {
-  return apiClient.put<OrganizationMemberResponse>(
-    `/users/${userId}/organization`,
-    { organization_id: organizationId } satisfies AssignOrganizationRequest,
-  )
+  return apiClient.put<OrganizationMemberResponse>(`/users/${userId}/organization`, {
+    organization_id: organizationId,
+  } satisfies AssignOrganizationRequest)
 }
 
 /**

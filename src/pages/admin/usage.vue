@@ -1,17 +1,16 @@
 <template>
   <div class="flex flex-col gap-8">
     <!-- Header Section -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-3xl font-bold">{{ $t('admin.usage.title', 'Usage Dashboard') }}</h1>
         <p class="text-secondary mt-1">
-          {{ $t('admin.usage.description', 'View application usage metrics across all organizations') }}
+          {{
+            $t('admin.usage.description', 'View application usage metrics across all organizations')
+          }}
         </p>
       </div>
-      <UsageTimeRangeToggle
-        v-model="selectedRange"
-        @update:dates="handleDatesUpdate"
-      />
+      <UsageTimeRangeToggle v-model="selectedRange" @update:dates="handleDatesUpdate" />
     </div>
 
     <!-- Error State -->
@@ -48,10 +47,7 @@
       </div>
 
       <!-- Organization Table Section -->
-      <OrganizationUsageTable
-        :data="data?.companies_by_organization ?? []"
-        :loading="isLoading"
-      />
+      <OrganizationUsageTable :data="data?.companies_by_organization ?? []" :loading="isLoading" />
     </template>
   </div>
 </template>

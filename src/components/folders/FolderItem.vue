@@ -7,17 +7,19 @@
     @mouseleave="isParentHovered = false"
     class="relative"
   >
-
     <div class="flex flex-col gap-2">
       <div class="flex items-start justify-between">
-        <div class="flex items-center gap-3 w-full">
-          <div :class="folderColorClasses" class="w-12 h-12 rounded-lg flex items-center justify-center">
+        <div class="flex w-full items-center gap-3">
+          <div
+            :class="folderColorClasses"
+            class="flex h-12 w-12 items-center justify-center rounded-lg"
+          >
             <i :class="[folderIcon]" class="text-xl"></i>
           </div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 mb-1">
+          <div class="min-w-0 flex-1">
+            <div class="mb-1 flex items-center gap-2">
               <h3
-                class="text-lg font-semibold group-hover:text-secondary transition-colors truncate"
+                class="group-hover:text-secondary truncate text-lg font-semibold transition-colors"
               >
                 {{ folder.name }}
               </h3>
@@ -26,34 +28,38 @@
                 v-if="isSharedWithMe"
                 :label="$t('folder.shared.badge', 'Shared')"
                 intent="info"
-                class="ml-auto mr-0"
+                class="mr-0 ml-auto"
                 size="xs"
               />
-                  <!-- Favorite Toggle Button / Indicator -->
-            <button
-              @click.stop="toggleFavorite"
-              class="size-8 z-10 flex items-center justify-center rounded-full transition-all duration-200"
-              :class="[
-                folder.is_favorite ? 'bg-yellow-100 dark:bg-yellow-900/30' : 'hover:bg-base-200',
-                isSharedWithMe ? 'ml-0' : 'ml-auto'
-              ]"
-              :title="folder.is_favorite ? $t('folder.actions.removeFromFavorites') : $t('folder.actions.addToFavorites')"
-              :disabled="isTogglingFavorite"
-            >
-              <i
-                v-if="!isTogglingFavorite"
+              <!-- Favorite Toggle Button / Indicator -->
+              <button
+                @click.stop="toggleFavorite"
+                class="z-10 flex size-8 items-center justify-center rounded-full transition-all duration-200"
                 :class="[
-                  folder.is_favorite
-                    ? 'fas fa-star text-yellow-500'
-                    : 'far fa-star text-secondary hover:text-yellow-500',
+                  folder.is_favorite ? 'bg-yellow-100 dark:bg-yellow-900/30' : 'hover:bg-base-200',
+                  isSharedWithMe ? 'ml-0' : 'ml-auto',
                 ]"
-                class="text-sm"
-              ></i>
-              <i v-else class="fas fa-spinner fa-spin text-secondary text-sm"></i>
-            </button>
+                :title="
+                  folder.is_favorite
+                    ? $t('folder.actions.removeFromFavorites')
+                    : $t('folder.actions.addToFavorites')
+                "
+                :disabled="isTogglingFavorite"
+              >
+                <i
+                  v-if="!isTogglingFavorite"
+                  :class="[
+                    folder.is_favorite
+                      ? 'fas fa-star text-yellow-500'
+                      : 'far fa-star text-secondary hover:text-yellow-500',
+                  ]"
+                  class="text-sm"
+                ></i>
+                <i v-else class="fas fa-spinner fa-spin text-secondary text-sm"></i>
+              </button>
             </div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="text-sm text-secondary">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-secondary text-sm">
                 {{ $t('folder.itemCount', itemCount) }}
               </span>
               <!-- Share role indicator -->
@@ -71,7 +77,7 @@
                   variant="secondary"
                   size="xs"
                 />
-                <span v-if="folder.tags.length > 2" class="text-xs text-secondary">
+                <span v-if="folder.tags.length > 2" class="text-secondary text-xs">
                   +{{ folder.tags.length - 2 }}
                 </span>
               </div>
@@ -83,10 +89,10 @@
       <!-- Folder Item Previews -->
       <div
         v-if="folder.items && folder.items.length > 0"
-        class="mb-4 relative rounded-xl overflow-hidden"
+        class="relative mb-4 overflow-hidden rounded-xl"
       >
         <div
-          class="flex flex-col justify-start gap-2 bg-base-200 p-4 rounded-xl h-64 overflow-y-auto"
+          class="bg-base-200 flex h-64 flex-col justify-start gap-2 overflow-y-auto rounded-xl p-4"
           @mouseenter="isChildHovered = true"
           @mouseleave="isChildHovered = false"
         >
@@ -99,31 +105,31 @@
             @click="handleItemClick(item.id, index)"
           />
           <div
-            class="absolute top-0 left-0 h-6 w-full bg-gradient-to-b from-bg2 to-transparent z-10"
+            class="from-bg2 absolute top-0 left-0 z-10 h-6 w-full bg-gradient-to-b to-transparent"
           ></div>
           <div
-            class="absolute bottom-0 left-0 h-4 w-full bg-gradient-to-b from-transparent to-bg2 z-10"
+            class="to-bg2 absolute bottom-0 left-0 z-10 h-4 w-full bg-gradient-to-b from-transparent"
           ></div>
         </div>
       </div>
 
       <!-- Empty State -->
-      <div v-else class="p-4 rounded-xl bg-base-200 h-64 mb-4">
+      <div v-else class="bg-base-200 mb-4 h-64 rounded-xl p-4">
         <div class="flex flex-col justify-start gap-2">
           <!-- Only show add button if user can create items -->
           <div
             v-if="canCreateItems"
             @click.prevent="$router.push(`/folders/${folder.id}/create/company`)"
-            class="group rounded-md border-2 border-dashed border-primary-stroke bg-base-200 dark:bg-base-100 h-16 hover:bg-base-300"
+            class="group border-primary-stroke bg-base-200 dark:bg-base-100 hover:bg-base-300 h-16 rounded-md border-2 border-dashed"
           >
-            <div class="flex items-center justify-center h-full">
-              <div class="flex items-center justify-center h-full gap-2">
+            <div class="flex h-full items-center justify-center">
+              <div class="flex h-full items-center justify-center gap-2">
                 <span
-                  class="w-8 h-8 rounded-lg bg-sage-100 group-hover:bg-sage-200 dark:bg-sage-800 group-hover:dark:bg-sage-700 flex items-center justify-center"
+                  class="bg-sage-100 group-hover:bg-sage-200 dark:bg-sage-800 group-hover:dark:bg-sage-700 flex h-8 w-8 items-center justify-center rounded-lg"
                 >
                   <i class="fas fa-plus text-secondary text-sm"></i>
                 </span>
-                <span class="text-sm text-secondary">{{
+                <span class="text-secondary text-sm">{{
                   $t('folder.addItems.company', 'Add Company')
                 }}</span>
               </div>
@@ -132,10 +138,10 @@
           <!-- Read-only empty state for readers -->
           <div
             v-else
-            class="rounded-md border-2 border-dashed border-primary-stroke bg-base-200 dark:bg-base-100 h-16"
+            class="border-primary-stroke bg-base-200 dark:bg-base-100 h-16 rounded-md border-2 border-dashed"
           >
-            <div class="flex items-center justify-center h-full">
-              <span class="text-sm text-secondary">{{
+            <div class="flex h-full items-center justify-center">
+              <span class="text-secondary text-sm">{{
                 $t('folder.empty.readOnly', 'No items in this folder')
               }}</span>
             </div>
@@ -146,16 +152,14 @@
 
     <!-- Footer with creation date and owner -->
     <div>
-      <div class="flex justify-between items-center text-xs text-secondary">
+      <div class="text-secondary flex items-center justify-between text-xs">
         <span>{{ $t('folder.grid.created') }} {{ formatDate(folder.created_at) }}</span>
         <span>
           <!-- Show "by @owner" for shared folders, or just owner for owned folders -->
           <template v-if="isSharedWithMe">
             {{ $t('folder.grid.owner', 'Owner:') }} @{{ folder.owner }}
           </template>
-          <template v-else>
-            {{ $t('folder.grid.by') }} @{{ folder.owner }}
-          </template>
+          <template v-else> {{ $t('folder.grid.by') }} @{{ folder.owner }} </template>
         </span>
       </div>
     </div>
@@ -250,7 +254,6 @@ const previewItems = computed(() => {
 
   return props.folder.items
 })
-
 
 function handleCardClick() {
   // Only emit viewFolder if not clicking on the favorite button

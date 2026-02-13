@@ -1,20 +1,26 @@
 <template>
   <div
-    class="p-4 bg-sage-light border border-primary-stroke rounded-lg transition-all duration-300"
+    class="bg-sage-light border-primary-stroke rounded-lg border p-4 transition-all duration-300"
   >
-    <div class="flex justify-between items-start">
+    <div class="flex items-start justify-between">
       <div>
-        <h3 class="text-lg font-semibold text-secondary">
+        <h3 class="text-secondary text-lg font-semibold">
           {{ jobTitle }}
         </h3>
         <div class="mt-2 space-y-2">
-          <Tag v-if="jobLocation" variant="primary" size="sm" :icon="'fa fa-map-marker'" >
+          <Tag v-if="jobLocation" variant="primary" size="sm" :icon="'fa fa-map-marker'">
             {{ jobLocation }}
           </Tag>
-          <Tag v-if="jobDepartment" variant="primary" size="sm" :icon="'fa fa-building'" class="block">
+          <Tag
+            v-if="jobDepartment"
+            variant="primary"
+            size="sm"
+            :icon="'fa fa-building'"
+            class="block"
+          >
             {{ jobDepartment }}
           </Tag>
-          <div v-if="jobPostedDate" class="flex items-center text-sm text-secondary">
+          <div v-if="jobPostedDate" class="text-secondary flex items-center text-sm">
             <i class="fa fa-calendar w-4"></i>
             {{ t('jobs.card.postedDate') }} {{ jobPostedDate }}
           </div>
@@ -23,15 +29,15 @@
     </div>
 
     <div v-if="jobDescription" class="mt-4">
-      <h4 class="font-medium mb-2">{{ t('jobs.card.description') }}</h4>
-      <p class="text-sm text-secondary">
+      <h4 class="mb-2 font-medium">{{ t('jobs.card.description') }}</h4>
+      <p class="text-secondary text-sm">
         {{ jobDescription }}
       </p>
     </div>
 
     <div v-if="jobRequirements" class="mt-4">
-      <h4 class="font-medium mb-2">{{ t('jobs.card.requirements') }}</h4>
-      <p class="text-sm text-secondary">
+      <h4 class="mb-2 font-medium">{{ t('jobs.card.requirements') }}</h4>
+      <p class="text-secondary text-sm">
         {{ jobRequirements }}
       </p>
     </div>

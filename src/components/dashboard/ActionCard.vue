@@ -1,22 +1,22 @@
 <template>
   <div
-    class="bg-base-100 border border-primary-stroke rounded-lg p-6 ring-offset-2 ring-offset-bg2 hover:ring-4 hover:ring-primary/70 transition-all cursor-pointer group h-full"
+    class="bg-base-100 border-primary-stroke ring-offset-bg2 hover:ring-primary/70 group h-full cursor-pointer rounded-lg border p-6 ring-offset-2 transition-all hover:ring-4"
     @click="handleClick"
   >
-    <div class="flex items-center h-full">
+    <div class="flex h-full items-center">
       <div class="flex-shrink-0">
         <div
-          class="w-12 h-12 rounded-lg flex items-center justify-center transition-colors"
+          class="flex h-12 w-12 items-center justify-center rounded-lg transition-colors"
           :class="iconBackgroundClass"
         >
           <i :class="iconClass" class="text-xl"></i>
         </div>
       </div>
       <div class="ml-4 flex-1">
-        <h3 class="text-lg font-medium group-hover:text-secondary transition-colors">
+        <h3 class="group-hover:text-secondary text-lg font-medium transition-colors">
           {{ title }}
         </h3>
-        <p class="text-sm text-secondary">{{ description }}</p>
+        <p class="text-secondary text-sm">{{ description }}</p>
       </div>
     </div>
   </div>

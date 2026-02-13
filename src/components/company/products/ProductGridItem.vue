@@ -1,17 +1,12 @@
 <template>
   <div class="bg-base-100 dark:bg-base-200 rounded-lg p-4">
-    <div class="flex items-center gap-3 mb-4">
-      <Badge
-        :icon="categoryIcon"
-        variant="secondary"
-        size="lg"
-        rounded
-        class="shrink-0"
-      >
-      </Badge>
+    <div class="mb-4 flex items-center gap-3">
+      <Badge :icon="categoryIcon" variant="secondary" size="lg" rounded class="shrink-0"> </Badge>
       <div>
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
-        <p class="text-sm text-secondary">{{ t('products.count', { count: productList.length }) }}</p>
+        <p class="text-secondary text-sm">
+          {{ t('products.count', { count: productList.length }) }}
+        </p>
       </div>
     </div>
 
@@ -19,9 +14,9 @@
       <div
         v-for="(product, index) in displayedProducts"
         :key="index"
-        class="flex items-center gap-3 p-3 bg-base-300 rounded-lg transition-colors"
+        class="bg-base-300 flex items-center gap-3 rounded-lg p-3 transition-colors"
       >
-        <span class="text-sm flex-1 capitalize">{{ product }}</span>
+        <span class="flex-1 text-sm capitalize">{{ product }}</span>
         <Tag v-if="isNewProduct(product)" variant="success" size="xs">
           <i class="fa-solid fa-star"></i>
           {{ t('products.badges.new') }}
@@ -34,7 +29,11 @@
         variant="tertiary"
         size="sm"
         :icon="showAll ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"
-        :label="showAll ? t('products.showLess') : t('products.showMore', { count: productList.length - maxDisplayItems })"
+        :label="
+          showAll
+            ? t('products.showLess')
+            : t('products.showMore', { count: productList.length - maxDisplayItems })
+        "
         @click="toggleShowAll"
       />
     </div>

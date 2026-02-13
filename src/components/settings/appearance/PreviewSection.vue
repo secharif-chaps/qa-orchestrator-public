@@ -1,20 +1,20 @@
 <template>
-  <div class="bg-base-100 border border-primary-stroke rounded-lg">
-    <div class="px-6 py-4 border-b border-primary-stroke">
+  <div class="bg-base-100 border-primary-stroke rounded-lg border">
+    <div class="border-primary-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.preview.title') }}</h2>
-      <p class="text-sm text-secondary mt-1">
+      <p class="text-secondary mt-1 text-sm">
         {{ $t('settings.appearance.preview.description') }}
       </p>
     </div>
     <div class="px-6 py-6">
       <!-- Preview Container -->
-      <div class="border border-primary-stroke rounded-lg p-6 bg-base-100 dark:bg-base-300">
+      <div class="border-primary-stroke bg-base-100 dark:bg-base-300 rounded-lg border p-6">
         <!-- Preview Header -->
         <div class="mb-6">
-          <h3 class="text-lg font-semibold mb-2">
+          <h3 class="mb-2 text-lg font-semibold">
             {{ $t('settings.appearance.preview.sample') }}
           </h3>
-          <p class="text-sm text-secondary">
+          <p class="text-secondary text-sm">
             {{
               $t(
                 'settings.appearance.preview.interfaceDescription',
@@ -25,13 +25,13 @@
         </div>
 
         <!-- Sample Card -->
-        <div class="bg-base-100 border border-primary-stroke rounded-lg p-4 mb-6">
-          <div class="flex items-start justify-between mb-4">
+        <div class="bg-base-100 border-primary-stroke mb-6 rounded-lg border p-4">
+          <div class="mb-4 flex items-start justify-between">
             <div>
               <h4 class="font-medium">
                 {{ $t('settings.appearance.preview.card.title', 'Sample Card Title') }}
               </h4>
-              <p class="text-sm text-secondary mt-1">
+              <p class="text-secondary mt-1 text-sm">
                 {{
                   $t(
                     'settings.appearance.preview.card.description',
@@ -50,7 +50,7 @@
           <div class="space-y-4">
             <!-- Input Field -->
             <div>
-              <label class="block text-sm font-medium mb-2">{{
+              <label class="mb-2 block text-sm font-medium">{{
                 $t('settings.appearance.preview.input.label', 'Sample Input Field')
               }}</label>
               <input
@@ -59,7 +59,7 @@
                 :placeholder="
                   $t('settings.appearance.preview.input.placeholder', 'Type something here...')
                 "
-                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-base-100 text-secondary placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                class="bg-base-100 text-secondary focus:ring-primary w-full rounded-md border border-slate-300 px-3 py-2 placeholder-slate-400 focus:border-transparent focus:ring-2 focus:outline-none dark:border-slate-600 dark:placeholder-slate-500"
               />
             </div>
 
@@ -69,7 +69,7 @@
                 <label class="text-sm font-medium">{{
                   $t('settings.appearance.preview.toggle.label', 'Sample Toggle')
                 }}</label>
-                <p class="text-sm text-secondary">
+                <p class="text-secondary text-sm">
                   {{
                     $t(
                       'settings.appearance.preview.toggle.description',
@@ -80,7 +80,7 @@
               </div>
               <Switch.Root
                 v-model:checked="previewToggleValue"
-                class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                class="focus:ring-primary relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none"
                 :class="previewToggleValue ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-600'"
               >
                 <Switch.Thumb
@@ -109,20 +109,20 @@
             <!-- Status Indicators -->
             <div class="flex flex-wrap gap-2">
               <div class="flex items-center gap-2">
-                <div class="h-2 w-2 bg-green-500 rounded-full"></div>
-                <span class="text-sm text-secondary">{{
+                <div class="h-2 w-2 rounded-full bg-green-500"></div>
+                <span class="text-secondary text-sm">{{
                   $t('settings.appearance.preview.status.active', 'Active')
                 }}</span>
               </div>
               <div class="flex items-center gap-2">
-                <div class="h-2 w-2 bg-yellow-500 rounded-full"></div>
-                <span class="text-sm text-secondary">{{
+                <div class="h-2 w-2 rounded-full bg-yellow-500"></div>
+                <span class="text-secondary text-sm">{{
                   $t('settings.appearance.preview.status.pending', 'Pending')
                 }}</span>
               </div>
               <div class="flex items-center gap-2">
-                <div class="h-2 w-2 bg-red-500 rounded-full"></div>
-                <span class="text-sm text-secondary">{{
+                <div class="h-2 w-2 rounded-full bg-red-500"></div>
+                <span class="text-secondary text-sm">{{
                   $t('settings.appearance.preview.status.error', 'Error')
                 }}</span>
               </div>
@@ -131,8 +131,8 @@
         </div>
 
         <!-- Sample List -->
-        <div class="bg-base-100 border border-primary-stroke rounded-lg overflow-hidden">
-          <div class="px-4 py-3 border-b border-primary-stroke">
+        <div class="bg-base-100 border-primary-stroke overflow-hidden rounded-lg border">
+          <div class="border-primary-stroke border-b px-4 py-3">
             <h4 class="text-sm font-medium">
               {{ $t('settings.appearance.preview.list.title', 'Sample List Items') }}
             </h4>
@@ -141,19 +141,19 @@
             <div
               v-for="(item, index) in previewItems"
               :key="index"
-              class="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+              class="px-4 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-700"
             >
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                  <div class="h-8 w-8 bg-primary/10 rounded-full flex items-center justify-center">
+                  <div class="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
                     <i :class="item.icon" class="text-secondary text-sm"></i>
                   </div>
                   <div>
                     <p class="text-sm font-medium">{{ item.title }}</p>
-                    <p class="text-xs text-secondary">{{ item.description }}</p>
+                    <p class="text-secondary text-xs">{{ item.description }}</p>
                   </div>
                 </div>
-                <div class="text-xs text-secondary">{{ item.time }}</div>
+                <div class="text-secondary text-xs">{{ item.time }}</div>
               </div>
             </div>
           </div>

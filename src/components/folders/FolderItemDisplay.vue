@@ -8,31 +8,31 @@
     @mouseenter="isParentHovered = true"
     @mouseleave="isParentHovered = false"
   >
-    <div class="flex items-start justify-between mb-4">
+    <div class="mb-4 flex items-start justify-between">
       <div class="flex items-center gap-3">
         <div
-          class="w-12 h-12 rounded-lg bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center justify-center"
+          class="ring-primary-stroke flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-white ring-1"
         >
           <img
             v-if="item.type === 'company' && getCompanyDomain(item.website)"
             :src="getLogoUrl(item.website)"
             :alt="`${item.name} logo`"
-            class="w-full h-full object-contain p-1"
+            class="h-full w-full object-contain p-1"
             @error="showFallbackIcon = true"
             v-show="!showFallbackIcon"
           />
           <div
             v-show="showFallbackIcon || !getCompanyDomain(item.website) || item.type !== 'company'"
-            class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
+            class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
           >
             <i class="fas fa-building text-secondary text-xl"></i>
           </div>
         </div>
-        <div class="flex-1 min-w-0 max-w-32">
-          <h3 class="text-lg font-semibold transition-colors truncate">
+        <div class="max-w-32 min-w-0 flex-1">
+          <h3 class="truncate text-lg font-semibold transition-colors">
             {{ item.name }}
           </h3>
-          <p class="text-sm text-secondary truncate">
+          <p class="text-secondary truncate text-sm">
             {{ formatType(item.type) }}
           </p>
         </div>
@@ -40,7 +40,7 @@
 
       <!-- Quick Actions -->
       <div
-        class="flex gap-1 opacity-100 group-hover:opacity-100 transition-opacity"
+        class="flex gap-1 opacity-100 transition-opacity group-hover:opacity-100"
         @mouseenter="isChildHovered = true"
         @mouseleave="isChildHovered = false"
       >
@@ -64,13 +64,17 @@
           variant="tertiary"
           :icon="isArchived ? 'fa fa-undo' : 'fa fa-trash'"
           icon-only
-          :title="isArchived ? $t('company.restore.title', 'Restore Company') : $t('company.delete.title', 'Delete Company')"
+          :title="
+            isArchived
+              ? $t('company.restore.title', 'Restore Company')
+              : $t('company.delete.title', 'Delete Company')
+          "
           @click.stop="$emit('deleteCompany', item)"
         />
       </div>
     </div>
 
-    <div class="flex items-center justify-between text-sm text-secondary">
+    <div class="text-secondary flex items-center justify-between text-sm">
       <span>{{ $t('folder.item.created', 'Created') }} {{ formatDate(item.created_at) }}</span>
       <span v-if="item.owner">{{ $t('folder.grid.by') }} @{{ item.owner }}</span>
     </div>

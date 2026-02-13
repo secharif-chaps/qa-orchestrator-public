@@ -2,7 +2,7 @@ import type { TaskResponse } from '@/types/task'
 
 interface Company {
   tasks?: TaskResponse[]
-  [key: string]: any
+  [key: string]: unknown
 }
 
 /**
@@ -31,14 +31,14 @@ export function hasDataForSection(
 
   // Check specific data path
   const pathParts = dataPath.split('.')
-  let currentData = sectionData
+  let currentData: unknown = sectionData
 
   for (const part of pathParts) {
     if (!currentData || typeof currentData !== 'object') return false
-    currentData = currentData[part]
+    currentData = (currentData as Record<string, unknown>)[part]
   }
 
   if (Array.isArray(currentData)) return currentData.length > 0
-  if (typeof currentData === 'object') return Object.keys(currentData).length > 0
+  if (currentData && typeof currentData === 'object') return Object.keys(currentData).length > 0
   return !!currentData
 }

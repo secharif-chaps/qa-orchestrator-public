@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-base-100 border border-primary-stroke rounded-card">
-    <div class="px-6 py-4 border-b border-primary-stroke">
+  <div class="bg-base-100 border-primary-stroke rounded-card border">
+    <div class="border-primary-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.security.activity.title') }}</h2>
-      <p class="text-sm text-secondary mt-1">
+      <p class="text-secondary mt-1 text-sm">
         {{ $t('settings.security.activity.description') }}
       </p>
     </div>
@@ -12,12 +12,12 @@
         <div
           v-for="i in 3"
           :key="i"
-          class="flex items-center gap-3 p-3 border border-primary-stroke rounded-lg animate-pulse"
+          class="border-primary-stroke flex animate-pulse items-center gap-3 rounded-lg border p-3"
         >
-          <div class="w-10 h-10 rounded-lg bg-base-200"></div>
-          <div class="flex-1 flex flex-col gap-2">
-            <div class="h-4 bg-base-200 rounded w-1/3"></div>
-            <div class="h-3 bg-base-200 rounded w-1/2"></div>
+          <div class="bg-base-200 h-10 w-10 rounded-lg"></div>
+          <div class="flex flex-1 flex-col gap-2">
+            <div class="bg-base-200 h-4 w-1/3 rounded"></div>
+            <div class="bg-base-200 h-3 w-1/2 rounded"></div>
           </div>
         </div>
       </div>
@@ -34,16 +34,12 @@
       <!-- Events List -->
       <div v-else class="flex flex-col gap-3">
         <!-- Empty State -->
-        <p v-if="events.length === 0" class="text-sm text-secondary text-center py-8">
+        <p v-if="events.length === 0" class="text-secondary py-8 text-center text-sm">
           {{ $t('settings.security.activity.noEvents') }}
         </p>
 
         <!-- Event Items -->
-        <ActivityEventItem
-          v-for="event in events"
-          :key="event.id"
-          :event="event"
-        />
+        <ActivityEventItem v-for="event in events" :key="event.id" :event="event" />
 
         <!-- Load More Button -->
         <div v-if="hasMore" class="flex justify-center pt-4">

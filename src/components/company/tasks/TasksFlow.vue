@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-base-100 border border-primary-stroke rounded-lg overflow-hidden">
+  <div class="bg-base-100 border-primary-stroke overflow-hidden rounded-lg border">
     <button
-      class="w-full px-4 py-3 flex items-center justify-between text-left border-b border-gray-200 dark:border-slate-700 cursor-pointer"
+      class="flex w-full cursor-pointer items-center justify-between border-b border-gray-200 px-4 py-3 text-left dark:border-slate-700"
       @click="isOpen = !isOpen"
       :class="{
         'border-b-0': !isOpen,
@@ -10,7 +10,7 @@
       <div class="flex items-center gap-3">
         <span class="font-medium">{{ t('company.debug.workflowTitle', 'Search Workflow') }}</span>
         <div class="flex items-center">
-          <span class="text-xs text-secondary font-medium"
+          <span class="text-secondary text-xs font-medium"
             >{{ completedCount }}/{{ totalTasks }}</span
           >
         </div>
@@ -22,57 +22,77 @@
       <!-- Progress Overview -->
       <div class="mb-6">
         <!-- Segmented progress bar -->
-        <div class="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-3 overflow-hidden flex">
+        <div class="flex h-3 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-800">
           <!-- Completed segment -->
           <div
             v-if="completedPercentage > 0"
-            class="bg-green-400 h-full transition-all duration-500 ease-out"
+            class="h-full bg-green-400 transition-all duration-500 ease-out"
             :style="{ width: `${completedPercentage}%` }"
-            :title="t('company.tasks.completed', { count: completedCount, percentage: Math.round(completedPercentage) })"
+            :title="
+              t('company.tasks.completed', {
+                count: completedCount,
+                percentage: Math.round(completedPercentage),
+              })
+            "
           ></div>
 
           <!-- Running segment -->
           <div
             v-if="runningPercentage > 0"
-            class="bg-orange-400 h-full transition-all duration-500 ease-out"
+            class="h-full bg-orange-400 transition-all duration-500 ease-out"
             :style="{ width: `${runningPercentage}%` }"
-            :title="t('company.tasks.running', { count: runningCount, percentage: Math.round(runningPercentage) })"
+            :title="
+              t('company.tasks.running', {
+                count: runningCount,
+                percentage: Math.round(runningPercentage),
+              })
+            "
           ></div>
 
           <!-- Error segment -->
           <div
             v-if="errorPercentage > 0"
-            class="bg-red-400 h-full transition-all duration-500 ease-out"
+            class="h-full bg-red-400 transition-all duration-500 ease-out"
             :style="{ width: `${errorPercentage}%` }"
-            :title="t('company.tasks.error', { count: errorCount, percentage: Math.round(errorPercentage) })"
+            :title="
+              t('company.tasks.error', {
+                count: errorCount,
+                percentage: Math.round(errorPercentage),
+              })
+            "
           ></div>
 
           <!-- Pending segment -->
           <div
             v-if="pendingPercentage > 0"
-            class="bg-gray-200 dark:bg-gray-800 h-full transition-all duration-500 ease-out"
+            class="h-full bg-gray-200 transition-all duration-500 ease-out dark:bg-gray-800"
             :style="{ width: `${pendingPercentage}%` }"
-            :title="t('company.tasks.pending', { count: pendingCount, percentage: Math.round(pendingPercentage) })"
+            :title="
+              t('company.tasks.pending', {
+                count: pendingCount,
+                percentage: Math.round(pendingPercentage),
+              })
+            "
           ></div>
         </div>
 
         <!-- Status summary -->
-        <div class="flex items-center justify-between mt-2 text-xs text-secondary">
+        <div class="text-secondary mt-2 flex items-center justify-between text-xs">
           <div class="flex items-center gap-4">
             <span class="flex items-center gap-1">
-              <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+              <div class="h-2 w-2 rounded-full bg-green-400"></div>
               {{ t('company.tasks.completedShort', { count: completedCount }) }}
             </span>
             <span v-if="runningCount > 0" class="flex items-center gap-1">
-              <div class="w-2 h-2 bg-orange-400 rounded-full"></div>
+              <div class="h-2 w-2 rounded-full bg-orange-400"></div>
               {{ t('company.tasks.runningShort', { count: runningCount }) }}
             </span>
             <span v-if="errorCount > 0" class="flex items-center gap-1">
-              <div class="w-2 h-2 bg-red-400 rounded-full"></div>
+              <div class="h-2 w-2 rounded-full bg-red-400"></div>
               {{ t('company.tasks.errorShort', { count: errorCount }) }}
             </span>
             <span v-if="pendingCount > 0" class="flex items-center gap-1">
-              <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
+              <div class="h-2 w-2 rounded-full bg-gray-400"></div>
               {{ t('company.tasks.pendingShort', { count: pendingCount }) }}
             </span>
           </div>
@@ -84,13 +104,13 @@
         <div
           v-for="task in taskList"
           :key="task.type"
-          class="flex items-center justify-between p-3 rounded-lg border transition-all duration-300"
+          class="flex items-center justify-between rounded-lg border p-3 transition-all duration-300"
           :class="getTaskClass(task)"
         >
           <!-- Task Info -->
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+              class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg"
               :class="getIconContainerClass(task.status)"
             >
               <i v-if="task.status === 'running'" class="fa fa-spinner-third animate-spin"></i>
@@ -99,21 +119,21 @@
 
             <div class="min-w-0">
               <div class="flex items-center gap-2">
-                <h3 class="font-semibold text-sm">{{ task.name }}</h3>
+                <h3 class="text-sm font-semibold">{{ task.name }}</h3>
                 <Tag
                   :variant="getStatusVariant(task.status)"
                   :label="getStatusLabel(task.status)"
                   size="xs"
                 />
               </div>
-              <p class="text-xs text-secondary truncate">
+              <p class="text-secondary truncate text-xs">
                 {{ task.description }}
               </p>
 
               <!-- Token information for admins -->
               <div
                 v-if="hasAdminAccess && getTokenInfo(task.type)?.hasTokenData"
-                class="mt-1 flex items-center gap-3 text-xs text-secondary"
+                class="text-secondary mt-1 flex items-center gap-3 text-xs"
               >
                 <span v-if="getTokenInfo(task.type)?.inputTokens">
                   <i class="fa fa-arrow-down text-blue-500"></i>
@@ -154,10 +174,15 @@
       </div>
 
       <!-- Global Actions -->
-      <div v-if="hasErrorsOrPending" class="mt-6 pt-6 border-t border-primary-stroke">
+      <div v-if="hasErrorsOrPending" class="border-primary-stroke mt-6 border-t pt-6">
         <div class="flex items-center justify-between">
-          <div class="text-sm text-secondary">
-            {{ t('company.tasks.canBeRestarted', 'Tasks can be restarted or have not been started yet') }}
+          <div class="text-secondary text-sm">
+            {{
+              t(
+                'company.tasks.canBeRestarted',
+                'Tasks can be restarted or have not been started yet',
+              )
+            }}
           </div>
           <Button
             variant="secondary"
@@ -246,7 +271,10 @@ const taskConfigs: TaskConfig[] = [
   {
     type: 'profile',
     name: t('company.analysisCards.profile.title', 'Company Profile'),
-    description: t('company.analysisCards.profile.description', 'View detailed company information, business lines, and key metrics'),
+    description: t(
+      'company.analysisCards.profile.description',
+      'View detailed company information, business lines, and key metrics',
+    ),
   },
   {
     type: 'digital',
@@ -256,32 +284,50 @@ const taskConfigs: TaskConfig[] = [
   {
     type: 'csr',
     name: t('company.analysisCards.csr.title', 'Corporate Social Responsibility'),
-    description: t('company.analysisCards.csr.description', 'CSR initiatives, sustainability programs, and social impact'),
+    description: t(
+      'company.analysisCards.csr.description',
+      'CSR initiatives, sustainability programs, and social impact',
+    ),
   },
   {
     type: 'press',
     name: t('company.analysisCards.press.title', 'Press & Media'),
-    description: t('company.analysisCards.press.description', 'Press releases, news articles, and media coverage'),
+    description: t(
+      'company.analysisCards.press.description',
+      'Press releases, news articles, and media coverage',
+    ),
   },
   {
     type: 'timeline',
     name: t('company.analysisCards.timeline.title', 'Timeline & History'),
-    description: t('company.analysisCards.timeline.description', 'Company history, milestones, and key events over time'),
+    description: t(
+      'company.analysisCards.timeline.description',
+      'Company history, milestones, and key events over time',
+    ),
   },
   {
     type: 'products',
     name: t('company.analysisCards.products.title', 'Products & Services'),
-    description: t('company.analysisCards.products.description', 'Browse products, services, and offerings'),
+    description: t(
+      'company.analysisCards.products.description',
+      'Browse products, services, and offerings',
+    ),
   },
   {
     type: 'team',
     name: t('company.analysisCards.team.title', 'Team & Management'),
-    description: t('company.analysisCards.team.description', 'Leadership team, organizational structure, and key personnel'),
+    description: t(
+      'company.analysisCards.team.description',
+      'Leadership team, organizational structure, and key personnel',
+    ),
   },
   {
     type: 'jobs',
     name: t('company.analysisCards.jobs.title', 'Job Offers'),
-    description: t('company.analysisCards.jobs.description', 'Current job openings and career opportunities'),
+    description: t(
+      'company.analysisCards.jobs.description',
+      'Current job openings and career opportunities',
+    ),
   },
 ]
 

@@ -9,7 +9,6 @@ type Theme = (typeof themes)[number]
 const globalTheme = ref<Theme>('system')
 const globalIsDark = ref(false)
 let isInitialized = false
-let mediaQueryCleanup: (() => void) | null = null
 
 // Get system preference
 const getSystemTheme = (): 'light' | 'dark' => {
@@ -80,11 +79,6 @@ const initTheme = () => {
   }
 
   mediaQuery.addEventListener('change', handleSystemThemeChange)
-
-  // Store cleanup function
-  mediaQueryCleanup = () => {
-    mediaQuery.removeEventListener('change', handleSystemThemeChange)
-  }
 
   isInitialized = true
 }

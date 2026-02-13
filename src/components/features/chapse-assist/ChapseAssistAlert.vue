@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="shouldShow"
-    class="bg-base-300 p-6 rounded-card border-2 border-primary-stroke flex items-center gap-8"
+    class="bg-base-300 rounded-card border-primary-stroke flex items-center gap-8 border-2 p-6"
   >
     <!-- Chapse Character -->
     <img
@@ -84,9 +84,15 @@ interface Props {
 const props = defineProps<Props>()
 
 // Computed props with translations as defaults
-const title = computed(() => props.title ?? t('chapseAssist.alert.title', 'Get Personalized AI Recommendations'))
-const actionLabel = computed(() => props.actionLabel ?? t('chapseAssist.alert.actionLabel', 'Set Up Now'))
-const dismissLabel = computed(() => props.dismissLabel ?? t('chapseAssist.alert.dismissLabel', 'Maybe Later'))
+const title = computed(
+  () => props.title ?? t('chapseAssist.alert.title', 'Get Personalized AI Recommendations'),
+)
+const actionLabel = computed(
+  () => props.actionLabel ?? t('chapseAssist.alert.actionLabel', 'Set Up Now'),
+)
+const dismissLabel = computed(
+  () => props.dismissLabel ?? t('chapseAssist.alert.dismissLabel', 'Maybe Later'),
+)
 const showDismiss = computed(() => props.showDismiss ?? true)
 const dismissKey = computed(() => props.dismissKey ?? 'chapse_assist_alert_dismissed')
 const forceShow = computed(() => props.forceShow ?? false)

@@ -6,14 +6,14 @@
         <!-- Medal style for top 3 -->
         <div v-if="item.rank <= 3" class="relative inline-flex">
           <span
-            class="inline-flex items-center justify-center w-9 h-9 rounded-full text-sm font-bold shadow-md"
+            class="inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold shadow-md"
             :class="getMedalClasses(item.rank)"
           >
             {{ item.rank }}
           </span>
           <!-- Trophy icon floating bottom-right -->
           <span
-            class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] shadow-sm"
+            class="absolute -right-1 -bottom-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] shadow-sm"
             :class="getTrophyClasses(item.rank)"
           >
             <i class="fa fa-trophy"></i>
@@ -22,7 +22,7 @@
         <!-- Regular rank for others -->
         <span
           v-else
-          class="inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-medium bg-base-200 text-secondary"
+          class="bg-base-200 text-secondary inline-flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium"
         >
           {{ item.rank }}
         </span>
@@ -35,7 +35,7 @@
         <div class="flex items-center gap-3">
           <!-- Avatar -->
           <div
-            class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-medium text-primary"
+            class="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium"
           >
             {{ item.initials }}
           </div>
@@ -43,7 +43,7 @@
           <!-- Name and email -->
           <div>
             <div class="font-medium">{{ item.fullName }}</div>
-            <div class="text-sm text-secondary">{{ item.email }}</div>
+            <div class="text-secondary text-sm">{{ item.email }}</div>
           </div>
         </div>
       </td>
@@ -52,7 +52,9 @@
     <!-- Credits column as badge -->
     <template #cell(credits)="{ item }">
       <td class="px-4 py-3 text-right">
-        <span class="inline-flex items-center px-3 py-1 rounded-full bg-primary-light text-primary text-sm font-medium">
+        <span
+          class="bg-primary-light text-primary inline-flex items-center rounded-full px-3 py-1 text-sm font-medium"
+        >
           {{ item.creditsConsumed.toLocaleString() }} {{ $t('credits.usedCredits') }}
         </span>
       </td>
@@ -61,8 +63,8 @@
     <!-- Empty state -->
     <template #empty>
       <div class="p-8 text-center">
-        <i class="fa fa-users text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">
+        <i class="fa fa-users text-secondary mb-2 text-2xl"></i>
+        <p class="text-secondary text-sm">
           {{ $t('credits.topUsers.noData', 'Aucun utilisateur trouvé') }}
         </p>
       </div>

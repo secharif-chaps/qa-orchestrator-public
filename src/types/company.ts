@@ -9,14 +9,14 @@ export interface CompanyCreate {
 export interface CompanyUpdate {
   name?: string | null
   website?: string | null
-  profile?: Record<string, any> | null
-  digital?: Record<string, any> | null
-  timeline?: Record<string, any> | null
-  products?: Record<string, any> | null
-  jobs?: Record<string, any> | null
-  csr?: Record<string, any> | null
-  press?: Record<string, any> | null
-  team?: Record<string, any>[] | null
+  profile?: Record<string, unknown> | null
+  digital?: Record<string, unknown> | null
+  timeline?: Record<string, unknown> | null
+  products?: Record<string, unknown> | null
+  jobs?: Record<string, unknown> | null
+  csr?: Record<string, unknown> | null
+  press?: Record<string, unknown> | null
+  team?: Record<string, unknown>[] | null
 }
 
 /**

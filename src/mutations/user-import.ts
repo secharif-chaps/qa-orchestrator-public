@@ -5,7 +5,6 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { importUsers } from '@/api/user-import'
 import { ADMIN_USER_QUERY_KEYS } from '@/queries/admin-users'
-import { ORGANIZATION_QUERY_KEYS } from '@/queries/organization-admin'
 import { toast } from '@/utils/toast'
 import type { BulkImportRequest, BulkImportResponse } from '@/types/user-import'
 
@@ -28,9 +27,7 @@ export const useImportUsers = defineMutation(() => {
       if (response.error_count === 0) {
         toast.success(`Successfully imported ${response.success_count} users`)
       } else if (response.success_count > 0) {
-        toast.warning(
-          `Imported ${response.success_count} users, ${response.error_count} failed`,
-        )
+        toast.warning(`Imported ${response.success_count} users, ${response.error_count} failed`)
       } else {
         toast.error(`Import failed: ${response.error_count} users could not be imported`)
       }
@@ -41,8 +38,7 @@ export const useImportUsers = defineMutation(() => {
       // TODO : optimistic ui update for organization members and count
     },
     onError: (error: unknown) => {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to import users'
+      const errorMessage = error instanceof Error ? error.message : 'Failed to import users'
       toast.error(errorMessage)
     },
   })

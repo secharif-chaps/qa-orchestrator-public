@@ -12,6 +12,11 @@ import { ADMIN_USER_QUERY_KEYS } from '@/queries/admin-users'
 import { toast } from '@/utils/toast'
 import type { OrganizationUserCreate, OrganizationUserUpdate } from '@/types/user'
 
+interface ApiError {
+  response?: { data?: { message?: string } }
+  message?: string
+}
+
 export const useCreateOrganizationUser = (organizationId: string) => {
   const queryCache = useQueryCache()
   const isLoading = ref(false)
@@ -29,11 +34,12 @@ export const useCreateOrganizationUser = (organizationId: string) => {
       })
       toast.success('User Created')
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error('Failed to add user:', error)
+      const apiError = error as ApiError
       toast.error(
         'Failed to Add User',
-        error.response?.data?.message || error.message || 'An unexpected error occurred',
+        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
       )
     },
   })
@@ -71,11 +77,12 @@ export const useUpdateOrganizationUser = (organizationId: string) => {
       })
       toast.success('User Updated')
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error('Failed to update user:', error)
+      const apiError = error as ApiError
       toast.error(
         'Failed to Update User',
-        error.response?.data?.message || error.message || 'An unexpected error occurred',
+        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
       )
     },
   })
@@ -112,11 +119,12 @@ export const useDeleteOrganizationUser = (organizationId: string) => {
       })
       toast.success('User Deleted')
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error('Failed to delete user:', error)
+      const apiError = error as ApiError
       toast.error(
         'Failed to Delete User',
-        error.response?.data?.message || error.message || 'An unexpected error occurred',
+        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
       )
     },
   })
@@ -153,11 +161,12 @@ export const useToggleUserStatus = (organizationId: string) => {
       })
       toast.success('User Status Updated')
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error('Failed to toggle user status:', error)
+      const apiError = error as ApiError
       toast.error(
         'Failed to Update Status',
-        error.response?.data?.message || error.message || 'An unexpected error occurred',
+        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
       )
     },
   })
@@ -186,11 +195,12 @@ export const useResendPasswordReset = (organizationId: string) => {
     onSuccess: () => {
       toast.success('Password Reset Sent')
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       console.error('Failed to send password reset:', error)
+      const apiError = error as ApiError
       toast.error(
         'Failed to Send Reset',
-        error.response?.data?.message || error.message || 'An unexpected error occurred',
+        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
       )
     },
   })

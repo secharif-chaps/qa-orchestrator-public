@@ -7,11 +7,7 @@
  * If this file compiles without errors, the interfaces are correct.
  */
 
-import type {
-  FeatureFlagName,
-  FeatureFlagConfig,
-  FeatureFlagToggleRequest,
-} from './feature-flags'
+import type { FeatureFlagName, FeatureFlagConfig, FeatureFlagToggleRequest } from './feature-flags'
 import { FEATURE_FLAG_CONFIG, getFeatureFlagDisplayConfig } from './feature-flags'
 
 // =============================================================================

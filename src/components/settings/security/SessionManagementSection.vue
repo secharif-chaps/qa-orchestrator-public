@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-base-100 border border-primary-stroke rounded-card">
-    <div class="px-6 py-4 border-b border-primary-stroke">
+  <div class="bg-base-100 border-primary-stroke rounded-card border">
+    <div class="border-primary-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.security.sessions.title') }}</h2>
-      <p class="text-sm text-secondary mt-1">
+      <p class="text-secondary mt-1 text-sm">
         {{ $t('settings.security.sessions.description') }}
       </p>
     </div>
@@ -12,13 +12,13 @@
         <div
           v-for="i in 3"
           :key="i"
-          class="border border-primary-stroke rounded-lg p-4 animate-pulse"
+          class="border-primary-stroke animate-pulse rounded-lg border p-4"
         >
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-base-200"></div>
-            <div class="flex-1 flex flex-col gap-2">
-              <div class="h-4 bg-base-200 rounded w-1/3"></div>
-              <div class="h-3 bg-base-200 rounded w-1/4"></div>
+            <div class="bg-base-200 h-10 w-10 rounded-lg"></div>
+            <div class="flex flex-1 flex-col gap-2">
+              <div class="bg-base-200 h-4 w-1/3 rounded"></div>
+              <div class="bg-base-200 h-3 w-1/4 rounded"></div>
             </div>
           </div>
         </div>
@@ -36,11 +36,7 @@
       <!-- Sessions List -->
       <div v-else class="flex flex-col gap-4">
         <!-- Current Session -->
-        <SessionItem
-          v-if="currentSession"
-          :session="currentSession"
-          :is-current="true"
-        />
+        <SessionItem v-if="currentSession" :session="currentSession" :is-current="true" />
 
         <!-- Other Sessions -->
         <SessionItem
@@ -54,19 +50,19 @@
         <!-- No Other Sessions -->
         <p
           v-if="otherSessions.length === 0 && currentSession"
-          class="text-sm text-secondary text-center py-4"
+          class="text-secondary py-4 text-center text-sm"
         >
           {{ $t('settings.security.sessions.noOtherSessions') }}
         </p>
 
         <!-- Sign Out All Devices -->
-        <div v-if="otherSessions.length > 0" class="pt-4 border-t border-primary-stroke">
+        <div v-if="otherSessions.length > 0" class="border-primary-stroke border-t pt-4">
           <div class="flex items-center justify-between">
             <div>
               <h3 class="text-sm font-medium">
                 {{ $t('settings.security.sessions.signOutAll.title') }}
               </h3>
-              <p class="text-sm text-secondary">
+              <p class="text-secondary text-sm">
                 {{ $t('settings.security.sessions.signOutAll.description') }}
               </p>
             </div>

@@ -1,7 +1,7 @@
 <template>
-  <div class="dark h-[calc(100vh-140px)] flex flex-col">
+  <div class="dark flex h-[calc(100vh-140px)] flex-col">
     <!-- Header -->
-    <div class="flex items-center justify-between border-b-2 shadow border-sage-800 px-4 py-2">
+    <div class="border-sage-800 flex items-center justify-between border-b-2 px-4 py-2 shadow">
       <h2 class="text-headline-2xl">{{ $t('sidebar.notifications.title', 'Notifications') }}</h2>
       <Button
         v-if="unreadCount > 0"
@@ -20,15 +20,15 @@
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="flex flex-col items-center justify-center py-8 gap-3 px-4">
+      <div v-else-if="error" class="flex flex-col items-center justify-center gap-3 px-4 py-8">
         <Badge variant="secondary" icon="fa fa-exclamation-triangle" size="lg" />
-        <p class="text-sm text-sage-400 text-center">
+        <p class="text-sage-400 text-center text-sm">
           {{ $t('sidebar.notifications.errorLoading', 'Unable to load notifications') }}
         </p>
       </div>
 
       <!-- Notifications -->
-      <div v-else-if="notifications.length > 0" class="divide-y divide-sage-800">
+      <div v-else-if="notifications.length > 0" class="divide-sage-800 divide-y">
         <NotificationItem
           v-for="notification in notifications"
           :key="notification.id"
@@ -47,13 +47,13 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="flex flex-col items-center justify-center py-12 px-4 gap-4">
+      <div v-else class="flex flex-col items-center justify-center gap-4 px-4 py-12">
         <Badge variant="secondary" icon="fa fa-bell" size="lg" />
         <div class="text-center">
-          <h3 class="text-sm font-medium text-white mb-2">
+          <h3 class="mb-2 text-sm font-medium text-white">
             {{ $t('sidebar.notifications.noNotifications', 'No notifications') }}
           </h3>
-          <p class="text-xs text-sage-400">
+          <p class="text-sage-400 text-xs">
             {{
               $t(
                 'sidebar.notifications.upToDate',
@@ -116,11 +116,7 @@ const { t } = useI18n()
 const readNotifications = ref<Set<string>>(new Set())
 
 // Fetch organization activities
-const {
-  data: activitiesData,
-  isLoading,
-  error,
-} = useQuery(organizationActivitiesQuery, () => ({}))
+const { data: activitiesData, isLoading, error } = useQuery(organizationActivitiesQuery, () => ({}))
 
 // Transform activities into notifications (limit to 20 most recent)
 const notifications = computed<Notification[]>(() => {

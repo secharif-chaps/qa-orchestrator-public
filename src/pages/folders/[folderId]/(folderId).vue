@@ -2,9 +2,9 @@
   <div class="min-h-screen">
     <div class="flex flex-col gap-4">
       <!-- Loading State -->
-      <div v-if="isLoading" class="bg-base-100 rounded-lg shadow-sm p-8 text-center">
+      <div v-if="isLoading" class="bg-base-100 rounded-lg p-8 text-center shadow-sm">
         <div
-          class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
+          class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
         ></div>
         <p class="text-secondary">
           {{ $t('folder.loading', 'Loading folder...') }}
@@ -37,7 +37,7 @@
           <!-- Grid View -->
           <div
             v-if="viewMode === 'grid'"
-            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6"
+            class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3"
           >
             <!-- Items List -->
             <FolderItemDisplay
@@ -56,12 +56,12 @@
           </div>
 
           <!-- Table View -->
-          <div v-else class="bg-base-100 rounded-lg overflow-hidden border border-primary-stroke">
+          <div v-else class="bg-base-100 border-primary-stroke overflow-hidden rounded-lg border">
             <!-- Add Items Row -->
 
             <!-- Table Header -->
-            <div class="px-6 py-4 border-b border-primary-stroke bg-base-200">
-              <div class="grid grid-cols-12 gap-4 text-sm font-medium text-secondary">
+            <div class="border-primary-stroke bg-base-200 border-b px-6 py-4">
+              <div class="text-secondary grid grid-cols-12 gap-4 text-sm font-medium">
                 <div class="col-span-4">{{ $t('folder.item.name', 'Name') }}</div>
                 <div class="col-span-2">{{ $t('folder.item.type', 'Type') }}</div>
                 <div class="col-span-2">{{ $t('folder.item.created', 'Created') }}</div>
@@ -71,28 +71,28 @@
             </div>
 
             <!-- Table Body -->
-            <div class="divide-y divide-primary-stroke">
+            <div class="divide-primary-stroke divide-y">
               <div
                 v-for="item in filteredItems"
                 :key="item.id"
-                class="px-6 py-4 hover:bg-base-200 transition-colors"
+                class="hover:bg-base-200 px-6 py-4 transition-colors"
                 :class="{
                   'cursor-auto': companyFilter === 'archived',
                   'cursor-pointer': companyFilter !== 'archived',
                 }"
                 @click="companyFilter !== 'archived' && navigateToItem(item)"
               >
-                <div class="grid grid-cols-12 gap-4 items-center">
+                <div class="grid grid-cols-12 items-center gap-4">
                   <div class="col-span-4">
                     <div class="flex items-center gap-3">
                       <div
-                        class="w-10 h-10 rounded-lg bg-white ring-1 ring-primary-stroke overflow-hidden flex items-center justify-center flex-shrink-0"
+                        class="ring-primary-stroke flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white ring-1"
                       >
                         <img
                           v-if="item.type === 'company' && getCompanyDomain(item.website)"
                           :src="getLogoUrl(item.website)"
                           :alt="`${item.name} logo`"
-                          class="w-full h-full object-contain p-1"
+                          class="h-full w-full object-contain p-1"
                           :class="{ grayscale: companyFilter === 'archived' }"
                           @error="item.showFallbackIcon = true"
                           v-show="!item.showFallbackIcon"
@@ -103,7 +103,7 @@
                             !getCompanyDomain(item.website) ||
                             item.type !== 'company'
                           "
-                          class="w-full h-full flex items-center justify-center bg-primary/10 dark:bg-primary/20"
+                          class="bg-primary/10 dark:bg-primary/20 flex h-full w-full items-center justify-center"
                         >
                           <i class="fas fa-building text-secondary"></i>
                         </div>
@@ -117,10 +117,10 @@
                     <Tag intent="accent" :label="formatItemType(item.type)" size="sm" />
                   </div>
                   <div class="col-span-2">
-                    <span class="text-sm text-secondary">{{ formatDate(item.created_at) }}</span>
+                    <span class="text-secondary text-sm">{{ formatDate(item.created_at) }}</span>
                   </div>
                   <div class="col-span-2">
-                    <span class="text-sm text-secondary">{{
+                    <span class="text-secondary text-sm">{{
                       item.owner || $t('common.na', 'N/A')
                     }}</span>
                   </div>
@@ -135,7 +135,9 @@
                         :hidden="companyFilter === 'archived'"
                       />
                       <Button
-                        v-if="item.type === 'company' && canMoveItems && companyFilter !== 'archived'"
+                        v-if="
+                          item.type === 'company' && canMoveItems && companyFilter !== 'archived'
+                        "
                         variant="tertiary"
                         size="sm"
                         icon="fa fa-exchange-alt"
@@ -160,7 +162,7 @@
                       <!-- Deleted Tag -->
                       <span
                         v-if="companyFilter === 'archived'"
-                        class="inline-block text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded ml-2"
+                        class="ml-2 inline-block rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-600"
                       >
                         {{ $t('folder.item.deleted', 'Deleted') }}
                       </span>

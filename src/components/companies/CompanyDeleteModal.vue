@@ -2,20 +2,20 @@
   <!-- Delete Confirmation Modal with backdrop blur -->
   <div
     v-if="showDeleteModal && companyToDelete"
-    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
   >
-    <div class="bg-base-100 rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div class="bg-base-100 mx-4 w-full max-w-md rounded-lg shadow-xl">
       <!-- Header -->
-      <div class="p-6 border-b border-primary-stroke">
+      <div class="border-primary-stroke border-b p-6">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
             <i class="fa fa-exclamation-triangle text-red-600"></i>
           </div>
           <div>
-            <h3 class="text-lg font-semibold text-base">
+            <h3 class="text-base text-lg font-semibold">
               {{ $t('company.delete.title', 'Delete Company') }}
             </h3>
-            <p class="text-sm text-secondary">
+            <p class="text-secondary text-sm">
               {{ $t('company.delete.subtitle', 'This action cannot be undone') }}
             </p>
           </div>
@@ -25,11 +25,11 @@
       <!-- Content -->
       <div class="p-6">
         <!-- Warning Message -->
-        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
           <div class="flex items-start gap-3">
-            <i class="fa fa-exclamation-triangle text-red-500 mt-0.5"></i>
-            <div class="text-red-700 text-sm leading-relaxed">
-              <p class="font-medium mb-2">
+            <i class="fa fa-exclamation-triangle mt-0.5 text-red-500"></i>
+            <div class="text-sm leading-relaxed text-red-700">
+              <p class="mb-2 font-medium">
                 {{
                   $t(
                     'company.delete.warning.title',
@@ -50,8 +50,8 @@
         </div>
 
         <!-- Company Details -->
-        <div class="mb-6 bg-base-200 rounded-lg p-4">
-          <h4 class="font-medium text-base mb-3">
+        <div class="bg-base-200 mb-6 rounded-lg p-4">
+          <h4 class="mb-3 text-base font-medium">
             {{ $t('company.delete.details', 'Company Details') }}
           </h4>
           <div class="space-y-2 text-sm">
@@ -82,11 +82,11 @@
 
         <!-- Confirmation Input -->
         <div class="mb-6">
-          <p class="text-sm text-secondary mb-3">
+          <p class="text-secondary mb-3 text-sm">
             {{ $t('company.delete.confirm.message', 'Type the company name to confirm deletion:') }}
           </p>
           <div class="space-y-2">
-            <code class="text-sm bg-base-300 px-2 py-1 rounded block">{{
+            <code class="bg-base-300 block rounded px-2 py-1 text-sm">{{
               companyToDelete.name
             }}</code>
             <Input
@@ -100,12 +100,8 @@
       </div>
 
       <!-- Footer -->
-      <div class="p-6 border-t border-primary-stroke flex items-center justify-end gap-3">
-        <Button
-          variant="tertiary"
-          :label="$t('common.cancel', 'Cancel')"
-          @click="handleClose"
-        />
+      <div class="border-primary-stroke flex items-center justify-end gap-3 border-t p-6">
+        <Button variant="tertiary" :label="$t('common.cancel', 'Cancel')" @click="handleClose" />
         <Button
           variant="accent"
           icon="fa fa-trash"

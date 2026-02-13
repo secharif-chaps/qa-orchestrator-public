@@ -6,7 +6,7 @@
 
     <template #content="{ close }">
       <button
-        class="w-full flex items-center gap-3 px-4 py-2 text-sm text-base hover:bg-base-200 transition-colors"
+        class="hover:bg-base-200 flex w-full items-center gap-3 px-4 py-2 text-base text-sm transition-colors"
         @click="handleChangeOrganization(close)"
       >
         <Icon icon="fa-building" class="text-secondary" />
@@ -14,19 +14,19 @@
       </button>
 
       <button
-        class="w-full flex items-center gap-3 px-4 py-2 text-sm text-base hover:bg-base-200 transition-colors"
+        class="hover:bg-base-200 flex w-full items-center gap-3 px-4 py-2 text-base text-sm transition-colors"
         @click="handleManagePermissions(close)"
       >
         <Icon icon="fa-shield" class="text-secondary" />
         <span>{{ t('admin.userActions.managePermissions', 'Manage Permissions') }}</span>
       </button>
 
-      <div class="my-1 border-t border-primary-stroke"></div>
+      <div class="border-primary-stroke my-1 border-t"></div>
 
       <!-- Show Enable User if user is revoked, otherwise show Disable User -->
       <button
         v-if="isRevoked"
-        class="w-full flex items-center gap-3 px-4 py-2 text-sm text-success hover:bg-base-200 transition-colors"
+        class="text-success hover:bg-base-200 flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
         @click="handleEnableUser(close)"
       >
         <Icon icon="fa-user-check" class="text-success" />
@@ -35,7 +35,7 @@
 
       <button
         v-else
-        class="w-full flex items-center gap-3 px-4 py-2 text-sm text-warning hover:bg-base-200 transition-colors"
+        class="text-warning hover:bg-base-200 flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
         @click="handleDisableUser(close)"
       >
         <Icon icon="fa-user-slash" class="text-warning" />
@@ -43,7 +43,7 @@
       </button>
 
       <button
-        class="w-full flex items-center gap-3 px-4 py-2 text-sm text-info hover:bg-base-200 transition-colors"
+        class="text-info hover:bg-base-200 flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
         @click="handleResetPassword(close)"
       >
         <Icon icon="fa-key" class="text-info" />

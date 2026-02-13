@@ -4,7 +4,7 @@ import type {
   OrganizationAdminResponse,
   PaginatedOrganizationsResponse,
   OrganizationQueryParams,
-  Activity
+  Activity,
 } from '@/types/organization'
 import type { AdminUserListItem, AdminUserListResponse } from '@/types/admin-user'
 
@@ -32,7 +32,9 @@ interface OrganizationMembersRawResponse {
 
 // Admin organization management endpoints
 // Organizations are managed in Keycloak, fetched via admin API
-export const getAllOrganizations = async (params: OrganizationQueryParams = {}): Promise<PaginatedOrganizationsResponse> => {
+export const getAllOrganizations = async (
+  params: OrganizationQueryParams = {},
+): Promise<PaginatedOrganizationsResponse> => {
   const searchParams = new URLSearchParams()
 
   if (params.page) searchParams.set('page', params.page.toString())
@@ -76,7 +78,7 @@ export interface OrganizationMembersParams {
 }
 
 export const getOrganizationMembers = async (
-  params: OrganizationMembersParams
+  params: OrganizationMembersParams,
 ): Promise<AdminUserListResponse> => {
   const searchParams = new URLSearchParams()
   searchParams.set('page', params.page.toString())
@@ -84,7 +86,7 @@ export const getOrganizationMembers = async (
   if (params.search) searchParams.set('search', params.search)
 
   const response = await apiClient.get<OrganizationMembersRawResponse>(
-    `/organizations/${params.organizationId}/users?${searchParams}`
+    `/organizations/${params.organizationId}/users?${searchParams}`,
   )
 
   const responseData = response.data ?? []

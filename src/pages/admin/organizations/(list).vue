@@ -24,7 +24,7 @@
 
     <!-- Loading State -->
     <div v-if="isLoading" class="flex items-center justify-center py-12">
-      <i class="fa fa-spinner fa-spin text-2xl text-primary"></i>
+      <i class="fa fa-spinner fa-spin text-primary text-2xl"></i>
     </div>
 
     <!-- Error State -->
@@ -40,22 +40,28 @@
       <div
         v-for="org in organizations"
         :key="org.id"
-        class="bg-base-200 rounded-card border border-primary-stroke p-6 hover:shadow-shadow-2 transition-all cursor-pointer"
+        class="bg-base-200 rounded-card border-primary-stroke hover:shadow-shadow-2 cursor-pointer border p-6 transition-all"
         @click="router.push(`/admin/organizations/${org.id}/profile`)"
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+            <div class="bg-primary/10 flex h-12 w-12 items-center justify-center rounded-full">
               <i class="fa fa-building text-primary text-xl"></i>
             </div>
             <div>
               <h3 class="text-lg font-semibold">{{ org.name }}</h3>
-              <p class="text-sm text-secondary">{{ org.description || $t('organization.noDescription', 'No description') }}</p>
-              <p class="text-xs text-secondary mt-1">ID: {{ org.id }}</p>
+              <p class="text-secondary text-sm">
+                {{ org.description || $t('organization.noDescription', 'No description') }}
+              </p>
+              <p class="text-secondary mt-1 text-xs">ID: {{ org.id }}</p>
             </div>
           </div>
           <div class="flex items-center gap-3">
-            <Tag variant="slate" :label="`${org.member_count} ${$t('admin.organizations.members', 'Members')}`" size="sm" />
+            <Tag
+              variant="slate"
+              :label="`${org.member_count} ${$t('admin.organizations.members', 'Members')}`"
+              size="sm"
+            />
             <i class="fa fa-chevron-right text-secondary"></i>
           </div>
         </div>
@@ -63,8 +69,8 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else class="text-center py-12">
-      <i class="fa fa-building text-4xl text-secondary mb-4"></i>
+    <div v-else class="py-12 text-center">
+      <i class="fa fa-building text-secondary mb-4 text-4xl"></i>
       <p class="text-secondary">{{ $t('admin.organizations.empty', 'No organizations found') }}</p>
     </div>
 
@@ -127,14 +133,14 @@ const organizations = computed(() => organizationsData.value?.data || [])
 // Transform API meta to PaginationMeta format
 const paginationMeta = computed(() => transformToPaginationMeta(organizationsData.value?.meta))
 
-
 // Extract error message safely
 const errorMessage = computed(() => {
   const err = error.value
   if (!err) return ''
   if (typeof err === 'string') return err
   if (err instanceof Error) return err.message
-  if (typeof err === 'object' && 'message' in err) return String((err as { message: unknown }).message)
+  if (typeof err === 'object' && 'message' in err)
+    return String((err as { message: unknown }).message)
   return 'An error occurred'
 })
 

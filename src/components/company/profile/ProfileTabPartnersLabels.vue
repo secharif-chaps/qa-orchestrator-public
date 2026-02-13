@@ -1,16 +1,15 @@
 <template>
   <div class="flex flex-col gap-4">
-
     <!-- Partner Brands -->
     <div v-if="company?.products?.partnerBrands?.length">
-      <h4 class="font-medium text-secondary mb-2 flex items-center gap-2">
+      <h4 class="text-secondary mb-2 flex items-center gap-2 font-medium">
         {{ $t('profile.sections.products.partnerBrands') }}
       </h4>
       <div class="grid grid-cols-2 gap-2">
         <div
           v-for="brand in company.products.partnerBrands"
           :key="getSourcedValue(brand)"
-          class="bg-base-200 rounded p-3 flex items-center justify-between"
+          class="bg-base-200 flex items-center justify-between rounded p-3"
         >
           <span class="text-secondary">{{ getSourcedValue(brand) }}</span>
           <Source :sourced-value="brand" />
@@ -20,14 +19,14 @@
 
     <!-- Private Labels -->
     <div v-if="company?.products?.privateLabels?.length">
-      <h4 class="font-medium text-secondary mb-2 flex items-center gap-2">
+      <h4 class="text-secondary mb-2 flex items-center gap-2 font-medium">
         {{ $t('profile.sections.products.privateLabels', { company: company?.name }) }}
       </h4>
       <div class="grid grid-cols-2 gap-2">
         <div
           v-for="label in company.products.privateLabels"
           :key="getSourcedValue(label)"
-          class="bg-base-200 rounded p-3 flex items-center justify-between"
+          class="bg-base-200 flex items-center justify-between rounded p-3"
         >
           <span class="text-secondary">{{ getSourcedValue(label) }}</span>
           <Source :sourced-value="label" />
@@ -36,7 +35,7 @@
     </div>
 
     <!-- No data message -->
-    <div v-if="!hasAnyPartnerData" class="text-secondary text-center py-4">
+    <div v-if="!hasAnyPartnerData" class="text-secondary py-4 text-center">
       {{ $t('common.noData') }}
     </div>
   </div>

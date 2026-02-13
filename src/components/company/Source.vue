@@ -1,7 +1,7 @@
 <template>
   <!-- Source from sourced value -->
   <div
-    class="relative inline-block group"
+    class="group relative inline-block"
     v-if="
       sourcedValue && getSourcedSource(sourcedValue) && getSourcedSource(sourcedValue) !== 'N/A'
     "
@@ -22,15 +22,15 @@
     </a>
 
     <div
-      class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10"
+      class="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 transform opacity-0 transition-opacity duration-200 group-hover:opacity-100"
       :class="isLLMSource(getSourcedSource(sourcedValue)) ? 'w-64' : 'whitespace-nowrap'"
     >
       <div
-        class="bg-gray-800 text-white text-xs rounded px-2 py-1 max-w-xs"
+        class="max-w-xs rounded bg-gray-800 px-2 py-1 text-xs text-white"
         :class="
           isLLMSource(getSourcedSource(sourcedValue))
             ? 'break-words'
-            : 'break-all overflow-hidden text-ellipsis'
+            : 'overflow-hidden break-all text-ellipsis'
         "
       >
         <template v-if="isLLMSource(getSourcedSource(sourcedValue))">
@@ -43,13 +43,13 @@
         </template>
       </div>
       <div
-        class="w-2 h-2 bg-gray-800 transform rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2"
+        class="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 transform bg-gray-800"
       ></div>
     </div>
   </div>
 
   <!-- Direct source prop -->
-  <div class="relative inline-block group" v-else-if="source">
+  <div class="group relative inline-block" v-else-if="source">
     <!-- LLM Source (non-clickable) -->
     <div v-if="isLLMSource(source)" class="text-secondary/50 cursor-help">
       <i class="fa fa-info-circle text-xs"></i>
@@ -66,12 +66,12 @@
     </a>
 
     <div
-      class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10"
+      class="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 transform opacity-0 transition-opacity duration-200 group-hover:opacity-100"
       :class="isLLMSource(source) ? 'w-64' : 'whitespace-nowrap'"
     >
       <div
-        class="bg-gray-800 text-white text-xs rounded px-2 py-1 max-w-xs"
-        :class="isLLMSource(source) ? 'break-words' : 'break-all overflow-hidden text-ellipsis'"
+        class="max-w-xs rounded bg-gray-800 px-2 py-1 text-xs text-white"
+        :class="isLLMSource(source) ? 'break-words' : 'overflow-hidden break-all text-ellipsis'"
       >
         <template v-if="isLLMSource(source)">
           Cette information est issue de la base de connaissances du modèle de langage (LLM). Un LLM
@@ -83,7 +83,7 @@
         </template>
       </div>
       <div
-        class="w-2 h-2 bg-gray-800 transform rotate-45 absolute -bottom-1 left-1/2 -translate-x-1/2"
+        class="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 transform bg-gray-800"
       ></div>
     </div>
   </div>

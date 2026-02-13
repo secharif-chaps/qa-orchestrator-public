@@ -1,7 +1,7 @@
 <template>
   <div
     ref="sidebarEl"
-    class="flex w-full flex-col justify-between bg-sage-950 dark:bg-sidebar text-white overflow-hidden"
+    class="bg-sage-950 dark:bg-sidebar flex w-full flex-col justify-between overflow-hidden text-white"
     @wheel="handleWheel"
   >
     <Transition
@@ -24,17 +24,17 @@
     <!-- Footer Actions -->
     <div
       v-if="!sidebarStore.isFullscreen"
-      class="w-[320px] border-t border-sage-800 z-50 px-4 py-3 grid grid-cols-2 delay-500"
+      class="border-sage-800 z-50 grid w-[320px] grid-cols-2 border-t px-4 py-3 delay-500"
     >
       <button
-        class="flex flex-col items-center gap-1 text-sage-300 hover:text-white transition-colors"
+        class="text-sage-300 flex flex-col items-center gap-1 transition-colors hover:text-white"
         @click="$router.push('/settings')"
       >
         <i class="fa fa-cog text-lg"></i>
         <span class="text-xs">{{ $t('sidebar.footer.settings', 'Settings') }}</span>
       </button>
       <button
-        class="flex flex-col items-center gap-1 text-sage-300 hover:text-white transition-colors"
+        class="text-sage-300 flex flex-col items-center gap-1 transition-colors hover:text-white"
         @click="toggleAccessibilityMode()"
       >
         <i class="fa fa-universal-access text-lg"></i>
@@ -59,7 +59,7 @@ const sidebarEl = ref<HTMLElement>()
 const { t } = useI18n()
 
 // Store pending assist action event data
-const pendingAssistAction = ref<any>(null)
+const pendingAssistAction = ref<Record<string, unknown> | null>(null)
 
 // Handle Chapse Assist quick action events
 const handleAssistActionEvent = (event: CustomEvent) => {

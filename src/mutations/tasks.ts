@@ -83,7 +83,7 @@ export const useRestartTask = () => {
         queryCache.setQueryData(TASK_QUERY_KEYS.byCompanyId(companyId.value), context.previousTasks)
       }
     },
-    onSettled: (data, error, variables, context) => {
+    onSettled: () => {
       console.log('✅ onSettled: Invalidating cache to get fresh data')
       // Invalidate tasks cache
       queryCache.invalidateQueries({ key: TASK_QUERY_KEYS.byCompanyId(companyId.value) })

@@ -3,13 +3,18 @@
  */
 
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { assignUserOrganization, updateUserPermissions, resetUserPassword, disableUser, enableUser } from '@/api/admin-users'
+import {
+  assignUserOrganization,
+  updateUserPermissions,
+  resetUserPassword,
+  disableUser,
+  enableUser,
+} from '@/api/admin-users'
 import { ADMIN_USER_QUERY_KEYS } from '@/queries/admin-users'
 import { ORGANIZATION_QUERY_KEYS } from '@/queries/organization-admin'
 import { toast } from '@/utils/toast'
 import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
-import type { ResetPasswordResponse } from '@/api/admin-users'
 
 /**
  * Mutation to assign a user to an organization or change their organization
@@ -40,8 +45,9 @@ export const useAssignUserOrganization = defineMutation(() => {
         }, 1000)
       }
     },
-    onError: (error: any) => {
-      const errorMessage = error?.message || t('admin.users.assignOrganization.error')
+    onError: (error: unknown) => {
+      const errorMessage =
+        error instanceof Error ? error.message : t('admin.users.assignOrganization.error')
       toast.error(errorMessage)
     },
   })
@@ -77,8 +83,9 @@ export const useUpdateUserPermissions = defineMutation(() => {
         }, 1000)
       }
     },
-    onError: (error: any) => {
-      const errorMessage = error?.message || t('admin.users.updatePermissions.error')
+    onError: (error: unknown) => {
+      const errorMessage =
+        error instanceof Error ? error.message : t('admin.users.updatePermissions.error')
       toast.error(errorMessage)
     },
   })
@@ -101,8 +108,9 @@ export const useResetUserPassword = defineMutation(() => {
     onSuccess: () => {
       toast.success(t('admin.users.resetPassword.success'))
     },
-    onError: (error: any) => {
-      const errorMessage = error?.message || t('admin.users.resetPassword.error')
+    onError: (error: unknown) => {
+      const errorMessage =
+        error instanceof Error ? error.message : t('admin.users.resetPassword.error')
       toast.error(errorMessage)
     },
   })
@@ -133,8 +141,8 @@ export const useDisableUser = defineMutation(() => {
       queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.root })
       queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.admin })
     },
-    onError: (error: any) => {
-      const errorMessage = error?.message || t('admin.users.disable.error')
+    onError: (error: unknown) => {
+      const errorMessage = error instanceof Error ? error.message : t('admin.users.disable.error')
       toast.error(errorMessage)
     },
   })
@@ -164,8 +172,8 @@ export const useEnableUser = defineMutation(() => {
       queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.root })
       queryCache.invalidateQueries({ key: ORGANIZATION_QUERY_KEYS.admin })
     },
-    onError: (error: any) => {
-      const errorMessage = error?.message || t('admin.users.enable.error')
+    onError: (error: unknown) => {
+      const errorMessage = error instanceof Error ? error.message : t('admin.users.enable.error')
       toast.error(errorMessage)
     },
   })

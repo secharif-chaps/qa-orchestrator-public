@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-base-200 rounded-card border border-primary-stroke p-4">
-    <div class="items-center flex gap-6 relative">
+  <div class="bg-base-200 rounded-card border-primary-stroke border p-4">
+    <div class="relative flex items-center gap-6">
       <i class="fa fa-calendar text-secondary text-2xl"></i>
       <div>
         <h2>

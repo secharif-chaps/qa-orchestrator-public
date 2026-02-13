@@ -12,7 +12,7 @@
       </div>
 
       <!-- Main Content Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <!-- Recent Projects -->
         <RecentProjectsList
           :projects="recentProjects"
@@ -84,10 +84,9 @@ const {
 const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
 
 // Fetch organization feature flags for ModulesShowcase
-const { data: featureFlagsData } = useQuery(
-  organizationFeatureFlagsQuery,
-  () => ({ organizationId: currentOrganization.value?.id || '' }),
-)
+const { data: featureFlagsData } = useQuery(organizationFeatureFlagsQuery, () => ({
+  organizationId: currentOrganization.value?.id || '',
+}))
 
 // Transform feature flags data for ModulesShowcase
 const featureFlags = computed<FeatureFlagConfig[]>(() => {

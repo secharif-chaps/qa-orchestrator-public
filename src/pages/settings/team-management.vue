@@ -18,7 +18,7 @@
       <!-- Loading State -->
       <div v-if="isLoading" class="flex items-center justify-center py-12">
         <div class="text-center">
-          <i class="fa fa-spinner fa-spin text-3xl text-primary mb-3"></i>
+          <i class="fa fa-spinner fa-spin text-primary mb-3 text-3xl"></i>
           <p class="text-secondary">
             {{ t('settings.team.loading', 'Loading team members...') }}
           </p>
@@ -26,7 +26,7 @@
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="py-12 px-6">
+      <div v-else-if="error" class="px-6 py-12">
         <Alert
           variant="danger"
           icon="fa-exclamation-circle"
@@ -39,8 +39,8 @@
       <template v-else>
         <!-- Empty state -->
         <div v-if="teamMembers.length === 0" class="p-12 text-center">
-          <i class="fa fa-users text-5xl text-secondary/30 mb-4"></i>
-          <h3 class="text-lg font-semibold mb-2">
+          <i class="fa fa-users text-secondary/30 mb-4 text-5xl"></i>
+          <h3 class="mb-2 text-lg font-semibold">
             {{ t('settings.team.empty.title', 'No team members found') }}
           </h3>
           <p class="text-secondary">

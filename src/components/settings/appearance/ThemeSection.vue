@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-base-100 border border-primary-stroke rounded-card">
-    <div class="px-6 py-4 border-b border-primary-stroke">
+  <div class="bg-base-100 border-primary-stroke rounded-card border">
+    <div class="border-primary-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.theme.title') }}</h2>
-      <p class="text-sm text-secondary mt-1">
+      <p class="text-secondary mt-1 text-sm">
         {{ $t('settings.appearance.theme.description') }}
       </p>
     </div>
@@ -11,16 +11,16 @@
         <div
           v-for="themeOption in themeOptions"
           :key="themeOption.value"
-          class="flex items-center justify-between p-4 border border-primary-stroke rounded-lg hover:border-primary/70 transition-colors cursor-pointer"
+          class="border-primary-stroke hover:border-primary/70 flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-colors"
           :class="{ 'border-primary bg-base-200': currentTheme === themeOption.value }"
           @click="handleThemeChange(themeOption.value)"
         >
           <div class="flex items-center gap-4">
             <div
-              class="w-10 h-10 rounded-lg flex items-center justify-center"
+              class="flex h-10 w-10 items-center justify-center rounded-lg"
               :class="
                 currentTheme === themeOption.value
-                  ? 'bg-rose-100 border border-rose-200 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
+                  ? 'border border-rose-200 bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400'
                   : 'bg-base-200 text-secondary'
               "
             >
@@ -30,7 +30,7 @@
               <h3 class="text-sm font-medium">
                 {{ $t(`settings.appearance.theme.options.${themeOption.value}.title`) }}
               </h3>
-              <p class="text-sm text-secondary">
+              <p class="text-secondary text-sm">
                 {{ $t(`settings.appearance.theme.options.${themeOption.value}.description`) }}
               </p>
             </div>

@@ -1,29 +1,29 @@
 <template>
-  <div class="bg-base-100 border border-primary-stroke rounded-lg">
-    <div class="px-6 py-4 border-b border-primary-stroke">
+  <div class="bg-base-100 border-primary-stroke rounded-lg border">
+    <div class="border-primary-stroke border-b px-6 py-4">
       <h2 class="text-lg font-semibold">{{ $t('settings.appearance.accent.title') }}</h2>
-      <p class="text-sm text-secondary mt-1">
+      <p class="text-secondary mt-1 text-sm">
         {{ $t('settings.appearance.accent.description') }}
       </p>
     </div>
     <div class="px-6 py-6">
       <div class="space-y-6">
         <!-- Color Picker Grid -->
-        <div class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-7 gap-4">
+        <div class="grid grid-cols-3 gap-4 sm:grid-cols-6 lg:grid-cols-7">
           <div
             v-for="colorOption in accentColors"
             :key="colorOption.name"
-            class="group relative border border-primary-stroke rounded-lg flex flex-col items-center justify-center p-4"
+            class="group border-primary-stroke relative flex flex-col items-center justify-center rounded-lg border p-4"
           >
             <!-- Color Circle Button -->
             <button
               @click="handleAccentChange(colorOption.name)"
-              class="relative w-12 h-12 rounded-full transition-all duration-200 transform group-hover:scale-110 group-hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-opacity-50"
+              class="focus:ring-opacity-50 relative h-12 w-12 transform rounded-full transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg focus:ring-4 focus:outline-none"
               :class="[
                 colorOption.bgClass,
                 colorOption.focusRingClass,
                 currentAccent === colorOption.name
-                  ? 'ring-4 ring-opacity-70 scale-105 shadow-lg'
+                  ? 'ring-opacity-70 scale-105 shadow-lg ring-4'
                   : 'shadow-md hover:shadow-lg',
               ]"
               :title="colorOption.label"
@@ -33,7 +33,7 @@
                 v-if="currentAccent === colorOption.name"
                 class="absolute inset-0 flex items-center justify-center"
               >
-                <i class="fas fa-check text-white text-lg drop-shadow-lg"></i>
+                <i class="fas fa-check text-lg text-white drop-shadow-lg"></i>
               </div>
 
               <!-- Gradient Overlay for Premium Feel -->
@@ -45,7 +45,7 @@
             <!-- Color Name Label -->
             <div class="mt-2 text-center">
               <span
-                class="text-xs font-medium text-secondary group-hover:text-secondary transition-colors"
+                class="text-secondary group-hover:text-secondary text-xs font-medium transition-colors"
               >
                 {{ colorOption.label }}
               </span>
@@ -55,16 +55,16 @@
 
         <!-- Current Selection Preview -->
         <div
-          class="border border-primary-stroke rounded-lg p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900"
+          class="border-primary-stroke rounded-lg border bg-gradient-to-br from-slate-50 to-slate-100 p-4 dark:from-slate-800 dark:to-slate-900"
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
-              <div class="w-8 h-8 rounded-full shadow-md" :class="getCurrentAccentBgClass()"></div>
+              <div class="h-8 w-8 rounded-full shadow-md" :class="getCurrentAccentBgClass()"></div>
               <div>
                 <h4 class="text-sm font-medium">
                   {{ $t('settings.appearance.accent.currentColor', 'Current Accent Color') }}
                 </h4>
-                <p class="text-xs text-secondary">
+                <p class="text-secondary text-xs">
                   {{ getCurrentAccentLabel() }}
                 </p>
               </div>
@@ -80,18 +80,18 @@
         </div>
 
         <!-- Color Customization Info -->
-        <div class="bg-primary/5 border border-primary/20 rounded-lg p-4">
+        <div class="bg-primary/5 border-primary/20 rounded-lg border p-4">
           <div class="flex items-start gap-3">
             <div class="flex-shrink-0">
               <i class="fas fa-palette text-secondary"></i>
             </div>
             <div>
-              <h4 class="text-sm font-medium text-secondary">
+              <h4 class="text-secondary text-sm font-medium">
                 {{
                   $t('settings.appearance.accent.personalizeTitle', 'Personalize Your Experience')
                 }}
               </h4>
-              <p class="text-xs text-secondary mt-1">
+              <p class="text-secondary mt-1 text-xs">
                 {{
                   $t(
                     'settings.appearance.accent.personalizeDescription',

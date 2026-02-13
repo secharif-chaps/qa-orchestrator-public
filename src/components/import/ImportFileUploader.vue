@@ -21,11 +21,11 @@
     <div
       :class="[
         'relative flex flex-col items-center justify-center gap-4 p-8',
-        'border-2 border-dashed rounded-xl transition-all duration-200',
+        'rounded-xl border-2 border-dashed transition-all duration-200',
         isDragging
           ? 'border-primary bg-primary-light/30'
-          : 'border-primary-stroke bg-base-100 hover:border-sage-500 ',
-        disabled && 'opacity-50 cursor-not-allowed',
+          : 'border-primary-stroke bg-base-100 hover:border-sage-500',
+        disabled && 'cursor-not-allowed opacity-50',
       ]"
       @dragover.prevent="handleDragOver"
       @dragleave.prevent="handleDragLeave"
@@ -34,7 +34,7 @@
       <!-- Icon -->
       <div
         :class="[
-          'w-16 h-16 rounded-full flex items-center justify-center',
+          'flex h-16 w-16 items-center justify-center rounded-full',
           isDragging ? 'bg-primary text-primary-content' : 'bg-base-200 text-sage-500',
         ]"
       >
@@ -48,10 +48,10 @@
 
       <!-- Text -->
       <div class="text-center">
-        <p class="text-base font-medium text-sage-700 dark:text-sage-200">
+        <p class="text-sage-700 dark:text-sage-200 text-base font-medium">
           {{ $t('admin.import.dropZoneTitle') }}
         </p>
-        <p class="text-sm text-sage-500 dark:text-sage-400">
+        <p class="text-sage-500 dark:text-sage-400 text-sm">
           {{ $t('admin.import.dropZoneSubtitle') }}
         </p>
       </div>
@@ -78,14 +78,14 @@
     <!-- File Info (when file is selected) -->
     <div
       v-if="parsedData"
-      class="flex items-center gap-4 p-4 bg-success-light border border-success-stroke rounded-xl"
+      class="bg-success-light border-success-stroke flex items-center gap-4 rounded-xl border p-4"
     >
-      <div class="w-10 h-10 rounded-full bg-success flex items-center justify-center">
+      <div class="bg-success flex h-10 w-10 items-center justify-center rounded-full">
         <i class="fa-solid fa-check text-success-content" />
       </div>
       <div class="flex-1">
-        <p class="font-medium text-success-light-content">{{ parsedData.fileName }}</p>
-        <p class="text-sm text-success-light-content/80">
+        <p class="text-success-light-content font-medium">{{ parsedData.fileName }}</p>
+        <p class="text-success-light-content/80 text-sm">
           {{ formatFileSize(parsedData.fileSize) }} • {{ parsedData.rowCount }}
           {{ $t('admin.import.rows') }}
         </p>
@@ -133,7 +133,7 @@ const emit = defineEmits<{
   clear: []
 }>()
 
-const { t } = useI18n()
+useI18n()
 
 // State
 const fileInputRef = ref<HTMLInputElement | null>(null)

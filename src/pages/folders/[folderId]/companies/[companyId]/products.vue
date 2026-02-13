@@ -44,7 +44,7 @@
       />
 
       <!-- Products Grid View -->
-      <div v-if="viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-if="viewMode === 'grid'" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <ProductGridItem
           v-for="(productList, category) in filteredProducts"
           :key="category"
@@ -106,7 +106,7 @@ const { data: company } = useQuery(
   companyByIdQuery,
   () => ({
     id: companyId.value,
-    language: selectedLanguage.value
+    language: selectedLanguage.value,
   }),
   // Task data is kept fresh via SSE (Server-Sent Events) in useTaskEvents composable.
   // No polling needed - cache is invalidated automatically when tasks update.

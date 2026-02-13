@@ -1,13 +1,16 @@
 <template>
   <div class="flex flex-col gap-6">
     <!-- Loading State -->
-    <div v-if="isLoading" class="flex justify-center items-center py-12">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+    <div v-if="isLoading" class="flex items-center justify-center py-12">
+      <div class="border-primary h-12 w-12 animate-spin rounded-full border-b-2"></div>
     </div>
 
     <!-- Not Configured State -->
-    <div v-else-if="!hasPreferences" class="bg-base-100 rounded-card border border-primary-stroke p-8">
-      <div class="flex flex-col items-center text-center gap-4">
+    <div
+      v-else-if="!hasPreferences"
+      class="bg-base-100 rounded-card border-primary-stroke border p-8"
+    >
+      <div class="flex flex-col items-center gap-4 text-center">
         <img
           src="@/assets/chapse/head.svg"
           alt="Chapse Assistant"
@@ -32,9 +35,9 @@
     </div>
 
     <!-- Edit Form -->
-    <div v-else class="bg-base-100 rounded-card border border-primary-stroke p-6">
+    <div v-else class="bg-base-100 rounded-card border-primary-stroke border p-6">
       <!-- Last Updated Info -->
-      <div v-if="lastUpdated" class="flex items-center gap-2 text-sm text-secondary mb-6">
+      <div v-if="lastUpdated" class="text-secondary mb-6 flex items-center gap-2 text-sm">
         <i class="fas fa-clock"></i>
         <span>{{ $t('aiPreferences.settings.lastUpdated', { date: lastUpdated }) }}</span>
       </div>
@@ -52,7 +55,7 @@
         />
 
         <!-- Goals Field -->
-        <div class="relative flex flex-col" >
+        <div class="relative flex flex-col">
           <label for="goals">
             {{ $t('aiPreferences.setup.fields.goals.label') }}
             <span class="text-warning ml-1">*</span>
@@ -91,9 +94,9 @@
         <div>
           <label for="documentation">
             {{ $t('aiPreferences.setup.fields.documentation.label') }}
-            <span class="text-sm font-normal text-secondary ml-2">({{
-              $t('aiPreferences.setup.optional')
-            }})</span>
+            <span class="text-secondary ml-2 text-sm font-normal"
+              >({{ $t('aiPreferences.setup.optional') }})</span
+            >
           </label>
           <Textarea
             id="documentation"
@@ -198,8 +201,9 @@ async function loadPreferences() {
     } else {
       hasPreferences.value = false
     }
-  } catch (error: any) {
-    if (error.status === 404) {
+  } catch (error: unknown) {
+    const httpError = error as { status?: number }
+    if (httpError.status === 404) {
       hasPreferences.value = false
     } else {
       console.error('Failed to load preferences:', error)
@@ -286,14 +290,14 @@ async function handleSubmit() {
     setTimeout(() => {
       successMessage.value = ''
     }, 3000)
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to update AI preferences:', error)
+    const httpError = error as { status?: number; message?: string }
 
-    if (error.status === 401) {
+    if (httpError.status === 401) {
       errorMessage.value = t('aiPreferences.settings.messages.authError')
     } else {
-      errorMessage.value =
-        error.message || t('aiPreferences.settings.error.message')
+      errorMessage.value = httpError.message || t('aiPreferences.settings.error.message')
     }
   } finally {
     isSaving.value = false

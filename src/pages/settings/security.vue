@@ -5,7 +5,7 @@
       :sessions="sessionsData?.sessions ?? []"
       :current-session-id="sessionsData?.currentSessionId"
       :is-loading="isLoadingSessions"
-      :error="sessionsError as Error | null"
+      :error="(sessionsError as Error) ?? null"
       @revoke-session="handleRevokeSession"
       @sign-out-all-devices="handleSignOutAllDevices"
     />
@@ -14,7 +14,7 @@
     <ActivityLogSection
       :events="activityData?.events ?? []"
       :is-loading="isLoadingActivity"
-      :error="activityError as Error | null"
+      :error="(activityError as Error) ?? null"
       :has-more="activityData?.hasMore ?? false"
       @load-more="loadMoreActivity"
     />

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex gap-3 mb-4"
+    class="mb-4 flex gap-3"
     :class="{
       'justify-start': message.role === 'assistant',
       'justify-end': message.role === 'user',
@@ -9,34 +9,33 @@
     <!-- Chaps-e Avatar (left side for assistant messages) -->
     <div
       v-if="message.role === 'assistant' && isFullscreen"
-      class="flex-shrink-0 w-8 h-8 rounded-full bg-sage-900 flex items-center justify-center"
+      class="bg-sage-900 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full"
     >
-      <img v-if="chapseAvatar" :src="chapseAvatar" class="w-6 h-6" alt="Chaps-e" />
+      <img v-if="chapseAvatar" :src="chapseAvatar" class="h-6 w-6" alt="Chaps-e" />
       <i v-else class="fa fa-robot text-secondary text-sm"></i>
     </div>
 
     <!-- Smart Action Message (special styling) -->
     <div
       v-if="message.isSmartAction"
-      class="max-w-[100%] rounded-xl px-4 py-3 text-sm bg-accent-200 text-accent-800 font-medium flex items-center gap-2"
+      class="bg-accent-200 text-accent-800 flex max-w-[100%] items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium"
     >
-      <i :class="message.smartActionIcon || 'fa-solid fa-wand-magic-sparkles'" class="text-base"></i>
+      <i
+        :class="message.smartActionIcon || 'fa-solid fa-wand-magic-sparkles'"
+        class="text-base"
+      ></i>
       <span>{{ message.smartActionLabel }}</span>
     </div>
 
     <!-- Regular Message Content -->
-    <div
-      v-else
-      class="max-w-[100%] rounded-xl px-4 py-3 text-sm"
-      :class="messageClasses"
-    >
+    <div v-else class="max-w-[100%] rounded-xl px-4 py-3 text-sm" :class="messageClasses">
       <div v-if="message.role === 'assistant' && formattedContent.length === 0">
         <i class="fa fa-circle-notch fa-spin text-secondary text-sm"></i>
       </div>
-      <div v-html="formattedContent"></div>
+      <div v-sanitize-html="formattedContent"></div>
 
       <!-- Timestamp -->
-      <div v-if="showTimestamp" class="text-[10px] mt-2 opacity-60">
+      <div v-if="showTimestamp" class="mt-2 text-[10px] opacity-60">
         {{ formattedTime }}
       </div>
     </div>
@@ -44,7 +43,7 @@
     <!-- User Avatar placeholder (right side for user messages) -->
     <div
       v-if="message.role === 'user'"
-      class="flex-shrink-0 w-8 h-8 rounded-full bg-sage-300 dark:bg-sage-300 flex items-center justify-center text-sage-950 text-xs font-semibold"
+      class="bg-sage-300 dark:bg-sage-300 text-sage-950 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold"
     >
       <i class="fa fa-user"></i>
     </div>
@@ -93,9 +92,7 @@ const formattedContent = computed(() => {
   // #### Heading 4 (including patterns like "#### 1." or just "####")
   formatted = formatted.replace(/^####\s*(\d+\.?\s*)?(.*)$/gm, (_, num, text) => {
     const content = (num || '') + (text || '')
-    return content.trim()
-      ? `<h4 class="text-sm font-bold mt-3 mb-1">${content.trim()}</h4>`
-      : ''
+    return content.trim() ? `<h4 class="text-sm font-bold mt-3 mb-1">${content.trim()}</h4>` : ''
   })
 
   // Convert --- to horizontal divider
@@ -111,16 +108,25 @@ const formattedContent = computed(() => {
   formatted = formatted.replace(/^- (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
 
   // Wrap consecutive <li> elements in <ul>
-  formatted = formatted.replace(/((?:<li class="ml-4 list-disc">.*?<\/li>\n?)+)/g, '<ul class="my-2">$1</ul>')
+  formatted = formatted.replace(
+    /((?:<li class="ml-4 list-disc">.*?<\/li>\n?)+)/g,
+    '<ul class="my-2">$1</ul>',
+  )
 
   // Convert numbered lists (1. item)
   formatted = formatted.replace(/^\d+\.\s+(.+)$/gm, '<li class="ml-4 list-decimal">$1</li>')
 
   // Wrap consecutive numbered <li> elements in <ol>
-  formatted = formatted.replace(/((?:<li class="ml-4 list-decimal">.*?<\/li>\n?)+)/g, '<ol class="my-2">$1</ol>')
+  formatted = formatted.replace(
+    /((?:<li class="ml-4 list-decimal">.*?<\/li>\n?)+)/g,
+    '<ol class="my-2">$1</ol>',
+  )
 
   // Convert links [text](url)
-  formatted = formatted.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a class="text-blue-400 underline" href="$2" target="_blank">$1</a>')
+  formatted = formatted.replace(
+    /\[([^\]]+)\]\(([^)]+)\)/g,
+    '<a class="text-blue-400 underline" href="$2" target="_blank">$1</a>',
+  )
 
   // Convert newlines to <br> for proper spacing (but not inside block elements)
   formatted = formatted.replace(/\n(?!<)/g, '<br>')

@@ -1,13 +1,18 @@
 <template>
   <div class="space-y-6">
     <Card v-if="tasks && completedCount < tasks.length">
-      <div class="w-full bg-base-200 rounded-full h-3 overflow-hidden flex">
+      <div class="bg-base-200 flex h-3 w-full overflow-hidden rounded-full">
         <!-- Completed segment -->
         <div
           v-if="completedPercentage > 0"
           class="bg-success-500 h-full transition-all duration-500 ease-out"
           :style="{ width: `${completedPercentage}%` }"
-          :title="t('company.tasks.completed', { count: completedCount, percentage: Math.round(completedPercentage) })"
+          :title="
+            t('company.tasks.completed', {
+              count: completedCount,
+              percentage: Math.round(completedPercentage),
+            })
+          "
         ></div>
 
         <!-- Running segment -->
@@ -15,7 +20,12 @@
           v-if="runningPercentage > 0"
           class="bg-info-500 h-full transition-all duration-500 ease-out"
           :style="{ width: `${runningPercentage}%` }"
-          :title="t('company.tasks.running', { count: runningCount, percentage: Math.round(runningPercentage) })"
+          :title="
+            t('company.tasks.running', {
+              count: runningCount,
+              percentage: Math.round(runningPercentage),
+            })
+          "
         ></div>
 
         <!-- Error segment -->
@@ -23,7 +33,9 @@
           v-if="errorPercentage > 0"
           class="bg-error-500 h-full transition-all duration-500 ease-out"
           :style="{ width: `${errorPercentage}%` }"
-          :title="t('company.tasks.error', { count: errorCount, percentage: Math.round(errorPercentage) })"
+          :title="
+            t('company.tasks.error', { count: errorCount, percentage: Math.round(errorPercentage) })
+          "
         ></div>
 
         <!-- Blocked segment -->
@@ -31,7 +43,12 @@
           v-if="blockedPercentage > 0"
           class="bg-sage-100 h-full transition-all duration-500 ease-out"
           :style="{ width: `${blockedPercentage}%` }"
-          :title="t('company.tasks.blocked', { count: blockedCount, percentage: Math.round(blockedPercentage) })"
+          :title="
+            t('company.tasks.blocked', {
+              count: blockedCount,
+              percentage: Math.round(blockedPercentage),
+            })
+          "
         ></div>
 
         <!-- Pending segment -->
@@ -39,26 +56,31 @@
           v-if="pendingPercentage > 0"
           class="bg-sage-200 h-full transition-all duration-500 ease-out"
           :style="{ width: `${pendingPercentage}%` }"
-          :title="t('company.tasks.pending', { count: pendingCount, percentage: Math.round(pendingPercentage) })"
+          :title="
+            t('company.tasks.pending', {
+              count: pendingCount,
+              percentage: Math.round(pendingPercentage),
+            })
+          "
         ></div>
       </div>
     </Card>
 
     <!-- Company Info Card - Full Width -->
-    <div class="space-y-4 xl:space-y-0 xl:flex gap-4">
-      <Card class="flex-1 relative">
+    <div class="gap-4 space-y-4 xl:flex xl:space-y-0">
+      <Card class="relative flex-1">
         <div
           v-if="isTaskRunning('profile')"
-          class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card"
+          class="bg-base-100/80 rounded-card absolute inset-0 flex items-center justify-center backdrop-blur-sm"
         >
-          <div class="flex items-center gap-3 text-base text-secondary">
+          <div class="text-secondary flex items-center gap-3 text-base">
             <i class="fas fa-spinner fa-spin text-xl"></i>
             <span>{{ t('company.analysis.loading', 'Loading analysis...') }}</span>
           </div>
         </div>
         <div class="flex items-start gap-6">
           <!-- Company Info -->
-          <div class="flex-1 min-w-0 flex flex-col gap-2">
+          <div class="flex min-w-0 flex-1 flex-col gap-2">
             <div v-if="!isTaskRunning('profile')">
               <h3 class="font-bold" v-if="company?.profile?.businessLine">
                 {{ getSourcedValue(company.profile.businessLine) }}
@@ -69,14 +91,14 @@
             </div>
             <div v-else>
               <div class="flex flex-wrap gap-2">
-                <div class="bg-sage-100 rounded-lg h-12 w-full"></div>
+                <div class="bg-sage-100 h-12 w-full rounded-lg"></div>
               </div>
             </div>
             <div>
               <p>{{ company?.products?.insights }}</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
               <ProfileInfoItem
                 v-for="item in companyInfoItems"
                 :key="item.label"
@@ -93,12 +115,12 @@
         </div>
       </Card>
 
-      <Card class="xl:max-w-md relative">
+      <Card class="relative xl:max-w-md">
         <div
           v-if="isTaskRunning('digital')"
-          class="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center rounded-card"
+          class="bg-base-100/80 rounded-card absolute inset-0 flex items-center justify-center backdrop-blur-sm"
         >
-          <div class="flex items-center gap-3 text-base text-secondary">
+          <div class="text-secondary flex items-center gap-3 text-base">
             <i class="fas fa-spinner fa-spin text-xl"></i>
             <span>{{ t('company.analysis.loading', 'Loading analysis...') }}</span>
           </div>
@@ -109,22 +131,26 @@
           :href="formatWebsiteUrl(company.website)"
           target="_blank"
           rel="noopener noreferrer"
-          class="flex bg-base-200 items-center gap-3 rounded-card px-4 py-3 hover:bg-base-300 transition-colors cursor-pointer"
+          class="bg-base-200 rounded-card hover:bg-base-300 flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors"
         >
           <i class="fa-solid fa-link fa-fw text-secondary"></i>
-          <div class="flex flex-col gap-1 w-44">
-            <span class="text-sm truncate"> {{ t('company.onlinePresence.website', 'Website') }} </span>
-            <span class="text-xs text-secondary truncate underline">
+          <div class="flex w-44 flex-col gap-1">
+            <span class="truncate text-sm">
+              {{ t('company.onlinePresence.website', 'Website') }}
+            </span>
+            <span class="text-secondary truncate text-xs underline">
               {{ company.website }}
             </span>
           </div>
-          <i class="fa-solid fa-external-link fa-fw text-secondary text-xs ml-auto"></i>
+          <i class="fa-solid fa-external-link fa-fw text-secondary ml-auto text-xs"></i>
         </a>
-        <div v-else class="flex bg-base-200 items-center gap-3 rounded-card px-4 py-3">
+        <div v-else class="bg-base-200 rounded-card flex items-center gap-3 px-4 py-3">
           <i class="fa-solid fa-link fa-fw text-secondary"></i>
-          <div class="flex flex-col gap-1 w-44">
-            <span class="text-sm truncate"> {{ t('company.onlinePresence.website', 'Website') }} </span>
-            <span class="text-xs text-secondary truncate">
+          <div class="flex w-44 flex-col gap-1">
+            <span class="truncate text-sm">
+              {{ t('company.onlinePresence.website', 'Website') }}
+            </span>
+            <span class="text-secondary truncate text-xs">
               {{ t('company.fields.notSpecified', 'Not specified') }}
             </span>
           </div>
@@ -133,10 +159,13 @@
         <div>
           <!-- Loading state -->
           <div v-if="isTaskRunning('digital')" class="flex flex-wrap gap-2">
-            <div v-for="i in 4" :key="i" class="bg-sage-100 rounded-full h-4 w-12"></div>
+            <div v-for="i in 4" :key="i" class="bg-sage-100 h-4 w-12 rounded-full"></div>
           </div>
           <!-- Social media accounts -->
-          <div v-else-if="company?.digital?.socialMediaAccounts?.length" class="flex flex-wrap gap-2">
+          <div
+            v-else-if="company?.digital?.socialMediaAccounts?.length"
+            class="flex flex-wrap gap-2"
+          >
             <Tag
               variant="slate"
               v-for="account in company.digital.socialMediaAccounts"
@@ -151,7 +180,7 @@
             </Tag>
           </div>
           <!-- No data -->
-          <span v-else class="text-xs text-secondary">
+          <span v-else class="text-secondary text-xs">
             {{ t('company.fields.notSpecified', 'Not specified') }}
           </span>
         </div>
@@ -177,7 +206,7 @@
     </div>
 
     <!-- Analysis Cards Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-fr">
+    <div class="grid auto-rows-fr grid-cols-1 gap-6 md:grid-cols-2">
       <AnalysisCard
         v-for="card in analysisCards"
         :key="card.section"
@@ -195,8 +224,13 @@
     </div>
 
     <!-- Footer -->
-    <div v-if="company" class="text-xs text-secondary italic text-center">
-      {{ t('company.footer.createdBy', { username: company.owner_username, date: formatFullDate(company.created_at) }) }}
+    <div v-if="company" class="text-secondary text-center text-xs italic">
+      {{
+        t('company.footer.createdBy', {
+          username: company.owner_username,
+          date: formatFullDate(company.created_at),
+        })
+      }}
     </div>
   </div>
 

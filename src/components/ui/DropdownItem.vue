@@ -3,7 +3,7 @@
   <button
     v-if="description"
     type="button"
-    class="w-full flex items-center gap-3 px-3 py-2 text-left rounded-md transition-colors"
+    class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left transition-colors"
     :class="richVariantClasses"
     :disabled="disabled"
     @click="handleClick"
@@ -11,16 +11,16 @@
     <!-- Icon box -->
     <div
       v-if="icon"
-      class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+      class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
       :class="iconColors.bg"
     >
       <i :class="[icon, iconColors.text, 'text-sm']"></i>
     </div>
 
     <!-- Content -->
-    <div class="flex-1 min-w-0">
-      <div class="font-medium text-sm">{{ label }}</div>
-      <div class="text-xs text-secondary">{{ description }}</div>
+    <div class="min-w-0 flex-1">
+      <div class="text-sm font-medium">{{ label }}</div>
+      <div class="text-secondary text-xs">{{ description }}</div>
     </div>
 
     <!-- Suffix slot for extra content (e.g., "Soon" tag) -->
@@ -31,7 +31,7 @@
   <button
     v-else
     type="button"
-    class="w-full text-left px-4 py-2 text-sm transition-colors flex items-center gap-2"
+    class="flex w-full items-center gap-2 px-4 py-2 text-left text-sm transition-colors"
     :class="simpleVariantClasses"
     :disabled="disabled"
     @click="handleClick"
@@ -66,9 +66,15 @@ const iconColors = computed(() => {
   const colorMap: Record<IconColor, { bg: string; text: string }> = {
     blue: { bg: 'bg-blue-100 dark:bg-blue-900/20', text: 'text-blue-600 dark:text-blue-400' },
     green: { bg: 'bg-green-100 dark:bg-green-900/20', text: 'text-green-600 dark:text-green-400' },
-    purple: { bg: 'bg-purple-100 dark:bg-purple-900/20', text: 'text-purple-600 dark:text-purple-400' },
+    purple: {
+      bg: 'bg-purple-100 dark:bg-purple-900/20',
+      text: 'text-purple-600 dark:text-purple-400',
+    },
     red: { bg: 'bg-red-100 dark:bg-red-900/20', text: 'text-red-600 dark:text-red-400' },
-    yellow: { bg: 'bg-yellow-100 dark:bg-yellow-900/20', text: 'text-yellow-600 dark:text-yellow-400' },
+    yellow: {
+      bg: 'bg-yellow-100 dark:bg-yellow-900/20',
+      text: 'text-yellow-600 dark:text-yellow-400',
+    },
     gray: { bg: 'bg-gray-100 dark:bg-gray-900/20', text: 'text-gray-600 dark:text-gray-400' },
     sage: { bg: 'bg-sage-100 dark:bg-sage-900/20', text: 'text-sage-600 dark:text-sage-400' },
     pink: { bg: 'bg-pink-100 dark:bg-pink-900/20', text: 'text-pink-600 dark:text-pink-400' },

@@ -1,46 +1,46 @@
 <template>
-  <div class="bg-base-100 rounded-lg border border-primary-stroke p-6">
-    <h3 class="text-lg font-semibold mb-4">{{ t('admin.costChart.title') }}</h3>
+  <div class="bg-base-100 border-primary-stroke rounded-lg border p-6">
+    <h3 class="mb-4 text-lg font-semibold">{{ t('admin.costChart.title') }}</h3>
 
     <div v-if="loading" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-spinner animate-spin text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">{{ t('admin.costChart.loading') }}</p>
+        <i class="fa fa-spinner text-secondary mb-2 animate-spin text-2xl"></i>
+        <p class="text-secondary text-sm">{{ t('admin.costChart.loading') }}</p>
       </div>
     </div>
 
     <div v-else-if="error" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-exclamation-triangle text-2xl text-error mb-2"></i>
-        <p class="text-sm text-error">{{ t('admin.costChart.error') }}</p>
+        <i class="fa fa-exclamation-triangle text-error mb-2 text-2xl"></i>
+        <p class="text-error text-sm">{{ t('admin.costChart.error') }}</p>
       </div>
     </div>
 
     <div v-else-if="!data?.workspaces.length" class="flex justify-center py-12">
       <div class="text-center">
-        <i class="fa fa-chart-pie text-2xl text-secondary mb-2"></i>
-        <p class="text-sm text-secondary">{{ t('admin.costChart.noData') }}</p>
+        <i class="fa fa-chart-pie text-secondary mb-2 text-2xl"></i>
+        <p class="text-secondary text-sm">{{ t('admin.costChart.noData') }}</p>
       </div>
     </div>
 
     <div v-else>
-      <div class="h-80 flex justify-center">
+      <div class="flex h-80 justify-center">
         <Doughnut :data="chartData" :options="chartOptions" />
       </div>
 
       <!-- Legend -->
-      <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
         <div
           v-for="(workspace, index) in data?.workspaces"
           :key="workspace.workspace_id"
           class="flex items-center gap-2"
         >
           <div
-            class="w-3 h-3 rounded-full flex-shrink-0"
+            class="h-3 w-3 flex-shrink-0 rounded-full"
             :style="{ backgroundColor: colors[index % colors.length] }"
           ></div>
-          <span class="text-sm text-secondary truncate">{{ workspace.workspace_name }}</span>
-          <span class="text-sm font-medium ml-auto">${{ workspace.total_cost.toFixed(2) }}</span>
+          <span class="text-secondary truncate text-sm">{{ workspace.workspace_name }}</span>
+          <span class="ml-auto text-sm font-medium">${{ workspace.total_cost.toFixed(2) }}</span>
         </div>
       </div>
     </div>
@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, type TooltipItem } from 'chart.js'
 import { Doughnut } from 'vue-chartjs'
 import type { WorkspaceCostResponse } from '@/api/cost-analysis'
 
@@ -114,7 +114,7 @@ const chartOptions = computed(() => ({
       borderColor: 'rgba(99, 102, 241, 0.5)',
       borderWidth: 1,
       callbacks: {
-        label: (context: any) => {
+        label: (context: TooltipItem<'doughnut'>) => {
           const workspace = props.data?.workspaces[context.dataIndex]
           if (!workspace) return ''
 

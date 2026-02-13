@@ -6,17 +6,13 @@
 
     <!-- Loading state -->
     <div v-if="loading" class="grid grid-cols-1 gap-4">
-      <div
-        v-for="n in 3"
-        :key="n"
-        class="bg-base-200 rounded-lg p-4 animate-pulse"
-      >
-        <div class="flex items-center gap-3 mb-3">
-          <div class="w-10 h-10 rounded-lg bg-base-300"></div>
-          <div class="h-4 bg-base-300 rounded w-24"></div>
+      <div v-for="n in 3" :key="n" class="bg-base-200 animate-pulse rounded-lg p-4">
+        <div class="mb-3 flex items-center gap-3">
+          <div class="bg-base-300 h-10 w-10 rounded-lg"></div>
+          <div class="bg-base-300 h-4 w-24 rounded"></div>
         </div>
-        <div class="h-8 bg-base-300 rounded w-20 mb-2"></div>
-        <div class="h-3 bg-base-300 rounded w-32"></div>
+        <div class="bg-base-300 mb-2 h-8 w-20 rounded"></div>
+        <div class="bg-base-300 h-3 w-32 rounded"></div>
       </div>
     </div>
 

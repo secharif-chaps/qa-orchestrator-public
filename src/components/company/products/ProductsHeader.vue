@@ -1,11 +1,13 @@
 <template>
   <div class="bg-base-100 rounded-lg p-4">
-    <div class="flex items-center justify-between mb-6">
+    <div class="mb-6 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div>
           <h2 class="text-xl font-semibold">{{ t('products.header.title') }}</h2>
-          <p class="text-sm text-secondary">
-            {{ t('products.header.summary', { total: totalProductCount, categories: categoryCount }) }}
+          <p class="text-secondary text-sm">
+            {{
+              t('products.header.summary', { total: totalProductCount, categories: categoryCount })
+            }}
           </p>
         </div>
       </div>
@@ -18,8 +20,8 @@
           @click="$emit('toggleViewMode')"
         />
 
-        <div class="w-64 relative">
-          <i class="fas fa-search absolute left-2 top-1/2 -translate-y-1/2 text-secondary"></i>
+        <div class="relative w-64">
+          <i class="fas fa-search text-secondary absolute top-1/2 left-2 -translate-y-1/2"></i>
           <Searchbar
             id="product-search"
             :value="searchQuery"
@@ -31,14 +33,14 @@
     </div>
 
     <!-- Category Filter Pills -->
-    <div class="flex flex-wrap gap-2 mb-4">
+    <div class="mb-4 flex flex-wrap gap-2">
       <Tag
         :label="t('products.categories.all')"
         :variant="selectedCategory === null ? 'sage' : 'slate'"
         size="md"
         :icon="selectedCategory === null ? 'fa fa-check' : 'fa fa-layer-group'"
         rounded
-        class="cursor-pointer hover:opacity-80 transition-opacity"
+        class="cursor-pointer transition-opacity hover:opacity-80"
         @click="$emit('selectCategory', null)"
       />
       <Tag
@@ -49,7 +51,7 @@
         size="md"
         :icon="selectedCategory === category ? 'fa fa-check' : getCategoryIcon(category)"
         rounded
-        class="cursor-pointer hover:opacity-80 transition-opacity"
+        class="cursor-pointer transition-opacity hover:opacity-80"
         @click="$emit('selectCategory', category)"
       />
     </div>

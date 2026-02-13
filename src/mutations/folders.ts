@@ -1,5 +1,14 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { addItemToFolder, removeItemFromFolder, updateFolder, createFolder, deleteFolder, restoreFolder, toggleFolderFavorite, moveItemBetweenFolders } from '@/api/folders'
+import {
+  addItemToFolder,
+  removeItemFromFolder,
+  updateFolder,
+  createFolder,
+  deleteFolder,
+  restoreFolder,
+  toggleFolderFavorite,
+  moveItemBetweenFolders,
+} from '@/api/folders'
 import type { Folder, FolderCreate, FolderItem, FolderItemAdd, FolderUpdate } from '@/types/folder'
 import { FOLDER_QUERY_KEYS } from '@/queries/folders'
 import { useAuthStore } from '@/stores/auth'
@@ -90,8 +99,15 @@ export const useRemoveItemFromFolder = defineMutation(() => {
   const { t } = useI18n()
 
   const { mutate, mutateAsync, ...mutation } = useMutation({
-    mutation: ({ folderId, itemId, itemType }: { folderId: string; itemId: string; itemType: 'company' }) =>
-      removeItemFromFolder(folderId, itemId, itemType),
+    mutation: ({
+      folderId,
+      itemId,
+      itemType,
+    }: {
+      folderId: string
+      itemId: string
+      itemType: 'company'
+    }) => removeItemFromFolder(folderId, itemId, itemType),
 
     onMutate: ({ folderId, itemId }: { folderId: string; itemId: string; itemType: 'company' }) => {
       // Update all folder caches dynamically
@@ -177,7 +193,7 @@ export const useMoveCompanyToFolder = defineMutation(() => {
         }
         // Check array of folders
         else if (Array.isArray(data)) {
-          const sourceFolder = data.find(f => f.id === sourceFolderId)
+          const sourceFolder = data.find((f) => f.id === sourceFolderId)
           if (sourceFolder) {
             itemToMove = sourceFolder.items?.find((item) => item.id == companyId)
             if (itemToMove) break
@@ -185,7 +201,7 @@ export const useMoveCompanyToFolder = defineMutation(() => {
         }
         // Check paginated response
         else if ('data' in data && Array.isArray(data.data)) {
-          const sourceFolder = data.data.find(f => f.id === sourceFolderId)
+          const sourceFolder = data.data.find((f) => f.id === sourceFolderId)
           if (sourceFolder) {
             itemToMove = sourceFolder.items?.find((item) => item.id == companyId)
             if (itemToMove) break
@@ -217,7 +233,7 @@ export const useMoveCompanyToFolder = defineMutation(() => {
 
         // Array of folders
         if (Array.isArray(data)) {
-          return data.map(folder => {
+          return data.map((folder) => {
             if (folder.id === sourceFolderId) {
               return {
                 ...folder,
@@ -240,7 +256,7 @@ export const useMoveCompanyToFolder = defineMutation(() => {
         if ('data' in data && Array.isArray(data.data)) {
           return {
             ...data,
-            data: data.data.map(folder => {
+            data: data.data.map((folder) => {
               if (folder.id === sourceFolderId) {
                 return {
                   ...folder,
@@ -444,8 +460,7 @@ export const useRestoreFolder = defineMutation(() => {
   const { t } = useI18n()
 
   const { mutate, mutateAsync, ...mutation } = useMutation({
-    mutation: ({ folderId }: { folderId: string; folderName: string }) =>
-      restoreFolder(folderId),
+    mutation: ({ folderId }: { folderId: string; folderName: string }) => restoreFolder(folderId),
 
     onError: (_error, { folderName }) => {
       toast.error(

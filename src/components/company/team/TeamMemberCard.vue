@@ -1,26 +1,26 @@
 <template>
   <div
-    class="bg-base-100 rounded-lg p-4 hover:shadow-lg transition-all duration-200 border border-primary-stroke hover:border-primary/30"
+    class="bg-base-100 border-primary-stroke hover:border-primary/30 rounded-lg border p-4 transition-all duration-200 hover:shadow-lg"
   >
     <div class="flex items-start justify-between gap-4">
       <!-- Avatar & Basic Info -->
       <div class="flex items-center gap-4">
         <div
-          class="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0"
+          class="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full"
           :class="[
             isExecutive
-              ? 'bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 text-purple-600 dark:text-purple-400'
-              : 'bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/30 text-orange-600 dark:text-orange-400',
+              ? 'bg-gradient-to-br from-purple-100 to-purple-200 text-purple-600 dark:from-purple-900/30 dark:to-purple-800/30 dark:text-purple-400'
+              : 'bg-gradient-to-br from-orange-100 to-orange-200 text-orange-600 dark:from-orange-900/30 dark:to-orange-800/30 dark:text-orange-400',
           ]"
         >
           <i class="fa fa-user text-xl"></i>
         </div>
 
         <div class="flex-1">
-          <h3 class="font-semibold text-secondary text-lg">
+          <h3 class="text-secondary text-lg font-semibold">
             {{ member.firstName }} {{ member.lastName }}
           </h3>
-          <p class="text-secondary text-sm mt-0.5">
+          <p class="text-secondary mt-0.5 text-sm">
             {{ member.position }}
           </p>
         </div>
@@ -53,8 +53,8 @@
     </div>
 
     <!-- Subordinates Count -->
-    <div v-if="subordinatesCount > 0" class="mt-3 pt-3 border-t border-primary-stroke">
-      <div class="flex items-center gap-2 text-sm text-secondary">
+    <div v-if="subordinatesCount > 0" class="border-primary-stroke mt-3 border-t pt-3">
+      <div class="text-secondary flex items-center gap-2 text-sm">
         <i class="fa fa-users"></i>
         <span>{{
           $t(
@@ -77,7 +77,7 @@ const props = defineProps<{
   level?: number
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   viewInHierarchy: [member: TeamMember]
 }>()
 

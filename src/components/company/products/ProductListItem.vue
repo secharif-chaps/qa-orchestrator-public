@@ -1,26 +1,21 @@
 <template>
-  <div class="border-b border-base-200 last:border-b-0 pb-6 last:pb-0">
-    <div class="flex items-center gap-3 mb-4">
-      <Badge
-        :icon="categoryIcon"
-        variant="secondary"
-        size="lg"
-        rounded
-        class="shrink-0"
-      >
-      </Badge>
+  <div class="border-base-200 border-b pb-6 last:border-b-0 last:pb-0">
+    <div class="mb-4 flex items-center gap-3">
+      <Badge :icon="categoryIcon" variant="secondary" size="lg" rounded class="shrink-0"> </Badge>
       <div class="flex-1">
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
-        <p class="text-sm text-secondary">{{ t('products.countInCategory', { count: productList.length }) }}</p>
+        <p class="text-secondary text-sm">
+          {{ t('products.countInCategory', { count: productList.length }) }}
+        </p>
       </div>
       <Tag :label="productList.length.toString()" variant="slate" size="sm" />
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+    <div class="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
       <div
         v-for="(product, index) in productList"
         :key="index"
-        class="flex items-center gap-2 p-2 bg-base-300 rounded text-sm"
+        class="bg-base-300 flex items-center gap-2 rounded p-2 text-sm"
       >
         <span class="text-secondary flex-1 capitalize">{{ product }}</span>
         <Tag v-if="isNewProduct(product)" variant="success" size="xs">
