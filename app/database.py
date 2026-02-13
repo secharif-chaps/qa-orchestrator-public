@@ -1,4 +1,5 @@
-from typing import AsyncGenerator
+from contextlib import contextmanager
+from typing import AsyncGenerator, Generator, Literal, overload
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import (
@@ -74,20 +75,30 @@ def _validate_schema(schema: str) -> None:
             f"Invalid schema name: {schema}. "
             f"Must be one of: {', '.join(sorted(VALID_SCHEMAS))}"
         )
-    logger.debug(f"Schema validation passed: {schema}")
+    logger.debug("Schema validation passed", extra={"schema": schema})
 
+
+@overload
+def _register_schema_event_listener(
+    engine: AsyncEngine, schema: str, *, is_async: Literal[True]
+) -> None: ...
+
+@overload
+def _register_schema_event_listener(
+    engine: Engine, schema: str, *, is_async: Literal[False] = ...
+) -> None: ...
 
 def _register_schema_event_listener(
-    engine: Engine | AsyncEngine, schema: str, is_async: bool = False
+    engine: Engine | AsyncEngine, schema: str, *, is_async: bool = False
 ) -> None:
     """Register event listener to set search_path on connection.
 
     Validates schema immediately before use to prevent TOCTOU vulnerabilities.
 
     Args:
-        engine: SQLAlchemy engine (async or sync)
+        engine: AsyncEngine when is_async=True, Engine when is_async=False
         schema: Schema name to set in search_path (validated here)
-        is_async: True if engine is async (uses eng.sync_engine for event)
+        is_async: True for AsyncEngine (uses sync_engine for event), False for Engine
 
     Raises:
         SchemaValidationError: If schema validation fails
@@ -205,6 +216,23 @@ global_sync_engine = _create_sync_engine_with_schema(GLOBAL_SCHEMA)
 GlobalSessionLocal = sessionmaker(
     bind=global_sync_engine, class_=Session, **SESSION_CONFIG
 )
+
+@contextmanager
+def get_global_sync_session() -> Generator[Session, None, None]:
+    """Get a synchronous database session for global_schema.
+
+    Convenience context manager for scripts and migrations,
+    consistent with the async get_global_db() pattern.
+
+    Yields:
+        Session for global_schema
+    """
+    session = GlobalSessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
+
 
 # Base classes for models - use schema parameter in __table_args__
 Base = declarative_base()
