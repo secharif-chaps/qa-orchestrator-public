@@ -26,7 +26,7 @@
           :class="widthClass"
           :style="dropdownStyle"
         >
-          <div class="p-2">
+          <div class="p-2" @click="props.closeOnSelect && close()">
             <slot name="content" :close="close" />
           </div>
         </div>

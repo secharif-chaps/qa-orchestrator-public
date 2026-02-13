@@ -141,56 +141,26 @@
                 ></i>
               </button>
             </template>
-            <template #content="{ close }">
-              <DropdownItem
-                @click="
-                  filters.status = undefined
-                  close()
-                "
-              >
+            <template #content>
+              <DropdownItem @click="filters.status = undefined">
                 {{ $t('admin.tasks.filters.allStatuses') }}
               </DropdownItem>
               <DropdownDivider />
-              <DropdownItem
-                @click="
-                  filters.status = 'running'
-                  close()
-                "
-              >
+              <DropdownItem @click="filters.status = 'running'">
                 <i class="fa fa-play-circle text-info mr-2"></i>
                 {{ $t('admin.tasks.status.running') }}
               </DropdownItem>
-              <DropdownItem
-                @click="
-                  filters.status = 'pending'
-                  close()
-                "
-              >
+              <DropdownItem @click="filters.status = 'pending'">
                 <i class="fa fa-clock text-warning mr-2"></i> {{ $t('admin.tasks.status.pending') }}
               </DropdownItem>
-              <DropdownItem
-                @click="
-                  filters.status = 'blocked'
-                  close()
-                "
-              >
+              <DropdownItem @click="filters.status = 'blocked'">
                 <i class="fa fa-ban text-secondary mr-2"></i> {{ $t('admin.tasks.status.blocked') }}
               </DropdownItem>
-              <DropdownItem
-                @click="
-                  filters.status = 'succeeded'
-                  close()
-                "
-              >
+              <DropdownItem @click="filters.status = 'succeeded'">
                 <i class="fa fa-check-circle text-success mr-2"></i>
                 {{ $t('admin.tasks.status.succeeded') }}
               </DropdownItem>
-              <DropdownItem
-                @click="
-                  filters.status = 'error'
-                  close()
-                "
-              >
+              <DropdownItem @click="filters.status = 'error'">
                 <i class="fa fa-times-circle text-error mr-2"></i>
                 {{ $t('admin.tasks.status.error') }}
               </DropdownItem>
@@ -213,23 +183,15 @@
                 ></i>
               </button>
             </template>
-            <template #content="{ close }">
-              <DropdownItem
-                @click="
-                  filters.task_type = undefined
-                  close()
-                "
-              >
+            <template #content>
+              <DropdownItem @click="filters.task_type = undefined">
                 {{ $t('admin.tasks.filters.allTypes') }}
               </DropdownItem>
               <DropdownDivider />
               <DropdownItem
                 v-for="taskType in taskTypes"
                 :key="taskType"
-                @click="
-                  filters.task_type = taskType
-                  close()
-                "
+                @click="filters.task_type = taskType"
               >
                 {{ formatTaskType(taskType) }}
               </DropdownItem>
@@ -252,23 +214,15 @@
                 ></i>
               </button>
             </template>
-            <template #content="{ close }">
-              <DropdownItem
-                @click="
-                  filters.organization_id = undefined
-                  close()
-                "
-              >
+            <template #content>
+              <DropdownItem @click="filters.organization_id = undefined">
                 {{ $t('admin.tasks.filters.allOrganizations') }}
               </DropdownItem>
               <DropdownDivider />
               <DropdownItem
                 v-for="org in organizations?.organizations ?? []"
                 :key="org.id"
-                @click="
-                  filters.organization_id = org.id
-                  close()
-                "
+                @click="filters.organization_id = org.id"
               >
                 <span :class="{ 'text-secondary': org.is_internal }">
                   {{ org.name }}
