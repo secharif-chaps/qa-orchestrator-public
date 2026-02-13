@@ -1,6 +1,7 @@
 export default {
   welcome: 'Bienvenue',
   settings: {
+    viewSection: 'Configurer',
     language: {
       title: 'Paramètres de langue',
       description: "Choisissez votre langue préférée pour l'application",
@@ -41,6 +42,18 @@ export default {
         title: 'Aucun membre trouvé',
         description: 'Aucun membre dans votre organisation',
         searchDescription: 'Essayez un autre terme de recherche',
+      },
+      searchPlaceholder: "Rechercher par nom, email ou nom d'utilisateur",
+      itemName: 'membres',
+      loadingPermissions: 'Chargement...',
+      selectPermission: 'Sélectionner une permission...',
+      permissions: {
+        reader: 'Lecteur',
+        readerDesc: 'Lecture seule',
+        writer: 'Éditeur',
+        writerDesc: 'Créer et gérer le contenu',
+        manager: 'Gestionnaire',
+        managerDesc: 'Gestion complète de l\'équipe',
       },
     },
     profile: {
@@ -400,6 +413,20 @@ export default {
         lastWeek: '7 derniers jours',
         lastMonth: '30 derniers jours',
         older: 'Plus ancien',
+      },
+      suggestions: {
+        home: {
+          recentCompanies: 'Montre-moi mes entreprises récentes',
+          orgActivity: "Résume l'activité de mon organisation",
+        },
+        company: {
+          summary: 'Fais-moi une synthèse de cette entreprise',
+          technologies: 'Liste les technologies citées',
+        },
+        folder: {
+          summarize: 'Résume les entreprises de ce dossier',
+          compare: 'Compare les entreprises de ce dossier',
+        },
       },
     },
   },
@@ -1291,6 +1318,7 @@ export default {
     organizations: {
       title: 'Gestion des Organisations',
       description: 'Gérer toutes les organisations dans Keycloak',
+      itemName: 'organisations',
       search: 'Rechercher des organisations...',
       showing: 'Affichage de {from} à {to} sur {total} organisations',
       members: 'Membres',
@@ -1304,8 +1332,8 @@ export default {
       description: 'Surveiller et gérer les tâches de toutes les organisations',
       refresh: 'Actualiser',
       autoRefresh: {
-        on: 'Auto-refresh ON',
-        off: 'Auto-refresh OFF',
+        on: "Auto-refresh ACTIVÉ",
+        off: "Auto-refresh DÉSACTIVÉ",
       },
       lastUpdated: {
         seconds: 'Mis à jour il y a {seconds}s',
@@ -1497,9 +1525,19 @@ export default {
     users: {
       search: {
         placeholder: "Rechercher par nom d'utilisateur, nom, email ou organisation...",
+        clear: 'Effacer la recherche',
+      },
+      sort: {
+        sortBy: 'Trier par',
+        username: "Nom d'utilisateur",
+        createdDate: 'Date de création',
+        order: 'Ordre',
+        ascending: 'Croissant (A-Z)',
+        descending: 'Décroissant (Z-A)',
       },
       title: 'Gestion des Utilisateurs',
-      description: "Gérer les assignations d'organisation des utilisateurs",
+      description: "Gérer les utilisateurs et leurs organisations",
+      itemName: 'utilisateurs',
       loading: 'Chargement des utilisateurs...',
       modal: {
         changeOrganization: "Changer l'Organisation de l'Utilisateur",
@@ -1975,6 +2013,7 @@ export default {
     },
   },
   tokens: {
+    balance: 'Solde de crédits',
     module: 'Module {module}',
     token: 'crédit',
     tokens: 'crédits',
@@ -2029,6 +2068,7 @@ export default {
     },
     history: {
       errorTitle: "Impossible de charger l'historique des crédits",
+      itemName: 'transactions',
     },
   },
   featureFlags: {
@@ -2209,6 +2249,7 @@ export default {
   folder: {
     title: 'Dossiers',
     description: 'Organisez vos entreprises en dossiers',
+    itemName: 'dossiers',
     descriptionGlobal: 'Tous les dossiers de votre organisation',
     viewScope: {
       myFolders: 'Mes dossiers',
@@ -2860,6 +2901,7 @@ export default {
     costs: 'Coûts',
     appearance: 'Apparence',
     security: 'Sécurité',
+    teamManagement: "Gestion d'équipe",
     credits: 'Crédits',
   },
   logout: {

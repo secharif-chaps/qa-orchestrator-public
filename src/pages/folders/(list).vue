@@ -160,7 +160,7 @@
             v-model:current-page="foldersStore.page"
             :meta="paginationMeta"
             :page-size-options="pageSizeOptions"
-            item-name="folders"
+            :item-name="$t('folder.itemName')"
             @update-per-page="updatePerPage"
           />
         </div>
