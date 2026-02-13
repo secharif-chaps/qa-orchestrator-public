@@ -98,11 +98,7 @@
               <template v-for="group in groups" :key="group.label">
                 <SelectGroup>
                   <SelectLabel>{{ group.label }}</SelectLabel>
-                  <SelectItem
-                    v-for="option in group.options"
-                    :key="option.value"
-                    :option="option"
-                  >
+                  <SelectItem v-for="option in group.options" :key="option.value" :option="option">
                     <template #icon>
                       <Radio
                         v-model="selectedFolderOption"

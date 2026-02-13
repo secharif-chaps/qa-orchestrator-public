@@ -7,18 +7,30 @@
     <!-- Header -->
     <div class="flex items-center gap-3">
       <div
-        class="flex size-10 items-center justify-center rounded-lg" :class="isAdmin ? 'bg-error-light' : 'bg-primary/10'"
+        class="flex size-10 items-center justify-center rounded-lg"
+        :class="isAdmin ? 'bg-error-light' : 'bg-primary/10'"
       >
-        <Icon :icon="role.icon ?? 'fa-shield-check'" :class="isAdmin ? 'text-error' : 'text-primary'" />
+        <Icon
+          :icon="role.icon ?? 'fa-shield-check'"
+          :class="isAdmin ? 'text-error' : 'text-primary'"
+        />
       </div>
 
       <div class="flex-1">
-        <h3 :class="['font-semibold text-base', isAdmin ? 'text-error' : '']">{{ $t(`admin.permissions.roles.${role.id}.name`) }}</h3>
-        <p class="text-sm text-secondary">{{ $t(`admin.permissions.roles.${role.id}.description`) }}</p>
+        <h3 :class="['text-base font-semibold', isAdmin ? 'text-error' : '']">
+          {{ $t(`admin.permissions.roles.${role.id}.name`) }}
+        </h3>
+        <p class="text-secondary text-sm">
+          {{ $t(`admin.permissions.roles.${role.id}.description`) }}
+        </p>
       </div>
 
-      <Icon v-if="selected" icon="fa-check-circle" class="size-6 flex-shrink-0" :class="isAdmin ? 'text-error' : 'text-primary'"/>
-
+      <Icon
+        v-if="selected"
+        icon="fa-check-circle"
+        class="size-6 flex-shrink-0"
+        :class="isAdmin ? 'text-error' : 'text-primary'"
+      />
     </div>
 
     <!-- Permissions -->
