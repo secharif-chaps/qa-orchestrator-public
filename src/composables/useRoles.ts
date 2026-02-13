@@ -57,9 +57,11 @@ const ROLES: Record<RoleId, Role> = {
       'admin.organizations',
       'organization.read',
       'organization.write',
+      'organization.manage',
       'company.create',
+      'target.create',
     ],
-    color: 'accent',
+    color: 'error',
     icon: 'fa-shield-check',
   },
 }

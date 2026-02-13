@@ -13,7 +13,7 @@
 
 export type RoleId = 'reader' | 'writer' | 'manager' | 'admin'
 
-export type RoleColor = 'primary' | 'secondary' | 'accent'
+export type RoleColor = 'primary' | 'secondary' | 'error'
 
 export interface Role {
   id: RoleId

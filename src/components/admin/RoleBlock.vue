@@ -1,24 +1,24 @@
 <template>
   <div
     class="flex flex-col gap-3 rounded-lg border p-4 transition-all cursor-pointer"
-    :class="{
-      'border-primary bg-primary/5': selected,
-      'border-primary-stroke hover:border-primary/30 hover:bg-base-200': !selected,
-    }"
+    :class="blockClasses"
     @click="$emit('select', role.id)"
   >
     <!-- Header -->
     <div class="flex items-center gap-3">
-      <div class="flex size-10 items-center justify-center rounded-lg bg-primary/10">
-        <i :class="[`fa ${role.icon}` || 'fas fa-shield-check', 'text-primary']"></i>
+      <div
+        class="flex size-10 items-center justify-center rounded-lg" :class="isAdmin ? 'bg-error-light' : 'bg-primary/10'"
+      >
+        <Icon :icon="role.icon ?? 'fa-shield-check'" :class="isAdmin ? 'text-error' : 'text-primary'" />
       </div>
 
       <div class="flex-1">
-        <h3 class="font-semibold text-base">{{ $t(`admin.permissions.roles.${role.id}.name`) }}</h3>
+        <h3 :class="['font-semibold text-base', isAdmin ? 'text-error' : '']">{{ $t(`admin.permissions.roles.${role.id}.name`) }}</h3>
         <p class="text-sm text-secondary">{{ $t(`admin.permissions.roles.${role.id}.description`) }}</p>
       </div>
 
-      <i v-if="selected" class="fa fa-circle-check text-primary size-6 flex-shrink-0"></i>
+      <Icon v-if="selected" icon="fa-check-circle" class="size-6 flex-shrink-0" :class="isAdmin ? 'text-error' : 'text-primary'"/>
+
     </div>
 
     <!-- Permissions -->
@@ -36,15 +36,33 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { Role } from '@/types/role'
+import { Icon } from '@owlint/feathers-vue'
 import Tag from '@/components/ui/Tag.vue'
 
-defineProps<{
+interface Props {
   role: Role
   selected: boolean
-}>()
+}
 
-defineEmits<{
+interface Emits {
   select: [roleId: string]
-}>()
+}
+
+const { role, selected } = defineProps<Props>()
+defineEmits<Emits>()
+
+const isAdmin = computed(() => role.id === 'admin')
+
+const blockClasses = computed(() => {
+  if (isAdmin.value) {
+    return selected
+      ? 'border-error bg-error/5'
+      : 'border-error-stroke hover:border-error/30 hover:bg-base-200'
+  }
+  return selected
+    ? 'border-primary bg-primary/5'
+    : 'border-primary-stroke hover:border-primary/30 hover:bg-base-200'
+})
 </script>
