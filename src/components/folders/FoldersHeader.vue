@@ -103,17 +103,14 @@
               />
             </template>
 
-            <template #content="{ close }">
+            <template #content>
               <!-- Company Screen - Enabled -->
               <DropdownItem
                 icon="fas fa-building"
                 color="blue"
                 :label="$t('folder.addItems.companyScreen', 'Company Screen')"
                 :description="$t('folder.addItems.companyDescription', 'Add company profiles')"
-                @click="
-                  $router.push(`/folders/${$route.params.folderId}/create/company`)
-                  close()
-                "
+                @click="$router.push(`/folders/${$route.params.folderId}/create/company`)"
               />
 
               <!-- Watchfile - Disabled -->

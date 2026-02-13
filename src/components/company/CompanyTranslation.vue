@@ -7,14 +7,11 @@
         :label="t('company.translation.button', 'Translate')"
       />
     </template>
-    <template #content="{ close }">
+    <template #content>
       <!-- Original language option -->
       <DropdownItem
         :class="{ 'bg-primary-light': !modelValue }"
-        @click="
-          resetToOriginal()
-          close()
-        "
+        @click="resetToOriginal()"
       >
         <div class="flex w-full items-center justify-between gap-2">
           <span>{{ t('company.translation.original', 'Original') }}</span>
@@ -33,10 +30,7 @@
         :key="lang.code"
         :disabled="isLanguageTranslating(lang.code)"
         :class="{ 'bg-primary-light': modelValue === lang.code }"
-        @click="
-          handleTranslate(lang.code)
-          close()
-        "
+        @click="handleTranslate(lang.code)"
       >
         <div class="flex w-full items-center justify-between gap-2">
           <span>{{ getLanguageName(lang.code) }}</span>
