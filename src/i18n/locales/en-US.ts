@@ -1396,6 +1396,7 @@ export default {
         name: 'Name',
         username: 'Username',
         email: 'Email',
+        organization: 'Organization',
         actions: 'Actions',
         status: 'Status',
       },
