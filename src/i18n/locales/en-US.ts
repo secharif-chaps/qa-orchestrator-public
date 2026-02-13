@@ -1987,6 +1987,13 @@ export default {
       myFolders: 'My Folders',
       allFolders: 'All Folders',
     },
+    groups: {
+      mine: 'My Folders',
+      shared: 'Shared with me',
+    },
+    tooltip: {
+      createdBy: 'Created by {username} on {date} at {time}',
+    },
     search: {
       placeholder: 'Search items...',
     },
