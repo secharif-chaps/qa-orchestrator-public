@@ -37,17 +37,17 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
-import { recentCompaniesQuery } from '@/queries/companies'
-import { organizationActivitiesQuery, currentOrganizationQuery } from '@/queries/organization'
-import { organizationFeatureFlagsQuery } from '@/queries/feature-flags'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
 import ModulesShowcase from '@/components/home/ModulesShowcase.vue'
-import RecentProjectsList from '@/components/home/RecentProjectsList.vue'
 import RecentActivitiesList from '@/components/home/RecentActivitiesList.vue'
-import { useQuery } from '@pinia/colada'
-import { useI18n } from 'vue-i18n'
+import RecentProjectsList from '@/components/home/RecentProjectsList.vue'
+import { recentCompaniesQuery } from '@/queries/companies'
+import { organizationFeatureFlagsQuery } from '@/queries/feature-flags'
+import { currentOrganizationQuery, organizationActivitiesQuery } from '@/queries/organization'
+import { useAuthStore } from '@/stores/auth'
 import type { FeatureFlagConfig } from '@/types/feature-flags'
+import { useQuery } from '@pinia/colada'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 // Only access auth on client side
 const authStore = useAuthStore()
