@@ -35,9 +35,11 @@ class ActivityResponse(BaseModel):
     Represents a recent action (company or folder creation) by other users
     in the organization.
     """
+    id: str = Field(..., description="ID of the item (company or folder)")
     type: str = Field(..., description="Activity type: 'company' or 'folder'")
     name: str = Field(..., description="Name of the created item")
     owner: str = Field(..., description="Username of the creator")
     created_at: datetime = Field(..., description="When the item was created")
+    folder_id: Optional[str] = Field(None, description="Folder ID (for companies, the folder containing them)")
 
     model_config = ConfigDict(from_attributes=True)
