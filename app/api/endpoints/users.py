@@ -34,8 +34,19 @@ MAX_CONCURRENT_ORG_REQUESTS = 5  # Maximum parallel Keycloak requests
 MAX_TOTAL_USERS_FROM_ORGS = 500  # Stop fetching when this many users found
 
 
-def _transform_kc_user(kc_user: dict[str, Any]) -> dict[str, Any]:
-    """Transform a Keycloak user dict into the API response format."""
+def _transform_kc_user(
+    kc_user: dict[str, Any],
+    organization: dict[str, Any] | None = None
+) -> dict[str, Any]:
+    """Transform a Keycloak user dict into the API response format.
+
+    Args:
+        kc_user: Keycloak user dictionary
+        organization: Optional organization dictionary with 'id' and 'name'
+
+    Returns:
+        User dict with all fields including organization data
+    """
     return {
         "user_id": kc_user.get("id"),
         "username": kc_user.get("username"),
@@ -44,6 +55,8 @@ def _transform_kc_user(kc_user: dict[str, Any]) -> dict[str, Any]:
         "last_name": kc_user.get("lastName"),
         "status": "active" if kc_user.get("enabled", True) else "revoked",
         "created_at": str(kc_user.get("createdTimestamp", 0)),
+        "organization_id": organization.get("id") if organization else None,
+        "organization_name": organization.get("name") if organization else None,
     }
 
 
@@ -281,14 +294,35 @@ async def get_all_users(
                 )
                 return user_id, None
 
-        # Fetch roles in parallel
-        role_tasks = [fetch_user_role(kc_user.get("id")) for kc_user in kc_users]
-        role_results = await asyncio.gather(*role_tasks)
-        user_roles_map = dict(role_results)
+        # Fetch organization for a single user
+        async def fetch_user_organization(user_id: str) -> tuple[str, dict[str, Any] | None]:
+            """Fetch organization for a single user."""
+            try:
+                org = await keycloak_admin_service.get_user_organization_optimized(user_id)
+                return user_id, org
+            except Exception as e:
+                logger.warning(
+                    "Failed to fetch organization for user",
+                    extra={"user_id": user_id, "error": str(e)}
+                )
+                return user_id, None
 
-        # Transform Keycloak users to response format with permission_tier
+        # Fetch roles and organizations in parallel
+        role_tasks = [fetch_user_role(kc_user.get("id")) for kc_user in kc_users]
+        org_tasks = [fetch_user_organization(kc_user.get("id")) for kc_user in kc_users]
+        role_results, org_results = await asyncio.gather(
+            asyncio.gather(*role_tasks),
+            asyncio.gather(*org_tasks)
+        )
+        user_roles_map = dict(role_results)
+        user_orgs_map = dict(org_results)
+
+        # Transform Keycloak users to response format with permission_tier and organization
         users_data = [
-            {**_transform_kc_user(u), "permission_tier": user_roles_map.get(u.get("id"))}
+            {
+                **_transform_kc_user(u, organization=user_orgs_map.get(u.get("id"))),
+                "permission_tier": user_roles_map.get(u.get("id"))
+            }
             for u in kc_users
         ]
         _sort_users(users_data, sort, order)
