@@ -72,6 +72,7 @@ export const getOrganizationActivities = async (): Promise<Activity[]> => {
 // Organization members (for admin org detail page)
 export interface OrganizationMembersParams {
   organizationId: string
+  organizationName: string
   page: number
   limit: number
   search?: string
@@ -102,6 +103,8 @@ export const getOrganizationMembers = async (
     created_at: member.createdTimestamp
       ? new Date(member.createdTimestamp).toISOString()
       : new Date().toISOString(),
+    organization_id: params.organizationId,
+    organization_name: params.organizationName,
   }))
 
   const pagination = response.pagination ?? {
