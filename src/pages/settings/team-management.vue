@@ -65,7 +65,7 @@
             v-if="paginationMeta"
             v-model:current-page="currentPage"
             :meta="paginationMeta"
-            item-name="members"
+            :item-name="$t('settings.team.itemName')"
           />
         </template>
       </template>

@@ -68,7 +68,7 @@
     <Pagination
       v-model:current-page="currentPage"
       :meta="paginationMeta"
-      item-name="users"
+      :item-name="$t('admin.users.itemName')"
       @update-per-page="updatePageSize"
     />
 

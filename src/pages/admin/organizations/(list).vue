@@ -79,7 +79,7 @@
       v-if="paginationMeta"
       v-model:current-page="currentPage"
       :meta="paginationMeta"
-      item-name="organizations"
+      :item-name="$t('admin.organizations.itemName')"
       @update-per-page="updatePageSize"
     />
   </div>

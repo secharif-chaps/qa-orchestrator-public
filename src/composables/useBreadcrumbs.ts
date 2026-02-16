@@ -239,6 +239,14 @@ export function useBreadcrumbs() {
           })
           break
 
+        case 'team-management':
+          items.push({
+            name: t('breadcrumb.teamManagement'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
         default:
           // Handle dynamic segments like company IDs and folder IDs
           if (pathSegments[i - 1] === 'companies' && segment !== 'companies') {

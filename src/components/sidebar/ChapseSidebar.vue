@@ -329,40 +329,26 @@ interface Suggestion {
 
 const suggestions = computed<Suggestion[]>(() => {
   const routeName = route.name as string
+  const suggestionsTranslationPrefix = 'sidebar.chapse.suggestions'
 
   if (routeName === '/(home)') {
     return [
-      {
-        label: 'Montre-moi mes entreprises récentes',
-        message: 'Montre-moi mes entreprises récentes',
-      },
-      {
-        label: "Résume l'activité de mon organization",
-        message: "Résume l'activité de mon organization",
-      },
+      { label: t(`${suggestionsTranslationPrefix}.home.recentCompanies`), message: t(`${suggestionsTranslationPrefix}.home.recentCompanies`) },
+      { label: t(`${suggestionsTranslationPrefix}.home.orgActivity`), message: t(`${suggestionsTranslationPrefix}.home.orgActivity`) },
     ]
   }
 
   if (routeName?.includes('/companies/[companyId]')) {
     return [
-      {
-        label: 'Fais-moi une synthèse de cette entreprise',
-        message: 'Fais-moi une synthèse de cette entreprise',
-      },
-      { label: 'Liste les technologies citées', message: 'Liste les technologies citées' },
+      { label: t(`${suggestionsTranslationPrefix}.company.summary`), message: t(`${suggestionsTranslationPrefix}.company.summary`) },
+      { label: t(`${suggestionsTranslationPrefix}.company.technologies`), message: t(`${suggestionsTranslationPrefix}.company.technologies`) },
     ]
   }
 
   if (routeName?.startsWith('/folders/[folderId]') && !routeName?.includes('/companies/')) {
     return [
-      {
-        label: 'Résume les entreprises de ce dossier',
-        message: 'Résume les entreprises de ce dossier',
-      },
-      {
-        label: 'Compare les entreprises de ce dossier',
-        message: 'Compare les entreprises de ce dossier',
-      },
+      { label: t(`${suggestionsTranslationPrefix}.folder.summarize`), message: t(`${suggestionsTranslationPrefix}.folder.summarize`) },
+      { label: t(`${suggestionsTranslationPrefix}.folder.compare`), message: t(`${suggestionsTranslationPrefix}.folder.compare`) },
     ]
   }
 

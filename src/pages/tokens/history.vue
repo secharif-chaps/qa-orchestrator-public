@@ -242,7 +242,7 @@
           v-model:current-page="currentPage"
           :meta="paginationMeta"
           :page-size-options="pageSizeOptions"
-          item-name="transactions"
+          :item-name="$t('tokens.history.itemName')"
           @update-per-page="updatePageSize"
         />
       </div>

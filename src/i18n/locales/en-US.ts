@@ -1,6 +1,7 @@
 export default {
   welcome: 'Welcome',
   settings: {
+    viewSection: 'Configure',
     language: {
       title: 'Language Settings',
       description: 'Choose your preferred language for the application',
@@ -41,6 +42,18 @@ export default {
         title: 'No team members found',
         description: 'No team members in your organization',
         searchDescription: 'Try a different search term',
+      },
+      searchPlaceholder: 'Search by name, email, or username',
+      itemName: 'members',
+      loadingPermissions: 'Loading...',
+      selectPermission: 'Select permission...',
+      permissions: {
+        reader: 'Reader',
+        readerDesc: 'View only',
+        writer: 'Writer',
+        writerDesc: 'Create and manage content',
+        manager: 'Manager',
+        managerDesc: 'Full team management',
       },
     },
     profile: {
@@ -396,6 +409,20 @@ export default {
         lastWeek: 'Last 7 days',
         lastMonth: 'Last 30 days',
         older: 'Older',
+      },
+      suggestions: {
+        home: {
+          recentCompanies: 'Show me my recent companies',
+          orgActivity: 'Summarize my organization activity',
+        },
+        company: {
+          summary: 'Give me a summary of this company',
+          technologies: 'List the mentioned technologies',
+        },
+        folder: {
+          summarize: 'Summarize the companies in this folder',
+          compare: 'Compare the companies in this folder',
+        },
       },
     },
   },
@@ -1241,6 +1268,7 @@ export default {
     organizations: {
       title: 'Organization Management',
       description: 'Manage all organizations in Keycloak',
+      itemName: 'organizations',
       search: 'Search organizations...',
       showing: 'Showing {from} to {to} of {total} organizations',
       members: 'Members',
@@ -1335,9 +1363,19 @@ export default {
     users: {
       search: {
         placeholder: 'Search by username, name, email or organization...',
+        clear: 'Clear search',
+      },
+      sort: {
+        sortBy: 'Sort by',
+        username: 'Username',
+        createdDate: 'Created Date',
+        order: 'Order',
+        ascending: 'Ascending (A-Z)',
+        descending: 'Descending (Z-A)',
       },
       title: 'User Management',
-      description: 'Manage user organization assignments',
+      description: 'Manage all users across organizations',
+      itemName: 'users',
       loading: 'Loading users...',
       modal: {
         changeOrganization: 'Change User Organization',
@@ -1911,6 +1949,7 @@ export default {
     },
   },
   tokens: {
+    balance: 'Token Balance',
     module: '{module} Module',
     token: 'token',
     tokens: 'tokens',
@@ -1964,6 +2003,7 @@ export default {
     },
     history: {
       errorTitle: 'Unable to load token history',
+      itemName: 'transactions',
     },
   },
   featureFlags: {
@@ -1994,6 +2034,7 @@ export default {
   folder: {
     title: 'Folders',
     description: 'Organize your companies into folders',
+    itemName: 'folders',
     descriptionGlobal: 'All folders in your organization',
     viewScope: {
       myFolders: 'My Folders',
@@ -2786,6 +2827,7 @@ export default {
     costs: 'Costs',
     appearance: 'Appearance',
     security: 'Security',
+    teamManagement: 'Team Management',
     credits: 'Credits',
   },
   logout: {
