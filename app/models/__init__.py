@@ -4,7 +4,7 @@ This package contains SQLAlchemy models for the global_schema,
 which stores organization-scoped resources shared across modules.
 """
 
-from app.models.folder import Folder, FolderItem, FolderShare, ShareRole
+from app.models.folder import Folder, FolderItem, FolderShare, ItemType, ShareRole
 from app.models.user_folder_favorite import UserFolderFavorite
 from app.models.organization import (
     FeatureFlag,
@@ -35,4 +35,5 @@ __all__ = [
     "TransactionType",
     "ReferenceType",
     "FeatureFlag",
+    "ItemType",
 ]

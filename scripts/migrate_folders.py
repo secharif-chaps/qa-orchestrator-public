@@ -39,7 +39,15 @@ TARGET_DB_URL = os.getenv(
 BATCH_SIZE = 500
 TARGET_SCHEMA = "global_schema"
 
+# Mapping of old item_type values (mint_db) to new enum values (global_db)
+# Only 'company' maps directly; other values are not migrated
+ITEM_TYPE_MAP = {
+    "company": "company",
+    # "contact" and "document" were allowed by old regex but unused in practice
+}
+
 # Table migration definitions: (source_table, target_table, columns)
+# Optional "casts" dict maps column names to SQL cast expressions for INSERT
 TABLES = [
     {
         "name": "folders",
@@ -59,6 +67,12 @@ TABLES = [
             "id", "folder_id", "item_id", "item_type",
             "position", "added_at", "owner",
         ],
+        # Cast item_type text to the PostgreSQL enum type
+        "casts": {
+            "item_type": f":item_type::{TARGET_SCHEMA}.item_type",
+        },
+        # Only migrate rows whose item_type exists in the enum
+        "source_filter": f"item_type IN ({', '.join(repr(v) for v in ITEM_TYPE_MAP.values())})",
     },
     {
         "name": "folder_shares",
@@ -86,9 +100,12 @@ def migrate_table(source_engine, target_engine, table_def):
     source_table = table_def["source"]
     target_table = table_def["target"]
     columns = table_def["columns"]
+    casts = table_def.get("casts", {})
+    source_filter = table_def.get("source_filter")
 
     columns_csv = ", ".join(columns)
-    placeholders = ", ".join(f":{col}" for col in columns)
+    # Use cast expressions for columns that need type conversion
+    placeholders = ", ".join(casts.get(col, f":{col}") for col in columns)
 
     print(f"\n{'='*60}")
     print(f"Migrating: {name}")
@@ -108,10 +125,13 @@ def migrate_table(source_engine, target_engine, table_def):
             print(f"  SKIPPED: Source table '{source_table}' does not exist")
             return 0
 
+    # Build source query with optional filter
+    where_clause = f" WHERE {source_filter}" if source_filter else ""
+
     # Count source rows
     with source_engine.connect() as src:
         source_count = src.execute(
-            text(f"SELECT COUNT(*) FROM {source_table}")
+            text(f"SELECT COUNT(*) FROM {source_table}{where_clause}")
         ).scalar()
         print(f"  Source rows: {source_count}")
 
@@ -119,10 +139,10 @@ def migrate_table(source_engine, target_engine, table_def):
         print(f"  No rows to migrate.")
         return 0
 
-    # Read all rows from source
+    # Read all rows from source (with filter if specified)
     with source_engine.connect() as src:
         rows = src.execute(
-            text(f"SELECT {columns_csv} FROM {source_table}")
+            text(f"SELECT {columns_csv} FROM {source_table}{where_clause}")
         ).mappings().all()
 
     # Insert into target in batches

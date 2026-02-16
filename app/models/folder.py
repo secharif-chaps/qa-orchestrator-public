@@ -26,6 +26,21 @@ from sqlalchemy.sql import func
 from app.database import GlobalBase, GLOBAL_SCHEMA
 
 
+class ItemType(enum.Enum):
+    """Item type enum for folder items.
+
+    Each value corresponds to an entity type from a specific module:
+    - company: Screen module entities
+    - watchfile: Target module entities
+    - explore: Explore module entities (future)
+
+    Note: Enum names must be lowercase to match PostgreSQL enum values.
+    """
+    company = "company"
+    watchfile = "watchfile"
+    explore = "explore"
+
+
 class ShareRole(enum.Enum):
     """Share role enum for folder sharing permissions.
 
@@ -121,7 +136,7 @@ class FolderItem(GlobalBase):
         id: Unique identifier (UUID)
         folder_id: Foreign key to parent folder
         item_id: ID of the linked item
-        item_type: Type of item ('company', 'contact', etc.)
+        item_type: ItemType enum (company, watchfile, explore)
         position: Optional position for ordering
         added_at: Timestamp when item was added
         owner: Username who added the item (denormalized)
@@ -141,7 +156,10 @@ class FolderItem(GlobalBase):
         nullable=False,
     )
     item_id = Column(String, nullable=False)
-    item_type = Column(String, nullable=False)  # 'company', 'contact', etc.
+    item_type = Column(
+        Enum(ItemType, name="item_type", schema=GLOBAL_SCHEMA, create_type=False),
+        nullable=False,
+    )
     position = Column(Integer, nullable=True)
     added_at = Column(
         DateTime(timezone=True),
