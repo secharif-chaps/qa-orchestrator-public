@@ -164,14 +164,16 @@ import {
 // Types
 import type { AdminUserListItem } from '@/types/admin-user'
 import type { OrganizationUserCreate } from '@/types/user'
+import type { OrganizationAdminResponse } from '@/types/organization'
 
 // Utils
 import { transformToPaginationMeta } from '@/utils/pagination'
 
 const router = useRouter()
 
-// Inject organization ID from parent layout
+// Inject organization ID and organization object from parent layout
 const organizationId = inject<ReturnType<typeof computed<string>>>('organizationId')
+const organization = inject<ReturnType<typeof computed<OrganizationAdminResponse>>>('organization')
 
 // Navigate to import page (single import page with org pre-selected via query param)
 function navigateToImport(): void {
@@ -196,12 +198,13 @@ const {
   organizationMembersQuery,
   () => ({
     organizationId: organizationId?.value || '',
+    organizationName: organization?.value?.name || '',
     page: queryParams.page,
     limit: queryParams.limit,
     search: queryParams.search || undefined,
   }),
   {
-    enabled: () => !!organizationId?.value,
+    enabled: () => !!organizationId?.value && !!organization?.value,
   },
 )
 

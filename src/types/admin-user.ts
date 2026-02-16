@@ -6,7 +6,7 @@ import type { PermissionTier } from "./team"
 
 /**
  * User list item for the paginated user list
- * Includes permission tier computed from permissions
+ * Includes organization info and permission tier computed from permissions
  */
 export interface AdminUserListItem {
   user_id: string
@@ -17,6 +17,8 @@ export interface AdminUserListItem {
   status: 'active' | 'revoked'
   created_at: string
   permission_tier: PermissionTier | null
+  organization_id: string | null
+  organization_name: string | null
 }
 
 /**
