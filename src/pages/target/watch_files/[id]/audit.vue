@@ -1,0 +1,28 @@
+<template>
+  <div class="h-full">
+    <div class="flex h-full gap-4 px-6">
+      <div class="w-[70%] pt-4">
+        <SourcesList :watch-file-id="watchFileId" />
+      </div>
+
+      <div class="w-[30%] pb-4">
+        <WatchFileMonitoring :watch-file-id="watchFileId" />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useRoute } from 'vue-router';
+import WatchFileMonitoring from '~/components/watchFiles/ActivitySection/WatchFileMonitoring.vue';
+import SourcesList from '~/components/watchFiles/ActivitySection/SourceMonitoring/SourcesListGrouped.vue';
+
+const route = useRoute();
+const watchFileId = route.params.id as string;
+
+definePage({
+  meta: {
+    layout: 'watch-file',
+  },
+});
+</script>

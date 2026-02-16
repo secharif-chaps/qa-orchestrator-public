@@ -62,6 +62,15 @@ declare module 'vue-router/auto-routes' {
     '/settings/credits': RouteRecordInfo<'/settings/credits', '/settings/credits', Record<never, never>, Record<never, never>>,
     '/settings/security': RouteRecordInfo<'/settings/security', '/settings/security', Record<never, never>, Record<never, never>>,
     '/settings/team-management': RouteRecordInfo<'/settings/team-management', '/settings/team-management', Record<never, never>, Record<never, never>>,
+    '/target/': RouteRecordInfo<'/target/', '/target', Record<never, never>, Record<never, never>>,
+    '/target/watch_files/[id]/': RouteRecordInfo<'/target/watch_files/[id]/', '/target/watch_files/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/target/watch_files/[id]/audit': RouteRecordInfo<'/target/watch_files/[id]/audit', '/target/watch_files/:id/audit', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/target/watch_files/[id]/documents': RouteRecordInfo<'/target/watch_files/[id]/documents', '/target/watch_files/:id/documents', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/target/watch_files/[id]/radar': RouteRecordInfo<'/target/watch_files/[id]/radar', '/target/watch_files/:id/radar', { id: ParamValue<true> }, { id: ParamValue<false> }, '/target/watch_files/[id]/radar/graph' | '/target/watch_files/[id]/radar/timeline'>,
+    '/target/watch_files/[id]/radar/graph': RouteRecordInfo<'/target/watch_files/[id]/radar/graph', '/target/watch_files/:id/radar/graph', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/target/watch_files/[id]/radar/timeline': RouteRecordInfo<'/target/watch_files/[id]/radar/timeline', '/target/watch_files/:id/radar/timeline', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/target/watch_files/[id]/scope': RouteRecordInfo<'/target/watch_files/[id]/scope', '/target/watch_files/:id/scope', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    '/target/watch_files/new': RouteRecordInfo<'/target/watch_files/new', '/target/watch_files/new', Record<never, never>, Record<never, never>>,
     '/tokens/history': RouteRecordInfo<'/tokens/history', '/tokens/history', Record<never, never>, Record<never, never>>,
   }
 }
