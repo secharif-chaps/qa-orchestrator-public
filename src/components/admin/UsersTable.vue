@@ -24,6 +24,24 @@
       </td>
     </template>
 
+    <!-- Permission Tier column -->
+    <template #cell(permission_tier)="{ item }">
+      <td class="px-4 py-3">
+        <Tag
+          v-if="item.permission_tier"
+          :label="getPermissionTierLabel(item.permission_tier)"
+          variant="success"
+          size="sm"
+        />
+        <Tag
+          v-else
+          :label="$t('admin.users.roles.custom', 'Custom')"
+          variant="slate"
+          size="sm"
+        />
+      </td>
+    </template>
+
     <!-- Status column -->
     <template #cell(status)="{ item }">
       <td class="px-4 py-3">
@@ -47,11 +65,11 @@
       <td class="px-4 py-3 text-right">
         <UserActionsDropdown
           :user-status="item.status"
-          @change-organization="$emit('change-organization', item)"
-          @manage-permissions="$emit('manage-permissions', item)"
-          @disable-user="$emit('disable-user', item)"
-          @enable-user="$emit('enable-user', item)"
-          @reset-password="$emit('reset-password', item)"
+          @change-organization="emit('change-organization', item)"
+          @manage-permissions="emit('manage-permissions', item)"
+          @disable-user="emit('disable-user', item)"
+          @enable-user="emit('enable-user', item)"
+          @reset-password="emit('reset-password', item)"
         />
       </td>
     </template>
@@ -78,7 +96,7 @@
           v-if="hasFilters"
           variant="secondary"
           :label="$t('admin.users.clearFilters', 'Clear Filters')"
-          @click="$emit('clear-filters')"
+          @click="emit('clear-filters')"
         />
       </div>
     </template>
@@ -90,28 +108,30 @@
  * Admin users table using Vuellar Table component.
  * Displays users with actions for organization assignment, permissions, etc.
  */
+import Tag from '@/components/ui/Tag.vue'
+import type { AdminUserListItem } from '@/types/admin-user'
+import { Button, Table } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Table, Button } from '@owlint/feathers-vue'
-import Tag from '@/components/ui/Tag.vue'
 import UserActionsDropdown from './UserActionsDropdown.vue'
-import type { AdminUserListItem } from '@/types/admin-user'
 
 interface Props {
   users: AdminUserListItem[]
   hasFilters: boolean
 }
 
-defineProps<Props>()
-
-defineEmits<{
+interface Emits {
   'change-organization': [user: AdminUserListItem]
   'manage-permissions': [user: AdminUserListItem]
   'disable-user': [user: AdminUserListItem]
   'enable-user': [user: AdminUserListItem]
   'reset-password': [user: AdminUserListItem]
   'clear-filters': []
-}>()
+}
+
+defineProps<Props>()
+
+const emit = defineEmits<Emits>()
 
 const { t } = useI18n()
 
@@ -119,9 +139,20 @@ const fields = computed(() => [
   { key: 'username', label: t('admin.users.table.username', 'Username') },
   { key: 'email', label: t('admin.users.table.email', 'Email') },
   { key: 'name', label: t('admin.users.table.name', 'Name') },
+  { key: 'permission_tier', label: t('admin.users.table.role', 'Role') },
   { key: 'status', label: t('admin.users.table.status', 'Status') },
   { key: 'actions', label: t('admin.users.table.actions', 'Actions'), class: 'text-right' },
 ])
+
+// Helper to get localized permission tier label
+const getPermissionTierLabel = (tier: string): string => {
+  const tierLabels: Record<string, string> = {
+    reader: t('admin.users.roles.reader', 'Reader'),
+    writer: t('admin.users.roles.writer', 'Writer'),
+    manager: t('admin.users.roles.manager', 'Manager'),
+  }
+  return tierLabels[tier] || tier
+}
 
 // Helper to get row key for table
 const getRowKey = (item: AdminUserListItem): string => item.user_id

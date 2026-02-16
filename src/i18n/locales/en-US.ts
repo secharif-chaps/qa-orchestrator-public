@@ -1361,15 +1361,23 @@ export default {
         actions: 'Actions',
         status: 'Status',
       },
-      status: {
-        active: 'Active',
-      },
       actions: {
         changeOrganization: 'Change Organization',
         managePermissions: 'Manage Permissions',
         enableUser: 'Enable User',
         disableUser: 'Disable User',
         resetPassword: 'Reset Password',
+      },
+      roles: {
+        reader: 'Reader',
+        writer: 'Writer',
+        manager: 'Manager',
+        admin: 'Admin',
+        custom: 'Custom',
+      },
+      status: {
+        active: 'Active',
+        revoked: 'Revoked',
       },
       assignOrganization: {
         success: 'Organization assigned successfully!',
