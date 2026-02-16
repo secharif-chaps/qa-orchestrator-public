@@ -208,7 +208,7 @@ import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert
 // Token cost for company creation
 const TOKENS_PER_COMPANY = 35
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const router = useRouter()
 const route = useRoute()
 
@@ -315,12 +315,12 @@ const folderOptions = computed(() => {
 const formatFolderCreationInfo = (option: FolderOption) => {
   if (!option.createdAt || !option.ownerUsername) return ''
   const date = new Date(option.createdAt)
-  const formattedDate = date.toLocaleDateString('fr-FR', {
+  const formattedDate = date.toLocaleDateString(locale.value, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
   })
-  const formattedTime = date.toLocaleTimeString('fr-FR', {
+  const formattedTime = date.toLocaleTimeString(locale.value, {
     hour: '2-digit',
     minute: '2-digit',
   })
