@@ -111,14 +111,6 @@ export function useBreadcrumbs() {
           })
           break
 
-        // case 'team':
-        //   items.push({
-        //     name: 'Team',
-        //     to: isLast ? undefined : currentPath,
-        //     current: isLast,
-        //   })
-        //   break
-
         case 'search':
           items.push({
             name: t('breadcrumb.search', 'Search'),
@@ -206,9 +198,73 @@ export function useBreadcrumbs() {
           break
 
         // Admin pages
+        case 'users':
+          items.push({
+            name: t('breadcrumb.users', 'Users'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
         case 'organizations':
           items.push({
             name: t('breadcrumb.organizations', 'Organizations'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
+        case 'tokens':
+          items.push({
+            name: t('breadcrumb.tokens', 'Tokens'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
+        case 'members':
+          items.push({
+            name: t('breadcrumb.members', 'Members'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
+        case 'sources':
+          items.push({
+            name: t('breadcrumb.sources', 'Sources'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
+        case 'tasks':
+          items.push({
+            name: t('breadcrumb.tasks', 'Tasks'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
+        case 'usage':
+          items.push({
+            name: t('breadcrumb.usage', 'Usage'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
+        case 'workflows':
+          items.push({
+            name: t('breadcrumb.workflows', 'Workflows'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
+        case 'history':
+          items.push({
+            name: t('breadcrumb.history', 'History'),
             to: isLast ? undefined : currentPath,
             current: isLast,
           })
@@ -222,7 +278,47 @@ export function useBreadcrumbs() {
           })
           break
 
+        case 'csr':
+          items.push({
+            name: t('breadcrumb.csr', 'CSR'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
+        case 'company-csv':
+          items.push({
+            name: t('breadcrumb.companyCsv', 'CSV Import'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
+        case 'help':
+          items.push({
+            name: t('breadcrumb.help', 'Help'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
         // Settings pages
+        case 'credits':
+          items.push({
+            name: t('breadcrumb.credits', 'Credits'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
+        case 'ai-preferences':
+          items.push({
+            name: t('breadcrumb.aiPreferences', 'AI Preferences'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
         case 'appearance':
           items.push({
             name: t('breadcrumb.appearance', 'Appearance'),

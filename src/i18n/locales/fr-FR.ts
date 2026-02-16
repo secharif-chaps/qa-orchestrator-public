@@ -2545,7 +2545,7 @@ export default {
   },
   csv: {
     upload: {
-      button: 'Import CSV',
+      button: 'Importer un CSV',
       title: 'Importer des Entreprises depuis un CSV',
       description: 'Téléchargez un fichier CSV pour importer plusieurs entreprises à la fois',
       step1: 'Étape 1 : Choisir le Fichier',
@@ -2903,6 +2903,18 @@ export default {
     security: 'Sécurité',
     teamManagement: "Gestion d'équipe",
     credits: 'Crédits',
+    users: 'Utilisateurs',
+    tokens: 'Jetons',
+    members: 'Membres',
+    sources: 'Sources',
+    tasks: 'Tâches',
+    usage: 'Utilisation',
+    workflows: 'Workflows',
+    history: 'Historique',
+    csr: 'RSE',
+    companyCsv: 'Import CSV',
+    help: 'Aide',
+    aiPreferences: 'Préférences IA',
   },
   logout: {
     title: 'Confirmer la déconnexion',
