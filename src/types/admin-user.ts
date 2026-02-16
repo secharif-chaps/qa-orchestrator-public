@@ -2,9 +2,11 @@
  * Admin user management types
  */
 
+import type { PermissionTier } from "./team"
+
 /**
- * User list item (simplified - no permissions, no organization)
- * Used in the paginated user list for fast loading
+ * User list item for the paginated user list
+ * Includes permission tier computed from permissions
  */
 export interface AdminUserListItem {
   user_id: string
@@ -14,6 +16,7 @@ export interface AdminUserListItem {
   last_name: string | null
   status: 'active' | 'revoked'
   created_at: string
+  permission_tier: PermissionTier | null
 }
 
 /**

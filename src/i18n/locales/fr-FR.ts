@@ -1561,15 +1561,23 @@ export default {
         actions: 'Actions',
         status: 'Statut',
       },
-      status: {
-        active: 'Actif',
-      },
       actions: {
         changeOrganization: "Changer d'organisation",
         managePermissions: 'Gérer les permissions',
         enableUser: "Activer l'utilisateur",
         disableUser: "Désactiver l'utilisateur",
         resetPassword: 'Réinitialiser le mot de passe',
+      },
+      roles: {
+        reader: 'Lecteur',
+        writer: 'Éditeur',
+        manager: 'Manager',
+        admin: 'Admin',
+        custom: 'Personnalisé',
+      },
+      status: {
+        active: 'Actif',
+        revoked: 'Révoqué',
       },
       assignOrganization: {
         success: 'Organisation assignée avec succès !',
