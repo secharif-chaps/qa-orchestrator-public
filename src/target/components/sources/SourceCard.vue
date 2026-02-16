@@ -3,7 +3,7 @@
     :variant="variant"
     :domain="source.primaryDomain"
     :name="source.name"
-    :description="source.description?.[locale] || source.description?.en"
+    :description="source.description?.[shortLocale] || source.description?.en"
     :date="source.createdAt"
   >
     <template v-if="variant !== 'list' && variant !== 'minimal'" #status>
@@ -53,6 +53,7 @@ import type { Source } from '~/types/source';
 import { CollectorStatus } from '~/types/source';
 
 const { locale, t } = useI18n();
+const shortLocale = computed(() => locale.value.split('-')[0] as 'en' | 'fr');
 
 interface Props {
   source: Source;

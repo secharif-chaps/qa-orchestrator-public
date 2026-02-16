@@ -9,14 +9,17 @@ import type { Localized } from '~/types/localized';
 export function useLocalized() {
   const { locale } = useI18n();
 
+  // Map full locale codes (en-US, fr-FR) to short codes (en, fr) used in backend Localized objects
+  const shortLocale = computed(() => locale.value.split('-')[0] as keyof Localized);
+
   const getLocalizedString = (
     translation: MaybeRef<Localized | undefined>,
     defaultValue: string = '',
   ): ComputedRef<string> => {
     return computed(() => {
       const translationValue = unref(translation);
-      return translationValue && translationValue[locale.value]
-        ? translationValue[locale.value]
+      return translationValue && translationValue[shortLocale.value]
+        ? translationValue[shortLocale.value]
         : defaultValue;
     });
   };

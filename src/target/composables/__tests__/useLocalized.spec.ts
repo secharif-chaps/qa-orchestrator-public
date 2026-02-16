@@ -4,7 +4,7 @@ import { useLocalized } from '~/composables/useLocalized';
 import type { Localized } from '~/types/localized';
 
 // Create a mutable locale ref for testing
-const localeRef = ref('en');
+const localeRef = ref('en-US');
 
 // Mock vue-i18n
 vi.mock('vue-i18n', () => ({
@@ -15,10 +15,10 @@ vi.mock('vue-i18n', () => ({
 
 describe('useLocalized', () => {
   beforeEach(() => {
-    localeRef.value = 'en';
+    localeRef.value = 'en-US';
   });
 
-  it('returns English value when locale is en', () => {
+  it('returns English value when locale is en-US', () => {
     const { getLocalizedString } = useLocalized();
     const translation: Localized = { en: 'Hello', fr: 'Bonjour' };
 
@@ -49,7 +49,7 @@ describe('useLocalized', () => {
   });
 
   it('works with ref translations in French locale', () => {
-    localeRef.value = 'fr';
+    localeRef.value = 'fr-FR';
     const { getLocalizedString } = useLocalized();
     const translation = ref<Localized>({ en: 'Test', fr: 'Tester' });
 

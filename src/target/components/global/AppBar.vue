@@ -126,10 +126,10 @@ const { logout, userName } = useAuth();
 const { resetMercure } = useMercure();
 
 const toggleLocale = () => {
-  if (locale.value === 'en') {
-    setLocale('fr');
+  if (locale.value === 'en-US') {
+    setLocale('fr-FR');
   } else {
-    setLocale('en');
+    setLocale('en-US');
   }
 };
 

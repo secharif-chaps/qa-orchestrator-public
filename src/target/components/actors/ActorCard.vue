@@ -3,7 +3,7 @@
     :variant="variant"
     :domain="actor.actor.primaryDomain"
     :name="actor.actor.label"
-    :description="actor.explanations?.[locale] || actor.explanations?.en"
+    :description="actor.explanations?.[shortLocale] || actor.explanations?.en"
     :date="actor.actor.createdAt"
   >
     <template v-if="variant === 'detail'" #status>
@@ -80,6 +80,7 @@ import ActorStatusModal from '~/components/watchFiles/ActorStatusModal.vue';
 import { ActorStatus } from '~/types/actor';
 
 const { locale, t } = useI18n();
+const shortLocale = computed(() => locale.value.split('-')[0] as 'en' | 'fr');
 
 interface Props {
   actor: WatchFileActor;

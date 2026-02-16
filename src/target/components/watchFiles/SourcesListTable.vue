@@ -141,7 +141,7 @@
               <td class="px-4 py-3">
                 <span class="text-sm">
                   {{
-                    ($i18n.locale === 'fr'
+                    ($i18n.locale === 'fr-FR'
                       ? item.relevance?.fr
                       : item.relevance?.en) || ''
                   }}
