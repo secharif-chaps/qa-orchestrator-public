@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """
-Data migration script: Copy folders from mint_db to global_db.global_schema.
+Data migration script: Copy folder data from mint_db to global_db.global_schema.
+
+Migrates all folder-related tables:
+1. folders
+2. folder_items
+3. folder_shares (+ share_role enum)
+4. user_folder_favorites
 
 Usage (inside the global-service container):
     python scripts/migrate_folders.py
@@ -32,52 +38,99 @@ TARGET_DB_URL = os.getenv(
 
 BATCH_SIZE = 500
 TARGET_SCHEMA = "global_schema"
-TARGET_TABLE = f"{TARGET_SCHEMA}.folders"
 
-# Columns to migrate (same order for SELECT and INSERT)
-COLUMNS = [
-    "id",
-    "organization_id",
-    "owner_id",
-    "owner",
-    "name",
-    "color",
-    "icon",
-    "tags",
-    "is_deleted",
-    "is_orphaned",
-    "created_at",
-    "updated_at",
+# Table migration definitions: (source_table, target_table, columns)
+TABLES = [
+    {
+        "name": "folders",
+        "source": "folders",
+        "target": f"{TARGET_SCHEMA}.folders",
+        "columns": [
+            "id", "organization_id", "owner_id", "owner", "name",
+            "color", "icon", "tags", "is_deleted", "is_orphaned",
+            "created_at", "updated_at",
+        ],
+    },
+    {
+        "name": "folder_items",
+        "source": "folder_items",
+        "target": f"{TARGET_SCHEMA}.folder_items",
+        "columns": [
+            "id", "folder_id", "item_id", "item_type",
+            "position", "added_at", "owner",
+        ],
+    },
+    {
+        "name": "folder_shares",
+        "source": "folder_shares",
+        "target": f"{TARGET_SCHEMA}.folder_shares",
+        "columns": [
+            "id", "folder_id", "user_id", "user_username",
+            "role", "created_at",
+        ],
+    },
+    {
+        "name": "user_folder_favorites",
+        "source": "user_folder_favorites",
+        "target": f"{TARGET_SCHEMA}.user_folder_favorites",
+        "columns": [
+            "id", "user_id", "folder_id", "created_at",
+        ],
+    },
 ]
 
-COLUMNS_CSV = ", ".join(COLUMNS)
-PLACEHOLDERS = ", ".join(f":{col}" for col in COLUMNS)
 
+def migrate_table(source_engine, target_engine, table_def):
+    """Migrate a single table from source to target database."""
+    name = table_def["name"]
+    source_table = table_def["source"]
+    target_table = table_def["target"]
+    columns = table_def["columns"]
 
-def migrate_folders():
-    """Copy all folders from mint_db.public.folders to global_db.global_schema.folders."""
-    source_engine = create_engine(SOURCE_DB_URL)
-    target_engine = create_engine(TARGET_DB_URL)
+    columns_csv = ", ".join(columns)
+    placeholders = ", ".join(f":{col}" for col in columns)
+
+    print(f"\n{'='*60}")
+    print(f"Migrating: {name}")
+    print(f"  Source: mint_db.public.{source_table}")
+    print(f"  Target: global_db.{target_table}")
+
+    # Check if source table exists
+    with source_engine.connect() as src:
+        exists = src.execute(text(
+            "SELECT EXISTS ("
+            "  SELECT FROM information_schema.tables "
+            "  WHERE table_schema = 'public' AND table_name = :table_name"
+            ")"
+        ), {"table_name": source_table}).scalar()
+
+        if not exists:
+            print(f"  SKIPPED: Source table '{source_table}' does not exist")
+            return 0
 
     # Count source rows
     with source_engine.connect() as src:
-        source_count = src.execute(text("SELECT COUNT(*) FROM folders")).scalar()
-        print(f"Source (mint_db.folders): {source_count} rows")
+        source_count = src.execute(
+            text(f"SELECT COUNT(*) FROM {source_table}")
+        ).scalar()
+        print(f"  Source rows: {source_count}")
 
     if source_count == 0:
-        print("No folders to migrate.")
-        return
+        print(f"  No rows to migrate.")
+        return 0
 
     # Read all rows from source
     with source_engine.connect() as src:
-        rows = src.execute(text(f"SELECT {COLUMNS_CSV} FROM folders")).mappings().all()
+        rows = src.execute(
+            text(f"SELECT {columns_csv} FROM {source_table}")
+        ).mappings().all()
 
     # Insert into target in batches
     inserted = 0
     skipped = 0
     insert_sql = text(
-        f"INSERT INTO {TARGET_TABLE} ({COLUMNS_CSV}) "
-        f"VALUES ({PLACEHOLDERS}) "
+        f"INSERT INTO {target_table} ({columns_csv}) "
+        f"VALUES ({placeholders}) "
         f"ON CONFLICT (id) DO NOTHING"
     )
 
@@ -88,26 +141,46 @@ def migrate_folders():
             batch_inserted = result.rowcount
             inserted += batch_inserted
             skipped += len(batch) - batch_inserted
-            print(f"  Batch {i // BATCH_SIZE + 1}: {batch_inserted}/{len(batch)} inserted")
+            print(f"    Batch {i // BATCH_SIZE + 1}: {batch_inserted}/{len(batch)} inserted")
         tgt.commit()
 
     # Verify target count
     with target_engine.connect() as tgt:
         target_count = tgt.execute(
-            text(f"SELECT COUNT(*) FROM {TARGET_TABLE}")
+            text(f"SELECT COUNT(*) FROM {target_table}")
         ).scalar()
 
-    print(f"\nMigration complete:")
-    print(f"  Source count:   {source_count}")
-    print(f"  Inserted:       {inserted}")
-    print(f"  Skipped (dups): {skipped}")
-    print(f"  Target count:   {target_count}")
+    print(f"  Results:")
+    print(f"    Inserted:       {inserted}")
+    print(f"    Skipped (dups): {skipped}")
+    print(f"    Target count:   {target_count}")
 
-    if target_count >= source_count:
-        print("  Status: OK")
-    else:
-        print(f"  WARNING: Target ({target_count}) < Source ({source_count})")
+    status = "OK" if target_count >= source_count else f"WARNING: Target ({target_count}) < Source ({source_count})"
+    print(f"    Status: {status}")
+
+    return inserted
+
+
+def migrate_all():
+    """Migrate all folder-related tables from mint_db to global_db."""
+    print("=" * 60)
+    print("Folder Data Migration: mint_db → global_db.global_schema")
+    print("=" * 60)
+
+    source_engine = create_engine(SOURCE_DB_URL)
+    target_engine = create_engine(TARGET_DB_URL)
+
+    total_inserted = 0
+
+    # Migrate tables in order (respecting FK dependencies)
+    for table_def in TABLES:
+        inserted = migrate_table(source_engine, target_engine, table_def)
+        total_inserted += inserted
+
+    print(f"\n{'='*60}")
+    print(f"Migration complete. Total rows inserted: {total_inserted}")
+    print("=" * 60)
 
 
 if __name__ == "__main__":
-    migrate_folders()
+    migrate_all()
