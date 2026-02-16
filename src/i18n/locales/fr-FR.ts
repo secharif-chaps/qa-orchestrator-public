@@ -1558,6 +1558,7 @@ export default {
         name: 'Nom',
         username: "Nom d'utilisateur",
         email: 'E-mail',
+        organization: 'Organisation',
         actions: 'Actions',
         status: 'Statut',
       },

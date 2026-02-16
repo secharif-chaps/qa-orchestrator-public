@@ -42,6 +42,16 @@
       </td>
     </template>
 
+    <!-- Organization column -->
+    <template #cell(organization)="{ item }">
+      <td class="px-4 py-3">
+        <div class="text-sm">
+          <template v-if="item.organization_name">{{ item.organization_name }}</template>
+          <span v-else class="text-secondary italic">—</span>
+        </div>
+      </td>
+    </template>
+
     <!-- Status column -->
     <template #cell(status)="{ item }">
       <td class="px-4 py-3">
@@ -140,6 +150,7 @@ const fields = computed(() => [
   { key: 'email', label: t('admin.users.table.email', 'Email') },
   { key: 'name', label: t('admin.users.table.name', 'Name') },
   { key: 'permission_tier', label: t('admin.users.table.role', 'Role') },
+  { key: 'organization', label: t('admin.users.table.organization', 'Organization') },
   { key: 'status', label: t('admin.users.table.status', 'Status') },
   { key: 'actions', label: t('admin.users.table.actions', 'Actions'), class: 'text-right' },
 ])
