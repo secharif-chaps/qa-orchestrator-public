@@ -14,10 +14,10 @@ import pytest
 class TestGetCurrentOrganization:
     """Tests for GET /current endpoint."""
 
-    def test_get_current_organization_structure(self, client):
+    async def test_get_current_organization_structure(self, client):
         """Test endpoint returns expected structure."""
         # The conftest provides a mocked user with organization context
-        response = client.get("/api/current")
+        response = await client.get("/api/current")
 
         # Should return 200 with the expected structure or 422 if validation fails
         assert response.status_code in [200, 422]
@@ -37,11 +37,11 @@ class TestGetOrganizationActivitiesIntegration:
     Run with: pytest --run-integration
     """
 
-    def test_activities_endpoint_exists(self, client):
+    async def test_activities_endpoint_exists(self, client):
         """Test activities endpoint is registered."""
         # This will attempt to call the endpoint
         # With mocked auth it should at least reach the endpoint
-        response = client.get("/api/activities")
+        response = await client.get("/api/activities")
 
         # We expect either 200 (success) or 503 (service unavailable)
         # or 500 (missing backend) - all are valid as they prove endpoint exists
