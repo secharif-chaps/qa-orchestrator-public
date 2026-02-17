@@ -121,15 +121,15 @@ import logo_chaps from '~/assets/images/CHAPSVISION_LOGO_ChapsVision_logo_icone_
 import { useAuth } from '~/composables/useAuth';
 import { useMercure } from '~/composables/useMercure';
 
-const { locale, setLocale } = useI18n();
+const { locale } = useI18n();
 const { logout, userName } = useAuth();
 const { resetMercure } = useMercure();
 
 const toggleLocale = () => {
   if (locale.value === 'en-US') {
-    setLocale('fr-FR');
+    locale.value = 'fr-FR';
   } else {
-    setLocale('en-US');
+    locale.value = 'en-US';
   }
 };
 
