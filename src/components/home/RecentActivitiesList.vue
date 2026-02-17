@@ -20,10 +20,18 @@
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="activities.length === 0" class="flex flex-col items-center gap-4 py-8">
-      <Badge variant="secondary" icon="fa fa-clock-rotate-left" size="lg" />
+    <div v-else-if="activities.length === 0" class="py-8 text-center">
+      <div
+        class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800"
+      >
+        <i class="fa fa-clock-rotate-left text-2xl text-gray-400"></i>
+      </div>
       <p class="text-sm text-gray-500 dark:text-gray-400">
-        {{ $t('home.recentActivities.noRecentActivities', 'No recent activities') }}
+        {{
+          hasUserProjects
+            ? $t('home.recentActivities.noTeamActivities')
+            : $t('home.recentActivities.startCreating')
+        }}
       </p>
     </div>
 
@@ -35,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { Alert, Badge } from '@owlint/feathers-vue'
+import { Alert } from '@owlint/feathers-vue'
 import Card from '@/components/ui/Card.vue'
 import RecentActivityItem from './RecentActivityItem.vue'
 import type { Activity } from '@/types/organization'
@@ -44,7 +52,10 @@ interface Props {
   activities: Activity[]
   isLoading?: boolean
   error?: Error | null
+  hasUserProjects?: boolean
 }
 
-defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+  hasUserProjects: false,
+})
 </script>
