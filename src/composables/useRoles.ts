@@ -28,7 +28,8 @@ const ROLES: Record<RoleId, Role> = {
   reader: {
     id: 'reader',
     name: 'Reader',
-    description: 'View-only access to folders and companies',
+    description:
+      'Read-only access to the organization\'s folders and company profiles. Can browse and consult all shared content.',
     permissions: ['organization.read'],
     color: 'primary',
     icon: 'fa-eye',
@@ -36,7 +37,8 @@ const ROLES: Record<RoleId, Role> = {
   writer: {
     id: 'writer',
     name: 'Writer',
-    description: 'Create and manage folders and companies',
+    description:
+      'Can create folders, add company profiles, search for companies and manage their own content within the organization.',
     permissions: ['organization.read', 'organization.write', 'company.create'],
     color: 'secondary',
     icon: 'fa-pencil',
@@ -44,20 +46,17 @@ const ROLES: Record<RoleId, Role> = {
   manager: {
     id: 'manager',
     name: 'Manager',
-    description: 'Writer permissions plus team management',
-    permissions: [
-      'organization.read',
-      'organization.write',
-      'organization.manage',
-      'company.create',
-    ],
+    description:
+      'All Writer permissions plus team management: can add or remove members and configure their permissions within the organization.',
+    permissions: ['organization.read', 'organization.write', 'organization.manage', 'company.create'],
     color: 'secondary',
     icon: 'fa-users-cog',
   },
   admin: {
     id: 'admin',
     name: 'Admin',
-    description: 'Complete administrative access',
+    description:
+      'Full administrative control over all organizations, users and system settings. Includes user creation and organization assignment. Assign with caution.',
     permissions: [
       'admin.organizations',
       'organization.read',
