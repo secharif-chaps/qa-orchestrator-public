@@ -1176,19 +1176,19 @@ export default {
       roles: {
         reader: {
           name: 'Lecteur',
-          description: 'Accès en lecture seule aux dossiers et entreprises',
+          description: 'Consultation uniquement : accès en lecture aux dossiers et fiches entreprises de l\'organisation.',
         },
         writer: {
           name: 'Rédacteur',
-          description: 'Créer et gérer les dossiers et entreprises',
+          description: 'Création et gestion : peut créer des dossiers, ajouter des fiches entreprises et gérer son propre contenu.',
         },
         manager: {
           name: 'Manager',
-          description: "Permissions de rédacteur plus gestion d'équipe",
+          description: 'Responsable d\'équipe : droits Rédacteur + gestion des membres et de leurs permissions au sein de l\'organisation.',
         },
         admin: {
           name: 'Administrateur',
-          description: 'Accès administrateur complet',
+          description: 'Accès administrateur complet : contrôle total sur toutes les organisations, utilisateurs et configurations système. À attribuer avec précaution.',
         },
       },
     },
@@ -2051,6 +2051,7 @@ export default {
       singular: "≈ 1 création d'entreprise",
       plural: "≈ {count} créations d'entreprise",
     },
+    disabled: 'Désactivé',
     status: {
       disabled: 'Désactivé',
       noTokens: 'Aucun crédit',
@@ -2082,8 +2083,20 @@ export default {
   },
   featureFlags: {
     globalFeatures: 'Fonctionnalités globales',
-    description:
-      'Capacités supplémentaires qui améliorent les modules principaux. Ces fonctionnalités sont désactivées par défaut.',
+    description: 'Capacités supplémentaires qui améliorent les modules principaux. Ces fonctionnalités sont désactivées par défaut.',
+    disabled: 'Désactivé',
+    translation: {
+      name: 'Traduction',
+      description: 'Traduire les données de l’entreprise vers d’autres langues'
+    },
+    discover: {
+      name: 'Discover',
+      description: 'Accéder au tableau de bord externe Discover'
+    },
+    pappers: {
+      name: 'Pappers',
+      description: 'Récupérer les données d’entreprise via l’API Pappers'
+    }
   },
   dataSources: {
     title: 'Sources de données',
