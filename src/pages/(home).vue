@@ -25,6 +25,7 @@
           :activities="recentActivities"
           :is-loading="isActivitiesLoading"
           :error="activitiesError"
+          :has-user-projects="!!recentCompaniesData?.length"
         />
       </div>
 

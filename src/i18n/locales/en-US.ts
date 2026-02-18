@@ -2299,13 +2299,15 @@ export default {
       },
     },
     recentActivities: {
-      title: 'Recent Activities',
+      title: 'Team Activities',
       by: 'by {username}',
       actions: {
         createdCompany: 'created a new Company Card about',
         createdFolder: 'created the Folder',
       },
       noRecentActivities: 'No recent activities',
+      noTeamActivities: 'No activities from your colleagues yet',
+      startCreating: 'Start by creating your first company',
       error: {
         title: 'Unable to load recent activities',
         description: 'There was a problem loading organization activities. Please try again later.',

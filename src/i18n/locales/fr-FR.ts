@@ -2516,13 +2516,15 @@ export default {
       },
     },
     recentActivities: {
-      title: 'Activités récentes',
+      title: "Activités de l'équipe",
       by: 'par {username}',
       actions: {
         createdCompany: 'a créé une nouvelle Carte Entreprise pour',
         createdFolder: 'a créé le Dossier',
       },
       noRecentActivities: 'Aucune activité récente',
+      noTeamActivities: 'Aucune activité de vos collègues pour le moment',
+      startCreating: 'Commencez par créer votre première entreprise',
       error: {
         title: 'Impossible de charger les activités récentes',
         description:
