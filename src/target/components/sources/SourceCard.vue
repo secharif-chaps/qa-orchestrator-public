@@ -49,11 +49,13 @@ import { useI18n } from 'vue-i18n';
 import ItemCard from '~/components/global/ItemCard.vue';
 import UrlDomain from '~/components/global/UrlDomain.vue';
 import SourceCardDrawer from '~/components/sources/SourceCardDrawer.vue';
+import { useLocalized } from '~/composables/useLocalized';
 import type { Source } from '~/types/source';
 import { CollectorStatus } from '~/types/source';
 
-const { locale, t } = useI18n();
-const shortLocale = computed(() => locale.value.split('-')[0] as 'en' | 'fr');
+const { t } = useI18n();
+
+const {shortLocale} = useLocalized()
 
 interface Props {
   source: Source;

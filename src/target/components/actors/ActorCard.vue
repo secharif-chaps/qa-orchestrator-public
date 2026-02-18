@@ -69,18 +69,19 @@
 </template>
 
 <script setup lang="ts">
-import type { WatchFileActor } from '~/types/watchFile';
-import UrlDomain from '~/components/global/UrlDomain.vue';
-import ItemCard from '~/components/global/ItemCard.vue';
+import { Button, Switch, Tag } from '@owlint/feathers-vue';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Tag, Button, Switch } from '@owlint/feathers-vue';
 import ActorDetailsModal from '~/components/actors/ActorDetailsModal.vue';
+import ItemCard from '~/components/global/ItemCard.vue';
+import UrlDomain from '~/components/global/UrlDomain.vue';
 import ActorStatusModal from '~/components/watchFiles/ActorStatusModal.vue';
 import { ActorStatus } from '~/types/actor';
+import type { Localized } from '~/types/localized';
+import type { WatchFileActor } from '~/types/watchFile';
 
 const { locale, t } = useI18n();
-const shortLocale = computed(() => locale.value.split('-')[0] as 'en' | 'fr');
+const shortLocale = computed(() => locale.value.split('-')[0] as keyof Localized);
 
 interface Props {
   actor: WatchFileActor;

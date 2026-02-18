@@ -26,5 +26,6 @@ export function useLocalized() {
 
   return {
     getLocalizedString,
+    shortLocale
   };
 }
