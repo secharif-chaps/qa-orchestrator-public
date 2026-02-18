@@ -1,19 +1,19 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
+import { WATCH_FILE_QUERY_KEYS } from '@target/api/queries/watchFile'
+import {
+    changeWatchFileStatus,
+    createWatchFile,
+    deleteWatchFile,
+    removeWatchFileActor,
+    toggleWatchFileFavorite,
+    updateWatchFile,
+} from '@target/api/watchFile'
+import { useApi } from '@target/composables/useApi'
+import { useToast } from '@target/composables/useToast'
+import { useWatchFileStore } from '@target/stores/watchFile'
+import type { WatchFile } from '@target/types/watchFile'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { WATCH_FILE_QUERY_KEYS } from '~/api/queries/watchFile'
-import {
-  changeWatchFileStatus,
-  createWatchFile,
-  deleteWatchFile,
-  removeWatchFileActor,
-  toggleWatchFileFavorite,
-  updateWatchFile,
-} from '~/api/watchFile'
-import { useApi } from '~/composables/useApi'
-import { useToast } from '~/composables/useToast'
-import { useWatchFileStore } from '~/stores/watchFile'
-import type { WatchFile } from '~/types/watchFile'
 
 interface CallbackMutations<T> {
   onSuccess?: (data: T) => void

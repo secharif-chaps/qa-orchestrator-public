@@ -1,18 +1,18 @@
 import { useMutation, useQueryCache } from '@pinia/colada'
-import { useI18n } from 'vue-i18n'
-import { useToast } from '~/composables/useToast'
-import { useWatchFileDocumentsStore } from '~/stores/watchFileDocuments'
+import { batchDocumentValidation, documentValidation, markDocumentAsSeen } from '@target/api/document'
+import { DOCUMENT_QUERY_KEYS } from '@target/api/queries/document'
+import { useToast } from '@target/composables/useToast'
+import { useWatchFileDocumentsStore } from '@target/stores/watchFileDocuments'
 import type {
-  Document,
-  DocumentFacets,
-  DocumentValidationResponse,
-  BatchValidationResponse,
-  ManualValidationStatus,
-} from '~/types/document'
-import { DocumentValidationAction } from '~/types/document'
-import type { User } from '~/types/user'
-import { markDocumentAsSeen, documentValidation, batchDocumentValidation } from '~/api/document'
-import { DOCUMENT_QUERY_KEYS } from '~/api/queries/document'
+    BatchValidationResponse,
+    Document,
+    DocumentFacets,
+    DocumentValidationResponse,
+    ManualValidationStatus,
+} from '@target/types/document'
+import { DocumentValidationAction } from '@target/types/document'
+import type { User } from '@target/types/user'
+import { useI18n } from 'vue-i18n'
 
 interface CallbackMutations<T> {
   onSuccess?: (data: T) => void

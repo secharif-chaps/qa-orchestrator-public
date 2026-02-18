@@ -1,6 +1,6 @@
+import { config } from '@target/config'
 import { ofetch } from 'ofetch'
 import { useI18n } from 'vue-i18n'
-import { config } from '~/config'
 import { useAuth } from './useAuth'
 
 import {
@@ -9,7 +9,7 @@ import {
   ApiUnauthorizedError,
   ApiValidationError,
   type ValidationError,
-} from '~/types/jsonld'
+} from '@target/types/jsonld'
 
 export function useAppFetch() {
   const baseURL = config.apiBaseUrl

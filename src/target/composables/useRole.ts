@@ -1,5 +1,5 @@
+import { WATCH_FILE_USER_ROLE, type WatchFileUserRole } from '@target/types/watchFileUser'
 import { useI18n } from 'vue-i18n'
-import { WATCH_FILE_USER_ROLE, type WatchFileUserRole } from '~/types/watchFileUser'
 
 export function useRole() {
   const { t } = useI18n()

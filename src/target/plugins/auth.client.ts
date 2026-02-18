@@ -1,5 +1,5 @@
+import { useAuth } from '@target/composables/useAuth'
 import type { App } from 'vue'
-import { useAuth } from '~/composables/useAuth'
 
 export default {
   install: async (_app: App) => {

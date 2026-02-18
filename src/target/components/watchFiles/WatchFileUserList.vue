@@ -77,14 +77,14 @@
 
 <script setup lang="ts">
 import { Badge, Button, ORadio, Select, SelectItem } from '@owlint/feathers-vue'
+import { useRemoveWatchFileUser, useUpdateWatchFileUserRole } from '@target/api/mutations/watchFileUser'
+import { useConfirmModal } from '@target/composables/useConfirmModal'
+import { useMotionPreference } from '@target/composables/useMotionPreference'
+import { useRole } from '@target/composables/useRole'
+import type { WatchFileUser, WatchFileUserRole } from '@target/types/watchFileUser'
+import { WATCH_FILE_USER_ROLE } from '@target/types/watchFileUser'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRole } from '~/composables/useRole'
-import { useRemoveWatchFileUser, useUpdateWatchFileUserRole } from '~/api/mutations/watchFileUser'
-import { useConfirmModal } from '~/composables/useConfirmModal'
-import { useMotionPreference } from '~/composables/useMotionPreference'
-import type { WatchFileUser, WatchFileUserRole } from '~/types/watchFileUser'
-import { WATCH_FILE_USER_ROLE } from '~/types/watchFileUser'
 
 const { t } = useI18n()
 const { roleLabel } = useRole()

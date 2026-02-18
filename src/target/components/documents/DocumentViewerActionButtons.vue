@@ -7,10 +7,10 @@
 </template>
 
 <script setup lang="ts">
+import DocumentValidationButtons from '@target/components/documents/DocumentValidationButtons.vue'
+import { useWatchFileStore } from '@target/stores/watchFile'
+import type { Document } from '@target/types/document'
 import { storeToRefs } from 'pinia'
-import DocumentValidationButtons from '~/components/documents/DocumentValidationButtons.vue'
-import { useWatchFileStore } from '~/stores/watchFile'
-import type { Document } from '~/types/document'
 
 interface Props {
   document?: Document

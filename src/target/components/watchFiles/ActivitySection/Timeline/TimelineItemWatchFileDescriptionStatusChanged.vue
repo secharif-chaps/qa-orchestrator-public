@@ -18,8 +18,8 @@
 
 <script setup lang="ts">
 import { Tag } from '@owlint/feathers-vue'
-import type { WatchFileStatus } from '~/types/watchFile'
-import { WATCH_FILE_STATUS, WATCH_FILE_STATUS_ICONS } from '~/types/watchFile'
+import type { WatchFileStatus } from '@target/types/watchFile'
+import { WATCH_FILE_STATUS, WATCH_FILE_STATUS_ICONS } from '@target/types/watchFile'
 
 interface Props {
   userName: string

@@ -5,8 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { ONotification } from '@owlint/feathers-vue'
-import { useToast } from '~/composables/useToast'
+import { ONotification } from '@owlint/feathers-vue';
+import { useToast } from '@target/composables/useToast';
 
 const { toasts } = useToast()
 </script>

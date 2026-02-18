@@ -38,7 +38,7 @@ describe('useTypingIndicatorPhrases', () => {
   })
 
   const importComposable = async () => {
-    const module = await import('~/composables/useTypingIndicatorPhrases')
+    const module = await import('@target/composables/useTypingIndicatorPhrases')
     return module.useTypingIndicatorPhrases
   }
 

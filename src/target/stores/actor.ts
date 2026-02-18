@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 
 import type { SortOrder } from '@owlint/feathers-vue'
-import { ActorStatus } from '~/types/actor'
+import { ActorStatus } from '@target/types/actor'
 
 export const useActorStore = defineStore('actor', () => {
   const status = ref<ActorStatus>(ActorStatus.INACTIVE) // Default to inactive

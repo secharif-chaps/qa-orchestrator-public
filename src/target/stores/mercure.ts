@@ -1,6 +1,6 @@
-import { computed, ref } from 'vue'
+import type { MercureSubscription } from '@target/composables/useMercure'
 import { defineStore } from 'pinia'
-import type { MercureSubscription } from '~/composables/useMercure'
+import { computed, ref } from 'vue'
 
 export type ConnectionStatus = 'connected' | 'disconnected' | 'reconnecting'
 

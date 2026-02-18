@@ -6,14 +6,14 @@
 
 <script setup lang="ts">
 import { Tab, type NavigationTab } from '@owlint/feathers-vue'
+import { useWatchFileStore } from '@target/stores/watchFile'
+import { RouteNames } from '@target/types/route-names'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { useWatchFileStore } from '~/stores/watchFile'
-import { RouteNames } from '~/types/route-names'
 
 /* Temporary, until collect is fixed */
-import { useAuth } from '~/composables/useAuth'
+import { useAuth } from '@target/composables/useAuth'
 const { isInternalUser } = useAuth()
 /* Temporary, until collect is fixed */
 

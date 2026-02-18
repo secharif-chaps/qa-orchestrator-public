@@ -61,10 +61,10 @@
 
 <script lang="ts" setup>
 import { Button, DateRangePicker, Label, ORadio, Select, SelectItem } from '@owlint/feathers-vue'
+import { DatesPeriod, FilterDates } from '@target/types/filter'
 import type { DateRange } from 'reka-ui'
 import { computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { DatesPeriod, FilterDates } from '~/types/filter'
 
 const { t } = useI18n()
 

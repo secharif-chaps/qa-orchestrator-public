@@ -1,6 +1,6 @@
-import { useApi } from '~/composables/useApi'
-import type { JsonLdCollection } from '~/types/jsonld'
-import type { User } from '~/types/user'
+import { useApi } from '@target/composables/useApi'
+import type { JsonLdCollection } from '@target/types/jsonld'
+import type { User } from '@target/types/user'
 
 export const searchUsers = async (
   query: string,

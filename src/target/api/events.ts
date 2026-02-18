@@ -1,10 +1,10 @@
+import { useApi } from '@target/composables/useApi'
+import { useDate } from '@target/composables/useDate'
+import type { AnalysisFacets } from '@target/types/facet'
+import { DatesPeriod } from '@target/types/filter'
+import type { JsonLdCollection } from '@target/types/jsonld'
+import type { WatchFileGraphEvent } from '@target/types/watchFileEvent'
 import type { LocationQueryRaw } from 'vue-router'
-import { useApi } from '~/composables/useApi'
-import { useDate } from '~/composables/useDate'
-import type { AnalysisFacets } from '~/types/facet'
-import { DatesPeriod } from '~/types/filter'
-import type { JsonLdCollection } from '~/types/jsonld'
-import type { WatchFileGraphEvent } from '~/types/watchFileEvent'
 
 const ROOT_URL = '/watch_files'
 

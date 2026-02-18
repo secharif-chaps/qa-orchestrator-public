@@ -29,15 +29,15 @@
 <script setup lang="ts">
 import { Icon } from '@owlint/feathers-vue'
 import { useInfiniteQuery } from '@pinia/colada'
+import { getWatchFileTimeline } from '@target/api/watchFile'
+import HistoryTimelineEventDetail from '@target/components/watchFiles/ActivitySection/Timeline/HistoryTimelineEventDetail.vue'
+import Timeline from '@target/components/watchFiles/ActivitySection/Timeline/Timeline.vue'
+import { useActivityDescription } from '@target/composables/useActivityDescription'
+import type { TimelineActivity, TimelineDay, WatchFileActivityDescription } from '@target/types/timeline'
+import type { GroupedWatchFileActivityDto, WatchFileActivity } from '@target/types/watchFile'
+import { WatchFileEventType } from '@target/types/watchFile'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getWatchFileTimeline } from '~/api/watchFile'
-import HistoryTimelineEventDetail from '~/components/watchFiles/ActivitySection/Timeline/HistoryTimelineEventDetail.vue'
-import Timeline from '~/components/watchFiles/ActivitySection/Timeline/Timeline.vue'
-import { useActivityDescription } from '~/composables/useActivityDescription'
-import type { TimelineActivity, TimelineDay, WatchFileActivityDescription } from '~/types/timeline'
-import type { GroupedWatchFileActivityDto, WatchFileActivity } from '~/types/watchFile'
-import { WatchFileEventType } from '~/types/watchFile'
 
 interface Props {
   watchFileId?: string

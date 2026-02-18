@@ -37,16 +37,16 @@
 <script setup lang="ts">
 import { Toggle } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
+import { getEventsGraphQuery } from '@target/api/queries/events'
+import AnalysisFilters from '@target/components/analysis/AnalysisFilters.vue'
+import { useWatchFileAnalysisStore } from '@target/stores/watchFileAnalysis'
+import { useWatchFileFiltersStore } from '@target/stores/watchFileFilters'
+import type { AnalysisFacets } from '@target/types/facet'
+import { RouteNames } from '@target/types/route-names'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterView, useRoute, useRouter } from 'vue-router'
-import { getEventsGraphQuery } from '~/api/queries/events'
-import AnalysisFilters from '~/components/analysis/AnalysisFilters.vue'
-import { useWatchFileAnalysisStore } from '~/stores/watchFileAnalysis'
-import { useWatchFileFiltersStore } from '~/stores/watchFileFilters'
-import type { AnalysisFacets } from '~/types/facet'
-import { RouteNames } from '~/types/route-names'
 
 definePage({
   meta: {

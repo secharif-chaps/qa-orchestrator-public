@@ -1,7 +1,7 @@
 import type { SortOrder } from '@owlint/feathers-vue'
+import type { WatchFileFilters } from '@target/types/watchFile'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { WatchFileFilters } from '~/types/watchFile'
 
 export const useWatchFileStore = defineStore('watchFile', () => {
   // UI state management only - no server state or API calls

@@ -1,15 +1,15 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
-import { useI18n } from 'vue-i18n'
-import { WATCH_FILE_USER_QUERY_KEYS } from '~/api/queries/watchFileUser'
+import { WATCH_FILE_USER_QUERY_KEYS } from '@target/api/queries/watchFileUser'
 import {
-  addWatchFileUsers,
-  removeWatchFileUser,
-  updateWatchFileUserRole,
-} from '~/api/watchFileUser'
-import { useRole } from '~/composables/useRole'
-import { useToast } from '~/composables/useToast'
-import type { User } from '~/types/user'
-import type { WatchFileUser, WatchFileUserRole } from '~/types/watchFileUser'
+    addWatchFileUsers,
+    removeWatchFileUser,
+    updateWatchFileUserRole,
+} from '@target/api/watchFileUser'
+import { useRole } from '@target/composables/useRole'
+import { useToast } from '@target/composables/useToast'
+import type { User } from '@target/types/user'
+import type { WatchFileUser, WatchFileUserRole } from '@target/types/watchFileUser'
+import { useI18n } from 'vue-i18n'
 
 interface CallbackMutations<T> {
   onSuccess?: (data: T) => void

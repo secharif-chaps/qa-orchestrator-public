@@ -65,14 +65,14 @@
 <script setup lang="ts">
 import { Icon, Searchbar, Select, SelectItem } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
+import { getActorTypesQuery } from '@target/api/queries/actor'
+import { useActorStore } from '@target/stores/actor'
+import type { ActorType } from '@target/types/actor'
+import { ActorStatus } from '@target/types/actor'
+import type { WatchFileActor } from '@target/types/watchFile'
 import { useDebounceFn } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
-import { getActorTypesQuery } from '~/api/queries/actor'
-import { useActorStore } from '~/stores/actor'
-import type { ActorType } from '~/types/actor'
-import { ActorStatus } from '~/types/actor'
-import type { WatchFileActor } from '~/types/watchFile'
 import ActorsGrid from './ActorsGrid.vue'
 
 interface Props {

@@ -1,8 +1,8 @@
+import { useMercureStore } from '@target/stores/mercure'
 import { useOnline } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useMercureStore } from '~/stores/mercure'
 import { useAppFetch } from './useAppFetch'
 import { useToast } from './useToast'
 

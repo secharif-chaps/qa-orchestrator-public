@@ -1,11 +1,11 @@
+import { type Message, MessageRole, MessageStatus } from '@target/types/conversation'
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { type Message, MessageRole, MessageStatus } from '~/types/conversation'
 import CollapsibleSystemMessage from '../CollapsibleSystemMessage.vue'
 
 // Mock useMarkdown
-vi.mock('~/composables/useMarkdown', () => ({
+vi.mock('@target/composables/useMarkdown', () => ({
   useMarkdown: () => ({
     toHtml: (content: { value: string }) => ({
       value: content.value || '',
@@ -14,7 +14,7 @@ vi.mock('~/composables/useMarkdown', () => ({
 }))
 
 // Mock useStringUtils
-vi.mock('~/composables/useStringUtils', () => ({
+vi.mock('@target/composables/useStringUtils', () => ({
   useStringUtils: () => ({
     unescapeString: (str: string) => str,
   }),

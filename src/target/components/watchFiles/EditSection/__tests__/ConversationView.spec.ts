@@ -1,11 +1,11 @@
+import ChatMessageComponent from '@target/components/chat/ChatMessage.vue'
+import SystemMessagesSection from '@target/components/chat/SystemMessagesSection.vue'
+import { useChatStore } from '@target/stores/chat'
+import { useConversationStore } from '@target/stores/conversation'
+import { MessageRole, MessageStatus, type Message } from '@target/types/conversation'
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import ChatMessageComponent from '~/components/chat/ChatMessage.vue'
-import SystemMessagesSection from '~/components/chat/SystemMessagesSection.vue'
-import { useChatStore } from '~/stores/chat'
-import { useConversationStore } from '~/stores/conversation'
-import { MessageRole, MessageStatus, type Message } from '~/types/conversation'
 import ConversationView from '../ConversationView.vue'
 
 // Mock vue-i18n
@@ -17,7 +17,7 @@ vi.mock('vue-i18n', () => ({
 }))
 
 // Mock useAuth (uses #imports which Vitest can't resolve)
-vi.mock('~/composables/useAuth', () => ({
+vi.mock('@target/composables/useAuth', () => ({
   useAuth: () => ({
     isAuthenticated: { value: true },
     isAuthProviderReady: { value: true },
@@ -27,7 +27,7 @@ vi.mock('~/composables/useAuth', () => ({
 }))
 
 // Mock useApi
-vi.mock('~/composables/useApi', () => ({
+vi.mock('@target/composables/useApi', () => ({
   useApi: () => ({
     get: vi.fn(),
     post: vi.fn(),
@@ -37,12 +37,12 @@ vi.mock('~/composables/useApi', () => ({
 }))
 
 // Mock API functions
-vi.mock('~/api/watchFile', () => ({
+vi.mock('@target/api/watchFile', () => ({
   retryMessage: vi.fn(),
 }))
 
 // Mock useToast
-vi.mock('~/composables/useToast', () => ({
+vi.mock('@target/composables/useToast', () => ({
   useToast: () => ({
     error: vi.fn(),
     success: vi.fn(),
@@ -51,28 +51,28 @@ vi.mock('~/composables/useToast', () => ({
 }))
 
 // Mock useTimeDisplay
-vi.mock('~/composables/useTimeDisplay', () => ({
+vi.mock('@target/composables/useTimeDisplay', () => ({
   useTimeDisplay: () => ({
     formatTime: () => '2 hours ago',
   }),
 }))
 
 // Mock useMarkdown
-vi.mock('~/composables/useMarkdown', () => ({
+vi.mock('@target/composables/useMarkdown', () => ({
   useMarkdown: () => ({
     toHtml: () => ({ value: '' }),
   }),
 }))
 
 // Mock useStringUtils
-vi.mock('~/composables/useStringUtils', () => ({
+vi.mock('@target/composables/useStringUtils', () => ({
   useStringUtils: () => ({
     unescapeString: (str: string) => str,
   }),
 }))
 
 // Mock useChatDateDisplay
-vi.mock('~/composables/useChatDateDisplay', () => ({
+vi.mock('@target/composables/useChatDateDisplay', () => ({
   useChatDateDisplay: () => ({
     getContextualDate: () => 'Today',
     getFullDateTime: () => 'January 1, 2026 at 12:00 PM',

@@ -1,7 +1,7 @@
 import type { SortOrder } from '@owlint/feathers-vue'
+import type { Source } from '@target/types/source'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import type { Source } from '~/types/source'
 
 export const useSourcesStore = defineStore('sources', () => {
   const sources = ref<Source[]>([])

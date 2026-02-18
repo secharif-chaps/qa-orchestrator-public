@@ -1,8 +1,8 @@
+import { useWatchFileAnalysisStore } from '@target/stores/watchFileAnalysis'
+import { RouteNames } from '@target/types/route-names'
+import { storeToRefs } from 'pinia'
 import type { NavigationGuardWithThis } from 'vue-router'
 import { useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { useWatchFileAnalysisStore } from '~/stores/watchFileAnalysis'
-import { RouteNames } from '~/types/route-names'
 
 const radarMiddleware: NavigationGuardWithThis<undefined> = (to) => {
   const router = useRouter()

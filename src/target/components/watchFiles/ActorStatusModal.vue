@@ -112,24 +112,24 @@
 
 <script setup lang="ts">
 import {
-  Button,
-  Checkbox,
-  HeaderCell,
-  Modal,
-  OPopper,
-  Table,
-  Tag,
-  useSort,
-  type SortOrder,
+    Button,
+    Checkbox,
+    HeaderCell,
+    Modal,
+    OPopper,
+    Table,
+    Tag,
+    useSort,
+    type SortOrder,
 } from '@owlint/feathers-vue'
+import { useChangeActorStatus } from '@target/api/mutations/actor'
+import { useToast } from '@target/composables/useToast'
+import { ActorStatus } from '@target/types/actor'
+import type { Source } from '@target/types/source'
+import { SourceStatus } from '@target/types/source'
+import type { WatchFileActor } from '@target/types/watchFile'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useChangeActorStatus } from '~/api/mutations/actor'
-import { useToast } from '~/composables/useToast'
-import { ActorStatus } from '~/types/actor'
-import type { Source } from '~/types/source'
-import { SourceStatus } from '~/types/source'
-import type { WatchFileActor } from '~/types/watchFile'
 import SourceCard from '../sources/SourceCard.vue'
 
 interface Props {
@@ -290,7 +290,7 @@ const fetchActorSources = async () => {
   isTableLoading.value = true
 
   try {
-    const { getActorSources } = await import('~/api/actor')
+    const { getActorSources } = await import('@target/api/actor')
     const response = await getActorSources(
       watchFileId,
       String(actor.actor.id),

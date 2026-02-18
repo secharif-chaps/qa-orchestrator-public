@@ -1,8 +1,8 @@
+import { useUpdateWatchFile } from '@target/api/mutations/watchFile'
+import type { WatchFile } from '@target/types/watchFile'
 import type { MaybeRef } from 'vue'
 import { computed, nextTick, readonly, ref, unref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useUpdateWatchFile } from '~/api/mutations/watchFile'
-import type { WatchFile } from '~/types/watchFile'
 
 interface UseWatchFileTitleOptions {
   watchFile?: MaybeRef<WatchFile | null>

@@ -1,6 +1,6 @@
-import type { User } from '~/types/user'
-import type { JsonLdResource } from '~/types/jsonld'
-import type { WatchFile } from '~/types/watchFile'
+import type { JsonLdResource } from '@target/types/jsonld'
+import type { User } from '@target/types/user'
+import type { WatchFile } from '@target/types/watchFile'
 
 export const WATCH_FILE_USER_ROLE = {
   OWNER: 'owner',

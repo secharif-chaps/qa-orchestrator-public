@@ -63,13 +63,13 @@
 
 <script lang="ts" setup>
 import { Button } from '@owlint/feathers-vue'
+import FilterDrawer from '@target/components/filters/FilterDrawer.vue'
+import { useFilterPanel } from '@target/composables/useFilterPanel'
+import type { DocumentFacets } from '@target/types/document'
+import type { AnalysisFacets } from '@target/types/facet'
+import type { DocumentFilter } from '@target/types/filter'
 import { computed, nextTick, ref, unref, useTemplateRef, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import FilterDrawer from '~/components/filters/FilterDrawer.vue'
-import { useFilterPanel } from '~/composables/useFilterPanel'
-import type { DocumentFacets } from '~/types/document'
-import type { AnalysisFacets } from '~/types/facet'
-import type { DocumentFilter } from '~/types/filter'
 
 const { t } = useI18n()
 

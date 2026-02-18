@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { useQuery } from '@pinia/colada'
-import { getWatchFileEventsQueryLink } from '~/api/queries/watchFileEvents'
+import { getWatchFileEventsQueryLink } from '@target/api/queries/watchFileEvents'
 import EmptyState from '../global/EmptyState.vue'
 import ErrorMessage from '../global/ErrorMessage.vue'
 import EventSkeleton from '../skeletons/EventSkeleton.vue'

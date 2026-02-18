@@ -24,9 +24,9 @@
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@owlint/feathers-vue'
-import type { Actor } from '~/types/facet'
-import Logo from '~/components/global/Logo.vue'
+import { Icon } from '@owlint/feathers-vue';
+import Logo from '@target/components/global/Logo.vue';
+import type { Actor } from '@target/types/facet';
 
 interface Props {
   actors: Actor[]

@@ -61,15 +61,15 @@
 
 <script setup lang="ts">
 import { Button, Switch, Tag } from '@owlint/feathers-vue'
+import ActorDetailsModal from '@target/components/actors/ActorDetailsModal.vue'
+import ItemCard from '@target/components/global/ItemCard.vue'
+import UrlDomain from '@target/components/global/UrlDomain.vue'
+import ActorStatusModal from '@target/components/watchFiles/ActorStatusModal.vue'
+import { useLocalized } from '@target/composables/useLocalized'
+import { ActorStatus } from '@target/types/actor'
+import type { WatchFileActor } from '@target/types/watchFile'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ActorDetailsModal from '~/components/actors/ActorDetailsModal.vue'
-import ItemCard from '~/components/global/ItemCard.vue'
-import UrlDomain from '~/components/global/UrlDomain.vue'
-import ActorStatusModal from '~/components/watchFiles/ActorStatusModal.vue'
-import { useLocalized } from '~/composables/useLocalized'
-import { ActorStatus } from '~/types/actor'
-import type { WatchFileActor } from '~/types/watchFile'
 
 const { t } = useI18n()
 

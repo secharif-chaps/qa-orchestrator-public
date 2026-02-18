@@ -4,12 +4,12 @@
 
 <script setup lang="ts">
 import { useQuery } from '@pinia/colada'
+import { getItemWatchFileQuery } from '@target/api/queries/watchFile'
+import WatchFileSkeleton from '@target/components/skeletons/WatchFileSkeleton.vue'
+import { RouteNames } from '@target/types/route-names'
+import { WATCH_FILE_STATUS } from '@target/types/watchFile'
 import { watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getItemWatchFileQuery } from '~/api/queries/watchFile'
-import WatchFileSkeleton from '~/components/skeletons/WatchFileSkeleton.vue'
-import { RouteNames } from '~/types/route-names'
-import { WATCH_FILE_STATUS } from '~/types/watchFile'
 
 const route = useRoute()
 const router = useRouter()

@@ -11,11 +11,11 @@
 
 <script setup lang="ts">
 import { ToggleGroup, type ToggleGroupOption } from '@owlint/feathers-vue'
+import { useDocumentValidation } from '@target/api/mutations/document'
+import type { Document, ManualValidationStatus } from '@target/types/document'
+import { DocumentValidationAction } from '@target/types/document'
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useDocumentValidation } from '~/api/mutations/document'
-import type { Document, ManualValidationStatus } from '~/types/document'
-import { DocumentValidationAction } from '~/types/document'
 
 const route = useRoute()
 

@@ -52,13 +52,13 @@
 
 <script lang="ts" setup>
 import { Button, Icon, Indicator } from '@owlint/feathers-vue'
+import { useWatchFileEventsInfiniteQuery } from '@target/api/queries/watchFileEvents'
+import EmptyState from '@target/components/global/EmptyState.vue'
+import AnalysisTimelineSkeleton from '@target/components/skeletons/AnalysisTimelineSkeleton.vue'
+import type { WatchFileEvent } from '@target/types/watchFileEvent'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import { useWatchFileEventsInfiniteQuery } from '~/api/queries/watchFileEvents'
-import EmptyState from '~/components/global/EmptyState.vue'
-import AnalysisTimelineSkeleton from '~/components/skeletons/AnalysisTimelineSkeleton.vue'
-import type { WatchFileEvent } from '~/types/watchFileEvent'
 
 const { d, t } = useI18n()
 

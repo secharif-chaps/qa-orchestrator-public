@@ -1,6 +1,6 @@
 import { defineQueryOptions } from '@pinia/colada'
-import { getConversationMessages, getLastConversation } from '~/api/watchFile'
-import type { Conversation, Message } from '~/types/conversation'
+import { getConversationMessages, getLastConversation } from '@target/api/watchFile'
+import type { Conversation, Message } from '@target/types/conversation'
 
 export const CONVERSATION_QUERY_KEYS = {
   root: ['conversations'] as const,

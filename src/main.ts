@@ -1,15 +1,15 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
 import { PiniaColada } from '@pinia/colada'
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { createHead } from '@unhead/vue/client'
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import { createApp } from 'vue'
 
-import App from './App.vue'
-import router from './router'
-import i18n from './i18n'
-import sanitizeHtmlPlugin from '~/plugins/sanitizeHtml.client'
-import clarityPlugin from '~/plugins/clarity.client'
 import '@/assets/main.css'
+import clarityPlugin from '@target/plugins/clarity.client'
+import sanitizeHtmlPlugin from '@target/plugins/sanitizeHtml.client'
+import App from './App.vue'
+import i18n from './i18n'
+import router from './router'
 
 const app = createApp(App)
 const head = createHead()

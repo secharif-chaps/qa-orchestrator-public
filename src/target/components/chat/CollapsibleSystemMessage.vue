@@ -55,11 +55,11 @@
 
 <script setup lang="ts">
 import { Icon } from '@owlint/feathers-vue'
+import { useMarkdown } from '@target/composables/useMarkdown'
+import { useStringUtils } from '@target/composables/useStringUtils'
+import type { Message } from '@target/types/conversation'
 import { Collapsible } from 'reka-ui/namespaced'
 import { computed } from 'vue'
-import { useMarkdown } from '~/composables/useMarkdown'
-import { useStringUtils } from '~/composables/useStringUtils'
-import type { Message } from '~/types/conversation'
 
 interface Props {
   message: Message

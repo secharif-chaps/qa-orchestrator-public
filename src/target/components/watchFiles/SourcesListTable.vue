@@ -169,29 +169,29 @@
 
 <script setup lang="ts">
 import {
-  Checkbox,
-  HeaderCell,
-  Icon,
-  Searchbar,
-  Select,
-  SelectItem,
-  Table,
-  Tag,
+    Checkbox,
+    HeaderCell,
+    Icon,
+    Searchbar,
+    Select,
+    SelectItem,
+    Table,
+    Tag,
 } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
+import { getActorSourcesQuery } from '@target/api/queries/actor'
+import { getCollectionSourceQuery, getSourceTypesQuery } from '@target/api/queries/sources'
+import EmptyState from '@target/components/global/EmptyState.vue'
+import ErrorMessage from '@target/components/global/ErrorMessage.vue'
+import SourceCard from '@target/components/sources/SourceCard.vue'
+import SectionListHeader from '@target/components/watchFiles/EditSection/SectionListHeader.vue'
+import SectionListPaginator from '@target/components/watchFiles/EditSection/SectionListPaginator.vue'
+import { useSourcesStore } from '@target/stores/source'
+import { SourceStatus } from '@target/types/source'
 import { watchDebounced } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getActorSourcesQuery } from '~/api/queries/actor'
-import { getCollectionSourceQuery, getSourceTypesQuery } from '~/api/queries/sources'
-import EmptyState from '~/components/global/EmptyState.vue'
-import ErrorMessage from '~/components/global/ErrorMessage.vue'
-import SourceCard from '~/components/sources/SourceCard.vue'
-import SectionListHeader from '~/components/watchFiles/EditSection/SectionListHeader.vue'
-import SectionListPaginator from '~/components/watchFiles/EditSection/SectionListPaginator.vue'
-import { useSourcesStore } from '~/stores/source'
-import { SourceStatus } from '~/types/source'
 import SourceListSwitch from './SourceListSwitch.vue'
 
 interface Props {

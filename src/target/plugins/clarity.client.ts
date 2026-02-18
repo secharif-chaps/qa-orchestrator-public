@@ -1,5 +1,5 @@
+import { config } from '@target/config'
 import type { App } from 'vue'
-import { config } from '~/config'
 
 interface ClarityFunction {
   (...args: unknown[]): void

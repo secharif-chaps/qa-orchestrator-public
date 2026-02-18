@@ -44,14 +44,14 @@
 
 <script setup lang="ts">
 import { Bullet, Button } from '@owlint/feathers-vue'
+import ItemCard from '@target/components/global/ItemCard.vue'
+import UrlDomain from '@target/components/global/UrlDomain.vue'
+import SourceCardDrawer from '@target/components/sources/SourceCardDrawer.vue'
+import { useLocalized } from '@target/composables/useLocalized'
+import type { Source } from '@target/types/source'
+import { CollectorStatus } from '@target/types/source'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ItemCard from '~/components/global/ItemCard.vue'
-import UrlDomain from '~/components/global/UrlDomain.vue'
-import SourceCardDrawer from '~/components/sources/SourceCardDrawer.vue'
-import { useLocalized } from '~/composables/useLocalized'
-import type { Source } from '~/types/source'
-import { CollectorStatus } from '~/types/source'
 
 const { t } = useI18n()
 

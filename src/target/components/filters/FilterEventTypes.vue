@@ -54,10 +54,10 @@
 
 <script lang="ts" setup>
 import { Button, Checkbox, Searchbar } from '@owlint/feathers-vue'
+import type { AnalysisEventFacet } from '@target/types/facet'
 import { watchDebounced } from '@vueuse/core'
 import { computed, ref, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { AnalysisEventFacet } from '~/types/facet'
 
 const { t } = useI18n()
 

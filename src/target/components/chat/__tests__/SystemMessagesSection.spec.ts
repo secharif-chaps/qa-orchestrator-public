@@ -1,8 +1,8 @@
+import { useChatStore } from '@target/stores/chat'
+import { MessageRole, MessageStatus, type Message } from '@target/types/conversation'
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useChatStore } from '~/stores/chat'
-import { MessageRole, MessageStatus, type Message } from '~/types/conversation'
 import CollapsibleSystemMessage from '../CollapsibleSystemMessage.vue'
 import SystemMessagesSection from '../SystemMessagesSection.vue'
 
@@ -22,21 +22,21 @@ vi.mock('vue-i18n', () => ({
 }))
 
 // Mock useTimeDisplay
-vi.mock('~/composables/useTimeDisplay', () => ({
+vi.mock('@target/composables/useTimeDisplay', () => ({
   useTimeDisplay: () => ({
     formatTime: () => '2 hours ago',
   }),
 }))
 
 // Mock useMarkdown
-vi.mock('~/composables/useMarkdown', () => ({
+vi.mock('@target/composables/useMarkdown', () => ({
   useMarkdown: () => ({
     toHtml: () => ({ value: '' }),
   }),
 }))
 
 // Mock useStringUtils
-vi.mock('~/composables/useStringUtils', () => ({
+vi.mock('@target/composables/useStringUtils', () => ({
   useStringUtils: () => ({
     unescapeString: (str: string) => str,
   }),

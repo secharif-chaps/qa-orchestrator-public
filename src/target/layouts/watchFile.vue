@@ -13,16 +13,16 @@
 
 <script lang="ts" setup>
 import { useQuery } from '@pinia/colada'
+import { getItemWatchFileQuery } from '@target/api/queries/watchFile'
+import { WATCHFILES_SUBSCRIBE_KEYS } from '@target/api/watchFile'
+import WatchFileHeader from '@target/components/watchFiles/WatchFileHeader.vue'
+import { useMercure } from '@target/composables/useMercure'
+import { useWatchFileTitle } from '@target/composables/useWatchFileTitle'
+import { useWatchFileStore } from '@target/stores/watchFile'
 import { useHead } from '@unhead/vue'
-import { computed, watch, watchEffect, onBeforeUnmount } from 'vue'
-import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import { getItemWatchFileQuery } from '~/api/queries/watchFile'
-import { WATCHFILES_SUBSCRIBE_KEYS } from '~/api/watchFile'
-import WatchFileHeader from '~/components/watchFiles/WatchFileHeader.vue'
-import { useMercure } from '~/composables/useMercure'
-import { useWatchFileTitle } from '~/composables/useWatchFileTitle'
-import { useWatchFileStore } from '~/stores/watchFile'
+import { computed, onBeforeUnmount, watch, watchEffect } from 'vue'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const { activeSubscriptions, unsubscribe } = useMercure()

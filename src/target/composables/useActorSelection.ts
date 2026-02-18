@@ -1,6 +1,6 @@
-import { ref, computed, readonly } from 'vue'
-import type { ActorSelection } from '~/types/actor'
-import type { WatchFileActor } from '~/types/watchFile'
+import type { ActorSelection } from '@target/types/actor'
+import type { WatchFileActor } from '@target/types/watchFile'
+import { computed, readonly, ref } from 'vue'
 
 const selectedActorIds = ref<Set<string>>(new Set())
 const actorSelections = ref<ActorSelection[]>([])

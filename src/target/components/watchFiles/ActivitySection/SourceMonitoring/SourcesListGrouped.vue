@@ -67,15 +67,15 @@
 <script setup lang="ts">
 import { Badge, Button, Icon, Searchbar } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
+import { getWatchFileSourcesGroupedQuery } from '@target/api/queries/sources'
+import ErrorMessage from '@target/components/global/ErrorMessage.vue'
+import SourcesListGroupedSkeleton from '@target/components/skeletons/SourcesListGroupedSkeleton.vue'
+import SourcesAccordion from '@target/components/watchFiles/ActivitySection/SourceMonitoring/SourcesAccordion.vue'
+import SourcesListEmpty from '@target/components/watchFiles/ActivitySection/SourceMonitoring/SourcesListGroupedEmpty.vue'
+import type { Source, SourceGroup } from '@target/types/source'
 import { watchDebounced } from '@vueuse/core'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getWatchFileSourcesGroupedQuery } from '~/api/queries/sources'
-import ErrorMessage from '~/components/global/ErrorMessage.vue'
-import SourcesListGroupedSkeleton from '~/components/skeletons/SourcesListGroupedSkeleton.vue'
-import SourcesAccordion from '~/components/watchFiles/ActivitySection/SourceMonitoring/SourcesAccordion.vue'
-import SourcesListEmpty from '~/components/watchFiles/ActivitySection/SourceMonitoring/SourcesListGroupedEmpty.vue'
-import type { Source, SourceGroup } from '~/types/source'
 
 const { t } = useI18n()
 

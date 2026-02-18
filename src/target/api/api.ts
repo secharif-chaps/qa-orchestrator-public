@@ -1,10 +1,10 @@
+import { useAppFetch } from '@target/composables/useAppFetch'
+import { useAuth } from '@target/composables/useAuth'
+import { useMercure } from '@target/composables/useMercure'
+import { useToast } from '@target/composables/useToast'
+import type { ApiResponse, DefaultErrorMessage, Link, MercureResponse } from '@target/types/api'
+import { ApiError, ApiRateLimitError, ApiUnauthorizedError } from '@target/types/jsonld'
 import { useI18n } from 'vue-i18n'
-import { useAppFetch } from '~/composables/useAppFetch'
-import { useAuth } from '~/composables/useAuth'
-import { useMercure } from '~/composables/useMercure'
-import { useToast } from '~/composables/useToast'
-import type { ApiResponse, DefaultErrorMessage, Link, MercureResponse } from '~/types/api'
-import { ApiError, ApiRateLimitError, ApiUnauthorizedError } from '~/types/jsonld'
 
 /**
  * Parses the Link header to extract Mercure hub URL and topics.

@@ -38,8 +38,8 @@
 
 <script setup lang="ts">
 import { Badge, Button, Icon } from '@owlint/feathers-vue'
+import type { DocumentFilter } from '@target/types/filter'
 import { Accordion } from 'reka-ui/namespaced'
-import type { DocumentFilter } from '~/types/filter'
 
 interface Props {
   items: DocumentFilter[]

@@ -19,8 +19,8 @@
 </template>
 
 <script lang="ts" setup>
+import { useSidebarStore } from '@target/stores/sidebar'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { useSidebarStore } from '~/stores/sidebar'
 
 const sidebarStore = useSidebarStore()
 const sidebarEl = ref<HTMLElement>()

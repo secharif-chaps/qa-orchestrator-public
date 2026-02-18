@@ -81,14 +81,14 @@
 
 <script setup lang="ts">
 import { Button, Icon } from '@owlint/feathers-vue'
+import ChatMessageComponent from '@target/components/chat/ChatMessage.vue'
+import ChatTypingIndicator from '@target/components/chat/ChatTypingIndicator.vue'
+import SystemMessagesSection from '@target/components/chat/SystemMessagesSection.vue'
+import { useConversationStore } from '@target/stores/conversation'
+import type { Message } from '@target/types/conversation'
+import { MessageRole } from '@target/types/conversation'
 import { computed, nextTick, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ChatMessageComponent from '~/components/chat/ChatMessage.vue'
-import ChatTypingIndicator from '~/components/chat/ChatTypingIndicator.vue'
-import SystemMessagesSection from '~/components/chat/SystemMessagesSection.vue'
-import { useConversationStore } from '~/stores/conversation'
-import type { Message } from '~/types/conversation'
-import { MessageRole } from '~/types/conversation'
 
 const { t } = useI18n()
 const conversationStore = useConversationStore()

@@ -1,12 +1,12 @@
 import type { SortOrder } from '@owlint/feathers-vue'
-import type { LocationQueryRaw } from 'vue-router'
-import { useApi } from '~/composables/useApi'
-import { useDate } from '~/composables/useDate'
-import { DatesPeriod } from '~/types/filter'
+import { useApi } from '@target/composables/useApi'
+import { useDate } from '@target/composables/useDate'
+import { DatesPeriod } from '@target/types/filter'
 import type {
-  WatchFileEventCollection,
-  WatchFileEventCollectionResponse,
-} from '~/types/watchFileEvent'
+    WatchFileEventCollection,
+    WatchFileEventCollectionResponse,
+} from '@target/types/watchFileEvent'
+import type { LocationQueryRaw } from 'vue-router'
 
 export const getWatchFileEventsLink = async (
   link: string,

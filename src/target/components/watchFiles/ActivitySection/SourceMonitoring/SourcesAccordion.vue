@@ -64,13 +64,13 @@
 
 <script setup lang="ts">
 import { Badge, Button } from '@owlint/feathers-vue'
+import ErrorMessage from '@target/components/global/ErrorMessage.vue'
+import SourceCard from '@target/components/sources/SourceCard.vue'
+import type { Source, SourceGroup, SourcesGroupedResponse } from '@target/types/source'
+import { CollectorStatus } from '@target/types/source'
 import { Accordion } from 'reka-ui/namespaced'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ErrorMessage from '~/components/global/ErrorMessage.vue'
-import type { Source, SourceGroup, SourcesGroupedResponse } from '~/types/source'
-import { CollectorStatus } from '~/types/source'
-import SourceCard from '~/components/sources/SourceCard.vue'
 
 interface Props {
   sourcesData?: SourcesGroupedResponse

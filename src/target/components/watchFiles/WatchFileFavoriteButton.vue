@@ -20,10 +20,10 @@
 </template>
 
 <script setup lang="ts">
-import { Button } from '@owlint/feathers-vue'
-import { computed } from 'vue'
-import { useToggleWatchFileFavorite } from '~/api/mutations/watchFile'
-import type { WatchFile } from '~/types/watchFile'
+import { Button } from '@owlint/feathers-vue';
+import { useToggleWatchFileFavorite } from '@target/api/mutations/watchFile';
+import type { WatchFile } from '@target/types/watchFile';
+import { computed } from 'vue';
 
 const { watchFile } = defineProps<{
   watchFile: WatchFile

@@ -1,6 +1,6 @@
+import type { Localized } from '@target/types/localized'
 import { computed, unref, type ComputedRef, type MaybeRef } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { Localized } from '~/types/localized'
 
 /**
  * Composable to get localized values from Localized objects

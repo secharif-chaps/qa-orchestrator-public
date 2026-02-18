@@ -1,5 +1,5 @@
-import type { Source, SourceActivity } from '~/types/source'
-import type { WatchFileActivity, WatchFileActor, WatchFileEventType } from '~/types/watchFile'
+import type { Source, SourceActivity } from '@target/types/source'
+import type { WatchFileActivity, WatchFileActor, WatchFileEventType } from '@target/types/watchFile'
 import type { JsonLdResource } from './jsonld'
 
 export interface WatchFileActivityDescription {

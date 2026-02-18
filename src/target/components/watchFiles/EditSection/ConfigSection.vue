@@ -42,17 +42,17 @@
 </template>
 
 <script setup lang="ts">
+import ActorsSection from '@target/components/watchFiles/EditSection/ActorsSection.vue'
+import ConfigSectionEmptyView from '@target/components/watchFiles/EditSection/ConfigSectionEmptyView.vue'
+import ReferenceSubjectSection from '@target/components/watchFiles/EditSection/ReferenceSubjectSection.vue'
+import SourcesSection from '@target/components/watchFiles/EditSection/SourcesSection.vue'
+import WatchFileShareButton from '@target/components/watchFiles/WatchFileShareButton.vue'
+import WatchFileShareDialog from '@target/components/watchFiles/WatchFileShareDialog.vue'
+import { useWatchFileStore } from '@target/stores/watchFile'
+import type { WatchFile } from '@target/types/watchFile'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ActorsSection from '~/components/watchFiles/EditSection/ActorsSection.vue'
-import ConfigSectionEmptyView from '~/components/watchFiles/EditSection/ConfigSectionEmptyView.vue'
-import ReferenceSubjectSection from '~/components/watchFiles/EditSection/ReferenceSubjectSection.vue'
-import SourcesSection from '~/components/watchFiles/EditSection/SourcesSection.vue'
-import WatchFileShareButton from '~/components/watchFiles/WatchFileShareButton.vue'
-import WatchFileShareDialog from '~/components/watchFiles/WatchFileShareDialog.vue'
-import { useWatchFileStore } from '~/stores/watchFile'
-import type { WatchFile } from '~/types/watchFile'
 import WatchFileDate from './WatchFileDate.vue'
 import WatchFileSelectStatus from './WatchFileSelectStatus.vue'
 

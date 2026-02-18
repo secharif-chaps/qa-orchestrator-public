@@ -1,16 +1,16 @@
 import type { SortOrder } from '@owlint/feathers-vue'
-import { useApi } from '~/composables/useApi'
+import { useApi } from '@target/composables/useApi'
 import type {
-  Actor,
-  ActorFilters,
-  ActorStatus,
-  ActorTypesResponse,
-  BatchChangeActorStatusResponse,
-} from '~/types/actor'
-import type { DefaultErrorMessage } from '~/types/api'
-import type { JsonLdCollection } from '~/types/jsonld'
-import type { Source } from '~/types/source'
-import type { WatchFileActor } from '~/types/watchFile'
+    Actor,
+    ActorFilters,
+    ActorStatus,
+    ActorTypesResponse,
+    BatchChangeActorStatusResponse,
+} from '@target/types/actor'
+import type { DefaultErrorMessage } from '@target/types/api'
+import type { JsonLdCollection } from '@target/types/jsonld'
+import type { Source } from '@target/types/source'
+import type { WatchFileActor } from '@target/types/watchFile'
 
 export const getCollectionActor = async ({
   watchFileId,

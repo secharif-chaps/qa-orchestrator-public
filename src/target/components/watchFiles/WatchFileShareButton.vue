@@ -15,9 +15,9 @@
 
 <script setup lang="ts">
 import { Button } from '@owlint/feathers-vue'
+import type { WatchFile } from '@target/types/watchFile'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { WatchFile } from '~/types/watchFile'
 
 const { t } = useI18n()
 

@@ -4,14 +4,14 @@
 
 <script setup lang="ts">
 import { useQuery } from '@pinia/colada'
+import { getSourceHistoryQuery } from '@target/api/queries/sources'
+import Timeline from '@target/components/watchFiles/ActivitySection/Timeline/Timeline.vue'
+import { useActivityDescription } from '@target/composables/useActivityDescription'
+import type { SourceActivity } from '@target/types/source'
+import { SourceActionType, SourceStatus } from '@target/types/source'
+import type { SourceActivityDescription } from '@target/types/timeline'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getSourceHistoryQuery } from '~/api/queries/sources'
-import Timeline from '~/components/watchFiles/ActivitySection/Timeline/Timeline.vue'
-import { useActivityDescription } from '~/composables/useActivityDescription'
-import type { SourceActivity } from '~/types/source'
-import { SourceActionType, SourceStatus } from '~/types/source'
-import type { SourceActivityDescription } from '~/types/timeline'
 
 const { d } = useI18n()
 const { createSourceActivityDescription } = useActivityDescription()

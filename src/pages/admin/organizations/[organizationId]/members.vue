@@ -275,7 +275,11 @@ const showAssignModal = (user: AdminUserListItem) => {
 }
 
 const showPermissionsModal = (user: AdminUserListItem) => {
-  userToManagePermissions.value = { userId: user.user_id, username: user.username, email: user.email }
+  userToManagePermissions.value = {
+    userId: user.user_id,
+    username: user.username,
+    email: user.email,
+  }
 }
 
 const showDisableModal = (user: AdminUserListItem) => {

@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { Button, Icon, Modal } from '@owlint/feathers-vue'
-import type { WatchFileActor } from '~/types/watchFile'
+import type { WatchFileActor } from '@target/types/watchFile'
 import ActorDetails from './ActorDetails.vue'
 
 interface Props {

@@ -92,8 +92,8 @@
 
 <script setup lang="ts">
 import { Badge, Button, Icon, Modal } from '@owlint/feathers-vue'
+import { useConfirmModal } from '@target/composables/useConfirmModal'
 import { useI18n } from 'vue-i18n'
-import { useConfirmModal } from '~/composables/useConfirmModal'
 
 const { modalState, handleConfirm, handleCancel } = useConfirmModal()
 const { t } = useI18n()

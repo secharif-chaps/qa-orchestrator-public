@@ -24,10 +24,10 @@
 </template>
 
 <script setup lang="ts">
-import type { WatchFileActor } from '~/types/watchFile'
-import { useActorSelection } from '~/composables/useActorSelection'
+import SourcesListTable from '@target/components/watchFiles/SourcesListTable.vue'
+import { useActorSelection } from '@target/composables/useActorSelection'
+import type { WatchFileActor } from '@target/types/watchFile'
 import ActorCard from './ActorCard.vue'
-import SourcesListTable from '~/components/watchFiles/SourcesListTable.vue'
 
 interface Props {
   actor: WatchFileActor

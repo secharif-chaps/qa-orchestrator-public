@@ -1,6 +1,6 @@
 import { defineQueryOptions } from '@pinia/colada'
-import { getCollectionDocument, getItemDocument } from '~/api/document'
-import type { CollectionParams, DocumentQueryOptions } from '~/types/document'
+import { getCollectionDocument, getItemDocument } from '@target/api/document'
+import type { CollectionParams, DocumentQueryOptions } from '@target/types/document'
 
 export const DOCUMENT_QUERY_KEYS = {
   root: ['documents'] as const,

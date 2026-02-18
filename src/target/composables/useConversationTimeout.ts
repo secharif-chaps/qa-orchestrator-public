@@ -1,5 +1,5 @@
+import { useConversationStore } from '@target/stores/conversation'
 import { computed, onUnmounted, ref, watch } from 'vue'
-import { useConversationStore } from '~/stores/conversation'
 
 export function useConversationTimeout() {
   const conversationStore = useConversationStore()

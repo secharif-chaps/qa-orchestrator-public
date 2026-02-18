@@ -1,17 +1,17 @@
-import { useApi } from '~/composables/useApi'
-import { useDate } from '~/composables/useDate'
-import type { DefaultErrorMessage } from '~/types/api'
+import { useApi } from '@target/composables/useApi'
+import { useDate } from '@target/composables/useDate'
+import type { DefaultErrorMessage } from '@target/types/api'
 import type {
-  BatchValidationResponse,
-  Document,
-  DocumentFacets,
-  DocumentQueryOptions,
-  DocumentValidationAction,
-  DocumentValidationResponse,
-  FilterParams,
-} from '~/types/document'
-import { FilterDates } from '~/types/filter'
-import type { JsonLdCollection } from '~/types/jsonld'
+    BatchValidationResponse,
+    Document,
+    DocumentFacets,
+    DocumentQueryOptions,
+    DocumentValidationAction,
+    DocumentValidationResponse,
+    FilterParams,
+} from '@target/types/document'
+import { FilterDates } from '@target/types/filter'
+import type { JsonLdCollection } from '@target/types/jsonld'
 
 const ROOT_URL = '/watch_files'
 
