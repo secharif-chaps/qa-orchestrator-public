@@ -101,7 +101,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'user-removed', userId: string): void
+  (e: 'user-removed'): void
   (e: 'role-changed', watchFileUser: WatchFileUser, newRole: WatchFileUserRole): void
 }>()
 
@@ -136,7 +136,7 @@ async function onRemoveUser(watchFileUser: WatchFileUser) {
           displayName: watchFileUser.user.displayName,
         })
 
-        emit('user-removed', watchFileUser.id)
+        emit('user-removed')
       } catch (error) {
         console.error('Failed to remove user:', error)
       }

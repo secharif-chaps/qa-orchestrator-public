@@ -97,7 +97,7 @@ import { useQuery } from '@pinia/colada'
 import { useAddWatchFileUsers } from '@target/api/mutations/watchFileUser'
 import { searchUsersQuery } from '@target/api/queries/user'
 import type { User } from '@target/types/user'
-import type { WatchFileUser, WatchFileUserRole } from '@target/types/watchFileUser'
+import type { WatchFileUserRole } from '@target/types/watchFileUser'
 import { WATCH_FILE_USER_ROLE } from '@target/types/watchFileUser'
 import { computed, nextTick, ref, useTemplateRef } from 'vue'
 import WatchFileUserChip from './WatchFileUserChip.vue'
@@ -107,12 +107,12 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'users-added', users: WatchFileUser[]): void
+  (e: 'users-added'): void
 }>()
 
 const { addUsers, isLoading: isAddingUsers } = useAddWatchFileUsers({
-  onSuccess: (users) => {
-    emit('users-added', users)
+  onSuccess: () => {
+    emit('users-added')
   },
 })
 

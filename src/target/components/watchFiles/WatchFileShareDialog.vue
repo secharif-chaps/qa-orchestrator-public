@@ -40,7 +40,6 @@ import { getWatchFileUsersQuery } from '@target/api/queries/watchFileUser'
 import { useConfirmModal } from '@target/composables/useConfirmModal'
 import { useWatchFileStore } from '@target/stores/watchFile'
 import type { WatchFile } from '@target/types/watchFile'
-import type { WatchFileUser } from '@target/types/watchFileUser'
 import { computed, ref } from 'vue'
 import WatchFileUserInvite from './WatchFileUserInvite.vue'
 import WatchFileUserList from './WatchFileUserList.vue'
@@ -91,12 +90,12 @@ function updateWatchFileUsersCount() {
   })
 }
 
-function onUserRemoved(_userId: string) {
+function onUserRemoved() {
   // Data is automatically updated by the query cache invalidation
   updateWatchFileUsersCount()
 }
 
-function onUsersAdded(_newUsers: WatchFileUser[]) {
+function onUsersAdded() {
   // Data is automatically updated by the query cache invalidation
   updateWatchFileUsersCount()
 }

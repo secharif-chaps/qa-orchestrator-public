@@ -1,5 +1,4 @@
 import { config } from '@target/config'
-import type { App } from 'vue'
 
 interface ClarityFunction {
   (...args: unknown[]): void
@@ -12,7 +11,7 @@ interface WindowWithClarity extends Window {
 }
 
 export default {
-  install(_app: App) {
+  install() {
     const clarityKey = config.clarityKey
 
     // Only load Clarity if the key is provided
