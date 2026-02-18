@@ -15,21 +15,21 @@
 </template>
 
 <script setup lang="ts">
-import type { SortOrder } from '@owlint/feathers-vue';
-import { useQuery } from '@pinia/colada';
-import { computed, ref } from 'vue';
-import { getCollectionActorQuery } from '~/api/queries/actor';
-import ActorsList from '~/components/actors/ActorsList.vue';
-import { ActorStatus } from '~/types/actor';
-import type { WatchFile } from '~/types/watchFile';
+import type { SortOrder } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, ref } from 'vue'
+import { getCollectionActorQuery } from '~/api/queries/actor'
+import ActorsList from '~/components/actors/ActorsList.vue'
+import { ActorStatus } from '~/types/actor'
+import type { WatchFile } from '~/types/watchFile'
 
 const props = defineProps<{
-  watchFile?: WatchFile | null;
-  readonly?: boolean;
-}>();
+  watchFile?: WatchFile | null
+  readonly?: boolean
+}>()
 
-const currentPage = ref(1);
-const itemsPerPage = 4;
+const currentPage = ref(1)
+const itemsPerPage = 4
 
 const {
   data: actorData,
@@ -43,18 +43,18 @@ const {
   sortOrder: 'ASC' as SortOrder,
   page: currentPage.value,
   itemsPerPage: itemsPerPage,
-}));
+}))
 
 const actors = computed(() => {
-  return actorData.value?.items || [];
-});
+  return actorData.value?.items || []
+})
 
 const totalItems = computed(() => {
-  return actorData.value?.totalItems || 0;
-});
+  return actorData.value?.totalItems || 0
+})
 
 const handleActorUpdated = () => {
-  currentPage.value = 1;
-  refetch();
-};
+  currentPage.value = 1
+  refetch()
+}
 </script>

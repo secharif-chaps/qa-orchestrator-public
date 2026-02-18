@@ -20,9 +20,7 @@
               {{ eventsDatesTitle(dayGroup.date, dayGroup.events.length) }}
             </div>
           </div>
-          <div
-            class="bg-primary-light absolute top-6 left-[163px] h-full w-0.5"
-          />
+          <div class="bg-primary-light absolute top-6 left-[163px] h-full w-0.5" />
           <div class="relative">
             <Indicator size="md" class="absolute top-6 -left-3" />
           </div>
@@ -36,24 +34,14 @@
           </div>
         </div>
         <div v-if="allEvents.length > 0" class="flex justify-center py-4">
-          <Button
-            v-if="hasMore && !isLoadingMore"
-            variant="secondary"
-            @click="loadMoreEvents"
-          >
+          <Button v-if="hasMore && !isLoadingMore" variant="secondary" @click="loadMoreEvents">
             {{ t('watch_files.analysis.timeline.loadMore') }}
           </Button>
-          <div
-            v-else-if="isLoadingMore"
-            class="flex items-center gap-2 text-sm text-gray-600"
-          >
+          <div v-else-if="isLoadingMore" class="flex items-center gap-2 text-sm text-gray-600">
             <Icon icon="fa-spinner" class="animate-spin" />
             <span>{{ t('common.action.loading') }}</span>
           </div>
-          <p
-            v-else-if="!hasMore && !isLoadingMore"
-            class="text-sm text-gray-600"
-          >
+          <p v-else-if="!hasMore && !isLoadingMore" class="text-sm text-gray-600">
             {{ t('watch_files.analysis.timeline.allEventsLoaded') }}
           </p>
         </div>
@@ -63,66 +51,66 @@
 </template>
 
 <script lang="ts" setup>
-import { Button, Icon, Indicator } from '@owlint/feathers-vue';
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
-import { useWatchFileEventsInfiniteQuery } from '~/api/queries/watchFileEvents';
-import EmptyState from '~/components/global/EmptyState.vue';
-import AnalysisTimelineSkeleton from '~/components/skeletons/AnalysisTimelineSkeleton.vue';
-import type { WatchFileEvent } from '~/types/watchFileEvent';
+import { Button, Icon, Indicator } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+import { useWatchFileEventsInfiniteQuery } from '~/api/queries/watchFileEvents'
+import EmptyState from '~/components/global/EmptyState.vue'
+import AnalysisTimelineSkeleton from '~/components/skeletons/AnalysisTimelineSkeleton.vue'
+import type { WatchFileEvent } from '~/types/watchFileEvent'
 
-const { d, t } = useI18n();
+const { d, t } = useI18n()
 
-const route = useRoute();
+const route = useRoute()
 
-const watchFileId = computed(() => route.params.id as string);
+const watchFileId = computed(() => route.params.id as string)
 
 const { allEvents, hasMore, isLoadingMore, loadMoreEvents, isInitialLoading } =
-  useWatchFileEventsInfiniteQuery(watchFileId);
+  useWatchFileEventsInfiniteQuery(watchFileId)
 
 interface DayGroup {
-  date: string;
-  events: WatchFileEvent[];
+  date: string
+  events: WatchFileEvent[]
 }
 
 const eventsByDay = computed<DayGroup[]>(() => {
   if (!allEvents.value.length) {
-    return [];
+    return []
   }
 
-  const groupedByDay = new Map<string, WatchFileEvent[]>();
+  const groupedByDay = new Map<string, WatchFileEvent[]>()
 
   for (const event of allEvents.value) {
     if (!event.startDate) {
-      continue;
+      continue
     }
 
-    const isoString = new Date(event.startDate).toISOString();
-    const eventDate = isoString.split('T')[0];
+    const isoString = new Date(event.startDate).toISOString()
+    const eventDate = isoString.split('T')[0]
 
     if (!eventDate) {
-      continue;
+      continue
     }
 
     if (!groupedByDay.has(eventDate)) {
-      groupedByDay.set(eventDate, []);
+      groupedByDay.set(eventDate, [])
     }
 
-    groupedByDay.get(eventDate)!.push(event);
+    groupedByDay.get(eventDate)!.push(event)
   }
 
   return Array.from(groupedByDay.entries()).map(([date, events]) => ({
     date,
     events,
-  }));
-});
+  }))
+})
 
 const eventsDatesTitle = (date: string, nbEvents: number) => {
   if (nbEvents > 1) {
-    return `${d(date, 'eventDate')} (${nbEvents})`;
+    return `${d(date, 'eventDate')} (${nbEvents})`
   }
 
-  return `${d(date, 'eventDate')}`;
-};
+  return `${d(date, 'eventDate')}`
+}
 </script>

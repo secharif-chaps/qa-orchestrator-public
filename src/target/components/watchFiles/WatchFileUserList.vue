@@ -6,10 +6,7 @@
     >
       {{ $t('watch_files.shareDialog.accessListTitle') }}
     </div>
-    <div
-      v-if="isLoading"
-      class="scrollable max-h-60 divide-y divide-gray-200 rounded-md"
-    >
+    <div v-if="isLoading" class="scrollable max-h-60 divide-y divide-gray-200 rounded-md">
       <div
         v-for="i in skeletonCount || 3"
         :key="`skeleton-${i}`"
@@ -41,20 +38,15 @@
             class="mr-3"
           />
           <span class="flex-1">{{ watchFileUser.user.displayName }}</span>
-          <span
-            v-if="watchFileUser.role === 'owner'"
-            class="text-secondary-font ml-2 text-sm"
-            >{{ $t('watch_files.shareDialog.owner') }}</span
-          >
+          <span v-if="watchFileUser.role === 'owner'" class="text-secondary-font ml-2 text-sm">{{
+            $t('watch_files.shareDialog.owner')
+          }}</span>
           <div v-else class="flex items-center gap-2">
             <Select
               :id="'user-role-' + watchFileUser.id"
               v-model="watchFileUser.role"
               :display-value="roleLabel"
-              :options="[
-                WATCH_FILE_USER_ROLE.VIEWER,
-                WATCH_FILE_USER_ROLE.EDITOR,
-              ]"
+              :options="[WATCH_FILE_USER_ROLE.VIEWER, WATCH_FILE_USER_ROLE.EDITOR]"
               to="#modal"
             >
               <template #items="{ options }">
@@ -64,11 +56,7 @@
                   :value="option"
                   @select="onChangeRole(watchFileUser, option)"
                 >
-                  <ORadio
-                    :id="option"
-                    v-model="watchFileUser.role"
-                    :value="option"
-                  />
+                  <ORadio :id="option" v-model="watchFileUser.role" :value="option" />
 
                   {{ roleLabel(option) }}
                 </SelectItem>
@@ -88,62 +76,49 @@
 </template>
 
 <script setup lang="ts">
-import {
-    Badge,
-    Button,
-    ORadio,
-    Select,
-    SelectItem,
-} from '@owlint/feathers-vue';
-import { ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRole } from '~/composables/useRole';
-import {
-    useRemoveWatchFileUser,
-    useUpdateWatchFileUserRole,
-} from '~/api/mutations/watchFileUser';
-import { useConfirmModal } from '~/composables/useConfirmModal';
-import { useMotionPreference } from '~/composables/useMotionPreference';
-import type { WatchFileUser, WatchFileUserRole } from '~/types/watchFileUser';
-import { WATCH_FILE_USER_ROLE } from '~/types/watchFileUser';
+import { Badge, Button, ORadio, Select, SelectItem } from '@owlint/feathers-vue'
+import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRole } from '~/composables/useRole'
+import { useRemoveWatchFileUser, useUpdateWatchFileUserRole } from '~/api/mutations/watchFileUser'
+import { useConfirmModal } from '~/composables/useConfirmModal'
+import { useMotionPreference } from '~/composables/useMotionPreference'
+import type { WatchFileUser, WatchFileUserRole } from '~/types/watchFileUser'
+import { WATCH_FILE_USER_ROLE } from '~/types/watchFileUser'
 
-const { t } = useI18n();
-const { roleLabel } = useRole();
-const { showConfirmModal } = useConfirmModal();
+const { t } = useI18n()
+const { roleLabel } = useRole()
+const { showConfirmModal } = useConfirmModal()
 
-const { removeUser } = useRemoveWatchFileUser();
-const { updateRole } = useUpdateWatchFileUserRole();
+const { removeUser } = useRemoveWatchFileUser()
+const { updateRole } = useUpdateWatchFileUserRole()
 
 const props = defineProps<{
-  watchFileId: string;
-  watchFileUsers: WatchFileUser[];
-  isLoading: boolean;
-  skeletonCount?: number;
-}>();
+  watchFileId: string
+  watchFileUsers: WatchFileUser[]
+  isLoading: boolean
+  skeletonCount?: number
+}>()
 
 const emit = defineEmits<{
-  (e: 'user-removed', userId: string): void;
-  (
-    e: 'role-changed',
-    watchFileUser: WatchFileUser,
-    newRole: WatchFileUserRole,
-  ): void;
-}>();
+  (e: 'user-removed', userId: string): void
+  (e: 'role-changed', watchFileUser: WatchFileUser, newRole: WatchFileUserRole): void
+}>()
 
-const originalRoles = ref<Record<string, WatchFileUserRole>>({});
-const { allowAnimations } = useMotionPreference();
+const originalRoles = ref<Record<string, WatchFileUserRole>>({})
+const { allowAnimations } = useMotionPreference()
 
 // Watch for changes in watchFileUsers to update originalRoles
 watch(
   () => props.watchFileUsers,
   (newUsers) => {
-    originalRoles.value = {};
+    originalRoles.value = {}
     newUsers.forEach((user) => {
-      originalRoles.value[user.id] = user.role;
-    });
+      originalRoles.value[user.id] = user.role
+    })
   },
   { immediate: true, deep: true },
-);
+)
 
 async function onRemoveUser(watchFileUser: WatchFileUser) {
   showConfirmModal({
@@ -159,20 +134,20 @@ async function onRemoveUser(watchFileUser: WatchFileUser) {
           watchFileId: props.watchFileId,
           watchFileUserId: watchFileUser.id,
           displayName: watchFileUser.user.displayName,
-        });
+        })
 
-        emit('user-removed', watchFileUser.id);
+        emit('user-removed', watchFileUser.id)
       } catch (error) {
-        console.error('Failed to remove user:', error);
+        console.error('Failed to remove user:', error)
       }
     },
-  });
+  })
 }
 
 function onChangeRole(watchFileUser: WatchFileUser, role: WatchFileUserRole) {
   // Get the original role from our stored values
-  const originalRole = originalRoles.value[watchFileUser.id];
-  if (originalRole === role) return;
+  const originalRole = originalRoles.value[watchFileUser.id]
+  if (originalRole === role) return
   showConfirmModal({
     title: t('watch_files.shareDialog.changeRoleTitle'),
     message: t('watch_files.shareDialog.changeRoleMessage', {
@@ -185,26 +160,26 @@ function onChangeRole(watchFileUser: WatchFileUser, role: WatchFileUserRole) {
           watchFileId: props.watchFileId,
           user: watchFileUser.user,
           role,
-        });
+        })
         // Update the stored original role to the new confirmed role
-        originalRoles.value[watchFileUser.id] = role;
+        originalRoles.value[watchFileUser.id] = role
 
-        emit('role-changed', watchFileUser, role);
+        emit('role-changed', watchFileUser, role)
       } catch (error) {
-        console.error('Failed to update role:', error);
+        console.error('Failed to update role:', error)
 
         if (originalRole) {
-          watchFileUser.role = originalRole;
+          watchFileUser.role = originalRole
         }
       }
     },
     onCancel: () => {
       // Reset the role to original value in case of cancellation
       if (originalRole) {
-        watchFileUser.role = originalRole;
+        watchFileUser.role = originalRole
       }
     },
-  });
+  })
 }
 </script>
 

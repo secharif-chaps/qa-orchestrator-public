@@ -1128,19 +1128,23 @@ export default {
       roles: {
         reader: {
           name: 'Reader',
-          description: 'Read-only access to the organization\'s folders and company profiles. Can browse and consult all shared content.',
+          description:
+            "Read-only access to the organization's folders and company profiles. Can browse and consult all shared content.",
         },
         writer: {
           name: 'Writer',
-          description: 'Can create folders, add company profiles, search for companies and manage their own content within the organization.',
+          description:
+            'Can create folders, add company profiles, search for companies and manage their own content within the organization.',
         },
         manager: {
           name: 'Manager',
-          description: 'All Writer permissions plus team management: can add or remove members and configure their permissions within the organization.',
+          description:
+            'All Writer permissions plus team management: can add or remove members and configure their permissions within the organization.',
         },
         admin: {
           name: 'Admin',
-          description: 'Full administrative control over all organizations, users and system settings. Includes user creation and organization assignment. Assign with caution.',
+          description:
+            'Full administrative control over all organizations, users and system settings. Includes user creation and organization assignment. Assign with caution.',
         },
       },
     },
@@ -2019,20 +2023,21 @@ export default {
   },
   featureFlags: {
     globalFeatures: 'Global Features',
-    description: 'Add-on capabilities that enhance core modules. These features are disabled by default.',
+    description:
+      'Add-on capabilities that enhance core modules. These features are disabled by default.',
     disabled: 'Disabled',
     translation: {
       name: 'Translation',
-      description: 'Translate company data to other languages'
+      description: 'Translate company data to other languages',
     },
     discover: {
       name: 'Discover',
-      description: 'Access external Discover dashboard'
+      description: 'Access external Discover dashboard',
     },
     pappers: {
       name: 'Pappers',
-      description: 'Fetch company data from Pappers API'
-    }
+      description: 'Fetch company data from Pappers API',
+    },
   },
   dataSources: {
     title: 'Data Sources',

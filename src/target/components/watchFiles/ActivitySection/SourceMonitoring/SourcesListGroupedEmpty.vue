@@ -15,21 +15,21 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Icon } from '@owlint/feathers-vue';
-import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
-import { RouteNames } from '~/types/route-names';
+import { Button, Icon } from '@owlint/feathers-vue'
+import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import { RouteNames } from '~/types/route-names'
 
-const { t } = useI18n();
-const router = useRouter();
+const { t } = useI18n()
+const router = useRouter()
 const props = defineProps<{
-  watchFileId?: string;
-}>();
+  watchFileId?: string
+}>()
 
 const onAddSource = async () => {
   await router.push({
     name: RouteNames.WATCH_FILES_SCOPE,
     params: { id: props.watchFileId! },
-  });
-};
+  })
+}
 </script>

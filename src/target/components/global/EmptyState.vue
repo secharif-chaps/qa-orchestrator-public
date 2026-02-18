@@ -5,9 +5,7 @@
       'flex-1': verticalAlign === 'center',
     }"
   >
-    <div
-      class="flex flex-col items-center justify-center px-4 py-12 text-center"
-    >
+    <div class="flex flex-col items-center justify-center px-4 py-12 text-center">
       <Icon
         :icon="icon"
         class="mb-4 text-5xl text-gray-300"
@@ -27,14 +25,14 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@owlint/feathers-vue';
+import { Icon } from '@owlint/feathers-vue'
 
 interface Props {
-  title?: string;
-  description?: string;
-  icon?: string;
-  fill?: boolean;
-  verticalAlign?: 'top' | 'center';
+  title?: string
+  description?: string
+  icon?: string
+  fill?: boolean
+  verticalAlign?: 'top' | 'center'
 }
 
 const {
@@ -42,5 +40,5 @@ const {
   verticalAlign = 'top',
   description = '',
   title = '',
-} = defineProps<Props>();
+} = defineProps<Props>()
 </script>

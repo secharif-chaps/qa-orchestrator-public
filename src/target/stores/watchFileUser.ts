@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore } from 'pinia'
 
 export const useWatchFileUserStore = defineStore('watchFileUser', () => {
   // UI state management only - no server state or API calls
@@ -9,5 +9,5 @@ export const useWatchFileUserStore = defineStore('watchFileUser', () => {
 
   return {
     // No UI state needed for watchFileUser functionality
-  };
-});
+  }
+})

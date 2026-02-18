@@ -1,10 +1,5 @@
 <template>
-  <Modal
-    v-model:display-modal="isOpen"
-    :title="modalTitle"
-    size="lg"
-    @close="handleClose"
-  >
+  <Modal v-model:display-modal="isOpen" :title="modalTitle" size="lg" @close="handleClose">
     <template #description>
       <p class="mb-4">
         {{ modalDescription }}
@@ -31,9 +26,7 @@
               </th>
             </template>
             <template
-              v-for="column in tableColumns.filter(
-                (col) => col.key !== 'selectAll',
-              )"
+              v-for="column in tableColumns.filter((col) => col.key !== 'selectAll')"
               :key="column.key"
               #[`head(${column.key})`]="{ field }"
             >
@@ -48,10 +41,7 @@
             </template>
             <template #cell(selectAll)="{ item }">
               <td class="px-4 py-3">
-                <div
-                  v-if="item.isSkeleton"
-                  class="h-4 w-4 animate-pulse rounded bg-gray-200"
-                ></div>
+                <div v-if="item.isSkeleton" class="h-4 w-4 animate-pulse rounded bg-gray-200"></div>
                 <template v-else>
                   <OPopper v-if="isSourceAlreadyInTargetState(item)">
                     <template #tooltip>
@@ -79,13 +69,8 @@
             <template #cell(name)="{ item }">
               <td class="px-4 py-3">
                 <div v-if="item.isSkeleton" class="flex items-center gap-2">
-                  <div
-                    class="h-4 w-4 animate-pulse rounded-full bg-gray-200"
-                  ></div>
-                  <div
-                    class="h-4 animate-pulse rounded bg-gray-200"
-                    style="width: 120px"
-                  ></div>
+                  <div class="h-4 w-4 animate-pulse rounded-full bg-gray-200"></div>
+                  <div class="h-4 animate-pulse rounded bg-gray-200" style="width: 120px"></div>
                 </div>
                 <SourceCard v-else :source="item" variant="minimal" />
               </td>
@@ -127,196 +112,185 @@
 
 <script setup lang="ts">
 import {
-    Button,
-    Checkbox,
-    HeaderCell,
-    Modal,
-    OPopper,
-    Table,
-    Tag,
-    useSort,
-    type SortOrder,
-} from '@owlint/feathers-vue';
-import { computed, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useChangeActorStatus } from '~/api/mutations/actor';
-import { useToast } from '~/composables/useToast';
-import { ActorStatus } from '~/types/actor';
-import type { Source } from '~/types/source';
-import { SourceStatus } from '~/types/source';
-import type { WatchFileActor } from '~/types/watchFile';
-import SourceCard from '../sources/SourceCard.vue';
+  Button,
+  Checkbox,
+  HeaderCell,
+  Modal,
+  OPopper,
+  Table,
+  Tag,
+  useSort,
+  type SortOrder,
+} from '@owlint/feathers-vue'
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useChangeActorStatus } from '~/api/mutations/actor'
+import { useToast } from '~/composables/useToast'
+import { ActorStatus } from '~/types/actor'
+import type { Source } from '~/types/source'
+import { SourceStatus } from '~/types/source'
+import type { WatchFileActor } from '~/types/watchFile'
+import SourceCard from '../sources/SourceCard.vue'
 
 interface Props {
-  actor?: WatchFileActor | null;
-  watchFileId?: string;
+  actor?: WatchFileActor | null
+  watchFileId?: string
 }
 
-const { actor = null, watchFileId = '' } = defineProps<Props>();
+const { actor = null, watchFileId = '' } = defineProps<Props>()
 
 const isOpen = defineModel<boolean>('isOpen', {
   required: false,
   default: false,
-});
+})
 
 const emit = defineEmits<{
-  (e: 'close'): void;
-  (e: 'actor-updated', newStatus: string): void;
-}>();
+  (e: 'close'): void
+  (e: 'actor-updated', newStatus: string): void
+}>()
 
-const { t } = useI18n();
-const toast = useToast();
+const { t } = useI18n()
+const toast = useToast()
 
 const { changeStatus } = useChangeActorStatus({
   onSuccess: () => {
     emit(
       'actor-updated',
-      actor?.status === ActorStatus.ACTIVE
-        ? ActorStatus.INACTIVE
-        : ActorStatus.ACTIVE,
-    );
-    isOpen.value = false;
+      actor?.status === ActorStatus.ACTIVE ? ActorStatus.INACTIVE : ActorStatus.ACTIVE,
+    )
+    isOpen.value = false
   },
-});
+})
 
-const isLoading = ref(false);
-const fetchedSources = ref<Source[]>([]);
-const isTableLoading = ref(false);
-const selectedSourceIds = ref<Array<string>>([]);
+const isLoading = ref(false)
+const fetchedSources = ref<Source[]>([])
+const isTableLoading = ref(false)
+const selectedSourceIds = ref<Array<string>>([])
 
-const sortOrderTable = ref<SortOrder>('');
-const sortByTable = ref('');
-const { changeSort } = useSort(sortOrderTable, sortByTable);
+const sortOrderTable = ref<SortOrder>('')
+const sortByTable = ref('')
+const { changeSort } = useSort(sortOrderTable, sortByTable)
 
 // Get sources associated with the actor (fetched via API)
 const actorSources = computed(() => {
-  if (!actor) return [];
-  return fetchedSources.value;
-});
+  if (!actor) return []
+  return fetchedSources.value
+})
 
 // Sorted sources for the table
 const sortedActorSources = computed(() => {
-  const sources = [...actorSources.value];
+  const sources = [...actorSources.value]
 
   if (sortByTable.value === 'name') {
     sources.sort((a, b) => {
-      const aName = a.name?.toLowerCase() || '';
-      const bName = b.name?.toLowerCase() || '';
+      const aName = a.name?.toLowerCase() || ''
+      const bName = b.name?.toLowerCase() || ''
       return sortOrderTable.value === 'ASC'
         ? aName.localeCompare(bName)
-        : bName.localeCompare(aName);
-    });
+        : bName.localeCompare(aName)
+    })
   } else if (sortByTable.value === 'type') {
     sources.sort((a, b) => {
-      const aType = getSourceTypeLabel(a.type)?.toLowerCase() || '';
-      const bType = getSourceTypeLabel(b.type)?.toLowerCase() || '';
+      const aType = getSourceTypeLabel(a.type)?.toLowerCase() || ''
+      const bType = getSourceTypeLabel(b.type)?.toLowerCase() || ''
       return sortOrderTable.value === 'ASC'
         ? aType.localeCompare(bType)
-        : bType.localeCompare(aType);
-    });
+        : bType.localeCompare(aType)
+    })
   }
 
-  return sources;
-});
+  return sources
+})
 
 const areAllSourcesReadOnly = computed(() => {
   if (sortedActorSources.value.length === 0) {
-    return true;
+    return true
   }
-  return sortedActorSources.value.every((source) =>
-    isSourceAlreadyInTargetState(source),
-  );
-});
+  return sortedActorSources.value.every((source) => isSourceAlreadyInTargetState(source))
+})
 
 const isSourceAlreadyInTargetState = (source: Source): boolean => {
-  if (!actor || isTableLoading.value) return false;
+  if (!actor || isTableLoading.value) return false
 
-  const isActivating = actor.status !== ActorStatus.ACTIVE;
+  const isActivating = actor.status !== ActorStatus.ACTIVE
 
   if (isActivating) {
-    return source.status === SourceStatus.ACTIVE;
+    return source.status === SourceStatus.ACTIVE
   } else {
-    return (
-      source.status === SourceStatus.INACTIVE ||
-      source.status === SourceStatus.AUTO_DISABLED
-    );
+    return source.status === SourceStatus.INACTIVE || source.status === SourceStatus.AUTO_DISABLED
   }
-};
+}
 
 const disabledSourceTooltipText = computed(() => {
-  if (!actor) return '';
+  if (!actor) return ''
 
   return actor.status !== ActorStatus.ACTIVE
     ? t('watch_files.actors.deactivation_modal.source_already_active')
-    : t('watch_files.actors.deactivation_modal.source_already_inactive');
-});
+    : t('watch_files.actors.deactivation_modal.source_already_inactive')
+})
 
-const selectAll = ref<boolean | 'indeterminate'>(false);
+const selectAll = ref<boolean | 'indeterminate'>(false)
 
 // // Handle select all checkbox change
 const toggleSelectAll = (value: boolean | 'indeterminate') => {
-  if (isTableLoading.value) return;
+  if (isTableLoading.value) return
   // Update selection for all changeable sources
   const filterActorSources = sortedActorSources.value.filter(
     (source) => !isSourceAlreadyInTargetState(source),
-  );
+  )
   if (value === true) {
-    selectedSourceIds.value = sortedActorSources.value.map(
-      (source) => source.id,
-    );
+    selectedSourceIds.value = sortedActorSources.value.map((source) => source.id)
   } else if (value === false) {
     for (const source of filterActorSources) {
-      const sourceIndex = selectedSourceIds.value.findIndex(
-        (id) => source.id === id,
-      );
+      const sourceIndex = selectedSourceIds.value.findIndex((id) => source.id === id)
       if (sourceIndex !== -1) {
-        selectedSourceIds.value.splice(sourceIndex, 1);
+        selectedSourceIds.value.splice(sourceIndex, 1)
       }
     }
   }
-};
+}
 
 watch(selectAll, (newValue) => {
-  toggleSelectAll(newValue);
-});
+  toggleSelectAll(newValue)
+})
 
 // Watch for changes in sources to update selectAll state
 watch(
   [sortedActorSources, selectedSourceIds],
   () => {
-    if (isTableLoading.value) return;
+    if (isTableLoading.value) return
 
     if (areAllSourcesReadOnly.value) {
-      selectAll.value = true;
-      return;
+      selectAll.value = true
+      return
     }
 
     const changeableSources = sortedActorSources.value.filter(
       (source) => !isSourceAlreadyInTargetState(source),
-    );
+    )
     if (changeableSources.length) {
       const isAllSourceSelected = changeableSources.every((source) =>
         selectedSourceIds.value.includes(source.id),
-      );
+      )
       if (isAllSourceSelected) {
-        selectAll.value = true;
+        selectAll.value = true
       } else if (!isAllSourceSelected && selectedSourceIds.value.length) {
-        selectAll.value = 'indeterminate';
+        selectAll.value = 'indeterminate'
       } else {
-        selectAll.value = false;
+        selectAll.value = false
       }
     }
   },
   { deep: true },
-);
+)
 
 const fetchActorSources = async () => {
-  if (!actor) return;
+  if (!actor) return
 
-  isTableLoading.value = true;
+  isTableLoading.value = true
 
   try {
-    const { getActorSources } = await import('~/api/actor');
+    const { getActorSources } = await import('~/api/actor')
     const response = await getActorSources(
       watchFileId,
       String(actor.actor.id),
@@ -324,16 +298,16 @@ const fetchActorSources = async () => {
       100,
       'name',
       'ASC',
-    );
+    )
     if (response && response.items && Array.isArray(response.items)) {
-      fetchedSources.value = response.items;
+      fetchedSources.value = response.items
     }
   } catch (error) {
-    console.error('Could not fetch sources for actor:', error);
+    console.error('Could not fetch sources for actor:', error)
   } finally {
-    isTableLoading.value = false;
+    isTableLoading.value = false
   }
-};
+}
 
 // Skeleton data for loading state
 const skeletonData = computed(() => {
@@ -343,56 +317,56 @@ const skeletonData = computed(() => {
     type: '',
     primaryDomain: '',
     isSkeleton: true,
-  }));
-});
+  }))
+})
 
 const tableData = computed(() => {
   if (isTableLoading.value) {
-    return skeletonData.value;
+    return skeletonData.value
   }
-  return sortedActorSources.value;
-});
+  return sortedActorSources.value
+})
 
 const modalTitle = computed(() => {
-  if (!actor) return '';
+  if (!actor) return ''
 
-  const isActivating = actor.status !== ActorStatus.ACTIVE;
-  const actorName = actor.actor.label;
+  const isActivating = actor.status !== ActorStatus.ACTIVE
+  const actorName = actor.actor.label
 
   return isActivating
     ? t('watch_files.actors.deactivation_modal.activation_modal.title', {
         actor: actorName,
       })
-    : t('watch_files.actors.deactivation_modal.title', { actor: actorName });
-});
+    : t('watch_files.actors.deactivation_modal.title', { actor: actorName })
+})
 
 const modalDescription = computed(() => {
-  if (!actor) return '';
+  if (!actor) return ''
 
-  const isActivating = actor.status !== ActorStatus.ACTIVE;
+  const isActivating = actor.status !== ActorStatus.ACTIVE
 
   return isActivating
     ? t('watch_files.actors.deactivation_modal.activation_modal.description')
-    : t('watch_files.actors.deactivation_modal.description');
-});
+    : t('watch_files.actors.deactivation_modal.description')
+})
 
 const confirmButtonLabel = computed(() => {
-  if (!actor) return '';
+  if (!actor) return ''
 
-  const isActivating = actor.status !== ActorStatus.ACTIVE;
+  const isActivating = actor.status !== ActorStatus.ACTIVE
   const changeableSources = sortedActorSources.value.filter(
     (source) => !isSourceAlreadyInTargetState(source),
-  );
+  )
   const selectedCount = changeableSources.filter((source) =>
     selectedSourceIds.value.includes(source.id),
-  ).length;
+  ).length
 
   const translationKey = isActivating
     ? 'watch_files.actors.deactivation_modal.activation_modal.confirm'
-    : 'watch_files.actors.deactivation_modal.confirm';
+    : 'watch_files.actors.deactivation_modal.confirm'
 
-  return t(translationKey, { count: selectedCount });
-});
+  return t(translationKey, { count: selectedCount })
+})
 
 const tableColumns = computed(() => {
   const columns = [
@@ -414,89 +388,88 @@ const tableColumns = computed(() => {
       sortable: true,
       class: 'w-1/4',
     },
-  ];
+  ]
 
-  return columns;
-});
+  return columns
+})
 
-const currentActorId = ref<string | null>(null);
+const currentActorId = ref<string | null>(null)
 
 watch(isOpen, async (isOpen) => {
   if (isOpen && actor) {
-    const newActorId = actor.actor.id;
+    const newActorId = actor.actor.id
     if (currentActorId.value !== newActorId) {
-      fetchedSources.value = [];
-      selectedSourceIds.value = [];
-      currentActorId.value = newActorId;
+      fetchedSources.value = []
+      selectedSourceIds.value = []
+      currentActorId.value = newActorId
       // Only reset sort when opening for a different actor
-      sortByTable.value = 'name';
-      sortOrderTable.value = 'ASC';
+      sortByTable.value = 'name'
+      sortOrderTable.value = 'ASC'
     }
 
-    await fetchActorSources();
+    await fetchActorSources()
 
     const filterActorSources = sortedActorSources.value.filter((source) => {
       if (!isSourceAlreadyInTargetState(source)) {
-        const isActivating = actor?.status !== ActorStatus.ACTIVE;
+        const isActivating = actor?.status !== ActorStatus.ACTIVE
         if (!(isActivating && source.status === SourceStatus.INACTIVE)) {
-          return true;
+          return true
         }
       }
-      return false;
-    });
+      return false
+    })
 
-    selectedSourceIds.value = filterActorSources.map(({ id }) => id);
+    selectedSourceIds.value = filterActorSources.map(({ id }) => id)
   }
-});
+})
 
 // Get translated source type label
 const getSourceTypeLabel = (type: string | undefined): string => {
-  if (!type) return 'Unknown';
+  if (!type) return 'Unknown'
 
   if (type.startsWith('social_media:')) {
-    return t('source_types.social_media');
+    return t('source_types.social_media')
   }
 
-  const translation = t(`source_types.${type}`);
+  const translation = t(`source_types.${type}`)
   if (translation !== `source_types.${type}`) {
-    return translation;
+    return translation
   }
-  return type;
-};
+  return type
+}
 
 const handleClose = () => {
-  emit('close');
-};
+  emit('close')
+}
 
 const handleConfirm = async () => {
   if (!actor) {
-    return;
+    return
   }
 
-  isLoading.value = true;
+  isLoading.value = true
 
   try {
-    const isActivating = actor.status !== ActorStatus.ACTIVE;
-    const status = isActivating ? ActorStatus.ACTIVE : ActorStatus.INACTIVE;
+    const isActivating = actor.status !== ActorStatus.ACTIVE
+    const status = isActivating ? ActorStatus.ACTIVE : ActorStatus.INACTIVE
 
     const selectedSources = sortedActorSources.value.filter(
       (source) =>
-        !isSourceAlreadyInTargetState(source) &&
-        selectedSourceIds.value.includes(source.id),
-    );
-    const sourceIds = selectedSources.map((source) => source.id);
+        !isSourceAlreadyInTargetState(source) && selectedSourceIds.value.includes(source.id),
+    )
+    const sourceIds = selectedSources.map((source) => source.id)
 
     await changeStatus({
       watchFileId: watchFileId,
       actorId: String(actor.actor.id),
       status: status as ActorStatus,
       sourceIds,
-    });
+    })
   } catch (error) {
-    console.error('Error updating actor status:', error);
-    toast.error(t('watch_files.actors.deactivation_modal.error'));
+    console.error('Error updating actor status:', error)
+    toast.error(t('watch_files.actors.deactivation_modal.error'))
   } finally {
-    isLoading.value = false;
+    isLoading.value = false
   }
-};
+}
 </script>

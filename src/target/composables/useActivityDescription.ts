@@ -1,9 +1,6 @@
-import type { WatchFileActivity } from '~/types/watchFile';
-import type { SourceActivity } from '~/types/source';
-import type {
-  WatchFileActivityDescription,
-  SourceActivityDescription,
-} from '~/types/timeline';
+import type { WatchFileActivity } from '~/types/watchFile'
+import type { SourceActivity } from '~/types/source'
+import type { WatchFileActivityDescription, SourceActivityDescription } from '~/types/timeline'
 
 export function useActivityDescription() {
   const createWatchFileActivityDescription = (
@@ -16,8 +13,8 @@ export function useActivityDescription() {
       localizationKey,
       activity,
       customComponent,
-    };
-  };
+    }
+  }
 
   const createSourceActivityDescription = (
     localizationKey: string,
@@ -29,11 +26,11 @@ export function useActivityDescription() {
       localizationKey,
       activity,
       customComponent,
-    };
-  };
+    }
+  }
 
   return {
     createWatchFileActivityDescription,
     createSourceActivityDescription,
-  };
+  }
 }

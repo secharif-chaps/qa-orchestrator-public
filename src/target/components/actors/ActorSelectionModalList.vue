@@ -1,8 +1,6 @@
 <template>
   <div class="actor-list-view p-2">
-    <div
-      class="mb-4 flex items-center justify-between gap-4 border-b border-gray-200 pb-4"
-    >
+    <div class="mb-4 flex items-center justify-between gap-4 border-b border-gray-200 pb-4">
       <div class="h-10 w-96">
         <Searchbar
           id="actor-list-search"
@@ -34,11 +32,7 @@
           class="h-full"
         >
           <template #items="{ options }">
-            <SelectItem
-              v-for="option in options"
-              :key="option.type"
-              :value="option.type"
-            >
+            <SelectItem v-for="option in options" :key="option.type" :value="option.type">
               {{ displayLabelActorType(option) }}
             </SelectItem>
           </template>
@@ -69,32 +63,32 @@
 </template>
 
 <script setup lang="ts">
-import { Icon, Searchbar, Select, SelectItem } from '@owlint/feathers-vue';
-import { useQuery } from '@pinia/colada';
-import { useDebounceFn } from '@vueuse/core';
-import { storeToRefs } from 'pinia';
-import { computed, ref, watch } from 'vue';
-import { getActorTypesQuery } from '~/api/queries/actor';
-import { useActorStore } from '~/stores/actor';
-import type { ActorType } from '~/types/actor';
-import { ActorStatus } from '~/types/actor';
-import type { WatchFileActor } from '~/types/watchFile';
-import ActorsGrid from './ActorsGrid.vue';
+import { Icon, Searchbar, Select, SelectItem } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { useDebounceFn } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { computed, ref, watch } from 'vue'
+import { getActorTypesQuery } from '~/api/queries/actor'
+import { useActorStore } from '~/stores/actor'
+import type { ActorType } from '~/types/actor'
+import { ActorStatus } from '~/types/actor'
+import type { WatchFileActor } from '~/types/watchFile'
+import ActorsGrid from './ActorsGrid.vue'
 
 interface Props {
-  actors: WatchFileActor[];
-  loading?: boolean;
-  error?: string;
-  watchFileId?: string;
-  pageSize?: number;
-  totalItems?: number;
-  isActorSelected?: (actor: WatchFileActor) => boolean;
+  actors: WatchFileActor[]
+  loading?: boolean
+  error?: string
+  watchFileId?: string
+  pageSize?: number
+  totalItems?: number
+  isActorSelected?: (actor: WatchFileActor) => boolean
 }
 
 interface Emits {
-  retry: [];
-  'toggle-status': [actor: WatchFileActor];
-  'actor-clicked': [actor: WatchFileActor];
+  retry: []
+  'toggle-status': [actor: WatchFileActor]
+  'actor-clicked': [actor: WatchFileActor]
 }
 
 const {
@@ -105,37 +99,37 @@ const {
   pageSize = undefined,
   totalItems = undefined,
   isActorSelected = undefined,
-} = defineProps<Props>();
+} = defineProps<Props>()
 
-defineEmits<Emits>();
+defineEmits<Emits>()
 
-const actorStore = useActorStore();
-const { search, page: currentPage } = storeToRefs(actorStore);
+const actorStore = useActorStore()
+const { search, page: currentPage } = storeToRefs(actorStore)
 
-const typeFilter = defineModel<string[]>('typeFilter', { required: true });
+const typeFilter = defineModel<string[]>('typeFilter', { required: true })
 
-const searchTerm = ref(search.value || '');
-const debouncedSearchTerm = ref(search.value || '');
+const searchTerm = ref(search.value || '')
+const debouncedSearchTerm = ref(search.value || '')
 
 const debouncedSearch = useDebounceFn((searchValue: string) => {
-  search.value = searchValue;
-  debouncedSearchTerm.value = searchValue.trim();
-}, 500);
+  search.value = searchValue
+  debouncedSearchTerm.value = searchValue.trim()
+}, 500)
 
 watch(searchTerm, (newValue) => {
-  debouncedSearch(newValue);
-});
+  debouncedSearch(newValue)
+})
 
-const noActorsToDisplay = computed(() => !loading && !actors.length);
+const noActorsToDisplay = computed(() => !loading && !actors.length)
 
 watch(
   () => search.value,
   (newSearch) => {
     if (newSearch !== searchTerm.value) {
-      searchTerm.value = newSearch || '';
+      searchTerm.value = newSearch || ''
     }
   },
-);
+)
 
 const { data: actorTypesData } = useQuery(() =>
   getActorTypesQuery({
@@ -143,41 +137,40 @@ const { data: actorTypesData } = useQuery(() =>
     status: ActorStatus.INACTIVE,
     name: debouncedSearchTerm.value || undefined,
   }),
-);
+)
 
-const typeOptions = computed(() => actorTypesData.value?.types ?? []);
+const typeOptions = computed(() => actorTypesData.value?.types ?? [])
 
 const displayLabelActorType = (option: ActorType) => {
-  const capitalizedType =
-    option.type.charAt(0).toUpperCase() + option.type.slice(1);
-  return `${capitalizedType} (${option.count})`;
-};
+  const capitalizedType = option.type.charAt(0).toUpperCase() + option.type.slice(1)
+  return `${capitalizedType} (${option.count})`
+}
 
 const typeDisplayValue = computed(() => {
-  const types = actorTypesData.value?.types;
+  const types = actorTypesData.value?.types
 
   if (!typeFilter.value || typeFilter.value.length === 0 || !types) {
-    return '';
+    return ''
   }
 
   const labels = typeFilter.value.map((value) => {
-    const option = types.find((t) => t.type === value);
+    const option = types.find((t) => t.type === value)
     if (option) {
-      return displayLabelActorType(option);
+      return displayLabelActorType(option)
     }
-    return value.charAt(0).toUpperCase() + value.slice(1);
-  });
+    return value.charAt(0).toUpperCase() + value.slice(1)
+  })
 
-  return labels.join(', ');
-});
+  return labels.join(', ')
+})
 
 watch(search, () => {
-  currentPage.value = 1;
-});
+  currentPage.value = 1
+})
 
 watch(typeFilter, () => {
-  currentPage.value = 1;
-});
+  currentPage.value = 1
+})
 </script>
 
 <style>

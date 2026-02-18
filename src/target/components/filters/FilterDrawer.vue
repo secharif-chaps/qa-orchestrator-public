@@ -28,12 +28,7 @@
         <Button @click="confirmFilters">
           {{ confirmButtonLabel }}
         </Button>
-        <Button
-          v-if="filtersCounts"
-          variant="tertiary"
-          icon="fa-rotate-left"
-          @click="resetFilters"
-        >
+        <Button v-if="filtersCounts" variant="tertiary" icon="fa-rotate-left" @click="resetFilters">
           {{ resetButtonLabel }}
         </Button>
       </div>
@@ -42,26 +37,26 @@
 </template>
 
 <script lang="ts" setup>
-import { Button } from '@owlint/feathers-vue';
-import ErrorMessage from '~/components/global/ErrorMessage.vue';
-import FiltersAccordion from '~/components/filterPanel/FiltersAccordion.vue';
-import FiltersPanelSkeleton from '~/components/filterPanel/FiltersPanelSkeleton.vue';
-import Drawer from '~/components/global/Drawer.vue';
-import type { DocumentFacets } from '~/types/document';
-import type { AnalysisFacets } from '~/types/facet';
-import type { DocumentFilter } from '~/types/filter';
+import { Button } from '@owlint/feathers-vue'
+import ErrorMessage from '~/components/global/ErrorMessage.vue'
+import FiltersAccordion from '~/components/filterPanel/FiltersAccordion.vue'
+import FiltersPanelSkeleton from '~/components/filterPanel/FiltersPanelSkeleton.vue'
+import Drawer from '~/components/global/Drawer.vue'
+import type { DocumentFacets } from '~/types/document'
+import type { AnalysisFacets } from '~/types/facet'
+import type { DocumentFilter } from '~/types/filter'
 
 interface Props {
-  facets?: DocumentFacets | AnalysisFacets;
-  isLoading?: boolean;
-  error?: Error | null;
-  accordionFilters: DocumentFilter[];
-  openEdit?: string;
-  defaultValueOpen: string[];
-  filtersCounts?: number;
-  title: string;
-  confirmButtonLabel: string;
-  resetButtonLabel: string;
+  facets?: DocumentFacets | AnalysisFacets
+  isLoading?: boolean
+  error?: Error | null
+  accordionFilters: DocumentFilter[]
+  openEdit?: string
+  defaultValueOpen: string[]
+  filtersCounts?: number
+  title: string
+  confirmButtonLabel: string
+  resetButtonLabel: string
 }
 
 const {
@@ -70,22 +65,22 @@ const {
   error = null,
   openEdit = '',
   filtersCounts = 0,
-} = defineProps<Props>();
+} = defineProps<Props>()
 
-const displayDrawer = defineModel<boolean>({ default: false });
+const displayDrawer = defineModel<boolean>({ default: false })
 
 const emit = defineEmits<{
-  confirm: [];
-  reset: [];
-}>();
+  confirm: []
+  reset: []
+}>()
 
 const confirmFilters = () => {
-  emit('confirm');
-  displayDrawer.value = false;
-};
+  emit('confirm')
+  displayDrawer.value = false
+}
 
 const resetFilters = () => {
-  emit('reset');
-  displayDrawer.value = false;
-};
+  emit('reset')
+  displayDrawer.value = false
+}
 </script>

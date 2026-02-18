@@ -10,49 +10,49 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { SourceActivity } from '~/types/source';
-import { SourceActionType, SourceStatus } from '~/types/source';
+import { computed } from 'vue'
+import type { SourceActivity } from '~/types/source'
+import { SourceActionType, SourceStatus } from '~/types/source'
 
 interface Props {
-  activity: SourceActivity;
+  activity: SourceActivity
 }
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const userName = computed(() => props.activity?.user?.displayName || '');
+const userName = computed(() => props.activity?.user?.displayName || '')
 
 const keypath = computed(() => {
-  const { actionType, actionData } = props.activity;
+  const { actionType, actionData } = props.activity
 
   switch (actionType) {
     case SourceActionType.SOURCE_CONNECTED:
-      return 'watch_files.activity.sources.history.source_connected';
+      return 'watch_files.activity.sources.history.source_connected'
     case SourceActionType.SOURCE_ERROR:
-      return 'watch_files.activity.sources.history.source_error';
+      return 'watch_files.activity.sources.history.source_error'
     case SourceActionType.SOURCE_RECOVERED:
-      return 'watch_files.activity.sources.history.source_recovered';
+      return 'watch_files.activity.sources.history.source_recovered'
     case SourceActionType.SOURCE_CONFIG_UPDATED:
-      return 'watch_files.activity.sources.history.source_config_updated';
+      return 'watch_files.activity.sources.history.source_config_updated'
     case SourceActionType.SOURCE_ADDED_TO_WATCHFILE:
-      return 'watch_files.activity.sources.history.source_added_to_watchfile';
+      return 'watch_files.activity.sources.history.source_added_to_watchfile'
     case SourceActionType.SOURCE_COLLECT_STATUS_CHANGED:
-      return 'watch_files.activity.sources.history.source_collect_status_changed';
+      return 'watch_files.activity.sources.history.source_collect_status_changed'
     case SourceActionType.SOURCE_STATUS_CHANGED:
       if (actionData.new_status === SourceStatus.ACTIVE) {
-        return 'watch_files.activity.sources.history.source_status_changed_active';
+        return 'watch_files.activity.sources.history.source_status_changed_active'
       } else {
-        return 'watch_files.activity.sources.history.source_status_changed_inactive';
+        return 'watch_files.activity.sources.history.source_status_changed_inactive'
       }
     default:
-      return '';
+      return ''
   }
-});
+})
 
 const errorMessage = computed(() => {
   if (props.activity.actionType === SourceActionType.SOURCE_ERROR) {
-    return props.activity.actionData.error_message;
+    return props.activity.actionData.error_message
   }
-  return '';
-});
+  return ''
+})
 </script>

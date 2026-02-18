@@ -58,24 +58,24 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Icon } from '@owlint/feathers-vue';
-import { computed, onMounted, onUnmounted, watch, type RendererElement } from 'vue';
+import { Button, Icon } from '@owlint/feathers-vue'
+import { computed, onMounted, onUnmounted, watch, type RendererElement } from 'vue'
 
-type DrawerPosition = 'left' | 'right';
+type DrawerPosition = 'left' | 'right'
 
 interface Props {
-  position?: DrawerPosition;
-  title?: string;
-  showHeader?: boolean;
-  icon?: string;
-  showCloseButton?: boolean;
-  closeOnOverlay?: boolean;
-  closeOnEscape?: boolean;
-  to?: string | RendererElement | null;
+  position?: DrawerPosition
+  title?: string
+  showHeader?: boolean
+  icon?: string
+  showCloseButton?: boolean
+  closeOnOverlay?: boolean
+  closeOnEscape?: boolean
+  to?: string | RendererElement | null
 }
 
 interface Emits {
-  (e: 'open' | 'close'): void;
+  (e: 'open' | 'close'): void
 }
 
 const {
@@ -87,70 +87,70 @@ const {
   to = undefined,
   title = undefined,
   icon = undefined,
-} = defineProps<Props>();
-const emit = defineEmits<Emits>();
+} = defineProps<Props>()
+const emit = defineEmits<Emits>()
 
-const isOpen = defineModel<boolean>();
+const isOpen = defineModel<boolean>()
 
 const drawerTransitionClasses = computed(() => {
   const baseClasses = {
     enterActive: 'transition-transform duration-300 ease-in-out',
     leaveActive: 'transition-transform duration-300 ease-in-out',
-  };
+  }
 
   const transformClasses = {
     left: '-translate-x-full',
     right: 'translate-x-full',
-  };
+  }
 
   return {
     ...baseClasses,
     enterFrom: transformClasses[position],
     leaveTo: transformClasses[position],
-  };
-});
+  }
+})
 
 const close = () => {
-  isOpen.value = false;
-  emit('close');
-};
+  isOpen.value = false
+  emit('close')
+}
 
 const open = () => {
-  isOpen.value = true;
-  emit('open');
-};
+  isOpen.value = true
+  emit('open')
+}
 
 const handleOverlayClick = () => {
   if (closeOnOverlay) {
-    close();
+    close()
   }
-};
+}
 
 const handleEscapeKey = (event: KeyboardEvent) => {
   if (event.key === 'Escape' && closeOnEscape && isOpen.value) {
-    close();
+    close()
   }
-};
+}
 
 watch(isOpen, (newValue) => {
   if (newValue) {
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden'
   } else {
-    document.body.style.overflow = '';
+    document.body.style.overflow = ''
   }
-});
+})
 
 onMounted(() => {
-  document.addEventListener('keydown', handleEscapeKey);
-});
+  document.addEventListener('keydown', handleEscapeKey)
+})
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleEscapeKey);
-  document.body.style.overflow = '';
-});
+  document.removeEventListener('keydown', handleEscapeKey)
+  document.body.style.overflow = ''
+})
 
 defineExpose({
   open,
   close,
-});
+})
 </script>

@@ -5,7 +5,7 @@
         <h1 class="text-2xl font-bold text-gray-900">
           {{ $t('watch_files.list.title') }}
         </h1>
-        <RouterLink :to="{name: RouteNames.WATCH_FILES_NEW}">
+        <RouterLink :to="{ name: RouteNames.WATCH_FILES_NEW }">
           <Button icon="fa-plus">
             {{ $t('watch_files.new') }}
           </Button>
@@ -48,9 +48,7 @@
                 v-for="column in columns.filter((c) => c.sortable)"
                 :key="column.key"
                 class="rounded-2xs flex w-full items-center p-2"
-                :class="
-                  sortBy === column.key ? 'bg-sage-200' : 'hover:bg-sage-100'
-                "
+                :class="sortBy === column.key ? 'bg-sage-200' : 'hover:bg-sage-100'"
               >
                 <ORadio
                   :id="`radio-sort-${column.key}`"
@@ -62,9 +60,7 @@
                     <span class="flex items-center gap-2">
                       <Icon
                         v-if="sortBy === column.key"
-                        :icon="
-                          sortOrder === 'ASC' ? 'fa-arrow-up' : 'fa-arrow-down'
-                        "
+                        :icon="sortOrder === 'ASC' ? 'fa-arrow-up' : 'fa-arrow-down'"
                         class="text-primary-500 text-base"
                       />
                       {{ column.sortLabel || column.label }}
@@ -89,10 +85,7 @@
                   value
                   name="checkbox-sort"
                 >
-                  <label
-                    for="checkbox-favorite-sort"
-                    class="flex items-center gap-2 pl-2"
-                  >
+                  <label for="checkbox-favorite-sort" class="flex items-center gap-2 pl-2">
                     <Icon icon="fa-star" class="text-gray-700" />
                     <span>{{ $t('watch_files.sort.favorites') }}</span>
                   </label>
@@ -108,10 +101,7 @@
                   value
                   name="checkbox-sort"
                 >
-                  <label
-                    for="checkbox-archived-sort"
-                    class="flex items-center gap-2 pl-2"
-                  >
+                  <label for="checkbox-archived-sort" class="flex items-center gap-2 pl-2">
                     <Icon icon="fa-box-archive" class="text-gray-700" />
                     <span>{{ $t('watch_files.sort.archived') }}</span>
                   </label>
@@ -130,14 +120,8 @@
       <span class="mb-2 text-gray-500">{{ $t('watch_files.empty') }}</span>
     </div>
     <div v-else class="space-y-6">
-      <div
-        class="shadow-2 border-sage-100 rounded-2xl border bg-white p-6 sm:px-6"
-      >
-        <Table
-          :loading="isLoading && status !== 'success'"
-          :items="watchFiles"
-          :fields="columns"
-        >
+      <div class="shadow-2 border-sage-100 rounded-2xl border bg-white p-6 sm:px-6">
+        <Table :loading="isLoading && status !== 'success'" :items="watchFiles" :fields="columns">
           <template
             v-for="column in columns"
             :key="column.key"
@@ -154,19 +138,14 @@
 
           <template #cell(name)="{ value, item }">
             <td class="of-flex of-ml-2 px-4 py-3">
-              <RouterLink
-                :to="`/watch_files/${item.id}`"
-                class="text-primary-600 hover:underline"
-              >
+              <RouterLink :to="`/watch_files/${item.id}`" class="text-primary-600 hover:underline">
                 {{ value }}
               </RouterLink>
             </td>
           </template>
           <template #cell(updatedAt)="{ value }">
             <td class="px-4 py-3">
-              <span class="text-sm text-gray-900">{{
-                formatDateTime(value)
-              }}</span>
+              <span class="text-sm text-gray-900">{{ formatDateTime(value) }}</span>
             </td>
           </template>
           <template #cell(countAccess)="{ item }">
@@ -224,9 +203,7 @@
         </Table>
       </div>
 
-      <div
-        class="shadow-2 border-sage-100 rounded-2xl border bg-white p-6 sm:px-6"
-      >
+      <div class="shadow-2 border-sage-100 rounded-2xl border bg-white p-6 sm:px-6">
         <Pagination
           v-model:current-page="currentPage"
           v-model:items-per-pages="itemsPerPage"
@@ -248,8 +225,8 @@
 </template>
 
 <script setup lang="ts">
-import { useToast } from '@/target/composables/useToast';
-import { RouteNames } from '@/target/types/route-names';
+import { useToast } from '@/target/composables/useToast'
+import { RouteNames } from '@/target/types/route-names'
 import {
   Button,
   Checkbox,
@@ -259,26 +236,22 @@ import {
   Pagination,
   Searchbar,
   Table,
-} from '@owlint/feathers-vue';
-import { useQuery } from '@pinia/colada';
-import { onClickOutside, refDebounced } from '@vueuse/core';
-import { storeToRefs } from 'pinia';
-import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { RouterLink } from 'vue-router';
-import { getCollectionWatchFileQuery } from '~/api/queries/watchFile';
-import WatchFileArchiveButton from '~/components/watchFiles/WatchFileArchiveButton.vue';
-import WatchFileFavoriteButton from '~/components/watchFiles/WatchFileFavoriteButton.vue';
-import WatchFileShareButton from '~/components/watchFiles/WatchFileShareButton.vue';
-import WatchFileShareDialog from '~/components/watchFiles/WatchFileShareDialog.vue';
-import { useWatchFileStore } from '~/stores/watchFile';
-import {
-  WATCH_FILE_STATUS,
-  type WatchFile,
-  type WatchFileStatus,
-} from '~/types/watchFile';
+} from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { onClickOutside, refDebounced } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { RouterLink } from 'vue-router'
+import { getCollectionWatchFileQuery } from '~/api/queries/watchFile'
+import WatchFileArchiveButton from '~/components/watchFiles/WatchFileArchiveButton.vue'
+import WatchFileFavoriteButton from '~/components/watchFiles/WatchFileFavoriteButton.vue'
+import WatchFileShareButton from '~/components/watchFiles/WatchFileShareButton.vue'
+import WatchFileShareDialog from '~/components/watchFiles/WatchFileShareDialog.vue'
+import { useWatchFileStore } from '~/stores/watchFile'
+import { WATCH_FILE_STATUS, type WatchFile, type WatchFileStatus } from '~/types/watchFile'
 
-const watchFileStore = useWatchFileStore();
+const watchFileStore = useWatchFileStore()
 
 const {
   sortOrder,
@@ -289,16 +262,16 @@ const {
   showFavorites,
   hideArchived,
   filters,
-} = storeToRefs(watchFileStore);
+} = storeToRefs(watchFileStore)
 
-const { t } = useI18n();
-const toast = useToast();
+const { t } = useI18n()
+const toast = useToast()
 
 interface TableColumn {
-  key: string;
-  label: string;
-  sortable?: boolean;
-  sortLabel?: string;
+  key: string
+  label: string
+  sortable?: boolean
+  sortLabel?: string
 }
 
 // Helper function to create columns with defaults
@@ -312,17 +285,17 @@ const createColumn = (
   label,
   sortable,
   sortLabel,
-});
+})
 
-const searchQuery = ref(storeSearchQuery.value);
-const debouncedSearchQuery = refDebounced(searchQuery, 500);
-const currentWatchFile = ref<WatchFile | null>(null);
-const showSortCard = ref(false);
-const shareDialogIsOpen = ref(false);
+const searchQuery = ref(storeSearchQuery.value)
+const debouncedSearchQuery = refDebounced(searchQuery, 500)
+const currentWatchFile = ref<WatchFile | null>(null)
+const showSortCard = ref(false)
+const shareDialogIsOpen = ref(false)
 
 watch(debouncedSearchQuery, (value) => {
-  storeSearchQuery.value = value;
-});
+  storeSearchQuery.value = value
+})
 
 const columns: TableColumn[] = [
   /*
@@ -338,72 +311,64 @@ const columns: TableColumn[] = [
     t('watch_files.sort.access_count'),
   ),
   //createColumn('newContent', t('watch_files.list.columns.new_content')),
-  createColumn(
-    'status',
-    t('watch_files.list.columns.status'),
-    true,
-    t('watch_files.sort.status'),
-  ),
+  createColumn('status', t('watch_files.list.columns.status'), true, t('watch_files.sort.status')),
   createColumn('actions', ''),
-];
+]
 
 // Utils
 const formatDateTime = (date: string) => {
-  const d = new Date(date);
-  return d.toLocaleString();
-};
+  const d = new Date(date)
+  return d.toLocaleString()
+}
 
 const shareWatchFile = (watchFile: WatchFile) => {
-  currentWatchFile.value = watchFile;
-  shareDialogIsOpen.value = true;
-};
+  currentWatchFile.value = watchFile
+  shareDialogIsOpen.value = true
+}
 
-const sortCardRef = useTemplateRef('sortCard');
-const sortBtn = ref<HTMLElement | null>(null);
+const sortCardRef = useTemplateRef('sortCard')
+const sortBtn = ref<HTMLElement | null>(null)
 
 onClickOutside(sortCardRef, () => (showSortCard.value = false), {
   ignore: [sortBtn],
-});
+})
 
 onMounted(() => {
-  const savedSort = sessionStorage.getItem('watchFileSort');
+  const savedSort = sessionStorage.getItem('watchFileSort')
   if (savedSort) {
-    const { sortBy: savedSortBy, sortOrder: savedSortOrder } =
-      JSON.parse(savedSort);
-    sortBy.value = savedSortBy || 'name';
-    sortOrder.value = savedSortOrder || 'ASC';
+    const { sortBy: savedSortBy, sortOrder: savedSortOrder } = JSON.parse(savedSort)
+    sortBy.value = savedSortBy || 'name'
+    sortOrder.value = savedSortOrder || 'ASC'
   }
-});
+})
 
 const {
   data: watchFilesCollection,
   isLoading,
   status,
   error,
-} = useQuery(getCollectionWatchFileQuery, () => filters.value);
+} = useQuery(getCollectionWatchFileQuery, () => filters.value)
 
 watch(error, () => {
   if (error.value) {
-    console.error('Error fetching watch files:', error);
-    toast.error(t('watch_files.toast.error.load'));
+    console.error('Error fetching watch files:', error)
+    toast.error(t('watch_files.toast.error.load'))
   }
-});
+})
 
 watch([storeSearchQuery, showFavorites, hideArchived, itemsPerPage], () => {
-  watchFileStore.resetPagination();
-});
+  watchFileStore.resetPagination()
+})
 
-const watchFiles = computed(() => watchFilesCollection.value?.items ?? []);
-const watchFilesTotalItems = computed(
-  () => watchFilesCollection.value?.totalItems ?? 0,
-);
+const watchFiles = computed(() => watchFilesCollection.value?.items ?? [])
+const watchFilesTotalItems = computed(() => watchFilesCollection.value?.totalItems ?? 0)
 
 function changeSort(fieldKey: string) {
   if (sortBy.value === fieldKey) {
-    sortOrder.value = sortOrder.value === 'ASC' ? 'DESC' : 'ASC';
+    sortOrder.value = sortOrder.value === 'ASC' ? 'DESC' : 'ASC'
   } else {
-    sortBy.value = fieldKey;
-    sortOrder.value = 'ASC';
+    sortBy.value = fieldKey
+    sortOrder.value = 'ASC'
   }
   sessionStorage.setItem(
     'watchFileSort',
@@ -411,18 +376,18 @@ function changeSort(fieldKey: string) {
       sortBy: sortBy.value,
       sortOrder: sortOrder.value,
     }),
-  );
-  watchFileStore.resetPagination();
+  )
+  watchFileStore.resetPagination()
 }
 
 function statusIcon(status: WatchFileStatus) {
   switch (status) {
     case WATCH_FILE_STATUS.DRAFT:
-      return 'fa-file-lines';
+      return 'fa-file-lines'
     case WATCH_FILE_STATUS.ENABLED:
-      return 'fa-play';
+      return 'fa-play'
     case WATCH_FILE_STATUS.ARCHIVED:
-      return 'fa-box-archive';
+      return 'fa-box-archive'
   }
 }
 </script>

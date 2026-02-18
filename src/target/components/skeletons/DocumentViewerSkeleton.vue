@@ -4,10 +4,7 @@
     <div class="flex flex-1 flex-col overflow-hidden">
       <!-- Header -->
       <div class="shrink-0 px-8 py-6">
-        <div
-          class="h-8 animate-pulse rounded bg-gray-200"
-          style="width: 90%"
-        ></div>
+        <div class="h-8 animate-pulse rounded bg-gray-200" style="width: 90%"></div>
       </div>
 
       <!-- Content Area -->
@@ -48,18 +45,10 @@
     <!-- Right Pane - Information Sidebar -->
     <div class="scrollable w-[30%] shrink-0 border-l border-gray-200">
       <div class="space-y-6 p-6">
-        <div
-          class="animate-pulse rounded-lg border border-gray-200 bg-gray-200 p-4"
-        />
-        <div
-          class="h-30 w-full animate-pulse rounded-lg border border-gray-200 bg-gray-200 p-4"
-        />
-        <div
-          class="h-30 w-full animate-pulse rounded-lg border border-gray-200 bg-gray-200 p-4"
-        />
-        <div
-          class="animate-pulse rounded-lg border border-gray-200 bg-gray-200 p-4"
-        />
+        <div class="animate-pulse rounded-lg border border-gray-200 bg-gray-200 p-4" />
+        <div class="h-30 w-full animate-pulse rounded-lg border border-gray-200 bg-gray-200 p-4" />
+        <div class="h-30 w-full animate-pulse rounded-lg border border-gray-200 bg-gray-200 p-4" />
+        <div class="animate-pulse rounded-lg border border-gray-200 bg-gray-200 p-4" />
       </div>
     </div>
   </div>

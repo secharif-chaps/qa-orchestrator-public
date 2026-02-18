@@ -27,62 +27,59 @@
 </template>
 
 <script setup lang="ts">
-import { Button } from '@owlint/feathers-vue';
-import BaseTextarea from '~/components/global/BaseTextarea.vue';
-import { computed, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { Button } from '@owlint/feathers-vue'
+import BaseTextarea from '~/components/global/BaseTextarea.vue'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 interface Props {
-  disabled?: boolean;
-  placeholder?: string;
+  disabled?: boolean
+  placeholder?: string
 }
 
-const { disabled = false, placeholder = null } = defineProps<Props>();
+const { disabled = false, placeholder = null } = defineProps<Props>()
 
 const emit = defineEmits<{
-  (e: 'send', message: string): void;
-}>();
+  (e: 'send', message: string): void
+}>()
 
-const message = ref('');
+const message = ref('')
 
-const canSendMessage = computed(
-  () => message.value.trim().length > 0 && !disabled,
-);
+const canSendMessage = computed(() => message.value.trim().length > 0 && !disabled)
 
 const inputPlaceholder = computed(() => {
-  return placeholder ?? t('watch_files.chat.input.placeholder');
-});
+  return placeholder ?? t('watch_files.chat.input.placeholder')
+})
 
 const textareaInputClass = computed(() => {
-  return `border border-gray-300 h-full pr-10 ${disabled ? 'cursor-not-allowed' : ''}`;
-});
+  return `border border-gray-300 h-full pr-10 ${disabled ? 'cursor-not-allowed' : ''}`
+})
 
 const sendMessage = () => {
   if (message.value.trim().length > 0) {
-    emit('send', message.value.trim());
-    message.value = '';
+    emit('send', message.value.trim())
+    message.value = ''
   }
-};
+}
 
 const handleKeyDown = (e: KeyboardEvent) => {
   if (e.key === 'Enter') {
     if (e.ctrlKey || e.shiftKey) {
-      const textarea = e.target as HTMLTextAreaElement;
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
+      const textarea = e.target as HTMLTextAreaElement
+      const start = textarea.selectionStart
+      const end = textarea.selectionEnd
 
-      message.value =
-        message.value.substring(0, start) + '\n' + message.value.substring(end);
+      message.value = message.value.substring(0, start) + '\n' + message.value.substring(end)
 
       requestAnimationFrame(() => {
-        textarea.selectionStart = textarea.selectionEnd = start + 1;
-      });
+        textarea.selectionStart = textarea.selectionEnd = start + 1
+      })
     } else {
-      e.preventDefault();
-      sendMessage();
+      e.preventDefault()
+      sendMessage()
     }
   }
-};
+}
 </script>

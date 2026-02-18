@@ -1,15 +1,15 @@
-import { useApi } from '~/composables/useApi';
-import type { DefaultErrorMessage } from '~/types/api';
-import type { JsonLdCollection } from '~/types/jsonld';
-import type { User } from '~/types/user';
-import type { WatchFileUser, WatchFileUserRole } from '~/types/watchFileUser';
+import { useApi } from '~/composables/useApi'
+import type { DefaultErrorMessage } from '~/types/api'
+import type { JsonLdCollection } from '~/types/jsonld'
+import type { User } from '~/types/user'
+import type { WatchFileUser, WatchFileUserRole } from '~/types/watchFileUser'
 
 export const getWatchFileUsers = async (watchFileId: string) => {
   const response = await useApi().get<JsonLdCollection<WatchFileUser>>(
     `/watch_files/${watchFileId}/share`,
-  );
-  return response.data;
-};
+  )
+  return response.data
+}
 
 export const addWatchFileUsers = async (
   watchFileId: string,
@@ -22,25 +22,24 @@ export const addWatchFileUsers = async (
       userId: user.id,
       role,
     })),
-  };
+  }
   const response = await useApi().post<JsonLdCollection<WatchFileUser>>(
     `/watch_files/${watchFileId}/share`,
     payload,
     { defaultErrorMessage },
-  );
-  return response.data;
-};
+  )
+  return response.data
+}
 
 export const removeWatchFileUser = async (
   watchFileId: string,
   watchFileUserId: string,
   defaultErrorMessage: DefaultErrorMessage,
 ) => {
-  await useApi().delete(
-    `/watch_files/${watchFileId}/share/${watchFileUserId}`,
-    { defaultErrorMessage },
-  );
-};
+  await useApi().delete(`/watch_files/${watchFileId}/share/${watchFileUserId}`, {
+    defaultErrorMessage,
+  })
+}
 
 export const updateWatchFileUserRole = async (
   watchFileId: string,
@@ -48,10 +47,5 @@ export const updateWatchFileUserRole = async (
   role: WatchFileUserRole,
   defaultErrorMessage: DefaultErrorMessage,
 ) => {
-  return await addWatchFileUsers(
-    watchFileId,
-    [user],
-    role,
-    defaultErrorMessage,
-  );
-};
+  return await addWatchFileUsers(watchFileId, [user], role, defaultErrorMessage)
+}

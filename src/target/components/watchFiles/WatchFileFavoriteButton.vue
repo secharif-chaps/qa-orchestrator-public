@@ -20,18 +20,16 @@
 </template>
 
 <script setup lang="ts">
-import { Button } from '@owlint/feathers-vue';
-import { computed } from 'vue';
-import { useToggleWatchFileFavorite } from '~/api/mutations/watchFile';
-import type { WatchFile } from '~/types/watchFile';
+import { Button } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useToggleWatchFileFavorite } from '~/api/mutations/watchFile'
+import type { WatchFile } from '~/types/watchFile'
 
 const { watchFile } = defineProps<{
-  watchFile: WatchFile;
-}>();
+  watchFile: WatchFile
+}>()
 
-const { toggleFavorite, isLoading } = useToggleWatchFileFavorite();
+const { toggleFavorite, isLoading } = useToggleWatchFileFavorite()
 
-const iconFilled = computed(() =>
-  watchFile.isFavorite ? 'fa-solid' : 'fa-regular',
-);
+const iconFilled = computed(() => (watchFile.isFavorite ? 'fa-solid' : 'fa-regular'))
 </script>

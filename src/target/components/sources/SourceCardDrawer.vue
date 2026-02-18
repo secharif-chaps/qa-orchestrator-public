@@ -17,19 +17,19 @@
 </template>
 
 <script setup lang="ts">
-import type { Source } from '~/types/source';
-import { useI18n } from 'vue-i18n';
-import Drawer from '~/components/global/Drawer.vue';
-import SourceMonitoring from '~/components/watchFiles/ActivitySection/SourceMonitoring/SourceMonitoring.vue';
-import SourceCard from '~/components/sources/SourceCard.vue';
+import type { Source } from '~/types/source'
+import { useI18n } from 'vue-i18n'
+import Drawer from '~/components/global/Drawer.vue'
+import SourceMonitoring from '~/components/watchFiles/ActivitySection/SourceMonitoring/SourceMonitoring.vue'
+import SourceCard from '~/components/sources/SourceCard.vue'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 interface Props {
-  source: Source;
+  source: Source
 }
 
-const { source } = defineProps<Props>();
+const { source } = defineProps<Props>()
 
-const isOpen = defineModel<boolean>();
+const isOpen = defineModel<boolean>()
 </script>

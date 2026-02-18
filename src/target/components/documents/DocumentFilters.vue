@@ -16,22 +16,22 @@
 </template>
 
 <script lang="ts" setup>
-import Filters from '~/components/filters/Filters.vue';
-import type { DocumentFacets } from '~/types/document';
+import Filters from '~/components/filters/Filters.vue'
+import type { DocumentFacets } from '~/types/document'
 import {
   FILTER_CATEGORY_VALIDATIONS,
   FILTER_CATEGORY_DATES,
   FILTER_CATEGORY_ACTORS,
   FILTER_CATEGORY_SOURCES,
-} from '~/types/facet';
+} from '~/types/facet'
 
-const displayDrawer = defineModel<boolean>();
+const displayDrawer = defineModel<boolean>()
 
 interface Props {
-  facets?: DocumentFacets;
-  isLoading?: boolean;
-  error?: Error | null;
+  facets?: DocumentFacets
+  isLoading?: boolean
+  error?: Error | null
 }
 
-defineProps<Props>();
+defineProps<Props>()
 </script>

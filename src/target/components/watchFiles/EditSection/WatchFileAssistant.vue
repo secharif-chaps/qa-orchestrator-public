@@ -49,37 +49,31 @@
 </template>
 
 <script setup lang="ts">
-import { useQuery } from '@pinia/colada';
-import { storeToRefs } from 'pinia';
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import {
-  useAddMessage,
-  useGetOlderConversationMessages,
-} from '~/api/mutations/conversation';
-import { useCreateWatchFile } from '~/api/mutations/watchFile';
-import {
-  getConversationMessagesQuery,
-  getLastConversationQuery,
-} from '~/api/queries/conversation';
-import ChatInput from '~/components/chat/ChatInput.vue';
-import AssistantEmptyView from '~/components/watchFiles/EditSection/AssistantEmptyView.vue';
-import ConnectionBanner from '~/components/watchFiles/EditSection/ConnectionBanner.vue';
-import ConversationView from '~/components/watchFiles/EditSection/ConversationView.vue';
-import { useConversationTimeout } from '~/composables/useConversationTimeout';
-import { useChatStore } from '~/stores/chat';
-import { useConversationStore } from '~/stores/conversation';
-import type { Conversation, Message } from '~/types/conversation';
-import type { WatchFileStatus } from '~/types/watchFile';
+import { useQuery } from '@pinia/colada'
+import { storeToRefs } from 'pinia'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useAddMessage, useGetOlderConversationMessages } from '~/api/mutations/conversation'
+import { useCreateWatchFile } from '~/api/mutations/watchFile'
+import { getConversationMessagesQuery, getLastConversationQuery } from '~/api/queries/conversation'
+import ChatInput from '~/components/chat/ChatInput.vue'
+import AssistantEmptyView from '~/components/watchFiles/EditSection/AssistantEmptyView.vue'
+import ConnectionBanner from '~/components/watchFiles/EditSection/ConnectionBanner.vue'
+import ConversationView from '~/components/watchFiles/EditSection/ConversationView.vue'
+import { useConversationTimeout } from '~/composables/useConversationTimeout'
+import { useChatStore } from '~/stores/chat'
+import { useConversationStore } from '~/stores/conversation'
+import type { Conversation, Message } from '~/types/conversation'
+import type { WatchFileStatus } from '~/types/watchFile'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 interface Props {
-  conversation?: Conversation | null;
-  isLoading?: boolean;
-  watchFileId?: string;
-  watchFileStatus?: WatchFileStatus | null;
-  isReadOnly?: boolean;
+  conversation?: Conversation | null
+  isLoading?: boolean
+  watchFileId?: string
+  watchFileStatus?: WatchFileStatus | null
+  isReadOnly?: boolean
 }
 
 const {
@@ -88,222 +82,219 @@ const {
   watchFileId = '',
   watchFileStatus = null,
   isReadOnly,
-} = defineProps<Props>();
+} = defineProps<Props>()
 
 const emit = defineEmits<{
-  watchFileCreated: [id: string];
-}>();
+  watchFileCreated: [id: string]
+}>()
 
 // Initialize stores
-const chatStore = useChatStore();
-const conversationStore = useConversationStore();
-const { isWaitingForAI } = storeToRefs(conversationStore);
+const chatStore = useChatStore()
+const conversationStore = useConversationStore()
+const { isWaitingForAI } = storeToRefs(conversationStore)
 
 // Initialize timeout tracking for showing reassurance message after long waits
-const { showReassurance } = useConversationTimeout();
+const { showReassurance } = useConversationTimeout()
 
 // Local UI state
-const hasInitialized = ref(false);
-const isLoadingConversation = ref(false);
-const conversationViewRef = ref<InstanceType<typeof ConversationView> | null>(
-  null,
-);
+const hasInitialized = ref(false)
+const isLoadingConversation = ref(false)
+const conversationViewRef = ref<InstanceType<typeof ConversationView> | null>(null)
 
 const shouldShowEmptyView = computed(() => {
   const isNotLoading =
     !isLoading &&
     !isLoadingConversation.value &&
     !isLoadingConversationMessages.value &&
-    !isLoadingLastConversation.value;
-  const hasNoMessages = conversationStore.messages.length === 0;
-  const hasNoWatchFileId = !watchFileId;
+    !isLoadingLastConversation.value
+  const hasNoMessages = conversationStore.messages.length === 0
+  const hasNoWatchFileId = !watchFileId
 
-  return isNotLoading && hasNoWatchFileId && hasNoMessages;
-});
+  return isNotLoading && hasNoWatchFileId && hasNoMessages
+})
 
 const shouldHideChat = computed(() => {
-  return isReadOnly;
-});
+  return isReadOnly
+})
 
 watch(
   () => watchFileStatus,
   (_newStatus, oldStatus) => {
     if (isReadOnly) {
-      conversationStore.setWaitingForAI(false);
+      conversationStore.setWaitingForAI(false)
     }
     if (oldStatus === null || oldStatus === undefined) {
-      hasInitialized.value = true;
+      hasInitialized.value = true
     }
   },
-);
+)
 
 watch(shouldHideChat, (isHidden) => {
   if (!isHidden) {
-    conversationViewRef.value?.scrollToBottom();
+    conversationViewRef.value?.scrollToBottom()
   }
-});
+})
 
 // Reset stores when watchFileId changes (switching between watchFiles)
 watch(
   () => watchFileId,
   () => {
-    chatStore.$reset();
-    conversationStore.$reset();
+    chatStore.$reset()
+    conversationStore.$reset()
   },
-);
+)
 
 // Initialize with real data or props
 onMounted(async () => {
   if (conversation) {
-    conversationStore.setCurrentConversation(conversation);
-    conversationStore.setMessages(conversation.messages || []);
+    conversationStore.setCurrentConversation(conversation)
+    conversationStore.setMessages(conversation.messages || [])
   }
-});
+})
 
 // Reset stores when component unmounts
 onUnmounted(() => {
-  chatStore.$reset();
-  conversationStore.$reset();
-});
+  chatStore.$reset()
+  conversationStore.$reset()
+})
 
-const { data: dataLastConversation, isLoading: isLoadingLastConversation } =
-  useQuery(getLastConversationQuery, () => ({
+const { data: dataLastConversation, isLoading: isLoadingLastConversation } = useQuery(
+  getLastConversationQuery,
+  () => ({
     watchFileId,
     onUpdate: (updatedConversation) => {
-      conversationStore.setCurrentConversation(updatedConversation);
+      conversationStore.setCurrentConversation(updatedConversation)
     },
-  }));
-const lastConversation = computed(() => dataLastConversation.value);
+  }),
+)
+const lastConversation = computed(() => dataLastConversation.value)
 
-const {
-  data: dataConversationMessages,
-  isLoading: isLoadingConversationMessages,
-} = useQuery(getConversationMessagesQuery, () => ({
-  conversationId: lastConversation.value?.id ?? '',
-  onUpdate: (message) => {
-    if (conversationStore.addOrUpdateMessage(message) !== 'unchanged') {
-      conversationViewRef.value?.scrollToBottom();
-    }
-  },
-}));
+const { data: dataConversationMessages, isLoading: isLoadingConversationMessages } = useQuery(
+  getConversationMessagesQuery,
+  () => ({
+    conversationId: lastConversation.value?.id ?? '',
+    onUpdate: (message) => {
+      if (conversationStore.addOrUpdateMessage(message) !== 'unchanged') {
+        conversationViewRef.value?.scrollToBottom()
+      }
+    },
+  }),
+)
 
-const hasInitialMessagesLoaded = ref(false);
+const hasInitialMessagesLoaded = ref(false)
 
 watch(
   dataConversationMessages,
   (newData) => {
-    if (!newData) return;
+    if (!newData) return
 
-    conversationStore.setMessages(newData.items);
-    conversationStore.setNextMessagesUrl(newData.nextUrl ?? null);
+    conversationStore.setMessages(newData.items)
+    conversationStore.setNextMessagesUrl(newData.nextUrl ?? null)
 
     if (lastConversation.value) {
       conversationStore.setCurrentConversation({
         ...lastConversation.value,
         messages: conversationStore.messages,
-      });
+      })
     }
 
     // Always scroll on initial load, then only when not waiting for AI
     if (!hasInitialMessagesLoaded.value || !isWaitingForAI.value) {
-      hasInitialMessagesLoaded.value = true;
+      hasInitialMessagesLoaded.value = true
       nextTick(() => {
-        conversationViewRef.value?.scrollToBottom(true);
-      });
+        conversationViewRef.value?.scrollToBottom(true)
+      })
     }
   },
   { immediate: true },
-);
+)
 
-const { mutation: getOlderConversationMessagesMutation } =
-  useGetOlderConversationMessages();
+const { mutation: getOlderConversationMessagesMutation } = useGetOlderConversationMessages()
 
 // Load older messages for infinite scroll
 const loadOlderMessages = async (): Promise<Message[]> => {
   if (!conversationStore.nextMessagesUrl) {
-    return [];
+    return []
   }
   try {
     const olderMessagesCollection = await getOlderConversationMessagesMutation(
       conversationStore.nextMessagesUrl,
-    );
+    )
 
-    const olderMessages = olderMessagesCollection.items;
-    conversationStore.setNextMessagesUrl(
-      olderMessagesCollection.nextUrl ?? null,
-    );
+    const olderMessages = olderMessagesCollection.items
+    conversationStore.setNextMessagesUrl(olderMessagesCollection.nextUrl ?? null)
 
     // Use store's prepend with built-in deduplication
     if (olderMessages.length > 0) {
-      const addedCount = conversationStore.prependMessages(olderMessages);
+      const addedCount = conversationStore.prependMessages(olderMessages)
 
       if (addedCount > 0) {
-        await nextTick();
+        await nextTick()
       }
     }
-    return olderMessages;
+    return olderMessages
   } catch (error) {
-    console.error('Failed to load older messages:', error);
-    return [];
+    console.error('Failed to load older messages:', error)
+    return []
   }
-};
+}
 
 const placeholderInput = computed<string>(() => {
   if (isWaitingForAI.value) {
-    return t('watch_files.chat.input.placeholder_processing');
+    return t('watch_files.chat.input.placeholder_processing')
   }
 
   // Check if there are messages in the conversation
-  const hasMessages = conversationStore.messages.length > 0;
+  const hasMessages = conversationStore.messages.length > 0
 
   if (hasMessages) {
-    return t('watch_files.chat.input.placeholder');
+    return t('watch_files.chat.input.placeholder')
   } else {
-    return t('watch_files.chat.input.placeholder_not_started_conversation');
+    return t('watch_files.chat.input.placeholder_not_started_conversation')
   }
-});
+})
 
 const { createWatchFile, isLoading: isLoadingCreate } = useCreateWatchFile({
   onSuccess(data) {
     if (data.id) {
       // Emit event to parent to handle state update and silent URL navigation
-      emit('watchFileCreated', data.id);
+      emit('watchFileCreated', data.id)
     }
   },
-});
+})
 
-const { addMessage, isLoading: isLoadingAddMessage } = useAddMessage();
+const { addMessage, isLoading: isLoadingAddMessage } = useAddMessage()
 
 const handleSendMessage = async (message: string) => {
   if (shouldHideChat.value) {
-    return;
+    return
   }
 
   // If no watchfile ID is provided, create a new watchfile with conversation
   if (!watchFileId) {
     // For new watchfile creation, we don't have a conversation yet
     // So just show the typing indicator
-    conversationStore.setWaitingForAI(true);
-    await createWatchFile(message);
+    conversationStore.setWaitingForAI(true)
+    await createWatchFile(message)
   } else {
     if (!conversationStore.currentConversation) {
-      console.error('No conversation available to add message to');
-      return;
+      console.error('No conversation available to add message to')
+      return
     }
 
     // Send message to API (mutation's onMutate handles optimistic message)
     addMessage({
       conversationId: conversationStore.currentConversation.id,
       message,
-    });
+    })
 
     // Show typing indicator after user message
-    conversationStore.setWaitingForAI(true);
+    conversationStore.setWaitingForAI(true)
 
     // Scroll to show the new message (scrollToBottom already handles nextTick internally)
     // conversationViewRef.value?.scrollToBottom();
   }
-};
+}
 </script>
 
 <style scoped>

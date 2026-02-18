@@ -9,10 +9,7 @@
     </template>
     <template #content>
       <!-- Original language option -->
-      <DropdownItem
-        :class="{ 'bg-primary-light': !modelValue }"
-        @click="resetToOriginal()"
-      >
+      <DropdownItem :class="{ 'bg-primary-light': !modelValue }" @click="resetToOriginal()">
         <div class="flex w-full items-center justify-between gap-2">
           <span>{{ t('company.translation.original', 'Original') }}</span>
           <i

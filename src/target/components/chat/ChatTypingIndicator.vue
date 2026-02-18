@@ -2,16 +2,10 @@
   <div class="mb-4 flex w-full justify-start">
     <div class="flex items-end gap-2">
       <!-- AVATAR (chatbot) -->
-      <img
-        :src="chapse_head"
-        alt="Chapse"
-        class="size-6 shrink-0"
-      />
+      <img :src="chapse_head" alt="Chapse" class="size-6 shrink-0" />
 
       <!-- TYPING INDICATOR BUBBLE -->
-      <div
-        class="w-fit max-w-85 rounded-sm border border-gray-200 bg-white px-3 pt-3 pb-2"
-      >
+      <div class="w-fit max-w-85 rounded-sm border border-gray-200 bg-white px-3 pt-3 pb-2">
         <!-- Typing text with animated dots -->
         <div class="flex items-center gap-1 text-sm text-gray-600">
           <span>{{ typingIndicatorPhrase }}</span>
@@ -23,10 +17,7 @@
         </div>
 
         <!-- Reassurance message when waiting too long -->
-        <div
-          v-if="reassurancePhrase"
-          class="mt-2 flex items-center gap-1 text-xs text-gray-600"
-        >
+        <div v-if="reassurancePhrase" class="mt-2 flex items-center gap-1 text-xs text-gray-600">
           <span>{{ reassurancePhrase }}</span>
         </div>
       </div>
@@ -35,17 +26,17 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from 'vue';
-import chapse_head from '~/assets/images/chapse_head.svg';
-import { useTypingIndicatorPhrases } from '~/composables/useTypingIndicatorPhrases';
+import { toRef } from 'vue'
+import chapse_head from '~/assets/images/chapse_head.svg'
+import { useTypingIndicatorPhrases } from '~/composables/useTypingIndicatorPhrases'
 
 const { showReassurance = false } = defineProps<{
-  showReassurance?: boolean;
-}>();
+  showReassurance?: boolean
+}>()
 
 const { typingIndicatorPhrase, reassurancePhrase } = useTypingIndicatorPhrases(
   toRef(() => showReassurance),
-);
+)
 </script>
 
 <style scoped>

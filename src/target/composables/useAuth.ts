@@ -41,7 +41,7 @@ export function useAuth() {
   };
 
   const refreshToken = async (): Promise<boolean> => {
-    if (isTokenRefreshing.value) return false;
+    if (isTokenRefreshing.value) return false
 
     try {
       isTokenRefreshing.value = true;
@@ -49,17 +49,17 @@ export function useAuth() {
       const result = await authStore.refreshToken();
       return !!result;
     } catch (error) {
-      authError.value = 'Token refresh failed';
-      console.error('Token refresh failed:', error);
-      return false;
+      authError.value = 'Token refresh failed'
+      console.error('Token refresh failed:', error)
+      return false
     } finally {
-      isTokenRefreshing.value = false;
+      isTokenRefreshing.value = false
     }
-  };
+  }
 
   const updateToken = async () => {
-    return await refreshToken();
-  };
+    return await refreshToken()
+  }
 
   const logout = () => {
     authStore.signOut();
@@ -98,5 +98,5 @@ export function useAuth() {
     updateToken,
     refreshToken,
     logout,
-  };
+  }
 }

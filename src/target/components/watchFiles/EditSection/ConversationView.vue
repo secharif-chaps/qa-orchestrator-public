@@ -20,10 +20,7 @@
         role="status"
       >
         <div class="text-center">
-          <Icon
-            icon="fa-spinner-third"
-            class="text-primary-600 animate-spin text-3xl"
-          />
+          <Icon icon="fa-spinner-third" class="text-primary-600 animate-spin text-3xl" />
           <p class="text-sm text-gray-600">
             {{ t('watch_files.chat.loading_older_messages') }}
           </p>
@@ -40,11 +37,7 @@
             :group-id="item.groupId"
           />
           <!-- Individual messages -->
-          <ChatMessageComponent
-            v-else
-            :message="item.message"
-            :data-message-id="item.message.id"
-          />
+          <ChatMessageComponent v-else :message="item.message" :data-message-id="item.message.id" />
         </template>
       </template>
 
@@ -69,16 +62,10 @@
       </div>
 
       <!-- Typing indicator -->
-      <ChatTypingIndicator
-        v-if="isWaitingForAI"
-        :show-reassurance="showReassurance"
-      />
+      <ChatTypingIndicator v-if="isWaitingForAI" :show-reassurance="showReassurance" />
 
       <!-- New message notification -->
-      <div
-        v-if="showNewMessageNotification"
-        class="sticky bottom-4 z-10 flex justify-center"
-      >
+      <div v-if="showNewMessageNotification" class="sticky bottom-4 z-10 flex justify-center">
         <Button
           variant="accent"
           size="sm"
@@ -93,75 +80,66 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Icon } from '@owlint/feathers-vue';
-import {
-    computed,
-    nextTick,
-    onMounted,
-    onUnmounted,
-    ref,
-    useTemplateRef,
-    watch,
-} from 'vue';
-import { useI18n } from 'vue-i18n';
-import ChatMessageComponent from '~/components/chat/ChatMessage.vue';
-import ChatTypingIndicator from '~/components/chat/ChatTypingIndicator.vue';
-import SystemMessagesSection from '~/components/chat/SystemMessagesSection.vue';
-import { useConversationStore } from '~/stores/conversation';
-import type { Message } from '~/types/conversation';
-import { MessageRole } from '~/types/conversation';
+import { Button, Icon } from '@owlint/feathers-vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import ChatMessageComponent from '~/components/chat/ChatMessage.vue'
+import ChatTypingIndicator from '~/components/chat/ChatTypingIndicator.vue'
+import SystemMessagesSection from '~/components/chat/SystemMessagesSection.vue'
+import { useConversationStore } from '~/stores/conversation'
+import type { Message } from '~/types/conversation'
+import { MessageRole } from '~/types/conversation'
 
-const { t } = useI18n();
-const conversationStore = useConversationStore();
+const { t } = useI18n()
+const conversationStore = useConversationStore()
 
 interface Props {
-  isLoading?: boolean;
-  onLoadOlderMessages?: () => Promise<Message[]>;
-  showReassurance?: boolean;
+  isLoading?: boolean
+  onLoadOlderMessages?: () => Promise<Message[]>
+  showReassurance?: boolean
 }
 
-const { onLoadOlderMessages = undefined, showReassurance = false } =
-  defineProps<Props>();
+const { onLoadOlderMessages = undefined, showReassurance = false } = defineProps<Props>()
 
-const isWaitingForAI = computed(() => conversationStore.isWaitingForAI);
-const displayMessages = computed<Message[]>(() => conversationStore.messages);
-const hasMoreMessages = computed(() => conversationStore.hasMoreMessages);
+const isWaitingForAI = computed(() => conversationStore.isWaitingForAI)
+const displayMessages = computed<Message[]>(() => conversationStore.messages)
+const hasMoreMessages = computed(() => conversationStore.hasMoreMessages)
 
-const messagesContainerRef = useTemplateRef('messagesContainer');
-const loadMoreSentinelRef = useTemplateRef('loadMoreSentinel');
+const messagesContainerRef = useTemplateRef('messagesContainer')
+const loadMoreSentinelRef = useTemplateRef('loadMoreSentinel')
 
-const isLoadingOlderMessages = ref(false);
-let intersectionObserver: IntersectionObserver | null = null;
-let scrollToBottomTimeout: ReturnType<typeof setTimeout> | null = null;
-const userHasScrolledUp = ref(false);
-const showNewMessageNotification = ref(false);
-const lastMessageId = ref<string | null>(null);
+const isLoadingOlderMessages = ref(false)
+let intersectionObserver: IntersectionObserver | null = null
+let scrollToBottomTimeout: ReturnType<typeof setTimeout> | null = null
+const userHasScrolledUp = ref(false)
+const showNewMessageNotification = ref(false)
+const lastMessageId = ref<string | null>(null)
 
-const isInitialScrollComplete = ref(false);
+const isInitialScrollComplete = ref(false)
 
 // Type definitions for grouped messages
 interface MessageItem {
-  type: 'message';
-  key: string;
-  message: Message;
+  type: 'message'
+  key: string
+  message: Message
 }
 
 interface SystemGroupItem {
-  type: 'system-group';
-  key: string;
-  messages: Message[];
-  groupId: string;
+  type: 'system-group'
+  key: string
+  messages: Message[]
+  groupId: string
 }
 
-type GroupedMessageItem = MessageItem | SystemGroupItem;
+type GroupedMessageItem = MessageItem | SystemGroupItem
 
 // Minimum number of consecutive system messages required to form a group
-const MIN_SYSTEM_GROUP_SIZE = 2;
+const MIN_SYSTEM_GROUP_SIZE = 2
 
 // Group consecutive system messages (3+) together
 const groupedMessages = computed<GroupedMessageItem[]>(() => {
-  const groups: GroupedMessageItem[] = [];
-  let currentSystemGroup: Message[] = [];
+  const groups: GroupedMessageItem[] = []
+  let currentSystemGroup: Message[] = []
 
   const flushSystemGroup = () => {
     if (currentSystemGroup.length >= MIN_SYSTEM_GROUP_SIZE) {
@@ -171,7 +149,7 @@ const groupedMessages = computed<GroupedMessageItem[]>(() => {
         key: `system-group-${currentSystemGroup[0]!.id}`,
         messages: currentSystemGroup,
         groupId: currentSystemGroup[0]!.id,
-      });
+      })
     } else {
       // Add individually if less than MIN_SYSTEM_GROUP_SIZE
       for (const msg of currentSystemGroup) {
@@ -179,99 +157,94 @@ const groupedMessages = computed<GroupedMessageItem[]>(() => {
           type: 'message',
           key: msg.id,
           message: msg,
-        });
+        })
       }
     }
-    currentSystemGroup = [];
-  };
+    currentSystemGroup = []
+  }
 
   for (const message of displayMessages.value) {
     // Only group non-loading system messages (exclude system_error)
     if (message.role === MessageRole.SYSTEM && !message.loading) {
-      currentSystemGroup.push(message);
+      currentSystemGroup.push(message)
     } else {
       // Flush any accumulated system messages
-      flushSystemGroup();
+      flushSystemGroup()
       // Add the current non-system message
       groups.push({
         type: 'message',
         key: message.id,
         message,
-      });
+      })
     }
   }
 
   // Handle trailing system group
-  flushSystemGroup();
+  flushSystemGroup()
 
-  return groups;
-});
+  return groups
+})
 
-const SCROLL_DEBOUNCE_MS = 100;
-const SCROLL_BOTTOM_THRESHOLD = 100;
-const SCROLL_TOP_THRESHOLD = 50;
+const SCROLL_DEBOUNCE_MS = 100
+const SCROLL_BOTTOM_THRESHOLD = 100
+const SCROLL_TOP_THRESHOLD = 50
 
 const loadOlderMessages = async () => {
   // Skip loading during initial scroll to bottom
   if (!isInitialScrollComplete.value) {
-    return;
+    return
   }
 
-  if (
-    !onLoadOlderMessages ||
-    isLoadingOlderMessages.value ||
-    !conversationStore.hasMoreMessages
-  ) {
-    return;
+  if (!onLoadOlderMessages || isLoadingOlderMessages.value || !conversationStore.hasMoreMessages) {
+    return
   }
 
-  isLoadingOlderMessages.value = true;
+  isLoadingOlderMessages.value = true
 
-  const container = messagesContainerRef.value;
+  const container = messagesContainerRef.value
   if (!container) {
-    isLoadingOlderMessages.value = false;
-    return;
+    isLoadingOlderMessages.value = false
+    return
   }
 
   // Save current scroll position
-  const oldScrollHeight = container.scrollHeight;
-  const oldScrollTop = container.scrollTop;
+  const oldScrollHeight = container.scrollHeight
+  const oldScrollTop = container.scrollTop
 
   try {
-    await onLoadOlderMessages();
-    await nextTick();
+    await onLoadOlderMessages()
+    await nextTick()
 
     if (container) {
-      const newScrollHeight = container.scrollHeight;
-      const heightDifference = newScrollHeight - oldScrollHeight;
-      container.scrollTop =
-        oldScrollTop + heightDifference - SCROLL_TOP_THRESHOLD;
+      const newScrollHeight = container.scrollHeight
+      const heightDifference = newScrollHeight - oldScrollHeight
+      container.scrollTop = oldScrollTop + heightDifference - SCROLL_TOP_THRESHOLD
     }
   } catch (error) {
-    console.error('Failed to load older messages:', error);
+    console.error('Failed to load older messages:', error)
   } finally {
-    isLoadingOlderMessages.value = false;
+    isLoadingOlderMessages.value = false
   }
-};
+}
 
 const setupIntersectionObserver = () => {
   // Cleanup any existing observer first
-  cleanupIntersectionObserver();
+  cleanupIntersectionObserver()
 
-  const sentinel = loadMoreSentinelRef.value;
-  const container = messagesContainerRef.value;
+  const sentinel = loadMoreSentinelRef.value
+  const container = messagesContainerRef.value
 
   if (!sentinel || !container) {
-    return;
+    return
   }
 
   intersectionObserver = new IntersectionObserver(
     async (entries) => {
-      const entry = entries[0];
+      const entry = entries[0]
 
       // Only load if intersecting and not already loading
       if (entry?.isIntersecting && !isLoadingOlderMessages.value) {
-        await loadOlderMessages();
+        await loadOlderMessages()
       }
     },
     {
@@ -279,169 +252,157 @@ const setupIntersectionObserver = () => {
       rootMargin: '50px 0px',
       threshold: 0,
     },
-  );
+  )
 
-  intersectionObserver.observe(sentinel);
+  intersectionObserver.observe(sentinel)
 
   // Check if sentinel is already visible (user is already at top)
   // This handles the case where the user is already scrolled to the top
   // when the observer is set up
   nextTick(() => {
     if (sentinel && container) {
-      const rect = sentinel.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
+      const rect = sentinel.getBoundingClientRect()
+      const containerRect = container.getBoundingClientRect()
       const isVisible =
         rect.top >= containerRect.top &&
         rect.top <= containerRect.bottom &&
         !isLoadingOlderMessages.value &&
-        isInitialScrollComplete.value;
+        isInitialScrollComplete.value
 
-      if (
-        isVisible &&
-        conversationStore.hasMoreMessages &&
-        onLoadOlderMessages
-      ) {
-        loadOlderMessages();
+      if (isVisible && conversationStore.hasMoreMessages && onLoadOlderMessages) {
+        loadOlderMessages()
       }
     }
-  });
-};
+  })
+}
 
 const cleanupIntersectionObserver = () => {
   if (intersectionObserver) {
-    intersectionObserver.disconnect();
-    intersectionObserver = null;
+    intersectionObserver.disconnect()
+    intersectionObserver = null
   }
-};
+}
 
 const isNearBottom = (): boolean => {
-  const container = messagesContainerRef.value;
-  if (!container) return true;
+  const container = messagesContainerRef.value
+  if (!container) return true
 
-  const { scrollTop, scrollHeight, clientHeight } = container;
-  return scrollHeight - scrollTop - clientHeight < SCROLL_BOTTOM_THRESHOLD;
-};
+  const { scrollTop, scrollHeight, clientHeight } = container
+  return scrollHeight - scrollTop - clientHeight < SCROLL_BOTTOM_THRESHOLD
+}
 
 const isNearTop = (): boolean => {
-  const container = messagesContainerRef.value;
-  if (!container) return false;
+  const container = messagesContainerRef.value
+  if (!container) return false
 
-  const { scrollTop } = container;
-  return scrollTop < SCROLL_TOP_THRESHOLD;
-};
+  const { scrollTop } = container
+  return scrollTop < SCROLL_TOP_THRESHOLD
+}
 
 const handleScroll = () => {
-  const wasAtBottom = !userHasScrolledUp.value;
-  userHasScrolledUp.value = !isNearBottom();
+  const wasAtBottom = !userHasScrolledUp.value
+  userHasScrolledUp.value = !isNearBottom()
 
   if (isNearTop() && isInitialScrollComplete.value) {
     // Only trigger if we have more messages and aren't already loading
-    if (
-      conversationStore.hasMoreMessages &&
-      !isLoadingOlderMessages.value &&
-      onLoadOlderMessages
-    ) {
-      loadOlderMessages();
+    if (conversationStore.hasMoreMessages && !isLoadingOlderMessages.value && onLoadOlderMessages) {
+      loadOlderMessages()
     }
   }
 
   // Hide notification if user scrolls to bottom
   if (!userHasScrolledUp.value && !wasAtBottom) {
-    showNewMessageNotification.value = false;
+    showNewMessageNotification.value = false
     // Update last message ID when user scrolls to bottom
     if (displayMessages.value.length) {
-      lastMessageId.value = displayMessages.value.at(-1)?.id ?? null;
+      lastMessageId.value = displayMessages.value.at(-1)?.id ?? null
     }
   }
-};
+}
 
 const cancelPendingScroll = () => {
   if (scrollToBottomTimeout) {
-    clearTimeout(scrollToBottomTimeout);
-    scrollToBottomTimeout = null;
+    clearTimeout(scrollToBottomTimeout)
+    scrollToBottomTimeout = null
   }
-};
+}
 
 const scrollToBottom = (force = false): boolean => {
-  cancelPendingScroll();
+  cancelPendingScroll()
 
   if (!force && userHasScrolledUp.value) {
-    return false;
+    return false
   }
 
-  const debounceTimeout = force ? 0 : SCROLL_DEBOUNCE_MS;
+  const debounceTimeout = force ? 0 : SCROLL_DEBOUNCE_MS
 
   scrollToBottomTimeout = setTimeout(() => {
     if (!force && userHasScrolledUp.value) {
-      return;
+      return
     }
 
     nextTick(() => {
-      const container = messagesContainerRef.value;
+      const container = messagesContainerRef.value
       requestAnimationFrame(() => {
         if (container) {
-          container.scrollTop = container.scrollHeight;
-          userHasScrolledUp.value = false;
-          showNewMessageNotification.value = false;
-          const lastMessage = displayMessages.value.at(-1);
+          container.scrollTop = container.scrollHeight
+          userHasScrolledUp.value = false
+          showNewMessageNotification.value = false
+          const lastMessage = displayMessages.value.at(-1)
           // Update last message ID when scrolling to bottom
           if (!displayMessages.value.length) {
-            lastMessageId.value = lastMessage?.id ?? null;
+            lastMessageId.value = lastMessage?.id ?? null
           }
           // Mark initial scroll as complete only when we have messages
           if (!isInitialScrollComplete.value && displayMessages.value.length) {
-            isInitialScrollComplete.value = true;
+            isInitialScrollComplete.value = true
             // Set initial last message ID
-            lastMessageId.value = lastMessage?.id ?? null;
+            lastMessageId.value = lastMessage?.id ?? null
           }
         }
-      });
-    });
-  }, debounceTimeout);
+      })
+    })
+  }, debounceTimeout)
 
-  return true;
-};
+  return true
+}
 
 const isAtBottom = (): boolean => {
-  return !userHasScrolledUp.value;
-};
+  return !userHasScrolledUp.value
+}
 
 const handleNewMessageClick = () => {
-  scrollToBottom(true);
-};
+  scrollToBottom(true)
+}
 
 defineExpose({
   scrollToBottom,
   isAtBottom,
-});
+})
 
 // Watch for new messages when user is scrolled up
 watch(
   displayMessages,
   (newMessages) => {
     if (isLoadingOlderMessages.value) {
-      return;
+      return
     }
 
     // Only show notification if:
     // 1. User has scrolled up
     // 2. We're not in initial loading phase
     // 3. A new message was actually added at the end (not just an update)
-    if (
-      !userHasScrolledUp.value ||
-      !isInitialScrollComplete.value ||
-      newMessages.length === 0
-    ) {
-      return;
+    if (!userHasScrolledUp.value || !isInitialScrollComplete.value || newMessages.length === 0) {
+      return
     }
 
-    const lastMessage = newMessages.at(-1);
+    const lastMessage = newMessages.at(-1)
     if (!lastMessage) {
-      return;
+      return
     }
 
     if (lastMessage.role === MessageRole.USER) {
-      return;
+      return
     }
 
     // Check if this is a truly new message (different ID than last known)
@@ -450,41 +411,41 @@ watch(
     // - Not showing for updates to existing messages
     // - Not showing when loading older messages (prepended at the start)
     if (lastMessage.id !== lastMessageId.value) {
-      showNewMessageNotification.value = true;
+      showNewMessageNotification.value = true
     }
   },
   { deep: true },
-);
+)
 
 // Re-setup intersection observer when hasMoreMessages changes
 watch(hasMoreMessages, (newValue) => {
   if (newValue && isInitialScrollComplete.value) {
     nextTick(() => {
-      setupIntersectionObserver();
-    });
+      setupIntersectionObserver()
+    })
   } else if (!newValue) {
-    cleanupIntersectionObserver();
+    cleanupIntersectionObserver()
   }
-});
+})
 
 // Setup observer when initial scroll completes (if there are more messages)
 watch(isInitialScrollComplete, (newValue) => {
   if (newValue && hasMoreMessages.value) {
     nextTick(() => {
-      setupIntersectionObserver();
-    });
+      setupIntersectionObserver()
+    })
   }
-});
+})
 
 onMounted(() => {
   nextTick(() => {
-    scrollToBottom(true);
-    setupIntersectionObserver();
-  });
-});
+    scrollToBottom(true)
+    setupIntersectionObserver()
+  })
+})
 
 onUnmounted(() => {
-  cleanupIntersectionObserver();
-  cancelPendingScroll();
-});
+  cleanupIntersectionObserver()
+  cancelPendingScroll()
+})
 </script>

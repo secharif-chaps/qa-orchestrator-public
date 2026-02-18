@@ -17,9 +17,7 @@
       </Button>
       <Button
         v-if="filtersCounts"
-        :icon="
-          displayFiltersPanelValue ? 'fa-chevron-left' : 'fa-chevron-right'
-        "
+        :icon="displayFiltersPanelValue ? 'fa-chevron-left' : 'fa-chevron-right'"
         variant="tertiary"
         size="sm"
         class="shrink-0"
@@ -37,10 +35,7 @@
       >
         {{ t('watch_files.filters.button.reset') }}
       </Button>
-      <div
-        v-if="displayFiltersPanelValue"
-        class="flex flex-wrap items-start gap-1"
-      >
+      <div v-if="displayFiltersPanelValue" class="flex flex-wrap items-start gap-1">
         <slot name="chips" :open-edit-filter="openEditFilter" />
       </div>
     </div>
@@ -67,29 +62,29 @@
 </template>
 
 <script lang="ts" setup>
-import { Button } from '@owlint/feathers-vue';
-import { computed, nextTick, ref, unref, useTemplateRef, watch, type Ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import FilterDrawer from '~/components/filters/FilterDrawer.vue';
-import { useFilterPanel } from '~/composables/useFilterPanel';
-import type { DocumentFacets } from '~/types/document';
-import type { AnalysisFacets } from '~/types/facet';
-import type { DocumentFilter } from '~/types/filter';
+import { Button } from '@owlint/feathers-vue'
+import { computed, nextTick, ref, unref, useTemplateRef, watch, type Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import FilterDrawer from '~/components/filters/FilterDrawer.vue'
+import { useFilterPanel } from '~/composables/useFilterPanel'
+import type { DocumentFacets } from '~/types/document'
+import type { AnalysisFacets } from '~/types/facet'
+import type { DocumentFilter } from '~/types/filter'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 interface Props {
-  facets?: DocumentFacets | AnalysisFacets;
-  isLoading?: boolean;
-  error?: Error | null;
-  accordionFilters: DocumentFilter[];
-  filtersCounts: number;
-  displayFiltersPanel: Ref<boolean> | boolean;
-  cssVariableName: string;
-  onConfirmFilters: () => void | Promise<void>;
-  onResetFilters: () => void | Promise<void>;
-  onSyncFormFilters?: () => void;
-  onUpdateDisplayFiltersPanel?: (value: boolean) => void;
+  facets?: DocumentFacets | AnalysisFacets
+  isLoading?: boolean
+  error?: Error | null
+  accordionFilters: DocumentFilter[]
+  filtersCounts: number
+  displayFiltersPanel: Ref<boolean> | boolean
+  cssVariableName: string
+  onConfirmFilters: () => void | Promise<void>
+  onResetFilters: () => void | Promise<void>
+  onSyncFormFilters?: () => void
+  onUpdateDisplayFiltersPanel?: (value: boolean) => void
 }
 
 const {
@@ -104,90 +99,90 @@ const {
   onResetFilters,
   onSyncFormFilters = undefined,
   onUpdateDisplayFiltersPanel = undefined,
-} = defineProps<Props>();
-const displayDrawer = defineModel<boolean>();
+} = defineProps<Props>()
+const displayDrawer = defineModel<boolean>()
 
-const filterPanelRef = useTemplateRef('filterPanelRef');
-useFilterPanel(filterPanelRef, cssVariableName);
+const filterPanelRef = useTemplateRef('filterPanelRef')
+useFilterPanel(filterPanelRef, cssVariableName)
 
-const openEdit = ref('');
+const openEdit = ref('')
 
 // displayFiltersPanel can be a Ref or a boolean
 // Vue unwraps refs in templates, so we need to create a local ref that syncs
-const displayFiltersPanelRef = ref(unref(displayFiltersPanel));
+const displayFiltersPanelRef = ref(unref(displayFiltersPanel))
 
 // Flag to prevent watch loops
-let isUpdatingFromProp = false;
+let isUpdatingFromProp = false
 
 // Sync prop -> local ref
 watch(
   () => unref(displayFiltersPanel),
   (newValue) => {
     if (!isUpdatingFromProp) {
-      displayFiltersPanelRef.value = newValue;
+      displayFiltersPanelRef.value = newValue
     }
   },
   { immediate: true },
-);
+)
 
 // Sync local ref -> prop via callback
 watch(displayFiltersPanelRef, (newValue) => {
-  isUpdatingFromProp = true;
+  isUpdatingFromProp = true
   // Use callback if provided
   if (onUpdateDisplayFiltersPanel) {
-    onUpdateDisplayFiltersPanel(newValue);
+    onUpdateDisplayFiltersPanel(newValue)
   }
   nextTick(() => {
-    isUpdatingFromProp = false;
-  });
-});
+    isUpdatingFromProp = false
+  })
+})
 
 // Use unref to get the value and track changes
 const displayFiltersPanelValue = computed(() => {
-  return displayFiltersPanelRef.value;
-});
+  return displayFiltersPanelRef.value
+})
 
 const filterTitle = computed(() => {
   if (displayFiltersPanelValue.value) {
-    return `${t('watch_files.filters.title_count', { count: filtersCounts })}`;
+    return `${t('watch_files.filters.title_count', { count: filtersCounts })}`
   }
-  return `(${filtersCounts})`;
-});
+  return `(${filtersCounts})`
+})
 
 const defaultValueOpen = computed(() => {
   const activeFilters = accordionFilters.filter(
     (filter) => filter.count || (filter.count && filter.empty),
-  );
+  )
   if (activeFilters.length) {
-    return activeFilters.map((filter) => filter.value);
+    return activeFilters.map((filter) => filter.value)
   }
-  return accordionFilters.map((filter) => filter.value);
-});
+  return accordionFilters.map((filter) => filter.value)
+})
 
 const openEditFilter = (filterType: string) => {
-  openEdit.value = filterType;
-  displayDrawer.value = true;
-};
+  openEdit.value = filterType
+  displayDrawer.value = true
+}
 
 const toggleDisplayFiltersPanel = () => {
-  displayFiltersPanelRef.value = !displayFiltersPanelRef.value;
-};
+  displayFiltersPanelRef.value = !displayFiltersPanelRef.value
+}
 
 const handleConfirmFilters = async () => {
-  await onConfirmFilters();
-};
+  await onConfirmFilters()
+}
 
 const handleResetFilters = async () => {
-  await onResetFilters();
-};
+  await onResetFilters()
+}
 
 // Reset openEdit on close and sync formFilters when opening
 watch(displayDrawer, (newValue) => {
   if (!newValue) {
-    openEdit.value = '';
+    openEdit.value = ''
   } else if (onSyncFormFilters) {
     // When opening the drawer, sync formFilters with current store values
-    onSyncFormFilters();
+    onSyncFormFilters()
   }
-});
+})
 </script>

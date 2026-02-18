@@ -49,20 +49,9 @@
     <template v-else>
       <div v-if="!isLoading && searchQuery" class="flex items-center gap-4">
         <p class="text-sm font-bold">
-          {{
-            t(
-              'watch_files.documents.search.nb_results',
-              { nb: totalItems },
-              totalItems,
-            )
-          }}
+          {{ t('watch_files.documents.search.nb_results', { nb: totalItems }, totalItems) }}
         </p>
-        <Button
-          variant="secondary"
-          size="sm"
-          icon="fa-xmark"
-          @click="searchQuery = ''"
-        >
+        <Button variant="secondary" size="sm" icon="fa-xmark" @click="searchQuery = ''">
           {{ $t('watch_files.documents.search.delete') }}
         </Button>
       </div>
@@ -86,10 +75,7 @@
 
       <div class="shrink-0 rounded bg-white px-6 py-2 shadow-2xl">
         <div v-if="isLoading" class="flex items-center justify-between">
-          <div
-            class="h-4 animate-pulse rounded bg-gray-200"
-            style="width: 200px"
-          ></div>
+          <div class="h-4 animate-pulse rounded bg-gray-200" style="width: 200px"></div>
           <div class="flex items-center gap-2">
             <div class="h-8 w-8 animate-pulse rounded bg-gray-200"></div>
             <div class="h-8 w-8 animate-pulse rounded bg-gray-200"></div>
@@ -112,35 +98,35 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Pagination, type CheckboxType } from '@owlint/feathers-vue';
-import { useQuery } from '@pinia/colada';
-import { storeToRefs } from 'pinia';
-import { computed, onMounted, onUnmounted, ref, watch, watchEffect } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useWatchFileDocumentsStore } from '~/stores/watchFileDocuments';
-import { useBatchDocumentValidation } from '~/api/mutations/document';
-import { getItemWatchFileQuery } from '~/api/queries/watchFile';
-import DocumentListHeader from '~/components/documents/DocumentListHeader.vue';
-import ErrorMessage from '~/components/global/ErrorMessage.vue';
-import InformationMessage from '~/components/global/InformationMessage.vue';
-import DocumentListSkeleton from '~/components/skeletons/DocumentListSkeleton.vue';
-import { useConfirmModal } from '~/composables/useConfirmModal';
-import type { Document } from '~/types/document';
-import { DocumentValidationAction } from '~/types/document';
-import { WATCH_FILE_STATUS } from '~/types/watchFile';
-import EmptyState from '../global/EmptyState.vue';
-import DocumentItem from './DocumentItem.vue';
+import { Button, Pagination, type CheckboxType } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { storeToRefs } from 'pinia'
+import { computed, onMounted, onUnmounted, ref, watch, watchEffect } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useWatchFileDocumentsStore } from '~/stores/watchFileDocuments'
+import { useBatchDocumentValidation } from '~/api/mutations/document'
+import { getItemWatchFileQuery } from '~/api/queries/watchFile'
+import DocumentListHeader from '~/components/documents/DocumentListHeader.vue'
+import ErrorMessage from '~/components/global/ErrorMessage.vue'
+import InformationMessage from '~/components/global/InformationMessage.vue'
+import DocumentListSkeleton from '~/components/skeletons/DocumentListSkeleton.vue'
+import { useConfirmModal } from '~/composables/useConfirmModal'
+import type { Document } from '~/types/document'
+import { DocumentValidationAction } from '~/types/document'
+import { WATCH_FILE_STATUS } from '~/types/watchFile'
+import EmptyState from '../global/EmptyState.vue'
+import DocumentItem from './DocumentItem.vue'
 
-const { t } = useI18n();
-const { showConfirmModal } = useConfirmModal();
+const { t } = useI18n()
+const { showConfirmModal } = useConfirmModal()
 
 interface Props {
-  documents: Document[];
-  totalItems: number;
-  error?: string;
-  selectedDocumentId?: string;
-  isLoading: boolean;
-  watchFileId: string;
+  documents: Document[]
+  totalItems: number
+  error?: string
+  selectedDocumentId?: string
+  isLoading: boolean
+  watchFileId: string
 }
 
 const {
@@ -149,160 +135,143 @@ const {
   selectedDocumentId = undefined,
   isLoading,
   watchFileId,
-} = defineProps<Props>();
+} = defineProps<Props>()
 
 const { data: watchFileData } = useQuery(getItemWatchFileQuery, () => ({
   id: watchFileId,
-}));
+}))
 
-const isWatchFileActive = computed(
-  () => watchFileData.value?.status === WATCH_FILE_STATUS.ENABLED,
-);
+const isWatchFileActive = computed(() => watchFileData.value?.status === WATCH_FILE_STATUS.ENABLED)
 
 const emit = defineEmits<{
-  (e: 'select', document: Document): void;
-  (e: 'search'): void;
-}>();
+  (e: 'select', document: Document): void
+  (e: 'search'): void
+}>()
 
-const watchFileDocumentsStore = useWatchFileDocumentsStore();
-const { searchQuery, currentPage, itemsPerPage } = storeToRefs(
-  watchFileDocumentsStore,
-);
+const watchFileDocumentsStore = useWatchFileDocumentsStore()
+const { searchQuery, currentPage, itemsPerPage } = storeToRefs(watchFileDocumentsStore)
 
-const filtersCounts = computed(() => watchFileDocumentsStore.filtersCounts);
+const filtersCounts = computed(() => watchFileDocumentsStore.filtersCounts)
 
-const selectAll = ref<CheckboxType>(false);
-const selectedDocuments = ref<string[]>([]);
+const selectAll = ref<CheckboxType>(false)
+const selectedDocuments = ref<string[]>([])
 
-const isBatchProcessing = ref(false);
+const isBatchProcessing = ref(false)
 
-const hasNoDocuments = computed(() => !isLoading && !documents.length);
+const hasNoDocuments = computed(() => !isLoading && !documents.length)
 
-const headerIsHidden = computed(
-  () => isLoading || !documents.length || !!error,
-);
+const headerIsHidden = computed(() => isLoading || !documents.length || !!error)
 
-const headerIsDisabled = computed(() => isLoading || isBatchProcessing.value);
+const headerIsDisabled = computed(() => isLoading || isBatchProcessing.value)
 
 const toggleSelectAll = (checked: CheckboxType) => {
   if (checked === true) {
-    selectedDocuments.value = documents.map((doc) => doc.id);
+    selectedDocuments.value = documents.map((doc) => doc.id)
   } else if (checked === false) {
-    selectedDocuments.value = [];
+    selectedDocuments.value = []
   }
-};
+}
 
 watch(selectAll, (newValue) => {
-  toggleSelectAll(newValue);
-});
+  toggleSelectAll(newValue)
+})
 
 watchEffect(() => {
   if (selectedDocuments.value.length === documents.length) {
-    selectAll.value = true;
+    selectAll.value = true
   } else if (!selectedDocuments.value.length) {
-    selectAll.value = false;
+    selectAll.value = false
   } else {
-    selectAll.value = 'indeterminate';
+    selectAll.value = 'indeterminate'
   }
-});
+})
 
 watch(currentPage, () => {
-  selectedDocuments.value = [];
-  selectAll.value = false;
-});
+  selectedDocuments.value = []
+  selectAll.value = false
+})
 
 const search = () => {
-  emit('search');
-  currentPage.value = 1;
-};
+  emit('search')
+  currentPage.value = 1
+}
 
 const handleDocumentClick = (doc: Document) => {
-  emit('select', doc);
-};
+  emit('select', doc)
+}
 
 const { batchToggleDocumentStatus } = useBatchDocumentValidation({
   onSuccess: () => {
     // Reset selection after successful batch operation
-    selectedDocuments.value = [];
-    selectAll.value = false;
-    isBatchProcessing.value = false;
+    selectedDocuments.value = []
+    selectAll.value = false
+    isBatchProcessing.value = false
   },
   onError: () => {
-    isBatchProcessing.value = false;
+    isBatchProcessing.value = false
   },
-});
+})
 
 const validateSelectedDocuments = () => {
-  if (selectedDocuments.value.length === 0) return;
+  if (selectedDocuments.value.length === 0) return
 
-  const count = selectedDocuments.value.length;
+  const count = selectedDocuments.value.length
 
   showConfirmModal({
     title: t('watch_files.documents.batch_validate.modal.title'),
-    message: t(
-      'watch_files.documents.batch_validate.modal.message',
-      { count },
-      count,
-    ),
+    message: t('watch_files.documents.batch_validate.modal.message', { count }, count),
     confirmLabel: t('common.button.confirm'),
     cancelLabel: t('common.button.cancel'),
     onConfirm: () => {
-      isBatchProcessing.value = true;
+      isBatchProcessing.value = true
       batchToggleDocumentStatus({
         watchFileId,
         documentIds: selectedDocuments.value,
         action: DocumentValidationAction.ACCEPT,
-      });
+      })
     },
-  });
-};
+  })
+}
 
 const rejectSelectedDocuments = () => {
-  if (selectedDocuments.value.length === 0) return;
+  if (selectedDocuments.value.length === 0) return
 
-  const count = selectedDocuments.value.length;
+  const count = selectedDocuments.value.length
 
   showConfirmModal({
     title: t('watch_files.documents.batch_reject.modal.title'),
-    message: t(
-      'watch_files.documents.batch_reject.modal.message',
-      { count },
-      count,
-    ),
+    message: t('watch_files.documents.batch_reject.modal.message', { count }, count),
     confirmLabel: t('common.button.confirm'),
     cancelLabel: t('common.button.cancel'),
     onConfirm: () => {
-      isBatchProcessing.value = true;
+      isBatchProcessing.value = true
       batchToggleDocumentStatus({
         watchFileId,
         documentIds: selectedDocuments.value,
         action: DocumentValidationAction.REFUSE,
-      });
+      })
     },
-  });
-};
+  })
+}
 
 const handleKeydown = (event: KeyboardEvent) => {
-  if (
-    event.target instanceof HTMLInputElement ||
-    event.target instanceof HTMLTextAreaElement
-  ) {
-    return;
+  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+    return
   }
 
   if (event.ctrlKey && event.key === 'a') {
-    event.preventDefault();
+    event.preventDefault()
     if (!isLoading && !error && documents.length > 0) {
-      toggleSelectAll(true);
+      toggleSelectAll(true)
     }
   }
-};
+}
 
 onMounted(() => {
-  document.addEventListener('keydown', handleKeydown);
-});
+  document.addEventListener('keydown', handleKeydown)
+})
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown);
-});
+  document.removeEventListener('keydown', handleKeydown)
+})
 </script>

@@ -31,11 +31,7 @@
 
     <template #footer>
       <div class="flex flex-row-reverse gap-3">
-        <Button
-          v-if="selectedSources.length > 0"
-          color="primary"
-          @click="confirmSelection"
-        >
+        <Button v-if="selectedSources.length > 0" color="primary" @click="confirmSelection">
           {{
             $t('watch_files.sources.selection_modal.add_sources', {
               count: selectedSources.length,
@@ -51,46 +47,46 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Icon, Modal } from '@owlint/feathers-vue';
-import { ref } from 'vue';
-import { useBatchChangeSourceStatus } from '~/api/mutations/sources';
-import { SourceStatus } from '~/types/source';
-import SourcesListTable from './SourcesListTable.vue';
+import { Button, Icon, Modal } from '@owlint/feathers-vue'
+import { ref } from 'vue'
+import { useBatchChangeSourceStatus } from '~/api/mutations/sources'
+import { SourceStatus } from '~/types/source'
+import SourcesListTable from './SourcesListTable.vue'
 
 interface Props {
-  watchFileId?: string;
+  watchFileId?: string
 }
 
-const { watchFileId = undefined } = defineProps<Props>();
+const { watchFileId = undefined } = defineProps<Props>()
 
 const isOpen = defineModel<boolean>('isOpen', {
   required: true,
-});
+})
 
-const selectedSources = ref<string[]>([]);
-const { batchChangeStatus } = useBatchChangeSourceStatus();
+const selectedSources = ref<string[]>([])
+const { batchChangeStatus } = useBatchChangeSourceStatus()
 
 const closeModal = () => {
-  isOpen.value = false;
-  selectedSources.value = [];
-};
+  isOpen.value = false
+  selectedSources.value = []
+}
 
 const confirmSelection = async () => {
   if (!watchFileId) {
-    console.error('No watchFileId provided');
-    return;
+    console.error('No watchFileId provided')
+    return
   }
 
   if (selectedSources.value.length === 0) {
-    closeModal();
-    return;
+    closeModal()
+    return
   }
 
   await batchChangeStatus({
     watchFileId,
     sources: selectedSources.value.map((id) => ({ id })),
     status: SourceStatus.ACTIVE,
-  });
-  closeModal();
-};
+  })
+  closeModal()
+}
 </script>

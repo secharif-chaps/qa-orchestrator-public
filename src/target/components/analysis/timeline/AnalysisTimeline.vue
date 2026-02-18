@@ -17,20 +17,12 @@
     <Table :items="watchFileEvent.actors" :fields="columns">
       <template #cell(name)="{ item }">
         <td class="px-4 py-3">
-          <ActorCard
-            :actor="convertEventActorToWatchFileActor(item)"
-            variant="minimal"
-          />
+          <ActorCard :actor="convertEventActorToWatchFileActor(item)" variant="minimal" />
         </td>
       </template>
       <template #cell(action)="{ item }">
         <td class="border-sage-200 border-l px-4 py-3">
-          <Button
-            variant="tertiary"
-            size="sm"
-            icon="fa-file"
-            @click="handleViewDocuments(item)"
-          >
+          <Button variant="tertiary" size="sm" icon="fa-file" @click="handleViewDocuments(item)">
             {{ t('watch_files.analysis.timeline.event.actor.action') }}
           </Button>
         </td>
@@ -40,45 +32,43 @@
 </template>
 
 <script lang="ts" setup>
-import { Button, Table, Tag } from '@owlint/feathers-vue';
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from 'vue-router';
-import ActorCard from '~/components/actors/ActorCard.vue';
-import { useLocalized } from '~/composables/useLocalized';
-import { useWatchFileDocumentsStore } from '~/stores/watchFileDocuments';
-import { useWatchFileFiltersStore } from '~/stores/watchFileFilters';
-import { ActorStatus, type Actor } from '~/types/actor';
-import { RouteNames } from '~/types/route-names';
-import type { WatchFileActor } from '~/types/watchFile';
-import type { EventActor, WatchFileEvent } from '~/types/watchFileEvent';
+import { Button, Table, Tag } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
+import ActorCard from '~/components/actors/ActorCard.vue'
+import { useLocalized } from '~/composables/useLocalized'
+import { useWatchFileDocumentsStore } from '~/stores/watchFileDocuments'
+import { useWatchFileFiltersStore } from '~/stores/watchFileFilters'
+import { ActorStatus, type Actor } from '~/types/actor'
+import { RouteNames } from '~/types/route-names'
+import type { WatchFileActor } from '~/types/watchFile'
+import type { EventActor, WatchFileEvent } from '~/types/watchFileEvent'
 
-const { d, t } = useI18n();
-const route = useRoute();
-const router = useRouter();
+const { d, t } = useI18n()
+const route = useRoute()
+const router = useRouter()
 
 interface Props {
-  watchFileEvent: WatchFileEvent;
+  watchFileEvent: WatchFileEvent
 }
 
-const { getLocalizedString } = useLocalized();
-const { watchFileEvent } = defineProps<Props>();
+const { getLocalizedString } = useLocalized()
+const { watchFileEvent } = defineProps<Props>()
 
-const watchFileDocumentsStore = useWatchFileDocumentsStore();
-const watchFileFiltersStore = useWatchFileFiltersStore();
-const watchFileId = computed(() => route.params.id as string);
+const watchFileDocumentsStore = useWatchFileDocumentsStore()
+const watchFileFiltersStore = useWatchFileFiltersStore()
+const watchFileId = computed(() => route.params.id as string)
 
-const eventTitle = computed(() => getLocalizedString(watchFileEvent.title));
+const eventTitle = computed(() => getLocalizedString(watchFileEvent.title))
 
 /**
  * Converts an EventActor to a WatchFileActor
  * EventActor only has id, name, and role, so we create a minimal WatchFileActor
  * with default values for missing fields
  */
-const convertEventActorToWatchFileActor = (
-  eventActor: EventActor,
-): WatchFileActor => {
-  const now = new Date().toISOString();
+const convertEventActorToWatchFileActor = (eventActor: EventActor): WatchFileActor => {
+  const now = new Date().toISOString()
 
   // Create a minimal Actor object
   const actor: Actor = {
@@ -87,7 +77,7 @@ const convertEventActorToWatchFileActor = (
     primaryDomain: null,
     createdAt: now,
     updatedAt: now,
-  };
+  }
 
   // Create WatchFileActor with default values
   const watchFileActor: WatchFileActor = {
@@ -99,18 +89,18 @@ const convertEventActorToWatchFileActor = (
     status: ActorStatus.ACTIVE,
     createdAt: now,
     // no sourcesCount for eventActors
-  };
+  }
 
-  return watchFileActor;
-};
+  return watchFileActor
+}
 
 const eventDescription = computed(() => {
-  return getLocalizedString(watchFileEvent.description);
-});
+  return getLocalizedString(watchFileEvent.description)
+})
 
 const eventTypeLabel = computed(() => {
-  return t(`watch_files.analysis.event.type.${watchFileEvent.eventType}`);
-});
+  return t(`watch_files.analysis.event.type.${watchFileEvent.eventType}`)
+})
 
 const columns = computed(() => [
   {
@@ -123,48 +113,48 @@ const columns = computed(() => [
     label: '',
     class: 'w-1/3',
   },
-]);
+])
 
 const eventDateLabel = computed<string | null>(() => {
   try {
-    const endDate = new Date(watchFileEvent.endDate);
-    const startDate = new Date(watchFileEvent.startDate);
+    const endDate = new Date(watchFileEvent.endDate)
+    const startDate = new Date(watchFileEvent.startDate)
 
     if (startDate.getTime() !== endDate.getTime()) {
       return t('watch_files.analysis.event.date', {
         startDate: d(startDate, 'eventDateTime'),
         endDate: d(endDate, 'eventDateTime'),
-      });
+      })
     }
-    return d(startDate, 'eventDateTime');
+    return d(startDate, 'eventDateTime')
   } catch {
-    return t('watch_files.analysis.event.unknown_date');
+    return t('watch_files.analysis.event.unknown_date')
   }
-});
+})
 
 const convertEventActorToActor = (eventActor: EventActor) => {
   return {
     id: eventActor.id,
     label: eventActor.name,
     primaryDomain: '',
-  };
-};
+  }
+}
 
 const handleViewDocuments = async (actor: EventActor) => {
-  const actorFilter = convertEventActorToActor(actor);
+  const actorFilter = convertEventActorToActor(actor)
 
-  watchFileDocumentsStore.resetFilters();
+  watchFileDocumentsStore.resetFilters()
 
-  watchFileDocumentsStore.formFilters.actors = [actorFilter];
-  watchFileDocumentsStore.actors = [actorFilter];
+  watchFileDocumentsStore.formFilters.actors = [actorFilter]
+  watchFileDocumentsStore.actors = [actorFilter]
 
-  watchFileDocumentsStore.syncFormFilter();
+  watchFileDocumentsStore.syncFormFilter()
 
-  const filterQuery = watchFileFiltersStore.filterQuery('documents');
+  const filterQuery = watchFileFiltersStore.filterQuery('documents')
   await router.push({
     name: RouteNames.WATCH_FILES_DOCUMENTS,
     params: { id: watchFileId.value },
     query: filterQuery,
-  });
-};
+  })
+}
 </script>

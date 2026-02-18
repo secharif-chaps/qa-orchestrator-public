@@ -6,36 +6,30 @@
   >
     <Icon icon="fa-file-lines" />
     <span class="shrink">{{ $t(`watch_files.documents.status.${item}`) }}</span>
-    <button
-      class="flex items-center justify-center"
-      @click="emit('openEditFilter', 'validations')"
-    >
+    <button class="flex items-center justify-center" @click="emit('openEditFilter', 'validations')">
       <Icon icon="fa-pen" />
     </button>
-    <button
-      class="flex items-center justify-center"
-      @click="handleRemove(item)"
-    >
+    <button class="flex items-center justify-center" @click="handleRemove(item)">
       <Icon icon="fa-xmark" />
     </button>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@owlint/feathers-vue';
+import { Icon } from '@owlint/feathers-vue'
 
 interface Props {
-  status: string[];
+  status: string[]
 }
 
-defineProps<Props>();
+defineProps<Props>()
 
 const emit = defineEmits<{
-  openEditFilter: [filterType: string];
-  remove: [status: string];
-}>();
+  openEditFilter: [filterType: string]
+  remove: [status: string]
+}>()
 
 const handleRemove = (status: string) => {
-  emit('remove', status);
-};
+  emit('remove', status)
+}
 </script>

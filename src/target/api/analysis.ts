@@ -1,16 +1,16 @@
-import { useApi } from '~/composables/useApi';
-import { useDate } from '~/composables/useDate';
+import { useApi } from '~/composables/useApi'
+import { useDate } from '~/composables/useDate'
 import type {
-    CollectionParams,
-    Document,
-    DocumentFacets,
-    FacetsParams,
-    FilterParams,
-} from '~/types/document';
-import { FilterDates } from '~/types/filter';
-import type { JsonLdCollection } from '~/types/jsonld';
+  CollectionParams,
+  Document,
+  DocumentFacets,
+  FacetsParams,
+  FilterParams,
+} from '~/types/document'
+import { FilterDates } from '~/types/filter'
+import type { JsonLdCollection } from '~/types/jsonld'
 
-const ROOT_URL = '/watch_files';
+const ROOT_URL = '/watch_files'
 
 export const getCollectionAnalysis = async ({
   sortBy,
@@ -37,20 +37,20 @@ export const getCollectionAnalysis = async ({
       selectedDateType,
       selectedPeriod,
     }),
-  };
+  }
 
   const response = await useApi().get<JsonLdCollection<Document>>(
     `${ROOT_URL}/${watchFileId}/analysis`,
     {
       query,
     },
-  );
+  )
 
   return {
     items: response.data.member,
     totalItems: response.data.totalItems,
-  };
-};
+  }
+}
 export const getAnalysisFacets = async ({
   watchFileId,
   actors,
@@ -73,60 +73,57 @@ export const getAnalysisFacets = async ({
       selectedDateType,
       selectedPeriod,
     }),
-  };
+  }
 
   const response = await useApi().get<DocumentFacets>(
     `${ROOT_URL}/${watchFileId}/analysis/facets`,
     {
       query,
     },
-  );
+  )
   return {
     actors: response.data.actors,
     sources: response.data.sources,
     statuses: response.data.statuses,
-  };
-};
+  }
+}
 
-const buildFilterQuery = (
-  filters: FilterParams,
-): Record<string, string | number | string[]> => {
-  const query: Record<string, string | number | string[]> = {};
-  const { getPeriodDates, convertDateStringToDate, formatToISOWithTimezone } =
-    useDate();
+const buildFilterQuery = (filters: FilterParams): Record<string, string | number | string[]> => {
+  const query: Record<string, string | number | string[]> = {}
+  const { getPeriodDates, convertDateStringToDate, formatToISOWithTimezone } = useDate()
   if (filters.actors?.length) {
-    query['actor.id[]'] = filters.actors;
+    query['actor.id[]'] = filters.actors
   }
   if (filters.sources?.length) {
-    query['source.id[]'] = filters.sources;
+    query['source.id[]'] = filters.sources
   }
 
-  let startDate: Date | undefined = undefined;
-  let endDate: Date | undefined = undefined;
+  let startDate: Date | undefined = undefined
+  let endDate: Date | undefined = undefined
   if (filters.selectedPeriod) {
-    const periodDates = getPeriodDates(filters.selectedPeriod);
-    startDate = periodDates.start;
-    endDate = periodDates.end;
+    const periodDates = getPeriodDates(filters.selectedPeriod)
+    startDate = periodDates.start
+    endDate = periodDates.end
   } else if (filters.datesPickerEnd || filters.datesPickerStart) {
-    startDate = convertDateStringToDate(filters.datesPickerStart);
-    endDate = convertDateStringToDate(filters.datesPickerEnd);
+    startDate = convertDateStringToDate(filters.datesPickerStart)
+    endDate = convertDateStringToDate(filters.datesPickerEnd)
   }
 
   if (filters.selectedDateType === FilterDates.PUBLICATION) {
     if (startDate) {
-      query['datePublish[after]'] = formatToISOWithTimezone(startDate, false);
+      query['datePublish[after]'] = formatToISOWithTimezone(startDate, false)
     }
     if (endDate) {
-      query['datePublish[before]'] = formatToISOWithTimezone(endDate, true);
+      query['datePublish[before]'] = formatToISOWithTimezone(endDate, true)
     }
   } else {
     if (startDate) {
-      query['dateCollect[after]'] = formatToISOWithTimezone(startDate, false);
+      query['dateCollect[after]'] = formatToISOWithTimezone(startDate, false)
     }
     if (endDate) {
-      query['dateCollect[before]'] = formatToISOWithTimezone(endDate, true);
+      query['dateCollect[before]'] = formatToISOWithTimezone(endDate, true)
     }
   }
 
-  return query;
-};
+  return query
+}

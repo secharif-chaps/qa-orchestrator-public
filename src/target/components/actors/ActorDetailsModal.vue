@@ -29,22 +29,22 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Icon, Modal } from '@owlint/feathers-vue';
-import type { WatchFileActor } from '~/types/watchFile';
-import ActorDetails from './ActorDetails.vue';
+import { Button, Icon, Modal } from '@owlint/feathers-vue'
+import type { WatchFileActor } from '~/types/watchFile'
+import ActorDetails from './ActorDetails.vue'
 
 interface Props {
-  actor: WatchFileActor;
-  watchFileId?: string;
+  actor: WatchFileActor
+  watchFileId?: string
 }
 
-const { actor, watchFileId = undefined } = defineProps<Props>();
+const { actor, watchFileId = undefined } = defineProps<Props>()
 
 const isOpen = defineModel<boolean>('isOpen', {
   required: true,
-});
+})
 
 const closeModal = () => {
-  isOpen.value = false;
-};
+  isOpen.value = false
+}
 </script>

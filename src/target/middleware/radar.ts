@@ -1,21 +1,21 @@
-import type { NavigationGuardWithThis } from 'vue-router';
-import { useRouter } from 'vue-router';
-import { storeToRefs } from 'pinia';
-import { useWatchFileAnalysisStore } from '~/stores/watchFileAnalysis';
-import { RouteNames } from '~/types/route-names';
+import type { NavigationGuardWithThis } from 'vue-router'
+import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useWatchFileAnalysisStore } from '~/stores/watchFileAnalysis'
+import { RouteNames } from '~/types/route-names'
 
 const radarMiddleware: NavigationGuardWithThis<undefined> = (to) => {
-  const router = useRouter();
-  const watchFileAnalysisStore = useWatchFileAnalysisStore();
-  const { selectedView } = storeToRefs(watchFileAnalysisStore);
+  const router = useRouter()
+  const watchFileAnalysisStore = useWatchFileAnalysisStore()
+  const { selectedView } = storeToRefs(watchFileAnalysisStore)
 
   if (to.name === RouteNames.WATCH_FILES_RADAR) {
     return router.push({
       name: selectedView.value,
       params: to.params,
       query: to.query,
-    });
+    })
   }
-};
+}
 
-export default radarMiddleware;
+export default radarMiddleware

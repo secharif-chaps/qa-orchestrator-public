@@ -5,9 +5,7 @@
         :title="$t('watch_files.reference_subject.title')"
         :sub-title="$t('watch_files.reference_subject.sub_title')"
         :readonly="true"
-        :last-update="
-          watchFile?.referenceSubject ? watchFile?.updatedAt : undefined
-        "
+        :last-update="watchFile?.referenceSubject ? watchFile?.updatedAt : undefined"
       />
 
       <div
@@ -17,9 +15,7 @@
           {
             'animate-pulse': loading,
           },
-          watchFile?.status === 'draft'
-            ? 'border-sage-300 border'
-            : 'bg-sage-100',
+          watchFile?.status === 'draft' ? 'border-sage-300 border' : 'bg-sage-100',
         ]"
       >
         <div>
@@ -43,33 +39,33 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import InformationMessage from '~/components/global/InformationMessage.vue';
-import { useLocalized } from '~/composables/useLocalized';
-import { useMarkdown } from '~/composables/useMarkdown';
-import { useWatchFileStore } from '~/stores/watchFile';
-import type { WatchFile } from '~/types/watchFile';
-import SectionListHeader from './SectionListHeader.vue';
+import { computed } from 'vue'
+import InformationMessage from '~/components/global/InformationMessage.vue'
+import { useLocalized } from '~/composables/useLocalized'
+import { useMarkdown } from '~/composables/useMarkdown'
+import { useWatchFileStore } from '~/stores/watchFile'
+import type { WatchFile } from '~/types/watchFile'
+import SectionListHeader from './SectionListHeader.vue'
 
-const watchFileStore = useWatchFileStore();
-const loading = computed(() => watchFileStore.isLoading);
+const watchFileStore = useWatchFileStore()
+const loading = computed(() => watchFileStore.isLoading)
 
 interface Props {
-  watchFile?: WatchFile;
+  watchFile?: WatchFile
 }
-const { watchFile = undefined } = defineProps<Props>();
+const { watchFile = undefined } = defineProps<Props>()
 
-const { getLocalizedString } = useLocalized();
-const { toHtml } = useMarkdown();
+const { getLocalizedString } = useLocalized()
+const { toHtml } = useMarkdown()
 
-const localizedReferenceSubject = computed(() => watchFile?.referenceSubject);
+const localizedReferenceSubject = computed(() => watchFile?.referenceSubject)
 
 const localizedText = getLocalizedString(
   localizedReferenceSubject,
   watchFile?.referenceSubject?.en || '',
-);
+)
 
-const renderedContent = toHtml(localizedText);
+const renderedContent = toHtml(localizedText)
 </script>
 
 <style scoped>

@@ -36,11 +36,7 @@
       class="flex flex-col items-center gap-4 py-8"
       :class="fixedHeight ? 'mb-6 flex-1' : ''"
     >
-      <ErrorMessage
-        :title="errorTitle"
-        :retry-button="true"
-        @retry="$emit('retry')"
-      />
+      <ErrorMessage :title="errorTitle" :retry-button="true" @retry="$emit('retry')" />
     </div>
 
     <div v-else-if="allActors.length > 0" :class="fixedHeight ? 'flex-1' : ''">
@@ -95,27 +91,27 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@owlint/feathers-vue';
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import ErrorMessage from '~/components/global/ErrorMessage.vue';
-import SectionListPaginator from '~/components/watchFiles/EditSection/SectionListPaginator.vue';
-import type { WatchFileActor } from '~/types/watchFile';
-import ActorCard from './ActorCard.vue';
+import { Icon } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import ErrorMessage from '~/components/global/ErrorMessage.vue'
+import SectionListPaginator from '~/components/watchFiles/EditSection/SectionListPaginator.vue'
+import type { WatchFileActor } from '~/types/watchFile'
+import ActorCard from './ActorCard.vue'
 
 interface Props {
-  actors: WatchFileActor[];
-  loading?: boolean;
-  error?: string;
-  watchFileId?: string;
-  readonly?: boolean;
-  pageSize?: number;
-  totalItems?: number;
-  showPagination?: boolean;
-  inModal?: boolean;
-  fixedHeight?: boolean;
-  isActorSelected?: (actor: WatchFileActor) => boolean;
-  overrideDefaultAction?: boolean;
+  actors: WatchFileActor[]
+  loading?: boolean
+  error?: string
+  watchFileId?: string
+  readonly?: boolean
+  pageSize?: number
+  totalItems?: number
+  showPagination?: boolean
+  inModal?: boolean
+  fixedHeight?: boolean
+  isActorSelected?: (actor: WatchFileActor) => boolean
+  overrideDefaultAction?: boolean
 }
 
 const {
@@ -131,31 +127,29 @@ const {
   fixedHeight = false,
   isActorSelected = undefined,
   overrideDefaultAction = false,
-} = defineProps<Props>();
+} = defineProps<Props>()
 
 defineEmits<{
-  retry: [];
-  'toggle-status': [actor: WatchFileActor];
-  'actor-clicked': [actor: WatchFileActor];
-  'actor-updated': [actor: WatchFileActor];
-}>();
+  retry: []
+  'toggle-status': [actor: WatchFileActor]
+  'actor-clicked': [actor: WatchFileActor]
+  'actor-updated': [actor: WatchFileActor]
+}>()
 
 const currentPage = defineModel<number>('currentPage', {
   required: true,
   default: 1,
-});
+})
 
-const allActors = computed(() => actors || []);
+const allActors = computed(() => actors || [])
 
 const paginatedActors = computed(() => {
-  return allActors.value;
-});
+  return allActors.value
+})
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 const errorTitle = computed(() =>
-  error.includes('403')
-    ? t('watch_files.actors.forbidden')
-    : t('common.error.title'),
-);
+  error.includes('403') ? t('watch_files.actors.forbidden') : t('common.error.title'),
+)
 </script>

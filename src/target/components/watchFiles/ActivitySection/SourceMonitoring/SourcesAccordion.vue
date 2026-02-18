@@ -1,10 +1,6 @@
 <template>
   <div class="space-y-4">
-    <Accordion.Root
-      type="multiple"
-      :default-value="allSectionValues"
-      :collapsible="true"
-    >
+    <Accordion.Root type="multiple" :default-value="allSectionValues" :collapsible="true">
       <template v-for="section in sections" :key="section.value">
         <Accordion.Item
           v-if="section.count"
@@ -22,24 +18,17 @@
               class="flex items-center justify-between gap-4"
               :class="{ 'flex-1': section.value === CollectorStatus.ERROR }"
             >
-              <div
-                v-if="section.value === CollectorStatus.ERROR"
-                class="min-w-0 flex-1"
-              >
+              <div v-if="section.value === CollectorStatus.ERROR" class="min-w-0 flex-1">
                 <ErrorMessage
                   :title="t('watch_files.activity.sources.error.title')"
-                  :description="
-                    t('watch_files.activity.sources.error.subtitle')
-                  "
+                  :description="t('watch_files.activity.sources.error.subtitle')"
                   width="full"
                   :fill="true"
                   :transparent="true"
                 />
               </div>
               <div v-else class="flex items-center gap-2">
-                <span class="text-sm font-medium text-gray-900">{{
-                  section.title
-                }}</span>
+                <span class="text-sm font-medium text-gray-900">{{ section.title }}</span>
                 <Badge
                   v-if="section.count"
                   variant="secondary"
@@ -74,56 +63,52 @@
 </template>
 
 <script setup lang="ts">
-import { Badge, Button } from '@owlint/feathers-vue';
-import { Accordion } from 'reka-ui/namespaced';
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import ErrorMessage from '~/components/global/ErrorMessage.vue';
-import type {
-  Source,
-  SourceGroup,
-  SourcesGroupedResponse,
-} from '~/types/source';
-import { CollectorStatus } from '~/types/source';
-import SourceCard from '~/components/sources/SourceCard.vue';
+import { Badge, Button } from '@owlint/feathers-vue'
+import { Accordion } from 'reka-ui/namespaced'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import ErrorMessage from '~/components/global/ErrorMessage.vue'
+import type { Source, SourceGroup, SourcesGroupedResponse } from '~/types/source'
+import { CollectorStatus } from '~/types/source'
+import SourceCard from '~/components/sources/SourceCard.vue'
 
 interface Props {
-  sourcesData?: SourcesGroupedResponse;
-  searchQuery?: string;
+  sourcesData?: SourcesGroupedResponse
+  searchQuery?: string
 }
 
 interface Emits {
-  (e: 'monitoring-click', source: Source): void;
+  (e: 'monitoring-click', source: Source): void
 }
 
-const { sourcesData = undefined, searchQuery = '' } = defineProps<Props>();
-const emit = defineEmits<Emits>();
-const { t } = useI18n();
+const { sourcesData = undefined, searchQuery = '' } = defineProps<Props>()
+const emit = defineEmits<Emits>()
+const { t } = useI18n()
 
 const handleMonitoringClick = (source: Source) => {
-  emit('monitoring-click', source);
-};
+  emit('monitoring-click', source)
+}
 
 // Process sources data and apply search filter
 const sections = computed(() => {
   const data = sourcesData || {
     groups: [],
     summary: { total: 0, error: 0, running: 0, stopped: 0 },
-  };
-  if (!data.groups || !Array.isArray(data.groups)) return [];
+  }
+  if (!data.groups || !Array.isArray(data.groups)) return []
 
   return data.groups
     .map((group: SourceGroup) => {
       // Filter sources within this group based on search query
-      let groupSources = group.sources || [];
+      let groupSources = group.sources || []
 
       if (searchQuery?.trim()) {
-        const query = searchQuery.toLowerCase().trim();
+        const query = searchQuery.toLowerCase().trim()
         groupSources = groupSources.filter(
           (source: Source) =>
             source.name.toLowerCase().includes(query) ||
             source.primaryDomain.toLowerCase().includes(query),
-        );
+        )
       }
 
       return {
@@ -131,13 +116,13 @@ const sections = computed(() => {
         title: t(`source_types.${group.type || 'unknown'}`),
         count: groupSources.length,
         sources: groupSources,
-      };
+      }
     })
-    .filter((section) => section.count > 0); // Only show sections with sources
-});
+    .filter((section) => section.count > 0) // Only show sections with sources
+})
 
 // Get all section values for default expanded state
 const allSectionValues = computed(() => {
-  return sections.value.map((section) => section.value);
-});
+  return sections.value.map((section) => section.value)
+})
 </script>

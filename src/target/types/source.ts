@@ -1,21 +1,10 @@
-import type { Actor } from './actor';
-import type { JsonLdResource } from './jsonld';
-import type { Localized } from './localized';
-import type { User } from './user';
+import type { Actor } from './actor'
+import type { JsonLdResource } from './jsonld'
+import type { Localized } from './localized'
+import type { User } from './user'
 
-export type SourceCategory =
-  | 'news'
-  | 'social'
-  | 'research'
-  | 'business'
-  | 'other';
-export type SourceCapability =
-  | 'realtime'
-  | 'api'
-  | 'free'
-  | 'premium'
-  | 'rss'
-  | 'webhook';
+export type SourceCategory = 'news' | 'social' | 'research' | 'business' | 'other'
+export type SourceCapability = 'realtime' | 'api' | 'free' | 'premium' | 'rss' | 'webhook'
 export enum SourceStatus {
   AVAILABLE = 'available',
   CONFIGURED = 'configured',
@@ -30,81 +19,81 @@ export enum CollectorStatus {
 }
 
 export interface Source extends JsonLdResource {
-  id: string;
-  name: string;
-  description: Localized;
-  type: string;
-  url: string;
-  primaryDomain: string;
-  relevance: Localized;
-  status: SourceStatus;
-  actor?: Actor;
-  createdAt: string;
-  updatedAt?: string;
-  collectStatus: CollectorStatus;
-  active: boolean;
+  id: string
+  name: string
+  description: Localized
+  type: string
+  url: string
+  primaryDomain: string
+  relevance: Localized
+  status: SourceStatus
+  actor?: Actor
+  createdAt: string
+  updatedAt?: string
+  collectStatus: CollectorStatus
+  active: boolean
 }
 
 export interface SourceConfiguration {
-  sourceId: string;
-  settings: Record<string, unknown>;
+  sourceId: string
+  settings: Record<string, unknown>
   credentials?: {
-    apiKey?: string;
-    username?: string;
-    password?: string;
-    webhookUrl?: string;
+    apiKey?: string
+    username?: string
+    password?: string
+    webhookUrl?: string
     oauth?: {
-      clientId: string;
-      clientSecret: string;
-    };
-  };
+      clientId: string
+      clientSecret: string
+    }
+  }
   filters?: {
-    keywords?: string[];
-    languages?: string[];
+    keywords?: string[]
+    languages?: string[]
     dateRange?: {
-      start: Date;
-      end: Date;
-    };
-  };
+      start: Date
+      end: Date
+    }
+  }
 }
 
 export interface SourceFilter {
-  searchQuery: string;
-  category: SourceCategory | 'all';
-  capabilities: SourceCapability[];
-  sortBy: 'popularity' | 'name' | 'lastUpdated';
-  sortOrder: 'asc' | 'desc';
-  page: number;
-  pageSize: number;
+  searchQuery: string
+  category: SourceCategory | 'all'
+  capabilities: SourceCapability[]
+  sortBy: 'popularity' | 'name' | 'lastUpdated'
+  sortOrder: 'asc' | 'desc'
+  page: number
+  pageSize: number
 }
 
 export interface SourceTag {
-  label: string;
-  icon: string;
-  color: string;
+  label: string
+  icon: string
+  color: string
 }
 
 export interface SourceStats {
-  quality: number;
-  relevance: number;
-  popularity: number;
+  quality: number
+  relevance: number
+  popularity: number
 }
 
 export interface SourceGroup {
-  type: string;
-  name: string;
-  title: string;
-  sources: Source[];
+  type: string
+  name: string
+  title: string
+  sources: Source[]
 }
 
 export interface SourcesGroupedResponse {
-  groups: SourceGroup[];
+  groups: SourceGroup[]
   summary: {
-    total: number;
-    error: number;
-    running: number;
-    stopped: number;
-  };
+    total: number
+    error: number
+    running: number
+    stopped: number
+  }
 }
 
 export enum SourceActionType {
@@ -118,27 +107,27 @@ export enum SourceActionType {
 }
 
 export interface SourceActivity {
-  '@id': string;
-  '@type': 'SourceActivity';
-  id: string;
-  source: string;
-  user: User;
-  actionType: SourceActionType;
-  actionData: Record<string, unknown>;
-  createdAt: string;
+  '@id': string
+  '@type': 'SourceActivity'
+  id: string
+  source: string
+  user: User
+  actionType: SourceActionType
+  actionData: Record<string, unknown>
+  createdAt: string
 }
 
 export interface GroupedSourceActivityDto extends JsonLdResource {
-  activitiesByDay: Record<string, SourceActivity[]>;
-  totalItems: number;
+  activitiesByDay: Record<string, SourceActivity[]>
+  totalItems: number
 }
 
 export interface BatchChangeSourceStatusResponse {
-  success: boolean;
-  message: string;
-  results: Array<Record<string, unknown>>;
-  errors: Array<Record<string, unknown>>;
-  total: number;
-  processed: number;
-  failed: number;
+  success: boolean
+  message: string
+  results: Array<Record<string, unknown>>
+  errors: Array<Record<string, unknown>>
+  total: number
+  processed: number
+  failed: number
 }

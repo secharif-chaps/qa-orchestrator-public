@@ -15,11 +15,7 @@
               <span class="font-bold">{{ item.title }}</span>
             </div>
             <div class="flex gap-2">
-              <Badge
-                v-if="item.count"
-                variant="secondary"
-                :number="String(item.count)"
-              />
+              <Badge v-if="item.count" variant="secondary" :number="String(item.count)" />
               <Button
                 :icon="open ? 'fa-chevron-up' : 'fa-chevron-down'"
                 variant="tertiary"
@@ -41,14 +37,14 @@
 </template>
 
 <script setup lang="ts">
-import { Badge, Button, Icon } from '@owlint/feathers-vue';
-import { Accordion } from 'reka-ui/namespaced';
-import type { DocumentFilter } from '~/types/filter';
+import { Badge, Button, Icon } from '@owlint/feathers-vue'
+import { Accordion } from 'reka-ui/namespaced'
+import type { DocumentFilter } from '~/types/filter'
 
 interface Props {
-  items: DocumentFilter[];
-  defaultValue?: string | string[];
+  items: DocumentFilter[]
+  defaultValue?: string | string[]
 }
 
-defineProps<Props>();
+defineProps<Props>()
 </script>

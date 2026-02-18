@@ -6,14 +6,14 @@
 </template>
 
 <script setup lang="ts">
-import { useTimeDisplay } from '~/composables/useTimeDisplay';
+import { useTimeDisplay } from '~/composables/useTimeDisplay'
 
 interface Props {
-  datePrefix: string;
-  date: string;
+  datePrefix: string
+  date: string
 }
 
-defineProps<Props>();
+defineProps<Props>()
 
-const { formatTimeReactive } = useTimeDisplay();
+const { formatTimeReactive } = useTimeDisplay()
 </script>

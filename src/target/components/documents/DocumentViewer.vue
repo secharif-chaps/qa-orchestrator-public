@@ -30,11 +30,7 @@
         >
           <div class="flex justify-end">
             <div class="rounded bg-white">
-              <Button
-                variant="secondary"
-                icon="fa-xmark"
-                @click="$emit('close')"
-              />
+              <Button variant="secondary" icon="fa-xmark" @click="$emit('close')" />
             </div>
           </div>
         </div>
@@ -50,21 +46,12 @@
           leave-to-class="opacity-0 translate-y-2"
         >
           <DocumentViewerSkeleton v-if="isLoading" :key="'skeleton'" />
-          <div
-            v-else-if="error"
-            :key="'error'"
-            class="flex flex-1 items-center justify-center"
-          >
-            <ErrorMessage
-              :title="$t('document.viewer.error.title')"
-              :fill="true"
-            />
+          <div v-else-if="error" :key="'error'" class="flex flex-1 items-center justify-center">
+            <ErrorMessage :title="$t('document.viewer.error.title')" :fill="true" />
           </div>
           <div v-else :key="'content'" class="flex flex-1 overflow-hidden p-6">
             <!-- Left Pane - Main Content with Header -->
-            <div
-              class="flex flex-1 flex-col overflow-hidden rounded-2xl shadow-2xl"
-            >
+            <div class="flex flex-1 flex-col overflow-hidden rounded-2xl shadow-2xl">
               <!-- Header -->
               <div class="shrink-0 px-6 pt-4">
                 <div class="flex items-center justify-between">
@@ -116,57 +103,52 @@
 </template>
 
 <script setup lang="ts">
-import { Button } from '@owlint/feathers-vue';
-import { computed, onMounted, onUnmounted } from 'vue';
-import DocumentDetail from '~/components/documents/DocumentDetail.vue';
-import ErrorMessage from '~/components/global/ErrorMessage.vue';
-import Logo from '~/components/global/Logo.vue';
-import DocumentViewerSkeleton from '~/components/skeletons/DocumentViewerSkeleton.vue';
-import type { Document } from '~/types/document';
-import DocumentViewerActionButtons from './DocumentViewerActionButtons.vue';
+import { Button } from '@owlint/feathers-vue'
+import { computed, onMounted, onUnmounted } from 'vue'
+import DocumentDetail from '~/components/documents/DocumentDetail.vue'
+import ErrorMessage from '~/components/global/ErrorMessage.vue'
+import Logo from '~/components/global/Logo.vue'
+import DocumentViewerSkeleton from '~/components/skeletons/DocumentViewerSkeleton.vue'
+import type { Document } from '~/types/document'
+import DocumentViewerActionButtons from './DocumentViewerActionButtons.vue'
 
 interface Props {
-  isOpen: boolean;
-  document?: Document;
-  isLoading?: boolean;
-  error?: Error;
+  isOpen: boolean
+  document?: Document
+  isLoading?: boolean
+  error?: Error
 }
 
-const {
-  isOpen,
-  document = undefined,
-  isLoading = false,
-  error = undefined,
-} = defineProps<Props>();
+const { isOpen, document = undefined, isLoading = false, error = undefined } = defineProps<Props>()
 
 const emit = defineEmits<{
-  (e: 'close'): void;
-}>();
+  (e: 'close'): void
+}>()
 
-const isPdf = computed(() => document?.type?.toLowerCase() === 'pdf');
+const isPdf = computed(() => document?.type?.toLowerCase() === 'pdf')
 
 const pdfData = computed(() => {
-  if (!document?.content) return '';
-  return `data:application/pdf;base64,${document.content}`;
-});
+  if (!document?.content) return ''
+  return `data:application/pdf;base64,${document.content}`
+})
 
 const handleKeydown = (event: KeyboardEvent) => {
   if (event.key === 'Escape' && isOpen) {
-    event.preventDefault();
-    event.stopPropagation();
-    emit('close');
+    event.preventDefault()
+    event.stopPropagation()
+    emit('close')
   }
-};
+}
 
 onMounted(() => {
-  window.document.addEventListener('keydown', handleKeydown, true);
+  window.document.addEventListener('keydown', handleKeydown, true)
   // Prevent body scroll when modal is open
-  window.document.body.style.overflow = 'hidden';
-});
+  window.document.body.style.overflow = 'hidden'
+})
 
 onUnmounted(() => {
-  window.document.removeEventListener('keydown', handleKeydown, true);
+  window.document.removeEventListener('keydown', handleKeydown, true)
   // Restore body scroll
-  window.document.body.style.overflow = '';
-});
+  window.document.body.style.overflow = ''
+})
 </script>

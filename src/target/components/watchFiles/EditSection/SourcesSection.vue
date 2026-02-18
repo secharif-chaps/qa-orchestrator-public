@@ -5,11 +5,11 @@
 </template>
 
 <script setup lang="ts">
-import SourcesList from '~/components/watchFiles/SourcesList.vue';
-import type { WatchFile } from '~/types/watchFile';
+import SourcesList from '~/components/watchFiles/SourcesList.vue'
+import type { WatchFile } from '~/types/watchFile'
 
 defineProps<{
-  watchFile?: WatchFile | null;
-  readonly?: boolean;
-}>();
+  watchFile?: WatchFile | null
+  readonly?: boolean
+}>()
 </script>

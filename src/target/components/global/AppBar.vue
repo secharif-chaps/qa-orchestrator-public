@@ -1,8 +1,5 @@
 <template>
-  <header
-    data-theme="dark"
-    class="dark fixed z-20 flex h-16 w-full justify-between px-4 sm:px-6"
-  >
+  <header data-theme="dark" class="dark fixed z-20 flex h-16 w-full justify-between px-4 sm:px-6">
     <div class="flex">
       <div class="flex shrink-0 items-center">
         <RouterLink to="/" :aria-label="$t('logo.link.aria_label')">
@@ -104,37 +101,35 @@
       </Tag>
       <Button variant="secondary" icon="fa-globe" @click="toggleLocale" />
       <div class="bg-sage-600 dark:bg-sage-400 h-4 w-px"></div>
-      <Button
-        variant="secondary"
-        icon="fa-arrow-right-from-bracket"
-        @click="signOut"
-      />
+      <Button variant="secondary" icon="fa-arrow-right-from-bracket" @click="signOut" />
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { Button, Tag } from '@owlint/feathers-vue';
-import { useI18n } from 'vue-i18n';
-import { RouterLink } from 'vue-router';
-import logo_chaps from '~/assets/images/CHAPSVISION_LOGO_ChapsVision_logo_icone_amande.svg';
-import { useAuth } from '~/composables/useAuth';
-import { useMercure } from '~/composables/useMercure';
+import { Button, Tag } from '@owlint/feathers-vue'
+import { useI18n } from 'vue-i18n'
+import { RouterLink } from 'vue-router'
+import logo_chaps from '~/assets/images/CHAPSVISION_LOGO_ChapsVision_logo_icone_amande.svg'
+import { useAuth } from '~/composables/useAuth'
+import { useLocalized } from '~/composables/useLocalized'
+import { useMercure } from '~/composables/useMercure'
 
-const { locale } = useI18n();
-const { logout, userName } = useAuth();
-const { resetMercure } = useMercure();
+const { locale } = useI18n()
+const { logout, userName } = useAuth()
+const { resetMercure } = useMercure()
+const { setLocale } = useLocalized()
 
 const toggleLocale = () => {
   if (locale.value === 'en-US') {
-    locale.value = 'fr-FR';
+    setLocale('fr-FR')
   } else {
-    locale.value = 'en-US';
+    setLocale('en-US')
   }
-};
+}
 
 const signOut = async () => {
-  await resetMercure();
-  logout();
-};
+  await resetMercure()
+  logout()
+}
 </script>

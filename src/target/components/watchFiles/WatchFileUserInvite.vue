@@ -5,10 +5,7 @@
         class="relative flex min-h-10 flex-1 flex-wrap items-center rounded-md border border-gray-300 bg-white px-1"
       >
         <template v-for="selectedUser in selectedUsers" :key="selectedUser.id">
-          <WatchFileUserChip
-            :user="selectedUser"
-            @remove="removeSelectedUser"
-          />
+          <WatchFileUserChip :user="selectedUser" @remove="removeSelectedUser" />
         </template>
         <input
           id="invite-input"
@@ -38,11 +35,7 @@
               }"
               @mousedown="onDropdownSelect(user)"
             >
-              <Badge
-                :number="user.defaultThumbnail"
-                size="sm"
-                variant="secondary"
-              />
+              <Badge :number="user.defaultThumbnail" size="sm" variant="secondary" />
               <div>
                 <div class="truncate">
                   {{ user.displayName }}
@@ -99,119 +92,112 @@
 </template>
 
 <script setup lang="ts">
-import { Badge, Button, OPopper, ORadio } from '@owlint/feathers-vue';
-import { useQuery } from '@pinia/colada';
-import { computed, nextTick, ref, useTemplateRef } from 'vue';
-import { useAddWatchFileUsers } from '~/api/mutations/watchFileUser';
-import { searchUsersQuery } from '~/api/queries/user';
-import type { User } from '~/types/user';
-import type { WatchFileUser, WatchFileUserRole } from '~/types/watchFileUser';
-import { WATCH_FILE_USER_ROLE } from '~/types/watchFileUser';
-import WatchFileUserChip from './WatchFileUserChip.vue';
+import { Badge, Button, OPopper, ORadio } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, nextTick, ref, useTemplateRef } from 'vue'
+import { useAddWatchFileUsers } from '~/api/mutations/watchFileUser'
+import { searchUsersQuery } from '~/api/queries/user'
+import type { User } from '~/types/user'
+import type { WatchFileUser, WatchFileUserRole } from '~/types/watchFileUser'
+import { WATCH_FILE_USER_ROLE } from '~/types/watchFileUser'
+import WatchFileUserChip from './WatchFileUserChip.vue'
 
 const props = defineProps<{
-  watchFileId: string;
-}>();
+  watchFileId: string
+}>()
 
 const emit = defineEmits<{
-  (e: 'users-added', users: WatchFileUser[]): void;
-}>();
+  (e: 'users-added', users: WatchFileUser[]): void
+}>()
 
 const { addUsers, isLoading: isAddingUsers } = useAddWatchFileUsers({
   onSuccess: (users) => {
-    emit('users-added', users);
+    emit('users-added', users)
   },
-});
+})
 
-const selectedUsers = ref<User[]>([]);
-const shareRights = ref<WatchFileUserRole>(WATCH_FILE_USER_ROLE.VIEWER);
-const newUser = ref('');
+const selectedUsers = ref<User[]>([])
+const shareRights = ref<WatchFileUserRole>(WATCH_FILE_USER_ROLE.VIEWER)
+const newUser = ref('')
 
 // Autocomplete state
-const showAutocomplete = ref(false);
-const highlightedIndex = ref(-1);
-const listRef = useTemplateRef('list');
-const searchQuery = ref('');
+const showAutocomplete = ref(false)
+const highlightedIndex = ref(-1)
+const listRef = useTemplateRef('list')
+const searchQuery = ref('')
 
 const { data: searchData } = useQuery(searchUsersQuery, () => ({
   query: searchQuery.value,
   excludeWatchFileSharedUsers: props.watchFileId,
-}));
+}))
 
-const searchResults = computed(() => searchData.value?.member || []);
+const searchResults = computed(() => searchData.value?.member || [])
 
 function handleKeyDown(event: KeyboardEvent) {
   // Remove last chip on Backspace if input is empty
-  if (
-    event.key === 'Backspace' &&
-    newUser.value.length === 0 &&
-    selectedUsers.value.length > 0
-  ) {
-    selectedUsers.value.pop();
-    event.preventDefault();
-    return;
+  if (event.key === 'Backspace' && newUser.value.length === 0 && selectedUsers.value.length > 0) {
+    selectedUsers.value.pop()
+    event.preventDefault()
+    return
   }
 
   if (!showAutocomplete.value || searchResults.value.length === 0) {
     if (event.key === 'Enter' && selectedUsers.value.length > 0) {
-      onAddUser();
+      onAddUser()
     }
 
-    return;
+    return
   }
 
   switch (event.key) {
     case 'ArrowDown':
-      event.preventDefault();
-      highlightedIndex.value = Math.min(
-        highlightedIndex.value + 1,
-        searchResults.value.length - 1,
-      );
-      scrollToActive();
-      break;
+      event.preventDefault()
+      highlightedIndex.value = Math.min(highlightedIndex.value + 1, searchResults.value.length - 1)
+      scrollToActive()
+      break
     case 'ArrowUp':
-      event.preventDefault();
-      highlightedIndex.value = Math.max(highlightedIndex.value - 1, -1);
-      scrollToActive();
-      break;
+      event.preventDefault()
+      highlightedIndex.value = Math.max(highlightedIndex.value - 1, -1)
+      scrollToActive()
+      break
     case 'Tab':
-      event.preventDefault();
+      event.preventDefault()
       if (highlightedIndex.value >= 0) {
-        const user = searchResults.value[highlightedIndex.value];
-        if (user) onDropdownSelect(user);
+        const user = searchResults.value[highlightedIndex.value]
+        if (user) onDropdownSelect(user)
       } else {
         // select first result if no highlight
         if (searchResults.value.length > 0) {
-          const firstUser = searchResults.value[0];
-          if (firstUser) onDropdownSelect(firstUser);
+          const firstUser = searchResults.value[0]
+          if (firstUser) onDropdownSelect(firstUser)
         }
       }
-      break;
+      break
     case 'Enter':
-      event.preventDefault();
+      event.preventDefault()
       if (highlightedIndex.value >= 0) {
-        const user = searchResults.value[highlightedIndex.value];
-        if (user) onDropdownSelect(user);
+        const user = searchResults.value[highlightedIndex.value]
+        if (user) onDropdownSelect(user)
       }
-      break;
+      break
     case 'Escape':
-      event.preventDefault();
-      showAutocomplete.value = false;
-      highlightedIndex.value = -1;
-      break;
+      event.preventDefault()
+      showAutocomplete.value = false
+      highlightedIndex.value = -1
+      break
   }
 }
 
 const scrollToActive = async () => {
-  await nextTick();
-  const activeElement = listRef.value?.querySelector('.active');
+  await nextTick()
+  const activeElement = listRef.value?.querySelector('.active')
   if (activeElement) {
     activeElement.scrollIntoView({
       behavior: 'smooth',
       block: 'nearest',
-    });
+    })
   }
-};
+}
 
 async function onAddUser() {
   try {
@@ -219,77 +205,75 @@ async function onAddUser() {
       watchFileId: props.watchFileId,
       users: selectedUsers.value,
       role: shareRights.value,
-    });
+    })
 
     // Only clear the chips if the API call was successful
-    selectedUsers.value = [];
-    newUser.value = '';
+    selectedUsers.value = []
+    newUser.value = ''
   } catch (error) {
-    console.error('Failed to add users:', error);
+    console.error('Failed to add users:', error)
   }
 }
 
 function selectUser(user: User) {
   // Prevent duplicates
   if (!selectedUsers.value.some((u: User) => u.id === user.id)) {
-    selectedUsers.value.push(user);
+    selectedUsers.value.push(user)
   }
-  newUser.value = '';
-  showAutocomplete.value = false;
-  searchQuery.value = '';
-  highlightedIndex.value = -1;
+  newUser.value = ''
+  showAutocomplete.value = false
+  searchQuery.value = ''
+  highlightedIndex.value = -1
   // Blur and then refocus input after selection (mouse or keyboard)
   requestAnimationFrame(() => {
-    const el = document.getElementById(
-      'invite-input',
-    ) as HTMLInputElement | null;
+    const el = document.getElementById('invite-input') as HTMLInputElement | null
     if (el) {
-      el.blur();
-      setTimeout(() => el.focus(), 0);
+      el.blur()
+      setTimeout(() => el.focus(), 0)
     }
-  });
+  })
 }
 
 function removeSelectedUser(id: string) {
-  const idx = selectedUsers.value.findIndex((u: User) => u.id === id);
-  if (idx !== -1) selectedUsers.value.splice(idx, 1);
+  const idx = selectedUsers.value.findIndex((u: User) => u.id === id)
+  if (idx !== -1) selectedUsers.value.splice(idx, 1)
 }
 
 function handleBlur() {
-  showAutocomplete.value = false;
-  highlightedIndex.value = -1;
+  showAutocomplete.value = false
+  highlightedIndex.value = -1
 }
 
 function onInputSearch(event: Event) {
-  const input = event.target as HTMLInputElement;
+  const input = event.target as HTMLInputElement
 
   if (input.value.length >= 3) {
-    searchQuery.value = input.value;
-    showAutocomplete.value = true;
-    highlightedIndex.value = -1;
+    searchQuery.value = input.value
+    showAutocomplete.value = true
+    highlightedIndex.value = -1
   } else {
-    searchQuery.value = '';
-    showAutocomplete.value = false;
-    highlightedIndex.value = -1;
+    searchQuery.value = ''
+    showAutocomplete.value = false
+    highlightedIndex.value = -1
   }
 }
 
 function onDropdownSelect(user: User) {
-  selectUser(user);
-  searchQuery.value = '';
+  selectUser(user)
+  searchQuery.value = ''
 }
 
 // Expose reset function for parent component
 function resetForm() {
-  newUser.value = '';
-  selectedUsers.value = [];
-  shareRights.value = WATCH_FILE_USER_ROLE.VIEWER;
-  searchQuery.value = '';
-  showAutocomplete.value = false;
-  highlightedIndex.value = -1;
+  newUser.value = ''
+  selectedUsers.value = []
+  shareRights.value = WATCH_FILE_USER_ROLE.VIEWER
+  searchQuery.value = ''
+  showAutocomplete.value = false
+  highlightedIndex.value = -1
 }
 
 defineExpose({
   resetForm,
-});
+})
 </script>

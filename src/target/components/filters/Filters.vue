@@ -68,11 +68,7 @@
       />
     </template>
     <template #actors>
-      <FilterActors
-        v-if="'actors' in facets"
-        v-model="formFilters.actors"
-        :actors="facetActors"
-      />
+      <FilterActors v-if="'actors' in facets" v-model="formFilters.actors" :actors="facetActors" />
     </template>
     <template #sources>
       <FilterSources
@@ -92,183 +88,176 @@
 </template>
 
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia';
-import type { DateRange } from 'reka-ui';
-import { computed, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import FilterActors from '~/components/filters/FilterActors.vue';
-import FilterDatesComponent from '~/components/filters/FilterDates.vue';
-import FilterPanelActorsChips from '~/components/filters/FilterPanelActorsChips.vue';
-import FilterPanelDatesChips from '~/components/filters/FilterPanelDatesChips.vue';
-import FilterPanelSourcesChips from '~/components/filters/FilterPanelSourcesChips.vue';
-import FilterPanelValidationsChips from '~/components/filters/FilterPanelValidationsChips.vue';
-import FilterSources from '~/components/filters/FilterSources.vue';
-import FiltersPanel from '~/components/filters/FiltersPanel.vue';
-import FilterValidations from '~/components/filters/FilterValidations.vue';
-import type { FilterType } from '~/stores/watchFileFilters';
-import { useWatchFileFiltersStore } from '~/stores/watchFileFilters';
-import type { DocumentFacets } from '~/types/document';
-import type { ActorFacet, AnalysisFacets, FilterCategory } from '~/types/facet';
-import type { DocumentFilter } from '~/types/filter';
-import type { WatchFileEventType } from '~/types/watchFile';
-import FilterEventTypes from './FilterEventTypes.vue';
-import FilterPanelEventTypesChips from './FilterPanelEventTypesChips.vue';
+import { storeToRefs } from 'pinia'
+import type { DateRange } from 'reka-ui'
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import FilterActors from '~/components/filters/FilterActors.vue'
+import FilterDatesComponent from '~/components/filters/FilterDates.vue'
+import FilterPanelActorsChips from '~/components/filters/FilterPanelActorsChips.vue'
+import FilterPanelDatesChips from '~/components/filters/FilterPanelDatesChips.vue'
+import FilterPanelSourcesChips from '~/components/filters/FilterPanelSourcesChips.vue'
+import FilterPanelValidationsChips from '~/components/filters/FilterPanelValidationsChips.vue'
+import FilterSources from '~/components/filters/FilterSources.vue'
+import FiltersPanel from '~/components/filters/FiltersPanel.vue'
+import FilterValidations from '~/components/filters/FilterValidations.vue'
+import type { FilterType } from '~/stores/watchFileFilters'
+import { useWatchFileFiltersStore } from '~/stores/watchFileFilters'
+import type { DocumentFacets } from '~/types/document'
+import type { ActorFacet, AnalysisFacets, FilterCategory } from '~/types/facet'
+import type { DocumentFilter } from '~/types/filter'
+import type { WatchFileEventType } from '~/types/watchFile'
+import FilterEventTypes from './FilterEventTypes.vue'
+import FilterPanelEventTypesChips from './FilterPanelEventTypesChips.vue'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
-const displayDrawer = defineModel<boolean>();
+const displayDrawer = defineModel<boolean>()
 
 interface Props {
-  filterType: FilterType;
-  facets?: DocumentFacets | AnalysisFacets;
-  isLoading?: boolean;
-  error?: Error | null;
-  cssVariableName: string;
-  availableFilters: FilterCategory[];
+  filterType: FilterType
+  facets?: DocumentFacets | AnalysisFacets
+  isLoading?: boolean
+  error?: Error | null
+  cssVariableName: string
+  availableFilters: FilterCategory[]
 }
 
-const {
-  filterType,
-  facets = undefined,
-  isLoading = false,
-  error = null,
-} = defineProps<Props>();
+const { filterType, facets = undefined, isLoading = false, error = null } = defineProps<Props>()
 
-const filtersStore = useWatchFileFiltersStore();
-const { states } = storeToRefs(filtersStore);
+const filtersStore = useWatchFileFiltersStore()
+const { states } = storeToRefs(filtersStore)
 
 // Access state based on filter type - use a getter function to access the ref directly
-const getState = () => states.value[filterType];
+const getState = () => states.value[filterType]
 
 // Expose state as refs for compatibility
 const formFilters = computed({
   get: () => getState().formFilters,
   set: (value) => {
-    getState().formFilters = value;
+    getState().formFilters = value
   },
-});
+})
 
 const actors = computed({
   get: () => getState().actors,
   set: (value) => {
-    getState().actors = value;
+    getState().actors = value
   },
-});
+})
 
 const sources = computed({
   get: () => getState().sources,
   set: (value) => {
-    getState().sources = value;
+    getState().sources = value
   },
-});
+})
 
 const datesPicker = computed({
   get: () => getState().datesPicker,
   set: (value) => {
-    getState().datesPicker = value;
+    getState().datesPicker = value
   },
-});
+})
 
 const datesPickerValue = computed<DateRange | undefined>(() => {
-  return datesPicker.value as DateRange | undefined;
-});
+  return datesPicker.value as DateRange | undefined
+})
 
 const formFiltersDatesPicker = computed({
   get: (): DateRange => {
-    return formFilters.value.datesPicker as DateRange;
+    return formFilters.value.datesPicker as DateRange
   },
   set: (value: DateRange) => {
-    formFilters.value.datesPicker = value;
+    formFilters.value.datesPicker = value
   },
-});
+})
 
 const selectedPeriod = computed({
   get: () => getState().selectedPeriod,
   set: (value) => {
-    getState().selectedPeriod = value;
+    getState().selectedPeriod = value
   },
-});
+})
 
-const displayFiltersPanel = ref(states.value[filterType].displayFiltersPanel);
+const displayFiltersPanel = ref(states.value[filterType].displayFiltersPanel)
 
 const handleUpdateDisplayFiltersPanel = (value: boolean) => {
-  displayFiltersPanel.value = value;
-};
+  displayFiltersPanel.value = value
+}
 
 watch(displayFiltersPanel, (newValue) => {
-  states.value[filterType].displayFiltersPanel = newValue;
-});
+  states.value[filterType].displayFiltersPanel = newValue
+})
 
 const eventTypes = computed(() => {
-  if (!facets || !('eventTypes' in facets)) return [];
-  const state = getState();
+  if (!facets || !('eventTypes' in facets)) return []
+  const state = getState()
 
-  return 'eventTypes' in state ? state.eventTypes : [];
-});
+  return 'eventTypes' in state ? state.eventTypes : []
+})
 
 const status = computed(() => {
-  if (!facets || !('validationStatuses' in facets)) return [];
-  const state = getState();
-  return 'status' in state ? state.status : [];
-});
+  if (!facets || !('validationStatuses' in facets)) return []
+  const state = getState()
+  return 'status' in state ? state.status : []
+})
 
 const selectedDateType = computed(() => {
-  const state = getState();
-  return 'selectedDateType' in state ? state.selectedDateType : undefined;
-});
+  const state = getState()
+  return 'selectedDateType' in state ? state.selectedDateType : undefined
+})
 
 const formFiltersSelectedDateType = computed({
   get: () => {
-    const filters = formFilters.value;
-    return 'selectedDateType' in filters ? filters.selectedDateType : undefined;
+    const filters = formFilters.value
+    return 'selectedDateType' in filters ? filters.selectedDateType : undefined
   },
   set: (value) => {
-    const filters = formFilters.value;
+    const filters = formFilters.value
     if ('selectedDateType' in filters) {
-      filters.selectedDateType = value;
+      filters.selectedDateType = value
     }
   },
-});
+})
 
 const formFiltersStatus = computed({
   get: () => {
-    const filters = formFilters.value;
-    return 'status' in filters ? filters.status : [];
+    const filters = formFilters.value
+    return 'status' in filters ? filters.status : []
   },
   set: (value: string[]) => {
-    const filters = formFilters.value;
+    const filters = formFilters.value
     if ('status' in filters) {
-      filters.status = value;
+      filters.status = value
     }
   },
-});
+})
 
-const datesFilterCount = computed(() =>
-  filtersStore.datesFilterCount(filterType),
-);
-const filtersCounts = computed(() => filtersStore.filtersCounts(filterType));
+const datesFilterCount = computed(() => filtersStore.datesFilterCount(filterType))
+const filtersCounts = computed(() => filtersStore.filtersCounts(filterType))
 
-const previousCount = ref(0);
+const previousCount = ref(0)
 
 watch(
   filtersCounts,
   (count) => {
     if (previousCount.value === 0 && count > 0) {
-      displayFiltersPanel.value = true;
+      displayFiltersPanel.value = true
     }
     if (count === 0) {
-      displayFiltersPanel.value = false;
+      displayFiltersPanel.value = false
     }
-    previousCount.value = count;
+    previousCount.value = count
   },
   { immediate: true },
-);
+)
 
 const accordionFilters = computed<DocumentFilter[]>(() => {
-  const filters: DocumentFilter[] = [];
+  const filters: DocumentFilter[] = []
 
   if (!facets) {
-    return filters;
+    return filters
   }
 
   if ('validationStatuses' in facets) {
@@ -278,7 +267,7 @@ const accordionFilters = computed<DocumentFilter[]>(() => {
       icon: 'fa-file-lines',
       count: status.value.length,
       empty: !facets.validationStatuses?.length,
-    });
+    })
   }
 
   filters.push({
@@ -287,7 +276,7 @@ const accordionFilters = computed<DocumentFilter[]>(() => {
     icon: 'fa-calendar',
     count: datesFilterCount.value,
     empty: false,
-  });
+  })
 
   if ('actors' in facets) {
     filters.push({
@@ -296,7 +285,7 @@ const accordionFilters = computed<DocumentFilter[]>(() => {
       icon: 'fa-user',
       count: actors.value.length,
       empty: !facets.actors?.length,
-    });
+    })
   }
 
   if ('sources' in facets) {
@@ -306,7 +295,7 @@ const accordionFilters = computed<DocumentFilter[]>(() => {
       icon: 'fa-link',
       count: sources.value.length,
       empty: !facets.sources?.length,
-    });
+    })
   }
 
   if ('eventTypes' in facets) {
@@ -316,15 +305,15 @@ const accordionFilters = computed<DocumentFilter[]>(() => {
       icon: 'fa-bullhorn',
       count: eventTypes.value.length,
       empty: !facets.eventTypes?.length,
-    });
+    })
   }
 
-  return filters.filter((filter) => !filter.empty);
-});
+  return filters.filter((filter) => !filter.empty)
+})
 
 const facetActors = computed<ActorFacet[]>(() => {
   if (!facets || !('actors' in facets) || !facets.actors?.length) {
-    return actors.value.map((actor) => ({ actor, count: 0 }));
+    return actors.value.map((actor) => ({ actor, count: 0 }))
   }
 
   return facets.actors.map((actorFacet) => {
@@ -337,7 +326,7 @@ const facetActors = computed<ActorFacet[]>(() => {
           primaryDomain: actorFacet.actor.primaryDomain ?? '',
         },
         count: actorFacet.count,
-      };
+      }
     }
 
     // For analysis actors, we need to normalize to ActorFacet
@@ -348,70 +337,70 @@ const facetActors = computed<ActorFacet[]>(() => {
         primaryDomain: '',
       },
       count: actorFacet.count,
-    };
-  });
-});
+    }
+  })
+})
 
 const facetSources = computed(() => {
   if (!facets || !('sources' in facets) || !facets.sources?.length) {
-    return sources.value.map((source) => ({ source, count: 0 }));
+    return sources.value.map((source) => ({ source, count: 0 }))
   }
 
-  return facets.sources;
-});
+  return facets.sources
+})
 
 const facetEventTypes = computed(() => {
   if (!facets || !('eventTypes' in facets) || !facets.eventTypes?.length) {
-    return eventTypes.value.map((eventType) => ({ type: eventType, count: 0 }));
+    return eventTypes.value.map((eventType) => ({ type: eventType, count: 0 }))
   }
 
-  return facets.eventTypes;
-});
+  return facets.eventTypes
+})
 
 const handleRemoveActor = (id: string) => {
-  filtersStore.removeActor(filterType, id);
-};
+  filtersStore.removeActor(filterType, id)
+}
 
 const handleRemoveSource = (id: string) => {
-  filtersStore.removeSource(filterType, id);
-};
+  filtersStore.removeSource(filterType, id)
+}
 
 const handleRemoveEventType = (eventType: WatchFileEventType) => {
-  filtersStore.removeEventType(filterType, eventType);
-};
+  filtersStore.removeEventType(filterType, eventType)
+}
 
 const handleRemoveValidation = (id: string) => {
-  filtersStore.removeValidation(filterType, id);
-};
+  filtersStore.removeValidation(filterType, id)
+}
 
 const confirmFilters = () => {
-  filtersStore.syncFormFilter(filterType);
-};
+  filtersStore.syncFormFilter(filterType)
+}
 
 const resetFilters = () => {
-  filtersStore.resetFilters(filterType);
-};
+  filtersStore.resetFilters(filterType)
+}
 
 const syncFormFilters = () => {
-  formFilters.value.actors = [...actors.value];
-  formFilters.value.sources = [...sources.value];
-  formFilters.value.datesPicker = datesPicker.value;
-  formFilters.value.selectedPeriod = selectedPeriod.value;
+  formFilters.value.actors = [...actors.value]
+  formFilters.value.sources = [...sources.value]
+  formFilters.value.datesPicker = datesPicker.value
+  formFilters.value.selectedPeriod = selectedPeriod.value
 
-  const filters = formFilters.value;
+  const filters = formFilters.value
   if ('status' in filters) {
-    filters.status = [...status.value];
+    filters.status = [...status.value]
   }
   if ('selectedDateType' in filters) {
-    filters.selectedDateType = selectedDateType.value;
+    filters.selectedDateType = selectedDateType.value
   }
-};
+}
 
 const handleResetDatesFilter = () => {
-  filtersStore.resetDatesFilter(filterType);
-};
+  filtersStore.resetDatesFilter(filterType)
+}
 
 const handleResetFormDatesFilter = () => {
-  filtersStore.resetFormDatesFilter(filterType);
-};
+  filtersStore.resetFormDatesFilter(filterType)
+}
 </script>

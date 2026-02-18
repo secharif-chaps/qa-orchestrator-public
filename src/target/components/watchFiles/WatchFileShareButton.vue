@@ -14,21 +14,21 @@
 </template>
 
 <script setup lang="ts">
-import { Button } from '@owlint/feathers-vue';
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import type { WatchFile } from '~/types/watchFile';
+import { Button } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import type { WatchFile } from '~/types/watchFile'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 interface Props {
-  watchFile: WatchFile;
-  variant?: 'primary' | 'secondary' | 'tertiary';
-  showLabel?: boolean;
-  showCount?: boolean;
-  title?: string;
-  ariaLabel?: string;
-  isReadOnly?: boolean;
+  watchFile: WatchFile
+  variant?: 'primary' | 'secondary' | 'tertiary'
+  showLabel?: boolean
+  showCount?: boolean
+  title?: string
+  ariaLabel?: string
+  isReadOnly?: boolean
 }
 
 const {
@@ -39,28 +39,28 @@ const {
   showLabel = false,
   showCount = false,
   isReadOnly = false,
-} = defineProps<Props>();
+} = defineProps<Props>()
 
 const emit = defineEmits<{
-  (e: 'share-watch-file', watchFile: WatchFile): void;
-}>();
+  (e: 'share-watch-file', watchFile: WatchFile): void
+}>()
 
 const labelText = computed<string>(() => {
   if (showCount) {
-    const count = watchFile?.watchFileUsersCount || 0;
-    return t('watch_files.persons', { count });
+    const count = watchFile?.watchFileUsersCount || 0
+    return t('watch_files.persons', { count })
   }
 
   if (showLabel) {
-    return t('watch_files.actions.share');
+    return t('watch_files.actions.share')
   }
 
-  return '';
-});
+  return ''
+})
 
 function handleClick() {
   if (watchFile && !isReadOnly) {
-    emit('share-watch-file', watchFile);
+    emit('share-watch-file', watchFile)
   }
 }
 </script>

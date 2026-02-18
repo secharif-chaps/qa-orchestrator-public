@@ -5,5 +5,5 @@
 </template>
 
 <script lang="ts" setup>
-import { Table } from '@owlint/feathers-vue';
+import { Table } from '@owlint/feathers-vue'
 </script>

@@ -13,24 +13,19 @@
       :class="{ 'animate-spin': isReconnecting }"
     />
     <span class="text-sm font-medium">
-      {{
-        isReconnecting
-          ? t('watch_files.chat.reconnecting')
-          : t('watch_files.chat.offline')
-      }}
+      {{ isReconnecting ? t('watch_files.chat.reconnecting') : t('watch_files.chat.offline') }}
     </span>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@owlint/feathers-vue';
-import { storeToRefs } from 'pinia';
-import { useI18n } from 'vue-i18n';
-import { useMercureStore } from '~/stores/mercure';
+import { Icon } from '@owlint/feathers-vue'
+import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
+import { useMercureStore } from '~/stores/mercure'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
-const mercureStore = useMercureStore();
-const { isConnected, isDisconnected, isReconnecting } =
-  storeToRefs(mercureStore);
+const mercureStore = useMercureStore()
+const { isConnected, isDisconnected, isReconnecting } = storeToRefs(mercureStore)
 </script>

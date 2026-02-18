@@ -16,11 +16,7 @@
         :value="source"
         name="filter-sources"
       >
-        <label
-          v-if="source"
-          :for="source.id"
-          class="flex items-center gap-2 pl-2"
-        >
+        <label v-if="source" :for="source.id" class="flex items-center gap-2 pl-2">
           <Logo
             :domain="source.primaryDomain ?? ''"
             :alt="source.name"
@@ -45,11 +41,7 @@
       variant="tertiary"
       @click="displayAllSources = !displayAllSources"
     >
-      {{
-        t(
-          `watch_files.filters.type.sources.see.${displayAllSources ? 'less' : 'more'}`,
-        )
-      }}
+      {{ t(`watch_files.filters.type.sources.see.${displayAllSources ? 'less' : 'more'}`) }}
     </Button>
     <Button
       v-if="selectedSources.length"
@@ -69,62 +61,58 @@
 </template>
 
 <script lang="ts" setup>
-import { Button, Checkbox, Searchbar } from '@owlint/feathers-vue';
-import { watchDebounced } from '@vueuse/core';
-import { computed, ref, watchEffect } from 'vue';
-import { useI18n } from 'vue-i18n';
-import Logo from '~/components/global/Logo.vue';
-import type { Source, SourceFacet } from '~/types/facet';
+import { Button, Checkbox, Searchbar } from '@owlint/feathers-vue'
+import { watchDebounced } from '@vueuse/core'
+import { computed, ref, watchEffect } from 'vue'
+import { useI18n } from 'vue-i18n'
+import Logo from '~/components/global/Logo.vue'
+import type { Source, SourceFacet } from '~/types/facet'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 interface Props {
-  sources: SourceFacet[];
+  sources: SourceFacet[]
 }
 
-const { sources } = defineProps<Props>();
+const { sources } = defineProps<Props>()
 
-const selectedSources = defineModel<Source[]>({ required: true });
+const selectedSources = defineModel<Source[]>({ required: true })
 
-const displayAllSources = ref(false);
-const searchSource = ref('');
-const searchInput = ref(searchSource.value);
+const displayAllSources = ref(false)
+const searchSource = ref('')
+const searchInput = ref(searchSource.value)
 
 const filteredSources = computed(() =>
   sources.filter(({ source }) => {
-    if (!source || !source.name) return false;
-    const isSelected = selectedSources.value.some(
-      (storedsource) => storedsource.id === source.id,
-    );
+    if (!source || !source.name) return false
+    const isSelected = selectedSources.value.some((storedsource) => storedsource.id === source.id)
     return (
-      source.name
-        .toLocaleLowerCase()
-        .includes(searchSource.value.toLocaleLowerCase()) || isSelected
-    );
+      source.name.toLocaleLowerCase().includes(searchSource.value.toLocaleLowerCase()) || isSelected
+    )
   }),
-);
+)
 
-const slicedSources = computed(() => filteredSources.value.slice(0, 5));
+const slicedSources = computed(() => filteredSources.value.slice(0, 5))
 
 const displayedSources = computed(() =>
   displayAllSources.value ? filteredSources.value : slicedSources.value,
-);
+)
 
 const handleReset = () => {
-  selectedSources.value = [];
-};
+  selectedSources.value = []
+}
 
 watchEffect(() => {
   if (searchSource.value === '') {
-    searchInput.value = '';
+    searchInput.value = ''
   }
-});
+})
 
 watchDebounced(
   searchInput,
   (newval) => {
-    searchSource.value = newval;
+    searchSource.value = newval
   },
   { debounce: 500, maxWait: 1000 },
-);
+)
 </script>

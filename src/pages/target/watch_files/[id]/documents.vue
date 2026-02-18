@@ -5,10 +5,7 @@
       class="shadow-2 border-sage-100 mx-3 flex items-center justify-between gap-8 rounded-xl border p-3"
     >
       <div class="min-h-[32px]">
-        <div
-          v-if="documents.length > 0 || searchInput"
-          class="relative flex items-center gap-3"
-        >
+        <div v-if="documents.length > 0 || searchInput" class="relative flex items-center gap-3">
           <Searchbar
             id="document-search-input"
             v-model="searchInput"
@@ -42,11 +39,7 @@
               <div class="flex flex-col items-start">
                 <div
                   class="rounded-2xs flex w-full items-center p-2"
-                  :class="
-                    sortBy === 'datePublish'
-                      ? 'bg-sage-200'
-                      : 'hover:bg-sage-100'
-                  "
+                  :class="sortBy === 'datePublish' ? 'bg-sage-200' : 'hover:bg-sage-100'"
                 >
                   <ORadio
                     id="radio-sort-datePublish"
@@ -58,11 +51,7 @@
                       <span class="flex items-center gap-2">
                         <Icon
                           v-if="sortBy === 'datePublish'"
-                          :icon="
-                            sortOrder === 'ASC'
-                              ? 'fa-arrow-up'
-                              : 'fa-arrow-down'
-                          "
+                          :icon="sortOrder === 'ASC' ? 'fa-arrow-up' : 'fa-arrow-down'"
                           class="text-primary-500 text-base"
                         />
                         {{ $t('watch_files.filters.type.dates.publication') }}
@@ -72,11 +61,7 @@
                 </div>
                 <div
                   class="rounded-2xs flex w-full items-center p-2"
-                  :class="
-                    sortBy === 'dateCollect'
-                      ? 'bg-sage-200'
-                      : 'hover:bg-sage-100'
-                  "
+                  :class="sortBy === 'dateCollect' ? 'bg-sage-200' : 'hover:bg-sage-100'"
                 >
                   <ORadio
                     id="radio-sort-dateCollect"
@@ -88,11 +73,7 @@
                       <span class="flex items-center gap-2">
                         <Icon
                           v-if="sortBy === 'dateCollect'"
-                          :icon="
-                            sortOrder === 'ASC'
-                              ? 'fa-arrow-up'
-                              : 'fa-arrow-down'
-                          "
+                          :icon="sortOrder === 'ASC' ? 'fa-arrow-up' : 'fa-arrow-down'"
                           class="text-primary-500 text-base"
                         />
                         {{ $t('watch_files.filters.type.dates.collection') }}
@@ -148,10 +129,7 @@
               {{ $t('documents.detail.consultDocument') }}
             </Button>
           </div>
-          <DocumentDetail
-            :is-loading="isLoading"
-            :document="selectedDocument"
-          />
+          <DocumentDetail :is-loading="isLoading" :document="selectedDocument" />
         </div>
       </div>
 
@@ -167,86 +145,78 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Icon, ORadio, Searchbar } from '@owlint/feathers-vue';
-import { useQuery } from '@pinia/colada';
-import { onClickOutside, watchDebounced } from '@vueuse/core';
-import { storeToRefs } from 'pinia';
-import { computed, ref, useTemplateRef, watch, watchEffect } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useMarkDocumentAsSeen } from '~/api/mutations/document';
-import {
-    getCollectionDocumentQuery,
-    getItemDocumentQuery,
-} from '~/api/queries/document';
-import DocumentDetail from '~/components/documents/DocumentDetail.vue';
-import DocumentFilters from '~/components/documents/DocumentFilters.vue';
-import DocumentList from '~/components/documents/DocumentList.vue';
-import DocumentViewer from '~/components/documents/DocumentViewer.vue';
-import { useWatchFileDocumentsStore } from '~/stores/watchFileDocuments';
-import { useWatchFileFiltersStore } from '~/stores/watchFileFilters';
-import type { Document, DocumentDateType } from '~/types/document';
+import { Button, Icon, ORadio, Searchbar } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { onClickOutside, watchDebounced } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { computed, ref, useTemplateRef, watch, watchEffect } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useMarkDocumentAsSeen } from '~/api/mutations/document'
+import { getCollectionDocumentQuery, getItemDocumentQuery } from '~/api/queries/document'
+import DocumentDetail from '~/components/documents/DocumentDetail.vue'
+import DocumentFilters from '~/components/documents/DocumentFilters.vue'
+import DocumentList from '~/components/documents/DocumentList.vue'
+import DocumentViewer from '~/components/documents/DocumentViewer.vue'
+import { useWatchFileDocumentsStore } from '~/stores/watchFileDocuments'
+import { useWatchFileFiltersStore } from '~/stores/watchFileFilters'
+import type { Document, DocumentDateType } from '~/types/document'
 
 definePage({
   meta: {
     layout: 'watch-file',
   },
-});
+})
 
-const menuSortingRef = useTemplateRef('menuSorting');
-onClickOutside(menuSortingRef, () => (displayMenuSorting.value = false));
+const menuSortingRef = useTemplateRef('menuSorting')
+onClickOutside(menuSortingRef, () => (displayMenuSorting.value = false))
 
-const route = useRoute();
-const router = useRouter();
-const watchFileId = route.params.id as string;
+const route = useRoute()
+const router = useRouter()
+const watchFileId = route.params.id as string
 
-const selectedDocument = ref<Document | undefined>(undefined);
-const isDetailPanelOpen = ref(false);
-const isViewerOpen = ref(false);
-const displayDrawer = ref(false);
-const displayMenuSorting = ref(false);
+const selectedDocument = ref<Document | undefined>(undefined)
+const isDetailPanelOpen = ref(false)
+const isViewerOpen = ref(false)
+const displayDrawer = ref(false)
+const displayMenuSorting = ref(false)
 
-const watchFileDocumentsStore = useWatchFileDocumentsStore();
+const watchFileDocumentsStore = useWatchFileDocumentsStore()
 const { displayFiltersPanel, currentPage, searchQuery, sortBy, sortOrder } =
-  storeToRefs(watchFileDocumentsStore);
+  storeToRefs(watchFileDocumentsStore)
 
-const searchInput = ref(searchQuery.value);
+const searchInput = ref(searchQuery.value)
 
-const filtersCounts = computed(() => watchFileDocumentsStore.filtersCounts);
-const filterQuery = computed(() => watchFileDocumentsStore.filterQuery);
-const queryParams = computed(() => watchFileDocumentsStore.queryParams);
+const filtersCounts = computed(() => watchFileDocumentsStore.filtersCounts)
+const filterQuery = computed(() => watchFileDocumentsStore.filterQuery)
+const queryParams = computed(() => watchFileDocumentsStore.queryParams)
 const mayHaveDocuments = computed(
-  () =>
-    !error.value &&
-    (isLoading.value || documents.value.length > 0 || searchInput.value),
-);
+  () => !error.value && (isLoading.value || documents.value.length > 0 || searchInput.value),
+)
 
 // Handle left panel display
 const filterPanelWidth = computed(() => {
   if (filtersCounts.value && displayFiltersPanel.value) {
-    return 'w-[20%] min-w-64';
+    return 'w-[20%] min-w-64'
   } else if (filtersCounts.value && !displayFiltersPanel.value) {
-    return 'w-auto';
+    return 'w-auto'
   } else {
-    return 'w-12';
+    return 'w-12'
   }
-});
+})
 
-const { data, isLoading, error, refetch } = useQuery(
-  getCollectionDocumentQuery,
-  () => ({
-    watchFileId,
-    filters: queryParams.value,
-  }),
-);
+const { data, isLoading, error, refetch } = useQuery(getCollectionDocumentQuery, () => ({
+  watchFileId,
+  filters: queryParams.value,
+}))
 
-const { markAsSeen } = useMarkDocumentAsSeen();
+const { markAsSeen } = useMarkDocumentAsSeen()
 
-const documents = computed(() => data.value?.items ?? []);
-const totalItems = computed(() => data.value?.totalItems ?? 0);
-const facets = computed(() => data.value?.facets);
+const documents = computed(() => data.value?.items ?? [])
+const totalItems = computed(() => data.value?.totalItems ?? 0)
+const facets = computed(() => data.value?.facets)
 
 // Document consultation query
-const consultedDocumentId = ref<string | null>(null);
+const consultedDocumentId = ref<string | null>(null)
 const {
   data: consultedDocument,
   isLoading: isConsultedDocumentLoading,
@@ -254,48 +224,48 @@ const {
 } = useQuery(
   getItemDocumentQuery,
   computed(() => {
-    return { id: consultedDocumentId.value! };
+    return { id: consultedDocumentId.value! }
   }),
-);
+)
 
 const consultDocument = () => {
-  if (!selectedDocument.value?.id) return;
+  if (!selectedDocument.value?.id) return
 
-  isViewerOpen.value = true;
-  consultedDocumentId.value = selectedDocument.value.id;
-};
+  isViewerOpen.value = true
+  consultedDocumentId.value = selectedDocument.value.id
+}
 
 const closeViewer = () => {
-  consultedDocumentId.value = null;
-  isViewerOpen.value = false;
-};
+  consultedDocumentId.value = null
+  isViewerOpen.value = false
+}
 
 const resetSearchbar = () => {
-  searchQuery.value = '';
-  searchInput.value = '';
-};
+  searchQuery.value = ''
+  searchInput.value = ''
+}
 
 watchEffect(() => {
   if (searchQuery.value === '') {
-    searchInput.value = '';
+    searchInput.value = ''
   }
-});
+})
 
 watchDebounced(
   searchInput,
   (newval) => {
-    searchQuery.value = newval;
-    watchFileDocumentsStore.resetPagination();
+    searchQuery.value = newval
+    watchFileDocumentsStore.resetPagination()
   },
   { debounce: 500, maxWait: 1000 },
-);
+)
 
 function changeSort(fieldKey: DocumentDateType) {
   if (sortBy.value === fieldKey) {
-    sortOrder.value = sortOrder.value === 'ASC' ? 'DESC' : 'ASC';
+    sortOrder.value = sortOrder.value === 'ASC' ? 'DESC' : 'ASC'
   } else {
-    sortBy.value = fieldKey;
-    sortOrder.value = 'ASC';
+    sortBy.value = fieldKey
+    sortOrder.value = 'ASC'
   }
   sessionStorage.setItem(
     'documentsSort',
@@ -303,89 +273,89 @@ function changeSort(fieldKey: DocumentDateType) {
       sortBy: sortBy.value,
       sortOrder: sortOrder.value,
     }),
-  );
+  )
 }
 
 const selectDocument = (doc: Document) => {
   if (selectedDocument.value?.id === doc.id) {
-    return;
+    return
   }
 
   markAsSeen({
     documentId: doc.id,
     watchFileId: watchFileId,
-  });
-  selectedDocument.value = doc;
-  isDetailPanelOpen.value = true;
-};
+  })
+  selectedDocument.value = doc
+  isDetailPanelOpen.value = true
+}
 
 const closeDetailPanel = () => {
-  selectedDocument.value = undefined;
-  isDetailPanelOpen.value = false;
-};
+  selectedDocument.value = undefined
+  isDetailPanelOpen.value = false
+}
 
 const handleSearch = () => {
   if (currentPage.value !== 1) {
-    currentPage.value = 1;
+    currentPage.value = 1
   } else {
-    refetch();
+    refetch()
   }
-};
+}
 
 watchEffect(() => {
-  if (!selectedDocument.value?.id) return;
+  if (!selectedDocument.value?.id) return
 
   const updatedDocument = documents.value.find(
     (document) => document.id === selectedDocument.value?.id,
-  );
+  )
 
   if (updatedDocument) {
-    selectedDocument.value = updatedDocument;
+    selectedDocument.value = updatedDocument
   }
-});
+})
 
 // Auto-select first document when list changes (initial load, search, page change),
 // only if the list composition has actually changed (not just document properties)
-const previousDocumentIds = ref<string[]>([]);
+const previousDocumentIds = ref<string[]>([])
 
 watch(
   [documents, isLoading],
   ([newDocuments, loading]) => {
-    const newIds = newDocuments.map((doc) => doc.id);
+    const newIds = newDocuments.map((doc) => doc.id)
     const hasListChanged =
       newIds.length !== previousDocumentIds.value.length ||
-      newIds.some((id, index) => id !== previousDocumentIds.value[index]);
+      newIds.some((id, index) => id !== previousDocumentIds.value[index])
 
     if (!hasListChanged) {
-      return;
+      return
     }
 
     if (!newDocuments.length) {
-      closeDetailPanel();
-      return;
+      closeDetailPanel()
+      return
     }
 
-    previousDocumentIds.value = newIds;
+    previousDocumentIds.value = newIds
 
-    const firstDocument = newDocuments[0];
+    const firstDocument = newDocuments[0]
     if (firstDocument) {
-      selectDocument(firstDocument);
+      selectDocument(firstDocument)
     } else if (!loading) {
-      closeDetailPanel();
+      closeDetailPanel()
     }
   },
   { immediate: true },
-);
+)
 
-const filtersStore = useWatchFileFiltersStore();
+const filtersStore = useWatchFileFiltersStore()
 
 // Initialize from URL when facets are available
 watch(facets, (newFacets) => {
   if (newFacets) {
     // Initialize search query
     if (route.query.search && typeof route.query.search === 'string') {
-      searchQuery.value = route.query.search;
-      searchInput.value = route.query.search;
+      searchQuery.value = route.query.search
+      searchInput.value = route.query.search
     }
 
     // Initialize filters from URL
@@ -394,24 +364,24 @@ watch(facets, (newFacets) => {
       route.query,
       newFacets,
       () => watchFileDocumentsStore.isUrlSync,
-    );
+    )
   }
-});
+})
 
 // Sync URL with filter changes (excluding pagination and sort from URL sync)
 watch(
   filterQuery,
   async (newQuery) => {
     if (!watchFileDocumentsStore.isUrlSync) {
-      return;
+      return
     }
 
-    const urlQuery: Record<string, string | string[]> = { ...newQuery };
+    const urlQuery: Record<string, string | string[]> = { ...newQuery }
 
     await router.replace({
       query: urlQuery,
-    });
+    })
   },
   { immediate: true },
-);
+)
 </script>

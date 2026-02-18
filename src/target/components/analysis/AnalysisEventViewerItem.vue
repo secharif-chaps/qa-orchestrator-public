@@ -13,15 +13,8 @@
         <p class="font-medium text-gray-900">
           {{ $t('watch_files.analysis.event.actors') }}
         </p>
-        <ul
-          v-if="event.actors.length > 0"
-          class="mt-1 list-outside list-disc space-y-1 pl-6"
-        >
-          <li
-            v-for="actor in event.actors"
-            :key="actor.id"
-            class="text-gray-700"
-          >
+        <ul v-if="event.actors.length > 0" class="mt-1 list-outside list-disc space-y-1 pl-6">
+          <li v-for="actor in event.actors" :key="actor.id" class="text-gray-700">
             {{ actor.name }}
           </li>
         </ul>
@@ -31,37 +24,37 @@
 </template>
 
 <script lang="ts" setup>
-import { Tag } from '@owlint/feathers-vue';
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useLocalized } from '~/composables/useLocalized';
-import type { WatchFileEvent } from '~/types/watchFileEvent';
+import { Tag } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useLocalized } from '~/composables/useLocalized'
+import type { WatchFileEvent } from '~/types/watchFileEvent'
 
 interface Props {
-  event: WatchFileEvent;
+  event: WatchFileEvent
 }
 
-const { event } = defineProps<Props>();
+const { event } = defineProps<Props>()
 
-const { d, t } = useI18n();
-const { getLocalizedString } = useLocalized();
+const { d, t } = useI18n()
+const { getLocalizedString } = useLocalized()
 
-const eventDescription = getLocalizedString(event.description);
+const eventDescription = getLocalizedString(event.description)
 
 const eventDateLabel = computed<string | null>(() => {
   try {
-    const endDate = new Date(event.endDate);
-    const startDate = new Date(event.startDate);
+    const endDate = new Date(event.endDate)
+    const startDate = new Date(event.startDate)
 
     if (startDate.getTime() !== endDate.getTime()) {
       return t('watch_files.analysis.event.date', {
         startDate: d(startDate, 'eventDateTime'),
         endDate: d(endDate, 'eventDateTime'),
-      });
+      })
     }
-    return d(startDate, 'eventDateTime');
+    return d(startDate, 'eventDateTime')
   } catch {
-    return t('watch_files.analysis.event.unknown_date');
+    return t('watch_files.analysis.event.unknown_date')
   }
-});
+})
 </script>
