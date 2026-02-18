@@ -1,8 +1,11 @@
 """
-Internal JWT verification for service-to-service communication.
+Internal JWT for service-to-service communication.
 
-This module verifies internal JWTs from the gateway and optionally
-validates the source IP against an allowlist.
+This module provides both creation and verification of internal JWTs:
+- create_internal_token: Create a token when calling other internal services
+- verify_internal_token: Verify a token received from another service
+
+The tokens use a shared secret (INTERNAL_JWT_SECRET) and contain user context.
 
 Security layers:
 1. JWT signature verification (always)
@@ -11,6 +14,7 @@ Security layers:
 
 import jwt
 import ipaddress
+from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 from typing import Optional
 from pydantic import BaseModel
@@ -62,6 +66,66 @@ class IPNotAllowedError(InternalJWTError):
     """Source IP is not in the allowlist."""
 
     pass
+
+
+def create_internal_token(
+    user_id: str,
+    username: str,
+    org_id: str,
+    org_name: str = "Unknown",
+    roles: list[str] | None = None,
+    email: str | None = None,
+) -> str:
+    """
+    Create an internal JWT for service-to-service communication.
+
+    Called by the monolith when making requests to global-service or other
+    internal services. The internal token contains necessary user context.
+
+    Args:
+        user_id: Keycloak user UUID (sub claim)
+        username: User's preferred username
+        org_id: Organization UUID from Keycloak
+        org_name: Organization name (optional, defaults to "Unknown")
+        roles: List of roles (optional, defaults to empty list)
+        email: Optional user email
+
+    Returns:
+        Signed JWT string
+
+    Raises:
+        InternalJWTError: If INTERNAL_JWT_SECRET is not configured
+    """
+    if not settings.INTERNAL_JWT_SECRET:
+        raise InternalJWTError("INTERNAL_JWT_SECRET not configured")
+
+    now = datetime.now(timezone.utc)
+    expiry = now + timedelta(seconds=settings.INTERNAL_JWT_EXPIRY_SECONDS)
+
+    payload = {
+        "sub": user_id,
+        "username": username,
+        "email": email,
+        "org_id": org_id,
+        "org_name": org_name,
+        "roles": roles or [],
+        "iss": ISSUER,
+        "iat": int(now.timestamp()),
+        "exp": int(expiry.timestamp()),
+    }
+
+    token = jwt.encode(payload, settings.INTERNAL_JWT_SECRET, algorithm=ALGORITHM)
+
+    logger.debug(
+        "Created internal token",
+        extra={
+            "user_id": user_id,
+            "org_id": org_id,
+            "expiry_seconds": settings.INTERNAL_JWT_EXPIRY_SECONDS,
+        },
+    )
+
+    return token
 
 
 @lru_cache(maxsize=1)

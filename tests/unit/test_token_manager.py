@@ -1,5 +1,9 @@
 """Unit tests for refactored TokenManager with global token balance.
 
+NOTE: These tests are skipped because TokenManager has been migrated to global-service
+as part of Story #870 (Phase 2 microservices migration). The token management functionality
+is now tested in global-service/tests/test_token_manager.py.
+
 Tests cover:
 - get_balance() returns correct balance
 - add_tokens() creates transaction and updates balance
@@ -10,6 +14,11 @@ Tests cover:
 """
 
 import pytest
+
+# Skip entire module - TokenManager migrated to global-service (Story #870)
+pytestmark = pytest.mark.skip(
+    reason="TokenManager migrated to global-service - see global-service/tests/test_token_manager.py"
+)
 from datetime import datetime, timedelta, timezone
 
 from app.services.token_manager import (

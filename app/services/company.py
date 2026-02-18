@@ -588,12 +588,27 @@ class CompanyService:
 
         return company_responses
 
-    def validate_csv_companies(self, companies: List[CompanyCSVRow], organization_id: str,
-                               token_manager: TokenManager) -> CompanyCSVValidationResponse:
+    def validate_csv_companies(
+        self,
+        companies: List[CompanyCSVRow],
+        organization_id: str,
+        token_manager: TokenManager | None = None,
+    ) -> CompanyCSVValidationResponse:
         """Validate a list of companies from CSV without creating them.
 
-        Uses global token balance instead of module-specific tokens.
+        Token validation is now optional since token consumption is handled by
+        global-service. If token_manager is None, token checking is skipped.
+
         Each company creation costs TOKENS_PER_COMPANY (35) tokens.
+
+        Args:
+            companies: List of CSV row data to validate
+            organization_id: Organization UUID
+            token_manager: Optional TokenManager for backward compatibility.
+                          If None, token validation is skipped.
+
+        Returns:
+            CompanyCSVValidationResponse with validation results
         """
         errors = []
 
@@ -656,17 +671,24 @@ class CompanyService:
         # Calculate tokens required - each company costs TOKENS_PER_COMPANY tokens
         tokens_required = valid_count * TOKENS_PER_COMPANY
 
-        # Check available tokens from global balance
-        available_tokens = token_manager.get_balance(organization_id)
-        has_sufficient_tokens = available_tokens >= tokens_required
+        # Check available tokens from global balance if token_manager is provided
+        # Token validation is now optional since global-service handles consumption
+        if token_manager is not None:
+            available_tokens = token_manager.get_balance(organization_id)
+            has_sufficient_tokens = available_tokens >= tokens_required
 
-        # Add token insufficiency as a validation error if needed
-        if not has_sufficient_tokens and valid_count > 0:
-            errors.append(CompanyCSVValidationError(
-                row_number=0,  # Global error, not specific to a row
-                field="tokens",
-                error=f"Insufficient tokens. Required: {tokens_required}, Available: {available_tokens}"
-            ))
+            # Add token insufficiency as a validation error if needed
+            if not has_sufficient_tokens and valid_count > 0:
+                errors.append(CompanyCSVValidationError(
+                    row_number=0,  # Global error, not specific to a row
+                    field="tokens",
+                    error=f"Insufficient tokens. Required: {tokens_required}, Available: {available_tokens}"
+                ))
+        else:
+            # Token validation skipped - global-service will handle it during consumption
+            # Return None to indicate balance is unknown (frontend should handle this)
+            available_tokens = None
+            has_sufficient_tokens = True  # Assume sufficient until consumption fails
 
         return CompanyCSVValidationResponse(
             valid_count=valid_count,

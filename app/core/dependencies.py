@@ -6,6 +6,7 @@ from typing import List, Optional
 from app.database import get_db
 from app.services.company import CompanyService
 from app.services.token_manager import TokenManager
+from app.services.global_service_client import GlobalServiceClient
 from app.services.auth import keycloak_service
 from app.schemas.user import TokenData
 
@@ -18,6 +19,10 @@ def get_company_service(
 def get_token_manager(db: Session = Depends(get_db)) -> TokenManager:
     return TokenManager(db=db)
 
+def get_global_service_client() -> GlobalServiceClient:
+    """Get a GlobalServiceClient instance for calling global-service APIs."""
+    return GlobalServiceClient()
+
 # Authentication dependencies
 security = HTTPBearer()
 
@@ -27,12 +32,12 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     """
     import logging
     logger = logging.getLogger(__name__)
-    
+
     token = credentials.credentials
-    
+
     try:
         token_data = await keycloak_service.verify_token(token)
-        
+
         if not token_data:
             logger.debug("🔐 Auth failed - Invalid token")
             raise HTTPException(
@@ -40,9 +45,9 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
                 detail="Invalid authentication credentials",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        
+
         return token_data
-        
+
     except Exception as e:
         logger.debug(f"🔐 Auth error: {str(e)}")
         raise HTTPException(
@@ -61,18 +66,18 @@ def require_roles(required_roles: List[str]):
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Insufficient permissions"
             )
-        
+
         user_roles = set(current_user.roles)
         required_roles_set = set(required_roles)
-        
+
         if not required_roles_set.intersection(user_roles):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Insufficient permissions"
             )
-        
+
         return current_user
-    
+
     return check_roles
 
 def require_admin():
@@ -87,6 +92,6 @@ async def get_optional_user(credentials: Optional[HTTPAuthorizationCredentials] 
     """
     if not credentials:
         return None
-    
+
     token = credentials.credentials
-    return await keycloak_service.verify_token(token) 
+    return await keycloak_service.verify_token(token)

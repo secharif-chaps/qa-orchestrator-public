@@ -1,5 +1,9 @@
 """Tests for Organization and TokenTransaction models.
 
+NOTE: These tests are skipped because the token/organization models have been migrated
+to global-service as part of Story #870 (Phase 2 microservices migration). The models
+are now tested in global-service/tests/test_organization_models.py.
+
 These tests verify the core functionality of the global token system models:
 1. Organization model creation with defaults
 2. TokenTransaction model with required fields
@@ -8,6 +12,11 @@ These tests verify the core functionality of the global token system models:
 """
 
 import pytest
+
+# Skip entire module - Models migrated to global-service (Story #870)
+pytestmark = pytest.mark.skip(
+    reason="Token/Organization models migrated to global-service - see global-service/tests/test_organization_models.py"
+)
 from datetime import datetime, timezone
 from sqlalchemy.exc import IntegrityError
 

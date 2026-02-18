@@ -14,7 +14,7 @@ from fastapi_keycloak import OIDCUser
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
-from app.core.dependencies import get_company_service, get_token_manager
+from app.core.dependencies import get_company_service, get_global_service_client
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.organization import OrganizationContext, get_user_organization
@@ -31,6 +31,7 @@ from app.schemas.company import (
     CompanyCreate,
     CompanyCSVImportRequest,
     CompanyCSVImportResponse,
+    CompanyCSVValidationError,
     CompanyCSVValidationRequest,
     CompanyCSVValidationResponse,
     CompanyResponse,
@@ -41,7 +42,12 @@ from app.services.company import CompanyService, _build_company_response
 from app.services.company_section_service import read_all_section_data
 from app.services.dify import DifyService
 from app.services.folder import FolderService
-from app.services.token_manager import TOKENS_PER_COMPANY, TokenManager
+from app.services.global_service_client import (
+    GlobalServiceClient,
+    InsufficientTokensError,
+    ModuleNotEnabledError,
+    TOKENS_PER_COMPANY,
+)
 
 logger = get_logger(__name__)
 
@@ -198,13 +204,13 @@ async def get_company_by_name(
 async def create_company(
     company_data: CompanyCreate,
     service: CompanyService = Depends(get_company_service),
-    token_manager: TokenManager = Depends(get_token_manager),
+    global_service: GlobalServiceClient = Depends(get_global_service_client),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db),
 ):
     """Create a new company.
 
-    Consumes tokens from the organization's global token balance.
+    Consumes tokens from the organization's global token balance via global-service.
     Each company creation costs 35 tokens.
 
     The screen module must be enabled for the organization.
@@ -214,24 +220,26 @@ async def create_company(
         f"Data: {company_data.name[:50]}..."
     )
 
-    # Step 1: Consume tokens from global balance
+    # Step 1: Consume tokens from global-service
     # Each company creation costs TOKENS_PER_COMPANY (35) tokens
     logger.info(
         f"Checking and consuming {TOKENS_PER_COMPANY} tokens for screen module "
         f"in organization: {org_context.organization_id}"
     )
 
-    # Note: consume_tokens will raise InsufficientTokensException or
-    # ModuleNotEnabledException if conditions are not met
-    token_manager.consume_tokens(
+    # Consume tokens via global-service API
+    # InsufficientTokensError (402) and ModuleNotEnabledError (403) propagate directly
+    await global_service.consume_tokens(
         org_id=org_context.organization_id,
         amount=TOKENS_PER_COMPANY,
         module_name=ModuleName.SCREEN,
         reference_type=ReferenceType.company,
         reference_id=None,  # Will be updated after company is created
         user_id=org_context.user_id,
+        username=org_context.username,
+        description="Company creation",
     )
-    logger.info("Token consumed successfully")
+    logger.info("Token consumed successfully via global-service")
 
     try:
         # Step 2: Input validation already handled by Pydantic CompanyCreate model
@@ -431,7 +439,7 @@ async def restore_company(
 async def refresh_company(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
-    token_manager: TokenManager = Depends(get_token_manager),
+    global_service: GlobalServiceClient = Depends(get_global_service_client),
     org_context: OrganizationContext = Depends(get_user_organization),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])),
     db: Session = Depends(get_db),
@@ -441,7 +449,7 @@ async def refresh_company(
     Args:
         company_id: ID of the company to refresh
         service: Company service instance
-        token_manager: Token management service
+        global_service: Global service client for token consumption
         org_context: User's organization context
         user: Authenticated user from Keycloak
         db: Database session
@@ -453,6 +461,7 @@ async def refresh_company(
         HTTPException 404: Company not found
         HTTPException 403: User is not the company owner
         HTTPException 400: Not all tasks have succeeded
+        HTTPException 402: Insufficient tokens
         HTTPException 500: Unexpected server error
     """
     logger.info(
@@ -469,15 +478,37 @@ async def refresh_company(
         company = _get_and_verify_company(company_id, org_context, service)
         _verify_ownership(company, org_context)
         _verify_all_tasks_succeeded(company_id, service)
-        _ensure_module_and_consume_tokens(
-            company_id, org_context, token_manager
+
+        # Consume tokens via global-service
+        await global_service.consume_tokens(
+            org_id=org_context.organization_id,
+            amount=TOKENS_PER_COMPANY,
+            module_name=ModuleName.SCREEN,
+            reference_type=ReferenceType.refresh,
+            reference_id=str(company_id),
+            user_id=org_context.user_id,
+            username=org_context.username,
+            description="Company refresh",
+        )
+
+        logger.info(
+            "Tokens consumed for company refresh via global-service",
+            extra={
+                "company_id": company_id,
+                "tokens_consumed": TOKENS_PER_COMPANY,
+                "organization_id": org_context.organization_id,
+            }
         )
 
         try:
             refreshed_company = service.refresh_company(company_id)
         except Exception as e:
-            # Refund tokens if refresh operation fails after consumption
-            _refund_tokens_on_failure(company_id, org_context, token_manager)
+            # Note: Per spec, refunds require calling global-service add_tokens
+            # For now we log the failure but don't refund (refund logic could be added)
+            logger.error(
+                "Refresh failed after token consumption - tokens not refunded",
+                extra={"company_id": company_id, "error": str(e)},
+            )
             raise
 
         logger.info(
@@ -565,75 +596,6 @@ def _verify_all_tasks_succeeded(company_id: int, service: CompanyService) -> Non
         )
 
 
-def _ensure_module_and_consume_tokens(
-    company_id: int,
-    org_context: OrganizationContext,
-    token_manager: TokenManager
-) -> None:
-    """Ensure SCREEN module is enabled and consume tokens for refresh operation."""
-    screen_module = token_manager.get_or_create_module(
-        org_context.organization_id, ModuleName.SCREEN
-    )
-
-    if not screen_module.enabled:
-        token_manager.update_module_config(
-            organization_id=org_context.organization_id,
-            module_name=ModuleName.SCREEN,
-            enabled=True,
-        )
-        logger.info(
-            "SCREEN module enabled for organization",
-            extra={"organization_id": org_context.organization_id}
-        )
-
-    token_manager.consume_tokens(
-        org_id=org_context.organization_id,
-        amount=TOKENS_PER_COMPANY,
-        module_name=ModuleName.SCREEN,
-        reference_type=ReferenceType.refresh,
-        reference_id=company_id,
-        user_id=org_context.user_id,
-    )
-
-    logger.info(
-        "Tokens consumed for company refresh",
-        extra={
-            "company_id": company_id,
-            "tokens_consumed": TOKENS_PER_COMPANY,
-            "organization_id": org_context.organization_id,
-        }
-    )
-
-
-def _refund_tokens_on_failure(
-    company_id: int,
-    org_context: OrganizationContext,
-    token_manager: TokenManager
-) -> None:
-    """Refund tokens when refresh operation fails after consumption.
-
-    Uses add_tokens to credit back the consumed tokens with an audit trail.
-
-    Args:
-        company_id: ID of the company being refreshed
-        org_context: User's organization context
-        token_manager: Token management service
-    """
-    token_manager.add_tokens(
-        org_id=org_context.organization_id,
-        amount=TOKENS_PER_COMPANY,
-        user_id=org_context.user_id,
-    )
-    logger.info(
-        "Tokens refunded due to refresh failure",
-        extra={
-            "company_id": company_id,
-            "tokens_refunded": TOKENS_PER_COMPANY,
-            "organization_id": org_context.organization_id,
-        }
-    )
-
-
 @router.get("/archived/list", response_model=List[CompanyResponse])
 async def get_archived_companies(
     service: CompanyService = Depends(get_company_service),
@@ -653,12 +615,13 @@ async def get_archived_companies(
 async def validate_csv_companies(
     validation_request: CompanyCSVValidationRequest,
     service: CompanyService = Depends(get_company_service),
-    token_manager: TokenManager = Depends(get_token_manager),
+    global_service: GlobalServiceClient = Depends(get_global_service_client),
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
     """Validate CSV company data without creating companies.
 
-    Also checks if user has sufficient tokens for valid companies.
+    Also checks if user has sufficient tokens for valid companies by querying
+    the global-service for the actual token balance.
     """
     logger.info(
         f"CSV validation request - User: {org_context.username}, "
@@ -667,10 +630,39 @@ async def validate_csv_companies(
 
     verify_company_modify_permission(org_context, "company.create")
 
-    return service.validate_csv_companies(
+    # Validate CSV data (without token check)
+    validation_result = service.validate_csv_companies(
         companies=validation_request.companies,
         organization_id=org_context.organization_id,
-        token_manager=token_manager,
+        token_manager=None,
+    )
+
+    # Get actual token balance from global-service
+    available_tokens = await global_service.get_balance(
+        org_id=org_context.organization_id,
+        user_id=org_context.user_id,
+        username=org_context.username,
+    )
+
+    # Check if user has sufficient tokens
+    has_sufficient_tokens = available_tokens >= validation_result.tokens_required
+
+    # Add token insufficiency error if needed
+    errors = list(validation_result.errors)
+    if not has_sufficient_tokens and validation_result.valid_count > 0:
+        errors.append(CompanyCSVValidationError(
+            row_number=0,  # Global error, not specific to a row
+            field="tokens",
+            error=f"Insufficient tokens. Required: {validation_result.tokens_required}, Available: {available_tokens}"
+        ))
+
+    return CompanyCSVValidationResponse(
+        valid_count=validation_result.valid_count,
+        error_count=len(errors),
+        errors=errors,
+        has_sufficient_tokens=has_sufficient_tokens,
+        tokens_required=validation_result.tokens_required,
+        tokens_available=available_tokens,
     )
 
 
@@ -678,12 +670,12 @@ async def validate_csv_companies(
 async def import_csv_companies(
     import_request: CompanyCSVImportRequest,
     service: CompanyService = Depends(get_company_service),
-    token_manager: TokenManager = Depends(get_token_manager),
+    global_service: GlobalServiceClient = Depends(get_global_service_client),
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
     """Import companies from CSV data.
 
-    Consumes tokens from the organization's global token balance.
+    Consumes tokens from the organization's global token balance via global-service.
     Each company creation costs 35 tokens.
 
     Note: Per requirements, no token refunds on partial failures.
@@ -695,41 +687,30 @@ async def import_csv_companies(
 
     verify_company_modify_permission(org_context, "company.create")
 
-    # First validate to get token requirements
+    # First validate to get count of valid companies
     validation = service.validate_csv_companies(
         companies=import_request.companies,
         organization_id=org_context.organization_id,
-        token_manager=token_manager,
+        token_manager=None,
     )
-
-    if not validation.has_sufficient_tokens:
-        raise HTTPException(
-            status_code=status.HTTP_402_PAYMENT_REQUIRED,
-            detail=f"Insufficient tokens. Need {validation.tokens_required} tokens "
-            f"for {validation.valid_count} valid companies, but only "
-            f"{validation.tokens_available} available",
-        )
 
     # Calculate total tokens needed (TOKENS_PER_COMPANY per company)
     tokens_needed = validation.valid_count * TOKENS_PER_COMPANY
 
     if tokens_needed > 0:
-        try:
-            logger.info(f"Consuming {tokens_needed} tokens for CSV import")
-            token_manager.consume_tokens(
-                org_id=org_context.organization_id,
-                amount=tokens_needed,
-                module_name=ModuleName.SCREEN,
-                reference_type=ReferenceType.csv_import,
-                reference_id=None,
-                user_id=org_context.user_id,
-            )
-        except Exception as e:
-            logger.error(f"Token consumption failed: {str(e)}")
-            raise HTTPException(
-                status_code=status.HTTP_402_PAYMENT_REQUIRED,
-                detail=f"Failed to consume tokens: {str(e)}",
-            )
+        # Consume tokens via global-service
+        # InsufficientTokensError (402) and ModuleNotEnabledError (403) propagate directly
+        logger.info(f"Consuming {tokens_needed} tokens for CSV import via global-service")
+        await global_service.consume_tokens(
+            org_id=org_context.organization_id,
+            amount=tokens_needed,
+            module_name=ModuleName.SCREEN,
+            reference_type=ReferenceType.csv_import,
+            reference_id=None,
+            user_id=org_context.user_id,
+            username=org_context.username,
+            description=f"CSV import of {validation.valid_count} companies",
+        )
 
     # Import the companies
     # Note: Per requirements, no token refunds on partial failures

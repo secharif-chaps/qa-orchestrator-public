@@ -13,37 +13,12 @@ from app.core.organization import get_user_organization, OrganizationContext
 from app.models.company import Company
 from app.models.folder import Folder, FolderShare, FolderItem
 from app.services.folder import FolderService
-from app.schemas.organization import OrganizationResponse, ActivityResponse
+from app.schemas.organization import ActivityResponse
 from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
 
 router = APIRouter(tags=["organization"])
-
-
-@router.get("/current", response_model=OrganizationResponse)
-async def get_current_organization(
-    org_context: OrganizationContext = Depends(get_user_organization),
-    db: Session = Depends(get_db)
-):
-    """
-    Get current user's organization information.
-
-    Returns basic organization context extracted from JWT token.
-    Organization management is handled in Keycloak.
-    """
-    logger.info(
-        "Get current organization",
-        extra={
-            "user": org_context.username,
-            "organization_id": org_context.organization_id
-        }
-    )
-
-    return OrganizationResponse(
-        id=org_context.organization_id,
-        name=org_context.organization_name
-    )
 
 
 @router.get("/activities", response_model=List[ActivityResponse])

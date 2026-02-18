@@ -48,6 +48,10 @@ class Settings(BaseSettings):
     # Example: "10.244.0.0/16,172.16.0.0/12"
     INTERNAL_ALLOWED_IPS: str = ""
 
+    # Global-service URL for internal API calls (token consumption)
+    # In Docker/K8s, this is the internal service name
+    GLOBAL_SERVICE_URL: str = "http://global-service:8000"
+
     # RabbitMQ and Celery settings
     RABBITMQ_URL: str = "amqp://guest:guest@rabbitmq:5672//"
     MAX_CONCURRENT_WORKFLOWS: int = 10

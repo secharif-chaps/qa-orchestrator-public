@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from app.api.endpoints import (
     account, company, tasks, auth, admin, admin_tasks, security, webhooks,
-    modules, cost_analysis, folder, concurrency, team,
-    ai_preferences, organization, organizations, users, chapse, tokens,
+    cost_analysis, folder, concurrency, team,
+    ai_preferences, organization, organizations, users, chapse,
     translation, feature_flags, credits, data_sources
 )
 
@@ -19,8 +19,8 @@ api_router.include_router(users.router)  # Global user management (admin)
 api_router.include_router(organizations.router)  # Keycloak Organizations admin endpoints
 api_router.include_router(organization.router)  # User organization context (/current, /activities)
 api_router.include_router(team.router)  # Team management (organization.manage)
-api_router.include_router(modules.router)
-api_router.include_router(tokens.router)  # Global token balance management
+# Note: modules and tokens endpoints have been migrated to global-service
+# See: global-service/app/routers/tokens.py and global-service/app/routers/modules.py
 api_router.include_router(webhooks.router)
 api_router.include_router(cost_analysis.router)
 api_router.include_router(folder.router, prefix="/folders", tags=["folders"])

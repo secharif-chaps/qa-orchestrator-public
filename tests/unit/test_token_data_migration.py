@@ -1,5 +1,8 @@
 """Tests for token data migration logic.
 
+NOTE: These tests are skipped because the token migration logic has been migrated
+to global-service as part of Story #870 (Phase 2 microservices migration).
+
 These tests verify the migration from module-based tokens to global tokens:
 1. Summing tokens across multiple modules for one organization
 2. Organization record creation with summed balance
@@ -11,6 +14,11 @@ the OrganizationModule model has been updated to not include token_count.
 """
 
 import pytest
+
+# Skip entire module - Token migration logic migrated to global-service (Story #870)
+pytestmark = pytest.mark.skip(
+    reason="Token migration logic migrated to global-service"
+)
 from sqlalchemy import text
 
 from app.models.organization import (

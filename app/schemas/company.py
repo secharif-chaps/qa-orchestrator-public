@@ -316,13 +316,18 @@ class CompanyCSVValidationRequest(BaseModel):
 
 
 class CompanyCSVValidationResponse(BaseModel):
-    """Response from validation endpoint"""
+    """Response from validation endpoint.
+
+    Note: When tokens_available is None, token balance is unknown (validation
+    skipped because global-service handles consumption). The import endpoint
+    will return 402 if there are insufficient tokens.
+    """
     valid_count: int
     error_count: int
     errors: List[CompanyCSVValidationError]
     has_sufficient_tokens: bool
     tokens_required: int
-    tokens_available: int
+    tokens_available: int | None = None
 
 
 class CompanyCSVImportRequest(BaseModel):
