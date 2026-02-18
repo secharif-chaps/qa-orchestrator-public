@@ -16,11 +16,7 @@
         :value="actor"
         name="filter-actors"
       >
-        <label
-          v-if="actor"
-          :for="actor.id"
-          class="flex items-center gap-2 pl-2"
-        >
+        <label v-if="actor" :for="actor.id" class="flex items-center gap-2 pl-2">
           <Logo
             :domain="actor.primaryDomain ?? ''"
             :alt="actor.label"
@@ -45,11 +41,7 @@
       variant="tertiary"
       @click="displayAllActors = !displayAllActors"
     >
-      {{
-        t(
-          `watch_files.filters.type.actors.see.${displayAllActors ? 'less' : 'more'}`,
-        )
-      }}
+      {{ t(`watch_files.filters.type.actors.see.${displayAllActors ? 'less' : 'more'}`) }}
     </Button>
     <Button
       v-if="selectedActors.length"
@@ -69,63 +61,59 @@
 </template>
 
 <script lang="ts" setup>
-import { Button, Checkbox, Searchbar } from '@owlint/feathers-vue';
-import { watchDebounced } from '@vueuse/core';
-import { computed, ref, watchEffect } from 'vue';
-import { useI18n } from 'vue-i18n';
-import Logo from '~/components/global/Logo.vue';
-import type { Actor, ActorFacet } from '~/types/facet';
+import { Button, Checkbox, Searchbar } from '@owlint/feathers-vue'
+import { watchDebounced } from '@vueuse/core'
+import { computed, ref, watchEffect } from 'vue'
+import { useI18n } from 'vue-i18n'
+import Logo from '~/components/global/Logo.vue'
+import type { Actor, ActorFacet } from '~/types/facet'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 interface Props {
-  actors: ActorFacet[];
+  actors: ActorFacet[]
 }
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
-const selectedActors = defineModel<Actor[]>({ required: true });
+const selectedActors = defineModel<Actor[]>({ required: true })
 
-const displayAllActors = ref(false);
-const searchActor = ref('');
-const searchInput = ref(searchActor.value);
+const displayAllActors = ref(false)
+const searchActor = ref('')
+const searchInput = ref(searchActor.value)
 
 const filteredActors = computed(() =>
   props.actors.filter(({ actor }) => {
-    if (!actor || !actor.label) return false;
-    const isSelected = selectedActors.value.some(
-      (storedActor) => storedActor.id === actor.id,
-    );
+    if (!actor || !actor.label) return false
+    const isSelected = selectedActors.value.some((storedActor) => storedActor.id === actor.id)
 
     return (
-      actor.label
-        .toLocaleLowerCase()
-        .includes(searchActor.value.toLocaleLowerCase()) || isSelected
-    );
+      actor.label.toLocaleLowerCase().includes(searchActor.value.toLocaleLowerCase()) || isSelected
+    )
   }),
-);
+)
 
-const slicedActors = computed(() => filteredActors.value.slice(0, 5));
+const slicedActors = computed(() => filteredActors.value.slice(0, 5))
 
 const displayedActors = computed(() =>
   displayAllActors.value ? filteredActors.value : slicedActors.value,
-);
+)
 
 const handleReset = () => {
-  selectedActors.value = [];
-};
+  selectedActors.value = []
+}
 
 watchEffect(() => {
   if (searchActor.value === '') {
-    searchInput.value = '';
+    searchInput.value = ''
   }
-});
+})
 
 watchDebounced(
   searchInput,
   (newval) => {
-    searchActor.value = newval;
+    searchActor.value = newval
   },
   { debounce: 500, maxWait: 1000 },
-);
+)
 </script>

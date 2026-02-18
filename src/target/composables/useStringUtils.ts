@@ -6,25 +6,25 @@ function unescapeString(str: string): string {
   return str.replace(/\\(.)/g, (match, char) => {
     switch (char) {
       case 'n':
-        return '\n';
+        return '\n'
       case 't':
-        return '\t';
+        return '\t'
       case 'r':
-        return '\r';
+        return '\r'
       case 'v':
-        return '\v';
+        return '\v'
       case 'f':
-        return '\f';
+        return '\f'
       case '\\':
-        return '\\';
+        return '\\'
       default:
-        return char;
+        return char
     }
-  });
+  })
 }
 
 export function useStringUtils() {
   return {
     unescapeString,
-  };
+  }
 }

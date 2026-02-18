@@ -2,7 +2,7 @@
  * Admin user management types
  */
 
-import type { PermissionTier } from "./team"
+import type { PermissionTier } from './team'
 
 /**
  * User list item for the paginated user list

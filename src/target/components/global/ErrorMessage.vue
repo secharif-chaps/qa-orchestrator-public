@@ -16,18 +16,18 @@
 </template>
 
 <script setup lang="ts">
-import InformationMessage from './InformationMessage.vue';
-import { Button } from '@owlint/feathers-vue';
+import InformationMessage from './InformationMessage.vue'
+import { Button } from '@owlint/feathers-vue'
 
 interface Props {
-  title?: string;
-  description?: string;
-  width?: 'md' | 'lg' | 'full';
-  verticalAlign?: 'top' | 'center';
-  fill?: boolean;
-  transparent?: boolean;
-  isChatMessage?: boolean;
-  retryButton?: boolean;
+  title?: string
+  description?: string
+  width?: 'md' | 'lg' | 'full'
+  verticalAlign?: 'top' | 'center'
+  fill?: boolean
+  transparent?: boolean
+  isChatMessage?: boolean
+  retryButton?: boolean
 }
 
 const {
@@ -39,9 +39,9 @@ const {
   transparent = false,
   isChatMessage = false,
   retryButton = false,
-} = defineProps<Props>();
+} = defineProps<Props>()
 
 defineEmits<{
-  retry: [];
-}>();
+  retry: []
+}>()
 </script>

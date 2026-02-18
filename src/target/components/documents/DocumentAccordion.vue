@@ -1,9 +1,6 @@
 <template>
   <div>
-    <div
-      v-if="status === 'pending'"
-      class="w-full animate-pulse overflow-hidden rounded"
-    >
+    <div v-if="status === 'pending'" class="w-full animate-pulse overflow-hidden rounded">
       <div class="flex h-8 items-center bg-gray-200 px-2 text-xs">
         {{ t(pendingTitle) }}
       </div>
@@ -43,10 +40,7 @@
           class="data-[state=open]:animate-slideDown data-[state=closed]:animate-slideUp"
         >
           <div class="space-y-1 pt-2">
-            <div
-              v-if="subtitle || $slots.subtitle"
-              class="text-xs text-gray-800"
-            >
+            <div v-if="subtitle || $slots.subtitle" class="text-xs text-gray-800">
               <slot name="subtitle">
                 {{ subtitle }}
               </slot>
@@ -62,21 +56,21 @@
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@owlint/feathers-vue';
-import { Accordion } from 'reka-ui/namespaced';
-import { useI18n } from 'vue-i18n';
-import type { AiValidationStatus, SummaryStatusType } from '~/types/document';
-import InformationMessage from '../global/InformationMessage.vue';
+import { Icon } from '@owlint/feathers-vue'
+import { Accordion } from 'reka-ui/namespaced'
+import { useI18n } from 'vue-i18n'
+import type { AiValidationStatus, SummaryStatusType } from '~/types/document'
+import InformationMessage from '../global/InformationMessage.vue'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 interface Props {
-  title: string;
-  subtitle?: string;
-  content?: string;
-  status?: SummaryStatusType | AiValidationStatus;
-  errorTitle?: string;
-  pendingTitle?: string;
+  title: string
+  subtitle?: string
+  content?: string
+  status?: SummaryStatusType | AiValidationStatus
+  errorTitle?: string
+  pendingTitle?: string
 }
 
 const {
@@ -86,5 +80,5 @@ const {
   status = 'completed',
   errorTitle = 'common.errors.generic',
   pendingTitle = 'common.action.loading',
-} = defineProps<Props>();
+} = defineProps<Props>()
 </script>

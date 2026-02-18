@@ -97,39 +97,39 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Icon, Modal } from '@owlint/feathers-vue';
-import { useQuery } from '@pinia/colada';
-import { storeToRefs } from 'pinia';
-import { computed, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useBatchChangeActorStatus } from '~/api/mutations/actor';
-import { getCollectionActorQuery } from '~/api/queries/actor';
-import { useActorStore } from '~/stores/actor';
-import { useActorSelection } from '~/composables/useActorSelection';
-import { ActorStatus } from '~/types/actor';
-import type { WatchFileActor } from '~/types/watchFile';
-import ActorDetails from './ActorDetails.vue';
-import ActorSelectionModalList from './ActorSelectionModalList.vue';
+import { Button, Icon, Modal } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { storeToRefs } from 'pinia'
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useBatchChangeActorStatus } from '~/api/mutations/actor'
+import { getCollectionActorQuery } from '~/api/queries/actor'
+import { useActorStore } from '~/stores/actor'
+import { useActorSelection } from '~/composables/useActorSelection'
+import { ActorStatus } from '~/types/actor'
+import type { WatchFileActor } from '~/types/watchFile'
+import ActorDetails from './ActorDetails.vue'
+import ActorSelectionModalList from './ActorSelectionModalList.vue'
 
 const props = defineProps<{
-  watchFileId?: string;
-}>();
+  watchFileId?: string
+}>()
 
 const isOpen = defineModel<boolean>('isOpen', {
   required: true,
-});
+})
 
 const emit = defineEmits<{
-  'actor-updated': [];
-  'actors-selected': [actors: WatchFileActor[]];
-}>();
+  'actor-updated': []
+  'actors-selected': [actors: WatchFileActor[]]
+}>()
 
-const { t } = useI18n();
-const actorStore = useActorStore();
-const { search, page: currentPage } = storeToRefs(actorStore);
-const currentView = ref<'list' | 'detail'>('list');
-const isConfirming = ref(false);
-const typeFilter = ref<string[]>([]);
+const { t } = useI18n()
+const actorStore = useActorStore()
+const { search, page: currentPage } = storeToRefs(actorStore)
+const currentView = ref<'list' | 'detail'>('list')
+const isConfirming = ref(false)
+const typeFilter = ref<string[]>([])
 
 const {
   selectedActorsCount,
@@ -145,7 +145,7 @@ const {
   setDetailActor,
   clearDetailActor,
   selectActorFromDetail,
-} = useActorSelection();
+} = useActorSelection()
 
 const {
   data: actorData,
@@ -161,29 +161,29 @@ const {
   sortOrder: actorStore.sortOrder,
   page: currentPage.value,
   itemsPerPage: actorStore.itemsPerPage,
-}));
+}))
 
 const allActors = computed(() => {
   if (!actorData.value?.items) {
-    return [];
+    return []
   }
-  const transformed = actorData.value.items as WatchFileActor[];
-  return transformed;
-});
+  const transformed = actorData.value.items as WatchFileActor[]
+  return transformed
+})
 
 const totalItems = computed(() => {
-  return actorData.value?.totalItems || 0;
-});
+  return actorData.value?.totalItems || 0
+})
 
 const { batchChangeStatus } = useBatchChangeActorStatus({
   onSuccess: () => {
-    emit('actor-updated');
+    emit('actor-updated')
   },
-});
+})
 
 const confirmButtonLabel = computed(() => {
   if (isConfirming.value) {
-    return t('common.action.loading');
+    return t('common.action.loading')
   }
 
   if (visibleSelectedSourcesCount.value > 0) {
@@ -194,7 +194,7 @@ const confirmButtonLabel = computed(() => {
         sources: visibleSelectedSourcesCount.value,
       },
       selectedActorsCount.value,
-    );
+    )
   }
 
   return t(
@@ -203,37 +203,37 @@ const confirmButtonLabel = computed(() => {
       count: selectedActorsCount.value,
     },
     selectedActorsCount.value,
-  );
-});
+  )
+})
 
 const closeModal = () => {
-  isOpen.value = false;
-  actorStore.resetFilters();
-  typeFilter.value = [];
-  currentView.value = 'list';
-  clearDetailActor();
-};
+  isOpen.value = false
+  actorStore.resetFilters()
+  typeFilter.value = []
+  currentView.value = 'list'
+  clearDetailActor()
+}
 
 const handleActorClicked = (actor: WatchFileActor) => {
-  setDetailActor(actor);
-  currentView.value = 'detail';
-};
+  setDetailActor(actor)
+  currentView.value = 'detail'
+}
 
 const handleBackToList = () => {
-  currentView.value = 'list';
-  clearDetailActor();
-};
+  currentView.value = 'list'
+  clearDetailActor()
+}
 
 const handleSelectActorFromDetail = () => {
   if (detailActor.value) {
-    selectActorFromDetail();
-    handleBackToList();
+    selectActorFromDetail()
+    handleBackToList()
   }
-};
+}
 
 const handleRetry = () => {
-  refetchActors();
-};
+  refetchActors()
+}
 
 const getSelectActorButtonLabel = () => {
   return t(
@@ -242,45 +242,45 @@ const getSelectActorButtonLabel = () => {
       count: detailSelectedSourcesCount.value,
     },
     detailSelectedSourcesCount.value,
-  );
-};
+  )
+}
 
 const confirmSelection = async () => {
   if (!props.watchFileId) {
-    console.error('No watchFileId provided');
-    return;
+    console.error('No watchFileId provided')
+    return
   }
 
   if (!hasSelections.value) {
-    closeModal();
-    return;
+    closeModal()
+    return
   }
 
-  isConfirming.value = true;
+  isConfirming.value = true
 
   try {
     await batchChangeStatus({
       watchFileId: props.watchFileId!,
       actors: getApiFormatSelections(),
-    });
+    })
 
-    const selectedActors = getSelectedActors(allActors.value);
-    emit('actors-selected', selectedActors);
-    emit('actor-updated');
-    closeModal();
+    const selectedActors = getSelectedActors(allActors.value)
+    emit('actors-selected', selectedActors)
+    emit('actor-updated')
+    closeModal()
   } catch (error) {
-    console.error('Error batch changing actor status:', error);
-    closeModal();
+    console.error('Error batch changing actor status:', error)
+    closeModal()
   } finally {
-    isConfirming.value = false;
+    isConfirming.value = false
   }
-};
+}
 
 watch(isOpen, (isOpenValue) => {
   if (isOpenValue && props.watchFileId) {
-    actorStore.status = ActorStatus.INACTIVE;
+    actorStore.status = ActorStatus.INACTIVE
   } else {
-    clearSelections();
+    clearSelections()
   }
-});
+})
 </script>

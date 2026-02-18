@@ -5,8 +5,7 @@
       :for="id"
       class="mb-1 block text-sm font-bold text-slate-500 dark:text-indigo-500"
       :class="{
-        'after:ml-0.5 after:text-red-400 after:content-[\'*\'] dark:after:text-red-700':
-          required,
+        'after:ml-0.5 after:text-red-400 after:content-[\'*\'] dark:after:text-red-700': required,
       }"
     >
       {{ label }}
@@ -37,24 +36,24 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue';
+import { watch } from 'vue'
 
 interface Props {
-  id: string;
-  label?: string;
-  placeholder?: string;
-  required?: boolean;
-  readonly?: boolean;
-  disabled?: boolean;
-  resizeable?: boolean;
-  error?: string;
-  rows?: number;
-  maxHeight?: string;
-  inputClass?: string;
-  autocorrect?: boolean;
-  autoResize?: boolean;
-  autofocus?: boolean;
-  tabindex?: string;
+  id: string
+  label?: string
+  placeholder?: string
+  required?: boolean
+  readonly?: boolean
+  disabled?: boolean
+  resizeable?: boolean
+  error?: string
+  rows?: number
+  maxHeight?: string
+  inputClass?: string
+  autocorrect?: boolean
+  autoResize?: boolean
+  autofocus?: boolean
+  tabindex?: string
 }
 
 // Set default value for autoResize
@@ -67,37 +66,37 @@ const {
   maxHeight = undefined,
   inputClass = '',
   tabindex = undefined,
-} = defineProps<Props>();
+} = defineProps<Props>()
 
-const model = defineModel<string>({ required: true });
+const model = defineModel<string>({ required: true })
 // Auto-resize directive
 const vAutoResize = {
   mounted: (el: HTMLTextAreaElement, binding: string | false) => {
-    if (binding.value === false) return;
+    if (binding.value === false) return
 
-    const maxHeight = binding.value || '300px';
+    const maxHeight = binding.value || '300px'
 
     const resize = () => {
-      el.style.height = 'auto';
-      const newHeight = Math.min(el.scrollHeight, parseInt(maxHeight));
-      el.style.height = `${newHeight}px`;
-    };
+      el.style.height = 'auto'
+      const newHeight = Math.min(el.scrollHeight, parseInt(maxHeight))
+      el.style.height = `${newHeight}px`
+    }
 
-    watch(model, resize);
-    resize(); // Initial resize
+    watch(model, resize)
+    resize() // Initial resize
 
     // Store the resize function in a WeakMap for cleanup
-    resizeHandlers.set(el, resize);
+    resizeHandlers.set(el, resize)
   },
   unmounted: (el: HTMLTextAreaElement) => {
-    const handler = resizeHandlers.get(el);
+    const handler = resizeHandlers.get(el)
     if (handler) {
-      el.removeEventListener('input', handler);
-      resizeHandlers.delete(el);
+      el.removeEventListener('input', handler)
+      resizeHandlers.delete(el)
     }
   },
-};
+}
 
 // WeakMap to store resize handlers
-const resizeHandlers = new WeakMap<HTMLTextAreaElement, () => void>();
+const resizeHandlers = new WeakMap<HTMLTextAreaElement, () => void>()
 </script>

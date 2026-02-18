@@ -38,63 +38,63 @@
 </template>
 
 <script setup lang="ts">
-import { Button } from '@owlint/feathers-vue';
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useTimeDisplay } from '~/composables/useTimeDisplay';
-import { useChatStore } from '~/stores/chat';
-import type { Message } from '~/types/conversation';
-import CollapsibleSystemMessage from './CollapsibleSystemMessage.vue';
+import { Button } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useTimeDisplay } from '~/composables/useTimeDisplay'
+import { useChatStore } from '~/stores/chat'
+import type { Message } from '~/types/conversation'
+import CollapsibleSystemMessage from './CollapsibleSystemMessage.vue'
 
 interface Props {
-  messages: Message[];
-  groupId: string;
+  messages: Message[]
+  groupId: string
 }
 
-const { messages, groupId } = defineProps<Props>();
+const { messages, groupId } = defineProps<Props>()
 
-const { t } = useI18n();
-const chatStore = useChatStore();
-const { formatTime } = useTimeDisplay();
+const { t } = useI18n()
+const chatStore = useChatStore()
+const { formatTime } = useTimeDisplay()
 
-const DEFAULT_VISIBLE_COUNT = 3;
+const DEFAULT_VISIBLE_COUNT = 3
 
 const hasOlderMessages = computed(() => {
-  return messages.length > DEFAULT_VISIBLE_COUNT;
-});
+  return messages.length > DEFAULT_VISIBLE_COUNT
+})
 
 const hiddenCount = computed(() => {
-  return Math.max(0, messages.length - DEFAULT_VISIBLE_COUNT);
-});
+  return Math.max(0, messages.length - DEFAULT_VISIBLE_COUNT)
+})
 
 const showOlderMessages = computed(() => {
-  return chatStore.isOlderMessagesVisible(groupId);
-});
+  return chatStore.isOlderMessagesVisible(groupId)
+})
 
 // Messages that are always visible (last 3)
 const visibleMessages = computed(() => {
-  return messages.slice(-DEFAULT_VISIBLE_COUNT);
-});
+  return messages.slice(-DEFAULT_VISIBLE_COUNT)
+})
 
 // Messages that are hidden by default (older messages)
 const olderMessages = computed(() => {
-  if (!hasOlderMessages.value) return [];
-  return messages.slice(0, -DEFAULT_VISIBLE_COUNT);
-});
+  if (!hasOlderMessages.value) return []
+  return messages.slice(0, -DEFAULT_VISIBLE_COUNT)
+})
 
 // Format time range for the group header
 const groupTimeDisplay = computed(() => {
-  if (olderMessages.value.length === 0) return '';
+  if (olderMessages.value.length === 0) return ''
 
-  const oldestMessage = olderMessages.value[0];
-  if (!oldestMessage?.createdAt) return '';
+  const oldestMessage = olderMessages.value[0]
+  if (!oldestMessage?.createdAt) return ''
 
-  return formatTime(oldestMessage.createdAt);
-});
+  return formatTime(oldestMessage.createdAt)
+})
 
 const showOlderMessagesLabel = computed(() => {
   if (showOlderMessages.value) {
-    return t('watch_files.chat.system_messages.hide_older');
+    return t('watch_files.chat.system_messages.hide_older')
   }
   return t(
     'watch_files.chat.system_messages.view_older',
@@ -103,18 +103,18 @@ const showOlderMessagesLabel = computed(() => {
       time: groupTimeDisplay.value,
     },
     hiddenCount.value,
-  );
-});
+  )
+})
 
 const handleShowOlder = () => {
-  chatStore.showOlderMessages(groupId);
-};
+  chatStore.showOlderMessages(groupId)
+}
 
 const handleHideOlder = () => {
-  chatStore.hideOlderMessages(groupId);
-};
+  chatStore.hideOlderMessages(groupId)
+}
 
 const handleMessageToggle = (messageId: string) => {
-  chatStore.toggleMessage(messageId);
-};
+  chatStore.toggleMessage(messageId)
+}
 </script>

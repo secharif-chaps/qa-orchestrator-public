@@ -1,19 +1,8 @@
-import type { App } from 'vue';
-import DOMPurify, { type Config } from 'dompurify';
+import type { App } from 'vue'
+import DOMPurify, { type Config } from 'dompurify'
 
 const sanitizeConfig: Config = {
-  ALLOWED_ATTR: [
-    'href',
-    'title',
-    'rel',
-    'target',
-    'class',
-    'id',
-    'src',
-    'alt',
-    'width',
-    'height',
-  ],
+  ALLOWED_ATTR: ['href', 'title', 'rel', 'target', 'class', 'id', 'src', 'alt', 'width', 'height'],
   ALLOWED_TAGS: [
     'p',
     'br',
@@ -42,17 +31,17 @@ const sanitizeConfig: Config = {
     'td',
     'th',
   ],
-};
+}
 
 export default {
   install(app: App) {
     app.directive('sanitize-html', {
       beforeMount(el, binding) {
-        el.innerHTML = DOMPurify.sanitize(binding.value, sanitizeConfig);
+        el.innerHTML = DOMPurify.sanitize(binding.value, sanitizeConfig)
       },
       updated(el, binding) {
-        el.innerHTML = DOMPurify.sanitize(binding.value, sanitizeConfig);
+        el.innerHTML = DOMPurify.sanitize(binding.value, sanitizeConfig)
       },
-    });
+    })
   },
-};
+}

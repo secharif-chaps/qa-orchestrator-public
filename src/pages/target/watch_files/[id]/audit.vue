@@ -13,16 +13,16 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
-import WatchFileMonitoring from '~/components/watchFiles/ActivitySection/WatchFileMonitoring.vue';
-import SourcesList from '~/components/watchFiles/ActivitySection/SourceMonitoring/SourcesListGrouped.vue';
+import { useRoute } from 'vue-router'
+import WatchFileMonitoring from '~/components/watchFiles/ActivitySection/WatchFileMonitoring.vue'
+import SourcesList from '~/components/watchFiles/ActivitySection/SourceMonitoring/SourcesListGrouped.vue'
 
-const route = useRoute();
-const watchFileId = route.params.id as string;
+const route = useRoute()
+const watchFileId = route.params.id as string
 
 definePage({
   meta: {
     layout: 'watch-file',
   },
-});
+})
 </script>

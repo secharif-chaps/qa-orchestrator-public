@@ -20,11 +20,7 @@
             />
             <UrlDomain v-else-if="item.key === 'url'" :url="item.value" />
             <template v-else>
-              <Icon
-                v-if="item.leftIcon"
-                :icon="item.leftIcon"
-                class="h-4 w-4 text-gray-400"
-              />
+              <Icon v-if="item.leftIcon" :icon="item.leftIcon" class="h-4 w-4 text-gray-400" />
               <span class="text-sm font-medium text-gray-900">
                 {{ item.value }}
               </span>
@@ -43,12 +39,7 @@
       error-title="watch_files.documents.summary.error"
     >
       <template #subtitle>
-        <Tag
-          v-if="document.summaryGeneratedAt"
-          size="sm"
-          icon="fa-clock"
-          variant="secondary"
-        >
+        <Tag v-if="document.summaryGeneratedAt" size="sm" icon="fa-clock" variant="secondary">
           {{ d(document.summaryGeneratedAt, 'long') }}
         </Tag>
       </template>
@@ -63,12 +54,7 @@
       error-title="watch_files.documents.validation.error"
     >
       <template #subtitle>
-        <Tag
-          v-if="document.aiValidation.processedAt"
-          size="sm"
-          icon="fa-clock"
-          variant="secondary"
-        >
+        <Tag v-if="document.aiValidation.processedAt" size="sm" icon="fa-clock" variant="secondary">
           {{ d(document.aiValidation.processedAt, 'long') }}
         </Tag>
       </template>
@@ -95,75 +81,75 @@
 </template>
 
 <script setup lang="ts">
-import { Icon, Tag } from '@owlint/feathers-vue';
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import InformationMessage from '~/components/global/InformationMessage.vue';
-import UrlDomain from '~/components/global/UrlDomain.vue';
-import DocumentDetailSkeleton from '~/components/skeletons/DocumentDetailSkeleton.vue';
-import { useDocumentIcon } from '~/composables/useDocumentIcon';
-import { useLocalized } from '~/composables/useLocalized';
-import type { Document } from '~/types/document';
-import { DocumentValidationAction } from '~/types/document';
-import DocumentAccordion from './DocumentAccordion.vue';
+import { Icon, Tag } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import InformationMessage from '~/components/global/InformationMessage.vue'
+import UrlDomain from '~/components/global/UrlDomain.vue'
+import DocumentDetailSkeleton from '~/components/skeletons/DocumentDetailSkeleton.vue'
+import { useDocumentIcon } from '~/composables/useDocumentIcon'
+import { useLocalized } from '~/composables/useLocalized'
+import type { Document } from '~/types/document'
+import { DocumentValidationAction } from '~/types/document'
+import DocumentAccordion from './DocumentAccordion.vue'
 
-const { d, t } = useI18n();
-const { getDocumentIcon } = useDocumentIcon();
-const { getLocalizedString } = useLocalized();
+const { d, t } = useI18n()
+const { getDocumentIcon } = useDocumentIcon()
+const { getLocalizedString } = useLocalized()
 
 interface Props {
-  document?: Document;
-  isLoading?: boolean;
+  document?: Document
+  isLoading?: boolean
 }
 
-const { document = undefined, isLoading = false } = defineProps<Props>();
+const { document = undefined, isLoading = false } = defineProps<Props>()
 
 const formatDate = (date: string, format: string = 'long') => {
-  return d(date, format);
-};
+  return d(date, format)
+}
 
-const summaryText = getLocalizedString(computed(() => document?.summary));
+const summaryText = getLocalizedString(computed(() => document?.summary))
 const validationReasonText = getLocalizedString(
   computed(() => document?.aiValidation?.validationReason),
-);
+)
 
 const validationTitle = computed(() => {
-  if (!document?.aiValidation) return '';
+  if (!document?.aiValidation) return ''
 
-  const status = document.aiValidation.status;
-  if (status === 'pending' || status === 'failed') return '';
+  const status = document.aiValidation.status
+  if (status === 'pending' || status === 'failed') return ''
 
-  return t(`documents.detail.validation.title.${status}`);
-});
+  return t(`documents.detail.validation.title.${status}`)
+})
 
 const acceptedTitle = computed(() => {
-  if (!document) return '';
+  if (!document) return ''
 
   if (document.validatedBy && document.validatedAt) {
     return t('documents.detail.validatedBy', {
       name: document.validatedBy.displayName,
       date: formatDate(document.validatedAt, 'eventDateTime'),
-    });
+    })
   }
 
-  return t('documents.detail.accepted');
-});
+  return t('documents.detail.accepted')
+})
 
 const refusedTitle = computed(() => {
-  if (!document) return '';
+  if (!document) return ''
 
   if (document.validatedBy && document.validatedAt) {
     return t('documents.detail.rejectedBy', {
       name: document.validatedBy.displayName,
       date: formatDate(document.validatedAt, 'eventDateTime'),
-    });
+    })
   }
 
-  return t('documents.detail.rejected');
-});
+  return t('documents.detail.rejected')
+})
 
 const metadataItems = computed(() => {
-  if (!document) return [];
+  if (!document) return []
 
   return [
     {
@@ -199,6 +185,6 @@ const metadataItems = computed(() => {
       label: t('documents.detail.language'),
       value: t('common.language_' + document?.language.toLowerCase()),
     },
-  ];
-});
+  ]
+})
 </script>

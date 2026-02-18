@@ -1,9 +1,6 @@
 <template>
   <div class="flex flex-col gap-3">
-    <div
-      v-if="showDateType"
-      class="flex flex-col items-start gap-1 border-b border-gray-200 pb-3"
-    >
+    <div v-if="showDateType" class="flex flex-col items-start gap-1 border-b border-gray-200 pb-3">
       <ORadio
         id="publication-radio"
         v-model="selectedDateType"
@@ -33,9 +30,7 @@
           <SelectItem v-for="option in options" :key="option" :option="option">
             <ORadio :id="option" v-model="selectedPeriod" :value="option" />
             <span class="of:flex of:items-center of:gap-2">
-              <span>{{
-                t(`watch_files.filters.type.dates.period.${option}`)
-              }}</span>
+              <span>{{ t(`watch_files.filters.type.dates.period.${option}`) }}</span>
             </span>
           </SelectItem>
         </template>
@@ -45,11 +40,7 @@
       <Label id="dates-range-filter">
         {{ t('watch_files.filters.type.dates.range.label') }}
       </Label>
-      <DateRangePicker
-        id="dates-range-filter"
-        v-model="datesPicker"
-        class="z-50"
-      />
+      <DateRangePicker id="dates-range-filter" v-model="datesPicker" class="z-50" />
     </div>
     <Button
       v-if="datesFilterCount"
@@ -69,68 +60,59 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  Button,
-  DateRangePicker,
-  Label,
-  ORadio,
-  Select,
-  SelectItem,
-} from '@owlint/feathers-vue';
-import type { DateRange } from 'reka-ui';
-import { computed, onMounted, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { DatesPeriod, FilterDates } from '~/types/filter';
+import { Button, DateRangePicker, Label, ORadio, Select, SelectItem } from '@owlint/feathers-vue'
+import type { DateRange } from 'reka-ui'
+import { computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { DatesPeriod, FilterDates } from '~/types/filter'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 interface Props {
-  datesFilterCount?: number;
-  showDateType?: boolean;
+  datesFilterCount?: number
+  showDateType?: boolean
 }
 
-const { datesFilterCount = 0, showDateType = false } = defineProps<Props>();
+const { datesFilterCount = 0, showDateType = false } = defineProps<Props>()
 
 const datesPicker = defineModel<DateRange | null>('datesPicker', {
   default: () => ({ start: undefined, end: undefined }),
-});
+})
 
-const selectedPeriod = defineModel<DatesPeriod | undefined>('selectedPeriod');
-const selectedDateType = defineModel<FilterDates | undefined>(
-  'selectedDateType',
-);
+const selectedPeriod = defineModel<DatesPeriod | undefined>('selectedPeriod')
+const selectedDateType = defineModel<FilterDates | undefined>('selectedDateType')
 
 const emit = defineEmits<{
-  reset: [];
-}>();
+  reset: []
+}>()
 
 const periodsOptions = computed(() => [
   DatesPeriod.LAST_WEEK,
   DatesPeriod.LAST_MONTH,
   DatesPeriod.LAST_3_MONTH,
-]);
+])
 
 onMounted(() => {
   if (!selectedDateType.value && showDateType) {
-    selectedDateType.value = FilterDates.PUBLICATION;
+    selectedDateType.value = FilterDates.PUBLICATION
   }
-});
+})
 
 watch(selectedPeriod, (value) => {
   if (value) {
-    datesPicker.value = { start: undefined, end: undefined } as DateRange;
+    datesPicker.value = { start: undefined, end: undefined } as DateRange
   }
-});
+})
 
 watch(datesPicker, (value) => {
   if (value && (value.end || value.start)) {
-    selectedPeriod.value = undefined;
+    selectedPeriod.value = undefined
   }
-});
+})
 
 const handleReset = () => {
-  emit('reset');
-};
+  emit('reset')
+}
 </script>
 
 <style>

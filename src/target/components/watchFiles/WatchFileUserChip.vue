@@ -15,15 +15,15 @@
 </template>
 
 <script setup lang="ts">
-import type { User } from '~/types/user';
+import type { User } from '~/types/user'
 
 defineProps<{
-  user: User;
-}>();
+  user: User
+}>()
 
 defineEmits<{
-  (e: 'remove', id: string): void;
-}>();
+  (e: 'remove', id: string): void
+}>()
 </script>
 
 <style scoped>

@@ -1,28 +1,24 @@
-import { defineMutation, useMutation, useQueryCache } from '@pinia/colada';
-import { useI18n } from 'vue-i18n';
-import {
-    batchChangeActorStatus,
-    changeActorStatus,
-    removeWatchFileActor,
-} from '~/api/actor';
-import { ACTOR_QUERY_KEYS } from '~/api/queries/actor';
-import { useToast } from '~/composables/useToast';
-import { ActorStatus } from '~/types/actor';
-import { SOURCES_QUERY_KEYS } from '../queries/sources';
+import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
+import { useI18n } from 'vue-i18n'
+import { batchChangeActorStatus, changeActorStatus, removeWatchFileActor } from '~/api/actor'
+import { ACTOR_QUERY_KEYS } from '~/api/queries/actor'
+import { useToast } from '~/composables/useToast'
+import { ActorStatus } from '~/types/actor'
+import { SOURCES_QUERY_KEYS } from '../queries/sources'
 
 interface CallbackMutations<T> {
-  onSuccess?: (data: T) => void;
-  onError?: (error: Error) => void;
+  onSuccess?: (data: T) => void
+  onError?: (error: Error) => void
 }
 
 export const useChangeActorStatus = (options?: CallbackMutations<unknown>) => {
-  const queryCache = useQueryCache();
-  const toast = useToast();
-  const { t } = useI18n();
+  const queryCache = useQueryCache()
+  const toast = useToast()
+  const { t } = useI18n()
 
   const defaultErrorMessage = {
     title: t('watch_files.actors.deactivation_modal.error'),
-  };
+  }
 
   const { mutate, ...mutation } = useMutation({
     mutation: ({
@@ -31,132 +27,114 @@ export const useChangeActorStatus = (options?: CallbackMutations<unknown>) => {
       status,
       sourceIds,
     }: {
-      watchFileId: string;
-      actorId: string;
-      status: ActorStatus;
-      sourceIds?: string[];
-    }) =>
-      changeActorStatus(
-        watchFileId,
-        actorId,
-        status,
-        sourceIds,
-        defaultErrorMessage,
-      ),
+      watchFileId: string
+      actorId: string
+      status: ActorStatus
+      sourceIds?: string[]
+    }) => changeActorStatus(watchFileId, actorId, status, sourceIds, defaultErrorMessage),
 
     onError(error) {
-      options?.onError?.(error);
-      console.error('Failed to change actor status:', error);
+      options?.onError?.(error)
+      console.error('Failed to change actor status:', error)
     },
     onSuccess(data, { watchFileId, status, sourceIds }) {
-      options?.onSuccess?.(data);
+      options?.onSuccess?.(data)
 
-      const sourceCount = sourceIds?.length || 0;
+      const sourceCount = sourceIds?.length || 0
       const messageKey =
         status === ActorStatus.ACTIVE
           ? 'watch_files.actors.deactivation_modal.success.activated'
-          : 'watch_files.actors.deactivation_modal.success.deactivated';
+          : 'watch_files.actors.deactivation_modal.success.deactivated'
 
-      toast.success(t(messageKey, sourceCount));
+      toast.success(t(messageKey, sourceCount))
 
       queryCache.invalidateQueries({
         key: ACTOR_QUERY_KEYS.byWatchFile(watchFileId),
-      });
+      })
     },
     onSettled(_, __, { watchFileId }) {
       queryCache.invalidateQueries({
         key: SOURCES_QUERY_KEYS.byWatchFile(watchFileId),
-      });
+      })
     },
-  });
+  })
 
-  return { ...mutation, changeStatus: mutate };
-};
+  return { ...mutation, changeStatus: mutate }
+}
 
 export const useRemoveWatchFileActor = defineMutation(() => {
-  const queryCache = useQueryCache();
-  const toast = useToast();
-  const { t } = useI18n();
+  const queryCache = useQueryCache()
+  const toast = useToast()
+  const { t } = useI18n()
 
   const defaultErrorMessage = {
     title: t('watch_files.actors.remove.error'),
-  };
+  }
 
   const { mutate, ...mutation } = useMutation({
-    mutation: ({
-      watchFileId,
-      actorId,
-    }: {
-      watchFileId: string;
-      actorId: string;
-    }) => removeWatchFileActor(watchFileId, actorId, defaultErrorMessage),
+    mutation: ({ watchFileId, actorId }: { watchFileId: string; actorId: string }) =>
+      removeWatchFileActor(watchFileId, actorId, defaultErrorMessage),
     onSuccess(_, { watchFileId }) {
-      toast.success(t('watch_files.actors.remove.success'));
+      toast.success(t('watch_files.actors.remove.success'))
 
       queryCache.invalidateQueries({
         key: ACTOR_QUERY_KEYS.byWatchFile(watchFileId),
-      });
+      })
     },
     onError(error) {
-      console.error('Failed to remove actor:', error);
+      console.error('Failed to remove actor:', error)
     },
-  });
+  })
 
-  return { ...mutation, removeActor: mutate };
-});
+  return { ...mutation, removeActor: mutate }
+})
 
-export const useBatchChangeActorStatus = (
-  options?: CallbackMutations<unknown>,
-) => {
-  const queryCache = useQueryCache();
-  const toast = useToast();
-  const { t } = useI18n();
+export const useBatchChangeActorStatus = (options?: CallbackMutations<unknown>) => {
+  const queryCache = useQueryCache()
+  const toast = useToast()
+  const { t } = useI18n()
 
   const defaultErrorMessage = {
     title: t('watch_files.actors.batch_change.error'),
-  };
+  }
 
   const { mutate, ...mutation } = useMutation({
     mutation: ({
       watchFileId,
       actors,
     }: {
-      watchFileId: string;
-      actors: Array<{ id: string; sourceIds: string[] }>;
+      watchFileId: string
+      actors: Array<{ id: string; sourceIds: string[] }>
     }) => batchChangeActorStatus(watchFileId, actors, defaultErrorMessage),
 
     onError(error) {
-      options?.onError?.(error);
-      console.error('Failed to batch change actor status:', error);
+      options?.onError?.(error)
+      console.error('Failed to batch change actor status:', error)
     },
     onSuccess(data, { watchFileId }) {
-      options?.onSuccess?.(data);
+      options?.onSuccess?.(data)
 
-      const successCount = data.processed;
-      const failedCount = data.failed;
+      const successCount = data.processed
+      const failedCount = data.failed
 
       if (data.success || successCount > 0) {
-        toast.success(
-          t('watch_files.actors.batch_change.success', successCount),
-        );
+        toast.success(t('watch_files.actors.batch_change.success', successCount))
       }
 
       if (failedCount > 0) {
-        toast.error(
-          t('watch_files.actors.batch_change.partial_error', failedCount),
-        );
+        toast.error(t('watch_files.actors.batch_change.partial_error', failedCount))
       }
 
       queryCache.invalidateQueries({
         key: ACTOR_QUERY_KEYS.byWatchFile(watchFileId),
-      });
+      })
     },
     onSettled(_, __, { watchFileId }) {
       queryCache.invalidateQueries({
         key: SOURCES_QUERY_KEYS.byWatchFile(watchFileId),
-      });
+      })
     },
-  });
+  })
 
-  return { ...mutation, batchChangeStatus: mutate };
-};
+  return { ...mutation, batchChangeStatus: mutate }
+}

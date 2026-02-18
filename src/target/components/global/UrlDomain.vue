@@ -29,17 +29,17 @@
 </template>
 
 <script setup lang="ts">
-import { Link, OPopper, Icon } from '@owlint/feathers-vue';
-import { computed } from 'vue';
-import Logo from '~/components/global/Logo.vue';
+import { Link, OPopper, Icon } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import Logo from '~/components/global/Logo.vue'
 
 interface Props {
-  domain?: string;
-  alt?: string;
-  url?: string;
-  label?: string;
-  showLogo?: boolean;
-  size?: 'sm' | 'lg';
+  domain?: string
+  alt?: string
+  url?: string
+  label?: string
+  showLogo?: boolean
+  size?: 'sm' | 'lg'
 }
 
 const {
@@ -49,9 +49,9 @@ const {
   size = 'lg',
   url = undefined,
   label = undefined,
-} = defineProps<Props>();
+} = defineProps<Props>()
 
 const href = computed(() => {
-  return url ?? 'https://' + domain;
-});
+  return url ?? 'https://' + domain
+})
 </script>

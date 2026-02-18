@@ -1,13 +1,13 @@
-import type { DateValue } from 'reka-ui';
-import type { Actor, Source } from './facet';
-import type { WatchFileEventType } from './watchFile';
+import type { DateValue } from 'reka-ui'
+import type { Actor, Source } from './facet'
+import type { WatchFileEventType } from './watchFile'
 
 export interface DocumentFilter {
-  value: string;
-  title: string;
-  count: number;
-  icon?: string;
-  empty?: boolean;
+  value: string
+  title: string
+  count: number
+  icon?: string
+  empty?: boolean
 }
 
 export enum DatesPeriod {
@@ -21,47 +21,47 @@ export enum FilterDates {
   COLLECT = 'collect',
 }
 
-export type FilterDatesType = keyof typeof FilterDates | undefined;
+export type FilterDatesType = keyof typeof FilterDates | undefined
 
 export interface DatePicker {
-  start?: DateValue;
-  end?: DateValue;
+  start?: DateValue
+  end?: DateValue
 }
 
 export interface Filter {
-  datesPicker: DatePicker | undefined;
-  selectedPeriod?: DatesPeriod;
-  selectedDateType?: FilterDates;
-  status: string[];
-  actors: Actor[];
-  sources: Source[];
+  datesPicker: DatePicker | undefined
+  selectedPeriod?: DatesPeriod
+  selectedDateType?: FilterDates
+  status: string[]
+  actors: Actor[]
+  sources: Source[]
 }
 
 export interface ApiFilter {
-  status: string[];
-  actors: string[];
-  sources: string[];
-  search: string;
-  watchFileId?: string;
-  sortBy?: string;
-  sortOrder?: string;
-  page?: number;
-  itemsPerPage?: number;
+  status: string[]
+  actors: string[]
+  sources: string[]
+  search: string
+  watchFileId?: string
+  sortBy?: string
+  sortOrder?: string
+  page?: number
+  itemsPerPage?: number
 }
 
 // Form filters types
 export interface BaseFormFilters {
-  datesPicker?: DatePicker;
-  selectedPeriod?: DatesPeriod;
-  actors: Actor[];
-  sources: Source[];
+  datesPicker?: DatePicker
+  selectedPeriod?: DatesPeriod
+  actors: Actor[]
+  sources: Source[]
 }
 
 export interface DocumentsFormFilters extends BaseFormFilters {
-  selectedDateType?: FilterDates;
-  status: string[];
+  selectedDateType?: FilterDates
+  status: string[]
 }
 
 export interface AnalysisFormFilters extends BaseFormFilters {
-  eventTypes: WatchFileEventType[];
+  eventTypes: WatchFileEventType[]
 }

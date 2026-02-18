@@ -1,29 +1,15 @@
 <template>
-  <i18n-t
-    scope="global"
-    keypath="watch_files.activity.history.status_changed"
-    tag="span"
-  >
+  <i18n-t scope="global" keypath="watch_files.activity.history.status_changed" tag="span">
     <template #userName>
       <span class="font-semibold">{{ userName }}</span>
     </template>
     <template #oldStatus>
-      <Tag
-        variant="secondary"
-        kind="light"
-        size="sm"
-        :icon="getStatusIcon(oldStatus)"
-      >
+      <Tag variant="secondary" kind="light" size="sm" :icon="getStatusIcon(oldStatus)">
         {{ oldStatusText }}
       </Tag>
     </template>
     <template #newStatus>
-      <Tag
-        variant="secondary"
-        kind="light"
-        size="sm"
-        :icon="getStatusIcon(newStatus)"
-      >
+      <Tag variant="secondary" kind="light" size="sm" :icon="getStatusIcon(newStatus)">
         {{ newStatusText }}
       </Tag>
     </template>
@@ -31,30 +17,30 @@
 </template>
 
 <script setup lang="ts">
-import { Tag } from '@owlint/feathers-vue';
-import type { WatchFileStatus } from '~/types/watchFile';
-import { WATCH_FILE_STATUS, WATCH_FILE_STATUS_ICONS } from '~/types/watchFile';
+import { Tag } from '@owlint/feathers-vue'
+import type { WatchFileStatus } from '~/types/watchFile'
+import { WATCH_FILE_STATUS, WATCH_FILE_STATUS_ICONS } from '~/types/watchFile'
 
 interface Props {
-  userName: string;
-  oldStatusText: string;
-  newStatusText: string;
-  oldStatus: WatchFileStatus;
-  newStatus: WatchFileStatus;
+  userName: string
+  oldStatusText: string
+  newStatusText: string
+  oldStatus: WatchFileStatus
+  newStatus: WatchFileStatus
 }
 
-defineProps<Props>();
+defineProps<Props>()
 
 function getStatusIcon(status: WatchFileStatus) {
   switch (status) {
     case WATCH_FILE_STATUS.DRAFT:
-      return WATCH_FILE_STATUS_ICONS.DRAFT;
+      return WATCH_FILE_STATUS_ICONS.DRAFT
     case WATCH_FILE_STATUS.ENABLED:
-      return WATCH_FILE_STATUS_ICONS.ENABLED;
+      return WATCH_FILE_STATUS_ICONS.ENABLED
     case WATCH_FILE_STATUS.ARCHIVED:
-      return WATCH_FILE_STATUS_ICONS.ARCHIVED;
+      return WATCH_FILE_STATUS_ICONS.ARCHIVED
     default:
-      return 'fa-circle-info';
+      return 'fa-circle-info'
   }
 }
 </script>

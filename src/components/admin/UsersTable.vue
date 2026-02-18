@@ -33,12 +33,7 @@
           variant="success"
           size="sm"
         />
-        <Tag
-          v-else
-          :label="$t('admin.users.roles.custom', 'Custom')"
-          variant="slate"
-          size="sm"
-        />
+        <Tag v-else :label="$t('admin.users.roles.custom', 'Custom')" variant="slate" size="sm" />
       </td>
     </template>
 

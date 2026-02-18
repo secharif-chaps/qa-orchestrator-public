@@ -4,4 +4,4 @@ export const config = {
   enablePiniaColadaDevtool:
     import.meta.env.VITE_ENABLE_PINIA_COLADA_DEVTOOL === 'true',
   clarityKey: import.meta.env.VITE_APP_CLARITY_PROJECT_ID || '',
-} as const;
+} as const

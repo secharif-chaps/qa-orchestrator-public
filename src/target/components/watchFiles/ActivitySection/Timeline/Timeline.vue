@@ -13,25 +13,18 @@
         <template v-for="(day, dayIndex) in days" :key="day.date">
           <!-- Date header -->
           <div class="relative mb-6">
-            <Tag
-              size="sm"
-              class="relative left-6 z-10 -ml-10 inline-block -translate-x-1/2"
-            >
+            <Tag size="sm" class="relative left-6 z-10 -ml-10 inline-block -translate-x-1/2">
               {{ d(day.date, 'short') }}
             </Tag>
           </div>
 
           <!-- Activities for this day -->
-          <template
-            v-for="(activity, activityIndex) in day.activities"
-            :key="activity.id"
-          >
+          <template v-for="(activity, activityIndex) in day.activities" :key="activity.id">
             <div
               class="relative mb-4 flex gap-2"
               :class="{
                 'last-event':
-                  dayIndex === days.length - 1 &&
-                  activityIndex === day.activities.length - 1,
+                  dayIndex === days.length - 1 && activityIndex === day.activities.length - 1,
               }"
             >
               <div
@@ -54,10 +47,7 @@
                     v-if="activity.message.dataType === 'Source'"
                     :activity="activity.message.activity"
                   />
-                  <TimelineItemWatchFileDescription
-                    v-else
-                    :activity="activity.message.activity"
-                  />
+                  <TimelineItemWatchFileDescription v-else :activity="activity.message.activity" />
                 </div>
                 <Button
                   v-if="activity.button"
@@ -97,72 +87,70 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Icon, Tag } from '@owlint/feathers-vue';
-import { nextTick, onMounted, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import TimelineSkeleton from '~/components/skeletons/TimelineSkeleton.vue';
-import type { TimelineProps } from '~/types/timeline';
-import TimelineItemSourceDescription from './TimelineItemSourceDescription.vue';
-import TimelineItemWatchFileDescription from './TimelineItemWatchFileDescription.vue';
+import { Button, Icon, Tag } from '@owlint/feathers-vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import TimelineSkeleton from '~/components/skeletons/TimelineSkeleton.vue'
+import type { TimelineProps } from '~/types/timeline'
+import TimelineItemSourceDescription from './TimelineItemSourceDescription.vue'
+import TimelineItemWatchFileDescription from './TimelineItemWatchFileDescription.vue'
 
-const { days = [], isLoading } = defineProps<TimelineProps>();
+const { days = [], isLoading } = defineProps<TimelineProps>()
 
 const emit = defineEmits<{
-  loadMore: [];
-}>();
+  loadMore: []
+}>()
 
-const { t, d } = useI18n();
+const { t, d } = useI18n()
 
-const timelineRef = ref<HTMLElement>();
-const lineRef = ref<HTMLElement>();
-const lineHeight = ref(0);
+const timelineRef = ref<HTMLElement>()
+const lineRef = ref<HTMLElement>()
+const lineHeight = ref(0)
 
 const updateLineHeight = () => {
   if (timelineRef.value) {
-    const lastElement = timelineRef.value.querySelector(
-      '.last-event',
-    ) as HTMLElement;
+    const lastElement = timelineRef.value.querySelector('.last-event') as HTMLElement
 
     if (lastElement) {
       // Get the container and last element positions
-      const containerRect = timelineRef.value.getBoundingClientRect();
-      const lastElementRect = lastElement.getBoundingClientRect();
+      const containerRect = timelineRef.value.getBoundingClientRect()
+      const lastElementRect = lastElement.getBoundingClientRect()
 
       // Calculate the position of the last element relative to the container
-      const lastElementTop = lastElementRect.top - containerRect.top;
+      const lastElementTop = lastElementRect.top - containerRect.top
       // The line stops at 1/3 of the height of the last element (to make sure it is behind)
-      lineHeight.value = lastElementTop + lastElementRect.height / 3;
+      lineHeight.value = lastElementTop + lastElementRect.height / 3
     } else {
       // Fallback if no last element - use the full height of the container
-      lineHeight.value = timelineRef.value.scrollHeight;
+      lineHeight.value = timelineRef.value.scrollHeight
     }
   }
-};
+}
 
 onMounted(() => {
   if (timelineRef.value) {
-    updateLineHeight();
+    updateLineHeight()
   }
-});
+})
 
 watch(
   () => days,
   async () => {
     if (!isLoading) {
-      await nextTick();
-      updateLineHeight();
+      await nextTick()
+      updateLineHeight()
     }
   },
   { deep: true },
-);
+)
 
 watch(
   () => isLoading,
   async (newIsLoading, oldIsLoading) => {
     if (oldIsLoading && !newIsLoading) {
-      await nextTick();
-      updateLineHeight();
+      await nextTick()
+      updateLineHeight()
     }
   },
-);
+)
 </script>

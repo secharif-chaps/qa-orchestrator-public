@@ -1,22 +1,22 @@
-import type { SortOrder } from '@owlint/feathers-vue';
-import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
-import type { WatchFileFilters } from '~/types/watchFile';
+import type { SortOrder } from '@owlint/feathers-vue'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+import type { WatchFileFilters } from '~/types/watchFile'
 
 export const useWatchFileStore = defineStore('watchFile', () => {
   // UI state management only - no server state or API calls
 
-  const currentPage = ref(1);
-  const itemsPerPage = ref(10);
-  const sortBy = ref<string>('sortBy');
-  const sortOrder = ref<SortOrder>('ASC');
-  const searchQuery = ref<string>('');
-  const showFavorites = ref<boolean>(false);
-  const hideArchived = ref<boolean>(true);
-  const isUserEditable = ref<boolean>(false);
+  const currentPage = ref(1)
+  const itemsPerPage = ref(10)
+  const sortBy = ref<string>('sortBy')
+  const sortOrder = ref<SortOrder>('ASC')
+  const searchQuery = ref<string>('')
+  const showFavorites = ref<boolean>(false)
+  const hideArchived = ref<boolean>(true)
+  const isUserEditable = ref<boolean>(false)
 
   // Current watch file ID - used for silent navigation after creation
-  const currentWatchFileId = ref<string | null>(null);
+  const currentWatchFileId = ref<string | null>(null)
 
   const filters = computed(
     (): WatchFileFilters => ({
@@ -28,27 +28,27 @@ export const useWatchFileStore = defineStore('watchFile', () => {
       ...(showFavorites.value && { onlyFavorites: true }),
       ...(!hideArchived.value && { includeArchived: true }),
     }),
-  );
+  )
 
   const resetPagination = () => {
-    currentPage.value = 1;
-  };
+    currentPage.value = 1
+  }
 
   const resetFilters = () => {
-    sortBy.value = 'sortBy';
-    sortOrder.value = 'ASC';
-    searchQuery.value = '';
-    showFavorites.value = false;
-    hideArchived.value = true;
-    isUserEditable.value = false;
-  };
+    sortBy.value = 'sortBy'
+    sortOrder.value = 'ASC'
+    searchQuery.value = ''
+    showFavorites.value = false
+    hideArchived.value = true
+    isUserEditable.value = false
+  }
 
   const $reset = () => {
-    resetFilters();
-    resetPagination();
-    itemsPerPage.value = 10;
-    currentWatchFileId.value = null;
-  };
+    resetFilters()
+    resetPagination()
+    itemsPerPage.value = 10
+    currentWatchFileId.value = null
+  }
 
   return {
     currentPage,
@@ -66,5 +66,5 @@ export const useWatchFileStore = defineStore('watchFile', () => {
     resetPagination,
     resetFilters,
     $reset,
-  };
-});
+  }
+})

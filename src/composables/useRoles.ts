@@ -29,7 +29,7 @@ const ROLES: Record<RoleId, Role> = {
     id: 'reader',
     name: 'Reader',
     description:
-      'Read-only access to the organization\'s folders and company profiles. Can browse and consult all shared content.',
+      "Read-only access to the organization's folders and company profiles. Can browse and consult all shared content.",
     permissions: ['organization.read'],
     color: 'primary',
     icon: 'fa-eye',
@@ -48,7 +48,12 @@ const ROLES: Record<RoleId, Role> = {
     name: 'Manager',
     description:
       'All Writer permissions plus team management: can add or remove members and configure their permissions within the organization.',
-    permissions: ['organization.read', 'organization.write', 'organization.manage', 'company.create'],
+    permissions: [
+      'organization.read',
+      'organization.write',
+      'organization.manage',
+      'company.create',
+    ],
     color: 'secondary',
     icon: 'fa-users-cog',
   },

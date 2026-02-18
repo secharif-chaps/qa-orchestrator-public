@@ -10,12 +10,7 @@
       }"
       @dblclick.stop="titleManager.enterEditMode"
     >
-      <template
-        v-if="
-          titleManager.displayTitle.value.length >
-          titleManager.maxTitleDisplayLength
-        "
-      >
+      <template v-if="titleManager.displayTitle.value.length > titleManager.maxTitleDisplayLength">
         <OPopper placement="top" class="tooltip-wrapper">
           <template #tooltip>
             <div class="tooltip-content">
@@ -68,9 +63,7 @@
           class="shrink-0"
           :aria-label="$t('watch_files.title.aria_label_confirm_button')"
           :loading="titleManager.isSaving.value"
-          :disabled="
-            !titleManager.isValidTitle.value || titleManager.isSaving.value
-          "
+          :disabled="!titleManager.isValidTitle.value || titleManager.isSaving.value"
           @click="titleManager.saveTitle"
         />
       </div>
@@ -85,37 +78,37 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Input, OPopper } from '@owlint/feathers-vue';
-import { computed, onMounted, onUnmounted, toRef } from 'vue';
-import { useWatchFileTitle } from '~/composables/useWatchFileTitle';
-import type { WatchFile } from '~/types/watchFile';
+import { Button, Input, OPopper } from '@owlint/feathers-vue'
+import { computed, onMounted, onUnmounted, toRef } from 'vue'
+import { useWatchFileTitle } from '~/composables/useWatchFileTitle'
+import type { WatchFile } from '~/types/watchFile'
 
 const props = withDefaults(
   defineProps<{
-    watchFile?: WatchFile | null;
-    canEdit?: boolean;
+    watchFile?: WatchFile | null
+    canEdit?: boolean
   }>(),
   {
     watchFile: null,
     title: '',
     canEdit: false,
   },
-);
+)
 
-const disabled = computed(() => props.watchFile === null);
+const disabled = computed(() => props.watchFile === null)
 
 const titleManager = useWatchFileTitle({
   watchFile: toRef(props, 'watchFile'),
   canEdit: toRef(props, 'canEdit'),
-});
+})
 
 onMounted(() => {
-  document.addEventListener('click', titleManager.handleClickOutside);
-});
+  document.addEventListener('click', titleManager.handleClickOutside)
+})
 
 onUnmounted(() => {
-  document.removeEventListener('click', titleManager.handleClickOutside);
-});
+  document.removeEventListener('click', titleManager.handleClickOutside)
+})
 </script>
 
 <style scoped>

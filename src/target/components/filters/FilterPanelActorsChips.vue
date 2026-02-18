@@ -14,38 +14,32 @@
       class="shrink-0 rounded-full object-contain"
     />
     <span class="shrink">{{ actor.label }}</span>
-    <button
-      class="flex items-center justify-center"
-      @click="emit('openEditFilter', 'actors')"
-    >
+    <button class="flex items-center justify-center" @click="emit('openEditFilter', 'actors')">
       <Icon icon="fa-pen" />
     </button>
-    <button
-      class="flex items-center justify-center"
-      @click="handleRemove(actor.id)"
-    >
+    <button class="flex items-center justify-center" @click="handleRemove(actor.id)">
       <Icon icon="fa-xmark" />
     </button>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@owlint/feathers-vue';
-import type { Actor } from '~/types/facet';
-import Logo from '~/components/global/Logo.vue';
+import { Icon } from '@owlint/feathers-vue'
+import type { Actor } from '~/types/facet'
+import Logo from '~/components/global/Logo.vue'
 
 interface Props {
-  actors: Actor[];
+  actors: Actor[]
 }
 
-defineProps<Props>();
+defineProps<Props>()
 
 const emit = defineEmits<{
-  openEditFilter: [filterType: string];
-  remove: [id: string];
-}>();
+  openEditFilter: [filterType: string]
+  remove: [id: string]
+}>()
 
 const handleRemove = (id: string) => {
-  emit('remove', id);
-};
+  emit('remove', id)
+}
 </script>

@@ -1,4 +1,4 @@
-import type { WatchFile } from './watchFile';
+import type { WatchFile } from './watchFile'
 
 export enum MessageRole {
   SYSTEM = 'system',
@@ -21,44 +21,44 @@ export enum ConversationState {
 }
 
 export interface TextContent {
-  '@type': 'TextContent';
-  '@id': string;
-  id: string;
-  content: string;
+  '@type': 'TextContent'
+  '@id': string
+  id: string
+  content: string
 }
 
 export interface FunctionCallContent {
-  '@type': 'FunctionCallContent';
-  '@id': string;
-  id: string;
-  functionName: string;
-  arguments: Record<string, unknown>;
+  '@type': 'FunctionCallContent'
+  '@id': string
+  id: string
+  functionName: string
+  arguments: Record<string, unknown>
 }
 
 export interface Message {
-  id: string;
-  '@type': 'Message';
-  contents: (TextContent | FunctionCallContent)[];
-  role: MessageRole;
-  status: MessageStatus;
-  retryCount: number;
-  metadata?: Record<string, unknown>;
-  createdAt: string;
-  loading?: boolean;
+  id: string
+  '@type': 'Message'
+  contents: (TextContent | FunctionCallContent)[]
+  role: MessageRole
+  status: MessageStatus
+  retryCount: number
+  metadata?: Record<string, unknown>
+  createdAt: string
+  loading?: boolean
   createdBy?: {
-    defaultThumbnail?: string;
-  } | null;
+    defaultThumbnail?: string
+  } | null
 }
 
 // Conversation with messages
 export interface Conversation {
-  id: string;
-  title: string;
-  watchFile: WatchFile;
-  metadata?: Record<string, unknown>;
-  state: ConversationState;
-  createdAt: string;
-  updatedAt: string;
-  language: 'fr' | 'en';
-  messages: Message[];
+  id: string
+  title: string
+  watchFile: WatchFile
+  metadata?: Record<string, unknown>
+  state: ConversationState
+  createdAt: string
+  updatedAt: string
+  language: 'fr' | 'en'
+  messages: Message[]
 }

@@ -1,150 +1,143 @@
-import type { MaybeRef } from 'vue';
-import { computed, nextTick, readonly, ref, unref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useUpdateWatchFile } from '~/api/mutations/watchFile';
-import type { WatchFile } from '~/types/watchFile';
+import type { MaybeRef } from 'vue'
+import { computed, nextTick, readonly, ref, unref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useUpdateWatchFile } from '~/api/mutations/watchFile'
+import type { WatchFile } from '~/types/watchFile'
 
 interface UseWatchFileTitleOptions {
-  watchFile?: MaybeRef<WatchFile | null>;
-  onUpdate?: (updatedWatchFile: WatchFile) => void;
-  canEdit?: MaybeRef<boolean>;
+  watchFile?: MaybeRef<WatchFile | null>
+  onUpdate?: (updatedWatchFile: WatchFile) => void
+  canEdit?: MaybeRef<boolean>
 }
 
 export const useWatchFileTitle = (options: UseWatchFileTitleOptions = {}) => {
-  const { t } = useI18n();
+  const { t } = useI18n()
 
-  const { updateTask, isLoading: isSaving } = useUpdateWatchFile();
+  const { updateTask, isLoading: isSaving } = useUpdateWatchFile()
 
-  const isEditing = ref(false);
-  const editValue = ref('');
-  const originalValue = ref('');
+  const isEditing = ref(false)
+  const editValue = ref('')
+  const originalValue = ref('')
   const currentTitle = computed(() => {
-    return unref(options.watchFile)?.name || '';
-  });
+    return unref(options.watchFile)?.name || ''
+  })
 
-  const maxTitleDisplayLength = 70;
+  const maxTitleDisplayLength = 70
   const currentTitleTruncated = computed(() => {
-    const title = currentTitle.value;
+    const title = currentTitle.value
     return title.length > maxTitleDisplayLength
       ? `${title.slice(0, maxTitleDisplayLength)}...`
-      : title;
-  });
+      : title
+  })
 
   const displayTitle = computed(() => {
-    return currentTitle.value;
-  });
+    return currentTitle.value
+  })
 
   const isPlaceholder = computed(() => {
-    return !currentTitle.value;
-  });
+    return !currentTitle.value
+  })
 
   const hasChanges = computed(() => {
-    return editValue.value !== originalValue.value;
-  });
+    return editValue.value !== originalValue.value
+  })
 
   const isValidTitle = computed<boolean>(() => {
-    const trimmed = editValue.value.trim();
-    return trimmed.length >= 3 && trimmed.length <= 255;
-  });
+    const trimmed = editValue.value.trim()
+    return trimmed.length >= 3 && trimmed.length <= 255
+  })
 
   const error = computed<string | null>(() => {
     if (!isEditing.value) {
-      return null;
+      return null
     }
 
     if (editValue.value.trim() === '') {
-      return t('watch_files.title.error.empty');
+      return t('watch_files.title.error.empty')
     }
 
     if (!isValidTitle.value) {
-      return t('watch_files.title.error.invalid_length');
+      return t('watch_files.title.error.invalid_length')
     }
 
-    return null;
-  });
+    return null
+  })
 
   const enterEditMode = () => {
     if (!unref(options.canEdit)) {
-      return false;
+      return false
     }
 
-    const watchFile = unref(options.watchFile);
-    if (!watchFile) return false;
+    const watchFile = unref(options.watchFile)
+    if (!watchFile) return false
 
-    originalValue.value = currentTitle.value;
-    editValue.value = currentTitle.value;
-    isEditing.value = true;
+    originalValue.value = currentTitle.value
+    editValue.value = currentTitle.value
+    isEditing.value = true
 
     nextTick(() => {
-      const input = document.querySelector(
-        '[data-watch-file-title-input]',
-      ) as HTMLInputElement;
-      input?.focus();
-      input?.select();
-    });
-  };
+      const input = document.querySelector('[data-watch-file-title-input]') as HTMLInputElement
+      input?.focus()
+      input?.select()
+    })
+  }
 
   const exitEditMode = () => {
-    isEditing.value = false;
-    editValue.value = '';
-    originalValue.value = '';
-  };
+    isEditing.value = false
+    editValue.value = ''
+    originalValue.value = ''
+  }
 
   const cancelEdit = () => {
-    editValue.value = originalValue.value;
-    exitEditMode();
-  };
+    editValue.value = originalValue.value
+    exitEditMode()
+  }
 
   const saveTitle = async () => {
-    const watchFile = unref(options.watchFile);
-    if (!watchFile) return;
+    const watchFile = unref(options.watchFile)
+    if (!watchFile) return
 
-    if (!isValidTitle.value) return;
+    if (!isValidTitle.value) return
 
     if (!hasChanges.value) {
-      exitEditMode();
-      return;
+      exitEditMode()
+      return
     }
 
-    updateTask({ id: watchFile.id, data: { name: editValue.value.trim() } });
-    exitEditMode();
-  };
+    updateTask({ id: watchFile.id, data: { name: editValue.value.trim() } })
+    exitEditMode()
+  }
 
   const handleKeydown = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
-      event.preventDefault();
-      saveTitle();
+      event.preventDefault()
+      saveTitle()
     } else if (event.key === 'Escape') {
-      event.preventDefault();
-      cancelEdit();
+      event.preventDefault()
+      cancelEdit()
     }
-  };
+  }
 
   const handleClickOutside = (event: Event) => {
-    if (!isEditing.value) return;
+    if (!isEditing.value) return
 
     if (isSaving.value) {
-      event.stopPropagation();
-      return;
+      event.stopPropagation()
+      return
     }
 
-    const titleContainer = document.querySelector(
-      '[data-watch-file-title-container]',
-    );
+    const titleContainer = document.querySelector('[data-watch-file-title-container]')
 
-    if (
-      titleContainer &&
-      titleContainer.contains(event.target as HTMLElement)
-    ) {
-      return;
+    if (titleContainer && titleContainer.contains(event.target as HTMLElement)) {
+      return
     }
 
     if (hasChanges.value) {
-      saveTitle();
+      saveTitle()
     } else {
-      cancelEdit();
+      cancelEdit()
     }
-  };
+  }
 
   return {
     isEditing: readonly(isEditing),
@@ -164,5 +157,5 @@ export const useWatchFileTitle = (options: UseWatchFileTitleOptions = {}) => {
     saveTitle,
     handleKeydown,
     handleClickOutside,
-  };
-};
+  }
+}

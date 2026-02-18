@@ -8,45 +8,40 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { Switch } from '@owlint/feathers-vue';
-import { useChangeSourceStatus } from '~/api/mutations/sources';
-import { SourceStatus, type Source } from '~/types/source';
+import { computed } from 'vue'
+import { Switch } from '@owlint/feathers-vue'
+import { useChangeSourceStatus } from '~/api/mutations/sources'
+import { SourceStatus, type Source } from '~/types/source'
 
 interface Props {
-  source: Source;
-  watchFileId: string;
-  batchSelection?: boolean;
-  selectedSources?: string[];
+  source: Source
+  watchFileId: string
+  batchSelection?: boolean
+  selectedSources?: string[]
 }
 
 interface Emits {
-  'toggle-selection': [sourceId: string, isSelected: boolean];
+  'toggle-selection': [sourceId: string, isSelected: boolean]
 }
 
-const {
-  source,
-  watchFileId,
-  batchSelection = false,
-  selectedSources = [],
-} = defineProps<Props>();
+const { source, watchFileId, batchSelection = false, selectedSources = [] } = defineProps<Props>()
 
-const emit = defineEmits<Emits>();
+const emit = defineEmits<Emits>()
 
-const { changeStatus } = useChangeSourceStatus();
+const { changeStatus } = useChangeSourceStatus()
 
 const isActive = computed(() => {
   if (batchSelection) {
-    return selectedSources.includes(source.id);
+    return selectedSources.includes(source.id)
   }
-  return source.status === SourceStatus.ACTIVE;
-});
+  return source.status === SourceStatus.ACTIVE
+})
 
 const onSwitchToggle = () => {
   if (batchSelection) {
-    emit('toggle-selection', source.id, !isActive.value);
+    emit('toggle-selection', source.id, !isActive.value)
   } else {
-    changeStatus({ source, watchFileId });
+    changeStatus({ source, watchFileId })
   }
-};
+}
 </script>

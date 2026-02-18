@@ -17,30 +17,25 @@
 </template>
 
 <script setup lang="ts">
-import { Button } from '@owlint/feathers-vue';
-import { computed } from 'vue';
-import { useWatchFileStatusModal } from '~/composables/useWatchFileStatusModal';
-import type { WatchFile } from '~/types/watchFile';
-import { WATCH_FILE_STATUS } from '~/types/watchFile';
+import { Button } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useWatchFileStatusModal } from '~/composables/useWatchFileStatusModal'
+import type { WatchFile } from '~/types/watchFile'
+import { WATCH_FILE_STATUS } from '~/types/watchFile'
 
 const props = defineProps<{
-  watchFile: WatchFile;
-}>();
+  watchFile: WatchFile
+}>()
 
-const { showStatusModal, showRestoreModal } = useWatchFileStatusModal(
-  {},
-  props.watchFile,
-);
+const { showStatusModal, showRestoreModal } = useWatchFileStatusModal({}, props.watchFile)
 
-const isArchived = computed(
-  () => props.watchFile.status === WATCH_FILE_STATUS.ARCHIVED,
-);
+const isArchived = computed(() => props.watchFile.status === WATCH_FILE_STATUS.ARCHIVED)
 
 const onButtonClick = async () => {
   if (isArchived.value) {
-    showRestoreModal(props.watchFile);
+    showRestoreModal(props.watchFile)
   } else {
-    showStatusModal(props.watchFile, WATCH_FILE_STATUS.ARCHIVED);
+    showStatusModal(props.watchFile, WATCH_FILE_STATUS.ARCHIVED)
   }
-};
+}
 </script>

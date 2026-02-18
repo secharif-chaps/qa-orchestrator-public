@@ -34,21 +34,21 @@
 </template>
 
 <script lang="ts" setup>
-import { Button, Checkbox } from '@owlint/feathers-vue';
-import { useI18n } from 'vue-i18n';
-import type { StatusFacet } from '~/types/facet';
+import { Button, Checkbox } from '@owlint/feathers-vue'
+import { useI18n } from 'vue-i18n'
+import type { StatusFacet } from '~/types/facet'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 interface Props {
-  statuses: StatusFacet[];
+  statuses: StatusFacet[]
 }
 
-defineProps<Props>();
+defineProps<Props>()
 
-const selectedStatuses = defineModel<string[]>({ required: true });
+const selectedStatuses = defineModel<string[]>({ required: true })
 
 const handleReset = () => {
-  selectedStatuses.value = [];
-};
+  selectedStatuses.value = []
+}
 </script>

@@ -17,11 +17,7 @@
           <div>
             <div class="mb-2 h-4 w-32 animate-pulse rounded bg-gray-200"></div>
             <ul class="mt-1 list-inside list-disc space-y-1">
-              <li
-                v-for="actorIndex in 3"
-                :key="actorIndex"
-                class="flex items-center gap-1.5"
-              >
+              <li v-for="actorIndex in 3" :key="actorIndex" class="flex items-center gap-1.5">
                 <div class="h-3.5 w-32 animate-pulse rounded bg-gray-200"></div>
               </li>
             </ul>

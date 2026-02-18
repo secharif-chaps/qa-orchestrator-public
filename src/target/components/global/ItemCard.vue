@@ -29,10 +29,7 @@
         </div>
       </div>
 
-      <div
-        v-if="description && variant !== 'minimal'"
-        class="text-sm text-gray-900"
-      >
+      <div v-if="description && variant !== 'minimal'" class="text-sm text-gray-900">
         {{ description }}
       </div>
     </div>
@@ -51,27 +48,26 @@
 </template>
 
 <script setup lang="ts">
-import { Tag } from '@owlint/feathers-vue';
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import Logo from '~/components/global/Logo.vue';
+import { Tag } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import Logo from '~/components/global/Logo.vue'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 interface Props {
-  variant?: 'compact' | 'detail' | 'list' | 'minimal';
-  domain?: string;
-  name: string;
-  description?: string;
-  date?: string | Date;
+  variant?: 'compact' | 'detail' | 'list' | 'minimal'
+  domain?: string
+  name: string
+  description?: string
+  date?: string | Date
 }
 
-const props = defineProps<Props>();
+const props = defineProps<Props>()
 
 const isNew = computed(() => {
-  if (!props.date) return false;
-  const dateValue =
-    props.date instanceof Date ? props.date : new Date(props.date);
-  return dateValue > new Date(Date.now() - 1000 * 60 * 60 * 24);
-});
+  if (!props.date) return false
+  const dateValue = props.date instanceof Date ? props.date : new Date(props.date)
+  return dateValue > new Date(Date.now() - 1000 * 60 * 60 * 24)
+})
 </script>

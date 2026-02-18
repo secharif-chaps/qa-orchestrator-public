@@ -19,41 +19,35 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
-import { useSidebarStore } from '~/stores/sidebar';
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useSidebarStore } from '~/stores/sidebar'
 
-const sidebarStore = useSidebarStore();
-const sidebarEl = ref<HTMLElement>();
+const sidebarStore = useSidebarStore()
+const sidebarEl = ref<HTMLElement>()
 
-const pendingAssistAction = ref<unknown>(null);
+const pendingAssistAction = ref<unknown>(null)
 
 // Handle Chapse Assist quick action events
 const handleAssistActionEvent = (event: CustomEvent) => {
   // Store the event data for ChapseSidebar to pick up
-  pendingAssistAction.value = event.detail;
+  pendingAssistAction.value = event.detail
 
   // Switch to chapse sidebar
-  sidebarStore.setState('chapse');
-};
+  sidebarStore.setState('chapse')
+}
 
 onMounted(() => {
-  window.addEventListener(
-    'chapse-assist-action',
-    handleAssistActionEvent as EventListener,
-  );
-});
+  window.addEventListener('chapse-assist-action', handleAssistActionEvent as EventListener)
+})
 
 onUnmounted(() => {
-  window.removeEventListener(
-    'chapse-assist-action',
-    handleAssistActionEvent as EventListener,
-  );
-});
+  window.removeEventListener('chapse-assist-action', handleAssistActionEvent as EventListener)
+})
 
 // Horizontal scroll configuration
-const SCROLL_THRESHOLD = 50; // Pixels of accumulated horizontal scroll needed to switch tabs
-let scrollDelta = 0;
-const isNavigating = ref(false); // Prevent multiple navigations in one gesture
+const SCROLL_THRESHOLD = 50 // Pixels of accumulated horizontal scroll needed to switch tabs
+let scrollDelta = 0
+const isNavigating = ref(false) // Prevent multiple navigations in one gesture
 
 // Handle horizontal scroll/swipe gestures
 function handleWheel(event: WheelEvent) {
@@ -63,79 +57,73 @@ function handleWheel(event: WheelEvent) {
       ? event.deltaX
       : event.shiftKey
         ? event.deltaY
-        : 0;
+        : 0
 
   // If no horizontal scroll detected, allow normal vertical/horizontal scrolling
-  if (horizontalDelta === 0) return;
+  if (horizontalDelta === 0) return
 
   // Check if the target element or its parents are scrollable horizontally
-  let target = event.target as HTMLElement;
+  let target = event.target as HTMLElement
   while (target && target !== sidebarEl.value) {
-    const hasHorizontalScroll = target.scrollWidth > target.clientWidth;
-    const computedStyle = window.getComputedStyle(target);
-    const overflowX = computedStyle.overflowX;
+    const hasHorizontalScroll = target.scrollWidth > target.clientWidth
+    const computedStyle = window.getComputedStyle(target)
+    const overflowX = computedStyle.overflowX
 
     // If element is scrollable horizontally, allow native scroll
-    if (
-      hasHorizontalScroll &&
-      (overflowX === 'auto' || overflowX === 'scroll')
-    ) {
-      return;
+    if (hasHorizontalScroll && (overflowX === 'auto' || overflowX === 'scroll')) {
+      return
     }
-    target = target.parentElement as HTMLElement;
+    target = target.parentElement as HTMLElement
   }
 
   // If already navigating, ignore additional scroll events
   if (isNavigating.value) {
-    event.preventDefault();
-    return;
+    event.preventDefault()
+    return
   }
 
   // Only prevent default when we're using it for tab navigation
-  event.preventDefault();
+  event.preventDefault()
 
   // Accumulate scroll delta
-  scrollDelta += horizontalDelta;
+  scrollDelta += horizontalDelta
 
   // Check if threshold is reached for next tab (scroll right)
   if (scrollDelta >= SCROLL_THRESHOLD) {
-    const success = sidebarStore.navigateNext();
+    const success = sidebarStore.navigateNext()
     if (success) {
-      isNavigating.value = true;
-      scrollDelta = 0;
+      isNavigating.value = true
+      scrollDelta = 0
       // Reset navigation lock after a short delay to allow new gestures
       setTimeout(() => {
-        isNavigating.value = false;
-      }, 300);
+        isNavigating.value = false
+      }, 300)
     } else {
       // At boundary, limit accumulation
-      scrollDelta = SCROLL_THRESHOLD;
+      scrollDelta = SCROLL_THRESHOLD
     }
   }
   // Check if threshold is reached for previous tab (scroll left)
   else if (scrollDelta <= -SCROLL_THRESHOLD) {
-    const success = sidebarStore.navigatePrevious();
+    const success = sidebarStore.navigatePrevious()
     if (success) {
-      isNavigating.value = true;
-      scrollDelta = 0;
+      isNavigating.value = true
+      scrollDelta = 0
       // Reset navigation lock after a short delay to allow new gestures
       setTimeout(() => {
-        isNavigating.value = false;
-      }, 300);
+        isNavigating.value = false
+      }, 300)
     } else {
       // At boundary, limit accumulation
-      scrollDelta = -SCROLL_THRESHOLD;
+      scrollDelta = -SCROLL_THRESHOLD
     }
   }
 }
 
 // Determine transition direction based on button order
 const isTransitioningRight = computed(() => {
-  return sidebarStore.isTransitioningRight(
-    sidebarStore.previousState,
-    sidebarStore.state,
-  );
-});
+  return sidebarStore.isTransitioningRight(sidebarStore.previousState, sidebarStore.state)
+})
 
 const transitionClasses = computed(() => {
   if (isTransitioningRight.value) {
@@ -147,7 +135,7 @@ const transitionClasses = computed(() => {
       enterTo: 'translate-x-0 opacity-100',
       leaveFrom: 'translate-x-0 opacity-100',
       leaveTo: '-translate-x-32 opacity-0',
-    };
+    }
   } else {
     // Moving to the left (lower index) - slide from left to right
     return {
@@ -157,7 +145,7 @@ const transitionClasses = computed(() => {
       enterTo: 'translate-x-0 opacity-100',
       leaveFrom: 'translate-x-0 opacity-100',
       leaveTo: 'translate-x-32 opacity-0',
-    };
+    }
   }
-});
+})
 </script>

@@ -1,10 +1,7 @@
 <template>
   <OPopper class="!cursor-default">
     <template #tooltip>
-      <div
-        v-sanitize-html="$t('watch_files.edit.alert.enabled.tooltip')"
-        class="tooltip-content"
-      />
+      <div v-sanitize-html="$t('watch_files.edit.alert.enabled.tooltip')" class="tooltip-content" />
     </template>
     <Tag icon="fa-lock" size="sm" intent="accent">
       {{ $t('watch_files.edit.alert.enabled') }}
@@ -13,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { OPopper, Tag } from '@owlint/feathers-vue';
+import { OPopper, Tag } from '@owlint/feathers-vue'
 </script>
 
 <style scoped>

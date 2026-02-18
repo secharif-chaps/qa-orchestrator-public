@@ -1,15 +1,15 @@
-import type { NavigationGuardWithThis } from 'vue-router';
-import { useAuth } from '~/composables/useAuth';
+import type { NavigationGuardWithThis } from 'vue-router'
+import { useAuth } from '~/composables/useAuth'
 
 const authMiddleware: NavigationGuardWithThis<undefined> = () => {
-  const { isAuthenticated, isAuthProviderReady } = useAuth();
+  const { isAuthenticated, isAuthProviderReady } = useAuth()
   if (!isAuthProviderReady?.value) {
-    return false;
+    return false
   }
 
   if (!isAuthenticated?.value) {
-    return false;
+    return false
   }
-};
+}
 
-export default authMiddleware;
+export default authMiddleware

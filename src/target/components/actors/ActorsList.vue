@@ -34,25 +34,25 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import SectionListHeader from '~/components/watchFiles/EditSection/SectionListHeader.vue';
-import { ActorStatus } from '~/types/actor';
-import type { WatchFileActor } from '~/types/watchFile';
-import ActorSelectionModal from './ActorSelectionModal.vue';
-import ActorsGrid from './ActorsGrid.vue';
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import SectionListHeader from '~/components/watchFiles/EditSection/SectionListHeader.vue'
+import { ActorStatus } from '~/types/actor'
+import type { WatchFileActor } from '~/types/watchFile'
+import ActorSelectionModal from './ActorSelectionModal.vue'
+import ActorsGrid from './ActorsGrid.vue'
 
 interface Props {
-  actors: WatchFileActor[];
-  loading?: boolean;
-  error?: string;
-  pageSize?: number;
-  totalItems?: number;
-  watchFileId?: string;
-  readonly?: boolean;
+  actors: WatchFileActor[]
+  loading?: boolean
+  error?: string
+  pageSize?: number
+  totalItems?: number
+  watchFileId?: string
+  readonly?: boolean
 }
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 const {
   actors,
@@ -62,64 +62,60 @@ const {
   totalItems = undefined,
   watchFileId = undefined,
   readonly = false,
-} = defineProps<Props>();
+} = defineProps<Props>()
 
-const emit = defineEmits(['retry', 'add', 'actor-updated']);
-const currentPage = defineModel<number>('currentPage', { required: true });
-const actorsList = ref<WatchFileActor[]>([...actors]);
-const isSelectionModalOpen = ref(false);
+const emit = defineEmits(['retry', 'add', 'actor-updated'])
+const currentPage = defineModel<number>('currentPage', { required: true })
+const actorsList = ref<WatchFileActor[]>([...actors])
+const isSelectionModalOpen = ref(false)
 
 const actorsStats = computed(() => {
-  const activeCount = actorsList.value.filter(
-    (a) => a.status === ActorStatus.ACTIVE,
-  ).length;
-  const total = totalItems ?? actorsList.value.length;
-  return { count: activeCount, total };
-});
+  const activeCount = actorsList.value.filter((a) => a.status === ActorStatus.ACTIVE).length
+  const total = totalItems ?? actorsList.value.length
+  return { count: activeCount, total }
+})
 
 const subTitle = computed(() => {
   if (!actorsList.value.length) {
-    return '';
+    return ''
   }
-  return t('watch_files.actors.sub_title', actorsStats.value);
-});
+  return t('watch_files.actors.sub_title', actorsStats.value)
+})
 
 watch(
   () => actors,
   (newActors) => {
-    actorsList.value = [...newActors];
+    actorsList.value = [...newActors]
   },
-);
+)
 
 function handleActorUpdated(actor: WatchFileActor) {
   const idx = actorsList.value.findIndex(
     (a: WatchFileActor) =>
       (a.actor['@id'] ?? a.actor.id) === (actor.actor['@id'] ?? actor.actor.id),
-  );
+  )
 
   if (idx !== -1) {
-    const current = actorsList.value[idx];
+    const current = actorsList.value[idx]
     if (current) {
       // Toggle the status based on current state
       const newStatus =
-        current.status === ActorStatus.ACTIVE
-          ? ActorStatus.INACTIVE
-          : ActorStatus.ACTIVE;
+        current.status === ActorStatus.ACTIVE ? ActorStatus.INACTIVE : ActorStatus.ACTIVE
       actorsList.value[idx] = {
         ...current,
         status: newStatus,
-      };
+      }
     }
   }
 
-  emit('actor-updated');
+  emit('actor-updated')
 }
 
 function openSelectionModal() {
-  isSelectionModalOpen.value = true;
+  isSelectionModalOpen.value = true
 }
 
 function handleModalActorUpdated() {
-  emit('actor-updated');
+  emit('actor-updated')
 }
 </script>

@@ -8,12 +8,7 @@
     :data-testid="messageTestId"
   >
     <!-- SYSTEM ERROR MESSAGE -->
-    <ErrorMessage
-      v-if="isSystemErrorMessage"
-      width="full"
-      :fill="false"
-      :is-chat-message="true"
-    />
+    <ErrorMessage v-if="isSystemErrorMessage" width="full" :fill="false" :is-chat-message="true" />
 
     <!-- SYSTEM MESSAGE (when not grouped - handled by parent for grouping) -->
     <CollapsibleSystemMessage
@@ -35,12 +30,7 @@
     >
       <div class="flex items-end gap-2">
         <!-- AVATAR (chatbot) -->
-        <img
-          v-if="!isUserMessage"
-          :src="chapse_head"
-          alt="Chapse"
-          class="size-6 shrink-0"
-        />
+        <img v-if="!isUserMessage" :src="chapse_head" alt="Chapse" class="size-6 shrink-0" />
 
         <!-- MESSAGE BUBBLE -->
         <div
@@ -51,12 +41,7 @@
           }"
         >
           <!-- LOADING STATE -->
-          <div
-            v-if="isLoading"
-            class="animate-pulse"
-            role="progressbar"
-            aria-busy="true"
-          >
+          <div v-if="isLoading" class="animate-pulse" role="progressbar" aria-busy="true">
             <div class="mb-2 h-4 w-3/4 rounded bg-gray-300" />
             <div class="h-4 w-1/2 rounded bg-gray-300" />
           </div>
@@ -69,10 +54,7 @@
             />
 
             <!-- ERROR STATUS INDICATOR -->
-            <div
-              v-if="isError"
-              class="text-error-700 mt-1 flex items-center gap-1 text-xs"
-            >
+            <div v-if="isError" class="text-error-700 mt-1 flex items-center gap-1 text-xs">
               <i class="fa-solid fa-circle-exclamation" aria-hidden="true" />
               <span>{{ t('watch_files.chat.message.send_failed') }}</span>
             </div>
@@ -136,99 +118,93 @@
 </template>
 
 <script setup lang="ts">
-import { Badge, Button, OPopper } from '@owlint/feathers-vue';
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRetryMessage } from '~/api/mutations/conversation';
-import chapse_head from "~/assets/images/chapse_head.svg";
-import { useChatDateDisplay } from '~/composables/useChatDateDisplay';
-import { useMarkdown } from '~/composables/useMarkdown';
-import { useStringUtils } from '~/composables/useStringUtils';
-import { useChatStore } from '~/stores/chat';
-import { useConversationStore } from '~/stores/conversation';
-import type { Message } from '~/types/conversation';
-import { MessageRole } from '~/types/conversation';
-import ErrorMessage from '../global/ErrorMessage.vue';
-import CollapsibleSystemMessage from './CollapsibleSystemMessage.vue';
+import { Badge, Button, OPopper } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRetryMessage } from '~/api/mutations/conversation'
+import chapse_head from '~/assets/images/chapse_head.svg'
+import { useChatDateDisplay } from '~/composables/useChatDateDisplay'
+import { useMarkdown } from '~/composables/useMarkdown'
+import { useStringUtils } from '~/composables/useStringUtils'
+import { useChatStore } from '~/stores/chat'
+import { useConversationStore } from '~/stores/conversation'
+import type { Message } from '~/types/conversation'
+import { MessageRole } from '~/types/conversation'
+import ErrorMessage from '../global/ErrorMessage.vue'
+import CollapsibleSystemMessage from './CollapsibleSystemMessage.vue'
 
-const MAX_RETRY_ATTEMPTS = 3;
+const MAX_RETRY_ATTEMPTS = 3
 
 interface Props {
-  message: Message;
+  message: Message
 }
 
-const { message } = defineProps<Props>();
+const { message } = defineProps<Props>()
 
-const { t } = useI18n();
-const { unescapeString } = useStringUtils();
+const { t } = useI18n()
+const { unescapeString } = useStringUtils()
 const { toHtml } = useMarkdown({
   gfm: true,
   breaks: false,
-});
-const chatStore = useChatStore();
-const conversationStore = useConversationStore();
-const { getContextualDate, getFullDateTime } = useChatDateDisplay();
+})
+const chatStore = useChatStore()
+const conversationStore = useConversationStore()
+const { getContextualDate, getFullDateTime } = useChatDateDisplay()
 
-const { retryMessage, isLoading: isRetrying } = useRetryMessage();
+const { retryMessage, isLoading: isRetrying } = useRetryMessage()
 
 // Extract text content from message contents
 const messageContent = computed(() => {
-  if (
-    !message.contents ||
-    !Array.isArray(message.contents) ||
-    message.contents.length === 0
-  ) {
-    return '';
+  if (!message.contents || !Array.isArray(message.contents) || message.contents.length === 0) {
+    return ''
   }
-  const content = message.contents[0] as { content: string };
+  const content = message.contents[0] as { content: string }
 
-  return unescapeString(content.content || '');
-});
+  return unescapeString(content.content || '')
+})
 
-const renderedContent = toHtml(messageContent);
+const renderedContent = toHtml(messageContent)
 
 // Computed properties for message display
-const isUserMessage = computed(() => message.role === MessageRole.USER);
-const isSystemMessage = computed(() => message.role === MessageRole.SYSTEM);
-const isSystemErrorMessage = computed(
-  () => message.role === MessageRole.SYSTEM_ERROR,
-);
-const isLoading = computed(() => message.loading === true);
-const isError = computed(() => message.status === 'error');
-const canRetry = computed(() => (message.retryCount ?? 0) < MAX_RETRY_ATTEMPTS);
+const isUserMessage = computed(() => message.role === MessageRole.USER)
+const isSystemMessage = computed(() => message.role === MessageRole.SYSTEM)
+const isSystemErrorMessage = computed(() => message.role === MessageRole.SYSTEM_ERROR)
+const isLoading = computed(() => message.loading === true)
+const isError = computed(() => message.status === 'error')
+const canRetry = computed(() => (message.retryCount ?? 0) < MAX_RETRY_ATTEMPTS)
 
 const contextualDate = computed(() => {
-  if (!message.createdAt) return '';
-  return getContextualDate(message.createdAt).value;
-});
+  if (!message.createdAt) return ''
+  return getContextualDate(message.createdAt).value
+})
 
 const fullDateTime = computed(() => {
-  if (!message.createdAt) return '';
-  return getFullDateTime(message.createdAt).value;
-});
+  if (!message.createdAt) return ''
+  return getFullDateTime(message.createdAt).value
+})
 
 // Test ID for E2E testing - maps role to test identifier
-const messageTestId = computed(() => `message-${message.role}`);
+const messageTestId = computed(() => `message-${message.role}`)
 
 // Handle system message toggle
 const handleSystemMessageToggle = () => {
-  chatStore.toggleMessage(message.id);
-};
+  chatStore.toggleMessage(message.id)
+}
 
 // Handle retry action
 const handleRetry = () => {
   if (isRetrying.value || !canRetry.value) {
-    return;
+    return
   }
 
-  const conversationId = conversationStore.currentConversation?.id;
+  const conversationId = conversationStore.currentConversation?.id
   if (!conversationId) {
-    console.error('No conversation ID available for retry');
-    return;
+    console.error('No conversation ID available for retry')
+    return
   }
 
-  retryMessage({ message, conversationId });
-};
+  retryMessage({ message, conversationId })
+}
 </script>
 
 <style scoped>

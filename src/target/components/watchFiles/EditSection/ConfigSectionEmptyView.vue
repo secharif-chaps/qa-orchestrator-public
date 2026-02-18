@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="mx-auto flex h-full flex-col items-center justify-center py-4 text-center"
-  >
+  <div class="mx-auto flex h-full flex-col items-center justify-center py-4 text-center">
     <div class="mb-8">
       <div class="mx-auto h-6 w-6">
         <svg

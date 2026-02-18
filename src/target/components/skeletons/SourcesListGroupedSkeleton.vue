@@ -23,9 +23,7 @@
               <div class="flex items-center gap-3">
                 <div class="h-8 w-8 animate-pulse rounded-full bg-gray-200" />
                 <div class="flex-1">
-                  <div
-                    class="mb-2 h-4 w-3/4 animate-pulse rounded bg-gray-200"
-                  />
+                  <div class="mb-2 h-4 w-3/4 animate-pulse rounded bg-gray-200" />
                   <div class="h-3 w-1/2 animate-pulse rounded bg-gray-200" />
                 </div>
                 <div class="h-6 w-6 animate-pulse rounded bg-gray-200" />
@@ -39,11 +37,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from 'vue'
 
 const sections = computed(() => {
   return Array.from({ length: 3 }, (_, index) => ({
     cardCount: index % 2 === 0 ? 6 : 5,
-  }));
-});
+  }))
+})
 </script>

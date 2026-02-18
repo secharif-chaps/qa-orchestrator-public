@@ -47,25 +47,25 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Icon, Tag } from '@owlint/feathers-vue';
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { Button, Icon, Tag } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 interface SectionListHeaderProps {
-  title: string;
-  refreshButtonTitle?: string;
-  refreshIcon?: string;
-  addButtonText?: string;
-  addIcon?: string;
-  subTitle?: string;
-  readonly?: boolean;
-  lastUpdate?: string;
-  loading?: boolean;
-  error?: string;
-  batchSelection?: boolean;
+  title: string
+  refreshButtonTitle?: string
+  refreshIcon?: string
+  addButtonText?: string
+  addIcon?: string
+  subTitle?: string
+  readonly?: boolean
+  lastUpdate?: string
+  loading?: boolean
+  error?: string
+  batchSelection?: boolean
 }
 
-type SectionListHeaderEmits = (e: 'refresh' | 'add') => void;
+type SectionListHeaderEmits = (e: 'refresh' | 'add') => void
 
 const props = withDefaults(defineProps<SectionListHeaderProps>(), {
   refreshIcon: 'fa-arrow-rotate-right',
@@ -78,14 +78,14 @@ const props = withDefaults(defineProps<SectionListHeaderProps>(), {
   loading: false,
   error: '',
   batchSelection: false,
-});
+})
 
-const { d } = useI18n();
+const { d } = useI18n()
 
 const formattedLastUpdate = computed(() => {
-  if (!props.lastUpdate) return '';
-  return d(props.lastUpdate, 'long');
-});
+  if (!props.lastUpdate) return ''
+  return d(props.lastUpdate, 'long')
+})
 
-defineEmits<SectionListHeaderEmits>();
+defineEmits<SectionListHeaderEmits>()
 </script>

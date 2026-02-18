@@ -333,22 +333,40 @@ const suggestions = computed<Suggestion[]>(() => {
 
   if (routeName === '/(home)') {
     return [
-      { label: t(`${suggestionsTranslationPrefix}.home.recentCompanies`), message: t(`${suggestionsTranslationPrefix}.home.recentCompanies`) },
-      { label: t(`${suggestionsTranslationPrefix}.home.orgActivity`), message: t(`${suggestionsTranslationPrefix}.home.orgActivity`) },
+      {
+        label: t(`${suggestionsTranslationPrefix}.home.recentCompanies`),
+        message: t(`${suggestionsTranslationPrefix}.home.recentCompanies`),
+      },
+      {
+        label: t(`${suggestionsTranslationPrefix}.home.orgActivity`),
+        message: t(`${suggestionsTranslationPrefix}.home.orgActivity`),
+      },
     ]
   }
 
   if (routeName?.includes('/companies/[companyId]')) {
     return [
-      { label: t(`${suggestionsTranslationPrefix}.company.summary`), message: t(`${suggestionsTranslationPrefix}.company.summary`) },
-      { label: t(`${suggestionsTranslationPrefix}.company.technologies`), message: t(`${suggestionsTranslationPrefix}.company.technologies`) },
+      {
+        label: t(`${suggestionsTranslationPrefix}.company.summary`),
+        message: t(`${suggestionsTranslationPrefix}.company.summary`),
+      },
+      {
+        label: t(`${suggestionsTranslationPrefix}.company.technologies`),
+        message: t(`${suggestionsTranslationPrefix}.company.technologies`),
+      },
     ]
   }
 
   if (routeName?.startsWith('/folders/[folderId]') && !routeName?.includes('/companies/')) {
     return [
-      { label: t(`${suggestionsTranslationPrefix}.folder.summarize`), message: t(`${suggestionsTranslationPrefix}.folder.summarize`) },
-      { label: t(`${suggestionsTranslationPrefix}.folder.compare`), message: t(`${suggestionsTranslationPrefix}.folder.compare`) },
+      {
+        label: t(`${suggestionsTranslationPrefix}.folder.summarize`),
+        message: t(`${suggestionsTranslationPrefix}.folder.summarize`),
+      },
+      {
+        label: t(`${suggestionsTranslationPrefix}.folder.compare`),
+        message: t(`${suggestionsTranslationPrefix}.folder.compare`),
+      },
     ]
   }
 

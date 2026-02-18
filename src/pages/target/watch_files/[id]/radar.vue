@@ -35,53 +35,51 @@
 </template>
 
 <script setup lang="ts">
-import { Toggle } from '@owlint/feathers-vue';
-import { useQuery } from '@pinia/colada';
-import { storeToRefs } from 'pinia';
-import { computed, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { RouterView, useRoute, useRouter } from 'vue-router';
-import { getEventsGraphQuery } from '~/api/queries/events';
-import AnalysisFilters from '~/components/analysis/AnalysisFilters.vue';
-import { useWatchFileAnalysisStore } from '~/stores/watchFileAnalysis';
-import { useWatchFileFiltersStore } from '~/stores/watchFileFilters';
-import type { AnalysisFacets } from '~/types/facet';
-import { RouteNames } from '~/types/route-names';
+import { Toggle } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { storeToRefs } from 'pinia'
+import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { RouterView, useRoute, useRouter } from 'vue-router'
+import { getEventsGraphQuery } from '~/api/queries/events'
+import AnalysisFilters from '~/components/analysis/AnalysisFilters.vue'
+import { useWatchFileAnalysisStore } from '~/stores/watchFileAnalysis'
+import { useWatchFileFiltersStore } from '~/stores/watchFileFilters'
+import type { AnalysisFacets } from '~/types/facet'
+import { RouteNames } from '~/types/route-names'
 
 definePage({
   meta: {
     layout: 'watch-file',
     middleware: 'radar',
   },
-});
+})
 
-const { t } = useI18n();
+const { t } = useI18n()
 
-const route = useRoute();
-const router = useRouter();
-const watchFileId = computed(() => route.params.id as string);
+const route = useRoute()
+const router = useRouter()
+const watchFileId = computed(() => route.params.id as string)
 
-const watchFileAnalysisStore = useWatchFileAnalysisStore();
-const { displayFiltersPanel, selectedView } = storeToRefs(
-  watchFileAnalysisStore,
-);
-const displayDrawer = ref(false);
+const watchFileAnalysisStore = useWatchFileAnalysisStore()
+const { displayFiltersPanel, selectedView } = storeToRefs(watchFileAnalysisStore)
+const displayDrawer = ref(false)
 
-const filtersCounts = computed(() => watchFileAnalysisStore.filtersCounts);
-const filterQuery = computed(() => watchFileAnalysisStore.filterQuery);
+const filtersCounts = computed(() => watchFileAnalysisStore.filtersCounts)
+const filterQuery = computed(() => watchFileAnalysisStore.filterQuery)
 
 if (route.name === RouteNames.WATCH_FILES_RADAR_GRAPH) {
-  selectedView.value = RouteNames.WATCH_FILES_RADAR_GRAPH;
+  selectedView.value = RouteNames.WATCH_FILES_RADAR_GRAPH
 } else if (route.name === RouteNames.WATCH_FILES_RADAR_TIMELINE) {
-  selectedView.value = RouteNames.WATCH_FILES_RADAR_TIMELINE;
+  selectedView.value = RouteNames.WATCH_FILES_RADAR_TIMELINE
 }
 
 watch(selectedView, (newView) => {
   router.push({
     name: newView,
     params: { id: watchFileId.value },
-  });
-});
+  })
+})
 
 const { data: eventsGraphData, isLoading: isLoadingEventsGraph } = useQuery(
   getEventsGraphQuery,
@@ -89,13 +87,13 @@ const { data: eventsGraphData, isLoading: isLoadingEventsGraph } = useQuery(
     watchFileId: watchFileId.value,
     filters: filterQuery.value,
   }),
-);
+)
 
 const analysisFacets = computed<AnalysisFacets | undefined>(() => {
-  return eventsGraphData.value?.facets;
-});
+  return eventsGraphData.value?.facets
+})
 
-const filtersStore = useWatchFileFiltersStore();
+const filtersStore = useWatchFileFiltersStore()
 
 // Initialize from URL when facets are available
 watch(analysisFacets, (newFacets) => {
@@ -105,35 +103,35 @@ watch(analysisFacets, (newFacets) => {
       route.query,
       newFacets,
       () => watchFileAnalysisStore.isUrlSync,
-    );
+    )
   }
-});
+})
 
 // Sync URL with filter changes
 watch(
   filterQuery,
   async (newQuery) => {
     if (!watchFileAnalysisStore.isUrlSync) {
-      return;
+      return
     }
-    console.log('watch filterQuery', newQuery);
+    console.log('watch filterQuery', newQuery)
 
     await router.replace({
       query: newQuery,
-    });
+    })
   },
   { immediate: true },
-);
+)
 
 const filterPanelWidth = computed(() => {
   if (filtersCounts.value && displayFiltersPanel.value) {
-    return 'w-[20%] min-w-64';
+    return 'w-[20%] min-w-64'
   } else if (filtersCounts.value && !displayFiltersPanel.value) {
-    return 'w-auto';
+    return 'w-auto'
   } else {
-    return 'w-12';
+    return 'w-12'
   }
-});
+})
 
 const options = computed(() => [
   {
@@ -144,5 +142,5 @@ const options = computed(() => [
     value: RouteNames.WATCH_FILES_RADAR_GRAPH,
     label: t('watch_files.analysis.toggle.graph'),
   },
-]);
+])
 </script>

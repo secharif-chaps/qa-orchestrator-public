@@ -26,10 +26,7 @@
           </template>
           <OPopper v-if="isDisabledStatus(option)" placement="top">
             <template #tooltip>
-              <div
-                v-sanitize-html="disabledStatusTooltip"
-                class="tooltip-content"
-              />
+              <div v-sanitize-html="disabledStatusTooltip" class="tooltip-content" />
             </template>
             <span class="cursor-not-allowed">
               {{ statusLabel(option) }}
@@ -48,42 +45,36 @@
 </template>
 
 <script lang="ts" setup>
-import { Icon, OPopper, Select, SelectItem, Tag } from '@owlint/feathers-vue';
-import { useQuery } from '@pinia/colada';
-import { computed, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { getCollectionSourceQuery } from '~/api/queries/sources';
-import { useWatchFileStatusModal } from '~/composables/useWatchFileStatusModal';
-import {
-  WATCH_FILE_STATUS,
-  type WatchFile,
-  type WatchFileStatus,
-} from '~/types/watchFile';
+import { Icon, OPopper, Select, SelectItem, Tag } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { getCollectionSourceQuery } from '~/api/queries/sources'
+import { useWatchFileStatusModal } from '~/composables/useWatchFileStatusModal'
+import { WATCH_FILE_STATUS, type WatchFile, type WatchFileStatus } from '~/types/watchFile'
 
 interface Props {
-  watchFile: WatchFile;
-  isReadOnly?: boolean;
+  watchFile: WatchFile
+  isReadOnly?: boolean
 }
 
-const { watchFile, isReadOnly = false } = defineProps<Props>();
+const { watchFile, isReadOnly = false } = defineProps<Props>()
 
-const { t } = useI18n();
+const { t } = useI18n()
 
-const statusOptions = Object.values(
-  WATCH_FILE_STATUS,
-) as readonly WatchFileStatus[];
+const statusOptions = Object.values(WATCH_FILE_STATUS) as readonly WatchFileStatus[]
 
 const { showStatusModal, statusValue, isLoading } = useWatchFileStatusModal(
   {
     onSuccess: (newStatus: WatchFileStatus) => {
-      statusValue.value = newStatus;
+      statusValue.value = newStatus
     },
     onRevert: () => {
-      statusValue.value = watchFile.status;
+      statusValue.value = watchFile.status
     },
   },
   watchFile,
-);
+)
 
 const { data: sourcesData } = useQuery(getCollectionSourceQuery, () => ({
   watchFileId: watchFile.id,
@@ -91,64 +82,62 @@ const { data: sourcesData } = useQuery(getCollectionSourceQuery, () => ({
   itemsPerPage: 1,
   sortBy: 'name',
   sortOrder: 'ASC' as const,
-}));
+}))
 
-const hasActiveSources = computed(() => !!sourcesData.value?.totalItems);
+const hasActiveSources = computed(() => !!sourcesData.value?.totalItems)
 
 const isDisabledStatus = (status: WatchFileStatus) => {
   if (status === WATCH_FILE_STATUS.ENABLED) {
-    return !hasActiveSources.value || !watchFile.referenceSubject;
+    return !hasActiveSources.value || !watchFile.referenceSubject
   }
-  return false;
-};
+  return false
+}
 
 const disabledStatusTooltip = computed(() => {
   if (!hasActiveSources.value) {
-    return t('watch_files.status_change.enabled.disabled_tooltip.sources');
+    return t('watch_files.status_change.enabled.disabled_tooltip.sources')
   }
   if (!watchFile.referenceSubject) {
-    return t(
-      'watch_files.status_change.enabled.disabled_tooltip.reference_subject',
-    );
+    return t('watch_files.status_change.enabled.disabled_tooltip.reference_subject')
   }
-  return '';
-});
+  return ''
+})
 
 watch(
   () => watchFile.status,
   (newStatus) => {
-    statusValue.value = newStatus;
+    statusValue.value = newStatus
   },
-);
+)
 
 function statusLabel(status: WatchFileStatus) {
   switch (status) {
     case WATCH_FILE_STATUS.DRAFT:
-      return t('watch_files.header_section.status.draft');
+      return t('watch_files.header_section.status.draft')
     case WATCH_FILE_STATUS.ENABLED:
-      return t('watch_files.header_section.status.enabled');
+      return t('watch_files.header_section.status.enabled')
     case WATCH_FILE_STATUS.ARCHIVED:
-      return t('watch_files.header_section.status.archived');
+      return t('watch_files.header_section.status.archived')
   }
 }
 
 function statusIcon(status: WatchFileStatus) {
   switch (status) {
     case WATCH_FILE_STATUS.DRAFT:
-      return 'fa-file-lines';
+      return 'fa-file-lines'
     case WATCH_FILE_STATUS.ENABLED:
-      return 'fa-play';
+      return 'fa-play'
     case WATCH_FILE_STATUS.ARCHIVED:
-      return 'fa-box-archive';
+      return 'fa-box-archive'
   }
 }
 
 async function onStatusChange(newStatus: WatchFileStatus) {
   if (newStatus === statusValue.value || isDisabledStatus(newStatus)) {
-    return;
+    return
   }
 
-  showStatusModal(watchFile, newStatus);
+  showStatusModal(watchFile, newStatus)
 }
 </script>
 

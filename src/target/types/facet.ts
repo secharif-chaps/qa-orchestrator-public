@@ -1,91 +1,91 @@
-import type { JsonLdResource } from './jsonld';
+import type { JsonLdResource } from './jsonld'
 
 export interface Actor {
-  id: string;
-  label: string;
-  primaryDomain?: string;
+  id: string
+  label: string
+  primaryDomain?: string
 }
 
 export interface Source {
-  id: string;
-  name: string;
-  primaryDomain: string;
+  id: string
+  name: string
+  primaryDomain: string
 }
 
 export interface ActorFacet {
-  actor: Actor;
-  count: number;
+  actor: Actor
+  count: number
 }
 
 export interface AnalysisActor {
-  id: string;
-  name: string;
-  count: number;
+  id: string
+  name: string
+  count: number
 }
 
-export type AnalysisActorFacet = ActorFacet | AnalysisActor;
+export type AnalysisActorFacet = ActorFacet | AnalysisActor
 
 export interface SourceFacet {
-  source: Source;
-  count: number;
+  source: Source
+  count: number
 }
 
 export interface EventFacet {
-  type: string;
-  count: number;
+  type: string
+  count: number
 }
 
 export interface StatusFacet {
-  status: string;
-  count: number;
+  status: string
+  count: number
 }
 
 export interface DomainFacet {
-  domain: string;
-  count: number;
+  domain: string
+  count: number
 }
 
 export interface BaseFacets extends JsonLdResource {
-  actors: ActorFacet[];
-  sources: SourceFacet[];
+  actors: ActorFacet[]
+  sources: SourceFacet[]
 }
 
 export interface FacetsWithStatuses extends BaseFacets {
-  statuses: StatusFacet[];
+  statuses: StatusFacet[]
 }
 
 export interface FacetsWithValidationStatuses extends FacetsWithStatuses {
-  validationStatuses: StatusFacet[];
+  validationStatuses: StatusFacet[]
 }
 
 export interface FacetsWithDomains extends BaseFacets {
-  domains: DomainFacet[];
+  domains: DomainFacet[]
 }
 
 export interface AnalysisEventFacet {
-  type: string;
-  count: number;
+  type: string
+  count: number
 }
 
 export interface DateRangeFacet {
-  maxStartDate?: string | null;
-  maxEndDate?: string | null;
+  maxStartDate?: string | null
+  maxEndDate?: string | null
 }
 export interface AnalysisFacets {
-  actors?: AnalysisActorFacet[];
-  eventTypes?: AnalysisEventFacet[];
-  dateRange?: DateRangeFacet;
+  actors?: AnalysisActorFacet[]
+  eventTypes?: AnalysisEventFacet[]
+  dateRange?: DateRangeFacet
 }
 
-export const FILTER_CATEGORY_VALIDATIONS = 'validations';
-export const FILTER_CATEGORY_DATES = 'dates';
-export const FILTER_CATEGORY_ACTORS = 'actors';
-export const FILTER_CATEGORY_SOURCES = 'sources';
-export const FILTER_CATEGORY_EVENTS = 'events';
+export const FILTER_CATEGORY_VALIDATIONS = 'validations'
+export const FILTER_CATEGORY_DATES = 'dates'
+export const FILTER_CATEGORY_ACTORS = 'actors'
+export const FILTER_CATEGORY_SOURCES = 'sources'
+export const FILTER_CATEGORY_EVENTS = 'events'
 
 export type FilterCategory =
   | typeof FILTER_CATEGORY_VALIDATIONS
   | typeof FILTER_CATEGORY_DATES
   | typeof FILTER_CATEGORY_ACTORS
   | typeof FILTER_CATEGORY_SOURCES
-  | typeof FILTER_CATEGORY_EVENTS;
+  | typeof FILTER_CATEGORY_EVENTS

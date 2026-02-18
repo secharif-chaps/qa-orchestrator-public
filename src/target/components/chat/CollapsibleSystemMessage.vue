@@ -12,10 +12,7 @@
         </p>
       </div>
       <div v-if="hasError" class="flex shrink-0 items-center">
-        <span
-          class="size-2 rounded-full bg-red-500"
-          aria-label="Error indicator"
-        />
+        <span class="size-2 rounded-full bg-red-500" aria-label="Error indicator" />
       </div>
     </div>
   </div>
@@ -28,20 +25,14 @@
     :class="positionClasses"
     @update:open="handleToggle"
   >
-    <Collapsible.Trigger
-      class="flex w-full cursor-pointer items-center justify-between gap-2 p-3"
-    >
+    <Collapsible.Trigger class="flex w-full cursor-pointer items-center justify-between gap-2 p-3">
       <div class="min-w-0 flex-1">
         <p class="text-left">
           {{ firstLine }}
         </p>
       </div>
       <div class="flex shrink-0 items-center gap-2">
-        <span
-          v-if="hasError"
-          class="size-2 rounded-full bg-red-500"
-          aria-label="Error indicator"
-        />
+        <span v-if="hasError" class="size-2 rounded-full bg-red-500" aria-label="Error indicator" />
         <Icon
           :icon="isExpanded ? 'fa-chevron-up' : 'fa-chevron-down'"
           aria-label="Expand/Collapse"
@@ -63,137 +54,128 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@owlint/feathers-vue';
-import { Collapsible } from 'reka-ui/namespaced';
-import { computed } from 'vue';
-import { useMarkdown } from '~/composables/useMarkdown';
-import { useStringUtils } from '~/composables/useStringUtils';
-import type { Message } from '~/types/conversation';
+import { Icon } from '@owlint/feathers-vue'
+import { Collapsible } from 'reka-ui/namespaced'
+import { computed } from 'vue'
+import { useMarkdown } from '~/composables/useMarkdown'
+import { useStringUtils } from '~/composables/useStringUtils'
+import type { Message } from '~/types/conversation'
 
 interface Props {
-  message: Message;
-  isExpanded: boolean;
-  isFirst?: boolean;
-  isLast?: boolean;
+  message: Message
+  isExpanded: boolean
+  isFirst?: boolean
+  isLast?: boolean
 }
 
 interface Emits {
-  (e: 'toggle'): void;
+  (e: 'toggle'): void
 }
 
-const {
-  message,
-  isExpanded,
-  isFirst = true,
-  isLast = true,
-} = defineProps<Props>();
-const emit = defineEmits<Emits>();
+const { message, isExpanded, isFirst = true, isLast = true } = defineProps<Props>()
+const emit = defineEmits<Emits>()
 
-const { unescapeString } = useStringUtils();
+const { unescapeString } = useStringUtils()
 const { toHtml } = useMarkdown({
   gfm: true,
   breaks: false,
-});
+})
 
 // Extract text content from message contents
 const messageContent = computed(() => {
-  if (
-    !message.contents ||
-    !Array.isArray(message.contents) ||
-    message.contents.length === 0
-  ) {
-    return '';
+  if (!message.contents || !Array.isArray(message.contents) || message.contents.length === 0) {
+    return ''
   }
-  const content = message.contents[0] as { content: string };
-  return unescapeString(content.content || '').trim();
-});
+  const content = message.contents[0] as { content: string }
+  return unescapeString(content.content || '').trim()
+})
 
 // Get first line of message for collapsed display
 const firstLine = computed(() => {
-  const content = messageContent.value;
-  if (!content) return '';
+  const content = messageContent.value
+  if (!content) return ''
 
   // Split by newline and get first non-empty line
-  const lines = content.split('\n').filter((line) => line.trim());
-  return lines[0] || content;
-});
+  const lines = content.split('\n').filter((line) => line.trim())
+  return lines[0] || content
+})
 
 // Single line: collapsible only if it would be truncated (ellipsis)
 // ~80 chars is approximate threshold for truncation in the container
 const firstLineReachTruncation = computed(() => {
-  const TRUNCATION_THRESHOLD = 80;
-  return firstLine.value.length > TRUNCATION_THRESHOLD;
-});
+  const TRUNCATION_THRESHOLD = 80
+  return firstLine.value.length > TRUNCATION_THRESHOLD
+})
 
 // Get content without the first line (for expanded view to avoid repetition)
 // Except if first line is not truncated, we keep it in expanded view
 const messageContentFormatted = computed(() => {
-  const content = messageContent.value;
-  if (!content) return '';
+  const content = messageContent.value
+  if (!content) return ''
 
   if (firstLineReachTruncation.value) {
     // If first line is truncated, show full content in expanded view
-    return content;
+    return content
   }
 
-  const lines = content.split('\n');
+  const lines = content.split('\n')
   // Find index of first non-empty line
-  const firstNonEmptyIndex = lines.findIndex((line) => line.trim());
-  if (firstNonEmptyIndex === -1) return '';
+  const firstNonEmptyIndex = lines.findIndex((line) => line.trim())
+  if (firstNonEmptyIndex === -1) return ''
 
   // Return everything after the first non-empty line
-  const remainingLines = lines.slice(firstNonEmptyIndex + 1);
-  return remainingLines.join('\n').trim();
-});
+  const remainingLines = lines.slice(firstNonEmptyIndex + 1)
+  return remainingLines.join('\n').trim()
+})
 
 // Render content without first line as HTML (for expanded description)
-const renderedContent = toHtml(messageContentFormatted);
+const renderedContent = toHtml(messageContentFormatted)
 
 // Check if message has error status in metadata
 const hasError = computed(() => {
-  return message.metadata?.status === 'error';
-});
+  return message.metadata?.status === 'error'
+})
 
 // Check if message should be collapsible
 // Not collapsible if: single line AND short enough to not be truncated
 const isCollapsible = computed(() => {
-  const content = messageContent.value;
-  if (!content) return false;
+  const content = messageContent.value
+  if (!content) return false
 
-  const lines = content.split('\n').filter((line) => line.trim());
+  const lines = content.split('\n').filter((line) => line.trim())
 
   // Multi-line content is always collapsible
-  if (lines.length > 1) return true;
+  if (lines.length > 1) return true
 
   // Single line: collapsible only if it would be truncated
-  return firstLineReachTruncation.value;
-});
+  return firstLineReachTruncation.value
+})
 
 // Computed classes for stacking messages
 const positionClasses = computed(() => {
-  const classes: string[] = [];
+  const classes: string[] = []
 
   // Negative margin for non-first items to merge borders
-  if (!isFirst) classes.push('-mt-px');
+  if (!isFirst) classes.push('-mt-px')
 
   // Border radius based on position
   if (isFirst && isLast) {
-    classes.push('rounded-sm');
+    classes.push('rounded-sm')
   } else if (isFirst) {
-    classes.push('rounded-t-sm', 'rounded-b-none');
+    classes.push('rounded-t-sm', 'rounded-b-none')
   } else if (isLast) {
-    classes.push('rounded-b-sm', 'rounded-t-none');
+    classes.push('rounded-b-sm', 'rounded-t-none')
   } else {
-    classes.push('rounded-none');
+    classes.push('rounded-none')
   }
 
-  return classes.join(' ');
-});
+  return classes.join(' ')
+})
 
 // Handle toggle click
 const handleToggle = (open: boolean) => {
   if (open !== isExpanded) {
-    emit('toggle');
+    emit('toggle')
   }
-};
+}
 </script>

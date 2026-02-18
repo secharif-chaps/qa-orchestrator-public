@@ -10,20 +10,20 @@
 </template>
 
 <script setup lang="ts">
-import { ToggleGroup, type ToggleGroupOption } from '@owlint/feathers-vue';
-import { computed, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { useDocumentValidation } from '~/api/mutations/document';
-import type { Document, ManualValidationStatus } from '~/types/document';
-import { DocumentValidationAction } from '~/types/document';
+import { ToggleGroup, type ToggleGroupOption } from '@owlint/feathers-vue'
+import { computed, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useDocumentValidation } from '~/api/mutations/document'
+import type { Document, ManualValidationStatus } from '~/types/document'
+import { DocumentValidationAction } from '~/types/document'
 
-const route = useRoute();
+const route = useRoute()
 
 interface Props {
-  document: Document;
-  isBatchProcessing?: boolean;
-  iconOnly?: boolean;
-  darkMode?: boolean; // Temporary prop to match colors not yet supported by the design system. It will be removed when the design system is updated.
+  document: Document
+  isBatchProcessing?: boolean
+  iconOnly?: boolean
+  darkMode?: boolean // Temporary prop to match colors not yet supported by the design system. It will be removed when the design system is updated.
 }
 
 const {
@@ -31,17 +31,17 @@ const {
   isBatchProcessing = false,
   iconOnly = false,
   darkMode = false,
-} = defineProps<Props>();
-const watchFileId = computed(() => route.params.id as string);
+} = defineProps<Props>()
+const watchFileId = computed(() => route.params.id as string)
 
-const selectedStatus = ref<ManualValidationStatus>(document.manualStatus);
+const selectedStatus = ref<ManualValidationStatus>(document.manualStatus)
 
 watch(
   () => document.manualStatus,
   (newStatus) => {
-    selectedStatus.value = newStatus;
+    selectedStatus.value = newStatus
   },
-);
+)
 
 const options = computed<ToggleGroupOption[]>(() => [
   {
@@ -58,13 +58,13 @@ const options = computed<ToggleGroupOption[]>(() => [
     kind: 'refused',
     iconOnly,
   },
-]);
+])
 
-const { toggleDocumentStatus } = useDocumentValidation();
+const { toggleDocumentStatus } = useDocumentValidation()
 
 watch(selectedStatus, (newStatus) => {
   if (newStatus === document.manualStatus) {
-    return;
+    return
   }
 
   const action: DocumentValidationAction =
@@ -72,14 +72,14 @@ watch(selectedStatus, (newStatus) => {
       ? DocumentValidationAction.ACCEPT
       : newStatus === 'refuse'
         ? DocumentValidationAction.REFUSE
-        : DocumentValidationAction.UNCERTAIN;
+        : DocumentValidationAction.UNCERTAIN
 
   toggleDocumentStatus({
     watchFileId: watchFileId.value,
     documentId: document.id,
     action,
-  });
-});
+  })
+})
 </script>
 
 <style scoped>
@@ -104,8 +104,7 @@ watch(selectedStatus, (newStatus) => {
   color: var(--color-green-600);
 }
 
-.document-validation-buttons
-  :deep(button[data-kind='accepted'][aria-pressed='true']) {
+.document-validation-buttons :deep(button[data-kind='accepted'][aria-pressed='true']) {
   background-color: var(--color-green-300);
   color: var(--color-black);
 }
@@ -121,8 +120,7 @@ watch(selectedStatus, (newStatus) => {
   color: var(--color-red-600);
 }
 
-.document-validation-buttons
-  :deep(button[data-kind='refused'][aria-pressed='true']) {
+.document-validation-buttons :deep(button[data-kind='refused'][aria-pressed='true']) {
   background-color: var(--color-red-300);
   color: var(--color-black);
 }

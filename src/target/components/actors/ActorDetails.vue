@@ -24,30 +24,26 @@
 </template>
 
 <script setup lang="ts">
-import type { WatchFileActor } from '~/types/watchFile';
-import { useActorSelection } from '~/composables/useActorSelection';
-import ActorCard from './ActorCard.vue';
-import SourcesListTable from '~/components/watchFiles/SourcesListTable.vue';
+import type { WatchFileActor } from '~/types/watchFile'
+import { useActorSelection } from '~/composables/useActorSelection'
+import ActorCard from './ActorCard.vue'
+import SourcesListTable from '~/components/watchFiles/SourcesListTable.vue'
 
 interface Props {
-  actor: WatchFileActor;
-  watchFileId?: string;
-  selectable?: boolean;
+  actor: WatchFileActor
+  watchFileId?: string
+  selectable?: boolean
 }
 
-const {
-  actor,
-  watchFileId = undefined,
-  selectable = false,
-} = defineProps<Props>();
+const { actor, watchFileId = undefined, selectable = false } = defineProps<Props>()
 
-const { detailSelectedSources } = useActorSelection();
+const { detailSelectedSources } = useActorSelection()
 
 const emit = defineEmits<{
-  'actor-clicked': [actor: WatchFileActor];
-}>();
+  'actor-clicked': [actor: WatchFileActor]
+}>()
 
 const handleActorClicked = (clickedActor: WatchFileActor) => {
-  emit('actor-clicked', clickedActor);
-};
+  emit('actor-clicked', clickedActor)
+}
 </script>

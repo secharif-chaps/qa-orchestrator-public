@@ -1,62 +1,54 @@
-import type { LocationQueryRaw } from 'vue-router';
-import { useApi } from '~/composables/useApi';
-import { useDate } from '~/composables/useDate';
-import type { AnalysisFacets } from '~/types/facet';
-import { DatesPeriod } from '~/types/filter';
-import type { JsonLdCollection } from '~/types/jsonld';
-import type { WatchFileGraphEvent } from '~/types/watchFileEvent';
+import type { LocationQueryRaw } from 'vue-router'
+import { useApi } from '~/composables/useApi'
+import { useDate } from '~/composables/useDate'
+import type { AnalysisFacets } from '~/types/facet'
+import { DatesPeriod } from '~/types/filter'
+import type { JsonLdCollection } from '~/types/jsonld'
+import type { WatchFileGraphEvent } from '~/types/watchFileEvent'
 
-const ROOT_URL = '/watch_files';
+const ROOT_URL = '/watch_files'
 
 interface EventsGraphFilters {
-  startDate?: string;
-  endDate?: string;
-  'actors.id'?: string[];
-  'actors.id[]'?: string[];
-  eventType?: string[];
-  'eventType[]'?: string[];
+  startDate?: string
+  endDate?: string
+  'actors.id'?: string[]
+  'actors.id[]'?: string[]
+  eventType?: string[]
+  'eventType[]'?: string[]
 }
 
-export const getEventsGraph = async (
-  watchFileId: string,
-  filters?: LocationQueryRaw,
-) => {
-  const queryParams: EventsGraphFilters = {};
+export const getEventsGraph = async (watchFileId: string, filters?: LocationQueryRaw) => {
+  const queryParams: EventsGraphFilters = {}
 
   if (filters) {
-    const { getPeriodDates, convertDateStringToDate, formatToISOWithTimezone } =
-      useDate();
+    const { getPeriodDates, convertDateStringToDate, formatToISOWithTimezone } = useDate()
 
-    let startDate: Date | undefined = undefined;
-    let endDate: Date | undefined = undefined;
+    let startDate: Date | undefined = undefined
+    let endDate: Date | undefined = undefined
 
     // Handle period selection or date picker
     if (filters.selectedPeriod) {
-      const period = filters.selectedPeriod as string;
+      const period = filters.selectedPeriod as string
       if (
         period === DatesPeriod.LAST_WEEK ||
         period === DatesPeriod.LAST_MONTH ||
         period === DatesPeriod.LAST_3_MONTH
       ) {
-        const periodDates = getPeriodDates(period);
-        startDate = periodDates.start;
-        endDate = periodDates.end;
+        const periodDates = getPeriodDates(period)
+        startDate = periodDates.start
+        endDate = periodDates.end
       }
     } else if (filters.datesPickerStart || filters.datesPickerEnd) {
-      startDate = convertDateStringToDate(
-        filters.datesPickerStart as string | undefined,
-      );
-      endDate = convertDateStringToDate(
-        filters.datesPickerEnd as string | undefined,
-      );
+      startDate = convertDateStringToDate(filters.datesPickerStart as string | undefined)
+      endDate = convertDateStringToDate(filters.datesPickerEnd as string | undefined)
     }
 
     // Convert dates to ISO 8601 strings
     if (startDate) {
-      queryParams.startDate = formatToISOWithTimezone(startDate, false);
+      queryParams.startDate = formatToISOWithTimezone(startDate, false)
     }
     if (endDate) {
-      queryParams.endDate = formatToISOWithTimezone(endDate, true);
+      queryParams.endDate = formatToISOWithTimezone(endDate, true)
     }
 
     // Handle actors filter
@@ -64,9 +56,9 @@ export const getEventsGraph = async (
       if (Array.isArray(filters.actors)) {
         queryParams['actors.id[]'] = filters.actors.filter(
           (a): a is string => typeof a === 'string',
-        );
+        )
       } else if (typeof filters.actors === 'string') {
-        queryParams['actors.id'] = [filters.actors];
+        queryParams['actors.id'] = [filters.actors]
       }
     }
 
@@ -74,9 +66,9 @@ export const getEventsGraph = async (
       if (Array.isArray(filters.eventTypes)) {
         queryParams['eventType[]'] = filters.eventTypes.filter(
           (e): e is string => typeof e === 'string',
-        );
+        )
       } else if (typeof filters.eventTypes === 'string') {
-        queryParams.eventType = [filters.eventTypes];
+        queryParams.eventType = [filters.eventTypes]
       }
     }
   }
@@ -85,11 +77,11 @@ export const getEventsGraph = async (
     JsonLdCollection<WatchFileGraphEvent> & { facets?: AnalysisFacets }
   >(`${ROOT_URL}/${watchFileId}/events/graph`, {
     query: queryParams,
-  });
+  })
 
   return {
     items: response.data.member,
     totalItems: response.data.totalItems,
     facets: response.data.facets,
-  };
-};
+  }
+}

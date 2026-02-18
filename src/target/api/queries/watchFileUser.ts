@@ -1,11 +1,11 @@
-import { defineQueryOptions } from '@pinia/colada';
-import { getWatchFileUsers } from '~/api/watchFileUser';
+import { defineQueryOptions } from '@pinia/colada'
+import { getWatchFileUsers } from '~/api/watchFileUser'
 
 export const WATCH_FILE_USER_QUERY_KEYS = {
   root: ['watchFileUsers'] as const,
   byWatchFile: (watchFileId: string) =>
     [...WATCH_FILE_USER_QUERY_KEYS.root, 'byWatchFile', watchFileId] as const,
-};
+}
 
 export const getWatchFileUsersQuery = defineQueryOptions(
   ({ watchFileId, isOpen }: { watchFileId: string; isOpen: boolean }) => ({
@@ -13,4 +13,4 @@ export const getWatchFileUsersQuery = defineQueryOptions(
     query: () => getWatchFileUsers(watchFileId),
     enabled: !!watchFileId && isOpen,
   }),
-);
+)

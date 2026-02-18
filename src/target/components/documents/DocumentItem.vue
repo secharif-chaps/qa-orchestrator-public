@@ -5,9 +5,7 @@
       {
         'hover:bg-sage-100': !isDocumentSelected && !isClickedDocument,
       },
-      isDocumentSelected || isClickedDocument
-        ? 'bg-sage-200'
-        : 'even:bg-sage-50 odd:bg-white',
+      isDocumentSelected || isClickedDocument ? 'bg-sage-200' : 'even:bg-sage-50 odd:bg-white',
     ]"
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
@@ -64,15 +62,9 @@
       <Tag
         v-if="isAiValidatedOrRejected"
         size="sm"
-        :intent="
-          document.aiValidation?.status === 'validated' ? 'success' : 'danger'
-        "
+        :intent="document.aiValidation?.status === 'validated' ? 'success' : 'danger'"
       >
-        {{
-          t(
-            `watch_files.documents.aiValidationStatus.${document.aiValidation?.status}`,
-          )
-        }}
+        {{ t(`watch_files.documents.aiValidationStatus.${document.aiValidation?.status}`) }}
       </Tag>
       <DocumentValidationButtons
         v-if="isUserEditable"
@@ -88,70 +80,62 @@
 </template>
 
 <script lang="ts" setup>
-import { Bullet, Checkbox, Tag } from '@owlint/feathers-vue';
-import { computed, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { storeToRefs } from 'pinia';
-import type { Document } from '~/types/document';
-import { useWatchFileStore } from '~/stores/watchFile';
-import { useWatchFileDocumentsStore } from '~/stores/watchFileDocuments';
-import Logo from '../global/Logo.vue';
-import DocumentValidationButtons from './DocumentValidationButtons.vue';
+import { Bullet, Checkbox, Tag } from '@owlint/feathers-vue'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
+import type { Document } from '~/types/document'
+import { useWatchFileStore } from '~/stores/watchFile'
+import { useWatchFileDocumentsStore } from '~/stores/watchFileDocuments'
+import Logo from '../global/Logo.vue'
+import DocumentValidationButtons from './DocumentValidationButtons.vue'
 
-const { t, d } = useI18n();
+const { t, d } = useI18n()
 
 interface Props {
-  document: Document;
-  selectedDocumentId?: string;
-  isBatchProcessing?: boolean;
+  document: Document
+  selectedDocumentId?: string
+  isBatchProcessing?: boolean
 }
 
-const watchFileStore = useWatchFileStore();
-const { isUserEditable } = storeToRefs(watchFileStore);
-const {
-  selectedDocumentId = undefined,
-  document,
-  isBatchProcessing = false,
-} = defineProps<Props>();
+const watchFileStore = useWatchFileStore()
+const { isUserEditable } = storeToRefs(watchFileStore)
+const { selectedDocumentId = undefined, document, isBatchProcessing = false } = defineProps<Props>()
 
-const isHovered = ref(false);
+const isHovered = ref(false)
 
 const selectedDocuments = defineModel<string[]>('selectedDocuments', {
   required: true,
-});
+})
 
-const watchFileDocumentsStore = useWatchFileDocumentsStore();
-const { searchQuery, sortBy } = storeToRefs(watchFileDocumentsStore);
+const watchFileDocumentsStore = useWatchFileDocumentsStore()
+const { searchQuery, sortBy } = storeToRefs(watchFileDocumentsStore)
 
 const formatDate = (date: string, format: string = 'short') => {
-  return d(date, format);
-};
+  return d(date, format)
+}
 
-const isClickedDocument = computed(() => selectedDocumentId === document.id);
-const isDocumentSelected = computed(() =>
-  selectedDocuments.value.includes(document.id),
-);
+const isClickedDocument = computed(() => selectedDocumentId === document.id)
+const isDocumentSelected = computed(() => selectedDocuments.value.includes(document.id))
 const isActive = computed(
   () => isDocumentSelected.value || isClickedDocument.value || isHovered.value,
-);
+)
 
 const isExcerpt = computed(() => {
-  if (!searchQuery.value) return false;
+  if (!searchQuery.value) return false
 
-  return document.excerptHighlighted || document.contentHighlighted;
-});
+  return document.excerptHighlighted || document.contentHighlighted
+})
 
 const isAiValidatedOrRejected = computed(() => {
-  return ['validated', 'rejected'].includes(
-    document.aiValidation?.status ?? '',
-  );
-});
+  return ['validated', 'rejected'].includes(document.aiValidation?.status ?? '')
+})
 
 const dateLabel = computed(() => {
   if (sortBy.value === 'datePublish') {
-    return t('common.publishedOn', { date: formatDate(document.datePublish) });
+    return t('common.publishedOn', { date: formatDate(document.datePublish) })
   } else {
-    return t('common.collectedOn', { date: formatDate(document.dateCollect) });
+    return t('common.collectedOn', { date: formatDate(document.dateCollect) })
   }
-});
+})
 </script>

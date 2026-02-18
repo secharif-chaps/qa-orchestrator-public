@@ -1,10 +1,7 @@
 <template>
   <div class="flex w-full flex-1">
     <!-- Vertical line -->
-    <div
-      class="absolute top-0 left-6 z-10 w-0.5 bg-gray-200"
-      style="height: 100%"
-    ></div>
+    <div class="absolute top-0 left-6 z-10 w-0.5 bg-gray-200" style="height: 100%"></div>
     <div ref="timelineRef" class="relative w-full pl-10">
       <!-- Simulate 3 days of activities -->
       <template v-for="dayIndex in 2" :key="dayIndex">
@@ -34,12 +31,8 @@
               </div>
               <div>
                 <div class="space-y-1">
-                  <div
-                    class="h-4 w-4/5 animate-pulse rounded bg-gray-200"
-                  ></div>
-                  <div
-                    class="h-4 w-3/4 animate-pulse rounded bg-gray-200"
-                  ></div>
+                  <div class="h-4 w-4/5 animate-pulse rounded bg-gray-200"></div>
+                  <div class="h-4 w-3/4 animate-pulse rounded bg-gray-200"></div>
                 </div>
               </div>
             </div>

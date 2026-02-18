@@ -1,6 +1,6 @@
-import { useApi } from '~/composables/useApi';
-import type { JsonLdCollection } from '~/types/jsonld';
-import type { User } from '~/types/user';
+import { useApi } from '~/composables/useApi'
+import type { JsonLdCollection } from '~/types/jsonld'
+import type { User } from '~/types/user'
 
 export const searchUsers = async (
   query: string,
@@ -12,7 +12,7 @@ export const searchUsers = async (
       excludeCurrentUser: true,
       excludeWatchFileSharedUsers: excludeWatchFileSharedUsers,
     },
-  });
+  })
 
-  return response.data;
-};
+  return response.data
+}

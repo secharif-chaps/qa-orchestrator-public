@@ -1,30 +1,26 @@
-import type {
-    JsonLdCollectionView,
-    JsonLdContext,
-    JsonLdResource,
-} from '~/types/jsonld';
-import type { Localized } from './localized';
+import type { JsonLdCollectionView, JsonLdContext, JsonLdResource } from '~/types/jsonld'
+import type { Localized } from './localized'
 
 export interface WatchFileGraphEvent {
-  '@type': string;
-  '@id': string;
-  documentsCount: number;
-  eventsCount: number;
-  hasEvents: boolean;
-  start: string;
-  end: string;
-  link: string;
+  '@type': string
+  '@id': string
+  documentsCount: number
+  eventsCount: number
+  hasEvents: boolean
+  start: string
+  end: string
+  link: string
 }
 
 export interface EventActor extends JsonLdResource {
-  id: string;
-  name: string;
-  role: string;
+  id: string
+  name: string
+  role: string
 }
 
 export interface DocumentLink extends JsonLdResource {
-  id: string;
-  textExtract: string;
+  id: string
+  textExtract: string
 }
 
 enum EventType {
@@ -38,29 +34,29 @@ enum EventType {
 }
 
 export interface WatchFileEvent extends JsonLdResource {
-  id: string;
-  eventType: EventType;
-  extractionStatus: string;
-  startDate: string;
-  endDate: string;
-  description: Localized;
-  actors: EventActor[];
-  documentLinks: DocumentLink[];
-  createdAt: string;
-  title: Localized;
+  id: string
+  eventType: EventType
+  extractionStatus: string
+  startDate: string
+  endDate: string
+  description: Localized
+  actors: EventActor[]
+  documentLinks: DocumentLink[]
+  createdAt: string
+  title: Localized
 }
 
 export interface WatchFileEventCollection {
-  '@context': string | JsonLdContext;
-  '@id': string;
-  '@type': string;
-  totalItems: number;
-  member: WatchFileEvent[];
-  view?: JsonLdCollectionView;
+  '@context': string | JsonLdContext
+  '@id': string
+  '@type': string
+  totalItems: number
+  member: WatchFileEvent[]
+  view?: JsonLdCollectionView
 }
 
 export interface WatchFileEventCollectionResponse {
-  items: WatchFileEvent[];
-  totalItems: number;
-  nextPageUrl?: string;
+  items: WatchFileEvent[]
+  totalItems: number
+  nextPageUrl?: string
 }

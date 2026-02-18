@@ -1,6 +1,6 @@
-import { defineQueryOptions } from '@pinia/colada';
-import { getEventsGraph } from '../events';
-import type { LocationQueryRaw } from 'vue-router';
+import { defineQueryOptions } from '@pinia/colada'
+import { getEventsGraph } from '../events'
+import type { LocationQueryRaw } from 'vue-router'
 
 export const EVENTS_QUERY_KEYS = {
   root: ['events'] as const,
@@ -12,32 +12,21 @@ export const EVENTS_QUERY_KEYS = {
             .sort()
             .reduce(
               (acc, key) => {
-                acc[key] = filters[key];
-                return acc;
+                acc[key] = filters[key]
+                return acc
               },
               {} as Record<string, unknown>,
             ),
         )
-      : 'no-filters';
-    return [
-      ...EVENTS_QUERY_KEYS.root,
-      'graph',
-      watchFileId,
-      filtersKey,
-    ] as const;
+      : 'no-filters'
+    return [...EVENTS_QUERY_KEYS.root, 'graph', watchFileId, filtersKey] as const
   },
-};
+}
 
 export const getEventsGraphQuery = defineQueryOptions(
-  ({
-    watchFileId,
-    filters,
-  }: {
-    watchFileId: string;
-    filters?: LocationQueryRaw;
-  }) => ({
+  ({ watchFileId, filters }: { watchFileId: string; filters?: LocationQueryRaw }) => ({
     key: EVENTS_QUERY_KEYS.graph(watchFileId, filters),
     query: () => getEventsGraph(watchFileId, filters),
     enabled: !!watchFileId,
   }),
-);
+)

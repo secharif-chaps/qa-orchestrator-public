@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', () => {
   // UI state management only - no server state or API calls
@@ -7,5 +7,5 @@ export const useUserStore = defineStore('user', () => {
 
   return {
     // No UI state needed for user search functionality
-  };
-});
+  }
+})

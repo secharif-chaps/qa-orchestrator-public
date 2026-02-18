@@ -53,7 +53,7 @@ export default {
         writer: 'Éditeur',
         writerDesc: 'Créer et gérer le contenu',
         manager: 'Gestionnaire',
-        managerDesc: 'Gestion complète de l\'équipe',
+        managerDesc: "Gestion complète de l'équipe",
       },
     },
     profile: {
@@ -1177,19 +1177,23 @@ export default {
       roles: {
         reader: {
           name: 'Lecteur',
-          description: 'Consultation uniquement : accès en lecture aux dossiers et fiches entreprises de l\'organisation.',
+          description:
+            "Consultation uniquement : accès en lecture aux dossiers et fiches entreprises de l'organisation.",
         },
         writer: {
           name: 'Rédacteur',
-          description: 'Création et gestion : peut créer des dossiers, ajouter des fiches entreprises et gérer son propre contenu.',
+          description:
+            'Création et gestion : peut créer des dossiers, ajouter des fiches entreprises et gérer son propre contenu.',
         },
         manager: {
           name: 'Manager',
-          description: 'Responsable d\'équipe : droits Rédacteur + gestion des membres et de leurs permissions au sein de l\'organisation.',
+          description:
+            "Responsable d'équipe : droits Rédacteur + gestion des membres et de leurs permissions au sein de l'organisation.",
         },
         admin: {
           name: 'Administrateur',
-          description: 'Accès administrateur complet : contrôle total sur toutes les organisations, utilisateurs et configurations système. À attribuer avec précaution.',
+          description:
+            'Accès administrateur complet : contrôle total sur toutes les organisations, utilisateurs et configurations système. À attribuer avec précaution.',
         },
       },
     },
@@ -1333,8 +1337,8 @@ export default {
       description: 'Surveiller et gérer les tâches de toutes les organisations',
       refresh: 'Actualiser',
       autoRefresh: {
-        on: "Auto-refresh ACTIVÉ",
-        off: "Auto-refresh DÉSACTIVÉ",
+        on: 'Auto-refresh ACTIVÉ',
+        off: 'Auto-refresh DÉSACTIVÉ',
       },
       lastUpdated: {
         seconds: 'Mis à jour il y a {seconds}s',
@@ -1537,7 +1541,7 @@ export default {
         descending: 'Décroissant (Z-A)',
       },
       title: 'Gestion des Utilisateurs',
-      description: "Gérer les utilisateurs et leurs organisations",
+      description: 'Gérer les utilisateurs et leurs organisations',
       itemName: 'utilisateurs',
       loading: 'Chargement des utilisateurs...',
       modal: {
@@ -2084,20 +2088,21 @@ export default {
   },
   featureFlags: {
     globalFeatures: 'Fonctionnalités globales',
-    description: 'Capacités supplémentaires qui améliorent les modules principaux. Ces fonctionnalités sont désactivées par défaut.',
+    description:
+      'Capacités supplémentaires qui améliorent les modules principaux. Ces fonctionnalités sont désactivées par défaut.',
     disabled: 'Désactivé',
     translation: {
       name: 'Traduction',
-      description: 'Traduire les données de l’entreprise vers d’autres langues'
+      description: 'Traduire les données de l’entreprise vers d’autres langues',
     },
     discover: {
       name: 'Discover',
-      description: 'Accéder au tableau de bord externe Discover'
+      description: 'Accéder au tableau de bord externe Discover',
     },
     pappers: {
       name: 'Pappers',
-      description: 'Récupérer les données d’entreprise via l’API Pappers'
-    }
+      description: 'Récupérer les données d’entreprise via l’API Pappers',
+    },
   },
   dataSources: {
     title: 'Sources de données',
