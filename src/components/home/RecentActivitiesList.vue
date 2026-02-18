@@ -24,7 +24,7 @@
       <div
         class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800"
       >
-        <i class="fa fa-clock-rotate-left text-2xl text-gray-400"></i>
+        <Icon icon="fa-clock-rotate-left" class="text-2xl text-gray-400" />
       </div>
       <p class="text-sm text-gray-500 dark:text-gray-400">
         {{
@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { Alert } from '@owlint/feathers-vue'
+import { Alert, Icon } from '@owlint/feathers-vue'
 import Card from '@/components/ui/Card.vue'
 import RecentActivityItem from './RecentActivityItem.vue'
 import type { Activity } from '@/types/organization'
@@ -55,7 +55,5 @@ interface Props {
   hasUserProjects?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
-  hasUserProjects: false,
-})
+const { hasUserProjects = false } = defineProps<Props>()
 </script>
