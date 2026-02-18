@@ -1,53 +1,53 @@
-import { useAuthStore } from '@/stores/auth';
-import { computed, readonly, ref } from 'vue';
+import { useAuthStore } from '@/stores/auth'
+import { computed, readonly, ref } from 'vue'
 
-const authError = ref<string | null>(null);
-const isTokenRefreshing = ref<boolean>(false);
+const authError = ref<string | null>(null)
+const isTokenRefreshing = ref<boolean>(false)
 
 // Delegates to the main app's auth store while keeping the same API
 // that target consumers expect
 export function useAuth() {
-  const authStore = useAuthStore();
+  const authStore = useAuthStore()
 
-  const isAuthProviderReady = computed(() => authStore.initialized);
-  const isAuthenticated = computed(() => authStore.isAuthenticated);
+  const isAuthProviderReady = computed(() => authStore.initialized)
+  const isAuthenticated = computed(() => authStore.isAuthenticated)
 
-  const userName = computed(() => authStore.username);
+  const userName = computed(() => authStore.username)
   const userEmail = computed(
     () => authStore.user?.profile?.email || null,
-  );
+  )
 
   const isInternalUser = computed(
     () =>
       typeof userEmail.value === 'string' &&
       userEmail.value.endsWith('@chapsvision.com'),
-  );
+  )
 
   const isLoading = computed(
     () => !authStore.initialized || isTokenRefreshing.value,
-  );
-  const hasError = computed(() => authError.value !== null);
+  )
+  const hasError = computed(() => authError.value !== null)
 
   const init = async () => {
-    await authStore.initialize();
-  };
+    await authStore.initialize()
+  }
 
   const getToken = async (): Promise<string | null> => {
-    return authStore.accessToken;
-  };
+    return authStore.accessToken
+  }
 
   const isTokenExpired = (): boolean => {
-    return authStore.user?.expired ?? false;
-  };
+    return authStore.user?.expired ?? false
+  }
 
   const refreshToken = async (): Promise<boolean> => {
     if (isTokenRefreshing.value) return false
 
     try {
-      isTokenRefreshing.value = true;
-      authError.value = null;
-      const result = await authStore.refreshToken();
-      return !!result;
+      isTokenRefreshing.value = true
+      authError.value = null
+      const result = await authStore.refreshToken()
+      return !!result
     } catch (error) {
       authError.value = 'Token refresh failed'
       console.error('Token refresh failed:', error)
@@ -62,19 +62,19 @@ export function useAuth() {
   }
 
   const logout = () => {
-    authStore.signOut();
-  };
+    authStore.signOut()
+  }
 
   const getValidToken = async (): Promise<string | null> => {
-    if (!authStore.user) return null;
+    if (!authStore.user) return null
 
     if (authStore.user.expired) {
-      const refreshed = await refreshToken();
-      if (!refreshed) return null;
+      const refreshed = await refreshToken()
+      if (!refreshed) return null
     }
 
-    return authStore.accessToken;
-  };
+    return authStore.accessToken
+  }
 
   return {
     // State
