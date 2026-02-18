@@ -1169,6 +1169,7 @@ export default {
         label: 'Admin organisation',
         description: 'Accès administrateur complet à toutes les organisations',
       },
+      adminChapsVisionOnly: 'Le rôle Admin est réservé aux collaborateurs ChapsVision',
       summary: {
         title: 'Résumé des permissions',
         noPermissions: 'Aucune permission sélectionnée',
