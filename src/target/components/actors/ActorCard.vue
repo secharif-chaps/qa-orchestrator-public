@@ -76,12 +76,13 @@ import ActorDetailsModal from '~/components/actors/ActorDetailsModal.vue';
 import ItemCard from '~/components/global/ItemCard.vue';
 import UrlDomain from '~/components/global/UrlDomain.vue';
 import ActorStatusModal from '~/components/watchFiles/ActorStatusModal.vue';
+import { useLocalized } from '~/composables/useLocalized';
 import { ActorStatus } from '~/types/actor';
-import type { Localized } from '~/types/localized';
 import type { WatchFileActor } from '~/types/watchFile';
 
-const { locale, t } = useI18n();
-const shortLocale = computed(() => locale.value.split('-')[0] as keyof Localized);
+const { t } = useI18n();
+
+const { shortLocale } = useLocalized()
 
 interface Props {
   actor: WatchFileActor;
@@ -128,7 +129,7 @@ const buttonStatus = computed({
 });
 
 const actorTypeLabel = computed(() => {
-  return $t('watch_files.actors.type.' + actor.type);
+  return t('watch_files.actors.type.' + actor.type);
 });
 
 const handleCardClick = () => {

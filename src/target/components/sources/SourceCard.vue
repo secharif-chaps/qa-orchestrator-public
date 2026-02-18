@@ -55,7 +55,7 @@ import { CollectorStatus } from '~/types/source';
 
 const { t } = useI18n();
 
-const {shortLocale} = useLocalized()
+const { shortLocale } = useLocalized()
 
 interface Props {
   source: Source;
