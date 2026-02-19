@@ -14,6 +14,7 @@ from app.core.config import settings
 from app.schemas.task import TaskTokenUpdate
 from app.core.concurrency import DifyConcurrencyManager
 from app.services.task_events import task_event_manager
+from app.services.dify_error_handler import DifyErrorHandler
 from fastapi import Depends
 
 logger = logging.getLogger(__name__)
@@ -196,19 +197,63 @@ async def dify_task_callback(
         if task.status in [TaskStatus.SUCCEEDED, TaskStatus.ERROR]:
             logger.warning(f"Task {task_id} already completed with status: {task.status}")
             return {"message": "Task already completed", "current_status": task.status.value}
-        
+
+        # Extract language preference
+        # Priority: 1) Query param, 2) Accept-Language header, 3) Default (en)
+        language = "en"  # Default to English
+
+        # Check for language query parameter
+        if hasattr(request, "query_params") and "lang" in request.query_params:
+            language = request.query_params["lang"]
+        # Check Accept-Language header
+        elif "accept-language" in request.headers:
+            # Parse Accept-Language header (e.g., "fr-FR,fr;q=0.9,en;q=0.8")
+            accept_lang = request.headers["accept-language"]
+            # Take first language code (simple parsing)
+            if accept_lang:
+                first_lang = accept_lang.split(",")[0].split(";")[0].split("-")[0].strip()
+                if first_lang in ["en", "fr"]:
+                    language = first_lang
+
+        # Initialize error handler with language
+        error_handler = DifyErrorHandler(language=language)
+
+        # Check if this is an error callback
+        is_error = error_handler.is_error_callback(body)
+
         # Determine success/failure and extract data
-        success = True
+        success = not is_error
         error_msg = None
+        error_result = None
         task_data = None
 
-        # Check for error indicators
-        if "error" in body and body["error"]:
+        # Process error if present
+        if is_error:
             success = False
-            error_msg = str(body["error"])
-        elif "status" in body and body["status"] in ["failed", "error"]:
-            success = False
-            error_msg = body.get("message", "Task failed without specific error")
+            # Parse and categorize error
+            error_result = error_handler.parse_error_callback(
+                callback_body=body,
+                task_id=task_id,
+                task_type=task.type.value
+            )
+            # Get user-friendly error message
+            error_msg = error_handler.get_user_error_message(
+                error_result,
+                include_technical=False
+            )
+
+            logger.error(
+                f"❌ Error callback processed for task {task_id}",
+                extra={
+                    "task_id": task_id,
+                    "task_type": task.type.value,
+                    "error_count": len(error_result.errors),
+                    "primary_error_type": error_result.primary_error.categorized_type.value,
+                    "has_whitelisted": error_result.has_whitelisted_error,
+                    "is_recoverable": error_result.primary_error.is_recoverable,
+                    "user_message": error_msg[:200],
+                }
+            )
 
         # Extract the actual result data - now simplified for string-based responses
         if success:
@@ -409,11 +454,39 @@ async def dify_task_callback(
                 exc_info=True
             )
 
-        return {
+        # Build response with error details if applicable
+        response = {
             "message": "Dify callback processed successfully",
             "task_id": task_id,
             "new_status": task.status.value
         }
+
+        # Add structured error information for failed tasks
+        if not success and error_result:
+            response["error_details"] = {
+                "user_message": error_result.primary_error.user_message,
+                "error_type": error_result.primary_error.categorized_type.value,
+                "is_recoverable": error_result.primary_error.is_recoverable,
+                "retry_after_seconds": error_result.primary_error.retry_after_seconds,
+                "recommended_action": error_result.recommended_action,
+                "error_count": len(error_result.errors),
+                "has_whitelisted_error": error_result.has_whitelisted_error,
+            }
+
+            # Add technical details for debugging (optional, only for dev/admin)
+            if logger.level == logging.DEBUG:
+                response["error_details"]["technical"] = {
+                    "errors": [
+                        {
+                            "type": e.categorized_type.value,
+                            "original_type": e.original_type,
+                            "message": e.original_message[:200],
+                        }
+                        for e in error_result.errors
+                    ]
+                }
+
+        return response
         
     except HTTPException:
         raise
