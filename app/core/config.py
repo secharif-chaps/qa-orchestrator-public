@@ -50,7 +50,7 @@ class Settings(BaseSettings):
 
     # Global-service URL for internal API calls (token consumption)
     # In Docker/K8s, this is the internal service name
-    GLOBAL_SERVICE_URL: str = "http://global-service:8000"
+    GLOBAL_SERVICE_URL: str = "http://global-service:8001/api"
 
     # RabbitMQ and Celery settings
     RABBITMQ_URL: str = "amqp://guest:guest@rabbitmq:5672//"
