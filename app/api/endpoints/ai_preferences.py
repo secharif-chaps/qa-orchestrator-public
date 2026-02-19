@@ -78,12 +78,4 @@ async def create_or_update_ai_preferences(
         preferences_data.model_dump(),
     )
 
-    logger.info(
-        "AI preferences updated",
-        extra={
-            "user_id": org_context.user_id,
-            "username": org_context.username,
-        },
-    )
-
     return AiPreferencesResponse(**ai_preferences)

@@ -25,8 +25,8 @@ Usage:
 Environment variables:
     SOURCE_DATABASE_URL: Backend database URL (default: postgresql://postgres:postgres@db:5432/mint_db)
     DATABASE_URL: Global service database URL (uses app config)
-    KEYCLOAK_URL: Keycloak base URL for user resolution
-    KEYCLOAK_REALM: Keycloak realm name
+    KEYCLOAK_URL or KEYCLOAK_SERVER_URL: Keycloak base URL for user resolution
+    KEYCLOAK_REALM: Keycloak realm name (default: chapsmind)
     KEYCLOAK_ADMIN_CLIENT_ID: Admin client ID for Keycloak API
     KEYCLOAK_ADMIN_CLIENT_SECRET: Admin client secret for Keycloak API
 """
@@ -36,7 +36,7 @@ import os
 import sys
 from datetime import datetime
 
-import requests
+import httpx
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
@@ -57,8 +57,8 @@ def get_source_engine():
 
 def get_keycloak_token() -> str | None:
     """Get admin access token from Keycloak using client credentials."""
-    keycloak_url = os.getenv("KEYCLOAK_URL", "")
-    realm = os.getenv("KEYCLOAK_REALM", "mint")
+    keycloak_url = os.getenv("KEYCLOAK_URL", "") or os.getenv("KEYCLOAK_SERVER_URL", "")
+    realm = os.getenv("KEYCLOAK_REALM", "chapsmind")
     client_id = os.getenv("KEYCLOAK_ADMIN_CLIENT_ID", "")
     client_secret = os.getenv("KEYCLOAK_ADMIN_CLIENT_SECRET", "")
 
@@ -67,7 +67,7 @@ def get_keycloak_token() -> str | None:
         return None
 
     token_url = f"{keycloak_url}/realms/{realm}/protocol/openid-connect/token"
-    response = requests.post(
+    response = httpx.post(
         token_url,
         data={
             "grant_type": "client_credentials",
@@ -94,11 +94,11 @@ def resolve_username_to_uuid(username: str, token: str) -> str | None:
     Returns:
         User UUID string or None if not found
     """
-    keycloak_url = os.getenv("KEYCLOAK_URL", "")
-    realm = os.getenv("KEYCLOAK_REALM", "mint")
+    keycloak_url = os.getenv("KEYCLOAK_URL", "") or os.getenv("KEYCLOAK_SERVER_URL", "")
+    realm = os.getenv("KEYCLOAK_REALM", "chapsmind")
 
     users_url = f"{keycloak_url}/admin/realms/{realm}/users"
-    response = requests.get(
+    response = httpx.get(
         users_url,
         params={"username": username, "exact": "true"},
         headers={"Authorization": f"Bearer {token}"},

@@ -51,3 +51,17 @@ class ModuleNotEnabledException(HTTPException):
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Module '{module_name.value}' is not enabled for this organization",
         )
+
+
+class PreferencesUpdateException(HTTPException):
+    """Exception raised when user preferences update fails after retry.
+
+    Returns HTTP 500 with a generic message. The user_id is only
+    logged server-side for debugging, never exposed in the response.
+    """
+
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update preferences. Please try again.",
+        )

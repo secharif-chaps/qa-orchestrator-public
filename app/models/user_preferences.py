@@ -9,8 +9,7 @@ Stored in global_schema as a global (non-module-specific) resource.
 
 from typing import Any, Dict, Optional
 
-from sqlalchemy import Column, DateTime, Integer, String
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Column, DateTime, Integer, JSON, String
 from sqlalchemy.sql import func
 
 from app.database import GlobalBase, GLOBAL_SCHEMA
@@ -37,7 +36,8 @@ class UserPreferences(GlobalBase):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(String, nullable=False, unique=True, index=True)
-    preferences = Column(JSONB, nullable=False, server_default="{}")
+    # JSON type maps to JSONB on PostgreSQL and JSON on SQLite (for tests)
+    preferences = Column(JSON, nullable=False, server_default="{}")
     created_at = Column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
