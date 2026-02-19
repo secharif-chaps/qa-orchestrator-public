@@ -1,5 +1,9 @@
 import { defineQueryOptions } from '@pinia/colada'
-import { getCollectionWatchFile, getItemWatchFile, getWatchFileTimeline } from '@target/api/watchFile'
+import {
+  getCollectionWatchFile,
+  getItemWatchFile,
+  getWatchFileTimeline,
+} from '@target/api/watchFile'
 import type { WatchFileFilters } from '@target/types/watchFile'
 
 export const WATCH_FILE_QUERY_KEYS = {

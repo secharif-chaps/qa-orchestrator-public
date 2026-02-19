@@ -10,9 +10,9 @@
 </template>
 
 <script setup lang="ts">
-import type { SourceActivity } from '@target/types/source';
-import { SourceActionType, SourceStatus } from '@target/types/source';
-import { computed } from 'vue';
+import type { SourceActivity } from '@target/types/source'
+import { SourceActionType, SourceStatus } from '@target/types/source'
+import { computed } from 'vue'
 
 interface Props {
   activity: SourceActivity

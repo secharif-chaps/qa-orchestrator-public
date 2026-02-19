@@ -14,9 +14,9 @@
 import Filters from '@target/components/filters/Filters.vue'
 import type { AnalysisFacets } from '@target/types/facet'
 import {
-    FILTER_CATEGORY_ACTORS,
-    FILTER_CATEGORY_DATES,
-    FILTER_CATEGORY_EVENTS,
+  FILTER_CATEGORY_ACTORS,
+  FILTER_CATEGORY_DATES,
+  FILTER_CATEGORY_EVENTS,
 } from '@target/types/facet'
 
 const displayDrawer = defineModel<boolean>()

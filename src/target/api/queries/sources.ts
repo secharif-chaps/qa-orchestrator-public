@@ -1,10 +1,10 @@
 import type { SortOrder } from '@owlint/feathers-vue'
 import { defineQueryOptions } from '@pinia/colada'
 import {
-    getCollectionSource,
-    getSourceHistory,
-    getSourceTypes,
-    getWatchFileSourcesGrouped,
+  getCollectionSource,
+  getSourceHistory,
+  getSourceTypes,
+  getWatchFileSourcesGrouped,
 } from '@target/api/sources'
 import type { SourceStatus } from '@target/types/source'
 

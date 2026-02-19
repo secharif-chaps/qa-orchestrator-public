@@ -28,8 +28,8 @@
 <script setup lang="ts">
 import { useQuery } from '@pinia/colada'
 import {
-    getWatchFileTimelineEventActorsQuery,
-    getWatchFileTimelineEventSourcesQuery,
+  getWatchFileTimelineEventActorsQuery,
+  getWatchFileTimelineEventSourcesQuery,
 } from '@target/api/queries/timeline'
 import ActorCard from '@target/components/actors/ActorCard.vue'
 import Drawer from '@target/components/global/Drawer.vue'

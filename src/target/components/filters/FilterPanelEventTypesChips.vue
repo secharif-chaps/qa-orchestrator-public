@@ -16,8 +16,8 @@
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@owlint/feathers-vue';
-import type { WatchFileEventType } from '@target/types/watchFile';
+import { Icon } from '@owlint/feathers-vue'
+import type { WatchFileEventType } from '@target/types/watchFile'
 
 interface Props {
   eventTypes: WatchFileEventType[]

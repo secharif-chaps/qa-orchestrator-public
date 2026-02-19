@@ -4,15 +4,19 @@ import { SOURCES_QUERY_KEYS } from '@target/api/queries/sources'
 import { useApi } from '@target/composables/useApi'
 import type { DefaultErrorMessage } from '@target/types/api'
 import type {
-    Conversation,
-    FunctionCallContent,
-    Message,
-    MessageRole,
-    MessageStatus,
-    TextContent,
+  Conversation,
+  FunctionCallContent,
+  Message,
+  MessageRole,
+  MessageStatus,
+  TextContent,
 } from '@target/types/conversation'
 import type { JsonLdCollection } from '@target/types/jsonld'
-import type { GroupedWatchFileActivityDto, WatchFile, WatchFileFilters } from '@target/types/watchFile'
+import type {
+  GroupedWatchFileActivityDto,
+  WatchFile,
+  WatchFileFilters,
+} from '@target/types/watchFile'
 import { WATCH_FILE_QUERY_KEYS } from './queries/watchFile'
 
 const ROOT_URL = '/watch_files'

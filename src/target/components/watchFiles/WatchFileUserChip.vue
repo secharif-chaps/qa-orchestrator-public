@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import type { User } from '@target/types/user';
+import type { User } from '@target/types/user'
 
 defineProps<{
   user: User

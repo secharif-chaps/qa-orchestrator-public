@@ -3,8 +3,8 @@ import { useApi } from '@target/composables/useApi'
 import { useDate } from '@target/composables/useDate'
 import { DatesPeriod } from '@target/types/filter'
 import type {
-    WatchFileEventCollection,
-    WatchFileEventCollectionResponse,
+  WatchFileEventCollection,
+  WatchFileEventCollectionResponse,
 } from '@target/types/watchFileEvent'
 import type { LocationQueryRaw } from 'vue-router'
 

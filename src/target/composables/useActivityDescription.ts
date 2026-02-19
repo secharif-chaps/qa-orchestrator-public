@@ -1,5 +1,8 @@
 import type { SourceActivity } from '@target/types/source'
-import type { SourceActivityDescription, WatchFileActivityDescription } from '@target/types/timeline'
+import type {
+  SourceActivityDescription,
+  WatchFileActivityDescription,
+} from '@target/types/timeline'
 import type { WatchFileActivity } from '@target/types/watchFile'
 
 export function useActivityDescription() {

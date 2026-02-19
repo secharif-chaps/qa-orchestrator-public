@@ -52,7 +52,10 @@
 import { useQuery } from '@pinia/colada'
 import { useAddMessage, useGetOlderConversationMessages } from '@target/api/mutations/conversation'
 import { useCreateWatchFile } from '@target/api/mutations/watchFile'
-import { getConversationMessagesQuery, getLastConversationQuery } from '@target/api/queries/conversation'
+import {
+  getConversationMessagesQuery,
+  getLastConversationQuery,
+} from '@target/api/queries/conversation'
 import ChatInput from '@target/components/chat/ChatInput.vue'
 import AssistantEmptyView from '@target/components/watchFiles/EditSection/AssistantEmptyView.vue'
 import ConnectionBanner from '@target/components/watchFiles/EditSection/ConnectionBanner.vue'

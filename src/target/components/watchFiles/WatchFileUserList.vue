@@ -77,7 +77,10 @@
 
 <script setup lang="ts">
 import { Badge, Button, ORadio, Select, SelectItem } from '@owlint/feathers-vue'
-import { useRemoveWatchFileUser, useUpdateWatchFileUserRole } from '@target/api/mutations/watchFileUser'
+import {
+  useRemoveWatchFileUser,
+  useUpdateWatchFileUserRole,
+} from '@target/api/mutations/watchFileUser'
 import { useConfirmModal } from '@target/composables/useConfirmModal'
 import { useMotionPreference } from '@target/composables/useMotionPreference'
 import { useRole } from '@target/composables/useRole'

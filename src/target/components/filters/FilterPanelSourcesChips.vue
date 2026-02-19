@@ -24,9 +24,9 @@
 </template>
 
 <script lang="ts" setup>
-import { Icon } from '@owlint/feathers-vue';
-import Logo from '@target/components/global/Logo.vue';
-import type { Source } from '@target/types/facet';
+import { Icon } from '@owlint/feathers-vue'
+import Logo from '@target/components/global/Logo.vue'
+import type { Source } from '@target/types/facet'
 
 interface Props {
   sources: Source[]

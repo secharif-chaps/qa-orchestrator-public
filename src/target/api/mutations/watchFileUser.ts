@@ -1,9 +1,9 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { WATCH_FILE_USER_QUERY_KEYS } from '@target/api/queries/watchFileUser'
 import {
-    addWatchFileUsers,
-    removeWatchFileUser,
-    updateWatchFileUserRole,
+  addWatchFileUsers,
+  removeWatchFileUser,
+  updateWatchFileUserRole,
 } from '@target/api/watchFileUser'
 import { useRole } from '@target/composables/useRole'
 import { useToast } from '@target/composables/useToast'

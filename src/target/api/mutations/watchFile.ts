@@ -1,12 +1,12 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { WATCH_FILE_QUERY_KEYS } from '@target/api/queries/watchFile'
 import {
-    changeWatchFileStatus,
-    createWatchFile,
-    deleteWatchFile,
-    removeWatchFileActor,
-    toggleWatchFileFavorite,
-    updateWatchFile,
+  changeWatchFileStatus,
+  createWatchFile,
+  deleteWatchFile,
+  removeWatchFileActor,
+  toggleWatchFileFavorite,
+  updateWatchFile,
 } from '@target/api/watchFile'
 import { useApi } from '@target/composables/useApi'
 import { useToast } from '@target/composables/useToast'

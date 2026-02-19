@@ -112,15 +112,15 @@
 
 <script setup lang="ts">
 import {
-    Button,
-    Checkbox,
-    HeaderCell,
-    Modal,
-    OPopper,
-    Table,
-    Tag,
-    useSort,
-    type SortOrder,
+  Button,
+  Checkbox,
+  HeaderCell,
+  Modal,
+  OPopper,
+  Table,
+  Tag,
+  useSort,
+  type SortOrder,
 } from '@owlint/feathers-vue'
 import { useChangeActorStatus } from '@target/api/mutations/actor'
 import { useToast } from '@target/composables/useToast'

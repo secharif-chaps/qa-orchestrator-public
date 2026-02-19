@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { useTimeDisplay } from '@target/composables/useTimeDisplay';
+import { useTimeDisplay } from '@target/composables/useTimeDisplay'
 
 interface Props {
   datePrefix: string

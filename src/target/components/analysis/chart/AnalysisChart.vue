@@ -76,15 +76,15 @@ import type { WatchFileGraphEvent } from '@target/types/watchFileEvent'
 import { Chart, registerables, type ChartData, type ChartOptions } from 'chart.js'
 import { draw } from 'patternomaly'
 import {
-    computed,
-    nextTick,
-    onMounted,
-    onUnmounted,
-    ref,
-    toRefs,
-    useTemplateRef,
-    watch,
-    watchEffect,
+  computed,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  toRefs,
+  useTemplateRef,
+  watch,
+  watchEffect,
 } from 'vue'
 import { useI18n } from 'vue-i18n'
 

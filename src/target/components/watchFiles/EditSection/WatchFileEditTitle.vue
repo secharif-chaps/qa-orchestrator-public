@@ -78,10 +78,10 @@
 </template>
 
 <script setup lang="ts">
-import { Button, Input, OPopper } from '@owlint/feathers-vue';
-import { useWatchFileTitle } from '@target/composables/useWatchFileTitle';
-import type { WatchFile } from '@target/types/watchFile';
-import { computed, onMounted, onUnmounted, toRef } from 'vue';
+import { Button, Input, OPopper } from '@owlint/feathers-vue'
+import { useWatchFileTitle } from '@target/composables/useWatchFileTitle'
+import type { WatchFile } from '@target/types/watchFile'
+import { computed, onMounted, onUnmounted, toRef } from 'vue'
 
 const props = withDefaults(
   defineProps<{
