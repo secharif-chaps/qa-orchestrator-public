@@ -16,6 +16,7 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from pydantic import BaseModel
+from fastapi import Header, HTTPException, status
 
 from app.core.config import settings
 from app.core.logging_config import get_logger
@@ -116,3 +117,109 @@ def create_internal_token(
     )
 
     return token
+
+
+def verify_internal_token(token: str) -> InternalTokenPayload:
+    """
+    Verify and decode an internal JWT token.
+
+    Called by backend services to validate tokens from the gateway.
+    Checks signature, expiration, and issuer.
+
+    Args:
+        token: JWT string to verify
+
+    Returns:
+        Decoded token payload with user context
+
+    Raises:
+        TokenExpiredError: If token has expired
+        TokenInvalidError: If token is invalid or signature doesn't match
+        InternalJWTError: If secret is not configured
+    """
+    if not settings.INTERNAL_JWT_SECRET:
+        raise InternalJWTError("INTERNAL_JWT_SECRET not configured")
+
+    try:
+        # Decode and verify token
+        payload = jwt.decode(
+            token,
+            settings.INTERNAL_JWT_SECRET,
+            algorithms=[ALGORITHM],
+            options={
+                "verify_signature": True,
+                "verify_exp": True,
+                "verify_iss": True,
+                "require": ["sub", "username", "org_id", "iss", "iat", "exp"],
+            },
+            issuer=ISSUER,
+        )
+
+        # Convert to validated model
+        return InternalTokenPayload(**payload)
+
+    except jwt.ExpiredSignatureError as e:
+        logger.warning("Internal token expired", extra={"error": str(e)})
+        raise TokenExpiredError("Internal token has expired") from e
+
+    except jwt.InvalidTokenError as e:
+        logger.warning(
+            "Invalid internal token", extra={"error": str(e), "error_type": type(e).__name__}
+        )
+        raise TokenInvalidError(f"Invalid internal token: {str(e)}") from e
+
+
+async def get_internal_token(authorization: str = Header(...)) -> InternalTokenPayload:
+    """
+    FastAPI dependency to extract and verify internal JWT from Authorization header.
+
+    Validates the token format, extracts the bearer token, and verifies its signature.
+    Use as a dependency in internal API endpoints that require service-to-service auth.
+
+    Args:
+        authorization: Authorization header value (format: "Bearer <token>")
+
+    Returns:
+        Validated token payload with user context
+
+    Raises:
+        HTTPException 401: If token is missing, invalid, or expired
+    """
+    if not authorization:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing authorization header",
+        )
+
+    # Extract bearer token
+    parts = authorization.split()
+    if len(parts) != 2 or parts[0].lower() != "bearer":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authorization header format. Expected: Bearer <token>",
+        )
+
+    token = parts[1]
+
+    try:
+        payload = verify_internal_token(token)
+        logger.debug(
+            "Internal token verified",
+            extra={
+                "user_id": payload.sub,
+                "org_id": payload.org_id,
+            },
+        )
+        return payload
+
+    except TokenExpiredError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Internal token has expired",
+        )
+
+    except (TokenInvalidError, InternalJWTError) as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Invalid internal token: {str(e)}",
+        )
