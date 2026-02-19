@@ -1,9 +1,9 @@
 import {
-    type Conversation,
-    ConversationState,
-    type Message,
-    MessageRole,
-    type MessageStatus,
+  type Conversation,
+  ConversationState,
+  type Message,
+  MessageRole,
+  type MessageStatus,
 } from '@target/types/conversation'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'

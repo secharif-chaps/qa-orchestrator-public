@@ -1,10 +1,10 @@
 import { useConversationStore } from '@target/stores/conversation'
 import {
-    ConversationState,
-    MessageRole,
-    MessageStatus,
-    type Conversation,
-    type Message,
+  ConversationState,
+  MessageRole,
+  MessageStatus,
+  type Conversation,
+  type Message,
 } from '@target/types/conversation'
 import type { WatchFile } from '@target/types/watchFile'
 import { createPinia, setActivePinia } from 'pinia'

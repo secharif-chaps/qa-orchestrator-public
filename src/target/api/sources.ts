@@ -3,11 +3,11 @@ import { useApi } from '@target/composables/useApi'
 import type { DefaultErrorMessage } from '@target/types/api'
 import type { JsonLdCollection } from '@target/types/jsonld'
 import type {
-    BatchChangeSourceStatusResponse,
-    GroupedSourceActivityDto,
-    Source,
-    SourcesGroupedResponse,
-    SourceStatus,
+  BatchChangeSourceStatusResponse,
+  GroupedSourceActivityDto,
+  Source,
+  SourcesGroupedResponse,
+  SourceStatus,
 } from '@target/types/source'
 const ROOT_URL = '/watch_files'
 

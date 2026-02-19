@@ -1,14 +1,18 @@
 import { useMutation, useQueryCache } from '@pinia/colada'
-import { batchDocumentValidation, documentValidation, markDocumentAsSeen } from '@target/api/document'
+import {
+  batchDocumentValidation,
+  documentValidation,
+  markDocumentAsSeen,
+} from '@target/api/document'
 import { DOCUMENT_QUERY_KEYS } from '@target/api/queries/document'
 import { useToast } from '@target/composables/useToast'
 import { useWatchFileDocumentsStore } from '@target/stores/watchFileDocuments'
 import type {
-    BatchValidationResponse,
-    Document,
-    DocumentFacets,
-    DocumentValidationResponse,
-    ManualValidationStatus,
+  BatchValidationResponse,
+  Document,
+  DocumentFacets,
+  DocumentValidationResponse,
+  ManualValidationStatus,
 } from '@target/types/document'
 import { DocumentValidationAction } from '@target/types/document'
 import type { User } from '@target/types/user'

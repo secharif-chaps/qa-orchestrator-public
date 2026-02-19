@@ -1,13 +1,10 @@
 <template>
   <div class="flex h-full w-full flex-col border-l border-gray-200">
     <div class="flex flex-1 flex-col items-stretch gap-4 overflow-y-auto px-8 py-4">
-      <template v-if="watchFile">
+      <template v-if="watchFile || !loading">
         <ReferenceSubjectSection :watch-file="watchFile" />
         <ActorsSection :watch-file="watchFile" :readonly="isReadOnly || !isUserEditable" />
         <SourcesSection :watch-file="watchFile" :readonly="isReadOnly || !isUserEditable" />
-      </template>
-      <template v-else-if="!loading">
-        <ConfigSectionEmptyView />
       </template>
     </div>
     <footer v-if="watchFile" class="sticky bottom-0 z-10 bg-white p-4 shadow-2xl">
@@ -43,7 +40,6 @@
 
 <script setup lang="ts">
 import ActorsSection from '@target/components/watchFiles/EditSection/ActorsSection.vue'
-import ConfigSectionEmptyView from '@target/components/watchFiles/EditSection/ConfigSectionEmptyView.vue'
 import ReferenceSubjectSection from '@target/components/watchFiles/EditSection/ReferenceSubjectSection.vue'
 import SourcesSection from '@target/components/watchFiles/EditSection/SourcesSection.vue'
 import WatchFileShareButton from '@target/components/watchFiles/WatchFileShareButton.vue'

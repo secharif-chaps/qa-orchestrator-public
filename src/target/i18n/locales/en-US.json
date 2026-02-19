@@ -326,8 +326,6 @@
   "watch_files.chat.connection_restored": "Connection restored",
   "watch_files.chat.reconnecting": "Reconnecting...",
   "watch_files.chat.offline": "No internet connection",
-  "watch_files.config_section.empty_view.description": "Start talking to start the generation.",
-  "watch_files.config_section.empty_view.title": "Awaiting your instructions...",
   "watch_files.edit.alert.enabled": "Active collection - Configuration locked",
   "watch_files.edit.alert.enabled.tooltip": "Monitoring in progress:<ul><li>Automatic source monitoring</li><li>Real-time document collection</li><li>Automatic AI validation</li></ul>",
   "watch_files.header_section.activation.modal.warning_message": "Your watch file can be activated now, but we recommend completing the configuration for optimal results.",

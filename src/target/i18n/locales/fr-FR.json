@@ -328,8 +328,6 @@
   "watch_files.chat.connection_restored": "Connexion rétablie",
   "watch_files.chat.reconnecting": "Reconnexion en cours...",
   "watch_files.chat.offline": "Pas de connexion internet",
-  "watch_files.config_section.empty_view.description": "Commencez à discuter pour démarrer la génération.",
-  "watch_files.config_section.empty_view.title": "En attente de vos instructions...",
   "watch_files.edit.alert.enabled": "Collecte active - Configuration verrouillée",
   "watch_files.edit.alert.enabled.tooltip": "Surveillance en cours :<ul><li>Surveillance automatique des sources</li><li>Collecte en temps réel des documents</li><li>Validation automatique par l'IA</li></ul>",
   "watch_files.header_section.activation.modal.warning_message": "Votre dossier peut être activé maintenant, mais nous recommandons de compléter la configuration pour les résultats optimaux.",

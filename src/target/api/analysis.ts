@@ -1,11 +1,11 @@
 import { useApi } from '@target/composables/useApi'
 import { useDate } from '@target/composables/useDate'
 import type {
-    CollectionParams,
-    Document,
-    DocumentFacets,
-    FacetsParams,
-    FilterParams,
+  CollectionParams,
+  Document,
+  DocumentFacets,
+  FacetsParams,
+  FilterParams,
 } from '@target/types/document'
 import { FilterDates } from '@target/types/filter'
 import type { JsonLdCollection } from '@target/types/jsonld'

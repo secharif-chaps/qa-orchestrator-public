@@ -1,11 +1,11 @@
 import type { SortOrder } from '@owlint/feathers-vue'
 import { useApi } from '@target/composables/useApi'
 import type {
-    Actor,
-    ActorFilters,
-    ActorStatus,
-    ActorTypesResponse,
-    BatchChangeActorStatusResponse,
+  Actor,
+  ActorFilters,
+  ActorStatus,
+  ActorTypesResponse,
+  BatchChangeActorStatusResponse,
 } from '@target/types/actor'
 import type { DefaultErrorMessage } from '@target/types/api'
 import type { JsonLdCollection } from '@target/types/jsonld'

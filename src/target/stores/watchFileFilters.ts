@@ -2,12 +2,12 @@ import { useDate } from '@target/composables/useDate'
 import type { DocumentFacets } from '@target/types/document'
 import type { Actor, AnalysisFacets, Source } from '@target/types/facet'
 import type {
-    AnalysisFormFilters,
-    BaseFormFilters,
-    DatePicker,
-    DatesPeriod,
-    DocumentsFormFilters,
-    FilterDates,
+  AnalysisFormFilters,
+  BaseFormFilters,
+  DatePicker,
+  DatesPeriod,
+  DocumentsFormFilters,
+  FilterDates,
 } from '@target/types/filter'
 import type { WatchFileEventType } from '@target/types/watchFile'
 import { defineStore } from 'pinia'

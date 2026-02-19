@@ -169,14 +169,14 @@
 
 <script setup lang="ts">
 import {
-    Checkbox,
-    HeaderCell,
-    Icon,
-    Searchbar,
-    Select,
-    SelectItem,
-    Table,
-    Tag,
+  Checkbox,
+  HeaderCell,
+  Icon,
+  Searchbar,
+  Select,
+  SelectItem,
+  Table,
+  Tag,
 } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { getActorSourcesQuery } from '@target/api/queries/actor'

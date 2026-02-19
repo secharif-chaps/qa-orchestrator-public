@@ -228,14 +228,14 @@
 import { useToast } from '@/target/composables/useToast'
 import { RouteNames } from '@/target/types/route-names'
 import {
-    Button,
-    Checkbox,
-    HeaderCell,
-    Icon,
-    ORadio,
-    Pagination,
-    Searchbar,
-    Table,
+  Button,
+  Checkbox,
+  HeaderCell,
+  Icon,
+  ORadio,
+  Pagination,
+  Searchbar,
+  Table,
 } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
 import { getCollectionWatchFileQuery } from '@target/api/queries/watchFile'

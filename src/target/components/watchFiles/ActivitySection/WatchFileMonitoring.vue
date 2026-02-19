@@ -33,7 +33,11 @@ import { getWatchFileTimeline } from '@target/api/watchFile'
 import HistoryTimelineEventDetail from '@target/components/watchFiles/ActivitySection/Timeline/HistoryTimelineEventDetail.vue'
 import Timeline from '@target/components/watchFiles/ActivitySection/Timeline/Timeline.vue'
 import { useActivityDescription } from '@target/composables/useActivityDescription'
-import type { TimelineActivity, TimelineDay, WatchFileActivityDescription } from '@target/types/timeline'
+import type {
+  TimelineActivity,
+  TimelineDay,
+  WatchFileActivityDescription,
+} from '@target/types/timeline'
 import type { GroupedWatchFileActivityDto, WatchFileActivity } from '@target/types/watchFile'
 import { WatchFileEventType } from '@target/types/watchFile'
 import { computed, ref, watch } from 'vue'
