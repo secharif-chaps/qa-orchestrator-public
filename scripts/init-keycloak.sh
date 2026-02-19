@@ -47,6 +47,14 @@ if [ "$REALM_EXISTS" != "200" ]; then
 fi
 echo "✅ Realm exists"
 
+# Set ChapsMind theme for login and email
+echo "🎨 Configuring ChapsMind theme..."
+curl -sf -X PUT "$KEYCLOAK_URL/admin/realms/$REALM" \
+    -H "Authorization: Bearer $ADMIN_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '{"loginTheme": "chapsmind", "emailTheme": "chapsmind"}'
+echo "✅ Theme configured (login + email)"
+
 # Get the chapsmind-admin client ID
 echo "🔍 Getting chapsmind-admin client..."
 CLIENT_ID=$(curl -sf "$KEYCLOAK_URL/admin/realms/$REALM/clients" \
