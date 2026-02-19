@@ -20,6 +20,7 @@ from app.core.logging_config import get_logger
 from app.core.organization import get_user_organization
 from app.database import get_global_db
 from app.services.token_manager import TokenManager
+from app.services.user_preferences import UserPreferencesService
 
 logger = get_logger(__name__)
 
@@ -167,3 +168,18 @@ async def get_token_manager(db: AsyncSession = Depends(get_global_db)) -> TokenM
         TokenManager instance configured with the async database session.
     """
     return TokenManager(db=db)
+
+
+# UserPreferencesService dependency
+async def get_user_preferences_service(
+    db: AsyncSession = Depends(get_global_db),
+) -> UserPreferencesService:
+    """FastAPI dependency to get UserPreferencesService instance.
+
+    Args:
+        db: Async SQLAlchemy session for global_schema database.
+
+    Returns:
+        UserPreferencesService instance configured with the async database session.
+    """
+    return UserPreferencesService(db=db)

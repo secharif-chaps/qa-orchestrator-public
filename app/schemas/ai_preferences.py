@@ -1,0 +1,32 @@
+"""Pydantic schemas for AI preferences endpoints.
+
+Defines request/response models for the Chapse Assist AI preferences feature.
+Field names and types match the monolith schemas for frontend compatibility.
+"""
+
+from typing import Optional
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class AiPreferencesCreate(BaseModel):
+    """Schema for creating/updating AI preferences."""
+
+    role: str = Field(..., min_length=1, max_length=255)
+    goals_text: str = Field(..., min_length=1, max_length=2000)
+    desired_output_text: str = Field(..., min_length=1, max_length=2000)
+    documentation_text: Optional[str] = Field(None, max_length=5000)
+
+
+class AiPreferencesResponse(BaseModel):
+    """Schema for AI preferences response.
+
+    Returns the AI preference fields directly (extracted from JSONB).
+    """
+
+    role: str
+    goals_text: str
+    desired_output_text: str
+    documentation_text: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=False)
