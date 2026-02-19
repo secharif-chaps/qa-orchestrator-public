@@ -1,7 +1,7 @@
 import type { SortOrder } from '@owlint/feathers-vue'
-import type { Actor, ActorStatus } from '~/types/actor'
-import type { JsonLdResource } from '~/types/jsonld'
-import type { Localized } from '~/types/localized'
+import type { Actor, ActorStatus } from '@target/types/actor'
+import type { JsonLdResource } from '@target/types/jsonld'
+import type { Localized } from '@target/types/localized'
 
 export const WATCH_FILE_STATE = {
   NEW: 'new',

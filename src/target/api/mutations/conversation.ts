@@ -1,11 +1,11 @@
-import { addMessage, getOlderConversationMessages, retryMessage } from '~/api/watchFile'
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
+import { CONVERSATION_QUERY_KEYS } from '@target/api/queries/conversation'
+import { addMessage, getOlderConversationMessages, retryMessage } from '@target/api/watchFile'
+import { useToast } from '@target/composables/useToast'
+import { useConversationStore } from '@target/stores/conversation'
+import type { Message } from '@target/types/conversation'
+import { MessageRole, MessageStatus } from '@target/types/conversation'
 import { useI18n } from 'vue-i18n'
-import { CONVERSATION_QUERY_KEYS } from '~/api/queries/conversation'
-import { useToast } from '~/composables/useToast'
-import { useConversationStore } from '~/stores/conversation'
-import type { Message } from '~/types/conversation'
-import { MessageRole, MessageStatus } from '~/types/conversation'
 
 export const useAddMessage = defineMutation(() => {
   const queryCache = useQueryCache()

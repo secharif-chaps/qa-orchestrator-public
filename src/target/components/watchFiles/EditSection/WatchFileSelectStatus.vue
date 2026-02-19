@@ -47,11 +47,11 @@
 <script lang="ts" setup>
 import { Icon, OPopper, Select, SelectItem, Tag } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
+import { getCollectionSourceQuery } from '@target/api/queries/sources'
+import { useWatchFileStatusModal } from '@target/composables/useWatchFileStatusModal'
+import { WATCH_FILE_STATUS, type WatchFile, type WatchFileStatus } from '@target/types/watchFile'
 import { computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getCollectionSourceQuery } from '~/api/queries/sources'
-import { useWatchFileStatusModal } from '~/composables/useWatchFileStatusModal'
-import { WATCH_FILE_STATUS, type WatchFile, type WatchFileStatus } from '~/types/watchFile'
 
 interface Props {
   watchFile: WatchFile

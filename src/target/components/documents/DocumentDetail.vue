@@ -82,15 +82,15 @@
 
 <script setup lang="ts">
 import { Icon, Tag } from '@owlint/feathers-vue'
+import InformationMessage from '@target/components/global/InformationMessage.vue'
+import UrlDomain from '@target/components/global/UrlDomain.vue'
+import DocumentDetailSkeleton from '@target/components/skeletons/DocumentDetailSkeleton.vue'
+import { useDocumentIcon } from '@target/composables/useDocumentIcon'
+import { useLocalized } from '@target/composables/useLocalized'
+import type { Document } from '@target/types/document'
+import { DocumentValidationAction } from '@target/types/document'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import InformationMessage from '~/components/global/InformationMessage.vue'
-import UrlDomain from '~/components/global/UrlDomain.vue'
-import DocumentDetailSkeleton from '~/components/skeletons/DocumentDetailSkeleton.vue'
-import { useDocumentIcon } from '~/composables/useDocumentIcon'
-import { useLocalized } from '~/composables/useLocalized'
-import type { Document } from '~/types/document'
-import { DocumentValidationAction } from '~/types/document'
 import DocumentAccordion from './DocumentAccordion.vue'
 
 const { d, t } = useI18n()

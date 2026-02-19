@@ -33,17 +33,17 @@
 
 <script lang="ts" setup>
 import { Button, Table, Tag } from '@owlint/feathers-vue'
+import ActorCard from '@target/components/actors/ActorCard.vue'
+import { useLocalized } from '@target/composables/useLocalized'
+import { useWatchFileDocumentsStore } from '@target/stores/watchFileDocuments'
+import { useWatchFileFiltersStore } from '@target/stores/watchFileFilters'
+import { ActorStatus, type Actor } from '@target/types/actor'
+import { RouteNames } from '@target/types/route-names'
+import type { WatchFileActor } from '@target/types/watchFile'
+import type { EventActor, WatchFileEvent } from '@target/types/watchFileEvent'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import ActorCard from '~/components/actors/ActorCard.vue'
-import { useLocalized } from '~/composables/useLocalized'
-import { useWatchFileDocumentsStore } from '~/stores/watchFileDocuments'
-import { useWatchFileFiltersStore } from '~/stores/watchFileFilters'
-import { ActorStatus, type Actor } from '~/types/actor'
-import { RouteNames } from '~/types/route-names'
-import type { WatchFileActor } from '~/types/watchFile'
-import type { EventActor, WatchFileEvent } from '~/types/watchFileEvent'
 
 const { d, t } = useI18n()
 const route = useRoute()

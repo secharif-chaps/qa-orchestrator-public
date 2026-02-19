@@ -1,14 +1,14 @@
 import type { SortOrder } from '@owlint/feathers-vue'
-import { useApi } from '~/composables/useApi'
-import type { DefaultErrorMessage } from '~/types/api'
-import type { JsonLdCollection } from '~/types/jsonld'
+import { useApi } from '@target/composables/useApi'
+import type { DefaultErrorMessage } from '@target/types/api'
+import type { JsonLdCollection } from '@target/types/jsonld'
 import type {
-  BatchChangeSourceStatusResponse,
-  GroupedSourceActivityDto,
-  Source,
-  SourcesGroupedResponse,
-  SourceStatus,
-} from '~/types/source'
+    BatchChangeSourceStatusResponse,
+    GroupedSourceActivityDto,
+    Source,
+    SourcesGroupedResponse,
+    SourceStatus,
+} from '@target/types/source'
 const ROOT_URL = '/watch_files'
 
 export const getWatchFileSourcesGrouped = async (watchFileId: string) => {

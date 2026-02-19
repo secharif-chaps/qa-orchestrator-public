@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
+import WatchFileConfiguration from '@target/components/watchFiles/EditSection/Main.vue'
 import { useRoute } from 'vue-router'
-import WatchFileConfiguration from '~/components/watchFiles/EditSection/Main.vue'
 
 const route = useRoute()
 const watchFileId = route.params.id as string

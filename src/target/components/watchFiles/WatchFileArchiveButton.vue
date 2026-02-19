@@ -18,10 +18,10 @@
 
 <script setup lang="ts">
 import { Button } from '@owlint/feathers-vue'
+import { useWatchFileStatusModal } from '@target/composables/useWatchFileStatusModal'
+import type { WatchFile } from '@target/types/watchFile'
+import { WATCH_FILE_STATUS } from '@target/types/watchFile'
 import { computed } from 'vue'
-import { useWatchFileStatusModal } from '~/composables/useWatchFileStatusModal'
-import type { WatchFile } from '~/types/watchFile'
-import { WATCH_FILE_STATUS } from '~/types/watchFile'
 
 const props = defineProps<{
   watchFile: WatchFile

@@ -1,8 +1,8 @@
-import { useApi } from '~/composables/useApi'
-import type { DefaultErrorMessage } from '~/types/api'
-import type { JsonLdCollection } from '~/types/jsonld'
-import type { User } from '~/types/user'
-import type { WatchFileUser, WatchFileUserRole } from '~/types/watchFileUser'
+import { useApi } from '@target/composables/useApi'
+import type { DefaultErrorMessage } from '@target/types/api'
+import type { JsonLdCollection } from '@target/types/jsonld'
+import type { User } from '@target/types/user'
+import type { WatchFileUser, WatchFileUserRole } from '@target/types/watchFileUser'
 
 export const getWatchFileUsers = async (watchFileId: string) => {
   const response = await useApi().get<JsonLdCollection<WatchFileUser>>(

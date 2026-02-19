@@ -81,12 +81,12 @@
 
 <script lang="ts" setup>
 import { Bullet, Checkbox, Tag } from '@owlint/feathers-vue'
+import { useWatchFileStore } from '@target/stores/watchFile'
+import { useWatchFileDocumentsStore } from '@target/stores/watchFileDocuments'
+import type { Document } from '@target/types/document'
+import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { storeToRefs } from 'pinia'
-import type { Document } from '~/types/document'
-import { useWatchFileStore } from '~/stores/watchFile'
-import { useWatchFileDocumentsStore } from '~/stores/watchFileDocuments'
 import Logo from '../global/Logo.vue'
 import DocumentValidationButtons from './DocumentValidationButtons.vue'
 

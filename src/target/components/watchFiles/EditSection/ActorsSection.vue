@@ -17,11 +17,11 @@
 <script setup lang="ts">
 import type { SortOrder } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
+import { getCollectionActorQuery } from '@target/api/queries/actor'
+import ActorsList from '@target/components/actors/ActorsList.vue'
+import { ActorStatus } from '@target/types/actor'
+import type { WatchFile } from '@target/types/watchFile'
 import { computed, ref } from 'vue'
-import { getCollectionActorQuery } from '~/api/queries/actor'
-import ActorsList from '~/components/actors/ActorsList.vue'
-import { ActorStatus } from '~/types/actor'
-import type { WatchFile } from '~/types/watchFile'
 
 const props = defineProps<{
   watchFile?: WatchFile | null

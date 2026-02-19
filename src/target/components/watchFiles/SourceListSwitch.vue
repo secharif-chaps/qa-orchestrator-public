@@ -8,10 +8,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
 import { Switch } from '@owlint/feathers-vue'
-import { useChangeSourceStatus } from '~/api/mutations/sources'
-import { SourceStatus, type Source } from '~/types/source'
+import { useChangeSourceStatus } from '@target/api/mutations/sources'
+import { SourceStatus, type Source } from '@target/types/source'
+import { computed } from 'vue'
 
 interface Props {
   source: Source

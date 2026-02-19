@@ -1,7 +1,7 @@
 import type { SortOrder } from '@owlint/feathers-vue'
 import { defineQueryOptions } from '@pinia/colada'
-import { getActorSources, getActorTypes, getCollectionActor, getItemActor } from '~/api/actor'
-import type { ActorFilters, ActorStatus } from '~/types/actor'
+import { getActorSources, getActorTypes, getCollectionActor, getItemActor } from '@target/api/actor'
+import type { ActorFilters, ActorStatus } from '@target/types/actor'
 
 export const ACTOR_QUERY_KEYS = {
   root: ['actors'] as const,

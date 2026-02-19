@@ -26,9 +26,9 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from 'vue'
-import chapse_head from '~/assets/images/chapse_head.svg'
-import { useTypingIndicatorPhrases } from '~/composables/useTypingIndicatorPhrases'
+import chapse_head from '@target/assets/images/chapse_head.svg';
+import { useTypingIndicatorPhrases } from '@target/composables/useTypingIndicatorPhrases';
+import { toRef } from 'vue';
 
 const { showReassurance = false } = defineProps<{
   showReassurance?: boolean

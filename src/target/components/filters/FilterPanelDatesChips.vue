@@ -17,11 +17,11 @@
 <script lang="ts" setup>
 import { getLocalTimeZone } from '@internationalized/date'
 import { Icon } from '@owlint/feathers-vue'
+import { useDate } from '@target/composables/useDate'
+import type { DatesPeriod, FilterDates } from '@target/types/filter'
 import type { DateRange } from 'reka-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useDate } from '~/composables/useDate'
-import type { DatesPeriod, FilterDates } from '~/types/filter'
 
 const { t, d } = useI18n()
 const { getPeriodDates } = useDate()

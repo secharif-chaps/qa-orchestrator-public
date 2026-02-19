@@ -228,28 +228,28 @@
 import { useToast } from '@/target/composables/useToast'
 import { RouteNames } from '@/target/types/route-names'
 import {
-  Button,
-  Checkbox,
-  HeaderCell,
-  Icon,
-  ORadio,
-  Pagination,
-  Searchbar,
-  Table,
+    Button,
+    Checkbox,
+    HeaderCell,
+    Icon,
+    ORadio,
+    Pagination,
+    Searchbar,
+    Table,
 } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
+import { getCollectionWatchFileQuery } from '@target/api/queries/watchFile'
+import WatchFileArchiveButton from '@target/components/watchFiles/WatchFileArchiveButton.vue'
+import WatchFileFavoriteButton from '@target/components/watchFiles/WatchFileFavoriteButton.vue'
+import WatchFileShareButton from '@target/components/watchFiles/WatchFileShareButton.vue'
+import WatchFileShareDialog from '@target/components/watchFiles/WatchFileShareDialog.vue'
+import { useWatchFileStore } from '@target/stores/watchFile'
+import { WATCH_FILE_STATUS, type WatchFile, type WatchFileStatus } from '@target/types/watchFile'
 import { onClickOutside, refDebounced } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
-import { getCollectionWatchFileQuery } from '~/api/queries/watchFile'
-import WatchFileArchiveButton from '~/components/watchFiles/WatchFileArchiveButton.vue'
-import WatchFileFavoriteButton from '~/components/watchFiles/WatchFileFavoriteButton.vue'
-import WatchFileShareButton from '~/components/watchFiles/WatchFileShareButton.vue'
-import WatchFileShareDialog from '~/components/watchFiles/WatchFileShareDialog.vue'
-import { useWatchFileStore } from '~/stores/watchFile'
-import { WATCH_FILE_STATUS, type WatchFile, type WatchFileStatus } from '~/types/watchFile'
 
 const watchFileStore = useWatchFileStore()
 

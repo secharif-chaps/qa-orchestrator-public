@@ -13,9 +13,9 @@
 </template>
 
 <script setup lang="ts">
+import SourcesList from '@target/components/watchFiles/ActivitySection/SourceMonitoring/SourcesListGrouped.vue'
+import WatchFileMonitoring from '@target/components/watchFiles/ActivitySection/WatchFileMonitoring.vue'
 import { useRoute } from 'vue-router'
-import WatchFileMonitoring from '~/components/watchFiles/ActivitySection/WatchFileMonitoring.vue'
-import SourcesList from '~/components/watchFiles/ActivitySection/SourceMonitoring/SourcesListGrouped.vue'
 
 const route = useRoute()
 const watchFileId = route.params.id as string

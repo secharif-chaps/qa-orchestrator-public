@@ -1,5 +1,5 @@
 import { defineQueryOptions } from '@pinia/colada'
-import type { TimelineEventParams } from '~/types/timeline'
+import type { TimelineEventParams } from '@target/types/timeline'
 import { getWatchFileTimelineEventActors, getWatchFileTimelineEventSources } from '../timeline'
 
 export const TIMELINE_QUERY_KEYS = {

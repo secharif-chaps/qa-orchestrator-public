@@ -1,6 +1,6 @@
-import { ref, computed, readonly } from 'vue'
-import type { ActorSelection } from '~/types/actor'
-import type { WatchFileActor } from '~/types/watchFile'
+import type { ActorSelection } from '@target/types/actor'
+import type { WatchFileActor } from '@target/types/watchFile'
+import { computed, readonly, ref } from 'vue'
 
 const selectedActorIds = ref<Set<string>>(new Set())
 const actorSelections = ref<ActorSelection[]>([])
@@ -12,7 +12,7 @@ const detailSelectedSources = ref<string[]>([])
  * Source IDs should be fetched separately when needed (e.g., via getActorSources API).
  * This function returns an empty array as initial selection.
  */
-const extractSourceIds = (_actor: WatchFileActor): string[] => {
+const extractSourceIds = (): string[] => {
   return []
 }
 
@@ -60,7 +60,7 @@ export const useActorSelection = () => {
     if (selectedActorIds.value.has(actorId)) {
       removeActorSelection(actorId)
     } else {
-      const sourceIds = extractSourceIds(actor)
+      const sourceIds = extractSourceIds()
       addActorSelection(actorId, sourceIds)
     }
 
@@ -102,7 +102,7 @@ export const useActorSelection = () => {
     detailActor.value = actor
     if (actor) {
       // Initialize with all actor sources by default
-      detailSelectedSources.value = extractSourceIds(actor)
+      detailSelectedSources.value = extractSourceIds()
     } else {
       detailSelectedSources.value = []
     }

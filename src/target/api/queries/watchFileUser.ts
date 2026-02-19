@@ -1,5 +1,5 @@
-import { defineQueryOptions } from '@pinia/colada'
-import { getWatchFileUsers } from '~/api/watchFileUser'
+import { defineQueryOptions } from '@pinia/colada';
+import { getWatchFileUsers } from '@target/api/watchFileUser';
 
 export const WATCH_FILE_USER_QUERY_KEYS = {
   root: ['watchFileUsers'] as const,

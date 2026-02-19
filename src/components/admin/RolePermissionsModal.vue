@@ -111,7 +111,10 @@
             :disabled="role.id === 'admin' && !isChapsVisionUser"
             :disabled-reason="
               role.id === 'admin' && !isChapsVisionUser
-                ? $t('admin.permissions.adminChapsVisionOnly', 'Admin role is reserved for ChapsVision employees')
+                ? $t(
+                    'admin.permissions.adminChapsVisionOnly',
+                    'Admin role is reserved for ChapsVision employees',
+                  )
                 : undefined
             "
             @select="handleRoleSelect"
@@ -270,7 +273,10 @@
                 :disabled="!isChapsVisionUser"
                 :disabled-reason="
                   !isChapsVisionUser
-                    ? $t('admin.permissions.adminChapsVisionOnly', 'Admin role is reserved for ChapsVision employees')
+                    ? $t(
+                        'admin.permissions.adminChapsVisionOnly',
+                        'Admin role is reserved for ChapsVision employees',
+                      )
                     : undefined
                 "
                 @change="handleAdminPermissionChange"

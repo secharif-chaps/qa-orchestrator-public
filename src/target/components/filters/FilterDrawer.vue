@@ -38,13 +38,13 @@
 
 <script lang="ts" setup>
 import { Button } from '@owlint/feathers-vue'
-import ErrorMessage from '~/components/global/ErrorMessage.vue'
-import FiltersAccordion from '~/components/filterPanel/FiltersAccordion.vue'
-import FiltersPanelSkeleton from '~/components/filterPanel/FiltersPanelSkeleton.vue'
-import Drawer from '~/components/global/Drawer.vue'
-import type { DocumentFacets } from '~/types/document'
-import type { AnalysisFacets } from '~/types/facet'
-import type { DocumentFilter } from '~/types/filter'
+import FiltersAccordion from '@target/components/filterPanel/FiltersAccordion.vue'
+import FiltersPanelSkeleton from '@target/components/filterPanel/FiltersPanelSkeleton.vue'
+import Drawer from '@target/components/global/Drawer.vue'
+import ErrorMessage from '@target/components/global/ErrorMessage.vue'
+import type { DocumentFacets } from '@target/types/document'
+import type { AnalysisFacets } from '@target/types/facet'
+import type { DocumentFilter } from '@target/types/filter'
 
 interface Props {
   facets?: DocumentFacets | AnalysisFacets

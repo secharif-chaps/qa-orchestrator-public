@@ -39,12 +39,12 @@
 </template>
 
 <script setup lang="ts">
+import InformationMessage from '@target/components/global/InformationMessage.vue'
+import { useLocalized } from '@target/composables/useLocalized'
+import { useMarkdown } from '@target/composables/useMarkdown'
+import { useWatchFileStore } from '@target/stores/watchFile'
+import type { WatchFile } from '@target/types/watchFile'
 import { computed } from 'vue'
-import InformationMessage from '~/components/global/InformationMessage.vue'
-import { useLocalized } from '~/composables/useLocalized'
-import { useMarkdown } from '~/composables/useMarkdown'
-import { useWatchFileStore } from '~/stores/watchFile'
-import type { WatchFile } from '~/types/watchFile'
 import SectionListHeader from './SectionListHeader.vue'
 
 const watchFileStore = useWatchFileStore()

@@ -29,9 +29,9 @@
 </template>
 
 <script setup lang="ts">
-import { Link, OPopper, Icon } from '@owlint/feathers-vue'
+import { Icon, Link, OPopper } from '@owlint/feathers-vue'
+import Logo from '@target/components/global/Logo.vue'
 import { computed } from 'vue'
-import Logo from '~/components/global/Logo.vue'
 
 interface Props {
   domain?: string

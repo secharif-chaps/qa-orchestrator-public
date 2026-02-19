@@ -34,11 +34,11 @@
 </template>
 
 <script setup lang="ts">
+import SectionListHeader from '@target/components/watchFiles/EditSection/SectionListHeader.vue'
+import { ActorStatus } from '@target/types/actor'
+import type { WatchFileActor } from '@target/types/watchFile'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import SectionListHeader from '~/components/watchFiles/EditSection/SectionListHeader.vue'
-import { ActorStatus } from '~/types/actor'
-import type { WatchFileActor } from '~/types/watchFile'
 import ActorSelectionModal from './ActorSelectionModal.vue'
 import ActorsGrid from './ActorsGrid.vue'
 

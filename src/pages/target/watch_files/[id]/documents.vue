@@ -147,19 +147,19 @@
 <script setup lang="ts">
 import { Button, Icon, ORadio, Searchbar } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
+import { useMarkDocumentAsSeen } from '@target/api/mutations/document'
+import { getCollectionDocumentQuery, getItemDocumentQuery } from '@target/api/queries/document'
+import DocumentDetail from '@target/components/documents/DocumentDetail.vue'
+import DocumentFilters from '@target/components/documents/DocumentFilters.vue'
+import DocumentList from '@target/components/documents/DocumentList.vue'
+import DocumentViewer from '@target/components/documents/DocumentViewer.vue'
+import { useWatchFileDocumentsStore } from '@target/stores/watchFileDocuments'
+import { useWatchFileFiltersStore } from '@target/stores/watchFileFilters'
+import type { Document, DocumentDateType } from '@target/types/document'
 import { onClickOutside, watchDebounced } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, ref, useTemplateRef, watch, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useMarkDocumentAsSeen } from '~/api/mutations/document'
-import { getCollectionDocumentQuery, getItemDocumentQuery } from '~/api/queries/document'
-import DocumentDetail from '~/components/documents/DocumentDetail.vue'
-import DocumentFilters from '~/components/documents/DocumentFilters.vue'
-import DocumentList from '~/components/documents/DocumentList.vue'
-import DocumentViewer from '~/components/documents/DocumentViewer.vue'
-import { useWatchFileDocumentsStore } from '~/stores/watchFileDocuments'
-import { useWatchFileFiltersStore } from '~/stores/watchFileFilters'
-import type { Document, DocumentDateType } from '~/types/document'
 
 definePage({
   meta: {

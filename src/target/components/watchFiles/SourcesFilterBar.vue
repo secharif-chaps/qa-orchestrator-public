@@ -41,10 +41,10 @@
 </template>
 
 <script setup lang="ts">
-import { Searchbar, Select, SelectItem } from '@owlint/feathers-vue'
-import { computed, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import type { Source } from '~/types/source'
+import { Searchbar, Select, SelectItem } from '@owlint/feathers-vue';
+import type { Source } from '@target/types/source';
+import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
   sources: Source[]

@@ -1,4 +1,4 @@
-import type { JsonLdCollectionView, JsonLdContext, JsonLdResource } from '~/types/jsonld'
+import type { JsonLdCollectionView, JsonLdContext, JsonLdResource } from '@target/types/jsonld'
 import type { Localized } from './localized'
 
 export interface WatchFileGraphEvent {

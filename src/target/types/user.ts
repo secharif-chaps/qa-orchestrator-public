@@ -1,4 +1,4 @@
-import type { JsonLdResource } from '~/types/jsonld'
+import type { JsonLdResource } from '@target/types/jsonld'
 
 export interface User extends JsonLdResource {
   '@id': string

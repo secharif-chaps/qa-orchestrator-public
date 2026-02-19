@@ -1,9 +1,9 @@
-import { useApi } from '~/composables/useApi'
+import { useApi } from '@target/composables/useApi'
 import type {
-  TimelineEventActors,
-  TimelineEventParams,
-  TimelineEventSources,
-} from '~/types/timeline'
+    TimelineEventActors,
+    TimelineEventParams,
+    TimelineEventSources,
+} from '@target/types/timeline'
 
 const ROOT_URL = '/watch_files'
 

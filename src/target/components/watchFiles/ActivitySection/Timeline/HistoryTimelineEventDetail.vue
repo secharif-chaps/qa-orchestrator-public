@@ -27,19 +27,19 @@
 
 <script setup lang="ts">
 import { useQuery } from '@pinia/colada'
+import {
+    getWatchFileTimelineEventActorsQuery,
+    getWatchFileTimelineEventSourcesQuery,
+} from '@target/api/queries/timeline'
+import ActorCard from '@target/components/actors/ActorCard.vue'
+import Drawer from '@target/components/global/Drawer.vue'
+import EmptyState from '@target/components/global/EmptyState.vue'
+import ErrorMessage from '@target/components/global/ErrorMessage.vue'
+import SourceCard from '@target/components/sources/SourceCard.vue'
+import type { WatchFileEventType } from '@target/types/watchFile'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import {
-  getWatchFileTimelineEventActorsQuery,
-  getWatchFileTimelineEventSourcesQuery,
-} from '~/api/queries/timeline'
-import ErrorMessage from '~/components/global/ErrorMessage.vue'
-import Drawer from '~/components/global/Drawer.vue'
-import EmptyState from '~/components/global/EmptyState.vue'
-import SourceCard from '~/components/sources/SourceCard.vue'
-import type { WatchFileEventType } from '~/types/watchFile'
 import HistoryTimelineEventSkeleton from './HistoryTimelineEventSkeleton.vue'
-import ActorCard from '~/components/actors/ActorCard.vue'
 
 interface Props {
   watchFileId: string

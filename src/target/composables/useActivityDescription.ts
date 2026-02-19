@@ -1,6 +1,6 @@
-import type { WatchFileActivity } from '~/types/watchFile'
-import type { SourceActivity } from '~/types/source'
-import type { WatchFileActivityDescription, SourceActivityDescription } from '~/types/timeline'
+import type { SourceActivity } from '@target/types/source'
+import type { SourceActivityDescription, WatchFileActivityDescription } from '@target/types/timeline'
+import type { WatchFileActivity } from '@target/types/watchFile'
 
 export function useActivityDescription() {
   const createWatchFileActivityDescription = (

@@ -18,5 +18,5 @@
 </template>
 
 <script setup lang="ts">
-import chapse_full from '~/assets/images/chapse_full.svg'
+import chapse_full from '@target/assets/images/chapse_full.svg';
 </script>

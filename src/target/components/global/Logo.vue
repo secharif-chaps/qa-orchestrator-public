@@ -24,8 +24,8 @@
 </template>
 
 <script setup lang="ts">
+import { config } from '@target/config'
 import { computed, ref, watchEffect } from 'vue'
-import { config } from '~/config'
 
 interface Props {
   domain: string

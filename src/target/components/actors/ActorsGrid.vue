@@ -92,11 +92,11 @@
 
 <script setup lang="ts">
 import { Icon } from '@owlint/feathers-vue'
+import ErrorMessage from '@target/components/global/ErrorMessage.vue'
+import SectionListPaginator from '@target/components/watchFiles/EditSection/SectionListPaginator.vue'
+import type { WatchFileActor } from '@target/types/watchFile'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ErrorMessage from '~/components/global/ErrorMessage.vue'
-import SectionListPaginator from '~/components/watchFiles/EditSection/SectionListPaginator.vue'
-import type { WatchFileActor } from '~/types/watchFile'
 import ActorCard from './ActorCard.vue'
 
 interface Props {

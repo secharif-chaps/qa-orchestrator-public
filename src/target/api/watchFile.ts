@@ -1,18 +1,18 @@
 import { useQueryCache } from '@pinia/colada'
-import { ACTOR_QUERY_KEYS } from '~/api/queries/actor'
-import { SOURCES_QUERY_KEYS } from '~/api/queries/sources'
-import { useApi } from '~/composables/useApi'
-import type { DefaultErrorMessage } from '~/types/api'
+import { ACTOR_QUERY_KEYS } from '@target/api/queries/actor'
+import { SOURCES_QUERY_KEYS } from '@target/api/queries/sources'
+import { useApi } from '@target/composables/useApi'
+import type { DefaultErrorMessage } from '@target/types/api'
 import type {
-  Conversation,
-  FunctionCallContent,
-  Message,
-  MessageRole,
-  MessageStatus,
-  TextContent,
-} from '~/types/conversation'
-import type { JsonLdCollection } from '~/types/jsonld'
-import type { GroupedWatchFileActivityDto, WatchFile, WatchFileFilters } from '~/types/watchFile'
+    Conversation,
+    FunctionCallContent,
+    Message,
+    MessageRole,
+    MessageStatus,
+    TextContent,
+} from '@target/types/conversation'
+import type { JsonLdCollection } from '@target/types/jsonld'
+import type { GroupedWatchFileActivityDto, WatchFile, WatchFileFilters } from '@target/types/watchFile'
 import { WATCH_FILE_QUERY_KEYS } from './queries/watchFile'
 
 const ROOT_URL = '/watch_files'

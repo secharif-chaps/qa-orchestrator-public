@@ -23,14 +23,14 @@
 
 <script setup lang="ts">
 import { useQuery } from '@pinia/colada'
+import { getItemWatchFileQuery } from '@target/api/queries/watchFile'
+import ConfigSection from '@target/components/watchFiles/EditSection/ConfigSection.vue'
+import WatchFileAssistant from '@target/components/watchFiles/EditSection/WatchFileAssistant.vue'
+import { useWatchFileStore } from '@target/stores/watchFile'
+import { RouteNames } from '@target/types/route-names'
+import { WATCH_FILE_STATUS } from '@target/types/watchFile'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { getItemWatchFileQuery } from '~/api/queries/watchFile'
-import ConfigSection from '~/components/watchFiles/EditSection/ConfigSection.vue'
-import WatchFileAssistant from '~/components/watchFiles/EditSection/WatchFileAssistant.vue'
-import { useWatchFileStore } from '~/stores/watchFile'
-import { RouteNames } from '~/types/route-names'
-import { WATCH_FILE_STATUS } from '~/types/watchFile'
 
 const props = defineProps<{
   watchFileId?: string

@@ -88,10 +88,10 @@
 
 <script setup lang="ts">
 import { Button, Icon, Tag } from '@owlint/feathers-vue'
+import TimelineSkeleton from '@target/components/skeletons/TimelineSkeleton.vue'
+import type { TimelineProps } from '@target/types/timeline'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import TimelineSkeleton from '~/components/skeletons/TimelineSkeleton.vue'
-import type { TimelineProps } from '~/types/timeline'
 import TimelineItemSourceDescription from './TimelineItemSourceDescription.vue'
 import TimelineItemWatchFileDescription from './TimelineItemWatchFileDescription.vue'
 

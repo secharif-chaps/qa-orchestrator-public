@@ -57,9 +57,9 @@
 
 <script lang="ts" setup>
 import { Icon } from '@owlint/feathers-vue'
+import type { AiValidationStatus, SummaryStatusType } from '@target/types/document'
 import { Accordion } from 'reka-ui/namespaced'
 import { useI18n } from 'vue-i18n'
-import type { AiValidationStatus, SummaryStatusType } from '~/types/document'
 import InformationMessage from '../global/InformationMessage.vue'
 
 const { t } = useI18n()

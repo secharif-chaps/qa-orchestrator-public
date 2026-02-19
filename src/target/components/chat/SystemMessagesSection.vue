@@ -39,11 +39,11 @@
 
 <script setup lang="ts">
 import { Button } from '@owlint/feathers-vue'
+import { useTimeDisplay } from '@target/composables/useTimeDisplay'
+import { useChatStore } from '@target/stores/chat'
+import type { Message } from '@target/types/conversation'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useTimeDisplay } from '~/composables/useTimeDisplay'
-import { useChatStore } from '~/stores/chat'
-import type { Message } from '~/types/conversation'
 import CollapsibleSystemMessage from './CollapsibleSystemMessage.vue'
 
 interface Props {

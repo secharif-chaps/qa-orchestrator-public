@@ -1,9 +1,9 @@
 import type { SortOrder } from '@owlint/feathers-vue'
 import { defineQueryOptions, useInfiniteQuery } from '@pinia/colada'
+import { getWatchFileEvents, getWatchFileEventsLink } from '@target/api/watchFileEvents'
+import { useWatchFileAnalysisStore } from '@target/stores/watchFileAnalysis'
+import type { WatchFileEventCollectionResponse } from '@target/types/watchFileEvent'
 import { computed, nextTick, ref, watch, watchEffect, type ComputedRef } from 'vue'
-import { getWatchFileEvents, getWatchFileEventsLink } from '~/api/watchFileEvents'
-import { useWatchFileAnalysisStore } from '~/stores/watchFileAnalysis'
-import type { WatchFileEventCollectionResponse } from '~/types/watchFileEvent'
 
 export const WATCH_FILE_EVENTS_QUERY_KEYS = {
   root: ['watchFileEvents'] as const,

@@ -17,11 +17,11 @@
 </template>
 
 <script setup lang="ts">
-import type { Source } from '~/types/source'
+import Drawer from '@target/components/global/Drawer.vue'
+import SourceCard from '@target/components/sources/SourceCard.vue'
+import SourceMonitoring from '@target/components/watchFiles/ActivitySection/SourceMonitoring/SourceMonitoring.vue'
+import type { Source } from '@target/types/source'
 import { useI18n } from 'vue-i18n'
-import Drawer from '~/components/global/Drawer.vue'
-import SourceMonitoring from '~/components/watchFiles/ActivitySection/SourceMonitoring/SourceMonitoring.vue'
-import SourceCard from '~/components/sources/SourceCard.vue'
 
 const { t } = useI18n()
 

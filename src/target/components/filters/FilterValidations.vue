@@ -35,8 +35,8 @@
 
 <script lang="ts" setup>
 import { Button, Checkbox } from '@owlint/feathers-vue'
+import type { StatusFacet } from '@target/types/facet'
 import { useI18n } from 'vue-i18n'
-import type { StatusFacet } from '~/types/facet'
 
 const { t } = useI18n()
 

@@ -1,6 +1,6 @@
-import { computed, ref, type Ref } from 'vue'
+import { RouteNames } from '@target/types/route-names'
 import { defineStore, storeToRefs } from 'pinia'
-import { RouteNames } from '~/types/route-names'
+import { computed, ref, type Ref } from 'vue'
 import { useWatchFileFiltersStore } from './watchFileFilters'
 
 export const useWatchFileAnalysisStore = defineStore('watchFileAnalysis', () => {

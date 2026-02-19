@@ -53,11 +53,11 @@
 
 <script setup lang="ts">
 import { Button, Checkbox, type CheckboxType } from '@owlint/feathers-vue'
+import { useWatchFileStore } from '@target/stores/watchFile'
+import { useWatchFileDocumentsStore } from '@target/stores/watchFileDocuments'
 import { watchDebounced } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref, watch, watchEffect } from 'vue'
-import { useWatchFileStore } from '~/stores/watchFile'
-import { useWatchFileDocumentsStore } from '~/stores/watchFileDocuments'
 
 interface Props {
   isHidden: boolean

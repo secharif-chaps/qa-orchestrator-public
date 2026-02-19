@@ -1,7 +1,7 @@
+import { useLocalized } from '@target/composables/useLocalized'
+import type { Localized } from '@target/types/localized'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
-import { useLocalized } from '~/composables/useLocalized'
-import type { Localized } from '~/types/localized'
 
 // Create a mutable locale ref for testing
 const localeRef = ref('en-US')

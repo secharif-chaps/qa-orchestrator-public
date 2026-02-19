@@ -16,14 +16,14 @@
 </template>
 
 <script lang="ts" setup>
-import Filters from '~/components/filters/Filters.vue'
-import type { DocumentFacets } from '~/types/document'
+import Filters from '@target/components/filters/Filters.vue'
+import type { DocumentFacets } from '@target/types/document'
 import {
-  FILTER_CATEGORY_VALIDATIONS,
-  FILTER_CATEGORY_DATES,
-  FILTER_CATEGORY_ACTORS,
-  FILTER_CATEGORY_SOURCES,
-} from '~/types/facet'
+    FILTER_CATEGORY_ACTORS,
+    FILTER_CATEGORY_DATES,
+    FILTER_CATEGORY_SOURCES,
+    FILTER_CATEGORY_VALIDATIONS,
+} from '@target/types/facet'
 
 const displayDrawer = defineModel<boolean>()
 

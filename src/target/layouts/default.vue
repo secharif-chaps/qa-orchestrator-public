@@ -24,14 +24,14 @@
 </template>
 
 <script lang="ts" setup>
+import ConfirmModal from '@target/components/global/ConfirmModal.vue'
+import Sidebar from '@target/components/global/Sidebar.vue'
+import ToastContainer from '@target/components/global/ToastContainer.vue'
+import { config } from '@target/config'
+import { useSidebarStore } from '@target/stores/sidebar'
 import { useHead } from '@unhead/vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ConfirmModal from '~/components/global/ConfirmModal.vue'
-import Sidebar from '~/components/global/Sidebar.vue'
-import ToastContainer from '~/components/global/ToastContainer.vue'
-import { config } from '~/config'
-import { useSidebarStore } from '~/stores/sidebar'
 
 const { locale } = useI18n()
 

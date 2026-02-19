@@ -50,21 +50,21 @@
 
 <script setup lang="ts">
 import { useQuery } from '@pinia/colada'
+import { useAddMessage, useGetOlderConversationMessages } from '@target/api/mutations/conversation'
+import { useCreateWatchFile } from '@target/api/mutations/watchFile'
+import { getConversationMessagesQuery, getLastConversationQuery } from '@target/api/queries/conversation'
+import ChatInput from '@target/components/chat/ChatInput.vue'
+import AssistantEmptyView from '@target/components/watchFiles/EditSection/AssistantEmptyView.vue'
+import ConnectionBanner from '@target/components/watchFiles/EditSection/ConnectionBanner.vue'
+import ConversationView from '@target/components/watchFiles/EditSection/ConversationView.vue'
+import { useConversationTimeout } from '@target/composables/useConversationTimeout'
+import { useChatStore } from '@target/stores/chat'
+import { useConversationStore } from '@target/stores/conversation'
+import type { Conversation, Message } from '@target/types/conversation'
+import type { WatchFileStatus } from '@target/types/watchFile'
 import { storeToRefs } from 'pinia'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useAddMessage, useGetOlderConversationMessages } from '~/api/mutations/conversation'
-import { useCreateWatchFile } from '~/api/mutations/watchFile'
-import { getConversationMessagesQuery, getLastConversationQuery } from '~/api/queries/conversation'
-import ChatInput from '~/components/chat/ChatInput.vue'
-import AssistantEmptyView from '~/components/watchFiles/EditSection/AssistantEmptyView.vue'
-import ConnectionBanner from '~/components/watchFiles/EditSection/ConnectionBanner.vue'
-import ConversationView from '~/components/watchFiles/EditSection/ConversationView.vue'
-import { useConversationTimeout } from '~/composables/useConversationTimeout'
-import { useChatStore } from '~/stores/chat'
-import { useConversationStore } from '~/stores/conversation'
-import type { Conversation, Message } from '~/types/conversation'
-import type { WatchFileStatus } from '~/types/watchFile'
 
 const { t } = useI18n()
 

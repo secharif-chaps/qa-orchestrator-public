@@ -1,12 +1,12 @@
+import {
+    type Conversation,
+    ConversationState,
+    type Message,
+    MessageRole,
+    type MessageStatus,
+} from '@target/types/conversation'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import {
-  type Conversation,
-  ConversationState,
-  type Message,
-  MessageRole,
-  type MessageStatus,
-} from '~/types/conversation'
 
 export const useConversationStore = defineStore('conversation', () => {
   // State: Current conversation

@@ -62,11 +62,11 @@
 
 <script lang="ts" setup>
 import { Button, Checkbox, Searchbar } from '@owlint/feathers-vue'
+import Logo from '@target/components/global/Logo.vue'
+import type { Source, SourceFacet } from '@target/types/facet'
 import { watchDebounced } from '@vueuse/core'
 import { computed, ref, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Logo from '~/components/global/Logo.vue'
-import type { Source, SourceFacet } from '~/types/facet'
 
 const { t } = useI18n()
 

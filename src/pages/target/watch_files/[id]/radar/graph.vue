@@ -8,11 +8,11 @@
 
 <script lang="ts" setup>
 import { useQuery } from '@pinia/colada'
+import { getEventsGraphQuery } from '@target/api/queries/events'
+import AnalysisChart from '@target/components/analysis/chart/AnalysisChart.vue'
+import { useWatchFileAnalysisStore } from '@target/stores/watchFileAnalysis'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { getEventsGraphQuery } from '~/api/queries/events'
-import AnalysisChart from '~/components/analysis/chart/AnalysisChart.vue'
-import { useWatchFileAnalysisStore } from '~/stores/watchFileAnalysis'
 
 const route = useRoute()
 const watchFileAnalysisStore = useWatchFileAnalysisStore()

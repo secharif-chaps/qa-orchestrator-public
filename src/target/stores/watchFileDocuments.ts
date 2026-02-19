@@ -1,8 +1,8 @@
-import { computed, ref, toRef, type Ref } from 'vue'
 import type { SortOrder } from '@owlint/feathers-vue'
+import type { CollectionParams, DocumentDateType, FilterParams } from '@target/types/document'
+import type { Filter } from '@target/types/filter'
 import { defineStore } from 'pinia'
-import type { CollectionParams, DocumentDateType, FilterParams } from '~/types/document'
-import type { Filter } from '~/types/filter'
+import { computed, ref, toRef, type Ref } from 'vue'
 import { useWatchFileFiltersStore, type DocumentsFilterState } from './watchFileFilters'
 
 export const useWatchFileDocumentsStore = defineStore('watchFileDocuments', () => {

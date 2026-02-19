@@ -1,6 +1,6 @@
 import { CalendarDate } from '@internationalized/date'
+import { DatesPeriod } from '@target/types/filter'
 import type { DateValue } from 'reka-ui'
-import { DatesPeriod } from '~/types/filter'
 
 export function useDate() {
   /**

@@ -35,13 +35,12 @@
 <script setup lang="ts">
 import { Button, Modal } from '@owlint/feathers-vue'
 import { useQuery, useQueryCache } from '@pinia/colada'
+import { WATCH_FILE_QUERY_KEYS } from '@target/api/queries/watchFile'
+import { getWatchFileUsersQuery } from '@target/api/queries/watchFileUser'
+import { useConfirmModal } from '@target/composables/useConfirmModal'
+import { useWatchFileStore } from '@target/stores/watchFile'
+import type { WatchFile } from '@target/types/watchFile'
 import { computed, ref } from 'vue'
-import { WATCH_FILE_QUERY_KEYS } from '~/api/queries/watchFile'
-import { getWatchFileUsersQuery } from '~/api/queries/watchFileUser'
-import { useConfirmModal } from '~/composables/useConfirmModal'
-import { useWatchFileStore } from '~/stores/watchFile'
-import type { WatchFile } from '~/types/watchFile'
-import type { WatchFileUser } from '~/types/watchFileUser'
 import WatchFileUserInvite from './WatchFileUserInvite.vue'
 import WatchFileUserList from './WatchFileUserList.vue'
 
@@ -91,12 +90,12 @@ function updateWatchFileUsersCount() {
   })
 }
 
-function onUserRemoved(_userId: string) {
+function onUserRemoved() {
   // Data is automatically updated by the query cache invalidation
   updateWatchFileUsersCount()
 }
 
-function onUsersAdded(_newUsers: WatchFileUser[]) {
+function onUsersAdded() {
   // Data is automatically updated by the query cache invalidation
   updateWatchFileUsersCount()
 }

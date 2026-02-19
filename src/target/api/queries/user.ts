@@ -1,5 +1,5 @@
 import { defineQueryOptions } from '@pinia/colada'
-import { searchUsers } from '~/api/user'
+import { searchUsers } from '@target/api/user'
 
 export const USER_QUERY_KEYS = {
   root: ['users'] as const,

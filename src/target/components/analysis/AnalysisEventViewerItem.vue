@@ -25,10 +25,10 @@
 
 <script lang="ts" setup>
 import { Tag } from '@owlint/feathers-vue'
+import { useLocalized } from '@target/composables/useLocalized'
+import type { WatchFileEvent } from '@target/types/watchFileEvent'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useLocalized } from '~/composables/useLocalized'
-import type { WatchFileEvent } from '~/types/watchFileEvent'
 
 interface Props {
   event: WatchFileEvent

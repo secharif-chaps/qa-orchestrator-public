@@ -104,12 +104,12 @@
 
 <script setup lang="ts">
 import { Button } from '@owlint/feathers-vue'
+import DocumentDetail from '@target/components/documents/DocumentDetail.vue'
+import ErrorMessage from '@target/components/global/ErrorMessage.vue'
+import Logo from '@target/components/global/Logo.vue'
+import DocumentViewerSkeleton from '@target/components/skeletons/DocumentViewerSkeleton.vue'
+import type { Document } from '@target/types/document'
 import { computed, onMounted, onUnmounted } from 'vue'
-import DocumentDetail from '~/components/documents/DocumentDetail.vue'
-import ErrorMessage from '~/components/global/ErrorMessage.vue'
-import Logo from '~/components/global/Logo.vue'
-import DocumentViewerSkeleton from '~/components/skeletons/DocumentViewerSkeleton.vue'
-import type { Document } from '~/types/document'
 import DocumentViewerActionButtons from './DocumentViewerActionButtons.vue'
 
 interface Props {

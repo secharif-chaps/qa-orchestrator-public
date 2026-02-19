@@ -1,6 +1,6 @@
+import { useChatStore } from '@target/stores/chat'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { useChatStore } from '~/stores/chat'
 
 describe('useChatStore', () => {
   beforeEach(() => {

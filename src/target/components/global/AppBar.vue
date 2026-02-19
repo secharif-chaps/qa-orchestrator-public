@@ -108,12 +108,12 @@
 
 <script setup lang="ts">
 import { Button, Tag } from '@owlint/feathers-vue'
+import logo_chaps from '@target/assets/images/CHAPSVISION_LOGO_ChapsVision_logo_icone_amande.svg'
+import { useAuth } from '@target/composables/useAuth'
+import { useLocalized } from '@target/composables/useLocalized'
+import { useMercure } from '@target/composables/useMercure'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
-import logo_chaps from '~/assets/images/CHAPSVISION_LOGO_ChapsVision_logo_icone_amande.svg'
-import { useAuth } from '~/composables/useAuth'
-import { useLocalized } from '~/composables/useLocalized'
-import { useMercure } from '~/composables/useMercure'
 
 const { locale } = useI18n()
 const { logout, userName } = useAuth()

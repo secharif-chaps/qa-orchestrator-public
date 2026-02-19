@@ -48,9 +48,9 @@
 
 <script setup lang="ts">
 import { Button, Icon, Modal } from '@owlint/feathers-vue'
+import { useBatchChangeSourceStatus } from '@target/api/mutations/sources'
+import { SourceStatus } from '@target/types/source'
 import { ref } from 'vue'
-import { useBatchChangeSourceStatus } from '~/api/mutations/sources'
-import { SourceStatus } from '~/types/source'
 import SourcesListTable from './SourcesListTable.vue'
 
 interface Props {

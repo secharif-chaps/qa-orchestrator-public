@@ -1,19 +1,19 @@
-import { computed, ref } from 'vue'
+import { useDate } from '@target/composables/useDate'
+import type { DocumentFacets } from '@target/types/document'
+import type { Actor, AnalysisFacets, Source } from '@target/types/facet'
+import type {
+    AnalysisFormFilters,
+    BaseFormFilters,
+    DatePicker,
+    DatesPeriod,
+    DocumentsFormFilters,
+    FilterDates,
+} from '@target/types/filter'
+import type { WatchFileEventType } from '@target/types/watchFile'
 import { defineStore } from 'pinia'
 import type { DateRange } from 'reka-ui'
+import { computed, ref } from 'vue'
 import type { LocationQueryRaw } from 'vue-router'
-import { useDate } from '~/composables/useDate'
-import type { DocumentFacets } from '~/types/document'
-import type { Actor, AnalysisFacets, Source } from '~/types/facet'
-import type {
-  AnalysisFormFilters,
-  BaseFormFilters,
-  DatePicker,
-  DatesPeriod,
-  DocumentsFormFilters,
-  FilterDates,
-} from '~/types/filter'
-import type { WatchFileEventType } from '~/types/watchFile'
 
 export type FilterType = 'documents' | 'analysis'
 

@@ -16,9 +16,9 @@
 
 <script setup lang="ts">
 import { Button, Icon } from '@owlint/feathers-vue'
+import { RouteNames } from '@target/types/route-names'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { RouteNames } from '~/types/route-names'
 
 const { t } = useI18n()
 const router = useRouter()

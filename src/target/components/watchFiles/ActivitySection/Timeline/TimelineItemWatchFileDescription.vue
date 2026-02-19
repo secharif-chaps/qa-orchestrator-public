@@ -38,21 +38,21 @@
 
 <script setup lang="ts">
 import { Tag } from '@owlint/feathers-vue'
+import type {
+    ActorStatusChangedActionData,
+    SharedModeChangedActionData,
+    SourceStatusChangedActionData,
+    StatusChangedActionData,
+    WatchFileActivity,
+    WatchFileStatus,
+} from '@target/types/watchFile'
+import {
+    WATCH_FILE_STATUS,
+    WATCH_FILE_STATUS_ICONS,
+    WatchFileUserAccessState,
+} from '@target/types/watchFile'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type {
-  ActorStatusChangedActionData,
-  SharedModeChangedActionData,
-  SourceStatusChangedActionData,
-  StatusChangedActionData,
-  WatchFileActivity,
-  WatchFileStatus,
-} from '~/types/watchFile'
-import {
-  WATCH_FILE_STATUS,
-  WATCH_FILE_STATUS_ICONS,
-  WatchFileUserAccessState,
-} from '~/types/watchFile'
 
 interface Props {
   activity: WatchFileActivity

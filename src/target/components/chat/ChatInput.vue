@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { Button } from '@owlint/feathers-vue'
-import BaseTextarea from '~/components/global/BaseTextarea.vue'
+import BaseTextarea from '@target/components/global/BaseTextarea.vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 

@@ -13,19 +13,13 @@ export function useAuth() {
   const isAuthenticated = computed(() => authStore.isAuthenticated)
 
   const userName = computed(() => authStore.username)
-  const userEmail = computed(
-    () => authStore.user?.profile?.email || null,
-  )
+  const userEmail = computed(() => authStore.user?.profile?.email || null)
 
   const isInternalUser = computed(
-    () =>
-      typeof userEmail.value === 'string' &&
-      userEmail.value.endsWith('@chapsvision.com'),
+    () => typeof userEmail.value === 'string' && userEmail.value.endsWith('@chapsvision.com'),
   )
 
-  const isLoading = computed(
-    () => !authStore.initialized || isTokenRefreshing.value,
-  )
+  const isLoading = computed(() => !authStore.initialized || isTokenRefreshing.value)
   const hasError = computed(() => authError.value !== null)
 
   const init = async () => {

@@ -1,8 +1,7 @@
-import type { App } from 'vue'
-import { useAuth } from '~/composables/useAuth'
+import { useAuth } from '@target/composables/useAuth'
 
 export default {
-  install: async (_app: App) => {
+  install: async () => {
     const auth = useAuth()
     await auth.init()
   },
