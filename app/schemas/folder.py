@@ -11,6 +11,7 @@ from enum import Enum
 from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel, Field
+from pydantic.config import ConfigDict
 from uuid import UUID
 
 from app.models.folder import ItemType
@@ -82,8 +83,7 @@ class FolderItemResponse(FolderItemBase):
     added_at: datetime
     owner: Optional[str]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class FolderItemMoveResponse(BaseModel):
@@ -91,8 +91,7 @@ class FolderItemMoveResponse(BaseModel):
     message: str
     item: FolderItemResponse
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class FolderItemSimple(BaseModel):
@@ -156,8 +155,7 @@ class FolderResponse(FolderBase):
     updated_at: datetime
     items: Optional[List[FolderItemSimple]] = Field(default_factory=list)
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class FolderWithItemsResponse(BaseModel):
@@ -256,8 +254,7 @@ class FolderShareResponse(BaseModel):
         description="Whether user has organization.write permission (can be assigned Writer role)"
     )
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ==============================================================================

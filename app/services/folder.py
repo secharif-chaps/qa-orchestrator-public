@@ -368,7 +368,7 @@ class FolderService:
         folder_update: FolderUpdate
     ) -> Folder:
         """Update a folder."""
-        update_data = folder_update.dict(exclude_unset=True)
+        update_data = folder_update.model_dump(exclude_unset=True)
 
         for field, value in update_data.items():
             setattr(folder, field, value)
@@ -504,7 +504,7 @@ class FolderService:
         Returns:
             Updated FolderItem if successful, None if item not found
         """
-         # Find the folder item
+        # Find the folder item
         stmt = select(FolderItem).where(
             FolderItem.folder_id == folder_id,
             FolderItem.item_id == item_id,
@@ -1061,8 +1061,9 @@ class FolderService:
             return False
 
         for folder_item in folder_items:
+            folder_id = folder_item.folder_id
             if await FolderService.has_folder_access(
-                db, folder_item.folder_id, user_id, organization_id,
+                db, folder_id, user_id, organization_id,
                 username=username, user_roles=user_roles
             ):
                 logger.debug(
