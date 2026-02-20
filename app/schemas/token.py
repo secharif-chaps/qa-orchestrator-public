@@ -51,3 +51,22 @@ class PaginatedTokenTransactionResponse(BaseModel):
     page: int = Field(..., ge=1, description="Current page number")
     size: int = Field(..., ge=1, description="Page size")
     pages: int = Field(..., ge=0, description="Total number of pages")
+
+
+class ConsumeTokensRequest(BaseModel):
+    """Request schema for consuming tokens (internal API)."""
+
+    amount: int = Field(..., gt=0, description="Number of tokens to consume (must be positive)")
+    module_name: str = Field(..., description="Module consuming the tokens (must be enabled)")
+    reference_type: str = Field(..., description="Type of operation consuming tokens")
+    reference_id: Optional[str] = Field(None, description="Optional ID of the referenced entity")
+    created_by: str = Field(..., description="Keycloak user ID performing the operation")
+    description: Optional[str] = Field(None, description="Optional transaction description")
+
+
+class ConsumeTokensResponse(BaseModel):
+    """Response schema for token consumption (internal API)."""
+
+    success: bool = Field(True, description="Always true for successful operations")
+    balance: int = Field(..., ge=0, description="Remaining token balance after consumption")
+    transaction: Optional[TokenTransactionRead] = Field(None, description="Created transaction record")
