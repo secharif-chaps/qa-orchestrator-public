@@ -166,14 +166,22 @@ async def update_user_enabled_status(
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Failed to {action.lower()} user",
+                detail={
+                    "error": "user_action_failed",
+                    "message": f"Failed to {action.lower()} user",
+                    "user_id": user_id,
+                },
             )
 
         kc_user = await keycloak_admin_service.get_user(user_id)
         if not kc_user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User {user_id} not found",
+                detail={
+                    "error": "user_not_found",
+                    "message": "User not found",
+                    "user_id": user_id,
+                },
             )
 
         user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
@@ -226,7 +234,11 @@ async def update_user_enabled_status(
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to {action.lower()} user: {str(e)}",
+            detail={
+                "error": "user_action_failed",
+                "message": f"Failed to {action.lower()} user",
+                "user_id": user_id,
+            },
         )
 
 
@@ -360,7 +372,10 @@ async def get_all_users(
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch users: {str(e)}",
+            detail={
+                "error": "fetch_users_failed",
+                "message": "Failed to fetch users",
+            },
         )
 
 
@@ -387,7 +402,11 @@ async def assign_user_to_organization(
     if not organization_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="organization_id parameter is required",
+            detail={
+                "error": "missing_organization",
+                "message": "organization_id parameter is required",
+                "user_id": user_id,
+            },
         )
 
     try:
@@ -475,7 +494,11 @@ async def assign_user_to_organization(
         else:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to assign user to organization",
+                detail={
+                    "error": "user_action_failed",
+                    "message": "Failed to assign user to organization",
+                    "user_id": user_id,
+                },
             )
 
     except HTTPException:
@@ -488,7 +511,11 @@ async def assign_user_to_organization(
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to assign user to organization: {str(e)}",
+            detail={
+                "error": "user_action_failed",
+                "message": "Failed to assign user to organization",
+                "user_id": user_id,
+            },
         )
 
 
@@ -518,7 +545,11 @@ async def update_user_permissions(
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to update user permissions",
+                detail={
+                    "error": "user_action_failed",
+                    "message": "Failed to update user permissions",
+                    "user_id": user_id,
+                },
             )
 
         # Fetch updated user data
@@ -526,7 +557,11 @@ async def update_user_permissions(
         if not kc_user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User {user_id} not found",
+                detail={
+                    "error": "user_not_found",
+                    "message": "User not found",
+                    "user_id": user_id,
+                },
             )
 
         # Fetch updated roles
@@ -580,7 +615,12 @@ async def update_user_permissions(
             extra={"user_id": user_id, "permissions": request.permissions},
         )
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "invalid_permissions",
+                "message": str(e),
+                "user_id": user_id,
+            },
         )
     except Exception as e:
         logger.error(
@@ -590,7 +630,11 @@ async def update_user_permissions(
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to update user permissions: {str(e)}",
+            detail={
+                "error": "user_action_failed",
+                "message": "Failed to update user permissions",
+                "user_id": user_id,
+            },
         )
 
 
@@ -646,13 +690,21 @@ async def reset_user_password(
         if not kc_user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User {user_id} not found",
+                detail={
+                    "error": "user_not_found",
+                    "message": "User not found",
+                    "user_id": user_id,
+                },
             )
 
         if not request.temporary_password:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="temporary_password is required",
+                detail={
+                    "error": "missing_password",
+                    "message": "temporary_password is required",
+                    "user_id": user_id,
+                },
             )
 
         logger.info(
@@ -669,7 +721,11 @@ async def reset_user_password(
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to set user password in Keycloak",
+                detail={
+                    "error": "user_action_failed",
+                    "message": "Failed to reset password",
+                    "user_id": user_id,
+                },
             )
 
         logger.info(
@@ -681,7 +737,6 @@ async def reset_user_password(
             "success": True,
             "method": "temporary_password",
             "message": "Temporary password set. User must change password on next login.",
-            "temporary_password": request.temporary_password,
         }
 
     except HTTPException:
@@ -693,7 +748,12 @@ async def reset_user_password(
             extra={"user_id": user_id},
         )
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "error": "invalid_password",
+                "message": str(e),
+                "user_id": user_id,
+            },
         )
     except Exception as e:
         logger.error(
@@ -703,5 +763,9 @@ async def reset_user_password(
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to reset user password: {str(e)}",
+            detail={
+                "error": "user_action_failed",
+                "message": "Failed to reset password",
+                "user_id": user_id,
+            },
         )

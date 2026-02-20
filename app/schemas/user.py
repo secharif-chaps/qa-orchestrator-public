@@ -37,7 +37,7 @@ class ResetPasswordRequest(BaseModel):
     """Request body for resetting user password."""
 
     temporary_password: str | None = None
-    send_email: bool = False
+    send_email: bool = False  # TODO: implement email notification on password reset
 
     @field_validator("temporary_password")
     @classmethod
