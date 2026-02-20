@@ -65,14 +65,15 @@ const dropdownPosition = ref({ top: 0, left: 0 })
 
 // Calculate dropdown position based on trigger element
 const updatePosition = () => {
-  if (!triggerRef.value) return
+  if (!triggerRef.value || !dropdownRef.value) return
 
   const rect = triggerRef.value.getBoundingClientRect()
   const dropdownWidth = getDropdownWidth()
+  const dropdownHeight = dropdownRef.value.offsetHeight
 
+  // Horizontal positioning
   let left = props.align === 'right' ? rect.right - dropdownWidth : rect.left
 
-  // Ensure dropdown doesn't go off-screen
   const viewportWidth = window.innerWidth
   if (left + dropdownWidth > viewportWidth - 8) {
     left = viewportWidth - dropdownWidth - 8
@@ -81,8 +82,25 @@ const updatePosition = () => {
     left = 8
   }
 
+  // Vertical positioning with flip
+  let top = rect.bottom + 8
+  const viewportHeight = window.innerHeight
+
+  if (top + dropdownHeight > viewportHeight - 8) {
+    top = rect.top - dropdownHeight - 8
+
+    if (top < 8) {
+      top = 8
+      dropdownRef.value.style.maxHeight = `${viewportHeight - 16}px`
+    } else {
+      dropdownRef.value.style.maxHeight = ''
+    }
+  } else {
+    dropdownRef.value.style.maxHeight = '' // reset if enough space
+  }
+
   dropdownPosition.value = {
-    top: rect.bottom + 8, // 8px gap below trigger
+    top,
     left,
   }
 }
