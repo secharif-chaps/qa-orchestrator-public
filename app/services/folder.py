@@ -103,7 +103,7 @@ class FolderService:
         )
 
         if not include_deleted:
-            stmt = stmt.where(Folder.is_deleted == False)
+            stmt = stmt.where(Folder.is_deleted.is_(False))
 
         result = await db.execute(stmt)
         return result.scalars().first()
@@ -286,10 +286,10 @@ class FolderService:
         # Apply archived filter
         if archived:
             logger.debug("Filtering for archived (deleted) folders")
-            stmt = stmt.where(Folder.is_deleted == True)
+            stmt = stmt.where(Folder.is_deleted.is_(True))
         else:
             logger.debug("Filtering for non-archived folders")
-            stmt = stmt.where(Folder.is_deleted == False)
+            stmt = stmt.where(Folder.is_deleted.is_(False))
 
         # Apply favorites filter
         if favorites_only:
@@ -341,9 +341,9 @@ class FolderService:
         )
 
         if archived:
-            stmt = stmt.where(Folder.is_deleted == True)
+            stmt = stmt.where(Folder.is_deleted.is_(True))
         else:
-            stmt = stmt.where(Folder.is_deleted == False)
+            stmt = stmt.where(Folder.is_deleted.is_(False))
 
         if favorites_only:
             if not user_id:
@@ -573,7 +573,7 @@ class FolderService:
         stmt = select(Folder).where(
             Folder.id.in_(folder_ids),
             Folder.organization_id == organization_id,
-            Folder.is_deleted == False
+            Folder.is_deleted.is_(False)
         )
         result = await db.execute(stmt)
         return list(result.scalars().all())
@@ -992,7 +992,7 @@ class FolderService:
         ).where(
             UserFolderFavorite.user_id == user_id,
             Folder.organization_id == organization_id,
-            Folder.is_deleted == False
+            Folder.is_deleted.is_(False)
         )
         result = await db.execute(stmt)
         return {row[0] for row in result.all()}
@@ -1049,7 +1049,7 @@ class FolderService:
             FolderItem.item_id == str(company_id),
             FolderItem.item_type == 'company',
             Folder.organization_id == organization_id,
-            Folder.is_deleted == False
+            Folder.is_deleted.is_(False)
         )
         result = await db.execute(stmt)
         folder_items = result.scalars().all()
