@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app.api.endpoints import internal, modules, organization, tokens
+from app.api.endpoints import internal, modules, organization, tokens, users
 
 api_router = APIRouter()
 
@@ -11,3 +11,4 @@ api_router.include_router(internal.router)  # Internal service-to-service API
 api_router.include_router(tokens.router)  # Token balance management
 api_router.include_router(organization.router)  # Organization context
 api_router.include_router(modules.router)  # Module enablement
+api_router.include_router(users.router)  # Admin user management
