@@ -101,7 +101,7 @@ async def consume_organization_tokens(
         )
 
     logger.info(
-        f"Internal token consumption request",
+        "Internal token consumption request",
         extra={
             "organization_id": org_id_str,
             "amount": request.amount,
@@ -133,7 +133,7 @@ async def consume_organization_tokens(
         transaction = transactions[0] if transactions else None
 
         logger.info(
-            f"Tokens consumed successfully",
+            "Tokens consumed successfully",
             extra={
                 "organization_id": org_id_str,
                 "amount": request.amount,
@@ -151,7 +151,7 @@ async def consume_organization_tokens(
 
     except ModuleNotEnabledException as e:
         logger.warning(
-            f"Module not enabled for token consumption",
+            "Module not enabled for token consumption",
             extra={
                 "organization_id": org_id_str,
                 "module_name": request.module_name,
@@ -165,7 +165,7 @@ async def consume_organization_tokens(
 
     except InsufficientTokensException as e:
         logger.warning(
-            f"Insufficient tokens for consumption",
+            "Insufficient tokens for consumption",
             extra={
                 "organization_id": org_id_str,
                 "requested_amount": request.amount,
