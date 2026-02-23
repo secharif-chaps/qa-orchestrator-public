@@ -14,6 +14,7 @@ from app.models.organization import (
     TokenTransaction,
     TransactionType,
 )
+from app.models.user_preferences import UserPreferences
 
 __all__ = [
     # Models
@@ -21,6 +22,7 @@ __all__ = [
     "TokenTransaction",
     "OrganizationModule",
     "OrganizationFeatureFlag",
+    "UserPreferences",
     # Enums
     "ModuleName",
     "TransactionType",
