@@ -39,6 +39,15 @@ const activeTab = computed(() => {
 
 const isActive = (routeName: string) => activeTab.value.includes(routeName)
 
+const noTabActive = computed(() => {
+  return ![
+    RouteNames.WATCH_FILES_RADAR,
+    RouteNames.WATCH_FILES_DOCUMENTS,
+    RouteNames.WATCH_FILES_SCOPE,
+    RouteNames.WATCH_FILES_AUDIT,
+  ].some((name) => isActive(name))
+})
+
 const tabs = computed<NavigationTab[]>(() => {
   return [
     {
@@ -65,7 +74,7 @@ const tabs = computed<NavigationTab[]>(() => {
       click() {
         switchTab(RouteNames.WATCH_FILES_SCOPE)
       },
-      isActive: isActive(RouteNames.WATCH_FILES_SCOPE),
+      isActive: isActive(RouteNames.WATCH_FILES_SCOPE) || noTabActive.value,
       disabled: !watchFileId,
     },
     {

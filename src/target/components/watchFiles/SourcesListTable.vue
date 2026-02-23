@@ -10,6 +10,7 @@
       :batch-selection="batchSelection"
       :loading="isLoading"
       :error="error ? error.message : undefined"
+      :is-new
       @refresh="refetch()"
       @add="emit('add')"
     />
@@ -192,6 +193,7 @@ import { watchDebounced } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 import SourceListSwitch from './SourceListSwitch.vue'
 
 interface Props {
@@ -225,6 +227,7 @@ const selectedSources = defineModel<string[]>('selectedSources', {
 const emit = defineEmits<{
   add: []
 }>()
+const route = useRoute()
 
 const { t } = useI18n()
 const sourcesStore = useSourcesStore()
@@ -234,6 +237,8 @@ const { itemsPerPage, page, sortBy, sortOrder } = storeToRefs(sourcesStore)
 const searchTerm = ref('')
 const debouncedSearchTerm = ref('')
 const typeFilter = ref<string[]>([])
+
+const isNew = computed(() => !route.params.id)
 
 onMounted(() => {
   const savedSort = sessionStorage.getItem('watchFileSourcesSort')

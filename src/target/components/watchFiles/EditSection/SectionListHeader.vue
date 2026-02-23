@@ -20,7 +20,7 @@
         </button>
         <!-- Info Badge -->
       </div>
-      <div v-if="props.lastUpdate" class="text-xs">
+      <div v-if="lastUpdate" class="text-xs">
         <Tag intent="accent" icon="fa-clock" size="sm">
           {{
             $t('watch_files.last_update.label', {
@@ -30,11 +30,12 @@
         </Tag>
       </div>
       <Button
-        v-if="!readonly && !batchSelection"
+        v-if="(!readonly && !batchSelection) || isNew"
         :aria-label="addButtonText"
         :icon="addIcon"
         variant="tertiary"
         size="sm"
+        :disabled="isNew"
         @click="$emit('add')"
       >
         {{ addButtonText }}
@@ -63,28 +64,30 @@ interface SectionListHeaderProps {
   loading?: boolean
   error?: string
   batchSelection?: boolean
+  isNew?: boolean
 }
 
 type SectionListHeaderEmits = (e: 'refresh' | 'add') => void
 
-const props = withDefaults(defineProps<SectionListHeaderProps>(), {
-  refreshIcon: 'fa-arrow-rotate-right',
-  addButtonText: 'common.action.add',
-  addIcon: 'fa-plus',
-  subTitle: '',
-  refreshButtonTitle: 'watch_files.aria_label_refresh_button',
-  readonly: false,
-  lastUpdate: '',
-  loading: false,
-  error: '',
-  batchSelection: false,
-})
+const {
+  refreshIcon = 'fa-arrow-rotate-right',
+  addButtonText = 'common.action.add',
+  addIcon = 'fa-plus',
+  subTitle = '',
+  refreshButtonTitle = 'watch_files.aria_label_refresh_button',
+  readonly = false,
+  lastUpdate = '',
+  loading = false,
+  error = '',
+  batchSelection = false,
+  isNew = false,
+} = defineProps<SectionListHeaderProps>()
 
 const { d } = useI18n()
 
 const formattedLastUpdate = computed(() => {
-  if (!props.lastUpdate) return ''
-  return d(props.lastUpdate, 'long')
+  if (!lastUpdate) return ''
+  return d(lastUpdate, 'long')
 })
 
 defineEmits<SectionListHeaderEmits>()
