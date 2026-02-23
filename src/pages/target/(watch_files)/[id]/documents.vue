@@ -161,12 +161,6 @@ import { storeToRefs } from 'pinia'
 import { computed, ref, useTemplateRef, watch, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-definePage({
-  meta: {
-    layout: 'watch-file',
-  },
-})
-
 const menuSortingRef = useTemplateRef('menuSorting')
 onClickOutside(menuSortingRef, () => (displayMenuSorting.value = false))
 

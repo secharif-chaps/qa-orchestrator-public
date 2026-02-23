@@ -19,10 +19,4 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const watchFileId = route.params.id as string
-
-definePage({
-  meta: {
-    layout: 'watch-file',
-  },
-})
 </script>

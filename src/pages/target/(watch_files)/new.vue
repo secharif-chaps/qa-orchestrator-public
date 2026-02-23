@@ -6,10 +6,4 @@
 import WatchFileConfiguration from '@target/components/watchFiles/EditSection/Main.vue'
 
 //Need to redirect after creation???
-
-definePage({
-  meta: {
-    layout: 'watch-file',
-  },
-})
 </script>
