@@ -1,4 +1,4 @@
-"""004 Create folder_items, folder_shares, user_folder_favorites in global_schema
+"""007 Create folder_items, folder_shares, user_folder_favorites in global_schema
 
 Revision ID: c3d4e5f6a7b8
 Revises: b2c3d4e5f6a7

@@ -1,4 +1,4 @@
-"""007 Convert folder_items.item_type from String to Enum
+"""008 Convert folder_items.item_type from String to Enum
 
 Revision ID: d4e5f6a7b8c9
 Revises: c3d4e5f6a7b8
