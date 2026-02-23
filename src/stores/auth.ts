@@ -104,8 +104,13 @@ export const useAuthStore = defineStore(
         console.log('Access token expiring')
       })
 
-      manager.events.addAccessTokenExpired(() => {
-        user.value = null
+      manager.events.addAccessTokenExpired(async () => {
+        try {
+          const refreshedUser = await manager.signinSilent()
+          user.value = refreshedUser
+        } catch {
+          user.value = null
+        }
       })
 
       const router = useRouter()
@@ -127,8 +132,6 @@ export const useAuthStore = defineStore(
       if (!manager) {
         return
       }
-
-      console.log('hey')
 
       try {
         const currentUser = await manager.getUser()

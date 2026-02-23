@@ -5,7 +5,7 @@ import { ref } from 'vue'
  * Used in vitest tests to replace Nuxt's auto-imports
  */
 
-export function useCookie<T = unknown>(_name: string, _options?: unknown) {
+export function useCookie<T = unknown>() {
   return ref<T | null>(null)
 }
 
@@ -31,7 +31,7 @@ export function useRouter() {
   }
 }
 
-export function navigateTo(_path: string) {
+export function navigateTo() {
   return Promise.resolve()
 }
 
