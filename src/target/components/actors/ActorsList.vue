@@ -7,6 +7,7 @@
       :readonly="readonly"
       :loading="loading"
       :error="error"
+      :is-new
       @refresh="$emit('retry')"
       @add="openSelectionModal"
     />
@@ -39,6 +40,7 @@ import { ActorStatus } from '@target/types/actor'
 import type { WatchFileActor } from '@target/types/watchFile'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 import ActorSelectionModal from './ActorSelectionModal.vue'
 import ActorsGrid from './ActorsGrid.vue'
 
@@ -64,10 +66,13 @@ const {
   readonly = false,
 } = defineProps<Props>()
 
+const route = useRoute()
 const emit = defineEmits(['retry', 'add', 'actor-updated'])
 const currentPage = defineModel<number>('currentPage', { required: true })
 const actorsList = ref<WatchFileActor[]>([...actors])
 const isSelectionModalOpen = ref(false)
+
+const isNew = computed(() => !route.params.id)
 
 const actorsStats = computed(() => {
   const activeCount = actorsList.value.filter((a) => a.status === ActorStatus.ACTIVE).length
