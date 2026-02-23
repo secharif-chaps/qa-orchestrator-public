@@ -7,7 +7,6 @@
       :rows="5"
       max-height="200px"
       :input-class="textareaInputClass"
-      :disabled="disabled"
       autofocus
       tabindex="1"
       :aria-label="inputPlaceholder"
@@ -65,7 +64,7 @@ const sendMessage = () => {
 }
 
 const handleKeyDown = (e: KeyboardEvent) => {
-  if (e.key === 'Enter') {
+  if (e.key === 'Enter' && !disabled) {
     if (e.ctrlKey || e.shiftKey) {
       const textarea = e.target as HTMLTextAreaElement
       const start = textarea.selectionStart
