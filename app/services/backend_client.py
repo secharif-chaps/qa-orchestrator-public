@@ -47,7 +47,7 @@ def _create_auth_headers(
         roles=roles,
         email=email,
     )
-    return {"Authorization": f"Bearer {token}"}
+    return {"Authorization": f"Internal {token}"}
 
 
 async def get_companies_by_ids(

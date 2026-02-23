@@ -44,7 +44,11 @@ async def _build_folder_response(
     db: AsyncSession,
     folder,
     user_id: str,
-    user_favorite_ids: set = None
+    user_favorite_ids: set = None,
+    org_id: str = "",
+    username: str = "",
+    org_name: str = "",
+    user_roles: List[str] = None,
 ) -> dict:
     """Build folder response dict with access control fields.
 
@@ -59,6 +63,10 @@ async def _build_folder_response(
         folder: Folder model instance
         user_id: Current user's Keycloak UUID
         user_favorite_ids: Optional set of favorited folder IDs (for list views)
+        org_id: Organization UUID (for backend company enrichment)
+        username: User's username (for backend company enrichment)
+        org_name: Organization name (for backend company enrichment)
+        user_roles: User's realm roles (for backend company enrichment)
 
     Returns:
         Dict ready for FolderResponse serialization
@@ -73,8 +81,15 @@ async def _build_folder_response(
     else:
         is_favorite = await FolderService.is_favorite(db, folder.id, user_id)
 
-    # Get folder items
-    folder_items = await FolderService._get_folder_items_summary(db, folder.id)
+    # Get folder items with full context for company enrichment
+    folder_items = await FolderService._get_folder_items_summary(
+        db, folder.id,
+        user_id=user_id,
+        org_id=org_id,
+        username=username,
+        org_name=org_name,
+        roles=user_roles,
+    )
 
     return {
         "id": folder.id,
@@ -208,7 +223,13 @@ async def create_folder(
         extra={"folder_id": str(folder_obj.id), "folder_name": folder_obj.name}
     )
 
-    return await _build_folder_response(db, folder_obj, org_context.user_id)
+    return await _build_folder_response(
+        db, folder_obj, org_context.user_id,
+        org_id=org_context.organization_id,
+        username=org_context.username,
+        org_name=getattr(org_context, 'organization_name', ''),
+        user_roles=user.realm_access.get('roles', []),
+    )
 
 
 @router.get("/", response_model=List[FolderResponse])
@@ -297,8 +318,15 @@ async def list_folders(
     )
 
     # Build response with access control fields
+    user_roles = user.realm_access.get('roles', []) if user.realm_access else []
     response_folders = [
-        await _build_folder_response(db, folder, org_context.user_id, user_favorite_ids)
+        await _build_folder_response(
+            db, folder, org_context.user_id, user_favorite_ids,
+            org_id=org_context.organization_id,
+            username=org_context.username,
+            org_name=getattr(org_context, 'organization_name', ''),
+            user_roles=user_roles,
+        )
         for folder in folders
     ]
 
@@ -436,7 +464,13 @@ async def update_folder(
         folder_update=folder_update
     )
 
-    return await _build_folder_response(db, updated_folder, org_context.user_id)
+    return await _build_folder_response(
+        db, updated_folder, org_context.user_id,
+        org_id=org_context.organization_id,
+        username=org_context.username,
+        org_name=getattr(org_context, 'organization_name', ''),
+        user_roles=user.realm_access.get('roles', []),
+    )
 
 
 @router.patch("/{folder_id}", response_model=FolderResponse)
@@ -493,7 +527,13 @@ async def patch_folder(
         folder_update=folder_update
     )
 
-    return await _build_folder_response(db, updated_folder, org_context.user_id)
+    return await _build_folder_response(
+        db, updated_folder, org_context.user_id,
+        org_id=org_context.organization_id,
+        username=org_context.username,
+        org_name=getattr(org_context, 'organization_name', ''),
+        user_roles=user.realm_access.get('roles', []),
+    )
 
 
 @router.delete("/{folder_id}", response_model=FolderResponse)
@@ -544,7 +584,13 @@ async def delete_folder(
 
     deleted_folder = await FolderService.soft_delete_folder(db=db, folder=folder)
 
-    return await _build_folder_response(db, deleted_folder, org_context.user_id)
+    return await _build_folder_response(
+        db, deleted_folder, org_context.user_id,
+        org_id=org_context.organization_id,
+        username=org_context.username,
+        org_name=getattr(org_context, 'organization_name', ''),
+        user_roles=user.realm_access.get('roles', []),
+    )
 
 
 @router.post("/{folder_id}/restore", response_model=FolderResponse)
@@ -602,7 +648,13 @@ async def restore_folder(
 
     restored_folder = await FolderService.restore_folder(db=db, folder=folder)
 
-    return await _build_folder_response(db, restored_folder, org_context.user_id)
+    return await _build_folder_response(
+        db, restored_folder, org_context.user_id,
+        org_id=org_context.organization_id,
+        username=org_context.username,
+        org_name=getattr(org_context, 'organization_name', ''),
+        user_roles=user.realm_access.get('roles', []),
+    )
 
 
 # ==============================================================================
