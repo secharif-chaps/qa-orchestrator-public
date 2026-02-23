@@ -5,7 +5,12 @@ from app.core.config import settings
 
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+# Create engine with connection pool settings to handle SSL connection drops
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    pool_pre_ping=True,  # Verify connection is alive before using it
+    pool_recycle=3600,   # Recycle connections after 1 hour (3600 seconds)
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
