@@ -3,8 +3,7 @@
     <div class="flex min-h-0 flex-1">
       <aside
         v-if="isUserEditable || !watchFile"
-        class="hidden w-1/3 overflow-y-auto bg-slate-50 md:block"
-        style="min-width: 24rem; max-width: 36rem"
+        class="hidden w-1/3 min-w-96 overflow-y-auto bg-slate-50 md:block"
       >
         <WatchFileAssistant
           :watch-file-id="effectiveWatchFileId"

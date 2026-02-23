@@ -34,7 +34,7 @@
 
         <!-- MESSAGE BUBBLE -->
         <div
-          class="w-max max-w-[33vw] overflow-x-auto rounded-sm border px-3 pt-3 pb-2 lg:max-w-[28vw] 2xl:max-w-[24vw]"
+          class="w-max max-w-[32vw] overflow-x-auto rounded-sm border px-3 pt-3 pb-2 lg:max-w-[28vw] 2xl:max-w-[24vw]"
           :class="{
             'bg-primary-lighter border-primary-stroke': isUserMessage,
             'border-gray-200 bg-white': !isUserMessage,
