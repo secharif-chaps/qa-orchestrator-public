@@ -13,7 +13,10 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Import the SQLAlchemy models
-from app.database import Base
+from app.database import Base, GlobalBase, GLOBAL_SCHEMA
+
+# Register all models so their tables appear in metadata
+import app.models  # noqa: F401
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -24,9 +27,15 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-target_metadata = Base.metadata
+# Track both public and global_schema models
+target_metadata = [Base.metadata, GlobalBase.metadata]
+
+
+def include_name(name, type_, parent_names):
+    """Filter objects to only include public and global_schema schemas."""
+    if type_ == "schema":
+        return name in (None, GLOBAL_SCHEMA)
+    return True
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -53,6 +62,8 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        include_schemas=True,
+        include_name=include_name,
     )
 
     with context.begin_transaction():
@@ -79,7 +90,10 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
+            include_schemas=True,
+            include_name=include_name,
         )
 
         with context.begin_transaction():
