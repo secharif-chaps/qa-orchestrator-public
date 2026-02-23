@@ -50,7 +50,7 @@ def org_context():
 
 
 @pytest.fixture
-def authed_client(client, test_user, org_context):
+async def authed_client(client, test_user, org_context):
     """Create a test client with authentication overrides."""
     from tests.conftest import _mock_idp
     from app.core.organization import get_user_organization
@@ -96,17 +96,17 @@ VALID_PAYLOAD = {
 # --- GET /ai-preferences ---
 
 
-def test_get_preferences_not_found(authed_client):
+async def test_get_preferences_not_found(authed_client):
     """GET returns 404 when user has no preferences."""
-    response = authed_client.get("/api/ai-preferences")
+    response = await authed_client.get("/api/ai-preferences")
 
     assert response.status_code == 404
     assert "not found" in response.json()["detail"].lower()
 
 
-def test_get_preferences_success(authed_client, existing_preferences):
+async def test_get_preferences_success(authed_client, existing_preferences):
     """GET returns 200 with preferences when they exist."""
-    response = authed_client.get("/api/ai-preferences")
+    response = await authed_client.get("/api/ai-preferences")
 
     assert response.status_code == 200
     data = response.json()
@@ -116,9 +116,9 @@ def test_get_preferences_success(authed_client, existing_preferences):
     assert data["documentation_text"] == "CRM docs"
 
 
-def test_get_preferences_response_schema(authed_client, existing_preferences):
+async def test_get_preferences_response_schema(authed_client, existing_preferences):
     """GET response contains exactly the expected fields."""
-    response = authed_client.get("/api/ai-preferences")
+    response = await authed_client.get("/api/ai-preferences")
 
     assert response.status_code == 200
     data = response.json()
@@ -129,9 +129,9 @@ def test_get_preferences_response_schema(authed_client, existing_preferences):
 # --- POST /ai-preferences ---
 
 
-def test_create_preferences(authed_client):
+async def test_create_preferences(authed_client):
     """POST creates new preferences when none exist."""
-    response = authed_client.post("/api/ai-preferences", json=VALID_PAYLOAD)
+    response = await authed_client.post("/api/ai-preferences", json=VALID_PAYLOAD)
 
     assert response.status_code == 200
     data = response.json()
@@ -141,39 +141,39 @@ def test_create_preferences(authed_client):
     assert data["documentation_text"] == VALID_PAYLOAD["documentation_text"]
 
 
-def test_update_preferences(authed_client, existing_preferences):
+async def test_update_preferences(authed_client, existing_preferences):
     """POST updates existing preferences (upsert)."""
-    response = authed_client.post("/api/ai-preferences", json=VALID_PAYLOAD)
+    response = await authed_client.post("/api/ai-preferences", json=VALID_PAYLOAD)
 
     assert response.status_code == 200
     data = response.json()
     assert data["role"] == VALID_PAYLOAD["role"]
 
     # Verify GET returns updated data
-    get_response = authed_client.get("/api/ai-preferences")
+    get_response = await authed_client.get("/api/ai-preferences")
     assert get_response.status_code == 200
     assert get_response.json()["role"] == VALID_PAYLOAD["role"]
 
 
-def test_create_then_get(authed_client):
+async def test_create_then_get(authed_client):
     """POST then GET returns consistent data."""
-    post_response = authed_client.post("/api/ai-preferences", json=VALID_PAYLOAD)
+    post_response = await authed_client.post("/api/ai-preferences", json=VALID_PAYLOAD)
     assert post_response.status_code == 200
 
-    get_response = authed_client.get("/api/ai-preferences")
+    get_response = await authed_client.get("/api/ai-preferences")
     assert get_response.status_code == 200
 
     assert post_response.json() == get_response.json()
 
 
-def test_create_without_optional_field(authed_client):
+async def test_create_without_optional_field(authed_client):
     """POST works with documentation_text omitted."""
     payload = {
         "role": "Analyst",
         "goals_text": "Research companies",
         "desired_output_text": "Brief summaries",
     }
-    response = authed_client.post("/api/ai-preferences", json=payload)
+    response = await authed_client.post("/api/ai-preferences", json=payload)
 
     assert response.status_code == 200
     data = response.json()
@@ -181,7 +181,7 @@ def test_create_without_optional_field(authed_client):
     assert data["documentation_text"] is None
 
 
-def test_create_with_null_optional_field(authed_client):
+async def test_create_with_null_optional_field(authed_client):
     """POST works with documentation_text explicitly null."""
     payload = {
         "role": "Analyst",
@@ -189,7 +189,7 @@ def test_create_with_null_optional_field(authed_client):
         "desired_output_text": "Brief summaries",
         "documentation_text": None,
     }
-    response = authed_client.post("/api/ai-preferences", json=payload)
+    response = await authed_client.post("/api/ai-preferences", json=payload)
 
     assert response.status_code == 200
     assert response.json()["documentation_text"] is None
@@ -198,50 +198,50 @@ def test_create_with_null_optional_field(authed_client):
 # --- Validation ---
 
 
-def test_validation_missing_required_field(authed_client):
+async def test_validation_missing_required_field(authed_client):
     """POST returns 422 when required field is missing."""
     payload = {
         "role": "Analyst",
         # missing goals_text and desired_output_text
     }
-    response = authed_client.post("/api/ai-preferences", json=payload)
+    response = await authed_client.post("/api/ai-preferences", json=payload)
     assert response.status_code == 422
 
 
-def test_validation_empty_role(authed_client):
+async def test_validation_empty_role(authed_client):
     """POST returns 422 when role is empty string."""
     payload = {
         "role": "",
         "goals_text": "Some goals",
         "desired_output_text": "Some output",
     }
-    response = authed_client.post("/api/ai-preferences", json=payload)
+    response = await authed_client.post("/api/ai-preferences", json=payload)
     assert response.status_code == 422
 
 
-def test_validation_role_too_long(authed_client):
+async def test_validation_role_too_long(authed_client):
     """POST returns 422 when role exceeds max length."""
     payload = {
         "role": "x" * 256,
         "goals_text": "Some goals",
         "desired_output_text": "Some output",
     }
-    response = authed_client.post("/api/ai-preferences", json=payload)
+    response = await authed_client.post("/api/ai-preferences", json=payload)
     assert response.status_code == 422
 
 
-def test_validation_goals_too_long(authed_client):
+async def test_validation_goals_too_long(authed_client):
     """POST returns 422 when goals_text exceeds max length."""
     payload = {
         "role": "Analyst",
         "goals_text": "x" * 2001,
         "desired_output_text": "Some output",
     }
-    response = authed_client.post("/api/ai-preferences", json=payload)
+    response = await authed_client.post("/api/ai-preferences", json=payload)
     assert response.status_code == 422
 
 
-def test_validation_documentation_too_long(authed_client):
+async def test_validation_documentation_too_long(authed_client):
     """POST returns 422 when documentation_text exceeds max length."""
     payload = {
         "role": "Analyst",
@@ -249,5 +249,9 @@ def test_validation_documentation_too_long(authed_client):
         "desired_output_text": "Some output",
         "documentation_text": "x" * 5001,
     }
-    response = authed_client.post("/api/ai-preferences", json=payload)
+    response = await authed_client.post("/api/ai-preferences", json=payload)
     assert response.status_code == 422
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

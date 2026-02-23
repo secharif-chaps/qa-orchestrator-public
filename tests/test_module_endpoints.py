@@ -10,7 +10,6 @@ Full integration tests with auth are in test_module_workflows.py
 """
 
 import pytest
-from datetime import datetime, timezone
 
 from app.models.organization import (
     Organization,
@@ -61,16 +60,16 @@ async def setup_test_modules(global_db_session, test_org_id):
 class TestModuleEndpointsBasic:
     """Basic tests for module endpoints that can work without full auth."""
 
-    def test_get_modules_endpoint_registered(self, client, test_org_id):
+    async def test_get_modules_endpoint_registered(self, client, test_org_id):
         """Test GET modules endpoint is registered."""
-        response = client.get(f"/api/organizations/{test_org_id}/modules")
+        response = await client.get(f"/api/organizations/{test_org_id}/modules")
 
         # Endpoint exists (may fail auth but endpoint is there)
         assert response.status_code in [200, 401, 403, 422]
 
-    def test_bulk_update_endpoint_registered(self, client, test_org_id):
+    async def test_bulk_update_endpoint_registered(self, client, test_org_id):
         """Test PUT bulk update endpoint is registered."""
-        response = client.put(
+        response = await client.put(
             f"/api/organizations/{test_org_id}/modules",
             json={"screen": {"enabled": True}},
         )
@@ -78,18 +77,18 @@ class TestModuleEndpointsBasic:
         # Endpoint exists (may fail auth/validation)
         assert response.status_code in [200, 400, 401, 403, 422]
 
-    def test_toggle_endpoint_registered(self, client, test_org_id):
+    async def test_toggle_endpoint_registered(self, client, test_org_id):
         """Test PUT toggle endpoint is registered."""
-        response = client.put(
+        response = await client.put(
             f"/api/organizations/{test_org_id}/modules/screen/toggle"
         )
 
         # Endpoint exists (may fail auth)
         assert response.status_code in [200, 401, 403, 404, 422]
 
-    def test_toggle_invalid_module_validation(self, client, test_org_id):
+    async def test_toggle_invalid_module_validation(self, client, test_org_id):
         """Test validation rejects invalid module names."""
-        response = client.put(
+        response = await client.put(
             f"/api/organizations/{test_org_id}/modules/invalid_module/toggle"
         )
 

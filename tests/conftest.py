@@ -125,13 +125,32 @@ TestingSessionLocal = async_sessionmaker(
 
 
 def _strip_schema_from_metadata(base):
-    """Strip schema from metadata for SQLite compatibility."""
+    """Strip schema and adapt PostgreSQL types for SQLite compatibility."""
+    from sqlalchemy import JSON, Enum as SAEnum
+    from sqlalchemy.dialects.postgresql import ARRAY
+
     for table in base.metadata.tables.values():
         table.schema = None
         # Also update table_args if it has schema
         if hasattr(table, '__table_args__'):
             if isinstance(table.__table_args__, dict):
                 table.__table_args__.pop('schema', None)
+
+        # Adapt PostgreSQL-specific column types for SQLite
+        for column in table.columns:
+            # Replace ARRAY with JSON (SQLite has no array type)
+            if isinstance(column.type, ARRAY):
+                column.type = JSON()
+                # Fix PostgreSQL-specific server_default for arrays
+                if column.server_default is not None:
+                    sd = str(column.server_default.arg)
+                    if "::text[]" in sd or "::varchar[]" in sd:
+                        column.server_default = None
+
+            # Fix Enum types with schema (strip schema, allow creation)
+            if isinstance(column.type, SAEnum):
+                column.type.schema = None
+                column.type.create_type = True
 
 
 @pytest.fixture(scope="function")
@@ -173,13 +192,13 @@ async def global_db_session(setup_test_db):
 
 
 @pytest.fixture
-def client(global_db_session):
-    """Create a test client with database override.
+async def client(global_db_session):
+    """Create an async test client with database override.
 
-    Note: Uses TestClient which runs async endpoints in a thread pool.
-    For true async testing, use httpx.AsyncClient instead.
+    Uses httpx.AsyncClient with ASGITransport so async fixtures
+    (like global_db_session) work correctly with pytest-asyncio.
     """
-    from fastapi.testclient import TestClient
+    from httpx import AsyncClient, ASGITransport
     from app.main import app
     from app.database import get_global_db
 
@@ -189,10 +208,10 @@ def client(global_db_session):
 
     app.dependency_overrides[get_global_db] = override_get_db
 
-    # Create test client
-    test_client = TestClient(app)
-
-    yield test_client
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        ac.app = app  # Expose app for dependency_overrides access in tests
+        yield ac
 
     # Clean up overrides
     app.dependency_overrides.clear()
