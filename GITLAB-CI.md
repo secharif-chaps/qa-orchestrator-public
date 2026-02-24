@@ -8,13 +8,13 @@ To build the frontend Docker image, you need to configure the following CI/CD va
 
 ### Environment Variables
 
-| Variable Name | Example Value | Description |
-|---------------|---------------|-------------|
-| `VITE_BASE_URL` | `http://chapsmind.chapsvision.com` | Base URL of the application |
-| `VITE_KEYCLOAK_URL` | `https://sso.dwcode.team` | Keycloak server URL |
-| `VITE_KEYCLOAK_REALM` | `mint` | Keycloak realm name |
-| `VITE_BACKEND_API` | `http://chapsmind.chapsvision.com` | Backend API URL |
-| `VITE_KEYCLOAK_CLIENT_ID` | `chapsmind-front-prod` | Keycloak client ID for frontend |
+| Variable Name             | Example Value                      | Description                     |
+| ------------------------- | ---------------------------------- | ------------------------------- |
+| `VITE_BASE_URL`           | `http://chapsmind.chapsvision.com` | Base URL of the application     |
+| `VITE_KEYCLOAK_URL`       | `https://sso.dwcode.team`          | Keycloak server URL             |
+| `VITE_KEYCLOAK_REALM`     | `mint`                             | Keycloak realm name             |
+| `VITE_BACKEND_API`        | `http://chapsmind.chapsvision.com` | Backend API URL                 |
+| `VITE_KEYCLOAK_CLIENT_ID` | `chapsmind-front-prod`             | Keycloak client ID for frontend |
 
 ### How It Works
 

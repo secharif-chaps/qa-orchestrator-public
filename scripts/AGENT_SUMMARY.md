@@ -3,6 +3,7 @@
 ## What You Asked For
 
 An agent that:
+
 1. Scans every Vue file in `pages/` and `components/`
 2. Verifies existing i18n keys exist in both locale files
 3. Detects plain text without internationalization
@@ -17,39 +18,46 @@ A Python script (`scripts/i18n-agent.py`) that does exactly that! ✅
 ## Key Features
 
 ### 1. Smart Text Detection
+
 - ✅ Finds text in `<h1>`, `<p>`, `<span>`, `<button>`, `<label>`, etc.
 - ✅ Finds text in attributes: `placeholder`, `title`, `label`, `alt`, `aria-label`
 - ✅ Skips numbers, URLs, acronyms, Tailwind classes
 - ✅ Skips already internationalized text (`{{ $t() }}`)
 
 ### 2. Key Generation
+
 - ✅ Based on file path: `src/pages/companies/(list).vue` → `companieslist.*`
 - ✅ Based on text content: "No companies yet" → `no_companies_yet`
 - ✅ Ensures uniqueness with suffixes
 
 ### 3. Translation
+
 - ✅ Uses Claude AI API for English → French translation
 - ✅ Falls back to placeholders if no API key
 - ✅ Preserves nested structure of locale files
 
 ### 4. Verification
+
 - ✅ Checks all existing `$t('key')` usage
 - ✅ Reports missing keys in either locale file
 - ✅ Verifies both `en-US.ts` and `fr-FR.ts`
 
 ### 5. Updating
+
 - ✅ Updates Vue templates with `{{ $t('key') }}`
 - ✅ Updates attributes with `:attr="$t('key')"`
 - ✅ Preserves TypeScript export format
 - ✅ Maintains nested object structure
 
 ### 6. Reporting
+
 - ✅ Shows files scanned/modified
 - ✅ Shows keys added/verified
 - ✅ Lists missing translations
 - ✅ Shows all new translations (en + fr)
 
 ### 7. Git Integration
+
 - ✅ Stages all changed files
 - ✅ Creates gitmoji commit message
 - ✅ Includes detailed stats in commit
@@ -58,13 +66,17 @@ A Python script (`scripts/i18n-agent.py`) that does exactly that! ✅
 ## How It Answers Your Questions
 
 ### Q: "If a file contains text using i18n, verify keys exist"
+
 **A**: ✅ The `_verify_existing_keys()` method:
+
 - Finds all `$t('key')` usage
 - Checks if key exists in both `en-US.ts` and `fr-FR.ts`
 - Reports missing keys with file location
 
 ### Q: "If plain text without internationalization, add to locale files"
+
 **A**: ✅ The `_convert_untranslated_text()` method:
+
 - Detects translatable text in templates
 - Generates appropriate key
 - Translates to French (or placeholder)
@@ -72,7 +84,9 @@ A Python script (`scripts/i18n-agent.py`) that does exactly that! ✅
 - Updates Vue file with `$t()` syntax
 
 ### Q: "Give stats about changes with list of new translations"
+
 **A**: ✅ The `generate_report()` method shows:
+
 ```
 📄 Files scanned: 45
 ✏️  Files modified: 12
@@ -89,6 +103,7 @@ A Python script (`scripts/i18n-agent.py`) that does exactly that! ✅
 ## Usage
 
 ### Quick Start
+
 ```bash
 # Install dependency
 pip install anthropic
@@ -102,6 +117,7 @@ python3 scripts/i18n-agent.py
 ```
 
 ### What Happens
+
 1. Scans all `.vue` files in `src/pages/` and `src/components/`
 2. Shows progress for each file
 3. Generates detailed report
@@ -118,6 +134,7 @@ python3 scripts/i18n-agent.py
 ## Example Transformations
 
 ### Before:
+
 ```vue
 <template>
   <div>
@@ -129,6 +146,7 @@ python3 scripts/i18n-agent.py
 ```
 
 ### After:
+
 ```vue
 <template>
   <div>
@@ -140,6 +158,7 @@ python3 scripts/i18n-agent.py
 ```
 
 ### Locale Files Updated:
+
 ```typescript
 // en-US.ts
 export default {
@@ -147,9 +166,9 @@ export default {
   pages: {
     component: {
       this_is_some_text: 'This is some text',
-      enter_name: 'Enter name'
-    }
-  }
+      enter_name: 'Enter name',
+    },
+  },
 }
 
 // fr-FR.ts
@@ -158,9 +177,9 @@ export default {
   pages: {
     component: {
       this_is_some_text: 'Ceci est du texte',
-      enter_name: 'Entrez le nom'
-    }
-  }
+      enter_name: 'Entrez le nom',
+    },
+  },
 }
 ```
 
@@ -175,6 +194,7 @@ export default {
 ## Customization
 
 You can modify the script to:
+
 - Change key generation strategy
 - Add support for more languages
 - Customize text detection patterns
@@ -184,6 +204,7 @@ You can modify the script to:
 ## Next Steps
 
 1. **Test the agent**:
+
    ```bash
    python3 scripts/i18n-agent.py
    ```
@@ -199,12 +220,14 @@ You can modify the script to:
 ## Support
 
 The script is well-documented with:
+
 - Inline comments explaining logic
 - Type hints for all functions
 - Clear class and method structure
 - Comprehensive README
 
 You can:
+
 - Read the code to understand how it works
 - Modify patterns in the script
 - Adjust key generation logic
