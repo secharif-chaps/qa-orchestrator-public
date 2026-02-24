@@ -6,11 +6,17 @@ WORKDIR /app
 # Enable corepack for Yarn 4
 RUN corepack enable
 
-# Copy package files and yarn config
-COPY package.json yarn.lock .yarnrc.yml ./
+# Copy package files and yarn config template
+COPY package.json yarn.lock .yarnrc.dist.yml ./
 
-# Install dependencies
-RUN yarn install --immutable
+# Generate .yarnrc.yml from secrets and install dependencies
+RUN --mount=type=secret,id=OWLINT_REGISTRY_URL \
+    --mount=type=secret,id=OWLINT_DEPLOY_KEY \
+    cp .yarnrc.dist.yml .yarnrc.yml && \
+    sed -i "s|<OWLINT_REGISTRY_URL>|$(cat /run/secrets/OWLINT_REGISTRY_URL)|g" .yarnrc.yml && \
+    sed -i "s|<OWLINT_DEPLOY_KEY>|$(cat /run/secrets/OWLINT_DEPLOY_KEY)|g" .yarnrc.yml && \
+    yarn install --immutable && \
+    rm .yarnrc.yml
 
 # Copy project files
 COPY . .

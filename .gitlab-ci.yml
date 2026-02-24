@@ -93,7 +93,10 @@ stylelint:
   image: docker:29-cli
   script:
     - echo Building $IMAGE_NAME:$IMAGE_TAG
-    - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+    - echo "$OWLINT_REGISTRY_URL" > owlint_registry_url.txt
+    - echo "$OWLINT_DEPLOY_KEY" > owlint_deploy_key.txt
+    - docker build --no-cache --pull --secret id=OWLINT_REGISTRY_URL,src=owlint_registry_url.txt --secret id=OWLINT_DEPLOY_KEY,src=owlint_deploy_key.txt -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+    - rm -f owlint_registry_url.txt owlint_deploy_key.txt
 
 docker-build:
   stage: Publish
