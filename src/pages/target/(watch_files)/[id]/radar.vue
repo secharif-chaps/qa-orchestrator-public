@@ -48,13 +48,6 @@ import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterView, useRoute, useRouter } from 'vue-router'
 
-definePage({
-  meta: {
-    layout: 'watch-file',
-    middleware: 'radar',
-  },
-})
-
 const { t } = useI18n()
 
 const route = useRoute()

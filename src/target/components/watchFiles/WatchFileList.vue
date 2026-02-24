@@ -138,7 +138,10 @@
 
           <template #cell(name)="{ value, item }">
             <td class="of-flex of-ml-2 px-4 py-3">
-              <RouterLink :to="`/watch_files/${item.id}`" class="text-primary-600 hover:underline">
+              <RouterLink
+                :to="{ name: RouteNames.WATCH_FILES, params: { id: item.id } }"
+                class="text-primary-600 hover:underline"
+              >
                 {{ value }}
               </RouterLink>
             </td>
@@ -163,7 +166,11 @@
             <td class="px-4 py-3">
               <RouterLink
                 v-if="item.newContentCount > 0"
-                :to="`/watch_files/${item.id}?tab=news`"
+                :to="{
+                  name: RouteNames.WATCH_FILES,
+                  params: { id: item.id },
+                  query: { tab: 'news' },
+                }"
                 class="text-primary-600 hover:text-primary-800 text-sm font-medium underline"
                 @click.stop
               >

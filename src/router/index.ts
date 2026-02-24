@@ -81,11 +81,18 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  // Note: Token validation is primarily handled at component level
-  // Router-level token validation is disabled to avoid issues with composables in guards
-  // The search page and other components will handle token validation directly
+  // Radar middleware: redirect /radar to the last selected sub-view (timeline or graph)
+  if (to.name === '/target/(watch_files)/[id]/radar') {
+    const { useWatchFileAnalysisStore } = await import('@target/stores/watchFileAnalysis')
+    const store = useWatchFileAnalysisStore()
+    return next({
+      name: store.selectedView,
+      params: to.params,
+      query: to.query,
+    })
+  }
 
-  // User is authenticated and has required permissions and tokens, allow access
+  // User is authenticated and has required permissions, allow access
   next()
 })
 

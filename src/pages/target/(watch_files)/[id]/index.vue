@@ -14,12 +14,6 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
-definePage({
-  meta: {
-    layout: 'watch-file',
-  },
-})
-
 // Fetch watch file data
 const { data: watchFile, isLoading } = useQuery(getItemWatchFileQuery, () => ({
   id: route.params.id as string,
