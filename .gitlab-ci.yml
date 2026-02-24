@@ -1,34 +1,107 @@
 # Frontend GitLab CI/CD Pipeline
-# Builds and publishes Docker image to GitLab Container Registry on main branch
+# Builds, lints, and publishes Docker image to GitLab Container Registry
 
 stages:
-  - build
-  - publish
+  - Build
+  - CodingStandards
+  - Publish
 
 variables:
   IMAGE_NAME: ${CI_REGISTRY_IMAGE}/mint-front
   IMAGE_TAG: preprod
   DOCKER_BUILDKIT: 1
 
-.build:
+# ---- Cache ----
+
+.cache-node-modules: &cache-node-modules
+  key:
+    files:
+      - yarn.lock
+    prefix: yarn
+  paths:
+    - node_modules
+  policy: pull
+
+# ---- Rules ----
+
+.default-rules: &default-rules
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+# ---- Job Templates ----
+
+.default-lint-job: &default-lint-job
+  image: node:22-alpine
+  cache:
+    - <<: *cache-node-modules
+  needs:
+    - job: install
+  <<: *default-rules
+
+# ---- Build Stage ----
+
+install:
+  image: node:22-alpine
+  stage: Build
+  before_script:
+    - corepack enable
+  script:
+    - yarn install --immutable
+  cache:
+    - <<: *cache-node-modules
+      policy: pull-push
+  <<: *default-rules
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - node_modules
+
+# ---- CodingStandards Stage ----
+
+eslint:
+  <<: *default-lint-job
+  stage: CodingStandards
+  script:
+    - npx eslint .
+
+prettier:
+  <<: *default-lint-job
+  stage: CodingStandards
+  script:
+    - npx prettier --check --no-error-on-unmatched-pattern --ignore-unknown .
+  after_script:
+    - npx prettier --list-different --no-error-on-unmatched-pattern --ignore-unknown .
+
+stylelint:
+  <<: *default-lint-job
+  stage: CodingStandards
+  script:
+    - npx stylelint "src/**/*.{vue,css}"
+
+# ---- Publish Stage ----
+
+.docker-build:
   image: docker:29-cli
   script:
     - echo Building $IMAGE_NAME:$IMAGE_TAG
     - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" .
 
+docker-build:
+  stage: Publish
+  extends: .docker-build
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
 publish:
-  stage: publish
-  extends: .build
+  stage: Publish
+  extends: .docker-build
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   after_script:
     - docker push $IMAGE_NAME:${IMAGE_TAG}
     - docker logout $CI_REGISTRY
-  only:
-    - main
-
-build:
-  stage: build
-  extends: .build
-  only:
-    - merge_requests
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
