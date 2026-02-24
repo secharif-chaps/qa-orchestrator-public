@@ -1,38 +1,56 @@
-"""Schemas for Dify error callback handling."""
+"""Schemas for Dify error callback handling.
+
+⚠️ NOTE ON ERROR TYPES:
+This module defines internal categorized error types for consistent handling.
+Actual Dify error types are mapped to these categories in dify_error_config.py.
+
+✅ CONFIRMED ERRORS (observed in production):
+- InvokeRateLimitError → RATE_LIMIT_LLM
+
+⚠️ PLACEHOLDER CATEGORIES (not yet observed in production):
+- All other error types are anticipated but not yet confirmed
+- These will be updated as real Dify errors are detected
+"""
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 from enum import Enum
 
 
 class DifyErrorType(str, Enum):
-    """Known Dify error types for categorization."""
+    """Internal categorized error types.
+
+    These are our internal categories. Actual Dify error types (like
+    'InvokeRateLimitError') are mapped to these categories in ERROR_TYPE_MAPPING.
+    """
 
     # Rate limiting errors
+    # ✅ RATE_LIMIT_LLM is CONFIRMED (maps from InvokeRateLimitError)
     RATE_LIMIT_LLM = "rate_limit_llm"
+    # ⚠️ RATE_LIMIT_API is PLACEHOLDER
     RATE_LIMIT_API = "rate_limit_api"
 
-    # Authentication errors
+    # ⚠️ Authentication errors - PLACEHOLDER
     AUTH_INVALID_KEY = "auth_invalid_key"
     AUTH_EXPIRED = "auth_expired"
 
-    # Workflow errors
+    # ⚠️ Workflow errors - PLACEHOLDER
     WORKFLOW_TIMEOUT = "workflow_timeout"
     WORKFLOW_NODE_ERROR = "workflow_node_error"
     WORKFLOW_VALIDATION_ERROR = "workflow_validation_error"
 
-    # Data errors
+    # ⚠️ Data errors - PLACEHOLDER
     DATA_INVALID_INPUT = "data_invalid_input"
     DATA_MISSING_FIELD = "data_missing_field"
 
-    # External service errors
+    # ⚠️ External service errors - PLACEHOLDER
     EXTERNAL_SERVICE_UNAVAILABLE = "external_service_unavailable"
     EXTERNAL_API_ERROR = "external_api_error"
 
-    # Network errors
+    # ⚠️ Network errors - PLACEHOLDER
     NETWORK_TIMEOUT = "network_timeout"
     NETWORK_CONNECTION_ERROR = "network_connection_error"
 
-    # Unknown/generic errors
+    # Unknown/generic errors (fallback)
     UNKNOWN = "unknown"
 
 

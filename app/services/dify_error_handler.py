@@ -1,4 +1,5 @@
 """Service for handling and processing Dify error callbacks."""
+import re
 from typing import Dict, Any, List, Optional
 from app.schemas.dify_errors import (
     DifyErrorDetail,
@@ -21,6 +22,71 @@ from app.core.dify_error_i18n import (
 from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
+
+
+def extract_retry_after_from_message(error_message: str) -> Optional[int]:
+    """
+    Extract retry_after value (in seconds) from error message.
+
+    Parses various formats like:
+    - "Please retry after 24 seconds"
+    - "retry after 5 minutes"
+    - "Retry in 2 hours"
+    - "wait for 30 seconds"
+
+    Args:
+        error_message: The error message to parse
+
+    Returns:
+        Retry delay in seconds, or None if not found
+
+    Examples:
+        >>> extract_retry_after_from_message("Please retry after 24 seconds")
+        24
+        >>> extract_retry_after_from_message("Retry after 5 minutes")
+        300
+        >>> extract_retry_after_from_message("Wait for 2 hours")
+        7200
+    """
+    if not error_message:
+        return None
+
+    # Patterns to match (case-insensitive):
+    # - "retry after X seconds/minutes/hours"
+    # - "retry in X seconds/minutes/hours"
+    # - "wait for X seconds/minutes/hours"
+    # - "please retry after X seconds/minutes/hours"
+    patterns = [
+        r"retry\s+(?:after|in)\s+(\d+)\s+(second|minute|hour)s?",
+        r"wait\s+(?:for)?\s+(\d+)\s+(second|minute|hour)s?",
+        r"please\s+retry\s+(?:after|in)\s+(\d+)\s+(second|minute|hour)s?",
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, error_message, re.IGNORECASE)
+        if match:
+            value = int(match.group(1))
+            unit = match.group(2).lower()
+
+            # Convert to seconds
+            if unit == "second":
+                return value
+            elif unit == "minute":
+                return value * 60
+            elif unit == "hour":
+                return value * 3600
+
+            logger.debug(
+                "Extracted retry_after from message",
+                extra={
+                    "value": value,
+                    "unit": unit,
+                    "seconds": value if unit == "second" else value * 60 if unit == "minute" else value * 3600,
+                    "message_snippet": error_message[:100],
+                }
+            )
+
+    return None
 
 
 class DifyErrorHandler:
@@ -120,9 +186,9 @@ class DifyErrorHandler:
         # Determine primary error (highest priority)
         primary_error = self._select_primary_error(parsed_errors)
 
-        # Check if any error is whitelisted
+        # Check if any error is whitelisted (case-insensitive comparison)
         has_whitelisted = any(
-            e.original_type in self.whitelisted_types for e in parsed_errors
+            e.original_type.lower() in self.whitelisted_types for e in parsed_errors
         )
 
         # Create summary
@@ -287,9 +353,24 @@ class DifyErrorHandler:
         # Calculate retry time
         retry_after_seconds = None
         if error_detail.retry_after:
+            # Use explicit retry_after attribute if present
             retry_after_seconds = error_detail.retry_after
         elif error_detail.retry_after_ms:
+            # Convert milliseconds to seconds
             retry_after_seconds = error_detail.retry_after_ms // 1000
+        else:
+            # Try to extract from error message (e.g., "Please retry after 24 seconds")
+            extracted_retry = extract_retry_after_from_message(error_detail.error_message)
+            if extracted_retry:
+                retry_after_seconds = extracted_retry
+                logger.info(
+                    "Extracted retry_after from error message",
+                    extra={
+                        "error_type": error_detail.error_type,
+                        "retry_after_seconds": retry_after_seconds,
+                        "message_snippet": error_detail.error_message[:100],
+                    }
+                )
 
         # Create parsed error (without user_message first)
         parsed_error = ParsedError(
@@ -299,7 +380,7 @@ class DifyErrorHandler:
             user_message="",  # Will be set below
             technical_details=technical_details,
             retry_after_seconds=retry_after_seconds,
-            should_display=error_detail.error_type in self.whitelisted_types,
+            should_display=error_detail.error_type.lower() in self.whitelisted_types,
             is_recoverable=categorized_type in self.recoverable_types,
         )
 
