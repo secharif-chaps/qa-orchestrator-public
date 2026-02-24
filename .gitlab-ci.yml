@@ -31,14 +31,21 @@ variables:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
 
+# ---- Registry Setup ----
+
+.yarnrc-setup: &yarnrc-setup
+  before_script:
+    - cp .yarnrc.dist.yml .yarnrc.yml
+    - sed -i "s|<OWLINT_REGISTRY_URL>|$OWLINT_REGISTRY_URL|g" .yarnrc.yml
+    - sed -i "s|<OWLINT_DEPLOY_KEY>|$OWLINT_DEPLOY_KEY|g" .yarnrc.yml
+    - corepack enable
+
 # ---- Job Templates ----
 
 .default-lint-job: &default-lint-job
   image: node:22-alpine
   cache:
     - <<: *cache-node-modules
-  needs:
-    - job: install
   <<: *default-rules
 
 # ---- Build Stage ----
@@ -46,8 +53,7 @@ variables:
 install:
   image: node:22-alpine
   stage: Build
-  before_script:
-    - corepack enable
+  <<: *yarnrc-setup
   script:
     - yarn install --immutable
   cache:
