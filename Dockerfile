@@ -16,7 +16,7 @@ RUN --mount=type=secret,id=OWLINT_REGISTRY_URL \
     sed -i "s|<OWLINT_REGISTRY_URL>|$(cat /run/secrets/OWLINT_REGISTRY_URL)|g" .yarnrc.yml && \
     sed -i "s|<OWLINT_DEPLOY_KEY>|$(cat /run/secrets/OWLINT_DEPLOY_KEY)|g" .yarnrc.yml && \
     yarn install --immutable && \
-    rm .yarnrc.yml
+    cp .yarnrc.dist.yml .yarnrc.yml
 
 # Copy project files
 COPY . .
