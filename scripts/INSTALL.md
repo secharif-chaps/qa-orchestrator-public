@@ -29,6 +29,7 @@ python3 scripts/i18n-agent.py
 ## 4. Review and Commit
 
 The agent will:
+
 1. Scan all Vue files
 2. Show you a detailed report
 3. Ask if you want to commit changes
@@ -70,16 +71,19 @@ Do you want to commit these changes? (y/n): y
 ## Troubleshooting
 
 ### "No module named 'anthropic'"
+
 ```bash
 pip install anthropic
 ```
 
 ### "Permission denied"
+
 ```bash
 chmod +x scripts/i18n-agent.py
 ```
 
 ### Want to see what changed before committing?
+
 ```bash
 # Run agent but answer "n" to commit prompt
 python3 scripts/i18n-agent.py

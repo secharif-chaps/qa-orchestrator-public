@@ -1,34 +1,116 @@
 # Frontend GitLab CI/CD Pipeline
-# Builds and publishes Docker image to GitLab Container Registry on main branch
+# Builds, lints, and publishes Docker image to GitLab Container Registry
 
 stages:
-  - build
-  - publish
+  - Build
+  - CodingStandards
+  - Publish
 
 variables:
   IMAGE_NAME: ${CI_REGISTRY_IMAGE}/mint-front
   IMAGE_TAG: preprod
   DOCKER_BUILDKIT: 1
 
-.build:
+# ---- Cache ----
+
+.cache-node-modules: &cache-node-modules
+  key:
+    files:
+      - yarn.lock
+    prefix: yarn
+  paths:
+    - node_modules
+  policy: pull
+
+# ---- Rules ----
+
+.default-rules: &default-rules
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+# ---- Registry Setup ----
+
+.yarnrc-setup: &yarnrc-setup
+  before_script:
+    - cp .yarnrc.dist.yml .yarnrc.yml
+    - sed -i "s|<OWLINT_REGISTRY_URL>|$OWLINT_REGISTRY_URL|g" .yarnrc.yml
+    - sed -i "s|<OWLINT_DEPLOY_KEY>|$OWLINT_DEPLOY_KEY|g" .yarnrc.yml
+    - corepack enable
+
+# ---- Job Templates ----
+
+.default-lint-job: &default-lint-job
+  image: node:22-alpine
+  cache:
+    - <<: *cache-node-modules
+  <<: *default-rules
+
+# ---- Build Stage ----
+
+install:
+  image: node:22-alpine
+  stage: Build
+  <<: *yarnrc-setup
+  script:
+    - yarn install --immutable
+  cache:
+    - <<: *cache-node-modules
+      policy: pull-push
+  <<: *default-rules
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - node_modules
+
+# ---- CodingStandards Stage ----
+
+eslint:
+  <<: *default-lint-job
+  stage: CodingStandards
+  script:
+    - npx eslint .
+
+prettier:
+  <<: *default-lint-job
+  stage: CodingStandards
+  script:
+    - npx prettier --check --no-error-on-unmatched-pattern --ignore-unknown .
+  after_script:
+    - npx prettier --list-different --no-error-on-unmatched-pattern --ignore-unknown .
+
+stylelint:
+  <<: *default-lint-job
+  stage: CodingStandards
+  script:
+    - npx stylelint "src/**/*.{vue,css}"
+
+# ---- Publish Stage ----
+
+.docker-build:
   image: docker:29-cli
   script:
     - echo Building $IMAGE_NAME:$IMAGE_TAG
-    - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+    - echo "$OWLINT_REGISTRY_URL" > owlint_registry_url.txt
+    - echo "$OWLINT_DEPLOY_KEY" > owlint_deploy_key.txt
+    - docker build --no-cache --pull --secret id=OWLINT_REGISTRY_URL,src=owlint_registry_url.txt --secret id=OWLINT_DEPLOY_KEY,src=owlint_deploy_key.txt -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+    - rm -f owlint_registry_url.txt owlint_deploy_key.txt
+
+docker-build:
+  stage: Publish
+  extends: .docker-build
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
 publish:
-  stage: publish
-  extends: .build
+  stage: Publish
+  extends: .docker-build
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   after_script:
     - docker push $IMAGE_NAME:${IMAGE_TAG}
     - docker logout $CI_REGISTRY
-  only:
-    - main
-
-build:
-  stage: build
-  extends: .build
-  only:
-    - merge_requests
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

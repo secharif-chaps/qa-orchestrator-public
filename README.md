@@ -135,16 +135,16 @@ MINT uses a simplified permission model integrated with Keycloak:
 
 ### Folder Access Control
 
-| Action | Owner | Writer | Reader |
-|--------|-------|--------|--------|
-| View folder/items | Yes | Yes | Yes |
-| Edit folder | Yes | No | No |
-| Delete folder | Yes | No | No |
-| Manage sharing | Yes | No | No |
-| Create companies* | Yes | Yes | No |
-| Delete companies | Yes | No | No |
+| Action             | Owner | Writer | Reader |
+| ------------------ | ----- | ------ | ------ |
+| View folder/items  | Yes   | Yes    | Yes    |
+| Edit folder        | Yes   | No     | No     |
+| Delete folder      | Yes   | No     | No     |
+| Manage sharing     | Yes   | No     | No     |
+| Create companies\* | Yes   | Yes    | No     |
+| Delete companies   | Yes   | No     | No     |
 
-*Requires `screen.create` permission
+\*Requires `screen.create` permission
 
 ---
 

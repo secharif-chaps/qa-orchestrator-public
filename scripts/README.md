@@ -18,12 +18,14 @@ An intelligent agent that automatically detects missing translations in your Vue
 The agent intelligently detects translatable text in:
 
 ### Template Elements
+
 - Headings: `<h1>`, `<h2>`, `<h3>`, etc.
 - Text containers: `<p>`, `<span>`, `<div>`, `<label>`
 - Interactive elements: `<button>`, `<a>`, `<li>`
 - Table elements: `<th>`, `<td>`
 
 ### Attributes
+
 - `placeholder="Enter name"`
 - `title="Tooltip text"`
 - `label="Field label"`
@@ -181,17 +183,19 @@ The agent generates keys based on:
 The agent preserves the nested structure of your locale files:
 
 **Before:**
+
 ```typescript
 export default {
   company: {
     list: {
-      title: 'Companies'
-    }
-  }
+      title: 'Companies',
+    },
+  },
 }
 ```
 
 **After:**
+
 ```typescript
 export default {
   company: {
@@ -199,10 +203,10 @@ export default {
       title: 'Companies',
       empty: {
         title: 'No companies yet',
-        description: 'Start by adding your first company'
-      }
-    }
-  }
+        description: 'Start by adding your first company',
+      },
+    },
+  },
 }
 ```
 
@@ -278,6 +282,7 @@ ATTRIBUTE_TEXT_PATTERN = re.compile(...)
 ## Support
 
 For issues or questions:
+
 1. Check the report output for specific errors
 2. Review the changes in git diff
 3. Modify the script for your specific needs

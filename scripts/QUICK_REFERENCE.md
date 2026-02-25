@@ -16,14 +16,14 @@ export ANTHROPIC_API_KEY="your-key"  # Optional
 
 ## 🎯 What It Does
 
-| Action | Description |
-|--------|-------------|
-| **Scans** | All `.vue` files in `src/pages/` and `src/components/` |
-| **Verifies** | All existing `$t('key')` have translations in both locales |
-| **Detects** | Plain text in templates not using i18n |
-| **Translates** | English → French using Claude AI |
-| **Updates** | Vue files with `{{ $t('key') }}` syntax |
-| **Commits** | Changes with gitmoji format |
+| Action         | Description                                                |
+| -------------- | ---------------------------------------------------------- |
+| **Scans**      | All `.vue` files in `src/pages/` and `src/components/`     |
+| **Verifies**   | All existing `$t('key')` have translations in both locales |
+| **Detects**    | Plain text in templates not using i18n                     |
+| **Translates** | English → French using Claude AI                           |
+| **Updates**    | Vue files with `{{ $t('key') }}` syntax                    |
+| **Commits**    | Changes with gitmoji format                                |
 
 ## ✅ Translates
 
@@ -57,11 +57,11 @@ export ANTHROPIC_API_KEY="your-key"  # Optional
 
 ## 🔑 Key Generation
 
-| Input | Output |
-|-------|--------|
-| File: `src/pages/companies/(list).vue` | Prefix: `companieslist` |
-| Text: `"No companies yet"` | Key: `no_companies_yet` |
-| **Result** | `companieslist.no_companies_yet` |
+| Input                                  | Output                           |
+| -------------------------------------- | -------------------------------- |
+| File: `src/pages/companies/(list).vue` | Prefix: `companieslist`          |
+| Text: `"No companies yet"`             | Key: `no_companies_yet`          |
+| **Result**                             | `companieslist.no_companies_yet` |
 
 ## 🌍 Locale Files
 
@@ -85,28 +85,31 @@ FR_LOCALE_FILE = LOCALES_DIR / "fr-FR.ts"
 
 ## 🐛 Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| "No module named 'anthropic'" | `pip install anthropic` |
-| "Permission denied" | `chmod +x scripts/i18n-agent.py` |
-| Translation errors | Check API key or use placeholders |
-| Git conflicts | Resolve manually and commit |
+| Issue                         | Solution                          |
+| ----------------------------- | --------------------------------- |
+| "No module named 'anthropic'" | `pip install anthropic`           |
+| "Permission denied"           | `chmod +x scripts/i18n-agent.py`  |
+| Translation errors            | Check API key or use placeholders |
+| Git conflicts                 | Resolve manually and commit       |
 
 ## 📝 Example
 
 **Before:**
+
 ```vue
 <h1>Welcome</h1>
 <button>Click me</button>
 ```
 
 **After:**
+
 ```vue
 <h1>{{ $t('welcome') }}</h1>
 <button>{{ $t('click_me') }}</button>
 ```
 
 **Locale files:**
+
 ```typescript
 // en-US.ts: welcome: 'Welcome', click_me: 'Click me'
 // fr-FR.ts: welcome: 'Bienvenue', click_me: 'Cliquez ici'
