@@ -10,6 +10,7 @@ from app.database import engine
 from app.api import api_router
 from app.grpc_server import create_grpc_server
 from app.proxy.client import get_proxy_client, close_proxy_client
+from app.services.keycloak_admin import keycloak_admin_service
 from app.proxy.routes import router as proxy_router
 
 # Initialize logging with configured level
@@ -74,6 +75,9 @@ async def shutdown_event():
     # Close proxy client
     await close_proxy_client()
     logger.info("🔌 Proxy client closed")
+
+    # Close Keycloak admin HTTP client
+    await keycloak_admin_service.close()
 
 
 # Health check endpoints
