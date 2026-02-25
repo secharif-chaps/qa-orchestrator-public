@@ -1,0 +1,7 @@
+nodeLinker: node-modules
+
+npmScopes:
+  owlint:
+    npmRegistryServer: '<OWLINT_REGISTRY_URL>'
+    npmAlwaysAuth: true
+    npmAuthToken: '<OWLINT_DEPLOY_KEY>'

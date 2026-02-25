@@ -1,0 +1,221 @@
+import { ref } from 'vue'
+import { useMutation, useQueryCache } from '@pinia/colada'
+import {
+  createOrganizationUser,
+  updateOrganizationUser,
+  deleteOrganizationUser,
+  toggleUserStatus,
+  resendPasswordReset,
+} from '@/api/user'
+import { USER_QUERY_KEYS } from '@/queries/user'
+import { ADMIN_USER_QUERY_KEYS } from '@/queries/admin-users'
+import { toast } from '@/utils/toast'
+import type { OrganizationUserCreate, OrganizationUserUpdate } from '@/types/user'
+
+interface ApiError {
+  response?: { data?: { message?: string } }
+  message?: string
+}
+
+export const useCreateOrganizationUser = (organizationId: string) => {
+  const queryCache = useQueryCache()
+  const isLoading = ref(false)
+
+  const { mutateAsync } = useMutation({
+    mutation: (user: OrganizationUserCreate) => createOrganizationUser(organizationId, user),
+    onSuccess: () => {
+      // Invalidate organization users query to refresh the list
+      queryCache.invalidateQueries({
+        key: USER_QUERY_KEYS.organization(organizationId),
+      })
+      // Also invalidate admin users queries to refresh admin pages
+      queryCache.invalidateQueries({
+        key: ADMIN_USER_QUERY_KEYS.root,
+      })
+      toast.success('User Created')
+    },
+    onError: (error: unknown) => {
+      console.error('Failed to add user:', error)
+      const apiError = error as ApiError
+      toast.error(
+        'Failed to Add User',
+        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
+      )
+    },
+  })
+
+  const createUser = async (user: OrganizationUserCreate) => {
+    isLoading.value = true
+    try {
+      const result = await mutateAsync(user)
+      return result
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  return {
+    createUser,
+    isLoading,
+  }
+}
+
+export const useUpdateOrganizationUser = (organizationId: string) => {
+  const queryCache = useQueryCache()
+  const isLoading = ref(false)
+
+  const { mutateAsync } = useMutation({
+    mutation: ({ userId, user }: { userId: string; user: OrganizationUserUpdate }) =>
+      updateOrganizationUser(organizationId, userId, user),
+    onSuccess: () => {
+      queryCache.invalidateQueries({
+        key: USER_QUERY_KEYS.organization(organizationId),
+      })
+      // Also invalidate admin users queries to refresh admin pages
+      queryCache.invalidateQueries({
+        key: ADMIN_USER_QUERY_KEYS.root,
+      })
+      toast.success('User Updated')
+    },
+    onError: (error: unknown) => {
+      console.error('Failed to update user:', error)
+      const apiError = error as ApiError
+      toast.error(
+        'Failed to Update User',
+        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
+      )
+    },
+  })
+
+  const updateUser = async (userId: string, user: OrganizationUserUpdate) => {
+    isLoading.value = true
+    try {
+      const result = await mutateAsync({ userId, user })
+      return result
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  return {
+    updateUser,
+    isLoading,
+  }
+}
+
+export const useDeleteOrganizationUser = (organizationId: string) => {
+  const queryCache = useQueryCache()
+  const isLoading = ref(false)
+
+  const { mutateAsync } = useMutation({
+    mutation: (userId: string) => deleteOrganizationUser(organizationId, userId),
+    onSuccess: () => {
+      queryCache.invalidateQueries({
+        key: USER_QUERY_KEYS.organization(organizationId),
+      })
+      // Also invalidate admin users queries to refresh admin pages
+      queryCache.invalidateQueries({
+        key: ADMIN_USER_QUERY_KEYS.root,
+      })
+      toast.success('User Deleted')
+    },
+    onError: (error: unknown) => {
+      console.error('Failed to delete user:', error)
+      const apiError = error as ApiError
+      toast.error(
+        'Failed to Delete User',
+        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
+      )
+    },
+  })
+
+  const deleteUser = async (userId: string) => {
+    isLoading.value = true
+    try {
+      await mutateAsync(userId)
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  return {
+    deleteUser,
+    isLoading,
+  }
+}
+
+export const useToggleUserStatus = (organizationId: string) => {
+  const queryCache = useQueryCache()
+  const isLoading = ref(false)
+
+  const { mutateAsync } = useMutation({
+    mutation: ({ userId, enabled }: { userId: string; enabled: boolean }) =>
+      toggleUserStatus(organizationId, userId, enabled),
+    onSuccess: () => {
+      queryCache.invalidateQueries({
+        key: USER_QUERY_KEYS.organization(organizationId),
+      })
+      // Also invalidate admin users queries to refresh admin pages
+      queryCache.invalidateQueries({
+        key: ADMIN_USER_QUERY_KEYS.root,
+      })
+      toast.success('User Status Updated')
+    },
+    onError: (error: unknown) => {
+      console.error('Failed to toggle user status:', error)
+      const apiError = error as ApiError
+      toast.error(
+        'Failed to Update Status',
+        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
+      )
+    },
+  })
+
+  const toggleStatus = async (userId: string, enabled: boolean) => {
+    isLoading.value = true
+    try {
+      const result = await mutateAsync({ userId, enabled })
+      return result
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  return {
+    toggleStatus,
+    isLoading,
+  }
+}
+
+export const useResendPasswordReset = (organizationId: string) => {
+  const isLoading = ref(false)
+
+  const { mutateAsync } = useMutation({
+    mutation: (userId: string) => resendPasswordReset(organizationId, userId),
+    onSuccess: () => {
+      toast.success('Password Reset Sent')
+    },
+    onError: (error: unknown) => {
+      console.error('Failed to send password reset:', error)
+      const apiError = error as ApiError
+      toast.error(
+        'Failed to Send Reset',
+        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
+      )
+    },
+  })
+
+  const resendReset = async (userId: string) => {
+    isLoading.value = true
+    try {
+      await mutateAsync(userId)
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  return {
+    resendReset,
+    isLoading,
+  }
+}
