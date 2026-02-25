@@ -198,6 +198,7 @@ async def get_member_permissions(
         )
     
     
+# TODO: Frontend not implemented — invite member UI not yet built
 @router.post("/members", response_model=InviteTeamMemberResponse, status_code=status.HTTP_201_CREATED)
 async def invite_team_member(
     invite_data: InviteTeamMemberRequest,
@@ -407,6 +408,7 @@ async def update_member_permissions(
         )
 
 
+# TODO: Frontend not implemented — update member profile UI not yet built
 @router.put("/members/{user_id}", response_model=TeamMember)
 async def update_team_member(
     user_id: str = Path(..., description="Keycloak user UUID"),
@@ -618,6 +620,7 @@ async def reset_member_password(
         )
 
 
+# TODO: Frontend not implemented — remove member UI not yet built
 @router.delete("/members/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def remove_team_member(
     user_id: str = Path(..., description="Keycloak user UUID"),
