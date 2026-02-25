@@ -1,0 +1,42 @@
+version: '3'
+
+tasks:
+  lint:
+    desc: 'Run all linters (ESLint, Prettier, Stylelint)'
+    cmds:
+      - task: lint:eslint
+      - task: lint:prettier
+      - task: lint:stylelint
+
+  lint:eslint:
+    desc: 'Check TypeScript/Vue code style with ESLint'
+    cmds:
+      - npx eslint .
+
+  lint:prettier:
+    desc: 'Check code formatting with Prettier'
+    cmds:
+      - npx prettier --check --no-error-on-unmatched-pattern --ignore-unknown .
+
+  lint:stylelint:
+    desc: 'Check CSS code style with Stylelint'
+    cmds:
+      - npx stylelint "src/**/*.{vue,css}"
+
+  lint:fix:
+    desc: 'Fix all linting issues automatically'
+    cmds:
+      - npx eslint --fix .
+      - npx prettier --write --no-error-on-unmatched-pattern --ignore-unknown .
+      - npx stylelint --fix "src/**/*.{vue,css}"
+
+  lint:staged:
+    desc: 'Lint only staged files (via lint-staged)'
+    cmds:
+      - npx lint-staged --allow-empty
+
+  hook:install:
+    desc: 'Install git hooks (pre-commit)'
+    cmds:
+      - yarn install
+      - yarn prepare
