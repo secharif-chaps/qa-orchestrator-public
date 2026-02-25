@@ -5,44 +5,34 @@ Complete local development setup with Keycloak, PostgreSQL, RabbitMQ, and backen
 ## Prerequisites
 
 - Docker and Docker Compose
-- Git
+- [Task](https://taskfile.dev/) (optional but recommended)
 
 ## File Structure
 
 - `docker-compose.yml` - Base configuration (preprod/production)
-- `docker-compose.local.yml` - Local development overrides
+- `docker-compose.local.yml` - Local development overrides (builds from `../apps/`)
 
 ## Fresh Installation
 
 For new developers setting up the project for the first time:
 
 ```bash
-# 1. Clone and enter the infra directory
+# From the monorepo root, the recommended way:
+task init
+
+# Or manually from the infra directory:
 cd infra
-
-# 2. Start all services (builds containers and imports Keycloak realm)
 docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
-
-# 3. Wait for Keycloak to be ready, then run the initialization script
 ./scripts/init-keycloak.sh
+docker compose -f docker-compose.yml -f docker-compose.local.yml exec screen alembic upgrade head
+docker compose -f docker-compose.yml -f docker-compose.local.yml restart screen
 
-# 4. Run database migrations
-docker compose -f docker-compose.yml -f docker-compose.local.yml exec backend alembic upgrade head
-
-# 5. Restart backend to pick up configuration
-docker compose -f docker-compose.yml -f docker-compose.local.yml restart backend
-
-# 6. (Optional) Seed sample data for testing
-./scripts/seed-workflow-configs.sh  # Populate Dify API keys
-./scripts/seed-sample-data.sh       # Create sample folder and companies
+# (Optional) Seed sample data for testing
+./scripts/seed-workflow-configs.sh
+./scripts/seed-sample-data.sh
 ```
 
-**Tip**: Create an alias in your shell config:
-```bash
-alias dc='docker compose -f docker-compose.yml -f docker-compose.local.yml'
-```
-
-Then you can use: `dc up -d --build`, `dc logs -f backend`, etc.
+**Tip**: Use `task` from the monorepo root instead of raw docker compose commands.
 
 That's it! The local environment is now ready.
 
@@ -75,7 +65,11 @@ All test users are assigned to the "ChapsMind Dev" organization:
 The frontend is **not** started by default. Run it separately:
 
 ```bash
-cd ../front
+# From monorepo root:
+task front:dev
+
+# Or manually:
+cd apps/front
 pnpm install
 pnpm dev
 ```
@@ -84,24 +78,24 @@ Frontend runs at http://localhost:5173
 
 ## Common Commands
 
-Using the alias `dc='docker compose -f docker-compose.yml -f docker-compose.local.yml'`:
+From monorepo root using `task`, or with `dc` alias:
 
 ```bash
 # View logs
-dc logs -f backend
-dc logs -f keycloak
+task logs                     # or: dc logs -f screen
+task logs:service -- screen  # specific service
 
 # Restart a service
-dc restart backend
+dc restart screen
 
 # Run migrations
-dc exec backend alembic upgrade head
+task migrate                  # or: dc exec screen alembic upgrade head
 
 # Enter backend shell
-dc exec backend bash
+task screen:shell             # or: dc exec screen bash
 
 # Stop all services
-dc down
+task down                     # or: dc down
 
 # Full reset (removes all data)
 dc down -v
@@ -120,8 +114,8 @@ dc up -d --build
 
 # Re-run initialization
 ./scripts/init-keycloak.sh
-dc exec backend alembic upgrade head
-dc restart backend
+dc exec screen alembic upgrade head
+dc restart screen
 
 # (Optional) Seed sample data
 ./scripts/seed-workflow-configs.sh
@@ -232,7 +226,7 @@ BACKEND_BASE_URL: https://abc123.ngrok-free.app/api
 
 Or restart with the env var:
 ```bash
-BACKEND_BASE_URL=https://abc123.ngrok-free.app/api dc up -d backend
+BACKEND_BASE_URL=https://abc123.ngrok-free.app/api dc up -d screen
 ```
 
 #### 5. Test the callback
@@ -260,7 +254,7 @@ https://abc123.ngrok-free.app/api/webhooks/dify/task-result
 If the backend shows Keycloak connection errors, ensure Keycloak is fully started and run:
 ```bash
 ./scripts/init-keycloak.sh
-dc restart backend
+dc restart screen
 ```
 
 ### Token missing organization ID
@@ -272,7 +266,7 @@ The init script configures the organization mapper. Re-run if needed:
 ### Database connection issues
 ```bash
 dc logs db
-dc restart backend
+dc restart screen
 ```
 
 ### Full environment reset
@@ -280,11 +274,11 @@ dc restart backend
 dc down -v
 dc up -d --build
 ./scripts/init-keycloak.sh
-dc exec backend alembic upgrade head
+dc exec screen alembic upgrade head
 ```
 
 ### Dify callbacks not working
 1. Ensure ngrok is running: `ngrok http 8000`
 2. Update `BACKEND_BASE_URL` with your ngrok URL
-3. Restart backend: `dc restart backend`
+3. Restart backend: `dc restart screen`
 4. Check ngrok web interface at http://localhost:4040 for incoming requests

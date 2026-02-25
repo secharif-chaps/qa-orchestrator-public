@@ -10,7 +10,7 @@ services:
     profiles:
       - frontend
     build:
-      context: ../front
+      context: ../apps/front
       dockerfile: Dockerfile
     image: mint-front:local
     ports:
@@ -23,10 +23,10 @@ services:
       VITE_KEYCLOAK_REALM: chapsmind
       VITE_KEYCLOAK_CLIENT_ID: chapsmind-front
 
-  # Override backend to use local code and expose directly
-  backend:
+  # Override screen backend to use local code and expose directly
+  screen:
     build:
-      context: ../back
+      context: ../apps/screen
       dockerfile: Dockerfile
     image: mint-back:local
     ports:
@@ -60,17 +60,17 @@ services:
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
     volumes:
       # Mount local code for hot-reload
-      - ../back/app:/app/app
-      - ../back/alembic:/app/alembic
-      - ../back/alembic.ini:/app/alembic.ini
-      - ../back/scripts:/app/scripts
+      - ../apps/screen/app:/app/app
+      - ../apps/screen/alembic:/app/alembic
+      - ../apps/screen/alembic.ini:/app/alembic.ini
+      - ../apps/screen/scripts:/app/scripts
       # Mount tests directory for running tests in Docker
-      - ../back/tests:/app/tests
+      - ../apps/screen/tests:/app/tests
 
   # Override celery worker to use local code
-  backend_celery_worker:
+  screen_celery_worker:
     build:
-      context: ../back
+      context: ../apps/screen
       dockerfile: Dockerfile
     image: mint-back:local
     environment:
@@ -78,20 +78,20 @@ services:
       LOG_LEVEL: INFO  # Use INFO level for local development
     volumes:
       # Mount local code for hot-reload
-      - ../back/app:/app/app
-      - ../back/alembic:/app/alembic
+      - ../apps/screen/app:/app/app
+      - ../apps/screen/alembic:/app/alembic
 
   # Override flower to use local code
-  backend_celery_flower:
+  screen_celery_flower:
     build:
-      context: ../back
+      context: ../apps/screen
       dockerfile: Dockerfile
     image: mint-back:local
 
   # Global Service (Gateway) - Proxies /api requests to backend monolith
   global-service:
     build:
-      context: ../global-service
+      context: ../apps/global-service
       dockerfile: Dockerfile
     image: global-service:local
     ports:
@@ -100,7 +100,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      backend:
+      screen:
         condition: service_started
     environment:
       LOG_LEVEL: INFO
@@ -108,8 +108,8 @@ services:
       API_HOST: "0.0.0.0"
       API_PORT: 8001
       GRPC_PORT: 50051
-      # Gateway proxies to the monolith backend (internal Docker network)
-      BACKEND_BASE_URL: http://backend:8000
+      # Gateway proxies to the screen backend (internal Docker network)
+      BACKEND_BASE_URL: http://screen:8000
       DATABASE_URL: postgresql://postgres:postgres@db:5432/global_db
       CORS_ORIGIN: http://localhost:3000,http://localhost:8001
       # Local Keycloak settings
@@ -123,11 +123,11 @@ services:
       INTERNAL_JWT_SECRET: "local-dev-internal-jwt-secret-32chars"
     volumes:
       # Hot reload
-      - ../global-service/app:/app/app
-      - ../global-service/protos:/app/protos
-      - ../global-service/alembic:/app/alembic
-      - ../global-service/alembic.ini:/app/alembic.ini
-      - ../global-service/tests:/app/tests
-      - ../global-service/scripts:/app/scripts
+      - ../apps/global-service/app:/app/app
+      - ../apps/global-service/protos:/app/protos
+      - ../apps/global-service/alembic:/app/alembic
+      - ../apps/global-service/alembic.ini:/app/alembic.ini
+      - ../apps/global-service/tests:/app/tests
+      - ../apps/global-service/scripts:/app/scripts
     networks:
       - mint-network

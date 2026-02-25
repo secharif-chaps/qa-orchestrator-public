@@ -8,7 +8,7 @@ services:
     volumes:
       - ./files/nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      - backend
+      - screen
       - global-service
       - keycloak
       - frontend
@@ -22,8 +22,8 @@ services:
     networks:
       - mint-network
 
-  # FastAPI Backend
-  backend:
+  # FastAPI Backend (Screen)
+  screen:
     image: registry.git.mediaspeech.com/mint/screen-poc/mint-back:preprod
     depends_on:
       db:
@@ -58,7 +58,7 @@ services:
       - mint-network
 
   # Celery Worker for Task Processing
-  backend_celery_worker:
+  screen_celery_worker:
     image: registry.git.mediaspeech.com/mint/screen-poc/mint-back:preprod
     entrypoint: celery -A app.core.celery_app worker --loglevel=info --concurrency=4 --pool=solo --queues=dify_workflows
     restart: always
@@ -75,7 +75,7 @@ services:
     networks:
       - mint-network
 
-  backend_celery_flower:
+  screen_celery_flower:
     image: registry.git.mediaspeech.com/mint/screen-poc/mint-back:preprod
     entrypoint: celery -A app.core.celery_app flower --port=5555 --broker=amqp://guest:guest@rabbitmq:5672//
     restart: always
@@ -96,7 +96,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      backend:
+      screen:
         condition: service_started
     environment:
       LOG_LEVEL: INFO
@@ -104,8 +104,8 @@ services:
       API_HOST: "0.0.0.0"
       API_PORT: 8001
       GRPC_PORT: 50051
-      # Gateway proxies to the monolith backend
-      BACKEND_BASE_URL: http://backend:8000
+      # Gateway proxies to the screen backend
+      BACKEND_BASE_URL: http://screen:8000
       DATABASE_URL: postgresql://postgres:postgres@db:5432/global_db
       CORS_ORIGIN: http://localhost
       # Keycloak settings (same as backend)

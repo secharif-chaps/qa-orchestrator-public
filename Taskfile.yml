@@ -2,7 +2,7 @@
 version: '3'
 
 vars:
-  COMPOSE: docker compose -f infra/docker-compose.yml
+  COMPOSE: docker compose -f infra/docker-compose.yml -f infra/docker-compose.local.yml
 
 tasks:
   # ─── Setup ─────────────────────────────────────────
