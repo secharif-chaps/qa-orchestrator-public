@@ -63,12 +63,12 @@
  * Permission dropdown with lazy-loading.
  * Fetches permissions from API only when dropdown is opened.
  */
-import { computed, ref, type ComputedRef } from 'vue'
-import { useQuery } from '@pinia/colada'
-import { useI18n } from 'vue-i18n'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import { memberPermissionsQuery } from '@/queries/team'
 import type { PermissionTier } from '@/types/team'
+import { useQuery } from '@pinia/colada'
+import { computed, ref, type ComputedRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
@@ -114,9 +114,10 @@ const selectPermission = (tier: PermissionTier, closeDropdown: () => void) => {
 // Get icon for each permission tier
 const getPermissionIcon = (tier: PermissionTier): string => {
   const icons: Record<PermissionTier, string> = {
-    reader: 'fa fa-eye',
-    writer: 'fa fa-pen',
-    manager: 'fa fa-user-shield',
+    reader: 'fa-eye',
+    writer: 'fa-pen',
+    manager: 'fa-user-shield',
+    admin: 'fa-crown',
   }
   return icons[tier]
 }

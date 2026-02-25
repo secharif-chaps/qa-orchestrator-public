@@ -1,12 +1,13 @@
-import { apiClient } from './client'
-import type {
-  OrganizationResponse,
-  OrganizationAdminResponse,
-  PaginatedOrganizationsResponse,
-  OrganizationQueryParams,
-  Activity,
-} from '@/types/organization'
 import type { AdminUserListItem, AdminUserListResponse } from '@/types/admin-user'
+import type {
+  Activity,
+  OrganizationAdminResponse,
+  OrganizationQueryParams,
+  OrganizationResponse,
+  PaginatedOrganizationsResponse,
+} from '@/types/organization'
+import type { PermissionTier } from '@/types/team'
+import { apiClient } from './client'
 
 // Backend organization member response (raw Keycloak format)
 interface OrganizationMemberRaw {
@@ -18,6 +19,7 @@ interface OrganizationMemberRaw {
   enabled: boolean
   emailVerified?: boolean
   createdTimestamp?: number
+  permission_tier: PermissionTier | null
 }
 
 interface OrganizationMembersRawResponse {
@@ -103,6 +105,7 @@ export const getOrganizationMembers = async (
     created_at: member.createdTimestamp
       ? new Date(member.createdTimestamp).toISOString()
       : new Date().toISOString(),
+    permission_tier: member.permission_tier,
     organization_id: params.organizationId,
     organization_name: params.organizationName,
   }))
