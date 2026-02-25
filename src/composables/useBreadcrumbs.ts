@@ -176,11 +176,11 @@ export function useBreadcrumbs() {
           break
 
         case 'create':
-          // For folder create pages
+          // For folder create pages - not clickable as there's no /create route
           if (pathSegments.includes('folders')) {
             items.push({
               name: t('breadcrumb.create', 'Create'),
-              to: isLast ? undefined : currentPath,
+              to: undefined, // Always undefined - no standalone /create page exists
               current: isLast,
             })
           }
