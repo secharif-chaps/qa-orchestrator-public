@@ -1,0 +1,15 @@
+# ─── Infrastructure CI ─────────────────────────────
+# Owned by: team-devops
+# Only runs when infra/ files change
+
+.infra-changes: &infra-changes
+  changes:
+    - infra/**/*
+
+infra:validate:
+  stage: lint
+  rules:
+    - <<: *infra-changes
+  image: docker:29-cli
+  script:
+    - docker compose -f infra/docker-compose.yml config --quiet
