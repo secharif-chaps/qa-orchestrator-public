@@ -288,6 +288,58 @@ MINT follows a structured data flow pattern using Pinia Colada:
 - Use flexbox with `gap` for spacing (never margin between siblings)
 - Follow the established project structure
 
+### Code Quality
+
+#### Prerequisites
+
+Install [Task](https://taskfile.dev/) (task runner):
+
+```bash
+# macOS
+brew install go-task
+
+# Linux (snap)
+sudo snap install task --classic
+
+# Or see https://taskfile.dev/installation/
+```
+
+#### Available Commands
+
+| Command               | Description                                   |
+| --------------------- | --------------------------------------------- |
+| `task lint`           | Run all linters (ESLint, Prettier, Stylelint) |
+| `task lint:eslint`    | ESLint only                                   |
+| `task lint:prettier`  | Prettier only (check mode)                    |
+| `task lint:stylelint` | Stylelint only                                |
+| `task lint:fix`       | Auto-fix all linting issues                   |
+| `task lint:staged`    | Lint only staged files (via lint-staged)      |
+| `task hook:install`   | Install git hooks (pre-commit)                |
+
+#### Recommended Workflow
+
+```bash
+# 1. Install git hooks (once after cloning)
+task hook:install
+
+# 2. Work on your code...
+
+# 3. Before committing, fix all issues
+task lint:fix
+
+# 4. Verify everything passes
+task lint
+
+# 5. Commit (lint-staged runs automatically via pre-commit hook)
+git commit -m "your message"
+```
+
+The pre-commit hook automatically runs ESLint, Prettier and Stylelint on staged files and fixes what it can. If an error can't be auto-fixed, the commit is blocked.
+
+#### CI Pipeline
+
+The GitLab CI runs the same 3 linters on every push and every MR. A failing linter blocks the pipeline.
+
 ### Git Commit Convention
 
 MINT uses Conventional Commits with Gitmoji:
