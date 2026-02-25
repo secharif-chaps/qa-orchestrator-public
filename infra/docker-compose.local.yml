@@ -4,7 +4,7 @@ services:
     profiles:
       - production  # Only run in production profile
 
-  # Disable frontend in Docker - use 'pnpm dev' locally for hot-reload
+  # Disable frontend in Docker - use 'yarn dev' locally for hot-reload
   # To run frontend in Docker instead: docker compose --profile frontend up -d
   frontend:
     profiles:

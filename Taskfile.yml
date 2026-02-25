@@ -10,7 +10,7 @@ tasks:
     desc: First-time setup — copy env, install deps, start services, migrate
     cmds:
       - test -f .env || cp .env.example .env && echo "Created .env from .env.example"
-      - cd apps/front && pnpm install
+      - cd apps/front && yarn install
       - "{{.COMPOSE}} up -d --build"
       - "{{.COMPOSE}} exec screen alembic upgrade head"
       - echo ""
@@ -58,22 +58,22 @@ tasks:
   front:dev:
     desc: Start frontend dev server (HMR)
     dir: apps/front
-    cmd: pnpm dev
+    cmd: yarn dev
 
   front:lint:
     desc: Lint + fix frontend code
     dir: apps/front
-    cmd: pnpm lint
+    cmd: yarn lint
 
   front:typecheck:
     desc: Run TypeScript type checking
     dir: apps/front
-    cmd: pnpm run type-check
+    cmd: yarn run type-check
 
   front:build:
     desc: Build frontend for production
     dir: apps/front
-    cmd: pnpm build
+    cmd: yarn build
 
   # ─── Screen Backend ───────────────────────────────
   screen:lint:

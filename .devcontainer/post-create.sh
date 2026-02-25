@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 
-echo "=== Installing pnpm ==="
-npm install -g pnpm
+echo "=== Enabling Corepack (for Yarn 4) ==="
+corepack enable
 
 echo "=== Installing frontend dependencies ==="
 if [ -f apps/front/package.json ]; then
-  cd apps/front && pnpm install
+  cd apps/front && yarn install
   cd ../..
 fi
 

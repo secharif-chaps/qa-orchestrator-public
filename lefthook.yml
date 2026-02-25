@@ -8,11 +8,11 @@ pre-commit:
   commands:
     front-lint:
       glob: "apps/front/**/*.{ts,vue,js}"
-      run: cd apps/front && pnpm lint {staged_files}
+      run: cd apps/front && yarn lint {staged_files}
 
     front-typecheck:
       glob: "apps/front/**/*.{ts,vue}"
-      run: cd apps/front && pnpm vue-tsc --noEmit
+      run: cd apps/front && yarn vue-tsc --noEmit
 
     screen-lint:
       glob: "apps/screen/**/*.py"
@@ -26,4 +26,4 @@ pre-push:
   commands:
     front-build:
       glob: "apps/front/**/*"
-      run: cd apps/front && pnpm build
+      run: cd apps/front && yarn build

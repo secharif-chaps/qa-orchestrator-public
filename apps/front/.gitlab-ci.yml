@@ -11,14 +11,16 @@ front:lint:
   rules:
     - <<: *front-changes
   script:
-    - cd apps/front && pnpm install --frozen-lockfile && pnpm lint
+    - corepack enable
+    - cd apps/front && yarn install --immutable && yarn lint
 
 front:typecheck:
   stage: lint
   rules:
     - <<: *front-changes
   script:
-    - cd apps/front && pnpm install --frozen-lockfile && pnpm vue-tsc --noEmit
+    - corepack enable
+    - cd apps/front && yarn install --immutable && yarn vue-tsc --noEmit
 
 front:build:
   stage: build

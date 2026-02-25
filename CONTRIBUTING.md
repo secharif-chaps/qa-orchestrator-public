@@ -6,7 +6,7 @@
 - [VS Code](https://code.visualstudio.com/) + [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
   - **OR** [JetBrains Gateway](https://www.jetbrains.com/remote-development/gateway/) for PHPStorm users
 
-That's it. Everything else (Node, Python, pnpm, Poetry, Ruff, Lefthook, Taskfile) is installed automatically inside the Dev Container.
+That's it. Everything else (Node, Python, Yarn, Poetry, Ruff, Lefthook, Taskfile) is installed automatically inside the Dev Container.
 
 ## Getting Started
 
@@ -35,7 +35,7 @@ That's it. Everything else (Node, Python, pnpm, Poetry, Ruff, Lefthook, Taskfile
 
 ### Option B: Local setup (without Dev Container)
 
-1. Install: Node.js 20+, pnpm, Python 3.9+, Poetry, [Task](https://taskfile.dev/), Lefthook
+1. Install: Node.js 20+, Yarn, Python 3.9+, Poetry, [Task](https://taskfile.dev/), Lefthook
 2. Clone and run:
    ```bash
    git clone <repo-url> && cd chapsmind-monorepo
