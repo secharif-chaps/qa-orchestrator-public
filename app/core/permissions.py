@@ -18,6 +18,7 @@ class PermissionTier(str, Enum):
     READER = "reader"
     WRITER = "writer"
     MANAGER = "manager"
+    ADMIN = "admin"
 
 
 # Role mappings for each tier (cumulative)
@@ -39,6 +40,15 @@ TIER_ROLE_MAPPING: dict[PermissionTier, List[str]] = {
         "company.view",
         "company.create",
         "company.delete",
+    ],
+    PermissionTier.ADMIN: [
+        "organization.read",
+        "organization.write",
+        "organization.manage",
+        "company.view",
+        "company.create",
+        "company.delete",
+        "admin.organizations",
     ],
 }
 
@@ -65,7 +75,7 @@ def get_tier_from_roles(roles: List[str]) -> PermissionTier:
     Returns highest matching tier based on role presence.
     This allows users to have additional custom roles without breaking tier detection.
 
-    Special case: Users with 'admin.organizations' role automatically get MANAGER tier.
+    Special case: Users with 'admin.organizations' role get ADMIN tier.
 
     Args:
         roles: List of Keycloak realm role names
@@ -77,13 +87,14 @@ def get_tier_from_roles(roles: List[str]) -> PermissionTier:
         >>> get_tier_from_roles(['organization.read', 'organization.write', 'company.view'])
         PermissionTier.WRITER
         >>> get_tier_from_roles(['admin.organizations'])
-        PermissionTier.MANAGER
+        PermissionTier.ADMIN
     """
     role_set = set(roles)
 
     # Check from highest to lowest tier
-    # Admin role automatically grants MANAGER tier
-    if "admin.organizations" in role_set or "organization.manage" in role_set:
+    if "admin.organizations" in role_set:
+        return PermissionTier.ADMIN
+    elif "organization.manage" in role_set:
         return PermissionTier.MANAGER
     elif "organization.write" in role_set:
         return PermissionTier.WRITER
