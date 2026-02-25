@@ -1,0 +1,40 @@
+# .editorconfig
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Frontend (JS, TS, Vue, CSS, JSON, YAML)
+[*.{js,ts,vue,jsx,tsx,css,scss,json,yaml,yml,html}]
+indent_style = space
+indent_size = 2
+
+# Backend (Python)
+[*.py]
+indent_style = space
+indent_size = 4
+
+# PHP
+[*.php]
+indent_style = space
+indent_size = 4
+
+# Makefile (tabs required)
+[Makefile]
+indent_style = tab
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false
+
+# Docker
+[Dockerfile*]
+indent_style = space
+indent_size = 4
+
+[docker-compose*.yml]
+indent_style = space
+indent_size = 2

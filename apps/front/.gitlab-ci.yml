@@ -1,0 +1,64 @@
+# ─── Frontend CI ───────────────────────────────────
+# Owned by: team-front
+# Only runs when apps/front/ files change
+
+.front-changes: &front-changes
+  changes:
+    - apps/front/**/*
+
+front:lint:
+  stage: lint
+  rules:
+    - <<: *front-changes
+  script:
+    - cd apps/front && pnpm install --frozen-lockfile && pnpm lint
+
+front:typecheck:
+  stage: lint
+  rules:
+    - <<: *front-changes
+  script:
+    - cd apps/front && pnpm install --frozen-lockfile && pnpm vue-tsc --noEmit
+
+front:build:
+  stage: build
+  rules:
+    - <<: *front-changes
+  image: docker:29-cli
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE/mint-front:$CI_COMMIT_SHORT_SHA apps/front/
+    - docker push $CI_REGISTRY_IMAGE/mint-front:$CI_COMMIT_SHORT_SHA
+
+front:deploy:integration:
+  stage: deploy:integration
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      <<: *front-changes
+  environment:
+    name: integration
+  script:
+    - docker tag $CI_REGISTRY_IMAGE/mint-front:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/mint-front:integration
+    - docker push $CI_REGISTRY_IMAGE/mint-front:integration
+
+front:deploy:preprod:
+  stage: deploy:preprod
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v.*/
+      <<: *front-changes
+  environment:
+    name: preprod
+  script:
+    - docker tag $CI_REGISTRY_IMAGE/mint-front:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/mint-front:preprod
+    - docker push $CI_REGISTRY_IMAGE/mint-front:preprod
+
+front:deploy:prod:
+  stage: deploy:prod
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v.*/
+      <<: *front-changes
+  environment:
+    name: production
+  when: manual
+  script:
+    - docker tag $CI_REGISTRY_IMAGE/mint-front:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/mint-front:prod
+    - docker push $CI_REGISTRY_IMAGE/mint-front:prod

@@ -1,0 +1,64 @@
+# ─── Screen Backend CI ─────────────────────────────
+# Owned by: team-back
+# Only runs when apps/screen/ files change
+
+.screen-changes: &screen-changes
+  changes:
+    - apps/screen/**/*
+
+screen:lint:
+  stage: lint
+  rules:
+    - <<: *screen-changes
+  script:
+    - cd apps/screen && ruff check .
+
+screen:test:
+  stage: test
+  rules:
+    - <<: *screen-changes
+  script:
+    - cd apps/screen && pytest
+
+screen:build:
+  stage: build
+  rules:
+    - <<: *screen-changes
+  image: docker:29-cli
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE/mint-screen:$CI_COMMIT_SHORT_SHA apps/screen/
+    - docker push $CI_REGISTRY_IMAGE/mint-screen:$CI_COMMIT_SHORT_SHA
+
+screen:deploy:integration:
+  stage: deploy:integration
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      <<: *screen-changes
+  environment:
+    name: integration
+  script:
+    - docker tag $CI_REGISTRY_IMAGE/mint-screen:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/mint-screen:integration
+    - docker push $CI_REGISTRY_IMAGE/mint-screen:integration
+
+screen:deploy:preprod:
+  stage: deploy:preprod
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v.*/
+      <<: *screen-changes
+  environment:
+    name: preprod
+  script:
+    - docker tag $CI_REGISTRY_IMAGE/mint-screen:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/mint-screen:preprod
+    - docker push $CI_REGISTRY_IMAGE/mint-screen:preprod
+
+screen:deploy:prod:
+  stage: deploy:prod
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v.*/
+      <<: *screen-changes
+  environment:
+    name: production
+  when: manual
+  script:
+    - docker tag $CI_REGISTRY_IMAGE/mint-screen:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/mint-screen:prod
+    - docker push $CI_REGISTRY_IMAGE/mint-screen:prod

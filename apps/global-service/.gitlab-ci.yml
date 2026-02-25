@@ -1,0 +1,57 @@
+# ─── Global Service CI ─────────────────────────────
+# Owned by: team-back
+# Only runs when apps/global-service/ files change
+
+.global-service-changes: &global-service-changes
+  changes:
+    - apps/global-service/**/*
+
+global-service:lint:
+  stage: lint
+  rules:
+    - <<: *global-service-changes
+  script:
+    - cd apps/global-service && ruff check .
+
+global-service:build:
+  stage: build
+  rules:
+    - <<: *global-service-changes
+  image: docker:29-cli
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE/chapsmind-global-service:$CI_COMMIT_SHORT_SHA apps/global-service/
+    - docker push $CI_REGISTRY_IMAGE/chapsmind-global-service:$CI_COMMIT_SHORT_SHA
+
+global-service:deploy:integration:
+  stage: deploy:integration
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      <<: *global-service-changes
+  environment:
+    name: integration
+  script:
+    - docker tag $CI_REGISTRY_IMAGE/chapsmind-global-service:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/chapsmind-global-service:integration
+    - docker push $CI_REGISTRY_IMAGE/chapsmind-global-service:integration
+
+global-service:deploy:preprod:
+  stage: deploy:preprod
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v.*/
+      <<: *global-service-changes
+  environment:
+    name: preprod
+  script:
+    - docker tag $CI_REGISTRY_IMAGE/chapsmind-global-service:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/chapsmind-global-service:preprod
+    - docker push $CI_REGISTRY_IMAGE/chapsmind-global-service:preprod
+
+global-service:deploy:prod:
+  stage: deploy:prod
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v.*/
+      <<: *global-service-changes
+  environment:
+    name: production
+  when: manual
+  script:
+    - docker tag $CI_REGISTRY_IMAGE/chapsmind-global-service:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/chapsmind-global-service:prod
+    - docker push $CI_REGISTRY_IMAGE/chapsmind-global-service:prod

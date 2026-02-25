@@ -1,0 +1,29 @@
+# lefthook.yml
+# Polyglot pre-commit hooks — runs linters on staged files before each commit
+# Install: lefthook install
+# Doc: https://github.com/evilmartians/lefthook
+
+pre-commit:
+  parallel: true
+  commands:
+    front-lint:
+      glob: "apps/front/**/*.{ts,vue,js}"
+      run: cd apps/front && pnpm lint {staged_files}
+
+    front-typecheck:
+      glob: "apps/front/**/*.{ts,vue}"
+      run: cd apps/front && pnpm vue-tsc --noEmit
+
+    screen-lint:
+      glob: "apps/screen/**/*.py"
+      run: cd apps/screen && ruff check {staged_files}
+
+    screen-format-check:
+      glob: "apps/screen/**/*.py"
+      run: cd apps/screen && ruff format --check {staged_files}
+
+pre-push:
+  commands:
+    front-build:
+      glob: "apps/front/**/*"
+      run: cd apps/front && pnpm build

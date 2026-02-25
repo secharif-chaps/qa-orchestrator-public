@@ -1,0 +1,21 @@
+# CODEOWNERS — auto-assign reviewers per directory
+# Used by CI job (assign-reviewers) to assign MR reviewers via GitLab API
+# Will work natively if/when upgrading to GitLab Premium
+#
+# Syntax: path @group-or-user
+# Doc: https://docs.gitlab.com/ee/user/project/codeowners/
+
+# Frontend
+apps/front/              @chapsmind/team-front
+
+# Screen Backend
+apps/screen/             @chapsmind/team-back
+
+# Services
+apps/global-service/     @chapsmind/team-back
+
+# Infrastructure
+infra/                   @chapsmind/team-devops
+
+# Documentation
+docs/                    @chapsmind/team-leads

@@ -1,0 +1,17 @@
+# GitLab CI — Monorepo orchestrator
+# Each app owns its CI config. This file only defines stages and includes.
+# Doc: https://docs.gitlab.com/ee/ci/yaml/#include
+
+stages:
+  - lint
+  - test
+  - build
+  - deploy:integration
+  - deploy:preprod
+  - deploy:prod
+
+include:
+  - local: apps/front/.gitlab-ci.yml
+  - local: apps/screen/.gitlab-ci.yml
+  - local: apps/global-service/.gitlab-ci.yml
+  - local: infra/.gitlab-ci.yml

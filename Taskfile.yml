@@ -1,0 +1,102 @@
+# https://taskfile.dev
+version: '3'
+
+vars:
+  COMPOSE: docker compose -f infra/docker-compose.yml
+
+tasks:
+  # ─── Setup ─────────────────────────────────────────
+  init:
+    desc: First-time setup — copy env, install deps, start services, migrate
+    cmds:
+      - test -f .env || cp .env.example .env && echo "Created .env from .env.example"
+      - cd apps/front && pnpm install
+      - "{{.COMPOSE}} up -d --build"
+      - "{{.COMPOSE}} exec screen alembic upgrade head"
+      - echo ""
+      - echo "Ready! Run 'task' for available commands."
+
+  # ─── Infrastructure ────────────────────────────────
+  up:
+    desc: Start all services (docker compose up)
+    cmd: "{{.COMPOSE}} up -d --build"
+
+  down:
+    desc: Stop all services
+    cmd: "{{.COMPOSE}} down"
+
+  restart:
+    desc: Restart all services
+    cmd: "{{.COMPOSE}} restart"
+
+  logs:
+    desc: Tail all service logs
+    cmd: "{{.COMPOSE}} logs -f"
+
+  logs:service:
+    desc: Tail logs for a specific service
+    cmd: "{{.COMPOSE}} logs -f {{.CLI_ARGS}}"
+
+  # ─── Database ──────────────────────────────────────
+  migrate:
+    desc: Run Alembic migrations
+    cmd: "{{.COMPOSE}} exec screen alembic upgrade head"
+
+  migrate:status:
+    desc: Show current migration version
+    cmd: "{{.COMPOSE}} exec screen alembic current"
+
+  seed:
+    desc: Seed sample data
+    cmd: "{{.COMPOSE}} exec screen python seed-sample-data.py"
+
+  db:shell:
+    desc: Open psql shell
+    cmd: "{{.COMPOSE}} exec db psql -U postgres -d mint_db"
+
+  # ─── Frontend ──────────────────────────────────────
+  front:dev:
+    desc: Start frontend dev server (HMR)
+    dir: apps/front
+    cmd: pnpm dev
+
+  front:lint:
+    desc: Lint + fix frontend code
+    dir: apps/front
+    cmd: pnpm lint
+
+  front:typecheck:
+    desc: Run TypeScript type checking
+    dir: apps/front
+    cmd: pnpm run type-check
+
+  front:build:
+    desc: Build frontend for production
+    dir: apps/front
+    cmd: pnpm build
+
+  # ─── Screen Backend ───────────────────────────────
+  screen:lint:
+    desc: Lint screen backend code (ruff)
+    cmd: "{{.COMPOSE}} exec screen ruff check ."
+
+  screen:format:
+    desc: Format screen backend code (ruff)
+    cmd: "{{.COMPOSE}} exec screen ruff format ."
+
+  screen:test:
+    desc: Run screen backend tests
+    cmd: "{{.COMPOSE}} exec screen pytest"
+
+  screen:shell:
+    desc: Open bash shell in screen backend container
+    cmd: "{{.COMPOSE}} exec screen bash"
+
+  # ─── All ────────────────────────────────────────────
+  lint:
+    desc: Lint all projects
+    deps: [front:lint, screen:lint]
+
+  test:
+    desc: Run all tests
+    deps: [screen:test]
