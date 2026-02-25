@@ -6,7 +6,13 @@ corepack enable
 
 echo "=== Installing frontend dependencies ==="
 if [ -f apps/front/package.json ]; then
-  cd apps/front && yarn install
+  cd apps/front
+  # Create .yarnrc.yml from dist template if missing (contains private registry config)
+  if [ ! -f .yarnrc.yml ] && [ -f .yarnrc.dist.yml ]; then
+    cp .yarnrc.dist.yml .yarnrc.yml
+    echo "⚠️  Created .yarnrc.yml from template. Edit apps/front/.yarnrc.yml with your registry credentials."
+  fi
+  yarn install || echo "⚠️  yarn install failed — configure apps/front/.yarnrc.yml with registry credentials, then run: cd apps/front && yarn install"
   cd ../..
 fi
 
