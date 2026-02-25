@@ -1,0 +1,343 @@
+{
+  "realm": "chapsmind",
+  "displayName": "ChapsMind",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "registrationEmailAsUsername": false,
+  "resetPasswordAllowed": true,
+  "verifyEmail": false,
+  "loginTheme": "keycloak",
+  "accessTokenLifespan": 3600,
+  "ssoSessionIdleTimeout": 86400,
+  "ssoSessionMaxLifespan": 604800,
+  "organizationsEnabled": true,
+  "users": [
+    {
+      "username": "admin",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "User",
+      "email": "admin@chapsmind.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin",
+        "company.create",
+        "organization.read",
+        "organization.write",
+        "admin.organizations",
+        "admin.tasks"
+      ]
+    },
+    {
+      "username": "company_manager",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Company",
+      "lastName": "Manager",
+      "email": "manager@chapsmind.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "manager123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "company.create",
+        "organization.read",
+        "organization.write"
+      ]
+    },
+    {
+      "username": "company_viewer",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Company",
+      "lastName": "Viewer",
+      "email": "viewer@chapsmind.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "viewer123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "organization.read"
+      ]
+    },
+    {
+      "username": "no_access",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "No",
+      "lastName": "Access",
+      "email": "noaccess@chapsmind.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "noaccess123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": []
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "chapsmind-front",
+      "name": "ChapsMind Frontend",
+      "description": "Vue.js frontend application",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "rootUrl": "http://localhost:3000",
+      "baseUrl": "http://localhost:3000",
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000",
+        "http://localhost:5173"
+      ],
+      "attributes": {
+        "post.logout.redirect.uris": "http://localhost:3000/*##http://localhost:5173/*",
+        "pkce.code.challenge.method": "S256"
+      },
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email",
+        "organization"
+      ],
+      "protocolMappers": [
+        {
+          "name": "organization-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-organization-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "organization",
+            "userinfo.token.claim": "true",
+            "add.organization.id": "true"
+          }
+        },
+        {
+          "name": "subject-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-sub-mapper",
+          "consentRequired": false,
+          "config": {
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "chapsmind-screen-back",
+      "name": "ChapsMind Screen Backend",
+      "description": "FastAPI backend application",
+      "enabled": true,
+      "publicClient": false,
+      "bearerOnly": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "secret": "chapsmind-screen-back-secret",
+      "rootUrl": "http://localhost:8000",
+      "baseUrl": "http://localhost:8000/api",
+      "redirectUris": [
+        "http://localhost:8000/*"
+      ],
+      "webOrigins": [
+        "http://localhost:8000",
+        "http://localhost:3000"
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email",
+        "organization"
+      ],
+      "protocolMappers": [
+        {
+          "name": "organization-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-organization-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "organization",
+            "userinfo.token.claim": "true",
+            "add.organization.id": "true"
+          }
+        },
+        {
+          "name": "subject-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-sub-mapper",
+          "consentRequired": false,
+          "config": {
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "chapsmind-admin",
+      "name": "ChapsMind Admin Client",
+      "description": "Service account for backend admin operations",
+      "enabled": true,
+      "publicClient": false,
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "fullScopeAllowed": true,
+      "secret": "chapsmind-admin-secret",
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email",
+        "organization"
+      ],
+      "protocolMappers": [
+        {
+          "name": "organization-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-organization-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "organization",
+            "userinfo.token.claim": "true",
+            "add.organization.id": "true"
+          }
+        },
+        {
+          "name": "subject-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-sub-mapper",
+          "consentRequired": false,
+          "config": {
+            "id.token.claim": "true",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "scopeMappings": [
+    {
+      "clientScope": "offline_access",
+      "roles": ["offline_access"]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "company.create",
+        "description": "Can add items (company screens) to folders",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "organization.read",
+        "description": "Read folders and companies shared with user",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "organization.write",
+        "description": "Create folders, create items in folders, edit/share/delete owned folders",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "admin.organizations",
+        "description": "Global admin access to all organizations",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "admin.tasks",
+        "description": "Admin access to manage and view all tasks",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "admin.workflows",
+        "description": "Admin access to manage workflow configurations",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "admin",
+        "description": "Full administrative access",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "company.create",
+            "organization.read",
+            "organization.write",
+            "admin.organizations",
+            "admin.tasks",
+            "admin.workflows"
+          ]
+        },
+        "clientRole": false
+      }
+    ]
+  },
+  "clientScopeMappings": {
+    "chapsmind-admin": [
+      {
+        "client": "realm-management",
+        "roles": [
+          "realm-admin",
+          "manage-users",
+          "view-users",
+          "query-users",
+          "manage-clients",
+          "view-clients",
+          "manage-realm"
+        ]
+      }
+    ]
+  },
+  "internationalizationEnabled": true,
+  "supportedLocales": ["en", "fr"],
+  "defaultLocale": "en",
+  "browserFlow": "browser",
+  "registrationFlow": "registration",
+  "directGrantFlow": "direct grant",
+  "resetCredentialsFlow": "reset credentials",
+  "clientAuthenticationFlow": "clients"
+}
