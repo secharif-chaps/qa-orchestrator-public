@@ -9,9 +9,52 @@ stages:
   - deploy:integration
   - deploy:preprod
   - deploy:prod
+  - maintenance
 
 include:
   - local: apps/front/.gitlab-ci.yml
   - local: apps/screen/.gitlab-ci.yml
   - local: apps/global-service/.gitlab-ci.yml
   - local: infra/.gitlab-ci.yml
+
+# ─── Assign reviewers based on CODEOWNERS ─────────────
+assign-reviewers:
+  stage: lint
+  image: python:3.12-slim
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - pip install --quiet requests
+    - python scripts/ci/assign_reviewers.py
+  variables:
+    GITLAB_TOKEN: $REVIEWER_BOT_TOKEN
+
+# ─── Scheduled maintenance jobs ──────────────────────
+update-codeowners:
+  stage: maintenance
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  image: python:3.12-slim
+  script:
+    - pip install --quiet requests
+    - python scripts/ci/generate_codeowners.py --min-commits 5 --months 6
+    - |
+      if git diff --quiet .gitlab/CODEOWNERS; then
+        echo "CODEOWNERS is up to date"
+        exit 0
+      fi
+      echo "CODEOWNERS changed — creating MR"
+      BRANCH="chore/update-codeowners-$(date +%Y%m%d)"
+      git config user.email "ci-bot@chapsvision.com"
+      git config user.name "CI Bot"
+      git checkout -b "$BRANCH"
+      git add .gitlab/CODEOWNERS
+      git commit -m "chore: update CODEOWNERS from git history"
+      git push "https://gitlab-ci-token:${REVIEWER_BOT_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git" "$BRANCH"
+      # Create MR via GitLab API
+      curl --fail --silent --header "PRIVATE-TOKEN: ${REVIEWER_BOT_TOKEN}" \
+        --data-urlencode "source_branch=${BRANCH}" \
+        --data-urlencode "target_branch=main" \
+        --data-urlencode "title=chore: update CODEOWNERS from git history" \
+        --data-urlencode "remove_source_branch=true" \
+        "https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/merge_requests"
