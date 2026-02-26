@@ -12,12 +12,12 @@
       >
         <!-- Loading state -->
         <span v-if="isLoadingPermissions" class="text-secondary flex items-center gap-2">
-          <Icon icon="fa-spinner" class="fa-spin text-sm"/>
+          <Icon icon="fa-spinner" class="fa-spin text-sm" />
           {{ $t('settings.team.loadingPermissions', 'Loading...') }}
         </span>
         <!-- Permission loaded -->
         <span v-else-if="selectedTier" class="flex items-center gap-2">
-          <Icon :icon="getPermissionIcon(selectedTier)" class="text-sm"/>
+          <Icon :icon="getPermissionIcon(selectedTier)" class="text-sm" />
           {{ permissionOptions.find((p) => p.value === selectedTier)?.label }}
         </span>
         <!-- Not loaded yet -->
@@ -52,7 +52,11 @@
             <div class="font-medium">{{ permission.label }}</div>
             <div class="text-secondary text-xs">{{ permission.description }}</div>
           </div>
-          <Icon icon="fa-check" v-if="selectedTier === permission.value" class="text-success"></Icon>
+          <Icon
+            icon="fa-check"
+            v-if="selectedTier === permission.value"
+            class="text-success"
+          ></Icon>
         </button>
       </div>
     </template>
@@ -142,6 +146,11 @@ const permissionOptions: ComputedRef<
     value: 'manager',
     label: t('settings.team.permissions.manager', 'Manager'),
     description: t('settings.team.permissions.managerDesc', 'Full team management'),
+  },
+  {
+    value: 'admin',
+    label: t('settings.team.permissions.admin', 'Admin'),
+    description: t('settings.team.permissions.adminDesc', 'Full admin access'),
   },
 ])
 </script>
