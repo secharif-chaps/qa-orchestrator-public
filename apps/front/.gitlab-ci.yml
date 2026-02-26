@@ -1,66 +1,125 @@
-# ─── Frontend CI ───────────────────────────────────
-# Owned by: team-front
-# Only runs when apps/front/ files change
+# Frontend GitLab CI/CD Pipeline
+# Builds, lints, and publishes Docker image to GitLab Container Registry
 
-.front-changes: &front-changes
-  changes:
-    - apps/front/**/*
+stages:
+  - Build
+  - CodingStandards
+  - Publish
 
-front:lint:
-  stage: lint
+variables:
+  IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-front
+  IMAGE_TAG: preprod
+  DOCKER_BUILDKIT: 1
+
+# ---- Cache ----
+
+.cache-node-modules: &cache-node-modules
+  key:
+    files:
+      - apps/front/yarn.lock
+    prefix: yarn
+  paths:
+    - apps/front/node_modules
+  policy: pull
+
+# ---- Rules ----
+
+.default-rules: &default-rules
   rules:
-    - <<: *front-changes
-  script:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - apps/front/**/*
+    - if: $CI_COMMIT_BRANCH
+      changes:
+        - apps/front/**/*
+
+# ---- Registry Setup ----
+
+.yarnrc-setup: &yarnrc-setup
+  before_script:
+    - cd apps/front
+    - cp .yarnrc.dist.yml .yarnrc.yml
+    - sed -i "s|<OWLINT_REGISTRY_URL>|$OWLINT_REGISTRY_URL|g" .yarnrc.yml
+    - sed -i "s|<OWLINT_DEPLOY_KEY>|$OWLINT_DEPLOY_KEY|g" .yarnrc.yml
     - corepack enable
-    - cd apps/front && yarn install --immutable && yarn lint
 
-front:typecheck:
-  stage: lint
-  rules:
-    - <<: *front-changes
+# ---- Job Templates ----
+
+.default-lint-job: &default-lint-job
+  image: node:22-alpine
+  cache:
+    - <<: *cache-node-modules
+  <<: *default-rules
+
+# ---- Build Stage ----
+
+install:
+  image: node:22-alpine
+  stage: Build
+  <<: *yarnrc-setup
   script:
-    - corepack enable
-    - cd apps/front && yarn install --immutable && yarn vue-tsc --noEmit
+    - yarn install --immutable
+  cache:
+    - <<: *cache-node-modules
+      policy: pull-push
+  <<: *default-rules
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - apps/front/node_modules
 
-front:build:
-  stage: build
-  rules:
-    - <<: *front-changes
+# ---- CodingStandards Stage ----
+
+eslint:
+  <<: *default-lint-job
+  stage: CodingStandards
+  script:
+    - cd apps/front && npx eslint .
+
+prettier:
+  <<: *default-lint-job
+  stage: CodingStandards
+  script:
+    - cd apps/front && npx prettier --check --no-error-on-unmatched-pattern --ignore-unknown .
+  after_script:
+    - cd apps/front && npx prettier --list-different --no-error-on-unmatched-pattern --ignore-unknown .
+
+stylelint:
+  <<: *default-lint-job
+  stage: CodingStandards
+  script:
+    - cd apps/front && npx stylelint "src/**/*.{vue,css}"
+
+# ---- Publish Stage ----
+
+.docker-build:
   image: docker:29-cli
   script:
-    - docker build -t $CI_REGISTRY_IMAGE/chapsmind-front:$CI_COMMIT_SHORT_SHA apps/front/
-    - docker push $CI_REGISTRY_IMAGE/chapsmind-front:$CI_COMMIT_SHORT_SHA
+    - echo Building $IMAGE_NAME:$IMAGE_TAG
+    - echo "$OWLINT_REGISTRY_URL" > owlint_registry_url.txt
+    - echo "$OWLINT_DEPLOY_KEY" > owlint_deploy_key.txt
+    - docker build --no-cache --pull --secret id=OWLINT_REGISTRY_URL,src=owlint_registry_url.txt --secret id=OWLINT_DEPLOY_KEY,src=owlint_deploy_key.txt -t "${IMAGE_NAME}:${IMAGE_TAG}" apps/front/
+    - rm -f owlint_registry_url.txt owlint_deploy_key.txt
 
-front:deploy:integration:
-  stage: deploy:integration
+docker-build:
+  stage: Publish
+  extends: .docker-build
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      <<: *front-changes
-  environment:
-    name: integration
-  script:
-    - docker tag $CI_REGISTRY_IMAGE/chapsmind-front:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/chapsmind-front:integration
-    - docker push $CI_REGISTRY_IMAGE/chapsmind-front:integration
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - apps/front/**/*
 
-front:deploy:preprod:
-  stage: deploy:preprod
+publish:
+  stage: Publish
+  extends: .docker-build
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  after_script:
+    - docker push $IMAGE_NAME:${IMAGE_TAG}
+    - docker logout $CI_REGISTRY
   rules:
-    - if: $CI_COMMIT_TAG =~ /^v.*/
-      <<: *front-changes
-  environment:
-    name: preprod
-  script:
-    - docker tag $CI_REGISTRY_IMAGE/chapsmind-front:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/chapsmind-front:preprod
-    - docker push $CI_REGISTRY_IMAGE/chapsmind-front:preprod
-
-front:deploy:prod:
-  stage: deploy:prod
-  rules:
-    - if: $CI_COMMIT_TAG =~ /^v.*/
-      <<: *front-changes
-  environment:
-    name: production
-  when: manual
-  script:
-    - docker tag $CI_REGISTRY_IMAGE/chapsmind-front:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/chapsmind-front:prod
-    - docker push $CI_REGISTRY_IMAGE/chapsmind-front:prod
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - apps/front/**/*
