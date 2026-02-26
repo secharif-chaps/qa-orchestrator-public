@@ -4,12 +4,15 @@ Organizations are managed in Keycloak, not in the application database.
 These endpoints interact with Keycloak Admin API to fetch organization data.
 """
 
+import asyncio
 from typing import Any, Dict, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from fastapi_keycloak import OIDCUser
 
+from app.core.config import settings
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
+from app.core.permissions import get_tier_from_roles
 from app.schemas.organization import OrganizationResponse
 from app.schemas.pagination import PaginatedResponse, SortOrder, create_pagination_meta
 from app.services.keycloak_admin import keycloak_admin_service
@@ -244,6 +247,35 @@ async def get_organization_users_admin(
         # Get total count for pagination
         total = await keycloak_admin_service.count_organization_members(organization_id)
 
+        # Fetch permission tiers for all members in parallel
+        async def fetch_user_tier(user_id: str) -> tuple[str, str | None]:
+            """Fetch roles and compute permission tier for a user."""
+            try:
+                user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
+                internal_roles = {
+                    "uma_authorization",
+                    "offline_access",
+                    "default-roles-" + settings.KEYCLOAK_REALM.lower()
+                }
+                permissions = [
+                    role["name"] for role in user_roles
+                    if role["name"] not in internal_roles and
+                       not role["name"].startswith("realm-management")
+                ]
+                tier = get_tier_from_roles(permissions)
+                return user_id, tier.value
+            except Exception as e:
+                logger.warning(
+                    "Failed to fetch permissions for user",
+                    extra={"user_id": user_id, "error": str(e)}
+                )
+                return user_id, None
+
+        tier_results = await asyncio.gather(
+            *[fetch_user_tier(member.get("id")) for member in members]
+        )
+        user_tiers_map = dict(tier_results)
+
         # Format response
         users_list = []
         for member in members:
@@ -255,7 +287,8 @@ async def get_organization_users_admin(
                 'lastName': member.get('lastName'),
                 'enabled': member.get('enabled', True),
                 'emailVerified': member.get('emailVerified', False),
-                'createdTimestamp': member.get('createdTimestamp')
+                'createdTimestamp': member.get('createdTimestamp'),
+                'permission_tier': user_tiers_map.get(member.get('id')),
             }
             users_list.append(user_dict)
 
