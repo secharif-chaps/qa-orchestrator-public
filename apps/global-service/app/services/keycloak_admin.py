@@ -215,6 +215,69 @@ class KeycloakAdminService:
             logger.error("Error updating user", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__})
             return False
 
+    async def create_user(
+        self,
+        username: str,
+        email: str,
+        first_name: Optional[str] = None,
+        last_name: Optional[str] = None,
+        password: Optional[str] = None,
+        temporary_password: bool = True,
+    ) -> Optional[str]:
+        """Create a new user in Keycloak and return its ID.
+
+        Returns the new user's ID on success, or None on failure.
+        Raises HTTPException(409) if username or email already exists.
+        """
+        try:
+            payload: dict[str, Any] = {
+                "username": username,
+                "email": email,
+                "enabled": True,
+            }
+            if first_name:
+                payload["firstName"] = first_name
+            if last_name:
+                payload["lastName"] = last_name
+            if password:
+                payload["credentials"] = [
+                    {
+                        "type": "password",
+                        "value": password,
+                        "temporary": temporary_password,
+                    }
+                ]
+
+            response = await self._make_admin_request("POST", "/users", payload)
+
+            if response.status_code == 201:
+                # Keycloak returns the new user's URL in the Location header
+                location = response.headers.get("Location", "")
+                user_id = location.rsplit("/", 1)[-1] if location else None
+                logger.info(
+                    "Created user in Keycloak",
+                    extra={"username": username, "user_id": user_id},
+                )
+                return user_id
+
+            if response.status_code == 409:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="A user with this username or email already exists",
+                )
+
+            logger.error(
+                "Failed to create user",
+                extra={"status_code": response.status_code, "response": response.text},
+            )
+            return None
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error("Exception creating user", exc_info=True, extra={"error": str(e)})
+            return None
+
     async def set_user_password(self, user_id: str, password: str, temporary: bool = True) -> bool:
         """Set a new password for a user directly."""
         try:
@@ -398,6 +461,31 @@ class KeycloakAdminService:
         except Exception as e:
             logger.error("Error getting organization members", exc_info=True, extra={"organization_id": organization_id, "error_type": type(e).__name__})
             return []
+
+    async def count_organization_members(self, organization_id: str) -> int:
+        """Get total count of members in an organization."""
+        try:
+            # Fetch with max=1 to check X-Total-Count header first
+            endpoint = f"/organizations/{organization_id}/members?first=0&max=1"
+            response = await self._make_admin_request("GET", endpoint)
+
+            if response.status_code == 200:
+                total = response.headers.get("X-Total-Count")
+                if total:
+                    return int(total)
+                # Fallback: fetch all and count
+                all_members = await self.get_organization_members(
+                    organization_id, first=0, max_results=10000
+                )
+                return len(all_members)
+            if response.status_code == 404:
+                logger.warning(f"Organization {organization_id} not found")
+                return 0
+            logger.error(f"Failed to count organization members: {response.status_code}")
+            return 0
+        except Exception as e:
+            logger.error(f"Error counting organization members: {e}")
+            return 0
 
     async def add_user_to_organization(self, organization_id: str, user_id: str) -> bool:
         """Add a user to an organization."""
