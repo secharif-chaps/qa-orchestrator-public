@@ -1,258 +1,206 @@
-# ChapsMind Workspace
+# ChapsMind
 
-Workspace repository containing all ChapsMind projects as git submodules.
+A modern platform for monitoring companies online. Built as a monorepo with a Vue 3 frontend, FastAPI backend, and infrastructure-as-code.
 
-## Structure
+## Project Structure
 
 ```
-chapsmind-workspace/
-├── front/      # Vue 3 Frontend (submodule)
-├── back/       # FastAPI Backend (submodule)
-├── infra/      # Docker & Infrastructure (submodule)
-├── .claude/    # Claude AI configuration
-├── agent-os/   # Agent OS specs & standards
-└── CLAUDE.md   # Project documentation
+chapsmind/
+├── apps/
+│   ├── front/              # Vue 3 frontend (TypeScript, Tailwind CSS v4)
+│   ├── screen/             # FastAPI backend (Python, SQLAlchemy, Celery)
+│   └── global-service/     # Global service
+├── infra/                  # Docker Compose, CI/CD configuration
+├── docs/                   # Documentation (ADRs, architecture, product, specs, standards)
+├── agent-os/               # Agent OS configuration (product docs, specs, standards)
+├── scripts/                # CI scripts, subtree sync
+├── .claude/                # Claude AI agents, commands, skills
+├── .gitlab/                # CODEOWNERS
+├── Taskfile.yml            # Task runner
+├── CLAUDE.md               # AI assistant instructions
+└── README.md               # This file
+```
+
+## Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) and Docker Compose
+- [Task](https://taskfile.dev/installation/) (task runner)
+- [Node.js](https://nodejs.org/) (LTS) with [Corepack](https://nodejs.org/api/corepack.html) enabled (for Yarn 4)
+
+```bash
+# Enable corepack to use Yarn 4
+corepack enable
 ```
 
 ## Quick Start
 
-### 1. Clone the Workspace
+### 1. Clone the Repository
 
 ```bash
-# Clone with all submodules in one command
-git clone --recursive ssh://git@git.mediaspeech.com:17890/mint/chapsmind-workspace.git
-
-# Navigate to workspace
-cd chapsmind-workspace
+git clone ssh://git@git.mediaspeech.com:17890/chapsmind/chapsmind.git
+cd chapsmind
 ```
 
-**Alternative**: If you already cloned without `--recursive`:
+### 2. Initialize the Project
 
 ```bash
-git submodule update --init --recursive
+task init
 ```
 
-### 2. Login to Docker Registry
+This single command will:
+- Copy `.env.example` to `.env` (if not already present)
+- Install frontend dependencies (`yarn install`)
+- Build and start all Docker services
+- Run database migrations
 
-```bash
-docker login registry.git.mediaspeech.com
-```
+### 3. Access the Application
 
-### 3. Start Development Environment
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-```bash
-cd infra
+## Available Commands
 
-# Build and start all services
-docker compose up -d --build
+All commands use [Task](https://taskfile.dev/). Run `task` (with no arguments) to list all available commands.
 
-# Check services are running
-docker compose ps
-```
+### Infrastructure
 
-This will start:
-- **db**: PostgreSQL database (port 5432)
-- **rabbitmq**: Message broker (ports 5672, 15672)
-- **backend**: FastAPI API (port 8000)
-- **backend_celery_worker**: Background task processor
-- **backend_celery_flower**: Celery monitoring (port 5555)
-- **frontend**: Vue.js app (port 3000)
+| Command            | Description                          |
+|--------------------|--------------------------------------|
+| `task up`          | Start all services (build + detach)  |
+| `task down`        | Stop all services                    |
+| `task restart`     | Restart all services                 |
+| `task logs`        | Tail all service logs                |
+| `task logs:service -- screen` | Tail logs for a specific service |
 
-> **Note**: Keycloak runs locally at http://localhost:8080. Admin console: admin/admin
+### Database
 
-### 4. Initialize Keycloak
+| Command              | Description                    |
+|----------------------|--------------------------------|
+| `task migrate`       | Run Alembic migrations         |
+| `task migrate:status`| Show current migration version |
+| `task seed`          | Seed sample data               |
+| `task db:shell`      | Open psql shell                |
 
-After Keycloak starts, run the initialization script to configure service accounts and create a default organization:
+### Frontend
 
-```bash
-cd infra
-./scripts/init-keycloak.sh
-```
+| Command              | Description                    |
+|----------------------|--------------------------------|
+| `task front:dev`     | Start dev server with HMR      |
+| `task front:lint`    | Lint and fix frontend code     |
+| `task front:typecheck` | Run TypeScript type checking |
+| `task front:build`   | Build for production           |
 
-### 5. Run Database Migrations
+### Screen (Backend)
 
-```bash
-docker compose exec backend alembic upgrade head
-```
+| Command              | Description                    |
+|----------------------|--------------------------------|
+| `task screen:lint`   | Lint backend code (ruff)       |
+| `task screen:format` | Format backend code (ruff)     |
+| `task screen:test`   | Run backend tests              |
+| `task screen:shell`  | Open bash shell in container   |
 
-### 6. (Optional) Seed Sample Data
+### All Projects
 
-```bash
-docker compose exec backend python scripts/seed_companies.py
-```
+| Command     | Description         |
+|-------------|---------------------|
+| `task lint`  | Lint all projects   |
+| `task test`  | Run all tests       |
 
-## Service URLs
+## Services
 
-| Service          | URL                          | Description               |
-|------------------|------------------------------|---------------------------|
-| Frontend         | http://localhost:3000        | Vue.js application        |
-| Backend API      | http://localhost:8000/api    | FastAPI endpoints         |
-| API Docs         | http://localhost:8000/docs   | Swagger documentation     |
-| Celery Flower    | http://localhost:5555        | Task monitoring           |
-| RabbitMQ Admin   | http://localhost:15672       | Message broker (guest/guest) |
-| Keycloak         | http://localhost:8080        | Authentication (local)        |
-| Keycloak Admin   | http://localhost:8080/admin  | Admin console (admin/admin)   |
-
-## Working with Submodules
-
-### Update All Submodules
-
-```bash
-git submodule update --remote --merge
-```
-
-### Pull Latest Changes (All Repos)
-
-```bash
-# Pull workspace changes
-git pull
-
-# Update submodules to tracked commits
-git submodule update --init --recursive
-```
-
-### Commit Changes in a Submodule
-
-```bash
-# Work in a submodule (e.g., front/)
-cd front
-git checkout main
-git pull
-# Make changes...
-git add .
-git commit -m "Your commit message"
-git push
-
-# Then update workspace to reference new commit
-cd ..
-git add front
-git commit -m "Update front submodule"
-git push
-```
-
-## Common Commands
-
-### Docker (from ./infra/)
-
-```bash
-# Start services
-docker compose up -d
-
-# Build and start (after code changes)
-docker compose up -d --build
-
-# View logs
-docker compose logs -f backend
-
-# Restart a service
-docker compose restart backend
-
-# Stop all services
-docker compose down
-
-# Stop and remove volumes (clean reset)
-docker compose down -v
-
-# Enter backend shell
-docker compose exec backend bash
-```
-
-### Database Migrations (from ./infra/)
-
-```bash
-# Run migrations
-docker compose exec backend alembic upgrade head
-
-# Create new migration
-docker compose exec backend alembic revision -m "description"
-
-# Check current version
-docker compose exec backend alembic current
-
-# Downgrade one version
-docker compose exec backend alembic downgrade -1
-```
-
-### Frontend Development
-
-For hot-reload during frontend development, run the dev server locally instead of using Docker:
-
-```bash
-cd front
-pnpm install
-pnpm run dev
-```
-
-Then access at http://localhost:5173 (Vite dev server port).
+| Service          | URL                          | Description                   |
+|------------------|------------------------------|-------------------------------|
+| Frontend         | http://localhost:3000         | Vue.js application            |
+| Backend API      | http://localhost:8000/api     | FastAPI endpoints             |
+| API Docs         | http://localhost:8000/docs    | Swagger documentation         |
+| Celery Flower    | http://localhost:5555         | Task monitoring               |
+| RabbitMQ Admin   | http://localhost:15672        | Message broker (guest/guest)  |
 
 ## Authentication
 
-This setup uses **local Keycloak** at `http://localhost:8080`.
+Authentication is handled via **Keycloak** (integration server) at `https://sso.dwcode.team/auth`.
 
 ### Test Users
 
-| Username         | Password        | Permissions                           |
-|------------------|-----------------|---------------------------------------|
-| admin            | admin123        | Full admin access                     |
+| Username         | Password        | Permissions                             |
+|------------------|-----------------|-----------------------------------------|
+| admin            | admin123        | Full admin access                       |
 | company_manager  | manager123      | Company management (view/create/delete) |
-| company_viewer   | viewer123       | Company view only                     |
-| team_manager     | teammanager123  | Team management                       |
-| no_access        | noaccess123     | No permissions (for testing 403)      |
+| company_viewer   | viewer123       | Company view only                       |
+| team_viewer      | teamviewer123   | Team read-only + company view           |
+| team_manager     | teammanager123  | Team management + company view          |
+| no_access        | noaccess123     | No permissions (for testing 403)        |
+
+## Git Workflow
+
+### Branch Naming
+
+```
+feat/TAR-xxx-feature-name
+fix/TAR-xxx-bug-name
+refactor/TAR-xxx-description
+docs/TAR-xxx-description
+chore/TAR-xxx-description
+```
+
+### Commit Format
+
+Uses gitmoji + conventional commits:
+
+```
+<gitmoji> <type>(<scope>): TAR-xxx <description>
+```
+
+Examples:
+```
+feat(front): TAR-42 add company search filters
+fix(screen): TAR-15 resolve pagination offset error
+docs: TAR-99 update API endpoint documentation
+```
+
+### Workflow
+
+1. Create a feature branch from `main`: `git checkout -b feat/TAR-xxx-feature-name`
+2. Make changes and commit using the format above
+3. Push: `git push -u origin feat/TAR-xxx-feature-name`
+4. Create a Merge Request for code review
+5. After approval, merge to `main`
+
+**Rules**:
+- Never commit directly to `main`
+- Always create a Merge Request before merging
+- Never force push to `main`
 
 ## Troubleshooting
-
-### Submodule Issues
-
-```bash
-# If submodules are empty
-git submodule update --init --recursive
-
-# If submodules are outdated
-git submodule update --remote --merge
-
-# Reset submodule to tracked commit
-git submodule update --force
-```
 
 ### Docker Issues
 
 ```bash
 # Rebuild containers from scratch
-docker compose build --no-cache
+task down
+task up
 
-# Remove all containers and volumes (full reset)
-docker compose down -v
+# Full reset (removes volumes and data)
+docker compose -f infra/docker-compose.yml -f infra/docker-compose.local.yml down -v
+task up
+task migrate
+```
 
-# Check container logs
-docker compose logs backend
+### Port Conflicts
 
-# Check if ports are in use
+```bash
 lsof -i :3000
 lsof -i :8000
 ```
 
-### Database Issues
-
-```bash
-# Reset database (WARNING: deletes all data)
-docker compose down -v
-docker compose up -d db
-docker compose exec backend alembic upgrade head
-
-# Connect to database directly
-docker compose exec db psql -U postgres -d mint_db
-```
-
 ## Claude Code Integration
 
-This workspace is configured for Claude Code with:
-- **CLAUDE.md**: Complete project documentation and guidelines
-- **.claude/**: Agents, commands, and skills configuration
+This repository is configured for [Claude Code](https://claude.ai/code):
+
+- **CLAUDE.md**: Complete project documentation and AI assistant guidelines
+- **.claude/**: Specialized agents, commands, and skills
 - **agent-os/**: Product specs, roadmap, and coding standards
 
-To use Claude Code:
-
 ```bash
-cd chapsmind-workspace
+cd chapsmind
 claude
 ```

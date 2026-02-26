@@ -1,65 +1,65 @@
 # Claude AI Assistant Instructions
 
-## 📁 Project Structure
+## Project Structure
 
-This project uses a **workspace architecture** with git submodules:
+This project is a **monorepo** containing all ChapsMind applications:
 
 ```
-chapsmind-workspace/                # THIS REPO - Workspace with submodules
-├── CLAUDE.md                       # This file - Claude configuration
+chapsmind/                              # THIS REPO - Monorepo
+├── CLAUDE.md                           # This file - Claude configuration
 ├── .claude/
-│   ├── agents/                     # Specialized AI agents
-│   ├── commands/                   # Custom slash commands
-│   └── skills/                     # Shared skills
-├── agent-os/                       # Agent OS configuration
+│   ├── agents/                         # Specialized AI agents
+│   ├── commands/                       # Custom slash commands
+│   └── skills/                         # Shared skills
+├── agent-os/                           # Agent OS configuration
 │   ├── config.yml
-│   ├── product/                    # Product docs (mission, roadmap, tech-stack)
-│   ├── specs/                      # Feature specifications
-│   └── standards/                  # Coding standards
+│   ├── product/                        # Product docs (mission, roadmap, tech-stack)
+│   ├── specs/                          # Feature specifications
+│   └── standards/                      # Coding standards
+├── docs/                               # Documentation (ADRs, architecture, product)
 │
-├── front/                          # Frontend submodule (Vue 3)
-│   ├── src/
-│   │   ├── api/                    # API functions (fetch wrappers)
-│   │   ├── components/
-│   │   │   ├── ui/                 # Base UI components
-│   │   │   ├── layout/             # Layout components
-│   │   │   └── features/           # Feature-specific components
-│   │   ├── composables/            # Composition functions
-│   │   ├── stores/                 # Pinia stores (global state)
-│   │   ├── queries/                # Pinia Colada queries
-│   │   ├── pages/                  # Page components (file-based routing)
-│   │   ├── plugins/                # Vue plugins
-│   │   ├── utils/                  # Utility functions
-│   │   ├── assets/                 # Static assets (CSS, images)
-│   │   ├── main.ts                 # App entry point
-│   │   └── App.vue                 # Root component
-│   └── public/                     # Public static files
+├── apps/
+│   ├── front/                          # Frontend (Vue 3)
+│   │   ├── src/
+│   │   │   ├── api/                    # API functions (fetch wrappers)
+│   │   │   ├── components/
+│   │   │   │   ├── ui/                 # Base UI components
+│   │   │   │   ├── layout/             # Layout components
+│   │   │   │   └── features/           # Feature-specific components
+│   │   │   ├── composables/            # Composition functions
+│   │   │   ├── stores/                 # Pinia stores (global state)
+│   │   │   ├── queries/                # Pinia Colada queries
+│   │   │   ├── pages/                  # Page components (file-based routing)
+│   │   │   ├── plugins/                # Vue plugins
+│   │   │   ├── utils/                  # Utility functions
+│   │   │   ├── assets/                 # Static assets (CSS, images)
+│   │   │   ├── main.ts                 # App entry point
+│   │   │   └── App.vue                 # Root component
+│   │   └── public/                     # Public static files
+│   │
+│   ├── screen/                         # Backend (FastAPI)
+│   │   ├── app/
+│   │   │   ├── api/                    # API endpoints
+│   │   │   ├── models/                 # SQLAlchemy models
+│   │   │   ├── schemas/                # Pydantic schemas
+│   │   │   ├── services/               # Business logic
+│   │   │   └── core/                   # Core configuration
+│   │   └── alembic/                    # Database migrations
+│   │
+│   └── global-service/                 # Global service
 │
-├── back/                           # Backend submodule (FastAPI)
-│   ├── app/
-│   │   ├── api/                    # API endpoints
-│   │   ├── models/                 # SQLAlchemy models
-│   │   ├── schemas/                # Pydantic schemas
-│   │   ├── services/               # Business logic
-│   │   └── core/                   # Core configuration
-│   └── alembic/                    # Database migrations
+├── infra/                              # Infrastructure
+│   ├── docker-compose.yml              # Base compose
+│   ├── docker-compose.local.yml        # Local overrides
+│   └── ...                             # Other infra configs
 │
-└── infra/                          # Infrastructure submodule
-    ├── docker-compose.dev.yml      # Development environment
-    ├── docker-compose.prod.yml     # Production environment
-    └── ...                         # Other infra configs
+├── scripts/                            # CI scripts, subtree sync
+└── Taskfile.yml                        # Task runner (all commands)
 ```
-
-### Working with Submodules
-
-Access submodules using relative paths from workspace root:
-- Frontend: `./front/`
-- Backend: `./back/`
-- Infrastructure: `./infra/`
 
 ---
 
-# MINT Frontend Application
+# ChapsMind Frontend Application
 
 A modern Vue 3 application with TypeScript, Tailwind CSS v4, and comprehensive tooling for monitoring companies online.
 
@@ -67,13 +67,13 @@ A modern Vue 3 application with TypeScript, Tailwind CSS v4, and comprehensive t
 
 ### User Application Workflow
 
-🗂️ **Organizations**
+**Organizations**
 
 - Users create company cards to monitor companies' information online
 - A user always belongs to an organization
 - Company cards are shared within an organization
 
-🔄 **Company Lifecycle & Tasks**
+**Company Lifecycle & Tasks**
 
 - Creating a company card triggers tasks that find specific information online via Dify workflows
 - Frontend monitors task status and calls the backend to start tasks
@@ -88,7 +88,7 @@ A modern Vue 3 application with TypeScript, Tailwind CSS v4, and comprehensive t
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework**: Vue 3 with Composition API + `<script setup lang="ts">`
 - **Language**: TypeScript
@@ -102,7 +102,7 @@ A modern Vue 3 application with TypeScript, Tailwind CSS v4, and comprehensive t
 
 ---
 
-## 📋 Development Standards
+## Development Standards
 
 ### Core Principles
 
@@ -128,7 +128,7 @@ A modern Vue 3 application with TypeScript, Tailwind CSS v4, and comprehensive t
 #### Example Pattern
 
 ```vue
-<!-- ✅ CORRECT: Parent controls spacing with gap -->
+<!-- CORRECT: Parent controls spacing with gap -->
 <template>
   <div class="flex flex-col gap-4">
     <PageHeader />
@@ -139,7 +139,7 @@ A modern Vue 3 application with TypeScript, Tailwind CSS v4, and comprehensive t
   </div>
 </template>
 
-<!-- ❌ INCORRECT: Margin-based spacing -->
+<!-- INCORRECT: Margin-based spacing -->
 <template>
   <div>
     <PageHeader class="mb-8" />
@@ -158,7 +158,7 @@ A modern Vue 3 application with TypeScript, Tailwind CSS v4, and comprehensive t
 - **Cleaner code** - no margin classes scattered throughout
 - **Predictable layouts** - parent always controls child spacing
 
-### 🎨 Color System (DaisyUI-Inspired Semantic Tokens)
+### Color System (DaisyUI-Inspired Semantic Tokens)
 
 The application uses a semantic color token system similar to DaisyUI. **NEVER** use raw color values or numbered palette colors directly.
 
@@ -230,13 +230,13 @@ Use `-stroke` tokens for borders without repeating "border":
 
 #### Rules
 
-✅ **DO**:
+**DO**:
 - Use semantic tokens: `bg-success`, `text-success-content`
 - Pair colors with their `-content` variant for accessibility
 - Use `-light` variants for alerts, toasts, and subtle backgrounds
 - Use `-stroke` for borders
 
-❌ **DON'T**:
+**DON'T**:
 - Use palette colors directly: ~~`bg-green-500`~~, ~~`text-red-600`~~
 - Mix incompatible pairs: ~~`bg-success text-error-content`~~
 - Use raw hex colors: ~~`#29ad72`~~
@@ -255,7 +255,7 @@ Use `-stroke` tokens for borders without repeating "border":
 
 ---
 
-## 🎯 Specialized Agents
+## Specialized Agents
 
 This project uses specialized agents for specific domains. Use them proactively:
 
@@ -282,7 +282,7 @@ This project uses specialized agents for specific domains. Use them proactively:
 - Ensuring accessibility compliance
 - Reviewing frontend code
 
-**Location**: `.claude/agents/frontend-design-system-dev.md` (in this chapsmind-claude repo)
+**Location**: `.claude/agents/frontend-design-system-dev.md`
 
 ### Smart Commit Agent (`/commit`)
 
@@ -295,15 +295,15 @@ This project uses specialized agents for specific domains. Use them proactively:
 - Creates multiple focused commits (not one giant commit)
 - Follows gitmoji + conventional commits format
 - Includes detailed descriptions and Claude footer
-- Pushes everything to `origin/main`
+- Pushes everything to the feature branch
 
 **When to use**: When you have multiple changes to commit and want intelligent grouping
 
-**Location**: `.claude/commands/commit.md` (in this chapsmind-claude repo)
+**Location**: `.claude/commands/commit.md`
 
 ---
 
-## 🔐 Permission System
+## Permission System
 
 ### Overview
 
@@ -398,11 +398,11 @@ See **Test Users** section below for credentials to test different permission sc
 
 ---
 
-## 🗺️ Routing System
+## Routing System
 
 ### File-Based Routing
 
-Routes are automatically generated from `src/pages/` directory structure using `unplugin-vue-router`.
+Routes are automatically generated from `apps/front/src/pages/` directory structure using `unplugin-vue-router`.
 
 #### Basic Patterns
 
@@ -457,7 +457,7 @@ src/pages/
 
 ---
 
-## 🔌 API & Data Fetching
+## API & Data Fetching
 
 ### Architecture
 
@@ -652,7 +652,7 @@ const { data: companies } = useQuery(companiesQuery, () => ({
 
 ---
 
-## 👥 Test Users
+## Test Users
 
 All test users are linked to **Organization ID 1** (ChapsVision organization).
 
@@ -668,10 +668,10 @@ Email: admin@test.com
 
 **Expected Behavior**:
 
-- ✅ Sees all sidebar links (home, search, companies, team, organizations)
-- ✅ Can create, edit, and delete companies
-- ✅ Can manage team members
-- ✅ Has access to all routes
+- Sees all sidebar links (home, search, companies, team, organizations)
+- Can create, edit, and delete companies
+- Can manage team members
+- Has access to all routes
 
 ### 2. Company Manager
 
@@ -685,9 +685,9 @@ Email: manager@test.com
 
 **Expected Behavior**:
 
-- ✅ Can manage companies (create, edit, delete)
-- ❌ Cannot see team link
-- ❌ Cannot access organization admin
+- Can manage companies (create, edit, delete)
+- Cannot see team link
+- Cannot access organization admin
 
 ### 3. Company Viewer
 
@@ -701,10 +701,10 @@ Email: viewer@test.com
 
 **Expected Behavior**:
 
-- ✅ Can view companies (read-only)
-- ❌ Cannot create/edit/delete companies
-- ❌ Cannot access team page
-- ✅ Sees "Read-only access" messages
+- Can view companies (read-only)
+- Cannot create/edit/delete companies
+- Cannot access team page
+- Sees "Read-only access" messages
 
 ### 4. Team Viewer
 
@@ -718,10 +718,10 @@ Email: teamviewer@test.com
 
 **Expected Behavior**:
 
-- ✅ Can access team page (read-only)
-- ✅ Can view companies
-- ❌ Cannot add/edit/disable users
-- ❌ Cannot create/edit/delete companies
+- Can access team page (read-only)
+- Can view companies
+- Cannot add/edit/disable users
+- Cannot create/edit/delete companies
 
 ### 5. Team Manager
 
@@ -735,9 +735,9 @@ Email: teammanager@test.com
 
 **Expected Behavior**:
 
-- ✅ Can manage team members (add, edit, disable)
-- ✅ Can view companies
-- ❌ Cannot create/edit/delete companies
+- Can manage team members (add, edit, disable)
+- Can view companies
+- Cannot create/edit/delete companies
 
 ### 6. No Access User
 
@@ -751,21 +751,13 @@ Email: noaccess@test.com
 
 **Expected Behavior**:
 
-- ✅ Can only see home link
-- ❌ Gets 403 on most routes
-- ❌ Sees permission denied messages
-
-### Creating Test Users
-
-Run from the infra submodule:
-
-```bash
-cd ./infra && ./create_test_users.sh
-```
+- Can only see home link
+- Gets 403 on most routes
+- Sees permission denied messages
 
 ---
 
-## 🔍 Development Workflow
+## Development Workflow
 
 ### Standard Workflow
 
@@ -789,44 +781,58 @@ cd ./infra && ./create_test_users.sh
 
 ---
 
-## 📚 Project Commands
+## Project Commands
 
-### Frontend Commands (run from `./front/`)
+### Frontend Commands (run from `apps/front/`)
 
 ```bash
 # Build for production
-cd ./front && pnpm run build
+cd apps/front && yarn build
 
 # Run all tests
-cd ./front && pnpm run test
+cd apps/front && yarn test
 
 # Run specific test files
-cd ./front && pnpm exec vitest run <test-files>
+cd apps/front && yarn vitest run <test-files>
 
 # Check test coverage
-cd ./front && pnpm exec vitest run --coverage
+cd apps/front && yarn vitest run --coverage
+
+# Lint and fix
+cd apps/front && yarn lint
+
+# Type check
+cd apps/front && yarn run type-check
 ```
 
-### Backend Commands (via Docker)
-
-Run from `./infra/` directory:
+Or use Taskfile commands from monorepo root:
 
 ```bash
-cd ./infra
+task front:build
+task front:lint
+task front:typecheck
+task front:dev
+```
 
-# Run Python scripts
-docker compose exec backend python script_name.py
+### Screen Backend Commands (via Task)
 
-# Check logs
-docker compose logs backend
+```bash
+# Run backend tests
+task screen:test
 
-# Enter backend shell
-docker compose exec backend bash
+# Lint backend code
+task screen:lint
+
+# Format backend code
+task screen:format
+
+# Open bash shell in screen container
+task screen:shell
 ```
 
 ---
 
-## 🔗 Research & Documentation
+## Research & Documentation
 
 - **NEVER** hallucinate or guess URLs
 - **ALWAYS** try accessing `llms.txt` first (e.g., `https://pinia-colada.esm.dev/llms.txt`)
@@ -835,7 +841,7 @@ docker compose exec backend bash
 
 ---
 
-## 🎯 Key Reminders
+## Key Reminders
 
 1. Use appropriate specialized agents for frontend work or commits
 2. Follow git commit format with gitmojis
@@ -850,13 +856,12 @@ docker compose exec backend bash
 
 ---
 
-## 📖 Additional Documentation
+## Additional Documentation
 
 - **Frontend Design System**: `.claude/agents/frontend-design-system-dev.md`
 - **Commit Agent**: `.claude/commands/commit.md`
-- **Component Guidelines**: `./front/src/components/CLAUDE.md`
-- **Page Routing**: `./front/src/pages/CLAUDE.md`
-
+- **Component Guidelines**: `apps/front/src/components/CLAUDE.md`
+- **Page Routing**: `apps/front/src/pages/CLAUDE.md`
 
 
 
@@ -870,72 +875,70 @@ docker compose exec backend bash
 kubectl get pods -n chapsmind | grep postgres
 
 # Connect to database
-kubectl exec -it <postgres-pod-name> -n chapsmind -- psql -U postgres -d mint_db -c "YOUR_SQL_QUERY"
+kubectl exec -it <postgres-pod-name> -n chapsmind -- psql -U postgres -d chapsmind_db -c "YOUR_SQL_QUERY"
 
 # List tables
-kubectl exec -it <postgres-pod-name> -n chapsmind -- psql -U postgres -d mint_db -c "\\dt"
+kubectl exec -it <postgres-pod-name> -n chapsmind -- psql -U postgres -d chapsmind_db -c "\\dt"
 
 # Describe table structure
-kubectl exec -it <postgres-pod-name> -n chapsmind -- psql -U postgres -d mint_db -c "\\d TABLE_NAME"
+kubectl exec -it <postgres-pod-name> -n chapsmind -- psql -U postgres -d chapsmind_db -c "\\d TABLE_NAME"
 ```
 
 ### Running Alembic Migrations in Kubernetes
 ```bash
-# Find backend pod name
-kubectl get pods -n chapsmind | grep backend
+# Find screen backend pod name
+kubectl get pods -n chapsmind | grep screen
 
 # Run migrations
-kubectl exec -it <backend-pod-name> -n chapsmind -- alembic upgrade head
+kubectl exec -it <screen-pod-name> -n chapsmind -- alembic upgrade head
 
 # Check current migration version
-kubectl exec -it <backend-pod-name> -n chapsmind -- alembic current
+kubectl exec -it <screen-pod-name> -n chapsmind -- alembic current
 
 # Check migration history
-kubectl exec -it <backend-pod-name> -n chapsmind -- alembic history
+kubectl exec -it <screen-pod-name> -n chapsmind -- alembic history
 ```
 
 **Important Notes:**
 - Always use the `-n chapsmind` namespace flag
 - Use double quotes for SQL queries to handle escaping properly
-- Backend pod name typically starts with `mint-backend-`
+- Screen backend pod name typically starts with `chapsmind-screen-`
 - Database pod name typically starts with `postgres-` or similar
 
 ## Docker Compose Commands
 
-This project uses Docker Compose with an override file for development. Run commands from the `./infra/` directory.
+This project uses Taskfile to wrap Docker Compose commands. Run all commands from the monorepo root.
 
 ### Development Environment
 
-Uses `docker-compose.yml` + `docker-compose.override.yml` (auto-loaded).
-
 ```bash
-cd ./infra
-
 # Start all services
-docker compose up -d --build
-
-# Check status
-docker compose ps
-
-# View logs
-docker compose logs -f backend
-
-# Restart a service
-docker compose restart backend
+task up
 
 # Stop all services
-docker compose down
+task down
+
+# Restart all services
+task restart
+
+# Tail all logs
+task logs
+
+# Tail logs for a specific service
+task logs:service -- screen
 
 # Full reset (removes volumes)
-docker compose down -v
+task down
+docker compose -f infra/docker-compose.yml -f infra/docker-compose.local.yml down -v
+task up
 ```
 
 ### Services Available
 - **db**: PostgreSQL database (port 5432)
 - **rabbitmq**: Message broker (ports 5672, 15672)
-- **backend**: FastAPI API (port 8000)
-- **backend_celery_worker**: Background task processor
-- **backend_celery_flower**: Celery monitoring (port 5555)
+- **screen**: FastAPI API (port 8000)
+- **screen_celery_worker**: Background task processor
+- **screen_celery_flower**: Celery monitoring (port 5555)
 - **frontend**: Vue.js app (port 3000)
 
 ### Authentication
@@ -943,24 +946,21 @@ Uses **integration Keycloak** at `https://sso.dwcode.team/auth` (not local keycl
 
 ## Database Migrations
 
-Run from the `./infra/` directory.
-
-### Creating Migrations
+### Running Migrations
 ```bash
-cd ./infra
-docker compose exec backend alembic revision -m "description"
-```
-
-### Applying Migrations
-```bash
-cd ./infra
-docker compose exec backend alembic upgrade head
+task migrate
 ```
 
 ### Checking Migration Status
 ```bash
-cd ./infra
-docker compose exec backend alembic current
+task migrate:status
+```
+
+### Creating Migrations
+```bash
+task screen:shell
+# Then inside the container:
+alembic revision -m "description"
 ```
 
 **Important**: Never run alembic commands locally - the database host is configured as 'db' which only resolves inside Docker network.
@@ -981,14 +981,13 @@ docker compose exec backend alembic current
 5. Ask user to deploy using their deployment process
 6. Verify deployment worked correctly
 
-## Backend Development
-
-Run from the `./infra/` directory.
+## Screen Backend Development
 
 ### Running Python Scripts
 ```bash
-cd ./infra
-docker compose exec backend python script_name.py
+task screen:shell
+# Then inside the container:
+python script_name.py
 ```
 
 ### Testing Endpoints
@@ -996,10 +995,12 @@ The backend API is available at `http://localhost:8000/api/`
 
 ### Common Commands
 ```bash
-cd ./infra
-docker compose logs backend           # Check logs
-docker compose restart backend        # Restart backend
-docker compose exec backend bash      # Enter backend shell
+task logs:service -- screen    # Check logs
+task restart                   # Restart all services
+task screen:shell              # Enter screen backend shell
+task screen:lint               # Lint backend code
+task screen:format             # Format backend code
+task screen:test               # Run backend tests
 ```
 
 ## Permission System Guidelines
@@ -1034,7 +1035,7 @@ docker compose exec backend bash      # Enter backend shell
 - Show/hide UI elements based on permissions (v-if="canCreateCompany")
 - Display helpful messages for users without permissions
 
-#### Backend Implementation  
+#### Backend Implementation
 - Always verify permissions in API endpoints using `verify_*_permission()` functions
 - Return 403 Forbidden with clear error messages
 - Check permissions BEFORE executing business logic
@@ -1058,13 +1059,13 @@ user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])
 
 ### Local Testing
 - **Backend API**: Available at `http://localhost:8000/api/`
-- **Frontend**: Available at `http://localhost:3000` (Docker) or `http://localhost:5173` (pnpm dev)
+- **Frontend**: Available at `http://localhost:3000` (Docker) or `http://localhost:5173` (yarn dev)
 - **Keycloak**: Uses integration server at `https://sso.dwcode.team/auth`
-- Run Docker commands from `./infra/` directory
+- Run all commands from monorepo root using `task`
 
 ### Authentication for Testing
 
-Uses **integration Keycloak** at `https://sso.dwcode.team/auth` with realm `mint`.
+Uses **integration Keycloak** at `https://sso.dwcode.team/auth` with realm `chapsmind`.
 
 Log in with your existing ChapsMind credentials. Test users are managed on the integration Keycloak server.
 
@@ -1082,14 +1083,14 @@ curl -X POST http://localhost:8000/api/companies/ \
 
 ### Testing Process
 1. Make code changes locally
-2. Test locally using Docker development environment (`cd ./infra && docker compose up -d --build`)
-3. Check logs: `cd ./infra && docker compose logs backend`
+2. Test locally using `task up`
+3. Check logs: `task logs:service -- screen`
 4. Once working, commit and push changes
 5. Ask user to deploy to production server
 
 ### Deployment Process
 1. Make changes locally in development environment
-2. Test changes locally with Docker
+2. Test changes locally with `task up`
 3. Commit changes with descriptive commit message using gitmoji
 4. Push to repository
 5. Ask user to deploy using their deployment process
@@ -1116,11 +1117,9 @@ Common gitmojis for this project:
 
 ### Commit Message Format
 ```
-<gitmoji> <type>: <description>
+<gitmoji> <type>(<scope>): TAR-xxx <description>
 
 [optional body]
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
 
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
@@ -1128,39 +1127,42 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ### Examples
 ```bash
 # Feature
-✨ feat: add user authentication system
+✨ feat(front): TAR-42 add company search filters
 
 # Bug fix
-🐛 fix: resolve validation error for company names with ampersand
+🐛 fix(screen): TAR-15 resolve pagination offset error
 
 # Database change
-🗃️ feat: populate workflow_configs with 8 task types in initial migration
+🗃️ feat(screen): TAR-30 add workflow_configs migration
 
 # Security fix
-🔒 fix: sanitize user input to prevent XSS attacks
+🔒 fix(screen): TAR-55 sanitize user input to prevent XSS
+
+# Documentation
+📝 docs: TAR-99 update API endpoint documentation
 ```
 
 ### Git Workflow (Feature Branch)
 
 **Branch Naming Conventions**:
-- `feat/feature-name` - New features
-- `fix/bug-name` - Bug fixes
-- `refactor/refactor-name` - Code refactoring
-- `docs/doc-name` - Documentation updates
-- `chore/task-name` - Maintenance tasks
+- `feat/TAR-xxx-feature-name` - New features
+- `fix/TAR-xxx-bug-name` - Bug fixes
+- `refactor/TAR-xxx-refactor-name` - Code refactoring
+- `docs/TAR-xxx-doc-name` - Documentation updates
+- `chore/TAR-xxx-task-name` - Maintenance tasks
 
 **Workflow**:
-1. Create feature branch from main: `git checkout -b feat/feature-name`
+1. Create feature branch from main: `git checkout -b feat/TAR-xxx-feature-name`
 2. Make changes and commit using gitmoji format
-3. Push feature branch: `git push -u origin feat/feature-name`
-4. Create merge/pull request for code review
+3. Push feature branch: `git push -u origin feat/TAR-xxx-feature-name`
+4. Create merge request for code review
 5. After approval, merge to main
 6. Deploy from main branch
 
 **Critical Rules**:
 - **NEVER** commit directly to main branch
 - **ALWAYS** work in feature branches
-- **ALWAYS** create merge/pull request before merging to main
+- **ALWAYS** create merge request before merging to main
 - **NEVER** use force push to main/master
 - **ALWAYS** use `/commit` command for intelligent commit grouping
 
