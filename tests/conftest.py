@@ -9,9 +9,13 @@ BEFORE any app modules are imported.
 """
 
 import pytest
+import uuid as _uuid
 from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 from app.core.keycloak import OIDCUser
+
+import sqlalchemy as _sa
+from sqlalchemy import event as _sa_event
 
 # Apply patches at module level BEFORE any app modules are imported
 # This prevents Keycloak initialization during pytest collection phase
@@ -114,6 +118,14 @@ _test_engine = create_async_engine(
     poolclass=StaticPool,
 )
 
+
+# Register gen_random_uuid() as a custom SQLite function (still useful for raw SQL)
+# and provide Python-side UUID generation for ORM operations
+@_sa_event.listens_for(_test_engine.sync_engine, "connect")
+def _register_sqlite_functions(dbapi_connection, connection_record):
+    dbapi_connection.create_function("gen_random_uuid", 0, lambda: str(_uuid.uuid4()))
+
+
 # Export this for use in concurrency tests
 TestingSessionLocal = async_sessionmaker(
     _test_engine,
@@ -152,6 +164,18 @@ def _strip_schema_from_metadata(base):
                 column.type.schema = None
                 column.type.create_type = True
 
+            # Replace gen_random_uuid() server_default with Python-side default
+            # SQLite can't return server-generated UUIDs via RETURNING, so we
+            # generate them in Python before INSERT instead
+            if column.server_default is not None:
+                try:
+                    sd = str(column.server_default.arg)
+                    if "gen_random_uuid()" in sd:
+                        column.server_default = None
+                        if column.default is None:
+                            column.default = _sa.ColumnDefault(_uuid.uuid4)
+                except (AttributeError, TypeError):
+                    pass
 
 @pytest.fixture(scope="function")
 async def setup_test_db():

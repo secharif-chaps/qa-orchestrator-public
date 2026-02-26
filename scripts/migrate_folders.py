@@ -67,9 +67,11 @@ TABLES = [
             "id", "folder_id", "item_id", "item_type",
             "position", "added_at", "owner",
         ],
-        # Cast item_type text to the PostgreSQL enum type
+        # Cast item_type text to the PostgreSQL enum type.
+        # Use CAST() syntax instead of ::type — the :: operator after a :param
+        # confuses SQLAlchemy's text() parameter parser.
         "casts": {
-            "item_type": f":item_type::{TARGET_SCHEMA}.item_type",
+            "item_type": f"CAST(:item_type AS {TARGET_SCHEMA}.item_type)",
         },
         # Only migrate rows whose item_type exists in the enum
         "source_filter": f"item_type IN ({', '.join(repr(v) for v in ITEM_TYPE_MAP.values())})",
@@ -107,7 +109,7 @@ def migrate_table(source_engine, target_engine, table_def):
     # Use cast expressions for columns that need type conversion
     placeholders = ", ".join(casts.get(col, f":{col}") for col in columns)
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Migrating: {name}")
     print(f"  Source: mint_db.public.{source_table}")
     print(f"  Target: global_db.{target_table}")
@@ -136,7 +138,7 @@ def migrate_table(source_engine, target_engine, table_def):
         print(f"  Source rows: {source_count}")
 
     if source_count == 0:
-        print(f"  No rows to migrate.")
+        print("  No rows to migrate.")
         return 0
 
     # Read all rows from source (with filter if specified)
@@ -156,7 +158,7 @@ def migrate_table(source_engine, target_engine, table_def):
 
     with target_engine.connect() as tgt:
         for i in range(0, len(rows), BATCH_SIZE):
-            batch = rows[i : i + BATCH_SIZE]
+            batch = rows[i: i + BATCH_SIZE]
             result = tgt.execute(insert_sql, [dict(row) for row in batch])
             batch_inserted = result.rowcount
             inserted += batch_inserted
@@ -170,7 +172,7 @@ def migrate_table(source_engine, target_engine, table_def):
             text(f"SELECT COUNT(*) FROM {target_table}")
         ).scalar()
 
-    print(f"  Results:")
+    print("  Results:")
     print(f"    Inserted:       {inserted}")
     print(f"    Skipped (dups): {skipped}")
     print(f"    Target count:   {target_count}")
@@ -197,7 +199,7 @@ def migrate_all():
         inserted = migrate_table(source_engine, target_engine, table_def)
         total_inserted += inserted
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Migration complete. Total rows inserted: {total_inserted}")
     print("=" * 60)
 

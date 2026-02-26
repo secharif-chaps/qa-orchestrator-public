@@ -87,14 +87,10 @@ def health_live():
 
 
 @app.get("/health/ready", tags=["health"])
-def health_ready():
-    # TODO: Enhance readiness check after Phase 1 to verify:
-    # - gRPC server listening on port 50051
-    # - Proxy HTTP client pool healthy
-    # - Keycloak connectivity (optional, may add latency)
+async def health_ready():
     try:
-        with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
+        async with engine.connect() as conn:
+            await conn.execute(text("SELECT 1"))
         return {"status": "ready"}
     except Exception:
         return {"status": "not_ready"}
