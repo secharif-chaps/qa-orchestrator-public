@@ -8,18 +8,20 @@ All work done in feature branches, merged to main via pull/merge requests.
 
 ### Branch Naming Conventions
 
-| Prefix | Use |
-|--------|-----|
-| `feat/` | New features |
-| `fix/` | Bug fixes |
-| `refactor/` | Code refactoring |
-| `docs/` | Documentation updates |
-| `chore/` | Maintenance tasks |
+| Prefix              | Use                                     |
+|---------------------|-----------------------------------------|
+| `feat/TAR-xxx-`     | New features                            |
+| `fix/TAR-xxx-`      | Bug fixes                               |
+| `refactor/TAR-xxx-` | Code refactoring                        |
+| `docs/`             | Documentation updates (ticket optional) |
+| `chore/`            | Maintenance tasks (ticket optional)     |
 
 Examples:
-- `feat/user-authentication`
-- `fix/validation-error`
-- `refactor/company-service`
+- `feat/TAR-123-user-authentication`
+- `fix/TAR-456-validation-error`
+- `refactor/TAR-789-company-service`
+- `docs/update-readme`
+- `chore/update-dependencies`
 
 ---
 
@@ -28,7 +30,7 @@ Examples:
 ### Gitmoji + Conventional Commits
 
 ```
-<gitmoji> <type>: <description>
+<gitmoji> <type>(<scope>): TAR-xxx <description>
 
 [optional body]
 
@@ -37,37 +39,45 @@ Examples:
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
+**Note**: `chore` and `docs` commits may omit the Jira ticket number (TAR-xxx).
+
 ### Common Gitmojis
 
-| Emoji | Code | Usage |
-|-------|------|-------|
-| ✨ | `:sparkles:` | New features |
-| 🐛 | `:bug:` | Bug fixes |
-| 🔧 | `:wrench:` | Configuration changes |
-| 📝 | `:memo:` | Documentation updates |
-| 🗃️ | `:card_file_box:` | Database changes/migrations |
-| 🔒 | `:lock:` | Security improvements |
-| ♻️ | `:recycle:` | Refactoring code |
-| 🚀 | `:rocket:` | Deployment/performance |
-| 🔥 | `:fire:` | Removing code/files |
-| 💄 | `:lipstick:` | UI/styling updates |
-| 🧪 | `:test_tube:` | Adding tests |
-| 📦 | `:package:` | Dependencies/packages |
+| Emoji  | Code              | Usage                       |
+|--------|-------------------|-----------------------------|
+| ✨      | `:sparkles:`      | New features                |
+| 🐛     | `:bug:`           | Bug fixes                   |
+| 🔧     | `:wrench:`        | Configuration changes       |
+| 📝     | `:memo:`          | Documentation updates       |
+| 🗃️    | `:card_file_box:` | Database changes/migrations |
+| 🔒     | `:lock:`          | Security improvements       |
+| ♻️     | `:recycle:`       | Refactoring code            |
+| 🚀     | `:rocket:`        | Deployment/performance      |
+| 🔥     | `:fire:`          | Removing code/files         |
+| 💄     | `:lipstick:`      | UI/styling updates          |
+| 🧪     | `:test_tube:`     | Adding tests                |
+| 📦     | `:package:`       | Dependencies/packages       |
 
 ### Examples
 
 ```bash
-# Feature
-✨ feat: add user authentication system
+# Feature (ticket required)
+✨ feat(auth): TAR-123 add user authentication system
 
-# Bug fix
-🐛 fix: resolve validation error for company names
+# Bug fix (ticket required)
+🐛 fix(company): TAR-456 resolve validation error for company names
 
-# Database change
-🗃️ feat: add organization_id to companies table
+# Database change (ticket required)
+🗃️ feat(db): TAR-789 add organization_id to companies table
 
-# Security fix
-🔒 fix: sanitize user input to prevent XSS
+# Security fix (ticket required)
+🔒 fix(api): TAR-101 sanitize user input to prevent XSS
+
+# Chore (ticket optional)
+🔧 chore(deps): update frontend dependencies
+
+# Documentation (ticket optional)
+📝 docs(readme): update installation instructions
 ```
 
 ---
@@ -81,8 +91,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 git checkout main
 git pull origin main
 
-# Create feature branch
-git checkout -b feat/feature-name
+# Create feature branch (include Jira ticket)
+git checkout -b feat/TAR-123-feature-name
 ```
 
 ### 2. Make Changes
@@ -99,7 +109,7 @@ git add .
 
 # Commit with gitmoji format
 git commit -m "$(cat <<'EOF'
-✨ feat: add company search functionality
+✨ feat(search): TAR-123 add company search functionality
 
 - Add search endpoint with filters
 - Add frontend search component
@@ -116,10 +126,10 @@ EOF
 
 ```bash
 # Push feature branch
-git push -u origin feat/feature-name
+git push -u origin feat/TAR-123-feature-name
 
 # Create pull request
-gh pr create --title "feat: add company search" --body "..."
+gh pr create --title "feat(search): TAR-123 add company search" --body "..."
 ```
 
 ### 5. Merge After Review
@@ -135,6 +145,7 @@ After approval, merge to main via GitHub/GitLab UI.
 - ✅ Create feature branches for all work
 - ✅ Write clear commit messages
 - ✅ Use gitmoji for visual context
+- ✅ Include Jira ticket (TAR-xxx) in commits (except chore/docs)
 - ✅ Test before committing
 - ✅ Create PR/MR for code review
 
@@ -156,9 +167,9 @@ One logical change per commit:
 
 ```bash
 # ✅ GOOD - Separate concerns
-git commit -m "✨ feat: add search endpoint"
-git commit -m "💄 feat: add search UI component"
-git commit -m "🧪 test: add search tests"
+git commit -m "✨ feat(api): TAR-123 add search endpoint"
+git commit -m "💄 feat(ui): TAR-123 add search UI component"
+git commit -m "🧪 test(search): TAR-123 add search tests"
 
 # ❌ BAD - Mixed concerns
 git commit -m "Add search feature, fix bug, update docs"
@@ -171,11 +182,11 @@ Group related changes logically:
 ```bash
 # All changes to search feature
 git add src/api/search.py src/services/search.py
-git commit -m "✨ feat: add search backend"
+git commit -m "✨ feat(api): TAR-123 add search backend"
 
 # All changes to UI
 git add src/components/SearchForm.vue
-git commit -m "💄 feat: add search form component"
+git commit -m "💄 feat(ui): TAR-123 add search form component"
 ```
 
 ### Test Before Commit
@@ -186,8 +197,8 @@ ruff check . && ruff format .
 pytest
 
 # TypeScript
-pnpm lint
-pnpm test
+yarn lint
+yarn test
 ```
 
 ---

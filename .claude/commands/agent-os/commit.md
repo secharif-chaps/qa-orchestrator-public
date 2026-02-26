@@ -21,6 +21,7 @@ Analyze all changes, intelligently group them by scope and type, then create foc
 4. **Creates Focused Commits**
    - Stages relevant files for each logical group
    - Writes descriptive commit messages with gitmoji
+   - Includes Jira ticket (TAR-xxx) in the description
    - Includes detailed bullet points for complex changes
    - Always includes Claude footer
 
@@ -34,7 +35,7 @@ Analyze all changes, intelligently group them by scope and type, then create foc
 Each commit follows this structure:
 
 ```
-<gitmoji> <type>(<scope>): <description>
+<gitmoji> <type>(<scope>): TAR-xxx <description>
 
 - Detailed change 1
 - Detailed change 2
@@ -44,6 +45,8 @@ Each commit follows this structure:
 
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
+
+**Note**: `chore` and `docs` commits may omit the Jira ticket number (TAR-xxx).
 
 ## Common Gitmojis
 
@@ -88,15 +91,15 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 **CRITICAL**: Never commit directly to main branch!
 
 ### Branch Naming Conventions
-- `feat/feature-name` - New features
-- `fix/bug-name` - Bug fixes
-- `refactor/refactor-name` - Code refactoring
-- `docs/doc-name` - Documentation updates
-- `chore/task-name` - Maintenance tasks
+- `feat/TAR-xxx-feature-name` - New features
+- `fix/TAR-xxx-bug-name` - Bug fixes
+- `refactor/TAR-xxx-refactor-name` - Code refactoring
+- `docs/doc-name` - Documentation updates (ticket optional)
+- `chore/task-name` - Maintenance tasks (ticket optional)
 
 ### Workflow Steps
 1. Check if on main branch
-2. If on main, create feature branch with appropriate prefix
+2. If on main, create feature branch with appropriate prefix (include Jira ticket)
 3. Make commits on feature branch
 4. Push feature branch to origin
 5. Remind user to create merge/pull request
@@ -112,7 +115,7 @@ The agent will:
 1. Check current branch and create feature branch if needed
 2. Analyze all your changes
 3. Group them intelligently
-4. Create multiple focused commits
+4. Create multiple focused commits (with TAR-xxx ticket reference)
 5. Push feature branch to origin
 6. Prompt you to create merge/pull request
 
@@ -121,24 +124,24 @@ The agent will:
 After completion, you'll see:
 
 ```
-## Feature Branch: feat/collapsible-navigation
+## Feature Branch: feat/TAR-123-collapsible-navigation
 
 ## Commits Created & Pushed:
 
-1. **✨ feat(sidebar): add collapsible navigation menu**
+1. **✨ feat(sidebar): TAR-123 add collapsible navigation menu**
    - Implemented toggle functionality
    - Added animation transitions
    - Updated mobile responsiveness
 
-2. **💄 style(components): update Badge component theming**
+2. **💄 style(components): TAR-123 update Badge component theming**
    - Added dark mode support
    - Improved color contrast for accessibility
 
-3. **🧪 test(sidebar): add navigation tests**
+3. **🧪 test(sidebar): TAR-123 add navigation tests**
    - Unit tests for toggle behavior
    - Accessibility tests
 
-All changes committed and pushed to origin/feat/collapsible-navigation ✅
+All changes committed and pushed to origin/feat/TAR-123-collapsible-navigation
 
 Next step: Create a merge/pull request to merge into main
 ```
@@ -149,6 +152,7 @@ Next step: Create a merge/pull request to merge into main
 - Automatically creates feature branch if on main
 - Quality over quantity - creates fewer, well-organized commits
 - Always includes Claude footer for attribution
+- Always includes Jira ticket (TAR-xxx) except for chore/docs
 - Pushes feature branch after all commits are created
 - Reminds user to create merge/pull request
 - Use for any number of changes - from few files to large refactors
