@@ -27,7 +27,7 @@ include:
 sast:
   stage: CodingStandards
 
-secret-detection:
+secret_detection:
   stage: CodingStandards
 
 # ─── Commit message lint ──────────────────────────────
