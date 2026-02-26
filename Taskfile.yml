@@ -7,14 +7,41 @@ vars:
 tasks:
   # ─── Setup ─────────────────────────────────────────
   init:
-    desc: First-time setup — copy env, install deps, start services, migrate
+    desc: First-time setup — copy env, configure yarn, install deps, start services, migrate
     cmds:
       - test -f .env || cp .env.example .env && echo "Created .env from .env.example"
+      - task: front:setup-yarnrc
       - cd apps/front && yarn install
       - "{{.COMPOSE}} up -d --build"
       - "{{.COMPOSE}} exec screen alembic upgrade head"
       - echo ""
       - echo "Ready! Run 'task' for available commands."
+
+  front:setup-yarnrc:
+    desc: Create or update apps/front/.yarnrc.yml from template (interactive)
+    cmds:
+      - |
+        if [ -f apps/front/.yarnrc.yml ] && ! grep -q '<OWLINT_' apps/front/.yarnrc.yml; then
+          echo "apps/front/.yarnrc.yml already configured, skipping."
+          exit 0
+        fi
+        echo "Configuring apps/front/.yarnrc.yml from template..."
+        echo "(Credentials available in Passbolt — search for 'CHAPSMIND_VUELLAR')"
+        echo ""
+        if [ -t 0 ]; then
+          read -rp "OWLINT_REGISTRY_URL: " REGISTRY_URL
+          read -rp "OWLINT_DEPLOY_KEY: " DEPLOY_KEY
+        elif [ -n "$OWLINT_REGISTRY_URL" ] && [ -n "$OWLINT_DEPLOY_KEY" ]; then
+          REGISTRY_URL="$OWLINT_REGISTRY_URL"
+          DEPLOY_KEY="$OWLINT_DEPLOY_KEY"
+        else
+          echo "Error: not interactive and OWLINT_REGISTRY_URL / OWLINT_DEPLOY_KEY env vars not set"
+          exit 1
+        fi
+        sed -e "s|<OWLINT_REGISTRY_URL>|${REGISTRY_URL}|g" \
+            -e "s|<OWLINT_DEPLOY_KEY>|${DEPLOY_KEY}|g" \
+            apps/front/.yarnrc.dist.yml > apps/front/.yarnrc.yml
+        echo "Created apps/front/.yarnrc.yml"
 
   # ─── Infrastructure ────────────────────────────────
   up:

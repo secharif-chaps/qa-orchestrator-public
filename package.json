@@ -1,7 +1,6 @@
 {
   "name": "chapsmind",
   "private": true,
-  "workspaces": ["apps/front"],
   "scripts": {
     "prepare": "husky"
   },
