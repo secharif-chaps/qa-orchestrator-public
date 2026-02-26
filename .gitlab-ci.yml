@@ -9,11 +9,37 @@ stages:
   - Deploy
   - Maintenance
 
+variables:
+  AST_ENABLE_MR_PIPELINES: true
+
 include:
+  # App CI configs
   - local: apps/front/.gitlab-ci.yml
   - local: apps/screen/.gitlab-ci.yml
   - local: apps/global-service/.gitlab-ci.yml
   - local: infra/.gitlab-ci.yml
+  # GitLab security templates (free tier — results as JSON artifacts)
+  - template: Jobs/SAST.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
+
+# ─── Override security template stages ────────────────
+# SAST and Secret Detection templates default to stage: test which doesn't exist
+sast:
+  stage: CodingStandards
+
+secret-detection:
+  stage: CodingStandards
+
+# ─── Commit message lint ──────────────────────────────
+main:commitlint:
+  stage: CodingStandards
+  image: node:22-alpine
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - npm install --global @commitlint/cli @commitlint/config-conventional
+    - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME --depth=50
+    - npx commitlint --from "origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME" --to HEAD --config commitlint.config.mjs
 
 # ─── Assign reviewers based on CODEOWNERS ─────────────
 main:assign-reviewers:
