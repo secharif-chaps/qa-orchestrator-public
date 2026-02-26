@@ -120,9 +120,9 @@ services:
     networks:
       - mint-network
 
-  # Keycloak for Authentication
+  # Keycloak for Authentication (with ChapsMind theme baked in)
   keycloak:
-    image: keycloak/keycloak:26.4.6
+    image: registry.git.mediaspeech.com/mint/keycloak-theme/keycloak-chapsmind:latest
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -170,6 +170,7 @@ services:
       retries: 5
     networks:
       - mint-network
+
   # RabbitMQ Message Broker
   rabbitmq:
     image: rabbitmq:3.12-management-alpine
