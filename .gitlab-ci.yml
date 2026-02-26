@@ -3,13 +3,11 @@
 # Doc: https://docs.gitlab.com/ee/ci/yaml/#include
 
 stages:
-  - lint
-  - test
-  - build
-  - deploy:integration
-  - deploy:preprod
-  - deploy:prod
-  - maintenance
+  - Build
+  - CodingStandards
+  - Publish
+  - Deploy
+  - Maintenance
 
 include:
   - local: apps/front/.gitlab-ci.yml
@@ -19,7 +17,7 @@ include:
 
 # ─── Assign reviewers based on CODEOWNERS ─────────────
 assign-reviewers:
-  stage: lint
+  stage: CodingStandards
   image: python:3.12-slim
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -31,7 +29,7 @@ assign-reviewers:
 
 # ─── Scheduled maintenance jobs ──────────────────────
 update-codeowners:
-  stage: maintenance
+  stage: Maintenance
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
   image: python:3.12-slim

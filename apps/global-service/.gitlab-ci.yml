@@ -1,11 +1,6 @@
 # Global Service GitLab CI/CD Pipeline
-# Builds and publishes Docker image to GitLab Container Registry on main branch
-
-stages:
-  - lint
-  - test
-  - build
-  - publish
+# Builds and publishes Docker image to GitLab Container Registry
+# Stages are defined in the root .gitlab-ci.yml
 
 variables:
   IMAGE_NAME: ${CI_REGISTRY_IMAGE}/global-service
@@ -14,7 +9,7 @@ variables:
 
 # ---- Rules ----
 
-.default-rules: &default-rules
+.gs-rules: &gs-rules
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
@@ -25,21 +20,19 @@ variables:
       changes:
         - apps/global-service/**/*
 
-# ---- Lint Stage ----
+# ---- CodingStandards Stage ----
 
-lint:
-  stage: lint
+gs:lint:
+  stage: CodingStandards
   image: python:3.12-slim
   before_script:
     - pip install ruff
   script:
     - cd apps/global-service && ruff check app/ --exclude "app/grpc_generated/*"
-  <<: *default-rules
+  <<: *gs-rules
 
-# ---- Test Stage ----
-
-test:
-  stage: test
+gs:test:
+  stage: CodingStandards
   image: python:3.12-slim
   before_script:
     - pip install poetry
@@ -47,27 +40,27 @@ test:
     - cd apps/global-service && python scripts/generate_protos.py
   script:
     - cd apps/global-service && pytest tests/ -v --cov=app --cov-report=term-missing
-  <<: *default-rules
+  <<: *gs-rules
 
 # ---- Build template ----
 
 .build:
-  image: docker:29-cli
+  image: docker:cli
   script:
     - echo Building $IMAGE_NAME:$IMAGE_TAG
     - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" apps/global-service/
 
 # ---- Build Stage ----
 
-build:
-  stage: build
+gs:build:
+  stage: Build
   extends: .build
-  <<: *default-rules
+  <<: *gs-rules
 
 # ---- Publish Stage ----
 
-publish:
-  stage: publish
+gs:publish:
+  stage: Publish
   extends: .build
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY

@@ -1,10 +1,6 @@
 # Frontend GitLab CI/CD Pipeline
 # Builds, lints, and publishes Docker image to GitLab Container Registry
-
-stages:
-  - Build
-  - CodingStandards
-  - Publish
+# Stages are defined in the root .gitlab-ci.yml
 
 variables:
   IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-front

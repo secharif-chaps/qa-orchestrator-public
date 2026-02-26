@@ -1,9 +1,6 @@
 # Screen Backend GitLab CI/CD Pipeline
-# Builds and publishes Docker image to GitLab Container Registry on main branch
-
-stages:
-  - build
-  - publish
+# Builds and publishes Docker image to GitLab Container Registry
+# Stages are defined in the root .gitlab-ci.yml
 
 variables:
   IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-screen
@@ -12,7 +9,7 @@ variables:
 
 # ---- Rules ----
 
-.default-rules: &default-rules
+.screen-rules: &screen-rules
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
@@ -22,6 +19,27 @@ variables:
     - if: $CI_COMMIT_BRANCH
       changes:
         - apps/screen/**/*
+
+# ---- CodingStandards Stage ----
+
+screen:lint:
+  stage: CodingStandards
+  image: python:3.12-slim
+  before_script:
+    - pip install ruff
+  script:
+    - cd apps/screen && ruff check app/
+  <<: *screen-rules
+
+screen:test:
+  stage: CodingStandards
+  image: python:3.12-slim
+  before_script:
+    - pip install poetry
+    - cd apps/screen && poetry config virtualenvs.create false && poetry install --no-interaction
+  script:
+    - cd apps/screen && pytest tests/ -v --cov=app --cov-report=term-missing
+  <<: *screen-rules
 
 # ---- Build template ----
 
@@ -33,15 +51,15 @@ variables:
 
 # ---- Build Stage ----
 
-build:
-  stage: build
+screen:build:
+  stage: Build
   extends: .build
-  <<: *default-rules
+  <<: *screen-rules
 
 # ---- Publish Stage ----
 
-publish:
-  stage: publish
+screen:publish:
+  stage: Publish
   extends: .build
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
