@@ -122,9 +122,9 @@ services:
     networks:
       - chapsmind-network
 
-  # Keycloak for Authentication
+  # Keycloak for Authentication (with ChapsMind theme baked in)
   keycloak:
-    image: keycloak/keycloak:26.4.6
+    image: registry.git.mediaspeech.com/mint/keycloak-theme/keycloak-chapsmind:latest
     restart: unless-stopped
     ports:
       - "8080:8080"
