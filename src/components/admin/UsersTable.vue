@@ -30,7 +30,7 @@
         <Tag
           v-if="item.permission_tier"
           :label="getPermissionTierLabel(item.permission_tier)"
-          variant="success"
+          :variant="getRoleVariant(item.permission_tier)"
           size="sm"
         />
         <Tag v-else :label="$t('admin.users.roles.custom', 'Custom')" variant="slate" size="sm" />
@@ -156,8 +156,14 @@ const getPermissionTierLabel = (tier: string): string => {
     reader: t('admin.users.roles.reader', 'Reader'),
     writer: t('admin.users.roles.writer', 'Writer'),
     manager: t('admin.users.roles.manager', 'Manager'),
+    admin: t('admin.users.roles.admin', 'Admin'),
   }
   return tierLabels[tier] || tier
+}
+
+// Helper to get tag variant based on role (admin = accent/rose, others = success/green)
+const getRoleVariant = (tier: string): 'success' | 'accent' => {
+  return tier === 'admin' ? 'accent' : 'success'
 }
 
 // Helper to get row key for table

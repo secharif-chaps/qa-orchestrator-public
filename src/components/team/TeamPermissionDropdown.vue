@@ -12,29 +12,30 @@
       >
         <!-- Loading state -->
         <span v-if="isLoadingPermissions" class="text-secondary flex items-center gap-2">
-          <i class="fa fa-spinner fa-spin text-sm"></i>
+          <Icon icon="fa-spinner" class="fa-spin text-sm" />
           {{ $t('settings.team.loadingPermissions', 'Loading...') }}
         </span>
         <!-- Permission loaded -->
         <span v-else-if="selectedTier" class="flex items-center gap-2">
-          <i :class="getPermissionIcon(selectedTier)" class="text-sm"></i>
+          <Icon :icon="getPermissionIcon(selectedTier)" class="text-sm" />
           {{ permissionOptions.find((p) => p.value === selectedTier)?.label }}
         </span>
         <!-- Not loaded yet -->
         <span v-else class="text-secondary">
           {{ $t('settings.team.selectPermission', 'Select permission...') }}
         </span>
-        <i
-          class="fa fa-chevron-down text-xs transition-transform"
+        <Icon
+          icon="fa-chevron-down"
+          class="text-xs transition-transform"
           :class="{ 'rotate-180': isOpen }"
-        ></i>
+        />
       </button>
     </template>
 
     <template #content="{ close }">
       <!-- Loading state in dropdown -->
       <div v-if="isLoadingPermissions" class="py-4 text-center">
-        <i class="fa fa-spinner fa-spin text-primary"></i>
+        <Icon icon="fa-spinner" class="fa-spin text-primary"></Icon>
       </div>
       <!-- Permission options -->
       <div v-else class="py-1">
@@ -46,12 +47,16 @@
           :class="{ 'bg-primary-light': selectedTier === permission.value }"
           @click="selectPermission(permission.value, close)"
         >
-          <i :class="getPermissionIcon(permission.value)" class="w-4 text-base"></i>
+          <Icon :icon="getPermissionIcon(permission.value)" class="w-4 text-base"></Icon>
           <div class="flex-1">
             <div class="font-medium">{{ permission.label }}</div>
             <div class="text-secondary text-xs">{{ permission.description }}</div>
           </div>
-          <i v-if="selectedTier === permission.value" class="fa fa-check text-success"></i>
+          <Icon
+            icon="fa-check"
+            v-if="selectedTier === permission.value"
+            class="text-success"
+          ></Icon>
         </button>
       </div>
     </template>
@@ -63,12 +68,13 @@
  * Permission dropdown with lazy-loading.
  * Fetches permissions from API only when dropdown is opened.
  */
-import { computed, ref, type ComputedRef } from 'vue'
-import { useQuery } from '@pinia/colada'
-import { useI18n } from 'vue-i18n'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import { memberPermissionsQuery } from '@/queries/team'
 import type { PermissionTier } from '@/types/team'
+import { Icon } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, ref, type ComputedRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
@@ -114,9 +120,10 @@ const selectPermission = (tier: PermissionTier, closeDropdown: () => void) => {
 // Get icon for each permission tier
 const getPermissionIcon = (tier: PermissionTier): string => {
   const icons: Record<PermissionTier, string> = {
-    reader: 'fa fa-eye',
-    writer: 'fa fa-pen',
-    manager: 'fa fa-user-shield',
+    reader: 'fa-eye',
+    writer: 'fa-pen',
+    manager: 'fa-user-shield',
+    admin: 'fa-crown',
   }
   return icons[tier]
 }
@@ -139,6 +146,11 @@ const permissionOptions: ComputedRef<
     value: 'manager',
     label: t('settings.team.permissions.manager', 'Manager'),
     description: t('settings.team.permissions.managerDesc', 'Full team management'),
+  },
+  {
+    value: 'admin',
+    label: t('settings.team.permissions.admin', 'Admin'),
+    description: t('settings.team.permissions.adminDesc', 'Full admin access'),
   },
 ])
 </script>
