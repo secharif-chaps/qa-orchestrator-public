@@ -9,8 +9,8 @@ Complete local development setup with Keycloak, PostgreSQL, RabbitMQ, and backen
 
 ## File Structure
 
-- `docker-compose.yml` - Base configuration (preprod/production)
-- `docker-compose.local.yml` - Local development overrides (builds from `../apps/`)
+- `compose.yaml` - Base configuration (preprod/production)
+- `compose.local.yaml` - Local development overrides (builds from `../apps/`)
 
 ## Fresh Installation
 
@@ -22,10 +22,10 @@ task init
 
 # Or manually from the infra directory:
 cd infra
-docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
+docker compose -f compose.yaml -f compose.local.yaml up -d --build
 ./scripts/init-keycloak.sh
-docker compose -f docker-compose.yml -f docker-compose.local.yml exec screen alembic upgrade head
-docker compose -f docker-compose.yml -f docker-compose.local.yml restart screen
+docker compose -f compose.yaml -f compose.local.yaml exec screen alembic upgrade head
+docker compose -f compose.yaml -f compose.local.yaml restart screen
 
 # (Optional) Seed sample data for testing
 ./scripts/seed-workflow-configs.sh
@@ -220,7 +220,7 @@ Forwarding    https://abc123.ngrok-free.app -> http://localhost:8000
 Update the `BACKEND_BASE_URL` environment variable to use your ngrok URL:
 
 ```bash
-# In docker-compose.local.yml, update the backend environment:
+# In compose.local.yaml, update the backend environment:
 BACKEND_BASE_URL: https://abc123.ngrok-free.app/api
 ```
 

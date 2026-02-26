@@ -12,4 +12,4 @@ infra:validate:
     - <<: *infra-changes
   image: docker:29-cli
   script:
-    - docker compose -f infra/docker-compose.yml config --quiet
+    - docker compose -f infra/compose.yaml config --quiet

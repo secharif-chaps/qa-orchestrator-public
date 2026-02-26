@@ -13,18 +13,18 @@ services:
       - keycloak
       - frontend
     networks:
-      - mint-network
+      - chapsmind-network
 
   # Vue Frontend
   frontend:
-    image: registry.git.mediaspeech.com/mint/screen-front/mint-front:preprod
+    image: registry.git.mediaspeech.com/chapsmind/screen-front/chapsmind-front:preprod
     restart: always
     networks:
-      - mint-network
+      - chapsmind-network
 
   # FastAPI Backend (Screen)
   screen:
-    image: registry.git.mediaspeech.com/mint/screen-poc/mint-back:preprod
+    image: registry.git.mediaspeech.com/chapsmind/screen/chapsmind-screen:preprod
     depends_on:
       db:
         condition: service_healthy
@@ -34,11 +34,12 @@ services:
     environment:
       DATABASE_HOST: db
       DATABASE_PORT: 5432
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/mint_db
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/chapsmind_db
       KEYCLOAK_SERVER_URL: http://keycloak:8080
-      KEYCLOAK_REALM: mint-dev
-      KEYCLOAK_CLIENT_ID: mint-back
-      KEYCLOAK_CLIENT_SECRET: 
+      # NOTE: Keycloak server realm/client must be updated separately
+      KEYCLOAK_REALM: chapsmind-dev
+      KEYCLOAK_CLIENT_ID: chapsmind-screen-back
+      KEYCLOAK_CLIENT_SECRET:
       KEYCLOAK_ADMIN_USERNAME: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       CORS_ORIGIN: http://localhost
@@ -55,15 +56,15 @@ services:
       # Encryption KEY
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
     networks:
-      - mint-network
+      - chapsmind-network
 
   # Celery Worker for Task Processing
   screen_celery_worker:
-    image: registry.git.mediaspeech.com/mint/screen-poc/mint-back:preprod
+    image: registry.git.mediaspeech.com/chapsmind/screen/chapsmind-screen:preprod
     entrypoint: celery -A app.core.celery_app worker --loglevel=info --concurrency=4 --pool=solo --queues=dify_workflows
     restart: always
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/mint_db
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/chapsmind_db
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672//
       MAX_CONCURRENT_WORKFLOWS: 10
       BACKEND_BASE_URL: http://localhost
@@ -73,10 +74,10 @@ services:
       db:
         condition: service_healthy
     networks:
-      - mint-network
+      - chapsmind-network
 
   screen_celery_flower:
-    image: registry.git.mediaspeech.com/mint/screen-poc/mint-back:preprod
+    image: registry.git.mediaspeech.com/chapsmind/screen/chapsmind-screen:preprod
     entrypoint: celery -A app.core.celery_app flower --port=5555 --broker=amqp://guest:guest@rabbitmq:5672//
     restart: always
     ports:
@@ -87,11 +88,11 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - mint-network
+      - chapsmind-network
 
   # Global Service (Gateway) - Proxies /api requests to backend monolith
   global-service:
-    image: registry.git.mediaspeech.com/mint/chapsmind-global-service:preprod
+    image: registry.git.mediaspeech.com/chapsmind/global-service/chapsmind-global-service:preprod
     restart: always
     depends_on:
       db:
@@ -110,15 +111,16 @@ services:
       CORS_ORIGIN: http://localhost
       # Keycloak settings (same as backend)
       KEYCLOAK_SERVER_URL: http://keycloak:8080
-      KEYCLOAK_REALM: mint-dev
-      KEYCLOAK_CLIENT_ID: mint-back
+      # NOTE: Keycloak server realm/client must be updated separately
+      KEYCLOAK_REALM: chapsmind-dev
+      KEYCLOAK_CLIENT_ID: chapsmind-screen-back
       KEYCLOAK_CLIENT_SECRET:
       KEYCLOAK_ADMIN_CLIENT_ID: admin-cli
       KEYCLOAK_ADMIN_CLIENT_SECRET:
       # Internal JWT for service-to-service communication (same secret as backend)
       INTERNAL_JWT_SECRET: ${INTERNAL_JWT_SECRET}
     networks:
-      - mint-network
+      - chapsmind-network
 
   # Keycloak for Authentication
   keycloak:
@@ -150,7 +152,7 @@ services:
       retries: 5
       start_period: 60s
     networks:
-      - mint-network
+      - chapsmind-network
 
   # PostgreSQL Database
   db:
@@ -159,7 +161,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: mint_db
+      POSTGRES_DB: chapsmind_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./files/db/initdb.d:/docker-entrypoint-initdb.d:ro
@@ -169,7 +171,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - mint-network
+      - chapsmind-network
   # RabbitMQ Message Broker
   rabbitmq:
     image: rabbitmq:3.12-management-alpine
@@ -188,12 +190,12 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - mint-network
+      - chapsmind-network
 
 volumes:
   postgres_data:
   rabbitmq_data:
 
 networks:
-  mint-network:
+  chapsmind-network:
     driver: bridge

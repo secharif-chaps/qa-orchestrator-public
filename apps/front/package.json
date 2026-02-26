@@ -17,8 +17,7 @@
     "format": "prettier --write src/",
     "stylelint": "stylelint \"src/**/*.{vue,css}\" --fix",
     "test": "vitest",
-    "test:run": "vitest run",
-    "prepare": "husky"
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@internationalized/date": "^3.11.0",

@@ -114,7 +114,7 @@ pytest
 ```
 ### Runing gRPC tests:
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.local.yml  exec -e PYTHONPATH=/app global-service poetry run pytest tests/grpc/test_grpc_server.py -v
+docker compose -f compose.yaml -f compose.local.yaml exec -e PYTHONPATH=/app global-service poetry run pytest tests/grpc/test_grpc_server.py -v
 ```
  
 ## License

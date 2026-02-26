@@ -2,7 +2,7 @@
 version: '3'
 
 vars:
-  COMPOSE: docker compose -f infra/docker-compose.yml -f infra/docker-compose.local.yml
+  COMPOSE: docker compose -f infra/compose.yaml -f infra/compose.local.yaml
 
 tasks:
   # ─── Setup ─────────────────────────────────────────
@@ -52,7 +52,7 @@ tasks:
 
   db:shell:
     desc: Open psql shell
-    cmd: "{{.COMPOSE}} exec db psql -U postgres -d mint_db"
+    cmd: "{{.COMPOSE}} exec db psql -U postgres -d chapsmind_db"
 
   # ─── Frontend ──────────────────────────────────────
   front:dev:
@@ -100,6 +100,11 @@ tasks:
   sync:module:
     desc: "Pull latest from a legacy repo (e.g. task sync:module -- front)"
     cmd: bash scripts/subtree-sync.sh {{.CLI_ARGS}}
+
+  # ─── Git Hooks ─────────────────────────────────────
+  hooks:install:
+    desc: Install git hooks (husky)
+    cmd: yarn install
 
   # ─── All ────────────────────────────────────────────
   lint:

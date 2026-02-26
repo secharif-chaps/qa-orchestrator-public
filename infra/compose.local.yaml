@@ -12,7 +12,7 @@ services:
     build:
       context: ../apps/front
       dockerfile: Dockerfile
-    image: mint-front:local
+    image: chapsmind-front:local
     ports:
       - "3000:80"
     environment:
@@ -28,7 +28,7 @@ services:
     build:
       context: ../apps/screen
       dockerfile: Dockerfile
-    image: mint-back:local
+    image: chapsmind-screen:local
     ports:
       - "8000:8000"  # Expose backend directly
     depends_on:
@@ -72,7 +72,7 @@ services:
     build:
       context: ../apps/screen
       dockerfile: Dockerfile
-    image: mint-back:local
+    image: chapsmind-screen:local
     environment:
       BACKEND_BASE_URL: http://localhost:8000/api
       LOG_LEVEL: INFO  # Use INFO level for local development
@@ -86,7 +86,7 @@ services:
     build:
       context: ../apps/screen
       dockerfile: Dockerfile
-    image: mint-back:local
+    image: chapsmind-screen:local
 
   # Global Service (Gateway) - Proxies /api requests to backend monolith
   global-service:
@@ -130,4 +130,4 @@ services:
       - ../apps/global-service/tests:/app/tests
       - ../apps/global-service/scripts:/app/scripts
     networks:
-      - mint-network
+      - chapsmind-network

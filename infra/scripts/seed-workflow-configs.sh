@@ -5,11 +5,11 @@
 set -e
 
 # Use the dc alias format or full command
-DC="${DC:-docker compose -f docker-compose.yml -f docker-compose.local.yml}"
+DC="${DC:-docker compose -f compose.yaml -f compose.local.yaml}"
 
 echo "🔧 Seeding workflow_configs with Dify API keys..."
 
-$DC exec -T db psql -U postgres -d mint_db << 'EOF'
+$DC exec -T db psql -U postgres -d chapsmind_db << 'EOF'
 -- Clear existing configs (if any) and insert fresh data
 TRUNCATE TABLE workflow_configs RESTART IDENTITY CASCADE;
 
@@ -31,4 +31,4 @@ echo ""
 echo "✅ Workflow configs seeded successfully!"
 echo ""
 echo "You can verify with:"
-echo "  $DC exec db psql -U postgres -d mint_db -c 'SELECT * FROM workflow_configs;'"
+echo "  $DC exec db psql -U postgres -d chapsmind_db -c 'SELECT * FROM workflow_configs;'"

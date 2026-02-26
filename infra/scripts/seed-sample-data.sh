@@ -12,7 +12,7 @@
 set -e
 
 # Use the dc alias format or full command
-DC="${DC:-docker compose -f docker-compose.yml -f docker-compose.local.yml}"
+DC="${DC:-docker compose -f compose.yaml -f compose.local.yaml}"
 
 echo "🔧 Seeding sample data..."
 
@@ -49,7 +49,7 @@ echo "   Admin User ID: $ADMIN_USER_ID"
 echo ""
 echo "📦 Inserting sample data into database..."
 
-$DC exec -T db psql -U postgres -d mint_db << EOF
+$DC exec -T db psql -U postgres -d chapsmind_db << EOF
 -- Create a sample folder
 INSERT INTO folders (id, organization_id, owner_id, owner, name, color, icon, tags, is_deleted, created_at, updated_at)
 VALUES (

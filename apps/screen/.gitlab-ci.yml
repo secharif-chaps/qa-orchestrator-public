@@ -26,8 +26,8 @@ screen:build:
     - <<: *screen-changes
   image: docker:29-cli
   script:
-    - docker build -t $CI_REGISTRY_IMAGE/mint-screen:$CI_COMMIT_SHORT_SHA apps/screen/
-    - docker push $CI_REGISTRY_IMAGE/mint-screen:$CI_COMMIT_SHORT_SHA
+    - docker build -t $CI_REGISTRY_IMAGE/chapsmind-screen:$CI_COMMIT_SHORT_SHA apps/screen/
+    - docker push $CI_REGISTRY_IMAGE/chapsmind-screen:$CI_COMMIT_SHORT_SHA
 
 screen:deploy:integration:
   stage: deploy:integration
@@ -37,8 +37,8 @@ screen:deploy:integration:
   environment:
     name: integration
   script:
-    - docker tag $CI_REGISTRY_IMAGE/mint-screen:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/mint-screen:integration
-    - docker push $CI_REGISTRY_IMAGE/mint-screen:integration
+    - docker tag $CI_REGISTRY_IMAGE/chapsmind-screen:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/chapsmind-screen:integration
+    - docker push $CI_REGISTRY_IMAGE/chapsmind-screen:integration
 
 screen:deploy:preprod:
   stage: deploy:preprod
@@ -48,8 +48,8 @@ screen:deploy:preprod:
   environment:
     name: preprod
   script:
-    - docker tag $CI_REGISTRY_IMAGE/mint-screen:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/mint-screen:preprod
-    - docker push $CI_REGISTRY_IMAGE/mint-screen:preprod
+    - docker tag $CI_REGISTRY_IMAGE/chapsmind-screen:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/chapsmind-screen:preprod
+    - docker push $CI_REGISTRY_IMAGE/chapsmind-screen:preprod
 
 screen:deploy:prod:
   stage: deploy:prod
@@ -60,5 +60,5 @@ screen:deploy:prod:
     name: production
   when: manual
   script:
-    - docker tag $CI_REGISTRY_IMAGE/mint-screen:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/mint-screen:prod
-    - docker push $CI_REGISTRY_IMAGE/mint-screen:prod
+    - docker tag $CI_REGISTRY_IMAGE/chapsmind-screen:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/chapsmind-screen:prod
+    - docker push $CI_REGISTRY_IMAGE/chapsmind-screen:prod

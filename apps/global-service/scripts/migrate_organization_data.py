@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Data migration script: Copy organization data from backend to global-service.
 
-This script migrates data from the backend's mint_db to global-service's
+This script migrates data from the backend's chapsmind_db to global-service's
 global_db.global_schema for Phase 2.1 of the Global Service API Gateway migration.
 
 Tables migrated:
@@ -12,15 +12,15 @@ Tables migrated:
 
 Usage:
     # From infra directory:
-    docker compose -f docker-compose.yml -f docker-compose.local.yml exec \
+    docker compose -f compose.yaml -f compose.local.yaml exec \
         global-service python scripts/migrate_organization_data.py
 
     # With dry-run (no changes):
-    docker compose -f docker-compose.yml -f docker-compose.local.yml exec \
+    docker compose -f compose.yaml -f compose.local.yaml exec \
         global-service python scripts/migrate_organization_data.py --dry-run
 
 Environment variables:
-    SOURCE_DATABASE_URL: Backend database URL (default: postgresql://postgres:postgres@db:5432/mint_db)
+    SOURCE_DATABASE_URL: Backend database URL (default: postgresql://postgres:postgres@db:5432/chapsmind_db)
     DATABASE_URL: Global service database URL (uses app config)
 """
 
@@ -49,9 +49,9 @@ from app.models.organization import (
 
 
 def get_source_engine():
-    """Create engine for source database (backend/mint_db)."""
+    """Create engine for source database (backend/chapsmind_db)."""
     source_url = os.getenv(
-        "SOURCE_DATABASE_URL", "postgresql://postgres:postgres@db:5432/mint_db"
+        "SOURCE_DATABASE_URL", "postgresql://postgres:postgres@db:5432/chapsmind_db"
     )
     return create_engine(source_url)
 

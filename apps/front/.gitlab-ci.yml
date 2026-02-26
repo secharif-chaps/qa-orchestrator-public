@@ -28,8 +28,8 @@ front:build:
     - <<: *front-changes
   image: docker:29-cli
   script:
-    - docker build -t $CI_REGISTRY_IMAGE/mint-front:$CI_COMMIT_SHORT_SHA apps/front/
-    - docker push $CI_REGISTRY_IMAGE/mint-front:$CI_COMMIT_SHORT_SHA
+    - docker build -t $CI_REGISTRY_IMAGE/chapsmind-front:$CI_COMMIT_SHORT_SHA apps/front/
+    - docker push $CI_REGISTRY_IMAGE/chapsmind-front:$CI_COMMIT_SHORT_SHA
 
 front:deploy:integration:
   stage: deploy:integration
@@ -39,8 +39,8 @@ front:deploy:integration:
   environment:
     name: integration
   script:
-    - docker tag $CI_REGISTRY_IMAGE/mint-front:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/mint-front:integration
-    - docker push $CI_REGISTRY_IMAGE/mint-front:integration
+    - docker tag $CI_REGISTRY_IMAGE/chapsmind-front:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/chapsmind-front:integration
+    - docker push $CI_REGISTRY_IMAGE/chapsmind-front:integration
 
 front:deploy:preprod:
   stage: deploy:preprod
@@ -50,8 +50,8 @@ front:deploy:preprod:
   environment:
     name: preprod
   script:
-    - docker tag $CI_REGISTRY_IMAGE/mint-front:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/mint-front:preprod
-    - docker push $CI_REGISTRY_IMAGE/mint-front:preprod
+    - docker tag $CI_REGISTRY_IMAGE/chapsmind-front:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/chapsmind-front:preprod
+    - docker push $CI_REGISTRY_IMAGE/chapsmind-front:preprod
 
 front:deploy:prod:
   stage: deploy:prod
@@ -62,5 +62,5 @@ front:deploy:prod:
     name: production
   when: manual
   script:
-    - docker tag $CI_REGISTRY_IMAGE/mint-front:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/mint-front:prod
-    - docker push $CI_REGISTRY_IMAGE/mint-front:prod
+    - docker tag $CI_REGISTRY_IMAGE/chapsmind-front:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/chapsmind-front:prod
+    - docker push $CI_REGISTRY_IMAGE/chapsmind-front:prod
