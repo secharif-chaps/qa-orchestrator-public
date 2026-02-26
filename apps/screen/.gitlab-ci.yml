@@ -7,8 +7,6 @@ variables:
   IMAGE_TAG: preprod
   DOCKER_BUILDKIT: 1
 
-# ---- Rules ----
-
 .screen-rules: &screen-rules
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
@@ -19,8 +17,6 @@ variables:
     - if: $CI_COMMIT_BRANCH
       changes:
         - apps/screen/**/*
-
-# ---- CodingStandards Stage ----
 
 screen:lint:
   stage: CodingStandards
@@ -36,12 +32,11 @@ screen:test:
   image: python:3.12-slim
   before_script:
     - pip install poetry
-    - cd apps/screen && poetry config virtualenvs.create false && poetry install --no-interaction
+    - cd apps/screen
+    - poetry config virtualenvs.create false && poetry install --no-interaction
   script:
-    - cd apps/screen && pytest tests/ -v --cov=app --cov-report=term-missing
+    - pytest tests/ -v --cov=app --cov-report=term-missing
   <<: *screen-rules
-
-# ---- Build template ----
 
 .build:
   image: docker:29-cli
@@ -49,14 +44,10 @@ screen:test:
     - echo Building $IMAGE_NAME:$IMAGE_TAG
     - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" apps/screen/
 
-# ---- Build Stage ----
-
 screen:build:
   stage: Build
   extends: .build
   <<: *screen-rules
-
-# ---- Publish Stage ----
 
 screen:publish:
   stage: Publish
