@@ -2,7 +2,7 @@
  * Team management types with permission tiers
  */
 
-export type PermissionTier = 'reader' | 'writer' | 'manager'
+export type PermissionTier = 'reader' | 'writer' | 'manager' | 'admin'
 
 /**
  * Team member for list view (without permission tier - lazy loaded)

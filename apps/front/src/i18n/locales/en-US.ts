@@ -54,6 +54,8 @@ export default {
         writerDesc: 'Create and manage content',
         manager: 'Manager',
         managerDesc: 'Full team management',
+        admin: 'Admin',
+        adminDesc: 'Full admin access',
       },
     },
     profile: {
