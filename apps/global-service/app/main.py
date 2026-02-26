@@ -10,6 +10,7 @@ from app.database import engine
 from app.api import api_router
 from app.grpc_server import create_grpc_server
 from app.proxy.client import get_proxy_client, close_proxy_client
+from app.services.keycloak_admin import keycloak_admin_service
 from app.proxy.routes import router as proxy_router
 
 # Initialize logging with configured level
@@ -75,6 +76,9 @@ async def shutdown_event():
     await close_proxy_client()
     logger.info("🔌 Proxy client closed")
 
+    # Close Keycloak admin HTTP client
+    await keycloak_admin_service.close()
+
 
 # Health check endpoints
 @app.get("/health/live", tags=["health"])
@@ -87,14 +91,10 @@ def health_live():
 
 
 @app.get("/health/ready", tags=["health"])
-def health_ready():
-    # TODO: Enhance readiness check after Phase 1 to verify:
-    # - gRPC server listening on port 50051
-    # - Proxy HTTP client pool healthy
-    # - Keycloak connectivity (optional, may add latency)
+async def health_ready():
     try:
-        with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
+        async with engine.connect() as conn:
+            await conn.execute(text("SELECT 1"))
         return {"status": "ready"}
     except Exception:
         return {"status": "not_ready"}
