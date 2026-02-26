@@ -19,6 +19,7 @@ from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.organization import get_user_organization
 from app.database import get_global_db
+from app.services.keycloak_admin import KeycloakAdminService, keycloak_admin_service
 from app.services.token_manager import TokenManager
 from app.services.user_preferences import UserPreferencesService
 
@@ -168,6 +169,16 @@ async def get_token_manager(db: AsyncSession = Depends(get_global_db)) -> TokenM
         TokenManager instance configured with the async database session.
     """
     return TokenManager(db=db)
+
+
+# KeycloakAdminService dependency
+def get_keycloak_admin() -> KeycloakAdminService:
+    """FastAPI dependency to get the KeycloakAdminService singleton.
+
+    Wrapping the singleton in a dependency makes it overridable in tests
+    via ``app.dependency_overrides``.
+    """
+    return keycloak_admin_service
 
 
 # UserPreferencesService dependency
