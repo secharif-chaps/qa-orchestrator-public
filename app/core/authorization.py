@@ -63,3 +63,23 @@ def verify_organization_access(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Access denied to this organization's {resource}",
         )
+
+
+def verify_any_role_access(user: OIDCUser, required_roles: list[str]) -> None:
+    """Verify user has at least one of the required roles.
+
+    Raises HTTPException 403 if user lacks all required roles.
+    """
+    if not user.roles or not any(role in user.roles for role in required_roles):
+        logger.warning(
+            "Role access denied",
+            extra={
+                "user": user.preferred_username,
+                "required_roles": required_roles,
+                "user_roles": user.roles,
+            },
+        )
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Access denied: requires one of {required_roles}",
+        )
