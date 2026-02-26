@@ -35,7 +35,15 @@ screen:test:
     - cd apps/screen
     - poetry config virtualenvs.create false && poetry install --no-interaction
   script:
-    - pytest tests/ -v --cov=app --cov-report=term-missing
+    - pytest tests/ -v --cov=app --cov-report=term-missing --cov-report=xml:coverage.xml --junitxml=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: apps/screen/report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: apps/screen/coverage.xml
+  coverage: '/TOTAL.*\s+(\d+%)/'
   <<: *screen-rules
 
 .build:

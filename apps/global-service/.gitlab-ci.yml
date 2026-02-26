@@ -40,7 +40,15 @@ global-service:test:
     - poetry config virtualenvs.create false && poetry install --no-interaction
     - python scripts/generate_protos.py
   script:
-    - pytest tests/ -v --cov=app --cov-report=term-missing
+    - pytest tests/ -v --cov=app --cov-report=term-missing --cov-report=xml:coverage.xml --junitxml=report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: apps/global-service/report.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: apps/global-service/coverage.xml
+  coverage: '/TOTAL.*\s+(\d+%)/'
   <<: *gs-rules
 
 # ---- Build template ----
