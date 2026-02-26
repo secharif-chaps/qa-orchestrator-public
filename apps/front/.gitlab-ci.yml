@@ -7,8 +7,6 @@ variables:
   IMAGE_TAG: preprod
   DOCKER_BUILDKIT: 1
 
-# ---- Cache ----
-
 .cache-node-modules: &cache-node-modules
   key:
     files:
@@ -17,8 +15,6 @@ variables:
   paths:
     - apps/front/node_modules
   policy: pull
-
-# ---- Rules ----
 
 .default-rules: &default-rules
   rules:
@@ -31,8 +27,6 @@ variables:
       changes:
         - apps/front/**/*
 
-# ---- Registry Setup ----
-
 .yarnrc-setup: &yarnrc-setup
   before_script:
     - cd apps/front
@@ -41,17 +35,13 @@ variables:
     - sed -i "s|<OWLINT_DEPLOY_KEY>|$OWLINT_DEPLOY_KEY|g" .yarnrc.yml
     - corepack enable
 
-# ---- Job Templates ----
-
 .default-lint-job: &default-lint-job
   image: node:22-alpine
   cache:
     - <<: *cache-node-modules
   <<: *default-rules
 
-# ---- Build Stage ----
-
-install:
+front:install:
   image: node:22-alpine
   stage: Build
   <<: *yarnrc-setup
@@ -66,15 +56,13 @@ install:
     paths:
       - apps/front/node_modules
 
-# ---- CodingStandards Stage ----
-
-eslint:
+front:eslint:
   <<: *default-lint-job
   stage: CodingStandards
   script:
     - cd apps/front && npx eslint .
 
-prettier:
+front:prettier:
   <<: *default-lint-job
   stage: CodingStandards
   script:
@@ -82,13 +70,11 @@ prettier:
   after_script:
     - cd apps/front && npx prettier --list-different --no-error-on-unmatched-pattern --ignore-unknown .
 
-stylelint:
+front:stylelint:
   <<: *default-lint-job
   stage: CodingStandards
   script:
     - cd apps/front && npx stylelint "src/**/*.{vue,css}"
-
-# ---- Publish Stage ----
 
 .docker-build:
   image: docker:29-cli
@@ -99,7 +85,7 @@ stylelint:
     - docker build --no-cache --pull --secret id=OWLINT_REGISTRY_URL,src=owlint_registry_url.txt --secret id=OWLINT_DEPLOY_KEY,src=owlint_deploy_key.txt -t "${IMAGE_NAME}:${IMAGE_TAG}" apps/front/
     - rm -f owlint_registry_url.txt owlint_deploy_key.txt
 
-docker-build:
+front:docker-build:
   stage: Publish
   extends: .docker-build
   rules:
@@ -107,7 +93,7 @@ docker-build:
       changes:
         - apps/front/**/*
 
-publish:
+front:publish:
   stage: Publish
   extends: .docker-build
   before_script:
