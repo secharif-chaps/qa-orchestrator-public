@@ -1,9 +1,10 @@
 """Account self-service endpoints for the current user.
 
-Provides REST endpoints for session management:
+Provides REST endpoints for session and activity management:
 - GET  /users/me/sessions           - List active sessions
 - DELETE /users/me/sessions/{id}    - Revoke a specific session
 - DELETE /users/me/sessions         - Revoke all sessions
+- GET  /users/me/events             - Activity events (security log)
 """
 
 from datetime import datetime, timezone
@@ -16,7 +17,12 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from app.core.dependencies import get_keycloak_admin
 from app.core.logging_config import get_logger
 from app.core.organization import OrganizationContext, get_user_organization
-from app.schemas.account import SessionListResponse, SessionResponse
+from app.schemas.account import (
+    ActivityEventResponse,
+    ActivityEventsResponse,
+    SessionListResponse,
+    SessionResponse,
+)
 from app.services.keycloak_admin import KeycloakAdminService
 
 logger = get_logger(__name__)
@@ -271,4 +277,200 @@ async def revoke_all_sessions(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to revoke all sessions",
+        )
+
+
+# ── Activity Events ────────────────────────────────────────────────
+
+# Keycloak event type → user-friendly display mapping
+_EVENT_DISPLAY_MAP: dict[str, dict[str, str]] = {
+    "LOGIN": {
+        "display_type": "login",
+        "icon": "fas fa-sign-in-alt",
+        "title": "Successful login",
+        "description": "Signed in successfully",
+    },
+    "LOGIN_ERROR": {
+        "display_type": "security",
+        "icon": "fas fa-exclamation-triangle",
+        "title": "Failed login attempt",
+        "description": "Invalid credentials or authentication failed",
+    },
+    "LOGOUT": {
+        "display_type": "login",
+        "icon": "fas fa-sign-out-alt",
+        "title": "Signed out",
+        "description": "Logged out of session",
+    },
+    "UPDATE_PROFILE": {
+        "display_type": "update",
+        "icon": "fas fa-user-edit",
+        "title": "Profile updated",
+        "description": "Account profile was modified",
+    },
+    "UPDATE_PASSWORD": {
+        "display_type": "security",
+        "icon": "fas fa-key",
+        "title": "Password changed",
+        "description": "Account password was updated",
+    },
+    "UPDATE_EMAIL": {
+        "display_type": "update",
+        "icon": "fas fa-envelope",
+        "title": "Email updated",
+        "description": "Account email was changed",
+    },
+    "UPDATE_TOTP": {
+        "display_type": "security",
+        "icon": "fas fa-mobile-alt",
+        "title": "Two-factor updated",
+        "description": "Two-factor authentication was modified",
+    },
+    "REMOVE_TOTP": {
+        "display_type": "security",
+        "icon": "fas fa-mobile-alt",
+        "title": "Two-factor removed",
+        "description": "Two-factor authentication was disabled",
+    },
+    "REFRESH_TOKEN": {
+        "display_type": "login",
+        "icon": "fas fa-sync",
+        "title": "Session refreshed",
+        "description": "Authentication token was refreshed",
+    },
+    "CODE_TO_TOKEN": {
+        "display_type": "login",
+        "icon": "fas fa-exchange-alt",
+        "title": "Token exchanged",
+        "description": "Authorization code exchanged for token",
+    },
+}
+
+# Frontend filter category → Keycloak event types
+_EVENT_TYPE_FILTERS: dict[str, list[str]] = {
+    "login": ["LOGIN", "LOGOUT", "LOGIN_ERROR", "CODE_TO_TOKEN"],
+    "security": ["LOGIN_ERROR", "UPDATE_PASSWORD", "UPDATE_TOTP", "REMOVE_TOTP"],
+    "profile": ["UPDATE_PROFILE", "UPDATE_EMAIL"],
+}
+
+
+def _get_event_display_info(event_type: str) -> dict[str, str]:
+    """Map a Keycloak event type to user-friendly display information."""
+    return _EVENT_DISPLAY_MAP.get(event_type, {
+        "display_type": "update",
+        "icon": "fas fa-info-circle",
+        "title": event_type.replace("_", " ").title(),
+        "description": f"Event: {event_type}",
+    })
+
+
+@router.get("/events", response_model=ActivityEventsResponse)
+async def get_activity_events(
+    page: int = Query(1, ge=1, description="Page number (1-indexed)"),
+    size: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
+    event_type: Optional[str] = Query(
+        None,
+        description="Filter category: login, security, profile, or all",
+    ),
+    org_context: OrganizationContext = Depends(get_user_organization),
+    kc_admin: KeycloakAdminService = Depends(get_keycloak_admin),
+) -> ActivityEventsResponse:
+    """Get activity events (security log) for the current user.
+
+    Returns a paginated list of security-relevant events from Keycloak,
+    including logins, logouts, password changes, and profile updates.
+
+    Args:
+        page: Page number (1-indexed).
+        size: Number of items per page (max 100).
+        event_type: Optional filter category (login/security/profile/all).
+        org_context: Organization context with user_id from JWT.
+
+    Returns:
+        ActivityEventsResponse with paginated events and has_more flag.
+    """
+    user_id = org_context.user_id
+    logger.info(
+        "Fetching activity events for current user",
+        extra={
+            "user_id": user_id,
+            "username": org_context.username,
+            "page": page,
+            "size": size,
+            "event_type": event_type,
+        },
+    )
+
+    try:
+        # Resolve filter category to Keycloak event types
+        keycloak_types = None
+        if event_type and event_type != "all":
+            keycloak_types = _EVENT_TYPE_FILTERS.get(event_type)
+
+        # Fetch one extra to detect whether more pages exist
+        first = (page - 1) * size
+        kc_events = await kc_admin.get_user_events(
+            user_id=user_id,
+            first=first,
+            max_results=size + 1,
+            event_types=keycloak_types,
+        )
+
+        has_more = len(kc_events) > size
+        if has_more:
+            kc_events = kc_events[:size]
+
+        # Transform Keycloak events to response format
+        events: list[ActivityEventResponse] = []
+        for kc_event in kc_events:
+            event_type_str = kc_event.get("type", "UNKNOWN")
+            display = _get_event_display_info(event_type_str)
+
+            timestamp = datetime.fromtimestamp(
+                kc_event.get("time", 0) / 1000, tz=timezone.utc,
+            )
+
+            description = display["description"]
+            details = kc_event.get("details", {})
+            if details and "auth_method" in details:
+                description += f" ({details['auth_method']})"
+
+            events.append(ActivityEventResponse(
+                id=str(kc_event.get("time", 0)),
+                type=event_type_str,
+                display_type=display["display_type"],
+                icon=display["icon"],
+                title=display["title"],
+                description=description,
+                ip_address=kc_event.get("ipAddress"),
+                timestamp=timestamp,
+            ))
+
+        logger.info(
+            "Successfully fetched activity events",
+            extra={
+                "user_id": user_id,
+                "event_count": len(events),
+                "has_more": has_more,
+            },
+        )
+
+        return ActivityEventsResponse(
+            events=events,
+            page=page,
+            size=size,
+            has_more=has_more,
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            "Failed to fetch activity events",
+            exc_info=True,
+            extra={"user_id": user_id, "error_type": type(e).__name__},
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to fetch activity events",
         )
