@@ -2361,7 +2361,8 @@ export default {
       description: 'Manage all organizations in the system',
       confirmAdminRole: {
         title: 'Assign Admin Role?',
-        warningTitle: 'High privilege role',
+        warningTitle:
+          'You are about to assign full administrator rights. This action gives you complete control over all organizations and users. Confirm?',
         warningDescription: 'This role grants full administrative access to the organization.',
         description: 'The Admin role includes:',
         permissions: {
