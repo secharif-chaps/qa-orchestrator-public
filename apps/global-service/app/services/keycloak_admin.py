@@ -6,6 +6,8 @@ via the Keycloak Admin REST API.
 """
 
 import asyncio
+import secrets
+import string
 import time
 from typing import Any, Optional
 from urllib.parse import quote
@@ -214,67 +216,179 @@ class KeycloakAdminService:
         except Exception as e:
             logger.error("Error updating user", exc_info=True, extra={"user_id": user_id, "error_type": type(e).__name__})
             return False
-
-    async def create_user(
-        self,
-        username: str,
-        email: str,
-        first_name: Optional[str] = None,
-        last_name: Optional[str] = None,
-        password: Optional[str] = None,
-        temporary_password: bool = True,
-    ) -> Optional[str]:
-        """Create a new user in Keycloak and return its ID.
-
-        Returns the new user's ID on success, or None on failure.
-        Raises HTTPException(409) if username or email already exists.
-        """
+    
+    async def get_users(self, first: int = 0, max_results: int = 100) -> list[dict[str, Any]]:
+        """Get paginated list of users."""
         try:
-            payload: dict[str, Any] = {
-                "username": username,
-                "email": email,
-                "enabled": True,
-            }
-            if first_name:
-                payload["firstName"] = first_name
-            if last_name:
-                payload["lastName"] = last_name
-            if password:
-                payload["credentials"] = [
-                    {
-                        "type": "password",
-                        "value": password,
-                        "temporary": temporary_password,
-                    }
-                ]
+            endpoint = f"/users?first={first}&max={max_results}"
+            response = await self._make_admin_request("GET", endpoint)
 
-            response = await self._make_admin_request("POST", "/users", payload)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logger.error(f"Failed to get users: {response.status_code} - {response.text}")
+                return []
+
+        except Exception as e:
+            logger.error(f"Error getting users: {e}")
+            return []
+
+    async def create_user(self, user_data: dict[str, Any]) -> dict[str, Any]:
+        """Create a new user in Keycloak."""
+        try:
+            logger.info(
+                "Starting user creation in Keycloak",
+                extra={
+                    "username": user_data.get("username"),
+                    "email": user_data.get("email"),
+                    "firstName": user_data.get("firstName"),
+                    "lastName": user_data.get("lastName"),
+                }
+            )
+
+            # Generate temporary password if not provided
+            temp_password = user_data.get("temporaryPassword") or self.generate_temp_password()
+
+            # Prepare Keycloak user payload
+            keycloak_payload = {
+                "username": user_data["username"],
+                "email": user_data["email"],
+                "firstName": user_data.get("firstName", ""),
+                "lastName": user_data.get("lastName", ""),
+                "enabled": True,
+                "emailVerified": True,
+                "credentials": [{
+                    "type": "password",
+                    "value": temp_password,
+                    "temporary": True,
+                }],
+            }
+
+            response = await self._make_admin_request("POST", "/users", keycloak_payload)
 
             if response.status_code == 201:
-                # Keycloak returns the new user's URL in the Location header
+                # Get the created user's ID from Location header
                 location = response.headers.get("Location", "")
-                user_id = location.rsplit("/", 1)[-1] if location else None
+                user_id = location.split("/")[-1] if location else None
+
                 logger.info(
-                    "Created user in Keycloak",
-                    extra={"username": username, "user_id": user_id},
+                    "User created successfully in Keycloak",
+                    extra={
+                        "user_id": user_id,
+                        "username": user_data["username"],
+                    }
                 )
-                return user_id
 
-            if response.status_code == 409:
+                if user_id:
+                    user_details = await self.get_user(user_id)
+                    if user_details:
+                        user_details["temporaryPassword"] = temp_password
+                        return user_details
+
+                logger.error(
+                    "User created but could not retrieve user ID or details",
+                    extra={"username": user_data["username"]},
+                )
                 raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail="A user with this username or email already exists",
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="User created but could not retrieve details",
                 )
-            
-            logger.error( "Failed to create user in Keycloak", extra={ "status_code": response.status_code, "username": username})
 
-            return None
+            elif response.status_code == 409:
+                error_detail = (
+                    response.json()
+                    if response.headers.get("content-type", "").startswith("application/json")
+                    else {"errorMessage": "User already exists"}
+                )
+                logger.warning(
+                    "User creation failed - conflict",
+                    extra={
+                        "username": user_data["username"],
+                        "email": user_data["email"],
+                        "error_detail": error_detail,
+                    }
+                )
+                error_msg = error_detail.get("errorMessage", "").lower()
+                if "username" in error_msg:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Username already exists",
+                    )
+                elif "email" in error_msg:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Email already exists",
+                    )
+                else:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="User already exists",
+                    )
+            else:
+                error_text = response.text
+                logger.error(
+                    "Failed to create user in Keycloak",
+                    extra={
+                        "status_code": response.status_code,
+                        "error_text": error_text,
+                        "username": user_data["username"],
+                        "email": user_data["email"],
+                    }
+                )
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail={
+                        "error": "user_creation_failed",
+                        "message": "Failed to create user",
+                    },
+                )
 
         except HTTPException:
             raise
         except Exception as e:
-            logger.error("Exception creating user", exc_info=True, extra={"error": str(e)})
-            return None
+            logger.error(
+                "Unexpected error creating user in Keycloak",
+                exc_info=True,
+                extra={
+                    "error_type": type(e).__name__,
+                    "error_message": str(e),
+                    "username": user_data.get("username"),
+                    "email": user_data.get("email"),
+                }
+            )
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal error creating user",
+            )
+        
+    def generate_temp_password(self, length: int = 12) -> str:
+        """Generate a secure temporary password."""
+        if length < 8:
+            length = 8
+
+        # Ensure we have at least one of each required character type
+        alphabet_upper = string.ascii_uppercase
+        alphabet_lower = string.ascii_lowercase
+        alphabet_digits = string.digits
+        alphabet_special = "!@#$%^&*"
+
+        # Start with at least one of each type
+        password = [
+            secrets.choice(alphabet_upper),
+            secrets.choice(alphabet_lower),
+            secrets.choice(alphabet_digits),
+            secrets.choice(alphabet_special),
+        ]
+
+        # Fill the rest with random choices from all characters
+        all_chars = alphabet_upper + alphabet_lower + alphabet_digits + alphabet_special
+        for _ in range(length - 4):
+            password.append(secrets.choice(all_chars))
+
+        # Shuffle to avoid predictable pattern
+        secrets.SystemRandom().shuffle(password)
+
+        return ''.join(password)
 
     async def set_user_password(self, user_id: str, password: str, temporary: bool = True) -> bool:
         """Set a new password for a user directly."""
@@ -414,6 +528,63 @@ class KeycloakAdminService:
             return False
 
     # ── Organization methods ────────────────────────────────────────
+
+    async def get_organization(self, organization_id: str) -> Optional[dict[str, Any]]:
+        """Get a specific organization by ID from Keycloak.
+
+        Returns:
+            Organization dictionary if found, None on unexpected errors.
+
+        Raises:
+            HTTPException 404: If organization not found.
+        """
+        try:
+            endpoint = f"/organizations/{organization_id}"
+            response = await self._make_admin_request("GET", endpoint)
+
+            if response.status_code == 200:
+                org = response.json()
+                logger.info(
+                    "Successfully fetched organization from Keycloak",
+                    extra={
+                        "organization_id": organization_id,
+                        "organization_name": org.get("name"),
+                    }
+                )
+                return org
+            elif response.status_code == 404:
+                logger.warning(
+                    "Organization not found in Keycloak",
+                    extra={"organization_id": organization_id},
+                )
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Organization {organization_id} not found",
+                )
+            else:
+                logger.error(
+                    "Failed to get organization from Keycloak",
+                    extra={
+                        "organization_id": organization_id,
+                        "status_code": response.status_code,
+                        "response_text": response.text[:500],
+                    }
+                )
+                return None
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(
+                "Exception while getting organization from Keycloak",
+                exc_info=True,
+                extra={
+                    "organization_id": organization_id,
+                    "error_type": type(e).__name__,
+                    "error_message": str(e),
+                }
+            )
+            return None
 
     async def get_organizations(self) -> list[dict[str, Any]]:
         """Get all organizations from Keycloak."""
