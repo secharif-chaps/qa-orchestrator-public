@@ -12,8 +12,7 @@ tasks:
       - test -f .env || cp .env.example .env && echo "Created .env from .env.example"
       - task: front:setup-yarnrc
       - cd apps/front && yarn install
-      - "{{.COMPOSE}} up -d --build"
-      - "{{.COMPOSE}} exec screen alembic upgrade head"
+      - "{{.COMPOSE}} --profile frontend up -d --build"
       - echo ""
       - echo "Ready! Run 'task' for available commands."
 
