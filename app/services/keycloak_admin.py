@@ -900,6 +900,80 @@ class KeycloakAdminService:
                 detail="Identity provider unavailable",
             )
 
+    async def get_user_events(
+        self,
+        user_id: str,
+        first: int = 0,
+        max_results: int = 20,
+        event_types: list[str] | None = None,
+    ) -> list[dict[str, Any]]:
+        """Get user events (activity log) from Keycloak.
+
+        Queries the Keycloak Admin Events API filtered by user.
+
+        Args:
+            user_id: Keycloak user UUID.
+            first: Offset for pagination (0-indexed).
+            max_results: Maximum number of events to return.
+            event_types: Optional list of Keycloak event types to filter
+                (e.g. LOGIN, LOGIN_ERROR, LOGOUT, UPDATE_PASSWORD).
+
+        Returns:
+            List of event dicts with time, type, ipAddress, details.
+
+        Raises:
+            HTTPException 502: If Keycloak returns an unexpected status code.
+            HTTPException 503: If Keycloak is unreachable.
+        """
+        try:
+            logger.info(
+                "Fetching user events from Keycloak",
+                extra={
+                    "user_id": user_id,
+                    "first": first,
+                    "max_results": max_results,
+                    "event_types": event_types,
+                },
+            )
+
+            # Build query string
+            endpoint = f"/events?user={user_id}&first={first}&max={max_results}"
+            if event_types:
+                for et in event_types:
+                    endpoint += f"&type={et}"
+
+            response = await self._make_admin_request("GET", endpoint)
+
+            if response.status_code == 200:
+                events = response.json()
+                logger.info(
+                    "Successfully fetched user events",
+                    extra={"user_id": user_id, "event_count": len(events)},
+                )
+                return events
+
+            logger.error(
+                "Failed to get user events from Keycloak",
+                extra={"user_id": user_id, "status_code": response.status_code},
+            )
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="Unexpected response from identity provider",
+            )
+
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(
+                "Exception while getting user events",
+                exc_info=True,
+                extra={"user_id": user_id, "error_type": type(e).__name__},
+            )
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Identity provider unavailable",
+            )
+
     async def get_user_organizations(self, user_id: str) -> list[dict[str, Any]]:
         """Get all organizations that a user belongs to."""
         try:
