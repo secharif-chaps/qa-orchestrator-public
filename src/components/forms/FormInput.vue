@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-1">
     <Input
       :id="id"
-      :model-value="modelValue"
+      v-model="modelValue"
       :label="label"
       :placeholder="placeholder"
       :type="type"
@@ -11,9 +11,8 @@
       :required="required"
       :class="{ 'border-error': error }"
       v-bind="$attrs"
-      @update:model-value="$emit('update:model-value', $event)"
-      @blur="$emit('blur', $event)"
-      @focus="$emit('focus', $event)"
+      @blur="emit('blur', $event)"
+      @focus="emit('focus', $event)"
     />
     <p v-if="error" class="text-error text-sm">
       {{ error }}
@@ -25,8 +24,7 @@
 import { Input } from '@owlint/feathers-vue'
 
 interface Props {
-  id?: string
-  modelValue: string | number
+  id: string
   label?: string
   placeholder?: string
   type?: string
@@ -36,32 +34,23 @@ interface Props {
   error?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  id: undefined,
-  label: undefined,
-  placeholder: undefined,
-  type: 'text',
-  icon: undefined,
-  disabled: false,
-  required: false,
-  error: undefined,
-})
-
-defineEmits<{
-  'update:model-value': [value: string | number]
+interface Emits {
   blur: [event: FocusEvent]
   focus: [event: FocusEvent]
-}>()
+}
+
+const modelValue = defineModel<string | number>({ required: true })
+
+const {
+  id,
+  label = undefined,
+  placeholder = undefined,
+  type = 'text',
+  icon = undefined,
+  disabled = false,
+  required = false,
+  error = undefined,
+} = defineProps<Props>()
+
+const emit = defineEmits<Emits>()
 </script>
-
-<style scoped>
-/* Apply red border to Input when it has error */
-.border-error :deep(input) {
-  border-color: rgb(var(--error)) !important;
-}
-
-.border-error :deep(input:focus) {
-  border-color: rgb(var(--error)) !important;
-  outline-color: rgb(var(--error)) !important;
-}
-</style>

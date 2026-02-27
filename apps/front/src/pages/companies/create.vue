@@ -493,7 +493,8 @@ const validateWebsite = (url: string) => {
   // Strict URL pattern validation
   // Must have: optional protocol, optional www, domain name, and TLD (at least 2 chars)
   // Examples: example.com, www.example.com, https://example.com, sub.example.co.uk
-  const urlPattern = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}(\/.*)?$/
+  const urlPattern =
+    /^(https?:\/\/)?(www\.)?[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}(\/.*)?$/
 
   if (!urlPattern.test(url)) {
     return false
