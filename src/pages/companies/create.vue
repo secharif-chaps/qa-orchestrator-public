@@ -127,39 +127,29 @@
 
         <!-- Form Fields -->
         <div class="flex flex-col gap-4">
-          <div class="flex flex-col gap-1">
-            <Input
-              id="company"
-              v-model="company"
-              :placeholder="$t('search.fields.companyName.placeholder')"
-              :error="companyError"
-              data-cy="company-name-input"
-              required
-              :label="$t('search.fields.companyName.label')"
-              icon="fa-building"
-              @blur="handleCompanyBlur"
-            />
-            <p v-if="companyError" class="text-error text-sm">
-              {{ companyError }}
-            </p>
-          </div>
+          <FormInput
+            id="company"
+            v-model="company"
+            :placeholder="$t('search.fields.companyName.placeholder')"
+            :error="companyError"
+            data-cy="company-name-input"
+            required
+            :label="$t('search.fields.companyName.label')"
+            icon="fa-building"
+            @blur="handleCompanyBlur"
+          />
 
-          <div class="flex flex-col gap-1">
-            <Input
-              id="website"
-              v-model="website"
-              :placeholder="$t('search.fields.website.placeholder')"
-              :error="websiteError"
-              data-cy="website-input"
-              required
-              :label="$t('search.fields.website.label')"
-              icon="fa-globe"
-              @blur="handleWebsiteBlur"
-            />
-            <p v-if="websiteError" class="text-error text-sm">
-              {{ websiteError }}
-            </p>
-          </div>
+          <FormInput
+            id="website"
+            v-model="website"
+            :placeholder="$t('search.fields.website.placeholder')"
+            :error="websiteError"
+            data-cy="website-input"
+            required
+            :label="$t('search.fields.website.label')"
+            icon="fa-globe"
+            @blur="handleWebsiteBlur"
+          />
         </div>
 
         <!-- Action Buttons -->
@@ -196,7 +186,6 @@ meta:
 import {
   Alert,
   Button,
-  Input,
   Select,
   SelectGroup,
   SelectItem,
@@ -216,6 +205,7 @@ import { foldersQuery, folderByIdQuery } from '@/queries/folders'
 import { InsufficientTokensError } from '@/api/client'
 import TokenCounter from '@/components/tokens/TokenCounter.vue'
 import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
+import FormInput from '@/components/forms/FormInput.vue'
 
 // Token cost for company creation
 const TOKENS_PER_COMPANY = 35
