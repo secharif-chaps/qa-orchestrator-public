@@ -54,8 +54,6 @@ export default {
         writerDesc: 'Créer et gérer le contenu',
         manager: 'Gestionnaire',
         managerDesc: "Gestion complète de l'équipe",
-        admin: 'Administrateur',
-        adminDesc: "L'accès administrateur donne un contrôle total. À utiliser avec précaution.",
       },
     },
     profile: {
@@ -2133,7 +2131,8 @@ export default {
       description: 'Gérez tous les espaces de travail du système',
       confirmAdminRole: {
         title: 'Attribuer le rôle Admin ?',
-        warningTitle: 'Rôle à privilèges élevés',
+        warningTitle:
+          "Vous êtes sur le point d'attribuer les droits administrateur complets. Cette action donne un contrôle total sur toutes les organisations et utilisateurs. Confirmer ?",
         warningDescription: "Ce rôle donne un accès administratif complet à l'organisation.",
         description: 'Le rôle Admin inclut :',
         permissions: {
