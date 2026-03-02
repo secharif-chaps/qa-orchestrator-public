@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.api.endpoints import (
     account, company, tasks, auth, admin, admin_tasks, security, webhooks,
-    cost_analysis, folder, concurrency, team,
+    cost_analysis, concurrency, team,
     ai_preferences, organization, organizations, users, chapse,
     translation, feature_flags, credits, data_sources
 )
@@ -23,7 +23,6 @@ api_router.include_router(team.router)  # Team management (organization.manage)
 # See: global-service/app/routers/tokens.py and global-service/app/routers/modules.py
 api_router.include_router(webhooks.router)
 api_router.include_router(cost_analysis.router)
-api_router.include_router(folder.router, prefix="/folders", tags=["folders"])
 api_router.include_router(concurrency.router)
 api_router.include_router(chapse.router)
 api_router.include_router(ai_preferences.router)
