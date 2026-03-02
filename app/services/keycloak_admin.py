@@ -226,11 +226,11 @@ class KeycloakAdminService:
             if response.status_code == 200:
                 return response.json()
             else:
-                logger.error(f"Failed to get users: {response.status_code} - {response.text}")
+                logger.error("Failed to get users", extra={"status_code": response.status_code})
                 return []
 
         except Exception as e:
-            logger.error(f"Error getting users: {e}")
+            logger.error("Exception getting users", exc_info=True, extra={"endpoint": endpoint, "error_type": type(e).__name__})
             return []
 
     async def create_user(self, user_data: dict[str, Any]) -> dict[str, Any]:

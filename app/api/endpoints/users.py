@@ -803,5 +803,5 @@ async def bulk_import_users(
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to import users: {str(e)}"
+            detail="Internal error during bulk import"
         )
