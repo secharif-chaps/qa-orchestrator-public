@@ -18,8 +18,11 @@ from app.schemas.user import (
     AssignOrganizationRequest,
     ResetPasswordRequest,
     UpdatePermissionsRequest,
+    BulkUserImportRequest,
+    BulkUserImportResponse,
 )
 from app.services.keycloak_admin import keycloak_admin_service
+from app.services.user_import import import_users_bulk
 
 router = APIRouter(prefix="/users", tags=["users"])
 logger = get_logger(__name__)
@@ -768,4 +771,37 @@ async def reset_user_password(
                 "message": "Failed to reset password",
                 "user_id": user_id,
             },
+        )
+
+
+@router.post("/import", response_model=BulkUserImportResponse)
+async def bulk_import_users(
+    request: BulkUserImportRequest,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+):
+    """Bulk import users into Keycloak.
+
+    Creates users with temporary passwords, assigns them to the specified
+    organization, and grants organization.read permission.
+    Requires admin.organizations role.
+    """
+    try:
+        return await import_users_bulk(
+            request=request,
+            admin_username=user.preferred_username,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(
+            "Unexpected error during bulk user import",
+            exc_info=e,
+            extra={
+                "admin_user": user.preferred_username,
+                "organization_id": request.organization_id,
+            }
+        )
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal error during bulk import"
         )
