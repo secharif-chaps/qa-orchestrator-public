@@ -127,7 +127,7 @@
 
         <!-- Form Fields -->
         <div class="flex flex-col gap-4">
-          <Input
+          <FormInput
             id="company"
             v-model="company"
             :placeholder="$t('search.fields.companyName.placeholder')"
@@ -136,9 +136,10 @@
             required
             :label="$t('search.fields.companyName.label')"
             icon="fa-building"
+            @blur="handleCompanyBlur"
           />
 
-          <Input
+          <FormInput
             id="website"
             v-model="website"
             :placeholder="$t('search.fields.website.placeholder')"
@@ -147,6 +148,7 @@
             required
             :label="$t('search.fields.website.label')"
             icon="fa-globe"
+            @blur="handleWebsiteBlur"
           />
         </div>
 
@@ -184,7 +186,6 @@ meta:
 import {
   Alert,
   Button,
-  Input,
   Select,
   SelectGroup,
   SelectItem,
@@ -204,6 +205,7 @@ import { foldersQuery, folderByIdQuery } from '@/queries/folders'
 import { InsufficientTokensError } from '@/api/client'
 import TokenCounter from '@/components/tokens/TokenCounter.vue'
 import InsufficientTokensAlert from '@/components/tokens/InsufficientTokensAlert.vue'
+import FormInput from '@/components/forms/FormInput.vue'
 
 // Token cost for company creation
 const TOKENS_PER_COMPANY = 35
@@ -483,10 +485,45 @@ function goToCSVUpload() {
 const validateWebsite = (url: string) => {
   if (!url.trim()) return false
 
+  // Check for spaces and other invalid characters that shouldn't be in a URL
+  if (/\s/.test(url)) {
+    return false
+  }
+
+  // Strict URL pattern validation
+  // Must have: optional protocol, optional www, domain name, and TLD (at least 2 chars)
+  // Examples: example.com, www.example.com, https://example.com, sub.example.co.uk
+  const urlPattern =
+    /^(https?:\/\/)?(www\.)?[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}(\/.*)?$/
+
+  if (!urlPattern.test(url)) {
+    return false
+  }
+
+  // Additional check with URL constructor for protocol validation
   try {
     const urlToTest = url.includes('://') ? url : `https://${url}`
     const parsedUrl = new URL(urlToTest)
-    return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:'
+
+    // Must be http or https protocol
+    if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+      return false
+    }
+
+    // Hostname must have at least one dot (e.g., example.com)
+    // This prevents "www" or "localhost" from being valid
+    if (!parsedUrl.hostname.includes('.')) {
+      return false
+    }
+
+    // Hostname must end with a TLD (at least 2 characters after last dot)
+    const parts = parsedUrl.hostname.split('.')
+    const tld = parts[parts.length - 1]
+    if (!tld || tld.length < 2) {
+      return false
+    }
+
+    return true
   } catch {
     return false
   }
@@ -496,16 +533,49 @@ const validateCompany = (name: string) => {
   return name.trim().length >= 2
 }
 
-// Watch for changes to validate inputs
-watch([company, website], ([newCompany, newWebsite]) => {
-  companyError.value = ''
-  websiteError.value = ''
+// Handle company name blur - validate and show/hide errors
+const handleCompanyBlur = () => {
+  const trimmed = company.value.trim()
 
-  if (newCompany && !validateCompany(newCompany)) {
-    companyError.value = t('search.fields.companyName.error')
+  // Don't show error for empty field (HTML5 required handles this)
+  if (!trimmed) {
+    companyError.value = ''
+    return
   }
 
-  if (newWebsite && !validateWebsite(newWebsite)) {
+  // Validate and set error if invalid
+  if (!validateCompany(trimmed)) {
+    companyError.value = t('search.fields.companyName.error')
+  } else {
+    companyError.value = ''
+  }
+}
+
+// Handle website blur - validate and show/hide errors
+const handleWebsiteBlur = () => {
+  const trimmed = website.value.trim()
+
+  // Don't show error for empty field (HTML5 required handles this)
+  if (!trimmed) {
+    websiteError.value = ''
+    return
+  }
+
+  // Validate and set error if invalid
+  if (!validateWebsite(trimmed)) {
+    websiteError.value = t('search.fields.website.error')
+  } else {
+    websiteError.value = ''
+  }
+}
+
+// Watch locale changes and update error messages
+watch(locale, () => {
+  // Re-translate error messages if they exist
+  if (companyError.value) {
+    companyError.value = t('search.fields.companyName.error')
+  }
+  if (websiteError.value) {
     websiteError.value = t('search.fields.website.error')
   }
 })
@@ -632,3 +702,11 @@ const submit = async () => {
   }
 }
 </script>
+
+<style scoped>
+/* Apply red border only to the specific Input component that has an error */
+.flex-col.gap-1:has(> p.text-error) :deep(input) {
+  border-color: var(--color-error) !important;
+  outline: 1px solid var(--color-error) !important;
+}
+</style>
