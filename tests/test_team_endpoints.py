@@ -17,6 +17,7 @@ Auth mocking strategy:
 """
 
 import pytest
+import uuid
 from datetime import datetime, timezone
 from unittest.mock import patch, AsyncMock
 
@@ -30,17 +31,17 @@ from app.main import app
 
 # ── Constants ────────────────────────────────────────────────────────
 
-TEST_ORG_ID = "test-org-uuid-123"
+TEST_ORG_ID = str(uuid.uuid4())
 TEST_ORG_NAME = "Test Organization"
-MANAGER_USER_ID = "manager-uuid-123"
-READER_USER_ID = "reader-uuid-456"
-TARGET_USER_ID = "target-uuid-789"
+MANAGER_USER_ID = str(uuid.uuid4())
+READER_USER_ID = str(uuid.uuid4())
+TARGET_USER_ID = str(uuid.uuid4())
 
 KC_SERVICE = "app.services.keycloak_admin.keycloak_admin_service"
 
-# Sample Keycloak user data
+# Sample Keycloak user data with valid UUIDs
 KC_MEMBER_1 = {
-    "id": "member-uuid-1",
+    "id": str(uuid.uuid4()),
     "username": "john.doe",
     "email": "john@example.com",
     "firstName": "John",
@@ -49,7 +50,7 @@ KC_MEMBER_1 = {
 }
 
 KC_MEMBER_2 = {
-    "id": "member-uuid-2",
+    "id": str(uuid.uuid4()),
     "username": "jane.smith",
     "email": "jane@example.com",
     "firstName": "Jane",
@@ -213,8 +214,9 @@ class TestGetMemberPermissions:
     @patch(f"{KC_SERVICE}.get_user_realm_roles", new_callable=AsyncMock)
     def test_get_permissions_user_not_found(self, mock_get_roles, client):
         mock_get_roles.return_value = None
+        non_existent_id = str(uuid.uuid4())
 
-        response = client.get("/api/team/members/nonexistent-uuid/permissions")
+        response = client.get(f"/api/team/members/{non_existent_id}/permissions")
 
         assert response.status_code == 404
 
@@ -243,7 +245,8 @@ class TestInviteTeamMember:
     def test_invite_member_success(
         self, mock_create, mock_add_org, mock_sync_roles, client
     ):
-        mock_create.return_value = "new-user-uuid"
+        new_user_id = str(uuid.uuid4())
+        mock_create.return_value = new_user_id
         mock_add_org.return_value = True
         mock_sync_roles.return_value = True
 
@@ -251,13 +254,13 @@ class TestInviteTeamMember:
 
         assert response.status_code == 201
         data = response.json()
-        assert data["id"] == "new-user-uuid"
+        assert data["id"] == new_user_id
         assert data["username"] == "new.user"
         assert data["email"] == "newuser@example.com"
         assert data["permission_tier"] == "reader"
         mock_create.assert_called_once()
         mock_add_org.assert_called_once_with(
-            organization_id=TEST_ORG_ID, user_id="new-user-uuid"
+            organization_id=TEST_ORG_ID, user_id=new_user_id
         )
 
     @patch(f"{KC_SERVICE}.create_user", new_callable=AsyncMock)

@@ -265,11 +265,9 @@ class KeycloakAdminService:
                     status_code=status.HTTP_409_CONFLICT,
                     detail="A user with this username or email already exists",
                 )
+            
+            logger.error( "Failed to create user in Keycloak", extra={ "status_code": response.status_code, "username": username})
 
-            logger.error(
-                "Failed to create user",
-                extra={"status_code": response.status_code, "response": response.text},
-            )
             return None
 
         except HTTPException:
@@ -479,12 +477,12 @@ class KeycloakAdminService:
                 )
                 return len(all_members)
             if response.status_code == 404:
-                logger.warning(f"Organization {organization_id} not found")
+                logger.warning("Organization not found", extra={"organization_id": organization_id, "status_code": response.status_code})
                 return 0
-            logger.error(f"Failed to count organization members: {response.status_code}")
+            logger.error("Failed to count organization members", extra={"organization_id": organization_id, "status_code": response.status_code})
             return 0
         except Exception as e:
-            logger.error(f"Error counting organization members: {e}")
+            logger.error("Exception counting organization members", exc_info=True, extra={"organization_id": organization_id, "error_type": type(e).__name__})
             return 0
 
     async def add_user_to_organization(self, organization_id: str, user_id: str) -> bool:

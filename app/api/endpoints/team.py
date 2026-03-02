@@ -6,7 +6,7 @@ Route: /api/team/*
 Ported from the backend monolith (back/app/api/endpoints/team.py).
 
 Permission Requirements:
-- POST /members: organization.read (invite member - any org member)
+- POST /members: organization.read (invite member)
 - GET /members: organization.read (view team)
 - GET /members/{user_id}/permissions: organization.read (get user permissions)
 - PUT /members/{user_id}: organization.manage OR admin.organizations (update profile & permissions)
@@ -35,6 +35,7 @@ from app.schemas.team import (
     TeamMemberPasswordReset,
 )
 from app.services.keycloak_admin import keycloak_admin_service
+from uuid import UUID
 
 router = APIRouter(prefix="/team", tags=["team"])
 logger = get_logger(__name__)
@@ -139,14 +140,15 @@ async def list_team_members(
 
 @router.get("/members/{user_id}/permissions", response_model=TeamMemberPermissions)
 async def get_member_permissions(
-    user_id: str = Path(..., description="Keycloak user UUID"),
+    user_id: UUID = Path(..., description="Keycloak user UUID"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
     """Get permission tier for a specific team member (lazy-loaded)."""
     try:
+        uid = str(user_id)
         user_roles_response = await keycloak_admin_service.get_user_realm_roles(
-            user_id
+            uid
         )
 
         if user_roles_response is None:
@@ -155,7 +157,7 @@ async def get_member_permissions(
                 detail={
                     "error": "user_not_found",
                     "message": "User not found",
-                    "user_id": user_id,
+                    "user_id": uid,
                 },
             )
 
@@ -170,13 +172,13 @@ async def get_member_permissions(
             "Fetched member permissions",
             extra={
                 "organization_id": org_context.organization_id,
-                "target_user_id": user_id,
+                "target_user_id": uid,
                 "permission_tier": permission_tier.value,
             },
         )
 
         return TeamMemberPermissions(
-            user_id=user_id,
+            user_id=uid,
             permission_tier=permission_tier,
         )
 
@@ -186,14 +188,14 @@ async def get_member_permissions(
         logger.error(
             "Failed to get member permissions",
             exc_info=True,
-            extra={"user_id": user_id, "error": str(e)},
+            extra={"user_id": str(user_id), "error": str(e)},
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "error": "permissions_retrieval_failed",
                 "message": "Failed to retrieve permissions",
-                "user_id": user_id,
+                "user_id": str(user_id),
             },
         )
     
@@ -202,16 +204,20 @@ async def get_member_permissions(
 @router.post("/members", response_model=InviteTeamMemberResponse, status_code=status.HTTP_201_CREATED)
 async def invite_team_member(
     invite_data: InviteTeamMemberRequest,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
+    user: OIDCUser = Depends(idp.get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
     """Invite a new member to the team.
 
-    Any authenticated organization member can invite new members.
+    Only admin member can invite new members.
     Creates a Keycloak user, adds them to the caller's organization,
     and assigns the requested permission tier roles.
     """
     try:
+        verify_any_role_access(
+            user, ["organization.manage", "admin.organizations"]
+        )
+    
         # 1. Create user in Keycloak
         new_user_id = await keycloak_admin_service.create_user(
             username=invite_data.username,
@@ -298,7 +304,7 @@ async def invite_team_member(
 
 @router.patch("/members/{user_id}", response_model=TeamMember)
 async def update_member_permissions(
-    user_id: str = Path(..., description="Keycloak user UUID"),
+    user_id: UUID = Path(..., description="Keycloak user UUID"),
     update_data: UpdateTeamMemberPermissions = ...,
     user: OIDCUser = Depends(idp.get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
@@ -310,35 +316,36 @@ async def update_member_permissions(
     Prevents users from changing their own permissions.
     """
     try:
+        uid = str(user_id)
         verify_any_role_access(
             user, ["organization.manage", "admin.organizations"]
         )
 
-        if user_id == user.sub:
+        if uid == user.sub:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail={
                     "error": "self_modification_forbidden",
                     "message": "Cannot modify your own permissions",
-                    "user_id": user_id,
+                    "user_id": uid,
                 },
             )
 
-        keycloak_user = await keycloak_admin_service.get_user(user_id)
+        keycloak_user = await keycloak_admin_service.get_user(uid)
         if not keycloak_user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={
                     "error": "user_not_found",
                     "message": "User not found",
-                    "user_id": user_id,
+                    "user_id": uid,
                 },
             )
 
         target_roles = get_roles_for_tier(update_data.permission_tier)
 
         success = await keycloak_admin_service.sync_user_realm_roles(
-            user_id=user_id,
+            user_id=uid,
             target_roles=target_roles,
         )
 
@@ -348,12 +355,12 @@ async def update_member_permissions(
                 detail={
                     "error": "permission_update_failed",
                     "message": "Failed to update permissions in Keycloak",
-                    "user_id": user_id,
+                    "user_id": uid,
                 },
             )
 
         updated_user_roles = (
-            await keycloak_admin_service.get_user_realm_roles(user_id)
+            await keycloak_admin_service.get_user_realm_roles(uid)
         )
         updated_roles = (
             [role["name"] for role in updated_user_roles]
@@ -362,7 +369,7 @@ async def update_member_permissions(
         )
 
         team_member = TeamMember(
-            id=user_id,
+            id=uid,
             username=keycloak_user.get("username", ""),
             email=keycloak_user.get("email", ""),
             first_name=keycloak_user.get("firstName"),
@@ -377,7 +384,7 @@ async def update_member_permissions(
             "Updated team member permissions",
             extra={
                 "organization_id": org_context.organization_id,
-                "target_user_id": user_id,
+                "target_user_id": uid,
                 "new_tier": update_data.permission_tier.value,
                 "new_roles": target_roles,
                 "updated_by": user.sub,
@@ -393,7 +400,7 @@ async def update_member_permissions(
             "Failed to update member permissions",
             exc_info=True,
             extra={
-                "user_id": user_id,
+                "user_id": str(user_id),
                 "new_tier": update_data.permission_tier.value,
                 "error": str(e),
             },
@@ -403,7 +410,7 @@ async def update_member_permissions(
             detail={
                 "error": "permission_update_failed",
                 "message": "Failed to update permissions",
-                "user_id": user_id,
+                "user_id": str(user_id),
             },
         )
 
@@ -411,7 +418,7 @@ async def update_member_permissions(
 # TODO: Frontend not implemented — update member profile UI not yet built
 @router.put("/members/{user_id}", response_model=TeamMember)
 async def update_team_member(
-    user_id: str = Path(..., description="Keycloak user UUID"),
+    user_id: UUID = Path(..., description="Keycloak user UUID"),
     update_data: UpdateTeamMember = ...,
     user: OIDCUser = Depends(idp.get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
@@ -423,28 +430,30 @@ async def update_team_member(
     Prevents users from modifying themselves.
     """
     try:
+
+        uid = str(user_id)
         verify_any_role_access(
             user, ["organization.manage", "admin.organizations"]
         )
 
-        if user_id == user.sub:
+        if uid == user.sub:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail={
                     "error": "self_modification_forbidden",
                     "message": "Cannot modify your own profile",
-                    "user_id": user_id,
+                    "user_id": uid,
                 },
             )
 
-        keycloak_user = await keycloak_admin_service.get_user(user_id)
+        keycloak_user = await keycloak_admin_service.get_user(uid)
         if not keycloak_user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={
                     "error": "user_not_found",
                     "message": "User not found",
-                    "user_id": user_id,
+                    "user_id": uid,
                 },
             )
 
@@ -459,7 +468,7 @@ async def update_team_member(
 
         if profile_updates:
             success = await keycloak_admin_service.update_user(
-                user_id=user_id,
+                user_id=uid,
                 user_data=profile_updates,
             )
             if not success:
@@ -468,7 +477,7 @@ async def update_team_member(
                     detail={
                         "error": "profile_update_failed",
                         "message": "Failed to update user profile in Keycloak",
-                        "user_id": user_id,
+                        "user_id": uid,
                     },
                 )
 
@@ -476,7 +485,7 @@ async def update_team_member(
         if update_data.permission_tier is not None:
             target_roles = get_roles_for_tier(update_data.permission_tier)
             success = await keycloak_admin_service.sync_user_realm_roles(
-                user_id=user_id,
+                user_id=uid,
                 target_roles=target_roles,
             )
             if not success:
@@ -485,16 +494,16 @@ async def update_team_member(
                     detail={
                         "error": "permission_update_failed",
                         "message": "Failed to update permissions in Keycloak",
-                        "user_id": user_id,
+                        "user_id": uid,
                     },
                 )
 
         # Re-fetch user to return updated data
-        updated_keycloak_user = await keycloak_admin_service.get_user(user_id)
+        updated_keycloak_user = await keycloak_admin_service.get_user(uid)
         if not updated_keycloak_user:
             updated_keycloak_user = keycloak_user
 
-        updated_user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
+        updated_user_roles = await keycloak_admin_service.get_user_realm_roles(uid)
         updated_roles = (
             [role["name"] for role in updated_user_roles]
             if updated_user_roles
@@ -502,7 +511,7 @@ async def update_team_member(
         )
 
         team_member = TeamMember(
-            id=user_id,
+            id=uid,
             username=updated_keycloak_user.get("username", ""),
             email=updated_keycloak_user.get("email", ""),
             first_name=updated_keycloak_user.get("firstName"),
@@ -517,7 +526,7 @@ async def update_team_member(
             "Updated team member",
             extra={
                 "organization_id": org_context.organization_id,
-                "target_user_id": user_id,
+                "target_user_id": uid,
                 "profile_fields_updated": list(profile_updates.keys()),
                 "permission_tier_updated": update_data.permission_tier is not None,
                 "updated_by": user.sub,
@@ -532,21 +541,21 @@ async def update_team_member(
         logger.error(
             "Failed to update team member",
             exc_info=True,
-            extra={"user_id": user_id, "error": str(e)},
+            extra={"user_id": str(user_id), "error": str(e)},
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "error": "member_update_failed",
                 "message": "Failed to update team member",
-                "user_id": user_id,
+                "user_id": str(user_id),
             },
         )
 
 
 @router.post("/members/{user_id}/reset-password", response_model=TeamMemberPasswordReset,)
 async def reset_member_password(
-    user_id: str = Path(..., description="Keycloak user UUID"),
+    user_id: UUID = Path(..., description="Keycloak user UUID"),
     request: ResetPasswordRequest = ...,
     user: OIDCUser = Depends(idp.get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
@@ -557,23 +566,24 @@ async def reset_member_password(
     Sets password as temporary, forcing user to change it on next login.
     """
     try:
+        uid = str(user_id)
         verify_any_role_access(
             user, ["organization.manage", "admin.organizations"]
         )
 
-        keycloak_user = await keycloak_admin_service.get_user(user_id)
+        keycloak_user = await keycloak_admin_service.get_user(uid)
         if not keycloak_user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={
                     "error": "user_not_found",
                     "message": "User not found",
-                    "user_id": user_id,
+                    "user_id": uid,
                 },
             )
 
         success = await keycloak_admin_service.set_user_password(
-            user_id=user_id,
+            user_id=uid,
             password=request.temporary_password,
             temporary=True,
         )
@@ -584,7 +594,7 @@ async def reset_member_password(
                 detail={
                     "error": "password_reset_failed",
                     "message": "Failed to reset password in Keycloak",
-                    "user_id": user_id,
+                    "user_id": uid,
                 },
             )
 
@@ -592,7 +602,7 @@ async def reset_member_password(
             "Reset team member password",
             extra={
                 "organization_id": org_context.organization_id,
-                "target_user_id": user_id,
+                "target_user_id": uid,
                 "target_username": keycloak_user.get("username"),
                 "reset_by": user.sub,
             },
@@ -608,14 +618,14 @@ async def reset_member_password(
         logger.error(
             "Failed to reset member password",
             exc_info=True,
-            extra={"user_id": user_id, "error": str(e)},
+            extra={"user_id": str(user_id), "error": str(e)},
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "error": "password_reset_failed",
                 "message": "Failed to reset password",
-                "user_id": user_id,
+                "user_id": str(user_id),
             },
         )
 
@@ -623,7 +633,7 @@ async def reset_member_password(
 # TODO: Frontend not implemented — remove member UI not yet built
 @router.delete("/members/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def remove_team_member(
-    user_id: str = Path(..., description="Keycloak user UUID"),
+    user_id: UUID = Path(..., description="Keycloak user UUID"),
     user: OIDCUser = Depends(idp.get_current_user()),
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
@@ -634,35 +644,36 @@ async def remove_team_member(
     application roles. Prevents users from removing themselves.
     """
     try:
+        uid = str(user_id)
         verify_any_role_access(
             user, ["organization.manage", "admin.organizations"]
         )
 
-        if user_id == user.sub:
+        if uid == user.sub:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail={
                     "error": "self_removal_forbidden",
                     "message": "Cannot remove yourself from the team",
-                    "user_id": user_id,
+                    "user_id": uid,
                 },
             )
 
-        keycloak_user = await keycloak_admin_service.get_user(user_id)
+        keycloak_user = await keycloak_admin_service.get_user(uid)
         if not keycloak_user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail={
                     "error": "user_not_found",
                     "message": "User not found",
-                    "user_id": user_id,
+                    "user_id": uid,
                 },
             )
 
         # Remove user from the organization
         removed = await keycloak_admin_service.remove_user_from_organization(
             organization_id=org_context.organization_id,
-            user_id=user_id,
+            user_id=uid,
         )
 
         if not removed:
@@ -671,13 +682,13 @@ async def remove_team_member(
                 detail={
                     "error": "user_action_failed",
                     "message": "Failed to remove user from organization",
-                    "user_id": user_id,
+                    "user_id": uid,
                 },
             )
 
         # Strip all application roles so the user has no residual access
         await keycloak_admin_service.sync_user_realm_roles(
-            user_id=user_id,
+            user_id=uid,
             target_roles=[],
         )
 
@@ -685,7 +696,7 @@ async def remove_team_member(
             "Removed team member",
             extra={
                 "organization_id": org_context.organization_id,
-                "target_user_id": user_id,
+                "target_user_id": uid,
                 "target_username": keycloak_user.get("username"),
                 "removed_by": user.sub,
             },
@@ -697,13 +708,13 @@ async def remove_team_member(
         logger.error(
             "Failed to remove team member",
             exc_info=True,
-            extra={"user_id": user_id, "error": str(e)},
+            extra={"user_id": str(user_id), "error": str(e)},
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "error": "member_removal_failed",
                 "message": "Failed to remove team member",
-                "user_id": user_id,
+                "user_id": str(user_id),
             },
         )
