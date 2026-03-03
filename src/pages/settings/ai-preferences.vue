@@ -308,7 +308,7 @@ async function handleSubmit() {
  * Navigate to setup page
  */
 function goToSetup() {
-  router.push({ name: '/ai-preferences-setup' })
+  router.push({ name: '/settings/ai-preferences.ai-preferences-setup' })
 }
 
 // Load preferences on mount

@@ -2874,6 +2874,7 @@ export default {
     companyCsv: 'CSV Import',
     help: 'Help',
     aiPreferences: 'AI Preferences',
+    aiPreferencesSetup: 'AI Preferences Setup',
   },
   logout: {
     title: 'Confirm Logout',

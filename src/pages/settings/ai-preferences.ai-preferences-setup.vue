@@ -295,7 +295,7 @@ async function handleSubmit() {
 
     // Redirect after 2 seconds
     setTimeout(() => {
-      router.push({ name: '/(home)' })
+      router.push({ name: '/settings/ai-preferences' })
     }, 2000)
   } catch (error: unknown) {
     console.error('Failed to save AI preferences:', error)
@@ -315,7 +315,7 @@ async function handleSubmit() {
  * Handle cancel action
  */
 function handleCancel() {
-  router.push({ name: '/(home)' })
+  router.push({ name: '/settings/ai-preferences' })
 }
 </script>
 
