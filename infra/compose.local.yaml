@@ -12,6 +12,9 @@ services:
     build:
       context: ../apps/front
       dockerfile: Dockerfile
+      secrets:
+        - OWLINT_REGISTRY_URL
+        - OWLINT_DEPLOY_KEY
     image: chapsmind-front:local
     ports:
       - "3000:80"
@@ -131,3 +134,9 @@ services:
       - ../apps/global-service/scripts:/app/scripts
     networks:
       - chapsmind-network
+
+secrets:
+  OWLINT_REGISTRY_URL:
+    environment: OWLINT_REGISTRY_URL
+  OWLINT_DEPLOY_KEY:
+    environment: OWLINT_DEPLOY_KEY
