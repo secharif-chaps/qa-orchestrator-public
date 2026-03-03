@@ -241,6 +241,17 @@ async def test_get_events_filter_all(authed_client, mock_kc_admin):
     )
 
 
+async def test_get_events_invalid_filter_rejected(authed_client, mock_kc_admin):
+    """GET with invalid event_type returns 422."""
+    response = await authed_client.get("/api/users/me/events?event_type=banana")
+
+    assert response.status_code == 422
+    assert "Invalid event_type" in response.json()["detail"]
+    assert "banana" in response.json()["detail"]
+    # Keycloak should NOT have been called
+    mock_kc_admin.get_user_events.assert_not_called()
+
+
 async def test_get_events_keycloak_http_error(authed_client, mock_kc_admin):
     """GET returns 502 when Keycloak returns unexpected status."""
     mock_kc_admin.get_user_events = AsyncMock(

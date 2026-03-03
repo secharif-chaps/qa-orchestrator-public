@@ -406,6 +406,12 @@ async def get_activity_events(
         keycloak_types = None
         if event_type and event_type != "all":
             keycloak_types = _EVENT_TYPE_FILTERS.get(event_type)
+            if keycloak_types is None:
+                valid = ", ".join(_EVENT_TYPE_FILTERS.keys())
+                raise HTTPException(
+                    status_code=422,
+                    detail=f"Invalid event_type '{event_type}'. Must be one of: {valid}, all",
+                )
 
         # Fetch one extra to detect whether more pages exist
         first = (page - 1) * size
