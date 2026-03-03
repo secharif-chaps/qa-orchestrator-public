@@ -3,7 +3,6 @@ import re
 from typing import Dict, Any, List, Optional
 from app.schemas.dify_errors import (
     DifyErrorDetail,
-    DifyErrorResponse,
     DifyErrorType,
     ParsedError,
     ErrorHandlingResult,

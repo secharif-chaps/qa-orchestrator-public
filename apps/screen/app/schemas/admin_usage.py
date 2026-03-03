@@ -4,7 +4,6 @@ This module provides schemas for the usage statistics dashboard that displays
 company creation trends, task success rates, and organization breakdowns.
 """
 
-from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 

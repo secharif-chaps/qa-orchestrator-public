@@ -235,7 +235,7 @@ class DifyService:
                 inputs["pappers_api_key"] = pappers_api_key
 
                 logger.info(
-                    f"🔍 Pappers config for data_collection",
+                    "🔍 Pappers config for data_collection",
                     extra={
                         "company_id": company_id,
                         "organization_id": company.organization_id,
@@ -338,7 +338,7 @@ class DifyService:
                 try:
                     response_body = response.json()
                     response_text = response.text
-                except:
+                except Exception:
                     response_body = None
                     response_text = response.text if hasattr(response, 'text') else str(response.content)
 
@@ -879,7 +879,7 @@ Make actions specific, actionable, and relevant to the user's role and company c
                     error_details["response_body"] = response.text[:500]
 
                 logger.error(
-                    f"Unexpected quick actions response format",
+                    "Unexpected quick actions response format",
                     extra=error_details
                 )
                 raise ExternalServiceError(

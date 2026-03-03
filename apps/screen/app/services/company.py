@@ -116,7 +116,7 @@ class CompanyService:
         """
         query = self.secure_query.safe_filter_by_id(Company, company_id)
         if not include_deleted:
-            query = query.filter(Company.is_deleted == False)
+            query = query.filter(not Company.is_deleted)
         return query.options(joinedload(Company.tasks)).first()
 
     def get_company_response(self, company_id: int, include_deleted: bool = False) -> Optional[CompanyResponse]:
@@ -134,14 +134,14 @@ class CompanyService:
         """Securely get company by name"""
         query = self.secure_query.safe_filter_by_string(Company, Company.name, name, exact_match=True)
         if not include_deleted:
-            query = query.filter(Company.is_deleted == False)
+            query = query.filter(not Company.is_deleted)
         return query.first()
 
     def get_all_companies(self, organization_id: Optional[str] = None, include_deleted: bool = False) -> List[Company]:
         """Securely get all companies, optionally filtered by organization"""
         query = self.db.query(Company)
         if not include_deleted:
-            query = query.filter(Company.is_deleted == False)
+            query = query.filter(not Company.is_deleted)
         if organization_id:
             query = query.filter(Company.organization_id == organization_id)
         return query.all()
@@ -549,7 +549,7 @@ class CompanyService:
         query = (
             self.db.query(Company)
             .filter(Company.organization_id == organization_id)
-            .filter(Company.is_deleted == False)
+            .filter(not Company.is_deleted)
         )
 
         # Filter by accessible company IDs if provided
@@ -574,7 +574,7 @@ class CompanyService:
                 .join(Folder, FolderItem.folder_id == Folder.id)
                 .filter(FolderItem.item_id == str(company.id))
                 .filter(FolderItem.item_type == 'company')
-                .filter(Folder.is_deleted == False)
+                .filter(not Folder.is_deleted)
                 .order_by(FolderItem.added_at.desc())  # Most recent folder first
                 .first()
             )

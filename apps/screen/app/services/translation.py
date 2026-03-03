@@ -19,7 +19,6 @@ from sqlalchemy.orm import Session
 from app.core.logging_config import get_logger
 from app.models import (
     Translation,
-    Company,
     CompanyProfile,
     CompanyDigital,
     CompanyTimeline,

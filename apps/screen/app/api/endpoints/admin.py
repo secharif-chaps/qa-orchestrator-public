@@ -177,7 +177,7 @@ def _get_companies_count(db: Session, start_date: date, end_date: date) -> int:
     count = (
         db.query(func.count(Company.id))
         .filter(
-            Company.is_deleted == False,
+            not Company.is_deleted,
             func.date(Company.created_at) >= start_date,
             func.date(Company.created_at) <= end_date,
         )
@@ -248,7 +248,7 @@ def _get_active_users_count(db: Session, start_date: date, end_date: date) -> in
     count = (
         db.query(func.count(func.distinct(Company.owner_id)))
         .filter(
-            Company.is_deleted == False,
+            not Company.is_deleted,
             func.date(Company.created_at) >= start_date,
             func.date(Company.created_at) <= end_date,
         )
@@ -290,7 +290,7 @@ def _get_companies_over_time(
             func.count(Company.id).label("count"),
         )
         .filter(
-            Company.is_deleted == False,
+            not Company.is_deleted,
             func.date(Company.created_at) >= start_date,
             func.date(Company.created_at) <= end_date,
         )
@@ -328,7 +328,7 @@ async def _get_companies_by_organization(
             func.count(Company.id).label("count"),
         )
         .filter(
-            Company.is_deleted == False,
+            not Company.is_deleted,
             func.date(Company.created_at) >= start_date,
             func.date(Company.created_at) <= end_date,
         )

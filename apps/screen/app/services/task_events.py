@@ -10,7 +10,6 @@ Architecture:
 """
 
 import asyncio
-import json
 from collections import defaultdict
 
 from app.core.logging_config import get_logger

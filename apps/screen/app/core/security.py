@@ -9,7 +9,6 @@ from app.models.company import Company
 from app.core.organization import OrganizationContext
 
 # Re-export is_chapsvision_email from email_utils to avoid circular imports
-from app.core.email_utils import is_chapsvision_email
 
 
 class AuthorizationError(HTTPException):

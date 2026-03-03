@@ -11,7 +11,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_keycloak import OIDCUser
-from sqlalchemy import func, case
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_token_manager
@@ -21,9 +21,7 @@ from app.core.modules import MODULE_CONFIG, get_all_module_names
 from app.core.organization import OrganizationContext, get_user_organization
 from app.database import get_db
 from app.models.organization import (
-    Organization,
     OrganizationModule,
-    ModuleName,
     TokenTransaction,
     TransactionType,
     ReferenceType,

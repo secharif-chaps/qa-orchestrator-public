@@ -10,7 +10,7 @@ Permission Requirements:
 - POST /members/{user_id}/reset-password: organization.manage OR admin.organizations (reset password)
 """
 
-from typing import List, Optional
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
 from fastapi_keycloak import OIDCUser
 

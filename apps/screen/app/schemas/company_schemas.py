@@ -13,7 +13,6 @@ Schemas follow the frontend TypeScript interfaces for compatibility while
 supporting the normalized database structure.
 """
 
-from datetime import datetime
 from enum import Enum
 from typing import TypeVar, Generic, Optional, Any
 

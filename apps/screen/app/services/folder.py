@@ -102,7 +102,7 @@ class FolderService:
         )
 
         if not include_deleted:
-            query = query.filter(Folder.is_deleted == False)
+            query = query.filter(not Folder.is_deleted)
 
         return query.first()
 
@@ -239,10 +239,10 @@ class FolderService:
         # Apply archived filter
         if archived:
             logger.debug("Filtering for archived (deleted) folders")
-            query = query.filter(Folder.is_deleted == True)
+            query = query.filter(Folder.is_deleted)
         else:
             logger.debug("Filtering for non-archived folders")
-            query = query.filter(Folder.is_deleted == False)
+            query = query.filter(not Folder.is_deleted)
 
         # Apply favorites filter
         if favorites_only:
@@ -311,10 +311,10 @@ class FolderService:
         # Apply archived filter
         if archived:
             logger.debug("Filtering for archived (deleted) folders")
-            query = query.filter(Folder.is_deleted == True)
+            query = query.filter(Folder.is_deleted)
         else:
             logger.debug("Filtering for non-archived folders")
-            query = query.filter(Folder.is_deleted == False)
+            query = query.filter(not Folder.is_deleted)
 
         # Apply favorites filter (requires user_id)
         if favorites_only:
@@ -540,7 +540,7 @@ class FolderService:
         return db.query(Folder).filter(
             Folder.id.in_(folder_ids),
             Folder.organization_id == organization_id,
-            Folder.is_deleted == False
+            not Folder.is_deleted
         ).all()
 
     # ==================== Folder Sharing Methods ====================
@@ -932,7 +932,7 @@ class FolderService:
         ).filter(
             UserFolderFavorite.user_id == user_id,
             Folder.organization_id == organization_id,
-            Folder.is_deleted == False
+            not Folder.is_deleted
         ).all()
 
         return {f[0] for f in favorites}
@@ -985,7 +985,7 @@ class FolderService:
             FolderItem.item_id == str(company_id),
             FolderItem.item_type == 'company',
             Folder.organization_id == organization_id,
-            Folder.is_deleted == False
+            not Folder.is_deleted
         ).all()
 
         if not folder_items:

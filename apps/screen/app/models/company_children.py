@@ -22,12 +22,10 @@ import enum
 from sqlalchemy import (
     Column,
     Integer,
-    String,
     Text,
     ForeignKey,
     DateTime,
     Enum,
-    Index,
 )
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship

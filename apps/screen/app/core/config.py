@@ -1,7 +1,9 @@
+import logging
+import os
+
+from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 from typing import Optional
-from pydantic import ConfigDict
-import os
 
 
 class Settings(BaseSettings):
@@ -76,7 +78,6 @@ class Settings(BaseSettings):
 settings = Settings()
 
 # 🔍 DEBUG: Log configuration on startup
-import logging
 logger = logging.getLogger(__name__)
 logger.info(f"🔧 CONFIG DEBUG - BACKEND_BASE_URL loaded as: {settings.BACKEND_BASE_URL}")
 logger.info(f"🔧 CONFIG DEBUG - ENVIRONMENT: {getattr(settings, 'ENVIRONMENT', 'not set')}")
