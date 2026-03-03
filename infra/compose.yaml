@@ -17,14 +17,14 @@ services:
 
   # Vue Frontend
   frontend:
-    image: registry.git.mediaspeech.com/chapsmind/screen-front/chapsmind-front:preprod
+    image: registry.git.mediaspeech.com/chapsmind/chapsmind/chapsmind-front:latest
     restart: always
     networks:
       - chapsmind-network
 
   # FastAPI Backend (Screen)
   screen:
-    image: registry.git.mediaspeech.com/chapsmind/screen/chapsmind-screen:preprod
+    image: registry.git.mediaspeech.com/chapsmind/chapsmind/chapsmind-screen:latest
     depends_on:
       db:
         condition: service_healthy
@@ -60,7 +60,7 @@ services:
 
   # Celery Worker for Task Processing
   screen_celery_worker:
-    image: registry.git.mediaspeech.com/chapsmind/screen/chapsmind-screen:preprod
+    image: registry.git.mediaspeech.com/chapsmind/chapsmind/chapsmind-screen:latest
     entrypoint: celery -A app.core.celery_app worker --loglevel=info --concurrency=4 --pool=solo --queues=dify_workflows
     restart: always
     environment:
@@ -77,7 +77,7 @@ services:
       - chapsmind-network
 
   screen_celery_flower:
-    image: registry.git.mediaspeech.com/chapsmind/screen/chapsmind-screen:preprod
+    image: registry.git.mediaspeech.com/chapsmind/chapsmind/chapsmind-screen:latest
     entrypoint: celery -A app.core.celery_app flower --port=5555 --broker=amqp://guest:guest@rabbitmq:5672//
     restart: always
     ports:
@@ -92,7 +92,7 @@ services:
 
   # Global Service (Gateway) - Proxies /api requests to backend monolith
   global-service:
-    image: registry.git.mediaspeech.com/chapsmind/global-service/chapsmind-global-service:preprod
+    image: registry.git.mediaspeech.com/chapsmind/chapsmind/chapsmind-global-service:latest
     restart: always
     depends_on:
       db:

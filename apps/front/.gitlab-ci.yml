@@ -1,12 +1,12 @@
 # Frontend GitLab CI/CD Pipeline
-# Builds, lints, and publishes Docker image to GitLab Container Registry
+# Builds, lints, tests, and publishes Docker image to GitLab Container Registry
 # Stages are defined in the root .gitlab-ci.yml
 
 variables:
   IMAGE_NAME: ${CI_REGISTRY_IMAGE}/chapsmind-front
-  IMAGE_TAG: preprod
   DOCKER_BUILDKIT: 1
 
+# ─── Reusable blocks ───────────────────────────────────
 .cache-node-modules: &cache-node-modules
   key:
     files:
@@ -16,7 +16,7 @@ variables:
     - apps/front/node_modules
   policy: pull
 
-.default-rules: &default-rules
+.front-changes: &front-changes
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
@@ -39,32 +39,34 @@ variables:
   image: node:22-alpine
   cache:
     - <<: *cache-node-modules
-  <<: *default-rules
+  <<: *front-changes
 
+# ─── Install Stage ─────────────────────────────────────
 front:install:
   image: node:22-alpine
-  stage: Build
+  stage: install
   <<: *yarnrc-setup
   script:
     - yarn install --immutable
   cache:
     - <<: *cache-node-modules
       policy: pull-push
-  <<: *default-rules
+  <<: *front-changes
   artifacts:
     expire_in: 1 hour
     paths:
       - apps/front/node_modules
 
+# ─── Lint Stage ────────────────────────────────────────
 front:eslint:
   <<: *default-lint-job
-  stage: CodingStandards
+  stage: lint
   script:
     - cd apps/front && npx eslint .
 
 front:prettier:
   <<: *default-lint-job
-  stage: CodingStandards
+  stage: lint
   script:
     - cd apps/front && npx prettier --check --no-error-on-unmatched-pattern --ignore-unknown .
   after_script:
@@ -72,34 +74,59 @@ front:prettier:
 
 front:stylelint:
   <<: *default-lint-job
-  stage: CodingStandards
+  stage: lint
   script:
     - cd apps/front && npx stylelint "src/**/*.{vue,css}"
 
-.docker-build:
+front:typecheck:
+  <<: *default-lint-job
+  stage: lint
+  script:
+    - cd apps/front && npx vue-tsc --build
+
+# ─── Test Stage ────────────────────────────────────────
+front:test:
+  <<: *default-lint-job
+  stage: test
+  script:
+    - cd apps/front && npx vitest run
+
+# ─── Build Stage (Docker) ─────────────────────────────
+.front-docker-build:
   image: docker:29-cli
   script:
-    - echo Building $IMAGE_NAME:$IMAGE_TAG
+    - echo "Building $IMAGE_NAME:${IMAGE_TAG}"
     - echo "$OWLINT_REGISTRY_URL" > owlint_registry_url.txt
     - echo "$OWLINT_DEPLOY_KEY" > owlint_deploy_key.txt
-    - docker build --no-cache --pull --secret id=OWLINT_REGISTRY_URL,src=owlint_registry_url.txt --secret id=OWLINT_DEPLOY_KEY,src=owlint_deploy_key.txt -t "${IMAGE_NAME}:${IMAGE_TAG}" apps/front/
+    - docker build --no-cache --pull
+        --secret id=OWLINT_REGISTRY_URL,src=owlint_registry_url.txt
+        --secret id=OWLINT_DEPLOY_KEY,src=owlint_deploy_key.txt
+        -t "${IMAGE_NAME}:${IMAGE_TAG}" apps/front/
     - rm -f owlint_registry_url.txt owlint_deploy_key.txt
 
+# MR: test that docker build succeeds (don't push)
 front:docker-build:
-  stage: Publish
-  extends: .docker-build
+  stage: build
+  extends: .front-docker-build
+  variables:
+    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
         - apps/front/**/*
 
+# Main branch: build + push with SHA tag and :latest
 front:publish:
-  stage: Publish
-  extends: .docker-build
+  stage: publish
+  extends: .front-docker-build
+  variables:
+    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   after_script:
-    - docker push $IMAGE_NAME:${IMAGE_TAG}
+    - docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+    - docker tag "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}" "${IMAGE_NAME}:latest"
+    - docker push "${IMAGE_NAME}:latest"
     - docker logout $CI_REGISTRY
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

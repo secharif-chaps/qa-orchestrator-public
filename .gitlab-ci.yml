@@ -1,13 +1,14 @@
 # GitLab CI — Monorepo orchestrator
-# Each app owns its CI config. This file only defines stages and includes.
+# Each app owns its CI config. This file only defines stages, includes, and shared templates.
 # Doc: https://docs.gitlab.com/ee/ci/yaml/#include
 
 stages:
-  - Build
-  - CodingStandards
-  - Publish
-  - Deploy
-  - Maintenance
+  - install
+  - lint
+  - test
+  - build
+  - publish
+  - maintenance
 
 variables:
   AST_ENABLE_MR_PIPELINES: true
@@ -22,17 +23,23 @@ include:
   - template: Jobs/SAST.gitlab-ci.yml
   - template: Jobs/Secret-Detection.gitlab-ci.yml
 
+# ─── Shared Docker templates ──────────────────────────
+# Used by publish jobs in app CI files via `extends`
+.docker-login:
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
 # ─── Override security template stages ────────────────
 # SAST and Secret Detection templates default to stage: test which doesn't exist
 sast:
-  stage: CodingStandards
+  stage: lint
 
 secret_detection:
-  stage: CodingStandards
+  stage: lint
 
 # ─── Commit message lint ──────────────────────────────
 main:commitlint:
-  stage: CodingStandards
+  stage: lint
   image: node:22-alpine
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -43,7 +50,7 @@ main:commitlint:
 
 # ─── Assign reviewers based on CODEOWNERS ─────────────
 main:assign-reviewers:
-  stage: CodingStandards
+  stage: lint
   image: python:3.12-slim
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -55,7 +62,7 @@ main:assign-reviewers:
 
 # ─── Scheduled maintenance jobs ──────────────────────
 main:update-codeowners:
-  stage: Maintenance
+  stage: maintenance
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
   image: python:3.12-slim

@@ -7,9 +7,9 @@
     - infra/**/*
 
 infra:validate:
-  stage: CodingStandards
+  stage: lint
   rules:
     - <<: *infra-changes
-  image: docker:cli
+  image: docker:29-cli
   script:
     - docker compose -f infra/compose.yaml -f infra/compose.local.yaml config --quiet
