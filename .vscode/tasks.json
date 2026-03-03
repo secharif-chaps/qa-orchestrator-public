@@ -1,0 +1,275 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    // ═══════════════════════════════════════════════
+    //  DOCKER COMPOSE - Services
+    // ═══════════════════════════════════════════════
+    {
+      "label": "Docker: Full Setup",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-c", "cd infra && docker compose -f compose.yaml -f compose.local.yaml up -d --build && ./scripts/init-keycloak.sh && docker compose -f compose.yaml -f compose.local.yaml exec screen alembic upgrade head && docker compose -f compose.yaml -f compose.local.yaml exec global-service alembic upgrade head && docker compose -f compose.yaml -f compose.local.yaml restart screen global-service"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Start All Services (up -d --build)",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml up -d --build",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Stop All Services (down)",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml down",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Restart Service",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml restart ${input:service}",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Rebuild Service",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml up -d --build ${input:service}",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Status (ps)",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml ps",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Full Reset (down + volumes)",
+      "type": "shell",
+      "command": "echo '⚠️  This will delete all data!' && docker compose -f compose.yaml -f compose.local.yaml down -v",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+
+    // ═══════════════════════════════════════════════
+    //  LOGS
+    // ═══════════════════════════════════════════════
+    {
+      "label": "Logs: Follow Service",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml logs -f ${input:service}",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": []
+    },
+
+    // ═══════════════════════════════════════════════
+    //  FRONTEND
+    // ═══════════════════════════════════════════════
+    {
+      "label": "Front: Dev Server (yarn dev)",
+      "type": "shell",
+      "command": "yarn dev",
+      "options": { "cwd": "${workspaceFolder}/apps/front" },
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Front: Run Tests",
+      "type": "shell",
+      "command": "yarn run test",
+      "options": { "cwd": "${workspaceFolder}/apps/front" },
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Front: Run Tests (watch)",
+      "type": "shell",
+      "command": "yarn exec vitest",
+      "options": { "cwd": "${workspaceFolder}/apps/front" },
+      "isBackground": true,
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Front: Build",
+      "type": "shell",
+      "command": "yarn run build",
+      "options": { "cwd": "${workspaceFolder}/apps/front" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Front: Type Check",
+      "type": "shell",
+      "command": "yarn exec vue-tsc --noEmit",
+      "options": { "cwd": "${workspaceFolder}/apps/front" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Front: Lint & Format",
+      "type": "shell",
+      "command": "yarn format & yarn stylelint & yarn lint",
+      "options": { "cwd": "${workspaceFolder}/apps/front" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+
+    // ═══════════════════════════════════════════════
+    //  BACKEND / GLOBAL SERVICE (inside Docker)
+    // ═══════════════════════════════════════════════
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} pytest tests/ -v",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Tests (with coverage)",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} pytest tests/ -v --cov=app --cov-report=term-missing",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Shell (bash)",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} bash",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": []
+    },
+
+    // ═══════════════════════════════════════════════
+    //  ALEMBIC MIGRATIONS
+    // ═══════════════════════════════════════════════
+    {
+      "label": "Alembic: Upgrade Head",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} alembic upgrade head",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Alembic: Current",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} alembic current",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Alembic: History",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} alembic history",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Alembic: New Migration",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} alembic revision -m \"${input:migrationMessage}\"",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Alembic: Downgrade -1",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml exec ${input:testableService} alembic downgrade -1",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+
+    // ═══════════════════════════════════════════════
+    //  DATABASE
+    // ═══════════════════════════════════════════════
+    {
+      "label": "Database: Connect (psql)",
+      "type": "shell",
+      "command": "docker compose -f compose.yaml -f compose.local.yaml exec db psql -U postgres -d ${input:database}",
+      "options": { "cwd": "${workspaceFolder}/infra" },
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": []
+    },
+
+    // ═══════════════════════════════════════════════
+    //  NGROK
+    // ═══════════════════════════════════════════════
+    {
+      "label": "Ngrok: Expose Backend (port 8000)",
+      "type": "shell",
+      "command": "ngrok http 8000",
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "service",
+      "type": "pickString",
+      "description": "Which service?",
+      "options": [
+        "screen",
+        "global-service",
+        "screen_celery_worker",
+        "screen_celery_flower",
+        "db",
+        "rabbitmq",
+        "keycloak"
+      ]
+    },
+    {
+      "id": "testableService",
+      "type": "pickString",
+      "description": "Which service?",
+      "options": [
+        "screen",
+        "global-service"
+      ]
+    },
+    {
+      "id": "database",
+      "type": "pickString",
+      "description": "Which database?",
+      "options": [
+        "chapsmind_db",
+        "global_db",
+        "keycloak"
+      ]
+    },
+    {
+      "id": "migrationMessage",
+      "type": "promptString",
+      "description": "Migration description (e.g., 'add user_preferences table')"
+    }
+  ]
+}
