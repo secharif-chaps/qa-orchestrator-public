@@ -2946,6 +2946,7 @@ export default {
     companyCsv: 'Import CSV',
     help: 'Aide',
     aiPreferences: 'Préférences IA',
+    aiPreferencesSetup: 'Configuration des préférences IA',
   },
   logout: {
     title: 'Confirmer la déconnexion',

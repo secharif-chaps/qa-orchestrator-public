@@ -319,6 +319,14 @@ export function useBreadcrumbs() {
           })
           break
 
+        case 'ai-preferences-setup':
+          items.push({
+            name: t('breadcrumb.aiPreferencesSetup', 'AI Preferences Setup'),
+            to: isLast ? undefined : currentPath,
+            current: isLast,
+          })
+          break
+
         case 'appearance':
           items.push({
             name: t('breadcrumb.appearance', 'Appearance'),
