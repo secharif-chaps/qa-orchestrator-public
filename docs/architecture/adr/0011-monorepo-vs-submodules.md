@@ -569,36 +569,31 @@ Reconsider adding a tool if any of these signals appear:
 
 ### Phase 2: History Import
 
-```bash
-# From an empty repo
-git init chapsmind && cd chapsmind
-
-# Import each repo with its full history
-git subtree add --prefix=apps/front <url-front> main
-git subtree add --prefix=apps/screen <url-screen> main
-git subtree add --prefix=apps/infra <url-infra> main
-git subtree add --prefix=apps/global-service <url-global> main
-
-# Copy docs, .claude, agent-os from current workspace
-cp -r ../chapsmind-workspace/docs ./docs
-cp -r ../chapsmind-workspace/.claude ./.claude
-cp -r ../chapsmind-workspace/agent-os ./agent-os
-```
+- [x] Import all repos via `git subtree add` (front, screen, global-service, infra)
+- [x] Copy docs, .claude, agent-os from workspace parent
 
 ### Phase 3: CI and Protections
 
-- [x] Write unified `.gitlab-ci.yml`
-- [ ] Configure `main` branch protection
-- [x] Set up CODEOWNERS
-- [ ] Add merge rules (green CI, approvals)
+- [x] Write unified `.gitlab-ci.yml` (root orchestrator + 4 app CI files)
+- [x] Set up CODEOWNERS + auto-assign reviewers CI job
 - [x] Set up husky + lint-staged for pre-commit hooks
+- [x] Set up commitlint (gitmoji + conventional commits)
+- [x] Add `.dockerignore` files for all apps
+- [x] Add `.editorconfig`, `.gitattributes`, `.env.example`
+- [x] Add `CONTRIBUTING.md` onboarding guide
+- [x] Add Dev Container configuration (`.devcontainer/`)
+- [x] Add Taskfile (unified commands)
+- [x] Configure ruff for all Python backends (`pyproject.toml`)
+- [x] Add SAST + Secret Detection CI templates
+- [ ] Configure `main` branch protection *(requires GitLab admin)*
+- [ ] Add merge rules (green CI, approvals) *(requires GitLab admin)*
 
 ### Phase 4: Switch
 
-- [ ] Freeze old repos (read-only)
+- [ ] Freeze old repos (read-only) *(requires GitLab admin)*
 - [ ] Team communication: "everything goes in the monorepo"
-- [ ] Archive old repos on GitLab
-- [ ] Update README with new workflow
+- [ ] Archive old repos on GitLab *(requires GitLab admin)*
+- [x] Update README with new workflow (`CONTRIBUTING.md`)
 
 ---
 

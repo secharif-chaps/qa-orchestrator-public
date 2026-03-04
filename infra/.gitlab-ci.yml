@@ -3,13 +3,19 @@
 # Only runs when infra/ files change
 
 .infra-changes: &infra-changes
-  changes:
-    - infra/**/*
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - infra/**/*
+    - if: $CI_COMMIT_BRANCH
+      changes:
+        - infra/**/*
 
 infra:validate:
   stage: lint
-  rules:
-    - <<: *infra-changes
+  <<: *infra-changes
   image: docker:29-cli
   script:
     - docker compose -f infra/compose.yaml -f infra/compose.local.yaml config --quiet
