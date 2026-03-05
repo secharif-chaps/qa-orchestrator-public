@@ -9,6 +9,10 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+# Skip Keycloak initialization in CI where Keycloak is not available
+# Set this BEFORE any app imports to prevent connection attempts
+os.environ.setdefault("SKIP_KEYCLOAK_INIT", "true")
+
 # Override Keycloak settings for local testing
 # These must be set before any app imports
 os.environ["KEYCLOAK_SERVER_URL"] = os.environ.get("KEYCLOAK_SERVER_URL", "http://keycloak:8080")

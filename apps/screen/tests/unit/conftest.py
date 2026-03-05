@@ -9,6 +9,9 @@ import pytest
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 
+# Skip Keycloak initialization in tests - set BEFORE any app imports
+os.environ.setdefault("SKIP_KEYCLOAK_INIT", "true")
+
 # Set environment variables before importing app modules
 os.environ["KEYCLOAK_SERVER_URL"] = "http://localhost:8080"
 os.environ["KEYCLOAK_REALM"] = "test"
