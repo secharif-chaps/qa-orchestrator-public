@@ -102,7 +102,7 @@ class FolderService:
         )
 
         if not include_deleted:
-            query = query.filter(not Folder.is_deleted)
+            query = query.filter(~Folder.is_deleted)
 
         return query.first()
 
@@ -242,7 +242,7 @@ class FolderService:
             query = query.filter(Folder.is_deleted)
         else:
             logger.debug("Filtering for non-archived folders")
-            query = query.filter(not Folder.is_deleted)
+            query = query.filter(~Folder.is_deleted)
 
         # Apply favorites filter
         if favorites_only:
@@ -314,7 +314,7 @@ class FolderService:
             query = query.filter(Folder.is_deleted)
         else:
             logger.debug("Filtering for non-archived folders")
-            query = query.filter(not Folder.is_deleted)
+            query = query.filter(~Folder.is_deleted)
 
         # Apply favorites filter (requires user_id)
         if favorites_only:

@@ -52,7 +52,7 @@ class SQLAlchemyCompanyRepository:
 
         # Filter out soft-deleted unless explicitly included
         if not include_archived:
-            query = query.filter(not Company.is_deleted)
+            query = query.filter(~Company.is_deleted)
 
         # Filter by organization if provided
         if organization_id:
