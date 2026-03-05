@@ -90,6 +90,27 @@
         }
       ],
       "realmRoles": []
+    },
+    {
+      "username": "service-account-chapsmind-admin",
+      "enabled": true,
+      "serviceAccountClientId": "chapsmind-admin",
+      "clientRoles": {
+        "realm-management": [
+          "realm-admin",
+          "manage-users",
+          "view-users",
+          "query-users",
+          "manage-clients",
+          "view-clients",
+          "manage-realm"
+        ],
+        "account": [
+          "manage-account",
+          "manage-account-links",
+          "view-profile"
+        ]
+      }
     }
   ],
   "clients": [
