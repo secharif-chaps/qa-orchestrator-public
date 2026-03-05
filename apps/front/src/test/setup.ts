@@ -20,7 +20,7 @@ const mockT = (key: string, fallback?: string | number | Record<string, unknown>
 config.global.mocks = {
   $t: mockT,
   $tc: mockT,
-  $te: (key: string) => true,
+  $te: () => true,
   $d: (date: Date) => date.toISOString(),
   $n: (num: number) => num.toString(),
 }
@@ -30,7 +30,7 @@ vi.mock('vue-i18n', () => ({
   useI18n: () => ({
     t: mockT,
     tc: mockT,
-    te: (key: string) => true,
+    te: () => true,
     d: (date: Date) => date.toISOString(),
     n: (num: number) => num.toString(),
     locale: { value: 'en-US' },

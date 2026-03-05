@@ -11,6 +11,7 @@ Usage:
         return {"users": [...]}
 """
 
+import os
 import time
 from typing import Any, Optional
 
@@ -334,7 +335,6 @@ def _initialize_keycloak_with_retry(
 
 # Initialize FastAPIKeycloak client with retry logic
 # Skip initialization in test environments when Keycloak is not available
-import os
 if os.environ.get("SKIP_KEYCLOAK_INIT", "").lower() in ("1", "true", "yes"):
     logger.warning("SKIP_KEYCLOAK_INIT is set - using mock IDP for testing")
     _raw_idp = None  # Will be handled by InternalTrustIDPWrapper
