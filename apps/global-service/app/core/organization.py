@@ -9,10 +9,11 @@ Copied and adapted from mint-server/app/core/organization.py
 """
 
 from typing import Any
-from fastapi import Depends, HTTPException, status, Request
+
+from fastapi import Depends, HTTPException, Request, status
 from pydantic import BaseModel
 
-from app.core.keycloak import idp, OIDCUser
+from app.core.keycloak import OIDCUser, idp
 from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)

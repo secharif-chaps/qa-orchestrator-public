@@ -15,27 +15,28 @@ Permission Requirements:
 - POST /members/{user_id}/reset-password: organization.manage OR admin.organizations (reset password)
 """
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Path, status
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 
 from app.core.authorization import verify_any_role_access
-from app.core.keycloak import idp, OIDCUser
+from app.core.keycloak import OIDCUser, idp
 from app.core.logging_config import get_logger
-from app.core.organization import get_user_organization, OrganizationContext
+from app.core.organization import OrganizationContext, get_user_organization
 from app.core.permissions import get_roles_for_tier, get_tier_from_roles
 from app.schemas.team import (
-    TeamMemberListItem,
-    TeamMemberListResponse,
-    TeamMemberPermissions,
-    TeamMember,
-    UpdateTeamMember,
-    UpdateTeamMemberPermissions,
     InviteTeamMemberRequest,
     InviteTeamMemberResponse,
     ResetPasswordRequest,
+    TeamMember,
+    TeamMemberListItem,
+    TeamMemberListResponse,
     TeamMemberPasswordReset,
+    TeamMemberPermissions,
+    UpdateTeamMember,
+    UpdateTeamMemberPermissions,
 )
 from app.services.keycloak_admin import keycloak_admin_service
-from uuid import UUID
 
 router = APIRouter(prefix="/team", tags=["team"])
 logger = get_logger(__name__)

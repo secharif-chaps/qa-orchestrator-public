@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app.api.endpoints import account, ai_preferences, internal, modules, organization, team, tokens, folder, users
+from app.api.endpoints import account, ai_preferences, folder, internal, modules, organization, team, tokens, users
 
 api_router = APIRouter()
 

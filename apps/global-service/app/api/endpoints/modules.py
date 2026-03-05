@@ -202,10 +202,7 @@ async def toggle_module(
     )
 
     # If body specifies enabled state, use it; otherwise toggle
-    if body is not None and body.enabled is not None:
-        new_enabled = body.enabled
-    else:
-        new_enabled = not current_module.enabled
+    new_enabled = body.enabled if body is not None and body.enabled is not None else not current_module.enabled
 
     logger.info(
         "Toggling module",

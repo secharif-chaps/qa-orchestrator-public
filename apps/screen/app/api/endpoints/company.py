@@ -7,7 +7,6 @@ This module provides endpoints for:
 - Company chat integration
 """
 
-from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_keycloak import OIDCUser
@@ -43,8 +42,8 @@ from app.services.company_section_service import read_all_section_data
 from app.services.dify import DifyService
 from app.services.folder import FolderService
 from app.services.global_service_client import (
-    GlobalServiceClient,
     TOKENS_PER_COMPANY,
+    GlobalServiceClient,
 )
 
 logger = get_logger(__name__)
@@ -52,7 +51,7 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/companies", tags=["companies"])
 
 
-@router.get("/recent", response_model=List[CompanyResponse])
+@router.get("/recent", response_model=list[CompanyResponse])
 async def get_recent_companies(
     limit: int = Query(
         5, ge=1, le=100, description="Number of recent companies to return"
@@ -594,7 +593,7 @@ def _verify_all_tasks_succeeded(company_id: int, service: CompanyService) -> Non
         )
 
 
-@router.get("/archived/list", response_model=List[CompanyResponse])
+@router.get("/archived/list", response_model=list[CompanyResponse])
 async def get_archived_companies(
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),

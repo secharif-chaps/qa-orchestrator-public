@@ -3,14 +3,16 @@ Keycloak Admin Service for user management operations
 """
 
 import asyncio
-import httpx
+import logging
 import secrets
 import string
 import time
-from typing import Dict, List, Optional, Any
+from typing import Any, Optional
+
+import httpx
 from fastapi import HTTPException, status
+
 from app.core.config import settings
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -192,7 +194,7 @@ class KeycloakAdminService:
             detail="Failed to obtain admin token"
         )
     
-    async def _make_admin_request(self, method: str, endpoint: str, data: Optional[Dict] = None) -> httpx.Response:
+    async def _make_admin_request(self, method: str, endpoint: str, data: Optional[dict] = None) -> httpx.Response:
         """Make authenticated request to Keycloak Admin API"""
         token = await self._get_admin_token()
 
@@ -249,7 +251,7 @@ class KeycloakAdminService:
         
         return ''.join(password)
     
-    async def create_user(self, user_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def create_user(self, user_data: dict[str, Any]) -> dict[str, Any]:
         """Create a new user in Keycloak"""
         try:
             logger.info(
@@ -395,7 +397,7 @@ class KeycloakAdminService:
                 detail="Internal error creating user"
             )
     
-    async def get_user(self, user_id: str) -> Optional[Dict[str, Any]]:
+    async def get_user(self, user_id: str) -> Optional[dict[str, Any]]:
         """Get user details by ID"""
         try:
             response = await self._make_admin_request("GET", f"/users/{user_id}")
@@ -427,7 +429,7 @@ class KeycloakAdminService:
             )
             return None
     
-    async def get_users(self, first: int = 0, max_results: int = 100) -> List[Dict[str, Any]]:
+    async def get_users(self, first: int = 0, max_results: int = 100) -> list[dict[str, Any]]:
         """Get paginated list of users"""
         try:
             endpoint = f"/users?first={first}&max={max_results}"
@@ -448,7 +450,7 @@ class KeycloakAdminService:
         search: Optional[str] = None,
         first: int = 0,
         max_results: int = 100
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Search users using Keycloak's native search API.
 
@@ -580,7 +582,7 @@ class KeycloakAdminService:
             )
             return 0
 
-    async def get_user_organization_optimized(self, user_id: str) -> Optional[Dict[str, Any]]:
+    async def get_user_organization_optimized(self, user_id: str) -> Optional[dict[str, Any]]:
         """
         Get the organization for a single user efficiently.
 
@@ -610,7 +612,7 @@ class KeycloakAdminService:
                 return None
 
             # Check membership in all organizations in parallel
-            async def check_membership(org: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+            async def check_membership(org: dict[str, Any]) -> Optional[dict[str, Any]]:
                 org_id = org.get("id")
                 if not org_id:
                     return None
@@ -675,7 +677,7 @@ class KeycloakAdminService:
             )
             return None
     
-    async def update_user(self, user_id: str, user_data: Dict[str, Any]) -> bool:
+    async def update_user(self, user_id: str, user_data: dict[str, Any]) -> bool:
         """Update user details"""
         try:
             # Prepare update payload
@@ -837,7 +839,7 @@ class KeycloakAdminService:
             logger.error(f"Error counting users: {e}")
             return 0
     
-    async def get_realm_roles(self) -> List[Dict[str, Any]]:
+    async def get_realm_roles(self) -> list[dict[str, Any]]:
         """Get all realm roles"""
         try:
             response = await self._make_admin_request("GET", "/roles")
@@ -852,7 +854,7 @@ class KeycloakAdminService:
             logger.error(f"Error getting realm roles: {e}")
             return []
     
-    async def get_user_realm_roles(self, user_id: str) -> List[Dict[str, Any]]:
+    async def get_user_realm_roles(self, user_id: str) -> list[dict[str, Any]]:
         """Get realm roles assigned to a user"""
         try:
             response = await self._make_admin_request("GET", f"/users/{user_id}/role-mappings/realm")
@@ -869,7 +871,7 @@ class KeycloakAdminService:
             logger.error(f"Error getting user roles: {e}")
             return []
     
-    async def assign_realm_roles_to_user(self, user_id: str, roles: List[Dict[str, Any]]) -> bool:
+    async def assign_realm_roles_to_user(self, user_id: str, roles: list[dict[str, Any]]) -> bool:
         """Assign realm roles to a user"""
         try:
             response = await self._make_admin_request("POST", f"/users/{user_id}/role-mappings/realm", roles)
@@ -891,7 +893,7 @@ class KeycloakAdminService:
             logger.error(f"Error assigning roles: {e}")
             return False
     
-    async def remove_realm_roles_from_user(self, user_id: str, roles: List[Dict[str, Any]]) -> bool:
+    async def remove_realm_roles_from_user(self, user_id: str, roles: list[dict[str, Any]]) -> bool:
         """Remove realm roles from a user"""
         try:
             response = await self._make_admin_request("DELETE", f"/users/{user_id}/role-mappings/realm", roles)
@@ -913,7 +915,7 @@ class KeycloakAdminService:
             logger.error(f"Error removing roles: {e}")
             return False
     
-    async def sync_user_realm_roles(self, user_id: str, target_roles: List[str]) -> bool:
+    async def sync_user_realm_roles(self, user_id: str, target_roles: list[str]) -> bool:
         """
         Sync user realm roles to match target roles list
         This will add missing roles and remove extra roles
@@ -1002,7 +1004,7 @@ class KeycloakAdminService:
         first: int = 0,
         max_results: int = 100,
         search: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Get members of a specific Keycloak organization
 
@@ -1196,7 +1198,7 @@ class KeycloakAdminService:
             logger.error(f"Error removing user from organization: {e}")
             return False
 
-    async def search_organizations(self, search: str) -> List[Dict[str, Any]]:
+    async def search_organizations(self, search: str) -> list[dict[str, Any]]:
         """
         Search organizations by name using Keycloak's native search API.
 
@@ -1247,7 +1249,7 @@ class KeycloakAdminService:
             )
             return []
 
-    async def get_organizations(self) -> List[Dict[str, Any]]:
+    async def get_organizations(self) -> list[dict[str, Any]]:
         """
         Get all organizations from Keycloak.
 
@@ -1293,7 +1295,7 @@ class KeycloakAdminService:
             )
             return []
 
-    async def get_organization(self, organization_id: str) -> Optional[Dict[str, Any]]:
+    async def get_organization(self, organization_id: str) -> Optional[dict[str, Any]]:
         """
         Get a specific organization by ID from Keycloak.
 
@@ -1360,7 +1362,7 @@ class KeycloakAdminService:
 
     # Session Management Methods
 
-    async def get_user_sessions(self, user_id: str) -> List[Dict[str, Any]]:
+    async def get_user_sessions(self, user_id: str) -> list[dict[str, Any]]:
         """
         Get all active sessions for a user.
 
@@ -1549,8 +1551,8 @@ class KeycloakAdminService:
         user_id: str,
         first: int = 0,
         max_results: int = 20,
-        event_types: Optional[List[str]] = None
-    ) -> List[Dict[str, Any]]:
+        event_types: Optional[list[str]] = None
+    ) -> list[dict[str, Any]]:
         """
         Get user events (activity log) from Keycloak.
 
@@ -1616,7 +1618,7 @@ class KeycloakAdminService:
             )
             return []
 
-    async def get_user_organizations(self, user_id: str) -> List[Dict[str, Any]]:
+    async def get_user_organizations(self, user_id: str) -> list[dict[str, Any]]:
         """
         Get all organizations that a user belongs to.
 
@@ -1637,7 +1639,7 @@ class KeycloakAdminService:
 
             # Get all organizations
             all_orgs = await self.get_organizations()
-            user_orgs: List[Dict[str, Any]] = []
+            user_orgs: list[dict[str, Any]] = []
 
             # Check each organization for user membership
             for org in all_orgs:

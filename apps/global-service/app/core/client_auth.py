@@ -6,13 +6,14 @@ This module handles OAuth2 client credentials flow for service-to-service
 communication, using Keycloak token introspection with caching.
 """
 
+import logging
+from datetime import UTC, datetime
+from typing import Any
+
 import httpx
 from cachetools import TTLCache
-from typing import Any, Dict
-from datetime import datetime, timezone
 
 from app.core.config import settings
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ class ClientAuthError(Exception):
     pass
 
 
-async def introspect_token(token: str) -> Dict:
+async def introspect_token(token: str) -> dict:
     """
     Introspect a client credentials token against Keycloak.
     
@@ -81,8 +82,8 @@ async def introspect_token(token: str) -> Dict:
     # Check expiration
     exp = result.get("exp")
     if exp:
-        exp_time = datetime.fromtimestamp(exp, tz=timezone.utc)
-        if exp_time < datetime.now(timezone.utc):
+        exp_time = datetime.fromtimestamp(exp, tz=UTC)
+        if exp_time < datetime.now(UTC):
             logger.warning("Token expired according to introspection")
             raise ClientAuthError("Token expired")
     
@@ -93,7 +94,7 @@ async def introspect_token(token: str) -> Dict:
     return result
 
 
-async def get_client_info(token: str) -> Dict[str, Any]:
+async def get_client_info(token: str) -> dict[str, Any]:
     """
     Get client information from validated token.
     

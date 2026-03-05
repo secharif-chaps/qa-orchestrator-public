@@ -2,10 +2,11 @@
 Security middleware for request validation and sanitization
 """
 
-import time
 import json
+import time
 from typing import Callable
-from fastapi import Request, Response, HTTPException, status
+
+from fastapi import HTTPException, Request, Response, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -178,7 +179,7 @@ class SecurityMiddleware(BaseHTTPMiddleware):
                 )
         
         # Check for header injection attempts
-        for header_name, header_value in request.headers.items():
+        for _header_name, header_value in request.headers.items():
             if any(char in header_value for char in ['\r', '\n', '\0']):
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,

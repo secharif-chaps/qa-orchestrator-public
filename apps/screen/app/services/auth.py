@@ -1,10 +1,12 @@
-from keycloak import KeycloakOpenID, KeycloakAdmin
+from typing import Any, Optional
+
+import requests
 from jose import jwt
+from keycloak import KeycloakAdmin, KeycloakOpenID
+
 from app.core.config import settings
 from app.core.logging_config import get_logger
 from app.schemas.user import TokenData
-from typing import Optional, Dict, Any
-import requests
 
 logger = get_logger(__name__)
 
@@ -36,7 +38,7 @@ class KeycloakService:
                 # Admin connection is optional
                 pass
 
-    async def authenticate_user(self, username: str, password: str) -> Optional[Dict[str, Any]]:
+    async def authenticate_user(self, username: str, password: str) -> Optional[dict[str, Any]]:
         """Authenticate user with Keycloak using direct HTTP request"""
         try:
             # Build token endpoint URL
@@ -76,7 +78,7 @@ class KeycloakService:
             logger.error(f"Unexpected error during authentication for user {username}: {str(e)}")
             return None
 
-    async def refresh_token(self, refresh_token: str) -> Optional[Dict[str, Any]]:
+    async def refresh_token(self, refresh_token: str) -> Optional[dict[str, Any]]:
         """Refresh access token"""
         try:
             token = self.keycloak_openid.refresh_token(refresh_token)
@@ -92,7 +94,7 @@ class KeycloakService:
         except Exception:
             return False
 
-    async def get_user_info(self, access_token: str) -> Optional[Dict[str, Any]]:
+    async def get_user_info(self, access_token: str) -> Optional[dict[str, Any]]:
         """Get user info from access token"""
         try:
             logger.debug(f"Calling userinfo endpoint with token: {access_token[:20]}...")
@@ -136,9 +138,8 @@ class KeycloakService:
                 roles = realm_access.get("roles", ["user"])
 
                 # Ensure admin role is properly assigned
-                if username == "admin":
-                    if "admin" not in roles:
-                        roles.append("admin")
+                if username == "admin" and "admin" not in roles:
+                    roles.append("admin")
 
                 return TokenData(
                     username=username,
@@ -179,7 +180,7 @@ class KeycloakService:
             logger.debug(f"Token verification error: {str(e)}")
             return None
 
-    async def introspect_token(self, token: str) -> Optional[Dict[str, Any]]:
+    async def introspect_token(self, token: str) -> Optional[dict[str, Any]]:
         """Introspect token (server-side validation)"""
         try:
             logger.debug(f"Calling introspect endpoint with token: {token[:20]}...")

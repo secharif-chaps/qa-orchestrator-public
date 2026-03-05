@@ -1,6 +1,8 @@
+from typing import Any, Optional
+
 from sqlalchemy.orm import Session
+
 from app.models.user_preferences import UserPreferences
-from typing import Optional, Dict, Any
 
 
 class UserPreferencesService:
@@ -13,14 +15,14 @@ class UserPreferencesService:
             UserPreferences.keycloak_user_id == keycloak_user_id
         ).first()
 
-    def get_ai_preferences(self, keycloak_user_id: str) -> Optional[Dict[str, Any]]:
+    def get_ai_preferences(self, keycloak_user_id: str) -> Optional[dict[str, Any]]:
         """Get AI preferences for a user from JSONB"""
         user_prefs = self.get_user_preferences(keycloak_user_id)
         if not user_prefs or not user_prefs.preferences:
             return None
         return user_prefs.preferences.get('ai')
 
-    def set_ai_preferences(self, keycloak_user_id: str, ai_data: Dict[str, Any]) -> Dict[str, Any]:
+    def set_ai_preferences(self, keycloak_user_id: str, ai_data: dict[str, Any]) -> dict[str, Any]:
         """Create or update AI preferences for a user"""
         user_prefs = self.get_user_preferences(keycloak_user_id)
 
@@ -49,14 +51,14 @@ class UserPreferencesService:
         ai_prefs = self.get_ai_preferences(keycloak_user_id)
         return ai_prefs is not None
 
-    def get_preference_category(self, keycloak_user_id: str, category: str) -> Optional[Dict[str, Any]]:
+    def get_preference_category(self, keycloak_user_id: str, category: str) -> Optional[dict[str, Any]]:
         """Get preferences for any category (generic method for future use)"""
         user_prefs = self.get_user_preferences(keycloak_user_id)
         if not user_prefs or not user_prefs.preferences:
             return None
         return user_prefs.preferences.get(category)
 
-    def set_preference_category(self, keycloak_user_id: str, category: str, data: Dict[str, Any]) -> Dict[str, Any]:
+    def set_preference_category(self, keycloak_user_id: str, category: str, data: dict[str, Any]) -> dict[str, Any]:
         """Set preferences for any category (generic method for future use)"""
         user_prefs = self.get_user_preferences(keycloak_user_id)
 

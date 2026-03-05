@@ -11,21 +11,21 @@ from fastapi.responses import StreamingResponse
 from fastapi_keycloak import OIDCUser
 from sqlalchemy.orm import Session
 
-from app.core.keycloak import idp
-from app.core.organization import get_user_organization, OrganizationContext
 from app.core.dependencies import get_db
-from app.core.exceptions import ResourceNotFoundError, AuthorizationError, ExternalServiceError
+from app.core.exceptions import AuthorizationError, ExternalServiceError, ResourceNotFoundError
+from app.core.keycloak import idp
 from app.core.logging_config import get_logger
-from app.services.chapse import ChapseService
+from app.core.organization import OrganizationContext, get_user_organization
 from app.schemas.chapse import (
     ChapseChatRequest,
-    ConversationsResponse,
-    ConversationDetailResponse,
     ContextResponse,
-    UpdateContextRequest,
+    ConversationDetailResponse,
+    ConversationsResponse,
     RenameRequest,
     RenameResponse,
+    UpdateContextRequest,
 )
+from app.services.chapse import ChapseService
 
 router = APIRouter(prefix="/chapse", tags=["chapse"])
 logger = get_logger(__name__)

@@ -15,7 +15,7 @@ Legacy JSON columns (profile, digital, timeline, products, jobs, csr, press, tea
 have been removed. Use the relationships to access section data.
 """
 
-from sqlalchemy import Column, String, Integer, DateTime, Boolean
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 

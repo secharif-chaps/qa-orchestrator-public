@@ -1,7 +1,9 @@
-import httpx
 import logging
-from typing import Dict, Any, Optional
+from typing import Any, Optional
+
+import httpx
 from sqlalchemy.orm import Session
+
 from app.core.config import settings
 from app.services.workflow_config import WorkflowConfigService
 
@@ -46,7 +48,7 @@ class DifyClient:
         company_id: int,
         async_mode: bool = True,
         api_key: Optional[str] = None
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Generic method to trigger any workflow type using Workflow Apps API
 
@@ -203,7 +205,7 @@ class DifyClient:
             error_msg = f"Error triggering Dify {task_type} workflow: {str(e)}"
             logger.error(error_msg)
             raise Exception(error_msg) from e
-    async def send_chat_message(self, message: str, company_context: Dict[str, Any], chat_history: list = None) -> Dict[str, Any]:
+    async def send_chat_message(self, message: str, company_context: dict[str, Any], chat_history: list = None) -> dict[str, Any]:
         """
         Send a chat message to the Dify chat workflow
         
@@ -303,10 +305,10 @@ class DifyClient:
     async def send_global_chat_message(
         self,
         message: str,
-        contexts: Dict[str, Any],
-        system_context: Dict[str, Any],
+        contexts: dict[str, Any],
+        system_context: dict[str, Any],
         chat_history: list = None
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Send a chat message to the global Chaps-e chat workflow
 
@@ -421,9 +423,9 @@ class DifyClient:
 
     async def generate_quick_actions(
         self,
-        user_preferences: Dict[str, Any],
-        company_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        user_preferences: dict[str, Any],
+        company_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Generate quick actions using Dify workflow based on user preferences and company data
 

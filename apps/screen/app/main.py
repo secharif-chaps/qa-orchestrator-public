@@ -3,9 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
 from app.core.config import settings
-from app.core.logging_config import setup_logging, get_logger
-from app.core.middleware import SecurityMiddleware, JSONValidationMiddleware
 from app.core.database_security import setup_database_security
+from app.core.logging_config import get_logger, setup_logging
+from app.core.middleware import JSONValidationMiddleware, SecurityMiddleware
 from app.database import engine
 
 # Initialize logging with configured level

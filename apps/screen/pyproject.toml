@@ -52,7 +52,13 @@ select = [
     "ASYNC", # async best practices
 ]
 ignore = [
-    "E501",  # line too long (handled by formatter)
+    "E501",    # line too long (handled by formatter)
+    "B008",    # function call in default argument (FastAPI Depends pattern)
+    "B904",    # raise without from (needs manual review for proper exception chaining)
+    "SIM102",  # nested if statements (style preference)
+    "SIM105",  # use contextlib.suppress (style preference)
+    "SIM108",  # use ternary operator (style preference)
+    "ASYNC210",# blocking HTTP in async (needs httpx migration)
 ]
 
 [tool.ruff.lint.isort]

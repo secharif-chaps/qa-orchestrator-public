@@ -19,20 +19,20 @@ All models have 1:N relationship with Company via company_id foreign key.
 """
 
 import enum
+
 from sqlalchemy import (
     Column,
-    Integer,
-    Text,
-    ForeignKey,
     DateTime,
     Enum,
+    ForeignKey,
+    Integer,
+    Text,
 )
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.database import Base
-
 
 # ENUM definitions for type columns
 

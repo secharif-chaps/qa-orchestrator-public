@@ -1,24 +1,25 @@
 """Service for handling and processing Dify error callbacks."""
 import re
-from typing import Dict, Any, List, Optional
+from typing import Any, Optional
+
+from app.core.dify_error_config import (
+    ERROR_PRIORITY,
+    ERROR_TYPE_MAPPING,
+    RECOVERABLE_ERROR_TYPES,
+    WHITELISTED_ERROR_TYPES,
+)
+from app.core.dify_error_i18n import (
+    DEFAULT_LANGUAGE,
+    SUPPORTED_LANGUAGES,
+    get_message_template,
+)
+from app.core.logging_config import get_logger
 from app.schemas.dify_errors import (
     DifyErrorDetail,
     DifyErrorType,
-    ParsedError,
     ErrorHandlingResult,
+    ParsedError,
 )
-from app.core.dify_error_config import (
-    WHITELISTED_ERROR_TYPES,
-    ERROR_TYPE_MAPPING,
-    ERROR_PRIORITY,
-    RECOVERABLE_ERROR_TYPES,
-)
-from app.core.dify_error_i18n import (
-    get_message_template,
-    DEFAULT_LANGUAGE,
-    SUPPORTED_LANGUAGES,
-)
-from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
 
@@ -113,7 +114,7 @@ class DifyErrorHandler:
         self.recoverable_types = RECOVERABLE_ERROR_TYPES
         self.language = language if language in SUPPORTED_LANGUAGES else DEFAULT_LANGUAGE
 
-    def is_error_callback(self, callback_body: Dict[str, Any]) -> bool:
+    def is_error_callback(self, callback_body: dict[str, Any]) -> bool:
         """
         Check if callback body represents an error.
 
@@ -137,14 +138,11 @@ class DifyErrorHandler:
             return True
 
         # Check for status-based error
-        if "status" in callback_body and callback_body["status"] in ["failed", "error"]:
-            return True
-
-        return False
+        return bool("status" in callback_body and callback_body["status"] in ["failed", "error"])
 
     def parse_error_callback(
         self,
-        callback_body: Dict[str, Any],
+        callback_body: dict[str, Any],
         task_id: int,
         task_type: str,
     ) -> ErrorHandlingResult:
@@ -218,8 +216,8 @@ class DifyErrorHandler:
         return result
 
     def _parse_new_error_format(
-        self, callback_body: Dict[str, Any]
-    ) -> List[ParsedError]:
+        self, callback_body: dict[str, Any]
+    ) -> list[ParsedError]:
         """Parse new error format with structured error list."""
         parsed_errors = []
 
@@ -268,8 +266,8 @@ class DifyErrorHandler:
         return parsed_errors
 
     def _parse_old_error_format(
-        self, callback_body: Dict[str, Any]
-    ) -> List[ParsedError]:
+        self, callback_body: dict[str, Any]
+    ) -> list[ParsedError]:
         """Parse old error format (simple error string)."""
         parsed_errors = []
 
@@ -306,7 +304,7 @@ class DifyErrorHandler:
 
         return parsed_errors
 
-    def _create_generic_error(self, callback_body: Dict[str, Any]) -> ParsedError:
+    def _create_generic_error(self, callback_body: dict[str, Any]) -> ParsedError:
         """Create a generic unknown error."""
         error_detail = DifyErrorDetail(
             error_type="unknown",
@@ -389,7 +387,7 @@ class DifyErrorHandler:
 
         return parsed_error
 
-    def _select_primary_error(self, errors: List[ParsedError]) -> ParsedError:
+    def _select_primary_error(self, errors: list[ParsedError]) -> ParsedError:
         """
         Select the most important error to display to user.
 
@@ -419,7 +417,7 @@ class DifyErrorHandler:
 
         return sorted_errors[0]
 
-    def _create_error_summary(self, errors: List[ParsedError]) -> str:
+    def _create_error_summary(self, errors: list[ParsedError]) -> str:
         """Create a brief summary of all errors."""
         if not errors:
             return "Aucune erreur détectée"
@@ -454,7 +452,7 @@ class DifyErrorHandler:
 
     def _log_errors(
         self,
-        errors: List[ParsedError],
+        errors: list[ParsedError],
         task_id: int,
         task_type: str
     ) -> None:

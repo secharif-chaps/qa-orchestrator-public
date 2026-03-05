@@ -1,7 +1,8 @@
-from typing import List, Optional, Tuple
 import logging
-from sqlalchemy.orm import Session
+from typing import Optional
+
 from sqlalchemy import asc, desc
+from sqlalchemy.orm import Session
 
 from app.models.company import Company
 from app.schemas.pagination import PaginationParams
@@ -20,7 +21,7 @@ class SQLAlchemyCompanyRepository:
     def get_by_name(self, name: str) -> Optional[Company]:
         return self.db_session.query(Company).filter(Company.name == name).first()
     
-    def get_all(self) -> List[Company]:
+    def get_all(self) -> list[Company]:
         return self.db_session.query(Company).all()
     
     def create(self, name: str, website: str) -> Company:
@@ -46,7 +47,7 @@ class SQLAlchemyCompanyRepository:
         return True
     
     
-    def get_paginated(self, pagination_params: PaginationParams, organization_id: Optional[str] = None, name_filter: Optional[str] = None, include_archived: bool = False) -> Tuple[List[Company], int]:
+    def get_paginated(self, pagination_params: PaginationParams, organization_id: Optional[str] = None, name_filter: Optional[str] = None, include_archived: bool = False) -> tuple[list[Company], int]:
         """Get paginated list of companies with sorting and filtering"""
         query = self.db_session.query(Company)
 

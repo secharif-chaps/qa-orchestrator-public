@@ -7,13 +7,13 @@ This service handles:
 """
 
 import json
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
 import httpx
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.core.exceptions import ExternalServiceError, ResourceNotFoundError, AuthorizationError
+from app.core.exceptions import AuthorizationError, ExternalServiceError, ResourceNotFoundError
 from app.core.logging_config import get_logger
 from app.models.chapse_conversation_context import ChapseConversationContext
 from app.models.company import Company
@@ -358,38 +358,37 @@ class ChapseService:
         new_conversation_id = None
 
         try:
-            async with httpx.AsyncClient(timeout=120.0) as client:
-                async with client.stream(
-                    "POST",
-                    f"{self.base_url}/chat-messages",
-                    json=payload,
-                    headers=headers
-                ) as response:
-                    if response.status_code != 200:
-                        error_text = await response.aread()
-                        logger.error(
-                            "Dify API error",
-                            extra={
-                                "status_code": response.status_code,
-                                "response": error_text.decode()[:500]
-                            }
-                        )
-                        raise ExternalServiceError(
-                            f"Dify API error: {response.status_code}",
-                            details={"response": error_text.decode()[:500]}
-                        )
+            async with httpx.AsyncClient(timeout=120.0) as client, client.stream(
+                "POST",
+                f"{self.base_url}/chat-messages",
+                json=payload,
+                headers=headers
+            ) as response:
+                if response.status_code != 200:
+                    error_text = await response.aread()
+                    logger.error(
+                        "Dify API error",
+                        extra={
+                            "status_code": response.status_code,
+                            "response": error_text.decode()[:500]
+                        }
+                    )
+                    raise ExternalServiceError(
+                        f"Dify API error: {response.status_code}",
+                        details={"response": error_text.decode()[:500]}
+                    )
 
-                    async for line in response.aiter_lines():
-                        if line.startswith("data:"):
-                            # Parse to extract conversation_id for new conversations
-                            try:
-                                data = json.loads(line[5:].strip())
-                                if "conversation_id" in data and not conversation_id:
-                                    new_conversation_id = data["conversation_id"]
-                            except json.JSONDecodeError:
-                                pass
+                async for line in response.aiter_lines():
+                    if line.startswith("data:"):
+                        # Parse to extract conversation_id for new conversations
+                        try:
+                            data = json.loads(line[5:].strip())
+                            if "conversation_id" in data and not conversation_id:
+                                new_conversation_id = data["conversation_id"]
+                        except json.JSONDecodeError:
+                            pass
 
-                            yield f"{line}\n"
+                        yield f"{line}\n"
 
         except httpx.TimeoutException as e:
             logger.error("Dify chat request timed out", exc_info=True)

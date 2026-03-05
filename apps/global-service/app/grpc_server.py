@@ -1,12 +1,12 @@
-import grpc
-from concurrent import futures
-from grpc_reflection.v1alpha import reflection
 import logging
+from concurrent import futures
+
+import grpc
+from grpc_reflection.v1alpha import reflection
 
 from app.core.config import settings
 from app.core.grpc import create_grpc_auth_interceptor
-from app.grpc_generated import organization_pb2
-from app.grpc_generated import organization_pb2_grpc
+from app.grpc_generated import organization_pb2, organization_pb2_grpc
 from app.grpc_services.organization import OrganizationService
 
 logger = logging.getLogger(__name__)

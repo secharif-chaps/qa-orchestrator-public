@@ -1,6 +1,6 @@
 import asyncio
 import json
-from typing import AsyncGenerator, List
+from collections.abc import AsyncGenerator
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
@@ -9,7 +9,7 @@ from fastapi_keycloak import OIDCUser
 from app.core.dependencies import get_company_service
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
-from app.core.organization import get_user_organization, OrganizationContext
+from app.core.organization import OrganizationContext, get_user_organization
 from app.core.security import verify_company_organization_access
 from app.schemas.task import TaskResponse, TaskTokenUpdate
 from app.services.company import CompanyService
@@ -74,7 +74,7 @@ router = APIRouter(
 #             detail=f"An unexpected error occurred: {str(e)}"
 #         )
 
-@router.get("/company/{company_id}", response_model=List[TaskResponse])
+@router.get("/company/{company_id}", response_model=list[TaskResponse])
 async def get_company_tasks(
     company_id: int,
     service: CompanyService = Depends(get_company_service),

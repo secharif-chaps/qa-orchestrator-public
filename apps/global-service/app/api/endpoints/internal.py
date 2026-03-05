@@ -5,17 +5,18 @@ Used by backend services (monolith) to call global-service functionality.
 """
 
 from uuid import UUID
-from fastapi import APIRouter, Depends, Path, status, HTTPException
+
+from fastapi import APIRouter, Depends, HTTPException, Path, status
 
 from app.core.dependencies import get_token_manager
-from app.core.internal_jwt import get_internal_token, InternalTokenPayload
+from app.core.internal_jwt import InternalTokenPayload, get_internal_token
 from app.core.logging_config import get_logger
 from app.models.organization import ModuleName, ReferenceType
 from app.schemas.token import ConsumeTokensRequest, ConsumeTokensResponse, TokenTransactionRead
 from app.services.token_manager import (
-    TokenManager,
     InsufficientTokensException,
     ModuleNotEnabledException,
+    TokenManager,
 )
 
 logger = get_logger(__name__)

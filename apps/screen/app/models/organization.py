@@ -10,21 +10,25 @@ Organizations are managed in Keycloak, not in the database. The Organization
 table stores application-specific settings tied to Keycloak organization UUIDs.
 """
 
+from enum import Enum
+
 from sqlalchemy import (
-    Column,
-    Integer,
-    String,
+    JSON,
     Boolean,
+    Column,
     DateTime,
-    Enum as SQLEnum,
-    UniqueConstraint,
     ForeignKey,
     Index,
-    JSON,
+    Integer,
+    String,
+    UniqueConstraint,
+)
+from sqlalchemy import (
+    Enum as SQLEnum,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from enum import Enum
+
 from app.database import Base
 
 

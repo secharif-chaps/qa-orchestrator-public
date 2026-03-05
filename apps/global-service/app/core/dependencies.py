@@ -8,7 +8,7 @@ Provides dependencies for:
 3. Organization context extraction
 """
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 from fastapi import Depends, Header, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -30,7 +30,7 @@ security = HTTPBearer(auto_error=False)
 
 # User JWT Authentication (for frontend)
 async def get_current_user(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
+    credentials: HTTPAuthorizationCredentials | None = Depends(security)
 ):
     """
     Dependency for user JWT authentication.
@@ -64,8 +64,8 @@ async def get_current_user(
 
 # Client Credentials Authentication (for service-to-service)
 async def get_service_client(
-    authorization: Optional[str] = Header(None, alias="Authorization")
-) -> Dict[str, Any]:
+    authorization: str | None = Header(None, alias="Authorization")
+) -> dict[str, Any]:
     """
     Dependency for client credentials authentication.
     
@@ -111,8 +111,8 @@ async def get_service_client(
 
 # Combined authentication (accepts either user or client)
 async def get_authenticated_entity(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
-) -> Dict[str, Any]:
+    credentials: HTTPAuthorizationCredentials | None = Depends(security)
+) -> dict[str, Any]:
     """
     Accepts either user JWT or client credentials.
     

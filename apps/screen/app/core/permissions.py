@@ -5,7 +5,6 @@ abstracting away individual Keycloak roles into a simple 3-tier model.
 """
 
 from enum import Enum
-from typing import List
 
 
 class PermissionTier(str, Enum):
@@ -22,7 +21,7 @@ class PermissionTier(str, Enum):
 
 
 # Role mappings for each tier (cumulative)
-TIER_ROLE_MAPPING: dict[PermissionTier, List[str]] = {
+TIER_ROLE_MAPPING: dict[PermissionTier, list[str]] = {
     PermissionTier.READER: [
         "organization.read",
     ],
@@ -53,7 +52,7 @@ TIER_ROLE_MAPPING: dict[PermissionTier, List[str]] = {
 }
 
 
-def get_roles_for_tier(tier: PermissionTier) -> List[str]:
+def get_roles_for_tier(tier: PermissionTier) -> list[str]:
     """Get all roles for a permission tier.
 
     Args:
@@ -69,7 +68,7 @@ def get_roles_for_tier(tier: PermissionTier) -> List[str]:
     return TIER_ROLE_MAPPING[tier].copy()
 
 
-def get_tier_from_roles(roles: List[str]) -> PermissionTier:
+def get_tier_from_roles(roles: list[str]) -> PermissionTier:
     """Determine permission tier from user's roles.
 
     Returns highest matching tier based on role presence.

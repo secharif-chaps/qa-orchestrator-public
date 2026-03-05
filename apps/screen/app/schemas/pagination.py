@@ -1,6 +1,7 @@
-from typing import Generic, TypeVar, List, Optional
-from pydantic import BaseModel, Field
 from enum import Enum
+from typing import Generic, Optional, TypeVar
+
+from pydantic import BaseModel, Field
 
 # Generic type for paginated data
 T = TypeVar('T')
@@ -20,7 +21,7 @@ class PaginationMeta(BaseModel):
 
 class PaginatedResponse(BaseModel, Generic[T]):
     """Generic paginated response wrapper"""
-    data: List[T] = Field(..., description="List of items")
+    data: list[T] = Field(..., description="List of items")
     meta: PaginationMeta = Field(..., description="Pagination metadata")
 
 class PaginationParams(BaseModel):

@@ -1,9 +1,11 @@
 """Concurrency monitoring endpoints."""
 import logging
+
 from fastapi import APIRouter, Depends
+
+from app.core.concurrency import DifyConcurrencyManager
 from app.core.dependencies import get_company_service
 from app.services.company import CompanyService
-from app.core.concurrency import DifyConcurrencyManager
 
 logger = logging.getLogger(__name__)
 

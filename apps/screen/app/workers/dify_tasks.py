@@ -1,12 +1,15 @@
 """Dify workflow task worker with dynamic concurrency control."""
-from app.core.celery_app import celery_app, MAX_CONCURRENT_WORKFLOWS
-from celery import Task
-from app.database import SessionLocal
-from app.models.task import Task as TaskModel, TaskStatus
-from app.models.company import Company
-from app.core.concurrency import DifyConcurrencyManager
-import logging
 import asyncio
+import logging
+
+from celery import Task
+
+from app.core.celery_app import MAX_CONCURRENT_WORKFLOWS, celery_app
+from app.core.concurrency import DifyConcurrencyManager
+from app.database import SessionLocal
+from app.models.company import Company
+from app.models.task import Task as TaskModel
+from app.models.task import TaskStatus
 
 logger = logging.getLogger(__name__)
 

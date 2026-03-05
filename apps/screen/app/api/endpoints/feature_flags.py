@@ -13,7 +13,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_keycloak import OIDCUser
-from pydantic import BaseModel, field_validator, HttpUrl
+from pydantic import BaseModel, HttpUrl, field_validator
 from sqlalchemy.orm import Session
 
 from app.core.keycloak import idp
@@ -22,8 +22,8 @@ from app.core.organization import OrganizationContext, get_user_organization
 from app.database import get_db
 from app.models.organization import FeatureFlag
 from app.services.feature_flags import (
-    enable_feature,
     disable_feature,
+    enable_feature,
     get_organization_features,
 )
 

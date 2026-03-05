@@ -9,7 +9,7 @@ import asyncio
 import secrets
 import string
 import time
-from typing import Any, Optional
+from typing import Any
 from urllib.parse import quote
 
 import httpx
@@ -29,8 +29,8 @@ class KeycloakAdminService:
         self.realm = settings.KEYCLOAK_REALM
         self.admin_client_id = settings.KEYCLOAK_ADMIN_CLIENT_ID
         self.admin_client_secret = settings.KEYCLOAK_ADMIN_CLIENT_SECRET
-        self._admin_token: Optional[str] = None
-        self._token_expiry: Optional[float] = None
+        self._admin_token: str | None = None
+        self._token_expiry: float | None = None
         self._token_lock = asyncio.Lock()
         self._client = httpx.AsyncClient(timeout=httpx.Timeout(30.0, read=60.0))
 
@@ -125,7 +125,7 @@ class KeycloakAdminService:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to obtain admin token")
 
     async def _make_admin_request(
-        self, method: str, endpoint: str, data: Optional[Any] = None
+        self, method: str, endpoint: str, data: Any | None = None
     ) -> httpx.Response:
         """Make authenticated request to Keycloak Admin API."""
         token = await self._get_admin_token()
@@ -148,7 +148,7 @@ class KeycloakAdminService:
 
     # ── User methods ────────────────────────────────────────────────
 
-    async def get_user(self, user_id: str) -> Optional[dict[str, Any]]:
+    async def get_user(self, user_id: str) -> dict[str, Any] | None:
         """Get user details by ID."""
         try:
             response = await self._make_admin_request("GET", f"/users/{user_id}")
@@ -163,7 +163,7 @@ class KeycloakAdminService:
             return None
 
     async def search_users(
-        self, search: Optional[str] = None, first: int = 0, max_results: int = 100
+        self, search: str | None = None, first: int = 0, max_results: int = 100
     ) -> list[dict[str, Any]]:
         """Search users using Keycloak's native search API."""
         try:
@@ -180,7 +180,7 @@ class KeycloakAdminService:
             logger.error("Exception searching users", exc_info=True, extra={"error_type": type(e).__name__})
             return []
 
-    async def count_users_with_search(self, search: Optional[str] = None) -> int:
+    async def count_users_with_search(self, search: str | None = None) -> int:
         """Count users with optional search filter."""
         try:
             endpoint = "/users/count"
@@ -529,7 +529,7 @@ class KeycloakAdminService:
 
     # ── Organization methods ────────────────────────────────────────
 
-    async def get_organization(self, organization_id: str) -> Optional[dict[str, Any]]:
+    async def get_organization(self, organization_id: str) -> dict[str, Any] | None:
         """Get a specific organization by ID from Keycloak.
 
         Returns:
@@ -611,7 +611,7 @@ class KeycloakAdminService:
             return []
 
     async def get_organization_members(
-        self, organization_id: str, first: int = 0, max_results: int = 100, search: Optional[str] = None
+        self, organization_id: str, first: int = 0, max_results: int = 100, search: str | None = None
     ) -> list[dict[str, Any]]:
         """Get members of a specific Keycloak organization."""
         try:

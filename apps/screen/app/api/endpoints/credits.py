@@ -22,18 +22,18 @@ from app.core.organization import OrganizationContext, get_user_organization
 from app.database import get_db
 from app.models.organization import (
     OrganizationModule,
+    ReferenceType,
     TokenTransaction,
     TransactionType,
-    ReferenceType,
 )
 from app.schemas.credits import (
     CreditStatsResponse,
-    ModuleUsageItem,
+    DailyCreditUsageResponse,
+    DailyUsageItem,
     ModuleForecastItem,
+    ModuleUsageItem,
     TopCreditUser,
     TopCreditUsersResponse,
-    DailyUsageItem,
-    DailyCreditUsageResponse,
 )
 from app.services.keycloak_admin import keycloak_admin_service
 from app.services.token_manager import TokenManager

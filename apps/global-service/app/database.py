@@ -1,14 +1,17 @@
+from collections.abc import AsyncGenerator, Generator
 from contextlib import contextmanager
-from typing import AsyncGenerator, Generator, Literal, overload
+from typing import Literal, overload
+
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import (
-    create_async_engine,
-    async_sessionmaker,
     AsyncEngine,
     AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
 )
-from sqlalchemy.orm import declarative_base, sessionmaker, Session
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
+
 from app.core.config import settings
 from app.core.logging_config import get_logger
 

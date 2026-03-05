@@ -12,25 +12,28 @@ Usage:
 """
 
 import time
-from typing import Optional, Any
-from fastapi_keycloak import FastAPIKeycloak, OIDCUser as BaseOIDCUser
+from typing import Any, Optional
+
+from fastapi_keycloak import FastAPIKeycloak
+from fastapi_keycloak import OIDCUser as BaseOIDCUser
 from requests.exceptions import (
-    RequestException,
-    Timeout,
     ConnectionError,
     HTTPError,
+    RequestException,
     SSLError,
+    Timeout,
 )
+
 from app.core.config import settings
-from app.core.logging_config import get_logger
 from app.core.internal_jwt import (
-    is_internal_request,
-    verify_internal_request,
     InternalJWTError,
+    IPNotAllowedError,
     TokenExpiredError,
     TokenInvalidError,
-    IPNotAllowedError,
+    is_internal_request,
+    verify_internal_request,
 )
+from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
 
@@ -433,7 +436,7 @@ class InternalTrustIDPWrapper:
 
         Returns a FastAPI dependency that can be used with Depends().
         """
-        from fastapi import Request, HTTPException, status
+        from fastapi import HTTPException, Request, status
 
         async def get_user_with_internal_trust(
             request: Request,

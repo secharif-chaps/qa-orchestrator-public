@@ -1,9 +1,11 @@
-from fastapi import APIRouter, HTTPException, status, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import logging
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
 from app.schemas.user import LoginRequest, RefreshTokenRequest, Token
 from app.services.auth import keycloak_service
-from typing import Dict, Any
-import logging
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -81,7 +83,7 @@ async def refresh_token(refresh_request: RefreshTokenRequest) -> Token:
 
 
 @router.post("/logout")
-async def logout(refresh_request: RefreshTokenRequest) -> Dict[str, str]:
+async def logout(refresh_request: RefreshTokenRequest) -> dict[str, str]:
     """
     Logout user by invalidating refresh token
     """
@@ -96,8 +98,8 @@ async def logout(refresh_request: RefreshTokenRequest) -> Dict[str, str]:
     return {"message": "Successfully logged out"}
 
 
-@router.get("/me", response_model=Dict[str, Any])
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
+@router.get("/me", response_model=dict[str, Any])
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict[str, Any]:
     """
     Get current user information from access token
     """
@@ -115,7 +117,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
 
 
 @router.post("/verify")
-async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
+async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict[str, Any]:
     """
     Verify if the provided token is valid
     """
@@ -138,7 +140,7 @@ async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(secur
 
 
 @router.post("/introspect")
-async def introspect_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
+async def introspect_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict[str, Any]:
     """
     Introspect token (server-side validation with detailed info)
     """

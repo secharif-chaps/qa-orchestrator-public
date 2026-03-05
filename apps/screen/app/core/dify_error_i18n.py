@@ -1,7 +1,7 @@
 """Internationalization (i18n) for Dify error messages."""
-from typing import Dict, Callable
-from app.schemas.dify_errors import DifyErrorType, ParsedError
+from typing import Callable
 
+from app.schemas.dify_errors import DifyErrorType, ParsedError
 
 # ============================================================================
 # TRANSLATION HELPERS
@@ -56,7 +56,7 @@ def _format_service_info(service_name: str | None, lang: str = "en") -> str:
 # ERROR MESSAGE TEMPLATES - ENGLISH (DEFAULT)
 # ============================================================================
 
-USER_MESSAGE_TEMPLATES_EN: Dict[DifyErrorType, Callable[[ParsedError], str]] = {
+USER_MESSAGE_TEMPLATES_EN: dict[DifyErrorType, Callable[[ParsedError], str]] = {
     DifyErrorType.RATE_LIMIT_LLM: lambda e: (
         f"The service is temporarily overloaded. "
         f"Please retry in {_format_retry_time(e.retry_after_seconds, 'en')}."
@@ -138,7 +138,7 @@ USER_MESSAGE_TEMPLATES_EN: Dict[DifyErrorType, Callable[[ParsedError], str]] = {
 # ERROR MESSAGE TEMPLATES - FRENCH
 # ============================================================================
 
-USER_MESSAGE_TEMPLATES_FR: Dict[DifyErrorType, Callable[[ParsedError], str]] = {
+USER_MESSAGE_TEMPLATES_FR: dict[DifyErrorType, Callable[[ParsedError], str]] = {
     DifyErrorType.RATE_LIMIT_LLM: lambda e: (
         f"Le service est temporairement saturé. "
         f"Merci de réessayer dans {_format_retry_time(e.retry_after_seconds, 'fr')}."
@@ -223,7 +223,7 @@ USER_MESSAGE_TEMPLATES_FR: Dict[DifyErrorType, Callable[[ParsedError], str]] = {
 SUPPORTED_LANGUAGES = ["en", "fr"]
 DEFAULT_LANGUAGE = "en"
 
-MESSAGE_TEMPLATES_REGISTRY: Dict[str, Dict[DifyErrorType, Callable[[ParsedError], str]]] = {
+MESSAGE_TEMPLATES_REGISTRY: dict[str, dict[DifyErrorType, Callable[[ParsedError], str]]] = {
     "en": USER_MESSAGE_TEMPLATES_EN,
     "fr": USER_MESSAGE_TEMPLATES_FR,
 }

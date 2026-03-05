@@ -55,13 +55,13 @@ main:commitlint:
     - npx commitlint --from "origin/main" --to HEAD --config commitlint.config.mjs
 
 # ─── Assign reviewers based on CODEOWNERS ─────────────
+# Only runs on MRs (requires CI_MERGE_REQUEST_IID)
 main:assign-reviewers:
   stage: lint
   image: python:3.12-slim
   allow_failure: true
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH
   script:
     - pip install --quiet requests
     - python scripts/ci/assign_reviewers.py

@@ -1,14 +1,16 @@
+from typing import Optional
+
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
-from typing import List, Optional
 
 from app.database import get_db
-from app.services.company import CompanyService
-from app.services.token_manager import TokenManager
-from app.services.global_service_client import GlobalServiceClient
-from app.services.auth import keycloak_service
 from app.schemas.user import TokenData
+from app.services.auth import keycloak_service
+from app.services.company import CompanyService
+from app.services.global_service_client import GlobalServiceClient
+from app.services.token_manager import TokenManager
+
 
 # Service dependencies
 def get_company_service(
@@ -56,7 +58,7 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-def require_roles(required_roles: List[str]):
+def require_roles(required_roles: list[str]):
     """
     Dependency factory to require specific roles
     """

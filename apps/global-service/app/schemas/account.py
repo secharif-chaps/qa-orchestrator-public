@@ -4,7 +4,6 @@ Covers user session management and activity event responses.
 """
 
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -27,7 +26,7 @@ class SessionListResponse(BaseModel):
     """List of active sessions for the current user."""
 
     sessions: list[SessionResponse] = Field(..., description="Active sessions")
-    current_session_id: Optional[str] = Field(
+    current_session_id: str | None = Field(
         None,
         description="Session ID extracted from the caller's JWT (if available)",
     )
@@ -42,7 +41,7 @@ class ActivityEventResponse(BaseModel):
     icon: str = Field(..., description="Font Awesome icon class")
     title: str = Field(..., description="User-friendly event title")
     description: str = Field(..., description="Human-readable event description")
-    ip_address: Optional[str] = Field(None, description="IP address of the event")
+    ip_address: str | None = Field(None, description="IP address of the event")
     timestamp: datetime = Field(..., description="When the event occurred")
 
 

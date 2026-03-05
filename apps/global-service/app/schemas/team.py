@@ -6,7 +6,6 @@ abstracting individual Keycloak roles into permission tiers.
 Ported from the backend monolith (back/app/schemas/team.py).
 """
 
-from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -22,10 +21,10 @@ class TeamMemberListItem(BaseModel):
     id: str = Field(..., description="Keycloak user UUID")
     username: str
     email: str
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    first_name: str | None = None
+    last_name: str | None = None
     is_current_user: bool = False
-    created_at: Optional[int] = Field(None, description="Unix timestamp from Keycloak")
+    created_at: int | None = Field(None, description="Unix timestamp from Keycloak")
 
     class Config:
         from_attributes = True
@@ -54,12 +53,12 @@ class TeamMember(BaseModel):
     id: str = Field(..., description="Keycloak user UUID")
     username: str
     email: str
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    avatar_url: Optional[str] = None
+    first_name: str | None = None
+    last_name: str | None = None
+    avatar_url: str | None = None
     permission_tier: PermissionTier
     is_current_user: bool = False
-    created_at: Optional[int] = Field(None, description="Unix timestamp from Keycloak")
+    created_at: int | None = Field(None, description="Unix timestamp from Keycloak")
 
     class Config:
         from_attributes = True
@@ -87,14 +86,14 @@ class UpdateTeamMember(BaseModel):
     All fields are optional - only provided fields are updated.
     """
 
-    first_name: Optional[str] = Field(None, max_length=100)
-    last_name: Optional[str] = Field(None, max_length=100)
-    email: Optional[str] = Field(None)
-    permission_tier: Optional[PermissionTier] = None
+    first_name: str | None = Field(None, max_length=100)
+    last_name: str | None = Field(None, max_length=100)
+    email: str | None = Field(None)
+    permission_tier: PermissionTier | None = None
 
     @field_validator("email")
     @classmethod
-    def validate_email(cls, v: Optional[str]) -> Optional[str]:
+    def validate_email(cls, v: str | None) -> str | None:
         if v is None:
             return v
         if "@" not in v or "." not in v.split("@")[-1]:
@@ -107,8 +106,8 @@ class InviteTeamMemberRequest(BaseModel):
 
     username: str = Field(..., min_length=3, max_length=50, description="Username for the new user")
     email: str = Field(..., description="Email address")
-    first_name: Optional[str] = Field(None, max_length=100)
-    last_name: Optional[str] = Field(None, max_length=100)
+    first_name: str | None = Field(None, max_length=100)
+    last_name: str | None = Field(None, max_length=100)
     temporary_password: str = Field(..., description="Temporary password for initial login")
     permission_tier: PermissionTier = Field(
         default=PermissionTier.READER,
@@ -151,8 +150,8 @@ class InviteTeamMemberResponse(BaseModel):
     id: str = Field(..., description="Keycloak user UUID of the new member")
     username: str
     email: str
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    first_name: str | None = None
+    last_name: str | None = None
     permission_tier: PermissionTier
     temporary_password: str
     message: str = "Team member created. Share the temporary password with the user."

@@ -1,9 +1,9 @@
 import logging
 import os
+from typing import Optional
 
 from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
-from typing import Optional
 
 
 class Settings(BaseSettings):

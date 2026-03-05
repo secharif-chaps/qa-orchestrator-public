@@ -7,12 +7,12 @@ identified by their Keycloak user UUID.
 Stored in global_schema as a global (non-module-specific) resource.
 """
 
-from typing import Any, Dict, Optional
+from typing import Any
 
-from sqlalchemy import Column, DateTime, Integer, JSON, String
+from sqlalchemy import JSON, Column, DateTime, Integer, String
 from sqlalchemy.sql import func
 
-from app.database import GlobalBase, GLOBAL_SCHEMA
+from app.database import GLOBAL_SCHEMA, GlobalBase
 
 
 class UserPreferences(GlobalBase):
@@ -48,22 +48,22 @@ class UserPreferences(GlobalBase):
     def __repr__(self) -> str:
         return f"<UserPreferences(user_id='{self.user_id}')>"
 
-    def get_preference(self, category: str) -> Optional[Dict[str, Any]]:
+    def get_preference(self, category: str) -> dict[str, Any] | None:
         """Get preferences for a specific category."""
         if not self.preferences:
             return None
         return self.preferences.get(category)
 
-    def set_preference(self, category: str, data: Dict[str, Any]) -> None:
+    def set_preference(self, category: str, data: dict[str, Any]) -> None:
         """Set preferences for a specific category."""
         if not self.preferences:
             self.preferences = {}
         self.preferences[category] = data
 
-    def get_ai_preferences(self) -> Optional[Dict[str, Any]]:
+    def get_ai_preferences(self) -> dict[str, Any] | None:
         """Convenience method to get AI preferences."""
         return self.get_preference("ai")
 
-    def set_ai_preferences(self, data: Dict[str, Any]) -> None:
+    def set_ai_preferences(self, data: dict[str, Any]) -> None:
         """Convenience method to set AI preferences."""
         self.set_preference("ai", data)

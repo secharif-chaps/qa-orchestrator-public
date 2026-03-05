@@ -6,8 +6,9 @@ supporting text translation with batch processing capabilities.
 API Documentation: https://docs.systran.net/translateAPI/translation/
 """
 
-import httpx
 from dataclasses import dataclass
+
+import httpx
 
 from app.core.config import settings
 from app.core.logging_config import get_logger

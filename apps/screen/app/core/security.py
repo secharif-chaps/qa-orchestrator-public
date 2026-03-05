@@ -3,10 +3,12 @@ Security utilities for authorization and access control
 """
 
 from typing import Optional
+
 from fastapi import HTTPException, status
-from app.schemas.user import TokenData
-from app.models.company import Company
+
 from app.core.organization import OrganizationContext
+from app.models.company import Company
+from app.schemas.user import TokenData
 
 # Re-export is_chapsvision_email from email_utils to avoid circular imports
 

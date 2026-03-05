@@ -12,15 +12,18 @@ Usage:
 """
 
 import time
-from typing import Optional, Any
-from fastapi_keycloak import FastAPIKeycloak, OIDCUser as BaseOIDCUser
+from typing import Any
+
+from fastapi_keycloak import FastAPIKeycloak
+from fastapi_keycloak import OIDCUser as BaseOIDCUser
 from requests.exceptions import (
-    RequestException,
-    Timeout,
     ConnectionError,
     HTTPError,
+    RequestException,
     SSLError,
+    Timeout,
 )
+
 from app.core.config import settings
 from app.core.logging_config import get_logger
 
@@ -38,7 +41,7 @@ class OIDCUser(BaseOIDCUser):
     ["OrgName", {"OrgName": {"id": "uuid"}}]
     """
 
-    organization: Optional[Any] = (
+    organization: Any | None = (
         None  # Can be list, dict, or string depending on Keycloak config
     )
     enabled_modules: list[
@@ -336,7 +339,7 @@ def _initialize_keycloak_with_retry(
 
 # Lazy initialization for Keycloak client
 # This avoids connection attempts during test collection or when Keycloak is not available
-_idp_instance: Optional[FastAPIKeycloak] = None
+_idp_instance: FastAPIKeycloak | None = None
 
 
 def get_idp() -> FastAPIKeycloak:

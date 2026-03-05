@@ -1,7 +1,6 @@
 """Pydantic schemas for token operations."""
 
 from datetime import datetime
-from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -34,7 +33,7 @@ class TokenTransactionRead(BaseModel):
     balance_after: int = Field(..., ge=0, description="Balance after transaction")
     transaction_type: TransactionType = Field(..., description="Type of transaction")
     reference_type: ReferenceType = Field(..., description="Reference type")
-    reference_id: Optional[str] = Field(None, description="Reference entity ID")
+    reference_id: str | None = Field(None, description="Reference entity ID")
     created_at: datetime = Field(..., description="Transaction timestamp")
     created_by: str = Field(
         ..., description="Keycloak user ID who created the transaction"
@@ -46,7 +45,7 @@ class TokenTransactionRead(BaseModel):
 class PaginatedTokenTransactionResponse(BaseModel):
     """Paginated response for token transaction history."""
 
-    items: List[TokenTransactionRead] = Field(..., description="List of transactions")
+    items: list[TokenTransactionRead] = Field(..., description="List of transactions")
     total: int = Field(..., ge=0, description="Total number of matching transactions")
     page: int = Field(..., ge=1, description="Current page number")
     size: int = Field(..., ge=1, description="Page size")
@@ -59,9 +58,9 @@ class ConsumeTokensRequest(BaseModel):
     amount: int = Field(..., gt=0, description="Number of tokens to consume (must be positive)")
     module_name: str = Field(..., description="Module consuming the tokens (must be enabled)")
     reference_type: str = Field(..., description="Type of operation consuming tokens")
-    reference_id: Optional[str] = Field(None, description="Optional ID of the referenced entity")
+    reference_id: str | None = Field(None, description="Optional ID of the referenced entity")
     created_by: str = Field(..., description="Keycloak user ID performing the operation")
-    description: Optional[str] = Field(None, description="Optional transaction description")
+    description: str | None = Field(None, description="Optional transaction description")
 
 
 class ConsumeTokensResponse(BaseModel):
@@ -69,4 +68,4 @@ class ConsumeTokensResponse(BaseModel):
 
     success: bool = Field(True, description="Always true for successful operations")
     balance: int = Field(..., ge=0, description="Remaining token balance after consumption")
-    transaction: Optional[TokenTransactionRead] = Field(None, description="Created transaction record")
+    transaction: TokenTransactionRead | None = Field(None, description="Created transaction record")

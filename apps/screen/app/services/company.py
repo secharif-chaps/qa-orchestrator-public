@@ -9,36 +9,42 @@ After Task Group 11 cleanup, this service:
 - Maintains raw_*_knowledge fields on Company model for data collection
 """
 
-from typing import List, Dict, Any, Optional
 import logging
+from typing import Any, Optional
+
 from sqlalchemy.orm import Session, joinedload
-from app.models.company import Company
-from app.models.task import Task, TaskType, TaskStatus
-from app.models.workflow_config import WorkflowConfig
-from app.schemas.company import (
-    CompanyResponse,
-    CompanyCSVRow, CompanyCSVValidationError, CompanyCSVValidationResponse,
-    CompanyCSVImportResponse, CompanyCSVImportResult
-)
-from app.schemas.task import TaskTokenUpdate
-from app.schemas.pagination import PaginationParams, PaginatedResponse, create_pagination_meta
-from app.services.dify import DifyService
-from app.services.company_section_service import (
-    write_section_data,
-    read_all_section_data,
-    apply_translations_to_section_data,
-)
-from app.services.translation import (
-    TranslationService,
-    SUPPORTED_LANGUAGE_CODES,
-)
-from app.core.database_security import SecureQueryBuilder
-from app.core.exceptions import ResourceNotFoundError, ValidationError as ValidationException
-from app.core.validators import ValidationError, InputValidator
-from app.repositories.company_repository_impl import SQLAlchemyCompanyRepository
+
 from app.core.config import settings
+from app.core.database_security import SecureQueryBuilder
+from app.core.exceptions import ResourceNotFoundError
+from app.core.exceptions import ValidationError as ValidationException
+from app.core.validators import InputValidator, ValidationError
+from app.models.company import Company
+from app.models.task import Task, TaskStatus, TaskType
+from app.models.workflow_config import WorkflowConfig
+from app.repositories.company_repository_impl import SQLAlchemyCompanyRepository
+from app.schemas.company import (
+    CompanyCSVImportResponse,
+    CompanyCSVImportResult,
+    CompanyCSVRow,
+    CompanyCSVValidationError,
+    CompanyCSVValidationResponse,
+    CompanyResponse,
+)
+from app.schemas.pagination import PaginatedResponse, PaginationParams, create_pagination_meta
+from app.schemas.task import TaskTokenUpdate
+from app.services.company_section_service import (
+    apply_translations_to_section_data,
+    read_all_section_data,
+    write_section_data,
+)
+from app.services.dify import DifyService
+from app.services.token_manager import TOKENS_PER_COMPANY, TokenManager
+from app.services.translation import (
+    SUPPORTED_LANGUAGE_CODES,
+    TranslationService,
+)
 from app.workers.dify_tasks import execute_dify_workflow
-from app.services.token_manager import TokenManager, TOKENS_PER_COMPANY
 
 logger = logging.getLogger(__name__)
 
@@ -137,7 +143,7 @@ class CompanyService:
             query = query.filter(~Company.is_deleted)
         return query.first()
 
-    def get_all_companies(self, organization_id: Optional[str] = None, include_deleted: bool = False) -> List[Company]:
+    def get_all_companies(self, organization_id: Optional[str] = None, include_deleted: bool = False) -> list[Company]:
         """Securely get all companies, optionally filtered by organization"""
         query = self.db.query(Company)
         if not include_deleted:
@@ -426,7 +432,7 @@ class CompanyService:
             # Log the error for debugging but don't re-raise to avoid crashing the backend
             logger.error(f"Task execution failed for company {company.name} (task {task.type.value}): {str(e)}", exc_info=True)
 
-    def _update_company_data(self, company: Company, query_type: str, data: Dict[str, Any]) -> None:
+    def _update_company_data(self, company: Company, query_type: str, data: dict[str, Any]) -> None:
         """Update company data from Dify callback.
 
         After Task Group 11 cleanup, this method:
@@ -518,7 +524,7 @@ class CompanyService:
             self.db.refresh(company)
         return company
 
-    def get_archived_companies(self, organization_id: Optional[str] = None) -> List[Company]:
+    def get_archived_companies(self, organization_id: Optional[str] = None) -> list[Company]:
         """Get all soft-deleted (archived) companies"""
         query = self.db.query(Company).filter(Company.is_deleted)
         if organization_id:
@@ -530,7 +536,7 @@ class CompanyService:
         organization_id: str,
         limit: int = 5,
         accessible_company_ids: set | None = None
-    ) -> List[CompanyResponse]:
+    ) -> list[CompanyResponse]:
         """Get recent companies with their folder information.
 
         Args:
@@ -543,7 +549,7 @@ class CompanyService:
         Returns:
             List of CompanyResponse objects with folder information
         """
-        from app.models.folder import FolderItem, Folder
+        from app.models.folder import Folder, FolderItem
 
         # Build base query
         query = (
@@ -590,7 +596,7 @@ class CompanyService:
 
     def validate_csv_companies(
         self,
-        companies: List[CompanyCSVRow],
+        companies: list[CompanyCSVRow],
         organization_id: str,
         token_manager: TokenManager | None = None,
     ) -> CompanyCSVValidationResponse:
@@ -699,7 +705,7 @@ class CompanyService:
             tokens_available=available_tokens
         )
 
-    def import_csv_companies(self, companies: List[CompanyCSVRow], owner_username: str,
+    def import_csv_companies(self, companies: list[CompanyCSVRow], owner_username: str,
                             organization_id: str, skip_invalid: bool = True) -> CompanyCSVImportResponse:
         """Import companies from CSV, creating them with tasks"""
         results = []

@@ -12,11 +12,11 @@ Security properties:
 - Issuer claim identifies the gateway
 """
 
+from datetime import UTC, datetime, timedelta
+
 import jwt
-from datetime import datetime, timedelta, timezone
-from typing import Optional
-from pydantic import BaseModel
 from fastapi import Header, HTTPException, status
+from pydantic import BaseModel
 
 from app.core.config import settings
 from app.core.logging_config import get_logger
@@ -32,7 +32,7 @@ class InternalTokenPayload(BaseModel):
 
     sub: str  # User ID (Keycloak sub)
     username: str  # Preferred username
-    email: Optional[str] = None  # User email
+    email: str | None = None  # User email
     org_id: str  # Organization UUID
     org_name: str  # Organization name
     roles: list[str]  # User roles from realm_access
@@ -65,7 +65,7 @@ def create_internal_token(
     org_id: str,
     org_name: str,
     roles: list[str],
-    email: Optional[str] = None,
+    email: str | None = None,
 ) -> str:
     """
     Create an internal JWT for service-to-service communication.
@@ -90,7 +90,7 @@ def create_internal_token(
     if not settings.INTERNAL_JWT_SECRET:
         raise InternalJWTError("INTERNAL_JWT_SECRET not configured")
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     expiry = now + timedelta(seconds=settings.INTERNAL_JWT_EXPIRY_SECONDS)
 
     payload = {

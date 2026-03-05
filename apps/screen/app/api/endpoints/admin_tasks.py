@@ -125,10 +125,7 @@ async def get_admin_tasks(
 
     # Apply sorting
     sort_column = getattr(Task, sort_by, Task.created_at)
-    if sort_order.lower() == "asc":
-        query = query.order_by(sort_column.asc())
-    else:
-        query = query.order_by(sort_column.desc())
+    query = query.order_by(sort_column.asc()) if sort_order.lower() == "asc" else query.order_by(sort_column.desc())
 
     # Apply pagination
     offset = (page - 1) * size

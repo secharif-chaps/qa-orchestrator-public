@@ -14,10 +14,9 @@ supporting the normalized database structure.
 """
 
 from enum import Enum
-from typing import TypeVar, Generic, Optional, Any
+from typing import Any, Generic, Optional, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-
 
 # Generic type for SourcedValue
 T = TypeVar('T')

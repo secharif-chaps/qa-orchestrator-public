@@ -1,8 +1,9 @@
-import re
 import json
-from typing import Dict, List, Optional, Any
-from pydantic import BaseModel, Field, ConfigDict, field_validator, HttpUrl
+import re
 from datetime import datetime
+from typing import Any, Optional
+
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator
 
 from app.models.task import TaskStatus, TaskType
 
@@ -119,14 +120,14 @@ class CompanyCreate(CompanyBase):
 class CompanyUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=2, max_length=100, description="Company name")
     website: Optional[HttpUrl] = Field(None, description="Company website URL")
-    profile: Optional[Dict[str, Any]] = Field(None, description="Company profile data")
-    digital: Optional[Dict[str, Any]] = Field(None, description="Digital presence data")
-    timeline: Optional[Dict[str, Any]] = Field(None, description="Company timeline data")
-    products: Optional[Dict[str, Any]] = Field(None, description="Products data")
-    jobs: Optional[Dict[str, Any]] = Field(None, description="Jobs data")
-    csr: Optional[Dict[str, Any]] = Field(None, description="CSR data")
-    press: Optional[Dict[str, Any]] = Field(None, description="Press data")
-    team: Optional[List[Dict[str, Any]]] = Field(None, description="Team data")
+    profile: Optional[dict[str, Any]] = Field(None, description="Company profile data")
+    digital: Optional[dict[str, Any]] = Field(None, description="Digital presence data")
+    timeline: Optional[dict[str, Any]] = Field(None, description="Company timeline data")
+    products: Optional[dict[str, Any]] = Field(None, description="Products data")
+    jobs: Optional[dict[str, Any]] = Field(None, description="Jobs data")
+    csr: Optional[dict[str, Any]] = Field(None, description="CSR data")
+    press: Optional[dict[str, Any]] = Field(None, description="Press data")
+    team: Optional[list[dict[str, Any]]] = Field(None, description="Team data")
 
     @field_validator('name')
     @classmethod
@@ -272,14 +273,14 @@ class CompanyResponse(CompanyBase):
     owner_id: Optional[str] = Field(None, description="Keycloak user UUID of the company owner")
     owner_username: str
     website: str  # Override to str since validator converts HttpUrl to str
-    profile: Dict[str, Any] = Field(default_factory=dict)
-    digital: Dict[str, Any] = Field(default_factory=dict)
-    timeline: Dict[str, Any] = Field(default_factory=dict)
-    products: Dict[str, Any] = Field(default_factory=dict)
-    jobs: Dict[str, Any] = Field(default_factory=dict)
-    csr: Dict[str, Any] = Field(default_factory=dict)
-    press: Dict[str, Any] = Field(default_factory=dict)
-    team: List[Dict[str, Any]] = Field(default_factory=list)
+    profile: dict[str, Any] = Field(default_factory=dict)
+    digital: dict[str, Any] = Field(default_factory=dict)
+    timeline: dict[str, Any] = Field(default_factory=dict)
+    products: dict[str, Any] = Field(default_factory=dict)
+    jobs: dict[str, Any] = Field(default_factory=dict)
+    csr: dict[str, Any] = Field(default_factory=dict)
+    press: dict[str, Any] = Field(default_factory=dict)
+    team: list[dict[str, Any]] = Field(default_factory=list)
     raw_mistral_knowledge: Optional[str] = Field(None, description="Raw knowledge from Mistral AI")
     raw_gpt_knowledge: Optional[str] = Field(None, description="Raw knowledge from GPT AI")
     raw_wikipedia_knowledge: Optional[str] = Field(None, description="Raw knowledge from Wikipedia")
@@ -289,7 +290,7 @@ class CompanyResponse(CompanyBase):
     is_deleted: bool = Field(default=False)
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    tasks: List[TaskResponse] = Field(default_factory=list)
+    tasks: list[TaskResponse] = Field(default_factory=list)
     folder_id: Optional[str] = Field(None, description="Primary folder ID (if company is in folders)")
     folder_name: Optional[str] = Field(None, description="Primary folder name (if company is in folders)")
 
@@ -312,7 +313,7 @@ class CompanyCSVValidationError(BaseModel):
 
 class CompanyCSVValidationRequest(BaseModel):
     """Request to validate CSV data"""
-    companies: List[CompanyCSVRow]
+    companies: list[CompanyCSVRow]
 
 
 class CompanyCSVValidationResponse(BaseModel):
@@ -324,7 +325,7 @@ class CompanyCSVValidationResponse(BaseModel):
     """
     valid_count: int
     error_count: int
-    errors: List[CompanyCSVValidationError]
+    errors: list[CompanyCSVValidationError]
     has_sufficient_tokens: bool
     tokens_required: int
     tokens_available: int | None = None
@@ -332,7 +333,7 @@ class CompanyCSVValidationResponse(BaseModel):
 
 class CompanyCSVImportRequest(BaseModel):
     """Request to import validated CSV data"""
-    companies: List[CompanyCSVRow]
+    companies: list[CompanyCSVRow]
     skip_invalid: bool = True  # Whether to skip invalid rows or fail entire import
 
 
@@ -350,4 +351,4 @@ class CompanyCSVImportResponse(BaseModel):
     total_rows: int
     successful: int
     failed: int
-    results: List[CompanyCSVImportResult]
+    results: list[CompanyCSVImportResult]

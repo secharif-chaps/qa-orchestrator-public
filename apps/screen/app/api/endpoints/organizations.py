@@ -5,8 +5,9 @@ These endpoints interact with Keycloak Admin API to fetch organization data.
 """
 
 import asyncio
-from typing import Any, Dict, Optional
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from typing import Any, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_keycloak import OIDCUser
 
 from app.core.config import settings
@@ -385,7 +386,7 @@ async def get_organization_user_admin(
 @router.post("/{organization_id}/users")
 async def create_organization_user_admin(
     organization_id: str,
-    user_data: Dict[str, Any],
+    user_data: dict[str, Any],
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
 ):
     """Create a new user in Keycloak and add to organization (admin only).
@@ -588,7 +589,7 @@ async def create_organization_user_admin(
 async def update_organization_user_admin(
     organization_id: str,
     user_id: str,
-    user_data: Dict[str, Any],
+    user_data: dict[str, Any],
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
 ):
     """Update user details in Keycloak (admin only).
@@ -770,7 +771,7 @@ async def reset_user_password(
 async def update_user_status(
     organization_id: str,
     user_id: str,
-    status_data: Dict[str, bool],
+    status_data: dict[str, bool],
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
 ):
     """Enable or disable user in Keycloak (admin only).

@@ -9,14 +9,15 @@ This module provides business logic for:
 - Orphaned folder management
 """
 
-from typing import List, Optional, Dict, Any, Set
-from uuid import UUID
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import or_, and_, select
-from datetime import datetime, timezone
 import logging
+from datetime import UTC, datetime
+from typing import Any
+from uuid import UUID
 
-from app.models.folder import Folder, FolderItem, FolderShare, ShareRole, ItemType
+from sqlalchemy import and_, or_, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.folder import Folder, FolderItem, FolderShare, ItemType, ShareRole
 from app.models.user_folder_favorite import UserFolderFavorite
 from app.schemas.folder import FolderCreate, FolderUpdate
 from app.services.backend_client import get_companies_by_ids
@@ -24,7 +25,7 @@ from app.services.backend_client import get_companies_by_ids
 logger = logging.getLogger(__name__)
 
 
-def _user_is_manager(user_roles: List[str]) -> bool:
+def _user_is_manager(user_roles: list[str]) -> bool:
     """Check if user has manager permissions.
 
     A user is considered a manager if they have either:
@@ -85,7 +86,7 @@ class FolderService:
         folder_id: UUID,
         organization_id: str,
         include_deleted: bool = False
-    ) -> Optional[Folder]:
+    ) -> Folder | None:
         """Get a folder by ID.
 
         Args:
@@ -117,8 +118,8 @@ class FolderService:
         username: str = "",
         org_id: str = "",
         org_name: str = "",
-        roles: List[str] | None = None,
-    ) -> List[Dict[str, Any]]:
+        roles: list[str] | None = None,
+    ) -> list[dict[str, Any]]:
         """Get complete items for a folder - returns dicts for internal use.
 
         Enriches company items with details from the backend API.
@@ -196,8 +197,8 @@ class FolderService:
         user_id: str = "",
         username: str = "",
         org_name: str = "",
-        roles: List[str] | None = None,
-    ) -> Optional[Dict[str, Any]]:
+        roles: list[str] | None = None,
+    ) -> dict[str, Any] | None:
         """Get folder with summary of its items."""
         folder = await FolderService.get_folder(db, folder_id, organization_id)
         if not folder:
@@ -238,7 +239,7 @@ class FolderService:
         archived: bool = False,
         favorites_only: bool = False,
         username: str | None = None
-    ) -> List[Folder]:
+    ) -> list[Folder]:
         """List folders accessible to a user (owned + shared).
 
         This method returns only folders that the user owns or has been explicitly
@@ -313,7 +314,7 @@ class FolderService:
         archived: bool = False,
         favorites_only: bool = False,
         user_id: str | None = None
-    ) -> List[Folder]:
+    ) -> list[Folder]:
         """List ALL folders in an organization (for managers).
 
         Unlike list_folders which returns only owned/shared folders, this method
@@ -340,10 +341,7 @@ class FolderService:
             Folder.organization_id == organization_id
         )
 
-        if archived:
-            stmt = stmt.where(Folder.is_deleted.is_(True))
-        else:
-            stmt = stmt.where(Folder.is_deleted.is_(False))
+        stmt = stmt.where(Folder.is_deleted.is_(True)) if archived else stmt.where(Folder.is_deleted.is_(False))
 
         if favorites_only:
             if not user_id:
@@ -373,7 +371,7 @@ class FolderService:
         for field, value in update_data.items():
             setattr(folder, field, value)
 
-        folder.updated_at = datetime.now(timezone.utc)
+        folder.updated_at = datetime.now(UTC)
         await db.commit()
         await db.refresh(folder)
         return folder
@@ -385,7 +383,7 @@ class FolderService:
     ) -> Folder:
         """Soft delete a folder."""
         folder.is_deleted = True
-        folder.updated_at = datetime.now(timezone.utc)
+        folder.updated_at = datetime.now(UTC)
         await db.commit()
         await db.refresh(folder)
         return folder
@@ -397,7 +395,7 @@ class FolderService:
     ) -> Folder:
         """Restore a soft-deleted folder."""
         folder.is_deleted = False
-        folder.updated_at = datetime.now(timezone.utc)
+        folder.updated_at = datetime.now(UTC)
         await db.commit()
         await db.refresh(folder)
         return folder
@@ -411,7 +409,7 @@ class FolderService:
         item_id: str,
         item_type: str,
         owner: str,
-        position: Optional[int] = None
+        position: int | None = None
     ) -> FolderItem:
         """Add an item to a folder."""
         try:
@@ -487,7 +485,7 @@ class FolderService:
         item_type: str,
         destination_folder_id: UUID,
         organization_id: str
-    ) -> Optional[FolderItem]:
+    ) -> FolderItem | None:
         """Update the folder_id of an item (move it to a different folder).
 
         This is a RESTful PATCH operation that updates the folder_id attribute
@@ -544,7 +542,7 @@ class FolderService:
             f"item_id: {item_id}, item_type: {item_type}"
         )
         folder_item.folder_id = destination_folder_id
-        folder_item.added_at = datetime.now(timezone.utc)
+        folder_item.added_at = datetime.now(UTC)
         await db.commit()
         await db.refresh(folder_item)
 
@@ -556,7 +554,7 @@ class FolderService:
         item_id: str,
         item_type: str,
         organization_id: str
-    ) -> List[Folder]:
+    ) -> list[Folder]:
         """Get all folders containing a specific item."""
         stmt = select(FolderItem).where(
             FolderItem.item_id == item_id,
@@ -675,7 +673,7 @@ class FolderService:
     async def get_folder_shares(
         db: AsyncSession,
         folder_id: UUID
-    ) -> List[FolderShare]:
+    ) -> list[FolderShare]:
         """Get all shares for a folder.
 
         Args:
@@ -698,7 +696,7 @@ class FolderService:
         folder_id: UUID,
         user_id: str,
         role: ShareRole
-    ) -> Optional[FolderShare]:
+    ) -> FolderShare | None:
         """Update a user's share role for a folder.
 
         Args:
@@ -742,7 +740,7 @@ class FolderService:
         user_id: str,
         organization_id: str,
         username: str | None = None,
-        user_roles: List[str] | None = None
+        user_roles: list[str] | None = None
     ) -> bool:
         """Check if a user has access to a folder.
 
@@ -809,7 +807,7 @@ class FolderService:
         db: AsyncSession,
         folder_id: UUID,
         user_id: str
-    ) -> Optional[str]:
+    ) -> str | None:
         """Get a user's role for a folder.
 
         Args:
@@ -898,7 +896,7 @@ class FolderService:
             return False
 
         folder.is_orphaned = True
-        folder.updated_at = datetime.now(timezone.utc)
+        folder.updated_at = datetime.now(UTC)
         await db.commit()
 
         logger.info(f"Flagged folder as orphaned: {folder_id}")
@@ -980,7 +978,7 @@ class FolderService:
         db: AsyncSession,
         user_id: str,
         organization_id: str
-    ) -> Set[UUID]:
+    ) -> set[UUID]:
         """Get all folder IDs favorited by a user in an organization."""
         """Get all folder IDs favorited by a user in an organization.
 
@@ -1006,7 +1004,7 @@ class FolderService:
         user_id: str,
         organization_id: str,
         username: str | None = None,
-        user_roles: List[str] | None = None
+        user_roles: list[str] | None = None
     ) -> bool:
         """Check if a user has access to a company via folder sharing.
 
@@ -1082,7 +1080,7 @@ class FolderService:
         user_id: str,
         organization_id: str,
         username: str | None = None
-    ) -> Set[int]:
+    ) -> set[int]:
         """Get all company IDs that a user can access via folder sharing.
 
         Returns the set of company IDs from all folders the user owns or

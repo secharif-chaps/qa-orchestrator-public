@@ -7,12 +7,12 @@ This module defines:
 - ShareRole enum for share permission levels
 """
 
-from enum import Enum
-from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel, Field
+from enum import Enum
+from typing import Optional
 from uuid import UUID
 
+from pydantic import BaseModel, Field
 
 # ==============================================================================
 # Share Role Enum
@@ -40,7 +40,7 @@ class FolderBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     color: Optional[str] = Field(None, max_length=50)
     icon: Optional[str] = Field(None, max_length=50)
-    tags: Optional[List[str]] = Field(default_factory=list)
+    tags: Optional[list[str]] = Field(default_factory=list)
 
 
 class FolderCreate(FolderBase):
@@ -51,7 +51,7 @@ class FolderUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=255)
     color: Optional[str] = Field(None, max_length=50)
     icon: Optional[str] = Field(None, max_length=50)
-    tags: Optional[List[str]] = None
+    tags: Optional[list[str]] = None
 
 
 # ==============================================================================
@@ -152,7 +152,7 @@ class FolderResponse(FolderBase):
     is_deleted: bool
     created_at: datetime
     updated_at: datetime
-    items: Optional[List[FolderItemSimple]] = Field(default_factory=list)
+    items: Optional[list[FolderItemSimple]] = Field(default_factory=list)
 
     class Config:
         from_attributes = True
@@ -182,7 +182,7 @@ class FolderWithItemsResponse(BaseModel):
     name: str
     color: Optional[str]
     icon: Optional[str]
-    tags: List[str]
+    tags: list[str]
     owner: str
     owner_id: Optional[str] = Field(None, description="Owner Keycloak UUID")
     is_owner: bool = Field(False, description="True if current user is folder owner")
@@ -195,7 +195,7 @@ class FolderWithItemsResponse(BaseModel):
     created_at: Optional[str]
     updated_at: Optional[str]
     organization_id: str
-    items: List[FolderItemSummary]
+    items: list[FolderItemSummary]
 
 
 # ==============================================================================

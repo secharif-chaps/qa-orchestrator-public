@@ -4,7 +4,8 @@ Tracks ongoing and completed translation jobs for progress monitoring.
 """
 
 import enum
-from sqlalchemy import Column, Integer, String, DateTime, Enum, Text
+
+from sqlalchemy import Column, DateTime, Enum, Integer, String, Text
 from sqlalchemy.sql import func
 
 from app.database import Base

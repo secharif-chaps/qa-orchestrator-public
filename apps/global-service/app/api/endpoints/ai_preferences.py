@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.core.dependencies import get_user_preferences_service
 from app.core.logging_config import get_logger
-from app.core.organization import get_user_organization, OrganizationContext
+from app.core.organization import OrganizationContext, get_user_organization
 from app.schemas.ai_preferences import AiPreferencesCreate, AiPreferencesResponse
 from app.services.user_preferences import UserPreferencesService
 

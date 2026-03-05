@@ -4,14 +4,15 @@ gRPC authentication interceptor with support for:
 2. Client credentials (service-to-service)
 """
 
-import grpc
 import asyncio
-from typing import Callable, Optional
-from google.protobuf import message
 import logging
+from collections.abc import Callable
 
-from app.core.keycloak import idp, OIDCUser
-from app.core.client_auth import introspect_token, ClientAuthError
+import grpc
+from google.protobuf import message
+
+from app.core.client_auth import ClientAuthError, introspect_token
+from app.core.keycloak import OIDCUser, idp
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +44,7 @@ class GrpcAuthInterceptor(grpc.ServerInterceptor):
         self,
         continuation: Callable,
         handler_call_details: grpc.HandlerCallDetails,
-    ) -> Optional[grpc.RpcMethodHandler]:
+    ) -> grpc.RpcMethodHandler | None:
 
         method = handler_call_details.method
 
@@ -234,6 +235,6 @@ class NoAuthInterceptor(grpc.ServerInterceptor):
         self,
         continuation: Callable,
         handler_call_details: grpc.HandlerCallDetails,
-    ) -> Optional[grpc.RpcMethodHandler]:
+    ) -> grpc.RpcMethodHandler | None:
         logger.info("NoAuthInterceptor: authentication disabled")
         return continuation(handler_call_details)

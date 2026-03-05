@@ -11,15 +11,15 @@ from typing import Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from app.core.config import settings
-from app.core.keycloak import idp, OIDCUser
+from app.core.keycloak import OIDCUser, idp
 from app.core.logging_config import get_logger
 from app.core.permissions import get_tier_from_roles
 from app.schemas.user import (
     AssignOrganizationRequest,
-    ResetPasswordRequest,
-    UpdatePermissionsRequest,
     BulkUserImportRequest,
     BulkUserImportResponse,
+    ResetPasswordRequest,
+    UpdatePermissionsRequest,
 )
 from app.services.keycloak_admin import keycloak_admin_service
 from app.services.user_import import import_users_bulk

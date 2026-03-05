@@ -2,13 +2,15 @@
 Database security utilities and enhanced query protection
 """
 
-import time
 import logging
-from typing import Any, Dict
-from sqlalchemy import event
-from sqlalchemy.orm import Session
-from sqlalchemy.engine import Engine
+import time
 from contextlib import contextmanager
+from typing import Any
+
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
+from sqlalchemy.orm import Session
+
 from app.core.validators import ValidationError
 
 logger = logging.getLogger(__name__)
@@ -65,7 +67,7 @@ class DatabaseSecurityManager:
             if len(self.query_log) > self.max_query_log_size:
                 self.query_log = self.query_log[-self.max_query_log_size//2:]
     
-    def validate_query_parameters(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_query_parameters(self, parameters: dict[str, Any]) -> dict[str, Any]:
         """Validate and sanitize query parameters"""
         if not parameters:
             return {}
@@ -97,7 +99,7 @@ class DatabaseSecurityManager:
         
         return sanitized
     
-    def get_query_stats(self) -> Dict[str, Any]:
+    def get_query_stats(self) -> dict[str, Any]:
         """Get query execution statistics"""
         if not self.query_log:
             return {"total_queries": 0, "average_time": 0, "slow_queries": 0}
@@ -231,6 +233,6 @@ def setup_database_security(engine: Engine):
     logger.info("Database security monitoring initialized")
 
 
-def get_database_stats() -> Dict[str, Any]:
+def get_database_stats() -> dict[str, Any]:
     """Get current database security statistics"""
     return db_security_manager.get_query_stats()

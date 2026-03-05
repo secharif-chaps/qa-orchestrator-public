@@ -5,7 +5,6 @@ Token management has been moved to global token balance in schemas/token.py.
 """
 
 from datetime import datetime
-from typing import List
 
 from pydantic import BaseModel
 
@@ -31,7 +30,7 @@ class OrganizationModuleResponse(BaseModel):
 class OrganizationModulesResponse(BaseModel):
     """Response model for list of organization modules."""
 
-    modules: List[OrganizationModuleResponse]
+    modules: list[OrganizationModuleResponse]
 
 
 class ModuleUpdateRequest(BaseModel):

@@ -12,7 +12,7 @@ Key operations:
 """
 
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError
@@ -320,7 +320,7 @@ class TokenManager:
         date_to: Optional[datetime] = None,
         page: int = 1,
         size: int = 50,
-    ) -> List[TokenTransaction]:
+    ) -> list[TokenTransaction]:
         """Get transaction history for organization with optional filters.
 
         Results are ordered by created_at descending (most recent first).
@@ -452,7 +452,7 @@ class TokenManager:
 
     def get_all_organization_modules(
         self, organization_id: str
-    ) -> List[OrganizationModule]:
+    ) -> list[OrganizationModule]:
         """Get all modules for an organization.
 
         Ensures all module types exist for the organization.
