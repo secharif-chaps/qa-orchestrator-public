@@ -1,21 +1,21 @@
 import asyncio
-import logging
-from fastapi import APIRouter, HTTPException, status, Request
-from pydantic import BaseModel, Field
-from typing import Dict, Any, Optional
-from datetime import datetime
 import json
+import logging
+from datetime import datetime
+from typing import Any, Optional
 
-from app.services.company import CompanyService
-from app.core.dependencies import get_company_service
-from app.models.task import TaskStatus, Task
-from app.models.folder import FolderItem
-from app.core.config import settings
-from app.schemas.task import TaskTokenUpdate
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from pydantic import BaseModel, Field
+
 from app.core.concurrency import DifyConcurrencyManager
-from app.services.task_events import task_event_manager
+from app.core.config import settings
+from app.core.dependencies import get_company_service
+from app.models.folder import FolderItem
+from app.models.task import Task, TaskStatus
+from app.schemas.task import TaskTokenUpdate
+from app.services.company import CompanyService
 from app.services.dify_error_handler import DifyErrorHandler
-from fastapi import Depends
+from app.services.task_events import task_event_manager
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +29,7 @@ class TaskCallbackPayload(BaseModel):
     company_id: int
     task_type: str
     status: str = Field(..., description="succeeded or failed")
-    data: Optional[Dict[str, Any]] = Field(None, description="Task results data")
+    data: Optional[dict[str, Any]] = Field(None, description="Task results data")
     error: Optional[str] = Field(None, description="Error message if failed")
 
 @router.post("/tasks/{task_id}/callback")
@@ -331,8 +331,8 @@ async def dify_task_callback(
 
             # NEW: If this was a prerequisite task, trigger dependent tasks
             if task.is_prerequisite:
-                from app.services.task_dependency_service import TaskDependencyService
                 from app.models.workflow_config import WorkflowConfig
+                from app.services.task_dependency_service import TaskDependencyService
                 from app.workers.dify_tasks import execute_dify_workflow
 
                 logger.info(f"🔓 Task {task_id} is a prerequisite - checking for dependent tasks")

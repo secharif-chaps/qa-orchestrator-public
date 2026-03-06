@@ -9,25 +9,25 @@ into Keycloak, with support for:
 - Partial success (some rows can fail while others succeed)
 """
 
-from typing import List, Dict, Set
+
 from fastapi import HTTPException, status
 from pydantic import ValidationError
 
+from app.core.logging_config import get_logger
 from app.schemas.user_import import (
-    UserImportRow,
     BulkUserImportRequest,
     BulkUserImportResponse,
     UserImportResult,
+    UserImportRow,
 )
 from app.services.keycloak_admin import keycloak_admin_service
-from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
 
 
 async def check_existing_users(
-    users: List[UserImportRow],
-) -> tuple[Dict[str, str], Dict[str, str]]:
+    users: list[UserImportRow],
+) -> tuple[dict[str, str], dict[str, str]]:
     """Check for existing users in Keycloak by email and username.
 
     Args:
@@ -42,8 +42,8 @@ async def check_existing_users(
     # consider implementing paginated checks or individual lookups.
     existing_users = await keycloak_admin_service.get_users(first=0, max_results=10000)
 
-    email_to_user_id: Dict[str, str] = {}
-    username_to_user_id: Dict[str, str] = {}
+    email_to_user_id: dict[str, str] = {}
+    username_to_user_id: dict[str, str] = {}
 
     for kc_user in existing_users:
         email = kc_user.get("email", "").lower()
@@ -59,8 +59,8 @@ async def check_existing_users(
 
 
 async def check_duplicates_in_import(
-    users: List[UserImportRow],
-) -> tuple[Set[int], Dict[str, List[int]]]:
+    users: list[UserImportRow],
+) -> tuple[set[int], dict[str, list[int]]]:
     """Check for duplicate emails/usernames within the import itself.
 
     Args:
@@ -71,9 +71,9 @@ async def check_duplicates_in_import(
         - Set of row indices that are duplicates
         - Dict mapping email/username to list of row indices where it appears
     """
-    email_occurrences: Dict[str, List[int]] = {}
-    username_occurrences: Dict[str, List[int]] = {}
-    duplicate_rows: Set[int] = set()
+    email_occurrences: dict[str, list[int]] = {}
+    username_occurrences: dict[str, list[int]] = {}
+    duplicate_rows: set[int] = set()
 
     for idx, user in enumerate(users):
         email_lower = user.email.lower()
@@ -167,7 +167,7 @@ async def import_users_bulk(
             detail=f"Organization {request.organization_id} not found"
         )
 
-    results: List[UserImportResult] = []
+    results: list[UserImportResult] = []
     success_count = 0
     error_count = 0
 

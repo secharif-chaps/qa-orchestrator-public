@@ -6,7 +6,7 @@ cleaning them up on read operations without requiring Celery Beat.
 """
 
 from datetime import datetime, timedelta, timezone
-from typing import List, Optional
+from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -177,7 +177,7 @@ class TaskService:
             .count()
         )
 
-    def get_stale_tasks(self, limit: Optional[int] = None) -> List[Task]:
+    def get_stale_tasks(self, limit: Optional[int] = None) -> list[Task]:
         """
         Get stale tasks without cleaning them up.
 

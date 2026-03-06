@@ -1,7 +1,8 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional, List
 from datetime import datetime
+from typing import Optional
 from uuid import UUID
+
+from pydantic import BaseModel, EmailStr
 
 
 class UserBase(BaseModel):
@@ -25,7 +26,7 @@ class UserUpdate(BaseModel):
 class User(UserBase):
     id: UUID
     keycloak_id: str
-    roles: Optional[List[str]] = None
+    roles: Optional[list[str]] = None
     created_at: datetime
     updated_at: Optional[datetime] = None
 
@@ -54,7 +55,7 @@ class TokenData(BaseModel):
     """
     username: Optional[str] = None
     sub: Optional[str] = None
-    roles: Optional[List[str]] = None
+    roles: Optional[list[str]] = None
     organization_id: Optional[str] = None  # Keycloak organization UUID
 
 
@@ -81,4 +82,4 @@ class AdminUserResponse(BaseModel):
     organization_name: Optional[str] = None
     status: str  # "active" or "revoked"
     created_at: str  # ISO timestamp
-    permissions: List[str]  # Application permission roles from Keycloak
+    permissions: list[str]  # Application permission roles from Keycloak

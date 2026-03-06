@@ -1,10 +1,11 @@
 """
 Service for managing task dependencies and execution order
 """
-from typing import List
-from sqlalchemy.orm import Session
-from app.models.task import Task, TaskDependency, TaskStatus
 import logging
+
+from sqlalchemy.orm import Session
+
+from app.models.task import Task, TaskDependency, TaskStatus
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +37,7 @@ class TaskDependencyService:
         logger.info(f"📌 Created dependency: Task {task_id} depends on Task {depends_on_task_id}")
         return dependency
 
-    def get_dependencies(self, task_id: int) -> List[Task]:
+    def get_dependencies(self, task_id: int) -> list[Task]:
         """Get all prerequisite tasks for a given task"""
         dependencies = (
             self.db.query(TaskDependency)
@@ -56,7 +57,7 @@ class TaskDependencyService:
 
         return prerequisites
 
-    def get_dependent_tasks(self, task_id: int) -> List[Task]:
+    def get_dependent_tasks(self, task_id: int) -> list[Task]:
         """Get all tasks that depend on this task"""
         dependencies = (
             self.db.query(TaskDependency)
@@ -93,7 +94,7 @@ class TaskDependencyService:
 
         return all_succeeded
 
-    def get_ready_tasks(self, company_id: int) -> List[Task]:
+    def get_ready_tasks(self, company_id: int) -> list[Task]:
         """Get all tasks for a company that are ready to run (prerequisites satisfied)"""
         tasks = (
             self.db.query(Task)
@@ -109,7 +110,7 @@ class TaskDependencyService:
 
         return ready_tasks
 
-    def unblock_dependent_tasks(self, completed_task_id: int) -> List[Task]:
+    def unblock_dependent_tasks(self, completed_task_id: int) -> list[Task]:
         """
         When a task completes, check its dependents and unblock any that are ready
         Returns list of tasks that were unblocked
@@ -134,7 +135,7 @@ class TaskDependencyService:
 
         return unblocked_tasks
 
-    def mark_dependents_as_failed(self, failed_task_id: int, error_message: str) -> List[Task]:
+    def mark_dependents_as_failed(self, failed_task_id: int, error_message: str) -> list[Task]:
         """
         When a prerequisite task fails, mark all dependent tasks as failed
         Returns list of tasks that were marked as failed

@@ -6,7 +6,6 @@ for conversation management while storing company context locally.
 
 from pydantic import BaseModel, Field, field_validator
 
-
 # =============================================================================
 # Company Context Schemas
 # =============================================================================

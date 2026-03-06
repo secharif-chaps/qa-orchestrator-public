@@ -20,30 +20,29 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from app.models.company_sections import (
-    CompanyProfile,
-    CompanyDigital,
-    CompanyTimeline,
-    CompanyProducts,
-    CompanyJobs,
-    CompanyCsr,
-    CompanyPress,
-)
 from app.models.company_children import (
-    CompanyOnlineService,
-    CompanySocialMediaAccount,
-    CompanyTimelineEvent,
-    CompanyProductItem,
-    CompanyProductCategory,
-    CompanyJobOffer,
     CompanyCsrInitiative,
+    CompanyJobOffer,
+    CompanyOnlineService,
     CompanyPressItem,
+    CompanyProductCategory,
+    CompanyProductItem,
+    CompanySocialMediaAccount,
     CompanyTeamMember,
-    ProductItemType,
+    CompanyTimelineEvent,
     CsrInitiativeType,
     PressItemType,
+    ProductItemType,
 )
-
+from app.models.company_sections import (
+    CompanyCsr,
+    CompanyDigital,
+    CompanyJobs,
+    CompanyPress,
+    CompanyProducts,
+    CompanyProfile,
+    CompanyTimeline,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -882,9 +881,7 @@ def save_jobs_data(db: Session, company_id: int, data: dict) -> None:
         total_openings_data = insights_data.get("total_openings", {})
         if isinstance(total_openings_data, dict):
             value = total_openings_data.get("value")
-            if isinstance(value, (int, float)):
-                jobs.insights_total_openings = int(value)
-            elif isinstance(value, str) and value.isdigit():
+            if isinstance(value, (int, float)) or isinstance(value, str) and value.isdigit():
                 jobs.insights_total_openings = int(value)
             jobs.insights_total_openings_source = total_openings_data.get("source")
 

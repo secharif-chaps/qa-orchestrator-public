@@ -7,8 +7,7 @@ Provides REST endpoints for session and activity management:
 - GET  /users/me/events             - Activity events (security log)
 """
 
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import UTC, datetime
 from uuid import UUID
 
 import jwt
@@ -30,7 +29,7 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/users/me", tags=["account"])
 
 
-def _get_current_session_id(request: Request) -> Optional[str]:
+def _get_current_session_id(request: Request) -> str | None:
     """Extract the caller's session ID from the JWT ``sid`` claim.
 
     This is a best-effort helper: returns *None* when the claim is absent
@@ -84,8 +83,8 @@ async def get_sessions(
             SessionResponse(
                 id=s.get("id", ""),
                 ip_address=s.get("ipAddress", "Unknown"),
-                started_at=datetime.fromtimestamp(s.get("start", 0) / 1000, tz=timezone.utc),
-                last_access=datetime.fromtimestamp(s.get("lastAccess", 0) / 1000, tz=timezone.utc),
+                started_at=datetime.fromtimestamp(s.get("start", 0) / 1000, tz=UTC),
+                last_access=datetime.fromtimestamp(s.get("lastAccess", 0) / 1000, tz=UTC),
                 clients=s.get("clients", {}),
                 is_current=(s.get("id") == current_session_id) if current_session_id else False,
             )
@@ -368,7 +367,7 @@ def _get_event_display_info(event_type: str) -> dict[str, str]:
 async def get_activity_events(
     page: int = Query(1, ge=1, description="Page number (1-indexed)"),
     size: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
-    event_type: Optional[str] = Query(
+    event_type: str | None = Query(
         None,
         description="Filter category: login, security, profile, or all",
     ),
@@ -433,7 +432,7 @@ async def get_activity_events(
             display = _get_event_display_info(event_type_str)
 
             timestamp = datetime.fromtimestamp(
-                kc_event.get("time", 0) / 1000, tz=timezone.utc,
+                kc_event.get("time", 0) / 1000, tz=UTC,
             )
 
             description = display["description"]

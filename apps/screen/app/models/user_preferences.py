@@ -1,8 +1,10 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from typing import Any, Optional
+
+from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.sql import func
+
 from app.database import Base
-from typing import Optional, Dict, Any
 
 
 class UserPreferences(Base):
@@ -19,22 +21,22 @@ class UserPreferences(Base):
     def __repr__(self):
         return f"<UserPreferences(keycloak_user_id='{self.keycloak_user_id}')>"
 
-    def get_preference(self, category: str) -> Optional[Dict[str, Any]]:
+    def get_preference(self, category: str) -> Optional[dict[str, Any]]:
         """Get preferences for a specific category"""
         if not self.preferences:
             return None
         return self.preferences.get(category)
 
-    def set_preference(self, category: str, data: Dict[str, Any]) -> None:
+    def set_preference(self, category: str, data: dict[str, Any]) -> None:
         """Set preferences for a specific category"""
         if not self.preferences:
             self.preferences = {}
         self.preferences[category] = data
 
-    def get_ai_preferences(self) -> Optional[Dict[str, Any]]:
+    def get_ai_preferences(self) -> Optional[dict[str, Any]]:
         """Convenience method to get AI preferences"""
         return self.get_preference('ai')
 
-    def set_ai_preferences(self, data: Dict[str, Any]) -> None:
+    def set_ai_preferences(self, data: dict[str, Any]) -> None:
         """Convenience method to set AI preferences"""
         self.set_preference('ai', data)

@@ -12,14 +12,14 @@ into Keycloak, with support for:
 from fastapi import HTTPException, status
 from pydantic import ValidationError
 
+from app.core.logging_config import get_logger
 from app.schemas.user import (
-    UserImportRow,
     BulkUserImportRequest,
     BulkUserImportResponse,
     UserImportResult,
+    UserImportRow,
 )
 from app.services.keycloak_admin import keycloak_admin_service
-from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
 

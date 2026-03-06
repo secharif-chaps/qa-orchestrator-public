@@ -1,7 +1,6 @@
 """Pydantic schemas for admin user management endpoints."""
 
 import re
-from typing import Optional, List
 
 from pydantic import BaseModel, EmailStr, field_validator
 
@@ -79,9 +78,9 @@ class UserImportRow(BaseModel):
     """
     username: str
     email: EmailStr
-    firstname: Optional[str] = None
-    lastname: Optional[str] = None
-    password: Optional[str] = None
+    firstname: str | None = None
+    lastname: str | None = None
+    password: str | None = None
 
     @field_validator('username')
     @classmethod
@@ -101,7 +100,7 @@ class UserImportRow(BaseModel):
 
     @field_validator('firstname', 'lastname', mode='before')
     @classmethod
-    def strip_whitespace(cls, v: Optional[str]) -> Optional[str]:
+    def strip_whitespace(cls, v: str | None) -> str | None:
         """Strip whitespace from names."""
         if v is None:
             return None
@@ -110,7 +109,7 @@ class UserImportRow(BaseModel):
 
     @field_validator('password')
     @classmethod
-    def validate_import_password(cls, v: Optional[str]) -> Optional[str]:
+    def validate_import_password(cls, v: str | None) -> str | None:
         """Validate password if provided."""
         if v is None or v == '':
             return None
@@ -141,7 +140,7 @@ class BulkUserImportRequest(BaseModel):
         generate_passwords: Whether to generate random passwords for users without passwords
     """
     organization_id: str
-    users: List[UserImportRow]
+    users: list[UserImportRow]
     generate_passwords: bool = True
 
     @field_validator('organization_id')
@@ -155,7 +154,7 @@ class BulkUserImportRequest(BaseModel):
 
     @field_validator('users')
     @classmethod
-    def validate_users_count(cls, v: List[UserImportRow]) -> List[UserImportRow]:
+    def validate_users_count(cls, v: list[UserImportRow]) -> list[UserImportRow]:
         """Validate user count limits."""
         if len(v) == 0:
             raise ValueError('At least one user is required')
@@ -174,9 +173,9 @@ class UserImportResult(BaseModel):
     username: str
     email: str
     success: bool
-    error_message: Optional[str] = None
-    user_id: Optional[str] = None  # Keycloak user UUID if created
-    generated_password: Optional[str] = None  # Only if password was generated
+    error_message: str | None = None
+    user_id: str | None = None  # Keycloak user UUID if created
+    generated_password: str | None = None  # Only if password was generated
 
 
 class BulkUserImportResponse(BaseModel):
@@ -188,4 +187,4 @@ class BulkUserImportResponse(BaseModel):
     success_count: int
     error_count: int
     total_count: int
-    results: List[UserImportResult]
+    results: list[UserImportResult]

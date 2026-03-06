@@ -10,8 +10,9 @@ transient failures.
 """
 
 import asyncio
+from collections.abc import Awaitable
 from dataclasses import dataclass
-from typing import Awaitable, Callable
+from typing import Callable
 
 import httpx
 from fastapi import HTTPException, status

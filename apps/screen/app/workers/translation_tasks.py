@@ -6,6 +6,7 @@ using the SYSTRAN Translation API with progress tracking.
 
 import asyncio
 from datetime import datetime, timezone
+
 from celery import Task
 
 from app.core.celery_app import celery_app

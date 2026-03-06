@@ -5,15 +5,16 @@ This module provides utilities to extract organization information from JWT toke
 and manage organization-based access control.
 """
 
-from typing import Any, TYPE_CHECKING
-from fastapi import Depends, HTTPException, status, Request
+from typing import TYPE_CHECKING, Any
+
+import jwt
+from fastapi import Depends, HTTPException, Request, status
 from fastapi_keycloak import OIDCUser
 from pydantic import BaseModel
-import jwt
 
+from app.core.internal_jwt import is_internal_request
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
-from app.core.internal_jwt import is_internal_request
 
 if TYPE_CHECKING:
     from app.models.organization import FeatureFlag
@@ -279,8 +280,9 @@ def require_feature(flag: "FeatureFlag"):
             # Feature is guaranteed to be enabled if we reach here
             pass
     """
-    from app.database import get_db
     from sqlalchemy.orm import Session
+
+    from app.database import get_db
 
     async def check_feature(
         org_context: OrganizationContext = Depends(get_user_organization),

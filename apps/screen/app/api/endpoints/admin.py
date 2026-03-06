@@ -4,7 +4,7 @@ This module contains all admin-only endpoints that require specific admin roles.
 Uses fastapi-keycloak for automatic role-based access control via dependency injection.
 """
 
-from datetime import datetime, date
+from datetime import date, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_keycloak import OIDCUser
@@ -128,7 +128,8 @@ async def fail_stuck_tasks(
     # Purge all messages from the dify_workflows queue
     try:
         # Get the queue with the same parameters as defined in celery_app
-        from kombu import Connection, Queue as KombuQueue
+        from kombu import Connection
+        from kombu import Queue as KombuQueue
 
         from app.core.celery_app import RABBITMQ_URL
 

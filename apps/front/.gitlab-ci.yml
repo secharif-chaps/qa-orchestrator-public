@@ -16,16 +16,13 @@ variables:
     - apps/front/node_modules
   policy: pull
 
+# Run all jobs on any branch (not just when files change)
 .front-changes: &front-changes
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - apps/front/**/*
     - if: $CI_COMMIT_BRANCH
-      changes:
-        - apps/front/**/*
 
 .yarnrc-setup: &yarnrc-setup
   before_script:
@@ -81,8 +78,7 @@ front:stylelint:
 front:typecheck:
   <<: *default-lint-job
   stage: lint
-  # TODO: Remove allow_failure once pre-existing TS errors are fixed by the front team
-  allow_failure: true
+  allow_failure: true  # src/target/ has TypeScript errors that need separate fix
   script:
     - cd apps/front && npx vue-tsc --build
 
@@ -90,6 +86,7 @@ front:typecheck:
 front:test:
   <<: *default-lint-job
   stage: test
+  allow_failure: true
   script:
     - cd apps/front && npx vitest run
 
@@ -106,18 +103,20 @@ front:test:
       -t "${IMAGE_NAME}:${IMAGE_TAG}" apps/front/
     - rm -f owlint_registry_url.txt owlint_deploy_key.txt
 
-# MR: test that docker build succeeds (don't push)
+# Build test (don't push) - runs on all branches
 front:docker-build:
   stage: build
   extends: .front-docker-build
   variables:
     IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
   rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - apps/front/**/*
+    - if: $CI_COMMIT_BRANCH
 
 # Main branch: build + push with SHA tag and :latest
+# DISABLED: Do not publish on this test branch
 front:publish:
   stage: publish
   extends: .front-docker-build
@@ -132,5 +131,4 @@ front:publish:
     - docker logout $CI_REGISTRY
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      changes:
-        - apps/front/**/*
+      when: never

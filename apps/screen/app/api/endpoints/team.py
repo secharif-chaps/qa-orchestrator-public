@@ -11,22 +11,23 @@ Permission Requirements:
 """
 
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, status, Query, Path
+
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 from fastapi_keycloak import OIDCUser
 
-from app.core.keycloak import idp
 from app.core.auth import verify_any_role_access
+from app.core.keycloak import idp
 from app.core.logging_config import get_logger
-from app.core.organization import get_user_organization, OrganizationContext
+from app.core.organization import OrganizationContext, get_user_organization
 from app.core.permissions import get_roles_for_tier, get_tier_from_roles
 from app.schemas.team import (
+    ResetPasswordRequest,
+    TeamMember,
     TeamMemberListItem,
     TeamMemberListResponse,
-    TeamMemberPermissions,
-    TeamMember,
-    UpdateTeamMemberPermissions,
-    ResetPasswordRequest,
     TeamMemberPasswordReset,
+    TeamMemberPermissions,
+    UpdateTeamMemberPermissions,
 )
 from app.services.keycloak_admin import keycloak_admin_service
 

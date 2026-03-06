@@ -9,21 +9,22 @@ This module provides business logic for:
 - Orphaned folder management
 """
 
-from typing import List, Optional, Dict, Any, Set
-from uuid import UUID
-from sqlalchemy.orm import Session
-from sqlalchemy import or_
-from datetime import datetime, timezone
 import logging
+from datetime import datetime, timezone
+from typing import Any, Optional
+from uuid import UUID
 
-from app.models import Folder, FolderItem, Company, UserFolderFavorite
+from sqlalchemy import or_
+from sqlalchemy.orm import Session
+
+from app.models import Company, Folder, FolderItem, UserFolderFavorite
 from app.models.folder import FolderShare, ShareRole
 from app.schemas.folder import FolderCreate, FolderUpdate
 
 logger = logging.getLogger(__name__)
 
 
-def _user_is_manager(user_roles: List[str]) -> bool:
+def _user_is_manager(user_roles: list[str]) -> bool:
     """Check if user has manager permissions.
 
     A user is considered a manager if they have either:
@@ -111,7 +112,7 @@ class FolderService:
         db: Session,
         folder_id: UUID,
         item_archived_filter: bool = False
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Get complete items for a folder - returns dicts for internal use."""
         items = []
         folder_items = db.query(FolderItem).filter(
@@ -153,7 +154,7 @@ class FolderService:
         folder_id: UUID,
         organization_id: str,
         item_archived_filter: bool = False
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[dict[str, Any]]:
         """Get folder with summary of its items."""
         folder = FolderService.get_folder(db, folder_id, organization_id)
         if not folder:
@@ -189,7 +190,7 @@ class FolderService:
         archived: bool = False,
         favorites_only: bool = False,
         username: str | None = None
-    ) -> List[Folder]:
+    ) -> list[Folder]:
         """List folders accessible to a user (owned + shared).
 
         This method returns only folders that the user owns or has been explicitly
@@ -278,7 +279,7 @@ class FolderService:
         archived: bool = False,
         favorites_only: bool = False,
         user_id: str | None = None
-    ) -> List[Folder]:
+    ) -> list[Folder]:
         """List ALL folders in an organization (for managers).
 
         Unlike list_folders which returns only owned/shared folders, this method
@@ -525,7 +526,7 @@ class FolderService:
         item_id: str,
         item_type: str,
         organization_id: str
-    ) -> List[Folder]:
+    ) -> list[Folder]:
         """Get all folders containing a specific item."""
         folder_items = db.query(FolderItem).filter(
             FolderItem.item_id == item_id,
@@ -636,7 +637,7 @@ class FolderService:
     def get_folder_shares(
         db: Session,
         folder_id: UUID
-    ) -> List[FolderShare]:
+    ) -> list[FolderShare]:
         """Get all shares for a folder.
 
         Args:
@@ -698,7 +699,7 @@ class FolderService:
         user_id: str,
         organization_id: str,
         username: str | None = None,
-        user_roles: List[str] | None = None
+        user_roles: list[str] | None = None
     ) -> bool:
         """Check if a user has access to a folder.
 
@@ -921,7 +922,7 @@ class FolderService:
         db: Session,
         user_id: str,
         organization_id: str
-    ) -> Set[UUID]:
+    ) -> set[UUID]:
         """Get all folder IDs favorited by a user in an organization.
 
         Returns:
@@ -946,7 +947,7 @@ class FolderService:
         user_id: str,
         organization_id: str,
         username: str | None = None,
-        user_roles: List[str] | None = None
+        user_roles: list[str] | None = None
     ) -> bool:
         """Check if a user has access to a company via folder sharing.
 
@@ -1016,7 +1017,7 @@ class FolderService:
         user_id: str,
         organization_id: str,
         username: str | None = None
-    ) -> Set[int]:
+    ) -> set[int]:
         """Get all company IDs that a user can access via folder sharing.
 
         Returns the set of company IDs from all folders the user owns or

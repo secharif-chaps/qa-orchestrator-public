@@ -3,15 +3,16 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
-from app.core.config import settings
-from app.core.logging_config import setup_logging, get_logger
-from app.core.keycloak import get_idp
-from app.database import engine
+
 from app.api import api_router
+from app.core.config import settings
+from app.core.keycloak import get_idp
+from app.core.logging_config import get_logger, setup_logging
+from app.database import engine
 from app.grpc_server import create_grpc_server
-from app.proxy.client import get_proxy_client, close_proxy_client
-from app.services.keycloak_admin import keycloak_admin_service
+from app.proxy.client import close_proxy_client, get_proxy_client
 from app.proxy.routes import router as proxy_router
+from app.services.keycloak_admin import keycloak_admin_service
 
 # Initialize logging with configured level
 setup_logging(level=getattr(settings, "LOG_LEVEL", "INFO"))

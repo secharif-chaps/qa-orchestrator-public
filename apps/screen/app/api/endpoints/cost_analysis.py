@@ -3,22 +3,23 @@
 All endpoints require admin.costs role for access.
 """
 
-from datetime import datetime, date, timedelta
-from typing import Optional, Dict, Any
+from datetime import date, datetime, timedelta
+from typing import Any, Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_keycloak import OIDCUser
-from sqlalchemy.orm import Session
 from sqlalchemy import func
+from sqlalchemy.orm import Session
 
-from app.database import get_db
 from app.core.keycloak import idp
+from app.database import get_db
 from app.models import Task, TaskStatus
 from app.models.company import Company
 
 router = APIRouter(prefix="/cost-analysis", tags=["cost-analysis"])
 
 
-@router.get("/global", response_model=Dict[str, Any])
+@router.get("/global", response_model=dict[str, Any])
 async def get_global_cost_analysis(
     start_date: Optional[date] = Query(None, description="Start date for analysis (inclusive)"),
     end_date: Optional[date] = Query(None, description="End date for analysis (inclusive)"),
@@ -89,7 +90,7 @@ async def get_global_cost_analysis(
     }
 
 
-@router.get("/by-organization", response_model=Dict[str, Any])
+@router.get("/by-organization", response_model=dict[str, Any])
 async def get_cost_by_organization(
     start_date: Optional[date] = Query(None, description="Start date for analysis (inclusive)"),
     end_date: Optional[date] = Query(None, description="End date for analysis (inclusive)"),
@@ -176,7 +177,7 @@ async def get_cost_by_organization(
     }
 
 
-@router.get("/by-task-type", response_model=Dict[str, Any])
+@router.get("/by-task-type", response_model=dict[str, Any])
 async def get_cost_by_task_type(
     start_date: Optional[date] = Query(None, description="Start date for analysis (inclusive)"),
     end_date: Optional[date] = Query(None, description="End date for analysis (inclusive)"),
@@ -266,7 +267,7 @@ async def get_cost_by_task_type(
     }
 
 
-@router.get("/trends", response_model=Dict[str, Any])
+@router.get("/trends", response_model=dict[str, Any])
 async def get_cost_trends(
     start_date: Optional[date] = Query(None, description="Start date for analysis (inclusive)"),
     end_date: Optional[date] = Query(None, description="End date for analysis (inclusive)"),

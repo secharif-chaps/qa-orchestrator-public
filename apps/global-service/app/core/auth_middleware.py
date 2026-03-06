@@ -11,15 +11,17 @@ Security:
 - HMAC-SHA256 signature prevents tampering
 """
 
-from typing import Optional, Set, Any
+from typing import Any
+
 import httpx
-from jose import jwt, JWTError
 from cachetools import TTLCache
 from fastapi import Request
+from jose import JWTError, jwt
 from pydantic import BaseModel
+
 from app.core.config import settings
+from app.core.internal_jwt import InternalJWTError, create_internal_token
 from app.core.logging_config import get_logger
-from app.core.internal_jwt import create_internal_token, InternalJWTError
 
 logger = get_logger(__name__)
 
@@ -30,15 +32,15 @@ _public_key_cache: TTLCache = TTLCache(maxsize=1, ttl=3600)
 class GatewayUser(BaseModel):
     """User information extracted from JWT token."""
     sub: str
-    preferred_username: Optional[str] = None
-    email: Optional[str] = None
-    realm_access: Optional[dict[str, Any]] = None
-    organization: Optional[Any] = None
+    preferred_username: str | None = None
+    email: str | None = None
+    realm_access: dict[str, Any] | None = None
+    organization: Any | None = None
 
 
 # Public routes that don't require authentication
 # These paths are relative to /api/
-PUBLIC_ROUTES: Set[str] = {
+PUBLIC_ROUTES: set[str] = {
     "health",
     "health/live",
     "health/ready",
@@ -58,10 +60,7 @@ def is_public_route(path: str) -> bool:
         return True
 
     # Check webhook prefixes (use different auth mechanism)
-    if clean_path.startswith(WEBHOOK_PREFIXES):
-        return True
-
-    return False
+    return bool(clean_path.startswith(WEBHOOK_PREFIXES))
 
 
 async def get_keycloak_public_key() -> str:
@@ -102,7 +101,7 @@ async def get_keycloak_public_key() -> str:
         raise
 
 
-async def extract_token(request: Request) -> Optional[str]:
+async def extract_token(request: Request) -> str | None:
     """Extract JWT token from Authorization header."""
     auth_header = request.headers.get("Authorization", "")
     if auth_header.startswith("Bearer "):
@@ -110,7 +109,7 @@ async def extract_token(request: Request) -> Optional[str]:
     return None
 
 
-async def validate_jwt_token(token: str) -> Optional[GatewayUser]:
+async def validate_jwt_token(token: str) -> GatewayUser | None:
     """
     Validate JWT token against Keycloak's public key.
 
@@ -184,7 +183,7 @@ def extract_organization_info(user: GatewayUser) -> tuple[str, str]:
     return "", ""
 
 
-def build_internal_headers(user: Optional[GatewayUser]) -> dict[str, str]:
+def build_internal_headers(user: GatewayUser | None) -> dict[str, str]:
     """
     Build internal request headers with signed JWT.
 
@@ -245,7 +244,7 @@ class GatewayAuthMiddleware:
 
     async def validate_request(
         self, request: Request, path: str
-    ) -> tuple[bool, Optional[GatewayUser], dict]:
+    ) -> tuple[bool, GatewayUser | None, dict]:
         """
         Validate the request and return auth status.
 

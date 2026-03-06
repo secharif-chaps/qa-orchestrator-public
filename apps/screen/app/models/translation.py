@@ -8,7 +8,7 @@ in the company data structure, allowing easy addition of new languages
 without schema changes.
 """
 
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, Index
+from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 

@@ -12,27 +12,29 @@ table stores application-specific settings tied to Keycloak organization UUIDs.
 All models are stored in the global_schema for organization-scoped resources.
 """
 
-from enum import Enum
+from enum import StrEnum
 
 from sqlalchemy import (
+    JSON,
     Boolean,
     Column,
     DateTime,
-    Enum as SQLEnum,
     ForeignKey,
     Index,
     Integer,
-    JSON,
     String,
     UniqueConstraint,
+)
+from sqlalchemy import (
+    Enum as SQLEnum,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from app.database import GlobalBase, GLOBAL_SCHEMA
+from app.database import GLOBAL_SCHEMA, GlobalBase
 
 
-class ModuleName(str, Enum):
+class ModuleName(StrEnum):
     """Available core modules for feature gating.
 
     Valid modules are: screen, target, explore.
@@ -45,7 +47,7 @@ class ModuleName(str, Enum):
     EXPLORE = "explore"
 
 
-class TransactionType(str, Enum):
+class TransactionType(StrEnum):
     """Token transaction types for audit trail.
 
     Attributes:
@@ -59,7 +61,7 @@ class TransactionType(str, Enum):
     adjustment = "adjustment"
 
 
-class ReferenceType(str, Enum):
+class ReferenceType(StrEnum):
     """Reference types for token transactions.
 
     Indicates what triggered the token transaction.
@@ -79,7 +81,7 @@ class ReferenceType(str, Enum):
     system = "system"
 
 
-class FeatureFlag(str, Enum):
+class FeatureFlag(StrEnum):
     """Organization-level feature flags for add-on capabilities.
 
     Feature flags are OFF by default. Unlike core modules (screen, target, explore),

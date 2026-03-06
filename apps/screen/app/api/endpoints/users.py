@@ -8,12 +8,12 @@ import asyncio
 import time
 from typing import Any
 
-
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_keycloak import OIDCUser
 from pydantic import BaseModel, field_validator
 
 from app.core.config import settings
+from app.core.email_utils import is_chapsvision_email
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.permissions import get_tier_from_roles
@@ -21,7 +21,6 @@ from app.schemas.user_import import (
     BulkUserImportRequest,
     BulkUserImportResponse,
 )
-from app.core.email_utils import is_chapsvision_email
 from app.services.keycloak_admin import keycloak_admin_service
 from app.services.user_import import import_users_bulk
 

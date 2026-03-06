@@ -11,9 +11,10 @@ Actual Dify error types are mapped to these categories in dify_error_config.py.
 - All other error types are anticipated but not yet confirmed
 - These will be updated as real Dify errors are detected
 """
-from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, Field
 from enum import Enum
+from typing import Any, Optional
+
+from pydantic import BaseModel, Field
 
 
 class DifyErrorType(str, Enum):
@@ -69,7 +70,7 @@ class DifyErrorDetail(BaseModel):
     http_status: Optional[int] = Field(None, description="HTTP status code if applicable")
 
     # Catch-all for any other attributes
-    extra_data: Dict[str, Any] = Field(default_factory=dict)
+    extra_data: dict[str, Any] = Field(default_factory=dict)
 
     class Config:
         extra = "allow"  # Allow additional fields not explicitly defined
@@ -95,7 +96,7 @@ class DifyErrorResponse(BaseModel):
     """Full Dify error callback response format."""
 
     status: str = Field(..., description="Should be 'failed' for errors")
-    message: List[DifyErrorDetail] = Field(..., description="List of error details")
+    message: list[DifyErrorDetail] = Field(..., description="List of error details")
 
     # Optional metadata
     workflow_run_id: Optional[str] = Field(None, description="Dify workflow run ID")
@@ -117,7 +118,7 @@ class ParsedError(BaseModel):
     user_message: str = Field(..., description="User-friendly error message")
 
     # Technical details for logging
-    technical_details: Dict[str, Any] = Field(
+    technical_details: dict[str, Any] = Field(
         default_factory=dict,
         description="Technical details for debugging"
     )
@@ -145,7 +146,7 @@ class ErrorHandlingResult(BaseModel):
     """Result of error handling process."""
 
     # Parsed errors
-    errors: List[ParsedError] = Field(..., description="List of processed errors")
+    errors: list[ParsedError] = Field(..., description="List of processed errors")
 
     # Primary error (most important one to show)
     primary_error: ParsedError = Field(..., description="Main error to display")

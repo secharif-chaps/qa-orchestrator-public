@@ -7,16 +7,15 @@ Provides REST endpoints for managing organization token balances:
 """
 
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Path, Query, status
 
 from app.core.authorization import verify_organization_access
 from app.core.dependencies import get_token_manager
-from app.core.keycloak import idp, OIDCUser
+from app.core.keycloak import OIDCUser, idp
 from app.core.logging_config import get_logger
-from app.core.organization import get_user_organization, OrganizationContext
+from app.core.organization import OrganizationContext, get_user_organization
 from app.core.utils import calculate_pages
 from app.models.organization import ReferenceType, TransactionType
 from app.schemas.token import (
@@ -149,16 +148,16 @@ async def get_transaction_history(
         description="Organization UUID",
         examples=["550e8400-e29b-41d4-a716-446655440000"],
     ),
-    transaction_type: Optional[TransactionType] = Query(
+    transaction_type: TransactionType | None = Query(
         None, description="Filter by transaction type"
     ),
-    reference_type: Optional[ReferenceType] = Query(
+    reference_type: ReferenceType | None = Query(
         None, description="Filter by reference type"
     ),
-    date_from: Optional[datetime] = Query(
+    date_from: datetime | None = Query(
         None, description="Filter transactions after this date"
     ),
-    date_to: Optional[datetime] = Query(
+    date_to: datetime | None = Query(
         None, description="Filter transactions before this date"
     ),
     page: int = Query(1, ge=1, description="Page number"),

@@ -3,12 +3,13 @@
 All admin endpoints require admin role for access.
 """
 
-from typing import Dict, Any
+from typing import Any
+
 from fastapi import APIRouter, Depends
 from fastapi_keycloak import OIDCUser
 
-from app.core.keycloak import idp
 from app.core.database_security import get_database_stats
+from app.core.keycloak import idp
 
 router = APIRouter(
     prefix="/security",
@@ -16,7 +17,7 @@ router = APIRouter(
 )
 
 
-@router.get("/stats", response_model=Dict[str, Any])
+@router.get("/stats", response_model=dict[str, Any])
 async def get_security_stats(
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin"]))
 ):

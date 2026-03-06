@@ -11,6 +11,7 @@ role verification within endpoint logic.
 """
 
 from fastapi_keycloak import OIDCUser
+
 from app.core.exceptions import AuthorizationError
 from app.core.logging_config import get_logger
 

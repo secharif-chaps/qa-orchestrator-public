@@ -1,44 +1,44 @@
+from .chapse_conversation_context import ChapseConversationContext
 from .company import Company
-from .company_sections import (
-    CompanyProfile,
-    CompanyDigital,
-    CompanyTimeline,
-    CompanyProducts,
-    CompanyJobs,
-    CompanyCsr,
-    CompanyPress,
-)
 from .company_children import (
-    ProductItemType,
+    CompanyCsrInitiative,
+    CompanyJobOffer,
+    CompanyOnlineService,
+    CompanyPressItem,
+    CompanyProductCategory,
+    CompanyProductItem,
+    CompanySocialMediaAccount,
+    CompanyTeamMember,
+    CompanyTimelineEvent,
     CsrInitiativeType,
     PressItemType,
-    CompanyOnlineService,
-    CompanySocialMediaAccount,
-    CompanyTimelineEvent,
-    CompanyProductItem,
-    CompanyProductCategory,
-    CompanyJobOffer,
-    CompanyCsrInitiative,
-    CompanyPressItem,
-    CompanyTeamMember,
+    ProductItemType,
 )
-from .task import Task, TaskStatus, TaskType
-from .organization import (
-    Organization,
-    OrganizationModule,
-    OrganizationFeatureFlag,
-    TokenTransaction,
-    ModuleName,
-    TransactionType,
-    ReferenceType,
-    FeatureFlag,
+from .company_sections import (
+    CompanyCsr,
+    CompanyDigital,
+    CompanyJobs,
+    CompanyPress,
+    CompanyProducts,
+    CompanyProfile,
+    CompanyTimeline,
 )
 from .folder import Folder, FolderItem, FolderShare, ShareRole
-from .user_folder_favorite import UserFolderFavorite
-from .user_preferences import UserPreferences
-from .chapse_conversation_context import ChapseConversationContext
+from .organization import (
+    FeatureFlag,
+    ModuleName,
+    Organization,
+    OrganizationFeatureFlag,
+    OrganizationModule,
+    ReferenceType,
+    TokenTransaction,
+    TransactionType,
+)
+from .task import Task, TaskStatus, TaskType
 from .translation import Translation
 from .translation_job import TranslationJob, TranslationJobStatus
+from .user_folder_favorite import UserFolderFavorite
+from .user_preferences import UserPreferences
 
 __all__ = [
     "Company",

@@ -1,6 +1,6 @@
-from pydantic_settings import BaseSettings
-from typing import Optional
+
 from pydantic import ConfigDict
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     KEYCLOAK_SERVER_URL: str = "https://keycloak.preprod.chapsmind.com"
     KEYCLOAK_REALM: str = "mint-preprod"
     KEYCLOAK_CLIENT_ID: str = "mint-back"
-    KEYCLOAK_CLIENT_SECRET: Optional[str] = None
+    KEYCLOAK_CLIENT_SECRET: str | None = None
     KEYCLOAK_CALLBACK_URI: str = "http://localhost:8001/callback"
     KEYCLOAK_ADMIN_CLIENT_ID: str = "admin-cli"
     KEYCLOAK_ADMIN_CLIENT_SECRET: str = "admin-cli-secret"

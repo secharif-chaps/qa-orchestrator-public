@@ -4,8 +4,8 @@ During the migration period, company data still lives in mint_db.
 This client calls the backend API to enrich folder items with company details.
 """
 
+
 import httpx
-from typing import Optional
 from pydantic import BaseModel
 
 from app.core.config import settings
@@ -19,10 +19,10 @@ class CompanyInfo(BaseModel):
     """Minimal company info for folder item enrichment."""
     id: int
     name: str
-    website: Optional[str] = None
+    website: str | None = None
     is_deleted: bool = False
-    owner_username: Optional[str] = None
-    created_at: Optional[str] = None
+    owner_username: str | None = None
+    created_at: str | None = None
 
 
 def _get_backend_base_url() -> str:
@@ -36,7 +36,7 @@ def _create_auth_headers(
     org_id: str,
     org_name: str,
     roles: list[str],
-    email: Optional[str] = None,
+    email: str | None = None,
 ) -> dict:
     """Create internal JWT auth headers for backend calls."""
     token = create_internal_token(

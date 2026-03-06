@@ -18,15 +18,15 @@ Security:
 """
 
 import time
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
 import httpx
 from fastapi import APIRouter, Request, Response
 from fastapi.responses import StreamingResponse
 
-from app.proxy.client import get_proxy_client, get_streaming_client
-from app.core.logging_config import get_logger
 from app.core.auth_middleware import auth_middleware
+from app.core.logging_config import get_logger
+from app.proxy.client import get_proxy_client, get_streaming_client
 
 logger = get_logger(__name__)
 

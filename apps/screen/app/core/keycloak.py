@@ -11,26 +11,30 @@ Usage:
         return {"users": [...]}
 """
 
+import os
 import time
-from typing import Optional, Any
-from fastapi_keycloak import FastAPIKeycloak, OIDCUser as BaseOIDCUser
+from typing import Any, Optional
+
+from fastapi_keycloak import FastAPIKeycloak
+from fastapi_keycloak import OIDCUser as BaseOIDCUser
 from requests.exceptions import (
-    RequestException,
-    Timeout,
     ConnectionError,
     HTTPError,
+    RequestException,
     SSLError,
+    Timeout,
 )
+
 from app.core.config import settings
-from app.core.logging_config import get_logger
 from app.core.internal_jwt import (
-    is_internal_request,
-    verify_internal_request,
     InternalJWTError,
+    IPNotAllowedError,
     TokenExpiredError,
     TokenInvalidError,
-    IPNotAllowedError,
+    is_internal_request,
+    verify_internal_request,
 )
+from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
 
@@ -330,7 +334,12 @@ def _initialize_keycloak_with_retry(
 
 
 # Initialize FastAPIKeycloak client with retry logic
-_raw_idp = _initialize_keycloak_with_retry()
+# Skip initialization in test environments when Keycloak is not available
+if os.environ.get("SKIP_KEYCLOAK_INIT", "").lower() in ("1", "true", "yes"):
+    logger.warning("SKIP_KEYCLOAK_INIT is set - using mock IDP for testing")
+    _raw_idp = None  # Will be handled by InternalTrustIDPWrapper
+else:
+    _raw_idp = _initialize_keycloak_with_retry()
 
 def _create_user_from_internal_token(request) -> Optional[OIDCUser]:
     """
@@ -417,11 +426,18 @@ class InternalTrustIDPWrapper:
     - Validates JWT via Keycloak as normal
     """
 
-    def __init__(self, wrapped_idp: FastAPIKeycloak):
+    def __init__(self, wrapped_idp: FastAPIKeycloak | None):
         self._wrapped = wrapped_idp
+        self._is_test_mode = wrapped_idp is None
 
     def __getattr__(self, name):
         """Forward all other attributes to the wrapped idp."""
+        if self._wrapped is None:
+            raise RuntimeError(
+                f"Keycloak IDP not initialized (test mode). "
+                f"Cannot access attribute '{name}'. "
+                f"Set SKIP_KEYCLOAK_INIT=false or provide Keycloak connection."
+            )
         return getattr(self._wrapped, name)
 
     def get_current_user(self, required_roles: list[str] | None = None):
@@ -433,7 +449,7 @@ class InternalTrustIDPWrapper:
 
         Returns a FastAPI dependency that can be used with Depends().
         """
-        from fastapi import Request, HTTPException, status
+        from fastapi import HTTPException, Request, status
 
         async def get_user_with_internal_trust(
             request: Request,

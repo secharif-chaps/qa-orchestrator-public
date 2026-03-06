@@ -18,22 +18,22 @@ from sqlalchemy.orm import Session
 
 from app.core.logging_config import get_logger
 from app.models import (
-    Translation,
-    CompanyProfile,
-    CompanyDigital,
-    CompanyTimeline,
-    CompanyProducts,
-    CompanyJobs,
     CompanyCsr,
-    CompanyPress,
-    CompanyOnlineService,
-    CompanyTimelineEvent,
-    CompanyProductItem,
-    CompanyProductCategory,
-    CompanyJobOffer,
     CompanyCsrInitiative,
+    CompanyDigital,
+    CompanyJobOffer,
+    CompanyJobs,
+    CompanyOnlineService,
+    CompanyPress,
     CompanyPressItem,
+    CompanyProductCategory,
+    CompanyProductItem,
+    CompanyProducts,
+    CompanyProfile,
     CompanyTeamMember,
+    CompanyTimeline,
+    CompanyTimelineEvent,
+    Translation,
 )
 
 logger = get_logger(__name__)

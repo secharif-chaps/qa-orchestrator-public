@@ -5,9 +5,10 @@ This module provides an async httpx client configured for proxying
 all requests to the backend service.
 """
 
-import httpx
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
+
+import httpx
 
 from app.core.config import settings
 from app.core.logging_config import get_logger

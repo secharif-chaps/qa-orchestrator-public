@@ -12,13 +12,14 @@ Security layers:
 2. IP allowlist validation (optional, if INTERNAL_ALLOWED_IPS is set)
 """
 
-import jwt
 import ipaddress
 from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 from typing import Optional
-from pydantic import BaseModel
+
+import jwt
 from fastapi import Request
+from pydantic import BaseModel
 
 from app.core.config import settings
 from app.core.logging_config import get_logger

@@ -5,7 +5,6 @@ which stores organization-scoped resources shared across modules.
 """
 
 from app.models.folder import Folder, FolderItem, FolderShare, ItemType, ShareRole
-from app.models.user_folder_favorite import UserFolderFavorite
 from app.models.organization import (
     FeatureFlag,
     ModuleName,
@@ -16,6 +15,7 @@ from app.models.organization import (
     TokenTransaction,
     TransactionType,
 )
+from app.models.user_folder_favorite import UserFolderFavorite
 from app.models.user_preferences import UserPreferences
 
 __all__ = [

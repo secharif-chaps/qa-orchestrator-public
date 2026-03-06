@@ -5,7 +5,7 @@ Currently supports AI preferences for Chapse Assist, designed to be extensible
 for future preference categories.
 """
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
@@ -32,7 +32,7 @@ class UserPreferencesService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def _get_user_preferences(self, user_id: str) -> Optional[UserPreferences]:
+    async def _get_user_preferences(self, user_id: str) -> UserPreferences | None:
         """Get the full preferences record for a user.
 
         Args:
@@ -48,7 +48,7 @@ class UserPreferencesService:
 
     async def _get_user_preferences_for_update(
         self, user_id: str
-    ) -> Optional[UserPreferences]:
+    ) -> UserPreferences | None:
         """Get the full preferences record with row-level lock.
 
         Uses SELECT ... FOR UPDATE to prevent race conditions
@@ -67,7 +67,7 @@ class UserPreferencesService:
         )
         return result.scalar_one_or_none()
 
-    async def get_ai_preferences(self, user_id: str) -> Optional[Dict[str, Any]]:
+    async def get_ai_preferences(self, user_id: str) -> dict[str, Any] | None:
         """Get AI preferences for a user.
 
         Args:
@@ -82,8 +82,8 @@ class UserPreferencesService:
         return user_prefs.get_ai_preferences()
 
     async def set_ai_preferences(
-        self, user_id: str, ai_data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, user_id: str, ai_data: dict[str, Any]
+    ) -> dict[str, Any]:
         """Create or update AI preferences for a user.
 
         Uses row-level locking for existing records to prevent race conditions.

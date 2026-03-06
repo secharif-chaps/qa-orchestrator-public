@@ -1,7 +1,9 @@
 """Celery configuration for Mint application."""
+import os
+
 from celery import Celery
 from kombu import Queue
-import os
+
 from app.core.logging_config import setup_logging
 
 # Initialize logging for Celery workers

@@ -1,7 +1,9 @@
-from typing import List, Optional
-from sqlalchemy.orm import Session
-from app.models.workflow_config import WorkflowConfig
+from typing import Optional
+
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from app.models.workflow_config import WorkflowConfig
 
 
 class WorkflowConfigResponse(BaseModel):
@@ -28,7 +30,7 @@ class WorkflowConfigService:
             return None
         return f"{api_key[:4]}{'*' * (len(api_key) - 8)}{api_key[-4:]}"
     
-    def get_all_configs(self) -> List[WorkflowConfigResponse]:
+    def get_all_configs(self) -> list[WorkflowConfigResponse]:
         """Get all workflow configs with obfuscated API keys"""
         configs = self.db.query(WorkflowConfig).order_by(WorkflowConfig.task_type).all()
 

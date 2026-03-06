@@ -4,28 +4,28 @@ Organization endpoints for Keycloak Organizations integration.
 This module provides minimal organization context endpoints. User and organization
 management is handled directly in Keycloak, not in the application database.
 """
-from typing import List
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.database import get_db
-from app.core.organization import get_user_organization, OrganizationContext
-from app.models.company import Company
-from app.models.folder import Folder, FolderShare, FolderItem
-from app.services.folder import FolderService
-from app.schemas.organization import ActivityResponse
 from app.core.logging_config import get_logger
+from app.core.organization import OrganizationContext, get_user_organization
+from app.database import get_db
+from app.models.company import Company
+from app.models.folder import Folder, FolderItem, FolderShare
+from app.schemas.organization import ActivityResponse
+from app.services.folder import FolderService
 
 logger = get_logger(__name__)
 
 router = APIRouter(tags=["organization"])
 
 
-@router.get("/activities", response_model=List[ActivityResponse])
+@router.get("/activities", response_model=list[ActivityResponse])
 async def get_organization_activities(
     db: Session = Depends(get_db),
     org_context: OrganizationContext = Depends(get_user_organization)
-) -> List[ActivityResponse]:
+) -> list[ActivityResponse]:
     """
     Get recent creation activities in the organization (companies and folders created by other users).
 

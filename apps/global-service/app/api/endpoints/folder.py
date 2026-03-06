@@ -7,34 +7,33 @@ This module provides REST API endpoints for:
 - User favorites
 """
 
-from typing import List
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_keycloak import OIDCUser
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_global_db
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
+from app.core.organization import OrganizationContext, get_user_organization
+from app.database import get_global_db
+from app.models.folder import ShareRole
 from app.schemas.folder import (
     FolderCreate,
-    FolderUpdate,
-    FolderResponse,
-    FolderWithItemsResponse,
     FolderItemAdd,
     FolderItemMove,
     FolderItemMoveResponse,
     FolderItemResponse,
+    FolderResponse,
     FolderShareCreate,
-    FolderShareUpdate,
     FolderShareResponse,
+    FolderShareUpdate,
+    FolderUpdate,
+    FolderWithItemsResponse,
     UserSearchResult,
 )
-from app.models.folder import ShareRole
 from app.services.folder import FolderService
 from app.services.keycloak_admin import keycloak_admin_service
-from app.core.organization import get_user_organization, OrganizationContext
-
 
 router = APIRouter(prefix="/folders", tags=["folders"])
 logger = get_logger(__name__)
@@ -48,7 +47,7 @@ async def _build_folder_response(
     org_id: str = "",
     username: str = "",
     org_name: str = "",
-    user_roles: List[str] = None,
+    user_roles: list[str] = None,
 ) -> dict:
     """Build folder response dict with access control fields.
 
@@ -117,7 +116,7 @@ async def _build_folder_response(
 # ==============================================================================
 
 
-@router.get("/users/search", response_model=List[UserSearchResult])
+@router.get("/users/search", response_model=list[UserSearchResult])
 async def search_users_for_sharing(
     q: str = Query(..., min_length=1, description="Search query for username/email"),
     limit: int = Query(10, ge=1, le=50, description="Maximum results to return"),
@@ -232,7 +231,7 @@ async def create_folder(
     )
 
 
-@router.get("/", response_model=List[FolderResponse])
+@router.get("/", response_model=list[FolderResponse])
 async def list_folders(
     archived: bool = Query(False),
     favorites: bool = Query(False),
@@ -748,7 +747,7 @@ async def create_folder_share(
     return share
 
 
-@router.get("/{folder_id}/shares", response_model=List[FolderShareResponse])
+@router.get("/{folder_id}/shares", response_model=list[FolderShareResponse])
 async def get_folder_shares(
     folder_id: UUID,
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),

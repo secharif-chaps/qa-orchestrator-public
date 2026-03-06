@@ -8,20 +8,22 @@ This module defines:
 """
 
 import enum
+
 from sqlalchemy import (
-    Column,
-    String,
     Boolean,
+    Column,
     DateTime,
+    Enum,
     ForeignKey,
     Integer,
-    Enum,
+    String,
     UniqueConstraint,
     text,
 )
-from sqlalchemy.dialects.postgresql import UUID, ARRAY
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
 from app.database import Base
 
 

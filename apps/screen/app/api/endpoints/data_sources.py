@@ -16,7 +16,7 @@ from app.core.logging_config import get_logger
 from app.database import get_db
 from app.models.organization import FeatureFlag
 from app.schemas.data_source import DataSourceConfigRequest, DataSourceConfigResponse
-from app.services.feature_flags import update_feature_config, get_feature_config, obfuscate_api_key
+from app.services.feature_flags import get_feature_config, obfuscate_api_key, update_feature_config
 
 logger = get_logger(__name__)
 

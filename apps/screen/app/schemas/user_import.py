@@ -1,8 +1,9 @@
 """Schemas for bulk user import functionality."""
 
-from typing import Optional, List
-from pydantic import BaseModel, EmailStr, field_validator
 import re
+from typing import Optional
+
+from pydantic import BaseModel, EmailStr, field_validator
 
 
 class UserImportRow(BaseModel):
@@ -76,7 +77,7 @@ class BulkUserImportRequest(BaseModel):
         generate_passwords: Whether to generate random passwords for users without passwords
     """
     organization_id: str
-    users: List[UserImportRow]
+    users: list[UserImportRow]
     generate_passwords: bool = True
 
     @field_validator('organization_id')
@@ -90,7 +91,7 @@ class BulkUserImportRequest(BaseModel):
 
     @field_validator('users')
     @classmethod
-    def validate_users_count(cls, v: List[UserImportRow]) -> List[UserImportRow]:
+    def validate_users_count(cls, v: list[UserImportRow]) -> list[UserImportRow]:
         """Validate user count limits."""
         if len(v) == 0:
             raise ValueError('At least one user is required')
@@ -123,7 +124,7 @@ class BulkUserImportResponse(BaseModel):
     success_count: int
     error_count: int
     total_count: int
-    results: List[UserImportResult]
+    results: list[UserImportResult]
 
 
 class DuplicateCheckResult(BaseModel):

@@ -1,10 +1,12 @@
 # app/grpc_services/organization.py
+import logging
+
+import grpc
+
 from app.grpc_generated import (
     organization_pb2,
     organization_pb2_grpc,
 )
-import grpc
-import logging
 
 logger = logging.getLogger(__name__)
 

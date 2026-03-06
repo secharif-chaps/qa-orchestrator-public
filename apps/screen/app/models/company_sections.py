@@ -16,7 +16,7 @@ Models:
 All models have 1:1 relationship with Company using company_id as PK and FK.
 """
 
-from sqlalchemy import Column, Integer, Text, ForeignKey, DateTime
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 

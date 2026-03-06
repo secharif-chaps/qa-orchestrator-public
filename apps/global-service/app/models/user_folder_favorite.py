@@ -4,11 +4,11 @@ This module defines the junction table for user-scoped folder favorites.
 Each user can have their own list of favorite folders, independent of other users.
 """
 
-from sqlalchemy import Column, String, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, DateTime, ForeignKey, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func, text
 
-from app.database import GlobalBase, GLOBAL_SCHEMA
+from app.database import GLOBAL_SCHEMA, GlobalBase
 
 
 class UserFolderFavorite(GlobalBase):

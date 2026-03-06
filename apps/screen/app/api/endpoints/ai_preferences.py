@@ -2,22 +2,24 @@
 AI Preferences endpoints for Chapse Assist feature
 """
 
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.core.organization import get_user_organization, OrganizationContext
+
 from app.core.dependencies import get_company_service
+from app.core.organization import OrganizationContext, get_user_organization
 from app.database import get_db
-from app.services.user_preferences import UserPreferencesService
-from app.services.company import CompanyService
-from app.services.company_section_service import read_all_section_data
-from app.services.dify import DifyService
 from app.schemas.ai_preferences import (
     AiPreferencesCreate,
     AiPreferencesResponse,
     QuickActionsRequest,
     QuickActionsResponse,
 )
-import logging
+from app.services.company import CompanyService
+from app.services.company_section_service import read_all_section_data
+from app.services.dify import DifyService
+from app.services.user_preferences import UserPreferencesService
 
 router = APIRouter(
     prefix="/ai-preferences",

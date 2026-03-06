@@ -12,12 +12,11 @@ Key operations:
 """
 
 from datetime import datetime
-from typing import List, Optional
 
+from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
 from sqlalchemy.sql import Select
 
 from app.core.logging_config import get_logger
@@ -263,7 +262,7 @@ class TokenManager:
         amount: int,
         module_name: ModuleName,
         reference_type: ReferenceType,
-        reference_id: Optional[str],
+        reference_id: str | None,
         user_id: str,
     ) -> Organization:
         """Consume tokens from organization balance.
@@ -366,10 +365,10 @@ class TokenManager:
         self,
         query: Select,
         org_id: str,
-        transaction_type: Optional[TransactionType] = None,
-        reference_type: Optional[ReferenceType] = None,
-        date_from: Optional[datetime] = None,
-        date_to: Optional[datetime] = None,
+        transaction_type: TransactionType | None = None,
+        reference_type: ReferenceType | None = None,
+        date_from: datetime | None = None,
+        date_to: datetime | None = None,
     ) -> Select:
         """Build base query with transaction filters.
 
@@ -406,13 +405,13 @@ class TokenManager:
     async def get_transaction_history(
         self,
         org_id: str,
-        transaction_type: Optional[TransactionType] = None,
-        reference_type: Optional[ReferenceType] = None,
-        date_from: Optional[datetime] = None,
-        date_to: Optional[datetime] = None,
+        transaction_type: TransactionType | None = None,
+        reference_type: ReferenceType | None = None,
+        date_from: datetime | None = None,
+        date_to: datetime | None = None,
         page: int = 1,
         size: int = 50,
-    ) -> List[TokenTransaction]:
+    ) -> list[TokenTransaction]:
         """Get transaction history for organization with optional filters.
 
         Results are ordered by created_at descending (most recent first).
@@ -447,10 +446,10 @@ class TokenManager:
     async def get_transaction_count(
         self,
         org_id: str,
-        transaction_type: Optional[TransactionType] = None,
-        reference_type: Optional[ReferenceType] = None,
-        date_from: Optional[datetime] = None,
-        date_to: Optional[datetime] = None,
+        transaction_type: TransactionType | None = None,
+        reference_type: ReferenceType | None = None,
+        date_from: datetime | None = None,
+        date_to: datetime | None = None,
     ) -> int:
         """Get total count of transactions for pagination.
 
@@ -538,7 +537,7 @@ class TokenManager:
 
     async def get_all_organization_modules(
         self, organization_id: str
-    ) -> List[OrganizationModule]:
+    ) -> list[OrganizationModule]:
         """Get all modules for an organization.
 
         Ensures all module types exist for the organization using bulk upsert.
@@ -587,7 +586,7 @@ class TokenManager:
         self,
         organization_id: str,
         module_name: ModuleName,
-        enabled: Optional[bool] = None,
+        enabled: bool | None = None,
     ) -> OrganizationModule:
         """Update module configuration (enabled/disabled).
 

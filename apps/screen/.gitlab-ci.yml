@@ -7,23 +7,18 @@ variables:
   DOCKER_BUILDKIT: 1
 
 # ─── Reusable blocks ───────────────────────────────────
+# Run all jobs on any branch (not just when files change)
 .screen-changes: &screen-changes
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - apps/screen/**/*
     - if: $CI_COMMIT_BRANCH
-      changes:
-        - apps/screen/**/*
 
 # ─── Lint Stage ────────────────────────────────────────
 screen:lint:
   stage: lint
   image: python:3.12-slim
-  # TODO: Remove allow_failure once pre-existing ruff errors are fixed by the back team
-  allow_failure: true
   before_script:
     - pip install ruff
   script:
@@ -34,8 +29,15 @@ screen:lint:
 screen:test:
   stage: test
   image: python:3.12-slim
-  # TODO: Remove allow_failure once tests no longer require Keycloak at collection time
   allow_failure: true
+  services:
+    - name: postgres:15-alpine
+      alias: postgres
+  variables:
+    POSTGRES_DB: mint_db_test
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    TEST_DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/mint_db_test"
   before_script:
     - pip install poetry
     - cd apps/screen
@@ -59,18 +61,20 @@ screen:test:
     - echo "Building $IMAGE_NAME:${IMAGE_TAG}"
     - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" apps/screen/
 
-# MR: test that docker build succeeds (don't push)
+# Build test (don't push) - runs on all branches
 screen:docker-build:
   stage: build
   extends: .screen-docker-build
   variables:
     IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
   rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - apps/screen/**/*
+    - if: $CI_COMMIT_BRANCH
 
 # Main branch: build + push with SHA tag and :latest
+# DISABLED: Do not publish on this test branch
 screen:publish:
   stage: publish
   extends: .screen-docker-build
@@ -85,5 +89,4 @@ screen:publish:
     - docker logout $CI_REGISTRY
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      changes:
-        - apps/screen/**/*
+      when: never

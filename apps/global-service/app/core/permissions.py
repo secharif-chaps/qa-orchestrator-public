@@ -4,10 +4,10 @@ This module defines the permission tier system for team management,
 abstracting away individual Keycloak roles into a simple 3-tier model.
 """
 
-from enum import Enum
+from enum import StrEnum
 
 
-class PermissionTier(str, Enum):
+class PermissionTier(StrEnum):
     """Permission tiers for team members."""
 
     READER = "reader"

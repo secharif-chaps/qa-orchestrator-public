@@ -1,6 +1,9 @@
-from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict
+
 from app.models.task import TaskStatus, TaskType
+
 
 class TaskCreate(BaseModel):
     company_id: int

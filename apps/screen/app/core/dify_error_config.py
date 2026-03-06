@@ -1,7 +1,6 @@
 """Configuration for Dify error handling."""
-from typing import Dict, Set
-from app.schemas.dify_errors import DifyErrorType
 
+from app.schemas.dify_errors import DifyErrorType
 
 # ============================================================================
 # ERROR WHITELIST
@@ -14,7 +13,7 @@ from app.schemas.dify_errors import DifyErrorType
 # - ⚠️ PLACEHOLDER: Error types that are anticipated but not yet observed
 # - Placeholders will be updated as real errors are detected
 
-WHITELISTED_ERROR_TYPES: Set[str] = {
+WHITELISTED_ERROR_TYPES: set[str] = {
     # ============================================================================
     # ✅ CONFIRMED ERRORS (detected in production)
     # ============================================================================
@@ -66,7 +65,7 @@ WHITELISTED_ERROR_TYPES: Set[str] = {
 # ✅ CONFIRMED mappings are based on observed production errors
 # ⚠️ PLACEHOLDER mappings are anticipated but not yet confirmed
 
-ERROR_TYPE_MAPPING: Dict[str, DifyErrorType] = {
+ERROR_TYPE_MAPPING: dict[str, DifyErrorType] = {
     # ============================================================================
     # ✅ CONFIRMED MAPPINGS
     # ============================================================================
@@ -132,7 +131,7 @@ ERROR_TYPE_MAPPING: Dict[str, DifyErrorType] = {
 # Priority order for determining which error to show as primary
 # Higher number = higher priority
 
-ERROR_PRIORITY: Dict[DifyErrorType, int] = {
+ERROR_PRIORITY: dict[DifyErrorType, int] = {
     # Auth errors are most critical - user can't proceed
     DifyErrorType.AUTH_INVALID_KEY: 100,
     DifyErrorType.AUTH_EXPIRED: 90,
@@ -168,7 +167,7 @@ ERROR_PRIORITY: Dict[DifyErrorType, int] = {
 # ============================================================================
 # Errors that can potentially be retried automatically
 
-RECOVERABLE_ERROR_TYPES: Set[DifyErrorType] = {
+RECOVERABLE_ERROR_TYPES: set[DifyErrorType] = {
     DifyErrorType.RATE_LIMIT_LLM,
     DifyErrorType.RATE_LIMIT_API,
     DifyErrorType.WORKFLOW_TIMEOUT,

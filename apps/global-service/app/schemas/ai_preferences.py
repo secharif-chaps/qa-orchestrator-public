@@ -4,7 +4,6 @@ Defines request/response models for the Chapse Assist AI preferences feature.
 Field names and types match the monolith schemas for frontend compatibility.
 """
 
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -15,7 +14,7 @@ class AiPreferencesCreate(BaseModel):
     role: str = Field(..., min_length=1, max_length=255)
     goals_text: str = Field(..., min_length=1, max_length=2000)
     desired_output_text: str = Field(..., min_length=1, max_length=2000)
-    documentation_text: Optional[str] = Field(None, max_length=5000)
+    documentation_text: str | None = Field(None, max_length=5000)
 
 
 class AiPreferencesResponse(BaseModel):
@@ -27,6 +26,6 @@ class AiPreferencesResponse(BaseModel):
     role: str
     goals_text: str
     desired_output_text: str
-    documentation_text: Optional[str] = None
+    documentation_text: str | None = None
 
     model_config = ConfigDict(from_attributes=False)

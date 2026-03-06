@@ -1,15 +1,17 @@
 """Dify service wrapper around official Dify Python SDK."""
+from typing import Any, Optional
+
 import httpx
-from typing import Dict, Any, Optional
-from sqlalchemy.orm import Session
 from dify_client import ChatClient
+from sqlalchemy.orm import Session
+
 from app.core.config import settings
 from app.core.exceptions import ExternalServiceError
 from app.core.logging_config import get_logger
-from app.services.workflow_config import WorkflowConfigService
-from app.services.feature_flags import has_feature, get_feature_config
-from app.models.organization import FeatureFlag
 from app.models.company import Company
+from app.models.organization import FeatureFlag
+from app.services.feature_flags import get_feature_config, has_feature
+from app.services.workflow_config import WorkflowConfigService
 
 logger = get_logger(__name__)
 
@@ -68,7 +70,7 @@ class DifyService:
             logger.warning(f"Failed to get workflow config from database: {e}")
             return None
 
-    def _get_knowledge_data(self, company_id: int) -> Dict[str, str]:
+    def _get_knowledge_data(self, company_id: int) -> dict[str, str]:
         """Retrieve knowledge data for a company from database.
 
         This fetches the raw knowledge data collected by the data_collection
@@ -137,7 +139,7 @@ class DifyService:
         company_id: int,
         response_mode: str = "blocking",
         api_key: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Execute a Dify workflow using the official SDK.
 
         This method handles workflow execution with automatic knowledge data injection
@@ -518,10 +520,10 @@ class DifyService:
     async def send_chat_message(
         self,
         message: str,
-        company_context: Dict[str, Any],
+        company_context: dict[str, Any],
         chat_history: Optional[list] = None,
         api_key: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Send a chat message to Dify chat workflow.
 
         This method sends a user message to the Dify chat API with company context.
@@ -600,11 +602,11 @@ class DifyService:
     async def send_global_chat_message(
         self,
         message: str,
-        contexts: Dict[str, Any],
-        system_context: Dict[str, Any],
+        contexts: dict[str, Any],
+        system_context: dict[str, Any],
         chat_history: Optional[list] = None,
         api_key: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Send a message to the global Chaps-e chat workflow.
 
         This method handles global chat with multiple context types (company, folder,
@@ -731,10 +733,10 @@ class DifyService:
 
     async def generate_quick_actions(
         self,
-        user_preferences: Dict[str, Any],
-        company_data: Dict[str, Any],
+        user_preferences: dict[str, Any],
+        company_data: dict[str, Any],
         api_key: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Generate quick actions using Dify chat workflow.
 
         This method generates personalized quick action recommendations based on

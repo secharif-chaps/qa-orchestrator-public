@@ -7,15 +7,16 @@ This module provides endpoints for users to manage their own account:
 All endpoints are self-service and require authentication.
 """
 
-from typing import Optional, List
+from datetime import datetime
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi_keycloak import OIDCUser
 from pydantic import BaseModel
-from datetime import datetime
 
 from app.core.keycloak import idp
-from app.services.keycloak_admin import keycloak_admin_service
 from app.core.logging_config import get_logger
+from app.services.keycloak_admin import keycloak_admin_service
 
 router = APIRouter(prefix="/users/me", tags=["account"])
 logger = get_logger(__name__)
@@ -35,7 +36,7 @@ class SessionResponse(BaseModel):
 
 class SessionListResponse(BaseModel):
     """Response schema for session list."""
-    sessions: List[SessionResponse]
+    sessions: list[SessionResponse]
     current_session_id: Optional[str] = None
 
 
@@ -53,7 +54,7 @@ class ActivityEventResponse(BaseModel):
 
 class ActivityEventsResponse(BaseModel):
     """Response schema for activity events list."""
-    events: List[ActivityEventResponse]
+    events: list[ActivityEventResponse]
     page: int
     size: int
     has_more: bool
@@ -469,9 +470,8 @@ async def get_activity_events(
             # Build description with additional details
             description = display_info["description"]
             details = kc_event.get("details", {})
-            if details:
-                if "auth_method" in details:
-                    description += f" ({details['auth_method']})"
+            if details and "auth_method" in details:
+                description += f" ({details['auth_method']})"
 
             events.append(ActivityEventResponse(
                 id=str(kc_event.get("time", 0)),  # Use timestamp as ID if no ID provided

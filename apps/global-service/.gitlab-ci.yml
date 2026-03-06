@@ -7,23 +7,18 @@ variables:
   DOCKER_BUILDKIT: 1
 
 # ─── Reusable blocks ───────────────────────────────────
+# Run all jobs on any branch (not just when files change)
 .gs-changes: &gs-changes
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
       when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - apps/global-service/**/*
     - if: $CI_COMMIT_BRANCH
-      changes:
-        - apps/global-service/**/*
 
 # ─── Lint Stage ────────────────────────────────────────
 global-service:lint:
   stage: lint
   image: python:3.12-slim
-  # TODO: Remove allow_failure once pre-existing ruff errors are fixed by the back team
-  allow_failure: true
   before_script:
     - pip install ruff
   script:
@@ -58,18 +53,20 @@ global-service:test:
     - echo "Building $IMAGE_NAME:${IMAGE_TAG}"
     - docker build --no-cache --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" apps/global-service/
 
-# MR: test that docker build succeeds (don't push)
+# Build test (don't push) - runs on all branches
 global-service:docker-build:
   stage: build
   extends: .gs-docker-build
   variables:
     IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
   rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - apps/global-service/**/*
+    - if: $CI_COMMIT_BRANCH
 
 # Main branch: build + push with SHA tag and :latest
+# DISABLED: Do not publish on this test branch
 global-service:publish:
   stage: publish
   extends: .gs-docker-build
@@ -84,5 +81,4 @@ global-service:publish:
     - docker logout $CI_REGISTRY
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      changes:
-        - apps/global-service/**/*
+      when: never

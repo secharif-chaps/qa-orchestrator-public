@@ -4,8 +4,8 @@ This module defines the table for storing company context linked to Dify convers
 Each row links a Dify conversation ID to the companies the user added as context.
 """
 
-from sqlalchemy import Column, String, DateTime, Integer
-from sqlalchemy.dialects.postgresql import UUID, ARRAY
+from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.sql import func, text
 
 from app.database import Base

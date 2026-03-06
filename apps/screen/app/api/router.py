@@ -1,9 +1,26 @@
 from fastapi import APIRouter
+
 from app.api.endpoints import (
-    account, company, tasks, auth, admin, admin_tasks, security, webhooks,
-    cost_analysis, concurrency, team,
-    ai_preferences, organization, organizations, users, chapse,
-    translation, feature_flags, credits, data_sources
+    account,
+    admin,
+    admin_tasks,
+    ai_preferences,
+    auth,
+    chapse,
+    company,
+    concurrency,
+    cost_analysis,
+    credits,
+    data_sources,
+    feature_flags,
+    organization,
+    organizations,
+    security,
+    tasks,
+    team,
+    translation,
+    users,
+    webhooks,
 )
 
 api_router = APIRouter()
