@@ -107,8 +107,6 @@ watch(
     if (!watchFileAnalysisStore.isUrlSync) {
       return
     }
-    console.log('watch filterQuery', newQuery)
-
     await router.replace({
       query: newQuery,
     })

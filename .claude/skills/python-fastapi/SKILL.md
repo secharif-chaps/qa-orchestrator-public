@@ -2,6 +2,9 @@
 name: python-fastapi
 description: Python backend development with FastAPI, SQLAlchemy, and Pydantic. Use when writing API endpoints, database models, migrations, or backend business logic. Follows Ruff formatting and strict type hints.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
+metadata:
+  author: chaps-e
+  version: "1.0"
 ---
 
 # Python FastAPI Backend
@@ -103,4 +106,4 @@ except CompanyNotFoundError:
     raise HTTPException(status_code=404, detail="Company not found")
 ```
 
-For detailed patterns, see [coding-style.md](coding-style.md)
+For detailed patterns, see [coding-style.md](references/coding-style.md)

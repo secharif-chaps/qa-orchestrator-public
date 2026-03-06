@@ -256,3 +256,8 @@ export const retryMessage = async (messageId: string, defaultErrorMessage: Defau
   )
   return response.data
 }
+
+export const cancelConversation = async (conversationId: string) => {
+  const response = await useApi().post<Conversation>(`/conversations/${conversationId}/cancel`, {})
+  return response.data
+}

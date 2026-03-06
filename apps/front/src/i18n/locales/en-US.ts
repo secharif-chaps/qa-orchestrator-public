@@ -1436,6 +1436,8 @@ export default {
       resetPassword: {
         success: 'Password reset successfully!',
         error: 'Failed to reset password',
+        sent: 'Password reset email sent',
+        sentError: 'Failed to send password reset',
       },
       disable: {
         success: 'User disabled successfully!',
@@ -1444,6 +1446,22 @@ export default {
       enable: {
         success: 'User enabled successfully!',
         error: 'Failed to enable user',
+      },
+      create: {
+        success: 'User created',
+        error: 'Failed to add user',
+      },
+      update: {
+        success: 'User updated',
+        error: 'Failed to update user',
+      },
+      delete: {
+        success: 'User deleted',
+        error: 'Failed to delete user',
+      },
+      statusUpdate: {
+        success: 'User status updated',
+        error: 'Failed to update status',
       },
     },
     tasks: {
@@ -2469,7 +2487,16 @@ export default {
         'The password has been reset. Share this temporary password with the user.',
       temporaryPassword: 'Temporary Password',
     },
+    username: 'Username',
+    usernamePlaceholder: 'Enter username',
+    email: 'Email',
+    emailPlaceholder: 'Enter email address',
+    temporaryPassword: 'Temporary Password',
+    passwordPlaceholder: 'Enter temporary password',
+    passwordHelp: 'User will be required to change this password on first login',
     generatePassword: 'Generate Random Password',
+    initialRole: 'Initial Role',
+    initialRoleDescription: 'Select the initial permissions for this user. Can be changed later.',
     status: {
       active: 'Active',
       pending: 'Pending',

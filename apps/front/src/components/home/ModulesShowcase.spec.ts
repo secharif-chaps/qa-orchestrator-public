@@ -8,12 +8,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import type { FeatureFlagConfig } from '@/types/feature-flags'
 
-// Mock vue-i18n
+// Mock vue-i18n (useI18n for <script setup>, $t provided via global.mocks)
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
     t: (key: string, fallback?: string) => fallback || key,
   }),
 }))
+
+const $t = (key: string, fallback?: string) => fallback || key
 
 // Mock vue-router
 vi.mock('vue-router', () => ({
@@ -32,7 +34,7 @@ vi.mock('@owlint/feathers-vue', () => ({
   Button: {
     name: 'Button',
     template:
-      '<button class="button" :disabled="disabled" @click="$emit(\'click\')"><slot /></button>',
+      '<button class="button" :disabled="disabled" @click="$emit(\'click\')"><slot />{{ label }}</button>',
     props: ['variant', 'intent', 'size', 'label', 'icon', 'disabled'],
     emits: ['click'],
   },
@@ -78,6 +80,7 @@ describe('ModulesShowcase', () => {
 
     const wrapper = mount(ModulesShowcase, {
       props: { featureFlags },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()
@@ -99,6 +102,7 @@ describe('ModulesShowcase', () => {
 
     const wrapper = mount(ModulesShowcase, {
       props: { featureFlags: [] },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()
@@ -129,6 +133,7 @@ describe('ModulesShowcase', () => {
 
     const wrapper = mount(ModulesShowcase, {
       props: { featureFlags },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()
@@ -163,6 +168,7 @@ describe('ModulesShowcase', () => {
 
     const wrapper = mount(ModulesShowcase, {
       props: { featureFlags },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()
@@ -198,6 +204,7 @@ describe('ModulesShowcase', () => {
 
     const wrapper = mount(ModulesShowcase, {
       props: { featureFlags },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()
@@ -231,6 +238,7 @@ describe('ModulesShowcase', () => {
 
     const wrapper = mount(ModulesShowcase, {
       props: { featureFlags },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()
@@ -266,6 +274,7 @@ describe('ModulesShowcase', () => {
           },
         ],
       },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()

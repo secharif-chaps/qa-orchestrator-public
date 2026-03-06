@@ -8,7 +8,15 @@
     :data-testid="messageTestId"
   >
     <!-- SYSTEM ERROR MESSAGE -->
-    <ErrorMessage v-if="isSystemErrorMessage" width="full" :fill="false" :is-chat-message="true" />
+    <InformationMessage
+      v-if="isSystemErrorMessage"
+      width="full"
+      :fill="false"
+      :is-chat-message="true"
+      :color="isCancelledMessage ? 'info' : 'error'"
+      :title="systemErrorTitle"
+      :description="systemErrorDescription"
+    />
 
     <!-- SYSTEM MESSAGE (when not grouped - handled by parent for grouping) -->
     <CollapsibleSystemMessage
@@ -130,7 +138,7 @@ import type { Message } from '@target/types/conversation'
 import { MessageRole } from '@target/types/conversation'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ErrorMessage from '../global/ErrorMessage.vue'
+import InformationMessage from '../global/InformationMessage.vue'
 import CollapsibleSystemMessage from './CollapsibleSystemMessage.vue'
 
 const MAX_RETRY_ATTEMPTS = 3
@@ -169,6 +177,22 @@ const renderedContent = toHtml(messageContent)
 const isUserMessage = computed(() => message.role === MessageRole.USER)
 const isSystemMessage = computed(() => message.role === MessageRole.SYSTEM)
 const isSystemErrorMessage = computed(() => message.role === MessageRole.SYSTEM_ERROR)
+const isCancelledMessage = computed(
+  () => isSystemErrorMessage.value && message.metadata?.reason === 'cancelled',
+)
+const isTimedOutMessage = computed(
+  () => isSystemErrorMessage.value && message.metadata?.reason === 'timed_out',
+)
+const systemErrorTitle = computed(() => {
+  if (isCancelledMessage.value) return t('watch_files.chat.system_error.cancelled_title')
+  if (isTimedOutMessage.value) return t('watch_files.chat.system_error.timed_out_title')
+  return t('common.error.title')
+})
+const systemErrorDescription = computed(() => {
+  if (isCancelledMessage.value) return t('watch_files.chat.system_error.cancelled_description')
+  if (isTimedOutMessage.value) return t('watch_files.chat.system_error.timed_out_description')
+  return t('common.error.description')
+})
 const isLoading = computed(() => message.loading === true)
 const isError = computed(() => message.status === 'error')
 const canRetry = computed(() => (message.retryCount ?? 0) < MAX_RETRY_ATTEMPTS)

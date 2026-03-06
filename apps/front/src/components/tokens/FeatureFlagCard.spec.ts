@@ -8,12 +8,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { ref } from 'vue'
 
-// Mock vue-i18n
+// Mock vue-i18n (useI18n for <script setup>, $t provided via global.mocks)
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
     t: (key: string, fallback?: string) => fallback || key,
   }),
 }))
+
+const $t = (key: string, fallback?: string) => fallback || key
 
 // Mock the mutation
 const mockToggleFeatureFlag = vi.fn()
@@ -63,6 +65,7 @@ describe('FeatureFlagCard', () => {
         organizationId: 'test-org-123',
         config: null,
       },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()
@@ -82,6 +85,7 @@ describe('FeatureFlagCard', () => {
         organizationId: 'test-org-123',
         config: null,
       },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()
@@ -101,6 +105,7 @@ describe('FeatureFlagCard', () => {
         organizationId: 'test-org-123',
         config: null,
       },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()
@@ -121,6 +126,7 @@ describe('FeatureFlagCard', () => {
         organizationId: 'test-org-123',
         config: { url: existingUrl },
       },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()
@@ -140,6 +146,7 @@ describe('FeatureFlagCard', () => {
         organizationId: 'test-org-123',
         config: null,
       },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()
@@ -164,6 +171,7 @@ describe('FeatureFlagCard', () => {
         organizationId: 'test-org-123',
         config: null,
       },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()
@@ -195,6 +203,7 @@ describe('FeatureFlagCard', () => {
         organizationId: 'test-org-123',
         config: { url: existingUrl },
       },
+      global: { mocks: { $t } },
     })
 
     await flushPromises()

@@ -32,7 +32,7 @@ FR_LOCALE_FILE = LOCALES_DIR / "fr-FR.ts"
 # Patterns
 I18N_PATTERN = re.compile(r'\$t\([\'"]([^\'")]+)[\'"](?:,\s*[\'"][^\'"]*[\'"])?\)')
 TEMPLATE_TEXT_PATTERN = re.compile(
-    r'<(?:h1|h2|h3|h4|h5|h6|p|span|div|a|button|label|th|td|li|option)[^>]*>([^<{}]+)</(?:h1|h2|h3|h4|h5|h6|p|span|div|a|button|label|th|td|li|option)>'
+    r"<(?:h1|h2|h3|h4|h5|h6|p|span|div|a|button|label|th|td|li|option)[^>]*>([^<{}]+)</(?:h1|h2|h3|h4|h5|h6|p|span|div|a|button|label|th|td|li|option)>"
 )
 ATTRIBUTE_TEXT_PATTERN = re.compile(
     r'(?:placeholder|title|label|alt|aria-label)=["\']([^"\']+)["\']'
@@ -42,6 +42,7 @@ ATTRIBUTE_TEXT_PATTERN = re.compile(
 @dataclass
 class TranslationStats:
     """Statistics about translation changes"""
+
     files_scanned: int = 0
     files_modified: int = 0
     keys_added: int = 0
@@ -67,10 +68,10 @@ class LocaleManager:
 
     def _parse_locale_file(self, file_path: Path) -> Dict[str, str]:
         """Parse TypeScript export default object into flat key-value dict"""
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
 
         # Remove export default and trailing curly brace
-        content = re.sub(r'^export\s+default\s+\{', '{', content, flags=re.MULTILINE)
+        content = re.sub(r"^export\s+default\s+\{", "{", content, flags=re.MULTILINE)
 
         translations = {}
         self._extract_keys(content, [], translations)
@@ -81,7 +82,7 @@ class LocaleManager:
         # Match key-value pairs (both string values and nested objects)
         key_value_pattern = re.compile(
             r"(['\"]?)(\w+)(['\"]?)\s*:\s*(?:(['\"])((?:\\.|[^'\"\\])*)\4|(\{))",
-            re.MULTILINE | re.DOTALL
+            re.MULTILINE | re.DOTALL,
         )
 
         pos = 0
@@ -92,7 +93,7 @@ class LocaleManager:
             string_value = match.group(5)
             is_object = match.group(6)
 
-            full_key = '.'.join(prefix + [key])
+            full_key = ".".join(prefix + [key])
 
             if string_value is not None:
                 # It's a string value
@@ -104,9 +105,9 @@ class LocaleManager:
                 obj_end = obj_start
 
                 for i in range(obj_start, len(content)):
-                    if content[i] == '{':
+                    if content[i] == "{":
                         brace_count += 1
-                    elif content[i] == '}':
+                    elif content[i] == "}":
                         brace_count -= 1
                         if brace_count == 0:
                             obj_end = i
@@ -134,7 +135,7 @@ class LocaleManager:
         nested = {}
 
         for key, value in sorted(translations.items()):
-            parts = key.split('.')
+            parts = key.split(".")
             current = nested
 
             for part in parts[:-1]:
@@ -145,16 +146,16 @@ class LocaleManager:
             current[parts[-1]] = value
 
         content = "export default " + self._dict_to_ts(nested, 0)
-        file_path.write_text(content, encoding='utf-8')
+        file_path.write_text(content, encoding="utf-8")
 
     def _dict_to_ts(self, obj: Dict, indent_level: int) -> str:
         """Convert nested dict to TypeScript object string"""
         if not obj:
-            return '{}'
+            return "{}"
 
-        indent = '  ' * indent_level
-        next_indent = '  ' * (indent_level + 1)
-        lines = ['{']
+        indent = "  " * indent_level
+        next_indent = "  " * (indent_level + 1)
+        lines = ["{"]
 
         for key, value in obj.items():
             if isinstance(value, dict):
@@ -162,11 +163,11 @@ class LocaleManager:
                 lines.append(f"{next_indent}{key}: {nested},")
             else:
                 # Escape single quotes and backslashes
-                escaped_value = value.replace('\\', '\\\\').replace("'", "\\'")
+                escaped_value = value.replace("\\", "\\\\").replace("'", "\\'")
                 lines.append(f"{next_indent}{key}: '{escaped_value}',")
 
         lines.append(f"{indent}}}")
-        return '\n'.join(lines)
+        return "\n".join(lines)
 
 
 class TranslationAgent:
@@ -181,7 +182,9 @@ class TranslationAgent:
             self.anthropic = Anthropic(api_key=anthropic_api_key)
         else:
             self.anthropic = None
-            print("⚠️  No Anthropic API key provided. Translation will use placeholder text.")
+            print(
+                "⚠️  No Anthropic API key provided. Translation will use placeholder text."
+            )
 
     def scan_directory(self, directory: Path):
         """Recursively scan directory for Vue files"""
@@ -195,11 +198,11 @@ class TranslationAgent:
 
     def process_vue_file(self, file_path: Path) -> bool:
         """Process a single Vue file for translation issues"""
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
         original_content = content
 
         # Extract template section
-        template_match = re.search(r'<template>(.*?)</template>', content, re.DOTALL)
+        template_match = re.search(r"<template>(.*?)</template>", content, re.DOTALL)
         if not template_match:
             return False
 
@@ -213,8 +216,12 @@ class TranslationAgent:
 
         if changes_made:
             # Replace template in content
-            content = content[:template_match.start(1)] + template + content[template_match.end(1):]
-            file_path.write_text(content, encoding='utf-8')
+            content = (
+                content[: template_match.start(1)]
+                + template
+                + content[template_match.end(1) :]
+            )
+            file_path.write_text(content, encoding="utf-8")
             return True
 
         return False
@@ -230,16 +237,20 @@ class TranslationAgent:
             if not en_exists or not fr_exists:
                 missing_locales = []
                 if not en_exists:
-                    missing_locales.append('en-US')
+                    missing_locales.append("en-US")
                 if not fr_exists:
-                    missing_locales.append('fr-FR')
+                    missing_locales.append("fr-FR")
 
-                self.stats.missing_translations.append((
-                    str(file_path.relative_to(ROOT_DIR)),
-                    f"Key '{key}' missing in: {', '.join(missing_locales)}"
-                ))
+                self.stats.missing_translations.append(
+                    (
+                        str(file_path.relative_to(ROOT_DIR)),
+                        f"Key '{key}' missing in: {', '.join(missing_locales)}",
+                    )
+                )
 
-    def _convert_untranslated_text(self, template: str, file_path: Path) -> Tuple[str, bool]:
+    def _convert_untranslated_text(
+        self, template: str, file_path: Path
+    ) -> Tuple[str, bool]:
         """Find and convert untranslated text to i18n"""
         changes_made = False
 
@@ -261,12 +272,13 @@ class TranslationAgent:
 
             # Track new translation
             if key not in self.stats.new_translations:
-                self.stats.new_translations[key] = {'en': en_text, 'fr': fr_text}
+                self.stats.new_translations[key] = {"en": en_text, "fr": fr_text}
 
             # Replace in template
             replacement = f"{{{{ $t('{key}') }}}}"
-            template = template.replace(match.group(0),
-                match.group(0).replace(match.group(1), replacement))
+            template = template.replace(
+                match.group(0), match.group(0).replace(match.group(1), replacement)
+            )
             changes_made = True
 
         # Find text in attributes
@@ -283,12 +295,11 @@ class TranslationAgent:
             self.stats.keys_added += 1
 
             if key not in self.stats.new_translations:
-                self.stats.new_translations[key] = {'en': en_text, 'fr': fr_text}
+                self.stats.new_translations[key] = {"en": en_text, "fr": fr_text}
 
             # Replace attribute value with v-bind
-            attr_name = match.group(0).split('=')[0]
-            template = template.replace(match.group(0),
-                f":{attr_name}=\"$t('{key}')\"")
+            attr_name = match.group(0).split("=")[0]
+            template = template.replace(match.group(0), f":{attr_name}=\"$t('{key}')\"")
             changes_made = True
 
         return template, changes_made
@@ -300,20 +311,20 @@ class TranslationAgent:
             return False
 
         # Skip if already using interpolation
-        if '{{' in text or '}}' in text:
+        if "{{" in text or "}}" in text:
             return False
 
         # Skip numbers
-        if text.strip().replace('.', '').replace(',', '').isdigit():
+        if text.strip().replace(".", "").replace(",", "").isdigit():
             return False
 
         # Skip common non-translatable patterns
         skip_patterns = [
-            r'^[\d\s\.\,\-\:\;]+$',  # Numbers and punctuation
-            r'^[A-Z]{2,}$',  # Acronyms like "ID", "URL"
-            r'^https?://',  # URLs
-            r'^@',  # Mentions/decorators
-            r'^\$',  # Variables
+            r"^[\d\s\.\,\-\:\;]+$",  # Numbers and punctuation
+            r"^[A-Z]{2,}$",  # Acronyms like "ID", "URL"
+            r"^https?://",  # URLs
+            r"^@",  # Mentions/decorators
+            r"^\$",  # Variables
         ]
 
         for pattern in skip_patterns:
@@ -329,12 +340,12 @@ class TranslationAgent:
         parts = list(relative_path.parts)
 
         # Determine section (pages/components/etc)
-        if 'pages' in parts:
-            section_idx = parts.index('pages')
-            section_parts = parts[section_idx + 1:]
-        elif 'components' in parts:
-            section_idx = parts.index('components')
-            section_parts = parts[section_idx + 1:]
+        if "pages" in parts:
+            section_idx = parts.index("pages")
+            section_parts = parts[section_idx + 1 :]
+        elif "components" in parts:
+            section_idx = parts.index("components")
+            section_parts = parts[section_idx + 1 :]
         else:
             section_parts = parts
 
@@ -342,17 +353,17 @@ class TranslationAgent:
         base_parts = []
         for part in section_parts[:-1]:  # Exclude filename
             # Remove special chars from folder names
-            clean_part = re.sub(r'[^\w]', '', part)
+            clean_part = re.sub(r"[^\w]", "", part)
             if clean_part:
                 base_parts.append(clean_part)
 
         # Generate key from text
-        text_key = re.sub(r'[^\w\s]', '', text.lower())
-        text_key = re.sub(r'\s+', '_', text_key)[:30]  # Limit length
+        text_key = re.sub(r"[^\w\s]", "", text.lower())
+        text_key = re.sub(r"\s+", "_", text_key)[:30]  # Limit length
 
         # Combine
         if base_parts:
-            key = '.'.join(base_parts) + '.' + text_key
+            key = ".".join(base_parts) + "." + text_key
         else:
             key = text_key
 
@@ -376,10 +387,12 @@ class TranslationAgent:
                 message = self.anthropic.messages.create(
                     model="claude-3-5-sonnet-20241022",
                     max_tokens=200,
-                    messages=[{
-                        "role": "user",
-                        "content": f"Translate this English text to French. Only respond with the translation, nothing else:\n\n{en_text}"
-                    }]
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": f"Translate this English text to French. Only respond with the translation, nothing else:\n\n{en_text}",
+                        }
+                    ],
                 )
                 fr_text = message.content[0].text.strip()
             except Exception as e:
@@ -403,23 +416,31 @@ class TranslationAgent:
         ]
 
         if self.stats.missing_translations:
-            report.append(f"\n⚠️  Missing translations found: {len(self.stats.missing_translations)}")
+            report.append(
+                f"\n⚠️  Missing translations found: {len(self.stats.missing_translations)}"
+            )
             for file, issue in self.stats.missing_translations[:10]:
                 report.append(f"   - {file}: {issue}")
             if len(self.stats.missing_translations) > 10:
-                report.append(f"   ... and {len(self.stats.missing_translations) - 10} more")
+                report.append(
+                    f"   ... and {len(self.stats.missing_translations) - 10} more"
+                )
 
         if self.stats.new_translations:
-            report.append(f"\n🌍 New translations added: {len(self.stats.new_translations)}")
+            report.append(
+                f"\n🌍 New translations added: {len(self.stats.new_translations)}"
+            )
             for key, translations in list(self.stats.new_translations.items())[:20]:
                 report.append(f"   {key}:")
                 report.append(f"      en: {translations['en']}")
                 report.append(f"      fr: {translations['fr']}")
             if len(self.stats.new_translations) > 20:
-                report.append(f"   ... and {len(self.stats.new_translations) - 20} more")
+                report.append(
+                    f"   ... and {len(self.stats.new_translations) - 20} more"
+                )
 
         report.append("\n" + "=" * 60 + "\n")
-        return '\n'.join(report)
+        return "\n".join(report)
 
     def commit_changes(self):
         """Commit changes with gitmoji format"""
@@ -428,9 +449,9 @@ class TranslationAgent:
             return
 
         # Stage changed files
-        subprocess.run(['git', 'add', str(LOCALES_DIR)], cwd=ROOT_DIR)
-        subprocess.run(['git', 'add', str(PAGES_DIR)], cwd=ROOT_DIR)
-        subprocess.run(['git', 'add', str(COMPONENTS_DIR)], cwd=ROOT_DIR)
+        subprocess.run(["git", "add", str(LOCALES_DIR)], cwd=ROOT_DIR)
+        subprocess.run(["git", "add", str(PAGES_DIR)], cwd=ROOT_DIR)
+        subprocess.run(["git", "add", str(COMPONENTS_DIR)], cwd=ROOT_DIR)
 
         # Create commit message
         commit_message = f"""🌍 i18n: add {self.stats.keys_added} translations and update {self.stats.files_modified} files
@@ -439,17 +460,14 @@ class TranslationAgent:
 - Updated {self.stats.files_modified} Vue files to use i18n
 - Verified {self.stats.keys_verified} existing translation keys
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 """
 
         # Commit
         result = subprocess.run(
-            ['git', 'commit', '-m', commit_message],
+            ["git", "commit", "-m", commit_message],
             cwd=ROOT_DIR,
             capture_output=True,
-            text=True
+            text=True,
         )
 
         if result.returncode == 0:
@@ -463,7 +481,7 @@ def main():
     import sys
 
     # Get Anthropic API key from environment or args
-    api_key = os.getenv('ANTHROPIC_API_KEY')
+    api_key = os.getenv("ANTHROPIC_API_KEY")
     if len(sys.argv) > 1:
         api_key = sys.argv[1]
 
@@ -491,11 +509,11 @@ def main():
 
     # Commit changes
     should_commit = input("Do you want to commit these changes? (y/n): ").lower()
-    if should_commit == 'y':
+    if should_commit == "y":
         agent.commit_changes()
     else:
         print("⏭️  Skipping commit")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

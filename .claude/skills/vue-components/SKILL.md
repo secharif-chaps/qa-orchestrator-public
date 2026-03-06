@@ -2,6 +2,9 @@
 name: vue-components
 description: Vue 3 component development with Composition API and TypeScript. Use when creating Vue components, pages, handling reactivity (ref, computed, watch), or setting up file-based routing. ALWAYS use script setup with TypeScript.
 allowed-tools: Read, Write, Edit, Glob, Grep
+metadata:
+  author: chaps-e
+  version: "1.0"
 ---
 
 # Vue 3 Component Development
@@ -63,19 +66,19 @@ onMounted(() => { ... })
 
 ```typescript
 // Primitives: use ref
-const count = ref(0)
-const name = ref('')
+const count = ref(0);
+const name = ref("");
 
 // Objects: use ref (preferred) or reactive
-const user = ref({ name: '', email: '' })
+const user = ref({ name: "", email: "" });
 
 // Computed: derived state
-const fullName = computed(() => `${first.value} ${last.value}`)
+const fullName = computed(() => `${first.value} ${last.value}`);
 
 // Watch: side effects
 watch(userId, async (newId) => {
-  await fetchUser(newId)
-})
+  await fetchUser(newId);
+});
 ```
 
 ## File-Based Routing
@@ -91,6 +94,7 @@ src/pages/
 ```
 
 Route meta with permissions:
+
 ```vue
 <route lang="yaml">
 meta:
@@ -102,6 +106,6 @@ meta:
 
 ## Documentation
 
-- [component-structure.md](component-structure.md) - Full patterns
-- [reactivity.md](reactivity.md) - Reactivity deep dive
-- [routing.md](routing.md) - File-based routing details
+- [component-structure.md](references/component-structure.md) - Full patterns
+- [reactivity.md](references/reactivity.md) - Reactivity deep dive
+- [routing.md](references/routing.md) - File-based routing details

@@ -1596,6 +1596,8 @@ export default {
       resetPassword: {
         success: 'Mot de passe réinitialisé avec succès !',
         error: 'Échec de la réinitialisation du mot de passe',
+        sent: 'Email de réinitialisation du mot de passe envoyé',
+        sentError: "Échec de l'envoi de la réinitialisation du mot de passe",
       },
       disable: {
         success: 'Utilisateur désactivé avec succès !',
@@ -1604,6 +1606,22 @@ export default {
       enable: {
         success: 'Utilisateur activé avec succès !',
         error: "Échec de l'activation de l'utilisateur",
+      },
+      create: {
+        success: 'Utilisateur créé',
+        error: "Échec de l'ajout de l'utilisateur",
+      },
+      update: {
+        success: 'Utilisateur mis à jour',
+        error: "Échec de la mise à jour de l'utilisateur",
+      },
+      delete: {
+        success: 'Utilisateur supprimé',
+        error: "Échec de la suppression de l'utilisateur",
+      },
+      statusUpdate: {
+        success: "Statut de l'utilisateur mis à jour",
+        error: 'Échec de la mise à jour du statut',
       },
     },
   },
@@ -2239,7 +2257,17 @@ export default {
         "Le mot de passe a été réinitialisé. Partagez ce mot de passe temporaire avec l'utilisateur.",
       temporaryPassword: 'Mot de Passe Temporaire',
     },
+    username: "Nom d'utilisateur",
+    usernamePlaceholder: "Entrez le nom d'utilisateur",
+    email: 'Email',
+    emailPlaceholder: "Entrez l'adresse email",
+    temporaryPassword: 'Mot de passe temporaire',
+    passwordPlaceholder: 'Entrez le mot de passe temporaire',
+    passwordHelp: "L'utilisateur devra changer ce mot de passe à la première connexion",
     generatePassword: 'Générer un mot de passe aléatoire',
+    initialRole: 'Rôle Initial',
+    initialRoleDescription:
+      'Sélectionnez les permissions initiales pour cet utilisateur. Peut être modifié ultérieurement.',
     status: {
       active: 'Actif',
       pending: 'En attente',

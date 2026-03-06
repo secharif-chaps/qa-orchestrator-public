@@ -23,7 +23,6 @@ Analyze all changes, intelligently group them by scope and type, then create foc
    - Writes descriptive commit messages with gitmoji
    - Includes Jira ticket (TAR-xxx) in the description
    - Includes detailed bullet points for complex changes
-   - Always includes Claude footer
 
 5. **Pushes to Remote**
    - Pushes feature branch to origin
@@ -41,9 +40,6 @@ Each commit follows this structure:
 - Detailed change 2
 - Additional context if needed
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 **Note**: `chore` and `docs` commits may omit the Jira ticket number (TAR-xxx).
@@ -66,6 +62,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ## Grouping Examples
 
 ### Good Grouping ✅
+
 - **Commit 1**: All sidebar-related changes (sidebar.vue + sidebar store + routes)
 - **Commit 2**: UI component updates (Badge.vue + Alert.vue + shared styles)
 - **Commit 3**: API endpoint additions (routes + schemas + services)
@@ -73,6 +70,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - **Commit 5**: Test additions for new features
 
 ### Bad Grouping ❌
+
 - All changes in one giant commit
 - Random unrelated files grouped together
 - Mixing feat + fix + style in one commit
@@ -91,6 +89,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 **CRITICAL**: Never commit directly to main branch!
 
 ### Branch Naming Conventions
+
 - `feat/TAR-xxx-feature-name` - New features
 - `fix/TAR-xxx-bug-name` - Bug fixes
 - `refactor/TAR-xxx-refactor-name` - Code refactoring
@@ -98,6 +97,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - `chore/task-name` - Maintenance tasks (ticket optional)
 
 ### Workflow Steps
+
 1. Check if on main branch
 2. If on main, create feature branch with appropriate prefix (include Jira ticket)
 3. Make commits on feature branch
@@ -107,11 +107,13 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ## Usage
 
 Simply run:
+
 ```
 /commit
 ```
 
 The agent will:
+
 1. Check current branch and create feature branch if needed
 2. Analyze all your changes
 3. Group them intelligently
@@ -151,7 +153,6 @@ Next step: Create a merge/pull request to merge into main
 - **NEVER commits directly to main** - always creates/uses feature branch
 - Automatically creates feature branch if on main
 - Quality over quantity - creates fewer, well-organized commits
-- Always includes Claude footer for attribution
 - Always includes Jira ticket (TAR-xxx) except for chore/docs
 - Pushes feature branch after all commits are created
 - Reminds user to create merge/pull request

@@ -65,3 +65,5 @@ export interface DocumentsFormFilters extends BaseFormFilters {
 export interface AnalysisFormFilters extends BaseFormFilters {
   eventTypes: WatchFileEventType[]
 }
+
+export type FilterKey = keyof (DocumentsFormFilters & AnalysisFormFilters)

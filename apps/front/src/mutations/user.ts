@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useMutation, useQueryCache } from '@pinia/colada'
 import {
   createOrganizationUser,
@@ -12,12 +13,8 @@ import { ADMIN_USER_QUERY_KEYS } from '@/queries/admin-users'
 import { toast } from '@/utils/toast'
 import type { OrganizationUserCreate, OrganizationUserUpdate } from '@/types/user'
 
-interface ApiError {
-  response?: { data?: { message?: string } }
-  message?: string
-}
-
 export const useCreateOrganizationUser = (organizationId: string) => {
+  const { t } = useI18n()
   const queryCache = useQueryCache()
   const isLoading = ref(false)
 
@@ -32,15 +29,14 @@ export const useCreateOrganizationUser = (organizationId: string) => {
       queryCache.invalidateQueries({
         key: ADMIN_USER_QUERY_KEYS.root,
       })
-      toast.success('User Created')
+      // Invalidate organization members query used on the admin members page
+      queryCache.invalidateQueries({
+        key: ['organizations', organizationId, 'members'],
+      })
+      toast.success(t('admin.users.create.success'))
     },
-    onError: (error: unknown) => {
-      console.error('Failed to add user:', error)
-      const apiError = error as ApiError
-      toast.error(
-        'Failed to Add User',
-        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
-      )
+    onError: () => {
+      toast.error(t('admin.users.create.error'))
     },
   })
 
@@ -61,6 +57,7 @@ export const useCreateOrganizationUser = (organizationId: string) => {
 }
 
 export const useUpdateOrganizationUser = (organizationId: string) => {
+  const { t } = useI18n()
   const queryCache = useQueryCache()
   const isLoading = ref(false)
 
@@ -75,15 +72,10 @@ export const useUpdateOrganizationUser = (organizationId: string) => {
       queryCache.invalidateQueries({
         key: ADMIN_USER_QUERY_KEYS.root,
       })
-      toast.success('User Updated')
+      toast.success(t('admin.users.update.success'))
     },
-    onError: (error: unknown) => {
-      console.error('Failed to update user:', error)
-      const apiError = error as ApiError
-      toast.error(
-        'Failed to Update User',
-        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
-      )
+    onError: () => {
+      toast.error(t('admin.users.update.error'))
     },
   })
 
@@ -104,6 +96,7 @@ export const useUpdateOrganizationUser = (organizationId: string) => {
 }
 
 export const useDeleteOrganizationUser = (organizationId: string) => {
+  const { t } = useI18n()
   const queryCache = useQueryCache()
   const isLoading = ref(false)
 
@@ -117,15 +110,10 @@ export const useDeleteOrganizationUser = (organizationId: string) => {
       queryCache.invalidateQueries({
         key: ADMIN_USER_QUERY_KEYS.root,
       })
-      toast.success('User Deleted')
+      toast.success(t('admin.users.delete.success'))
     },
-    onError: (error: unknown) => {
-      console.error('Failed to delete user:', error)
-      const apiError = error as ApiError
-      toast.error(
-        'Failed to Delete User',
-        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
-      )
+    onError: () => {
+      toast.error(t('admin.users.delete.error'))
     },
   })
 
@@ -145,13 +133,14 @@ export const useDeleteOrganizationUser = (organizationId: string) => {
 }
 
 export const useToggleUserStatus = (organizationId: string) => {
+  const { t } = useI18n()
   const queryCache = useQueryCache()
   const isLoading = ref(false)
 
   const { mutateAsync } = useMutation({
     mutation: ({ userId, enabled }: { userId: string; enabled: boolean }) =>
       toggleUserStatus(organizationId, userId, enabled),
-    onSuccess: () => {
+    onSuccess: (_: unknown, { enabled }) => {
       queryCache.invalidateQueries({
         key: USER_QUERY_KEYS.organization(organizationId),
       })
@@ -159,15 +148,10 @@ export const useToggleUserStatus = (organizationId: string) => {
       queryCache.invalidateQueries({
         key: ADMIN_USER_QUERY_KEYS.root,
       })
-      toast.success('User Status Updated')
+      toast.success(t(enabled ? 'admin.users.enable.success' : 'admin.users.disable.success'))
     },
-    onError: (error: unknown) => {
-      console.error('Failed to toggle user status:', error)
-      const apiError = error as ApiError
-      toast.error(
-        'Failed to Update Status',
-        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
-      )
+    onError: () => {
+      toast.error(t('admin.users.statusUpdate.error'))
     },
   })
 
@@ -188,20 +172,16 @@ export const useToggleUserStatus = (organizationId: string) => {
 }
 
 export const useResendPasswordReset = (organizationId: string) => {
+  const { t } = useI18n()
   const isLoading = ref(false)
 
   const { mutateAsync } = useMutation({
     mutation: (userId: string) => resendPasswordReset(organizationId, userId),
     onSuccess: () => {
-      toast.success('Password Reset Sent')
+      toast.success(t('admin.users.resetPassword.sent'))
     },
-    onError: (error: unknown) => {
-      console.error('Failed to send password reset:', error)
-      const apiError = error as ApiError
-      toast.error(
-        'Failed to Send Reset',
-        apiError.response?.data?.message || apiError.message || 'An unexpected error occurred',
-      )
+    onError: () => {
+      toast.error(t('admin.users.resetPassword.sentError'))
     },
   })
 

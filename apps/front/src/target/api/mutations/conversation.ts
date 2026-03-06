@@ -1,6 +1,11 @@
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { CONVERSATION_QUERY_KEYS } from '@target/api/queries/conversation'
-import { addMessage, getOlderConversationMessages, retryMessage } from '@target/api/watchFile'
+import {
+  addMessage,
+  cancelConversation,
+  getOlderConversationMessages,
+  retryMessage,
+} from '@target/api/watchFile'
 import { useToast } from '@target/composables/useToast'
 import { useConversationStore } from '@target/stores/conversation'
 import type { Message } from '@target/types/conversation'
@@ -129,6 +134,23 @@ export const useRetryMessage = defineMutation(() => {
     },
   })
   return { ...mutation, retryMessage: mutate }
+})
+
+export const useCancelConversation = defineMutation(() => {
+  const toast = useToast()
+  const { t } = useI18n()
+
+  const { mutate, ...mutation } = useMutation({
+    mutation: (conversationId: string) => cancelConversation(conversationId),
+    onError(error) {
+      toast.error(
+        t('watch_files.chat.cancel.error_title'),
+        t('watch_files.chat.cancel.error_description'),
+      )
+      console.error('Failed to cancel conversation:', error)
+    },
+  })
+  return { ...mutation, cancelConversation: mutate }
 })
 
 export const useGetOlderConversationMessages = defineMutation(() => ({

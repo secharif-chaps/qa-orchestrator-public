@@ -27,6 +27,7 @@
         "
         :on-load-older-messages="loadOlderMessages"
         :show-reassurance="showReassurance"
+        :should-cancel="shouldCancel"
       />
     </div>
 
@@ -97,7 +98,7 @@ const conversationStore = useConversationStore()
 const { isWaitingForAI } = storeToRefs(conversationStore)
 
 // Initialize timeout tracking for showing reassurance message after long waits
-const { showReassurance } = useConversationTimeout()
+const { showReassurance, shouldCancel } = useConversationTimeout()
 
 // Local UI state
 const hasInitialized = ref(false)

@@ -86,9 +86,6 @@ const bgColorClass = computed(() => {
 })
 
 const iconBackgroundClass = computed(() => {
-  if (isChatMessage) {
-    return 'bg-red-600'
-  }
   const colorMap = {
     error: transparent ? 'bg-red-600' : 'bg-red-100',
     info: transparent ? 'bg-sage-600' : 'bg-sage-100',
@@ -98,9 +95,6 @@ const iconBackgroundClass = computed(() => {
 })
 
 const iconColorClass = computed(() => {
-  if (isChatMessage) {
-    return 'text-white'
-  }
   const colorMap = {
     error: transparent ? 'text-white' : 'text-red-800',
     info: transparent ? 'text-white' : 'text-sage-800',

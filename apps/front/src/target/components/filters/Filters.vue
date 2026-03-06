@@ -382,18 +382,7 @@ const resetFilters = () => {
 }
 
 const syncFormFilters = () => {
-  formFilters.value.actors = [...actors.value]
-  formFilters.value.sources = [...sources.value]
-  formFilters.value.datesPicker = datesPicker.value
-  formFilters.value.selectedPeriod = selectedPeriod.value
-
-  const filters = formFilters.value
-  if ('status' in filters) {
-    filters.status = [...status.value]
-  }
-  if ('selectedDateType' in filters) {
-    filters.selectedDateType = selectedDateType.value
-  }
+  filtersStore.syncActiveToForm(filterType)
 }
 
 const handleResetDatesFilter = () => {

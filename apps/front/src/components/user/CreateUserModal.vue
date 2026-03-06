@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+  <div class="bg-base-100/20 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
     <div class="bg-base-100 w-full max-w-md rounded-lg shadow-xl">
       <!-- Header -->
       <div class="border-primary-stroke border-b px-6 py-4">

@@ -29,6 +29,16 @@ src/pages/
 [[...slug]].vue    → /users/*?       (optional catch-all)
 ```
 
+### Advanced Filename Patterns
+```
+# Repeatable params (matches /posts/some/nested/path)
+posts.[[slug]]+.vue    → /posts/:slug+    (one or more segments)
+
+# Multiple sub-segments in a single file
+@[username].vue        → /@:username      (e.g. /@posva)
+with-[name]-[lastName].vue → /with-:name-:lastName
+```
+
 ---
 
 ## Route Groups
@@ -59,6 +69,28 @@ src/pages/
 │   └── [id].vue              → Uses users.vue layout
 └── users.create.vue          → "/users/create" (NO layout)
 ```
+
+---
+
+## definePage() — Customize Route Properties
+
+Use `definePage()` inside `<script setup>` to customize the route's `meta`, `name`, `path`, `alias`, etc:
+
+```vue
+<script setup lang="ts">
+definePage({
+  name: 'custom-route-name',
+  meta: {
+    requiresAuth: true,
+    permissions: ['company.view'],
+    title: 'Company Details',
+  },
+  alias: ['/old-path'],
+})
+</script>
+```
+
+> **Note**: `definePage()` and `<route lang="yaml">` are both supported. Prefer `<route lang="yaml">` for simple meta, use `definePage()` when you need dynamic or programmatic route configuration.
 
 ---
 
@@ -191,10 +223,11 @@ function replaceRoute() {
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 
-const route = useRoute()
+// Pass the route name for stricter types on params
+const route = useRoute('/companies/[companyId]')
 
-// Route params
-const companyId = computed(() => Number(route.params.id))
+// Route params (typed from route name)
+const companyId = computed(() => Number(route.params.companyId))
 
 // Query params
 const searchQuery = computed(() => route.query.q as string)

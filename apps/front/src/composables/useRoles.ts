@@ -12,6 +12,7 @@
  * - admin.organizations: Global admin access
  */
 
+import { useI18n } from 'vue-i18n'
 import type { Role, RoleId } from '@/types/role'
 import { isLegacyPermission, mapLegacyToNewPermissions } from '@/types/role'
 
@@ -93,6 +94,7 @@ function normalizePermissions(permissions: string[]): string[] {
  * Composable for role management and permission-to-role mapping
  */
 export function useRoles() {
+  const { t } = useI18n()
   /**
    * Get a user's role based on their permissions
    *
@@ -143,7 +145,11 @@ export function useRoles() {
    * @returns Array of all role definitions
    */
   function getAllRoles(): Role[] {
-    return Object.values(ROLES)
+    return Object.values(ROLES).map((role: Role) => ({
+      ...role,
+      name: t(`admin.permissions.roles.${role.id}.name`, role.name),
+      description: t(`admin.permissions.roles.${role.id}.description`, role.description),
+    }))
   }
 
   /**

@@ -24,11 +24,11 @@ interface OrganizationMemberRaw {
 
 interface OrganizationMembersRawResponse {
   data: OrganizationMemberRaw[]
-  pagination: {
+  meta: {
     total: number
     page: number
-    limit: number
-    total_pages: number
+    per_page: number
+    last_page: number
   }
 }
 
@@ -110,20 +110,20 @@ export const getOrganizationMembers = async (
     organization_name: params.organizationName,
   }))
 
-  const pagination = response.pagination ?? {
+  const meta = response.meta ?? {
     total: mappedData.length,
     page: params.page,
-    limit: params.limit,
-    total_pages: Math.ceil(mappedData.length / params.limit) || 1,
+    per_page: params.limit,
+    last_page: Math.ceil(mappedData.length / params.limit) || 1,
   }
 
   return {
     data: mappedData,
     pagination: {
-      total: pagination.total,
-      page: pagination.page,
-      limit: pagination.limit,
-      total_pages: pagination.total_pages,
+      total: meta.total,
+      page: meta.page,
+      per_page: meta.per_page,
+      last_page: meta.last_page,
     },
   }
 }

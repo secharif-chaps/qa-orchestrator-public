@@ -27,6 +27,7 @@ function createMockFolder(overrides: Partial<Folder> = {}): Folder {
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     owner: 'testuser',
+    owner_username: 'testuser',
     organization_id: 'org-1',
     owner_id: 'user-123',
     is_owner: false,
@@ -134,9 +135,9 @@ describe('useFolderPermissions', () => {
   })
 
   describe('canCreateItems', () => {
-    it('returns true when owner has screen.create permission', () => {
+    it('returns true when owner has company.create permission', () => {
       mockHasPermission.mockImplementation((permission: string) => {
-        return permission === 'screen.create'
+        return permission === 'company.create'
       })
 
       const folder = ref(createMockFolder({ is_owner: true }))
@@ -144,12 +145,12 @@ describe('useFolderPermissions', () => {
       const { canCreateItems } = useFolderPermissions(folder)
 
       expect(canCreateItems.value).toBe(true)
-      expect(mockHasPermission).toHaveBeenCalledWith('screen.create')
+      expect(mockHasPermission).toHaveBeenCalledWith('company.create')
     })
 
-    it('returns true when writer has screen.create permission', () => {
+    it('returns true when writer has company.create permission', () => {
       mockHasPermission.mockImplementation((permission: string) => {
-        return permission === 'screen.create'
+        return permission === 'company.create'
       })
 
       const folder = ref(createMockFolder({ is_owner: false, share_role: 'writer' }))
@@ -159,9 +160,9 @@ describe('useFolderPermissions', () => {
       expect(canCreateItems.value).toBe(true)
     })
 
-    it('returns false when reader (even with screen.create permission)', () => {
+    it('returns false when reader (even with company.create permission)', () => {
       mockHasPermission.mockImplementation((permission: string) => {
-        return permission === 'screen.create'
+        return permission === 'company.create'
       })
 
       const folder = ref(createMockFolder({ is_owner: false, share_role: 'reader' }))
@@ -171,7 +172,7 @@ describe('useFolderPermissions', () => {
       expect(canCreateItems.value).toBe(false)
     })
 
-    it('returns false when owner lacks screen.create permission', () => {
+    it('returns false when owner lacks company.create permission', () => {
       mockHasPermission.mockReturnValue(false)
 
       const folder = ref(createMockFolder({ is_owner: true }))

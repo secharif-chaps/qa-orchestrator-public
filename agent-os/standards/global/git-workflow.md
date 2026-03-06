@@ -8,15 +8,16 @@ All work done in feature branches, merged to main via pull/merge requests.
 
 ### Branch Naming Conventions
 
-| Prefix | Use |
-|--------|-----|
-| `feat/` | New features |
-| `fix/` | Bug fixes |
-| `refactor/` | Code refactoring |
-| `docs/` | Documentation updates |
-| `chore/` | Maintenance tasks |
+| Prefix      | Use                   |
+| ----------- | --------------------- |
+| `feat/`     | New features          |
+| `fix/`      | Bug fixes             |
+| `refactor/` | Code refactoring      |
+| `docs/`     | Documentation updates |
+| `chore/`    | Maintenance tasks     |
 
 Examples:
+
 - `feat/user-authentication`
 - `fix/validation-error`
 - `refactor/company-service`
@@ -31,28 +32,24 @@ Examples:
 <gitmoji> <type>: <description>
 
 [optional body]
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ### Common Gitmojis
 
-| Emoji | Code | Usage |
-|-------|------|-------|
-| ✨ | `:sparkles:` | New features |
-| 🐛 | `:bug:` | Bug fixes |
-| 🔧 | `:wrench:` | Configuration changes |
-| 📝 | `:memo:` | Documentation updates |
-| 🗃️ | `:card_file_box:` | Database changes/migrations |
-| 🔒 | `:lock:` | Security improvements |
-| ♻️ | `:recycle:` | Refactoring code |
-| 🚀 | `:rocket:` | Deployment/performance |
-| 🔥 | `:fire:` | Removing code/files |
-| 💄 | `:lipstick:` | UI/styling updates |
-| 🧪 | `:test_tube:` | Adding tests |
-| 📦 | `:package:` | Dependencies/packages |
+| Emoji | Code              | Usage                       |
+| ----- | ----------------- | --------------------------- |
+| ✨    | `:sparkles:`      | New features                |
+| 🐛    | `:bug:`           | Bug fixes                   |
+| 🔧    | `:wrench:`        | Configuration changes       |
+| 📝    | `:memo:`          | Documentation updates       |
+| 🗃️    | `:card_file_box:` | Database changes/migrations |
+| 🔒    | `:lock:`          | Security improvements       |
+| ♻️    | `:recycle:`       | Refactoring code            |
+| 🚀    | `:rocket:`        | Deployment/performance      |
+| 🔥    | `:fire:`          | Removing code/files         |
+| 💄    | `:lipstick:`      | UI/styling updates          |
+| 🧪    | `:test_tube:`     | Adding tests                |
+| 📦    | `:package:`       | Dependencies/packages       |
 
 ### Examples
 
@@ -105,9 +102,6 @@ git commit -m "$(cat <<'EOF'
 - Add frontend search component
 - Add pagination support
 
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 ```
@@ -230,19 +224,21 @@ git commit --amend --no-edit
 
 ```markdown
 ## Summary
+
 - Brief description of changes (1-3 bullets)
 
 ## Changes
+
 - [ ] Feature 1
 - [ ] Feature 2
 
 ## Test Plan
+
 - [ ] Unit tests pass
 - [ ] Manual testing completed
 - [ ] E2E tests pass (if applicable)
 
 ## Screenshots (if UI changes)
-[Add screenshots]
 
-🤖 Generated with [Claude Code](https://claude.ai/code)
+[Add screenshots]
 ```

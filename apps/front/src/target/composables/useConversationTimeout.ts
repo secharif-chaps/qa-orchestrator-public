@@ -1,3 +1,4 @@
+import { config } from '@target/config'
 import { useConversationStore } from '@target/stores/conversation'
 import { computed, onUnmounted, ref, watch } from 'vue'
 
@@ -49,9 +50,8 @@ export function useConversationTimeout() {
     return false
   })
 
-  // Computed: Should cancel after 180 seconds
   const shouldCancel = computed(
-    () => conversationStore.isWaitingForAI && elapsedSeconds.value >= 180,
+    () => conversationStore.isWaitingForAI && elapsedSeconds.value >= config.cancelTimeoutSeconds,
   )
 
   // Clean up interval on component unmount

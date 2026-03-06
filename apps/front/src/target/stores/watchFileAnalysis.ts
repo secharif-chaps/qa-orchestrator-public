@@ -1,6 +1,6 @@
 import { RouteNames } from '@target/types/route-names'
 import { defineStore, storeToRefs } from 'pinia'
-import { computed, ref, type Ref } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { useWatchFileFiltersStore } from './watchFileFilters'
 
 export const useWatchFileAnalysisStore = defineStore('watchFileAnalysis', () => {
@@ -11,57 +11,24 @@ export const useWatchFileAnalysisStore = defineStore('watchFileAnalysis', () => 
     RouteNames.WATCH_FILES_RADAR_GRAPH | RouteNames.WATCH_FILES_RADAR_TIMELINE
   >(RouteNames.WATCH_FILES_RADAR_TIMELINE)
 
-  const currentPage = ref(1)
-  const itemsPerPage = ref(25)
-
   const { states } = storeToRefs(filtersStore)
 
-  const formFilters = computed({
-    get: () => states.value.analysis.formFilters,
-    set: (value) => {
-      states.value.analysis.formFilters = value
-    },
-  })
+  const state = computed(() => states.value[type])
 
-  const actors = computed({
-    get: () => states.value.analysis.actors,
-    set: (value) => {
-      states.value.analysis.actors = value
-    },
-  })
-
-  const sources = computed({
-    get: () => states.value.analysis.sources,
-    set: (value) => {
-      states.value.analysis.sources = value
-    },
-  })
-
-  const datesPicker = computed({
-    get: () => states.value.analysis.datesPicker,
-    set: (value) => {
-      states.value.analysis.datesPicker = value
-    },
-  })
-
-  const selectedPeriod = computed({
-    get: () => states.value.analysis.selectedPeriod,
-    set: (value) => {
-      states.value.analysis.selectedPeriod = value
-    },
-  })
+  const currentPage = toRef(() => state.value.currentPage)
+  const itemsPerPage = toRef(() => state.value.itemsPerPage)
 
   const displayFiltersPanel = computed({
-    get: () => states.value.analysis.displayFiltersPanel,
+    get: () => state.value.displayFiltersPanel,
     set: (value) => {
-      states.value.analysis.displayFiltersPanel = value
+      state.value.displayFiltersPanel = value
     },
   })
 
   const isUrlSync = computed({
-    get: () => states.value.analysis.isUrlSync,
+    get: () => state.value.isUrlSync,
     set: (value) => {
-      states.value.analysis.isUrlSync = value
+      state.value.isUrlSync = value
     },
   })
 
@@ -69,35 +36,8 @@ export const useWatchFileAnalysisStore = defineStore('watchFileAnalysis', () => 
   const filtersCounts = computed(() => filtersStore.filtersCounts(type))
   const datesFilterCount = computed(() => filtersStore.datesFilterCount(type))
 
-  const resetPagination = () => {
-    currentPage.value = 1
-  }
-
   const syncFormFilter = () => {
     filtersStore.syncFormFilter(type)
-    resetPagination()
-  }
-
-  const removeFilterItem = <T extends { id: string }>(
-    id: string,
-    filterArray: T[],
-    targetRef: Ref<T[]>,
-  ) => {
-    // Determine if it's actors or sources based on the targetRef
-    if (targetRef === actors.value) {
-      filtersStore.removeActor(type, id)
-    } else if (targetRef === sources.value) {
-      filtersStore.removeSource(type, id)
-    }
-    resetPagination()
-  }
-
-  const resetFormDatesFilter = () => {
-    filtersStore.resetFormDatesFilter(type)
-  }
-
-  const resetDatesFilter = () => {
-    filtersStore.resetDatesFilter(type)
   }
 
   const resetFilters = () => {
@@ -106,8 +46,8 @@ export const useWatchFileAnalysisStore = defineStore('watchFileAnalysis', () => 
 
   const $reset = () => {
     resetFilters()
-    currentPage.value = 1
-    itemsPerPage.value = 25
+    state.value.currentPage = 1
+    state.value.itemsPerPage = 25
     displayFiltersPanel.value = false
   }
 
@@ -117,28 +57,17 @@ export const useWatchFileAnalysisStore = defineStore('watchFileAnalysis', () => 
 
     selectedView,
 
-    formFilters,
     filtersCounts,
     datesFilterCount,
 
     displayFiltersPanel,
-    actors,
-    sources,
-
-    datesPicker,
-    selectedPeriod,
 
     filterQuery,
 
     syncFormFilter,
     isUrlSync,
 
-    removeFilterItem,
-
-    resetFormDatesFilter,
-    resetDatesFilter,
     resetFilters,
-    resetPagination,
     $reset,
   }
 })

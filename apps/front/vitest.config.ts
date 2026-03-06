@@ -8,10 +8,14 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     include: ['src/**/*.{test,spec}.{js,ts}'],
+    // Type-only files that contain no test suites (just TS type assertions)
+    exclude: ['src/types/*.spec.ts'],
+    setupFiles: ['./src/tests/setup.ts'],
   },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@target': fileURLToPath(new URL('./src/target', import.meta.url)),
     },
   },
 })

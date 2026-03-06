@@ -2,6 +2,9 @@
 name: tailwind-styling
 description: Tailwind CSS styling with semantic color tokens. Use when styling components, layouts, or handling responsive design. ALWAYS use gap-based spacing (never margins between siblings) and semantic color tokens (never raw colors).
 allowed-tools: Read, Write, Edit, Glob, Grep
+metadata:
+  author: chaps-e
+  version: "1.0"
 ---
 
 # Tailwind CSS Styling
@@ -32,20 +35,22 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ## Semantic Color Tokens
 
-| Token | Usage |
-|-------|-------|
-| `primary` / `primary-content` | Brand, main actions |
-| `secondary` / `secondary-content` | Secondary actions |
-| `success` / `success-content` | Positive states |
-| `warning` / `warning-content` | Caution states |
-| `error` / `error-content` | Error states |
-| `info` / `info-content` | Informational |
+| Token                             | Usage               |
+| --------------------------------- | ------------------- |
+| `primary` / `primary-content`     | Brand, main actions |
+| `secondary` / `secondary-content` | Secondary actions   |
+| `success` / `success-content`     | Positive states     |
+| `warning` / `warning-content`     | Caution states      |
+| `error` / `error-content`         | Error states        |
+| `info` / `info-content`           | Informational       |
 
 ### Light Variants (for backgrounds)
 
 ```vue
 <!-- Alert with light background -->
-<div class="bg-success-light text-success-light-content border border-success-stroke">
+<div
+  class="bg-success-light text-success-light-content border border-success-stroke"
+>
   Success message
 </div>
 

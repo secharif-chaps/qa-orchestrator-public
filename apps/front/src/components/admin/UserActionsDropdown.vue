@@ -1,5 +1,5 @@
 <template>
-  <Dropdown align="right" width="md" :close-on-select="true">
+  <Dropdown align="right" width="lg" :close-on-select="true">
     <template #trigger>
       <Button variant="tertiary" size="sm" icon="fa fa-ellipsis-v" />
     </template>

@@ -9,7 +9,7 @@ All work done in feature branches, merged to main via pull/merge requests.
 ### Branch Naming Conventions
 
 | Prefix              | Use                                     |
-|---------------------|-----------------------------------------|
+| ------------------- | --------------------------------------- |
 | `feat/TAR-xxx-`     | New features                            |
 | `fix/TAR-xxx-`      | Bug fixes                               |
 | `refactor/TAR-xxx-` | Code refactoring                        |
@@ -17,6 +17,7 @@ All work done in feature branches, merged to main via pull/merge requests.
 | `chore/`            | Maintenance tasks (ticket optional)     |
 
 Examples:
+
 - `feat/TAR-123-user-authentication`
 - `fix/TAR-456-validation-error`
 - `refactor/TAR-789-company-service`
@@ -33,30 +34,26 @@ Examples:
 <gitmoji> <type>(<scope>): TAR-xxx <description>
 
 [optional body]
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 **Note**: `chore` and `docs` commits may omit the Jira ticket number (TAR-xxx).
 
 ### Common Gitmojis
 
-| Emoji  | Code              | Usage                       |
-|--------|-------------------|-----------------------------|
-| ✨      | `:sparkles:`      | New features                |
-| 🐛     | `:bug:`           | Bug fixes                   |
-| 🔧     | `:wrench:`        | Configuration changes       |
-| 📝     | `:memo:`          | Documentation updates       |
+| Emoji | Code              | Usage                       |
+| ----- | ----------------- | --------------------------- |
+| ✨    | `:sparkles:`      | New features                |
+| 🐛    | `:bug:`           | Bug fixes                   |
+| 🔧    | `:wrench:`        | Configuration changes       |
+| 📝    | `:memo:`          | Documentation updates       |
 | 🗃️    | `:card_file_box:` | Database changes/migrations |
-| 🔒     | `:lock:`          | Security improvements       |
-| ♻️     | `:recycle:`       | Refactoring code            |
-| 🚀     | `:rocket:`        | Deployment/performance      |
-| 🔥     | `:fire:`          | Removing code/files         |
-| 💄     | `:lipstick:`      | UI/styling updates          |
-| 🧪     | `:test_tube:`     | Adding tests                |
-| 📦     | `:package:`       | Dependencies/packages       |
+| 🔒    | `:lock:`          | Security improvements       |
+| ♻️    | `:recycle:`       | Refactoring code            |
+| 🚀    | `:rocket:`        | Deployment/performance      |
+| 🔥    | `:fire:`          | Removing code/files         |
+| 💄    | `:lipstick:`      | UI/styling updates          |
+| 🧪    | `:test_tube:`     | Adding tests                |
+| 📦    | `:package:`       | Dependencies/packages       |
 
 ### Examples
 
@@ -115,9 +112,6 @@ git commit -m "$(cat <<'EOF'
 - Add frontend search component
 - Add pagination support
 
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
 EOF
 )"
 ```
@@ -241,18 +235,22 @@ git commit --amend --no-edit
 
 ```markdown
 ## Summary
+
 - Brief description of changes (1-3 bullets)
 
 ## Changes
+
 - [ ] Feature 1
 - [ ] Feature 2
 
 ## Test Plan
+
 - [ ] Unit tests pass
 - [ ] Manual testing completed
 - [ ] E2E tests pass (if applicable)
 
 ## Screenshots (if UI changes)
+
 [Add screenshots]
 
 🤖 Generated with [Claude Code](https://claude.ai/code)

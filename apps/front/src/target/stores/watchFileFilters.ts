@@ -8,6 +8,7 @@ import type {
   DatesPeriod,
   DocumentsFormFilters,
   FilterDates,
+  FilterKey,
 } from '@target/types/filter'
 import type { WatchFileEventType } from '@target/types/watchFile'
 import { defineStore } from 'pinia'
@@ -25,6 +26,8 @@ interface BaseFilterState {
   sources: Source[]
   isUrlSync: boolean
   displayFiltersPanel: boolean
+  currentPage: number
+  itemsPerPage: number
 }
 
 export interface DocumentsFilterState extends BaseFilterState {
@@ -42,6 +45,8 @@ type FilterState = {
   documents: DocumentsFilterState
   analysis: AnalysisFilterState
 }
+
+const DEFAULT_ITEMS_PER_PAGE = 25
 
 const getEmptyDatePicker = (): DatePicker => ({
   start: undefined,
@@ -68,6 +73,8 @@ export const useWatchFileFiltersStore = defineStore('watchFileFilters', () => {
       status: [],
       isUrlSync: false,
       displayFiltersPanel: false,
+      currentPage: 1,
+      itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
     },
     analysis: {
       formFilters: {
@@ -84,6 +91,8 @@ export const useWatchFileFiltersStore = defineStore('watchFileFilters', () => {
       eventTypes: [],
       isUrlSync: false,
       displayFiltersPanel: false,
+      currentPage: 1,
+      itemsPerPage: DEFAULT_ITEMS_PER_PAGE,
     },
   })
 
@@ -177,6 +186,11 @@ export const useWatchFileFiltersStore = defineStore('watchFileFilters', () => {
   }
 
   // Generic methods
+  const resetPagination = (type: FilterType) => {
+    const state = getState(type)
+    state.currentPage = 1
+  }
+
   const syncFormFilter = (type: FilterType) => {
     const state = getState(type)
     state.isUrlSync = true
@@ -195,52 +209,71 @@ export const useWatchFileFiltersStore = defineStore('watchFileFilters', () => {
       const analysisState = state as AnalysisFilterState
       analysisState.eventTypes = analysisState.formFilters.eventTypes
     }
+
+    resetPagination(type)
+  }
+
+  const syncActiveToForm = (type: FilterType) => {
+    const state = getState(type)
+    state.formFilters.actors = [...state.actors]
+    state.formFilters.sources = [...state.sources]
+    state.formFilters.datesPicker = state.datesPicker
+    state.formFilters.selectedPeriod = state.selectedPeriod
+
+    if (type === 'documents') {
+      const docState = state as DocumentsFilterState
+      docState.formFilters.status = [...docState.status]
+      docState.formFilters.selectedDateType = docState.selectedDateType
+    }
+    if (type === 'analysis') {
+      const analysisState = state as AnalysisFilterState
+      analysisState.formFilters.eventTypes = [...analysisState.eventTypes]
+    }
+  }
+
+  const removeFilterValue = (type: FilterType, key: FilterKey, value: string) => {
+    const state = getState(type)
+    const formFilters = state.formFilters as Record<string, unknown>
+    const stateRecord = state as Record<string, unknown>
+
+    const formArray = formFilters[key]
+    const stateArray = stateRecord[key]
+
+    if (!Array.isArray(formArray) || !Array.isArray(stateArray)) return
+
+    const findIndex = (arr: unknown[]) =>
+      arr.findIndex((item) =>
+        typeof item === 'object' && item !== null && 'id' in item
+          ? (item as { id: string }).id === value
+          : item === value,
+      )
+
+    const formIndex = findIndex(formArray)
+    if (formIndex !== -1) {
+      formArray.splice(formIndex, 1)
+      stateRecord[key] = [...formArray]
+      formFilters[key] = [...formArray]
+    }
+
+    resetPagination(type)
   }
 
   const removeActor = (type: FilterType, id: string) => {
-    const state = getState(type)
-    const itemIndex = state.formFilters.actors.findIndex((item) => item.id === id)
-
-    if (itemIndex !== -1) {
-      state.formFilters.actors.splice(itemIndex, 1)
-      const newArray = [...state.formFilters.actors]
-      state.actors = newArray
-      state.formFilters.actors = newArray
-    }
+    removeFilterValue(type, 'actors', id)
   }
 
   const removeSource = (type: FilterType, id: string) => {
-    const state = getState(type)
-    const itemIndex = state.formFilters.sources.findIndex((item) => item.id === id)
-
-    if (itemIndex !== -1) {
-      state.formFilters.sources.splice(itemIndex, 1)
-      const newArray = [...state.formFilters.sources]
-      state.sources = newArray
-      state.formFilters.sources = newArray
-    }
+    removeFilterValue(type, 'sources', id)
   }
 
   const removeEventType = (type: FilterType, eventType: WatchFileEventType) => {
     if (type !== 'analysis') return
-    const state = getState(type) as AnalysisFilterState
-    const itemIndex = state.formFilters.eventTypes.findIndex((item) => item === eventType)
-    if (itemIndex !== -1) {
-      state.formFilters.eventTypes.splice(itemIndex, 1)
-      state.eventTypes = [...state.formFilters.eventTypes]
-    }
+    removeFilterValue(type, 'eventTypes', eventType)
   }
 
   const removeValidation = (type: FilterType, id: string) => {
     if (type !== 'documents') return
-
-    const state = getState(type) as DocumentsFilterState
-    const statusIndex = state.formFilters.status.findIndex((status) => status === id)
-
-    if (statusIndex !== -1) {
-      state.formFilters.status.splice(statusIndex, 1)
-      state.status = [...state.formFilters.status]
-    }
+    removeFilterValue(type, 'status', id)
   }
 
   const resetFormDatesFilter = (type: FilterType) => {
@@ -265,6 +298,8 @@ export const useWatchFileFiltersStore = defineStore('watchFileFilters', () => {
       const docState = state as DocumentsFilterState
       docState.selectedDateType = undefined
     }
+
+    resetPagination(type)
   }
 
   const resetFilters = (type: FilterType) => {
@@ -274,7 +309,6 @@ export const useWatchFileFiltersStore = defineStore('watchFileFilters', () => {
     state.formFilters.sources = []
     state.actors = []
     state.sources = []
-    state.isUrlSync = false
 
     if (type === 'documents') {
       const docState = state as DocumentsFilterState
@@ -477,6 +511,8 @@ export const useWatchFileFiltersStore = defineStore('watchFileFilters', () => {
 
     // Methods
     syncFormFilter,
+    syncActiveToForm,
+    removeFilterValue,
     removeActor,
     removeSource,
     removeValidation,
@@ -484,6 +520,7 @@ export const useWatchFileFiltersStore = defineStore('watchFileFilters', () => {
     resetFormDatesFilter,
     resetDatesFilter,
     resetFilters,
+    resetPagination,
     initializeFromUrl,
   }
 })

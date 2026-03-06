@@ -3,4 +3,5 @@ export const config = {
   apiBaseUrl: import.meta.env.VITE_PUBLIC_API_TARGET_BASE || 'https://basil.local/api',
   enablePiniaColadaDevtool: import.meta.env.VITE_ENABLE_PINIA_COLADA_DEVTOOL === 'true',
   clarityKey: import.meta.env.VITE_APP_CLARITY_PROJECT_ID || '',
+  cancelTimeoutSeconds: Number(import.meta.env.VITE_CANCEL_TIMEOUT_SECONDS) || 90,
 } as const
