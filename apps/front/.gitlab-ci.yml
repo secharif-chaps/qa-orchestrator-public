@@ -42,7 +42,6 @@ variables:
 front:install:
   image: node:22-alpine
   stage: install
-  allow_failure: true
   <<: *yarnrc-setup
   script:
     - yarn install --immutable
@@ -59,14 +58,12 @@ front:install:
 front:eslint:
   <<: *default-lint-job
   stage: lint
-  allow_failure: true
   script:
     - cd apps/front && npx eslint .
 
 front:prettier:
   <<: *default-lint-job
   stage: lint
-  allow_failure: true
   script:
     - cd apps/front && npx prettier --check --no-error-on-unmatched-pattern --ignore-unknown .
   after_script:
@@ -75,14 +72,12 @@ front:prettier:
 front:stylelint:
   <<: *default-lint-job
   stage: lint
-  allow_failure: true
   script:
     - cd apps/front && npx stylelint "src/**/*.{vue,css}"
 
 front:typecheck:
   <<: *default-lint-job
   stage: lint
-  allow_failure: true
   script:
     - cd apps/front && npx vue-tsc --build
 
@@ -90,7 +85,6 @@ front:typecheck:
 front:test:
   <<: *default-lint-job
   stage: test
-  allow_failure: true
   script:
     - cd apps/front && npx vitest run
 
@@ -111,7 +105,6 @@ front:test:
 front:docker-build:
   stage: build
   extends: .front-docker-build
-  allow_failure: true
   variables:
     IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
   rules:
