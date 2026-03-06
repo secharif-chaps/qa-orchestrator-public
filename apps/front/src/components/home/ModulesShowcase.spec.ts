@@ -26,13 +26,13 @@ vi.mock('vue-router', () => ({
 vi.mock('@owlint/feathers-vue', () => ({
   Tag: {
     name: 'Tag',
-    template: '<span class="tag"><slot /></span>',
+    template: '<span class="tag">{{ label }}<slot /></span>',
     props: ['intent', 'label', 'size'],
   },
   Button: {
     name: 'Button',
     template:
-      '<button class="button" :disabled="disabled" @click="$emit(\'click\')"><slot /></button>',
+      '<button class="button" :disabled="disabled" @click="$emit(\'click\')">{{ label }}<slot /></button>',
     props: ['variant', 'intent', 'size', 'label', 'icon', 'disabled'],
     emits: ['click'],
   },
