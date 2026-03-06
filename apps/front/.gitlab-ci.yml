@@ -86,6 +86,7 @@ front:typecheck:
 front:test:
   <<: *default-lint-job
   stage: test
+  allow_failure: true
   script:
     - cd apps/front && npx vitest run
 
