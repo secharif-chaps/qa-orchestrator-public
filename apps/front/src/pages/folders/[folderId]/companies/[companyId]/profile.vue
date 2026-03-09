@@ -8,7 +8,6 @@
     <!-- Error State - Show if ALL profile tasks failed -->
     <SectionErrorState
       v-else-if="company && task?.status === 'error'"
-      :error-message="task.error"
       :task="task"
     />
 

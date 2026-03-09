@@ -1948,6 +1948,21 @@ export default {
       error: {
         title: 'Error',
         message: 'An error occurred during analysis',
+        retry: 'Retry',
+        rateLimit: {
+          title: 'Service temporarily unavailable',
+          description: 'The service is temporarily overloaded. Please retry in {seconds} seconds.',
+          waitingLabel: 'Retry in {seconds}s',
+        },
+        recoverable: {
+          title: 'Temporary error',
+          description: 'An error occurred during analysis. You can retry.',
+        },
+        generic: {
+          title: 'Analysis failed',
+          description:
+            'An error occurred during profile generation. Please retry later or contact support if the problem persists.',
+        },
       },
       status: {
         succeeded: 'Completed',

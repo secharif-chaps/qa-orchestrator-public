@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
@@ -20,6 +21,7 @@ class TaskResponse(BaseModel):
     type: TaskType
     status: TaskStatus
     error: str | None = None
+    error_details: dict[str, Any] | None = None
     is_prerequisite: bool = False
     created_at: datetime
     updated_at: datetime

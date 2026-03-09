@@ -215,8 +215,9 @@
         :icon="card.icon"
         :insights="card.insights"
         :task-status="card.taskStatus"
-        :error-message="card.errorMessage"
+        :error-details="card.errorDetails"
         :task-id="card.taskId"
+        :task-updated-at="card.taskUpdatedAt"
         :disabled="card.disabled"
         @click="openSection(card.section)"
         @restart="handleRestartTask"
@@ -321,11 +322,18 @@ const getTaskStatus = (taskType: TaskType): TaskStatus | null => {
   return task?.status || null
 }
 
-// Helper function to get task error message
-const getTaskError = (taskType: TaskType): string | null => {
+// Helper function to get structured Dify error details
+const getTaskErrorDetails = (taskType: TaskType) => {
   if (!tasks.value) return null
   const task = tasks.value?.find((t) => t.type === taskType)
-  return task?.error || null
+  return task?.error_details || null
+}
+
+// Helper function to get task updated_at timestamp (used for accurate countdown after refresh/reopen)
+const getTaskUpdatedAt = (taskType: TaskType): string | null => {
+  if (!tasks.value) return null
+  const task = tasks.value?.find((t) => t.type === taskType)
+  return task?.updated_at || null
 }
 
 // Helper function to get task ID by type
@@ -381,8 +389,9 @@ const analysisCards = computed(() => {
       icon: 'fas fa-building',
       insights: company.value?.profile?.businessLine?.value || company.value?.digital?.insights,
       taskStatus: dataCollectionStatus || getTaskStatus('profile') || getTaskStatus('digital'),
-      errorMessage: getTaskError('profile') || getTaskError('digital'),
+      errorDetails: getTaskErrorDetails('profile') || getTaskErrorDetails('digital'),
       taskId: getTaskId('profile') || getTaskId('digital'),
+      taskUpdatedAt: getTaskUpdatedAt('profile') || getTaskUpdatedAt('digital'),
       disabled: false,
     },
     {
@@ -398,8 +407,9 @@ const analysisCards = computed(() => {
         'Discover the company history and key events',
       ),
       taskStatus: dataCollectionStatus || getTaskStatus('timeline'),
-      errorMessage: getTaskError('timeline'),
+      errorDetails: getTaskErrorDetails('timeline'),
       taskId: getTaskId('timeline'),
+      taskUpdatedAt: getTaskUpdatedAt('timeline'),
       disabled: false,
     },
     {
@@ -414,8 +424,9 @@ const analysisCards = computed(() => {
         company.value?.products?.insights ||
         t('company.analysisCards.products.insights', 'Discover the company products and services'),
       taskStatus: dataCollectionStatus || getTaskStatus('products'),
-      errorMessage: getTaskError('products'),
+      errorDetails: getTaskErrorDetails('products'),
       taskId: getTaskId('products'),
+      taskUpdatedAt: getTaskUpdatedAt('products'),
       disabled: false,
     },
     {
@@ -431,8 +442,9 @@ const analysisCards = computed(() => {
         'Discover the organizational structure and key members',
       ),
       taskStatus: dataCollectionStatus || getTaskStatus('team'),
-      errorMessage: getTaskError('team'),
+      errorDetails: getTaskErrorDetails('team'),
       taskId: getTaskId('team'),
+      taskUpdatedAt: getTaskUpdatedAt('team'),
       disabled: false,
     },
     {
@@ -445,8 +457,9 @@ const analysisCards = computed(() => {
       icon: 'fas fa-briefcase',
       insights: company.value?.jobs?.insights?.hiring_focus?.value,
       taskStatus: dataCollectionStatus || getTaskStatus('jobs'),
-      errorMessage: getTaskError('jobs'),
+      errorDetails: getTaskErrorDetails('jobs'),
       taskId: getTaskId('jobs'),
+      taskUpdatedAt: getTaskUpdatedAt('jobs'),
       disabled: false,
     },
     {
@@ -459,8 +472,9 @@ const analysisCards = computed(() => {
       icon: 'fas fa-newspaper',
       insights: company.value?.press?.insights,
       taskStatus: dataCollectionStatus || getTaskStatus('press'),
-      errorMessage: getTaskError('press'),
+      errorDetails: getTaskErrorDetails('press'),
       taskId: getTaskId('press'),
+      taskUpdatedAt: getTaskUpdatedAt('press'),
       disabled: false,
     },
     {
@@ -473,8 +487,9 @@ const analysisCards = computed(() => {
       icon: 'fas fa-leaf',
       insights: company.value?.csr?.insights,
       taskStatus: dataCollectionStatus || getTaskStatus('csr'),
-      errorMessage: getTaskError('csr'),
+      errorDetails: getTaskErrorDetails('csr'),
       taskId: getTaskId('csr'),
+      taskUpdatedAt: getTaskUpdatedAt('csr'),
       disabled: false,
     },
     {
@@ -487,8 +502,9 @@ const analysisCards = computed(() => {
       icon: 'fas fa-bullhorn',
       insights: null,
       taskStatus: null,
-      errorMessage: null,
+      errorDetails: null,
       taskId: null,
+      taskUpdatedAt: null,
       disabled: true,
     },
   ]

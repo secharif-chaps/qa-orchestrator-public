@@ -2012,6 +2012,22 @@ export default {
       error: {
         title: 'Erreur',
         message: "Une erreur s'est produite lors de l'analyse",
+        retry: 'Réessayer',
+        rateLimit: {
+          title: 'Service temporairement saturé',
+          description:
+            'Le service est temporairement saturé. Merci de réessayer dans {seconds} secondes.',
+          waitingLabel: 'Réessayer dans {seconds}s',
+        },
+        recoverable: {
+          title: 'Erreur temporaire',
+          description: "Une erreur s'est produite lors de l'analyse. Vous pouvez réessayer.",
+        },
+        generic: {
+          title: "Échec de l'analyse",
+          description:
+            'Une erreur est survenue lors de la génération du profil. Veuillez réessayer ultérieurement ou contacter le support si le problème persiste.',
+        },
       },
       status: {
         succeeded: 'Terminé',

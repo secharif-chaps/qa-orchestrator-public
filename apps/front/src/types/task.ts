@@ -10,10 +10,18 @@ export type TaskType =
   | 'data_collection'
 export type TaskStatus = 'pending' | 'blocked' | 'running' | 'succeeded' | 'error'
 
+export interface DifyErrorDetails {
+  error_type: string
+  is_recoverable: boolean
+  retry_after_seconds: number | null
+  recommended_action: string | null
+}
+
 export interface TaskBase {
   type: TaskType
   status: TaskStatus
   error?: string | null
+  error_details?: DifyErrorDetails | null
   is_prerequisite?: boolean
 }
 

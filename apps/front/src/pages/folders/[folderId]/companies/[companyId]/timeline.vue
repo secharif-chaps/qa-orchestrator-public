@@ -7,7 +7,6 @@
     <!-- Error State -->
     <SectionErrorState
       v-else-if="company && task?.status === 'error'"
-      :error-message="task.error"
       :task="task"
     />
 

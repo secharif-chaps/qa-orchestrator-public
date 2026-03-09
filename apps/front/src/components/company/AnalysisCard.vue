@@ -53,22 +53,13 @@
     </div>
 
     <!-- Error State Overlay -->
-    <div
+    <TaskErrorOverlay
       v-if="hasError"
-      class="bg-base-100/80 rounded-card absolute inset-0 flex items-center justify-center p-6 backdrop-blur-sm"
-    >
-      <div class="flex w-full flex-col items-center gap-4">
-        <Alert
-          variant="danger"
-          :title="$t('company.analysisCard.error.title', 'Error')"
-          :description="
-            errorMessage ||
-            $t('company.analysisCard.error.message', 'An error occurred during analysis')
-          "
-          icon="fa-exclamation-triangle"
-        />
-      </div>
-    </div>
+      :error-details="errorDetails"
+      :task-id="taskId"
+      :task-updated-at="taskUpdatedAt"
+      @restart="(id) => emit('restart', id)"
+    />
 
     <!-- No Data State -->
     <div v-else-if="!hasInsights && !isLoading" class="border-primary-stroke mt-4 border-t pt-4">
@@ -94,8 +85,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Tag from '@/components/ui/Tag.vue'
-import { Alert } from '@owlint/feathers-vue'
-import type { TaskStatus } from '@/types/task'
+import TaskErrorOverlay from '@/components/company/TaskErrorOverlay.vue'
+import type { DifyErrorDetails, TaskStatus } from '@/types/task'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -106,17 +97,19 @@ interface Props {
   icon: string
   insights?: string | null
   taskStatus?: TaskStatus | null
-  errorMessage?: string | null
+  errorDetails?: DifyErrorDetails | null
   disabled?: boolean
   taskId?: number | null
+  taskUpdatedAt?: string | null
 }
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   insights: null,
   taskStatus: null,
-  errorMessage: null,
+  errorDetails: null,
   taskId: null,
+  taskUpdatedAt: null,
 })
 
 const emit = defineEmits<{

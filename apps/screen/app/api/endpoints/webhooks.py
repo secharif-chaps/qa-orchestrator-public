@@ -372,6 +372,13 @@ async def dify_task_callback(
         else:
             task.status = TaskStatus.ERROR
             task.error = error_msg or "Task failed without specific error message"
+            if error_result:
+                task.error_details = {
+                    "error_type": error_result.primary_error.categorized_type.value,
+                    "is_recoverable": error_result.primary_error.is_recoverable,
+                    "retry_after_seconds": error_result.primary_error.retry_after_seconds,
+                    "recommended_action": error_result.recommended_action,
+                }
             logger.error(f"❌ Task {task_id} failed via Dify callback: {task.error}")
 
             # NEW: If prerequisite task failed, mark dependent tasks as error
