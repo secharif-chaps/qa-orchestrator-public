@@ -30,17 +30,16 @@ variables:
     - cp .yarnrc.dist.yml .yarnrc.yml
     - sed -i "s|<OWLINT_REGISTRY_URL>|$OWLINT_REGISTRY_URL|g" .yarnrc.yml
     - sed -i "s|<OWLINT_DEPLOY_KEY>|$OWLINT_DEPLOY_KEY|g" .yarnrc.yml
-    - corepack enable
 
 .default-lint-job: &default-lint-job
-  image: node:22-alpine
+  image: ${CI_REGISTRY}/chapsmind/ci-images/web-linters:latest
   cache:
     - <<: *cache-node-modules
   <<: *front-changes
 
 # ─── Install Stage ─────────────────────────────────────
 front:install:
-  image: node:22-alpine
+  image: ${CI_REGISTRY}/chapsmind/ci-images/web-linters:latest
   stage: install
   <<: *yarnrc-setup
   script:

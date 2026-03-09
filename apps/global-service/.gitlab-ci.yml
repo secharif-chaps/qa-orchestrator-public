@@ -18,9 +18,7 @@ variables:
 # ─── Lint Stage ────────────────────────────────────────
 global-service:lint:
   stage: lint
-  image: python:3.12-slim
-  before_script:
-    - pip install ruff
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
   script:
     - cd apps/global-service && ruff check app/ --exclude "app/grpc_generated/*"
   <<: *gs-changes
@@ -28,9 +26,8 @@ global-service:lint:
 # ─── Test Stage ────────────────────────────────────────
 global-service:test:
   stage: test
-  image: python:3.12-slim
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
   before_script:
-    - pip install poetry
     - cd apps/global-service
     - poetry config virtualenvs.create false && poetry install --no-interaction
     - python scripts/generate_protos.py

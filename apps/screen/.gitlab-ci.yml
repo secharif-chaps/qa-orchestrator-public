@@ -18,9 +18,7 @@ variables:
 # ─── Lint Stage ────────────────────────────────────────
 screen:lint:
   stage: lint
-  image: python:3.12-slim
-  before_script:
-    - pip install ruff
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
   script:
     - cd apps/screen && ruff check app/
   <<: *screen-changes
@@ -28,7 +26,7 @@ screen:lint:
 # ─── Test Stage ────────────────────────────────────────
 screen:test:
   stage: test
-  image: python:3.12-slim
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
   allow_failure: true
   services:
     - name: postgres:15-alpine
@@ -39,7 +37,6 @@ screen:test:
     POSTGRES_PASSWORD: postgres
     TEST_DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/mint_db_test"
   before_script:
-    - pip install poetry
     - cd apps/screen
     - poetry config virtualenvs.create false && poetry install --no-interaction
   script:

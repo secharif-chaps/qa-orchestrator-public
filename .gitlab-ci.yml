@@ -42,28 +42,26 @@ secret_detection:
 # ─── Commit message lint ──────────────────────────────
 main:commitlint:
   stage: lint
-  image: node:22-alpine
+  image:
+    name: commitlint/commitlint:latest
+    entrypoint: [""]
   allow_failure: true
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
-  before_script:
-    - apk add --no-cache git
   script:
-    - npm install --global @commitlint/cli @commitlint/config-conventional
     - git fetch origin main --depth=50
-    - npx commitlint --from "origin/main" --to HEAD --config commitlint.config.mjs
+    - commitlint --from "origin/main" --to HEAD --config commitlint.config.mjs
 
 # ─── Assign reviewers based on CODEOWNERS ─────────────
 # Only runs on MRs (requires CI_MERGE_REQUEST_IID)
 main:assign-reviewers:
   stage: lint
-  image: python:3.12-slim
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
   allow_failure: true
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   script:
-    - pip install --quiet requests
     - python .gitlab/scripts/assign_reviewers.py
   variables:
     GITLAB_TOKEN: $REVIEWER_BOT_TOKEN
@@ -73,9 +71,8 @@ main:update-codeowners:
   stage: maintenance
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
-  image: python:3.12-slim
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
   script:
-    - pip install --quiet requests
     - python .gitlab/scripts/generate_codeowners.py --min-commits 5 --months 6
     - |
       if git diff --quiet .gitlab/CODEOWNERS; then
