@@ -6,10 +6,7 @@
     />
 
     <!-- Error State -->
-    <SectionErrorState
-      v-else-if="company && task?.status === 'error'"
-      :task="task"
-    />
+    <SectionErrorState v-else-if="company && task?.status === 'error'" :task="task" />
 
     <!-- No Data State -->
     <NoData v-else-if="!hasJobsData">

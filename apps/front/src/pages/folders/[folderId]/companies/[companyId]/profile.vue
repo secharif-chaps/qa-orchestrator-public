@@ -6,10 +6,7 @@
     />
 
     <!-- Error State - Show if ALL profile tasks failed -->
-    <SectionErrorState
-      v-else-if="company && task?.status === 'error'"
-      :task="task"
-    />
+    <SectionErrorState v-else-if="company && task?.status === 'error'" :task="task" />
 
     <!-- No Data State - Show if all tasks completed but no data -->
     <NoData v-else-if="task?.status === 'succeeded' && !hasAnyProfileData">

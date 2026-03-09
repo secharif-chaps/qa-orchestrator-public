@@ -106,8 +106,7 @@ let countdownInterval: ReturnType<typeof setInterval> | null = null
 const RATE_LIMIT_TYPES = ['rate_limit_llm', 'rate_limit_api']
 
 const isRateLimit = computed(
-  () =>
-    props.errorDetails != null && RATE_LIMIT_TYPES.includes(props.errorDetails.error_type),
+  () => props.errorDetails != null && RATE_LIMIT_TYPES.includes(props.errorDetails.error_type),
 )
 
 const isRecoverable = computed(() => props.errorDetails?.is_recoverable === true)

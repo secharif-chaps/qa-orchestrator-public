@@ -5,10 +5,7 @@
       v-if="company && (task?.status === 'pending' || task?.status === 'running')"
     />
     <!-- Error State -->
-    <SectionErrorState
-      v-else-if="company && task?.status === 'error'"
-      :task="task"
-    />
+    <SectionErrorState v-else-if="company && task?.status === 'error'" :task="task" />
 
     <!-- No Data State -->
     <NoData v-else-if="!hasTimelineData">
