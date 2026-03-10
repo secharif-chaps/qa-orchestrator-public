@@ -104,7 +104,7 @@ const handleClick = () => {
     if (props.external) {
       window.open(props.href, '_blank')
     } else {
-      window.location.href = props.href
+      router.push(props.href)
     }
   } else {
     emit('click')

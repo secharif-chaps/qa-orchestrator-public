@@ -126,12 +126,13 @@ export const useAuthStore = defineStore(
 
     // Actions
     const initialize = async () => {
-      if (initialized.value) return
+      // Always set up UserManager on startup — it's not persisted across page reloads.
+      // Without this, automaticSilentRenew never starts and the first user action
+      // triggers token renewal instead of it happening silently in the background.
+      const manager = initializeUserManager()
+      if (!manager) return
 
-      const manager = await initializeUserManager()
-      if (!manager) {
-        return
-      }
+      if (initialized.value) return
 
       try {
         const currentUser = await manager.getUser()
