@@ -322,6 +322,7 @@ class CompanyResponse(CompanyBase):
     raw_wikipedia_knowledge: Optional[str] = Field(None, description="Raw knowledge from Wikipedia")
     raw_scraped_website_knowledge: Optional[str] = Field(None, description="Raw scraped website content")
     raw_pappers_knowledge: Optional[str] = Field(None, description="Raw knowledge from Pappers")
+    raw_worldcheck_knowledge: Optional[str] = Field(None, description="Raw knowledge from WorldCheck One")
     error: Optional[str] = None
     is_deleted: bool = Field(default=False)
     created_at: Optional[datetime] = None

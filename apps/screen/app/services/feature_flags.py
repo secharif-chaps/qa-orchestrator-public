@@ -109,20 +109,21 @@ def get_feature_config(
 
     if feature and feature.config:
         config = feature.config.copy()
-        # Decrypt API key if present
-        if config.get("api_key"):
-            try:
-                config["api_key"] = decrypt(config["api_key"])
-            except Exception as e:
-                logger.error(
-                    "Failed to decrypt API key",
-                    extra={
-                        "organization_id": organization_id,
-                        "flag": flag.value,
-                        "error": str(e),
-                    },
-                )
-                config["api_key"] = None
+        # Decrypt encrypted credential fields (api_key, api_secret)
+        for field in ("api_key", "api_secret"):
+            if config.get(field):
+                try:
+                    config[field] = decrypt(config[field])
+                except Exception as e:
+                    logger.error(
+                        f"Failed to decrypt {field}",
+                        extra={
+                            "organization_id": organization_id,
+                            "flag": flag.value,
+                            "error": str(e),
+                        },
+                    )
+                    config[field] = None
         return config
     return None
 
@@ -155,10 +156,12 @@ def enable_feature(
         OrganizationFeatureFlag.flag == flag,
     ).first()
 
-    # Encrypt API key if present in config
-    if config and config.get("api_key"):
+    # Encrypt credential fields if present in config
+    if config:
         config = config.copy()
-        config["api_key"] = encrypt(config["api_key"])
+        for field in ("api_key", "api_secret"):
+            if config.get(field):
+                config[field] = encrypt(config[field])
 
     if feature:
         feature.enabled = True
@@ -272,12 +275,19 @@ def update_feature_config(
     api_key = config.get("api_key")
     has_api_key = api_key is not None and len(api_key.strip()) > 0
 
-    # Encrypt or clear api_key
+    # Encrypt or clear credential fields (api_key, api_secret)
     config = config.copy()
     if has_api_key:
         config["api_key"] = encrypt(api_key)
     elif api_key is not None:
         config["api_key"] = ""
+
+    api_secret = config.get("api_secret")
+    if api_secret is not None:
+        if len(api_secret.strip()) > 0:
+            config["api_secret"] = encrypt(api_secret)
+        else:
+            config["api_secret"] = ""
 
     if feature:
         # Merge new config with existing config

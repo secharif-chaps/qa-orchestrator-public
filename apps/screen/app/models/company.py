@@ -40,6 +40,7 @@ class Company(Base):
         raw_wikipedia_knowledge: Raw knowledge from Wikipedia
         raw_scraped_website_knowledge: Raw scraped website content
         raw_pappers_knowledge: Raw knowledge from Pappers
+        raw_worldcheck_knowledge: Raw knowledge from WorldCheck One (sanctions, PEP, adverse media)
         error: Error message if data collection failed
         tasks: Relationship to Task model (1:N)
         profile_data: Relationship to CompanyProfile (1:1)
@@ -83,6 +84,7 @@ class Company(Base):
     raw_wikipedia_knowledge = Column(String, nullable=True)
     raw_scraped_website_knowledge = Column(String, nullable=True)
     raw_pappers_knowledge = Column(String, nullable=True)
+    raw_worldcheck_knowledge = Column(String, nullable=True)
 
     # Error field
     error = Column(String, nullable=True)

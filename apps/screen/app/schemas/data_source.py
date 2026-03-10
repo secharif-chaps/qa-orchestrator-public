@@ -8,6 +8,7 @@ from pydantic import BaseModel
 class DataSourceConfigRequest(BaseModel):
     """Request to update data source configuration."""
     api_key: Optional[str] = None
+    api_secret: Optional[str] = None
 
 
 class DataSourceConfigResponse(BaseModel):
@@ -15,6 +16,7 @@ class DataSourceConfigResponse(BaseModel):
     source: str
     enabled: bool
     api_key_masked: Optional[str] = None
+    api_secret_masked: Optional[str] = None
     enabled_at: Optional[str] = None
     updated_at: Optional[str] = None
 
