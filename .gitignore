@@ -28,6 +28,7 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 pnpm-debug.log
+.yarn/
 
 # ─── Frontend build ───────────────────────────────
 .output
@@ -47,6 +48,9 @@ dist/
 *.swo
 *~
 .fleet/
+
+# ─── Claude Code ──────────────────────────────────
+.claude/settings.local.json
 
 # ─── OS ────────────────────────────────────────────
 .DS_Store
