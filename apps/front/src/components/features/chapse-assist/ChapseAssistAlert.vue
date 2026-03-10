@@ -37,7 +37,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useChapseAssist } from '@/composables/useChapseAssist'
 import { Button } from '@owlint/feathers-vue'
@@ -102,7 +101,6 @@ const emit = defineEmits<{
   dismiss: []
 }>()
 
-const router = useRouter()
 const { hasAiPreferences, checkHasPreferences } = useChapseAssist()
 
 // Local state
@@ -133,7 +131,6 @@ const shouldShow = computed(() => {
  */
 function handleSetup() {
   emit('setup')
-  router.push('/ai-preferences-setup')
 }
 
 /**

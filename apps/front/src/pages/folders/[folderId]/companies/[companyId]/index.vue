@@ -572,8 +572,7 @@ const formatWebsiteUrl = (url: string): string => {
 
 // Handle setup button click (navigates to AI preferences setup)
 const handleAssistSetup = () => {
-  console.log('User clicked setup AI preferences')
-  router.push('/ai-preferences-setup')
+  router.push({ name: '/settings/ai-preferences.ai-preferences-setup' })
 }
 
 // Handle alert dismiss
