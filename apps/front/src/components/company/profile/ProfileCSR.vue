@@ -37,7 +37,7 @@
               <span class="text-sm">
                 {{ getSourcedValue(initiative) }}
               </span>
-              <Source :source="initiative.sources[0]" />
+              <Source :source="initiative.source" />
             </li>
             <li
               v-if="!company?.csr?.responsibility_initiatives?.length"
@@ -65,7 +65,7 @@
               <span class="text-sm">
                 {{ getSourcedValue(action) }}
               </span>
-              <Source :source="action.sources[0]" />
+              <Source :source="action.source" />
             </li>
             <li v-if="!company?.csr?.charity_actions?.length" class="text-secondary text-sm italic">
               {{ $t('common.notFound') }}
@@ -90,7 +90,7 @@
               <span class="text-sm">
                 {{ getSourcedValue(program) }}
               </span>
-              <Source :source="program.sources[0]" />
+              <Source :source="program.source" />
             </li>
             <li
               v-if="!company?.csr?.sustainability_programs?.length"
@@ -118,7 +118,7 @@
               <span class="text-sm">
                 {{ getSourcedValue(involvement) }}
               </span>
-              <Source :source="involvement.sources[0]" />
+              <Source :source="involvement.source" />
             </li>
             <li
               v-if="!company?.csr?.community_involvement?.length"
@@ -146,7 +146,7 @@
               <span class="text-sm">
                 {{ getSourcedValue(initiative) }}
               </span>
-              <Source :source="initiative.sources[0]" />
+              <Source :source="initiative.source" />
             </li>
             <li
               v-if="!company?.csr?.diversity_inclusion?.length"
@@ -174,7 +174,7 @@
               <span class="text-sm">
                 {{ getSourcedValue(practice) }}
               </span>
-              <Source :source="practice.sources[0]" />
+              <Source :source="practice.source" />
             </li>
             <li
               v-if="!company?.csr?.ethical_practices?.length"
@@ -202,7 +202,7 @@
               <span class="text-sm">
                 {{ getSourcedValue(award) }}
               </span>
-              <Source :source="award.sources[0]" />
+              <Source :source="award.source" />
             </li>
             <li
               v-if="!company?.csr?.awards_certifications?.length"
@@ -226,9 +226,9 @@ import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Source from '../Source.vue'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
 
-const route = useRoute()
+const route = useRoute('/folders/[folderId]/companies/[companyId]/csr')
 
-const companyId = computed(() => route.params.companyId as string)
+const companyId = computed(() => route.params.companyId)
 
 const { data: company } = useQuery(companyByIdQuery, () => ({
   id: companyId.value,

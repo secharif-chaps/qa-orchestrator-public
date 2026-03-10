@@ -49,8 +49,8 @@ chapsmind/                              # THIS REPO - Monorepo
 │   └── global-service/                 # Global service
 │
 ├── infra/                              # Infrastructure
-│   ├── docker-compose.yml              # Base compose
-│   ├── docker-compose.local.yml        # Local overrides
+│   ├── compose.yaml                    # Base compose
+│   ├── compose.local.yaml              # Local overrides
 │   └── ...                             # Other infra configs
 │
 ├── scripts/                            # CI scripts, subtree sync
@@ -929,7 +929,7 @@ task logs:service -- screen
 
 # Full reset (removes volumes)
 task down
-docker compose -f infra/docker-compose.yml -f infra/docker-compose.local.yml down -v
+docker compose -f infra/compose.yaml -f infra/compose.local.yaml down -v
 task up
 ```
 

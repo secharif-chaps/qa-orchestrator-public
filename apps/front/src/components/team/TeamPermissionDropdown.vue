@@ -95,7 +95,8 @@ const {
   data: permissionsData,
   isLoading: isLoadingPermissions,
   refetch: refetchPermissions,
-} = useQuery(memberPermissionsQuery, () => ({ userId: props.memberId }), {
+} = useQuery({
+  ...memberPermissionsQuery({ userId: props.memberId }),
   enabled: () => permissionsFetched.value,
 })
 

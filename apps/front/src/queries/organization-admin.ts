@@ -12,12 +12,14 @@ import type { OrganizationMembersParams } from '@/api/organization'
 export const ORGANIZATION_QUERY_KEYS = {
   root: ['organizations'] as const,
   admin: ['organizations', 'admin'] as const,
-  adminAll: (params?: OrganizationQueryParams) =>
+  adminAll: (params: OrganizationQueryParams = {}) =>
     ['organizations', 'admin', 'all', params] as const,
   adminById: (id: string) => ['organizations', 'admin', id] as const,
   activities: (organizationId: string) => ['organizations', organizationId, 'activities'] as const,
-  members: (organizationId: string, params: Omit<OrganizationMembersParams, 'organizationId'>) =>
-    ['organizations', organizationId, 'members', params] as const,
+  members: (
+    organizationId: string,
+    params: { page: number; limit: number; search?: string; organizationName: string },
+  ) => ['organizations', organizationId, 'members', params] as const,
 }
 
 // Admin queries for managing all organizations
@@ -32,12 +34,10 @@ export const organizationByIdQuery = defineQueryOptions(({ id }: { id: string })
 }))
 
 // Organization activities query
-export const organizationActivitiesQuery = defineQueryOptions(
-  ({ organizationId }: { organizationId: string }) => ({
-    key: ORGANIZATION_QUERY_KEYS.activities(organizationId),
-    query: () => getOrganizationActivities(organizationId),
-  }),
-)
+export const organizationActivitiesQuery = defineQueryOptions(() => ({
+  key: ORGANIZATION_QUERY_KEYS.activities('current'),
+  query: () => getOrganizationActivities(),
+}))
 
 // Organization members query (for admin org detail page)
 export const organizationMembersQuery = defineQueryOptions((params: OrganizationMembersParams) => ({
@@ -45,6 +45,7 @@ export const organizationMembersQuery = defineQueryOptions((params: Organization
     page: params.page,
     limit: params.limit,
     search: params.search,
+    organizationName: params.organizationName,
   }),
   query: () => getOrganizationMembers(params),
 }))

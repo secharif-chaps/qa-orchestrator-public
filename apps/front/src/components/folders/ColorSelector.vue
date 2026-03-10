@@ -48,10 +48,12 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 interface Props {
-  modelValue: string
+  modelValue?: string
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: 'blue',
+})
 
 const emit = defineEmits<{
   'update:modelValue': [value: string]

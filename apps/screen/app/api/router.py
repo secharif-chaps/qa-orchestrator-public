@@ -12,6 +12,7 @@ from app.api.endpoints import (
     cost_analysis,
     credits,
     data_sources,
+    dev,
     feature_flags,
     organization,
     organizations,
@@ -49,3 +50,4 @@ api_router.include_router(translation.router)
 api_router.include_router(feature_flags.router)  # Organization feature flags management
 api_router.include_router(credits.router)  # Organization credit statistics
 api_router.include_router(data_sources.router)  # Organization data sources
+api_router.include_router(dev.router)  # Development utilities (tunnel URL, etc.)

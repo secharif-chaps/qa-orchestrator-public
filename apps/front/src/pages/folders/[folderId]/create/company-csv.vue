@@ -68,7 +68,7 @@
                 <Button
                   variant="tertiary"
                   :label="$t('csv.upload.chooseFile', 'Choose File')"
-                  @click="$refs.fileInput?.click()"
+                  @click="fileInput?.click()"
                 />
               </div>
             </div>
@@ -135,11 +135,7 @@
         <div v-if="parseResult.companies.length > 0" class="flex flex-col gap-4">
           <div class="flex items-center justify-between">
             <p class="text-secondary text-sm">
-              {{
-                $t('csv.upload.companiesFound', 'Found {count} companies in CSV', {
-                  count: parseResult.companies.length,
-                })
-              }}
+              {{ $t('csv.upload.companiesFound', { count: parseResult.companies.length }) }}
             </p>
             <Button
               variant="secondary"
@@ -185,11 +181,7 @@
               v-if="parseResult.companies.length > 5"
               class="text-secondary bg-base-200 px-4 py-3 text-sm"
             >
-              {{
-                $t('csv.upload.moreRows', 'and {count} more rows...', {
-                  count: parseResult.companies.length - 5,
-                })
-              }}
+              {{ $t('csv.upload.moreRows', { count: parseResult.companies.length - 5 }) }}
             </div>
           </div>
         </div>
@@ -229,14 +221,10 @@
           variant="danger"
           :title="$t('csv.upload.tokens.insufficient', 'Insufficient tokens')"
           :description="
-            $t(
-              'csv.upload.tokens.insufficientMessage',
-              'You need {required} tokens but only have {available} available',
-              {
-                required: validationResult.tokens_required,
-                available: validationResult.tokens_available,
-              },
-            )
+            $t('csv.upload.tokens.insufficientMessage', {
+              required: validationResult.tokens_required,
+              available: validationResult.tokens_available,
+            })
           "
           icon="fa-coins"
         />
@@ -275,9 +263,7 @@
             variant="primary"
             icon="fa fa-upload"
             :label="
-              $t('csv.upload.actions.importCompanies', 'Import {count} Companies', {
-                count: validationResult.valid_count,
-              })
+              $t('csv.upload.actions.importCompanies', { count: validationResult.valid_count })
             "
             :loading="isImporting"
             :disabled="isImporting || !validationResult.has_sufficient_tokens"
@@ -381,7 +367,7 @@ import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/to
 
 useI18n()
 const router = useRouter()
-const route = useRoute()
+const route = useRoute('/folders/[folderId]/create/company-csv')
 
 // File handling
 const fileInput = ref<HTMLInputElement>()
@@ -402,26 +388,20 @@ const {
   data: balanceData,
   isLoading: tokenDataLoading,
   refetch: refetchBalance,
-} = useQuery(
-  organizationBalanceQuery,
-  () => ({
+} = useQuery({
+  ...organizationBalanceQuery({
     organizationId: currentOrganization.value?.id ?? '',
   }),
-  {
-    enabled: computed(() => !!currentOrganization.value?.id),
-  },
-)
+  enabled: () => !!currentOrganization.value?.id,
+})
 
 // Module enablement query (to check if screen module is enabled)
-const { data: modulesData } = useQuery(
-  organizationModulesQuery,
-  () => ({
+const { data: modulesData } = useQuery({
+  ...organizationModulesQuery({
     organizationId: currentOrganization.value?.id ?? '',
   }),
-  {
-    enabled: computed(() => !!currentOrganization.value?.id),
-  },
-)
+  enabled: () => !!currentOrganization.value?.id,
+})
 
 // Computed properties based on global token balance
 const tokenBalance = computed(() => balanceData.value?.balance ?? 0)
@@ -532,7 +512,7 @@ const importCompanies = async () => {
             folderId,
             item: {
               item_id: result.company_id.toString(),
-              item_type: 'company',
+              type: 'company',
             },
           })
         }

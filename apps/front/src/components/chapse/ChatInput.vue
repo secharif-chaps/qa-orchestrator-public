@@ -91,7 +91,7 @@ interface Props {
 
 const {
   canAddMoreCompanies,
-  companyContext,
+  companyContext = [],
   disabled,
   loading,
   modelValue = '',

@@ -242,7 +242,7 @@ const chartOptions = computed(() => ({
       padding: 12,
       callbacks: {
         label: (context: TooltipItem<'bar'>) => {
-          const count = context.parsed.y
+          const count = context.parsed.y ?? 0
           const label = context.dataset.label || 'Unknown'
           return `${label}: ${count.toFixed(1)} ${t('admin.usage.stackedChart.companies')}`
         },

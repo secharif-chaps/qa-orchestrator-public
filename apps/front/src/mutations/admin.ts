@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useMutation, useQueryCache } from '@pinia/colada'
 import { restartAdminTasks } from '@/api/admin'
 import { ADMIN_QUERY_KEYS } from '@/queries/admin'
@@ -104,5 +104,6 @@ export const useRestartAdminTasks = () => {
     selectAll,
     clearSelection,
     isSelected,
+    isPending: computed(() => mutation.status.value === 'pending'),
   }
 }

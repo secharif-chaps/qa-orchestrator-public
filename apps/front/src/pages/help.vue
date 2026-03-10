@@ -173,7 +173,7 @@ watch(selectedSection, async (newSection) => {
     selectedSectionPermission.value = newSection.permission
     try {
       const content = await loadHelpContent(newSection.permission)
-      selectedSectionContent.value = marked(content)
+      selectedSectionContent.value = await marked(content)
     } catch (error) {
       console.error('Error loading help content:', error)
       selectedSectionContent.value = `<p>${t('help.error.loadingContent', 'Error loading help content.')}</p>`

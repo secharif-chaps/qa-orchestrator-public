@@ -22,10 +22,10 @@
             <span class="text-sm">
               <span class="font-medium capitalize">{{ errorModule }}</span> Module
               <span v-if="reason === 'module_disabled'" class="ml-2 text-red-600"
-                >• {{ $t('errors.forbidden.token.status.disabled', 'Disabled') }}</span
+                >• {{ $t('errors.forbidden.token.status.disabled') }}</span
               >
               <span v-else-if="reason === 'insufficient_tokens'" class="ml-2 text-red-600"
-                >• {{ $t('errors.forbidden.token.status.noTokens', 'No Tokens') }}</span
+                >• {{ $t('errors.forbidden.token.status.noTokens') }}</span
               >
             </span>
           </div>
@@ -34,22 +34,22 @@
         <!-- Regular permission error -->
         <div v-else>
           <h2 class="mt-4 text-2xl font-semibold">
-            {{ $t('errors.forbidden.title', 'Access Forbidden') }}
+            {{ $t('errors.forbidden.title') }}
           </h2>
           <p class="text-secondary mt-2">
-            {{ $t('errors.forbidden.message', "You don't have permission to access this page.") }}
+            {{ $t('errors.forbidden.message') }}
           </p>
         </div>
       </div>
 
       <div class="space-x-4">
         <Button
-          :label="$t('errors.forbidden.goHome', 'Go to Home')"
+          :label="$t('errors.forbidden.goHome')"
           variant="primary"
           @click="$router.push('/')"
         />
         <Button
-          :label="$t('errors.forbidden.goBack', 'Go Back')"
+          :label="$t('errors.forbidden.goBack')"
           variant="secondary"
           @click="$router.back()"
         />
@@ -57,12 +57,7 @@
 
       <div class="text-secondary mt-8 text-sm">
         <p>
-          {{
-            $t(
-              'errors.forbidden.contact',
-              'If you believe this is an error, please contact your administrator.',
-            )
-          }}
+          {{ $t('errors.forbidden.contact') }}
         </p>
       </div>
     </div>
@@ -88,31 +83,27 @@ const isTokenError = computed(
 
 const tokenErrorTitle = computed(() => {
   if (reason.value === 'module_disabled') {
-    return t('errors.forbidden.token.moduleDisabled', '{module} Disabled', {
+    return t('errors.forbidden.token.moduleDisabled', {
       module: errorModule.value || 'Module',
     })
   }
   if (reason.value === 'insufficient_tokens') {
-    return t('errors.forbidden.token.insufficientTokens', 'Insufficient Tokens')
+    return t('errors.forbidden.token.insufficientTokens')
   }
-  return t('errors.forbidden.token.accessRestricted', 'Access Restricted')
+  return t('errors.forbidden.token.accessRestricted')
 })
 
 const tokenErrorMessage = computed(() => {
   if (reason.value === 'module_disabled') {
-    return t(
-      'errors.forbidden.token.moduleDisabledMessage',
-      'The {module} module has been disabled for your organization. Contact your administrator to enable this feature.',
-      { module: errorModule.value || 'requested' },
-    )
+    return t('errors.forbidden.token.moduleDisabledMessage', {
+      module: errorModule.value || 'requested',
+    })
   }
   if (reason.value === 'insufficient_tokens') {
-    return t(
-      'errors.forbidden.token.insufficientTokensMessage',
-      "You don't have enough tokens to access the {module} module. Contact your administrator to add more tokens.",
-      { module: errorModule.value || 'requested' },
-    )
+    return t('errors.forbidden.token.insufficientTokensMessage', {
+      module: errorModule.value || 'requested',
+    })
   }
-  return t('errors.forbidden.token.unavailable', 'This feature is currently unavailable.')
+  return t('errors.forbidden.token.unavailable')
 })
 </script>

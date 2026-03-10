@@ -175,7 +175,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Tag from '@/components/ui/Tag.vue'
+import Tag, { type BadgeVariant } from '@/components/ui/Tag.vue'
 import type { TaskTypeCostResponse, TaskTypeCostData } from '@/api/cost-analysis'
 
 const { t } = useI18n()
@@ -250,8 +250,8 @@ const getTaskCountPercentage = (count: number) => {
   return total > 0 ? ((count / total) * 100).toFixed(1) : '0'
 }
 
-const getTaskTypeVariant = (taskType: string) => {
-  const variants: Record<string, string> = {
+const getTaskTypeVariant = (taskType: string): BadgeVariant => {
+  const variants: Record<string, BadgeVariant> = {
     profile: 'primary',
     digital: 'info',
     timeline: 'success',

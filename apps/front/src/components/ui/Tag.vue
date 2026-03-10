@@ -35,6 +35,7 @@
 import { computed } from 'vue'
 
 export type BadgeVariant =
+  | 'primary'
   | 'sage'
   | 'almond'
   | 'success'
@@ -163,7 +164,9 @@ const variantClasses = computed(() => {
         ? `${isRounded} bg-transparent text-gray-500 border border-base-200 dark:text-sage-50`
         : `${isRounded} bg-base-200 text-sage-950 dark:bg-base-400/30 dark:text-sage-50 dark:border-base-400/30`
 
-    default: // primary
+    case 'primary':
+    case 'sage':
+    default:
       return isOutline
         ? `${isRounded} bg-transparent text-sage-700 border border-primary-stroke dark:text-sage-50`
         : `${isRounded} bg-sage-200 text-sage-950 border border-sage-200 dark:bg-sage-400/30 dark:text-sage-50 dark:border-sage-400/30`
@@ -185,7 +188,9 @@ const dotClasses = computed(() => {
       return 'bg-accent'
     case 'slate':
       return 'bg-base-300'
-    default: // primary
+    case 'primary':
+    case 'sage':
+    default:
       return 'bg-primary'
   }
 })

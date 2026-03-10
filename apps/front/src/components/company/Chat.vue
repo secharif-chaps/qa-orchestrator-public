@@ -98,9 +98,11 @@ const messages = ref([
 
 const question = ref('')
 const isLoading = ref(false)
-const messagesContainer = ref(null)
+const messagesContainer = ref<HTMLElement | null>(null)
 
-const companyId = computed(() => props.companyId || (route.params.companyId as string))
+const companyId = computed(
+  () => props.companyId || String((route.params as Record<string, string>).companyId || ''),
+)
 
 // Auto-scroll to bottom when messages change
 watch(

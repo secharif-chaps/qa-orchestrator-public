@@ -21,7 +21,7 @@
                 </h2>
                 <p class="text-secondary text-sm">
                   {{
-                    t('company.tasks.completedCount', '{completed}/{total} tasks completed', {
+                    t('company.tasks.completedCount', {
                       completed: completedCount,
                       total: totalTasks,
                     })
@@ -174,15 +174,15 @@
                     >
                       <span v-if="getTokenInfo(task.type)?.inputTokens">
                         <i class="fas fa-arrow-down text-info-500"></i>
-                        {{ formatTokens(getTokenInfo(task.type)?.inputTokens) }}
+                        {{ formatTokens(getTokenInfo(task.type)?.inputTokens ?? null) }}
                       </span>
                       <span v-if="getTokenInfo(task.type)?.outputTokens">
                         <i class="fas fa-arrow-up text-success-500"></i>
-                        {{ formatTokens(getTokenInfo(task.type)?.outputTokens) }}
+                        {{ formatTokens(getTokenInfo(task.type)?.outputTokens ?? null) }}
                       </span>
                       <span v-if="getTokenInfo(task.type)?.totalCost" class="font-medium">
                         <i class="fas fa-coins text-warning-500"></i>
-                        {{ formatCost(getTokenInfo(task.type)?.totalCost) }}
+                        {{ formatCost(getTokenInfo(task.type)?.totalCost ?? null) }}
                       </span>
                     </div>
 
@@ -268,7 +268,11 @@ const emit = defineEmits<{
 }>()
 
 const route = useRoute()
-const companyId = computed(() => route.params.companyId as string)
+// Use type assertion since route.params may have companyId on company routes
+const companyId = computed(() => {
+  const params = route.params as Record<string, string | string[] | undefined>
+  return (params.companyId as string) || ''
+})
 
 const isRestarting = ref<TaskType | null>(null)
 const isStartingAll = ref(false)

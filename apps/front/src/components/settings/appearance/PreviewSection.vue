@@ -177,25 +177,22 @@ const previewInputValue = ref('Sample text input')
 const previewToggleValue = ref(true)
 const previewItems = ref([
   {
-    title: t('common.preview.items.newMessage', 'New Message Received'),
-    description: t('common.preview.items.newMessageDesc', 'You have a new message from John Doe'),
+    title: t('common.preview.items.newMessage'),
+    description: t('common.preview.items.newMessageDesc'),
     icon: 'fas fa-envelope',
-    time: t('common.time.minutesAgo', '{count} min ago', { count: 2 }),
+    time: t('common.time.minutesAgo', { count: 2 }),
   },
   {
-    title: t('common.preview.items.systemUpdate', 'System Update'),
-    description: t('common.preview.items.systemUpdateDesc', 'Application updated to version 2.1.0'),
+    title: t('common.preview.items.systemUpdate'),
+    description: t('common.preview.items.systemUpdateDesc'),
     icon: 'fas fa-download',
-    time: t('common.time.hoursAgo', '{count} hour ago', { count: 1 }),
+    time: t('common.time.hoursAgo', { count: 1 }),
   },
   {
-    title: t('common.preview.items.profileComplete', 'Profile Completed'),
-    description: t(
-      'common.preview.items.profileCompleteDesc',
-      'Your profile setup is now complete',
-    ),
+    title: t('common.preview.items.profileComplete'),
+    description: t('common.preview.items.profileCompleteDesc'),
     icon: 'fas fa-check-circle',
-    time: t('common.time.hoursAgo', '{count} hours ago', { count: 3 }),
+    time: t('common.time.hoursAgo', { count: 3 }),
   },
 ])
 </script>

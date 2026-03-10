@@ -1,3 +1,4 @@
+import { computed } from 'vue'
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { updateMemberPermissions, resetMemberPassword } from '@/api/team'
 import { TEAM_QUERY_KEYS } from '@/queries/team'
@@ -37,11 +38,11 @@ export const useUpdateMemberPermissions = defineMutation(() => {
         }
       }
 
-      // Update members query without search
-      updateMembersInCache(TEAM_QUERY_KEYS.members(undefined))
+      // Update members query without search (using default pagination values)
+      updateMembersInCache(TEAM_QUERY_KEYS.members({ page: 1, limit: 10 }))
 
       // Update members query with empty search
-      updateMembersInCache(TEAM_QUERY_KEYS.members(''))
+      updateMembersInCache(TEAM_QUERY_KEYS.members({ page: 1, limit: 10, search: '' }))
 
       return { previousData }
     },
@@ -68,9 +69,9 @@ export const useUpdateMemberPermissions = defineMutation(() => {
         }
       }
 
-      // Update with server response for consistency
-      updateWithServerData(TEAM_QUERY_KEYS.members(undefined))
-      updateWithServerData(TEAM_QUERY_KEYS.members(''))
+      // Update with server response for consistency (using default pagination values)
+      updateWithServerData(TEAM_QUERY_KEYS.members({ page: 1, limit: 10 }))
+      updateWithServerData(TEAM_QUERY_KEYS.members({ page: 1, limit: 10, search: '' }))
 
       toast.success('Permissions updated successfully')
     },
@@ -86,7 +87,7 @@ export const useUpdateMemberPermissions = defineMutation(() => {
  * Mutation to reset team member password
  */
 export const useResetMemberPassword = defineMutation(() => {
-  const { mutateAsync, ...mutation } = useMutation({
+  const { mutateAsync, status, ...mutation } = useMutation({
     mutation: ({ userId, temporaryPassword }: { userId: string; temporaryPassword: string }) =>
       resetMemberPassword(userId, { temporary_password: temporaryPassword }),
     onSuccess: () => {
@@ -99,6 +100,8 @@ export const useResetMemberPassword = defineMutation(() => {
 
   return {
     ...mutation,
+    status,
+    isPending: computed(() => status.value === 'pending'),
     resetPasswordAsync: mutateAsync,
   }
 })

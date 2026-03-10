@@ -91,7 +91,7 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const route = useRoute()
-const companyId = computed(() => route.params.companyId as string)
+const companyId = computed(() => String((route.params as Record<string, string>).companyId || ''))
 
 // Chat state
 const isOpen = ref(false)

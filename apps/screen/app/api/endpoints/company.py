@@ -257,6 +257,7 @@ async def create_company(
             owner_id=org_context.user_id,
             owner_username=org_context.username,
             organization_id=org_context.organization_id,
+            callback_base_url=company_data.callback_base_url,
         )
         logger.info(f"Company created successfully - ID: {company.id}, Name: {company.name}")
 

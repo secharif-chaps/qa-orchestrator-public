@@ -5,25 +5,23 @@
       <div class="mb-6 flex items-center justify-between">
         <div>
           <h2 class="text-xl font-semibold">
-            {{ $t('organization.detail.members', 'Members') }}
+            {{ $t('organization.detail.members') }}
           </h2>
           <p class="text-secondary mt-1">
-            {{
-              $t('organization.membersDescription', 'Manage organization members and their access')
-            }}
+            {{ $t('organization.membersDescription') }}
           </p>
         </div>
         <div class="flex gap-2">
           <Button
             variant="secondary"
             icon="fa fa-file-import"
-            :label="$t('admin.import.title', 'Import Users')"
+            :label="$t('admin.import.title')"
             @click="navigateToImport"
           />
           <Button
             variant="primary"
             icon="fa fa-user-plus"
-            :label="$t('user.create.button', 'Add User')"
+            :label="$t('user.create.button')"
             @click="showCreateUserModal = true"
           />
         </div>
@@ -33,7 +31,7 @@
       <div v-if="usersLoading" class="p-8 text-center">
         <div class="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
         <p class="text-secondary">
-          {{ $t('user.loading', 'Loading users...') }}
+          {{ $t('user.loading') }}
         </p>
       </div>
 
@@ -41,7 +39,7 @@
       <Alert
         v-else-if="usersError"
         variant="danger"
-        :title="$t('common.error', 'Error')"
+        :title="$t('common.error')"
         :description="errorMessage"
       />
 
@@ -62,14 +60,14 @@
         <div v-else class="p-8 text-center">
           <i class="fa fa-users text-secondary/50 mb-4 text-4xl"></i>
           <h3 class="mb-2 text-base text-lg font-medium">
-            {{ $t('user.empty.title', 'No users found') }}
+            {{ $t('user.empty.title') }}
           </h3>
           <p class="text-secondary mb-6">
-            {{ $t('user.empty.description', 'Add your first user to this organization') }}
+            {{ $t('user.empty.description') }}
           </p>
           <Button
             variant="primary"
-            :label="$t('user.create.button', 'Add User')"
+            :label="$t('user.create.button')"
             @click="showCreateUserModal = true"
           />
         </div>
@@ -79,7 +77,7 @@
           v-if="users && users.length > 0 && paginationMeta"
           v-model:current-page="currentPage"
           :meta="paginationMeta"
-          :item-name="$t('organization.detail.members', 'Members').toLowerCase()"
+          :item-name="$t('organization.detail.members').toLowerCase()"
           class="mt-4"
           @update-per-page="updatePageSize"
         />
@@ -194,19 +192,16 @@ const {
   data: usersResponse,
   isLoading: usersLoading,
   error: usersError,
-} = useQuery(
-  organizationMembersQuery,
-  () => ({
+} = useQuery({
+  ...organizationMembersQuery({
     organizationId: organizationId?.value || '',
     organizationName: organization?.value?.name || '',
     page: queryParams.page,
     limit: queryParams.limit,
     search: queryParams.search || undefined,
   }),
-  {
-    enabled: () => !!organizationId?.value && !!organization?.value,
-  },
-)
+  enabled: () => !!organizationId?.value && !!organization?.value,
+})
 
 // Query for all organizations (for the change organization modal)
 const { data: organizationsResponse } = useQuery(allOrganizationsQuery, () => ({

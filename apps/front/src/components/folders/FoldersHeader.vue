@@ -110,7 +110,11 @@
                 color="blue"
                 :label="$t('folder.addItems.companyScreen', 'Company Screen')"
                 :description="$t('folder.addItems.companyDescription', 'Add company profiles')"
-                @click="$router.push(`/folders/${$route.params.folderId}/create/company`)"
+                @click="
+                  $router.push(
+                    `/folders/${($route.params as Record<string, string>).folderId}/create/company`,
+                  )
+                "
               />
 
               <!-- Watchfile - Disabled -->

@@ -164,9 +164,9 @@ import { useRoute, useRouter } from 'vue-router'
 const menuSortingRef = useTemplateRef('menuSorting')
 onClickOutside(menuSortingRef, () => (displayMenuSorting.value = false))
 
-const route = useRoute()
+const route = useRoute('/target/(watch_files)/[id]/documents')
 const router = useRouter()
-const watchFileId = route.params.id as string
+const watchFileId = route.params.id
 
 const selectedDocument = ref<Document | undefined>(undefined)
 const isDetailPanelOpen = ref(false)

@@ -74,11 +74,14 @@
           <div v-else class="py-1">
             <button
               v-for="company in filteredCompanies"
-              :key="company.id"
+              :key="company.id ?? 0"
               type="button"
               class="hover:bg-sage-700 flex w-full items-center gap-2 px-2 py-1.5 text-left transition-colors"
-              :class="{ 'cursor-not-allowed opacity-50': isCompanyInContext(company.id) }"
-              :disabled="isCompanyInContext(company.id)"
+              :class="{
+                'cursor-not-allowed opacity-50':
+                  company.id !== undefined && isCompanyInContext(company.id),
+              }"
+              :disabled="company.id !== undefined && isCompanyInContext(company.id)"
               @click="selectCompany(company)"
             >
               <!-- Company Icon -->
@@ -96,7 +99,10 @@
               </div>
 
               <!-- Already Added Indicator -->
-              <i v-if="isCompanyInContext(company.id)" class="fa fa-check text-primary text-xs"></i>
+              <i
+                v-if="company.id !== undefined && isCompanyInContext(company.id)"
+                class="fa fa-check text-primary text-xs"
+              ></i>
             </button>
           </div>
         </div>
@@ -228,12 +234,13 @@ function handleSearch() {
 }
 
 function selectCompany(company: Company) {
+  if (company.id === undefined) return
   if (isCompanyInContext(company.id)) return
 
   const context: CompanyContext = {
     id: company.id,
     name: company.name,
-    siren: company.siren || null,
+    siren: null, // siren is not available on Company type
   }
 
   emit('select', context)

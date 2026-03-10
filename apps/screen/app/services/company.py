@@ -14,7 +14,7 @@ from typing import Any, Optional
 
 from sqlalchemy.orm import Session, joinedload
 
-from app.core.config import settings
+from app.core.config import get_callback_base_url, settings
 from app.core.database_security import SecureQueryBuilder
 from app.core.exceptions import ResourceNotFoundError
 from app.core.exceptions import ValidationError as ValidationException
@@ -177,11 +177,34 @@ class CompanyService:
 
         return PaginatedResponse(data=company_responses, meta=meta)
 
-    def create_company(self, name: str, website: str, owner_id: str, owner_username: str, organization_id: str) -> Company:
-        """Securely create a new company"""
+    def create_company(
+        self,
+        name: str,
+        website: str,
+        owner_id: str,
+        owner_username: str,
+        organization_id: str,
+        callback_base_url: str | None = None,
+    ) -> Company:
+        """Securely create a new company.
+
+        Args:
+            name: Company name
+            website: Company website URL
+            owner_id: Keycloak user UUID
+            owner_username: Username for display
+            organization_id: Organization UUID
+            callback_base_url: Optional base URL for Dify callbacks (dev mode with tunnels)
+        """
         from app.services.task_dependency_service import TaskDependencyService
 
-        logger.info(f"Creating company: {name[:50]}, Owner: {owner_username} ({owner_id}), Organization: {organization_id}")
+        # Store callback_base_url for use in task callbacks
+        self._callback_base_url = callback_base_url
+
+        logger.info(
+            f"Creating company: {name[:50]}, Owner: {owner_username} ({owner_id}), "
+            f"Organization: {organization_id}, Callback URL: {callback_base_url or 'auto'}"
+        )
 
         # Additional validation
         if not owner_username or len(owner_username) > 100:
@@ -265,7 +288,7 @@ class CompanyService:
             self.db.commit()
         else:
             # Prepare callback URLs in FastAPI context before queueing to Celery
-            success_callback, error_callback = self._prepare_task_callbacks(prerequisite_task)
+            success_callback, error_callback = self._prepare_task_callbacks(prerequisite_task, getattr(self, '_callback_base_url', None))
 
             logger.info(f"Queueing prerequisite task {prerequisite_task.id} ({prerequisite_task.type.value})")
             execute_dify_workflow.delay(
@@ -359,7 +382,7 @@ class CompanyService:
             return task
 
         # Prepare callback URLs
-        success_callback, error_callback = self._prepare_task_callbacks(task)
+        success_callback, error_callback = self._prepare_task_callbacks(task, getattr(self, '_callback_base_url', None))
 
         # Queue task via Celery (fire-and-forget)
         logger.info(f"Queueing restart of task {task.id} ({task.type.value}) for company {company.name}")
@@ -374,9 +397,25 @@ class CompanyService:
 
         return task
 
-    def _prepare_task_callbacks(self, task: Task) -> tuple[str, str]:
-        """Helper method to prepare callback URLs for task execution"""
-        success_callback = f"{settings.BACKEND_BASE_URL}/webhooks/dify/tasks/{task.id}/callback"
+    def _prepare_task_callbacks(self, task: Task, callback_base_url: str | None = None) -> tuple[str, str]:
+        """Helper method to prepare callback URLs for task execution.
+
+        Args:
+            task: The task to prepare callbacks for
+            callback_base_url: Optional override for callback base URL (from frontend in dev mode)
+
+        Returns:
+            Tuple of (success_callback, error_callback) URLs
+        """
+        # Priority: 1) Explicit callback_base_url, 2) Tunnel URL from file, 3) BACKEND_BASE_URL
+        if callback_base_url:
+            base_url = callback_base_url
+            source = "frontend_override"
+        else:
+            base_url = get_callback_base_url()
+            source = "tunnel" if base_url != settings.BACKEND_BASE_URL else "config"
+
+        success_callback = f"{base_url}/api/webhooks/dify/tasks/{task.id}/callback"
         error_callback = success_callback  # Same endpoint, different status in payload
 
         # Debug logging for callback URLs
@@ -385,7 +424,8 @@ class CompanyService:
             extra={
                 "task_id": task.id,
                 "task_type": task.type.value,
-                "BACKEND_BASE_URL": settings.BACKEND_BASE_URL,
+                "callback_base_url": base_url,
+                "source": source,
                 "success_callback": success_callback,
                 "error_callback": error_callback,
             }
@@ -401,7 +441,7 @@ class CompanyService:
             logger.info(f"Using Dify workflow (async) for {task.type.value} task - Company: {company.name}")
 
             # Prepare callback URLs using helper method
-            success_callback, error_callback = self._prepare_task_callbacks(task)
+            success_callback, error_callback = self._prepare_task_callbacks(task, getattr(self, '_callback_base_url', None))
 
             # Trigger Dify workflow with callbacks (streaming mode - fire and forget)
             result = await self.dify_service.run_workflow(
@@ -904,7 +944,7 @@ class CompanyService:
         self, company: Company, task: Task, workflow_config: WorkflowConfig
     ) -> None:
         """Queue the refresh workflow via Celery."""
-        success_callback, error_callback = self._prepare_task_callbacks(task)
+        success_callback, error_callback = self._prepare_task_callbacks(task, getattr(self, '_callback_base_url', None))
 
         logger.info(
             "Queueing refresh workflow",

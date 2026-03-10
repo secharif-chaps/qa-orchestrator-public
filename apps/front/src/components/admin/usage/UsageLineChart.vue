@@ -201,8 +201,8 @@ const chartOptions = computed(() => ({
         title: (tooltipItems: { label: string }[]) => {
           return tooltipItems[0]?.label || ''
         },
-        label: (context: { parsed: { y: number } }) => {
-          const count = context.parsed.y
+        label: (context: { parsed: { y: number | null } }) => {
+          const count = context.parsed.y ?? 0
           return t('admin.usage.lineChart.tooltip', { count }, count)
         },
       },

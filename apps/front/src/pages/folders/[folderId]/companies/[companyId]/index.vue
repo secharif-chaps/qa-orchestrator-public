@@ -271,14 +271,14 @@ import { useRoute, useRouter } from 'vue-router'
 import { formatFullDate } from '@/utils/time'
 
 const router = useRouter()
-const route = useRoute()
+const route = useRoute('/folders/[folderId]/companies/[companyId]/')
 const { t } = useI18n()
 const authStore = useAuthStore()
 
 const showSectionModal = ref(false)
 const activeSection = ref<TaskType | null>(null)
 
-const companyId = computed(() => route.params.companyId as string)
+const companyId = computed(() => route.params.companyId)
 
 // Inject selected language from parent [companyId].vue
 const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
@@ -553,7 +553,7 @@ const formatWebsiteUrl = (url: string): string => {
 // Handle setup button click (navigates to AI preferences setup)
 const handleAssistSetup = () => {
   console.log('User clicked setup AI preferences')
-  router.push({ name: '/ai-preferences-setup' })
+  router.push('/ai-preferences-setup')
 }
 
 // Handle alert dismiss

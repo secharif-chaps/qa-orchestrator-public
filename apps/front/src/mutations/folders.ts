@@ -79,7 +79,7 @@ export const useAddItemToFolder = defineMutation(() => {
       if (context?.previousStates) {
         rollbackCacheChanges(queryCache, context.previousStates)
       }
-      toast.error(t('folder.addItem.error', 'Failed to add item to folder'))
+      toast.error(t('folder.addItem.error'))
     },
   })
 
@@ -126,7 +126,7 @@ export const useRemoveItemFromFolder = defineMutation(() => {
       if (context?.previousStates) {
         rollbackCacheChanges(queryCache, context.previousStates)
       }
-      toast.error(t('folder.removeItem.error', 'Failed to remove item from folder'))
+      toast.error(t('folder.removeItem.error'))
     },
   })
 
@@ -372,6 +372,7 @@ export const useCreateFolder = defineMutation(() => {
         updated_at: new Date().toISOString(),
         owner: authStore.username,
         owner_id: authStore.userId || '',
+        owner_username: authStore.username,
         organization_id: authStore.organizationId || '',
         is_owner: true,
         share_role: null,
@@ -463,22 +464,14 @@ export const useRestoreFolder = defineMutation(() => {
     mutation: ({ folderId }: { folderId: string; folderName: string }) => restoreFolder(folderId),
 
     onError: (_error, { folderName }) => {
-      toast.error(
-        t('folder.restore.error', 'Failed to restore folder "{name}". Please try again.', {
-          name: folderName,
-        }),
-      )
+      toast.error(t('folder.restore.error', { name: folderName }))
     },
 
     onSuccess: (_data, { folderName }) => {
       // Invalidate folder caches to refetch fresh data
       queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
-      toast.success(
-        t('folder.restore.success', 'Folder "{name}" has been restored successfully', {
-          name: folderName,
-        }),
-      )
+      toast.success(t('folder.restore.success', { name: folderName }))
     },
   })
 
@@ -503,18 +496,14 @@ export const useToggleFolderFavorite = defineMutation(() => {
       toggleFolderFavorite(folderId, shouldBeFavorite),
 
     onError: () => {
-      toast.error(t('folder.favorite.error', 'Failed to update favorite status'))
+      toast.error(t('folder.favorite.error'))
     },
 
     onSuccess: (_data, { shouldBeFavorite }) => {
       // Invalidate all folder caches to refetch fresh data
       queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
-      toast.success(
-        shouldBeFavorite
-          ? t('folder.favorite.added', 'Folder added to favorites')
-          : t('folder.favorite.removed', 'Folder removed from favorites'),
-      )
+      toast.success(shouldBeFavorite ? t('folder.favorite.added') : t('folder.favorite.removed'))
     },
   })
 

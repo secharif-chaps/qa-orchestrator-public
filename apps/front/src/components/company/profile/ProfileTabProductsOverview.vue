@@ -52,7 +52,7 @@ import { Button } from '@owlint/feathers-vue'
 const route = useRoute()
 const router = useRouter()
 
-const companyId = computed(() => route.params.companyId as string)
+const companyId = computed(() => String((route.params as Record<string, string>).companyId || ''))
 
 const viewProducts = () => {
   router.push({

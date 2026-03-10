@@ -69,7 +69,9 @@
     <div class="border-primary-stroke mt-4 border-t pt-3">
       <div class="text-secondary flex items-center justify-between text-xs">
         <span>{{ t('company.item.created') }} {{ formatFullDate(company.created_at) }}</span>
-        <span v-if="company.owner">{{ t('company.item.by') }} {{ company.owner }}</span>
+        <span v-if="company.owner_username"
+          >{{ t('company.item.by') }} {{ company.owner_username }}</span
+        >
       </div>
     </div>
   </div>
@@ -160,7 +162,7 @@
 </template>
 
 <script setup lang="ts">
-import Tag from '@/components/ui/Tag.vue'
+import Tag, { type BadgeVariant } from '@/components/ui/Tag.vue'
 import { Button } from '@owlint/feathers-vue'
 import type { Company } from '@/types/company'
 import { useCompanyPermissions } from '@/composables/useCompanyPermissions'
@@ -178,7 +180,7 @@ interface Props {
 defineProps<Props>()
 
 defineEmits<{
-  viewCompany: [id: string]
+  viewCompany: [id: number | undefined]
   deleteCompany: [company: Company]
 }>()
 
@@ -233,7 +235,7 @@ const getTaskStatusText = (tasks: Array<{ status: string }>) => {
   return t('company.item.tasks.status.partial', 'Partial')
 }
 
-const getTaskStatusVariant = (tasks: Array<{ status: string }>) => {
+const getTaskStatusVariant = (tasks: Array<{ status: string }>): BadgeVariant => {
   if (!tasks || tasks.length === 0) return 'primary'
 
   const running = tasks.filter((t) => t.status === 'running' || t.status === 'pending').length

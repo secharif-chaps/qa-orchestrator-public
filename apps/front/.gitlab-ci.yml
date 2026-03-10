@@ -78,9 +78,8 @@ front:stylelint:
 front:typecheck:
   <<: *default-lint-job
   stage: lint
-  allow_failure: true  # src/target/ has TypeScript errors that need separate fix
   script:
-    - cd apps/front && npx vue-tsc --build
+    - cd apps/front && npx vue-tsc --noEmit -p tsconfig.app.json
 
 # ─── Test Stage ────────────────────────────────────────
 front:test:

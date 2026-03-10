@@ -22,8 +22,8 @@
     <div v-else-if="hasTeamData" class="space-y-6">
       <!-- Team Header with Stats -->
       <TeamPageHeader
-        :team="company?.team"
-        :team-insights="company?.team_insights"
+        :team="company?.team ?? []"
+        :team-insights="undefined"
         @export="handleExport"
       />
 
@@ -33,7 +33,10 @@
           <i class="fa fa-address-card"></i>
           <span>{{ $t('team.members.title', 'Team Members') }}</span>
         </h3>
-        <TeamMembersList :team="company?.team" @view-in-hierarchy="scrollToMemberInHierarchy" />
+        <TeamMembersList
+          :team="company?.team ?? []"
+          @view-in-hierarchy="scrollToMemberInHierarchy"
+        />
       </div>
 
       <!-- Hierarchy Graph -->
@@ -191,9 +194,9 @@ interface LayoutNode extends TeamNode {
 
 const { isDark } = useTheme()
 
-const route = useRoute()
+const route = useRoute('/folders/[folderId]/companies/[companyId]/team')
 
-const companyId = computed(() => route.params.companyId as string)
+const companyId = computed(() => route.params.companyId)
 
 // Inject selected language from parent [companyId].vue
 const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))

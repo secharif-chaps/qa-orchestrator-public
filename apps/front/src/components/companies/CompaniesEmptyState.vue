@@ -41,23 +41,16 @@ const iconClass = computed(() => {
 
 const title = computed(() => {
   return props.type === 'no-results'
-    ? t('company.empty.noResults.title', 'No companies found')
-    : t('company.empty.noCompanies.title', 'No companies yet')
+    ? t('company.empty.noResults.title')
+    : t('company.empty.noCompanies.title')
 })
 
 const description = computed(() => {
   if (props.type === 'no-results') {
     return props.searchQuery
-      ? t(
-          'company.empty.noResults.description',
-          'No companies match "{query}". Try adjusting your search terms.',
-          { query: props.searchQuery },
-        )
-      : t('company.empty.noResults.descriptionNoQuery', 'Try adjusting your search terms')
+      ? t('company.empty.noResults.description', { query: props.searchQuery })
+      : t('company.empty.noResults.descriptionNoQuery')
   }
-  return t(
-    'company.empty.noCompanies.description',
-    'Get started by creating your first company to track and manage your business relationships.',
-  )
+  return t('company.empty.noCompanies.description')
 })
 </script>

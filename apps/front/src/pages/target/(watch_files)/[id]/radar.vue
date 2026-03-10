@@ -50,9 +50,9 @@ import { RouterView, useRoute, useRouter } from 'vue-router'
 
 const { t } = useI18n()
 
-const route = useRoute()
+const route = useRoute('/target/(watch_files)/[id]/radar')
 const router = useRouter()
-const watchFileId = computed(() => route.params.id as string)
+const watchFileId = computed(() => route.params.id)
 
 const watchFileAnalysisStore = useWatchFileAnalysisStore()
 const { displayFiltersPanel, selectedView } = storeToRefs(watchFileAnalysisStore)

@@ -19,28 +19,37 @@ export function useBreadcrumbs() {
   const { t } = useI18n()
 
   // Get company data if we're on a company page
+  // Use type assertion since route.params may have companyId on some routes
   const companyId = computed(() => {
-    if (typeof route.params.companyId === 'string') {
-      return route.params.companyId
+    const params = route.params as Record<string, string | string[] | undefined>
+    if (typeof params.companyId === 'string') {
+      return params.companyId
     }
     return null
   })
 
-  const { data: company } = useQuery(companyByIdQuery, () => ({ id: companyId.value! }), {
-    enabled: () =>
-      !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
+  const { data: company } = useQuery({
+    ...companyByIdQuery({ id: companyId.value! }),
+    enabled: computed(
+      () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
+    ),
   })
 
   // Get folder data if we're on a folder page
+  // Use type assertion since route.params may have folderId on some routes
   const folderId = computed(() => {
-    if (typeof route.params.folderId === 'string') {
-      return route.params.folderId
+    const params = route.params as Record<string, string | string[] | undefined>
+    if (typeof params.folderId === 'string') {
+      return params.folderId
     }
     return null
   })
 
-  const { data: folder } = useQuery(folderByIdQuery, () => ({ id: folderId.value! }), {
-    enabled: () => !!folderId.value && folderId.value !== 'null' && folderId.value !== 'undefined',
+  const { data: folder } = useQuery({
+    ...folderByIdQuery({ id: folderId.value! }),
+    enabled: computed(
+      () => !!folderId.value && folderId.value !== 'null' && folderId.value !== 'undefined',
+    ),
   })
 
   const breadcrumbs = computed((): BreadcrumbItem[] => {

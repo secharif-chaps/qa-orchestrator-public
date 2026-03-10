@@ -37,7 +37,7 @@
           </div>
 
           <!-- Icon Selection -->
-          <IconSelector v-model="form.icon" :color="form.color" />
+          <IconSelector v-model="form.icon" :color="form.color ?? 'blue'" />
 
           <!-- Color Selection -->
           <ColorSelector v-model="form.color" />

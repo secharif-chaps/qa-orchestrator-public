@@ -44,7 +44,14 @@ export const foldersWithItemsQuery = defineQueryOptions(
   ({
     filters,
   }: {
-    filters: { page: number; size: number; name: string; archived?: boolean; favorites?: boolean }
+    filters: {
+      page: number
+      size: number
+      name: string
+      archived?: boolean
+      favorites?: boolean
+      include_all?: boolean
+    }
   }) => ({
     key: FOLDER_QUERY_KEYS.withItems(filters),
     query: () => getFoldersWithItems(filters),

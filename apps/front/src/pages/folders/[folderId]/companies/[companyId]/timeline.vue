@@ -82,9 +82,9 @@ import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import type { SourcedValue } from '@/types/company'
 
-const route = useRoute()
+const route = useRoute('/folders/[folderId]/companies/[companyId]/timeline')
 
-const companyId = computed(() => route.params.companyId as string)
+const companyId = computed(() => route.params.companyId)
 
 // Inject selected language from parent [companyId].vue
 const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
@@ -141,14 +141,34 @@ const extractStringValue = (field: SourcedValue<string> | string | undefined): s
   return ''
 }
 
+// Helper to convert string | SourcedValue<string> to SourcedValue<string>
+const toSourcedValue = (field: string | SourcedValue<string> | undefined): SourcedValue<string> => {
+  if (!field) return { value: '', source: '' }
+  if (typeof field === 'string') return { value: field, source: '' }
+  return field
+}
+
+// Normalize events to ensure all fields are SourcedValue<string>
+const normalizedEvents = computed(() => {
+  return getTimelineEvents.value.map((event) => ({
+    date: toSourcedValue(event.date),
+    title: toSourcedValue(event.title),
+    description: toSourcedValue(event.description),
+    category: toSourcedValue(event.category),
+    location: event.location ? toSourcedValue(event.location) : undefined,
+    impact: event.impact ? toSourcedValue(event.impact) : undefined,
+    source: event.source,
+  }))
+})
+
 const filteredEvents = computed(() => {
   if (!searchQuery.value.trim()) {
-    return getTimelineEvents.value
+    return normalizedEvents.value
   }
 
   const query = searchQuery.value.toLowerCase().trim()
 
-  return getTimelineEvents.value.filter((event) => {
+  return normalizedEvents.value.filter((event) => {
     // Search in title, description, location, and category (handle SourcedValue)
     const title = extractStringValue(event.title).toLowerCase()
     const description = extractStringValue(event.description).toLowerCase()

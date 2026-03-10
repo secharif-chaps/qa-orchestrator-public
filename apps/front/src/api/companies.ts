@@ -92,7 +92,13 @@ export const getCompanies = async (filters: {
   return response
 }
 
-export const createCompany = async (company: { name: string; website: string }) => {
+export interface CreateCompanyRequest {
+  name: string
+  website: string
+  callback_base_url?: string
+}
+
+export const createCompany = async (company: CreateCompanyRequest) => {
   const response = await apiClient.post<Company>('/companies/', company)
   return response
 }

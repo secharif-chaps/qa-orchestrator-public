@@ -8,7 +8,7 @@
             <h1 class="text-2xl font-bold">{{ $t('folder.title', 'Folders') }}</h1>
             <p class="text-secondary mt-1">
               {{
-                globalView
+                isGlobalView
                   ? $t('folder.descriptionGlobal', 'All folders in your organization')
                   : $t('folder.description', 'Organize your companies into folders')
               }}
@@ -20,7 +20,7 @@
             <!-- Global View Toggle (Managers Only) -->
             <Toggle
               v-if="canManageTeam"
-              v-model="globalView"
+              v-model="globalViewToggle"
               :options="viewScopeOptions"
               variant="pill"
             />
@@ -122,13 +122,13 @@
           <div class="border-primary-stroke bg-base-200 border-b px-6 py-4">
             <div
               :class="
-                globalView
+                isGlobalView
                   ? 'text-secondary grid grid-cols-14 gap-4 text-sm font-medium'
                   : 'text-secondary grid grid-cols-12 gap-4 text-sm font-medium'
               "
             >
               <div class="col-span-5">{{ $t('folder.table.name', 'Name') }}</div>
-              <div v-if="globalView" class="col-span-2">
+              <div v-if="isGlobalView" class="col-span-2">
                 {{ $t('folder.table.owner', 'Owner') }}
               </div>
               <div class="col-span-2">{{ $t('folder.table.items', 'Items') }}</div>
@@ -143,7 +143,7 @@
               v-for="folder in foldersWithItems"
               :key="folder.id"
               :folder="folder"
-              :global-view="globalView"
+              :global-view="isGlobalView"
               @view-folder="$router.push(`/folders/${$event}`)"
               @delete-folder="confirmDelete"
               @restore-folder="confirmRestore"
@@ -263,7 +263,11 @@ const { canManageTeam } = useTeamPermissions()
 // Filter and view state
 const folderFilter = ref<'all' | 'favorites' | 'archived'>('all')
 const viewMode = ref<'grid' | 'table'>('grid')
-const globalView = ref(false)
+// Using 'my' and 'all' strings instead of boolean values to match AcceptableValue type
+const globalViewToggle = ref<'my' | 'all'>('my')
+
+// Computed to convert toggle value to boolean for API and template usage
+const isGlobalView = computed(() => globalViewToggle.value === 'all')
 
 // Filter options for Toggle
 const filterOptions = computed(() => [
@@ -301,34 +305,31 @@ const viewModeOptions = computed(() => [
 // View scope options for global toggle (managers only)
 const viewScopeOptions = computed(() => [
   {
-    value: false,
+    value: 'my',
     label: $t('folder.viewScope.myFolders', 'My Folders'),
     icon: 'fa fa-user',
   },
   {
-    value: true,
+    value: 'all',
     label: $t('folder.viewScope.allFolders', 'All Folders'),
     icon: 'fa fa-users',
   },
 ])
 
 // Query for grid view (uses same query as table for unified caching)
-const { data, status, isLoading, refetch } = useQuery(
-  foldersWithItemsQuery,
-  () => ({
+const { data, status, isLoading, refetch } = useQuery({
+  ...foldersWithItemsQuery({
     filters: {
       page: foldersStore.page,
       size: foldersStore.size,
       name: foldersStore.debouncedName,
       archived: folderFilter.value === 'archived',
       favorites: folderFilter.value === 'favorites',
-      include_all: globalView.value,
+      include_all: isGlobalView.value,
     },
   }),
-  {
-    enabled: () => viewMode.value === 'grid',
-  },
-)
+  enabled: () => viewMode.value === 'grid',
+})
 
 // Query for table view (folders with items)
 const {
@@ -336,22 +337,19 @@ const {
   status: statusWithItems,
   isLoading: isLoadingWithItems,
   refetch: refetchWithItems,
-} = useQuery(
-  foldersWithItemsQuery,
-  () => ({
+} = useQuery({
+  ...foldersWithItemsQuery({
     filters: {
       page: foldersStore.page,
       size: foldersStore.size,
       name: foldersStore.debouncedName,
       archived: folderFilter.value === 'archived',
       favorites: folderFilter.value === 'favorites',
-      include_all: globalView.value,
+      include_all: isGlobalView.value,
     },
   }),
-  {
-    enabled: () => viewMode.value === 'table',
-  },
-)
+  enabled: () => viewMode.value === 'table',
+})
 
 // Combined computed properties for different view modes
 const currentData = computed(() => (viewMode.value === 'grid' ? data.value : dataWithItems.value))
@@ -363,9 +361,10 @@ const currentIsLoading = computed(() =>
 )
 
 // Folders are now filtered server-side (both archived and favorites)
-const folders = computed(() => currentData.value || [])
+// Access the .data property from PaginatedResponse
+const folders = computed<Folder[]>(() => currentData.value?.data || [])
 
-const foldersWithItems = computed(() => folders.value)
+const foldersWithItems = computed<Folder[]>(() => folders.value)
 
 const paginationMeta = computed(() => currentData.value?.meta)
 

@@ -137,15 +137,15 @@
               >
                 <span v-if="getTokenInfo(task.type)?.inputTokens">
                   <i class="fa fa-arrow-down text-blue-500"></i>
-                  {{ formatTokens(getTokenInfo(task.type)?.inputTokens) }}
+                  {{ formatTokens(getTokenInfo(task.type)?.inputTokens ?? null) }}
                 </span>
                 <span v-if="getTokenInfo(task.type)?.outputTokens">
                   <i class="fa fa-arrow-up text-green-500"></i>
-                  {{ formatTokens(getTokenInfo(task.type)?.outputTokens) }}
+                  {{ formatTokens(getTokenInfo(task.type)?.outputTokens ?? null) }}
                 </span>
                 <span v-if="getTokenInfo(task.type)?.totalCost" class="font-medium">
                   <i class="fa fa-coins text-yellow-500"></i>
-                  {{ formatCost(getTokenInfo(task.type)?.totalCost) }}
+                  {{ formatCost(getTokenInfo(task.type)?.totalCost ?? null) }}
                 </span>
               </div>
 
@@ -222,7 +222,7 @@ interface TaskConfig {
 }
 
 const route = useRoute()
-const companyId = computed(() => route.params.companyId as string)
+const companyId = computed(() => (route.params as { companyId: string }).companyId)
 
 const isDev = import.meta.env.DEV
 const isOpen = ref(false)
@@ -233,7 +233,7 @@ const { data: tasks, refetch: refetchTasks } = useQuery(companyTasksQuery, () =>
   companyId: companyId.value,
 }))
 
-const pollingInterval = ref<NodeJS.Timeout | null>(null)
+const pollingInterval = ref<ReturnType<typeof setInterval> | null>(null)
 const { canCreateCompany } = useCompanyPermissions()
 const authStore = useAuthStore()
 
@@ -372,6 +372,7 @@ const getTaskIcon = (taskType: TaskType): string => {
     csr: 'fas fa-leaf',
     press: 'fas fa-newspaper',
     team: 'fas fa-users',
+    data_collection: 'fas fa-database',
   }
   return iconMap[taskType] || 'fas fa-question'
 }
@@ -563,6 +564,23 @@ const restartTask = async (taskType: TaskType) => {
   } finally {
     isRestarting.value = null
   }
+}
+
+// Restart all pending/error tasks
+const performAutoRecovery = async () => {
+  const pendingOrErrorTasks = tasks.value?.filter(
+    (t: TaskResponse) => t.status === 'pending' || t.status === 'error',
+  )
+  if (!pendingOrErrorTasks?.length) return
+
+  for (const task of pendingOrErrorTasks) {
+    try {
+      await restart(task.id)
+    } catch (error) {
+      console.error(`❌ Failed to restart task ${task.type}:`, error)
+    }
+  }
+  await refetchTasks()
 }
 
 const startAllPendingTasks = async () => {

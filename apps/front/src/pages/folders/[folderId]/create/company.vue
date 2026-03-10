@@ -41,7 +41,7 @@
       class="bg-base-100 border-primary-stroke rounded-lg border p-6"
       :title="$t('search.companyIdentity')"
     >
-      <form @submit.prevent="startSearch" class="flex flex-col gap-6">
+      <form @submit.prevent="submit" class="flex flex-col gap-6">
         <!-- Form Fields -->
         <div class="flex flex-col gap-4">
           <Input
@@ -115,7 +115,7 @@ const TOKENS_PER_COMPANY = 35
 
 const { t } = useI18n()
 const router = useRouter()
-const route = useRoute()
+const route = useRoute('/folders/[folderId]/create/company')
 
 const company = ref('')
 const website = ref('')
@@ -137,26 +137,20 @@ const {
   data: balanceData,
   isLoading: tokenDataLoading,
   refetch: refetchBalance,
-} = useQuery(
-  organizationBalanceQuery,
-  () => ({
+} = useQuery({
+  ...organizationBalanceQuery({
     organizationId: currentOrganization.value?.id ?? '',
   }),
-  {
-    enabled: computed(() => !!currentOrganization.value?.id),
-  },
-)
+  enabled: computed(() => !!currentOrganization.value?.id),
+})
 
 // Module enablement query (to check if screen module is enabled)
-const { data: modulesData } = useQuery(
-  organizationModulesQuery,
-  () => ({
+const { data: modulesData } = useQuery({
+  ...organizationModulesQuery({
     organizationId: currentOrganization.value?.id ?? '',
   }),
-  {
-    enabled: computed(() => !!currentOrganization.value?.id),
-  },
-)
+  enabled: computed(() => !!currentOrganization.value?.id),
+})
 
 // Set organization ID on mutation for optimistic cache update
 watch(
@@ -323,11 +317,14 @@ const submit = async () => {
 
     // Add the company to the folder
     const folderId = route.params.folderId
+    if (newCompany.id === undefined) {
+      throw new Error('Company ID is undefined')
+    }
     await addToFolder({
       folderId,
       item: {
         item_id: newCompany.id.toString(),
-        item_type: 'company',
+        type: 'company',
       },
     })
     // Redirect to the newly created company page

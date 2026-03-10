@@ -197,7 +197,7 @@
                   :model-value="share.role"
                   variant="pill"
                   :options="getRoleOptionsForShare(share)"
-                  @update:model-value="(value: ShareRole) => updateShareRole(share, value)"
+                  @update:model-value="(value) => updateShareRole(share, value as ShareRole)"
                 />
 
                 <!-- Remove Button -->
@@ -296,18 +296,18 @@ watch(searchQuery, (newQuery) => {
 })
 
 // Fetch current shares
-const { data: shares, isLoading: isLoadingShares } = useQuery(
-  folderSharesQuery,
-  () => ({ folderId: props.folderId }),
-  { enabled: () => isOpen.value && !!props.folderId },
-)
+const { data: shares, isLoading: isLoadingShares } = useQuery({
+  ...folderSharesQuery({ folderId: props.folderId }),
+  enabled: () => isOpen.value && !!props.folderId,
+})
 
 // Search users
 const {
   data: searchResults,
   isLoading: isSearching,
   error: searchError,
-} = useQuery(userSearchQuery, () => ({ query: debouncedSearchQuery.value }), {
+} = useQuery({
+  ...userSearchQuery({ query: debouncedSearchQuery.value }),
   enabled: () => isOpen.value && debouncedSearchQuery.value.length >= 2,
 })
 

@@ -14,10 +14,10 @@ import { useWatchFileAnalysisStore } from '@target/stores/watchFileAnalysis'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-const route = useRoute()
+const route = useRoute('/target/(watch_files)/[id]/radar/graph')
 const watchFileAnalysisStore = useWatchFileAnalysisStore()
 
-const watchFileId = computed(() => route.params.id as string)
+const watchFileId = computed(() => route.params.id)
 const filterQuery = computed(() => watchFileAnalysisStore.filterQuery)
 
 const { data: eventsGraphData, isLoading: isLoadingEventsGraph } = useQuery(

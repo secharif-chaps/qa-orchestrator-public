@@ -133,7 +133,7 @@ const shouldShow = computed(() => {
  */
 function handleSetup() {
   emit('setup')
-  router.push({ name: '/ai-preferences-setup' })
+  router.push('/ai-preferences-setup')
 }
 
 /**

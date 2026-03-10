@@ -269,9 +269,8 @@ const routeFolderId = computed(() => route.query.folderId as string | undefined)
 const needsFolderSelection = computed(() => !routeFolderId.value)
 
 // Fetch folders (only when folder selection is needed)
-const { data: foldersData, isLoading: foldersLoading } = useQuery(
-  foldersQuery,
-  () => ({
+const { data: foldersData, isLoading: foldersLoading } = useQuery({
+  ...foldersQuery({
     filters: {
       page: 1,
       size: 100, // Get all folders
@@ -279,10 +278,8 @@ const { data: foldersData, isLoading: foldersLoading } = useQuery(
       archived: false,
     },
   }),
-  {
-    enabled: computed(() => needsFolderSelection.value),
-  },
-)
+  enabled: computed(() => needsFolderSelection.value),
+})
 
 // Extract folders array - handle both API response formats:
 // 1. Paginated: { data: [...], meta: {...} }
@@ -385,7 +382,8 @@ const hasFoldersAvailable = computed(() => {
 })
 
 // Fetch folder details (when folder ID is in route)
-const { data: folderData } = useQuery(folderByIdQuery, () => ({ id: routeFolderId.value || '' }), {
+const { data: folderData } = useQuery({
+  ...folderByIdQuery({ id: routeFolderId.value || '' }),
   enabled: computed(() => !!routeFolderId.value),
 })
 
@@ -394,26 +392,20 @@ const {
   data: balanceData,
   isLoading: tokenDataLoading,
   refetch: refetchBalance,
-} = useQuery(
-  organizationBalanceQuery,
-  () => ({
+} = useQuery({
+  ...organizationBalanceQuery({
     organizationId: currentOrganization.value?.id ?? '',
   }),
-  {
-    enabled: computed(() => !!currentOrganization.value?.id),
-  },
-)
+  enabled: computed(() => !!currentOrganization.value?.id),
+})
 
 // Module enablement query (to check if screen module is enabled)
-const { data: modulesData } = useQuery(
-  organizationModulesQuery,
-  () => ({
+const { data: modulesData } = useQuery({
+  ...organizationModulesQuery({
     organizationId: currentOrganization.value?.id ?? '',
   }),
-  {
-    enabled: computed(() => !!currentOrganization.value?.id),
-  },
-)
+  enabled: computed(() => !!currentOrganization.value?.id),
+})
 
 const tokenBalance = computed(() => balanceData.value?.balance ?? 0)
 const screenModuleEnabled = computed(() => {
@@ -654,11 +646,14 @@ const submit = async () => {
     })
 
     // Add to folder
+    if (newCompany.id === undefined) {
+      throw new Error('Company ID is undefined')
+    }
     await addToFolder({
-      folderId: targetFolderId.value,
+      folderId: targetFolderId.value as string,
       item: {
         item_id: newCompany.id.toString(),
-        item_type: 'company',
+        type: 'company',
       },
     })
 

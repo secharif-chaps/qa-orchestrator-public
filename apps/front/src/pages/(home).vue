@@ -128,35 +128,37 @@ onUnmounted(() => {
 const recentProjects = computed(() => {
   if (!recentCompaniesData.value) return []
 
-  return recentCompaniesData.value.map((company) => {
-    // Calculate time ago
-    const createdDate = new Date(company.created_at)
-    const now = new Date()
-    const diffMs = now.getTime() - createdDate.getTime()
-    const diffMinutes = Math.floor(diffMs / (1000 * 60))
-    const diffHours = Math.floor(diffMinutes / 60)
-    const diffDays = Math.floor(diffHours / 24)
+  return recentCompaniesData.value
+    .filter((company) => company.id !== undefined)
+    .map((company) => {
+      // Calculate time ago
+      const createdDate = new Date(company.created_at)
+      const now = new Date()
+      const diffMs = now.getTime() - createdDate.getTime()
+      const diffMinutes = Math.floor(diffMs / (1000 * 60))
+      const diffHours = Math.floor(diffMinutes / 60)
+      const diffDays = Math.floor(diffHours / 24)
 
-    let timeAgo = ''
-    if (diffDays > 0) {
-      timeAgo = t('common.time.daysAgo', { count: diffDays })
-    } else if (diffHours > 0) {
-      timeAgo = t('common.time.hoursAgo', { count: diffHours })
-    } else if (diffMinutes > 0) {
-      timeAgo = t('common.time.minutesAgo', { count: diffMinutes })
-    } else {
-      timeAgo = t('common.time.justNow')
-    }
+      let timeAgo = ''
+      if (diffDays > 0) {
+        timeAgo = t('common.time.daysAgo', { count: diffDays })
+      } else if (diffHours > 0) {
+        timeAgo = t('common.time.hoursAgo', { count: diffHours })
+      } else if (diffMinutes > 0) {
+        timeAgo = t('common.time.minutesAgo', { count: diffMinutes })
+      } else {
+        timeAgo = t('common.time.justNow')
+      }
 
-    return {
-      id: company.id,
-      name: company.name,
-      folderName: company.folder_name || t('home.recentProjects.noFolder'),
-      folderId: company.folder_id,
-      timeAgo,
-      badge: { intent: 'info' as const, label: t('home.recentProjects.badge.collaborative') },
-    }
-  })
+      return {
+        id: company.id as number,
+        name: company.name,
+        folderName: company.folder_name || t('home.recentProjects.noFolder'),
+        folderId: company.folder_id,
+        timeAgo,
+        badge: { intent: 'info' as const, label: t('home.recentProjects.badge.collaborative') },
+      }
+    })
 })
 
 const recentActivities = computed(() => {

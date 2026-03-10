@@ -14,6 +14,7 @@
     <!-- Search -->
     <div class="px-4 pt-4 pb-2">
       <Searchbar
+        id="folders-sidebar-search"
         v-model="searchTerm"
         :placeholder="$t('sidebar.foldersSidebar.search', 'Search a folder...')"
         size="sm"
@@ -106,6 +107,7 @@ import { useQuery } from '@pinia/colada'
 import { foldersWithItemsQuery } from '@/queries/folders'
 import { Button, Searchbar } from '@owlint/feathers-vue'
 import FolderRow from './FolderRow.vue'
+import type { Folder } from '@/types/folder'
 
 const router = useRouter()
 
@@ -128,26 +130,26 @@ const { data: foldersData, isLoading } = useQuery(foldersWithItemsQuery, () => (
   },
 }))
 
-// Computed folders lists
-const allFolders = computed(() => foldersData.value || [])
+// Computed folders lists - access .data from PaginatedResponse
+const allFolders = computed<Folder[]>(() => foldersData.value?.data || [])
 
-const favoriteFolders = computed(() => {
-  return allFolders.value.filter((f) => f.is_favorite)
+const favoriteFolders = computed<Folder[]>(() => {
+  return allFolders.value.filter((f: Folder) => f.is_favorite)
 })
 
-const regularFolders = computed(() => {
-  return allFolders.value.filter((f) => !f.is_favorite)
+const regularFolders = computed<Folder[]>(() => {
+  return allFolders.value.filter((f: Folder) => !f.is_favorite)
 })
 
 // Filter folders based on search
-const filteredFolders = computed(() => {
+const filteredFolders = computed<Folder[]>(() => {
   if (!searchTerm.value.trim()) {
     return allFolders.value
   }
 
   const query = searchTerm.value.toLowerCase()
 
-  return allFolders.value.filter((folder) => {
+  return allFolders.value.filter((folder: Folder) => {
     // Check folder name
     if (folder.name.toLowerCase().includes(query)) {
       return true

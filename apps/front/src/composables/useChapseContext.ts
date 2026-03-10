@@ -24,17 +24,15 @@ export function useChapseContext() {
   // Detect company context from route
   const companyId = computed(() => {
     // Check various route params that might contain company ID
-    return route.params.companyId || route.params.id
+    const params = route.params as { companyId?: string; id?: string }
+    return params.companyId || params.id
   })
 
   // Fetch company data if on company page
-  const { data: company, isLoading: isLoadingCompany } = useQuery(
-    companyByIdQuery,
-    () => ({ id: companyId.value as string }),
-    {
-      enabled: computed(() => !!companyId.value),
-    },
-  )
+  const { data: company, isLoading: isLoadingCompany } = useQuery({
+    ...companyByIdQuery({ id: companyId.value as string }),
+    enabled: () => !!companyId.value,
+  })
 
   // =========================================================================
   // Available Context from Current Page
@@ -46,7 +44,7 @@ export function useChapseContext() {
       return {
         id: Number(companyId.value),
         name: company.value.name || 'Company',
-        siren: company.value.siren || null,
+        siren: null, // Company type doesn't have siren field
       }
     }
     return null

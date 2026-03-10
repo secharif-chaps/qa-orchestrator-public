@@ -54,6 +54,8 @@ export default {
         writerDesc: 'Créer et gérer le contenu',
         manager: 'Gestionnaire',
         managerDesc: "Gestion complète de l'équipe",
+        admin: 'Administrateur',
+        adminDesc: "L'accès administrateur donne un contrôle total. À utiliser avec précaution.",
       },
     },
     profile: {

@@ -20,8 +20,9 @@
 <script lang="ts" setup>
 import { Button } from '@owlint/feathers-vue'
 import { companyByIdQuery } from '@/queries/companies'
-import type { SourcedValue } from '@/types/company'
+import type { SourcedValue, Company, TeamMember } from '@/types/company'
 import pptxgen from 'pptxgenjs'
+import type PptxGenJS from 'pptxgenjs'
 import { ref } from 'vue'
 import ExportModal from './ExportModal.vue'
 import { useRoute } from 'vue-router'
@@ -29,7 +30,7 @@ import { useQuery } from '@pinia/colada'
 
 const route = useRoute()
 const { data: company } = useQuery(companyByIdQuery, () => ({
-  id: route.params.companyId as string,
+  id: String((route.params as Record<string, string>).companyId || ''),
 }))
 const showModal = ref(false)
 
@@ -76,20 +77,20 @@ const getSourcesFromObject = (obj: Record<string, unknown> | undefined): string[
 }
 
 // Function to add sources section to slide
-const addSourcesSection = (slide, sources: string[]) => {
+const addSourcesSection = (slide: PptxGenJS.Slide, sources: string[]) => {
   if (!sources || sources.length === 0) return
 
   // Remove duplicates
   const uniqueSources = [...new Set(sources)]
 
   // Create a background for the sources section - moved to bottom
-  slide.addShape('RECTANGLE', {
+  slide.addShape('rect', {
     x: 0.5,
     y: 6.8,
     w: 9.0,
     h: 0.8,
     fill: { color: 'F8FAFC' }, // Very light gray (slate-50)
-    lineSize: 0,
+    line: { width: 0 },
   })
 
   // Add sources title
@@ -137,14 +138,14 @@ const addSourcesSection = (slide, sources: string[]) => {
 }
 
 // Function to create rounded rectangle for card background
-const addCardBackground = (slide, options = {}) => {
+const addCardBackground = (slide: PptxGenJS.Slide, options: Record<string, unknown> = {}) => {
   const defaultOptions = {
     x: 0.5,
     y: 1.2,
     w: 9.0,
     h: 4.5,
     fill: { color: COLORS.cardBackground },
-    line: { type: 'none' },
+    line: { width: 0 },
     rectRadius: 0.1, // Rounding radius (0-1) for rounded rectangles
   }
 
@@ -152,7 +153,11 @@ const addCardBackground = (slide, options = {}) => {
 }
 
 // Function to add slide title
-const addSlideTitle = (slide, title, options = {}) => {
+const addSlideTitle = (
+  slide: PptxGenJS.Slide,
+  title: string,
+  options: Record<string, unknown> = {},
+) => {
   const defaultOptions = {
     x: 0.5,
     y: 0.5,
@@ -166,7 +171,13 @@ const addSlideTitle = (slide, title, options = {}) => {
 }
 
 // Function to create text block with label and value
-const addInfoBlock = (slide, label, sourcedValue: SourcedValue<string> | undefined, x, y) => {
+const addInfoBlock = (
+  slide: PptxGenJS.Slide,
+  label: string,
+  sourcedValue: SourcedValue<string> | undefined,
+  x: number,
+  y: number,
+) => {
   slide.addText(label, {
     x,
     y,
@@ -189,11 +200,11 @@ const addInfoBlock = (slide, label, sourcedValue: SourcedValue<string> | undefin
 
 // Better bullet point function using single text block
 const addListItemsImproved = (
-  slide,
-  title,
+  slide: PptxGenJS.Slide,
+  title: string,
   items: SourcedValue<string>[] | undefined,
-  x,
-  y,
+  x: number,
+  y: number,
   maxWidth = 4.0,
 ) => {
   slide.addText(title, {
@@ -232,7 +243,7 @@ const addListItemsImproved = (
 }
 
 // Create slide for company profile
-const createProfileSlide = (pptx, company: Company) => {
+const createProfileSlide = (pptx: PptxGenJS, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -251,7 +262,7 @@ const createProfileSlide = (pptx, company: Company) => {
 
   // Add company catchphrase
   if (company.profile?.catchphrase) {
-    slide.addText(getValue(company.profile.catchphrase), {
+    slide.addText(getValue(company.profile.catchphrase) || '', {
       x: 1.0,
       y: 2.0,
       fontSize: 14,
@@ -265,7 +276,13 @@ const createProfileSlide = (pptx, company: Company) => {
 
   // Company details in 2 columns
   addInfoBlock(slide, 'Business Line', company.profile?.businessLine, 1.0, 2.7)
-  addInfoBlock(slide, 'Website', company.website, 5.0, 2.7)
+  addInfoBlock(
+    slide,
+    'Website',
+    company.website ? { value: company.website, source: '' } : undefined,
+    5.0,
+    2.7,
+  )
   addInfoBlock(slide, 'Established', company.profile?.establishmentYear, 1.0, 3.7)
   addInfoBlock(slide, 'Employees', company.profile?.employeeCount, 5.0, 3.7)
   addInfoBlock(slide, 'Revenue', company.profile?.revenue, 1.0, 4.7)
@@ -283,7 +300,7 @@ const createProfileSlide = (pptx, company: Company) => {
 }
 
 // Create slide for products and services
-const createProductsSlide = (pptx, company: Company) => {
+const createProductsSlide = (pptx: PptxGenJS, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -324,7 +341,7 @@ const createProductsSlide = (pptx, company: Company) => {
 }
 
 // Create second products slide for partner brands and private labels
-const createProductsSlide2 = (pptx, company: Company) => {
+const createProductsSlide2 = (pptx: PptxGenJS, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -345,7 +362,7 @@ const createProductsSlide2 = (pptx, company: Company) => {
 }
 
 // Create slide for target audience and customer base
-const createTargetAudienceSlide = (pptx, company: Company) => {
+const createTargetAudienceSlide = (pptx: PptxGenJS, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -402,7 +419,7 @@ const createTargetAudienceSlide = (pptx, company: Company) => {
 }
 
 // Create slide for digital strategy
-const createDigitalStrategySlide = (pptx, company: Company) => {
+const createDigitalStrategySlide = (pptx: PptxGenJS, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -423,7 +440,12 @@ const createDigitalStrategySlide = (pptx, company: Company) => {
 
   // digitalStrategy is a SourcedValue containing an object with strategy details
   const digitalStrategyValue = getValue(digital.digitalStrategy)
-  const strategyText = digitalStrategyValue?.overallStrategy || digital.insights || 'N/A'
+  const strategyText =
+    (typeof digitalStrategyValue?.overallStrategy === 'string'
+      ? digitalStrategyValue.overallStrategy
+      : getValue(digitalStrategyValue?.overallStrategy)) ||
+    digital.insights ||
+    'N/A'
 
   slide.addText(strategyText, {
     x: 1.0,
@@ -463,7 +485,7 @@ const createDigitalStrategySlide = (pptx, company: Company) => {
 }
 
 // Create second digital strategy slide for online services and social media
-const createDigitalStrategySlide2 = (pptx, company: Company) => {
+const createDigitalStrategySlide2 = (pptx: PptxGenJS, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -550,7 +572,7 @@ const createDigitalStrategySlide2 = (pptx, company: Company) => {
 }
 
 // Create slide for CSR initiatives
-const createCSRSlide = (pptx, company: Company) => {
+const createCSRSlide = (pptx: PptxGenJS, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -578,7 +600,7 @@ const createCSRSlide = (pptx, company: Company) => {
 }
 
 // Create slide for recent news
-const createNewsSlide = (pptx, company: Company) => {
+const createNewsSlide = (pptx: PptxGenJS, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -594,7 +616,7 @@ const createNewsSlide = (pptx, company: Company) => {
 }
 
 // Create title slide
-const createTitleSlide = (pptx, company: Company) => {
+const createTitleSlide = (pptx: PptxGenJS, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -605,7 +627,7 @@ const createTitleSlide = (pptx, company: Company) => {
     w: 9.0,
     h: 3.0,
     fill: { color: COLORS.cardBackground },
-    line: { type: 'none' },
+    line: { width: 0 },
     rectRadius: 0.1, // Rounding radius (0-1) for rounded rectangles
   })
 
@@ -623,7 +645,7 @@ const createTitleSlide = (pptx, company: Company) => {
 
   // Add subtitle with catchphrase if available
   if (company.profile?.catchphrase) {
-    slide.addText(getValue(company.profile.catchphrase), {
+    slide.addText(getValue(company.profile.catchphrase) || '', {
       x: 0.5,
       y: 2.8,
       w: 9.0,
@@ -665,7 +687,7 @@ const createTitleSlide = (pptx, company: Company) => {
 }
 
 // Create timeline slide
-const createTimelineSlide = (pptx, company: Company) => {
+const createTimelineSlide = (pptx: PptxGenJS, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -735,13 +757,13 @@ const createTimelineSlide = (pptx, company: Company) => {
   const sources = company.timeline?.events
     ? company.timeline.events
         .map((event) => event.source)
-        .filter((source) => source && source.trim() !== '')
+        .filter((source): source is string => !!source && source.trim() !== '')
     : []
   addSourcesSection(slide, sources)
 }
 
 // Create team slide
-const createTeamSlide = (pptx, company: Company) => {
+const createTeamSlide = (pptx: PptxGenJS, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -760,13 +782,13 @@ const createTeamSlide = (pptx, company: Company) => {
     })
 
     // Function to format team member with subordinates
-    const formatTeamMember = (member, indent = '') => {
+    const formatTeamMember = (member: TeamMember, indent = ''): string => {
       const fullName = `${member.firstName} ${member.lastName}`
       let result = `${indent}${fullName} - ${member.position}`
 
       if (member.subordinates && member.subordinates.length > 0) {
         const subordinateLines = member.subordinates
-          .map((sub) => formatTeamMember(sub, '  '))
+          .map((sub: TeamMember) => formatTeamMember(sub, '  '))
           .join('\n')
         result += '\n' + subordinateLines
       }
@@ -818,7 +840,7 @@ const createTeamSlide = (pptx, company: Company) => {
 }
 
 // Create jobs slide
-const createJobsSlide = (pptx, company: Company) => {
+const createJobsSlide = (pptx: PptxGenJS, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 
@@ -919,7 +941,7 @@ const createJobsSlide = (pptx, company: Company) => {
 }
 
 // Create press slide
-const createPressSlide = (pptx, company: Company) => {
+const createPressSlide = (pptx: PptxGenJS, company: Company) => {
   const slide = pptx.addSlide()
   slide.background = { color: COLORS.background }
 

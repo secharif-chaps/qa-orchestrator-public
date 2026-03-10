@@ -211,11 +211,11 @@ async function processAssistAction(actionData: AssistActionData): Promise<void> 
     // Try to fetch company data and add to context
     try {
       const company = await getCompanyById(String(actionData.companyId))
-      if (company) {
+      if (company && company.id !== undefined) {
         addCompanyToContext({
           id: company.id,
           name: company.name,
-          siren: company.siren || undefined,
+          siren: (company as unknown as Record<string, unknown>).siren as string | undefined,
         })
       }
     } catch (err) {

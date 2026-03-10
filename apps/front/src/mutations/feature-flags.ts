@@ -2,7 +2,7 @@
  * Feature flags mutations for Pinia Colada.
  */
 
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { toggleFeatureFlag } from '@/api/feature-flags'
 import { FEATURE_FLAGS_QUERY_KEYS } from '@/queries/feature-flags'
@@ -19,7 +19,7 @@ export const useToggleFeatureFlag = defineMutation(() => {
   const enabled = ref<boolean>(false)
   const config = ref<Record<string, unknown> | null>(null)
 
-  const { mutate, ...mutation } = useMutation({
+  const { mutate, status, ...mutation } = useMutation({
     mutation: () =>
       toggleFeatureFlag(organizationId.value, flag.value, {
         enabled: enabled.value,
@@ -48,6 +48,8 @@ export const useToggleFeatureFlag = defineMutation(() => {
 
   return {
     ...mutation,
+    status,
+    isPending: computed(() => status.value === 'pending'),
     toggleFeatureFlag: toggle,
   }
 })

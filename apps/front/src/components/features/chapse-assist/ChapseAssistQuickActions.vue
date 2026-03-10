@@ -354,7 +354,7 @@ async function handleRetry() {
  * Navigate to setup page
  */
 function goToSetup() {
-  router.push({ name: '/ai-preferences-setup' })
+  router.push('/ai-preferences-setup')
 }
 
 /**

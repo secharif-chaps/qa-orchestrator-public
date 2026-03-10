@@ -1,6 +1,8 @@
 import { ref } from 'vue'
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { createCompany, deleteCompany, restoreCompany, refreshCompany } from '@/api/companies'
+import type { CreateCompanyRequest } from '@/api/companies'
+import { getTunnelUrl, isDev } from '@/api/dev'
 import { COMPANY_QUERY_KEYS } from '@/queries/companies'
 import { ORGANIZATION_TOKEN_KEYS } from '@/queries/tokens'
 import { FOLDER_QUERY_KEYS } from '@/queries/folders'
@@ -13,6 +15,25 @@ import { useI18n } from 'vue-i18n'
 // Cost per company creation (screen module)
 const TOKENS_PER_COMPANY = 35
 
+/**
+ * Fetch tunnel URL for dev mode, returns undefined in production.
+ */
+const fetchTunnelUrlIfDev = async (): Promise<string | undefined> => {
+  if (!isDev()) {
+    return undefined
+  }
+  try {
+    const response = await getTunnelUrl()
+    if (response.is_tunnel) {
+      console.log('[Dev] Using tunnel URL for Dify callbacks:', response.url)
+      return response.url
+    }
+  } catch (error) {
+    console.warn('[Dev] Failed to fetch tunnel URL, using default:', error)
+  }
+  return undefined
+}
+
 export const useCreateCompany = defineMutation(() => {
   const queryCache = useQueryCache()
   const name = ref('')
@@ -20,7 +41,18 @@ export const useCreateCompany = defineMutation(() => {
   const organizationId = ref('')
 
   const { mutate, mutateAsync, ...mutation } = useMutation({
-    mutation: (company: { name: string; website: string }) => createCompany(company),
+    mutation: async (company: { name: string; website: string }) => {
+      // In dev mode, fetch tunnel URL for Dify callbacks
+      const callback_base_url = await fetchTunnelUrlIfDev()
+
+      const request: CreateCompanyRequest = {
+        name: company.name,
+        website: company.website,
+        ...(callback_base_url && { callback_base_url }),
+      }
+
+      return createCompany(request)
+    },
     onSuccess: (newCompany: Company) => {
       // Get current recent companies from cache (limit 10)
       const currentRecent = queryCache.getQueryData<Company[]>(COMPANY_QUERY_KEYS.recent(10)) || []
@@ -77,23 +109,15 @@ export const useArchiveCompany = defineMutation(() => {
     mutation: ({ companyId }: { companyId: string; companyName: string }) =>
       deleteCompany(companyId),
 
-    onError: (_error, { companyName }) => {
-      toast.error(
-        t('company.archive.error', 'Failed to archive company "{name}". Please try again.', {
-          name: companyName,
-        }),
-      )
+    onError: (_error: Error, { companyName }: { companyId: string; companyName: string }) => {
+      toast.error(t('company.archive.error', { name: companyName }))
     },
 
-    onSuccess: (_data, { companyName }) => {
+    onSuccess: (_data: void, { companyName }: { companyId: string; companyName: string }) => {
       // Invalidate folder caches to refetch fresh data
       queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
-      toast.success(
-        t('company.archive.success', 'Company "{name}" has been archived successfully', {
-          name: companyName,
-        }),
-      )
+      toast.success(t('company.archive.success', { name: companyName }))
     },
   })
 
@@ -117,23 +141,15 @@ export const useDeleteCompany = defineMutation(() => {
     mutation: ({ companyId }: { companyId: string; companyName: string }) =>
       deleteCompany(companyId),
 
-    onError: (_error, { companyName }) => {
-      toast.error(
-        t('company.delete.error', 'Failed to delete company "{name}". Please try again.', {
-          name: companyName,
-        }),
-      )
+    onError: (_error: Error, { companyName }: { companyId: string; companyName: string }) => {
+      toast.error(t('company.delete.error', { name: companyName }))
     },
 
-    onSuccess: (_data, { companyName }) => {
+    onSuccess: (_data: void, { companyName }: { companyId: string; companyName: string }) => {
       // Invalidate folder caches to refetch fresh data
       queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
-      toast.success(
-        t('company.delete.success', 'Company "{name}" has been deleted successfully', {
-          name: companyName,
-        }),
-      )
+      toast.success(t('company.delete.success', { name: companyName }))
     },
   })
 
@@ -157,23 +173,15 @@ export const useRestoreCompany = defineMutation(() => {
     mutation: ({ companyId }: { companyId: string; companyName: string }) =>
       restoreCompany(companyId),
 
-    onError: (_error, { companyName }) => {
-      toast.error(
-        t('company.restore.error', 'Failed to restore company "{name}". Please try again.', {
-          name: companyName,
-        }),
-      )
+    onError: (_error: Error, { companyName }: { companyId: string; companyName: string }) => {
+      toast.error(t('company.restore.error', { name: companyName }))
     },
 
-    onSuccess: (_data, { companyName }) => {
+    onSuccess: (_data, { companyName }: { companyId: string; companyName: string }) => {
       // Invalidate folder caches to refetch fresh data
       queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
-      toast.success(
-        t('company.restore.success', 'Company "{name}" has been restored successfully', {
-          name: companyName,
-        }),
-      )
+      toast.success(t('company.restore.success', { name: companyName }))
     },
   })
 

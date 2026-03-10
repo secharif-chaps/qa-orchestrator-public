@@ -1,8 +1,8 @@
 # Getting Started
 
-> **Last Updated:** 2026-03-04
+> **Last Updated:** 2026-03-07
 
-Step-by-step guide to set up ChapsMind on your local machine (Ubuntu / WSL / macOS).
+Complete step-by-step guide to set up ChapsMind on your local machine. Supports **Ubuntu**, **Windows (WSL2)**, and **macOS**.
 
 ---
 
@@ -18,13 +18,13 @@ Step-by-step guide to set up ChapsMind on your local machine (Ubuntu / WSL / mac
   - [7. Configure SSH Access](#7-configure-ssh-access)
 - [Project Setup](#project-setup)
   - [1. Clone the Repository](#1-clone-the-repository)
-  - [2. Add Legacy Remotes](#2-add-legacy-remotes)
-  - [3. Fetch All Remotes](#3-fetch-all-remotes)
-  - [4. Configure the Private Registry (Vuellar)](#4-configure-the-private-registry-vuellar)
-  - [5. Environment Variables](#5-environment-variables)
-  - [6. Initialize the Project](#6-initialize-the-project)
+  - [2. Configure the Private Registry (Vuellar)](#2-configure-the-private-registry-vuellar)
+  - [3. Environment Variables](#3-environment-variables)
+  - [4. Initialize the Project](#4-initialize-the-project)
+  - [5. Initialize Keycloak](#5-initialize-keycloak)
+  - [6. Run Database Migrations](#6-run-database-migrations)
+  - [7. Verify Setup](#7-verify-setup)
 - [Running the Application](#running-the-application)
-- [Keeping In Sync](#keeping-in-sync)
 - [Available Commands](#available-commands)
 - [VS Code Tasks (Terminal)](#vs-code-tasks-terminal)
 - [Services & URLs](#services--urls)
@@ -208,32 +208,7 @@ git clone ssh://git@git.mediaspeech.com:17890/chapsmind/chapsmind.git
 cd chapsmind
 ```
 
-### 2. Add Legacy Remotes
-
-The monorepo uses [git subtree](https://www.atlassian.com/git/tutorials/git-subtree) to sync with legacy repositories. Add the remotes:
-
-```bash
-git remote add origin-front ssh://git@git.mediaspeech.com:17890/mint/screen-front.git
-git remote add origin-global-service ssh://git@git.mediaspeech.com:17890/mint/chapsmind-global-service.git
-git remote add origin-infra ssh://git@git.mediaspeech.com:17890/mint/infra.git
-git remote add origin-screen ssh://git@git.mediaspeech.com:17890/mint/screen-poc.git
-```
-
-### 3. Fetch All Remotes
-
-```bash
-git fetch --all
-```
-
-Then run an initial sync to pull the latest from all legacy repos:
-
-```bash
-task sync
-```
-
-> **Important:** Run `task sync` regularly to stay up-to-date with changes made in legacy repositories.
-
-### 4. Configure the Private Registry (Vuellar)
+### 2. Configure the Private Registry (Vuellar)
 
 The frontend depends on `@owlint/feathers-vue` (Vuellar), hosted on a private npm registry. You need credentials from **Passbolt**.
 
@@ -245,23 +220,28 @@ Look for the entry named **CHAPSMIND_VUELLAR**. You will need:
 - `OWLINT_REGISTRY_URL` — the private registry URL
 - `OWLINT_DEPLOY_KEY` — the authentication token
 
-**Step 2:** Run the interactive setup:
+**Step 2:** Add the credentials to your `.env` file:
+
+```bash
+# Copy .env.example first if you haven't
+cp .env.example .env
+
+# Edit .env and set the registry credentials
+# OWLINT_REGISTRY_URL=<url-from-passbolt>
+# OWLINT_DEPLOY_KEY=<key-from-passbolt>
+```
+
+> **Important:** These environment variables are required for Docker builds. Without them, `task up` will fail.
+
+**Step 3:** Configure the local frontend `.yarnrc.yml`:
 
 ```bash
 task front:setup-yarnrc
 ```
 
-This will prompt you for `OWLINT_REGISTRY_URL` and `OWLINT_DEPLOY_KEY`, then generate `apps/front/.yarnrc.yml` from the template.
+This generates `apps/front/.yarnrc.yml` from the template using the credentials from your environment or prompting you interactively.
 
-Alternatively, set environment variables before running:
-
-```bash
-export OWLINT_REGISTRY_URL="<url-from-passbolt>"
-export OWLINT_DEPLOY_KEY="<key-from-passbolt>"
-task front:setup-yarnrc
-```
-
-### 5. Environment Variables
+### 3. Environment Variables
 
 Copy the example environment file and adjust values as needed:
 
@@ -279,7 +259,7 @@ Key variables to review:
 
 > Most defaults work out of the box for local development. Only the values marked `changeme` need attention.
 
-### 6. Initialize the Project
+### 4. Initialize the Project
 
 Run the one-command setup:
 
@@ -295,45 +275,94 @@ This will:
 4. Build and start all Docker services
 5. Display available commands
 
-After init completes, run database migrations:
+### 5. Initialize Keycloak
+
+After Docker services are running, initialize Keycloak with the realm, clients, and test users:
+
+```bash
+cd infra && ./scripts/init-keycloak.sh && cd ..
+```
+
+This script:
+- Creates the `chapsmind` realm
+- Configures OAuth clients for frontend and backend
+- Creates test users with different permission levels
+
+### 6. Run Database Migrations
+
+Apply database migrations:
 
 ```bash
 task migrate
 ```
 
+### 7. Verify Setup
+
+Check all services are running correctly:
+
+```bash
+# Check container status
+docker compose -f infra/compose.yaml -f infra/compose.local.yaml ps
+
+# All containers should show "healthy" or "running"
+```
+
+Test the services:
+
+| Service | URL | Expected |
+|---------|-----|----------|
+| Frontend | http://localhost:3000 | Login page |
+| API Docs | http://localhost:8000/docs | Swagger UI |
+| Keycloak | http://localhost:8080 | Keycloak admin console |
+| RabbitMQ | http://localhost:15672 | RabbitMQ dashboard |
+
 ---
 
 ## Running the Application
+
+### First-Time Setup (Full)
+
+For a complete first-time setup with Keycloak initialization:
+
+```bash
+# Start all services
+task up
+
+# Wait for services to be healthy (check status)
+docker compose -f infra/compose.yaml -f infra/compose.local.yaml ps
+
+# Initialize Keycloak (creates realm, clients, test users)
+cd infra && ./scripts/init-keycloak.sh && cd ..
+
+# Run database migrations
+task migrate
+
+# (Optional) Seed sample data
+task seed
+```
+
+### Daily Usage
 
 ```bash
 # Start all services
 task up
 
 # Open the app
-# http://localhost:3000
+# Frontend: http://localhost:3000
+# API Docs: http://localhost:8000/docs
+# Keycloak: http://localhost:8080
 ```
 
-To stop:
+### Stopping Services
 
 ```bash
 task down
 ```
 
----
-
-## Keeping In Sync
-
-Legacy repositories (front, screen, global-service, infra) are synced into the monorepo via `git subtree`. Run this **regularly** (e.g., at the start of each workday):
+### Restarting Services
 
 ```bash
-task sync
-```
-
-To sync a single module:
-
-```bash
-task sync:module -- front
-task sync:module -- screen
+task restart
 ```
 
 ---
@@ -385,7 +414,6 @@ Run `task` with no arguments to see all available commands. Here are the most co
 |---------|-------------|
 | `task lint` | Lint all projects |
 | `task test` | Run all tests |
-| `task sync` | Pull latest from all legacy repos |
 
 ---
 
@@ -455,15 +483,17 @@ The project includes pre-configured VS Code tasks that you can run directly from
 
 Once `task up` is running, these services are available:
 
-| Service | URL | Description |
+| Service | URL | Credentials |
 |---------|-----|-------------|
-| Frontend | http://localhost:3000 | Vue.js application |
-| Backend API | http://localhost:8000/api | FastAPI endpoints |
-| API Docs (Swagger) | http://localhost:8000/docs | Interactive API documentation |
-| Celery Flower | http://localhost:5555 | Background task monitoring |
-| RabbitMQ Admin | http://localhost:15672 | Message broker (guest / guest) |
+| Frontend | http://localhost:3000 | See [Test Users](#test-users) below |
+| Backend API | http://localhost:8000/api | Bearer token from Keycloak |
+| API Docs (Swagger) | http://localhost:8000/docs | - |
+| Keycloak Admin | http://localhost:8080 | admin / admin |
+| Celery Flower | http://localhost:5555 | admin / admin |
+| RabbitMQ Admin | http://localhost:15672 | guest / guest |
+| Global Service | http://localhost:8001 | Internal service |
 
-Authentication is handled via **Keycloak** (integration server at `https://sso.dwcode.team/auth`).
+> **Note:** Authentication is handled via the local Keycloak instance at `http://localhost:8080`.
 
 ---
 
@@ -487,19 +517,25 @@ All test users belong to **Organization 1** (ChapsVision). Use these to test dif
 ### Docker won't start
 
 ```bash
-# Make sure Docker daemon is running (Ubuntu / WSL)
+# Ubuntu / WSL: Start Docker daemon
 sudo service docker start
 
-# macOS / Windows: Ensure Docker Desktop is running
-# macOS: open /Applications/Docker.app
-# Windows: Ensure Docker Desktop is running and WSL integration is enabled
+# Check if Docker is running
+docker info
+
+# macOS: Open Docker Desktop
+open /Applications/Docker.app
+
+# Windows: Ensure Docker Desktop is running with WSL2 backend enabled
+# Settings > Resources > WSL Integration > Enable for your distro
 ```
 
 ### Containers fail to build
 
 ```bash
-# Rebuild from scratch
+# Clean rebuild from scratch
 task down
+docker system prune -f
 task up
 ```
 
@@ -507,6 +543,7 @@ task up
 
 ```bash
 docker compose -f infra/compose.yaml -f infra/compose.local.yaml down -v
+docker system prune -f
 task up
 task migrate
 ```
@@ -517,17 +554,26 @@ task migrate
 # Check what's using a port (macOS / Linux)
 lsof -i :3000
 lsof -i :8000
+lsof -i :8080
 
 # Ubuntu / WSL alternative
-ss -tlnp | grep -E '3000|8000'
+ss -tlnp | grep -E '3000|8000|8080'
+
+# Kill process using a port (replace PID)
+kill -9 <PID>
 ```
 
 ### Yarn install fails (registry auth)
 
-Make sure `apps/front/.yarnrc.yml` is correctly configured with valid credentials. Re-run:
-
 ```bash
+# Re-configure registry credentials
 task front:setup-yarnrc
+
+# Clear Yarn cache and retry
+cd apps/front && yarn cache clean && yarn install
+
+# Verify .yarnrc.yml exists and has correct values
+cat apps/front/.yarnrc.yml
 ```
 
 ### `task` command not found
@@ -538,6 +584,35 @@ sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/b
 
 # macOS: Reinstall via Homebrew
 brew install go-task
+
+# Verify installation
+task --version
+```
+
+### `jq` command not found
+
+```bash
+# Ubuntu / WSL
+sudo apt-get update && sudo apt-get install -y jq
+
+# macOS
+brew install jq
+
+# Verify installation
+jq --version
+```
+
+### `corepack` or Yarn issues
+
+```bash
+# Enable corepack
+corepack enable
+
+# If Yarn version is wrong, force it
+corepack prepare yarn@4.9.1 --activate
+
+# Verify
+yarn --version  # Should be 4.9.1
 ```
 
 ### SSH connection refused
@@ -549,15 +624,94 @@ ssh -T -p 17890 git@git.mediaspeech.com
 # If it fails, check your SSH key is added to GitLab and the agent is running
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
+
+# Verify your key is loaded
+ssh-add -l
 ```
 
-### `task sync` fails with merge conflicts
+### Keycloak not accessible
 
 ```bash
-# Sync pulls via git subtree, which can conflict.
-# Resolve conflicts manually, then commit:
-git add -A
-git commit -m "resolve sync conflicts"
+# Check if Keycloak container is running
+docker compose -f infra/compose.yaml -f infra/compose.local.yaml ps keycloak
+
+# View Keycloak logs
+task logs:service -- keycloak
+
+# Restart Keycloak
+docker compose -f infra/compose.yaml -f infra/compose.local.yaml restart keycloak
+```
+
+### Database connection issues
+
+```bash
+# Check if database is healthy
+docker compose -f infra/compose.yaml -f infra/compose.local.yaml ps db
+
+# View database logs
+task logs:service -- db
+
+# Connect to database directly
+task db:shell
+```
+
+### Backend API not responding
+
+```bash
+# Check screen container status
+docker compose -f infra/compose.yaml -f infra/compose.local.yaml ps screen
+
+# View backend logs
+task logs:service -- screen
+
+# Restart backend
+docker compose -f infra/compose.yaml -f infra/compose.local.yaml restart screen
+
+# Check if migrations are up to date
+task migrate:status
+```
+
+### Frontend not loading
+
+```bash
+# If using task front:dev (local dev server)
+cd apps/front && yarn dev
+
+# Check for port conflicts
+lsof -i :3000
+lsof -i :5173
+
+# Reinstall dependencies
+cd apps/front && rm -rf node_modules && yarn install
+```
+
+### WSL-Specific Issues
+
+```bash
+# If Docker commands hang, restart WSL
+wsl --shutdown
+# Then reopen Ubuntu terminal
+
+# If DNS doesn't work in WSL
+sudo rm /etc/resolv.conf
+sudo bash -c 'echo "nameserver 8.8.8.8" > /etc/resolv.conf'
+sudo chattr +i /etc/resolv.conf
+
+# Check WSL version (should be 2)
+wsl -l -v
+```
+
+### macOS-Specific Issues
+
+```bash
+# If Docker Desktop is slow, increase resources
+# Docker Desktop > Settings > Resources > Memory (at least 4GB)
+
+# If brew commands fail
+brew update && brew upgrade
+
+# Reset Homebrew if corrupted
+brew doctor
 ```
 
 ---
@@ -571,6 +725,7 @@ git commit -m "resolve sync conflicts"
 | Tech Stack | [`agent-os/product/tech-stack.md`](../agent-os/product/tech-stack.md) | Technology choices and rationale |
 | Coding Standards | [`agent-os/standards/`](../agent-os/standards/) | Development conventions |
 | AI Assistant Guide | [`CLAUDE.md`](../CLAUDE.md) | Claude Code configuration and project rules |
+| Claude Setup Prompts | [`docs/claude-setup-prompt.md`](claude-setup-prompt.md) | AI-assisted setup prompts for Claude Code |
 
 ---
 

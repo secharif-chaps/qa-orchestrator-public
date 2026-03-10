@@ -2,7 +2,7 @@
 version: '3'
 
 vars:
-  COMPOSE: docker compose -f infra/compose.yaml -f infra/compose.local.yaml
+  COMPOSE: docker compose --env-file .env -f infra/compose.yaml -f infra/compose.local.yaml
 
 tasks:
   # ─── Setup ─────────────────────────────────────────
@@ -12,6 +12,8 @@ tasks:
       - test -f .env || cp .env.example .env && echo "Created .env from .env.example"
       - task: front:setup-yarnrc
       - cd apps/front && yarn install
+      # Build screen image first to avoid parallel build conflicts
+      - "{{.COMPOSE}} build screen"
       - "{{.COMPOSE}} --profile frontend up -d --build"
       - echo ""
       - echo "Ready! Run 'task' for available commands."
@@ -45,7 +47,11 @@ tasks:
   # ─── Infrastructure ────────────────────────────────
   up:
     desc: Start all services (docker compose up)
-    cmd: "{{.COMPOSE}} up -d --build"
+    cmds:
+      # Build screen image first to avoid parallel build conflicts
+      # (screen, screen_celery_worker, screen_celery_flower share the same image)
+      - "{{.COMPOSE}} build screen"
+      - "{{.COMPOSE}} up -d --build"
 
   down:
     desc: Stop all services

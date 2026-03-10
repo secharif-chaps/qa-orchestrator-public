@@ -72,7 +72,8 @@ const chartOptions = computed(() => ({
       padding: 12,
       callbacks: {
         label: (context: TooltipItem<'bar'>) => {
-          return `${context.parsed.y.toLocaleString()} crédits`
+          const value = context.parsed.y ?? 0
+          return `${value.toLocaleString()} crédits`
         },
       },
     },

@@ -62,9 +62,9 @@ import { useRoute } from 'vue-router'
 
 const { d, t } = useI18n()
 
-const route = useRoute()
+const route = useRoute('/target/(watch_files)/[id]/radar/timeline')
 
-const watchFileId = computed(() => route.params.id as string)
+const watchFileId = computed(() => route.params.id)
 
 const { allEvents, hasMore, isLoadingMore, loadMoreEvents, isInitialLoading } =
   useWatchFileEventsInfiniteQuery(watchFileId)

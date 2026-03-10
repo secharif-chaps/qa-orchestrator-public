@@ -110,13 +110,13 @@
                 <Tag
                   v-if="folder.is_owner"
                   :label="$t('folder.permissions.owner', 'Owner')"
-                  intent="primary"
+                  intent="success"
                   size="xs"
                 />
                 <Tag
                   v-else-if="folder.share_role === 'writer'"
                   :label="$t('folder.permissions.writer', 'Writer')"
-                  intent="secondary"
+                  intent="info"
                   size="xs"
                 />
               </div>
@@ -194,20 +194,14 @@ const {
   data: foldersData,
   isLoading: isLoadingFolders,
   error: folderError,
-} = useQuery(
-  foldersQuery,
-  () => ({
-    filters: {
-      page: 1,
-      size: 100,
-      name: debouncedSearchQuery.value,
-      archived: false,
-    },
-  }),
-  {
-    enabled: computed(() => props.displayModal),
+} = useQuery(foldersQuery, () => ({
+  filters: {
+    page: 1,
+    size: 100,
+    name: debouncedSearchQuery.value,
+    archived: false,
   },
-)
+}))
 
 const writableFolders = computed(() => {
   if (!foldersData.value) {

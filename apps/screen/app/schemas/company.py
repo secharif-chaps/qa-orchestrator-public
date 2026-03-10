@@ -114,7 +114,43 @@ class CompanyBase(BaseModel):
 
 
 class CompanyCreate(CompanyBase):
-    pass  # Only inherits name and website from CompanyBase
+    # Optional callback URL for Dify workflows (used in dev mode with tunnels)
+    callback_base_url: Optional[str] = Field(
+        None,
+        description="Base URL for Dify callbacks (optional, for dev mode with tunnels)"
+    )
+
+    @field_validator('callback_base_url')
+    @classmethod
+    def validate_callback_base_url(cls, v: str | None) -> str | None:
+        """Validate callback_base_url to only allow localtunnel URLs.
+
+        This field is only used in dev mode with localtunnel for Dify callbacks.
+        For security, we only allow localtunnel URLs (*.loca.lt).
+
+        Args:
+            v: Callback URL to validate
+
+        Returns:
+            Validated URL or None
+
+        Raises:
+            ValueError: If URL is not a valid localtunnel URL
+        """
+        if v is None:
+            return v
+
+        v = v.strip()
+        if not v:
+            return None
+
+        # Only allow localtunnel URLs for security
+        if not v.startswith('https://') or '.loca.lt' not in v:
+            raise ValueError(
+                'callback_base_url must be a localtunnel URL (https://*.loca.lt)'
+            )
+
+        return v
 
 
 class CompanyUpdate(BaseModel):

@@ -266,11 +266,12 @@ import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import { useQuery } from '@pinia/colada'
 import { computed, inject, ref } from 'vue'
+import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-const route = useRoute()
+const route = useRoute('/folders/[folderId]/companies/[companyId]/press')
 
-const companyId = computed(() => route.params.companyId as string)
+const companyId = computed(() => route.params.companyId)
 
 const { data: tasks } = useQuery(companyTasksQuery, () => ({
   companyId: companyId.value,

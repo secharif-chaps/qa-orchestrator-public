@@ -94,11 +94,11 @@ import ProfileTabPartnersLabels from '@/components/company/profile/ProfileTabPar
 import ProfileTabDigitalStrategy from '@/components/company/profile/ProfileTabDigitalStrategy.vue'
 import Card from '@/components/ui/Card.vue'
 
-const route = useRoute()
+const route = useRoute('/folders/[folderId]/companies/[companyId]/profile')
 const router = useRouter()
 const { t } = useI18n()
 
-const companyId = computed(() => route.params.companyId as string)
+const companyId = computed(() => route.params.companyId)
 
 const { data: tasks } = useQuery(companyTasksQuery, () => ({
   companyId: companyId.value,
@@ -124,7 +124,8 @@ const hasAnyProfileData = computed(() => {
   if (!comp) return false
 
   // Check if any profile-related data exists (excluding CSR as it has its own section)
-  return !!(comp.profile || comp.digital || comp.establishment || comp.employees || comp.revenue)
+  // Profile contains nested fields like establishmentYear, employeeCount, revenue
+  return !!(comp.profile || comp.digital)
 })
 
 // Tab configuration

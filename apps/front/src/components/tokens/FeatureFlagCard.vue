@@ -41,6 +41,7 @@
       <!-- URL Input for Discover flag (shown when enabled) -->
       <div v-if="isDiscoverFlag && isEnabled" class="flex flex-col gap-2">
         <Input
+          id="discover-url-input"
           v-model="urlInput"
           type="url"
           :label="$t('featureFlags.discover.urlLabel', 'External URL')"

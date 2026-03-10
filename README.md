@@ -180,7 +180,7 @@ task down
 task up
 
 # Full reset (removes volumes and data)
-docker compose -f infra/docker-compose.yml -f infra/docker-compose.local.yml down -v
+docker compose -f infra/compose.yaml -f infra/compose.local.yaml down -v
 task up
 task migrate
 ```

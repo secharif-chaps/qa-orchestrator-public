@@ -1,4 +1,57 @@
 services:
+  # LocalTunnel for Dify callbacks (local dev only)
+  # Creates a public URL that Dify can call back to your local backend
+  # No account or setup required - just works!
+  #
+  # START ON DEMAND: docker compose --profile tunnel up -d tunnel
+  # STOP: docker compose --profile tunnel stop tunnel
+  #
+  # Optional: Set TUNNEL_SUBDOMAIN in infra/.env for a consistent URL
+  # Example: TUNNEL_SUBDOMAIN=chapsmind-dev-yourname
+  #
+  tunnel:
+    profiles:
+      - tunnel  # Only start on demand with --profile tunnel
+    image: node:20-alpine
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "Installing localtunnel..."
+        npm install -g localtunnel
+        rm -f /tunnel/url
+
+        SUBDOMAIN_ARG=""
+        if [ -n "$$TUNNEL_SUBDOMAIN" ]; then
+          SUBDOMAIN_ARG="--subdomain $$TUNNEL_SUBDOMAIN"
+          echo "Using subdomain: $$TUNNEL_SUBDOMAIN"
+        fi
+
+        echo "Starting localtunnel to screen:8000..."
+
+        # Start localtunnel and capture output
+        lt --host https://localtunnel.me --port 8000 --local-host screen $$SUBDOMAIN_ARG 2>&1 | while read line; do
+          echo "$$line"
+          # Extract URL from output (format: "your url is: https://xxx.loca.lt")
+          URL=$$(echo "$$line" | grep -oE 'https://[a-zA-Z0-9-]+\.loca\.lt' | head -1)
+          if [ -n "$$URL" ] && [ ! -f /tunnel/url ]; then
+            echo ""
+            echo "=============================================="
+            echo "TUNNEL URL READY: $$URL"
+            echo "=============================================="
+            echo "$$URL" > /tunnel/url
+          fi
+        done
+    environment:
+      TUNNEL_SUBDOMAIN: ${TUNNEL_SUBDOMAIN:-}
+    volumes:
+      - tunnel_url:/tunnel
+    depends_on:
+      screen:
+        condition: service_started
+    networks:
+      - chapsmind-network
+    restart: unless-stopped
+
   # Disable nginx for local development
   nginx:
     profiles:
@@ -45,6 +98,8 @@ services:
       # Override CORS to allow frontend on port 3000
       CORS_ORIGIN: http://localhost:3000
       BACKEND_BASE_URL: http://localhost:8000/api
+      # Tunnel URL file location (for Dify callbacks via localtunnel)
+      TUNNEL_URL_FILE: /tunnel/url
       LOG_LEVEL: INFO  # Use INFO level for local development
       # Local Keycloak settings
       KEYCLOAK_SERVER_URL: http://keycloak:8080
@@ -69,6 +124,8 @@ services:
       - ../apps/screen/scripts:/app/scripts
       # Mount tests directory for running tests in Docker
       - ../apps/screen/tests:/app/tests
+      # Tunnel URL shared volume (for Dify callbacks)
+      - tunnel_url:/tunnel:ro
 
   # Override celery worker to use local code
   screen_celery_worker:
@@ -78,11 +135,15 @@ services:
     image: chapsmind-screen:local
     environment:
       BACKEND_BASE_URL: http://localhost:8000/api
+      # Tunnel URL file location (for Dify callbacks via localtunnel)
+      TUNNEL_URL_FILE: /tunnel/url
       LOG_LEVEL: INFO  # Use INFO level for local development
     volumes:
       # Mount local code for hot-reload
       - ../apps/screen/app:/app/app
       - ../apps/screen/alembic:/app/alembic
+      # Tunnel URL shared volume (for Dify callbacks)
+      - tunnel_url:/tunnel:ro
 
   # Override flower to use local code
   screen_celery_flower:
@@ -140,3 +201,8 @@ secrets:
     environment: OWLINT_REGISTRY_URL
   OWLINT_DEPLOY_KEY:
     environment: OWLINT_DEPLOY_KEY
+
+# Volumes for local development
+volumes:
+  tunnel_url:
+    # Shared volume for localtunnel URL between tunnel and backend services

@@ -80,7 +80,7 @@
           tag="div"
           class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3"
         >
-          <JobCard v-for="job in filteredJobs" :key="job.title" :job="job" />
+          <JobCard v-for="job in filteredJobs" :key="extractStringValue(job.title)" :job="job" />
 
           <!-- No results message -->
           <div
@@ -115,9 +115,9 @@ import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 import { Searchbar } from '@owlint/feathers-vue'
 import NoData from '@/components/ui/NoData.vue'
 
-const route = useRoute()
+const route = useRoute('/folders/[folderId]/companies/[companyId]/jobs')
 
-const companyId = computed(() => route.params.companyId as string)
+const companyId = computed(() => route.params.companyId)
 
 // Inject selected language from parent [companyId].vue
 const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))

@@ -51,11 +51,12 @@
 import { ref, computed } from 'vue'
 
 interface Props {
-  modelValue: string
+  modelValue?: string
   color?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  modelValue: 'fa-jelly-duo fa-folder',
   color: 'blue',
 })
 

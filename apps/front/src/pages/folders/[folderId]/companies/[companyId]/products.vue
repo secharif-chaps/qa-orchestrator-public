@@ -83,16 +83,16 @@ import ProductListItem from '@/components/company/products/ProductListItem.vue'
 import ChapseAlert from '@/components/ui/ChapseAlert.vue'
 import NoData from '@/components/ui/NoData.vue'
 import { useRoute } from 'vue-router'
-import { computed, ref, inject } from 'vue'
+import { computed, ref, inject, type Ref } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import SectionErrorState from '@/components/company/SectionErrorState.vue'
 import SectionLoadingState from '@/components/company/SectionLoadingState.vue'
 
-const route = useRoute()
+const route = useRoute('/folders/[folderId]/companies/[companyId]/products')
 
-const companyId = computed(() => route.params.companyId as string)
+const companyId = computed(() => route.params.companyId)
 
 const { data: tasks } = useQuery(companyTasksQuery, () => ({
   companyId: companyId.value,

@@ -45,6 +45,7 @@ function createMockFolder(overrides: Partial<Folder> = {}): Folder {
     owner: 'owneruser',
     organization_id: 'org-1',
     owner_id: 'owner-user-id',
+    owner_username: 'owneruser',
     is_owner: false,
     share_role: null,
     items: [],

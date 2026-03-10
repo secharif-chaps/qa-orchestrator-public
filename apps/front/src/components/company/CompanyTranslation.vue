@@ -91,13 +91,10 @@ const { t } = useI18n()
 const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
 
 // Organization feature flags - check if translation is enabled
-const { data: featureFlagsData } = useQuery(
-  organizationFeatureFlagsQuery,
-  () => ({ organizationId: currentOrganization.value?.id || '' }),
-  {
-    enabled: () => !!currentOrganization.value?.id,
-  },
-)
+const { data: featureFlagsData } = useQuery({
+  ...organizationFeatureFlagsQuery({ organizationId: currentOrganization.value?.id || '' }),
+  enabled: () => !!currentOrganization.value?.id,
+})
 
 // Check if translation feature flag is enabled for the organization
 const isTranslationEnabled = computed(() => {
@@ -116,14 +113,10 @@ const optimisticTranslations = ref<Map<string, { job: TranslationJob | null }>>(
 let pollingInterval: ReturnType<typeof setInterval> | null = null
 
 // Translation status for company with refetchInterval for active jobs
-const { data: translationStatus, refetch: refetchStatus } = useQuery(
-  companyTranslationStatusQuery,
-  () => ({ companyId: props.companyId }),
-  {
-    enabled: () =>
-      !!props.companyId && props.companyId !== 'null' && props.companyId !== 'undefined',
-  },
-)
+const { data: translationStatus, refetch: refetchStatus } = useQuery({
+  ...companyTranslationStatusQuery({ companyId: props.companyId }),
+  enabled: () => !!props.companyId && props.companyId !== 'null' && props.companyId !== 'undefined',
+})
 
 /**
  * Check if there are any active translation jobs (pending or running).

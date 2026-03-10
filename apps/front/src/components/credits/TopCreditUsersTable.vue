@@ -1,5 +1,5 @@
 <template>
-  <Table :fields="fields" :items="users" :row-key="(item) => item.userId">
+  <Table :fields="fields" :items="users" :row-key="(item: TopCreditUser) => item.userId">
     <!-- Rank column with medal styling -->
     <template #cell(rank)="{ item }">
       <td class="px-4 py-3 text-center">

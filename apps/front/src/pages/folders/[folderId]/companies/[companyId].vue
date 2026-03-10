@@ -90,13 +90,13 @@ import { useRefreshCompany } from '@/mutations/companies'
 import { companyTasksQuery } from '@/queries/tasks'
 import { formatFullDate } from '@/utils/time'
 
-const route = useRoute()
+const route = useRoute('/folders/[folderId]/companies/[companyId]')
 const router = useRouter()
 const { t } = useI18n()
 const authStore = useAuthStore()
 
-const companyId = computed(() => (route.params as { companyId: string }).companyId)
-const folderId = computed(() => (route.params as { folderId: string }).folderId)
+const companyId = computed(() => route.params.companyId)
+const folderId = computed(() => route.params.folderId)
 
 // Selected language for viewing translated content
 const selectedLanguage = ref<string | undefined>(undefined)
@@ -116,12 +116,14 @@ const {
   data: company,
   error,
   status,
-} = useQuery(companyByIdQuery, () => ({ id: companyId.value, language: selectedLanguage.value }), {
+} = useQuery({
+  ...companyByIdQuery({ id: companyId.value, language: selectedLanguage.value }),
   enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
 })
 
 // Get company tasks
-const { data: tasks } = useQuery(companyTasksQuery, () => ({ companyId: companyId.value }), {
+const { data: tasks } = useQuery({
+  ...companyTasksQuery({ companyId: companyId.value }),
   enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
 })
 
@@ -168,9 +170,14 @@ watch(company, () => {
 // Handle 404 errors - redirect to companies list if company doesn't exist
 watch([error, status], ([newError, newStatus]) => {
   // Check for 404 error in multiple possible formats
+  const err = newError as {
+    status?: number
+    response?: { status: number }
+    message?: string
+  } | null
   if (
-    (newError && (newError.status === 404 || newError.response?.status === 404)) ||
-    (newStatus === 'error' && newError && newError.message?.includes('404'))
+    (err && (err.status === 404 || err.response?.status === 404)) ||
+    (newStatus === 'error' && err && err.message?.includes('404'))
   ) {
     // Company not found, redirect to companies list
     router.push(`/folders/${folderId.value}`)

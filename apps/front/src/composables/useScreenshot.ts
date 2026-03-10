@@ -2,12 +2,20 @@ import { toJpeg as ElToJpg, toPng as ElToPng } from 'html-to-image'
 import { ref } from 'vue'
 import type { Options as HTMLToImageOptions } from 'html-to-image/es/types'
 
+type ImageType = 'png' | 'jpeg'
+
+interface CaptureOptions extends HTMLToImageOptions {
+  fileName?: string
+  type?: ImageType
+  shouldDownload?: boolean
+}
+
 export function useScreenshot() {
   const dataUrl = ref<string>('')
   const imgType = ref<ImageType>('png')
-  const error = ref()
+  const error = ref<Error | null>(null)
 
-  async function capture(el: HTMLElement, options = {}) {
+  async function capture(el: HTMLElement, options: CaptureOptions = {}) {
     let data
 
     const fileName = options.fileName ?? `vue-flow-screenshot-${Date.now()}`

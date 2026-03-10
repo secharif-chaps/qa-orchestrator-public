@@ -1,6 +1,6 @@
-import type { DateTimeFormats } from 'vue-i18n'
+import type { DateTimeFormat } from '@intlify/core-base'
 
-export const datetimeFormats: DateTimeFormats = {
+export const datetimeFormats: Record<string, DateTimeFormat> = {
   'en-US': {
     short: {
       year: 'numeric',

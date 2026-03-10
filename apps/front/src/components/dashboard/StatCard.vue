@@ -23,33 +23,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const props = defineProps({
-  title: {
-    type: String,
-    required: true,
-  },
-  value: {
-    type: [Number, String, undefined],
-    required: true,
-  },
-  subtitle: {
-    type: String,
-    default: null,
-  },
-  icon: {
-    type: String,
-    required: true,
-  },
-  color: {
-    type: String,
-    default: 'indigo',
-    validator: (value: string) =>
-      ['blue', 'green', 'purple', 'orange', 'red', 'yellow', 'indigo'].includes(value),
-  },
-  loading: {
-    type: Boolean,
-    default: false,
-  },
+interface Props {
+  title: string
+  value: number | string | undefined
+  subtitle?: string | null
+  icon: string
+  color?: 'blue' | 'green' | 'purple' | 'orange' | 'red' | 'yellow' | 'indigo'
+  loading?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  subtitle: null,
+  color: 'indigo',
+  loading: false,
 })
 
 // Computed properties for styling

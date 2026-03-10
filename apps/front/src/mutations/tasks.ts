@@ -39,7 +39,7 @@ export const useCreateTask = defineMutation(() => {
 export const useRestartTask = () => {
   const taskId = ref<number | null>(null)
   const route = useRoute()
-  const companyId = computed(() => route.params.companyId as string)
+  const companyId = computed(() => (route.params as { companyId?: string }).companyId ?? '')
 
   console.log('🔄 restarting Task ID:', taskId.value)
 

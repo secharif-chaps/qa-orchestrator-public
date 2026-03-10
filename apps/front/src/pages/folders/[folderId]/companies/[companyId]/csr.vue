@@ -34,7 +34,7 @@
         <p class="text-secondary text-sm leading-relaxed">
           {{ responsibilityValue }}
           <Source
-            v-if="company?.csr?.responsibility"
+            v-if="company?.csr?.responsibility && typeof company.csr.responsibility !== 'string'"
             :source="getSourcedSource(company.csr.responsibility)"
           />
         </p>
@@ -252,9 +252,9 @@ import { computed, inject, ref } from 'vue'
 import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-const route = useRoute()
+const route = useRoute('/folders/[folderId]/companies/[companyId]/csr')
 
-const companyId = computed(() => route.params.companyId as string)
+const companyId = computed(() => route.params.companyId)
 
 // Inject selected language from parent [companyId].vue
 const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))

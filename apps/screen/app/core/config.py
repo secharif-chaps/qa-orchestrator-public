@@ -74,6 +74,10 @@ class Settings(BaseSettings):
     # WARNING: Default value is for dev/test only. Must be set via environment variable in production.
     ENCRYPTION_KEY: str = "8sFxzWzVK2M7d3-KN7TqPmzXH0Yw5FqGhL9Qx1Jb2c4="
 
+    # Tunnel URL file path (for dev mode with localtunnel)
+    # In production, this should not be set or the file won't exist
+    TUNNEL_URL_FILE: Optional[str] = None
+
 
 settings = Settings()
 
@@ -83,3 +87,40 @@ logger.info(f"🔧 CONFIG DEBUG - BACKEND_BASE_URL loaded as: {settings.BACKEND_
 logger.info(f"🔧 CONFIG DEBUG - ENVIRONMENT: {getattr(settings, 'ENVIRONMENT', 'not set')}")
 logger.info(f"🔧 CONFIG DEBUG - .env file path: {os.path.abspath('.env') if os.path.exists('.env') else 'not found'}")
 logger.info(f"🔧 STARTUP CONFIG - BACKEND_BASE_URL: {settings.BACKEND_BASE_URL}")
+
+
+def _read_tunnel_url(file_path: str | None) -> str | None:
+    """Read tunnel URL from file if it exists.
+
+    Args:
+        file_path: Path to the tunnel URL file
+
+    Returns:
+        Tunnel URL if file exists and has content, None otherwise
+    """
+    if not file_path:
+        return None
+    try:
+        if os.path.exists(file_path):
+            with open(file_path) as f:
+                url = f.read().strip()
+                if url:
+                    return url
+    except OSError:
+        pass
+    return None
+
+
+def get_callback_base_url() -> str:
+    """Get the callback base URL for Dify webhooks.
+
+    In dev mode with a tunnel running, returns the tunnel URL.
+    In production (or when no tunnel is available), returns BACKEND_BASE_URL.
+
+    Returns:
+        The callback base URL to use for Dify webhooks
+    """
+    tunnel_url = _read_tunnel_url(settings.TUNNEL_URL_FILE)
+    if tunnel_url:
+        return tunnel_url
+    return settings.BACKEND_BASE_URL

@@ -4,7 +4,7 @@
     <div v-if="isLoading" class="bg-base-100 rounded-lg p-8 text-center shadow-sm">
       <div class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
       <p class="text-secondary">
-        {{ $t('organization.loading', 'Loading organizations...') }}
+        {{ $t('organization.loading') }}
       </p>
     </div>
 
@@ -12,7 +12,7 @@
     <Alert
       v-else-if="error"
       variant="danger"
-      :title="$t('common.error', 'Error')"
+      :title="$t('common.error')"
       :description="errorMessage"
     />
 
@@ -23,12 +23,7 @@
         <div>
           <h1 class="text-2xl font-bold">{{ organization.name }}</h1>
           <p class="text-secondary mt-1">
-            {{
-              $t(
-                'organization.detail.description',
-                'Manage organization settings, tokens, and members',
-              )
-            }}
+            {{ $t('organization.detail.description') }}
           </p>
         </div>
 
@@ -60,18 +55,19 @@ import { Alert, Toggle } from '@owlint/feathers-vue'
 // Queries
 import { organizationByIdQuery } from '@/queries/organization-admin'
 
-const route = useRoute()
+const route = useRoute('/admin/organizations/[organizationId]')
 const router = useRouter()
 const { t } = useI18n()
 
-const organizationId = computed(() => route.params.organizationId as string)
+const organizationId = computed(() => route.params.organizationId)
 
 // Query for organization details
 const {
   data: organization,
   isLoading,
   error,
-} = useQuery(organizationByIdQuery, () => ({ id: organizationId.value }), {
+} = useQuery({
+  ...organizationByIdQuery({ id: organizationId.value }),
   enabled: () =>
     !!organizationId.value &&
     organizationId.value !== 'null' &&
@@ -98,22 +94,22 @@ const sectionOptions = computed(() => [
   {
     value: 'profile',
     icon: 'fas fa-building',
-    label: t('organization.tabs.profile', 'Profile'),
+    label: t('organization.tabs.profile'),
   },
   {
     value: 'tokens',
     icon: 'fas fa-coins',
-    label: t('organization.tabs.tokens', 'Tokens'),
+    label: t('organization.tabs.tokens'),
   },
   {
     value: 'members',
     icon: 'fas fa-users',
-    label: t('organization.tabs.members', 'Members'),
+    label: t('organization.tabs.members'),
   },
   {
     value: 'sources',
     icon: 'fas fa-plug',
-    label: t('organization.tabs.sources', 'Sources'),
+    label: t('organization.tabs.sources'),
   },
 ])
 

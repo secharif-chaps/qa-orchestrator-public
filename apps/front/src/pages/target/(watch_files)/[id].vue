@@ -24,7 +24,7 @@ import { storeToRefs } from 'pinia'
 import { computed, onBeforeUnmount, watch, watchEffect } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 
-const route = useRoute()
+const route = useRoute('/target/(watch_files)/[id]')
 const { activeSubscriptions, unsubscribe } = useMercure()
 
 const watchFileStore = useWatchFileStore()
@@ -34,7 +34,7 @@ const { isUserEditable } = storeToRefs(watchFileStore)
 // Get ID from route params or from store (after silent navigation)
 const routeWatchFileId = computed<string | undefined>(() => {
   const id = route.params.id
-  return Array.isArray(id) ? id[0] : id
+  return id
 })
 
 // CurrentWatchFileId is only set after silent navigation from /new. Not needed otherwise.

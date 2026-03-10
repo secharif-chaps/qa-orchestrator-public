@@ -17,6 +17,6 @@ import SourcesList from '@target/components/watchFiles/ActivitySection/SourceMon
 import WatchFileMonitoring from '@target/components/watchFiles/ActivitySection/WatchFileMonitoring.vue'
 import { useRoute } from 'vue-router'
 
-const route = useRoute()
-const watchFileId = route.params.id as string
+const route = useRoute('/target/(watch_files)/[id]/audit')
+const watchFileId = route.params.id
 </script>
