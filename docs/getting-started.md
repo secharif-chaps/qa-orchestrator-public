@@ -229,6 +229,10 @@ cp .env.example .env
 # Edit .env and set the registry credentials
 # OWLINT_REGISTRY_URL=<url-from-passbolt>
 # OWLINT_DEPLOY_KEY=<key-from-passbolt>
+
+# Export these keys for later
+export OWLINT_REGISTRY_URL="<url-from-passbolt>"
+export OWLINT_DEPLOY_KEY="<key-from-passbolt>"
 ```
 
 > **Important:** These environment variables are required for Docker builds. Without them, `task up` will fail.
@@ -243,7 +247,7 @@ This generates `apps/front/.yarnrc.yml` from the template using the credentials 
 
 ### 3. Environment Variables
 
-Copy the example environment file and adjust values as needed:
+If not already done (you should have made it on previous step), copy the example environment file and adjust values as needed:
 
 ```bash
 cp .env.example .env
@@ -253,8 +257,8 @@ Key variables to review:
 
 | Variable | Default | Notes |
 |----------|---------|-------|
-| `KEYCLOAK_ADMIN_CLIENT_SECRET` | `changeme` | Ask a team member |
-| `DIFY_API_KEY` | `changeme` | Ask a team member |
+| `KEYCLOAK_ADMIN_CLIENT_SECRET` | `changeme` | Not used for the moment. You can keep 'changeme' |
+| `DIFY_API_KEY` | `changeme` | Not used for the moment. You can keep 'changeme' |
 | `ENCRYPTION_KEY` | `changeme` | Generate with: `python3 -c "import secrets; print(secrets.token_hex(32))"` |
 
 > Most defaults work out of the box for local development. Only the values marked `changeme` need attention.
@@ -274,6 +278,15 @@ This will:
 3. Install frontend dependencies (`yarn install`)
 4. Build and start all Docker services
 5. Display available commands
+
+If one service is in error after that, you may want to:
+
+```bash
+# Clean rebuild from scratch
+task down
+docker system prune -f
+task up
+```
 
 ### 5. Initialize Keycloak
 

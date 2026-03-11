@@ -1,0 +1,44 @@
+#!/bin/sh
+# Auto-prepend gitmoji based on conventional commit type
+# Skips if a gitmoji is already present
+
+COMMIT_MSG_FILE="$1"
+COMMIT_SOURCE="$2"
+
+# Don't modify merge commits, squash commits, or amends
+if [ "$COMMIT_SOURCE" = "merge" ] || [ "$COMMIT_SOURCE" = "squash" ] || [ "$COMMIT_SOURCE" = "commit" ]; then
+  exit 0
+fi
+
+FIRST_LINE=$(head -1 "$COMMIT_MSG_FILE")
+
+# Skip if a gitmoji (or any emoji) is already present at the start
+if echo "$FIRST_LINE" | grep -qP '^[\x{1F000}-\x{1FFFF}\x{2600}-\x{27BF}]'; then
+  exit 0
+fi
+
+# Extract type from conventional commit format
+TYPE=$(echo "$FIRST_LINE" | sed -n 's/^\([a-z]*\)[(!)].*/\1/p; s/^\([a-z]*\):.*/\1/p' | head -1)
+
+case "$TYPE" in
+  feat)     EMOJI="✨" ;;
+  fix)      EMOJI="🐛" ;;
+  docs)     EMOJI="📝" ;;
+  style)    EMOJI="🎨" ;;
+  refactor) EMOJI="♻️" ;;
+  perf)     EMOJI="⚡️" ;;
+  test)     EMOJI="✅" ;;
+  build)    EMOJI="🔧" ;;
+  ci)       EMOJI="👷" ;;
+  chore)    EMOJI="🔨" ;;
+  revert)   EMOJI="⏪️" ;;
+  *)        exit 0 ;;
+esac
+
+# Prepend emoji to the first line
+TAIL=$(tail -n +2 "$COMMIT_MSG_FILE")
+if [ -z "$TAIL" ]; then
+  echo "$EMOJI $FIRST_LINE" > "$COMMIT_MSG_FILE"
+else
+  printf '%s\n%s' "$EMOJI $FIRST_LINE" "$TAIL" > "$COMMIT_MSG_FILE"
+fi

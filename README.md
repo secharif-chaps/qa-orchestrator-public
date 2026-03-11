@@ -144,18 +144,83 @@ chore/TAR-xxx-description
 
 ### Commit Format
 
-Uses gitmoji + conventional commits:
+Uses [Gitmoji](https://gitmoji.dev/) + [Conventional Commits](https://www.conventionalcommits.org/).
+
+#### Syntax
 
 ```
-<gitmoji> <type>(<scope>): TAR-xxx <description>
+<gitmoji> <type>[(scope)][!]: TAR-xxx <description>
+
+[body]
+
+[footer(s)]
 ```
 
-Examples:
+#### Types & Gitmoji
+
+| Gitmoji | Type         | Description                                          |
+|---------|--------------|------------------------------------------------------|
+| 🐛      | `fix`        | Bug fix                                              |
+| ✨      | `feat`       | New feature                                          |
+| 🔧      | `build`      | Changes to build system or external dependencies     |
+| 🔨      | `chore`      | Other changes                                        |
+| 👷      | `ci`         | CI configuration and scripts                         |
+| 📝      | `docs`       | Documentation only                                   |
+| ⚡️      | `perf`       | Performance improvement                              |
+| ♻️      | `refactor`   | Code change that neither fixes a bug nor adds a feature |
+| ⏪️      | `revert`     | Reverts a previous commit                            |
+| 🎨      | `style`      | Code formatting, punctuation, etc.                   |
+| ✅      | `test`       | Adding or modifying tests                            |
+
+#### Scope
+
+A tag matching a section of the codebase (e.g., `front`, `screen`, `infra`). Multiple scopes can be separated with `|` if needed (avoid when possible).
+
+#### Description
+
+- Must start with the Jira ticket number: `TAR-xxx`
+- Use imperative mood (`add`, not `adds` or `added`)
+
+#### Body & Footer
+
+- **Body**: optional, free-form. Must be separated by an empty line. Provides additional context beyond the description.
+- **Footer**: optional, strict `Key: Value` format. Separated by an empty line. Used for breaking change details, config notes, etc.
+
+#### Breaking Changes
+
+Mark with `!` before the description. Detail the impact in the footer:
+
 ```
-feat(front): TAR-42 add company search filters
-fix(screen): TAR-15 resolve pagination offset error
-docs: TAR-99 update API endpoint documentation
+💥 feat(screen)!: TAR-56 rework company data model
+
+BREAKING CHANGE: upgrade migration XXX must be run on all existing installs
 ```
+
+#### Examples
+
+```bash
+# Simple fix
+🐛 fix(front): TAR-42 resolve redirect loop on login
+
+# New feature
+✨ feat(screen): TAR-15 add company search filters
+
+# Documentation
+📝 docs: TAR-99 update API endpoint documentation
+
+# Full commit with body and footer
+💥 feat(front)!: TAR-78 add folder sharing with granular permissions
+
+Implement owner/writer/reader roles for shared folders.
+Writers can add companies, readers have view-only access.
+
+BREAKING CHANGE: folder API responses now include sharing metadata
+CONFIG: Set SHARING_ENABLED=true for existing organizations
+```
+
+#### Pre-commit Hook
+
+A commitlint hook rejects any commit that does not follow this syntax. The pre-commit hook also runs ESLint, Prettier and Stylelint on staged files and fixes what it can. If an error can't be auto-fixed, the commit is blocked.
 
 ### Workflow
 
