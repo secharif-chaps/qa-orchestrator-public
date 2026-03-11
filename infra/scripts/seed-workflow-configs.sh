@@ -10,6 +10,8 @@ DC="${DC:-docker compose -f compose.yaml -f compose.local.yaml}"
 echo "🔧 Seeding workflow_configs with Dify API keys..."
 
 $DC exec -T db psql -U postgres -d chapsmind_db << 'EOF'
+SET search_path TO screen_schema;
+
 -- Clear existing configs (if any) and insert fresh data
 TRUNCATE TABLE workflow_configs RESTART IDENTITY CASCADE;
 
