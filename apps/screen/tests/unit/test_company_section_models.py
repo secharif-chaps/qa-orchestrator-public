@@ -7,18 +7,19 @@ These tests verify the core functionality of the company section models:
 4. Timestamps auto-populate on creation
 """
 
+from datetime import datetime, timezone
+
 import pytest
-from datetime import datetime, timezone, timedelta
 
 from app.models.company import Company
 from app.models.company_sections import (
-    CompanyProfile,
-    CompanyDigital,
-    CompanyTimeline,
-    CompanyProducts,
-    CompanyJobs,
     CompanyCsr,
+    CompanyDigital,
+    CompanyJobs,
     CompanyPress,
+    CompanyProducts,
+    CompanyProfile,
+    CompanyTimeline,
 )
 
 
@@ -47,15 +48,12 @@ class TestSectionModelCreation:
             company_id=sample_company.id,
             insights="AI-generated company summary",
             insights_source="Chaps-e",
-            insights_value_fr=None,
             group_name="Test Group Inc",
             group_name_source="https://wikipedia.org/wiki/TestGroup",
             business_line="Technology consulting",
             business_line_source="https://testcompany.com/about",
-            business_line_value_fr=None,
             catchphrase="Innovation through technology",
             catchphrase_source="https://testcompany.com",
-            catchphrase_value_fr=None,
             establishment_year="2010",
             establishment_year_source="https://testcompany.com/about",
             employee_count="500",

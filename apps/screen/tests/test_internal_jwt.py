@@ -9,27 +9,28 @@ Tests cover:
 5. Error handling for missing configuration
 """
 
-import pytest
 import time
+from unittest.mock import MagicMock, patch
+
 import jwt as pyjwt
-from unittest.mock import patch, MagicMock
+import pytest
 from fastapi import Request
 
 from app.core.internal_jwt import (
-    verify_internal_token,
-    validate_source_ip,
-    is_internal_request,
-    verify_internal_request,
+    ALGORITHM,
+    INTERNAL_AUTH_PREFIX,
+    ISSUER,
     InternalJWTError,
+    InternalTokenPayload,
+    IPNotAllowedError,
     TokenExpiredError,
     TokenInvalidError,
-    IPNotAllowedError,
-    InternalTokenPayload,
-    ALGORITHM,
-    ISSUER,
-    INTERNAL_AUTH_PREFIX,
     _get_allowed_networks,
     _get_client_ip,
+    is_internal_request,
+    validate_source_ip,
+    verify_internal_request,
+    verify_internal_token,
 )
 
 
@@ -230,6 +231,7 @@ class TestIPValidation:
         """Test that IP validation is skipped when INTERNAL_ALLOWED_IPS is empty."""
         with patch("app.core.internal_jwt.settings") as mock:
             mock.INTERNAL_ALLOWED_IPS = ""
+            _get_allowed_networks.cache_clear()
 
             request = self._create_mock_request(client_ip="192.168.1.100")
 
@@ -240,6 +242,7 @@ class TestIPValidation:
         """Test that IPs in allowed range are accepted."""
         with patch("app.core.internal_jwt.settings") as mock:
             mock.INTERNAL_ALLOWED_IPS = "192.168.0.0/16,10.0.0.0/8"
+            _get_allowed_networks.cache_clear()
 
             request = self._create_mock_request(client_ip="192.168.1.100")
 
@@ -250,6 +253,7 @@ class TestIPValidation:
         """Test that IPs not in allowed range are rejected."""
         with patch("app.core.internal_jwt.settings") as mock:
             mock.INTERNAL_ALLOWED_IPS = "192.168.0.0/16"
+            _get_allowed_networks.cache_clear()
 
             request = self._create_mock_request(client_ip="10.0.0.1")
 
@@ -260,6 +264,7 @@ class TestIPValidation:
         """Test that X-Forwarded-For header is checked first."""
         with patch("app.core.internal_jwt.settings") as mock:
             mock.INTERNAL_ALLOWED_IPS = "192.168.0.0/16"
+            _get_allowed_networks.cache_clear()
 
             # X-Forwarded-For is in allowed range, but client IP is not
             request = self._create_mock_request(
@@ -274,6 +279,7 @@ class TestIPValidation:
         """Test that X-Real-IP header is used as fallback."""
         with patch("app.core.internal_jwt.settings") as mock:
             mock.INTERNAL_ALLOWED_IPS = "192.168.0.0/16"
+            _get_allowed_networks.cache_clear()
 
             request = self._create_mock_request(
                 client_ip="10.0.0.1",
@@ -287,6 +293,7 @@ class TestIPValidation:
         """Test that invalid IP format is rejected."""
         with patch("app.core.internal_jwt.settings") as mock:
             mock.INTERNAL_ALLOWED_IPS = "192.168.0.0/16"
+            _get_allowed_networks.cache_clear()
 
             request = self._create_mock_request(client_ip="not-an-ip")
 
@@ -297,6 +304,7 @@ class TestIPValidation:
         """Test that missing IP is rejected."""
         with patch("app.core.internal_jwt.settings") as mock:
             mock.INTERNAL_ALLOWED_IPS = "192.168.0.0/16"
+            _get_allowed_networks.cache_clear()
 
             request = self._create_mock_request()  # No IP at all
 

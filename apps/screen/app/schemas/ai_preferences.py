@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class AiPreferencesCreate(BaseModel):
@@ -18,8 +18,7 @@ class AiPreferencesResponse(BaseModel):
     desired_output_text: str
     documentation_text: Optional[str] = None
 
-    class Config:
-        from_attributes = False  # This is a dict response, not a model
+    model_config = ConfigDict(from_attributes=True)
 
 
 class QuickActionResponse(BaseModel):

@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.models.organization import ReferenceType, TransactionType
 
@@ -13,7 +13,7 @@ class TokenBalanceResponse(BaseModel):
     organization_id: str = Field(..., description="Keycloak organization UUID")
     balance: int = Field(..., ge=0, description="Current token balance")
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AddTokensRequest(BaseModel):
@@ -39,7 +39,7 @@ class TokenTransactionRead(BaseModel):
         ..., description="Keycloak user ID who created the transaction"
     )
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PaginatedTokenTransactionResponse(BaseModel):

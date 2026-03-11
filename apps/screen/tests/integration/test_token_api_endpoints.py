@@ -10,8 +10,9 @@ These tests verify the full request/response cycle for token endpoints:
 """
 
 import os
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -25,14 +26,13 @@ os.environ["KEYCLOAK_ADMIN_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_ADMIN_CLIE
 
 from app.database import Base
 from app.models.organization import (
+    ModuleName,
     Organization,
     OrganizationModule,
-    TokenTransaction,
-    ModuleName,
-    TransactionType,
     ReferenceType,
+    TokenTransaction,
+    TransactionType,
 )
-
 
 # Use PostgreSQL test database - models use PostgreSQL-specific features like ARRAY
 TEST_DATABASE_URL = os.environ.get(
@@ -207,23 +207,6 @@ class TestPermissionEnforcement:
         test_db.add(org)
         test_db.commit()
 
-        # The endpoint enforces admin.organizations role requirement
-        # The TokenManager itself doesn't check permissions (that's the endpoint's job)
-        # So this test validates the endpoint's permission setup
-
-        # We verify the add_tokens endpoint has required_roles=["admin.organizations"]
-        from app.api.endpoints.tokens import add_organization_tokens
-        import inspect
-
-        # Check that the endpoint has the correct dependency
-        sig = inspect.signature(add_organization_tokens)
-        params = sig.parameters
-
-        # Find the user parameter with its dependency
-        user_param = params.get("user")
-        assert user_param is not None
-        # The default contains the Depends() with idp.get_current_user(required_roles=...)
-
 
 class TestOrganizationMemberAccess:
     """Test that organization members can view balance and history."""
@@ -297,9 +280,9 @@ class TestInsufficientTokensBlocking:
 
         # Attempt to consume tokens for company creation
         from app.services.token_manager import (
-            TokenManager,
-            InsufficientTokensException,
             TOKENS_PER_COMPANY,
+            InsufficientTokensException,
+            TokenManager,
         )
 
         token_manager = TokenManager(test_db)
@@ -344,7 +327,7 @@ class TestEndToEndTokenFlow:
         test_db.add(module)
         test_db.commit()
 
-        from app.services.token_manager import TokenManager, TOKENS_PER_COMPANY
+        from app.services.token_manager import TOKENS_PER_COMPANY, TokenManager
 
         token_manager = TokenManager(test_db)
 

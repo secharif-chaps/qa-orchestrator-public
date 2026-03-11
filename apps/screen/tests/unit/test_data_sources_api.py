@@ -1,10 +1,12 @@
 import inspect
+
+from app.api.endpoints.data_sources import update_data_source_config
+from app.core.encryption import decrypt
 from app.models.company import Company
 from app.models.organization import FeatureFlag
-from app.services.dify import DifyService
 from app.services.company import CompanyService
-from app.services.feature_flags import update_feature_config, obfuscate_api_key, has_feature, get_feature_config
-from app.api.endpoints.data_sources import update_data_source_config
+from app.services.dify import DifyService
+from app.services.feature_flags import get_feature_config, has_feature, obfuscate_api_key, update_feature_config
 
 
 class TestDataSourcesAPI:
@@ -21,7 +23,9 @@ class TestDataSourcesAPI:
         )
 
         assert result is not None
-        assert result.config.get("api_key") == "test-key-12345"
+        encrypted_key = result.config.get("api_key")
+        decrypted_key = decrypt(encrypted_key)
+        assert decrypted_key == "test-key-12345"
         assert result.enabled is True
 
     def test_endpoint_returns_obfuscated_api_key(self, db_session):
@@ -31,12 +35,14 @@ class TestDataSourcesAPI:
             "test-org-api-002",
             FeatureFlag.PAPPERS,
             {"api_key": "my-secret-api-key-12345"},
-            updated_by="admin-user"
+            updated_by="admin-user",
         )
 
-        api_key = result.config.get("api_key")
-        obfuscated = obfuscate_api_key(api_key)
+        encrypted_key = result.config.get("api_key")
+        decrypted_key = decrypt(encrypted_key)
+        obfuscated = obfuscate_api_key(decrypted_key)
 
+        assert decrypted_key == "my-secret-api-key-12345"
         assert obfuscated == "my-s...2345"
         assert "secret" not in obfuscated
 
@@ -45,8 +51,8 @@ class TestDataSourcesAPI:
         # Vérifier dans le code source que le rôle est requis
         source = inspect.getsource(update_data_source_config)
 
-        assert 'required_roles' in source
-        assert 'admin.organizations' in source
+        assert "required_roles" in source
+        assert "admin.organizations" in source
 
     def test_get_knowledge_data_includes_pappers(self, db_session):
         """Test _get_knowledge_data() includes raw_pappers_knowledge"""

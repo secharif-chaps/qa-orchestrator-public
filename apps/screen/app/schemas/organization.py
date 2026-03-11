@@ -7,7 +7,7 @@ These schemas represent organization context extracted from JWT tokens.
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class OrganizationResponse(BaseModel):
@@ -25,8 +25,7 @@ class OrganizationResponse(BaseModel):
     updated_at: Optional[datetime] = Field(None, description="When organization was last updated")
     member_count: Optional[int] = Field(None, description="Number of members in organization")
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ActivityResponse(BaseModel):
@@ -43,5 +42,4 @@ class ActivityResponse(BaseModel):
     id: str = Field(..., description="ID of the item (company or folder)")
     folder_id: Optional[str] = Field(None, description="Folder ID (for companies, the folder containing them)")
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

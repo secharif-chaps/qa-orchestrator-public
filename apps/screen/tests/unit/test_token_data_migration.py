@@ -14,18 +14,18 @@ the OrganizationModule model has been updated to not include token_count.
 """
 
 import pytest
-
-# Skip entire module - Token migration logic migrated to global-service (Story #870)
-pytestmark = pytest.mark.skip(
-    reason="Token migration logic migrated to global-service"
-)
 from sqlalchemy import text
 
 from app.models.organization import (
     Organization,
+    ReferenceType,
     TokenTransaction,
     TransactionType,
-    ReferenceType,
+)
+
+# Skip entire module - Token migration logic migrated to global-service (Story #870)
+pytestmark = pytest.mark.skip(
+    reason="Token migration logic migrated to global-service"
 )
 
 

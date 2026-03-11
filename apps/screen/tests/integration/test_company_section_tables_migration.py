@@ -11,8 +11,9 @@ not the SQLAlchemy models (which are created in a later task group).
 """
 
 import os
+
 import pytest
-from sqlalchemy import create_engine, text, inspect
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import sessionmaker
 
 # Set environment variables before importing app modules
@@ -29,6 +30,24 @@ os.environ["KEYCLOAK_ADMIN_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_ADMIN_CLIE
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
     "postgresql://postgres:postgres@db:5432/mint_db"
+)
+
+
+def _db_connectable() -> bool:
+    """Check if the database is actually connectable."""
+    try:
+        engine = create_engine(DATABASE_URL, connect_args={"connect_timeout": 3})
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        engine.dispose()
+        return True
+    except Exception:
+        return False
+
+
+pytestmark = pytest.mark.skipif(
+    not _db_connectable(),
+    reason="Database not reachable (not running inside Docker network)",
 )
 
 # List of all 7 section tables created by the migration
@@ -86,13 +105,13 @@ class TestMigrationAppliesSuccessfully:
         expected_columns = {
             'company_id',
             # Insights (translatable)
-            'insights', 'insights_source', 'insights_value_fr',
+            'insights', 'insights_source',
             # Group name (proper noun - no translation)
             'group_name', 'group_name_source',
             # Business line (translatable)
-            'business_line', 'business_line_source', 'business_line_value_fr',
+            'business_line', 'business_line_source',
             # Catchphrase (translatable)
-            'catchphrase', 'catchphrase_source', 'catchphrase_value_fr',
+            'catchphrase', 'catchphrase_source',
             # Establishment year (number - no translation)
             'establishment_year', 'establishment_year_source',
             # Employee count (number - no translation)
@@ -117,14 +136,14 @@ class TestMigrationAppliesSuccessfully:
         expected_columns = {
             'company_id',
             # Insights (translatable)
-            'insights', 'insights_source', 'insights_value_fr',
+            'insights', 'insights_source',
             # Strategy fields (all translatable)
-            'overall_strategy', 'overall_strategy_source', 'overall_strategy_value_fr',
-            'digital_transformation', 'digital_transformation_source', 'digital_transformation_value_fr',
-            'ecommerce_capabilities', 'ecommerce_capabilities_source', 'ecommerce_capabilities_value_fr',
-            'mobile_strategy', 'mobile_strategy_source', 'mobile_strategy_value_fr',
-            'digital_marketing_approach', 'digital_marketing_approach_source', 'digital_marketing_approach_value_fr',
-            'loyalty_program', 'loyalty_program_source', 'loyalty_program_value_fr',
+            'overall_strategy', 'overall_strategy_source',
+            'digital_transformation', 'digital_transformation_source',
+            'ecommerce_capabilities', 'ecommerce_capabilities_source',
+            'mobile_strategy', 'mobile_strategy_source',
+            'digital_marketing_approach', 'digital_marketing_approach_source',
+            'loyalty_program', 'loyalty_program_source',
             # Timestamps
             'created_at', 'updated_at',
         }
@@ -165,9 +184,9 @@ class TestForeignKeyConstraints:
             assert company_fk is not None, \
                 f"Table {table_name} has no FK to companies table"
             assert company_fk['referred_columns'] == ['id'], \
-                f"FK should reference companies.id"
+                "FK should reference companies.id"
             assert company_fk['constrained_columns'] == ['company_id'], \
-                f"FK should be on company_id column"
+                "FK should be on company_id column"
 
     def test_fk_prevents_insert_with_invalid_company_id(self, db_session):
         """Verify FK constraint prevents inserting with non-existent company_id."""

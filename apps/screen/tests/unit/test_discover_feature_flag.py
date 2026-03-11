@@ -8,7 +8,7 @@ This module contains tests for:
 import pytest
 from pydantic import ValidationError
 
-from app.models.organization import FeatureFlag, OrganizationFeatureFlag
+from app.models.organization import FeatureFlag
 
 
 class TestFeatureFlagEnum:

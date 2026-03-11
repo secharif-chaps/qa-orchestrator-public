@@ -7,39 +7,20 @@ These tests verify that the cleanup phase is complete:
 4. No references to old JSON fields
 """
 
+from unittest.mock import MagicMock
+
 import pytest
-from unittest.mock import MagicMock, patch
 from sqlalchemy.orm import Session
 
 from app.models.company import Company
 from app.models.company_sections import (
     CompanyProfile,
-    CompanyDigital,
-    CompanyTimeline,
-    CompanyProducts,
-    CompanyJobs,
-    CompanyCsr,
-    CompanyPress,
-)
-from app.models.company_children import (
-    CompanyOnlineService,
-    CompanySocialMediaAccount,
-    CompanyTimelineEvent,
-    CompanyProductItem,
-    CompanyProductCategory,
-    CompanyJobOffer,
-    CompanyCsrInitiative,
-    CompanyPressItem,
-    CompanyTeamMember,
-    ProductItemType,
-    CsrInitiativeType,
-    PressItemType,
 )
 from app.services.company_section_service import (
-    write_section_data,
+    get_profile_data,
     read_all_section_data,
     save_profile_data,
-    get_profile_data,
+    write_section_data,
 )
 
 
@@ -118,7 +99,7 @@ class TestDifyCallbackWritesToNewTables:
         }
 
         # Write the data
-        save_profile_data(mock_db_session, company_id, dify_data)
+        save_profile_data(mock_db_session, company_id, dify_data["profile"])
 
         # Verify add was called with CompanyProfile
         mock_db_session.add.assert_called()

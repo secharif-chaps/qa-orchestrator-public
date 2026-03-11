@@ -6,7 +6,7 @@ Token management has been moved to global token balance in schemas/token.py.
 
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.models.organization import ModuleName
 
@@ -23,8 +23,7 @@ class OrganizationModuleResponse(BaseModel):
     created_at: datetime
     updated_at: datetime | None = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class OrganizationModulesResponse(BaseModel):
@@ -51,5 +50,4 @@ class ModuleToggleResponse(BaseModel):
     created_at: datetime
     updated_at: datetime | None = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

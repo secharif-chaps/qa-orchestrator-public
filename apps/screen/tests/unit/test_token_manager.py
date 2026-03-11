@@ -13,27 +13,28 @@ Tests cover:
 - get_transaction_history() with filters
 """
 
+from datetime import datetime, timedelta, timezone
+
 import pytest
+
+from app.models.organization import (
+    ModuleName,
+    Organization,
+    OrganizationModule,
+    ReferenceType,
+    TokenTransaction,
+    TransactionType,
+)
+from app.services.token_manager import (
+    TOKENS_PER_COMPANY,
+    InsufficientTokensException,
+    ModuleNotEnabledException,
+    TokenManager,
+)
 
 # Skip entire module - TokenManager migrated to global-service (Story #870)
 pytestmark = pytest.mark.skip(
     reason="TokenManager migrated to global-service - see global-service/tests/test_token_manager.py"
-)
-from datetime import datetime, timedelta, timezone
-
-from app.services.token_manager import (
-    TokenManager,
-    InsufficientTokensException,
-    ModuleNotEnabledException,
-    TOKENS_PER_COMPANY,
-)
-from app.models.organization import (
-    Organization,
-    OrganizationModule,
-    TokenTransaction,
-    ModuleName,
-    TransactionType,
-    ReferenceType,
 )
 
 

@@ -9,7 +9,7 @@ This module contains schemas for:
 from datetime import datetime
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # Re-export enums for API use
@@ -47,8 +47,7 @@ class OrganizationRead(BaseModel):
     created_at: datetime = Field(..., description="When record was created")
     updated_at: datetime | None = Field(None, description="Last update timestamp")
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class OrganizationUpdate(BaseModel):
@@ -108,8 +107,7 @@ class TokenTransactionRead(BaseModel):
     created_at: datetime = Field(..., description="When transaction occurred")
     created_by: str = Field(..., description="Keycloak user ID who initiated")
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # History filter schemas

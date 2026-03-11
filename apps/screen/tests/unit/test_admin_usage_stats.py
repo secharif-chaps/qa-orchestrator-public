@@ -7,23 +7,24 @@ Tests the GET /api/admin/usage-stats endpoint including:
 - Permission requirements
 """
 
-import pytest
-from datetime import date, datetime, timedelta
-from unittest.mock import AsyncMock, MagicMock, patch
+from datetime import UTC, datetime, timedelta
+from unittest.mock import AsyncMock, patch
 
+import pytest
+
+from app.api.endpoints.admin import (
+    _get_active_users_count,
+    _get_companies_by_organization,
+    _get_companies_count,
+    _get_companies_over_time,
+    _get_task_success_rate,
+)
 from app.models.company import Company
 from app.models.task import Task, TaskStatus, TaskType
 from app.schemas.admin_usage import (
     OrganizationBreakdown,
     TimeSeriesDataPoint,
     UsageStatsResponse,
-)
-from app.api.endpoints.admin import (
-    _get_companies_count,
-    _get_task_success_rate,
-    _get_active_users_count,
-    _get_companies_over_time,
-    _get_companies_by_organization,
 )
 
 
@@ -100,7 +101,7 @@ class TestCompaniesCountQuery:
     def test_companies_count_filters_by_date_range(self, db_session):
         """Test companies count correctly filters by date range."""
         # Create companies with different dates
-        today = datetime.utcnow()
+        today = datetime.now(UTC)
         yesterday = today - timedelta(days=1)
         last_week = today - timedelta(days=7)
 
@@ -148,7 +149,7 @@ class TestCompaniesCountQuery:
 
     def test_companies_count_excludes_deleted(self, db_session):
         """Test companies count excludes soft-deleted companies."""
-        today = datetime.utcnow()
+        today = datetime.now(UTC)
 
         # Active company
         company1 = Company(
@@ -183,7 +184,7 @@ class TestTaskSuccessRateCalculation:
 
     def test_success_rate_calculation_correct(self, db_session):
         """Test success rate is calculated correctly from succeeded vs error tasks."""
-        today = datetime.utcnow()
+        today = datetime.now(UTC)
 
         # Create a company first (required for task foreign key)
         company = Company(
@@ -236,7 +237,7 @@ class TestTaskSuccessRateCalculation:
 
     def test_success_rate_returns_none_when_no_tasks(self, db_session):
         """Test success rate returns None when no completed tasks exist."""
-        today = datetime.utcnow()
+        today = datetime.now(UTC)
         start_date = (today - timedelta(days=1)).date()
         end_date = (today + timedelta(days=1)).date()
 
@@ -246,7 +247,7 @@ class TestTaskSuccessRateCalculation:
 
     def test_success_rate_excludes_pending_and_running(self, db_session):
         """Test success rate only counts succeeded and error tasks."""
-        today = datetime.utcnow()
+        today = datetime.now(UTC)
 
         company = Company(
             name="Test Company",
@@ -292,7 +293,7 @@ class TestActiveUsersCount:
 
     def test_active_users_count_unique_owners(self, db_session):
         """Test active users count returns unique owner IDs."""
-        today = datetime.utcnow()
+        today = datetime.now(UTC)
 
         # Two companies by same user
         company1 = Company(
@@ -335,7 +336,7 @@ class TestCompaniesOverTime:
 
     def test_companies_over_time_groups_by_day_for_short_range(self, db_session):
         """Test that short date ranges (<=30 days) group by day."""
-        today = datetime.utcnow()
+        today = datetime.now(UTC)
 
         # Create companies on different days
         for i in range(3):
@@ -374,7 +375,7 @@ class TestCompaniesByOrganization:
         top 10 organizations and aggregates the rest under "Other" to keep
         the UI manageable.
         """
-        today = datetime.utcnow()
+        today = datetime.now(UTC)
 
         # Mock keycloak_admin_service to avoid external calls
         with patch("app.api.endpoints.admin.keycloak_admin_service") as mock_keycloak:
@@ -433,9 +434,9 @@ class TestEndpointPermission:
         This is a structural test verifying the dependency injection is set up
         correctly to require the admin.organizations role.
         """
-        from app.api.endpoints.admin import get_usage_stats
-        from fastapi import Depends
         import inspect
+
+        from app.api.endpoints.admin import get_usage_stats
 
         # Get the function signature
         sig = inspect.signature(get_usage_stats)

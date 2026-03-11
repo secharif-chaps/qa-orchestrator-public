@@ -5,6 +5,7 @@ For unit tests that don't need the app, use tests/unit/conftest.py instead.
 """
 
 import os
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -21,10 +22,10 @@ os.environ["KEYCLOAK_CLIENT_ID"] = os.environ.get("KEYCLOAK_CLIENT_ID", "chapsmi
 os.environ["KEYCLOAK_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_CLIENT_SECRET", "chapsmind-screen-back-secret")
 os.environ["KEYCLOAK_ADMIN_CLIENT_ID"] = os.environ.get("KEYCLOAK_ADMIN_CLIENT_ID", "chapsmind-admin")
 os.environ["KEYCLOAK_ADMIN_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_ADMIN_CLIENT_SECRET", "chapsmind-admin-secret")
+os.environ["ENCRYPTION_KEY"] = "WIxh6MTz5Zx3tRvLWBFJuzm4VFMe9kxecYjFZF23FRM="
 
 from app.database import Base
 from app.schemas.user import TokenData
-
 
 # Test database URL - use in-memory SQLite for fast tests
 TEST_DATABASE_URL = "sqlite:///:memory:"
@@ -54,6 +55,7 @@ def client():
     issues when running unit tests that don't need the client.
     """
     from fastapi.testclient import TestClient
+
     from app.main import app
     return TestClient(app)
 

@@ -1,8 +1,9 @@
+from app.core.encryption import decrypt, encrypt
 from app.models.organization import FeatureFlag, OrganizationFeatureFlag
 from app.services.feature_flags import (
-    update_feature_config,
     enable_feature,
     get_feature_config,
+    update_feature_config,
 )
 
 
@@ -31,7 +32,9 @@ class TestFeatureFlagsService:
         )
 
         assert updated.enabled is True
-        assert updated.config.get("api_key") == "new-key-67890"
+        encrypted_key = updated.config.get("api_key")
+        decrypted_key = decrypt(encrypted_key)
+        assert decrypted_key == "new-key-67890"
 
     def test_update_feature_config_creates_record_if_not_exists(self, db_session):
         """Test update_feature_config() creates record if not exists"""
@@ -46,7 +49,9 @@ class TestFeatureFlagsService:
         assert updated is not None
         assert updated.organization_id == "test-org-002"
         assert updated.flag == FeatureFlag.PAPPERS
-        assert updated.config.get("api_key") == "brand-new-key"
+        encrypted_key = updated.config.get("api_key")
+        decrypted_key = decrypt(encrypted_key)
+        assert decrypted_key == "brand-new-key"
         assert updated.enabled is True
 
     def test_enable_feature_with_config_sets_api_key(self, db_session):
@@ -61,7 +66,9 @@ class TestFeatureFlagsService:
 
         assert feature.enabled is True
         assert feature.config is not None
-        assert feature.config.get("api_key") == "my-api-key-abc"
+        encrypted_key = feature.config.get("api_key")
+        decrypted_key = decrypt(encrypted_key)
+        assert decrypted_key == "my-api-key-abc"
 
     def test_get_feature_config_retrieves_api_key(self, db_session):
         """Test get_feature_config() retrieves api_key from config"""
@@ -69,7 +76,7 @@ class TestFeatureFlagsService:
             organization_id="test-org-004",
             flag=FeatureFlag.PAPPERS,
             enabled=True,
-            config={"api_key": "secret-key-xyz"}
+            config={"api_key": encrypt("secret-key-xyz")}
         )
         db_session.add(feature)
         db_session.commit()
@@ -101,4 +108,6 @@ class TestFeatureFlagsService:
         )
 
         assert updated.enabled is True
-        assert updated.config.get("api_key") == "new-api-key"
+        encrypted_key = updated.config.get("api_key")
+        decrypted_key = decrypt(encrypted_key)
+        assert decrypted_key == "new-api-key"

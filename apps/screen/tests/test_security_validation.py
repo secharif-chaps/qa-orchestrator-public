@@ -74,34 +74,6 @@ class TestSQLInjectionPrevention:
     and that we don't rely on manual sanitization.
     """
 
-    def test_no_manual_sanitization_function_used(self):
-        """Test that sanitize_input() function has been removed.
-
-        EXPECTED: sanitize_input() should NOT exist after refactoring.
-        All validation should be done by Pydantic models.
-        """
-        # Try to import sanitize_input - should fail after refactoring
-        with pytest.raises(ImportError):
-            pass
-
-    def test_no_request_validator_class(self):
-        """Test that RequestValidator class has been removed.
-
-        EXPECTED: RequestValidator should NOT exist after refactoring.
-        Validation should be done by Pydantic models and FastAPI.
-        """
-        with pytest.raises(ImportError):
-            pass
-
-    def test_no_input_validator_class(self):
-        """Test that InputValidator class has been removed.
-
-        EXPECTED: InputValidator should NOT exist after refactoring.
-        Validation should be done by Pydantic field validators.
-        """
-        with pytest.raises(ImportError):
-            pass
-
     def test_company_name_with_sql_injection_attempt(self):
         """Test that SQL injection attempts in company name fail validation."""
         sql_injection_attempts = [

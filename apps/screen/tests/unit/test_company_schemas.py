@@ -4,56 +4,34 @@ Tests the SourcedValue generic schema, section schemas, and validation
 logic for the normalized company data structure.
 """
 
-import pytest
-from pydantic import ValidationError
 
 from app.schemas.company_schemas import (
-    # Core generic
-    SourcedValue,
-    # Profile
-    ProfileResponse,
-    ProfileCreate,
-    # Digital
-    DigitalResponse,
-    DigitalCreate,
-    OnlineServiceResponse,
-    SocialMediaAccountResponse,
-    DigitalStrategyResponse,
-    OnlineServiceSourced,
-    # Timeline
-    TimelineResponse,
-    TimelineCreate,
-    TimelineEventResponse,
-    TimelineEventSourced,
-    # Products
-    ProductsResponse,
-    ProductsCreate,
-    ProductItemResponse,
-    ProductItemTypeEnum,
-    # Jobs
-    JobsResponse,
-    JobsCreate,
-    JobOfferResponse,
-    JobInsightsResponse,
-    JobOfferSourced,
-    # CSR
-    CsrResponse,
+    # Complete
+    CompanySectionsResponse,
     CsrCreate,
     CsrInitiativeResponse,
     CsrInitiativeTypeEnum,
-    CsrInitiativeSourced,
-    # Press
-    PressResponse,
-    PressCreate,
+    CsrResponse,
+    # Digital
+    DigitalResponse,
+    DigitalStrategyResponse,
+    # Jobs
+    JobsResponse,
     PressItemResponse,
     PressItemTypeEnum,
-    PressItemSourced,
-    # Team
-    TeamMemberResponse,
-    TeamMemberSourced,
+    PressResponse,
+    ProductItemTypeEnum,
+    ProductsResponse,
+    ProfileCreate,
+    # Profile
+    ProfileResponse,
+    # Core generic
+    SourcedValue,
     TeamCreate,
-    # Complete
-    CompanySectionsResponse,
+    TeamMemberResponse,
+    TimelineCreate,
+    TimelineEventResponse,
+    TimelineResponse,
 )
 
 
@@ -66,7 +44,6 @@ class TestSourcedValueGeneric:
         assert sv.value == "LVMH"
         assert sv.source == "https://wikipedia.org/wiki/LVMH"
         assert sv.favicon is None
-        assert sv.value_fr is None
 
     def test_sourced_value_with_int(self):
         """Test SourcedValue works with int type."""
@@ -90,11 +67,9 @@ class TestSourcedValueGeneric:
             value="Luxury goods",
             source="https://company.com/about",
             favicon="https://company.com/favicon.ico",
-            value_fr="Produits de luxe"
         )
         assert sv.value == "Luxury goods"
         assert sv.favicon == "https://company.com/favicon.ico"
-        assert sv.value_fr == "Produits de luxe"
 
 
 class TestSourceValidation:
@@ -142,13 +117,11 @@ class TestNestedSchemaSerialization:
             groupName=SourcedValue[str](value="LVMH", source="https://wikipedia.org"),
             businessLine=SourcedValue[str](
                 value="Luxury goods",
-                source="https://company.com",
-                value_fr="Produits de luxe"
+                source="https://company.com"
             ),
             ceo=SourcedValue[str](value="Bernard Arnault", source="https://wikipedia.org")
         )
         assert profile.groupName.value == "LVMH"
-        assert profile.businessLine.value_fr == "Produits de luxe"
 
     def test_profile_response_serialization(self):
         """Test ProfileResponse serializes to dict correctly."""
@@ -329,14 +302,12 @@ class TestCreateSchemas:
             "groupName": {"value": "LVMH", "source": "https://wikipedia.org"},
             "businessLine": {
                 "value": "Luxury goods",
-                "source": "https://company.com",
-                "value_fr": "Produits de luxe"
+                "source": "https://company.com"
             }
         }
         profile = ProfileCreate(**data)
         assert profile.insights == "AI-generated summary"
         assert profile.groupName.value == "LVMH"
-        assert profile.businessLine.value_fr == "Produits de luxe"
 
     def test_timeline_create_with_events(self):
         """Test TimelineCreate with sourced events."""

@@ -7,7 +7,7 @@ Ported from the backend monolith (back/app/schemas/team.py).
 """
 
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.core.permissions import PermissionTier
 
@@ -26,8 +26,7 @@ class TeamMemberListItem(BaseModel):
     is_current_user: bool = False
     created_at: int | None = Field(None, description="Unix timestamp from Keycloak")
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TeamMemberListResponse(BaseModel):
@@ -60,8 +59,7 @@ class TeamMember(BaseModel):
     is_current_user: bool = False
     created_at: int | None = Field(None, description="Unix timestamp from Keycloak")
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UpdateTeamMemberPermissions(BaseModel):
@@ -167,19 +165,19 @@ class ResetPasswordRequest(BaseModel):
     def validate_password(cls, v: str) -> str:
         if len(v) < 8:
             raise ValueError("Password must be at least 8 characters long")
-        
+
         if not any(c.isupper() for c in v):
             raise ValueError("Password must contain at least one uppercase letter")
-        
+
         if not any(c.islower() for c in v):
             raise ValueError("Password must contain at least one lowercase letter")
-        
+
         if not any(c.isdigit() for c in v):
             raise ValueError("Password must contain at least one number")
-        
+
         if not any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in v):
             raise ValueError("Password must contain at least one special character")
-        
+
         return v
 
 

@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class LanguageResponse(BaseModel):
@@ -62,7 +62,7 @@ class TranslationJobResponse(BaseModel):
     started_at: datetime | None = Field(None, description="Job start time")
     completed_at: datetime | None = Field(None, description="Job completion time")
 
-    model_config = {"from_attributes": True}
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TranslateResponse(BaseModel):

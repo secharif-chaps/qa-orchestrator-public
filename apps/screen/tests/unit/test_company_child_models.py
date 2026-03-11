@@ -7,23 +7,23 @@ These tests verify the core functionality of the company child models:
 4. Team member parent_id hierarchy (self-referential)
 """
 
+
 import pytest
-from datetime import datetime, timezone
 
 from app.models.company import Company
 from app.models.company_children import (
-    ProductItemType,
+    CompanyCsrInitiative,
+    CompanyJobOffer,
+    CompanyOnlineService,
+    CompanyPressItem,
+    CompanyProductCategory,
+    CompanyProductItem,
+    CompanySocialMediaAccount,
+    CompanyTeamMember,
+    CompanyTimelineEvent,
     CsrInitiativeType,
     PressItemType,
-    CompanyOnlineService,
-    CompanySocialMediaAccount,
-    CompanyTimelineEvent,
-    CompanyProductItem,
-    CompanyProductCategory,
-    CompanyJobOffer,
-    CompanyCsrInitiative,
-    CompanyPressItem,
-    CompanyTeamMember,
+    ProductItemType,
 )
 
 
@@ -52,10 +52,8 @@ class TestChildModelCreationWithCompanyId:
             company_id=sample_company.id,
             name="Virtual Try-On",
             name_source="https://testcompany.com/features",
-            name_value_fr=None,
             description="AR-powered virtual try-on for accessories",
-            description_source="https://testcompany.com/features",
-            description_value_fr=None
+            description_source="https://testcompany.com/features"
         )
         db_session.add(service)
         db_session.commit()
@@ -93,18 +91,14 @@ class TestChildModelCreationWithCompanyId:
             date_source="https://wikipedia.org/wiki/TestCompany",
             title="Company Founded",
             title_source="https://wikipedia.org/wiki/TestCompany",
-            title_value_fr=None,
             description="The company was established in Paris",
             description_source="https://wikipedia.org/wiki/TestCompany",
-            description_value_fr=None,
             category="Foundation",
             category_source="Chaps-e",
-            category_value_fr=None,
             location="Paris, France",
             location_source="https://wikipedia.org/wiki/TestCompany",
             impact="Became a leading company in the industry",
-            impact_source="Chaps-e",
-            impact_value_fr=None
+            impact_source="Chaps-e"
         )
         db_session.add(event)
         db_session.commit()
@@ -124,18 +118,14 @@ class TestChildModelCreationWithCompanyId:
             company_id=sample_company.id,
             title="Senior Software Engineer",
             title_source="https://careers.testcompany.com/job/123",
-            title_value_fr=None,
             location="Paris, France",
             location_source="https://careers.testcompany.com/job/123",
             department="Digital Technology",
             department_source="https://careers.testcompany.com/job/123",
-            department_value_fr=None,
             description="Lead the development of e-commerce platform",
             description_source="https://careers.testcompany.com/job/123",
-            description_value_fr=None,
             requirements="5+ years experience in Python, cloud architecture",
             requirements_source="https://careers.testcompany.com/job/123",
-            requirements_value_fr=None,
             posted_date="2024-12-15",
             posted_date_source="https://careers.testcompany.com/job/123"
         )
@@ -159,8 +149,7 @@ class TestEnumFieldValidation:
             company_id=sample_company.id,
             type=ProductItemType.range,
             value="Leather Goods Collection",
-            value_source="https://testcompany.com/products",
-            value_value_fr=None
+            value_source="https://testcompany.com/products"
         )
         db_session.add(item)
         db_session.commit()
@@ -207,8 +196,7 @@ class TestEnumFieldValidation:
             company_id=sample_company.id,
             type=CsrInitiativeType.sustainability,
             value="100% renewable energy in all stores by 2025",
-            value_source="https://testcompany.com/sustainability",
-            value_value_fr=None
+            value_source="https://testcompany.com/sustainability"
         )
         db_session.add(initiative)
         db_session.commit()
@@ -253,8 +241,8 @@ class TestEnumFieldValidation:
             company_id=sample_company.id,
             type=PressItemType.article,
             value="Company reports record Q4 earnings",
-            value_source="https://reuters.com/article/company-earnings",
-            value_value_fr=None
+            
+            value_source="https://reuters.com/article/company-earnings"
         )
         db_session.add(press)
         db_session.commit()
@@ -410,7 +398,6 @@ class TestTeamMemberHierarchy:
             parent_id=None,
             position="Chairman and CEO",
             position_source="https://testcompany.com/leadership",
-            position_value_fr=None,
             first_name="Bernard",
             first_name_source="https://testcompany.com/leadership",
             last_name="Arnault",
@@ -623,9 +610,7 @@ class TestProductCategoryWithArrays:
         category = CompanyProductCategory(
             company_id=sample_company.id,
             category_name="Fashion",
-            category_name_value_fr=None,
-            items=["Clothing", "Accessories", "Footwear"],
-            items_value_fr=None
+            items=["Clothing", "Accessories", "Footwear"]
         )
         db_session.add(category)
         db_session.commit()
@@ -641,17 +626,14 @@ class TestProductCategoryWithArrays:
         category = CompanyProductCategory(
             company_id=sample_company.id,
             category_name="Electronics",
-            category_name_value_fr="Electronique",
-            items=["Phones", "Laptops", "Tablets"],
-            items_value_fr=["Telephones", "Ordinateurs portables", "Tablettes"]
+            items=["Phones", "Laptops", "Tablets"]
         )
         db_session.add(category)
         db_session.commit()
         db_session.refresh(category)
 
         assert category.items == ["Phones", "Laptops", "Tablets"]
-        assert category.items_value_fr == ["Telephones", "Ordinateurs portables", "Tablettes"]
-        assert len(category.items) == len(category.items_value_fr)
+        assert len(category.items) == 3
 
 
 class TestRelationshipsFromCompany:

@@ -12,21 +12,20 @@ These tests verify the core functionality of the global token system models:
 """
 
 import pytest
+from sqlalchemy.exc import IntegrityError
+
+from app.models.organization import (
+    ModuleName,
+    Organization,
+    OrganizationModule,
+    ReferenceType,
+    TokenTransaction,
+    TransactionType,
+)
 
 # Skip entire module - Models migrated to global-service (Story #870)
 pytestmark = pytest.mark.skip(
     reason="Token/Organization models migrated to global-service - see global-service/tests/test_organization_models.py"
-)
-from datetime import datetime, timezone
-from sqlalchemy.exc import IntegrityError
-
-from app.models.organization import (
-    Organization,
-    TokenTransaction,
-    TransactionType,
-    ReferenceType,
-    OrganizationModule,
-    ModuleName,
 )
 
 

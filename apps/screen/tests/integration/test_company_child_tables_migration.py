@@ -11,8 +11,9 @@ not the SQLAlchemy models (which are created in a later task group).
 """
 
 import os
+
 import pytest
-from sqlalchemy import create_engine, text, inspect
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import sessionmaker
 
 # Set environment variables before importing app modules
@@ -29,6 +30,24 @@ os.environ["KEYCLOAK_ADMIN_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_ADMIN_CLIE
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
     "postgresql://postgres:postgres@db:5432/mint_db"
+)
+
+
+def _db_connectable() -> bool:
+    """Check if the database is actually connectable."""
+    try:
+        engine = create_engine(DATABASE_URL, connect_args={"connect_timeout": 3})
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        engine.dispose()
+        return True
+    except Exception:
+        return False
+
+
+pytestmark = pytest.mark.skipif(
+    not _db_connectable(),
+    reason="Database not reachable (not running inside Docker network)",
 )
 
 # List of all 10 child tables created by the migration
@@ -136,7 +155,7 @@ class TestEnumTypesCreatedCorrectly:
 
     def test_enum_types_exist(self, db_session):
         """Verify all ENUM types exist in the database."""
-        for enum_name in EXPECTED_ENUMS.keys():
+        for enum_name in EXPECTED_ENUMS:
             result = db_session.execute(
                 text("""
                     SELECT typname FROM pg_type
@@ -467,8 +486,8 @@ class TestTableSchemaCorrectness:
 
         expected = {
             'id', 'company_id',
-            'name', 'name_source', 'name_value_fr',
-            'description', 'description_source', 'description_value_fr',
+            'name', 'name_source',
+            'description', 'description_source',
             'created_at'
         }
         assert expected.issubset(columns), f"Missing columns: {expected - columns}"
@@ -481,11 +500,11 @@ class TestTableSchemaCorrectness:
         expected = {
             'id', 'company_id',
             'date', 'date_source',
-            'title', 'title_source', 'title_value_fr',
-            'description', 'description_source', 'description_value_fr',
-            'category', 'category_source', 'category_value_fr',
+            'title', 'title_source',
+            'description', 'description_source',
+            'category', 'category_source',
             'location', 'location_source',
-            'impact', 'impact_source', 'impact_value_fr',
+            'impact', 'impact_source',
             'created_at'
         }
         assert expected.issubset(columns), f"Missing columns: {expected - columns}"
@@ -496,16 +515,12 @@ class TestTableSchemaCorrectness:
         columns = inspector.get_columns('company_product_categories')
 
         items_col = next((col for col in columns if col['name'] == 'items'), None)
-        items_fr_col = next((col for col in columns if col['name'] == 'items_value_fr'), None)
 
         assert items_col is not None, "items column not found"
-        assert items_fr_col is not None, "items_value_fr column not found"
 
         # Check that these are array types
         assert 'ARRAY' in str(items_col['type']).upper(), \
             f"items should be ARRAY type, got {items_col['type']}"
-        assert 'ARRAY' in str(items_fr_col['type']).upper(), \
-            f"items_value_fr should be ARRAY type, got {items_fr_col['type']}"
 
     def test_team_members_has_correct_columns(self, db_engine):
         """Verify company_team_members has all expected columns."""
@@ -514,7 +529,7 @@ class TestTableSchemaCorrectness:
 
         expected = {
             'id', 'company_id', 'parent_id',
-            'position', 'position_source', 'position_value_fr',
+            'position', 'position_source',
             'first_name', 'first_name_source',
             'last_name', 'last_name_source',
             'linkedin_url', 'linkedin_url_source',

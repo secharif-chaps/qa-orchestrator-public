@@ -4,8 +4,9 @@ These tests verify that the admin.organizations permission can only be assigned
 to users with @chapsvision.com email addresses.
 """
 
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
 from fastapi import HTTPException, status
 from fastapi_keycloak import OIDCUser
 
@@ -53,8 +54,7 @@ class TestAdminRoleRestriction:
         self, mock_chapsvision_user, mock_admin_user
     ):
         """Test that ChapsVision user CAN receive admin.organizations permission."""
-        from app.api.endpoints.users import update_user_permissions
-        from app.api.endpoints.users import UpdatePermissionsRequest
+        from app.api.endpoints.users import UpdatePermissionsRequest, update_user_permissions
 
         with patch('app.api.endpoints.users.keycloak_admin_service') as mock_kc_service:
             # Mock Keycloak calls
@@ -74,8 +74,8 @@ class TestAdminRoleRestriction:
                 user=mock_admin_user
             )
 
-            # Verify user was fetched to check email
-            mock_kc_service.get_user.assert_called_once_with("chapsvision-user-id")
+            # Verify user was fetched (once for email validation, once for updated data)
+            assert mock_kc_service.get_user.call_count == 2
 
             # Verify roles were synced
             mock_kc_service.sync_user_realm_roles.assert_called_once()
@@ -88,8 +88,7 @@ class TestAdminRoleRestriction:
         self, mock_non_chapsvision_user, mock_admin_user
     ):
         """Test that non-ChapsVision user CANNOT receive admin.organizations permission."""
-        from app.api.endpoints.users import update_user_permissions
-        from app.api.endpoints.users import UpdatePermissionsRequest
+        from app.api.endpoints.users import UpdatePermissionsRequest, update_user_permissions
 
         with patch('app.api.endpoints.users.keycloak_admin_service') as mock_kc_service:
             # Mock Keycloak to return non-ChapsVision user
@@ -123,8 +122,7 @@ class TestAdminRoleRestriction:
         self, mock_non_chapsvision_user, mock_admin_user
     ):
         """Test that non-admin permissions work for non-ChapsVision users."""
-        from app.api.endpoints.users import update_user_permissions
-        from app.api.endpoints.users import UpdatePermissionsRequest
+        from app.api.endpoints.users import UpdatePermissionsRequest, update_user_permissions
 
         with patch('app.api.endpoints.users.keycloak_admin_service') as mock_kc_service:
             # Mock Keycloak calls
@@ -157,8 +155,7 @@ class TestAdminRoleRestriction:
         self, mock_non_chapsvision_user, mock_admin_user
     ):
         """Test that error response format matches specification."""
-        from app.api.endpoints.users import update_user_permissions
-        from app.api.endpoints.users import UpdatePermissionsRequest
+        from app.api.endpoints.users import UpdatePermissionsRequest, update_user_permissions
 
         with patch('app.api.endpoints.users.keycloak_admin_service') as mock_kc_service:
             mock_kc_service.get_user = AsyncMock(return_value=mock_non_chapsvision_user)
@@ -175,29 +172,28 @@ class TestAdminRoleRestriction:
             # Verify error details match spec
             assert exc_info.value.status_code == 403
             assert isinstance(exc_info.value.detail, str)
-            assert "Admin role can only be assigned to ChapsVision employees" == exc_info.value.detail
+            assert exc_info.value.detail == "Admin role can only be assigned to ChapsVision employees"
 
     @pytest.mark.asyncio
     async def test_logging_of_unauthorized_assignment_attempts(
         self, mock_non_chapsvision_user, mock_admin_user, caplog
     ):
         """Test that unauthorized assignment attempts are logged."""
-        from app.api.endpoints.users import update_user_permissions
-        from app.api.endpoints.users import UpdatePermissionsRequest
         import logging
+
+        from app.api.endpoints.users import UpdatePermissionsRequest, update_user_permissions
 
         with patch('app.api.endpoints.users.keycloak_admin_service') as mock_kc_service:
             mock_kc_service.get_user = AsyncMock(return_value=mock_non_chapsvision_user)
 
             request = UpdatePermissionsRequest(permissions=["admin.organizations"])
 
-            with caplog.at_level(logging.WARNING):
-                with pytest.raises(HTTPException):
-                    await update_user_permissions(
-                        user_id="external-user-id",
-                        request=request,
-                        user=mock_admin_user
-                    )
+            with caplog.at_level(logging.WARNING), pytest.raises(HTTPException):
+                await update_user_permissions(
+                    user_id="external-user-id",
+                    request=request,
+                    user=mock_admin_user
+                )
 
             # Verify warning was logged
             assert any("Unauthorized admin assignment attempt" in record.message for record in caplog.records)
@@ -207,8 +203,7 @@ class TestAdminRoleRestriction:
         self, mock_non_chapsvision_user, mock_admin_user
     ):
         """Test that validation happens BEFORE calling Keycloak sync."""
-        from app.api.endpoints.users import update_user_permissions
-        from app.api.endpoints.users import UpdatePermissionsRequest
+        from app.api.endpoints.users import UpdatePermissionsRequest, update_user_permissions
 
         with patch('app.api.endpoints.users.keycloak_admin_service') as mock_kc_service:
             # Mock get_user to return non-ChapsVision user

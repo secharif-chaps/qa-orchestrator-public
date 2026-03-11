@@ -6,7 +6,7 @@ abstracting individual Keycloak roles into permission tiers.
 
 from typing import Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.core.permissions import PermissionTier
 
@@ -25,8 +25,7 @@ class TeamMemberListItem(BaseModel):
     is_current_user: bool = False
     created_at: Optional[int] = Field(None, description="Unix timestamp from Keycloak")
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class TeamMemberListResponse(BaseModel):
@@ -60,8 +59,7 @@ class TeamMember(BaseModel):
     is_current_user: bool = False
     created_at: Optional[int] = Field(None, description="Unix timestamp from Keycloak")
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UpdateTeamMemberPermissions(BaseModel):

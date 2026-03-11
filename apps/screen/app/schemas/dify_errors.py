@@ -14,7 +14,7 @@ Actual Dify error types are mapped to these categories in dify_error_config.py.
 from enum import Enum
 from typing import Any, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class DifyErrorType(str, Enum):
@@ -72,8 +72,7 @@ class DifyErrorDetail(BaseModel):
     # Catch-all for any other attributes
     extra_data: dict[str, Any] = Field(default_factory=dict)
 
-    class Config:
-        extra = "allow"  # Allow additional fields not explicitly defined
+    model_config = ConfigDict(extra="allow")
 
     def __init__(self, **data):
         """Custom init to move unknown fields to extra_data."""
