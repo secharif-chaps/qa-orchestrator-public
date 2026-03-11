@@ -1,4 +1,4 @@
-import type { Source, SourceActivity } from '@target/types/source'
+import type { Source, SourceActionType, SourceActivity } from '@target/types/source'
 import type { WatchFileActivity, WatchFileActor, WatchFileEventType } from '@target/types/watchFile'
 import type { JsonLdResource } from './jsonld'
 
@@ -22,7 +22,7 @@ export interface TimelineActivity {
   id: string
   time: string
   message: ActivityDescription
-  type: WatchFileEventType
+  type: WatchFileEventType | SourceActionType
   color: string
   icon: string
   user?: {

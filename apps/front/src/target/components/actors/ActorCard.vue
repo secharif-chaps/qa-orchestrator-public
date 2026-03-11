@@ -1,7 +1,7 @@
 <template>
   <ItemCard
     :variant="variant"
-    :domain="actor.actor.primaryDomain"
+    :domain="actor.actor.primaryDomain ?? undefined"
     :name="actor.actor.label"
     :description="actor.explanations?.[shortLocale] || actor.explanations?.en"
     :date="actor.actor.createdAt"
@@ -17,7 +17,7 @@
         <UrlDomain
           :show-logo="false"
           size="sm"
-          :domain="actor.actor.primaryDomain"
+          :domain="actor.actor.primaryDomain ?? undefined"
           :alt="actor.actor.label"
           :label="t('watch_files.actors.link_label')"
           class="text-base-alt"

@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue'
+import { type DirectiveBinding, watch } from 'vue'
 
 interface Props {
   id: string
@@ -71,7 +71,7 @@ const {
 const model = defineModel<string>({ required: true })
 // Auto-resize directive
 const vAutoResize = {
-  mounted: (el: HTMLTextAreaElement, binding: string | false) => {
+  mounted: (el: HTMLTextAreaElement, binding: DirectiveBinding<string | false>) => {
     if (binding.value === false) return
 
     const maxHeight = binding.value || '300px'

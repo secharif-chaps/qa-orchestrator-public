@@ -20,7 +20,7 @@ export function useTimeDisplay(options: TimeDisplayOptions = {}) {
 
   const { d, t } = useI18n()
   const currentTime = ref(new Date())
-  let intervalId: NodeJS.Timeout | null = null
+  let intervalId: ReturnType<typeof setInterval> | null = null
 
   // Update current time every minute if autoUpdate is enabled
   onMounted(() => {

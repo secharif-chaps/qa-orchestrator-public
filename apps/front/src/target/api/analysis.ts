@@ -1,7 +1,7 @@
 import { useApi } from '@target/composables/useApi'
 import { useDate } from '@target/composables/useDate'
 import type {
-  CollectionParams,
+  AnalysisCollectionParams,
   Document,
   DocumentFacets,
   FacetsParams,
@@ -24,7 +24,7 @@ export const getCollectionAnalysis = async ({
   selectedDateType,
   selectedPeriod,
   ...params
-}: CollectionParams) => {
+}: AnalysisCollectionParams) => {
   const query: Record<string, string | number | string[]> = {
     [`sort[${sortBy}]`]: sortOrder.toLowerCase(),
     ...params,

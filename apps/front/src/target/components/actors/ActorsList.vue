@@ -38,6 +38,7 @@
 import SectionListHeader from '@target/components/watchFiles/EditSection/SectionListHeader.vue'
 import { ActorStatus } from '@target/types/actor'
 import type { WatchFileActor } from '@target/types/watchFile'
+import { RouteNames } from '@target/types/route-names'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -66,7 +67,7 @@ const {
   readonly = false,
 } = defineProps<Props>()
 
-const route = useRoute()
+const route = useRoute(RouteNames.WATCH_FILES)
 const emit = defineEmits(['retry', 'add', 'actor-updated'])
 const currentPage = defineModel<number>('currentPage', { required: true })
 const actorsList = ref<WatchFileActor[]>([...actors])

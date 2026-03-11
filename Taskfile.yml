@@ -1,6 +1,11 @@
 # https://taskfile.dev
 version: '3'
 
+includes:
+  front:
+    taskfile: apps/front/Taskfile.yaml
+    dir: apps/front
+
 vars:
   COMPOSE: docker compose --env-file .env -f infra/compose.yaml -f infra/compose.local.yaml
 
@@ -86,21 +91,11 @@ tasks:
     desc: Open psql shell
     cmd: "{{.COMPOSE}} exec db psql -U postgres -d chapsmind_db"
 
-  # ─── Frontend ──────────────────────────────────────
+  # ─── Frontend (tasks not covered by include) ──────
   front:dev:
     desc: Start frontend dev server (HMR)
     dir: apps/front
     cmd: yarn dev
-
-  front:lint:
-    desc: Lint + fix frontend code
-    dir: apps/front
-    cmd: yarn lint
-
-  front:typecheck:
-    desc: Run TypeScript type checking
-    dir: apps/front
-    cmd: yarn run type-check
 
   front:build:
     desc: Build frontend for production
@@ -145,4 +140,4 @@ tasks:
 
   test:
     desc: Run all tests
-    deps: [screen:test]
+    deps: [front:test, screen:test]

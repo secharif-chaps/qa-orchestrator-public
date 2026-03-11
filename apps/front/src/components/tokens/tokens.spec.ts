@@ -11,17 +11,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { ref, nextTick } from 'vue'
-import { createPinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia'
 
-// Mock the i18n (useI18n for <script setup>, $t provided via global.mocks)
+// Mock the i18n
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
     t: (key: string, fallback?: string) => fallback || key,
     locale: ref('en-US'),
   }),
 }))
-
-const $t = (key: string, fallback?: string) => fallback || key
 
 // Mock router
 vi.mock('vue-router', () => ({
@@ -45,29 +43,13 @@ const mockModulesData = ref({
 })
 
 vi.mock('@pinia/colada', () => ({
-  useQuery: vi.fn((...args: unknown[]) => {
-    // Inspect the query key to determine what data to return
-    const queryObj = typeof args[0] === 'object' ? (args[0] as Record<string, unknown>) : null
-    const key = queryObj?.key as string[] | undefined
+  useQuery: vi.fn((queryOrFn) => {
+    // Detect query type from key
+    const query = typeof queryOrFn === 'function' ? queryOrFn() : queryOrFn
+    const key = query?.key || []
+    const keyStr = JSON.stringify(key)
 
-    // Match by key pattern
-    if (key && key.includes('balance')) {
-      return {
-        data: mockBalanceData,
-        isLoading: ref(false),
-        error: ref(null),
-        refetch: vi.fn(),
-      }
-    }
-    if (key && key.includes('modules')) {
-      return {
-        data: mockModulesData,
-        isLoading: ref(false),
-        error: ref(null),
-        refetch: vi.fn(),
-      }
-    }
-    if (key && (key.includes('companies') || key.includes('recent'))) {
+    if (keyStr.includes('companies')) {
       return {
         data: ref([]),
         isLoading: ref(false),
@@ -75,7 +57,15 @@ vi.mock('@pinia/colada', () => ({
         refetch: vi.fn(),
       }
     }
-    if (key && key.includes('organization')) {
+    if (keyStr.includes('balance') || keyStr.includes('token')) {
+      return {
+        data: mockBalanceData,
+        isLoading: ref(false),
+        error: ref(null),
+        refetch: vi.fn(),
+      }
+    }
+    if (keyStr.includes('organization')) {
       return {
         data: ref({ id: 'test-org-123', name: 'Test Org' }),
         isLoading: ref(false),
@@ -83,10 +73,8 @@ vi.mock('@pinia/colada', () => ({
         refetch: vi.fn(),
       }
     }
-
-    // Default fallback
     return {
-      data: ref(null),
+      data: mockModulesData,
       isLoading: ref(false),
       error: ref(null),
       refetch: vi.fn(),
@@ -95,6 +83,7 @@ vi.mock('@pinia/colada', () => ({
   useQueryCache: () => ({
     invalidateQueries: vi.fn(),
   }),
+  defineQueryOptions: <T>(fn: () => T) => fn,
   defineMutation: vi.fn((fn) => fn),
   useMutation: vi.fn(() => ({
     mutate: vi.fn(),
@@ -107,13 +96,13 @@ vi.mock('@pinia/colada', () => ({
 vi.mock('@owlint/feathers-vue', () => ({
   Button: {
     name: 'Button',
-    template: '<button><slot />{{ label }}</button>',
+    template: '<button><slot /></button>',
     props: ['variant', 'size', 'icon', 'label', 'loading', 'disabled', 'iconOnly', 'title'],
   },
   Tag: {
     name: 'Tag',
     template: '<span><slot /></span>',
-    props: ['variant', 'label', 'size', 'icon', 'rounded', 'dot'],
+    props: ['variant', 'label', 'size', 'icon', 'rounded'],
   },
   Badge: {
     name: 'Badge',
@@ -132,18 +121,26 @@ vi.mock('@owlint/feathers-vue', () => ({
   },
   Input: {
     name: 'Input',
-    template: '<input type="text" />',
-    props: ['modelValue', 'id', 'type', 'placeholder', 'min', 'max', 'disabled'],
+    template:
+      '<input type="text" class="input" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
+    props: ['modelValue', 'type', 'placeholder', 'disabled', 'label', 'icon'],
+    emits: ['update:modelValue'],
   },
-  Alert: {
-    name: 'Alert',
-    template: '<div class="alert"><slot /></div>',
-    props: ['variant', 'title', 'description', 'icon'],
-  },
-  Icon: {
-    name: 'Icon',
-    template: '<i></i>',
-    props: ['icon'],
+}))
+
+// Mock companies query
+vi.mock('@/queries/companies', () => ({
+  recentCompaniesQuery: () => ({
+    key: ['companies', 'recent'],
+    query: () => Promise.resolve([]),
+  }),
+}))
+
+// Mock organization query
+vi.mock('@/queries/organization', () => ({
+  currentOrganizationQuery: {
+    key: ['organization', 'current'],
+    query: () => Promise.resolve({ id: 'test-org-123', name: 'Test Org' }),
   },
 }))
 
@@ -155,60 +152,12 @@ vi.mock('@/utils/toast', () => ({
   },
 }))
 
-// Mock token queries
-vi.mock('@/queries/tokens', () => ({
-  organizationBalanceQuery: (params: { organizationId: string }) => ({
-    key: ['tokens', 'balance', params.organizationId],
-    query: () => Promise.resolve({ organization_id: params.organizationId, balance: 175 }),
-  }),
-  organizationModulesQuery: (params: { organizationId: string }) => ({
-    key: ['tokens', 'modules', params.organizationId],
-    query: () =>
-      Promise.resolve({
-        modules: [
-          { name: 'screen', enabled: true, created_at: '2024-01-01', updated_at: '2024-01-01' },
-          { name: 'target', enabled: false, created_at: '2024-01-01', updated_at: '2024-01-01' },
-          { name: 'explore', enabled: true, created_at: '2024-01-01', updated_at: '2024-01-01' },
-        ],
-      }),
-  }),
-}))
-
-// Mock token mutations
-vi.mock('@/mutations/tokens', () => ({
-  useAddGlobalTokens: () => ({
-    organizationId: ref(''),
-    amount: ref(0),
-    addTokens: vi.fn(),
-    isLoading: ref(false),
-  }),
-  useToggleModule: () => ({
-    toggleModule: vi.fn(),
-    isLoading: ref(false),
-  }),
-}))
-
-// Mock organization query (for TokenSidebar)
-vi.mock('@/queries/organization', () => ({
-  currentOrganizationQuery: {
-    key: ['organization', 'current'],
-    query: () => Promise.resolve({ id: 'test-org-123', name: 'Test Org' }),
-  },
-}))
-
-// Mock companies query (for TokenSidebar)
-vi.mock('@/queries/companies', () => ({
-  recentCompaniesQuery: () => ({
-    key: ['companies', 'recent'],
-    query: () => Promise.resolve([]),
-  }),
-}))
-
 // Constants
 const TOKENS_PER_COMPANY = 35
 
 describe('Global Token System UI Components', () => {
   beforeEach(() => {
+    setActivePinia(createPinia())
     vi.clearAllMocks()
     mockBalanceData.value = { organization_id: 'test-org-123', balance: 175 }
   })
@@ -223,14 +172,10 @@ describe('Global Token System UI Components', () => {
           organizationId: 'test-org-123',
         },
         global: {
-          plugins: [createPinia()],
-          mocks: { $t },
           stubs: {
             Card: { template: '<div class="card"><slot /></div>' },
-            ModuleStatusCard: { template: '<div class="module-card"></div>' },
+            ModuleTokenCard: { template: '<div class="module-card"></div>' },
             RouterLink: { template: '<a><slot /></a>' },
-            Alert: { template: '<div class="alert"><slot /></div>' },
-            Input: { template: '<input />' },
           },
         },
       })
@@ -250,14 +195,10 @@ describe('Global Token System UI Components', () => {
           organizationId: 'test-org-123',
         },
         global: {
-          plugins: [createPinia()],
-          mocks: { $t },
           stubs: {
             Card: { template: '<div class="card"><slot /></div>' },
-            ModuleStatusCard: { template: '<div class="module-card"></div>' },
+            ModuleTokenCard: { template: '<div class="module-card"></div>' },
             RouterLink: { template: '<a><slot /></a>' },
-            Alert: { template: '<div class="alert"><slot /></div>' },
-            Input: { template: '<input />' },
           },
         },
       })
@@ -285,13 +226,7 @@ describe('Global Token System UI Components', () => {
           isEnabled: true,
           organizationId: 'test-org-123',
         },
-        global: {
-          plugins: [createPinia()],
-          mocks: { $t },
-          stubs: {
-            Tag: { template: '<span><slot /></span>', props: ['variant', 'label', 'size', 'dot'] },
-          },
-        },
+        global: {},
       })
 
       await flushPromises()
@@ -317,13 +252,7 @@ describe('Global Token System UI Components', () => {
           isEnabled: true,
           organizationId: 'test-org-123',
         },
-        global: {
-          plugins: [createPinia()],
-          mocks: { $t },
-          stubs: {
-            Tag: { template: '<span><slot /></span>', props: ['variant', 'label', 'size', 'dot'] },
-          },
-        },
+        global: {},
       })
 
       await flushPromises()
@@ -341,24 +270,13 @@ describe('Global Token System UI Components', () => {
 
   describe('TokenSidebar', () => {
     it('displays global balance from single query', async () => {
-      // Mock organization query
-      vi.doMock('@/queries/organization', () => ({
-        currentOrganizationQuery: {
-          key: ['organization', 'current'],
-          query: () => Promise.resolve({ id: 'test-org-123', name: 'Test Org' }),
-        },
-      }))
-
       const { default: TokenSidebar } = await import('../sidebar/TokenSidebar.vue')
 
       const wrapper = mount(TokenSidebar, {
         global: {
-          plugins: [createPinia()],
-          mocks: { $t },
           stubs: {
             TokenHistoryItem: { template: '<div class="history-item"></div>' },
             RouterLink: { template: '<a><slot /></a>' },
-            Tag: { template: '<span><slot /></span>', props: ['variant', 'label', 'icon', 'size'] },
           },
         },
       })

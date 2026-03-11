@@ -28,14 +28,14 @@ import { config } from '@target/config'
 import { computed, ref, watchEffect } from 'vue'
 
 interface Props {
-  domain: string
-  alt: string
+  domain?: string
+  alt?: string
   name?: string
   width?: number
   height?: number
 }
 
-const { domain, alt, name = undefined, width = 32, height = 32 } = defineProps<Props>()
+const { domain = '', alt = '', name = undefined, width = 32, height = 32 } = defineProps<Props>()
 
 const shouldShowFallback = ref(false)
 

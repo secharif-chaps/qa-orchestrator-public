@@ -2,19 +2,17 @@
  * Tests for DataSourceCard component.
  */
 
-import { flushPromises, mount } from '@vue/test-utils'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { mount, flushPromises } from '@vue/test-utils'
 import { ref } from 'vue'
 
-// Mock vue-i18n — createI18n must be included because src/i18n/index.ts calls it at module load time
+// Mock vue-i18n
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
     t: (key: string, fallback?: string) => fallback || key,
   }),
-  createI18n: () => ({ global: { t: (key: string) => key }, install: vi.fn() }),
+  createI18n: () => ({ global: { t: (key: string, fallback?: string) => fallback || key } }),
 }))
-
-const $t = (key: string) => key
 
 // Mock pinia/colada
 vi.mock('@pinia/colada', () => ({
@@ -119,7 +117,6 @@ describe('DataSourceCard', () => {
         },
         organizationId: 'test-org-123',
       },
-      global: { mocks: { $t } },
     })
 
     await flushPromises()
@@ -155,7 +152,6 @@ describe('DataSourceCard', () => {
         },
         organizationId: 'test-org-123',
       },
-      global: { mocks: { $t } },
     })
 
     await flushPromises()

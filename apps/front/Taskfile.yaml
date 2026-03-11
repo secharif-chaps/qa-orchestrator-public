@@ -35,6 +35,26 @@ tasks:
     cmds:
       - npx lint-staged --allow-empty
 
+  typecheck:
+    desc: 'Run TypeScript type checking (vue-tsc)'
+    cmds:
+      - npx vue-tsc --build
+
+  test:
+    desc: 'Run frontend tests with Vitest'
+    cmds:
+      - npx vitest run
+
+  test:coverage:
+    desc: 'Run frontend tests with coverage report'
+    cmds:
+      - npx vitest run --coverage
+
+  test:ui:
+    desc: 'Run frontend tests with Vitest UI (interactive browser)'
+    cmds:
+      - npx vitest --ui
+
   hook:install:
     desc: 'Install git hooks (pre-commit)'
     cmds:

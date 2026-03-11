@@ -10,7 +10,7 @@ import { useI18n } from 'vue-i18n'
 export function useChatDateDisplay() {
   const { d } = useI18n()
   const currentTime = ref(new Date())
-  let intervalId: NodeJS.Timeout
+  let intervalId: ReturnType<typeof setInterval>
 
   // Update current time every minute to handle day changes
   onMounted(() => {

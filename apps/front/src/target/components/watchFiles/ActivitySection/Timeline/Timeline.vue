@@ -45,9 +45,12 @@
                 <div v-else class="text-sm leading-relaxed text-gray-700">
                   <TimelineItemSourceDescription
                     v-if="activity.message.dataType === 'Source'"
-                    :activity="activity.message.activity"
+                    :activity="(activity.message as SourceActivityDescription).activity"
                   />
-                  <TimelineItemWatchFileDescription v-else :activity="activity.message.activity" />
+                  <TimelineItemWatchFileDescription
+                    v-else
+                    :activity="(activity.message as WatchFileActivityDescription).activity"
+                  />
                 </div>
                 <Button
                   v-if="activity.button"
@@ -89,7 +92,11 @@
 <script setup lang="ts">
 import { Button, Icon, Tag } from '@owlint/feathers-vue'
 import TimelineSkeleton from '@target/components/skeletons/TimelineSkeleton.vue'
-import type { TimelineProps } from '@target/types/timeline'
+import type {
+  SourceActivityDescription,
+  TimelineProps,
+  WatchFileActivityDescription,
+} from '@target/types/timeline'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import TimelineItemSourceDescription from './TimelineItemSourceDescription.vue'

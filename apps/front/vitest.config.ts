@@ -10,7 +10,30 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{js,ts}'],
     // Type-only files that contain no test suites (just TS type assertions)
     exclude: ['src/types/*.spec.ts'],
-    setupFiles: ['./src/tests/setup.ts'],
+    setupFiles: ['./src/test-utils/setup.ts'],
+    reporters: ['default', 'junit'],
+    outputFile: {
+      junit: './test-results.xml',
+    },
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'cobertura'],
+      include: [
+        'src/components/**/*.{ts,vue}',
+        'src/composables/**/*.ts',
+        'src/stores/**/*.ts',
+        'src/utils/**/*.ts',
+        'src/target/**/*.{ts,vue}',
+      ],
+      exclude: [
+        '**/__tests__/**',
+        '**/*.spec.ts',
+        '**/*.test.ts',
+        '**/*.d.ts',
+        'src/test-utils/**',
+        'node_modules/**',
+      ],
+    },
   },
   resolve: {
     alias: {

@@ -14,10 +14,13 @@ import { ToggleGroup, type ToggleGroupOption } from '@owlint/feathers-vue'
 import { useDocumentValidation } from '@target/api/mutations/document'
 import type { Document, ManualValidationStatus } from '@target/types/document'
 import { DocumentValidationAction } from '@target/types/document'
+import { RouteNames } from '@target/types/route-names'
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
-const route = useRoute()
+const route = useRoute(RouteNames.WATCH_FILES_DOCUMENTS)
+const { t } = useI18n()
 
 interface Props {
   document: Document
@@ -32,7 +35,7 @@ const {
   iconOnly = false,
   darkMode = false,
 } = defineProps<Props>()
-const watchFileId = computed(() => route.params.id as string)
+const watchFileId = computed(() => route.params.id)
 
 const selectedStatus = ref<ManualValidationStatus>(document.manualStatus)
 
@@ -46,14 +49,14 @@ watch(
 const options = computed<ToggleGroupOption[]>(() => [
   {
     icon: 'fa-thumbs-up',
-    label: $t('documents.validation.accept'),
+    label: t('documents.validation.accept'),
     value: 'accept',
     kind: 'accepted',
     iconOnly,
   },
   {
     icon: 'fa-thumbs-down',
-    label: $t('documents.validation.reject'),
+    label: t('documents.validation.reject'),
     value: 'refuse',
     kind: 'refused',
     iconOnly,

@@ -5,12 +5,12 @@
         <span class="font-semibold">{{ userName }}</span>
       </template>
       <template #oldStatus>
-        <Tag variant="secondary" kind="outline" size="sm" :icon="getStatusIcon(oldStatus)">
+        <Tag variant="secondary" kind="light" size="sm" :icon="getStatusIcon(oldStatus)">
           {{ oldStatusText }}
         </Tag>
       </template>
       <template #newStatus>
-        <Tag variant="secondary" kind="outline" size="sm" :icon="getStatusIcon(newStatus)">
+        <Tag variant="secondary" kind="light" size="sm" :icon="getStatusIcon(newStatus)">
           {{ newStatusText }}
         </Tag>
       </template>

@@ -193,6 +193,7 @@ import { watchDebounced } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { RouteNames } from '@target/types/route-names'
 import { useRoute } from 'vue-router'
 import SourceListSwitch from './SourceListSwitch.vue'
 
@@ -227,7 +228,7 @@ const selectedSources = defineModel<string[]>('selectedSources', {
 const emit = defineEmits<{
   add: []
 }>()
-const route = useRoute()
+const route = useRoute(RouteNames.WATCH_FILES)
 
 const { t } = useI18n()
 const sourcesStore = useSourcesStore()

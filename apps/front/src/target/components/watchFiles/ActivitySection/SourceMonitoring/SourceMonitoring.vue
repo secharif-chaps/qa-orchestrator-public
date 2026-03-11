@@ -60,6 +60,7 @@ const getActivityColor = (activity: SourceActivity): string => {
     [SourceActionType.SOURCE_ADDED_TO_WATCHFILE]: 'bg-gray-200',
     [SourceActionType.SOURCE_STATUS_CHANGED]:
       actionData.new_status === SourceStatus.ACTIVE ? 'bg-green-200' : 'bg-red-200',
+    [SourceActionType.SOURCE_COLLECT_STATUS_CHANGED]: 'bg-gray-200',
   }
   return colorMap[actionType] || 'bg-gray-200'
 }
@@ -75,6 +76,7 @@ const getActivityIcon = (activity: SourceActivity): string => {
     [SourceActionType.SOURCE_ADDED_TO_WATCHFILE]: 'fa-plus',
     [SourceActionType.SOURCE_STATUS_CHANGED]:
       actionData.new_status === SourceStatus.ACTIVE ? 'fa-check' : 'fa-exclamation',
+    [SourceActionType.SOURCE_COLLECT_STATUS_CHANGED]: 'fa-circle-info',
   }
   return iconMap[actionType] || 'fa-circle-info'
 }

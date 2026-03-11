@@ -20,11 +20,12 @@ import { useMercure } from '@target/composables/useMercure'
 import { useWatchFileTitle } from '@target/composables/useWatchFileTitle'
 import { useWatchFileStore } from '@target/stores/watchFile'
 import { useHead } from '@unhead/vue'
+import { RouteNames } from '@target/types/route-names'
 import { storeToRefs } from 'pinia'
 import { computed, onBeforeUnmount, watch, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
 
-const route = useRoute()
+const route = useRoute(RouteNames.WATCH_FILES)
 const { activeSubscriptions, unsubscribe } = useMercure()
 
 const watchFileStore = useWatchFileStore()
@@ -32,10 +33,7 @@ const watchFileStore = useWatchFileStore()
 const { isUserEditable } = storeToRefs(watchFileStore)
 
 // Get ID from route params or from store (after silent navigation)
-const routeWatchFileId = computed<string | undefined>(() => {
-  const id = route.params.id
-  return Array.isArray(id) ? id[0] : id
-})
+const routeWatchFileId = computed<string | undefined>(() => route.params.id)
 
 // CurrentWatchFileId is only set after silent navigation from /new. Not needed otherwise.
 watch(

@@ -93,9 +93,7 @@ const switchTab = async (name: RouteNames) => {
   await router.push({
     name,
     params: { id: watchFileId },
-    query: {
-      ...route.query,
-    },
-  })
+    query: { ...route.query },
+  } as never)
 }
 </script>

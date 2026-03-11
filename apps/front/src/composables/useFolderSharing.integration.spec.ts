@@ -43,9 +43,9 @@ function createMockFolder(overrides: Partial<Folder> = {}): Folder {
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     owner: 'owneruser',
+    owner_username: 'owneruser',
     organization_id: 'org-1',
     owner_id: 'owner-user-id',
-    owner_username: 'owneruser',
     is_owner: false,
     share_role: null,
     items: [],
@@ -62,7 +62,7 @@ describe('Folder Sharing Integration Tests', () => {
 
   describe('Full sharing flow: owner shares folder, recipient sees it', () => {
     it('owner can see their own folder and has full control', () => {
-      // Setup: User is the owner with organization.write and company.create permissions
+      // Setup: User is the owner with organization.write and screen.create permissions
       mockUserPermissions.value = ['organization.write', 'company.create', 'organization.read']
 
       const ownedFolder = ref(
@@ -94,7 +94,7 @@ describe('Folder Sharing Integration Tests', () => {
     })
 
     it('shared user with writer role can see folder and create items', () => {
-      // Setup: User is a writer with company.create permission
+      // Setup: User is a writer with screen.create permission
       mockUserPermissions.value = ['organization.read', 'organization.write', 'company.create']
 
       const sharedFolder = ref(
@@ -215,8 +215,8 @@ describe('Folder Sharing Integration Tests', () => {
   })
 
   describe('Permission enforcement: reader cannot create items', () => {
-    it('reader cannot create items even with company.create permission', () => {
-      // Edge case: reader with company.create (unusual but possible)
+    it('reader cannot create items even with screen.create permission', () => {
+      // Edge case: reader with screen.create (unusual but possible)
       mockUserPermissions.value = ['organization.read', 'company.create']
 
       const sharedFolder = ref(
@@ -277,8 +277,8 @@ describe('Folder Sharing Integration Tests', () => {
       expect(canCreateFolder.value).toBe(false)
     })
 
-    it('writer needs company.create to add items to folder', () => {
-      // Writer without company.create
+    it('writer needs screen.create to add items to folder', () => {
+      // Writer without screen.create
       mockUserPermissions.value = ['organization.read', 'organization.write']
 
       const sharedFolder = ref(
@@ -294,8 +294,8 @@ describe('Folder Sharing Integration Tests', () => {
       expect(canCreateItems.value).toBe(false)
     })
 
-    it('owner needs company.create to add items to their own folder', () => {
-      // Owner without company.create
+    it('owner needs screen.create to add items to their own folder', () => {
+      // Owner without screen.create
       mockUserPermissions.value = ['organization.read', 'organization.write']
 
       const ownedFolder = ref(

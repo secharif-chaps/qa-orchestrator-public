@@ -85,9 +85,16 @@ front:typecheck:
 front:test:
   <<: *default-lint-job
   stage: test
-  allow_failure: true
   script:
-    - cd apps/front && npx vitest run
+    - cd apps/front && npx vitest run --coverage
+  artifacts:
+    reports:
+      junit: apps/front/test-results.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: apps/front/coverage/cobertura-coverage.xml
+    when: always
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
 # ─── Build Stage (Docker) ─────────────────────────────
 .front-docker-build:

@@ -46,7 +46,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
 const { d, t } = useI18n()
-const route = useRoute()
+const route = useRoute(RouteNames.WATCH_FILES)
 const router = useRouter()
 
 interface Props {
@@ -58,7 +58,7 @@ const { watchFileEvent } = defineProps<Props>()
 
 const watchFileDocumentsStore = useWatchFileDocumentsStore()
 const watchFileFiltersStore = useWatchFileFiltersStore()
-const watchFileId = computed(() => route.params.id as string)
+const watchFileId = computed(() => route.params.id)
 
 const eventTitle = computed(() => getLocalizedString(watchFileEvent.title))
 

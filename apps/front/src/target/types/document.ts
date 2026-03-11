@@ -97,6 +97,14 @@ export interface CollectionParams extends FilterParams {
   itemsPerPage?: number
 }
 
+export interface FacetsParams extends FilterParams {
+  watchFileId: string
+}
+
+export interface AnalysisCollectionParams extends CollectionParams {
+  watchFileId: string
+}
+
 export interface DocumentQueryOptions {
   watchFileId: string
   filters: CollectionParams

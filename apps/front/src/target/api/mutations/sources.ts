@@ -1,4 +1,4 @@
-import { useMutation, useQueryCache } from '@pinia/colada'
+import { useMutation, useQueryCache, type EntryKey } from '@pinia/colada'
 import { batchChangeSourceStatus, changeSourceStatus } from '@target/api/sources'
 import { useToast } from '@target/composables/useToast'
 import { SourceStatus, type Source } from '@target/types/source'
@@ -14,11 +14,11 @@ function updateSourcesOptimistically(
   sourceIds: Set<string>,
   status: SourceStatus,
 ): Array<{
-  queryKey: ReturnType<typeof SOURCES_QUERY_KEYS.byWatchFile>
+  queryKey: EntryKey
   data: unknown
 }> {
   const oldQueriesData: Array<{
-    queryKey: ReturnType<typeof SOURCES_QUERY_KEYS.byWatchFile>
+    queryKey: EntryKey
     data: unknown
   }> = []
 
@@ -42,7 +42,7 @@ function updateSourcesOptimistically(
       if (collection?.items) {
         // Save old data
         oldQueriesData.push({
-          queryKey: key,
+          queryKey: key as EntryKey,
           data: JSON.parse(JSON.stringify(collection)),
         })
 

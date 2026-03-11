@@ -1,15 +1,16 @@
-import { useChatStore } from '@target/stores/chat'
-import { MessageRole, MessageStatus, type Message } from '@target/types/conversation'
-import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import CollapsibleSystemMessage from '../CollapsibleSystemMessage.vue'
+import { mount } from '@vue/test-utils'
 import SystemMessagesSection from '../SystemMessagesSection.vue'
+import CollapsibleSystemMessage from '../CollapsibleSystemMessage.vue'
+import { useChatStore } from '@target/stores/chat'
+import { createMessages } from '@/test-utils/factories'
+import { MessageRole } from '@target/types/conversation'
+import { defaultGlobalConfig, buttonStub } from '@/test-utils/mount-config'
 
-// Mock vue-i18n
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
-    t: (key: string, params?: Record<string, unknown>, count?: number) => {
+    t: (key: string, _params?: Record<string, unknown>, count?: number) => {
       if (key === 'watch_files.chat.system_messages.view_older') {
         return `View ${count} older actions`
       }
@@ -21,57 +22,30 @@ vi.mock('vue-i18n', () => ({
   }),
 }))
 
-// Mock useTimeDisplay
 vi.mock('@target/composables/useTimeDisplay', () => ({
   useTimeDisplay: () => ({
     formatTime: () => '2 hours ago',
   }),
 }))
 
-// Mock useMarkdown
 vi.mock('@target/composables/useMarkdown', () => ({
   useMarkdown: () => ({
     toHtml: () => ({ value: '' }),
   }),
 }))
 
-// Mock useStringUtils
 vi.mock('@target/composables/useStringUtils', () => ({
   useStringUtils: () => ({
     unescapeString: (str: string) => str,
   }),
 }))
 
-// Mock sanitize-html directive
-const vSanitizeHtml = {
-  mounted: (el: HTMLElement, binding: { value: string }) => {
-    el.innerHTML = binding.value
+const globalConfig = {
+  ...defaultGlobalConfig,
+  stubs: {
+    ...defaultGlobalConfig.stubs,
+    Button: buttonStub,
   },
-  updated: (el: HTMLElement, binding: { value: string }) => {
-    el.innerHTML = binding.value
-  },
-}
-
-const createMessage = (id: string, overrides: Partial<Message> = {}): Message => ({
-  id,
-  '@type': 'Message',
-  contents: [
-    {
-      '@type': 'TextContent',
-      '@id': `/contents/${id}`,
-      id,
-      content: `Message content ${id}`,
-    },
-  ],
-  role: MessageRole.SYSTEM,
-  status: MessageStatus.SENT,
-  retryCount: 0,
-  createdAt: new Date().toISOString(),
-  ...overrides,
-})
-
-const createMessages = (count: number): Message[] => {
-  return Array.from({ length: count }, (_, i) => createMessage(`msg-${i + 1}`))
 }
 
 describe('SystemMessagesSection', () => {
@@ -80,153 +54,72 @@ describe('SystemMessagesSection', () => {
   })
 
   it('shows only last 3 messages by default when there are more than 3', () => {
-    const messages = createMessages(5)
+    const messages = createMessages(5, { role: MessageRole.SYSTEM })
 
     const wrapper = mount(SystemMessagesSection, {
-      props: {
-        messages,
-        groupId: 'group-1',
-      },
-      global: {
-        directives: {
-          'sanitize-html': vSanitizeHtml,
-        },
-        stubs: {
-          Icon: {
-            props: ['icon'],
-            template: '<span class="icon" :data-icon="icon"></span>',
-          },
-        },
-      },
+      props: { messages, groupId: 'group-1' },
+      global: globalConfig,
     })
 
-    // Should show "View X older" button
     expect(wrapper.text()).toContain('View 2 older actions')
 
-    // Should only render 3 CollapsibleSystemMessage components (the visible ones)
     const collapsibleMessages = wrapper.findAllComponents(CollapsibleSystemMessage)
     expect(collapsibleMessages.length).toBe(3)
   })
 
   it('shows all messages when "View X older" button is clicked', async () => {
-    const messages = createMessages(5)
+    const messages = createMessages(5, { role: MessageRole.SYSTEM })
     const chatStore = useChatStore()
 
     const wrapper = mount(SystemMessagesSection, {
-      props: {
-        messages,
-        groupId: 'group-1',
-      },
-      global: {
-        directives: {
-          'sanitize-html': vSanitizeHtml,
-        },
-        stubs: {
-          Icon: {
-            props: ['icon'],
-            template: '<span class="icon" :data-icon="icon"></span>',
-          },
-        },
-      },
+      props: { messages, groupId: 'group-1' },
+      global: globalConfig,
     })
 
-    // Find and click the "View older" button
     const viewOlderButton = wrapper.find('button')
     expect(viewOlderButton.text()).toContain('View 2 older actions')
     await viewOlderButton.trigger('click')
 
-    // Verify store was called
     expect(chatStore.isOlderMessagesVisible('group-1')).toBe(true)
 
-    // Re-mount to reflect state change
-    const wrapperAfter = mount(SystemMessagesSection, {
-      props: {
-        messages,
-        groupId: 'group-1',
-      },
-      global: {
-        directives: {
-          'sanitize-html': vSanitizeHtml,
-        },
-        stubs: {
-          Icon: {
-            props: ['icon'],
-            template: '<span class="icon" :data-icon="icon"></span>',
-          },
-        },
-      },
-    })
+    await wrapper.vm.$nextTick()
 
-    // Should now show all 5 messages
-    const allCollapsibleMessages = wrapperAfter.findAllComponents(CollapsibleSystemMessage)
+    const allCollapsibleMessages = wrapper.findAllComponents(CollapsibleSystemMessage)
     expect(allCollapsibleMessages.length).toBe(5)
-
-    // Should show "Hide older actions" button
-    expect(wrapperAfter.text()).toContain('Hide older actions')
+    expect(wrapper.text()).toContain('Hide older actions')
   })
 
   it('shows all messages without "View older" button when 3 or fewer messages', () => {
-    const messages = createMessages(3)
+    const messages = createMessages(3, { role: MessageRole.SYSTEM })
 
     const wrapper = mount(SystemMessagesSection, {
-      props: {
-        messages,
-        groupId: 'group-1',
-      },
-      global: {
-        directives: {
-          'sanitize-html': vSanitizeHtml,
-        },
-        stubs: {
-          Icon: {
-            props: ['icon'],
-            template: '<span class="icon" :data-icon="icon"></span>',
-          },
-        },
-      },
+      props: { messages, groupId: 'group-1' },
+      global: defaultGlobalConfig,
     })
 
-    // Should not show "View X older" button
     expect(wrapper.text()).not.toContain('View')
 
-    // Should render all 3 messages
     const collapsibleMessages = wrapper.findAllComponents(CollapsibleSystemMessage)
     expect(collapsibleMessages.length).toBe(3)
   })
 
   it('hides older messages when "Hide older actions" button is clicked', async () => {
-    const messages = createMessages(5)
+    const messages = createMessages(5, { role: MessageRole.SYSTEM })
     const chatStore = useChatStore()
 
-    // First show older messages
     chatStore.showOlderMessages('group-1')
 
     const wrapper = mount(SystemMessagesSection, {
-      props: {
-        messages,
-        groupId: 'group-1',
-      },
-      global: {
-        directives: {
-          'sanitize-html': vSanitizeHtml,
-        },
-        stubs: {
-          Icon: {
-            props: ['icon'],
-            template: '<span class="icon" :data-icon="icon"></span>',
-          },
-        },
-      },
+      props: { messages, groupId: 'group-1' },
+      global: globalConfig,
     })
 
-    // Find and click the "Hide older" button
     const hideButton = wrapper
       .findAll('button')
       .find((btn) => btn.text().includes('Hide older actions'))
     expect(hideButton).toBeDefined()
     await hideButton!.trigger('click')
 
-    // Verify store was called
     expect(chatStore.isOlderMessagesVisible('group-1')).toBe(false)
   })
 })

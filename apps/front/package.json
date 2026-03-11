@@ -17,12 +17,14 @@
     "format": "prettier --write src/",
     "stylelint": "stylelint \"src/**/*.{vue,css}\" --fix",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "@internationalized/date": "^3.11.0",
     "@owlint/feathers-vue": "^0.3.12",
-    "@pinia/colada": "^0.21.4",
+    "@pinia/colada": "~0.19.1",
     "@pinia/colada-devtools": "^0.1.5",
     "@tailwindcss/vite": "^4.1.11",
     "@unhead/vue": "^2.1.4",
@@ -49,10 +51,11 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@pinia/testing": "^0.1.6",
     "@tsconfig/node22": "^22.0.2",
     "@types/node": "^22.16.5",
     "@vitejs/plugin-vue": "^6.0.1",
+    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/ui": "^4.0.18",
     "@vue/compiler-sfc": "^3.5.29",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",

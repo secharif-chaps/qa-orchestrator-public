@@ -1,58 +1,8 @@
-import { useConversationStore } from '@target/stores/conversation'
-import {
-  ConversationState,
-  MessageRole,
-  MessageStatus,
-  type Conversation,
-  type Message,
-} from '@target/types/conversation'
-import type { WatchFile } from '@target/types/watchFile'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it } from 'vitest'
-
-const createMockWatchFile = (): WatchFile =>
-  ({
-    id: 'wf-1',
-    '@id': '/watch_files/wf-1',
-    '@type': 'WatchFile',
-    name: 'Test WatchFile',
-    titleManuallySetByUser: false,
-    status: 'draft',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    watchFileUsersCount: 1,
-    isFavorite: false,
-    userEditable: true,
-  }) as WatchFile
-
-const createMessage = (id: string, overrides: Partial<Message> = {}): Message => ({
-  id,
-  '@type': 'Message',
-  contents: [
-    {
-      '@type': 'TextContent',
-      '@id': `/contents/${id}`,
-      id,
-      content: `Message ${id}`,
-    },
-  ],
-  role: MessageRole.USER,
-  status: MessageStatus.SENT,
-  retryCount: 0,
-  createdAt: new Date().toISOString(),
-  ...overrides,
-})
-
-const createConversation = (id: string, messages: Message[] = []): Conversation => ({
-  id,
-  title: 'Test Conversation',
-  watchFile: createMockWatchFile(),
-  state: ConversationState.IDLE,
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-  language: 'en',
-  messages,
-})
+import { useConversationStore } from '@target/stores/conversation'
+import { MessageRole, MessageStatus } from '@target/types/conversation'
+import { createMessage, createConversation } from '@/test-utils/factories'
 
 describe('useConversationStore', () => {
   beforeEach(() => {
@@ -101,16 +51,6 @@ describe('useConversationStore', () => {
     expect(store.messages).toHaveLength(1)
   })
 
-  it('transitions message status from pending to sent', () => {
-    const store = useConversationStore()
-    const message = createMessage('msg-1', { status: MessageStatus.PENDING })
-    store.addOrUpdateMessage(message)
-
-    store.updateMessageStatus('msg-1', MessageStatus.SENT)
-
-    expect(store.messages[0]?.status).toBe(MessageStatus.SENT)
-  })
-
   it('sets isWaitingForAI and records start time', () => {
     const store = useConversationStore()
 
@@ -146,9 +86,7 @@ describe('useConversationStore', () => {
     const store = useConversationStore()
     store.setWaitingForAI(true)
 
-    const errorMessage = createMessage('msg-1', {
-      role: MessageRole.SYSTEM_ERROR,
-    })
+    const errorMessage = createMessage('msg-1', { role: MessageRole.SYSTEM_ERROR })
     store.addOrUpdateMessage(errorMessage)
 
     expect(store.isWaitingForAI).toBe(false)

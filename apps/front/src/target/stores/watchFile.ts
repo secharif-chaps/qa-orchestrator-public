@@ -61,6 +61,7 @@ export const useWatchFileStore = defineStore('watchFile', () => {
     filters,
     isUserEditable,
     currentWatchFileId,
+    isLoading: false,
 
     // UI state management methods
     resetPagination,
