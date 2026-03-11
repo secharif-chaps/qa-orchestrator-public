@@ -324,7 +324,7 @@ const submit = async () => {
       folderId,
       item: {
         item_id: newCompany.id.toString(),
-        type: 'company',
+        item_type: 'company',
       },
     })
     // Redirect to the newly created company page

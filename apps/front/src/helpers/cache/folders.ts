@@ -1,9 +1,9 @@
 import type { useQueryCache } from '@pinia/colada'
 import type { Folder } from '@/types/folder'
-import type { PaginatedResponse } from '@/types/pagination'
+import type { FolderListResponse } from '@/api/folders'
 import { FOLDER_QUERY_KEYS } from '@/queries/folders'
 
-export type FolderCacheData = PaginatedResponse<Folder> | Folder[] | Folder
+export type FolderCacheData = FolderListResponse | Folder[] | Folder
 
 /**
  * Update all folder caches dynamically using getEntries.
@@ -87,7 +87,7 @@ export function addFolderToCache(data: FolderCacheData, newFolder: Folder): Fold
     return {
       ...data,
       data: [newFolder, ...data.data],
-      meta: { ...data.meta, total: data.meta.total + 1 },
+      pagination: { ...data.pagination, total: (data.pagination.total ?? 0) + 1 },
     }
   }
 
@@ -118,7 +118,10 @@ export function removeFolderFromCache(
     return {
       ...data,
       data: data.data.filter((folder) => folder.id !== folderId),
-      meta: { ...data.meta, total: Math.max(0, data.meta.total - (hadFolder ? 1 : 0)) },
+      pagination: {
+        ...data.pagination,
+        total: Math.max(0, (data.pagination.total ?? 0) - (hadFolder ? 1 : 0)),
+      },
     }
   }
 

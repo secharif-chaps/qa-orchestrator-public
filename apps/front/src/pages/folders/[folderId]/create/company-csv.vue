@@ -512,7 +512,7 @@ const importCompanies = async () => {
             folderId,
             item: {
               item_id: result.company_id.toString(),
-              type: 'company',
+              item_type: 'company',
             },
           })
         }

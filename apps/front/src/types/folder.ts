@@ -54,7 +54,7 @@ export interface Folder {
 
 export interface FolderItemAdd {
   item_id: string
-  type: 'company'
+  item_type: 'company'
   position?: number
 }
 

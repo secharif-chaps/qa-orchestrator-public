@@ -653,7 +653,7 @@ const submit = async () => {
       folderId: targetFolderId.value as string,
       item: {
         item_id: newCompany.id.toString(),
-        type: 'company',
+        item_type: 'company',
       },
     })
 

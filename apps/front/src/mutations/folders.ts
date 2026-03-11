@@ -54,7 +54,7 @@ export const useAddItemToFolder = defineMutation(() => {
       const optimisticItem: FolderItem = {
         id: `temp-${Date.now()}`,
         item_id: item.item_id,
-        type: item.type,
+        type: item.item_type,
         position: item.position,
         created_at: new Date().toISOString(),
         name: itemMetadata?.name || 'Loading...',
