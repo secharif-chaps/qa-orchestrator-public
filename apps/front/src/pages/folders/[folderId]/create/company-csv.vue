@@ -131,11 +131,19 @@
           />
         </div>
 
+        <!-- Validation error alert -->
+        <Alert
+          v-if="validationError"
+          variant="danger"
+          :description="validationError"
+          icon="fa-exclamation-circle"
+        />
+
         <!-- Parsed Companies Preview -->
         <div v-if="parseResult.companies.length > 0" class="flex flex-col gap-4">
           <div class="flex items-center justify-between">
             <p class="text-secondary text-sm">
-              {{ $t('csv.upload.companiesFound', { count: parseResult.companies.length }) }}
+              {{ $t('csv.upload.companiesFoundCount', { count: parseResult.companies.length }) }}
             </p>
             <Button
               variant="secondary"
@@ -365,7 +373,7 @@ import { useAddItemToFolder } from '@/mutations/folders'
 import { currentOrganizationQuery } from '@/queries/organization'
 import { organizationBalanceQuery, organizationModulesQuery } from '@/queries/tokens'
 
-useI18n()
+const { t } = useI18n()
 const router = useRouter()
 const route = useRoute('/folders/[folderId]/create/company-csv')
 
@@ -379,6 +387,12 @@ const importResult = ref<CSVImportResponse | null>(null)
 // Loading states
 const isValidating = ref(false)
 const isImporting = ref(false)
+
+// Error states
+const validationError = ref<string | null>(null)
+
+// Folder mutation — must be at setup level, not inside async functions
+const { mutateAsync: addToFolder } = useAddItemToFolder()
 
 // Fetch current organization
 const { data: currentOrganization } = useQuery(() => currentOrganizationQuery())
@@ -431,13 +445,17 @@ const showTokenAlert = ref(false)
 const isRefreshingTokens = ref(false)
 
 // File handling methods
+const CSV_MIME_TYPES = ['text/csv', 'application/csv', 'text/plain', 'application/vnd.ms-excel']
+
 const handleFileSelect = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
-  if (file && file.type === 'text/csv') {
+  const isCsv = file && (CSV_MIME_TYPES.includes(file.type) || file.name.endsWith('.csv'))
+  if (isCsv) {
     selectedFile.value = file
     parseCSVFile(file)
     // Reset previous results
     validationResult.value = null
+    validationError.value = null
     importResult.value = null
   }
 }
@@ -446,6 +464,7 @@ const removeFile = () => {
   selectedFile.value = null
   parseResult.value = null
   validationResult.value = null
+  validationError.value = null
   importResult.value = null
   if (fileInput.value) {
     fileInput.value.value = ''
@@ -477,13 +496,14 @@ const validateCompanies = async () => {
   if (!parseResult.value?.companies.length) return
 
   isValidating.value = true
+  validationError.value = null
   try {
     validationResult.value = await validateCSV({
       companies: parseResult.value.companies,
     })
   } catch (error: unknown) {
     console.error('Validation error:', error)
-    // Handle validation errors appropriately
+    validationError.value = t('csv.upload.validationFailed', 'Validation failed. Please try again.')
   } finally {
     isValidating.value = false
   }
@@ -502,7 +522,6 @@ const importCompanies = async () => {
 
     // Add successful companies to the folder
     if (importResult.value.successful > 0) {
-      const { mutateAsync: addToFolder } = useAddItemToFolder()
       const folderId = route.params.folderId
 
       // Add each successful company to the folder
@@ -536,6 +555,7 @@ const resetUpload = () => {
   selectedFile.value = null
   parseResult.value = null
   validationResult.value = null
+  validationError.value = null
   importResult.value = null
   if (fileInput.value) {
     fileInput.value.value = ''

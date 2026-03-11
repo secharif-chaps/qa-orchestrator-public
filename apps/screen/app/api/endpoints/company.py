@@ -636,14 +636,21 @@ async def validate_csv_companies(
     )
 
     # Get actual token balance from global-service
-    available_tokens = await global_service.get_balance(
-        org_id=org_context.organization_id,
-        user_id=org_context.user_id,
-        username=org_context.username,
-    )
-
-    # Check if user has sufficient tokens
-    has_sufficient_tokens = available_tokens >= validation_result.tokens_required
+    # If global-service is unavailable, degrade gracefully so validation still works
+    try:
+        available_tokens = await global_service.get_balance(
+            org_id=org_context.organization_id,
+            user_id=org_context.user_id,
+            username=org_context.username,
+        )
+        has_sufficient_tokens = available_tokens >= validation_result.tokens_required
+    except HTTPException:
+        logger.warning(
+            "Global-service unavailable during CSV validation, skipping token check",
+            extra={"organization_id": org_context.organization_id},
+        )
+        available_tokens = None
+        has_sufficient_tokens = True  # Don't block validation when token service is down
 
     # Add token insufficiency error if needed
     errors = list(validation_result.errors)
@@ -714,6 +721,7 @@ async def import_csv_companies(
     # Note: Per requirements, no token refunds on partial failures
     result = service.import_csv_companies(
         companies=import_request.companies,
+        owner_id=org_context.user_id,
         owner_username=org_context.username,
         organization_id=org_context.organization_id,
         skip_invalid=import_request.skip_invalid,

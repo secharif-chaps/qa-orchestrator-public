@@ -2573,6 +2573,7 @@ export default {
       rows: 'rows',
       moreRows: '{count} more rows not shown',
       validateData: 'Validate Data',
+      validationFailed: 'Validation failed. Please check your connection and try again.',
       validating: 'Validating companies...',
       table: {
         row: 'Row',

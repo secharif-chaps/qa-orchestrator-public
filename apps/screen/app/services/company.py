@@ -745,7 +745,7 @@ class CompanyService:
             tokens_available=available_tokens
         )
 
-    def import_csv_companies(self, companies: list[CompanyCSVRow], owner_username: str,
+    def import_csv_companies(self, companies: list[CompanyCSVRow], owner_id: str, owner_username: str,
                             organization_id: str, skip_invalid: bool = True) -> CompanyCSVImportResponse:
         """Import companies from CSV, creating them with tasks"""
         results = []
@@ -822,6 +822,7 @@ class CompanyService:
                 company = self.create_company(
                     name=company_row.name,
                     website=company_row.website,
+                    owner_id=owner_id,
                     owner_username=owner_username,
                     organization_id=organization_id
                 )

@@ -2646,6 +2646,7 @@ export default {
       rows: 'premières lignes',
       moreRows: '{count} lignes supplémentaires non affichées',
       validateData: 'Valider les Données',
+      validationFailed: 'La validation a échoué. Veuillez vérifier votre connexion et réessayer.',
       validating: 'Validation des entreprises...',
       table: {
         row: 'Ligne',

@@ -439,6 +439,16 @@ class GlobalServiceClient:
                 detail=f"Token service error: {response.status_code}",
             )
 
+        except httpx.HTTPStatusError as e:
+            logger.error(
+                f"Global-service returned error getting balance: {e.response.status_code}",
+                extra={"organization_id": org_id, "status_code": e.response.status_code, "error": str(e)},
+            )
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=f"Token service error: {e.response.status_code}",
+            )
+
         except httpx.RequestError as e:
             logger.error(
                 f"Network error calling global-service: {str(e)}",
