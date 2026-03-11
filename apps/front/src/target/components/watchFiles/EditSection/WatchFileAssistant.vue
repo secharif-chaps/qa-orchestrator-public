@@ -27,7 +27,6 @@
         "
         :on-load-older-messages="loadOlderMessages"
         :show-reassurance="showReassurance"
-        :should-cancel="shouldCancel"
       />
     </div>
 
@@ -98,12 +97,13 @@ const conversationStore = useConversationStore()
 const { isWaitingForAI } = storeToRefs(conversationStore)
 
 // Initialize timeout tracking for showing reassurance message after long waits
-const { showReassurance, shouldCancel } = useConversationTimeout()
+const { showReassurance } = useConversationTimeout()
 
 // Local UI state
 const hasInitialized = ref(false)
 const isLoadingConversation = ref(false)
 const conversationViewRef = ref<InstanceType<typeof ConversationView> | null>(null)
+const isMounted = ref(true)
 
 const shouldShowEmptyView = computed(() => {
   const isNotLoading =
@@ -139,13 +139,23 @@ watch(shouldHideChat, (isHidden) => {
   }
 })
 
-// Reset stores when watchFileId changes (switching between watchFiles)
+// Reset stores and unsubscribe stale Mercure topics when switching WatchFiles
+// flush: 'sync' ensures cleanup runs before queries re-evaluate with the new ID
 watch(
   () => watchFileId,
-  () => {
+  (_newId, oldId) => {
+    if (oldId) {
+      const { unsubscribe } = useMercure()
+      if (lastConversation.value?.id) {
+        unsubscribe(WATCHFILES_SUBSCRIBE_KEYS.conversationMessages(lastConversation.value.id))
+      }
+      unsubscribe(WATCHFILES_SUBSCRIBE_KEYS.lastConversation(oldId))
+    }
     chatStore.$reset()
     conversationStore.$reset()
+    hasInitialMessagesLoaded.value = false
   },
+  { flush: 'sync' },
 )
 
 // Initialize with real data or props
@@ -156,8 +166,16 @@ onMounted(async () => {
   }
 })
 
-// Reset stores when component unmounts
+// Reset stores and unsubscribe Mercure when component unmounts
 onUnmounted(() => {
+  isMounted.value = false
+  const { unsubscribe } = useMercure()
+  if (lastConversation.value?.id) {
+    unsubscribe(WATCHFILES_SUBSCRIBE_KEYS.conversationMessages(lastConversation.value.id))
+  }
+  if (watchFileId) {
+    unsubscribe(WATCHFILES_SUBSCRIBE_KEYS.lastConversation(watchFileId))
+  }
   chatStore.$reset()
   conversationStore.$reset()
 })
@@ -166,6 +184,7 @@ const { data: dataLastConversation, isLoading: isLoadingLastConversation } = use
   getLastConversationQuery({
     watchFileId,
     onUpdate: (updatedConversation) => {
+      if (!isMounted.value) return
       conversationStore.setCurrentConversation(updatedConversation)
     },
   }),
@@ -176,6 +195,7 @@ const { data: dataConversationMessages, isLoading: isLoadingConversationMessages
   getConversationMessagesQuery({
     conversationId: lastConversation.value?.id ?? '',
     onUpdate: (message) => {
+      if (!isMounted.value) return
       if (conversationStore.addOrUpdateMessage(message) !== 'unchanged') {
         conversationViewRef.value?.scrollToBottom()
       }
