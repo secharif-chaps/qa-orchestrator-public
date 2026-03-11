@@ -13,7 +13,7 @@ import os
 from unittest.mock import MagicMock
 
 import pytest
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 # Set environment variables before importing app modules
@@ -49,6 +49,12 @@ def test_db():
     features (ARRAY, UUID, etc.) that are not supported in SQLite.
     """
     engine = create_engine(TEST_DATABASE_URL)
+
+    # Create schema before tables (PostgreSQL-specific)
+    with engine.connect() as conn:
+        conn.execute(text("CREATE SCHEMA IF NOT EXISTS screen_schema"))
+        conn.commit()
+
     Base.metadata.create_all(bind=engine)
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     db = TestingSessionLocal()

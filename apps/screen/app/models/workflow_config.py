@@ -2,11 +2,12 @@ from datetime import datetime
 
 from sqlalchemy import Column, DateTime, Integer, String
 
-from app.database import Base
+from app.database import SCREEN_SCHEMA, Base
 
 
 class WorkflowConfig(Base):
     __tablename__ = "workflow_configs"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, index=True)
     task_type = Column(String(50), unique=True, nullable=False)

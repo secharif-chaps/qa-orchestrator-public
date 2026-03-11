@@ -51,6 +51,8 @@ pytestmark = pytest.mark.skipif(
 )
 
 # List of all 7 section tables created by the migration
+SCHEMA = 'screen_schema'
+
 SECTION_TABLES = [
     'company_profile',
     'company_digital',
@@ -92,7 +94,7 @@ class TestMigrationAppliesSuccessfully:
     def test_all_section_tables_created(self, db_engine):
         """Verify all 7 section tables exist after migration."""
         inspector = inspect(db_engine)
-        existing_tables = inspector.get_table_names()
+        existing_tables = inspector.get_table_names(schema=SCHEMA)
 
         for table_name in SECTION_TABLES:
             assert table_name in existing_tables, f"Table {table_name} was not created"
@@ -100,7 +102,7 @@ class TestMigrationAppliesSuccessfully:
     def test_company_profile_has_correct_columns(self, db_engine):
         """Verify company_profile table has all expected columns."""
         inspector = inspect(db_engine)
-        columns = {col['name'] for col in inspector.get_columns('company_profile')}
+        columns = {col['name'] for col in inspector.get_columns('company_profile', schema=SCHEMA)}
 
         expected_columns = {
             'company_id',
@@ -131,7 +133,7 @@ class TestMigrationAppliesSuccessfully:
     def test_company_digital_has_correct_columns(self, db_engine):
         """Verify company_digital table has all expected columns."""
         inspector = inspect(db_engine)
-        columns = {col['name'] for col in inspector.get_columns('company_digital')}
+        columns = {col['name'] for col in inspector.get_columns('company_digital', schema=SCHEMA)}
 
         expected_columns = {
             'company_id',
@@ -153,7 +155,7 @@ class TestMigrationAppliesSuccessfully:
     def test_company_jobs_has_integer_total_openings(self, db_engine):
         """Verify company_jobs.insights_total_openings is INTEGER type."""
         inspector = inspect(db_engine)
-        columns = inspector.get_columns('company_jobs')
+        columns = inspector.get_columns('company_jobs', schema=SCHEMA)
 
         total_openings_col = next(
             (col for col in columns if col['name'] == 'insights_total_openings'),
@@ -174,7 +176,7 @@ class TestForeignKeyConstraints:
         inspector = inspect(db_engine)
 
         for table_name in SECTION_TABLES:
-            fks = inspector.get_foreign_keys(table_name)
+            fks = inspector.get_foreign_keys(table_name, schema=SCHEMA)
             assert len(fks) > 0, f"Table {table_name} has no foreign keys"
 
             company_fk = next(
@@ -193,8 +195,8 @@ class TestForeignKeyConstraints:
         # Try to insert into company_profile with non-existent company_id
         with pytest.raises(Exception) as exc_info:
             db_session.execute(
-                text("""
-                    INSERT INTO company_profile (company_id, insights)
+                text(f"""
+                    INSERT INTO {SCHEMA}.company_profile (company_id, insights)
                     VALUES (99999, 'Test insights')
                 """)
             )
@@ -218,8 +220,8 @@ class TestCascadeDeleteBehavior:
         try:
             # Create a company
             db_session.execute(
-                text("""
-                    INSERT INTO companies (id, name, website, organization_id)
+                text(f"""
+                    INSERT INTO {SCHEMA}.companies (id, name, website, organization_id)
                     VALUES (:id, 'Test Company Cascade', 'https://test-cascade.com', 'test-org-cascade')
                 """),
                 {"id": test_company_id}
@@ -228,8 +230,8 @@ class TestCascadeDeleteBehavior:
 
             # Create profile for the company
             db_session.execute(
-                text("""
-                    INSERT INTO company_profile (company_id, insights, insights_source)
+                text(f"""
+                    INSERT INTO {SCHEMA}.company_profile (company_id, insights, insights_source)
                     VALUES (:id, 'Test insights', 'Chaps-e')
                 """),
                 {"id": test_company_id}
@@ -238,21 +240,21 @@ class TestCascadeDeleteBehavior:
 
             # Verify profile exists
             result = db_session.execute(
-                text("SELECT * FROM company_profile WHERE company_id = :id"),
+                text(f"SELECT * FROM {SCHEMA}.company_profile WHERE company_id = :id"),
                 {"id": test_company_id}
             ).fetchone()
             assert result is not None, "Profile should exist before delete"
 
             # Delete the company
             db_session.execute(
-                text("DELETE FROM companies WHERE id = :id"),
+                text(f"DELETE FROM {SCHEMA}.companies WHERE id = :id"),
                 {"id": test_company_id}
             )
             db_session.commit()
 
             # Verify profile was cascaded
             result = db_session.execute(
-                text("SELECT * FROM company_profile WHERE company_id = :id"),
+                text(f"SELECT * FROM {SCHEMA}.company_profile WHERE company_id = :id"),
                 {"id": test_company_id}
             ).fetchone()
             assert result is None, "Profile should be deleted by CASCADE"
@@ -261,7 +263,7 @@ class TestCascadeDeleteBehavior:
             # Clean up in case of failure
             db_session.rollback()
             db_session.execute(
-                text("DELETE FROM companies WHERE id = :id"),
+                text(f"DELETE FROM {SCHEMA}.companies WHERE id = :id"),
                 {"id": test_company_id}
             )
             db_session.commit()
@@ -274,8 +276,8 @@ class TestCascadeDeleteBehavior:
         try:
             # Create a company
             db_session.execute(
-                text("""
-                    INSERT INTO companies (id, name, website, organization_id)
+                text(f"""
+                    INSERT INTO {SCHEMA}.companies (id, name, website, organization_id)
                     VALUES (:id, 'Cascade All Test Company', 'https://cascade-all.com', 'test-org-cascade-all')
                 """),
                 {"id": test_company_id}
@@ -284,13 +286,13 @@ class TestCascadeDeleteBehavior:
 
             # Insert into all 7 section tables
             section_inserts = [
-                ("company_profile", "INSERT INTO company_profile (company_id, insights) VALUES (:id, 'Profile insights')"),
-                ("company_digital", "INSERT INTO company_digital (company_id, insights) VALUES (:id, 'Digital insights')"),
-                ("company_timeline", "INSERT INTO company_timeline (company_id, insights) VALUES (:id, 'Timeline insights')"),
-                ("company_products", "INSERT INTO company_products (company_id, insights) VALUES (:id, 'Products insights')"),
-                ("company_jobs", "INSERT INTO company_jobs (company_id, insights_total_openings) VALUES (:id, 50)"),
-                ("company_csr", "INSERT INTO company_csr (company_id, insights) VALUES (:id, 'CSR insights')"),
-                ("company_press", "INSERT INTO company_press (company_id, insights) VALUES (:id, 'Press insights')"),
+                ("company_profile", f"INSERT INTO {SCHEMA}.company_profile (company_id, insights) VALUES (:id, 'Profile insights')"),
+                ("company_digital", f"INSERT INTO {SCHEMA}.company_digital (company_id, insights) VALUES (:id, 'Digital insights')"),
+                ("company_timeline", f"INSERT INTO {SCHEMA}.company_timeline (company_id, insights) VALUES (:id, 'Timeline insights')"),
+                ("company_products", f"INSERT INTO {SCHEMA}.company_products (company_id, insights) VALUES (:id, 'Products insights')"),
+                ("company_jobs", f"INSERT INTO {SCHEMA}.company_jobs (company_id, insights_total_openings) VALUES (:id, 50)"),
+                ("company_csr", f"INSERT INTO {SCHEMA}.company_csr (company_id, insights) VALUES (:id, 'CSR insights')"),
+                ("company_press", f"INSERT INTO {SCHEMA}.company_press (company_id, insights) VALUES (:id, 'Press insights')"),
             ]
 
             for table_name, insert_sql in section_inserts:
@@ -300,14 +302,14 @@ class TestCascadeDeleteBehavior:
             # Verify all sections exist
             for table_name in SECTION_TABLES:
                 result = db_session.execute(
-                    text(f"SELECT * FROM {table_name} WHERE company_id = :id"),
+                    text(f"SELECT * FROM screen_schema.{table_name} WHERE company_id = :id"),
                     {"id": test_company_id}
                 ).fetchone()
                 assert result is not None, f"{table_name} should exist before delete"
 
             # Delete the company
             db_session.execute(
-                text("DELETE FROM companies WHERE id = :id"),
+                text("DELETE FROM screen_schema.companies WHERE id = :id"),
                 {"id": test_company_id}
             )
             db_session.commit()
@@ -315,7 +317,7 @@ class TestCascadeDeleteBehavior:
             # Verify all sections were cascaded
             for table_name in SECTION_TABLES:
                 result = db_session.execute(
-                    text(f"SELECT * FROM {table_name} WHERE company_id = :id"),
+                    text(f"SELECT * FROM screen_schema.{table_name} WHERE company_id = :id"),
                     {"id": test_company_id}
                 ).fetchone()
                 assert result is None, f"{table_name} should be deleted by CASCADE"
@@ -324,7 +326,7 @@ class TestCascadeDeleteBehavior:
             # Clean up in case of failure
             db_session.rollback()
             db_session.execute(
-                text("DELETE FROM companies WHERE id = :id"),
+                text("DELETE FROM screen_schema.companies WHERE id = :id"),
                 {"id": test_company_id}
             )
             db_session.commit()

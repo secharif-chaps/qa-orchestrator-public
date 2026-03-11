@@ -19,7 +19,7 @@ from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from app.database import Base
+from app.database import SCREEN_SCHEMA, Base
 
 
 class Company(Base):
@@ -60,6 +60,7 @@ class Company(Base):
         team_members: Relationship to CompanyTeamMember (1:N)
     """
     __tablename__ = "companies"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True, nullable=False)

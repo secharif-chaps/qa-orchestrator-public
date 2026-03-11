@@ -20,7 +20,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from app.database import Base
+from app.database import SCREEN_SCHEMA, Base
 
 
 class CompanyProfile(Base):
@@ -55,11 +55,12 @@ class CompanyProfile(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_profile"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     # Primary key is also foreign key - enforces 1:1 relationship
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         primary_key=True
     )
 
@@ -144,10 +145,11 @@ class CompanyDigital(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_digital"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         primary_key=True
     )
 
@@ -211,10 +213,11 @@ class CompanyTimeline(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_timeline"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         primary_key=True
     )
 
@@ -259,10 +262,11 @@ class CompanyProducts(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_products"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         primary_key=True
     )
 
@@ -317,10 +321,11 @@ class CompanyJobs(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_jobs"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         primary_key=True
     )
 
@@ -374,10 +379,11 @@ class CompanyCsr(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_csr"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         primary_key=True
     )
 
@@ -421,10 +427,11 @@ class CompanyPress(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_press"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         primary_key=True
     )
 

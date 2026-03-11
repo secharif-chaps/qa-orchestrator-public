@@ -41,6 +41,7 @@ from app.services.keycloak_admin import keycloak_admin_service
 router = APIRouter(prefix="/team", tags=["team"])
 logger = get_logger(__name__)
 
+
 @router.get("/members", response_model=TeamMemberListResponse)
 async def list_team_members(
     page: int = Query(1, ge=1, description="Page number (1-indexed)"),
@@ -199,8 +200,8 @@ async def get_member_permissions(
                 "user_id": str(user_id),
             },
         )
-    
-    
+
+
 # TODO: Frontend not implemented — invite member UI not yet built
 @router.post("/members", response_model=InviteTeamMemberResponse, status_code=status.HTTP_201_CREATED)
 async def invite_team_member(
@@ -218,7 +219,7 @@ async def invite_team_member(
         verify_any_role_access(
             user, ["organization.manage", "admin.organizations"]
         )
-    
+
         # 1. Create user in Keycloak
         new_user_id = await keycloak_admin_service.create_user(
             username=invite_data.username,

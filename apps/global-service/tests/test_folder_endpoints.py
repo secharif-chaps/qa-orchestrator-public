@@ -11,17 +11,17 @@ All tests use SQLite in-memory database and mock external dependencies
 (Keycloak auth, backend_client for company enrichment, keycloak_admin_service).
 """
 
-import pytest
+from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
-from unittest.mock import AsyncMock, patch, MagicMock
+
+import pytest
 
 from app.core.organization import OrganizationContext, get_user_organization
-from app.models.folder import Folder, FolderItem, FolderShare, ShareRole, ItemType
+from app.models.folder import Folder, FolderItem, FolderShare, ItemType, ShareRole
 from app.models.user_folder_favorite import UserFolderFavorite
 
 # Import the mock idp to access the dependency object for overrides
 from tests.conftest import _mock_idp
-
 
 # ============================================================================
 # Constants
@@ -208,14 +208,16 @@ class TestListFolders:
     async def test_list_folders_empty(self, folder_client):
         response = await folder_client.get("/api/folders/")
         assert response.status_code == 200
-        assert response.json() == []
+        body = response.json()
+        assert body["data"] == []
+        assert body["pagination"]["total"] == 0
 
     async def test_list_folders_returns_owned(self, folder_client, seed_folder):
         response = await folder_client.get("/api/folders/")
         assert response.status_code == 200
-        data = response.json()
-        assert len(data) == 1
-        assert data[0]["name"] == "Test Folder"
+        body = response.json()
+        assert len(body["data"]) == 1
+        assert body["data"][0]["name"] == "Test Folder"
 
     async def test_list_folders_excludes_deleted(self, folder_client, seed_folder, global_db_session):
         """Deleted folders should not appear in default list."""
@@ -224,7 +226,7 @@ class TestListFolders:
 
         response = await folder_client.get("/api/folders/")
         assert response.status_code == 200
-        assert len(response.json()) == 0
+        assert len(response.json()["data"]) == 0
 
     async def test_list_folders_archived_flag(self, folder_client, seed_folder, global_db_session):
         """archived=true should only return deleted folders."""
@@ -233,9 +235,9 @@ class TestListFolders:
 
         response = await folder_client.get("/api/folders/", params={"archived": "true"})
         assert response.status_code == 200
-        data = response.json()
-        assert len(data) == 1
-        assert data[0]["is_deleted"] is True
+        body = response.json()
+        assert len(body["data"]) == 1
+        assert body["data"][0]["is_deleted"] is True
 
     async def test_list_folders_favorites_filter(self, folder_client, seed_folder, global_db_session):
         """favorites=true should only return favorited folders."""
@@ -245,8 +247,8 @@ class TestListFolders:
 
         response = await folder_client.get("/api/folders/", params={"favorites": "true"})
         assert response.status_code == 200
-        data = response.json()
-        assert len(data) == 1
+        body = response.json()
+        assert len(body["data"]) == 1
 
     async def test_list_folders_other_org_excluded(self, folder_client, global_db_session):
         """Folders from other organizations should not be listed."""
@@ -263,7 +265,7 @@ class TestListFolders:
 
         response = await folder_client.get("/api/folders/")
         assert response.status_code == 200
-        assert len(response.json()) == 0
+        assert len(response.json()["data"]) == 0
 
 
 class TestGetFolder:
@@ -804,10 +806,10 @@ class TestAccessControl:
 
         response = await folder_client.get("/api/folders/")
         assert response.status_code == 200
-        data = response.json()
-        assert len(data) == 1
-        assert data[0]["name"] == "Test Folder"
-        assert data[0]["share_role"] == "reader"
+        body = response.json()
+        assert len(body["data"]) == 1
+        assert body["data"][0]["name"] == "Test Folder"
+        assert body["data"][0]["share_role"] == "reader"
 
 
 if __name__ == "__main__":

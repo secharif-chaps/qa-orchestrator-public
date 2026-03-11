@@ -8,7 +8,7 @@ from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.sql import func, text
 
-from app.database import Base
+from app.database import SCREEN_SCHEMA, Base
 
 
 class ChapseConversationContext(Base):
@@ -29,6 +29,7 @@ class ChapseConversationContext(Base):
     """
 
     __tablename__ = "chapse_conversation_context"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(
         UUID(as_uuid=True),

@@ -12,7 +12,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, String, Tex
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from app.database import Base
+from app.database import SCREEN_SCHEMA, Base
 
 
 class Translation(Base):
@@ -42,7 +42,7 @@ class Translation(Base):
     # Link to company for easy status queries
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
@@ -91,6 +91,7 @@ class Translation(Base):
             'ix_translations_company_language',
             'company_id', 'language_code'
         ),
+        {"schema": SCREEN_SCHEMA},
     )
 
     def __repr__(self) -> str:

@@ -32,6 +32,8 @@ DATABASE_URL = os.environ.get(
     "postgresql://postgres:postgres@db:5432/mint_db"
 )
 
+SCHEMA = 'screen_schema'
+
 
 def _db_connectable() -> bool:
     """Check if the database is actually connectable."""
@@ -114,7 +116,7 @@ class TestIndexesCreatedOnCompanyIdColumns:
     def test_all_child_tables_created(self, db_engine):
         """Verify all 10 child tables exist after migration."""
         inspector = inspect(db_engine)
-        existing_tables = inspector.get_table_names()
+        existing_tables = inspector.get_table_names(schema=SCHEMA)
 
         for table_name in CHILD_TABLES:
             assert table_name in existing_tables, f"Table {table_name} was not created"
@@ -124,7 +126,7 @@ class TestIndexesCreatedOnCompanyIdColumns:
         inspector = inspect(db_engine)
 
         for table_name, expected_index_names in EXPECTED_INDEXES.items():
-            indexes = inspector.get_indexes(table_name)
+            indexes = inspector.get_indexes(table_name, schema=SCHEMA)
             index_names = [idx['name'] for idx in indexes]
 
             for expected_idx in expected_index_names:
@@ -136,7 +138,7 @@ class TestIndexesCreatedOnCompanyIdColumns:
         inspector = inspect(db_engine)
 
         for table_name in CHILD_TABLES:
-            indexes = inspector.get_indexes(table_name)
+            indexes = inspector.get_indexes(table_name, schema=SCHEMA)
             company_id_indexes = [
                 idx for idx in indexes
                 if 'company_id' in idx['name']
@@ -185,16 +187,18 @@ class TestEnumTypesCreatedCorrectly:
 
     def test_product_item_type_column_uses_enum(self, db_session):
         """Verify company_product_items.type uses product_item_type_enum via PostgreSQL catalog."""
-        # Use PostgreSQL system catalog to verify column data type
         result = db_session.execute(
             text("""
                 SELECT pg_type.typname
                 FROM pg_attribute
                 JOIN pg_class ON pg_attribute.attrelid = pg_class.oid
+                JOIN pg_namespace ON pg_class.relnamespace = pg_namespace.oid
                 JOIN pg_type ON pg_attribute.atttypid = pg_type.oid
-                WHERE pg_class.relname = 'company_product_items'
+                WHERE pg_namespace.nspname = :schema
+                AND pg_class.relname = 'company_product_items'
                 AND pg_attribute.attname = 'type'
-            """)
+            """),
+            {"schema": SCHEMA}
         ).fetchone()
 
         assert result is not None, "type column not found"
@@ -208,10 +212,13 @@ class TestEnumTypesCreatedCorrectly:
                 SELECT pg_type.typname
                 FROM pg_attribute
                 JOIN pg_class ON pg_attribute.attrelid = pg_class.oid
+                JOIN pg_namespace ON pg_class.relnamespace = pg_namespace.oid
                 JOIN pg_type ON pg_attribute.atttypid = pg_type.oid
-                WHERE pg_class.relname = 'company_csr_initiatives'
+                WHERE pg_namespace.nspname = :schema
+                AND pg_class.relname = 'company_csr_initiatives'
                 AND pg_attribute.attname = 'type'
-            """)
+            """),
+            {"schema": SCHEMA}
         ).fetchone()
 
         assert result is not None, "type column not found"
@@ -225,10 +232,13 @@ class TestEnumTypesCreatedCorrectly:
                 SELECT pg_type.typname
                 FROM pg_attribute
                 JOIN pg_class ON pg_attribute.attrelid = pg_class.oid
+                JOIN pg_namespace ON pg_class.relnamespace = pg_namespace.oid
                 JOIN pg_type ON pg_attribute.atttypid = pg_type.oid
-                WHERE pg_class.relname = 'company_press_items'
+                WHERE pg_namespace.nspname = :schema
+                AND pg_class.relname = 'company_press_items'
                 AND pg_attribute.attname = 'type'
-            """)
+            """),
+            {"schema": SCHEMA}
         ).fetchone()
 
         assert result is not None, "type column not found"
@@ -242,14 +252,14 @@ class TestSelfReferentialFKForTeamMembers:
     def test_parent_id_column_exists(self, db_engine):
         """Verify company_team_members has parent_id column."""
         inspector = inspect(db_engine)
-        columns = {col['name'] for col in inspector.get_columns('company_team_members')}
+        columns = {col['name'] for col in inspector.get_columns('company_team_members', schema=SCHEMA)}
 
         assert 'parent_id' in columns, "parent_id column not found in company_team_members"
 
     def test_parent_id_fk_references_same_table(self, db_engine):
         """Verify parent_id FK references company_team_members.id."""
         inspector = inspect(db_engine)
-        fks = inspector.get_foreign_keys('company_team_members')
+        fks = inspector.get_foreign_keys('company_team_members', schema=SCHEMA)
 
         parent_fk = next(
             (fk for fk in fks if 'parent_id' in fk['constrained_columns']),
@@ -265,7 +275,7 @@ class TestSelfReferentialFKForTeamMembers:
     def test_parent_id_is_nullable(self, db_engine):
         """Verify parent_id is nullable (CEO has no parent)."""
         inspector = inspect(db_engine)
-        columns = inspector.get_columns('company_team_members')
+        columns = inspector.get_columns('company_team_members', schema=SCHEMA)
 
         parent_id_col = next(
             (col for col in columns if col['name'] == 'parent_id'),
@@ -278,7 +288,7 @@ class TestSelfReferentialFKForTeamMembers:
     def test_parent_id_index_exists(self, db_engine):
         """Verify index exists on parent_id for hierarchy queries."""
         inspector = inspect(db_engine)
-        indexes = inspector.get_indexes('company_team_members')
+        indexes = inspector.get_indexes('company_team_members', schema=SCHEMA)
         index_names = [idx['name'] for idx in indexes]
 
         assert 'idx_team_members_parent_id' in index_names, \
@@ -293,61 +303,55 @@ class TestOnDeleteBehaviors:
         test_company_id = 91001
 
         try:
-            # Create a company
             db_session.execute(
-                text("""
-                    INSERT INTO companies (id, name, website, organization_id)
+                text(f"""
+                    INSERT INTO {SCHEMA}.companies (id, name, website, organization_id)
                     VALUES (:id, 'Child Tables Test Company', 'https://child-test.com', 'test-org-child')
                 """),
                 {"id": test_company_id}
             )
             db_session.commit()
 
-            # Insert into all child tables
             child_inserts = [
-                ("company_online_services", "INSERT INTO company_online_services (company_id, name) VALUES (:id, 'Test Service')"),
-                ("company_social_media_accounts", "INSERT INTO company_social_media_accounts (company_id, platform) VALUES (:id, 'Twitter')"),
-                ("company_timeline_events", "INSERT INTO company_timeline_events (company_id, title) VALUES (:id, 'Founded')"),
-                ("company_product_items", "INSERT INTO company_product_items (company_id, type, value) VALUES (:id, 'range', 'Test Product')"),
-                ("company_product_categories", "INSERT INTO company_product_categories (company_id, category_name) VALUES (:id, 'Electronics')"),
-                ("company_job_offers", "INSERT INTO company_job_offers (company_id, title) VALUES (:id, 'Engineer')"),
-                ("company_csr_initiatives", "INSERT INTO company_csr_initiatives (company_id, type, value) VALUES (:id, 'charity', 'Donation')"),
-                ("company_press_items", "INSERT INTO company_press_items (company_id, type, value) VALUES (:id, 'article', 'News Article')"),
-                ("company_team_members", "INSERT INTO company_team_members (company_id, first_name, last_name) VALUES (:id, 'John', 'Doe')"),
+                f"INSERT INTO {SCHEMA}.company_online_services (company_id, name) VALUES (:id, 'Test Service')",
+                f"INSERT INTO {SCHEMA}.company_social_media_accounts (company_id, platform) VALUES (:id, 'Twitter')",
+                f"INSERT INTO {SCHEMA}.company_timeline_events (company_id, title) VALUES (:id, 'Founded')",
+                f"INSERT INTO {SCHEMA}.company_product_items (company_id, type, value) VALUES (:id, 'range', 'Test Product')",
+                f"INSERT INTO {SCHEMA}.company_product_categories (company_id, category_name) VALUES (:id, 'Electronics')",
+                f"INSERT INTO {SCHEMA}.company_job_offers (company_id, title) VALUES (:id, 'Engineer')",
+                f"INSERT INTO {SCHEMA}.company_csr_initiatives (company_id, type, value) VALUES (:id, 'charity', 'Donation')",
+                f"INSERT INTO {SCHEMA}.company_press_items (company_id, type, value) VALUES (:id, 'article', 'News Article')",
+                f"INSERT INTO {SCHEMA}.company_team_members (company_id, first_name, last_name) VALUES (:id, 'John', 'Doe')",
             ]
 
-            for table_name, insert_sql in child_inserts:
+            for insert_sql in child_inserts:
                 db_session.execute(text(insert_sql), {"id": test_company_id})
             db_session.commit()
 
-            # Verify all children exist
             for table_name in CHILD_TABLES:
                 result = db_session.execute(
-                    text(f"SELECT COUNT(*) FROM {table_name} WHERE company_id = :id"),
+                    text(f"SELECT COUNT(*) FROM {SCHEMA}.{table_name} WHERE company_id = :id"),
                     {"id": test_company_id}
                 ).scalar()
                 assert result > 0, f"{table_name} should have records before delete"
 
-            # Delete the company
             db_session.execute(
-                text("DELETE FROM companies WHERE id = :id"),
+                text(f"DELETE FROM {SCHEMA}.companies WHERE id = :id"),
                 {"id": test_company_id}
             )
             db_session.commit()
 
-            # Verify all children were cascaded
             for table_name in CHILD_TABLES:
                 result = db_session.execute(
-                    text(f"SELECT COUNT(*) FROM {table_name} WHERE company_id = :id"),
+                    text(f"SELECT COUNT(*) FROM {SCHEMA}.{table_name} WHERE company_id = :id"),
                     {"id": test_company_id}
                 ).scalar()
                 assert result == 0, f"{table_name} should be empty after CASCADE delete"
 
         finally:
-            # Clean up in case of failure
             db_session.rollback()
             db_session.execute(
-                text("DELETE FROM companies WHERE id = :id"),
+                text(f"DELETE FROM {SCHEMA}.companies WHERE id = :id"),
                 {"id": test_company_id}
             )
             try:
@@ -360,59 +364,52 @@ class TestOnDeleteBehaviors:
         test_company_id = 91002
 
         try:
-            # Create a company
             db_session.execute(
-                text("""
-                    INSERT INTO companies (id, name, website, organization_id)
+                text(f"""
+                    INSERT INTO {SCHEMA}.companies (id, name, website, organization_id)
                     VALUES (:id, 'Team Hierarchy Test', 'https://team-test.com', 'test-org-team')
                 """),
                 {"id": test_company_id}
             )
             db_session.commit()
 
-            # Create CEO (parent_id = NULL)
             db_session.execute(
-                text("""
-                    INSERT INTO company_team_members (id, company_id, first_name, last_name, position, parent_id)
+                text(f"""
+                    INSERT INTO {SCHEMA}.company_team_members (id, company_id, first_name, last_name, position, parent_id)
                     VALUES (91101, :company_id, 'Jane', 'CEO', 'Chief Executive Officer', NULL)
                 """),
                 {"company_id": test_company_id}
             )
 
-            # Create subordinate (parent_id = CEO's id)
             db_session.execute(
-                text("""
-                    INSERT INTO company_team_members (id, company_id, first_name, last_name, position, parent_id)
+                text(f"""
+                    INSERT INTO {SCHEMA}.company_team_members (id, company_id, first_name, last_name, position, parent_id)
                     VALUES (91102, :company_id, 'John', 'Manager', 'Department Manager', 91101)
                 """),
                 {"company_id": test_company_id}
             )
             db_session.commit()
 
-            # Verify subordinate has parent_id set
             result = db_session.execute(
-                text("SELECT parent_id FROM company_team_members WHERE id = 91102")
+                text(f"SELECT parent_id FROM {SCHEMA}.company_team_members WHERE id = 91102")
             ).scalar()
             assert result == 91101, "Subordinate should have parent_id = 91101"
 
-            # Delete the CEO (parent)
             db_session.execute(
-                text("DELETE FROM company_team_members WHERE id = 91101")
+                text(f"DELETE FROM {SCHEMA}.company_team_members WHERE id = 91101")
             )
             db_session.commit()
 
-            # Verify subordinate's parent_id is now NULL (not deleted)
             result = db_session.execute(
-                text("SELECT id, parent_id FROM company_team_members WHERE id = 91102")
+                text(f"SELECT id, parent_id FROM {SCHEMA}.company_team_members WHERE id = 91102")
             ).fetchone()
             assert result is not None, "Subordinate should still exist after parent deletion"
             assert result[1] is None, "Subordinate's parent_id should be NULL after parent deletion"
 
         finally:
-            # Clean up
             db_session.rollback()
             db_session.execute(
-                text("DELETE FROM companies WHERE id = :id"),
+                text(f"DELETE FROM {SCHEMA}.companies WHERE id = :id"),
                 {"id": test_company_id}
             )
             try:
@@ -424,8 +421,8 @@ class TestOnDeleteBehaviors:
         """Verify FK constraint prevents inserting with non-existent company_id."""
         with pytest.raises(Exception) as exc_info:
             db_session.execute(
-                text("""
-                    INSERT INTO company_online_services (company_id, name)
+                text(f"""
+                    INSERT INTO {SCHEMA}.company_online_services (company_id, name)
                     VALUES (99999, 'Invalid Service')
                 """)
             )
@@ -439,21 +436,19 @@ class TestOnDeleteBehaviors:
         test_company_id = 91003
 
         try:
-            # Create a company first
             db_session.execute(
-                text("""
-                    INSERT INTO companies (id, name, website, organization_id)
+                text(f"""
+                    INSERT INTO {SCHEMA}.companies (id, name, website, organization_id)
                     VALUES (:id, 'Invalid Parent Test', 'https://invalid-parent.com', 'test-org-inv')
                 """),
                 {"id": test_company_id}
             )
             db_session.commit()
 
-            # Try to insert team member with non-existent parent_id
             with pytest.raises(Exception) as exc_info:
                 db_session.execute(
-                    text("""
-                        INSERT INTO company_team_members (company_id, first_name, last_name, parent_id)
+                    text(f"""
+                        INSERT INTO {SCHEMA}.company_team_members (company_id, first_name, last_name, parent_id)
                         VALUES (:id, 'Orphan', 'Employee', 99999)
                     """),
                     {"id": test_company_id}
@@ -464,10 +459,9 @@ class TestOnDeleteBehaviors:
             assert 'foreign key' in error_msg or 'violates foreign key constraint' in error_msg or 'fk' in error_msg
 
         finally:
-            # Clean up
             db_session.rollback()
             db_session.execute(
-                text("DELETE FROM companies WHERE id = :id"),
+                text(f"DELETE FROM {SCHEMA}.companies WHERE id = :id"),
                 {"id": test_company_id}
             )
             try:
@@ -482,7 +476,7 @@ class TestTableSchemaCorrectness:
     def test_online_services_has_correct_columns(self, db_engine):
         """Verify company_online_services has all expected columns."""
         inspector = inspect(db_engine)
-        columns = {col['name'] for col in inspector.get_columns('company_online_services')}
+        columns = {col['name'] for col in inspector.get_columns('company_online_services', schema=SCHEMA)}
 
         expected = {
             'id', 'company_id',
@@ -495,7 +489,7 @@ class TestTableSchemaCorrectness:
     def test_timeline_events_has_correct_columns(self, db_engine):
         """Verify company_timeline_events has all expected columns."""
         inspector = inspect(db_engine)
-        columns = {col['name'] for col in inspector.get_columns('company_timeline_events')}
+        columns = {col['name'] for col in inspector.get_columns('company_timeline_events', schema=SCHEMA)}
 
         expected = {
             'id', 'company_id',
@@ -512,7 +506,7 @@ class TestTableSchemaCorrectness:
     def test_product_categories_has_array_columns(self, db_engine):
         """Verify company_product_categories has TEXT[] array columns."""
         inspector = inspect(db_engine)
-        columns = inspector.get_columns('company_product_categories')
+        columns = inspector.get_columns('company_product_categories', schema=SCHEMA)
 
         items_col = next((col for col in columns if col['name'] == 'items'), None)
 
@@ -525,7 +519,7 @@ class TestTableSchemaCorrectness:
     def test_team_members_has_correct_columns(self, db_engine):
         """Verify company_team_members has all expected columns."""
         inspector = inspect(db_engine)
-        columns = {col['name'] for col in inspector.get_columns('company_team_members')}
+        columns = {col['name'] for col in inspector.get_columns('company_team_members', schema=SCHEMA)}
 
         expected = {
             'id', 'company_id', 'parent_id',

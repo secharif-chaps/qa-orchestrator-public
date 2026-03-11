@@ -16,16 +16,15 @@ Auth mocking strategy:
   `app.dependency_overrides` to replace it with a proper callable.
 """
 
-import pytest
-from datetime import datetime, timezone
-from unittest.mock import patch, AsyncMock
+from datetime import UTC, datetime
+from unittest.mock import AsyncMock, patch
 
+import pytest
 from fastapi import HTTPException, status
 from fastapi.testclient import TestClient
 
 from app.core.keycloak import OIDCUser
 from app.main import app
-
 
 # Sample Keycloak user data
 SAMPLE_KC_USER_1 = {
@@ -57,7 +56,7 @@ KC_SERVICE = "app.services.keycloak_admin.keycloak_admin_service"
 
 
 def _make_admin_user() -> OIDCUser:
-    now = int(datetime.now(timezone.utc).timestamp())
+    now = int(datetime.now(UTC).timestamp())
     return OIDCUser(
         sub="admin-uuid-123",
         preferred_username="admin_user",

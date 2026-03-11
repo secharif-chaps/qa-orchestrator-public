@@ -242,6 +242,7 @@ import { useFolderPermissions } from '@/composables/useFolderPermissions'
 import { useTeamPermissions } from '@/composables/useTeamPermissions'
 import type { Folder } from '@/types/folder'
 import { useQuery } from '@pinia/colada'
+import { transformToPaginationMeta } from '@/utils/pagination'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -366,7 +367,7 @@ const folders = computed<Folder[]>(() => currentData.value?.data || [])
 
 const foldersWithItems = computed<Folder[]>(() => folders.value)
 
-const paginationMeta = computed(() => currentData.value?.meta)
+const paginationMeta = computed(() => transformToPaginationMeta(currentData.value?.pagination))
 
 const showDeleteModal = ref(false)
 const folderToDelete = ref<Folder | null>(null)

@@ -14,7 +14,7 @@ from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import and_, or_, select
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.folder import Folder, FolderItem, FolderShare, ItemType, ShareRole
@@ -238,9 +238,11 @@ class FolderService:
         user_id: str,
         archived: bool = False,
         favorites_only: bool = False,
-        username: str | None = None
-    ) -> list[Folder]:
-        """List folders accessible to a user (owned + shared).
+        username: str | None = None,
+        page: int = 1,
+        limit: int = 12,
+    ) -> tuple[list[Folder], int]:
+        """List folders accessible to a user (owned + shared) with pagination.
 
         This method returns only folders that the user owns or has been explicitly
         shared with. It filters by organization and optionally by archived status
@@ -253,9 +255,11 @@ class FolderService:
             archived: If True, show deleted folders; if False, show active folders
             favorites_only: If True, only show folders favorited by this user
             username: Optional username for legacy fallback when owner_id is NULL
+            page: Page number (1-indexed)
+            limit: Items per page
 
         Returns:
-            List of Folder instances the user has access to
+            Tuple of (list of Folder instances, total count)
         """
         logger.debug(
             f"list_folders - organization_id: {organization_id}, "
@@ -271,18 +275,21 @@ class FolderService:
                 and_(Folder.owner_id.is_(None), Folder.owner == username)
             )
 
-        # Build base query with ownership OR sharing filter
-        # This uses a LEFT JOIN with folder_shares to include both owned and shared folders
-        stmt = select(Folder).outerjoin(
-            FolderShare,
-            FolderShare.folder_id == Folder.id
-        ).where(
+        # Build base filter conditions
+        base_conditions = [
             Folder.organization_id == organization_id,
             or_(
                 *ownership_conditions,
                 FolderShare.user_id == user_id
             )
-        )
+        ]
+
+        # Build base query with ownership OR sharing filter
+        # This uses a LEFT JOIN with folder_shares to include both owned and shared folders
+        stmt = select(Folder).outerjoin(
+            FolderShare,
+            FolderShare.folder_id == Folder.id
+        ).where(*base_conditions)
 
         # Apply archived filter
         if archived:
@@ -299,13 +306,22 @@ class FolderService:
                 (UserFolderFavorite.folder_id == Folder.id) & (UserFolderFavorite.user_id == user_id)
             )
 
-        stmt = stmt.distinct().order_by(Folder.created_at.desc())
+        stmt = stmt.distinct()
+
+        # Count total before pagination
+        count_stmt = select(func.count()).select_from(stmt.subquery())
+        total_result = await db.execute(count_stmt)
+        total = total_result.scalar() or 0
+
+        # Apply ordering and pagination
+        offset = (page - 1) * limit
+        stmt = stmt.order_by(Folder.created_at.desc()).offset(offset).limit(limit)
 
         result = await db.execute(stmt)
         folders = result.scalars().all()
 
-        logger.info(f"list_folders result: Found {len(folders)} folders")
-        return list(folders)
+        logger.info(f"list_folders result: Found {len(folders)} folders (total: {total})")
+        return list(folders), total
 
     @staticmethod
     async def list_all_org_folders(
@@ -313,9 +329,11 @@ class FolderService:
         organization_id: str,
         archived: bool = False,
         favorites_only: bool = False,
-        user_id: str | None = None
-    ) -> list[Folder]:
-        """List ALL folders in an organization (for managers).
+        user_id: str | None = None,
+        page: int = 1,
+        limit: int = 12,
+    ) -> tuple[list[Folder], int]:
+        """List ALL folders in an organization (for managers) with pagination.
 
         Unlike list_folders which returns only owned/shared folders, this method
         returns ALL folders in the organization regardless of ownership or sharing.
@@ -327,9 +345,11 @@ class FolderService:
             archived: If True, show deleted folders; if False, show active folders
             favorites_only: If True, only show folders favorited by this user
             user_id: User ID for favorites filtering (required if favorites_only=True)
+            page: Page number (1-indexed)
+            limit: Items per page
 
         Returns:
-            List of all Folder instances in the organization
+            Tuple of (list of Folder instances, total count)
         """
 
         logger.debug(
@@ -351,13 +371,20 @@ class FolderService:
                 (UserFolderFavorite.folder_id == Folder.id) & (UserFolderFavorite.user_id == user_id)
             )
 
-        stmt = stmt.order_by(Folder.created_at.desc())
+        # Count total before pagination
+        count_stmt = select(func.count()).select_from(stmt.subquery())
+        total_result = await db.execute(count_stmt)
+        total = total_result.scalar() or 0
+
+        # Apply ordering and pagination
+        offset = (page - 1) * limit
+        stmt = stmt.order_by(Folder.created_at.desc()).offset(offset).limit(limit)
 
         result = await db.execute(stmt)
         folders = result.scalars().all()
 
-        logger.info(f"list_all_org_folders result: Found {len(folders)} folders")
-        return list(folders)
+        logger.info(f"list_all_org_folders result: Found {len(folders)} folders (total: {total})")
+        return list(folders), total
 
     @staticmethod
     async def update_folder(

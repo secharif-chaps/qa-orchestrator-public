@@ -32,7 +32,7 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from app.database import Base
+from app.database import SCREEN_SCHEMA, Base
 
 # ENUM definitions for type columns
 
@@ -114,11 +114,12 @@ class CompanyOnlineService(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_online_services"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
@@ -159,11 +160,12 @@ class CompanySocialMediaAccount(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_social_media_accounts"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
@@ -212,11 +214,12 @@ class CompanyTimelineEvent(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_timeline_events"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
@@ -273,11 +276,12 @@ class CompanyProductItem(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_product_items"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
@@ -287,7 +291,8 @@ class CompanyProductItem(Base):
         Enum(
             ProductItemType,
             values_callable=lambda obj: [e.value for e in obj],
-            name="product_item_type_enum"
+            name="product_item_type_enum",
+            schema=SCREEN_SCHEMA,
         ),
         nullable=False
     )
@@ -322,11 +327,12 @@ class CompanyProductCategory(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_product_categories"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
@@ -373,11 +379,12 @@ class CompanyJobOffer(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_job_offers"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
@@ -433,11 +440,12 @@ class CompanyCsrInitiative(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_csr_initiatives"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
@@ -447,7 +455,8 @@ class CompanyCsrInitiative(Base):
         Enum(
             CsrInitiativeType,
             values_callable=lambda obj: [e.value for e in obj],
-            name="csr_initiative_type_enum"
+            name="csr_initiative_type_enum",
+            schema=SCREEN_SCHEMA,
         ),
         nullable=False
     )
@@ -483,11 +492,12 @@ class CompanyPressItem(Base):
         company: Relationship to parent Company model
     """
     __tablename__ = "company_press_items"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
@@ -497,7 +507,8 @@ class CompanyPressItem(Base):
         Enum(
             PressItemType,
             values_callable=lambda obj: [e.value for e in obj],
-            name="press_item_type_enum"
+            name="press_item_type_enum",
+            schema=SCREEN_SCHEMA,
         ),
         nullable=False
     )
@@ -542,11 +553,12 @@ class CompanyTeamMember(Base):
         subordinates: List of direct reports
     """
     __tablename__ = "company_team_members"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
         Integer,
-        ForeignKey("companies.id", ondelete="CASCADE"),
+        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
         nullable=False,
         index=True
     )
@@ -555,7 +567,7 @@ class CompanyTeamMember(Base):
     # NULL means top-level (CEO), otherwise points to manager
     parent_id = Column(
         Integer,
-        ForeignKey("company_team_members.id", ondelete="SET NULL"),
+        ForeignKey(f"{SCREEN_SCHEMA}.company_team_members.id", ondelete="SET NULL"),
         nullable=True,
         index=True
     )

@@ -342,7 +342,7 @@ async def get_all_users(
         # Apply pagination for search results (already paginated for non-search)
         if search and search.strip():
             first_idx = (page - 1) * limit
-            users_data = users_data[first_idx : first_idx + limit]
+            users_data = users_data[first_idx: first_idx + limit]
 
         total_pages = (total + limit - 1) // limit if total > 0 else 1
 

@@ -9,7 +9,12 @@ import {
   type ShareableUser,
 } from '@/types/folder'
 import { apiClient } from './client'
-import type { PaginatedResponse } from '@/types/pagination'
+import type { ApiPaginationRaw } from '@/utils/pagination'
+
+export interface FolderListResponse {
+  data: Folder[]
+  pagination: ApiPaginationRaw
+}
 
 export const getFolderById = async (folderId: string, filters?: { archived?: boolean }) => {
   const params = new URLSearchParams()
@@ -55,7 +60,7 @@ export const getFolders = async (filters: {
     params.append('include_all', 'true')
   }
 
-  const response = await apiClient.get<PaginatedResponse<Folder>>(`/folders/?${params.toString()}`)
+  const response = await apiClient.get<FolderListResponse>(`/folders/?${params.toString()}`)
   return response
 }
 
@@ -89,7 +94,7 @@ export const getFoldersWithItems = async (filters: {
     params.append('include_all', 'true')
   }
 
-  const response = await apiClient.get<PaginatedResponse<Folder>>(`/folders/?${params.toString()}`)
+  const response = await apiClient.get<FolderListResponse>(`/folders/?${params.toString()}`)
   return response
 }
 

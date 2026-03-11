@@ -24,6 +24,7 @@ from app.schemas.folder import (
     FolderItemMove,
     FolderItemMoveResponse,
     FolderItemResponse,
+    FolderListResponse,
     FolderResponse,
     FolderShareCreate,
     FolderShareResponse,
@@ -231,11 +232,13 @@ async def create_folder(
     )
 
 
-@router.get("/", response_model=list[FolderResponse])
+@router.get("/", response_model=FolderListResponse)
 async def list_folders(
     archived: bool = Query(False),
     favorites: bool = Query(False),
     include_all: bool = Query(False, description="Include all org folders (managers only)"),
+    page: int = Query(1, ge=1, description="Page number (1-indexed)"),
+    size: int = Query(12, ge=1, le=100, description="Items per page"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: AsyncSession = Depends(get_global_db)
@@ -257,7 +260,9 @@ async def list_folders(
             "organization_id": org_context.organization_id,
             "archived": archived,
             "favorites": favorites,
-            "include_all": include_all
+            "include_all": include_all,
+            "page": page,
+            "size": size,
         }
     )
 
@@ -291,27 +296,32 @@ async def list_folders(
             }
         )
 
-        folders = await FolderService.list_all_org_folders(
+        folders, total = await FolderService.list_all_org_folders(
             db=db,
             organization_id=org_context.organization_id,
             archived=archived,
             favorites_only=favorites,
-            user_id=org_context.user_id
+            user_id=org_context.user_id,
+            page=page,
+            limit=size,
         )
     else:
-        folders = await FolderService.list_folders(
+        folders, total = await FolderService.list_folders(
             db=db,
             organization_id=org_context.organization_id,
             user_id=org_context.user_id,
             archived=archived,
             favorites_only=favorites,
-            username=org_context.username
+            username=org_context.username,
+            page=page,
+            limit=size,
         )
 
     logger.info(
         "Found folders",
         extra={
             "count": len(folders),
+            "total": total,
             "organization_id": org_context.organization_id
         }
     )
@@ -329,7 +339,17 @@ async def list_folders(
         for folder in folders
     ]
 
-    return response_folders
+    total_pages = (total + size - 1) // size if total > 0 else 0
+
+    return FolderListResponse(
+        data=response_folders,
+        pagination={
+            "total": total,
+            "page": page,
+            "limit": size,
+            "total_pages": total_pages,
+        },
+    )
 
 
 @router.get("/{folder_id}", response_model=FolderWithItemsResponse)

@@ -8,14 +8,15 @@ This follows the same pattern as backend tests - set up test environment
 BEFORE any app modules are imported.
 """
 
-import pytest
 import uuid as _uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import MagicMock, patch
-from app.core.keycloak import OIDCUser
 
+import pytest
 import sqlalchemy as _sa
 from sqlalchemy import event as _sa_event
+
+from app.core.keycloak import OIDCUser
 
 # Apply patches at module level BEFORE any app modules are imported
 # This prevents Keycloak initialization during pytest collection phase
@@ -36,7 +37,7 @@ _patch_idp.start()
 # Create a REAL OIDCUser instance for tests (not MagicMock)
 # This follows the backend pattern - use real classes, just in test config
 # Organization format matches Keycloak: [string_name, {name: {id: uuid}}]
-now = int(datetime.now(timezone.utc).timestamp())
+now = int(datetime.now(UTC).timestamp())
 mock_user = OIDCUser(
     sub="test-user-123",
     preferred_username="testuser",
@@ -107,8 +108,9 @@ def pytest_collection_modifyitems(config, items):
 # Test database fixtures
 
 # Create testing session factory at module level for use in concurrency tests
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
+
 from app.database import GlobalBase
 
 # Create a shared test engine
@@ -138,7 +140,8 @@ TestingSessionLocal = async_sessionmaker(
 
 def _strip_schema_from_metadata(base):
     """Strip schema and adapt PostgreSQL types for SQLite compatibility."""
-    from sqlalchemy import JSON, Enum as SAEnum
+    from sqlalchemy import JSON
+    from sqlalchemy import Enum as SAEnum
     from sqlalchemy.dialects.postgresql import ARRAY
 
     for table in base.metadata.tables.values():
@@ -176,6 +179,7 @@ def _strip_schema_from_metadata(base):
                             column.default = _sa.ColumnDefault(_uuid.uuid4)
                 except (AttributeError, TypeError):
                     pass
+
 
 @pytest.fixture(scope="function")
 async def setup_test_db():
@@ -222,9 +226,10 @@ async def client(global_db_session):
     Uses httpx.AsyncClient with ASGITransport so async fixtures
     (like global_db_session) work correctly with pytest-asyncio.
     """
-    from httpx import AsyncClient, ASGITransport
-    from app.main import app
+    from httpx import ASGITransport, AsyncClient
+
     from app.database import get_global_db
+    from app.main import app
 
     # Override database dependency with async fixture
     async def override_get_db():

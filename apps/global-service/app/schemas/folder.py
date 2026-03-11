@@ -157,6 +157,12 @@ class FolderResponse(FolderBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+class FolderListResponse(BaseModel):
+    """Paginated response for folder list."""
+    data: list[FolderResponse]
+    pagination: dict = Field(..., description="Pagination metadata with total, page, limit, total_pages")
+
+
 class FolderWithItemsResponse(BaseModel):
     """Folder response with complete item details and access control fields.
 

@@ -8,7 +8,7 @@ import enum
 from sqlalchemy import Column, DateTime, Enum, Integer, String, Text
 from sqlalchemy.sql import func
 
-from app.database import Base
+from app.database import SCREEN_SCHEMA, Base
 
 
 class TranslationJobStatus(enum.Enum):
@@ -40,6 +40,7 @@ class TranslationJob(Base):
     """
 
     __tablename__ = "translation_jobs"
+    __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(Integer, nullable=False, index=True)
@@ -49,6 +50,7 @@ class TranslationJob(Base):
             TranslationJobStatus,
             values_callable=lambda obj: [e.value for e in obj],
             name="translation_job_status_enum",
+            schema=SCREEN_SCHEMA,
         ),
         nullable=False,
         default=TranslationJobStatus.pending,
