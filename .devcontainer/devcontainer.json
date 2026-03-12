@@ -18,6 +18,7 @@
   },
 
   "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "postStartCommand": "task up",
 
   "forwardPorts": [3000, 8000, 8080, 5432, 5672, 15672, 5555],
 

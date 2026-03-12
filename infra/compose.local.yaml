@@ -57,27 +57,30 @@ services:
     profiles:
       - production  # Only run in production profile
 
-  # Disable frontend in Docker - use 'yarn dev' locally for hot-reload
-  # To run frontend in Docker instead: docker compose --profile frontend up -d
+  # Frontend dev server with hot-reload (Vite HMR)
   frontend:
-    profiles:
-      - frontend
     build:
       context: ../apps/front
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       secrets:
         - OWLINT_REGISTRY_URL
         - OWLINT_DEPLOY_KEY
-    image: chapsmind-front:local
+    image: chapsmind-front:local-dev
     ports:
-      - "3000:80"
+      - "3000:3000"
     environment:
-      # These are build-time vars, set in .env file for local dev
       VITE_BASE_URL: http://localhost:8000/api
       VITE_API_URL: http://localhost:8000/api
       VITE_KEYCLOAK_URL: http://localhost:8080
       VITE_KEYCLOAK_REALM: chapsmind
       VITE_KEYCLOAK_CLIENT_ID: chapsmind-front
+    volumes:
+      - ../apps/front/src:/app/src
+      - ../apps/front/public:/app/public
+      - ../apps/front/index.html:/app/index.html
+      - ../apps/front/vite.config.ts:/app/vite.config.ts
+      - ../apps/front/tsconfig.json:/app/tsconfig.json
+      - ../apps/front/tsconfig.app.json:/app/tsconfig.app.json
 
   # Override screen backend to use local code and expose directly
   screen:

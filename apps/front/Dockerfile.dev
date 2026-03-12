@@ -1,0 +1,21 @@
+FROM node:22.20.0-alpine
+
+WORKDIR /app
+
+# Enable corepack for Yarn 4
+RUN corepack enable
+
+# Copy package files and yarn config template
+COPY package.json yarn.lock .yarnrc.dist.yml ./
+
+# Generate .yarnrc.yml from secrets and install dependencies
+RUN --mount=type=secret,id=OWLINT_REGISTRY_URL \
+    --mount=type=secret,id=OWLINT_DEPLOY_KEY \
+    cp .yarnrc.dist.yml .yarnrc.yml && \
+    sed -i "s|<OWLINT_REGISTRY_URL>|$(cat /run/secrets/OWLINT_REGISTRY_URL)|g" .yarnrc.yml && \
+    sed -i "s|<OWLINT_DEPLOY_KEY>|$(cat /run/secrets/OWLINT_DEPLOY_KEY)|g" .yarnrc.yml && \
+    yarn install
+
+EXPOSE 3000
+
+CMD ["yarn", "dev", "--host", "0.0.0.0"]
