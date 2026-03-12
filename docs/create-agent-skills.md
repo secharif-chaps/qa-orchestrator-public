@@ -1,133 +1,133 @@
-# Creer et maintenir un Agent Skill
+# Creating and maintaining an Agent Skill
 
-> **Projet** : ChapsMind (monorepo) — s'applique aussi aux repos partages (basil, etc.)
-> **Spec de reference** : https://agentskills.io/specification
-> **Best practices** : https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
-
----
-
-## 1. Qu'est-ce qu'un Agent Skill ?
-
-Un Agent Skill est un **dossier contenant un fichier SKILL.md** qui enseigne a un agent IA (Claude Code, Copilot, Cursor, etc.) comment effectuer une tache specifique. C'est un standard ouvert adopte par 30+ plateformes.
-
-**Pourquoi on les utilise :**
-
-- Garantir la coherence du code genere (memes patterns, memes conventions)
-- Capitaliser les decisions d'architecture (DDD, API Platform, Vuellar, etc.)
-- Partager les standards entre equipes et projets (chapsmind, basil, etc.)
-- Eviter de repeter les memes instructions dans chaque prompt
-
-**Ce que ce n'est pas :**
-
-- Un fichier de documentation pour humains (c'est pour l'agent)
-- Un cours exhaustif sur une techno (Claude connait deja Symfony, Vue, etc.)
-- Un remplacant de CLAUDE.md (qui contient les instructions globales du projet)
-
-**Pourquoi suivre la spec agentskills.io :**
-
-- **Cross-plateforme** : Un skill conforme fonctionne avec Claude Code, Copilot, Cursor, Windsurf et 30+ outils. Si on change d'agent, les skills suivent.
-- **Progressive disclosure** : La spec impose 3 niveaux (description → body → references) pour optimiser les tokens de contexte au lieu de tout charger d'un coup.
-- **Activation fiable** : Les contraintes sur `description` ("Use when...", 1024c max, 3eme personne) permettent a l'agent de declencher le bon skill au bon moment.
-- **Marketplace** : skills.sh indexe 73K+ skills conformes. On peut installer des skills tiers et publier les notres.
-- **Validation automatique** : `skills-ref validate` verifie la conformite - impossible sans format standardise.
-
-Pour le detail complet, voir la spec agentskills.io et les best practices Anthropic linkees ci-dessus.
+> **Project**: Target / Chapsmind
+> **Reference spec**: https://agentskills.io/specification
+> **Best practices**: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
 
 ---
 
-## 2. Prerequis
+## 1. What is an Agent Skill?
 
-Avant de creer ou modifier un skill :
+An Agent Skill is a **folder containing a SKILL.md file** that teaches an AI agent (Claude Code, Copilot, Cursor, etc.) how to perform a specific task. It is an open standard adopted by 30+ platforms.
 
-1. Lire la spec agentskills.io (10 min) : https://agentskills.io/specification
-2. Lire les best practices Anthropic (15 min) : https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
-3. Parcourir 2-3 skills existants dans `.claude/skills/` pour comprendre le format
-4. Avoir acces au repo chapsmind (ou basil pour les skills PHP/Symfony)
+**Why we use them:**
+
+- Ensure consistency of generated code (same patterns, same conventions)
+- Capitalize on architectural decisions (DDD, API Platform, Vuellar, etc.)
+- Share standards across teams and projects (basil, chapsmind)
+- Avoid repeating the same instructions in every prompt
+
+**What it is NOT:**
+
+- A documentation file for humans (it's for the agent)
+- An exhaustive course on a technology (Claude already knows Symfony, Vue, etc.)
+- A replacement for CLAUDE.md (which contains global project instructions)
+
+**Why follow the agentskills.io spec:**
+
+- **Cross-platform**: A compliant skill works with Claude Code, Copilot, Cursor, Windsurf, and 30+ tools. If we switch agents, the skills follow.
+- **Progressive disclosure**: The spec enforces 3 tiers (description -> body -> references) to optimize context tokens instead of loading everything at once.
+- **Reliable activation**: The constraints on `description` ("Use when...", 1024c max, third person) allow the agent to trigger the right skill at the right time.
+- **Marketplace**: skills.sh indexes 73K+ compliant skills. We can install third-party skills and publish ours.
+- **Automatic validation**: `skills-ref validate` checks compliance - impossible without a standardized format.
+
+For the full details, see the [section 0 of the strategy document](agent-skills-strategy.md#0-why-follow-the-agentskillsio-spec).
 
 ---
 
-## 3. Nos conventions
+## 2. Prerequisites
 
-### Emplacement
+Before creating or modifying a skill:
+
+1. Read the agentskills.io spec (10 min): https://agentskills.io/specification
+2. Read the Anthropic best practices (15 min): https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+3. Browse 2-3 existing skills in `.claude/skills/` to understand the format
+4. Have access to the basil or chapsmind-workspace repo
+
+---
+
+## 3. Our conventions
+
+### Location
 
 ```
 .claude/skills/{skill-name}/
-    SKILL.md                    # Obligatoire - instructions principales
-    references/                 # Optionnel - documentation detaillee
+    SKILL.md                    # Required - main instructions
+    references/                 # Optional - detailed documentation
         examples.md
         patterns.md
 ```
 
-Les skills vivent dans `.claude/skills/` (emplacement natif Claude Code, supporte par la spec agentskills.io). Ne PAS utiliser `.github/skills/` (on est sur GitLab).
+Skills live in `.claude/skills/` (native Claude Code location, supported by the agentskills.io spec). Do NOT use `.github/skills/` (we're on GitLab).
 
-### Nommage
+### Naming
 
-| Regle                        | Exemple OK                                         | Exemple KO                      |
-| ---------------------------- | -------------------------------------------------- | ------------------------------- |
-| kebab-case uniquement        | `api-platform`                                     | `apiPlatform`, `API_Platform`   |
-| Le dossier = le champ `name` | `pinia-colada/` + `name: pinia-colada`             | `pinia/` + `name: pinia-colada` |
-| Max 64 caracteres            | `clean-architecture`                               | (rarement un probleme)          |
-| Pas de tirets en debut/fin   | `git-commits`                                      | `-git-commits-`                 |
-| Pas de tirets consecutifs    | `vue-components`                                   | `vue--components`               |
-| Prefixe par domaine          | `backend-api`, `frontend-css`, `global-validation` | `api`, `css`, `validation`      |
-| Noms descriptifs             | `testing-test-writing`                             | `utils`, `helper`, `tools`      |
+| Rule                        | OK example                                         | Bad example                     |
+| --------------------------- | -------------------------------------------------- | ------------------------------- |
+| kebab-case only             | `api-platform`                                     | `apiPlatform`, `API_Platform`   |
+| Folder = `name` field       | `pinia-colada/` + `name: pinia-colada`             | `pinia/` + `name: pinia-colada` |
+| Max 64 characters           | `clean-architecture`                               | (rarely an issue)               |
+| No leading/trailing hyphens | `git-commits`                                      | `-git-commits-`                 |
+| No consecutive hyphens      | `vue-components`                                   | `vue--components`               |
+| Domain prefix               | `backend-api`, `frontend-css`, `global-validation` | `api`, `css`, `validation`      |
+| Descriptive names           | `testing-test-writing`                             | `utils`, `helper`, `tools`      |
 
-### Deux types de skills
+### Two types of skills
 
-| Type                | Quand l'utiliser                                                  | Taille typique                        |
-| ------------------- | ----------------------------------------------------------------- | ------------------------------------- |
-| **Self-contained**  | Le sujet tient en < 300 lignes                                    | SKILL.md seul                         |
-| **Avec references** | Le sujet necessite des exemples detailles ou des patterns avances | SKILL.md (< 300L) + `references/*.md` |
-
----
-
-## 4. Creer un nouveau skill - 5 etapes
-
-### Etape 1 - Identifier le besoin
-
-Avant de creer un skill, repondre a ces 3 questions :
-
-- [ ] **Aucun skill existant ne couvre le sujet ?** Parcourir `.claude/skills/`
-- [ ] **Aucun skill marketplace ne fait mieux ?** Chercher sur https://skills.sh
-- [ ] **Le sujet justifie un skill dedie ?** Si c'est 3 lignes de config, les ajouter a un skill existant
-
-### Etape 2 - Creer la structure
-
-```bash
-mkdir -p .claude/skills/mon-skill/references
-touch .claude/skills/mon-skill/SKILL.md
-```
-
-### Etape 3 - Rediger le SKILL.md
-
-Utiliser le template ci-dessous (section 5). Points cles :
-
-- **Description** : Phrase d'accroche + "Use when..." + "Activates when..." + "CRITICAL -" (si applicable)
-- **Body** : Instructions concretes, pas de theorie. Claude est deja intelligent - ne lui expliquer que ce qu'il ne peut pas deviner
-- **Exemples** : Minimum 2, copies depuis le code reel du projet (pas des exemples generiques)
-- **References** : Deporter les details dans `references/` si le body depasse 300 lignes
-
-### Etape 4 - Valider
-
-```bash
-# Validation automatique
-npx skills-ref validate .claude/skills/mon-skill/
-
-# Checklist manuelle (voir section 8)
-```
-
-### Etape 5 - Tester
-
-1. Ouvrir Claude Code dans le projet
-2. Donner une tache couverte par le skill
-3. Verifier que le skill est active automatiquement (visible dans le contexte)
-4. Verifier que les instructions sont suivies correctement
-5. Tester avec un cas limite / edge case
-6. Bonus : tester avec un autre modele (Haiku, Sonnet) si le skill est critique
+| Type                | When to use                                               | Typical size                          |
+| ------------------- | --------------------------------------------------------- | ------------------------------------- |
+| **Self-contained**  | The topic fits in < 300 lines                             | SKILL.md only                         |
+| **With references** | The topic requires detailed examples or advanced patterns | SKILL.md (< 300L) + `references/*.md` |
 
 ---
 
-## 5. Template SKILL.md
+## 4. Creating a new skill - 5 steps
+
+### Step 1 - Identify the need
+
+Before creating a skill, answer these 3 questions:
+
+- [ ] **No existing skill covers the topic?** Browse `.claude/skills/`
+- [ ] **No marketplace skill does it better?** Search on https://skills.sh
+- [ ] **The topic justifies a dedicated skill?** If it's 3 lines of config, add them to an existing skill
+
+### Step 2 - Create the structure
+
+```bash
+mkdir -p .claude/skills/my-skill/references
+touch .claude/skills/my-skill/SKILL.md
+```
+
+### Step 3 - Write the SKILL.md
+
+Use the template below (section 5). Key points:
+
+- **Description**: Hook sentence + "Use when..." + "Activates when..." + "CRITICAL -" (if applicable)
+- **Body**: Concrete instructions, no theory. Claude is already smart - only explain what it can't guess
+- **Examples**: Minimum 2, copied from real project code (not generic examples)
+- **References**: Move details to `references/` if the body exceeds 300 lines
+
+### Step 4 - Validate
+
+```bash
+# Automatic validation
+npx skills-ref validate .claude/skills/my-skill/
+
+# Manual checklist (see section 8)
+```
+
+### Step 5 - Test
+
+1. Open Claude Code in the project
+2. Give a task covered by the skill
+3. Verify the skill is activated automatically (visible in context)
+4. Verify the instructions are followed correctly
+5. Test with an edge case
+6. Bonus: test with another model (Haiku, Sonnet) if the skill is critical
+
+---
+
+## 5. SKILL.md template
 
 ````yaml
 ---
@@ -165,68 +165,69 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 
 ```language
 // Code example from real project
-````
+```
 
 ## Examples
 
 ### Example 1 - [Scenario]
 
 ```language
-// Real code from the project
+// Real code from basil
 ```
 
 ### Example 2 - [Scenario]
 
 ```language
-// Real code from the project
+// Real code from basil
 ```
 
 ## References
 
 For detailed implementation patterns, see:
+- Topic A → references/topic-a.md
+- Topic B → references/topic-b.md
 
-- [Topic A](references/topic-a.md)
-- [Topic B](references/topic-b.md)
+````
 
-```
+### YAML frontmatter fields
 
-### Champs du frontmatter YAML
-
-| Champ | Obligatoire | Contraintes | Notes |
-|-------|------------|-------------|-------|
-| `name` | **Oui** | Max 64c, kebab-case, = nom du dossier | Pas de mots reserves ("anthropic", "claude") |
-| `description` | **Oui** | Max 1024c, 3eme personne, pas de XML | Inclure "Use when..." et "Activates when..." |
-| `allowed-tools` | **Oui** (convention) | Liste separee par virgules | Restreindre au necessaire |
-| `license` | Non | Nom de licence | `MIT` par defaut chez nous |
-| `metadata` | Non | Cles/valeurs string | `author: <utilisateur-courant>`, `version: "1.0"` |
-| `compatibility` | Non | Max 500c | Environnement requis |
+| Field           | Required             | Constraints                        | Notes                                         |
+| --------------- | -------------------- | ---------------------------------- | --------------------------------------------- |
+| `name`          | **Yes**              | Max 64c, kebab-case, = folder name | No reserved words ("anthropic", "claude")     |
+| `description`   | **Yes**              | Max 1024c, third person, no XML    | Include "Use when..." and "Activates when..." |
+| `allowed-tools` | **Yes** (convention) | Comma-separated list               | Restrict to what's needed                     |
+| `license`       | No                   | License name                       | `MIT` by default for us                       |
+| `metadata`      | No                   | String key/values                  | `author: owlint`, `version: "1.0"`            |
+| `compatibility` | No                   | Max 500c                           | Required environment                          |
 
 ---
 
-## 6. Bonnes pratiques
+## 6. Best practices
 
-### Progressive disclosure (3 niveaux)
+### Progressive disclosure (3 tiers)
 
-| Niveau | Charge quand | Budget | Contenu |
-|--------|-------------|--------|---------|
-| **Description** (frontmatter) | Au demarrage, pour TOUS les skills | < 200 tokens (~800c) | Quoi + quand + critere d'activation |
-| **Body** (SKILL.md) | Quand le skill est active | < 5000 tokens (~400L) | Instructions essentielles, regles, exemples cles |
-| **References** (`references/`) | Sur demande | Illimite | Details, exemples exhaustifs, patterns avances |
+| Tier                           | Loaded when                 | Budget                | Content                                         |
+| ------------------------------ | --------------------------- | --------------------- | ----------------------------------------------- |
+| **Description** (frontmatter)  | At startup, for ALL skills  | < 200 tokens (~800c)  | What + when + activation criteria               |
+| **Body** (SKILL.md)            | When the skill is activated | < 5000 tokens (~400L) | Essential instructions, rules, key examples     |
+| **References** (`references/`) | On demand                   | Unlimited             | Details, exhaustive examples, advanced patterns |
 
-### Ecrire une bonne description
+### Writing a good description
 
-La description est le critere d'activation principal. L'agent lit TOUTES les descriptions au demarrage pour decider quel skill activer.
+The description is the primary activation criterion. The agent reads ALL descriptions at startup to decide which skill to activate.
 
-**Structure recommandee :**
-```
-
-[Ce que fait le skill]. Use when [conditions de declenchement].
-Activates when [patterns de fichiers ou contextes].
-CRITICAL - [regle la plus importante].
+**Recommended structure:**
 
 ```
 
-**Exemple reel (pinia-colada) :**
+[What the skill does]. Use when [trigger conditions].
+Activates when [file patterns or contexts].
+CRITICAL - [most important rule].
+
+```
+
+**Real example (pinia-colada):**
+
 ```
 
 Data fetching with Pinia Colada queries and mutations for Vue/Nuxt
@@ -234,93 +235,95 @@ applications. Use when fetching data from the API, creating query
 definitions with defineQueryOptions, implementing mutations with
 useMutation, handling loading/error/empty states, managing server-side
 cache invalidation, or implementing optimistic updates. Activates when
-working on files in src/queries/, src/mutations/, or any Vue
+working on files in pwa/api/queries/, pwa/api/mutations/, or any Vue
 component that needs to fetch or mutate API data. CRITICAL - Never call
 API functions directly in components; always use queries and mutations.
 
-````
+```
 
-### Regles d'ecriture du body
+### Body writing rules
 
-1. **Concision** : Chaque token compete avec l'historique de conversation. Aller droit au but.
-2. **Un niveau de profondeur** : SKILL.md -> references/file.md. Jamais references/a.md -> references/b.md.
-3. **Exemples du projet** : Utiliser du code reel du projet, pas des exemples generiques.
-4. **Pas de dates** : "Pattern actuel" au lieu de "Depuis la v2.0 (jan 2026)".
-5. **Terminologie fixe** : Choisir un terme et s'y tenir (ex: toujours "Gateway", jamais "Repository").
-6. **Feedback loops** : Pour les taches critiques, inclure une etape de validation (lint, test, type-check).
-7. **Allowed-tools restreints** : Ne donner que les outils necessaires (Read, Grep pour review ; + Write, Edit pour generation).
-
----
-
-## 7. Maintenir un skill existant
-
-| Quand modifier | Action |
-|---------------|--------|
-| Upgrade de version (ex: Symfony 7.3 -> 7.4) | Mettre a jour versions + patterns obsoletes |
-| Nouveau pattern decouvert | Ajouter dans `references/` (pas dans SKILL.md sauf si essentiel) |
-| Pattern obsolete | Supprimer (pas de "deprecated since..." ni "anciennement...") |
-| Skill trop gros (> 500L) | Extraire vers `references/` |
-| Feedback negatif recurrent | Reformuler les instructions, ajouter exemples |
-| Skill tiers meilleur disponible | Evaluer : remplacer ou completer |
-
-### Ne jamais modifier
-
-- Le champ `name` (casserait les references existantes)
-- Les descriptions pour ajouter du contenu temporel ("depuis fevrier 2026...")
+1. **Conciseness**: Every token competes with conversation history. Get straight to the point.
+2. **One level of depth**: SKILL.md -> references/file.md. Never references/a.md -> references/b.md.
+3. **Project examples**: Use real code from basil, not generic examples.
+4. **No dates**: "Current pattern" instead of "Since v2.0 (Jan 2026)".
+5. **Fixed terminology**: Choose a term and stick with it (e.g., always "Gateway", never "Repository").
+6. **Feedback loops**: For critical tasks, include a validation step (lint, test, type-check).
+7. **Restricted allowed-tools**: Only provide the necessary tools (Read, Grep for review; + Write, Edit for generation).
 
 ---
 
-## 8. Checklist qualite (avant merge)
+## 7. Maintaining an existing skill
+
+| When to modify                             | Action                                                  |
+| ------------------------------------------ | ------------------------------------------------------- |
+| Version upgrade (e.g., Symfony 7.3 -> 7.4) | Update versions + obsolete patterns                     |
+| New pattern discovered                     | Add to `references/` (not to SKILL.md unless essential) |
+| Obsolete pattern                           | Delete (no "deprecated since..." or "formerly...")      |
+| Skill too large (> 500L)                   | Extract to `references/`                                |
+| Recurring negative feedback                | Rephrase instructions, add examples                     |
+| Better third-party skill available         | Evaluate: replace or complement                         |
+
+### Never modify
+
+- The `name` field (would break existing references)
+- Descriptions to add temporal content ("since February 2026...")
+
+---
+
+## 8. Quality checklist (before merge)
 
 ### Frontmatter
 
-- [ ] `name` match le dossier, kebab-case, < 64 caracteres
-- [ ] `description` < 1024 caracteres, 3eme personne
-- [ ] `description` inclut "Use when..." ET "Activates when..."
-- [ ] `allowed-tools` present et restreint au necessaire
-- [ ] `metadata.author` = `owlint` (ou nom de l'auteur), `metadata.version` renseignee
+- [ ] `name` matches folder, kebab-case, < 64 characters
+- [ ] `description` < 1024 characters, third person
+- [ ] `description` includes "Use when..." AND "Activates when..."
+- [ ] `allowed-tools` present and restricted to what's needed
+- [ ] `metadata.author` = `owlint`, `metadata.version` filled in
 
 ### Body
 
-- [ ] < 500 lignes
-- [ ] Section "## When to use this skill" presente
-- [ ] Minimum 2 exemples pratiques (code reel du projet)
-- [ ] Pas de theorie que Claude connait deja
-- [ ] Terminologie coherente dans tout le skill
+- [ ] < 500 lines
+- [ ] Section "## When to use this skill" present
+- [ ] Minimum 2 practical examples (real project code)
+- [ ] No theory that Claude already knows
+- [ ] Consistent terminology throughout the skill
 
 ### Structure
 
-- [ ] Fichiers supplementaires dans `references/` (pas a la racine du skill)
-- [ ] Pas de chemins relatifs hors du dossier skill (`../../../` interdit)
-- [ ] Liens internes vers `references/` corrects
-- [ ] Pas d'information temporelle
+- [ ] Additional files in `references/` (not at the skill root)
+- [ ] No relative paths outside the skill folder (`../../../` forbidden)
+- [ ] Internal links to `references/` are correct
+- [ ] No temporal information
 
 ### Test
 
-- [ ] Teste avec une tache reelle dans Claude Code
-- [ ] Le skill s'active au bon moment (pas de faux positif ni negatif)
-- [ ] Les instructions sont suivies correctement
+- [ ] Tested with a real task in Claude Code
+- [ ] The skill activates at the right time (no false positive or negative)
+- [ ] Instructions are followed correctly
 
 ---
 
-## 9. Erreurs courantes a eviter
+## 9. Common mistakes to avoid
 
-Ces anti-patterns ont ete identifies lors de notre audit :
+These anti-patterns were identified during our audit (33 skills):
 
-### 1. Le "thin wrapper" vide
+### 1. The empty "thin wrapper"
 
 ```markdown
-# Bad - un SKILL.md qui ne fait que pointer ailleurs
+# Bad - a SKILL.md that only points elsewhere
+
 ## Instructions
+
 For details, refer to the information provided in this file:
 [backend models](../../../agent-os/standards/backend/models.md)
-````
+```
 
-Le fichier externe contient 10 lignes de bullet points. Resultat : le skill ne fournit quasiment rien a l'agent.
+The external file contains 10 lines of bullet points. Result: the skill provides almost nothing to the agent.
 
-**Correction** : Integrer le contenu directement dans le SKILL.md. Si le contenu externe est > 100 lignes, le copier dans `references/`.
+**Fix**: Integrate the content directly into the SKILL.md. If the external content is > 100 lines, copy it into `references/`.
 
-### 2. Le `allowed-tools` manquant
+### 2. Missing `allowed-tools`
 
 ```yaml
 ---
@@ -329,60 +332,60 @@ description: Implement caching with Symfony Cache...
 ---
 ```
 
-Sans `allowed-tools`, l'agent ne sait pas quels outils il peut utiliser avec ce skill.
+Without `allowed-tools`, the agent doesn't know which tools it can use with this skill.
 
-**Correction** : Toujours inclure `allowed-tools` dans le frontmatter.
+**Fix**: Always include `allowed-tools` in the frontmatter.
 
-### 3. La description trop courte
+### 3. Description too short
 
 ```yaml
 description: Git workflow with gitmoji commits and feature branches.
 ```
 
-175 caracteres. L'agent n'a pas assez de contexte pour savoir QUAND activer ce skill.
+175 characters. The agent doesn't have enough context to know WHEN to activate this skill.
 
-**Correction** : Inclure les triggers ("Use when..."), les patterns de fichiers ("Activates when..."), et la regle critique ("CRITICAL -").
+**Fix**: Include triggers ("Use when..."), file patterns ("Activates when..."), and the critical rule ("CRITICAL -").
 
-### 4. L'absence de "When to use this skill"
+### 4. Missing "When to use this skill"
 
-Un SKILL.md qui commence directement par les instructions sans section d'activation. L'agent comprend moins bien quand l'utiliser.
+A SKILL.md that starts directly with instructions without an activation section. The agent understands less well when to use it.
 
-**Correction** : Toujours commencer par `## When to use this skill` avec 5-10 bullet points.
+**Fix**: Always start with `## When to use this skill` with 5-10 bullet points.
 
-### 5. Les fichiers de support a la racine
+### 5. Support files at the root
 
 ```
-mon-skill/
+my-skill/
     SKILL.md
-    examples.md        # A la racine, pas dans references/
+    examples.md        # At the root, not in references/
     patterns.md
 ```
 
-Ne suit pas la convention `references/` de la spec, rend la structure moins lisible.
+Doesn't follow the spec's `references/` convention, makes the structure less readable.
 
-**Correction** :
+**Fix**:
 
 ```
-mon-skill/
+my-skill/
     SKILL.md
     references/
         examples.md
         patterns.md
 ```
 
-### 6. Les exemples generiques
+### 6. Generic examples
 
 ```php
-// Bad - exemple generique
+// Bad - generic example
 class MyEntity {
     private string $name;
 }
 ```
 
-**Correction** : Utiliser du code reel du projet.
+**Fix**: Use real code from the project.
 
 ```php
-// Good - exemple reel du projet
+// Good - real example from basil
 #[ORM\Entity]
 #[ApiResource(
     operations: [new Get(), new GetCollection()],
@@ -397,19 +400,19 @@ class WatchFile {
 
 ---
 
-## 10. Exemple complet : le skill `pinia-colada`
+## 10. Complete example: the `pinia-colada` skill
 
 ### Structure
 
 ```
 .claude/skills/pinia-colada/
-    SKILL.md                     # 264 lignes
+    SKILL.md                     # 264 lines
     references/
-        data-fetching.md         # 369 lignes - architecture et patterns
-        examples.md              # 633 lignes - exemples detailles
+        data-fetching.md         # 369 lines - architecture and patterns
+        examples.md              # 633 lines - detailed examples
 ```
 
-### SKILL.md (extrait)
+### SKILL.md (excerpt)
 
 ```yaml
 ---
@@ -418,8 +421,8 @@ description: Data fetching with Pinia Colada queries and mutations for Vue/Nuxt
   applications. Use when fetching data from the API, creating query definitions with
   defineQueryOptions, implementing mutations with useMutation, handling
   loading/error/empty states, managing server-side cache invalidation, or implementing
-  optimistic updates. Activates when working on files in src/queries/,
-  src/mutations/, or any Vue component that needs to fetch or mutate API data.
+  optimistic updates. Activates when working on files in pwa/api/queries/,
+  pwa/api/mutations/, or any Vue component that needs to fetch or mutate API data.
   CRITICAL - Never call API functions directly in components; always use queries and
   mutations.
 allowed-tools: Read, Write, Edit, Glob, Grep
@@ -428,8 +431,8 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 ## When to use this skill
 
 - When fetching data from the API in Vue components
-- When creating query definitions in `src/queries/`
-- When creating mutation definitions in `src/mutations/`
+- When creating query definitions in `pwa/api/queries/`
+- When creating mutation definitions in `pwa/api/mutations/`
 - When implementing `useQuery` or `useMutation` hooks
 - When handling loading, error, and empty states in templates
 - When invalidating cache after successful mutations
@@ -440,9 +443,9 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 **CRITICAL**: Never call API functions directly in components. Always use
 queries and mutations.
 
-## Architecture (3 couches)
+## Architecture (3 layers)
 
-[... instructions essentielles ...]
+[... essential instructions ...]
 
 ## References
 
@@ -450,11 +453,11 @@ queries and mutations.
 - [examples.md](references/examples.md) - Pagination, optimistic UI, cache
 ```
 
-### Pourquoi ce skill fonctionne bien
+### Why this skill works well
 
-1. **Description riche** (552c) avec triggers clairs et CRITICAL rule
-2. **"When to use"** avec 7 scenarios concrets + paths de fichiers
-3. **Body < 300 lignes** avec les regles essentielles
-4. **references/** pour les 1000+ lignes de detail
-5. **Exemples reels** du projet (pas de code generique)
-6. **Terminologie coherente** : toujours "query", "mutation", "cache invalidation"
+1. **Rich description** (552c) with clear triggers and CRITICAL rule
+2. **"When to use"** with 7 concrete scenarios + file paths
+3. **Body < 300 lines** with essential rules
+4. **references/** for the 1000+ lines of detail
+5. **Real examples** from the project (no generic code)
+6. **Consistent terminology**: always "query", "mutation", "cache invalidation"
