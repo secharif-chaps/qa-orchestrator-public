@@ -15,7 +15,7 @@ No real Dify failures are needed — a helper script injects mock errors directl
 
 ## Database migration
 
-This feature requires migration `026` which adds the `error_details` column to the `tasks` table.
+This feature requires migration `028` which adds the `error_details` column to the `tasks` table.
 
 ### Check if migration is already applied
 
@@ -23,7 +23,7 @@ This feature requires migration `026` which adds the `error_details` column to t
 task migrate:status
 ```
 
-Look for `026_add_task_error_details` in the output. If it shows `(head)` or is listed as applied, you're good.
+Look for `028_add_task_error_details` in the output. If it shows `(head)` or is listed as applied, you're good.
 
 Alternatively:
 

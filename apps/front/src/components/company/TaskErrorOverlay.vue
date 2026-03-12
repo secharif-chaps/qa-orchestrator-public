@@ -55,7 +55,7 @@
       <!-- Permanent / generic error -->
       <Alert
         v-else
-        variant="error"
+        variant="danger"
         :title="t('company.analysisCard.error.generic.title')"
         :description="t('company.analysisCard.error.generic.description')"
         icon="fa-circle-xmark"

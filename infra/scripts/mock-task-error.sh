@@ -32,7 +32,7 @@ error()   { echo -e "${RED}✘  $1${RESET}"; exit 1; }
 # ─── Step 1: choose company ───────────────────────────────────────────────────
 header "── Step 1 / 3 : Choose a company ──"
 
-companies=$(psql "SELECT id, name FROM companies ORDER BY name;")
+companies=$(psql "SELECT id, name FROM screen_schema.companies ORDER BY name;")
 
 if [[ -z "$companies" ]]; then
   error "No companies found in the database. Run the seed script first."
@@ -64,7 +64,7 @@ success "Selected company: $selected_company_name (id: $selected_company_id)"
 # ─── Step 2: choose task ──────────────────────────────────────────────────────
 header "── Step 2 / 3 : Choose a task ──"
 
-tasks=$(psql "SELECT id, type, status FROM tasks WHERE company_id = $selected_company_id ORDER BY type;")
+tasks=$(psql "SELECT id, type, status FROM screen_schema.tasks WHERE company_id = $selected_company_id ORDER BY type;")
 
 if [[ -z "$tasks" ]]; then
   error "No tasks found for company '$selected_company_name'."
@@ -175,7 +175,7 @@ error_details_json="{\"error_type\": \"$error_type\", \"is_recoverable\": $is_re
 # ─── Apply to database ────────────────────────────────────────────────────────
 header "── Applying mock error ──"
 
-psql "UPDATE tasks
+psql "UPDATE screen_schema.tasks
       SET status = 'error',
           error = 'Mock error injected by QA: $error_type',
           error_details = '$error_details_json',
