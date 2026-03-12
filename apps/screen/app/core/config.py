@@ -27,7 +27,6 @@ class Settings(BaseSettings):
     CORS_ORIGIN: str = "http://localhost:3000"
 
     # Keycloak settings
-
     KEYCLOAK_SERVER_URL: str = "https://keycloak.preprod.chapsmind.com"
     KEYCLOAK_REALM: str = "mint-preprod"
     KEYCLOAK_CLIENT_ID: str = "mint-back"

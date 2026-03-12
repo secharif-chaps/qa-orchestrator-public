@@ -52,42 +52,42 @@ services:
       - chapsmind-network
     restart: unless-stopped
 
-  # Disable nginx for local development
+  # Nginx Reverse Proxy
   nginx:
-    profiles:
-      - production  # Only run in production profile
-
-  # Frontend dev server with hot-reload (Vite HMR)
-  frontend:
-    build:
-      context: ../apps/front
-      dockerfile: Dockerfile.dev
-      secrets:
-        - OWLINT_REGISTRY_URL
-        - OWLINT_DEPLOY_KEY
-    image: chapsmind-front:local-dev
+    image: nginx:alpine
+    restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "80:80"
+    volumes:
+      - ./files/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - screen
+      - global-service
+      - keycloak
+      - frontend
+    networks:
+      - chapsmind-network
+
+  # Frontend with hot-reload for local development
+  # Requires: task front:setup-yarnrc && cd apps/front && yarn install
+  frontend:
+    image: node:24
+    working_dir: /app
+    entrypoint: /bin/sh -c "corepack enable && yarn dev --host 0.0.0.0 --port 3000"
     environment:
-      VITE_BASE_URL: http://localhost:8000/api
-      VITE_API_URL: http://localhost:8000/api
+      VITE_BASE_URL: http://localhost:3000/api
+      VITE_API_URL: http://localhost:3000/api
       VITE_KEYCLOAK_URL: http://localhost:8080
       VITE_KEYCLOAK_REALM: chapsmind
       VITE_KEYCLOAK_CLIENT_ID: chapsmind-front
     volumes:
-      - ../apps/front/src:/app/src
-      - ../apps/front/public:/app/public
-      - ../apps/front/index.html:/app/index.html
-      - ../apps/front/vite.config.ts:/app/vite.config.ts
-      - ../apps/front/tsconfig.json:/app/tsconfig.json
-      - ../apps/front/tsconfig.app.json:/app/tsconfig.app.json
+      - ../apps/front:/app
 
   # Override screen backend to use local code and expose directly
   screen:
     build:
       context: ../apps/screen
       dockerfile: Dockerfile
-    image: chapsmind-screen:local
     ports:
       - "8000:8000"  # Expose backend directly
     depends_on:
@@ -135,7 +135,6 @@ services:
     build:
       context: ../apps/screen
       dockerfile: Dockerfile
-    image: chapsmind-screen:local
     environment:
       BACKEND_BASE_URL: http://localhost:8000/api
       # Tunnel URL file location (for Dify callbacks via localtunnel)
@@ -147,13 +146,6 @@ services:
       - ../apps/screen/alembic:/app/alembic
       # Tunnel URL shared volume (for Dify callbacks)
       - tunnel_url:/tunnel:ro
-
-  # Override flower to use local code
-  screen_celery_flower:
-    build:
-      context: ../apps/screen
-      dockerfile: Dockerfile
-    image: chapsmind-screen:local
 
   # Global Service (Gateway) - Proxies /api requests to backend monolith
   global-service:
@@ -199,11 +191,37 @@ services:
     networks:
       - chapsmind-network
 
-secrets:
-  OWLINT_REGISTRY_URL:
-    environment: OWLINT_REGISTRY_URL
-  OWLINT_DEPLOY_KEY:
-    environment: OWLINT_DEPLOY_KEY
+  # Keycloak for Authentication (with ChapsMind theme baked in)
+  keycloak:
+    image: registry.git.mediaspeech.com/mint/keycloak-theme/keycloak-chapsmind:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HTTP_ENABLED: "true"
+      KC_FEATURES: organization
+    command: start-dev --import-realm
+    volumes:
+      - ./files/realm-chapsmind.json:/opt/keycloak/data/import/realm-chapsmind.json
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080;echo -e 'GET /health/ready HTTP/1.1\r\nhost: localhost\r\nConnection: close\r\n\r\n' >&3;if [ $? -eq 0 ]; then echo 'Healthcheck Successful';exit 0;else echo 'Healthcheck Failed';exit 1;fi;"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - chapsmind-network
 
 # Volumes for local development
 volumes:

@@ -1,24 +1,8 @@
 services:
-  # Nginx Reverse Proxy
-  nginx:
-    image: nginx:alpine
-    restart: always
-    ports:
-      - "80:80"
-    volumes:
-      - ./files/nginx.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - screen
-      - global-service
-      - keycloak
-      - frontend
-    networks:
-      - chapsmind-network
-
   # Vue Frontend
   frontend:
     image: registry.git.mediaspeech.com/chapsmind/chapsmind/chapsmind-front:latest
-    restart: always
+    restart: unless-stopped
     networks:
       - chapsmind-network
 
@@ -30,7 +14,7 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    restart: always
+    restart: unless-stopped
     environment:
       DATABASE_HOST: db
       DATABASE_PORT: 5432
@@ -48,7 +32,7 @@ services:
       MAX_CONCURRENT_WORKFLOWS: 10
       BACKEND_BASE_URL: http://localhost
       # Translation API (runs in backend via BackgroundTasks)
-      SYSTRAN_API_KEY: ${SYSTRAN_API_KEY}
+      SYSTRAN_API_KEY: ${SYSTRAN_API_KEY:-}
       # Internal JWT for gateway communication (same secret as global-service)
       INTERNAL_JWT_SECRET: ${INTERNAL_JWT_SECRET}
       # Optional: IP allowlist for internal auth (comma-separated CIDR)
@@ -62,7 +46,7 @@ services:
   screen_celery_worker:
     image: registry.git.mediaspeech.com/chapsmind/chapsmind/chapsmind-screen:latest
     entrypoint: celery -A app.core.celery_app worker --loglevel=info --concurrency=4 --pool=solo --queues=dify_workflows
-    restart: always
+    restart: unless-stopped
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/chapsmind_db
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672//
@@ -77,29 +61,13 @@ services:
     networks:
       - chapsmind-network
 
-  screen_celery_flower:
-    image: registry.git.mediaspeech.com/chapsmind/chapsmind/chapsmind-screen:latest
-    entrypoint: celery -A app.core.celery_app flower --port=5555 --broker=amqp://guest:guest@rabbitmq:5672//
-    restart: always
-    ports:
-      - "5555:5555"
-    environment:
-      FLOWER_BASIC_AUTH: admin:admin
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    networks:
-      - chapsmind-network
-
   # Global Service (Gateway) - Proxies /api requests to backend monolith
   global-service:
     image: registry.git.mediaspeech.com/chapsmind/chapsmind/chapsmind-global-service:latest
-    restart: always
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
-      screen:
-        condition: service_started
     environment:
       LOG_LEVEL: INFO
       SERVICE_NAME: global-service
@@ -123,42 +91,10 @@ services:
     networks:
       - chapsmind-network
 
-  # Keycloak for Authentication (with ChapsMind theme baked in)
-  keycloak:
-    image: registry.git.mediaspeech.com/mint/keycloak-theme/keycloak-chapsmind:latest
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_DB: postgres
-      KC_DB_USERNAME: postgres
-      KC_DB_PASSWORD: postgres
-      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
-      KC_HOSTNAME_STRICT: "false"
-      KC_HOSTNAME_STRICT_HTTPS: "false"
-      KC_HTTP_ENABLED: "true"
-      KC_FEATURES: organization
-    command: start-dev --import-realm
-    volumes:
-      - ./files/realm-chapsmind.json:/opt/keycloak/data/import/realm-chapsmind.json
-    depends_on:
-      db:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080;echo -e 'GET /health/ready HTTP/1.1\r\nhost: localhost\r\nConnection: close\r\n\r\n' >&3;if [ $? -eq 0 ]; then echo 'Healthcheck Successful';exit 0;else echo 'Healthcheck Failed';exit 1;fi;"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
-    networks:
-      - chapsmind-network
-
   # PostgreSQL Database
   db:
     image: postgres:17-alpine
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -173,13 +109,11 @@ services:
       retries: 5
     networks:
       - chapsmind-network
+
   # RabbitMQ Message Broker
   rabbitmq:
     image: rabbitmq:3.12-management-alpine
-    restart: always
-    ports:
-      - "5672:5672"     # AMQP port
-      - "15672:15672"   # Management UI
+    restart: unless-stopped
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
