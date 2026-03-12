@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-full flex-col bg-slate-50">
+  <div class="relative flex h-full flex-col bg-slate-50">
     <ConnectionBanner />
     <div class="min-h-0 flex-1">
       <div
