@@ -64,7 +64,7 @@ main:assign-reviewers:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   script:
     - pip install --quiet requests
-    - python scripts/ci/assign_reviewers.py
+    - python .gitlab/scripts/assign_reviewers.py
   variables:
     GITLAB_TOKEN: $REVIEWER_BOT_TOKEN
 
@@ -76,7 +76,7 @@ main:update-codeowners:
   image: python:3.12-slim
   script:
     - pip install --quiet requests
-    - python scripts/ci/generate_codeowners.py --min-commits 5 --months 6
+    - python .gitlab/scripts/generate_codeowners.py --min-commits 5 --months 6
     - |
       if git diff --quiet .gitlab/CODEOWNERS; then
         echo "CODEOWNERS is up to date"
