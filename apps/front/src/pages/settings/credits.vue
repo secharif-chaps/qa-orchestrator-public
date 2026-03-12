@@ -82,7 +82,7 @@ import TopCreditUsersCard from '@/components/credits/TopCreditUsersCard.vue'
 import DailyCreditUsageCard from '@/components/credits/DailyCreditUsageCard.vue'
 
 // Get current organization
-const { data: organization } = useQuery(currentOrganizationQuery, () => ({}))
+const { data: organization } = useQuery(() => currentOrganizationQuery())
 
 const organizationId = computed(() => organization.value?.id || '')
 

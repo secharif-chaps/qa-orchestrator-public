@@ -126,10 +126,12 @@ const highlightedIndex = ref(-1)
 const listRef = useTemplateRef('list')
 const searchQuery = ref('')
 
-const { data: searchData } = useQuery(searchUsersQuery, () => ({
-  query: searchQuery.value,
-  excludeWatchFileSharedUsers: props.watchFileId,
-}))
+const { data: searchData } = useQuery(() =>
+  searchUsersQuery({
+    query: searchQuery.value,
+    excludeWatchFileSharedUsers: props.watchFileId,
+  }),
+)
 
 const searchResults = computed(() => searchData.value?.member || [])
 

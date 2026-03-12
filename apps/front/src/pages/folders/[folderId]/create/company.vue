@@ -130,7 +130,7 @@ const {
 const { mutateAsync: addToFolder } = useAddItemToFolder()
 
 // Fetch current organization
-const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
+const { data: currentOrganization } = useQuery(() => currentOrganizationQuery())
 
 // Global token balance query
 const {

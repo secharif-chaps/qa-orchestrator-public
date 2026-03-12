@@ -122,13 +122,15 @@ const expandedSections = ref({
 })
 
 // Fetch folders with items (5 most recent)
-const { data: foldersData, isLoading } = useQuery(foldersWithItemsQuery, () => ({
-  filters: {
-    page: 1,
-    size: 5,
-    name: '',
-  },
-}))
+const { data: foldersData, isLoading } = useQuery(() =>
+  foldersWithItemsQuery({
+    filters: {
+      page: 1,
+      size: 5,
+      name: '',
+    },
+  }),
+)
 
 // Computed folders lists - access .data from PaginatedResponse
 const allFolders = computed<Folder[]>(() => foldersData.value?.data || [])

@@ -198,10 +198,12 @@ const filterPanelWidth = computed(() => {
   }
 })
 
-const { data, isLoading, error, refetch } = useQuery(getCollectionDocumentQuery, () => ({
-  watchFileId,
-  filters: queryParams.value,
-}))
+const { data, isLoading, error, refetch } = useQuery(() =>
+  getCollectionDocumentQuery({
+    watchFileId,
+    filters: queryParams.value,
+  }),
+)
 
 const { markAsSeen } = useMarkDocumentAsSeen()
 
@@ -215,12 +217,7 @@ const {
   data: consultedDocument,
   isLoading: isConsultedDocumentLoading,
   error: consultedDocumentError,
-} = useQuery(
-  getItemDocumentQuery,
-  computed(() => {
-    return { id: consultedDocumentId.value! }
-  }),
-)
+} = useQuery(() => getItemDocumentQuery({ id: consultedDocumentId.value! }))
 
 const consultDocument = () => {
   if (!selectedDocument.value?.id) return

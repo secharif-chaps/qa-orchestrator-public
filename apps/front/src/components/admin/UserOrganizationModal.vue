@@ -206,7 +206,7 @@ const {
   data: orgData,
   isLoading: isLoadingOrg,
   error: orgError,
-} = useQuery(userOrganizationQuery, () => ({ userId: props.userId }))
+} = useQuery(() => userOrganizationQuery({ userId: props.userId }))
 
 // Current organization from fetched data
 const currentOrganization = computed(() => orgData.value?.organization ?? null)

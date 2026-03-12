@@ -15,9 +15,11 @@ const route = useRoute('/target/(watch_files)/[id]/')
 const router = useRouter()
 
 // Fetch watch file data
-const { data: watchFile, isLoading } = useQuery(getItemWatchFileQuery, () => ({
-  id: route.params.id,
-}))
+const { data: watchFile, isLoading } = useQuery(() =>
+  getItemWatchFileQuery({
+    id: route.params.id,
+  }),
+)
 
 // Redirect only when data is properly fetched
 watchEffect(async () => {

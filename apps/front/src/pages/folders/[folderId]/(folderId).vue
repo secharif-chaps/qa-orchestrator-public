@@ -287,12 +287,14 @@ const {
   status,
   isLoading,
   refetch,
-} = useQuery(folderByIdQuery, () => ({
-  id: route.params.folderId as string,
-  filters: {
-    archived: companyFilter.value === 'archived',
-  },
-}))
+} = useQuery(() =>
+  folderByIdQuery({
+    id: route.params.folderId as string,
+    filters: {
+      archived: companyFilter.value === 'archived',
+    },
+  }),
+)
 
 // Folder permissions based on current folder
 const { canMoveItems } = useFolderPermissions(folder)

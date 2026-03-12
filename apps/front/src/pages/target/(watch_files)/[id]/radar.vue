@@ -74,9 +74,8 @@ watch(selectedView, (newView) => {
   })
 })
 
-const { data: eventsGraphData, isLoading: isLoadingEventsGraph } = useQuery(
-  getEventsGraphQuery,
-  () => ({
+const { data: eventsGraphData, isLoading: isLoadingEventsGraph } = useQuery(() =>
+  getEventsGraphQuery({
     watchFileId: watchFileId.value,
     filters: filterQuery.value,
   }),

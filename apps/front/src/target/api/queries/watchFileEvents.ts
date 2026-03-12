@@ -3,7 +3,7 @@ import { defineQueryOptions, useInfiniteQuery } from '@pinia/colada'
 import { getWatchFileEvents, getWatchFileEventsLink } from '@target/api/watchFileEvents'
 import { useWatchFileAnalysisStore } from '@target/stores/watchFileAnalysis'
 import type { WatchFileEventCollectionResponse } from '@target/types/watchFileEvent'
-import { computed, nextTick, ref, watch, watchEffect, type ComputedRef } from 'vue'
+import { computed, nextTick, type ComputedRef } from 'vue'
 
 export const WATCH_FILE_EVENTS_QUERY_KEYS = {
   root: ['watchFileEvents'] as const,
@@ -20,9 +20,6 @@ export const getWatchFileEventsQueryLink = defineQueryOptions(({ link }: { link:
 
 export const useWatchFileEventsInfiniteQuery = (watchFileId: ComputedRef<string>) => {
   const ITEMS_PER_PAGE = 10
-
-  const nextPageUrl = ref<string | undefined>(undefined)
-  const resetQuery = ref(false)
 
   const watchFileAnalysisStore = useWatchFileAnalysisStore()
 
@@ -51,13 +48,9 @@ export const useWatchFileEventsInfiniteQuery = (watchFileId: ComputedRef<string>
     ] as const
   })
 
-  const {
-    state: infiniteData,
-    loadMore: loadMorePages,
-    asyncStatus,
-  } = useInfiniteQuery({
+  const { data, loadNextPage, hasNextPage, asyncStatus } = useInfiniteQuery({
     key: queryKey,
-    query: async () => {
+    query: async ({ pageParam }: { pageParam: string | undefined }) => {
       if (!watchFileId.value) {
         return {
           items: [],
@@ -66,8 +59,8 @@ export const useWatchFileEventsInfiniteQuery = (watchFileId: ComputedRef<string>
         } as WatchFileEventCollectionResponse
       }
 
-      if (nextPageUrl.value) {
-        return getWatchFileEventsLink(nextPageUrl.value)
+      if (pageParam) {
+        return getWatchFileEventsLink(pageParam)
       }
 
       return getWatchFileEvents(
@@ -80,34 +73,14 @@ export const useWatchFileEventsInfiniteQuery = (watchFileId: ComputedRef<string>
       )
     },
     enabled: computed(() => !!watchFileId.value),
-    initialPage: {
-      items: [],
-      totalItems: 0,
-      nextPageUrl: undefined,
-    } as WatchFileEventCollectionResponse,
-    merge: (
-      result: WatchFileEventCollectionResponse,
-      current: WatchFileEventCollectionResponse | null,
-    ) => {
-      if (!current) return result
-      if (resetQuery.value) {
-        resetQuery.value = false
-        return current
-      }
-      return {
-        items: [...result.items, ...current.items],
-        totalItems: current.totalItems,
-        nextPageUrl: current.nextPageUrl,
-      }
-    },
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage: WatchFileEventCollectionResponse) =>
+      lastPage.nextPageUrl ?? undefined,
   })
+
   const allEvents = computed(() => {
-    if (infiniteData.value?.status !== 'success') return []
-    return infiniteData.value.data.items
-  })
-  const hasMore = computed(() => {
-    if (infiniteData.value?.status !== 'success') return false
-    return !!infiniteData.value.data.nextPageUrl
+    if (!data.value) return []
+    return data.value.pages.flatMap((page) => page.items)
   })
 
   const isInitialLoading = computed(
@@ -117,35 +90,13 @@ export const useWatchFileEventsInfiniteQuery = (watchFileId: ComputedRef<string>
     () => asyncStatus.value === 'loading' && allEvents.value.length > 0,
   )
 
-  // Sync nextPageUrl from query data (including cached data)
-  watchEffect(() => {
-    if (infiniteData.value?.status === 'success') {
-      const cachedNextPageUrl = infiniteData.value.data.nextPageUrl
-      if (cachedNextPageUrl !== nextPageUrl.value) {
-        nextPageUrl.value = cachedNextPageUrl
-      }
-    }
-  })
-
-  // Reset nextPageUrl and trigger refetch when watchFileId or filters change
-  // Don't use immediate to avoid interfering with initial query
-  watch(
-    filters,
-    () => {
-      nextPageUrl.value = undefined
-      resetQuery.value = true
-      loadMorePages()
-    },
-    { deep: true },
-  )
-
   const loadMoreEvents = async () => {
-    if (!hasMore.value || isLoadingMore.value) return
+    if (!hasNextPage.value || isLoadingMore.value) return
 
     const scrollableElement = document.querySelector('.scrollable')
     const scrollPosition = scrollableElement?.scrollTop || 0
 
-    await loadMorePages()
+    await loadNextPage()
 
     await nextTick()
     if (scrollableElement) {
@@ -153,19 +104,9 @@ export const useWatchFileEventsInfiniteQuery = (watchFileId: ComputedRef<string>
     }
   }
 
-  watch(
-    watchFileId,
-    () => {
-      nextPageUrl.value = undefined
-      loadMorePages()
-    },
-    {
-      immediate: true,
-    },
-  )
   return {
     allEvents,
-    hasMore,
+    hasMore: hasNextPage,
     isLoadingMore,
     loadMoreEvents,
     isInitialLoading,

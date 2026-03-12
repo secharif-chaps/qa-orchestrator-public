@@ -60,19 +60,23 @@ const {
   data: dataActors,
   isLoading: isLoadingActors,
   error: errorActors,
-} = useQuery(getWatchFileTimelineEventActorsQuery, () => ({
-  watchFileId: watchFileId,
-  eventId: actorEventId,
-}))
+} = useQuery(() =>
+  getWatchFileTimelineEventActorsQuery({
+    watchFileId: watchFileId,
+    eventId: actorEventId,
+  }),
+)
 
 const {
   data: dataSources,
   isLoading: isLoadingSources,
   error: errorSources,
-} = useQuery(getWatchFileTimelineEventSourcesQuery, () => ({
-  watchFileId: watchFileId,
-  eventId: sourceEventId,
-}))
+} = useQuery(() =>
+  getWatchFileTimelineEventSourcesQuery({
+    watchFileId: watchFileId,
+    eventId: sourceEventId,
+  }),
+)
 
 const isLoadingEvent = computed(() => isLoadingActors.value || isLoadingSources.value)
 const isError = computed(() => errorActors.value || errorSources.value)

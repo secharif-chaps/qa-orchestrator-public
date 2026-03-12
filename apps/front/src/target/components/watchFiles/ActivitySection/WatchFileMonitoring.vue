@@ -40,7 +40,7 @@ import type {
 } from '@target/types/timeline'
 import type { GroupedWatchFileActivityDto, WatchFileActivity } from '@target/types/watchFile'
 import { WatchFileEventType } from '@target/types/watchFile'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 interface Props {
@@ -58,49 +58,26 @@ const eventType = ref<WatchFileEventType>()
 const currentWatchFileId = computed(() => watchFileId)
 const isDrawerOpen = ref(false)
 
-const currentPage = ref(1)
-
 const {
-  state: data,
-  loadMore,
+  data,
+  loadNextPage,
+  hasNextPage: hasNextPageRef,
   asyncStatus,
 } = useInfiniteQuery({
   key: computed(() => ['watchFiles', 'timeline', currentWatchFileId.value || '']),
-  query: async () => {
+  query: async ({ pageParam }: { pageParam: number }) => {
     if (!currentWatchFileId.value) return null
     return getWatchFileTimeline(currentWatchFileId.value, {
-      page: currentPage.value,
+      page: pageParam,
     })
   },
   enabled: computed(() => !!currentWatchFileId.value),
-  initialPage: {
-    '@type': 'GroupedWatchFileActivityDto',
-    '@id': '',
-    activitiesByDay: {},
-    totalActivities: 0,
-    totalItems: 0,
-  } as GroupedWatchFileActivityDto,
-  merge: (result, current) => {
-    if (!current || typeof current !== 'object' || !('activitiesByDay' in current)) return result
-
-    const newPage = current as GroupedWatchFileActivityDto
-    if (!newPage) return result
-
-    // Merge activities by day
-    const mergedActivitiesByDay = { ...result.activitiesByDay }
-    Object.entries(newPage.activitiesByDay).forEach(([date, activities]) => {
-      if (mergedActivitiesByDay[date]) {
-        mergedActivitiesByDay[date] = [...mergedActivitiesByDay[date], ...activities]
-      } else {
-        mergedActivitiesByDay[date] = activities
-      }
-    })
-
-    return {
-      ...newPage,
-      activitiesByDay: mergedActivitiesByDay,
-    }
-  },
+  initialPageParam: 1,
+  getNextPageParam: (
+    lastPage: GroupedWatchFileActivityDto | null,
+    _allPages: unknown,
+    lastPageParam: number,
+  ) => (lastPage?.hasNextPage ? lastPageParam + 1 : undefined),
 })
 
 const transformActivityToTimelineActivity = (activity: WatchFileActivity): TimelineActivity => {
@@ -207,25 +184,30 @@ const getActivityButton = (activity: WatchFileActivity) => {
 }
 
 const timelineDays = computed((): TimelineDay[] => {
-  if (data.value?.status === 'success' && data.value.data) {
-    const activitiesByDay = data.value.data.activitiesByDay
+  if (!data.value?.pages) return []
 
-    return Object.entries(activitiesByDay)
-      .map(([date, activities]) => ({
-        date,
-        activities: activities.map(transformActivityToTimelineActivity),
-      }))
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  // Merge activitiesByDay from all pages
+  const mergedActivitiesByDay: Record<string, WatchFileActivity[]> = {}
+  for (const page of data.value.pages) {
+    if (!page || !('activitiesByDay' in page)) continue
+    for (const [date, activities] of Object.entries(page.activitiesByDay)) {
+      if (mergedActivitiesByDay[date]) {
+        mergedActivitiesByDay[date] = [...mergedActivitiesByDay[date], ...activities]
+      } else {
+        mergedActivitiesByDay[date] = activities
+      }
+    }
   }
-  return []
+
+  return Object.entries(mergedActivitiesByDay)
+    .map(([date, activities]) => ({
+      date,
+      activities: activities.map(transformActivityToTimelineActivity),
+    }))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 })
 
-const hasNextPage = computed(() => {
-  if (data.value?.status === 'success' && data.value.data) {
-    return data.value.data.hasNextPage
-  }
-  return false
-})
+const hasNextPage = hasNextPageRef
 
 const isLoading = computed(() => {
   return asyncStatus.value === 'loading' && !timelineDays.value.length
@@ -250,17 +232,6 @@ const getEventIcon = (eventType: WatchFileEventType): string => {
 
 const loadMoreActivities = () => {
   if (!currentWatchFileId.value || isLoadingMore.value) return
-  currentPage.value++
-  loadMore()
+  loadNextPage()
 }
-
-watch(
-  currentWatchFileId,
-  (newWatchFileId) => {
-    if (newWatchFileId) {
-      loadMore()
-    }
-  },
-  { immediate: true },
-)
 </script>

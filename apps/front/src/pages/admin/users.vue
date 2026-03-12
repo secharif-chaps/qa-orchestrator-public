@@ -162,15 +162,17 @@ const {
   data: usersResponse,
   isLoading,
   error,
-} = useQuery(adminUsersQuery, () => ({ params: queryParams }))
+} = useQuery(() => adminUsersQuery({ params: queryParams }))
 
-const { data: organizationsResponse } = useQuery(allOrganizationsQuery, () => ({
-  page: 1,
-  limit: 100,
-  sort: 'name' as const,
-  order: 'asc' as const,
-  search: undefined,
-}))
+const { data: organizationsResponse } = useQuery(() =>
+  allOrganizationsQuery({
+    page: 1,
+    limit: 100,
+    sort: 'name' as const,
+    order: 'asc' as const,
+    search: undefined,
+  }),
+)
 
 // Mutations
 const { assignOrganization, isLoading: isAssigning } = useAssignUserOrganization()

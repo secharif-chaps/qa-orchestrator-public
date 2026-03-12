@@ -52,7 +52,7 @@ const {
   data: activityData,
   isLoading: isLoadingActivity,
   error: activityError,
-} = useQuery(activityEventsQuery, () => ({ params: activityParams.value }))
+} = useQuery(() => activityEventsQuery({ params: activityParams.value }))
 
 // Mutations
 const { revokeSession } = useRevokeSession()

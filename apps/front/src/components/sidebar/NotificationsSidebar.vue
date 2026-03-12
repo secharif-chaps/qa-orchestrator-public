@@ -116,7 +116,7 @@ const { t } = useI18n()
 const readNotifications = ref<Set<string>>(new Set())
 
 // Fetch organization activities
-const { data: activitiesData, isLoading, error } = useQuery(organizationActivitiesQuery, () => ({}))
+const { data: activitiesData, isLoading, error } = useQuery(() => organizationActivitiesQuery())
 
 // Transform activities into notifications (limit to 20 most recent)
 const notifications = computed<Notification[]>(() => {

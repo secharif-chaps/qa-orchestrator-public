@@ -28,7 +28,9 @@ const route = useRoute()
 
 const companyId = computed(() => String((route.params as Record<string, string>).companyId || ''))
 
-const { data: company } = useQuery(companyByIdQuery, () => ({
-  id: companyId.value,
-}))
+const { data: company } = useQuery(() =>
+  companyByIdQuery({
+    id: companyId.value,
+  }),
+)
 </script>

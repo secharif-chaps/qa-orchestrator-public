@@ -29,9 +29,11 @@ import { useRoute } from 'vue-router'
 import { useQuery } from '@pinia/colada'
 
 const route = useRoute()
-const { data: company } = useQuery(companyByIdQuery, () => ({
-  id: String((route.params as Record<string, string>).companyId || ''),
-}))
+const { data: company } = useQuery(() =>
+  companyByIdQuery({
+    id: String((route.params as Record<string, string>).companyId || ''),
+  }),
+)
 const showModal = ref(false)
 
 // Define color constants to match Tailwind colors

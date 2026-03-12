@@ -353,7 +353,7 @@ const {
   data: permissionsData,
   isLoading,
   error,
-} = useQuery(userPermissionsQuery, () => ({ userId: props.userId }))
+} = useQuery(() => userPermissionsQuery({ userId: props.userId }))
 
 const { getAllRoles, getUserRole, hasLegacyPermissions, normalizePermissions } = useRoles()
 

@@ -74,7 +74,7 @@ const {
   data: organizationsData,
   isLoading: isLoadingOrganizations,
   error: organizationsError,
-} = useQuery(allOrganizationsQuery, () => ({ page: 1, limit: 100 }))
+} = useQuery(() => allOrganizationsQuery({ page: 1, limit: 100 }))
 
 // Transform organizations for the wizard
 const organizations = computed(() => {

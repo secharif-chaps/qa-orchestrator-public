@@ -273,20 +273,22 @@ const route = useRoute('/folders/[folderId]/companies/[companyId]/press')
 
 const companyId = computed(() => route.params.companyId)
 
-const { data: tasks } = useQuery(companyTasksQuery, () => ({
-  companyId: companyId.value,
-}))
+const { data: tasks } = useQuery(() =>
+  companyTasksQuery({
+    companyId: companyId.value,
+  }),
+)
 
 const task = computed(() => tasks.value?.find((t) => t.type === 'press'))
 const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
 const { data: company } = useQuery(
-  companyByIdQuery,
-  () => ({
-    id: companyId.value,
-    language: selectedLanguage.value,
-  }),
   // Task data is kept fresh via SSE (Server-Sent Events) in useTaskEvents composable.
   // No polling needed - cache is invalidated automatically when tasks update.
+  () =>
+    companyByIdQuery({
+      id: companyId.value,
+      language: selectedLanguage.value,
+    }),
 )
 
 const hasAnyPressData = computed(() => {

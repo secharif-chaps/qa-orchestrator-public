@@ -60,10 +60,12 @@ const emit = defineEmits<{
 
 const inviteRef = ref<InstanceType<typeof WatchFileUserInvite> | null>(null)
 
-const { data: watchFileUsersData, isLoading } = useQuery(getWatchFileUsersQuery, () => ({
-  watchFileId: props.selectedWatchFile?.id ?? '',
-  isOpen: isOpen.value ?? false,
-}))
+const { data: watchFileUsersData, isLoading } = useQuery(() =>
+  getWatchFileUsersQuery({
+    watchFileId: props.selectedWatchFile?.id ?? '',
+    isOpen: isOpen.value ?? false,
+  }),
+)
 
 const watchFileUsers = computed(() => watchFileUsersData.value?.member ?? [])
 

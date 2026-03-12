@@ -127,7 +127,7 @@ const toggleLocale = () => {
 }
 
 // Fetch current organization
-const { data: organization, isLoading } = useQuery(currentOrganizationQuery, () => ({}))
+const { data: organization, isLoading } = useQuery(() => currentOrganizationQuery())
 
 // Sidebar toggle handlers
 const isTokensActive = computed(() => sidebarStore.state === 'tokens')

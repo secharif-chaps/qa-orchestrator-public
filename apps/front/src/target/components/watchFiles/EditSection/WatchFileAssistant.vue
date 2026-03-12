@@ -162,9 +162,8 @@ onUnmounted(() => {
   conversationStore.$reset()
 })
 
-const { data: dataLastConversation, isLoading: isLoadingLastConversation } = useQuery(
-  getLastConversationQuery,
-  () => ({
+const { data: dataLastConversation, isLoading: isLoadingLastConversation } = useQuery(() =>
+  getLastConversationQuery({
     watchFileId,
     onUpdate: (updatedConversation) => {
       conversationStore.setCurrentConversation(updatedConversation)
@@ -173,9 +172,8 @@ const { data: dataLastConversation, isLoading: isLoadingLastConversation } = use
 )
 const lastConversation = computed(() => dataLastConversation.value)
 
-const { data: dataConversationMessages, isLoading: isLoadingConversationMessages } = useQuery(
-  getConversationMessagesQuery,
-  () => ({
+const { data: dataConversationMessages, isLoading: isLoadingConversationMessages } = useQuery(() =>
+  getConversationMessagesQuery({
     conversationId: lastConversation.value?.id ?? '',
     onUpdate: (message) => {
       if (conversationStore.addOrUpdateMessage(message) !== 'unchanged') {

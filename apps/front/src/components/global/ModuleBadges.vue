@@ -29,7 +29,7 @@ import { getModuleDisplayConfig, type ModuleDisplayConfig } from '@/config/modul
 
 const { organizationId } = defineProps<{ organizationId: string }>()
 
-const { data: modulesData } = useQuery(organizationModulesQuery, () => ({ organizationId }))
+const { data: modulesData } = useQuery(() => organizationModulesQuery({ organizationId }))
 
 const modules = computed(() => {
   if (!modulesData.value?.modules) return []

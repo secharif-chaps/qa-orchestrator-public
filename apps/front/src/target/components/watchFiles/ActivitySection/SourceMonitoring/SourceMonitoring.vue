@@ -23,9 +23,11 @@ interface Props {
 const props = defineProps<Props>()
 const currentSourceId = computed(() => props.sourceId)
 
-const { data, isLoading } = useQuery(getSourceHistoryQuery, () => ({
-  sourceId: currentSourceId.value!,
-}))
+const { data, isLoading } = useQuery(() =>
+  getSourceHistoryQuery({
+    sourceId: currentSourceId.value!,
+  }),
+)
 
 const timelineDays = computed(() => {
   if (!data.value) return []

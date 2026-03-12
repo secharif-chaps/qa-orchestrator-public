@@ -116,9 +116,11 @@ watch(
   { deep: true },
 )
 
-const { data: company } = useQuery(companyByIdQuery, () => ({
-  id: companyId.value,
-}))
+const { data: company } = useQuery(() =>
+  companyByIdQuery({
+    id: companyId.value,
+  }),
+)
 
 interface ChatResponse {
   response: string

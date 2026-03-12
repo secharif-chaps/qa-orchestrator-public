@@ -60,9 +60,11 @@ const viewProducts = () => {
   })
 }
 
-const { data: company } = useQuery(companyByIdQuery, () => ({
-  id: companyId.value,
-}))
+const { data: company } = useQuery(() =>
+  companyByIdQuery({
+    id: companyId.value,
+  }),
+)
 
 const hasAnyProductData = computed(() => {
   const products = company.value?.products

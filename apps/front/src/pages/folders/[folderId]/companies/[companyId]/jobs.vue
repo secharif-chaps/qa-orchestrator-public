@@ -122,18 +122,22 @@ const companyId = computed(() => route.params.companyId)
 // Inject selected language from parent [companyId].vue
 const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
 
-const { data: tasks } = useQuery(companyTasksQuery, () => ({
-  companyId: companyId.value,
-}))
+const { data: tasks } = useQuery(() =>
+  companyTasksQuery({
+    companyId: companyId.value,
+  }),
+)
 
 const task = computed(() => tasks.value?.find((t) => t.type === 'jobs'))
 
 // Task data is kept fresh via SSE (Server-Sent Events) in useTaskEvents composable.
 // No polling needed - cache is invalidated automatically when tasks update.
-const { data: company } = useQuery(companyByIdQuery, () => ({
-  id: companyId.value,
-  language: selectedLanguage.value,
-}))
+const { data: company } = useQuery(() =>
+  companyByIdQuery({
+    id: companyId.value,
+    language: selectedLanguage.value,
+  }),
+)
 
 const searchQuery = ref('')
 

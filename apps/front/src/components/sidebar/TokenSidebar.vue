@@ -120,9 +120,8 @@ const route = useRoute()
 const isOnHistoryPage = computed(() => route.path === '/tokens/history')
 
 // Fetch current organization
-const { data: currentOrganization, isLoading: isLoadingOrg } = useQuery(
-  currentOrganizationQuery,
-  () => ({}),
+const { data: currentOrganization, isLoading: isLoadingOrg } = useQuery(() =>
+  currentOrganizationQuery(),
 )
 
 // Fetch global token balance (new global system) using the spread pattern

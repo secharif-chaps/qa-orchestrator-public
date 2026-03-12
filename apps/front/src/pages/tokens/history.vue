@@ -279,9 +279,8 @@ const filters = reactive<TokenHistoryFilters>({
 const pageSizeOptions = [10, 25, 50]
 
 // Get current organization
-const { data: currentOrganization, isLoading: isLoadingOrg } = useQuery(
-  currentOrganizationQuery,
-  () => ({}),
+const { data: currentOrganization, isLoading: isLoadingOrg } = useQuery(() =>
+  currentOrganizationQuery(),
 )
 
 // Fetch global token balance using the spread pattern

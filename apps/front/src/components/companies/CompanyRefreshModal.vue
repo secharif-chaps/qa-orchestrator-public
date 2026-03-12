@@ -82,7 +82,7 @@ const emit = defineEmits<{
 const { refreshCompany, isLoading } = useRefreshCompany()
 
 // Get current organization
-const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
+const { data: currentOrganization } = useQuery(() => currentOrganizationQuery())
 
 // Get token balance
 const { data: tokenBalanceData } = useQuery({

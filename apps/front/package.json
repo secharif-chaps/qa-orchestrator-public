@@ -24,7 +24,7 @@
   "dependencies": {
     "@internationalized/date": "^3.11.0",
     "@owlint/feathers-vue": "^0.3.12",
-    "@pinia/colada": "~0.19.1",
+    "@pinia/colada": "^1.0.0",
     "@pinia/colada-devtools": "^0.1.5",
     "@tailwindcss/vite": "^4.1.11",
     "@unhead/vue": "^2.1.4",

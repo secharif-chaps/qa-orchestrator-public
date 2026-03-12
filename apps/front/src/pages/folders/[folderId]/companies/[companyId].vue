@@ -133,7 +133,7 @@ const showFallbackIcon = ref(false)
 const showRefreshModal = ref(false)
 
 // Get current organization
-const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
+const { data: currentOrganization } = useQuery(() => currentOrganizationQuery())
 
 // Get token balance for refresh button
 const { data: tokenBalanceData } = useQuery({

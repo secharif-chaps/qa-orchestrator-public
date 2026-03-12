@@ -35,7 +35,7 @@ export const translationLanguagesQuery = defineQueryOptions(() => ({
  * Query for company translation status.
  *
  * @example
- * const { data: status } = useQuery(companyTranslationStatusQuery, () => ({ companyId: 123 }))
+ * const { data: status } = useQuery(() => companyTranslationStatusQuery({ companyId: 123 }))
  */
 export const companyTranslationStatusQuery = defineQueryOptions(
   ({ companyId }: { companyId: string | number }) => ({
@@ -49,9 +49,9 @@ export const companyTranslationStatusQuery = defineQueryOptions(
  * Use refetchInterval for polling during active jobs.
  *
  * @example
- * const { data: job } = useQuery(translationJobQuery, () => ({ jobId: 123 }), {
+ * const { data: job } = useQuery(() => translationJobQuery(({ jobId: 123 }), {
  *   refetchInterval: 2000, // Poll every 2 seconds
- * })
+ * }))
  */
 export const translationJobQuery = defineQueryOptions(({ jobId }: { jobId: number }) => ({
   key: TRANSLATION_QUERY_KEYS.job(jobId),

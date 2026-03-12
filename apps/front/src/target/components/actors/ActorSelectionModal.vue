@@ -152,16 +152,18 @@ const {
   error,
   isLoading: loading,
   refetch: refetchActors,
-} = useQuery(getCollectionActorQuery, () => ({
-  watchFileId: isOpen.value && props.watchFileId ? props.watchFileId : '',
-  status: actorStore.status,
-  search: actorStore.search,
-  type: typeFilter.value.length > 0 ? typeFilter.value : undefined,
-  sortBy: actorStore.sortBy,
-  sortOrder: actorStore.sortOrder,
-  page: currentPage.value,
-  itemsPerPage: actorStore.itemsPerPage,
-}))
+} = useQuery(() =>
+  getCollectionActorQuery({
+    watchFileId: isOpen.value && props.watchFileId ? props.watchFileId : '',
+    status: actorStore.status,
+    search: actorStore.search,
+    type: typeFilter.value.length > 0 ? typeFilter.value : undefined,
+    sortBy: actorStore.sortBy,
+    sortOrder: actorStore.sortOrder,
+    page: currentPage.value,
+    itemsPerPage: actorStore.itemsPerPage,
+  }),
+)
 
 const allActors = computed(() => {
   if (!actorData.value?.items) {

@@ -88,9 +88,11 @@ const {
   data: sourcesData,
   isLoading,
   error,
-} = useQuery(getWatchFileSourcesGroupedQuery, () => ({
-  watchFileId: watchFileId!,
-}))
+} = useQuery(() =>
+  getWatchFileSourcesGroupedQuery({
+    watchFileId: watchFileId!,
+  }),
+)
 
 // Search functionality
 const searchQuery = ref('')

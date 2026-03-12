@@ -354,7 +354,7 @@ const {
   isLoading,
   status,
   error,
-} = useQuery(getCollectionWatchFileQuery, () => filters.value)
+} = useQuery(() => getCollectionWatchFileQuery(filters.value))
 
 watch(error, () => {
   if (error.value) {

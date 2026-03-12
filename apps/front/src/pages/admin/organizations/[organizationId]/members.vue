@@ -204,13 +204,15 @@ const {
 })
 
 // Query for all organizations (for the change organization modal)
-const { data: organizationsResponse } = useQuery(allOrganizationsQuery, () => ({
-  page: 1,
-  limit: 100,
-  sort: 'name' as const,
-  order: 'asc' as const,
-  search: undefined,
-}))
+const { data: organizationsResponse } = useQuery(() =>
+  allOrganizationsQuery({
+    page: 1,
+    limit: 100,
+    sort: 'name' as const,
+    order: 'asc' as const,
+    search: undefined,
+  }),
+)
 
 const users = computed(() => usersResponse.value?.data || [])
 const availableOrganizations = computed(() => organizationsResponse.value?.data || [])

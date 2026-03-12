@@ -1124,15 +1124,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pinia/colada@npm:~0.19.1":
-  version: 0.19.1
-  resolution: "@pinia/colada@npm:0.19.1"
-  dependencies:
-    "@vue/devtools-api": "npm:^8.0.5"
+"@pinia/colada@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@pinia/colada@npm:1.0.0"
   peerDependencies:
     pinia: ^2.2.6 || ^3.0.0
     vue: ^3.5.17
-  checksum: 10c0/b352a2391aaebd89118058ddaf519ea479ae53e319c7c6487a744e1afac93575f167d910b1fed2507fc87d82d95999cce30a04472d40da695a61eac4f37d25c4
+  checksum: 10c0/1c16b5d1a9aca306d90dff18bb12395e67a406bb375732fa7d08a5bb3bcf9629725d53ab3ca0884fc939689b5f3ad696f10ae851e6d868f217900472458f064f
   languageName: node
   linkType: hard
 
@@ -2138,15 +2136,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/devtools-api@npm:^8.0.5":
-  version: 8.0.7
-  resolution: "@vue/devtools-api@npm:8.0.7"
-  dependencies:
-    "@vue/devtools-kit": "npm:^8.0.7"
-  checksum: 10c0/78d686b050ce08722271d29b69848a9e578e227663928dd076b105e5f33527f9152cb65411df182eb18d7c1a1d36f0a28e06be029ff2a89332fc26655b60ff05
-  languageName: node
-  linkType: hard
-
 "@vue/devtools-core@npm:^8.0.6":
   version: 8.0.6
   resolution: "@vue/devtools-core@npm:8.0.6"
@@ -2193,18 +2182,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/devtools-kit@npm:^8.0.7":
-  version: 8.0.7
-  resolution: "@vue/devtools-kit@npm:8.0.7"
-  dependencies:
-    "@vue/devtools-shared": "npm:^8.0.7"
-    birpc: "npm:^2.6.1"
-    hookable: "npm:^5.5.3"
-    perfect-debounce: "npm:^2.0.0"
-  checksum: 10c0/5d0a13f698ada1756a64a1dabecab304f75fbdfd137839ce40a354f95527b6c7b423f25f3a86acdf231ed0083f2c4e4697f4b1b59b87a1d10790e89dd248f48e
-  languageName: node
-  linkType: hard
-
 "@vue/devtools-shared@npm:^7.7.9":
   version: 7.7.9
   resolution: "@vue/devtools-shared@npm:7.7.9"
@@ -2220,13 +2197,6 @@ __metadata:
   dependencies:
     rfdc: "npm:^1.4.1"
   checksum: 10c0/e253bd15b00418dc1c6f7c90d990a517c461ecf4ad8484155dca53b6cc96f83e93158e2e8b2b2b68e869472cc64230ed388e2ceca6509430a2b78f0cbffe5fd8
-  languageName: node
-  linkType: hard
-
-"@vue/devtools-shared@npm:^8.0.7":
-  version: 8.0.7
-  resolution: "@vue/devtools-shared@npm:8.0.7"
-  checksum: 10c0/96e714ef562ca72200ccfcd457c94112367fa245e3b238e8474d000b2b48de666b74d86d0e6b238dbdff84515249652e704a56f1a065b23b2276fa3cf71f2757
   languageName: node
   linkType: hard
 
@@ -5323,7 +5293,7 @@ __metadata:
   dependencies:
     "@internationalized/date": "npm:^3.11.0"
     "@owlint/feathers-vue": "npm:^0.3.12"
-    "@pinia/colada": "npm:~0.19.1"
+    "@pinia/colada": "npm:^1.0.0"
     "@pinia/colada-devtools": "npm:^0.1.5"
     "@tailwindcss/vite": "npm:^4.1.11"
     "@tsconfig/node22": "npm:^22.0.2"

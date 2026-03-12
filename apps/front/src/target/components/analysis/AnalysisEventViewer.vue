@@ -31,7 +31,9 @@ const {
   data: eventsData,
   isLoading,
   error,
-} = useQuery(getWatchFileEventsQueryLink, () => ({
-  link: link,
-}))
+} = useQuery(() =>
+  getWatchFileEventsQueryLink({
+    link: link,
+  }),
+)
 </script>

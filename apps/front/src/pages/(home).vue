@@ -70,24 +70,28 @@ const {
   data: recentCompaniesData,
   isLoading: isRecentCompaniesLoading,
   error: recentCompaniesError,
-} = useQuery(recentCompaniesQuery, () => ({
-  limit: 5,
-}))
+} = useQuery(() =>
+  recentCompaniesQuery({
+    limit: 5,
+  }),
+)
 
 // Fetch organization activities (no organization ID needed - from JWT)
 const {
   data: organizationActivitiesData,
   isLoading: isActivitiesLoading,
   error: activitiesError,
-} = useQuery(organizationActivitiesQuery, () => ({}))
+} = useQuery(() => organizationActivitiesQuery())
 
 // Fetch current organization
-const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
+const { data: currentOrganization } = useQuery(() => currentOrganizationQuery())
 
 // Fetch organization feature flags for ModulesShowcase
-const { data: featureFlagsData } = useQuery(organizationFeatureFlagsQuery, () => ({
-  organizationId: currentOrganization.value?.id || '',
-}))
+const { data: featureFlagsData } = useQuery(() =>
+  organizationFeatureFlagsQuery({
+    organizationId: currentOrganization.value?.id || '',
+  }),
+)
 
 // Transform feature flags data for ModulesShowcase
 const featureFlags = computed<FeatureFlagConfig[]>(() => {

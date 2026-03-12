@@ -138,10 +138,10 @@ vi.mock('@/queries/companies', () => ({
 
 // Mock organization query
 vi.mock('@/queries/organization', () => ({
-  currentOrganizationQuery: {
+  currentOrganizationQuery: () => ({
     key: ['organization', 'current'],
     query: () => Promise.resolve({ id: 'test-org-123', name: 'Test Org' }),
-  },
+  }),
 }))
 
 // Mock toast utility

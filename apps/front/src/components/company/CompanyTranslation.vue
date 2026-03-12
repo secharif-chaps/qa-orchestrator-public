@@ -88,7 +88,7 @@ const modelValue = defineModel<string | undefined>()
 const { t } = useI18n()
 
 // Fetch current organization
-const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
+const { data: currentOrganization } = useQuery(() => currentOrganizationQuery())
 
 // Organization feature flags - check if translation is enabled
 const { data: featureFlagsData } = useQuery({
@@ -104,7 +104,7 @@ const isTranslationEnabled = computed(() => {
 })
 
 // Translation languages
-const { data: translationLanguages } = useQuery(translationLanguagesQuery, () => ({}))
+const { data: translationLanguages } = useQuery(() => translationLanguagesQuery())
 
 // Optimistic UI state for in-progress translations
 const optimisticTranslations = ref<Map<string, { job: TranslationJob | null }>>(new Map())

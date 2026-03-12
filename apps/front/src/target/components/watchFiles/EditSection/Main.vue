@@ -55,9 +55,11 @@ const handleWatchFileCreated = (newId: string) => {
   window.history.replaceState(window.history.state, '', resolved.href)
 }
 
-const { data } = useQuery(getItemWatchFileQuery, () => ({
-  id: effectiveWatchFileId.value!,
-}))
+const { data } = useQuery(() =>
+  getItemWatchFileQuery({
+    id: effectiveWatchFileId.value!,
+  }),
+)
 const watchFile = computed(() => data.value ?? undefined)
 
 const isReadOnly = computed(() => {

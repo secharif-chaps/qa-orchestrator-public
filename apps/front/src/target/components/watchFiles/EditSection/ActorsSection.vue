@@ -36,14 +36,16 @@ const {
   isLoading: loading,
   error,
   refetch,
-} = useQuery(getCollectionActorQuery, () => ({
-  watchFileId: props.watchFile?.id || '',
-  status: ActorStatus.ACTIVE,
-  sortBy: 'actor.label',
-  sortOrder: 'ASC' as SortOrder,
-  page: currentPage.value,
-  itemsPerPage: itemsPerPage,
-}))
+} = useQuery(() =>
+  getCollectionActorQuery({
+    watchFileId: props.watchFile?.id || '',
+    status: ActorStatus.ACTIVE,
+    sortBy: 'actor.label',
+    sortOrder: 'ASC' as SortOrder,
+    page: currentPage.value,
+    itemsPerPage: itemsPerPage,
+  }),
+)
 
 const actors = computed(() => {
   return actorData.value?.items || []

@@ -51,9 +51,11 @@ const watchFileId = computed<string | undefined>(
 )
 
 // Automatic title management for all watchfile pages
-const { data } = useQuery(getItemWatchFileQuery, () => ({
-  id: watchFileId.value!,
-}))
+const { data } = useQuery(() =>
+  getItemWatchFileQuery({
+    id: watchFileId.value!,
+  }),
+)
 const watchFile = computed(() => data.value ?? null)
 
 const titleManager = useWatchFileTitle({ watchFile })

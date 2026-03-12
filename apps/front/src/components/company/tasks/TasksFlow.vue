@@ -229,9 +229,11 @@ const isOpen = ref(false)
 const isRestarting = ref<TaskType | null>(null)
 const isStartingAll = ref(false)
 
-const { data: tasks, refetch: refetchTasks } = useQuery(companyTasksQuery, () => ({
-  companyId: companyId.value,
-}))
+const { data: tasks, refetch: refetchTasks } = useQuery(() =>
+  companyTasksQuery({
+    companyId: companyId.value,
+  }),
+)
 
 const pollingInterval = ref<ReturnType<typeof setInterval> | null>(null)
 const { canCreateCompany } = useCompanyPermissions()

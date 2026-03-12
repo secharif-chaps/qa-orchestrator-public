@@ -701,7 +701,7 @@ const {
   error: tasksError,
   isLoading: tasksLoading,
   refetch: refetchTasks,
-} = useQuery(adminTasksQuery, () => ({ filters: filters.value }))
+} = useQuery(() => adminTasksQuery({ filters: filters.value }))
 
 const { data: organizations } = useQuery(adminOrganizationsQuery)
 

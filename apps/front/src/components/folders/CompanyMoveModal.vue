@@ -194,14 +194,16 @@ const {
   data: foldersData,
   isLoading: isLoadingFolders,
   error: folderError,
-} = useQuery(foldersQuery, () => ({
-  filters: {
-    page: 1,
-    size: 100,
-    name: debouncedSearchQuery.value,
-    archived: false,
-  },
-}))
+} = useQuery(() =>
+  foldersQuery({
+    filters: {
+      page: 1,
+      size: 100,
+      name: debouncedSearchQuery.value,
+      archived: false,
+    },
+  }),
+)
 
 const writableFolders = computed(() => {
   if (!foldersData.value) {

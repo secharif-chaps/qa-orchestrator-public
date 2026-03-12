@@ -20,9 +20,8 @@ const watchFileAnalysisStore = useWatchFileAnalysisStore()
 const watchFileId = computed(() => route.params.id)
 const filterQuery = computed(() => watchFileAnalysisStore.filterQuery)
 
-const { data: eventsGraphData, isLoading: isLoadingEventsGraph } = useQuery(
-  getEventsGraphQuery,
-  () => ({
+const { data: eventsGraphData, isLoading: isLoadingEventsGraph } = useQuery(() =>
+  getEventsGraphQuery({
     watchFileId: watchFileId.value,
     filters: filterQuery.value,
   }),

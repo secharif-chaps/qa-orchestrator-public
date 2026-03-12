@@ -230,7 +230,9 @@ const route = useRoute('/folders/[folderId]/companies/[companyId]/csr')
 
 const companyId = computed(() => route.params.companyId)
 
-const { data: company } = useQuery(companyByIdQuery, () => ({
-  id: companyId.value,
-}))
+const { data: company } = useQuery(() =>
+  companyByIdQuery({
+    id: companyId.value,
+  }),
+)
 </script>

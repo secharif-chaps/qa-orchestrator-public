@@ -289,17 +289,21 @@ const isDebugUser = computed(() => {
 })
 
 // Use the company data composable with language for translations
-const { data: company } = useQuery(companyByIdQuery, () => ({
-  id: companyId.value,
-  language: selectedLanguage.value,
-}))
+const { data: company } = useQuery(() =>
+  companyByIdQuery({
+    id: companyId.value,
+    language: selectedLanguage.value,
+  }),
+)
 
 // Restart task mutation
 const { mutate: restartTaskMutation } = useRestartTask()
 
-const { data: tasks } = useQuery(companyTasksQuery, () => ({
-  companyId: companyId.value,
-}))
+const { data: tasks } = useQuery(() =>
+  companyTasksQuery({
+    companyId: companyId.value,
+  }),
+)
 
 const isTaskRunning = (taskType: TaskType): boolean => {
   if (!tasks.value) return false

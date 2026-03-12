@@ -76,13 +76,15 @@ const { showStatusModal, statusValue, isLoading } = useWatchFileStatusModal(
   watchFile,
 )
 
-const { data: sourcesData } = useQuery(getCollectionSourceQuery, () => ({
-  watchFileId: watchFile.id,
-  active: true,
-  itemsPerPage: 1,
-  sortBy: 'name',
-  sortOrder: 'ASC' as const,
-}))
+const { data: sourcesData } = useQuery(() =>
+  getCollectionSourceQuery({
+    watchFileId: watchFile.id,
+    active: true,
+    itemsPerPage: 1,
+    sortBy: 'name',
+    sortOrder: 'ASC' as const,
+  }),
+)
 
 const hasActiveSources = computed(() => !!sourcesData.value?.totalItems)
 

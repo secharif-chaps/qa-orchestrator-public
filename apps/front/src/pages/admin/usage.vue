@@ -149,10 +149,12 @@ const chartEndDate = computed((): string => {
 })
 
 // Query usage statistics with reactive date range
-const { data, isLoading, error, refetch } = useQuery(usageStatsQuery, () => ({
-  startDate: dateRange.value.startDate,
-  endDate: dateRange.value.endDate,
-}))
+const { data, isLoading, error, refetch } = useQuery(() =>
+  usageStatsQuery({
+    startDate: dateRange.value.startDate,
+    endDate: dateRange.value.endDate,
+  }),
+)
 
 /**
  * Extract error message from the error object.

@@ -381,7 +381,7 @@ const isValidating = ref(false)
 const isImporting = ref(false)
 
 // Fetch current organization
-const { data: currentOrganization } = useQuery(currentOrganizationQuery, () => ({}))
+const { data: currentOrganization } = useQuery(() => currentOrganizationQuery())
 
 // Global token balance query
 const {

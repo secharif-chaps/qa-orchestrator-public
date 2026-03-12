@@ -279,9 +279,11 @@ const isStartingAll = ref(false)
 
 // Task data is now kept fresh via SSE (Server-Sent Events) in useTaskEvents composable
 // which invalidates the cache when tasks update. No polling needed.
-const { data: tasks } = useQuery(companyTasksQuery, () => ({
-  companyId: companyId.value,
-}))
+const { data: tasks } = useQuery(() =>
+  companyTasksQuery({
+    companyId: companyId.value,
+  }),
+)
 
 const { canCreateCompany } = useCompanyPermissions()
 const authStore = useAuthStore()

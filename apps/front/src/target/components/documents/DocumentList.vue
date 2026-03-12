@@ -137,9 +137,11 @@ const {
   watchFileId,
 } = defineProps<Props>()
 
-const { data: watchFileData } = useQuery(getItemWatchFileQuery, () => ({
-  id: watchFileId,
-}))
+const { data: watchFileData } = useQuery(() =>
+  getItemWatchFileQuery({
+    id: watchFileId,
+  }),
+)
 
 const isWatchFileActive = computed(() => watchFileData.value?.status === WATCH_FILE_STATUS.ENABLED)
 

@@ -154,9 +154,11 @@ const {
   data: folder,
   status,
   isLoading,
-} = useQuery(folderByIdQuery, () => ({
-  id: route.params.folderId as string,
-}))
+} = useQuery(() =>
+  folderByIdQuery({
+    id: route.params.folderId as string,
+  }),
+)
 
 // Form state
 const form = ref<FolderUpdate & { is_favorite?: boolean }>({

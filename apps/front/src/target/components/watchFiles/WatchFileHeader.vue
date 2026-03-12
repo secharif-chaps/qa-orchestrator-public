@@ -40,9 +40,11 @@ const watchFileStore = useWatchFileStore()
 // Effective watchFileId: uses store value after silent navigation, otherwise falls back to prop
 const effectiveWatchFileId = computed(() => watchFileStore.currentWatchFileId || props.watchFileId)
 
-const { data, error } = useQuery(getItemWatchFileQuery, () => ({
-  id: effectiveWatchFileId.value!,
-}))
+const { data, error } = useQuery(() =>
+  getItemWatchFileQuery({
+    id: effectiveWatchFileId.value!,
+  }),
+)
 const watchFile = computed(() => data.value ?? null)
 
 const goToHome = async () => {

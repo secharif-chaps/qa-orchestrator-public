@@ -118,11 +118,13 @@ const {
   data: response,
   isLoading,
   error,
-} = useQuery(teamMembersQuery, () => ({
-  page: queryParams.page,
-  limit: queryParams.limit,
-  search: searchQuery.value || undefined,
-}))
+} = useQuery(() =>
+  teamMembersQuery({
+    page: queryParams.page,
+    limit: queryParams.limit,
+    search: searchQuery.value || undefined,
+  }),
+)
 
 // Computed properties for data
 const teamMembers = computed(() => response.value?.data || [])
