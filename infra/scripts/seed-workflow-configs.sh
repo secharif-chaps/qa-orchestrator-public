@@ -5,7 +5,7 @@
 set -e
 
 # Use the dc alias format or full command
-DC="${DC:-docker compose -f compose.yaml -f compose.local.yaml}"
+DC="${DC:-docker compose -f infra/compose.yaml -f infra/compose.local.yaml}"
 
 echo "🔧 Seeding workflow_configs with Dify API keys..."
 

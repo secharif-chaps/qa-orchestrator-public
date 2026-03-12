@@ -486,7 +486,7 @@ The project includes pre-configured VS Code tasks that you can run directly from
 
 | Task | Description |
 |------|-------------|
-| **Ngrok: Expose Backend** | Expose the backend API (port 8000) via ngrok for external access |
+| **Tunnel: Expose Backend** | Expose the backend API (port 8000) via localtunnel for Dify callbacks |
 
 > **Tip:** The service picker lets you choose between `screen`, `global-service`, `screen_celery_worker`, `screen_celery_flower`, `db`, `rabbitmq`, and `keycloak`.
 
@@ -726,6 +726,44 @@ brew update && brew upgrade
 # Reset Homebrew if corrupted
 brew doctor
 ```
+
+---
+
+## Dify Integration (Localtunnel)
+
+If you need to test **Dify AI workflows** locally (company creation triggers, task callbacks), you must start the localtunnel service. Dify runs on a remote server and needs a public URL to send results back to your local backend.
+
+### Start the tunnel
+
+The tunnel is **on-demand** — it does not start with `task up`:
+
+```bash
+docker compose -f infra/compose.yaml -f infra/compose.local.yaml --profile tunnel up -d tunnel
+```
+
+### Stop the tunnel
+
+```bash
+docker compose -f infra/compose.yaml -f infra/compose.local.yaml --profile tunnel stop tunnel
+```
+
+### How it works
+
+1. The tunnel container exposes your local backend (port 8000) via a public URL (e.g. `https://xxxxx.loca.lt`)
+2. The backend and Celery worker automatically read this URL from a shared Docker volume
+3. In dev mode, the frontend fetches the tunnel URL and passes it with company creation requests
+4. Dify uses this URL to POST task results back to your local machine
+
+### Optional: consistent URL
+
+Set `TUNNEL_SUBDOMAIN` in your `.env` for a stable URL across restarts:
+
+```bash
+TUNNEL_SUBDOMAIN=my-chapsmind-dev
+# Gives you: https://my-chapsmind-dev.loca.lt
+```
+
+> **Note:** You only need the tunnel when testing Dify workflow callbacks. For normal frontend/backend development, the tunnel is not required.
 
 ---
 

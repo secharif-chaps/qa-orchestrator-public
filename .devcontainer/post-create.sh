@@ -11,6 +11,9 @@ fi
 echo "=== Setting up environment ==="
 test -f .env || cp .env.example .env
 
+# Export .env vars so Docker compose secrets and yarn can access them
+set -a && source .env && set +a
+
 echo "=== Enabling Corepack (for Yarn 4) ==="
 corepack enable
 

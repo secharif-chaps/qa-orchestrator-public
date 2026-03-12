@@ -183,70 +183,45 @@ The backend connects to a remote Dify instance for AI workflows. To test workflo
 
 These are stored in the `workflow_configs` table in the database.
 
-### ngrok Setup for Local Development
+### Localtunnel Setup for Dify Callbacks
 
-Since Dify runs on a remote server, it needs a public URL to call back to your local backend. Use ngrok to expose your local backend.
+Since Dify runs on a remote server, it needs a public URL to call back to your local backend. A **localtunnel** service is included in the Docker Compose setup for this purpose.
 
-#### 1. Install ngrok
+#### How it works
 
-```bash
-# macOS
-brew install ngrok
+The tunnel service exposes your local backend (port 8000) via a public URL (e.g. `https://xxxxx.loca.lt`). The backend and Celery worker automatically read this URL from a shared volume, so Dify can send task results back to your local machine.
 
-# Or download from https://ngrok.com/download
-```
+#### Start the tunnel (on-demand)
 
-#### 2. Create ngrok account and authenticate
+The tunnel does **not** start automatically with `task up`. Start it explicitly when you need Dify callbacks:
 
 ```bash
-# Sign up at https://ngrok.com and get your authtoken
-ngrok config add-authtoken YOUR_AUTH_TOKEN
+docker compose -f infra/compose.yaml -f infra/compose.local.yaml --profile tunnel up -d tunnel
 ```
 
-#### 3. Start ngrok tunnel
+#### Stop the tunnel
 
 ```bash
-# Expose local backend port 8000
-ngrok http 8000
+docker compose -f infra/compose.yaml -f infra/compose.local.yaml --profile tunnel stop tunnel
 ```
 
-You'll see output like:
-```
-Forwarding    https://abc123.ngrok-free.app -> http://localhost:8000
-```
+#### Optional: consistent subdomain
 
-#### 4. Configure backend with ngrok URL
-
-Update the `BACKEND_BASE_URL` environment variable to use your ngrok URL:
+Set `TUNNEL_SUBDOMAIN` in your `.env` to get a consistent URL across restarts:
 
 ```bash
-# In compose.local.yaml, update the backend environment:
-BACKEND_BASE_URL: https://abc123.ngrok-free.app/api
+TUNNEL_SUBDOMAIN=my-chapsmind-dev
 ```
 
-Or restart with the env var:
-```bash
-BACKEND_BASE_URL=https://abc123.ngrok-free.app/api dc up -d screen
-```
+This gives you `https://my-chapsmind-dev.loca.lt` every time.
 
-#### 5. Test the callback
+#### How callbacks work
 
-The Dify workflows use `BACKEND_BASE_URL` to construct callback URLs. When a workflow completes, Dify will POST results to:
-```
-{BACKEND_BASE_URL}/webhooks/dify/task-result
-```
-
-With ngrok, this becomes:
-```
-https://abc123.ngrok-free.app/api/webhooks/dify/task-result
-```
-
-#### ngrok Tips
-
-- Free tier URLs change each time you restart ngrok
-- Consider ngrok paid plan for static URLs in development
-- Monitor requests in ngrok web interface at http://localhost:4040
-- ngrok URLs expire after 2 hours on free tier
+1. The tunnel container writes its public URL to a shared Docker volume (`tunnel_url`)
+2. The backend reads this URL from `TUNNEL_URL_FILE` at `/tunnel/url`
+3. In dev mode, the frontend fetches the tunnel URL via `GET /api/dev/tunnel-url`
+4. When creating a company, the frontend passes the tunnel URL as `callback_base_url`
+5. Dify uses this URL to POST task results back to your local backend
 
 ## Troubleshooting
 
@@ -278,7 +253,7 @@ dc exec screen alembic upgrade head
 ```
 
 ### Dify callbacks not working
-1. Ensure ngrok is running: `ngrok http 8000`
-2. Update `BACKEND_BASE_URL` with your ngrok URL
-3. Restart backend: `dc restart screen`
-4. Check ngrok web interface at http://localhost:4040 for incoming requests
+1. Ensure the tunnel is running: `docker compose -f infra/compose.yaml -f infra/compose.local.yaml --profile tunnel up -d tunnel`
+2. Check the tunnel URL was generated: `docker compose -f infra/compose.yaml -f infra/compose.local.yaml exec tunnel cat /tunnel/url`
+3. Restart backend so it picks up the URL: `docker compose -f infra/compose.yaml -f infra/compose.local.yaml restart screen`
+4. Check tunnel logs: `docker compose -f infra/compose.yaml -f infra/compose.local.yaml logs tunnel`
