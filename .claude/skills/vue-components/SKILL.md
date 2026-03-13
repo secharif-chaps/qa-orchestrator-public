@@ -104,7 +104,7 @@ meta:
 </route>
 ```
 
-## Documentation
+## Documentations
 
 - [component-structure.md](references/component-structure.md) - Full patterns
 - [reactivity.md](references/reactivity.md) - Reactivity deep dive

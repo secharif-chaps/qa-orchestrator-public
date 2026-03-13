@@ -40,6 +40,16 @@ secret_detection:
   allow_failure: true
 
 # ─── Commit message lint ──────────────────────────────
+# ─── Skills validation ──────────────────────────────
+main:validate-skills:
+  stage: lint
+  image: node:22-alpine
+  rules:
+    - changes:
+        - .claude/skills/**/*
+  script:
+    - for dir in .claude/skills/*/; do npx skills-ref validate "$dir" || exit 1; done
+
 main:commitlint:
   stage: lint
   image:

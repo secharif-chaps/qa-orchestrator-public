@@ -133,6 +133,11 @@ tasks:
     desc: Install git hooks (husky)
     cmd: yarn install
 
+  # ─── Skills ────────────────────────────────────────
+  skills:validate:
+    desc: Validate Claude skills structure
+    cmd: for dir in .claude/skills/*/; do npx skills-ref validate "$dir" || exit 1; done
+
   # ─── All ────────────────────────────────────────────
   lint:
     desc: Lint all projects
