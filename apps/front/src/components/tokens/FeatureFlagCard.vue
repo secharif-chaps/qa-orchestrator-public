@@ -33,7 +33,6 @@
         <Switch
           :id="`feature-flag-toggle-${flag}`"
           :model-value="isEnabled"
-          :disabled="isToggling"
           @update:model-value="handleToggle"
         />
       </div>
@@ -86,7 +85,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 // Mutation for toggling feature flag
-const { toggleFeatureFlag, isPending: isToggling } = useToggleFeatureFlag()
+const { toggleFeatureFlag } = useToggleFeatureFlag()
 
 // Get flag config
 const flagConfig = computed(() => FEATURE_FLAG_CONFIG[props.flag])
@@ -101,6 +100,7 @@ const defaultDescriptions: Record<FeatureFlagName, string> = {
   translation: 'Translate company data to other languages',
   discover: 'Access external Discover dashboard',
   pappers: 'Fetch company data from Pappers API',
+  worldcheck: 'Due diligence screening via WorldCheck One API',
 }
 
 const defaultDescription = computed(
@@ -187,13 +187,12 @@ const handleToggle = async () => {
   try {
     const newEnabled = !props.isEnabled
 
-    // When disabling, preserve the existing URL config
-    // When enabling, also preserve any existing config
+    // Toggle only changes enabled state, never touches config
+    // (config with API keys is managed via data-sources endpoint)
     await toggleFeatureFlag({
       organizationId: props.organizationId,
       flag: props.flag,
       enabled: newEnabled,
-      config: props.config,
     })
     emit('refresh')
   } catch (error) {

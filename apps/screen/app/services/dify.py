@@ -208,6 +208,7 @@ class DifyService:
             inputs["gpt"] = knowledge["gpt"]
             inputs["wikipedia"] = knowledge["wikipedia"]
             inputs["scraped"] = knowledge["scraped"]
+            inputs["pappers"] = knowledge["pappers"]
 
             logger.info(
                 f"🔍 URL DEBUG [{task_type}] Step 2: Added knowledge data (non-data_collection)",

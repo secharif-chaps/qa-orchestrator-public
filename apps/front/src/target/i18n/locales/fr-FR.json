@@ -591,5 +591,22 @@
   "workflowStep.completed": "Terminé",
   "workflowStep.error": "Erreur",
   "workflowStep.processing": "En cours",
-  "workflowStep.skipped": "Ignoré"
+  "workflowStep.skipped": "Ignoré",
+  "featureFlags.globalFeatures": "Fonctionnalités globales",
+  "featureFlags.description": "Capacités additionnelles qui enrichissent les modules principaux. Ces fonctionnalités sont désactivées par défaut.",
+  "featureFlags.enabled": "Activé",
+  "featureFlags.disabled": "Désactivé",
+  "featureFlags.translation.name": "Traduction",
+  "featureFlags.translation.description": "Traduire les données d'entreprise dans d'autres langues",
+  "featureFlags.discover.name": "Discover",
+  "featureFlags.discover.description": "Accès au tableau de bord Discover externe",
+  "featureFlags.discover.urlLabel": "URL externe",
+  "featureFlags.discover.urlPlaceholder": "https://discover.example.com",
+  "featureFlags.discover.urlHint": "Entrez l'URL HTTPS du tableau de bord Discover.",
+  "featureFlags.discover.urlError": "Veuillez entrer une URL HTTPS valide",
+  "featureFlags.discover.saveError": "Échec de l'enregistrement de l'URL",
+  "featureFlags.pappers.name": "Pappers",
+  "featureFlags.pappers.description": "Enrichissement des données d'entreprises françaises (infos légales, finances, dirigeants)",
+  "featureFlags.worldcheck.name": "WorldCheck",
+  "featureFlags.worldcheck.description": "Criblage de conformité (sanctions, PPE, médias défavorables)"
 }

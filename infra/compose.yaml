@@ -68,6 +68,7 @@ services:
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672//
       MAX_CONCURRENT_WORKFLOWS: 10
       BACKEND_BASE_URL: http://localhost
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
     depends_on:
       rabbitmq:
         condition: service_healthy

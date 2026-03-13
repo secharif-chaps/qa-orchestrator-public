@@ -88,15 +88,11 @@ class FeatureFlagToggleRequest(BaseModel):
             try:
                 parsed_url = HttpUrl(url)
             except Exception:
-                raise ValueError(
-                    f"Invalid URL format: {url}. Must be a valid URL."
-                )
+                raise ValueError(f"Invalid URL format: {url}. Must be a valid URL.")
 
             # Ensure HTTPS scheme
             if parsed_url.scheme != "https":
-                raise ValueError(
-                    f"URL must use HTTPS scheme. Got: {parsed_url.scheme}://"
-                )
+                raise ValueError(f"URL must use HTTPS scheme. Got: {parsed_url.scheme}://")
 
         return v
 
@@ -131,9 +127,7 @@ async def get_organization_feature_flags(
         FeatureFlagsResponse with list of feature flags
     """
     # Check if user has admin.organizations role or belongs to the organization
-    is_org_admin = (
-        hasattr(user, "roles") and user.roles and "admin.organizations" in user.roles
-    )
+    is_org_admin = hasattr(user, "roles") and user.roles and "admin.organizations" in user.roles
     is_org_member = org_context.organization_id == organization_id
 
     if not (is_org_admin or is_org_member):
@@ -156,7 +150,7 @@ async def get_organization_feature_flags(
                     flag=flag.value,
                     enabled=stored.enabled,
                     enabled_at=stored.enabled_at.isoformat() if stored.enabled_at else None,
-                    config=stored.config,
+                    config=None,  # Don't expose encrypted config via this endpoint
                     created_at=stored.created_at.isoformat() if stored.created_at else None,
                     updated_at=stored.updated_at.isoformat() if stored.updated_at else None,
                 )
@@ -186,9 +180,7 @@ async def toggle_feature_flag(
     flag: FeatureFlag,
     request: FeatureFlagToggleRequest,
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(
-        idp.get_current_user(required_roles=["admin.organizations"])
-    ),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Toggle a feature flag for an organization.
 
@@ -217,9 +209,7 @@ async def toggle_feature_flag(
     )
 
     if request.enabled:
-        result = enable_feature(
-            db, organization_id, flag, user.sub, config=request.config
-        )
+        result = enable_feature(db, organization_id, flag, user.sub, config=request.config)
     else:
         result = disable_feature(db, organization_id, flag, user.sub)
 

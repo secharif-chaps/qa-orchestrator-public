@@ -584,5 +584,22 @@
   "workflowStep.completed": "Completed",
   "workflowStep.error": "Error",
   "workflowStep.processing": "Processing",
-  "workflowStep.skipped": "Skipped"
+  "workflowStep.skipped": "Skipped",
+  "featureFlags.globalFeatures": "Global Features",
+  "featureFlags.description": "Add-on capabilities that enhance core modules. These features are disabled by default.",
+  "featureFlags.enabled": "Enabled",
+  "featureFlags.disabled": "Disabled",
+  "featureFlags.translation.name": "Translation",
+  "featureFlags.translation.description": "Translate company data to other languages",
+  "featureFlags.discover.name": "Discover",
+  "featureFlags.discover.description": "Access external Discover dashboard",
+  "featureFlags.discover.urlLabel": "External URL",
+  "featureFlags.discover.urlPlaceholder": "https://discover.example.com",
+  "featureFlags.discover.urlHint": "Enter the HTTPS URL for the Discover dashboard.",
+  "featureFlags.discover.urlError": "Please enter a valid HTTPS URL",
+  "featureFlags.discover.saveError": "Failed to save URL",
+  "featureFlags.pappers.name": "Pappers",
+  "featureFlags.pappers.description": "French company data enrichment (legal info, financials, executives)",
+  "featureFlags.worldcheck.name": "WorldCheck",
+  "featureFlags.worldcheck.description": "Due diligence screening (sanctions, PEP, adverse media)"
 }

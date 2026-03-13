@@ -1,4 +1,7 @@
 import inspect
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 from app.api.endpoints.data_sources import update_data_source_config
 from app.core.encryption import decrypt
@@ -123,3 +126,66 @@ class TestDataSourcesAPI:
         db_session.commit()
 
         assert company.raw_pappers_knowledge == "pappers content"
+
+    @pytest.mark.asyncio
+    async def test_run_workflow_injects_pappers_for_downstream_workflows(self, db_session):
+        """Test run_workflow() injects pappers knowledge into inputs for non-data_collection workflows"""
+        # Create a company with pappers knowledge
+        company = Company(
+            name="Test Pappers Propagation",
+            website="https://test-pappers.com",
+            organization_id="test-org-006",
+            raw_mistral_knowledge="mistral data",
+            raw_gpt_knowledge="gpt data",
+            raw_wikipedia_knowledge="wikipedia data",
+            raw_scraped_website_knowledge="scraped data",
+            raw_pappers_knowledge="pappers data",
+        )
+        db_session.add(company)
+        db_session.commit()
+
+        dify_service = DifyService(db_session)
+
+        # Mock _get_workflow_config to return a fake API key
+        dify_service._get_workflow_config = MagicMock(return_value="fake-api-key")
+
+        # Mock httpx.AsyncClient to capture the request payload
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "workflow_run_id": "test-run-id",
+            "task_id": "test-task-id",
+            "data": {"outputs": {}, "status": "succeeded"},
+        }
+        mock_response.text = "{}"
+
+        mock_post = AsyncMock(return_value=mock_response)
+        mock_client = AsyncMock()
+        mock_client.post = mock_post
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=False)
+
+        with patch("httpx.AsyncClient", return_value=mock_client):
+            await dify_service.run_workflow(
+                task_type="profile",
+                company_name="Test Pappers Propagation",
+                website="https://test-pappers.com",
+                success_callback="http://localhost/callback",
+                error_callback="http://localhost/error",
+                task_id=1,
+                company_id=company.id,
+            )
+
+        # Verify the POST was called and pappers is in the inputs
+        mock_post.assert_called_once()
+        call_kwargs = mock_post.call_args
+        payload = call_kwargs.kwargs.get("json") or call_kwargs[1].get("json")
+        inputs = payload["inputs"]
+
+        assert "pappers" in inputs, "pappers key must be present in workflow inputs"
+        assert inputs["pappers"] == "pappers data"
+        # Also verify other knowledge sources are present
+        assert inputs["mistral"] == "mistral data"
+        assert inputs["gpt"] == "gpt data"
+        assert inputs["wikipedia"] == "wikipedia data"
+        assert inputs["scraped"] == "scraped data"

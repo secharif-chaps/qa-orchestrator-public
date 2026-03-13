@@ -7,7 +7,7 @@
  */
 
 // Feature flag names - matches backend FeatureFlag enum
-export type FeatureFlagName = 'translation' | 'discover' | 'pappers'
+export type FeatureFlagName = 'translation' | 'discover' | 'pappers' | 'worldcheck'
 
 /**
  * Feature flag configuration for an organization.
@@ -77,6 +77,11 @@ export const FEATURE_FLAG_CONFIG: Record<
     labelKey: 'featureFlags.pappers.name',
     descriptionKey: 'featureFlags.pappers.description',
     icon: 'fa fa-plug',
+  },
+  worldcheck: {
+    labelKey: 'featureFlags.worldcheck.name',
+    descriptionKey: 'featureFlags.worldcheck.description',
+    icon: 'fa fa-shield',
   },
 }
 

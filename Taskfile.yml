@@ -15,6 +15,19 @@ tasks:
     desc: First-time setup — copy env, configure yarn, install deps, start services, migrate
     cmds:
       - test -f .env || cp .env.example .env && echo "Created .env from .env.example"
+      # Auto-configure TUNNEL_SUBDOMAIN based on system username
+      - |
+        if ! grep -q '^TUNNEL_SUBDOMAIN=' .env 2>/dev/null; then
+          USERNAME=$(whoami)
+          echo "" >> .env
+          echo "# ─── Tunnel (Dify callbacks in local dev) ────────" >> .env
+          echo "TUNNEL_SUBDOMAIN=chapsmind-dev-${USERNAME}" >> .env
+          echo "Auto-configured TUNNEL_SUBDOMAIN=chapsmind-dev-${USERNAME}"
+        elif grep -q 'TUNNEL_SUBDOMAIN=chapsmind-dev-changeme' .env; then
+          USERNAME=$(whoami)
+          sed -i "s/TUNNEL_SUBDOMAIN=chapsmind-dev-changeme/TUNNEL_SUBDOMAIN=chapsmind-dev-${USERNAME}/" .env
+          echo "Auto-configured TUNNEL_SUBDOMAIN=chapsmind-dev-${USERNAME}"
+        fi
       - task: front:setup-yarnrc
       - cd apps/front && yarn install
       # Build screen image first to avoid parallel build conflicts
@@ -118,6 +131,26 @@ tasks:
   screen:shell:
     desc: Open bash shell in screen backend container
     cmd: "{{.COMPOSE}} exec screen bash"
+
+  # ─── Tunnel (Dify callbacks) ─────────────────────
+  tunnel:
+    desc: Start LocalTunnel for Dify callbacks
+    cmds:
+      - "{{.COMPOSE}} --profile tunnel up -d tunnel"
+      - sleep 5
+      - "{{.COMPOSE}} logs tunnel --tail 10"
+
+  tunnel:stop:
+    desc: Stop the tunnel
+    cmd: "{{.COMPOSE}} --profile tunnel stop tunnel"
+
+  tunnel:url:
+    desc: Show current tunnel URL
+    cmd: "curl -s http://localhost:8000/api/dev/tunnel-url | python3 -m json.tool || {{.COMPOSE}} logs tunnel --tail 5"
+
+  tunnel:logs:
+    desc: Follow tunnel logs
+    cmd: "{{.COMPOSE}} logs -f tunnel"
 
   # ─── Sync (transitional — pull from legacy repos) ──
   sync:

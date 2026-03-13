@@ -19,10 +19,8 @@ from app.services.task_events import task_event_manager
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(
-    prefix="/webhooks",
-    tags=["webhooks"]
-)
+router = APIRouter(prefix="/webhooks", tags=["webhooks"])
+
 
 class TaskCallbackPayload(BaseModel):
     task_id: int
@@ -32,125 +30,111 @@ class TaskCallbackPayload(BaseModel):
     data: Optional[dict[str, Any]] = Field(None, description="Task results data")
     error: Optional[str] = Field(None, description="Error message if failed")
 
+
 @router.post("/tasks/{task_id}/callback")
 async def task_callback(
-    task_id: int,
-    payload: TaskCallbackPayload,
-    service: CompanyService = Depends(get_company_service)
+    task_id: int, payload: TaskCallbackPayload, service: CompanyService = Depends(get_company_service)
 ):
     """
     Webhook endpoint for workflow services to call when a task completes
     """
     logger.info(f"🔄 Task callback received - Task ID: {task_id}, Status: {payload.status}")
-    
+
     try:
         # Validate that task_id in URL matches payload
         if task_id != payload.task_id:
             logger.error(f"Task ID mismatch - URL: {task_id}, Payload: {payload.task_id}")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Task ID in URL doesn't match payload"
-            )
-        
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Task ID in URL doesn't match payload")
+
         # Get the company and find the task
         company = service.get_company(payload.company_id)
         if not company:
             logger.error(f"Company not found - ID: {payload.company_id}")
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Company with ID {payload.company_id} not found"
+                status_code=status.HTTP_404_NOT_FOUND, detail=f"Company with ID {payload.company_id} not found"
             )
-        
+
         # Find the specific task
         task = next((t for t in company.tasks if t.id == task_id), None)
         if not task:
             logger.error(f"Task not found - ID: {task_id} in company {payload.company_id}")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Task with ID {task_id} not found"
-            )
-        
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Task with ID {task_id} not found")
+
         # Check if task is already completed
         if task.status in [TaskStatus.SUCCEEDED, TaskStatus.ERROR]:
             logger.warning(f"Task {task_id} already completed with status: {task.status}")
             return {"message": "Task already completed", "current_status": task.status.value}
-        
+
         # Update task based on callback status
         if payload.status == "succeeded":
             task.status = TaskStatus.SUCCEEDED
             task.error = None
-            
+
             # Update company data if provided
             if payload.data:
                 logger.info(f"Updating company data for task type: {payload.task_type}")
                 service._update_company_data(company, payload.task_type, payload.data)
-            
+
             logger.info(f"✅ Task {task_id} completed successfully")
-            
+
         elif payload.status == "failed":
             task.status = TaskStatus.ERROR
             task.error = payload.error or "Task failed without specific error message"
-            
+
             logger.error(f"❌ Task {task_id} failed: {task.error}")
-            
+
         else:
             logger.error(f"Invalid status received: {payload.status}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Invalid status: {payload.status}. Must be 'succeeded' or 'failed'"
+                detail=f"Invalid status: {payload.status}. Must be 'succeeded' or 'failed'",
             )
-        
+
         # Update the task's updated_at timestamp
         task.updated_at = datetime.utcnow()
-        
+
         # Save changes to database
         service.db.commit()
         service.db.refresh(task)
-        
+
         # Log concurrency status when workflow completes
         if payload.status in ["succeeded", "failed"]:
             concurrency_manager = DifyConcurrencyManager(service.db)
             running_count = concurrency_manager.get_running_count()
-            logger.info(f"🎉 Task {task_id} callback processed successfully - Running workflows: {running_count}/{concurrency_manager.max_concurrent}")
-        
+            logger.info(
+                f"🎉 Task {task_id} callback processed successfully - Running workflows: {running_count}/{concurrency_manager.max_concurrent}"
+            )
+
         logger.info(f"🎉 Task {task_id} callback processed successfully")
-        
-        return {
-            "message": "Task callback processed successfully",
-            "task_id": task_id,
-            "new_status": task.status.value
-        }
-        
+
+        return {"message": "Task callback processed successfully", "task_id": task_id, "new_status": task.status.value}
+
     except HTTPException:
         # Re-raise HTTP exceptions (they're already properly formatted)
         raise
     except Exception as e:
         logger.error(f"💥 Unexpected error processing task callback {task_id}: {str(e)}", exc_info=True)
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error processing task callback"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error processing task callback"
         )
 
+
 @router.post("/dify/tasks/{task_id}/callback")
-async def dify_task_callback(
-    task_id: int,
-    request: Request,
-    service: CompanyService = Depends(get_company_service)
-):
+async def dify_task_callback(task_id: int, request: Request, service: CompanyService = Depends(get_company_service)):
     """
     Flexible webhook endpoint for Dify callbacks
     Handles various response formats from Dify workflows
     """
     logger.info(f"🔄 Dify callback received for Task ID: {task_id}")
-    
+
     try:
         # Get raw body for logging
         body = await request.json()
         logger.info(f"Dify callback raw payload: {json.dumps(body, indent=2)[:500]}")  # Log first 500 chars
-        
+
         # Extract task metadata (might be in different places depending on Dify configuration)
         company_id = None
-        
+
         # Try to extract company_id from various possible locations
         if "callback_payload" in body:
             company_id = body["callback_payload"].get("company_id")
@@ -160,7 +144,7 @@ async def dify_task_callback(
             body["inputs"]["callback_payload"].get("task_type", "products")
         elif "company_id" in body:
             company_id = body["company_id"]
-        
+
         # If no company_id, try to find it from the task
         if not company_id:
             # Get all companies and find the task
@@ -170,29 +154,22 @@ async def dify_task_callback(
                 if task:
                     company_id = company.id
                     break
-        
+
         if not company_id:
             logger.error(f"Could not determine company_id for task {task_id}")
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Could not determine company_id from callback"
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Could not determine company_id from callback"
             )
-        
+
         # Get the company and task
         company = service.get_company(company_id)
         if not company:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Company with ID {company_id} not found"
-            )
-        
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Company with ID {company_id} not found")
+
         task = next((t for t in company.tasks if t.id == task_id), None)
         if not task:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Task with ID {task_id} not found"
-            )
-        
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Task with ID {task_id} not found")
+
         # Check if task is already completed
         if task.status in [TaskStatus.SUCCEEDED, TaskStatus.ERROR]:
             logger.warning(f"Task {task_id} already completed with status: {task.status}")
@@ -232,15 +209,10 @@ async def dify_task_callback(
             success = False
             # Parse and categorize error
             error_result = error_handler.parse_error_callback(
-                callback_body=body,
-                task_id=task_id,
-                task_type=task.type.value
+                callback_body=body, task_id=task_id, task_type=task.type.value
             )
             # Get user-friendly error message
-            error_msg = error_handler.get_user_error_message(
-                error_result,
-                include_technical=False
-            )
+            error_msg = error_handler.get_user_error_message(error_result, include_technical=False)
 
             logger.error(
                 f"❌ Error callback processed for task {task_id}",
@@ -252,7 +224,7 @@ async def dify_task_callback(
                     "has_whitelisted": error_result.has_whitelisted_error,
                     "is_recoverable": error_result.primary_error.is_recoverable,
                     "user_message": error_msg[:200],
-                }
+                },
             )
 
         # Extract the actual result data - now simplified for string-based responses
@@ -276,15 +248,18 @@ async def dify_task_callback(
                     logger.info("🔍 DEBUG - Using entire body as outputs")
                     outputs = body
 
-                logger.info(f"🔍 DEBUG - Outputs keys: {list(outputs.keys()) if isinstance(outputs, dict) else 'not a dict'}")
+                logger.info(
+                    f"🔍 DEBUG - Outputs keys: {list(outputs.keys()) if isinstance(outputs, dict) else 'not a dict'}"
+                )
                 logger.info(f"🔍 DEBUG - Outputs type: {type(outputs)}")
 
-                # Extract the 4 string fields
+                # Extract the knowledge fields
                 task_data = {
                     "mistral": outputs.get("mistral", ""),
                     "gpt": outputs.get("gpt", ""),
                     "wikipedia": outputs.get("wikipedia", ""),
-                    "scraped": outputs.get("scraped", "")
+                    "scraped": outputs.get("scraped", ""),
+                    "pappers": outputs.get("pappers", ""),
                 }
 
                 logger.info(f"🔍 DEBUG - Extracted task_data keys: {list(task_data.keys())}")
@@ -292,6 +267,7 @@ async def dify_task_callback(
                 logger.info(f"🔍 DEBUG - gpt length: {len(task_data['gpt'])}")
                 logger.info(f"🔍 DEBUG - wikipedia length: {len(task_data['wikipedia'])}")
                 logger.info(f"🔍 DEBUG - scraped length: {len(task_data['scraped'])}")
+                logger.info(f"🔍 DEBUG - pappers length: {len(task_data['pappers'])}")
             else:
                 # For other tasks (profile, digital, etc.), extract the single string field
                 task_type_key = task.type.value
@@ -314,7 +290,7 @@ async def dify_task_callback(
                 else:
                     # Case 2: The entire outputs object IS the data for this task
                     task_data = {task_type_key: outputs}
-        
+
         # Update task and company based on result
         if success:
             task.status = TaskStatus.SUCCEEDED
@@ -323,7 +299,7 @@ async def dify_task_callback(
             if task_data:
                 logger.info(f"Updating company data for task type: {task.type.value}")
                 # Pass the task_data directly - it's already in the correct format
-                # For data_collection: {"mistral": "", "gpt": "", "wikipedia": "", "scraped": ""}
+                # For data_collection: {"mistral": "", "gpt": "", "wikipedia": "", "scraped": "", "pappers": ""}
                 # For other tasks: {task_type_key: outputs}
                 service._update_company_data(company, task.type.value, task_data)
 
@@ -344,9 +320,11 @@ async def dify_task_callback(
 
                     # Queue all unblocked tasks
                     for unblocked_task in unblocked_tasks:
-                        workflow_config = service.db.query(WorkflowConfig).filter(
-                            WorkflowConfig.task_type == unblocked_task.type.value
-                        ).first()
+                        workflow_config = (
+                            service.db.query(WorkflowConfig)
+                            .filter(WorkflowConfig.task_type == unblocked_task.type.value)
+                            .first()
+                        )
 
                         if not workflow_config or not workflow_config.api_key:
                             logger.error(f"No workflow config or API key for {unblocked_task.type.value}")
@@ -365,7 +343,7 @@ async def dify_task_callback(
                             task_type=unblocked_task.type.value,
                             api_key=workflow_config.api_key,
                             success_callback=success_callback,
-                            error_callback=error_callback
+                            error_callback=error_callback,
                         )
                 else:
                     logger.info(f"ℹ️  No dependent tasks to unblock for task {task_id}")
@@ -400,7 +378,9 @@ async def dify_task_callback(
         # Log concurrency status when workflow completes
         concurrency_manager = DifyConcurrencyManager(service.db)
         running_count = concurrency_manager.get_running_count()
-        logger.info(f"🎉 Dify callback for task {task_id} processed successfully - Running workflows: {running_count}/{concurrency_manager.max_concurrent}")
+        logger.info(
+            f"🎉 Dify callback for task {task_id} processed successfully - Running workflows: {running_count}/{concurrency_manager.max_concurrent}"
+        )
 
         logger.info(f"🎉 Dify callback for task {task_id} processed successfully")
 
@@ -418,10 +398,11 @@ async def dify_task_callback(
                 error_count = sum(1 for t in all_tasks if t.status == TaskStatus.ERROR)
 
                 # Get folder_id from FolderItem junction table
-                folder_item = service.db.query(FolderItem).filter(
-                    FolderItem.item_id == str(company.id),
-                    FolderItem.item_type == "company"
-                ).first()
+                folder_item = (
+                    service.db.query(FolderItem)
+                    .filter(FolderItem.item_id == str(company.id), FolderItem.item_type == "company")
+                    .first()
+                )
                 folder_id = str(folder_item.folder_id) if folder_item else None
 
                 asyncio.create_task(
@@ -431,16 +412,12 @@ async def dify_task_callback(
                         company_name=company.name,
                         folder_id=folder_id,
                         success_count=success_count,
-                        error_count=error_count
+                        error_count=error_count,
                     )
                 )
                 logger.info(
                     f"📢 All tasks completed notification sent for company {company.id}",
-                    extra={
-                        "company_id": company.id,
-                        "success_count": success_count,
-                        "error_count": error_count
-                    }
+                    extra={"company_id": company.id, "success_count": success_count, "error_count": error_count},
                 )
             else:
                 # Individual task update - for cache invalidation
@@ -451,21 +428,18 @@ async def dify_task_callback(
                         task_id=task.id,
                         status=task.status.value,
                         task_type=task.type.value,
-                        error=task.error
+                        error=task.error,
                     )
                 )
         except Exception as sse_error:
             # SSE broadcast failure should not fail the webhook
-            logger.warning(
-                f"SSE broadcast failed for task {task_id}: {str(sse_error)}",
-                exc_info=True
-            )
+            logger.warning(f"SSE broadcast failed for task {task_id}: {str(sse_error)}", exc_info=True)
 
         # Build response with error details if applicable
         response = {
             "message": "Dify callback processed successfully",
             "task_id": task_id,
-            "new_status": task.status.value
+            "new_status": task.status.value,
         }
 
         # Add structured error information for failed tasks
@@ -494,67 +468,64 @@ async def dify_task_callback(
                 }
 
         return response
-        
+
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"💥 Unexpected error processing Dify callback for task {task_id}: {str(e)}", exc_info=True)
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error processing Dify callback"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error processing Dify callback"
         )
+
 
 @router.patch("/dify/tasks/{task_id}/tokens")
 async def dify_task_tokens(
-    task_id: int,
-    token_data: TaskTokenUpdate,
-    service: CompanyService = Depends(get_company_service)
+    task_id: int, token_data: TaskTokenUpdate, service: CompanyService = Depends(get_company_service)
 ):
     """
     Update token usage information for a task (called by Dify workflows)
     No authentication required as this is a webhook endpoint
     """
     logger.info(f"📊 Token update received for Task ID: {task_id}")
-    logger.info(f"Tokens - Input: {token_data.input_tokens}, Output: {token_data.output_tokens}, Cost: {token_data.total_cost}")
-    
+    logger.info(
+        f"Tokens - Input: {token_data.input_tokens}, Output: {token_data.output_tokens}, Cost: {token_data.total_cost}"
+    )
+
     try:
         # Find the task across all companies
         companies = service.get_all_companies()
         task = None
-        
+
         for company in companies:
             task = next((t for t in company.tasks if t.id == task_id), None)
             if task:
                 break
-        
+
         if not task:
             logger.error(f"Task {task_id} not found in any company")
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Task with ID {task_id} not found"
-            )
-        
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Task with ID {task_id} not found")
+
         # Update token information using the service
         updated_task = service.update_task_tokens(task_id, token_data)
-        
+
         logger.info(f"✅ Token information updated for task {task_id}")
-        
+
         return {
             "message": "Token information updated successfully",
             "task_id": task_id,
             "input_tokens": updated_task.input_tokens,
             "output_tokens": updated_task.output_tokens,
-            "total_cost": updated_task.total_cost
+            "total_cost": updated_task.total_cost,
         }
-        
+
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"💥 Error updating tokens for task {task_id}: {str(e)}", exc_info=True)
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error updating token information"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal server error updating token information"
         )
+
 
 @router.get("/debug/dify-config")
 async def debug_dify_config():
@@ -565,5 +536,5 @@ async def debug_dify_config():
         "dify_url": settings.DIFY_URL,
         "dify_api_key": settings.DIFY_API_KEY[:10] + "..." if settings.DIFY_API_KEY else "None",
         "message": "Configuration loaded successfully",
-        "note": "Workflow IDs are now managed in the database via workflow_configs table"
+        "note": "Workflow IDs are now managed in the database via workflow_configs table",
     }
