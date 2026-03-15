@@ -58,6 +58,7 @@ vi.mock('@/mutations/data-sources', () => ({
     organizationId: ref(''),
     source: ref(''),
     apiKey: ref(''),
+    apiSecret: ref(''),
     updateConfig: mockUpdateConfig,
     isLoading: ref(false),
     mutate: mockUpdateConfig,

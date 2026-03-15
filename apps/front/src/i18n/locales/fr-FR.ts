@@ -2155,10 +2155,19 @@ export default {
       placeholder: 'Entrez la clé API...',
       notConfigured: 'Non configurée',
     },
+    apiSecret: {
+      label: 'Secret API',
+      placeholder: 'Entrez le secret API...',
+      notConfigured: 'Non configuré',
+    },
     pappers: {
       name: 'Pappers',
       description:
         "Fournisseur de données d'entreprises françaises (infos légales, financières, dirigeants)",
+    },
+    worldcheck: {
+      name: 'WorldCheck',
+      description: 'LSEG WorldCheck pour le screening sanctions, PPE et médias défavorables',
     },
   },
   organization: {

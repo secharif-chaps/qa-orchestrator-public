@@ -33,44 +33,81 @@
       </span>
     </div>
 
-    <!-- API Key Section -->
+    <!-- Credentials Section -->
     <div class="border-base-300 mt-4 border-t pt-4">
       <div class="flex flex-col gap-3">
-        <label class="text-secondary text-sm font-medium">
-          {{ $t('dataSources.apiKey.label', 'API Key') }}
-        </label>
-
         <!-- Display Mode -->
-        <div v-if="!isEditing" class="flex items-center justify-between">
-          <code class="bg-base-200 flex-1 rounded px-3 py-2 text-sm">
-            {{ config?.api_key_masked || $t('dataSources.apiKey.notConfigured', 'Not configured') }}
-          </code>
-          <Button
-            variant="secondary"
-            size="sm"
-            :label="$t('dataSources.edit', 'Edit')"
-            icon="fas fa-pencil"
-            class="ml-3"
-            @click="startEditing"
-          />
+        <div v-if="!isEditing" class="flex flex-col gap-3">
+          <!-- API Key row -->
+          <div class="flex flex-col gap-1">
+            <label class="text-secondary text-sm font-medium">
+              {{ $t('dataSources.apiKey.label', 'API Key') }}
+            </label>
+            <code class="bg-base-200 rounded px-3 py-2 text-sm">
+              {{
+                config?.api_key_masked || $t('dataSources.apiKey.notConfigured', 'Not configured')
+              }}
+            </code>
+          </div>
+
+          <!-- API Secret row (dual credential only) -->
+          <div v-if="source.isDualCredential" class="flex flex-col gap-1">
+            <label class="text-secondary text-sm font-medium">
+              {{ $t('dataSources.apiSecret.label', 'API Secret') }}
+            </label>
+            <code class="bg-base-200 rounded px-3 py-2 text-sm">
+              {{
+                config?.api_secret_masked ||
+                $t('dataSources.apiSecret.notConfigured', 'Not configured')
+              }}
+            </code>
+          </div>
+
+          <div class="flex">
+            <Button
+              variant="secondary"
+              size="sm"
+              :label="$t('dataSources.edit', 'Edit')"
+              icon="fas fa-pencil"
+              @click="startEditing"
+            />
+          </div>
         </div>
 
         <!-- Edit Mode -->
         <div v-else class="flex flex-col gap-3">
-          <Input
-            id="input-api-key"
-            v-model="newApiKey"
-            type="password"
-            :placeholder="$t('dataSources.apiKey.placeholder', 'Enter API key...')"
-          />
+          <div class="flex flex-col gap-1">
+            <label class="text-secondary text-sm font-medium">
+              {{ $t('dataSources.apiKey.label', 'API Key') }}
+            </label>
+            <Input
+              id="input-api-key"
+              v-model="newApiKey"
+              type="password"
+              :placeholder="$t('dataSources.apiKey.placeholder', 'Enter API key...')"
+            />
+          </div>
+
+          <div v-if="source.isDualCredential" class="flex flex-col gap-1">
+            <label class="text-secondary text-sm font-medium">
+              {{ $t('dataSources.apiSecret.label', 'API Secret') }}
+            </label>
+            <Input
+              id="input-api-secret"
+              v-model="newApiSecret"
+              type="password"
+              :placeholder="$t('dataSources.apiSecret.placeholder', 'Enter API secret...')"
+            />
+          </div>
+
           <div class="flex items-center gap-2">
             <Button
               variant="primary"
               size="sm"
               :label="$t('dataSources.save', 'Save')"
               :loading="updateMutation.isLoading.value"
-              :disabled="!newApiKey.trim()"
-              @click="saveApiKey"
+              :disabled="isSaveDisabled"
+              @click="saveCredentials"
             />
             <Button
               variant="tertiary"
@@ -97,7 +134,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useQuery } from '@pinia/colada'
 import { Button, Input, Icon } from '@owlint/feathers-vue'
 import { dataSourceConfigQuery } from '@/queries/data-sources'
@@ -112,6 +149,7 @@ const props = defineProps<{
 
 const isEditing = ref(false)
 const newApiKey = ref('')
+const newApiSecret = ref('')
 
 // Query for source config
 const { data: config, refetch } = useQuery({
@@ -125,27 +163,37 @@ const { data: config, refetch } = useQuery({
 // Mutation for updating config
 const updateMutation = useUpdateDataSourceConfig()
 
-function startEditing() {
+const isSaveDisabled = computed(() => {
+  if (!newApiKey.value.trim()) return true
+  if (props.source.isDualCredential && !newApiSecret.value.trim()) return true
+  return false
+})
+
+const startEditing = () => {
   isEditing.value = true
   newApiKey.value = ''
+  newApiSecret.value = ''
 }
 
-function cancelEditing() {
+const cancelEditing = () => {
   isEditing.value = false
   newApiKey.value = ''
+  newApiSecret.value = ''
 }
 
-async function saveApiKey() {
-  if (!newApiKey.value.trim()) return
+const saveCredentials = async () => {
+  if (isSaveDisabled.value) return
 
   updateMutation.organizationId.value = props.organizationId
   updateMutation.source.value = props.source.source
   updateMutation.apiKey.value = newApiKey.value
+  updateMutation.apiSecret.value = props.source.isDualCredential ? newApiSecret.value : ''
 
   updateMutation.updateConfig()
 
   isEditing.value = false
   newApiKey.value = ''
+  newApiSecret.value = ''
   refetch()
 }
 </script>

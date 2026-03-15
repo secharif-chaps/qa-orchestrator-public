@@ -8,6 +8,7 @@ export const useUpdateDataSourceConfig = defineMutation(() => {
   const organizationId = ref<string>('')
   const source = ref<string>('')
   const apiKey = ref<string>('')
+  const apiSecret = ref<string>('')
   const queryCache = useQueryCache()
 
   const { mutate, ...mutation } = useMutation({
@@ -15,11 +16,13 @@ export const useUpdateDataSourceConfig = defineMutation(() => {
       organizationId,
       source,
       apiKey,
+      apiSecret,
     }: {
       organizationId: string
       source: string
       apiKey: string
-    }) => updateDataSourceConfig(organizationId, source, apiKey),
+      apiSecret?: string
+    }) => updateDataSourceConfig(organizationId, source, apiKey, apiSecret),
     onSuccess: (_response, { organizationId, source }) => {
       toast.success('API key updated successfully')
       queryCache.invalidateQueries({
@@ -44,6 +47,7 @@ export const useUpdateDataSourceConfig = defineMutation(() => {
       organizationId: organizationId.value,
       source: source.value,
       apiKey: apiKey.value,
+      apiSecret: apiSecret.value || undefined,
     })
   }
 
@@ -52,6 +56,7 @@ export const useUpdateDataSourceConfig = defineMutation(() => {
     organizationId,
     source,
     apiKey,
+    apiSecret,
     updateConfig,
     mutate,
   }

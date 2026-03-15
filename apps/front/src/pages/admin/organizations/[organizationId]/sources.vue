@@ -52,5 +52,15 @@ const availableSources = computed<DataSourceInfo[]>(() => [
     ),
     logo: '/src/assets/logos/pappers.svg',
   },
+  {
+    source: 'worldcheck',
+    name: t('dataSources.worldcheck.name', 'WorldCheck'),
+    description: t(
+      'dataSources.worldcheck.description',
+      'LSEG WorldCheck screening for sanctions, PEP, and adverse media',
+    ),
+    logo: '/src/assets/logos/worldcheck.svg',
+    isDualCredential: true,
+  },
 ])
 </script>

@@ -2089,9 +2089,18 @@ export default {
       placeholder: 'Enter API key...',
       notConfigured: 'Not configured',
     },
+    apiSecret: {
+      label: 'API Secret',
+      placeholder: 'Enter API secret...',
+      notConfigured: 'Not configured',
+    },
     pappers: {
       name: 'Pappers',
       description: 'French company data provider (legal info, financials, officers)',
+    },
+    worldcheck: {
+      name: 'WorldCheck',
+      description: 'LSEG WorldCheck screening for sanctions, PEP, and adverse media',
     },
   },
   folder: {
