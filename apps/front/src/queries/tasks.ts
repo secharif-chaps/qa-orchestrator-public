@@ -8,5 +8,6 @@ export const TASK_QUERY_KEYS = {
 
 export const companyTasksQuery = defineQueryOptions(({ companyId }: { companyId: string }) => ({
   key: TASK_QUERY_KEYS.byCompanyId(companyId),
+  enabled: !!companyId && companyId !== 'null' && companyId !== 'undefined',
   query: () => getCompanyTasks(companyId),
 }))

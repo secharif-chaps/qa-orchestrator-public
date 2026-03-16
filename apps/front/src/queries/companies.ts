@@ -18,13 +18,8 @@ export const COMPANY_QUERY_KEYS = {
 export const companyByIdQuery = defineQueryOptions(
   ({ id, language }: { id: string; language?: string }) => ({
     key: COMPANY_QUERY_KEYS.byId(id, language),
-    query: () => {
-      // Ensure we don't make API calls with invalid IDs
-      if (!id || id === 'null' || id === 'undefined' || id.trim() === '') {
-        throw new Error('Invalid company ID')
-      }
-      return getCompanyById(id, language)
-    },
+    enabled: !!id && id !== 'null' && id !== 'undefined',
+    query: () => getCompanyById(id, language),
   }),
 )
 

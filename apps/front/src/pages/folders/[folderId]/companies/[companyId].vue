@@ -116,16 +116,10 @@ const {
   data: company,
   error,
   status,
-} = useQuery({
-  ...companyByIdQuery({ id: companyId.value, language: selectedLanguage.value }),
-  enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
-})
+} = useQuery(() => companyByIdQuery({ id: companyId.value, language: selectedLanguage.value }))
 
 // Get company tasks
-const { data: tasks } = useQuery({
-  ...companyTasksQuery({ companyId: companyId.value }),
-  enabled: () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
-})
+const { data: tasks } = useQuery(() => companyTasksQuery({ companyId: companyId.value }))
 
 // Modal state
 const showTasksModal = ref(false)
