@@ -19,6 +19,8 @@ include:
   - local: apps/screen/.gitlab-ci.yml
   - local: apps/global-service/.gitlab-ci.yml
   - local: infra/.gitlab-ci.yml
+  # AI-powered jobs (auto-review, dev-agent, ticket scanner)
+  - local: .gitlab/ai-jobs.gitlab-ci.yml
   # GitLab security templates (free tier — results as JSON artifacts)
   - template: Jobs/SAST.gitlab-ci.yml
   - template: Jobs/Secret-Detection.gitlab-ci.yml
