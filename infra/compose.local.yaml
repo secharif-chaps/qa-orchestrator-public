@@ -1,57 +1,4 @@
 services:
-  # LocalTunnel for Dify callbacks (local dev only)
-  # Creates a public URL that Dify can call back to your local backend
-  # No account or setup required - just works!
-  #
-  # START ON DEMAND: docker compose --profile tunnel up -d tunnel
-  # STOP: docker compose --profile tunnel stop tunnel
-  #
-  # Optional: Set TUNNEL_SUBDOMAIN in infra/.env for a consistent URL
-  # Example: TUNNEL_SUBDOMAIN=chapsmind-dev-yourname
-  #
-  tunnel:
-    profiles:
-      - tunnel  # Only start on demand with --profile tunnel
-    image: node:20-alpine
-    entrypoint: ["/bin/sh", "-c"]
-    command:
-      - |
-        echo "Installing localtunnel..."
-        npm install -g localtunnel
-        rm -f /tunnel/url
-
-        SUBDOMAIN_ARG=""
-        if [ -n "$$TUNNEL_SUBDOMAIN" ]; then
-          SUBDOMAIN_ARG="--subdomain $$TUNNEL_SUBDOMAIN"
-          echo "Using subdomain: $$TUNNEL_SUBDOMAIN"
-        fi
-
-        echo "Starting localtunnel to screen:8000..."
-
-        # Start localtunnel and capture output
-        lt --host https://localtunnel.me --port 8000 --local-host screen $$SUBDOMAIN_ARG 2>&1 | while read line; do
-          echo "$$line"
-          # Extract URL from output (format: "your url is: https://xxx.loca.lt")
-          URL=$$(echo "$$line" | grep -oE 'https://[a-zA-Z0-9-]+\.loca\.lt' | head -1)
-          if [ -n "$$URL" ] && [ ! -f /tunnel/url ]; then
-            echo ""
-            echo "=============================================="
-            echo "TUNNEL URL READY: $$URL"
-            echo "=============================================="
-            echo "$$URL" > /tunnel/url
-          fi
-        done
-    environment:
-      TUNNEL_SUBDOMAIN: ${TUNNEL_SUBDOMAIN:-}
-    volumes:
-      - tunnel_url:/tunnel
-    depends_on:
-      screen:
-        condition: service_started
-    networks:
-      - chapsmind-network
-    restart: unless-stopped
-
   # Nginx Reverse Proxy
   nginx:
     image: nginx:alpine
@@ -190,6 +137,59 @@ services:
       - ../apps/global-service/scripts:/app/scripts
     networks:
       - chapsmind-network
+
+  # LocalTunnel for Dify callbacks (local dev only)
+  # Creates a public URL that Dify can call back to your local backend
+  # No account or setup required - just works!
+  #
+  # START ON DEMAND: docker compose --profile tunnel up -d tunnel
+  # STOP: docker compose --profile tunnel stop tunnel
+  #
+  # Optional: Set TUNNEL_SUBDOMAIN in infra/.env for a consistent URL
+  # Example: TUNNEL_SUBDOMAIN=chapsmind-dev-yourname
+  #
+  tunnel:
+    profiles:
+      - tunnel  # Only start on demand with --profile tunnel
+    image: node:20-alpine
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "Installing localtunnel..."
+        npm install -g localtunnel
+        rm -f /tunnel/url
+
+        SUBDOMAIN_ARG=""
+        if [ -n "$$TUNNEL_SUBDOMAIN" ]; then
+          SUBDOMAIN_ARG="--subdomain $$TUNNEL_SUBDOMAIN"
+          echo "Using subdomain: $$TUNNEL_SUBDOMAIN"
+        fi
+
+        echo "Starting localtunnel to screen:8000..."
+
+        # Start localtunnel and capture output
+        lt --host https://localtunnel.me --port 8000 --local-host screen $$SUBDOMAIN_ARG 2>&1 | while read line; do
+          echo "$$line"
+          # Extract URL from output (format: "your url is: https://xxx.loca.lt")
+          URL=$$(echo "$$line" | grep -oE 'https://[a-zA-Z0-9-]+\.loca\.lt' | head -1)
+          if [ -n "$$URL" ] && [ ! -f /tunnel/url ]; then
+            echo ""
+            echo "=============================================="
+            echo "TUNNEL URL READY: $$URL"
+            echo "=============================================="
+            echo "$$URL" > /tunnel/url
+          fi
+        done
+    environment:
+      TUNNEL_SUBDOMAIN: ${TUNNEL_SUBDOMAIN:-}
+    volumes:
+      - tunnel_url:/tunnel
+    depends_on:
+      screen:
+        condition: service_started
+    networks:
+      - chapsmind-network
+    restart: unless-stopped
 
   # Keycloak for Authentication (with ChapsMind theme baked in)
   keycloak:
