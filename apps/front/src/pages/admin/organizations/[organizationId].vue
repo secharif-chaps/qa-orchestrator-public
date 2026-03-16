@@ -123,6 +123,8 @@ const currentSection = computed({
     return 'profile'
   },
   set: (value: string) => {
+    const validSections = ['profile', 'tokens', 'members', 'sources']
+    if (!value || !validSections.includes(value) || !organizationId.value) return
     router.push(`/admin/organizations/${organizationId.value}/${value}`)
   },
 })
