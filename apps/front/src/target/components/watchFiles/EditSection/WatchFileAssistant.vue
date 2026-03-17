@@ -39,9 +39,11 @@
         <ChatInput
           ref="chatInputRef"
           :loading="isLoading || isLoadingAddMessage"
-          :disabled="isWaitingForAI || isLoadingCreate"
+          :disabled="isLoadingCreate"
+          :is-waiting-for-a-i="isWaitingForAI"
           :placeholder="placeholderInput"
           @send="handleSendMessage"
+          @cancel="handleCancelConversation"
         />
       </div>
     </Transition>
@@ -50,12 +52,18 @@
 
 <script setup lang="ts">
 import { useQuery } from '@pinia/colada'
-import { useAddMessage, useGetOlderConversationMessages } from '@target/api/mutations/conversation'
+import {
+  useAddMessage,
+  useCancelConversation,
+  useGetOlderConversationMessages,
+} from '@target/api/mutations/conversation'
 import { useCreateWatchFile } from '@target/api/mutations/watchFile'
+import { WATCHFILES_SUBSCRIBE_KEYS } from '@target/api/watchFile'
 import {
   getConversationMessagesQuery,
   getLastConversationQuery,
 } from '@target/api/queries/conversation'
+import { useMercure } from '@target/composables/useMercure'
 import ChatInput from '@target/components/chat/ChatInput.vue'
 import AssistantEmptyView from '@target/components/watchFiles/EditSection/AssistantEmptyView.vue'
 import ConnectionBanner from '@target/components/watchFiles/EditSection/ConnectionBanner.vue'
@@ -98,6 +106,15 @@ const { isWaitingForAI } = storeToRefs(conversationStore)
 
 // Initialize timeout tracking for showing reassurance message after long waits
 const { showReassurance } = useConversationTimeout()
+
+const { cancelConversation } = useCancelConversation()
+
+const handleCancelConversation = () => {
+  const conversationId = conversationStore.currentConversation?.id
+  if (conversationId) {
+    cancelConversation(conversationId)
+  }
+}
 
 // Local UI state
 const hasInitialized = ref(false)
@@ -304,14 +321,11 @@ const handleSendMessage = async (message: string) => {
       return
     }
 
-    // Send message to API (mutation's onMutate handles optimistic message)
+    // Send message to API (mutation's onMutate handles optimistic message and setWaitingForAI)
     addMessage({
       conversationId: conversationStore.currentConversation.id,
       message,
     })
-
-    // Show typing indicator after user message
-    conversationStore.setWaitingForAI(true)
 
     // Scroll to show the new message (scrollToBottom already handles nextTick internally)
     // conversationViewRef.value?.scrollToBottom();
