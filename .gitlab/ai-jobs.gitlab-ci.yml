@@ -11,8 +11,6 @@
 #   JIRA_AGENT_ASSIGNEE     — Jira account ID (optional, auto-detected via /myself)
 #   AGENT_GIT_NAME          — Git author/committer name for dev-agent (e.g. cc-agent)
 #   AGENT_GIT_EMAIL         — Git author/committer email for dev-agent (linked to @cc-agent)
-#   AGENT_GPG_PRIVATE_KEY   — GPG private key for commit signing (type: File, optional)
-#   AGENT_GPG_KEY_ID        — GPG key ID for commit signing (optional)
 
 variables:
   CLAUDE_IMAGE: ${CI_REGISTRY}/chapsmind/ci-images/claude:latest
@@ -78,8 +76,6 @@ ai:dev-agent:
     - git config --global user.email "$AGENT_GIT_EMAIL"
     - 'git remote set-url origin https://${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git'
     - 'git config --global http.https://${CI_SERVER_HOST}.extraheader "PRIVATE-TOKEN: ${AGENT_GITLAB_TOKEN}"'
-    # GPG commit signing (optional — requires AGENT_GPG_PRIVATE_KEY and AGENT_GPG_KEY_ID)
-    - if [ -n "$AGENT_GPG_PRIVATE_KEY" ] && [ -n "$AGENT_GPG_KEY_ID" ]; then gpg --batch --import "$AGENT_GPG_PRIVATE_KEY" && git config --global user.signingkey "$AGENT_GPG_KEY_ID" && git config --global commit.gpgsign true && echo "GPG signing enabled"; fi
   script:
     - >
       dev-agent
