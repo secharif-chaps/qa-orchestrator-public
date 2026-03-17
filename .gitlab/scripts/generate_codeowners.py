@@ -60,6 +60,20 @@ HEADER = """\
 """
 
 
+def _check_git_available() -> None:
+    """Check that git is available in PATH, exit with clear message if not."""
+    import shutil
+
+    if shutil.which("git") is None:
+        print(
+            "Error: 'git' is not installed or not in PATH.\n"
+            "Install it in the CI image (e.g. 'apt-get install -y git') "
+            "or use an image that includes git.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+
 def _run_git(*args: str) -> str:
     """Run a git command and return stdout, or empty string on failure."""
     try:
@@ -218,4 +232,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    _check_git_available()
     main()
