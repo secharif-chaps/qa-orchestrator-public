@@ -29,6 +29,8 @@ All ADRs follow a consistent format. See [template.md](./template.md) for the st
 | [ADR-0009](./0009-global-service-architecture.md) | Global Service Architecture | Accepted | backend, architecture |
 | [ADR-0010](./0010-translation-background-tasks.md) | Translation Processing with BackgroundTasks | Accepted | backend, performance |
 | [ADR-0011](./0011-monorepo-vs-submodules.md) | Monorepo vs Git Submodules | Accepted | architecture, git, monorepo, dx |
+| [ADR-0012](./0012-langgraph-agent-system.md) | LangGraph Agent System | Accepted | backend, ai, orchestration, langgraph, agents |
+| [ADR-0013](./0013-chat-service-replacement.md) | Chat Service Replacement | Proposed | backend, ai, chat, azure-openai |
 
 ## Status Definitions
 
