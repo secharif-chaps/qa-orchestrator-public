@@ -37,6 +37,7 @@ ai:review-mr:
   variables:
     GITLAB_TOKEN: $AGENT_GITLAB_TOKEN
     REVIEW_MODE: standard
+  needs: []
   script:
     - review-mr --log-file review-mr.log
   artifacts:
