@@ -74,7 +74,8 @@ ai:dev-agent:
     # Configure git for push (the agent creates branches + MRs)
     - git config --global user.name "$AGENT_GIT_NAME"
     - git config --global user.email "$AGENT_GIT_EMAIL"
-    - git config --global http.https://${CI_SERVER_HOST}.extraheader "PRIVATE-TOKEN: ${AGENT_GITLAB_TOKEN}"
+    - git remote set-url origin "https://${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+    - git config --global "http.https://${CI_SERVER_HOST}.extraheader" "PRIVATE-TOKEN: ${AGENT_GITLAB_TOKEN}"
   script:
     - >
       dev-agent
