@@ -82,6 +82,8 @@ main:update-codeowners:
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
   image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  variables:
+    GIT_DEPTH: 0
   script:
     - python .gitlab/scripts/generate_codeowners.py --min-commits 5 --months 6
     - |

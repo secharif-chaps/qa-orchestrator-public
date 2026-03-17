@@ -87,6 +87,9 @@ def _run_git(*args: str) -> str:
     except subprocess.CalledProcessError as exc:
         print(f"Warning: git {' '.join(args)} failed: {exc.stderr.strip()}", file=sys.stderr)
         return ""
+    except FileNotFoundError:
+        print("Error: 'git' not found. Is it installed?", file=sys.stderr)
+        sys.exit(1)
 
 
 def _find_subtree_import(path: str) -> str | None:
