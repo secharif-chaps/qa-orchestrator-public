@@ -7,16 +7,16 @@
 # Doc: https://docs.gitlab.com/ee/user/project/codeowners/
 
 # Frontend
-apps/front/              @aaittaleb @asaber @lgault @alauf @faourik @yelouatri @ffayard
+apps/front/              @aaittaleb
 
 # Screen Backend
-apps/screen/             @asaber @aaittaleb @yelouatri @iyolande.ext @ffayard
+# apps/screen/              (no contributors with >= 5 commits)
 
 # Global Service
-apps/global-service/     @iyolande.ext @aaittaleb @yelouatri
+# apps/global-service/      (no contributors with >= 5 commits)
 
 # Infrastructure
-infra/                   @iyolande.ext @ffayard @asaber @aaittaleb
+# infra/                    (no contributors with >= 5 commits)
 
 # Documentation
 # docs/                     (no contributors with >= 5 commits)
@@ -24,5 +24,5 @@ infra/                   @iyolande.ext @ffayard @asaber @aaittaleb
 # Scripts & Tooling
 # scripts/                  (no contributors with >= 5 commits)
 
-# GitLab Configuration & CI
-.gitlab/                 @ffayard @asaber @bertin-it-hbriere
+# GitLab Configuration
+# .gitlab/                  (no contributors with >= 5 commits)
