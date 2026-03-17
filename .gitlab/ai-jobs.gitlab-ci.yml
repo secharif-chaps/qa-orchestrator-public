@@ -54,6 +54,10 @@ ai:review-mr:
 ai:dev-agent:
   stage: build
   image: $AGENT_IMAGE
+  # One resource group per ticket: prevents duplicate runs for the same issue
+  # while allowing parallel execution across different tickets.
+  # To cap total concurrency, limit the runner (concurrent=N) or ticket-scanner (--max-tickets).
+  resource_group: dev-agent/$AGENT_ISSUE
   rules:
     # Triggered via API by ticket-scanner or manually from UI
     - if: $AGENT_ISSUE
@@ -67,6 +71,12 @@ ai:dev-agent:
     GIT_COMMITTER_NAME: $AGENT_GIT_NAME
     GIT_COMMITTER_EMAIL: $AGENT_GIT_EMAIL
   before_script:
+    # Validate AGENT_ISSUE format (e.g. TAR-1234) to prevent injection
+    - |
+      if ! echo "$AGENT_ISSUE" | grep -qE '^[A-Z][A-Z0-9_]+-[0-9]+$'; then
+        echo "ERROR: Invalid AGENT_ISSUE format: '$AGENT_ISSUE' (expected e.g. TAR-1234)" >&2
+        exit 1
+      fi
     # Install Claude credentials
     - mkdir -p /home/agent/.claude
     - cp "$CLAUDE_CREDENTIALS_JSON" /home/agent/.claude/.credentials.json
@@ -83,7 +93,6 @@ ai:dev-agent:
       --phase "${AGENT_PHASE:-all}"
       --config-dir .gitlab/agent
       --verbose
-      ${AGENT_DRY_RUN:+--dry-run}
   artifacts:
     when: always
     paths:
