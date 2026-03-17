@@ -9,6 +9,8 @@
 #   JIRA_API_TOKEN          — Jira service account API token
 #   JIRA_PROJECT_KEY        — Jira project key (e.g. TAR)
 #   JIRA_AGENT_ASSIGNEE     — Jira account ID (optional, auto-detected via /myself)
+#   AGENT_GIT_NAME          — Git author/committer name for dev-agent (e.g. cc-agent)
+#   AGENT_GIT_EMAIL         — Git author/committer email for dev-agent (linked to @cc-agent)
 
 variables:
   CLAUDE_IMAGE: ${CI_REGISTRY}/chapsmind/ci-images/claude:latest
@@ -53,26 +55,26 @@ ai:dev-agent:
   stage: build
   image: $AGENT_IMAGE
   rules:
-    # Manual trigger from UI or API (requires AGENT_ISSUE variable)
+    # Triggered via API by ticket-scanner or manually from UI
     - if: $AGENT_ISSUE
-      when: manual
+      when: always
   allow_failure: true
   timeout: 30m
   variables:
     GITLAB_TOKEN: $AGENT_GITLAB_TOKEN
-    GIT_AUTHOR_NAME: dev-agent
-    GIT_AUTHOR_EMAIL: dev-agent@chapsvision.com
-    GIT_COMMITTER_NAME: dev-agent
-    GIT_COMMITTER_EMAIL: dev-agent@chapsvision.com
+    GIT_AUTHOR_NAME: $AGENT_GIT_NAME
+    GIT_AUTHOR_EMAIL: $AGENT_GIT_EMAIL
+    GIT_COMMITTER_NAME: $AGENT_GIT_NAME
+    GIT_COMMITTER_EMAIL: $AGENT_GIT_EMAIL
   before_script:
     # Install Claude credentials
     - mkdir -p /home/agent/.claude
     - cp "$CLAUDE_CREDENTIALS_JSON" /home/agent/.claude/.credentials.json
     - chmod 600 /home/agent/.claude/.credentials.json
     # Configure git for push (the agent creates branches + MRs)
-    - git config --global user.name "dev-agent"
-    - git config --global user.email "dev-agent@chapsvision.com"
-    - git remote set-url origin "https://gitlab-ci-token:${AGENT_GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+    - git config --global user.name "$AGENT_GIT_NAME"
+    - git config --global user.email "$AGENT_GIT_EMAIL"
+    - git config --global http.https://${CI_SERVER_HOST}.extraheader "PRIVATE-TOKEN: ${AGENT_GITLAB_TOKEN}"
   script:
     - >
       dev-agent
