@@ -87,7 +87,7 @@ class DifyService:
             DatabaseError: If database query fails (logged and returns empty dict)
         """
         if self.db is None:
-            return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": "", "pappers": ""}
+            return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": "", "pappers": "", "worldcheck": ""}
         try:
             from app.models.company import Company
 
@@ -100,6 +100,7 @@ class DifyService:
                     "wikipedia": company.raw_wikipedia_knowledge or "",
                     "scraped": company.raw_scraped_website_knowledge or "",
                     "pappers": company.raw_pappers_knowledge or "",
+                    "worldcheck": company.raw_worldcheck_knowledge or "",
                 }
 
                 logger.info(
@@ -111,13 +112,14 @@ class DifyService:
                         "wikipedia_chars": len(knowledge["wikipedia"]),
                         "scraped_chars": len(knowledge["scraped"]),
                         "pappers_chars": len(knowledge["pappers"]),
+                        "worldcheck_chars": len(knowledge["worldcheck"]),
                     },
                 )
 
                 return knowledge
             else:
                 logger.warning(f"Company {company_id} not found")
-                return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": "", "pappers": ""}
+                return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": "", "pappers": "", "worldcheck": ""}
 
         except Exception as e:
             logger.error(
@@ -126,7 +128,7 @@ class DifyService:
                 extra={"company_id": company_id},
             )
 
-            return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": "", "pappers": ""}
+            return {"mistral": "", "gpt": "", "wikipedia": "", "scraped": "", "pappers": "", "worldcheck": ""}
 
     async def run_workflow(
         self,
@@ -247,6 +249,8 @@ class DifyService:
                     }
                 )
 
+                # WorldCheck screening is handled directly by the celery worker
+                # (not via Dify) — see dify_tasks._screen_worldcheck()
             logger.info(
                 f"🔍 URL DEBUG [{task_type}] Step 2: Set callback_url for data_collection",
                 extra={

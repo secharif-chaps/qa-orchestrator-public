@@ -71,19 +71,35 @@ class WorldCheckService:
         return WorldCheckClient(api_key=api_key, api_secret=api_secret)
 
     @staticmethod
+    async def _resolve_group_id(client: WorldCheckClient) -> str:
+        """Auto-detect the first available WorldCheck screening group.
+
+        Raises:
+            WorldCheckError: If no groups are available
+        """
+        groups = await client.get_groups()
+        if not groups:
+            raise WorldCheckError("No WorldCheck screening groups available")
+        group_id = groups[0].get("id", "")
+        if not group_id:
+            raise WorldCheckError("WorldCheck group has no id")
+        logger.info(f"Auto-detected WorldCheck group: {group_id} ({groups[0].get('name', '')})")
+        return group_id
+
+    @staticmethod
     async def screen_company(
         db: Session,
         organization_id: str,
         company_name: str,
-        group_id: str,
     ) -> ScreeningResponse:
         """Screen a company against WorldCheck databases.
+
+        Auto-detects the screening group from the WorldCheck API.
 
         Args:
             db: Database session
             organization_id: Keycloak organization UUID
             company_name: Company name to screen
-            group_id: WorldCheck group ID for the screening
 
         Returns:
             ScreeningResponse with case info and match results
@@ -93,6 +109,9 @@ class WorldCheckService:
             WorldCheckCredentialsMissingError: If credentials incomplete
             WorldCheckError: On API errors
         """
+        client = WorldCheckService._get_client(db, organization_id)
+        group_id = await WorldCheckService._resolve_group_id(client)
+
         logger.info(
             "Starting WorldCheck company screening",
             extra={
@@ -100,8 +119,6 @@ class WorldCheckService:
                 "group_id": group_id,
             },
         )
-
-        client = WorldCheckService._get_client(db, organization_id)
 
         try:
             response = await client.screen_entity(
@@ -134,16 +151,16 @@ class WorldCheckService:
         db: Session,
         organization_id: str,
         name: str,
-        group_id: str,
         secondary_fields: list[dict] | None = None,
     ) -> ScreeningResponse:
         """Screen an individual against WorldCheck databases.
+
+        Auto-detects the screening group from the WorldCheck API.
 
         Args:
             db: Database session
             organization_id: Keycloak organization UUID
             name: Individual name to screen
-            group_id: WorldCheck group ID for the screening
             secondary_fields: Optional fields (date of birth, nationality, etc.)
 
         Returns:
@@ -154,6 +171,9 @@ class WorldCheckService:
             WorldCheckCredentialsMissingError: If credentials incomplete
             WorldCheckError: On API errors
         """
+        client = WorldCheckService._get_client(db, organization_id)
+        group_id = await WorldCheckService._resolve_group_id(client)
+
         logger.info(
             "Starting WorldCheck individual screening",
             extra={
@@ -161,8 +181,6 @@ class WorldCheckService:
                 "group_id": group_id,
             },
         )
-
-        client = WorldCheckService._get_client(db, organization_id)
 
         try:
             response = await client.screen_entity(

@@ -499,6 +499,7 @@ class CompanyService:
                 company.raw_wikipedia_knowledge = knowledge_data.get("wikipedia", "")
                 company.raw_scraped_website_knowledge = knowledge_data.get("scraped", "")
                 company.raw_pappers_knowledge = knowledge_data.get("pappers", "")
+                company.raw_worldcheck_knowledge = knowledge_data.get("worldcheck", "")
             else:
                 # Not a dict, set all to empty
                 company.raw_mistral_knowledge = ""
@@ -506,6 +507,7 @@ class CompanyService:
                 company.raw_wikipedia_knowledge = ""
                 company.raw_scraped_website_knowledge = ""
                 company.raw_pappers_knowledge = ""
+                company.raw_worldcheck_knowledge = ""
         else:
             # All other query types write to normalized tables
             # Data comes from webhook wrapped as {query_type: actual_data}

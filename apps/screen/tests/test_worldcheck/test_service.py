@@ -4,9 +4,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from app.infrastructure.worldcheck.exceptions import WorldCheckAuthError
+from app.infrastructure.worldcheck.exceptions import WorldCheckAuthError, WorldCheckError
 from app.infrastructure.worldcheck.schemas import EntityType, ScreeningResponse, ScreeningResult
-from app.models.organization import FeatureFlag
 from app.services.worldcheck import (
     WorldCheckCredentialsMissingError,
     WorldCheckFeatureNotEnabledError,
@@ -67,7 +66,7 @@ class TestScreenCompany:
 
     @pytest.mark.asyncio
     async def test_successful_screening(self, mock_db):
-        """Test successful company screening."""
+        """Test successful company screening with auto-detected group_id."""
         mock_response = ScreeningResponse(
             caseSystemId="case-123",
             results=[
@@ -80,31 +79,24 @@ class TestScreenCompany:
             resultCount=1,
         )
 
-        with patch("app.services.worldcheck.has_feature", return_value=True), \
-             patch("app.services.worldcheck.get_feature_config", return_value={
-                 "api_key": "key",
-                 "api_secret": "secret",
-             }), \
-             patch.object(
-                 WorldCheckService, "_get_client"
-             ) as mock_get_client:
-            mock_client = AsyncMock()
-            mock_client.screen_entity = AsyncMock(return_value=mock_response)
-            mock_get_client.return_value = mock_client
+        mock_client = AsyncMock()
+        mock_client.screen_entity = AsyncMock(return_value=mock_response)
+        mock_client.get_groups = AsyncMock(return_value=[{"id": "group-auto", "name": "Test Group"}])
 
+        with patch.object(WorldCheckService, "_get_client", return_value=mock_client):
             result = await WorldCheckService.screen_company(
                 db=mock_db,
                 organization_id="org-123",
                 company_name="Acme Corp",
-                group_id="group-1",
             )
 
         assert result.caseSystemId == "case-123"
         assert result.resultCount == 1
+        mock_client.get_groups.assert_called_once()
         mock_client.screen_entity.assert_called_once_with(
             name="Acme Corp",
             entity_type=EntityType.ORGANISATION,
-            group_id="group-1",
+            group_id="group-auto",
         )
 
     @pytest.mark.asyncio
@@ -116,25 +108,35 @@ class TestScreenCompany:
                     db=mock_db,
                     organization_id="org-123",
                     company_name="Acme Corp",
-                    group_id="group-1",
                 )
 
     @pytest.mark.asyncio
     async def test_api_error_propagates(self, mock_db):
         """Test that WorldCheck API errors propagate correctly."""
-        with patch.object(WorldCheckService, "_get_client") as mock_get_client:
-            mock_client = AsyncMock()
-            mock_client.screen_entity = AsyncMock(
-                side_effect=WorldCheckAuthError()
-            )
-            mock_get_client.return_value = mock_client
+        mock_client = AsyncMock()
+        mock_client.screen_entity = AsyncMock(side_effect=WorldCheckAuthError())
+        mock_client.get_groups = AsyncMock(return_value=[{"id": "group-1", "name": "Test"}])
 
+        with patch.object(WorldCheckService, "_get_client", return_value=mock_client):
             with pytest.raises(WorldCheckAuthError):
                 await WorldCheckService.screen_company(
                     db=mock_db,
                     organization_id="org-123",
                     company_name="Acme Corp",
-                    group_id="group-1",
+                )
+
+    @pytest.mark.asyncio
+    async def test_no_groups_raises(self, mock_db):
+        """Test error when no screening groups are available."""
+        mock_client = AsyncMock()
+        mock_client.get_groups = AsyncMock(return_value=[])
+
+        with patch.object(WorldCheckService, "_get_client", return_value=mock_client):
+            with pytest.raises(WorldCheckError, match="No WorldCheck screening groups"):
+                await WorldCheckService.screen_company(
+                    db=mock_db,
+                    organization_id="org-123",
+                    company_name="Acme Corp",
                 )
 
 
@@ -150,17 +152,16 @@ class TestScreenIndividual:
             resultCount=0,
         )
 
-        with patch.object(WorldCheckService, "_get_client") as mock_get_client:
-            mock_client = AsyncMock()
-            mock_client.screen_entity = AsyncMock(return_value=mock_response)
-            mock_get_client.return_value = mock_client
+        mock_client = AsyncMock()
+        mock_client.screen_entity = AsyncMock(return_value=mock_response)
+        mock_client.get_groups = AsyncMock(return_value=[{"id": "group-auto", "name": "Test"}])
 
+        with patch.object(WorldCheckService, "_get_client", return_value=mock_client):
             secondary = [{"typeId": "SFCT_1", "dateTimeValue": "1980-01-01"}]
             result = await WorldCheckService.screen_individual(
                 db=mock_db,
                 organization_id="org-123",
                 name="John Doe",
-                group_id="group-1",
                 secondary_fields=secondary,
             )
 
@@ -168,6 +169,6 @@ class TestScreenIndividual:
         mock_client.screen_entity.assert_called_once_with(
             name="John Doe",
             entity_type=EntityType.INDIVIDUAL,
-            group_id="group-1",
+            group_id="group-auto",
             secondary_fields=secondary,
         )
