@@ -189,3 +189,81 @@ class TestDataSourcesAPI:
         assert inputs["gpt"] == "gpt data"
         assert inputs["wikipedia"] == "wikipedia data"
         assert inputs["scraped"] == "scraped data"
+
+
+class TestWorldCheckIntegration:
+    """Tests for WorldCheck integration in Dify workflows"""
+
+    def test_get_knowledge_data_includes_worldcheck(self, db_session):
+        """Test _get_knowledge_data() includes raw_worldcheck_knowledge"""
+        company = Company(
+            name="Test WorldCheck Company",
+            website="https://test-wc.com",
+            organization_id="test-org-wc-001",
+            raw_mistral_knowledge="mistral data",
+            raw_gpt_knowledge="gpt data",
+            raw_wikipedia_knowledge="wikipedia data",
+            raw_scraped_website_knowledge="scraped data",
+            raw_pappers_knowledge="pappers data",
+            raw_worldcheck_knowledge="worldcheck data",
+        )
+        db_session.add(company)
+        db_session.commit()
+
+        dify_service = DifyService(db_session)
+        knowledge = dify_service._get_knowledge_data(company.id)
+
+        assert "worldcheck" in knowledge
+        assert knowledge["worldcheck"] == "worldcheck data"
+
+    def test_run_workflow_passes_worldcheck_inputs(self, db_session):
+        """Test run_workflow() passes worldcheck_enabled, api_key, and api_secret for data_collection"""
+        company = Company(
+            name="Test WorldCheck Company",
+            website="https://test-wc.com",
+            organization_id="test-org-wc-002",
+        )
+        db_session.add(company)
+        db_session.commit()
+
+        update_feature_config(
+            db_session,
+            "test-org-wc-002",
+            FeatureFlag.WORLDCHECK,
+            {"api_key": "wc-api-key-xyz", "api_secret": "wc-api-secret-abc"},
+            updated_by="admin",
+        )
+
+        assert has_feature(db_session, "test-org-wc-002", FeatureFlag.WORLDCHECK) is True
+        config = get_feature_config(db_session, "test-org-wc-002", FeatureFlag.WORLDCHECK)
+        assert config.get("api_key") == "wc-api-key-xyz"
+        assert config.get("api_secret") == "wc-api-secret-abc"
+
+    def test_update_company_data_stores_worldcheck(self, db_session):
+        """Test _update_company_data() stores worldcheck data correctly"""
+        company = Company(
+            name="Test WorldCheck Company",
+            website="https://test-wc.com",
+            organization_id="test-org-wc-003",
+        )
+        db_session.add(company)
+        db_session.commit()
+
+        service = CompanyService(db_session)
+
+        data = {
+            "knowledge": {
+                "mistral": "mistral content",
+                "gpt": "gpt content",
+                "wikipedia": "wiki content",
+                "scraped": "scraped content",
+                "pappers": "pappers content",
+                "worldcheck": "worldcheck content",
+            }
+        }
+
+        service._update_company_data(company, "data_collection", data)
+        db_session.commit()
+
+        assert company.raw_worldcheck_knowledge == "worldcheck content"
+        assert company.raw_pappers_knowledge == "pappers content"

@@ -8,8 +8,10 @@ from app.core.celery_app import MAX_CONCURRENT_WORKFLOWS, celery_app
 from app.core.concurrency import DifyConcurrencyManager
 from app.database import SessionLocal
 from app.models.company import Company
+from app.models.organization import FeatureFlag
 from app.models.task import Task as TaskModel
 from app.models.task import TaskStatus
+from app.services.feature_flags import has_feature
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +28,7 @@ class DifyWorkflowTask(Task):
         if not task_db_id:
             logger.error(f"No task_id provided in kwargs for failed Celery task {task_id}")
             return
-            
+
         try:
             with SessionLocal() as db:
                 task = db.query(TaskModel).filter(TaskModel.id == task_db_id).first()
@@ -63,6 +65,104 @@ def run_async_task(coro):
             loop.close()
 
 
+async def _screen_worldcheck(db, company: Company) -> str | None:
+    """Run WorldCheck screening for a company if enabled.
+
+    Returns the screening result as a JSON string, or None if skipped/failed.
+    WorldCheck errors are logged but never propagated — they must not block Dify.
+    """
+    from app.services.worldcheck import (
+        WorldCheckCredentialsMissingError,
+        WorldCheckFeatureNotEnabledError,
+        WorldCheckService,
+    )
+
+    try:
+        if not has_feature(db, company.organization_id, FeatureFlag.WORLDCHECK):
+            logger.info(f"WorldCheck not enabled for organization {company.organization_id}, skipping")
+            return None
+
+        logger.info(
+            f"🔍 Starting WorldCheck screening for company {company.name}",
+            extra={"company_id": company.id, "organization_id": company.organization_id},
+        )
+
+        response = await WorldCheckService.screen_company(
+            db=db,
+            organization_id=company.organization_id,
+            company_name=company.name,
+        )
+
+        result_json = response.model_dump_json()
+        logger.info(
+            f"✅ WorldCheck screening completed for company {company.name}",
+            extra={
+                "company_id": company.id,
+                "result_count": response.resultCount,
+                "case_system_id": response.caseSystemId,
+            },
+        )
+        return result_json
+
+    except (WorldCheckFeatureNotEnabledError, WorldCheckCredentialsMissingError) as e:
+        logger.warning(f"WorldCheck skipped for company {company.id}: {e}")
+        return None
+    except Exception as e:
+        logger.error(
+            f"WorldCheck screening failed for company {company.id}: {e}",
+            exc_info=True,
+            extra={"company_id": company.id},
+        )
+        return None
+
+
+async def _run_data_collection_with_worldcheck(
+    dify_service,
+    db,
+    company: Company,
+    task: TaskModel,
+    task_type: str,
+    api_key: str,
+    success_callback: str,
+    error_callback: str,
+) -> dict:
+    """Run Dify data_collection workflow and WorldCheck screening in parallel.
+
+    WorldCheck results are stored directly in company.raw_worldcheck_knowledge.
+    WorldCheck failure does not affect the Dify workflow result.
+    """
+    dify_coro = dify_service.run_workflow(
+        task_type=task_type,
+        company_name=company.name,
+        website=company.website,
+        success_callback=success_callback,
+        error_callback=error_callback,
+        task_id=task.id,
+        company_id=company.id,
+        response_mode="blocking",
+        api_key=api_key,
+    )
+    worldcheck_coro = _screen_worldcheck(db, company)
+
+    dify_result, worldcheck_result = await asyncio.gather(
+        dify_coro, worldcheck_coro, return_exceptions=True
+    )
+
+    # Store WorldCheck result in company if successful
+    if isinstance(worldcheck_result, str):
+        company.raw_worldcheck_knowledge = worldcheck_result
+        db.commit()
+        logger.info(f"💾 WorldCheck result saved for company {company.id}")
+    elif isinstance(worldcheck_result, Exception):
+        logger.error(f"WorldCheck raised exception: {worldcheck_result}", exc_info=worldcheck_result)
+
+    # Re-raise Dify errors — Dify failure is critical
+    if isinstance(dify_result, Exception):
+        raise dify_result
+
+    return dify_result
+
+
 @celery_app.task(
     bind=True,
     base=DifyWorkflowTask,
@@ -87,22 +187,22 @@ def execute_dify_workflow(
     with SessionLocal() as db:
         # Initialize concurrency manager
         concurrency_manager = DifyConcurrencyManager(db)
-        
+
         # Query company and task directly
         company = db.query(Company).filter(Company.id == company_id).first()
         task = db.query(TaskModel).filter(TaskModel.id == task_id).first()
-        
+
         if not task:
             logger.error(f"Task {task_id} not found in database")
             return {"status": "error", "message": f"Task {task_id} not found"}
-            
+
         if not company:
             logger.error(f"Company {company_id} not found in database")
             task.status = TaskStatus.ERROR
             task.error = f"Company {company_id} not found"
             db.commit()
             return {"status": "error", "message": f"Company {company_id} not found"}
-        
+
         # Wait for available workflow slot (dynamic concurrency control)
         logger.info(f"Task {task_id}: Checking workflow concurrency...")
         if not concurrency_manager.wait_for_available_slot(task_id, max_wait_time=300):
@@ -111,15 +211,15 @@ def execute_dify_workflow(
             task.error = "Timeout waiting for available workflow slot"
             db.commit()
             return {"status": "error", "message": "Timeout waiting for workflow slot"}
-        
+
         # Now we have a slot - update task to RUNNING
         logger.info(f"Task {task_id}: Workflow slot available, starting execution...")
         task.status = TaskStatus.RUNNING
         db.commit()
-        
+
         running_count = concurrency_manager.get_running_count()
         logger.info(f"Task {task_id}: Started workflow ({running_count}/{concurrency_manager.max_concurrent} running)")
-        
+
         try:
             # Callback URLs are passed as parameters from the backend
             # No need to construct them here - eliminates BACKEND_BASE_URL dependency in worker
@@ -141,37 +241,52 @@ def execute_dify_workflow(
             # Create Dify service and trigger workflow (pass db session for knowledge data access)
             dify_service = DifyService(db=db)
 
-            # Execute the async Dify workflow trigger with provided api_key
-            result = run_async_task(
-                dify_service.run_workflow(
-                    task_type=task_type,
-                    company_name=company.name,
-                    website=company.website,
-                    success_callback=success_callback,
-                    error_callback=error_callback,
-                    task_id=task.id,
-                    company_id=company.id,
-                    response_mode="blocking",  # blocking mode for async execution
-                    api_key=api_key
+            if task_type == "data_collection":
+                # Run Dify workflow and WorldCheck screening in parallel
+                result = run_async_task(
+                    _run_data_collection_with_worldcheck(
+                        dify_service=dify_service,
+                        db=db,
+                        company=company,
+                        task=task,
+                        task_type=task_type,
+                        api_key=api_key,
+                        success_callback=success_callback,
+                        error_callback=error_callback,
+                    )
                 )
-            )
-            
+            else:
+                # Non-data_collection tasks: just run Dify
+                result = run_async_task(
+                    dify_service.run_workflow(
+                        task_type=task_type,
+                        company_name=company.name,
+                        website=company.website,
+                        success_callback=success_callback,
+                        error_callback=error_callback,
+                        task_id=task.id,
+                        company_id=company.id,
+                        response_mode="blocking",
+                        api_key=api_key,
+                    )
+                )
+
             logger.info(f"✅ Workflow triggered for task {task_id}: {result}")
-            
+
             # Task remains in RUNNING state - will be updated via webhook callback
             return {"status": "success", "message": f"Workflow triggered for task {task_id}", "result": result}
-            
+
         except Exception as e:
             logger.error(f"Failed to trigger workflow for task {task_id}: {e}")
             # Revert task status to allow retry or manual intervention
             task.status = TaskStatus.ERROR
             task.error = str(e)
             db.commit()
-            
+
             # Log current concurrency state for debugging
             running_count = concurrency_manager.get_running_count()
             logger.error(f"Task {task_id} failed, running workflows: {running_count}/{concurrency_manager.max_concurrent}")
-            
+
             # Re-raise to trigger on_failure handler
             raise
 

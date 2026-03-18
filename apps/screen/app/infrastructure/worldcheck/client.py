@@ -353,6 +353,19 @@ class WorldCheckClient:
 
         return results
 
+    async def get_groups(self) -> list[dict]:
+        """Get available screening groups from WorldCheck.
+
+        Returns:
+            List of group dicts with keys like id, name, parentId, etc.
+        """
+        path = "/screening/v2/groups"
+
+        logger.info("Fetching WorldCheck screening groups")
+
+        response = await self._request("GET", path)
+        return response.json()
+
     async def get_reference_profile(self, reference_id: str) -> dict:
         """Get detailed profile for a matched reference.
 
