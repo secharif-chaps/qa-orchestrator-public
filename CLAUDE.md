@@ -1201,3 +1201,59 @@ Co-Authored-By: Claude <noreply@anthropic.com>
   - Always use: t(translationKey, { param: value })
   - Never use: t(translationKey, 'fallback', { param: value })
 - vuellar is our own private component lib dont make research on it you wont find anything
+
+---
+
+## Jira - Modules et Composants
+
+| Prefixe | Description | Composant Jira |
+|---------|-------------|----------------|
+| `[LEGACY]` | AMI v9 / Target v9 - Maintenance (branche ST9_3) | `Target Legacy` |
+| `[GLOBAL]` | Infrastructure, auth, features transverses | `Global` |
+| `[TARGET]` | Intelligence concurrentielle et veille strategique | `Target` |
+| `[SCREEN]` | Fiches entreprises automatisees | `Screen` |
+| `[STREAM]` | Diffusion multi-canal (newsletters, API, Slack, Teams) | `Stream` |
+| `[EXPLORE]` | Exploration donnees sous forme de graphe | `Explore` |
+
+### Regles Jira
+
+- **Composant** : deduit automatiquement du prefixe module
+- **Story = 1 seul module**. Multi-modules detecte -> creer plusieurs Stories liees
+- **Epic** : peut etre multi-modules (prefixes combines `[TARGET][SCREEN]`)
+- **Bug** : module = ou le bug est DETECTE (pas ou il est cause)
+- **Validation PO obligatoire** avant toute creation Jira (attendre "oui"/"ok"/"go"/"valide")
+- **Jamais estimer en points** (c'est le role de l'equipe)
+- **Jamais modifier les statuts** Jira
+
+### Etiquettes Competences
+
+| Etiquette | Usage |
+|-----------|-------|
+| `Back` | API, services, BDD, infrastructure |
+| `Front` | UI, composants, UX |
+| `Prompt` | IA, LLM, workflows Dify |
+
+Combinaisons : `Back + Prompt`, `Front + Prompt`, `Back + Front` (rare)
+
+### Phases Epic
+
+```
+Phase 0 : Design (maquettes Figma, specs UI)
+Phase 1 : Fondation (architecture, composants de base)
+Phase 2 : Back (services, API, integrations)
+Phase 3 : Front (interface, UX finale)
+```
+
+### Terminologie
+
+```
+Dossier de veille -> WatchFile
+Acteur -> Actor
+Source -> Source
+Code -> Anglais
+```
+
+### Outils MCP
+
+- **Jira** : Cloud ID `60cc5e3d-8230-41aa-9611-5c348537a1ea`, projet `TAR`
+- **Legacy** : branche `ST9_3`, labels `Back` par defaut, corrections ciblees uniquement
