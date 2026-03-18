@@ -33,10 +33,17 @@
             type="text"
             required
             :disabled="isLoading"
-            class="border-primary-stroke focus:ring-primary w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+            class="w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+            :class="
+              touched.username && errors.username
+                ? 'border-error-stroke focus:ring-error'
+                : 'border-primary-stroke focus:ring-primary'
+            "
             :placeholder="$t('user.usernamePlaceholder', 'Enter username')"
+            @blur="touchField('username')"
+            @input="validateForm()"
           />
-          <p v-if="errors.username" class="mt-1 text-xs text-red-600">
+          <p v-if="touched.username && errors.username" class="text-error mt-1 text-xs">
             {{ errors.username }}
           </p>
         </div>
@@ -51,10 +58,17 @@
             type="email"
             required
             :disabled="isLoading"
-            class="border-primary-stroke focus:ring-primary w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+            class="w-full rounded-lg border px-3 py-2 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+            :class="
+              touched.email && errors.email
+                ? 'border-error-stroke focus:ring-error'
+                : 'border-primary-stroke focus:ring-primary'
+            "
             :placeholder="$t('user.emailPlaceholder', 'Enter email address')"
+            @blur="touchField('email')"
+            @input="validateForm()"
           />
-          <p v-if="errors.email" class="mt-1 text-xs text-red-600">
+          <p v-if="touched.email && errors.email" class="text-error mt-1 text-xs">
             {{ errors.email }}
           </p>
         </div>
@@ -70,8 +84,15 @@
               :type="showPassword ? 'text' : 'password'"
               required
               :disabled="isLoading"
-              class="border-primary-stroke focus:ring-primary w-full rounded-lg border px-3 py-2 pr-10 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+              class="w-full rounded-lg border px-3 py-2 pr-10 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+              :class="
+                touched.temporaryPassword && errors.temporaryPassword
+                  ? 'border-error-stroke focus:ring-error'
+                  : 'border-primary-stroke focus:ring-primary'
+              "
               :placeholder="$t('user.passwordPlaceholder', 'Enter temporary password')"
+              @blur="touchField('temporaryPassword')"
+              @input="validateForm()"
             />
             <button
               type="button"
@@ -82,16 +103,19 @@
               <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
             </button>
           </div>
-          <p class="text-secondary mt-1 text-xs">
+          <p
+            v-if="touched.temporaryPassword && errors.temporaryPassword"
+            class="text-error mt-1 text-xs"
+          >
+            {{ errors.temporaryPassword }}
+          </p>
+          <p v-else class="text-secondary mt-1 text-xs">
             {{
               $t(
                 'user.passwordHelp',
                 'User will be required to change this password on first login',
               )
             }}
-          </p>
-          <p v-if="errors.temporaryPassword" class="mt-1 text-xs text-red-600">
-            {{ errors.temporaryPassword }}
           </p>
         </div>
 
@@ -165,8 +189,13 @@
         </button>
         <button
           @click="handleSubmit"
-          :disabled="isLoading || !isFormValid"
-          class="bg-primary hover:bg-primary/80 flex items-center gap-2 rounded-lg px-6 py-2 text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          :disabled="isLoading"
+          class="flex items-center gap-2 rounded-lg px-6 py-2 text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          :class="
+            isFormValid
+              ? 'bg-primary hover:bg-primary/80 cursor-pointer'
+              : 'bg-primary/50 cursor-not-allowed'
+          "
         >
           <div
             v-if="isLoading"
@@ -219,7 +248,17 @@ const form = reactive<OrganizationUserCreate>({
 })
 
 const showPassword = ref(false)
-const errors = ref<Record<string, string>>({})
+const errors = reactive<Record<string, string>>({})
+const touched = reactive({
+  username: false,
+  email: false,
+  temporaryPassword: false,
+})
+
+function touchField(field: keyof typeof touched) {
+  touched[field] = true
+  validateForm()
+}
 
 // Form validation
 const isFormValid = computed(() => {
@@ -263,40 +302,47 @@ function generatePassword() {
 
 // Form validation
 function validateForm() {
-  errors.value = {}
+  errors.username = ''
+  errors.email = ''
+  errors.temporaryPassword = ''
 
   if (!form.username.trim()) {
-    errors.value.username = t('user.validation.username.required', 'Username is required')
+    errors.username = t('user.validation.username.required', 'Username is required')
   } else if (form.username.length < 3) {
-    errors.value.username = t(
+    errors.username = t(
       'user.validation.username.minLength',
       'Username must be at least 3 characters',
     )
   }
 
   if (!form.email.trim()) {
-    errors.value.email = t('user.validation.email.required', 'Email is required')
+    errors.email = t('user.validation.email.required', 'Email is required')
   } else if (!isValidEmail(form.email)) {
-    errors.value.email = t('user.validation.email.invalid', 'Please enter a valid email address')
+    errors.email = t('user.validation.email.invalid', 'Please enter a valid email address')
   }
 
   if (!form.temporaryPassword.trim()) {
-    errors.value.temporaryPassword = t(
+    errors.temporaryPassword = t(
       'user.validation.temporaryPassword.required',
       'Temporary password is required',
     )
   } else if (form.temporaryPassword.length < 8) {
-    errors.value.temporaryPassword = t(
+    errors.temporaryPassword = t(
       'user.validation.temporaryPassword.minLength',
       'Password must be at least 8 characters',
     )
   }
 
-  return Object.keys(errors.value).length === 0
+  return !errors.username && !errors.email && !errors.temporaryPassword
 }
 
 // Handle form submission
 function handleSubmit() {
+  // Touch all fields so errors become visible when user clicks submit
+  touched.username = true
+  touched.email = true
+  touched.temporaryPassword = true
+
   if (!validateForm()) return
 
   // Get permissions for selected role
