@@ -12,24 +12,18 @@
 #   AGENT_GIT_NAME          — Git author/committer name for dev-agent (e.g. cc-agent)
 #   AGENT_GIT_EMAIL         — Git author/committer email for dev-agent (linked to @cc-agent)
 
-variables:
-  CLAUDE_IMAGE: ${CI_REGISTRY}/chapsmind/ci-images/claude:latest
-  AGENT_IMAGE: ${CI_REGISTRY}/chapsmind/ci-images/dev-agent:latest
-
-# Shared template: install Claude credentials from CI variable
-.claude-auth:
-  before_script:
-    - mkdir -p ~/.claude
-    - cp "$CLAUDE_CREDENTIALS_JSON" ~/.claude/.credentials.json
-    - chmod 600 ~/.claude/.credentials.json
+# Shared steps: install Claude credentials from CI variable
+.install-claude-credentials: &install-claude-credentials
+  - mkdir -p ~/.claude
+  - cp "$CLAUDE_CREDENTIALS_JSON" ~/.claude/.credentials.json
+  - chmod 600 ~/.claude/.credentials.json
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # 1. AUTO-REVIEW — Automated MR code review with Claude
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ai:review-mr:
-  extends: .claude-auth
   stage: lint
-  image: $CLAUDE_IMAGE
+  image: ${CI_REGISTRY}/chapsmind/ci-images/agent:latest
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: always
@@ -38,6 +32,8 @@ ai:review-mr:
     GITLAB_TOKEN: $AGENT_GITLAB_TOKEN
     REVIEW_MODE: standard
   needs: []
+  before_script:
+    - *install-claude-credentials
   script:
     - review-mr --log-file review-mr.log
   artifacts:
@@ -54,7 +50,7 @@ ai:review-mr:
 # Pass AGENT_ISSUE as a variable (e.g. TAR-1234).
 ai:dev-agent:
   stage: build
-  image: $AGENT_IMAGE
+  image: ${CI_REGISTRY}/chapsmind/ci-images/agent:latest
   # One resource group per ticket: prevents duplicate runs for the same issue
   # while allowing parallel execution across different tickets.
   # To cap total concurrency, limit the runner (concurrent=N) or ticket-scanner (--max-tickets).
@@ -72,16 +68,13 @@ ai:dev-agent:
     GIT_COMMITTER_NAME: $AGENT_GIT_NAME
     GIT_COMMITTER_EMAIL: $AGENT_GIT_EMAIL
   before_script:
+    - *install-claude-credentials
     # Validate AGENT_ISSUE format (e.g. TAR-1234) to prevent injection
     - |
       if ! echo "$AGENT_ISSUE" | grep -qE '^[A-Z][A-Z0-9_]+-[0-9]+$'; then
         echo "ERROR: Invalid AGENT_ISSUE format: '$AGENT_ISSUE' (expected e.g. TAR-1234)" >&2
         exit 1
       fi
-    # Install Claude credentials
-    - mkdir -p /home/agent/.claude
-    - cp "$CLAUDE_CREDENTIALS_JSON" /home/agent/.claude/.credentials.json
-    - chmod 600 /home/agent/.claude/.credentials.json
     # Configure git for push (the agent creates branches + MRs)
     - git config --global user.name "$AGENT_GIT_NAME"
     - git config --global user.email "$AGENT_GIT_EMAIL"
@@ -109,7 +102,7 @@ ai:dev-agent:
 # a dev-agent pipeline for each one.
 ai:ticket-scanner:
   stage: maintenance
-  image: $AGENT_IMAGE
+  image: ${CI_REGISTRY}/chapsmind/ci-images/agent:latest
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule" && $SCAN_JIRA_TICKETS == "true"
   variables:
