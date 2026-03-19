@@ -32,11 +32,6 @@ services:
     image: node:24
     working_dir: /app
     entrypoint: /bin/sh -c "corepack enable && yarn dev --host 0.0.0.0 --port 3000"
-    environment:
-      VITE_API_URL: http://localhost/api
-      VITE_KEYCLOAK_URL: http://localhost:8080
-      VITE_KEYCLOAK_REALM: chapsmind
-      VITE_KEYCLOAK_CLIENT_ID: chapsmind-front
     volumes:
       - ../apps/front:/app
 
