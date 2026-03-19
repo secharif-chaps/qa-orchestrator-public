@@ -111,6 +111,13 @@ else
   warn "apps/front/.yarnrc.yml not configured — will be set up by 'task init'"
 fi
 
+# Git hooks
+if [ -f .husky/pre-commit ] && [ "$(git config core.hooksPath 2>/dev/null)" = "$(pwd)/.husky" -o "$(git config core.hooksPath 2>/dev/null)" = ".husky" ]; then
+  ok "Git pre-commit hook installed"
+else
+  warn "Git pre-commit hook not installed — run 'yarn install' from repo root"
+fi
+
 # ─── Summary ──────────────────────────────────────────
 
 echo ""
