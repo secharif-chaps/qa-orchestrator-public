@@ -94,31 +94,31 @@ class CompanyService:
         self.secure_query = SecureQueryBuilder(db)
         self.repository = SQLAlchemyCompanyRepository(db)
 
-    def get_company(self, company_id: int, include_deleted: bool = False) -> Company | None:
+    def get_company(self, company_id: int, include_archived: bool = False) -> Company | None:
         """Securely get company by ID."""
         query = self.secure_query.safe_filter_by_id(Company, company_id)
-        if not include_deleted:
+        if not include_archived:
             query = query.filter(~Company.is_deleted)
         return query.options(joinedload(Company.tasks)).first()
 
-    def get_company_response(self, company_id: int, include_deleted: bool = False) -> CompanyResponse | None:
+    def get_company_response(self, company_id: int, include_archived: bool = False) -> CompanyResponse | None:
         """Get company as CompanyResponse with all section data."""
-        company = self.get_company(company_id, include_deleted)
+        company = self.get_company(company_id, include_archived)
         if not company:
             return None
         return _build_company_response(self.db, company)
 
-    def get_company_by_name(self, name: str, include_deleted: bool = False) -> Company | None:
+    def get_company_by_name(self, name: str, include_archived: bool = False) -> Company | None:
         """Securely get company by name"""
         query = self.secure_query.safe_filter_by_string(Company, Company.name, name, exact_match=True)
-        if not include_deleted:
+        if not include_archived:
             query = query.filter(~Company.is_deleted)
         return query.first()
 
-    def get_all_companies(self, organization_id: str | None = None, include_deleted: bool = False) -> list[Company]:
+    def get_all_companies(self, organization_id: str | None = None, include_archived: bool = False) -> list[Company]:
         """Securely get all companies, optionally filtered by organization"""
         query = self.db.query(Company)
-        if not include_deleted:
+        if not include_archived:
             query = query.filter(~Company.is_deleted)
         if organization_id:
             query = query.filter(Company.organization_id == organization_id)

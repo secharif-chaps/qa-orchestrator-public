@@ -106,19 +106,26 @@ async def get_companies(
 async def get_company(
     company_id: int,
     language: str = Query(None, description="Language code for translations (fr, es, de, pt)"),
+    archived: bool = Query(False, description="Include archived (soft-deleted) companies"),
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     db: Session = Depends(get_db),
 ):
-    """Get a company by ID (only if user has access via folder sharing)."""
+    """Get a company by ID (only if user has access via folder sharing).
+
+    Archived companies (soft-deleted) are accessible to any organization.read user when
+    archived=True is passed. Organization membership and folder-sharing access are still
+    enforced, so no additional permission is required beyond what regular company access needs.
+    """
     try:
         logger.info(
             f"GET /api/companies/{company_id} - User: {org_context.username}, "
-            f"Organization: {org_context.organization_id}, Language: {language}"
+            f"Organization: {org_context.organization_id}, Language: {language}, Archived: {archived}"
         )
 
-        company = service.get_company(company_id)
+        # Get the Company model for access checks
+        company = service.get_company(company_id, include_archived=archived)
         if not company:
             logger.error(f"Company {company_id} not found")
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found")
