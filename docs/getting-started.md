@@ -149,10 +149,8 @@ Run `task` with no arguments to see all commands.
 
 | Command                | Description                  |
 |------------------------|------------------------------|
-| `task front:dev`       | Start dev server with HMR    |
 | `task front:lint`      | Lint and fix frontend code   |
 | `task front:typecheck` | Run TypeScript type checking |
-| `task front:build`     | Build for production         |
 
 ### Backend (Screen)
 

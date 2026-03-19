@@ -52,7 +52,14 @@ fi
 
 bash infra/scripts/setup-yarnrc.sh
 
-# ─── 4. Install frontend dependencies ────────────────
+# ─── 4. Install dependencies ──────────────────────────
+
+echo ""
+echo "📦 Installing dev tools (husky, lint-staged, commitlint)..."
+docker run --rm -w /app \
+  -v "$(pwd):/app" \
+  node:24 \
+  sh -c "git config --global --add safe.directory /app && corepack enable && yarn install"
 
 echo ""
 echo "📦 Installing frontend dependencies..."

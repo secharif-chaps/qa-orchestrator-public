@@ -112,7 +112,8 @@ else
 fi
 
 # Git hooks
-if [ -f .husky/pre-commit ] && [ "$(git config core.hooksPath 2>/dev/null)" = "$(pwd)/.husky" -o "$(git config core.hooksPath 2>/dev/null)" = ".husky" ]; then
+HOOKS_PATH=$(git config core.hooksPath 2>/dev/null || true)
+if [ -f .husky/pre-commit ] && echo "$HOOKS_PATH" | grep -q "\.husky"; then
   ok "Git pre-commit hook installed"
 else
   warn "Git pre-commit hook not installed — run 'yarn install' from repo root"

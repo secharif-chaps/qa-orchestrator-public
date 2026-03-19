@@ -85,11 +85,6 @@ tasks:
     desc: Follow tunnel logs
     cmd: "{{.COMPOSE}} logs -f tunnel"
 
-  # ─── Git Hooks ─────────────────────────────────────
-  hooks:install:
-    desc: Install git hooks (husky)
-    cmd: yarn install
-
   # ─── Skills ────────────────────────────────────────
   skills:validate:
     desc: Validate Claude skills structure

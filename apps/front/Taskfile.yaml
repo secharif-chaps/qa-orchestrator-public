@@ -1,14 +1,6 @@
 version: '3'
 
 tasks:
-  dev:
-    desc: Start frontend dev server (HMR)
-    cmd: yarn dev
-
-  build:
-    desc: Build frontend for production
-    cmd: yarn build
-
   setup-yarnrc:
     desc: Create or update .yarnrc.yml from template
     silent: true
@@ -59,9 +51,3 @@ tasks:
   test:ui:
     desc: Run frontend tests with Vitest UI (interactive browser)
     cmd: npx vitest --ui
-
-  hook:install:
-    desc: Install git hooks (pre-commit)
-    cmds:
-      - yarn install
-      - yarn prepare
