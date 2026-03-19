@@ -1,0 +1,111 @@
+# AI-powered CI jobs: auto-review, dev-agent, ticket scanner
+# Included from root .gitlab-ci.yml
+#
+# Required CI/CD variables (Settings > CI/CD > Variables):
+#   CLAUDE_CREDENTIALS_JSON — Claude Code credentials (type: File)
+#                             Content of ~/.claude/.credentials.json
+#   AGENT_GITLAB_TOKEN      — GitLab PAT (glpat-*) with api scope
+#   JIRA_CLOUD_ID           — Atlassian Cloud ID (UUID)
+#   JIRA_API_TOKEN          — Jira service account API token
+#   JIRA_PROJECT_KEY        — Jira project key (e.g. TAR)
+#   JIRA_AGENT_ASSIGNEE     — Jira account ID (optional, auto-detected via /myself)
+#   AGENT_GIT_NAME          — Git author/committer name for dev-agent (e.g. cc-agent)
+#   AGENT_GIT_EMAIL         — Git author/committer email for dev-agent (linked to @cc-agent)
+
+# Shared steps: install Claude credentials from CI variable
+.install-claude-credentials: &install-claude-credentials
+  - mkdir -p ~/.claude
+  - cp "$CLAUDE_CREDENTIALS_JSON" ~/.claude/.credentials.json
+  - chmod 600 ~/.claude/.credentials.json
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 1. AUTO-REVIEW — Automated MR code review with Claude
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ai:review-mr:
+  stage: lint
+  image: ${CI_REGISTRY}/chapsmind/ci-images/agent:latest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+  allow_failure: true
+  variables:
+    GITLAB_TOKEN: $AGENT_GITLAB_TOKEN
+    REVIEW_MODE: standard
+  needs: []
+  before_script:
+    - *install-claude-credentials
+  script:
+    - review-mr --log-file review-mr.log
+  artifacts:
+    when: always
+    paths:
+      - review-mr.log
+    expire_in: 7 days
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 2. DEV-AGENT — Automated Jira-to-MR development agent
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# Triggered manually or by the ticket scanner pipeline.
+# Pass AGENT_ISSUE as a variable (e.g. TAR-1234).
+ai:dev-agent:
+  stage: build
+  image: ${CI_REGISTRY}/chapsmind/ci-images/agent:latest
+  # One resource group per ticket: prevents duplicate runs for the same issue
+  # while allowing parallel execution across different tickets.
+  # To cap total concurrency, limit the runner (concurrent=N) or ticket-scanner (--max-tickets).
+  resource_group: dev-agent/$AGENT_ISSUE
+  rules:
+    # Triggered via API by ticket-scanner or manually from UI
+    - if: $AGENT_ISSUE
+      when: always
+  allow_failure: true
+  timeout: 30m
+  variables:
+    GITLAB_TOKEN: $AGENT_GITLAB_TOKEN
+    GIT_AUTHOR_NAME: $AGENT_GIT_NAME
+    GIT_AUTHOR_EMAIL: $AGENT_GIT_EMAIL
+    GIT_COMMITTER_NAME: $AGENT_GIT_NAME
+    GIT_COMMITTER_EMAIL: $AGENT_GIT_EMAIL
+  before_script:
+    - *install-claude-credentials
+    # Validate AGENT_ISSUE format (e.g. TAR-1234) to prevent injection
+    - |
+      if ! echo "$AGENT_ISSUE" | grep -qE '^[A-Z][A-Z0-9_]+-[0-9]+$'; then
+        echo "ERROR: Invalid AGENT_ISSUE format: '$AGENT_ISSUE' (expected e.g. TAR-1234)" >&2
+        exit 1
+      fi
+    # Configure git for push (the agent creates branches + MRs)
+    - git config --global user.name "$AGENT_GIT_NAME"
+    - git config --global user.email "$AGENT_GIT_EMAIL"
+    - 'git remote set-url origin https://${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git'
+    - 'git config --global http.https://${CI_SERVER_HOST}.extraheader "PRIVATE-TOKEN: ${AGENT_GITLAB_TOKEN}"'
+  script:
+    - >
+      dev-agent
+      --issue "$AGENT_ISSUE"
+      --phase "${AGENT_PHASE:-all}"
+      --config-dir .gitlab/agent
+      --verbose
+  artifacts:
+    when: always
+    paths:
+      - .gitlab/agent/artifacts/
+    expire_in: 30 days
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 3. TICKET SCANNER — Find ready Jira tickets for dev-agent
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# Runs on schedule (e.g. every 5 min). Queries Jira for tickets
+# in "To Do" status assigned to the agent user, then triggers
+# a dev-agent pipeline for each one.
+ai:ticket-scanner:
+  stage: maintenance
+  image: ${CI_REGISTRY}/chapsmind/ci-images/agent:latest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $SCAN_JIRA_TICKETS == "true"
+  variables:
+    GITLAB_TOKEN: $AGENT_GITLAB_TOKEN
+  script:
+    - ticket-scanner --verbose
