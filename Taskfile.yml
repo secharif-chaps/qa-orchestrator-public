@@ -5,6 +5,8 @@ includes:
   front:
     taskfile: apps/front/Taskfile.yaml
     dir: apps/front
+  screen:
+    taskfile: apps/screen/Taskfile.yaml
 
 dotenv: ['.env']
 
@@ -63,23 +65,6 @@ tasks:
     desc: Open psql shell
     cmd: "{{.COMPOSE}} exec db psql -U postgres -d chapsmind_db"
 
-  # ─── Screen Backend ───────────────────────────────
-  screen:lint:
-    desc: Lint screen backend code (ruff)
-    cmd: "{{.COMPOSE}} exec screen ruff check ."
-
-  screen:format:
-    desc: Format screen backend code (ruff)
-    cmd: "{{.COMPOSE}} exec screen ruff format ."
-
-  screen:test:
-    desc: Run screen backend tests
-    cmd: "{{.COMPOSE}} exec screen pytest"
-
-  screen:shell:
-    desc: Open bash shell in screen backend container
-    cmd: "{{.COMPOSE}} exec screen bash"
-
   # ─── Tunnel (Dify callbacks) ─────────────────────
   tunnel:
     desc: Start LocalTunnel for Dify callbacks
@@ -94,7 +79,7 @@ tasks:
 
   tunnel:url:
     desc: Show current tunnel URL
-    cmd: "curl -s http://localhost:8000/api/dev/tunnel-url | python3 -m json.tool || {{.COMPOSE}} logs tunnel --tail 5"
+    cmd: "curl -s http://localhost/api/dev/tunnel-url | python3 -m json.tool || {{.COMPOSE}} logs tunnel --tail 5"
 
   tunnel:logs:
     desc: Follow tunnel logs
