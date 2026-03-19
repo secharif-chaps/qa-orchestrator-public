@@ -124,18 +124,16 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
-      "rootUrl": "http://localhost:3000",
-      "baseUrl": "http://localhost:3000",
+      "rootUrl": "http://localhost",
+      "baseUrl": "http://localhost",
       "redirectUris": [
-        "http://localhost:3000/*",
-        "http://localhost:5173/*"
+        "http://localhost/*"
       ],
       "webOrigins": [
-        "http://localhost:3000",
-        "http://localhost:5173"
+        "http://localhost"
       ],
       "attributes": {
-        "post.logout.redirect.uris": "http://localhost:3000/*##http://localhost:5173/*",
+        "post.logout.redirect.uris": "http://localhost/*",
         "pkce.code.challenge.method": "S256"
       },
       "defaultClientScopes": [
@@ -184,14 +182,13 @@
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
       "secret": "chapsmind-screen-back-secret",
-      "rootUrl": "http://localhost:8000",
-      "baseUrl": "http://localhost:8000/api",
+      "rootUrl": "http://localhost",
+      "baseUrl": "http://localhost/api",
       "redirectUris": [
-        "http://localhost:8000/*"
+        "http://localhost/*"
       ],
       "webOrigins": [
-        "http://localhost:8000",
-        "http://localhost:3000"
+        "http://localhost"
       ],
       "defaultClientScopes": [
         "web-origins",
