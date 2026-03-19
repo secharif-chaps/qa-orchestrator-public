@@ -51,6 +51,7 @@
   "common.errors.generic": "Une erreur s'est produite",
   "common.errors.no_data": "Aucune donnée retournée",
   "common.errors.token_refresh_failed": "Échec du rafraîchissement du token",
+  "common.errors.rate_limit": "Trop de requêtes. Veuillez patienter {seconds} secondes.",
   "common.errors.unauthorized": "Non autorisé",
   "common.errors.unexpected": "Une erreur inattendue s'est produite",
   "common.from": "du",

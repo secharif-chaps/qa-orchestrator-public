@@ -51,6 +51,7 @@
   "common.errors.generic": "An error occurred",
   "common.errors.no_data": "No data returned",
   "common.errors.token_refresh_failed": "Failed to refresh token",
+  "common.errors.rate_limit": "Too many requests. Please wait {seconds} seconds.",
   "common.errors.unauthorized": "Unauthorized",
   "common.errors.unexpected": "An unexpected error occurred",
   "composables.useTimeDisplay.hoursAgo": "{count} hour ago | {count} hours ago",
