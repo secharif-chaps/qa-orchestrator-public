@@ -26,12 +26,12 @@ x-encryption: &encryption
 services:
   # Vue Frontend
   frontend:
-    image: registry.git.mediaspeech.com/chapsmind/chapsmind/chapsmind-front:latest
+    image: ${DOCKER_REGISTRY:-registry.git.mediaspeech.com/chapsmind/chapsmind}/chapsmind-front:${DOCKER_CHAPSMIND_VERSION:-latest}
     restart: unless-stopped
 
   # FastAPI Backend (Screen)
   screen:
-    image: registry.git.mediaspeech.com/chapsmind/chapsmind/chapsmind-screen:latest
+    image: ${DOCKER_REGISTRY:-registry.git.mediaspeech.com/chapsmind/chapsmind}/chapsmind-screen:${DOCKER_CHAPSMIND_VERSION:-latest}
     depends_on:
       db: { condition: service_healthy }
       rabbitmq: { condition: service_healthy }
@@ -45,7 +45,7 @@ services:
 
   # Celery Worker for Task Processing
   screen_celery_worker:
-    image: registry.git.mediaspeech.com/chapsmind/chapsmind/chapsmind-screen:latest
+    image: ${DOCKER_REGISTRY:-registry.git.mediaspeech.com/chapsmind/chapsmind}/chapsmind-screen:${DOCKER_CHAPSMIND_VERSION:-latest}
     entrypoint: celery -A app.core.celery_app worker --loglevel=info --concurrency=4 --pool=solo --queues=dify_workflows
     restart: unless-stopped
     environment:
@@ -58,7 +58,7 @@ services:
 
   # Global Service (Gateway) — Proxies /api requests to backend
   global-service:
-    image: registry.git.mediaspeech.com/chapsmind/chapsmind/chapsmind-global-service:latest
+    image: ${DOCKER_REGISTRY:-registry.git.mediaspeech.com/chapsmind/chapsmind}/chapsmind-global-service:${DOCKER_CHAPSMIND_VERSION:-latest}
     restart: unless-stopped
     depends_on:
       db: { condition: service_healthy }
