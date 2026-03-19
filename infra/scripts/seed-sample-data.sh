@@ -12,7 +12,7 @@
 set -e
 
 # Use the dc alias format or full command
-DC="${DC:-docker compose -f compose.yaml -f compose.local.yaml}"
+DC="${DC:-docker compose}"
 
 echo "🔧 Seeding sample data..."
 
