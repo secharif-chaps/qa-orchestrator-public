@@ -85,15 +85,6 @@ tasks:
     desc: Follow tunnel logs
     cmd: "{{.COMPOSE}} logs -f tunnel"
 
-  # ─── Sync (transitional — pull from legacy repos) ──
-  sync:
-    desc: Pull latest commits from all legacy repos
-    cmd: bash scripts/subtree-sync.sh
-
-  sync:module:
-    desc: "Pull latest from a legacy repo (e.g. task sync:module -- front)"
-    cmd: bash scripts/subtree-sync.sh {{.CLI_ARGS}}
-
   # ─── Git Hooks ─────────────────────────────────────
   hooks:install:
     desc: Install git hooks (husky)
