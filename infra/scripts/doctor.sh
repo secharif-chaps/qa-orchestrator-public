@@ -95,8 +95,8 @@ echo ""
 if [ -f .env ]; then
   ok ".env file exists"
   CHANGEME_VARS=$(grep '=changeme$' .env 2>/dev/null | sed 's/=.*//' || true)
-  CHANGEME_COUNT=$(echo "$CHANGEME_VARS" | grep -c . 2>/dev/null || echo 0)
-  if [ "$CHANGEME_COUNT" -gt 0 ]; then
+  if [ -n "$CHANGEME_VARS" ]; then
+    CHANGEME_COUNT=$(echo "$CHANGEME_VARS" | wc -l)
     warn "${CHANGEME_COUNT} variable(s) still set to 'changeme' in .env"
     echo "$CHANGEME_VARS" | while read -r var; do echo "     → $var"; done
   fi
