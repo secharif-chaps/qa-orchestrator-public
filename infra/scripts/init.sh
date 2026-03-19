@@ -14,11 +14,6 @@
 
 set -euo pipefail
 
-# Load COMPOSE_FILE and other vars from .env
-set -a
-source .env
-set +a
-
 # ─── 1. Create .env ──────────────────────────────────
 
 if [ ! -f .env ]; then
@@ -27,6 +22,11 @@ if [ ! -f .env ]; then
 else
   echo "ℹ️  .env already exists, skipping copy"
 fi
+
+# Load COMPOSE_FILE and other vars from .env
+set -a
+source .env
+set +a
 
 # ─── 2. Auto-generate secrets ────────────────────────
 
