@@ -64,7 +64,11 @@ docker run --rm -w /app \
 # ─── 5. Check required ports are free ─────────────────
 
 # Stop our own project first (if running) so ports are free for the check
-docker compose down 2>/dev/null || true
+if docker compose ps -q 2>/dev/null | grep -q .; then
+  echo ""
+  echo "🔄 Stopping existing containers..."
+  docker compose down
+fi
 
 mapfile -t REQUIRED_PORTS < <(docker compose config 2>/dev/null | grep -oP 'published: "\K\d+' | sort -u)
 BUSY_PORTS=()
