@@ -15,15 +15,13 @@ tasks:
   # ─── Setup ─────────────────────────────────────────
   init:
     desc: "One-shot first-time setup: env, deps, services, keycloak, migrations"
+    silent: true
     cmd: bash infra/scripts/init.sh
 
   doctor:
     desc: Check that all prerequisites are installed and configured
+    silent: true
     cmd: bash infra/scripts/doctor.sh
-
-  front:setup-yarnrc:
-    desc: Create or update apps/front/.yarnrc.yml from template
-    cmd: bash infra/scripts/setup-yarnrc.sh
 
   # ─── Infrastructure ────────────────────────────────
   up:
@@ -64,17 +62,6 @@ tasks:
   db:shell:
     desc: Open psql shell
     cmd: "{{.COMPOSE}} exec db psql -U postgres -d chapsmind_db"
-
-  # ─── Frontend (tasks not covered by include) ──────
-  front:dev:
-    desc: Start frontend dev server (HMR)
-    dir: apps/front
-    cmd: yarn dev
-
-  front:build:
-    desc: Build frontend for production
-    dir: apps/front
-    cmd: yarn build
 
   # ─── Screen Backend ───────────────────────────────
   screen:lint:

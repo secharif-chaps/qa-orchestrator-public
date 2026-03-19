@@ -1,62 +1,67 @@
 version: '3'
 
 tasks:
+  dev:
+    desc: Start frontend dev server (HMR)
+    cmd: yarn dev
+
+  build:
+    desc: Build frontend for production
+    cmd: yarn build
+
+  setup-yarnrc:
+    desc: Create or update .yarnrc.yml from template
+    silent: true
+    cmd: bash ../../infra/scripts/setup-yarnrc.sh
+
   lint:
-    desc: 'Run all linters (ESLint, Prettier, Stylelint)'
+    desc: Run all linters (ESLint, Prettier, Stylelint)
     cmds:
       - task: lint:eslint
       - task: lint:prettier
       - task: lint:stylelint
 
   lint:eslint:
-    desc: 'Check TypeScript/Vue code style with ESLint'
-    cmds:
-      - npx eslint .
+    desc: Check TypeScript/Vue code style with ESLint
+    cmd: npx eslint .
 
   lint:prettier:
-    desc: 'Check code formatting with Prettier'
-    cmds:
-      - npx prettier --check --no-error-on-unmatched-pattern --ignore-unknown .
+    desc: Check code formatting with Prettier
+    cmd: npx prettier --check --no-error-on-unmatched-pattern --ignore-unknown .
 
   lint:stylelint:
-    desc: 'Check CSS code style with Stylelint'
-    cmds:
-      - npx stylelint "src/**/*.{vue,css}"
+    desc: Check CSS code style with Stylelint
+    cmd: npx stylelint "src/**/*.{vue,css}"
 
   lint:fix:
-    desc: 'Fix all linting issues automatically'
+    desc: Fix all linting issues automatically
     cmds:
       - npx eslint --fix .
       - npx prettier --write --no-error-on-unmatched-pattern --ignore-unknown .
       - npx stylelint --fix "src/**/*.{vue,css}"
 
   lint:staged:
-    desc: 'Lint only staged files (via lint-staged)'
-    cmds:
-      - npx lint-staged --allow-empty
+    desc: Lint only staged files (via lint-staged)
+    cmd: npx lint-staged --allow-empty
 
   typecheck:
-    desc: 'Run TypeScript type checking (vue-tsc)'
-    cmds:
-      - npx vue-tsc --build
+    desc: Run TypeScript type checking (vue-tsc)
+    cmd: npx vue-tsc --build
 
   test:
-    desc: 'Run frontend tests with Vitest'
-    cmds:
-      - npx vitest run
+    desc: Run frontend tests with Vitest
+    cmd: npx vitest run
 
   test:coverage:
-    desc: 'Run frontend tests with coverage report'
-    cmds:
-      - npx vitest run --coverage
+    desc: Run frontend tests with coverage report
+    cmd: npx vitest run --coverage
 
   test:ui:
-    desc: 'Run frontend tests with Vitest UI (interactive browser)'
-    cmds:
-      - npx vitest --ui
+    desc: Run frontend tests with Vitest UI (interactive browser)
+    cmd: npx vitest --ui
 
   hook:install:
-    desc: 'Install git hooks (pre-commit)'
+    desc: Install git hooks (pre-commit)
     cmds:
       - yarn install
       - yarn prepare
