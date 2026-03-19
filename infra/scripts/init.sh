@@ -61,14 +61,33 @@ docker run --rm -w /app \
   node:24 \
   sh -c "corepack enable && yarn install"
 
-# ─── 5. Build and start services ─────────────────────
+# ─── 5. Check required ports are free ─────────────────
+
+mapfile -t REQUIRED_PORTS < <(docker compose config 2>/dev/null | grep -oP 'published: "\K\d+' | sort -u)
+BUSY_PORTS=()
+for port in "${REQUIRED_PORTS[@]}"; do
+  if ss -tlnH "sport = :$port" 2>/dev/null | grep -q .; then
+    PROCESS=$(ss -tlnpH "sport = :$port" 2>/dev/null | head -1 | grep -oP 'users:\(\("\K[^"]+' || echo "unknown")
+    BUSY_PORTS+=("$port ($PROCESS)")
+  fi
+done
+
+if [ ${#BUSY_PORTS[@]} -gt 0 ]; then
+  echo "❌ Required ports are already in use:"
+  for p in "${BUSY_PORTS[@]}"; do echo "   → port $p"; done
+  echo ""
+  echo "   Free these ports and re-run 'task init'."
+  exit 1
+fi
+
+# ─── 6. Build and start services ─────────────────────
 
 echo ""
 echo "🐳 Building and starting services..."
 docker compose build screen
 docker compose up -d --build
 
-# ─── 6. Wait for Keycloak + init ─────────────────────
+# ─── 7. Wait for Keycloak + init ─────────────────────
 
 echo ""
 echo "⏳ Waiting for Keycloak to be ready..."
@@ -89,13 +108,13 @@ echo ""
 echo "🔐 Initializing Keycloak (realm, clients, test users)..."
 bash infra/scripts/init-keycloak.sh
 
-# ─── 7. Run migrations ───────────────────────────────
+# ─── 8. Run migrations ───────────────────────────────
 
 echo ""
 echo "🗃️  Running database migrations..."
 docker compose exec screen alembic upgrade head
 
-# ─── 8. Done ─────────────────────────────────────────
+# ─── 9. Done ─────────────────────────────────────────
 
 echo ""
 echo "════════════════════════════════════════════════════"
