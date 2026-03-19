@@ -250,8 +250,10 @@ Use `-stroke` tokens for borders without repeating "border":
 
 ### Dev Environment
 
-- Dev server runs on `http://localhost:3000` with HMR
-- **NEVER** launch the dev server yourself (it's already running)
+- All services run behind nginx reverse proxy at `http://localhost`
+- Keycloak admin console at `http://localhost:8080`
+- **NEVER** launch the dev server yourself (it's already running in Docker)
+- Screen backend is **never** exposed directly — global-service is the API gateway
 
 ---
 
@@ -654,106 +656,14 @@ const { data: companies } = useQuery(companiesQuery, () => ({
 
 ## Test Users
 
-All test users are linked to **Organization ID 1** (ChapsVision organization).
+All test users are defined in `infra/files/realm-chapsmind.json` and added to the **ChapsMind Dev** organization by `init-keycloak.sh`.
 
-### 1. Admin User (Full Access)
-
-```
-Username: admin
-Password: admin123
-Email: admin@test.com
-```
-
-**Permissions**: All permissions
-
-**Expected Behavior**:
-
-- Sees all sidebar links (home, search, companies, team, organizations)
-- Can create, edit, and delete companies
-- Can manage team members
-- Has access to all routes
-
-### 2. Company Manager
-
-```
-Username: company_manager
-Password: manager123
-Email: manager@test.com
-```
-
-**Permissions**: `company.view`, `company.create`, `company.delete`
-
-**Expected Behavior**:
-
-- Can manage companies (create, edit, delete)
-- Cannot see team link
-- Cannot access organization admin
-
-### 3. Company Viewer
-
-```
-Username: company_viewer
-Password: viewer123
-Email: viewer@test.com
-```
-
-**Permissions**: `company.view`
-
-**Expected Behavior**:
-
-- Can view companies (read-only)
-- Cannot create/edit/delete companies
-- Cannot access team page
-- Sees "Read-only access" messages
-
-### 4. Team Viewer
-
-```
-Username: team_viewer
-Password: teamviewer123
-Email: teamviewer@test.com
-```
-
-**Permissions**: `organization.read`, `company.view`
-
-**Expected Behavior**:
-
-- Can access team page (read-only)
-- Can view companies
-- Cannot add/edit/disable users
-- Cannot create/edit/delete companies
-
-### 5. Team Manager
-
-```
-Username: team_manager
-Password: teammanager123
-Email: teammanager@test.com
-```
-
-**Permissions**: `organization.read`, `organization.write`, `company.view`
-
-**Expected Behavior**:
-
-- Can manage team members (add, edit, disable)
-- Can view companies
-- Cannot create/edit/delete companies
-
-### 6. No Access User
-
-```
-Username: no_access
-Password: noaccess123
-Email: noaccess@test.com
-```
-
-**Permissions**: None
-
-**Expected Behavior**:
-
-- Can only see home link
-- Gets 403 on most routes
-- Sees permission denied messages
+| Username | Password | Roles | Description |
+|----------|----------|-------|-------------|
+| `admin` | `admin123` | admin (composite: all roles) | Full access |
+| `company_manager` | `manager123` | company.create, organization.read, organization.write | Company + team management |
+| `company_viewer` | `viewer123` | organization.read | Read-only access |
+| `no_access` | `noaccess123` | (none) | For testing 403 errors |
 
 ---
 
@@ -912,6 +822,12 @@ This project uses Taskfile to wrap Docker Compose commands. Run all commands fro
 ### Development Environment
 
 ```bash
+# First-time setup (one-shot)
+task init
+
+# Check prerequisites
+task doctor
+
 # Start all services
 task up
 
@@ -928,21 +844,22 @@ task logs
 task logs:service -- screen
 
 # Full reset (removes volumes)
-task down
-docker compose -f infra/compose.yaml -f infra/compose.local.yaml down -v
-task up
+docker compose down -v --rmi local
+task init
 ```
 
 ### Services Available
-- **db**: PostgreSQL database (port 5432)
-- **rabbitmq**: Message broker (ports 5672, 15672)
-- **screen**: FastAPI API (port 8000)
+- **nginx**: Reverse proxy — single entry point at `http://localhost`
+- **frontend**: Vue.js app (internal, behind nginx)
+- **global-service**: API gateway (internal, behind nginx at `/api`)
+- **screen**: FastAPI backend (internal, never exposed directly)
 - **screen_celery_worker**: Background task processor
-- **screen_celery_flower**: Celery monitoring (port 5555)
-- **frontend**: Vue.js app (port 3000)
+- **db**: PostgreSQL database
+- **rabbitmq**: Message broker (management UI at `http://localhost:15672`)
+- **keycloak**: Auth server at `http://localhost:8080` (local dev only)
 
 ### Authentication
-Uses **integration Keycloak** at `https://sso.dwcode.team/auth` (not local keycloak).
+Uses **local Keycloak** at `http://localhost:8080` in development. Staging/preprod uses a shared Keycloak instance.
 
 ## Database Migrations
 
@@ -991,7 +908,7 @@ python script_name.py
 ```
 
 ### Testing Endpoints
-The backend API is available at `http://localhost:8000/api/`
+The API is available at `http://localhost/api` (via nginx → global-service → other modules like screen).
 
 ### Common Commands
 ```bash
@@ -1058,24 +975,26 @@ user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])
 ## Testing and Deployment Workflow
 
 ### Local Testing
-- **Backend API**: Available at `http://localhost:8000/api/`
-- **Frontend**: Available at `http://localhost:3000` (Docker) or `http://localhost:5173` (yarn dev)
-- **Keycloak**: Uses integration server at `https://sso.dwcode.team/auth`
+- **Application**: Available at `http://localhost` (frontend + API via nginx)
+- **API**: Available at `http://localhost/api`
+- **API Docs**: Available at `http://localhost/docs` (Swagger UI via global-service)
+- **Keycloak**: Local instance at `http://localhost:8080`
 - Run all commands from monorepo root using `task`
 
 ### Authentication for Testing
 
+Uses **local Keycloak** at `http://localhost:8080` with realm `chapsmind`.
 Uses **integration Keycloak** at `https://sso.dwcode.team/auth` with realm `chapsmind`.
 
-Log in with your existing ChapsMind credentials. Test users are managed on the integration Keycloak server.
+Log in with test users defined in `infra/files/realm-chapsmind.json` (see Test Users section above).
 
 #### Using Token in API Calls
 ```bash
 # Example: Get folders
-curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:8000/api/folders/
+curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost/api/folders/
 
 # Example: Create company
-curl -X POST http://localhost:8000/api/companies/ \
+curl -X POST http://localhost/api/companies/ \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"name": "Test Company"}'
