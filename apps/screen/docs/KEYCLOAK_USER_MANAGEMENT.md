@@ -267,7 +267,7 @@ TOKEN=$(python3 get_token.py)
 
 # List organization users
 curl -H "Authorization: Bearer $TOKEN" \
-  "http://localhost:8000/api/organizations/org-uuid-123/users?page=1&limit=20"
+  "http://localhost/api/organizations/org-uuid-123/users?page=1&limit=20"
 
 # Create user
 curl -X POST \
@@ -280,7 +280,7 @@ curl -X POST \
     "last_name": "User",
     "permissions": ["organization.read", "company.view"]
   }' \
-  "http://localhost:8000/api/organizations/org-uuid-123/users"
+  "http://localhost/api/organizations/org-uuid-123/users"
 
 # Update user
 curl -X PUT \
@@ -293,7 +293,7 @@ curl -X PUT \
     "is_active": true,
     "permissions": ["organization.write", "company.create"]
   }' \
-  "http://localhost:8000/api/organizations/org-uuid-123/users/user-uuid-456"
+  "http://localhost/api/organizations/org-uuid-123/users/user-uuid-456"
 ```
 
 ### Test Users

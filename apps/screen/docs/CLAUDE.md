@@ -56,8 +56,9 @@ This project uses different Docker Compose files for different environments:
 
 ### Services Available
 
-- **backend**: FastAPI backend service (port 8000)
-- **frontend**: Nuxt.js frontend service (port 3000)
+- **nginx**: Reverse proxy (port 80) - single entry point at http://localhost
+- **backend**: FastAPI backend service (internal)
+- **frontend**: Vue.js frontend service (internal, behind nginx)
 - **keycloak**: Authentication service (port 8080)
 - **db**: PostgreSQL database service (port 5432)
 
@@ -117,7 +118,7 @@ docker compose -f docker-compose.dev.yml exec backend python script_name.py
 
 ### Testing Endpoints
 
-The backend API is available at `http://localhost:8000/api/`
+The backend API is available at `http://localhost/api`
 
 ### Common Commands
 
@@ -189,8 +190,8 @@ user: OIDCUser = Depends(idp.get_current_user(required_roles=["company.create"])
 
 ### Local Testing
 
-- **Backend API**: Available at `http://localhost:8000/api/`
-- **Frontend**: Available at `http://localhost:3000` (when running)
+- **Backend API**: Available at `http://localhost/api`
+- **Frontend**: Available at `http://localhost`
 - **Keycloak**: Available at `http://localhost:8080`
 - Use `docker compose -f docker-compose.dev.yml` for all local Docker operations
 
@@ -231,10 +232,10 @@ The script will output:
 
 ```bash
 # Example: Get folders
-curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:8000/api/folders/
+curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost/api/folders/
 
 # Example: Create company
-curl -X POST http://localhost:8000/api/companies/ \
+curl -X POST http://localhost/api/companies/ \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"name": "Test Company"}'

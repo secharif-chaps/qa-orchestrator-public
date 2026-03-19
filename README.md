@@ -55,7 +55,7 @@ This single command will:
 
 ### 3. Access the Application
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost](http://localhost) in your browser.
 
 ## Available Commands
 
@@ -109,9 +109,9 @@ All commands use [Task](https://taskfile.dev/). Run `task` (with no arguments) t
 
 | Service          | URL                          | Description                   |
 |------------------|------------------------------|-------------------------------|
-| Frontend         | http://localhost:3000         | Vue.js application            |
-| Backend API      | http://localhost:8000/api     | FastAPI endpoints             |
-| API Docs         | http://localhost:8000/docs    | Swagger documentation         |
+| Frontend         | http://localhost              | Vue.js application            |
+| Backend API      | http://localhost/api          | FastAPI endpoints             |
+| API Docs         | http://localhost/docs         | Swagger documentation         |
 | Celery Flower    | http://localhost:5555         | Task monitoring               |
 | RabbitMQ Admin   | http://localhost:15672        | Message broker (guest/guest)  |
 
@@ -253,8 +253,8 @@ task migrate
 ### Port Conflicts
 
 ```bash
-lsof -i :3000
-lsof -i :8000
+lsof -i :80
+lsof -i :8080
 ```
 
 ## Claude Code Integration

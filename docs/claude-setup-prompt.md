@@ -182,9 +182,9 @@ Expected containers (all healthy/running):
 
 | Service | URL | Credentials |
 |---------|-----|-------------|
-| Frontend | http://localhost:3000 | See test users below |
-| Backend API | http://localhost:8000/api | - |
-| API Docs (Swagger) | http://localhost:8000/docs | - |
+| Frontend | http://localhost | See test users below |
+| Backend API | http://localhost/api | - |
+| API Docs (Swagger) | http://localhost/docs | - |
 | Keycloak Admin | http://localhost:8080 | admin / admin |
 | RabbitMQ Admin | http://localhost:15672 | guest / guest |
 | Celery Flower | http://localhost:5555 | admin / admin |
@@ -231,8 +231,7 @@ sudo service docker start  # Ubuntu/WSL
 # macOS: Open Docker Desktop
 
 # Check port conflicts
-lsof -i :3000
-lsof -i :8000
+lsof -i :80
 lsof -i :8080
 
 # Full reset (removes all data)
