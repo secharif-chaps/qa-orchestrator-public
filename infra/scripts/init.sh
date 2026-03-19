@@ -63,6 +63,9 @@ docker run --rm -w /app \
 
 # ─── 5. Check required ports are free ─────────────────
 
+# Stop our own project first (if running) so ports are free for the check
+docker compose down 2>/dev/null || true
+
 mapfile -t REQUIRED_PORTS < <(docker compose config 2>/dev/null | grep -oP 'published: "\K\d+' | sort -u)
 BUSY_PORTS=()
 for port in "${REQUIRED_PORTS[@]}"; do
