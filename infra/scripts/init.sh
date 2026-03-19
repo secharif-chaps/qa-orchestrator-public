@@ -90,18 +90,21 @@ docker compose up -d --build
 # ─── 7. Wait for Keycloak + init ─────────────────────
 
 echo ""
-echo "⏳ Waiting for Keycloak to be ready..."
-for i in $(seq 1 60); do
+echo "⏳ Waiting for Keycloak to be ready (first start takes ~1-2 min for realm import)..."
+KEYCLOAK_TIMEOUT=90
+for i in $(seq 1 "$KEYCLOAK_TIMEOUT"); do
   if curl -sf http://localhost:8080/realms/master > /dev/null 2>&1; then
-    echo "✅ Keycloak is ready"
+    echo -e "\r✅ Keycloak is ready (${i}s)                    "
     break
   fi
-  if [ "$i" -eq 60 ]; then
-    echo "❌ Keycloak did not become ready in time"
+  if [ "$i" -eq "$KEYCLOAK_TIMEOUT" ]; then
+    echo ""
+    echo "❌ Keycloak did not become ready in ${KEYCLOAK_TIMEOUT}s"
     echo "   Check logs: task logs:service -- keycloak"
     exit 1
   fi
-  sleep 3
+  printf "\r   ⏳ %ds / %ds" "$i" "$KEYCLOAK_TIMEOUT"
+  sleep 1
 done
 
 echo ""
