@@ -307,7 +307,7 @@ fi
 # Add all test users to the organization
 echo "👥 Adding all test users to organization..."
 echo "   Organization ID: $ORG_ID"
-TEST_USERS=("admin" "company_manager" "company_viewer" "team_manager" "no_access")
+TEST_USERS=("admin" "company_manager" "company_viewer" "no_access")
 
 for username in "${TEST_USERS[@]}"; do
     USER_ID=$(curl -sf "$KEYCLOAK_URL/admin/realms/$REALM/users?username=$username" \
@@ -342,6 +342,5 @@ echo "  - Login to app with any test user:"
 echo "      admin / admin123"
 echo "      company_manager / manager123"
 echo "      company_viewer / viewer123"
-echo "      team_manager / teammanager123"
 echo "      no_access / noaccess123"
 echo ""
