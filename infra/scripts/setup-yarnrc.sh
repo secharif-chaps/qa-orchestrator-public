@@ -1,6 +1,6 @@
 #!/bin/bash
 # Configure apps/front/.yarnrc.yml from template.
-# Tries: env vars → .env file → interactive prompt.
+# Tries: env vars → interactive prompt.
 # Usage: bash infra/scripts/setup-yarnrc.sh
 
 set -euo pipefail
@@ -20,17 +20,13 @@ echo ""
 REGISTRY_URL=""
 DEPLOY_KEY=""
 
-# 1. Try env vars
+# 1. Try env vars (e.g. CI or pre-configured shell)
 if [ -n "${OWLINT_REGISTRY_URL:-}" ] && [ -n "${OWLINT_DEPLOY_KEY:-}" ]; then
   REGISTRY_URL="$OWLINT_REGISTRY_URL"
   DEPLOY_KEY="$OWLINT_DEPLOY_KEY"
-# 2. Try .env file
-elif [ -f .env ]; then
-  REGISTRY_URL=$(grep '^OWLINT_REGISTRY_URL=' .env | cut -d= -f2- || true)
-  DEPLOY_KEY=$(grep '^OWLINT_DEPLOY_KEY=' .env | cut -d= -f2- || true)
 fi
 
-# 3. If still missing or "changeme", prompt interactively
+# 2. If missing, prompt interactively
 if [ -z "$REGISTRY_URL" ] || [ "$REGISTRY_URL" = "changeme" ] || \
    [ -z "$DEPLOY_KEY" ] || [ "$DEPLOY_KEY" = "changeme" ]; then
   if [ -t 0 ]; then
@@ -38,7 +34,7 @@ if [ -z "$REGISTRY_URL" ] || [ "$REGISTRY_URL" = "changeme" ] || \
     read -rp "OWLINT_DEPLOY_KEY: " DEPLOY_KEY
   else
     echo "❌ OWLINT_REGISTRY_URL / OWLINT_DEPLOY_KEY not set."
-    echo "   Set them in .env or as environment variables."
+    echo "   Export them as environment variables or run interactively."
     exit 1
   fi
 fi
