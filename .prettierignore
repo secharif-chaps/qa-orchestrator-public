@@ -1,0 +1,17 @@
+# Build outputs
+dist/
+node_modules/
+.yarn/
+
+# CI configuration
+.gitlab-ci.yml
+
+# Generated files
+apps/front/typed-router.d.ts
+
+# Python (handled by ruff)
+apps/screen/
+apps/global-service/
+
+# Infrastructure
+infra/files/
