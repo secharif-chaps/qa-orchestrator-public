@@ -62,7 +62,7 @@
               v-for="folder in favoriteFolders"
               :key="folder.id"
               :folder="folder"
-              :is-expanded="expandedFolders[folder.id] || false"
+              :is-expanded="isExpandedForFolder(folder.id)"
               :search-term="searchTerm"
               @toggle="toggleFolder(folder.id)"
               @navigate-folder="navigateToFolder"
@@ -87,7 +87,7 @@
             v-for="folder in regularFolders"
             :key="folder.id"
             :folder="folder"
-            :is-expanded="expandedFolders[folder.id] || false"
+            :is-expanded="isExpandedForFolder(folder.id)"
             :search-term="searchTerm"
             @toggle="toggleFolder(folder.id)"
             @navigate-folder="navigateToFolder"
@@ -136,11 +136,11 @@ const { data: foldersData, isLoading } = useQuery(() =>
 const allFolders = computed<Folder[]>(() => foldersData.value?.data || [])
 
 const favoriteFolders = computed<Folder[]>(() => {
-  return allFolders.value.filter((f: Folder) => f.is_favorite)
+  return filteredFolders.value.filter((f: Folder) => f.is_favorite)
 })
 
 const regularFolders = computed<Folder[]>(() => {
-  return allFolders.value.filter((f: Folder) => !f.is_favorite)
+  return filteredFolders.value.filter((f: Folder) => !f.is_favorite)
 })
 
 // Filter folders based on search
@@ -165,6 +165,19 @@ const filteredFolders = computed<Folder[]>(() => {
     return false
   })
 })
+
+// When searching, auto-expand folders that match via a company name (not folder name)
+const isExpandedForFolder = (folderId: string): boolean => {
+  if (searchTerm.value.trim()) {
+    const folder = allFolders.value.find((f) => f.id === folderId)
+    if (folder?.items) {
+      const query = searchTerm.value.toLowerCase()
+      return folder.items.some((item) => item.name.toLowerCase().includes(query))
+    }
+    return false
+  }
+  return expandedFolders.value[folderId] || false
+}
 
 // Toggle folder expansion
 const toggleFolder = (folderId: string) => {
