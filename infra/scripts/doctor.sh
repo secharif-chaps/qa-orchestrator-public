@@ -71,6 +71,13 @@ echo ""
 echo "🔍 Checking connectivity..."
 echo ""
 
+# HTTP
+if curl -sf --connect-timeout 5 https://git.mediaspeech.com > /dev/null 2>&1; then
+  ok "HTTPS access to git.mediaspeech.com"
+else
+  err "Cannot reach https://git.mediaspeech.com — check network/VPN"
+fi
+
 # SSH
 if ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no -T -p 17890 git@git.mediaspeech.com 2>&1 | grep -qi "welcome\|success"; then
   ok "SSH access to git.mediaspeech.com"
