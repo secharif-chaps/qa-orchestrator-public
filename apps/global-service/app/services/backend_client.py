@@ -25,9 +25,9 @@ class CompanyInfo(BaseModel):
     created_at: str | None = None
 
 
-def _get_backend_base_url() -> str:
+def _get_screen_base_url() -> str:
     """Get the backend base URL from settings."""
-    return settings.BACKEND_BASE_URL.rstrip("/")
+    return settings.SCREEN_BASE_URL.rstrip("/")
 
 
 def _create_auth_headers(
@@ -88,7 +88,7 @@ async def get_companies_by_ids(
     )
 
     result: dict[int, CompanyInfo] = {}
-    base_url = _get_backend_base_url()
+    base_url = _get_screen_base_url()
 
     async with httpx.AsyncClient(
         base_url=base_url,

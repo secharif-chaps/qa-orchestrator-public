@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     # API settings
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8001
-    BACKEND_BASE_URL: str = "http://screen:8000"  # Internal Docker service name for screen backend
+    SCREEN_BASE_URL: str = "http://screen:8000"  # Internal Docker service name for screen backend
 
     # GRPC settings
     GRPC_PORT: int = 50051

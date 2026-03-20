@@ -28,7 +28,7 @@ class TestProxyClient:
         client_module._client = None
 
         with patch("app.proxy.client.settings") as mock_settings:
-            mock_settings.BACKEND_BASE_URL = "http://test-backend:8000"
+            mock_settings.SCREEN_BASE_URL = "http://test-backend:8000"
 
             client = await get_proxy_client()
 
@@ -48,7 +48,7 @@ class TestProxyClient:
         client_module._client = None
 
         with patch("app.proxy.client.settings") as mock_settings:
-            mock_settings.BACKEND_BASE_URL = "http://test-backend:8000"
+            mock_settings.SCREEN_BASE_URL = "http://test-backend:8000"
 
             await get_proxy_client()
             assert client_module._client is not None

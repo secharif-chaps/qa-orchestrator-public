@@ -19,9 +19,9 @@ logger = get_logger(__name__)
 _client: httpx.AsyncClient | None = None
 
 
-def get_backend_base_url() -> str:
+def get_screen_base_url() -> str:
     """Get the backend base URL from settings."""
-    return settings.BACKEND_BASE_URL.rstrip("/")
+    return settings.SCREEN_BASE_URL.rstrip("/")
 
 
 async def get_proxy_client() -> httpx.AsyncClient:
@@ -32,7 +32,7 @@ async def get_proxy_client() -> httpx.AsyncClient:
     global _client
     if _client is None:
         _client = httpx.AsyncClient(
-            base_url=get_backend_base_url(),
+            base_url=get_screen_base_url(),
             timeout=httpx.Timeout(
                 connect=10.0,
                 read=60.0,  # Longer read timeout for slow endpoints
@@ -46,7 +46,7 @@ async def get_proxy_client() -> httpx.AsyncClient:
             ),
             follow_redirects=False,  # Let the client handle redirects
         )
-        logger.info(f"🔗 Proxy client initialized with base URL: {get_backend_base_url()}")
+        logger.info(f"🔗 Proxy client initialized with base URL: {get_screen_base_url()}")
     return _client
 
 
@@ -67,7 +67,7 @@ async def get_streaming_client() -> AsyncGenerator[httpx.AsyncClient, None]:
     blocking the connection pool.
     """
     client = httpx.AsyncClient(
-        base_url=get_backend_base_url(),
+        base_url=get_screen_base_url(),
         timeout=httpx.Timeout(
             connect=10.0,
             read=None,  # No read timeout for streaming
