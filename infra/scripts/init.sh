@@ -32,21 +32,23 @@ set +a
 
 if grep -q '^ENCRYPTION_KEY=changeme$' .env; then
   KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")
-  sed -i "s/^ENCRYPTION_KEY=changeme$/ENCRYPTION_KEY=${KEY}/" .env
+  sed -i.bak "s/^ENCRYPTION_KEY=changeme$/ENCRYPTION_KEY=${KEY}/" .env
   echo "✅ Auto-generated ENCRYPTION_KEY"
 fi
 
 if grep -q '^INTERNAL_JWT_SECRET=changeme$' .env; then
   SECRET=$(openssl rand -base64 32)
-  sed -i "s|^INTERNAL_JWT_SECRET=changeme$|INTERNAL_JWT_SECRET=${SECRET}|" .env
+  sed -i.bak "s|^INTERNAL_JWT_SECRET=changeme$|INTERNAL_JWT_SECRET=${SECRET}|" .env
   echo "✅ Auto-generated INTERNAL_JWT_SECRET"
 fi
 
 if grep -q '^TUNNEL_SUBDOMAIN=chapsmind-dev-changeme$' .env; then
   RANDOM_ID=$(python3 -c "import secrets; print(secrets.token_hex(4))")
-  sed -i "s/^TUNNEL_SUBDOMAIN=chapsmind-dev-changeme$/TUNNEL_SUBDOMAIN=chapsmind-dev-${RANDOM_ID}/" .env
+  sed -i.bak "s/^TUNNEL_SUBDOMAIN=chapsmind-dev-changeme$/TUNNEL_SUBDOMAIN=chapsmind-dev-${RANDOM_ID}/" .env
   echo "✅ Auto-generated TUNNEL_SUBDOMAIN=chapsmind-dev-${RANDOM_ID}"
 fi
+
+rm -f .env.bak
 
 # ─── 3. Configure .yarnrc.yml ────────────────────────
 
