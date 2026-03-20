@@ -77,19 +77,17 @@ if docker compose ps -q 2>/dev/null | grep -q .; then
   docker compose down
 fi
 
-mapfile -t REQUIRED_PORTS < <(docker compose config 2>/dev/null | grep -oP 'published: "\K\d+' | sort -u)
-BUSY_PORTS=()
-for port in "${REQUIRED_PORTS[@]}"; do
-  if ss -tlnH "sport = :$port" 2>/dev/null | grep -q .; then
-    PROCESS=$(ss -tlnpH "sport = :$port" 2>/dev/null | head -1 | grep -oP 'users:\(\("\K[^"]+' || echo "unknown")
-    BUSY_PORTS+=("$port ($PROCESS)")
+BUSY_PORTS=""
+for port in $(docker compose config 2>/dev/null | sed -n 's/.*published: "\([0-9]*\)".*/\1/p' | sort -u); do
+  if lsof -iTCP:"$port" -sTCP:LISTEN -P -n >/dev/null 2>&1; then
+    PROCESS=$(lsof -iTCP:"$port" -sTCP:LISTEN -P -n 2>/dev/null | tail -1 | awk '{print $1}')
+    BUSY_PORTS="${BUSY_PORTS}  → port ${port} (${PROCESS:-unknown})\n"
   fi
 done
 
-if [ ${#BUSY_PORTS[@]} -gt 0 ]; then
+if [ -n "$BUSY_PORTS" ]; then
   echo "❌ Required ports are already in use:"
-  for p in "${BUSY_PORTS[@]}"; do echo "   → port $p"; done
-  echo ""
+  echo -e "$BUSY_PORTS"
   echo "   Free these ports and re-run 'task init'."
   exit 1
 fi

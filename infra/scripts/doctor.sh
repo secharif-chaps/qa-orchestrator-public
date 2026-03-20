@@ -18,7 +18,7 @@ echo ""
 
 # Docker
 if command -v docker &> /dev/null; then
-  DOCKER_V=$(docker --version 2>/dev/null | grep -oP '\d+\.\d+' | head -1)
+  DOCKER_V=$(docker --version 2>/dev/null | sed 's/[^0-9.]//g' | cut -d. -f1,2)
   ok "Docker ${DOCKER_V}"
 else
   err "Docker not installed"
@@ -41,7 +41,7 @@ fi
 # Node.js
 if command -v node &> /dev/null; then
   NODE_V=$(node --version 2>/dev/null)
-  NODE_MAJOR=$(echo "$NODE_V" | grep -oP '\d+' | head -1)
+  NODE_MAJOR=$(echo "$NODE_V" | sed 's/v//' | cut -d. -f1)
   if [ "$NODE_MAJOR" -ge 24 ]; then
     ok "Node.js ${NODE_V}"
   else
