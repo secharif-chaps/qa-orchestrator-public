@@ -1,0 +1,21 @@
+version: '3'
+
+vars:
+  COMPOSE: docker compose
+
+tasks:
+  lint:
+    desc: Lint backend code (ruff)
+    cmd: "{{.COMPOSE}} exec screen ruff check ."
+
+  format:
+    desc: Format backend code (ruff)
+    cmd: "{{.COMPOSE}} exec screen ruff format ."
+
+  test:
+    desc: Run backend tests
+    cmd: "{{.COMPOSE}} exec screen pytest"
+
+  shell:
+    desc: Open bash shell in screen backend container
+    cmd: "{{.COMPOSE}} exec screen bash"

@@ -8,7 +8,7 @@ No real Dify failures are needed — a helper script injects mock errors directl
 ## Prerequisites
 
 - Docker services are running
-- The app is accessible at `http://localhost:3000`
+- The app is accessible at `http://localhost`
 - At least one company exists
 
 ---
@@ -63,7 +63,7 @@ The countdown is **persistent** — it resumes correctly after page refresh or m
 
 ### 1. Start the services
 
-Open `http://localhost:3000` and navigate to any company page.
+Open `http://localhost` and navigate to any company page.
 
 ### 2. Run the mock error script
 

@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     # API settings
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8000
-    BACKEND_BASE_URL: str = "http://localhost:8000"  # Default for local dev, override with env var
+    BACKEND_BASE_URL: str = "http://localhost"  # Default for local dev, override with env var
 
     # Logging settings
     LOG_LEVEL: str = "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -24,15 +24,14 @@ class Settings(BaseSettings):
     DIFY_CHAT_API_KEY: str = "app-jGJl5PAPQnAE0IzFAfkV3XjO"  # API key for quick actions chat app
 
     # CORS settings
-    CORS_ORIGIN: str = "http://localhost:3000"
+    CORS_ORIGIN: str = "http://localhost"
 
     # Keycloak settings
-
     KEYCLOAK_SERVER_URL: str = "https://keycloak.preprod.chapsmind.com"
     KEYCLOAK_REALM: str = "mint-preprod"
     KEYCLOAK_CLIENT_ID: str = "mint-back"
     KEYCLOAK_CLIENT_SECRET: Optional[str] = None
-    KEYCLOAK_CALLBACK_URI: str = "http://localhost:8000/callback"
+    KEYCLOAK_CALLBACK_URI: str = "http://localhost/callback"
     KEYCLOAK_ADMIN_CLIENT_ID: str = "admin-cli"
     KEYCLOAK_ADMIN_CLIENT_SECRET: str = "admin-cli-secret"
 

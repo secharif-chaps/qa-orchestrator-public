@@ -1,5 +1,5 @@
 # Build stage
-FROM node:22.20.0-alpine AS build-stage
+FROM node:24 AS build-stage
 
 WORKDIR /app
 
@@ -25,7 +25,7 @@ COPY . .
 RUN yarn build-only
 
 # Production stage
-FROM nginx:1.29
+FROM nginx:1.29-alpine
 
 # Copy built app to nginx
 COPY --chown=nginx:nginx --from=build-stage /app/dist /usr/share/nginx/html

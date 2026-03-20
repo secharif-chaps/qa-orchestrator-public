@@ -4,35 +4,17 @@ Vue 3 frontend application for ChapsMind, part of the [monorepo](../../README.md
 
 ## Tech Stack
 
-### Frontend Framework
-
-- **Vue 3** - Composition API with `<script setup lang="ts">`
-- **TypeScript 5.8** - Type-safe development
-- **Tailwind CSS v4** - Utility-first CSS framework
-- **Vite 7** - Build tool
-
-### UI Components
-
-- **Vuellar** (`@owlint/feathers-vue`) - ChapsVision Design System
-- **Reka UI** - Headless UI primitives for accessibility
-- Custom components in `src/components/ui/`
-
-### State Management & Data Fetching
-
-- **Pinia 3** - Global state management
-- **Pinia Colada** - Async state management and data fetching with caching
-
-### Routing & Internationalization
-
-- **Vue Router** - Client-side routing with file-based routing (`unplugin-vue-router`)
-- **Vue I18n** - Internationalization (English/French)
-
-### Authentication & Authorization
-
-- **Keycloak** - Identity and access management
-- **Keycloak Organizations** - Multi-tenant organization support
-- **OIDC Client** - OpenID Connect authentication
-- Role-based permissions extracted from JWT tokens
+- **Vue 3** — Composition API with `<script setup lang="ts">`
+- **TypeScript 5.8**
+- **Tailwind CSS v4**
+- **Vite 7**
+- **Vuellar** (`@owlint/feathers-vue`) — ChapsVision Design System
+- **Reka UI** — Headless UI primitives
+- **Pinia 3** — State management
+- **Pinia Colada** — Data fetching with caching
+- **Vue Router** — File-based routing (`unplugin-vue-router`)
+- **Vue I18n** — Internationalization (English/French)
+- **Keycloak** — OIDC authentication with organization-based multi-tenancy
 
 ## Project Structure
 
@@ -58,18 +40,19 @@ src/
 
 ## Development
 
+The frontend runs inside Docker (via `docker compose`). No local Node.js required for day-to-day development.
+
 ### Task Commands
 
 From the **monorepo root**:
 
 ```bash
-task front:dev          # Start dev server with HMR
-task front:lint         # Lint and fix
+task front:lint         # ESLint + Prettier + Stylelint
 task front:typecheck    # TypeScript type checking
-task front:build        # Production build
+task front:test         # Run Vitest tests
 ```
 
-From this directory:
+From this directory (`apps/front/`):
 
 | Command               | Description                                   |
 | --------------------- | --------------------------------------------- |
@@ -78,9 +61,9 @@ From this directory:
 | `task lint:prettier`  | Prettier only (check mode)                    |
 | `task lint:stylelint` | Stylelint only                                |
 | `task lint:fix`       | Auto-fix all linting issues                   |
-| `task lint:staged`    | Lint only staged files (via lint-staged)      |
-| `task hook:install`   | Install git hooks (pre-commit)                |
+| `task typecheck`      | TypeScript type checking                      |
+| `task test`           | Run Vitest tests                              |
 
 ### CI Pipeline
 
-The GitLab CI runs the same 3 linters on every push and every MR. A failing linter blocks the pipeline.
+The GitLab CI runs the same linters on every push and every MR. A failing linter blocks the pipeline.

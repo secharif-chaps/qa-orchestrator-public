@@ -242,7 +242,7 @@
     {
       "label": "Tunnel: Show URL",
       "type": "shell",
-      "command": "curl -s http://localhost:8000/api/dev/tunnel-url | python3 -m json.tool || docker compose --env-file ../.env -f compose.yaml -f compose.local.yaml logs tunnel --tail 5",
+      "command": "curl -s http://localhost/api/dev/tunnel-url | python3 -m json.tool || docker compose --env-file ../.env -f compose.yaml -f compose.local.yaml logs tunnel --tail 5",
       "options": { "cwd": "${workspaceFolder}/infra" },
       "presentation": { "reveal": "always", "panel": "shared" },
       "problemMatcher": []

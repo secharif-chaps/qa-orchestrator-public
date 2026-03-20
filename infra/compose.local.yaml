@@ -1,17 +1,104 @@
+# ─── Local dev anchors ─────────────────────────────────
+
+x-local-keycloak: &local-keycloak
+  KEYCLOAK_SERVER_URL: http://keycloak:8080
+  KEYCLOAK_REALM: chapsmind
+  KEYCLOAK_CLIENT_ID: chapsmind-screen-back
+  KEYCLOAK_CLIENT_SECRET: chapsmind-screen-back-secret
+
+x-local-keycloak-admin: &local-keycloak-admin
+  KEYCLOAK_ADMIN_CLIENT_ID: chapsmind-admin
+  KEYCLOAK_ADMIN_CLIENT_SECRET: chapsmind-admin-secret
+
+x-local-internal-auth: &local-internal-auth
+  INTERNAL_JWT_SECRET: "local-dev-internal-jwt-secret-32chars"
+  INTERNAL_ALLOWED_IPS: "172.16.0.0/12,192.168.0.0/16,10.0.0.0/8"
+
+# ─── Services ──────────────────────────────────────────
+
 services:
-  # LocalTunnel for Dify callbacks (local dev only)
-  # Creates a public URL that Dify can call back to your local backend
-  # No account or setup required - just works!
-  #
-  # START ON DEMAND: docker compose --profile tunnel up -d tunnel
-  # STOP: docker compose --profile tunnel stop tunnel
-  #
-  # Optional: Set TUNNEL_SUBDOMAIN in infra/.env for a consistent URL
-  # Example: TUNNEL_SUBDOMAIN=chapsmind-dev-yourname
-  #
+  # Nginx Reverse Proxy (local dev only — staging uses Traefik)
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./files/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on: [screen, global-service, keycloak, frontend]
+
+  # Frontend with hot-reload for local development
+  frontend:
+    image: node:24
+    working_dir: /app
+    entrypoint: /bin/sh -c "corepack enable && yarn dev --host 0.0.0.0 --port 3000"
+    volumes:
+      - ../apps/front:/app
+
+  # Override screen backend to use local code
+  screen:
+    image: chapsmind-screen:local
+    build:
+      context: ../apps/screen
+      dockerfile: Dockerfile
+    depends_on:
+      db: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+      keycloak: { condition: service_started }
+    environment:
+      <<: [*local-keycloak, *local-keycloak-admin, *local-internal-auth]
+      CORS_ORIGIN: http://localhost
+      BACKEND_BASE_URL: http://localhost/api
+      TUNNEL_URL_FILE: /tunnel/url
+      LOG_LEVEL: INFO
+      SYSTRAN_API_KEY: ${SYSTRAN_API_KEY:-}
+    volumes:
+      - ../apps/screen/app:/app/app
+      - ../apps/screen/alembic:/app/alembic
+      - ../apps/screen/alembic.ini:/app/alembic.ini
+      - ../apps/screen/scripts:/app/scripts
+      - ../apps/screen/tests:/app/tests
+      - tunnel_url:/tunnel:ro
+
+  # Override celery worker to use local code
+  screen_celery_worker:
+    image: chapsmind-screen:local
+    build:
+      context: ../apps/screen
+      dockerfile: Dockerfile
+    environment:
+      BACKEND_BASE_URL: http://localhost/api
+      TUNNEL_URL_FILE: /tunnel/url
+      LOG_LEVEL: INFO
+    volumes:
+      - ../apps/screen/app:/app/app
+      - ../apps/screen/alembic:/app/alembic
+      - tunnel_url:/tunnel:ro
+
+  # Global Service — local build with hot-reload
+  global-service:
+    build:
+      context: ../apps/global-service
+      dockerfile: Dockerfile
+    image: chapsmind-global-service:local
+    depends_on:
+      db: { condition: service_healthy }
+      screen: { condition: service_started }
+    environment:
+      <<: [*local-keycloak, *local-keycloak-admin, *local-internal-auth]
+      CORS_ORIGIN: http://localhost
+    volumes:
+      - ../apps/global-service/app:/app/app
+      - ../apps/global-service/protos:/app/protos
+      - ../apps/global-service/alembic:/app/alembic
+      - ../apps/global-service/alembic.ini:/app/alembic.ini
+      - ../apps/global-service/tests:/app/tests
+      - ../apps/global-service/scripts:/app/scripts
+
+  # LocalTunnel for Dify callbacks (on-demand with --profile tunnel)
   tunnel:
     profiles:
-      - tunnel  # Only start on demand with --profile tunnel
+      - tunnel
     image: node:20-alpine
     entrypoint: ["/bin/sh", "-c"]
     command:
@@ -28,10 +115,8 @@ services:
 
         echo "Starting localtunnel to screen:8000..."
 
-        # Start localtunnel and capture output
         lt --host https://localtunnel.me --port 8000 --local-host screen $$SUBDOMAIN_ARG 2>&1 | while read line; do
           echo "$$line"
-          # Extract URL from output (format: "your url is: https://xxx.loca.lt")
           URL=$$(echo "$$line" | grep -oE 'https://[a-zA-Z0-9-]+\.loca\.lt' | head -1)
           if [ -n "$$URL" ] && [ ! -f /tunnel/url ]; then
             echo ""
@@ -46,166 +131,37 @@ services:
     volumes:
       - tunnel_url:/tunnel
     depends_on:
-      screen:
-        condition: service_started
-    networks:
-      - chapsmind-network
+      screen: { condition: service_started }
     restart: unless-stopped
 
-  # Disable nginx for local development
-  nginx:
-    profiles:
-      - production  # Only run in production profile
-
-  # Frontend dev server with hot-reload (Vite HMR)
-  frontend:
-    build:
-      context: ../apps/front
-      dockerfile: Dockerfile.dev
-      secrets:
-        - OWLINT_REGISTRY_URL
-        - OWLINT_DEPLOY_KEY
-    image: chapsmind-front:local-dev
+  # Keycloak (local dev only — staging uses shared Keycloak)
+  keycloak:
+    image: registry.git.mediaspeech.com/chapsmind/keycloak-theme/keycloak-chapsmind:latest
+    restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "8080:8080"
     environment:
-      VITE_BASE_URL: http://localhost:8000/api
-      VITE_API_URL: http://localhost:8000/api
-      VITE_KEYCLOAK_URL: http://localhost:8080
-      VITE_KEYCLOAK_REALM: chapsmind
-      VITE_KEYCLOAK_CLIENT_ID: chapsmind-front
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_USERNAME: ${POSTGRES_USER:-postgres}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_HTTP_ENABLED: "true"
+      KC_FEATURES: organization
+    command: start-dev --import-realm
     volumes:
-      - ../apps/front/src:/app/src
-      - ../apps/front/public:/app/public
-      - ../apps/front/index.html:/app/index.html
-      - ../apps/front/vite.config.ts:/app/vite.config.ts
-      - ../apps/front/tsconfig.json:/app/tsconfig.json
-      - ../apps/front/tsconfig.app.json:/app/tsconfig.app.json
-
-  # Override screen backend to use local code and expose directly
-  screen:
-    build:
-      context: ../apps/screen
-      dockerfile: Dockerfile
-    image: chapsmind-screen:local
-    ports:
-      - "8000:8000"  # Expose backend directly
+      - ./files/realm-chapsmind.json:/opt/keycloak/data/import/realm-chapsmind.json
     depends_on:
-      db:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-      keycloak:
-        condition: service_started
-    environment:
-      # Override CORS to allow frontend on port 3000
-      CORS_ORIGIN: http://localhost:3000
-      BACKEND_BASE_URL: http://localhost:8000/api
-      # Tunnel URL file location (for Dify callbacks via localtunnel)
-      TUNNEL_URL_FILE: /tunnel/url
-      LOG_LEVEL: INFO  # Use INFO level for local development
-      # Local Keycloak settings
-      KEYCLOAK_SERVER_URL: http://keycloak:8080
-      KEYCLOAK_REALM: chapsmind
-      KEYCLOAK_CLIENT_ID: chapsmind-screen-back
-      KEYCLOAK_CLIENT_SECRET: chapsmind-screen-back-secret
-      KEYCLOAK_ADMIN_CLIENT_ID: chapsmind-admin
-      KEYCLOAK_ADMIN_CLIENT_SECRET: chapsmind-admin-secret
-      # Translation API (runs in backend via BackgroundTasks)
-      SYSTRAN_API_KEY: ${SYSTRAN_API_KEY}
-      # Internal JWT for gateway communication (local dev secret)
-      INTERNAL_JWT_SECRET: "local-dev-internal-jwt-secret-32chars"
-      # Allow Docker network IPs for internal auth
-      INTERNAL_ALLOWED_IPS: "172.16.0.0/12,192.168.0.0/16,10.0.0.0/8"
-      # Encryption KEY
-      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
-    volumes:
-      # Mount local code for hot-reload
-      - ../apps/screen/app:/app/app
-      - ../apps/screen/alembic:/app/alembic
-      - ../apps/screen/alembic.ini:/app/alembic.ini
-      - ../apps/screen/scripts:/app/scripts
-      # Mount tests directory for running tests in Docker
-      - ../apps/screen/tests:/app/tests
-      # Tunnel URL shared volume (for Dify callbacks)
-      - tunnel_url:/tunnel:ro
+      db: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080;echo -e 'GET /health/ready HTTP/1.1\\r\\nhost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3;if [ $? -eq 0 ]; then echo 'Healthcheck Successful';exit 0;else echo 'Healthcheck Failed';exit 1;fi;"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
-  # Override celery worker to use local code
-  screen_celery_worker:
-    build:
-      context: ../apps/screen
-      dockerfile: Dockerfile
-    image: chapsmind-screen:local
-    environment:
-      BACKEND_BASE_URL: http://localhost:8000/api
-      # Tunnel URL file location (for Dify callbacks via localtunnel)
-      TUNNEL_URL_FILE: /tunnel/url
-      LOG_LEVEL: INFO  # Use INFO level for local development
-    volumes:
-      # Mount local code for hot-reload
-      - ../apps/screen/app:/app/app
-      - ../apps/screen/alembic:/app/alembic
-      # Tunnel URL shared volume (for Dify callbacks)
-      - tunnel_url:/tunnel:ro
-
-  # Override flower to use local code
-  screen_celery_flower:
-    build:
-      context: ../apps/screen
-      dockerfile: Dockerfile
-    image: chapsmind-screen:local
-
-  # Global Service (Gateway) - Proxies /api requests to backend monolith
-  global-service:
-    build:
-      context: ../apps/global-service
-      dockerfile: Dockerfile
-    image: global-service:local
-    ports:
-      - "8001:8001"      # REST API (Gateway)
-      - "50051:50051"    # gRPC server
-    depends_on:
-      db:
-        condition: service_healthy
-      screen:
-        condition: service_started
-    environment:
-      LOG_LEVEL: INFO
-      SERVICE_NAME: global-service
-      API_HOST: "0.0.0.0"
-      API_PORT: 8001
-      GRPC_PORT: 50051
-      # Gateway proxies to the screen backend (internal Docker network)
-      BACKEND_BASE_URL: http://screen:8000
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/global_db
-      CORS_ORIGIN: http://localhost:3000,http://localhost:8001
-      # Local Keycloak settings
-      KEYCLOAK_SERVER_URL: http://keycloak:8080
-      KEYCLOAK_REALM: chapsmind
-      KEYCLOAK_CLIENT_ID: chapsmind-screen-back
-      KEYCLOAK_CLIENT_SECRET: chapsmind-screen-back-secret
-      KEYCLOAK_ADMIN_CLIENT_ID: chapsmind-admin
-      KEYCLOAK_ADMIN_CLIENT_SECRET: chapsmind-admin-secret
-      # Internal JWT for service-to-service communication (same as backend)
-      INTERNAL_JWT_SECRET: "local-dev-internal-jwt-secret-32chars"
-    volumes:
-      # Hot reload
-      - ../apps/global-service/app:/app/app
-      - ../apps/global-service/protos:/app/protos
-      - ../apps/global-service/alembic:/app/alembic
-      - ../apps/global-service/alembic.ini:/app/alembic.ini
-      - ../apps/global-service/tests:/app/tests
-      - ../apps/global-service/scripts:/app/scripts
-    networks:
-      - chapsmind-network
-
-secrets:
-  OWLINT_REGISTRY_URL:
-    environment: OWLINT_REGISTRY_URL
-  OWLINT_DEPLOY_KEY:
-    environment: OWLINT_DEPLOY_KEY
-
-# Volumes for local development
 volumes:
   tunnel_url:
-    # Shared volume for localtunnel URL between tunnel and backend services

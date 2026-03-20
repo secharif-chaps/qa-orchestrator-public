@@ -28,8 +28,8 @@ That's it. Everything else (Node, Python, Yarn, Poetry, Ruff, Lefthook, Taskfile
    ```
 
 5. Open the app:
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000/api
+   - Frontend: http://localhost
+   - Backend API: http://localhost/api
    - Flower (Celery): http://localhost:5555
    - RabbitMQ: http://localhost:15672
 

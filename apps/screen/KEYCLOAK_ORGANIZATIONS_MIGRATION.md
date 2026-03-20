@@ -315,10 +315,10 @@ Authentication: Keycloak JWT-only (no database permission checks)
 
 ```bash
 # Get current organization
-curl -H "Authorization: Bearer $TOKEN" http://localhost:8000/api/organizations/current
+curl -H "Authorization: Bearer $TOKEN" http://localhost/api/organizations/current
 
 # Get organization activities
-curl -H "Authorization: Bearer $TOKEN" http://localhost:8000/api/organizations/activities
+curl -H "Authorization: Bearer $TOKEN" http://localhost/api/organizations/activities
 ```
 
 ### Expected JWT Token Structure

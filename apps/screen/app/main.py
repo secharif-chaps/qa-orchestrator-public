@@ -29,14 +29,9 @@ logger.info(f"Backend Base URL: {settings.BACKEND_BASE_URL}")
 # Allow common development origins for local testing
 development_origins = [
     settings.CORS_ORIGIN,
-    "http://localhost:3000",
-    "http://localhost:5173",  # Vite dev server default
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
+    "http://localhost",
+    "http://127.0.0.1",
     "http://10.0.1.2",       # Direct access to preprod server
-    "http://10.0.1.2:3000",
-    "http://10.0.1.2:5173",
-    "http://10.0.1.2:8000",  # Backend on preprod server
 ]
 
 app.add_middleware(

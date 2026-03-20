@@ -5,69 +5,30 @@ includes:
   front:
     taskfile: apps/front/Taskfile.yaml
     dir: apps/front
+  screen:
+    taskfile: apps/screen/Taskfile.yaml
+
+dotenv: ['.env']
 
 vars:
-  COMPOSE: docker compose --env-file .env -f infra/compose.yaml -f infra/compose.local.yaml
+  COMPOSE: docker compose
 
 tasks:
   # ─── Setup ─────────────────────────────────────────
   init:
-    desc: First-time setup — copy env, configure yarn, install deps, start services, migrate
-    cmds:
-      - test -f .env || cp .env.example .env && echo "Created .env from .env.example"
-      # Auto-configure TUNNEL_SUBDOMAIN based on system username
-      - |
-        if ! grep -q '^TUNNEL_SUBDOMAIN=' .env 2>/dev/null; then
-          USERNAME=$(whoami)
-          echo "" >> .env
-          echo "# ─── Tunnel (Dify callbacks in local dev) ────────" >> .env
-          echo "TUNNEL_SUBDOMAIN=chapsmind-dev-${USERNAME}" >> .env
-          echo "Auto-configured TUNNEL_SUBDOMAIN=chapsmind-dev-${USERNAME}"
-        elif grep -q 'TUNNEL_SUBDOMAIN=chapsmind-dev-changeme' .env; then
-          USERNAME=$(whoami)
-          sed -i "s/TUNNEL_SUBDOMAIN=chapsmind-dev-changeme/TUNNEL_SUBDOMAIN=chapsmind-dev-${USERNAME}/" .env
-          echo "Auto-configured TUNNEL_SUBDOMAIN=chapsmind-dev-${USERNAME}"
-        fi
-      - task: front:setup-yarnrc
-      - cd apps/front && yarn install
-      # Build screen image first to avoid parallel build conflicts
-      - "{{.COMPOSE}} build screen"
-      - "{{.COMPOSE}} --profile frontend up -d --build"
-      - echo ""
-      - echo "Ready! Run 'task' for available commands."
+    desc: "One-shot first-time setup: env, deps, services, keycloak, migrations"
+    silent: true
+    cmd: bash infra/scripts/init.sh
 
-  front:setup-yarnrc:
-    desc: Create or update apps/front/.yarnrc.yml from template (interactive)
-    cmds:
-      - |
-        if [ -f apps/front/.yarnrc.yml ] && ! grep -q '<OWLINT_' apps/front/.yarnrc.yml; then
-          echo "apps/front/.yarnrc.yml already configured, skipping."
-          exit 0
-        fi
-        echo "Configuring apps/front/.yarnrc.yml from template..."
-        echo "(Credentials available in Passbolt — search for 'CHAPSMIND_VUELLAR')"
-        echo ""
-        if [ -t 0 ]; then
-          read -rp "OWLINT_REGISTRY_URL: " REGISTRY_URL
-          read -rp "OWLINT_DEPLOY_KEY: " DEPLOY_KEY
-        elif [ -n "$OWLINT_REGISTRY_URL" ] && [ -n "$OWLINT_DEPLOY_KEY" ]; then
-          REGISTRY_URL="$OWLINT_REGISTRY_URL"
-          DEPLOY_KEY="$OWLINT_DEPLOY_KEY"
-        else
-          echo "Error: not interactive and OWLINT_REGISTRY_URL / OWLINT_DEPLOY_KEY env vars not set"
-          exit 1
-        fi
-        sed -e "s|<OWLINT_REGISTRY_URL>|${REGISTRY_URL}|g" \
-            -e "s|<OWLINT_DEPLOY_KEY>|${DEPLOY_KEY}|g" \
-            apps/front/.yarnrc.dist.yml > apps/front/.yarnrc.yml
-        echo "Created apps/front/.yarnrc.yml"
+  doctor:
+    desc: Check that all prerequisites are installed and configured
+    silent: true
+    cmd: bash infra/scripts/doctor.sh
 
   # ─── Infrastructure ────────────────────────────────
   up:
     desc: Start all services (docker compose up)
     cmds:
-      # Build screen image first to avoid parallel build conflicts
-      # (screen, screen_celery_worker, screen_celery_flower share the same image)
       - "{{.COMPOSE}} build screen"
       - "{{.COMPOSE}} up -d --build"
 
@@ -104,34 +65,6 @@ tasks:
     desc: Open psql shell
     cmd: "{{.COMPOSE}} exec db psql -U postgres -d chapsmind_db"
 
-  # ─── Frontend (tasks not covered by include) ──────
-  front:dev:
-    desc: Start frontend dev server (HMR)
-    dir: apps/front
-    cmd: yarn dev
-
-  front:build:
-    desc: Build frontend for production
-    dir: apps/front
-    cmd: yarn build
-
-  # ─── Screen Backend ───────────────────────────────
-  screen:lint:
-    desc: Lint screen backend code (ruff)
-    cmd: "{{.COMPOSE}} exec screen ruff check ."
-
-  screen:format:
-    desc: Format screen backend code (ruff)
-    cmd: "{{.COMPOSE}} exec screen ruff format ."
-
-  screen:test:
-    desc: Run screen backend tests
-    cmd: "{{.COMPOSE}} exec screen pytest"
-
-  screen:shell:
-    desc: Open bash shell in screen backend container
-    cmd: "{{.COMPOSE}} exec screen bash"
-
   # ─── Tunnel (Dify callbacks) ─────────────────────
   tunnel:
     desc: Start LocalTunnel for Dify callbacks
@@ -146,25 +79,11 @@ tasks:
 
   tunnel:url:
     desc: Show current tunnel URL
-    cmd: "curl -s http://localhost:8000/api/dev/tunnel-url | python3 -m json.tool || {{.COMPOSE}} logs tunnel --tail 5"
+    cmd: "curl -s http://localhost/api/dev/tunnel-url | python3 -m json.tool || {{.COMPOSE}} logs tunnel --tail 5"
 
   tunnel:logs:
     desc: Follow tunnel logs
     cmd: "{{.COMPOSE}} logs -f tunnel"
-
-  # ─── Sync (transitional — pull from legacy repos) ──
-  sync:
-    desc: Pull latest commits from all legacy repos
-    cmd: bash scripts/subtree-sync.sh
-
-  sync:module:
-    desc: "Pull latest from a legacy repo (e.g. task sync:module -- front)"
-    cmd: bash scripts/subtree-sync.sh {{.CLI_ARGS}}
-
-  # ─── Git Hooks ─────────────────────────────────────
-  hooks:install:
-    desc: Install git hooks (husky)
-    cmd: yarn install
 
   # ─── Skills ────────────────────────────────────────
   skills:validate:

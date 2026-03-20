@@ -35,5 +35,5 @@ echo "========================================"
 echo ""
 
 # Execute the Python migration script inside global-service container
-docker compose -f compose.yaml -f compose.local.yaml exec \
+docker compose exec \
     global-service python scripts/migrate_organization_data.py "$@"

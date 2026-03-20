@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     # API settings
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8001
-    BACKEND_BASE_URL: str = "http://localhost:8001"  # Default for local dev, override with env var
+    BACKEND_BASE_URL: str = "http://screen:8000"  # Internal Docker service name for screen backend
 
     # GRPC settings
     GRPC_PORT: int = 50051
@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/global_db"
     
     # CORS settings (comma-separated list of allowed origins)
-    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173"
+    CORS_ORIGINS: str = "http://localhost"
     
     # Keycloak settings
     
@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     KEYCLOAK_REALM: str = "mint-preprod"
     KEYCLOAK_CLIENT_ID: str = "mint-back"
     KEYCLOAK_CLIENT_SECRET: str | None = None
-    KEYCLOAK_CALLBACK_URI: str = "http://localhost:8001/callback"
+    KEYCLOAK_CALLBACK_URI: str = "http://localhost/callback"
     KEYCLOAK_ADMIN_CLIENT_ID: str = "admin-cli"
     KEYCLOAK_ADMIN_CLIENT_SECRET: str = "admin-cli-secret"
     
