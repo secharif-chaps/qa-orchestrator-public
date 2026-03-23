@@ -1,5 +1,3 @@
-import { config } from '@target/config'
-
 interface ClarityFunction {
   (...args: unknown[]): void
   q?: unknown[][]
@@ -12,9 +10,8 @@ interface WindowWithClarity extends Window {
 
 export default {
   install() {
-    const clarityKey = config.clarityKey
+    const clarityKey = import.meta.env.VITE_APP_CLARITY_PROJECT_ID || ''
 
-    // Only load Clarity if the key is provided
     if (!clarityKey) {
       return
     }

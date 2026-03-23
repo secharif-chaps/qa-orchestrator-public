@@ -9,7 +9,7 @@ interface ImportMetaEnv {
   readonly OIDC_PKCE_METHOD: string
   readonly OIDC_LOGOUT_REDIRECT_URI: string
   readonly VITE_ENABLE_PINIA_COLADA_DEVTOOL: string
-  readonly VITE_CLARITY_KEY: string
+  readonly VITE_APP_CLARITY_PROJECT_ID: string
 }
 
 interface ImportMeta {

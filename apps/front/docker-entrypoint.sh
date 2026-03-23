@@ -2,25 +2,30 @@
 # Runtime injection of environment variables into Vite-built JS files.
 # Replaces __VITE_xxx__ placeholders with actual env var values at container startup.
 # This allows a single Docker image to be deployed across all environments.
+#
+# All env vars starting with VITE_ are automatically injected.
+# The corresponding placeholder in the built JS must be __VITE_xxx__.
 
 set -e
 
 HTML_DIR="/usr/share/nginx/html"
 
-# List of VITE_ variables to inject
-VARS="VITE_BASE_URL VITE_API_URL VITE_KEYCLOAK_REALM VITE_KEYCLOAK_CLIENT_ID VITE_KEYCLOAK_URL"
-
-for var in $VARS; do
-  value=$(eval echo "\$$var")
+# Auto-discover all VITE_* environment variables
+env | grep '^VITE_' | while IFS='=' read -r var value; do
   placeholder="__${var}__"
 
   if [ -z "$value" ]; then
-    echo "⚠️  $var is not set — placeholder $placeholder will remain in JS files"
+    echo "⚠️  $var is set but empty — placeholder $placeholder will remain"
     continue
   fi
 
-  # Replace in all JS and HTML files
-  find "$HTML_DIR" -type f \( -name '*.js' -o -name '*.html' \) -exec sed -i "s|${placeholder}|${value}|g" {} +
+  # Escape sed special characters in value: \ & | "
+  escaped_value=$(printf '%s' "$value" | sed 's/[\\&|"]/\\&/g')
+
+  # Replace placeholder AND surrounding quotes if present
+  # Handles both: "__VITE_FOO__" → "value" and __VITE_FOO__ → value
+  find "$HTML_DIR" -type f \( -name '*.js' -o -name '*.html' \) \
+    -exec sed -i "s|\"${placeholder}\"|\"${escaped_value}\"|g; s|${placeholder}|${escaped_value}|g" {} +
   echo "✅ $var → $value"
 done
 

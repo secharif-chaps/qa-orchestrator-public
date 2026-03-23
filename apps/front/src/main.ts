@@ -5,7 +5,7 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { createApp } from 'vue'
 
 import '@/assets/main.css'
-import clarityPlugin from '@target/plugins/clarity.client'
+import clarityPlugin from '@/plugins/clarity.client'
 import sanitizeHtmlPlugin from '@target/plugins/sanitizeHtml.client'
 import App from './App.vue'
 import i18n from './i18n'
