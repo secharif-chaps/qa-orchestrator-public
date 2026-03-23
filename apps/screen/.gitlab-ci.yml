@@ -18,6 +18,7 @@ variables:
 # ─── Lint Stage ────────────────────────────────────────
 screen:poetry-check:
   stage: lint
+  needs: []
   image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
   script:
     - cd apps/screen && poetry check && poetry check --lock
@@ -25,6 +26,7 @@ screen:poetry-check:
 
 screen:lint:
   stage: lint
+  needs: []
   image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
   script:
     - cd apps/screen && ruff check app/
@@ -44,6 +46,7 @@ screen:lint:
 # Unit tests — fast, no external dependencies, must pass
 screen:test:unit:
   <<: *screen-test-base
+  needs: []
   script:
     - pytest tests/unit/ tests/test_worldcheck/ -v --cov=app --cov-report=term-missing --cov-report=xml:coverage.xml --junitxml=report.xml
   artifacts:
@@ -58,6 +61,7 @@ screen:test:unit:
 # Integration tests — require Postgres, slower
 screen:test:integration:
   <<: *screen-test-base
+  needs: []
   services:
     - name: postgres:15-alpine
       alias: postgres
@@ -91,6 +95,7 @@ screen:test:integration:
 screen:docker-build:
   stage: build
   extends: .screen-docker-build
+  needs: [screen:lint, screen:poetry-check, screen:test:unit, screen:test:integration]
   variables:
     IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
   rules:
@@ -104,6 +109,7 @@ screen:docker-build:
 screen:publish:
   stage: publish
   extends: .screen-docker-build
+  needs: [screen:docker-build]
   variables:
     IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
   before_script:

@@ -35,16 +35,17 @@ include:
 # SAST and Secret Detection templates default to stage: test which doesn't exist
 sast:
   stage: lint
-  allow_failure: true
+  needs: []
 
 secret_detection:
   stage: lint
-  allow_failure: true
+  needs: []
 
 # ─── Commit message lint ──────────────────────────────
 # ─── Skills validation ──────────────────────────────
 main:validate-skills:
   stage: lint
+  needs: []
   image: node:22-alpine
   rules:
     - changes:
@@ -54,10 +55,10 @@ main:validate-skills:
 
 main:commitlint:
   stage: lint
+  needs: []
   image:
     name: commitlint/commitlint:latest
     entrypoint: [""]
-  allow_failure: true
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
@@ -69,6 +70,7 @@ main:commitlint:
 # Only runs on MRs (requires CI_MERGE_REQUEST_IID)
 main:assign-reviewers:
   stage: lint
+  needs: []
   image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
   allow_failure: true
   rules:
@@ -81,6 +83,7 @@ main:assign-reviewers:
 # ─── Scheduled maintenance jobs ──────────────────────
 main:update-codeowners:
   stage: maintenance
+  needs: []
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
   image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest

@@ -12,6 +12,7 @@
 
 infra:validate:
   stage: lint
+  needs: []
   <<: *infra-changes
   image: docker:29-cli
   script:

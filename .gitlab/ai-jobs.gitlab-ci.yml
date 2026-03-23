@@ -50,6 +50,7 @@ ai:review-mr:
 # Pass AGENT_ISSUE as a variable (e.g. TAR-1234).
 ai:dev-agent:
   stage: build
+  needs: []
   image: ${CI_REGISTRY}/chapsmind/ci-images/agent:latest
   # One resource group per ticket: prevents duplicate runs for the same issue
   # while allowing parallel execution across different tickets.
@@ -102,6 +103,7 @@ ai:dev-agent:
 # a dev-agent pipeline for each one.
 ai:ticket-scanner:
   stage: maintenance
+  needs: []
   image: ${CI_REGISTRY}/chapsmind/ci-images/agent:latest
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule" && $SCAN_JIRA_TICKETS == "true"
