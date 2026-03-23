@@ -39,6 +39,7 @@ export const useAddMessage = defineMutation(() => {
         createdAt: new Date().toISOString(),
       }
       conversationStore.addOrUpdateMessage(pendingMessage)
+      conversationStore.setWaitingForAI(true)
       return { pendingMessageId: pendingMessage.id }
     },
     onSettled(_, __, { conversationId }) {

@@ -8,15 +8,28 @@
     :data-testid="messageTestId"
   >
     <!-- SYSTEM ERROR MESSAGE -->
-    <InformationMessage
-      v-if="isSystemErrorMessage"
-      width="full"
-      :fill="false"
-      :is-chat-message="true"
-      :color="isCancelledMessage ? 'info' : 'error'"
-      :title="systemErrorTitle"
-      :description="systemErrorDescription"
-    />
+    <div v-if="isSystemErrorMessage" class="flex w-full flex-col gap-2">
+      <InformationMessage
+        width="full"
+        :fill="false"
+        :is-chat-message="true"
+        :color="isCancelledMessage ? 'info' : 'error'"
+        :title="systemErrorTitle"
+        :description="systemErrorDescription"
+      />
+      <div v-if="isTimedOutMessage" class="flex justify-end">
+        <Button
+          variant="tertiary"
+          size="sm"
+          icon="fa-rotate-right"
+          :loading="isRetryingTimeout"
+          :disabled="isRetryingTimeout"
+          @click="handleTimeoutRetry"
+        >
+          {{ t('common.button.retry') }}
+        </Button>
+      </div>
+    </div>
 
     <!-- SYSTEM MESSAGE (when not grouped - handled by parent for grouping) -->
     <CollapsibleSystemMessage
@@ -127,7 +140,7 @@
 
 <script setup lang="ts">
 import { Badge, Button, OPopper } from '@owlint/feathers-vue'
-import { useRetryMessage } from '@target/api/mutations/conversation'
+import { useAddMessage, useRetryMessage } from '@target/api/mutations/conversation'
 import chapse_head from '@target/assets/images/chapse_head.svg'
 import { useChatDateDisplay } from '@target/composables/useChatDateDisplay'
 import { useMarkdown } from '@target/composables/useMarkdown'
@@ -160,6 +173,7 @@ const conversationStore = useConversationStore()
 const { getContextualDate, getFullDateTime } = useChatDateDisplay()
 
 const { retryMessage, isLoading: isRetrying } = useRetryMessage()
+const { addMessage, isLoading: isRetryingTimeout } = useAddMessage()
 
 // Extract text content from message contents
 const messageContent = computed(() => {
@@ -213,6 +227,29 @@ const messageTestId = computed(() => `message-${message.role}`)
 // Handle system message toggle
 const handleSystemMessageToggle = () => {
   chatStore.toggleMessage(message.id)
+}
+
+// Handle retry after timeout — re-sends the last user message
+const handleTimeoutRetry = () => {
+  if (isRetryingTimeout.value) return
+
+  const conversationId = conversationStore.currentConversation?.id
+  if (!conversationId) return
+
+  const lastUserMessage = [...conversationStore.messages]
+    .slice(
+      0,
+      conversationStore.messages.findIndex((m) => m.id === message.id),
+    )
+    .reverse()
+    .find((m) => m.role === MessageRole.USER)
+
+  if (!lastUserMessage) return
+
+  const content = lastUserMessage.contents?.[0] as { content: string } | undefined
+  if (!content?.content) return
+
+  addMessage({ conversationId, message: content.content })
 }
 
 // Handle retry action

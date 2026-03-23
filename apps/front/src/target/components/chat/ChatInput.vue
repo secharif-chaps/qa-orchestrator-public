@@ -13,6 +13,18 @@
       @keydown="handleKeyDown"
     />
     <Button
+      v-if="isWaitingForAI"
+      variant="tertiary"
+      class="absolute right-3 bottom-3"
+      :aria-label="$t('watch_files.chat.input.cancel_button')"
+      :title="$t('watch_files.chat.input.cancel_button')"
+      rounded
+      tabindex="2"
+      icon="fa-circle-stop"
+      @click="emit('cancel')"
+    />
+    <Button
+      v-else
       :variant="disabled ? 'secondary' : 'tertiary'"
       class="absolute right-3 bottom-3"
       :disabled="disabled || !canSendMessage"
@@ -35,13 +47,15 @@ const { t } = useI18n()
 
 interface Props {
   disabled?: boolean
+  isWaitingForAI?: boolean
   placeholder?: string
 }
 
-const { disabled = false, placeholder = null } = defineProps<Props>()
+const { disabled = false, isWaitingForAI = false, placeholder = null } = defineProps<Props>()
 
 const emit = defineEmits<{
-  (e: 'send', message: string): void
+  send: [message: string]
+  cancel: []
 }>()
 
 const message = ref('')
@@ -64,7 +78,7 @@ const sendMessage = () => {
 }
 
 const handleKeyDown = (e: KeyboardEvent) => {
-  if (e.key === 'Enter' && !disabled) {
+  if (e.key === 'Enter' && !disabled && !isWaitingForAI) {
     if (e.ctrlKey || e.shiftKey) {
       const textarea = e.target as HTMLTextAreaElement
       const start = textarea.selectionStart

@@ -62,13 +62,7 @@
       </div>
 
       <!-- Typing indicator -->
-      <ChatTypingIndicator
-        v-if="isWaitingForAI"
-        :show-reassurance="showReassurance"
-        :should-cancel="shouldCancel"
-        :is-cancelling="isCancellingConversation"
-        @cancel="handleCancelConversation"
-      />
+      <ChatTypingIndicator v-if="isWaitingForAI" :show-reassurance="showReassurance" />
 
       <!-- New message notification -->
       <div v-if="showNewMessageNotification" class="sticky bottom-4 z-10 flex justify-center">
@@ -87,7 +81,6 @@
 
 <script setup lang="ts">
 import { Button, Icon } from '@owlint/feathers-vue'
-import { useCancelConversation } from '@target/api/mutations/conversation'
 import ChatMessageComponent from '@target/components/chat/ChatMessage.vue'
 import ChatTypingIndicator from '@target/components/chat/ChatTypingIndicator.vue'
 import SystemMessagesSection from '@target/components/chat/SystemMessagesSection.vue'
@@ -104,25 +97,12 @@ interface Props {
   isLoading?: boolean
   onLoadOlderMessages?: () => Promise<Message[]>
   showReassurance?: boolean
-  shouldCancel?: boolean
 }
 
-const {
-  onLoadOlderMessages = undefined,
-  showReassurance = false,
-  shouldCancel = false,
-} = defineProps<Props>()
+const { onLoadOlderMessages = undefined, showReassurance = false } = defineProps<Props>()
 
 const isWaitingForAI = computed(() => conversationStore.isWaitingForAI)
 
-const { cancelConversation, isLoading: isCancellingConversation } = useCancelConversation()
-
-const handleCancelConversation = () => {
-  const conversationId = conversationStore.currentConversation?.id
-  if (conversationId) {
-    cancelConversation(conversationId)
-  }
-}
 const displayMessages = computed<Message[]>(() => conversationStore.messages)
 const hasMoreMessages = computed(() => conversationStore.hasMoreMessages)
 
