@@ -69,7 +69,7 @@ services:
       API_HOST: "0.0.0.0"
       API_PORT: 8001
       GRPC_PORT: 50051
-      BACKEND_BASE_URL: http://screen:8000
+      SCREEN_BASE_URL: http://screen:8000
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${GLOBAL_DB:-global_db}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
 

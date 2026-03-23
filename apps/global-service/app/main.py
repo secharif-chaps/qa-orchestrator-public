@@ -32,7 +32,7 @@ cors_origins = [
     origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()
 ]
 logger.info(f"CORS Origins: {cors_origins}")
-logger.info(f"Backend Base URL: {settings.BACKEND_BASE_URL}")
+logger.info(f"Screen Base URL: {settings.SCREEN_BASE_URL}")
 
 app.add_middleware(
     CORSMiddleware,
@@ -63,7 +63,7 @@ async def startup_event():
 
     # Initialize proxy client (warm up connection pool)
     await get_proxy_client()
-    logger.info(f"🔗 Proxy client initialized → {settings.BACKEND_BASE_URL}")
+    logger.info(f"🔗 Proxy client initialized → {settings.SCREEN_BASE_URL}")
 
 
 @app.on_event("shutdown")
