@@ -10,12 +10,12 @@ target, explore), feature flags are enhancements that can be toggled on/off.
 
 Feature flags are OFF by default - organizations must explicitly enable them.
 """
+
 from alembic import op
 
-
 # revision identifiers, used by Alembic.
-revision = '019'
-down_revision = '018'
+revision = "019"
+down_revision = "018"
 branch_labels = None
 depends_on = None
 

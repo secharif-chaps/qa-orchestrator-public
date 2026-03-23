@@ -6,7 +6,9 @@ coverage
 .vscode
 .idea
 *.md
-.env*
+.env
+.env.local
+.env.*.local
 *.spec.ts
 *.test.ts
 __tests__

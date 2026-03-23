@@ -4,7 +4,6 @@ This module provides schemas for the usage statistics dashboard that displays
 company creation trends, task success rates, and organization breakdowns.
 """
 
-
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -33,9 +32,7 @@ class OrganizationBreakdown(BaseModel):
     organization_id: str = Field(..., description="Keycloak organization UUID")
     organization_name: str = Field(..., description="Organization name from Keycloak")
     companies_count: int = Field(..., ge=0, description="Number of companies created")
-    percentage: float = Field(
-        ..., ge=0, le=100, description="Percentage of total companies"
-    )
+    percentage: float = Field(..., ge=0, le=100, description="Percentage of total companies")
 
 
 class UsageStatsResponse(BaseModel):
@@ -54,18 +51,14 @@ class UsageStatsResponse(BaseModel):
         companies_by_organization: Organization breakdown for table/stacked chart
     """
 
-    companies_count: int = Field(
-        ..., ge=0, description="Total companies created in period"
-    )
+    companies_count: int = Field(..., ge=0, description="Total companies created in period")
     task_success_rate: float | None = Field(
         None,
         ge=0,
         le=100,
         description="Percentage of successful tasks (None if no tasks)",
     )
-    active_users_count: int = Field(
-        ..., ge=0, description="Unique users who created companies"
-    )
+    active_users_count: int = Field(..., ge=0, description="Unique users who created companies")
     companies_over_time: list[TimeSeriesDataPoint] = Field(
         default_factory=list, description="Time series data for line chart"
     )

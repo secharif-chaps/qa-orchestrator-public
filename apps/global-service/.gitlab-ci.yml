@@ -16,6 +16,13 @@ variables:
     - if: $CI_COMMIT_BRANCH
 
 # ─── Lint Stage ────────────────────────────────────────
+global-service:poetry-check:
+  stage: lint
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  script:
+    - cd apps/global-service && poetry check && poetry check --lock
+  <<: *gs-changes
+
 global-service:lint:
   stage: lint
   image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest

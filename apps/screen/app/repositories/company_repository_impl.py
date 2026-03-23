@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from sqlalchemy import asc, desc
 from sqlalchemy.orm import Session
@@ -9,45 +8,51 @@ from app.schemas.pagination import PaginationParams
 
 logger = logging.getLogger(__name__)
 
+
 class SQLAlchemyCompanyRepository:
     """SQLAlchemy implementation of the Company repository"""
-    
+
     def __init__(self, db_session: Session):
         self.db_session = db_session
-    
-    def get_by_id(self, company_id: int) -> Optional[Company]:
+
+    def get_by_id(self, company_id: int) -> Company | None:
         return self.db_session.query(Company).filter(Company.id == company_id).first()
-    
-    def get_by_name(self, name: str) -> Optional[Company]:
+
+    def get_by_name(self, name: str) -> Company | None:
         return self.db_session.query(Company).filter(Company.name == name).first()
-    
+
     def get_all(self) -> list[Company]:
         return self.db_session.query(Company).all()
-    
+
     def create(self, name: str, website: str) -> Company:
         company = Company(name=name, website=website)
         self.db_session.add(company)
         self.db_session.commit()
         self.db_session.refresh(company)
         return company
-    
+
     def update(self, company: Company) -> Company:
         self.db_session.add(company)
         self.db_session.commit()
         self.db_session.refresh(company)
         return company
-    
+
     def delete(self, company_id: int) -> bool:
         company = self.get_by_id(company_id)
         if not company:
             return False
-        
+
         self.db_session.delete(company)
         self.db_session.commit()
         return True
-    
-    
-    def get_paginated(self, pagination_params: PaginationParams, organization_id: Optional[str] = None, name_filter: Optional[str] = None, include_archived: bool = False) -> tuple[list[Company], int]:
+
+    def get_paginated(
+        self,
+        pagination_params: PaginationParams,
+        organization_id: str | None = None,
+        name_filter: str | None = None,
+        include_archived: bool = False,
+    ) -> tuple[list[Company], int]:
         """Get paginated list of companies with sorting and filtering"""
         query = self.db_session.query(Company)
 
@@ -58,11 +63,11 @@ class SQLAlchemyCompanyRepository:
         # Filter by organization if provided
         if organization_id:
             query = query.filter(Company.organization_id == organization_id)
-        
+
         # Filter by name if provided (case-insensitive partial match)
         if name_filter:
             query = query.filter(Company.name.ilike(f"%{name_filter}%"))
-        
+
         # Apply sorting
         if pagination_params.sort:
             sort_field = getattr(Company, pagination_params.sort, None)
@@ -77,15 +82,17 @@ class SQLAlchemyCompanyRepository:
         else:
             # Default sort by created_at DESC
             query = query.order_by(desc(Company.created_at))
-        
+
         # Get total count before applying pagination
         total_count = query.count()
-        
+
         # Apply pagination
         companies = query.offset(pagination_params.get_offset()).limit(pagination_params.get_limit()).all()
-        
+
         # Single result log
         filter_info = f" (filtered by '{name_filter}')" if name_filter else ""
-        logger.info(f"📊 Found {total_count} companies{filter_info}, returning {len(companies)} for page {pagination_params.page}")
-        
-        return companies, total_count 
+        logger.info(
+            f"📊 Found {total_count} companies{filter_info}, returning {len(companies)} for page {pagination_params.page}"
+        )
+
+        return companies, total_count

@@ -25,10 +25,7 @@ from app.database import Base
 
 # Use PostgreSQL test database - the 'db' service in Docker network
 # This is necessary because the models use PostgreSQL-specific features like ARRAY
-TEST_DATABASE_URL = os.environ.get(
-    "TEST_DATABASE_URL",
-    "postgresql://postgres:postgres@db:5432/mint_db_test"
-)
+TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL", "postgresql://postgres:postgres@db:5432/chapsmind_db_test")
 
 
 @pytest.fixture(scope="function")

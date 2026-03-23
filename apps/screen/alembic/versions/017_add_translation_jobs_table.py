@@ -8,14 +8,14 @@ Creates the translation_jobs table to track ongoing and completed
 translation jobs with progress information.
 """
 
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
+from alembic import op
 
 # revision identifiers, used by Alembic
-revision = '017'
-down_revision = '016'
+revision = "017"
+down_revision = "016"
 branch_labels = None
 depends_on = None
 
@@ -39,55 +39,38 @@ def upgrade():
     """)
 
     op.create_table(
-        'translation_jobs',
-        sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-        sa.Column('company_id', sa.Integer(), nullable=False),
-        sa.Column('language_code', sa.String(5), nullable=False),
+        "translation_jobs",
+        sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
+        sa.Column("company_id", sa.Integer(), nullable=False),
+        sa.Column("language_code", sa.String(5), nullable=False),
         sa.Column(
-            'status',
+            "status",
             postgresql.ENUM(
-                'pending', 'running', 'completed', 'failed',
-                name='translation_job_status_enum',
-                create_type=False
+                "pending", "running", "completed", "failed", name="translation_job_status_enum", create_type=False
             ),
             nullable=False,
-            server_default='pending'
+            server_default="pending",
         ),
-        sa.Column('celery_task_id', sa.String(255), nullable=True),
-        sa.Column('total_fields', sa.Integer(), nullable=False, server_default='0'),
-        sa.Column('translated_fields', sa.Integer(), nullable=False, server_default='0'),
-        sa.Column('error_message', sa.Text(), nullable=True),
-        sa.Column(
-            'created_at',
-            sa.DateTime(timezone=True),
-            server_default=sa.func.now(),
-            nullable=False
-        ),
-        sa.Column('started_at', sa.DateTime(timezone=True), nullable=True),
-        sa.Column('completed_at', sa.DateTime(timezone=True), nullable=True),
-        sa.PrimaryKeyConstraint('id'),
+        sa.Column("celery_task_id", sa.String(255), nullable=True),
+        sa.Column("total_fields", sa.Integer(), nullable=False, server_default="0"),
+        sa.Column("translated_fields", sa.Integer(), nullable=False, server_default="0"),
+        sa.Column("error_message", sa.Text(), nullable=True),
+        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column("started_at", sa.DateTime(timezone=True), nullable=True),
+        sa.Column("completed_at", sa.DateTime(timezone=True), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
     )
 
     # Create indexes
     print("Creating indexes...")
 
-    op.create_index(
-        'ix_translation_jobs_company_id',
-        'translation_jobs',
-        ['company_id']
-    )
+    op.create_index("ix_translation_jobs_company_id", "translation_jobs", ["company_id"])
 
-    op.create_index(
-        'ix_translation_jobs_celery_task_id',
-        'translation_jobs',
-        ['celery_task_id']
-    )
+    op.create_index("ix_translation_jobs_celery_task_id", "translation_jobs", ["celery_task_id"])
 
     # Composite index for finding active jobs per company/language
     op.create_index(
-        'ix_translation_jobs_company_language_status',
-        'translation_jobs',
-        ['company_id', 'language_code', 'status']
+        "ix_translation_jobs_company_language_status", "translation_jobs", ["company_id", "language_code", "status"]
     )
 
     print("Translation jobs table created successfully!")
@@ -99,12 +82,12 @@ def downgrade():
     print("Dropping translation_jobs table...")
 
     # Drop indexes
-    op.drop_index('ix_translation_jobs_company_language_status', table_name='translation_jobs')
-    op.drop_index('ix_translation_jobs_celery_task_id', table_name='translation_jobs')
-    op.drop_index('ix_translation_jobs_company_id', table_name='translation_jobs')
+    op.drop_index("ix_translation_jobs_company_language_status", table_name="translation_jobs")
+    op.drop_index("ix_translation_jobs_celery_task_id", table_name="translation_jobs")
+    op.drop_index("ix_translation_jobs_company_id", table_name="translation_jobs")
 
     # Drop table
-    op.drop_table('translation_jobs')
+    op.drop_table("translation_jobs")
 
     # Drop enum type
     op.execute("DROP TYPE IF EXISTS translation_job_status_enum")

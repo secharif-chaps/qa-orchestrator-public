@@ -20,7 +20,7 @@ def mock_chapsvision_user():
         "email": "adnane.saber@chapsvision.com",
         "firstName": "Adnane",
         "lastName": "Saber",
-        "enabled": True
+        "enabled": True,
     }
 
 
@@ -33,7 +33,7 @@ def mock_non_chapsvision_user():
         "email": "john.doe@example.com",
         "firstName": "John",
         "lastName": "Doe",
-        "enabled": True
+        "enabled": True,
     }
 
 
@@ -50,29 +50,21 @@ class TestAdminRoleRestriction:
     """Test suite for admin.organizations permission assignment restrictions."""
 
     @pytest.mark.asyncio
-    async def test_chapsvision_user_can_receive_admin_permission(
-        self, mock_chapsvision_user, mock_admin_user
-    ):
+    async def test_chapsvision_user_can_receive_admin_permission(self, mock_chapsvision_user, mock_admin_user):
         """Test that ChapsVision user CAN receive admin.organizations permission."""
         from app.api.endpoints.users import UpdatePermissionsRequest, update_user_permissions
 
-        with patch('app.api.endpoints.users.keycloak_admin_service') as mock_kc_service:
+        with patch("app.api.endpoints.users.keycloak_admin_service") as mock_kc_service:
             # Mock Keycloak calls
             mock_kc_service.get_user = AsyncMock(return_value=mock_chapsvision_user)
             mock_kc_service.sync_user_realm_roles = AsyncMock(return_value=True)
-            mock_kc_service.get_user_realm_roles = AsyncMock(return_value=[
-                {"name": "admin.organizations"}
-            ])
+            mock_kc_service.get_user_realm_roles = AsyncMock(return_value=[{"name": "admin.organizations"}])
 
             # Create request with admin.organizations permission
             request = UpdatePermissionsRequest(permissions=["admin.organizations"])
 
             # Should succeed without raising HTTPException
-            result = await update_user_permissions(
-                user_id="chapsvision-user-id",
-                request=request,
-                user=mock_admin_user
-            )
+            result = await update_user_permissions(user_id="chapsvision-user-id", request=request, user=mock_admin_user)
 
             # Verify user was fetched (once for email validation, once for updated data)
             assert mock_kc_service.get_user.call_count == 2
@@ -90,7 +82,7 @@ class TestAdminRoleRestriction:
         """Test that non-ChapsVision user CANNOT receive admin.organizations permission."""
         from app.api.endpoints.users import UpdatePermissionsRequest, update_user_permissions
 
-        with patch('app.api.endpoints.users.keycloak_admin_service') as mock_kc_service:
+        with patch("app.api.endpoints.users.keycloak_admin_service") as mock_kc_service:
             # Mock Keycloak to return non-ChapsVision user
             mock_kc_service.get_user = AsyncMock(return_value=mock_non_chapsvision_user)
 
@@ -99,11 +91,7 @@ class TestAdminRoleRestriction:
 
             # Should raise HTTPException with 403 status
             with pytest.raises(HTTPException) as exc_info:
-                await update_user_permissions(
-                    user_id="external-user-id",
-                    request=request,
-                    user=mock_admin_user
-                )
+                await update_user_permissions(user_id="external-user-id", request=request, user=mock_admin_user)
 
             # Verify 403 Forbidden status
             assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
@@ -124,24 +112,19 @@ class TestAdminRoleRestriction:
         """Test that non-admin permissions work for non-ChapsVision users."""
         from app.api.endpoints.users import UpdatePermissionsRequest, update_user_permissions
 
-        with patch('app.api.endpoints.users.keycloak_admin_service') as mock_kc_service:
+        with patch("app.api.endpoints.users.keycloak_admin_service") as mock_kc_service:
             # Mock Keycloak calls
             mock_kc_service.get_user = AsyncMock(return_value=mock_non_chapsvision_user)
             mock_kc_service.sync_user_realm_roles = AsyncMock(return_value=True)
-            mock_kc_service.get_user_realm_roles = AsyncMock(return_value=[
-                {"name": "company.create"},
-                {"name": "organization.read"}
-            ])
+            mock_kc_service.get_user_realm_roles = AsyncMock(
+                return_value=[{"name": "company.create"}, {"name": "organization.read"}]
+            )
 
             # Create request with non-admin permissions
             request = UpdatePermissionsRequest(permissions=["company.create", "organization.read"])
 
             # Should succeed
-            result = await update_user_permissions(
-                user_id="external-user-id",
-                request=request,
-                user=mock_admin_user
-            )
+            result = await update_user_permissions(user_id="external-user-id", request=request, user=mock_admin_user)
 
             # Verify roles were synced (no validation needed for non-admin permissions)
             mock_kc_service.sync_user_realm_roles.assert_called_once()
@@ -151,23 +134,17 @@ class TestAdminRoleRestriction:
             assert "organization.read" in result["permissions"]
 
     @pytest.mark.asyncio
-    async def test_error_response_format_matches_spec(
-        self, mock_non_chapsvision_user, mock_admin_user
-    ):
+    async def test_error_response_format_matches_spec(self, mock_non_chapsvision_user, mock_admin_user):
         """Test that error response format matches specification."""
         from app.api.endpoints.users import UpdatePermissionsRequest, update_user_permissions
 
-        with patch('app.api.endpoints.users.keycloak_admin_service') as mock_kc_service:
+        with patch("app.api.endpoints.users.keycloak_admin_service") as mock_kc_service:
             mock_kc_service.get_user = AsyncMock(return_value=mock_non_chapsvision_user)
 
             request = UpdatePermissionsRequest(permissions=["admin.organizations"])
 
             with pytest.raises(HTTPException) as exc_info:
-                await update_user_permissions(
-                    user_id="external-user-id",
-                    request=request,
-                    user=mock_admin_user
-                )
+                await update_user_permissions(user_id="external-user-id", request=request, user=mock_admin_user)
 
             # Verify error details match spec
             assert exc_info.value.status_code == 403
@@ -183,29 +160,23 @@ class TestAdminRoleRestriction:
 
         from app.api.endpoints.users import UpdatePermissionsRequest, update_user_permissions
 
-        with patch('app.api.endpoints.users.keycloak_admin_service') as mock_kc_service:
+        with patch("app.api.endpoints.users.keycloak_admin_service") as mock_kc_service:
             mock_kc_service.get_user = AsyncMock(return_value=mock_non_chapsvision_user)
 
             request = UpdatePermissionsRequest(permissions=["admin.organizations"])
 
             with caplog.at_level(logging.WARNING), pytest.raises(HTTPException):
-                await update_user_permissions(
-                    user_id="external-user-id",
-                    request=request,
-                    user=mock_admin_user
-                )
+                await update_user_permissions(user_id="external-user-id", request=request, user=mock_admin_user)
 
             # Verify warning was logged
             assert any("Unauthorized admin assignment attempt" in record.message for record in caplog.records)
 
     @pytest.mark.asyncio
-    async def test_validation_happens_before_keycloak_update(
-        self, mock_non_chapsvision_user, mock_admin_user
-    ):
+    async def test_validation_happens_before_keycloak_update(self, mock_non_chapsvision_user, mock_admin_user):
         """Test that validation happens BEFORE calling Keycloak sync."""
         from app.api.endpoints.users import UpdatePermissionsRequest, update_user_permissions
 
-        with patch('app.api.endpoints.users.keycloak_admin_service') as mock_kc_service:
+        with patch("app.api.endpoints.users.keycloak_admin_service") as mock_kc_service:
             # Mock get_user to return non-ChapsVision user
             mock_kc_service.get_user = AsyncMock(return_value=mock_non_chapsvision_user)
             # Mock sync to track if it was called
@@ -214,11 +185,7 @@ class TestAdminRoleRestriction:
             request = UpdatePermissionsRequest(permissions=["admin.organizations"])
 
             with pytest.raises(HTTPException):
-                await update_user_permissions(
-                    user_id="external-user-id",
-                    request=request,
-                    user=mock_admin_user
-                )
+                await update_user_permissions(user_id="external-user-id", request=request, user=mock_admin_user)
 
             # Verify get_user was called (to fetch email for validation)
             mock_kc_service.get_user.assert_called_once()

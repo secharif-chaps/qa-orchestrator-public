@@ -57,44 +57,31 @@ def client():
     from fastapi.testclient import TestClient
 
     from app.main import app
+
     return TestClient(app)
 
 
 @pytest.fixture
 def admin_user() -> TokenData:
     """Create admin user token data."""
-    return TokenData(
-        username="admin",
-        sub="admin-uuid-1234",
-        roles=["admin", "admin.organizations"]
-    )
+    return TokenData(username="admin", sub="admin-uuid-1234", roles=["admin", "admin.organizations"])
 
 
 @pytest.fixture
 def regular_user() -> TokenData:
     """Create regular user token data."""
-    return TokenData(
-        username="user",
-        sub="user-uuid-5678",
-        roles=["company.view"]
-    )
+    return TokenData(username="user", sub="user-uuid-5678", roles=["company.view"])
 
 
 @pytest.fixture
 def no_permission_user() -> TokenData:
     """Create user with no permissions."""
-    return TokenData(
-        username="noperm",
-        sub="noperm-uuid-9999",
-        roles=[]
-    )
+    return TokenData(username="noperm", sub="noperm-uuid-9999", roles=[])
 
 
 @pytest.fixture
 def organization_admin_user() -> TokenData:
     """Create organization admin user."""
     return TokenData(
-        username="organization_admin",
-        sub="orgadmin-uuid-4321",
-        roles=["admin.organizations", "organization.write"]
+        username="organization_admin", sub="orgadmin-uuid-4321", roles=["admin.organizations", "organization.write"]
     )

@@ -15,9 +15,12 @@ export default {
     'cd apps/front && npx stylelint --fix',
     'cd apps/front && npx prettier --write',
   ],
-  // Screen backend: Python
-  'apps/screen/**/*.py': [
-    'cd apps/screen && ruff check --fix',
-    'cd apps/screen && ruff format',
-  ],
+  // Screen backend: Python (via Docker — ruff not installed on host)
+  'apps/screen/**/*.py': (filenames) => {
+    const relative = filenames.map((f) => f.replace(/.*apps\/screen\//, ''))
+    return [
+      `docker compose exec -T screen ruff check --fix ${relative.join(' ')}`,
+      `docker compose exec -T screen ruff format ${relative.join(' ')}`,
+    ]
+  },
 }

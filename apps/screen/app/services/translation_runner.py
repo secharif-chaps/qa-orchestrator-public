@@ -17,7 +17,7 @@ Future Considerations:
 """
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy.orm import Session
 
@@ -72,21 +72,17 @@ async def run_translation_async(
             return {"status": "error", "error": "Job not found"}
 
         job.status = TranslationJobStatus.running
-        job.started_at = datetime.now(timezone.utc)
+        job.started_at = datetime.now(UTC)
         db.commit()
 
         # Get fields that need translation
         translation_service = TranslationService(db)
-        fields_to_translate = translation_service.get_fields_to_translate(
-            company_id, language_code
-        )
+        fields_to_translate = translation_service.get_fields_to_translate(company_id, language_code)
 
         if not fields_to_translate:
-            logger.info(
-                f"No fields to translate for company {company_id} ({language_code})"
-            )
+            logger.info(f"No fields to translate for company {company_id} ({language_code})")
             job.status = TranslationJobStatus.completed
-            job.completed_at = datetime.now(timezone.utc)
+            job.completed_at = datetime.now(UTC)
             job.total_fields = 0
             job.translated_fields = 0
             db.commit()
@@ -112,7 +108,7 @@ async def run_translation_async(
             logger.error(f"Failed to initialize SYSTRAN client: {e}")
             job.status = TranslationJobStatus.failed
             job.error_message = str(e)
-            job.completed_at = datetime.now(timezone.utc)
+            job.completed_at = datetime.now(UTC)
             db.commit()
             return {
                 "status": "error",
@@ -138,7 +134,7 @@ async def run_translation_async(
                 )
 
                 # Save translations
-                for field, result in zip(batch, results):
+                for field, result in zip(batch, results, strict=False):
                     try:
                         translation_service.save_translation(
                             company_id=company_id,
@@ -151,9 +147,7 @@ async def run_translation_async(
                         )
                         translated_count += 1
                     except Exception as e:
-                        logger.error(
-                            f"Failed to save translation for {field.table_name}.{field.field_name}: {e}"
-                        )
+                        logger.error(f"Failed to save translation for {field.table_name}.{field.field_name}: {e}")
                         error_count += 1
 
                 # Update progress
@@ -175,7 +169,7 @@ async def run_translation_async(
         # Mark job as completed
         job.status = TranslationJobStatus.completed
         job.translated_fields = translated_count
-        job.completed_at = datetime.now(timezone.utc)
+        job.completed_at = datetime.now(UTC)
         if error_count > 0:
             job.error_message = f"{error_count} fields failed to translate"
         db.commit()
@@ -205,7 +199,7 @@ async def run_translation_async(
             if job:
                 job.status = TranslationJobStatus.failed
                 job.error_message = str(e)
-                job.completed_at = datetime.now(timezone.utc)
+                job.completed_at = datetime.now(UTC)
                 db.commit()
         except Exception:
             pass

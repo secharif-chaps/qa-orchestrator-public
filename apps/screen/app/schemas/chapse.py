@@ -1,14 +1,17 @@
-"""Schemas for Chapse chatbot rework with conversation persistence and company context.
+"""Schemas for Chapse chatbot with conversation persistence and company context.
 
-This module defines Pydantic models for the new Chapse API that integrates with Dify
-for conversation management while storing company context locally.
+This module defines Pydantic models for the Chapse API that manages
+conversations while storing company context locally.
 """
+
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
 # =============================================================================
 # Company Context Schemas
 # =============================================================================
+
 
 class CompanySummary(BaseModel):
     """Minimal company data for context display."""
@@ -27,17 +30,14 @@ class ContextResponse(BaseModel):
 class UpdateContextRequest(BaseModel):
     """Request to update company context for a conversation."""
 
-    company_ids: list[int] = Field(
-        default_factory=list,
-        description="List of company IDs to set as context (max 3)"
-    )
+    company_ids: list[int] = Field(default_factory=list, description="List of company IDs to set as context (max 3)")
 
-    @field_validator('company_ids')
+    @field_validator("company_ids")
     @classmethod
     def validate_max_companies(cls, v: list[int]) -> list[int]:
         """Ensure maximum 3 companies in context."""
         if len(v) > 3:
-            raise ValueError('Maximum 3 companies allowed in context')
+            raise ValueError("Maximum 3 companies allowed in context")
         return v
 
 
@@ -45,30 +45,38 @@ class UpdateContextRequest(BaseModel):
 # Chat Request/Response Schemas
 # =============================================================================
 
+
+class ChatMessageInput(BaseModel):
+    """A single prior chat message sent by the frontend for conversation history."""
+
+    role: Literal["user", "assistant"] = Field(..., description="Message role")
+    content: str = Field(..., max_length=8000, description="Message content")
+
+
 class ChapseChatRequest(BaseModel):
-    """Request to send a chat message to Dify."""
+    """Request to send a chat message."""
 
-    query: str = Field(
-        ...,
-        min_length=1,
-        max_length=4000,
-        description="User's message"
-    )
-    conversation_id: str | None = Field(
-        default=None,
-        description="Dify conversation ID (omit for new conversation)"
-    )
-    company_ids: list[int] | None = Field(
-        default=None,
-        description="Company IDs to add to context (max 3)"
+    query: str = Field(..., min_length=1, max_length=4000, description="User's message")
+    conversation_id: str | None = Field(default=None, description="Conversation ID (omit for new conversation)")
+    company_ids: list[int] | None = Field(default=None, description="Company IDs to add to context (max 3)")
+    messages: list[ChatMessageInput] | None = Field(
+        default=None, description="Prior conversation messages for context (max 20, newest kept)"
     )
 
-    @field_validator('company_ids')
+    @field_validator("company_ids")
     @classmethod
     def validate_max_companies(cls, v: list[int] | None) -> list[int] | None:
         """Ensure maximum 3 companies in context."""
         if v is not None and len(v) > 3:
-            raise ValueError('Maximum 3 companies allowed in context')
+            raise ValueError("Maximum 3 companies allowed in context")
+        return v
+
+    @field_validator("messages")
+    @classmethod
+    def cap_messages(cls, v: list[ChatMessageInput] | None) -> list[ChatMessageInput] | None:
+        """Keep only the last 20 messages if exceeded."""
+        if v is not None and len(v) > 20:
+            return v[-20:]
         return v
 
 
@@ -76,10 +84,11 @@ class ChapseChatRequest(BaseModel):
 # Conversation Schemas
 # =============================================================================
 
+
 class Conversation(BaseModel):
     """Single conversation in list response."""
 
-    id: str = Field(..., description="Dify conversation ID")
+    id: str = Field(..., description="Conversation ID")
     name: str = Field(..., description="Auto-generated or custom name")
     created_at: int = Field(..., description="Unix timestamp")
     updated_at: int = Field(..., description="Unix timestamp")
@@ -122,18 +131,12 @@ class ConversationDetailResponse(BaseModel):
 # Rename Schemas
 # =============================================================================
 
+
 class RenameRequest(BaseModel):
     """Request to rename a conversation."""
 
-    name: str | None = Field(
-        default=None,
-        max_length=255,
-        description="Manual name (optional)"
-    )
-    auto_generate: bool = Field(
-        default=False,
-        description="If true, Dify generates name from content"
-    )
+    name: str | None = Field(default=None, max_length=255, description="Manual name (optional)")
+    auto_generate: bool = Field(default=False, description="If true, auto-generate name from content")
 
 
 class RenameResponse(BaseModel):
@@ -146,6 +149,7 @@ class RenameResponse(BaseModel):
 # =============================================================================
 # Error Schemas
 # =============================================================================
+
 
 class ChapseErrorResponse(BaseModel):
     """Error response format for Chapse endpoints."""

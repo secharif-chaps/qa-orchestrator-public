@@ -153,11 +153,7 @@ class TestBuildAuthHeaders:
         )
 
         # Build what the data-to-sign should be
-        data_to_sign = (
-            f"(request-target): get {path}\n"
-            f"host: {self.HOST}\n"
-            f"date: {self.DATE}"
-        )
+        data_to_sign = f"(request-target): get {path}\nhost: {self.HOST}\ndate: {self.DATE}"
 
         # Verify no \r\n in the string
         assert "\r\n" not in data_to_sign

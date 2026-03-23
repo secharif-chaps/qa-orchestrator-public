@@ -1,4 +1,3 @@
-from typing import Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -13,26 +12,29 @@ from app.services.token_manager import TokenManager
 
 
 # Service dependencies
-def get_company_service(
-    db: Session = Depends(get_db)
-) -> CompanyService:
+def get_company_service(db: Session = Depends(get_db)) -> CompanyService:
     return CompanyService(db=db)
+
 
 def get_token_manager(db: Session = Depends(get_db)) -> TokenManager:
     return TokenManager(db=db)
+
 
 def get_global_service_client() -> GlobalServiceClient:
     """Get a GlobalServiceClient instance for calling global-service APIs."""
     return GlobalServiceClient()
 
+
 # Authentication dependencies
 security = HTTPBearer()
+
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> TokenData:
     """
     Dependency to get current authenticated user from JWT token
     """
     import logging
+
     logger = logging.getLogger(__name__)
 
     token = credentials.credentials
@@ -58,29 +60,26 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+
 def require_roles(required_roles: list[str]):
     """
     Dependency factory to require specific roles
     """
+
     async def check_roles(current_user: TokenData = Depends(get_current_user)) -> TokenData:
         if not current_user.roles:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Insufficient permissions"
-            )
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
 
         user_roles = set(current_user.roles)
         required_roles_set = set(required_roles)
 
         if not required_roles_set.intersection(user_roles):
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Insufficient permissions"
-            )
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
 
         return current_user
 
     return check_roles
+
 
 def require_admin():
     """
@@ -88,7 +87,10 @@ def require_admin():
     """
     return require_roles(["admin"])
 
-async def get_optional_user(credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False))) -> Optional[TokenData]:
+
+async def get_optional_user(
+    credentials: HTTPAuthorizationCredentials | None = Depends(HTTPBearer(auto_error=False)),
+) -> TokenData | None:
     """
     Dependency to get current user if token is provided, otherwise None
     """

@@ -3,8 +3,7 @@
 Tests verify:
 1. Role-based access control via fastapi-keycloak dependency injection
 2. Automatic 401/403 responses for unauthorized/forbidden access
-3. All role combinations (admin.organizations, admin.workflows)
-4. Proper access control for all admin endpoints
+3. Proper access control for all admin endpoints
 
 These are integration tests that use FastAPI dependency overrides
 to test the complete request/response cycle with different user roles.
@@ -58,6 +57,7 @@ def _setup_auth(monkeypatch, roles: list[str]):
 
     def mock_get_current_user(required_roles=None):
         """Mimic Keycloak's get_current_user with role enforcement."""
+
         async def dependency(request=None):
             if required_roles:
                 if not any(role in roles for role in required_roles):
@@ -66,70 +66,12 @@ def _setup_auth(monkeypatch, roles: list[str]):
                         detail=f"User lacks required role(s): {required_roles}",
                     )
             return user
+
         return dependency
 
     mock_wrapped.get_current_user.side_effect = mock_get_current_user
 
     monkeypatch.setattr(idp, "_wrapped", mock_wrapped)
-
-
-class TestWorkflowAdminEndpointsAccess:
-    """Test workflow admin endpoints require 'admin.workflows' role."""
-
-    def test_get_workflows_with_workflow_admin_role(self, monkeypatch, client):
-        """Workflow admin can access GET /admin/workflows."""
-        _setup_auth(monkeypatch, ["admin.workflows"])
-
-        response = client.get("/api/admin/workflows")
-
-        # Should not be forbidden (may be 500 if DB not available)
-        assert response.status_code != 403
-
-    def test_get_workflows_without_workflow_admin_role(self, monkeypatch, client):
-        """Admin without admin.workflows role gets 403."""
-        _setup_auth(monkeypatch, ["admin"])
-
-        response = client.get("/api/admin/workflows")
-
-        assert response.status_code == 403
-
-    def test_get_workflows_with_regular_user(self, monkeypatch, client):
-        """Regular user gets 403 on GET /admin/workflows."""
-        _setup_auth(monkeypatch, ["company.view"])
-
-        response = client.get("/api/admin/workflows")
-
-        assert response.status_code == 403
-
-    def test_get_workflows_with_no_roles(self, monkeypatch, client):
-        """User with no roles gets 403 on GET /admin/workflows."""
-        _setup_auth(monkeypatch, [])
-
-        response = client.get("/api/admin/workflows")
-
-        assert response.status_code in [401, 403]
-
-    def test_update_workflow_config_with_workflow_admin(self, monkeypatch, client):
-        """Workflow admin can access PUT /admin/workflows/{task_type}."""
-        _setup_auth(monkeypatch, ["admin.workflows"])
-
-        response = client.put(
-            "/api/admin/workflows/data_collection",
-            json={"workflow_id": "test-workflow-id"},
-        )
-
-        assert response.status_code != 403
-
-    def test_update_workflow_config_without_role(self, monkeypatch, client):
-        """Organization admin without admin.workflows gets 403."""
-        _setup_auth(monkeypatch, ["admin.organizations"])
-
-        response = client.put(
-            "/api/admin/workflows/data_collection",
-            json={"workflow_id": "test-workflow-id"},
-        )
-
-        assert response.status_code == 403
 
 
 class TestOrganizationAdminEndpointsAccess:
@@ -141,7 +83,7 @@ class TestOrganizationAdminEndpointsAccess:
 
         response = client.post("/api/admin/tasks/fail-stuck")
 
-        # Should not be forbidden (may fail for other reasons like DB/RabbitMQ)
+        # Should not be forbidden (may fail for other reasons like DB)
         assert response.status_code != 403
 
     def test_fail_stuck_tasks_without_organization_admin(self, monkeypatch, client):
@@ -172,70 +114,20 @@ class TestOrganizationAdminEndpointsAccess:
 class TestCrossRoleAccess:
     """Test that roles don't grant access to endpoints they shouldn't."""
 
-    def test_workflow_admin_cannot_access_organization_endpoints(self, monkeypatch, client):
-        """Workflow admin cannot access organization admin endpoints."""
-        _setup_auth(monkeypatch, ["admin.workflows"])
-
-        response = client.post("/api/admin/tasks/fail-stuck")
-
-        assert response.status_code == 403
-
-    def test_organization_admin_cannot_access_workflow_endpoints(self, monkeypatch, client):
-        """Organization admin cannot access workflow admin endpoints."""
-        _setup_auth(monkeypatch, ["admin.organizations"])
-
-        response = client.get("/api/admin/workflows")
-
-        assert response.status_code in [401, 403]
-
-    def test_regular_user_cannot_access_any_admin_endpoint(self, monkeypatch, client):
-        """Regular user gets 403 on all admin endpoints."""
+    def test_regular_user_cannot_access_admin_endpoint(self, monkeypatch, client):
+        """Regular user gets 403 on admin endpoints."""
         _setup_auth(monkeypatch, ["company.view"])
 
-        responses = [
-            client.get("/api/admin/workflows"),
-            client.post("/api/admin/tasks/fail-stuck"),
-        ]
-
-        for response in responses:
-            assert response.status_code in [401, 403]
+        response = client.post("/api/admin/tasks/fail-stuck")
+        assert response.status_code in [401, 403]
 
 
 class TestMultipleRoles:
     """Test users with multiple admin roles have correct access."""
 
-    def test_user_with_all_roles_has_full_access(self, monkeypatch, client):
-        """User with all admin roles can access all admin endpoints."""
-        _setup_auth(monkeypatch, ["admin.organizations", "admin.workflows"])
-
-        responses = [
-            client.get("/api/admin/workflows"),
-            client.post("/api/admin/tasks/fail-stuck"),
-        ]
-
-        for response in responses:
-            assert response.status_code != 403
-
-    def test_user_with_only_workflow_role(self, monkeypatch, client):
-        """User with only admin.workflows can access workflows but not tasks."""
-        _setup_auth(monkeypatch, ["admin.workflows"])
-
-        # Can access workflow endpoints
-        response1 = client.get("/api/admin/workflows")
-        assert response1.status_code != 403
-
-        # Cannot access organization admin endpoints
-        response2 = client.post("/api/admin/tasks/fail-stuck")
-        assert response2.status_code == 403
-
-    def test_user_with_only_organization_role(self, monkeypatch, client):
-        """User with only admin.organizations can access tasks but not workflows."""
+    def test_user_with_organization_role_has_access(self, monkeypatch, client):
+        """User with admin.organizations can access fail-stuck endpoint."""
         _setup_auth(monkeypatch, ["admin.organizations"])
 
-        # Can access organization admin endpoints
-        response1 = client.post("/api/admin/tasks/fail-stuck")
-        assert response1.status_code != 403
-
-        # Cannot access workflow endpoints
-        response2 = client.get("/api/admin/workflows")
-        assert response2.status_code == 403
+        response = client.post("/api/admin/tasks/fail-stuck")
+        assert response.status_code != 403

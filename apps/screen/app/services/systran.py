@@ -277,9 +277,7 @@ class SystranClient:
                 outputs = data.get("outputs", [])
 
                 if len(outputs) != len(non_empty_texts):
-                    logger.warning(
-                        f"Output count mismatch: expected {len(non_empty_texts)}, got {len(outputs)}"
-                    )
+                    logger.warning(f"Output count mismatch: expected {len(non_empty_texts)}, got {len(outputs)}")
 
                 # Build results, mapping back to original positions
                 results: list[TranslationResult] = []

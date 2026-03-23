@@ -33,4 +33,9 @@ COPY --chown=nginx:nginx --from=build-stage /app/dist /usr/share/nginx/html
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Copy entrypoint for runtime env injection
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+
 EXPOSE 80
+
+ENTRYPOINT ["/docker-entrypoint.sh"]

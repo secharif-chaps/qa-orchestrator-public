@@ -16,7 +16,7 @@ Reference: WorldCheck One API Security documentation
 import base64
 import hashlib
 import hmac
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from email.utils import formatdate
 
 
@@ -26,7 +26,7 @@ def _format_date_rfc1123() -> str:
     Returns:
         Date string like 'Thu, 27 Feb 2026 14:30:00 GMT'
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     return formatdate(timeval=now.timestamp(), localtime=False, usegmt=True)
 
 

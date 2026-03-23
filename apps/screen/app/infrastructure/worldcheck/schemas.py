@@ -1,18 +1,18 @@
 """Pydantic schemas for WorldCheck One API requests and responses."""
 
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
 
-class EntityType(str, Enum):
+class EntityType(StrEnum):
     """WorldCheck entity types for screening."""
 
     INDIVIDUAL = "INDIVIDUAL"
     ORGANISATION = "ORGANISATION"
 
 
-class MatchStrength(str, Enum):
+class MatchStrength(StrEnum):
     """Confidence level of a screening match."""
 
     EXACT = "EXACT"

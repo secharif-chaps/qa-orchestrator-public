@@ -11,12 +11,13 @@ Create Date: 2025-12-16
 
 """
 
-from alembic import op
 import sqlalchemy as sa
 
+from alembic import op
+
 # revision identifiers, used by Alembic.
-revision = '009'
-down_revision = '008'
+revision = "009"
+down_revision = "008"
 branch_labels = None
 depends_on = None
 
@@ -24,18 +25,10 @@ depends_on = None
 def upgrade() -> None:
     """Add is_orphaned boolean column to folders table."""
 
-    op.add_column(
-        'folders',
-        sa.Column(
-            'is_orphaned',
-            sa.Boolean(),
-            server_default=sa.text('false'),
-            nullable=False
-        )
-    )
+    op.add_column("folders", sa.Column("is_orphaned", sa.Boolean(), server_default=sa.text("false"), nullable=False))
 
 
 def downgrade() -> None:
     """Remove is_orphaned column from folders table."""
 
-    op.drop_column('folders', 'is_orphaned')
+    op.drop_column("folders", "is_orphaned")

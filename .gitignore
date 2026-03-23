@@ -3,6 +3,7 @@
 .env.*
 !.env.example
 !.env.dist
+!apps/front/.env.production
 
 # ─── Python ────────────────────────────────────────
 __pycache__/

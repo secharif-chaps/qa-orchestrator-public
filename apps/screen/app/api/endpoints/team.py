@@ -10,7 +10,6 @@ Permission Requirements:
 - POST /members/{user_id}/reset-password: organization.manage OR admin.organizations (reset password)
 """
 
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 from fastapi_keycloak import OIDCUser
@@ -39,7 +38,7 @@ logger = get_logger(__name__)
 async def list_team_members(
     page: int = Query(1, ge=1, description="Page number (1-indexed)"),
     limit: int = Query(10, ge=1, le=100, description="Items per page"),
-    search: Optional[str] = Query(None, max_length=100, description="Search by name, email, username"),
+    search: str | None = Query(None, max_length=100, description="Search by name, email, username"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     org_context: OrganizationContext = Depends(get_user_organization),
 ):
@@ -82,25 +81,24 @@ async def list_team_members(
         if not keycloak_members:
             logger.info(
                 "No members found in organization",
-                extra={"organization_id": org_context.organization_id, "search": search}
+                extra={"organization_id": org_context.organization_id, "search": search},
             )
             return TeamMemberListResponse(
-                data=[],
-                pagination={"total": 0, "page": page, "limit": limit, "total_pages": 0}
+                data=[], pagination={"total": 0, "page": page, "limit": limit, "total_pages": 0}
             )
 
         # Map to response format (NO permission fetching - done on-demand)
         team_members = []
         for member in keycloak_members:
-            user_id = member.get('id')
+            user_id = member.get("id")
             team_member = TeamMemberListItem(
                 id=user_id,
-                username=member.get('username', ''),
-                email=member.get('email', ''),
-                first_name=member.get('firstName'),
-                last_name=member.get('lastName'),
+                username=member.get("username", ""),
+                email=member.get("email", ""),
+                first_name=member.get("firstName"),
+                last_name=member.get("lastName"),
                 is_current_user=(user_id == user.sub),
-                created_at=member.get('createdTimestamp'),
+                created_at=member.get("createdTimestamp"),
             )
             team_members.append(team_member)
 
@@ -118,12 +116,11 @@ async def list_team_members(
                 "total": total,
                 "page": page,
                 "search_query": search,
-            }
+            },
         )
 
         return TeamMemberListResponse(
-            data=team_members,
-            pagination={"total": total, "page": page, "limit": limit, "total_pages": total_pages}
+            data=team_members, pagination={"total": total, "page": page, "limit": limit, "total_pages": total_pages}
         )
 
     except Exception as e:
@@ -134,7 +131,7 @@ async def list_team_members(
                 "organization_id": org_context.organization_id,
                 "error_type": type(e).__name__,
                 "error_message": str(e),
-            }
+            },
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -177,7 +174,7 @@ async def get_member_permissions(
                 detail="User not found",
             )
 
-        user_roles = [role['name'] for role in user_roles_response] if user_roles_response else []
+        user_roles = [role["name"] for role in user_roles_response] if user_roles_response else []
         permission_tier = get_tier_from_roles(user_roles)
 
         logger.info(
@@ -186,7 +183,7 @@ async def get_member_permissions(
                 "organization_id": org_context.organization_id,
                 "target_user_id": user_id,
                 "permission_tier": permission_tier,
-            }
+            },
         )
 
         return TeamMemberPermissions(
@@ -204,7 +201,7 @@ async def get_member_permissions(
                 "user_id": user_id,
                 "error_type": type(e).__name__,
                 "error_message": str(e),
-            }
+            },
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -241,21 +238,18 @@ async def update_member_permissions(
         500: If Keycloak update fails
     """
     try:
-        
         verify_any_role_access(user, ["organization.manage", "admin.organizations"])
 
-        
         if user_id == user.sub:
             logger.warning(
                 "User attempted to change own permissions",
-                extra={"user_id": user_id, "organization_id": org_context.organization_id}
+                extra={"user_id": user_id, "organization_id": org_context.organization_id},
             )
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Cannot modify your own permissions",
             )
 
-        
         keycloak_user = await keycloak_admin_service.get_user(user_id)
         if not keycloak_user:
             raise HTTPException(
@@ -263,11 +257,8 @@ async def update_member_permissions(
                 detail="User not found",
             )
 
-        
         target_roles = get_roles_for_tier(update_data.permission_tier)
 
-        
-        
         success = await keycloak_admin_service.sync_user_realm_roles(
             user_id=user_id,
             target_roles=target_roles,
@@ -280,18 +271,18 @@ async def update_member_permissions(
             )
 
         updated_user_roles = await keycloak_admin_service.get_user_realm_roles(user_id)
-        updated_roles = [role['name'] for role in updated_user_roles] if updated_user_roles else []
+        updated_roles = [role["name"] for role in updated_user_roles] if updated_user_roles else []
 
         team_member = TeamMember(
             id=user_id,
-            username=keycloak_user.get('username', ''),
-            email=keycloak_user.get('email', ''),
-            first_name=keycloak_user.get('firstName'),
-            last_name=keycloak_user.get('lastName'),
+            username=keycloak_user.get("username", ""),
+            email=keycloak_user.get("email", ""),
+            first_name=keycloak_user.get("firstName"),
+            last_name=keycloak_user.get("lastName"),
             avatar_url=None,
             permission_tier=get_tier_from_roles(updated_roles),
             is_current_user=False,
-            created_at=keycloak_user.get('createdTimestamp'),
+            created_at=keycloak_user.get("createdTimestamp"),
         )
 
         logger.info(
@@ -302,7 +293,7 @@ async def update_member_permissions(
                 "new_tier": update_data.permission_tier,
                 "new_roles": target_roles,
                 "updated_by": user.sub,
-            }
+            },
         )
 
         return team_member
@@ -318,7 +309,7 @@ async def update_member_permissions(
                 "new_tier": update_data.permission_tier,
                 "error_type": type(e).__name__,
                 "error_message": str(e),
-            }
+            },
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -382,9 +373,9 @@ async def reset_member_password(
             extra={
                 "organization_id": org_context.organization_id,
                 "target_user_id": user_id,
-                "target_username": keycloak_user.get('username'),
+                "target_username": keycloak_user.get("username"),
                 "reset_by": user.sub,
-            }
+            },
         )
 
         return TeamMemberPasswordReset(
@@ -402,7 +393,7 @@ async def reset_member_password(
                 "user_id": user_id,
                 "error_type": type(e).__name__,
                 "error_message": str(e),
-            }
+            },
         )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

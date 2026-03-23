@@ -13,7 +13,7 @@ Usage:
 
 import os
 import time
-from typing import Any, Optional
+from typing import Any
 
 from fastapi_keycloak import FastAPIKeycloak
 from fastapi_keycloak import OIDCUser as BaseOIDCUser
@@ -48,12 +48,11 @@ class OIDCUser(BaseOIDCUser):
     The organization claim format from Keycloak is:
     ["OrgName", {"OrgName": {"id": "uuid"}}]
     """
-    organization: Optional[Any] = None  # Can be list, dict, or string depending on Keycloak config
+
+    organization: Any | None = None  # Can be list, dict, or string depending on Keycloak config
 
 
-def _initialize_keycloak_with_retry(
-    max_retries: int = 5, initial_backoff: float = 2.0
-) -> FastAPIKeycloak:
+def _initialize_keycloak_with_retry(max_retries: int = 5, initial_backoff: float = 2.0) -> FastAPIKeycloak:
     """Initialize FastAPIKeycloak with exponential backoff retry logic.
 
     During startup, Keycloak may not be immediately available or may be slow to respond.
@@ -73,8 +72,7 @@ def _initialize_keycloak_with_retry(
     backoff = initial_backoff
     # Construct expected OpenID configuration URL for debugging
     openid_config_url = (
-        f"{settings.KEYCLOAK_SERVER_URL}/realms/{settings.KEYCLOAK_REALM}"
-        f"/.well-known/openid-configuration"
+        f"{settings.KEYCLOAK_SERVER_URL}/realms/{settings.KEYCLOAK_REALM}/.well-known/openid-configuration"
     )
 
     for attempt in range(1, max_retries + 1):
@@ -194,9 +192,7 @@ def _initialize_keycloak_with_retry(
             # HTTP error (4xx, 5xx response codes)
             elapsed_time = time.time() - start_time
             status_code = e.response.status_code if hasattr(e, "response") else None
-            response_text = (
-                e.response.text[:500] if hasattr(e, "response") else None
-            )  # Limit to 500 chars
+            response_text = e.response.text[:500] if hasattr(e, "response") else None  # Limit to 500 chars
 
             error_details = {
                 "exception_type": "HTTPError",
@@ -341,7 +337,8 @@ if os.environ.get("SKIP_KEYCLOAK_INIT", "").lower() in ("1", "true", "yes"):
 else:
     _raw_idp = _initialize_keycloak_with_retry()
 
-def _create_user_from_internal_token(request) -> Optional[OIDCUser]:
+
+def _create_user_from_internal_token(request) -> OIDCUser | None:
     """
     Verify internal JWT and create OIDCUser from the token payload.
 
@@ -470,9 +467,7 @@ class InternalTrustIDPWrapper:
 
                 # Check required roles if specified
                 if required_roles:
-                    user_roles = set(
-                        user.realm_access.get("roles", []) if user.realm_access else []
-                    )
+                    user_roles = set(user.realm_access.get("roles", []) if user.realm_access else [])
                     if not any(role in user_roles for role in required_roles):
                         logger.warning(
                             f"Internal user {user.preferred_username} missing required roles: {required_roles}"
@@ -486,55 +481,31 @@ class InternalTrustIDPWrapper:
                 return user
 
             # External request - validate JWT with Keycloak
-            # Get the original dependency and call it
-            keycloak_dependency = self._wrapped.get_current_user(
-                required_roles=required_roles
-            )
+            # Extract Bearer token from Authorization header
+            auth_header = request.headers.get("Authorization", "")
+            if not auth_header.startswith("Bearer "):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Not authenticated",
+                )
 
-            # The keycloak dependency expects to be injected by FastAPI
-            # We need to call it with the request
+            token = auth_header[7:]
+
+            # get_current_user() returns a sync function: current_user(token) -> OIDCUser
+            # It uses _decode_token internally and checks required_roles
+            keycloak_dependency = self._wrapped.get_current_user(required_roles=required_roles)
+
             try:
-                # FastAPI-keycloak's get_current_user returns an async function
-                # that extracts token from Authorization header and validates it
-                user = await keycloak_dependency(request=request)
+                user = keycloak_dependency(token=token)
                 return user
-            except TypeError:
-                # If it doesn't accept request directly, it's a dependency
-                # In this case, we need to manually extract and validate the token
-                auth_header = request.headers.get("Authorization", "")
-                if not auth_header.startswith("Bearer "):
-                    raise HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="Not authenticated",
-                    )
-
-                token = auth_header[7:]
-
-                # Use the idp's decode_token method
-                try:
-                    decoded = self._wrapped.decode_token(token)
-                    user = OIDCUser(**decoded)
-
-                    # Check roles
-                    if required_roles:
-                        user_roles = set(
-                            user.realm_access.get("roles", [])
-                            if user.realm_access
-                            else []
-                        )
-                        if not any(role in user_roles for role in required_roles):
-                            raise HTTPException(
-                                status_code=status.HTTP_403_FORBIDDEN,
-                                detail="Insufficient permissions",
-                            )
-
-                    return user
-                except Exception as e:
-                    logger.debug(f"Token validation failed: {e}")
-                    raise HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="Invalid authentication credentials",
-                    )
+            except HTTPException:
+                raise
+            except Exception as e:
+                logger.warning(f"Token validation failed: {e}")
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Invalid authentication credentials",
+                )
 
         return get_user_with_internal_trust
 

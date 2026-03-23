@@ -16,7 +16,7 @@ Example usage:
     enable_feature(db, org_id, FeatureFlag.TRANSLATION, enabled_by="admin-user-id")
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy.orm import Session
 
@@ -78,18 +78,20 @@ def has_feature(db: Session, organization_id: str, flag: FeatureFlag) -> bool:
     Returns:
         True if the feature is enabled, False otherwise
     """
-    feature = db.query(OrganizationFeatureFlag).filter(
-        OrganizationFeatureFlag.organization_id == organization_id,
-        OrganizationFeatureFlag.flag == flag,
-        OrganizationFeatureFlag.enabled == True,  # noqa: E712
-    ).first()
+    feature = (
+        db.query(OrganizationFeatureFlag)
+        .filter(
+            OrganizationFeatureFlag.organization_id == organization_id,
+            OrganizationFeatureFlag.flag == flag,
+            OrganizationFeatureFlag.enabled == True,  # noqa: E712
+        )
+        .first()
+    )
 
     return feature is not None
 
 
-def get_feature_config(
-    db: Session, organization_id: str, flag: FeatureFlag
-) -> dict | None:
+def get_feature_config(db: Session, organization_id: str, flag: FeatureFlag) -> dict | None:
     """Get the configuration for a feature flag.
 
     API keys are automatically decrypted before being returned.
@@ -102,10 +104,14 @@ def get_feature_config(
     Returns:
         The config dict if feature exists and has config, None otherwise
     """
-    feature = db.query(OrganizationFeatureFlag).filter(
-        OrganizationFeatureFlag.organization_id == organization_id,
-        OrganizationFeatureFlag.flag == flag,
-    ).first()
+    feature = (
+        db.query(OrganizationFeatureFlag)
+        .filter(
+            OrganizationFeatureFlag.organization_id == organization_id,
+            OrganizationFeatureFlag.flag == flag,
+        )
+        .first()
+    )
 
     if feature and feature.config:
         config = feature.config.copy()
@@ -151,10 +157,14 @@ def enable_feature(
     Returns:
         The created or updated OrganizationFeatureFlag record
     """
-    feature = db.query(OrganizationFeatureFlag).filter(
-        OrganizationFeatureFlag.organization_id == organization_id,
-        OrganizationFeatureFlag.flag == flag,
-    ).first()
+    feature = (
+        db.query(OrganizationFeatureFlag)
+        .filter(
+            OrganizationFeatureFlag.organization_id == organization_id,
+            OrganizationFeatureFlag.flag == flag,
+        )
+        .first()
+    )
 
     # Encrypt credential fields if present in config
     if config:
@@ -165,7 +175,7 @@ def enable_feature(
 
     if feature:
         feature.enabled = True
-        feature.enabled_at = datetime.now(timezone.utc)
+        feature.enabled_at = datetime.now(UTC)
         if config is not None:
             # Merge new config with existing config to preserve api_key
             existing_config = feature.config or {}
@@ -184,7 +194,7 @@ def enable_feature(
             organization_id=organization_id,
             flag=flag,
             enabled=True,
-            enabled_at=datetime.now(timezone.utc),
+            enabled_at=datetime.now(UTC),
             config=config,
         )
         db.add(feature)
@@ -221,10 +231,14 @@ def disable_feature(
     Returns:
         The updated OrganizationFeatureFlag record, or None if not found
     """
-    feature = db.query(OrganizationFeatureFlag).filter(
-        OrganizationFeatureFlag.organization_id == organization_id,
-        OrganizationFeatureFlag.flag == flag,
-    ).first()
+    feature = (
+        db.query(OrganizationFeatureFlag)
+        .filter(
+            OrganizationFeatureFlag.organization_id == organization_id,
+            OrganizationFeatureFlag.flag == flag,
+        )
+        .first()
+    )
 
     if feature:
         feature.enabled = False
@@ -266,10 +280,14 @@ def update_feature_config(
     Returns:
         The created or updated OrganizationFeatureFlag record
     """
-    feature = db.query(OrganizationFeatureFlag).filter(
-        OrganizationFeatureFlag.organization_id == organization_id,
-        OrganizationFeatureFlag.flag == flag,
-    ).first()
+    feature = (
+        db.query(OrganizationFeatureFlag)
+        .filter(
+            OrganizationFeatureFlag.organization_id == organization_id,
+            OrganizationFeatureFlag.flag == flag,
+        )
+        .first()
+    )
 
     # Determine if we should auto-enable/disable based on api_key
     api_key = config.get("api_key")
@@ -298,7 +316,7 @@ def update_feature_config(
         # Auto-enable if api_key is valid, auto-disable if invalid/removed
         if has_api_key and not feature.enabled:
             feature.enabled = True
-            feature.enabled_at = datetime.now(timezone.utc)
+            feature.enabled_at = datetime.now(UTC)
         elif not has_api_key and feature.enabled:
             feature.enabled = False
             feature.enabled_at = None
@@ -319,7 +337,7 @@ def update_feature_config(
             organization_id=organization_id,
             flag=flag,
             enabled=has_api_key,
-            enabled_at=datetime.now(timezone.utc) if has_api_key else None,
+            enabled_at=datetime.now(UTC) if has_api_key else None,
             config=config,
         )
         db.add(feature)
@@ -339,9 +357,7 @@ def update_feature_config(
     return feature
 
 
-def get_organization_features(
-    db: Session, organization_id: str
-) -> list[OrganizationFeatureFlag]:
+def get_organization_features(db: Session, organization_id: str) -> list[OrganizationFeatureFlag]:
     """Get all feature flags for an organization.
 
     Args:
@@ -351,9 +367,13 @@ def get_organization_features(
     Returns:
         List of OrganizationFeatureFlag records for the organization
     """
-    return db.query(OrganizationFeatureFlag).filter(
-        OrganizationFeatureFlag.organization_id == organization_id,
-    ).all()
+    return (
+        db.query(OrganizationFeatureFlag)
+        .filter(
+            OrganizationFeatureFlag.organization_id == organization_id,
+        )
+        .all()
+    )
 
 
 def get_enabled_features(db: Session, organization_id: str) -> list[FeatureFlag]:
@@ -366,9 +386,13 @@ def get_enabled_features(db: Session, organization_id: str) -> list[FeatureFlag]
     Returns:
         List of FeatureFlag enums that are enabled for the organization
     """
-    features = db.query(OrganizationFeatureFlag.flag).filter(
-        OrganizationFeatureFlag.organization_id == organization_id,
-        OrganizationFeatureFlag.enabled == True,  # noqa: E712
-    ).all()
+    features = (
+        db.query(OrganizationFeatureFlag.flag)
+        .filter(
+            OrganizationFeatureFlag.organization_id == organization_id,
+            OrganizationFeatureFlag.enabled == True,  # noqa: E712
+        )
+        .all()
+    )
 
     return [f[0] for f in features]

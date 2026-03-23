@@ -6,7 +6,6 @@ whether a user email belongs to the ChapsVision domain (@chapsvision.com).
 This is used for restricting admin.organizations permission to ChapsVision employees only.
 """
 
-import pytest
 from app.core.email_utils import is_chapsvision_email
 
 

@@ -4,8 +4,7 @@ This module provides endpoints for admin users to monitor and manage tasks
 across all organizations. Requires admin.tasks role for access.
 """
 
-from datetime import datetime, timedelta, timezone
-from typing import Optional
+from datetime import UTC, datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_keycloak import OIDCUser
@@ -32,10 +31,7 @@ from app.services.task_service import TaskService
 
 logger = get_logger(__name__)
 
-router = APIRouter(
-    prefix="/admin/tasks",
-    tags=["admin-tasks"]
-)
+router = APIRouter(prefix="/admin/tasks", tags=["admin-tasks"])
 
 # Internal organization identifier - organizations with this in the name are internal
 INTERNAL_ORG_IDENTIFIER = "chapsvision"
@@ -43,15 +39,15 @@ INTERNAL_ORG_IDENTIFIER = "chapsvision"
 
 @router.get("", response_model=AdminTasksListResponse)
 async def get_admin_tasks(
-    status_filter: Optional[list[str]] = Query(None, alias="status"),
-    type_filter: Optional[list[str]] = Query(None, alias="type"),
-    organization_id: Optional[str] = Query(None),
+    status_filter: list[str] | None = Query(None, alias="status"),
+    type_filter: list[str] | None = Query(None, alias="type"),
+    organization_id: str | None = Query(None),
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
     sort_by: str = Query("created_at"),
     sort_order: str = Query("desc"),
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.tasks"]))
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.tasks"])),
 ):
     """Get all tasks across all organizations with filtering and pagination.
 
@@ -61,7 +57,7 @@ async def get_admin_tasks(
     Requires admin.tasks role for access.
 
     Args:
-        status_filter: Filter by status(es): pending, blocked, running, succeeded, error
+        status_filter: Filter by status(es): pending, running, succeeded, error
         type_filter: Filter by task type(s)
         organization_id: Filter by specific organization UUID
         page: Page number for pagination
@@ -78,8 +74,8 @@ async def get_admin_tasks(
                 "type": type_filter,
                 "organization_id": organization_id,
             },
-            "pagination": {"page": page, "size": size}
-        }
+            "pagination": {"page": page, "size": size},
+        },
     )
 
     # Lazy cleanup of all stale tasks before fetching
@@ -88,7 +84,7 @@ async def get_admin_tasks(
     if cleaned_count > 0:
         logger.info(
             f"Admin tasks endpoint cleaned up {cleaned_count} stale tasks",
-            extra={"user": user.preferred_username, "cleaned_count": cleaned_count}
+            extra={"user": user.preferred_username, "cleaned_count": cleaned_count},
         )
 
     # Build base query with company join for company_name
@@ -144,32 +140,22 @@ async def get_admin_tasks(
             type=task.type,
             status=task.status,
             error=task.error,
-            is_prerequisite=task.is_prerequisite,
             created_at=task.created_at,
-            updated_at=task.updated_at
+            updated_at=task.updated_at,
         )
         for task in tasks
     ]
 
-    logger.info(
-        "Admin tasks query completed",
-        extra={"total": total, "page": page, "returned": len(items)}
-    )
+    logger.info("Admin tasks query completed", extra={"total": total, "page": page, "returned": len(items)})
 
-    return AdminTasksListResponse(
-        items=items,
-        total=total,
-        page=page,
-        size=size,
-        pages=pages
-    )
+    return AdminTasksListResponse(items=items, total=total, page=page, size=size, pages=pages)
 
 
 @router.get("/stats", response_model=AdminTaskStatsResponse)
 async def get_admin_task_stats(
     hours: int = Query(24, ge=1, le=168),
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.tasks"]))
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.tasks"])),
 ):
     """Get aggregated task statistics for the summary cards.
 
@@ -178,30 +164,18 @@ async def get_admin_task_stats(
     Args:
         hours: Time range in hours for calculations
     """
-    logger.info(
-        "Admin fetching task stats",
-        extra={"user": user.preferred_username, "hours": hours}
-    )
+    logger.info("Admin fetching task stats", extra={"user": user.preferred_username, "hours": hours})
 
     # Calculate time threshold
-    time_threshold = datetime.now(timezone.utc) - timedelta(hours=hours)
+    time_threshold = datetime.now(UTC) - timedelta(hours=hours)
 
     # Get counts by status
     status_counts = (
-        db.query(Task.status, func.count(Task.id))
-        .filter(Task.created_at >= time_threshold)
-        .group_by(Task.status)
-        .all()
+        db.query(Task.status, func.count(Task.id)).filter(Task.created_at >= time_threshold).group_by(Task.status).all()
     )
 
     # Initialize counts
-    counts = {
-        "running": 0,
-        "pending": 0,
-        "blocked": 0,
-        "succeeded": 0,
-        "error": 0
-    }
+    counts = {"running": 0, "pending": 0, "succeeded": 0, "error": 0}
 
     for task_status, count in status_counts:
         counts[task_status.value] = count
@@ -213,14 +187,10 @@ async def get_admin_task_stats(
     success_rate = (counts["succeeded"] / completed * 100) if completed > 0 else 0.0
 
     # Count stuck tasks (running > 3 minutes)
-    stuck_threshold = datetime.now(timezone.utc) - timedelta(minutes=3)
+    stuck_threshold = datetime.now(UTC) - timedelta(minutes=3)
     stuck_count = (
         db.query(func.count(Task.id))
-        .filter(
-            Task.status == TaskStatus.RUNNING,
-            Task.created_at < stuck_threshold,
-            Task.created_at >= time_threshold
-        )
+        .filter(Task.status == TaskStatus.RUNNING, Task.created_at < stuck_threshold, Task.created_at >= time_threshold)
         .scalar()
     ) or 0
 
@@ -231,20 +201,19 @@ async def get_admin_task_stats(
             "running": counts["running"],
             "pending": counts["pending"],
             "stuck_count": stuck_count,
-            "success_rate": round(success_rate, 1)
-        }
+            "success_rate": round(success_rate, 1),
+        },
     )
 
     return AdminTaskStatsResponse(
         total_tasks=total_tasks,
         running=counts["running"],
         pending=counts["pending"],
-        blocked=counts["blocked"],
         succeeded=counts["succeeded"],
         error=counts["error"],
         success_rate=round(success_rate, 1),
         stuck_count=stuck_count,
-        time_range_hours=hours
+        time_range_hours=hours,
     )
 
 
@@ -252,22 +221,18 @@ async def get_admin_task_stats(
 async def bulk_restart_tasks(
     request: BulkRestartRequest,
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.tasks"]))
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.tasks"])),
 ):
     """Restart multiple tasks in bulk.
 
     Requires admin.tasks role for access.
 
     Only tasks with status 'running' or 'error' can be restarted.
-    Tasks with status 'pending', 'blocked', or 'succeeded' will be skipped.
+    Tasks with status 'pending' or 'succeeded' will be skipped.
     """
     logger.info(
         "Admin bulk restart tasks",
-        extra={
-            "user": user.preferred_username,
-            "task_count": len(request.task_ids),
-            "task_ids": request.task_ids
-        }
+        extra={"user": user.preferred_username, "task_count": len(request.task_ids), "task_ids": request.task_ids},
     )
 
     restarted: list[int] = []
@@ -289,13 +254,12 @@ async def bulk_restart_tasks(
         if task.status not in [TaskStatus.RUNNING, TaskStatus.ERROR]:
             skipped.append(task_id)
             skipped_reasons[str(task_id)] = (
-                f"Task status is '{task.status.value}', "
-                "only 'running' or 'error' tasks can be restarted"
+                f"Task status is '{task.status.value}', only 'running' or 'error' tasks can be restarted"
             )
             continue
 
         try:
-            # Restart the task using the company service (fire-and-forget via Celery)
+            # Restart the task using the company service (fire-and-forget via LangGraph)
             company_service.restart_task(task_id)
             restarted.append(task_id)
             logger.info(f"Task {task_id} restarted successfully by admin")
@@ -303,9 +267,7 @@ async def bulk_restart_tasks(
             skipped.append(task_id)
             skipped_reasons[str(task_id)] = f"Failed to restart: {str(e)}"
             logger.error(
-                f"Failed to restart task {task_id}",
-                exc_info=True,
-                extra={"task_id": task_id, "error": str(e)}
+                f"Failed to restart task {task_id}", exc_info=True, extra={"task_id": task_id, "error": str(e)}
             )
 
     logger.info(
@@ -314,28 +276,19 @@ async def bulk_restart_tasks(
             "restarted_count": len(restarted),
             "skipped_count": len(skipped),
             "restarted": restarted,
-            "skipped": skipped
-        }
+            "skipped": skipped,
+        },
     )
 
-    return BulkRestartResponse(
-        restarted=restarted,
-        skipped=skipped,
-        skipped_reasons=skipped_reasons
-    )
+    return BulkRestartResponse(restarted=restarted, skipped=skipped, skipped_reasons=skipped_reasons)
 
 
 # Organizations endpoint in a separate router to avoid prefix issues
-org_router = APIRouter(
-    prefix="/admin/organizations",
-    tags=["admin-tasks"]
-)
+org_router = APIRouter(prefix="/admin/organizations", tags=["admin-tasks"])
 
 
 @org_router.get("", response_model=OrganizationsListResponse)
-async def get_admin_organizations(
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.tasks"]))
-):
+async def get_admin_organizations(user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.tasks"]))):
     """Fetch all organizations for the organization filter dropdown and name mapping.
 
     Requires admin.tasks role for access.
@@ -343,10 +296,7 @@ async def get_admin_organizations(
     Returns organizations from Keycloak with is_internal flag set for
     internal organizations (those containing 'chapsvision' in their name).
     """
-    logger.info(
-        "Admin fetching organizations",
-        extra={"user": user.preferred_username}
-    )
+    logger.info("Admin fetching organizations", extra={"user": user.preferred_username})
 
     try:
         # Fetch organizations from Keycloak
@@ -356,26 +306,18 @@ async def get_admin_organizations(
             OrganizationResponse(
                 id=org.get("id", ""),
                 name=org.get("name", "Unknown"),
-                is_internal=INTERNAL_ORG_IDENTIFIER in org.get("name", "").lower()
+                is_internal=INTERNAL_ORG_IDENTIFIER in org.get("name", "").lower(),
             )
             for org in keycloak_orgs
             if org.get("id")  # Only include orgs with valid IDs
         ]
 
-        logger.info(
-            "Organizations fetched successfully",
-            extra={"count": len(organizations)}
-        )
+        logger.info("Organizations fetched successfully", extra={"count": len(organizations)})
 
         return OrganizationsListResponse(organizations=organizations)
 
     except Exception as e:
-        logger.error(
-            "Failed to fetch organizations from Keycloak",
-            exc_info=True,
-            extra={"error": str(e)}
-        )
+        logger.error("Failed to fetch organizations from Keycloak", exc_info=True, extra={"error": str(e)})
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to fetch organizations from Keycloak"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to fetch organizations from Keycloak"
         )

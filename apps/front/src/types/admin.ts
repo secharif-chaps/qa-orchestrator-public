@@ -11,7 +11,6 @@ export interface AdminTaskResponse {
   type: TaskType
   status: TaskStatus
   error: string | null
-  is_prerequisite: boolean
   created_at: string
   updated_at: string
 }

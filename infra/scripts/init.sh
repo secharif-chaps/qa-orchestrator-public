@@ -4,7 +4,7 @@
 #
 # What it does:
 #   1. Create .env from template
-#   2. Auto-generate secrets (ENCRYPTION_KEY, INTERNAL_JWT_SECRET, TUNNEL_SUBDOMAIN)
+#   2. Auto-generate secrets (ENCRYPTION_KEY, INTERNAL_JWT_SECRET)
 #   3. Configure frontend private registry (.yarnrc.yml)
 #   4. Install frontend dependencies
 #   5. Build and start all Docker services
@@ -42,13 +42,11 @@ if grep -q '^INTERNAL_JWT_SECRET=changeme$' .env; then
   echo "✅ Auto-generated INTERNAL_JWT_SECRET"
 fi
 
-if grep -q '^TUNNEL_SUBDOMAIN=chapsmind-dev-changeme$' .env; then
-  RANDOM_ID=$(python3 -c "import secrets; print(secrets.token_hex(4))")
-  sed -i.bak "s/^TUNNEL_SUBDOMAIN=chapsmind-dev-changeme$/TUNNEL_SUBDOMAIN=chapsmind-dev-${RANDOM_ID}/" .env
-  echo "✅ Auto-generated TUNNEL_SUBDOMAIN=chapsmind-dev-${RANDOM_ID}"
-fi
-
 rm -f .env.bak
+
+# ─── 2b. Configure LLM ─────────────────────────────
+
+bash infra/scripts/setup-llm.sh
 
 # ─── 3. Configure .yarnrc.yml ────────────────────────
 
@@ -76,7 +74,7 @@ docker run --rm -w /app \
 if docker compose ps -q 2>/dev/null | grep -q .; then
   echo ""
   echo "🔄 Stopping existing containers..."
-  docker compose down
+  docker compose down --remove-orphans
 fi
 
 BUSY_PORTS=""
@@ -141,7 +139,7 @@ echo ""
 echo "  Application → http://localhost         (frontend + API)"
 echo "  API Docs    → http://localhost/docs    (Swagger UI)"
 echo "  Keycloak    → http://localhost:8080    (admin / admin)"
-echo "  RabbitMQ    → http://localhost:15672   (guest / guest)"
+echo ""
 echo ""
 echo "  Test users:"
 echo "    admin / admin123              (full access)"

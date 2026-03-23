@@ -8,8 +8,7 @@ This module defines:
 """
 
 from datetime import datetime
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -19,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field
 # ==============================================================================
 
 
-class FolderShareRole(str, Enum):
+class FolderShareRole(StrEnum):
     """Share role enum for folder sharing permissions.
 
     Attributes:
@@ -27,6 +26,7 @@ class FolderShareRole(str, Enum):
         writer: Can view folder and add items (if has module permission),
                 but cannot edit/delete folder or manage sharing
     """
+
     reader = "reader"
     writer = "writer"
 
@@ -38,9 +38,9 @@ class FolderShareRole(str, Enum):
 
 class FolderBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
-    color: Optional[str] = Field(None, max_length=50)
-    icon: Optional[str] = Field(None, max_length=50)
-    tags: Optional[list[str]] = Field(default_factory=list)
+    color: str | None = Field(None, max_length=50)
+    icon: str | None = Field(None, max_length=50)
+    tags: list[str] | None = Field(default_factory=list)
 
 
 class FolderCreate(FolderBase):
@@ -48,10 +48,10 @@ class FolderCreate(FolderBase):
 
 
 class FolderUpdate(BaseModel):
-    name: Optional[str] = Field(None, min_length=1, max_length=255)
-    color: Optional[str] = Field(None, max_length=50)
-    icon: Optional[str] = Field(None, max_length=50)
-    tags: Optional[list[str]] = None
+    name: str | None = Field(None, min_length=1, max_length=255)
+    color: str | None = Field(None, max_length=50)
+    icon: str | None = Field(None, max_length=50)
+    tags: list[str] | None = None
 
 
 # ==============================================================================
@@ -62,7 +62,7 @@ class FolderUpdate(BaseModel):
 class FolderItemBase(BaseModel):
     item_id: str
     item_type: str = Field(..., pattern="^(company|contact|document)$")  # Validate item type
-    position: Optional[int] = None
+    position: int | None = None
 
 
 class FolderItemAdd(FolderItemBase):
@@ -71,6 +71,7 @@ class FolderItemAdd(FolderItemBase):
 
 class FolderItemMove(BaseModel):
     """Schema for moving an item between folders."""
+
     folder_id: UUID = Field(..., description="Destination folder ID")
 
 
@@ -78,13 +79,14 @@ class FolderItemResponse(FolderItemBase):
     id: UUID
     folder_id: UUID
     added_at: datetime
-    owner: Optional[str]
+    owner: str | None
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class FolderItemMoveResponse(BaseModel):
     """Response schema for moving an item to a folder."""
+
     message: str
     item: FolderItemResponse
 
@@ -94,22 +96,22 @@ class FolderItemMoveResponse(BaseModel):
 class FolderItemSimple(BaseModel):
     id: str
     type: str
-    position: Optional[int]
-    added_at: Optional[str]
+    position: int | None
+    added_at: str | None
     name: str
-    website: Optional[str]
-    created_at: Optional[str]
+    website: str | None
+    created_at: str | None
     owner: str
 
 
 class FolderItemSummary(BaseModel):
     id: str
     type: str
-    position: Optional[int]
-    added_at: Optional[str]
+    position: int | None
+    added_at: str | None
     name: str
-    website: Optional[str]
-    created_at: Optional[str]
+    website: str | None
+    created_at: str | None
     owner: str
     is_deleted: bool = False
 
@@ -136,21 +138,21 @@ class FolderResponse(FolderBase):
         updated_at: Last update timestamp
         items: List of items in the folder
     """
+
     id: UUID
     organization_id: str
     owner: str
-    owner_id: Optional[str] = Field(None, description="Owner Keycloak UUID")
+    owner_id: str | None = Field(None, description="Owner Keycloak UUID")
     owner_username: str = Field(..., description="Owner username for display in global view")
     is_owner: bool = Field(False, description="True if current user is folder owner")
-    share_role: Optional[str] = Field(
-        None,
-        description="User's role for this folder: 'owner', 'writer', 'reader', or null"
+    share_role: str | None = Field(
+        None, description="User's role for this folder: 'owner', 'writer', 'reader', or null"
     )
     is_favorite: bool
     is_deleted: bool
     created_at: datetime
     updated_at: datetime
-    items: Optional[list[FolderItemSimple]] = Field(default_factory=list)
+    items: list[FolderItemSimple] | None = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -175,22 +177,22 @@ class FolderWithItemsResponse(BaseModel):
         organization_id: Organization UUID
         items: List of items with details
     """
+
     id: str
     name: str
-    color: Optional[str]
-    icon: Optional[str]
+    color: str | None
+    icon: str | None
     tags: list[str]
     owner: str
-    owner_id: Optional[str] = Field(None, description="Owner Keycloak UUID")
+    owner_id: str | None = Field(None, description="Owner Keycloak UUID")
     is_owner: bool = Field(False, description="True if current user is folder owner")
-    share_role: Optional[str] = Field(
-        None,
-        description="User's role for this folder: 'owner', 'writer', 'reader', or null"
+    share_role: str | None = Field(
+        None, description="User's role for this folder: 'owner', 'writer', 'reader', or null"
     )
     is_favorite: bool
     is_deleted: bool
-    created_at: Optional[str]
-    updated_at: Optional[str]
+    created_at: str | None
+    updated_at: str | None
     organization_id: str
     items: list[FolderItemSummary]
 
@@ -208,11 +210,11 @@ class FolderShareCreate(BaseModel):
         user_username: Username for display (denormalized)
         role: Share role (reader or writer)
     """
+
     user_id: str = Field(..., description="Keycloak user UUID to share with")
     user_username: str = Field(..., description="Username for display")
     role: FolderShareRole = Field(
-        default=FolderShareRole.reader,
-        description="Share role - reader (view only) or writer (can add items)"
+        default=FolderShareRole.reader, description="Share role - reader (view only) or writer (can add items)"
     )
 
 
@@ -222,10 +224,8 @@ class FolderShareUpdate(BaseModel):
     Attributes:
         role: New share role (reader or writer)
     """
-    role: FolderShareRole = Field(
-        ...,
-        description="New share role - reader (view only) or writer (can add items)"
-    )
+
+    role: FolderShareRole = Field(..., description="New share role - reader (view only) or writer (can add items)")
 
 
 class FolderShareResponse(BaseModel):
@@ -240,6 +240,7 @@ class FolderShareResponse(BaseModel):
         created_at: Timestamp when share was created
         has_write_permission: Whether user has organization.write permission
     """
+
     id: UUID
     folder_id: UUID
     user_id: str
@@ -247,8 +248,7 @@ class FolderShareResponse(BaseModel):
     role: FolderShareRole
     created_at: datetime
     has_write_permission: bool = Field(
-        default=False,
-        description="Whether user has organization.write permission (can be assigned Writer role)"
+        default=False, description="Whether user has organization.write permission (can be assigned Writer role)"
     )
 
     model_config = ConfigDict(from_attributes=True)
@@ -268,10 +268,10 @@ class UserSearchResult(BaseModel):
         email: User's email address
         has_write_permission: Whether user has organization.write permission
     """
+
     user_id: str = Field(..., description="Keycloak user UUID")
     username: str = Field(..., description="Username for display")
-    email: Optional[str] = Field(None, description="User's email address")
+    email: str | None = Field(None, description="User's email address")
     has_write_permission: bool = Field(
-        False,
-        description="Whether user has organization.write permission (can be Writer)"
+        False, description="Whether user has organization.write permission (can be Writer)"
     )

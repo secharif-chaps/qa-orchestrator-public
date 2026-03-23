@@ -12,19 +12,17 @@ This script can either:
 
 import argparse
 import json
-import os
 import sys
-from datetime import datetime
 from pathlib import Path
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from sqlalchemy.orm import Session
-from app.database import SessionLocal, engine
+
+from app.database import SessionLocal
 from app.models.company import Company
 from app.models.task import Task, TaskStatus, TaskType
-
 
 # Sample companies fixture data
 SAMPLE_COMPANIES = [
@@ -39,12 +37,12 @@ SAMPLE_COMPANIES = [
             "industry": "Artificial Intelligence",
             "founded": "2021",
             "headquarters": "San Francisco, CA",
-            "employees": "500-1000"
+            "employees": "500-1000",
         },
         "digital": {
             "linkedin": "https://www.linkedin.com/company/anthropic",
-            "twitter": "https://twitter.com/AnthropicAI"
-        }
+            "twitter": "https://twitter.com/AnthropicAI",
+        },
     },
     {
         "name": "OpenAI",
@@ -57,12 +55,9 @@ SAMPLE_COMPANIES = [
             "industry": "Artificial Intelligence",
             "founded": "2015",
             "headquarters": "San Francisco, CA",
-            "employees": "1000-5000"
+            "employees": "1000-5000",
         },
-        "digital": {
-            "linkedin": "https://www.linkedin.com/company/openai",
-            "twitter": "https://twitter.com/OpenAI"
-        }
+        "digital": {"linkedin": "https://www.linkedin.com/company/openai", "twitter": "https://twitter.com/OpenAI"},
     },
     {
         "name": "Google DeepMind",
@@ -75,12 +70,12 @@ SAMPLE_COMPANIES = [
             "industry": "Artificial Intelligence",
             "founded": "2010",
             "headquarters": "London, UK",
-            "employees": "1000-5000"
+            "employees": "1000-5000",
         },
         "digital": {
             "linkedin": "https://www.linkedin.com/company/deepmind",
-            "twitter": "https://twitter.com/GoogleDeepMind"
-        }
+            "twitter": "https://twitter.com/GoogleDeepMind",
+        },
     },
     {
         "name": "Meta AI",
@@ -93,12 +88,9 @@ SAMPLE_COMPANIES = [
             "industry": "Artificial Intelligence",
             "founded": "2013",
             "headquarters": "Menlo Park, CA",
-            "employees": "1000-5000"
+            "employees": "1000-5000",
         },
-        "digital": {
-            "linkedin": "https://www.linkedin.com/company/meta",
-            "twitter": "https://twitter.com/AIatMeta"
-        }
+        "digital": {"linkedin": "https://www.linkedin.com/company/meta", "twitter": "https://twitter.com/AIatMeta"},
     },
     {
         "name": "Mistral AI",
@@ -111,13 +103,13 @@ SAMPLE_COMPANIES = [
             "industry": "Artificial Intelligence",
             "founded": "2023",
             "headquarters": "Paris, France",
-            "employees": "50-200"
+            "employees": "50-200",
         },
         "digital": {
             "linkedin": "https://www.linkedin.com/company/mistral-ai",
-            "twitter": "https://twitter.com/MistralAI"
-        }
-    }
+            "twitter": "https://twitter.com/MistralAI",
+        },
+    },
 ]
 
 
@@ -155,10 +147,9 @@ def seed_companies(db: Session, companies_data: list[dict], organization_id: str
     for company_data in companies_data:
         # Check if company already exists (by name and organization)
         org_id = organization_id or company_data.get("organization_id", "default-org")
-        existing = db.query(Company).filter(
-            Company.name == company_data["name"],
-            Company.organization_id == org_id
-        ).first()
+        existing = (
+            db.query(Company).filter(Company.name == company_data["name"], Company.organization_id == org_id).first()
+        )
 
         if existing:
             print(f"  Skipping '{company_data['name']}' - already exists")
@@ -196,29 +187,19 @@ def seed_companies(db: Session, companies_data: list[dict], organization_id: str
 
 def create_initial_tasks(db: Session, company: Company):
     """Create initial tasks for a company."""
-    # Create data collection task (prerequisite)
-    data_task = Task(
-        company_id=company.id,
-        organization_id=company.organization_id,
-        type=TaskType.data_collection,
-        status=TaskStatus.SUCCEEDED,  # Mark as done since we have sample data
-        is_prerequisite=True,
-    )
-    db.add(data_task)
-
-    # Create profile task
-    profile_task = Task(
-        company_id=company.id,
-        organization_id=company.organization_id,
-        type=TaskType.profile,
-        status=TaskStatus.SUCCEEDED if company.profile else TaskStatus.PENDING,
-    )
-    db.add(profile_task)
+    for task_type in TaskType:
+        task = Task(
+            company_id=company.id,
+            organization_id=company.organization_id,
+            type=task_type,
+            status=TaskStatus.SUCCEEDED,  # Mark as done since we have sample data
+        )
+        db.add(task)
 
 
 def export_from_db(db: Session, organization_id: str = None) -> list[dict]:
     """Export companies from database to fixture format."""
-    query = db.query(Company).filter(Company.is_deleted == False)
+    query = db.query(Company).filter(Company.is_deleted is False)
     if organization_id:
         query = query.filter(Company.organization_id == organization_id)
 
@@ -226,42 +207,35 @@ def export_from_db(db: Session, organization_id: str = None) -> list[dict]:
 
     result = []
     for c in companies:
-        result.append({
-            "name": c.name,
-            "website": c.website,
-            "organization_id": c.organization_id,
-            "owner_id": c.owner_id,
-            "owner_username": c.owner_username,
-            "profile": c.profile or {},
-            "digital": c.digital or {},
-            "timeline": c.timeline or {},
-            "products": c.products or {},
-            "jobs": c.jobs or {},
-            "csr": c.csr or {},
-            "press": c.press or {},
-            "team": c.team or [],
-        })
+        result.append(
+            {
+                "name": c.name,
+                "website": c.website,
+                "organization_id": c.organization_id,
+                "owner_id": c.owner_id,
+                "owner_username": c.owner_username,
+                "profile": c.profile or {},
+                "digital": c.digital or {},
+                "timeline": c.timeline or {},
+                "products": c.products or {},
+                "jobs": c.jobs or {},
+                "csr": c.csr or {},
+                "press": c.press or {},
+                "team": c.team or [],
+            }
+        )
 
     return result
 
 
 def main():
     parser = argparse.ArgumentParser(description="Seed or export companies")
+    parser.add_argument("--export", action="store_true", help="Export companies from database to fixture file")
     parser.add_argument(
-        "--export",
-        action="store_true",
-        help="Export companies from database to fixture file"
+        "--org", type=str, default=None, help="Organization ID to use (for seeding) or filter by (for export)"
     )
     parser.add_argument(
-        "--org",
-        type=str,
-        default=None,
-        help="Organization ID to use (for seeding) or filter by (for export)"
-    )
-    parser.add_argument(
-        "--clear",
-        action="store_true",
-        help="Clear all existing companies before seeding (WARNING: destructive)"
+        "--clear", action="store_true", help="Clear all existing companies before seeding (WARNING: destructive)"
     )
     args = parser.parse_args()
 

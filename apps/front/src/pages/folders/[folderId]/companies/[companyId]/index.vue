@@ -38,19 +38,6 @@
           "
         ></div>
 
-        <!-- Blocked segment -->
-        <div
-          v-if="blockedPercentage > 0"
-          class="bg-sage-100 h-full transition-all duration-500 ease-out"
-          :style="{ width: `${blockedPercentage}%` }"
-          :title="
-            t('company.tasks.blocked', {
-              count: blockedCount,
-              percentage: Math.round(blockedPercentage),
-            })
-          "
-        ></div>
-
         <!-- Pending segment -->
         <div
           v-if="pendingPercentage > 0"
@@ -309,7 +296,7 @@ const { data: tasks } = useQuery(() =>
 const isTaskRunning = (taskType: TaskType): boolean => {
   if (!tasks.value) return false
   const task = tasks.value?.find((t) => t.type === taskType)
-  return task?.status === 'running' || task?.status === 'pending' || task?.status === 'blocked'
+  return task?.status === 'running' || task?.status === 'pending'
 }
 
 // Task data is kept fresh via SSE (Server-Sent Events) in useTaskEvents composable.
@@ -343,12 +330,6 @@ const getTaskId = (taskType: TaskType): number | null => {
   return task?.id || null
 }
 
-// Check if data_collection task is running (blocks all other tasks)
-const isDataCollectionRunning = computed(() => {
-  const status = getTaskStatus('data_collection')
-  return status === 'pending' || status === 'running'
-})
-
 // Company info items for the grid
 const companyInfoItems = computed(() => [
   {
@@ -375,9 +356,6 @@ const companyInfoItems = computed(() => [
 
 // Analysis cards configuration
 const analysisCards = computed(() => {
-  // If data_collection is running, show all cards as loading
-  const dataCollectionStatus = isDataCollectionRunning.value ? 'running' : null
-
   return [
     {
       section: 'profile' as TaskType,
@@ -388,7 +366,7 @@ const analysisCards = computed(() => {
       ),
       icon: 'fas fa-building',
       insights: company.value?.profile?.businessLine?.value || company.value?.digital?.insights,
-      taskStatus: dataCollectionStatus || getTaskStatus('profile') || getTaskStatus('digital'),
+      taskStatus: getTaskStatus('profile') || getTaskStatus('digital'),
       errorDetails: getTaskErrorDetails('profile') || getTaskErrorDetails('digital'),
       taskId: getTaskId('profile') || getTaskId('digital'),
       taskUpdatedAt: getTaskUpdatedAt('profile') || getTaskUpdatedAt('digital'),
@@ -406,7 +384,7 @@ const analysisCards = computed(() => {
         'company.analysisCards.timeline.insights',
         'Discover the company history and key events',
       ),
-      taskStatus: dataCollectionStatus || getTaskStatus('timeline'),
+      taskStatus: getTaskStatus('timeline'),
       errorDetails: getTaskErrorDetails('timeline'),
       taskId: getTaskId('timeline'),
       taskUpdatedAt: getTaskUpdatedAt('timeline'),
@@ -423,7 +401,7 @@ const analysisCards = computed(() => {
       insights:
         company.value?.products?.insights ||
         t('company.analysisCards.products.insights', 'Discover the company products and services'),
-      taskStatus: dataCollectionStatus || getTaskStatus('products'),
+      taskStatus: getTaskStatus('products'),
       errorDetails: getTaskErrorDetails('products'),
       taskId: getTaskId('products'),
       taskUpdatedAt: getTaskUpdatedAt('products'),
@@ -441,7 +419,7 @@ const analysisCards = computed(() => {
         'company.analysisCards.team.insights',
         'Discover the organizational structure and key members',
       ),
-      taskStatus: dataCollectionStatus || getTaskStatus('team'),
+      taskStatus: getTaskStatus('team'),
       errorDetails: getTaskErrorDetails('team'),
       taskId: getTaskId('team'),
       taskUpdatedAt: getTaskUpdatedAt('team'),
@@ -456,7 +434,7 @@ const analysisCards = computed(() => {
       ),
       icon: 'fas fa-briefcase',
       insights: company.value?.jobs?.insights?.hiring_focus?.value,
-      taskStatus: dataCollectionStatus || getTaskStatus('jobs'),
+      taskStatus: getTaskStatus('jobs'),
       errorDetails: getTaskErrorDetails('jobs'),
       taskId: getTaskId('jobs'),
       taskUpdatedAt: getTaskUpdatedAt('jobs'),
@@ -471,7 +449,7 @@ const analysisCards = computed(() => {
       ),
       icon: 'fas fa-newspaper',
       insights: company.value?.press?.insights,
-      taskStatus: dataCollectionStatus || getTaskStatus('press'),
+      taskStatus: getTaskStatus('press'),
       errorDetails: getTaskErrorDetails('press'),
       taskId: getTaskId('press'),
       taskUpdatedAt: getTaskUpdatedAt('press'),
@@ -486,7 +464,7 @@ const analysisCards = computed(() => {
       ),
       icon: 'fas fa-leaf',
       insights: company.value?.csr?.insights,
-      taskStatus: dataCollectionStatus || getTaskStatus('csr'),
+      taskStatus: getTaskStatus('csr'),
       errorDetails: getTaskErrorDetails('csr'),
       taskId: getTaskId('csr'),
       taskUpdatedAt: getTaskUpdatedAt('csr'),
@@ -618,12 +596,6 @@ const errorPercentage = computed(() => {
   return (errorCount / tasks.value.length) * 100
 })
 
-const blockedPercentage = computed(() => {
-  if (!tasks.value) return 0
-  const blockedCount = tasks.value.filter((t) => t.status === 'blocked').length
-  return (blockedCount / tasks.value.length) * 100
-})
-
 const pendingPercentage = computed(() => {
   if (!tasks.value) return 0
   const pendingCount = tasks.value.filter((t) => t.status === 'pending').length
@@ -640,12 +612,6 @@ const errorCount = computed(() => {
   if (!tasks.value) return 0
   const errorCount = tasks.value.filter((t) => t.status === 'error').length
   return errorCount
-})
-
-const blockedCount = computed(() => {
-  if (!tasks.value) return 0
-  const blockedCount = tasks.value.filter((t) => t.status === 'blocked').length
-  return blockedCount
 })
 
 const pendingCount = computed(() => {

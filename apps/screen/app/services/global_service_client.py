@@ -10,9 +10,8 @@ transient failures.
 """
 
 import asyncio
-from collections.abc import Awaitable
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from typing import Callable
 
 import httpx
 from fastapi import HTTPException, status
@@ -192,7 +191,7 @@ class GlobalServiceClient:
 
             except httpx.TimeoutException as e:
                 last_exception = e
-                delay = min(BASE_DELAY_SECONDS * (2 ** attempt), MAX_DELAY_SECONDS)
+                delay = min(BASE_DELAY_SECONDS * (2**attempt), MAX_DELAY_SECONDS)
                 logger.warning(
                     f"{operation_name} timeout on attempt {attempt + 1}/{MAX_RETRIES}, retrying in {delay}s",
                     extra={"attempt": attempt + 1, "delay": delay},
@@ -201,7 +200,7 @@ class GlobalServiceClient:
 
             except httpx.ConnectError as e:
                 last_exception = e
-                delay = min(BASE_DELAY_SECONDS * (2 ** attempt), MAX_DELAY_SECONDS)
+                delay = min(BASE_DELAY_SECONDS * (2**attempt), MAX_DELAY_SECONDS)
                 logger.warning(
                     f"{operation_name} connection error on attempt {attempt + 1}/{MAX_RETRIES}, retrying in {delay}s",
                     extra={"attempt": attempt + 1, "delay": delay, "error": str(e)},
@@ -367,7 +366,6 @@ class GlobalServiceClient:
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail="Token service temporarily unavailable",
             )
-
 
     async def get_balance(
         self,

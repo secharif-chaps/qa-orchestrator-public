@@ -5,12 +5,12 @@ Revises: 022
 Create Date: 2026-01-19 17:02:53.911909
 
 """
+
 from alembic import op
 
-
 # revision identifiers, used by Alembic.
-revision = '023'
-down_revision = '022'
+revision = "023"
+down_revision = "022"
 branch_labels = None
 depends_on = None
 

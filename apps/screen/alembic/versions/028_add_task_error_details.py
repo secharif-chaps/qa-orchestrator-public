@@ -7,6 +7,7 @@ Create Date: 2026-03-09
 Stores structured Dify error information (error_type, is_recoverable,
 retry_after_seconds, recommended_action) for contextualized frontend display (TAR-1172).
 """
+
 import sqlalchemy as sa
 
 from alembic import op

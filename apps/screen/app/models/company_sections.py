@@ -54,15 +54,12 @@ class CompanyProfile(Base):
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_profile"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
     # Primary key is also foreign key - enforces 1:1 relationship
-    company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        primary_key=True
-    )
+    company_id = Column(Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), primary_key=True)
 
     # Insights (translatable)
     insights = Column(Text, nullable=True)
@@ -101,17 +98,8 @@ class CompanyProfile(Base):
     hq_source = Column(Text, nullable=True)
 
     # Timestamps
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
-    updated_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     # Relationship to Company (bidirectional with back_populates)
     company = relationship("Company", back_populates="profile_data")
@@ -144,14 +132,11 @@ class CompanyDigital(Base):
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_digital"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
-    company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        primary_key=True
-    )
+    company_id = Column(Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), primary_key=True)
 
     # Insights (translatable)
     insights = Column(Text, nullable=True)
@@ -182,17 +167,8 @@ class CompanyDigital(Base):
     loyalty_program_source = Column(Text, nullable=True)
 
     # Timestamps
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
-    updated_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="digital_data")
@@ -212,31 +188,19 @@ class CompanyTimeline(Base):
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_timeline"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
-    company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        primary_key=True
-    )
+    company_id = Column(Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), primary_key=True)
 
     # Insights (translatable)
     insights = Column(Text, nullable=True)
     insights_source = Column(Text, nullable=True)
 
     # Timestamps
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
-    updated_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="timeline_data")
@@ -261,14 +225,11 @@ class CompanyProducts(Base):
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_products"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
-    company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        primary_key=True
-    )
+    company_id = Column(Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), primary_key=True)
 
     # Insights (translatable)
     insights = Column(Text, nullable=True)
@@ -283,17 +244,8 @@ class CompanyProducts(Base):
     marketing_positioning_source = Column(Text, nullable=True)
 
     # Timestamps
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
-    updated_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="products_data")
@@ -320,14 +272,11 @@ class CompanyJobs(Base):
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_jobs"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
-    company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        primary_key=True
-    )
+    company_id = Column(Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), primary_key=True)
 
     # Total openings (number - no translation)
     insights_total_openings = Column(Integer, nullable=True)
@@ -346,17 +295,8 @@ class CompanyJobs(Base):
     insights_growth_indicators_source = Column(Text, nullable=True)
 
     # Timestamps
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
-    updated_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="jobs_data")
@@ -378,14 +318,11 @@ class CompanyCsr(Base):
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_csr"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
-    company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        primary_key=True
-    )
+    company_id = Column(Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), primary_key=True)
 
     # Insights (translatable)
     insights = Column(Text, nullable=True)
@@ -396,17 +333,8 @@ class CompanyCsr(Base):
     responsibility_source = Column(Text, nullable=True)
 
     # Timestamps
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
-    updated_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="csr_data")
@@ -426,31 +354,19 @@ class CompanyPress(Base):
         updated_at: Record last update timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_press"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
-    company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        primary_key=True
-    )
+    company_id = Column(Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), primary_key=True)
 
     # Insights (translatable)
     insights = Column(Text, nullable=True)
     insights_source = Column(Text, nullable=True)
 
     # Timestamps
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
-    updated_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="press_data")

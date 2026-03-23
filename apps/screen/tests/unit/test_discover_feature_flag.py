@@ -46,9 +46,7 @@ class TestFeatureFlagApiConfig:
         ]
 
         for url in valid_urls:
-            request = FeatureFlagToggleRequest(
-                enabled=True, config={"url": url}
-            )
+            request = FeatureFlagToggleRequest(enabled=True, config={"url": url})
             assert request.enabled is True
             assert request.config["url"] == url
 
@@ -58,9 +56,7 @@ class TestFeatureFlagApiConfig:
 
         # HTTP URLs should be rejected
         with pytest.raises(ValidationError) as exc_info:
-            FeatureFlagToggleRequest(
-                enabled=True, config={"url": "http://insecure.example.com"}
-            )
+            FeatureFlagToggleRequest(enabled=True, config={"url": "http://insecure.example.com"})
 
         errors = exc_info.value.errors()
         assert len(errors) > 0
@@ -110,8 +106,6 @@ class TestFeatureFlagApiConfig:
         from app.api.endpoints.feature_flags import FeatureFlagToggleRequest
 
         # Config with other fields (not url) should be allowed
-        request = FeatureFlagToggleRequest(
-            enabled=True, config={"some_other_field": "value"}
-        )
+        request = FeatureFlagToggleRequest(enabled=True, config={"some_other_field": "value"})
         assert request.enabled is True
         assert request.config == {"some_other_field": "value"}

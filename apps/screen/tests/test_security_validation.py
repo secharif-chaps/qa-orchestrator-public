@@ -18,10 +18,7 @@ class TestPydanticValidation:
 
     def test_company_create_valid_input(self):
         """Test that valid company data passes validation."""
-        data = CompanyCreate(
-            name="Acme Corporation",
-            website="https://acme.com"
-        )
+        data = CompanyCreate(name="Acme Corporation", website="https://acme.com")
         assert data.name == "Acme Corporation"
         assert str(data.website) == "https://acme.com/"
 
@@ -55,12 +52,7 @@ class TestPydanticValidation:
     def test_company_create_name_with_special_characters(self):
         """Test that company names with safe special characters are allowed."""
         # These should be allowed in company names
-        valid_names = [
-            "Acme & Co.",
-            "Smith-Jones LLC",
-            "Company (USA)",
-            "Tech_Startup"
-        ]
+        valid_names = ["Acme & Co.", "Smith-Jones LLC", "Company (USA)", "Tech_Startup"]
 
         for name in valid_names:
             data = CompanyCreate(name=name, website="https://example.com")
@@ -81,7 +73,7 @@ class TestSQLInjectionPrevention:
             "' OR '1'='1",
             "1' UNION SELECT * FROM users--",
             "admin'--",
-            "' OR 1=1--"
+            "' OR 1=1--",
         ]
 
         for malicious_input in sql_injection_attempts:
@@ -94,7 +86,7 @@ class TestSQLInjectionPrevention:
             "<script>alert('xss')</script>",
             "<img src=x onerror=alert('xss')>",
             "javascript:alert('xss')",
-            "<iframe src='http://evil.com'></iframe>"
+            "<iframe src='http://evil.com'></iframe>",
         ]
 
         for malicious_input in xss_attempts:
@@ -107,10 +99,7 @@ class TestInputValidation:
 
     def test_company_name_whitespace_trimming(self):
         """Test that leading/trailing whitespace is trimmed from company name."""
-        data = CompanyCreate(
-            name="  Acme Corp  ",
-            website="https://example.com"
-        )
+        data = CompanyCreate(name="  Acme Corp  ", website="https://example.com")
         # Pydantic should trim whitespace
         assert data.name.strip() == data.name
         assert data.name == "Acme Corp" or data.name == "  Acme Corp  "  # Depends on implementation
@@ -126,7 +115,7 @@ class TestInputValidation:
 
         for input_url, expected_url in test_cases:
             data = CompanyCreate(name="Test Corp", website=input_url)
-            assert str(data.website).rstrip('/') == expected_url.rstrip('/')
+            assert str(data.website).rstrip("/") == expected_url.rstrip("/")
 
     def test_company_name_minimum_length(self):
         """Test that company name has minimum length requirement."""

@@ -8,7 +8,6 @@ All endpoints are self-service and require authentication.
 """
 
 from datetime import datetime
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi_keycloak import OIDCUser
@@ -24,8 +23,10 @@ logger = get_logger(__name__)
 
 # Pydantic Schemas
 
+
 class SessionResponse(BaseModel):
     """Response schema for a single session."""
+
     id: str
     ip_address: str
     started_at: datetime
@@ -36,24 +37,27 @@ class SessionResponse(BaseModel):
 
 class SessionListResponse(BaseModel):
     """Response schema for session list."""
+
     sessions: list[SessionResponse]
-    current_session_id: Optional[str] = None
+    current_session_id: str | None = None
 
 
 class ActivityEventResponse(BaseModel):
     """Response schema for a single activity event."""
+
     id: str
     type: str
     display_type: str
     icon: str
     title: str
     description: str
-    ip_address: Optional[str] = None
+    ip_address: str | None = None
     timestamp: datetime
 
 
 class ActivityEventsResponse(BaseModel):
     """Response schema for activity events list."""
+
     events: list[ActivityEventResponse]
     page: int
     size: int
@@ -62,6 +66,7 @@ class ActivityEventsResponse(BaseModel):
 
 # Helper functions
 
+
 def get_event_display_info(event_type: str) -> dict:
     """Map Keycloak event type to user-friendly display information."""
     event_mapping = {
@@ -69,73 +74,76 @@ def get_event_display_info(event_type: str) -> dict:
             "display_type": "login",
             "icon": "fas fa-sign-in-alt",
             "title": "Successful login",
-            "description": "Signed in successfully"
+            "description": "Signed in successfully",
         },
         "LOGIN_ERROR": {
             "display_type": "security",
             "icon": "fas fa-exclamation-triangle",
             "title": "Failed login attempt",
-            "description": "Invalid credentials or authentication failed"
+            "description": "Invalid credentials or authentication failed",
         },
         "LOGOUT": {
             "display_type": "login",
             "icon": "fas fa-sign-out-alt",
             "title": "Signed out",
-            "description": "Logged out of session"
+            "description": "Logged out of session",
         },
         "UPDATE_PROFILE": {
             "display_type": "update",
             "icon": "fas fa-user-edit",
             "title": "Profile updated",
-            "description": "Account profile was modified"
+            "description": "Account profile was modified",
         },
         "UPDATE_PASSWORD": {
             "display_type": "security",
             "icon": "fas fa-key",
             "title": "Password changed",
-            "description": "Account password was updated"
+            "description": "Account password was updated",
         },
         "UPDATE_EMAIL": {
             "display_type": "update",
             "icon": "fas fa-envelope",
             "title": "Email updated",
-            "description": "Account email was changed"
+            "description": "Account email was changed",
         },
         "UPDATE_TOTP": {
             "display_type": "security",
             "icon": "fas fa-mobile-alt",
             "title": "Two-factor updated",
-            "description": "Two-factor authentication was modified"
+            "description": "Two-factor authentication was modified",
         },
         "REMOVE_TOTP": {
             "display_type": "security",
             "icon": "fas fa-mobile-alt",
             "title": "Two-factor removed",
-            "description": "Two-factor authentication was disabled"
+            "description": "Two-factor authentication was disabled",
         },
         "REFRESH_TOKEN": {
             "display_type": "login",
             "icon": "fas fa-sync",
             "title": "Session refreshed",
-            "description": "Authentication token was refreshed"
+            "description": "Authentication token was refreshed",
         },
         "CODE_TO_TOKEN": {
             "display_type": "login",
             "icon": "fas fa-exchange-alt",
             "title": "Token exchanged",
-            "description": "Authorization code exchanged for token"
+            "description": "Authorization code exchanged for token",
         },
     }
 
-    return event_mapping.get(event_type, {
-        "display_type": "update",
-        "icon": "fas fa-info-circle",
-        "title": event_type.replace("_", " ").title(),
-        "description": f"Event: {event_type}"
-    })
+    return event_mapping.get(
+        event_type,
+        {
+            "display_type": "update",
+            "icon": "fas fa-info-circle",
+            "title": event_type.replace("_", " ").title(),
+            "description": f"Event: {event_type}",
+        },
+    )
 
 
-def get_current_session_id(request: Request) -> Optional[str]:
+def get_current_session_id(request: Request) -> str | None:
     """Extract current session ID from the request if available.
 
     The session ID might be in the JWT token or other request context.
@@ -147,6 +155,7 @@ def get_current_session_id(request: Request) -> Optional[str]:
     if auth_header.startswith("Bearer "):
         try:
             import jwt
+
             token = auth_header.split(" ")[1]
             # Decode without verification just to read claims
             payload = jwt.decode(token, options={"verify_signature": False})
@@ -158,11 +167,9 @@ def get_current_session_id(request: Request) -> Optional[str]:
 
 # Endpoints
 
+
 @router.get("/sessions", response_model=SessionListResponse)
-async def get_sessions(
-    request: Request,
-    user: OIDCUser = Depends(idp.get_current_user())
-):
+async def get_sessions(request: Request, user: OIDCUser = Depends(idp.get_current_user())):
     """Get all active sessions for the current user.
 
     Returns a list of all sessions associated with the authenticated user,
@@ -171,10 +178,7 @@ async def get_sessions(
     Returns:
         SessionListResponse with list of sessions and current session ID
     """
-    logger.info(
-        "Fetching sessions for current user",
-        extra={"user_id": user.sub, "username": user.preferred_username}
-    )
+    logger.info("Fetching sessions for current user", extra={"user_id": user.sub, "username": user.preferred_username})
 
     try:
         # Get current session ID from request
@@ -194,49 +198,33 @@ async def get_sessions(
             started_at = datetime.fromtimestamp(kc_session.get("start", 0) / 1000)
             last_access = datetime.fromtimestamp(kc_session.get("lastAccess", 0) / 1000)
 
-            sessions.append(SessionResponse(
-                id=session_id,
-                ip_address=kc_session.get("ipAddress", "Unknown"),
-                started_at=started_at,
-                last_access=last_access,
-                clients=kc_session.get("clients", {}),
-                is_current=is_current
-            ))
+            sessions.append(
+                SessionResponse(
+                    id=session_id,
+                    ip_address=kc_session.get("ipAddress", "Unknown"),
+                    started_at=started_at,
+                    last_access=last_access,
+                    clients=kc_session.get("clients", {}),
+                    is_current=is_current,
+                )
+            )
 
         logger.info(
             "Successfully fetched user sessions",
-            extra={
-                "user_id": user.sub,
-                "session_count": len(sessions),
-                "current_session_id": current_session_id
-            }
+            extra={"user_id": user.sub, "session_count": len(sessions), "current_session_id": current_session_id},
         )
 
-        return SessionListResponse(
-            sessions=sessions,
-            current_session_id=current_session_id
-        )
+        return SessionListResponse(sessions=sessions, current_session_id=current_session_id)
 
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(
-            "Failed to fetch user sessions",
-            exc_info=True,
-            extra={"user_id": user.sub, "error": str(e)}
-        )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to fetch sessions"
-        )
+        logger.error("Failed to fetch user sessions", exc_info=True, extra={"user_id": user.sub, "error": str(e)})
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to fetch sessions")
 
 
 @router.delete("/sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def revoke_session(
-    session_id: str,
-    request: Request,
-    user: OIDCUser = Depends(idp.get_current_user())
-):
+async def revoke_session(session_id: str, request: Request, user: OIDCUser = Depends(idp.get_current_user())):
     """Revoke a specific session.
 
     Terminates the specified session, logging out that device/browser.
@@ -251,11 +239,7 @@ async def revoke_session(
     """
     logger.info(
         "Revoking session for current user",
-        extra={
-            "user_id": user.sub,
-            "username": user.preferred_username,
-            "session_id": session_id
-        }
+        extra={"user_id": user.sub, "username": user.preferred_username, "session_id": session_id},
     )
 
     try:
@@ -263,8 +247,7 @@ async def revoke_session(
         current_session_id = get_current_session_id(request)
         if current_session_id and session_id == current_session_id:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Cannot revoke current session. Use logout instead."
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot revoke current session. Use logout instead."
             )
 
         # Verify the session belongs to this user before revoking
@@ -272,24 +255,15 @@ async def revoke_session(
         session_ids = [s.get("id") for s in user_sessions]
 
         if session_id not in session_ids:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Session not found"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
 
         # Revoke the session
         success = await keycloak_admin_service.revoke_session(session_id)
 
         if not success:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to revoke session"
-            )
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to revoke session")
 
-        logger.info(
-            "Successfully revoked session",
-            extra={"user_id": user.sub, "session_id": session_id}
-        )
+        logger.info("Successfully revoked session", extra={"user_id": user.sub, "session_id": session_id})
 
     except HTTPException:
         raise
@@ -297,19 +271,16 @@ async def revoke_session(
         logger.error(
             "Failed to revoke session",
             exc_info=True,
-            extra={"user_id": user.sub, "session_id": session_id, "error": str(e)}
+            extra={"user_id": user.sub, "session_id": session_id, "error": str(e)},
         )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to revoke session"
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to revoke session")
 
 
 @router.delete("/sessions", status_code=status.HTTP_204_NO_CONTENT)
 async def revoke_all_sessions(
     request: Request,
     keep_current: bool = Query(True, description="Keep the current session active"),
-    user: OIDCUser = Depends(idp.get_current_user())
+    user: OIDCUser = Depends(idp.get_current_user()),
 ):
     """Revoke all sessions (sign out all devices).
 
@@ -325,11 +296,7 @@ async def revoke_all_sessions(
     """
     logger.info(
         "Revoking all sessions for current user",
-        extra={
-            "user_id": user.sub,
-            "username": user.preferred_username,
-            "keep_current": keep_current
-        }
+        extra={"user_id": user.sub, "username": user.preferred_username, "keep_current": keep_current},
     )
 
     try:
@@ -348,17 +315,12 @@ async def revoke_all_sessions(
                         revoked_count += 1
                     except Exception as e:
                         logger.warning(
-                            "Failed to revoke individual session",
-                            extra={"session_id": session_id, "error": str(e)}
+                            "Failed to revoke individual session", extra={"session_id": session_id, "error": str(e)}
                         )
 
             logger.info(
                 "Successfully revoked other sessions",
-                extra={
-                    "user_id": user.sub,
-                    "revoked_count": revoked_count,
-                    "kept_session": current_session_id
-                }
+                extra={"user_id": user.sub, "revoked_count": revoked_count, "kept_session": current_session_id},
             )
         else:
             # Revoke all sessions including current
@@ -366,38 +328,24 @@ async def revoke_all_sessions(
 
             if not success:
                 raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Failed to revoke all sessions"
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to revoke all sessions"
                 )
 
-            logger.info(
-                "Successfully revoked all sessions",
-                extra={"user_id": user.sub}
-            )
+            logger.info("Successfully revoked all sessions", extra={"user_id": user.sub})
 
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(
-            "Failed to revoke all sessions",
-            exc_info=True,
-            extra={"user_id": user.sub, "error": str(e)}
-        )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to revoke all sessions"
-        )
+        logger.error("Failed to revoke all sessions", exc_info=True, extra={"user_id": user.sub, "error": str(e)})
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to revoke all sessions")
 
 
 @router.get("/events", response_model=ActivityEventsResponse)
 async def get_activity_events(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
     size: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
-    event_type: Optional[str] = Query(
-        None,
-        description="Filter by event type: login, security, profile, all"
-    ),
-    user: OIDCUser = Depends(idp.get_current_user())
+    event_type: str | None = Query(None, description="Filter by event type: login, security, profile, all"),
+    user: OIDCUser = Depends(idp.get_current_user()),
 ):
     """Get activity events (security log) for the current user.
 
@@ -426,8 +374,8 @@ async def get_activity_events(
             "username": user.preferred_username,
             "page": page,
             "size": size,
-            "event_type": event_type
-        }
+            "event_type": event_type,
+        },
     )
 
     try:
@@ -447,10 +395,7 @@ async def get_activity_events(
 
         # Fetch events from Keycloak (fetch one extra to check if there are more)
         kc_events = await keycloak_admin_service.get_user_events(
-            user_id=user.sub,
-            first=first,
-            max_results=size + 1,
-            event_types=keycloak_types
+            user_id=user.sub, first=first, max_results=size + 1, event_types=keycloak_types
         )
 
         # Check if there are more events
@@ -473,40 +418,26 @@ async def get_activity_events(
             if details and "auth_method" in details:
                 description += f" ({details['auth_method']})"
 
-            events.append(ActivityEventResponse(
-                id=str(kc_event.get("time", 0)),  # Use timestamp as ID if no ID provided
-                type=event_type_str,
-                display_type=display_info["display_type"],
-                icon=display_info["icon"],
-                title=display_info["title"],
-                description=description,
-                ip_address=kc_event.get("ipAddress"),
-                timestamp=timestamp
-            ))
+            events.append(
+                ActivityEventResponse(
+                    id=str(kc_event.get("time", 0)),  # Use timestamp as ID if no ID provided
+                    type=event_type_str,
+                    display_type=display_info["display_type"],
+                    icon=display_info["icon"],
+                    title=display_info["title"],
+                    description=description,
+                    ip_address=kc_event.get("ipAddress"),
+                    timestamp=timestamp,
+                )
+            )
 
         logger.info(
             "Successfully fetched activity events",
-            extra={
-                "user_id": user.sub,
-                "event_count": len(events),
-                "has_more": has_more
-            }
+            extra={"user_id": user.sub, "event_count": len(events), "has_more": has_more},
         )
 
-        return ActivityEventsResponse(
-            events=events,
-            page=page,
-            size=size,
-            has_more=has_more
-        )
+        return ActivityEventsResponse(events=events, page=page, size=size, has_more=has_more)
 
     except Exception as e:
-        logger.error(
-            "Failed to fetch activity events",
-            exc_info=True,
-            extra={"user_id": user.sub, "error": str(e)}
-        )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to fetch activity events"
-        )
+        logger.error("Failed to fetch activity events", exc_info=True, extra={"user_id": user.sub, "error": str(e)})
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to fetch activity events")

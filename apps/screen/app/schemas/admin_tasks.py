@@ -17,7 +17,6 @@ class AdminTaskResponse(BaseModel):
     type: TaskType
     status: TaskStatus
     error: str | None = None
-    is_prerequisite: bool = False
     created_at: datetime | None = None
     updated_at: datetime | None = None
 
@@ -40,7 +39,6 @@ class AdminTaskStatsResponse(BaseModel):
     total_tasks: int
     running: int
     pending: int
-    blocked: int
     succeeded: int
     error: int
     success_rate: float

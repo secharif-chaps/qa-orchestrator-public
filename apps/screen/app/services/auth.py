@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 import requests
 from jose import jwt
@@ -14,15 +14,15 @@ logger = get_logger(__name__)
 class KeycloakService:
     def __init__(self):
         # Remove trailing /auth if present (library adds it automatically)
-        server_url = settings.KEYCLOAK_SERVER_URL.removesuffix('/auth').removesuffix('/')
+        server_url = settings.KEYCLOAK_SERVER_URL.removesuffix("/auth").removesuffix("/")
 
         self.keycloak_openid = KeycloakOpenID(
             server_url=server_url,
             client_id=settings.KEYCLOAK_CLIENT_ID,
             realm_name=settings.KEYCLOAK_REALM,
-            client_secret_key=settings.KEYCLOAK_CLIENT_SECRET
+            client_secret_key=settings.KEYCLOAK_CLIENT_SECRET,
         )
-        
+
         # For admin operations (optional)
         self.keycloak_admin = None
         if settings.KEYCLOAK_CLIENT_SECRET:
@@ -32,18 +32,18 @@ class KeycloakService:
                     username=settings.KEYCLOAK_ADMIN_USERNAME,
                     password=settings.KEYCLOAK_ADMIN_PASSWORD,
                     realm_name=settings.KEYCLOAK_REALM,
-                    verify=True
+                    verify=True,
                 )
             except Exception:
                 # Admin connection is optional
                 pass
 
-    async def authenticate_user(self, username: str, password: str) -> Optional[dict[str, Any]]:
+    async def authenticate_user(self, username: str, password: str) -> dict[str, Any] | None:
         """Authenticate user with Keycloak using direct HTTP request"""
         try:
             # Build token endpoint URL
             # Note: settings.KEYCLOAK_SERVER_URL should be https://sso.deveryware.net/auth
-            server_url = settings.KEYCLOAK_SERVER_URL.removesuffix('/')
+            server_url = settings.KEYCLOAK_SERVER_URL.removesuffix("/")
             token_url = f"{server_url}/realms/{settings.KEYCLOAK_REALM}/protocol/openid-connect/token"
 
             # Prepare request payload
@@ -51,7 +51,7 @@ class KeycloakService:
                 "grant_type": "password",
                 "client_id": settings.KEYCLOAK_CLIENT_ID,
                 "username": username,
-                "password": password
+                "password": password,
             }
 
             # Add client_secret if configured
@@ -78,7 +78,7 @@ class KeycloakService:
             logger.error(f"Unexpected error during authentication for user {username}: {str(e)}")
             return None
 
-    async def refresh_token(self, refresh_token: str) -> Optional[dict[str, Any]]:
+    async def refresh_token(self, refresh_token: str) -> dict[str, Any] | None:
         """Refresh access token"""
         try:
             token = self.keycloak_openid.refresh_token(refresh_token)
@@ -94,7 +94,7 @@ class KeycloakService:
         except Exception:
             return False
 
-    async def get_user_info(self, access_token: str) -> Optional[dict[str, Any]]:
+    async def get_user_info(self, access_token: str) -> dict[str, Any] | None:
         """Get user info from access token"""
         try:
             logger.debug(f"Calling userinfo endpoint with token: {access_token[:20]}...")
@@ -106,7 +106,7 @@ class KeycloakService:
             logger.debug(f"Userinfo error: {type(e).__name__}: {str(e)}")
             return None
 
-    async def verify_token(self, token: str) -> Optional[TokenData]:
+    async def verify_token(self, token: str) -> TokenData | None:
         """Verify and decode JWT token with proper signature verification"""
         try:
             # Try JWT decoding first (works with any valid token from the realm)
@@ -114,25 +114,20 @@ class KeycloakService:
                 # Get the public key from Keycloak for JWT verification
                 public_key = self.keycloak_openid.public_key()
                 key = f"-----BEGIN PUBLIC KEY-----\n{public_key}\n-----END PUBLIC KEY-----"
-                
+
                 # Decode and verify the JWT token
                 options = {
                     "verify_signature": True,
                     "verify_aud": False,  # Don't verify audience for now
-                    "verify_exp": True,   # Verify expiration
+                    "verify_exp": True,  # Verify expiration
                 }
-                
-                payload = jwt.decode(
-                    token, 
-                    key, 
-                    algorithms=[settings.JWT_ALGORITHM],
-                    options=options
-                )
-                
+
+                payload = jwt.decode(token, key, algorithms=[settings.JWT_ALGORITHM], options=options)
+
                 # Extract user information
                 username = payload.get("preferred_username")
                 sub = payload.get("sub")
-                
+
                 # Extract roles
                 realm_access = payload.get("realm_access", {})
                 roles = realm_access.get("roles", ["user"])
@@ -141,46 +136,38 @@ class KeycloakService:
                 if username == "admin" and "admin" not in roles:
                     roles.append("admin")
 
-                return TokenData(
-                    username=username,
-                    sub=sub,
-                    roles=roles
-                )
-                
+                return TokenData(username=username, sub=sub, roles=roles)
+
             except jwt.ExpiredSignatureError:
                 return None
             except jwt.JWTError:
                 pass
             except Exception:
                 pass
-            
+
             # Fallback to userinfo endpoint if JWT decoding fails
             try:
                 userinfo = await self.get_user_info(token)
                 if userinfo:
                     username = userinfo.get("preferred_username")
                     sub = userinfo.get("sub")
-                    
+
                     # Check if user is admin (you can customize this logic)
                     roles = ["user"]
                     if username == "admin":
                         roles.append("admin")
 
-                    return TokenData(
-                        username=username,
-                        sub=sub,
-                        roles=roles
-                    )
+                    return TokenData(username=username, sub=sub, roles=roles)
             except Exception:
                 pass
-            
+
             return None
-            
+
         except Exception as e:
             logger.debug(f"Token verification error: {str(e)}")
             return None
 
-    async def introspect_token(self, token: str) -> Optional[dict[str, Any]]:
+    async def introspect_token(self, token: str) -> dict[str, Any] | None:
         """Introspect token (server-side validation)"""
         try:
             logger.debug(f"Calling introspect endpoint with token: {token[:20]}...")
@@ -216,6 +203,7 @@ class KeycloakService:
 
         try:
             import logging
+
             logger = logging.getLogger(__name__)
             logger.info(f"Assigning user {user_id} to organization {organization_id}")
 
@@ -225,26 +213,21 @@ class KeycloakService:
 
             # Remove user from current organizations
             for org in current_orgs:
-                org_id = org.get('id')
+                org_id = org.get("id")
                 if org_id:
                     logger.info(f"Removing user {user_id} from organization {org_id}")
-                    self.keycloak_admin.delete_user_from_organization(
-                        user_id=user_id,
-                        organization_id=org_id
-                    )
+                    self.keycloak_admin.delete_user_from_organization(user_id=user_id, organization_id=org_id)
 
             # Add user to new organization
             logger.info(f"Adding user {user_id} to organization {organization_id}")
-            self.keycloak_admin.add_user_to_organization(
-                user_id=user_id,
-                organization_id=organization_id
-            )
+            self.keycloak_admin.add_user_to_organization(user_id=user_id, organization_id=organization_id)
 
             logger.info(f"Successfully assigned user {user_id} to organization {organization_id}")
             return True
 
         except Exception as e:
             import logging
+
             logger = logging.getLogger(__name__)
             logger.error(f"Failed to assign user to organization: {str(e)}", exc_info=True)
             raise

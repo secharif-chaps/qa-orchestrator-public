@@ -37,10 +37,7 @@ from app.schemas.translation import (
 from app.services.translation import SUPPORTED_LANGUAGES, TranslationService
 from app.services.translation_runner import run_translation_background
 
-router = APIRouter(
-    prefix="/translation",
-    tags=["translation"]
-)
+router = APIRouter(prefix="/translation", tags=["translation"])
 
 logger = get_logger(__name__)
 
@@ -113,10 +110,12 @@ async def get_translation_status(
         db.query(TranslationJob)
         .filter(
             TranslationJob.company_id == company_id,
-            TranslationJob.status.in_([
-                TranslationJobStatus.pending,
-                TranslationJobStatus.running,
-            ]),
+            TranslationJob.status.in_(
+                [
+                    TranslationJobStatus.pending,
+                    TranslationJobStatus.running,
+                ]
+            ),
         )
         .all()
     )
@@ -125,10 +124,7 @@ async def get_translation_status(
     translations: dict[str, LanguageTranslationStatus] = {}
     for lang_code, lang_status in status_data["translations"].items():
         # Find active job for this language
-        active_job = next(
-            (j for j in active_jobs if j.language_code == lang_code),
-            None
-        )
+        active_job = next((j for j in active_jobs if j.language_code == lang_code), None)
 
         translations[lang_code] = LanguageTranslationStatus(
             language_name=lang_status["language_name"],
@@ -225,8 +221,7 @@ async def request_translation(
     if request.language_code not in valid_codes:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Unsupported language code: {request.language_code}. "
-                   f"Supported: {', '.join(valid_codes)}",
+            detail=f"Unsupported language code: {request.language_code}. Supported: {', '.join(valid_codes)}",
         )
 
     # Check for existing active job
@@ -235,10 +230,12 @@ async def request_translation(
         .filter(
             TranslationJob.company_id == company_id,
             TranslationJob.language_code == request.language_code,
-            TranslationJob.status.in_([
-                TranslationJobStatus.pending,
-                TranslationJobStatus.running,
-            ]),
+            TranslationJob.status.in_(
+                [
+                    TranslationJobStatus.pending,
+                    TranslationJobStatus.running,
+                ]
+            ),
         )
         .first()
     )
@@ -254,9 +251,7 @@ async def request_translation(
 
     # Get fields to translate
     service = TranslationService(db)
-    fields_to_translate = service.get_fields_to_translate(
-        company_id, request.language_code
-    )
+    fields_to_translate = service.get_fields_to_translate(company_id, request.language_code)
 
     if not fields_to_translate:
         return TranslateResponse(

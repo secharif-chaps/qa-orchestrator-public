@@ -26,7 +26,9 @@ def client():
     )
 
 
-def _mock_response(status_code: int, json_data: dict | list | None = None, text: str = "", headers: dict | None = None) -> httpx.Response:
+def _mock_response(
+    status_code: int, json_data: dict | list | None = None, text: str = "", headers: dict | None = None
+) -> httpx.Response:
     """Create a mock httpx.Response."""
     if json_data is not None:
         content = json.dumps(json_data).encode("utf-8")
@@ -138,9 +140,7 @@ class TestErrorHandling:
             mock_client = AsyncMock()
             mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
             mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
-            mock_client.request = AsyncMock(
-                return_value=_mock_response(401, text="Unauthorized")
-            )
+            mock_client.request = AsyncMock(return_value=_mock_response(401, text="Unauthorized"))
 
             with pytest.raises(WorldCheckAuthError):
                 await client.screen_entity("Test", EntityType.ORGANISATION, "group-1")
@@ -152,9 +152,7 @@ class TestErrorHandling:
             mock_client = AsyncMock()
             mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
             mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
-            mock_client.request = AsyncMock(
-                return_value=_mock_response(404, text="Not Found")
-            )
+            mock_client.request = AsyncMock(return_value=_mock_response(404, text="Not Found"))
 
             with pytest.raises(WorldCheckNotFoundError):
                 await client.get_case_results("nonexistent-case")
@@ -167,13 +165,13 @@ class TestErrorHandling:
             mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
             mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
             # Return 429 on all attempts
-            mock_client.request = AsyncMock(
-                return_value=_mock_response(429, text="Rate Limited")
-            )
+            mock_client.request = AsyncMock(return_value=_mock_response(429, text="Rate Limited"))
 
-            with patch("app.infrastructure.worldcheck.client.asyncio.sleep", new_callable=AsyncMock):
-                with pytest.raises(WorldCheckRateLimitError):
-                    await client.screen_entity("Test", EntityType.ORGANISATION, "group-1")
+            with (
+                patch("app.infrastructure.worldcheck.client.asyncio.sleep", new_callable=AsyncMock),
+                pytest.raises(WorldCheckRateLimitError),
+            ):
+                await client.screen_entity("Test", EntityType.ORGANISATION, "group-1")
 
             # Should have been called MAX_RETRIES times
             assert mock_client.request.call_count == 3
@@ -181,10 +179,13 @@ class TestErrorHandling:
     @pytest.mark.asyncio
     async def test_rate_limit_succeeds_on_retry(self, client):
         """Test that a successful response after 429 works correctly."""
-        mock_success = _mock_response(200, {
-            "caseSystemId": "case-789",
-            "results": [],
-        })
+        mock_success = _mock_response(
+            200,
+            {
+                "caseSystemId": "case-789",
+                "results": [],
+            },
+        )
         mock_429 = _mock_response(429, text="Rate Limited")
 
         with patch("app.infrastructure.worldcheck.client.httpx.AsyncClient") as mock_client_cls:
@@ -207,9 +208,7 @@ class TestErrorHandling:
             mock_client = AsyncMock()
             mock_client_cls.return_value.__aenter__ = AsyncMock(return_value=mock_client)
             mock_client_cls.return_value.__aexit__ = AsyncMock(return_value=False)
-            mock_client.request = AsyncMock(
-                return_value=_mock_response(500, text="Internal Server Error")
-            )
+            mock_client.request = AsyncMock(return_value=_mock_response(500, text="Internal Server Error"))
 
             with pytest.raises(WorldCheckAPIError) as exc_info:
                 await client.screen_entity("Test", EntityType.ORGANISATION, "group-1")

@@ -166,15 +166,6 @@ const sections: Record<TaskType, SectionConfig> = {
     icon: 'fas fa-leaf',
     component: CsrPage,
   },
-  data_collection: {
-    name: t('company.analysisCards.dataCollection.title', 'Data Collection'),
-    description: t(
-      'company.analysisCards.dataCollection.description',
-      'Data collection and processing status',
-    ),
-    icon: 'fas fa-database',
-    component: ProfilePage, // Uses profile as fallback
-  },
 }
 
 const sectionConfig = computed(() => {

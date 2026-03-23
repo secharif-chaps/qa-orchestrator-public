@@ -43,37 +43,22 @@ services:
       dockerfile: Dockerfile
     depends_on:
       db: { condition: service_healthy }
-      rabbitmq: { condition: service_healthy }
       keycloak: { condition: service_started }
     environment:
       <<: [*local-keycloak, *local-keycloak-admin, *local-internal-auth]
       CORS_ORIGIN: http://localhost
       BACKEND_BASE_URL: http://localhost/api
-      TUNNEL_URL_FILE: /tunnel/url
       LOG_LEVEL: INFO
       SYSTRAN_API_KEY: ${SYSTRAN_API_KEY:-}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_MODEL: ${LLM_MODEL:-gpt-5.1}
     volumes:
       - ../apps/screen/app:/app/app
       - ../apps/screen/alembic:/app/alembic
       - ../apps/screen/alembic.ini:/app/alembic.ini
       - ../apps/screen/scripts:/app/scripts
       - ../apps/screen/tests:/app/tests
-      - tunnel_url:/tunnel:ro
-
-  # Override celery worker to use local code
-  screen_celery_worker:
-    image: chapsmind-screen:local
-    build:
-      context: ../apps/screen
-      dockerfile: Dockerfile
-    environment:
-      BACKEND_BASE_URL: http://localhost/api
-      TUNNEL_URL_FILE: /tunnel/url
-      LOG_LEVEL: INFO
-    volumes:
-      - ../apps/screen/app:/app/app
-      - ../apps/screen/alembic:/app/alembic
-      - tunnel_url:/tunnel:ro
 
   # Global Service — local build with hot-reload
   global-service:
@@ -94,45 +79,6 @@ services:
       - ../apps/global-service/alembic.ini:/app/alembic.ini
       - ../apps/global-service/tests:/app/tests
       - ../apps/global-service/scripts:/app/scripts
-
-  # LocalTunnel for Dify callbacks (on-demand with --profile tunnel)
-  tunnel:
-    profiles:
-      - tunnel
-    image: node:20-alpine
-    entrypoint: ["/bin/sh", "-c"]
-    command:
-      - |
-        echo "Installing localtunnel..."
-        npm install -g localtunnel
-        rm -f /tunnel/url
-
-        SUBDOMAIN_ARG=""
-        if [ -n "$$TUNNEL_SUBDOMAIN" ]; then
-          SUBDOMAIN_ARG="--subdomain $$TUNNEL_SUBDOMAIN"
-          echo "Using subdomain: $$TUNNEL_SUBDOMAIN"
-        fi
-
-        echo "Starting localtunnel to screen:8000..."
-
-        lt --host https://localtunnel.me --port 8000 --local-host screen $$SUBDOMAIN_ARG 2>&1 | while read line; do
-          echo "$$line"
-          URL=$$(echo "$$line" | grep -oE 'https://[a-zA-Z0-9-]+\.loca\.lt' | head -1)
-          if [ -n "$$URL" ] && [ ! -f /tunnel/url ]; then
-            echo ""
-            echo "=============================================="
-            echo "TUNNEL URL READY: $$URL"
-            echo "=============================================="
-            echo "$$URL" > /tunnel/url
-          fi
-        done
-    environment:
-      TUNNEL_SUBDOMAIN: ${TUNNEL_SUBDOMAIN:-}
-    volumes:
-      - tunnel_url:/tunnel
-    depends_on:
-      screen: { condition: service_started }
-    restart: unless-stopped
 
   # Keycloak (local dev only — staging uses shared Keycloak)
   keycloak:
@@ -162,6 +108,3 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
-
-volumes:
-  tunnel_url:

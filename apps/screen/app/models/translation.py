@@ -35,16 +35,14 @@ class Translation(Base):
         created_at: Record creation timestamp
         updated_at: Record last update timestamp
     """
+
     __tablename__ = "translations"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
 
     # Link to company for easy status queries
     company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # Source record identification
@@ -60,37 +58,17 @@ class Translation(Base):
     source_value_hash = Column(String(64), nullable=True)
 
     # Timestamps
-    translated_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
-    updated_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False
-    )
+    translated_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="translations")
 
     # Unique constraint: one translation per field/language/record
     __table_args__ = (
-        Index(
-            'ix_translations_lookup',
-            'table_name', 'record_id', 'field_name', 'language_code',
-            unique=True
-        ),
-        Index(
-            'ix_translations_company_language',
-            'company_id', 'language_code'
-        ),
+        Index("ix_translations_lookup", "table_name", "record_id", "field_name", "language_code", unique=True),
+        Index("ix_translations_company_language", "company_id", "language_code"),
         {"schema": SCREEN_SCHEMA},
     )
 
