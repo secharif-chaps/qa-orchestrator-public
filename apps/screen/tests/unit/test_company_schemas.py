@@ -4,7 +4,6 @@ Tests the SourcedValue generic schema, section schemas, and validation
 logic for the normalized company data structure.
 """
 
-
 from app.schemas.company_schemas import (
     # Complete
     CompanySectionsResponse,
@@ -54,10 +53,7 @@ class TestSourcedValueGeneric:
     def test_sourced_value_with_list(self):
         """Test SourcedValue works with list type."""
         departments = ["Retail", "Digital", "Marketing"]
-        sv = SourcedValue[list[str]](
-            value=departments,
-            source="https://careers.company.com"
-        )
+        sv = SourcedValue[list[str]](value=departments, source="https://careers.company.com")
         assert sv.value == departments
         assert len(sv.value) == 3
 
@@ -115,11 +111,8 @@ class TestNestedSchemaSerialization:
         """Test ProfileResponse with nested SourcedValue fields."""
         profile = ProfileResponse(
             groupName=SourcedValue[str](value="LVMH", source="https://wikipedia.org"),
-            businessLine=SourcedValue[str](
-                value="Luxury goods",
-                source="https://company.com"
-            ),
-            ceo=SourcedValue[str](value="Bernard Arnault", source="https://wikipedia.org")
+            businessLine=SourcedValue[str](value="Luxury goods", source="https://company.com"),
+            ceo=SourcedValue[str](value="Bernard Arnault", source="https://wikipedia.org"),
         )
         assert profile.groupName.value == "LVMH"
 
@@ -127,7 +120,7 @@ class TestNestedSchemaSerialization:
         """Test ProfileResponse serializes to dict correctly."""
         profile = ProfileResponse(
             groupName=SourcedValue[str](value="LVMH", source="https://wiki.org"),
-            employeeCount=SourcedValue[str](value="196,000", source="https://company.com")
+            employeeCount=SourcedValue[str](value="196,000", source="https://company.com"),
         )
         data = profile.model_dump()
         assert data["groupName"]["value"] == "LVMH"
@@ -145,20 +138,10 @@ class TestNestedSchemaSerialization:
                     position="CFO",
                     firstName="Jean-Jacques",
                     lastName="Guiony",
-                    subordinates=[
-                        TeamMemberResponse(
-                            position="VP Finance",
-                            firstName="Marie",
-                            lastName="Dupont"
-                        )
-                    ]
+                    subordinates=[TeamMemberResponse(position="VP Finance", firstName="Marie", lastName="Dupont")],
                 ),
-                TeamMemberResponse(
-                    position="COO",
-                    firstName="Antonio",
-                    lastName="Belloni"
-                )
-            ]
+                TeamMemberResponse(position="COO", firstName="Antonio", lastName="Belloni"),
+            ],
         )
         assert ceo.position == "CEO"
         assert len(ceo.subordinates) == 2
@@ -172,15 +155,11 @@ class TestNestedSchemaSerialization:
             insights="Strong digital presence",
             digitalStrategy=SourcedValue[DigitalStrategyResponse](
                 value=DigitalStrategyResponse(
-                    overallStrategy="Omnichannel approach",
-                    eCommerceCapabilities="Full platform"
+                    overallStrategy="Omnichannel approach", eCommerceCapabilities="Full platform"
                 ),
-                source="https://company.com/digital"
+                source="https://company.com/digital",
             ),
-            loyaltyProgram=SourcedValue[str](
-                value="VIP membership",
-                source="https://company.com/vip"
-            )
+            loyaltyProgram=SourcedValue[str](value="VIP membership", source="https://company.com/vip"),
         )
         assert digital.digitalStrategy.value.overallStrategy == "Omnichannel approach"
 
@@ -197,9 +176,7 @@ class TestOptionalFieldsHandling:
 
     def test_profile_response_partial_fields(self):
         """Test ProfileResponse with partial fields populated."""
-        profile = ProfileResponse(
-            groupName=SourcedValue[str](value="Test", source="https://test.com")
-        )
+        profile = ProfileResponse(groupName=SourcedValue[str](value="Test", source="https://test.com"))
         assert profile.groupName is not None
         assert profile.businessLine is None
 
@@ -224,11 +201,7 @@ class TestOptionalFieldsHandling:
 
     def test_team_member_no_subordinates(self):
         """Test TeamMemberResponse without subordinates."""
-        member = TeamMemberResponse(
-            position="Developer",
-            firstName="John",
-            lastName="Doe"
-        )
+        member = TeamMemberResponse(position="Developer", firstName="John", lastName="Doe")
         assert member.subordinates is None
 
     def test_csr_response_empty_initiatives(self):
@@ -257,18 +230,21 @@ class TestEnumValidation:
 
     def test_csr_initiative_type_enum_valid(self):
         """Test valid CsrInitiativeTypeEnum values."""
-        all_types = [
-            "responsibility", "charity", "sustainability",
-            "community", "diversity", "ethics", "awards"
-        ]
+        all_types = ["responsibility", "charity", "sustainability", "community", "diversity", "ethics", "awards"]
         for t in all_types:
             assert CsrInitiativeTypeEnum(t).value == t
 
     def test_press_item_type_enum_valid(self):
         """Test valid PressItemTypeEnum values."""
         all_types = [
-            "article", "press_release", "media_mention", "award",
-            "product_launch", "interview", "financial", "partnership"
+            "article",
+            "press_release",
+            "media_mention",
+            "award",
+            "product_launch",
+            "interview",
+            "financial",
+            "partnership",
         ]
         for t in all_types:
             assert PressItemTypeEnum(t).value == t
@@ -278,7 +254,7 @@ class TestEnumValidation:
         initiative = CsrInitiativeResponse(
             type=CsrInitiativeTypeEnum.sustainability,
             value="100% renewable energy by 2025",
-            source="https://company.com/sustainability"
+            source="https://company.com/sustainability",
         )
         assert initiative.type == CsrInitiativeTypeEnum.sustainability
 
@@ -287,7 +263,7 @@ class TestEnumValidation:
         item = PressItemResponse(
             type=PressItemTypeEnum.article,
             value="Company reports record earnings",
-            source="https://reuters.com/article"
+            source="https://reuters.com/article",
         )
         assert item.type == PressItemTypeEnum.article
 
@@ -300,10 +276,7 @@ class TestCreateSchemas:
         data = {
             "insights": "AI-generated summary",
             "groupName": {"value": "LVMH", "source": "https://wikipedia.org"},
-            "businessLine": {
-                "value": "Luxury goods",
-                "source": "https://company.com"
-            }
+            "businessLine": {"value": "Luxury goods", "source": "https://company.com"},
         }
         profile = ProfileCreate(**data)
         assert profile.insights == "AI-generated summary"
@@ -317,9 +290,9 @@ class TestCreateSchemas:
                 {
                     "date": {"value": "1987", "source": "https://wiki.org"},
                     "title": {"value": "Founded", "source": "https://wiki.org"},
-                    "description": {"value": "Company was founded", "source": "https://wiki.org"}
+                    "description": {"value": "Company was founded", "source": "https://wiki.org"},
                 }
-            ]
+            ],
         }
         timeline = TimelineCreate(**data)
         assert len(timeline.events) == 1
@@ -332,8 +305,8 @@ class TestCreateSchemas:
             "responsibility": {"value": "Carbon neutral by 2030", "source": "https://company.com"},
             "initiatives": [
                 {"type": "sustainability", "value": "100% renewable", "source": "https://company.com"},
-                {"type": "charity", "value": "5M EUR donations", "source": "https://company.com"}
-            ]
+                {"type": "charity", "value": "5M EUR donations", "source": "https://company.com"},
+            ],
         }
         csr = CsrCreate(**data)
         assert len(csr.initiatives) == 2
@@ -351,9 +324,9 @@ class TestCreateSchemas:
                         {
                             "position": {"value": "CFO", "source": "https://company.com"},
                             "firstName": {"value": "Jane", "source": "https://company.com"},
-                            "lastName": {"value": "Smith", "source": "https://company.com"}
+                            "lastName": {"value": "Smith", "source": "https://company.com"},
                         }
-                    ]
+                    ],
                 }
             ]
         }
@@ -377,16 +350,11 @@ class TestCompleteSectionsResponse:
     def test_complete_response_with_all_sections(self):
         """Test CompanySectionsResponse with all sections populated."""
         response = CompanySectionsResponse(
-            profile=ProfileResponse(
-                groupName=SourcedValue[str](value="Test", source="https://test.com")
-            ),
+            profile=ProfileResponse(groupName=SourcedValue[str](value="Test", source="https://test.com")),
             timeline=TimelineResponse(
-                insights="History summary",
-                events=[TimelineEventResponse(date="2020", title="Founded")]
+                insights="History summary", events=[TimelineEventResponse(date="2020", title="Founded")]
             ),
-            team=[
-                TeamMemberResponse(position="CEO", firstName="John", lastName="Doe")
-            ]
+            team=[TeamMemberResponse(position="CEO", firstName="John", lastName="Doe")],
         )
         assert response.profile.groupName.value == "Test"
         assert response.timeline.events[0].title == "Founded"

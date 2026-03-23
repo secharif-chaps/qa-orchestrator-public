@@ -39,9 +39,7 @@ async def update_data_source_config(
     source: str,
     request: DataSourceConfigRequest,
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(
-        idp.get_current_user(required_roles=["admin.organizations"])
-    ),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ) -> DataSourceConfigResponse:
     """Update data source configuration for an organization.
 
@@ -106,9 +104,7 @@ async def get_data_source_config(
     organization_id: str,
     source: str,
     db: Session = Depends(get_db),
-    user: OIDCUser = Depends(
-        idp.get_current_user(required_roles=["admin.organizations"])
-    ),
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ) -> DataSourceConfigResponse:
     """Get data source configuration for an organization.
 
@@ -138,10 +134,14 @@ async def get_data_source_config(
     # Get the feature flag record for enabled status
     from app.models.organization import OrganizationFeatureFlag
 
-    feature = db.query(OrganizationFeatureFlag).filter(
-        OrganizationFeatureFlag.organization_id == organization_id,
-        OrganizationFeatureFlag.flag == flag,
-    ).first()
+    feature = (
+        db.query(OrganizationFeatureFlag)
+        .filter(
+            OrganizationFeatureFlag.organization_id == organization_id,
+            OrganizationFeatureFlag.flag == flag,
+        )
+        .first()
+    )
 
     if not feature:
         return DataSourceConfigResponse(

@@ -95,12 +95,12 @@ class DatabaseError(MintBaseException):
 
 
 class ExternalServiceError(MintBaseException):
-    """Raised when external service (Dify, n8n, Keycloak) fails.
+    """Raised when external service (Azure OpenAI, Keycloak) fails.
 
     Examples:
-        - Dify workflow execution timeout
+        - Azure OpenAI API timeout
         - Keycloak API unavailable
-        - n8n webhook failure
+        - LangGraph agent execution failure
     """
 
     pass

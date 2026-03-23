@@ -6,7 +6,7 @@ multiple languages using a normalized translations table.
 Key features:
 - Registry of translatable fields per table
 - Translation status tracking per company/language
-- Integration with translation backends (Dify, external APIs)
+- Integration with translation backends (Azure OpenAI, external APIs)
 """
 
 import hashlib
@@ -259,19 +259,14 @@ class TranslationService:
             List of fields that need translation.
         """
         if language_code not in SUPPORTED_LANGUAGE_CODES:
-            logger.warning(
-                f"Language {language_code} not supported for translation"
-            )
+            logger.warning(f"Language {language_code} not supported for translation")
             return []
 
         fields_to_translate: list[FieldToTranslate] = []
 
         # Get existing translations for this company/language
         existing = self._get_existing_translations(company_id, language_code)
-        existing_keys = {
-            (t.table_name, t.record_id, t.field_name): t.source_value_hash
-            for t in existing
-        }
+        existing_keys = {(t.table_name, t.record_id, t.field_name): t.source_value_hash for t in existing}
 
         # Check 1:1 section tables
         for table_name in ONE_TO_ONE_TABLES:
@@ -499,9 +494,7 @@ class TranslationService:
             or 0
         )
 
-    def _get_existing_translations(
-        self, company_id: int, language_code: str
-    ) -> list[Translation]:
+    def _get_existing_translations(self, company_id: int, language_code: str) -> list[Translation]:
         """Get existing translations for a company/language."""
         return (
             self.db.query(Translation)
@@ -532,44 +525,28 @@ class TranslationService:
         """Get all 1:N child records for a company."""
         return {
             "company_online_services": (
-                self.db.query(CompanyOnlineService)
-                .filter(CompanyOnlineService.company_id == company_id)
-                .all()
+                self.db.query(CompanyOnlineService).filter(CompanyOnlineService.company_id == company_id).all()
             ),
             "company_timeline_events": (
-                self.db.query(CompanyTimelineEvent)
-                .filter(CompanyTimelineEvent.company_id == company_id)
-                .all()
+                self.db.query(CompanyTimelineEvent).filter(CompanyTimelineEvent.company_id == company_id).all()
             ),
             "company_product_items": (
-                self.db.query(CompanyProductItem)
-                .filter(CompanyProductItem.company_id == company_id)
-                .all()
+                self.db.query(CompanyProductItem).filter(CompanyProductItem.company_id == company_id).all()
             ),
             "company_product_categories": (
-                self.db.query(CompanyProductCategory)
-                .filter(CompanyProductCategory.company_id == company_id)
-                .all()
+                self.db.query(CompanyProductCategory).filter(CompanyProductCategory.company_id == company_id).all()
             ),
             "company_job_offers": (
-                self.db.query(CompanyJobOffer)
-                .filter(CompanyJobOffer.company_id == company_id)
-                .all()
+                self.db.query(CompanyJobOffer).filter(CompanyJobOffer.company_id == company_id).all()
             ),
             "company_csr_initiatives": (
-                self.db.query(CompanyCsrInitiative)
-                .filter(CompanyCsrInitiative.company_id == company_id)
-                .all()
+                self.db.query(CompanyCsrInitiative).filter(CompanyCsrInitiative.company_id == company_id).all()
             ),
             "company_press_items": (
-                self.db.query(CompanyPressItem)
-                .filter(CompanyPressItem.company_id == company_id)
-                .all()
+                self.db.query(CompanyPressItem).filter(CompanyPressItem.company_id == company_id).all()
             ),
             "company_team_members": (
-                self.db.query(CompanyTeamMember)
-                .filter(CompanyTeamMember.company_id == company_id)
-                .all()
+                self.db.query(CompanyTeamMember).filter(CompanyTeamMember.company_id == company_id).all()
             ),
         }
 
@@ -590,8 +567,4 @@ class TranslationService:
             Dictionary mapping (table_name, record_id, field_name) to translated value.
         """
         translations = self._get_existing_translations(company_id, language_code)
-        return {
-            (t.table_name, t.record_id, t.field_name): t.value
-            for t in translations
-            if t.value
-        }
+        return {(t.table_name, t.record_id, t.field_name): t.value for t in translations if t.value}

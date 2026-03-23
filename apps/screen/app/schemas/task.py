@@ -10,10 +10,12 @@ class TaskCreate(BaseModel):
     company_id: int
     type: TaskType
 
+
 class TaskTokenUpdate(BaseModel):
     input_tokens: int | None = None
     output_tokens: int | None = None
     total_cost: float | None = None
+
 
 class TaskResponse(BaseModel):
     id: int
@@ -22,11 +24,10 @@ class TaskResponse(BaseModel):
     status: TaskStatus
     error: str | None = None
     error_details: dict[str, Any] | None = None
-    is_prerequisite: bool = False
     created_at: datetime
     updated_at: datetime
     input_tokens: int | None = None
     output_tokens: int | None = None
     total_cost: float | None = None
 
-    model_config = ConfigDict(from_attributes=True) 
+    model_config = ConfigDict(from_attributes=True)

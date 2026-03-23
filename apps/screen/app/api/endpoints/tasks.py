@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 from fastapi_keycloak import OIDCUser
 
+from app.core.config import settings
 from app.core.dependencies import get_company_service
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
@@ -18,10 +19,7 @@ from app.services.task_service import TaskService
 
 logger = get_logger(__name__)
 
-router = APIRouter(
-    prefix="/tasks",
-    tags=["tasks"]
-)
+router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 # COMMENTED OUT - Tasks are now automatically queued when creating companies
 # @router.post("/", response_model=TaskResponse)
@@ -36,7 +34,7 @@ router = APIRouter(
 #         # Check if company exists and user owns it
 #         company = service.get_company(task_data.company_id)
 #         verify_company_ownership(company, current_user)
-#         
+#
 #         # Check if task type is valid
 #         try:
 #             TaskType(task_data.type)
@@ -45,19 +43,19 @@ router = APIRouter(
 #                 status_code=status.HTTP_400_BAD_REQUEST,
 #                 detail=f"Invalid task type: {task_data.type}. Valid types are: {', '.join(t.value for t in TaskType)}"
 #             )
-#         
+#
 #         # Create and start the task
 #         task = await service.create_and_start_task(task_data.company_id, task_data.type)
 #         return task
 #     except ValidationError as e:
 #         # Get request body for logging
 #         body = await request.json()
-#         
+#
 #         # Log detailed validation errors
 #         logger.error("Validation error in task creation:")
 #         logger.error(f"Request body: {body}")
 #         logger.error(f"Validation errors: {e.errors()}")
-#         
+#
 #         return JSONResponse(
 #             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
 #             content={
@@ -74,12 +72,13 @@ router = APIRouter(
 #             detail=f"An unexpected error occurred: {str(e)}"
 #         )
 
+
 @router.get("/company/{company_id}", response_model=list[TaskResponse])
 async def get_company_tasks(
     company_id: int,
     service: CompanyService = Depends(get_company_service),
     user: OIDCUser = Depends(idp.get_current_user()),
-    org_context: OrganizationContext = Depends(get_user_organization)
+    org_context: OrganizationContext = Depends(get_user_organization),
 ):
     """Get all tasks for a company with automatic stale task cleanup.
 
@@ -101,12 +100,13 @@ async def get_company_tasks(
 
     return company.tasks
 
+
 @router.post("/{task_id}/restart", response_model=TaskResponse)
 async def restart_task(
     task_id: int,
     service: CompanyService = Depends(get_company_service),
     user: OIDCUser = Depends(idp.get_current_user()),
-    org_context: OrganizationContext = Depends(get_user_organization)
+    org_context: OrganizationContext = Depends(get_user_organization),
 ):
     """Restart a specific task (if user has access to the company's organization).
 
@@ -127,12 +127,13 @@ async def restart_task(
     if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Task with ID {task_id} not found or you don't have permission to access it"
+            detail=f"Task with ID {task_id} not found or you don't have permission to access it",
         )
 
-    # Restart the task (fire-and-forget via Celery)
+    # Restart the task (fire-and-forget via LangGraph)
     restarted_task = service.restart_task(task_id)
     return restarted_task
+
 
 @router.patch("/{task_id}/tokens", response_model=TaskResponse)
 async def update_task_tokens(
@@ -140,9 +141,9 @@ async def update_task_tokens(
     token_data: TaskTokenUpdate,
     service: CompanyService = Depends(get_company_service),
     user: OIDCUser = Depends(idp.get_current_user()),
-    org_context: OrganizationContext = Depends(get_user_organization)
+    org_context: OrganizationContext = Depends(get_user_organization),
 ):
-    """Update token usage information for a task (used by Dify workflows).
+    """Update token usage information for a task.
 
     Requires authentication.
     """
@@ -161,7 +162,7 @@ async def update_task_tokens(
     if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Task with ID {task_id} not found or you don't have permission to access it"
+            detail=f"Task with ID {task_id} not found or you don't have permission to access it",
         )
 
     # Update token information
@@ -170,10 +171,7 @@ async def update_task_tokens(
 
 
 @router.get("/events/stream")
-async def task_events_stream(
-    request: Request,
-    user: OIDCUser = Depends(idp.get_current_user())
-):
+async def task_events_stream(request: Request, user: OIDCUser = Depends(idp.get_current_user())):
     """SSE endpoint for real-time task status updates.
 
     Streams task status updates for all companies the user has access to.
@@ -192,10 +190,7 @@ async def task_events_stream(
     """
     user_id = user.sub
 
-    logger.info(
-        "SSE connection initiated",
-        extra={"user_id": user_id}
-    )
+    logger.info("SSE connection initiated", extra={"user_id": user_id})
 
     async def event_generator() -> AsyncGenerator[str, None]:
         """Generate SSE events for the connected client."""
@@ -209,10 +204,7 @@ async def task_events_stream(
             while True:
                 # Check if client disconnected
                 if await request.is_disconnected():
-                    logger.info(
-                        "SSE client disconnected",
-                        extra={"user_id": user_id}
-                    )
+                    logger.info("SSE client disconnected", extra={"user_id": user_id})
                     break
 
                 try:
@@ -220,22 +212,15 @@ async def task_events_stream(
                     event = await asyncio.wait_for(queue.get(), timeout=30.0)
                     yield f"data: {json.dumps(event)}\n\n"
 
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     # Send keepalive comment (SSE spec: lines starting with : are comments)
                     yield ": keepalive\n\n"
 
         except Exception as e:
-            logger.error(
-                "SSE stream error",
-                extra={"user_id": user_id, "error": str(e)},
-                exc_info=True
-            )
+            logger.error("SSE stream error", extra={"user_id": user_id, "error": str(e)}, exc_info=True)
         finally:
             task_event_manager.unsubscribe(user_id, queue)
-            logger.info(
-                "SSE connection closed",
-                extra={"user_id": user_id}
-            )
+            logger.info("SSE connection closed", extra={"user_id": user_id})
 
     return StreamingResponse(
         event_generator(),
@@ -244,6 +229,6 @@ async def task_events_stream(
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
             "X-Accel-Buffering": "no",  # Disable nginx buffering for SSE
-            "Access-Control-Allow-Origin": "*",  # CORS for SSE
-        }
+            "Access-Control-Allow-Origin": settings.CORS_ORIGIN,
+        },
     )

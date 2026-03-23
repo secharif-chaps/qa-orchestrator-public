@@ -14,17 +14,13 @@ These tests verify that:
 
 import pytest
 
+from app.core.security import AuthorizationError, verify_company_modify_permission  # noqa: F401
+from app.schemas.user import TokenData  # noqa: F401
+
 # Skip entire module - verify_organization_permission was never implemented
 pytestmark = pytest.mark.skip(
     reason="verify_organization_permission function not implemented - tests document expected behavior"
 )
-
-# Import only what exists - verify_organization_permission doesn't exist
-from app.core.security import (
-    verify_company_modify_permission,
-    AuthorizationError
-)
-from app.schemas.user import TokenData
 
 
 class TestOrganizationPermission:
@@ -65,16 +61,9 @@ class TestCompanyModifyPermission:
         """Test that user with correct permission can modify companies."""
         from app.core.organization import OrganizationContext
 
-        user = TokenData(
-            username="user",
-            sub="user-uuid",
-            roles=["company.update"]
-        )
+        user = TokenData(username="user", sub="user-uuid", roles=["company.update"])
         org_context = OrganizationContext(
-            organization_id="org-uuid-1",
-            organization_name="Test Org",
-            user_id=user.sub,
-            username=user.username
+            organization_id="org-uuid-1", organization_name="Test Org", user_id=user.sub, username=user.username
         )
 
         result = verify_company_modify_permission(org_context, "company.update")
@@ -84,16 +73,9 @@ class TestCompanyModifyPermission:
         """Test that user without required permission cannot modify companies."""
         from app.core.organization import OrganizationContext
 
-        user = TokenData(
-            username="user",
-            sub="user-uuid",
-            roles=["company.view"]
-        )
+        user = TokenData(username="user", sub="user-uuid", roles=["company.view"])
         org_context = OrganizationContext(
-            organization_id="org-uuid-1",
-            organization_name="Test Org",
-            user_id=user.sub,
-            username=user.username
+            organization_id="org-uuid-1", organization_name="Test Org", user_id=user.sub, username=user.username
         )
 
         with pytest.raises(AuthorizationError) as exc_info:

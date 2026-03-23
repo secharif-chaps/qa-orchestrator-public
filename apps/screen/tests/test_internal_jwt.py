@@ -396,9 +396,7 @@ class TestVerifyInternalRequest:
             "iat": now,
             "exp": now + 60,
         }
-        return pyjwt.encode(
-            payload, "test-secret-at-least-32-characters-long", algorithm=ALGORITHM
-        )
+        return pyjwt.encode(payload, "test-secret-at-least-32-characters-long", algorithm=ALGORITHM)
 
     def _create_mock_request(self, token: str, client_ip: str = "192.168.1.100"):
         """Create a mock request with internal auth header."""

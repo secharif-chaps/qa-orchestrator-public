@@ -65,7 +65,7 @@
     <!-- Main Content -->
     <template v-else>
       <!-- Summary Statistics -->
-      <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
         <StatCard
           :label="$t('admin.tasks.stats.totalTasks')"
           :value="stats?.total_tasks ?? 0"
@@ -83,12 +83,6 @@
           :value="stats?.pending ?? 0"
           icon="fa fa-clock"
           variant="warning"
-        />
-        <StatCard
-          :label="$t('admin.tasks.stats.blocked')"
-          :value="stats?.blocked ?? 0"
-          icon="fa fa-ban"
-          variant="slate"
         />
         <StatCard
           :label="$t('admin.tasks.stats.failed')"
@@ -152,9 +146,6 @@
               </DropdownItem>
               <DropdownItem @click="filters.status = 'pending'">
                 <i class="fa fa-clock text-warning mr-2"></i> {{ $t('admin.tasks.status.pending') }}
-              </DropdownItem>
-              <DropdownItem @click="filters.status = 'blocked'">
-                <i class="fa fa-ban text-secondary mr-2"></i> {{ $t('admin.tasks.status.blocked') }}
               </DropdownItem>
               <DropdownItem @click="filters.status = 'succeeded'">
                 <i class="fa fa-check-circle text-success mr-2"></i>
@@ -359,11 +350,7 @@
                   {{ getOrgName(task.organization_id) }}
                 </td>
                 <td class="px-4 py-3">
-                  <Tag
-                    :variant="task.is_prerequisite ? 'almond' : 'sage'"
-                    size="xs"
-                    :label="formatTaskType(task.type)"
-                  />
+                  <Tag variant="sage" size="xs" :label="formatTaskType(task.type)" />
                 </td>
                 <td class="px-4 py-3">
                   <Tag
@@ -668,7 +655,6 @@ const taskTypes: TaskType[] = [
   'csr',
   'press',
   'team',
-  'data_collection',
 ]
 
 // i18n
@@ -723,7 +709,6 @@ const stats = computed(() => {
   // Count by status
   const running = items.filter((t) => t.status === 'running').length
   const pending = items.filter((t) => t.status === 'pending').length
-  const blocked = items.filter((t) => t.status === 'blocked').length
   const succeeded = items.filter((t) => t.status === 'succeeded').length
   const error = items.filter((t) => t.status === 'error').length
 
@@ -743,7 +728,6 @@ const stats = computed(() => {
     total_tasks: items.length,
     running,
     pending,
-    blocked,
     succeeded,
     error,
     success_rate,
@@ -824,7 +808,6 @@ const taskTypeKeys: Record<TaskType, string> = {
   csr: 'admin.tasks.taskTypes.csr',
   press: 'admin.tasks.taskTypes.press',
   team: 'admin.tasks.taskTypes.team',
-  data_collection: 'admin.tasks.taskTypes.dataCollection',
 }
 
 function formatTaskType(type: TaskType): string {
@@ -837,7 +820,6 @@ function getStatusVariant(status: TaskStatus): 'success' | 'warning' | 'error' |
     pending: 'warning',
     error: 'error',
     running: 'info',
-    blocked: 'slate',
   }
   return variants[status] || 'slate'
 }
@@ -848,7 +830,6 @@ function getStatusIcon(status: TaskStatus): string {
     pending: 'fa fa-clock',
     error: 'fa fa-times-circle',
     running: 'fa fa-play-circle',
-    blocked: 'fa fa-ban',
   }
   return icons[status] || 'fa fa-question-circle'
 }

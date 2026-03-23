@@ -161,17 +161,6 @@ Run `task` with no arguments to see all commands.
 | `task screen:test`   | Run backend tests            |
 | `task screen:shell`  | Open bash shell in container |
 
-### Tunnel (Dify callbacks)
-
-| Command            | Description             |
-|--------------------|-------------------------|
-| `task tunnel`      | Start localtunnel       |
-| `task tunnel:stop` | Stop the tunnel         |
-| `task tunnel:url`  | Show current tunnel URL |
-| `task tunnel:logs` | Follow tunnel logs      |
-
-> The tunnel is **on-demand** — not started by `task up`. Only needed when testing Dify workflow callbacks.
-
 ---
 
 ## Troubleshooting

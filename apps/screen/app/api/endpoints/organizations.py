@@ -5,7 +5,7 @@ These endpoints interact with Keycloak Admin API to fetch organization data.
 """
 
 import asyncio
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_keycloak import OIDCUser
@@ -26,9 +26,9 @@ logger = get_logger(__name__)
 async def list_organizations(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
     limit: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
-    sort: str = Query('name', description="Field to sort by (name)"),
+    sort: str = Query("name", description="Field to sort by (name)"),
     order: SortOrder = Query(SortOrder.ASC, description="Sort order"),
-    search: Optional[str] = Query(None, description="Search organizations by name"),
+    search: str | None = Query(None, description="Search organizations by name"),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """List all organizations from Keycloak.
@@ -55,42 +55,35 @@ async def list_organizations(
         organizations = await keycloak_admin_service.get_organizations()
 
         logger.info(
-            "Fetched organizations from Keycloak",
-            extra={
-                "count": len(organizations),
-                "user": user.preferred_username
-            }
+            "Fetched organizations from Keycloak", extra={"count": len(organizations), "user": user.preferred_username}
         )
 
         # Apply search filter if provided
         if search:
             search_lower = search.lower()
-            organizations = [
-                org for org in organizations
-                if search_lower in org.get('name', '').lower()
-            ]
+            organizations = [org for org in organizations if search_lower in org.get("name", "").lower()]
 
         # Sort organizations
-        reverse = (order == SortOrder.DESC)
-        if sort == 'name':
-            organizations.sort(key=lambda x: x.get('name', '').lower(), reverse=reverse)
+        reverse = order == SortOrder.DESC
+        if sort == "name":
+            organizations.sort(key=lambda x: x.get("name", "").lower(), reverse=reverse)
 
         # Calculate pagination
         total = len(organizations)
         offset = (page - 1) * limit
-        paginated_orgs = organizations[offset:offset + limit]
+        paginated_orgs = organizations[offset : offset + limit]
 
         # Convert to response format using OrganizationResponse schema
         orgs_list = []
         for org in paginated_orgs:
             org_dict = {
-                'id': org.get('id'),  # Organization UUID string
-                'name': org.get('name', 'Unknown'),
-                'description': org.get('description'),
-                'slug': org.get('alias', org.get('name', '').lower().replace(' ', '-')),
-                'created_at': None,  # Not available from Keycloak API
-                'updated_at': None,  # Not available from Keycloak API
-                'member_count': await keycloak_admin_service.count_organization_members(org.get('id'))
+                "id": org.get("id"),  # Organization UUID string
+                "name": org.get("name", "Unknown"),
+                "description": org.get("description"),
+                "slug": org.get("alias", org.get("name", "").lower().replace(" ", "-")),
+                "created_at": None,  # Not available from Keycloak API
+                "updated_at": None,  # Not available from Keycloak API
+                "member_count": await keycloak_admin_service.count_organization_members(org.get("id")),
             }
             orgs_list.append(OrganizationResponse(**org_dict))
 
@@ -106,15 +99,11 @@ async def list_organizations(
         logger.error(
             "Failed to fetch organizations from Keycloak",
             exc_info=True,
-            extra={
-                "user": user.preferred_username,
-                "error_type": type(e).__name__,
-                "error_message": str(e)
-            }
+            extra={"user": user.preferred_username, "error_type": type(e).__name__, "error_message": str(e)},
         )
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=f"Failed to fetch organizations from Keycloak: {str(e)}"
+            detail=f"Failed to fetch organizations from Keycloak: {str(e)}",
         )
 
 
@@ -148,28 +137,27 @@ async def get_organization(
         if not org:
             # Service returns None on error (logged internally)
             raise HTTPException(
-                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-                detail="Failed to fetch organization from Keycloak"
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Failed to fetch organization from Keycloak"
             )
 
         logger.info(
             "Fetched organization from Keycloak",
             extra={
                 "organization_id": organization_id,
-                "organization_name": org.get('name'),
-                "user": user.preferred_username
-            }
+                "organization_name": org.get("name"),
+                "user": user.preferred_username,
+            },
         )
 
         # Convert to response format using OrganizationResponse schema
         org_dict = {
-            'id': org.get('id'),  # Organization UUID string
-            'name': org.get('name', 'Unknown'),
-            'description': org.get('description'),
-            'slug': org.get('alias', org.get('name', '').lower().replace(' ', '-')),
-            'created_at': None,
-            'updated_at': None,
-            'member_count': 0
+            "id": org.get("id"),  # Organization UUID string
+            "name": org.get("name", "Unknown"),
+            "description": org.get("description"),
+            "slug": org.get("alias", org.get("name", "").lower().replace(" ", "-")),
+            "created_at": None,
+            "updated_at": None,
+            "member_count": 0,
         }
 
         return OrganizationResponse(**org_dict)
@@ -185,12 +173,12 @@ async def get_organization(
                 "organization_id": organization_id,
                 "user": user.preferred_username,
                 "error_type": type(e).__name__,
-                "error_message": str(e)
-            }
+                "error_message": str(e),
+            },
         )
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=f"Failed to fetch organization from Keycloak: {str(e)}"
+            detail=f"Failed to fetch organization from Keycloak: {str(e)}",
         )
 
 
@@ -203,8 +191,8 @@ async def get_organization_users_admin(
     organization_id: str,
     page: int = Query(1, ge=1, description="Page number (1-indexed)"),
     limit: int = Query(20, ge=1, le=100, description="Items per page"),
-    search: Optional[str] = None,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+    search: str | None = None,
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Get paginated list of organization users from Keycloak (admin only).
 
@@ -229,8 +217,8 @@ async def get_organization_users_admin(
             "page": page,
             "limit": limit,
             "search": search,
-            "admin_user": user.preferred_username
-        }
+            "admin_user": user.preferred_username,
+        },
     )
 
     try:
@@ -239,10 +227,7 @@ async def get_organization_users_admin(
 
         # Fetch members from Keycloak
         members = await keycloak_admin_service.get_organization_members(
-            organization_id=organization_id,
-            first=first,
-            max_results=limit,
-            search=search
+            organization_id=organization_id, first=first, max_results=limit, search=search
         )
 
         # Get total count for pagination
@@ -256,50 +241,42 @@ async def get_organization_users_admin(
                 internal_roles = {
                     "uma_authorization",
                     "offline_access",
-                    "default-roles-" + settings.KEYCLOAK_REALM.lower()
+                    "default-roles-" + settings.KEYCLOAK_REALM.lower(),
                 }
                 permissions = [
-                    role["name"] for role in user_roles
-                    if role["name"] not in internal_roles and
-                       not role["name"].startswith("realm-management")
+                    role["name"]
+                    for role in user_roles
+                    if role["name"] not in internal_roles and not role["name"].startswith("realm-management")
                 ]
                 tier = get_tier_from_roles(permissions)
                 return user_id, tier.value
             except Exception as e:
-                logger.warning(
-                    "Failed to fetch permissions for user",
-                    extra={"user_id": user_id, "error": str(e)}
-                )
+                logger.warning("Failed to fetch permissions for user", extra={"user_id": user_id, "error": str(e)})
                 return user_id, None
 
-        tier_results = await asyncio.gather(
-            *[fetch_user_tier(member.get("id")) for member in members]
-        )
+        tier_results = await asyncio.gather(*[fetch_user_tier(member.get("id")) for member in members])
         user_tiers_map = dict(tier_results)
 
         # Format response
         users_list = []
         for member in members:
             user_dict = {
-                'id': member.get('id'),
-                'username': member.get('username'),
-                'email': member.get('email'),
-                'firstName': member.get('firstName'),
-                'lastName': member.get('lastName'),
-                'enabled': member.get('enabled', True),
-                'emailVerified': member.get('emailVerified', False),
-                'createdTimestamp': member.get('createdTimestamp'),
-                'permission_tier': user_tiers_map.get(member.get('id')),
+                "id": member.get("id"),
+                "username": member.get("username"),
+                "email": member.get("email"),
+                "firstName": member.get("firstName"),
+                "lastName": member.get("lastName"),
+                "enabled": member.get("enabled", True),
+                "emailVerified": member.get("emailVerified", False),
+                "createdTimestamp": member.get("createdTimestamp"),
+                "permission_tier": user_tiers_map.get(member.get("id")),
             }
             users_list.append(user_dict)
 
         # Create pagination metadata
         meta = create_pagination_meta(total=total, page=page, per_page=limit)
 
-        return {
-            'data': users_list,
-            'meta': meta
-        }
+        return {"data": users_list, "meta": meta}
 
     except HTTPException:
         raise
@@ -307,23 +284,18 @@ async def get_organization_users_admin(
         logger.error(
             "Failed to fetch organization users",
             exc_info=e,
-            extra={
-                "organization_id": organization_id,
-                "admin_user": user.preferred_username
-            }
+            extra={"organization_id": organization_id, "admin_user": user.preferred_username},
         )
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch organization users: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to fetch organization users: {str(e)}"
         )
-
 
 
 @router.get("/{organization_id}/users/{user_id}")
 async def get_organization_user_admin(
     organization_id: str,
     user_id: str,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Get a specific organization user from Keycloak (admin only).
 
@@ -342,52 +314,40 @@ async def get_organization_user_admin(
     """
     logger.info(
         "Fetching organization user",
-        extra={
-            "organization_id": organization_id,
-            "user_id": user_id,
-            "admin_user": user.preferred_username
-        }
+        extra={"organization_id": organization_id, "user_id": user_id, "admin_user": user.preferred_username},
     )
 
     try:
         user_data = await keycloak_admin_service.get_user(user_id)
 
         if not user_data:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User {user_id} not found"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User {user_id} not found")
 
         return {
-            'id': user_data.get('id'),
-            'username': user_data.get('username'),
-            'email': user_data.get('email'),
-            'firstName': user_data.get('firstName'),
-            'lastName': user_data.get('lastName'),
-            'enabled': user_data.get('enabled', True),
-            'emailVerified': user_data.get('emailVerified', False),
-            'createdTimestamp': user_data.get('createdTimestamp')
+            "id": user_data.get("id"),
+            "username": user_data.get("username"),
+            "email": user_data.get("email"),
+            "firstName": user_data.get("firstName"),
+            "lastName": user_data.get("lastName"),
+            "enabled": user_data.get("enabled", True),
+            "emailVerified": user_data.get("emailVerified", False),
+            "createdTimestamp": user_data.get("createdTimestamp"),
         }
 
     except HTTPException:
         raise
     except Exception as e:
         logger.error(
-            "Failed to fetch user",
-            exc_info=e,
-            extra={"user_id": user_id, "admin_user": user.preferred_username}
+            "Failed to fetch user", exc_info=e, extra={"user_id": user_id, "admin_user": user.preferred_username}
         )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to fetch user: {str(e)}"
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to fetch user: {str(e)}")
 
 
 @router.post("/{organization_id}/users")
 async def create_organization_user_admin(
     organization_id: str,
     user_data: dict[str, Any],
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Create a new user in Keycloak and add to organization (admin only).
 
@@ -408,23 +368,20 @@ async def create_organization_user_admin(
         "=== Starting organization user creation ===",
         extra={
             "organization_id": organization_id,
-            "username": user_data.get('username'),
-            "email": user_data.get('email'),
-            "firstName": user_data.get('firstName'),
-            "lastName": user_data.get('lastName'),
+            "username": user_data.get("username"),
+            "email": user_data.get("email"),
+            "firstName": user_data.get("firstName"),
+            "lastName": user_data.get("lastName"),
             "admin_user": user.preferred_username,
-            "admin_user_id": user.sub
-        }
+            "admin_user_id": user.sub,
+        },
     )
 
     try:
         # Step 1: Create user in Keycloak
         logger.info(
             "STEP 1: Calling keycloak_admin_service.create_user()",
-            extra={
-                "username": user_data.get('username'),
-                "email": user_data.get('email')
-            }
+            extra={"username": user_data.get("username"), "email": user_data.get("email")},
         )
         created_user = await keycloak_admin_service.create_user(user_data)
 
@@ -432,54 +389,36 @@ async def create_organization_user_admin(
             "STEP 1 RESULT: User creation response received",
             extra={
                 "created_user_keys": list(created_user.keys()) if created_user else None,
-                "has_id": 'id' in created_user if created_user else False,
-                "user_id": created_user.get('id') if created_user else None
-            }
+                "has_id": "id" in created_user if created_user else False,
+                "user_id": created_user.get("id") if created_user else None,
+            },
         )
 
-        if not created_user or 'id' not in created_user:
+        if not created_user or "id" not in created_user:
             logger.error(
                 "User creation failed - no user ID in response",
-                extra={
-                    "created_user": created_user,
-                    "username": user_data.get('username')
-                }
+                extra={"created_user": created_user, "username": user_data.get("username")},
             )
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Failed to create user in Keycloak"
-            )
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Failed to create user in Keycloak")
 
-        user_id = created_user['id']
+        user_id = created_user["id"]
         logger.info(
             "User created successfully in Keycloak",
-            extra={
-                "user_id": user_id,
-                "username": created_user.get('username'),
-                "email": created_user.get('email')
-            }
+            extra={"user_id": user_id, "username": created_user.get("username"), "email": created_user.get("email")},
         )
 
         # Step 2: Add user to organization
         logger.info(
             "STEP 2: Calling keycloak_admin_service.add_user_to_organization()",
-            extra={
-                "organization_id": organization_id,
-                "user_id": user_id
-            }
+            extra={"organization_id": organization_id, "user_id": user_id},
         )
         add_success = await keycloak_admin_service.add_user_to_organization(
-            organization_id=organization_id,
-            user_id=user_id
+            organization_id=organization_id, user_id=user_id
         )
 
         logger.info(
             "STEP 2 RESULT: Add user to organization response",
-            extra={
-                "add_success": add_success,
-                "organization_id": organization_id,
-                "user_id": user_id
-            }
+            extra={"add_success": add_success, "organization_id": organization_id, "user_id": user_id},
         )
 
         if not add_success:
@@ -488,71 +427,55 @@ async def create_organization_user_admin(
                 extra={
                     "user_id": user_id,
                     "organization_id": organization_id,
-                    "username": created_user.get('username')
-                }
+                    "username": created_user.get("username"),
+                },
             )
 
         # Step 3: Assign permissions/roles if provided
-        permissions = user_data.get('permissions', [])
+        permissions = user_data.get("permissions", [])
         if permissions:
-            logger.info(
-                "STEP 3: Assigning permissions to user",
-                extra={
-                    "user_id": user_id,
-                    "permissions": permissions
-                }
-            )
+            logger.info("STEP 3: Assigning permissions to user", extra={"user_id": user_id, "permissions": permissions})
 
             # Sync user roles with provided permissions
             role_sync_success = await keycloak_admin_service.sync_user_realm_roles(
-                user_id=user_id,
-                target_roles=permissions
+                user_id=user_id, target_roles=permissions
             )
 
             logger.info(
                 "STEP 3 RESULT: Permission assignment response",
-                extra={
-                    "role_sync_success": role_sync_success,
-                    "user_id": user_id,
-                    "permissions": permissions
-                }
+                extra={"role_sync_success": role_sync_success, "user_id": user_id, "permissions": permissions},
             )
 
             if not role_sync_success:
                 logger.warning(
                     "User created and added to organization but failed to assign permissions",
-                    extra={
-                        "user_id": user_id,
-                        "organization_id": organization_id,
-                        "permissions": permissions
-                    }
+                    extra={"user_id": user_id, "organization_id": organization_id, "permissions": permissions},
                 )
         else:
             logger.info(
-                "No permissions provided, user created with default permissions only",
-                extra={"user_id": user_id}
+                "No permissions provided, user created with default permissions only", extra={"user_id": user_id}
             )
 
         logger.info(
             "=== Successfully completed organization user creation ===",
             extra={
                 "user_id": user_id,
-                "username": created_user.get('username'),
+                "username": created_user.get("username"),
                 "organization_id": organization_id,
                 "added_to_org": add_success,
-                "permissions_assigned": len(permissions) if permissions else 0
-            }
+                "permissions_assigned": len(permissions) if permissions else 0,
+            },
         )
 
         return {
-            'id': created_user.get('id'),
-            'username': created_user.get('username'),
-            'email': created_user.get('email'),
-            'firstName': created_user.get('firstName'),
-            'lastName': created_user.get('lastName'),
-            'enabled': created_user.get('enabled', True),
-            'emailVerified': created_user.get('emailVerified', False),
-            'createdTimestamp': created_user.get('createdTimestamp')
+            "id": created_user.get("id"),
+            "username": created_user.get("username"),
+            "email": created_user.get("email"),
+            "firstName": created_user.get("firstName"),
+            "lastName": created_user.get("lastName"),
+            "enabled": created_user.get("enabled", True),
+            "emailVerified": created_user.get("emailVerified", False),
+            "createdTimestamp": created_user.get("createdTimestamp"),
         }
 
     except HTTPException as he:
@@ -562,9 +485,9 @@ async def create_organization_user_admin(
                 "status_code": he.status_code,
                 "detail": he.detail,
                 "organization_id": organization_id,
-                "username": user_data.get('username'),
-                "admin_user": user.preferred_username
-            }
+                "username": user_data.get("username"),
+                "admin_user": user.preferred_username,
+            },
         )
         raise
     except Exception as e:
@@ -575,13 +498,12 @@ async def create_organization_user_admin(
                 "error_type": type(e).__name__,
                 "error_message": str(e),
                 "organization_id": organization_id,
-                "username": user_data.get('username'),
-                "admin_user": user.preferred_username
-            }
+                "username": user_data.get("username"),
+                "admin_user": user.preferred_username,
+            },
         )
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to create user: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to create user: {str(e)}"
         )
 
 
@@ -590,7 +512,7 @@ async def update_organization_user_admin(
     organization_id: str,
     user_id: str,
     user_data: dict[str, Any],
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Update user details in Keycloak (admin only).
 
@@ -609,39 +531,28 @@ async def update_organization_user_admin(
     """
     logger.info(
         "Updating organization user",
-        extra={
-            "organization_id": organization_id,
-            "user_id": user_id,
-            "admin_user": user.preferred_username
-        }
+        extra={"organization_id": organization_id, "user_id": user_id, "admin_user": user.preferred_username},
     )
 
     try:
         success = await keycloak_admin_service.update_user(user_id, user_data)
 
         if success:
-            logger.info(
-                "Successfully updated user",
-                extra={"user_id": user_id, "organization_id": organization_id}
-            )
+            logger.info("Successfully updated user", extra={"user_id": user_id, "organization_id": organization_id})
             return {"success": True, "message": "User updated successfully"}
         else:
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to update user in Keycloak"
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update user in Keycloak"
             )
 
     except HTTPException:
         raise
     except Exception as e:
         logger.error(
-            "Failed to update user",
-            exc_info=e,
-            extra={"user_id": user_id, "admin_user": user.preferred_username}
+            "Failed to update user", exc_info=e, extra={"user_id": user_id, "admin_user": user.preferred_username}
         )
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to update user: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to update user: {str(e)}"
         )
 
 
@@ -649,7 +560,7 @@ async def update_organization_user_admin(
 async def delete_organization_user(
     organization_id: str,
     user_id: str,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Remove user from organization (admin only).
 
@@ -670,29 +581,23 @@ async def delete_organization_user(
     """
     logger.info(
         "Removing user from organization",
-        extra={
-            "organization_id": organization_id,
-            "user_id": user_id,
-            "admin_user": user.preferred_username
-        }
+        extra={"organization_id": organization_id, "user_id": user_id, "admin_user": user.preferred_username},
     )
 
     try:
         success = await keycloak_admin_service.remove_user_from_organization(
-            organization_id=organization_id,
-            user_id=user_id
+            organization_id=organization_id, user_id=user_id
         )
 
         if success:
             logger.info(
                 "Successfully removed user from organization",
-                extra={"user_id": user_id, "organization_id": organization_id}
+                extra={"user_id": user_id, "organization_id": organization_id},
             )
             return {"success": True, "message": "User removed from organization"}
         else:
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to remove user from organization"
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to remove user from organization"
             )
 
     except HTTPException:
@@ -701,11 +606,10 @@ async def delete_organization_user(
         logger.error(
             "Failed to remove user from organization",
             exc_info=e,
-            extra={"user_id": user_id, "admin_user": user.preferred_username}
+            extra={"user_id": user_id, "admin_user": user.preferred_username},
         )
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to remove user: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to remove user: {str(e)}"
         )
 
 
@@ -713,7 +617,7 @@ async def delete_organization_user(
 async def reset_user_password(
     organization_id: str,
     user_id: str,
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Send password reset email to user via Keycloak (admin only).
 
@@ -731,26 +635,18 @@ async def reset_user_password(
     """
     logger.info(
         "Sending password reset email",
-        extra={
-            "organization_id": organization_id,
-            "user_id": user_id,
-            "admin_user": user.preferred_username
-        }
+        extra={"organization_id": organization_id, "user_id": user_id, "admin_user": user.preferred_username},
     )
 
     try:
         success = await keycloak_admin_service.send_password_reset_email(user_id)
 
         if success:
-            logger.info(
-                "Successfully sent password reset email",
-                extra={"user_id": user_id}
-            )
+            logger.info("Successfully sent password reset email", extra={"user_id": user_id})
             return {"success": True, "message": "Password reset email sent"}
         else:
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to send password reset email"
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to send password reset email"
             )
 
     except HTTPException:
@@ -759,11 +655,10 @@ async def reset_user_password(
         logger.error(
             "Failed to send password reset email",
             exc_info=e,
-            extra={"user_id": user_id, "admin_user": user.preferred_username}
+            extra={"user_id": user_id, "admin_user": user.preferred_username},
         )
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to send password reset email: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to send password reset email: {str(e)}"
         )
 
 
@@ -772,7 +667,7 @@ async def update_user_status(
     organization_id: str,
     user_id: str,
     status_data: dict[str, bool],
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
+    user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
 ):
     """Enable or disable user in Keycloak (admin only).
 
@@ -795,34 +690,26 @@ async def update_user_status(
         extra={
             "organization_id": organization_id,
             "user_id": user_id,
-            "enabled": status_data.get('enabled'),
-            "admin_user": user.preferred_username
-        }
+            "enabled": status_data.get("enabled"),
+            "admin_user": user.preferred_username,
+        },
     )
 
-    if 'enabled' not in status_data:
+    if "enabled" not in status_data:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="'enabled' field is required in request body"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="'enabled' field is required in request body"
         )
 
     try:
-        success = await keycloak_admin_service.update_user(
-            user_id,
-            {"enabled": status_data['enabled']}
-        )
+        success = await keycloak_admin_service.update_user(user_id, {"enabled": status_data["enabled"]})
 
         if success:
-            status_text = "enabled" if status_data['enabled'] else "disabled"
-            logger.info(
-                f"Successfully {status_text} user",
-                extra={"user_id": user_id}
-            )
+            status_text = "enabled" if status_data["enabled"] else "disabled"
+            logger.info(f"Successfully {status_text} user", extra={"user_id": user_id})
             return {"success": True, "message": f"User {status_text}"}
         else:
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to update user status"
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update user status"
             )
 
     except HTTPException:
@@ -831,9 +718,8 @@ async def update_user_status(
         logger.error(
             "Failed to update user status",
             exc_info=e,
-            extra={"user_id": user_id, "admin_user": user.preferred_username}
+            extra={"user_id": user_id, "admin_user": user.preferred_username},
         )
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to update user status: {str(e)}"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to update user status: {str(e)}"
         )

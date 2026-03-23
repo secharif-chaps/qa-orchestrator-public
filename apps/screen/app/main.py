@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,10 +14,29 @@ from app.database import engine
 setup_logging(level=getattr(settings, "LOG_LEVEL", "INFO"))
 logger = get_logger(__name__)
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Manage async resource lifecycle (checkpoint pool, graph compilation)."""
+    # Startup: pre-compile graph and open checkpoint pool
+    from app.agents.graph import get_analysis_graph
+
+    await get_analysis_graph()
+    logger.info("Analysis graph compiled and checkpoint pool opened")
+    yield
+    # Shutdown: close checkpoint pool
+    from app.agents.checkpoint import _pool
+
+    if _pool:
+        await _pool.close()
+        logger.info("Checkpoint pool closed")
+
+
 app = FastAPI(
     title="Mint Backend API",
     description="API for company data and workflow integration",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 # Initialize database security monitoring
@@ -23,20 +44,22 @@ setup_database_security(engine)
 
 # Debug logging for CORS settings
 logger.info(f"CORS Origin setting: {settings.CORS_ORIGIN}")
-logger.info(f"Backend Base URL: {settings.BACKEND_BASE_URL}")
 
 # Add CORS middleware FIRST (to handle preflight requests properly)
 # Allow common development origins for local testing
-development_origins = [
+allowed_origins = [
     settings.CORS_ORIGIN,
     "http://localhost",
     "http://127.0.0.1",
-    "http://10.0.1.2",       # Direct access to preprod server
+    "http://10.0.1.2",  # Direct access to preprod server
 ]
+# Add extra origins from env (comma-separated), e.g. for preprod IPs
+if settings.CORS_EXTRA_ORIGINS:
+    allowed_origins.extend(origin.strip() for origin in settings.CORS_EXTRA_ORIGINS.split(",") if origin.strip())
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=development_origins,
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods including PATCH
     allow_headers=["*"],  # Allow all headers
@@ -47,8 +70,8 @@ app.add_middleware(
 app.add_middleware(
     SecurityMiddleware,
     max_request_size=2097152,  # 2MB
-    rate_limit_requests=300,   # 300 requests per minute (increased for lazy-load patterns)
-    rate_limit_window=60
+    rate_limit_requests=300,  # 300 requests per minute (increased for lazy-load patterns)
+    rate_limit_window=60,
 )
 
 app.add_middleware(JSONValidationMiddleware)
@@ -58,10 +81,10 @@ app.include_router(api_router, prefix="/api")
 
 if __name__ == "__main__":
     import uvicorn
-    
+
     uvicorn.run(
         "app.main:app",
         host=settings.API_HOST,
         port=settings.API_PORT,
         reload=True,
-    ) 
+    )

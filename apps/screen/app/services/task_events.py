@@ -50,10 +50,7 @@ class TaskEventManager:
         queue: asyncio.Queue = asyncio.Queue()
         self._connections[user_id].append(queue)
         connection_count = len(self._connections[user_id])
-        logger.info(
-            "User subscribed to task events",
-            extra={"user_id": user_id, "connection_count": connection_count}
-        )
+        logger.info("User subscribed to task events", extra={"user_id": user_id, "connection_count": connection_count})
         return queue
 
     def unsubscribe(self, user_id: str, queue: asyncio.Queue) -> None:
@@ -73,10 +70,7 @@ class TaskEventManager:
                     del self._connections[user_id]
                 logger.info(
                     "User unsubscribed from task events",
-                    extra={
-                        "user_id": user_id,
-                        "remaining_connections": len(self._connections.get(user_id, []))
-                    }
+                    extra={"user_id": user_id, "remaining_connections": len(self._connections.get(user_id, []))},
                 )
             except ValueError:
                 # Queue was already removed
@@ -115,31 +109,18 @@ class TaskEventManager:
                 await queue.put(event)
                 sent_count += 1
             except Exception as e:
-                logger.warning(
-                    "Failed to queue event for user",
-                    extra={"user_id": user_id, "error": str(e)}
-                )
+                logger.warning("Failed to queue event for user", extra={"user_id": user_id, "error": str(e)})
 
         if sent_count > 0:
             logger.debug(
                 "Event broadcast to user",
-                extra={
-                    "user_id": user_id,
-                    "event_type": event.get("type"),
-                    "connections": sent_count
-                }
+                extra={"user_id": user_id, "event_type": event.get("type"), "connections": sent_count},
             )
 
         return sent_count
 
     async def broadcast_task_update(
-        self,
-        user_id: str,
-        company_id: int,
-        task_id: int,
-        status: str,
-        task_type: str,
-        error: str | None = None
+        self, user_id: str, company_id: int, task_id: int, status: str, task_type: str, error: str | None = None
     ) -> int:
         """Broadcast a task status update event.
 
@@ -164,8 +145,8 @@ class TaskEventManager:
                 "task_id": task_id,
                 "status": status,
                 "task_type": task_type,
-                "error": error
-            }
+                "error": error,
+            },
         }
 
         sent_count = await self.broadcast_to_user(user_id, event)
@@ -178,8 +159,8 @@ class TaskEventManager:
                 "task_id": task_id,
                 "status": status,
                 "task_type": task_type,
-                "connections": sent_count
-            }
+                "connections": sent_count,
+            },
         )
 
         return sent_count
@@ -191,7 +172,7 @@ class TaskEventManager:
         company_name: str,
         folder_id: str | None,
         success_count: int,
-        error_count: int
+        error_count: int,
     ) -> int:
         """Broadcast when all tasks for a company are complete.
 
@@ -216,8 +197,8 @@ class TaskEventManager:
                 "company_name": company_name,
                 "folder_id": folder_id,
                 "success_count": success_count,
-                "error_count": error_count
-            }
+                "error_count": error_count,
+            },
         }
 
         sent_count = await self.broadcast_to_user(user_id, event)
@@ -230,8 +211,8 @@ class TaskEventManager:
                 "company_name": company_name,
                 "success_count": success_count,
                 "error_count": error_count,
-                "connections": sent_count
-            }
+                "connections": sent_count,
+            },
         )
 
         return sent_count

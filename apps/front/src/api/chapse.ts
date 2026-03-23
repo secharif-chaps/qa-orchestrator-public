@@ -71,10 +71,16 @@ export interface RenameResponse {
  * This returns an EventSource-like interface for handling streaming.
  * The actual streaming is handled by the composable.
  */
+export interface ChatHistoryMessage {
+  role: 'user' | 'assistant'
+  content: string
+}
+
 export interface ChapseChatRequest {
   query: string
   conversation_id?: string | null
   company_ids?: number[]
+  messages?: ChatHistoryMessage[]
 }
 
 /**

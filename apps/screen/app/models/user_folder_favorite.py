@@ -23,33 +23,19 @@ class UserFolderFavorite(Base):
         folder_id: UUID of the favorited folder
         created_at: Timestamp when the folder was favorited
     """
+
     __tablename__ = "user_folder_favorites"
 
-    id = Column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        server_default=text("gen_random_uuid()")
-    )
+    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
 
     # User reference (Keycloak user ID from JWT sub claim)
     user_id = Column(String, nullable=False, index=True)
 
     # Folder reference with cascade delete
-    folder_id = Column(
-        UUID(as_uuid=True),
-        ForeignKey("folders.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
-    )
+    folder_id = Column(UUID(as_uuid=True), ForeignKey("folders.id", ondelete="CASCADE"), nullable=False, index=True)
 
     # Timestamp when favorited
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Ensure a user can only favorite a folder once
-    __table_args__ = (
-        UniqueConstraint('user_id', 'folder_id', name='uq_user_folder_favorite'),
-    )
+    __table_args__ = (UniqueConstraint("user_id", "folder_id", name="uq_user_folder_favorite"),)

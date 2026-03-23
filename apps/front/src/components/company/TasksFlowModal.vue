@@ -82,19 +82,6 @@
                   "
                 ></div>
 
-                <!-- Blocked segment -->
-                <div
-                  v-if="blockedPercentage > 0"
-                  class="h-full bg-slate-500 transition-all duration-500 ease-out"
-                  :style="{ width: `${blockedPercentage}%` }"
-                  :title="
-                    t('company.tasks.blocked', {
-                      count: blockedCount,
-                      percentage: Math.round(blockedPercentage),
-                    })
-                  "
-                ></div>
-
                 <!-- Pending segment -->
                 <div
                   v-if="pendingPercentage > 0"
@@ -127,10 +114,6 @@
                   <span v-if="pendingCount > 0" class="flex items-center gap-1.5">
                     <div class="bg-secondary h-2 w-2 rounded-full"></div>
                     {{ t('company.tasks.pendingShort', { count: pendingCount }) }}
-                  </span>
-                  <span v-if="blockedCount > 0" class="flex items-center gap-1.5">
-                    <div class="h-2 w-2 rounded-full bg-slate-500"></div>
-                    {{ t('company.tasks.blockedShort', { count: blockedCount }) }}
                   </span>
                 </div>
               </div>
@@ -360,11 +343,6 @@ const taskConfigs: TaskConfig[] = [
     name: 'jobs',
     description: 'Job openings, career opportunities',
   },
-  {
-    type: 'data_collection',
-    name: 'data_collection',
-    description: 'Structured data collection (scraping)',
-  },
 ]
 
 const { mutate: restart } = useRestartTask()
@@ -401,7 +379,6 @@ const getTaskIcon = (taskType: TaskType): string => {
     csr: 'fas fa-leaf',
     press: 'fas fa-newspaper',
     team: 'fas fa-users',
-    data_collection: 'fas fa-database',
   }
   return iconMap[taskType] || 'fas fa-question'
 }
@@ -418,8 +395,6 @@ const getTaskClass = (task: { status: TaskStatus | null }): string => {
       return `${baseClasses} border-warning-500`
     case 'pending':
       return `${baseClasses} border-info-500`
-    case 'blocked':
-      return `${baseClasses} border-slate-500`
     default:
       return `${baseClasses} border-primary-stroke opacity-60`
   }
@@ -435,8 +410,6 @@ const getIconContainerClass = (status: TaskStatus | null): string => {
       return 'bg-warning-500/10 text-warning-500'
     case 'pending':
       return 'bg-info-500/10 text-info-500'
-    case 'blocked':
-      return 'bg-slate-500/10 text-slate-500'
     default:
       return 'bg-base-200 text-secondary'
   }
@@ -452,8 +425,6 @@ const getStatusIntent = (status: TaskStatus | null) => {
       return 'warning'
     case 'pending':
       return 'info'
-    case 'blocked':
-      return 'neutral'
     default:
       return 'accent'
   }
@@ -469,8 +440,6 @@ const getStatusLabel = (status: TaskStatus | null): string => {
       return t('company.analysisCard.status.running', 'In progress')
     case 'pending':
       return t('company.analysisCard.status.pending', 'Pending')
-    case 'blocked':
-      return t('company.analysisCard.status.blocked', 'Pending (blocked)')
     default:
       return t('company.analysisCard.status.notStarted', 'Not started')
   }
@@ -515,10 +484,6 @@ const pendingCount = computed(() => {
   return pendingFromExisting + notStartedTasks
 })
 
-const blockedCount = computed(
-  () => tasks.value?.filter((t: TaskResponse) => t.status === 'blocked').length || 0,
-)
-
 const totalTasks = computed(() => taskConfigs.length)
 
 const hasErrorsOrPending = computed(() => errorCount.value > 0 || pendingCount.value > 0)
@@ -534,10 +499,6 @@ const runningPercentage = computed(() =>
 
 const errorPercentage = computed(() =>
   totalTasks.value > 0 ? (errorCount.value / totalTasks.value) * 100 : 0,
-)
-
-const blockedPercentage = computed(() =>
-  totalTasks.value > 0 ? (blockedCount.value / totalTasks.value) * 100 : 0,
 )
 
 const pendingPercentage = computed(() =>

@@ -7,10 +7,9 @@ export type TaskType =
   | 'csr'
   | 'press'
   | 'team'
-  | 'data_collection'
-export type TaskStatus = 'pending' | 'blocked' | 'running' | 'succeeded' | 'error'
+export type TaskStatus = 'pending' | 'running' | 'succeeded' | 'error'
 
-export interface DifyErrorDetails {
+export interface AgentErrorDetails {
   error_type: string
   is_recoverable: boolean
   retry_after_seconds: number | null
@@ -21,8 +20,7 @@ export interface TaskBase {
   type: TaskType
   status: TaskStatus
   error?: string | null
-  error_details?: DifyErrorDetails | null
-  is_prerequisite?: boolean
+  error_details?: AgentErrorDetails | null
 }
 
 export interface TaskCreate extends TaskBase {
@@ -37,5 +35,4 @@ export interface TaskResponse extends TaskBase {
   input_tokens?: number | null
   output_tokens?: number | null
   total_cost?: number | null
-  is_prerequisite?: boolean
 }

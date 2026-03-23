@@ -12,7 +12,6 @@ Key operations:
 """
 
 from datetime import datetime
-from typing import Optional
 
 from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError
@@ -100,11 +99,7 @@ class TokenManager:
         Returns:
             Organization record (existing or newly created)
         """
-        org = (
-            self.db.query(Organization)
-            .filter(Organization.organization_id == org_id)
-            .first()
-        )
+        org = self.db.query(Organization).filter(Organization.organization_id == org_id).first()
 
         if not org:
             org = Organization(organization_id=org_id, token_balance=0)
@@ -114,11 +109,7 @@ class TokenManager:
             except IntegrityError:
                 self.db.rollback()
                 # Handle race condition - another process created it
-                org = (
-                    self.db.query(Organization)
-                    .filter(Organization.organization_id == org_id)
-                    .first()
-                )
+                org = self.db.query(Organization).filter(Organization.organization_id == org_id).first()
                 if not org:
                     raise
             self.db.refresh(org)
@@ -190,12 +181,7 @@ class TokenManager:
         self._ensure_organization_exists(org_id)
 
         # Lock organization row for update to prevent race conditions
-        org = (
-            self.db.query(Organization)
-            .filter(Organization.organization_id == org_id)
-            .with_for_update()
-            .first()
-        )
+        org = self.db.query(Organization).filter(Organization.organization_id == org_id).with_for_update().first()
 
         # Update balance
         org.token_balance += amount
@@ -228,7 +214,7 @@ class TokenManager:
         amount: int,
         module_name: ModuleName,
         reference_type: ReferenceType,
-        reference_id: Optional[str],
+        reference_id: str | None,
         user_id: str,
     ) -> Organization:
         """Consume tokens from organization balance.
@@ -263,12 +249,7 @@ class TokenManager:
         self._ensure_organization_exists(org_id)
 
         # Lock organization row for update to prevent race conditions
-        org = (
-            self.db.query(Organization)
-            .filter(Organization.organization_id == org_id)
-            .with_for_update()
-            .first()
-        )
+        org = self.db.query(Organization).filter(Organization.organization_id == org_id).with_for_update().first()
 
         # Check sufficient balance
         if org.token_balance < amount:
@@ -314,10 +295,10 @@ class TokenManager:
     def get_transaction_history(
         self,
         org_id: str,
-        transaction_type: Optional[TransactionType] = None,
-        reference_type: Optional[ReferenceType] = None,
-        date_from: Optional[datetime] = None,
-        date_to: Optional[datetime] = None,
+        transaction_type: TransactionType | None = None,
+        reference_type: ReferenceType | None = None,
+        date_from: datetime | None = None,
+        date_to: datetime | None = None,
         page: int = 1,
         size: int = 50,
     ) -> list[TokenTransaction]:
@@ -337,9 +318,7 @@ class TokenManager:
         Returns:
             List of TokenTransaction records matching filters
         """
-        query = self.db.query(TokenTransaction).filter(
-            TokenTransaction.organization_id == org_id
-        )
+        query = self.db.query(TokenTransaction).filter(TokenTransaction.organization_id == org_id)
 
         # Apply optional filters
         if transaction_type is not None:
@@ -366,10 +345,10 @@ class TokenManager:
     def get_transaction_count(
         self,
         org_id: str,
-        transaction_type: Optional[TransactionType] = None,
-        reference_type: Optional[ReferenceType] = None,
-        date_from: Optional[datetime] = None,
-        date_to: Optional[datetime] = None,
+        transaction_type: TransactionType | None = None,
+        reference_type: ReferenceType | None = None,
+        date_from: datetime | None = None,
+        date_to: datetime | None = None,
     ) -> int:
         """Get total count of transactions for pagination.
 
@@ -383,9 +362,7 @@ class TokenManager:
         Returns:
             Total count of matching transactions
         """
-        query = self.db.query(TokenTransaction).filter(
-            TokenTransaction.organization_id == org_id
-        )
+        query = self.db.query(TokenTransaction).filter(TokenTransaction.organization_id == org_id)
 
         if transaction_type is not None:
             query = query.filter(TokenTransaction.transaction_type == transaction_type)
@@ -403,9 +380,7 @@ class TokenManager:
 
     # Module management methods (kept for backward compatibility)
 
-    def get_or_create_module(
-        self, organization_id: str, module_name: ModuleName
-    ) -> OrganizationModule:
+    def get_or_create_module(self, organization_id: str, module_name: ModuleName) -> OrganizationModule:
         """Get or create a organization module configuration.
 
         Args:
@@ -450,9 +425,7 @@ class TokenManager:
 
         return module
 
-    def get_all_organization_modules(
-        self, organization_id: str
-    ) -> list[OrganizationModule]:
+    def get_all_organization_modules(self, organization_id: str) -> list[OrganizationModule]:
         """Get all modules for an organization.
 
         Ensures all module types exist for the organization.
@@ -467,17 +440,13 @@ class TokenManager:
         for module_name in ModuleName:
             self.get_or_create_module(organization_id, module_name)
 
-        return (
-            self.db.query(OrganizationModule)
-            .filter(OrganizationModule.organization_id == organization_id)
-            .all()
-        )
+        return self.db.query(OrganizationModule).filter(OrganizationModule.organization_id == organization_id).all()
 
     def update_module_config(
         self,
         organization_id: str,
         module_name: ModuleName,
-        enabled: Optional[bool] = None,
+        enabled: bool | None = None,
     ) -> OrganizationModule:
         """Update module configuration (enabled/disabled).
 

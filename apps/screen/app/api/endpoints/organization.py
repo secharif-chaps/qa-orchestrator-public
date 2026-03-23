@@ -23,8 +23,7 @@ router = APIRouter(tags=["organization"])
 
 @router.get("/activities", response_model=list[ActivityResponse])
 async def get_organization_activities(
-    db: Session = Depends(get_db),
-    org_context: OrganizationContext = Depends(get_user_organization)
+    db: Session = Depends(get_db), org_context: OrganizationContext = Depends(get_user_organization)
 ) -> list[ActivityResponse]:
     """
     Get recent creation activities in the organization (companies and folders created by other users).
@@ -36,10 +35,7 @@ async def get_organization_activities(
     """
     logger.info(
         "Get organization activities",
-        extra={
-            "user": org_context.username,
-            "organization_id": org_context.organization_id
-        }
+        extra={"user": org_context.username, "organization_id": org_context.organization_id},
     )
 
     # Get current user info
@@ -48,8 +44,7 @@ async def get_organization_activities(
 
     # Get accessible company IDs for this user (from folders they have access to)
     accessible_company_ids = FolderService.get_accessible_company_ids(
-        db, current_user_id, org_context.organization_id,
-        username=current_username
+        db, current_user_id, org_context.organization_id, username=current_username
     )
 
     activities = []
@@ -66,7 +61,7 @@ async def get_organization_activities(
                 Company.organization_id == org_context.organization_id,
                 Company.owner_username != current_username,
                 ~Company.is_deleted,
-                Company.id.in_(accessible_company_ids)
+                Company.id.in_(accessible_company_ids),
             )
             .order_by(Company.created_at.desc())
             .limit(10)
@@ -77,10 +72,7 @@ async def get_organization_activities(
         company_id_strings = [str(c.id) for c in companies]
         folder_items = (
             db.query(FolderItem.item_id, FolderItem.folder_id)
-            .filter(
-                FolderItem.item_id.in_(company_id_strings),
-                FolderItem.item_type == "company"
-            )
+            .filter(FolderItem.item_id.in_(company_id_strings), FolderItem.item_type == "company")
             .order_by(FolderItem.added_at.desc())  # Most recent folder first
             .all()
         )
@@ -91,14 +83,16 @@ async def get_organization_activities(
                 company_folder_map[fi.item_id] = str(fi.folder_id)
 
         for company in companies:
-            activities.append(ActivityResponse(
-                type="company",
-                name=company.name,
-                owner=company.owner_username or "Unknown",
-                created_at=company.created_at,
-                id=str(company.id),
-                folder_id=company_folder_map.get(str(company.id)),
-            ))
+            activities.append(
+                ActivityResponse(
+                    type="company",
+                    name=company.name,
+                    owner=company.owner_username or "Unknown",
+                    created_at=company.created_at,
+                    id=str(company.id),
+                    folder_id=company_folder_map.get(str(company.id)),
+                )
+            )
 
     # SECURITY: Query folders that:
     # 1. Belong to user's organization
@@ -112,7 +106,7 @@ async def get_organization_activities(
             Folder.organization_id == org_context.organization_id,
             Folder.owner_id != current_user_id,  # Not owned by current user
             ~Folder.is_deleted,
-            FolderShare.user_id == current_user_id  # Shared with current user
+            FolderShare.user_id == current_user_id,  # Shared with current user
         )
         .order_by(Folder.created_at.desc())
         .limit(10)
@@ -120,13 +114,15 @@ async def get_organization_activities(
     )
 
     for folder in folders:
-        activities.append(ActivityResponse(
-            type="folder",
-            name=folder.name,
-            owner=folder.owner or "Unknown",
-            created_at=folder.created_at,
-            id=str(folder.id),
-        ))
+        activities.append(
+            ActivityResponse(
+                type="folder",
+                name=folder.name,
+                owner=folder.owner or "Unknown",
+                created_at=folder.created_at,
+                id=str(folder.id),
+            )
+        )
 
     # Sort by creation time (most recent first)
     activities.sort(key=lambda x: x.created_at, reverse=True)

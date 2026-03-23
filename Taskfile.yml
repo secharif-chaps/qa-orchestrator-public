@@ -65,26 +65,6 @@ tasks:
     desc: Open psql shell
     cmd: "{{.COMPOSE}} exec db psql -U postgres -d chapsmind_db"
 
-  # ─── Tunnel (Dify callbacks) ─────────────────────
-  tunnel:
-    desc: Start LocalTunnel for Dify callbacks
-    cmds:
-      - "{{.COMPOSE}} --profile tunnel up -d tunnel"
-      - sleep 5
-      - "{{.COMPOSE}} logs tunnel --tail 10"
-
-  tunnel:stop:
-    desc: Stop the tunnel
-    cmd: "{{.COMPOSE}} --profile tunnel stop tunnel"
-
-  tunnel:url:
-    desc: Show current tunnel URL
-    cmd: "curl -s http://localhost/api/dev/tunnel-url | python3 -m json.tool || {{.COMPOSE}} logs tunnel --tail 5"
-
-  tunnel:logs:
-    desc: Follow tunnel logs
-    cmd: "{{.COMPOSE}} logs -f tunnel"
-
   # ─── Skills ────────────────────────────────────────
   skills:validate:
     desc: Validate Claude skills structure

@@ -7,7 +7,6 @@ This module provides API endpoints for:
 """
 
 from datetime import datetime, timedelta
-from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi_keycloak import OIDCUser
@@ -76,20 +75,18 @@ def _has_credits_access(user: OIDCUser, org_context: OrganizationContext, organi
         True if user has access, False otherwise
     """
     # Check if user has admin.organizations role
-    is_org_admin = (
-        hasattr(user, "roles") and user.roles and "admin.organizations" in user.roles
-    )
+    is_org_admin = hasattr(user, "roles") and user.roles and "admin.organizations" in user.roles
 
     # Check if user has organization.manage role and belongs to the organization
-    has_manage_role = (
-        hasattr(user, "roles") and user.roles and "organization.manage" in user.roles
-    )
+    has_manage_role = hasattr(user, "roles") and user.roles and "organization.manage" in user.roles
     is_org_member = org_context.organization_id == organization_id
 
     return is_org_admin or (has_manage_role and is_org_member)
 
 
-def _get_date_range(period: str, start_date: Optional[datetime], end_date: Optional[datetime]) -> tuple[datetime, datetime]:
+def _get_date_range(
+    period: str, start_date: datetime | None, end_date: datetime | None
+) -> tuple[datetime, datetime]:
     """Calculate date range from period preset or custom dates.
 
     Args:
@@ -125,11 +122,7 @@ def _get_module_enabled_status(db: Session, organization_id: str) -> dict[str, b
     Returns:
         Dict mapping module name to enabled status
     """
-    modules = (
-        db.query(OrganizationModule)
-        .filter(OrganizationModule.organization_id == organization_id)
-        .all()
-    )
+    modules = db.query(OrganizationModule).filter(OrganizationModule.organization_id == organization_id).all()
 
     module_status = {name: False for name in get_all_module_names()}
     for module in modules:
@@ -248,11 +241,11 @@ async def get_credit_stats(
 @router.get("/{organization_id}/credits/top-users", response_model=TopCreditUsersResponse)
 async def get_top_credit_users(
     organization_id: str,
-    module: Optional[str] = Query(None, description="Filter by module (screen, target, explore)"),
-    start_date: Optional[datetime] = Query(None, description="Filter from date"),
-    end_date: Optional[datetime] = Query(None, description="Filter until date"),
+    module: str | None = Query(None, description="Filter by module (screen, target, explore)"),
+    start_date: datetime | None = Query(None, description="Filter from date"),
+    end_date: datetime | None = Query(None, description="Filter until date"),
     period: str = Query("30d", description="Period preset (7d, 30d, 90d, custom)"),
-    search: Optional[str] = Query(None, description="Search by username or name"),
+    search: str | None = Query(None, description="Search by username or name"),
     page: int = Query(1, ge=1, description="Page number (1-indexed)"),
     size: int = Query(10, ge=1, le=100, description="Items per page"),
     db: Session = Depends(get_db),
@@ -286,17 +279,14 @@ async def get_top_credit_users(
     date_from, date_to = _get_date_range(period, start_date, end_date)
 
     # Build query for user consumption
-    query = (
-        db.query(
-            TokenTransaction.created_by,
-            func.sum(func.abs(TokenTransaction.amount)).label("total_consumed"),
-        )
-        .filter(
-            TokenTransaction.organization_id == organization_id,
-            TokenTransaction.transaction_type == TransactionType.consume,
-            TokenTransaction.created_at >= date_from,
-            TokenTransaction.created_at <= date_to,
-        )
+    query = db.query(
+        TokenTransaction.created_by,
+        func.sum(func.abs(TokenTransaction.amount)).label("total_consumed"),
+    ).filter(
+        TokenTransaction.organization_id == organization_id,
+        TokenTransaction.transaction_type == TransactionType.consume,
+        TokenTransaction.created_at >= date_from,
+        TokenTransaction.created_at <= date_to,
     )
 
     # Apply module filter
@@ -306,11 +296,7 @@ async def get_top_credit_users(
             query = query.filter(TokenTransaction.reference_type.in_(reference_types))
 
     # Group and order by consumption
-    query = (
-        query
-        .group_by(TokenTransaction.created_by)
-        .order_by(func.sum(func.abs(TokenTransaction.amount)).desc())
-    )
+    query = query.group_by(TokenTransaction.created_by).order_by(func.sum(func.abs(TokenTransaction.amount)).desc())
 
     # Get total count before pagination
     all_results = query.all()
@@ -318,7 +304,7 @@ async def get_top_credit_users(
 
     # Apply pagination
     offset = (page - 1) * size
-    user_consumption = all_results[offset:offset + size]
+    user_consumption = all_results[offset : offset + size]
 
     # Build response items by fetching user details from Keycloak
     items = []
@@ -382,8 +368,7 @@ async def get_top_credit_users(
 
         except Exception as e:
             logger.warning(
-                f"Failed to fetch user details for {user_id}: {e}",
-                extra={"user_id": user_id, "error": str(e)}
+                f"Failed to fetch user details for {user_id}: {e}", extra={"user_id": user_id, "error": str(e)}
             )
             # Include with limited data on error
             items.append(
@@ -410,9 +395,9 @@ async def get_top_credit_users(
 @router.get("/{organization_id}/credits/daily-usage", response_model=DailyCreditUsageResponse)
 async def get_daily_credit_usage(
     organization_id: str,
-    module: Optional[str] = Query(None, description="Filter by module (screen, target, explore)"),
-    start_date: Optional[datetime] = Query(None, description="Filter from date"),
-    end_date: Optional[datetime] = Query(None, description="Filter until date"),
+    module: str | None = Query(None, description="Filter by module (screen, target, explore)"),
+    start_date: datetime | None = Query(None, description="Filter from date"),
+    end_date: datetime | None = Query(None, description="Filter until date"),
     period: str = Query("30d", description="Period preset (7d, 30d, 90d, custom)"),
     db: Session = Depends(get_db),
     user: OIDCUser = Depends(idp.get_current_user()),
@@ -442,17 +427,14 @@ async def get_daily_credit_usage(
     date_from, date_to = _get_date_range(period, start_date, end_date)
 
     # Build query for daily usage
-    query = (
-        db.query(
-            func.date(TokenTransaction.created_at).label("date"),
-            func.sum(func.abs(TokenTransaction.amount)).label("daily_total"),
-        )
-        .filter(
-            TokenTransaction.organization_id == organization_id,
-            TokenTransaction.transaction_type == TransactionType.consume,
-            TokenTransaction.created_at >= date_from,
-            TokenTransaction.created_at <= date_to,
-        )
+    query = db.query(
+        func.date(TokenTransaction.created_at).label("date"),
+        func.sum(func.abs(TokenTransaction.amount)).label("daily_total"),
+    ).filter(
+        TokenTransaction.organization_id == organization_id,
+        TokenTransaction.transaction_type == TransactionType.consume,
+        TokenTransaction.created_at >= date_from,
+        TokenTransaction.created_at <= date_to,
     )
 
     # Apply module filter
@@ -462,11 +444,7 @@ async def get_daily_credit_usage(
             query = query.filter(TokenTransaction.reference_type.in_(reference_types))
 
     # Group by date and order chronologically
-    query = (
-        query
-        .group_by(func.date(TokenTransaction.created_at))
-        .order_by(func.date(TokenTransaction.created_at))
-    )
+    query = query.group_by(func.date(TokenTransaction.created_at)).order_by(func.date(TokenTransaction.created_at))
 
     results = query.all()
 

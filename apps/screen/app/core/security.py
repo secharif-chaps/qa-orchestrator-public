@@ -2,7 +2,6 @@
 Security utilities for authorization and access control
 """
 
-from typing import Optional
 
 from fastapi import HTTPException, status
 
@@ -15,14 +14,12 @@ from app.schemas.user import TokenData
 
 class AuthorizationError(HTTPException):
     """Custom exception for authorization errors"""
+
     def __init__(self, detail: str = "Insufficient permissions"):
-        super().__init__(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=detail
-        )
+        super().__init__(status_code=status.HTTP_403_FORBIDDEN, detail=detail)
 
 
-def verify_company_ownership(company: Optional[Company], current_user: TokenData) -> Company:
+def verify_company_ownership(company: Company | None, current_user: TokenData) -> Company:
     """
     Verify that the current user owns the specified company
 
@@ -37,10 +34,7 @@ def verify_company_ownership(company: Optional[Company], current_user: TokenData
         HTTPException: If company doesn't exist or user doesn't own it
     """
     if not company:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Company not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found")
 
     if company.owner_username != current_user.username:
         raise AuthorizationError("You don't have permission to access this company")
@@ -48,7 +42,7 @@ def verify_company_ownership(company: Optional[Company], current_user: TokenData
     return company
 
 
-def verify_company_organization_access(company: Optional[Company], org_context: OrganizationContext) -> Company:
+def verify_company_organization_access(company: Company | None, org_context: OrganizationContext) -> Company:
     """
     Verify that the company belongs to the user's organization
 
@@ -63,10 +57,7 @@ def verify_company_organization_access(company: Optional[Company], org_context: 
         HTTPException: If company doesn't exist or doesn't belong to organization
     """
     if not company:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Company not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found")
 
     if company.organization_id != org_context.organization_id:
         raise AuthorizationError("Company not found in your organization")

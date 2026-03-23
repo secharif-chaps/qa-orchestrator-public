@@ -5,13 +5,13 @@ stored in normalized tables (1:1 sections and 1:N children).
 
 Writers:
 - save_profile_data, save_digital_data, save_timeline_data, etc.
-- Called by _update_company_data to persist Dify callback data
+- Called by _update_company_data to persist agent output data
 
 Readers:
 - get_profile_data, get_digital_data, get_timeline_data, etc.
 - Called by _build_company_response to read data for API responses
 
-All functions handle the transformation between Dify JSON format
+All functions handle the transformation between agent JSON output
 and normalized database tables with SourcedValue pattern.
 """
 
@@ -53,10 +53,10 @@ logger = logging.getLogger(__name__)
 
 
 def _get_sourced_value(data: dict, key: str) -> tuple[str | None, str | None]:
-    """Extract value and source from a SourcedValue structure in Dify data.
+    """Extract value and source from a SourcedValue structure in agent data.
 
     Args:
-        data: Dictionary containing the Dify data
+        data: Dictionary containing the agent data
         key: Key to extract (e.g., "groupName")
 
     Returns:
@@ -74,10 +74,10 @@ def _get_sourced_value(data: dict, key: str) -> tuple[str | None, str | None]:
 
 
 def _get_string_value(data: dict | str | None, key: str) -> str | None:
-    """Extract a plain string value from Dify data (for insights, etc.).
+    """Extract a plain string value from agent data (for insights, etc.).
 
     Args:
-        data: Dictionary containing the Dify data, or a string, or None
+        data: Dictionary containing the agent data, or a string, or None
         key: Key to extract
 
     Returns:
@@ -97,23 +97,21 @@ def _get_string_value(data: dict | str | None, key: str) -> str | None:
 
 
 def save_profile_data(db: Session, company_id: int, data: dict) -> None:
-    """Save profile data from Dify callback to normalized tables.
+    """Save profile data from agent callback to normalized tables.
 
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data (at root level, not nested under "profile")
+        data: agent output data (at root level, not nested under "profile")
     """
-    # Data comes at root level from Dify, not nested under "profile"
+    # Data comes at root level from agent, not nested under "profile"
     profile_data = data
     if not profile_data:
         logger.debug(f"No profile data to save for company {company_id}")
         return
 
     # Check for existing profile record
-    existing = db.query(CompanyProfile).filter(
-        CompanyProfile.company_id == company_id
-    ).first()
+    existing = db.query(CompanyProfile).filter(CompanyProfile.company_id == company_id).first()
 
     if existing:
         # Update existing record
@@ -123,29 +121,19 @@ def save_profile_data(db: Session, company_id: int, data: dict) -> None:
         profile = CompanyProfile(company_id=company_id)
         db.add(profile)
 
-    # Extract values from Dify data
+    # Extract values from agent data
     profile.insights = _get_string_value(profile_data, "insights")
     profile.insights_source = "Chaps-e"  # Insights are always from Chaps-e
 
     # SourcedValue fields
-    profile.group_name, profile.group_name_source = _get_sourced_value(
-        profile_data, "groupName"
-    )
-    profile.business_line, profile.business_line_source = _get_sourced_value(
-        profile_data, "businessLine"
-    )
-    profile.catchphrase, profile.catchphrase_source = _get_sourced_value(
-        profile_data, "catchphrase"
-    )
+    profile.group_name, profile.group_name_source = _get_sourced_value(profile_data, "groupName")
+    profile.business_line, profile.business_line_source = _get_sourced_value(profile_data, "businessLine")
+    profile.catchphrase, profile.catchphrase_source = _get_sourced_value(profile_data, "catchphrase")
     profile.establishment_year, profile.establishment_year_source = _get_sourced_value(
         profile_data, "establishmentYear"
     )
-    profile.employee_count, profile.employee_count_source = _get_sourced_value(
-        profile_data, "employeeCount"
-    )
-    profile.revenue, profile.revenue_source = _get_sourced_value(
-        profile_data, "revenue"
-    )
+    profile.employee_count, profile.employee_count_source = _get_sourced_value(profile_data, "employeeCount")
+    profile.revenue, profile.revenue_source = _get_sourced_value(profile_data, "revenue")
     profile.ceo, profile.ceo_source = _get_sourced_value(profile_data, "ceo")
     profile.hq, profile.hq_source = _get_sourced_value(profile_data, "hq")
 
@@ -163,9 +151,7 @@ def get_profile_data(db: Session, company_id: int) -> dict[str, Any]:
     Returns:
         Dictionary matching frontend Company.profile interface
     """
-    profile = db.query(CompanyProfile).filter(
-        CompanyProfile.company_id == company_id
-    ).first()
+    profile = db.query(CompanyProfile).filter(CompanyProfile.company_id == company_id).first()
 
     if not profile:
         return {}
@@ -232,23 +218,21 @@ def get_profile_data(db: Session, company_id: int) -> dict[str, Any]:
 
 
 def save_digital_data(db: Session, company_id: int, data: dict) -> None:
-    """Save digital data from Dify callback to normalized tables.
+    """Save digital data from agent callback to normalized tables.
 
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data (at root level, not nested under "digital")
+        data: agent output data (at root level, not nested under "digital")
     """
-    # Data comes at root level from Dify, not nested under "digital"
+    # Data comes at root level from agent, not nested under "digital"
     digital_data = data
     if not digital_data:
         logger.debug(f"No digital data to save for company {company_id}")
         return
 
     # Check for existing digital record
-    existing = db.query(CompanyDigital).filter(
-        CompanyDigital.company_id == company_id
-    ).first()
+    existing = db.query(CompanyDigital).filter(CompanyDigital.company_id == company_id).first()
 
     if existing:
         digital = existing
@@ -309,21 +293,15 @@ def save_digital_data(db: Session, company_id: int, data: dict) -> None:
         _save_online_services(db, company_id, online_services)
 
     # Save social media accounts (1:N) - snake_case key
-    _save_social_media_accounts(
-        db, company_id, digital_data.get("social_media_accounts", [])
-    )
+    _save_social_media_accounts(db, company_id, digital_data.get("social_media_accounts", []))
 
     logger.info(f"Saved digital data for company {company_id}")
 
 
-def _save_online_services(
-    db: Session, company_id: int, services: list[dict]
-) -> None:
+def _save_online_services(db: Session, company_id: int, services: list[dict]) -> None:
     """Save online services to normalized table."""
     # Delete existing services
-    db.query(CompanyOnlineService).filter(
-        CompanyOnlineService.company_id == company_id
-    ).delete()
+    db.query(CompanyOnlineService).filter(CompanyOnlineService.company_id == company_id).delete()
 
     for service_data in services:
         if not isinstance(service_data, dict):
@@ -361,14 +339,10 @@ def _save_online_services(
     db.flush()
 
 
-def _save_social_media_accounts(
-    db: Session, company_id: int, accounts: list[dict]
-) -> None:
+def _save_social_media_accounts(db: Session, company_id: int, accounts: list[dict]) -> None:
     """Save social media accounts to normalized table."""
     # Delete existing accounts
-    db.query(CompanySocialMediaAccount).filter(
-        CompanySocialMediaAccount.company_id == company_id
-    ).delete()
+    db.query(CompanySocialMediaAccount).filter(CompanySocialMediaAccount.company_id == company_id).delete()
 
     for account_data in accounts:
         if not isinstance(account_data, dict):
@@ -416,9 +390,7 @@ def get_digital_data(db: Session, company_id: int) -> dict[str, Any]:
     Returns:
         Dictionary matching frontend Company.digital interface
     """
-    digital = db.query(CompanyDigital).filter(
-        CompanyDigital.company_id == company_id
-    ).first()
+    digital = db.query(CompanyDigital).filter(CompanyDigital.company_id == company_id).first()
 
     if not digital:
         return {}
@@ -463,9 +435,7 @@ def get_digital_data(db: Session, company_id: int) -> dict[str, Any]:
         }
 
     # Get online services
-    services = db.query(CompanyOnlineService).filter(
-        CompanyOnlineService.company_id == company_id
-    ).all()
+    services = db.query(CompanyOnlineService).filter(CompanyOnlineService.company_id == company_id).all()
 
     if services:
         services_list = [
@@ -481,9 +451,7 @@ def get_digital_data(db: Session, company_id: int) -> dict[str, Any]:
         }
 
     # Get social media accounts
-    accounts = db.query(CompanySocialMediaAccount).filter(
-        CompanySocialMediaAccount.company_id == company_id
-    ).all()
+    accounts = db.query(CompanySocialMediaAccount).filter(CompanySocialMediaAccount.company_id == company_id).all()
 
     if accounts:
         result["socialMediaAccounts"] = [
@@ -510,23 +478,21 @@ def get_digital_data(db: Session, company_id: int) -> dict[str, Any]:
 
 
 def save_timeline_data(db: Session, company_id: int, data: dict) -> None:
-    """Save timeline data from Dify callback to normalized tables.
+    """Save timeline data from agent callback to normalized tables.
 
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data (at root level, not nested under "timeline")
+        data: agent output data (at root level, not nested under "timeline")
     """
-    # Data comes at root level from Dify, not nested under "timeline"
+    # Data comes at root level from agent, not nested under "timeline"
     timeline_data = data
     if not timeline_data:
         logger.debug(f"No timeline data to save for company {company_id}")
         return
 
     # Check for existing timeline record
-    existing = db.query(CompanyTimeline).filter(
-        CompanyTimeline.company_id == company_id
-    ).first()
+    existing = db.query(CompanyTimeline).filter(CompanyTimeline.company_id == company_id).first()
 
     if existing:
         timeline = existing
@@ -546,14 +512,10 @@ def save_timeline_data(db: Session, company_id: int, data: dict) -> None:
     logger.info(f"Saved timeline data for company {company_id}")
 
 
-def _save_timeline_events(
-    db: Session, company_id: int, events: list[dict]
-) -> None:
+def _save_timeline_events(db: Session, company_id: int, events: list[dict]) -> None:
     """Save timeline events to normalized table."""
     # Delete existing events
-    db.query(CompanyTimelineEvent).filter(
-        CompanyTimelineEvent.company_id == company_id
-    ).delete()
+    db.query(CompanyTimelineEvent).filter(CompanyTimelineEvent.company_id == company_id).delete()
 
     for event_data in events:
         if not isinstance(event_data, dict):
@@ -596,9 +558,7 @@ def get_timeline_data(db: Session, company_id: int) -> dict[str, Any]:
     Returns:
         Dictionary matching frontend Company.timeline interface
     """
-    timeline = db.query(CompanyTimeline).filter(
-        CompanyTimeline.company_id == company_id
-    ).first()
+    timeline = db.query(CompanyTimeline).filter(CompanyTimeline.company_id == company_id).first()
 
     if not timeline:
         return {}
@@ -609,9 +569,7 @@ def get_timeline_data(db: Session, company_id: int) -> dict[str, Any]:
         result["insights"] = timeline.insights
 
     # Get timeline events
-    events = db.query(CompanyTimelineEvent).filter(
-        CompanyTimelineEvent.company_id == company_id
-    ).all()
+    events = db.query(CompanyTimelineEvent).filter(CompanyTimelineEvent.company_id == company_id).all()
 
     if events:
         events_list = []
@@ -641,23 +599,21 @@ def get_timeline_data(db: Session, company_id: int) -> dict[str, Any]:
 
 
 def save_products_data(db: Session, company_id: int, data: dict) -> None:
-    """Save products data from Dify callback to normalized tables.
+    """Save products data from agent callback to normalized tables.
 
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data (at root level, not nested under "products")
+        data: agent output data (at root level, not nested under "products")
     """
-    # Data comes at root level from Dify, not nested under "products"
+    # Data comes at root level from agent, not nested under "products"
     products_data = data
     if not products_data:
         logger.debug(f"No products data to save for company {company_id}")
         return
 
     # Check for existing products record
-    existing = db.query(CompanyProducts).filter(
-        CompanyProducts.company_id == company_id
-    ).first()
+    existing = db.query(CompanyProducts).filter(CompanyProducts.company_id == company_id).first()
 
     if existing:
         products = existing
@@ -693,9 +649,7 @@ def save_products_data(db: Session, company_id: int, data: dict) -> None:
 def _save_product_items(db: Session, company_id: int, products_data: dict) -> None:
     """Save product items to normalized table."""
     # Delete existing items
-    db.query(CompanyProductItem).filter(
-        CompanyProductItem.company_id == company_id
-    ).delete()
+    db.query(CompanyProductItem).filter(CompanyProductItem.company_id == company_id).delete()
 
     def extract_item_value(item: dict | str) -> tuple[str | None, str | None]:
         """Extract value and source from product item (handles nested name/value pattern)."""
@@ -714,46 +668,48 @@ def _save_product_items(db: Session, company_id: int, products_data: dict) -> No
     for item in products_data.get("range", []):
         value, source = extract_item_value(item)
         if value:
-            db.add(CompanyProductItem(
-                company_id=company_id,
-                type=ProductItemType.range,
-                value=value,
-                value_source=source,
-            ))
+            db.add(
+                CompanyProductItem(
+                    company_id=company_id,
+                    type=ProductItemType.range,
+                    value=value,
+                    value_source=source,
+                )
+            )
 
     # Save partner brands (snake_case key)
     for item in products_data.get("partner_brands", []):
         value, source = extract_item_value(item)
         if value:
-            db.add(CompanyProductItem(
-                company_id=company_id,
-                type=ProductItemType.partner_brand,
-                value=value,
-                value_source=source,
-            ))
+            db.add(
+                CompanyProductItem(
+                    company_id=company_id,
+                    type=ProductItemType.partner_brand,
+                    value=value,
+                    value_source=source,
+                )
+            )
 
     # Save private labels (snake_case key)
     for item in products_data.get("private_labels", []):
         value, source = extract_item_value(item)
         if value:
-            db.add(CompanyProductItem(
-                company_id=company_id,
-                type=ProductItemType.private_label,
-                value=value,
-                value_source=source,
-            ))
+            db.add(
+                CompanyProductItem(
+                    company_id=company_id,
+                    type=ProductItemType.private_label,
+                    value=value,
+                    value_source=source,
+                )
+            )
 
     db.flush()
 
 
-def _save_product_categories(
-    db: Session, company_id: int, categories: dict
-) -> None:
+def _save_product_categories(db: Session, company_id: int, categories: dict) -> None:
     """Save product categories to normalized table."""
     # Delete existing categories
-    db.query(CompanyProductCategory).filter(
-        CompanyProductCategory.company_id == company_id
-    ).delete()
+    db.query(CompanyProductCategory).filter(CompanyProductCategory.company_id == company_id).delete()
 
     if not isinstance(categories, dict):
         return
@@ -762,11 +718,13 @@ def _save_product_categories(
         if not isinstance(items, list):
             items = [items] if items else []
 
-        db.add(CompanyProductCategory(
-            company_id=company_id,
-            category_name=category_name,
-            items=items,
-        ))
+        db.add(
+            CompanyProductCategory(
+                company_id=company_id,
+                category_name=category_name,
+                items=items,
+            )
+        )
 
     db.flush()
 
@@ -781,9 +739,7 @@ def get_products_data(db: Session, company_id: int) -> dict[str, Any]:
     Returns:
         Dictionary matching frontend Company.products interface
     """
-    products = db.query(CompanyProducts).filter(
-        CompanyProducts.company_id == company_id
-    ).first()
+    products = db.query(CompanyProducts).filter(CompanyProducts.company_id == company_id).first()
 
     if not products:
         return {}
@@ -806,21 +762,14 @@ def get_products_data(db: Session, company_id: int) -> dict[str, Any]:
         }
 
     # Get product items
-    items = db.query(CompanyProductItem).filter(
-        CompanyProductItem.company_id == company_id
-    ).all()
+    items = db.query(CompanyProductItem).filter(CompanyProductItem.company_id == company_id).all()
 
-    range_items = [
-        {"value": i.value, "source": i.value_source}
-        for i in items if i.type == ProductItemType.range
-    ]
+    range_items = [{"value": i.value, "source": i.value_source} for i in items if i.type == ProductItemType.range]
     partner_brands = [
-        {"value": i.value, "source": i.value_source}
-        for i in items if i.type == ProductItemType.partner_brand
+        {"value": i.value, "source": i.value_source} for i in items if i.type == ProductItemType.partner_brand
     ]
     private_labels = [
-        {"value": i.value, "source": i.value_source}
-        for i in items if i.type == ProductItemType.private_label
+        {"value": i.value, "source": i.value_source} for i in items if i.type == ProductItemType.private_label
     ]
 
     if range_items:
@@ -831,15 +780,10 @@ def get_products_data(db: Session, company_id: int) -> dict[str, Any]:
         result["privateLabels"] = private_labels
 
     # Get product categories
-    categories = db.query(CompanyProductCategory).filter(
-        CompanyProductCategory.company_id == company_id
-    ).all()
+    categories = db.query(CompanyProductCategory).filter(CompanyProductCategory.company_id == company_id).all()
 
     if categories:
-        result["categories"] = {
-            c.category_name: c.items or []
-            for c in categories
-        }
+        result["categories"] = {c.category_name: c.items or [] for c in categories}
 
     return result
 
@@ -850,23 +794,21 @@ def get_products_data(db: Session, company_id: int) -> dict[str, Any]:
 
 
 def save_jobs_data(db: Session, company_id: int, data: dict) -> None:
-    """Save jobs data from Dify callback to normalized tables.
+    """Save jobs data from agent callback to normalized tables.
 
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data (at root level, not nested under "jobs")
+        data: agent output data (at root level, not nested under "jobs")
     """
-    # Data comes at root level from Dify, not nested under "jobs"
+    # Data comes at root level from agent, not nested under "jobs"
     jobs_data = data
     if not jobs_data:
         logger.debug(f"No jobs data to save for company {company_id}")
         return
 
     # Check for existing jobs record
-    existing = db.query(CompanyJobs).filter(
-        CompanyJobs.company_id == company_id
-    ).first()
+    existing = db.query(CompanyJobs).filter(CompanyJobs.company_id == company_id).first()
 
     if existing:
         jobs = existing
@@ -874,14 +816,14 @@ def save_jobs_data(db: Session, company_id: int, data: dict) -> None:
         jobs = CompanyJobs(company_id=company_id)
         db.add(jobs)
 
-    # Extract insights_data (structured data from Dify prompt's insights_data field)
+    # Extract insights_data (structured data from agent prompt's insights_data field)
     insights_data = jobs_data.get("insights_data", {})
     if isinstance(insights_data, dict):
         # Total openings
         total_openings_data = insights_data.get("total_openings", {})
         if isinstance(total_openings_data, dict):
             value = total_openings_data.get("value")
-            if isinstance(value, (int, float)) or isinstance(value, str) and value.isdigit():
+            if isinstance(value, int | float) or isinstance(value, str) and value.isdigit():
                 jobs.insights_total_openings = int(value)
             jobs.insights_total_openings_source = total_openings_data.get("source")
 
@@ -918,9 +860,7 @@ def save_jobs_data(db: Session, company_id: int, data: dict) -> None:
 def _save_job_offers(db: Session, company_id: int, offers: list[dict]) -> None:
     """Save job offers to normalized table."""
     # Delete existing offers
-    db.query(CompanyJobOffer).filter(
-        CompanyJobOffer.company_id == company_id
-    ).delete()
+    db.query(CompanyJobOffer).filter(CompanyJobOffer.company_id == company_id).delete()
 
     for offer_data in offers:
         if not isinstance(offer_data, dict):
@@ -963,9 +903,7 @@ def get_jobs_data(db: Session, company_id: int) -> dict[str, Any]:
     Returns:
         Dictionary matching frontend Company.jobs interface
     """
-    jobs = db.query(CompanyJobs).filter(
-        CompanyJobs.company_id == company_id
-    ).first()
+    jobs = db.query(CompanyJobs).filter(CompanyJobs.company_id == company_id).first()
 
     if not jobs:
         return {}
@@ -999,9 +937,7 @@ def get_jobs_data(db: Session, company_id: int) -> dict[str, Any]:
         result["insights"] = insights
 
     # Get job offers
-    offers = db.query(CompanyJobOffer).filter(
-        CompanyJobOffer.company_id == company_id
-    ).all()
+    offers = db.query(CompanyJobOffer).filter(CompanyJobOffer.company_id == company_id).all()
 
     if offers:
         offers_list = []
@@ -1031,23 +967,21 @@ def get_jobs_data(db: Session, company_id: int) -> dict[str, Any]:
 
 
 def save_csr_data(db: Session, company_id: int, data: dict) -> None:
-    """Save CSR data from Dify callback to normalized tables.
+    """Save CSR data from agent callback to normalized tables.
 
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data (at root level, not nested under "csr")
+        data: agent output data (at root level, not nested under "csr")
     """
-    # Data comes at root level from Dify, not nested under "csr"
+    # Data comes at root level from agent, not nested under "csr"
     csr_data = data
     if not csr_data:
         logger.debug(f"No CSR data to save for company {company_id}")
         return
 
     # Check for existing CSR record
-    existing = db.query(CompanyCsr).filter(
-        CompanyCsr.company_id == company_id
-    ).first()
+    existing = db.query(CompanyCsr).filter(CompanyCsr.company_id == company_id).first()
 
     if existing:
         csr = existing
@@ -1060,9 +994,7 @@ def save_csr_data(db: Session, company_id: int, data: dict) -> None:
     csr.insights_source = "Chaps-e"
 
     # Responsibility
-    csr.responsibility, csr.responsibility_source = _get_sourced_value(
-        csr_data, "responsibility"
-    )
+    csr.responsibility, csr.responsibility_source = _get_sourced_value(csr_data, "responsibility")
 
     db.flush()
 
@@ -1075,9 +1007,7 @@ def save_csr_data(db: Session, company_id: int, data: dict) -> None:
 def _save_csr_initiatives(db: Session, company_id: int, csr_data: dict) -> None:
     """Save CSR initiatives to normalized table."""
     # Delete existing initiatives
-    db.query(CompanyCsrInitiative).filter(
-        CompanyCsrInitiative.company_id == company_id
-    ).delete()
+    db.query(CompanyCsrInitiative).filter(CompanyCsrInitiative.company_id == company_id).delete()
 
     # Map of type strings to enum values
     type_mapping = {
@@ -1110,12 +1040,14 @@ def _save_csr_initiatives(db: Session, company_id: int, csr_data: dict) -> None:
         source = item.get("source")
 
         if value:
-            db.add(CompanyCsrInitiative(
-                company_id=company_id,
-                type=init_type,
-                value=value,
-                value_source=source,
-            ))
+            db.add(
+                CompanyCsrInitiative(
+                    company_id=company_id,
+                    type=init_type,
+                    value=value,
+                    value_source=source,
+                )
+            )
 
     db.flush()
 
@@ -1130,9 +1062,7 @@ def get_csr_data(db: Session, company_id: int) -> dict[str, Any]:
     Returns:
         Dictionary matching frontend Company.csr interface
     """
-    csr = db.query(CompanyCsr).filter(
-        CompanyCsr.company_id == company_id
-    ).first()
+    csr = db.query(CompanyCsr).filter(CompanyCsr.company_id == company_id).first()
 
     if not csr:
         return {}
@@ -1149,9 +1079,7 @@ def get_csr_data(db: Session, company_id: int) -> dict[str, Any]:
         }
 
     # Get CSR initiatives
-    initiatives = db.query(CompanyCsrInitiative).filter(
-        CompanyCsrInitiative.company_id == company_id
-    ).all()
+    initiatives = db.query(CompanyCsrInitiative).filter(CompanyCsrInitiative.company_id == company_id).all()
 
     # Group by type
     type_to_field = {
@@ -1169,10 +1097,12 @@ def get_csr_data(db: Session, company_id: int) -> dict[str, Any]:
         if field_name:
             if field_name not in result:
                 result[field_name] = []
-            result[field_name].append({
-                "value": init.value,
-                "source": init.value_source,
-            })
+            result[field_name].append(
+                {
+                    "value": init.value,
+                    "source": init.value_source,
+                }
+            )
 
     return result
 
@@ -1183,14 +1113,14 @@ def get_csr_data(db: Session, company_id: int) -> dict[str, Any]:
 
 
 def save_press_data(db: Session, company_id: int, data: dict) -> None:
-    """Save press data from Dify callback to normalized tables.
+    """Save press data from agent callback to normalized tables.
 
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data (at root level, not nested under "press")
+        data: agent output data (at root level, not nested under "press")
     """
-    # Data comes at root level from Dify, not nested under "press"
+    # Data comes at root level from agent, not nested under "press"
     press_data = data
     if not press_data:
         logger.debug(f"No press data to save for company {company_id}")
@@ -1202,9 +1132,7 @@ def save_press_data(db: Session, company_id: int, data: dict) -> None:
         return
 
     # Check for existing press record
-    existing = db.query(CompanyPress).filter(
-        CompanyPress.company_id == company_id
-    ).first()
+    existing = db.query(CompanyPress).filter(CompanyPress.company_id == company_id).first()
 
     if existing:
         press = existing
@@ -1227,9 +1155,7 @@ def save_press_data(db: Session, company_id: int, data: dict) -> None:
 def _save_press_items(db: Session, company_id: int, press_data: dict) -> None:
     """Save press items to normalized table."""
     # Delete existing items
-    db.query(CompanyPressItem).filter(
-        CompanyPressItem.company_id == company_id
-    ).delete()
+    db.query(CompanyPressItem).filter(CompanyPressItem.company_id == company_id).delete()
 
     # Map of field names to press types
     type_mapping = {
@@ -1257,12 +1183,14 @@ def _save_press_items(db: Session, company_id: int, press_data: dict) -> None:
                 source = None
 
             if value:
-                db.add(CompanyPressItem(
-                    company_id=company_id,
-                    type=item_type,
-                    value=value,
-                    value_source=source,
-                ))
+                db.add(
+                    CompanyPressItem(
+                        company_id=company_id,
+                        type=item_type,
+                        value=value,
+                        value_source=source,
+                    )
+                )
 
     db.flush()
 
@@ -1277,9 +1205,7 @@ def get_press_data(db: Session, company_id: int) -> dict[str, Any]:
     Returns:
         Dictionary matching frontend Company.press interface
     """
-    press = db.query(CompanyPress).filter(
-        CompanyPress.company_id == company_id
-    ).first()
+    press = db.query(CompanyPress).filter(CompanyPress.company_id == company_id).first()
 
     if not press:
         return {}
@@ -1290,9 +1216,7 @@ def get_press_data(db: Session, company_id: int) -> dict[str, Any]:
         result["insights"] = press.insights
 
     # Get press items
-    items = db.query(CompanyPressItem).filter(
-        CompanyPressItem.company_id == company_id
-    ).all()
+    items = db.query(CompanyPressItem).filter(CompanyPressItem.company_id == company_id).all()
 
     # Group by type
     type_to_field = {
@@ -1311,10 +1235,12 @@ def get_press_data(db: Session, company_id: int) -> dict[str, Any]:
         if field_name:
             if field_name not in result:
                 result[field_name] = []
-            result[field_name].append({
-                "value": item.value,
-                "source": item.value_source,
-            })
+            result[field_name].append(
+                {
+                    "value": item.value,
+                    "source": item.value_source,
+                }
+            )
 
     return result
 
@@ -1325,12 +1251,12 @@ def get_press_data(db: Session, company_id: int) -> dict[str, Any]:
 
 
 def save_team_data(db: Session, company_id: int, data: dict) -> None:
-    """Save team data from Dify callback to normalized tables.
+    """Save team data from agent callback to normalized tables.
 
     Args:
         db: Database session
         company_id: Company ID to save data for
-        data: Dify callback data containing team section
+        data: agent output data containing team section
     """
     # Check for team data in multiple formats:
     # 1. Direct "team" key: {"team": [...]}
@@ -1354,9 +1280,7 @@ def save_team_data(db: Session, company_id: int, data: dict) -> None:
         return
 
     # Delete existing team members
-    db.query(CompanyTeamMember).filter(
-        CompanyTeamMember.company_id == company_id
-    ).delete()
+    db.query(CompanyTeamMember).filter(CompanyTeamMember.company_id == company_id).delete()
 
     if not isinstance(members, list):
         members = []
@@ -1378,7 +1302,7 @@ def _save_team_members_recursive(
         if not isinstance(member_data, dict):
             continue
 
-        # Extract member fields using snake_case keys (Dify output format)
+        # Extract member fields using snake_case keys (agent output format)
         position, position_source = _get_sourced_value(member_data, "position")
         first_name, first_name_source = _get_sourced_value(member_data, "first_name")
         last_name, last_name_source = _get_sourced_value(member_data, "last_name")
@@ -1427,9 +1351,7 @@ def get_team_data(db: Session, company_id: int) -> list[dict[str, Any]]:
         frontend Company.team interface
     """
     # Get all team members for this company
-    all_members = db.query(CompanyTeamMember).filter(
-        CompanyTeamMember.company_id == company_id
-    ).all()
+    all_members = db.query(CompanyTeamMember).filter(CompanyTeamMember.company_id == company_id).all()
 
     if not all_members:
         return []
@@ -1479,7 +1401,7 @@ def write_section_data(
         db: Database session
         company_id: Company ID to save data for
         query_type: Type of query (profile, digital, timeline, etc.)
-        data: Dify callback data containing the section
+        data: agent output data containing the section
     """
     # Map query types to writer functions
     writers = {
@@ -1692,8 +1614,13 @@ def apply_translations_to_section_data(
     # not 'environmental', 'social', 'governance'
     if "csr" in section_data:
         csr_keys = [
-            "responsibility_initiatives", "charity_actions", "sustainability_programs",
-            "community_involvement", "diversity_inclusion", "ethical_practices", "awards_certifications"
+            "responsibility_initiatives",
+            "charity_actions",
+            "sustainability_programs",
+            "community_involvement",
+            "diversity_inclusion",
+            "ethical_practices",
+            "awards_certifications",
         ]
         for init_type in csr_keys:
             if init_type in section_data["csr"]:

@@ -59,6 +59,7 @@ def _setup_auth(monkeypatch, roles: list[str]):
                         detail=f"User lacks required role(s): {required_roles}",
                     )
             return user
+
         return dependency
 
     mock_wrapped.get_current_user.side_effect = mock_get_current_user
@@ -69,12 +70,7 @@ class TestGetAllUsersWithPermissions:
     """Test GET /api/users returns users with permission_tier field."""
 
     @patch("app.api.endpoints.users.keycloak_admin_service")
-    def test_get_users_includes_permission_tier(
-        self,
-        mock_kc_service,
-        monkeypatch,
-        client
-    ):
+    def test_get_users_includes_permission_tier(self, mock_kc_service, monkeypatch, client):
         """GET /api/users returns users with permission_tier."""
         _setup_auth(monkeypatch, ["admin.organizations"])
 
@@ -82,26 +78,28 @@ class TestGetAllUsersWithPermissions:
         mock_kc_service.count_users_with_search = AsyncMock(return_value=2)
 
         # Mock search_users (no search, so uses paginated path)
-        mock_kc_service.search_users = AsyncMock(return_value=[
-            {
-                "id": "user-uuid-1",
-                "username": "john.doe",
-                "email": "john@example.com",
-                "firstName": "John",
-                "lastName": "Doe",
-                "enabled": True,
-                "createdTimestamp": 1234567890000,
-            },
-            {
-                "id": "user-uuid-2",
-                "username": "jane.smith",
-                "email": "jane@example.com",
-                "firstName": "Jane",
-                "lastName": "Smith",
-                "enabled": True,
-                "createdTimestamp": 1234567891000,
-            },
-        ])
+        mock_kc_service.search_users = AsyncMock(
+            return_value=[
+                {
+                    "id": "user-uuid-1",
+                    "username": "john.doe",
+                    "email": "john@example.com",
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "enabled": True,
+                    "createdTimestamp": 1234567890000,
+                },
+                {
+                    "id": "user-uuid-2",
+                    "username": "jane.smith",
+                    "email": "jane@example.com",
+                    "firstName": "Jane",
+                    "lastName": "Smith",
+                    "enabled": True,
+                    "createdTimestamp": 1234567891000,
+                },
+            ]
+        )
 
         # Mock user roles for tier computation
         async def mock_roles_side_effect(user_id: str):
@@ -161,15 +159,17 @@ class TestGetAllUsersWithPermissions:
         _setup_auth(monkeypatch, ["admin.organizations"])
 
         mock_kc_service.count_users_with_search = AsyncMock(return_value=1)
-        mock_kc_service.search_users = AsyncMock(return_value=[
-            {
-                "id": "user-uuid-1",
-                "username": "john.doe",
-                "email": "john@example.com",
-                "enabled": True,
-                "createdTimestamp": 1234567890000,
-            },
-        ])
+        mock_kc_service.search_users = AsyncMock(
+            return_value=[
+                {
+                    "id": "user-uuid-1",
+                    "username": "john.doe",
+                    "email": "john@example.com",
+                    "enabled": True,
+                    "createdTimestamp": 1234567890000,
+                },
+            ]
+        )
 
         # Mock roles including internal Keycloak roles
         async def mock_roles_with_internal(user_id: str):
@@ -218,23 +218,27 @@ class TestUpdateUserPermissions:
         mock_kc_service.sync_user_realm_roles = AsyncMock(return_value=True)
 
         # Mock get_user (called after sync to build response)
-        mock_kc_service.get_user = AsyncMock(return_value={
-            "id": "user-uuid-1",
-            "username": "john.doe",
-            "email": "john@example.com",
-            "enabled": True,
-            "createdTimestamp": 1234567890000,
-            "attributes": {
-                "organization_id": ["org-uuid-1"],
-                "organization_name": ["Test Org"],
-            },
-        })
+        mock_kc_service.get_user = AsyncMock(
+            return_value={
+                "id": "user-uuid-1",
+                "username": "john.doe",
+                "email": "john@example.com",
+                "enabled": True,
+                "createdTimestamp": 1234567890000,
+                "attributes": {
+                    "organization_id": ["org-uuid-1"],
+                    "organization_name": ["Test Org"],
+                },
+            }
+        )
 
         # Mock updated roles after sync
-        mock_kc_service.get_user_realm_roles = AsyncMock(return_value=[
-            {"name": "company.create"},
-            {"name": "organization.read"},
-        ])
+        mock_kc_service.get_user_realm_roles = AsyncMock(
+            return_value=[
+                {"name": "company.create"},
+                {"name": "organization.read"},
+            ]
+        )
 
         response = client.put(
             "/api/users/user-uuid-1/permissions",
@@ -291,17 +295,19 @@ class TestDisableUser:
         mock_kc_service.update_user = AsyncMock(return_value=True)
 
         # Mock get_user (called after update to build response)
-        mock_kc_service.get_user = AsyncMock(return_value={
-            "id": "user-uuid-1",
-            "username": "john.doe",
-            "email": "john@example.com",
-            "enabled": False,
-            "createdTimestamp": 1234567890000,
-            "attributes": {
-                "organization_id": ["org-uuid-1"],
-                "organization_name": ["Test Org"],
-            },
-        })
+        mock_kc_service.get_user = AsyncMock(
+            return_value={
+                "id": "user-uuid-1",
+                "username": "john.doe",
+                "email": "john@example.com",
+                "enabled": False,
+                "createdTimestamp": 1234567890000,
+                "attributes": {
+                    "organization_id": ["org-uuid-1"],
+                    "organization_name": ["Test Org"],
+                },
+            }
+        )
 
         # Mock roles
         mock_kc_service.get_user_realm_roles = AsyncMock(return_value=[])
@@ -343,22 +349,20 @@ class TestResetUserPassword:
         _setup_auth(monkeypatch, ["admin.organizations"])
 
         # Mock get_user
-        mock_kc_service.get_user = AsyncMock(return_value={
-            "id": "user-uuid-1",
-            "username": "john.doe",
-            "email": "john@example.com",
-            "enabled": True,
-        })
+        mock_kc_service.get_user = AsyncMock(
+            return_value={
+                "id": "user-uuid-1",
+                "username": "john.doe",
+                "email": "john@example.com",
+                "enabled": True,
+            }
+        )
 
         # Mock set_user_password
         mock_kc_service.set_user_password = AsyncMock(return_value=True)
 
         response = client.post(
-            "/api/users/user-uuid-1/reset-password",
-            json={
-                "temporary_password": "TempPass123!",
-                "send_email": False
-            }
+            "/api/users/user-uuid-1/reset-password", json={"temporary_password": "TempPass123!", "send_email": False}
         )
 
         assert response.status_code == 200
@@ -386,10 +390,12 @@ class TestResetUserPassword:
         _setup_auth(monkeypatch, ["admin.organizations"])
 
         # Mock get_user
-        mock_kc_service.get_user = AsyncMock(return_value={
-            "id": "user-uuid-1",
-            "username": "john.doe",
-        })
+        mock_kc_service.get_user = AsyncMock(
+            return_value={
+                "id": "user-uuid-1",
+                "username": "john.doe",
+            }
+        )
 
         response = client.post(
             "/api/users/user-uuid-1/reset-password",
@@ -405,11 +411,7 @@ class TestResetUserPassword:
 
         # Weak password (too short, no special chars)
         response = client.post(
-            "/api/users/user-uuid-1/reset-password",
-            json={
-                "temporary_password": "weak",
-                "send_email": False
-            }
+            "/api/users/user-uuid-1/reset-password", json={"temporary_password": "weak", "send_email": False}
         )
 
         # Pydantic validation returns 422 for invalid field values

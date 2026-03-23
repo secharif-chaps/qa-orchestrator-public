@@ -8,12 +8,12 @@ This migration adds the 'discover' value to the featureflag PostgreSQL enum type
 The DISCOVER feature flag allows organizations to configure an external Discover
 dashboard URL that users can access from the home page.
 """
+
 from alembic import op
 
-
 # revision identifiers, used by Alembic.
-revision = '024'
-down_revision = '023'
+revision = "024"
+down_revision = "023"
 branch_labels = None
 depends_on = None
 

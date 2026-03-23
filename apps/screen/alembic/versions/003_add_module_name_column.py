@@ -5,11 +5,12 @@ Revises: 002
 Create Date: 2025-11-17
 
 """
+
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = '003'
-down_revision = '002_drop_workspace_tables'
+revision = "003"
+down_revision = "002_drop_workspace_tables"
 branch_labels = None
 depends_on = None
 
@@ -60,7 +61,7 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     """Remove module_name column."""
-    op.drop_index('ix_organization_modules_module_name', table_name='organization_modules', if_exists=True)
-    op.execute('ALTER TABLE organization_modules DROP CONSTRAINT IF EXISTS uq_organization_modules_organization_module')
-    op.drop_column('organization_modules', 'module_name')
+    op.drop_index("ix_organization_modules_module_name", table_name="organization_modules", if_exists=True)
+    op.execute("ALTER TABLE organization_modules DROP CONSTRAINT IF EXISTS uq_organization_modules_organization_module")
+    op.drop_column("organization_modules", "module_name")
     # Note: Not dropping the enum type as it might be used elsewhere

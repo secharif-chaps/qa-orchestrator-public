@@ -9,7 +9,7 @@
 import { computed, type ComputedRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQueryCache } from '@pinia/colada'
-import { useChapseStore, type CompanyContext } from '@/stores/chapse'
+import { useChapseStore, parseSmartActionMarker, type CompanyContext } from '@/stores/chapse'
 import { useAuthStore } from '@/stores/auth'
 import { useEndpointResolver } from '@/composables/useEndpointResolver'
 import {
@@ -19,6 +19,7 @@ import {
   deleteConversation as apiDeleteConversation,
   renameConversation as apiRenameConversation,
   updateConversationContext,
+  type ChatHistoryMessage,
 } from '@/api/chapse'
 import { CHAPSE_QUERY_KEYS } from '@/queries/chapse'
 
@@ -27,7 +28,7 @@ import { CHAPSE_QUERY_KEYS } from '@/queries/chapse'
 // =============================================================================
 
 export function useChapseChat() {
-  const { locale } = useI18n()
+  const { t } = useI18n()
   const store = useChapseStore()
   const authStore = useAuthStore()
   const { endpoints } = useEndpointResolver()
@@ -67,7 +68,7 @@ export function useChapseChat() {
 
     const accessToken = authStore.accessToken
     if (!accessToken) {
-      store.setError(locale.value === 'fr' ? 'Non authentifié' : 'Not authenticated')
+      store.setError(t('chapse.errors.notAuthenticated'))
       return
     }
 
@@ -84,11 +85,25 @@ export function useChapseChat() {
     try {
       let newConversationId: string | null = null
 
+      // Build prior messages from store (exclude the user + assistant placeholder just added)
+      const allMessages = store.messages
+      const priorMessages: ChatHistoryMessage[] = []
+      // Last 2 messages are the user message + streaming assistant placeholder we just added
+      const historyMessages = allMessages.slice(0, allMessages.length - 2)
+      for (const msg of historyMessages) {
+        if (msg.isStreaming) continue
+        const { cleanContent } = parseSmartActionMarker(msg.content)
+        if (cleanContent.trim()) {
+          priorMessages.push({ role: msg.role, content: cleanContent })
+        }
+      }
+
       await sendChatMessage(
         {
           query: content.trim(),
           conversation_id: store.currentConversationId,
           company_ids: store.companyIds,
+          ...(priorMessages.length > 0 ? { messages: priorMessages } : {}),
         },
         accessToken,
         endpoints.value.apiUrl,
@@ -149,10 +164,7 @@ export function useChapseChat() {
       }
     } catch (err: unknown) {
       console.error('Error sending message:', err)
-      const errorMessage =
-        locale.value === 'fr'
-          ? "Désolé, une erreur s'est produite. Veuillez réessayer."
-          : 'Sorry, an error occurred. Please try again.'
+      const errorMessage = t('chapse.errors.sendMessageFailed')
       store.setError(errorMessage)
 
       // Update the streaming message with error
@@ -183,11 +195,7 @@ export function useChapseChat() {
       }
     } catch (err) {
       console.error('Error loading conversations:', err)
-      store.setError(
-        locale.value === 'fr'
-          ? 'Erreur lors du chargement des conversations'
-          : 'Error loading conversations',
-      )
+      store.setError(t('chapse.errors.loadConversationsFailed'))
     } finally {
       store.setConversationsLoading(false)
     }
@@ -199,29 +207,33 @@ export function useChapseChat() {
     store.setLoading(true)
     store.setError(null)
 
+    // Try localStorage first for instant display
+    const hadCachedMessages = store.loadFromStorage(conversationId)
+
     try {
       const response = await getConversation(conversationId)
 
-      // Set current conversation
+      // Update metadata from server (name, company context)
       store.setCurrentConversation(conversationId, response.name)
 
-      // Load messages
-      store.loadMessagesFromApi(response.messages)
-
-      // Load company context
       const companies: CompanyContext[] = response.companies.map((c) => ({
         id: c.id,
         name: c.name,
         siren: c.siren,
       }))
       store.setCompanyContext(companies)
+
+      // Only load API messages if server actually returned some
+      // (post-LangGraph migration, server returns messages: [])
+      if (response.messages.length > 0) {
+        store.loadMessagesFromApi(response.messages)
+      }
     } catch (err) {
       console.error('Error loading conversation:', err)
-      store.setError(
-        locale.value === 'fr'
-          ? 'Erreur lors du chargement de la conversation'
-          : 'Error loading conversation',
-      )
+      // Only show error if we don't have cached messages to display
+      if (!hadCachedMessages) {
+        store.setError(t('chapse.errors.loadConversationFailed'))
+      }
     } finally {
       store.setLoading(false)
     }
@@ -235,9 +247,7 @@ export function useChapseChat() {
       return true
     } catch (err) {
       console.error('Error deleting conversation:', err)
-      store.setError(
-        locale.value === 'fr' ? 'Erreur lors de la suppression' : 'Error deleting conversation',
-      )
+      store.setError(t('chapse.errors.deleteConversationFailed'))
       return false
     }
   }

@@ -6,7 +6,7 @@ These tests verify the migration creates the correct database schema:
 3. Foreign key constraints to companies table work correctly
 4. ON DELETE CASCADE behavior removes section data when company is deleted
 
-NOTE: These tests use the main database (mint_db) because they test the migration itself,
+NOTE: These tests use the main database (chapsmind_db) because they test the migration itself,
 not the SQLAlchemy models (which are created in a later task group).
 """
 
@@ -27,10 +27,7 @@ os.environ["KEYCLOAK_ADMIN_CLIENT_SECRET"] = os.environ.get("KEYCLOAK_ADMIN_CLIE
 
 # Use main PostgreSQL database - tests verify migration created correct schema
 # The migration must be applied before running these tests
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql://postgres:postgres@db:5432/mint_db"
-)
+DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://postgres:postgres@db:5432/chapsmind_db")
 
 
 def _db_connectable() -> bool:
@@ -51,16 +48,16 @@ pytestmark = pytest.mark.skipif(
 )
 
 # List of all 7 section tables created by the migration
-SCHEMA = 'screen_schema'
+SCHEMA = "screen_schema"
 
 SECTION_TABLES = [
-    'company_profile',
-    'company_digital',
-    'company_timeline',
-    'company_products',
-    'company_jobs',
-    'company_csr',
-    'company_press',
+    "company_profile",
+    "company_digital",
+    "company_timeline",
+    "company_products",
+    "company_jobs",
+    "company_csr",
+    "company_press",
 ]
 
 
@@ -102,30 +99,40 @@ class TestMigrationAppliesSuccessfully:
     def test_company_profile_has_correct_columns(self, db_engine):
         """Verify company_profile table has all expected columns."""
         inspector = inspect(db_engine)
-        columns = {col['name'] for col in inspector.get_columns('company_profile', schema=SCHEMA)}
+        columns = {col["name"] for col in inspector.get_columns("company_profile", schema=SCHEMA)}
 
         expected_columns = {
-            'company_id',
+            "company_id",
             # Insights (translatable)
-            'insights', 'insights_source',
+            "insights",
+            "insights_source",
             # Group name (proper noun - no translation)
-            'group_name', 'group_name_source',
+            "group_name",
+            "group_name_source",
             # Business line (translatable)
-            'business_line', 'business_line_source',
+            "business_line",
+            "business_line_source",
             # Catchphrase (translatable)
-            'catchphrase', 'catchphrase_source',
+            "catchphrase",
+            "catchphrase_source",
             # Establishment year (number - no translation)
-            'establishment_year', 'establishment_year_source',
+            "establishment_year",
+            "establishment_year_source",
             # Employee count (number - no translation)
-            'employee_count', 'employee_count_source',
+            "employee_count",
+            "employee_count_source",
             # Revenue (number - no translation)
-            'revenue', 'revenue_source',
+            "revenue",
+            "revenue_source",
             # CEO (proper noun - no translation)
-            'ceo', 'ceo_source',
+            "ceo",
+            "ceo_source",
             # HQ (location - no translation)
-            'hq', 'hq_source',
+            "hq",
+            "hq_source",
             # Timestamps
-            'created_at', 'updated_at',
+            "created_at",
+            "updated_at",
         }
 
         assert expected_columns.issubset(columns), f"Missing columns: {expected_columns - columns}"
@@ -133,21 +140,29 @@ class TestMigrationAppliesSuccessfully:
     def test_company_digital_has_correct_columns(self, db_engine):
         """Verify company_digital table has all expected columns."""
         inspector = inspect(db_engine)
-        columns = {col['name'] for col in inspector.get_columns('company_digital', schema=SCHEMA)}
+        columns = {col["name"] for col in inspector.get_columns("company_digital", schema=SCHEMA)}
 
         expected_columns = {
-            'company_id',
+            "company_id",
             # Insights (translatable)
-            'insights', 'insights_source',
+            "insights",
+            "insights_source",
             # Strategy fields (all translatable)
-            'overall_strategy', 'overall_strategy_source',
-            'digital_transformation', 'digital_transformation_source',
-            'ecommerce_capabilities', 'ecommerce_capabilities_source',
-            'mobile_strategy', 'mobile_strategy_source',
-            'digital_marketing_approach', 'digital_marketing_approach_source',
-            'loyalty_program', 'loyalty_program_source',
+            "overall_strategy",
+            "overall_strategy_source",
+            "digital_transformation",
+            "digital_transformation_source",
+            "ecommerce_capabilities",
+            "ecommerce_capabilities_source",
+            "mobile_strategy",
+            "mobile_strategy_source",
+            "digital_marketing_approach",
+            "digital_marketing_approach_source",
+            "loyalty_program",
+            "loyalty_program_source",
             # Timestamps
-            'created_at', 'updated_at',
+            "created_at",
+            "updated_at",
         }
 
         assert expected_columns.issubset(columns), f"Missing columns: {expected_columns - columns}"
@@ -155,17 +170,15 @@ class TestMigrationAppliesSuccessfully:
     def test_company_jobs_has_integer_total_openings(self, db_engine):
         """Verify company_jobs.insights_total_openings is INTEGER type."""
         inspector = inspect(db_engine)
-        columns = inspector.get_columns('company_jobs', schema=SCHEMA)
+        columns = inspector.get_columns("company_jobs", schema=SCHEMA)
 
-        total_openings_col = next(
-            (col for col in columns if col['name'] == 'insights_total_openings'),
-            None
-        )
+        total_openings_col = next((col for col in columns if col["name"] == "insights_total_openings"), None)
 
         assert total_openings_col is not None, "insights_total_openings column not found"
         # PostgreSQL INTEGER type
-        assert 'INTEGER' in str(total_openings_col['type']).upper(), \
+        assert "INTEGER" in str(total_openings_col["type"]).upper(), (
             f"Expected INTEGER type, got {total_openings_col['type']}"
+        )
 
 
 class TestForeignKeyConstraints:
@@ -179,16 +192,10 @@ class TestForeignKeyConstraints:
             fks = inspector.get_foreign_keys(table_name, schema=SCHEMA)
             assert len(fks) > 0, f"Table {table_name} has no foreign keys"
 
-            company_fk = next(
-                (fk for fk in fks if fk['referred_table'] == 'companies'),
-                None
-            )
-            assert company_fk is not None, \
-                f"Table {table_name} has no FK to companies table"
-            assert company_fk['referred_columns'] == ['id'], \
-                "FK should reference companies.id"
-            assert company_fk['constrained_columns'] == ['company_id'], \
-                "FK should be on company_id column"
+            company_fk = next((fk for fk in fks if fk["referred_table"] == "companies"), None)
+            assert company_fk is not None, f"Table {table_name} has no FK to companies table"
+            assert company_fk["referred_columns"] == ["id"], "FK should reference companies.id"
+            assert company_fk["constrained_columns"] == ["company_id"], "FK should be on company_id column"
 
     def test_fk_prevents_insert_with_invalid_company_id(self, db_session):
         """Verify FK constraint prevents inserting with non-existent company_id."""
@@ -204,9 +211,7 @@ class TestForeignKeyConstraints:
 
         # Should fail with FK violation
         error_msg = str(exc_info.value).lower()
-        assert 'foreign key' in error_msg or \
-               'violates foreign key constraint' in error_msg or \
-               'fk' in error_msg
+        assert "foreign key" in error_msg or "violates foreign key constraint" in error_msg or "fk" in error_msg
 
 
 class TestCascadeDeleteBehavior:
@@ -224,7 +229,7 @@ class TestCascadeDeleteBehavior:
                     INSERT INTO {SCHEMA}.companies (id, name, website, organization_id)
                     VALUES (:id, 'Test Company Cascade', 'https://test-cascade.com', 'test-org-cascade')
                 """),
-                {"id": test_company_id}
+                {"id": test_company_id},
             )
             db_session.commit()
 
@@ -234,38 +239,30 @@ class TestCascadeDeleteBehavior:
                     INSERT INTO {SCHEMA}.company_profile (company_id, insights, insights_source)
                     VALUES (:id, 'Test insights', 'Chaps-e')
                 """),
-                {"id": test_company_id}
+                {"id": test_company_id},
             )
             db_session.commit()
 
             # Verify profile exists
             result = db_session.execute(
-                text(f"SELECT * FROM {SCHEMA}.company_profile WHERE company_id = :id"),
-                {"id": test_company_id}
+                text(f"SELECT * FROM {SCHEMA}.company_profile WHERE company_id = :id"), {"id": test_company_id}
             ).fetchone()
             assert result is not None, "Profile should exist before delete"
 
             # Delete the company
-            db_session.execute(
-                text(f"DELETE FROM {SCHEMA}.companies WHERE id = :id"),
-                {"id": test_company_id}
-            )
+            db_session.execute(text(f"DELETE FROM {SCHEMA}.companies WHERE id = :id"), {"id": test_company_id})
             db_session.commit()
 
             # Verify profile was cascaded
             result = db_session.execute(
-                text(f"SELECT * FROM {SCHEMA}.company_profile WHERE company_id = :id"),
-                {"id": test_company_id}
+                text(f"SELECT * FROM {SCHEMA}.company_profile WHERE company_id = :id"), {"id": test_company_id}
             ).fetchone()
             assert result is None, "Profile should be deleted by CASCADE"
 
         finally:
             # Clean up in case of failure
             db_session.rollback()
-            db_session.execute(
-                text(f"DELETE FROM {SCHEMA}.companies WHERE id = :id"),
-                {"id": test_company_id}
-            )
+            db_session.execute(text(f"DELETE FROM {SCHEMA}.companies WHERE id = :id"), {"id": test_company_id})
             db_session.commit()
 
     def test_cascade_delete_all_sections(self, db_session):
@@ -280,53 +277,66 @@ class TestCascadeDeleteBehavior:
                     INSERT INTO {SCHEMA}.companies (id, name, website, organization_id)
                     VALUES (:id, 'Cascade All Test Company', 'https://cascade-all.com', 'test-org-cascade-all')
                 """),
-                {"id": test_company_id}
+                {"id": test_company_id},
             )
             db_session.commit()
 
             # Insert into all 7 section tables
             section_inserts = [
-                ("company_profile", f"INSERT INTO {SCHEMA}.company_profile (company_id, insights) VALUES (:id, 'Profile insights')"),
-                ("company_digital", f"INSERT INTO {SCHEMA}.company_digital (company_id, insights) VALUES (:id, 'Digital insights')"),
-                ("company_timeline", f"INSERT INTO {SCHEMA}.company_timeline (company_id, insights) VALUES (:id, 'Timeline insights')"),
-                ("company_products", f"INSERT INTO {SCHEMA}.company_products (company_id, insights) VALUES (:id, 'Products insights')"),
-                ("company_jobs", f"INSERT INTO {SCHEMA}.company_jobs (company_id, insights_total_openings) VALUES (:id, 50)"),
-                ("company_csr", f"INSERT INTO {SCHEMA}.company_csr (company_id, insights) VALUES (:id, 'CSR insights')"),
-                ("company_press", f"INSERT INTO {SCHEMA}.company_press (company_id, insights) VALUES (:id, 'Press insights')"),
+                (
+                    "company_profile",
+                    f"INSERT INTO {SCHEMA}.company_profile (company_id, insights) VALUES (:id, 'Profile insights')",
+                ),
+                (
+                    "company_digital",
+                    f"INSERT INTO {SCHEMA}.company_digital (company_id, insights) VALUES (:id, 'Digital insights')",
+                ),
+                (
+                    "company_timeline",
+                    f"INSERT INTO {SCHEMA}.company_timeline (company_id, insights) VALUES (:id, 'Timeline insights')",
+                ),
+                (
+                    "company_products",
+                    f"INSERT INTO {SCHEMA}.company_products (company_id, insights) VALUES (:id, 'Products insights')",
+                ),
+                (
+                    "company_jobs",
+                    f"INSERT INTO {SCHEMA}.company_jobs (company_id, insights_total_openings) VALUES (:id, 50)",
+                ),
+                (
+                    "company_csr",
+                    f"INSERT INTO {SCHEMA}.company_csr (company_id, insights) VALUES (:id, 'CSR insights')",
+                ),
+                (
+                    "company_press",
+                    f"INSERT INTO {SCHEMA}.company_press (company_id, insights) VALUES (:id, 'Press insights')",
+                ),
             ]
 
-            for table_name, insert_sql in section_inserts:
+            for _table_name, insert_sql in section_inserts:
                 db_session.execute(text(insert_sql), {"id": test_company_id})
             db_session.commit()
 
             # Verify all sections exist
             for table_name in SECTION_TABLES:
                 result = db_session.execute(
-                    text(f"SELECT * FROM screen_schema.{table_name} WHERE company_id = :id"),
-                    {"id": test_company_id}
+                    text(f"SELECT * FROM screen_schema.{table_name} WHERE company_id = :id"), {"id": test_company_id}
                 ).fetchone()
                 assert result is not None, f"{table_name} should exist before delete"
 
             # Delete the company
-            db_session.execute(
-                text("DELETE FROM screen_schema.companies WHERE id = :id"),
-                {"id": test_company_id}
-            )
+            db_session.execute(text("DELETE FROM screen_schema.companies WHERE id = :id"), {"id": test_company_id})
             db_session.commit()
 
             # Verify all sections were cascaded
             for table_name in SECTION_TABLES:
                 result = db_session.execute(
-                    text(f"SELECT * FROM screen_schema.{table_name} WHERE company_id = :id"),
-                    {"id": test_company_id}
+                    text(f"SELECT * FROM screen_schema.{table_name} WHERE company_id = :id"), {"id": test_company_id}
                 ).fetchone()
                 assert result is None, f"{table_name} should be deleted by CASCADE"
 
         finally:
             # Clean up in case of failure
             db_session.rollback()
-            db_session.execute(
-                text("DELETE FROM screen_schema.companies WHERE id = :id"),
-                {"id": test_company_id}
-            )
+            db_session.execute(text("DELETE FROM screen_schema.companies WHERE id = :id"), {"id": test_company_id})
             db_session.commit()

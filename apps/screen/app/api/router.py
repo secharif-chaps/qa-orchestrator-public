@@ -8,11 +8,9 @@ from app.api.endpoints import (
     auth,
     chapse,
     company,
-    concurrency,
     cost_analysis,
     credits,
     data_sources,
-    dev,
     feature_flags,
     organization,
     organizations,
@@ -21,7 +19,6 @@ from app.api.endpoints import (
     team,
     translation,
     users,
-    webhooks,
 )
 
 api_router = APIRouter()
@@ -39,9 +36,7 @@ api_router.include_router(organization.router)  # User organization context (/cu
 api_router.include_router(team.router)  # Team management (organization.manage)
 # Note: modules and tokens endpoints have been migrated to global-service
 # See: global-service/app/routers/tokens.py and global-service/app/routers/modules.py
-api_router.include_router(webhooks.router)
 api_router.include_router(cost_analysis.router)
-api_router.include_router(concurrency.router)
 api_router.include_router(chapse.router)
 api_router.include_router(ai_preferences.router)
 api_router.include_router(admin_tasks.router)  # Admin task monitoring
@@ -50,4 +45,3 @@ api_router.include_router(translation.router)
 api_router.include_router(feature_flags.router)  # Organization feature flags management
 api_router.include_router(credits.router)  # Organization credit statistics
 api_router.include_router(data_sources.router)  # Organization data sources
-api_router.include_router(dev.router)  # Development utilities (tunnel URL, etc.)

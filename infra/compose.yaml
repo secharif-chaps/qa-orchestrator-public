@@ -2,9 +2,6 @@
 x-screen-db: &screen-db
   DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-chapsmind_db}
 
-x-rabbitmq: &rabbitmq-env
-  RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672//
-
 x-keycloak-client: &keycloak-client
   KEYCLOAK_SERVER_URL: ${KEYCLOAK_SERVER_URL:-}
   KEYCLOAK_REALM: ${KEYCLOAK_REALM:-chapsmind}
@@ -34,27 +31,16 @@ services:
     image: ${DOCKER_REGISTRY:-registry.git.mediaspeech.com/chapsmind/chapsmind}/chapsmind-screen:${DOCKER_CHAPSMIND_VERSION:-latest}
     depends_on:
       db: { condition: service_healthy }
-      rabbitmq: { condition: service_healthy }
     restart: unless-stopped
     environment:
-      <<: [*screen-db, *rabbitmq-env, *keycloak-client, *keycloak-admin, *internal-auth, *encryption]
+      <<: [*screen-db, *keycloak-client, *keycloak-admin, *internal-auth, *encryption]
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
       BACKEND_BASE_URL: ${BACKEND_BASE_URL:-http://localhost}
       MAX_CONCURRENT_WORKFLOWS: ${MAX_CONCURRENT_WORKFLOWS:-10}
       SYSTRAN_API_KEY: ${SYSTRAN_API_KEY:-}
-
-  # Celery Worker for Task Processing
-  screen_celery_worker:
-    image: ${DOCKER_REGISTRY:-registry.git.mediaspeech.com/chapsmind/chapsmind}/chapsmind-screen:${DOCKER_CHAPSMIND_VERSION:-latest}
-    entrypoint: celery -A app.core.celery_app worker --loglevel=info --concurrency=4 --pool=solo --queues=dify_workflows
-    restart: unless-stopped
-    environment:
-      <<: [*screen-db, *rabbitmq-env, *encryption]
-      BACKEND_BASE_URL: ${BACKEND_BASE_URL:-http://localhost}
-      MAX_CONCURRENT_WORKFLOWS: ${MAX_CONCURRENT_WORKFLOWS:-10}
-    depends_on:
-      rabbitmq: { condition: service_healthy }
-      db: { condition: service_healthy }
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_MODEL: ${LLM_MODEL:-gpt-5.1}
 
   # Global Service (Gateway) — Proxies /api requests to backend
   global-service:
@@ -90,21 +76,5 @@ services:
       timeout: 5s
       retries: 5
 
-  # RabbitMQ Message Broker
-  rabbitmq:
-    image: rabbitmq:3.12-management-alpine
-    restart: unless-stopped
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
 volumes:
   postgres_data:
-  rabbitmq_data:

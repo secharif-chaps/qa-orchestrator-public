@@ -2,7 +2,7 @@
 
 This module defines Pydantic schemas for the new normalized company data structure
 with SourcedValue pattern support. These schemas are used for:
-- Validating data from Dify workflow callbacks
+- Validating data from LangGraph agent output
 - Serializing data for API responses
 - Ensuring frontend compatibility
 
@@ -13,26 +13,29 @@ Schemas follow the frontend TypeScript interfaces for compatibility while
 supporting the normalized database structure.
 """
 
-from enum import Enum
-from typing import Any, Generic, Optional, TypeVar
+from enum import StrEnum
+from typing import Any, Generic, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 # Generic type for SourcedValue
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 # ENUM definitions matching SQLAlchemy models
 
-class ProductItemTypeEnum(str, Enum):
+
+class ProductItemTypeEnum(StrEnum):
     """Product item type enum values."""
+
     range = "range"
     partner_brand = "partner_brand"
     private_label = "private_label"
 
 
-class CsrInitiativeTypeEnum(str, Enum):
+class CsrInitiativeTypeEnum(StrEnum):
     """CSR initiative type enum values."""
+
     responsibility = "responsibility"
     charity = "charity"
     sustainability = "sustainability"
@@ -42,8 +45,9 @@ class CsrInitiativeTypeEnum(str, Enum):
     awards = "awards"
 
 
-class PressItemTypeEnum(str, Enum):
+class PressItemTypeEnum(StrEnum):
     """Press item type enum values."""
+
     article = "article"
     press_release = "press_release"
     media_mention = "media_mention"
@@ -55,6 +59,7 @@ class PressItemTypeEnum(str, Enum):
 
 
 # Core SourcedValue generic schema
+
 
 class SourcedValue(BaseModel, Generic[T]):
     """Generic schema for values with source attribution.
@@ -77,18 +82,19 @@ class SourcedValue(BaseModel, Generic[T]):
         >>> sv = SourcedValue[int](value=250, source="https://careers.company.com")
         >>> sv = SourcedValue[str](value="AI-generated insight", source="Chaps-e")
     """
+
     value: T
     source: str
-    favicon: Optional[str] = None
+    favicon: str | None = None
 
     model_config = ConfigDict(
         # Allow extra fields for forward compatibility
         extra="ignore",
         # Enable from_attributes for ORM model conversion
-        from_attributes=True
+        from_attributes=True,
     )
 
-    @field_validator('source')
+    @field_validator("source")
     @classmethod
     def validate_source(cls, v: str) -> str:
         """Validate source field.
@@ -96,7 +102,7 @@ class SourcedValue(BaseModel, Generic[T]):
         Accepts:
         - URLs starting with http:// or https://
         - Known tool names: Chaps-e, linkedin, glassdoor, mistral, claude,
-          perplexity, wikipedia, dify
+          perplexity, wikipedia, langgraph, azure_openai
         - Any other string (lenient for flexibility)
 
         Args:
@@ -109,13 +115,21 @@ class SourcedValue(BaseModel, Generic[T]):
             return v
 
         # Accept URLs
-        if v.startswith(('http://', 'https://')):
+        if v.startswith(("http://", "https://")):
             return v
 
         # Accept known tool names (case-insensitive check but preserve original)
         known_tools = {
-            'chaps-e', 'linkedin', 'glassdoor', 'mistral', 'claude',
-            'perplexity', 'wikipedia', 'dify', 'n8n'
+            "chaps-e",
+            "linkedin",
+            "glassdoor",
+            "mistral",
+            "claude",
+            "perplexity",
+            "wikipedia",
+            "langgraph",
+            "azure_openai",
+            "n8n",
         }
         if v.lower() in known_tools:
             return v
@@ -125,6 +139,7 @@ class SourcedValue(BaseModel, Generic[T]):
 
 
 # Profile section schemas
+
 
 class ProfileResponse(BaseModel):
     """Profile section response schema.
@@ -138,70 +153,77 @@ class ProfileResponse(BaseModel):
     Non-translatable fields (proper nouns, numbers, locations):
     - groupName, ceo, hq, establishmentYear, employeeCount, revenue
     """
-    insights: Optional[SourcedValue[str]] = None
-    groupName: Optional[SourcedValue[str]] = None
-    businessLine: Optional[SourcedValue[str]] = None
-    catchphrase: Optional[SourcedValue[str]] = None
-    establishmentYear: Optional[SourcedValue[str]] = None
-    employeeCount: Optional[SourcedValue[str]] = None
-    revenue: Optional[SourcedValue[str]] = None
-    ceo: Optional[SourcedValue[str]] = None
-    hq: Optional[SourcedValue[str]] = None
+
+    insights: SourcedValue[str] | None = None
+    groupName: SourcedValue[str] | None = None
+    businessLine: SourcedValue[str] | None = None
+    catchphrase: SourcedValue[str] | None = None
+    establishmentYear: SourcedValue[str] | None = None
+    employeeCount: SourcedValue[str] | None = None
+    revenue: SourcedValue[str] | None = None
+    ceo: SourcedValue[str] | None = None
+    hq: SourcedValue[str] | None = None
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class ProfileCreate(BaseModel):
     """Profile section input schema for creating/updating profile data."""
-    insights: Optional[str] = None
-    groupName: Optional[SourcedValue[str]] = None
-    businessLine: Optional[SourcedValue[str]] = None
-    catchphrase: Optional[SourcedValue[str]] = None
-    establishmentYear: Optional[SourcedValue[str]] = None
-    employeeCount: Optional[SourcedValue[str]] = None
-    revenue: Optional[SourcedValue[str]] = None
-    ceo: Optional[SourcedValue[str]] = None
-    hq: Optional[SourcedValue[str]] = None
+
+    insights: str | None = None
+    groupName: SourcedValue[str] | None = None
+    businessLine: SourcedValue[str] | None = None
+    catchphrase: SourcedValue[str] | None = None
+    establishmentYear: SourcedValue[str] | None = None
+    employeeCount: SourcedValue[str] | None = None
+    revenue: SourcedValue[str] | None = None
+    ceo: SourcedValue[str] | None = None
+    hq: SourcedValue[str] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
 
 # Digital section schemas
 
+
 class OnlineServiceResponse(BaseModel):
     """Online service response schema."""
-    name: Optional[str] = None
-    description: Optional[str] = None
-    name_source: Optional[str] = None
-    description_source: Optional[str] = None
+
+    name: str | None = None
+    description: str | None = None
+    name_source: str | None = None
+    description_source: str | None = None
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class OnlineServiceSourced(BaseModel):
-    """Online service with sourced fields for Dify input."""
-    name: Optional[SourcedValue[str]] = None
-    description: Optional[SourcedValue[str]] = None
+    """Online service with sourced fields for agent input."""
+
+    name: SourcedValue[str] | None = None
+    description: SourcedValue[str] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
 
 class SocialMediaAccountResponse(BaseModel):
     """Social media account response schema."""
+
     platform: str
     url: str
-    source: Optional[str] = None
+    source: str | None = None
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class DigitalStrategyResponse(BaseModel):
     """Digital strategy nested response matching frontend interface."""
-    overallStrategy: Optional[str] = None
-    digitalTransformation: Optional[str] = None
-    eCommerceCapabilities: Optional[str] = None
-    mobileStrategy: Optional[str] = None
-    digitalMarketingApproach: Optional[str] = None
+
+    overallStrategy: str | None = None
+    digitalTransformation: str | None = None
+    eCommerceCapabilities: str | None = None
+    mobileStrategy: str | None = None
+    digitalMarketingApproach: str | None = None
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
@@ -212,52 +234,57 @@ class DigitalResponse(BaseModel):
     Matches frontend Company.digital interface with nested structures
     for digital strategy, online services, and social media.
     """
-    insights: Optional[str] = None
-    digitalStrategy: Optional[SourcedValue[DigitalStrategyResponse]] = None
-    onlineServices: Optional[SourcedValue[list[OnlineServiceResponse]]] = None
-    socialMediaAccounts: Optional[list[SocialMediaAccountResponse]] = None
-    loyaltyProgram: Optional[SourcedValue[str]] = None
+
+    insights: str | None = None
+    digitalStrategy: SourcedValue[DigitalStrategyResponse] | None = None
+    onlineServices: SourcedValue[list[OnlineServiceResponse]] | None = None
+    socialMediaAccounts: list[SocialMediaAccountResponse] | None = None
+    loyaltyProgram: SourcedValue[str] | None = None
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class DigitalCreate(BaseModel):
-    """Digital section input schema from Dify webhook."""
-    insights: Optional[str] = None
-    digitalStrategy: Optional[dict[str, Any]] = None
-    onlineServices: Optional[list[OnlineServiceSourced]] = None
-    socialMediaAccounts: Optional[list[SocialMediaAccountResponse]] = None
-    loyaltyProgram: Optional[SourcedValue[str]] = None
+    """Digital section input schema from agent output."""
+
+    insights: str | None = None
+    digitalStrategy: dict[str, Any] | None = None
+    onlineServices: list[OnlineServiceSourced] | None = None
+    socialMediaAccounts: list[SocialMediaAccountResponse] | None = None
+    loyaltyProgram: SourcedValue[str] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
 
 # Timeline section schemas
 
+
 class TimelineEventResponse(BaseModel):
     """Timeline event response schema.
 
     Matches frontend timeline.events[] interface.
     """
-    date: Optional[str] = None
-    title: Optional[str] = None
-    description: Optional[str] = None
-    category: Optional[str] = None
-    location: Optional[str] = None
-    impact: Optional[str] = None
-    source: Optional[str] = None
+
+    date: str | None = None
+    title: str | None = None
+    description: str | None = None
+    category: str | None = None
+    location: str | None = None
+    impact: str | None = None
+    source: str | None = None
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class TimelineEventSourced(BaseModel):
-    """Timeline event with sourced fields for Dify input."""
-    date: Optional[SourcedValue[str]] = None
-    title: Optional[SourcedValue[str]] = None
-    description: Optional[SourcedValue[str]] = None
-    category: Optional[SourcedValue[str]] = None
-    location: Optional[SourcedValue[str]] = None
-    impact: Optional[SourcedValue[str]] = None
+    """Timeline event with sourced fields for agent input."""
+
+    date: SourcedValue[str] | None = None
+    title: SourcedValue[str] | None = None
+    description: SourcedValue[str] | None = None
+    category: SourcedValue[str] | None = None
+    location: SourcedValue[str] | None = None
+    impact: SourcedValue[str] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
@@ -267,33 +294,38 @@ class TimelineResponse(BaseModel):
 
     Contains insights summary and list of historical events.
     """
-    insights: Optional[str] = None
-    events: Optional[list[TimelineEventResponse]] = None
+
+    insights: str | None = None
+    events: list[TimelineEventResponse] | None = None
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class TimelineCreate(BaseModel):
-    """Timeline section input schema from Dify webhook."""
-    insights: Optional[str] = None
-    events: Optional[list[TimelineEventSourced]] = None
+    """Timeline section input schema from agent output."""
+
+    insights: str | None = None
+    events: list[TimelineEventSourced] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
 
 # Products section schemas
 
+
 class ProductItemResponse(BaseModel):
     """Product item response schema with type and sourced value."""
+
     value: str
     source: str
-    type: Optional[ProductItemTypeEnum] = None
+    type: ProductItemTypeEnum | None = None
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class ProductCategoryResponse(BaseModel):
     """Product category response schema."""
+
     category_name: str
     items: list[str] = Field(default_factory=list)
 
@@ -306,9 +338,10 @@ class ProductsResponse(BaseModel):
     Matches frontend Company.products interface with grouped
     product items by type and categories dict.
     """
-    insights: Optional[str] = None
-    customerType: Optional[str] = None
-    marketingPositioning: Optional[str] = None
+
+    insights: str | None = None
+    customerType: str | None = None
+    marketingPositioning: str | None = None
     range: list[SourcedValue[str]] = Field(default_factory=list)
     partnerBrands: list[SourcedValue[str]] = Field(default_factory=list)
     privateLabels: list[SourcedValue[str]] = Field(default_factory=list)
@@ -318,44 +351,48 @@ class ProductsResponse(BaseModel):
 
 
 class ProductsCreate(BaseModel):
-    """Products section input schema from Dify webhook."""
-    insights: Optional[str] = None
-    customerType: Optional[SourcedValue[str]] = None
-    marketingPositioning: Optional[SourcedValue[str]] = None
-    range: Optional[list[SourcedValue[str]]] = None
-    partnerBrands: Optional[list[SourcedValue[str]]] = None
-    privateLabels: Optional[list[SourcedValue[str]]] = None
-    categories: Optional[dict[str, list[str]]] = None
+    """Products section input schema from agent output."""
+
+    insights: str | None = None
+    customerType: SourcedValue[str] | None = None
+    marketingPositioning: SourcedValue[str] | None = None
+    range: list[SourcedValue[str]] | None = None
+    partnerBrands: list[SourcedValue[str]] | None = None
+    privateLabels: list[SourcedValue[str]] | None = None
+    categories: dict[str, list[str]] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
 
 # Jobs section schemas
 
+
 class JobOfferResponse(BaseModel):
     """Job offer response schema.
 
     Matches frontend jobs.offers[] interface.
     """
-    title: Optional[str] = None
-    location: Optional[str] = None
-    department: Optional[str] = None
-    description: Optional[str] = None
-    requirements: Optional[str] = None
-    posted_date: Optional[str] = None
-    source: Optional[str] = None
+
+    title: str | None = None
+    location: str | None = None
+    department: str | None = None
+    description: str | None = None
+    requirements: str | None = None
+    posted_date: str | None = None
+    source: str | None = None
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class JobOfferSourced(BaseModel):
-    """Job offer with sourced fields for Dify input."""
-    title: Optional[SourcedValue[str]] = None
-    location: Optional[SourcedValue[str]] = None
-    department: Optional[SourcedValue[str]] = None
-    description: Optional[SourcedValue[str]] = None
-    requirements: Optional[SourcedValue[str]] = None
-    posted_date: Optional[SourcedValue[str]] = None
+    """Job offer with sourced fields for agent input."""
+
+    title: SourcedValue[str] | None = None
+    location: SourcedValue[str] | None = None
+    department: SourcedValue[str] | None = None
+    description: SourcedValue[str] | None = None
+    requirements: SourcedValue[str] | None = None
+    posted_date: SourcedValue[str] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
@@ -366,10 +403,11 @@ class JobInsightsResponse(BaseModel):
     Matches frontend jobs.insights interface with structured
     hiring data (total_openings as int, others as sourced values).
     """
-    total_openings: Optional[SourcedValue[int]] = None
-    top_departments: Optional[SourcedValue[list[str]]] = None
-    hiring_focus: Optional[SourcedValue[str]] = None
-    growth_indicators: Optional[SourcedValue[str]] = None
+
+    total_openings: SourcedValue[int] | None = None
+    top_departments: SourcedValue[list[str]] | None = None
+    hiring_focus: SourcedValue[str] | None = None
+    growth_indicators: SourcedValue[str] | None = None
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
@@ -380,24 +418,28 @@ class JobsResponse(BaseModel):
     Contains structured insights and list of job offers.
     Matches frontend Company.jobs interface.
     """
-    insights: Optional[JobInsightsResponse] = None
-    offers: Optional[list[JobOfferResponse]] = None
+
+    insights: JobInsightsResponse | None = None
+    offers: list[JobOfferResponse] | None = None
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class JobsCreate(BaseModel):
-    """Jobs section input schema from Dify webhook."""
-    insights: Optional[dict[str, Any]] = None
-    offers: Optional[list[JobOfferSourced]] = None
+    """Jobs section input schema from agent output."""
+
+    insights: dict[str, Any] | None = None
+    offers: list[JobOfferSourced] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
 
 # CSR section schemas
 
+
 class CsrInitiativeResponse(BaseModel):
     """CSR initiative response schema."""
+
     type: CsrInitiativeTypeEnum
     value: str
     source: str
@@ -411,8 +453,9 @@ class CsrResponse(BaseModel):
     Contains insights, responsibility statement, and initiatives
     grouped by type. Matches frontend Company.csr interface.
     """
-    insights: Optional[str] = None
-    responsibility: Optional[str] = None
+
+    insights: str | None = None
+    responsibility: str | None = None
     responsibility_initiatives: list[SourcedValue[str]] = Field(default_factory=list)
     charity_actions: list[SourcedValue[str]] = Field(default_factory=list)
     sustainability_programs: list[SourcedValue[str]] = Field(default_factory=list)
@@ -425,7 +468,8 @@ class CsrResponse(BaseModel):
 
 
 class CsrInitiativeSourced(BaseModel):
-    """CSR initiative with sourced fields for Dify input."""
+    """CSR initiative with sourced fields for agent input."""
+
     type: CsrInitiativeTypeEnum
     value: str
     source: str
@@ -434,21 +478,24 @@ class CsrInitiativeSourced(BaseModel):
 
 
 class CsrCreate(BaseModel):
-    """CSR section input schema from Dify webhook."""
-    insights: Optional[str] = None
-    responsibility: Optional[SourcedValue[str]] = None
-    initiatives: Optional[list[CsrInitiativeSourced]] = None
+    """CSR section input schema from agent output."""
+
+    insights: str | None = None
+    responsibility: SourcedValue[str] | None = None
+    initiatives: list[CsrInitiativeSourced] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
 
 # Press section schemas
 
+
 class PressItemResponse(BaseModel):
     """Press item response schema.
 
     Note: Uses single 'source' field instead of old 'sources[]' array.
     """
+
     type: PressItemTypeEnum
     value: str
     source: str
@@ -466,7 +513,8 @@ class PressResponse(BaseModel):
     arrays and 'sources[]'. Response schema here matches the normalized
     structure - a future task will update frontend to match.
     """
-    insights: Optional[str] = None
+
+    insights: str | None = None
     # Grouped by type for frontend compatibility
     articles: list[PressItemResponse] = Field(default_factory=list)
     press_releases: list[PressItemResponse] = Field(default_factory=list)
@@ -481,7 +529,8 @@ class PressResponse(BaseModel):
 
 
 class PressItemSourced(BaseModel):
-    """Press item with sourced fields for Dify input."""
+    """Press item with sourced fields for agent input."""
+
     type: PressItemTypeEnum
     value: str
     source: str
@@ -490,14 +539,16 @@ class PressItemSourced(BaseModel):
 
 
 class PressCreate(BaseModel):
-    """Press section input schema from Dify webhook."""
-    insights: Optional[str] = None
-    items: Optional[list[PressItemSourced]] = None
+    """Press section input schema from agent output."""
+
+    insights: str | None = None
+    items: list[PressItemSourced] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
 
 # Team section schemas
+
 
 class TeamMemberResponse(BaseModel):
     """Team member response schema with hierarchical support.
@@ -512,33 +563,36 @@ class TeamMemberResponse(BaseModel):
         linkedinUrl: Optional LinkedIn profile URL
         subordinates: Optional list of direct reports (recursive)
     """
+
     position: str
     firstName: str
     lastName: str
-    linkedinUrl: Optional[str] = None
-    subordinates: Optional[list['TeamMemberResponse']] = None
+    linkedinUrl: str | None = None
+    subordinates: list["TeamMemberResponse"] | None = None
 
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
 class TeamMemberSourced(BaseModel):
-    """Team member with sourced fields for Dify input."""
-    position: Optional[SourcedValue[str]] = None
-    firstName: Optional[SourcedValue[str]] = None
-    lastName: Optional[SourcedValue[str]] = None
-    linkedinUrl: Optional[SourcedValue[str]] = None
-    subordinates: Optional[list['TeamMemberSourced']] = None
+    """Team member with sourced fields for agent input."""
+
+    position: SourcedValue[str] | None = None
+    firstName: SourcedValue[str] | None = None
+    lastName: SourcedValue[str] | None = None
+    linkedinUrl: SourcedValue[str] | None = None
+    subordinates: list["TeamMemberSourced"] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
 
 class TeamCreate(BaseModel):
-    """Team section input schema from Dify webhook.
+    """Team section input schema from agent output.
 
     Team is passed as a flat list with hierarchy defined by
-    nested subordinates arrays in the Dify JSON.
+    nested subordinates arrays in the agent JSON.
     """
-    members: Optional[list[TeamMemberSourced]] = None
+
+    members: list[TeamMemberSourced] | None = None
 
     model_config = ConfigDict(extra="ignore")
 
@@ -550,12 +604,14 @@ TeamMemberSourced.model_rebuild()
 
 # Complete company sections response
 
+
 class CompanySectionsResponse(BaseModel):
     """Complete response schema for all company sections.
 
     This is used to build the full CompanyResponse with typed
     section data instead of Dict[str, Any].
     """
+
     profile: ProfileResponse = Field(default_factory=ProfileResponse)
     digital: DigitalResponse = Field(default_factory=DigitalResponse)
     timeline: TimelineResponse = Field(default_factory=TimelineResponse)

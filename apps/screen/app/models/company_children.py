@@ -45,6 +45,7 @@ class ProductItemType(enum.Enum):
         partner_brand: Products from partner brands
         private_label: Private label products
     """
+
     range = "range"
     partner_brand = "partner_brand"
     private_label = "private_label"
@@ -62,6 +63,7 @@ class CsrInitiativeType(enum.Enum):
         ethics: Business ethics and governance
         awards: CSR-related awards and recognition
     """
+
     responsibility = "responsibility"
     charity = "charity"
     sustainability = "sustainability"
@@ -84,6 +86,7 @@ class PressItemType(enum.Enum):
         financial: Financial news and reports
         partnership: Partnership announcements
     """
+
     article = "article"
     press_release = "press_release"
     media_mention = "media_mention"
@@ -113,15 +116,13 @@ class CompanyOnlineService(Base):
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_online_services"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # Name (translatable)
@@ -133,11 +134,7 @@ class CompanyOnlineService(Base):
     description_source = Column(Text, nullable=True)
 
     # Timestamp
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="online_services")
@@ -159,15 +156,13 @@ class CompanySocialMediaAccount(Base):
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_social_media_accounts"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # Platform (not translatable - proper noun)
@@ -179,11 +174,7 @@ class CompanySocialMediaAccount(Base):
     url_source = Column(Text, nullable=True)
 
     # Timestamp
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="social_media_accounts")
@@ -213,15 +204,13 @@ class CompanyTimelineEvent(Base):
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_timeline_events"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # Date (not translatable - number/date)
@@ -249,11 +238,7 @@ class CompanyTimelineEvent(Base):
     impact_source = Column(Text, nullable=True)
 
     # Timestamp
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="timeline_events")
@@ -275,15 +260,13 @@ class CompanyProductItem(Base):
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_product_items"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # Type (ENUM)
@@ -294,7 +277,7 @@ class CompanyProductItem(Base):
             name="product_item_type_enum",
             schema=SCREEN_SCHEMA,
         ),
-        nullable=False
+        nullable=False,
     )
 
     # Value with source (translation only for 'range' type)
@@ -302,11 +285,7 @@ class CompanyProductItem(Base):
     value_source = Column(Text, nullable=True)
 
     # Timestamp
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="product_items")
@@ -326,15 +305,13 @@ class CompanyProductCategory(Base):
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_product_categories"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # Category name (translatable)
@@ -344,11 +321,7 @@ class CompanyProductCategory(Base):
     items = Column(ARRAY(Text), nullable=True)
 
     # Timestamp
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="product_categories")
@@ -378,15 +351,13 @@ class CompanyJobOffer(Base):
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_job_offers"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # Title (translatable)
@@ -414,11 +385,7 @@ class CompanyJobOffer(Base):
     posted_date_source = Column(Text, nullable=True)
 
     # Timestamp
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="job_offers")
@@ -439,15 +406,13 @@ class CompanyCsrInitiative(Base):
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_csr_initiatives"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # Type (ENUM)
@@ -458,7 +423,7 @@ class CompanyCsrInitiative(Base):
             name="csr_initiative_type_enum",
             schema=SCREEN_SCHEMA,
         ),
-        nullable=False
+        nullable=False,
     )
 
     # Value with source (translatable)
@@ -466,11 +431,7 @@ class CompanyCsrInitiative(Base):
     value_source = Column(Text, nullable=True)
 
     # Timestamp
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="csr_initiatives")
@@ -491,15 +452,13 @@ class CompanyPressItem(Base):
         created_at: Record creation timestamp
         company: Relationship to parent Company model
     """
+
     __tablename__ = "company_press_items"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # Type (ENUM)
@@ -510,7 +469,7 @@ class CompanyPressItem(Base):
             name="press_item_type_enum",
             schema=SCREEN_SCHEMA,
         ),
-        nullable=False
+        nullable=False,
     )
 
     # Value with source (translatable)
@@ -518,11 +477,7 @@ class CompanyPressItem(Base):
     value_source = Column(Text, nullable=True)
 
     # Timestamp
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="press_items")
@@ -552,24 +507,19 @@ class CompanyTeamMember(Base):
         parent: Self-referential relationship to manager
         subordinates: List of direct reports
     """
+
     __tablename__ = "company_team_members"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     company_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
+        Integer, ForeignKey(f"{SCREEN_SCHEMA}.companies.id", ondelete="CASCADE"), nullable=False, index=True
     )
 
     # Self-referential FK for hierarchy (adjacency list pattern)
     # NULL means top-level (CEO), otherwise points to manager
     parent_id = Column(
-        Integer,
-        ForeignKey(f"{SCREEN_SCHEMA}.company_team_members.id", ondelete="SET NULL"),
-        nullable=True,
-        index=True
+        Integer, ForeignKey(f"{SCREEN_SCHEMA}.company_team_members.id", ondelete="SET NULL"), nullable=True, index=True
     )
 
     # Position (translatable)
@@ -589,11 +539,7 @@ class CompanyTeamMember(Base):
     linkedin_url_source = Column(Text, nullable=True)
 
     # Timestamp
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationship to Company
     company = relationship("Company", back_populates="team_members")
@@ -601,15 +547,8 @@ class CompanyTeamMember(Base):
     # Self-referential relationships for hierarchy
     # Parent relationship (manager)
     parent = relationship(
-        "CompanyTeamMember",
-        remote_side=[id],
-        back_populates="subordinates",
-        foreign_keys=[parent_id]
+        "CompanyTeamMember", remote_side=[id], back_populates="subordinates", foreign_keys=[parent_id]
     )
 
     # Subordinates relationship (direct reports)
-    subordinates = relationship(
-        "CompanyTeamMember",
-        back_populates="parent",
-        foreign_keys=[parent_id]
-    )
+    subordinates = relationship("CompanyTeamMember", back_populates="parent", foreign_keys=[parent_id])

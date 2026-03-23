@@ -4,11 +4,12 @@ This module defines the cost configuration and metadata for each
 billable module in the system.
 """
 
-from enum import Enum
+from enum import StrEnum
 
 
-class ModuleType(str, Enum):
+class ModuleType(StrEnum):
     """Module types for credit billing."""
+
     SCREEN = "screen"
     TARGET = "target"
     EXPLORE = "explore"

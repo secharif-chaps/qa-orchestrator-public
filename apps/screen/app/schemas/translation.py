@@ -16,24 +16,18 @@ class LanguageTranslationStatus(BaseModel):
     """Translation status for a single language."""
 
     language_name: str = Field(..., description="Language name in English")
-    status: str = Field(
-        ..., description="Translation status: 'complete', 'partial', or 'none'"
-    )
+    status: str = Field(..., description="Translation status: 'complete', 'partial', or 'none'")
     fields_translated: int = Field(..., description="Number of translated fields")
     fields_total: int = Field(..., description="Total translatable fields")
     percentage: float = Field(..., description="Translation completion percentage")
-    active_job: "TranslationJobResponse | None" = Field(
-        None, description="Active translation job if any"
-    )
+    active_job: "TranslationJobResponse | None" = Field(None, description="Active translation job if any")
 
 
 class CompanyTranslationStatusResponse(BaseModel):
     """Translation status response for a company."""
 
     company_id: int = Field(..., description="Company ID")
-    translations: dict[str, LanguageTranslationStatus] = Field(
-        ..., description="Translation status per language code"
-    )
+    translations: dict[str, LanguageTranslationStatus] = Field(..., description="Translation status per language code")
 
 
 class TranslateRequest(BaseModel):

@@ -16,6 +16,13 @@ variables:
     - if: $CI_COMMIT_BRANCH
 
 # ─── Lint Stage ────────────────────────────────────────
+screen:poetry-check:
+  stage: lint
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  script:
+    - cd apps/screen && poetry check && poetry check --lock
+  <<: *screen-changes
+
 screen:lint:
   stage: lint
   image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
@@ -24,23 +31,21 @@ screen:lint:
   <<: *screen-changes
 
 # ─── Test Stage ────────────────────────────────────────
-screen:test:
+
+# Shared test setup (no DB needed)
+.screen-test-base: &screen-test-base
   stage: test
   image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
-  allow_failure: true
-  services:
-    - name: postgres:15-alpine
-      alias: postgres
-  variables:
-    POSTGRES_DB: mint_db_test
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: postgres
-    TEST_DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/mint_db_test"
   before_script:
     - cd apps/screen
     - poetry config virtualenvs.create false && poetry install --no-interaction
+  <<: *screen-changes
+
+# Unit tests — fast, no external dependencies, must pass
+screen:test:unit:
+  <<: *screen-test-base
   script:
-    - pytest tests/ -v --cov=app --cov-report=term-missing --cov-report=xml:coverage.xml --junitxml=report.xml
+    - pytest tests/unit/ tests/test_worldcheck/ -v --cov=app --cov-report=term-missing --cov-report=xml:coverage.xml --junitxml=report.xml
   artifacts:
     when: always
     reports:
@@ -49,7 +54,31 @@ screen:test:
         coverage_format: cobertura
         path: apps/screen/coverage.xml
   coverage: '/TOTAL.*\s+(\d+%)/'
-  <<: *screen-changes
+
+# Integration tests — require Postgres, slower
+screen:test:integration:
+  <<: *screen-test-base
+  services:
+    - name: postgres:15-alpine
+      alias: postgres
+  variables:
+    POSTGRES_DB: chapsmind_db_test
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    TEST_DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/chapsmind_db_test"
+    DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/chapsmind_db_test"
+  before_script:
+    - cd apps/screen
+    - poetry config virtualenvs.create false && poetry install --no-interaction
+    # Create schema and run migrations so migration tests find existing tables
+    - PGPASSWORD=postgres psql -h postgres -U postgres -d chapsmind_db_test -c "CREATE SCHEMA IF NOT EXISTS screen_schema;" || true
+    - alembic upgrade head
+  script:
+    - pytest tests/integration/ -v --junitxml=report-integration.xml
+  artifacts:
+    when: always
+    reports:
+      junit: apps/screen/report-integration.xml
 
 # ─── Build Stage (Docker) ─────────────────────────────
 .screen-docker-build:

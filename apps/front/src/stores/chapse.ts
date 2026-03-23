@@ -82,6 +82,11 @@ export interface CompanyContext {
 // Maximum number of companies in context
 const MAX_COMPANY_CONTEXT = 3
 
+// localStorage persistence constants
+const STORAGE_KEY_PREFIX = 'chapse_conv_'
+const MAX_STORED_CONVERSATIONS = 30
+const MAX_MESSAGES_PER_CONVERSATION = 100
+
 // =============================================================================
 // Store
 // =============================================================================
@@ -127,6 +132,112 @@ export const useChapseStore = defineStore('chapse', () => {
   const isNewConversation = computed(() => currentConversationId.value === null)
 
   // =========================================================================
+  // localStorage Persistence (per-conversation)
+  // =========================================================================
+
+  function _saveToStorage(): void {
+    if (!currentConversationId.value) return
+
+    try {
+      // Filter out streaming messages and cap at max
+      const storedMessages = messages.value
+        .filter((m) => !m.isStreaming)
+        .slice(-MAX_MESSAGES_PER_CONVERSATION)
+
+      const data = {
+        messages: storedMessages,
+        companyContext: companyContext.value,
+        conversationName: currentConversationName.value,
+        savedAt: Date.now(),
+      }
+
+      localStorage.setItem(
+        `${STORAGE_KEY_PREFIX}${currentConversationId.value}`,
+        JSON.stringify(data),
+      )
+
+      _pruneStorage()
+    } catch (err) {
+      console.warn('Failed to save conversation to localStorage:', err)
+    }
+  }
+
+  function _loadFromStorage(conversationId: string): boolean {
+    try {
+      const raw = localStorage.getItem(`${STORAGE_KEY_PREFIX}${conversationId}`)
+      if (!raw) return false
+
+      const data = JSON.parse(raw)
+      if (!Array.isArray(data.messages)) return false
+
+      messages.value = data.messages
+      if (Array.isArray(data.companyContext)) {
+        companyContext.value = data.companyContext
+      }
+      if (data.conversationName) {
+        currentConversationName.value = data.conversationName
+      }
+
+      return true
+    } catch {
+      // Corrupt data — remove it
+      localStorage.removeItem(`${STORAGE_KEY_PREFIX}${conversationId}`)
+      return false
+    }
+  }
+
+  function _removeFromStorage(conversationId: string): void {
+    localStorage.removeItem(`${STORAGE_KEY_PREFIX}${conversationId}`)
+  }
+
+  function _pruneStorage(): void {
+    try {
+      interface StorageEntry {
+        key: string
+        savedAt: number
+      }
+      const entries: StorageEntry[] = []
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (!key?.startsWith(STORAGE_KEY_PREFIX)) continue
+
+        try {
+          const data = JSON.parse(localStorage.getItem(key) || '')
+          entries.push({ key, savedAt: data.savedAt || 0 })
+        } catch {
+          // Remove corrupt entries
+          localStorage.removeItem(key)
+        }
+      }
+
+      if (entries.length <= MAX_STORED_CONVERSATIONS) return
+
+      // Sort oldest first, remove excess
+      entries.sort((a, b) => a.savedAt - b.savedAt)
+      const toRemove = entries.slice(0, entries.length - MAX_STORED_CONVERSATIONS)
+      for (const entry of toRemove) {
+        localStorage.removeItem(entry.key)
+      }
+    } catch (err) {
+      console.warn('Failed to prune localStorage:', err)
+    }
+  }
+
+  function _clearAllStorage(): void {
+    const keysToRemove: string[] = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key?.startsWith(STORAGE_KEY_PREFIX)) {
+        keysToRemove.push(key)
+      }
+    }
+    for (const key of keysToRemove) {
+      localStorage.removeItem(key)
+    }
+  }
+
+  // =========================================================================
   // Message Actions
   // =========================================================================
 
@@ -147,6 +258,7 @@ export const useChapseStore = defineStore('chapse', () => {
       smartActionLabel: smartAction?.label,
       smartActionIcon: smartAction?.icon,
     })
+    _saveToStorage()
     return messageId
   }
 
@@ -175,6 +287,7 @@ export const useChapseStore = defineStore('chapse', () => {
       lastMessage.isStreaming = false
     }
     isStreaming.value = false
+    _saveToStorage()
   }
 
   function clearMessages(): void {
@@ -186,11 +299,15 @@ export const useChapseStore = defineStore('chapse', () => {
   // =========================================================================
 
   function setCurrentConversation(conversationId: string | null, name: string = ''): void {
+    // Save previous conversation before switching
+    _saveToStorage()
     currentConversationId.value = conversationId
     currentConversationName.value = name
   }
 
   function startNewConversation(): void {
+    // Save current conversation before clearing
+    _saveToStorage()
     currentConversationId.value = null
     currentConversationName.value = ''
     messages.value = []
@@ -210,6 +327,7 @@ export const useChapseStore = defineStore('chapse', () => {
 
   function removeConversation(conversationId: string): void {
     conversations.value = conversations.value.filter((c) => c.id !== conversationId)
+    _removeFromStorage(conversationId)
 
     // If deleted conversation was current, start new
     if (currentConversationId.value === conversationId) {
@@ -327,6 +445,18 @@ export const useChapseStore = defineStore('chapse', () => {
         timestamp: msg.created_at * 1000 + 1, // +1ms to ensure order
       })
     }
+
+    _saveToStorage()
+  }
+
+  /**
+   * Load a conversation's messages from localStorage.
+   * Sets currentConversationId and populates messages if found.
+   * Returns true if cached data was found, false otherwise.
+   */
+  function loadFromStorage(conversationId: string): boolean {
+    currentConversationId.value = conversationId
+    return _loadFromStorage(conversationId)
   }
 
   // =========================================================================
@@ -344,6 +474,7 @@ export const useChapseStore = defineStore('chapse', () => {
     conversations.value = []
     conversationsLoading.value = false
     hasMoreConversations.value = false
+    _clearAllStorage()
   }
 
   return {
@@ -397,6 +528,7 @@ export const useChapseStore = defineStore('chapse', () => {
 
     // Load Messages
     loadMessagesFromApi,
+    loadFromStorage,
 
     // Reset
     $reset,

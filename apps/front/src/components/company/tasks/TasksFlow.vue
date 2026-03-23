@@ -374,7 +374,6 @@ const getTaskIcon = (taskType: TaskType): string => {
     csr: 'fas fa-leaf',
     press: 'fas fa-newspaper',
     team: 'fas fa-users',
-    data_collection: 'fas fa-database',
   }
   return iconMap[taskType] || 'fas fa-question'
 }

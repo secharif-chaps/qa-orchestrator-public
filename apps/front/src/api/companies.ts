@@ -95,7 +95,6 @@ export const getCompanies = async (filters: {
 export interface CreateCompanyRequest {
   name: string
   website: string
-  callback_base_url?: string
 }
 
 export const createCompany = async (company: CreateCompanyRequest) => {

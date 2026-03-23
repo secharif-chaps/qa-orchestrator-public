@@ -15,14 +15,14 @@ confirming all data has been migrated to normalized tables:
 This is the final cleanup step for the Company data structure refactoring.
 """
 
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
+from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = '015'
-down_revision = '014'
+revision = "015"
+down_revision = "014"
 branch_labels = None
 depends_on = None
 
@@ -38,18 +38,22 @@ def upgrade():
     connection = op.get_bind()
 
     # Count companies with JSON data
-    result = connection.execute(sa.text("""
+    result = connection.execute(
+        sa.text("""
         SELECT COUNT(*) FROM companies
         WHERE profile IS NOT NULL
            OR digital IS NOT NULL
            OR timeline IS NOT NULL
-    """))
+    """)
+    )
     json_companies = result.scalar()
 
     # Count companies with normalized data
-    result = connection.execute(sa.text("""
+    result = connection.execute(
+        sa.text("""
         SELECT COUNT(*) FROM company_profile
-    """))
+    """)
+    )
     normalized_companies = result.scalar()
 
     if json_companies > 0 and normalized_companies == 0:
@@ -62,14 +66,14 @@ def upgrade():
     print(f"Safety check passed: {normalized_companies} companies in normalized tables")
 
     # Drop JSON columns - these are replaced by normalized tables
-    op.drop_column('companies', 'profile')
-    op.drop_column('companies', 'digital')
-    op.drop_column('companies', 'timeline')
-    op.drop_column('companies', 'products')
-    op.drop_column('companies', 'jobs')
-    op.drop_column('companies', 'csr')
-    op.drop_column('companies', 'press')
-    op.drop_column('companies', 'team')
+    op.drop_column("companies", "profile")
+    op.drop_column("companies", "digital")
+    op.drop_column("companies", "timeline")
+    op.drop_column("companies", "products")
+    op.drop_column("companies", "jobs")
+    op.drop_column("companies", "csr")
+    op.drop_column("companies", "press")
+    op.drop_column("companies", "team")
 
     # NOTE: raw_*_knowledge columns are intentionally KEPT
     # - raw_mistral_knowledge
@@ -85,51 +89,27 @@ def downgrade():
     Data in normalized tables would need to be migrated back manually.
     """
     # Recreate JSON columns with default empty values
-    op.add_column('companies', sa.Column(
-        'profile',
-        postgresql.JSON(astext_type=sa.Text()),
-        nullable=True,
-        server_default='{}'
-    ))
-    op.add_column('companies', sa.Column(
-        'digital',
-        postgresql.JSON(astext_type=sa.Text()),
-        nullable=True,
-        server_default='{}'
-    ))
-    op.add_column('companies', sa.Column(
-        'timeline',
-        postgresql.JSON(astext_type=sa.Text()),
-        nullable=True,
-        server_default='{}'
-    ))
-    op.add_column('companies', sa.Column(
-        'products',
-        postgresql.JSON(astext_type=sa.Text()),
-        nullable=True,
-        server_default='{}'
-    ))
-    op.add_column('companies', sa.Column(
-        'jobs',
-        postgresql.JSON(astext_type=sa.Text()),
-        nullable=True,
-        server_default='{}'
-    ))
-    op.add_column('companies', sa.Column(
-        'csr',
-        postgresql.JSON(astext_type=sa.Text()),
-        nullable=True,
-        server_default='{}'
-    ))
-    op.add_column('companies', sa.Column(
-        'press',
-        postgresql.JSON(astext_type=sa.Text()),
-        nullable=True,
-        server_default='{}'
-    ))
-    op.add_column('companies', sa.Column(
-        'team',
-        postgresql.JSON(astext_type=sa.Text()),
-        nullable=True,
-        server_default='[]'
-    ))
+    op.add_column(
+        "companies", sa.Column("profile", postgresql.JSON(astext_type=sa.Text()), nullable=True, server_default="{}")
+    )
+    op.add_column(
+        "companies", sa.Column("digital", postgresql.JSON(astext_type=sa.Text()), nullable=True, server_default="{}")
+    )
+    op.add_column(
+        "companies", sa.Column("timeline", postgresql.JSON(astext_type=sa.Text()), nullable=True, server_default="{}")
+    )
+    op.add_column(
+        "companies", sa.Column("products", postgresql.JSON(astext_type=sa.Text()), nullable=True, server_default="{}")
+    )
+    op.add_column(
+        "companies", sa.Column("jobs", postgresql.JSON(astext_type=sa.Text()), nullable=True, server_default="{}")
+    )
+    op.add_column(
+        "companies", sa.Column("csr", postgresql.JSON(astext_type=sa.Text()), nullable=True, server_default="{}")
+    )
+    op.add_column(
+        "companies", sa.Column("press", postgresql.JSON(astext_type=sa.Text()), nullable=True, server_default="{}")
+    )
+    op.add_column(
+        "companies", sa.Column("team", postgresql.JSON(astext_type=sa.Text()), nullable=True, server_default="[]")
+    )

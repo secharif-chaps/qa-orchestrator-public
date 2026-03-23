@@ -79,12 +79,12 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Alert, Button } from '@owlint/feathers-vue'
-import type { DifyErrorDetails } from '@/types/task'
+import type { AgentErrorDetails } from '@/types/task'
 
 const { t } = useI18n()
 
 interface Props {
-  errorDetails?: DifyErrorDetails | null
+  errorDetails?: AgentErrorDetails | null
   taskId?: number | null
   taskUpdatedAt?: string | null
 }

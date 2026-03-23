@@ -1,13 +1,11 @@
+import os
+import sys
 from logging.config import fileConfig
+from pathlib import Path
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-
-import sys
-import os
-from pathlib import Path
 
 # Add the app directory to the Python path
 sys.path.append(str(Path(__file__).parent.parent))

@@ -10,7 +10,7 @@ Organizations are managed in Keycloak, not in the database. The Organization
 table stores application-specific settings tied to Keycloak organization UUIDs.
 """
 
-from enum import Enum
+from enum import StrEnum
 
 from sqlalchemy import (
     JSON,
@@ -32,19 +32,20 @@ from sqlalchemy.sql import func
 from app.database import Base
 
 
-class ModuleName(str, Enum):
+class ModuleName(StrEnum):
     """Available core modules for feature gating.
 
     Valid modules are: screen, target, explore.
     Note: 'stream' module has been removed from the system.
     Note: 'translation' is now a FeatureFlag, not a core module.
     """
+
     SCREEN = "screen"
     TARGET = "target"
     EXPLORE = "explore"
 
 
-class TransactionType(str, Enum):
+class TransactionType(StrEnum):
     """Token transaction types for audit trail.
 
     Attributes:
@@ -52,12 +53,13 @@ class TransactionType(str, Enum):
         consume: Token usage (company creation, etc.)
         adjustment: System adjustments (migration, corrections)
     """
+
     add = "add"
     consume = "consume"
     adjustment = "adjustment"
 
 
-class ReferenceType(str, Enum):
+class ReferenceType(StrEnum):
     """Reference types for token transactions.
 
     Indicates what triggered the token transaction.
@@ -69,6 +71,7 @@ class ReferenceType(str, Enum):
         manual: Manual admin operation
         system: System operation (migration, etc.)
     """
+
     company = "company"
     csv_import = "csv_import"
     refresh = "refresh"
@@ -76,7 +79,7 @@ class ReferenceType(str, Enum):
     system = "system"
 
 
-class FeatureFlag(str, Enum):
+class FeatureFlag(StrEnum):
     """Organization-level feature flags for add-on capabilities.
 
     Feature flags are OFF by default. Unlike core modules (screen, target, explore),
@@ -88,6 +91,7 @@ class FeatureFlag(str, Enum):
         PAPPERS: Pappers API for French business registry data
         WORLDCHECK: WorldCheck One API for due diligence screening (sanctions, PEP, adverse media)
     """
+
     TRANSLATION = "translation"
     DISCOVER = "discover"
     PAPPERS = "pappers"
@@ -108,6 +112,7 @@ class Organization(Base):
         updated_at: Last update timestamp
         transactions: Related TokenTransaction records
     """
+
     __tablename__ = "organizations"
 
     # Primary key is the Keycloak organization UUID
@@ -148,6 +153,7 @@ class TokenTransaction(Base):
         created_by: Keycloak user ID who initiated the transaction
         organization: Relationship to parent Organization
     """
+
     __tablename__ = "token_transactions"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -195,9 +201,7 @@ class TokenTransaction(Base):
     organization = relationship("Organization", back_populates="transactions")
 
     # Composite index for efficient history queries
-    __table_args__ = (
-        Index("ix_token_transactions_org_created", "organization_id", "created_at"),
-    )
+    __table_args__ = (Index("ix_token_transactions_org_created", "organization_id", "created_at"),)
 
 
 class OrganizationModule(Base):
@@ -215,13 +219,13 @@ class OrganizationModule(Base):
         created_at: Record creation timestamp
         updated_at: Last update timestamp
     """
+
     __tablename__ = "organization_modules"
 
     id = Column(Integer, primary_key=True, index=True)
     organization_id = Column(String, nullable=False, index=True)  # Keycloak organization UUID
     module_name = Column(
-        SQLEnum(ModuleName, name='modulename', values_callable=lambda x: [e.value for e in x]),
-        nullable=False
+        SQLEnum(ModuleName, name="modulename", values_callable=lambda x: [e.value for e in x]), nullable=False
     )
     enabled = Column(Boolean, default=False, nullable=False)
 
@@ -231,7 +235,7 @@ class OrganizationModule(Base):
 
     # Constraints
     __table_args__ = (
-        UniqueConstraint('organization_id', 'module_name', name='uq_organization_modules_organization_module'),
+        UniqueConstraint("organization_id", "module_name", name="uq_organization_modules_organization_module"),
     )
 
 
@@ -251,13 +255,13 @@ class OrganizationFeatureFlag(Base):
         created_at: Record creation timestamp
         updated_at: Last update timestamp
     """
+
     __tablename__ = "organization_feature_flags"
 
     id = Column(Integer, primary_key=True, index=True)
     organization_id = Column(String, nullable=False, index=True)
     flag = Column(
-        SQLEnum(FeatureFlag, name='featureflag', values_callable=lambda x: [e.value for e in x]),
-        nullable=False
+        SQLEnum(FeatureFlag, name="featureflag", values_callable=lambda x: [e.value for e in x]), nullable=False
     )
     enabled = Column(Boolean, default=False, nullable=False)
     enabled_at = Column(DateTime(timezone=True), nullable=True)
@@ -266,6 +270,6 @@ class OrganizationFeatureFlag(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     __table_args__ = (
-        UniqueConstraint('organization_id', 'flag', name='uq_organization_feature_flags_org_flag'),
-        Index('ix_organization_feature_flags_org_enabled', 'organization_id', 'enabled'),
+        UniqueConstraint("organization_id", "flag", name="uq_organization_feature_flags_org_flag"),
+        Index("ix_organization_feature_flags_org_enabled", "organization_id", "enabled"),
     )

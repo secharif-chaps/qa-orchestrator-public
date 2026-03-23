@@ -7,8 +7,7 @@
     {
       "label": "Docker: Full Setup",
       "type": "shell",
-      "command": "bash",
-      "args": ["-c", "cd infra && docker compose --env-file ../.env -f compose.yaml -f compose.local.yaml up -d --build && ./scripts/init-keycloak.sh && docker compose --env-file ../.env -f compose.yaml -f compose.local.yaml exec screen alembic upgrade head && docker compose --env-file ../.env -f compose.yaml -f compose.local.yaml exec global-service alembic upgrade head && docker compose --env-file ../.env -f compose.yaml -f compose.local.yaml restart screen global-service && echo '' && echo '🚇 Starting tunnel for Dify callbacks...' && docker compose --env-file ../.env -f compose.yaml -f compose.local.yaml --profile tunnel up -d tunnel && sleep 5 && docker compose --env-file ../.env -f compose.yaml -f compose.local.yaml logs tunnel --tail 10"],
+      "command": "task init",
       "options": { "cwd": "${workspaceFolder}" },
       "group": "build",
       "presentation": { "reveal": "always", "panel": "shared" },
@@ -218,43 +217,6 @@
       "options": { "cwd": "${workspaceFolder}/infra" },
       "presentation": { "reveal": "always", "panel": "dedicated" },
       "problemMatcher": []
-    },
-
-    // ═══════════════════════════════════════════════
-    //  TUNNEL (Dify callbacks)
-    // ═══════════════════════════════════════════════
-    {
-      "label": "Tunnel: Start",
-      "type": "shell",
-      "command": "docker compose --env-file ../.env -f compose.yaml -f compose.local.yaml --profile tunnel up -d tunnel && sleep 5 && docker compose --env-file ../.env -f compose.yaml -f compose.local.yaml logs tunnel --tail 10",
-      "options": { "cwd": "${workspaceFolder}/infra" },
-      "presentation": { "reveal": "always", "panel": "shared" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Tunnel: Stop",
-      "type": "shell",
-      "command": "docker compose --env-file ../.env -f compose.yaml -f compose.local.yaml --profile tunnel stop tunnel",
-      "options": { "cwd": "${workspaceFolder}/infra" },
-      "presentation": { "reveal": "always", "panel": "shared" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Tunnel: Show URL",
-      "type": "shell",
-      "command": "curl -s http://localhost/api/dev/tunnel-url | python3 -m json.tool || docker compose --env-file ../.env -f compose.yaml -f compose.local.yaml logs tunnel --tail 5",
-      "options": { "cwd": "${workspaceFolder}/infra" },
-      "presentation": { "reveal": "always", "panel": "shared" },
-      "problemMatcher": []
-    },
-    {
-      "label": "Tunnel: Follow Logs",
-      "type": "shell",
-      "command": "docker compose --env-file ../.env -f compose.yaml -f compose.local.yaml logs -f tunnel",
-      "options": { "cwd": "${workspaceFolder}/infra" },
-      "isBackground": true,
-      "presentation": { "reveal": "always", "panel": "dedicated" },
-      "problemMatcher": []
     }
   ],
   "inputs": [
@@ -265,12 +227,8 @@
       "options": [
         "screen",
         "global-service",
-        "screen_celery_worker",
-        "screen_celery_flower",
         "db",
-        "rabbitmq",
-        "keycloak",
-        "tunnel"
+        "keycloak"
       ]
     },
     {

@@ -31,6 +31,7 @@ class OrganizationContext(BaseModel):
         user_id: User UUID (from JWT sub claim)
         username: User's preferred username
     """
+
     organization_id: str
     organization_name: str
     user_id: str
@@ -70,10 +71,7 @@ def extract_organization_from_token(token_payload: dict[str, Any]) -> tuple[str,
 
     # organization_claim is an array with 2 elements
     if not isinstance(organization_claim, list) or len(organization_claim) != 2:
-        logger.warning(
-            "Invalid organization claim format",
-            extra={"organization_claim": organization_claim}
-        )
+        logger.warning("Invalid organization claim format", extra={"organization_claim": organization_claim})
         return None
 
     # Find which element is the dict and which is the string
@@ -88,18 +86,14 @@ def extract_organization_from_token(token_payload: dict[str, Any]) -> tuple[str,
 
     if not org_dict or not org_name:
         logger.warning(
-            "Organization claim missing dict or string element",
-            extra={"organization_claim": organization_claim}
+            "Organization claim missing dict or string element", extra={"organization_claim": organization_claim}
         )
         return None
 
     # Extract the organization name (key) and nested id
     # org_dict should be like: {"Chapsvision": {"id": "19226951-..."}}
     if len(org_dict) != 1:
-        logger.warning(
-            "Organization dict has unexpected number of keys",
-            extra={"org_dict": org_dict}
-        )
+        logger.warning("Organization dict has unexpected number of keys", extra={"org_dict": org_dict})
         return None
 
     # Get the first (and only) key-value pair
@@ -107,10 +101,7 @@ def extract_organization_from_token(token_payload: dict[str, Any]) -> tuple[str,
     org_data = org_dict[org_name_from_dict]
 
     if not isinstance(org_data, dict) or "id" not in org_data:
-        logger.warning(
-            "Organization data missing id field",
-            extra={"org_data": org_data}
-        )
+        logger.warning("Organization data missing id field", extra={"org_data": org_data})
         return None
 
     org_id = org_data["id"]
@@ -118,20 +109,10 @@ def extract_organization_from_token(token_payload: dict[str, Any]) -> tuple[str,
     # Validate that both name representations match
     if org_name_from_dict != org_name:
         logger.warning(
-            "Organization name mismatch",
-            extra={
-                "name_from_dict": org_name_from_dict,
-                "name_from_array": org_name
-            }
+            "Organization name mismatch", extra={"name_from_dict": org_name_from_dict, "name_from_array": org_name}
         )
 
-    logger.debug(
-        "Extracted organization from token",
-        extra={
-            "organization_id": org_id,
-            "organization_name": org_name
-        }
-    )
+    logger.debug("Extracted organization from token", extra={"organization_id": org_id, "organization_name": org_name})
 
     return (org_id, org_name)
 
@@ -153,10 +134,7 @@ def _extract_org_from_user(user: OIDCUser) -> tuple[str, str] | None:
     return extract_organization_from_token({"organization": user.organization})
 
 
-def get_user_organization(
-    request: Request,
-    user: OIDCUser = Depends(idp.get_current_user())
-) -> OrganizationContext:
+def get_user_organization(request: Request, user: OIDCUser = Depends(idp.get_current_user())) -> OrganizationContext:
     """FastAPI dependency to extract organization context from JWT token.
 
     This dependency should be used in API endpoints that require organization-scoped
@@ -196,7 +174,7 @@ def get_user_organization(
                 organization_id=org_id,
                 organization_name=org_name,
                 user_id=user.sub,
-                username=user.preferred_username or ""
+                username=user.preferred_username or "",
             )
         # If no org in user, fall through to try JWT (shouldn't happen for internal requests)
         logger.warning("Internal request user missing organization info")
@@ -209,10 +187,7 @@ def get_user_organization(
     auth_header = request.headers.get("Authorization", "")
     if not auth_header.startswith("Bearer "):
         logger.error("Missing or invalid Authorization header")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authorization header"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authorization header")
 
     raw_token = auth_header.replace("Bearer ", "")
 
@@ -222,10 +197,7 @@ def get_user_organization(
         decoded_token = jwt.decode(raw_token, options={"verify_signature": False})
     except Exception as e:
         logger.error(f"Failed to decode JWT token: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Failed to decode token"
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Failed to decode token")
 
     # Build token data dict with organization claim from the decoded JWT
     token_data = {"organization": decoded_token.get("organization")} if "organization" in decoded_token else {}
@@ -235,24 +207,14 @@ def get_user_organization(
 
     if not org_info:
         logger.error(
-            "User has no organization assignment",
-            extra={
-                "user": user.preferred_username,
-                "user_id": user.sub
-            }
+            "User has no organization assignment", extra={"user": user.preferred_username, "user_id": user.sub}
         )
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User must be assigned to an organization"
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User must be assigned to an organization")
 
     org_id, org_name = org_info
 
     return OrganizationContext(
-        organization_id=org_id,
-        organization_name=org_name,
-        user_id=user.sub,
-        username=user.preferred_username
+        organization_id=org_id, organization_name=org_name, user_id=user.sub, username=user.preferred_username
     )
 
 
@@ -285,15 +247,14 @@ def require_feature(flag: "FeatureFlag"):
     from app.database import get_db
 
     async def check_feature(
-        org_context: OrganizationContext = Depends(get_user_organization),
-        db: Session = Depends(get_db)
+        org_context: OrganizationContext = Depends(get_user_organization), db: Session = Depends(get_db)
     ) -> None:
         from app.services.feature_flags import has_feature
 
         if not has_feature(db, org_context.organization_id, flag):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Feature '{flag.value}' is not enabled for this organization"
+                detail=f"Feature '{flag.value}' is not enabled for this organization",
             )
 
     return check_feature

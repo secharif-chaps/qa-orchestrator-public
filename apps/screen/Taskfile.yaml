@@ -6,7 +6,7 @@ vars:
 tasks:
   lint:
     desc: Lint backend code (ruff)
-    cmd: "{{.COMPOSE}} exec screen ruff check ."
+    cmd: "{{.COMPOSE}} exec screen ruff check . {{.CLI_ARGS}}"
 
   format:
     desc: Format backend code (ruff)

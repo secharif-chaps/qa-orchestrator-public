@@ -86,7 +86,7 @@
 import { computed } from 'vue'
 import Tag from '@/components/ui/Tag.vue'
 import TaskErrorOverlay from '@/components/company/TaskErrorOverlay.vue'
-import type { DifyErrorDetails, TaskStatus } from '@/types/task'
+import type { AgentErrorDetails, TaskStatus } from '@/types/task'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -97,7 +97,7 @@ interface Props {
   icon: string
   insights?: string | null
   taskStatus?: TaskStatus | null
-  errorDetails?: DifyErrorDetails | null
+  errorDetails?: AgentErrorDetails | null
   disabled?: boolean
   taskId?: number | null
   taskUpdatedAt?: string | null

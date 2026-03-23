@@ -2,7 +2,6 @@ import { ref } from 'vue'
 import { defineMutation, useMutation, useQueryCache } from '@pinia/colada'
 import { createCompany, deleteCompany, restoreCompany, refreshCompany } from '@/api/companies'
 import type { CreateCompanyRequest } from '@/api/companies'
-import { getTunnelUrl, isDev } from '@/api/dev'
 import { COMPANY_QUERY_KEYS } from '@/queries/companies'
 import { ORGANIZATION_TOKEN_KEYS } from '@/queries/tokens'
 import { FOLDER_QUERY_KEYS } from '@/queries/folders'
@@ -15,25 +14,6 @@ import { useI18n } from 'vue-i18n'
 // Cost per company creation (screen module)
 const TOKENS_PER_COMPANY = 35
 
-/**
- * Fetch tunnel URL for dev mode, returns undefined in production.
- */
-const fetchTunnelUrlIfDev = async (): Promise<string | undefined> => {
-  if (!isDev()) {
-    return undefined
-  }
-  try {
-    const response = await getTunnelUrl()
-    if (response.is_tunnel) {
-      console.log('[Dev] Using tunnel URL for Dify callbacks:', response.url)
-      return response.url
-    }
-  } catch (error) {
-    console.warn('[Dev] Failed to fetch tunnel URL, using default:', error)
-  }
-  return undefined
-}
-
 export const useCreateCompany = defineMutation(() => {
   const queryCache = useQueryCache()
   const name = ref('')
@@ -42,13 +22,9 @@ export const useCreateCompany = defineMutation(() => {
 
   const { mutate, mutateAsync, ...mutation } = useMutation({
     mutation: async (company: { name: string; website: string }) => {
-      // In dev mode, fetch tunnel URL for Dify callbacks
-      const callback_base_url = await fetchTunnelUrlIfDev()
-
       const request: CreateCompanyRequest = {
         name: company.name,
         website: company.website,
-        ...(callback_base_url && { callback_base_url }),
       }
 
       return createCompany(request)

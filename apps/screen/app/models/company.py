@@ -35,11 +35,6 @@ class Company(Base):
         created_at: Record creation timestamp
         updated_at: Record last update timestamp
         is_deleted: Soft delete flag
-        raw_mistral_knowledge: Raw knowledge from Mistral
-        raw_gpt_knowledge: Raw knowledge from GPT
-        raw_wikipedia_knowledge: Raw knowledge from Wikipedia
-        raw_scraped_website_knowledge: Raw scraped website content
-        raw_pappers_knowledge: Raw knowledge from Pappers
         raw_worldcheck_knowledge: Raw knowledge from WorldCheck One (sanctions, PEP, adverse media)
         error: Error message if data collection failed
         tasks: Relationship to Task model (1:N)
@@ -60,6 +55,7 @@ class Company(Base):
         press_items: Relationship to CompanyPressItem (1:N)
         team_members: Relationship to CompanyTeamMember (1:N)
     """
+
     __tablename__ = "companies"
     __table_args__ = {"schema": SCREEN_SCHEMA}
 
@@ -78,12 +74,7 @@ class Company(Base):
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
     is_deleted = Column(Boolean, default=False, nullable=False)
 
-    # Raw knowledge fields from data collection task (preserved per spec)
-    raw_mistral_knowledge = Column(String, nullable=True)
-    raw_gpt_knowledge = Column(String, nullable=True)
-    raw_wikipedia_knowledge = Column(String, nullable=True)
-    raw_scraped_website_knowledge = Column(String, nullable=True)
-    raw_pappers_knowledge = Column(String, nullable=True)
+    # WorldCheck One knowledge (sanctions, PEP, adverse media) - separate ingestion flow
     raw_worldcheck_knowledge = Column(String, nullable=True)
 
     # Error field
@@ -95,100 +86,31 @@ class Company(Base):
     # 1:1 Relationships to normalized section tables
     # Using uselist=False enforces 1:1 relationship
     # cascade="all, delete-orphan" ensures section data is deleted with company
-    profile_data = relationship(
-        "CompanyProfile",
-        back_populates="company",
-        uselist=False,
-        cascade="all, delete-orphan"
-    )
-    digital_data = relationship(
-        "CompanyDigital",
-        back_populates="company",
-        uselist=False,
-        cascade="all, delete-orphan"
-    )
+    profile_data = relationship("CompanyProfile", back_populates="company", uselist=False, cascade="all, delete-orphan")
+    digital_data = relationship("CompanyDigital", back_populates="company", uselist=False, cascade="all, delete-orphan")
     timeline_data = relationship(
-        "CompanyTimeline",
-        back_populates="company",
-        uselist=False,
-        cascade="all, delete-orphan"
+        "CompanyTimeline", back_populates="company", uselist=False, cascade="all, delete-orphan"
     )
     products_data = relationship(
-        "CompanyProducts",
-        back_populates="company",
-        uselist=False,
-        cascade="all, delete-orphan"
+        "CompanyProducts", back_populates="company", uselist=False, cascade="all, delete-orphan"
     )
-    jobs_data = relationship(
-        "CompanyJobs",
-        back_populates="company",
-        uselist=False,
-        cascade="all, delete-orphan"
-    )
-    csr_data = relationship(
-        "CompanyCsr",
-        back_populates="company",
-        uselist=False,
-        cascade="all, delete-orphan"
-    )
-    press_data = relationship(
-        "CompanyPress",
-        back_populates="company",
-        uselist=False,
-        cascade="all, delete-orphan"
-    )
+    jobs_data = relationship("CompanyJobs", back_populates="company", uselist=False, cascade="all, delete-orphan")
+    csr_data = relationship("CompanyCsr", back_populates="company", uselist=False, cascade="all, delete-orphan")
+    press_data = relationship("CompanyPress", back_populates="company", uselist=False, cascade="all, delete-orphan")
 
     # 1:N Relationships to child tables
     # cascade="all, delete-orphan" ensures child records are deleted with company
-    online_services = relationship(
-        "CompanyOnlineService",
-        back_populates="company",
-        cascade="all, delete-orphan"
-    )
+    online_services = relationship("CompanyOnlineService", back_populates="company", cascade="all, delete-orphan")
     social_media_accounts = relationship(
-        "CompanySocialMediaAccount",
-        back_populates="company",
-        cascade="all, delete-orphan"
+        "CompanySocialMediaAccount", back_populates="company", cascade="all, delete-orphan"
     )
-    timeline_events = relationship(
-        "CompanyTimelineEvent",
-        back_populates="company",
-        cascade="all, delete-orphan"
-    )
-    product_items = relationship(
-        "CompanyProductItem",
-        back_populates="company",
-        cascade="all, delete-orphan"
-    )
-    product_categories = relationship(
-        "CompanyProductCategory",
-        back_populates="company",
-        cascade="all, delete-orphan"
-    )
-    job_offers = relationship(
-        "CompanyJobOffer",
-        back_populates="company",
-        cascade="all, delete-orphan"
-    )
-    csr_initiatives = relationship(
-        "CompanyCsrInitiative",
-        back_populates="company",
-        cascade="all, delete-orphan"
-    )
-    press_items = relationship(
-        "CompanyPressItem",
-        back_populates="company",
-        cascade="all, delete-orphan"
-    )
-    team_members = relationship(
-        "CompanyTeamMember",
-        back_populates="company",
-        cascade="all, delete-orphan"
-    )
+    timeline_events = relationship("CompanyTimelineEvent", back_populates="company", cascade="all, delete-orphan")
+    product_items = relationship("CompanyProductItem", back_populates="company", cascade="all, delete-orphan")
+    product_categories = relationship("CompanyProductCategory", back_populates="company", cascade="all, delete-orphan")
+    job_offers = relationship("CompanyJobOffer", back_populates="company", cascade="all, delete-orphan")
+    csr_initiatives = relationship("CompanyCsrInitiative", back_populates="company", cascade="all, delete-orphan")
+    press_items = relationship("CompanyPressItem", back_populates="company", cascade="all, delete-orphan")
+    team_members = relationship("CompanyTeamMember", back_populates="company", cascade="all, delete-orphan")
 
     # Translations relationship (1:N)
-    translations = relationship(
-        "Translation",
-        back_populates="company",
-        cascade="all, delete-orphan"
-    )
+    translations = relationship("Translation", back_populates="company", cascade="all, delete-orphan")

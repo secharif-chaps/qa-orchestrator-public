@@ -24,38 +24,51 @@ class TestGetClient:
 
     def test_raises_when_feature_not_enabled(self, mock_db):
         """Test error when WorldCheck feature flag is disabled."""
-        with patch("app.services.worldcheck.has_feature", return_value=False):
-            with pytest.raises(WorldCheckFeatureNotEnabledError):
-                WorldCheckService._get_client(mock_db, "org-123")
+        with (
+            patch("app.services.worldcheck.has_feature", return_value=False),
+            pytest.raises(WorldCheckFeatureNotEnabledError),
+        ):
+            WorldCheckService._get_client(mock_db, "org-123")
 
     def test_raises_when_no_config(self, mock_db):
         """Test error when feature config is None."""
-        with patch("app.services.worldcheck.has_feature", return_value=True), \
-             patch("app.services.worldcheck.get_feature_config", return_value=None):
-            with pytest.raises(WorldCheckCredentialsMissingError):
-                WorldCheckService._get_client(mock_db, "org-123")
+        with (
+            patch("app.services.worldcheck.has_feature", return_value=True),
+            patch("app.services.worldcheck.get_feature_config", return_value=None),
+            pytest.raises(WorldCheckCredentialsMissingError),
+        ):
+            WorldCheckService._get_client(mock_db, "org-123")
 
     def test_raises_when_api_key_missing(self, mock_db):
         """Test error when api_key is missing from config."""
-        with patch("app.services.worldcheck.has_feature", return_value=True), \
-             patch("app.services.worldcheck.get_feature_config", return_value={"api_secret": "secret"}):
-            with pytest.raises(WorldCheckCredentialsMissingError):
-                WorldCheckService._get_client(mock_db, "org-123")
+        with (
+            patch("app.services.worldcheck.has_feature", return_value=True),
+            patch("app.services.worldcheck.get_feature_config", return_value={"api_secret": "secret"}),
+            pytest.raises(WorldCheckCredentialsMissingError),
+        ):
+            WorldCheckService._get_client(mock_db, "org-123")
 
     def test_raises_when_api_secret_missing(self, mock_db):
         """Test error when api_secret is missing from config."""
-        with patch("app.services.worldcheck.has_feature", return_value=True), \
-             patch("app.services.worldcheck.get_feature_config", return_value={"api_key": "key"}):
-            with pytest.raises(WorldCheckCredentialsMissingError):
-                WorldCheckService._get_client(mock_db, "org-123")
+        with (
+            patch("app.services.worldcheck.has_feature", return_value=True),
+            patch("app.services.worldcheck.get_feature_config", return_value={"api_key": "key"}),
+            pytest.raises(WorldCheckCredentialsMissingError),
+        ):
+            WorldCheckService._get_client(mock_db, "org-123")
 
     def test_returns_client_with_valid_config(self, mock_db):
         """Test successful client creation with valid credentials."""
-        with patch("app.services.worldcheck.has_feature", return_value=True), \
-             patch("app.services.worldcheck.get_feature_config", return_value={
-                 "api_key": "test-key",
-                 "api_secret": "test-secret",
-             }):
+        with (
+            patch("app.services.worldcheck.has_feature", return_value=True),
+            patch(
+                "app.services.worldcheck.get_feature_config",
+                return_value={
+                    "api_key": "test-key",
+                    "api_secret": "test-secret",
+                },
+            ),
+        ):
             client = WorldCheckService._get_client(mock_db, "org-123")
             assert client._api_key == "test-key"
             assert client._api_secret == "test-secret"
@@ -102,13 +115,15 @@ class TestScreenCompany:
     @pytest.mark.asyncio
     async def test_feature_not_enabled_raises(self, mock_db):
         """Test that disabled feature flag raises error."""
-        with patch("app.services.worldcheck.has_feature", return_value=False):
-            with pytest.raises(WorldCheckFeatureNotEnabledError):
-                await WorldCheckService.screen_company(
-                    db=mock_db,
-                    organization_id="org-123",
-                    company_name="Acme Corp",
-                )
+        with (
+            patch("app.services.worldcheck.has_feature", return_value=False),
+            pytest.raises(WorldCheckFeatureNotEnabledError),
+        ):
+            await WorldCheckService.screen_company(
+                db=mock_db,
+                organization_id="org-123",
+                company_name="Acme Corp",
+            )
 
     @pytest.mark.asyncio
     async def test_api_error_propagates(self, mock_db):
@@ -117,13 +132,15 @@ class TestScreenCompany:
         mock_client.screen_entity = AsyncMock(side_effect=WorldCheckAuthError())
         mock_client.get_groups = AsyncMock(return_value=[{"id": "group-1", "name": "Test"}])
 
-        with patch.object(WorldCheckService, "_get_client", return_value=mock_client):
-            with pytest.raises(WorldCheckAuthError):
-                await WorldCheckService.screen_company(
-                    db=mock_db,
-                    organization_id="org-123",
-                    company_name="Acme Corp",
-                )
+        with (
+            patch.object(WorldCheckService, "_get_client", return_value=mock_client),
+            pytest.raises(WorldCheckAuthError),
+        ):
+            await WorldCheckService.screen_company(
+                db=mock_db,
+                organization_id="org-123",
+                company_name="Acme Corp",
+            )
 
     @pytest.mark.asyncio
     async def test_no_groups_raises(self, mock_db):
@@ -131,13 +148,15 @@ class TestScreenCompany:
         mock_client = AsyncMock()
         mock_client.get_groups = AsyncMock(return_value=[])
 
-        with patch.object(WorldCheckService, "_get_client", return_value=mock_client):
-            with pytest.raises(WorldCheckError, match="No WorldCheck screening groups"):
-                await WorldCheckService.screen_company(
-                    db=mock_db,
-                    organization_id="org-123",
-                    company_name="Acme Corp",
-                )
+        with (
+            patch.object(WorldCheckService, "_get_client", return_value=mock_client),
+            pytest.raises(WorldCheckError, match="No WorldCheck screening groups"),
+        ):
+            await WorldCheckService.screen_company(
+                db=mock_db,
+                organization_id="org-123",
+                company_name="Acme Corp",
+            )
 
 
 class TestScreenIndividual:

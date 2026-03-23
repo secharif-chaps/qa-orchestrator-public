@@ -9,6 +9,7 @@ workflow_configs, chapse_conversation_context) from public schema to
 screen_schema. Uses ALTER TABLE SET SCHEMA to preserve data, sequences,
 indexes, and constraints.
 """
+
 from alembic import op
 
 # revision identifiers, used by Alembic.

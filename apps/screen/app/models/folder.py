@@ -37,6 +37,7 @@ class ShareRole(enum.Enum):
 
     Note: Enum names must be lowercase to match PostgreSQL enum values.
     """
+
     reader = "reader"
     writer = "writer"
 
@@ -63,6 +64,7 @@ class Folder(Base):
         items: Related FolderItem records
         shares: Related FolderShare records for user-level sharing
     """
+
     __tablename__ = "folders"
 
     id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
@@ -104,6 +106,7 @@ class FolderItem(Base):
         added_at: Timestamp when item was added
         owner: Username who added the item (denormalized)
     """
+
     __tablename__ = "folder_items"
 
     id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
@@ -133,21 +136,13 @@ class FolderShare(Base):
         created_at: Timestamp when share was created
         folder: Relationship to parent Folder
     """
+
     __tablename__ = "folder_shares"
 
-    id = Column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        server_default=text("gen_random_uuid()")
-    )
+    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
 
     # Folder reference with cascade delete
-    folder_id = Column(
-        UUID(as_uuid=True),
-        ForeignKey("folders.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True
-    )
+    folder_id = Column(UUID(as_uuid=True), ForeignKey("folders.id", ondelete="CASCADE"), nullable=False, index=True)
 
     # User reference (Keycloak user ID from JWT sub claim)
     user_id = Column(String, nullable=False, index=True)
@@ -156,23 +151,13 @@ class FolderShare(Base):
     user_username = Column(String, nullable=False)
 
     # Share role - reader can only view, writer can add items
-    role = Column(
-        Enum(ShareRole, name="share_role", create_type=False),
-        nullable=False,
-        default=ShareRole.reader
-    )
+    role = Column(Enum(ShareRole, name="share_role", create_type=False), nullable=False, default=ShareRole.reader)
 
     # Timestamp when share was created
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
     # Relationship to parent folder
     folder = relationship("Folder", back_populates="shares")
 
     # Ensure a user can only have one share per folder
-    __table_args__ = (
-        UniqueConstraint('folder_id', 'user_id', name='uq_folder_share_folder_user'),
-    )
+    __table_args__ = (UniqueConstraint("folder_id", "user_id", name="uq_folder_share_folder_user"),)

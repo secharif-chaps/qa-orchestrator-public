@@ -13,9 +13,8 @@ Security layers:
 """
 
 import ipaddress
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from functools import lru_cache
-from typing import Optional
 
 import jwt
 from fastapi import Request
@@ -36,7 +35,7 @@ class InternalTokenPayload(BaseModel):
 
     sub: str  # User ID (Keycloak sub)
     username: str  # Preferred username
-    email: Optional[str] = None  # User email
+    email: str | None = None  # User email
     org_id: str  # Organization UUID
     org_name: str  # Organization name
     roles: list[str]  # User roles from realm_access
@@ -100,7 +99,7 @@ def create_internal_token(
     if not settings.INTERNAL_JWT_SECRET:
         raise InternalJWTError("INTERNAL_JWT_SECRET not configured")
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     expiry = now + timedelta(seconds=settings.INTERNAL_JWT_EXPIRY_SECONDS)
 
     payload = {
@@ -138,9 +137,7 @@ def _get_allowed_networks() -> tuple[ipaddress.IPv4Network | ipaddress.IPv6Netwo
     Uses @lru_cache for thread-safe caching without global mutable state.
     """
     if not settings.INTERNAL_ALLOWED_IPS:
-        logger.info(
-            "INTERNAL_ALLOWED_IPS not set - IP validation disabled for internal auth"
-        )
+        logger.info("INTERNAL_ALLOWED_IPS not set - IP validation disabled for internal auth")
         return ()
 
     networks = []
@@ -155,9 +152,7 @@ def _get_allowed_networks() -> tuple[ipaddress.IPv4Network | ipaddress.IPv6Netwo
         except ValueError as e:
             logger.error(f"Invalid CIDR in INTERNAL_ALLOWED_IPS: {cidr} - {e}")
 
-    logger.info(
-        f"Internal auth IP allowlist configured with {len(networks)} network(s)"
-    )
+    logger.info(f"Internal auth IP allowlist configured with {len(networks)} network(s)")
     return tuple(networks)
 
 
@@ -222,9 +217,7 @@ def validate_source_ip(request: Request) -> None:
     # Check if IP is in any allowed network
     for network in allowed_networks:
         if client_ip in network:
-            logger.debug(
-                f"Internal auth IP {client_ip_str} allowed (matches {network})"
-            )
+            logger.debug(f"Internal auth IP {client_ip_str} allowed (matches {network})")
             return
 
     logger.warning(

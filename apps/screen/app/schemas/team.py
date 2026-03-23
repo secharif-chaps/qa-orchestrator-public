@@ -4,7 +4,6 @@ Provides simplified schemas for team member management,
 abstracting individual Keycloak roles into permission tiers.
 """
 
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -20,10 +19,10 @@ class TeamMemberListItem(BaseModel):
     id: str = Field(..., description="Keycloak user UUID")
     username: str
     email: str
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
+    first_name: str | None = None
+    last_name: str | None = None
     is_current_user: bool = False
-    created_at: Optional[int] = Field(None, description="Unix timestamp from Keycloak")
+    created_at: int | None = Field(None, description="Unix timestamp from Keycloak")
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -52,12 +51,12 @@ class TeamMember(BaseModel):
     id: str = Field(..., description="Keycloak user UUID")
     username: str
     email: str
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    avatar_url: Optional[str] = None
+    first_name: str | None = None
+    last_name: str | None = None
+    avatar_url: str | None = None
     permission_tier: PermissionTier
     is_current_user: bool = False
-    created_at: Optional[int] = Field(None, description="Unix timestamp from Keycloak")
+    created_at: int | None = Field(None, description="Unix timestamp from Keycloak")
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -70,7 +69,7 @@ class UpdateTeamMemberPermissions(BaseModel):
 
     permission_tier: PermissionTier
 
-    @field_validator('permission_tier')
+    @field_validator("permission_tier")
     @classmethod
     def validate_tier(cls, v: PermissionTier) -> PermissionTier:
         """Validate permission tier is valid enum value."""
@@ -84,7 +83,7 @@ class ResetPasswordRequest(BaseModel):
 
     temporary_password: str = Field(..., description="Temporary password to set")
 
-    @field_validator('temporary_password')
+    @field_validator("temporary_password")
     @classmethod
     def validate_password(cls, v: str) -> str:
         """Validate password meets security requirements."""

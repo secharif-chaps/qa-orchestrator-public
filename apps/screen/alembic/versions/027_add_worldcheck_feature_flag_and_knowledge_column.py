@@ -10,7 +10,7 @@ The WORLDCHECK feature flag allows organizations to configure WorldCheck One API
 credentials (API Key + API Secret) for due diligence screening data
 (sanctions, PEP, adverse media).
 """
-import sqlalchemy as sa
+
 
 from alembic import op
 
@@ -27,14 +27,12 @@ def upgrade():
 
     # Add raw_worldcheck_knowledge column to companies table (IF NOT EXISTS for idempotency)
     # After migration 026, companies table lives in screen_schema
-    op.execute(
-        "ALTER TABLE screen_schema.companies ADD COLUMN IF NOT EXISTS raw_worldcheck_knowledge VARCHAR"
-    )
+    op.execute("ALTER TABLE screen_schema.companies ADD COLUMN IF NOT EXISTS raw_worldcheck_knowledge VARCHAR")
 
 
 def downgrade():
     # Remove the column
-    op.drop_column('companies', 'raw_worldcheck_knowledge', schema='screen_schema')
+    op.drop_column("companies", "raw_worldcheck_knowledge", schema="screen_schema")
 
     # Remove 'worldcheck' value from FeatureFlag enum
     # PostgreSQL doesn't support DROP VALUE, so we need to recreate the enum
