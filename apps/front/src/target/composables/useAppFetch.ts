@@ -2,6 +2,7 @@ import { config } from '@target/config'
 import { ofetch } from 'ofetch'
 import { useI18n } from 'vue-i18n'
 import { useAuth } from './useAuth'
+import { useRateLimit } from './useRateLimit'
 
 import {
   ApiError,
@@ -10,11 +11,13 @@ import {
   ApiValidationError,
   type ValidationError,
 } from '@target/types/jsonld'
+import { parseRetryAfter } from '@target/utils/parseRetryAfter'
 
 export function useAppFetch() {
   const baseURL = config.apiBaseUrl
   const auth = useAuth()
   const { t, locale } = useI18n()
+  const { isRateLimited, getRemainingSeconds, setRateLimit } = useRateLimit()
 
   async function getAuthenticationToken() {
     if (auth.isTokenExpired()) {
@@ -34,16 +37,18 @@ export function useAppFetch() {
       Accept: 'application/ld+json',
     },
     async onRequest({ options }) {
-      // Set authorization header dynamically for each request
+      if (isRateLimited.value) {
+        throw new ApiRateLimitError(
+          t('common.errors.rate_limit', { seconds: getRemainingSeconds() }),
+        )
+      }
+
       const token = await getAuthenticationToken()
 
-      // Ensure headers is a Headers instance and set authorization
       if (!(options.headers instanceof Headers)) {
         options.headers = new Headers(options.headers)
       }
       options.headers.set('Authorization', `Bearer ${token}`)
-
-      // Set Accept-Language header with current locale
       options.headers.set('Accept-Language', locale.value)
     },
     onResponseError({ response }) {
@@ -55,8 +60,14 @@ export function useAppFetch() {
             throw new ApiError(t('common.errors.forbidden'), response.status, null)
           case 422:
             throw new ApiValidationError(response._data as ValidationError)
-          case 429:
-            throw new ApiRateLimitError(response._data?.detail)
+          case 429: {
+            const retryAfterSeconds = parseRetryAfter(response)
+            setRateLimit(retryAfterSeconds)
+            throw new ApiRateLimitError(
+              response._data?.detail ||
+                t('common.errors.rate_limit', { seconds: retryAfterSeconds }),
+            )
+          }
           default:
             throw new ApiError(
               response._data?.detail || t('common.errors.unexpected'),
@@ -68,5 +79,7 @@ export function useAppFetch() {
     },
     retry: 3,
     retryDelay: 1000,
+    // ofetch do not use blacklists, only whitelist. We are using default retryStatusCodes minus 429: rate limit must not be retried automatically
+    retryStatusCodes: [408, 409, 425, 500, 502, 503, 504],
   })
 }

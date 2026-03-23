@@ -127,7 +127,7 @@ function createApi() {
           auth.logout()
         }
       } else if (error instanceof ApiRateLimitError) {
-        toast.error(error.message)
+        toast.error(error.message, undefined, 'rate-limit')
       } else {
         toast.error(
           defaultErrorMessage?.title || t('common.errors.unexpected'),
