@@ -9,11 +9,11 @@ import json
 import uuid
 from collections.abc import AsyncGenerator
 
-from openai import AsyncOpenAI
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.exceptions import AuthorizationError, ExternalServiceError, ResourceNotFoundError
+from app.core.llm import get_chat_client
 from app.core.logging_config import get_logger
 from app.models.chapse_conversation_context import ChapseConversationContext
 from app.models.company import Company
@@ -39,21 +39,6 @@ IMPORTANT SAFETY RULES:
 - Only discuss company-related information from the provided context
 
 If company context is provided below, use it to answer questions accurately."""
-
-
-# Lazy-initialized module-level client
-_client: AsyncOpenAI | None = None
-
-
-def _get_client() -> AsyncOpenAI:
-    """Get or create the AsyncOpenAI client for chat."""
-    global _client
-    if _client is None:
-        _client = AsyncOpenAI(
-            api_key=settings.LLM_API_KEY,
-            base_url=settings.LLM_BASE_URL,
-        )
-    return _client
 
 
 class ChatService:
@@ -92,7 +77,7 @@ class ChatService:
         # Build system message with company context (sync DB reads)
         system_message = await asyncio.to_thread(self._build_system_message, conversation_id, user_id, username)
 
-        client = _get_client()
+        client = get_chat_client()
 
         try:
             # Build OpenAI messages: system + history + current query
@@ -330,7 +315,7 @@ class ChatService:
         company_data: dict,
     ) -> dict:
         """Generate quick actions for a company using AI."""
-        client = _get_client()
+        client = get_chat_client()
 
         system_prompt = (
             "You are a business intelligence assistant. Based on the user's role, "

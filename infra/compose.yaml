@@ -38,9 +38,11 @@ services:
       BACKEND_BASE_URL: ${BACKEND_BASE_URL:-http://localhost}
       MAX_CONCURRENT_WORKFLOWS: ${MAX_CONCURRENT_WORKFLOWS:-10}
       SYSTRAN_API_KEY: ${SYSTRAN_API_KEY:-}
+      LLM_PROVIDER: ${LLM_PROVIDER:-openai}
       LLM_API_KEY: ${LLM_API_KEY:-}
       LLM_BASE_URL: ${LLM_BASE_URL:-}
       LLM_MODEL: ${LLM_MODEL:-gpt-5.1}
+      LLM_API_VERSION: ${LLM_API_VERSION:-}
 
   # Global Service (Gateway) — Proxies /api requests to backend
   global-service:

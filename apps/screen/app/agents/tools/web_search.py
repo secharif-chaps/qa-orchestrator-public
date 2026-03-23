@@ -7,27 +7,15 @@ import re
 import time
 from typing import Any
 
-from openai import AsyncOpenAI, RateLimitError
+from openai import RateLimitError
 
 from app.core.config import settings
+from app.core.llm import get_responses_client
 from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
 
-# Lazy-initialized module-level client singleton
-_client: AsyncOpenAI | None = None
 _semaphore: asyncio.Semaphore | None = None
-
-
-def _get_client() -> AsyncOpenAI:
-    """Get or create the AsyncOpenAI client for Responses API."""
-    global _client
-    if _client is None:
-        _client = AsyncOpenAI(
-            api_key=settings.LLM_API_KEY,
-            base_url=settings.LLM_BASE_URL,
-        )
-    return _client
 
 
 def _get_semaphore() -> asyncio.Semaphore:
@@ -109,7 +97,7 @@ async def web_search_query(
     Returns:
         dict with keys: data, sources, input_tokens, output_tokens, duration_ms
     """
-    client = _get_client()
+    client = get_responses_client()
     semaphore = _get_semaphore()
 
     # Build tool config
