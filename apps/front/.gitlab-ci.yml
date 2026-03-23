@@ -41,6 +41,7 @@ variables:
 front:install:
   image: ${CI_REGISTRY}/chapsmind/ci-images/web-linters:latest
   stage: install
+  needs: []
   <<: *yarnrc-setup
   script:
     - yarn install --immutable
@@ -57,12 +58,14 @@ front:install:
 front:eslint:
   <<: *default-lint-job
   stage: lint
+  needs: [front:install]
   script:
     - cd apps/front && npx eslint .
 
 front:prettier:
   <<: *default-lint-job
   stage: lint
+  needs: [front:install]
   script:
     - cd apps/front && npx prettier --check --no-error-on-unmatched-pattern --ignore-unknown .
   after_script:
@@ -71,12 +74,14 @@ front:prettier:
 front:stylelint:
   <<: *default-lint-job
   stage: lint
+  needs: [front:install]
   script:
     - cd apps/front && npx stylelint "src/**/*.{vue,css}"
 
 front:typecheck:
   <<: *default-lint-job
   stage: lint
+  needs: [front:install]
   script:
     - cd apps/front && npx vue-tsc --noEmit -p tsconfig.app.json
 
@@ -84,6 +89,7 @@ front:typecheck:
 front:test:
   <<: *default-lint-job
   stage: test
+  needs: [front:install]
   script:
     - cd apps/front && npx vitest run --coverage
   artifacts:
@@ -112,6 +118,7 @@ front:test:
 front:docker-build:
   stage: build
   extends: .front-docker-build
+  needs: [front:eslint, front:prettier, front:stylelint, front:typecheck, front:test]
   variables:
     IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
   rules:
@@ -125,6 +132,7 @@ front:docker-build:
 front:publish:
   stage: publish
   extends: .front-docker-build
+  needs: [front:docker-build]
   variables:
     IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
   before_script:
