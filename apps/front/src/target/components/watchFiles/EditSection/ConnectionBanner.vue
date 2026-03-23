@@ -1,20 +1,11 @@
 <template>
   <div
-    v-show="!isConnected"
-    class="flex items-center justify-center gap-2 px-4 py-2"
-    :class="{
-      'bg-warning-100 text-warning-700': isReconnecting,
-      'bg-error-100 text-error-700': isDisconnected,
-    }"
+    v-show="isDisconnected"
+    class="bg-error-100 text-error-700 absolute inset-x-0 top-0 z-10 flex items-center justify-center gap-2 px-4 py-2"
     role="alert"
   >
-    <Icon
-      :icon="isReconnecting ? 'fa-spinner-third' : 'fa-circle-exclamation'"
-      :class="{ 'animate-spin': isReconnecting }"
-    />
-    <span class="text-sm font-medium">
-      {{ isReconnecting ? t('watch_files.chat.reconnecting') : t('watch_files.chat.offline') }}
-    </span>
+    <Icon icon="fa-circle-exclamation" />
+    <span class="text-sm font-medium">{{ t('watch_files.chat.offline') }}</span>
   </div>
 </template>
 
@@ -27,5 +18,5 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const mercureStore = useMercureStore()
-const { isConnected, isDisconnected, isReconnecting } = storeToRefs(mercureStore)
+const { isDisconnected } = storeToRefs(mercureStore)
 </script>

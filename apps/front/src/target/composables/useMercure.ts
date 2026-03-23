@@ -63,17 +63,17 @@ interface MercureTokenResponse {
   expires_at: number
 }
 
-const DISCONNECT_TOAST_DELAY_MS = 3000
+const CONNECTION_LOST_DELAY_MS = 3000
 
 // Global state shared across all useMercure instances
 const eventSources = new Map<string, EventSource>()
 const retryCounts = new Map<string, number>()
 const isOnline = useOnline()
+let connectionTimer: ReturnType<typeof setTimeout> | null = null
 
 export function useMercure() {
   const mercureStore = useMercureStore()
-  const { activeSubscriptions, hasShownDisconnectToast, disconnectDebounceTimer } =
-    storeToRefs(mercureStore)
+  const { activeSubscriptions, hasShownDisconnectToast } = storeToRefs(mercureStore)
   const isConnected = ref(false)
   const fetch = useAppFetch()
   const toast = useToast()
@@ -94,14 +94,8 @@ export function useMercure() {
     }
 
     if (!online) {
-      mercureStore.setDisconnected()
-      mercureStore.clearDisconnectTimer()
-      if (!hasShownDisconnectToast.value) {
-        toast.warning(t('watch_files.chat.connection_lost'))
-        hasShownDisconnectToast.value = true
-      }
+      handleConnectionLost()
     } else {
-      mercureStore.setReconnecting()
       for (const eventSource of eventSources.values()) {
         eventSource.close()
       }
@@ -113,31 +107,34 @@ export function useMercure() {
   })
 
   function handleConnectionLost() {
-    mercureStore.setReconnecting()
+    if (connectionTimer !== null) {
+      clearTimeout(connectionTimer)
+    }
 
-    // Clear any existing timer
-    mercureStore.clearDisconnectTimer()
-
-    // Set debounce timer before showing toast (avoid flashing for transient errors)
-    disconnectDebounceTimer.value = setTimeout(() => {
+    // Delay showing the banner and toast to avoid flickering on transient errors
+    connectionTimer = setTimeout(() => {
+      connectionTimer = null
       mercureStore.setDisconnected()
       toast.warning(t('watch_files.chat.connection_lost'))
       hasShownDisconnectToast.value = true
-      disconnectDebounceTimer.value = null
-    }, DISCONNECT_TOAST_DELAY_MS)
+    }, CONNECTION_LOST_DELAY_MS)
   }
 
   function handleConnectionRestored() {
-    // Clear debounce timer if reconnected quickly
-    mercureStore.clearDisconnectTimer()
-
-    mercureStore.setConnected()
-
-    // Show reconnection toast only if we had shown disconnect toast
-    if (hasShownDisconnectToast.value) {
-      toast.info(t('watch_files.chat.connection_restored'))
-      hasShownDisconnectToast.value = false
+    if (connectionTimer !== null) {
+      clearTimeout(connectionTimer)
     }
+
+    // Delay hiding the banner and showing the toast to mirror the lost behavior
+    connectionTimer = setTimeout(() => {
+      connectionTimer = null
+      mercureStore.setConnected()
+
+      if (hasShownDisconnectToast.value) {
+        toast.info(t('watch_files.chat.connection_restored'))
+        hasShownDisconnectToast.value = false
+      }
+    }, CONNECTION_LOST_DELAY_MS)
   }
 
   function makeUrl(urlString: string, topics: string[]): URL {
