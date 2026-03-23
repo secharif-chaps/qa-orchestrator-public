@@ -1,15 +1,14 @@
 <template>
-  <div class="flex h-[calc(100vh-140px)] flex-col">
+  <div class="flex h-[calc(100vh-140px)] flex-col px-6">
     <!-- Header with Total Credits -->
-    <div class="border-sage-800 flex items-center justify-between border-b-2 px-4 py-2 shadow">
-      <h2 class="text-headline-2xl">{{ $t('sidebar.tokens.title', 'Credits') }}</h2>
+    <SidebarHeader :title="$t('sidebar.tokens.title')">
       <Tag
-        variant="success"
+        color="almond"
         :label="`${totalTokens} ${$t('sidebar.tokens.credits', 'credits')}`"
-        icon="fa fa-coins"
+        icon="fa-coins"
         size="md"
       />
-    </div>
+    </SidebarHeader>
 
     <!-- Token History List -->
     <div class="flex-1 overflow-y-auto px-4 py-4">
@@ -22,12 +21,12 @@
       <div v-else class="flex flex-col gap-6">
         <!-- Empty State -->
         <div v-if="hasNoHistory" class="flex flex-col items-center justify-center gap-3 py-8">
-          <Tag variant="sage" icon="fa fa-coins" size="lg" />
+          <Tag color="sage" icon="fa-coins" />
           <div class="text-center">
-            <h3 class="mb-1 text-sm font-semibold text-white">
+            <h3 class="text-sage-900 mb-1 text-sm font-semibold dark:text-white">
               {{ $t('sidebar.tokens.noHistory', 'No usage history') }}
             </h3>
-            <p class="text-sage-400 px-4 text-xs">
+            <p class="text-sage-700 dark:text-sage-300 px-4 text-xs">
               {{
                 $t(
                   'sidebar.tokens.noHistoryDesc',
@@ -103,16 +102,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useQuery } from '@pinia/colada'
-import { useRoute } from 'vue-router'
-import { Button } from '@owlint/feathers-vue'
-import Tag from '@/components/ui/Tag.vue'
-import { organizationBalanceQuery } from '@/queries/tokens'
-import { currentOrganizationQuery } from '@/queries/organization'
 import { recentCompaniesQuery } from '@/queries/companies'
-import TokenHistoryItem from './TokenHistoryItem.vue'
+import { currentOrganizationQuery } from '@/queries/organization'
+import { organizationBalanceQuery } from '@/queries/tokens'
 import type { Company } from '@/types/company'
+import { Button, Tag } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import SidebarHeader from './SidebarHeader.vue'
+import TokenHistoryItem from './TokenHistoryItem.vue'
 
 const route = useRoute()
 

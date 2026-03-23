@@ -1,14 +1,14 @@
 <template>
-  <nav class="relative z-10 flex" aria-label="Breadcrumb" v-if="breadcrumbs.length > 0">
+  <nav class="relative z-10 flex" aria-label="Breadcrumb" v-if="breadcrumbs.length">
     <ol role="list" class="flex items-center space-x-4">
       <!-- Home icon - always first -->
       <li>
         <div>
           <RouterLink
             to="/"
-            class="text-gray-400 transition-colors hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300"
+            class="text-almond-600 transition-colors hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200"
           >
-            <i class="fa fa-home text-lg" aria-hidden="true"></i>
+            <Icon icon="fa-home" class="text-lg" aria-hidden="true" />
             <span class="sr-only">{{ t('sidebar.home') }}</span>
           </RouterLink>
         </div>
@@ -17,10 +17,11 @@
       <!-- Breadcrumb items -->
       <li v-for="item in breadcrumbs" :key="item.name">
         <div class="flex items-center">
-          <i
-            class="fa fa-chevron-right text-sm text-gray-400 dark:text-gray-500"
+          <Icon
+            icon="fa-chevron-right"
+            class="text-sm text-black dark:text-gray-300"
             aria-hidden="true"
-          ></i>
+          />
 
           <!-- Clickable link -->
           <RouterLink
@@ -29,8 +30,8 @@
             :class="[
               'ml-4 text-sm font-medium transition-colors',
               item.current
-                ? 'text-gray-900 dark:text-gray-100'
-                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200',
+                ? 'text-almond-600 dark:text-gray-100'
+                : 'text-almond-600 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-200',
             ]"
             :aria-current="item.current ? 'page' : undefined"
           >
@@ -38,13 +39,15 @@
           </RouterLink>
 
           <!-- Non-clickable text (no link provided) -->
-          <span
+          <Tag
             v-else
-            class="ml-4 text-sm font-medium text-gray-900 dark:text-gray-100"
+            class="ml-4"
+            size="sm"
+            color="indigo"
             :aria-current="item.current ? 'page' : undefined"
           >
             {{ item.name }}
-          </span>
+          </Tag>
         </div>
       </li>
     </ol>
@@ -68,8 +71,9 @@
  * - /admin/organizations → 🏠 Home > Adminorganizationaces
  * - /settings/appearance → 🏠 Home > Settings > Appearance
  */
-import { useI18n } from 'vue-i18n'
 import { useBreadcrumbs } from '@/composables/useBreadcrumbs'
+import { Icon, Tag } from '@owlint/feathers-vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const { breadcrumbs } = useBreadcrumbs()

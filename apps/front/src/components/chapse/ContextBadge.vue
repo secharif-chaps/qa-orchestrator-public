@@ -3,12 +3,12 @@
     class="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-medium transition-all"
     :class="badgeClasses"
   >
-    <i :class="icon" class="text-xs"></i>
+    <Icon :icon class="text-xs" />
     <span class="max-w-[120px] truncate">{{ label }}</span>
     <button
       v-if="dismissible"
       @click="$emit('dismiss')"
-      class="flex-shrink-0 rounded p-0.5 transition-colors hover:bg-black/10 dark:hover:bg-white/10"
+      class="shrink-0 rounded p-0.5 transition-colors hover:bg-black/10 dark:hover:bg-white/10"
       :aria-label="`Remove ${label} context`"
     >
       <i class="fa fa-times text-xs"></i>
@@ -17,6 +17,7 @@
 </template>
 
 <script setup lang="ts">
+import { Icon } from '@owlint/feathers-vue'
 import { computed } from 'vue'
 
 // Support both old ChapseContext format and new CompanyContext format
@@ -40,13 +41,13 @@ const label = computed(() => props.context.name)
 const icon = computed(() => {
   switch (props.context.type) {
     case 'company':
-      return 'fa fa-building'
+      return 'fa-building'
     case 'folder':
-      return 'fa fa-folder'
+      return 'fa-folder'
     case 'organization':
-      return 'fa fa-users'
+      return 'fa-users'
     default:
-      return 'fa fa-building' // Default to company icon
+      return 'fa-building' // Default to company icon
   }
 })
 

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex"
+    class="flex px-6"
     :class="{
       'h-[calc(100vh-140px)]': !sidebarStore.isFullscreen,
       'h-[calc(100vh-70px)]': sidebarStore.isFullscreen,
@@ -9,7 +9,7 @@
     <!-- Conversation List (visible in fullscreen mode) -->
     <div
       v-if="sidebarStore.isFullscreen"
-      class="border-sage-700 bg-sage-850 w-64 flex-shrink-0 border-r"
+      class="border-sage-300 dark:border-sage-700 bg-sage-850 w-64 shrink-0 border-r"
     >
       <ConversationList
         :conversations="conversations"
@@ -26,10 +26,7 @@
     <!-- Main Chat Area -->
     <div class="flex min-w-0 flex-1 flex-col">
       <!-- Header -->
-      <div class="border-sage-700 flex items-center justify-between border-b px-4 py-2">
-        <div class="flex items-center gap-3">
-          <h2 class="text-headline-2xl">{{ $t('sidebar.chapse.title', 'Chaps-e') }}</h2>
-        </div>
+      <SidebarHeader :title="$t('sidebar.chapse.title')">
         <div class="flex items-center gap-2">
           <Button
             variant="tertiary"
@@ -57,12 +54,12 @@
             @click="handleClearHistory"
           />
         </div>
-      </div>
+      </SidebarHeader>
 
       <!-- Add Company from Page Button (when on company page and not in context) -->
       <div
         v-if="availablePageContext && !isPageContextActive && canAddMoreCompanies"
-        class="border-sage-700 border-b px-4 py-2"
+        class="border-sage-300 dark:border-sage-700 border-b px-4 py-2"
       >
         <button
           class="bg-sage-800 hover:bg-sage-700 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors"
@@ -86,7 +83,7 @@
           class="flex h-full flex-col items-center justify-center gap-4"
         >
           <img :src="withBody" class="h-32 w-32" alt="Chaps-e" />
-          <p class="text-sage-300 max-w-xs text-center">
+          <p class="text-sage-900 dark:text-sage-300 max-w-xs text-center">
             {{
               $t(
                 'sidebar.chapse.welcomeMessage',
@@ -142,20 +139,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
+import { getCompanyById } from '@/api/companies'
+import withBody from '@/assets/chapse/default.svg'
+import ChatInput from '@/components/chapse/ChatInput.vue'
+import ChatMessage from '@/components/chapse/ChatMessage.vue'
+import ConversationList from '@/components/chapse/ConversationList.vue'
 import { useChapseChat, type CompanyContext } from '@/composables/useChapseChat'
 import { useChapseContext } from '@/composables/useChapseContext'
+import { buildSmartActionMarker, useChapseStore } from '@/stores/chapse'
 import { useSidebarStore } from '@/stores/sidebar'
-import { useChapseStore, buildSmartActionMarker } from '@/stores/chapse'
-import ChatMessage from '@/components/chapse/ChatMessage.vue'
-import ChatInput from '@/components/chapse/ChatInput.vue'
-import ConversationList from '@/components/chapse/ConversationList.vue'
-import { Button } from '@owlint/feathers-vue'
-import withBody from '@/assets/chapse/default.svg'
 import { toast } from '@/utils/toast'
-import { getCompanyById } from '@/api/companies'
+import { Button } from '@owlint/feathers-vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+import SidebarHeader from './SidebarHeader.vue'
 
 // =============================================================================
 // Props & Emits
