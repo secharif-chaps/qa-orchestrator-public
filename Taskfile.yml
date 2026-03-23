@@ -30,15 +30,15 @@ tasks:
     desc: Start all services (docker compose up)
     cmds:
       - "{{.COMPOSE}} build screen"
-      - "{{.COMPOSE}} up -d --build"
+      - "{{.COMPOSE}} up -d --build --remove-orphans"
 
   down:
     desc: Stop all services
     cmd: "{{.COMPOSE}} down"
 
   restart:
-    desc: Restart all services
-    cmd: "{{.COMPOSE}} restart"
+    desc: Recreate all services
+    cmd: "{{.COMPOSE}} up -d --force-recreate"
 
   logs:
     desc: Tail all service logs

@@ -1,8 +1,14 @@
 import logging
 import os
+from enum import StrEnum
 
 from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
+
+
+class LLMProvider(StrEnum):
+    AZURE = "azure"
+    OPENAI = "openai"
 
 
 class Settings(BaseSettings):
@@ -48,9 +54,11 @@ class Settings(BaseSettings):
     GLOBAL_SERVICE_URL: str = "http://global-service:8001/api"
 
     # LLM settings (OpenAI-compatible: Azure AI Foundry, LiteLLM, etc.)
+    LLM_PROVIDER: LLMProvider = LLMProvider.OPENAI
     LLM_API_KEY: str = ""
     LLM_BASE_URL: str = ""
     LLM_MODEL: str = "gpt-5.1"
+    LLM_API_VERSION: str = ""  # Azure only: e.g. "2024-05-01-preview"
 
     # Task timeout settings
     # Tasks running longer than this are considered stale and will be marked as ERROR

@@ -145,7 +145,7 @@ class TestWebSearchQuery:
 
     @pytest.mark.asyncio
     @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
-    @patch("app.agents.tools.web_search._get_client")
+    @patch("app.agents.tools.web_search.get_responses_client")
     async def test_successful_query_returns_expected_keys(self, mock_get_client, mock_sem, mock_client, mock_response):
         mock_get_client.return_value = mock_client
         mock_client.responses.create = AsyncMock(
@@ -164,7 +164,7 @@ class TestWebSearchQuery:
 
     @pytest.mark.asyncio
     @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
-    @patch("app.agents.tools.web_search._get_client")
+    @patch("app.agents.tools.web_search.get_responses_client")
     async def test_country_code_sets_user_location(self, mock_get_client, mock_sem, mock_client, mock_response):
         mock_get_client.return_value = mock_client
         mock_client.responses.create = AsyncMock(return_value=mock_response(text="{}"))
@@ -177,7 +177,7 @@ class TestWebSearchQuery:
 
     @pytest.mark.asyncio
     @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
-    @patch("app.agents.tools.web_search._get_client")
+    @patch("app.agents.tools.web_search.get_responses_client")
     async def test_no_country_code_no_user_location(self, mock_get_client, mock_sem, mock_client, mock_response):
         mock_get_client.return_value = mock_client
         mock_client.responses.create = AsyncMock(return_value=mock_response(text="{}"))
@@ -190,7 +190,7 @@ class TestWebSearchQuery:
 
     @pytest.mark.asyncio
     @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
-    @patch("app.agents.tools.web_search._get_client")
+    @patch("app.agents.tools.web_search.get_responses_client")
     async def test_allowed_domains_sets_filters(self, mock_get_client, mock_sem, mock_client, mock_response):
         mock_get_client.return_value = mock_client
         mock_client.responses.create = AsyncMock(return_value=mock_response(text="{}"))
@@ -205,7 +205,7 @@ class TestWebSearchQuery:
 
     @pytest.mark.asyncio
     @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
-    @patch("app.agents.tools.web_search._get_client")
+    @patch("app.agents.tools.web_search.get_responses_client")
     async def test_usage_none_returns_zeros(self, mock_get_client, mock_sem, mock_client, mock_response):
         mock_get_client.return_value = mock_client
         resp = mock_response(text="{}")
@@ -219,7 +219,7 @@ class TestWebSearchQuery:
 
     @pytest.mark.asyncio
     @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
-    @patch("app.agents.tools.web_search._get_client")
+    @patch("app.agents.tools.web_search.get_responses_client")
     async def test_duration_ms_is_positive(self, mock_get_client, mock_sem, mock_client, mock_response):
         mock_get_client.return_value = mock_client
         mock_client.responses.create = AsyncMock(return_value=mock_response(text="{}"))
@@ -231,7 +231,7 @@ class TestWebSearchQuery:
 
     @pytest.mark.asyncio
     @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
-    @patch("app.agents.tools.web_search._get_client")
+    @patch("app.agents.tools.web_search.get_responses_client")
     async def test_rate_limit_retries(self, mock_get_client, mock_sem, mock_client, mock_response):
         """Rate limit (429) retries with backoff."""
         mock_get_client.return_value = mock_client
@@ -260,7 +260,7 @@ class TestWebSearchQuery:
 
     @pytest.mark.asyncio
     @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
-    @patch("app.agents.tools.web_search._get_client")
+    @patch("app.agents.tools.web_search.get_responses_client")
     async def test_fallback_to_web_search_preview(self, mock_get_client, mock_sem, mock_client, mock_response):
         """Fallback to web_search_preview when web_search error."""
         mock_get_client.return_value = mock_client
@@ -284,7 +284,7 @@ class TestWebSearchQuery:
 
     @pytest.mark.asyncio
     @patch("app.agents.tools.web_search._get_semaphore", return_value=asyncio.Semaphore(5))
-    @patch("app.agents.tools.web_search._get_client")
+    @patch("app.agents.tools.web_search.get_responses_client")
     async def test_non_web_search_error_propagates(self, mock_get_client, mock_sem, mock_client):
         """Non-web_search errors propagate without fallback."""
         mock_get_client.return_value = mock_client

@@ -160,7 +160,7 @@ class TestStreamChat:
     """Tests for stream_chat."""
 
     @pytest.mark.asyncio
-    @patch("app.services.chat_service._get_client")
+    @patch("app.services.chat_service.get_chat_client")
     async def test_yields_message_events(self, mock_get_client, service, mock_db):
         # Mock the OpenAI streaming response
         mock_chunk = MagicMock()
@@ -192,7 +192,7 @@ class TestStreamChat:
         assert msg_event["answer"] == "Hello"
 
     @pytest.mark.asyncio
-    @patch("app.services.chat_service._get_client")
+    @patch("app.services.chat_service.get_chat_client")
     async def test_generates_conversation_id_when_none(self, mock_get_client, service, mock_db):
         mock_stream = AsyncIterator([])
         mock_client = AsyncMock()
@@ -217,7 +217,7 @@ class TestStreamChat:
         assert len(end_event["conversation_id"]) > 0
 
     @pytest.mark.asyncio
-    @patch("app.services.chat_service._get_client")
+    @patch("app.services.chat_service.get_chat_client")
     async def test_history_messages_sent_to_openai(self, mock_get_client, service, mock_db):
         """History messages should be included in the OpenAI call."""
         mock_stream = AsyncIterator([])
@@ -255,7 +255,7 @@ class TestStreamChat:
         assert openai_messages[3]["content"] == "Tell me more"
 
     @pytest.mark.asyncio
-    @patch("app.services.chat_service._get_client")
+    @patch("app.services.chat_service.get_chat_client")
     async def test_filters_invalid_history_roles(self, mock_get_client, service, mock_db):
         """Only user/assistant roles with non-empty content pass through."""
         mock_stream = AsyncIterator([])
@@ -370,7 +370,7 @@ class TestGenerateQuickActions:
     """Tests for generate_quick_actions."""
 
     @pytest.mark.asyncio
-    @patch("app.services.chat_service._get_client")
+    @patch("app.services.chat_service.get_chat_client")
     async def test_returns_validated_actions(self, mock_get_client, service):
         mock_response = MagicMock()
         mock_response.choices = [MagicMock()]
@@ -400,7 +400,7 @@ class TestGenerateQuickActions:
         assert result["actions"][0]["id"] == "a1"
 
     @pytest.mark.asyncio
-    @patch("app.services.chat_service._get_client")
+    @patch("app.services.chat_service.get_chat_client")
     async def test_caps_at_three_actions(self, mock_get_client, service):
         mock_response = MagicMock()
         mock_response.choices = [MagicMock()]
