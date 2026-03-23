@@ -1,8 +1,10 @@
 <template>
   <div class="flex h-full flex-col">
     <!-- Header -->
-    <div class="border-sage-700 flex items-center justify-between border-b px-4 py-2.5">
-      <h3 class="text-sage-100 text-sm font-semibold">
+    <div
+      class="border-sage-300 dark:border-sage-700 flex items-center justify-between border-b px-4 py-3.5"
+    >
+      <h3 class="dark:text-sage-100 text-sm font-semibold text-black">
         {{ $t('chapse.conversations', 'Conversations') }}
       </h3>
       <Button
@@ -21,7 +23,7 @@
         v-if="loading && conversations.length === 0"
         class="flex items-center justify-center py-8"
       >
-        <i class="fa fa-spinner fa-spin text-sage-400"></i>
+        <Icon icon="fa-spinner" class="fa-spin text-sage-900 dark:text-sage-300" />
       </div>
 
       <!-- Empty State -->
@@ -29,13 +31,15 @@
         v-else-if="conversations.length === 0"
         class="flex flex-col items-center justify-center px-4 py-8 text-center"
       >
-        <div class="bg-sage-700 mb-3 flex h-12 w-12 items-center justify-center rounded-full">
-          <i class="fa fa-comments text-sage-400"></i>
+        <div
+          class="bg-sage-200 dark:bg-sage-700 mb-3 flex size-12 items-center justify-center rounded-full"
+        >
+          <Icon icon="fa-comments" class="text-sage-900 dark:text-sage-300" />
         </div>
-        <p class="text-sage-400 text-sm">
+        <p class="text-sage-900 dark:text-sage-300 text-sm">
           {{ $t('chapse.noConversations', 'No conversations yet') }}
         </p>
-        <p class="text-sage-500 mt-1 text-xs">
+        <p class="text-sage-700 dark:text-sage-200 mt-1 text-xs">
           {{ $t('chapse.startConversation', 'Start a new conversation to begin') }}
         </p>
       </div>
@@ -74,11 +78,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { ChapseConversation } from '@/api/chapse'
-import ConversationItem from './ConversationItem.vue'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Icon } from '@owlint/feathers-vue'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import ConversationItem from './ConversationItem.vue'
 
 const { t } = useI18n()
 

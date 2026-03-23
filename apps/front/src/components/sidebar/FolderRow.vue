@@ -1,32 +1,32 @@
 <template>
-  <div class="bg-sage-800 rounded-card ml-1">
+  <div class="dark:bg-sage-800 border-sage-300 rounded-card ml-1 border bg-white">
     <!-- Folder Header -->
     <div
       @click.stop="$emit('toggle')"
-      class="group bg-sage-800 rounded-card relative z-10 flex cursor-pointer items-center justify-between gap-2 px-2 py-3 transition-colors"
+      class="group text-sage-900 dark:bg-sage-800 rounded-card relative z-10 flex cursor-pointer items-center justify-between gap-2 bg-white px-2 py-3 transition-colors"
     >
       <div class="flex min-w-0 flex-1 items-center gap-2">
         <!-- Expand/Collapse Arrow -->
         <button
           v-if="folder.items && folder.items.length > 0"
-          class="flex w-3 flex-shrink-0 items-center justify-center"
+          class="flex w-3 shrink-0 items-center justify-center"
         >
-          <i
-            :class="isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'"
-            class="fa text-sage-300 text-xs transition-transform"
-          ></i>
+          <Icon
+            :icon="isExpanded ? 'fa-chevron-down' : 'fa-chevron-right'"
+            class="dark:text-sage-300 text-xs transition-transform"
+          />
         </button>
-        <div v-else class="w-3 flex-shrink-0"></div>
+        <div v-else class="w-3 shrink-0"></div>
 
         <!-- Folder Icon -->
-        <i
-          class="fa text-sage-300 flex-shrink-0 text-sm"
-          :class="{ 'fa-folder': !isExpanded, 'fa-folder-open': isExpanded }"
-        ></i>
+        <Icon
+          class="dark:text-sage-300 shrink-0 text-sm"
+          :icon="isExpanded ? 'fa-folder' : 'fa-folder-open'"
+        />
 
         <!-- Folder Name -->
         <span
-          class="truncate text-sm text-white hover:underline"
+          class="truncate text-sm hover:underline"
           @click.prevent="$emit('navigateFolder', folder.id)"
           >{{ folder.name }}</span
         >
@@ -36,7 +36,7 @@
       <Button
         v-if="canAddCompany"
         variant="tertiary"
-        icon="fa fa-plus-circle"
+        icon="fa-plus-circle"
         size="sm"
         @click.stop="$emit('addCompany', folder.id)"
         :title="$t('sidebar.chapse.addCompany')"
@@ -50,23 +50,24 @@
       class="relative ml-3 pb-2 pl-3"
     >
       <!-- <div class="absolute w-0.5 bg-sage-300 h-[calc(100%-30px)] top-0 -left-0.5"></div> -->
-      <div class="relative" v-for="item in visibleItems" :key="item.id">
+      <div class="relative mr-3" v-for="item in visibleItems" :key="item.id">
         <div
           class="rounded-bl-card border-sage-300 absolute -top-8 bottom-0 -left-[10px] h-12 w-3 border-b-2 border-l-2"
         ></div>
         <div
-          class="hover:bg-sage-800/50 group ml-1 flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1.5 transition-colors"
+          class="hover:bg-sage-300/80 dark:hover:bg-sage-800/50 group ml-1 flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1.5 transition-colors"
           @click.prevent="$emit('navigateCompany', folder.id, item.id)"
         >
           <!-- Item Icon -->
-          <div class="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded bg-orange-200">
-            <i class="fa fa-file-lines text-xs text-black"></i>
+          <div class="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-orange-200">
+            <Icon icon="fa-file-lines" class="text-xs text-black" />
           </div>
 
           <!-- Item Name -->
-          <span class="text-sage-300 flex-1 truncate text-xs group-hover:underline">{{
-            item.name
-          }}</span>
+          <span
+            class="text-sage-900 dark:text-sage-300 flex-1 truncate text-xs group-hover:underline"
+            >{{ item.name }}</span
+          >
         </div>
       </div>
     </div>
@@ -74,9 +75,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import type { Folder } from '@/types/folder'
-import { Button } from '@owlint/feathers-vue'
+import { Button, Icon } from '@owlint/feathers-vue'
+import { computed } from 'vue'
 
 const props = defineProps<{
   folder: Folder

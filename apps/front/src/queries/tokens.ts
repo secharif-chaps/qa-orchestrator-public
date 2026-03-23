@@ -115,5 +115,6 @@ export const organizationModulesQuery = defineQueryOptions(
       }
       return getOrganizationModules(organizationId)
     },
+    enabled: !!organizationId,
   }),
 )

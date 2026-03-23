@@ -1,16 +1,15 @@
 <template>
-  <div class="dark flex h-[calc(100vh-140px)] flex-col">
+  <div class="flex h-[calc(100vh-140px)] flex-col px-6">
     <!-- Header -->
-    <div class="border-sage-800 flex items-center justify-between border-b-2 px-4 py-2 shadow">
-      <h2 class="text-headline-2xl">{{ $t('sidebar.notifications.title', 'Notifications') }}</h2>
+    <SidebarHeader :title="$t('sidebar.notifications.title')">
       <Button
-        v-if="unreadCount > 0"
+        v-if="unreadCount"
         variant="tertiary"
         size="sm"
         :label="$t('sidebar.notifications.markAllRead', 'Mark all as read')"
         @click="markAllAsRead"
       />
-    </div>
+    </SidebarHeader>
 
     <!-- Notifications List -->
     <div class="flex-1 overflow-y-auto">
@@ -22,7 +21,7 @@
       <!-- Error State -->
       <div v-else-if="error" class="flex flex-col items-center justify-center gap-3 px-4 py-8">
         <Badge variant="secondary" icon="fa fa-exclamation-triangle" size="lg" />
-        <p class="text-sage-400 text-center text-sm">
+        <p class="text-sage-800 dark:text-sage-400 text-center text-sm">
           {{ $t('sidebar.notifications.errorLoading', 'Unable to load notifications') }}
         </p>
       </div>
@@ -50,10 +49,10 @@
       <div v-else class="flex flex-col items-center justify-center gap-4 px-4 py-12">
         <Badge variant="secondary" icon="fa fa-bell" size="lg" />
         <div class="text-center">
-          <h3 class="mb-2 text-sm font-medium text-white">
+          <h3 class="text-sage-900 mb-2 text-sm font-medium">
             {{ $t('sidebar.notifications.noNotifications', 'No notifications') }}
           </h3>
-          <p class="text-sage-400 text-xs">
+          <p class="text-sage-800 dark:text-sage-400 text-xs">
             {{
               $t(
                 'sidebar.notifications.upToDate',
@@ -83,14 +82,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useQuery } from '@pinia/colada'
-import { Badge, Button } from '@owlint/feathers-vue'
-import NotificationItem from '../ui/NotificationItem.vue'
 import { organizationActivitiesQuery } from '@/queries/organization'
 import { formatRelativeTime } from '@/utils/time'
+import { Badge, Button } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import NotificationItem from '../ui/NotificationItem.vue'
+import SidebarHeader from './SidebarHeader.vue'
 
 // Vuellar Badge colors
 type BadgeColor = 'sage' | 'almond' | 'pink' | 'indigo' | 'yellow' | 'cherry' | 'cyan'

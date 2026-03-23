@@ -2,35 +2,32 @@
   <div
     class="mb-4 flex gap-3"
     :class="{
-      'justify-start': message.role === 'assistant',
-      'justify-end': message.role === 'user',
+      'items-start justify-start': message.role === 'assistant',
+      'items-end justify-end': message.role === 'user',
     }"
   >
     <!-- Chaps-e Avatar (left side for assistant messages) -->
     <div
       v-if="message.role === 'assistant' && isFullscreen"
-      class="bg-sage-900 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full"
+      class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
     >
       <img v-if="chapseAvatar" :src="chapseAvatar" class="h-6 w-6" alt="Chaps-e" />
-      <i v-else class="fa fa-robot text-secondary text-sm"></i>
+      <Icon icon="fa-robot" v-else class="text-secondary text-sm" />
     </div>
 
     <!-- Smart Action Message (special styling) -->
     <div
       v-if="message.isSmartAction"
-      class="bg-accent-200 text-accent-800 flex max-w-[100%] items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium"
+      class="bg-accent-200 text-accent-800 flex max-w-full items-center gap-2 rounded-xl px-4 py-3 text-sm font-medium"
     >
-      <i
-        :class="message.smartActionIcon || 'fa-solid fa-wand-magic-sparkles'"
-        class="text-base"
-      ></i>
+      <Icon :icon="message.smartActionIcon || 'fa-wand-magic-sparkles'" class="text-base" />
       <span>{{ message.smartActionLabel }}</span>
     </div>
 
     <!-- Regular Message Content -->
-    <div v-else class="max-w-[100%] rounded-xl px-4 py-3 text-sm" :class="messageClasses">
+    <div v-else class="max-w-full rounded-xl text-sm" :class="messageClasses">
       <div v-if="message.role === 'assistant' && formattedContent.length === 0">
-        <i class="fa fa-circle-notch fa-spin text-secondary text-sm"></i>
+        <Icon icon="fa-circle-notch" class="fa-spin text-secondary text-sm" />
       </div>
       <div v-sanitize-html="formattedContent"></div>
 
@@ -41,20 +38,19 @@
     </div>
 
     <!-- User Avatar placeholder (right side for user messages) -->
-    <div
-      v-if="message.role === 'user'"
-      class="bg-sage-300 dark:bg-sage-300 text-sage-950 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-semibold"
-    >
-      <i class="fa fa-user"></i>
-    </div>
+    <Avatar v-if="message.role === 'user'" :label="authStore.username" color="almond" size="sm" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { ChatMessage as ChatMessageType } from '@/stores/chapse'
 import chapseHead from '@/assets/chapse/head.svg'
+import { useAuthStore } from '@/stores/auth'
+import type { ChatMessage as ChatMessageType } from '@/stores/chapse'
 import { useSidebarStore } from '@/stores/sidebar'
+import { Avatar, Icon } from '@owlint/feathers-vue'
+import { computed } from 'vue'
+
+const authStore = useAuthStore()
 
 const props = defineProps<{
   message: ChatMessageType
@@ -74,9 +70,9 @@ const chapseAvatar = computed(() => {
 
 const messageClasses = computed(() => {
   if (props.message.role === 'assistant') {
-    return 'bg-sage-900 dark:bg-sage-900 text-base dark:text-gray-100'
+    return 'text-sage-950 dark:text-sage-50'
   } else {
-    return 'bg-sage-300 text-sage-950 dark:bg-sage-300/20 dark:text-sage-300'
+    return 'bg-white text-sage-950 dark:bg-sage-700 dark:text-sage-100 p-4'
   }
 })
 

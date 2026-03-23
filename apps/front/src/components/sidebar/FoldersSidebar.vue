@@ -1,15 +1,14 @@
 <template>
-  <div class="flex h-[calc(100vh-140px)] min-w-[320px] flex-col">
+  <div class="flex h-[calc(100vh-140px)] min-w-[320px] flex-col px-6">
     <!-- Header -->
-    <div class="border-sage-800 flex items-center justify-between border-b-2 px-4 py-2 shadow">
-      <h2 class="text-headline-2xl">{{ $t('sidebar.foldersSidebar.title', 'Folders') }}</h2>
+    <SidebarHeader :title="$t('sidebar.foldersSidebar.title')">
       <Button
         variant="tertiary"
         size="sm"
         :label="$t('sidebar.foldersSidebar.viewAll', 'View all folders')"
         @click="$router.push('/folders')"
       />
-    </div>
+    </SidebarHeader>
 
     <!-- Search -->
     <div class="px-4 pt-4 pb-2">
@@ -23,19 +22,13 @@
 
     <!-- Folders List -->
     <div class="relative flex-1 overflow-y-auto px-2 pt-4 pb-12">
-      <div
-        class="from-sage-950 fixed top-[180px] z-20 h-4 w-full bg-transparent bg-gradient-to-b to-transparent"
-      ></div>
-      <div
-        class="from-sage-950 fixed bottom-16 z-20 h-4 w-full bg-transparent bg-gradient-to-t to-transparent"
-      ></div>
       <div v-if="isLoading" class="flex items-center justify-center py-8">
-        <i class="fa fa-spinner fa-spin text-sage-400"></i>
+        <Icon icon="fa-spinner" class="fa-spin text-sage-400" />
       </div>
 
       <div
         v-else-if="filteredFolders.length === 0"
-        class="text-sage-400 px-4 py-8 text-center text-sm"
+        class="text-sage-900 dark:text-sage-400 px-4 py-8 text-center text-sm"
       >
         {{
           searchTerm
@@ -46,9 +39,9 @@
 
       <div v-else class="flex flex-col gap-3">
         <!-- Favorites Section -->
-        <div v-if="favoriteFolders.length > 0">
+        <div v-if="favoriteFolders.length > 0" class="space-y-3">
           <div
-            class="text-sage-300 group hover:bg-sage-800/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors"
+            class="hover:bg-sage-700/20 text-sage-900 dark:text-sage-300 group dark:hover:bg-sage-800/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors"
             @click="$router.push('/folders')"
           >
             <i class="fa fa-heart text-sm"></i>
@@ -75,7 +68,7 @@
         <!-- Regular Folders -->
         <div v-if="regularFolders.length > 0" class="space-y-3">
           <div
-            class="text-sage-300 group hover:bg-sage-800/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors"
+            class="hover:bg-sage-700/20 text-sage-900 dark:text-sage-300 group dark:hover:bg-sage-800/50 flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors"
             @click="$router.push('/folders')"
           >
             <i class="fa fa-folders text-sm"></i>
@@ -101,13 +94,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useQuery } from '@pinia/colada'
 import { foldersWithItemsQuery } from '@/queries/folders'
-import { Button, Searchbar } from '@owlint/feathers-vue'
-import FolderRow from './FolderRow.vue'
 import type { Folder } from '@/types/folder'
+import { Button, Icon, Searchbar } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import FolderRow from './FolderRow.vue'
+import SidebarHeader from './SidebarHeader.vue'
 
 const router = useRouter()
 

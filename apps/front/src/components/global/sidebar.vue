@@ -1,7 +1,7 @@
 <template>
   <div
     ref="sidebarEl"
-    class="bg-sage-950 dark:bg-sidebar flex w-full flex-col justify-between overflow-hidden text-white"
+    class="dark:bg-sidebar flex w-full flex-col justify-between overflow-hidden text-white"
     @wheel="handleWheel"
   >
     <Transition
@@ -22,36 +22,36 @@
     </Transition>
 
     <!-- Footer Actions -->
-    <div
-      v-if="!sidebarStore.isFullscreen"
-      class="border-sage-800 z-50 grid w-[320px] grid-cols-2 border-t px-4 py-3 delay-500"
-    >
-      <button
-        class="text-sage-300 flex flex-col items-center gap-1 transition-colors hover:text-white"
-        @click="$router.push('/settings')"
-      >
-        <i class="fa fa-cog text-lg"></i>
-        <span class="text-xs">{{ $t('sidebar.footer.settings', 'Settings') }}</span>
-      </button>
-      <button
-        class="text-sage-300 flex flex-col items-center gap-1 transition-colors hover:text-white"
-        @click="toggleAccessibilityMode()"
-      >
-        <i class="fa fa-universal-access text-lg"></i>
-        <span class="text-xs">{{ $t('sidebar.footer.accessibility', 'Accessibility') }}</span>
-      </button>
+    <div v-if="!sidebarStore.isFullscreen" class="w-[320px] px-6 delay-500">
+      <div class="border-sage-300 dark:border-sage-800 z-50 grid grid-cols-2 border-t py-3">
+        <button
+          class="text-sage-700 dark:text-sage-300 hover:text-sage-950 flex flex-col items-center gap-1 transition-colors dark:hover:text-white"
+          @click="$router.push('/settings')"
+        >
+          <Icon icon="fa-cog" class="text-lg" />
+          <span class="text-xs">{{ $t('sidebar.footer.settings', 'Settings') }}</span>
+        </button>
+        <button
+          class="text-sage-700 dark:text-sage-300 hover:text-sage-950 flex flex-col items-center gap-1 transition-colors dark:hover:text-white"
+          @click="toggleAccessibilityMode()"
+        >
+          <Icon icon="fa-universal-access" class="text-lg" />
+          <span class="text-xs">{{ $t('sidebar.footer.accessibility', 'Accessibility') }}</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useSidebarStore } from '@/stores/sidebar'
-import { computed, ref, onMounted, onUnmounted } from 'vue'
-import TokenSidebar from '@/components/sidebar/TokenSidebar.vue'
 import ChapseSidebar from '@/components/sidebar/ChapseSidebar.vue'
-import NotificationsSidebar from '@/components/sidebar/NotificationsSidebar.vue'
 import FoldersSidebar from '@/components/sidebar/FoldersSidebar.vue'
+import NotificationsSidebar from '@/components/sidebar/NotificationsSidebar.vue'
+import TokenSidebar from '@/components/sidebar/TokenSidebar.vue'
+import { useSidebarStore } from '@/stores/sidebar'
 import { toast } from '@/utils/toast'
+import { Icon } from '@owlint/feathers-vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const sidebarStore = useSidebarStore()

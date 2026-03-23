@@ -1,8 +1,8 @@
 <template>
   <div class="relative">
     <!-- Context Badges Row (always visible to allow adding companies) -->
-    <div class="border-sage-700 flex flex-wrap items-center gap-2 border-t px-4 py-2">
-      <span class="text-sage-400 text-xs">
+    <div class="border-sage-300 dark:border-sage-700 flex flex-wrap items-center gap-2 px-4 py-2">
+      <span class="text-sage-900 dark:text-sage-300 text-xs">
         {{ $t('sidebar.chapse.context', 'Context:') }}
       </span>
       <ContextBadge
@@ -34,7 +34,7 @@
           v-model="message"
           :placeholder="placeholder"
           :disabled="disabled"
-          class="bg-sage-900 text-sage-100 placeholder-sage-500 focus:ring-primary/50 max-h-[200px] min-h-[80px] w-full resize-none rounded-xl p-4 pr-14 text-sm focus:ring-2 focus:outline-none disabled:opacity-50"
+          class="bg-sage-50 dark:bg-sage-900 border-sage-300 text-sage-950 dark:text-sage-100 placeholder-sage-500 focus:ring-primary/50 max-h-[200px] min-h-[80px] w-full resize-none rounded-xl border p-4 pr-14 text-sm focus:ring-2 focus:outline-none disabled:opacity-50"
           @keydown.enter.ctrl.prevent="handleSend"
           @keydown.enter.meta.prevent="handleSend"
           @input="autoResize"
@@ -42,10 +42,10 @@
 
         <!-- Send Button -->
         <Button
-          variant="primary"
-          icon="fa fa-paper-plane"
+          variant="accent"
+          icon="fa-send"
           size="sm"
-          class="absolute right-3 bottom-3"
+          class="absolute right-3 bottom-4"
           :disabled="!canSend && !loading"
           :loading="loading"
           @click="handleSend"
@@ -53,14 +53,16 @@
       </div>
 
       <!-- Helper Text -->
-      <p class="text-sage-500 mt-2 text-xs">
-        <kbd class="bg-sage-800 text-sage-400 rounded px-1.5 py-0.5">{{
-          $t('common.keyboard.ctrl')
-        }}</kbd>
+      <p class="text-sage-900 dark:text-sage-300 mt-2 text-xs">
+        <kbd
+          class="bg-sage-300 dark:bg-sage-800 text-sage-950 dark:text-sage-200 rounded px-1.5 py-0.5"
+          >{{ $t('common.keyboard.ctrl') }}</kbd
+        >
         +
-        <kbd class="bg-sage-800 text-sage-400 rounded px-1.5 py-0.5">{{
-          $t('common.keyboard.enter')
-        }}</kbd>
+        <kbd
+          class="bg-sage-300 dark:bg-sage-800 text-sage-950 dark:text-sage-200 rounded px-1.5 py-0.5"
+          >{{ $t('common.keyboard.enter') }}</kbd
+        >
         {{ $t('sidebar.chapse.toSend') }}
       </p>
     </div>
@@ -68,11 +70,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
-import { Button } from '@owlint/feathers-vue'
-import ContextBadge from './ContextBadge.vue'
-import CompanyContextSelector from './CompanyContextSelector.vue'
 import type { CompanyContext } from '@/stores/chapse'
+import { Button } from '@owlint/feathers-vue'
+import { computed, nextTick, ref, watch } from 'vue'
+import CompanyContextSelector from './CompanyContextSelector.vue'
+import ContextBadge from './ContextBadge.vue'
 
 interface Props {
   /** Initial message value */

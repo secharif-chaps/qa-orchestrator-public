@@ -1,4 +1,4 @@
-import { ref, watch, onMounted, onUnmounted, nextTick, readonly } from 'vue'
+import { onMounted, onUnmounted, readonly, ref, watch } from 'vue'
 
 // Global state - shared across all component instances
 const STORAGE_KEY = 'user-theme'
@@ -6,7 +6,8 @@ const themes = ['light', 'dark', 'system'] as const
 type Theme = (typeof themes)[number]
 
 // Global reactive state
-const globalTheme = ref<Theme>('system')
+// Default have to be system when design is be ready
+const globalTheme = ref<Theme>('light')
 const globalIsDark = ref(false)
 let isInitialized = false
 
@@ -41,36 +42,36 @@ const updateTheme = () => {
 }
 
 // Set theme and persist to localStorage
+// TEMPORARY: Force light theme until dark mode designs are delivered.
+// When ready, remove the early return below.
 const setTheme = (newTheme: Theme) => {
+  // Dark mode not yet designed — ignore theme changes
+  if (newTheme !== 'light') return
+
   globalTheme.value = newTheme
 
   if (typeof localStorage !== 'undefined') {
     localStorage.setItem(STORAGE_KEY, newTheme)
-    console.log('Theme saved to localStorage:', newTheme)
   }
 
-  // Apply immediately without waiting for nextTick
   updateTheme()
-
-  // Also schedule for nextTick as fallback
-  nextTick(() => {
-    console.log('Applying theme via nextTick as fallback')
-    updateTheme()
-  })
 }
 
 // Initialize theme on client
+// TEMPORARY: Force light theme for all users until dark mode designs are delivered.
+// When dark mode mockups are ready, restore localStorage logic:
+//   const stored = localStorage.getItem(STORAGE_KEY) as Theme | null
+//   globalTheme.value = stored && themes.includes(stored) ? stored : 'system'
 const initTheme = () => {
   if (typeof window === 'undefined' || isInitialized) return
 
-  // Load from localStorage or default to system
-  const stored = localStorage.getItem(STORAGE_KEY) as Theme | null
-  globalTheme.value = stored && themes.includes(stored) ? stored : 'system'
+  // Force light theme — dark mode designs not yet available
+  globalTheme.value = 'light'
 
   // Apply initial theme
   updateTheme()
 
-  // Listen for system theme changes
+  // Listen for system theme changes (will be useful when 'system' is re-enabled)
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
   const handleSystemThemeChange = () => {
     if (globalTheme.value === 'system') {

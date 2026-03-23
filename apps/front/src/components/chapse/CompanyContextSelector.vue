@@ -1,16 +1,11 @@
 <template>
   <div class="relative" ref="containerRef">
     <!-- Trigger Button -->
-    <button
-      type="button"
-      class="bg-sage-700 text-sage-200 hover:bg-sage-600 inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50"
-      :disabled="disabled"
-      @click="toggleDropdown"
-    >
-      <i class="fa fa-plus text-xs"></i>
+    <Button variant="secondary" size="sm" :disabled="disabled" @click="toggleDropdown">
+      <Icon icon="fa-plus" class="text-xs" />
       <span>{{ $t('sidebar.chapse.addCompany', 'Add company') }}</span>
       <span v-if="showLimit" class="text-sage-400">({{ contextCount }}/{{ maxCompanies }})</span>
-    </button>
+    </Button>
 
     <!-- Dropdown -->
     <Transition
@@ -23,7 +18,7 @@
     >
       <div
         v-if="isOpen"
-        class="bg-sage-800 border-sage-700 absolute z-[9999] mt-1 w-[145px] overflow-hidden rounded-xl border shadow-lg"
+        class="bg-sage-800 border-sage-700 absolute z-9999 mt-1 w-[145px] overflow-hidden rounded-xl border shadow-lg"
         :class="dropdownPosition"
       >
         <!-- Search Input -->
@@ -112,10 +107,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import { getCompanies } from '@/api/companies'
-import type { Company } from '@/types/company'
 import type { CompanyContext } from '@/stores/chapse'
+import type { Company } from '@/types/company'
+import { Button, Icon } from '@owlint/feathers-vue'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 
 interface Props {
   /** Current company context IDs */

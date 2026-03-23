@@ -55,6 +55,11 @@
   --screen-lg: 1440px;
   --screen-xl: 1920px;
 
+  /* Blob Blur */
+  --blur-blob-sm: 280px;
+  --blur-blob-md: 420px;
+  --blur-blob-lg: 460px;
+
   /* Box Shadows */
   --shadow-shadow-1:
     0px 4px 6px -1px rgba(45, 57, 58, 0.1), 0px 2px 4px -1px rgba(45, 57, 58, 0.06);
@@ -374,6 +379,9 @@
     --theme-color-info-light: var(--color-info-100);
     --theme-color-info-light-content: var(--color-info-950);
 
+    /* BLOB BACKGROUND */
+    --blob-gradient: linear-gradient(135deg, #96fff9 0%, #b0b0fcf0 50%, #cc5fff10 100%);
+
     --theme-color-primary-stroke: var(--color-sage-200);
     --theme-color-primary-light-stroke: var(--color-sage-100);
 
@@ -418,6 +426,9 @@
     --theme-color-info-content: var(--color-white);
     --theme-color-info-light: var(--color-info-100);
     --theme-color-info-light-content: var(--color-info-700);
+
+    /* BLOB BACKGROUND */
+    --blob-gradient-top: linear-gradient(135deg, #8db4b5 0%, #7f5a8b 100%);
 
     --theme-color-primary-stroke: var(--color-sage-700);
     --theme-color-primary-light-stroke: var(--color-primary-100);

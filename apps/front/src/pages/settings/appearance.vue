@@ -4,7 +4,8 @@
     <LocaleSection />
 
     <!-- Theme Settings -->
-    <ThemeSection :current-theme="currentTheme" @theme-change="handleThemeChange" />
+    <!-- TEMPORARY Dark mode disabled, waiting for designs -->
+    <ThemeSection v-if="false" :current-theme="currentTheme" @theme-change="handleThemeChange" />
   </div>
 </template>
 

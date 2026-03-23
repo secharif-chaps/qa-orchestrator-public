@@ -1,164 +1,67 @@
 <template>
   <div class="z-20 w-full">
-    <div class="dark bg-sage-950 fixed top-0 z-20 h-[68px] w-full pr-6">
-      <div class="flex h-full items-center justify-between">
+    <div class="fixed top-0 z-20 h-[68px] w-full pr-6">
+      <div class="flex h-full w-full items-center gap-3">
         <RouterLink to="/">
           <div
             class="text-sage-200 relative flex items-center space-x-2 pl-6 text-xl dark:text-white"
           >
-            <img :src="logo_small" class="!h-10 !w-auto" />
-            <h1>
-              <span> ChapsMind </span>
-            </h1>
+            <img :src="logo" class="h-10! w-auto!" />
           </div>
         </RouterLink>
-        <div class="max-w-md grow"></div>
-        <div class="flex items-center gap-4">
-          <!-- Module badges -->
-          <ModuleBadges v-if="organization && !isLoading" :organization-id="organization.id" />
+        <div class="flex grow gap-3">
+          <div class="bg-sage-300 h-8 w-px" />
+          <Breadcrumbs class="grow" />
+        </div>
 
-          <!-- <div>
-            <img :src="logo" class="!h-10 !w-auto" />
-          </div> -->
+        <div class="flex items-center gap-3">
+          <!-- Module badges -->
+          <ModuleBadges v-if="organization && !isOrgLoading" :organization-id="organization.id" />
 
           <!-- Dev mode only theme toggle -->
-          <Button
+          <button
             v-if="isDebugUser"
-            variant="tertiary"
-            :icon="isDark ? 'fa fa-sun' : 'fa fa-moon'"
+            class="text-sage-500 hover:text-sage-800 dark:text-sage-400 dark:hover:text-sage-200 cursor-pointer transition-colors"
             @click="toggleTheme"
-          />
+          >
+            <i :class="isDark ? 'fa fa-sun' : 'fa fa-moon'" />
+          </button>
 
-          <!-- Dev mode only language toggle -->
-          <Button
-            v-if="isDebugUser"
-            variant="tertiary"
-            icon="fa fa-language"
-            @click="toggleLocale"
-          />
-
-          <!-- Admin button - only visible to users with admin.organizations permission -->
-          <Button
-            v-if="hasAdminPermission"
-            variant="tertiary"
-            icon="fa fa-shield"
-            @click="$router.push('/admin')"
-          />
-
-          <Button
-            variant="tertiary"
-            icon="fa fa-arrow-right-from-bracket"
-            :title="$t('logout.tooltip')"
-            @click="handleLogout"
-          />
-
-          <div class="bg-sage-600 dark:bg-sage-400 h-4 w-px"></div>
-
-          <Button
-            :variant="isTokensActive ? 'accent' : 'tertiary'"
-            icon="fa fa-circle-dollar"
-            @click="toggleTokens"
-          />
-          <Button
-            :variant="isChaapseActive ? 'accent' : 'tertiary'"
-            icon="fa fa-robot"
-            @click="toggleChapse"
-          />
-
-          <Button
-            :variant="isNotificationsActive ? 'accent' : 'tertiary'"
-            icon="fa fa-bell"
-            @click="toggleNotifications"
-          />
-          <Button
-            :variant="isFoldersActive ? 'accent' : 'tertiary'"
-            icon="fa fa-grip-lines"
-            @click="toggleFolders"
-          />
+          <UserMenu />
+          <div class="bg-sage-300 h-4.5 w-px rounded-full" />
+          <AppBarNav />
         </div>
       </div>
     </div>
-
-    <!-- Logout Confirmation Modal -->
-    <LogoutConfirmationModal
-      v-model="showLogoutModal"
-      :is-loading="isLoggingOut"
-      @confirm="confirmLogout"
-    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import logo_small from '@/assets/CHAPSVISION_LOGO_ChapsVision_logo_icone_amande.svg'
-import { useTheme } from '@/composables/useTheme'
-import { useAuthStore } from '@/stores/auth'
-import { useSidebarStore } from '@/stores/sidebar'
-import { Button } from '@owlint/feathers-vue'
-import { useQuery } from '@pinia/colada'
-import { currentOrganizationQuery } from '@/queries/organization'
+import logo_dark from '@/assets/CHAPSVISION_LOGO_DARK.svg'
+import logo_light from '@/assets/CHAPSVISION_LOGO_LIGHT.svg'
+import AppBarNav from '@/components/global/AppBarNav.vue'
 import ModuleBadges from '@/components/global/ModuleBadges.vue'
-import LogoutConfirmationModal from '@/components/global/LogoutConfirmationModal.vue'
-import { computed, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
+import UserMenu from '@/components/global/UserMenu.vue'
+import { useTheme } from '@/composables/useTheme'
+import { currentOrganizationQuery } from '@/queries/organization'
+import { useAuthStore } from '@/stores/auth'
+import { useQuery } from '@pinia/colada'
+import { computed } from 'vue'
+import Breadcrumbs from '../ui/Breadcrumbs.vue'
 
 const authStore = useAuthStore()
-const { signOut } = authStore
-const sidebarStore = useSidebarStore()
-
 const { isDark, setTheme } = useTheme()
-const { locale } = useI18n()
 
-// Permission checks for navigation buttons
-const hasAdminPermission = computed(() => authStore.hasPermission('admin.organizations'))
+const logo = computed(() => (isDark.value ? logo_dark : logo_light))
+
+const { data: organization, isLoading: isOrgLoading } = useQuery(() => currentOrganizationQuery())
 
 const isDebugUser = computed(() => {
   const username = authStore.user?.profile?.preferred_username?.toLowerCase()
   return username === 'nmr' || username === 'suh' || username === 'nmr-cv'
 })
 
-// Theme toggle function
 const toggleTheme = () => {
   setTheme(isDark.value ? 'light' : 'dark')
-}
-
-// Language toggle function
-const toggleLocale = () => {
-  locale.value = locale.value === 'en-US' ? 'fr-FR' : 'en-US'
-}
-
-// Fetch current organization
-const { data: organization, isLoading } = useQuery(() => currentOrganizationQuery())
-
-// Sidebar toggle handlers
-const isTokensActive = computed(() => sidebarStore.state === 'tokens')
-const isChaapseActive = computed(() => sidebarStore.state === 'chapse')
-const isNotificationsActive = computed(() => sidebarStore.state === 'notifications')
-const isFoldersActive = computed(() => sidebarStore.state === 'folders')
-
-const toggleTokens = () => sidebarStore.toggleState('tokens')
-const toggleChapse = () => sidebarStore.toggleState('chapse')
-const toggleNotifications = () => sidebarStore.toggleState('notifications')
-const toggleFolders = () => sidebarStore.toggleState('folders')
-
-// Logout modal state
-const showLogoutModal = ref(false)
-const isLoggingOut = ref(false)
-
-// Show logout confirmation modal
-const handleLogout = () => {
-  showLogoutModal.value = true
-}
-
-// Confirm logout action
-const confirmLogout = async () => {
-  isLoggingOut.value = true
-  try {
-    await signOut()
-  } catch (error) {
-    console.error('Logout error:', error)
-  } finally {
-    isLoggingOut.value = false
-    showLogoutModal.value = false
-  }
 }
 </script>
