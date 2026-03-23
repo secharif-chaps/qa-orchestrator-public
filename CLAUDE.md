@@ -1,5 +1,49 @@
 # Claude AI Assistant Instructions
 
+## Agent Behavior Rules
+
+### 1. Plan First
+
+- Enter plan mode for any non-trivial task (3+ steps or architecture decisions)
+- Write detailed specs upfront to reduce ambiguity
+- If something goes wrong, stop and re-plan immediately — don't push through
+- Validate the plan with the user before starting implementation
+- Before implementing any visual change, file restructuring, or Jira ticket creation: describe your planned approach in 2-3 bullet points and wait for confirmation before writing any code
+
+### 2. Sub-Agent Strategy
+
+- Use sub-agents extensively to keep the main context window clean
+- Delegate research, exploration, and parallel analysis to sub-agents
+- One task per sub-agent for focused execution
+- For complex problems, use more compute via parallel sub-agents
+
+### 3. Self-Improvement Loop
+
+- After any user correction: save a feedback memory with the lesson learned
+- Write rules for yourself that prevent the same mistake
+- Review relevant memories at the start of related tasks
+
+### 4. Verify Before Completing
+
+- Never mark a task as done without proving it works
+- Run tests, check logs, demonstrate the fix
+- Ask yourself: "Is this complete, correct, and ready to ship?"
+- Compare behavior between main branch and your changes when relevant
+
+### 5. Require Elegance (Balanced)
+
+- For non-trivial changes: pause and ask "is there a more elegant way?"
+- If a fix feels hacky: "knowing everything I know now, implement the elegant solution"
+- Skip this for simple, obvious fixes — don't over-engineer
+
+### 6. Autonomous Bug Fixing
+
+- When given a bug report: just fix it. Don't ask for hand-holding
+- Point to logs, errors, failing tests — then resolve them
+- Go fix failing CI tests without being told how
+
+---
+
 ## Project Structure
 
 This project is a **monorepo** containing all ChapsMind applications:
@@ -1123,56 +1167,60 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ---
 
-## Jira - Modules et Composants
+## Jira - Modules and Components
 
-| Prefixe | Description | Composant Jira |
-|---------|-------------|----------------|
-| `[LEGACY]` | AMI v9 / Target v9 - Maintenance (branche ST9_3) | `Target Legacy` |
-| `[GLOBAL]` | Infrastructure, auth, features transverses | `Global` |
-| `[TARGET]` | Intelligence concurrentielle et veille strategique | `Target` |
-| `[SCREEN]` | Fiches entreprises automatisees | `Screen` |
-| `[STREAM]` | Diffusion multi-canal (newsletters, API, Slack, Teams) | `Stream` |
-| `[EXPLORE]` | Exploration donnees sous forme de graphe | `Explore` |
+| Prefix | Description | Jira Component |
+|--------|-------------|----------------|
+| `[LEGACY]` | AMI v9 / Target v9 - Maintenance (branch ST9_3) | `Target Legacy` |
+| `[GLOBAL]` | Infrastructure, auth, cross-cutting features | `Global` |
+| `[TARGET]` | Competitive intelligence and strategic monitoring | `Target` |
+| `[SCREEN]` | Automated company cards | `Screen` |
+| `[STREAM]` | Multi-channel distribution (newsletters, API, Slack, Teams) | `Stream` |
+| `[EXPLORE]` | Data exploration as a graph | `Explore` |
 
-### Regles Jira
+### Jira Rules
 
-- **Composant** : deduit automatiquement du prefixe module
-- **Story = 1 seul module**. Multi-modules detecte -> creer plusieurs Stories liees
-- **Epic** : peut etre multi-modules (prefixes combines `[TARGET][SCREEN]`)
-- **Bug** : module = ou le bug est DETECTE (pas ou il est cause)
-- **Validation PO obligatoire** avant toute creation Jira (attendre "oui"/"ok"/"go"/"valide")
-- **Jamais estimer en points** (c'est le role de l'equipe)
-- **Jamais modifier les statuts** Jira
+- **Component**: automatically inferred from the module prefix. Always verify the component name against the actual project list before using it
+- **Story = 1 single module**. If multi-module detected -> create multiple linked Stories
+- **Epic**: can be multi-module (combined prefixes `[TARGET][SCREEN]`)
+- **Bug**: module = where the bug is DETECTED (not where it is caused)
+- **PO validation required** before any Jira creation (wait for "yes"/"ok"/"go"/"validated")
+- **Never estimate in story points** (that is the team's responsibility)
+- **Never modify Jira statuses**
 
-### Etiquettes Competences
+### Jira API (MCP Atlassian)
 
-| Etiquette | Usage |
-|-----------|-------|
-| `Back` | API, services, BDD, infrastructure |
-| `Front` | UI, composants, UX |
-| `Prompt` | IA, LLM, workflows Dify |
+- **Descriptions**: always use **markdown** format (`contentFormat: "markdown"`), never wiki markup
+- **Priority**: use ID strings (`"10007"`), never names (`"Medium"`)
+- **Components**: verify exact names via `getVisibleJiraProjects` or the table above before setting them
 
-Combinaisons : `Back + Prompt`, `Front + Prompt`, `Back + Front` (rare)
+### Skill Labels
 
-### Phases Epic
+| Label | Usage |
+|-------|-------|
+| `Back` | API, services, database, infrastructure |
+| `Front` | UI, components, UX |
+| `Prompt` | AI, LLM, Dify workflows |
+
+Combinations: `Back + Prompt`, `Front + Prompt`, `Back + Front` (rare)
+
+### Epic Phases
 
 ```
-Phase 0 : Design (maquettes Figma, specs UI)
-Phase 1 : Fondation (architecture, composants de base)
-Phase 2 : Back (services, API, integrations)
-Phase 3 : Front (interface, UX finale)
+Phase 0: Design (Figma mockups, UI specs)
+Phase 1: Foundation (architecture, base components)
+Phase 2: Back (services, API, integrations)
+Phase 3: Front (interface, final UX)
 ```
 
-### Terminologie
+### Terminology
 
 ```
 Dossier de veille -> WatchFile
 Acteur -> Actor
 Source -> Source
-Code -> Anglais
 ```
 
-### Outils MCP
+### MCP Tools
 
-- **Jira** : Cloud ID `60cc5e3d-8230-41aa-9611-5c348537a1ea`, projet `TAR`
-- **Legacy** : branche `ST9_3`, labels `Back` par defaut, corrections ciblees uniquement
+- **Jira**: Cloud ID `60cc5e3d-8230-41aa-9611-5c348537a1ea`, project `TAR`
