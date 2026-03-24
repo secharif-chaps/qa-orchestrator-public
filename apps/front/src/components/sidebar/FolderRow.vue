@@ -32,9 +32,9 @@
         >
       </div>
 
-      <!-- Add Company Button (visible only for owners or writers) -->
+      <!-- Add Company Button (visible only for owners or writers when Screen module is enabled) -->
       <Button
-        v-if="canAddCompany"
+        v-if="canAddCompany && props.isScreenEnabled"
         variant="tertiary"
         icon="fa-plus-circle"
         size="sm"
@@ -83,6 +83,7 @@ const props = defineProps<{
   folder: Folder
   isExpanded: boolean
   searchTerm: string
+  isScreenEnabled: boolean
 }>()
 
 defineEmits<{
