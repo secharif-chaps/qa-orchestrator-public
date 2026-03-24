@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     DB_POOL_TIMEOUT: int = 30
     DB_POOL_RECYCLE: int = 1800
 
+    # Health check settings
+    HEALTH_CHECK_KEYCLOAK_ENABLED: bool = False
+
     # Internal JWT for service-to-service communication
     # Must be the same value in all services (gateway + backends)
     # Generate with: openssl rand -base64 32

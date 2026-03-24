@@ -50,6 +50,11 @@ async def get_proxy_client() -> httpx.AsyncClient:
     return _client
 
 
+def is_client_ready() -> bool:
+    """Check if the proxy client is initialized and open."""
+    return _client is not None and not _client.is_closed
+
+
 async def close_proxy_client() -> None:
     """Close the shared httpx client."""
     global _client

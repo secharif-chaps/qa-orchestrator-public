@@ -1,15 +1,16 @@
 import os
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import text
+from fastapi.responses import JSONResponse
 
 from app.api import api_router
 from app.core.config import settings
 from app.core.keycloak import get_idp
 from app.core.logging_config import get_logger, setup_logging
-from app.database import engine
 from app.grpc_server import create_grpc_server
+from app.health import close_health_http_client, run_readiness_checks
 from app.proxy.client import close_proxy_client, get_proxy_client
 from app.proxy.routes import router as proxy_router
 from app.services.keycloak_admin import keycloak_admin_service
@@ -21,11 +22,46 @@ logger.debug(
     f".env file path: {os.path.abspath('.env') if os.path.exists('.env') else 'not found'}"
 )
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # ── Startup ──
+    grpc_server = None
+    try:
+        # Initialize Keycloak IDP eagerly (before accepting requests)
+        # This ensures time.sleep() in retry logic doesn't block the event loop during user requests
+        get_idp()
+        logger.info("🔐 Keycloak IDP initialized")
+
+        # Initialize gRPC server
+        grpc_server = create_grpc_server()
+        grpc_server.start()
+        logger.info("🚀 gRPC server started")
+
+        # Initialize proxy client (warm up connection pool)
+        await get_proxy_client()
+        logger.info(f"🔗 Proxy client initialized → {settings.SCREEN_BASE_URL}")
+
+        yield
+    finally:
+        # ── Shutdown — always runs, even if startup failed partially ──
+        if grpc_server is not None:
+            logger.info("🛑 Shutting down gRPC server")
+            grpc_server.stop(grace=5)
+
+        await close_proxy_client()
+        logger.info("🔌 Proxy client closed")
+
+        await close_health_http_client()
+        await keycloak_admin_service.close()
+
+
 # App initialization
 app = FastAPI(
     title="Global Service",
     description="Centralized organization-scoped resources service",
     version="0.1.0",
+    lifespan=lifespan,
 )
 # Parse CORS origins from comma-separated config (no rebuild needed to change)
 cors_origins = [
@@ -43,43 +79,6 @@ app.add_middleware(
     expose_headers=["Content-Type", "Authorization"],
 )
 
-# gRPC server lifecycle
-grpc_server = None
-
-
-@app.on_event("startup")
-async def startup_event():
-    global grpc_server
-
-    # Initialize Keycloak IDP eagerly at startup (before accepting requests)
-    # This ensures time.sleep() in retry logic doesn't block the event loop during user requests
-    get_idp()
-    logger.info("🔐 Keycloak IDP initialized")
-
-    # Initialize gRPC server
-    grpc_server = create_grpc_server()
-    grpc_server.start()
-    logger.info("🚀 gRPC server started")
-
-    # Initialize proxy client (warm up connection pool)
-    await get_proxy_client()
-    logger.info(f"🔗 Proxy client initialized → {settings.SCREEN_BASE_URL}")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    # Shutdown gRPC server
-    if grpc_server:
-        logger.info("🛑 Shutting down gRPC server")
-        grpc_server.stop(grace=5)
-
-    # Close proxy client
-    await close_proxy_client()
-    logger.info("🔌 Proxy client closed")
-
-    # Close Keycloak admin HTTP client
-    await keycloak_admin_service.close()
-
 
 # Health check endpoints
 @app.get("/health/live", tags=["health"])
@@ -93,12 +92,14 @@ def health_live():
 
 @app.get("/health/ready", tags=["health"])
 async def health_ready():
-    try:
-        async with engine.connect() as conn:
-            await conn.execute(text("SELECT 1"))
-        return {"status": "ready"}
-    except Exception:
-        return {"status": "not_ready"}
+    """Readiness probe. Verifies all critical dependencies before accepting traffic."""
+    checks, all_ready = await run_readiness_checks(
+        include_keycloak=settings.HEALTH_CHECK_KEYCLOAK_ENABLED,
+    )
+    return JSONResponse(
+        content={"status": "ready" if all_ready else "not_ready", "checks": checks},
+        status_code=200 if all_ready else 503,
+    )
 
 
 # Register token API endpoints - these are handled locally by global-service
