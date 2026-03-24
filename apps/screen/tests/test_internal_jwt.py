@@ -27,6 +27,7 @@ from app.core.internal_jwt import (
     TokenInvalidError,
     _get_allowed_networks,
     _get_client_ip,
+    create_internal_token,
     is_internal_request,
     validate_source_ip,
     verify_internal_request,
@@ -164,6 +165,86 @@ class TestVerifyInternalToken:
 
             with pytest.raises(InternalJWTError, match="not configured"):
                 verify_internal_token("any-token")
+
+
+class TestCreateInternalToken:
+    """Test internal token creation."""
+
+    @pytest.fixture
+    def mock_settings(self):
+        """Mock settings with valid configuration."""
+        with patch("app.core.internal_jwt.settings") as mock:
+            mock.INTERNAL_JWT_SECRET = "test-secret-at-least-32-characters-long"
+            mock.INTERNAL_JWT_EXPIRY_SECONDS = 300
+            yield mock
+
+    def test_creates_valid_token(self, mock_settings):
+        """Test that a valid token is created and can be verified."""
+        token = create_internal_token(
+            user_id="user-123",
+            username="testuser",
+            org_id="org-456",
+            org_name="Test Org",
+            roles=["company.view"],
+            email="test@example.com",
+        )
+
+        assert isinstance(token, str)
+        # Verify the token is valid by decoding it
+        payload = verify_internal_token(token)
+        assert payload.sub == "user-123"
+        assert payload.username == "testuser"
+        assert payload.org_id == "org-456"
+        assert payload.org_name == "Test Org"
+        assert payload.roles == ["company.view"]
+        assert payload.email == "test@example.com"
+
+    def test_creates_token_with_defaults(self, mock_settings):
+        """Test token creation with default values."""
+        token = create_internal_token(
+            user_id="user-123",
+            username="testuser",
+            org_id="org-456",
+        )
+
+        payload = verify_internal_token(token)
+        assert payload.org_name == "Unknown"
+        assert payload.roles == []
+        assert payload.email is None
+
+    def test_raises_error_without_secret(self):
+        """Test that error is raised when secret is not configured."""
+        with patch("app.core.internal_jwt.settings") as mock:
+            mock.INTERNAL_JWT_SECRET = ""
+
+            with pytest.raises(InternalJWTError, match="not configured"):
+                create_internal_token(
+                    user_id="user-123",
+                    username="testuser",
+                    org_id="org-456",
+                )
+
+
+class TestGetAllowedNetworksEdgeCases:
+    """Test edge cases in _get_allowed_networks."""
+
+    def test_skips_empty_cidrs(self):
+        """Test that empty entries in CIDR list are skipped."""
+        with patch("app.core.internal_jwt.settings") as mock:
+            mock.INTERNAL_ALLOWED_IPS = "192.168.0.0/16,,  ,10.0.0.0/8"
+            _get_allowed_networks.cache_clear()
+
+            networks = _get_allowed_networks()
+            assert len(networks) == 2
+
+    def test_handles_invalid_cidr(self):
+        """Test that invalid CIDR entries are skipped with a warning."""
+        with patch("app.core.internal_jwt.settings") as mock:
+            mock.INTERNAL_ALLOWED_IPS = "not-a-cidr,192.168.0.0/16"
+            _get_allowed_networks.cache_clear()
+
+            networks = _get_allowed_networks()
+            assert len(networks) == 1
 
 
 class TestInternalTokenPayload:

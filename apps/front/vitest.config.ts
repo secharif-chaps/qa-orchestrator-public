@@ -33,6 +33,12 @@ export default defineConfig({
         'src/test-utils/**',
         'node_modules/**',
       ],
+      thresholds: {
+        lines: 5,
+        branches: 4,
+        functions: 4,
+        statements: 5,
+      },
     },
   },
   resolve: {
