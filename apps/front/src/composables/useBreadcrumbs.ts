@@ -28,12 +28,7 @@ export function useBreadcrumbs() {
     return null
   })
 
-  const { data: company } = useQuery({
-    ...companyByIdQuery({ id: companyId.value! }),
-    enabled: computed(
-      () => !!companyId.value && companyId.value !== 'null' && companyId.value !== 'undefined',
-    ),
-  })
+  const { data: company } = useQuery(() => companyByIdQuery({ id: companyId.value ?? '' }))
 
   // Get folder data if we're on a folder page
   // Use type assertion since route.params may have folderId on some routes
@@ -45,12 +40,7 @@ export function useBreadcrumbs() {
     return null
   })
 
-  const { data: folder } = useQuery({
-    ...folderByIdQuery({ id: folderId.value! }),
-    enabled: computed(
-      () => !!folderId.value && folderId.value !== 'null' && folderId.value !== 'undefined',
-    ),
-  })
+  const { data: folder } = useQuery(() => folderByIdQuery({ id: folderId.value ?? '' }))
 
   const breadcrumbs = computed((): BreadcrumbItem[] => {
     const items: BreadcrumbItem[] = []
