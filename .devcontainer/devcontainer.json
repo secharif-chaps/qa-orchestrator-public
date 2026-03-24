@@ -1,15 +1,11 @@
 {
   "name": "ChapsMind Dev",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
 
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "22",
+      "version": "24",
       "installYarnUsingApt": false
-    },
-    "ghcr.io/devcontainers/features/python:1": {
-      "version": "3.9",
-      "installTools": true
     },
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
     "ghcr.io/devcontainers/features/git:1": {},
@@ -17,9 +13,9 @@
   },
 
   "postCreateCommand": "bash .devcontainer/post-create.sh",
-  "postStartCommand": "set -a && . .env && set +a && task up",
+  "postStartCommand": "task up",
 
-  "forwardPorts": [3000, 8000, 8080, 5432, 5672, 15672, 5555],
+  "forwardPorts": [80, 8080, 15672],
 
   "customizations": {
     "vscode": {
@@ -40,7 +36,6 @@
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "charliermarsh.ruff",
-        "ms-python.python",
         "EditorConfig.EditorConfig",
         "eamodio.gitlens",
         "ms-azuretools.vscode-docker",
