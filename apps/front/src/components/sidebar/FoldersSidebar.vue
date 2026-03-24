@@ -57,6 +57,7 @@
               :folder="folder"
               :is-expanded="isExpandedForFolder(folder.id)"
               :search-term="searchTerm"
+              :is-screen-enabled="isScreenEnabled"
               @toggle="toggleFolder(folder.id)"
               @navigate-folder="navigateToFolder"
               @navigate-company="navigateToCompany"
@@ -82,6 +83,7 @@
             :folder="folder"
             :is-expanded="isExpandedForFolder(folder.id)"
             :search-term="searchTerm"
+            :is-screen-enabled="isScreenEnabled"
             @toggle="toggleFolder(folder.id)"
             @navigate-folder="navigateToFolder"
             @navigate-company="navigateToCompany"
@@ -95,6 +97,7 @@
 
 <script setup lang="ts">
 import { foldersWithItemsQuery } from '@/queries/folders'
+import { useScreenModule } from '@/composables/useScreenModule'
 import type { Folder } from '@/types/folder'
 import { Button, Icon, Searchbar } from '@owlint/feathers-vue'
 import { useQuery } from '@pinia/colada'
@@ -104,6 +107,7 @@ import FolderRow from './FolderRow.vue'
 import SidebarHeader from './SidebarHeader.vue'
 
 const router = useRouter()
+const { isScreenEnabled } = useScreenModule()
 
 const STORAGE_KEY_EXPANDED = 'folders-sidebar-expanded'
 const STORAGE_KEY_SECTIONS = 'folders-sidebar-sections'

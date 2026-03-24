@@ -104,8 +104,9 @@
             </template>
 
             <template #content>
-              <!-- Company Screen - Enabled -->
+              <!-- Company Screen - Only visible when Screen module is enabled -->
               <DropdownItem
+                v-if="isScreenEnabled"
                 icon="fas fa-building"
                 color="blue"
                 :label="$t('folder.addItems.companyScreen', 'Company Screen')"
@@ -167,6 +168,7 @@ import { useI18n } from 'vue-i18n'
 import type { Folder } from '@/types/folder'
 import { useToggleFolderFavorite } from '@/mutations/folders'
 import { useFolderPermissions } from '@/composables/useFolderPermissions'
+import { useScreenModule } from '@/composables/useScreenModule'
 import FolderShareButton from '@/components/features/folders/FolderShareButton.vue'
 import Dropdown from '@/components/ui/Dropdown.vue'
 import DropdownItem from '@/components/ui/DropdownItem.vue'
@@ -189,6 +191,8 @@ const { t } = useI18n()
 const folderRef = toRef(props, 'folder')
 const { canEditFolder, canDeleteFolder, canCreateItems, isSharedWithMe } =
   useFolderPermissions(folderRef)
+
+const { isScreenEnabled } = useScreenModule()
 
 // Use mutation for optimistic UI
 const { toggleFavorite: toggleFavoriteMutation, isLoading: isTogglingFavorite } =
