@@ -56,6 +56,8 @@ def upgrade():
     op.execute("DROP MATERIALIZED VIEW IF EXISTS public.organization_cost_summary CASCADE")
 
     # 7. Rebuild task_status_enum (remove 'blocked')
+    # Convert any remaining 'blocked' tasks to 'error' before dropping the enum value
+    op.execute(f"UPDATE {SCHEMA}.tasks SET status = 'error' WHERE status = 'blocked'")
     op.execute("ALTER TYPE screen_schema.task_status_enum RENAME TO task_status_enum_old")
     op.execute("CREATE TYPE screen_schema.task_status_enum AS ENUM ('pending', 'running', 'succeeded', 'error')")
     op.execute(
