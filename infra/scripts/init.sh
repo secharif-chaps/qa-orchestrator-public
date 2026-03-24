@@ -31,7 +31,7 @@ set +a
 # ─── 2. Auto-generate secrets ────────────────────────
 
 if grep -q '^ENCRYPTION_KEY=changeme$' .env; then
-  KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+  KEY=$(openssl rand -base64 32 | tr '+/' '-_')
   sed -i.bak "s/^ENCRYPTION_KEY=changeme$/ENCRYPTION_KEY=${KEY}/" .env
   echo "✅ Auto-generated ENCRYPTION_KEY"
 fi
