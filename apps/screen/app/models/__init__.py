@@ -23,7 +23,6 @@ from .company_sections import (
     CompanyProfile,
     CompanyTimeline,
 )
-from .folder import Folder, FolderItem, FolderShare, ShareRole
 from .organization import (
     FeatureFlag,
     ModuleName,
@@ -37,8 +36,6 @@ from .organization import (
 from .task import Task, TaskStatus, TaskType
 from .translation import Translation
 from .translation_job import TranslationJob, TranslationJobStatus
-from .user_folder_favorite import UserFolderFavorite
-from .user_preferences import UserPreferences
 
 __all__ = [
     "Company",
@@ -63,10 +60,6 @@ __all__ = [
     "CompanyCsrInitiative",
     "CompanyPressItem",
     "CompanyTeamMember",
-    # Task models
-    "Task",
-    "TaskStatus",
-    "TaskType",
     # Organization models
     "Organization",
     "OrganizationModule",
@@ -76,14 +69,10 @@ __all__ = [
     "TransactionType",
     "ReferenceType",
     "FeatureFlag",
-    # Folder models
-    "Folder",
-    "FolderItem",
-    "FolderShare",
-    "ShareRole",
-    # User models
-    "UserFolderFavorite",
-    "UserPreferences",
+    # Task models
+    "Task",
+    "TaskStatus",
+    "TaskType",
     # Conversation models
     "ChapseConversationContext",
     # Translation models

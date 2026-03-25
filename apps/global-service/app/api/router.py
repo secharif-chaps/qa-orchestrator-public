@@ -2,7 +2,18 @@
 
 from fastapi import APIRouter
 
-from app.api.endpoints import account, ai_preferences, folder, internal, modules, organization, team, tokens, users
+from app.api.endpoints import (
+    account,
+    ai_preferences,
+    folder,
+    internal,
+    modules,
+    organization,
+    organizations,
+    team,
+    tokens,
+    users,
+)
 
 api_router = APIRouter()
 
@@ -16,3 +27,4 @@ api_router.include_router(users.router)  # Admin user management
 api_router.include_router(ai_preferences.router)  # AI preferences (Chapse Assist)
 api_router.include_router(folder.router)  # Folder management
 api_router.include_router(team.router)  # Team management
+api_router.include_router(organizations.router)  # Admin organization management

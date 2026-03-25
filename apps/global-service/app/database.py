@@ -266,3 +266,16 @@ async def get_global_db() -> AsyncGenerator[AsyncSession, None]:
             yield session
         finally:
             await session.close()
+
+
+from contextlib import asynccontextmanager  # noqa: E402
+
+
+@asynccontextmanager
+async def get_global_db_context() -> AsyncGenerator[AsyncSession, None]:
+    """Async context manager for global_schema sessions outside of FastAPI Depends."""
+    async with GlobalAsyncSessionLocal() as session:
+        try:
+            yield session
+        finally:
+            await session.close()

@@ -4,10 +4,16 @@ This module provides the CompanyService class for managing company entities,
 including CRUD operations, task management, and LangGraph agent execution.
 """
 
+from __future__ import annotations
+
 import asyncio
 import logging
+from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Session, joinedload
+
+if TYPE_CHECKING:
+    from app.services.token_manager import TokenManager
 
 from app.core.database_security import SecureQueryBuilder
 from app.core.exceptions import ResourceNotFoundError
@@ -29,7 +35,7 @@ from app.services.company_section_service import (
     apply_translations_to_section_data,
     read_all_section_data,
 )
-from app.services.token_manager import TOKENS_PER_COMPANY, TokenManager
+from app.services.global_service_client import TOKENS_PER_COMPANY
 from app.services.translation import (
     SUPPORTED_LANGUAGE_CODES,
     TranslationService,
@@ -366,12 +372,27 @@ class CompanyService:
         return query.all()
 
     def get_recent_companies(
-        self, organization_id: str, limit: int = 5, accessible_company_ids: set | None = None
+        self,
+        organization_id: str,
+        limit: int = 5,
+        accessible_company_ids: set | None = None,
     ) -> list[CompanyResponse]:
-        """Get recent companies with their folder information."""
-        from app.models.folder import Folder, FolderItem
+        """Get recent companies in the organization.
 
-        query = self.db.query(Company).filter(Company.organization_id == organization_id).filter(~Company.is_deleted)
+        Args:
+            organization_id: Organization UUID to filter by
+            limit: Maximum number of companies to return
+            accessible_company_ids: Optional set of company IDs the user has access to.
+                If provided, only companies in this set are returned.
+
+        Returns:
+            List of CompanyResponse objects
+        """
+        query = (
+            self.db.query(Company)
+            .filter(Company.organization_id == organization_id)
+            .filter(~Company.is_deleted)
+        )
 
         if accessible_company_ids is not None:
             if not accessible_company_ids:
@@ -380,28 +401,7 @@ class CompanyService:
 
         companies = query.order_by(Company.created_at.desc()).limit(limit).all()
 
-        company_responses = []
-        for company in companies:
-            company_response = _build_company_response(self.db, company)
-
-            folder_item = (
-                self.db.query(FolderItem, Folder)
-                .join(Folder, FolderItem.folder_id == Folder.id)
-                .filter(FolderItem.item_id == str(company.id))
-                .filter(FolderItem.item_type == "company")
-                .filter(~Folder.is_deleted)
-                .order_by(FolderItem.added_at.desc())
-                .first()
-            )
-
-            if folder_item:
-                folder_item_obj, folder_obj = folder_item
-                company_response.folder_id = str(folder_obj.id)
-                company_response.folder_name = folder_obj.name
-
-            company_responses.append(company_response)
-
-        return company_responses
+        return [_build_company_response(self.db, company) for company in companies]
 
     def validate_csv_companies(
         self,
@@ -409,7 +409,21 @@ class CompanyService:
         organization_id: str,
         token_manager: TokenManager | None = None,
     ) -> CompanyCSVValidationResponse:
-        """Validate a list of companies from CSV without creating them."""
+        """Validate a list of companies from CSV without creating them.
+
+        Token validation is skipped since token consumption is handled by
+        global-service.
+
+        Each company creation costs TOKENS_PER_COMPANY (35) tokens.
+
+        Args:
+            companies: List of CSV row data to validate
+            organization_id: Organization UUID
+            token_manager: Deprecated, kept for backward compatibility. Always pass None.
+
+        Returns:
+            CompanyCSVValidationResponse with validation results
+        """
         errors = []
 
         name_count: dict[str, list[int]] = {}

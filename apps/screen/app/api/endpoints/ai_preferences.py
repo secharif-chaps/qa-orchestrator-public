@@ -11,8 +11,6 @@ from app.core.dependencies import get_company_service
 from app.core.organization import OrganizationContext, get_user_organization
 from app.database import get_db
 from app.schemas.ai_preferences import (
-    AiPreferencesCreate,
-    AiPreferencesResponse,
     QuickActionsRequest,
     QuickActionsResponse,
 )
@@ -23,34 +21,6 @@ from app.services.user_preferences import UserPreferencesService
 router = APIRouter(prefix="/ai-preferences", tags=["ai-preferences"])
 
 logger = logging.getLogger(__name__)
-
-
-@router.get("", response_model=AiPreferencesResponse)
-async def get_ai_preferences(
-    org_context: OrganizationContext = Depends(get_user_organization), db: Session = Depends(get_db)
-):
-    """Get current user's AI preferences"""
-    service = UserPreferencesService(db)
-    ai_preferences = service.get_ai_preferences(org_context.username)
-
-    if not ai_preferences:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="AI preferences not found for this user")
-
-    return ai_preferences
-
-
-@router.post("", response_model=AiPreferencesResponse, status_code=status.HTTP_200_OK)
-async def create_or_update_ai_preferences(
-    preferences_data: AiPreferencesCreate,
-    org_context: OrganizationContext = Depends(get_user_organization),
-    db: Session = Depends(get_db),
-):
-    """Create or update user's AI preferences"""
-    service = UserPreferencesService(db)
-
-    ai_preferences = service.set_ai_preferences(org_context.username, preferences_data.model_dump())
-
-    return ai_preferences
 
 
 @router.post("/quick-actions", response_model=QuickActionsResponse)

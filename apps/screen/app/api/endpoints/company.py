@@ -21,7 +21,6 @@ from app.core.security import (
 )
 from app.database import get_db
 from app.models.company import Company
-from app.models.organization import ModuleName, ReferenceType
 from app.models.task import TaskStatus
 from app.schemas.company import (
     CompanyCreate,
@@ -35,10 +34,11 @@ from app.schemas.company import (
 )
 from app.schemas.pagination import PaginatedResponse, PaginationParams, SortOrder
 from app.services.company import CompanyService, _build_company_response
-from app.services.folder import FolderService
 from app.services.global_service_client import (
     TOKENS_PER_COMPANY,
     GlobalServiceClient,
+    ModuleName,
+    ReferenceType,
 )
 
 logger = get_logger(__name__)
@@ -50,6 +50,7 @@ router = APIRouter(prefix="/companies", tags=["companies"])
 async def get_recent_companies(
     limit: int = Query(5, ge=1, le=100, description="Number of recent companies to return"),
     service: CompanyService = Depends(get_company_service),
+    global_service: GlobalServiceClient = Depends(get_global_service_client),
     org_context: OrganizationContext = Depends(get_user_organization),
     db: Session = Depends(get_db),
 ):
@@ -59,10 +60,10 @@ async def get_recent_companies(
     """
     logger.info(f"GET /companies/recent - User: {org_context.username}, Limit: {limit}")
 
-    accessible_company_ids = FolderService.get_accessible_company_ids(
-        db,
-        org_context.user_id,
-        org_context.organization_id,
+    # Get accessible company IDs for this user via global-service
+    accessible_company_ids = await global_service.get_accessible_company_ids(
+        org_id=org_context.organization_id,
+        user_id=org_context.user_id,
         username=org_context.username,
     )
 
@@ -109,14 +110,15 @@ async def get_company(
     archived: bool = Query(False, description="Include archived (soft-deleted) companies"),
     service: CompanyService = Depends(get_company_service),
     org_context: OrganizationContext = Depends(get_user_organization),
-    user: OIDCUser = Depends(idp.get_current_user(required_roles=["organization.read"])),
     db: Session = Depends(get_db),
 ):
-    """Get a company by ID (only if user has access via folder sharing).
+    """Get a company by ID.
 
-    Archived companies (soft-deleted) are accessible to any organization.read user when
-    archived=True is passed. Organization membership and folder-sharing access are still
-    enforced, so no additional permission is required beyond what regular company access needs.
+    Organization membership is enforced here. Folder-level access control
+    is handled by global-service at the gateway level before proxying.
+
+    Archived companies (soft-deleted) are accessible when archived=True is passed.
+    Optionally specify a language code (fr, es, de, pt) to get translated content.
     """
     try:
         logger.info(
@@ -124,29 +126,13 @@ async def get_company(
             f"Organization: {org_context.organization_id}, Language: {language}, Archived: {archived}"
         )
 
-        # Get the Company model for access checks
         company = service.get_company(company_id, include_archived=archived)
         if not company:
-            logger.error(f"Company {company_id} not found")
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found")
-
-        logger.info(f"Company {company_id} found, verifying organization access")
-        verify_company_organization_access(company, org_context)
-
-        user_roles = user.realm_access.get("roles", [])
-        if not FolderService.user_has_company_access(
-            db,
-            company_id,
-            org_context.user_id,
-            org_context.organization_id,
-            username=org_context.username,
-            user_roles=user_roles,
-        ):
-            logger.warning(
-                f"User {org_context.username} does not have folder access to company {company_id}",
-                extra={"user_roles": user_roles},
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Company not found"
             )
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found")
+
+        verify_company_organization_access(company, org_context)
 
         return _build_company_response(db, company, language=language)
     except HTTPException:

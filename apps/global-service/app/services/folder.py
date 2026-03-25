@@ -582,10 +582,18 @@ class FolderService:
         item_type: str,
         organization_id: str
     ) -> list[Folder]:
-        """Get all folders containing a specific item."""
-        stmt = select(FolderItem).where(
-            FolderItem.item_id == item_id,
-            FolderItem.item_type == item_type
+        """Get all folders containing a specific item.
+
+        Results are ordered by added_at descending (most recently added first)
+        to ensure deterministic ordering.
+        """
+        stmt = (
+            select(FolderItem)
+            .where(
+                FolderItem.item_id == item_id,
+                FolderItem.item_type == item_type,
+            )
+            .order_by(FolderItem.added_at.desc())
         )
         result = await db.execute(stmt)
         folder_items = result.scalars().all()
@@ -598,10 +606,13 @@ class FolderService:
         stmt = select(Folder).where(
             Folder.id.in_(folder_ids),
             Folder.organization_id == organization_id,
-            Folder.is_deleted.is_(False)
+            Folder.is_deleted.is_(False),
         )
         result = await db.execute(stmt)
-        return list(result.scalars().all())
+        folders_by_id = {f.id: f for f in result.scalars().all()}
+
+        # Preserve added_at descending order from folder_items
+        return [folders_by_id[fid] for fid in folder_ids if fid in folders_by_id]
 
     # ==================== Folder Sharing Methods ====================
 
@@ -1102,6 +1113,47 @@ class FolderService:
         return False
 
     @staticmethod
+    async def _get_accessible_folder_ids(
+        db: AsyncSession,
+        user_id: str,
+        organization_id: str,
+        username: str | None = None,
+    ) -> list:
+        """Get all folder IDs accessible to a user (owned + shared).
+
+        Lightweight query that returns only folder IDs without loading
+        full Folder objects or pagination overhead.
+
+        Args:
+            db: Database session
+            user_id: Keycloak user UUID
+            organization_id: Organization UUID
+            username: Optional username for legacy fallback when owner_id is NULL
+
+        Returns:
+            List of folder IDs the user has access to
+        """
+        ownership_conditions = [Folder.owner_id == user_id]
+        if username:
+            ownership_conditions.append(
+                and_(Folder.owner_id.is_(None), Folder.owner == username)
+            )
+
+        stmt = (
+            select(Folder.id)
+            .outerjoin(FolderShare, FolderShare.folder_id == Folder.id)
+            .where(
+                Folder.organization_id == organization_id,
+                Folder.is_deleted.is_(False),
+                or_(*ownership_conditions, FolderShare.user_id == user_id),
+            )
+            .distinct()
+        )
+
+        result = await db.execute(stmt)
+        return [row[0] for row in result.all()]
+
+    @staticmethod
     async def get_accessible_company_ids(
         db: AsyncSession,
         user_id: str,
@@ -1122,21 +1174,16 @@ class FolderService:
         Returns:
             Set of company IDs the user has access to
         """
-
-        # Get all folders accessible to the user (owned + shared)
-        accessible_folders = await FolderService.list_folders(
+        folder_ids = await FolderService._get_accessible_folder_ids(
             db=db,
             organization_id=organization_id,
             user_id=user_id,
-            archived=False,
-            username=username
+            username=username,
         )
 
-        if not accessible_folders:
+        if not folder_ids:
             logger.debug(f"User {user_id} has no accessible folders")
             return set()
-
-        folder_ids = [f.id for f in accessible_folders]
 
         # Get all company IDs from these folders
         stmt = select(FolderItem.item_id).where(
@@ -1154,7 +1201,7 @@ class FolderService:
 
         logger.debug(
             f"User {user_id} has access to {len(company_ids)} companies "
-            f"via {len(accessible_folders)} folders"
+            f"via {len(folder_ids)} folders"
         )
 
         return company_ids

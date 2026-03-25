@@ -12,9 +12,9 @@ from app.agents.config import (
 )
 from app.agents.nodes.base import run_agent
 from app.agents.state import AgentResult, CompanyAnalysisState
+from app.core.dependencies import get_global_service_client
 from app.core.logging_config import get_logger
 from app.models.company import Company
-from app.models.folder import FolderItem
 from app.models.task import Task, TaskStatus
 from app.services.company_section_service import write_section_data
 from app.services.task_events import task_event_manager
@@ -120,7 +120,7 @@ class CompanyAnalysisRunner:
             )
 
             # Broadcast completion
-            await self._broadcast_completion(db, owner_id, company_id, company_name, task_map)
+            await self._broadcast_completion(db, owner_id, company_id, company_name, organization_id, task_map)
 
         except TimeoutError:
             timeout_msg = f"Analysis timed out after {GLOBAL_ANALYSIS_TIMEOUT_SECONDS}s"
@@ -317,25 +317,24 @@ class CompanyAnalysisRunner:
         owner_id: str,
         company_id: int,
         company_name: str,
+        organization_id: str,
         task_map: dict[str, Task],
     ) -> None:
         """Broadcast all_tasks_completed event."""
         success_count = sum(1 for t in task_map.values() if t.status == TaskStatus.SUCCEEDED)
         error_count = sum(1 for t in task_map.values() if t.status == TaskStatus.ERROR)
 
-        # Look up folder_id via FolderItem junction table
-        def _get_folder_id() -> str | None:
-            folder_item = (
-                db.query(FolderItem)
-                .filter(
-                    FolderItem.item_id == str(company_id),
-                    FolderItem.item_type == "company",
-                )
-                .first()
+        # Look up folder_id via global-service
+        try:
+            client = get_global_service_client()
+            folder_id = await client.get_company_folder_id(
+                org_id=organization_id,
+                company_id=company_id,
+                user_id=owner_id,
             )
-            return str(folder_item.folder_id) if folder_item else None
-
-        folder_id = await asyncio.to_thread(_get_folder_id)
+        except Exception as e:
+            logger.warning("Failed to get folder_id from global-service", extra={"error": str(e)})
+            folder_id = None
 
         await task_event_manager.broadcast_all_tasks_completed(
             user_id=owner_id,
