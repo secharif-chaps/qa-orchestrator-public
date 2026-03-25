@@ -1,9 +1,9 @@
 import logging
-from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
+from app.schemas.auth import IntrospectResponse, LogoutResponse, UserInfoResponse, VerifyResponse
 from app.schemas.user import LoginRequest, RefreshTokenRequest, Token
 from app.services.auth import keycloak_service
 
@@ -78,8 +78,8 @@ async def refresh_token(refresh_request: RefreshTokenRequest) -> Token:
     )
 
 
-@router.post("/logout")
-async def logout(refresh_request: RefreshTokenRequest) -> dict[str, str]:
+@router.post("/logout", response_model=LogoutResponse)
+async def logout(refresh_request: RefreshTokenRequest) -> LogoutResponse:
     """
     Logout user by invalidating refresh token
     """
@@ -91,8 +91,8 @@ async def logout(refresh_request: RefreshTokenRequest) -> dict[str, str]:
     return {"message": "Successfully logged out"}
 
 
-@router.get("/me", response_model=dict[str, Any])
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict[str, Any]:
+@router.get("/me", response_model=UserInfoResponse)
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> UserInfoResponse:
     """
     Get current user information from access token
     """
@@ -106,11 +106,11 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    return user_info
+    return UserInfoResponse(**user_info)
 
 
-@router.post("/verify")
-async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict[str, Any]:
+@router.post("/verify", response_model=VerifyResponse)
+async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> VerifyResponse:
     """
     Verify if the provided token is valid
     """
@@ -124,11 +124,16 @@ async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(secur
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    return {"valid": True, "username": token_data.username, "sub": token_data.sub, "roles": token_data.roles}
+    return VerifyResponse(
+        valid=True,
+        username=token_data.username,
+        sub=token_data.sub,
+        roles=token_data.roles or [],
+    )
 
 
-@router.post("/introspect")
-async def introspect_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict[str, Any]:
+@router.post("/introspect", response_model=IntrospectResponse)
+async def introspect_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> IntrospectResponse:
     """
     Introspect token (server-side validation with detailed info)
     """
@@ -142,4 +147,4 @@ async def introspect_token(credentials: HTTPAuthorizationCredentials = Depends(s
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    return token_info
+    return IntrospectResponse(**token_info)

@@ -4,7 +4,6 @@ Provides simplified schemas for team member management,
 abstracting individual Keycloak roles into permission tiers.
 """
 
-
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.core.permissions import PermissionTier
@@ -53,7 +52,6 @@ class TeamMember(BaseModel):
     email: str
     first_name: str | None = None
     last_name: str | None = None
-    avatar_url: str | None = None
     permission_tier: PermissionTier
     is_current_user: bool = False
     created_at: int | None = Field(None, description="Unix timestamp from Keycloak")
@@ -106,10 +104,10 @@ class ResetPasswordRequest(BaseModel):
 
 
 class TeamMemberPasswordReset(BaseModel):
-    """Response after password reset containing temporary password.
+    """Response after password reset.
 
     Password is set as temporary in Keycloak, forcing user to change it on next login.
+    The temporary password is not returned in the response for security reasons.
     """
 
-    temporary_password: str
     message: str = "Password reset successfully. User must change password on next login."

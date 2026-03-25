@@ -10,7 +10,6 @@ Permission Requirements:
 - POST /members/{user_id}/reset-password: organization.manage OR admin.organizations (reset password)
 """
 
-
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 from fastapi_keycloak import OIDCUser
 
@@ -279,7 +278,6 @@ async def update_member_permissions(
             email=keycloak_user.get("email", ""),
             first_name=keycloak_user.get("firstName"),
             last_name=keycloak_user.get("lastName"),
-            avatar_url=None,
             permission_tier=get_tier_from_roles(updated_roles),
             is_current_user=False,
             created_at=keycloak_user.get("createdTimestamp"),
@@ -379,7 +377,6 @@ async def reset_member_password(
         )
 
         return TeamMemberPasswordReset(
-            temporary_password=temp_password,
             message="Password reset successfully. User must change password on next login.",
         )
 

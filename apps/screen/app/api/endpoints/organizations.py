@@ -14,7 +14,12 @@ from app.core.config import settings
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.permissions import get_tier_from_roles
-from app.schemas.organization import OrganizationResponse
+from app.schemas.organization import (
+    OrganizationResponse,
+    OrganizationUserDetailResponse,
+    OrganizationUserItem,
+    SuccessMessageResponse,
+)
 from app.schemas.pagination import PaginatedResponse, SortOrder, create_pagination_meta
 from app.services.keycloak_admin import keycloak_admin_service
 
@@ -71,7 +76,7 @@ async def list_organizations(
         # Calculate pagination
         total = len(organizations)
         offset = (page - 1) * limit
-        paginated_orgs = organizations[offset : offset + limit]
+        paginated_orgs = organizations[offset: offset + limit]
 
         # Convert to response format using OrganizationResponse schema
         orgs_list = []
@@ -186,7 +191,7 @@ async def get_organization(
 # Note: All organization data is managed in Keycloak via organization UUIDs (strings)
 
 
-@router.get("/{organization_id}/users")
+@router.get("/{organization_id}/users", response_model=PaginatedResponse[OrganizationUserItem])
 async def get_organization_users_admin(
     organization_id: str,
     page: int = Query(1, ge=1, description="Page number (1-indexed)"),
@@ -244,8 +249,7 @@ async def get_organization_users_admin(
                     "default-roles-" + settings.KEYCLOAK_REALM.lower(),
                 }
                 permissions = [
-                    role["name"]
-                    for role in user_roles
+                    role["name"] for role in user_roles
                     if role["name"] not in internal_roles and not role["name"].startswith("realm-management")
                 ]
                 tier = get_tier_from_roles(permissions)
@@ -276,7 +280,7 @@ async def get_organization_users_admin(
         # Create pagination metadata
         meta = create_pagination_meta(total=total, page=page, per_page=limit)
 
-        return {"data": users_list, "meta": meta}
+        return PaginatedResponse(data=users_list, meta=meta)
 
     except HTTPException:
         raise
@@ -291,7 +295,7 @@ async def get_organization_users_admin(
         )
 
 
-@router.get("/{organization_id}/users/{user_id}")
+@router.get("/{organization_id}/users/{user_id}", response_model=OrganizationUserDetailResponse)
 async def get_organization_user_admin(
     organization_id: str,
     user_id: str,
@@ -323,16 +327,16 @@ async def get_organization_user_admin(
         if not user_data:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User {user_id} not found")
 
-        return {
-            "id": user_data.get("id"),
-            "username": user_data.get("username"),
-            "email": user_data.get("email"),
-            "firstName": user_data.get("firstName"),
-            "lastName": user_data.get("lastName"),
-            "enabled": user_data.get("enabled", True),
-            "emailVerified": user_data.get("emailVerified", False),
-            "createdTimestamp": user_data.get("createdTimestamp"),
-        }
+        return OrganizationUserDetailResponse(
+            id=user_data.get('id'),
+            username=user_data.get('username'),
+            email=user_data.get('email'),
+            firstName=user_data.get('firstName'),
+            lastName=user_data.get('lastName'),
+            enabled=user_data.get('enabled', True),
+            emailVerified=user_data.get('emailVerified', False),
+            createdTimestamp=user_data.get('createdTimestamp'),
+        )
 
     except HTTPException:
         raise
@@ -343,7 +347,7 @@ async def get_organization_user_admin(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to fetch user: {str(e)}")
 
 
-@router.post("/{organization_id}/users")
+@router.post("/{organization_id}/users", response_model=OrganizationUserDetailResponse)
 async def create_organization_user_admin(
     organization_id: str,
     user_data: dict[str, Any],
@@ -467,16 +471,16 @@ async def create_organization_user_admin(
             },
         )
 
-        return {
-            "id": created_user.get("id"),
-            "username": created_user.get("username"),
-            "email": created_user.get("email"),
-            "firstName": created_user.get("firstName"),
-            "lastName": created_user.get("lastName"),
-            "enabled": created_user.get("enabled", True),
-            "emailVerified": created_user.get("emailVerified", False),
-            "createdTimestamp": created_user.get("createdTimestamp"),
-        }
+        return OrganizationUserDetailResponse(
+            id=created_user.get('id'),
+            username=created_user.get('username'),
+            email=created_user.get('email'),
+            firstName=created_user.get('firstName'),
+            lastName=created_user.get('lastName'),
+            enabled=created_user.get('enabled', True),
+            emailVerified=created_user.get('emailVerified', False),
+            createdTimestamp=created_user.get('createdTimestamp'),
+        )
 
     except HTTPException as he:
         logger.error(
@@ -507,7 +511,7 @@ async def create_organization_user_admin(
         )
 
 
-@router.put("/{organization_id}/users/{user_id}")
+@router.put("/{organization_id}/users/{user_id}", response_model=SuccessMessageResponse)
 async def update_organization_user_admin(
     organization_id: str,
     user_id: str,
@@ -538,8 +542,11 @@ async def update_organization_user_admin(
         success = await keycloak_admin_service.update_user(user_id, user_data)
 
         if success:
-            logger.info("Successfully updated user", extra={"user_id": user_id, "organization_id": organization_id})
-            return {"success": True, "message": "User updated successfully"}
+            logger.info(
+                "Successfully updated user",
+                extra={"user_id": user_id, "organization_id": organization_id}
+            )
+            return SuccessMessageResponse(success=True, message="User updated successfully")
         else:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update user in Keycloak"
@@ -556,7 +563,7 @@ async def update_organization_user_admin(
         )
 
 
-@router.delete("/{organization_id}/users/{user_id}")
+@router.delete("/{organization_id}/users/{user_id}", response_model=SuccessMessageResponse)
 async def delete_organization_user(
     organization_id: str,
     user_id: str,
@@ -594,7 +601,7 @@ async def delete_organization_user(
                 "Successfully removed user from organization",
                 extra={"user_id": user_id, "organization_id": organization_id},
             )
-            return {"success": True, "message": "User removed from organization"}
+            return SuccessMessageResponse(success=True, message="User removed from organization")
         else:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to remove user from organization"
@@ -613,7 +620,7 @@ async def delete_organization_user(
         )
 
 
-@router.post("/{organization_id}/users/{user_id}/reset-password")
+@router.post("/{organization_id}/users/{user_id}/reset-password", response_model=SuccessMessageResponse)
 async def reset_user_password(
     organization_id: str,
     user_id: str,
@@ -642,8 +649,11 @@ async def reset_user_password(
         success = await keycloak_admin_service.send_password_reset_email(user_id)
 
         if success:
-            logger.info("Successfully sent password reset email", extra={"user_id": user_id})
-            return {"success": True, "message": "Password reset email sent"}
+            logger.info(
+                "Successfully sent password reset email",
+                extra={"user_id": user_id}
+            )
+            return SuccessMessageResponse(success=True, message="Password reset email sent")
         else:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to send password reset email"
@@ -662,7 +672,7 @@ async def reset_user_password(
         )
 
 
-@router.patch("/{organization_id}/users/{user_id}/status")
+@router.patch("/{organization_id}/users/{user_id}/status", response_model=SuccessMessageResponse)
 async def update_user_status(
     organization_id: str,
     user_id: str,
@@ -704,9 +714,12 @@ async def update_user_status(
         success = await keycloak_admin_service.update_user(user_id, {"enabled": status_data["enabled"]})
 
         if success:
-            status_text = "enabled" if status_data["enabled"] else "disabled"
-            logger.info(f"Successfully {status_text} user", extra={"user_id": user_id})
-            return {"success": True, "message": f"User {status_text}"}
+            status_text = "enabled" if status_data['enabled'] else "disabled"
+            logger.info(
+                f"Successfully {status_text} user",
+                extra={"user_id": user_id}
+            )
+            return SuccessMessageResponse(success=True, message=f"User {status_text}")
         else:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update user status"

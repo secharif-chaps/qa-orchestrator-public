@@ -91,11 +91,13 @@ class FeatureFlag(StrEnum):
         TRANSLATION: Translation feature for translating company data
         DISCOVER: External Discover dashboard integration with configurable URL
         PAPPERS: Pappers API integration for company data enrichment
+        WORLDCHECK: WorldCheck One API for due diligence screening (sanctions, PEP, adverse media)
     """
 
     TRANSLATION = "translation"
     DISCOVER = "discover"
     PAPPERS = "pappers"
+    WORLDCHECK = "worldcheck"
 
 
 class Organization(GlobalBase):

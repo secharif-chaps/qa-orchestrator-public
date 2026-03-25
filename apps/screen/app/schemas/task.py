@@ -20,6 +20,7 @@ class TaskTokenUpdate(BaseModel):
 class TaskResponse(BaseModel):
     id: int
     company_id: int
+    organization_id: str | None = None
     type: TaskType
     status: TaskStatus
     error: str | None = None
