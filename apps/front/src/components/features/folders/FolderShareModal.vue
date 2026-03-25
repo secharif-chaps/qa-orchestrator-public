@@ -301,15 +301,12 @@ const { data: shares, isLoading: isLoadingShares } = useQuery({
   enabled: () => isOpen.value && !!props.folderId,
 })
 
-// Search users
+// Search users — getter form ensures options re-evaluate when debouncedSearchQuery changes
 const {
   data: searchResults,
   isLoading: isSearching,
   error: searchError,
-} = useQuery({
-  ...userSearchQuery({ query: debouncedSearchQuery.value }),
-  enabled: () => isOpen.value && debouncedSearchQuery.value.length >= 2,
-})
+} = useQuery(() => userSearchQuery({ query: debouncedSearchQuery.value }))
 
 // Mutations
 const { createShare, isLoading: isAddingShare } = useCreateFolderShare()
