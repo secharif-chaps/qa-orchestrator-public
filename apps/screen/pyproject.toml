@@ -6,7 +6,7 @@ authors = ["Your Name <your.email@example.com>"]
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 fastapi = ">=0.115"
 uvicorn = "0.22.0"
 sqlalchemy = ">=2.0.35"
@@ -40,14 +40,14 @@ ruff = "^0.9.0"
 mypy = "^1.15"
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 ignore_missing_imports = true
 warn_return_any = true
 warn_unused_configs = true
 exclude = ["alembic/", "tests/"]
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py312"
 line-length = 120
 
 [tool.ruff.lint]
@@ -68,6 +68,7 @@ ignore = [
     "SIM105",  # use contextlib.suppress (style preference)
     "SIM108",  # use ternary operator (style preference)
     "ASYNC210",# blocking HTTP in async (needs httpx migration)
+    "UP046",   # PEP 695 type params syntax (Generic[T] still widely used)
 ]
 
 [tool.ruff.lint.isort]

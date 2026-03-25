@@ -5,7 +5,7 @@
 | Component | Technology | Version |
 |-----------|------------|---------|
 | Framework | FastAPI | 0.100.0 |
-| Language | Python | 3.11 |
+| Language | Python | 3.12 |
 | Database | PostgreSQL | 16 |
 | ORM | SQLAlchemy | 2.0.17 |
 | DB Driver (sync) | psycopg2-binary | 2.9.6 |
@@ -75,7 +75,7 @@
 |-----------|------------|
 | Container Orchestration | Docker Compose (dev), Kubernetes (prod) |
 | Database Container | postgres:16-alpine |
-| Backend Container | Python 3.11-slim |
+| Backend Container | Python 3.12-slim |
 | Dev Port (Backend) | 8000 |
 | Dev Port (Frontend) | 3000 |
 | Auth Port | 8080 |
