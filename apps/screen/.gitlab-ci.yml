@@ -32,6 +32,16 @@ screen:lint:
     - cd apps/screen && ruff check app/
   <<: *screen-changes
 
+screen:mypy:
+  stage: lint
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  script:
+    - cd apps/screen && poetry config virtualenvs.create false && poetry install --no-interaction
+    - cd apps/screen && mypy app/ --ignore-missing-imports
+  allow_failure: true
+  <<: *screen-changes
+
 # ─── Test Stage ────────────────────────────────────────
 
 # Shared test setup (no DB needed)
@@ -48,7 +58,7 @@ screen:test:unit:
   <<: *screen-test-base
   needs: []
   script:
-    - pytest tests/unit/ tests/test_worldcheck/ -v --cov=app --cov-report=term-missing --cov-report=xml:coverage.xml --junitxml=report.xml
+    - pytest tests/unit/ tests/test_worldcheck/ -v --cov=app --cov-report=term-missing --cov-report=xml:coverage.xml --cov-fail-under=35 --junitxml=report.xml
   artifacts:
     when: always
     reports:
@@ -78,7 +88,7 @@ screen:test:integration:
     - PGPASSWORD=postgres psql -h postgres -U postgres -d chapsmind_db_test -c "CREATE SCHEMA IF NOT EXISTS screen_schema;" || true
     - alembic upgrade head
   script:
-    - pytest tests/integration/ -v --junitxml=report-integration.xml
+    - pytest tests/integration/ -v --no-cov --junitxml=report-integration.xml
   artifacts:
     when: always
     reports:

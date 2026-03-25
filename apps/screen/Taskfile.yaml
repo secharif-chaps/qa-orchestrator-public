@@ -16,6 +16,10 @@ tasks:
     desc: Run backend tests
     cmd: "{{.COMPOSE}} exec screen pytest"
 
+  mypy:
+    desc: Run mypy type checking on backend code
+    cmd: "{{.COMPOSE}} exec screen mypy app/ --ignore-missing-imports"
+
   shell:
     desc: Open bash shell in screen backend container
     cmd: "{{.COMPOSE}} exec screen bash"
