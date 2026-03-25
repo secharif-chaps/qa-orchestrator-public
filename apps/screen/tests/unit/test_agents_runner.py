@@ -5,7 +5,7 @@ _broadcast_completion, _mark_tasks_errored, run_single_agent, run.
 
 Regression tests for:
 - error_details is dict (not json.dumps string)
-- folder_id via FolderItem junction table (not Company.folder_id)
+- folder_id via global-service client (not local FolderItem table)
 - task.total_cost (not task.cost)
 """
 
@@ -262,39 +262,46 @@ class TestBroadcastCompletion:
     """Tests for _broadcast_completion."""
 
     @pytest.mark.asyncio
+    @patch("app.agents.runner.get_global_service_client")
     @patch("app.agents.runner.task_event_manager")
-    async def test_folder_id_via_folder_item(self, mock_events, runner, mock_db):
-        """REGRESSION: folder_id must be looked up via FolderItem junction table."""
-        mock_folder_item = MagicMock()
-        mock_folder_item.folder_id = "folder-uuid-123"
-        mock_db.query.return_value.filter.return_value.first.return_value = mock_folder_item
+    async def test_folder_id_via_global_service(self, mock_events, mock_get_client, runner, mock_db):
+        """REGRESSION: folder_id must be looked up via GlobalServiceClient."""
+        mock_client = MagicMock()
+        mock_client.get_company_folder_id = AsyncMock(return_value="folder-uuid-123")
+        mock_get_client.return_value = mock_client
 
         task_map = {"profile": MagicMock(status=TaskStatus.SUCCEEDED)}
         mock_events.broadcast_all_tasks_completed = AsyncMock()
 
-        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", task_map)
+        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", "org-1", task_map)
 
         mock_events.broadcast_all_tasks_completed.assert_called_once()
         call_kwargs = mock_events.broadcast_all_tasks_completed.call_args[1]
         assert call_kwargs["folder_id"] == "folder-uuid-123"
 
     @pytest.mark.asyncio
+    @patch("app.agents.runner.get_global_service_client")
     @patch("app.agents.runner.task_event_manager")
-    async def test_no_folder_item_returns_none(self, mock_events, runner, mock_db):
-        mock_db.query.return_value.filter.return_value.first.return_value = None
+    async def test_no_folder_item_returns_none(self, mock_events, mock_get_client, runner, mock_db):
+        mock_client = MagicMock()
+        mock_client.get_company_folder_id = AsyncMock(return_value=None)
+        mock_get_client.return_value = mock_client
 
         task_map = {"profile": MagicMock(status=TaskStatus.SUCCEEDED)}
         mock_events.broadcast_all_tasks_completed = AsyncMock()
 
-        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", task_map)
+        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", "org-1", task_map)
 
         call_kwargs = mock_events.broadcast_all_tasks_completed.call_args[1]
         assert call_kwargs["folder_id"] is None
 
     @pytest.mark.asyncio
+    @patch("app.agents.runner.get_global_service_client")
     @patch("app.agents.runner.task_event_manager")
-    async def test_correct_success_error_counts(self, mock_events, runner, mock_db):
-        mock_db.query.return_value.filter.return_value.first.return_value = None
+    async def test_correct_success_error_counts(self, mock_events, mock_get_client, runner, mock_db):
+        mock_client = MagicMock()
+        mock_client.get_company_folder_id = AsyncMock(return_value=None)
+        mock_get_client.return_value = mock_client
         mock_events.broadcast_all_tasks_completed = AsyncMock()
 
         task_map = {
@@ -303,7 +310,7 @@ class TestBroadcastCompletion:
             "press": MagicMock(status=TaskStatus.ERROR),
         }
 
-        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", task_map)
+        await runner._broadcast_completion(mock_db, "owner-1", 1, "Test Co", "org-1", task_map)
 
         call_kwargs = mock_events.broadcast_all_tasks_completed.call_args[1]
         assert call_kwargs["success_count"] == 2
@@ -533,9 +540,13 @@ class TestRunFullAnalysis:
         # Mock the graph to yield no events (empty analysis)
         mock_graph = MagicMock()
         mock_graph.astream_events = MagicMock(return_value=aiter([]))
-        with patch("app.agents.graph.get_analysis_graph", new=AsyncMock(return_value=mock_graph)):
-            # Mock FolderItem lookup for completion broadcast
-            mock_db.query.return_value.filter.return_value.first.return_value = None
+        with (
+            patch("app.agents.graph.get_analysis_graph", new=AsyncMock(return_value=mock_graph)),
+            patch("app.agents.runner.get_global_service_client") as mock_get_gsc,
+        ):
+            mock_gsc_instance = MagicMock()
+            mock_gsc_instance.get_company_folder_id = AsyncMock(return_value=None)
+            mock_get_gsc.return_value = mock_gsc_instance
 
             await runner.run(mock_db, 1, "Test", "https://test.com", "org-1", "owner-1")
 

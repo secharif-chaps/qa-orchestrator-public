@@ -4,20 +4,19 @@ Organization endpoints for Keycloak Organizations integration.
 This module provides organization context endpoints:
 - /current: Returns current organization from JWT
 - /activities: Returns recent activities (companies and folders) from other users
-
-Note: During Phase 2, companies and folders are still in screen-service,
-so /activities makes internal API calls. After Phase 3 (Folders Domain),
-folders will be queried locally while companies remain in screen-service.
 """
-import httpx
-from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.core.auth_middleware import GatewayUser, build_internal_headers
-from app.core.keycloak import OIDCUser, idp
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.logging_config import get_logger
 from app.core.organization import OrganizationContext, get_user_organization
-from app.proxy.client import get_proxy_client
+from app.database import get_global_db
+from app.models.folder import Folder, FolderItem, FolderShare
 from app.schemas.organization import ActivityResponse, OrganizationResponse
+from app.services.backend_client import get_companies_by_ids
+from app.services.folder import FolderService
 
 logger = get_logger(__name__)
 
@@ -51,23 +50,18 @@ async def get_current_organization(
 @router.get("/activities", response_model=list[ActivityResponse])
 async def get_organization_activities(
     org_context: OrganizationContext = Depends(get_user_organization),
-    user: OIDCUser = Depends(idp.get_current_user(extra_fields=["organization"])),
+    db: AsyncSession = Depends(get_global_db),
 ) -> list[ActivityResponse]:
     """
     Get recent creation activities in the organization.
 
     Shows last 10 companies and folders created by other users in the same organization.
 
-    NOTE: During Phase 2, both companies and folders are still in screen-service,
-    so this endpoint makes an internal API call to screen-service to fetch activities.
-    After Phase 3 (Folders Domain migration), folders will be queried locally from
-    global_schema while companies will continue to be fetched from screen-service.
-
     The response includes:
     - Companies created by other users (filtered by folder access control)
     - Folders shared with the current user (created by other users)
 
-    Security: Access control is enforced by screen-service based on folder permissions.
+    Security: Access control is enforced by folder-based permissions.
     """
     logger.info(
         "Get organization activities",
@@ -78,73 +72,112 @@ async def get_organization_activities(
     )
 
     try:
-        # Extract organization from extra_fields (fastapi-keycloak puts custom claims there)
-        organization_claim = user.extra_fields.get("organization") if user.extra_fields else None
+        current_user_id = org_context.user_id
+        current_username = org_context.username
 
-        # Convert OIDCUser to GatewayUser for build_internal_headers
-        gateway_user = GatewayUser(
-            sub=user.sub,
-            preferred_username=user.preferred_username,
-            email=user.email,
-            realm_access=user.realm_access,
-            organization=organization_claim,
+        # Get accessible company IDs for this user
+        accessible_company_ids = await FolderService.get_accessible_company_ids(
+            db=db,
+            user_id=current_user_id,
+            organization_id=org_context.organization_id,
+            username=current_username,
         )
 
-        # Build internal JWT headers for service-to-service auth
-        internal_headers = build_internal_headers(gateway_user)
+        activities: list[ActivityResponse] = []
 
-        if not internal_headers:
-            logger.error("Failed to build internal headers for activities request")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Failed to authenticate with backend service"
+        # Get companies from accessible folders created by other users
+        if accessible_company_ids:
+            company_id_strings = [str(cid) for cid in accessible_company_ids]
+
+            # Get folder items for accessible companies, with folder info
+            stmt = (
+                select(FolderItem, Folder)
+                .join(Folder, FolderItem.folder_id == Folder.id)
+                .where(
+                    FolderItem.item_id.in_(company_id_strings),
+                    FolderItem.item_type == "company",
+                    Folder.organization_id == org_context.organization_id,
+                    Folder.is_deleted.is_(False),
+                )
+                .order_by(FolderItem.added_at.desc())
+                .limit(10)
             )
+            result = await db.execute(stmt)
+            rows = result.all()
 
-        # Make internal API call to screen-service to get activities
-        # Screen-service owns companies (and folders until Phase 3)
-        client = await get_proxy_client()
-        response = await client.get(
-            "/api/activities",
-            headers=internal_headers,
+            # Collect unique company IDs and their folder mapping
+            seen_company_ids: set[str] = set()
+            company_folder_map: dict[str, tuple[FolderItem, Folder]] = {}
+            for folder_item, folder in rows:
+                if folder_item.item_id not in seen_company_ids:
+                    seen_company_ids.add(folder_item.item_id)
+                    company_folder_map[folder_item.item_id] = (folder_item, folder)
+
+            # Enrich with company names from screen-service
+            if company_folder_map:
+                int_ids = [int(cid) for cid in company_folder_map]
+                company_map = await get_companies_by_ids(
+                    company_ids=int_ids,
+                    user_id=current_user_id,
+                    username=current_username,
+                    org_id=org_context.organization_id,
+                    org_name=org_context.organization_name,
+                )
+
+                for cid_str, (folder_item, folder) in company_folder_map.items():
+                    company_info = company_map.get(int(cid_str))
+                    if not company_info or company_info.is_deleted:
+                        continue
+                    # Only show companies created by other users
+                    if company_info.owner_username == current_username:
+                        continue
+                    activities.append(ActivityResponse(
+                        type="company",
+                        name=company_info.name,
+                        owner=company_info.owner_username or "Unknown",
+                        created_at=folder_item.added_at,
+                        id=cid_str,
+                        folder_id=str(folder.id),
+                    ))
+
+        # Get folders shared with the current user (created by other users)
+        stmt = (
+            select(Folder)
+            .join(FolderShare, FolderShare.folder_id == Folder.id)
+            .where(
+                Folder.organization_id == org_context.organization_id,
+                Folder.owner_id != current_user_id,
+                Folder.is_deleted.is_(False),
+                FolderShare.user_id == current_user_id,
+            )
+            .order_by(Folder.created_at.desc())
+            .limit(10)
         )
+        result = await db.execute(stmt)
+        folders = result.scalars().all()
 
-        # Check if request was successful
-        if response.status_code != 200:
-            logger.error(
-                "Screen-service activities request failed",
-                extra={
-                    "status_code": response.status_code,
-                    "response": response.text
-                }
-            )
-            raise HTTPException(
-                status_code=response.status_code,
-                detail="Unable to retrieve activities from the backend service. Please try again later."
-            )
+        for folder in folders:
+            activities.append(ActivityResponse(
+                type="folder",
+                name=folder.name,
+                owner=folder.owner or "Unknown",
+                created_at=folder.created_at,
+                id=str(folder.id),
+            ))
 
-        # Parse and return activities
-        activities_data = response.json()
-        activities = [ActivityResponse(**activity) for activity in activities_data]
+        # Sort by creation time (most recent first) and return top 10
+        activities.sort(key=lambda x: x.created_at, reverse=True)
 
         logger.debug(
             "Retrieved organization activities",
             extra={
-                "count": len(activities),
+                "count": len(activities[:10]),
                 "user": org_context.username
             }
         )
 
-        return activities
+        return activities[:10]
 
-    except httpx.HTTPError as e:
-        logger.error(
-            "HTTP error calling screen-service for activities",
-            extra={"error": str(e)}
-        )
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Backend service unavailable"
-        )
     except Exception as e:
         logger.error(
             "Unexpected error fetching activities",

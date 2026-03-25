@@ -458,6 +458,222 @@ class GlobalServiceClient:
             )
 
 
+    async def get_accessible_company_ids(
+        self,
+        org_id: str,
+        user_id: str,
+        username: str = "unknown",
+    ) -> set[int]:
+        """Get company IDs accessible to a user via folder sharing.
+
+        Calls global-service internal API to get the list of company IDs
+        from all folders the user owns or has been shared with.
+
+        Args:
+            org_id: Keycloak organization UUID
+            user_id: Keycloak user ID
+            username: Username for internal JWT
+
+        Returns:
+            Set of accessible company IDs
+
+        Raises:
+            HTTPException: On API errors or service unavailability
+        """
+        url = f"{self.base_url}/internal/organizations/{org_id}/folders/accessible-company-ids"
+
+        token = self._create_internal_token(
+            user_id=user_id,
+            username=username,
+            org_id=org_id,
+        )
+
+        headers = {"Authorization": f"Bearer {token}"}
+
+        logger.debug(
+            f"Calling global-service to get accessible company IDs for user {user_id}",
+            extra={"organization_id": org_id, "user_id": user_id},
+        )
+
+        async def make_request() -> httpx.Response:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                return await client.get(url, headers=headers)
+
+        try:
+            response = await self._retry_with_backoff(make_request, "Get accessible company IDs")
+
+            if response.status_code == 200:
+                company_ids = response.json()
+                logger.debug(
+                    f"Got {len(company_ids)} accessible company IDs",
+                    extra={"organization_id": org_id, "count": len(company_ids)},
+                )
+                return set(company_ids)
+
+            logger.error(
+                f"Global-service returned error getting accessible company IDs: {response.status_code}",
+                extra={
+                    "organization_id": org_id,
+                    "status_code": response.status_code,
+                    "response_body": response.text[:500],
+                },
+            )
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=f"Folder service error: {response.status_code}",
+            )
+
+        except httpx.RequestError as e:
+            logger.error(
+                f"Network error calling global-service: {str(e)}",
+                extra={"organization_id": org_id, "error": str(e)},
+            )
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Folder service temporarily unavailable",
+            )
+
+    async def user_has_company_access(
+        self,
+        org_id: str,
+        company_id: int,
+        user_id: str,
+        username: str = "unknown",
+        user_roles: list[str] | None = None,
+    ) -> bool:
+        """Check if a user has access to a company via folder sharing.
+
+        Calls global-service internal API to check if the user has access
+        to the specified company through folder ownership or sharing.
+
+        Args:
+            org_id: Keycloak organization UUID
+            company_id: Company ID to check access for
+            user_id: Keycloak user ID
+            username: Username for internal JWT
+            user_roles: User roles for manager check
+
+        Returns:
+            True if user has access, False otherwise
+
+        Raises:
+            HTTPException: On API errors or service unavailability
+        """
+        roles_param = ",".join(user_roles) if user_roles else ""
+        url = (
+            f"{self.base_url}/internal/organizations/{org_id}"
+            f"/folders/company-access/{company_id}?user_roles={roles_param}"
+        )
+
+        token = self._create_internal_token(
+            user_id=user_id,
+            username=username,
+            org_id=org_id,
+        )
+
+        headers = {"Authorization": f"Bearer {token}"}
+
+        logger.debug(
+            "Calling global-service to check company access",
+            extra={
+                "organization_id": org_id,
+                "company_id": company_id,
+                "user_id": user_id,
+            },
+        )
+
+        async def make_request() -> httpx.Response:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                return await client.get(url, headers=headers)
+
+        try:
+            response = await self._retry_with_backoff(make_request, "Check company access")
+
+            if response.status_code == 200:
+                return response.json()
+
+            logger.error(
+                f"Global-service returned error checking company access: {response.status_code}",
+                extra={
+                    "organization_id": org_id,
+                    "company_id": company_id,
+                    "status_code": response.status_code,
+                },
+            )
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=f"Folder service error: {response.status_code}",
+            )
+
+        except httpx.RequestError as e:
+            logger.error(
+                f"Network error calling global-service: {str(e)}",
+                extra={"organization_id": org_id, "error": str(e)},
+            )
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Folder service temporarily unavailable",
+            )
+
+
+    async def get_company_folder_id(
+        self,
+        org_id: str,
+        company_id: int,
+        user_id: str,
+        username: str = "unknown",
+    ) -> str | None:
+        """Get the folder ID containing a company.
+
+        Calls global-service internal API to get the folder_id of the first
+        folder containing this company in the organization.
+
+        Args:
+            org_id: Keycloak organization UUID
+            company_id: Company ID
+            user_id: Keycloak user ID for internal JWT
+            username: Username for internal JWT
+
+        Returns:
+            Folder ID as string, or None if company is not in any folder
+        """
+        url = (
+            f"{self.base_url}/internal/organizations/{org_id}"
+            f"/folders/company/{company_id}/folder-id"
+        )
+
+        token = self._create_internal_token(
+            user_id=user_id,
+            username=username,
+            org_id=org_id,
+        )
+
+        headers = {"Authorization": f"Bearer {token}"}
+
+        async def make_request() -> httpx.Response:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                return await client.get(url, headers=headers)
+
+        try:
+            response = await self._retry_with_backoff(make_request, "Get company folder ID")
+
+            if response.status_code == 200:
+                return response.json()
+
+            logger.warning(
+                f"Global-service returned {response.status_code} getting company folder ID",
+                extra={"organization_id": org_id, "company_id": company_id},
+            )
+            return None
+
+        except (httpx.RequestError, HTTPException) as e:
+            logger.warning(
+                f"Failed to get company folder ID: {e}",
+                extra={"organization_id": org_id, "company_id": company_id},
+            )
+            return None
+
+
 def get_global_service_client() -> GlobalServiceClient:
     """Dependency function to get a GlobalServiceClient instance.
 

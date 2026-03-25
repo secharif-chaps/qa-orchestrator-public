@@ -6,13 +6,16 @@ Used by backend services (monolith) to call global-service functionality.
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Path, status
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import get_token_manager
 from app.core.internal_jwt import InternalTokenPayload, get_internal_token
 from app.core.logging_config import get_logger
+from app.database import get_global_db
 from app.models.organization import ModuleName, ReferenceType
 from app.schemas.token import ConsumeTokensRequest, ConsumeTokensResponse, TokenTransactionRead
+from app.services.folder import FolderService
 from app.services.token_manager import (
     InsufficientTokensException,
     ModuleNotEnabledException,
@@ -182,3 +185,143 @@ async def consume_organization_tokens(
                 "required_tokens": request.amount,
             },
         )
+
+
+@router.get(
+    "/{org_id}/folders/accessible-company-ids",
+    response_model=list[int],
+    status_code=status.HTTP_200_OK,
+)
+async def get_accessible_company_ids(
+    org_id: UUID = Path(
+        ...,
+        description="Organization UUID",
+    ),
+    token_payload: InternalTokenPayload = Depends(get_internal_token),
+    db: AsyncSession = Depends(get_global_db),
+) -> list[int]:
+    """Get company IDs accessible to a user via folder sharing (internal API).
+
+    Returns the list of company IDs from all folders the user owns or
+    has been shared with in the specified organization.
+
+    Security:
+    - Requires valid internal JWT token in Authorization header
+    - Validates that org_id in path matches org_id in JWT token
+    """
+    org_id_str = str(org_id)
+
+    if org_id_str != token_payload.org_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"message": "Organization ID in path does not match token organization"},
+        )
+
+    company_ids = await FolderService.get_accessible_company_ids(
+        db=db,
+        user_id=token_payload.sub,
+        organization_id=org_id_str,
+        username=token_payload.username,
+    )
+
+    logger.debug(
+        "Accessible company IDs retrieved",
+        extra={
+            "organization_id": org_id_str,
+            "user_id": token_payload.sub,
+            "count": len(company_ids),
+        },
+    )
+
+    return sorted(company_ids)
+
+
+@router.get(
+    "/{org_id}/folders/company-access/{company_id}",
+    response_model=bool,
+    status_code=status.HTTP_200_OK,
+)
+async def check_company_access(
+    org_id: UUID = Path(..., description="Organization UUID"),
+    company_id: int = Path(..., description="Company ID to check access for"),
+    user_roles: str = Query("", description="Comma-separated list of user roles"),
+    token_payload: InternalTokenPayload = Depends(get_internal_token),
+    db: AsyncSession = Depends(get_global_db),
+) -> bool:
+    """Check if a user has access to a company via folder sharing (internal API).
+
+    A user has access if they are a manager or the company belongs to a folder
+    the user owns or has been shared with.
+
+    Security:
+    - Requires valid internal JWT token in Authorization header
+    - Validates that org_id in path matches org_id in JWT token
+    """
+    org_id_str = str(org_id)
+
+    if org_id_str != token_payload.org_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"message": "Organization ID in path does not match token organization"},
+        )
+
+    roles = [r.strip() for r in user_roles.split(",") if r.strip()] if user_roles else []
+
+    has_access = await FolderService.user_has_company_access(
+        db=db,
+        company_id=company_id,
+        user_id=token_payload.sub,
+        organization_id=org_id_str,
+        username=token_payload.username,
+        user_roles=roles,
+    )
+
+    logger.debug(
+        "Company access check completed",
+        extra={
+            "organization_id": org_id_str,
+            "user_id": token_payload.sub,
+            "company_id": company_id,
+            "has_access": has_access,
+        },
+    )
+
+    return has_access
+
+
+@router.get(
+    "/{org_id}/folders/company/{company_id}/folder-id",
+    response_model=str | None,
+    status_code=status.HTTP_200_OK,
+)
+async def get_company_folder_id(
+    org_id: UUID = Path(..., description="Organization UUID"),
+    company_id: int = Path(..., description="Company ID"),
+    token_payload: InternalTokenPayload = Depends(get_internal_token),
+    db: AsyncSession = Depends(get_global_db),
+) -> str | None:
+    """Get the folder ID containing a company (internal API).
+
+    Returns the folder_id of the first folder containing this company
+    in the specified organization, or null if not found.
+
+    Security:
+    - Requires valid internal JWT token in Authorization header
+    - Validates that org_id in path matches org_id in JWT token
+    """
+    org_id_str = str(org_id)
+
+    if org_id_str != token_payload.org_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={"message": "Organization ID in path does not match token organization"},
+        )
+
+    folders = await FolderService.get_folders_for_item(
+        db=db,
+        item_id=str(company_id),
+        item_type="company",
+        organization_id=org_id_str,
+    )
+
+    return str(folders[0].id) if folders else None

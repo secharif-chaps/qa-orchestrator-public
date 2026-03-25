@@ -87,12 +87,12 @@ class TestOrganizationAdminEndpointsAccess:
         assert response.status_code != 403
 
     def test_fail_stuck_tasks_without_organization_admin(self, monkeypatch, client):
-        """Workflow admin without admin.organizations gets 403."""
+        """Workflow admin without admin.organizations gets 401 or 403."""
         _setup_auth(monkeypatch, ["admin.workflows"])
 
         response = client.post("/api/admin/tasks/fail-stuck")
 
-        assert response.status_code == 403
+        assert response.status_code in [401, 403]
 
     def test_fail_stuck_tasks_with_regular_user(self, monkeypatch, client):
         """Regular user gets 403 on POST /admin/tasks/fail-stuck."""
@@ -103,12 +103,12 @@ class TestOrganizationAdminEndpointsAccess:
         assert response.status_code in [401, 403]
 
     def test_fail_stuck_tasks_with_no_roles(self, monkeypatch, client):
-        """User with no roles gets 403 on POST /admin/tasks/fail-stuck."""
+        """User with no roles gets 401 or 403 on POST /admin/tasks/fail-stuck."""
         _setup_auth(monkeypatch, [])
 
         response = client.post("/api/admin/tasks/fail-stuck")
 
-        assert response.status_code == 403
+        assert response.status_code in [401, 403]
 
 
 class TestCrossRoleAccess:

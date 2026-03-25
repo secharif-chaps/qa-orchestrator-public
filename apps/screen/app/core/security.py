@@ -7,9 +7,6 @@ from fastapi import HTTPException, status
 
 from app.core.organization import OrganizationContext
 from app.models.company import Company
-from app.schemas.user import TokenData
-
-# Re-export is_chapsvision_email from email_utils to avoid circular imports
 
 
 class AuthorizationError(HTTPException):
@@ -17,29 +14,6 @@ class AuthorizationError(HTTPException):
 
     def __init__(self, detail: str = "Insufficient permissions"):
         super().__init__(status_code=status.HTTP_403_FORBIDDEN, detail=detail)
-
-
-def verify_company_ownership(company: Company | None, current_user: TokenData) -> Company:
-    """
-    Verify that the current user owns the specified company
-
-    Args:
-        company: Company object to check ownership for
-        current_user: Current authenticated user
-
-    Returns:
-        Company object if user owns it
-
-    Raises:
-        HTTPException: If company doesn't exist or user doesn't own it
-    """
-    if not company:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Company not found")
-
-    if company.owner_username != current_user.username:
-        raise AuthorizationError("You don't have permission to access this company")
-
-    return company
 
 
 def verify_company_organization_access(company: Company | None, org_context: OrganizationContext) -> Company:

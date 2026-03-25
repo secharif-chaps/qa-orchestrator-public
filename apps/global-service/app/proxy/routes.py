@@ -17,6 +17,7 @@ Security:
 - Backend verifies internal JWT, no re-validation with Keycloak needed
 """
 
+import re
 import time
 from collections.abc import AsyncGenerator
 
@@ -24,7 +25,7 @@ import httpx
 from fastapi import APIRouter, Request, Response
 from fastapi.responses import StreamingResponse
 
-from app.core.auth_middleware import auth_middleware
+from app.core.auth_middleware import auth_middleware, extract_organization_info
 from app.core.logging_config import get_logger
 from app.proxy.client import get_proxy_client, get_streaming_client
 
@@ -129,6 +130,66 @@ def is_streaming_request(request: Request) -> bool:
     return any(ct in accept_lower for ct in STREAMING_CONTENT_TYPES)
 
 
+# Pattern to match GET /companies/{id} (single company access)
+_COMPANY_BY_ID_PATTERN = re.compile(r"^companies/(\d+)$")
+
+
+async def _check_company_folder_access(path: str, method: str, user) -> Response | None:
+    """Check folder-based access for company endpoints at the gateway.
+
+    Returns a 404 Response if access is denied, None if access is granted.
+    Only applies to GET /companies/{id} requests from authenticated users.
+    """
+    if method != "GET" or not user:
+        return None
+
+    match = _COMPANY_BY_ID_PATTERN.match(path)
+    if not match:
+        return None
+
+    company_id = int(match.group(1))
+    org_id, _ = extract_organization_info(user)
+    if not org_id:
+        return None
+
+    roles: list[str] = []
+    if user.realm_access:
+        roles = user.realm_access.get("roles", [])
+
+    # Managers bypass folder access check
+    if any(r in roles for r in ("admin.organizations", "organization.manage")):
+        return None
+
+    try:
+        from app.database import get_global_db_context
+        from app.services.folder import FolderService
+
+        async with get_global_db_context() as db:
+            has_access = await FolderService.user_has_company_access(
+                db=db,
+                company_id=company_id,
+                user_id=user.sub,
+                organization_id=org_id,
+                username=user.preferred_username or "",
+                user_roles=roles,
+            )
+
+        if not has_access:
+            logger.warning(
+                f"🚫 Folder access denied: {user.preferred_username} → company {company_id}",
+            )
+            return Response(
+                content=b'{"detail": "Company not found"}',
+                status_code=404,
+                media_type="application/json",
+            )
+    except Exception as e:
+        # Don't block on access check failures — log and allow
+        logger.error(f"Folder access check failed, allowing request: {e}")
+
+    return None
+
+
 @router.api_route(
     "/{path:path}",
     methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
@@ -167,6 +228,11 @@ async def proxy_request(request: Request, path: str) -> Response:
         f"🔐 AUTH OK: {username} → {request.method} /api/{path}",
         extra={"path": path, "method": request.method, "user": username},
     )
+
+    # Folder-based access control at the gateway (before proxying to screen)
+    denied = await _check_company_folder_access(path, request.method, user)
+    if denied:
+        return denied
 
     # Build the target URL
     target_path = f"/api/{path}"
