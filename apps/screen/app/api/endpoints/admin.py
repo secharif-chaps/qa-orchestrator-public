@@ -16,6 +16,7 @@ from app.core.logging_config import get_logger
 from app.database import get_db
 from app.models.company import Company
 from app.models.task import Task, TaskStatus
+from app.schemas.admin_tasks import FailStuckTasksResponse
 from app.schemas.admin_usage import (
     OrganizationBreakdown,
     TimeSeriesDataPoint,
@@ -31,7 +32,7 @@ logger = get_logger(__name__)
 # Task Management Endpoints
 
 
-@router.post("/tasks/fail-stuck")
+@router.post("/tasks/fail-stuck", response_model=FailStuckTasksResponse)
 async def fail_stuck_tasks(
     db: Session = Depends(get_db),
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"])),
@@ -57,7 +58,6 @@ async def fail_stuck_tasks(
         "tasks_failed": failed_count,
         "message": f"Failed {failed_count} stuck tasks",
     }
-
 
 # Usage Statistics Endpoints
 

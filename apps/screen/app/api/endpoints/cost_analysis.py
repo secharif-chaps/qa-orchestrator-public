@@ -4,7 +4,6 @@ All endpoints require admin.costs role for access.
 """
 
 from datetime import date, datetime, timedelta
-from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_keycloak import OIDCUser
@@ -15,11 +14,26 @@ from app.core.keycloak import idp
 from app.database import get_db
 from app.models import Task, TaskStatus
 from app.models.company import Company
+from app.schemas.cost_analysis import (
+    CostTrendsResponse,
+    GlobalCostResponse,
+    GlobalSummary,
+    OrganizationCostItem,
+    OrganizationCostResponse,
+    OrganizationCostSummary,
+    PeriodRange,
+    RefreshMaterializedViewsResponse,
+    TaskTypeCostItem,
+    TaskTypeCostResponse,
+    TaskTypeCostSummary,
+    TrendDataPoint,
+    TrendSummary,
+)
 
 router = APIRouter(prefix="/cost-analysis", tags=["cost-analysis"])
 
 
-@router.get("/global", response_model=dict[str, Any])
+@router.get("/global", response_model=GlobalCostResponse)
 async def get_global_cost_analysis(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
     end_date: date | None = Query(None, description="End date for analysis (inclusive)"),
@@ -71,22 +85,25 @@ async def get_global_cost_analysis(
         .scalar()
     )
 
-    return {
-        "period": {"start_date": start_date.isoformat(), "end_date": end_date.isoformat()},
-        "global_summary": {
-            "total_tasks": global_stats.total_tasks or 0,
-            "total_companies": company_count or 0,
-            "total_organizations": organization_count or 0,
-            "total_input_tokens": global_stats.total_input_tokens or 0,
-            "total_output_tokens": global_stats.total_output_tokens or 0,
-            "total_cost": float(global_stats.total_cost or 0),
-            "avg_cost_per_task": float(global_stats.avg_cost_per_task or 0),
-            "avg_cost_per_company": float(global_stats.total_cost or 0) / company_count if company_count else 0,
-        },
-    }
+    return GlobalCostResponse(
+        period=PeriodRange(
+            start_date=start_date.isoformat(),
+            end_date=end_date.isoformat(),
+        ),
+        global_summary=GlobalSummary(
+            total_tasks=global_stats.total_tasks or 0,
+            total_companies=company_count or 0,
+            total_organizations=organization_count or 0,
+            total_input_tokens=global_stats.total_input_tokens or 0,
+            total_output_tokens=global_stats.total_output_tokens or 0,
+            total_cost=float(global_stats.total_cost or 0),
+            avg_cost_per_task=float(global_stats.avg_cost_per_task or 0),
+            avg_cost_per_company=(float(global_stats.total_cost or 0) / company_count) if company_count else 0,
+        ),
+    )
 
 
-@router.get("/by-organization", response_model=dict[str, Any])
+@router.get("/by-organization", response_model=OrganizationCostResponse)
 async def get_cost_by_organization(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
     end_date: date | None = Query(None, description="End date for analysis (inclusive)"),
@@ -137,38 +154,40 @@ async def get_cost_by_organization(
     # Format results
     organizations_data = []
     for org in organization_results:
-        organizations_data.append(
-            {
-                "organization_id": org.organization_id,
-                "company_count": org.company_count or 0,
-                "task_count": org.task_count or 0,
-                "total_input_tokens": org.total_input_tokens or 0,
-                "total_output_tokens": org.total_output_tokens or 0,
-                "total_cost": float(org.total_cost or 0),
-                "avg_cost_per_task": float(org.avg_cost_per_task or 0),
-                "avg_cost_per_company": float(org.total_cost or 0) / org.company_count if org.company_count else 0,
-            }
-        )
+
+        organizations_data.append(OrganizationCostItem(
+            organization_id=org.organization_id,
+            company_count=org.company_count or 0,
+            task_count=org.task_count or 0,
+            total_input_tokens=org.total_input_tokens or 0,
+            total_output_tokens=org.total_output_tokens or 0,
+            total_cost=float(org.total_cost or 0),
+            avg_cost_per_task=float(org.avg_cost_per_task or 0),
+            avg_cost_per_company=float(org.total_cost or 0) / org.company_count if org.company_count else 0,
+        ))
 
     # Calculate totals
-    total_cost = sum(org["total_cost"] for org in organizations_data)
-    total_tasks = sum(org["task_count"] for org in organizations_data)
-    total_companies = sum(org["company_count"] for org in organizations_data)
+    total_cost = sum(org.total_cost for org in organizations_data)
+    total_tasks = sum(org.task_count for org in organizations_data)
+    total_companies = sum(org.company_count for org in organizations_data)
 
-    return {
-        "period": {"start_date": start_date.isoformat(), "end_date": end_date.isoformat()},
-        "organizations": organizations_data,
-        "summary": {
-            "total_organizations": len(organizations_data),
-            "total_cost": total_cost,
-            "total_tasks": total_tasks,
-            "total_companies": total_companies,
-            "avg_cost_per_organization": total_cost / len(organizations_data) if organizations_data else 0,
-        },
-    }
+    return OrganizationCostResponse(
+        period=PeriodRange(
+            start_date=start_date.isoformat(),
+            end_date=end_date.isoformat(),
+        ),
+        organizations=organizations_data,
+        summary=OrganizationCostSummary(
+            total_organizations=len(organizations_data),
+            total_cost=total_cost,
+            total_tasks=total_tasks,
+            total_companies=total_companies,
+            avg_cost_per_organization=total_cost / len(organizations_data) if organizations_data else 0,
+        ),
+    )
 
 
-@router.get("/by-task-type", response_model=dict[str, Any])
+@router.get("/by-task-type", response_model=TaskTypeCostResponse)
 async def get_cost_by_task_type(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
     end_date: date | None = Query(None, description="End date for analysis (inclusive)"),
@@ -212,49 +231,49 @@ async def get_cost_by_task_type(
 
     # Apply organization filter if provided
     if organization_id:
-        query = query.join(Company, Task.company_id == Company.id).filter(Company.organization_id == organization_id)
-
+        query = query.join(
+            Company, Task.company_id == Company.id
+        ).filter(
+            Company.organization_id == organization_id
+        )
     task_type_results = query.all()
 
     # Format results
     task_types_data = []
     for tt in task_type_results:
-        task_types_data.append(
-            {
-                "task_type": tt.task_type.value if hasattr(tt.task_type, "value") else tt.task_type,
-                "task_count": tt.task_count or 0,
-                "total_input_tokens": tt.total_input_tokens or 0,
-                "total_output_tokens": tt.total_output_tokens or 0,
-                "total_cost": float(tt.total_cost or 0),
-                "avg_cost_per_task": float(tt.avg_cost_per_task or 0),
-                "avg_input_tokens": float(tt.avg_input_tokens or 0),
-                "avg_output_tokens": float(tt.avg_output_tokens or 0),
-            }
-        )
+        task_types_data.append(TaskTypeCostItem(
+            task_type=tt.task_type.value if hasattr(tt.task_type, 'value') else tt.task_type,
+            task_count=tt.task_count or 0,
+            total_input_tokens=tt.total_input_tokens or 0,
+            total_output_tokens=tt.total_output_tokens or 0,
+            total_cost=float(tt.total_cost or 0),
+            avg_cost_per_task=float(tt.avg_cost_per_task or 0),
+            avg_input_tokens=float(tt.avg_input_tokens or 0),
+            avg_output_tokens=float(tt.avg_output_tokens or 0),
+        ))
 
     # Calculate totals
-    total_cost = sum(tt["total_cost"] for tt in task_types_data)
-    total_tasks = sum(tt["task_count"] for tt in task_types_data)
+    total_cost = sum(tt.total_cost for tt in task_types_data)
+    total_tasks = sum(tt.task_count for tt in task_types_data)
 
-    return {
-        "period": {"start_date": start_date.isoformat(), "end_date": end_date.isoformat()},
-        "organization_id": organization_id,
-        "task_types": task_types_data,
-        "summary": {
-            "total_task_types": len(task_types_data),
-            "total_cost": total_cost,
-            "total_tasks": total_tasks,
-            "most_expensive_type": max(task_types_data, key=lambda x: x["avg_cost_per_task"])["task_type"]
-            if task_types_data
-            else None,
-            "most_frequent_type": max(task_types_data, key=lambda x: x["task_count"])["task_type"]
-            if task_types_data
-            else None,
-        },
-    }
+    return TaskTypeCostResponse(
+        period=PeriodRange(
+            start_date=start_date.isoformat(),
+            end_date=end_date.isoformat(),
+        ),
+        organization_id=organization_id,
+        task_types=task_types_data,
+        summary=TaskTypeCostSummary(
+            total_task_types=len(task_types_data),
+            total_cost=total_cost,
+            total_tasks=total_tasks,
+            most_expensive_type=max(task_types_data, key=lambda x: x.avg_cost_per_task).task_type if task_types_data else None,
+            most_frequent_type=max(task_types_data, key=lambda x: x.task_count).task_type if task_types_data else None,
+        ),
+    )
 
 
-@router.get("/trends", response_model=dict[str, Any])
+@router.get("/trends", response_model=CostTrendsResponse)
 async def get_cost_trends(
     start_date: date | None = Query(None, description="Start date for analysis (inclusive)"),
     end_date: date | None = Query(None, description="End date for analysis (inclusive)"),
@@ -286,8 +305,7 @@ async def get_cost_trends(
     elif granularity == "weekly":
         date_trunc = func.date_trunc("week", Task.created_at)
     else:  # daily
-        date_trunc = func.date_trunc("day", Task.created_at)
-
+        date_trunc = func.date_trunc('day', Task.created_at)
     # Build base query
     query = (
         db.query(
@@ -304,49 +322,52 @@ async def get_cost_trends(
 
     # Apply organization filter if provided
     if organization_id:
-        query = query.join(Company, Task.company_id == Company.id).filter(Company.organization_id == organization_id)
-
+        query = query.join(
+            Company, Task.company_id == Company.id
+        ).filter(
+            Company.organization_id == organization_id
+        )
     trend_results = query.all()
 
     # Format results
     trends_data = []
     for trend in trend_results:
-        trends_data.append(
-            {
-                "period": trend.period.date().isoformat(),
-                "task_count": trend.task_count or 0,
-                "total_input_tokens": trend.total_input_tokens or 0,
-                "total_output_tokens": trend.total_output_tokens or 0,
-                "total_cost": float(trend.total_cost or 0),
-            }
-        )
-
+        trends_data.append(TrendDataPoint(
+            period=trend.period.date().isoformat(),
+            task_count=trend.task_count or 0,
+            total_input_tokens=trend.total_input_tokens or 0,
+            total_output_tokens=trend.total_output_tokens or 0,
+            total_cost=float(trend.total_cost or 0),
+        ))
     # Calculate summary statistics
     if trends_data:
-        total_cost = sum(t["total_cost"] for t in trends_data)
+        total_cost = sum(t.total_cost for t in trends_data)
         avg_daily_cost = total_cost / len(trends_data)
-        max_cost_period = max(trends_data, key=lambda x: x["total_cost"])
-        min_cost_period = min(trends_data, key=lambda x: x["total_cost"])
+        max_cost_period = max(trends_data, key=lambda x: x.total_cost)
+        min_cost_period = min(trends_data, key=lambda x: x.total_cost)
     else:
         total_cost = avg_daily_cost = 0
         max_cost_period = min_cost_period = None
 
-    return {
-        "period": {"start_date": start_date.isoformat(), "end_date": end_date.isoformat()},
-        "granularity": granularity,
-        "organization_id": organization_id,
-        "trends": trends_data,
-        "summary": {
-            "total_periods": len(trends_data),
-            "total_cost": total_cost,
-            "avg_cost_per_period": avg_daily_cost,
-            "max_cost_period": max_cost_period,
-            "min_cost_period": min_cost_period,
-        },
-    }
+    return CostTrendsResponse(
+        period=PeriodRange(
+            start_date=start_date.isoformat(),
+            end_date=end_date.isoformat(),
+        ),
+        granularity=granularity,
+        organization_id=organization_id,
+        trends=trends_data,
+        summary=TrendSummary(
+            total_periods=len(trends_data),
+            total_cost=total_cost,
+            avg_cost_per_period=avg_daily_cost,
+            max_cost_period=max_cost_period,
+            min_cost_period=min_cost_period,
+        ),
+    )
 
 
-@router.post("/refresh-materialized-views")
+@router.post("/refresh-materialized-views", response_model=RefreshMaterializedViewsResponse)
 async def refresh_materialized_views(
     user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.costs"])), db: Session = Depends(get_db)
 ):
@@ -365,11 +386,14 @@ async def refresh_materialized_views(
 
         db.commit()
 
-        return {
-            "status": "success",
-            "message": "Materialized views refreshed successfully",
-            "timestamp": datetime.now().isoformat(),
-        }
+        return RefreshMaterializedViewsResponse(
+            status="success",
+            message="Materialized views refreshed successfully",
+            timestamp=datetime.now().isoformat(),
+        )
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Failed to refresh materialized views: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to refresh materialized views: {str(e)}"
+        )

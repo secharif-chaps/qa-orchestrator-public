@@ -29,6 +29,32 @@ class OrganizationResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class OrganizationUserDetailResponse(BaseModel):
+    """Response for single organization user detail."""
+
+    id: str | None = None
+    username: str | None = None
+    email: str | None = None
+    firstName: str | None = None
+    lastName: str | None = None
+    enabled: bool = True
+    emailVerified: bool = False
+    createdTimestamp: int | None = None
+
+
+class OrganizationUserItem(OrganizationUserDetailResponse):
+    """Single user item in organization user list."""
+
+    permission_tier: str | None = None
+
+
+class SuccessMessageResponse(BaseModel):
+    """Generic success response with message."""
+
+    success: bool
+    message: str
+
+
 class ActivityResponse(BaseModel):
     """
     Activity item for organization activity feed.

@@ -72,3 +72,11 @@ class OrganizationsListResponse(BaseModel):
     """Response schema for organizations list."""
 
     organizations: list[OrganizationResponse]
+
+
+class FailStuckTasksResponse(BaseModel):
+    """Response schema for fail-stuck-tasks admin endpoint."""
+
+    success: bool
+    tasks_failed: int
+    message: str

@@ -17,6 +17,15 @@ from app.core.email_utils import is_chapsvision_email
 from app.core.keycloak import idp
 from app.core.logging_config import get_logger
 from app.core.permissions import get_tier_from_roles
+from app.schemas.user import (
+    AssignOrganizationResponse,
+    PasswordResetResponse,
+    UserDetailResponse,
+    UserListResponse,
+    UserOrganizationResponse,
+    UserPagination,
+    UserPermissionsResponse,
+)
 from app.schemas.user_import import (
     BulkUserImportRequest,
     BulkUserImportResponse,
@@ -212,7 +221,7 @@ class ResetPasswordRequest(BaseModel):
         return v
 
 
-@router.get("")
+@router.get("", response_model=UserListResponse)
 async def get_all_users(
     page: int = Query(1, ge=1, description="Page number (starting from 1)"),
     limit: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
@@ -333,10 +342,15 @@ async def get_all_users(
             },
         )
 
-        return {
-            "data": users_data,
-            "pagination": {"page": page, "limit": limit, "total": total, "total_pages": total_pages},
-        }
+        return UserListResponse(
+            data=users_data,
+            pagination=UserPagination(
+                page=page,
+                limit=limit,
+                total=total,
+                total_pages=total_pages,
+            ),
+        )
 
     except Exception as e:
         logger.error(
@@ -347,7 +361,7 @@ async def get_all_users(
         )
 
 
-@router.get("/{user_id}/permissions")
+@router.get("/{user_id}/permissions", response_model=UserPermissionsResponse)
 async def get_user_permissions(
     user_id: str, user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
 ):
@@ -394,7 +408,11 @@ async def get_user_permissions(
             extra={"user_id": user_id, "username": kc_user.get("username"), "permissions": permissions},
         )
 
-        return {"user_id": user_id, "username": kc_user.get("username"), "permissions": permissions}
+        return UserPermissionsResponse(
+            user_id=user_id,
+            username=kc_user.get("username"),
+            permissions=permissions,
+        )
 
     except HTTPException:
         raise
@@ -405,7 +423,7 @@ async def get_user_permissions(
         )
 
 
-@router.get("/{user_id}/organization")
+@router.get("/{user_id}/organization", response_model=UserOrganizationResponse)
 async def get_user_organization(
     user_id: str, user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
 ):
@@ -442,7 +460,11 @@ async def get_user_organization(
             extra={"user_id": user_id, "username": kc_user.get("username"), "organization": organization},
         )
 
-        return {"user_id": user_id, "username": kc_user.get("username"), "organization": organization}
+        return UserOrganizationResponse(
+            user_id=user_id,
+            username=kc_user.get("username"),
+            organization=organization,
+        )
 
     except HTTPException:
         raise
@@ -453,7 +475,7 @@ async def get_user_organization(
         )
 
 
-@router.put("/{user_id}/organization")
+@router.put("/{user_id}/organization", response_model=AssignOrganizationResponse)
 async def assign_user_to_organization(
     user_id: str,
     request: AssignOrganizationRequest,
@@ -530,12 +552,12 @@ async def assign_user_to_organization(
                 "User is already a member of target organization",
                 extra={"user_id": user_id, "organization_id": organization_id},
             )
-            return {
-                "success": True,
-                "message": f"User {user_id} successfully assigned to organization {organization_id}",
-                "user_id": user_id,
-                "organization_id": organization_id,
-            }
+            return AssignOrganizationResponse(
+                success=True,
+                message=f"User {user_id} successfully assigned to organization {organization_id}",
+                user_id=user_id,
+                organization_id=organization_id,
+            )
 
         # Add user to the new organization using Keycloak Admin API
         success = await keycloak_admin_service.add_user_to_organization(
@@ -547,12 +569,12 @@ async def assign_user_to_organization(
                 "Successfully assigned user to organization",
                 extra={"user_id": user_id, "organization_id": organization_id},
             )
-            return {
-                "success": True,
-                "message": f"User {user_id} successfully assigned to organization {organization_id}",
-                "user_id": user_id,
-                "organization_id": organization_id,
-            }
+            return AssignOrganizationResponse(
+                success=True,
+                message=f"User {user_id} successfully assigned to organization {organization_id}",
+                user_id=user_id,
+                organization_id=organization_id,
+            )
         else:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to assign user to organization"
@@ -571,7 +593,7 @@ async def assign_user_to_organization(
         )
 
 
-@router.put("/{user_id}/permissions")
+@router.put("/{user_id}/permissions", response_model=UserDetailResponse)
 async def update_user_permissions(
     user_id: str,
     request: UpdatePermissionsRequest,
@@ -645,20 +667,18 @@ async def update_user_permissions(
 
         # Build response
         attributes = kc_user.get("attributes", {})
-        user_data = {
-            "user_id": user_id,
-            "username": kc_user.get("username"),
-            "email": kc_user.get("email"),
-            "organization_id": attributes.get("organization_id", [None])[0]
-            if "organization_id" in attributes
-            else None,
-            "organization_name": attributes.get("organization_name", [None])[0]
+        user_data = UserDetailResponse(
+            user_id=user_id,
+            username=kc_user.get("username"),
+            email=kc_user.get("email"),
+            organization_id=attributes.get("organization_id", [None])[0] if "organization_id" in attributes else None,
+            organization_name=attributes.get("organization_name", [None])[0]
             if "organization_name" in attributes
             else None,
-            "status": "active" if kc_user.get("enabled", True) else "revoked",
-            "created_at": str(kc_user.get("createdTimestamp", 0)),
-            "permissions": permissions,
-        }
+            status="active" if kc_user.get("enabled", True) else "revoked",
+            created_at=str(kc_user.get("createdTimestamp", 0)),
+            permissions=permissions,
+        )
 
         logger.info("Successfully updated user permissions", extra={"user_id": user_id, "permissions": permissions})
 
@@ -678,7 +698,7 @@ async def update_user_permissions(
         )
 
 
-async def _update_user_enabled_status(user_id: str, enabled: bool, admin_username: str) -> dict[str, Any]:
+async def _update_user_enabled_status(user_id: str, enabled: bool, admin_username: str) -> UserDetailResponse:
     """Update user enabled/disabled status in Keycloak.
 
     Shared helper function for enable_user and disable_user endpoints.
@@ -723,20 +743,18 @@ async def _update_user_enabled_status(user_id: str, enabled: bool, admin_usernam
         ]
 
         attributes = kc_user.get("attributes", {})
-        user_data = {
-            "user_id": user_id,
-            "username": kc_user.get("username"),
-            "email": kc_user.get("email"),
-            "organization_id": attributes.get("organization_id", [None])[0]
-            if "organization_id" in attributes
-            else None,
-            "organization_name": attributes.get("organization_name", [None])[0]
+        user_data = UserDetailResponse(
+            user_id=user_id,
+            username=kc_user.get("username"),
+            email=kc_user.get("email"),
+            organization_id=attributes.get("organization_id", [None])[0] if "organization_id" in attributes else None,
+            organization_name=attributes.get("organization_name", [None])[0]
             if "organization_name" in attributes
             else None,
-            "status": status_value,
-            "created_at": str(kc_user.get("createdTimestamp", 0)),
-            "permissions": permissions,
-        }
+            status=status_value,
+            created_at=str(kc_user.get("createdTimestamp", 0)),
+            permissions=permissions,
+        )
 
         logger.info(f"Successfully {action_past} user", extra={"user_id": user_id})
 
@@ -751,10 +769,10 @@ async def _update_user_enabled_status(user_id: str, enabled: bool, admin_usernam
         )
 
 
-@router.put("/{user_id}/disable")
+@router.put("/{user_id}/disable", response_model=UserDetailResponse)
 async def disable_user(
     user_id: str, user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
-) -> dict[str, Any]:
+) -> UserDetailResponse:
     """Disable a user account (soft delete - account exists but cannot login).
 
     Requires admin.organizations role for access.
@@ -773,10 +791,10 @@ async def disable_user(
     return await _update_user_enabled_status(user_id=user_id, enabled=False, admin_username=user.preferred_username)
 
 
-@router.put("/{user_id}/enable")
+@router.put("/{user_id}/enable", response_model=UserDetailResponse)
 async def enable_user(
     user_id: str, user: OIDCUser = Depends(idp.get_current_user(required_roles=["admin.organizations"]))
-) -> dict[str, Any]:
+) -> UserDetailResponse:
     """Enable a previously disabled user account.
 
     Requires admin.organizations role for access.
@@ -795,7 +813,7 @@ async def enable_user(
     return await _update_user_enabled_status(user_id=user_id, enabled=True, admin_username=user.preferred_username)
 
 
-@router.post("/{user_id}/reset-password")
+@router.post("/{user_id}/reset-password", response_model=PasswordResetResponse)
 async def reset_user_password(
     user_id: str,
     request: ResetPasswordRequest,
@@ -852,12 +870,11 @@ async def reset_user_password(
 
         logger.info("Password reset successfully", extra={"user_id": user_id, "username": kc_user.get("username")})
 
-        return {
-            "success": True,
-            "method": "temporary_password",
-            "message": "Temporary password set. User must change password on next login.",
-            "temporary_password": request.temporary_password,
-        }
+        return PasswordResetResponse(
+            success=True,
+            method="temporary_password",
+            message="Temporary password set. User must change password on next login.",
+        )
 
     except HTTPException:
         raise

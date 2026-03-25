@@ -73,7 +73,7 @@ class TestAdminRoleRestriction:
             mock_kc_service.sync_user_realm_roles.assert_called_once()
 
             # Verify result contains admin permission
-            assert "admin.organizations" in result["permissions"]
+            assert "admin.organizations" in result.permissions
 
     @pytest.mark.asyncio
     async def test_non_chapsvision_user_cannot_receive_admin_permission(
@@ -130,8 +130,8 @@ class TestAdminRoleRestriction:
             mock_kc_service.sync_user_realm_roles.assert_called_once()
 
             # Verify result contains the permissions
-            assert "company.create" in result["permissions"]
-            assert "organization.read" in result["permissions"]
+            assert "company.create" in result.permissions
+            assert "organization.read" in result.permissions
 
     @pytest.mark.asyncio
     async def test_error_response_format_matches_spec(self, mock_non_chapsvision_user, mock_admin_user):

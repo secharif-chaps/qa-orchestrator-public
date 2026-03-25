@@ -278,7 +278,6 @@ class CompanyResponse(CompanyBase):
     csr: dict[str, Any] = Field(default_factory=dict)
     press: dict[str, Any] = Field(default_factory=dict)
     team: list[dict[str, Any]] = Field(default_factory=list)
-    raw_worldcheck_knowledge: str | None = Field(None, description="Raw knowledge from WorldCheck One")
     error: str | None = None
     is_deleted: bool = Field(default=False)
     created_at: datetime | None = None
