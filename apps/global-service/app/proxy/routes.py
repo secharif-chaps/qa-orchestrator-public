@@ -26,6 +26,7 @@ from fastapi import APIRouter, Request, Response
 from fastapi.responses import StreamingResponse
 
 from app.core.auth_middleware import auth_middleware, extract_organization_info
+from app.core.correlation import CORRELATION_HEADER
 from app.core.logging_config import get_logger
 from app.proxy.client import get_proxy_client, get_streaming_client
 
@@ -247,6 +248,11 @@ async def proxy_request(request: Request, path: str) -> Response:
         if key.lower() == "authorization":
             del headers[key]
     headers.update(internal_headers)  # Add gateway internal headers with correct case
+
+    # Propagate correlation ID to backend
+    correlation_id = getattr(request.state, "correlation_id", None)
+    if correlation_id:
+        headers[CORRELATION_HEADER] = correlation_id
 
     # Check if request has body (without reading it into memory)
     request_has_body = has_request_body(request)

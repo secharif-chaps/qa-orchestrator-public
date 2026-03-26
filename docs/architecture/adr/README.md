@@ -32,6 +32,7 @@ All ADRs follow a consistent format. See [template.md](./template.md) for the st
 | [ADR-0012](./0012-langgraph-agent-system.md) | LangGraph Agent System | Accepted | backend, ai, orchestration, langgraph, agents |
 | [ADR-0013](./0013-chat-service-replacement.md) | Chat Service Replacement | Proposed | backend, ai, chat, azure-openai |
 | [ADR-0014](./0012-frontend-translation-management-strategy.md) | Frontend Translation Management Strategy | Proposed | frontend, i18n, internationalization, vue, ci, architecture, monorepo |
+| [ADR-0015](./0015-multi-module-gateway.md) | Multi-Module API Gateway | Accepted | backend, architecture, api-gateway, global-service, multi-module |
 
 ## Status Definitions
 

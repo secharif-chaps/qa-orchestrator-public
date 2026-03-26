@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 
 from app.api import api_router
 from app.core.config import settings
+from app.core.correlation import CorrelationIdMiddleware
 from app.core.keycloak import get_idp
 from app.core.logging_config import get_logger, setup_logging
 from app.grpc_server import create_grpc_server
@@ -76,9 +77,14 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["Content-Type", "Authorization"],
+    expose_headers=["Content-Type", "Authorization", "X-Correlation-ID"],
 )
 
+
+# Correlation ID middleware — generates or propagates X-Correlation-ID.
+# Starlette executes middlewares in LIFO order, so this runs BEFORE CORS
+# which is the desired behavior (correlation ID is set early).
+app.add_middleware(CorrelationIdMiddleware)
 
 # Health check endpoints
 @app.get("/health/live", tags=["health"])
