@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.endpoints.health import router as health_router
 from app.api.router import api_router
 from app.core.config import settings
 from app.core.database_security import setup_database_security
@@ -75,6 +76,9 @@ app.add_middleware(
 )
 
 app.add_middleware(JSONValidationMiddleware)
+
+# Health check endpoints (registered before /api to avoid auth middleware)
+app.include_router(health_router)
 
 # Include API routers
 app.include_router(api_router, prefix="/api")
