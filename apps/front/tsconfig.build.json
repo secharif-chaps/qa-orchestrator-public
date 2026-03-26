@@ -11,6 +11,6 @@
       "@/*": ["./src/*"],
       "@target/*": ["./src/target/*"]
     },
-    "types": ["unplugin-vue-router/client"]
+    "types": []
   }
 }

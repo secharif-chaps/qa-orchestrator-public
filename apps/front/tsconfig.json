@@ -12,6 +12,6 @@
       "@target/*": ["./src/target/*"]
     },
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["unplugin-vue-router/client"]
+    "types": []
   }
 }
