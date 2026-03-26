@@ -28,13 +28,8 @@ export const USER_SEARCH_QUERY_KEYS = {
  */
 export const userSearchQuery = defineQueryOptions(({ query }: { query: string }) => ({
   key: USER_SEARCH_QUERY_KEYS.withQuery(query),
-  query: () => {
-    // Don't search with empty query
-    if (!query || query.trim().length < 2) {
-      return Promise.resolve([])
-    }
-    return searchUsersForSharing(query.trim(), 10)
-  },
+  query: () => searchUsersForSharing(query.trim(), 10),
+  enabled: query.trim().length >= 2,
   // Short stale time for search results
   staleTime: 30000, // 30 seconds
 }))
