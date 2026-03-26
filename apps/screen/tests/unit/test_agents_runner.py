@@ -555,12 +555,19 @@ class TestRunFullAnalysis:
             assert t.status == TaskStatus.RUNNING or t.status in (TaskStatus.SUCCEEDED, TaskStatus.ERROR)
 
     @pytest.mark.asyncio
+    @patch("app.agents.runner.get_global_service_client")
     @patch("app.agents.runner.task_event_manager")
     @patch("app.agents.runner.write_section_data")
-    async def test_graph_exception_marks_all_running_error(self, mock_write, mock_events, runner, mock_db):
+    async def test_graph_exception_marks_all_running_error(
+        self, mock_write, mock_events, mock_get_gsc, runner, mock_db
+    ):
         tasks = self._build_tasks(["profile", "digital"])
         mock_db.query.return_value.filter.return_value.all.return_value = tasks
         mock_events.broadcast_task_update = AsyncMock()
+        mock_events.broadcast_all_tasks_completed = AsyncMock()
+        mock_gsc_instance = MagicMock()
+        mock_gsc_instance.get_company_folder_id = AsyncMock(return_value=None)
+        mock_get_gsc.return_value = mock_gsc_instance
 
         mock_graph = MagicMock()
         mock_graph.astream_events = MagicMock(side_effect=RuntimeError("Graph crashed"))
@@ -570,6 +577,8 @@ class TestRunFullAnalysis:
         # Tasks should be marked ERROR (they were set to RUNNING before graph)
         for t in tasks:
             assert t.status == TaskStatus.ERROR
+        # Completion should still be broadcast on error
+        mock_events.broadcast_all_tasks_completed.assert_called_once()
 
     @pytest.mark.asyncio
     @patch("app.agents.runner.task_event_manager")
@@ -633,12 +642,17 @@ class TestRunFullAnalysis:
 
     @pytest.mark.asyncio
     @patch("app.agents.runner.GLOBAL_ANALYSIS_TIMEOUT_SECONDS", 0.01)
+    @patch("app.agents.runner.get_global_service_client")
     @patch("app.agents.runner.task_event_manager")
-    async def test_global_timeout_marks_tasks_errored(self, mock_events, runner, mock_db):
+    async def test_global_timeout_marks_tasks_errored(self, mock_events, mock_get_gsc, runner, mock_db):
         """Graph that exceeds timeout should mark running tasks as ERROR."""
         tasks = self._build_tasks(["profile", "digital"])
         mock_db.query.return_value.filter.return_value.all.return_value = tasks
         mock_events.broadcast_task_update = AsyncMock()
+        mock_events.broadcast_all_tasks_completed = AsyncMock()
+        mock_gsc_instance = MagicMock()
+        mock_gsc_instance.get_company_folder_id = AsyncMock(return_value=None)
+        mock_get_gsc.return_value = mock_gsc_instance
 
         mock_graph = MagicMock()
         mock_graph.astream_events = MagicMock(return_value=slow_aiter())
@@ -649,6 +663,8 @@ class TestRunFullAnalysis:
         for t in tasks:
             assert t.status == TaskStatus.ERROR
             assert "timed out" in t.error
+        # Completion should still be broadcast on timeout
+        mock_events.broadcast_all_tasks_completed.assert_called_once()
 
 
 # ---------------------------------------------------------------------------

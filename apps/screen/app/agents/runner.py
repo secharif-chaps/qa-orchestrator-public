@@ -139,6 +139,7 @@ class CompanyAnalysisRunner:
                         task_type=agent_name,
                         error=timeout_msg,
                     )
+            await self._broadcast_completion(db, owner_id, company_id, company_name, organization_id, task_map)
 
         except Exception as e:
             logger.error(
@@ -158,6 +159,7 @@ class CompanyAnalysisRunner:
                         task_type=agent_name,
                         error=str(e),
                     )
+            await self._broadcast_completion(db, owner_id, company_id, company_name, organization_id, task_map)
 
     async def run_single_agent(
         self,
