@@ -42,6 +42,14 @@ screen:mypy:
   allow_failure: true
   <<: *screen-changes
 
+screen:poetry-audit:
+  stage: lint
+  needs: []
+  image: ${CI_REGISTRY}/chapsmind/ci-images/python-ci:latest
+  script:
+    - cd apps/screen && poetry audit
+  <<: *screen-changes
+
 # ─── Test Stage ────────────────────────────────────────
 
 # Shared test setup (no DB needed)
@@ -105,7 +113,7 @@ screen:test:integration:
 screen:docker-build:
   stage: build
   extends: .screen-docker-build
-  needs: [screen:lint, screen:poetry-check, screen:test:unit, screen:test:integration]
+  needs: [screen:lint, screen:poetry-check, screen:poetry-audit, screen:test:unit, screen:test:integration]
   variables:
     IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
   rules:
