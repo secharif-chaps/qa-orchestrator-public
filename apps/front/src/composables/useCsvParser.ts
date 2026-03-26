@@ -9,7 +9,7 @@
  */
 
 import { ref } from 'vue'
-import * as XLSX from 'xlsx'
+import ExcelJS from 'exceljs'
 import type { ParsedFileData } from '@/types/user-import'
 import { MAX_IMPORT_ROWS, SUPPORTED_FILE_EXTENSIONS } from '@/types/user-import'
 
@@ -92,31 +92,26 @@ function parseCsvContent(content: string): string[][] {
 }
 
 /**
- * Parse Excel file using SheetJS
+ * Parse Excel file using ExcelJS
  */
-function parseExcelFile(arrayBuffer: ArrayBuffer): string[][] {
-  const workbook = XLSX.read(arrayBuffer, { type: 'array' })
+async function parseExcelFile(arrayBuffer: ArrayBuffer): Promise<string[][]> {
+  const workbook = new ExcelJS.Workbook()
+  await workbook.xlsx.load(arrayBuffer)
 
-  // Get the first sheet
-  const sheetName = workbook.SheetNames[0]
-  if (!sheetName) {
+  const sheet = workbook.worksheets[0]
+  if (!sheet) {
     throw new Error('Excel file has no sheets')
   }
 
-  const sheet = workbook.Sheets[sheetName]
-  if (!sheet) {
-    throw new Error('Failed to read Excel sheet')
-  }
-
-  // Convert to array of arrays
-  const data = XLSX.utils.sheet_to_json<string[]>(sheet, {
-    header: 1,
-    defval: '',
-    blankrows: false,
+  const rows: string[][] = []
+  sheet.eachRow((row) => {
+    const values = row.values as (string | number | boolean | null | undefined)[]
+    // ExcelJS row.values is 1-indexed (index 0 is undefined), so skip it
+    const cells = values.slice(1)
+    rows.push(cells.map((cell) => String(cell ?? '').trim()))
   })
 
-  // Convert all values to strings
-  return data.map((row) => row.map((cell) => String(cell ?? '').trim()))
+  return rows
 }
 
 /**
@@ -171,7 +166,7 @@ export function useCsvParser(): CsvParserReturn {
       if (fileName.endsWith('.xlsx')) {
         // Parse Excel file
         const arrayBuffer = await file.arrayBuffer()
-        allRows = parseExcelFile(arrayBuffer)
+        allRows = await parseExcelFile(arrayBuffer)
       } else {
         // Parse CSV file
         const content = await file.text()
