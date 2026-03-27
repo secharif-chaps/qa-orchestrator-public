@@ -1,5 +1,6 @@
 import os
 from contextlib import asynccontextmanager
+from urllib.parse import urlparse
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -43,6 +44,14 @@ async def lifespan(app: FastAPI):
         registry = await init_module_registry()
         module_count = len(registry.modules)
         logger.info(f"🔗 Module registry initialized: {module_count} module(s) discovered")
+
+        # Detect potential proxy loop (SCREEN_BASE_URL pointing to self)
+        screen_port = urlparse(settings.SCREEN_BASE_URL).port
+        if screen_port is not None and screen_port == settings.API_PORT:
+            logger.warning(
+                f"⚠️ SCREEN_BASE_URL ({settings.SCREEN_BASE_URL}) contains the same port "
+                f"as this service ({settings.API_PORT}) — potential proxy loop"
+            )
 
         yield
     finally:

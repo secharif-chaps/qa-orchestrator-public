@@ -1,4 +1,6 @@
-from pydantic import ConfigDict
+import os
+
+from pydantic import ConfigDict, model_validator
 from pydantic_settings import BaseSettings
 
 
@@ -7,12 +9,6 @@ class Settings(BaseSettings):
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8001
     SCREEN_BASE_URL: str = "http://screen:8000"  # Internal Docker service name for screen backend
-
-    # Public Keycloak URL for Swagger UI OAuth flows
-    KEYCLOAK_PUBLIC_URL: str = "http://localhost:8080"
-
-    # Token lock timeout (seconds) for the lock/unlock pattern
-    TOKEN_LOCK_TIMEOUT_SECONDS: int = 30
 
     # Public Keycloak URL for Swagger UI OAuth flows
     KEYCLOAK_PUBLIC_URL: str = "http://localhost:8080"
@@ -61,6 +57,21 @@ class Settings(BaseSettings):
     INTERNAL_JWT_EXPIRY_SECONDS: int = 60
 
     model_config = ConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+
+    @model_validator(mode="after")
+    def validate_internal_jwt_secret(self) -> "Settings":
+        """Fail fast if INTERNAL_JWT_SECRET is not configured (unless in test/CI mode)."""
+        is_test = (
+            os.environ.get("SKIP_KEYCLOAK_INIT", "").lower() in ("1", "true", "yes")
+            or "PYTEST_CURRENT_TEST" in os.environ  # Running under pytest
+            or os.environ.get("CI", "").lower() in ("1", "true", "yes")  # CI pipeline
+        )
+        if not self.INTERNAL_JWT_SECRET and not is_test:
+            raise ValueError(
+                "INTERNAL_JWT_SECRET must be set. "
+                "Generate one with: openssl rand -base64 32"
+            )
+        return self
 
 
 settings = Settings()

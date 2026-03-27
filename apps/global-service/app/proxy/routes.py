@@ -274,6 +274,22 @@ async def proxy_request(request: Request, path: str) -> Response:
             media_type="application/json",
         )
 
+    # Guard: authenticated routes must have internal headers
+    # If user is authenticated but internal headers are empty, the backend
+    # would receive an unauthenticated request — reject with 502
+    if user and not internal_headers:
+        logger.error(
+            f"🚫 PROXY BLOCKED: internal headers empty for authenticated user "
+            f"{user.preferred_username} on {request.method} /api/{path}. "
+            "Check INTERNAL_JWT_SECRET configuration.",
+            extra={"path": path, "method": request.method},
+        )
+        return Response(
+            content=b'{"detail": "Internal gateway error: cannot forward authenticated request"}',
+            status_code=502,
+            media_type="application/json",
+        )
+
     # Log authenticated request
     username = user.preferred_username if user else "anonymous"
     logger.info(
