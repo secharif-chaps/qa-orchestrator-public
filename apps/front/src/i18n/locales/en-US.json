@@ -1940,7 +1940,19 @@
         "label": "View",
         "table": "Table View"
       },
-      "website": "Website"
+      "website": "Website",
+      "screening": {
+        "messages": {
+          "thinking": "Thinking...",
+          "profile": "Analyzing company profile...",
+          "team": "Searching for team members...",
+          "products": "Reviewing product strategy...",
+          "press": "Scanning press coverage...",
+          "csr": "Evaluating CSR initiatives...",
+          "jobs": "Exploring job market...",
+          "timeline": "Building company timeline..."
+        }
+      }
     },
     "csv": {
       "upload": {

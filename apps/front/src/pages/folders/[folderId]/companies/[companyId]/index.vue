@@ -1,61 +1,5 @@
 <template>
   <div class="space-y-6">
-    <Card v-if="tasks && completedCount < tasks.length">
-      <div class="bg-base-200 flex h-3 w-full overflow-hidden rounded-full">
-        <!-- Completed segment -->
-        <div
-          v-if="completedPercentage > 0"
-          class="bg-success-500 h-full transition-all duration-500 ease-out"
-          :style="{ width: `${completedPercentage}%` }"
-          :title="
-            t('screen.company.tasks.completed', {
-              count: completedCount,
-              percentage: Math.round(completedPercentage),
-            })
-          "
-        ></div>
-
-        <!-- Running segment -->
-        <div
-          v-if="runningPercentage > 0"
-          class="bg-info-500 h-full transition-all duration-500 ease-out"
-          :style="{ width: `${runningPercentage}%` }"
-          :title="
-            t('screen.company.tasks.running', {
-              count: runningCount,
-              percentage: Math.round(runningPercentage),
-            })
-          "
-        ></div>
-
-        <!-- Error segment -->
-        <div
-          v-if="errorPercentage > 0"
-          class="bg-error-500 h-full transition-all duration-500 ease-out"
-          :style="{ width: `${errorPercentage}%` }"
-          :title="
-            t('screen.company.tasks.error', {
-              count: errorCount,
-              percentage: Math.round(errorPercentage),
-            })
-          "
-        ></div>
-
-        <!-- Pending segment -->
-        <div
-          v-if="pendingPercentage > 0"
-          class="bg-sage-200 h-full transition-all duration-500 ease-out"
-          :style="{ width: `${pendingPercentage}%` }"
-          :title="
-            t('screen.company.tasks.pending', {
-              count: pendingCount,
-              percentage: Math.round(pendingPercentage),
-            })
-          "
-        ></div>
-      </div>
-    </Card>
-
     <!-- Company Info Card - Full Width -->
     <div class="gap-4 space-y-4 xl:flex xl:space-y-0">
       <Card class="relative flex-1">
@@ -225,9 +169,6 @@
     </div>
   </div>
 
-  <!-- Raw Knowledge Debug Section (only for suh/nmr) -->
-  <RawKnowledgeDebug v-if="isDebugUser" />
-
   <!-- Section Modal -->
   <SectionModal v-model="showSectionModal" v-model:section="activeSection" />
 </template>
@@ -240,32 +181,28 @@ meta:
 
 <script lang="ts" setup>
 import AnalysisCard from '@/components/company/AnalysisCard.vue'
-import RawKnowledgeDebug from '@/components/company/profile/RawKnowledgeDebug.vue'
+import ProfileInfoItem from '@/components/company/profile/ProfileInfoItem.vue'
 import SectionModal from '@/components/company/SectionModal.vue'
 import ChapseAssistAlert from '@/components/features/chapse-assist/ChapseAssistAlert.vue'
 import ChapseAssistQuickActions from '@/components/features/chapse-assist/ChapseAssistQuickActions.vue'
 import { getSourcedValue } from '@/components/helpers/sourcedValues'
 import Card from '@/components/ui/Card.vue'
 import Tag from '@/components/ui/Tag.vue'
-import ProfileInfoItem from '@/components/company/profile/ProfileInfoItem.vue'
 import { useRestartTask } from '@/mutations/tasks'
 import { companyByIdQuery } from '@/queries/companies'
 import { companyTasksQuery } from '@/queries/tasks'
-import { useAuthStore } from '@/stores/auth'
 import type { QuickAction } from '@/types/ai-preferences'
 import type { TaskStatus, TaskType } from '@/types/task'
+import { formatFullDate } from '@/utils/time'
 import { useQuery } from '@pinia/colada'
-import { computed, ref, inject } from 'vue'
 import type { Ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
-import { formatFullDate } from '@/utils/time'
 
 const router = useRouter()
 const route = useRoute('/folders/[folderId]/companies/[companyId]/')
 const { t } = useI18n()
-const authStore = useAuthStore()
-
 const showSectionModal = ref(false)
 const activeSection = ref<TaskType | null>(null)
 
@@ -273,11 +210,6 @@ const companyId = computed(() => route.params.companyId)
 
 // Inject selected language from parent [companyId].vue
 const selectedLanguage = inject<Ref<string | undefined>>('selectedLanguage', ref(undefined))
-
-const isDebugUser = computed(() => {
-  const username = authStore.user?.profile?.preferred_username?.toLowerCase()
-  return username === 'nmr' || username === 'suh' || username === 'nmr-cv'
-})
 
 // Use the company data composable with language for translations
 const { data: company } = useQuery(() =>
@@ -580,55 +512,4 @@ const handleQuickActionsSuccess = (actions: QuickAction[]) => {
 const handleQuickActionsError = (error: string) => {
   console.error('❌ Failed to load quick actions:', error)
 }
-
-// Calculate task status percentages
-const completedPercentage = computed(() => {
-  if (!tasks.value) return 0
-  const completedCount = tasks.value.filter((t) => t.status === 'succeeded').length
-  return (completedCount / tasks.value.length) * 100
-})
-
-const runningPercentage = computed(() => {
-  if (!tasks.value) return 0
-  const runningCount = tasks.value.filter(
-    (t) => t.status === 'running' || t.status === 'pending',
-  ).length
-  return (runningCount / tasks.value.length) * 100
-})
-
-const errorPercentage = computed(() => {
-  if (!tasks.value) return 0
-  const errorCount = tasks.value.filter((t) => t.status === 'error').length
-  return (errorCount / tasks.value.length) * 100
-})
-
-const pendingPercentage = computed(() => {
-  if (!tasks.value) return 0
-  const pendingCount = tasks.value.filter((t) => t.status === 'pending').length
-  return (pendingCount / tasks.value.length) * 100
-})
-
-const runningCount = computed(() => {
-  if (!tasks.value) return 0
-  const runningCount = tasks.value.filter((t) => t.status === 'running').length
-  return runningCount
-})
-
-const errorCount = computed(() => {
-  if (!tasks.value) return 0
-  const errorCount = tasks.value.filter((t) => t.status === 'error').length
-  return errorCount
-})
-
-const pendingCount = computed(() => {
-  if (!tasks.value) return 0
-  const pendingCount = tasks.value.filter((t) => t.status === 'pending').length
-  return pendingCount
-})
-
-const completedCount = computed(() => {
-  if (!tasks.value) return 0
-  const completedCount = tasks.value.filter((t) => t.status === 'succeeded').length
-  return completedCount
-})
 </script>
