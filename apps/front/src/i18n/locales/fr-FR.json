@@ -1940,7 +1940,19 @@
         "label": "Voir",
         "table": "Vue tableau"
       },
-      "website": "Site web"
+      "website": "Site web",
+      "screening": {
+        "messages": {
+          "thinking": "Réflexion en cours...",
+          "profile": "Analyse du profil de l'entreprise...",
+          "team": "Recherche des membres de l'équipe...",
+          "products": "Analyse de la stratégie produit...",
+          "press": "Analyse de la couverture presse...",
+          "csr": "Évaluation des initiatives RSE...",
+          "jobs": "Exploration du marché de l'emploi...",
+          "timeline": "Construction de la chronologie..."
+        }
+      }
     },
     "csv": {
       "upload": {

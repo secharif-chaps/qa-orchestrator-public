@@ -3,31 +3,56 @@
     <!-- Company Header -->
     <div class="flex items-center justify-between gap-4">
       <div class="flex items-center gap-4">
-        <div
-          class="ring-primary-stroke relative size-12 flex-shrink-0 overflow-hidden rounded-lg bg-white ring-2"
-        >
-          <img
-            v-if="getCompanyDomain(company?.website)"
-            :src="getLogoUrl(company?.website)"
-            :alt="`${company?.name} logo`"
-            class="h-full w-full object-contain"
-            @error="showFallbackIcon = true"
-            v-show="!showFallbackIcon"
-          />
-          <Badge
-            v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
-            variant="secondary"
-            color="sage"
-            icon="fa fa-building"
-            size="lg"
-            class="h-full w-full rounded-none"
-          />
-        </div>
+        <!-- Loading around the image when task running -->
+        <SquareProgressRing :segments="progressSegments" :show-progress="showProgressRing">
+          <div class="relative size-12 flex-shrink-0 overflow-hidden rounded-lg bg-white">
+            <img
+              v-if="getCompanyDomain(company?.website)"
+              :src="getLogoUrl(company?.website)"
+              :alt="`${company?.name} logo`"
+              class="h-full w-full object-contain"
+              :class="{ 'opacity-30': showProgressRing }"
+              @error="showFallbackIcon = true"
+              v-show="!showFallbackIcon"
+            />
+            <Badge
+              v-show="showFallbackIcon || !getCompanyDomain(company?.website)"
+              variant="secondary"
+              color="sage"
+              icon="fa-building"
+              size="lg"
+              class="h-full w-full rounded-none"
+            />
+          </div>
+        </SquareProgressRing>
         <div class="flex flex-col gap-1">
           <h1 class="text-2xl font-bold">{{ company?.name }}</h1>
-          <span v-if="company?.created_at" class="text-secondary text-sm">
-            {{ t('screen.company.createdAt') }} {{ formatFullDate(company.created_at) }}
-          </span>
+          <Transition
+            mode="out-in"
+            enter-active-class="transition-all duration-300 ease-out"
+            leave-active-class="transition-all duration-300 ease-out"
+            enter-from-class="opacity-0 translate-y-1.5"
+            leave-to-class="opacity-0 -translate-y-1.5"
+          >
+            <div v-if="showProgressRing" key="activity" class="relative h-5 overflow-y-clip">
+              <Transition
+                enter-active-class="transition-all duration-300 ease-out"
+                leave-active-class="transition-all duration-300 ease-out"
+                enter-from-class="opacity-0 translate-y-full"
+                leave-to-class="opacity-0 -translate-y-full"
+              >
+                <span
+                  :key="currentMessage"
+                  class="text-sage-600 absolute top-0 left-0 text-sm whitespace-nowrap"
+                >
+                  {{ currentMessage }}
+                </span>
+              </Transition>
+            </div>
+            <span v-else-if="company?.created_at" key="date" class="text-secondary text-sm">
+              {{ t('screen.company.createdAt') }} {{ formatFullDate(company.created_at) }}
+            </span>
+          </Transition>
         </div>
       </div>
 
@@ -50,7 +75,7 @@
           v-if="isDebugUser"
           variant="tertiary"
           size="sm"
-          icon="fa fa-bug"
+          icon="fa-bug"
           icon-only
           :title="t('screen.company.debug.workflowTitle')"
           @click="showTasksModal = true"
@@ -72,23 +97,26 @@
 </template>
 
 <script lang="ts" setup>
-import { Badge, Button } from '@owlint/feathers-vue'
 import CompanyRefreshModal from '@/components/companies/CompanyRefreshModal.vue'
-import { companyByIdQuery } from '@/queries/companies'
-import { useQuery } from '@pinia/colada'
-import { computed, ref, watch, provide } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useRoute, useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import CompanyTranslation from '@/components/company/CompanyTranslation.vue'
 import CompanyDeleteButton from '@/components/company/CompanyDeleteButton.vue'
+import CompanyTranslation from '@/components/company/CompanyTranslation.vue'
 import Export from '@/components/company/Export.vue'
 import TasksFlowModal from '@/components/company/TasksFlowModal.vue'
-import { organizationBalanceQuery } from '@/queries/tokens'
-import { currentOrganizationQuery } from '@/queries/organization'
+import SquareProgressRing from '@/components/ui/SquareProgressRing.vue'
+import { useActivityMessages } from '@/composables/useActivityMessages'
+import { useTaskProgress } from '@/composables/useTaskProgress'
 import { useRefreshCompany } from '@/mutations/companies'
+import { companyByIdQuery } from '@/queries/companies'
+import { currentOrganizationQuery } from '@/queries/organization'
 import { companyTasksQuery } from '@/queries/tasks'
+import { organizationBalanceQuery } from '@/queries/tokens'
+import { useAuthStore } from '@/stores/auth'
 import { formatFullDate } from '@/utils/time'
+import { Badge, Button } from '@owlint/feathers-vue'
+import { useQuery } from '@pinia/colada'
+import { computed, provide, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute('/folders/[folderId]/companies/[companyId]')
 const router = useRouter()
@@ -120,6 +148,12 @@ const {
 
 // Get company tasks
 const { data: tasks } = useQuery(() => companyTasksQuery({ companyId: companyId.value }))
+
+// Task progress ring — revert to sage ring once all tasks complete
+const { segments: progressSegments, isInProgress: showProgressRing } = useTaskProgress(tasks)
+
+// Cycling activity messages while screening is in progress
+const { currentMessage } = useActivityMessages(showProgressRing)
 
 // Modal state
 const showTasksModal = ref(false)
