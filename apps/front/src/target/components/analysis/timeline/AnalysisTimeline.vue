@@ -14,7 +14,7 @@
         {{ eventTypeLabel }}
       </Tag>
     </div>
-    <Table :items="watchFileEvent.actors" :fields="columns">
+    <Table v-if="watchFileEvent.actors?.length" :items="watchFileEvent.actors" :fields="columns">
       <template #cell(name)="{ item }">
         <td class="px-4 py-3">
           <ActorCard :actor="convertEventActorToWatchFileActor(item)" variant="minimal" />
