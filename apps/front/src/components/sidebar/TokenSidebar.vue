@@ -14,7 +14,7 @@
     <div class="flex-1 overflow-y-auto px-4 py-4">
       <!-- Loading State -->
       <div v-if="isLoading" class="flex items-center justify-center py-8">
-        <i class="fa fa-spinner fa-spin text-sage-400"></i>
+        <i class="fa fa-spinner fa-spin text-sage-900 dark:text-sage-400"></i>
       </div>
 
       <!-- Token History -->
@@ -39,7 +39,9 @@
 
         <!-- Today Section -->
         <div v-if="groupedHistory.today.length > 0" class="flex flex-col gap-3">
-          <h3 class="text-sage-400 text-xs font-semibold tracking-wider uppercase">
+          <h3
+            class="text-sage-900 dark:text-sage-400 text-xs font-semibold tracking-wider uppercase"
+          >
             {{ $t('common.sidebar.tokens.today', "Aujourd'hui") }}
           </h3>
           <div class="flex flex-col gap-2">
@@ -54,7 +56,9 @@
 
         <!-- Yesterday Section -->
         <div v-if="groupedHistory.yesterday.length > 0" class="flex flex-col gap-3">
-          <h3 class="text-sage-400 text-xs font-semibold tracking-wider uppercase">
+          <h3
+            class="text-sage-900 dark:text-sage-400 text-xs font-semibold tracking-wider uppercase"
+          >
             {{ $t('common.sidebar.tokens.yesterday', 'Hier') }}
           </h3>
           <div class="flex flex-col gap-2">
@@ -73,7 +77,9 @@
           :key="dateKey"
           class="flex flex-col gap-3"
         >
-          <h3 class="text-sage-400 text-xs font-semibold tracking-wider uppercase">
+          <h3
+            class="text-sage-900 dark:text-sage-400 text-xs font-semibold tracking-wider uppercase"
+          >
             {{ dateKey }}
           </h3>
           <div class="flex flex-col gap-2">
