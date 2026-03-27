@@ -85,6 +85,17 @@ front:typecheck:
   script:
     - cd apps/front && npx vue-tsc --noEmit -p tsconfig.app.json
 
+front:yarn-audit:
+  image: ${CI_REGISTRY}/chapsmind/ci-images/web-linters:latest
+  stage: lint
+  needs: [front:install]
+  <<: *yarnrc-setup
+  script:
+    - yarn npm audit --all
+  cache:
+    - <<: *cache-node-modules
+  <<: *front-changes
+
 # ─── Test Stage ────────────────────────────────────────
 front:test:
   <<: *default-lint-job
@@ -118,7 +129,8 @@ front:test:
 front:docker-build:
   stage: build
   extends: .front-docker-build
-  needs: [front:eslint, front:prettier, front:stylelint, front:typecheck, front:test]
+  needs:
+    [front:eslint, front:prettier, front:stylelint, front:typecheck, front:yarn-audit, front:test]
   variables:
     IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}
   rules:
