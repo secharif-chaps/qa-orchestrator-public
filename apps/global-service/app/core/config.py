@@ -7,7 +7,12 @@ class Settings(BaseSettings):
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8001
     SCREEN_BASE_URL: str = "http://screen:8000"  # Internal Docker service name for screen backend
-    KEYCLOAK_PUBLIC_URL: str = "http://localhost:8080"  # Public Keycloak URL for Swagger UI OAuth
+
+    # Public Keycloak URL for Swagger UI OAuth flows
+    KEYCLOAK_PUBLIC_URL: str = "http://localhost:8080"
+
+    # Token lock timeout (seconds) for the lock/unlock pattern
+    TOKEN_LOCK_TIMEOUT_SECONDS: int = 30
 
     # Public Keycloak URL for Swagger UI OAuth flows
     KEYCLOAK_PUBLIC_URL: str = "http://localhost:8080"

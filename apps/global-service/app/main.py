@@ -13,16 +13,15 @@ from app.core.logging_config import get_logger, setup_logging
 from app.core.openapi_merge import setup_merged_openapi
 from app.grpc_server import create_grpc_server
 from app.health import close_health_http_client, run_readiness_checks
-from app.proxy.client import close_proxy_client, get_proxy_client
+from app.proxy.client import close_proxy_client
+from app.proxy.routes import init_module_registry
 from app.proxy.routes import router as proxy_router
 from app.services.keycloak_admin import keycloak_admin_service
 
 # Initialize logging with configured level
 setup_logging(level=getattr(settings, "LOG_LEVEL", "INFO"))
 logger = get_logger(__name__)
-logger.debug(
-    f".env file path: {os.path.abspath('.env') if os.path.exists('.env') else 'not found'}"
-)
+logger.debug(f".env file path: {os.path.abspath('.env') if os.path.exists('.env') else 'not found'}")
 
 
 @asynccontextmanager
@@ -40,9 +39,10 @@ async def lifespan(app: FastAPI):
         grpc_server.start()
         logger.info("🚀 gRPC server started")
 
-        # Initialize proxy client (warm up connection pool)
-        await get_proxy_client()
-        logger.info(f"🔗 Proxy client initialized → {settings.SCREEN_BASE_URL}")
+        # Initialize module registry (discovers backend schemas via OpenAPI)
+        registry = await init_module_registry()
+        module_count = len(registry.modules)
+        logger.info(f"🔗 Module registry initialized: {module_count} module(s) discovered")
 
         yield
     finally:
@@ -67,9 +67,7 @@ app = FastAPI(
     **({"docs_url": None, "redoc_url": None, "openapi_url": None} if not settings.ENABLE_DOCS else {}),
 )
 # Parse CORS origins from comma-separated config (no rebuild needed to change)
-cors_origins = [
-    origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()
-]
+cors_origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",") if origin.strip()]
 logger.info(f"CORS Origins: {cors_origins}")
 logger.info(f"Screen Base URL: {settings.SCREEN_BASE_URL}")
 

@@ -1,8 +1,9 @@
 """
-HTTP client for proxying requests to the monolith (Screen service).
+HTTP client pool for proxying requests to backend services.
 
-This module provides an async httpx client configured for proxying
-all requests to the backend service.
+Provides a pool of async httpx clients keyed by backend URL.
+Each backend gets its own connection pool for optimal performance.
+Also provides a streaming client factory for SSE/NDJSON connections.
 """
 
 from collections.abc import AsyncGenerator
@@ -15,70 +16,84 @@ from app.core.logging_config import get_logger
 
 logger = get_logger(__name__)
 
-# Global client instance for connection pooling
-_client: httpx.AsyncClient | None = None
+# Default timeout and pool settings
+_DEFAULT_TIMEOUT = httpx.Timeout(connect=10.0, read=60.0, write=10.0, pool=10.0)
+_DEFAULT_LIMITS = httpx.Limits(max_keepalive_connections=20, max_connections=100, keepalive_expiry=30.0)
+_STREAMING_TIMEOUT = httpx.Timeout(connect=10.0, read=None, write=10.0, pool=10.0)
+
+
+class ProxyClientPool:
+    """Pool of httpx clients keyed by backend base URL.
+
+    Each backend gets a dedicated client with its own connection pool.
+    Clients are created lazily on first use and reused for subsequent requests.
+    """
+
+    def __init__(self) -> None:
+        self._clients: dict[str, httpx.AsyncClient] = {}
+
+    async def get_client(self, backend_url: str) -> httpx.AsyncClient:
+        """Get or create a pooled client for the given backend URL."""
+        base_url = backend_url.rstrip("/")
+        if base_url not in self._clients:
+            self._clients[base_url] = httpx.AsyncClient(
+                base_url=base_url,
+                timeout=_DEFAULT_TIMEOUT,
+                limits=_DEFAULT_LIMITS,
+                follow_redirects=False,
+            )
+            logger.info("Proxy client created", extra={"base_url": base_url})
+        return self._clients[base_url]
+
+    async def close_all(self) -> None:
+        """Close all pooled clients."""
+        for base_url, client in self._clients.items():
+            await client.aclose()
+            logger.info("Proxy client closed", extra={"base_url": base_url})
+        self._clients.clear()
+
+
+# Global pool instance
+_pool = ProxyClientPool()
 
 
 def get_screen_base_url() -> str:
-    """Get the backend base URL from settings."""
+    """Get the screen backend base URL from settings."""
     return settings.SCREEN_BASE_URL.rstrip("/")
 
 
-async def get_proxy_client() -> httpx.AsyncClient:
-    """Get or create the shared httpx client for proxying requests.
+async def get_proxy_client(backend_url: str | None = None) -> httpx.AsyncClient:
+    """Get a pooled client for the given backend URL.
 
-    Uses connection pooling for better performance.
+    If no URL is provided, defaults to SCREEN_BASE_URL for backwards compatibility.
     """
-    global _client
-    if _client is None:
-        _client = httpx.AsyncClient(
-            base_url=get_screen_base_url(),
-            timeout=httpx.Timeout(
-                connect=10.0,
-                read=60.0,  # Longer read timeout for slow endpoints
-                write=10.0,
-                pool=10.0,
-            ),
-            limits=httpx.Limits(
-                max_keepalive_connections=20,
-                max_connections=100,
-                keepalive_expiry=30.0,
-            ),
-            follow_redirects=False,  # Let the client handle redirects
-        )
-        logger.info(f"🔗 Proxy client initialized with base URL: {get_screen_base_url()}")
-    return _client
+    url = backend_url or get_screen_base_url()
+    return await _pool.get_client(url)
 
 
 def is_client_ready() -> bool:
-    """Check if the proxy client is initialized and open."""
-    return _client is not None and not _client.is_closed
+    """Check if at least one proxy client is initialized and open."""
+    return bool(_pool._clients) and all(not c.is_closed for c in _pool._clients.values())
 
 
 async def close_proxy_client() -> None:
-    """Close the shared httpx client."""
-    global _client
-    if _client is not None:
-        await _client.aclose()
-        _client = None
-        logger.info("🔌 Proxy client closed")
+    """Close all pooled proxy clients."""
+    await _pool.close_all()
 
 
 @asynccontextmanager
-async def get_streaming_client() -> AsyncGenerator[httpx.AsyncClient, None]:
-    """Get a client configured for streaming responses (SSE).
+async def get_streaming_client(
+    backend_url: str | None = None,
+) -> AsyncGenerator[httpx.AsyncClient, None]:
+    """Get a client configured for streaming responses (SSE, NDJSON).
 
-    Creates a new client for each streaming request to avoid
-    blocking the connection pool.
+    Creates a new client per streaming request to avoid blocking the pool.
+    If no URL is provided, defaults to SCREEN_BASE_URL.
     """
+    base_url = (backend_url or get_screen_base_url()).rstrip("/")
     client = httpx.AsyncClient(
-        base_url=get_screen_base_url(),
-        timeout=httpx.Timeout(
-            connect=10.0,
-            read=None,  # No read timeout for streaming
-            write=10.0,
-            pool=10.0,
-        ),
+        base_url=base_url,
+        timeout=_STREAMING_TIMEOUT,
         follow_redirects=False,
     )
     try:
