@@ -21,6 +21,9 @@ from app.agents.nodes.team import run_team_agent
 from app.agents.nodes.timeline import run_timeline_agent
 from app.agents.state import AgentResult
 
+# Nodes that pass enrichment_sources and company_id to run_agent
+ENRICHMENT_NODES = {"profile", "team"}
+
 # Map agent name → (node function, module path for patching)
 AGENT_NODES = [
     ("profile", run_profile_agent, "app.agents.nodes.profile"),
@@ -80,13 +83,17 @@ class TestAgentNodes:
             state = _make_state()
             await node_fn(state)
 
-            mock_run.assert_called_once_with(
+            expected = dict(
                 agent_name=agent_name,
                 company_name="TestCo",
                 website="https://testco.com",
                 company_brief="A test company",
                 country_code="FR",
             )
+            if agent_name in ENRICHMENT_NODES:
+                expected["enrichment_sources"] = None
+                expected["company_id"] = None
+            mock_run.assert_called_once_with(**expected)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("agent_name,node_fn,module_path", AGENT_NODES)
@@ -113,13 +120,17 @@ class TestAgentNodes:
             mock_run.return_value = mock_result
             await node_fn(state)
 
-            mock_run.assert_called_once_with(
+            expected = dict(
                 agent_name=agent_name,
                 company_name="TestCo",
                 website="https://testco.com",
                 company_brief=None,
                 country_code=None,
             )
+            if agent_name in ENRICHMENT_NODES:
+                expected["enrichment_sources"] = None
+                expected["company_id"] = None
+            mock_run.assert_called_once_with(**expected)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("agent_name,node_fn,module_path", AGENT_NODES)
@@ -134,10 +145,14 @@ class TestAgentNodes:
             mock_run.return_value = mock_result
             await node_fn(state)
 
-            mock_run.assert_called_once_with(
+            expected = dict(
                 agent_name=agent_name,
                 company_name="TestCo",
                 website="https://testco.com",
                 company_brief=None,
                 country_code=None,
             )
+            if agent_name in ENRICHMENT_NODES:
+                expected["enrichment_sources"] = None
+                expected["company_id"] = None
+            mock_run.assert_called_once_with(**expected)

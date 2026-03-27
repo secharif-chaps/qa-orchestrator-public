@@ -6,6 +6,7 @@ from langgraph.constants import END, Send
 from langgraph.graph import StateGraph
 
 from app.agents.nodes.csr import run_csr_agent
+from app.agents.nodes.data_collector import data_collector_node
 from app.agents.nodes.digital import run_digital_agent
 from app.agents.nodes.jobs import run_jobs_agent
 from app.agents.nodes.planner import planner_node
@@ -46,14 +47,15 @@ def _build_graph_definition() -> StateGraph:
     """Build the graph definition (uncompiled).
 
     Graph structure:
-        START → planner → [agent_profile, agent_digital, ...] → synthesizer → END
-                                                                     ↓ (retry)
-                                                              [agent_X, ...] → synthesizer → END
+        START → planner → data_collector → [agent_profile, agent_digital, ...] → synthesizer → END
+                                                                                      ↓ (retry)
+                                                                               [agent_X, ...] → synthesizer → END
     """
     graph = StateGraph(CompanyAnalysisState)
 
     # Add nodes
     graph.add_node("planner", planner_node)
+    graph.add_node("data_collector", data_collector_node)
     graph.add_node("synthesizer", synthesizer_node)
 
     for agent_name, node_fn in AGENT_NODE_MAP.items():
@@ -61,7 +63,8 @@ def _build_graph_definition() -> StateGraph:
 
     # Edges
     graph.set_entry_point("planner")
-    graph.add_conditional_edges("planner", _route_to_agents)
+    graph.add_edge("planner", "data_collector")
+    graph.add_conditional_edges("data_collector", _route_to_agents)
 
     for agent_name in AGENT_NODE_MAP:
         graph.add_edge(f"agent_{agent_name}", "synthesizer")

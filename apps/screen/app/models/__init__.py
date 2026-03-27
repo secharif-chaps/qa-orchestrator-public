@@ -14,6 +14,7 @@ from .company_children import (
     PressItemType,
     ProductItemType,
 )
+from .company_enrichment import CompanyEnrichment
 from .company_sections import (
     CompanyCsr,
     CompanyDigital,
@@ -69,6 +70,8 @@ __all__ = [
     "TransactionType",
     "ReferenceType",
     "FeatureFlag",
+    # Enrichment models
+    "CompanyEnrichment",
     # Task models
     "Task",
     "TaskStatus",
