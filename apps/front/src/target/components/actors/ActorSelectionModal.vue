@@ -3,7 +3,7 @@
     <template #title>
       <div class="flex w-full items-center justify-between">
         <span class="text-lg text-gray-900">
-          {{ $t('watch_files.actors.selection_modal.title') }}
+          {{ $t('target.watchFiles.actors.selection_modal.title') }}
         </span>
         <button
           class="flex cursor-pointer items-center p-1 text-gray-500 transition-colors hover:text-gray-700"
@@ -190,7 +190,7 @@ const confirmButtonLabel = computed(() => {
 
   if (visibleSelectedSourcesCount.value > 0) {
     return t(
-      'watch_files.actors.selection_modal.add_actors',
+      'target.watchFiles.actors.selection_modal.add_actors',
       {
         count: selectedActorsCount.value,
         sources: visibleSelectedSourcesCount.value,
@@ -200,7 +200,7 @@ const confirmButtonLabel = computed(() => {
   }
 
   return t(
-    'watch_files.actors.selection_modal.add_actors_no_sources',
+    'target.watchFiles.actors.selection_modal.add_actors_no_sources',
     {
       count: selectedActorsCount.value,
     },
@@ -239,7 +239,7 @@ const handleRetry = () => {
 
 const getSelectActorButtonLabel = () => {
   return t(
-    'watch_files.actors.selection_modal.select_actor',
+    'target.watchFiles.actors.selection_modal.select_actor',
     {
       count: detailSelectedSourcesCount.value,
     },

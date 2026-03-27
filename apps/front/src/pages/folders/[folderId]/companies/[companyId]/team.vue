@@ -10,7 +10,7 @@
     <!-- No Data State -->
     <NoData v-else-if="!hasTeamData">
       <p class="text-secondary text-lg font-medium">
-        {{ $t('profile.sections.team.noData') }}
+        {{ $t('screen.profile.sections.team.noData') }}
       </p>
     </NoData>
 
@@ -27,7 +27,7 @@
       <div class="bg-base-100 rounded-lg p-6">
         <h3 class="text-secondary mb-4 flex items-center gap-2 text-lg font-semibold">
           <i class="fa fa-address-card"></i>
-          <span>{{ $t('team.members.title', 'Team Members') }}</span>
+          <span>{{ $t('screen.team.members.title', 'Team Members') }}</span>
         </h3>
         <TeamMembersList
           :team="company?.team ?? []"
@@ -40,15 +40,20 @@
         <div class="mb-4 flex items-center justify-between">
           <h3 class="text-secondary flex items-center gap-2 text-lg font-semibold">
             <i class="fa fa-sitemap"></i>
-            <span>{{ $t('team.hierarchy.title', 'Organization Chart') }}</span>
+            <span>{{ $t('screen.team.hierarchy.title', 'Organization Chart') }}</span>
           </h3>
           <div class="flex items-center gap-2">
-            <Tag variant="info" :label="$t('team.hierarchy.interactive')" size="xs" rounded />
+            <Tag
+              variant="info"
+              :label="$t('screen.team.hierarchy.interactive')"
+              size="xs"
+              rounded
+            />
             <Button
               @click="doScreenshot"
               variant="tertiary"
               icon="fa fa-camera"
-              :title="$t('team.hierarchy.screenshot', 'Take Screenshot')"
+              :title="$t('screen.team.hierarchy.screenshot', 'Take Screenshot')"
               icon-only
               size="sm"
             />

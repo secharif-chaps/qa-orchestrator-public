@@ -1,8 +1,8 @@
 <template>
   <div class="border-sage-100 space-y-4 rounded border p-6 shadow">
     <SectionListHeader
-      :title="$t('watch_files.actors.title')"
-      :add-button-text="$t('watch_files.actors.select_actor')"
+      :title="$t('target.watchFiles.actors.title')"
+      :add-button-text="$t('target.watchFiles.actors.select_actor')"
       :sub-title="subTitle"
       :readonly="readonly"
       :loading="loading"
@@ -85,7 +85,7 @@ const subTitle = computed(() => {
   if (!actorsList.value.length) {
     return ''
   }
-  return t('watch_files.actors.sub_title', actorsStats.value)
+  return t('target.watchFiles.actors.sub_title', actorsStats.value)
 })
 
 watch(

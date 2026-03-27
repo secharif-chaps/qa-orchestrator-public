@@ -5,7 +5,7 @@
     class="bg-sage-200 text-sage-800 flex items-center gap-1 rounded-sm p-1 text-sm"
   >
     <Icon icon="fa-file-lines" />
-    <span class="shrink">{{ $t(`watch_files.documents.status.${item}`) }}</span>
+    <span class="shrink">{{ $t(`target.watchFiles.documents.status.${item}`) }}</span>
     <button class="flex items-center justify-center" @click="emit('openEditFilter', 'validations')">
       <Icon icon="fa-pen" />
     </button>

@@ -58,18 +58,22 @@ export function useTimeDisplay(options: TimeDisplayOptions = {}) {
 
       // Relative display for recent dates
       if (diffMinutes < 1) {
-        return t('composables.useTimeDisplay.justNow')
+        return t('common.composables.useTimeDisplay.justNow')
       } else if (diffMinutes < 60) {
-        return t('composables.useTimeDisplay.minutesAgo', { count: diffMinutes }, diffMinutes)
+        return t(
+          'common.composables.useTimeDisplay.minutesAgo',
+          { count: diffMinutes },
+          diffMinutes,
+        )
       } else if (isSameDay) {
-        return t('composables.useTimeDisplay.hoursAgo', { count: diffHours }, diffHours)
+        return t('common.composables.useTimeDisplay.hoursAgo', { count: diffHours }, diffHours)
       } else {
         // For dates yesterday or day before but within threshold
         return d(targetDate, format)
       }
     } catch (error) {
       console.warn('Error formatting date:', error)
-      return t('composables.useTimeDisplay.invalidDate')
+      return t('common.composables.useTimeDisplay.invalidDate')
     }
   }
 

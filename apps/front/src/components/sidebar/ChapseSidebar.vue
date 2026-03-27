@@ -26,7 +26,7 @@
     <!-- Main Chat Area -->
     <div class="flex min-w-0 flex-1 flex-col">
       <!-- Header -->
-      <SidebarHeader :title="$t('sidebar.chapse.title')">
+      <SidebarHeader :title="$t('common.sidebar.chapse.title')">
         <div class="flex items-center gap-2">
           <Button
             variant="tertiary"
@@ -34,8 +34,8 @@
             size="sm"
             :title="
               sidebarStore.isFullscreen
-                ? $t('sidebar.chapse.exitFullscreen', 'Exit fullscreen')
-                : $t('sidebar.chapse.enterFullscreen', 'Enter fullscreen')
+                ? $t('common.sidebar.chapse.exitFullscreen', 'Exit fullscreen')
+                : $t('common.sidebar.chapse.enterFullscreen', 'Enter fullscreen')
             "
             @click="toggleFullscreen"
           />
@@ -43,14 +43,14 @@
             variant="tertiary"
             icon="fa-solid fa-plus"
             size="sm"
-            :title="$t('sidebar.chapse.newConversation', 'New conversation')"
+            :title="$t('common.sidebar.chapse.newConversation', 'New conversation')"
             @click="handleNewConversation"
           />
           <Button
             variant="tertiary"
             icon="fa-solid fa-trash"
             size="sm"
-            :title="$t('sidebar.chapse.clearHistory', 'Clear history')"
+            :title="$t('common.sidebar.chapse.clearHistory', 'Clear history')"
             @click="handleClearHistory"
           />
         </div>
@@ -67,9 +67,9 @@
         >
           <i class="fa fa-building text-sage-400 text-sm"></i>
           <span class="text-sage-200 text-sm">
-            {{ $t('sidebar.chapse.addThisCompany', 'Add') }}
+            {{ $t('common.sidebar.chapse.addThisCompany', 'Add') }}
             <strong>{{ availablePageContext.name }}</strong>
-            {{ $t('sidebar.chapse.toContext', 'to context') }}
+            {{ $t('common.sidebar.chapse.toContext', 'to context') }}
           </span>
           <i class="fa fa-plus text-sage-400 ml-auto text-xs"></i>
         </button>
@@ -86,7 +86,7 @@
           <p class="text-sage-900 dark:text-sage-300 max-w-xs text-center">
             {{
               $t(
-                'sidebar.chapse.welcomeMessage',
+                'common.sidebar.chapse.welcomeMessage',
                 "Hello! I'm Chaps-e, your AI assistant. How can I help you today?",
               )
             }}
@@ -116,7 +116,7 @@
             </div>
             <div class="bg-sage-800 text-sage-200 text-sm rounded-xl px-4 py-3">
               <i class="fa fa-circle fa-beat text-primary text-xs mr-2"></i>
-              {{ $t('sidebar.chapse.thinking', 'Thinking...') }}
+              {{ $t('common.sidebar.chapse.thinking', 'Thinking...') }}
             </div>
           </div> -->
         </template>
@@ -125,7 +125,7 @@
       <!-- Chat Input -->
       <ChatInput
         v-model="userMessage"
-        :placeholder="$t('sidebar.chapse.placeholder', 'Write a message...')"
+        :placeholder="$t('common.sidebar.chapse.placeholder', 'Write a message...')"
         :loading="isLoading"
         :disabled="isStreaming"
         :company-context="companyContext"
@@ -402,7 +402,7 @@ const handleDeleteConversation = async (conversationId: string) => {
   if (
     confirm(
       t(
-        'sidebar.chapse.confirmDeleteConversation',
+        'common.sidebar.chapse.confirmDeleteConversation',
         'Are you sure you want to delete this conversation?',
       ),
     )
@@ -422,7 +422,10 @@ async function handleLoadMoreConversations() {
 const handleClearHistory = () => {
   if (
     confirm(
-      t('sidebar.chapse.confirmClearMessages', 'Are you sure you want to clear all messages?'),
+      t(
+        'common.sidebar.chapse.confirmClearMessages',
+        'Are you sure you want to clear all messages?',
+      ),
     )
   ) {
     clearHistory()

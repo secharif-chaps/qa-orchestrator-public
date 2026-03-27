@@ -9,7 +9,7 @@
       <!-- Header -->
       <div class="mb-6 flex items-center justify-between">
         <h3 class="text-base text-lg font-semibold">
-          {{ $t('user.resetPassword.title', 'Reset Password') }}
+          {{ $t('settings.user.resetPassword.title', 'Reset Password') }}
         </h3>
         <Button variant="tertiary" icon="fa fa-times" @click="handleClose" />
       </div>
@@ -20,10 +20,10 @@
           variant="success"
           class="mb-6"
           icon="fa-check-circle"
-          :title="$t('user.resetPassword.success', 'Password reset successfully!')"
+          :title="$t('settings.user.resetPassword.success', 'Password reset successfully!')"
           :description="
             $t(
-              'user.resetPassword.successDescription',
+              'settings.user.resetPassword.successDescription',
               'Share the new password with the user. They will be required to change it on first login.',
             )
           "
@@ -32,7 +32,7 @@
         <!-- New Password Display -->
         <div class="mb-6">
           <label class="text-secondary mb-2 block text-sm font-medium">
-            {{ $t('user.resetPassword.newPassword', 'New Temporary Password') }}
+            {{ $t('settings.user.resetPassword.newPassword', 'New Temporary Password') }}
           </label>
           <div class="flex gap-2">
             <div class="relative flex-1">
@@ -69,7 +69,7 @@
         <!-- User Info -->
         <div class="mb-6">
           <p class="text-secondary text-sm">
-            {{ $t('user.resetPassword.description', 'Reset password for') }}
+            {{ $t('settings.user.resetPassword.description', 'Reset password for') }}
             <span class="font-semibold">{{ memberDisplayName }}</span>
           </p>
         </div>
@@ -77,7 +77,7 @@
         <!-- Password Input -->
         <div class="mb-4">
           <label class="text-secondary mb-2 block text-sm font-medium">
-            {{ $t('user.resetPassword.temporaryPassword', 'Temporary Password') }} *
+            {{ $t('settings.user.resetPassword.temporaryPassword', 'Temporary Password') }} *
           </label>
           <div class="relative">
             <input
@@ -85,7 +85,9 @@
               :type="showPassword ? 'text' : 'password'"
               :disabled="isLoading"
               class="border-primary-stroke focus:ring-primary w-full rounded-lg border px-3 py-2 pr-10 focus:border-transparent focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
-              :placeholder="$t('user.resetPassword.placeholder', 'Enter temporary password')"
+              :placeholder="
+                $t('settings.user.resetPassword.placeholder', 'Enter temporary password')
+              "
             />
             <button
               type="button"
@@ -108,7 +110,7 @@
             @click="generatePassword"
           >
             <i class="fa fa-refresh mr-1"></i>
-            {{ $t('user.generatePassword', 'Generate Random Password') }}
+            {{ $t('settings.user.generatePassword', 'Generate Random Password') }}
           </button>
         </div>
 
@@ -117,10 +119,10 @@
           variant="info"
           class="mb-6"
           icon="fa-info-circle"
-          :title="$t('user.resetPassword.infoTitle', 'Password will be temporary')"
+          :title="$t('settings.user.resetPassword.infoTitle', 'Password will be temporary')"
           :description="
             $t(
-              'user.resetPassword.infoDescription',
+              'settings.user.resetPassword.infoDescription',
               'The user will be required to change this password on their next login.',
             )
           "
@@ -136,7 +138,7 @@
           />
           <Button
             variant="primary"
-            :label="$t('user.resetPassword.button', 'Reset Password')"
+            :label="$t('settings.user.resetPassword.button', 'Reset Password')"
             :loading="isLoading"
             :disabled="!password || isLoading"
             @click="handleResetPassword"

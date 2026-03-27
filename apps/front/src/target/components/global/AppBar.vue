@@ -2,7 +2,7 @@
   <header data-theme="dark" class="dark fixed z-20 flex h-16 w-full justify-between px-4 sm:px-6">
     <div class="flex">
       <div class="flex shrink-0 items-center">
-        <RouterLink to="/" :aria-label="$t('logo.link.aria_label')">
+        <RouterLink to="/" :aria-label="$t('common.logo.link.aria_label')">
           <div class="flex items-center justify-center gap-2">
             <img :src="logo_chaps" alt="ChapsVision" class="h-8 w-min" />
             <svg

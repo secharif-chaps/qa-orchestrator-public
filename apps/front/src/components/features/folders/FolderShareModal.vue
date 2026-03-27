@@ -1,21 +1,24 @@
 <template>
   <Modal
     v-model:displayModal="isOpen"
-    :title="$t('folder.share.title', 'Share Folder')"
+    :title="$t('common.folder.share.title', 'Share Folder')"
     icon="fa-users"
     size="2xl"
     @close="handleClose"
   >
     <template #description>
       {{
-        $t('folder.share.description', 'Share this folder with other users in your organization')
+        $t(
+          'common.folder.share.description',
+          'Share this folder with other users in your organization',
+        )
       }}
 
       <div class="mt-4 flex flex-col gap-6">
         <!-- User Search Section -->
         <div class="flex flex-col gap-3">
           <Label id="user-search">
-            {{ $t('folder.share.searchLabel', 'Add people') }}
+            {{ $t('common.folder.share.searchLabel', 'Add people') }}
           </Label>
 
           <div class="flex gap-2">
@@ -24,7 +27,7 @@
                 id="user-search-input"
                 v-model="searchQuery"
                 :placeholder="
-                  $t('folder.share.searchPlaceholder', 'Search by username or email...')
+                  $t('common.folder.share.searchPlaceholder', 'Search by username or email...')
                 "
                 @keydown.enter="handleAddUser"
               />
@@ -42,7 +45,7 @@
               <!-- Loading state -->
               <div v-if="isSearching" class="text-secondary p-4 text-center">
                 <i class="fa fa-spinner fa-spin mr-2"></i>
-                {{ $t('folder.share.searching', 'Searching...') }}
+                {{ $t('common.folder.share.searching', 'Searching...') }}
               </div>
 
               <!-- Results -->
@@ -66,13 +69,13 @@
                   <div class="flex items-center gap-2">
                     <Tag
                       v-if="!user.has_write_permission"
-                      :label="$t('folder.share.readOnly', 'Read only')"
+                      :label="$t('common.folder.share.readOnly', 'Read only')"
                       variant="secondary"
                       size="xs"
                     />
                     <Tag
                       v-if="isUserAlreadyShared(user.user_id)"
-                      :label="$t('folder.share.alreadyShared', 'Already shared')"
+                      :label="$t('common.folder.share.alreadyShared', 'Already shared')"
                       intent="info"
                       size="xs"
                     />
@@ -82,7 +85,7 @@
 
               <!-- No results -->
               <div v-else-if="!searchError" class="text-secondary p-4 text-center">
-                {{ $t('folder.share.noResults', 'No users found') }}
+                {{ $t('common.folder.share.noResults', 'No users found') }}
               </div>
             </div>
           </div>
@@ -95,7 +98,7 @@
             <i class="fa fa-exclamation-triangle mr-2"></i>
             {{
               $t(
-                'folder.share.searchError',
+                'common.folder.share.searchError',
                 'Failed to search users. You may not have permission to share folders.',
               )
             }}
@@ -126,7 +129,7 @@
                   variant="primary"
                   size="sm"
                   icon="fa fa-plus"
-                  :label="$t('folder.share.add', 'Add')"
+                  :label="$t('common.folder.share.add', 'Add')"
                   :loading="isAddingShare"
                   @click="handleAddUser"
                 />
@@ -150,7 +153,7 @@
               <i class="fa fa-info-circle"></i>
               {{
                 $t(
-                  'folder.share.writerDisabledNote',
+                  'common.folder.share.writerDisabledNote',
                   'Writer role is disabled because this user only has read permissions in the organization.',
                 )
               }}
@@ -161,13 +164,13 @@
         <!-- Current Shares Section -->
         <div class="flex flex-col gap-3">
           <Label id="current-shares">
-            {{ $t('folder.share.currentShares', 'People with access') }}
+            {{ $t('common.folder.share.currentShares', 'People with access') }}
           </Label>
 
           <!-- Loading shares -->
           <div v-if="isLoadingShares" class="text-secondary py-4 text-center">
             <i class="fa fa-spinner fa-spin mr-2"></i>
-            {{ $t('folder.share.loadingShares', 'Loading...') }}
+            {{ $t('common.folder.share.loadingShares', 'Loading...') }}
           </div>
 
           <!-- Shares list -->
@@ -185,7 +188,7 @@
                 <div>
                   <div class="font-medium">{{ share.user_username }}</div>
                   <div class="text-secondary text-xs">
-                    {{ $t('folder.share.addedOn', 'Added') }}
+                    {{ $t('common.folder.share.addedOn', 'Added') }}
                     {{ formatDate(share.created_at) }}
                   </div>
                 </div>
@@ -207,7 +210,7 @@
                   size="sm"
                   icon="fa fa-trash"
                   icon-only
-                  :title="$t('folder.share.remove', 'Remove access')"
+                  :title="$t('common.folder.share.remove', 'Remove access')"
                   :loading="removingShareUserId === share.user_id"
                   @click="handleRemoveShare(share)"
                 />
@@ -218,7 +221,9 @@
           <!-- No shares yet -->
           <div v-else class="text-secondary bg-base-200 rounded-lg py-6 text-center">
             <i class="fa fa-user-friends mb-2 text-2xl opacity-50"></i>
-            <p>{{ $t('folder.share.noShares', 'This folder is not shared with anyone yet') }}</p>
+            <p>
+              {{ $t('common.folder.share.noShares', 'This folder is not shared with anyone yet') }}
+            </p>
           </div>
         </div>
       </div>
@@ -257,10 +262,10 @@ const { t } = useI18n()
 // Get role options with disabled property based on user's write permission
 function getRoleOptionsForUser(user: ShareableUser) {
   return [
-    { value: 'reader', label: t('folder.share.reader', 'Reader'), disabled: false },
+    { value: 'reader', label: t('common.folder.share.reader', 'Reader'), disabled: false },
     {
       value: 'writer',
-      label: t('folder.share.writer', 'Writer'),
+      label: t('common.folder.share.writer', 'Writer'),
       disabled: !user.has_write_permission,
     },
   ]
@@ -269,10 +274,10 @@ function getRoleOptionsForUser(user: ShareableUser) {
 // Get role options for existing share based on user's write permission
 function getRoleOptionsForShare(share: FolderShare) {
   return [
-    { value: 'reader', label: t('folder.share.reader', 'Reader'), disabled: false },
+    { value: 'reader', label: t('common.folder.share.reader', 'Reader'), disabled: false },
     {
       value: 'writer',
-      label: t('folder.share.writer', 'Writer'),
+      label: t('common.folder.share.writer', 'Writer'),
       disabled: !share.has_write_permission,
     },
   ]

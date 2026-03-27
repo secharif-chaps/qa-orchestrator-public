@@ -22,21 +22,21 @@
           </Tag>
           <div v-if="jobPostedDate" class="text-secondary flex items-center text-sm">
             <i class="fa fa-calendar w-4"></i>
-            {{ t('jobs.card.postedDate') }} {{ jobPostedDate }}
+            {{ t('screen.jobs.card.postedDate') }} {{ jobPostedDate }}
           </div>
         </div>
       </div>
     </div>
 
     <div v-if="jobDescription" class="mt-4">
-      <h4 class="mb-2 font-medium">{{ t('jobs.card.description') }}</h4>
+      <h4 class="mb-2 font-medium">{{ t('screen.jobs.card.description') }}</h4>
       <p class="text-secondary text-sm">
         {{ jobDescription }}
       </p>
     </div>
 
     <div v-if="jobRequirements" class="mt-4">
-      <h4 class="mb-2 font-medium">{{ t('jobs.card.requirements') }}</h4>
+      <h4 class="mb-2 font-medium">{{ t('screen.jobs.card.requirements') }}</h4>
       <p class="text-secondary text-sm">
         {{ jobRequirements }}
       </p>

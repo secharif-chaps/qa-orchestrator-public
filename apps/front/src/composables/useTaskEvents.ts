@@ -136,7 +136,7 @@ export function useTaskEvents() {
         // Build action to navigate to company page
         const action = folder_id
           ? {
-              label: t('tasks.events.view'),
+              label: t('screen.tasks.events.view'),
               onClick: () => {
                 router.push(`/folders/${folder_id}/companies/${company_id}`)
               },
@@ -145,9 +145,9 @@ export function useTaskEvents() {
 
         // Show toast notification with action button
         if (error_count === 0) {
-          toast.success(t('tasks.events.ready', { companyName: company_name }), { action })
+          toast.success(t('screen.tasks.events.ready', { companyName: company_name }), { action })
         } else {
-          toast.warning(t('tasks.events.readyWithErrors', { companyName: company_name }), {
+          toast.warning(t('screen.tasks.events.readyWithErrors', { companyName: company_name }), {
             action,
           })
         }

@@ -81,7 +81,7 @@ export const useChangeSourceStatus = () => {
   const { t } = useI18n()
   const queryCache = useQueryCache()
   const defaultErrorMessage = {
-    title: t('watch_files.sources.status_change.error'),
+    title: t('target.watchFiles.sources.status_change.error'),
   }
 
   const { mutate, ...mutation } = useMutation({
@@ -118,7 +118,7 @@ export const useChangeSourceStatus = () => {
     onSuccess(_, { source }) {
       const newStatus =
         source.status === SourceStatus.ACTIVE ? SourceStatus.INACTIVE : SourceStatus.ACTIVE
-      toast.success(t('watch_files.sources.status_change.' + newStatus))
+      toast.success(t('target.watchFiles.sources.status_change.' + newStatus))
     },
   })
   return {
@@ -132,7 +132,7 @@ export const useBatchChangeSourceStatus = () => {
   const { t } = useI18n()
   const queryCache = useQueryCache()
   const defaultErrorMessage = {
-    title: t('watch_files.sources.batch_change.error'),
+    title: t('target.watchFiles.sources.batch_change.error'),
   }
 
   const { mutate, ...mutation } = useMutation({
@@ -168,11 +168,11 @@ export const useBatchChangeSourceStatus = () => {
       const failedCount = data.failed
 
       if (data.success || successCount > 0) {
-        toast.success(t('watch_files.sources.batch_change.success', successCount))
+        toast.success(t('target.watchFiles.sources.batch_change.success', successCount))
       }
 
       if (failedCount > 0) {
-        toast.error(t('watch_files.sources.batch_change.partial_error', failedCount))
+        toast.error(t('target.watchFiles.sources.batch_change.partial_error', failedCount))
       }
     },
   })

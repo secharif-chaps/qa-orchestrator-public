@@ -36,7 +36,7 @@
       <button
         class="text-secondary hover:text-secondary/80 mt-2 flex items-center gap-1 self-start text-xs font-medium transition-colors"
       >
-        <span>{{ $t('company.analysisCard.viewMore', 'View more') }}</span>
+        <span>{{ $t('screen.company.analysisCard.viewMore', 'View more') }}</span>
         <i class="fas fa-arrow-right text-[10px]"></i>
       </button>
     </div>
@@ -48,7 +48,7 @@
     >
       <div class="text-secondary flex items-center gap-3 text-base">
         <i class="fas fa-spinner fa-spin text-xl"></i>
-        <span>{{ $t('company.analysisCard.loading', 'Analysis in progress...') }}</span>
+        <span>{{ $t('screen.company.analysisCard.loading', 'Analysis in progress...') }}</span>
       </div>
     </div>
 
@@ -64,7 +64,7 @@
     <!-- No Data State -->
     <div v-else-if="!hasInsights && !isLoading" class="border-primary-stroke mt-4 border-t pt-4">
       <p class="text-secondary text-sm italic">
-        {{ $t('company.analysisCard.noData', 'No data available for this section') }}
+        {{ $t('screen.company.analysisCard.noData', 'No data available for this section') }}
       </p>
     </div>
 
@@ -75,7 +75,7 @@
     >
       <Tag
         variant="accent"
-        :label="$t('company.analysisCard.comingSoon', 'Coming soon')"
+        :label="$t('screen.company.analysisCard.comingSoon', 'Coming soon')"
         size="sm"
       />
     </div>
@@ -140,15 +140,15 @@ const statusVariant = computed(() => {
 const statusLabel = computed(() => {
   switch (props.taskStatus) {
     case 'succeeded':
-      return t('company.analysisCard.status.succeeded', 'Completed')
+      return t('screen.company.analysisCard.status.succeeded', 'Completed')
     case 'error':
-      return t('company.analysisCard.status.error', 'Error')
+      return t('screen.company.analysisCard.status.error', 'Error')
     case 'running':
-      return t('company.analysisCard.status.running', 'In progress')
+      return t('screen.company.analysisCard.status.running', 'In progress')
     case 'pending':
-      return t('company.analysisCard.status.pending', 'Pending')
+      return t('screen.company.analysisCard.status.pending', 'Pending')
     default:
-      return t('company.analysisCard.status.notStarted', 'Not started')
+      return t('screen.company.analysisCard.status.notStarted', 'Not started')
   }
 })
 

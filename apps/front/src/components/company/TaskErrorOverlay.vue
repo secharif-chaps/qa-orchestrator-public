@@ -7,11 +7,11 @@
       <Alert
         v-if="isRateLimit && countdown !== null"
         variant="warning"
-        :title="t('company.analysisCard.error.rateLimit.title')"
+        :title="t('screen.company.analysisCard.error.rateLimit.title')"
         :description="
           countdown > 0
-            ? t('company.analysisCard.error.rateLimit.description', { seconds: countdown })
-            : t('company.analysisCard.error.recoverable.description')
+            ? t('screen.company.analysisCard.error.rateLimit.description', { seconds: countdown })
+            : t('screen.company.analysisCard.error.recoverable.description')
         "
         icon="fa-clock"
       >
@@ -21,8 +21,10 @@
             size="sm"
             :label="
               countdown > 0
-                ? t('company.analysisCard.error.rateLimit.waitingLabel', { seconds: countdown })
-                : t('company.analysisCard.error.retry')
+                ? t('screen.company.analysisCard.error.rateLimit.waitingLabel', {
+                    seconds: countdown,
+                  })
+                : t('screen.company.analysisCard.error.retry')
             "
             :icon="countdown > 0 ? 'fa fa-hourglass-half' : 'fa fa-rotate-right'"
             :disabled="countdown > 0"
@@ -36,15 +38,15 @@
       <Alert
         v-else-if="isRecoverable"
         variant="warning"
-        :title="t('company.analysisCard.error.recoverable.title')"
-        :description="t('company.analysisCard.error.recoverable.description')"
+        :title="t('screen.company.analysisCard.error.recoverable.title')"
+        :description="t('screen.company.analysisCard.error.recoverable.description')"
         icon="fa-triangle-exclamation"
       >
         <template #actions>
           <Button
             variant="secondary"
             size="sm"
-            :label="t('company.analysisCard.error.retry')"
+            :label="t('screen.company.analysisCard.error.retry')"
             icon="fa fa-rotate-right"
             :loading="isRetrying"
             @click="handleRetry"
@@ -56,15 +58,15 @@
       <Alert
         v-else
         variant="danger"
-        :title="t('company.analysisCard.error.generic.title')"
-        :description="t('company.analysisCard.error.generic.description')"
+        :title="t('screen.company.analysisCard.error.generic.title')"
+        :description="t('screen.company.analysisCard.error.generic.description')"
         icon="fa-circle-xmark"
       >
         <template #actions>
           <Button
             variant="secondary"
             size="sm"
-            :label="t('company.analysisCard.error.retry')"
+            :label="t('screen.company.analysisCard.error.retry')"
             icon="fa fa-rotate-right"
             :loading="isRetrying"
             @click="handleRetry"

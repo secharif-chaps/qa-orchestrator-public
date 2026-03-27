@@ -5,7 +5,11 @@
         <!-- Module Icon -->
         <Badge
           :intent="isEnabled ? 'success' : 'danger'"
-          :label="isEnabled ? $t('tokens.enabled', 'Enabled') : $t('tokens.disabled', 'Disabled')"
+          :label="
+            isEnabled
+              ? $t('settings.tokens.enabled', 'Enabled')
+              : $t('settings.tokens.disabled', 'Disabled')
+          "
           :icon="moduleIcon"
           variant="secondary"
         >
@@ -14,7 +18,7 @@
         <!-- Module Info -->
         <div>
           <h3 class="font-medium capitalize">
-            {{ $t(`tokens.modules.${module}.name`, module) }}
+            {{ $t(`settings.tokens.modules.${module}.name`, module) }}
           </h3>
           <p class="text-secondary text-sm">
             {{ moduleDescription }}
@@ -68,7 +72,7 @@ const moduleIcons: Record<ModuleName, string> = {
 const moduleIcon = computed(() => moduleIcons[props.module] || 'fa fa-cog')
 
 const moduleDescription = computed(() =>
-  t(`tokens.modules.${props.module}.description`, getDefaultDescription(props.module)),
+  t(`settings.tokens.modules.${props.module}.description`, getDefaultDescription(props.module)),
 )
 
 // Default descriptions for modules (core modules only)

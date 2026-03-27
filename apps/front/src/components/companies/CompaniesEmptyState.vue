@@ -9,7 +9,7 @@
           v-if="type === 'no-data'"
           variant="primary"
           icon="fa fa-plus"
-          :label="$t('company.list.create.title')"
+          :label="$t('screen.company.list.create.title')"
           @click="$router.push('/search')"
         />
       </slot>
@@ -41,16 +41,16 @@ const iconClass = computed(() => {
 
 const title = computed(() => {
   return props.type === 'no-results'
-    ? t('company.empty.noResults.title')
-    : t('company.empty.noCompanies.title')
+    ? t('screen.company.empty.noResults.title')
+    : t('screen.company.empty.noCompanies.title')
 })
 
 const description = computed(() => {
   if (props.type === 'no-results') {
     return props.searchQuery
-      ? t('company.empty.noResults.description', { query: props.searchQuery })
-      : t('company.empty.noResults.descriptionNoQuery')
+      ? t('screen.company.empty.noResults.description', { query: props.searchQuery })
+      : t('screen.company.empty.noResults.descriptionNoQuery')
   }
-  return t('company.empty.noCompanies.description')
+  return t('screen.company.empty.noCompanies.description')
 })
 </script>

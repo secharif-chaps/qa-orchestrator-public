@@ -17,11 +17,11 @@
               </div>
               <div>
                 <h2 class="text-lg font-semibold">
-                  {{ t('company.debug.workflowTitle', 'Search Workflow') }}
+                  {{ t('screen.company.debug.workflowTitle', 'Search Workflow') }}
                 </h2>
                 <p class="text-secondary text-sm">
                   {{
-                    t('company.tasks.completedCount', {
+                    t('screen.company.tasks.completedCount', {
                       completed: completedCount,
                       total: totalTasks,
                     })
@@ -49,7 +49,7 @@
                   class="bg-success-500 h-full transition-all duration-500 ease-out"
                   :style="{ width: `${completedPercentage}%` }"
                   :title="
-                    t('company.tasks.completed', {
+                    t('screen.company.tasks.completed', {
                       count: completedCount,
                       percentage: Math.round(completedPercentage),
                     })
@@ -62,7 +62,7 @@
                   class="bg-warning-500 h-full transition-all duration-500 ease-out"
                   :style="{ width: `${runningPercentage}%` }"
                   :title="
-                    t('company.tasks.running', {
+                    t('screen.company.tasks.running', {
                       count: runningCount,
                       percentage: Math.round(runningPercentage),
                     })
@@ -75,7 +75,7 @@
                   class="bg-error-500 h-full transition-all duration-500 ease-out"
                   :style="{ width: `${errorPercentage}%` }"
                   :title="
-                    t('company.tasks.error', {
+                    t('screen.company.tasks.error', {
                       count: errorCount,
                       percentage: Math.round(errorPercentage),
                     })
@@ -88,7 +88,7 @@
                   class="bg-base-200 h-full transition-all duration-500 ease-out"
                   :style="{ width: `${pendingPercentage}%` }"
                   :title="
-                    t('company.tasks.pending', {
+                    t('screen.company.tasks.pending', {
                       count: pendingCount,
                       percentage: Math.round(pendingPercentage),
                     })
@@ -101,19 +101,19 @@
                 <div class="flex items-center gap-4">
                   <span class="flex items-center gap-1.5">
                     <div class="bg-success-500 h-2 w-2 rounded-full"></div>
-                    {{ t('company.tasks.completedShort', { count: completedCount }) }}
+                    {{ t('screen.company.tasks.completedShort', { count: completedCount }) }}
                   </span>
                   <span v-if="runningCount > 0" class="flex items-center gap-1.5">
                     <div class="bg-warning-500 h-2 w-2 rounded-full"></div>
-                    {{ t('company.tasks.runningShort', { count: runningCount }) }}
+                    {{ t('screen.company.tasks.runningShort', { count: runningCount }) }}
                   </span>
                   <span v-if="errorCount > 0" class="flex items-center gap-1.5">
                     <div class="bg-error-500 h-2 w-2 rounded-full"></div>
-                    {{ t('company.tasks.errorShort', { count: errorCount }) }}
+                    {{ t('screen.company.tasks.errorShort', { count: errorCount }) }}
                   </span>
                   <span v-if="pendingCount > 0" class="flex items-center gap-1.5">
                     <div class="bg-secondary h-2 w-2 rounded-full"></div>
-                    {{ t('company.tasks.pendingShort', { count: pendingCount }) }}
+                    {{ t('screen.company.tasks.pendingShort', { count: pendingCount }) }}
                   </span>
                 </div>
               </div>
@@ -198,7 +198,7 @@
                 <div class="text-secondary text-sm">
                   {{
                     t(
-                      'company.tasks.canBeRestarted',
+                      'screen.company.tasks.canBeRestarted',
                       'Tasks can be restarted or have not been started yet',
                     )
                   }}
@@ -207,7 +207,7 @@
                   variant="secondary"
                   size="sm"
                   icon="fa fa-play"
-                  :label="t('company.tasks.startAll', 'Start all tasks')"
+                  :label="t('screen.company.tasks.startAll', 'Start all tasks')"
                   @click="startAllPendingTasks"
                   :loading="isStartingAll"
                 />
@@ -433,15 +433,15 @@ const getStatusIntent = (status: TaskStatus | null) => {
 const getStatusLabel = (status: TaskStatus | null): string => {
   switch (status) {
     case 'succeeded':
-      return t('company.analysisCard.status.succeeded', 'Completed')
+      return t('screen.company.analysisCard.status.succeeded', 'Completed')
     case 'error':
-      return t('company.analysisCard.status.error', 'Error')
+      return t('screen.company.analysisCard.status.error', 'Error')
     case 'running':
-      return t('company.analysisCard.status.running', 'In progress')
+      return t('screen.company.analysisCard.status.running', 'In progress')
     case 'pending':
-      return t('company.analysisCard.status.pending', 'Pending')
+      return t('screen.company.analysisCard.status.pending', 'Pending')
     default:
-      return t('company.analysisCard.status.notStarted', 'Not started')
+      return t('screen.company.analysisCard.status.notStarted', 'Not started')
   }
 }
 

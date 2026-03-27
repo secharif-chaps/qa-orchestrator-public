@@ -79,7 +79,7 @@ export const useAddItemToFolder = defineMutation(() => {
       if (context?.previousStates) {
         rollbackCacheChanges(queryCache, context.previousStates)
       }
-      toast.error(t('folder.addItem.error'))
+      toast.error(t('common.folder.addItem.error'))
     },
   })
 
@@ -126,7 +126,7 @@ export const useRemoveItemFromFolder = defineMutation(() => {
       if (context?.previousStates) {
         rollbackCacheChanges(queryCache, context.previousStates)
       }
-      toast.error(t('folder.removeItem.error'))
+      toast.error(t('common.folder.removeItem.error'))
     },
   })
 
@@ -281,7 +281,7 @@ export const useMoveCompanyToFolder = defineMutation(() => {
 
       // Show success toast immediately
       if (destinationFolderName) {
-        toast.success(t('folder.moveCompany.success', { folderName: destinationFolderName }))
+        toast.success(t('common.folder.moveCompany.success', { folderName: destinationFolderName }))
       }
 
       return { previousStates, sourceFolderId, destinationFolderId, itemToMove }
@@ -291,7 +291,7 @@ export const useMoveCompanyToFolder = defineMutation(() => {
       if (context?.previousStates) {
         rollbackCacheChanges(queryCache, context.previousStates)
       }
-      toast.error(t('folder.moveCompany.error'))
+      toast.error(t('common.folder.moveCompany.error'))
     },
   })
 
@@ -464,14 +464,14 @@ export const useRestoreFolder = defineMutation(() => {
     mutation: ({ folderId }: { folderId: string; folderName: string }) => restoreFolder(folderId),
 
     onError: (_error, { folderName }) => {
-      toast.error(t('folder.restore.error', { name: folderName }))
+      toast.error(t('common.folder.restore.error', { name: folderName }))
     },
 
     onSuccess: (_data, { folderName }) => {
       // Invalidate folder caches to refetch fresh data
       queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
-      toast.success(t('folder.restore.success', { name: folderName }))
+      toast.success(t('common.folder.restore.success', { name: folderName }))
     },
   })
 
@@ -496,14 +496,16 @@ export const useToggleFolderFavorite = defineMutation(() => {
       toggleFolderFavorite(folderId, shouldBeFavorite),
 
     onError: () => {
-      toast.error(t('folder.favorite.error'))
+      toast.error(t('common.folder.favorite.error'))
     },
 
     onSuccess: (_data, { shouldBeFavorite }) => {
       // Invalidate all folder caches to refetch fresh data
       queryCache.invalidateQueries({ key: FOLDER_QUERY_KEYS.root })
 
-      toast.success(shouldBeFavorite ? t('folder.favorite.added') : t('folder.favorite.removed'))
+      toast.success(
+        shouldBeFavorite ? t('common.folder.favorite.added') : t('common.folder.favorite.removed'),
+      )
     },
   })
 

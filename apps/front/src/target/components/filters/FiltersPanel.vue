@@ -33,7 +33,7 @@
         icon="fa-rotate-left"
         @click="handleResetFilters"
       >
-        {{ t('watch_files.filters.button.reset') }}
+        {{ t('target.watchFiles.filters.button.reset') }}
       </Button>
       <div v-if="displayFiltersPanelValue" class="flex flex-wrap items-start gap-1">
         <slot name="chips" :open-edit-filter="openEditFilter" />
@@ -49,9 +49,9 @@
     :open-edit="openEdit"
     :default-value-open="defaultValueOpen"
     :filters-counts="filtersCounts"
-    :title="$t('watch_files.filters.title')"
-    :confirm-button-label="t('watch_files.filters.button.confirm')"
-    :reset-button-label="t('watch_files.filters.button.reset')"
+    :title="$t('target.watchFiles.filters.title')"
+    :confirm-button-label="t('target.watchFiles.filters.button.confirm')"
+    :reset-button-label="t('target.watchFiles.filters.button.reset')"
     @confirm="handleConfirmFilters"
     @reset="handleResetFilters"
   >
@@ -144,7 +144,7 @@ const displayFiltersPanelValue = computed(() => {
 
 const filterTitle = computed(() => {
   if (displayFiltersPanelValue.value) {
-    return `${t('watch_files.filters.title_count', { count: filtersCounts })}`
+    return `${t('target.watchFiles.filters.title_count', { count: filtersCounts })}`
   }
   return `(${filtersCounts})`
 })

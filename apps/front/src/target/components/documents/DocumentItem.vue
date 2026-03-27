@@ -52,7 +52,7 @@
           </span>
           <Tag v-if="isExcerpt" intent="accent" size="sm">
             {{
-              t('watch_files.documents.search.matching', {
+              t('target.watchFiles.documents.search.matching', {
                 search: searchQuery,
               })
             }}
@@ -64,7 +64,7 @@
         size="sm"
         :intent="document.aiValidation?.status === 'validated' ? 'success' : 'danger'"
       >
-        {{ t(`watch_files.documents.aiValidationStatus.${document.aiValidation?.status}`) }}
+        {{ t(`target.watchFiles.documents.aiValidationStatus.${document.aiValidation?.status}`) }}
       </Tag>
       <DocumentValidationButtons
         v-if="isUserEditable"
@@ -73,7 +73,7 @@
         icon-only
       />
       <Tag v-else-if="document.manualStatus" size="sm">
-        {{ t(`watch_files.documents.manualStatus.${document.manualStatus}`) }}
+        {{ t(`target.watchFiles.documents.manualStatus.${document.manualStatus}`) }}
       </Tag>
     </div>
   </div>

@@ -8,7 +8,9 @@
       }"
     >
       <div class="flex items-center gap-3">
-        <span class="font-medium">{{ t('company.debug.workflowTitle', 'Search Workflow') }}</span>
+        <span class="font-medium">{{
+          t('screen.company.debug.workflowTitle', 'Search Workflow')
+        }}</span>
         <div class="flex items-center">
           <span class="text-secondary text-xs font-medium"
             >{{ completedCount }}/{{ totalTasks }}</span
@@ -29,7 +31,7 @@
             class="h-full bg-green-400 transition-all duration-500 ease-out"
             :style="{ width: `${completedPercentage}%` }"
             :title="
-              t('company.tasks.completed', {
+              t('screen.company.tasks.completed', {
                 count: completedCount,
                 percentage: Math.round(completedPercentage),
               })
@@ -42,7 +44,7 @@
             class="h-full bg-orange-400 transition-all duration-500 ease-out"
             :style="{ width: `${runningPercentage}%` }"
             :title="
-              t('company.tasks.running', {
+              t('screen.company.tasks.running', {
                 count: runningCount,
                 percentage: Math.round(runningPercentage),
               })
@@ -55,7 +57,7 @@
             class="h-full bg-red-400 transition-all duration-500 ease-out"
             :style="{ width: `${errorPercentage}%` }"
             :title="
-              t('company.tasks.error', {
+              t('screen.company.tasks.error', {
                 count: errorCount,
                 percentage: Math.round(errorPercentage),
               })
@@ -68,7 +70,7 @@
             class="h-full bg-gray-200 transition-all duration-500 ease-out dark:bg-gray-800"
             :style="{ width: `${pendingPercentage}%` }"
             :title="
-              t('company.tasks.pending', {
+              t('screen.company.tasks.pending', {
                 count: pendingCount,
                 percentage: Math.round(pendingPercentage),
               })
@@ -81,19 +83,19 @@
           <div class="flex items-center gap-4">
             <span class="flex items-center gap-1">
               <div class="h-2 w-2 rounded-full bg-green-400"></div>
-              {{ t('company.tasks.completedShort', { count: completedCount }) }}
+              {{ t('screen.company.tasks.completedShort', { count: completedCount }) }}
             </span>
             <span v-if="runningCount > 0" class="flex items-center gap-1">
               <div class="h-2 w-2 rounded-full bg-orange-400"></div>
-              {{ t('company.tasks.runningShort', { count: runningCount }) }}
+              {{ t('screen.company.tasks.runningShort', { count: runningCount }) }}
             </span>
             <span v-if="errorCount > 0" class="flex items-center gap-1">
               <div class="h-2 w-2 rounded-full bg-red-400"></div>
-              {{ t('company.tasks.errorShort', { count: errorCount }) }}
+              {{ t('screen.company.tasks.errorShort', { count: errorCount }) }}
             </span>
             <span v-if="pendingCount > 0" class="flex items-center gap-1">
               <div class="h-2 w-2 rounded-full bg-gray-400"></div>
-              {{ t('company.tasks.pendingShort', { count: pendingCount }) }}
+              {{ t('screen.company.tasks.pendingShort', { count: pendingCount }) }}
             </span>
           </div>
         </div>
@@ -179,7 +181,7 @@
           <div class="text-secondary text-sm">
             {{
               t(
-                'company.tasks.canBeRestarted',
+                'screen.company.tasks.canBeRestarted',
                 'Tasks can be restarted or have not been started yet',
               )
             }}
@@ -191,7 +193,7 @@
             @click="startAllPendingTasks"
             :loading="isStartingAll"
           >
-            {{ t('company.tasks.startAll', 'Start all tasks') }}
+            {{ t('screen.company.tasks.startAll', 'Start all tasks') }}
           </Button>
         </div>
       </div>
@@ -272,62 +274,62 @@ const getTokenInfo = (taskType: TaskType) => {
 const taskConfigs: TaskConfig[] = [
   {
     type: 'profile',
-    name: t('company.analysisCards.profile.title', 'Company Profile'),
+    name: t('screen.company.analysisCards.profile.title', 'Company Profile'),
     description: t(
-      'company.analysisCards.profile.description',
+      'screen.company.analysisCards.profile.description',
       'View detailed company information, business lines, and key metrics',
     ),
   },
   {
     type: 'digital',
-    name: t('company.onlinePresence.title', 'Online Presence'),
-    description: t('company.onlinePresence.socialMedia', 'Social Media Presence'),
+    name: t('screen.company.onlinePresence.title', 'Online Presence'),
+    description: t('screen.company.onlinePresence.socialMedia', 'Social Media Presence'),
   },
   {
     type: 'csr',
-    name: t('company.analysisCards.csr.title', 'Corporate Social Responsibility'),
+    name: t('screen.company.analysisCards.csr.title', 'Corporate Social Responsibility'),
     description: t(
-      'company.analysisCards.csr.description',
+      'screen.company.analysisCards.csr.description',
       'CSR initiatives, sustainability programs, and social impact',
     ),
   },
   {
     type: 'press',
-    name: t('company.analysisCards.press.title', 'Press & Media'),
+    name: t('screen.company.analysisCards.press.title', 'Press & Media'),
     description: t(
-      'company.analysisCards.press.description',
+      'screen.company.analysisCards.press.description',
       'Press releases, news articles, and media coverage',
     ),
   },
   {
     type: 'timeline',
-    name: t('company.analysisCards.timeline.title', 'Timeline & History'),
+    name: t('screen.company.analysisCards.timeline.title', 'Timeline & History'),
     description: t(
-      'company.analysisCards.timeline.description',
+      'screen.company.analysisCards.timeline.description',
       'Company history, milestones, and key events over time',
     ),
   },
   {
     type: 'products',
-    name: t('company.analysisCards.products.title', 'Products & Services'),
+    name: t('screen.company.analysisCards.products.title', 'Products & Services'),
     description: t(
-      'company.analysisCards.products.description',
+      'screen.company.analysisCards.products.description',
       'Browse products, services, and offerings',
     ),
   },
   {
     type: 'team',
-    name: t('company.analysisCards.team.title', 'Team & Management'),
+    name: t('screen.company.analysisCards.team.title', 'Team & Management'),
     description: t(
-      'company.analysisCards.team.description',
+      'screen.company.analysisCards.team.description',
       'Leadership team, organizational structure, and key personnel',
     ),
   },
   {
     type: 'jobs',
-    name: t('company.analysisCards.jobs.title', 'Job Offers'),
+    name: t('screen.company.analysisCards.jobs.title', 'Job Offers'),
     description: t(
-      'company.analysisCards.jobs.description',
+      'screen.company.analysisCards.jobs.description',
       'Current job openings and career opportunities',
     ),
   },
@@ -428,15 +430,15 @@ const getStatusVariant = (status: TaskStatus | null) => {
 const getStatusLabel = (status: TaskStatus | null): string => {
   switch (status) {
     case 'succeeded':
-      return t('company.analysisCard.status.succeeded', 'Completed')
+      return t('screen.company.analysisCard.status.succeeded', 'Completed')
     case 'error':
-      return t('company.analysisCard.status.error', 'Error')
+      return t('screen.company.analysisCard.status.error', 'Error')
     case 'running':
-      return t('company.analysisCard.status.running', 'In progress')
+      return t('screen.company.analysisCard.status.running', 'In progress')
     case 'pending':
-      return t('company.analysisCard.status.pending', 'Pending')
+      return t('screen.company.analysisCard.status.pending', 'Pending')
     default:
-      return t('company.analysisCard.status.notStarted', 'Not started')
+      return t('screen.company.analysisCard.status.notStarted', 'Not started')
   }
 }
 

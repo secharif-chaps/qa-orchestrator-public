@@ -1,8 +1,8 @@
 <template>
   <div class="">
     <div class="mb-8">
-      <h1 class="text-3xl font-bold">{{ $t('help.title') }}</h1>
-      <p class="text-secondary mt-2">{{ $t('help.description') }}</p>
+      <h1 class="text-3xl font-bold">{{ $t('settings.help.title') }}</h1>
+      <p class="text-secondary mt-2">{{ $t('settings.help.description') }}</p>
     </div>
 
     <!-- No help content available -->
@@ -10,12 +10,12 @@
       <div class="text-gray-500 dark:text-gray-400">
         <div class="mb-4 text-6xl">📚</div>
         <h3 class="mb-2 text-xl font-medium">
-          {{ $t('help.noContent.title', 'No Help Content Available') }}
+          {{ $t('settings.help.noContent.title', 'No Help Content Available') }}
         </h3>
         <p>
           {{
             $t(
-              'help.noContent.message',
+              'settings.help.noContent.message',
               "You don't have access to any help sections based on your current permissions.",
             )
           }}
@@ -57,7 +57,9 @@
           @change="onMobileSelectChange"
           class="border-primary-stroke bg-base-100 text-secondary focus:ring-primary w-full rounded-md border px-3 py-2 focus:ring-2 focus:outline-none"
         >
-          <option value="">{{ $t('help.selectTopic.placeholder', 'Select a help topic') }}</option>
+          <option value="">
+            {{ $t('settings.help.selectTopic.placeholder', 'Select a help topic') }}
+          </option>
           <optgroup
             v-for="category in helpCategories"
             :key="category"
@@ -80,12 +82,12 @@
           <div class="text-gray-500 dark:text-gray-400">
             <div class="mb-4 text-4xl">👈</div>
             <h3 class="mb-2 text-lg font-medium">
-              {{ $t('help.selectTopic.title', 'Select a Help Topic') }}
+              {{ $t('settings.help.selectTopic.title', 'Select a Help Topic') }}
             </h3>
             <p>
               {{
                 $t(
-                  'help.selectTopic.message',
+                  'settings.help.selectTopic.message',
                   'Choose a topic from the sidebar to view detailed documentation.',
                 )
               }}
@@ -113,7 +115,7 @@
                   class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
                 ></div>
                 <p class="text-secondary">
-                  {{ $t('help.loading.content', 'Loading help content...') }}
+                  {{ $t('settings.help.loading.content', 'Loading help content...') }}
                 </p>
               </div>
             </div>
@@ -147,9 +149,9 @@ const selectedSectionPermission = ref<string>('')
 // Category titles mapping
 const getCategoryTitle = (category: string) => {
   const titles: Record<string, string> = {
-    admin: t('help.categories.admin', 'Administration'),
-    company: t('help.categories.company', 'Company Screening'),
-    organization: t('help.categories.organization', 'organization Management'),
+    admin: t('settings.help.categories.admin', 'Administration'),
+    company: t('settings.help.categories.company', 'Company Screening'),
+    organization: t('settings.help.categories.organization', 'organization Management'),
   }
   return titles[category] || category
 }
@@ -176,7 +178,7 @@ watch(selectedSection, async (newSection) => {
       selectedSectionContent.value = await marked(content)
     } catch (error) {
       console.error('Error loading help content:', error)
-      selectedSectionContent.value = `<p>${t('help.error.loadingContent', 'Error loading help content.')}</p>`
+      selectedSectionContent.value = `<p>${t('settings.help.error.loadingContent', 'Error loading help content.')}</p>`
     }
   } else {
     selectedSectionContent.value = ''

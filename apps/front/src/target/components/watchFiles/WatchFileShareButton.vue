@@ -2,8 +2,8 @@
   <Button
     :variant
     icon="fa-user"
-    :title="title || $t('watch_files.actions.share')"
-    :aria-label="ariaLabel || $t('watch_files.actions.share')"
+    :title="title || $t('target.watchFiles.actions.share')"
+    :aria-label="ariaLabel || $t('target.watchFiles.actions.share')"
     size="sm"
     v-bind="$attrs"
     :class="{ 'pointer-events-none': isReadOnly }"
@@ -48,11 +48,11 @@ const emit = defineEmits<{
 const labelText = computed<string>(() => {
   if (showCount) {
     const count = watchFile?.watchFileUsersCount || 0
-    return t('watch_files.persons', { count })
+    return t('target.watchFiles.persons', { count })
   }
 
   if (showLabel) {
-    return t('watch_files.actions.share')
+    return t('target.watchFiles.actions.share')
   }
 
   return ''

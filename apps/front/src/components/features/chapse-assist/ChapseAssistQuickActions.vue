@@ -15,7 +15,9 @@
     >
       <div class="border-primary h-10 w-10 animate-spin rounded-full border-b-2"></div>
       <p class="text-secondary text-sm">
-        {{ $t('chapseAssist.quickActions.checkingPreferences', 'Checking AI preferences...') }}
+        {{
+          $t('screen.chapseAssist.quickActions.checkingPreferences', 'Checking AI preferences...')
+        }}
       </p>
     </div>
   </div>
@@ -35,7 +37,10 @@
       <Alert
         variant="danger"
         :title="
-          $t('chapseAssist.quickActions.error.preferencesCheck', 'Failed to Check Preferences')
+          $t(
+            'screen.chapseAssist.quickActions.error.preferencesCheck',
+            'Failed to Check Preferences',
+          )
         "
         :description="preferencesCheckError ?? ''"
         icon="fa-exclamation-circle"
@@ -45,7 +50,7 @@
           variant="secondary"
           size="sm"
           icon="fa fa-refresh"
-          :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')"
+          :label="$t('screen.chapseAssist.quickActions.tryAgain', 'Try Again')"
           @click="retryPreferencesCheck"
         />
       </div>
@@ -70,7 +75,7 @@
         variant="tertiary"
         size="sm"
         icon="fa fa-refresh"
-        :label="$t('chapseAssist.quickActions.refresh', 'Refresh')"
+        :label="$t('screen.chapseAssist.quickActions.refresh', 'Refresh')"
         @click="handleRefresh"
         :disabled="isLoadingActions"
       />
@@ -83,7 +88,7 @@
     >
       <div class="border-primary h-10 w-10 animate-spin rounded-full border-b-2"></div>
       <p class="text-secondary text-sm">
-        {{ $t('chapseAssist.quickActions.loading', 'Generating personalized actions...') }}
+        {{ $t('screen.chapseAssist.quickActions.loading', 'Generating personalized actions...') }}
       </p>
     </div>
 
@@ -91,11 +96,11 @@
     <div v-else-if="hasError" class="flex flex-col gap-3">
       <Alert
         variant="danger"
-        :title="$t('chapseAssist.quickActions.error.title', 'Failed to Load Quick Actions')"
+        :title="$t('screen.chapseAssist.quickActions.error.title', 'Failed to Load Quick Actions')"
         :description="
           actionsError ||
           $t(
-            'chapseAssist.quickActions.error.message',
+            'screen.chapseAssist.quickActions.error.message',
             'An error occurred while generating actions. Please try again.',
           )
         "
@@ -106,7 +111,7 @@
           variant="secondary"
           size="sm"
           icon="fa fa-refresh"
-          :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')"
+          :label="$t('screen.chapseAssist.quickActions.tryAgain', 'Try Again')"
           @click="handleRetry"
         />
         <Button
@@ -114,7 +119,7 @@
           variant="primary"
           size="sm"
           icon="fa fa-cog"
-          :label="$t('chapseAssist.quickActions.configure', 'Configure AI Preferences')"
+          :label="$t('screen.chapseAssist.quickActions.configure', 'Configure AI Preferences')"
           @click="goToSetup"
         />
       </div>
@@ -185,12 +190,12 @@
     >
       <i class="fa fa-magic text-secondary mb-3 text-3xl"></i>
       <h4 class="mb-2 font-semibold">
-        {{ $t('chapseAssist.quickActions.empty.title', 'No Quick Actions Available') }}
+        {{ $t('screen.chapseAssist.quickActions.empty.title', 'No Quick Actions Available') }}
       </h4>
       <p class="text-secondary text-sm">
         {{
           $t(
-            'chapseAssist.quickActions.empty.loadedMessage',
+            'screen.chapseAssist.quickActions.empty.loadedMessage',
             'Unable to generate quick actions for this company. Try refreshing or check back later.',
           )
         }}
@@ -200,7 +205,7 @@
         size="sm"
         icon="fa fa-refresh"
         class="mt-4"
-        :label="$t('chapseAssist.quickActions.tryAgain', 'Try Again')"
+        :label="$t('screen.chapseAssist.quickActions.tryAgain', 'Try Again')"
         @click="handleRetry"
       />
     </div>
@@ -254,7 +259,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 // Computed props with translations as defaults
 const title = computed(
-  () => props.title ?? t('chapseAssist.quickActions.title', 'Chaps-e Smart Assist'),
+  () => props.title ?? t('screen.chapseAssist.quickActions.title', 'Chaps-e Smart Assist'),
 )
 
 const emit = defineEmits<{

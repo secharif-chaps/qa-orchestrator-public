@@ -6,7 +6,7 @@
     <button
       type="button"
       class="text-sage-400 hover:text-sage-700 ml-1 focus:outline-none"
-      :aria-label="$t('watch_files.user.remove')"
+      :aria-label="$t('target.watchFiles.user.remove')"
       @click="$emit('remove', user.id)"
     >
       &times;

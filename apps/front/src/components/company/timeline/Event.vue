@@ -53,7 +53,7 @@
         v-if="displayedEvent.impact"
         variant="primary"
         icon="fa fa-bolt"
-        :title="t('timeline.event.impactAnalysis')"
+        :title="t('screen.timeline.event.impactAnalysis')"
         :description="displayedEvent.impact"
       />
 

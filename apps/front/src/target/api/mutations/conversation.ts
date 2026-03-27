@@ -56,8 +56,8 @@ export const useAddMessage = defineMutation(() => {
       }
       conversationStore.setWaitingForAI(false)
       toast.error(
-        t('watch_files.chat.message.send_failed_title'),
-        t('watch_files.chat.message.send_failed_description'),
+        t('target.watchFiles.chat.message.send_failed_title'),
+        t('target.watchFiles.chat.message.send_failed_description'),
       )
       console.error('Failed to send message:', error)
     },
@@ -97,8 +97,8 @@ export const useRetryMessage = defineMutation(() => {
       } else {
         // Real message - use the retry API which returns the updated Message
         const updatedMessage = await retryMessage(message.id, {
-          title: t('watch_files.chat.error.retry_failed_title'),
-          description: t('watch_files.chat.error.retry_failed_description'),
+          title: t('target.watchFiles.chat.error.retry_failed_title'),
+          description: t('target.watchFiles.chat.error.retry_failed_description'),
         })
         return { isPending: false, updatedMessage }
       }
@@ -128,8 +128,8 @@ export const useRetryMessage = defineMutation(() => {
       }
       conversationStore.setWaitingForAI(false)
       toast.error(
-        t('watch_files.chat.error.retry_failed_title'),
-        t('watch_files.chat.error.retry_failed_description'),
+        t('target.watchFiles.chat.error.retry_failed_title'),
+        t('target.watchFiles.chat.error.retry_failed_description'),
       )
       console.error('Failed to retry message:', error)
     },
@@ -145,8 +145,8 @@ export const useCancelConversation = defineMutation(() => {
     mutation: (conversationId: string) => cancelConversation(conversationId),
     onError(error) {
       toast.error(
-        t('watch_files.chat.cancel.error_title'),
-        t('watch_files.chat.cancel.error_description'),
+        t('target.watchFiles.chat.cancel.error_title'),
+        t('target.watchFiles.chat.cancel.error_description'),
       )
       console.error('Failed to cancel conversation:', error)
     },

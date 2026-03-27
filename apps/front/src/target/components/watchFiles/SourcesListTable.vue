@@ -3,8 +3,8 @@
     <SectionListHeader
       v-if="showHeader"
       class="mb-4"
-      :title="$t('watch_files.sources.title')"
-      :add-button-text="$t('watch_files.sources.select_source')"
+      :title="$t('target.watchFiles.sources.title')"
+      :add-button-text="$t('target.watchFiles.sources.select_source')"
       :sub-title="subTitle"
       :readonly="readonly"
       :batch-selection="batchSelection"
@@ -44,7 +44,7 @@
           v-model="typeFilter"
           :options="typeOptions"
           :display-value="typeDisplayValue"
-          :placeholder="$t('watch_files.actors.filters.type')"
+          :placeholder="$t('target.watchFiles.actors.filters.type')"
           :disabled="isLoadingSourceTypes || noSourcesToDisplay || !typeOptions.length"
           multiple
           class="h-full"
@@ -64,7 +64,7 @@
     <template v-else>
       <EmptyState
         v-if="noSourcesToDisplay"
-        :title="$t('watch_files.actors.detail.sources.no_sources.title')"
+        :title="$t('target.watchFiles.actors.detail.sources.no_sources.title')"
         icon="fa-link-slash"
         vertical-align="center"
       />
@@ -161,7 +161,7 @@
           v-model:current-page="page"
           :total-items="totalItems"
           :page-size="itemsPerPage"
-          :result-text="$t('watch_files.sources.pagination.result')"
+          :result-text="$t('target.watchFiles.sources.pagination.result')"
         />
       </template>
     </template>
@@ -321,7 +321,7 @@ const subTitle = computed(() => {
   if (!sources.value.length) {
     return ''
   }
-  return t('watch_files.sources.sub_title', {
+  return t('target.watchFiles.sources.sub_title', {
     count: sources.value.length,
     total: totalItems.value,
   })
@@ -356,14 +356,14 @@ const columns = computed(() => {
   cols.push(
     createColumn(
       'name',
-      t('watch_files.sources.name'),
+      t('target.watchFiles.sources.name'),
       true,
       selectable ? 'w-1/3 lg:w-2/5 xl:w-1/3' : 'w-2/5 lg:w-1/2 xl:w-2/5',
     ),
-    createColumn('type', t('watch_files.sources.type'), true, 'w-1/5'),
+    createColumn('type', t('target.watchFiles.sources.type'), true, 'w-1/5'),
     createColumn(
       'advice',
-      t('watch_files.sources.justification'),
+      t('target.watchFiles.sources.justification'),
       false,
       'w-1/4 xl:w-1/5 2xl:w-2/5',
     ),
@@ -440,10 +440,10 @@ function changeSort(fieldKey: string) {
 }
 
 const typeLabel = (type: string) => {
-  if (!type) return t('watch_files.actors.detail.sources.unknown_type')
+  if (!type) return t('target.watchFiles.actors.detail.sources.unknown_type')
 
   if (type.startsWith('social_media:')) {
-    return t('source_types.social_media')
+    return t('target.sourceTypes.social_media')
   }
 
   const translationKey = `source_types.${type}`

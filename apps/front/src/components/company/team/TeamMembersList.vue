@@ -6,7 +6,7 @@
         <Input
           id="team-search"
           v-model="searchQuery"
-          :placeholder="$t('team.searchPlaceholder')"
+          :placeholder="$t('screen.team.searchPlaceholder')"
           icon="fa-search"
         />
       </div>
@@ -17,11 +17,11 @@
           v-model="selectedLevel"
           class="bg-base-200 border-border text-secondary focus:ring-primary/50 rounded-lg border px-4 py-2 focus:ring-2 focus:outline-none"
         >
-          <option value="">{{ $t('team.levels.all') }}</option>
-          <option value="0">{{ $t('team.levels.ceo') }}</option>
-          <option value="1">{{ $t('team.levels.executives') }}</option>
-          <option value="2">{{ $t('team.levels.managers') }}</option>
-          <option value="3">{{ $t('team.levels.teamMembers') }}</option>
+          <option value="">{{ $t('screen.team.levels.all') }}</option>
+          <option value="0">{{ $t('screen.team.levels.ceo') }}</option>
+          <option value="1">{{ $t('screen.team.levels.executives') }}</option>
+          <option value="2">{{ $t('screen.team.levels.managers') }}</option>
+          <option value="3">{{ $t('screen.team.levels.teamMembers') }}</option>
         </select>
 
         <!-- View Mode Toggle -->
@@ -32,7 +32,7 @@
             icon="fa fa-th"
             icon-only
             size="sm"
-            :title="$t('team.views.grid')"
+            :title="$t('screen.team.views.grid')"
           />
           <Button
             @click="viewMode = 'list'"
@@ -40,7 +40,7 @@
             icon="fa fa-list"
             icon-only
             size="sm"
-            :title="$t('team.views.list')"
+            :title="$t('screen.team.views.list')"
           />
         </div>
       </div>
@@ -77,7 +77,7 @@
         <i class="fa fa-search"></i>
       </div>
       <p class="text-secondary">
-        {{ $t('team.noResults') }}
+        {{ $t('screen.team.noResults') }}
       </p>
     </div>
   </div>

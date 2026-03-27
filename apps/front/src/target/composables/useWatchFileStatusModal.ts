@@ -34,9 +34,9 @@ export function useWatchFileStatusModal(
 
   const showRestoreModal = async (watchFile: WatchFile) => {
     showConfirmModal({
-      title: t('watch_files.status_change.restore.confirm_title'),
+      title: t('target.watchFiles.status_change.restore.confirm_title'),
       titleIcon: 'fa-rotate-left',
-      message: t('watch_files.header_section.deactivation_modal.description', {
+      message: t('target.watchFiles.header_section.deactivation_modal.description', {
         name: watchFile.name,
       }),
       infoSection: {
@@ -45,16 +45,16 @@ export function useWatchFileStatusModal(
           t('common.dialog.info_item_data_preserved'),
         ],
       },
-      confirmLabel: t('watch_files.status_change.restore.confirm_button'),
+      confirmLabel: t('target.watchFiles.status_change.restore.confirm_button'),
       onConfirm: () => changeStatus({ id: watchFile.id, status: WATCH_FILE_STATUS.DRAFT }),
     })
   }
 
   const showEnabledModal = (watchFile: WatchFile) => {
     showConfirmModal({
-      title: t('watch_files.header_section.activation_modal.title'),
+      title: t('target.watchFiles.header_section.activation_modal.title'),
       titleIcon: 'fa-play',
-      message: t('watch_files.header_section.activation_modal.description', {
+      message: t('target.watchFiles.header_section.activation_modal.description', {
         name: watchFile.name,
       }),
       infoSection: {
@@ -65,9 +65,9 @@ export function useWatchFileStatusModal(
         ],
       },
       warningSection: {
-        message: t('watch_files.header_section.activation.modal.warning_message'),
+        message: t('target.watchFiles.header_section.activation.modal.warning_message'),
       },
-      confirmLabel: t('watch_files.header_section.activation_modal.confirm'),
+      confirmLabel: t('target.watchFiles.header_section.activation_modal.confirm'),
       type: 'warning',
       onConfirm: () => {
         changeStatus({ id: watchFile.id, status: WATCH_FILE_STATUS.ENABLED })
@@ -88,15 +88,15 @@ export function useWatchFileStatusModal(
     }
 
     showConfirmModal({
-      title: t('watch_files.header_section.deactivation_modal.title'),
+      title: t('target.watchFiles.header_section.deactivation_modal.title'),
       titleIcon: 'fa-file-lines',
-      message: t('watch_files.header_section.deactivation_modal.description', {
+      message: t('target.watchFiles.header_section.deactivation_modal.description', {
         name: watchFile.name,
       }),
       infoSection: {
         items: infoSectionItems,
       },
-      confirmLabel: t('watch_files.header_section.deactivation_modal.confirm'),
+      confirmLabel: t('target.watchFiles.header_section.deactivation_modal.confirm'),
       type: 'warning',
       onConfirm: () => {
         changeStatus({ id: watchFile.id, status: WATCH_FILE_STATUS.DRAFT })
@@ -118,15 +118,15 @@ export function useWatchFileStatusModal(
     }
 
     showConfirmModal({
-      title: t('watch_files.status_change.archive.confirm_title'),
+      title: t('target.watchFiles.status_change.archive.confirm_title'),
       titleIcon: 'fa-box-archive',
-      message: t('watch_files.status_change.archive.confirm_message', {
+      message: t('target.watchFiles.status_change.archive.confirm_message', {
         name: watchFile.name,
       }),
       infoSection: {
         items: infoSectionItems,
       },
-      confirmLabel: t('watch_files.status_change.archive.confirm_button'),
+      confirmLabel: t('target.watchFiles.status_change.archive.confirm_button'),
       onConfirm: () => {
         changeStatus({ id: watchFile.id, status: WATCH_FILE_STATUS.ARCHIVED })
       },

@@ -5,7 +5,7 @@
       <div class="border-primary-stroke border-b px-6 py-4">
         <div class="flex items-center justify-between">
           <h2 class="text-xl font-semibold">
-            {{ $t('user.create.title', 'Create New User') }}
+            {{ $t('settings.user.create.title', 'Create New User') }}
           </h2>
           <button
             @click="$emit('cancel')"
@@ -16,7 +16,10 @@
         </div>
         <p class="text-secondary mt-1 text-sm">
           {{
-            $t('user.create.description', 'User will be prompted to reset password on first login')
+            $t(
+              'settings.user.create.description',
+              'User will be prompted to reset password on first login',
+            )
           }}
         </p>
       </div>
@@ -26,7 +29,7 @@
         <!-- Username -->
         <div>
           <label class="text-secondary mb-1 block text-sm font-medium">
-            {{ $t('user.username', 'Username') }} *
+            {{ $t('settings.user.username', 'Username') }} *
           </label>
           <input
             v-model="form.username"
@@ -39,7 +42,7 @@
                 ? 'border-error-stroke focus:ring-error'
                 : 'border-primary-stroke focus:ring-primary'
             "
-            :placeholder="$t('user.usernamePlaceholder', 'Enter username')"
+            :placeholder="$t('settings.user.usernamePlaceholder', 'Enter username')"
             @blur="touchField('username')"
             @input="validateForm()"
           />
@@ -51,7 +54,7 @@
         <!-- Email -->
         <div>
           <label class="text-secondary mb-1 block text-sm font-medium">
-            {{ $t('user.email', 'Email') }} *
+            {{ $t('settings.user.email', 'Email') }} *
           </label>
           <input
             v-model="form.email"
@@ -64,7 +67,7 @@
                 ? 'border-error-stroke focus:ring-error'
                 : 'border-primary-stroke focus:ring-primary'
             "
-            :placeholder="$t('user.emailPlaceholder', 'Enter email address')"
+            :placeholder="$t('settings.user.emailPlaceholder', 'Enter email address')"
             @blur="touchField('email')"
             @input="validateForm()"
           />
@@ -76,7 +79,7 @@
         <!-- Temporary Password -->
         <div>
           <label class="text-secondary mb-1 block text-sm font-medium">
-            {{ $t('user.temporaryPassword', 'Temporary Password') }} *
+            {{ $t('settings.user.temporaryPassword', 'Temporary Password') }} *
           </label>
           <div class="relative">
             <input
@@ -90,7 +93,7 @@
                   ? 'border-error-stroke focus:ring-error'
                   : 'border-primary-stroke focus:ring-primary'
               "
-              :placeholder="$t('user.passwordPlaceholder', 'Enter temporary password')"
+              :placeholder="$t('settings.user.passwordPlaceholder', 'Enter temporary password')"
               @blur="touchField('temporaryPassword')"
               @input="validateForm()"
             />
@@ -112,7 +115,7 @@
           <p v-else class="text-secondary mt-1 text-xs">
             {{
               $t(
-                'user.passwordHelp',
+                'settings.user.passwordHelp',
                 'User will be required to change this password on first login',
               )
             }}
@@ -128,19 +131,19 @@
             class="text-secondary hover:text-sage-content/80 text-sm font-medium disabled:opacity-50"
           >
             <i class="fa fa-refresh mr-1"></i>
-            {{ $t('user.generatePassword', 'Generate Random Password') }}
+            {{ $t('settings.user.generatePassword', 'Generate Random Password') }}
           </button>
         </div>
 
         <!-- Initial Role Selection -->
         <div class="border-primary-stroke border-t pt-4">
           <label class="text-secondary mb-2 block text-sm font-medium">
-            {{ $t('user.initialRole', 'Initial Role') }}
+            {{ $t('settings.user.initialRole', 'Initial Role') }}
           </label>
           <p class="text-secondary mb-3 text-xs">
             {{
               $t(
-                'user.initialRoleDescription',
+                'settings.user.initialRoleDescription',
                 'Select the initial permissions for this user. Can be changed later.',
               )
             }}
@@ -202,7 +205,7 @@
             class="h-4 w-4 animate-spin rounded-full border-b-2 border-white"
           ></div>
           <i v-else class="fa fa-user-plus"></i>
-          {{ $t('user.create.button', 'Add User') }}
+          {{ $t('settings.user.create.button', 'Add User') }}
         </button>
       </div>
     </div>
@@ -307,28 +310,28 @@ function validateForm() {
   errors.temporaryPassword = ''
 
   if (!form.username.trim()) {
-    errors.username = t('user.validation.username.required', 'Username is required')
+    errors.username = t('settings.user.validation.username.required', 'Username is required')
   } else if (form.username.length < 3) {
     errors.username = t(
-      'user.validation.username.minLength',
+      'settings.user.validation.username.minLength',
       'Username must be at least 3 characters',
     )
   }
 
   if (!form.email.trim()) {
-    errors.email = t('user.validation.email.required', 'Email is required')
+    errors.email = t('settings.user.validation.email.required', 'Email is required')
   } else if (!isValidEmail(form.email)) {
-    errors.email = t('user.validation.email.invalid', 'Please enter a valid email address')
+    errors.email = t('settings.user.validation.email.invalid', 'Please enter a valid email address')
   }
 
   if (!form.temporaryPassword.trim()) {
     errors.temporaryPassword = t(
-      'user.validation.temporaryPassword.required',
+      'settings.user.validation.temporaryPassword.required',
       'Temporary password is required',
     )
   } else if (form.temporaryPassword.length < 8) {
     errors.temporaryPassword = t(
-      'user.validation.temporaryPassword.minLength',
+      'settings.user.validation.temporaryPassword.minLength',
       'Password must be at least 8 characters',
     )
   }

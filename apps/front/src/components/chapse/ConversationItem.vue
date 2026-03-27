@@ -12,7 +12,7 @@
     <!-- Conversation Info -->
     <div class="min-w-0 flex-1">
       <p class="truncate text-sm font-medium">
-        {{ conversation.name || $t('chapse.untitledConversation', 'New conversation') }}
+        {{ conversation.name || $t('screen.chapse.untitledConversation', 'New conversation') }}
       </p>
       <p v-if="showDate" class="text-sage-400 truncate text-xs">
         {{ formattedDate }}
@@ -36,7 +36,7 @@
     <button
       v-if="deletable"
       class="hover:bg-error/20 hover:text-error flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full opacity-0 transition-all group-hover:opacity-100"
-      :title="$t('chapse.deleteConversation', 'Delete conversation')"
+      :title="$t('screen.chapse.deleteConversation', 'Delete conversation')"
       @click.stop="$emit('delete', conversation.id)"
     >
       <i class="fa fa-trash text-xs"></i>

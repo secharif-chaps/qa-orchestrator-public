@@ -3,10 +3,13 @@
     <div class="mb-6 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div>
-          <h2 class="text-xl font-semibold">{{ t('products.header.title') }}</h2>
+          <h2 class="text-xl font-semibold">{{ t('screen.products.header.title') }}</h2>
           <p class="text-secondary text-sm">
             {{
-              t('products.header.summary', { total: totalProductCount, categories: categoryCount })
+              t('screen.products.header.summary', {
+                total: totalProductCount,
+                categories: categoryCount,
+              })
             }}
           </p>
         </div>
@@ -16,7 +19,11 @@
           variant="tertiary"
           size="sm"
           :icon="viewMode === 'grid' ? 'fa fa-list' : 'fa fa-th-large'"
-          :label="viewMode === 'grid' ? t('products.viewMode.list') : t('products.viewMode.grid')"
+          :label="
+            viewMode === 'grid'
+              ? t('screen.products.viewMode.list')
+              : t('screen.products.viewMode.grid')
+          "
           @click="$emit('toggleViewMode')"
         />
 
@@ -25,7 +32,7 @@
           <Searchbar
             id="product-search"
             :value="searchQuery"
-            :placeholder="t('products.search.placeholder')"
+            :placeholder="t('screen.products.search.placeholder')"
             @input="$emit('updateSearch', ($event.target as HTMLInputElement).value)"
           />
         </div>
@@ -35,7 +42,7 @@
     <!-- Category Filter Pills -->
     <div class="mb-4 flex flex-wrap gap-2">
       <Tag
-        :label="t('products.categories.all')"
+        :label="t('screen.products.categories.all')"
         :variant="selectedCategory === null ? 'sage' : 'slate'"
         size="md"
         :icon="selectedCategory === null ? 'fa fa-check' : 'fa fa-layer-group'"

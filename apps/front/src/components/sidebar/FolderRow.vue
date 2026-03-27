@@ -39,7 +39,7 @@
         icon="fa-plus-circle"
         size="sm"
         @click.stop="$emit('addCompany', folder.id)"
-        :title="$t('sidebar.chapse.addCompany')"
+        :title="$t('common.sidebar.chapse.addCompany')"
       >
       </Button>
     </div>

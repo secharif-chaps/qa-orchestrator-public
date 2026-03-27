@@ -4,12 +4,12 @@
       <div class="flex items-center justify-between">
         <h3 class="text-secondary space-x-2 font-bold">
           <i class="fa fa-bullhorn"></i>
-          <span>{{ $t('profile.sections.news.title') }}</span>
+          <span>{{ $t('screen.profile.sections.news.title') }}</span>
         </h3>
         <RouterLink :to="`/companies/${companyId}/press`">
           <Button
             variant="tertiary"
-            :label="$t('profile.sections.news.viewAll', 'View All')"
+            :label="$t('screen.profile.sections.news.viewAll', 'View All')"
             icon="fa fa-arrow-right"
             icon-position="right"
             size="sm"
@@ -22,7 +22,7 @@
         <div v-if="totalPressItems > 0" class="bg-base-200 rounded p-3">
           <div class="text-secondary text-2xl font-bold">{{ totalPressItems }}</div>
           <div class="text-secondary text-xs">
-            {{ $t('profile.sections.news.stats.totalPressItems', 'Total Press Items') }}
+            {{ $t('screen.profile.sections.news.stats.totalPressItems', 'Total Press Items') }}
           </div>
         </div>
         <div v-if="company?.press?.financial_news?.length" class="bg-base-200 rounded p-3">
@@ -30,7 +30,7 @@
             {{ company.press.financial_news.length }}
           </div>
           <div class="text-secondary text-xs">
-            {{ $t('profile.sections.news.stats.financialNews', 'Financial News') }}
+            {{ $t('screen.profile.sections.news.stats.financialNews', 'Financial News') }}
           </div>
         </div>
         <div v-if="company?.press?.media_mentions?.length" class="bg-base-200 rounded p-3">
@@ -38,7 +38,7 @@
             {{ company.press.media_mentions.length }}
           </div>
           <div class="text-secondary text-xs">
-            {{ $t('profile.sections.news.stats.mediaMentions', 'Media Mentions') }}
+            {{ $t('screen.profile.sections.news.stats.mediaMentions', 'Media Mentions') }}
           </div>
         </div>
         <div v-if="company?.press?.product_launches?.length" class="bg-base-200 rounded p-3">
@@ -46,7 +46,7 @@
             {{ company.press.product_launches.length }}
           </div>
           <div class="text-secondary text-xs">
-            {{ $t('profile.sections.news.stats.productLaunches', 'Product Launches') }}
+            {{ $t('screen.profile.sections.news.stats.productLaunches', 'Product Launches') }}
           </div>
         </div>
       </div>
@@ -54,7 +54,7 @@
       <!-- Latest Press Items Preview -->
       <div v-if="latestPressItems.length > 0" class="space-y-2">
         <h4 class="text-secondary text-sm font-medium">
-          {{ $t('profile.sections.news.latestUpdates', 'Latest Updates') }}
+          {{ $t('screen.profile.sections.news.latestUpdates', 'Latest Updates') }}
         </h4>
         <div class="space-y-2">
           <div

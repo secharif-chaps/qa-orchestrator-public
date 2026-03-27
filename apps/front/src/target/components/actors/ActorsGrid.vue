@@ -73,7 +73,7 @@
         v-model:current-page="currentPage"
         :page-size="pageSize"
         :total-items="totalItems"
-        :result-text="$t('watch_files.actors.pagination.result')"
+        :result-text="$t('target.watchFiles.actors.pagination.result')"
       />
     </div>
 
@@ -84,7 +84,7 @@
     >
       <Icon icon="fa-user-slash" class="mb-3 text-4xl text-gray-400" />
       <span class="text-lg text-gray-500">
-        {{ $t('watch_files.actors.selection_modal.no_actors') }}
+        {{ $t('target.watchFiles.actors.selection_modal.no_actors') }}
       </span>
     </div>
   </div>
@@ -150,6 +150,6 @@ const paginatedActors = computed(() => {
 const { t } = useI18n()
 
 const errorTitle = computed(() =>
-  error.includes('403') ? t('watch_files.actors.forbidden') : t('common.error.title'),
+  error.includes('403') ? t('target.watchFiles.actors.forbidden') : t('common.error.title'),
 )
 </script>

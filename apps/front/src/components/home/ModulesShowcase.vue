@@ -36,10 +36,10 @@
                     "
                     :label="
                       module.unlocked
-                        ? $t('home.modules.status.active', 'Active')
+                        ? $t('dashboard.home.modules.status.active', 'Active')
                         : module.status === 'contact-sales'
-                          ? $t('home.modules.status.proFeature', 'Pro Feature')
-                          : $t('home.modules.status.comingSoon', 'Coming Soon')
+                          ? $t('dashboard.home.modules.status.proFeature', 'Pro Feature')
+                          : $t('dashboard.home.modules.status.comingSoon', 'Coming Soon')
                     "
                     size="xs"
                   />
@@ -63,7 +63,7 @@
               variant="secondary"
               intent="warning"
               size="sm"
-              :label="$t('home.modules.actions.companyScreen', 'Create a Screen')"
+              :label="$t('dashboard.home.modules.actions.companyScreen', 'Create a Screen')"
               icon="fa-solid fa-search"
               @click="$router.push('/companies/create')"
             />
@@ -72,7 +72,7 @@
               variant="secondary"
               intent="warning"
               size="sm"
-              :label="$t('home.modules.actions.contactSales', 'Contact Sales')"
+              :label="$t('dashboard.home.modules.actions.contactSales', 'Contact Sales')"
               icon="fa-solid fa-envelope"
               @click="handleContactSales(module)"
             />
@@ -80,7 +80,7 @@
               v-else-if="module.status === 'coming-soon'"
               variant="secondary"
               size="sm"
-              :label="$t('home.modules.status.comingSoon', 'Coming Soon')"
+              :label="$t('dashboard.home.modules.status.comingSoon', 'Coming Soon')"
               icon="fa-solid fa-clock"
               disabled
             />
@@ -88,7 +88,7 @@
               v-else-if="module.status === 'external'"
               variant="secondary"
               size="sm"
-              :label="$t('home.modules.actions.open', 'Open')"
+              :label="$t('dashboard.home.modules.actions.open', 'Open')"
               icon="fa-solid fa-external-link"
               :disabled="!module.externalUrl"
               @click="handleOpenExternal(module)"
@@ -138,12 +138,12 @@ const discoverUrl = computed(() => (discoverFlag.value?.config?.url as string) |
 // Static modules (non-feature-flag modules)
 const staticModules = computed<Module[]>(() => [
   {
-    name: t('home.modules.screen.name', 'Screen'),
+    name: t('dashboard.home.modules.screen.name', 'Screen'),
     description: t(
-      'home.modules.screen.description',
+      'dashboard.home.modules.screen.description',
       'Deep company intelligence and comprehensive business screening with advanced analytics',
     ),
-    category: t('home.modules.screen.category', 'Business Intelligence'),
+    category: t('dashboard.home.modules.screen.category', 'Business Intelligence'),
     icon: 'fa-solid fa-magnifying-glass',
     unlocked: true,
     soon: false,
@@ -152,12 +152,12 @@ const staticModules = computed<Module[]>(() => [
     color: 'indigo',
   },
   {
-    name: t('home.modules.target.name', 'Target'),
+    name: t('dashboard.home.modules.target.name', 'Target'),
     description: t(
-      'home.modules.target.description',
+      'dashboard.home.modules.target.description',
       'AI-powered market watch with smart alerts and comprehensive monitoring tools',
     ),
-    category: t('home.modules.target.category', 'Market Analysis'),
+    category: t('dashboard.home.modules.target.category', 'Market Analysis'),
     icon: 'fa-solid fa-bullseye',
     unlocked: false,
     soon: false,
@@ -166,12 +166,12 @@ const staticModules = computed<Module[]>(() => [
     color: 'cherry',
   },
   {
-    name: t('home.modules.explore.name', 'Explore'),
+    name: t('dashboard.home.modules.explore.name', 'Explore'),
     description: t(
-      'home.modules.explore.description',
+      'dashboard.home.modules.explore.description',
       'Interactive knowledge graph for advanced data visualization and discovery',
     ),
-    category: t('home.modules.explore.category', 'Cartography'),
+    category: t('dashboard.home.modules.explore.category', 'Cartography'),
     icon: 'fa-solid fa-project-diagram',
     unlocked: false,
     soon: true,
@@ -187,9 +187,9 @@ const discoverModule = computed<Module>(() => {
   // When feature flag is enabled: show as "Active" with "Open" button
   if (!isDiscoverEnabled.value) {
     return {
-      name: t('home.modules.discover.name', 'Discover'),
-      description: t('home.modules.discover.description', 'Share strategic insights'),
-      category: t('home.modules.discover.category', 'Search Data'),
+      name: t('dashboard.home.modules.discover.name', 'Discover'),
+      description: t('dashboard.home.modules.discover.description', 'Share strategic insights'),
+      category: t('dashboard.home.modules.discover.category', 'Search Data'),
       icon: 'fa-solid fa-rss',
       unlocked: false,
       soon: false,
@@ -200,9 +200,9 @@ const discoverModule = computed<Module>(() => {
   }
 
   return {
-    name: t('home.modules.discover.name', 'Discover'),
-    description: t('home.modules.discover.description', 'Share strategic insights'),
-    category: t('home.modules.discover.category', 'Search Data'),
+    name: t('dashboard.home.modules.discover.name', 'Discover'),
+    description: t('dashboard.home.modules.discover.description', 'Share strategic insights'),
+    category: t('dashboard.home.modules.discover.category', 'Search Data'),
     icon: 'fa-solid fa-rss',
     unlocked: true,
     soon: false,

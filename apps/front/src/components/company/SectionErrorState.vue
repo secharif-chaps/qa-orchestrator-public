@@ -8,13 +8,13 @@
     <!-- Rate limit: countdown + retry -->
     <template v-if="isRateLimit && countdown !== null">
       <h3 class="text-secondary mb-2 text-xl font-semibold">
-        {{ t('company.analysisCard.error.rateLimit.title') }}
+        {{ t('screen.company.analysisCard.error.rateLimit.title') }}
       </h3>
       <p class="text-secondary mx-auto mb-6 max-w-md text-center">
         {{
           countdown > 0
-            ? t('company.analysisCard.error.rateLimit.description', { seconds: countdown })
-            : t('company.analysisCard.error.recoverable.description')
+            ? t('screen.company.analysisCard.error.rateLimit.description', { seconds: countdown })
+            : t('screen.company.analysisCard.error.recoverable.description')
         }}
       </p>
       <Button
@@ -23,8 +23,8 @@
         :icon="countdown > 0 ? 'fa fa-hourglass-half' : 'fa fa-rotate-right'"
         :label="
           countdown > 0
-            ? t('company.analysisCard.error.rateLimit.waitingLabel', { seconds: countdown })
-            : t('company.analysisCard.error.retry')
+            ? t('screen.company.analysisCard.error.rateLimit.waitingLabel', { seconds: countdown })
+            : t('screen.company.analysisCard.error.retry')
         "
         :disabled="countdown > 0"
         :loading="isRestarting === task.type"
@@ -35,16 +35,16 @@
     <!-- Recoverable error -->
     <template v-else-if="isRecoverable">
       <h3 class="text-secondary mb-2 text-xl font-semibold">
-        {{ t('company.analysisCard.error.recoverable.title') }}
+        {{ t('screen.company.analysisCard.error.recoverable.title') }}
       </h3>
       <p class="text-secondary mx-auto mb-6 max-w-md text-center">
-        {{ t('company.analysisCard.error.recoverable.description') }}
+        {{ t('screen.company.analysisCard.error.recoverable.description') }}
       </p>
       <Button
         v-if="task"
         variant="primary"
         icon="fa fa-rotate-right"
-        :label="t('company.analysisCard.error.retry')"
+        :label="t('screen.company.analysisCard.error.retry')"
         :loading="isRestarting === task.type"
         @click="restartTask(task.type)"
       />
@@ -53,16 +53,16 @@
     <!-- Generic / permanent error -->
     <template v-else>
       <h3 class="text-secondary mb-2 text-xl font-semibold">
-        {{ t('company.analysisCard.error.generic.title') }}
+        {{ t('screen.company.analysisCard.error.generic.title') }}
       </h3>
       <p class="text-secondary mx-auto mb-6 max-w-md text-center">
-        {{ t('company.analysisCard.error.generic.description') }}
+        {{ t('screen.company.analysisCard.error.generic.description') }}
       </p>
       <Button
         v-if="task"
         variant="primary"
         icon="fa fa-rotate-right"
-        :label="t('company.analysisCard.error.retry')"
+        :label="t('screen.company.analysisCard.error.retry')"
         :loading="isRestarting === task.type"
         @click="restartTask(task.type)"
       />

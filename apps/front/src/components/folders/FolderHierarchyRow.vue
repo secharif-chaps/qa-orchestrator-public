@@ -38,7 +38,7 @@
               <UiTag
                 v-if="folder.is_owner && !hasShares"
                 variant="slate"
-                :label="$t('folder.privacy.private')"
+                :label="$t('common.folder.privacy.private')"
                 size="xs"
                 rounded
               />
@@ -46,7 +46,7 @@
                 v-else-if="hasShares"
                 variant="info"
                 icon="fa fa-share-nodes"
-                :label="$t('folder.privacy.shared')"
+                :label="$t('common.folder.privacy.shared')"
                 size="xs"
                 rounded
               />
@@ -54,7 +54,7 @@
             <!-- Shared badge (non-global view) -->
             <UiTag
               v-else-if="isSharedWithMe"
-              :label="$t('folder.shared.badge', 'Shared')"
+              :label="$t('common.folder.shared.badge', 'Shared')"
               variant="info"
               size="xs"
             />
@@ -77,7 +77,7 @@
             {{ ownerInitials }}
           </div>
           <span class="text-secondary text-sm">
-            {{ folder.is_owner ? $t('folder.owner.you') : folder.owner_username }}
+            {{ folder.is_owner ? $t('common.folder.owner.you') : folder.owner_username }}
           </span>
         </div>
 
@@ -85,7 +85,7 @@
         <div class="col-span-2">
           <UiTag
             variant="slate"
-            :label="$t('folder.itemsChip', folder.items?.length || 0)"
+            :label="$t('common.folder.itemsChip', folder.items?.length || 0)"
             size="sm"
           />
         </div>
@@ -102,7 +102,7 @@
               variant="tertiary"
               size="sm"
               icon="fa fa-external-link-alt"
-              :label="$t('folder.actions.view', 'View')"
+              :label="$t('common.folder.actions.view', 'View')"
               @click.stop="$emit('view-folder', folder.id)"
             />
             <!-- Delete button only for owners -->
@@ -194,7 +194,7 @@
     >
       <i class="fas fa-folder-open text-secondary/50 mb-2 text-2xl"></i>
       <p class="text-secondary text-sm">
-        {{ $t('folder.items.empty', 'No items in this folder') }}
+        {{ $t('common.folder.items.empty', 'No items in this folder') }}
       </p>
     </div>
   </div>
@@ -234,8 +234,8 @@ const { canDeleteFolder, isSharedWithMe } = useFolderPermissions(folderRef)
 const shareRoleLabel = computed(() => {
   if (!props.folder.share_role) return ''
   return props.folder.share_role === 'writer'
-    ? t('folder.share.writer', 'Writer')
-    : t('folder.share.reader', 'Reader')
+    ? t('common.folder.share.writer', 'Writer')
+    : t('common.folder.share.reader', 'Reader')
 })
 
 const isExpanded = ref(false)
@@ -247,7 +247,7 @@ function toggleExpanded() {
 // Helper to format item type
 function formatItemType(type: string): string {
   if (type === 'company') {
-    return t('folder.itemTypes.company')
+    return t('common.folder.itemTypes.company')
   }
   return type.charAt(0).toUpperCase() + type.slice(1)
 }

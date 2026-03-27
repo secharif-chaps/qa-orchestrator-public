@@ -30,7 +30,7 @@ const moduleOptions = computed(() => {
   if (props.includeAll) {
     options.push({
       value: 'all',
-      label: t('credits.modules.all', 'Tous'),
+      label: t('settings.credits.modules.all', 'Tous'),
       icon: 'fa fa-list',
     })
   }
@@ -38,17 +38,17 @@ const moduleOptions = computed(() => {
   options.push(
     {
       value: 'screen',
-      label: t('credits.modules.screen', 'Screen'),
+      label: t('settings.credits.modules.screen', 'Screen'),
       icon: 'fa fa-table-cells',
     },
     {
       value: 'target',
-      label: t('credits.modules.target', 'Target'),
+      label: t('settings.credits.modules.target', 'Target'),
       icon: 'fa fa-eye',
     },
     {
       value: 'explore',
-      label: t('credits.modules.explore', 'Explore'),
+      label: t('settings.credits.modules.explore', 'Explore'),
       icon: 'fa fa-diagram-project',
     },
   )

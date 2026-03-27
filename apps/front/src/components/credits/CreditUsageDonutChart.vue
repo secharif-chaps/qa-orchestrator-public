@@ -1,7 +1,7 @@
 <template>
   <Card padding="p-6" class="flex h-full flex-col">
     <h3 class="text-lg font-semibold">
-      {{ $t('credits.usage.title') }}
+      {{ $t('settings.credits.usage.title') }}
     </h3>
 
     <!-- Loading state -->
@@ -17,7 +17,7 @@
       <div class="text-center">
         <i class="fa fa-chart-pie text-secondary mb-2 text-2xl"></i>
         <p class="text-secondary text-sm">
-          {{ $t('credits.usage.noData') }}
+          {{ $t('settings.credits.usage.noData') }}
         </p>
       </div>
     </div>
@@ -77,11 +77,11 @@
       <!-- Total - at bottom -->
       <div class="border-primary-stroke mt-auto flex items-center justify-between border-t pt-4">
         <span class="text-secondary text-sm">
-          {{ $t('credits.usage.total') }}
+          {{ $t('settings.credits.usage.total') }}
         </span>
         <span class="font-semibold">
           {{ formattedTotal }}
-          <span class="text-secondary ml-1 text-sm">{{ $t('credits.unit') }}</span>
+          <span class="text-secondary ml-1 text-sm">{{ $t('settings.credits.unit') }}</span>
         </span>
       </div>
     </template>

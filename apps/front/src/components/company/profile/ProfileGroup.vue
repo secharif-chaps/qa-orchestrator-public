@@ -1,11 +1,14 @@
 <template>
   <div class="bg-base-100 relative flex-1 rounded-lg p-4">
     <div class="flex flex-col gap-2">
-      <h4>{{ t('profile.sections.group.title') }}</h4>
+      <h4>{{ t('screen.profile.sections.group.title') }}</h4>
       <!-- Group name - individual property loading -->
       <div>
         <p class="text-secondary">
-          {{ getSourcedValue(company?.profile?.groupName) ?? t('profile.sections.group.notFound') }}
+          {{
+            getSourcedValue(company?.profile?.groupName) ??
+            t('screen.profile.sections.group.notFound')
+          }}
         </p>
       </div>
       <div class="absolute top-2 right-2">

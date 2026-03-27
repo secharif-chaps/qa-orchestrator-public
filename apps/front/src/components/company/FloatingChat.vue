@@ -32,10 +32,10 @@
             ></span>
           </div>
           <div>
-            <h3 class="font-semibold">{{ t('company.chat.assistant.name') }}</h3>
+            <h3 class="font-semibold">{{ t('screen.company.chat.assistant.name') }}</h3>
             <p class="flex items-center gap-1 text-xs text-white/80">
               <span class="h-2 w-2 animate-pulse rounded-full bg-green-400"></span>
-              {{ t('company.chat.assistant.online') }}
+              {{ t('screen.company.chat.assistant.online') }}
             </p>
           </div>
         </div>
@@ -77,7 +77,7 @@
           class="absolute -top-1 -right-1 h-2 w-2 animate-pulse rounded-full bg-green-400"
         ></span>
       </div>
-      <span class="text-sm font-medium">{{ t('company.chat.assistant.shortName') }}</span>
+      <span class="text-sm font-medium">{{ t('screen.company.chat.assistant.shortName') }}</span>
       <i class="fa fa-chevron-up text-xs"></i>
     </div>
   </Transition>

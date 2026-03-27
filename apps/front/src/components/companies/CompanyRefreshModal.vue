@@ -1,7 +1,7 @@
 <template>
   <Modal
     v-model:display-modal="showRefreshModal"
-    :title="t('company.refresh.title')"
+    :title="t('screen.company.refresh.title')"
     icon="fa fa-refresh"
     size="md"
     color=""
@@ -9,11 +9,11 @@
     <template #description>
       <div class="flex flex-col gap-4">
         <p class="text-secondary">
-          {{ t('company.refresh.subtitle', { name: company?.name ?? '' }) }}
+          {{ t('screen.company.refresh.subtitle', { name: company?.name ?? '' }) }}
         </p>
 
         <p class="text-secondary text-sm">
-          {{ t('company.refresh.warning.message') }}
+          {{ t('screen.company.refresh.warning.message') }}
         </p>
 
         <!-- Token Consumption Notice with remaining tokens badge -->
@@ -23,7 +23,7 @@
           <div class="flex items-center justify-between gap-3">
             <div class="flex items-center gap-3">
               <i class="fa fa-warning text-xl"></i>
-              <div class="font-medium">{{ t('company.refresh.consumptionNotice') }}</div>
+              <div class="font-medium">{{ t('screen.company.refresh.consumptionNotice') }}</div>
             </div>
             <span
               class="inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-sm font-medium"
@@ -41,7 +41,7 @@
       <Button
         variant="primary"
         icon="fa fa-refresh"
-        :label="t('company.refresh.confirm.button')"
+        :label="t('screen.company.refresh.confirm.button')"
         :loading="isLoading"
         :disabled="isLoading || !hasEnoughTokens"
         @click="handleRefresh"

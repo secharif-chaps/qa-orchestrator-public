@@ -1,6 +1,6 @@
 <template>
   <div v-if="activity.actionType === 'status_changed'">
-    <i18n-t scope="global" keypath="watch_files.activity.history.status_changed" tag="span">
+    <i18n-t scope="global" keypath="target.watchFiles.activity.history.status_changed" tag="span">
       <template #userName>
         <span class="font-semibold">{{ userName }}</span>
       </template>
@@ -66,7 +66,7 @@ const userName = computed(() => props.activity.user.displayName)
 const oldStatusText = computed(() => {
   if (props.activity.actionType === 'status_changed') {
     const statusData = props.activity.actionData as StatusChangedActionData
-    return t('watch_files.header_section.status.' + statusData.old_status)
+    return t('target.watchFiles.header_section.status.' + statusData.old_status)
   }
   return ''
 })
@@ -74,7 +74,7 @@ const oldStatusText = computed(() => {
 const newStatusText = computed(() => {
   if (props.activity.actionType === 'status_changed') {
     const statusData = props.activity.actionData as StatusChangedActionData
-    return t('watch_files.header_section.status.' + statusData.new_status)
+    return t('target.watchFiles.header_section.status.' + statusData.new_status)
   }
   return ''
 })
@@ -174,7 +174,7 @@ const userEmail = computed(() => {
 const roleText = computed(() => {
   if (props.activity.actionType === 'shared_mode_changed') {
     const sharedData = props.activity.actionData as SharedModeChangedActionData
-    return t('watch_files.access.' + sharedData.new_value)
+    return t('target.watchFiles.access.' + sharedData.new_value)
   }
   return ''
 })

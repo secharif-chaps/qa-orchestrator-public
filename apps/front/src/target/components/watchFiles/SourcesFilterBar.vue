@@ -15,7 +15,7 @@
           v-model="selectedTypes"
           :options="typeOptions"
           :display-value="getTypeDisplayValue"
-          :placeholder="$t('watch_files.actors.detail.sources.type_filter_placeholder')"
+          :placeholder="$t('target.watchFiles.actors.detail.sources.type_filter_placeholder')"
           :disabled="availableTypes.length === 0"
           multiple
           class="h-full"
@@ -31,7 +31,7 @@
 
     <div v-if="hasActiveFilters" class="text-sm text-gray-600">
       {{
-        $t('watch_files.actors.detail.sources.filter_results', {
+        $t('target.watchFiles.actors.detail.sources.filter_results', {
           filtered: filteredCount,
           total: totalCount,
         })
@@ -79,10 +79,10 @@ const typeOptions = computed(() => {
 })
 
 const getTypeLabel = (type: string) => {
-  if (!type) return t('watch_files.actors.detail.sources.unknown_type')
+  if (!type) return t('target.watchFiles.actors.detail.sources.unknown_type')
 
   if (type.startsWith('social_media:')) {
-    return t('source_types.social_media')
+    return t('target.sourceTypes.social_media')
   }
 
   const translationKey = `source_types.${type}`

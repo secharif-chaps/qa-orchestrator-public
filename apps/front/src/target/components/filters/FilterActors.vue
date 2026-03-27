@@ -4,7 +4,7 @@
       v-if="actors?.length > 5"
       id="searchbar-filter-actors"
       v-model="searchInput"
-      :placeholder="t('watch_files.filters.type.actors.placeholder')"
+      :placeholder="t('target.watchFiles.filters.type.actors.placeholder')"
       size="sm"
     />
     <div v-if="actors.length" class="flex flex-col items-start gap-1.5">
@@ -32,7 +32,7 @@
     </div>
     <div v-else>
       <p class="text-sm text-gray-800">
-        {{ t('watch_files.filters.empty') }}
+        {{ t('target.watchFiles.filters.empty') }}
       </p>
     </div>
     <Button
@@ -41,7 +41,7 @@
       variant="tertiary"
       @click="displayAllActors = !displayAllActors"
     >
-      {{ t(`watch_files.filters.type.actors.see.${displayAllActors ? 'less' : 'more'}`) }}
+      {{ t(`target.watchFiles.filters.type.actors.see.${displayAllActors ? 'less' : 'more'}`) }}
     </Button>
     <Button
       v-if="selectedActors.length"
@@ -52,8 +52,8 @@
       @click="handleReset"
     >
       {{
-        t('watch_files.filters.type.reset', {
-          name: t('watch_files.filters.type.actors'),
+        t('target.watchFiles.filters.type.reset', {
+          name: t('target.watchFiles.filters.type.actors'),
         })
       }}
     </Button>

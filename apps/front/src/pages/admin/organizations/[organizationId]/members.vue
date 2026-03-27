@@ -5,10 +5,10 @@
       <div class="mb-6 flex items-center justify-between">
         <div>
           <h2 class="text-xl font-semibold">
-            {{ $t('organization.detail.members') }}
+            {{ $t('admin.organization.detail.members') }}
           </h2>
           <p class="text-secondary mt-1">
-            {{ $t('organization.membersDescription') }}
+            {{ $t('admin.organization.membersDescription') }}
           </p>
         </div>
         <div class="flex gap-2">
@@ -21,7 +21,7 @@
           <Button
             variant="primary"
             icon="fa fa-user-plus"
-            :label="$t('user.create.button')"
+            :label="$t('settings.user.create.button')"
             @click="showCreateUserModal = true"
           />
         </div>
@@ -31,7 +31,7 @@
       <div v-if="usersLoading" class="p-8 text-center">
         <div class="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
         <p class="text-secondary">
-          {{ $t('user.loading') }}
+          {{ $t('settings.user.loading') }}
         </p>
       </div>
 
@@ -60,14 +60,14 @@
         <div v-else class="p-8 text-center">
           <i class="fa fa-users text-secondary/50 mb-4 text-4xl"></i>
           <h3 class="mb-2 text-base text-lg font-medium">
-            {{ $t('user.empty.title') }}
+            {{ $t('settings.user.empty.title') }}
           </h3>
           <p class="text-secondary mb-6">
-            {{ $t('user.empty.description') }}
+            {{ $t('settings.user.empty.description') }}
           </p>
           <Button
             variant="primary"
-            :label="$t('user.create.button')"
+            :label="$t('settings.user.create.button')"
             @click="showCreateUserModal = true"
           />
         </div>
@@ -77,7 +77,7 @@
           v-if="users && users.length > 0 && paginationMeta"
           v-model:current-page="currentPage"
           :meta="paginationMeta"
-          :item-name="$t('organization.detail.members').toLowerCase()"
+          :item-name="$t('admin.organization.detail.members').toLowerCase()"
           class="mt-4"
           @update-per-page="updatePageSize"
         />

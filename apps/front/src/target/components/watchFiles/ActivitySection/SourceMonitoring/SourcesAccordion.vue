@@ -20,8 +20,8 @@
             >
               <div v-if="section.value === CollectorStatus.ERROR" class="min-w-0 flex-1">
                 <ErrorMessage
-                  :title="t('watch_files.activity.sources.error.title')"
-                  :description="t('watch_files.activity.sources.error.subtitle')"
+                  :title="t('target.watchFiles.activity.sources.error.title')"
+                  :description="t('target.watchFiles.activity.sources.error.subtitle')"
                   width="full"
                   :fill="true"
                   :transparent="true"
@@ -113,7 +113,7 @@ const sections = computed(() => {
 
       return {
         value: group.type || 'unknown',
-        title: t(`source_types.${group.type || 'unknown'}`),
+        title: t(`target.sourceTypes.${group.type || 'unknown'}`),
         count: groupSources.length,
         sources: groupSources,
       }

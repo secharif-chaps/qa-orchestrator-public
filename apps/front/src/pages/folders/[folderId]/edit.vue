@@ -11,9 +11,9 @@
             <i :class="form.icon || 'fas fa-edit'" class="text-xl"></i>
           </div>
           <div>
-            <h1 class="text-2xl font-bold">{{ $t('folder.edit.title', 'Edit Folder') }}</h1>
+            <h1 class="text-2xl font-bold">{{ $t('common.folder.edit.title', 'Edit Folder') }}</h1>
             <p class="text-secondary">
-              {{ $t('folder.edit.subtitle', 'Update your folder settings and appearance') }}
+              {{ $t('common.folder.edit.subtitle', 'Update your folder settings and appearance') }}
             </p>
           </div>
         </div>
@@ -25,7 +25,7 @@
           class="border-primary mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"
         ></div>
         <p class="text-secondary">
-          {{ $t('folder.loading', 'Loading folder...') }}
+          {{ $t('common.folder.loading', 'Loading folder...') }}
         </p>
       </div>
 
@@ -33,8 +33,8 @@
       <Alert
         v-else-if="status === 'error'"
         variant="danger"
-        :title="$t('folder.edit.error.title', 'Error')"
-        :description="$t('folder.edit.error.description', 'Failed to load folder')"
+        :title="$t('common.folder.edit.error.title', 'Error')"
+        :description="$t('common.folder.edit.error.description', 'Failed to load folder')"
         icon="fa-exclamation-triangle"
       />
 
@@ -47,13 +47,13 @@
           <!-- Folder Name -->
           <div>
             <label class="mb-2 block text-sm font-medium">
-              {{ $t('folder.form.name', 'Folder Name') }}
+              {{ $t('common.folder.form.name', 'Folder Name') }}
               <span class="text-red-500">*</span>
             </label>
             <Input
               id="folder-name"
               v-model="form.name"
-              :placeholder="$t('folder.form.namePlaceholder', 'Enter folder name...')"
+              :placeholder="$t('common.folder.form.namePlaceholder', 'Enter folder name...')"
               :error="errors.name"
               required
             />
@@ -68,15 +68,17 @@
           <!-- Tags -->
           <div>
             <label class="mb-2 block text-sm font-medium">
-              {{ $t('folder.form.tags', 'Tags') }}
+              {{ $t('common.folder.form.tags', 'Tags') }}
               <span class="text-secondary ml-1 text-xs"
-                >({{ $t('folder.form.tagsOptional', 'optional') }})</span
+                >({{ $t('common.folder.form.tagsOptional', 'optional') }})</span
               >
             </label>
             <Input
               id="folder-tags"
               v-model="tagsInput"
-              :placeholder="$t('folder.form.tagsPlaceholder', 'Enter tags separated by commas...')"
+              :placeholder="
+                $t('common.folder.form.tagsPlaceholder', 'Enter tags separated by commas...')
+              "
             />
             <div v-if="form.tags && form.tags.length > 0" class="mt-2 flex flex-wrap gap-2">
               <Tag
@@ -100,7 +102,7 @@
               class="border-primary-stroke text-secondary focus:ring-primary/20 h-5 w-5 rounded"
             />
             <label for="is_favorite" class="cursor-pointer text-sm font-medium">
-              {{ $t('folder.form.favorite', 'Mark as favorite') }}
+              {{ $t('common.folder.form.favorite', 'Mark as favorite') }}
             </label>
           </div>
 
@@ -109,14 +111,14 @@
             <Button
               type="button"
               variant="secondary"
-              :label="$t('folder.form.cancel', 'Cancel')"
+              :label="$t('common.folder.form.cancel', 'Cancel')"
               @click="$router.push(`/folders/${route.params.folderId}`)"
               :disabled="isMutating"
             />
             <Button
               type="submit"
               variant="primary"
-              :label="$t('folder.form.save', 'Save Changes')"
+              :label="$t('common.folder.form.save', 'Save Changes')"
               :loading="isMutating"
             />
           </div>
@@ -242,13 +244,13 @@ const validateForm = () => {
   errors.value = {}
 
   if (!form.value.name?.trim()) {
-    errors.value.name = $t('folder.validation.nameRequired', 'Folder name is required')
+    errors.value.name = $t('common.folder.validation.nameRequired', 'Folder name is required')
     return false
   }
 
   if (form.value.name.trim().length < 3) {
     errors.value.name = $t(
-      'folder.validation.nameMinLength',
+      'common.folder.validation.nameMinLength',
       'Folder name must be at least 3 characters',
     )
     return false
@@ -256,7 +258,7 @@ const validateForm = () => {
 
   if (form.value.name.trim().length > 50) {
     errors.value.name = $t(
-      'folder.validation.nameMaxLength',
+      'common.folder.validation.nameMaxLength',
       'Folder name must be less than 50 characters',
     )
     return false

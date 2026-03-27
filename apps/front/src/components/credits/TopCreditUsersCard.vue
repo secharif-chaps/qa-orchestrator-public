@@ -3,7 +3,7 @@
     <!-- Header with filters -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <h3 class="text-lg font-semibold">
-        {{ $t('credits.topUsers.title', 'Classement des utilisateurs') }}
+        {{ $t('settings.credits.topUsers.title', 'Classement des utilisateurs') }}
       </h3>
 
       <div class="flex flex-wrap items-center gap-3">
@@ -17,7 +17,7 @@
         <Searchbar
           id="top-users-search"
           v-model="searchQuery"
-          :placeholder="$t('credits.topUsers.search', 'Rechercher...')"
+          :placeholder="$t('settings.credits.topUsers.search', 'Rechercher...')"
           size="sm"
         />
       </div>
@@ -40,7 +40,7 @@
         v-if="paginationMeta"
         v-model:current-page="currentPage"
         :meta="paginationMeta"
-        :item-name="$t('credits.topUsers.itemName', 'utilisateurs')"
+        :item-name="$t('settings.credits.topUsers.itemName', 'utilisateurs')"
         @update-per-page="$emit('updatePerPage', $event)"
       />
     </template>

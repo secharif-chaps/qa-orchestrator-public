@@ -11,7 +11,7 @@
             class="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"
           ></div>
           <p class="text-gray-600">
-            {{ $t('watch_files.chat.loading_messages') }}
+            {{ $t('target.watchFiles.chat.loading_messages') }}
           </p>
         </div>
       </div>
@@ -280,16 +280,16 @@ const loadOlderMessages = async (): Promise<Message[]> => {
 
 const placeholderInput = computed<string>(() => {
   if (isWaitingForAI.value) {
-    return t('watch_files.chat.input.placeholder_processing')
+    return t('target.watchFiles.chat.input.placeholder_processing')
   }
 
   // Check if there are messages in the conversation
   const hasMessages = conversationStore.messages.length > 0
 
   if (hasMessages) {
-    return t('watch_files.chat.input.placeholder')
+    return t('target.watchFiles.chat.input.placeholder')
   } else {
-    return t('watch_files.chat.input.placeholder_not_started_conversation')
+    return t('target.watchFiles.chat.input.placeholder_not_started_conversation')
   }
 })
 

@@ -9,7 +9,7 @@
           <Tag intent="danger" label="-35" size="xs" />
         </div>
         <p class="text-sage-400 mt-1 text-xs">
-          {{ $t('sidebar.tokens.createdBy', 'Fiche créée par') }} {{ ownerUsername }}
+          {{ $t('common.sidebar.tokens.createdBy', 'Fiche créée par') }} {{ ownerUsername }}
         </p>
       </div>
     </div>

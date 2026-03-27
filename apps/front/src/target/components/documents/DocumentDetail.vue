@@ -3,7 +3,7 @@
 
   <div v-else-if="document" class="scrollable flex-1 space-y-4 p-6 pb-26">
     <Tag v-if="document?.cfcRestricted" size="sm" icon="fa-lock">
-      {{ $t('documents.detail.cfc') }}
+      {{ $t('target.documents.detail.cfc') }}
     </Tag>
 
     <div class="">
@@ -32,7 +32,7 @@
 
     <DocumentAccordion
       v-if="document.summary"
-      :title="t('documents.detail.summary.title')"
+      :title="t('target.documents.detail.summary.title')"
       :content="summaryText"
       :status="document.summaryStatus"
       pending-title="watch_files.documents.summary.pending"
@@ -119,33 +119,33 @@ const validationTitle = computed(() => {
   const status = document.aiValidation.status
   if (status === 'pending' || status === 'failed') return ''
 
-  return t(`documents.detail.validation.title.${status}`)
+  return t(`target.documents.detail.validation.title.${status}`)
 })
 
 const acceptedTitle = computed(() => {
   if (!document) return ''
 
   if (document.validatedBy && document.validatedAt) {
-    return t('documents.detail.validatedBy', {
+    return t('target.documents.detail.validatedBy', {
       name: document.validatedBy.displayName,
       date: formatDate(document.validatedAt, 'eventDateTime'),
     })
   }
 
-  return t('documents.detail.accepted')
+  return t('target.documents.detail.accepted')
 })
 
 const refusedTitle = computed(() => {
   if (!document) return ''
 
   if (document.validatedBy && document.validatedAt) {
-    return t('documents.detail.rejectedBy', {
+    return t('target.documents.detail.rejectedBy', {
       name: document.validatedBy.displayName,
       date: formatDate(document.validatedAt, 'eventDateTime'),
     })
   }
 
-  return t('documents.detail.rejected')
+  return t('target.documents.detail.rejected')
 })
 
 const metadataItems = computed(() => {
@@ -154,35 +154,35 @@ const metadataItems = computed(() => {
   return [
     {
       key: 'source',
-      label: t('documents.detail.source'),
+      label: t('target.documents.detail.source'),
       value: document?.source?.name,
       url: document?.source?.url,
       domain: document?.source?.primaryDomain,
     },
     {
       key: 'url',
-      label: t('documents.detail.url'),
+      label: t('target.documents.detail.url'),
       value: document?.url,
     },
     {
       key: 'publishDate',
-      label: t('documents.detail.publishDate'),
+      label: t('target.documents.detail.publishDate'),
       value: formatDate(document?.datePublish),
     },
     {
       key: 'creationDate',
-      label: t('documents.detail.creationDate'),
+      label: t('target.documents.detail.creationDate'),
       value: formatDate(document?.dateCollect),
     },
     {
       key: 'type',
-      label: t('documents.detail.type'),
+      label: t('target.documents.detail.type'),
       value: t('common.documentType_' + document?.type.toLowerCase()),
       leftIcon: getDocumentIcon(document?.type),
     },
     {
       key: 'language',
-      label: t('documents.detail.language'),
+      label: t('target.documents.detail.language'),
       value: t('common.language_' + document?.language.toLowerCase()),
     },
   ]

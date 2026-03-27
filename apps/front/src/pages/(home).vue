@@ -5,7 +5,7 @@
         <div class="flex items-center justify-between">
           <div>
             <h1 class="text-3xl font-bold">
-              {{ $t('home.welcome.title', { name: userDisplayName }) }} 👋
+              {{ $t('dashboard.home.welcome.title', { name: userDisplayName }) }} 👋
             </h1>
           </div>
         </div>
@@ -157,10 +157,13 @@ const recentProjects = computed(() => {
       return {
         id: company.id as number,
         name: company.name,
-        folderName: company.folder_name || t('home.recentProjects.noFolder'),
+        folderName: company.folder_name || t('dashboard.home.recentProjects.noFolder'),
         folderId: company.folder_id,
         timeAgo,
-        badge: { intent: 'info' as const, label: t('home.recentProjects.badge.collaborative') },
+        badge: {
+          intent: 'info' as const,
+          label: t('dashboard.home.recentProjects.badge.collaborative'),
+        },
       }
     })
 })

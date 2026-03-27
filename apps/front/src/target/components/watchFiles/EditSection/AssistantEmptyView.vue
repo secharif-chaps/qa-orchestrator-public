@@ -7,12 +7,12 @@
     </div>
 
     <h3 class="mb-4 text-3xl">
-      {{ $t('watch_files.assistant.empty_view.title') }}
+      {{ $t('target.watchFiles.assistant.empty_view.title') }}
     </h3>
 
     <div class="text-secondary-font mb-12 text-sm">
-      <p>{{ $t('watch_files.assistant.empty_view.description') }}</p>
-      <div v-sanitize-html="$t('watch_files.assistant.empty_view.list')" class="mt-4"></div>
+      <p>{{ $t('target.watchFiles.assistant.empty_view.description') }}</p>
+      <div v-sanitize-html="$t('target.watchFiles.assistant.empty_view.list')" class="mt-4"></div>
     </div>
   </div>
 </template>

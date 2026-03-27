@@ -11,7 +11,7 @@
       </div>
       <div>
         <p class="font-medium text-gray-900">
-          {{ $t('watch_files.analysis.event.actors') }}
+          {{ $t('target.watchFiles.analysis.event.actors') }}
         </p>
         <ul v-if="event.actors.length > 0" class="mt-1 list-outside list-disc space-y-1 pl-6">
           <li v-for="actor in event.actors" :key="actor.id" class="text-gray-700">
@@ -47,14 +47,14 @@ const eventDateLabel = computed<string | null>(() => {
     const startDate = new Date(event.startDate)
 
     if (startDate.getTime() !== endDate.getTime()) {
-      return t('watch_files.analysis.event.date', {
+      return t('target.watchFiles.analysis.event.date', {
         startDate: d(startDate, 'eventDateTime'),
         endDate: d(endDate, 'eventDateTime'),
       })
     }
     return d(startDate, 'eventDateTime')
   } catch {
-    return t('watch_files.analysis.event.unknown_date')
+    return t('target.watchFiles.analysis.event.unknown_date')
   }
 })
 </script>

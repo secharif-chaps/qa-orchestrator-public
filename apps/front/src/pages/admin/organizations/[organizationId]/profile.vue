@@ -3,36 +3,36 @@
     <!-- Basic Info Card -->
     <Card>
       <h2 class="mb-4 text-xl font-semibold">
-        {{ $t('organization.detail.basicInfo', 'Basic Information') }}
+        {{ $t('admin.organization.detail.basicInfo', 'Basic Information') }}
       </h2>
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
           <label class="text-secondary mb-1 block text-sm font-medium">{{
-            $t('organization.name', 'Name')
+            $t('admin.organization.name', 'Name')
           }}</label>
           <p class="text-base font-medium">{{ organization?.name }}</p>
         </div>
         <div>
           <label class="text-secondary mb-1 block text-sm font-medium">{{
-            $t('organization.id', 'ID')
+            $t('admin.organization.id', 'ID')
           }}</label>
           <code class="bg-base-300 rounded px-2 py-1 text-sm">{{ organization?.id }}</code>
         </div>
         <div class="md:col-span-2" v-if="organization?.description">
           <label class="text-secondary mb-1 block text-sm font-medium">{{
-            $t('organization.description', 'Description')
+            $t('admin.organization.description', 'Description')
           }}</label>
           <p class="text-base">{{ organization?.description }}</p>
         </div>
         <div v-if="organization?.created_at">
           <label class="text-secondary mb-1 block text-sm font-medium">{{
-            $t('organization.created', 'Created')
+            $t('admin.organization.created', 'Created')
           }}</label>
           <p class="text-base">{{ formatDateTime(organization.created_at) }}</p>
         </div>
         <div v-if="organization?.updated_at">
           <label class="text-secondary mb-1 block text-sm font-medium">{{
-            $t('organization.updated', 'Last Updated')
+            $t('admin.organization.updated', 'Last Updated')
           }}</label>
           <p class="text-base">{{ formatDateTime(organization.updated_at) }}</p>
         </div>
@@ -42,7 +42,7 @@
     <!-- Module Status Section -->
     <Card>
       <h2 class="mb-4 text-xl font-semibold">
-        {{ $t('tokens.moduleStatus', 'Module Status') }}
+        {{ $t('settings.tokens.moduleStatus', 'Module Status') }}
       </h2>
 
       <!-- Loading State -->
@@ -66,12 +66,12 @@
     <!-- Global Features Section -->
     <Card>
       <h2 class="mb-4 text-xl font-semibold">
-        {{ $t('featureFlags.globalFeatures', 'Global Features') }}
+        {{ $t('settings.featureFlags.globalFeatures', 'Global Features') }}
       </h2>
       <p class="text-secondary mb-4 text-sm">
         {{
           $t(
-            'featureFlags.description',
+            'settings.featureFlags.description',
             'Add-on capabilities that enhance core modules. These features are disabled by default.',
           )
         }}

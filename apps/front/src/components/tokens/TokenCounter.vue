@@ -35,7 +35,7 @@
               size="sm"
               :loading="isRefreshing"
               :disabled="isRefreshing"
-              :title="$t('tokens.refresh')"
+              :title="$t('settings.tokens.refresh')"
               @click="$emit('refresh')"
             />
           </div>
@@ -60,7 +60,7 @@
           <!-- Loading State -->
           <div v-if="isLoading" class="text-secondary mt-2 flex items-center gap-2 text-xs">
             <div class="bg-primary/60 h-2 w-2 animate-pulse rounded-full"></div>
-            {{ $t('tokens.loading', 'Loading token data...') }}
+            {{ $t('settings.tokens.loading', 'Loading token data...') }}
           </div>
         </div>
       </div>
@@ -110,22 +110,22 @@ const displayCount = computed(() => {
 })
 
 const tokenLabel = computed(() => {
-  if (props.tokenCount === 1) return t('tokens.token')
-  return t('tokens.credits')
+  if (props.tokenCount === 1) return t('settings.tokens.token')
+  return t('settings.tokens.credits')
 })
 
 const companyEquivalenceText = computed(() => {
   const companiesCount = Math.floor(props.tokenCount / TOKENS_PER_COMPANY)
 
   if (companiesCount === 0) {
-    return t('tokens.companyEquivalence.none', 'Not enough for company creation')
+    return t('settings.tokens.companyEquivalence.none', 'Not enough for company creation')
   }
 
   if (companiesCount === 1) {
-    return t('tokens.companyEquivalence.singular', 'Enough for 1 company')
+    return t('settings.tokens.companyEquivalence.singular', 'Enough for 1 company')
   }
 
-  return t('tokens.companyEquivalence.plural', { count: companiesCount })
+  return t('settings.tokens.companyEquivalence.plural', { count: companiesCount })
 })
 
 const tokenIconClasses = computed(() => {

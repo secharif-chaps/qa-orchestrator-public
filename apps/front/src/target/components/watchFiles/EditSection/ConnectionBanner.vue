@@ -5,7 +5,7 @@
     role="alert"
   >
     <Icon icon="fa-circle-exclamation" />
-    <span class="text-sm font-medium">{{ t('watch_files.chat.offline') }}</span>
+    <span class="text-sm font-medium">{{ t('target.watchFiles.chat.offline') }}</span>
   </div>
 </template>
 

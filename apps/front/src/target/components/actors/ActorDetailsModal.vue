@@ -3,7 +3,7 @@
     <template #title>
       <div class="flex justify-between">
         <span class="text-lg text-gray-900">
-          {{ $t('watch_files.actors.details_modal.title') }}
+          {{ $t('target.watchFiles.actors.details_modal.title') }}
         </span>
         <button
           class="flex cursor-pointer items-center p-1 text-gray-500 transition-colors hover:text-gray-700"

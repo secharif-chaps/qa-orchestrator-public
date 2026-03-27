@@ -53,11 +53,11 @@ export const useWatchFileTitle = (options: UseWatchFileTitleOptions = {}) => {
     }
 
     if (editValue.value.trim() === '') {
-      return t('watch_files.title.error.empty')
+      return t('target.watchFiles.title.error.empty')
     }
 
     if (!isValidTitle.value) {
-      return t('watch_files.title.error.invalid_length')
+      return t('target.watchFiles.title.error.invalid_length')
     }
 
     return null

@@ -5,7 +5,7 @@
     class="bg-sage-200 text-sage-600 flex items-center gap-1 rounded-sm p-1 text-sm"
   >
     <Icon icon="fa-bullhorn" />
-    <span class="shrink">{{ $t(`watch_files.analysis.event.type.${eventType}`) }}</span>
+    <span class="shrink">{{ $t(`target.watchFiles.analysis.event.type.${eventType}`) }}</span>
     <button class="flex items-center justify-center" @click="emit('openEditFilter', 'sources')">
       <Icon icon="fa-pen" />
     </button>

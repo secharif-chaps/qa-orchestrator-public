@@ -10,7 +10,7 @@
         <input
           id="invite-input"
           v-model="newUser"
-          :placeholder="$t('watch_files.shareDialog.invitePlaceholder')"
+          :placeholder="$t('target.watchFiles.shareDialog.invitePlaceholder')"
           class="ml-1 w-full min-w-32 flex-1 rounded-xs outline-none"
           autocomplete="off"
           data-form-type="other"
@@ -54,14 +54,14 @@
         :loading="isAddingUsers"
         @click="onAddUser"
       >
-        {{ $t('watch_files.shareDialog.invite') }}
+        {{ $t('target.watchFiles.shareDialog.invite') }}
       </Button>
     </div>
     <div class="flex pt-2">
       <OPopper side="bottom">
         <template #tooltip>
           <span class="block max-w-50">
-            {{ $t('watch_files.shareDialog.role.viewerDescription') }}
+            {{ $t('target.watchFiles.shareDialog.role.viewerDescription') }}
           </span>
         </template>
         <ORadio
@@ -69,13 +69,13 @@
           v-model="shareRights"
           :value="WATCH_FILE_USER_ROLE.VIEWER"
           name="share-rights"
-          :label="$t('watch_files.shareDialog.role.viewer')"
+          :label="$t('target.watchFiles.shareDialog.role.viewer')"
         />
       </OPopper>
       <OPopper side="bottom">
         <template #tooltip>
           <span class="block max-w-50">
-            {{ $t('watch_files.shareDialog.role.editorDescription') }}
+            {{ $t('target.watchFiles.shareDialog.role.editorDescription') }}
           </span>
         </template>
         <ORadio
@@ -83,7 +83,7 @@
           v-model="shareRights"
           :value="WATCH_FILE_USER_ROLE.EDITOR"
           name="share-rights"
-          :label="$t('watch_files.shareDialog.role.editor')"
+          :label="$t('target.watchFiles.shareDialog.role.editor')"
           class="ml-2"
         />
       </OPopper>

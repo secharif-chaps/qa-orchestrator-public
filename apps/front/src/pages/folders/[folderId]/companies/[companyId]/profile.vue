@@ -11,7 +11,9 @@
     <!-- No Data State - Show if all tasks completed but no data -->
     <NoData v-else-if="task?.status === 'succeeded' && !hasAnyProfileData">
       <p class="text-secondary text-lg font-medium">
-        {{ $t('profile.sections.profile.noData', 'No profile data available for this company') }}
+        {{
+          $t('screen.profile.sections.profile.noData', 'No profile data available for this company')
+        }}
       </p>
     </NoData>
 
@@ -131,17 +133,17 @@ const tabOptions = computed(() => [
   {
     value: 'products-overview',
     icon: 'fa fa-box-open',
-    label: t('profile.tabs.productsOverview', 'Products Overview'),
+    label: t('screen.profile.tabs.productsOverview', 'Products Overview'),
   },
   {
     value: 'partners',
     icon: 'fa fa-handshake',
-    label: t('profile.tabs.partnersLabels', 'Partners & Labels'),
+    label: t('screen.profile.tabs.partnersLabels', 'Partners & Labels'),
   },
   {
     value: 'strategy',
     icon: 'fa fa-chart-line',
-    label: t('profile.tabs.digitalStrategy', 'Digital Strategy'),
+    label: t('screen.profile.tabs.digitalStrategy', 'Digital Strategy'),
   },
 ])
 

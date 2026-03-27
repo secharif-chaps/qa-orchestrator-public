@@ -86,13 +86,13 @@ export function useTypingIndicatorPhrases(showReassurance: MaybeRefOrGetter<bool
 
   // Current typing indicator phrase
   const typingIndicatorPhrase = computed(() => {
-    return t(`watch_files.chat.typing_indicator.${typingIndicatorIndex.value}`)
+    return t(`target.watchFiles.chat.typing_indicator.${typingIndicatorIndex.value}`)
   })
 
   // Current reassurance phrase (only used when showReassurance is true)
   const reassurancePhrase = computed(() => {
     if (!toValue(showReassurance)) return undefined
-    return t(`watch_files.chat.reassurance_message.${reassuranceMessageIndex.value}`)
+    return t(`target.watchFiles.chat.reassurance_message.${reassuranceMessageIndex.value}`)
   })
 
   return {

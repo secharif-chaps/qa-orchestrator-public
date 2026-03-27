@@ -2,12 +2,12 @@
   <Card>
     <div class="mb-4 flex items-center justify-between">
       <h3 class="font-semibold text-gray-900 dark:text-white">
-        {{ $t('home.recentProjects.title', 'Recent Projects') }}
+        {{ $t('dashboard.home.recentProjects.title', 'Recent Projects') }}
       </h3>
       <Button
         variant="tertiary"
         size="sm"
-        :label="$t('home.recentProjects.viewAll', 'View All')"
+        :label="$t('dashboard.home.recentProjects.viewAll', 'View All')"
         @click="router.push('/folders')"
       />
     </div>
@@ -21,8 +21,10 @@
     <div v-else-if="error" class="py-6">
       <Alert
         variant="danger"
-        :title="$t('home.recentProjects.error.title', 'Error')"
-        :description="$t('home.recentProjects.error.description', 'Failed to load projects')"
+        :title="$t('dashboard.home.recentProjects.error.title', 'Error')"
+        :description="
+          $t('dashboard.home.recentProjects.error.description', 'Failed to load projects')
+        "
         icon="fa-exclamation-triangle"
       />
     </div>
@@ -35,7 +37,7 @@
         <i class="fa fa-folder-open text-2xl text-gray-400"></i>
       </div>
       <p class="text-sm text-gray-500 dark:text-gray-400">
-        {{ $t('home.recentProjects.noRecentProjects', 'No recent projects yet') }}
+        {{ $t('dashboard.home.recentProjects.noRecentProjects', 'No recent projects yet') }}
       </p>
     </div>
 

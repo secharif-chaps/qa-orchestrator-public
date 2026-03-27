@@ -1,7 +1,7 @@
 <template>
   <Modal
     v-model:display-modal="isOpen"
-    :title="$t('watch_files.shareDialog.title', { name: selectedWatchFile?.name })"
+    :title="$t('target.watchFiles.shareDialog.title', { name: selectedWatchFile?.name })"
     size="xl"
     class="combobox-modal"
     @close="handleClose"

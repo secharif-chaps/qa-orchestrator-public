@@ -1,12 +1,12 @@
 <template>
   <div class="flex h-[calc(100vh-140px)] flex-col px-6">
     <!-- Header -->
-    <SidebarHeader :title="$t('sidebar.notifications.title')">
+    <SidebarHeader :title="$t('common.sidebar.notifications.title')">
       <Button
         v-if="unreadCount"
         variant="tertiary"
         size="sm"
-        :label="$t('sidebar.notifications.markAllRead', 'Mark all as read')"
+        :label="$t('common.sidebar.notifications.markAllRead', 'Mark all as read')"
         @click="markAllAsRead"
       />
     </SidebarHeader>
@@ -22,7 +22,7 @@
       <div v-else-if="error" class="flex flex-col items-center justify-center gap-3 px-4 py-8">
         <Badge variant="secondary" icon="fa fa-exclamation-triangle" size="lg" />
         <p class="text-sage-800 dark:text-sage-400 text-center text-sm">
-          {{ $t('sidebar.notifications.errorLoading', 'Unable to load notifications') }}
+          {{ $t('common.sidebar.notifications.errorLoading', 'Unable to load notifications') }}
         </p>
       </div>
 
@@ -50,12 +50,12 @@
         <Badge variant="secondary" icon="fa fa-bell" size="lg" />
         <div class="text-center">
           <h3 class="text-sage-900 mb-2 text-sm font-medium">
-            {{ $t('sidebar.notifications.noNotifications', 'No notifications') }}
+            {{ $t('common.sidebar.notifications.noNotifications', 'No notifications') }}
           </h3>
           <p class="text-sage-800 dark:text-sage-400 text-xs">
             {{
               $t(
-                'sidebar.notifications.upToDate',
+                'common.sidebar.notifications.upToDate',
                 'You are up to date! All notifications will appear here.',
               )
             }}
@@ -73,7 +73,7 @@
       <Button
         variant="tertiary"
         size="sm"
-        :label="$t('sidebar.notifications.viewAll', 'View all notifications')"
+        :label="$t('common.sidebar.notifications.viewAll', 'View all notifications')"
         icon-right="fa fa-arrow-right"
         @click="$router.push('/notifications')"
       />
@@ -129,13 +129,13 @@ const notifications = computed<Notification[]>(() => {
     return {
       id: notificationId,
       title: isCompany
-        ? t('sidebar.notifications.companyCreated', 'New company added')
-        : t('sidebar.notifications.folderCreated', 'New folder created'),
-      message: `${activity.owner} ${t('sidebar.notifications.activityMessage', 'created')} ${activity.name}`,
+        ? t('common.sidebar.notifications.companyCreated', 'New company added')
+        : t('common.sidebar.notifications.folderCreated', 'New folder created'),
+      message: `${activity.owner} ${t('common.sidebar.notifications.activityMessage', 'created')} ${activity.name}`,
       time: formatRelativeTime(activity.created_at),
       category: isCompany
-        ? t('sidebar.notifications.categoryCompany', 'Company')
-        : t('sidebar.notifications.categoryFolder', 'Folder'),
+        ? t('common.sidebar.notifications.categoryCompany', 'Company')
+        : t('common.sidebar.notifications.categoryFolder', 'Folder'),
       read: readNotifications.value.has(notificationId),
       icon: {
         icon: isCompany ? 'fa fa-building' : 'fa fa-folder',

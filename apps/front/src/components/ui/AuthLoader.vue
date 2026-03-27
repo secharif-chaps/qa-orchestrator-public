@@ -2,8 +2,10 @@
   <div class="bg-surface flex min-h-screen items-center justify-center">
     <div class="text-center">
       <div class="border-primary mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-b-2"></div>
-      <h2 class="text-foreground mb-2 text-xl font-semibold">{{ t('auth.loader.title') }}</h2>
-      <p class="text-secondary">{{ t('auth.loader.message') }}</p>
+      <h2 class="text-foreground mb-2 text-xl font-semibold">
+        {{ t('common.auth.loader.title') }}
+      </h2>
+      <p class="text-secondary">{{ t('common.auth.loader.message') }}</p>
     </div>
   </div>
 </template>

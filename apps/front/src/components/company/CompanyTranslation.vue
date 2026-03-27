@@ -4,18 +4,18 @@
       <Button
         variant="tertiary"
         icon="fa fa-language"
-        :label="t('company.translation.button', 'Translate')"
+        :label="t('screen.company.translation.button', 'Translate')"
       />
     </template>
     <template #content>
       <!-- Original language option -->
       <DropdownItem :class="{ 'bg-primary-light': !modelValue }" @click="resetToOriginal()">
         <div class="flex w-full items-center justify-between gap-2">
-          <span>{{ t('company.translation.original', 'Original') }}</span>
+          <span>{{ t('screen.company.translation.original', 'Original') }}</span>
           <i
             v-if="!modelValue"
             class="fa fa-eye text-primary"
-            :title="t('company.translation.currentlyViewing', 'Currently viewing')"
+            :title="t('screen.company.translation.currentlyViewing', 'Currently viewing')"
           />
         </div>
       </DropdownItem>
@@ -44,19 +44,19 @@
           <i
             v-else-if="getLanguageStatus(lang.code) === 'none'"
             class="fa fa-download text-secondary"
-            :title="t('company.translation.clickToTranslate', 'Click to translate')"
+            :title="t('screen.company.translation.clickToTranslate', 'Click to translate')"
           />
           <!-- Eye icon for currently viewing -->
           <i
             v-else-if="modelValue === lang.code"
             class="fa fa-eye text-primary"
-            :title="t('company.translation.currentlyViewing', 'Currently viewing')"
+            :title="t('screen.company.translation.currentlyViewing', 'Currently viewing')"
           />
           <!-- Check icon for translated (click to view) -->
           <i
             v-else
             class="fa fa-check text-success"
-            :title="t('company.translation.clickToView', 'Click to view in this language')"
+            :title="t('screen.company.translation.clickToView', 'Click to view in this language')"
           />
         </div>
       </DropdownItem>
@@ -195,10 +195,10 @@ const getProgressPercent = (languageCode: string): number => {
 const getProgressTitle = (languageCode: string): string => {
   const langStatus = translationStatus.value?.translations?.[languageCode]
   if (!langStatus?.active_job) {
-    return t('company.translation.inProgress', 'Translation in progress...')
+    return t('screen.company.translation.inProgress', 'Translation in progress...')
   }
   const job = langStatus.active_job
-  return t('company.translation.progressDetail', {
+  return t('screen.company.translation.progressDetail', {
     translated: job.translated_fields,
     total: job.total_fields,
     percent: Math.round(job.progress_percentage),
@@ -211,7 +211,7 @@ const getProgressTitle = (languageCode: string): string => {
 const resetToOriginal = () => {
   if (modelValue.value) {
     modelValue.value = undefined
-    toast.info(t('company.translation.viewingDefault', 'Viewing in original language'))
+    toast.info(t('screen.company.translation.viewingDefault', 'Viewing in original language'))
   }
 }
 
@@ -230,11 +230,11 @@ const handleTranslate = async (languageCode: string) => {
     // Toggle: if already viewing this language, switch back to default
     if (modelValue.value === languageCode) {
       modelValue.value = undefined
-      toast.info(t('company.translation.viewingDefault', 'Viewing in original language'))
+      toast.info(t('screen.company.translation.viewingDefault', 'Viewing in original language'))
     } else {
       modelValue.value = languageCode
       toast.success(
-        t('company.translation.viewingIn', {
+        t('screen.company.translation.viewingIn', {
           language: getLanguageName(languageCode),
         }),
       )
@@ -244,7 +244,7 @@ const handleTranslate = async (languageCode: string) => {
 
   // Prevent duplicate requests
   if (isLanguageTranslating(languageCode)) {
-    toast.info(t('company.translation.alreadyInProgress', 'Translation already in progress'))
+    toast.info(t('screen.company.translation.alreadyInProgress', 'Translation already in progress'))
     return
   }
 
@@ -262,7 +262,7 @@ const handleTranslate = async (languageCode: string) => {
     // Show success toast
     if (response.fields_queued > 0) {
       toast.success(
-        t('company.translation.started', {
+        t('screen.company.translation.started', {
           count: response.fields_queued,
           language: getLanguageName(languageCode),
         }),
@@ -282,7 +282,9 @@ const handleTranslate = async (languageCode: string) => {
     optimisticTranslations.value.delete(languageCode)
 
     // Show error toast
-    toast.error(t('company.translation.failed', 'Translation request failed. Please try again.'))
+    toast.error(
+      t('screen.company.translation.failed', 'Translation request failed. Please try again.'),
+    )
     console.error('Translation request failed:', error)
   }
 }

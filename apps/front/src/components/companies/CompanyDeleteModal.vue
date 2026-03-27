@@ -13,10 +13,10 @@
           </div>
           <div>
             <h3 class="text-base text-lg font-semibold">
-              {{ $t('company.delete.title', 'Delete Company') }}
+              {{ $t('screen.company.delete.title', 'Delete Company') }}
             </h3>
             <p class="text-secondary text-sm">
-              {{ $t('company.delete.subtitle', 'This action cannot be undone') }}
+              {{ $t('screen.company.delete.subtitle', 'This action cannot be undone') }}
             </p>
           </div>
         </div>
@@ -32,7 +32,7 @@
               <p class="mb-2 font-medium">
                 {{
                   $t(
-                    'company.delete.warning.title',
+                    'screen.company.delete.warning.title',
                     'Warning: This will permanently delete the company',
                   )
                 }}
@@ -40,7 +40,7 @@
               <p>
                 {{
                   $t(
-                    'company.delete.warning.message',
+                    'screen.company.delete.warning.message',
                     'All associated data including tasks, reports, and history will be permanently removed. This action cannot be undone.',
                   )
                 }}
@@ -52,29 +52,29 @@
         <!-- Company Details -->
         <div class="bg-base-200 mb-6 rounded-lg p-4">
           <h4 class="mb-3 text-base font-medium">
-            {{ $t('company.delete.details', 'Company Details') }}
+            {{ $t('screen.company.delete.details', 'Company Details') }}
           </h4>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('company.name', 'Name') }}:</span>
+              <span class="text-secondary">{{ $t('screen.company.name', 'Name') }}:</span>
               <span class="font-medium">{{ companyToDelete.name }}</span>
             </div>
             <div v-if="companyToDelete.website" class="flex justify-between">
-              <span class="text-secondary">{{ $t('company.website', 'Website') }}:</span>
+              <span class="text-secondary">{{ $t('screen.company.website', 'Website') }}:</span>
               <span class="text-xs">{{ companyToDelete.website }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-secondary">{{ $t('company.created', 'Created') }}:</span>
+              <span class="text-secondary">{{ $t('screen.company.created', 'Created') }}:</span>
               <span>{{ formatDate(companyToDelete.created_at) }}</span>
             </div>
             <div
               v-if="companyToDelete.tasks && companyToDelete.tasks.length > 0"
               class="flex justify-between"
             >
-              <span class="text-secondary">{{ $t('company.tasks', 'Tasks') }}:</span>
+              <span class="text-secondary">{{ $t('screen.company.tasks', 'Tasks') }}:</span>
               <span class="inline-flex items-center gap-1">
                 <i class="fa fa-tasks text-secondary text-xs"></i>
-                {{ companyToDelete.tasks.length }} {{ $t('company.tasks.count', 'tasks') }}
+                {{ companyToDelete.tasks.length }} {{ $t('screen.company.tasks.count', 'tasks') }}
               </span>
             </div>
           </div>
@@ -83,7 +83,12 @@
         <!-- Confirmation Input -->
         <div class="mb-6">
           <p class="text-secondary mb-3 text-sm">
-            {{ $t('company.delete.confirm.message', 'Type the company name to confirm deletion:') }}
+            {{
+              $t(
+                'screen.company.delete.confirm.message',
+                'Type the company name to confirm deletion:',
+              )
+            }}
           </p>
           <div class="space-y-2">
             <code class="bg-base-300 block rounded px-2 py-1 text-sm">{{
@@ -92,7 +97,9 @@
             <Input
               id="delete-confirmation"
               v-model="confirmationText"
-              :placeholder="$t('company.delete.confirm.placeholder', 'Enter company name...')"
+              :placeholder="
+                $t('screen.company.delete.confirm.placeholder', 'Enter company name...')
+              "
               class="bg-base-300"
             />
           </div>
@@ -105,7 +112,7 @@
         <Button
           variant="accent"
           icon="fa fa-trash"
-          :label="$t('company.delete.confirm.button', 'Delete Company')"
+          :label="$t('screen.company.delete.confirm.button', 'Delete Company')"
           :loading="isLoading"
           :disabled="!isConfirmed || isLoading"
           @click="handleDelete"

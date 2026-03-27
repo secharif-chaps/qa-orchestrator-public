@@ -79,7 +79,7 @@
                 class="w-fit"
                 @click="emit('loadMore')"
               >
-                {{ t('watch_files.activity.history.see_more_actions') }}
+                {{ t('target.watchFiles.activity.history.see_more_actions') }}
               </Button>
             </div>
           </div>

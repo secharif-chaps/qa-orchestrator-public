@@ -18,11 +18,11 @@
             @share-watch-file="shareWatchFile"
           />
           <WatchFileDate
-            :date-prefix="t('watch_files.prefix.createdAt')"
+            :date-prefix="t('target.watchFiles.prefix.createdAt')"
             :date="watchFile.createdAt"
           />
           <WatchFileDate
-            :date-prefix="t('watch_files.prefix.updatedAt')"
+            :date-prefix="t('target.watchFiles.prefix.updatedAt')"
             :date="watchFile.updatedAt"
           />
         </div>

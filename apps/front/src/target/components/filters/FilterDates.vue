@@ -6,31 +6,31 @@
         v-model="selectedDateType"
         :value="FilterDates.PUBLICATION"
         name="date-radio"
-        :label="t('watch_files.filters.type.dates.publication')"
+        :label="t('target.watchFiles.filters.type.dates.publication')"
       />
       <ORadio
         id="collection-radio"
         v-model="selectedDateType"
         :value="FilterDates.COLLECT"
         name="date-radio"
-        :label="t('watch_files.filters.type.dates.collection')"
+        :label="t('target.watchFiles.filters.type.dates.collection')"
       />
     </div>
     <div class="max-w-72 space-y-1">
       <Label id="dates-period-filter">
-        {{ t('watch_files.filters.type.dates.period.label') }}
+        {{ t('target.watchFiles.filters.type.dates.period.label') }}
       </Label>
       <Select
         id="dates-period-filter"
         v-model="selectedPeriod"
-        :placeholder="t('watch_files.filters.type.dates.period.placeholder')"
+        :placeholder="t('target.watchFiles.filters.type.dates.period.placeholder')"
         :options="periodsOptions"
       >
         <template #items="{ options }">
           <SelectItem v-for="option in options" :key="option" :option="option">
             <ORadio :id="option" v-model="selectedPeriod" :value="option" />
             <span class="of:flex of:items-center of:gap-2">
-              <span>{{ t(`watch_files.filters.type.dates.period.${option}`) }}</span>
+              <span>{{ t(`target.watchFiles.filters.type.dates.period.${option}`) }}</span>
             </span>
           </SelectItem>
         </template>
@@ -38,7 +38,7 @@
     </div>
     <div class="space-y-1">
       <Label id="dates-range-filter">
-        {{ t('watch_files.filters.type.dates.range.label') }}
+        {{ t('target.watchFiles.filters.type.dates.range.label') }}
       </Label>
       <DateRangePicker id="dates-range-filter" v-model="datesPicker" class="z-50" />
     </div>
@@ -51,8 +51,8 @@
       @click="handleReset"
     >
       {{
-        t('watch_files.filters.type.reset', {
-          name: t('watch_files.filters.type.dates'),
+        t('target.watchFiles.filters.type.reset', {
+          name: t('target.watchFiles.filters.type.dates'),
         })
       }}
     </Button>

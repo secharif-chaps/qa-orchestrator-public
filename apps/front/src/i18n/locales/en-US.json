@@ -1,0 +1,4065 @@
+{
+  "admin": {
+    "adminRequired": "Admin Required",
+    "costChart": {
+      "error": "Failed to load chart data",
+      "loading": "Loading chart data...",
+      "noData": "No workspace data available",
+      "title": "Workspace Cost Distribution",
+      "tooltip": {
+        "companies": "Companies",
+        "cost": "Cost",
+        "percentage": "Percentage",
+        "tasks": "Tasks"
+      }
+    },
+    "dashboard": {
+      "back": "Back to Admin",
+      "description": "Manage system features and settings",
+      "limitedAccess": {
+        "message": "You have access to basic admin features. Contact your administrator for additional permissions.",
+        "title": "Limited Access"
+      },
+      "quickStats": {
+        "title": "System Overview"
+      },
+      "stats": {
+        "companies": "Companies",
+        "health": "System Health",
+        "organizations": "Total organizations",
+        "users": "Active Users"
+      },
+      "title": "Admin Dashboard"
+    },
+    "disableUser": {
+      "actionDescription": "• Prevent the user from logging in • Revoke all active sessions • Preserve all user data. You can re-enable the user later if needed.",
+      "actionTitle": "This action will:",
+      "cancel": "Cancel",
+      "confirm": "Disable User",
+      "confirmText": "Are you sure you want to disable",
+      "title": "Disable User"
+    },
+    "features": {
+      "analyze": "Analyze",
+      "configure": "Configure",
+      "costs": {
+        "description": "Monitor token usage and costs for MINT screening workflows",
+        "title": "Cost Analysis"
+      },
+      "explore": "Explore",
+      "manage": "Manage",
+      "monitor": "Monitor",
+      "organizations": {
+        "description": "Manage all organizations, users, and organization settings",
+        "title": "Organization Management"
+      },
+      "tasks": {
+        "description": "Monitor running tasks across all organizations and restart stuck processes",
+        "title": "Task Monitoring"
+      },
+      "uiDemo": {
+        "description": "Preview and test all UI components and design system",
+        "title": "UI Components Demo"
+      },
+      "usage": {
+        "description": "View application usage metrics across all organizations",
+        "title": "Usage Dashboard"
+      },
+      "users": {
+        "description": "Manage user organization assignments and user access",
+        "title": "User Management"
+      },
+      "view": "View",
+      "workflows": {
+        "description": "Configure and manage automated workflows and processes",
+        "title": "Workflow Management"
+      }
+    },
+    "import": {
+      "autoDownloaded": "Password file automatically downloaded",
+      "browseFiles": "Browse files",
+      "cancelMessage": "Are you sure you want to cancel? All progress will be lost.",
+      "cancelTitle": "Cancel Import",
+      "confirmCancel": "Yes, cancel",
+      "csvColumn": "CSV Column",
+      "description": "Import users from CSV or Excel file",
+      "downloadPasswords": "Download Passwords CSV",
+      "downloadSample": "Download sample CSV",
+      "dropZoneSubtitle": "Supports CSV and Excel files (max 100 users)",
+      "dropZoneTitle": "Drag and drop your file here",
+      "duplicate": "Duplicate",
+      "duplicatesFound": "Duplicate emails found",
+      "duplicatesMessage": "The following users have duplicate email addresses and will be skipped:",
+      "errorCount": "{count} users failed to import",
+      "errorMessage": "Some users could not be imported. See details below.",
+      "errors": {
+        "emailInvalid": "Invalid email format",
+        "emailRequired": "Email is required",
+        "usernameRequired": "Username is required"
+      },
+      "fields": {
+        "email": "Email",
+        "firstname": "First Name",
+        "lastname": "Last Name",
+        "password": "Password",
+        "username": "Username"
+      },
+      "generateAllPasswords": "Generate all passwords",
+      "generateAllPasswordsHint": "Random passwords will be generated for all users, ignoring passwords in the file.",
+      "generatePasswords": "Generate random passwords",
+      "generatePasswordsHint": "Passwords will be generated for all users. They must change it on first login.",
+      "generatePasswordsHintWithColumn": "Passwords will be generated only for users without a password in the file.",
+      "hideDetails": "Hide details",
+      "ignore": "Ignore column",
+      "ignoredColumnsMessage": "The following columns are not mapped: {columns}",
+      "ignoredColumnsWarning": "Some columns will be ignored",
+      "importButton": "Import Users",
+      "mapsTo": "Maps to",
+      "needHelpMessage": "Download our sample CSV file to see the expected format with example data.",
+      "needHelpTitle": "Need a template?",
+      "noPasswordColumnMessage": "Random passwords will be generated for all users. You will be able to download them after the import is complete.",
+      "noPasswordColumnTitle": "No password column detected",
+      "parseError": "Error parsing file",
+      "passwordHandling": "Password handling",
+      "passwordsGenerated": "Temporary passwords generated",
+      "passwordsMessage": "Download the password file to share with users. This is the only time you can download this file.",
+      "previewSkipped": "{count} users will be skipped due to errors",
+      "previewSummary": "{count} users ready to import",
+      "ready": "Ready",
+      "requiredFieldTooltip": "Required field",
+      "requiredFieldsMessage": "Username and Email columns must be mapped to proceed.",
+      "requiredFieldsWarning": "Required fields not mapped",
+      "rows": "rows",
+      "selectOrganization": "Target Organization",
+      "selectOrganizationPlaceholder": "Select an organization...",
+      "showDetails": "Show error details",
+      "showingPreview": "Showing {shown} of {total} users",
+      "status": "Status",
+      "steps": {
+        "map": "Map Columns",
+        "results": "Results",
+        "review": "Review",
+        "upload": "Upload File"
+      },
+      "successCount": "{count} users imported successfully",
+      "successMessage": "All users were imported and can now log in with their temporary passwords.",
+      "title": "Import Users",
+      "usePasswordsFromFile": "Use passwords from file",
+      "usePasswordsFromFileHint": "Passwords from the CSV will be used. Random passwords will be generated for users without one.",
+      "validationErrors": "Validation errors found",
+      "willGenerate": "Will generate"
+    },
+    "organization": {
+      "actions": "Actions",
+      "admin": {
+        "confirmAdminRole": {
+          "description": "The Admin role includes:",
+          "permissions": {
+            "adminOrganizations": "Global admin access to all organizations"
+          },
+          "title": "Assign Admin Role?",
+          "warningDescription": "This role grants full administrative access to the organization.",
+          "warningTitle": "You are about to assign full administrator rights. This action gives you complete control over all organizations and users. Confirm?"
+        },
+        "description": "Manage all organizations in the system",
+        "title": "organization Management"
+      },
+      "alreadyCurrent": "Already in this organization",
+      "cannotDeleteDefault": "Cannot delete the default organization",
+      "clearSearch": "Clear Search",
+      "create": {
+        "button": "Create organization",
+        "description": "Create a new organization for your organization",
+        "preview": "Preview",
+        "submit": "Create organization",
+        "title": "Create organization"
+      },
+      "created": "Created",
+      "current": "Current",
+      "delete": "Delete organization",
+      "description": "Description",
+      "detail": {
+        "basicInfo": "Basic Information",
+        "description": "Manage organization settings, tokens, and members",
+        "members": "Members",
+        "settings": "Settings",
+        "settingsPlaceholder": "organization settings will be implemented here",
+        "title": "Organization Details"
+      },
+      "empty": {
+        "description": "Create your first organization to get started",
+        "noResults": "No organizations found",
+        "title": "No organizations yet",
+        "tryDifferentSearch": "Try a different search term"
+      },
+      "form": {
+        "description": {
+          "help": "Brief description to help users understand this organization",
+          "label": "Description",
+          "placeholder": "Describe the purpose of this organization..."
+        },
+        "name": {
+          "help": "This will be the display name for your organization",
+          "label": "organization Name",
+          "placeholder": "Enter organization name..."
+        },
+        "slug": {
+          "help": "URL-friendly identifier (lowercase, no spaces)",
+          "label": "organization Slug"
+        }
+      },
+      "id": "ID",
+      "justCreated": "Just created",
+      "loading": "Loading organizations...",
+      "members": "Members",
+      "membersDescription": "Manage users in this organization",
+      "name": "organization Name",
+      "noDescription": "No description",
+      "pick": "Switch to this organization",
+      "search": {
+        "placeholder": "Search organizations..."
+      },
+      "slug": "organization Slug",
+      "sort": {
+        "ascending": "Ascending",
+        "created": "Created Date",
+        "descending": "Descending",
+        "label": "Sort by",
+        "members": "Members",
+        "name": "Name",
+        "order": "Order"
+      },
+      "table": {
+        "description": "Description"
+      },
+      "tabs": {
+        "members": "Members",
+        "profile": "Profile",
+        "sources": "Sources",
+        "tokens": "Tokens"
+      },
+      "updated": "Updated",
+      "view": "View Details"
+    },
+    "organizationBreakdown": {
+      "columns": {
+        "avgCostPerCompany": "Avg Cost/Company",
+        "avgCostPerTask": "Avg Cost/Task",
+        "companies": "Companies",
+        "organization": "Organization",
+        "tasks": "Tasks",
+        "totalCost": "Total Cost"
+      },
+      "error": "Failed to load organization data",
+      "id": "ID:",
+      "loading": "Loading organization data...",
+      "noData": "No organization data available",
+      "noTokens": "No tokens",
+      "percentOfTotal": "{percent}% of total",
+      "title": "Organization Cost Breakdown",
+      "tokens": "{count} tokens"
+    },
+    "organizations": {
+      "actions": {
+        "create": "New workspace"
+      },
+      "confirm": {
+        "delete": "Are you sure you want to delete the workspace \"{name}\"?"
+      },
+      "description": "Manage all workspaces in your organization",
+      "empty": "No organizations found",
+      "error": {
+        "delete": "Error deleting workspace",
+        "loading": "Error loading workspaces",
+        "save": "Error saving workspace",
+        "title": "Error Loading Organizations"
+      },
+      "fields": {
+        "created": "Created on",
+        "description": "Description",
+        "members": "members",
+        "name": "Name",
+        "slug": "Identifier"
+      },
+      "itemName": "organizations",
+      "members": "Members",
+      "modal": {
+        "create": "Create a workspace",
+        "edit": "Edit workspace"
+      },
+      "placeholders": {
+        "description": "Workspace description",
+        "name": "Workspace name",
+        "slug": "unique-identifier"
+      },
+      "search": "Search organizations...",
+      "showing": "Showing {from} to {to} of {total} organizations",
+      "title": "Workspace Management"
+    },
+    "permissions": {
+      "adminChapsVisionOnly": "Admin role is reserved for ChapsVision employees",
+      "adminOrganizations": {
+        "description": "Full administrative access to all organizations",
+        "label": "Organization Admin"
+      },
+      "alwaysOn": "Always On",
+      "companyCreate": {
+        "description": "Add company screens and other items to folders",
+        "label": "Add Items"
+      },
+      "customWarning": {
+        "description": "This user has custom permissions that don't match any predefined role. Selecting a role will override their current permissions.",
+        "title": "Custom Permissions Detected"
+      },
+      "description": "Configure permissions for {username}",
+      "error": {
+        "title": "Error loading permissions"
+      },
+      "legacyWarning": {
+        "description": "This user has old-style permissions. They will be automatically converted to the new permission model when you save.",
+        "title": "Legacy Permissions Detected"
+      },
+      "loading": "Loading permissions...",
+      "organizationManage": {
+        "description": "Manage team members and their permissions",
+        "label": "Team Management"
+      },
+      "organizationRead": {
+        "description": "View folders and companies in the organization",
+        "label": "Read Access"
+      },
+      "organizationWrite": {
+        "description": "Create and manage folders, manage owned content",
+        "label": "Write Access"
+      },
+      "requiresWriteAccess": "Requires Write Access to be enabled",
+      "roles": {
+        "admin": {
+          "description": "Full administrative control over all organizations, users and system settings. Includes user creation and organization assignment. Assign with caution.",
+          "name": "Admin"
+        },
+        "manager": {
+          "description": "All Writer permissions plus team management: can add or remove members and configure their permissions within the organization.",
+          "name": "Manager"
+        },
+        "reader": {
+          "description": "Read-only access to the organization's folders and company profiles. Can browse and consult all shared content.",
+          "name": "Reader"
+        },
+        "writer": {
+          "description": "Can create folders, add company profiles, search for companies and manage their own content within the organization.",
+          "name": "Writer"
+        }
+      },
+      "save": "Save Permissions",
+      "sections": {
+        "admin": "Admin Permissions",
+        "adminDescription": "Administrative access grants full control. Use with caution.",
+        "base": "Base Access",
+        "modules": "Module Permissions",
+        "modulesDescription": "These permissions allow creating specific types of content. Requires Write Access."
+      },
+      "summary": {
+        "noPermissions": "No permissions selected",
+        "title": "Permissions Summary"
+      },
+      "tabs": {
+        "custom": "Custom Permissions",
+        "roles": "Quick Roles"
+      },
+      "targetCreate": {
+        "description": "Create new watchfiles (Target module)",
+        "label": "Create Targets"
+      },
+      "title": "Manage Permissions"
+    },
+    "taskTypes": {
+      "columns": {
+        "avgCostPerTask": "Avg Cost/Task",
+        "avgInputTokens": "Avg Input Tokens",
+        "avgOutputTokens": "Avg Output Tokens",
+        "taskCount": "Task Count",
+        "taskType": "Task Type",
+        "totalCost": "Total Cost"
+      },
+      "efficiency": {
+        "average": "Average",
+        "expensive": "Expensive",
+        "veryEfficient": "Very efficient"
+      },
+      "error": "Failed to load task type data",
+      "loading": "Loading task type data...",
+      "noData": "No task type data available",
+      "percentOfAllTasks": "% of all tasks",
+      "percentOfTotal": "% of total",
+      "summary": {
+        "mostExpensive": "Most Expensive",
+        "mostFrequent": "Most Frequent",
+        "totalTaskTypes": "Total Task Types"
+      },
+      "title": "Task Type Cost Efficiency"
+    },
+    "tasks": {
+      "autoRefresh": {
+        "off": "Auto-refresh OFF",
+        "on": "Auto-refresh ON"
+      },
+      "description": "Monitor and manage tasks across all organizations",
+      "error": {
+        "description": "Failed to load task data",
+        "retry": "Retry",
+        "title": "Error Loading Data"
+      },
+      "filters": {
+        "allOrganizations": "All Organizations",
+        "allStatuses": "All Statuses",
+        "allTypes": "All Types",
+        "clearFilters": "Clear Filters",
+        "internal": "Internal"
+      },
+      "lastUpdated": {
+        "minutes": "Updated {minutes}m ago",
+        "seconds": "Updated {seconds}s ago"
+      },
+      "loading": "Loading task data...",
+      "modal": {
+        "actions": {
+          "cancel": "Cancel the currently running tasks",
+          "queue": "Queue them for immediate re-execution",
+          "reset": "Reset their status to \"pending\""
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "restart": "Restart {count} Task | Restart {count} Tasks",
+          "restarting": "Restarting..."
+        },
+        "description": "You are about to restart {count} task. This action will: | You are about to restart {count} tasks. This action will:",
+        "result": {
+          "initiated": "Restart Initiated",
+          "noTasks": "No Tasks Restarted",
+          "restarted": "{count} task restarted successfully | {count} tasks restarted successfully",
+          "skipped": "{count} task skipped | {count} tasks skipped",
+          "skippedReasons": "Skipped reasons:",
+          "taskReason": "Task #{id}: {reason}"
+        },
+        "selectedTasks": "Selected tasks:",
+        "stuckWarning": "{count} of these tasks have been running for over 3 minutes and may be stuck.",
+        "title": "Confirm Bulk Restart"
+      },
+      "pagination": {
+        "page": "Page {page} of {pages}",
+        "showing": "Showing {from} to {to} of {total} tasks"
+      },
+      "refresh": "Refresh",
+      "selection": {
+        "clearSelection": "Clear Selection",
+        "restart": "Restart {count} Task | Restart {count} Tasks",
+        "selected": "{count} selected"
+      },
+      "stats": {
+        "failed": "Failed",
+        "pending": "Pending",
+        "running": "Running",
+        "successRate": "Success Rate",
+        "totalTasks": "Total Tasks"
+      },
+      "status": {
+        "error": "Error",
+        "pending": "Pending",
+        "running": "Running",
+        "succeeded": "Succeeded"
+      },
+      "stuckAlert": {
+        "description": "Tasks running longer than expected may need attention. Review and restart if necessary.",
+        "selectAll": "Select All Stuck",
+        "title": "{count} Stuck Task Detected | {count} Stuck Tasks Detected"
+      },
+      "table": {
+        "actions": "Actions",
+        "company": "Company",
+        "elapsed": "Elapsed",
+        "id": "ID",
+        "noTasks": "No tasks found matching your filters",
+        "organization": "Organization",
+        "restartTask": "Restart task",
+        "status": "Status",
+        "type": "Type",
+        "viewError": "View error"
+      },
+      "taskTypes": {
+        "csr": "CSR",
+        "digital": "Digital",
+        "jobs": "Jobs",
+        "press": "Press",
+        "products": "Products",
+        "profile": "Profile",
+        "team": "Team",
+        "timeline": "Timeline"
+      },
+      "title": "Task Monitoring"
+    },
+    "usage": {
+      "description": "View application usage metrics across all organizations",
+      "error": {
+        "message": "Failed to load usage statistics",
+        "retry": "Retry",
+        "title": "Error Loading Data"
+      },
+      "kpi": {
+        "activeUsers": "Active Users",
+        "azureCost": "Azure Cost",
+        "companiesCreated": "Companies Created",
+        "phase2Feature": "Phase 2 feature",
+        "taskSuccessRate": "Task Success Rate"
+      },
+      "lineChart": {
+        "label": "Companies Created",
+        "loading": "Loading chart data...",
+        "noData": "No company data for selected period",
+        "title": "Companies Over Time",
+        "tooltip": "{count} company created | {count} companies created"
+      },
+      "stackedChart": {
+        "companies": "companies",
+        "loading": "Loading chart data...",
+        "noData": "No organization data for selected period",
+        "title": "Companies by Organization"
+      },
+      "table": {
+        "companiesCreated": "Companies Created",
+        "noData": "No organization data for selected period",
+        "organization": "Organization",
+        "percentOfTotal": "% of Total",
+        "title": "Organization Breakdown"
+      },
+      "timeRange": {
+        "allTime": "All time",
+        "last30Days": "Last 30 days",
+        "last7Days": "Last 7 days",
+        "last90Days": "Last 90 days"
+      },
+      "title": "Usage Dashboard"
+    },
+    "userActions": {
+      "changeOrganization": "Change Organization",
+      "disableUser": "Disable User",
+      "enableUser": "Enable User",
+      "managePermissions": "Manage Permissions",
+      "resetPassword": "Reset Password"
+    },
+    "userOrganization": {
+      "cancel": "Cancel",
+      "current": "(current)",
+      "currentOrganization": "Current organization:",
+      "noOrganization": "No organization assigned",
+      "noOrganizationsAvailable": "No organizations available",
+      "save": "Save",
+      "selectOrganization": "Select organization",
+      "title": "Change User Organization"
+    },
+    "users": {
+      "actions": {
+        "changeOrganization": "Change Organization",
+        "disableUser": "Disable User",
+        "enableUser": "Enable User",
+        "managePermissions": "Manage Permissions",
+        "resetPassword": "Reset Password"
+      },
+      "assignOrganization": {
+        "error": "Failed to assign organization",
+        "success": "Organization assigned successfully!"
+      },
+      "clearFilters": "Clear Filters",
+      "create": {
+        "error": "Failed to add user",
+        "success": "User created"
+      },
+      "delete": {
+        "error": "Failed to delete user",
+        "success": "User deleted"
+      },
+      "description": "Manage all users across organizations",
+      "disable": {
+        "error": "Failed to disable user",
+        "success": "User disabled successfully!"
+      },
+      "empty": {
+        "description": "No users in the system",
+        "filtered": "No users found",
+        "filteredDescription": "Try a different search or filter",
+        "title": "No users found"
+      },
+      "enable": {
+        "error": "Failed to enable user",
+        "success": "User enabled successfully!"
+      },
+      "itemName": "users",
+      "loading": "Loading users...",
+      "modal": {
+        "assignOrganization": "Assign User to Organization",
+        "assigning": "Assigning...",
+        "changeOrganization": "Change User Organization",
+        "error": {
+          "title": "Error loading organization"
+        },
+        "loading": "Loading organization...",
+        "selectOrganization": "Select organization:",
+        "warning": {
+          "message": "Changing this user's organization will move them to the new organization. Their data will remain in the original organization.",
+          "title": "Organization Change"
+        }
+      },
+      "resetPassword": {
+        "error": "Failed to reset password",
+        "sent": "Password reset email sent",
+        "sentError": "Failed to send password reset",
+        "success": "Password reset successfully!"
+      },
+      "roles": {
+        "admin": "Admin",
+        "custom": "Custom",
+        "manager": "Manager",
+        "reader": "Reader",
+        "writer": "Writer"
+      },
+      "search": {
+        "clear": "Clear search",
+        "placeholder": "Search by username, name, email or organization..."
+      },
+      "sort": {
+        "ascending": "Ascending (A-Z)",
+        "createdDate": "Created Date",
+        "descending": "Descending (Z-A)",
+        "order": "Order",
+        "sortBy": "Sort by",
+        "username": "Username"
+      },
+      "status": {
+        "active": "Active",
+        "revoked": "Revoked"
+      },
+      "statusUpdate": {
+        "error": "Failed to update status",
+        "success": "User status updated"
+      },
+      "table": {
+        "actions": "Actions",
+        "email": "Email",
+        "name": "Name",
+        "organization": "Organization",
+        "role": "Role",
+        "status": "Status",
+        "username": "Username"
+      },
+      "title": "User Management",
+      "update": {
+        "error": "Failed to update user",
+        "success": "User updated"
+      },
+      "updatePermissions": {
+        "error": "Failed to update permissions",
+        "success": "Permissions updated successfully!"
+      }
+    },
+    "workflowCard": {
+      "cancel": "Cancel",
+      "editing": "Editing...",
+      "save": "Save"
+    },
+    "workflows": {
+      "apiKey": "API Key",
+      "apiKeyPlaceholder": "Enter Dify API key",
+      "description": "Configure Dify workflow integrations for automated analysis tasks",
+      "error": {
+        "title": "Failed to Load Workflows"
+      },
+      "loading": "Loading workflows...",
+      "notConfigured": "Not configured",
+      "status": {
+        "active": "Active",
+        "notConfigured": "Not Configured",
+        "partial": "Partial"
+      },
+      "title": "Workflow Management",
+      "updateSuccess": "Workflow updated successfully!",
+      "workflowId": "Workflow ID",
+      "workflowIdPlaceholder": "Enter Dify workflow ID"
+    }
+  },
+  "common": {
+    "action": {
+      "add": "Add",
+      "back": "Back",
+      "loading": "Loading...",
+      "selectAll": "Select All",
+      "selectedCount": "({count} document) | ({count} documents)"
+    },
+    "after": "after",
+    "appBar": {
+      "profile": "Your Profile",
+      "search": "Search...",
+      "settings": "Settings",
+      "signOut": "Sign out",
+      "theme": {
+        "dark": "Dark theme",
+        "emerald": "Emerald theme",
+        "indigo": "Indigo theme",
+        "pink": "Pink theme"
+      }
+    },
+    "auth": {
+      "callback": {
+        "loginFailed": "Login failed",
+        "processing": "Processing login...",
+        "tryAgain": "Try again"
+      },
+      "loader": {
+        "message": "Please wait while we verify your session",
+        "title": "Authenticating..."
+      }
+    },
+    "back": "Back",
+    "before": "before",
+    "breadcrumb": {
+      "admin": "Admin",
+      "aiPreferences": "AI Preferences",
+      "aiPreferencesSetup": "AI Preferences Setup",
+      "appearance": "Appearance",
+      "companies": "Companies",
+      "company": "Company",
+      "companyCsv": "CSV Import",
+      "costs": "Costs",
+      "create": "Create",
+      "credits": "Credits",
+      "csr": "CSR",
+      "edit": "Edit",
+      "folders": "Folders",
+      "help": "Help",
+      "history": "History",
+      "jobs": "Jobs",
+      "members": "Members",
+      "organizations": "Organizations",
+      "press": "Press",
+      "products": "Products",
+      "profile": "Profile",
+      "search": "Search",
+      "security": "Security",
+      "settings": "Settings",
+      "sources": "Sources",
+      "tasks": "Tasks",
+      "team": "Team",
+      "teamManagement": "Team Management",
+      "timeline": "Timeline",
+      "tokens": "Tokens",
+      "usage": "Usage",
+      "users": "Users",
+      "workflows": "Workflows"
+    },
+    "button": {
+      "cancel": "Cancel",
+      "close": "Close",
+      "confirm": "Confirm",
+      "retry": "Retry",
+      "save": "Save"
+    },
+    "cancel": "Cancel",
+    "close": "Close",
+    "collectedOn": "Collected on {date}",
+    "comingSoon": "Coming soon",
+    "components": {
+      "card": {
+        "defaultComingSoon": "Coming soon"
+      }
+    },
+    "composables": {
+      "useTimeDisplay": {
+        "hoursAgo": "{count} hour ago | {count} hours ago",
+        "invalidDate": "Invalid date",
+        "justNow": "just now",
+        "minutesAgo": "{count} minute ago | {count} minutes ago"
+      }
+    },
+    "confirm": "Confirm",
+    "copied": "Copied to clipboard!",
+    "dialog": {
+      "info_item_ai_validation": "Automatic validation by AI",
+      "info_item_archive_always_accessible": "It will remain accessible at all times",
+      "info_item_archive_default_hidden": "The watch file will be hidden by default",
+      "info_item_archive_restore_possible": "You can restore it at any time",
+      "info_item_collect_stop": "Information collect will stop",
+      "info_item_configuration_unlocked": "Configuration unlocked for modification",
+      "info_item_data_preserved": "Existing data remains intact",
+      "info_item_real_time_collect": "Real-time document collect",
+      "info_item_source_monitoring": "Automatic monitoring of your sources",
+      "info_section": {
+        "title": "What will happen"
+      },
+      "warning_section": {
+        "title": "Incomplete processing"
+      }
+    },
+    "dismiss": "Dismiss",
+    "documentType_html": "HTML",
+    "documentType_pdf": "PDF",
+    "done": "Done",
+    "empty": "No results found",
+    "error": {
+      "description": "Something went wrong. Please try again in a few moments or check your connection. If the problem persists, please contact an administrator.",
+      "title": {
+        "filter": "Unable to display filters",
+        "list": "Unable to display the list"
+      }
+    },
+    "errors": {
+      "forbidden": {
+        "contact": "Contact Administrator",
+        "contactAdmin": "Contact Administrator",
+        "goBack": "Go Back",
+        "goHome": "Go to Home",
+        "message": "You don't have permission to access this resource.",
+        "title": "Access Denied",
+        "token": {
+          "accessRestricted": "Access Restricted",
+          "insufficientTokens": "Insufficient Tokens",
+          "insufficientTokensMessage": "You don't have enough tokens to access the {module} module. Contact your administrator to add more tokens.",
+          "moduleDisabled": "{module} Disabled",
+          "moduleDisabledMessage": "The {module} module has been disabled for your organization. Contact your administrator to enable this feature.",
+          "status": {
+            "disabled": "Disabled",
+            "noTokens": "No Tokens"
+          },
+          "unavailable": "This feature is currently unavailable."
+        }
+      },
+      "generic": "An error occurred",
+      "no_data": "No data returned",
+      "notFound": {
+        "goBack": "Go Back",
+        "goHome": "Go to Home",
+        "help": "Need Help?",
+        "message": "The page you're looking for doesn't exist or has been moved.",
+        "title": "Page Not Found"
+      },
+      "rate_limit": "Too many requests. Please wait {seconds} seconds.",
+      "token_refresh_failed": "Failed to refresh token",
+      "unauthorized": "Unauthorized",
+      "unexpected": "An unexpected error occurred"
+    },
+    "folder": {
+      "actions": {
+        "addToFavorites": "Add to favorites",
+        "delete": "Delete",
+        "edit": "Edit",
+        "favorite": "Favorite",
+        "removeFromFavorites": "Remove from favorites",
+        "share": "Share",
+        "unfavorite": "Unfavorite",
+        "view": "View"
+      },
+      "addItem": {
+        "error": "Failed to add item to folder",
+        "label": "Add Item"
+      },
+      "addItems": {
+        "company": "Add Company",
+        "companyDescription": "Create a company card to monitor company information",
+        "companyScreen": "Company Screen",
+        "graphrag": "Knowledge Graph",
+        "graphragDescription": "Explore connections and relationships",
+        "watchfile": "Watchfile",
+        "watchfileDescription": "Set up monitoring for specific topics"
+      },
+      "clearSearch": "Clear Search",
+      "create": {
+        "button": "Create Folder",
+        "description": "Organize your companies into folders",
+        "subtitle": "Organize your companies with a custom folder",
+        "title": "Create New Folder"
+      },
+      "delete": {
+        "cancel": "Cancel",
+        "confirm": "Delete Folder",
+        "label": "Delete",
+        "message": "Are you sure you want to delete this folder?",
+        "subtitle": "This action cannot be undone",
+        "title": "Delete Folder",
+        "warning": {
+          "message": "Items in this folder will remain in your workspace but will no longer be grouped.",
+          "title": "Items will not be deleted"
+        }
+      },
+      "description": "Organize your companies into folders",
+      "descriptionGlobal": "All folders in your organization",
+      "detail": {
+        "error": {
+          "description": "Failed to load folder",
+          "title": "Error"
+        }
+      },
+      "edit": {
+        "error": {
+          "description": "Failed to load folder",
+          "title": "Error"
+        },
+        "subtitle": "Update your folder settings and appearance",
+        "title": "Edit Folder"
+      },
+      "empty": {
+        "description": "Start by creating your first company in this folder",
+        "noResults": "No results found",
+        "readOnly": "No items in this folder",
+        "title": "This folder is empty",
+        "tryDifferentSearch": "Try a different search term"
+      },
+      "emptyList": {
+        "description": "Create your first folder to organize your companies",
+        "descriptionReadOnly": "No folders have been shared with you yet",
+        "title": "No folders yet"
+      },
+      "favorite": {
+        "added": "Folder added to favorites",
+        "error": "Failed to update folder favorites",
+        "label": "Favorite",
+        "removed": "Folder removed from favorites"
+      },
+      "filter": {
+        "all": "All folders",
+        "allFolders": "All folders",
+        "allLabel": "All",
+        "archived": "Archived folders",
+        "archivedFolders": "Archived folders",
+        "archivedLabel": "Archived",
+        "favoriteFolders": "Favorite folders",
+        "favorites": "Favorite folders",
+        "favoritesLabel": "Favorites"
+      },
+      "form": {
+        "cancel": "Cancel",
+        "color": "Color",
+        "colors": {
+          "amber": "Amber",
+          "blue": "Blue",
+          "cyan": "Cyan",
+          "emerald": "Emerald",
+          "fuchsia": "Fuchsia",
+          "gray": "Gray",
+          "green": "Green",
+          "indigo": "Indigo",
+          "lime": "Lime",
+          "orange": "Orange",
+          "pink": "Pink",
+          "purple": "Purple",
+          "red": "Red",
+          "rose": "Rose",
+          "sky": "Sky",
+          "teal": "Teal",
+          "violet": "Violet",
+          "yellow": "Yellow"
+        },
+        "create": "Create Folder",
+        "favorite": "Mark as favorite",
+        "icon": "Icon",
+        "name": "Folder Name",
+        "namePlaceholder": "Enter folder name...",
+        "save": "Save Changes",
+        "tags": "Tags",
+        "tagsOptional": "optional",
+        "tagsPlaceholder": "Enter tags separated by commas..."
+      },
+      "grid": {
+        "by": "by",
+        "created": "Created",
+        "owner": "Owner:"
+      },
+      "groups": {
+        "mine": "My Folders",
+        "shared": "Shared with me"
+      },
+      "header": {
+        "by": "by",
+        "createdOn": "created on {date}",
+        "itemsCount": "{count} item | {count} items"
+      },
+      "item": {
+        "actions": {
+          "label": "Actions",
+          "view": "View"
+        },
+        "created": "Created",
+        "deleted": "Deleted",
+        "name": "Item",
+        "owner": "Owner",
+        "type": "Type",
+        "view": "View"
+      },
+      "itemCount": "{count} item | {count} items",
+      "itemName": "folders",
+      "itemTypes": {
+        "company": "Company Card"
+      },
+      "items": {
+        "add": "Add Items",
+        "empty": "No items in this folder"
+      },
+      "itemsChip": "{count} item | {count} items",
+      "list": {
+        "error": {
+          "description": "Failed to load folders",
+          "title": "Error"
+        }
+      },
+      "loading": "Loading folders...",
+      "moveCompany": {
+        "button": "Move to Folder",
+        "currentFolder": "Current folder (cannot select)",
+        "error": "Failed to move company",
+        "loadError": "Failed to load folders",
+        "move": "Move",
+        "noFolders": "No writable folders available",
+        "searchPlaceholder": "Search folders...",
+        "selectFolder": "Select a destination folder",
+        "success": "Company moved to {folderName}",
+        "title": "Move Company to Folder"
+      },
+      "name": "Name",
+      "owner": {
+        "you": "You"
+      },
+      "permissions": {
+        "owner": "Owner",
+        "reader": "Reader",
+        "writer": "Writer"
+      },
+      "privacy": {
+        "private": "Private",
+        "shared": "Shared"
+      },
+      "removeItem": {
+        "error": "Failed to remove item from folder",
+        "label": "Remove Item"
+      },
+      "restore": {
+        "confirm": {
+          "button": "Restore Folder",
+          "label": "Restore Folder"
+        },
+        "details": "Folder Details",
+        "error": "Failed to restore folder \"{name}\"",
+        "label": "Restore",
+        "subtitle": "This will move the folder back to the active list.",
+        "success": "Folder \"{name}\" has been restored successfully",
+        "title": "Restore Folder",
+        "warning": {
+          "label": "The folder and its contents will be restored.",
+          "message": "The folder and its contents will be restored to the active list."
+        }
+      },
+      "search": {
+        "placeholder": "Search items..."
+      },
+      "share": {
+        "add": "Add",
+        "addError": "Failed to share folder",
+        "added": "User added to folder",
+        "addedOn": "Added",
+        "alreadyShared": "Already shared",
+        "currentShares": "People with access",
+        "description": "Share this folder with other users in your organization",
+        "loadingShares": "Loading...",
+        "noResults": "No users found",
+        "noShares": "This folder is not shared with anyone yet",
+        "readOnly": "Read only",
+        "reader": "Reader",
+        "remove": "Remove access",
+        "removeError": "Failed to remove share",
+        "removed": "User removed from folder",
+        "searchError": "Failed to search users. You may not have permission to share folders.",
+        "searchLabel": "Add people",
+        "searchPlaceholder": "Search by username or email...",
+        "searching": "Searching...",
+        "title": "Share Folder",
+        "updateError": "Failed to update share role",
+        "updated": "Share role updated",
+        "writer": "Writer",
+        "writerDisabledNote": "Writer role is disabled because this user only has read permissions in the organization."
+      },
+      "shared": {
+        "badge": "Shared"
+      },
+      "table": {
+        "actions": "Actions",
+        "created": "Created",
+        "items": "Items",
+        "name": "Name",
+        "owner": "Owner"
+      },
+      "title": "Folders",
+      "tooltip": {
+        "createdBy": "Created by {username} on {date} at {time}"
+      },
+      "validation": {
+        "nameMaxLength": "Folder name must be less than 50 characters",
+        "nameMinLength": "Folder name must be at least 3 characters",
+        "nameRequired": "Folder name is required"
+      },
+      "view": {
+        "grid": "Grid View",
+        "table": "Table View"
+      },
+      "viewMode": {
+        "grid": "Grid",
+        "gridView": "Grid View",
+        "table": "Table",
+        "tableView": "Table View"
+      },
+      "viewScope": {
+        "allFolders": "All Folders",
+        "myFolders": "My Folders"
+      }
+    },
+    "from": "from",
+    "genericError": "An error occurred",
+    "keyboard": {
+      "ctrl": "Ctrl",
+      "enter": "Enter"
+    },
+    "language_de": "German",
+    "language_en": "English",
+    "language_es": "Spanish",
+    "language_fr": "French",
+    "language_it": "Italian",
+    "language_ja": "Japanese",
+    "language_pt": "Portuguese",
+    "language_ru": "Russian",
+    "language_xx": "Other",
+    "language_zh": "Chinese",
+    "loading": "Loading...",
+    "login": {
+      "errors": {
+        "genericError": "An error occurred during login"
+      },
+      "heading": "Sign in to your account",
+      "signInButton": "Sign in with Keycloak",
+      "signingIn": "Signing in..."
+    },
+    "logo": {
+      "link": {
+        "aria_label": "Go to the TARGET homepage"
+      },
+      "title": "TARGET logo"
+    },
+    "logout": {
+      "cancel": "Cancel",
+      "confirm": "Logout",
+      "message": "Are you sure you want to log out of your account?",
+      "subtitle": "This action will end your session",
+      "title": "Confirm Logout",
+      "tooltip": "Logout"
+    },
+    "mentions": {
+      "comingSoon": "Coming soon",
+      "loading": {
+        "description": "This feature is not implemented yet.",
+        "title": "Not implemented yet"
+      },
+      "title": "Mentions"
+    },
+    "moduleUnavailable": "Module unavailable",
+    "modules": {
+      "explore": "Knowledge Graph",
+      "screen": "Company Card",
+      "stream": "Stream",
+      "target": "Watchfile"
+    },
+    "na": "N/A",
+    "new": "New",
+    "next": "Next",
+    "noData": "No data available",
+    "notFound": "Not found",
+    "on": "on",
+    "openInNewTab": "{url} - New tab",
+    "pagination": {
+      "dispatched": "item on | item on | items on",
+      "displayResults": "Displaying results",
+      "displaying": "Displaying {start} to {end} of {total} {itemName}",
+      "next": "Next",
+      "of": "of",
+      "page": "Page:",
+      "pages": "page | page | pages",
+      "previous": "Previous",
+      "show": "Show:",
+      "to": "to"
+    },
+    "preview": {
+      "items": {
+        "newMessage": "New Message Received",
+        "newMessageDesc": "You have a new message from John Doe",
+        "profileComplete": "Profile Completed",
+        "profileCompleteDesc": "Your profile setup is now complete",
+        "systemUpdate": "System Update",
+        "systemUpdateDesc": "Application updated to version 2.1.0"
+      }
+    },
+    "publishedOn": "Published on {date}",
+    "save": "Save",
+    "search": {
+      "placeholder": "Search"
+    },
+    "sidebar": {
+      "admin": "Admin",
+      "cards": "Cards",
+      "chapse": {
+        "activeContext": "Active context:",
+        "addCompany": "Add company",
+        "addThisCompany": "Add",
+        "clearHistory": "Clear history",
+        "confirmClearMessages": "Are you sure you want to clear all messages?",
+        "confirmDeleteConversation": "Are you sure you want to delete this conversation?",
+        "context": "Context:",
+        "dateGroups": {
+          "lastMonth": "Last 30 days",
+          "lastWeek": "Last 7 days",
+          "older": "Older",
+          "today": "Today",
+          "yesterday": "Yesterday"
+        },
+        "enterFullscreen": "Enter fullscreen",
+        "errors": {
+          "deleteConversationFailed": "Error deleting conversation",
+          "loadConversationFailed": "Error loading conversation",
+          "loadConversationsFailed": "Error loading conversations",
+          "notAuthenticated": "Not authenticated",
+          "sendMessageFailed": "Sorry, an error occurred. Please try again."
+        },
+        "exitFullscreen": "Exit fullscreen",
+        "loadMore": "Load more",
+        "newConversation": "New conversation",
+        "noCompaniesFound": "No companies found",
+        "placeholder": "Write a message...",
+        "searchCompanies": "Search companies...",
+        "suggestions": {
+          "company": {
+            "summary": "Give me a summary of this company",
+            "technologies": "List the mentioned technologies"
+          },
+          "folder": {
+            "compare": "Compare the companies in this folder",
+            "summarize": "Summarize the companies in this folder"
+          },
+          "home": {
+            "orgActivity": "Summarize my organization activity",
+            "recentCompanies": "Show me my recent companies"
+          }
+        },
+        "thinking": "Thinking...",
+        "title": "Chaps-e",
+        "toContext": "to context",
+        "toSend": "To send",
+        "typeToSearch": "Type to search companies",
+        "welcomeMessage": "Hello! I'm Chaps-e, your AI assistant. How can I help you today?"
+      },
+      "folders": "Folders",
+      "foldersSidebar": {
+        "allFolders": "Folders",
+        "favorites": "Favorites",
+        "noFolders": "No folders",
+        "noFoldersFound": "No folders found",
+        "search": "Search a folder...",
+        "title": "Folders",
+        "viewAll": "View all folders →"
+      },
+      "footer": {
+        "accessibility": "Accessibility",
+        "profile": "Profile",
+        "settings": "Settings"
+      },
+      "help": "Help",
+      "home": "Home",
+      "notifications": {
+        "activityMessage": "created",
+        "categories": {
+          "export": "Export",
+          "monitor": "Monitoring",
+          "share": "Share",
+          "system": "System",
+          "team": "Team"
+        },
+        "categoryCompany": "Company",
+        "categoryFolder": "Folder",
+        "companyCreated": "New company added",
+        "errorLoading": "Unable to load notifications",
+        "folderCreated": "New folder created",
+        "markAllRead": "Mark all as read",
+        "noNotifications": "No notifications",
+        "title": "Notifications",
+        "upToDate": "You are up to date! All notifications will appear here."
+      },
+      "organization": "Team",
+      "organizations": "organizations",
+      "search": "Search",
+      "settings": "Settings",
+      "team": "Team",
+      "tokens": {
+        "advisor": "Your ChapsVision advisor",
+        "contact": "Contact",
+        "createdBy": "Card created by",
+        "credits": "{count} credits",
+        "needMore": "Need more Credits?",
+        "noHistory": "No usage history",
+        "noHistoryDesc": "Token usage will appear here when you create company cards.",
+        "title": "Credits",
+        "today": "Today",
+        "viewHistory": "View all history",
+        "yesterday": "Yesterday"
+      }
+    },
+    "soon": "Soon",
+    "time": {
+      "day": "day",
+      "days": "days",
+      "daysAgo": "{count}d ago",
+      "fewMinutes": "a few minutes",
+      "hours": "{count}h",
+      "hoursAgo": "{count}h ago",
+      "justNow": "just now",
+      "minutesAgo": "{count} min ago"
+    },
+    "to": "to",
+    "validation": {
+      "password": {
+        "lowercase": "Password must contain at least one lowercase letter",
+        "minLength": "Password must be at least 8 characters",
+        "number": "Password must contain at least one number",
+        "required": "Password is required",
+        "specialChar": "Password must contain at least one special character",
+        "uppercase": "Password must contain at least one uppercase letter"
+      }
+    },
+    "welcome": "Welcome"
+  },
+  "dashboard": {
+    "actions": {
+      "cards": "Cards",
+      "search": "Search"
+    },
+    "home": {
+      "assistant": {
+        "actions": {
+          "generatePdf": "Generate a PDF for me",
+          "newSearch": "I want to make a new search"
+        },
+        "greeting": "Can I help you?"
+      },
+      "modules": {
+        "actions": {
+          "companyScreen": "Create a Screen",
+          "contactSales": "Contact Sales",
+          "open": "Open"
+        },
+        "discover": {
+          "category": "Search Data",
+          "description": "Share strategic insights",
+          "name": "Discover"
+        },
+        "explore": {
+          "category": "Cartography",
+          "description": "Interactive knowledge graph for advanced data visualization and discovery",
+          "name": "Explore"
+        },
+        "screen": {
+          "category": "Business Intelligence",
+          "description": "Deep company intelligence and comprehensive business screening with advanced analytics",
+          "name": "Screen"
+        },
+        "status": {
+          "active": "Active",
+          "comingSoon": "Coming Soon",
+          "proFeature": "Pro Feature"
+        },
+        "target": {
+          "category": "Market Analysis",
+          "description": "AI-powered market watch with smart alerts and comprehensive monitoring tools",
+          "name": "Target"
+        }
+      },
+      "recentActivities": {
+        "actions": {
+          "createdCompany": "created a new Company Card about",
+          "createdFolder": "created the Folder"
+        },
+        "by": "by {username}",
+        "error": {
+          "description": "There was a problem loading organization activities. Please try again later.",
+          "title": "Unable to load recent activities"
+        },
+        "noRecentActivities": "No recent activities",
+        "noTeamActivities": "No activities from your colleagues yet",
+        "startCreating": "Start by creating your first company",
+        "title": "Team Activities"
+      },
+      "recentProjects": {
+        "badge": {
+          "collaborative": "Collaborative"
+        },
+        "error": {
+          "description": "There was a problem loading your recent projects. Please try again later.",
+          "title": "Unable to load recent projects"
+        },
+        "noFolder": "No folder",
+        "noRecentProjects": "No recent projects yet",
+        "timeAgo": "{time} ago",
+        "title": "Recent Projects",
+        "viewAll": "View all"
+      },
+      "welcome": {
+        "title": "Welcome back, {name}!"
+      }
+    },
+    "quickActions": {
+      "allCompanies": {
+        "description": "View companies database",
+        "title": "All Companies"
+      },
+      "searchCompanies": {
+        "description": "Find and explore companies",
+        "title": "Search Companies"
+      },
+      "settings": {
+        "description": "Configure preferences",
+        "title": "Settings"
+      }
+    },
+    "stats": {
+      "activeTasks": "Active Tasks",
+      "last24Hours": "Last 24 hours",
+      "recentUpdates": "Recent Updates",
+      "totalCompanies": "Total Companies"
+    },
+    "title": "Dashboard"
+  },
+  "screen": {
+    "cards": {
+      "actions": {
+        "delete": "Delete",
+        "view": "View"
+      },
+      "noResults": "No company found",
+      "table": {
+        "actions": "actions",
+        "created": "Created on",
+        "creator": "Creator",
+        "lastModification": "Last modification",
+        "name": "Name",
+        "owner": "Created by"
+      },
+      "title": "Cards"
+    },
+    "chapse": {
+      "conversations": "Conversations",
+      "deleteConversation": "Delete conversation",
+      "errors": {
+        "deleteConversationFailed": "Error deleting conversation",
+        "loadConversationFailed": "Error loading conversation",
+        "loadConversationsFailed": "Error loading conversations",
+        "notAuthenticated": "Not authenticated",
+        "sendMessageFailed": "Sorry, an error occurred. Please try again."
+      },
+      "maxCompanies": "(max 3)",
+      "newConversation": "New conversation",
+      "noConversations": "No conversations yet",
+      "startConversation": "Start a new conversation to begin",
+      "untitledConversation": "New conversation"
+    },
+    "chapseAssist": {
+      "alert": {
+        "actionLabel": "Set Up Now",
+        "dismissLabel": "Maybe Later",
+        "title": "Get Personalized AI Recommendations"
+      },
+      "quickActions": {
+        "checkingPreferences": "Checking AI preferences...",
+        "configure": "Configure AI Preferences",
+        "empty": {
+          "loadedMessage": "Unable to generate quick actions for this company. Try refreshing or check back later.",
+          "message": "Configure your AI preferences to see personalized recommendations.",
+          "title": "No Quick Actions Available"
+        },
+        "error": {
+          "message": "An error occurred while generating actions. Please try again.",
+          "preferencesCheck": "Failed to Check Preferences",
+          "title": "Failed to Load Quick Actions"
+        },
+        "loading": "Generating personalized actions...",
+        "refresh": "Refresh",
+        "title": "Chaps-e Smart Assist",
+        "tryAgain": "Try Again"
+      }
+    },
+    "company": {
+      "actions": "Actions",
+      "analysis": {
+        "loading": "Loading analysis...",
+        "title": "Analysis"
+      },
+      "analysisCard": {
+        "comingSoon": "Coming soon",
+        "error": {
+          "generic": {
+            "description": "An error occurred during profile generation. Please retry later or contact support if the problem persists.",
+            "title": "Analysis failed"
+          },
+          "message": "An error occurred during analysis",
+          "rateLimit": {
+            "description": "The service is temporarily overloaded. Please retry in {seconds} seconds.",
+            "title": "Service temporarily unavailable",
+            "waitingLabel": "Retry in {seconds}s"
+          },
+          "recoverable": {
+            "description": "An error occurred during analysis. You can retry.",
+            "title": "Temporary error"
+          },
+          "retry": "Retry",
+          "title": "Error"
+        },
+        "loading": "Analysis in progress...",
+        "noData": "No data available for this section",
+        "status": {
+          "error": "Error",
+          "notStarted": "Not started",
+          "pending": "Pending",
+          "running": "In progress",
+          "succeeded": "Completed"
+        },
+        "viewMore": "View more"
+      },
+      "analysisCards": {
+        "communications": {
+          "description": "Press releases, public statements, and official communications",
+          "insights": "Communication Insights",
+          "title": "Corporate Communications"
+        },
+        "csr": {
+          "description": "CSR initiatives, sustainability programs, and social impact",
+          "insights": "CSR Insights",
+          "title": "Corporate Social Responsibility"
+        },
+        "jobs": {
+          "description": "Current job openings and career opportunities",
+          "insights": "Hiring Insights",
+          "title": "Job Offers"
+        },
+        "press": {
+          "description": "Press releases, news articles, and media coverage",
+          "insights": "Media Insights",
+          "title": "Press & Media"
+        },
+        "products": {
+          "description": "Browse products, services, and offerings",
+          "insights": "Product Insights",
+          "title": "Products & Services"
+        },
+        "profile": {
+          "description": "View detailed company information, business lines, and key metrics",
+          "insights": "Profile Insights",
+          "title": "Company Profile"
+        },
+        "team": {
+          "description": "Leadership team, organizational structure, and key personnel",
+          "insights": "Team Insights",
+          "title": "Team & Management"
+        },
+        "timeline": {
+          "description": "Company history, milestones, and key events over time",
+          "insights": "Historical Insights",
+          "title": "Timeline & History"
+        }
+      },
+      "archive": {
+        "confirm": {
+          "button": "Archive Company"
+        },
+        "details": "Company Details",
+        "error": "Failed to archive company \"{name}\". Please try again.",
+        "subtitle": "This will move the company to the archive.",
+        "success": "Company \"{name}\" has been archived successfully",
+        "title": "Archive Company",
+        "warning": {
+          "message": "Archiving a company will hide it from the main list. You can restore it later from the archived view."
+        }
+      },
+      "chat": {
+        "askOurAi": "Ask our AI",
+        "assistant": {
+          "name": "Basil AI Assistant",
+          "online": "Online & ready to help",
+          "shortName": "Basil AI"
+        },
+        "errorMessage": "Sorry, I encountered an error processing your request. Please try again.",
+        "noResponse": "I received your message but couldn't generate a response.",
+        "placeholder": "Write a message...",
+        "thinking": "Thinking...",
+        "welcomeMessage": "Hello! I am Basil, your assistant. I can help you with questions about this company. What would you like to know?"
+      },
+      "clearSearch": "Clear Search",
+      "create": {
+        "button": "Make a new search",
+        "chooseFolderPlaceholder": "Choose a folder...",
+        "inFolder": "Create a new company screen in folder",
+        "noFolders": {
+          "action": "Create Folder",
+          "message": "You need to create a folder before creating a company screen",
+          "title": "No folders available"
+        },
+        "selectFolder": "Select Folder"
+      },
+      "created": "Created",
+      "createdAt": "Created on",
+      "dashboard": {
+        "description": "Company Information Dashboard",
+        "generalInfo": {
+          "ceo": "CEO",
+          "headquarters": "Headquarters",
+          "revenue": "Revenue",
+          "website": "Website"
+        },
+        "infoCards": {
+          "activities": {
+            "description": "Explore company events, trade shows, and key activities.",
+            "title": "Activities & Events"
+          },
+          "communications": {
+            "description": "Press releases, public statements, and official communications.",
+            "title": "Corporate Communications"
+          },
+          "financials": {
+            "description": "Financial data, revenue information, and market performance.",
+            "title": "Financials"
+          },
+          "jobs": {
+            "description": "Current job openings, career opportunities, and hiring information.",
+            "title": "Job Offers"
+          },
+          "mentions": {
+            "description": "News articles, media coverage, and third-party mentions.",
+            "title": "Mentions"
+          },
+          "press": {
+            "description": "Press releases, news articles, interviews, and media mentions.",
+            "title": "Press & Media Coverage"
+          },
+          "products": {
+            "description": "Browse the company's products, services, and offerings.",
+            "title": "Products"
+          },
+          "profile": {
+            "description": "View detailed company information, business lines, and key metrics.",
+            "title": "Company Profile"
+          },
+          "team": {
+            "description": "Leadership team, organizational structure, and key personnel.",
+            "title": "Team & Management"
+          }
+        },
+        "title": "Company Dashboard"
+      },
+      "debug": {
+        "workflowTitle": "Debug: Search Workflow"
+      },
+      "delete": {
+        "button": "Delete",
+        "confirm": {
+          "button": "Delete Company",
+          "label": "Type the company name to confirm deletion",
+          "message": "Type the company name to confirm deletion:",
+          "placeholder": "Enter company name..."
+        },
+        "details": "Company Details",
+        "error": "Failed to delete company \"{name}\". Please try again.",
+        "subtitle": "This action cannot be undone",
+        "success": "Company \"{name}\" has been deleted successfully",
+        "title": "Delete Company",
+        "warning": {
+          "message": "All associated data including tasks, reports, and history will be permanently removed. This action cannot be undone.",
+          "title": "Warning: This will permanently delete the company"
+        }
+      },
+      "empty": {
+        "noCompanies": {
+          "description": "Get started by creating your first company to track and manage your business relationships.",
+          "title": "No companies yet"
+        },
+        "noResults": {
+          "description": "No companies match \"{query}\". Try adjusting your search terms.",
+          "descriptionNoQuery": "Try adjusting your search terms",
+          "title": "No companies found"
+        }
+      },
+      "export": {
+        "button": "Export",
+        "modal": {
+          "cancel": "Cancel",
+          "description": "Select which sections to include in your PowerPoint export:",
+          "deselectAll": "Deselect All",
+          "export": "Export",
+          "options": {
+            "csr": {
+              "description": "Responsibility initiatives and charity actions",
+              "label": "Corporate Social Responsibility"
+            },
+            "digitalStrategy": {
+              "description": "Digital approach, loyalty programs, and online services",
+              "label": "Digital Strategy & Social Media"
+            },
+            "jobs": {
+              "description": "Current job openings and hiring information",
+              "label": "Job Opportunities"
+            },
+            "news": {
+              "description": "Press articles and media coverage",
+              "label": "Press & Media"
+            },
+            "press": {
+              "description": "Media articles and press releases",
+              "label": "Press Coverage"
+            },
+            "productsServices": {
+              "description": "Product range, partner brands, and private labels",
+              "label": "Products and Services"
+            },
+            "profile": {
+              "description": "Basic information, business lines, and key metrics",
+              "label": "Company Profile"
+            },
+            "targetAudience": {
+              "description": "Customer type and marketing positioning",
+              "label": "Target Audience & Customer Base"
+            },
+            "team": {
+              "description": "Leadership team and organizational structure",
+              "label": "Team & Management"
+            },
+            "timeline": {
+              "description": "Company timeline events and milestones",
+              "label": "Timeline"
+            },
+            "titleSlide": {
+              "description": "Cover page with company name and date",
+              "label": "Title Slide"
+            }
+          },
+          "preferencesSaved": "Preferences saved",
+          "selectAll": "Select All",
+          "title": "Export Options"
+        }
+      },
+      "fields": {
+        "ceo": "CEO",
+        "employeeCount": "Employee Count",
+        "headquarters": "Headquarters",
+        "notSpecified": "Not specified",
+        "revenue": "Revenue",
+        "website": "Website"
+      },
+      "footer": {
+        "createdBy": "Created by {username} on {date}"
+      },
+      "item": {
+        "by": "by",
+        "created": "Created on",
+        "tasks": {
+          "count": "{count} tasks",
+          "status": {
+            "complete": "Complete",
+            "issues": "Issues",
+            "new": "New",
+            "partial": "Partial",
+            "processing": "Processing"
+          }
+        },
+        "time": {
+          "daysAgo": "{days}d ago",
+          "hoursAgo": "{hours}h ago",
+          "justNow": "just now",
+          "minutesAgo": "{minutes}m ago"
+        }
+      },
+      "list": {
+        "create": {
+          "actions": {
+            "cancel": "Cancel",
+            "create": "Create"
+          },
+          "name": {
+            "label": "Company Name",
+            "placeholder": "Enter company name"
+          },
+          "title": "Create New Company",
+          "website": {
+            "label": "Website",
+            "placeholder": "Enter website URL"
+          }
+        },
+        "delete": {
+          "actions": {
+            "cancel": "Cancel",
+            "delete": "Delete"
+          },
+          "confirm": "Are you sure you want to delete",
+          "title": "Delete Company",
+          "warning": "This action cannot be undone."
+        },
+        "description": "Manage your company database",
+        "error": {
+          "description": "Failed to load companies"
+        },
+        "table": {
+          "loading": "Loading...",
+          "website": "Website"
+        },
+        "title": "Companies"
+      },
+      "loading": "Loading companies...",
+      "management": {
+        "description": "View and manage all companies in your organization",
+        "title": "Company Management"
+      },
+      "name": "Company",
+      "onlinePresence": {
+        "socialMedia": "Social Media Presence",
+        "title": "Online Presence",
+        "website": "Website"
+      },
+      "owner": "Owner",
+      "refresh": {
+        "button": "Refresh",
+        "confirm": {
+          "button": "Refresh Data"
+        },
+        "consumptionNotice": "35 tokens will be consumed",
+        "details": "Company Details",
+        "error": "Failed to refresh company \"{name}\"",
+        "subtitle": "Get the latest information about {name}",
+        "success": "Company \"{name}\" refresh has started",
+        "title": "Refresh Company Data",
+        "tokens": {
+          "cost": "Refresh cost",
+          "current": "Current tokens",
+          "remaining": "After refresh",
+          "title": "Token Information"
+        },
+        "tooltip": {
+          "insufficientTokens": "Insufficient tokens",
+          "tasksRunning": "Tasks are currently running",
+          "waitForTasks": "Wait for all tasks to complete"
+        },
+        "warning": {
+          "message": "Current data will be overwritten when new data arrives"
+        }
+      },
+      "restore": {
+        "confirm": {
+          "button": "Restore Company",
+          "label": "Restore"
+        },
+        "details": "Company Details",
+        "error": "Failed to restore company \"{name}\". Please try again.",
+        "subtitle": "This will restore the company to the active list",
+        "success": "Company \"{name}\" has been restored successfully",
+        "title": "Restore Company",
+        "warning": {
+          "message": "Restoring a company will make it visible again in the main list."
+        }
+      },
+      "search": {
+        "label": "Search companies...",
+        "placeholder": "Search companies..."
+      },
+      "sections": {
+        "analyses": "Analysis",
+        "analysis": "Analysis",
+        "notAvailable": "Section not available",
+        "onlinePresence": "Online Presence",
+        "socialMedia": "Social Media"
+      },
+      "status": "Status",
+      "taskError": {
+        "description": "An error occurred while loading the page",
+        "restartTask": "Restart task",
+        "title": "Error"
+      },
+      "tasks": {
+        "analysisInProgress": "Analysis in progress...",
+        "canBeRestarted": "Tasks can be restarted or have not been started yet",
+        "completed": "{count} completed ({percentage}%)",
+        "completedCount": "{completed}/{total} tasks completed",
+        "completedShort": "{count} completed",
+        "count": "tasks",
+        "error": "{count} errors ({percentage}%)",
+        "errorShort": "{count} errors",
+        "pending": "{count} pending ({percentage}%)",
+        "pendingShort": "{count} pending",
+        "running": "{count} running ({percentage}%)",
+        "runningShort": "{count} running",
+        "startAll": "Start all tasks"
+      },
+      "translation": {
+        "alreadyInProgress": "Translation already in progress",
+        "button": "Translate",
+        "clickToTranslate": "Click to translate",
+        "clickToView": "Click to view in this language",
+        "currentlyViewing": "Currently viewing",
+        "failed": "Translation request failed. Please try again.",
+        "inProgress": "Translation in progress...",
+        "languages": {
+          "de": "German",
+          "es": "Spanish",
+          "fr": "French",
+          "pt": "Portuguese"
+        },
+        "original": "Original",
+        "progressDetail": "{translated}/{total} fields ({percent}%)",
+        "started": "Translation started for {count} fields to {language}",
+        "viewingDefault": "Viewing in original language",
+        "viewingIn": "Now viewing in {language}"
+      },
+      "validation": {
+        "createError": "An error occurred while creating the company",
+        "folderRequired": "Please select a folder",
+        "insufficientTokens": "Insufficient tokens. You need at least 35 tokens to create a company.",
+        "invalidNameFormat": "Company name must contain at least 2 alphabetic characters",
+        "invalidWebsiteFormat": "Please enter a valid website URL",
+        "loadingTokens": "Loading tokens...",
+        "loadingorganization": "Loading organization...",
+        "moduleDisabled": "The Stream module is disabled",
+        "nameRequired": "Company name is required",
+        "networkError": "Network error - please try again",
+        "websiteRequired": "Website URL is required"
+      },
+      "view": {
+        "grid": "Grid View",
+        "label": "View",
+        "table": "Table View"
+      },
+      "website": "Website"
+    },
+    "csv": {
+      "upload": {
+        "actions": {
+          "cancel": "Cancel",
+          "close": "Close",
+          "fixAndReupload": "Fix CSV and Re-upload",
+          "goToFolder": "Go to Folder",
+          "import": "Import Companies",
+          "importCompanies": "Import {count} Companies",
+          "importing": "Importing...",
+          "uploadAnother": "Upload Another CSV"
+        },
+        "button": "CSV Upload",
+        "chooseFile": "Choose File",
+        "companiesFound": "companies found",
+        "companiesFoundCount": "{count} companies found in CSV",
+        "description": "Upload a CSV file to import multiple companies at once",
+        "dragDrop": "Drag and drop your CSV file here",
+        "errors": {
+          "emptyFile": "The CSV file is empty",
+          "importError": "Error importing companies",
+          "invalidFile": "Invalid file format. Please upload a CSV file.",
+          "missingColumns": "Missing required columns: {columns}",
+          "parseError": "Error parsing CSV file",
+          "uploadError": "Error uploading file",
+          "validationError": "Error validating companies"
+        },
+        "format1": "First row must contain column headers",
+        "format2": "Required columns: company_name, website",
+        "format3": "Optional columns: description, tags",
+        "format4": "Example: \"Acme Inc.,https://acme.com,A great company,tech;saas\"",
+        "formatTitle": "Expected CSV Format",
+        "moreRows": "{count} more rows not shown",
+        "or": "or",
+        "preview": "Data Preview",
+        "processing": "Processing CSV file...",
+        "remove": "Remove",
+        "results": {
+          "failed": "Failed to import",
+          "failedCount": "{count} companies failed to import",
+          "failedImportsTitle": "Failed Imports",
+          "failedLabel": "Failed",
+          "success": "Successfully imported",
+          "successCount": "{count} companies imported successfully",
+          "successful": "Successful",
+          "title": "Import Results",
+          "totalProcessed": "Total Processed",
+          "viewCompanies": "View Companies"
+        },
+        "rows": "rows",
+        "selectedFile": "Selected file",
+        "showingFirst": "Showing first",
+        "step1": "Step 1: Choose File",
+        "step2": "Step 2: Validate Data",
+        "step3": "Step 3: Import",
+        "table": {
+          "companyName": "Company Name",
+          "row": "Row",
+          "website": "Website"
+        },
+        "title": "Import Companies from CSV",
+        "tokens": {
+          "available": "tokens available",
+          "insufficient": "Insufficient tokens",
+          "insufficientMessage": "You need {required} tokens but only have {available} available",
+          "moduleDisabled": "CSV import requires the Stream module to be enabled",
+          "required": "tokens required",
+          "title": "Token Usage",
+          "tokensAvailable": "You have {count} tokens available",
+          "tokensRequired": "{count} tokens required",
+          "tokensRequiredLabel": "Tokens Required"
+        },
+        "validateData": "Validate Data",
+        "validating": "Validating companies...",
+        "validation": {
+          "company": "Company",
+          "error": "Error",
+          "errorsFound": "Validation Errors Found",
+          "errorsFoundMessage": "You can either fix the errors in your CSV file and re-upload, or proceed with import which will skip invalid rows.",
+          "errorsTitle": "Validation Errors",
+          "hideDetails": "Hide Details",
+          "invalid": "Invalid companies",
+          "invalidCompanies": "{count} invalid companies",
+          "invalidCompaniesLabel": "Invalid Companies",
+          "row": "Row",
+          "title": "Validation Results",
+          "valid": "Valid companies",
+          "validCompanies": "{count} valid companies",
+          "validCompaniesLabel": "Valid Companies",
+          "viewDetails": "View Details"
+        },
+        "validationFailed": "Validation failed. Please check your connection and try again."
+      }
+    },
+    "dataSources": {
+      "apiKey": {
+        "label": "API Key",
+        "notConfigured": "Not configured",
+        "placeholder": "Enter API key..."
+      },
+      "apiSecret": {
+        "label": "API Secret",
+        "notConfigured": "Not configured",
+        "placeholder": "Enter API secret..."
+      },
+      "cancel": "Cancel",
+      "description": "Configure external data providers for company screening",
+      "disabled": "Disabled",
+      "edit": "Edit",
+      "enabled": "Enabled",
+      "enabledAt": "Enabled at",
+      "lastUpdated": "Last updated",
+      "pappers": {
+        "description": "French company data provider (legal info, financials, officers)",
+        "name": "Pappers"
+      },
+      "save": "Save",
+      "title": "Data Sources",
+      "worldcheck": {
+        "description": "LSEG WorldCheck screening for sanctions, PEP, and adverse media",
+        "name": "WorldCheck"
+      }
+    },
+    "jobs": {
+      "card": {
+        "description": "Description",
+        "postedDate": "Posted:",
+        "requirements": "Requirements"
+      },
+      "emptyState": {
+        "hint": "Job listings and hiring insights will appear here once available",
+        "label": "No job offers available"
+      },
+      "insights": {
+        "growthIndicators": "Growth Indicators",
+        "hiringFocus": "Hiring Focus",
+        "title": "Hiring Insights",
+        "topDepartments": "Top Departments",
+        "totalOpenings": "Total Openings"
+      },
+      "listings": {
+        "noResults": "No job offers found matching \"{query}\"",
+        "search": {
+          "placeholder": "Search jobs..."
+        },
+        "title": "Current Openings"
+      },
+      "loading": {
+        "description": "Fetching current job opportunities...",
+        "title": "Loading job offers..."
+      },
+      "noData": {
+        "description": "Fetch job offers for this company to see current opportunities",
+        "title": "No Job Offers Available"
+      },
+      "title": "Job Offers"
+    },
+    "products": {
+      "badges": {
+        "new": "New"
+      },
+      "categories": {
+        "all": "All Categories"
+      },
+      "count": "{count} products",
+      "countInCategory": "{count} products in this category",
+      "header": {
+        "summary": "{total} products across {categories} categories",
+        "title": "Product Portfolio"
+      },
+      "insights": {
+        "label": "Product Insights",
+        "title": "Product Insights"
+      },
+      "loading": {
+        "description": "Fetching products and services data...",
+        "title": "Loading products..."
+      },
+      "noData": {
+        "description": "Products information will be displayed here once available.",
+        "title": "No Products Available"
+      },
+      "noResults": "No products found matching your search",
+      "search": {
+        "placeholder": "Search products..."
+      },
+      "showLess": "Show Less",
+      "showMore": "Show {count} More",
+      "title": "Products & Services",
+      "viewMode": {
+        "grid": "Grid View",
+        "list": "List View"
+      }
+    },
+    "profile": {
+      "loading": {
+        "description": "Fetching comprehensive company information...",
+        "title": "Loading company profile..."
+      },
+      "sections": {
+        "businessLine": {
+          "notFound": "Not found",
+          "title": "Line of business"
+        },
+        "csr": {
+          "awards": "Awards & Certifications",
+          "charity": "Charity Actions",
+          "community": "Community Involvement",
+          "diversity": "Diversity & Inclusion",
+          "ethics": "Ethical Practices",
+          "insights": {
+            "title": "CSR Insights"
+          },
+          "noData": "No CSR data available",
+          "responsibility": "Responsibility Statement",
+          "responsibility_initiatives": "Responsibility Initiatives",
+          "sustainability": "Sustainability Programs",
+          "title": "Corporate Social Responsibility"
+        },
+        "debug": {
+          "gpt": "Raw GPT Knowledge",
+          "mistral": "Raw Mistral Knowledge",
+          "title": "Raw Knowledge Data (Debug)",
+          "website": "Raw Scraped Website Content",
+          "wikipedia": "Raw Wikipedia Knowledge"
+        },
+        "digital": {
+          "digitalMarketingApproach": "Digital Marketing Approach",
+          "digitalTransformation": "Digital Transformation",
+          "eCommerceCapabilities": "E-Commerce Capabilities",
+          "insights": {
+            "title": "Digital Strategy Insights"
+          },
+          "loyaltyProgram": "Loyalty Program",
+          "mobileStrategy": "Mobile Strategy",
+          "onlineServices": "Online Services",
+          "overallStrategy": "Overall Strategy",
+          "strategy": "Digital Strategy",
+          "title": "Digital strategy"
+        },
+        "group": {
+          "notFound": "Not found",
+          "title": "Group"
+        },
+        "insights": {
+          "title": "Insights"
+        },
+        "jobs": {
+          "noData": "No job offers data available"
+        },
+        "metrics": {
+          "employees": "Number of employees",
+          "establishment": "Year of establishment",
+          "revenue": "Revenue"
+        },
+        "news": {
+          "latestUpdates": "Latest Updates",
+          "stats": {
+            "financialNews": "Financial News",
+            "mediaMentions": "Media Mentions",
+            "productLaunches": "Product Launches",
+            "totalPressItems": "Total Press Items"
+          },
+          "title": "Recent news",
+          "viewAll": "View All"
+        },
+        "press": {
+          "categories": {
+            "articles": "Articles",
+            "awardsRecognition": "Awards & Recognition",
+            "executiveInterviews": "Executive Interviews",
+            "financialNews": "Financial News",
+            "mediaMentions": "Media Mentions",
+            "partnershipAnnouncements": "Partnership Announcements",
+            "pressReleases": "Press Releases",
+            "productLaunches": "Product Launches"
+          },
+          "insights": {
+            "title": "Press Coverage Insights"
+          },
+          "noData": "No press coverage data available",
+          "stats": {
+            "title": "Press Coverage Stats"
+          }
+        },
+        "products": {
+          "customerType": "Customer Type",
+          "insights": {
+            "title": "Product Insights"
+          },
+          "marketingPositioning": "Marketing Positioning",
+          "noData": "No product data available",
+          "partnerBrands": "Partner Brands",
+          "partnersAndLabels": "Partners & Labels",
+          "privateLabels": "{company} Private Labels",
+          "range": "Product Range",
+          "title": "Products and services",
+          "viewProducts": "View Products"
+        },
+        "profile": {
+          "label": "Profile",
+          "noData": "No profile data available for this company"
+        },
+        "target": {
+          "customerBase": "Customer Base",
+          "positioning": "Marketing Positioning",
+          "title": "Target audience"
+        },
+        "team": {
+          "noData": "No team data available"
+        },
+        "timeline": {
+          "noData": "No timeline data available"
+        }
+      },
+      "tabs": {
+        "digitalStrategy": "Digital Strategy",
+        "partnersLabels": "Partners & Labels",
+        "productsOverview": "Products Overview"
+      },
+      "title": "Company Profile"
+    },
+    "search": {
+      "actions": {
+        "deleteData": "Delete Data",
+        "launchSearch": "Launch Search"
+      },
+      "advancedSearch": "Advanced search",
+      "companyIdentity": "Company identity",
+      "fields": {
+        "companyName": {
+          "error": "Company name must be at least 2 characters long",
+          "label": "Company name",
+          "placeholder": "ChapsVision"
+        },
+        "website": {
+          "error": "Please enter a valid URL (e.g., https://www.example.com)",
+          "label": "Website",
+          "placeholder": "https://www.chapsvision.com"
+        }
+      },
+      "mandatoryFields": "mandatory fields to start search",
+      "title": "New company"
+    },
+    "tasks": {
+      "events": {
+        "ready": "Your Screen about <span class=\"font-bold\">{companyName}</span> is ready!",
+        "readyWithErrors": "Your Screen about <span class=\"font-bold\">{companyName}</span> completed with some errors.",
+        "taskFailed": "Task \"{taskType}\" failed: {error}",
+        "taskStatus": "Task \"{taskType}\" status: {status}",
+        "taskSucceeded": "Task \"{taskType}\" completed successfully",
+        "view": "View"
+      }
+    },
+    "team": {
+      "apis": {
+        "active": "Active",
+        "add_description": "Connect a new data source",
+        "add_first": "Add Your First API",
+        "add_new": "Add External API",
+        "added": "Added",
+        "apiKeyLabel": "API Key:",
+        "apiKeyPlaceholder": "Your API key",
+        "api_key": "API Key",
+        "description": "Connect external APIs to use as data sources in your workflows. Add your API credentials to integrate third-party services and expand your automation capabilities.",
+        "inactive": "Inactive",
+        "name": "API Name",
+        "namePlaceholder": "e.g., Weather API",
+        "new_api": "New External API",
+        "no_apis": "No External APIs",
+        "no_apis_description": "Add external APIs to connect new data sources",
+        "requests": "requests",
+        "save": "Save API",
+        "title": "External APIs",
+        "url": "API URL",
+        "urlLabel": "URL:",
+        "urlPlaceholder": "https://api.example.com/v1"
+      },
+      "create": {
+        "button": "Add Member"
+      },
+      "departments": "Departments",
+      "description": "Manage team members and their permissions",
+      "disable": "Disable",
+      "edit": {
+        "description": "Update team member information and permissions",
+        "title": "Edit Team Member"
+      },
+      "email": "Email",
+      "emailCannotChange": "Email cannot be changed after creation",
+      "emailPlaceholder": "Enter email address",
+      "empty": {
+        "default": "No users",
+        "loading": {
+          "description": "Please wait while we load your team members",
+          "title": "Loading users..."
+        },
+        "noResults": {
+          "description": "Try a different search term or filter",
+          "descriptionNoFilter": "No users match the current filters",
+          "title": "No users found"
+        },
+        "noUsers": {
+          "description": "Add your first team member to get started with collaboration",
+          "title": "No users in organization"
+        }
+      },
+      "executives": "Executives",
+      "export": "Export",
+      "firstName": "First Name",
+      "firstNamePlaceholder": "Enter first name",
+      "hierarchy": {
+        "interactive": "Interactive",
+        "screenshot": "Take Screenshot",
+        "title": "Management Hierarchy",
+        "viewLinkedIn": "View LinkedIn Profile"
+      },
+      "insights": {
+        "label": "Team Insights",
+        "title": "Team Insights"
+      },
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Enter last name",
+      "levels": {
+        "all": "All Levels",
+        "ceo": "CEO",
+        "executives": "Executives",
+        "managers": "Managers",
+        "teamMembers": "Team Members"
+      },
+      "loading": {
+        "description": "Fetching team hierarchy and management structure...",
+        "title": "Loading team data..."
+      },
+      "managers": "Managers",
+      "managingCount": "Managing {count} people",
+      "members": {
+        "label": "Team Members",
+        "title": "Team Members"
+      },
+      "noData": {
+        "description": "Fetch team hierarchy for this company to see management structure",
+        "title": "No Team Data Available"
+      },
+      "noResults": "No team members found matching your criteria",
+      "pageSize": {
+        "label": "Items per page"
+      },
+      "permissions": "Permissions",
+      "permissions.description": "Select the permissions for this team member",
+      "permissionsList": {
+        "companyCreate": {
+          "description": "Add new companies to the organization",
+          "name": "Create Companies"
+        },
+        "companyDelete": {
+          "description": "Remove companies from the organization",
+          "name": "Delete Companies"
+        },
+        "companyView": {
+          "description": "Access detailed company information",
+          "name": "View Companies"
+        },
+        "organizationRead": {
+          "description": "View organization content and companies",
+          "name": "Basic Access"
+        },
+        "organizationWrite": {
+          "description": "Manage organization users and settings",
+          "name": "Team Management"
+        }
+      },
+      "search": {
+        "placeholder": "Search team members..."
+      },
+      "searchPlaceholder": "Search by name or position...",
+      "settings": {
+        "comingSoon": "Team settings will be available soon",
+        "title": "Team Settings"
+      },
+      "sort": {
+        "asc": "Ascending",
+        "created": "Created Date",
+        "desc": "Descending",
+        "email": "Email",
+        "label": "Sort by",
+        "name": "Name",
+        "username": "Username"
+      },
+      "status": {
+        "active": "Active",
+        "all": "All",
+        "disabled": "Disabled",
+        "label": "Status"
+      },
+      "subtitle": "Explore the organizational structure",
+      "table": {
+        "actions": "Actions",
+        "created": "Created",
+        "permissions": "Permissions",
+        "status": "Status",
+        "user": "User"
+      },
+      "tabs": {
+        "apis": "External APIs",
+        "settings": "Settings",
+        "users": "Team Users"
+      },
+      "title": "Team & Management",
+      "totalMembers": "Total Members",
+      "username": "Username",
+      "usernameCannotChange": "Username cannot be changed after creation",
+      "usernamePlaceholder": "Enter username (optional)",
+      "users": {
+        "error": {
+          "description": "Failed to load team members",
+          "title": "Error loading users"
+        },
+        "loading": "Loading users...",
+        "pagination": {
+          "itemName": "users"
+        }
+      },
+      "validation": {
+        "email": {
+          "invalid": "Please enter a valid email address",
+          "required": "Email is required"
+        },
+        "firstName": {
+          "required": "First name is required"
+        },
+        "lastName": {
+          "required": "Last name is required"
+        },
+        "password": {
+          "minLength": "Password must be at least 8 characters",
+          "required": "Password is required"
+        },
+        "username": {
+          "minLength": "Username must be at least 3 characters",
+          "required": "Username is required"
+        }
+      },
+      "viewInHierarchy": "View in Hierarchy",
+      "viewLinkedIn": "View LinkedIn Profile",
+      "views": {
+        "grid": "Grid View",
+        "list": "List View"
+      }
+    },
+    "timeline": {
+      "emptyState": {
+        "hint": "Timeline data will appear here once available",
+        "label": "No timeline data available"
+      },
+      "event": {
+        "impactAnalysis": "Impact Analysis"
+      },
+      "loading": {
+        "description": "Fetching milestone events data from AI agent...",
+        "title": "Loading company timeline data..."
+      },
+      "noData": {
+        "description": "Fetch milestone events for this company to see its history",
+        "title": "No Timeline Data Available"
+      },
+      "search": {
+        "noResults": "No events found matching \"{query}\"",
+        "placeholder": "Search..."
+      },
+      "sort": {
+        "newestFirst": "Newest first",
+        "oldestFirst": "Oldest first"
+      },
+      "title": "Timeline & Key Milestones"
+    },
+    "workflowStep": {
+      "completed": "Completed",
+      "error": "Error",
+      "processing": "Processing",
+      "skipped": "Skipped"
+    }
+  },
+  "settings": {
+    "aiPreferences": {
+      "settings": {
+        "actions": {
+          "cancel": "Cancel",
+          "edit": "Edit Preferences",
+          "save": "Save Changes"
+        },
+        "description": "Update your AI preferences to refine personalized recommendations",
+        "error": {
+          "message": "Failed to update your preferences. Please try again.",
+          "title": "Update Failed"
+        },
+        "lastUpdated": "Last updated: {date}",
+        "messages": {
+          "authError": "You must be logged in to update AI preferences",
+          "loadError": "Failed to load your preferences. Please try again."
+        },
+        "notConfigured": "Not configured",
+        "setUpButton": "Set Up AI Preferences",
+        "setUpDescription": "Set up your AI preferences to enable personalized quick actions and recommendations.",
+        "success": {
+          "message": "Your AI preferences have been updated successfully.",
+          "title": "Updated Successfully"
+        },
+        "title": "AI Assistant Preferences"
+      },
+      "setup": {
+        "actions": {
+          "cancel": "Cancel",
+          "save": "Save & Continue"
+        },
+        "description": "Tell us about your role and goals so we can provide personalized quick actions and recommendations tailored to your needs.",
+        "desiredOutput": {
+          "label": "Desired Output Format",
+          "required": "Desired output is required",
+          "tooLong": "Desired output must be less than 2000 characters"
+        },
+        "error": {
+          "message": "Failed to save your preferences. Please try again.",
+          "title": "Error"
+        },
+        "fields": {
+          "desiredOutput": {
+            "helper": "How would you like the AI to format its recommendations?",
+            "label": "Desired Output Format",
+            "placeholder": "e.g., Generate personalized outreach emails highlighting pain points with specific company references",
+            "required": "Desired output is required",
+            "tooLong": "Desired output must be less than 2000 characters"
+          },
+          "documentation": {
+            "helper": "Describe your product or service to help personalize recommendations (optional)",
+            "label": "Product/Service Documentation",
+            "placeholder": "e.g., Our product is a B2B SaaS platform that helps companies streamline workflow automation"
+          },
+          "goals": {
+            "helper": "What are you trying to achieve when researching companies?",
+            "label": "Your Goals",
+            "placeholder": "e.g., I want to identify which companies would benefit from our product and understand their pain points",
+            "required": "Goals are required",
+            "tooLong": "Goals must be less than 2000 characters"
+          },
+          "role": {
+            "helper": "What is your professional role?",
+            "label": "Your Role",
+            "placeholder": "e.g., Sales Representative, Marketing Manager, CEO",
+            "required": "Role is required",
+            "tooLong": "Role must be less than 255 characters"
+          }
+        },
+        "goals": {
+          "label": "Your Goals",
+          "required": "Goals are required",
+          "tooLong": "Goals must be less than 2000 characters"
+        },
+        "help": {
+          "tip1": "Be specific about your role and goals for more relevant recommendations",
+          "tip2": "Describe your desired output format clearly to get better-formatted results",
+          "tip3": "Include product details to receive more personalized and contextual suggestions",
+          "title": "Tips for Better Results"
+        },
+        "optional": "Optional",
+        "role": {
+          "label": "Your Role",
+          "required": "Role is required",
+          "tooLong": "Role must be less than 255 characters"
+        },
+        "success": {
+          "message": "Your AI preferences have been saved. Quick actions will now be personalized based on your profile.",
+          "title": "Success!"
+        },
+        "title": "Set Up Your AI Assistant",
+        "validation": {
+          "formInvalid": "Please fix the errors in the form"
+        }
+      }
+    },
+    "appearance": {
+      "accent": {
+        "active": "Active",
+        "currentColor": "Current Accent Color",
+        "description": "Choose your preferred accent color for the interface",
+        "personalizeDescription": "Your accent color affects buttons, links, highlights, and interactive elements throughout the application.",
+        "personalizeTitle": "Personalize Your Experience",
+        "title": "Accent Color"
+      },
+      "language": {
+        "description": "Select your preferred language",
+        "title": "Language"
+      },
+      "layout": {
+        "compact": {
+          "description": "Reduce spacing for more content",
+          "title": "Compact Mode"
+        },
+        "description": "Customize the interface layout",
+        "reducedMotion": {
+          "description": "Minimize animations and transitions",
+          "title": "Reduced Motion"
+        },
+        "title": "Layout Preferences"
+      },
+      "preview": {
+        "buttons": {
+          "danger": "Danger Button",
+          "primary": "Primary Button",
+          "secondary": "Secondary Button"
+        },
+        "card": {
+          "description": "This card demonstrates the current theme styling",
+          "title": "Sample Card Title"
+        },
+        "description": "See how your theme looks",
+        "input": {
+          "label": "Sample Input Field",
+          "placeholder": "Type something here..."
+        },
+        "interfaceDescription": "Experience how your interface looks with the current theme settings.",
+        "list": {
+          "title": "Sample List Items"
+        },
+        "sample": "This is a sample of your current theme",
+        "status": {
+          "active": "Active",
+          "error": "Error",
+          "pending": "Pending"
+        },
+        "tag1": "Sample",
+        "tag2": "Preview",
+        "title": "Theme Preview",
+        "toggle": {
+          "description": "This toggle demonstrates switch styling",
+          "label": "Sample Toggle"
+        }
+      },
+      "theme": {
+        "description": "Choose your preferred theme",
+        "options": {
+          "dark": {
+            "description": "Easy on the eyes in low light",
+            "title": "Dark"
+          },
+          "light": {
+            "description": "Clean and bright interface",
+            "title": "Light"
+          },
+          "system": {
+            "description": "Matches your device preference",
+            "title": "System"
+          }
+        },
+        "title": "Theme"
+      }
+    },
+    "credits": {
+      "balance": {
+        "current": "Current balance",
+        "label": "Available balance"
+      },
+      "cardDescription": "View credit usage and statistics",
+      "dailyUsage": {
+        "noData": "No consumption for this period",
+        "title": "Daily consumption"
+      },
+      "forecast": {
+        "title": "Remaining capacity"
+      },
+      "module": {
+        "canCreate": "You can still create",
+        "costPerItem": "1 {item} = {cost} credits",
+        "disabled": "Module disabled",
+        "explore": {
+          "item": "graph",
+          "itemPlural": "Graphs",
+          "label": "Graph"
+        },
+        "getQuote": "Get a quote",
+        "remaining": "{item} remaining",
+        "screen": {
+          "item": "company card",
+          "itemPlural": "Company cards",
+          "label": "Company card"
+        },
+        "target": {
+          "item": "watchfile",
+          "itemPlural": "Watchfiles",
+          "label": "Watchfile"
+        }
+      },
+      "modules": {
+        "all": "All",
+        "explore": "Explore",
+        "screen": "Screen",
+        "target": "Target"
+      },
+      "period": {
+        "30d": "30 days",
+        "7d": "7 days",
+        "90d": "90 days",
+        "all": "All time",
+        "custom": "Custom",
+        "endDate": "End",
+        "select": "Period",
+        "startDate": "Start"
+      },
+      "topUsers": {
+        "credits": "Credits",
+        "itemName": "users",
+        "noData": "No users found",
+        "rank": "Rank",
+        "search": "Search...",
+        "title": "User ranking",
+        "user": "User"
+      },
+      "unit": "credits",
+      "usage": {
+        "noData": "No consumption for this period",
+        "title": "Credit distribution",
+        "total": "Total consumed"
+      },
+      "usedCredits": "credits used"
+    },
+    "description": "Manage your account information and preferences",
+    "featureFlags": {
+      "description": "Add-on capabilities that enhance core modules. These features are disabled by default.",
+      "disabled": "Disabled",
+      "discover": {
+        "description": "Access external Discover dashboard",
+        "name": "Discover",
+        "saveError": "Failed to save URL",
+        "urlError": "Please enter a valid HTTPS URL",
+        "urlHint": "Enter the HTTPS URL for the Discover dashboard.",
+        "urlLabel": "External URL",
+        "urlPlaceholder": "https://discover.example.com"
+      },
+      "enabled": "Enabled",
+      "globalFeatures": "Global Features",
+      "pappers": {
+        "description": "French company data enrichment (legal info, financials, executives)",
+        "name": "Pappers"
+      },
+      "translation": {
+        "description": "Translate company data to other languages",
+        "name": "Translation"
+      },
+      "worldcheck": {
+        "description": "Due diligence screening (sanctions, PEP, adverse media)",
+        "name": "WorldCheck"
+      }
+    },
+    "help": {
+      "categories": {
+        "admin": "Administration",
+        "company": "Company Screening",
+        "organization": "Organization Management"
+      },
+      "description": "Find answers to your questions and learn how to use the application",
+      "error": {
+        "loadingContent": "Error loading help content."
+      },
+      "loading": {
+        "content": "Loading help content..."
+      },
+      "noContent": {
+        "message": "You don't have access to any help sections based on your current permissions.",
+        "title": "No Help Content Available"
+      },
+      "selectTopic": {
+        "message": "Choose a topic from the sidebar to view detailed documentation.",
+        "placeholder": "Select a help topic",
+        "title": "Select a Help Topic"
+      },
+      "title": "Help"
+    },
+    "language": {
+      "description": "Choose your preferred language for the application",
+      "title": "Language Settings"
+    },
+    "notifications": {
+      "description": "Manage your notification preferences",
+      "title": "Notification Settings"
+    },
+    "preferences": {
+      "actions": {
+        "cancel": "Cancel",
+        "deleteAccount": "Delete Account",
+        "export": "Export Data",
+        "save": "Save Changes"
+      },
+      "behavior": {
+        "autoSave": {
+          "description": "Automatically save changes as you work",
+          "title": "Auto-save"
+        },
+        "confirmations": {
+          "description": "Ask for confirmation before important actions",
+          "title": "Show confirmations"
+        },
+        "description": "Customize how the application behaves",
+        "title": "Behavior"
+      },
+      "notifications": {
+        "description": "Control when and how you receive notifications",
+        "email": {
+          "options": {
+            "marketing": {
+              "description": "Promotional content and special offers",
+              "title": "Marketing emails"
+            },
+            "security": {
+              "description": "Important security and account notifications",
+              "title": "Security alerts"
+            },
+            "updates": {
+              "description": "News about new features and improvements",
+              "title": "Product updates"
+            },
+            "welcome": {
+              "description": "Receive welcome messages and getting started guides",
+              "title": "Welcome emails"
+            }
+          },
+          "title": "Email Notifications"
+        },
+        "push": {
+          "options": {
+            "mentions": {
+              "description": "When someone mentions you",
+              "title": "Mentions"
+            },
+            "messages": {
+              "description": "New direct messages and replies",
+              "title": "Direct messages"
+            },
+            "updates": {
+              "description": "Important system notifications",
+              "title": "System updates"
+            }
+          },
+          "title": "Push Notifications"
+        },
+        "title": "Notifications"
+      },
+      "privacy": {
+        "analytics": {
+          "description": "Help improve the service by sharing usage data",
+          "title": "Analytics"
+        },
+        "delete": {
+          "description": "Permanently delete your account and all data",
+          "dialog": {
+            "description": "This action cannot be undone. All your data will be permanently deleted.",
+            "title": "Delete Account"
+          },
+          "title": "Delete Account"
+        },
+        "description": "Manage your data and privacy settings",
+        "export": {
+          "description": "Download a copy of your data",
+          "title": "Export Data"
+        },
+        "title": "Data & Privacy"
+      }
+    },
+    "profile": {
+      "actions": {
+        "refresh": "Refresh Profile",
+        "signOut": "Sign Out"
+      },
+      "auth": {
+        "description": "Session and authentication information",
+        "title": "Authentication Details"
+      },
+      "basic": {
+        "description": "Your personal account details",
+        "title": "Basic Information"
+      },
+      "debug": {
+        "description": "Technical details for debugging purposes",
+        "title": "Debug Information"
+      },
+      "error": {
+        "title": "Error loading profile"
+      },
+      "fields": {
+        "email": "Email",
+        "expiresAt": "Token Expires At",
+        "firstName": "First Name",
+        "issuedAt": "Issued At",
+        "lastName": "Last Name",
+        "sessionState": "Session State",
+        "userId": "User ID",
+        "username": "Username"
+      },
+      "roles": {
+        "description": "Your assigned roles and access levels",
+        "none": "No roles assigned",
+        "title": "Roles & Permissions"
+      },
+      "status": {
+        "active": "Active",
+        "expired": "Expired"
+      }
+    },
+    "security": {
+      "actions": {
+        "add": "Add",
+        "disable": "Disable",
+        "generate": "Generate",
+        "manage": "Manage",
+        "regenerate": "Regenerate",
+        "revoke": "Revoke",
+        "setup": "Setup",
+        "update": "Update"
+      },
+      "activity": {
+        "description": "Recent security and account activity",
+        "error": "Error loading activity",
+        "errorDescription": "Unable to load your activity log. Please try again.",
+        "loadMore": "Load more",
+        "noEvents": "No activity events found",
+        "title": "Activity Log"
+      },
+      "recovery": {
+        "backupCodes": {
+          "description": "Generate backup codes for account recovery",
+          "title": "Backup Codes"
+        },
+        "description": "Set up recovery options for your account",
+        "email": {
+          "notSet": "No recovery email set",
+          "title": "Recovery Email"
+        },
+        "title": "Account Recovery"
+      },
+      "sessions": {
+        "current": {
+          "badge": "Current",
+          "lastActive": "Last active",
+          "title": "Current Session"
+        },
+        "description": "Manage your active sessions and devices",
+        "error": "Error loading sessions",
+        "errorDescription": "Unable to load your active sessions. Please try again.",
+        "lastActive": "Last active",
+        "noOtherSessions": "No other active sessions",
+        "signOutAll": {
+          "description": "Sign out of all other sessions and devices",
+          "title": "Sign out all devices"
+        },
+        "title": "Session Management",
+        "webSession": "Web Session"
+      },
+      "status": {
+        "disabled": "Disabled",
+        "enabled": "Enabled",
+        "generated": "Generated",
+        "notGenerated": "Not Generated"
+      },
+      "twoFactor": {
+        "authenticator": {
+          "description": "Use an authenticator app for secure login",
+          "title": "Authenticator App"
+        },
+        "description": "Add an extra layer of security to your account",
+        "securityKeys": {
+          "count": "keys",
+          "description": "Use hardware security keys for login",
+          "title": "Security Keys"
+        },
+        "title": "Two-Factor Authentication"
+      }
+    },
+    "tabs": {
+      "ai-preferences": "AI Assistant",
+      "appearance": "Appearance",
+      "credits": "Credits",
+      "preferences": "Preferences",
+      "profile": "Profile",
+      "security": "Security",
+      "team": "Team Management"
+    },
+    "team": {
+      "cardDescription": "Manage team members and permissions",
+      "empty": {
+        "description": "No team members in your organization",
+        "searchDescription": "Try a different search term",
+        "title": "No team members found"
+      },
+      "error": {
+        "description": "Failed to load team members",
+        "label": "Failed to load team members",
+        "title": "Error"
+      },
+      "itemName": "members",
+      "loading": "Loading team members...",
+      "loadingPermissions": "Loading...",
+      "permissions": {
+        "admin": "Admin",
+        "adminDesc": "Full admin access",
+        "manager": "Manager",
+        "managerDesc": "Full team management",
+        "reader": "Reader",
+        "readerDesc": "View only",
+        "writer": "Writer",
+        "writerDesc": "Create and manage content"
+      },
+      "resetPassword": "Reset Password",
+      "searchPlaceholder": "Search by name, email, or username",
+      "selectPermission": "Select permission...",
+      "table": {
+        "actions": "Actions",
+        "email": "Email",
+        "member": "Member",
+        "permissions": "Permissions"
+      },
+      "title": "Your members",
+      "you": "You"
+    },
+    "theme": {
+      "description": "Customize the appearance of your application",
+      "title": "Theme Settings"
+    },
+    "title": "Account Settings",
+    "tokens": {
+      "add": "Add",
+      "addHelper": "Enter the number of tokens to add, or use quick-add buttons above.",
+      "addTokens": "Add Tokens",
+      "balance": "Token Balance",
+      "companies": "companies",
+      "company": "company",
+      "companyEquivalence": {
+        "none": "Not enough for 1 company creation",
+        "plural": "≈ {count} company creations",
+        "singular": "≈ 1 company creation"
+      },
+      "companyEquivalent": "Company Equivalent",
+      "contactAdmin": "Contact Admin",
+      "credits": "credits",
+      "currentTokens": "Current tokens:",
+      "customAmount": "Custom Amount",
+      "disabled": "Disabled",
+      "enabled": "Enabled",
+      "enterAmount": "Enter token amount...",
+      "errorTitle": "Error",
+      "globalBalance": "Organization Token Balance",
+      "history": {
+        "active": "Active",
+        "allReferences": "All References",
+        "allTypes": "All Types",
+        "clearFilters": "Clear Filters",
+        "dateFrom": "From",
+        "dateTo": "To",
+        "empty": "No transactions found",
+        "errorTitle": "Unable to load token history",
+        "itemName": "transactions",
+        "noHistory": "No token history yet",
+        "noHistoryDesc": "Token transactions will appear here",
+        "ref": {
+          "company": "Company",
+          "csv_import": "CSV Import",
+          "label": "Reference",
+          "manual": "Manual",
+          "system": "System"
+        },
+        "referenceType": "Reference Type",
+        "subtitle": "View all token transactions",
+        "table": {
+          "amount": "Amount",
+          "balanceAfter": "Balance After",
+          "date": "Date",
+          "label": "Transaction History",
+          "reference": "Reference",
+          "type": "Type",
+          "user": "User"
+        },
+        "title": "Token History",
+        "totalCredits": "Total Available Credits",
+        "transactionType": "Transaction Type",
+        "type": {
+          "add": "Add",
+          "adjustment": "Adjustment",
+          "consume": "Consume",
+          "label": "Type"
+        }
+      },
+      "insufficientMessage": "You don't have enough tokens. Contact your administrator.",
+      "insufficientTitle": "Insufficient Tokens",
+      "loading": "Loading token data...",
+      "management": "Token Management",
+      "managementDescription": "Manage your organization token balance",
+      "module": "{module} Module",
+      "moduleStatus": "Module Status",
+      "modules": {
+        "explore": {
+          "description": "Market exploration tools",
+          "name": "Explore"
+        },
+        "screen": {
+          "description": "Company search and screening",
+          "name": "Screen"
+        },
+        "stream": {
+          "description": "Data streaming capabilities",
+          "name": "Stream"
+        },
+        "target": {
+          "description": "Advanced targeting features",
+          "name": "Target"
+        }
+      },
+      "quickAdd": "Quick Add (by company count)",
+      "refresh": "Refresh token count",
+      "screensWithTokens": "{count} screens ({tokens})",
+      "status": {
+        "active": "Active",
+        "disabled": "Disabled",
+        "low": "Low",
+        "noTokens": "No tokens"
+      },
+      "token": "token",
+      "tokens": "tokens",
+      "viewHistory": "View History"
+    },
+    "user": {
+      "actions": {
+        "delete": "Remove User",
+        "disable": "Disable User",
+        "enable": "Enable User",
+        "resetPassword": "Reset Password"
+      },
+      "create": {
+        "button": "Add User",
+        "description": "Add a new user to the organization",
+        "title": "Create New User"
+      },
+      "delete": {
+        "button": "Remove User",
+        "description": "Are you sure you want to remove this user from the organization?",
+        "title": "Remove User"
+      },
+      "email": "Email",
+      "emailPlaceholder": "Enter email address",
+      "empty": {
+        "description": "Create your first user to get started",
+        "title": "No users found"
+      },
+      "generatePassword": "Generate Random Password",
+      "initialRole": "Initial Role",
+      "initialRoleDescription": "Select the initial permissions for this user. Can be changed later.",
+      "loading": "Loading users...",
+      "passwordHelp": "User will be required to change this password on first login",
+      "passwordPlaceholder": "Enter temporary password",
+      "resetPassword": {
+        "button": "Reset Password",
+        "description": "Reset password for this user",
+        "infoDescription": "A temporary password will be generated. The user must change it on first login.",
+        "infoTitle": "Password Reset",
+        "newPassword": "New Temporary Password",
+        "placeholder": "Enter new password",
+        "success": "Password Reset Successfully",
+        "successDescription": "The password has been reset. Share this temporary password with the user.",
+        "temporaryPassword": "Temporary Password",
+        "title": "Reset Password"
+      },
+      "status": {
+        "active": "Active",
+        "disabled": "Disabled",
+        "pending": "Pending"
+      },
+      "temporaryPassword": "Temporary Password",
+      "username": "Username",
+      "usernamePlaceholder": "Enter username",
+      "validation": {
+        "email": {
+          "invalid": "Please enter a valid email address",
+          "required": "Email is required"
+        },
+        "temporaryPassword": {
+          "minLength": "Password must be at least 8 characters",
+          "required": "Temporary password is required"
+        },
+        "username": {
+          "minLength": "Username must be at least 3 characters",
+          "required": "Username is required"
+        }
+      }
+    },
+    "viewSection": "Configure"
+  },
+  "target": {
+    "communications": {
+      "comingSoon": "Coming soon",
+      "loading": {
+        "description": "This feature is not implemented yet.",
+        "title": "Not implemented yet"
+      },
+      "title": "Corporate Communications"
+    },
+    "document": {
+      "viewer": {
+        "error": {
+          "title": "Oops, unable to display the document."
+        }
+      }
+    },
+    "documents": {
+      "detail": {
+        "accepted": "This document has been accepted",
+        "acceptedCurrentUser": "You have accepted this document",
+        "cfc": "Article subject to copyright",
+        "consultDocument": "Consult the document",
+        "creationDate": "Collect date: ",
+        "language": "Language: ",
+        "noDocument": "No document selected",
+        "pending": "Document pending review",
+        "publishDate": "Publish date: ",
+        "rejected": "This document has been rejected",
+        "rejectedBy": "{name} rejected this document on {date}",
+        "rejectedCurrentUser": "You have rejected this document",
+        "source": "Source: ",
+        "summary": {
+          "subtitle": "Automatic AI summary",
+          "title": "Summary"
+        },
+        "type": "Type: ",
+        "url": "Original URL: ",
+        "validatedBy": "{name} validated this document on {date}",
+        "validation": {
+          "subtitle": "Automatic AI validation",
+          "title": {
+            "rejected": "Why did the Assistant reject this document?",
+            "uncertain": "Why did the Assistant mark this document as uncertain?",
+            "validated": "Why did the Assistant validate this document?"
+          }
+        }
+      },
+      "empty": {
+        "description": "No documents match your search.",
+        "title": "No documents found"
+      },
+      "inactive": {
+        "subtitle": "Start your watch file in the <b>Configuration</b> tab to launch the first document collection.",
+        "title": "No documents collected yet"
+      },
+      "loading": {
+        "subtitle": "This will only take a few seconds.",
+        "title": "Collect in progress"
+      },
+      "mark_as_seen": {
+        "error": "The document could not be marked as seen"
+      },
+      "pagination": {
+        "items_per_page": "Documents per page"
+      },
+      "validation": {
+        "accept": "Accept",
+        "reject": "Reject"
+      }
+    },
+    "financials": {
+      "comingSoon": "Coming soon",
+      "loading": {
+        "description": "This feature is not implemented yet.",
+        "title": "Not implemented yet"
+      },
+      "title": "Financials"
+    },
+    "sourceTypes": {
+      "blog": "Blog",
+      "document:espacenet:advanced_search": "Espacenet Advanced Searches",
+      "document:espacenet:smart_search": "Espacenet Smart Searches",
+      "document:ieeexplore:publications": "IEEE Xplore Publications",
+      "document:questel:search": "Questel Searches",
+      "domain:company_name": "Company Pages",
+      "domain:search": "Domain Searches",
+      "error": "Sources in error",
+      "event:geoconfirmed:zone": "GeoConfirmed Zones",
+      "expert_opinion": "Expert Opinions",
+      "file:ftp": "FTP Files",
+      "forum": "Forums",
+      "image:google:images": "Google Images",
+      "news:newsapi": "NewsAPI",
+      "news:newsapi:headlines": "NewsAPI Headlines",
+      "newsletter": "Newsletters",
+      "official_publication": "Official Publications",
+      "rss_feed": "RSS Feeds",
+      "scientific_publication": "Scientific Publications",
+      "social_media": "Social Media",
+      "social_media:facebook:group": "Facebook Groups",
+      "social_media:facebook:page": "Facebook Pages",
+      "social_media:facebook:search": "Facebook Searches",
+      "social_media:facebook:user": "Facebook Users",
+      "social_media:gab:group": "Gab Groups",
+      "social_media:gab:search": "Gab Searches",
+      "social_media:instagram:hashtag": "Instagram Hashtags",
+      "social_media:instagram:search": "Instagram Searches",
+      "social_media:instagram:user": "Instagram Users",
+      "social_media:linkedin:company": "LinkedIn Companies",
+      "social_media:linkedin:group": "LinkedIn Groups",
+      "social_media:linkedin:search": "LinkedIn Searches",
+      "social_media:linkedin:user": "LinkedIn Users",
+      "social_media:mastodon:search": "Mastodon Searches",
+      "social_media:mastodon:user": "Mastodon Users",
+      "social_media:reddit:subreddit": "Reddit Subreddits",
+      "social_media:reddit:user": "Reddit Users",
+      "social_media:telegram:channel": "Telegram Channels",
+      "social_media:x:hashtag": "X Hashtags",
+      "social_media:x:search": "X Searches",
+      "social_media:x:user": "X Users",
+      "unknown": "Unknown",
+      "video:dailymotion:search": "Dailymotion Searches",
+      "video:dailymotion:user": "Dailymotion Users",
+      "video:odysee": "Odysee Videos",
+      "video:youtube:channel": "YouTube Channels",
+      "video:youtube:comments": "YouTube Comments",
+      "video:youtube:playlist": "YouTube Playlists",
+      "video:youtube:search": "YouTube Searches",
+      "website": "Websites"
+    },
+    "watchFiles": {
+      "access": {
+        "admin": "Administrator",
+        "editor": "Editor",
+        "no_access": "No access",
+        "viewer": "Viewer"
+      },
+      "actions": {
+        "add_favorite": "Add to favorites",
+        "archive_watch_file": "Archive watch file",
+        "remove_favorite": "Remove from favorites",
+        "restore_watch_file": "Restore watch file",
+        "share": "Share"
+      },
+      "activity": {
+        "history": {
+          "actor_added": "{userName} added an actor.",
+          "actor_status_changed_active": "{userName} activated the actor {actorName}.",
+          "actor_status_changed_inactive": "{userName} deactivated the actor {actorName}.",
+          "event": {
+            "WATCHFILE_ACTOR_ADDED": "Actor added | Actors added",
+            "WATCHFILE_ACTOR_STATUS_CHANGED": "Actor status changed | Actor status changes",
+            "WATCHFILE_SOURCE_ADDED": "Source added | Sources added",
+            "WATCHFILE_SOURCE_STATUS_CHANGED": "Source status changed | Source status changes",
+            "empty": {
+              "actors": {
+                "description": "No actors present on this event",
+                "title": "No actor"
+              },
+              "sources": {
+                "description": "No source present on this event",
+                "title": "No source"
+              }
+            },
+            "error": {
+              "actors": "Oops, actors cannot be displayed",
+              "sources": "Oops, sources cannot be displayed"
+            }
+          },
+          "monitoring_type_detected": "The monitoring type has been updated.",
+          "reference_subject_detected": "The reference subject has been updated.",
+          "see_more_actions": "See more actions",
+          "shared_mode_changed": "{userName} shared the watch file with the address {userEmail} ({role}).",
+          "shared_mode_owner": "{userName} is the owner of the watch file.",
+          "shared_mode_removed": "{userName} removed the access rights for the address {userEmail}.",
+          "source_added": "{userName} added a source.",
+          "source_status_changed_active": "{userName} activated the source {sourceName}.",
+          "source_status_changed_auto_disabled": "The source {sourceName} has been automatically disabled.",
+          "source_status_changed_inactive": "{userName} deactivated the source {sourceName}.",
+          "status_changed": "{userName} changed the status of the watch file from {oldStatus} to {newStatus}.",
+          "title": "Watch file actions history",
+          "unknown_action": "Unknown action",
+          "view_actors_added": "View actor details",
+          "view_actors_added_drawer_title": "Actors added",
+          "view_actors_removed_drawer_title": "Actors removed",
+          "view_monitoring_details": "View monitoring details",
+          "view_sources_added": "View source details",
+          "view_sources_added_drawer_title": "Sources added",
+          "view_sources_removed_drawer_title": "Sources removed",
+          "watch_file_created": "{userName} created the watch file.",
+          "watch_file_updated": "{userName} updated the watch file configuration."
+        },
+        "sources": {
+          "action": {
+            "monitoring": "Consult monitoring"
+          },
+          "empty": {
+            "add_button": "Add a source",
+            "title": "No sources added to this folder"
+          },
+          "error": {
+            "subtitle": "We are doing what is necessary to fix the problem.",
+            "title": "Oops! Some sources are currently in error"
+          },
+          "history": {
+            "drawer_title": "Monitoring",
+            "source_added_to_watchfile": "{userName} has added the source to the watch file.",
+            "source_collect_status_changed": "The collector status of the source has changed.",
+            "source_config_updated": "{userName} has updated the configuration of the source.",
+            "source_connected": "The collect has been activated.",
+            "source_error": "An error occurred. {errorMessage}",
+            "source_recovered": "The collect has resumed.",
+            "source_status_changed_active": "{userName} has activated the source.",
+            "source_status_changed_inactive": "{userName} has deactivated the source.",
+            "unknown_action": "Unknown activity."
+          },
+          "search": {
+            "clear": "Clear search",
+            "results": "Results: {count} sources | Results: {count} source | Results: {count} sources"
+          },
+          "search_placeholder": "Search a source",
+          "status": {
+            "error": "Error",
+            "running": "Running",
+            "stopped": "Paused"
+          },
+          "title": "Your sources for this watch file"
+        }
+      },
+      "actors": {
+        "active": "Active",
+        "batch_change": {
+          "error": "Failed to activate actors",
+          "partial_error": "{count} actor failed to activate | {count} actors failed to activate",
+          "success": "Successfully activated {count} actor | Successfully activated {count} actors"
+        },
+        "deactivation_modal": {
+          "activation_modal": {
+            "confirm": "Activate actor | Activate actor and its {count} source | Activate actor and its {count} sources",
+            "description": "Activating this actor will result in the activation of the selected sources associated with it. Do you wish to continue?",
+            "title": "Activation of actor '{actor}'"
+          },
+          "cancel": "Cancel",
+          "confirm": "Deactivate actor | Deactivate actor and its {count} source | Deactivate actor and its {count} sources",
+          "description": "Deactivating this actor will result in the deactivation of the selected sources associated with it. Do you wish to continue?",
+          "error": "An error occurred while updating the actor status",
+          "source_already_active": "This source is already active",
+          "source_already_inactive": "This source is already inactive",
+          "source_name": "Source name",
+          "success": {
+            "activated": "Actor activated successfully | Actor and 1 source activated successfully | Actor and {count} sources activated successfully",
+            "deactivated": "Actor deactivated successfully | Actor and 1 source deactivated successfully | Actor and {count} sources deactivated successfully"
+          },
+          "title": "Deactivation of actor '{actor}'",
+          "type": "Type"
+        },
+        "detail": {
+          "description": "Description",
+          "placeholder": "Actor details coming soon...",
+          "sources": {
+            "filter_results": "Showing {filtered} of {total} sources",
+            "no_results": {
+              "description": "Try adjusting your search terms or filters.",
+              "title": "No sources found"
+            },
+            "no_sources": {
+              "description": "This actor doesn't have any sources configured yet.",
+              "title": "No sources available"
+            },
+            "search_placeholder": "Search sources",
+            "table": {
+              "domain": "Domain",
+              "name": "Name",
+              "type": "Type"
+            },
+            "title": "Sources",
+            "total_count": "{total} source | {total} sources",
+            "type_filter_placeholder": "Filter by type",
+            "unknown_type": "Unknown"
+          }
+        },
+        "details_modal": {
+          "title": "Actor details"
+        },
+        "filters": {
+          "active": "Active",
+          "inactive": "Inactive",
+          "type": "Filter by type"
+        },
+        "forbidden": "You do not have permission to view the actors of this watch file",
+        "inactive": "Inactive",
+        "link_label": "Actor link",
+        "manage_sources": "Manage Sources",
+        "no_sources_found": "No sources found for this actor.",
+        "pagination": {
+          "result": " Actors per page"
+        },
+        "remove": {
+          "error": "Failed to remove actor",
+          "success": "Actor removed successfully"
+        },
+        "see_more": "View details",
+        "select_actor": "Choose actors",
+        "selection_modal": {
+          "actors_per_page": "Actors per page",
+          "add_actors": "Add {count} actor and {sources} sources | Add {count} actors and {sources} sources",
+          "add_actors_no_sources": "Add {count} actor | Add {count} actors",
+          "elements_count": "{count} elements on {total} pages",
+          "no_actors": "No actors available",
+          "pagination_info": "Showing {start} to {end} of {total} results",
+          "select_actor": "Select actor | Select actor and {count} source | Select actor and {count} sources",
+          "subtitle": "Select from {count} available actors",
+          "title": "Choose actors"
+        },
+        "sources_count": "{count} sources | {count} source | {count} sources",
+        "status": {
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "sub_title": "No actors displayed | 1 actor displayed out of {total} | {count} actors displayed out of {total}",
+        "title": "Identified actors",
+        "type": {
+          "competitor": "Competitor",
+          "customer": "Customer",
+          "other": "Other",
+          "parent": "Parent",
+          "partner": "Partner",
+          "regulator": "Regulator",
+          "subsidiary": "Subsidiary",
+          "supplier": "Supplier"
+        },
+        "website": "Website:"
+      },
+      "analysis": {
+        "event": {
+          "actors": "Identified actors:",
+          "date": "From {startDate} to {endDate}",
+          "documents_count": "{count} documents collected | {count} document collected | {count} documents collected",
+          "ia_analysis": "AI Analysis:",
+          "identified_actors": "Identified actors",
+          "sources": "The main sources are:",
+          "title": "Events of {from}",
+          "type": {
+            "commercial_business": "Commercial / Business",
+            "financial": "Financial",
+            "market_competitors": "Market / Competitors",
+            "organizational_hr": "Organizational / HR",
+            "regulatory_political": "Regulatory / Political",
+            "societal_environmental": "Societal / Environmental",
+            "technological_rd": "Technological / R&D"
+          },
+          "unknown_date": "Unknown date",
+          "view_documents": "View linked documents"
+        },
+        "graph": {
+          "legend": {
+            "axis": {
+              "y": "{nb} documents | {nb} document | {nb} documents"
+            },
+            "event": {
+              "basic": "Standard Daily Indicator",
+              "count": "{nb} event | {nb} events",
+              "starred": "Daily indicator with at least one milestone event"
+            }
+          }
+        },
+        "pagination": {
+          "items_per_page": "Folders per page"
+        },
+        "subTitle": "Graph representing the volume of documents collected",
+        "table": {
+          "actors": {
+            "see": {
+              "less": "See fewer actors",
+              "more": "See more actors"
+            }
+          },
+          "header": {
+            "actors": "Identified actors",
+            "date": "Date",
+            "ia_analysis": "AI Analysis",
+            "number": "Number",
+            "sources": "Identified sources"
+          }
+        },
+        "timeline": {
+          "allEventsLoaded": "All events are displayed",
+          "empty": {
+            "description": "No timeline events are available for this watch file yet.",
+            "title": "No events found"
+          },
+          "event": {
+            "actor": {
+              "action": "View related documents",
+              "name": "Identified actors"
+            }
+          },
+          "loadMore": "Load more"
+        },
+        "title": "Volume of Collected Documents",
+        "toggle": {
+          "graph": "Graph",
+          "timeline": "Timeline"
+        }
+      },
+      "aria_label_refresh_button": "Refresh",
+      "assistant": {
+        "empty_view": {
+          "description": "Describe what you want to monitor and Chaps-e will help you structure your watch file.",
+          "list": "Chaps-e will guide you to:<ul><li>✓ Define the objectives of your watch<li/><li>✓ Identify the key players to be monitored<li/><li>✓ Configure the relevant information sources<li/><li>✓ Set the collect criteria</li/><li>✓ Schedule the collection of information<li/></ul>",
+          "title": "How do I use the watch files?"
+        }
+      },
+      "chat": {
+        "cancel": {
+          "error_description": "Unable to cancel the conversation. Please try again.",
+          "error_title": "Cancellation failed"
+        },
+        "cancel_conversation": "Cancel",
+        "connection_lost": "Connection lost. Reconnecting...",
+        "connection_restored": "Connection restored",
+        "error": {
+          "retry_failed_description": "Unable to retry sending the message. Please try again.",
+          "retry_failed_title": "Retry failed"
+        },
+        "input": {
+          "cancel_button": "Cancel response",
+          "placeholder": "Type your message...",
+          "placeholder_not_started_conversation": "Describe what you want to watch: objectives, topic, context, etc...",
+          "placeholder_processing": "Processing in progress, please wait...",
+          "send_button": "Send message"
+        },
+        "loading_messages": "Loading messages...",
+        "loading_older_messages": "Loading older messages...",
+        "message": {
+          "max_retries_reached": "Maximum retry attempts reached",
+          "send_failed": "Failed to send",
+          "send_failed_description": "Unable to send the message. Please check your connection and try again.",
+          "send_failed_title": "Message not sent"
+        },
+        "new_message": "New message",
+        "no_messages": "No messages yet",
+        "offline": "No internet connection",
+        "reassurance_message": {
+          "0": "Still here! The analysis needs a bit more time...",
+          "1": "Making progress, your answer is coming soon...",
+          "10": "Haven't forgotten! The response is taking shape...",
+          "11": "Patience, I want to give you a complete answer...",
+          "12": "Digging deep for you...",
+          "13": "Your question deserves a thorough analysis...",
+          "14": "Making sure I don't miss anything...",
+          "15": "Don't worry, I'm still cooking!",
+          "16": "The gears are turning, it's coming!",
+          "17": "Rome wasn't built in a day... but this will be faster",
+          "18": "Tough question! But I'm almost there...",
+          "19": "Letting my answer simmer to perfection...",
+          "2": "Complex analysis in progress, just a few more moments...",
+          "3": "Fine-tuning my response, thanks for waiting...",
+          "4": "Deep processing underway...",
+          "5": "Gathering the final pieces...",
+          "6": "Almost done, refining the details...",
+          "7": "Consolidating the information...",
+          "8": "Still on it, I promise!",
+          "9": "Going well, just another moment..."
+        },
+        "reconnecting": "Reconnecting...",
+        "reset_conversation": "Reset conversation",
+        "system_error": {
+          "cancelled_description": "The request has been cancelled at your initiative. You can continue the conversation at any time.",
+          "cancelled_title": "Action cancelled",
+          "timed_out_description": "The request processing time has exceeded the maximum allowed processing time. You can continue the conversation at any time.",
+          "timed_out_title": "Processing time exceeded"
+        },
+        "system_messages": {
+          "group_header": "{count} action - {time} | {count} actions - {time}",
+          "hide_older": "Hide older actions",
+          "view_older": "View {count} older action {time} | View {count} older actions {time}"
+        },
+        "timeout_warning": "Chaps-e is taking longer than expected to respond.",
+        "typing_indicator": {
+          "0": "Chaps-e is analyzing your request...",
+          "1": "Chaps-e is mobilizing its agents...",
+          "10": "Chaps-e is digging in for you...",
+          "11": "Chaps-e is taking a closer look...",
+          "12": "Chaps-e is putting its neurons to work...",
+          "13": "Chaps-e is warming up its circuits...",
+          "14": "Chaps-e is looking into the matter...",
+          "15": "Chaps-e is pondering...",
+          "16": "Chaps-e is brainstorming...",
+          "17": "Chaps-e is crunching the numbers...",
+          "18": "Chaps-e is mulling it over...",
+          "19": "Chaps-e is meditating on your request...",
+          "2": "Chaps-e is exploring the data...",
+          "3": "Chaps-e is structuring the response...",
+          "4": "Chaps-e is consulting its sources...",
+          "5": "Chaps-e is processing your query...",
+          "6": "Chaps-e is connecting the information...",
+          "7": "Chaps-e is preparing the analysis...",
+          "8": "Chaps-e is focusing on your question...",
+          "9": "Chaps-e is diving into the subject..."
+        }
+      },
+      "delete": {
+        "label": "Delete",
+        "success": "Watch file deleted successfully"
+      },
+      "documents": {
+        "aiValidationStatus": {
+          "rejected": "Rejected by AI",
+          "validated": "Validated by AI"
+        },
+        "batch_reject": {
+          "modal": {
+            "message": "You are going to reject {count} document. Do you want to continue? | You are going to reject {count} documents. Do you want to continue?",
+            "title": "Reject documents"
+          }
+        },
+        "batch_status_change": {
+          "error_accept": "Error during batch validation",
+          "error_refuse": "Error during batch rejection",
+          "partial_success_accept": "No documents validated | 1 document validated, {failed} failed | {success} documents validated, {failed} failed",
+          "partial_success_refuse": "No documents rejected | 1 document rejected, {failed} failed | {success} documents rejected, {failed} failed",
+          "success_accept": "No documents validated | 1 document successfully validated | {count} documents successfully validated",
+          "success_refuse": "No documents rejected | 1 document successfully rejected | {count} documents successfully rejected"
+        },
+        "batch_validate": {
+          "modal": {
+            "message": "You are going to validate {count} document. Do you want to continue? | You are going to validate {count} documents. Do you want to continue?",
+            "title": "Validate documents"
+          }
+        },
+        "manualStatus": {
+          "accept": "Accepted",
+          "refuse": "Refused"
+        },
+        "search": {
+          "delete": "Clear Search",
+          "matching": "Result \"{search}\" in the document",
+          "nb_results": "Results : {nb} documents | Results : {nb} document | Results : {nb} documents",
+          "placeholder": "Search documents"
+        },
+        "status": {
+          "ai_rejected": "Rejected by AI",
+          "ai_uncertain": "AI uncertainty",
+          "ai_validated": "Validated by AI",
+          "manual_accept": "Accepted manually",
+          "manual_empty": "Waiting for manual validation",
+          "manual_refuse": "Rejected manually"
+        },
+        "status_change": {
+          "error": "Error during status change",
+          "success_accept": "Document successfully validated",
+          "success_refuse": "Document successfully rejected",
+          "success_uncertain": "Document validation status reset"
+        },
+        "summary": {
+          "error": "Error during summary generation",
+          "pending": "Summary generation in progress..."
+        },
+        "validation": {
+          "error": "Error during AI validation",
+          "pending": "Document AI validation in progress..."
+        }
+      },
+      "edit": {
+        "alert": {
+          "enabled": {
+            "tooltip": "Monitoring in progress:<ul><li>Automatic source monitoring</li><li>Real-time document collection</li><li>Automatic AI validation</li></ul>"
+          }
+        }
+      },
+      "empty": "No watch files yet",
+      "filters": {
+        "button": {
+          "confirm": "See results",
+          "reset": "Reset filters"
+        },
+        "empty": "No results with current filters",
+        "title": "Search Filters",
+        "title_count": "Search Filters ({count})",
+        "type": {
+          "actors": {
+            "placeholder": "Search for actors",
+            "see": {
+              "less": "See less actors",
+              "more": "See more actors"
+            }
+          },
+          "dates": {
+            "collected": {
+              "after_date": "Collected after {startDate}",
+              "before_date": "Collected before {endDate}",
+              "date_range": "Collected from {startDate} au {endDate}",
+              "single_date": "Collected on {startDate}"
+            },
+            "collection": "Date of collection",
+            "period": {
+              "label": "Filter by Period",
+              "last_3_month": "Last 3 months",
+              "last_month": "Last 30 days",
+              "last_week": "Last 7 days",
+              "placeholder": "Select Period"
+            },
+            "publication": "Date of publication",
+            "published": {
+              "after_date": "Published after {startDate}",
+              "before_date": "Published before {endDate}",
+              "date_range": "Published from {startDate} to {endDate}",
+              "single_date": "Published on {startDate}"
+            },
+            "range": {
+              "label": "Filter by dates"
+            }
+          },
+          "event_types": {
+            "placeholder": "Search for event types",
+            "see": {
+              "less": "See less event types",
+              "more": "See more event types"
+            }
+          },
+          "reset": "Reset \"{name}\" filters",
+          "sources": {
+            "placeholder": "Search for sources",
+            "see": {
+              "less": "See less sources",
+              "more": "See more sources"
+            }
+          },
+          "validations": "Document Validation"
+        }
+      },
+      "header_section": {
+        "activation": {
+          "modal": {
+            "warning_message": "Your watch file can be activated now, but we recommend completing the configuration for optimal results."
+          }
+        },
+        "activation_modal": {
+          "confirm": "Activate collect",
+          "description": "You are about to put the watch file <b>\"{name}\"</b> in active mode.",
+          "title": "Put the collect in active mode"
+        },
+        "deactivation_modal": {
+          "confirm": "Put in draft mode",
+          "description": "You are about to put the watch file <b>\"{name}\"</b> back in draft mode.",
+          "title": "Put the collect in draft mode"
+        },
+        "status": {
+          "archived": "Archived",
+          "change": {
+            "error": "An error occurred while changing the status",
+            "success": "Status changed successfully"
+          },
+          "draft": "Draft",
+          "enabled": "Active",
+          "label": "Change the status of this watch file"
+        },
+        "title": "Generating a new watch file"
+      },
+      "last_update": {
+        "label": "Last update: {date}"
+      },
+      "list": {
+        "columns": {
+          "access": "Access",
+          "name": "Watch file name",
+          "new_content": "New Content",
+          "status": "Status",
+          "thematics": "Thematics",
+          "updated_at": "Last modified"
+        },
+        "search_placeholder": "Search watch files...",
+        "title": "My Watch files"
+      },
+      "new": "New Watch file",
+      "new_content": {
+        "documents": "documents"
+      },
+      "pagination": {
+        "items": "watch files | watch file | watch files",
+        "items_per_page": "Watch files per page"
+      },
+      "persons": "{count} person | {count} persons",
+      "prefix": {
+        "createdAt": "Created: ",
+        "updatedAt": "Last modified: "
+      },
+      "reference_subject": {
+        "empty": "No reformulation has been calculated for this watch file yet",
+        "loading": "No reference subject yet",
+        "loading_subtitle": "The reference subject will be generated automatically once the need for this watch file is sufficiently defined.",
+        "sub_title": "This automatic rephrasing allows you to identify the relevant documents for your watch file",
+        "title": "Reference subject for this watch file"
+      },
+      "refresh_button": "Refresh",
+      "shareDialog": {
+        "accessListTitle": "People with access to the watch file",
+        "changeRoleMessage": "Are you sure you want to change the role of <b>\"{user}\"</b> to <b>\"{role}\"</b>?",
+        "changeRoleTitle": "Change role",
+        "invite": "Invite",
+        "invitePlaceholder": "Email, pseudo...",
+        "owner": "Owner",
+        "removeUserMessage": "Are you sure you want to remove <b>\"{user}\"</b> from this watch file?",
+        "removeUserTitle": "Remove user",
+        "role": {
+          "editor": "Editor",
+          "editorDescription": "Can view and edit the contents of the watch file. Can update sharing settings, but not change the owner.",
+          "owner": "Owner",
+          "viewer": "Viewer",
+          "viewerDescription": "Read-only access to the watch file. Cannot modify configuration or sharing settings."
+        },
+        "title": "Share watch file \"{name}\""
+      },
+      "sort": {
+        "access_count": "Access count",
+        "archived": "Hide archived",
+        "favorites": "Show only favorites",
+        "filter": "Filter",
+        "sort_by": "Sort by",
+        "status": "Watch file status"
+      },
+      "sources": {
+        "actor": "Actor: {label}",
+        "batch_change": {
+          "error": "Failed to activate sources",
+          "partial_error": "{count} source failed to activate | {count} sources failed to activate",
+          "success": "Successfully activated {count} source | Successfully activated {count} sources"
+        },
+        "justification": "Justification",
+        "link_label": "Source link",
+        "name": "Source name",
+        "new_source_tooltip": "From {date}",
+        "no_sources": {
+          "description": "No sources have been configured for this watch file yet.",
+          "title": "No sources available"
+        },
+        "pagination": {
+          "result": " Sources per page"
+        },
+        "select_source": "Choose a source",
+        "selection_modal": {
+          "add_sources": "Add {count} source | Add {count} sources",
+          "title": "Choose sources"
+        },
+        "status_change": {
+          "active": "Source successfully activated",
+          "error": "An error occurred while changing the status of the source",
+          "inactive": "Source successfully deactivated"
+        },
+        "sub_title": "1 source displayed out of {total} | {count} sources displayed out of {total}",
+        "title": "Sources",
+        "type": {
+          "media": "Media",
+          "social_media": "Social Media"
+        }
+      },
+      "status": {
+        "archived": "Archived",
+        "draft": "Draft",
+        "enabled": "Active",
+        "label": "Status:"
+      },
+      "status_change": {
+        "archive": {
+          "confirm_button": "Archive",
+          "confirm_message": "You are about to archive the watch file <b>\"{name}\"</b>.",
+          "confirm_title": "Archive watch file",
+          "success": "Watch file archived successfully"
+        },
+        "enabled": {
+          "disabled_tooltip": {
+            "reference_subject": "You cannot do this action:<ul><li>The reference subject has not been generated for this watch file yet</li></ul>Please try again in a few moments.",
+            "sources": "You cannot do this action:<ul><li>No sources configured</li></ul>Add at least one source in the Scope tab to activate the collection."
+          }
+        },
+        "error_false": "An error occurred while removing \"{name}\" from your favorites",
+        "error_true": "An error occurred while adding \"{name}\" to your favorites",
+        "restore": {
+          "confirm_button": "Restore",
+          "confirm_title": "Restore watch file",
+          "success": "Watch file restored successfully"
+        },
+        "success_false": "\"{name}\" has been removed from your favorites",
+        "success_true": "\"{name}\" has been added to your favorites"
+      },
+      "tabs": {
+        "audit": "Audit",
+        "documents": "Documents",
+        "radar": "Radar",
+        "scope": "Scope"
+      },
+      "title": {
+        "aria_label_confirm_button": "Save title modifications",
+        "aria_label_edit_button": "Edit the title of this watch file",
+        "edit_helper": "The field must contain between 3 and 255 characters.",
+        "error": {
+          "empty": "Title cannot be empty",
+          "generic": "An error occurred while updating the title",
+          "invalid_length": "Title must be between 3 and 255 characters",
+          "toast_title": "Update Error"
+        },
+        "placeholder": "Name your watch file",
+        "success": {
+          "updated": "Title updated successfully"
+        }
+      },
+      "toast": {
+        "error": {
+          "addUsers": "Error adding users to the watch file",
+          "changeRole": "Error changing user role in the watch file",
+          "load": "Error loading watch files",
+          "loadUsers": "Error loading watch file users",
+          "removeUser": "Error removing user from the watch file"
+        },
+        "success": {
+          "addUsers": "{count} user successfully added to the watch file | {count} users successfully added to the watch file",
+          "changeRole": "Role changed for {user}",
+          "removeUser": "User {user} removed from the watch file"
+        }
+      },
+      "user": {
+        "label": "User",
+        "remove": "Remove user"
+      }
+    }
+  }
+}

@@ -16,8 +16,8 @@
       v-if="isWaitingForAI"
       variant="tertiary"
       class="absolute right-3 bottom-3"
-      :aria-label="$t('watch_files.chat.input.cancel_button')"
-      :title="$t('watch_files.chat.input.cancel_button')"
+      :aria-label="$t('target.watchFiles.chat.input.cancel_button')"
+      :title="$t('target.watchFiles.chat.input.cancel_button')"
       rounded
       tabindex="2"
       icon="fa-circle-stop"
@@ -28,7 +28,7 @@
       :variant="disabled ? 'secondary' : 'tertiary'"
       class="absolute right-3 bottom-3"
       :disabled="disabled || !canSendMessage"
-      :aria-label="$t('watch_files.chat.input.send_button')"
+      :aria-label="$t('target.watchFiles.chat.input.send_button')"
       rounded
       tabindex="2"
       icon="fa-paper-plane"
@@ -63,7 +63,7 @@ const message = ref('')
 const canSendMessage = computed(() => message.value.trim().length > 0 && !disabled)
 
 const inputPlaceholder = computed(() => {
-  return placeholder ?? t('watch_files.chat.input.placeholder')
+  return placeholder ?? t('target.watchFiles.chat.input.placeholder')
 })
 
 const textareaInputClass = computed(() => {

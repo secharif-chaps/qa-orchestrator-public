@@ -4,11 +4,16 @@
     <div class="mx-auto mb-6 max-w-5xl">
       <div class="mb-2 flex items-center gap-4">
         <h1 class="text-headline-3xl font-bold">
-          {{ $t('tokens.history.title', 'Token History') }}
+          {{ $t('settings.tokens.history.title', 'Token History') }}
         </h1>
       </div>
       <p class="text-sm text-gray-600 dark:text-gray-400">
-        {{ $t('tokens.history.subtitle', 'View all token transactions for your organization') }}
+        {{
+          $t(
+            'settings.tokens.history.subtitle',
+            'View all token transactions for your organization',
+          )
+        }}
       </p>
     </div>
 
@@ -20,7 +25,7 @@
         <div class="flex items-center justify-between">
           <div>
             <h2 class="mb-1 text-sm font-semibold text-gray-600 uppercase dark:text-gray-400">
-              {{ $t('tokens.history.totalCredits', 'Total Available Credits') }}
+              {{ $t('settings.tokens.history.totalCredits', 'Total Available Credits') }}
             </h2>
             <p class="text-sage-600 dark:text-sage-400 text-3xl font-bold">
               {{ totalTokens.toLocaleString() }}
@@ -30,8 +35,8 @@
             :variant="totalTokens > 0 ? 'success' : 'warning'"
             :label="
               totalTokens > 0
-                ? $t('tokens.history.active', 'Active')
-                : $t('tokens.history.empty', 'Empty')
+                ? $t('settings.tokens.history.active', 'Active')
+                : $t('settings.tokens.history.empty', 'Empty')
             "
             size="lg"
             rounded
@@ -50,17 +55,19 @@
           <!-- Transaction Type Filter -->
           <div class="flex flex-col gap-2">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('tokens.history.transactionType', 'Transaction Type') }}
+              {{ $t('settings.tokens.history.transactionType', 'Transaction Type') }}
             </label>
             <select
               v-model="filters.transaction_type"
               class="bg-base-200 border-primary-stroke focus:ring-primary/20 focus:border-primary min-w-40 rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             >
-              <option value="">{{ $t('tokens.history.allTypes', 'All Types') }}</option>
-              <option value="add">{{ $t('tokens.history.type.add', 'Add') }}</option>
-              <option value="consume">{{ $t('tokens.history.type.consume', 'Consume') }}</option>
+              <option value="">{{ $t('settings.tokens.history.allTypes', 'All Types') }}</option>
+              <option value="add">{{ $t('settings.tokens.history.type.add', 'Add') }}</option>
+              <option value="consume">
+                {{ $t('settings.tokens.history.type.consume', 'Consume') }}
+              </option>
               <option value="adjustment">
-                {{ $t('tokens.history.type.adjustment', 'Adjustment') }}
+                {{ $t('settings.tokens.history.type.adjustment', 'Adjustment') }}
               </option>
             </select>
           </div>
@@ -68,26 +75,34 @@
           <!-- Reference Type Filter -->
           <div class="flex flex-col gap-2">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('tokens.history.referenceType', 'Reference Type') }}
+              {{ $t('settings.tokens.history.referenceType', 'Reference Type') }}
             </label>
             <select
               v-model="filters.reference_type"
               class="bg-base-200 border-primary-stroke focus:ring-primary/20 focus:border-primary min-w-40 rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             >
-              <option value="">{{ $t('tokens.history.allReferences', 'All References') }}</option>
-              <option value="company">{{ $t('tokens.history.ref.company', 'Company') }}</option>
-              <option value="manual">{{ $t('tokens.history.ref.manual', 'Manual') }}</option>
-              <option value="csv_import">
-                {{ $t('tokens.history.ref.csv_import', 'CSV Import') }}
+              <option value="">
+                {{ $t('settings.tokens.history.allReferences', 'All References') }}
               </option>
-              <option value="system">{{ $t('tokens.history.ref.system', 'System') }}</option>
+              <option value="company">
+                {{ $t('settings.tokens.history.ref.company', 'Company') }}
+              </option>
+              <option value="manual">
+                {{ $t('settings.tokens.history.ref.manual', 'Manual') }}
+              </option>
+              <option value="csv_import">
+                {{ $t('settings.tokens.history.ref.csv_import', 'CSV Import') }}
+              </option>
+              <option value="system">
+                {{ $t('settings.tokens.history.ref.system', 'System') }}
+              </option>
             </select>
           </div>
 
           <!-- Date Range (simplified) -->
           <div class="flex flex-col gap-2">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('tokens.history.dateFrom', 'Date From') }}
+              {{ $t('settings.tokens.history.dateFrom', 'Date From') }}
             </label>
             <input
               v-model="filters.date_from"
@@ -98,7 +113,7 @@
 
           <div class="flex flex-col gap-2">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('tokens.history.dateTo', 'Date To') }}
+              {{ $t('settings.tokens.history.dateTo', 'Date To') }}
             </label>
             <input
               v-model="filters.date_to"
@@ -112,7 +127,7 @@
             variant="tertiary"
             size="sm"
             icon="fa fa-times"
-            :label="$t('tokens.history.clearFilters', 'Clear Filters')"
+            :label="$t('settings.tokens.history.clearFilters', 'Clear Filters')"
             @click="clearFilters"
           />
         </div>
@@ -128,7 +143,7 @@
     <div v-else-if="error" class="mx-auto max-w-5xl">
       <Alert
         variant="danger"
-        :title="$t('tokens.history.errorTitle')"
+        :title="$t('settings.tokens.history.errorTitle')"
         :description="errorMessage"
         icon="fa-exclamation-triangle"
       />
@@ -147,12 +162,12 @@
           <i class="fa fa-coins text-4xl text-gray-400 dark:text-gray-500"></i>
         </div>
         <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-          {{ $t('tokens.history.noHistory', 'No token history yet') }}
+          {{ $t('settings.tokens.history.noHistory', 'No token history yet') }}
         </h3>
         <p class="mx-auto max-w-md text-sm text-gray-600 dark:text-gray-400">
           {{
             $t(
-              'tokens.history.noHistoryDesc',
+              'settings.tokens.history.noHistoryDesc',
               'Token transactions will appear here when tokens are added or consumed.',
             )
           }}
@@ -168,22 +183,22 @@
             <thead class="bg-base-200">
               <tr>
                 <th class="text-secondary px-4 py-3 text-left text-sm font-semibold">
-                  {{ $t('tokens.history.table.date', 'Date') }}
+                  {{ $t('settings.tokens.history.table.date', 'Date') }}
                 </th>
                 <th class="text-secondary px-4 py-3 text-left text-sm font-semibold">
-                  {{ $t('tokens.history.table.type', 'Type') }}
+                  {{ $t('settings.tokens.history.table.type', 'Type') }}
                 </th>
                 <th class="text-secondary px-4 py-3 text-right text-sm font-semibold">
-                  {{ $t('tokens.history.table.amount', 'Amount') }}
+                  {{ $t('settings.tokens.history.table.amount', 'Amount') }}
                 </th>
                 <th class="text-secondary px-4 py-3 text-right text-sm font-semibold">
-                  {{ $t('tokens.history.table.balanceAfter', 'Balance After') }}
+                  {{ $t('settings.tokens.history.table.balanceAfter', 'Balance After') }}
                 </th>
                 <th class="text-secondary px-4 py-3 text-left text-sm font-semibold">
-                  {{ $t('tokens.history.table.reference', 'Reference') }}
+                  {{ $t('settings.tokens.history.table.reference', 'Reference') }}
                 </th>
                 <th class="text-secondary px-4 py-3 text-left text-sm font-semibold">
-                  {{ $t('tokens.history.table.user', 'User') }}
+                  {{ $t('settings.tokens.history.table.user', 'User') }}
                 </th>
               </tr>
             </thead>
@@ -242,7 +257,7 @@
           v-model:current-page="currentPage"
           :meta="paginationMeta"
           :page-size-options="pageSizeOptions"
-          :item-name="$t('tokens.history.itemName')"
+          :item-name="$t('settings.tokens.history.itemName')"
           @update-per-page="updatePageSize"
         />
       </div>
@@ -346,9 +361,9 @@ function getTransactionTypeVariant(type: TransactionType): BadgeVariant {
 
 function getTransactionTypeLabel(type: TransactionType): string {
   const labels: Record<TransactionType, string> = {
-    add: t('tokens.history.type.add', 'Add'),
-    consume: t('tokens.history.type.consume', 'Consume'),
-    adjustment: t('tokens.history.type.adjustment', 'Adjustment'),
+    add: t('settings.tokens.history.type.add', 'Add'),
+    consume: t('settings.tokens.history.type.consume', 'Consume'),
+    adjustment: t('settings.tokens.history.type.adjustment', 'Adjustment'),
   }
   return labels[type] || type
 }

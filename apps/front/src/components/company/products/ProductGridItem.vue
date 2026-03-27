@@ -5,7 +5,7 @@
       <div>
         <h3 class="text-lg font-semibold capitalize">{{ formattedCategoryName }}</h3>
         <p class="text-secondary text-sm">
-          {{ t('products.count', { count: productList.length }) }}
+          {{ t('screen.products.count', { count: productList.length }) }}
         </p>
       </div>
     </div>
@@ -19,7 +19,7 @@
         <span class="flex-1 text-sm capitalize">{{ product }}</span>
         <Tag v-if="isNewProduct(product)" variant="success" size="xs">
           <i class="fa-solid fa-star"></i>
-          {{ t('products.badges.new') }}
+          {{ t('screen.products.badges.new') }}
         </Tag>
       </div>
     </div>
@@ -31,8 +31,8 @@
         :icon="showAll ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"
         :label="
           showAll
-            ? t('products.showLess')
-            : t('products.showMore', { count: productList.length - maxDisplayItems })
+            ? t('screen.products.showLess')
+            : t('screen.products.showMore', { count: productList.length - maxDisplayItems })
         "
         @click="toggleShowAll"
       />

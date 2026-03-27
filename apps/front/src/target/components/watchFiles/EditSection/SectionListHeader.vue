@@ -23,7 +23,7 @@
       <div v-if="lastUpdate" class="text-xs">
         <Tag intent="accent" icon="fa-clock" size="sm">
           {{
-            $t('watch_files.last_update.label', {
+            $t('target.watchFiles.last_update.label', {
               date: formattedLastUpdate,
             })
           }}

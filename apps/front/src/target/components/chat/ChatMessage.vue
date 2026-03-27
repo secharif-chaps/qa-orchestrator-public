@@ -77,7 +77,7 @@
             <!-- ERROR STATUS INDICATOR -->
             <div v-if="isError" class="text-error-700 mt-1 flex items-center gap-1 text-xs">
               <i class="fa-solid fa-circle-exclamation" aria-hidden="true" />
-              <span>{{ t('watch_files.chat.message.send_failed') }}</span>
+              <span>{{ t('target.watchFiles.chat.message.send_failed') }}</span>
             </div>
 
             <!-- DATE -->
@@ -132,7 +132,7 @@
 
       <!-- MAX RETRIES REACHED message -->
       <div v-if="isError && !canRetry" class="text-error text-xs">
-        {{ t('watch_files.chat.message.max_retries_reached') }}
+        {{ t('target.watchFiles.chat.message.max_retries_reached') }}
       </div>
     </div>
   </div>
@@ -198,13 +198,14 @@ const isTimedOutMessage = computed(
   () => isSystemErrorMessage.value && message.metadata?.reason === 'timed_out',
 )
 const systemErrorTitle = computed(() => {
-  if (isCancelledMessage.value) return t('watch_files.chat.system_error.cancelled_title')
-  if (isTimedOutMessage.value) return t('watch_files.chat.system_error.timed_out_title')
+  if (isCancelledMessage.value) return t('target.watchFiles.chat.system_error.cancelled_title')
+  if (isTimedOutMessage.value) return t('target.watchFiles.chat.system_error.timed_out_title')
   return t('common.error.title')
 })
 const systemErrorDescription = computed(() => {
-  if (isCancelledMessage.value) return t('watch_files.chat.system_error.cancelled_description')
-  if (isTimedOutMessage.value) return t('watch_files.chat.system_error.timed_out_description')
+  if (isCancelledMessage.value)
+    return t('target.watchFiles.chat.system_error.cancelled_description')
+  if (isTimedOutMessage.value) return t('target.watchFiles.chat.system_error.timed_out_description')
   return t('common.error.description')
 })
 const isLoading = computed(() => message.loading === true)

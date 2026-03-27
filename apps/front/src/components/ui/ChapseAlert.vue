@@ -29,7 +29,7 @@
         >
           <i class="fa-solid fa-wand-sparkles"></i>
           <span>
-            {{ title || $t('profile.sections.insights.title') }}
+            {{ title || $t('screen.profile.sections.insights.title') }}
           </span>
         </h3>
 

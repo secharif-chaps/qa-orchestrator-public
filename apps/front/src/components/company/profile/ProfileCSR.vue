@@ -4,7 +4,7 @@
       <div class="col-span-2">
         <h3 class="text-secondary space-x-2 font-bold">
           <i class="fa fa-hand-holding-heart"></i>
-          <span>{{ $t('profile.sections.csr.title') }}</span>
+          <span>{{ $t('screen.profile.sections.csr.title') }}</span>
         </h3>
       </div>
 
@@ -16,7 +16,7 @@
       <!-- CSR Responsibility Statement -->
       <div v-if="company?.csr?.responsibility">
         <h4 class="text-secondary mb-2 font-semibold">
-          {{ $t('profile.sections.csr.responsibility') }}
+          {{ $t('screen.profile.sections.csr.responsibility') }}
         </h4>
         <p class="text-secondary text-sm">{{ company.csr.responsibility }}</p>
       </div>
@@ -24,7 +24,7 @@
       <!-- Responsibility Initiatives -->
       <div>
         <h4 class="text-secondary mb-2 font-semibold">
-          {{ $t('profile.sections.csr.responsibility_initiatives') }}
+          {{ $t('screen.profile.sections.csr.responsibility_initiatives') }}
         </h4>
         <div class="">
           <ul class="space-y-1">
@@ -52,7 +52,7 @@
       <!-- Charity Actions -->
       <div>
         <h4 class="text-secondary mb-2 font-semibold">
-          {{ $t('profile.sections.csr.charity') }}
+          {{ $t('screen.profile.sections.csr.charity') }}
         </h4>
         <div class="">
           <ul class="space-y-1">
@@ -77,7 +77,7 @@
       <!-- Sustainability Programs -->
       <div>
         <h4 class="text-secondary mb-2 font-semibold">
-          {{ $t('profile.sections.csr.sustainability') }}
+          {{ $t('screen.profile.sections.csr.sustainability') }}
         </h4>
         <div class="">
           <ul class="space-y-1">
@@ -105,7 +105,7 @@
       <!-- Community Involvement -->
       <div>
         <h4 class="text-secondary mb-2 font-semibold">
-          {{ $t('profile.sections.csr.community') }}
+          {{ $t('screen.profile.sections.csr.community') }}
         </h4>
         <div class="">
           <ul class="space-y-1">
@@ -133,7 +133,7 @@
       <!-- Diversity & Inclusion -->
       <div>
         <h4 class="text-secondary mb-2 font-semibold">
-          {{ $t('profile.sections.csr.diversity') }}
+          {{ $t('screen.profile.sections.csr.diversity') }}
         </h4>
         <div class="">
           <ul class="space-y-1">
@@ -161,7 +161,7 @@
       <!-- Ethical Practices -->
       <div>
         <h4 class="text-secondary mb-2 font-semibold">
-          {{ $t('profile.sections.csr.ethics') }}
+          {{ $t('screen.profile.sections.csr.ethics') }}
         </h4>
         <div class="">
           <ul class="space-y-1">
@@ -189,7 +189,7 @@
       <!-- Awards & Certifications -->
       <div>
         <h4 class="text-secondary mb-2 font-semibold">
-          {{ $t('profile.sections.csr.awards') }}
+          {{ $t('screen.profile.sections.csr.awards') }}
         </h4>
         <div class="">
           <ul class="space-y-1">

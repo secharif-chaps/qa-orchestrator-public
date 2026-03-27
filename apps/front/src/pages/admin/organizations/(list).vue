@@ -51,7 +51,7 @@
             <div>
               <h3 class="text-lg font-semibold">{{ org.name }}</h3>
               <p class="text-secondary text-sm">
-                {{ org.description || $t('organization.noDescription', 'No description') }}
+                {{ org.description || $t('admin.organization.noDescription', 'No description') }}
               </p>
               <p class="text-secondary mt-1 text-xs">ID: {{ org.id }}</p>
             </div>

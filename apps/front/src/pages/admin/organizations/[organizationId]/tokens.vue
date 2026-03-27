@@ -5,10 +5,10 @@
       <div class="mb-6 flex items-center justify-between">
         <div>
           <h2 class="text-xl font-semibold">
-            {{ $t('tokens.management', 'Token Management') }}
+            {{ $t('settings.tokens.management', 'Token Management') }}
           </h2>
           <p class="text-secondary mt-1">
-            {{ $t('tokens.managementDescription', 'Manage organization credits') }}
+            {{ $t('settings.tokens.managementDescription', 'Manage organization credits') }}
           </p>
         </div>
 
@@ -17,7 +17,7 @@
           icon="fa fa-refresh"
           :loading="isRefreshing"
           :disabled="isRefreshing"
-          :title="$t('tokens.refresh', 'Refresh')"
+          :title="$t('settings.tokens.refresh', 'Refresh')"
           icon-only
           @click="handleRefresh"
         />
@@ -27,7 +27,7 @@
       <div v-if="isLoading" class="p-8 text-center">
         <div class="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
         <p class="text-secondary">
-          {{ $t('tokens.loading', 'Loading tokens...') }}
+          {{ $t('settings.tokens.loading', 'Loading tokens...') }}
         </p>
       </div>
 
@@ -52,14 +52,14 @@
               </div>
               <div>
                 <p class="text-secondary mb-1 text-sm">
-                  {{ $t('tokens.globalBalance', 'Global Balance') }}
+                  {{ $t('settings.tokens.globalBalance', 'Global Balance') }}
                 </p>
                 <div class="flex items-baseline gap-2">
                   <span class="text-primary text-4xl font-bold">
                     {{ balance.toLocaleString() }}
                   </span>
                   <span class="text-secondary">
-                    {{ $t('tokens.credits', 'credits') }}
+                    {{ $t('settings.tokens.credits', 'credits') }}
                   </span>
                 </div>
               </div>
@@ -67,7 +67,7 @@
 
             <div class="text-right">
               <p class="text-secondary mb-1 text-sm">
-                {{ $t('tokens.companyEquivalent', 'Company Equivalent') }}
+                {{ $t('settings.tokens.companyEquivalent', 'Company Equivalent') }}
               </p>
               <div class="flex items-baseline justify-end gap-1">
                 <span class="text-2xl font-semibold" :class="companyEquivalentColor">
@@ -76,8 +76,8 @@
                 <span class="text-secondary">
                   {{
                     companyEquivalent === 1
-                      ? $t('tokens.company', 'company')
-                      : $t('tokens.companies', 'companies')
+                      ? $t('settings.tokens.company', 'company')
+                      : $t('settings.tokens.companies', 'companies')
                   }}
                 </span>
               </div>
@@ -88,13 +88,13 @@
         <!-- Add Tokens Section -->
         <div class="flex flex-col gap-4" data-testid="quick-add-section">
           <h3 class="text-lg font-medium">
-            {{ $t('tokens.addTokens', 'Add Tokens') }}
+            {{ $t('settings.tokens.addTokens', 'Add Tokens') }}
           </h3>
 
           <!-- Quick Add Buttons -->
           <div class="flex flex-col gap-3">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('tokens.quickAdd', 'Quick Add') }}
+              {{ $t('settings.tokens.quickAdd', 'Quick Add') }}
             </label>
             <div class="flex flex-wrap items-center gap-2">
               <Button
@@ -105,7 +105,7 @@
                 :loading="addTokensMutation.isLoading.value && pendingAmount === amount.tokens"
                 :disabled="addTokensMutation.isLoading.value"
                 :label="
-                  $t('tokens.screensWithTokens', {
+                  $t('settings.tokens.screensWithTokens', {
                     count: amount.companies,
                     tokens: amount.tokens.toLocaleString(),
                   })
@@ -118,7 +118,7 @@
           <!-- Custom Amount Input -->
           <div class="flex flex-col gap-2">
             <label class="text-secondary text-sm font-medium">
-              {{ $t('tokens.customAmount', 'Custom Amount') }}
+              {{ $t('settings.tokens.customAmount', 'Custom Amount') }}
             </label>
             <div class="flex items-center gap-3">
               <Input
@@ -126,7 +126,7 @@
                 id="custom-amount-input"
                 v-model="customAmount"
                 type="number"
-                :placeholder="$t('tokens.enterAmount', 'Enter amount')"
+                :placeholder="$t('settings.tokens.enterAmount', 'Enter amount')"
                 :min="1"
                 :max="100000"
                 :disabled="addTokensMutation.isLoading.value"
@@ -135,7 +135,7 @@
               <Button
                 variant="primary"
                 icon="fa fa-plus"
-                :label="$t('tokens.add', 'Add')"
+                :label="$t('settings.tokens.add', 'Add')"
                 :loading="
                   addTokensMutation.isLoading.value && pendingAmount === Number(customAmount)
                 "
@@ -144,7 +144,7 @@
               />
             </div>
             <p class="text-secondary text-xs">
-              {{ $t('tokens.addHelper', 'Enter a custom amount of credits to add') }}
+              {{ $t('settings.tokens.addHelper', 'Enter a custom amount of credits to add') }}
             </p>
           </div>
         </div>

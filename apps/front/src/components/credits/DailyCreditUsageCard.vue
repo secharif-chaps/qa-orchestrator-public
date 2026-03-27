@@ -3,7 +3,7 @@
     <!-- Header with filters -->
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <h3 class="text-lg font-semibold">
-        {{ $t('credits.dailyUsage.title', 'Consommation quotidienne') }}
+        {{ $t('settings.credits.dailyUsage.title', 'Consommation quotidienne') }}
       </h3>
 
       <div class="flex flex-wrap items-center gap-3">
@@ -28,7 +28,7 @@
       <div class="text-center">
         <i class="fa fa-chart-bar text-secondary mb-2 text-2xl"></i>
         <p class="text-secondary text-sm">
-          {{ $t('credits.dailyUsage.noData', 'Aucune consommation pour cette période') }}
+          {{ $t('settings.credits.dailyUsage.noData', 'Aucune consommation pour cette période') }}
         </p>
       </div>
     </div>

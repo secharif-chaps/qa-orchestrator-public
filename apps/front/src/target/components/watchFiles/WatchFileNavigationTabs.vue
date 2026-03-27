@@ -52,7 +52,7 @@ const tabs = computed<NavigationTab[]>(() => {
   return [
     {
       id: RouteNames.WATCH_FILES_RADAR,
-      title: t('watch_files.tabs.radar'),
+      title: t('target.watchFiles.tabs.radar'),
       click() {
         switchTab(RouteNames.WATCH_FILES_RADAR)
       },
@@ -61,7 +61,7 @@ const tabs = computed<NavigationTab[]>(() => {
     },
     {
       id: RouteNames.WATCH_FILES_DOCUMENTS,
-      title: t('watch_files.tabs.documents'),
+      title: t('target.watchFiles.tabs.documents'),
       click() {
         switchTab(RouteNames.WATCH_FILES_DOCUMENTS)
       },
@@ -70,7 +70,7 @@ const tabs = computed<NavigationTab[]>(() => {
     },
     {
       id: RouteNames.WATCH_FILES_SCOPE,
-      title: t('watch_files.tabs.scope'),
+      title: t('target.watchFiles.tabs.scope'),
       click() {
         switchTab(RouteNames.WATCH_FILES_SCOPE)
       },
@@ -79,7 +79,7 @@ const tabs = computed<NavigationTab[]>(() => {
     },
     {
       id: RouteNames.WATCH_FILES_AUDIT,
-      title: t('watch_files.tabs.audit'),
+      title: t('target.watchFiles.tabs.audit'),
       click() {
         switchTab(RouteNames.WATCH_FILES_AUDIT)
       },

@@ -1,10 +1,10 @@
 <template>
   <div class="flex h-[calc(100vh-140px)] flex-col px-6">
     <!-- Header with Total Credits -->
-    <SidebarHeader :title="$t('sidebar.tokens.title')">
+    <SidebarHeader :title="$t('common.sidebar.tokens.title')">
       <Tag
         color="almond"
-        :label="`${totalTokens} ${$t('sidebar.tokens.credits', 'credits')}`"
+        :label="`${totalTokens} ${$t('common.sidebar.tokens.credits', 'credits')}`"
         icon="fa-coins"
         size="md"
       />
@@ -24,12 +24,12 @@
           <Tag color="sage" icon="fa-coins" />
           <div class="text-center">
             <h3 class="text-sage-900 mb-1 text-sm font-semibold dark:text-white">
-              {{ $t('sidebar.tokens.noHistory', 'No usage history') }}
+              {{ $t('common.sidebar.tokens.noHistory', 'No usage history') }}
             </h3>
             <p class="text-sage-700 dark:text-sage-300 px-4 text-xs">
               {{
                 $t(
-                  'sidebar.tokens.noHistoryDesc',
+                  'common.sidebar.tokens.noHistoryDesc',
                   'Token usage will appear here when you create company cards.',
                 )
               }}
@@ -40,7 +40,7 @@
         <!-- Today Section -->
         <div v-if="groupedHistory.today.length > 0" class="flex flex-col gap-3">
           <h3 class="text-sage-400 text-xs font-semibold tracking-wider uppercase">
-            {{ $t('sidebar.tokens.today', "Aujourd'hui") }}
+            {{ $t('common.sidebar.tokens.today', "Aujourd'hui") }}
           </h3>
           <div class="flex flex-col gap-2">
             <TokenHistoryItem
@@ -55,7 +55,7 @@
         <!-- Yesterday Section -->
         <div v-if="groupedHistory.yesterday.length > 0" class="flex flex-col gap-3">
           <h3 class="text-sage-400 text-xs font-semibold tracking-wider uppercase">
-            {{ $t('sidebar.tokens.yesterday', 'Hier') }}
+            {{ $t('common.sidebar.tokens.yesterday', 'Hier') }}
           </h3>
           <div class="flex flex-col gap-2">
             <TokenHistoryItem
@@ -91,7 +91,7 @@
           <Button
             variant="tertiary"
             size="sm"
-            :label="$t('sidebar.tokens.viewHistory', 'View all history')"
+            :label="$t('common.sidebar.tokens.viewHistory', 'View all history')"
             icon-right="fa fa-arrow-right"
             @click="$router.push('/tokens/history')"
           />

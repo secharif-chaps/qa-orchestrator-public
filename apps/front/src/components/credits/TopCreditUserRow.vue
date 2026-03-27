@@ -50,7 +50,7 @@
       <span
         class="bg-primary-light text-primary inline-flex items-center rounded-full px-3 py-1 text-sm font-medium"
       >
-        {{ formattedCredits }} {{ $t('credits.usedCredits') }}
+        {{ formattedCredits }} {{ $t('settings.credits.usedCredits') }}
       </span>
     </td>
   </tr>

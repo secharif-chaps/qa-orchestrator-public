@@ -6,7 +6,7 @@
       <div class="mb-6 flex shrink-0 items-center justify-between">
         <div class="flex items-center gap-2">
           <div class="text-medium text-gray-900">
-            {{ t('watch_files.activity.sources.title') }}
+            {{ t('target.watchFiles.activity.sources.title') }}
           </div>
           <Badge
             v-if="nbSources && !isSearchActive"
@@ -18,7 +18,7 @@
         <Searchbar
           id="source-search-input"
           v-model="searchQuery"
-          :placeholder="t('watch_files.activity.sources.search_placeholder')"
+          :placeholder="t('target.watchFiles.activity.sources.search_placeholder')"
           size="sm"
           class="w-64"
           :disabled="isLoading"
@@ -46,13 +46,13 @@
               <div v-if="isSearchActive" class="mb-6 flex items-center gap-2">
                 <span class="text-sm font-medium text-gray-900">
                   {{
-                    t('watch_files.activity.sources.search.results', {
+                    t('target.watchFiles.activity.sources.search.results', {
                       count: filteredSources.length,
                     })
                   }}
                 </span>
                 <Button variant="tertiary" icon="fa-xmark" size="sm" @click="clearSearch">
-                  {{ t('watch_files.activity.sources.search.clear') }}
+                  {{ t('target.watchFiles.activity.sources.search.clear') }}
                 </Button>
               </div>
               <SourcesAccordion :sources-data="sourcesData" :search-query="debouncedSearchQuery" />

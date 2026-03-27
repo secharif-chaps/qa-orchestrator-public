@@ -2,7 +2,7 @@
   <div v-if="hasAnyRawData" class="col-span-12 space-y-4">
     <h2 class="text-secondary flex items-center gap-2 text-xl font-semibold">
       <i class="fa fa-code text-lg"></i>
-      {{ t('profile.sections.debug.title') }}
+      {{ t('screen.profile.sections.debug.title') }}
     </h2>
 
     <!-- Mistral Knowledge -->
@@ -10,7 +10,7 @@
       <template #header>
         <div class="flex items-center gap-2">
           <i class="fa fa-brain text-accent"></i>
-          <h3 class="font-semibold">{{ t('profile.sections.debug.mistral') }}</h3>
+          <h3 class="font-semibold">{{ t('screen.profile.sections.debug.mistral') }}</h3>
         </div>
       </template>
       <div class="bg-base-100 text-secondary overflow-x-auto rounded-lg p-4 font-mono text-sm">
@@ -23,7 +23,7 @@
       <template #header>
         <div class="flex items-center gap-2">
           <i class="fa fa-robot text-info"></i>
-          <h3 class="font-semibold">{{ t('profile.sections.debug.gpt') }}</h3>
+          <h3 class="font-semibold">{{ t('screen.profile.sections.debug.gpt') }}</h3>
         </div>
       </template>
       <div class="bg-base-100 text-secondary overflow-x-auto rounded-lg p-4 font-mono text-sm">
@@ -36,7 +36,7 @@
       <template #header>
         <div class="flex items-center gap-2">
           <i class="fa fa-book text-warning"></i>
-          <h3 class="font-semibold">{{ t('profile.sections.debug.wikipedia') }}</h3>
+          <h3 class="font-semibold">{{ t('screen.profile.sections.debug.wikipedia') }}</h3>
         </div>
       </template>
       <div class="bg-base-100 text-secondary overflow-x-auto rounded-lg p-4 font-mono text-sm">
@@ -49,7 +49,7 @@
       <template #header>
         <div class="flex items-center gap-2">
           <i class="fa fa-globe text-success"></i>
-          <h3 class="font-semibold">{{ t('profile.sections.debug.website') }}</h3>
+          <h3 class="font-semibold">{{ t('screen.profile.sections.debug.website') }}</h3>
         </div>
       </template>
       <div class="bg-base-100 text-secondary overflow-x-auto rounded-lg p-4 font-mono text-sm">

@@ -1,10 +1,13 @@
 <template>
   <OPopper class="!cursor-default">
     <template #tooltip>
-      <div v-sanitize-html="$t('watch_files.edit.alert.enabled.tooltip')" class="tooltip-content" />
+      <div
+        v-sanitize-html="$t('target.watchFiles.edit.alert.enabled.tooltip')"
+        class="tooltip-content"
+      />
     </template>
     <Tag icon="fa-lock" size="sm" intent="accent">
-      {{ $t('watch_files.edit.alert.enabled') }}
+      {{ $t('target.watchFiles.edit.alert.enabled') }}
     </Tag>
   </OPopper>
 </template>
